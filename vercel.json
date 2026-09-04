@@ -1,0 +1,22 @@
+{
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "rewrites": [
+    { "source": "/home", "destination": "/index.html" },
+    { "source": "/profile", "destination": "/index.html" },
+    { "source": "/create", "destination": "/index.html" },
+    { "source": "/myads", "destination": "/index.html" },
+    { "source": "/proxolink", "destination": "/index.html" },
+    { "source": "/notifications", "destination": "/index.html" },
+    { "source": "/support", "destination": "/index.html" },
+    { "source": "/tutorials", "destination": "/index.html" },
+    { "source": "/tutplayer", "destination": "/index.html" },
+    { "source": "/txhistory", "destination": "/index.html" },
+    { "source": "/promocodes", "destination": "/index.html" },
+    { "source": "/adcalc", "destination": "/index.html" },
+    { "source": "/wallet", "destination": "/index.html" },
+    { "source": "/challenges", "destination": "/index.html" },
+    { "source": "/levels", "destination": "/index.html" },
+    { "source": "/gifts", "destination": "/index.html" }
+  ]
+}
