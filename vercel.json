@@ -1,8 +1,8 @@
 {
   "rewrites": [
     {
-      "source": "/(.*)",
-      "destination": "/index.html"
+      "source": "/exchange-admin1",
+      "destination": "/exchange-admin.html"
     }
   ]
 }
