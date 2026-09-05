@@ -1075,6 +1075,71 @@ body.has-nav{ padding-bottom:calc(84px + env(safe-area-inset-bottom, 0px)); }
 .notif-bar-ico.msg{ background:var(--secondary-soft); color:var(--secondary); }
 .notif-bar{ cursor:default; }
 
+/* ══════════════════════════════════════════════════════════════
+   RATE BOARD + CHANGE LOG  (/changes)
+   ══════════════════════════════════════════════════════════════ */
+.method-icon.sz-xs{ width:22px; height:22px; border-radius:7px; }
+.method-icon.sz-xs svg{ width:12px; height:12px; }
+
+.rates-now{ display:flex; flex-direction:column; gap:9px; margin-bottom:6px; }
+.rate-card{
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg);
+  padding:13px 14px; box-shadow:var(--shadow-sm);
+  display:flex; flex-direction:column; gap:9px;
+}
+.rate-route{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; font-size:var(--fs-xs); font-weight:var(--fw-semibold); color:var(--text); }
+.rate-w{ display:inline-flex; align-items:center; gap:6px; }
+.rate-arrow{ color:var(--text-faint); display:inline-flex; }
+.rate-arrow .icn{ width:16px; height:16px; }
+
+.rate-eq{
+  display:flex; align-items:center; gap:10px; direction:ltr; justify-content:flex-start;
+  background:var(--surface-2); border-radius:var(--radius-md); padding:10px 12px;
+  font-variant-numeric:tabular-nums;
+}
+.rate-in{ font-size:var(--fs-sm); color:var(--text-muted); font-weight:var(--fw-medium); }
+.rate-eqico{ color:var(--text-faint); display:inline-flex; }
+.rate-eqico .icn{ width:15px; height:15px; }
+.rate-out{ font-size:var(--fs-md); font-weight:var(--fw-bold); color:var(--success); }
+.rate-fee{ font-size:var(--fs-2xs); color:var(--text-faint); }
+
+.chg-item{
+  display:flex; gap:11px; align-items:flex-start; background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--radius-md); padding:13px; margin-bottom:9px; box-shadow:var(--shadow-sm);
+}
+.chg-ico{ width:34px; height:34px; border-radius:11px; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+.chg-ico .icn{ width:17px; height:17px; }
+.chg-ico.good{ background:var(--success-soft); color:var(--success); }
+.chg-ico.bad{ background:var(--error-soft); color:var(--error); }
+.chg-ico.neutral{ background:var(--info-soft); color:var(--info); }
+.chg-body{ flex:1; min-width:0; }
+.chg-head{ display:flex; align-items:baseline; gap:8px; }
+.chg-headline{ font-size:var(--fs-sm); font-weight:var(--fw-semibold); color:var(--text); flex:1; min-width:0; }
+.chg-time{ font-size:var(--fs-2xs); color:var(--text-faint); white-space:nowrap; flex-shrink:0; }
+
+.chg-route{ display:flex; align-items:center; gap:7px; flex-wrap:wrap; margin-top:8px; font-size:var(--fs-xs); color:var(--text-muted); }
+.chg-route b{ font-weight:var(--fw-semibold); color:var(--text); }
+.chg-arrow{ color:var(--text-faint); display:inline-flex; }
+.chg-arrow .icn{ width:15px; height:15px; }
+
+.chg-vals{
+  display:flex; align-items:center; gap:8px; margin-top:9px; direction:ltr;
+  font-size:var(--fs-sm); font-variant-numeric:tabular-nums;
+  background:var(--surface-2); border-radius:var(--radius-sm); padding:8px 11px; width:fit-content; max-width:100%;
+}
+.chg-old{ color:var(--text-faint); text-decoration:line-through; }
+.chg-to{ color:var(--text-faint); display:inline-flex; }
+.chg-to .icn{ width:14px; height:14px; }
+.chg-new{ color:var(--text); font-weight:var(--fw-bold); }
+.chg-delta{ font-size:var(--fs-2xs); font-weight:var(--fw-bold); border-radius:var(--radius-full); padding:2px 8px; }
+.chg-delta.good{ background:var(--success-soft); color:var(--success); }
+.chg-delta.bad{ background:var(--error-soft); color:var(--error); }
+.chg-delta.neutral{ background:var(--info-soft); color:var(--info); }
+
+.chg-meaning{ font-size:var(--fs-2xs); margin-top:8px; font-weight:var(--fw-medium); }
+.chg-meaning.good{ color:var(--success); }
+.chg-meaning.bad{ color:var(--error); }
+
 </style>
 </head>
 
@@ -1598,8 +1663,19 @@ body.has-nav{ padding-bottom:calc(84px + env(safe-area-inset-bottom, 0px)); }
         <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 16.5 9 11l3.5 3.5L20.5 6.5"/><path d="M15.5 6.5h5v5"/></svg>
         گۆڕانکاری نرخەکان
       </h2>
-      <p>دوایین گۆڕانکاری لە حمولە و ڕێژەی گۆڕینی واڵێتەکاندا.</p>
+      <p>نرخی ئێستا و مێژووی گۆڕانکارییەکان — بەپێی هەر ١٠٠,٠٠٠ دینار کە دەینێریت.</p>
     </div>
+
+    <h3 class="section-title">
+      <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v9M14.6 10.1a2.6 2.6 0 0 0-2.6-1.3c-1.5 0-2.6.8-2.6 2s1.1 1.8 2.6 2 2.6.8 2.6 2-1.1 2-2.6 2a2.6 2.6 0 0 1-2.6-1.3"/></svg>
+      نرخی ئێستا
+    </h3>
+    <div class="rates-now" id="ratesNow"></div>
+
+    <h3 class="section-title" style="margin-top:var(--space-6)">
+      <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 2.6-6.4"/><path d="M3 4v5h5"/><path d="M12 8v4.5l3 1.8"/></svg>
+      مێژووی گۆڕانکاری
+    </h3>
     <div id="changesList" style="width:100%;"></div>
   </section>
 
@@ -2705,7 +2781,7 @@ async function startApp(user){
       title:'هەژمار بۆیکۆتکراوە',
       message:'ئەم هەژمارە بۆیکۆتکراوە. تکایە پەیوەندی بە پشتگیری بکە.',
       primaryText:'باشە',
-      onPrimary: async ()=>{ try{ await sb.auth.signOut(); }catch(_){} location.reload(); }
+      onPrimary: async ()=>{ try{ await sb.auth.signOut(); }catch(_){} try{ location.replace(BASE_PATH); }catch(_){ location.reload(); } }
     });
     return;
   }
@@ -2737,7 +2813,9 @@ async function startApp(user){
 
 async function logout(){
   try{ await sb.auth.signOut(); }catch(_){}
-  location.reload();
+  // A signed-out visitor should never be left sitting on /profile or
+  // /transactions — send them back to the domain root.
+  try{ location.replace(BASE_PATH); }catch(_){ location.reload(); }
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -2779,6 +2857,9 @@ function subscribeRatesUser(){
     .on('postgres_changes', {event:'*',schema:'public',table:'ex_rates'}, async ()=>{
       await loadRates();
       calc();
+      // the rate board is now stale — refresh it if the user is looking at it
+      _changesLoaded=false;
+      if(_route==='changes') loadChangeLog(true);
     }).subscribe();
 }
 const FALLBACK_RATES = {
@@ -3008,7 +3089,6 @@ async function processOrder(){
   const btn=document.getElementById('submitBtn'); btn.dataset.submitting='1'; btn.disabled=true; btn.innerHTML=ICON.spin+' ناردن...';
   const totalTxt=document.getElementById('totalDisplay').innerText;
   const totalNum=parseFloat(totalTxt.replace(/[^0-9.]/g,''))||0;
-  const displayAmt=(from==='USDT')?`${formatNum(amtValue)}$`:`${formatNum(amtValue)} IQD`;
 
   try{
     let receiptUrl=null;
@@ -3026,10 +3106,19 @@ async function processOrder(){
     }).select().single();
     if(insErr) throw insErr;
 
-    const formData=new FormData();
-    formData.append("chat_id","6259019006"); formData.append("photo",file);
-    formData.append("caption", `🚀 ئۆردەر: ${orderCodeOf(orderRow)}\n👤 کڕیار: ${curProfile?.full_name||curUser.email}\n📥 لە: ${from}\n📤 بۆ: ${to}\n📱 ژمارە: ${phone}\n💵 بڕ: ${displayAmt}\n💰 وەرگرتن: ${totalTxt}`);
-    try{ const _tgTok=atob('ODg4MDIxNDgwNzpBQUVKNGN2aXZSVm1mcUpwaEh5R3RHX2JVQ3RDUDg0X0tkUQ=='); await fetch(`https://api.telegram.org/bot${_tgTok}/sendPhoto`, { method: "POST", body: formData }); }catch(_){}
+    // The Telegram alert is sent by /api/notify-order. The bot token lives in a
+    // Vercel environment variable, so it never reaches the browser, and the
+    // caption is rebuilt server-side from the saved row (amounts can't be faked).
+    try{
+      const {data:{session:_s}} = await sb.auth.getSession();
+      if(_s){
+        await fetch('/api/notify-order', {
+          method:'POST',
+          headers:{ 'Content-Type':'application/json', 'Authorization':'Bearer '+_s.access_token },
+          body: JSON.stringify({ order_id: orderRow.id })
+        });
+      }
+    }catch(_){ /* the order is already saved — never block the user on this */ }
 
     showResultModal({
       tone:'success',
@@ -3250,16 +3339,22 @@ function toggleReceipt(id){
 // ═══ EXTRA ICONS (used by the router pages + notifications) ════
 // ══════════════════════════════════════════════════════════════
 Object.assign(ICON, {
-  badgeCheck:'<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.8l2.2 2.1 3-.3.6 3 2.6 1.6-1.3 2.7 1.3 2.7-2.6 1.6-.6 3-3-.3L12 21.2 9.8 19.1l-3 .3-.6-3L3.6 14.8 4.9 12 3.6 9.3l2.6-1.6.6-3 3 .3z"/><path d="m8.8 12.2 2.2 2.2 4.2-4.4"/></svg>',
-  xCircle:'<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.6"/><path d="m9.2 9.2 5.6 5.6M14.8 9.2l-5.6 5.6"/></svg>',
-  refresh:'<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M19.5 12a7.5 7.5 0 1 1-2.2-5.3"/><path d="M19.8 4.6v4.2h-4.2"/></svg>',
-  megaphone:'<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.2v3.6a1.6 1.6 0 0 0 1.6 1.6h1.6l1.2 4.4h2.2l-1-4.4h.6l9-3.4V5.4l-9 3.2H5.6A1.6 1.6 0 0 0 4 10.2z"/><path d="M20.4 9v6"/></svg>',
-  bellOff:'<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 10.5a6 6 0 0 1 8.4-5.5"/><path d="M18 12.5c0 3 1 4.2 1.5 4.9.3.4-.1 1-.6 1H5.1c-.6 0-.9-.6-.6-1 .5-.7 1.5-1.9 1.5-4.9"/><path d="M9.7 20.3a2.3 2.3 0 0 0 4.6 0"/><path d="M3.5 3.5l17 17"/></svg>',
-  copy:'<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="8.5" y="8.5" width="11" height="11" rx="2.2"/><path d="M15.5 8.5V6.2A1.7 1.7 0 0 0 13.8 4.5H6.2A1.7 1.7 0 0 0 4.5 6.2v7.6a1.7 1.7 0 0 0 1.7 1.7h2.3"/></svg>',
-  trendUp:'<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 16.5 9 11l3.5 3.5L20.5 6.5"/><path d="M15.5 6.5h5v5"/></svg>',
-  trendDown:'<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 7.5 9 13l3.5-3.5 8 8"/><path d="M15.5 17.5h5v-5"/></svg>',
-  sliders:'<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>',
-  user:'<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.2" r="3.4"/><path d="M4.8 19.5c1.3-3.8 4-5.7 7.2-5.7s5.9 1.9 7.2 5.7"/></svg>'
+  // Notification icons — clean, well-formed 24px outline SVGs
+  badgeCheck:'<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/></svg>',
+  xCircle:'<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>',
+  refresh:'<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>',
+  megaphone:'<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>',
+  bellOff:'<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8.7 3A6 6 0 0 1 18 8a21.3 21.3 0 0 0 .6 5"/><path d="M17 17H3s3-2 3-9a4.67 4.67 0 0 1 .3-1.7"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/><path d="m2 2 20 20"/></svg>',
+  copy:'<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>',
+  trendUp:'<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>',
+  trendDown:'<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/></svg>',
+  lockClosed:'<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>',
+  lockOpen:'<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>',
+  sparkles:'<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M18 16.5 18.7 18.3 20.5 19 18.7 19.7 18 21.5 17.3 19.7 15.5 19 17.3 18.3z"/></svg>',
+  equals:'<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 9h14M5 15h14"/></svg>',
+  arrowLeftLong:'<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m11 6-6 6 6 6"/></svg>',
+  user:'<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
+  sliders:'<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="4" y1="21" y2="14"/><line x1="4" x2="4" y1="10" y2="3"/><line x1="12" x2="12" y1="21" y2="12"/><line x1="12" x2="12" y1="8" y2="3"/><line x1="20" x2="20" y1="21" y2="16"/><line x1="20" x2="20" y1="12" y2="3"/><line x1="2" x2="6" y1="14" y2="14"/><line x1="10" x2="14" y1="8" y2="8"/><line x1="18" x2="22" y1="16" y2="16"/></svg>'
 });
 
 // ══════════════════════════════════════════════════════════════
@@ -3326,68 +3421,175 @@ window.addEventListener('popstate', function(){ navigate(routeFromLocation(), fa
 // ══════════════════════════════════════════════════════════════
 // ═══ CHANGE LOG (ex_change_log — filled by database triggers) ══
 // ══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════
+// ═══ RATE BOARD + CHANGE LOG  (route "/changes")
+// ═══ Two halves: what the rate IS right now, and how it moved.
+// ══════════════════════════════════════════════════════════════
+const SAMPLE_IQD = 100000;   // "for every 100,000 you send, you receive …"
+
 const CHG_FIELD_LABEL = {
   multiplier:'ڕێژەی گۆڕین', fee_percent:'ڕێژەی لێبڕین', fee_fixed:'لێبڕینی جێگیر',
-  new_route:'ڕێگایەکی نوێ کرایەوە', is_active:'دۆخی ڕێگا', new_wallet:'واڵێتێکی نوێ زیادکرا',
+  new_route:'ڕێگایەکی نوێ', is_active:'دۆخی ڕێگا', new_wallet:'واڵێتێکی نوێ',
   fee:'لێبڕین', price:'نرخ', is_locked:'دۆخی واڵێت', allow_receive:'وەرگرتن', allow_from:'ناردن'
 };
-const CHG_BOOL_LABEL = {
-  is_active:{ 'true':'کراوەتەوە', 'false':'داخراوە' },
-  is_locked:{ 'true':'داخراوە',   'false':'کراوەتەوە' },
-  allow_receive:{ 'true':'ڕێگەپێدراو', 'false':'ڕێگەپێنەدراو' },
-  allow_from:{ 'true':'ڕێگەپێدراو', 'false':'ڕێگەپێنەدراو' }
-};
+
+// What a change MEANS for the customer — not just whether the number went up.
+// A bigger multiplier is good news; a bigger fee is not.
+function chgTone(r){
+  const up = r.direction==='up';
+  if(r.field==='multiplier') return up ? 'good' : 'bad';
+  if(r.field==='fee_percent' || r.field==='fee_fixed' || r.field==='fee') return up ? 'bad' : 'good';
+  if(r.field==='is_active' || r.field==='allow_from' || r.field==='allow_receive') return r.new_value==='true' ? 'good' : 'bad';
+  if(r.field==='is_locked') return r.new_value==='true' ? 'bad' : 'good';
+  return 'neutral';
+}
+function chgHeadline(r){
+  const up = r.direction==='up';
+  switch(r.field){
+    case 'multiplier':  return up ? 'ڕێژەی گۆڕین بەرزبووەوە' : 'ڕێژەی گۆڕین نزم بووەوە';
+    case 'fee_percent':
+    case 'fee_fixed':
+    case 'fee':         return up ? 'لێبڕین زیادی کرد' : 'لێبڕین کەمی کرد';
+    case 'is_active':   return r.new_value==='true' ? 'ئەم ڕێگایە کرایەوە' : 'ئەم ڕێگایە داخرا';
+    case 'is_locked':   return r.new_value==='true' ? 'واڵێت داخرا' : 'واڵێت کرایەوە';
+    case 'allow_receive': return r.new_value==='true' ? 'وەرگرتن کرایەوە' : 'وەرگرتن داخرا';
+    case 'allow_from':    return r.new_value==='true' ? 'ناردن کرایەوە' : 'ناردن داخرا';
+    case 'new_route':   return 'ڕێگایەکی نوێ زیادکرا';
+    case 'new_wallet':  return 'واڵێتێکی نوێ زیادکرا';
+    default: return CHG_FIELD_LABEL[r.field] || r.field;
+  }
+}
+// One plain sentence so nobody has to decode the numbers themselves
+function chgMeaning(r){
+  if(r.field==='multiplier' || r.field==='fee_percent' || r.field==='fee_fixed' || r.field==='fee'){
+    return chgTone(r)==='good' ? 'ئێستا زیاتر وەردەگریت' : 'ئێستا کەمتر وەردەگریت';
+  }
+  return '';
+}
+function chgIcon(r){
+  const t=chgTone(r);
+  if(r.field==='is_locked' || r.field==='is_active' || r.field==='allow_from' || r.field==='allow_receive')
+    return t==='good' ? ICON.lockOpen : ICON.lockClosed;
+  if(r.field==='new_route' || r.field==='new_wallet') return ICON.sparkles;
+  return r.direction==='up' ? ICON.trendUp : ICON.trendDown;
+}
 function chgValueText(field, v){
   if(v===null || v===undefined || v==='') return '—';
-  if(CHG_BOOL_LABEL[field]) return CHG_BOOL_LABEL[field][String(v)] || String(v);
+  if(field==='is_active' || field==='allow_from' || field==='allow_receive') return v==='true' ? 'کراوە' : 'داخراوە';
+  if(field==='is_locked') return v==='true' ? 'داخراوە' : 'کراوە';
   const n=Number(v);
-  if(!isNaN(n)) return (field==='fee_percent'||field==='fee') ? (formatNum(n)+'%') : formatNum(n);
+  if(!isNaN(n)) return (field==='fee_percent'||field==='fee') ? (fmtPct(n)+'%') : formatNum(n);
   return String(v);
 }
-function chgLabelText(row){
-  if(row.kind==='rate'){
-    const a=methodLabel(row.from_method), b=methodLabel(row.to_method);
-    return '<span class="chg-route">'+escHtml(a)+' ➔ '+escHtml(b)+'</span>';
+function chgDelta(r){
+  const a=Number(r.old_value), b=Number(r.new_value);
+  if(isNaN(a) || isNaN(b) || a===0) return '';
+  const d=((b-a)/a)*100;
+  if(!isFinite(d) || Math.abs(d)<0.01) return '';
+  return (d>0?'+':'') + fmtPct(d) + '%';
+}
+function chgRouteHTML(r){
+  if(r.kind==='rate'){
+    return '<span class="chg-route">'
+      + methodIconHTML(r.from_method,'sz-xs') + '<b>' + escHtml(methodLabel(r.from_method)) + '</b>'
+      + '<span class="chg-arrow">' + ICON.arrowLeftLong + '</span>'
+      + methodIconHTML(r.to_method,'sz-xs') + '<b>' + escHtml(methodLabel(r.to_method)) + '</b>'
+      + '</span>';
   }
-  return escHtml(methodLabel(row.wallet_key) || row.label || '—');
+  return '<span class="chg-route">'
+    + methodIconHTML(r.wallet_key,'sz-xs') + '<b>' + escHtml(methodLabel(r.wallet_key) || r.label || '—') + '</b>'
+    + '</span>';
+}
+
+// ── the "what you get right now" board ───────────────────────
+function rateOutcome(amount, r){
+  const v=Number(r.rate_value)||0;
+  if(r.rate_type==='fee_percent') return { out: amount - (amount*v/100), fee: v>0 ? ('لێبڕین '+fmtPct(v)+'%') : 'بێ لێبڕین' };
+  if(r.rate_type==='fee_fixed')   return { out: Math.max(0, amount-v),   fee: v>0 ? ('لێبڕین '+formatNum(v)+' IQD') : 'بێ لێبڕین' };
+  return { out: amount*v, fee: v<1 ? ('لێبڕین '+fmtPct(100-v*100)+'%') : '' };
+}
+function renderRatesNow(rows){
+  const el=document.getElementById('ratesNow'); if(!el) return;
+  const pos=k=>{ const i=FROM_OPTIONS.indexOf(k); return i<0 ? 99 : i; };
+  const list=(rows||[])
+    .filter(r=>!getWalletInfo(r.from_method).locked && !getWalletInfo(r.to_method).locked)
+    .sort((a,b)=> (pos(a.from_method)-pos(b.from_method)) || (pos(a.to_method)-pos(b.to_method)));
+
+  if(!list.length){ el.innerHTML='<div class="empty-state">هیچ ڕێگایەکی کراوە نییە لە ئێستادا</div>'; return; }
+
+  el.innerHTML = list.map(function(r){
+    const isUsdt = r.from_method==='USDT';
+    const amount = isUsdt ? 1 : SAMPLE_IQD;
+    const o = rateOutcome(amount, r);
+    const inTxt  = isUsdt ? '1 $' : formatNum(amount)+' IQD';
+    const outTxt = formatNum(Math.floor(o.out))+' IQD';
+    return '<div class="rate-card">'
+      + '<div class="rate-route">'
+        + '<span class="rate-w">'+methodIconHTML(r.from_method,'sz-xs')+escHtml(methodLabel(r.from_method))+'</span>'
+        + '<span class="rate-arrow">'+ICON.arrowLeftLong+'</span>'
+        + '<span class="rate-w">'+methodIconHTML(r.to_method,'sz-xs')+escHtml(methodLabel(r.to_method))+'</span>'
+      + '</div>'
+      + '<div class="rate-eq">'
+        + '<span class="rate-in">'+inTxt+'</span>'
+        + '<span class="rate-eqico">'+ICON.equals+'</span>'
+        + '<span class="rate-out">'+outTxt+'</span>'
+      + '</div>'
+      + (o.fee ? '<div class="rate-fee">'+o.fee+'</div>' : '')
+      + '</div>';
+  }).join('');
 }
 
 let _changesLoaded=false;
 async function loadChangeLog(force){
   const el=document.getElementById('changesList'); if(!el) return;
   if(_changesLoaded && !force) return;
-  el.innerHTML='<div class="empty-state">'+ICON.spin+' بارکردن...</div>';
+  el.innerHTML='<div class="empty-state">بارکردن...</div>';
   try{
-    const {data,error}=await sb.from('ex_change_log').select('*').order('created_at',{ascending:false}).limit(60);
-    if(error) throw error;
+    const res = await Promise.all([
+      sb.from('ex_change_log').select('*').order('created_at',{ascending:false}).limit(60),
+      sb.from('ex_rates').select('*').eq('is_active',true)
+    ]);
     _changesLoaded=true;
-    renderChangeLog(data||[]);
+    renderRatesNow((res[1] && res[1].data) || []);
+    renderChangeLog((res[0] && res[0].data) || []);
   }catch(e){
     el.innerHTML='<div class="empty-state">نەتوانرا گۆڕانکارییەکان باربکرێن</div>';
   }
 }
+
 function renderChangeLog(rows){
   const el=document.getElementById('changesList'); if(!el) return;
   if(!rows.length){ el.innerHTML='<div class="empty-state">هێشتا هیچ گۆڕانکارییەک تۆمار نەکراوە</div>'; return; }
-  el.innerHTML = rows.map(function(r){
-    const dir = r.direction || 'same';
-    const ico = dir==='up' ? ICON.trendUp : (dir==='down' ? ICON.trendDown : ICON.info);
-    const isNew = (r.field==='new_route' || r.field==='new_wallet');
+  let html='', lastDay='';
+  rows.forEach(function(r){
+    const dk=dayKey(r.created_at);
+    if(dk!==lastDay){ lastDay=dk; html += '<div class="notif-day">'+dayLabel(r.created_at)+'</div>'; }
+    const tone=chgTone(r);
+    const isNew=(r.field==='new_route' || r.field==='new_wallet');
+    const delta=isNew ? '' : chgDelta(r);
+    const meaning=isNew ? '' : chgMeaning(r);
     const vals = isNew
-      ? '<div class="chg-vals"><span class="chg-new">'+chgValueText(r.field, r.new_value)+'</span></div>'
-      : '<div class="chg-vals"><span class="chg-old">'+chgValueText(r.field, r.old_value)+'</span>'
-        + '<span style="color:var(--text-faint)">→</span>'
-        + '<span class="chg-new">'+chgValueText(r.field, r.new_value)+'</span></div>';
-    return '<div class="chg-item">'
-      + '<span class="chg-ico '+dir+'">'+ico+'</span>'
+      ? ''
+      : '<div class="chg-vals">'
+        + '<span class="chg-old">'+chgValueText(r.field, r.old_value)+'</span>'
+        + '<span class="chg-to">'+ICON.arrowLeftLong+'</span>'
+        + '<span class="chg-new">'+chgValueText(r.field, r.new_value)+'</span>'
+        + (delta ? '<span class="chg-delta '+tone+'">'+delta+'</span>' : '')
+        + '</div>';
+    html += '<div class="chg-item '+tone+'">'
+      + '<span class="chg-ico '+tone+'">'+chgIcon(r)+'</span>'
       + '<div class="chg-body">'
-        + '<div class="chg-title">'+chgLabelText(r)+'</div>'
-        + '<div class="chg-field">'+(CHG_FIELD_LABEL[r.field]||escHtml(r.field))+'</div>'
+        + '<div class="chg-head">'
+          + '<span class="chg-headline">'+chgHeadline(r)+'</span>'
+          + '<span class="chg-time">'+timeAgo(r.created_at)+'</span>'
+        + '</div>'
+        + chgRouteHTML(r)
         + vals
-        + '<div class="chg-time">'+timeAgo(r.created_at)+'</div>'
+        + (meaning ? '<div class="chg-meaning '+tone+'">'+meaning+'</div>' : '')
       + '</div>'
       + '</div>';
-  }).join('');
+  });
+  el.innerHTML=html;
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -3467,7 +3669,14 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   sb=window.supabase.createClient(SB_URL,SB_KEY,{ auth:{ persistSession:true, autoRefreshToken:true, storageKey:'zex_sb_session' } });
   const {data:{session}}=await sb.auth.getSession();
   if(session?.user){ await startApp(session.user); }
-  else { goAuthStep('email'); }
+  else {
+    // No session: drop any inner route from the address bar so the login
+    // screen is always at the root of the site.
+    if(location.pathname.replace(/\/+$/,'') !== BASE_PATH.replace(/\/+$/,'')){
+      try{ history.replaceState({}, '', BASE_PATH); }catch(_){}
+    }
+    goAuthStep('email');
+  }
 });
 </script>
 </body>
