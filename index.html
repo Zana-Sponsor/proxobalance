@@ -1148,7 +1148,7 @@ body.has-nav{ padding-bottom:calc(84px + env(safe-area-inset-bottom, 0px)); }
   background:color-mix(in srgb, var(--bg-elevated) 82%, transparent);
   -webkit-backdrop-filter:blur(18px) saturate(160%); backdrop-filter:blur(18px) saturate(160%);
   border-bottom:1px solid var(--border);
-  padding:10px 0 10px; margin:calc(var(--space-6) * -1) 0 var(--space-5);
+  padding:10px 0 10px; margin:0 0 var(--space-5);
   transition:box-shadow var(--t), border-color var(--t);
 }
 @supports not (backdrop-filter: blur(1px)){ .site-header{ background:var(--bg-elevated); } }
@@ -1397,17 +1397,19 @@ html{
   overscroll-behavior:contain;
   will-change:scroll-position;
 }
-/* promote the moving surfaces to their own layer so the sheet slide and the
-   nav stay on the compositor instead of repainting the page */
-.notif-panel, .sheet, .bottom-nav, .site-header{
-  transform:translateZ(0);
-  backface-visibility:hidden;
-}
-/* long lists: let the browser skip layout work for off-screen rows */
-.feed-wrap, .rates-now, #txList, #changesList, #historyPreview{ contain:layout style; }
-.feed-row, .chg-item{ content-visibility:auto; contain-intrinsic-size:auto 88px; }
+/* NOTE: do not add `transform` to .sheet / .notif-panel / .site-header.
+   Those elements use transform to position themselves (translateY(100%)
+   when closed), and a second transform rule silently replaces it. */
 .filter-scroll{ scroll-snap-type:x proximity; }
 .filter-chip{ scroll-snap-align:start; }
+
+/* ── hard guard: nothing may ever push the page sideways ──
+   overflow-x:clip (not hidden) — `hidden` would turn body into a scroll
+   container and break the sticky header. */
+body{ max-width:100%; overflow-x:clip; }
+.app-wrapper, .site-header, .page, .panel, .xc-group, .feed-wrap{ max-width:100%; min-width:0; }
+.site-header-inner, .bottom-nav-inner{ max-width:100%; }
+img, svg, table, pre{ max-width:100%; }
 
 /* ══════════════════════════════════════════════════════════════
    2 — SPACING / OVERLAP FIXES INSIDE THE EXCHANGE CARD
