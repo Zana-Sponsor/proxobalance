@@ -1,8 +1,18 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "rewrites": [
+    { "source": "/((?!api/)[^.]*)", "destination": "/index.html" }
+  ],
+  "functions": {
+    "api/*.js": { "maxDuration": 15 }
+  },
+  "headers": [
     {
-      "source": "/exchange-admin1",
-      "destination": "/exchange-admin.html"
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-store" },
+        { "key": "X-Content-Type-Options", "value": "nosniff" }
+      ]
     }
   ]
 }
