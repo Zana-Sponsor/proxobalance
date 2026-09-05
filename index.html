@@ -67,14 +67,14 @@
 }
 </script>
 
-<meta name="theme-color" id="themeColorMeta" content="#0b0e14">
+<meta name="theme-color" id="themeColorMeta" content="#f2f4f9">
 <script>
 (function(){
   try{
     var t = localStorage.getItem('zex_theme');
-    if(t!=='light' && t!=='dark') t='dark';
+    if(t!=='light' && t!=='dark') t='light';
     document.documentElement.setAttribute('data-theme', t);
-  }catch(e){ document.documentElement.setAttribute('data-theme','dark'); }
+  }catch(e){ document.documentElement.setAttribute('data-theme','light'); }
 })();
 </script>
 
@@ -1376,6 +1376,163 @@ body.has-nav{ padding-bottom:calc(84px + env(safe-area-inset-bottom, 0px)); }
   .hdr-nav{ display:flex; }
 }
 
+/* ══════════════════════════════════════════════════════════════
+   1 — SMOOTH, HARDWARE-ACCELERATED SCROLLING
+   ══════════════════════════════════════════════════════════════ */
+html{
+  scroll-behavior:smooth;
+  /* keeps scrollIntoView targets clear of the sticky header */
+  scroll-padding-top:96px;
+}
+@media (prefers-reduced-motion: reduce){
+  html{ scroll-behavior:auto; }
+  *,*::before,*::after{ animation-duration:.01ms !important; transition-duration:.01ms !important; }
+}
+.notif-panel-body,
+.sheet-body,
+.filter-scroll,
+#authWrap{
+  scroll-behavior:smooth;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
+  will-change:scroll-position;
+}
+/* promote the moving surfaces to their own layer so the sheet slide and the
+   nav stay on the compositor instead of repainting the page */
+.notif-panel, .sheet, .bottom-nav, .site-header{
+  transform:translateZ(0);
+  backface-visibility:hidden;
+}
+/* long lists: let the browser skip layout work for off-screen rows */
+.feed-wrap, .rates-now, #txList, #changesList, #historyPreview{ contain:layout style; }
+.feed-row, .chg-item{ content-visibility:auto; contain-intrinsic-size:auto 88px; }
+.filter-scroll{ scroll-snap-type:x proximity; }
+.filter-chip{ scroll-snap-align:start; }
+
+/* ══════════════════════════════════════════════════════════════
+   2 — SPACING / OVERLAP FIXES INSIDE THE EXCHANGE CARD
+   ══════════════════════════════════════════════════════════════ */
+
+/* the icon sits at the inline-start, the unit at the inline-end; the input
+   reserves room for BOTH so a long number can never run underneath them */
+.xc-input-wrap .input{
+  padding-inline-start:48px;
+  padding-inline-end:18px;
+  text-align:center;
+}
+.xc-input-wrap .xc-in-ico{
+  inset-inline-start:16px;
+  display:flex; align-items:center; justify-content:center;
+  width:20px; height:20px;
+}
+#amt{ padding-inline-end:64px; }
+.xc-input-wrap .xc-in-suffix{
+  inset-inline-end:16px;
+  max-width:46px; text-align:center; line-height:1;
+  padding-inline-start:8px;
+  border-inline-start:1px solid var(--border);
+}
+
+/* stack: label → input → helper → live value → error, each with real space */
+.xc-group .field{ margin-bottom:0; }
+.xc-group .field + .field{ margin-top:14px; }
+.xc-group .select-wrap{ margin-bottom:0; }
+.xc-group .field-label{ margin-bottom:7px; }
+.xc-group .xc-hint{ margin-top:9px; padding-inline:2px; }
+/* the live formatted amount used to sit on a negative margin and collided
+   with the helper line — give it its own row */
+.xc-group .formatted-amount{
+  margin:10px 2px 0; text-align:center; display:block;
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm);
+  padding:7px 10px; direction:ltr;
+}
+.xc-group .field-error{ margin:10px auto 0; }
+.xc-group .quick-amounts{ margin:12px 0 0; }
+.xc-group .phone-format-hint{ margin:9px 2px 0; }
+
+/* group header: badge never squeezes the title on narrow screens */
+.xc-group-head{ flex-wrap:wrap; row-gap:7px; min-width:0; }
+.xc-group-head .xc-badge{ white-space:nowrap; }
+
+/* breakdown rows: labels and values keep their distance */
+.xc-bd-row{ gap:14px; }
+.xc-bd-row .lbl{ min-width:0; flex:1; }
+.xc-bd-row .v{ flex-shrink:0; text-align:end; }
+.xc-breakdown .fee-note{ margin-top:8px; text-align:center; }
+.xc-breakdown .fee-note:empty{ display:none; margin:0; }
+
+/* picker trigger: icon, two lines of text and the chevron never collide */
+.picker-trigger{ gap:12px; }
+.picker-trigger-text{ min-width:0; flex:1; }
+.picker-trigger-value{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:block; }
+.select-chevron{ flex-shrink:0; }
+
+/* wallet row: long wallet numbers wrap instead of pushing the copy button out */
+.wallet-row-line{ flex-wrap:wrap; row-gap:6px; }
+.wallet-value{ min-width:0; overflow-wrap:anywhere; }
+.wallet-row .copy-btn{ flex-shrink:0; }
+
+/* header: nothing overflows on small phones */
+.site-header-inner{ min-width:0; }
+.hdr-logo, .hdr-word, .hdr-rate{ min-width:0; }
+.hdr-word b{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.hdr-actions{ flex-shrink:0; }
+@media (max-width:420px){
+  .hdr-word span{ display:none; }
+  .site-header-inner{ gap:7px; }
+}
+
+/* feed rows: id, route, meta and amount each keep their own column space */
+.feed-row{ gap:8px 14px; }
+.feed-row > *{ min-width:0; }
+.feed-route{ flex-wrap:wrap; row-gap:4px; }
+.feed-amount{ flex-shrink:0; white-space:nowrap; }
+.feed-meta{ overflow-wrap:anywhere; }
+
+/* trust badges wrap cleanly instead of overlapping the submit button */
+.xc-trust{ margin-bottom:14px; }
+.file-field{ margin-top:4px; }
+.btn-submit{ margin-top:4px; }
+
+/* ══════════════════════════════════════════════════════════════
+   3 — LIGHT MODE POLISH  (crisp white cards, soft grey borders)
+   ══════════════════════════════════════════════════════════════ */
+[data-theme="light"] .panel,
+[data-theme="light"] .xc-breakdown,
+[data-theme="light"] .feed-wrap,
+[data-theme="light"] .rate-card,
+[data-theme="light"] .pf-card,
+[data-theme="light"] .pf-menu,
+[data-theme="light"] .pf-hero,
+[data-theme="light"] .stat-card,
+[data-theme="light"] .chg-item,
+[data-theme="light"] .rule-item,
+[data-theme="light"] .order-card{
+  background:#ffffff;
+  border-color:#e4e8f1;
+}
+[data-theme="light"] .xc-group{ background:#fafbfe; border-color:#e4e8f1; }
+[data-theme="light"] .xc-input-wrap .input,
+[data-theme="light"] .xc-group .formatted-amount{ background:#ffffff; }
+[data-theme="light"] .xc-input-wrap .input:hover{ border-color:#ccd3e2; }
+
+/* softer elevation — the dark-mode shadows read as dirty smudges on white */
+[data-theme="light"] .site-header.scrolled{ box-shadow:0 4px 18px rgba(20,24,38,.07); }
+[data-theme="light"] .bottom-nav{ box-shadow:0 -3px 16px rgba(20,24,38,.06); }
+[data-theme="light"] .notif-panel{ box-shadow:0 -8px 40px rgba(20,24,38,.12); }
+[data-theme="light"] .proof-card{ box-shadow:0 8px 24px rgba(11,114,133,.18); }
+
+/* text contrast on light surfaces */
+[data-theme="light"] .xc-head p,
+[data-theme="light"] .page-head p{ color:#525c6e; }
+[data-theme="light"] .xc-hint{ color:#667083; }
+[data-theme="light"] .notif-item.unread{ background:#f5f8fc; border-color:#e4e8f1; }
+[data-theme="light"] .feed-row{ border-color:#eceff5; }
+[data-theme="light"] .xc-bd-row.total{ border-top-color:#dfe4ee; }
+[data-theme="light"] .filter-chip:not(.on){ background:#ffffff; }
+[data-theme="light"] .quick-amount-btn{ background:#ffffff; }
+[data-theme="light"] .wallet-row{ background:rgba(185,121,31,.08); border-color:rgba(185,121,31,.25); }
+
 </style>
 </head>
 
@@ -1940,6 +2097,11 @@ body.has-nav{ padding-bottom:calc(84px + env(safe-area-inset-bottom, 0px)); }
         <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/></svg>
         بێ کرێی شاراوە
       </span>
+    </div>
+
+    <div aria-hidden="true" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden">
+      <label for="contact_reference">Contact reference</label>
+      <input type="text" id="contact_reference" name="contact_reference" tabindex="-1" autocomplete="off">
     </div>
 
     <div class="file-field">
@@ -3519,6 +3681,14 @@ async function confirmAndSubmitOrder(){
 
 async function processOrder(){
   if(!_validateOrderFields()) return;
+
+  if(honeypotTripped()){
+    // Silent drop: the bot sees a normal success screen and learns nothing.
+    reportEvent('honeypot', 'خانەی شاراوە پڕکرایەوە', { from:document.getElementById('from').value });
+    showResultModal({ tone:'success', title:'داواکاریەکەت نێردرا',
+      message:'داواکارییەکەت وەرگیرا و لە چاوەڕوانیدایە.' });
+    return;
+  }
   const phone=document.getElementById('userPhone').value;
   const file=document.getElementById('fileInput').files[0];
   const amtValue=getAmtRaw();
@@ -3557,6 +3727,10 @@ async function processOrder(){
         });
       }
     }catch(_){ /* the order is already saved — never block the user on this */ }
+
+    // Attribution only (risk 0): records which IP and device this account
+    // used, so the admin panel can correlate later.
+    reportEvent('order_submitted', null, { order_code: orderCodeOf(orderRow) });
 
     showResultModal({
       tone:'success',
@@ -3849,7 +4023,7 @@ function navigate(route, push){
   if(push){ try{ history.pushState({route:route}, '', urlFor(route)); }catch(_){} }
   document.title = ROUTE_TITLES[route] || 'Proxo Balance';
   closeNotifPanel();
-  window.scrollTo(0,0);
+  window.scrollTo({ top:0, behavior:'smooth' });
   if(route==='transactions') renderTxPage();
   if(route==='changes')      loadChangeLog();
   if(route==='profile')      fillProfileForm();
@@ -4098,7 +4272,7 @@ function focusExchangeForm(){
   navigate('home');
   const el=document.getElementById('amt');
   const card=document.getElementById('exchangeCard');
-  if(card) card.scrollIntoView({ behavior:'smooth', block:'center' });
+  if(card) card.scrollIntoView({ behavior:'smooth', block:'start' });
   setTimeout(function(){ if(el) el.focus(); }, 320);
 }
 
@@ -4240,6 +4414,31 @@ function startProofPolling(){
 
 
 // ══════════════════════════════════════════════════════════════
+// ═══ BEHAVIOUR REPORTING ══════════════════════════════════════
+// The browser reports only WHAT happened. IP, user-agent and identity are
+// read from the request by /api/track, so none of them can be spoofed here.
+// ══════════════════════════════════════════════════════════════
+async function reportEvent(event, detail, meta){
+  try{
+    const headers={ 'Content-Type':'application/json' };
+    const { data:{ session } } = await sb.auth.getSession();
+    if(session) headers['Authorization']='Bearer '+session.access_token;
+    await fetch('/api/track', {
+      method:'POST', headers,
+      body: JSON.stringify({ event, detail:detail||null, path:location.pathname, meta:meta||null }),
+      keepalive:true
+    });
+  }catch(_){ /* never let telemetry break the app */ }
+}
+
+// A filled honeypot means a script, not a person. Report it, then behave
+// exactly as if the order went through — no hint that anything was noticed.
+function honeypotTripped(){
+  const hp=document.getElementById('contact_reference');
+  return !!(hp && hp.value && hp.value.trim());
+}
+
+// ══════════════════════════════════════════════════════════════
 // ═══ INIT ═══════════════════════════════════════════════════════
 // ══════════════════════════════════════════════════════════════
 document.addEventListener('keydown', (e)=>{
@@ -4253,7 +4452,7 @@ window.addEventListener('offline', ()=>showToast('پەیوەندیت بە ئین
 window.addEventListener('online', ()=>showToast('پەیوەندیت بە ئینتەرنێت گەڕایەوە','success'));
 
 document.addEventListener('DOMContentLoaded', async ()=>{
-  applyTheme(document.documentElement.getAttribute('data-theme')||'dark');
+  applyTheme(document.documentElement.getAttribute('data-theme')||'light');
   // Public trust numbers need no session — visitors see them on the login screen.
   loadPublicProof();
   document.querySelectorAll('.pass-eye-ico').forEach(el=>{ el.innerHTML=ICON.eyeOff; });

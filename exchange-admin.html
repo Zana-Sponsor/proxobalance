@@ -365,6 +365,7 @@ tr:hover td{background:rgba(28,35,51,.015);}
     <div class="sb-item" onclick="goPage('announcement')"><i class="fas fa-bullhorn" style="color:#0891b2"></i> بانەری ئاگاداری</div>
     <div class="sb-section">ئاسایش</div>
     <div class="sb-item" onclick="goPage('otp')"><i class="fas fa-key" style="color:#dc2626"></i> کۆدەکانی OTP</div>
+    <div class="sb-item" onclick="goPage('security')"><i class="fas fa-user-shield" style="color:#dc2626"></i> ئاسایش و IP <span class="sb-badge rd" id="sbBanCount" style="display:none">0</span></div>
   </div>
 
   <div class="sb-footer">
@@ -567,6 +568,58 @@ tr:hover td{background:rgba(28,35,51,.015);}
           <div class="act-btn dark" onclick="loadOtp()"><i class="fas fa-arrows-rotate"></i> نوێکردنەوە</div>
         </div>
         <div class="tbl-scroll" id="otpTableWrap">
+          <div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pg" id="pgSecurity">
+      <div class="sec-hdr">
+        <h3>ئاسایش و IP</h3>
+        <div class="act-btn dark" onclick="openBanModal()"><i class="fas fa-ban"></i> بلۆککردنی IP</div>
+      </div>
+
+      <div class="fee-toggle-note" style="margin-bottom:14px">
+        <i class="fas fa-user-secret" style="margin-left:4px"></i>
+        بلۆککراوەکان <b>404</b> وەردەگرن نەک «ڕێگەپێنەدراو» — بۆیە هێرشبەر وا بیردەکاتەوە ماڵپەڕەکە نەماوە، نەک ئەوەی گیراوە. هەموو بلۆککردنێکی دەستی لە <code>banned_ips</code> تۆمار دەکرێت.
+      </div>
+
+      <div class="stats-grid" style="margin-bottom:16px">
+        <div class="stat-card"><div class="stat-ico rd"><i class="fas fa-ban"></i></div>
+          <div class="stat-body"><div class="stat-val" id="secActiveBans">—</div><div class="stat-lbl">بلۆکی چالاک</div></div></div>
+        <div class="stat-card"><div class="stat-ico yw"><i class="fas fa-triangle-exclamation"></i></div>
+          <div class="stat-body"><div class="stat-val" id="secEvents24">—</div><div class="stat-lbl">ڕووداو (٢٤ کاتژمێر)</div></div></div>
+        <div class="stat-card"><div class="stat-ico bl"><i class="fas fa-shield-halved"></i></div>
+          <div class="stat-body"><div class="stat-val" id="secBlockedHits">—</div><div class="stat-lbl">داواکاری ڕێگری‌لێکراو</div></div></div>
+        <div class="stat-card"><div class="stat-ico gr"><i class="fas fa-fingerprint"></i></div>
+          <div class="stat-body"><div class="stat-val" id="secTopType" style="font-size:15px">—</div><div class="stat-lbl">زۆرترین جۆری ڕووداو</div></div></div>
+      </div>
+
+      <div class="tbl-wrap" style="margin-bottom:18px">
+        <div class="tbl-filter">
+          <input class="tbl-search" id="banSearch" placeholder="گەڕان بە IP، ناو، ئیمەیل یان هۆکار..." oninput="renderBans()">
+          <div class="chip on" data-banf="all" onclick="setBanFilter('all',this)">هەموو</div>
+          <div class="chip" data-banf="active" onclick="setBanFilter('active',this)">چالاک</div>
+          <div class="chip" data-banf="auto" onclick="setBanFilter('auto',this)">خۆکار</div>
+          <div class="chip" data-banf="manual" onclick="setBanFilter('manual',this)">دەستی</div>
+          <div class="act-btn dark" onclick="loadSecurity()"><i class="fas fa-arrows-rotate"></i> نوێکردنەوە</div>
+        </div>
+        <div class="tbl-scroll" id="bansTableWrap">
+          <div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>
+        </div>
+      </div>
+
+      <div class="sec-hdr"><h3 style="font-size:15px">ڕووداوە گومانلێکراوەکان</h3></div>
+      <div class="tbl-wrap">
+        <div class="tbl-filter">
+          <input class="tbl-search" id="evtSearch" placeholder="گەڕان بە IP، ناو، جۆر یان وردەکاری..." oninput="renderEvents()">
+          <div class="chip on" data-evtf="all" onclick="setEvtFilter('all',this)">هەموو</div>
+          <div class="chip" data-evtf="honeypot" onclick="setEvtFilter('honeypot',this)">Honeypot</div>
+          <div class="chip" data-evtf="number_spray" onclick="setEvtFilter('number_spray',this)">ژمارە پەخشکردن</div>
+          <div class="chip" data-evtf="receipt_probe" onclick="setEvtFilter('receipt_probe',this)">پسووڵەی دووبارە</div>
+          <div class="chip" data-evtf="risk" onclick="setEvtFilter('risk',this)">مەترسیدار تەنها</div>
+        </div>
+        <div class="tbl-scroll" id="eventsTableWrap">
           <div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>
         </div>
       </div>
@@ -1003,6 +1056,7 @@ const pageConfig = {
   notifications:{ title:'ئاگادارییەکان', sub:'ناردنی ئاگاداری و بینینی مێژوو', load: ()=>loadNotifPage() },
   announcement:{ title:'بانەری ئاگاداری', sub:'ئاگاداری گشتی سەرەوەی ئەپەکە', load: ()=>loadAnnouncement() },
   otp:{ title:'کۆدەکانی OTP', sub:'بینین و بەڕێوەبردنی کۆدەکانی دڵنیاکردنەوە', load: ()=>loadOtp() },
+  security:{ title:'ئاسایش و IP', sub:'ڕووداوە گومانلێکراوەکان و بلۆککردنی نهێنی (404)', load: ()=>loadSecurity() },
 };
 let _curPage='dashboard';
 function goPage(p){
@@ -1020,6 +1074,185 @@ function goPage(p){
     if(cfg.load) cfg.load();
   }
   closeSidebar();
+}
+
+
+// ══════════════════════════════════════════════════════════════
+// ═══ SECURITY / IP INTELLIGENCE ═══════════════════════════════
+// Every call goes through an is_ex_admin()-guarded RPC; the tables
+// themselves are unreachable from any browser role.
+// ══════════════════════════════════════════════════════════════
+let _bans=[], _events=[], _banFilter='all', _evtFilter='all';
+
+const EVT_LABEL = {
+  honeypot:'داوی Honeypot', receipt_probe:'پسووڵەی دووبارە', number_spray:'پەخشکردنی ژمارە',
+  rapid_submit:'ناردنی خێرا', otp_bruteforce:'هەوڵی OTP', devtools_tamper:'دەستکاری کلاینت',
+  order_submitted:'ناردنی داواکاری', login_failed:'چوونەژوورەوەی هەڵە', page_view:'سەردان'
+};
+const evtLabel = t => EVT_LABEL[t] || t;
+
+function riskClass(n){ return n>=60?'rd':(n>=25?'yw':'gr'); }
+function fmtWhen(t){ return t ? new Date(t).toLocaleString('ku-IQ') : '—'; }
+function fmtLeft(exp){
+  if(!exp) return 'هەمیشەیی';
+  const ms=new Date(exp)-Date.now();
+  if(ms<=0) return 'بەسەرچووە';
+  const h=Math.floor(ms/3600000), m=Math.floor(ms%3600000/60000);
+  return h>0 ? (h+' کاتژمێر') : (m+' خولەک');
+}
+
+async function loadSecurity(){
+  document.getElementById('bansTableWrap').innerHTML='<div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>';
+  try{
+    const [statsRes, bansRes, evtRes] = await Promise.all([
+      sb.rpc('ex_admin_ip_stats'),
+      sb.rpc('ex_admin_list_bans', { p_active_only:false, p_limit:200 }),
+      sb.rpc('ex_admin_list_events', { p_limit:200 })
+    ]);
+    if(statsRes.error) throw statsRes.error;
+    if(bansRes.error)  throw bansRes.error;
+    if(evtRes.error)   throw evtRes.error;
+
+    const s=statsRes.data||{};
+    document.getElementById('secActiveBans').textContent  = formatNum(s.active_bans||0);
+    document.getElementById('secEvents24').textContent    = formatNum(s.events_24h||0);
+    document.getElementById('secBlockedHits').textContent = formatNum(s.blocked_hits||0);
+    document.getElementById('secTopType').textContent     = s.top_type ? evtLabel(s.top_type) : '—';
+
+    _bans   = bansRes.data || [];
+    _events = evtRes.data  || [];
+    renderBans(); renderEvents();
+  }catch(e){
+    document.getElementById('bansTableWrap').innerHTML='<div class="empty">نەتوانرا باربکرێت: '+esc(e.message||'')+'</div>';
+  }
+}
+
+function setBanFilter(f,el){ _banFilter=f; document.querySelectorAll('[data-banf]').forEach(c=>c.classList.remove('on')); if(el) el.classList.add('on'); renderBans(); }
+function setEvtFilter(f,el){ _evtFilter=f; document.querySelectorAll('[data-evtf]').forEach(c=>c.classList.remove('on')); if(el) el.classList.add('on'); renderEvents(); }
+
+function renderBans(){
+  const q=(document.getElementById('banSearch')?.value||'').toLowerCase();
+  let list=_bans.filter(b=>{
+    if(_banFilter==='active' && !b.effective_active) return false;
+    if(_banFilter==='auto'   && !b.auto_banned) return false;
+    if(_banFilter==='manual' &&  b.auto_banned) return false;
+    if(!q) return true;
+    return [b.ip_address,b.account_name,b.account_email,b.reason,b.browser,b.os]
+      .some(v=>String(v||'').toLowerCase().includes(q));
+  });
+
+  const wrap=document.getElementById('bansTableWrap');
+  if(!list.length){ wrap.innerHTML='<div class="empty">هیچ IPـیەکی بلۆککراو نییە</div>'; return; }
+
+  wrap.innerHTML=`<table><thead><tr>
+      <th>IP</th><th>هەژمار</th><th>وێبگەڕ / ئامێر</th><th>هۆکار</th>
+      <th>مەترسی</th><th>بەروار</th><th>ماوە</th><th>کردار</th>
+    </tr></thead><tbody>
+    ${list.map(b=>`<tr${b.effective_active?'':' style="opacity:.5"'}>
+      <td><span class="order-code-chip" onclick="copyOrderCode('${esc(b.ip_address)}', event)">${esc(b.ip_address)}</span>
+          ${b.hit_count>0?`<div style="font-size:10px;color:var(--mt);margin-top:3px">${formatNum(b.hit_count)} داواکاری ڕێگری‌لێکراو</div>`:''}</td>
+      <td>${b.account_name?`<div class="user-cell"><div class="user-nm">${esc(b.account_name)}</div><div class="user-em">${esc(b.account_email||'')}</div></div>`:'<span style="color:var(--mt)">نەناسراو</span>'}</td>
+      <td><div style="font-size:12px">${esc(b.browser||'—')}</div>
+          <div style="font-size:10px;color:var(--mt)">${esc(b.os||'')} · ${esc(b.device||'')}</div></td>
+      <td style="max-width:220px"><div style="font-size:12px;line-height:1.6">${esc(b.reason||'')}</div>
+          <span class="chip ${b.auto_banned?'yw':'bl'}" style="font-size:10px;padding:2px 8px;margin-top:4px;display:inline-block">${b.auto_banned?'خۆکار':'دەستی'}</span></td>
+      <td><span class="chip ${riskClass(b.risk_score)}" style="font-size:11px">${b.risk_score||0}</span></td>
+      <td style="font-size:11px;color:var(--mt)">${fmtWhen(b.banned_at)}</td>
+      <td style="font-size:11px">${b.effective_active?fmtLeft(b.expires_at):'کراوەتەوە'}</td>
+      <td><div style="display:flex;gap:6px">
+        ${b.effective_active
+          ? `<div class="act-btn gr" onclick="unbanIp('${b.id}')" title="کردنەوە"><i class="fas fa-lock-open"></i></div>
+             <div class="act-btn dark" onclick="extendBan('${b.id}')" title="درێژکردنەوە"><i class="fas fa-clock"></i></div>`
+          : `<div class="act-btn rd" onclick="extendBan('${b.id}')" title="دووبارە بلۆک"><i class="fas fa-ban"></i></div>`}
+        <div class="act-btn dark" onclick="showIpAccounts('${esc(b.ip_address)}')" title="هەژمارەکانی ئەم IP"><i class="fas fa-users"></i></div>
+      </div></td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+
+function renderEvents(){
+  const q=(document.getElementById('evtSearch')?.value||'').toLowerCase();
+  let list=_events.filter(e=>{
+    if(_evtFilter==='risk' && (e.risk_score||0)<=0) return false;
+    if(_evtFilter!=='all' && _evtFilter!=='risk' && e.event_type!==_evtFilter) return false;
+    if(!q) return true;
+    return [e.ip_address,e.account_name,e.account_email,e.event_type,e.detail,e.browser]
+      .some(v=>String(v||'').toLowerCase().includes(q));
+  });
+
+  const wrap=document.getElementById('eventsTableWrap');
+  if(!list.length){ wrap.innerHTML='<div class="empty">هیچ ڕووداوێک نییە</div>'; return; }
+
+  wrap.innerHTML=`<table><thead><tr>
+      <th>کات</th><th>جۆر</th><th>IP</th><th>هەژمار</th><th>وێبگەڕ / ئامێر</th><th>وردەکاری</th><th>مەترسی</th><th></th>
+    </tr></thead><tbody>
+    ${list.map(e=>`<tr>
+      <td style="font-size:11px;color:var(--mt);white-space:nowrap">${fmtWhen(e.created_at)}</td>
+      <td><span class="chip ${riskClass(e.risk_score)}" style="font-size:11px">${esc(evtLabel(e.event_type))}</span></td>
+      <td><span style="font-family:monospace;font-size:12px;direction:ltr">${esc(e.ip_address||'—')}</span>
+          ${e.ip_is_banned?'<i class="fas fa-ban" style="color:#dc2626;margin-right:5px" title="بلۆککراوە"></i>':''}</td>
+      <td>${e.account_name?`<div class="user-cell"><div class="user-nm">${esc(e.account_name)}</div><div class="user-em">${esc(e.account_email||'')}</div></div>`:'<span style="color:var(--mt)">مێوان</span>'}</td>
+      <td><div style="font-size:12px">${esc(e.browser||'—')}</div>
+          <div style="font-size:10px;color:var(--mt)">${esc(e.os||'')} · ${esc(e.device||'')}</div></td>
+      <td style="font-size:11px;max-width:200px">${esc(e.detail||'—')}</td>
+      <td><b style="font-size:12px">${e.risk_score||0}</b></td>
+      <td>${e.ip_address && !e.ip_is_banned
+            ? `<div class="act-btn rd" onclick="quickBan('${esc(e.ip_address)}','${esc(evtLabel(e.event_type))}')" title="بلۆککردن"><i class="fas fa-ban"></i></div>`
+            : ''}</td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+
+// ── actions ──────────────────────────────────────────────────
+function openBanModal(ip='', reason=''){
+  const v=prompt('IP بۆ بلۆککردن (١.٢.٣.٤ یان ١.٢.٣.٠/٢٤):', ip);
+  if(!v) return;
+  const why=prompt('هۆکاری بلۆککردن:', reason||'دەستی لەلایەن ئادمین');
+  if(why===null) return;
+  const hrs=prompt('چەند کاتژمێر؟ (بەتاڵ = هەمیشەیی):', '24');
+  if(hrs===null) return;
+  doBan(v.trim(), why, hrs.trim()===''?null:parseInt(hrs,10));
+}
+function quickBan(ip, reason){ openBanModal(ip, 'ڕووداو: '+reason); }
+
+async function doBan(ip, reason, hours){
+  try{
+    const {error}=await sb.rpc('ex_admin_ban_ip',{ p_ip:ip, p_reason:reason, p_hours:hours, p_user_id:null, p_notes:null });
+    if(error) throw error;
+    showToast('IP بلۆککرا — ئێستا 404 وەردەگرێت','gr');
+    loadSecurity();
+  }catch(e){ showToast(e.message||'نەتوانرا بلۆک بکرێت','rd'); }
+}
+
+function unbanIp(id){
+  confirm2('کردنەوەی IP','دڵنیایت لە کردنەوەی ئەم IPـیە؟','fa-lock-open','#16a34a', async ()=>{
+    try{
+      const {error}=await sb.rpc('ex_admin_unban_ip',{ p_id:id });
+      if(error) throw error;
+      showToast('IP کرایەوە','gr'); loadSecurity();
+    }catch(e){ showToast(e.message||'هەڵە','rd'); }
+  });
+}
+
+async function extendBan(id){
+  const hrs=prompt('درێژکردنەوە بە چەند کاتژمێر؟ (بەتاڵ = هەمیشەیی):','24');
+  if(hrs===null) return;
+  try{
+    const {error}=await sb.rpc('ex_admin_extend_ban',{ p_id:id, p_hours:hrs.trim()===''?null:parseInt(hrs,10) });
+    if(error) throw error;
+    showToast('ماوەی بلۆک نوێکرایەوە','gr'); loadSecurity();
+  }catch(e){ showToast(e.message||'هەڵە','rd'); }
+}
+
+// Which accounts have been seen behind this address — the multi-accounting view
+async function showIpAccounts(ip){
+  try{
+    const {data,error}=await sb.rpc('ex_admin_ip_accounts',{ p_ip:ip });
+    if(error) throw error;
+    if(!data || !data.length){ showToast('هیچ هەژمارێک بەم IPـیەوە نەبەستراوە','bl'); return; }
+    alert('هەژمارەکانی ئەم IP ('+ip+'):\n\n' +
+      data.map(a=>'• '+(a.account_name||'—')+'  ('+(a.account_email||'—')+')  — '+a.events+' ڕووداو').join('\n'));
+  }catch(e){ showToast(e.message||'هەڵە','rd'); }
 }
 
 // ══════════════════════════════════════════════════════════════
