@@ -316,6 +316,84 @@ tr:hover td{background:rgba(28,35,51,.015);}
 }
 .order-code-chip:hover{ filter:brightness(1.1); }
 .order-code-chip:active{ transform:scale(.97); }
+/* ══ SUSPICIOUS ACTIVITY ALERTS ══ */
+#alertZone{margin-bottom:18px;display:none}
+#alertZone.show{display:block}
+.alert-head{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.alert-tag{
+  display:inline-flex;align-items:center;gap:8px;background:#dc2626;color:#fff;
+  border-radius:999px;padding:7px 15px;font-size:13px;font-weight:800;
+  box-shadow:0 4px 14px rgba(220,38,38,.35);animation:alertPulse 2.2s infinite;
+}
+@keyframes alertPulse{
+  0%{box-shadow:0 0 0 0 rgba(220,38,38,.5)}
+  70%{box-shadow:0 0 0 12px rgba(220,38,38,0)}
+  100%{box-shadow:0 0 0 0 rgba(220,38,38,0)}
+}
+.alert-count{background:rgba(255,255,255,.25);border-radius:999px;padding:1px 9px;font-size:12px}
+.alert-head-actions{margin-right:auto;display:flex;gap:8px}
+
+.alert-card{
+  background:#fff;border:1.5px solid #fecaca;border-right:5px solid #dc2626;
+  border-radius:14px;padding:15px;margin-bottom:10px;
+  box-shadow:0 4px 16px rgba(220,38,38,.10);
+  animation:alertIn .3s cubic-bezier(.4,0,.2,1);
+}
+@keyframes alertIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+.alert-card.sev-high{border-right-color:#b91c1c;background:linear-gradient(90deg,#fff5f5,#fff 40%)}
+.alert-card.sev-med{border-right-color:#f59e0b;border-color:#fde68a}
+
+.alert-top{display:flex;align-items:flex-start;gap:11px;margin-bottom:12px}
+.alert-ico{
+  width:40px;height:40px;border-radius:12px;flex-shrink:0;display:flex;align-items:center;justify-content:center;
+  background:rgba(220,38,38,.12);color:#dc2626;font-size:17px;
+}
+.alert-card.sev-med .alert-ico{background:rgba(245,158,11,.14);color:#b45309}
+.alert-title{font-size:14px;font-weight:800;color:#111827;line-height:1.5}
+.alert-metric{
+  display:inline-block;background:#111827;color:#fff;border-radius:8px;
+  padding:3px 10px;font-size:12px;font-weight:700;margin-top:6px;
+}
+.alert-time{margin-right:auto;font-size:11px;color:#6b7280;white-space:nowrap;flex-shrink:0}
+
+.alert-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:13px}
+.alert-fact{background:#f9fafb;border:1px solid #eef1f5;border-radius:10px;padding:9px 11px;min-width:0}
+.alert-fact .k{font-size:10px;color:#6b7280;margin-bottom:3px;display:flex;align-items:center;gap:5px}
+.alert-fact .v{font-size:12.5px;font-weight:700;color:#111827;overflow-wrap:anywhere}
+.alert-fact .v.mono{font-family:monospace;direction:ltr}
+.alert-fact .sub{font-size:10px;color:#6b7280;font-weight:500;margin-top:2px}
+
+.alert-acts{display:flex;gap:8px;flex-wrap:wrap}
+.alert-btn{
+  display:inline-flex;align-items:center;gap:7px;border:none;cursor:pointer;
+  font-family:'R',sans-serif;font-size:12.5px;font-weight:700;border-radius:10px;padding:10px 16px;
+  transition:transform .15s,filter .15s;
+}
+.alert-btn:hover{filter:brightness(1.06)}
+.alert-btn:active{transform:scale(.97)}
+.alert-btn.ban{background:#dc2626;color:#fff}
+.alert-btn.safe{background:#f3f4f6;color:#374151;border:1.5px solid #e5e7eb}
+.alert-btn.view{background:#111827;color:#fff}
+.alert-btn[disabled]{opacity:.55;cursor:not-allowed}
+.alert-banned-tag{
+  display:inline-flex;align-items:center;gap:6px;background:#111827;color:#fff;
+  border-radius:8px;padding:8px 13px;font-size:12px;font-weight:700;
+}
+
+/* IP chips in the users table */
+.ip-chip{
+  display:inline-flex;align-items:center;gap:6px;background:#f3f4f6;border:1px solid #e5e7eb;
+  border-radius:8px;padding:4px 9px;font-family:monospace;font-size:11.5px;direction:ltr;
+}
+.ip-chip.banned{background:#fee2e2;border-color:#fecaca;color:#991b1b;text-decoration:line-through}
+.ip-ban-btn{
+  border:none;background:#dc2626;color:#fff;border-radius:6px;width:22px;height:22px;
+  cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;
+}
+.ip-ban-btn:hover{filter:brightness(1.1)}
+.ip-ban-btn.undo{background:#16a34a}
+.ip-more{font-size:10px;color:var(--mt);cursor:pointer;text-decoration:underline}
+
 </style>
 </head>
 <body>
@@ -365,7 +443,7 @@ tr:hover td{background:rgba(28,35,51,.015);}
     <div class="sb-item" onclick="goPage('announcement')"><i class="fas fa-bullhorn" style="color:#0891b2"></i> بانەری ئاگاداری</div>
     <div class="sb-section">ئاسایش</div>
     <div class="sb-item" onclick="goPage('otp')"><i class="fas fa-key" style="color:#dc2626"></i> کۆدەکانی OTP</div>
-    <div class="sb-item" onclick="goPage('security')"><i class="fas fa-user-shield" style="color:#dc2626"></i> ئاسایش و IP <span class="sb-badge rd" id="sbBanCount" style="display:none">0</span></div>
+    <div class="sb-item" onclick="goPage('security')"><i class="fas fa-user-shield" style="color:#dc2626"></i> ئاسایش و IP <span class="sb-badge rd" id="sbAlertCount" style="display:none">0</span></div>
   </div>
 
   <div class="sb-footer">
@@ -403,6 +481,23 @@ tr:hover td{background:rgba(28,35,51,.015);}
 
     <!-- ══ DASHBOARD ══ -->
     <div class="pg on" id="pgDashboard">
+
+      <!-- ══ LIVE SUSPICIOUS ACTIVITY ══ -->
+      <div id="alertZone">
+        <div class="alert-head">
+          <span class="alert-tag">
+            <i class="fas fa-triangle-exclamation"></i>
+            چالاکی گومانلێکراو دۆزرایەوە
+            <span class="alert-count" id="alertCount">0</span>
+          </span>
+          <div class="alert-head-actions">
+            <div class="act-btn dark" onclick="loadAlerts()"><i class="fas fa-arrows-rotate"></i> نوێکردنەوە</div>
+            <div class="act-btn" onclick="dismissAllAlerts()"><i class="fas fa-check-double"></i> هەمووی سەلامەتە</div>
+          </div>
+        </div>
+        <div id="alertList"></div>
+      </div>
+
       <div class="stats-row">
         <div class="stat-card"><div class="stat-ico dark"><i class="fas fa-users"></i></div><div class="stat-info"><div class="stat-val" id="stUsers">—</div><div class="stat-lbl">کۆی بەکارهێنەران</div></div></div>
         <div class="stat-card"><div class="stat-ico rd"><i class="fas fa-user-slash"></i></div><div class="stat-info"><div class="stat-val" id="stBanned">—</div><div class="stat-lbl">بۆیکۆتکراو</div></div></div>
@@ -917,6 +1012,17 @@ tr:hover td{background:rgba(28,35,51,.015);}
   </div>
 </div>
 
+<!-- ══ USER IP HISTORY ══ -->
+<div class="overlay" id="moUserIps">
+  <div class="modal" style="max-width:640px">
+    <div class="modal-head">
+      <h3><i class="fas fa-network-wired" style="margin-left:8px"></i>مێژووی IPـەکانی بەکارهێنەر</h3>
+      <div class="mo-close" onclick="closeMo('moUserIps')"><i class="fas fa-xmark"></i></div>
+    </div>
+    <div class="tbl-scroll" id="userIpsBody" style="max-height:60vh"></div>
+  </div>
+</div>
+
 <!-- ══ IMAGE LIGHTBOX ══ -->
 <div class="overlay" id="moImgView" onclick="closeMo('moImgView')" style="align-items:center;padding:20px">
   <img id="imgViewSrc" src="" style="max-width:100%;max-height:90vh;border-radius:14px;">
@@ -1042,6 +1148,7 @@ function showApp(){
   document.getElementById('sbAdminName').textContent = adminName;
   goPage('dashboard');
   subscribeOrdersAdmin();
+  subscribeAlerts();
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -1076,6 +1183,244 @@ function goPage(p){
   closeSidebar();
 }
 
+
+
+// ══════════════════════════════════════════════════════════════
+// ═══ SPAM & SUSPICIOUS ACTIVITY ALERTS ════════════════════════
+// Rows arrive two ways: a realtime INSERT stream (admins can SELECT
+// suspicious_events through an is_ex_admin() policy, which is what
+// makes the subscription deliver) and a 30s poll as a fallback for
+// dropped sockets. Every write still goes through a guarded RPC.
+// ══════════════════════════════════════════════════════════════
+let _alerts = [], _alertChannel = null, _alertPoll = null;
+
+const ALERT_TITLE = {
+  order_flood:   'ناردنی زۆری داواکاری لە کاتێکی کورتدا',
+  number_spray:  'پەخشکردنی ژمارەی جیاواز',
+  honeypot:      'داوی Honeypot — بۆتێک دۆزرایەوە',
+  receipt_probe: 'بەکارهێنانی دووبارەی پسووڵە',
+  rapid_submit:  'ناردنی خێراتر لە تواناى مرۆڤ',
+  otp_bruteforce:'هەوڵی دووبارەی کۆدی OTP',
+  devtools_tamper:'دەستکاریکردنی کلاینت'
+};
+const ALERT_ICON = {
+  order_flood:'fa-gauge-high', number_spray:'fa-shuffle', honeypot:'fa-robot',
+  receipt_probe:'fa-clone', rapid_submit:'fa-bolt', otp_bruteforce:'fa-key',
+  devtools_tamper:'fa-screwdriver-wrench'
+};
+
+function alertAgo(t){
+  const s=Math.max(1,Math.floor((Date.now()-new Date(t))/1000));
+  if(s<60) return s+' چرکە لەمەوپێش';
+  const m=Math.floor(s/60); if(m<60) return m+' خولەک لەمەوپێش';
+  const h=Math.floor(m/60); if(h<24) return h+' کاتژمێر لەمەوپێش';
+  return new Date(t).toLocaleString('ku-IQ');
+}
+
+async function loadAlerts(){
+  try{
+    const {data,error}=await sb.rpc('ex_admin_pending_alerts',{ p_limit:20 });
+    if(error) throw error;
+    _alerts=data||[];
+    renderAlerts();
+  }catch(e){ /* the dashboard must still render without alerts */ }
+}
+
+function renderAlerts(){
+  const zone=document.getElementById('alertZone');
+  const list=document.getElementById('alertList');
+  if(!zone||!list) return;
+
+  if(!_alerts.length){ zone.classList.remove('show'); return; }
+  zone.classList.add('show');
+  document.getElementById('alertCount').textContent=_alerts.length;
+
+  const sbBadge=document.getElementById('sbAlertCount');
+  if(sbBadge){ sbBadge.style.display='inline-block'; sbBadge.textContent=_alerts.length; }
+
+  list.innerHTML=_alerts.map(a=>{
+    const sev = a.risk_score>=60 ? 'sev-high' : (a.risk_score>=40 ? '' : 'sev-med');
+    const m   = a.meta||{};
+    // "Submitted 4 orders in 75 seconds" — the metric that justifies the alert
+    const metric = a.event_type==='order_flood' && m.orders
+        ? `${m.orders} داواکاری لە ${m.seconds} چرکەدا`
+        : (a.event_type==='number_spray' && m.distinct_phones
+            ? `${m.distinct_phones} ژمارەی جیاواز لە ${m.orders_30m} داواکاریدا`
+            : (a.detail||''));
+
+    return `<div class="alert-card ${sev}" id="alert_${a.id}">
+      <div class="alert-top">
+        <div class="alert-ico"><i class="fas ${ALERT_ICON[a.event_type]||'fa-triangle-exclamation'}"></i></div>
+        <div style="flex:1;min-width:0">
+          <div class="alert-title">${esc(ALERT_TITLE[a.event_type]||a.event_type)}</div>
+          ${metric?`<div class="alert-metric"><i class="fas fa-chart-line" style="margin-left:5px"></i>${esc(metric)}</div>`:''}
+        </div>
+        <div class="alert-time">${alertAgo(a.created_at)}</div>
+      </div>
+
+      <div class="alert-grid">
+        <div class="alert-fact">
+          <div class="k"><i class="fas fa-user"></i> هەژمار</div>
+          <div class="v">${a.account_name?esc(a.account_name):'<span style="color:#6b7280">مێوان (نەچووەتە ژوورەوە)</span>'}</div>
+          ${a.account_email?`<div class="sub">${esc(a.account_email)}</div>`:''}
+        </div>
+        <div class="alert-fact">
+          <div class="k"><i class="fas fa-network-wired"></i> IP</div>
+          <div class="v mono">${esc(a.ip_address||'—')}</div>
+          ${a.ip_is_banned?'<div class="sub" style="color:#dc2626">بلۆککراوە</div>':''}
+        </div>
+        <div class="alert-fact">
+          <div class="k"><i class="fas fa-desktop"></i> وێبگەڕ و ئامێر</div>
+          <div class="v">${esc(a.browser||'—')}</div>
+          <div class="sub">${esc(a.os||'—')} · ${esc(a.device||'—')}</div>
+        </div>
+        <div class="alert-fact">
+          <div class="k"><i class="fas fa-gauge"></i> خاڵی مەترسی</div>
+          <div class="v">${a.risk_score||0}</div>
+          <div class="sub">${esc(a.detail||'')}</div>
+        </div>
+      </div>
+
+      <div class="alert-acts">
+        ${a.ip_is_banned || !a.ip_address
+          ? `<span class="alert-banned-tag"><i class="fas fa-ban"></i> ${a.ip_address?'ئەم IPـیە بلۆککراوە':'بێ IP'}</span>`
+          : `<button class="alert-btn ban" onclick="banFromAlert('${a.id}')">
+               <i class="fas fa-user-secret"></i> بلۆککردنی نهێنی (404)
+             </button>`}
+        <button class="alert-btn safe" onclick="dismissAlert('${a.id}')">
+          <i class="fas fa-check"></i> سەلامەتە — لابردن
+        </button>
+        ${a.ip_address?`<button class="alert-btn view" onclick="goPage('security');setTimeout(()=>{const s=document.getElementById('evtSearch');if(s){s.value='${esc(a.ip_address)}';renderEvents();}},250)">
+          <i class="fas fa-list"></i> هەموو ڕووداوەکان
+        </button>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function banFromAlert(id){
+  const hrs=prompt('چەند کاتژمێر بلۆک بکرێت؟ (بەتاڵ = هەمیشەیی):','24');
+  if(hrs===null) return;
+  try{
+    const {error}=await sb.rpc('ex_admin_ban_from_alert',{ p_id:id, p_hours:hrs.trim()===''?null:parseInt(hrs,10) });
+    if(error) throw error;
+    showToast('IP بلۆککرا — ئێستا 404 وەردەگرێت','gr');
+    _alerts=_alerts.filter(a=>a.id!==id);
+    renderAlerts(); loadAlerts();
+  }catch(e){ showToast(e.message||'نەتوانرا بلۆک بکرێت','rd'); }
+}
+
+async function dismissAlert(id){
+  try{
+    const {error}=await sb.rpc('ex_admin_resolve_alert',{ p_id:id, p_status:'dismissed', p_all_for_ip:false });
+    if(error) throw error;
+    _alerts=_alerts.filter(a=>a.id!==id);
+    renderAlerts();
+  }catch(e){ showToast(e.message||'هەڵە','rd'); }
+}
+
+async function dismissAllAlerts(){
+  confirm2('لابردنی هەموو ئاگادارییەکان','هەموو ئاگادارییە چاوەڕوانەکان وەک سەلامەت دەنێردرێن. دڵنیایت؟','fa-check','#16a34a', async ()=>{
+    for(const a of [..._alerts]){
+      try{ await sb.rpc('ex_admin_resolve_alert',{ p_id:a.id, p_status:'dismissed', p_all_for_ip:false }); }catch(_){}
+    }
+    _alerts=[]; renderAlerts(); showToast('هەموو ئاگادارییەکان لابران','gr');
+  });
+}
+
+// Realtime: a new high-risk row lands on the dashboard without a refresh.
+function subscribeAlerts(){
+  if(_alertChannel){ try{ sb.removeChannel(_alertChannel); }catch(_){} }
+  _alertChannel = sb.channel('admin_alerts')
+    .on('postgres_changes',
+        { event:'INSERT', schema:'public', table:'suspicious_events' },
+        payload => {
+          const row=payload.new;
+          if(!row || row.alert_status!=='pending') return;
+          loadAlerts();   // re-fetch through the RPC so joins/flags stay correct
+          try{ showToast('⚠️ چالاکی گومانلێکراو دۆزرایەوە', 'rd'); }catch(_){}
+        })
+    .subscribe();
+
+  clearInterval(_alertPoll);
+  _alertPoll = setInterval(()=>{ if(document.visibilityState==='visible') loadAlerts(); }, 30000);
+}
+
+// ══════════════════════════════════════════════════════════════
+// ═══ USER ↔ IP HISTORY (users table) ══════════════════════════
+// ══════════════════════════════════════════════════════════════
+let _accIps = {};   // user_id → { last_ip, ip_count, browser, os, device, last_ip_banned }
+
+async function loadAccountIps(){
+  try{
+    const {data,error}=await sb.rpc('ex_admin_accounts_ip_summary');
+    if(error) throw error;
+    _accIps={};
+    (data||[]).forEach(r=>{ _accIps[r.user_id]=r; });
+  }catch(_){ _accIps={}; }
+}
+
+function accIpCell(userId){
+  const r=_accIps[userId];
+  if(!r || !r.last_ip) return '<span style="color:var(--mt);font-size:11px">—</span>';
+  return `<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+      <span class="ip-chip ${r.last_ip_banned?'banned':''}">${esc(r.last_ip)}</span>
+      ${r.last_ip_banned
+        ? `<button class="ip-ban-btn undo" title="کردنەوە" onclick="unbanIpByAddress('${esc(r.last_ip)}')"><i class="fas fa-lock-open"></i></button>`
+        : `<button class="ip-ban-btn" title="بلۆککردنی ئەم IP (404)" onclick="banIpInline('${esc(r.last_ip)}','${esc(userId)}')"><i class="fas fa-ban"></i></button>`}
+      ${r.ip_count>1?`<span class="ip-more" onclick="showUserIps('${esc(userId)}')">+${r.ip_count-1} تر</span>`:''}
+    </div>
+    <div style="font-size:10px;color:var(--mt);margin-top:3px">${esc(r.browser||'')} · ${esc(r.device||'')}</div>`;
+}
+
+async function banIpInline(ip, userId){
+  const hrs=prompt('بلۆککردنی '+ip+' بۆ چەند کاتژمێر؟ (بەتاڵ = هەمیشەیی):','24');
+  if(hrs===null) return;
+  try{
+    const {error}=await sb.rpc('ex_admin_ban_ip',{
+      p_ip:ip, p_reason:'بلۆککردنی دەستی لە لیستی بەکارهێنەران',
+      p_hours:hrs.trim()===''?null:parseInt(hrs,10), p_user_id:userId||null, p_notes:null });
+    if(error) throw error;
+    showToast('IP بلۆککرا — 404 وەردەگرێت','gr');
+    await loadAccountIps(); renderAccounts((document.getElementById('accSearch')?.value||'').toLowerCase());
+  }catch(e){ showToast(e.message||'هەڵە','rd'); }
+}
+
+async function unbanIpByAddress(ip){
+  try{
+    const {data,error}=await sb.rpc('ex_admin_list_bans',{ p_active_only:true, p_limit:200 });
+    if(error) throw error;
+    const row=(data||[]).find(b=>b.ip_address===ip);
+    if(!row){ showToast('بلۆکەکە نەدۆزرایەوە','rd'); return; }
+    const r2=await sb.rpc('ex_admin_unban_ip',{ p_id:row.id });
+    if(r2.error) throw r2.error;
+    showToast('IP کرایەوە','gr');
+    await loadAccountIps(); renderAccounts((document.getElementById('accSearch')?.value||'').toLowerCase());
+  }catch(e){ showToast(e.message||'هەڵە','rd'); }
+}
+
+async function showUserIps(userId){
+  try{
+    const {data,error}=await sb.rpc('ex_admin_user_ips',{ p_user_id:userId, p_limit:20 });
+    if(error) throw error;
+    if(!data||!data.length){ showToast('هیچ IPـیەک تۆمار نەکراوە','bl'); return; }
+    document.getElementById('userIpsBody').innerHTML=`<table><thead><tr>
+        <th>IP</th><th>وێبگەڕ / ئامێر</th><th>ڕووداو</th><th>دوایین</th><th>کردار</th>
+      </tr></thead><tbody>
+      ${data.map(r=>`<tr>
+        <td><span class="ip-chip ${r.is_banned?'banned':''}">${esc(r.ip_address)}</span></td>
+        <td><div style="font-size:12px">${esc(r.browser||'—')}</div>
+            <div style="font-size:10px;color:var(--mt)">${esc(r.os||'')} · ${esc(r.device||'')}</div></td>
+        <td>${r.events}</td>
+        <td style="font-size:11px;color:var(--mt)">${new Date(r.last_seen).toLocaleString('ku-IQ')}</td>
+        <td>${r.is_banned
+              ? `<div class="act-btn gr" onclick="unbanIpByAddress('${esc(r.ip_address)}')"><i class="fas fa-lock-open"></i> کردنەوە</div>`
+              : `<div class="act-btn rd" onclick="banIpInline('${esc(r.ip_address)}','${esc(userId)}')"><i class="fas fa-ban"></i> بلۆک (404)</div>`}</td>
+      </tr>`).join('')}
+    </tbody></table>`;
+    openMo('moUserIps');
+  }catch(e){ showToast(e.message||'هەڵە','rd'); }
+}
 
 // ══════════════════════════════════════════════════════════════
 // ═══ SECURITY / IP INTELLIGENCE ═══════════════════════════════
@@ -1333,6 +1678,7 @@ async function loadProfilesFor(userIds){
 async function loadDashboard(){
   loadDashboardStats();
   loadDashOrders();
+  loadAlerts();
 }
 async function loadDashboardStats(){
   try{
@@ -1602,6 +1948,7 @@ async function loadAccounts(){
     const {data,error} = await sb.from('ex_profiles').select('*').order('created_at',{ascending:false}).limit(300);
     if(error) throw error;
     allAccounts = data||[];
+    await loadAccountIps();     // one round-trip for every account's last IP
     renderAccounts();
   }catch(e){
     document.getElementById('accountsTableWrap').innerHTML=`<div class="empty"><i class="fas fa-triangle-exclamation"></i><p>هەڵە: ${esc(e.message)}</p></div>`;
@@ -1626,10 +1973,11 @@ function accBadges(a){
 }
 function renderAccTable(list){
   if(!list.length) return '<div class="empty"><i class="fas fa-user-slash"></i><p>هیچ هەژمارێک نییە</p></div>';
-  return `<table><thead><tr><th>بەکارهێنەر</th><th>مۆبایل</th><th>باری</th><th>بەروار</th><th>کردار</th></tr></thead><tbody>
+  return `<table><thead><tr><th>بەکارهێنەر</th><th>مۆبایل</th><th>IP و ئامێر</th><th>باری</th><th>بەروار</th><th>کردار</th></tr></thead><tbody>
     ${list.map(a=>`<tr>
       <td><div class="user-cell"><div class="mini-av">${(a.full_name||a.email||'?')[0].toUpperCase()}</div><div><div class="user-cell-name">${esc(a.full_name||'—')}</div><div class="user-cell-email">${esc(a.email||'—')}</div></div></div></td>
       <td style="direction:ltr;font-size:12px">${esc(a.phone||'—')}</td>
+      <td>${accIpCell(a.id)}</td>
       <td>${accBadges(a)}</td>
       <td style="font-size:11px;color:var(--mt)">${new Date(a.created_at).toLocaleDateString('ku')}</td>
       <td><div class="act-grp">
