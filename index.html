@@ -72,9 +72,10 @@
 (function(){
   try{
     var t = localStorage.getItem('zex_theme');
-    if(t!=='light' && t!=='dark') t='light';
+    // Dark is the default. A visitor who has already chosen light keeps light.
+    if(t!=='light' && t!=='dark') t='dark';
     document.documentElement.setAttribute('data-theme', t);
-  }catch(e){ document.documentElement.setAttribute('data-theme','light'); }
+  }catch(e){ document.documentElement.setAttribute('data-theme','dark'); }
 })();
 </script>
 
@@ -698,7 +699,10 @@
 
   <!-- ══════════════ SOCIAL PROOF + PUBLIC FEED ══════════════ -->
   <div class="proof-wrap">
-    <div class="proof-card">
+    <!-- Banner removed from view. The nodes stay in the DOM (hidden) so app.js
+         can still write proofCount / proof24h / proofUsers without throwing —
+         deleting them would break the rest of its stats handler. -->
+    <div class="proof-card" hidden style="display:none">
       <div class="proof-top">
         <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/></svg>
         مامەڵەی سەرکەوتوو
@@ -707,9 +711,7 @@
       <div class="proof-sub">داواکاری پەسەندکراو و گەیشتوو بە دەستی خاوەنەکەی</div>
       <div class="proof-mini">
         <div><b id="proof24h">—</b><span>لە ٢٤ کاتژمێری ڕابردوو</span></div>
-        <!-- The number of accounts is deliberately not shown. The node stays in
-             the DOM (hidden) so app.js can still write to it without throwing. -->
-        <div hidden style="display:none"><b id="proofUsers">—</b><span>بەکارهێنەری چالاک</span></div>
+        <div><b id="proofUsers">—</b><span>بەکارهێنەری چالاک</span></div>
       </div>
     </div>
 
