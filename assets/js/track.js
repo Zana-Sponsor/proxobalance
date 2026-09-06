@@ -15,17 +15,30 @@
   var POLL_MS = 5000;
   var VIEW_GAP_MS = 10 * 60 * 1000;   // one page_view per 10 minutes per tab
 
-  // Supabase v2 stores the session under a key like "sb-<ref>-auth-token".
-  // Scanning for it means a custom storageKey still works.
+  // The app deliberately uses a custom storageKey. Check it first; looking only
+  // for Supabase's default "sb-<ref>-auth-token" name makes every authenticated
+  // page view look anonymous to /api/track.
+  var SESSION_KEYS = [
+    'zex_sb_session',
+    'sb-pycxuugoblkslvwebxuu-auth-token'
+  ];
+
+  function tokenFromRaw(raw) {
+    if (!raw) return null;
+    try {
+      var v = JSON.parse(raw);
+      return v && (
+        v.access_token ||
+        (v.currentSession && v.currentSession.access_token) ||
+        (v.session && v.session.access_token)
+      ) || null;
+    } catch (e) { return null; }
+  }
+
   function readToken() {
     try {
-      for (var i = 0; i < localStorage.length; i++) {
-        var k = localStorage.key(i);
-        if (!k || k.indexOf('auth-token') < 0) continue;
-        var raw = localStorage.getItem(k);
-        if (!raw) continue;
-        var v = JSON.parse(raw);
-        var t = v && (v.access_token || (v.currentSession && v.currentSession.access_token));
+      for (var i = 0; i < SESSION_KEYS.length; i++) {
+        var t = tokenFromRaw(localStorage.getItem(SESSION_KEYS[i]));
         if (t) return t;
       }
     } catch (e) { /* private mode, quota, bad JSON — never throw */ }

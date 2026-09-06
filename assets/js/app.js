@@ -811,6 +811,12 @@ async function verifyOtp(){
         user=data.user;
       }
       if(!user) throw new Error('هەڵەیەک ڕووی دا');
+      // track.js is loaded after app.js and owns the server-side IP capture.
+      // Send immediately while the freshly issued Supabase session is present;
+      // its Authorization header lets /api/track attach this IP to the account.
+      if(typeof window.trackEvent==='function'){
+        window.trackEvent(_authIsNewUser?'signup':'login');
+      }
       await startApp(user);
     }catch(e){
       showOtpMsg(kuErr(e.message)||'هەڵەیەک ڕووی دا','err');
