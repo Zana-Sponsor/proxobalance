@@ -423,3 +423,7 @@ tr:hover td{background:rgba(28,35,51,.015);}
 html{overflow-x:hidden !important;overflow-y:auto !important;height:auto !important;max-height:none !important;}
 body{overflow:visible !important;height:auto !important;max-height:none !important;position:static !important;}
 #main,.content,.pg{overflow:visible !important;height:auto !important;max-height:none !important;}
+/* tokens.css sets overscroll-behavior:contain on .content. On a scroll
+   container that cannot scroll, that swallows the touch gesture instead of
+   passing it to the page — this is what killed scrolling on mobile. */
+#main,.content,.pg{overscroll-behavior:auto !important;}
