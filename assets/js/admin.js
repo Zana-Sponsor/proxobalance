@@ -872,6 +872,7 @@ function showOrderDetail(id){
     <div class="detail-row"><span class="lbl">ئایدی مامەڵە</span><span class="val">${orderCodeChip(order)}</span></div>
     <div class="detail-row"><span class="lbl">بەکارهێنەر</span><span class="val">${esc(order.profile?.full_name||'—')}</span></div>
     <div class="detail-row"><span class="lbl">ئیمەیل</span><span class="val">${esc(order.profile?.email||'—')}</span></div>
+    <div class="detail-row"><span class="lbl">ناوی هەژماری نێرەر</span><span class="val">${esc(order.sender_name||order.profile?.full_name||'—')}</span></div>
     <div class="detail-row"><span class="lbl">لە</span><span class="val">${methodPill(order.from_method)}</span></div>
     <div class="detail-row"><span class="lbl">بۆ</span><span class="val">${methodPill(order.to_method)}</span></div>
     <div class="detail-row"><span class="lbl">بڕی نێردراو</span><span class="val">${displayAmt}</span></div>

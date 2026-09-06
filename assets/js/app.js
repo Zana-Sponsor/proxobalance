@@ -251,7 +251,7 @@ function clearFieldError(inputId){
   if(inp) inp.classList.remove('has-error');
   if(err){ err.classList.remove('show'); }
 }
-function clearAllOrderFieldErrors(){ ['amt','userPhone','fileInput'].forEach(clearFieldError); }
+function clearAllOrderFieldErrors(){ ['amt','userSenderName','userPhone','fileInput'].forEach(clearFieldError); }
 
 function onFileSelected(input){
   clearFieldError('fileInput');
@@ -1274,11 +1274,17 @@ function calc(){
 
 function _validateOrderFields(){
   clearAllOrderFieldErrors();
+  const senderName=document.getElementById('userSenderName')?.value||'';
+  const profileName=(curProfile&&curProfile.full_name)||'';
   const phone=document.getElementById('userPhone').value;
   const file=document.getElementById('fileInput').files[0];
   const amtValue=getAmtRaw();
   const from=document.getElementById('from').value, to=document.getElementById('receiveVia').value;
   let ok=true;
+  if(!profileName || normalizePersonName(senderName)!==normalizePersonName(profileName)){
+    setFieldError('userSenderName','ناوی خاوەنی هەژماری نێرەر دەبێت لەگەڵ ناوی پڕۆفایلی Proxo یەکسان بێت');
+    ok=false;
+  }
   if(!amtValue || parseFloat(amtValue)<=0){ setFieldError('amt','بڕی پارە داخڵ بکە'); ok=false; }
   else if(parseFloat(amtValue)<MIN_AMOUNT){ setFieldError('amt','کەمترین بڕی مامەڵە '+formatNum(MIN_AMOUNT)+' دینارە'); ok=false; }
   if(to==='QiCard'){
@@ -1297,6 +1303,7 @@ function _validateOrderFields(){
 
 function openOrderConfirm(){
   if(!_validateOrderFields()) return;
+  const senderName=document.getElementById('userSenderName').value;
   const phone=document.getElementById('userPhone').value;
   const amtValue=getAmtRaw();
   const from=document.getElementById('from').value, to=document.getElementById('receiveVia').value;
@@ -1307,6 +1314,7 @@ function openOrderConfirm(){
     + '<div class="confirm-row"><span class="confirm-row-label">'+methodIconHTML(to,'sz-sm')+' بۆ</span><span class="confirm-row-value">'+METHOD_META[to].label+'</span></div>'
     + '<div class="confirm-row"><span class="confirm-row-label">بڕی پارە</span><span class="confirm-row-value" dir="ltr">'+displayAmt+'</span></div>'
     + '<div class="confirm-row"><span class="confirm-row-label">بڕی وەرگیراو</span><span class="confirm-row-value accent" dir="ltr">'+totalTxt+'</span></div>'
+    + '<div class="confirm-row"><span class="confirm-row-label">ناوی نێرەر</span><span class="confirm-row-value">'+escHtml(senderName)+'</span></div>'
     + '<div class="confirm-row"><span class="confirm-row-label">ژمارەی مۆبایل</span><span class="confirm-row-value" dir="ltr">'+phone+'</span></div>';
   const overlay=document.getElementById('confirmSheet');
   openSheet(overlay);
@@ -1329,6 +1337,7 @@ async function processOrder(){
       message:'داواکارییەکەت وەرگیرا و لە چاوەڕوانیدایە.' });
     return;
   }
+  const senderName=document.getElementById('userSenderName').value;
   const phone=document.getElementById('userPhone').value;
   const file=document.getElementById('fileInput').files[0];
   const amtValue=getAmtRaw();
@@ -1355,7 +1364,7 @@ async function processOrder(){
       method:'POST',
       headers:{'Content-Type':'application/json','Authorization':'Bearer '+_orderSession.access_token},
       body:JSON.stringify({
-        from_method:from,to_method:to,amount:parseFloat(amtValue),phone,
+        from_method:from,to_method:to,amount:parseFloat(amtValue),phone,sender_name:senderName,
         receipt_url:receiptUrl,receipt_hash:receiptHash,contact_reference:''
       })
     });
@@ -1855,6 +1864,41 @@ function renderChangeLog(rows){
 // ═══ PROFILE — name + phone, saved to ex_profiles ══════════════
 // ══════════════════════════════════════════════════════════════
 function initialOf(s){ const t=(s||'').trim(); return t ? t.charAt(0).toUpperCase() : '؟'; }
+function normalizePersonName(s){ return String(s||'').trim().replace(/\s+/g,' ').toLocaleLowerCase(); }
+
+const PROFILE_CHANGE_COOLDOWN_MS=7*24*60*60*1000;
+
+function profileChangeAvailableAt(){
+  if(!curProfile || curProfile.is_admin || !curProfile.identity_updated_at) return null;
+  const at=new Date(curProfile.identity_updated_at).getTime()+PROFILE_CHANGE_COOLDOWN_MS;
+  return Number.isFinite(at) ? at : null;
+}
+
+function syncSenderIdentity(){
+  const el=document.getElementById('userSenderName');
+  if(el) el.value=(curProfile&&curProfile.full_name)||'';
+}
+
+function updateProfileCooldownUI(){
+  const nameEl=document.getElementById('pfName');
+  const phoneEl=document.getElementById('pfPhone');
+  const btn=document.getElementById('pfSaveBtn');
+  const hint=document.getElementById('pfCooldownHint');
+  const txt=document.getElementById('pfCooldownText');
+  const availableAt=profileChangeAvailableAt();
+  const locked=!!availableAt && availableAt>Date.now();
+
+  if(nameEl) nameEl.disabled=locked;
+  if(phoneEl) phoneEl.disabled=locked;
+  if(btn) btn.disabled=locked;
+  if(hint) hint.classList.toggle('warn',locked);
+  if(txt){
+    txt.textContent=locked
+      ? 'دەتوانیت لە '+new Date(availableAt).toLocaleString('ku-IQ')+' دووبارە ناو یان ژمارەکەت بگۆڕیت.'
+      : 'ئێستا دەتوانیت ناو و ژمارەکەت نوێ بکەیتەوە؛ دوای پاشەکەوتکردن بۆ ٧ ڕۆژ قوفڵ دەبێت.';
+  }
+  return locked;
+}
 
 function applyProfileToUI(){
   const name = (curProfile && curProfile.full_name) || (curUser && curUser.email) || '';
@@ -1863,6 +1907,7 @@ function applyProfileToUI(){
   const pfAv=document.getElementById('pfAvatar'); if(pfAv) pfAv.textContent=initialOf(name);
   const pfName=document.getElementById('pfNameLbl'); if(pfName) pfName.textContent=name||'—';
   const pfMail=document.getElementById('pfEmailLbl'); if(pfMail) pfMail.textContent=(curUser&&curUser.email)||'—';
+  syncSenderIdentity();
   const joined=document.getElementById('pfJoined');
   if(joined && curProfile && curProfile.created_at){
     joined.textContent='بەشدارە لە '+new Date(curProfile.created_at).toLocaleDateString('ku-IQ',{month:'long', year:'numeric'});
@@ -1875,12 +1920,24 @@ function fillProfileForm(){
   const n=document.getElementById('pfName'); if(n) n.value=(curProfile && curProfile.full_name)||'';
   const p=document.getElementById('pfPhone'); if(p) p.value=(curProfile && curProfile.phone)||'';
   applyProfileToUI();
+  updateProfileCooldownUI();
 }
 
 async function saveProfile(){
   const nameEl=document.getElementById('pfName'), phoneEl=document.getElementById('pfPhone');
   const name=(nameEl.value||'').trim(), phone=(phoneEl.value||'').trim();
   clearFieldError('pfName'); clearFieldError('pfPhone');
+
+  if(updateProfileCooldownUI()){
+    showToast('هێشتا ٧ ڕۆژەکە تەواو نەبووە؛ کاتی ڕێگەپێدراو لە خوارەوە نیشان دراوە','warning');
+    return;
+  }
+
+  if(normalizePersonName(name)===normalizePersonName(curProfile?.full_name)
+     && phone===String(curProfile?.phone||'')){
+    showToast('هیچ گۆڕانکارییەک نەکراوە','warning');
+    return;
+  }
 
   let ok=true;
   if(name.length<3){ setFieldError('pfName','ناو دەبێت لانیکەم ٣ پیت بێت'); ok=false; }
@@ -1896,13 +1953,24 @@ async function saveProfile(){
     if(error) throw error;
     curProfile=data;
     applyProfileToUI();
-    showToast('زانیارییەکانت نوێکرانەوە','success');
+    updateProfileCooldownUI();
+    showToast('زانیارییەکانت نوێکرانەوە؛ دوای ٧ ڕۆژ دەتوانیت دووبارە بیانگۆڕیت','success');
     const orderPhone=document.getElementById('userPhone');
     if(orderPhone && !orderPhone.value && phone) orderPhone.value=phone;
   }catch(e){
-    showToast((e && e.message) ? e.message : 'نەتوانرا پاشەکەوت بکرێت','error');
+    const msg=(e&&e.message)||'';
+    if(msg.includes('PROFILE_UPDATE_COOLDOWN')){
+      showToast('هێشتا ٧ ڕۆژەکە تەواو نەبووە؛ دوای کاتی دیاریکراو دووبارە هەوڵ بدەرەوە','error');
+    }else if(msg.includes('PROFILE_NAME_INVALID')){
+      showToast('ناو دەبێت لانیکەم ٣ پیت بێت','error');
+    }else if(msg.includes('PROFILE_PHONE_INVALID')){
+      showToast('ژمارەی مۆبایلەکە دروست نییە','error');
+    }else{
+      showToast(msg||'نەتوانرا پاشەکەوت بکرێت','error');
+    }
   }finally{
-    btn.disabled=false; btn.innerHTML='پاشەکەوتکردن';
+    btn.innerHTML='پاشەکەوتکردن';
+    updateProfileCooldownUI();
   }
 }
 
