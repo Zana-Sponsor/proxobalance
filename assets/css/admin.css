@@ -10,7 +10,11 @@
   --tx:#1c2333;
   --sidebar-w:260px;
 }
-body{font-family:'R',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;display:flex;flex-wrap:wrap;overflow-x:hidden;max-width:100vw;}
+/* body must stay a plain block: as a flex container it trapped #main in a
+   flex line and broke page scrolling on mobile. overflow-x:hidden here
+   propagates to the viewport, so horizontal clipping still works. */
+html{overflow-x:hidden;}
+body{font-family:'R',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;display:block;overflow-x:hidden;max-width:100vw;}
 
 /* ══ AUTH ══ */
 #authWrap{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:var(--dark);z-index:9999;padding:24px;}
@@ -63,7 +67,10 @@ body{font-family:'R',sans-serif;background:var(--bg);color:var(--tx);min-height:
 .sb-admin-role{font-size:10px;color:rgba(255,255,255,.4);}
 
 /* ══ MAIN ══ */
-#main{flex:1;display:none;flex-direction:column;min-height:100vh;margin-right:0;max-width:100%;overflow-x:hidden;}
+/* No overflow-x here: overflow-x:hidden with overflow-y:visible computes
+   overflow-y to auto, which turned #main into a second scroll container
+   nested inside the page and swallowed the touch scroll. */
+#main{display:none;flex-direction:column;min-height:100vh;margin-right:0;max-width:100%;}
 #main.show{display:flex;}
 @media(max-width:900px){#main{margin-right:0 !important;}}
 
@@ -82,7 +89,7 @@ body{font-family:'R',sans-serif;background:var(--bg);color:var(--tx);min-height:
 .tb-logout{width:36px;height:36px;border-radius:10px;background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.18);color:var(--rd);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;flex-shrink:0;transition:all .2s;}
 .tb-logout:hover{background:var(--rd);color:#fff;}
 
-.content{padding:16px;flex:1;max-width:100%;overflow-x:hidden;}
+.content{padding:16px;flex:1;max-width:100%;min-width:0;}
 @media(min-width:601px){.content{padding:24px;}}
 
 /* ══ STATS ══ */
@@ -394,3 +401,15 @@ tr:hover td{background:rgba(28,35,51,.015);}
 .sb-item:active,.act-btn:active,.alert-btn:active,.modal-btn:active{transform:scale(.985)}
 #sidebarOverlay{backdrop-filter:none!important}
 .tbl-wrap,.alert-card,.stat-card{contain:layout paint}
+
+/* ══ ACCOUNT INFO MODAL ══ */
+.ai-sec{font-size:12px;font-weight:800;color:var(--mt);margin:16px 0 6px;padding-top:12px;border-top:1px solid var(--b1);}
+.ai-sec:first-child{margin-top:0;padding-top:0;border-top:none;}
+.ai-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;}
+@media(min-width:601px){.ai-stats{grid-template-columns:repeat(4,1fr);}}
+.ai-stat{background:var(--bg);border:1px solid var(--b1);border-radius:12px;padding:11px 12px;}
+.ai-stat b{display:block;font-size:17px;font-weight:900;color:var(--dark);font-family:'Inter',sans-serif;line-height:1.2;}
+.ai-stat span{font-size:10.5px;color:var(--mt);}
+.ai-stat.gr b{color:var(--gr);} .ai-stat.yw b{color:var(--yw);} .ai-stat.rd b{color:var(--rd);}
+.ai-when{font-size:11px;color:var(--mt);line-height:1.6;}
+.ai-when b{display:block;font-size:12.5px;font-weight:700;color:var(--dark);}
