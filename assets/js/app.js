@@ -976,6 +976,7 @@ function kuErr(msg){
     'PROFILE_UPDATE_COOLDOWN':'ناو و ژمارەی مۆبایل تا تەواوبوونی ٧ ڕۆژەکە قوفڵن',
     'SENDER_PHONE_REQUIRED':'ژمارەی نێرەر بۆ Korek و Asiacell پێویستە',
     'SENDER_PHONE_INVALID':'ژمارەی نێرەر دەبێت بە 07 دەست پێبکات و ١١ ژمارە بێت',
+    'Invalid sender number':'ژمارەی نێرەر دەبێت بە 07 دەست پێبکات و ١١ ژمارە بێت',
   };
   return m[msg]||msg;
 }
@@ -1401,9 +1402,6 @@ async function processOrder(){
         from_method:from,to_method:to,amount:parseFloat(amtValue),phone,
         sender_name:needsSenderPhone(from)?null:senderName,
         sender_phone:needsSenderPhone(from)?senderPhone:null,
-        // The current /api/orders whitelist already forwards extra_info. Keep
-        // this transport fallback until that endpoint accepts sender_phone.
-        extra_info:needsSenderPhone(from)?('sender_phone:'+senderPhone):null,
         receipt_url:receiptUrl,receipt_hash:receiptHash,contact_reference:''
       })
     });
