@@ -173,9 +173,28 @@ function showApp(){
   document.getElementById('main').classList.add('show');
   document.getElementById('sbAv').textContent = (adminName||'A')[0].toUpperCase();
   document.getElementById('sbAdminName').textContent = adminName;
+  recordAdminVisit();
   goPage('dashboard');
   subscribeOrdersAdmin();
   subscribeAlerts();
+}
+
+// The admin page does not load the public assets/js/track.js file. Record its
+// authenticated visit here so administrator accounts also get an IP history.
+async function recordAdminVisit(){
+  try{
+    const {data:{session}}=await sb.auth.getSession();
+    if(!session) return;
+    await fetch('/api/track', {
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'Authorization':'Bearer '+session.access_token
+      },
+      body:JSON.stringify({type:'admin_login',detail:location.pathname}),
+      keepalive:true
+    });
+  }catch(_){ /* telemetry must never break the admin panel */ }
 }
 
 // ══════════════════════════════════════════════════════════════
