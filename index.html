@@ -88,6 +88,42 @@
 
 <link rel="stylesheet" href="assets/css/app.css">
 <link rel="stylesheet" href="assets/css/tokens.css">
+
+<!-- Appbar alignment. Inline and after the stylesheets so it wins over
+     app.css without needing that file to change. -->
+<style>
+  .site-header-inner{display:flex;align-items:center;gap:10px;}
+
+  .hdr-logo{display:flex;align-items:center;gap:10px;min-width:0;
+            text-decoration:none;cursor:pointer;}
+
+  /* The logo is already blue, so the mark sits on nothing — a filled
+     tile behind it would swallow it. */
+  .hdr-mark{width:38px;height:38px;flex:0 0 38px;border-radius:11px;
+            display:flex;align-items:center;justify-content:center;
+            padding:0!important;overflow:hidden;
+            background:none!important;border:0!important;box-shadow:none!important;}
+  .hdr-mark img{width:100%;height:100%;object-fit:contain;display:block;}
+
+  .hdr-word{display:flex;flex-direction:column;justify-content:center;
+            line-height:1.15;min-width:0;}
+  .hdr-word b{font-size:15px;font-weight:800;letter-spacing:-.2px;white-space:nowrap;}
+  .hdr-word span{font-size:9.5px;font-weight:700;letter-spacing:2px;opacity:.55;}
+
+  .hdr-actions{display:flex;align-items:center;gap:8px;}
+
+  /* Every action the same square, icon centred inside it. */
+  .icon-btn{width:38px;height:38px;flex:0 0 38px;padding:0!important;
+            display:inline-flex;align-items:center;justify-content:center;}
+  .icon-btn .icn,.icon-btn svg{width:19px;height:19px;}
+  .icon-btn .notif-badge{width:auto;height:auto;}
+
+  @media (max-width:420px){
+    .hdr-word b{font-size:14px;}
+    .hdr-mark{width:34px;height:34px;flex:0 0 34px;}
+    .icon-btn{width:34px;height:34px;flex:0 0 34px;}
+  }
+</style>
 </head>
 
 <body>
@@ -158,9 +194,12 @@
 </div>
 
 <!-- ══════════════════════════════════════════════════════════════
-     TELEGRAM PROMO MODAL
+     TELEGRAM PROMO MODAL — disabled.
+     Kept in the DOM (and hard-hidden with an inline !important, so no
+     class app.js adds can bring it back) because app.js opens and
+     closes it by id; removing the node would throw.
      ══════════════════════════════════════════════════════════════ -->
-<div id="tgModal" class="modal-overlay">
+<div id="tgModal" class="modal-overlay" hidden style="display:none !important">
   <div class="modal-card">
     <div class="modal-ico-wrap">
       <svg class="icn icn-xl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2.5l-9.3 19-3-8.1-8.2-3.1z"/><path d="M12.2 13.5l4-6.8"/></svg>
@@ -377,7 +416,7 @@
 
       <a class="hdr-logo" onclick="navigate('home')" role="button" tabindex="0" aria-label="Proxo Balance">
         <span class="hdr-mark">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h13.5l-3-3.2"/><path d="M20 16H6.5l3 3.2"/></svg>
+          <img src="data:image/png;base64,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" alt="" aria-hidden="true" width="128" height="128" decoding="async">
         </span>
         <span class="hdr-word"><b>Proxo Balance</b><span>EXCHANGE</span></span>
       </a>
@@ -500,7 +539,6 @@
       </span>
       <div>
         <h2>داواکاری ئاڵوگۆڕ</h2>
-        <p>بڕەکە بنێرە بۆ ژمارەی خوارەوە، دواتر فۆرمەکە پڕبکەرەوە. بەشێکی زۆر لە داواکارییەکان لە ماوەی ٥–٣٠ خولەکدا جێبەجێ دەکرێن.</p>
       </div>
     </div>
 
