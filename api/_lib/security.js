@@ -326,9 +326,15 @@ export function withSecurity(handler, {
         return stealth404(res);
       }
 
+      // Routine logging. An anonymous, zero-risk hit on a public endpoint
+      // (/api/public and friends) is not an event worth a row: it cannot be
+      // tied to an account, so it only fills the panel with "مێوان" lines.
+      // Anything with a risk score, and anything from a signed-in visitor,
+      // is always recorded.
       const type = event || 'api_access';
       const key = `${context.ip || '-'}|${user?.id || '-'}|${type}`;
-      if (autoLog && (risk > 0 || !throttled(key))) {
+      const worthLogging = risk > 0 || !!user;
+      if (autoLog && worthLogging && (risk > 0 || !throttled(key))) {
         await recordEvent(context, {
           type,
           detail: context.path,
