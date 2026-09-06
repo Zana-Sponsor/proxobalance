@@ -550,6 +550,21 @@
         </div>
 
         <div class="field" style="margin-top:10px">
+          <label class="field-label" for="userSenderName">ناوی خاوەنی هەژماری نێرەر</label>
+          <div class="xc-input-wrap">
+            <span class="xc-in-ico" aria-hidden="true">
+              <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.2" r="3.4"/><path d="M4.8 19.5c1.3-3.8 4-5.7 7.2-5.7s5.9 1.9 7.2 5.7"/></svg>
+            </span>
+            <input type="text" id="userSenderName" class="input" readonly aria-readonly="true" aria-describedby="senderNameHint">
+          </div>
+          <div class="xc-hint warn" id="senderNameHint">
+            <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4.5 21 19.5H3z"/><path d="M12 10v4"/><circle cx="12" cy="17" r=".9" fill="currentColor"/></svg>
+            <span>ناوی خاوەنی هەژماری نێرەر دەبێت هەمان ناوی پڕۆفایلی Proxo بێت.</span>
+          </div>
+          <span class="field-error" id="userSenderNameError"></span>
+        </div>
+
+        <div class="field" style="margin-top:10px">
           <label class="field-label" for="amt">بڕی پارە</label>
           <div class="xc-input-wrap">
             <span class="xc-in-ico" aria-hidden="true">
@@ -880,6 +895,10 @@
       <span class="rule-num" aria-label="یاسای هەشت"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.2 19 5.8v5.4c0 4.6-2.9 7.7-7 9.2-4.1-1.5-7-4.6-7-9.2V5.8z"/><path d="m9 12 2 2 4-4"/></svg></span>
       <div class="rule-txt"><h4>بەکارهێنانی یاسایی</h4><p>ئەم خزمەتگوزارییە تەنها بۆ مامەڵەی یاسایی و کەسییە. هەر بەکارهێنانێکی گومانلێکراو ڕادەگیرێت.</p></div>
     </div>
+    <div class="rule-item">
+      <span class="rule-num" aria-label="یاسای نۆ"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8.2" r="3.3"/><path d="M5 20c.8-4 3.4-6 7-6s6.2 2 7 6"/><path d="m16 8 1.5 1.5L21 6"/></svg></span>
+      <div class="rule-txt"><h4>یەکسانبوونی ناوی نێرەر</h4><p>ناوی پڕۆفایلی Proxo و ناوی خاوەنی ئەو هەژمارەی پارەکەی لێ دەنێریت دەبێت هەمان ناو بن؛ وەک FastPay، FIB یان Qi Card. ناو و ژمارەی مۆبایلی پڕۆفایل تەنها <b>هەر ٧ ڕۆژ جارێک</b> دەتوانرێت نوێ بکرێتەوە.</p></div>
+    </div>
 
     <div class="rule-note">
       <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4.5 21 19.5H3z"/><path d="M12 10v4"/><circle cx="12" cy="17" r=".9" fill="currentColor"/></svg>
@@ -929,6 +948,11 @@
         <input type="tel" class="input" id="pfPhone" placeholder="07xxxxxxxxx" dir="ltr" maxlength="11" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,''); clearFieldError('pfPhone')">
         <span class="phone-format-hint" dir="ltr">07xxxxxxxxx</span>
         <span class="field-error" id="pfPhoneError"></span>
+      </div>
+
+      <div class="xc-hint" id="pfCooldownHint" aria-live="polite">
+        <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3.2 1.9"/></svg>
+        <span id="pfCooldownText">ناو و ژمارەی مۆبایل هەر ٧ ڕۆژ جارێک دەتوانرێت بگۆڕدرێت.</span>
       </div>
 
       <button type="button" class="btn btn-primary btn-block" id="pfSaveBtn" onclick="saveProfile()"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h12l2 2v14H5z"/><path d="M8 4v6h8V4M8 20v-6h8v6"/></svg>پاشەکەوتکردن</button>
