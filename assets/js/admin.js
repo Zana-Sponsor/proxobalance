@@ -74,13 +74,17 @@ function updateClock(){ document.getElementById('currentTime').textContent = new
 // ═══ AUTH ════════════════════════════════════════════════════════
 // ══════════════════════════════════════════════════════════════
 async function verifyAdmin(uid, email){
+  // Admin rights live in ex_profiles.is_admin — the same column the panel's
+  // "کردن بە ئادمین" button writes and the database's is_ex_admin() RLS
+  // helper reads. (The old security_admins table does not exist.)
   try{
-    const [{data:role,error:roleError},{data:prof}] = await Promise.all([
-      sb.from('security_admins').select('user_id').eq('user_id',uid).maybeSingle(),
-      sb.from('ex_profiles').select('full_name,email').eq('id',uid).maybeSingle()
-    ]);
-    if(roleError || !role) return false;
-    adminName = prof?.full_name || email.split('@')[0];
+    const {data:prof, error} = await sb
+      .from('ex_profiles')
+      .select('full_name,email,is_admin,is_banned')
+      .eq('id', uid)
+      .maybeSingle();
+    if(error || !prof || !prof.is_admin || prof.is_banned) return false;
+    adminName = prof.full_name || email.split('@')[0];
     return true;
   }catch(e){ return false; }
 }
