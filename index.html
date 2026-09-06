@@ -88,42 +88,6 @@
 
 <link rel="stylesheet" href="assets/css/app.css">
 <link rel="stylesheet" href="assets/css/tokens.css">
-
-<!-- Appbar alignment. Inline and after the stylesheets so it wins over
-     app.css without needing that file to change. -->
-<style>
-  .site-header-inner{display:flex;align-items:center;gap:10px;}
-
-  .hdr-logo{display:flex;align-items:center;gap:10px;min-width:0;
-            text-decoration:none;cursor:pointer;}
-
-  /* The logo is already blue, so the mark sits on nothing — a filled
-     tile behind it would swallow it. */
-  .hdr-mark{width:38px;height:38px;flex:0 0 38px;border-radius:11px;
-            display:flex;align-items:center;justify-content:center;
-            padding:0!important;overflow:hidden;
-            background:none!important;border:0!important;box-shadow:none!important;}
-  .hdr-mark img{width:100%;height:100%;object-fit:contain;display:block;}
-
-  .hdr-word{display:flex;flex-direction:column;justify-content:center;
-            line-height:1.15;min-width:0;}
-  .hdr-word b{font-size:15px;font-weight:800;letter-spacing:-.2px;white-space:nowrap;}
-  .hdr-word span{font-size:9.5px;font-weight:700;letter-spacing:2px;opacity:.55;}
-
-  .hdr-actions{display:flex;align-items:center;gap:8px;}
-
-  /* Every action the same square, icon centred inside it. */
-  .icon-btn{width:38px;height:38px;flex:0 0 38px;padding:0!important;
-            display:inline-flex;align-items:center;justify-content:center;}
-  .icon-btn .icn,.icon-btn svg{width:19px;height:19px;}
-  .icon-btn .notif-badge{width:auto;height:auto;}
-
-  @media (max-width:420px){
-    .hdr-word b{font-size:14px;}
-    .hdr-mark{width:34px;height:34px;flex:0 0 34px;}
-    .icon-btn{width:34px;height:34px;flex:0 0 34px;}
-  }
-</style>
 </head>
 
 <body>
