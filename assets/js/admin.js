@@ -872,12 +872,14 @@ function showOrderDetail(id){
     <div class="detail-row"><span class="lbl">ئایدی مامەڵە</span><span class="val">${orderCodeChip(order)}</span></div>
     <div class="detail-row"><span class="lbl">بەکارهێنەر</span><span class="val">${esc(order.profile?.full_name||'—')}</span></div>
     <div class="detail-row"><span class="lbl">ئیمەیل</span><span class="val">${esc(order.profile?.email||'—')}</span></div>
-    <div class="detail-row"><span class="lbl">ناوی هەژماری نێرەر</span><span class="val">${esc(order.sender_name||order.profile?.full_name||'—')}</span></div>
+    ${['Korek','Asiacell'].includes(order.from_method)
+      ? `<div class="detail-row"><span class="lbl">ژمارەی نێرەر</span><span class="val">${esc(order.sender_phone||'—')}</span></div>`
+      : `<div class="detail-row"><span class="lbl">ناوی هەژماری نێرەر</span><span class="val">${esc(order.sender_name||order.profile?.full_name||'—')}</span></div>`}
     <div class="detail-row"><span class="lbl">لە</span><span class="val">${methodPill(order.from_method)}</span></div>
     <div class="detail-row"><span class="lbl">بۆ</span><span class="val">${methodPill(order.to_method)}</span></div>
     <div class="detail-row"><span class="lbl">بڕی نێردراو</span><span class="val">${displayAmt}</span></div>
     <div class="detail-row"><span class="lbl">بڕی وەرگیراو</span><span class="val" style="color:var(--gr)">${formatNum(order.total)} IQD</span></div>
-    <div class="detail-row"><span class="lbl">ژمارەی مۆبایل</span><span class="val">${esc(order.phone||'—')}</span></div>
+    <div class="detail-row"><span class="lbl">ژمارەی وەرگر</span><span class="val">${esc(order.phone||'—')}</span></div>
     ${order.extra_info?`<div class="detail-row"><span class="lbl">زانیاری زیاتر</span><span class="val">${esc(order.extra_info)}</span></div>`:''}
     <div class="detail-row"><span class="lbl">باری</span><span class="val"><span class="badge ${statusBadgeClass(order.status)}">${esc(order.status)}</span></span></div>
     <div class="detail-row"><span class="lbl">بەروار</span><span class="val">${new Date(order.created_at).toLocaleString('ku')}</span></div>

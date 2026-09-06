@@ -251,7 +251,7 @@ function clearFieldError(inputId){
   if(inp) inp.classList.remove('has-error');
   if(err){ err.classList.remove('show'); }
 }
-function clearAllOrderFieldErrors(){ ['amt','userSenderName','userPhone','fileInput'].forEach(clearFieldError); }
+function clearAllOrderFieldErrors(){ ['amt','userSenderName','userSenderPhone','userPhone','fileInput'].forEach(clearFieldError); }
 
 function onFileSelected(input){
   clearFieldError('fileInput');
@@ -973,6 +973,9 @@ function kuErr(msg){
     'Network request failed':'کێشەی تۆڕ، دووبارە هەوڵ بدەرەوە',
     'Email rate limit exceeded':'زۆر جار ئیمەیل نێردرا، کەمێک چاوەڕوان بە',
     'Auth session missing':'تکایە دووبارە بچۆ ژوورەوە',
+    'PROFILE_UPDATE_COOLDOWN':'ناو و ژمارەی مۆبایل تا تەواوبوونی ٧ ڕۆژەکە قوفڵن',
+    'SENDER_PHONE_REQUIRED':'ژمارەی نێرەر بۆ Korek و Asiacell پێویستە',
+    'SENDER_PHONE_INVALID':'ژمارەی نێرەر دەبێت بە 07 دەست پێبکات و ١١ ژمارە بێت',
   };
   return m[msg]||msg;
 }
@@ -1104,6 +1107,8 @@ async function loadRates(){
 }
 // Smallest amount any exchange is accepted for, in IQD.
 const MIN_AMOUNT = 10000;
+const CARRIER_SENDER_METHODS = new Set(['Korek','Asiacell']);
+function needsSenderPhone(method){ return CARRIER_SENDER_METHODS.has(method); }
 function routeAllowed(from,to){
   if(!from || !to || from===to) return false;
   if(!RATES_STRICT) return true;
@@ -1157,8 +1162,27 @@ function updateWallet(){
     numEl.classList.remove('locked-text');
     if(copyBtn) copyBtn.style.display = '';
   }
+  updateSenderIdentityFields();
   refreshTrigger('from');
   calc();
+}
+
+function updateSenderIdentityFields(){
+  const from=document.getElementById('from')?.value||'';
+  const carrier=needsSenderPhone(from);
+  const nameField=document.getElementById('senderNameField');
+  const phoneField=document.getElementById('senderPhoneField');
+  const senderName=document.getElementById('userSenderName');
+  const senderPhone=document.getElementById('userSenderPhone');
+
+  if(nameField) nameField.style.display=carrier?'none':'';
+  if(phoneField) phoneField.style.display=carrier?'':'none';
+  if(senderName) senderName.disabled=carrier;
+  if(senderPhone){
+    senderPhone.disabled=!carrier;
+    if(!carrier) senderPhone.value='';
+  }
+  clearFieldError(carrier?'userSenderName':'userSenderPhone');
 }
 function updatePlaceholder(){
   refreshTrigger('receiveVia');
@@ -1275,13 +1299,18 @@ function calc(){
 function _validateOrderFields(){
   clearAllOrderFieldErrors();
   const senderName=document.getElementById('userSenderName')?.value||'';
+  const senderPhone=document.getElementById('userSenderPhone')?.value||'';
   const profileName=(curProfile&&curProfile.full_name)||'';
   const phone=document.getElementById('userPhone').value;
   const file=document.getElementById('fileInput').files[0];
   const amtValue=getAmtRaw();
   const from=document.getElementById('from').value, to=document.getElementById('receiveVia').value;
+  const carrierSender=needsSenderPhone(from);
   let ok=true;
-  if(!profileName || normalizePersonName(senderName)!==normalizePersonName(profileName)){
+  if(carrierSender && !/^07\d{9}$/.test(senderPhone)){
+    setFieldError('userSenderPhone','ژمارەی نێرەر دەبێت بە 07 دەست پێبکات و ١١ ژمارە بێت');
+    ok=false;
+  }else if(!carrierSender && (!profileName || normalizePersonName(senderName)!==normalizePersonName(profileName))){
     setFieldError('userSenderName','ناوی خاوەنی هەژماری نێرەر دەبێت لەگەڵ ناوی پڕۆفایلی Proxo یەکسان بێت');
     ok=false;
   }
@@ -1304,9 +1333,13 @@ function _validateOrderFields(){
 function openOrderConfirm(){
   if(!_validateOrderFields()) return;
   const senderName=document.getElementById('userSenderName').value;
+  const senderPhone=document.getElementById('userSenderPhone').value;
   const phone=document.getElementById('userPhone').value;
   const amtValue=getAmtRaw();
   const from=document.getElementById('from').value, to=document.getElementById('receiveVia').value;
+  const senderIdentityRow=needsSenderPhone(from)
+    ? '<div class="confirm-row"><span class="confirm-row-label">ژمارەی نێرەر</span><span class="confirm-row-value" dir="ltr">'+escHtml(senderPhone)+'</span></div>'
+    : '<div class="confirm-row"><span class="confirm-row-label">ناوی نێرەر</span><span class="confirm-row-value">'+escHtml(senderName)+'</span></div>';
   const totalTxt=document.getElementById('totalDisplay').innerText;
   const displayAmt=(from==='USDT')?`${formatNum(amtValue)}$`:`${formatNum(amtValue)} IQD`;
   document.getElementById('confirmSummary').innerHTML =
@@ -1314,8 +1347,8 @@ function openOrderConfirm(){
     + '<div class="confirm-row"><span class="confirm-row-label">'+methodIconHTML(to,'sz-sm')+' بۆ</span><span class="confirm-row-value">'+METHOD_META[to].label+'</span></div>'
     + '<div class="confirm-row"><span class="confirm-row-label">بڕی پارە</span><span class="confirm-row-value" dir="ltr">'+displayAmt+'</span></div>'
     + '<div class="confirm-row"><span class="confirm-row-label">بڕی وەرگیراو</span><span class="confirm-row-value accent" dir="ltr">'+totalTxt+'</span></div>'
-    + '<div class="confirm-row"><span class="confirm-row-label">ناوی نێرەر</span><span class="confirm-row-value">'+escHtml(senderName)+'</span></div>'
-    + '<div class="confirm-row"><span class="confirm-row-label">ژمارەی مۆبایل</span><span class="confirm-row-value" dir="ltr">'+phone+'</span></div>';
+    + senderIdentityRow
+    + '<div class="confirm-row"><span class="confirm-row-label">ژمارەی وەرگر</span><span class="confirm-row-value" dir="ltr">'+phone+'</span></div>';
   const overlay=document.getElementById('confirmSheet');
   openSheet(overlay);
 }
@@ -1338,6 +1371,7 @@ async function processOrder(){
     return;
   }
   const senderName=document.getElementById('userSenderName').value;
+  const senderPhone=document.getElementById('userSenderPhone').value;
   const phone=document.getElementById('userPhone').value;
   const file=document.getElementById('fileInput').files[0];
   const amtValue=getAmtRaw();
@@ -1364,7 +1398,12 @@ async function processOrder(){
       method:'POST',
       headers:{'Content-Type':'application/json','Authorization':'Bearer '+_orderSession.access_token},
       body:JSON.stringify({
-        from_method:from,to_method:to,amount:parseFloat(amtValue),phone,sender_name:senderName,
+        from_method:from,to_method:to,amount:parseFloat(amtValue),phone,
+        sender_name:needsSenderPhone(from)?null:senderName,
+        sender_phone:needsSenderPhone(from)?senderPhone:null,
+        // The current /api/orders whitelist already forwards extra_info. Keep
+        // this transport fallback until that endpoint accepts sender_phone.
+        extra_info:needsSenderPhone(from)?('sender_phone:'+senderPhone):null,
         receipt_url:receiptUrl,receipt_hash:receiptHash,contact_reference:''
       })
     });
@@ -1397,6 +1436,7 @@ async function processOrder(){
     document.getElementById('fileInput').value='';
     onFileSelected(document.getElementById('fileInput'));
     document.getElementById('userPhone').value='';
+    document.getElementById('userSenderPhone').value='';
     document.getElementById('amt').value='';
     clearAllOrderFieldErrors();
     calc();
@@ -1951,7 +1991,10 @@ async function saveProfile(){
       .update({ full_name:name, phone: phone || null })
       .eq('id', curUser.id).select().single();
     if(error) throw error;
-    curProfile=data;
+    curProfile=Object.assign({},curProfile||{},data||{});
+    // Lock immediately even if an API/schema cache returns the row without the
+    // newly added timestamp column. The database remains the source of truth.
+    if(!curProfile.identity_updated_at) curProfile.identity_updated_at=new Date().toISOString();
     applyProfileToUI();
     updateProfileCooldownUI();
     showToast('زانیارییەکانت نوێکرانەوە؛ دوای ٧ ڕۆژ دەتوانیت دووبارە بیانگۆڕیت','success');
@@ -1960,7 +2003,16 @@ async function saveProfile(){
   }catch(e){
     const msg=(e&&e.message)||'';
     if(msg.includes('PROFILE_UPDATE_COOLDOWN')){
-      showToast('هێشتا ٧ ڕۆژەکە تەواو نەبووە؛ دوای کاتی دیاریکراو دووبارە هەوڵ بدەرەوە','error');
+      // A long-lived tab may still hold the profile from before the last save.
+      // Refresh it so both inputs become locked immediately and stay locked.
+      try{
+        const {data:fresh}=await sb.from('ex_profiles').select('*').eq('id',curUser.id).maybeSingle();
+        if(fresh){ curProfile=fresh; fillProfileForm(); }
+      }catch(_){}
+      const availableAt=profileChangeAvailableAt();
+      showToast(availableAt
+        ? 'ناو و ژمارەکەت قوفڵن؛ لە '+new Date(availableAt).toLocaleString('ku-IQ')+' دووبارە دەکرێنەوە'
+        : 'ناو و ژمارەی مۆبایل تا تەواوبوونی ٧ ڕۆژەکە قوفڵن','error');
     }else if(msg.includes('PROFILE_NAME_INVALID')){
       showToast('ناو دەبێت لانیکەم ٣ پیت بێت','error');
     }else if(msg.includes('PROFILE_PHONE_INVALID')){
