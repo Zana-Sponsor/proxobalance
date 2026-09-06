@@ -4,6 +4,7 @@ import {
 } from './_lib/security.js';
 
 const METHODS = new Set(['FastPay', 'FIB', 'QiCard', 'Asiacell', 'Korek', 'USDT']);
+const CARRIER_SENDER_METHODS = new Set(['Asiacell', 'Korek']);
 const MIN_AMOUNT = 10000;
 
 function oneLine(value, max = 200) {
@@ -75,6 +76,8 @@ export default withSecurity(async (req, res, { context, user }) => {
   const toMethod = oneLine(body.to_method, 30);
   const amount = Number(body.amount);
   const phone = oneLine(body.phone, 32).replace(/\s+/g, '');
+  const carrierSender = CARRIER_SENDER_METHODS.has(fromMethod);
+  const senderPhone = oneLine(body.sender_phone, 32).replace(/[^0-9]/g, '');
   const receiptUrl = cleanReceiptUrl(body.receipt_url);
   const receiptHash = /^[a-f0-9]{64}$/i.test(body.receipt_hash || '') ? String(body.receipt_hash).toLowerCase() : null;
   const transactionReference = oneLine(body.transaction_reference, 120) || null;
@@ -88,6 +91,9 @@ export default withSecurity(async (req, res, { context, user }) => {
   if (toMethod === 'QiCard' ? phone.length < 6 : !/^07\d{9}$/.test(phone)) {
     return json(res, 422, { error: 'Invalid recipient number' });
   }
+  if (carrierSender && !/^07\d{9}$/.test(senderPhone)) {
+    return json(res, 422, { error: 'Invalid sender number' });
+  }
   if (!receiptUrl || !receiptHash) return json(res, 422, { error: 'Receipt is required' });
 
   const profileRows = await serviceFetch(`/rest/v1/ex_profiles?id=eq.${encodeURIComponent(user.id)}&select=id,full_name,email,is_banned&limit=1`);
@@ -96,6 +102,9 @@ export default withSecurity(async (req, res, { context, user }) => {
   const username = oneLine(profile?.full_name || user.user_metadata?.full_name || '', 200);
   const email = oneLine(profile?.email || user.email || '', 320);
   const maskedPhone = phone.length > 4 ? `${phone.slice(0, 3)}••••${phone.slice(-3)}` : '••••';
+  const maskedSenderPhone = carrierSender
+    ? `${senderPhone.slice(0, 3)}••••${senderPhone.slice(-3)}`
+    : null;
 
   const velocity = await rpc('security_record_order_attempt', {
     p_ip: context.ip,
@@ -113,6 +122,7 @@ export default withSecurity(async (req, res, { context, user }) => {
       to_method: toMethod,
       amount,
       phone_masked: maskedPhone,
+      sender_phone_masked: maskedSenderPhone,
       receipt_hash_prefix: receiptHash.slice(0, 12)
     },
     p_threshold: 3,
@@ -150,6 +160,7 @@ export default withSecurity(async (req, res, { context, user }) => {
     amount,
     total,
     phone,
+    sender_phone: carrierSender ? senderPhone : null,
     extra_info: null,
     receipt_url: receiptUrl,
     receipt_hash: receiptHash,
