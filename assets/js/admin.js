@@ -457,7 +457,10 @@ const EVT_LABEL = {
   account_scanning:'پشکنینی هەژمار', blocked_request:'داواکاری بلۆککراو',
   honeypot:'داوی Honeypot', receipt_probe:'پسووڵەی دووبارە', number_spray:'پەخشکردنی ژمارە',
   rapid_submit:'ناردنی خێرا', otp_bruteforce:'هەوڵی OTP', devtools_tamper:'دەستکاری کلاینت',
-  order_submitted:'ناردنی داواکاری', login_failed:'چوونەژوورەوەی هەڵە', page_view:'سەردان'
+  order_submitted:'ناردنی داواکاری', login_failed:'چوونەژوورەوەی هەڵە', page_view:'سەردان',
+  login:'چوونەژوورەوە', signup:'خۆتۆمارکردن', logout:'دەرچوون',
+  otp_failed:'کۆدی OTPـی هەڵە', api_access:'داواکاری API',
+  unauthorized_request:'داواکاری بێ مۆڵەت', order_flood:'زۆری داواکاری لە کاتێکی کورتدا'
 };
 const evtLabel = t => EVT_LABEL[t] || t;
 
