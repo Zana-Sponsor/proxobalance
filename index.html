@@ -707,7 +707,9 @@
       <div class="proof-sub">داواکاری پەسەندکراو و گەیشتوو بە دەستی خاوەنەکەی</div>
       <div class="proof-mini">
         <div><b id="proof24h">—</b><span>لە ٢٤ کاتژمێری ڕابردوو</span></div>
-        <div><b id="proofUsers">—</b><span>بەکارهێنەری چالاک</span></div>
+        <!-- The number of accounts is deliberately not shown. The node stays in
+             the DOM (hidden) so app.js can still write to it without throwing. -->
+        <div hidden style="display:none"><b id="proofUsers">—</b><span>بەکارهێنەری چالاک</span></div>
       </div>
     </div>
 
@@ -991,5 +993,6 @@
 </div>
 
 <script src="assets/js/app.js"></script>
+<script src="assets/js/track.js"></script>
 </body>
 </html>
