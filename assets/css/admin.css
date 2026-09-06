@@ -11,9 +11,7 @@
   --sidebar-w:260px;
 }
 /* body must stay a plain block: as a flex container it trapped #main in a
-   flex line and broke page scrolling on mobile. overflow-x:hidden here
-   propagates to the viewport, so horizontal clipping still works. */
-html{overflow-x:hidden;}
+   flex line. See the SCROLL GUARD block at the end of this file. */
 body{font-family:'R',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;display:block;overflow-x:hidden;max-width:100vw;}
 
 /* ══ AUTH ══ */
@@ -413,3 +411,15 @@ tr:hover td{background:rgba(28,35,51,.015);}
 .ai-stat.gr b{color:var(--gr);} .ai-stat.yw b{color:var(--yw);} .ai-stat.rd b{color:var(--rd);}
 .ai-when{font-size:11px;color:var(--mt);line-height:1.6;}
 .ai-when b{display:block;font-size:12.5px;font-weight:700;color:var(--dark);}
+
+/* ══════════════════════════════════════════════════════════════
+   SCROLL GUARD — last block on purpose.
+   The page (the viewport) must be the ONE vertical scroller. Any
+   nested element with a vertical overflow or a locked height steals
+   the touch gesture on mobile. !important so it also wins over
+   tokens.css, which is linked after this file.
+   .tbl-scroll is deliberately untouched: it scrolls horizontally only.
+   ══════════════════════════════════════════════════════════════ */
+html{overflow-x:hidden !important;overflow-y:auto !important;height:auto !important;max-height:none !important;}
+body{overflow:visible !important;height:auto !important;max-height:none !important;position:static !important;}
+#main,.content,.pg{overflow:visible !important;height:auto !important;max-height:none !important;}
