@@ -40,7 +40,11 @@ export function realClientIp(req) {
     const ip = forwardedCandidate(header(req, 'x-forwarded-for'), trustedHops);
     if (ip) return ip;
   }
-  return normalizeIp(req.socket?.remoteAddress) || normalizeIp(req.connection?.remoteAddress);
+  // Vercel always sets x-forwarded-for; fall back to it so an IP is never lost.
+  return normalizeIp(req.socket?.remoteAddress)
+      || normalizeIp(req.connection?.remoteAddress)
+      || forwardedCandidate(header(req, 'x-forwarded-for'))
+      || null;
 }
 
 function browserInfo(ua) {
@@ -82,6 +86,7 @@ export function requestContext(req) {
     userAgent,
     fingerprint,
     path: String(req.url || '/').slice(0, 500),
+    method: String(req.method || 'GET'),
     ...browserInfo(userAgent)
   };
 }
@@ -132,10 +137,90 @@ export async function bearerUser(req) {
   }
 }
 
+// Admin rights live in ex_profiles.is_admin — the same source the panel and the
+// database's own is_ex_admin() use. A banned account is never an admin.
 export async function isSecurityAdmin(userId) {
   if (!userId) return false;
-  const rows = await serviceFetch(`/rest/v1/security_admins?user_id=eq.${encodeURIComponent(userId)}&select=user_id&limit=1`);
-  return Array.isArray(rows) && rows.length === 1;
+  try {
+    const rows = await serviceFetch(
+      `/rest/v1/ex_profiles?id=eq.${encodeURIComponent(userId)}&select=is_admin,is_banned&limit=1`
+    );
+    const row = Array.isArray(rows) ? rows[0] : null;
+    return !!row && row.is_admin === true && row.is_banned !== true;
+  } catch {
+    return false;
+  }
+}
+
+// ── BAN GATE ────────────────────────────────────────────────────────────────
+// ex_ip_check() matches an exact IP or any CIDR range, bumps the ban's hit
+// counter, and returns a single row. RETURNS TABLE arrives as an array.
+export async function ipGate(context) {
+  const rows = await rpc('ex_ip_check', { p_ip: context.ip });
+  const row = Array.isArray(rows) ? rows[0] : rows;
+  return {
+    banned: row?.banned === true,
+    banId: row?.ban_id || null,
+    reason: row?.reason || null,
+    expiresAt: row?.expires_at || null
+  };
+}
+
+// ── EVENT LOG ───────────────────────────────────────────────────────────────
+// ex_record_event() writes to suspicious_events and auto-bans an IP once its
+// risk in the window crosses the threshold.
+//
+// risk MUST stay 0 for routine traffic. The database default is 10 and the
+// auto-ban threshold is 100 per hour, so logging ordinary requests at the
+// default would ban a normal user after ten page loads.
+export async function recordEvent(context, options = {}) {
+  const {
+    type,
+    detail = null,
+    risk = 0,
+    userId = null,
+    meta = null,
+    method = null,
+    windowMins = 60,
+    threshold = 100
+  } = options;
+  if (!type) return null;
+  try {
+    return await rpc('ex_record_event', {
+      p_ip: context.ip,
+      p_user_id: userId,
+      p_user_agent: context.userAgent,
+      p_browser: context.browser,
+      p_os: context.os,
+      p_device: context.device,
+      p_event_type: type,
+      p_detail: detail,
+      p_risk: Math.max(0, Number(risk) || 0),
+      p_path: context.path,
+      p_method: method || context.method || null,
+      p_meta: { ...(meta || {}), fp: context.fingerprint || null },
+      p_window_mins: windowMins,
+      p_threshold: threshold
+    });
+  } catch {
+    // Telemetry must never take a request down with it.
+    return null;
+  }
+}
+
+// Per-instance throttle so routine traffic does not flood suspicious_events.
+// Risky events (risk > 0) are never throttled.
+const RECENT = new Map();
+const THROTTLE_MS = 5 * 60 * 1000;
+function throttled(key) {
+  const now = Date.now();
+  if (RECENT.size > 500) {
+    for (const [k, t] of RECENT) if (now - t > THROTTLE_MS) RECENT.delete(k);
+  }
+  const last = RECENT.get(key);
+  if (last && now - last < THROTTLE_MS) return true;
+  RECENT.set(key, now);
+  return false;
 }
 
 export async function readJson(req, maxBytes = 64 * 1024) {
@@ -173,14 +258,13 @@ export function stealth404(res) {
 export async function stealthBanMiddleware(req, res, next) {
   try {
     const context = requestContext(req);
-    const gate = await rpc('security_check_request', {
-      p_ip: context.ip,
-      p_user_id: null,
-      p_user_agent: context.userAgent,
-      p_fingerprint_hash: context.fingerprint,
-      p_path: context.path
-    });
-    if (gate?.banned) return stealth404(res);
+    const gate = await ipGate(context);
+    if (gate.banned) {
+      if (!throttled(`blocked|${context.ip || '-'}`)) {
+        await recordEvent(context, { type: 'blocked_request', detail: gate.reason, risk: 0 });
+      }
+      return stealth404(res);
+    }
     req.securityContext = context;
     return next();
   } catch (error) {
@@ -188,7 +272,26 @@ export async function stealthBanMiddleware(req, res, next) {
   }
 }
 
-export function withSecurity(handler, { auth = 'optional', methods = ['GET', 'POST'] } = {}) {
+/**
+ * Wraps an API route with: ban gate → auth → activity logging.
+ *
+ * The user is resolved BEFORE the event is written, so every recorded IP is
+ * tied to the account that was signed in — that is what feeds the admin
+ * panel's "IP و ئامێر" column and the per-account IP history.
+ *
+ * options:
+ *   auth     'none' | 'optional' | 'required' | 'admin'
+ *   methods  allowed HTTP methods
+ *   event    event_type to log for this route (default 'api_access')
+ *   risk     risk score for this route; keep 0 unless the route is sensitive
+ */
+export function withSecurity(handler, {
+  auth = 'optional',
+  methods = ['GET', 'POST'],
+  event = null,
+  risk = 0,
+  autoLog = true
+} = {}) {
   return async function secured(req, res) {
     try {
       if (!methods.includes(req.method)) {
@@ -197,20 +300,48 @@ export function withSecurity(handler, { auth = 'optional', methods = ['GET', 'PO
       }
 
       const context = requestContext(req);
-      const gate = await rpc('security_check_request', {
-        p_ip: context.ip,
-        p_user_id: null,
-        p_user_agent: context.userAgent,
-        p_fingerprint_hash: context.fingerprint,
-        p_path: context.path
-      });
-      if (gate?.banned) return stealth404(res);
+
+      const gate = await ipGate(context);
+      if (gate.banned) {
+        if (!throttled(`blocked|${context.ip || '-'}`)) {
+          await recordEvent(context, { type: 'blocked_request', detail: gate.reason, risk: 0 });
+        }
+        return stealth404(res);
+      }
 
       const user = auth === 'none' ? null : await bearerUser(req);
-      if ((auth === 'required' || auth === 'admin') && !user) return json(res, 401, { error: 'Unauthorized' });
-      if (auth === 'admin' && !(await isSecurityAdmin(user.id))) return json(res, 404, { error: 'Not Found' });
+      if ((auth === 'required' || auth === 'admin') && !user) {
+        await recordEvent(context, { type: 'unauthorized_request', detail: context.path, risk: 5 });
+        return json(res, 401, { error: 'Unauthorized' });
+      }
+      if (auth === 'admin' && !(await isSecurityAdmin(user.id))) {
+        // A non-admin probing an admin route is worth flagging, and gets the
+        // same blank 404 a banned visitor sees.
+        await recordEvent(context, {
+          type: 'account_scanning',
+          detail: `هەوڵی دەستگەیشتن بە ڕێڕەوی ئادمین: ${context.path}`,
+          risk: 30,
+          userId: user.id
+        });
+        return stealth404(res);
+      }
 
-      return await handler(req, res, { context, user });
+      const type = event || 'api_access';
+      const key = `${context.ip || '-'}|${user?.id || '-'}|${type}`;
+      if (autoLog && (risk > 0 || !throttled(key))) {
+        await recordEvent(context, {
+          type,
+          detail: context.path,
+          risk,
+          userId: user?.id || null
+        });
+      }
+
+      // Handlers can log their own findings:
+      //   await log({ type:'receipt_probe', detail:'...', risk:40 })
+      const log = (options) => recordEvent(context, { userId: user?.id || null, ...options });
+
+      return await handler(req, res, { context, user, log, recordEvent: log });
     } catch (error) {
       const status = Number(error.status) || 500;
       if (status === 403) return stealth404(res);
