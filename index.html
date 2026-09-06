@@ -549,7 +549,7 @@
           </button>
         </div>
 
-        <div class="field" style="margin-top:10px">
+        <div class="field" id="senderNameField" style="margin-top:10px">
           <label class="field-label" for="userSenderName">ناوی خاوەنی هەژماری نێرەر</label>
           <div class="xc-input-wrap">
             <span class="xc-in-ico" aria-hidden="true">
@@ -562,6 +562,23 @@
             <span>ناوی خاوەنی هەژماری نێرەر دەبێت هەمان ناوی پڕۆفایلی Proxo بێت.</span>
           </div>
           <span class="field-error" id="userSenderNameError"></span>
+        </div>
+
+        <div class="field" id="senderPhoneField" style="margin-top:10px;display:none">
+          <label class="field-label" for="userSenderPhone">ژمارەی نێرەر</label>
+          <div class="xc-input-wrap">
+            <span class="xc-in-ico" aria-hidden="true">
+              <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6.5" y="2.5" width="11" height="19" rx="2.6"/><path d="M10.8 18.6h2.4"/></svg>
+            </span>
+            <input type="tel" id="userSenderPhone" class="input" placeholder="07xxxxxxxxx" dir="ltr" maxlength="11" inputmode="numeric"
+                   aria-describedby="senderPhoneHint"
+                   oninput="this.value=this.value.replace(/[^0-9]/g,''); clearFieldError('userSenderPhone');">
+          </div>
+          <div class="xc-hint" id="senderPhoneHint">
+            <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.8h.01"/></svg>
+            <span>تەنها بۆ ناردن لە Korek یان Asiacell؛ ژمارەکە دەبێت بە <b>07</b> دەست پێبکات و <b>11</b> ژمارە بێت.</span>
+          </div>
+          <span class="field-error" id="userSenderPhoneError"></span>
         </div>
 
         <div class="field" style="margin-top:10px">
@@ -897,7 +914,7 @@
     </div>
     <div class="rule-item">
       <span class="rule-num" aria-label="یاسای نۆ"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8.2" r="3.3"/><path d="M5 20c.8-4 3.4-6 7-6s6.2 2 7 6"/><path d="m16 8 1.5 1.5L21 6"/></svg></span>
-      <div class="rule-txt"><h4>یەکسانبوونی ناوی نێرەر</h4><p>ناوی پڕۆفایلی Proxo و ناوی خاوەنی ئەو هەژمارەی پارەکەی لێ دەنێریت دەبێت هەمان ناو بن؛ وەک FastPay، FIB یان Qi Card. ناو و ژمارەی مۆبایلی پڕۆفایل تەنها <b>هەر ٧ ڕۆژ جارێک</b> دەتوانرێت نوێ بکرێتەوە.</p></div>
+      <div class="rule-txt"><h4>ناسنامەی نێرەر و قوفڵی پڕۆفایل</h4><p>بۆ FastPay، FIB، Qi Card و USDT ناوی پڕۆفایلی Proxo و ناوی خاوەنی هەژماری نێرەر دەبێت هەمان ناو بن. بۆ Korek و Asiacell ناوی نێرەر داوا ناکرێت و تەنها ژمارەی نێرەر پێویستە. دوای گۆڕینی ناو یان ژمارەی مۆبایلی پڕۆفایل، هەردوو خانەکە یەکسەر بۆ <b>٧ ڕۆژ</b> قوفڵ دەبن.</p></div>
     </div>
 
     <div class="rule-note">
@@ -1020,7 +1037,7 @@
 
 </div>
 
-<script src="assets/js/app.js"></script>
+<script src="assets/js/app.js?v=7"></script>
 <script src="assets/js/track.js"></script>
 </body>
 </html>
