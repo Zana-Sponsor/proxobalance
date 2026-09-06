@@ -446,3 +446,27 @@ body{height:100% !important;min-height:0 !important;max-height:100% !important;
 .pg{overflow:visible !important;height:auto !important;max-height:none !important;}
 
 #sidebar{height:100vh;height:100dvh;}
+
+/* ── Cards swallowing the scroll ──────────────────────────────
+   The mobile .rec-card list is injected INSIDE .tbl-scroll
+   (#accountsTableWrap, #ordersTableWrap, #dashOrdersWrap).
+
+   .tbl-scroll sets overflow-x:auto. Because the other axis is
+   visible, the browser computes overflow-y to auto too — so
+   .tbl-scroll is silently a VERTICAL scroll container as well.
+   It has nothing to scroll vertically, and tokens.css puts
+   overscroll-behavior:contain on it, which stops the unused
+   gesture from chaining to .content. The drag dies on the card.
+
+   Horizontal containment is kept, so swiping a wide table
+   sideways still won't trigger browser back-navigation.
+   ────────────────────────────────────────────────────────────── */
+.tbl-scroll{
+  overscroll-behavior-x:contain !important;
+  overscroll-behavior-y:auto !important;
+  touch-action:pan-x pan-y !important;
+}
+.tbl-wrap,.rec-cards,.rec-card,.wallets-grid,.stats-row,#alertZone,#alertList{
+  overscroll-behavior:auto !important;
+  touch-action:pan-x pan-y !important;
+}
