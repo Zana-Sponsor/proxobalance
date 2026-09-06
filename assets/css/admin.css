@@ -413,17 +413,36 @@ tr:hover td{background:rgba(28,35,51,.015);}
 .ai-when b{display:block;font-size:12.5px;font-weight:700;color:var(--dark);}
 
 /* ══════════════════════════════════════════════════════════════
-   SCROLL GUARD — last block on purpose.
-   The page (the viewport) must be the ONE vertical scroller. Any
-   nested element with a vertical overflow or a locked height steals
-   the touch gesture on mobile. !important so it also wins over
-   tokens.css, which is linked after this file.
-   .tbl-scroll is deliberately untouched: it scrolls horizontally only.
+   SCROLL — app-shell layout. Last block on purpose.
+
+   Earlier attempts tried to make the PAGE scroll, which depends on
+   how overflow propagates from body to the viewport and on flex
+   height resolution — too many ways to go wrong, and it kept
+   failing on mobile.
+
+   This does the opposite and is deterministic: the page itself does
+   not scroll at all, and .content is given a definite height and an
+   explicit scrollbar. A flex child with a definite height and
+   min-height:0 always overflows properly, so it always scrolls.
    ══════════════════════════════════════════════════════════════ */
-html{overflow-x:hidden !important;overflow-y:auto !important;height:auto !important;max-height:none !important;}
-body{overflow:visible !important;height:auto !important;max-height:none !important;position:static !important;}
-#main,.content,.pg{overflow:visible !important;height:auto !important;max-height:none !important;}
-/* tokens.css sets overscroll-behavior:contain on .content. On a scroll
-   container that cannot scroll, that swallows the touch gesture instead of
-   passing it to the page — this is what killed scrolling on mobile. */
-#main,.content,.pg{overscroll-behavior:auto !important;}
+html{height:100% !important;overflow:hidden !important;}
+body{height:100% !important;min-height:0 !important;max-height:100% !important;
+     overflow:hidden !important;display:block !important;position:static !important;}
+
+#main{display:none;flex-direction:column;max-width:100%;margin-right:0;
+      height:100vh;height:100dvh;min-height:0 !important;overflow:hidden !important;}
+#main.show{display:flex !important;}
+
+.topbar{flex:0 0 auto;position:static !important;}
+
+/* min-height:0 is the important part: a flex child defaults to
+   min-height:auto, which refuses to shrink below its content and
+   silently cancels the overflow. */
+.content{flex:1 1 auto !important;min-height:0 !important;height:auto !important;
+         max-height:none !important;
+         overflow-y:auto !important;overflow-x:hidden !important;
+         -webkit-overflow-scrolling:touch;overscroll-behavior:contain;}
+
+.pg{overflow:visible !important;height:auto !important;max-height:none !important;}
+
+#sidebar{height:100vh;height:100dvh;}
