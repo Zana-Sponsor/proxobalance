@@ -26,22 +26,69 @@ let orderFilter='all', accFilter='all';
 let _notifTarget='all', _notifSelectedUser=null;
 let _profMap={};
 
+// Routes every security call straight to the is_ex_admin()-guarded RPCs that
+// actually exist in the database (ex_admin_*), instead of the /api/security-admin
+// endpoint, which was written against an older schema (security_check_request,
+// security_alerts, security_admins — none of which exist here).
+// The response shape is kept identical so no call site had to change.
 async function securityRequest(view, options={}){
   const {data:{session}}=await sb.auth.getSession();
   if(!session) throw new Error('تکایە دووبارە بچۆ ژوورەوە');
-  const method=options.method||'GET';
-  const url=method==='GET'
-    ? '/api/security-admin?view='+encodeURIComponent(view)+(options.query||'')
-    : '/api/security-admin';
-  const response=await fetch(url,{
-    method,
-    headers:{'Content-Type':'application/json','Authorization':'Bearer '+session.access_token},
-    body:method==='GET'?undefined:JSON.stringify(options.body||{})
-  });
-  let payload={};
-  try{ payload=await response.json(); }catch(_){}
-  if(!response.ok) throw new Error(payload.error||'هەڵەی پەیوەندی بە سیستەمی ئاسایش');
-  return payload;
+
+  const q   = new URLSearchParams(options.query||'');
+  const num = (k,d)=>{ const v=parseInt(q.get(k),10); return Number.isFinite(v)?v:d; };
+  const call= async (fn,args)=>{
+    const {data,error}=await sb.rpc(fn,args);
+    if(error) throw new Error(error.message||'هەڵەی پەیوەندی بە سیستەمی ئاسایش');
+    return data;
+  };
+
+  if((options.method||'GET')==='GET'){
+    switch(view){
+      case 'dashboard': {
+        const limit=num('limit',200);
+        const [stats,bans,logs]=await Promise.all([
+          call('ex_admin_ip_stats',{}),
+          call('ex_admin_list_bans',{p_active_only:false,p_limit:limit}),
+          call('ex_admin_list_events',{p_limit:limit,p_ip:null,p_user_id:null,p_type:null})
+        ]);
+        return { stats:stats||{}, bans:bans||[], logs:logs||[] };
+      }
+      case 'alerts':
+        return { alerts: (await call('ex_admin_pending_alerts',{p_limit:num('limit',20)}))||[] };
+      case 'bans':
+        return { bans: (await call('ex_admin_list_bans',{p_active_only:false,p_limit:num('limit',200)}))||[] };
+      case 'account-ip-summary':
+        return { accounts: (await call('ex_admin_accounts_ip_summary',{}))||[] };
+      case 'user-ips':
+        return { ips: (await call('ex_admin_user_ips',{p_user_id:q.get('user_id'),p_limit:num('limit',50)}))||[] };
+      case 'ip-accounts':
+        return { accounts: (await call('ex_admin_ip_accounts',{p_ip:q.get('ip')}))||[] };
+      default:
+        throw new Error('داواکاری نەناسراو: '+view);
+    }
+  }
+
+  const b=options.body||{};
+  switch(b.action){
+    case 'ban':
+      return { id: await call('ex_admin_ban_ip',{
+        p_ip:b.ip, p_reason:b.reason||null,
+        p_hours:(b.hours===undefined?null:b.hours),
+        p_user_id:b.user_id||null, p_notes:b.notes||null }) };
+    case 'unban':
+      return { ok: await call('ex_admin_unban_ip',{p_id:b.id}) };
+    case 'extend':
+      return { ok: await call('ex_admin_extend_ban',{p_id:b.id,p_hours:(b.hours===undefined?null:b.hours)}) };
+    case 'resolve':
+      return { count: await call('ex_admin_resolve_alert',{
+        p_id:b.id, p_status:b.status||'dismissed', p_all_for_ip:!!b.all_for_ip }) };
+    case 'ban_from_alert':
+      return { id: await call('ex_admin_ban_from_alert',{
+        p_id:b.alert_id, p_hours:(b.hours===undefined?null:b.hours) }) };
+    default:
+      throw new Error('کرداری نەناسراو: '+(b.action||''));
+  }
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -167,7 +214,7 @@ function goPage(p){
 
 // ══════════════════════════════════════════════════════════════
 // ═══ SPAM & SUSPICIOUS ACTIVITY ALERTS ════════════════════════
-// Rows arrive two ways: a Realtime stream from security_alerts (protected
+// Rows arrive two ways: a Realtime stream from suspicious_events (protected
 // by the security-admin RLS policy) and a 30s API poll as a socket fallback.
 // All mutations stay on the server and use the service role there only.
 // ══════════════════════════════════════════════════════════════
@@ -313,7 +360,7 @@ function subscribeAlerts(){
   if(_alertChannel){ try{ sb.removeChannel(_alertChannel); }catch(_){} }
   _alertChannel = sb.channel('admin_alerts')
     .on('postgres_changes',
-        { event:'*', schema:'public', table:'security_alerts' },
+        { event:'*', schema:'public', table:'suspicious_events' },
         payload => {
           const row=payload.new||payload.old;
           if(!row) return;
@@ -416,6 +463,32 @@ const evtLabel = t => EVT_LABEL[t] || t;
 
 function riskClass(n){ return n>=60?'rd':(n>=25?'yw':'gr'); }
 function fmtWhen(t){ return t ? new Date(t).toLocaleString('ku-IQ') : '—'; }
+// Registration timestamps: fixed Gregorian format so it renders the same on
+// every device — some browsers have no data for the 'ku' locale and fall back
+// to something unreadable.
+function fmtDate(t){
+  if(!t) return '—';
+  const d=new Date(t); if(isNaN(d)) return '—';
+  const p=n=>String(n).padStart(2,'0');
+  return `${d.getFullYear()}/${p(d.getMonth()+1)}/${p(d.getDate())}`;
+}
+function fmtTime(t){
+  if(!t) return '';
+  const d=new Date(t); if(isNaN(d)) return '';
+  const p=n=>String(n).padStart(2,'0');
+  return `${p(d.getHours())}:${p(d.getMinutes())}`;
+}
+function fmtDateTime(t){ return t ? fmtDate(t)+' — '+fmtTime(t) : '—'; }
+function fmtAgo(t){
+  if(!t) return '';
+  const s=Math.floor((Date.now()-new Date(t))/1000);
+  if(s<0 || isNaN(s)) return '';
+  if(s<3600) return Math.max(1,Math.floor(s/60))+' خولەک لەمەوپێش';
+  const h=Math.floor(s/3600); if(h<24) return h+' کاتژمێر لەمەوپێش';
+  const d=Math.floor(h/24);   if(d<30) return d+' ڕۆژ لەمەوپێش';
+  const mo=Math.floor(d/30);  if(mo<12) return mo+' مانگ لەمەوپێش';
+  return Math.floor(mo/12)+' ساڵ لەمەوپێش';
+}
 function fmtLeft(exp){
   if(!exp) return 'هەمیشەیی';
   const ms=new Date(exp)-Date.now();
@@ -737,7 +810,7 @@ function renderOrdersTable(list){
       <td style="font-family:'Inter';font-weight:700">${formatNum(o.amount)}${o.from_method==='USDT'?'$':''}</td>
       <td style="font-family:'Inter';font-weight:800;color:var(--gr)">${formatNum(o.total)} IQD</td>
       <td><span class="badge ${statusBadgeClass(o.status)}">${esc(o.status)}</span></td>
-      <td style="font-size:11px;color:var(--mt)">${new Date(o.created_at).toLocaleDateString('ku')}</td>
+      <td style="font-size:11px;color:var(--mt)">${fmtDateTime(o.created_at)}</td>
       <td onclick="event.stopPropagation()"><div class="act-grp">
         <div class="act-btn dark" onclick='showOrderDetail(${safeAttr(o.id)})'><i class="fas fa-eye"></i></div>
         ${o.status===STATUS_PENDING?`<div class="act-btn gr" onclick="approveOrder('${o.id}')"><i class="fas fa-check"></i></div><div class="act-btn rd" onclick="showRejectReason('${o.id}')"><i class="fas fa-times"></i></div>`:''}
@@ -759,7 +832,7 @@ function renderOrdersCards(list){
       </div>
       <div class="rec-card-meta">
         <div class="rec-card-stat gr">${orderCodeChip(o)} • ${formatNum(o.total)} IQD</div>
-        <div class="rec-card-date">${new Date(o.created_at).toLocaleDateString('ku')}</div>
+        <div class="rec-card-date">${fmtDateTime(o.created_at)}</div>
       </div>
       ${o.status===STATUS_PENDING?`<div class="rec-card-actions" onclick="event.stopPropagation()">
         <div class="act-btn gr" onclick="approveOrder('${o.id}')"><i class="fas fa-check"></i> پەسەندکردن</div>
@@ -937,14 +1010,15 @@ function accBadges(a){
 }
 function renderAccTable(list){
   if(!list.length) return '<div class="empty"><i class="fas fa-user-slash"></i><p>هیچ هەژمارێک نییە</p></div>';
-  return `<table><thead><tr><th>بەکارهێنەر</th><th>مۆبایل</th><th>IP و ئامێر</th><th>باری</th><th>بەروار</th><th>کردار</th></tr></thead><tbody>
+  return `<table><thead><tr><th>بەکارهێنەر</th><th>مۆبایل</th><th>IP و ئامێر</th><th>باری</th><th>بەرواری تۆمارکردن</th><th>کردار</th></tr></thead><tbody>
     ${list.map(a=>`<tr>
       <td><div class="user-cell"><div class="mini-av">${(a.full_name||a.email||'?')[0].toUpperCase()}</div><div><div class="user-cell-name">${esc(a.full_name||'—')}</div><div class="user-cell-email">${esc(a.email||'—')}</div></div></div></td>
       <td style="direction:ltr;font-size:12px">${esc(a.phone||'—')}</td>
       <td>${accIpCell(a.id)}</td>
       <td>${accBadges(a)}</td>
-      <td style="font-size:11px;color:var(--mt)">${new Date(a.created_at).toLocaleDateString('ku')}</td>
+      <td class="ai-when"><b dir="ltr">${fmtDate(a.created_at)}</b><span dir="ltr">${fmtTime(a.created_at)}</span><div>${fmtAgo(a.created_at)}</div></td>
       <td><div class="act-grp">
+        <div class="act-btn bl" onclick="openAccountInfo('${a.id}')"><i class="fas fa-circle-info"></i> زانیاری</div>
         <div class="act-btn dark" onclick="openSetPasswordModal('${a.id}','${esc(a.email||'').replace(/'/g,"\\'")}')"><i class="fas fa-key"></i> گۆڕینی وشەی نهێنی</div>
         <div class="act-btn ${a.is_banned?'gr':'rd'}" onclick="toggleBan('${a.id}',${a.is_banned})"><i class="fas fa-${a.is_banned?'user-check':'user-slash'}"></i> ${a.is_banned?'لابردنی بۆیکۆت':'بۆیکۆتکردن'}</div>
         <div class="act-btn ${a.is_admin?'yw':'cy'}" onclick="toggleAdmin('${a.id}',${a.is_admin})"><i class="fas fa-shield"></i> ${a.is_admin?'لابردنی ئادمین':'کردن بە ئادمین'}</div>
@@ -960,13 +1034,94 @@ function renderAccCards(list){
         <div class="mini-av">${(a.full_name||a.email||'?')[0].toUpperCase()}</div>
         <div class="rec-card-info"><div class="rec-card-name">${esc(a.full_name||'بێ ناو')}</div><div class="rec-card-sub">${esc(a.email||'—')}</div></div>
       </div>
-      <div class="rec-card-meta">${accBadges(a)}<div class="rec-card-date">${new Date(a.created_at).toLocaleDateString('ku')}</div></div>
-      <div class="rec-card-actions">
+      <div class="rec-card-meta">${accBadges(a)}<div class="rec-card-date" dir="ltr">${fmtDateTime(a.created_at)}</div></div>
+      <div class="rec-card-actions g3">
+        <div class="act-btn bl" onclick="openAccountInfo('${a.id}')"><i class="fas fa-circle-info"></i> زانیاری</div>
         <div class="act-btn dark" onclick="openSetPasswordModal('${a.id}','${esc(a.email||'').replace(/'/g,"\\'")}')"><i class="fas fa-key"></i> وشەی نهێنی</div>
         <div class="act-btn ${a.is_banned?'gr':'rd'}" onclick="toggleBan('${a.id}',${a.is_banned})"><i class="fas fa-${a.is_banned?'user-check':'user-slash'}"></i> ${a.is_banned?'لابردنی بۆیکۆت':'بۆیکۆت'}</div>
         <div class="act-btn ${a.is_admin?'yw':'cy'}" onclick="toggleAdmin('${a.id}',${a.is_admin})"><i class="fas fa-shield"></i> ${a.is_admin?'لابردنی ئادمین':'کردن بە ئادمین'}</div>
       </div>
     </div>`).join('')}</div>`;
+}
+
+// ══════════════════════════════════════════════════════════════
+// ═══ ACCOUNT INFO ════════════════════════════════════════════════
+// Injected from JS so no change to exchange-admin.html is needed.
+// ══════════════════════════════════════════════════════════════
+function ensureAccountInfoModal(){
+  if(document.getElementById('moAccountInfo')) return;
+  const o=document.createElement('div');
+  o.className='overlay'; o.id='moAccountInfo';
+  o.innerHTML=`<div class="modal" style="max-width:560px">
+      <div class="modal-hdr">
+        <h3 id="aiTitle">زانیاری هەژمار</h3>
+        <div class="modal-close" onclick="closeMo('moAccountInfo')"><i class="fas fa-xmark"></i></div>
+      </div>
+      <div id="aiBody"></div>
+    </div>`;
+  document.body.appendChild(o);
+  o.addEventListener('click', e=>{ if(e.target===o) closeMo('moAccountInfo'); });
+}
+
+async function openAccountInfo(id){
+  const a=allAccounts.find(x=>x.id===id);
+  if(!a){ showToast('هەژمارەکە نەدۆزرایەوە','rd'); return; }
+  ensureAccountInfoModal();
+  document.getElementById('aiTitle').textContent=a.full_name||a.email||'زانیاری هەژمار';
+
+  const base=`
+    <div class="ai-sec">زانیاری بنەڕەتی</div>
+    <div class="detail-row"><div class="lbl">ناوی تەواو</div><div class="val" dir="rtl">${esc(a.full_name||'—')}</div></div>
+    <div class="detail-row"><div class="lbl">ئیمەیل</div><div class="val">${esc(a.email||'—')}</div></div>
+    <div class="detail-row"><div class="lbl">ژمارەی مۆبایل</div><div class="val">${esc(a.phone||'—')}</div></div>
+    <div class="detail-row"><div class="lbl">باری هەژمار</div><div class="val" dir="rtl">${accBadges(a)}</div></div>
+    <div class="detail-row"><div class="lbl">بەرواری تۆمارکردن</div><div class="val">${fmtDate(a.created_at)}</div></div>
+    <div class="detail-row"><div class="lbl">کاتی تۆمارکردن</div><div class="val">${fmtTime(a.created_at)||'—'}</div></div>
+    <div class="detail-row"><div class="lbl">تەمەنی هەژمار</div><div class="val" dir="rtl">${fmtAgo(a.created_at)||'—'}</div></div>
+    <div class="detail-row"><div class="lbl">ئایدی بەکارهێنەر</div><div class="val" style="font-size:11px">${esc(a.id)}</div></div>`;
+
+  document.getElementById('aiBody').innerHTML = base +
+    `<div class="ai-sec">چالاکی</div><div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>`;
+  openMo('moAccountInfo');
+
+  const [ordersRes, ipsRes] = await Promise.all([
+    sb.from('ex_orders').select('status,total,created_at').eq('user_id',id).order('created_at',{ascending:false}),
+    securityRequest('user-ips',{query:'&user_id='+encodeURIComponent(id)+'&limit=5'}).catch(()=>({ips:[]}))
+  ]);
+
+  const orders = ordersRes.data||[];
+  const n  = s => orders.filter(o=>o.status===s).length;
+  const volume = orders.filter(o=>o.status===STATUS_APPROVED)
+                       .reduce((s,o)=>s+(parseFloat(o.total)||0),0);
+  const last = orders[0];
+
+  let html = base + `
+    <div class="ai-sec">چالاکی داواکارییەکان</div>
+    <div class="ai-stats">
+      <div class="ai-stat"><b>${formatNum(orders.length)}</b><span>کۆی داواکاری</span></div>
+      <div class="ai-stat yw"><b>${formatNum(n(STATUS_PENDING))}</b><span>چاوەڕوان</span></div>
+      <div class="ai-stat gr"><b>${formatNum(n(STATUS_APPROVED))}</b><span>پەسەندکراو</span></div>
+      <div class="ai-stat rd"><b>${formatNum(n(STATUS_REJECTED))}</b><span>ڕەتکراو</span></div>
+    </div>
+    <div class="detail-row" style="margin-top:10px"><div class="lbl">کۆی گۆڕینەوەی پەسەندکراو</div><div class="val">${formatNum(volume)} IQD</div></div>
+    <div class="detail-row"><div class="lbl">دوایین داواکاری</div><div class="val">${last?fmtDateTime(last.created_at):'—'}</div></div>`;
+
+  const ips = ipsRes.ips||[];
+  html += `<div class="ai-sec">IP و ئامێر</div>`;
+  if(!ips.length){
+    html += `<div class="fee-toggle-note">هیچ IPـیەک بۆ ئەم هەژمارە تۆمار نەکراوە.</div>`;
+  }else{
+    html += ips.map(r=>`
+      <div class="detail-row">
+        <div class="lbl" style="flex:1;min-width:0">
+          <span class="ip-chip ${r.is_banned?'banned':''}">${esc(r.ip_address)}</span>
+          <div style="font-size:10.5px;margin-top:4px">${esc(r.browser||'—')} · ${esc(r.os||'')} · ${esc(r.device||'')}</div>
+        </div>
+        <div class="val" style="font-size:11px">${r.events} ڕووداو<br>${fmtDateTime(r.last_seen)}</div>
+      </div>`).join('');
+  }
+
+  document.getElementById('aiBody').innerHTML = html;
 }
 function toggleBan(id, current){
   const next=!current;
