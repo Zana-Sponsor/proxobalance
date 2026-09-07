@@ -2149,23 +2149,76 @@ function renderProofStats(s){
 
 function renderPublicFeed(rows){
   const el=document.getElementById('publicFeed'); if(!el) return;
-  if(!rows || !rows.length){ el.innerHTML='<div class="empty-state">هێشتا هیچ مامەڵەیەکی تەواوبوو نییە</div>'; return; }
-  el.innerHTML = rows.map(function(r){
-    return '<div class="feed-row">'
-      + '<span class="feed-id">'
-        + '<svg class="icn" style="width:12px;height:12px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/></svg>'
-        + escHtml(r.id||'') + '</span>'
-      + '<span class="feed-route">'
-        + methodIconHTML(r.from,'sz-xs') + escHtml(methodLabel(r.from))
-        + '<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="m11 6-6 6 6 6"/></svg>'
-        + methodIconHTML(r.to,'sz-xs') + escHtml(methodLabel(r.to))
-      + '</span>'
-      + '<span class="feed-meta">'
-        + '<span class="feed-phone">'+escHtml(r.phone||'')+'</span>'
-        + '<span>'+timeAgo(r.at)+'</span>'
-      + '</span>'
-      + '<span class="feed-amount">'+formatNum(Math.floor(r.total||0))+' IQD<small>لە '+formatNum(Math.floor(r.amount||0))+(r.from==='USDT'?'$':'')+'</small></span>'
+  if(!rows || !rows.length){
+    el.innerHTML = '<div class="feed-empty-box">'
+      + '<div class="feed-empty-icon">'
+        + '<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 1.8"/></svg>'
+      + '</div>'
+      + '<div class="feed-empty-title">هێشتا هیچ مامەڵەیەکی تەواوبوو تۆمار نەکراوە</div>'
+      + '<div class="feed-empty-sub">لەگەڵ پەسەندکردنی مامەڵە نوێیەکان، لێرە بە شێوازی ڕاستەوخۆ دەردەکەون</div>'
       + '</div>';
+    return;
+  }
+  el.innerHTML = rows.map(function(r){
+    const fromLabel = escHtml(methodLabel(r.from));
+    const toLabel = escHtml(methodLabel(r.to));
+    const totalFmt = formatNum(Math.floor(r.total || 0));
+    const amountFmt = formatNum(Math.floor(r.amount || 0));
+    const isUsdt = r.from === 'USDT';
+    const sentUnit = isUsdt ? '$' : ' IQD';
+    const idStr = escHtml(r.id || '—');
+    const phoneStr = escHtml(r.phone || '••••');
+    const timeStr = timeAgo(r.at);
+
+    return '<div class="feed-card-row">'
+      + '<div class="feed-card-header">'
+        + '<div class="feed-header-tags">'
+          + '<span class="feed-id-chip" onclick="copyOrderCode(\''+idStr+'\', event)" title="کۆپیکردنی ئایدی">'
+            + '<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 15h4M7 9h10"/></svg>'
+            + '<span>'+idStr+'</span>'
+          + '</span>'
+          + '<span class="feed-time-chip">'
+            + '<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 1.8"/></svg>'
+            + '<span>'+timeStr+'</span>'
+          + '</span>'
+        + '</div>'
+        + '<span class="feed-status-badge">'
+          + '<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>'
+          + 'پەسەندکرا'
+        + '</span>'
+      + '</div>'
+      + '<div class="feed-card-body">'
+        + '<div class="feed-route-group">'
+          + '<div class="feed-route-capsule">'
+            + '<span class="feed-method-node from">'
+              + methodIconHTML(r.from, 'sz-xs')
+              + '<span class="feed-method-name">'+fromLabel+'</span>'
+            + '</span>'
+            + '<span class="feed-arrow-node" aria-hidden="true">'
+              + '<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m11 6-6 6 6 6"/></svg>'
+            + '</span>'
+            + '<span class="feed-method-node to">'
+              + methodIconHTML(r.to, 'sz-xs')
+              + '<span class="feed-method-name">'+toLabel+'</span>'
+            + '</span>'
+          + '</div>'
+          + '<div class="feed-phone-tag">'
+            + '<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>'
+            + '<span>'+phoneStr+'</span>'
+          + '</div>'
+        + '</div>'
+        + '<div class="feed-amount-group">'
+          + '<div class="feed-payout-box">'
+            + '<span class="feed-payout-val">+'+totalFmt+'</span>'
+            + '<span class="feed-payout-curr">IQD</span>'
+          + '</div>'
+          + '<div class="feed-in-box">'
+            + '<span class="feed-in-lbl">نێردراو:</span>'
+            + '<span class="feed-in-val">'+amountFmt+sentUnit+'</span>'
+          + '</div>'
+        + '</div>'
+      + '</div>'
+    + '</div>';
   }).join('');
 }
 
