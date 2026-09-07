@@ -2622,3 +2622,159 @@ h1,h2,h3,.section-title{ letter-spacing:-.015em; line-height:1.3; }
     min-height:205px;
   }
 }
+
+/* ══════════════════════════════════════════════════════════════
+   COMPLETED EXCHANGES — calm neutral pass
+   Flat surfaces and neutral hierarchy replace the green glow,
+   gradient, rail and tinted amount boxes from the previous pass.
+   ══════════════════════════════════════════════════════════════ */
+
+.section-title:has(+ .proof-wrap),
+.section-title:has(+ .feed-wrap){
+  margin:22px 0 10px;
+  color:var(--text);
+  font-size:var(--fs-sm);
+  font-weight:var(--fw-semibold);
+}
+.section-title:has(+ .proof-wrap) > .icn,
+.section-title:has(+ .feed-wrap) > .icn{
+  width:32px;
+  height:32px;
+  padding:7px;
+  color:var(--text-muted);
+  background:var(--surface-2);
+  border:1px solid var(--border);
+  border-radius:10px;
+}
+
+.feed-wrap{ gap:9px; }
+
+.feed-row,
+[data-theme="light"] .feed-row,
+[data-theme="dark"] .feed-row{
+  padding:15px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:14px;
+  box-shadow:none;
+}
+.feed-row::before{ display:none; }
+
+@media (hover:hover) and (pointer:fine){
+  .feed-row:hover{
+    transform:none;
+    background:var(--surface);
+    border-color:var(--border-strong);
+    box-shadow:none;
+  }
+}
+.feed-row:active{
+  transform:none;
+  background:var(--surface-2);
+}
+
+.feed-main{ gap:10px; }
+
+.feed-id{
+  gap:6px;
+  padding:0;
+  color:var(--text-faint);
+  background:transparent;
+  border-radius:0;
+  font-size:10.5px;
+  font-weight:var(--fw-semibold);
+}
+.feed-id .icn{
+  width:19px;
+  height:19px;
+  flex-basis:19px;
+  padding:3px;
+  color:var(--text-muted);
+  background:var(--surface-2);
+  border:1px solid var(--border);
+}
+
+.feed-route .method-icon,
+.feed-route img{
+  width:36px;
+  height:36px;
+  flex-basis:36px;
+  padding:4px;
+  background:var(--surface-2);
+  border-color:var(--border);
+  border-radius:10px;
+  box-shadow:none;
+}
+.feed-route .method-icon svg,
+.feed-route .method-icon .icn{
+  width:21px;
+  height:21px;
+}
+.fr-arrow{
+  width:23px;
+  height:23px;
+  flex-basis:23px;
+  padding:3px;
+  color:var(--text-faint);
+  background:transparent;
+  border:0;
+}
+
+.feed-phone{
+  padding:0;
+  color:var(--text-faint);
+  background:transparent;
+  border-radius:0;
+}
+
+.feed-side{
+  padding:10px;
+  gap:7px 10px;
+  background:var(--surface-2);
+  border:1px solid var(--border);
+  border-radius:11px;
+}
+.feed-time{
+  padding:0 1px 7px;
+  border-bottom:1px solid var(--border);
+}
+.feed-time::before{ display:none; }
+
+.fa-line,
+.fa-in{
+  gap:3px;
+  padding:3px 4px;
+  background:transparent;
+  border:0;
+  border-radius:0;
+}
+.fa-out{
+  padding-inline-start:10px;
+  border-inline-start:1px solid var(--border);
+}
+.fa-lbl{ color:var(--text-faint); }
+.fa-in .fa-val{
+  color:var(--text);
+  font-size:15px;
+}
+.fa-out .fa-val{
+  color:var(--text-muted);
+  font-size:11.5px;
+}
+
+.feed-amount{
+  color:var(--text);
+  background:var(--surface-2);
+  border-color:var(--border);
+}
+
+@media (max-width:767px){
+  .feed-row{ padding:14px; }
+  .feed-side{ padding:9px; }
+  .feed-route .method-icon,
+  .feed-route img{
+    width:37px;
+    height:37px;
+    flex-basis:37px;
+  }
+}
