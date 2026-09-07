@@ -2059,8 +2059,8 @@ h1,h2,h3,.section-title{ letter-spacing:-.015em; line-height:1.3; }
   display:flex !important;
   flex-wrap:wrap;
   align-items:center;
-  gap:6px 10px;
-  padding:11px 13px;
+  gap:7px 10px;
+  padding:13px 14px;
   border-bottom:1px solid var(--border);
   /* no content-visibility here: the reserved height was wrong and the
      rows painted over each other while scrolling. */
@@ -2074,34 +2074,45 @@ h1,h2,h3,.section-title{ letter-spacing:-.015em; line-height:1.3; }
   order:-1;
   flex:1 0 100%;
   display:flex; align-items:center; gap:5px;
-  font-size:10px; font-weight:var(--fw-bold); letter-spacing:.4px;
+  font-size:11px; font-weight:var(--fw-bold); letter-spacing:.4px;
   color:var(--primary); direction:ltr;
   font-family:ui-monospace,'SF Mono',Menlo,monospace;
 }
-.feed-id .icn{ width:11px; height:11px; flex:0 0 11px; }
+.feed-id .icn{ width:13px; height:13px; flex:0 0 13px; }
 
 /* Line 2 — route on the start edge, amount pinned to the end. */
 .feed-route{
   order:1;
   flex:1 1 auto; min-width:0;
   display:flex; align-items:center; gap:5px; flex-wrap:nowrap;
-  font-size:var(--fs-2xs); font-weight:var(--fw-semibold);
+  font-size:12px; font-weight:var(--fw-semibold);
   overflow:hidden;
 }
-.feed-route .icn{ width:12px; height:12px; flex:0 0 12px; color:var(--text-faint); }
+.feed-route .icn{ width:13px; height:13px; flex:0 0 13px; color:var(--text-faint); }
 .feed-route .method-icon,
-.feed-route img{ width:16px; height:16px; flex:0 0 16px; border-radius:4px; }
+.feed-route img{ width:20px; height:20px; flex:0 0 20px; border-radius:6px; }
 
+/* Received amount leads; the amount originally sent sits under it as a
+   quiet pill, so the pair reads as one figure with its origin rather
+   than as two competing numbers. */
 .feed-amount{
   order:2;
   flex:0 0 auto;
+  display:flex; flex-direction:column; align-items:flex-end; gap:3px;
   text-align:end; white-space:nowrap; direction:ltr;
-  font-size:var(--fs-xs); font-weight:var(--fw-bold); color:var(--success);
+  font-size:15px; font-weight:var(--fw-bold); line-height:1.15;
+  color:var(--success);
   font-variant-numeric:tabular-nums;
+  letter-spacing:-.01em;
 }
 .feed-amount small{
-  display:block; margin-top:1px;
-  font-size:9.5px; font-weight:var(--fw-medium); color:var(--text-faint);
+  font-size:10.5px; font-weight:var(--fw-semibold);
+  color:var(--text-faint);
+  background:var(--surface-2);
+  border:1px solid var(--border);
+  border-radius:var(--radius-full);
+  padding:2px 7px;
+  letter-spacing:0;
 }
 
 /* Line 3 — phone and timestamp, quiet, full width. */
@@ -2109,7 +2120,7 @@ h1,h2,h3,.section-title{ letter-spacing:-.015em; line-height:1.3; }
   order:3;
   flex:1 0 100%;
   display:flex; align-items:center; gap:8px; flex-wrap:wrap;
-  font-size:10px; color:var(--text-faint);
+  font-size:11px; color:var(--text-faint);
 }
 .feed-phone{ direction:ltr; font-variant-numeric:tabular-nums; }
 
@@ -2120,4 +2131,21 @@ h1,h2,h3,.section-title{ letter-spacing:-.015em; line-height:1.3; }
 }
 
 /* Skeleton matches the new three-line row height. */
-.feed-skel{ height:66px; }
+/* The skeleton mirrors the real row piece by piece — icon, id, route,
+   amount, meta — so nothing shifts position when data lands. */
+.feed-skel{
+  display:flex; flex-wrap:wrap; align-items:center;
+  gap:7px 10px;
+  padding:13px 14px;
+  height:auto;
+  border-bottom:1px solid var(--border);
+  background:none; animation:none;
+}
+.feed-skel:last-child{ border-bottom:none; }
+.feed-skel::after{ content:none; }
+
+.fs-line{ display:flex; align-items:center; gap:6px; }
+.fs-id{ order:-1; flex:1 0 100%; }
+.fs-route{ order:1; flex:1 1 auto; min-width:0; }
+.fs-amt{ order:2; flex:0 0 auto; display:flex; flex-direction:column; align-items:flex-end; gap:4px; }
+.fs-meta{ order:3; flex:1 0 100%; gap:9px; }
