@@ -87,7 +87,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <link rel="stylesheet" href="/assets/css/tokens.css?v=4">
-<link rel="stylesheet" href="/assets/css/app.css?v=4">
+<link rel="stylesheet" href="/assets/css/app.css?v=8">
 </head>
 
 <body>
@@ -466,16 +466,12 @@
   <div class="home-greet">
     <div class="greet-av" id="greetAvatar">؟</div>
     <div class="greet-txt">
-      <span class="greet-hi"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.2 11.5 6.5 7.2a1.5 1.5 0 0 0-2.8 1.1l2.5 6.4"/><path d="m9.2 10.4-1.7-5a1.5 1.5 0 0 1 2.8-1l1.8 5.2"/><path d="m12.1 9.6-1-4.2a1.5 1.5 0 0 1 2.9-.7l1 4.3"/><path d="m15 9 .1-2.5a1.5 1.5 0 0 1 3 .2l-.2 6.2c-.1 4.5-2.7 7.5-6.8 7.5-3.1 0-5.1-1.5-6.4-4"/><path d="M18.7 2.8 20 1.5M20.3 6h1.9M17.4 1l.4-1.8"/></svg><span>بەخێربێیتەوە</span></span>
+      <span class="greet-hi">بەخێربێیتەوە</span>
       <span id="userName">...</span>
     </div>
-    <div class="social-mini-icons">
-      <a class="brand-badge tg" href="https://t.me/proxo_exchange" target="_blank" aria-label="تیلیگرام">
-        <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M21.9 3.4 2.7 11c-1 .4-1 1.6.1 1.9l4.9 1.5 1.9 5.9c.3.9 1.4 1.1 2 .4l2.7-2.9 5 3.7c.8.6 2 .2 2.2-.8l3.4-15.6c.2-1-.8-1.8-1.9-1.7zM8.9 13.9l9.9-6.9c.3-.2.6.2.3.4l-8.3 8-.3 3.3-1.6-4.8z"/></svg>
-      </a>
-      <a class="brand-badge wa" href="https://wa.me/9647510074008" target="_blank" aria-label="واتساپ">
-        <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2.2a9.8 9.8 0 0 0-8.4 14.8L2.2 21.8l4.9-1.3A9.8 9.8 0 1 0 12 2.2zm0 1.8a8 8 0 0 1 6.9 12l-.2.4.9 3.1-3.2-.9-.4.2a8 8 0 1 1-4-14.8zm-3.5 4.1c-.2 0-.5 0-.7.3-.2.3-.9.8-.9 2s.9 2.4 1 2.6c.1.2 1.8 2.9 4.5 4 2.2.9 2.7.7 3.2.6.5 0 1.6-.6 1.8-1.2.2-.6.2-1.2.2-1.3-.1-.1-.3-.2-.6-.4-.3-.1-1.6-.8-1.9-.9-.2-.1-.4-.1-.6.1-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-.3-.2-1.2-.5-2.3-1.5-.9-.7-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6l.4-.5c.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5C9.6 9 9 7.7 8.7 7.2c-.2-.5-.4-.4-.6-.5h-.5z"/></svg>
-      </a>
+    <div class="greet-rate">
+      <span class="greet-rate-dot" aria-hidden="true"></span>
+      <span class="greet-rate-txt">چالاک</span>
     </div>
   </div>
 
@@ -755,7 +751,51 @@
         دوایین ئاڵوگۆڕە تەواوبووەکان
       </h3>
       <div class="feed-wrap" id="publicFeed" aria-live="polite">
-        <div class="feed-skel"></div><div class="feed-skel"></div><div class="feed-skel"></div>
+        <div class="feed-skel">
+          <span class="fs-line fs-id"><span class="sk" style="width:14px;height:14px;border-radius:50%"></span><span class="sk" style="width:100px;height:13px"></span></span>
+          <span class="fs-line fs-route">
+            <span class="sk" style="width:22px;height:22px;border-radius:6px"></span>
+            <span class="sk" style="width:52px;height:14px"></span>
+            <span class="sk" style="width:14px;height:10px"></span>
+            <span class="sk" style="width:22px;height:22px;border-radius:6px"></span>
+            <span class="sk" style="width:60px;height:14px"></span>
+          </span>
+          <span class="fs-line fs-amt">
+            <span class="fs-sub"><span class="sk" style="width:46px;height:11px"></span><span class="sk" style="width:78px;height:17px"></span></span>
+            <span class="fs-sub"><span class="sk sk-pill" style="width:116px;height:21px"></span></span>
+          </span>
+          <span class="fs-line fs-meta"><span class="sk" style="width:76px;height:11px"></span><span class="sk" style="width:94px;height:11px"></span></span>
+        </div>
+        <div class="feed-skel">
+          <span class="fs-line fs-id"><span class="sk" style="width:14px;height:14px;border-radius:50%"></span><span class="sk" style="width:100px;height:13px"></span></span>
+          <span class="fs-line fs-route">
+            <span class="sk" style="width:22px;height:22px;border-radius:6px"></span>
+            <span class="sk" style="width:46px;height:14px"></span>
+            <span class="sk" style="width:14px;height:10px"></span>
+            <span class="sk" style="width:22px;height:22px;border-radius:6px"></span>
+            <span class="sk" style="width:66px;height:14px"></span>
+          </span>
+          <span class="fs-line fs-amt">
+            <span class="fs-sub"><span class="sk" style="width:46px;height:11px"></span><span class="sk" style="width:70px;height:17px"></span></span>
+            <span class="fs-sub"><span class="sk sk-pill" style="width:110px;height:21px"></span></span>
+          </span>
+          <span class="fs-line fs-meta"><span class="sk" style="width:76px;height:11px"></span><span class="sk" style="width:94px;height:11px"></span></span>
+        </div>
+        <div class="feed-skel">
+          <span class="fs-line fs-id"><span class="sk" style="width:14px;height:14px;border-radius:50%"></span><span class="sk" style="width:100px;height:13px"></span></span>
+          <span class="fs-line fs-route">
+            <span class="sk" style="width:22px;height:22px;border-radius:6px"></span>
+            <span class="sk" style="width:58px;height:14px"></span>
+            <span class="sk" style="width:14px;height:10px"></span>
+            <span class="sk" style="width:22px;height:22px;border-radius:6px"></span>
+            <span class="sk" style="width:52px;height:14px"></span>
+          </span>
+          <span class="fs-line fs-amt">
+            <span class="fs-sub"><span class="sk" style="width:46px;height:11px"></span><span class="sk" style="width:84px;height:17px"></span></span>
+            <span class="fs-sub"><span class="sk sk-pill" style="width:120px;height:21px"></span></span>
+          </span>
+          <span class="fs-line fs-meta"><span class="sk" style="width:76px;height:11px"></span><span class="sk" style="width:94px;height:11px"></span></span>
+        </div>
       </div>
       <div class="xc-hint" style="margin:9px 4px 0">
         <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
@@ -772,7 +812,23 @@
       <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>
     </span>
   </h3>
-  <div id="historyPreview" style="width:100%;"></div>
+  <div id="historyPreview" style="width:100%;">
+  <div class="tx-skel">
+    <div class="tx-skel-head"><span class="sk sk-w30"></span><span class="sk sk-pill sk-w30"></span></div>
+    <div class="tx-skel-row"><span class="sk sk-ico"></span><span class="sk sk-w60"></span></div>
+    <div class="tx-skel-row"><span class="sk sk-ico"></span><span class="sk sk-w45"></span></div>
+  </div>
+  <div class="tx-skel">
+    <div class="tx-skel-head"><span class="sk sk-w30"></span><span class="sk sk-pill sk-w30"></span></div>
+    <div class="tx-skel-row"><span class="sk sk-ico"></span><span class="sk sk-w75"></span></div>
+    <div class="tx-skel-row"><span class="sk sk-ico"></span><span class="sk sk-w45"></span></div>
+  </div>
+  <div class="tx-skel">
+    <div class="tx-skel-head"><span class="sk sk-w30"></span><span class="sk sk-pill sk-w30"></span></div>
+    <div class="tx-skel-row"><span class="sk sk-ico"></span><span class="sk sk-w60"></span></div>
+    <div class="tx-skel-row"><span class="sk sk-ico"></span><span class="sk sk-w45"></span></div>
+  </div>
+  </div>
 
   </section>
 
@@ -792,7 +848,7 @@
           <span class="stat-ico"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg></span>
           کۆی ناردن
         </div>
-        <div class="stat-val" id="txTotalSent">0</div>
+        <div class="stat-val" id="txTotalSent"><span class="sk sk-num"></span></div>
         <div class="stat-sub" id="txTotalSentSub">IQD</div>
       </div>
       <div class="stat-card recv">
@@ -800,16 +856,16 @@
           <span class="stat-ico"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 7 7 17"/><path d="M16 17H7V8"/></svg></span>
           کۆی وەرگرتن
         </div>
-        <div class="stat-val" id="txTotalRecv">0</div>
+        <div class="stat-val" id="txTotalRecv"><span class="sk sk-num"></span></div>
         <div class="stat-sub">IQD</div>
       </div>
     </div>
 
     <div class="mini-stats">
-      <div class="mini-stat"><b id="txCntAll">0</b><span>هەموو</span></div>
-      <div class="mini-stat ok"><b id="txCntOk">0</b><span>پەسەندکراو</span></div>
-      <div class="mini-stat wait"><b id="txCntWait">0</b><span>چاوەڕوان</span></div>
-      <div class="mini-stat no"><b id="txCntNo">0</b><span>ڕەتکراو</span></div>
+      <div class="mini-stat"><b id="txCntAll"><span class="sk sk-num"></span></b><span>هەموو</span></div>
+      <div class="mini-stat ok"><b id="txCntOk"><span class="sk sk-num"></span></b><span>پەسەندکراو</span></div>
+      <div class="mini-stat wait"><b id="txCntWait"><span class="sk sk-num"></span></b><span>چاوەڕوان</span></div>
+      <div class="mini-stat no"><b id="txCntNo"><span class="sk sk-num"></span></b><span>ڕەتکراو</span></div>
     </div>
 
     <div class="search-wrap">
@@ -844,7 +900,31 @@
     </div>
 
     <div class="result-count" id="txResultCount"></div>
-    <div id="txList" style="width:100%;"></div>
+    <div id="txList" style="width:100%;">
+  <div class="tx-skel">
+    <div class="tx-skel-head"><span class="sk sk-w30"></span><span class="sk sk-pill sk-w30"></span></div>
+    <div class="tx-skel-row"><span class="sk sk-ico"></span><span class="sk sk-w75"></span></div>
+    <div class="tx-skel-row"><span class="sk sk-ico"></span><span class="sk sk-w60"></span></div>
+    <div class="tx-skel-row"><span class="sk sk-ico"></span><span class="sk sk-w45"></span></div>
+  </div>
+  <div class="tx-skel">
+    <div class="tx-skel-head"><span class="sk sk-w30"></span><span class="sk sk-pill sk-w30"></span></div>
+    <div class="tx-skel-row"><span class="sk sk-ico"></span><span class="sk sk-w60"></span></div>
+    <div class="tx-skel-row"><span class="sk sk-ico"></span><span class="sk sk-w75"></span></div>
+    <div class="tx-skel-row"><span class="sk sk-ico"></span><span class="sk sk-w45"></span></div>
+  </div>
+  <div class="tx-skel">
+    <div class="tx-skel-head"><span class="sk sk-w30"></span><span class="sk sk-pill sk-w30"></span></div>
+    <div class="tx-skel-row"><span class="sk sk-ico"></span><span class="sk sk-w45"></span></div>
+    <div class="tx-skel-row"><span class="sk sk-ico"></span><span class="sk sk-w60"></span></div>
+    <div class="tx-skel-row"><span class="sk sk-ico"></span><span class="sk sk-w75"></span></div>
+  </div>
+  <div class="tx-skel">
+    <div class="tx-skel-head"><span class="sk sk-w30"></span><span class="sk sk-pill sk-w30"></span></div>
+    <div class="tx-skel-row"><span class="sk sk-ico"></span><span class="sk sk-w60"></span></div>
+    <div class="tx-skel-row"><span class="sk sk-ico"></span><span class="sk sk-w45"></span></div>
+  </div>
+    </div>
   </section>
 
   <!-- ══════════════ PAGE: CHANGE LOG (route "/changes") ══════════════ -->
@@ -1037,7 +1117,22 @@
 
 </div>
 
-<script src="/assets/js/app.js?v=7"></script>
-<script src="/assets/js/track.js?v=1"></script>
+<script>
+/* If a request never returns, the placeholders would shimmer forever.
+   Resolve them to readable text after 12s. */
+(function(){
+  setTimeout(function(){
+    ['historyPreview','txList','publicFeed'].forEach(function(id){
+      var el = document.getElementById(id);
+      if (el && el.querySelector('.tx-skel, .feed-skel')) {
+        el.innerHTML = '<div class="empty-state">نەتوانرا داتاکان باربکرێن — تکایە دووبارە هەوڵبدەوە</div>';
+      }
+    });
+    document.querySelectorAll('.sk-num').forEach(function(s){ s.replaceWith('—'); });
+  }, 12000);
+})();
+</script>
+<script src="/assets/js/app.js?v=8"></script>
+<script src="/assets/js/track.js?v=2"></script>
 </body>
 </html>
