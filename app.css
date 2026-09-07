@@ -12,23 +12,23 @@
    DESIGN TOKENS
    ══════════════════════════════════════════════════════════════ */
 :root, [data-theme="dark"]{
-  --bg:#0b0e14;
-  --bg-elevated:#0e1219;
-  --surface:#141a25;
-  --surface-2:#1b2230;
-  --surface-hover:#212a3b;
-  --border:#262e40;
-  --border-strong:#343e56;
-  --text:#f2f4f8;
-  --text-muted:#8d96ac;
-  --text-faint:#606a80;
+  --bg:#0a0c11;
+  --bg-elevated:#0e1117;
+  --surface:#12161f;
+  --surface-2:#181d28;
+  --surface-hover:#1e2431;
+  --border:#222937;
+  --border-strong:#313a4b;
+  --text:#eef1f6;
+  --text-muted:#8a94a6;
+  --text-faint:#5d6675;
 
-  --primary:#22d3ee;
-  --primary-hover:#54e0f5;
-  --primary-active:#14b3cc;
-  --on-primary:#052229;
-  --secondary:#7c8cff;
-  --secondary-soft:rgba(124,140,255,.14);
+  --primary:#38bdf8;
+  --primary-hover:#5ecbfa;
+  --primary-active:#1ea2df;
+  --on-primary:#04202c;
+  --secondary:#818cf8;
+  --secondary-soft:rgba(129,140,248,.13);
   --accent:#f5b942;
   --accent-soft:rgba(245,185,66,.14);
 
@@ -43,33 +43,33 @@
   --tg:#3ab2ea;
   --wa:#2fd669;
 
-  --focus-ring:rgba(34,211,238,.25);
-  --shadow-sm:0 1px 2px rgba(0,0,0,.35);
-  --shadow-md:0 10px 26px rgba(0,0,0,.38);
-  --shadow-lg:0 22px 50px rgba(0,0,0,.5);
-  --shadow-glow:0 0 0 1px rgba(34,211,238,.22), 0 10px 28px rgba(34,211,238,.16);
+  --focus-ring:rgba(56,189,248,.26);
+  --shadow-sm:0 1px 1px rgba(0,0,0,.24);
+  --shadow-md:0 3px 10px rgba(0,0,0,.26);
+  --shadow-lg:0 8px 24px rgba(0,0,0,.34);
+  --shadow-glow:0 0 0 1px rgba(56,189,248,.30);
 
   --err:var(--error); --ok:var(--success);
 }
 
 [data-theme="light"]{
-  --bg:#f2f4f9;
-  --bg-elevated:#eaedf5;
+  --bg:#f6f7fa;
+  --bg-elevated:#eff1f6;
   --surface:#ffffff;
-  --surface-2:#f1f3f8;
-  --surface-hover:#e7eaf2;
-  --border:#e1e5ee;
-  --border-strong:#ccd2e0;
-  --text:#12151f;
-  --text-muted:#5b6577;
-  --text-faint:#8892a4;
+  --surface-2:#f4f5f9;
+  --surface-hover:#eaecf3;
+  --border:#e4e7ee;
+  --border-strong:#cfd4e0;
+  --text:#10141c;
+  --text-muted:#59616f;
+  --text-faint:#88909e;
 
-  --primary:#0b7285;
-  --primary-hover:#0d859c;
-  --primary-active:#095f6e;
+  --primary:#0369a1;
+  --primary-hover:#0480c2;
+  --primary-active:#025782;
   --on-primary:#ffffff;
-  --secondary:#4c56d6;
-  --secondary-soft:rgba(76,86,214,.10);
+  --secondary:#4f46e5;
+  --secondary-soft:rgba(79,70,229,.10);
   --accent:#b9791f;
   --accent-soft:rgba(185,121,31,.10);
 
@@ -84,24 +84,24 @@
   --tg:#0088cc;
   --wa:#22b558;
 
-  --focus-ring:rgba(11,114,133,.18);
-  --shadow-sm:0 1px 2px rgba(20,24,38,.06);
-  --shadow-md:0 10px 26px rgba(20,24,38,.08);
-  --shadow-lg:0 22px 46px rgba(20,24,38,.12);
-  --shadow-glow:0 0 0 1px rgba(11,114,133,.14), 0 10px 24px rgba(11,114,133,.12);
+  --focus-ring:rgba(3,105,161,.20);
+  --shadow-sm:0 1px 1px rgba(16,20,28,.05);
+  --shadow-md:0 2px 8px rgba(16,20,28,.07);
+  --shadow-lg:0 8px 22px rgba(16,20,28,.10);
+  --shadow-glow:0 0 0 1px rgba(3,105,161,.22);
 
   --err:var(--error); --ok:var(--success);
 }
 
 :root{
-  --radius-sm:10px; --radius-md:14px; --radius-lg:18px; --radius-xl:24px; --radius-full:999px;
-  --space-1:4px; --space-2:8px; --space-3:12px; --space-4:16px; --space-5:20px; --space-6:24px; --space-7:32px; --space-8:40px;
-  --fs-2xs:11px; --fs-xs:12.5px; --fs-sm:13.5px; --fs-base:15px; --fs-md:16px; --fs-lg:18px; --fs-xl:21px; --fs-2xl:27px; --fs-3xl:33px;
+  --radius-sm:8px; --radius-md:11px; --radius-lg:14px; --radius-xl:18px; --radius-full:999px;
+  --space-1:4px; --space-2:7px; --space-3:10px; --space-4:14px; --space-5:18px; --space-6:22px; --space-7:28px; --space-8:34px;
+  --fs-2xs:10.5px; --fs-xs:11.5px; --fs-sm:12.5px; --fs-base:13.5px; --fs-md:14.5px; --fs-lg:16px; --fs-xl:18.5px; --fs-2xl:23px; --fs-3xl:28px;
   --fw-normal:400; --fw-medium:500; --fw-semibold:600; --fw-bold:700;
   --container-w:480px;
   --ease:cubic-bezier(.4,0,.2,1);
   --ease-soft:cubic-bezier(.16,1,.3,1);
-  --t:.18s var(--ease);
+  --t:.14s var(--ease);
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -306,7 +306,7 @@ input[type="file"].input::file-selector-button:hover{ background:var(--border-st
 .total-box .fee-note{ font-size:var(--fs-xs); color:var(--warning); font-weight:var(--fw-medium); margin-top:8px; min-height:16px; }
 
 .modal-overlay{
-  position:fixed; inset:0; background:rgba(4,6,10,.72); backdrop-filter:blur(6px);
+  position:fixed; inset:0; background:rgba(4,6,10,.72); 
   z-index:2000; display:none; align-items:center; justify-content:center; padding:var(--space-5);
 }
 .modal-card{
@@ -559,7 +559,7 @@ input[type="file"].input::file-selector-button:hover{ background:var(--border-st
    SHEETS (bottom-sheet on mobile / centered popover on desktop)
    ══════════════════════════════════════════════════════════════ */
 .sheet-overlay{
-  position:fixed; inset:0; background:rgba(4,6,10,.6); backdrop-filter:blur(3px);
+  position:fixed; inset:0; background:rgba(4,6,10,.6); 
   z-index:2100; display:none; align-items:flex-end; justify-content:center;
   opacity:0; transition:opacity .16s var(--ease-soft);
 }
@@ -718,7 +718,7 @@ body.has-nav{ padding-bottom:calc(84px + env(safe-area-inset-bottom, 0px)); }
   background:var(--bg-elevated); border-top:1px solid var(--border);
   box-shadow:0 -6px 24px rgba(0,0,0,.18);
   padding:7px 12px calc(7px + env(safe-area-inset-bottom, 0px));
-  -webkit-backdrop-filter:blur(16px) saturate(150%); backdrop-filter:blur(16px) saturate(150%);
+  
 }
 .bottom-nav-inner{ width:100%; max-width:var(--container-w); display:grid; grid-template-columns:repeat(4,1fr); gap:2px; }
 .bn-item{
@@ -917,7 +917,7 @@ body.has-nav{ padding-bottom:calc(84px + env(safe-area-inset-bottom, 0px)); }
    ══════════════════════════════════════════════════════════════ */
 .notif-backdrop{
   position:fixed; inset:0; background:rgba(4,7,13,.55); z-index:1400; opacity:0; pointer-events:none;
-  transition:opacity .2s var(--ease); -webkit-backdrop-filter:blur(2px); backdrop-filter:blur(2px);
+  transition:opacity .2s var(--ease); 
 }
 .notif-backdrop.open{ opacity:1; pointer-events:auto; }
 
@@ -1074,7 +1074,7 @@ body.has-nav{ padding-bottom:calc(84px + env(safe-area-inset-bottom, 0px)); }
 .site-header{
   position:sticky; top:0; z-index:850; width:100%;
   background:color-mix(in srgb, var(--bg-elevated) 82%, transparent);
-  -webkit-backdrop-filter:blur(18px) saturate(160%); backdrop-filter:blur(18px) saturate(160%);
+  
   border-bottom:1px solid var(--border);
   padding:10px 0 10px; margin:0 0 var(--space-5);
   transition:box-shadow var(--t), border-color var(--t);
@@ -1263,7 +1263,7 @@ body.has-nav{ padding-bottom:calc(84px + env(safe-area-inset-bottom, 0px)); }
 }
 .proof-top{ display:flex; align-items:center; gap:8px; font-size:var(--fs-2xs); opacity:.9; margin-bottom:9px; }
 .proof-top .icn{ width:15px; height:15px; }
-.proof-num{ font-size:34px; font-weight:var(--fw-bold); line-height:1.1; font-variant-numeric:tabular-nums; direction:ltr; }
+.proof-num{ font-size:25px; font-weight:var(--fw-bold); line-height:1.1; font-variant-numeric:tabular-nums; direction:ltr; }
 .proof-sub{ font-size:var(--fs-2xs); opacity:.88; margin-top:5px; }
 .proof-mini{ display:flex; gap:18px; margin-top:14px; position:relative; z-index:1; }
 .proof-mini div b{ display:block; font-size:var(--fs-sm); font-weight:var(--fw-bold); direction:ltr; }
@@ -1732,4 +1732,309 @@ body.has-nav{ padding-bottom:calc(96px + env(safe-area-inset-bottom, 0px)); }
 }
 @media (prefers-reduced-motion:reduce){
   .notif-panel, .notif-backdrop, .sheet, .sheet-overlay, .page.active, .toast{ transition:none !important; animation:none !important; }
+}
+
+
+/* ══════════════════════════════════════════════════════════════
+   REFINEMENT LAYER — 2026 pass
+   Appended last so it wins the cascade. Purely visual: no class or
+   id is renamed, so app.js and admin.js keep working untouched.
+   ══════════════════════════════════════════════════════════════ */
+
+/* Copy sits tighter and lighter at the new smaller sizes. */
+body{
+  line-height:1.5;
+  letter-spacing:-.005em;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,.section-title{ letter-spacing:-.015em; line-height:1.3; }
+
+/* Figures hold their column instead of jittering as they update. */
+.wallet-value,.total-value,.xc-bd-row .v,.proof-num,.formatted-amount,
+.hdr-rate,.order-card .amt,.feed-row b{ font-variant-numeric:tabular-nums; }
+
+/* One surface treatment: a hairline border, never a floating shadow. */
+.panel,.proof-card,.order-card,.rule-item,.chg-item,.rate-card,.feed-row{
+  box-shadow:none;
+  border:1px solid var(--border);
+}
+
+/* Decorative trust badges cut — the breakdown above already states the fee. */
+.xc-trust{ display:none; }
+
+/* Section headings step back so the exchange card leads the page. */
+.section-title{
+  font-size:var(--fs-xs);
+  font-weight:var(--fw-semibold);
+  color:var(--text-muted);
+  margin:var(--space-5) 2px var(--space-2);
+}
+
+/* Hints are support text, not body copy. */
+.xc-hint{ font-size:var(--fs-2xs); line-height:1.45; color:var(--text-faint); }
+.xc-hint .icn{ width:13px; height:13px; }
+
+/* Controls: shorter and calmer, still comfortably tappable (>=44px). */
+.input,.picker-trigger,.btn{ border-radius:var(--radius-md); }
+.input{ min-height:44px; font-size:var(--fs-base); }
+.btn{ min-height:44px; font-size:var(--fs-base); font-weight:var(--fw-semibold); }
+.btn-primary{ box-shadow:none; }
+.btn-primary:active{ transform:translateY(1px); }
+.field-label{ font-size:var(--fs-2xs); color:var(--text-muted); margin-bottom:5px; }
+
+/* Icons scale with the type instead of dominating it. */
+.icn{ width:16px; height:16px; }
+.icn-sm{ width:13px; height:13px; }
+
+/* Off-screen routes cost nothing to keep in the DOM. */
+.page:not(.active){ content-visibility:hidden; }
+
+/* Follow the system setting rather than animating regardless. */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation-duration:.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.01ms !important;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   SKELETON LOADING — transactions
+   Mirrors .order-card so the layout does not jump when real rows
+   replace it. One shared shimmer, GPU-only (transform), so a long
+   list costs nothing to animate.
+   ══════════════════════════════════════════════════════════════ */
+
+.tx-skel{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-inline-start:3px solid var(--border-strong);
+  border-radius:var(--radius-lg);
+  padding:var(--space-5);
+  margin-bottom:var(--space-4);
+}
+.tx-skel-head{
+  display:flex; justify-content:space-between; align-items:center;
+  margin-bottom:var(--space-4);
+  border-bottom:1px solid var(--border);
+  padding-bottom:var(--space-3);
+}
+.tx-skel-row{ display:flex; align-items:center; gap:10px; margin-bottom:11px; }
+.tx-skel-row:last-child{ margin-bottom:0; }
+
+/* The shimmering pieces. */
+.sk{
+  position:relative; overflow:hidden;
+  background:var(--surface-2);
+  border-radius:6px;
+  height:11px;
+}
+.sk::after{
+  content:''; position:absolute; inset:0;
+  background:linear-gradient(90deg, transparent, var(--surface-hover), transparent);
+  transform:translate3d(-100%,0,0);
+  animation:skShimmer 1.15s ease-in-out infinite;
+}
+@keyframes skShimmer{ to{ transform:translate3d(100%,0,0); } }
+
+.sk-ico{ width:26px; height:26px; border-radius:8px; flex:0 0 26px; }
+.sk-pill{ height:20px; border-radius:var(--radius-full); }
+.sk-w30{ width:30%; } .sk-w45{ width:45%; } .sk-w60{ width:60%; } .sk-w75{ width:75%; }
+.sk-num{ display:inline-block; width:56px; height:15px; vertical-align:-2px; }
+
+/* Stagger the cards so the block reads as loading, not as frozen. */
+.tx-skel:nth-child(2) .sk::after{ animation-delay:.12s; }
+.tx-skel:nth-child(3) .sk::after{ animation-delay:.24s; }
+.tx-skel:nth-child(4) .sk::after{ animation-delay:.36s; }
+
+@media (prefers-reduced-motion:reduce){
+  .sk::after{ animation:none; }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   EXCHANGE CARD — layout pass
+   Pairs with the rewritten #exchangeCard markup. One vertical
+   rhythm, one label style, one input height.
+   ══════════════════════════════════════════════════════════════ */
+
+#exchangeCard{ padding:var(--space-5) var(--space-4) var(--space-4); }
+
+/* The wallet you pay into is the first fact on the card, so it reads
+   as a header rather than as another form row. */
+#exchangeCard .wallet-row{
+  background:var(--surface-2);
+  border:1px solid var(--border);
+  border-radius:var(--radius-md);
+  padding:10px 12px;
+  margin-bottom:var(--space-5);
+}
+#exchangeCard .wallet-row-line{ display:flex; align-items:center; gap:10px; }
+#exchangeCard .wallet-label{
+  font-size:var(--fs-2xs); color:var(--text-muted); font-weight:var(--fw-medium);
+  flex:0 0 auto;
+}
+#exchangeCard .wallet-value{
+  flex:1; min-width:0; text-align:start;
+  font-size:var(--fs-md); font-weight:var(--fw-bold); letter-spacing:.01em;
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+
+/* Group headings: a quiet label with the badge pushed to the end. */
+.xc-group-head{
+  display:flex; align-items:center; gap:8px;
+  font-size:var(--fs-2xs); font-weight:var(--fw-semibold);
+  color:var(--text-muted);
+  margin-bottom:8px; padding:0 2px;
+}
+.xc-group-head .xc-badge{
+  margin-inline-start:auto;
+  font-size:var(--fs-2xs); font-weight:var(--fw-medium);
+  padding:3px 8px; border-radius:var(--radius-full);
+  background:var(--surface-2); color:var(--text-faint); border:1px solid var(--border);
+}
+
+/* One field rhythm throughout the card. */
+#exchangeCard .field{ margin-top:var(--space-3) !important; }
+#exchangeCard .field-label{
+  display:block; font-size:var(--fs-2xs); font-weight:var(--fw-medium);
+  color:var(--text-muted); margin-bottom:5px; padding:0 2px;
+}
+
+/* Inputs lost their leading icon, so the padding comes back. */
+#exchangeCard .xc-input-wrap{ position:relative; }
+#exchangeCard .xc-input-wrap .input{
+  padding-inline:12px;
+  font-size:var(--fs-md);
+  font-weight:var(--fw-medium);
+}
+#exchangeCard #amt{ font-size:var(--fs-lg); font-weight:var(--fw-bold); }
+#exchangeCard #userSenderName{
+  font-size:var(--fs-base); font-weight:var(--fw-medium);
+  color:var(--text-muted); background:var(--surface-2);
+}
+#exchangeCard .xc-in-suffix{
+  position:absolute; inset-inline-end:12px; top:50%; transform:translateY(-50%);
+  font-size:var(--fs-2xs); font-weight:var(--fw-semibold);
+  color:var(--text-faint); pointer-events:none;
+}
+
+/* Hints are one quiet line, no icon, no box. */
+#exchangeCard .xc-hint{
+  display:block; margin:5px 2px 0; padding:0; background:none; border:0;
+  font-size:var(--fs-2xs); line-height:1.45; color:var(--text-faint);
+}
+#exchangeCard .xc-hint b{ color:var(--text-muted); font-weight:var(--fw-semibold); }
+#exchangeCard .xc-hint.warn{ color:var(--warning); }
+
+/* The live echo duplicated the breakdown total. Kept for app.js, hidden. */
+#exchangeCard #formattedHint{ display:none; }
+
+/* Quick amounts read as chips, not as three more buttons. */
+.quick-amounts{ display:flex; gap:6px; margin-top:8px; }
+.quick-amount-btn{
+  flex:1; min-height:32px; padding:0 6px;
+  font-size:var(--fs-2xs); font-weight:var(--fw-semibold);
+  font-variant-numeric:tabular-nums;
+  color:var(--text-muted); background:var(--surface-2);
+  border:1px solid var(--border); border-radius:var(--radius-sm);
+  cursor:pointer; transition:color var(--motion-fast), border-color var(--motion-fast);
+}
+.quick-amount-btn:active{ color:var(--primary); border-color:var(--primary); }
+
+/* A hairline divider with a small button, not a feature of its own. */
+.xc-swap{ margin:var(--space-4) 0; gap:10px; }
+.xc-swap-btn{
+  width:32px; height:32px; border-radius:var(--radius-full);
+  background:var(--surface-2); border:1px solid var(--border); color:var(--text-muted);
+}
+.xc-swap-btn .icn{ width:15px; height:15px; }
+
+/* Breakdown: a quiet ledger, with only the total carrying weight. */
+.xc-breakdown{
+  margin-top:var(--space-5);
+  padding:12px 14px;
+  background:var(--surface-2);
+  border:1px solid var(--border);
+  border-radius:var(--radius-md);
+}
+.xc-bd-row{
+  display:flex; align-items:center; justify-content:space-between;
+  font-size:var(--fs-xs); padding:5px 0;
+}
+.xc-bd-row .lbl{ color:var(--text-muted); }
+.xc-bd-row .v{ font-weight:var(--fw-semibold); font-variant-numeric:tabular-nums; }
+.xc-bd-row.total{
+  margin-top:5px; padding-top:10px;
+  border-top:1px solid var(--border);
+  font-size:var(--fs-sm);
+}
+.xc-bd-row.total .lbl{ color:var(--text); font-weight:var(--fw-semibold); }
+.xc-bd-row.total .total-value{
+  font-size:var(--fs-xl); font-weight:var(--fw-bold); color:var(--primary);
+}
+.fee-note{ font-size:var(--fs-2xs); color:var(--text-faint); margin-top:6px; }
+
+/* Receipt picker: compact row, meta line carries the warning. */
+.file-field{ margin-top:var(--space-5); }
+.file-picker{ padding:10px 12px; gap:10px; border-radius:var(--radius-md); }
+.file-picker-icon{ width:34px; height:34px; flex-basis:34px; border-radius:9px; }
+.file-picker-icon .icn{ width:17px; height:17px; }
+.file-picker-copy b{ font-size:var(--fs-sm); font-weight:var(--fw-semibold); }
+.file-picker-copy small{ font-size:var(--fs-2xs); color:var(--text-faint); direction:rtl; }
+
+.btn-submit{ margin-top:var(--space-5); min-height:48px; font-size:var(--fs-md); }
+
+/* ══════════════════════════════════════════════════════════════
+   HOME HEADER — pairs with the rewritten .home-greet markup
+   ══════════════════════════════════════════════════════════════ */
+
+.home-greet{
+  display:flex; align-items:center; gap:11px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius-lg);
+  padding:11px 13px;
+  margin:0 0 var(--space-4);
+  box-shadow:none;
+}
+.greet-av{
+  width:38px; height:38px; flex:0 0 38px;
+  border-radius:var(--radius-full);
+  background:var(--surface-2); border:1px solid var(--border);
+  color:var(--primary);
+  font-size:var(--fs-base); font-weight:var(--fw-bold);
+  display:flex; align-items:center; justify-content:center;
+}
+.greet-txt{ flex:1; min-width:0; line-height:1.3; }
+.greet-hi{
+  display:block; font-size:var(--fs-2xs); color:var(--text-faint);
+  margin-bottom:1px; font-weight:var(--fw-normal);
+}
+.greet-txt #userName{
+  display:block; font-size:var(--fs-base); font-weight:var(--fw-semibold);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+
+/* Status chip — quiet, sits at the end of the row. */
+.greet-rate{
+  flex:0 0 auto; display:inline-flex; align-items:center; gap:6px;
+  padding:5px 10px; border-radius:var(--radius-full);
+  background:var(--success-soft); border:1px solid transparent;
+  font-size:var(--fs-2xs); font-weight:var(--fw-semibold); color:var(--success);
+}
+.greet-rate-dot{
+  width:6px; height:6px; border-radius:var(--radius-full);
+  background:currentColor; flex:0 0 6px;
+}
+
+/* Social badges are gone from the header. The rule stays so any
+   leftover markup cannot reappear mid-layout. */
+.home-greet .social-mini-icons{ display:none; }
+
+/* ── Long lists: the reserved placeholder height was smaller than a
+   real card, so rows could paint over one another while scrolling on
+   Android Chrome. Reserving nothing is safer than reserving wrong. */
+.order-card, .rule-item, .chg-item, .rate-card, .feed-row{
+  content-visibility:visible;
+  contain-intrinsic-size:auto;
 }
