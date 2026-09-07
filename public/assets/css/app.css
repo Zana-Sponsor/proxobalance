@@ -2388,3 +2388,237 @@ h1,h2,h3,.section-title{ letter-spacing:-.015em; line-height:1.3; }
 @media (prefers-reduced-motion:reduce){
   .feed-skel::before{ animation:none; }
 }
+
+/* ══════════════════════════════════════════════════════════════
+   LATEST COMPLETED EXCHANGES — RTL card redesign
+   Kurdish reading order leads from the right. Larger method icons
+   and a two-part amount summary keep every detail easy to scan.
+   ══════════════════════════════════════════════════════════════ */
+
+.section-title:has(+ .proof-wrap),
+.section-title:has(+ .feed-wrap){
+  direction:rtl;
+  gap:10px;
+  margin:26px 0 12px;
+  font-size:var(--fs-base);
+  text-align:start;
+}
+.section-title:has(+ .proof-wrap) > .icn,
+.section-title:has(+ .feed-wrap) > .icn{
+  width:34px;
+  height:34px;
+  padding:7px;
+  border:1px solid color-mix(in srgb, var(--success) 22%, var(--border));
+  border-radius:11px;
+}
+
+.feed-wrap{ gap:12px; }
+
+.feed-row{
+  direction:rtl;
+  grid-template-columns:minmax(0,1fr) minmax(230px,.78fr);
+  align-items:stretch;
+  gap:14px;
+  padding:16px;
+  padding-inline-start:19px;
+  background:var(--surface);
+  background:
+    radial-gradient(240px 120px at 100% 0%, color-mix(in srgb, var(--success) 9%, transparent), transparent 72%),
+    var(--surface);
+  border-radius:18px;
+  box-shadow:0 10px 28px rgba(0,0,0,.10);
+}
+.feed-row::before{
+  inset-inline-start:0;
+  top:16px;
+  bottom:16px;
+  width:4px;
+  border-radius:var(--radius-full) 0 0 var(--radius-full);
+  box-shadow:0 0 14px color-mix(in srgb, var(--success) 30%, transparent);
+}
+
+.feed-main{
+  direction:rtl;
+  align-items:flex-start;
+  gap:11px;
+}
+
+.feed-id{
+  direction:rtl;
+  unicode-bidi:isolate;
+  gap:7px;
+  padding:5px 6px 5px 10px;
+  font-size:11px;
+  letter-spacing:.4px;
+}
+.feed-id .icn{
+  width:21px;
+  height:21px;
+  flex-basis:21px;
+  padding:4px;
+}
+
+.feed-route{
+  direction:rtl;
+  justify-content:flex-start;
+  gap:8px;
+}
+.feed-route .method-icon,
+.feed-route img{
+  width:37px;
+  height:37px;
+  flex-basis:37px;
+  padding:4px;
+  border-radius:11px;
+  box-shadow:0 3px 10px rgba(0,0,0,.08);
+}
+.feed-route .method-icon svg,
+.feed-route .method-icon .icn{
+  width:22px;
+  height:22px;
+}
+.fr-name{
+  max-width:135px;
+  font-size:14px;
+  text-align:start;
+}
+.fr-arrow{
+  width:27px;
+  height:27px;
+  flex-basis:27px;
+  padding:5px;
+  transform:scaleX(-1);
+}
+
+.feed-phone{
+  direction:ltr;
+  unicode-bidi:isolate;
+  align-self:flex-start;
+  padding:4px 9px;
+  font-size:11px;
+  letter-spacing:.45px;
+}
+
+.feed-side{
+  direction:rtl;
+  min-width:230px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  align-items:stretch;
+  gap:8px;
+  padding:9px;
+  text-align:start;
+  background:var(--surface-2);
+  background:color-mix(in srgb, var(--success) 4%, var(--surface-2));
+  border-radius:14px;
+}
+.feed-time{
+  grid-column:1 / -1;
+  direction:rtl;
+  padding:1px 2px 7px;
+  margin:0;
+  text-align:start;
+}
+.feed-time::before{
+  content:'•';
+  display:inline-block;
+  margin-inline-end:6px;
+  color:var(--success);
+  font-size:15px;
+  line-height:0;
+  vertical-align:-1px;
+}
+
+.fa-line{
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  justify-content:center;
+  gap:4px;
+  padding:9px 10px;
+  border:1px solid var(--border);
+  border-radius:10px;
+  background:var(--surface);
+  white-space:normal;
+}
+.fa-in{
+  background:var(--success-soft);
+  border-color:color-mix(in srgb, var(--success) 22%, var(--border));
+}
+.fa-lbl{
+  width:100%;
+  direction:rtl;
+  text-align:start;
+  font-size:10px;
+}
+.fa-val{
+  width:100%;
+  direction:ltr;
+  unicode-bidi:isolate;
+  text-align:right;
+  white-space:nowrap;
+}
+.fa-in .fa-val{ font-size:16px; }
+.fa-out .fa-val{ font-size:12px; }
+
+[data-theme="light"] .feed-row{
+  background:
+    radial-gradient(240px 120px at 100% 0%, rgba(10,151,103,.09), transparent 72%),
+    #fff;
+  box-shadow:0 9px 26px rgba(16,36,30,.07);
+}
+
+/* On phones the route gets a full row and the two amounts sit below it. */
+@media (max-width:767px){
+  .feed-row{
+    grid-template-columns:1fr;
+    gap:13px;
+    padding:15px;
+    padding-inline-start:18px;
+  }
+  .feed-main{ gap:10px; }
+  .feed-side{
+    width:100%;
+    min-width:0;
+  }
+  .feed-route .method-icon,
+  .feed-route img{
+    width:39px;
+    height:39px;
+    flex-basis:39px;
+  }
+  .fr-name{
+    max-width:110px;
+    font-size:13.5px;
+  }
+}
+
+@media (max-width:360px){
+  .feed-route{ gap:6px; }
+  .feed-route .method-icon,
+  .feed-route img{
+    width:36px;
+    height:36px;
+    flex-basis:36px;
+  }
+  .fr-name{ max-width:78px; font-size:12.5px; }
+  .fr-arrow{ width:24px; height:24px; flex-basis:24px; }
+  .fa-line{ padding-inline:8px; }
+  .fa-in .fa-val{ font-size:14.5px; }
+}
+
+.feed-skel{
+  direction:rtl;
+  grid-template-columns:minmax(0,1fr) 230px;
+  min-height:132px;
+  padding:16px;
+  padding-inline-start:19px;
+  border-radius:18px;
+}
+@media (max-width:767px){
+  .feed-skel{
+    grid-template-columns:1fr;
+    min-height:205px;
+  }
+}
