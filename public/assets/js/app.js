@@ -2164,7 +2164,10 @@ function renderPublicFeed(rows){
         + '<span class="feed-phone">'+escHtml(r.phone||'')+'</span>'
         + '<span>'+timeAgo(r.at)+'</span>'
       + '</span>'
-      + '<span class="feed-amount">'+formatNum(Math.floor(r.total||0))+' IQD<small>لە '+formatNum(Math.floor(r.amount||0))+(r.from==='USDT'?'$':'')+'</small></span>'
+      + '<span class="feed-amount">'
+      +   '<span class="fa-line fa-in"><span class="fa-lbl">وەرگرتن:</span><span class="fa-val">'+formatNum(Math.floor(r.total||0))+'+</span></span>'
+      +   '<span class="fa-line fa-out"><span class="fa-lbl">ناردن:</span><span class="fa-val">'+formatNum(Math.floor(r.amount||0))+(r.from==='USDT'?'$':'')+'-</span></span>'
+      + '</span>'
       + '</div>';
   }).join('');
 }
