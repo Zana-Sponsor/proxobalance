@@ -11,7 +11,7 @@
 <meta name="author" content="Proxo Balance">
 <meta name="application-name" content="Proxo Balance">
 <meta name="apple-mobile-web-app-title" content="Proxo Balance">
-<link rel="canonical" href="https://www.proxopages.com/exchange">
+<link rel="canonical" href="https://www.proxobalance.app/">
 <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
 <meta http-equiv="content-language" content="ckb-IQ">
 
@@ -20,7 +20,7 @@
 <meta property="og:site_name" content="Proxo Balance">
 <meta property="og:title" content="Proxo Balance — ئاڵوگۆڕی دراو لە کوردستان و عێراق">
 <meta property="og:description" content="ئاڵوگۆڕی دراو بە کەمترین لێبڕین لە هەموو کوردستان و عێراق — FastPay، FIB، Qi Card، NassWallet، Korek و Asiacell. متمانە و خێرایی.">
-<meta property="og:url" content="https://www.proxopages.com/exchange">
+<meta property="og:url" content="https://www.proxobalance.app/">
 <meta property="og:image" content="https://cdn.imageurlgenerator.com/uploads/bdd57b8f-384b-470e-8a37-31fb03051838.webp">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -44,7 +44,7 @@
   "@type": "WebSite",
   "name": "Proxo Balance",
   "alternateName": ["پڕۆکسۆ باڵانس", "ProxoBalance", "Proxo Balance Exchange"],
-  "url": "https://www.proxopages.com/"
+  "url": "https://www.proxobalance.app/"
 }
 </script>
 
@@ -55,7 +55,7 @@
   "@type": "FinancialService",
   "name": "Proxo Balance",
   "alternateName": "پڕۆکسۆ باڵانس",
-  "url": "https://www.proxopages.com/exchange",
+  "url": "https://www.proxobalance.app/",
   "image": "https://cdn.imageurlgenerator.com/uploads/bdd57b8f-384b-470e-8a37-31fb03051838.webp",
   "description": "پڕۆکسۆ باڵانس — ماڵپەڕی ئاڵوگۆڕکردنی دراو لەنێوان FastPay، FIB، Qi Card، NassWallet، Korek و Asiacell بە کەمترین بڕی لێبڕین لە هەموو کوردستان و عێراق. متمانە، خێرایی و نرخی ڕاستەقینە.",
   "currenciesAccepted": "IQD, USD",
@@ -86,13 +86,8 @@
 <!-- Supabase — own dedicated project ("Exchange"), fully separate from Proxo -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<!-- Modern Typography Fonts: Plus Jakarta Sans for numerals/fintech & Noto Kufi Arabic / Rabar -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
-<link rel="stylesheet" href="assets/css/tokens.css?v=4">
-<link rel="stylesheet" href="assets/css/app.css?v=4">
+<link rel="stylesheet" href="/assets/css/tokens.css?v=4">
+<link rel="stylesheet" href="/assets/css/app.css?v=4">
 </head>
 
 <body>
@@ -201,35 +196,10 @@
       </div>
       <h1>Proxo Balance</h1>
       <p>ئاڵوگۆڕی دراو بە کەمترین لێبڕین — متمانە و خێرایی</p>
-
       <div class="auth-proof" aria-label="ئامارەکانی پلاتفۆرم">
-        <div class="auth-proof-card">
-          <span class="auth-proof-ico success">
-            <svg class="icn icn-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6L9 17l-5-5"/></svg>
-          </span>
-          <div class="auth-proof-info">
-            <b id="authProofCount">—</b>
-            <span>مامەڵەی سەرکەوتوو</span>
-          </div>
-        </div>
-        <div class="auth-proof-card">
-          <span class="auth-proof-ico primary">
-            <svg class="icn icn-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-          </span>
-          <div class="auth-proof-info">
-            <b id="authProofVolume">—</b>
-            <span>قەبارەی ئاڵوگۆڕ (IQD)</span>
-          </div>
-        </div>
-        <div class="auth-proof-card">
-          <span class="auth-proof-ico secondary">
-            <svg class="icn icn-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          </span>
-          <div class="auth-proof-info">
-            <b id="authProofUsers">—</b>
-            <span>بەکارهێنەر</span>
-          </div>
-        </div>
+        <div><b id="authProofCount">—</b><span>مامەڵەی سەرکەوتوو</span></div>
+        <div><b id="authProofVolume">—</b><span>قەبارەی ئاڵوگۆڕ (IQD)</span></div>
+        <div><b id="authProofUsers">—</b><span>بەکارهێنەر</span></div>
       </div>
     </div>
 
@@ -241,7 +211,7 @@
         <div class="auth-step-icon">
           <svg class="icn icn-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v12H4z"/><path d="M4 7l8 6 8-6"/></svg>
         </div>
-        <div class="auth-step-label"><h3>چوونەژوورەوە</h3><p>ئیمەیلەکەت بنووسە بۆ دەستپێکردن</p></div>
+        <div class="auth-step-label"><h3>چوونەژوورەوە</h3><p>ئیمەیلەکەت بنووسە</p></div>
         <div class="input-wrap">
           <span class="input-ico"><svg class="icn icn-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v12H4z"/><path d="M4 7l8 6 8-6"/></svg></span>
           <input class="input" type="email" id="authEmail" placeholder="example@gmail.com" dir="ltr" onkeydown="if(event.key==='Enter')nextAuthStep('email')">
@@ -299,66 +269,48 @@
       </div>
 
       <!-- OTP -->
-      <div id="otpStep" class="auth-step" style="display:none">
-        <div class="auth-step-icon otp-shield-icon">
-          <svg class="icn icn-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+      <div id="otpStep" style="display:none">
+        <div class="auth-step-icon">
+          <svg class="icn icn-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.2l6.8 2.6v5c0 4.8-2.9 7.9-6.8 9.4-3.9-1.5-6.8-4.6-6.8-9.4v-5z"/><path d="M9 12l2.1 2.1L15.4 9.8"/></svg>
         </div>
-        <div class="auth-step-label">
-          <h3>کۆدی دڵنیاکردنەوە (OTP)</h3>
-          <div class="otp-target-pill" id="otpTargetPill">
-            <span class="otp-target-ico"><svg class="icn icn-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></span>
-            <span id="otpEmailLbl">کۆدی ٦ ژمارە نێردرا</span>
-          </div>
+        <div class="auth-step-label"><h3>کۆدی دڵنیاکردنەوە</h3><p id="otpEmailLbl">کۆدی ٦ ژمارە نێردرا</p></div>
+        <div class="otp-inputs">
+          <input class="otp-digit" type="text" inputmode="tel" maxlength="1" id="otp1" oninput="otpMove(this,null,'otp2')" onkeydown="otpBack(event,this,null)">
+          <input class="otp-digit" type="text" inputmode="tel" maxlength="1" id="otp2" oninput="otpMove(this,'otp1','otp3')" onkeydown="otpBack(event,this,'otp1')">
+          <input class="otp-digit" type="text" inputmode="tel" maxlength="1" id="otp3" oninput="otpMove(this,'otp2','otp4')" onkeydown="otpBack(event,this,'otp2')">
+          <input class="otp-digit" type="text" inputmode="tel" maxlength="1" id="otp4" oninput="otpMove(this,'otp3','otp5')" onkeydown="otpBack(event,this,'otp3')">
+          <input class="otp-digit" type="text" inputmode="tel" maxlength="1" id="otp5" oninput="otpMove(this,'otp4','otp6')" onkeydown="otpBack(event,this,'otp4')">
+          <input class="otp-digit" type="text" inputmode="tel" maxlength="1" id="otp6" oninput="otpMove(this,'otp5',null)" onkeydown="otpBack(event,this,'otp5')">
         </div>
-
-        <div class="otp-inputs-wrapper" id="otpInputsWrapper">
-          <div class="otp-inputs" onpaste="handleOtpPaste(event, 'otp')">
-            <input class="otp-digit" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" id="otp1" autocomplete="one-time-code" oninput="otpMove(this,null,'otp2')" onkeydown="otpBack(event,this,null)">
-            <input class="otp-digit" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" id="otp2" autocomplete="one-time-code" oninput="otpMove(this,'otp1','otp3')" onkeydown="otpBack(event,this,'otp1')">
-            <input class="otp-digit" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" id="otp3" autocomplete="one-time-code" oninput="otpMove(this,'otp2','otp4')" onkeydown="otpBack(event,this,'otp2')">
-            <span class="otp-divider" aria-hidden="true">—</span>
-            <input class="otp-digit" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" id="otp4" autocomplete="one-time-code" oninput="otpMove(this,'otp3','otp5')" onkeydown="otpBack(event,this,'otp3')">
-            <input class="otp-digit" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" id="otp5" autocomplete="one-time-code" oninput="otpMove(this,'otp4','otp6')" onkeydown="otpBack(event,this,'otp4')">
-            <input class="otp-digit" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" id="otp6" autocomplete="one-time-code" oninput="otpMove(this,'otp5',null)" onkeydown="otpBack(event,this,'otp5')">
-          </div>
+        <div class="otp-timer" id="otpTimerWrap">ماوەی ئەم کۆدە: <span id="otpTimerVal">10:00</span></div>
+        <div class="otp-resend" id="otpResendBtn" onclick="resendOtp()">
+          <svg class="icn icn-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 0 1 13.7-5.7L20 8.5"/><path d="M20 4v4.5h-4.5"/><path d="M20 12a8 8 0 0 1-13.7 5.7L4 15.5"/><path d="M4 20v-4.5h4.5"/></svg>
+          کۆدی نوێ بنێرە
         </div>
-
-        <div class="otp-meta-row">
-          <div class="otp-timer-box" id="otpTimerWrap">
-            <span class="otp-timer-dot"></span>
-            <span>ماوەی کۆد:</span>
-            <b id="otpTimerVal">10:00</b>
-          </div>
-          <button type="button" class="otp-resend-btn" id="otpResendBtn" onclick="resendOtp()">
-            <svg class="icn icn-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
-            <span>کۆدی نوێ بنێرە</span>
-          </button>
-        </div>
-
         <button class="btn btn-primary btn-block" id="otpVerifyBtn" onclick="verifyOtp()" style="margin-top:14px">
           <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.8l4.3 4.3L19 7.5"/></svg>
-          <span>دڵنیاکردنەوە</span>
+          دڵنیاکردنەوە
         </button>
         <div class="amsg" id="otpMsg"></div>
         <div class="auth-step-back" onclick="cancelOtp()">
           <svg class="icn icn-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 6.2 19 12l-6 5.8"/></svg>
-          گەڕانەوە و گۆڕینی ئیمەیل
+          گەڕانەوە
         </div>
       </div>
 
       <!-- Forgot password -->
-      <div id="forgotStep" class="auth-step" style="display:none">
+      <div id="forgotStep" style="display:none">
         <div id="fpStepA">
           <div class="auth-step-icon">
             <svg class="icn icn-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.8" cy="15.8" r="3.1"/><path d="M10 13.6 17.6 6M17.6 6h-3.4M17.6 6v3.4"/></svg>
           </div>
-          <div class="auth-step-label"><h3>گەڕاندنەوەی وشەی نهێنی</h3><p>ئیمەیلەکەت بنووسە بۆ ناردنی کۆدی دڵنیاکردنەوە</p></div>
+          <div class="auth-step-label"><h3>گەڕاندنەوەی وشەی نهێنی</h3><p>ئیمەیلەکەت بنووسە</p></div>
           <div class="field">
             <input class="input" type="email" id="forgotEmail" placeholder="example@gmail.com" dir="ltr">
           </div>
           <button class="btn btn-primary btn-block" id="forgotSendBtn" onclick="doForgotSendOtp()">
             <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2.5l-9.3 19-3-8.1-8.2-3.1z"/><path d="M12.2 13.5l4-6.8"/></svg>
-            <span>ناردنی کۆد</span>
+            ناردنی کۆد
           </button>
           <div class="amsg" id="fpMsgA"></div>
           <div class="auth-step-back" onclick="cancelForgotStep()">
@@ -367,41 +319,27 @@
           </div>
         </div>
         <div id="fpStepB" style="display:none">
-          <div class="auth-step-icon otp-shield-icon">
-            <svg class="icn icn-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+          <div class="auth-step-icon">
+            <svg class="icn icn-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.2l6.8 2.6v5c0 4.8-2.9 7.9-6.8 9.4-3.9-1.5-6.8-4.6-6.8-9.4v-5z"/><path d="M9 12l2.1 2.1L15.4 9.8"/></svg>
           </div>
-          <div class="auth-step-label">
-            <h3>دڵنیاکردنەوەی کۆد</h3>
-            <div class="otp-target-pill">
-              <span id="fpOtpLbl">کۆدی ٦ ژمارە نێردرا</span>
-            </div>
+          <p style="text-align:center;font-size:var(--fs-xs);color:var(--text-muted);margin-bottom:14px" id="fpOtpLbl">کۆدی ٦ ژمارە نێردرا</p>
+          <div class="otp-inputs">
+            <input class="otp-digit" type="text" inputmode="tel" maxlength="1" id="fp1" oninput="fpOtpMove(this,null,'fp2')" onkeydown="fpOtpBack(event,this,null)">
+            <input class="otp-digit" type="text" inputmode="tel" maxlength="1" id="fp2" oninput="fpOtpMove(this,'fp1','fp3')" onkeydown="fpOtpBack(event,this,'fp1')">
+            <input class="otp-digit" type="text" inputmode="tel" maxlength="1" id="fp3" oninput="fpOtpMove(this,'fp2','fp4')" onkeydown="fpOtpBack(event,this,'fp2')">
+            <input class="otp-digit" type="text" inputmode="tel" maxlength="1" id="fp4" oninput="fpOtpMove(this,'fp3','fp5')" onkeydown="fpOtpBack(event,this,'fp3')">
+            <input class="otp-digit" type="text" inputmode="tel" maxlength="1" id="fp5" oninput="fpOtpMove(this,'fp4','fp6')" onkeydown="fpOtpBack(event,this,'fp4')">
+            <input class="otp-digit" type="text" inputmode="tel" maxlength="1" id="fp6" oninput="fpOtpMove(this,'fp5',null)" onkeydown="fpOtpBack(event,this,'fp5')">
           </div>
-          <div class="otp-inputs-wrapper" id="fpOtpInputsWrapper">
-            <div class="otp-inputs" onpaste="handleOtpPaste(event, 'fp')">
-              <input class="otp-digit" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" id="fp1" autocomplete="one-time-code" oninput="fpOtpMove(this,null,'fp2')" onkeydown="fpOtpBack(event,this,null)">
-              <input class="otp-digit" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" id="fp2" autocomplete="one-time-code" oninput="fpOtpMove(this,'fp1','fp3')" onkeydown="fpOtpBack(event,this,'fp1')">
-              <input class="otp-digit" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" id="fp3" autocomplete="one-time-code" oninput="fpOtpMove(this,'fp2','fp4')" onkeydown="fpOtpBack(event,this,'fp2')">
-              <span class="otp-divider" aria-hidden="true">—</span>
-              <input class="otp-digit" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" id="fp4" autocomplete="one-time-code" oninput="fpOtpMove(this,'fp3','fp5')" onkeydown="fpOtpBack(event,this,'fp3')">
-              <input class="otp-digit" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" id="fp5" autocomplete="one-time-code" oninput="fpOtpMove(this,'fp4','fp6')" onkeydown="fpOtpBack(event,this,'fp4')">
-              <input class="otp-digit" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" id="fp6" autocomplete="one-time-code" oninput="fpOtpMove(this,'fp5',null)" onkeydown="fpOtpBack(event,this,'fp5')">
-            </div>
-          </div>
-          <div class="otp-meta-row">
-            <div class="otp-timer-box" id="fpTimerWrap">
-              <span class="otp-timer-dot"></span>
-              <span>ماوەی کۆد:</span>
-              <b id="fpTimerVal">10:00</b>
-            </div>
-            <button type="button" class="otp-resend-btn" id="fpResendBtn" onclick="fpResendOtp()">
-              <svg class="icn icn-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
-              <span>کۆدی نوێ بنێرە</span>
-            </button>
+          <div class="otp-timer" id="fpTimerWrap">ماوەی ئەم کۆدە: <span id="fpTimerVal">10:00</span></div>
+          <div class="otp-resend" id="fpResendBtn" onclick="fpResendOtp()">
+            <svg class="icn icn-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 0 1 13.7-5.7L20 8.5"/><path d="M20 4v4.5h-4.5"/><path d="M20 12a8 8 0 0 1-13.7 5.7L4 15.5"/><path d="M4 20v-4.5h4.5"/></svg>
+            کۆدی نوێ بنێرە
           </div>
           <div class="amsg" id="fpMsgB"></div>
           <button class="btn btn-primary btn-block" id="fpVerifyBtn" onclick="doForgotVerifyOtp()" style="margin-top:14px">
             <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.8l4.3 4.3L19 7.5"/></svg>
-            <span>دڵنیاکردنەوە</span>
+            دڵنیاکردنەوە
           </button>
           <div class="auth-step-back" onclick="fpBackToA()">
             <svg class="icn icn-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 6.2 19 12l-6 5.8"/></svg>
@@ -424,28 +362,11 @@
           <div class="amsg" id="fpMsgC"></div>
           <button class="btn btn-primary btn-block" id="fpSaveBtn" onclick="doForgotSavePass()">
             <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10.5" width="14" height="9" rx="2.2"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></svg>
-            <span>پاشەکەوتکردن</span>
+            پاشەکەوتکردن
           </button>
         </div>
       </div>
     </div>
-
-    <!-- Security Trust Badges Strip -->
-    <div class="auth-security-footer">
-      <div class="auth-sec-item">
-        <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
-        <span>دڵنیایی ٢-هەنگاوی OTP</span>
-      </div>
-      <div class="auth-sec-item">
-        <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-        <span>داتای بەستراو بە SSL</span>
-      </div>
-      <div class="auth-sec-item">
-        <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-        <span>ئاڵوگۆڕی دەستبەجێ</span>
-      </div>
-    </div>
-
   </div>
 </div>
 
@@ -828,34 +749,17 @@
       </div>
     </div>
 
-    <div class="feed-section-container">
-      <div class="feed-section-header">
-        <h3 class="section-title">
-          <span class="section-title-ico">
-            <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></svg>
-          </span>
-          دوایین ئاڵوگۆڕە تەواوبووەکان
-        </h3>
-        <span class="feed-live-badge" title="نوێبوونەوەی ڕاستەوخۆ">
-          <span class="feed-live-dot"></span>
-          ڕاستەوخۆ
-        </span>
-      </div>
+    <div>
+      <h3 class="section-title">
+        <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 1.8"/></svg>
+        دوایین ئاڵوگۆڕە تەواوبووەکان
+      </h3>
       <div class="feed-wrap" id="publicFeed" aria-live="polite">
-        <div class="feed-skel-item">
-          <div class="feed-skel-top"><div class="feed-skel-bar sm"></div><div class="feed-skel-bar xs"></div></div>
-          <div class="feed-skel-main"><div class="feed-skel-bar md"></div><div class="feed-skel-bar sm"></div></div>
-        </div>
-        <div class="feed-skel-item">
-          <div class="feed-skel-top"><div class="feed-skel-bar sm"></div><div class="feed-skel-bar xs"></div></div>
-          <div class="feed-skel-main"><div class="feed-skel-bar md"></div><div class="feed-skel-bar sm"></div></div>
-        </div>
+        <div class="feed-skel"></div><div class="feed-skel"></div><div class="feed-skel"></div>
       </div>
-      <div class="feed-privacy-note">
-        <span class="feed-privacy-ico">
-          <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2.5"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-        </span>
-        <span class="feed-privacy-txt">ژمارەکان بۆ پاراستنی تایبەتمەندێتی بەکارهێنەران شاردراونەتەوە و ژمارەی تەواو هەرگیز نانێردرێت.</span>
+      <div class="xc-hint" style="margin:9px 4px 0">
+        <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <span>ژمارەکان بۆ پاراستنی تایبەتمەندێتی لەسەر سێرڤەر شاردراونەتەوە — ژمارەی تەواو هەرگیز نانێردرێت بۆ وێبگەڕ.</span>
       </div>
     </div>
   </div>
@@ -1133,7 +1037,7 @@
 
 </div>
 
-<script src="assets/js/app.js?v=7"></script>
-<script src="assets/js/track.js"></script>
+<script src="/assets/js/app.js?v=7"></script>
+<script src="/assets/js/track.js?v=1"></script>
 </body>
 </html>
