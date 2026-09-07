@@ -32,6 +32,8 @@ app.all('/api/security-admin', securityAdminHandler);
 app.all('/api/track', trackHandler);
 
 // Static files
+const publicDir = path.join(__dirname, 'public');
+app.use(express.static(publicDir, { extensions: ['html'] }));
 app.use(express.static(__dirname, { extensions: ['html'] }));
 
 // SPA fallback for non-file routes
