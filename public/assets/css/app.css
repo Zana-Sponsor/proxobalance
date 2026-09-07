@@ -2059,8 +2059,8 @@ h1,h2,h3,.section-title{ letter-spacing:-.015em; line-height:1.3; }
   display:flex !important;
   flex-wrap:wrap;
   align-items:center;
-  gap:6px 10px;
-  padding:12px 13px;
+  gap:8px 10px;
+  padding:14px 15px;
   border-bottom:1px solid var(--border);
   /* no content-visibility here: the reserved height was wrong and the
      rows painted over each other while scrolling. */
@@ -2074,45 +2074,61 @@ h1,h2,h3,.section-title{ letter-spacing:-.015em; line-height:1.3; }
   order:-1;
   flex:1 0 100%;
   display:flex; align-items:center; gap:5px;
-  font-size:10px; font-weight:var(--fw-bold); letter-spacing:.4px;
+  font-size:12px; font-weight:var(--fw-bold); letter-spacing:.4px;
   color:var(--primary); direction:ltr;
   font-family:ui-monospace,'SF Mono',Menlo,monospace;
 }
-.feed-id .icn{ width:11px; height:11px; flex:0 0 11px; }
+.feed-id .icn{ width:14px; height:14px; flex:0 0 14px; }
 
 /* Line 2 — route on the start edge, amount pinned to the end. */
 .feed-route{
   order:1;
   flex:1 1 auto; min-width:0;
   display:flex; align-items:center; gap:5px; flex-wrap:nowrap;
-  font-size:11px; font-weight:var(--fw-semibold);
+  font-size:13px; font-weight:var(--fw-semibold);
   overflow:hidden;
 }
-.feed-route .icn{ width:12px; height:12px; flex:0 0 12px; color:var(--text-faint); }
+.feed-route .icn{ width:14px; height:14px; flex:0 0 14px; color:var(--text-faint); }
 .feed-route .method-icon,
-.feed-route img{ width:17px; height:17px; flex:0 0 17px; border-radius:5px; }
+.feed-route img{ width:22px; height:22px; flex:0 0 22px; border-radius:6px; }
 
-/* Received amount leads; the amount originally sent sits under it as a
-   quiet pill, so the pair reads as one figure with its origin rather
-   than as two competing numbers. */
+/* Two labelled lines: what arrived, and what was sent to get it.
+   Labels stay RTL; the figures are isolated LTR so the + and - signs
+   cannot jump to the wrong end of the number on an RTL page. */
 .feed-amount{
   order:2;
   flex:0 0 auto;
-  display:flex; flex-direction:column; align-items:flex-end; gap:3px;
-  text-align:end; white-space:nowrap; direction:ltr;
-  font-size:13.5px; font-weight:var(--fw-bold); line-height:1.15;
-  color:var(--success);
-  font-variant-numeric:tabular-nums;
-  letter-spacing:-.01em;
+  display:flex; flex-direction:column; align-items:flex-end; gap:5px;
+  direction:rtl; text-align:end; white-space:nowrap;
 }
-.feed-amount small{
-  font-size:9.5px; font-weight:var(--fw-semibold);
-  color:var(--text-faint);
+.fa-line{ display:flex; align-items:baseline; gap:6px; }
+.fa-lbl{
+  font-size:10.5px; font-weight:var(--fw-semibold); color:var(--text-faint);
+}
+.fa-val{
+  direction:ltr; unicode-bidi:isolate;
+  font-variant-numeric:tabular-nums; letter-spacing:-.01em;
+}
+.fa-in .fa-val{
+  font-size:16px; font-weight:var(--fw-bold); color:var(--success);
+}
+.fa-out{
   background:var(--surface-2);
   border:1px solid var(--border);
   border-radius:var(--radius-full);
-  padding:2px 7px;
-  letter-spacing:0;
+  padding:3px 9px;
+}
+.fa-out .fa-lbl{ font-size:10px; }
+.fa-out .fa-val{
+  font-size:11.5px; font-weight:var(--fw-semibold); color:var(--text-muted);
+}
+
+/* Kept so an un-updated app.js still renders sensibly. */
+.feed-amount small{
+  font-size:10.5px; font-weight:var(--fw-semibold); color:var(--text-faint);
+  background:var(--surface-2); border:1px solid var(--border);
+  border-radius:var(--radius-full); padding:2px 7px;
+  direction:ltr; unicode-bidi:isolate;
 }
 
 /* Line 3 — phone and timestamp, quiet, full width. */
@@ -2120,7 +2136,7 @@ h1,h2,h3,.section-title{ letter-spacing:-.015em; line-height:1.3; }
   order:3;
   flex:1 0 100%;
   display:flex; align-items:center; gap:8px; flex-wrap:wrap;
-  font-size:10px; color:var(--text-faint);
+  font-size:11.5px; color:var(--text-faint);
 }
 .feed-phone{ direction:ltr; font-variant-numeric:tabular-nums; }
 
@@ -2135,8 +2151,8 @@ h1,h2,h3,.section-title{ letter-spacing:-.015em; line-height:1.3; }
    amount, meta — so nothing shifts position when data lands. */
 .feed-skel{
   display:flex; flex-wrap:wrap; align-items:center;
-  gap:6px 10px;
-  padding:12px 13px;
+  gap:8px 10px;
+  padding:14px 15px;
   height:auto;
   border-bottom:1px solid var(--border);
   background:none; animation:none;
@@ -2149,3 +2165,7 @@ h1,h2,h3,.section-title{ letter-spacing:-.015em; line-height:1.3; }
 .fs-route{ order:1; flex:1 1 auto; min-width:0; }
 .fs-amt{ order:2; flex:0 0 auto; display:flex; flex-direction:column; align-items:flex-end; gap:4px; }
 .fs-meta{ order:3; flex:1 0 100%; gap:9px; }
+
+/* Skeleton sub-rows inside the amount column. */
+.fs-amt{ align-items:flex-end; gap:5px; }
+.fs-sub{ display:flex; align-items:center; gap:6px; }
