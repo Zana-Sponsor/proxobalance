@@ -1983,3 +1983,58 @@ h1,h2,h3,.section-title{ letter-spacing:-.015em; line-height:1.3; }
 .file-picker-copy small{ font-size:var(--fs-2xs); color:var(--text-faint); direction:rtl; }
 
 .btn-submit{ margin-top:var(--space-5); min-height:48px; font-size:var(--fs-md); }
+
+/* ══════════════════════════════════════════════════════════════
+   HOME HEADER — pairs with the rewritten .home-greet markup
+   ══════════════════════════════════════════════════════════════ */
+
+.home-greet{
+  display:flex; align-items:center; gap:11px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius-lg);
+  padding:11px 13px;
+  margin:0 0 var(--space-4);
+  box-shadow:none;
+}
+.greet-av{
+  width:38px; height:38px; flex:0 0 38px;
+  border-radius:var(--radius-full);
+  background:var(--surface-2); border:1px solid var(--border);
+  color:var(--primary);
+  font-size:var(--fs-base); font-weight:var(--fw-bold);
+  display:flex; align-items:center; justify-content:center;
+}
+.greet-txt{ flex:1; min-width:0; line-height:1.3; }
+.greet-hi{
+  display:block; font-size:var(--fs-2xs); color:var(--text-faint);
+  margin-bottom:1px; font-weight:var(--fw-normal);
+}
+.greet-txt #userName{
+  display:block; font-size:var(--fs-base); font-weight:var(--fw-semibold);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+
+/* Status chip — quiet, sits at the end of the row. */
+.greet-rate{
+  flex:0 0 auto; display:inline-flex; align-items:center; gap:6px;
+  padding:5px 10px; border-radius:var(--radius-full);
+  background:var(--success-soft); border:1px solid transparent;
+  font-size:var(--fs-2xs); font-weight:var(--fw-semibold); color:var(--success);
+}
+.greet-rate-dot{
+  width:6px; height:6px; border-radius:var(--radius-full);
+  background:currentColor; flex:0 0 6px;
+}
+
+/* Social badges are gone from the header. The rule stays so any
+   leftover markup cannot reappear mid-layout. */
+.home-greet .social-mini-icons{ display:none; }
+
+/* ── Long lists: the reserved placeholder height was smaller than a
+   real card, so rows could paint over one another while scrolling on
+   Android Chrome. Reserving nothing is safer than reserving wrong. */
+.order-card, .rule-item, .chg-item, .rate-card, .feed-row{
+  content-visibility:visible;
+  contain-intrinsic-size:auto;
+}
