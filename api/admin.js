@@ -14,13 +14,29 @@
 // ─────────────────────────────────────────────────────────────
 import { createClient } from '@supabase/supabase-js';
 
-const SUPABASE_URL = process.env.SUPABASE_URL;
-const SERVICE_KEY  = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const SUPABASE_URL = process.env.SUPABASE_URL || 'https://pycxuugoblkslvwebxuu.supabase.co';
+const SERVICE_KEY  = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 
-// One client per cold start. Service role bypasses RLS, so every code path
-// below has to do its own authorisation — that is what requireAdmin() is for.
-const db = createClient(SUPABASE_URL, SERVICE_KEY, {
-  auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false }
+// Lazy initialization so missing environment variables do not crash server boot
+let dbClient = null;
+function getDb() {
+  if (!dbClient) {
+    if (!SUPABASE_URL || !SERVICE_KEY) {
+      throw Object.assign(new Error('Server is not configured'), { status: 500, code: 'missing_env' });
+    }
+    dbClient = createClient(SUPABASE_URL, SERVICE_KEY, {
+      auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false }
+    });
+  }
+  return dbClient;
+}
+
+const db = new Proxy({}, {
+  get(_, prop) {
+    const client = getDb();
+    const val = client[prop];
+    return typeof val === 'function' ? val.bind(client) : val;
+  }
 });
 
 const STATUS_PENDING  = 'چاوەڕوانە';

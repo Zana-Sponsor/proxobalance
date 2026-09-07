@@ -156,14 +156,19 @@ export async function isSecurityAdmin(userId) {
 // ex_ip_check() matches an exact IP or any CIDR range, bumps the ban's hit
 // counter, and returns a single row. RETURNS TABLE arrives as an array.
 export async function ipGate(context) {
-  const rows = await rpc('ex_ip_check', { p_ip: context.ip });
-  const row = Array.isArray(rows) ? rows[0] : rows;
-  return {
-    banned: row?.banned === true,
-    banId: row?.ban_id || null,
-    reason: row?.reason || null,
-    expiresAt: row?.expires_at || null
-  };
+  if (!SERVICE_KEY) return { banned: false };
+  try {
+    const rows = await rpc('ex_ip_check', { p_ip: context.ip });
+    const row = Array.isArray(rows) ? rows[0] : rows;
+    return {
+      banned: row?.banned === true,
+      banId: row?.ban_id || null,
+      reason: row?.reason || null,
+      expiresAt: row?.expires_at || null
+    };
+  } catch {
+    return { banned: false };
+  }
 }
 
 // ── EVENT LOG ───────────────────────────────────────────────────────────────
@@ -256,19 +261,21 @@ export function stealth404(res) {
 // Express/Node adapter: mount this before static files and before every route
 // (`app.use(stealthBanMiddleware)`) when the whole site is served by Node.
 export async function stealthBanMiddleware(req, res, next) {
+  if (!SERVICE_KEY) return next();
   try {
     const context = requestContext(req);
     const gate = await ipGate(context);
     if (gate.banned) {
       if (!throttled(`blocked|${context.ip || '-'}`)) {
-        await recordEvent(context, { type: 'blocked_request', detail: gate.reason, risk: 0 });
+        await recordEvent(context, { type: 'blocked_request', detail: gate.reason, risk: 0 }).catch(() => {});
       }
       return stealth404(res);
     }
     req.securityContext = context;
     return next();
   } catch (error) {
-    return json(res, Number(error.status) || 503, { error: 'Server error' });
+    // Fail-open: database or config blip must not break the whole site
+    return next();
   }
 }
 
