@@ -39,6 +39,9 @@ app.use((req, res) => {
   if (req.path.startsWith('/api/')) {
     return res.status(404).json({ error: 'Not found' });
   }
+  if (path.extname(req.path) || req.path.startsWith('/assets/')) {
+    return res.status(404).type('text/plain').send('Not found');
+  }
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
