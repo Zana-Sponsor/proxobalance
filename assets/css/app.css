@@ -2038,3 +2038,86 @@ h1,h2,h3,.section-title{ letter-spacing:-.015em; line-height:1.3; }
   content-visibility:visible;
   contain-intrinsic-size:auto;
 }
+
+/* ══════════════════════════════════════════════════════════════
+   PUBLIC FEED — rebuilt on flex
+   The old rule was `display:grid; grid-template-columns:auto 1fr auto`
+   with .feed-id spanning `1 / -1`. Three tracks, and any row whose
+   content did not fit the middle track pushed its siblings onto lines
+   of their own — which is what the broken screenshot shows. Flex wrap
+   cannot fail that way: the id owns its line, the rest share one.
+   ══════════════════════════════════════════════════════════════ */
+
+.feed-wrap{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius-lg);
+  overflow:hidden;
+}
+
+.feed-row{
+  display:flex !important;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:6px 10px;
+  padding:11px 13px;
+  border-bottom:1px solid var(--border);
+  /* no content-visibility here: the reserved height was wrong and the
+     rows painted over each other while scrolling. */
+  content-visibility:visible;
+  contain-intrinsic-size:auto;
+}
+.feed-row:last-child{ border-bottom:none; }
+
+/* Line 1 — the transaction id, full width. */
+.feed-id{
+  order:-1;
+  flex:1 0 100%;
+  display:flex; align-items:center; gap:5px;
+  font-size:10px; font-weight:var(--fw-bold); letter-spacing:.4px;
+  color:var(--primary); direction:ltr;
+  font-family:ui-monospace,'SF Mono',Menlo,monospace;
+}
+.feed-id .icn{ width:11px; height:11px; flex:0 0 11px; }
+
+/* Line 2 — route on the start edge, amount pinned to the end. */
+.feed-route{
+  order:1;
+  flex:1 1 auto; min-width:0;
+  display:flex; align-items:center; gap:5px; flex-wrap:nowrap;
+  font-size:var(--fs-2xs); font-weight:var(--fw-semibold);
+  overflow:hidden;
+}
+.feed-route .icn{ width:12px; height:12px; flex:0 0 12px; color:var(--text-faint); }
+.feed-route .method-icon,
+.feed-route img{ width:16px; height:16px; flex:0 0 16px; border-radius:4px; }
+
+.feed-amount{
+  order:2;
+  flex:0 0 auto;
+  text-align:end; white-space:nowrap; direction:ltr;
+  font-size:var(--fs-xs); font-weight:var(--fw-bold); color:var(--success);
+  font-variant-numeric:tabular-nums;
+}
+.feed-amount small{
+  display:block; margin-top:1px;
+  font-size:9.5px; font-weight:var(--fw-medium); color:var(--text-faint);
+}
+
+/* Line 3 — phone and timestamp, quiet, full width. */
+.feed-meta{
+  order:3;
+  flex:1 0 100%;
+  display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+  font-size:10px; color:var(--text-faint);
+}
+.feed-phone{ direction:ltr; font-variant-numeric:tabular-nums; }
+
+/* The desktop override rebuilt the grid; it has to go too. */
+@media (min-width:768px){
+  .feed-row{ display:flex !important; }
+  .feed-id{ flex:1 0 100%; order:-1; }
+}
+
+/* Skeleton matches the new three-line row height. */
+.feed-skel{ height:66px; }
