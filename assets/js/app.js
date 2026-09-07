@@ -733,20 +733,14 @@ async function doAuth(){
 // ══ OTP STEP ══
 function showOtpStep(email){
   _otpEmail=email;
-  const lbl=document.getElementById('otpEmailLbl');
-  if(lbl) lbl.textContent='کۆدی ٦ ژمارە بۆ '+email+' نێردرا';
+  document.getElementById('otpEmailLbl').textContent='کۆدی ٦ ژمارە بۆ '+email+' نێردرا';
   ['authStepEmail','authStepName','authStepPass'].forEach(id=>{ const el=document.getElementById(id); if(el) el.style.display='none'; });
   document.getElementById('forgotStep').style.display='none';
   document.getElementById('otpStep').style.display='block';
-  const wrap=document.getElementById('otpInputsWrapper');
-  if(wrap) wrap.className='otp-inputs-wrapper';
-  ['otp1','otp2','otp3','otp4','otp5','otp6'].forEach(id=>{
-    const el=document.getElementById(id);
-    if(el){ el.value=''; el.className='otp-digit'; }
-  });
+  ['otp1','otp2','otp3','otp4','otp5','otp6'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
   document.getElementById('otpMsg').style.display='none';
   document.getElementById('otpResendBtn').style.display='none';
-  document.getElementById('otp1')?.focus();
+  document.getElementById('otp1').focus();
   startOtpTimer(600);
 }
 function cancelOtp(){ clearInterval(_otpTimer); document.getElementById('otpStep').style.display='none'; goAuthStep('email'); _otpPendingData=null; }
@@ -758,82 +752,13 @@ function startOtpTimer(seconds){
   }
   tick(); _otpTimer=setInterval(tick,1000);
 }
-
-function handleOtpPaste(e, type){
-  e.preventDefault();
-  const pasteData = (e.clipboardData || window.clipboardData)?.getData('text') || '';
-  if(!pasteData) return;
-  const digits = pasteData.replace(/[^0-9]/g, '').slice(0, 6).split('');
-  if(!digits.length) return;
-  const prefix = type === 'fp' ? 'fp' : 'otp';
-  digits.forEach((d, idx) => {
-    const input = document.getElementById(prefix + (idx + 1));
-    if(input){
-      input.value = d;
-      input.classList.add('otp-filled', 'otp-pop');
-      setTimeout(() => input.classList.remove('otp-pop'), 260);
-    }
-  });
-  const nextIdx = Math.min(digits.length + 1, 6);
-  document.getElementById(prefix + nextIdx)?.focus();
-  if(digits.length === 6){
-    if(type === 'fp') doForgotVerifyOtp();
-    else verifyOtp();
-  }
-}
-
-function triggerOtpShake(wrapId, prefix){
-  const wrap = document.getElementById(wrapId);
-  if(wrap){
-    wrap.classList.remove('otp-shake');
-    void wrap.offsetWidth;
-    wrap.classList.add('otp-shake');
-    setTimeout(() => wrap.classList.remove('otp-shake'), 650);
-  }
-  for(let i=1; i<=6; i++){
-    const el = document.getElementById(prefix + i);
-    if(el){
-      el.classList.add('has-error');
-      setTimeout(() => el.classList.remove('has-error'), 1100);
-    }
-  }
-}
-
-function triggerOtpSuccess(wrapId, prefix){
-  const wrap = document.getElementById(wrapId);
-  if(wrap) wrap.classList.add('otp-success');
-  for(let i=1; i<=6; i++){
-    const el = document.getElementById(prefix + i);
-    if(el) el.classList.add('is-success');
-  }
-}
-
 function otpMove(el,prevId,nextId){
   el.value=el.value.replace(/[^0-9]/g,'').slice(-1);
-  if(el.value){
-    el.classList.add('otp-filled', 'otp-pop');
-    setTimeout(()=>el.classList.remove('otp-pop'), 260);
-    if(nextId) document.getElementById(nextId)?.focus();
-  } else {
-    el.classList.remove('otp-filled');
-  }
+  if(el.value&&nextId) document.getElementById(nextId)?.focus();
   const code=['otp1','otp2','otp3','otp4','otp5','otp6'].map(id=>document.getElementById(id)?.value||'').join('');
   if(code.length===6) verifyOtp();
 }
-function otpBack(e,el,prevId){
-  if(e.key==='Backspace'){
-    if(!el.value && prevId){
-      const prev = document.getElementById(prevId);
-      if(prev){
-        prev.focus();
-        prev.value = '';
-        prev.classList.remove('otp-filled');
-      }
-    } else {
-      el.classList.remove('otp-filled');
-    }
-  }
-}
+function otpBack(e,el,prevId){ if(e.key==='Backspace'&&!el.value&&prevId) document.getElementById(prevId)?.focus(); }
 function showOtpMsg(t,c){ const el=document.getElementById('otpMsg'); el.textContent=t; el.className='amsg '+c; el.style.display='block'; }
 
 let _banIntervals={};
@@ -853,31 +778,20 @@ let _otpVerifying=false;
 async function verifyOtp(){
   if(_otpVerifying) return;
   const code=['otp1','otp2','otp3','otp4','otp5','otp6'].map(id=>document.getElementById(id)?.value||'').join('');
-  if(code.length<6){
-    triggerOtpShake('otpInputsWrapper', 'otp');
-    showOtpMsg('کۆدەکە بە تەواوی بنووسە','err');
-    return;
-  }
+  if(code.length<6){ showOtpMsg('کۆدەکە تەواو بنووسە','err'); return; }
   const rlChk=otpRateCheck(_otpEmail);
-  if(!rlChk.ok){
-    triggerOtpShake('otpInputsWrapper', 'otp');
-    showOtpMsg('قفڵکراوە — تکایە '+rlChk.remaining+' خولەکی تر هەوڵ بدەرەوە','err');
-    startBanCountdown(_otpEmail,'otpMsg','otpResendBtn');
-    return;
-  }
+  if(!rlChk.ok){ showOtpMsg('قفڵکراوە — تکایە '+rlChk.remaining+' خولەکی تر هەوڵ بدەرەوە','err'); startBanCountdown(_otpEmail,'otpMsg','otpResendBtn'); return; }
   _otpVerifying=true;
   const btn=document.getElementById('otpVerifyBtn'); btn.disabled=true; btn.innerHTML=ICON.spin+' پشکنین...';
   const result=await verifyOtpCode(_otpEmail,code,_otpPurpose);
   _otpVerifying=false;
   if(!result.success){
-    triggerOtpShake('otpInputsWrapper', 'otp');
     const rl=otpRateRecord(_otpEmail);
     if(rl && !rl.ok){ showOtpMsg('زۆر جار هەوڵت دا — تکایە '+rl.remaining+' خولەکی تر هەوڵ بدەرەوە','err'); startBanCountdown(_otpEmail,'otpMsg','otpResendBtn'); }
     else showOtpMsg(result.message||'کۆدی هەڵە','err');
     btn.disabled=false; btn.innerHTML=ICON.check+' دڵنیاکردنەوە'; return;
   }
   clearInterval(_otpTimer);
-  triggerOtpSuccess('otpInputsWrapper', 'otp');
   showOtpMsg('سەرکەوتوو بوو!','ok');
   setTimeout(async()=>{
     try{
@@ -918,20 +832,8 @@ async function resendOtp(){
   document.getElementById('otpTimerWrap').style.color='';
   showOtpMsg('ناردن...','ok');
   const result=await requestOtp(_otpEmail,_otpPurpose);
-  if(result.success){
-    showOtpMsg('کۆدی نوێ نێردرا','ok');
-    const wrap=document.getElementById('otpInputsWrapper');
-    if(wrap) wrap.className='otp-inputs-wrapper';
-    ['otp1','otp2','otp3','otp4','otp5','otp6'].forEach(id=>{
-      const el=document.getElementById(id);
-      if(el){ el.value=''; el.className='otp-digit'; }
-    });
-    document.getElementById('otp1')?.focus();
-    startOtpTimer(600);
-  } else {
-    showOtpMsg(result.message||'هەڵە','err');
-    document.getElementById('otpResendBtn').style.display='flex';
-  }
+  if(result.success){ showOtpMsg('کۆدی نوێ نێردرا','ok'); ['otp1','otp2','otp3','otp4','otp5','otp6'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; }); document.getElementById('otp1')?.focus(); startOtpTimer(600); }
+  else { showOtpMsg(result.message||'هەڵە','err'); document.getElementById('otpResendBtn').style.display='flex'; }
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -962,30 +864,11 @@ function fpStartTimer(sec){
 }
 function fpOtpMove(el,prevId,nextId){
   el.value=el.value.replace(/[^0-9]/g,'').slice(-1);
-  if(el.value){
-    el.classList.add('otp-filled', 'otp-pop');
-    setTimeout(()=>el.classList.remove('otp-pop'), 260);
-    if(nextId) document.getElementById(nextId)?.focus();
-  } else {
-    el.classList.remove('otp-filled');
-  }
+  if(el.value&&nextId) document.getElementById(nextId)?.focus();
   const code=['fp1','fp2','fp3','fp4','fp5','fp6'].map(id=>document.getElementById(id)?.value||'').join('');
   if(code.length===6) doForgotVerifyOtp();
 }
-function fpOtpBack(e,el,prevId){
-  if(e.key==='Backspace'){
-    if(!el.value && prevId){
-      const prev = document.getElementById(prevId);
-      if(prev){
-        prev.focus();
-        prev.value = '';
-        prev.classList.remove('otp-filled');
-      }
-    } else {
-      el.classList.remove('otp-filled');
-    }
-  }
-}
+function fpOtpBack(e,el,prevId){ if(e.key==='Backspace'&&!el.value&&prevId) document.getElementById(prevId)?.focus(); }
 
 async function fpResendOtp(){
   const chk=otpRateCheck(_fpEmail);
@@ -994,20 +877,8 @@ async function fpResendOtp(){
   document.getElementById('fpTimerWrap').style.color='';
   fpShowMsg('B','ناردن...','ok');
   const result=await requestOtp(_fpEmail,'reset_password');
-  if(result.success){
-    fpShowMsg('B','کۆدی نوێ نێردرا','ok');
-    const wrap=document.getElementById('fpOtpInputsWrapper');
-    if(wrap) wrap.className='otp-inputs-wrapper';
-    ['fp1','fp2','fp3','fp4','fp5','fp6'].forEach(id=>{
-      const el=document.getElementById(id);
-      if(el){ el.value=''; el.className='otp-digit'; }
-    });
-    document.getElementById('fp1')?.focus();
-    fpStartTimer(600);
-  } else {
-    fpShowMsg('B',result.message||'هەڵەی ناردن','err');
-    document.getElementById('fpResendBtn').style.display='flex';
-  }
+  if(result.success){ fpShowMsg('B','کۆدی نوێ نێردرا','ok'); ['fp1','fp2','fp3','fp4','fp5','fp6'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; }); document.getElementById('fp1')?.focus(); fpStartTimer(600); }
+  else { fpShowMsg('B',result.message||'هەڵەی ناردن','err'); document.getElementById('fpResendBtn').style.display='flex'; }
 }
 
 async function doForgotSendOtp(){
@@ -1026,12 +897,7 @@ async function doForgotSendOtp(){
   if(!result.success){ fpShowMsg('A',result.message||'هەڵەی ناردنی کۆد','err'); return; }
   _fpEmail=email;
   document.getElementById('fpOtpLbl').textContent='کۆدی ٦ ژمارە بۆ '+email+' نێردرا';
-  const wrap=document.getElementById('fpOtpInputsWrapper');
-  if(wrap) wrap.className='otp-inputs-wrapper';
-  ['fp1','fp2','fp3','fp4','fp5','fp6'].forEach(id=>{
-    const el=document.getElementById(id);
-    if(el){ el.value=''; el.className='otp-digit'; }
-  });
+  ['fp1','fp2','fp3','fp4','fp5','fp6'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
   document.getElementById('fpMsgB').style.display='none';
   document.getElementById('fpResendBtn').style.display='none';
   document.getElementById('fpTimerWrap').style.color='';
@@ -1045,31 +911,20 @@ let _fpVerifying=false;
 async function doForgotVerifyOtp(){
   if(_fpVerifying) return;
   const code=['fp1','fp2','fp3','fp4','fp5','fp6'].map(id=>document.getElementById(id)?.value||'').join('');
-  if(code.length<6){
-    triggerOtpShake('fpOtpInputsWrapper', 'fp');
-    fpShowMsg('B','کۆدەکە بە تەواوی بنووسە','err');
-    return;
-  }
+  if(code.length<6){ fpShowMsg('B','کۆدەکە تەواو بنووسە','err'); return; }
   const rlChk=otpRateCheck(_fpEmail);
-  if(!rlChk.ok){
-    triggerOtpShake('fpOtpInputsWrapper', 'fp');
-    fpShowMsg('B','قفڵکراوە — تکایە '+rlChk.remaining+' خولەکی تر هەوڵ بدەرەوە','err');
-    startBanCountdown(_fpEmail,'fpMsgB','fpResendBtn');
-    return;
-  }
+  if(!rlChk.ok){ fpShowMsg('B','قفڵکراوە — تکایە '+rlChk.remaining+' خولەکی تر هەوڵ بدەرەوە','err'); startBanCountdown(_fpEmail,'fpMsgB','fpResendBtn'); return; }
   _fpVerifying=true;
   const btn=document.getElementById('fpVerifyBtn'); btn.disabled=true; btn.innerHTML=ICON.spin+' پشکنین...';
   const result=await verifyOtpCode(_fpEmail,code,'reset_password');
   _fpVerifying=false;
   if(!result.success){
-    triggerOtpShake('fpOtpInputsWrapper', 'fp');
     const rl=otpRateRecord(_fpEmail);
     if(rl && !rl.ok){ fpShowMsg('B','زۆر جار هەوڵت دا — تکایە '+rl.remaining+' خولەکی تر هەوڵ بدەرەوە','err'); startBanCountdown(_fpEmail,'fpMsgB','fpResendBtn'); }
     else fpShowMsg('B',result.message||'کۆدی هەڵە','err');
     btn.disabled=false; btn.innerHTML=ICON.check+' دڵنیاکردنەوە'; return;
   }
   clearInterval(_fpTimer);
-  triggerOtpSuccess('fpOtpInputsWrapper', 'fp');
   document.getElementById('fpStepB').style.display='none';
   document.getElementById('fpStepC').style.display='block';
   document.getElementById('fpNewPass').value=''; document.getElementById('fpConfirmPass').value='';
@@ -2294,76 +2149,23 @@ function renderProofStats(s){
 
 function renderPublicFeed(rows){
   const el=document.getElementById('publicFeed'); if(!el) return;
-  if(!rows || !rows.length){
-    el.innerHTML = '<div class="feed-empty-box">'
-      + '<div class="feed-empty-icon">'
-        + '<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 1.8"/></svg>'
-      + '</div>'
-      + '<div class="feed-empty-title">هێشتا هیچ مامەڵەیەکی تەواوبوو تۆمار نەکراوە</div>'
-      + '<div class="feed-empty-sub">لەگەڵ پەسەندکردنی مامەڵە نوێیەکان، لێرە بە شێوازی ڕاستەوخۆ دەردەکەون</div>'
-      + '</div>';
-    return;
-  }
+  if(!rows || !rows.length){ el.innerHTML='<div class="empty-state">هێشتا هیچ مامەڵەیەکی تەواوبوو نییە</div>'; return; }
   el.innerHTML = rows.map(function(r){
-    const fromLabel = escHtml(methodLabel(r.from));
-    const toLabel = escHtml(methodLabel(r.to));
-    const totalFmt = formatNum(Math.floor(r.total || 0));
-    const amountFmt = formatNum(Math.floor(r.amount || 0));
-    const isUsdt = r.from === 'USDT';
-    const sentUnit = isUsdt ? '$' : ' IQD';
-    const idStr = escHtml(r.id || '—');
-    const phoneStr = escHtml(r.phone || '••••');
-    const timeStr = timeAgo(r.at);
-
-    return '<div class="feed-card-row">'
-      + '<div class="feed-card-header">'
-        + '<div class="feed-header-tags">'
-          + '<span class="feed-id-chip" onclick="copyOrderCode(\''+idStr+'\', event)" title="کۆپیکردنی ئایدی">'
-            + '<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 15h4M7 9h10"/></svg>'
-            + '<span>'+idStr+'</span>'
-          + '</span>'
-          + '<span class="feed-time-chip">'
-            + '<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 1.8"/></svg>'
-            + '<span>'+timeStr+'</span>'
-          + '</span>'
-        + '</div>'
-        + '<span class="feed-status-badge">'
-          + '<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>'
-          + 'پەسەندکرا'
-        + '</span>'
-      + '</div>'
-      + '<div class="feed-card-body">'
-        + '<div class="feed-route-group">'
-          + '<div class="feed-route-capsule">'
-            + '<span class="feed-method-node from">'
-              + methodIconHTML(r.from, 'sz-xs')
-              + '<span class="feed-method-name">'+fromLabel+'</span>'
-            + '</span>'
-            + '<span class="feed-arrow-node" aria-hidden="true">'
-              + '<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m11 6-6 6 6 6"/></svg>'
-            + '</span>'
-            + '<span class="feed-method-node to">'
-              + methodIconHTML(r.to, 'sz-xs')
-              + '<span class="feed-method-name">'+toLabel+'</span>'
-            + '</span>'
-          + '</div>'
-          + '<div class="feed-phone-tag">'
-            + '<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>'
-            + '<span>'+phoneStr+'</span>'
-          + '</div>'
-        + '</div>'
-        + '<div class="feed-amount-group">'
-          + '<div class="feed-payout-box">'
-            + '<span class="feed-payout-val">+'+totalFmt+'</span>'
-            + '<span class="feed-payout-curr">IQD</span>'
-          + '</div>'
-          + '<div class="feed-in-box">'
-            + '<span class="feed-in-lbl">نێردراو:</span>'
-            + '<span class="feed-in-val">'+amountFmt+sentUnit+'</span>'
-          + '</div>'
-        + '</div>'
-      + '</div>'
-    + '</div>';
+    return '<div class="feed-row">'
+      + '<span class="feed-id">'
+        + '<svg class="icn" style="width:12px;height:12px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/></svg>'
+        + escHtml(r.id||'') + '</span>'
+      + '<span class="feed-route">'
+        + methodIconHTML(r.from,'sz-xs') + escHtml(methodLabel(r.from))
+        + '<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="m11 6-6 6 6 6"/></svg>'
+        + methodIconHTML(r.to,'sz-xs') + escHtml(methodLabel(r.to))
+      + '</span>'
+      + '<span class="feed-meta">'
+        + '<span class="feed-phone">'+escHtml(r.phone||'')+'</span>'
+        + '<span>'+timeAgo(r.at)+'</span>'
+      + '</span>'
+      + '<span class="feed-amount">'+formatNum(Math.floor(r.total||0))+' IQD<small>لە '+formatNum(Math.floor(r.amount||0))+(r.from==='USDT'?'$':'')+'</small></span>'
+      + '</div>';
   }).join('');
 }
 
