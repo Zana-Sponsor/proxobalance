@@ -1,17 +1,36 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "rewrites": [
-    { "source": "/((?!api/|assets/)[^.]*)", "destination": "/index.html" }
+    {
+      "source": "/exchange-admin",
+      "destination": "/exchange-admin.html"
+    },
+    {
+      "source": "/exchange-admin1",
+      "destination": "/exchange-admin1.html"
+    },
+    {
+      "source": "/((?!api/|assets/)[^.]*)",
+      "destination": "/index.html"
+    }
   ],
   "functions": {
-    "api/*.js": { "maxDuration": 15 }
+    "api/*.js": {
+      "maxDuration": 15
+    }
   },
   "headers": [
     {
       "source": "/api/(.*)",
       "headers": [
-        { "key": "Cache-Control", "value": "no-store" },
-        { "key": "X-Content-Type-Options", "value": "nosniff" }
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        }
       ]
     }
   ]
