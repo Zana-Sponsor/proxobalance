@@ -493,7 +493,7 @@ const db = firebase.database();
 // auth.users from Proxo/other apps (no shared identity, no shared tables).
 const SB_URL=atob('aHR0cHM6Ly9weWN4dXVnb2Jsa3NsdndlYnh1dS5zdXBhYmFzZS5jbw==');
 const SB_KEY=atob('ZXlKaGJHY2lPaUpJVXpJMU5pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SnBjM01pT2lKemRYQmhZbUZ6WlNJc0luSmxaaUk2SW5CNVkzaDFkV2R2WW14cmMyeDJkMlZpZUhWMUlpd2ljbTlzWlNJNkltRnViMjRpTENKcFlYUWlPakUzT0RZeU1UazNPVGtzSW1WNGNDSTZNakV3TVRjNU5UYzVPWDAuVlJSd3hubnVMc19XT1J1VlVPM29YM0NMeHJQdGdHX3Vld0lKYUdyem5fcw==');
-let sb, curUser=null, curProfile=null, RATES={};
+let sb, curUser=null, curProfile=null, activeSession=null, RATES={};
 const N8N_WEBHOOK = 'https://email.proxopages.com/webhook/otp_exchange';
 
 let _newsItems = []; // [{text, action}]
@@ -971,6 +971,11 @@ function kuErr(msg){
     'Unable to validate email address: invalid format':'فۆرماتی ئیمەیل هەڵەیە',
     'Too many requests':'زۆر جار هەوڵت دا، کەمێک چاوەڕوان بە',
     'Network request failed':'کێشەی تۆڕ، دووبارە هەوڵ بدەرەوە',
+    'Failed to fetch':'پەیوەندی بە سێرڤەر نەکرا؛ داتای مۆبایل یان Wi‑Fi بپشکنە و دووبارە هەوڵ بدەرەوە',
+    'RECEIPT_UPLOAD_NETWORK':'ناردنی وێنەکە بەهۆی کێشەی تۆڕەوە سەرکەوتوو نەبوو؛ پەیوەندییەکەت بپشکنە و دووبارە هەوڵ بدەرەوە',
+    'RECEIPT_UPLOAD_FAILED':'نەتوانرا وێنەی پسووڵەکە باربکرێت؛ تکایە وێنەکە دووبارە هەڵبژێرە',
+    'SESSION_NETWORK_ERROR':'نەتوانرا هەژمارەکەت پشتڕاست بکرێتەوە؛ پەیوەندییەکەت بپشکنە یان دووبارە بچۆ ژوورەوە',
+    'ORDER_NETWORK_ERROR':'داواکارییەکە نەگەیشتە سێرڤەر؛ پەیوەندییەکەت بپشکنە و دووبارە هەوڵ بدەرەوە',
     'Email rate limit exceeded':'زۆر جار ئیمەیل نێردرا، کەمێک چاوەڕوان بە',
     'Auth session missing':'تکایە دووبارە بچۆ ژوورەوە',
     'PROFILE_UPDATE_COOLDOWN':'ناو و ژمارەی مۆبایل تا تەواوبوونی ٧ ڕۆژەکە قوفڵن',
@@ -978,7 +983,9 @@ function kuErr(msg){
     'SENDER_PHONE_INVALID':'ژمارەی نێرەر دەبێت بە 07 دەست پێبکات و ١١ ژمارە بێت',
     'Invalid sender number':'ژمارەی نێرەر دەبێت بە 07 دەست پێبکات و ١١ ژمارە بێت',
   };
-  return m[msg]||msg;
+  if(m[msg]) return m[msg];
+  if(/failed to fetch|networkerror|network request failed|load failed/i.test(String(msg||''))) return m['Failed to fetch'];
+  return msg;
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -1321,6 +1328,7 @@ function _validateOrderFields(){
     if(!phone || phone.length<6){ setFieldError('userPhone','ژمارەی کارتی Qi Card داخڵ بکە'); ok=false; }
   } else if(!phone.startsWith("07")||phone.length!==11){ setFieldError('userPhone','تەنها ژمارەی عێراقی (07) بە 11 ژمارە داخڵ بکە'); ok=false; }
   if(!file){ setFieldError('fileInput','وێنەی پسووڵەی پارەدان زیاد بکە'); ok=false; }
+  else if(file.size>10*1024*1024){ setFieldError('fileInput','قەبارەی وێنەکە دەبێت لە ١٠ MB کەمتر بێت'); ok=false; }
   if(from===to){ showToast('لە هەمان واڵێت وەرناگیرێت — ڕێگایەکی جیاواز هەڵبژێرە بۆ وەرگرتن','warning','هەمان واڵێت هەڵبژێردراوە'); ok=false; }
   if(getWalletInfo(from).locked){ showToast('ئەم شێوازە لەئێستادا بەردەست نییە بۆ ناردن','error','بەردەست نییە'); ok=false; }
   if(getWalletInfo(to).locked){ showToast('ئەم شێوازە لەئێستادا بەردەست نییە بۆ وەرگرتن','error','بەردەست نییە'); ok=false; }
@@ -1361,6 +1369,50 @@ async function confirmAndSubmitOrder(){
   await processOrder();
 }
 
+function waitForNetworkRetry(ms){
+  return new Promise(resolve=>setTimeout(resolve,ms));
+}
+
+function isTransientNetworkError(error){
+  const status=Number(error?.statusCode||error?.status||0);
+  const message=String(error?.message||error||'');
+  return status===408 || status===429 || status>=500 || /failed to fetch|networkerror|network request failed|load failed|timeout/i.test(message);
+}
+
+async function getOrderSession(){
+  try{
+    const {data,error}=await sb.auth.getSession();
+    if(error) throw error;
+    if(data?.session){ activeSession=data.session; return data.session; }
+  }catch(error){
+    const validUntil=Number(activeSession?.expires_at||0)*1000;
+    if(activeSession?.access_token && validUntil>Date.now()+30000) return activeSession;
+    throw new Error(isTransientNetworkError(error)?'SESSION_NETWORK_ERROR':(error?.message||'Auth session missing'));
+  }
+  const validUntil=Number(activeSession?.expires_at||0)*1000;
+  if(activeSession?.access_token && validUntil>Date.now()+30000) return activeSession;
+  throw new Error('Auth session missing');
+}
+
+async function uploadReceiptWithRetry(file,ext){
+  let lastError=null;
+  for(let attempt=0;attempt<3;attempt++){
+    const path=`${curUser.id}/${Date.now()}_${Math.random().toString(36).slice(2,8)}.${ext}`;
+    try{
+      const {error}=await sb.storage.from('receipts').upload(path,file,{ upsert:false, contentType:file.type||'image/jpeg' });
+      if(error) throw error;
+      const publicUrl=sb.storage.from('receipts').getPublicUrl(path).data.publicUrl;
+      if(!publicUrl) throw new Error('RECEIPT_UPLOAD_FAILED');
+      return publicUrl;
+    }catch(error){
+      lastError=error;
+      if(!isTransientNetworkError(error) || attempt===2) break;
+      await waitForNetworkRetry(700*(attempt+1));
+    }
+  }
+  throw new Error(isTransientNetworkError(lastError)?'RECEIPT_UPLOAD_NETWORK':'RECEIPT_UPLOAD_FAILED');
+}
+
 async function processOrder(){
   if(!_validateOrderFields()) return;
 
@@ -1382,29 +1434,27 @@ async function processOrder(){
   try{
     let receiptUrl=null, receiptHash=null;
     if(file){
-      try{
-        const bytes=await file.arrayBuffer();
-        const digest=await crypto.subtle.digest('SHA-256',bytes);
-        receiptHash=Array.from(new Uint8Array(digest),b=>b.toString(16).padStart(2,'0')).join('');
-        const ext=(file.name.split('.').pop()||'jpg').toLowerCase();
-        const path=`${curUser.id}/${Date.now()}_${Math.random().toString(36).slice(2,8)}.${ext}`;
-        const {error:upErr}=await sb.storage.from('receipts').upload(path, file, { upsert:false, contentType:file.type||'image/jpeg' });
-        if(!upErr){ receiptUrl=sb.storage.from('receipts').getPublicUrl(path).data.publicUrl; }
-      }catch(_){}
+      const bytes=await file.arrayBuffer();
+      const digest=await crypto.subtle.digest('SHA-256',bytes);
+      receiptHash=Array.from(new Uint8Array(digest),b=>b.toString(16).padStart(2,'0')).join('');
+      const ext=(file.name.split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,5)||'jpg';
+      receiptUrl=await uploadReceiptWithRetry(file,ext);
     }
 
-    const {data:{session:_orderSession}}=await sb.auth.getSession();
-    if(!_orderSession) throw new Error('Auth session missing');
-    const orderResponse=await fetch('/api/orders',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':'Bearer '+_orderSession.access_token},
-      body:JSON.stringify({
-        from_method:from,to_method:to,amount:parseFloat(amtValue),phone,
-        sender_name:needsSenderPhone(from)?null:senderName,
-        sender_phone:needsSenderPhone(from)?senderPhone:null,
-        receipt_url:receiptUrl,receipt_hash:receiptHash,contact_reference:''
-      })
-    });
+    const _orderSession=await getOrderSession();
+    let orderResponse;
+    try{
+      orderResponse=await fetch('/api/orders',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','Authorization':'Bearer '+_orderSession.access_token},
+        body:JSON.stringify({
+          from_method:from,to_method:to,amount:parseFloat(amtValue),phone,
+          sender_name:needsSenderPhone(from)?null:senderName,
+          sender_phone:needsSenderPhone(from)?senderPhone:null,
+          receipt_url:receiptUrl,receipt_hash:receiptHash,contact_reference:''
+        })
+      });
+    }catch(_){ throw new Error('ORDER_NETWORK_ERROR'); }
     let orderPayload={};
     try{ orderPayload=await orderResponse.json(); }catch(_){}
     if(!orderResponse.ok || !orderPayload.order) throw new Error(orderPayload.error||'نەتوانرا داواکارییەکە تۆمار بکرێت');
@@ -1414,11 +1464,10 @@ async function processOrder(){
     // Vercel environment variable, so it never reaches the browser, and the
     // caption is rebuilt server-side from the saved row (amounts can't be faked).
     try{
-      const {data:{session:_s}} = await sb.auth.getSession();
-      if(_s){
+      if(_orderSession){
         await fetch('/api/notify-order', {
           method:'POST',
-          headers:{ 'Content-Type':'application/json', 'Authorization':'Bearer '+_s.access_token },
+          headers:{ 'Content-Type':'application/json', 'Authorization':'Bearer '+_orderSession.access_token },
           body: JSON.stringify({ order_id: orderRow.id })
         });
       }
@@ -2228,7 +2277,16 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   refreshTrigger('receiveVia');
   if(!window.supabase){ showAmsg('هەڵەی بارکردنی سیستەم، پەڕەکە نوێ بکەرەوە','err'); return; }
   sb=window.supabase.createClient(SB_URL,SB_KEY,{ auth:{ persistSession:true, autoRefreshToken:true, storageKey:'zex_sb_session' } });
-  const {data:{session}}=await sb.auth.getSession();
+  sb.auth.onAuthStateChange((_event,nextSession)=>{ activeSession=nextSession||null; });
+  let session=null;
+  try{
+    const result=await sb.auth.getSession();
+    if(result.error) throw result.error;
+    session=result.data.session;
+    activeSession=session||activeSession;
+  }catch(error){
+    showAmsg(kuErr(error?.message)||'کێشەی تۆڕ، پەڕەکە نوێ بکەرەوە','err');
+  }
   if(session?.user){ await startApp(session.user); }
   else {
     // No session: drop any inner route from the address bar so the login
