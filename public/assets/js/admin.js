@@ -91,6 +91,20 @@ async function securityRequest(view, options={}){
   }
 }
 
+async function adminApiRequest(action, payload={}){
+  const {data:{session}}=await sb.auth.getSession();
+  if(!session) throw new Error('تکایە دووبارە بچۆ ژوورەوە');
+  const response=await fetch('/api/admin',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','Authorization':'Bearer '+session.access_token},
+    body:JSON.stringify({action,payload})
+  });
+  let body={};
+  try{ body=await response.json(); }catch(_){}
+  if(!response.ok || !body.ok) throw new Error(body.error||'هەڵەی پەیوەندی بە سێرڤەر');
+  return body.data;
+}
+
 // ══════════════════════════════════════════════════════════════
 // ═══ SIDEBAR ═════════════════════════════════════════════════════
 // ══════════════════════════════════════════════════════════════
@@ -177,6 +191,7 @@ function showApp(){
   goPage('dashboard');
   subscribeOrdersAdmin();
   subscribeAlerts();
+  startErrorLogMonitor();
 }
 
 // The admin page does not load the public assets/js/track.js file. Record its
@@ -210,6 +225,7 @@ const pageConfig = {
   announcement:{ title:'بانەری ئاگاداری', sub:'ئاگاداری گشتی سەرەوەی ئەپەکە', load: ()=>loadAnnouncement() },
   otp:{ title:'کۆدەکانی OTP', sub:'بینین و بەڕێوەبردنی کۆدەکانی دڵنیاکردنەوە', load: ()=>loadOtp() },
   security:{ title:'ئاسایش و IP', sub:'ڕووداوە گومانلێکراوەکان و بلۆککردنی نهێنی (404)', load: ()=>loadSecurity() },
+  errors:{ title:'لۆگی هەڵەکان', sub:'هەڵەکانی ماڵپەڕی بەکارهێنەر و سێرڤەر', load: ()=>loadErrorLogs() },
 };
 let _curPage='dashboard';
 function goPage(p){
@@ -227,6 +243,139 @@ function goPage(p){
     if(cfg.load) cfg.load();
   }
   closeSidebar();
+}
+
+// ══════════════════════════════════════════════════════════════
+// ═══ APPLICATION ERROR LOGS ═══════════════════════════════════
+// Data is read through /api/admin; the service-role-only table is never
+// exposed directly to the browser.
+// ══════════════════════════════════════════════════════════════
+let _errorLogs=[];
+let _errorFilter='unresolved';
+let _errorPoll=null;
+let _lastErrorCount=null;
+
+function errorSourceLabel(source){ return source==='server'?'سێرڤەر':'ماڵپەڕی بەکارهێنەر'; }
+function errorSeverityLabel(severity){ return severity==='critical'?'گرنگ':severity==='warning'?'ئاگاداری':'هەڵە'; }
+function errorWhen(value){ return value?new Date(value).toLocaleString('ku-IQ'):'—'; }
+function errorMetaText(meta){
+  if(!meta || typeof meta!=='object') return '—';
+  const parts=[];
+  if(meta.stage) parts.push('قۆناغ: '+meta.stage);
+  if(meta.from_method || meta.to_method) parts.push((meta.from_method||'—')+' ← '+(meta.to_method||'—'));
+  if(meta.online===false) parts.push('ئۆفلاین');
+  return parts.length?parts.join(' · '):'—';
+}
+
+async function loadErrorLogSummary(notify=true){
+  try{
+    const stats=await adminApiRequest('error_log_summary');
+    const unresolved=Number(stats?.unresolved||0);
+    const badge=document.getElementById('sbErrorCount');
+    if(badge){
+      badge.textContent=unresolved>99?'99+':unresolved;
+      badge.style.display=unresolved?'inline-flex':'none';
+    }
+    const set=(id,value)=>{ const el=document.getElementById(id); if(el) el.textContent=formatNum(value||0); };
+    set('errUnresolved',unresolved); set('errLast24h',stats?.last_24h); set('errCritical',stats?.critical);
+    if(notify && unresolved>0 && (_lastErrorCount===null || unresolved>_lastErrorCount)){
+      const added=_lastErrorCount===null?unresolved:unresolved-_lastErrorCount;
+      showToast(added+' لۆگی هەڵەی نوێ هەیە','rd');
+    }
+    _lastErrorCount=unresolved;
+    return stats;
+  }catch(_){ return null; }
+}
+
+function startErrorLogMonitor(){
+  loadErrorLogSummary(true);
+  clearInterval(_errorPoll);
+  _errorPoll=setInterval(()=>{
+    if(document.visibilityState==='visible') loadErrorLogSummary(true);
+  },30000);
+}
+
+async function loadErrorLogs(){
+  const wrap=document.getElementById('errorLogsWrap');
+  if(wrap) wrap.innerHTML='<div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>';
+  try{
+    const [logs]=await Promise.all([
+      adminApiRequest('list_error_logs',{status:_errorFilter,limit:300}),
+      loadErrorLogSummary(false)
+    ]);
+    _errorLogs=Array.isArray(logs)?logs:[];
+    renderErrorLogs();
+  }catch(e){
+    if(wrap) wrap.innerHTML='<div class="empty"><i class="fas fa-triangle-exclamation"></i><p>هەڵە: '+esc(e.message)+'</p></div>';
+  }
+}
+
+function setErrorLogFilter(filter,el){
+  _errorFilter=filter;
+  document.querySelectorAll('[data-errf]').forEach(x=>x.classList.remove('on'));
+  if(el) el.classList.add('on');
+  loadErrorLogs();
+}
+
+function renderErrorLogs(){
+  const wrap=document.getElementById('errorLogsWrap');
+  if(!wrap) return;
+  const search=(document.getElementById('errorSearch')?.value||'').trim().toLowerCase();
+  const rows=_errorLogs.filter(row=>{
+    if(!search) return true;
+    return [row.message,row.error_code,row.operation,row.user_email,row.ip_address,row.path,row.browser,row.os]
+      .some(value=>String(value||'').toLowerCase().includes(search));
+  });
+  if(!rows.length){
+    wrap.innerHTML='<div class="empty"><i class="fas fa-circle-check"></i><p>هیچ لۆگێک نییە</p></div>';
+    return;
+  }
+
+  const table=`<table class="data-table error-log-table"><thead><tr>
+    <th>کات / سەرچاوە</th><th>هەڵە</th><th>بەکارهێنەر / IP</th><th>ئامێر</th><th>دۆخ</th><th></th>
+  </tr></thead><tbody>${rows.map(row=>`<tr>
+    <td><b>${esc(errorWhen(row.last_seen))}</b><small>${esc(errorSourceLabel(row.source))}</small></td>
+    <td class="error-message-cell"><b>${esc(row.message)}</b><small>${esc(row.operation)}${row.error_code?' · '+esc(row.error_code):''}${row.http_status?' · HTTP '+esc(row.http_status):''}</small><small>${esc(errorMetaText(row.metadata))}</small></td>
+    <td><b>${esc(row.user_email||'بێ هەژمار')}</b><small class="mono-ltr">${esc(row.ip_address||'—')}</small></td>
+    <td><b>${esc(row.browser||'—')}</b><small>${esc(row.os||'—')} · ${esc(row.device||'—')}</small></td>
+    <td><span class="badge ${row.resolved_at?'approved':row.severity==='critical'?'banned':'rejected'}">${row.resolved_at?'چارەسەرکرا':esc(errorSeverityLabel(row.severity))}</span><small>${formatNum(row.occurrences||1)} جار</small></td>
+    <td>${row.resolved_at?'':`<button class="mini-action success" onclick="resolveErrorLog('${esc(row.id)}')"><i class="fas fa-check"></i> چارەسەرکرا</button>`}</td>
+  </tr>`).join('')}</tbody></table>`;
+
+  const cards=`<div class="error-log-cards">${rows.map(row=>`<article class="error-log-card ${row.resolved_at?'resolved':row.severity==='critical'?'critical':''}">
+    <div class="error-log-card-head"><span class="badge ${row.resolved_at?'approved':row.severity==='critical'?'banned':'rejected'}">${row.resolved_at?'چارەسەرکرا':esc(errorSeverityLabel(row.severity))}</span><time>${esc(errorWhen(row.last_seen))}</time></div>
+    <h4>${esc(row.message)}</h4>
+    <div class="error-log-code">${esc(row.operation)}${row.error_code?' · '+esc(row.error_code):''}${row.http_status?' · HTTP '+esc(row.http_status):''}</div>
+    <div class="error-log-facts">
+      <span><i class="fas fa-globe"></i>${esc(errorSourceLabel(row.source))}</span>
+      <span><i class="fas fa-user"></i>${esc(row.user_email||'بێ هەژمار')}</span>
+      <span class="mono-ltr"><i class="fas fa-network-wired"></i>${esc(row.ip_address||'—')}</span>
+      <span><i class="fas fa-display"></i>${esc(row.browser||'—')} · ${esc(row.os||'—')}</span>
+      <span><i class="fas fa-layer-group"></i>${esc(errorMetaText(row.metadata))}</span>
+      <span><i class="fas fa-rotate"></i>${formatNum(row.occurrences||1)} جار</span>
+    </div>
+    ${row.resolved_at?'':`<button class="alert-btn safe" onclick="resolveErrorLog('${esc(row.id)}')"><i class="fas fa-check"></i> دیاریکردن وەک چارەسەرکراو</button>`}
+  </article>`).join('')}</div>`;
+  wrap.innerHTML=table+cards;
+}
+
+async function resolveErrorLog(id){
+  try{
+    await adminApiRequest('resolve_error_log',{id});
+    showToast('لۆگەکە وەک چارەسەرکراو دیاری کرا','gr');
+    await loadErrorLogs();
+  }catch(e){ showToast(e.message||'هەڵە','rd'); }
+}
+
+function resolveAllErrorLogs(){
+  if(!_lastErrorCount) return showToast('هیچ لۆگێکی چارەسەرنەکراو نییە','gr');
+  confirm2('هەموو لۆگەکان چارەسەر کراون؟','هەموو لۆگە چارەسەرنەکراوەکان دەخرێنە دۆخی چارەسەرکراو.','fas fa-check-double','#16a34a',async()=>{
+    try{
+      const result=await adminApiRequest('resolve_all_error_logs');
+      showToast(formatNum(result?.resolved||0)+' لۆگ چارەسەرکرا','gr');
+      await loadErrorLogs();
+    }catch(e){ showToast(e.message||'هەڵە','rd'); }
+  });
 }
 
 

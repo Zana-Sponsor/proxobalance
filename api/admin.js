@@ -180,6 +180,52 @@ const actions = {
 
     await audit(ctx.user.id, 'broadcast', null, bc.title);
     return { broadcast_id: bc.id, delivered: rows.length };
+  },
+
+  async error_log_summary(_payload, _ctx) {
+    const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+    const [unresolvedResult, recentResult, criticalResult] = await Promise.all([
+      db.from('ex_error_logs').select('id', { count: 'exact', head: true }).is('resolved_at', null),
+      db.from('ex_error_logs').select('id', { count: 'exact', head: true }).gte('last_seen', since),
+      db.from('ex_error_logs').select('id', { count: 'exact', head: true }).is('resolved_at', null).eq('severity', 'critical')
+    ]);
+    const failed = [unresolvedResult, recentResult, criticalResult].find(result => result.error);
+    if (failed) throw { status: 500, code: 'db_error', message: failed.error.message };
+    return {
+      unresolved: unresolvedResult.count || 0,
+      last_24h: recentResult.count || 0,
+      critical: criticalResult.count || 0
+    };
+  },
+
+  async list_error_logs({ status = 'unresolved', limit = 200 }, _ctx) {
+    const safeLimit = Math.max(1, Math.min(300, Number(limit) || 200));
+    const safeStatus = ['unresolved', 'resolved', 'all'].includes(status) ? status : 'unresolved';
+    let query = db.from('ex_error_logs').select('*').order('last_seen', { ascending: false }).limit(safeLimit);
+    if (safeStatus === 'unresolved') query = query.is('resolved_at', null);
+    if (safeStatus === 'resolved') query = query.not('resolved_at', 'is', null);
+    const { data, error } = await query;
+    if (error) throw { status: 500, code: 'db_error', message: error.message };
+    return data || [];
+  },
+
+  async resolve_error_log({ id }, ctx) {
+    if (!id) throw { status: 400, code: 'bad_input', message: 'id is required' };
+    const { data, error } = await db.from('ex_error_logs')
+      .update({ resolved_at: new Date().toISOString(), resolved_by: ctx.user.id })
+      .eq('id', id).is('resolved_at', null).select('id').maybeSingle();
+    if (error) throw { status: 500, code: 'db_error', message: error.message };
+    await audit(ctx.user.id, 'resolve_error_log', null, String(id).slice(0, 80));
+    return { id, resolved: !!data };
+  },
+
+  async resolve_all_error_logs(_payload, ctx) {
+    const { data, error } = await db.from('ex_error_logs')
+      .update({ resolved_at: new Date().toISOString(), resolved_by: ctx.user.id })
+      .is('resolved_at', null).select('id');
+    if (error) throw { status: 500, code: 'db_error', message: error.message };
+    await audit(ctx.user.id, 'resolve_all_error_logs', null, String((data || []).length));
+    return { resolved: (data || []).length };
   }
 };
 

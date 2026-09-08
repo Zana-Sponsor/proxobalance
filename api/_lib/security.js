@@ -213,6 +213,102 @@ export async function recordEvent(context, options = {}) {
   }
 }
 
+// ── APPLICATION ERROR LOG ──────────────────────────────────────────────────
+// Application failures are kept separate from suspicious activity. Only
+// sanitized fields are accepted here and the table is service-role only.
+const ERROR_DEDUPE_MS = 10 * 60 * 1000;
+const PRIVATE_META_KEY = /token|authorization|password|secret|cookie|receipt|phone|email/i;
+
+function errorText(value, max) {
+  const text = String(value == null ? '' : value).replace(/[\r\n\t]+/g, ' ').trim();
+  return text.slice(0, max);
+}
+
+function safeErrorMetadata(value) {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return {};
+  const clean = {};
+  for (const [rawKey, rawValue] of Object.entries(value).slice(0, 20)) {
+    const key = errorText(rawKey, 60);
+    if (!key || PRIVATE_META_KEY.test(key)) continue;
+    if (typeof rawValue === 'string') clean[key] = errorText(rawValue, 300);
+    else if (typeof rawValue === 'boolean') clean[key] = rawValue;
+    else if (typeof rawValue === 'number' && Number.isFinite(rawValue)) clean[key] = rawValue;
+  }
+  return clean;
+}
+
+export async function recordAppError(context, options = {}) {
+  if (!SERVICE_KEY || !context) return null;
+  const source = options.source === 'client' ? 'client' : 'server';
+  const severity = ['warning', 'error', 'critical'].includes(options.severity)
+    ? options.severity : 'error';
+  const operation = errorText(options.operation || 'unknown', 100) || 'unknown';
+  const message = errorText(options.message || 'Unknown application error', 2000) || 'Unknown application error';
+  const errorCode = errorText(options.code, 120) || null;
+  const statusNumber = Number(options.status);
+  const httpStatus = Number.isInteger(statusNumber) && statusNumber >= 100 && statusNumber <= 599
+    ? statusNumber : null;
+  const userId = options.user?.id || null;
+  const userEmail = errorText(options.user?.email, 320) || null;
+  const path = errorText(options.path || context.path, 500) || null;
+  const dedupeSeed = [source, operation, errorCode || '-', httpStatus || '-', message, path || '-', userId || '-', context.fingerprint || context.ip || '-'].join('|');
+  const dedupeKey = createHmac('sha256', FINGERPRINT_SALT || SERVICE_KEY)
+    .update(dedupeSeed).digest('hex');
+  const now = new Date();
+  const cutoff = new Date(now.getTime() - ERROR_DEDUPE_MS).toISOString();
+
+  try {
+    const recent = await serviceFetch(
+      `/rest/v1/ex_error_logs?dedupe_key=eq.${encodeURIComponent(dedupeKey)}` +
+      `&resolved_at=is.null&last_seen=gte.${encodeURIComponent(cutoff)}` +
+      '&select=id,occurrences&order=last_seen.desc&limit=1'
+    );
+    if (Array.isArray(recent) && recent[0]) {
+      await serviceFetch(`/rest/v1/ex_error_logs?id=eq.${encodeURIComponent(recent[0].id)}`, {
+        method: 'PATCH',
+        headers: { Prefer: 'return=minimal' },
+        body: JSON.stringify({
+          occurrences: Math.max(1, Number(recent[0].occurrences) || 1) + 1,
+          last_seen: now.toISOString(),
+          metadata: safeErrorMetadata(options.metadata)
+        })
+      });
+      return { id: recent[0].id, deduplicated: true };
+    }
+
+    const rows = await serviceFetch('/rest/v1/ex_error_logs?select=id', {
+      method: 'POST',
+      headers: { Prefer: 'return=representation' },
+      body: JSON.stringify({
+        user_id: userId,
+        user_email: userEmail,
+        source,
+        severity,
+        operation,
+        error_code: errorCode,
+        http_status: httpStatus,
+        message,
+        path,
+        request_method: errorText(options.method || context.method, 12) || null,
+        ip_address: context.ip,
+        user_agent: errorText(context.userAgent, 1200) || null,
+        browser: errorText(context.browser, 160) || null,
+        os: errorText(context.os, 160) || null,
+        device: errorText(context.device, 80) || null,
+        fingerprint_hash: errorText(context.fingerprint, 128) || null,
+        metadata: safeErrorMetadata(options.metadata),
+        dedupe_key: dedupeKey,
+        first_seen: now.toISOString(),
+        last_seen: now.toISOString()
+      })
+    });
+    return Array.isArray(rows) ? rows[0] : rows;
+  } catch {
+    // Logging can never be allowed to take down the original request.
+    return null;
+  }
+}
+
 // Per-instance throttle so routine traffic does not flood suspicious_events.
 // Risky events (risk > 0) are never throttled.
 const RECENT = new Map();
@@ -300,13 +396,15 @@ export function withSecurity(handler, {
   autoLog = true
 } = {}) {
   return async function secured(req, res) {
+    let context = null;
+    let user = null;
     try {
       if (!methods.includes(req.method)) {
         res.setHeader('Allow', methods.join(', '));
         return json(res, 405, { error: 'Method Not Allowed' });
       }
 
-      const context = requestContext(req);
+      context = requestContext(req);
 
       const gate = await ipGate(context);
       if (gate.banned) {
@@ -316,7 +414,7 @@ export function withSecurity(handler, {
         return stealth404(res);
       }
 
-      const user = auth === 'none' ? null : await bearerUser(req);
+      user = auth === 'none' ? null : await bearerUser(req);
       if ((auth === 'required' || auth === 'admin') && !user) {
         await recordEvent(context, { type: 'unauthorized_request', detail: context.path, risk: 5 });
         return json(res, 401, { error: 'Unauthorized' });
@@ -357,6 +455,17 @@ export function withSecurity(handler, {
       return await handler(req, res, { context, user, log, recordEvent: log });
     } catch (error) {
       const status = Number(error.status) || 500;
+      if (context && status >= 500) {
+        await recordAppError(context, {
+          source: 'server',
+          severity: status >= 503 ? 'critical' : 'error',
+          operation: event || `${context.method} ${String(context.path || '').split('?')[0]}`,
+          code: error.code || error.details?.code || null,
+          status,
+          message: error.message || 'Unhandled server error',
+          user
+        });
+      }
       if (status === 403) return stealth404(res);
       return json(res, status, { error: status >= 500 ? 'Server error' : error.message });
     }

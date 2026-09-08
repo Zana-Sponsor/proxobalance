@@ -988,6 +988,83 @@ function kuErr(msg){
   return msg;
 }
 
+// ═══ APPLICATION ERROR REPORTING ════════════════════════════════
+// Reports sanitized failures to the server. Network failures are queued
+// locally and retried after connectivity/session returns.
+const CLIENT_ERROR_QUEUE_KEY='zex_pending_error_logs_v1';
+const _recentClientErrors=new Map();
+
+function queuedErrorLogs(){
+  try{
+    const value=JSON.parse(localStorage.getItem(CLIENT_ERROR_QUEUE_KEY)||'[]');
+    return Array.isArray(value)?value.slice(-20):[];
+  }catch(_){ return []; }
+}
+function saveQueuedErrorLogs(rows){
+  try{ localStorage.setItem(CLIENT_ERROR_QUEUE_KEY,JSON.stringify((rows||[]).slice(-20))); }catch(_){}
+}
+function queueErrorLog(payload){
+  const rows=queuedErrorLogs();
+  if(!rows.some(row=>row.client_key===payload.client_key)) rows.push(payload);
+  saveQueuedErrorLogs(rows);
+}
+async function sendErrorLog(payload){
+  const token=activeSession?.access_token;
+  if(!token) throw new Error('NO_ERROR_LOG_SESSION');
+  const res=await fetch('/api/error-log',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+    body:JSON.stringify(payload),
+    keepalive:true
+  });
+  if(!res.ok) throw new Error('ERROR_LOG_HTTP_'+res.status);
+}
+async function reportAppError(error, details={}){
+  const rawMessage=String(error?.message||error||'Unknown client error').replace(/[\r\n\t]+/g,' ').slice(0,2000);
+  const operation=String(details.operation||'client_runtime').slice(0,100);
+  const stage=String(details.stage||'unknown').slice(0,200);
+  const code=String(error?.code||rawMessage).slice(0,120);
+  const clientKey=[operation,stage,code,location.pathname].join('|');
+  const last=_recentClientErrors.get(clientKey)||0;
+  if(Date.now()-last<60000) return;
+  _recentClientErrors.set(clientKey,Date.now());
+
+  const payload={
+    client_key:clientKey,
+    operation,
+    severity:details.severity||'error',
+    code,
+    status:Number(error?.status)||null,
+    message:rawMessage,
+    path:location.pathname,
+    metadata:{
+      stage,
+      online:navigator.onLine,
+      visibility:document.visibilityState,
+      from_method:details.from_method||null,
+      to_method:details.to_method||null,
+      file_size:Number(details.file_size)||null,
+      file_type:details.file_type||null,
+      filename:details.filename||null,
+      line:Number(details.line)||null,
+      column:Number(details.column)||null
+    }
+  };
+  try{ await sendErrorLog(payload); }
+  catch(_){ queueErrorLog(payload); }
+}
+async function flushQueuedErrorLogs(){
+  if(!activeSession?.access_token || !navigator.onLine) return;
+  const rows=queuedErrorLogs();
+  if(!rows.length) return;
+  const remaining=[];
+  for(const row of rows){
+    try{ await sendErrorLog(row); }
+    catch(_){ remaining.push(row); }
+  }
+  saveQueuedErrorLogs(remaining);
+}
+
 // ══════════════════════════════════════════════════════════════
 // ═══ START APP (after successful auth) ══════════════════════════
 // ══════════════════════════════════════════════════════════════
@@ -1002,6 +1079,7 @@ async function ensureExProfile(user){
 
 async function startApp(user){
   curUser=user;
+  flushQueuedErrorLogs();
   curProfile=await ensureExProfile(user);
   if(curProfile?.is_banned){
     showResultModal({
@@ -1431,19 +1509,24 @@ async function processOrder(){
   const from=document.getElementById('from').value, to=document.getElementById('receiveVia').value;
 
   const btn=document.getElementById('submitBtn'); btn.dataset.submitting='1'; btn.disabled=true; btn.innerHTML=ICON.spin+' ناردن...';
+  let orderStage='prepare';
   try{
     let receiptUrl=null, receiptHash=null;
     if(file){
+      orderStage='receipt_hash';
       const bytes=await file.arrayBuffer();
       const digest=await crypto.subtle.digest('SHA-256',bytes);
       receiptHash=Array.from(new Uint8Array(digest),b=>b.toString(16).padStart(2,'0')).join('');
       const ext=(file.name.split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,5)||'jpg';
+      orderStage='receipt_upload';
       receiptUrl=await uploadReceiptWithRetry(file,ext);
     }
 
+    orderStage='session';
     const _orderSession=await getOrderSession();
     let orderResponse;
     try{
+      orderStage='order_request';
       orderResponse=await fetch('/api/orders',{
         method:'POST',
         headers:{'Content-Type':'application/json','Authorization':'Bearer '+_orderSession.access_token},
@@ -1455,9 +1538,15 @@ async function processOrder(){
         })
       });
     }catch(_){ throw new Error('ORDER_NETWORK_ERROR'); }
+    orderStage='order_response';
     let orderPayload={};
     try{ orderPayload=await orderResponse.json(); }catch(_){}
-    if(!orderResponse.ok || !orderPayload.order) throw new Error(orderPayload.error||'نەتوانرا داواکارییەکە تۆمار بکرێت');
+    if(!orderResponse.ok || !orderPayload.order){
+      const responseError=new Error(orderPayload.error||'نەتوانرا داواکارییەکە تۆمار بکرێت');
+      responseError.status=orderResponse.status;
+      responseError.code=orderPayload.code||('ORDER_HTTP_'+orderResponse.status);
+      throw responseError;
+    }
     const orderRow=orderPayload.order;
 
     // The Telegram alert is sent by /api/notify-order. The bot token lives in a
@@ -1488,6 +1577,11 @@ async function processOrder(){
     clearAllOrderFieldErrors();
     calc();
   }catch(e){
+    reportAppError(e,{
+      operation:'order_submission', stage:orderStage,
+      from_method:from, to_method:to,
+      file_size:file?.size||null, file_type:file?.type||null
+    });
     showResultModal({
       tone:'error',
       title:'هەڵەیەک ڕووی دا',
@@ -2266,7 +2360,16 @@ document.addEventListener('keydown', (e)=>{
   const result=document.getElementById('resultModal'); if(result.style.display==='flex'){ closeResultModal(); return; }
 });
 window.addEventListener('offline', ()=>showToast('پەیوەندیت بە ئینتەرنێت بڕایەوە','error','کێشەی تۆڕ'));
-window.addEventListener('online', ()=>showToast('پەیوەندیت بە ئینتەرنێت گەڕایەوە','success'));
+window.addEventListener('online', ()=>{ showToast('پەیوەندیت بە ئینتەرنێت گەڕایەوە','success'); flushQueuedErrorLogs(); });
+window.addEventListener('error', event=>{
+  if(!event?.message) return;
+  reportAppError(event.error||new Error(event.message),{
+    operation:'client_runtime',stage:'window_error',filename:event.filename||null,line:event.lineno||null,column:event.colno||null
+  });
+});
+window.addEventListener('unhandledrejection', event=>{
+  reportAppError(event.reason||new Error('Unhandled promise rejection'),{operation:'client_runtime',stage:'unhandled_rejection'});
+});
 
 document.addEventListener('DOMContentLoaded', async ()=>{
   applyTheme(document.documentElement.getAttribute('data-theme')||'light');
