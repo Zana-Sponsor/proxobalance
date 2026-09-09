@@ -192,6 +192,7 @@ function showApp(){
   subscribeOrdersAdmin();
   subscribeAlerts();
   startErrorLogMonitor();
+  startSupportCaseMonitor();
 }
 
 // The admin page does not load the public assets/js/track.js file. Record its
@@ -222,6 +223,7 @@ const pageConfig = {
   wallets:{ title:'واڵێتەکان', sub:'زیادکردن، قوفڵکردن و دەستکاریکردنی واڵێتەکانی وەرگرتنی پارە', load: ()=>loadWalletsAdmin() },
   rates:{ title:'نرخ و کرێ', sub:'ڕێکخستنی نرخی گۆڕینەوە و کرێی هەر ڕێگایەک', load: ()=>loadRates() },
   notifications:{ title:'ئاگادارییەکان', sub:'ناردنی ئاگاداری و بینینی مێژوو', load: ()=>loadNotifPage() },
+  cases:{ title:'کەیسەکانی کڕیار', sub:'وێنە، وردەکاری و چارەسەرکردنی کێشەکانی کڕیار', load: ()=>loadSupportCasesAdmin() },
   announcement:{ title:'بانەری ئاگاداری', sub:'ئاگاداری گشتی سەرەوەی ئەپەکە', load: ()=>loadAnnouncement() },
   otp:{ title:'کۆدەکانی OTP', sub:'بینین و بەڕێوەبردنی کۆدەکانی دڵنیاکردنەوە', load: ()=>loadOtp() },
   security:{ title:'ئاسایش و IP', sub:'ڕووداوە گومانلێکراوەکان و بلۆککردنی نهێنی (404)', load: ()=>loadSecurity() },
@@ -243,6 +245,140 @@ function goPage(p){
     if(cfg.load) cfg.load();
   }
   closeSidebar();
+}
+
+// ══════════════════════════════════════════════════════════════
+// ═══ CUSTOMER SUPPORT CASES ═══════════════════════════════════
+// Cases and private image URLs are served through /api/admin. The browser
+// never receives the service-role key and signed image URLs expire quickly.
+// ══════════════════════════════════════════════════════════════
+let _supportCasesAdmin=[];
+let _supportCaseFilter='unresolved';
+let _supportCasePoll=null;
+let _lastSupportCaseCount=null;
+
+function supportCaseNumber(row){ return 'PB-'+String(row?.case_number||'—'); }
+function supportCaseStatusLabel(status){
+  return status==='open'?'نوێ':status==='in_progress'?'لەژێر پشکنینە':status==='resolved'?'چارەسەرکرا':'داخراوە';
+}
+function supportCaseStatusClass(status){
+  return status==='resolved'?'approved':status==='closed'?'rejected':status==='in_progress'?'pending':'order_status';
+}
+function supportCaseCategoryLabel(category){
+  return category==='order'?'کێشەی داواکاری':category==='payment'?'کێشەی پارەدان':category==='account'?'کێشەی هەژمار':category==='technical'?'کێشەی تەکنیکی':'کێشەی تر';
+}
+
+async function loadSupportCaseSummary(notify=true){
+  try{
+    const stats=await adminApiRequest('support_case_summary');
+    const unresolved=Number(stats?.unresolved||0);
+    const badge=document.getElementById('sbCaseCount');
+    if(badge){
+      badge.textContent=unresolved>99?'99+':String(unresolved);
+      badge.style.display=unresolved?'inline-flex':'none';
+    }
+    const set=(id,value)=>{ const el=document.getElementById(id); if(el) el.textContent=formatNum(value||0); };
+    set('caseOpenCount',stats?.open);
+    set('caseProgressCount',stats?.in_progress);
+    set('caseResolvedCount',stats?.resolved);
+    set('caseTodayCount',stats?.today);
+    if(notify && unresolved>0 && (_lastSupportCaseCount===null || unresolved>_lastSupportCaseCount)){
+      const added=_lastSupportCaseCount===null?unresolved:unresolved-_lastSupportCaseCount;
+      showToast(added+' کەیسی نوێی کڕیار هەیە','bl');
+    }
+    _lastSupportCaseCount=unresolved;
+    return stats;
+  }catch(_){ return null; }
+}
+
+function startSupportCaseMonitor(){
+  loadSupportCaseSummary(true);
+  clearInterval(_supportCasePoll);
+  _supportCasePoll=setInterval(()=>{
+    if(document.visibilityState==='visible') loadSupportCaseSummary(true);
+  },30000);
+}
+
+async function loadSupportCasesAdmin(){
+  const wrap=document.getElementById('supportCasesAdminWrap');
+  if(wrap) wrap.innerHTML='<div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>';
+  try{
+    const [rows]=await Promise.all([
+      adminApiRequest('list_support_cases',{status:_supportCaseFilter,limit:300}),
+      loadSupportCaseSummary(false)
+    ]);
+    _supportCasesAdmin=Array.isArray(rows)?rows:[];
+    renderSupportCasesAdmin();
+  }catch(e){
+    if(wrap) wrap.innerHTML='<div class="empty"><i class="fas fa-triangle-exclamation"></i><p>هەڵە: '+esc(e.message)+'</p></div>';
+  }
+}
+
+function setSupportCaseFilter(filter,el){
+  _supportCaseFilter=filter;
+  document.querySelectorAll('[data-casef]').forEach(x=>x.classList.remove('on'));
+  if(el) el.classList.add('on');
+  loadSupportCasesAdmin();
+}
+
+function renderSupportCasesAdmin(){
+  const wrap=document.getElementById('supportCasesAdminWrap');
+  if(!wrap) return;
+  const search=(document.getElementById('caseAdminSearch')?.value||'').trim().toLowerCase();
+  const rows=_supportCasesAdmin.filter(row=>{
+    if(!search) return true;
+    return [supportCaseNumber(row),row.profile?.full_name,row.profile?.email,row.profile?.phone,row.order_code,row.description,row.admin_note]
+      .some(value=>String(value||'').toLowerCase().includes(search));
+  });
+  if(!rows.length){
+    wrap.innerHTML='<div class="empty"><i class="fas fa-headset"></i><p>هیچ کەیسێک نییە</p></div>';
+    return;
+  }
+
+  wrap.innerHTML='<div class="support-admin-list">'+rows.map(row=>{
+    const id=String(row.id||'');
+    const profile=row.profile||{};
+    return `<article class="support-admin-card ${esc(row.status)}">
+      <div class="support-admin-head">
+        <div><b class="support-case-number">${esc(supportCaseNumber(row))}</b><small>${esc(fmtDateTime(row.created_at))}</small></div>
+        <span class="badge ${supportCaseStatusClass(row.status)}">${esc(supportCaseStatusLabel(row.status))}</span>
+      </div>
+      <div class="support-admin-facts">
+        <span><i class="fas fa-user"></i><b>${esc(profile.full_name||'بێ ناو')}</b><small>${esc(profile.email||'—')}</small></span>
+        <span><i class="fas fa-phone"></i><b dir="ltr">${esc(profile.phone||'—')}</b><small>${esc(supportCaseCategoryLabel(row.category))}</small></span>
+        ${row.order_code?`<span><i class="fas fa-receipt"></i><b dir="ltr">${esc(row.order_code)}</b><small>ئایدی مامەڵە</small></span>`:''}
+      </div>
+      <div class="support-admin-description">${esc(row.description)}</div>
+      ${row.image_url?`<button type="button" class="support-image-btn" onclick='showImg(${safeAttr(row.image_url)})'><i class="fas fa-image"></i> بینینی وێنەی کێشە</button>`:''}
+      <div class="support-admin-controls">
+        <label><span>دۆخی کەیس</span><select class="minp" id="caseStatus-${esc(id)}">
+          <option value="open" ${row.status==='open'?'selected':''}>نوێ</option>
+          <option value="in_progress" ${row.status==='in_progress'?'selected':''}>لەژێر پشکنینە</option>
+          <option value="resolved" ${row.status==='resolved'?'selected':''}>چارەسەرکرا</option>
+          <option value="closed" ${row.status==='closed'?'selected':''}>داخراوە</option>
+        </select></label>
+        <label class="support-note-field"><span>وەڵام/تێبینی بۆ کڕیار</span><textarea class="minp mta" id="caseNote-${esc(id)}" maxlength="2000" placeholder="چارەسەر یان زانیاری پێویست بۆ کڕیار بنووسە...">${esc(row.admin_note||'')}</textarea></label>
+        <button type="button" class="modal-btn cy support-save-btn" id="caseSave-${esc(id)}" onclick="saveSupportCaseAdmin('${esc(id)}')"><i class="fas fa-check"></i> پاشەکەوت و ئاگادارکردنەوەی کڕیار</button>
+      </div>
+    </article>`;
+  }).join('')+'</div>';
+}
+
+async function saveSupportCaseAdmin(id){
+  const status=document.getElementById('caseStatus-'+id)?.value;
+  const adminNote=document.getElementById('caseNote-'+id)?.value||'';
+  const btn=document.getElementById('caseSave-'+id);
+  if(btn){ btn.disabled=true; btn.innerHTML='<i class="fas fa-circle-notch fa-spin"></i> پاشەکەوتکردن...'; }
+  try{
+    const updated=await adminApiRequest('update_support_case',{id,status,admin_note:adminNote});
+    showToast(updated?.notification_sent
+      ? 'کەیسەکە نوێکرایەوە و کڕیار ئاگادارکرایەوە'
+      : 'کەیسەکە نوێکرایەوە','gr');
+    await loadSupportCasesAdmin();
+  }catch(e){
+    showToast(e.message||'نەتوانرا کەیسەکە نوێ بکرێتەوە','rd');
+    if(btn){ btn.disabled=false; btn.innerHTML='<i class="fas fa-check"></i> پاشەکەوت و ئاگادارکردنەوەی کڕیار'; }
+  }
 }
 
 // ══════════════════════════════════════════════════════════════

@@ -42,6 +42,14 @@ const db = new Proxy({}, {
 const STATUS_PENDING  = 'چاوەڕوانە';
 const STATUS_APPROVED = 'پەسەندکرا';
 const STATUS_REJECTED = 'ڕەتکرا';
+const SUPPORT_STATUSES = new Set(['open', 'in_progress', 'resolved', 'closed']);
+
+function supportStatusLabel(status) {
+  return status === 'open' ? 'نوێ'
+    : status === 'in_progress' ? 'لەژێر پشکنینە'
+    : status === 'resolved' ? 'چارەسەرکرا'
+    : 'داخراوە';
+}
 
 function json(res, status, body) {
   res.status(status).setHeader('Content-Type', 'application/json; charset=utf-8');
@@ -180,6 +188,96 @@ const actions = {
 
     await audit(ctx.user.id, 'broadcast', null, bc.title);
     return { broadcast_id: bc.id, delivered: rows.length };
+  },
+
+  async support_case_summary(_payload, _ctx) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const [openResult, progressResult, resolvedResult, todayResult] = await Promise.all([
+      db.from('ex_support_cases').select('id', { count: 'exact', head: true }).eq('status', 'open'),
+      db.from('ex_support_cases').select('id', { count: 'exact', head: true }).eq('status', 'in_progress'),
+      db.from('ex_support_cases').select('id', { count: 'exact', head: true }).eq('status', 'resolved'),
+      db.from('ex_support_cases').select('id', { count: 'exact', head: true }).gte('created_at', today.toISOString())
+    ]);
+    const failed = [openResult, progressResult, resolvedResult, todayResult].find(result => result.error);
+    if (failed) throw { status: 500, code: 'db_error', message: failed.error.message };
+    return {
+      open: openResult.count || 0,
+      in_progress: progressResult.count || 0,
+      unresolved: (openResult.count || 0) + (progressResult.count || 0),
+      resolved: resolvedResult.count || 0,
+      today: todayResult.count || 0
+    };
+  },
+
+  async list_support_cases({ status = 'unresolved', limit = 200 }, _ctx) {
+    const safeLimit = Math.max(1, Math.min(300, Number(limit) || 200));
+    const safeStatus = ['unresolved', 'all', ...SUPPORT_STATUSES].includes(status) ? status : 'unresolved';
+    let query = db.from('ex_support_cases').select('*').order('created_at', { ascending: false }).limit(safeLimit);
+    if (safeStatus === 'unresolved') query = query.in('status', ['open', 'in_progress']);
+    else if (safeStatus !== 'all') query = query.eq('status', safeStatus);
+    const { data: cases, error } = await query;
+    if (error) throw { status: 500, code: 'db_error', message: error.message };
+
+    const userIds = [...new Set((cases || []).map(row => row.user_id).filter(Boolean))];
+    let profileMap = {};
+    if (userIds.length) {
+      const { data: profiles, error: profileError } = await db
+        .from('ex_profiles').select('id,full_name,email,phone').in('id', userIds);
+      if (profileError) throw { status: 500, code: 'db_error', message: profileError.message };
+      profileMap = Object.fromEntries((profiles || []).map(profile => [profile.id, profile]));
+    }
+
+    return Promise.all((cases || []).map(async row => {
+      let imageUrl = null;
+      if (row.image_path) {
+        const { data } = await db.storage.from('support-case-images').createSignedUrl(row.image_path, 600);
+        imageUrl = data?.signedUrl || null;
+      }
+      return { ...row, profile: profileMap[row.user_id] || null, image_url: imageUrl };
+    }));
+  },
+
+  async update_support_case({ id, status, admin_note }, ctx) {
+    if (!id || !SUPPORT_STATUSES.has(status)) {
+      throw { status: 400, code: 'bad_input', message: 'Valid case id and status are required' };
+    }
+    const note = String(admin_note == null ? '' : admin_note).trim().slice(0, 2000) || null;
+    const { data: existing, error: findError } = await db
+      .from('ex_support_cases').select('*').eq('id', id).maybeSingle();
+    if (findError) throw { status: 500, code: 'db_error', message: findError.message };
+    if (!existing) throw { status: 404, code: 'not_found', message: 'Support case not found' };
+
+    const now = new Date().toISOString();
+    const patch = {
+      status,
+      admin_note: note,
+      assigned_admin: ctx.user.id,
+      updated_at: now,
+      resolved_at: ['resolved', 'closed'].includes(status) ? (existing.resolved_at || now) : null
+    };
+    const { data, error } = await db.from('ex_support_cases')
+      .update(patch).eq('id', id).select().single();
+    if (error) throw { status: 500, code: 'db_error', message: error.message };
+
+    let notificationSent = false;
+    if (existing.status !== data.status || (existing.admin_note || null) !== note) {
+      const caseLabel = `PB-${data.case_number}`;
+      const message = `دۆخ: ${supportStatusLabel(data.status)}` + (note ? ` — ${note}` : '');
+      try {
+        const { error: notificationError } = await db.from('ex_notifications').insert({
+          user_id: data.user_id,
+          type: 'support_case',
+          title: `کەیسی ${caseLabel} نوێکرایەوە`,
+          message: message.slice(0, 2000),
+          support_case_id: data.id
+        });
+        notificationSent = !notificationError;
+      } catch { /* a notification failure must not undo the case update */ }
+    }
+
+    await audit(ctx.user.id, 'update_support_case', data.user_id, `PB-${data.case_number}: ${data.status}`);
+    return { ...data, notification_sent: notificationSent };
   },
 
   async error_log_summary(_payload, _ctx) {

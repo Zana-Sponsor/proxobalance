@@ -4,6 +4,7 @@ import { fileURLToPath } from 'url';
 
 import adminHandler from './api/admin.js';
 import errorLogHandler from './api/error-log.js';
+import supportCasesHandler from './api/support-cases.js';
 import notifyOrderHandler from './api/notify-order.js';
 import ordersHandler from './api/orders.js';
 import publicHandler from './api/public.js';
@@ -26,6 +27,7 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 // API route handlers
 app.all('/api/admin', adminHandler);
 app.all('/api/error-log', errorLogHandler);
+app.all('/api/support-cases', supportCasesHandler);
 app.all('/api/notify-order', notifyOrderHandler);
 app.all('/api/orders', ordersHandler);
 app.all('/api/public', publicHandler);

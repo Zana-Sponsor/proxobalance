@@ -10,7 +10,7 @@
 <!-- Firebase — announcement banner control only (same project as exchange.html) -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-<link rel="stylesheet" href="assets/css/admin.css?v=2">
+<link rel="stylesheet" href="assets/css/admin.css?v=3">
 <link rel="stylesheet" href="assets/css/tokens.css">
 </head>
 <body>
@@ -57,6 +57,7 @@
     <div class="sb-item" onclick="goPage('rates')"><i class="fas fa-percent" style="color:#f59e0b"></i> نرخ و کرێ</div>
     <div class="sb-section">پەیوەندی</div>
     <div class="sb-item" onclick="goPage('notifications')"><i class="fas fa-bell" style="color:#7c3aed"></i> ئاگادارییەکان</div>
+    <div class="sb-item" onclick="goPage('cases')"><i class="fas fa-headset" style="color:#2563eb"></i> کەیسەکانی کڕیار <span class="sb-badge rd" id="sbCaseCount" style="display:none">0</span></div>
     <div class="sb-item" onclick="goPage('announcement')"><i class="fas fa-bullhorn" style="color:#0891b2"></i> بانەری ئاگاداری</div>
     <div class="sb-section">ئاسایش</div>
     <div class="sb-item" onclick="goPage('otp')"><i class="fas fa-key" style="color:#dc2626"></i> کۆدەکانی OTP</div>
@@ -237,6 +238,35 @@
       <div class="sec-hdr"><h3>دواترین ئاگادارییەکان</h3></div>
       <div class="tbl-wrap">
         <div class="tbl-scroll" id="notifLogWrap">
+          <div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ CUSTOMER SUPPORT CASES ══ -->
+    <div class="pg" id="pgCases">
+      <div class="sec-hdr">
+        <h3>کەیسەکانی پشتگیری کڕیار</h3>
+        <div class="act-btn dark" onclick="loadSupportCasesAdmin()"><i class="fas fa-arrows-rotate"></i> نوێکردنەوە</div>
+      </div>
+
+      <div class="stats-grid support-case-stats">
+        <div class="stat-card"><div class="stat-ico rd"><i class="fas fa-inbox"></i></div><div class="stat-info"><div class="stat-val" id="caseOpenCount">—</div><div class="stat-lbl">کەیسی نوێ</div></div></div>
+        <div class="stat-card"><div class="stat-ico yw"><i class="fas fa-magnifying-glass"></i></div><div class="stat-info"><div class="stat-val" id="caseProgressCount">—</div><div class="stat-lbl">لەژێر پشکنین</div></div></div>
+        <div class="stat-card"><div class="stat-ico gr"><i class="fas fa-circle-check"></i></div><div class="stat-info"><div class="stat-val" id="caseResolvedCount">—</div><div class="stat-lbl">چارەسەرکراو</div></div></div>
+        <div class="stat-card"><div class="stat-ico bl"><i class="fas fa-calendar-day"></i></div><div class="stat-info"><div class="stat-val" id="caseTodayCount">—</div><div class="stat-lbl">کەیسی ئەمڕۆ</div></div></div>
+      </div>
+
+      <div class="tbl-wrap">
+        <div class="tbl-filter">
+          <input class="tbl-search" id="caseAdminSearch" placeholder="گەڕان بە ژمارەی کەیس، ناو، ئیمەیل، ئایدی مامەڵە یان دەق..." oninput="renderSupportCasesAdmin()">
+          <div class="chip on" data-casef="unresolved" onclick="setSupportCaseFilter('unresolved',this)">چاوەڕوان</div>
+          <div class="chip" data-casef="all" onclick="setSupportCaseFilter('all',this)">هەموو</div>
+          <div class="chip yw" data-casef="in_progress" onclick="setSupportCaseFilter('in_progress',this)">لەژێر پشکنین</div>
+          <div class="chip gr" data-casef="resolved" onclick="setSupportCaseFilter('resolved',this)">چارەسەرکراو</div>
+          <div class="chip rd" data-casef="closed" onclick="setSupportCaseFilter('closed',this)">داخراو</div>
+        </div>
+        <div class="tbl-scroll" id="supportCasesAdminWrap">
           <div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>
         </div>
       </div>
@@ -699,6 +729,6 @@
 <div id="toast"></div>
 
   <script src="assets/js/svg-icons.js"></script>
-  <script src="assets/js/admin.js?v=2"></script>
+  <script src="assets/js/admin.js?v=3"></script>
 </body>
 </html>

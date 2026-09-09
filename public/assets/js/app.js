@@ -273,6 +273,7 @@ function _notifKind(type){
   if(type==='order_approved') return 'ok';
   if(type==='order_rejected') return 'no';
   if(type==='order_status')   return 'upd';
+  if(type==='support_case')   return 'upd';
   return 'msg';
 }
 function _notifIcon(type){
@@ -408,6 +409,11 @@ function toggleNotifPanel(){
 async function openNotifItem(id){
   const item=_notifItems.find(n=>n.id===id);
   await markNotifRead(id);
+  if(item && item.type==='support_case'){
+    closeNotifPanel();
+    navigate('support');
+    return;
+  }
   if(item && item.order_id){
     const o=_orders.find(x=>x.id===item.order_id);
     if(o){
@@ -1807,7 +1813,7 @@ Object.assign(ICON, {
 });
 
 // ══════════════════════════════════════════════════════════════
-// ═══ ROUTER — /, /transactions, /changes, /rules, /profile ═════
+// ═══ ROUTER — /, /transactions, /changes, /rules, /profile, /support ═════
 // ══════════════════════════════════════════════════════════════
 // ROUTE_MODE:
 //   'path' → clean URLs (www.domain.com/profile). The server must serve
@@ -1816,13 +1822,14 @@ Object.assign(ICON, {
 //   'hash' → www.domain.com/#/profile. Works on ANY static host with no
 //            server config at all. Switch to this if you cannot add rewrites.
 const ROUTE_MODE = 'path';
-const ROUTES = { home:'pageHome', transactions:'pageTx', changes:'pageChanges', rules:'pageRules', profile:'pageProfile' };
+const ROUTES = { home:'pageHome', transactions:'pageTx', changes:'pageChanges', rules:'pageRules', profile:'pageProfile', support:'pageSupport' };
 const ROUTE_TITLES = {
   home:'Proxo Balance — ئاڵوگۆڕی دراو',
   transactions:'مامەڵەکان — Proxo Balance',
   changes:'گۆڕانکاری نرخەکان — Proxo Balance',
   rules:'یاساکانی ئەپ — Proxo Balance',
-  profile:'پڕۆفایل — Proxo Balance'
+  profile:'پڕۆفایل — Proxo Balance',
+  support:'پشتگیری — Proxo Balance'
 };
 // Everything before the route segment, so the app works at the domain root
 // (/profile) and inside a sub-folder (/exchange/profile) with no edits.
@@ -1855,7 +1862,7 @@ function navigate(route, push){
     if(el) el.classList.toggle('active', r===route);
   });
   // /changes lives under the profile tab
-  const navRoute = (route==='changes') ? 'profile' : route;
+  const navRoute = (route==='changes' || route==='support') ? 'profile' : route;
   document.querySelectorAll('.bn-item, .hdr-nav-link').forEach(b=>b.classList.toggle('on', b.dataset.route===navRoute));
   if(push){ try{ history.pushState({route:route}, '', urlFor(route)); }catch(_){} }
   document.title = ROUTE_TITLES[route] || 'Proxo Balance';
@@ -1864,6 +1871,7 @@ function navigate(route, push){
   if(route==='transactions') renderTxPage();
   if(route==='changes')      loadChangeLog();
   if(route==='profile')      fillProfileForm();
+  if(route==='support')      loadSupportCases();
 }
 window.addEventListener('popstate', function(){ navigate(routeFromLocation(), false); });
 
@@ -2167,6 +2175,185 @@ async function saveProfile(){
   }
 }
 
+// ═══ CUSTOMER SUPPORT CASES ═══════════════════════════════════
+// Images live in a private bucket. The user's JWT and Storage RLS restrict
+// both upload and signed-URL creation to this user's own folder.
+// ══════════════════════════════════════════════════════════════
+const SUPPORT_IMAGE_MAX_BYTES=5*1024*1024;
+const SUPPORT_IMAGE_TYPES=new Set(['image/jpeg','image/png','image/webp']);
+let _supportImageFile=null;
+let _supportPreviewUrl=null;
+let _supportCases=[];
+
+function supportCategoryLabel(category){
+  return category==='order'?'کێشەی داواکاری':category==='payment'?'کێشەی پارەدان':category==='account'?'کێشەی هەژمار':category==='technical'?'کێشەی تەکنیکی':'کێشەی تر';
+}
+function supportStatusLabel(status){
+  return status==='open'?'نێردراوە':status==='in_progress'?'لەژێر پشکنینە':status==='resolved'?'چارەسەرکرا':'داخراوە';
+}
+function supportStatusClass(status){
+  return status==='resolved'?'resolved':status==='closed'?'closed':status==='in_progress'?'progress':'open';
+}
+function supportCaseNumber(row){ return 'PB-'+String(row?.case_number||'—'); }
+
+function updateSupportDescriptionCount(){
+  const input=document.getElementById('supportDescription');
+  const count=document.getElementById('supportDescriptionCount');
+  if(count) count.textContent=formatNum((input?.value||'').length)+' / ٢٠٠٠';
+  if((input?.value||'').trim().length>=10) clearFieldError('supportDescription');
+}
+
+function clearSupportImagePreview(){
+  if(_supportPreviewUrl){ URL.revokeObjectURL(_supportPreviewUrl); _supportPreviewUrl=null; }
+  const preview=document.getElementById('supportImagePreview');
+  const image=document.getElementById('supportImagePreviewImg');
+  if(preview) preview.style.display='none';
+  if(image) image.removeAttribute('src');
+}
+
+function removeSupportImage(){
+  _supportImageFile=null;
+  const input=document.getElementById('supportImageInput'); if(input) input.value='';
+  const name=document.getElementById('supportImageName'); if(name) name.textContent='وێنە هەڵبژێرە';
+  const meta=document.getElementById('supportImageMeta'); if(meta) meta.textContent='JPG، PNG یان WEBP';
+  const picker=document.getElementById('supportImagePicker'); if(picker) picker.classList.remove('selected');
+  clearSupportImagePreview();
+  clearFieldError('supportImage');
+}
+
+function onSupportImageSelected(input){
+  clearFieldError('supportImage');
+  const file=input?.files?.[0]||null;
+  if(!file){ removeSupportImage(); return; }
+  if(!SUPPORT_IMAGE_TYPES.has(file.type)){
+    removeSupportImage();
+    setFieldError('supportImage','تەنها JPG، PNG یان WEBP قبوڵ دەکرێت');
+    return;
+  }
+  if(file.size>SUPPORT_IMAGE_MAX_BYTES){
+    removeSupportImage();
+    setFieldError('supportImage','قەبارەی وێنە نابێت لە 5MB زیاتر بێت');
+    return;
+  }
+  _supportImageFile=file;
+  const name=document.getElementById('supportImageName'); if(name) name.textContent=file.name;
+  const meta=document.getElementById('supportImageMeta'); if(meta) meta.textContent=(file.size/1024/1024).toFixed(2)+' MB';
+  const picker=document.getElementById('supportImagePicker'); if(picker) picker.classList.add('selected');
+  clearSupportImagePreview();
+  _supportPreviewUrl=URL.createObjectURL(file);
+  const preview=document.getElementById('supportImagePreview');
+  const image=document.getElementById('supportImagePreviewImg');
+  if(image) image.src=_supportPreviewUrl;
+  if(preview) preview.style.display='block';
+}
+
+function supportImageExtension(type){
+  return type==='image/png'?'png':type==='image/webp'?'webp':'jpg';
+}
+
+async function submitSupportCase(){
+  if(!curUser || !activeSession?.access_token){ showToast('تکایە دووبارە بچۆ ژوورەوە','error'); return; }
+  const category=document.getElementById('supportCategory')?.value||'general';
+  const orderCode=(document.getElementById('supportOrderCode')?.value||'').trim().toUpperCase();
+  const description=(document.getElementById('supportDescription')?.value||'').trim();
+  clearFieldError('supportDescription'); clearFieldError('supportImage');
+  if(description.length<10){ setFieldError('supportDescription','تکایە کێشەکە بە لانیکەم ١٠ پیت ڕوون بکەرەوە'); return; }
+  if(orderCode && !/^P[A-Z0-9]{11}$/.test(orderCode)){
+    showToast('ئایدی مامەڵە دەبێت بە P دەست پێبکات و ١٢ پیت بێت','error');
+    return;
+  }
+
+  const btn=document.getElementById('supportSubmitBtn');
+  const defaultButton=btn.innerHTML;
+  btn.disabled=true; btn.innerHTML=ICON.spin+' ناردن...';
+  let imagePath=null;
+  let supportStage='case_create';
+  try{
+    if(_supportImageFile){
+      supportStage='image_upload';
+      const unique=(globalThis.crypto?.randomUUID?.()||String(Date.now())+'-'+Math.random().toString(16).slice(2));
+      imagePath=curUser.id+'/'+unique+'.'+supportImageExtension(_supportImageFile.type);
+      const {error:uploadError}=await sb.storage.from('support-case-images').upload(imagePath,_supportImageFile,{
+        cacheControl:'3600', contentType:_supportImageFile.type, upsert:false
+      });
+      if(uploadError){
+        const err=new Error(uploadError.message||'Support image upload failed'); err.code='SUPPORT_IMAGE_UPLOAD';
+        throw err;
+      }
+    }
+
+    supportStage='case_create';
+    const response=await fetch('/api/support-cases',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+activeSession.access_token},
+      body:JSON.stringify({category,order_code:orderCode||null,description,image_path:imagePath})
+    });
+    let payload={}; try{ payload=await response.json(); }catch(_){}
+    if(!response.ok || !payload.ok){
+      const err=new Error(payload.error||'Support case submission failed');
+      err.status=response.status; err.code='SUPPORT_CASE_HTTP_'+response.status;
+      throw err;
+    }
+
+    const row=payload.case||{};
+    const success=document.getElementById('supportSuccess');
+    const number=document.getElementById('supportSuccessNumber');
+    if(number) number.textContent=supportCaseNumber(row);
+    if(success) success.style.display='flex';
+    document.getElementById('supportDescription').value='';
+    document.getElementById('supportOrderCode').value='';
+    document.getElementById('supportCategory').value='order';
+    updateSupportDescriptionCount();
+    removeSupportImage();
+    showToast('کەیسەکەت بە سەرکەوتوویی نێردرا','success');
+    await loadSupportCases();
+  }catch(e){
+    reportAppError(e,{operation:'support_case_submission',stage:supportStage,file_size:_supportImageFile?.size,file_type:_supportImageFile?.type,filename:_supportImageFile?.name});
+    const msg=e?.status===429?'لە کاتژمێرێکدا زۆر کەیست ناردووە؛ تکایە دواتر هەوڵبدەوە'
+      :e?.status===409?'تکایە چاوەڕێی وەڵامی کەیسە کراوەکانت بکە'
+      :e?.code==='SUPPORT_IMAGE_UPLOAD'?'وێنەکە بارنەکرا؛ تکایە دووبارە هەوڵبدەوە'
+      :'نەتوانرا کەیسەکە بنێردرێت؛ تکایە دووبارە هەوڵبدەوە';
+    showToast(msg,'error');
+  }finally{
+    btn.disabled=false; btn.innerHTML=defaultButton;
+  }
+}
+
+async function loadSupportCases(){
+  const list=document.getElementById('supportCasesList');
+  if(!list || !curUser) return;
+  list.innerHTML='<div class="support-loading">'+ICON.spin+' بارکردن...</div>';
+  try{
+    const {data,error}=await sb.from('ex_support_cases')
+      .select('id,case_number,category,order_code,description,image_path,status,admin_note,created_at,updated_at')
+      .eq('user_id',curUser.id).order('created_at',{ascending:false}).limit(50);
+    if(error) throw error;
+    _supportCases=await Promise.all((data||[]).map(async row=>{
+      if(!row.image_path) return {...row,image_url:null};
+      const {data:signed}=await sb.storage.from('support-case-images').createSignedUrl(row.image_path,600);
+      return {...row,image_url:signed?.signedUrl||null};
+    }));
+    renderSupportCases();
+  }catch(e){
+    list.innerHTML='<div class="empty-state">نەتوانرا کەیسەکان باربکرێن</div>';
+    reportAppError(e,{operation:'support_cases_load',stage:'case_list'});
+  }
+}
+
+function renderSupportCases(){
+  const list=document.getElementById('supportCasesList'); if(!list) return;
+  if(!_supportCases.length){ list.innerHTML='<div class="empty-state">هێشتا هیچ کەیسێکت نییە</div>'; return; }
+  list.innerHTML=_supportCases.map(row=>`<article class="support-case-card ${supportStatusClass(row.status)}">
+    <div class="support-case-head">
+      <div><b dir="ltr">${escHtml(supportCaseNumber(row))}</b><small>${escHtml(timeAgo(row.created_at))}</small></div>
+      <span class="support-case-status">${escHtml(supportStatusLabel(row.status))}</span>
+    </div>
+    <div class="support-case-meta"><span>${escHtml(supportCategoryLabel(row.category))}</span>${row.order_code?`<span dir="ltr">${escHtml(row.order_code)}</span>`:''}</div>
+    <p class="support-case-description">${escHtml(row.description)}</p>
+    ${row.image_url?`<a class="support-case-image-link" href="${escHtml(row.image_url)}" target="_blank" rel="noopener"><img src="${escHtml(row.image_url)}" alt="وێنەی کێشە"><span>بینینی وێنە</span></a>`:''}
+    ${row.admin_note?`<div class="support-admin-reply"><b>وەڵامی پشتگیری</b><p>${escHtml(row.admin_note)}</p></div>`:''}
+  </article>`).join('');
+}
 
 // ══════════════════════════════════════════════════════════════
 // ═══ HEADER — shadow on scroll + live rate pill + nav state ════
