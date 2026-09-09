@@ -2194,7 +2194,10 @@ function supportStatusLabel(status){
 function supportStatusClass(status){
   return status==='resolved'?'resolved':status==='closed'?'closed':status==='in_progress'?'progress':'open';
 }
-function supportCaseNumber(row){ return 'PB-'+String(row?.case_number||'—'); }
+function supportCaseNumber(row){
+  const value=Number(row?.case_number);
+  return Number.isInteger(value) ? String(value).padStart(6,'0') : '—';
+}
 
 function updateSupportDescriptionCount(){
   const input=document.getElementById('supportDescription');

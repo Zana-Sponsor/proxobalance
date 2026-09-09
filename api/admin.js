@@ -262,7 +262,7 @@ const actions = {
 
     let notificationSent = false;
     if (existing.status !== data.status || (existing.admin_note || null) !== note) {
-      const caseLabel = `PB-${data.case_number}`;
+      const caseLabel = String(data.case_number).padStart(6, '0');
       const message = `دۆخ: ${supportStatusLabel(data.status)}` + (note ? ` — ${note}` : '');
       try {
         const { error: notificationError } = await db.from('ex_notifications').insert({
@@ -276,7 +276,7 @@ const actions = {
       } catch { /* a notification failure must not undo the case update */ }
     }
 
-    await audit(ctx.user.id, 'update_support_case', data.user_id, `PB-${data.case_number}: ${data.status}`);
+    await audit(ctx.user.id, 'update_support_case', data.user_id, `${String(data.case_number).padStart(6, '0')}: ${data.status}`);
     return { ...data, notification_sent: notificationSent };
   },
 

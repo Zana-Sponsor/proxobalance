@@ -61,8 +61,10 @@ test('creates a numbered support case for the authenticated customer', async (t)
     }
     if (url.pathname === '/rest/v1/ex_support_cases' && options.method === 'POST') {
       inserted = JSON.parse(options.body);
+      assert.match(String(inserted.case_number), /^\d{6}$/);
+      assert.ok(inserted.case_number >= 100000 && inserted.case_number <= 999999);
       return response([{
-        id: 'case-1', case_number: 100001, status: 'open', created_at: '2026-09-09T18:00:00Z', ...inserted
+        id: 'case-1', status: 'open', created_at: '2026-09-09T18:00:00Z', ...inserted
       }], 201);
     }
     throw new Error(`Unexpected request: ${options.method || 'GET'} ${url.pathname}${url.search}`);
@@ -77,14 +79,12 @@ test('creates a numbered support case for the authenticated customer', async (t)
   }), recorder.res);
 
   assert.equal(recorder.res.statusCode, 201);
-  assert.deepEqual(inserted, {
-    user_id: 'user-1',
-    category: 'technical',
-    order_code: null,
-    description: 'The exchange form does not submit on my phone.',
-    image_path: null
-  });
-  assert.equal(recorder.json().case.case_number, 100001);
+  assert.equal(inserted.user_id, 'user-1');
+  assert.equal(inserted.category, 'technical');
+  assert.equal(inserted.order_code, null);
+  assert.equal(inserted.description, 'The exchange form does not submit on my phone.');
+  assert.equal(inserted.image_path, null);
+  assert.match(String(recorder.json().case.case_number), /^\d{6}$/);
 });
 
 test('verifies that an attached image exists in the customer private folder', async (t) => {
@@ -102,7 +102,8 @@ test('verifies that an attached image exists in the customer private folder', as
     if (url.pathname === '/rest/v1/ex_support_cases' && options.method === 'POST') {
       const inserted = JSON.parse(options.body);
       assert.equal(inserted.image_path, imagePath);
-      return response([{ id: 'case-2', case_number: 100002, status: 'open', ...inserted }], 201);
+      assert.match(String(inserted.case_number), /^\d{6}$/);
+      return response([{ id: 'case-2', status: 'open', ...inserted }], 201);
     }
     throw new Error(`Unexpected request: ${options.method || 'GET'} ${url.pathname}${url.search}`);
   });
@@ -117,6 +118,33 @@ test('verifies that an attached image exists in the customer private folder', as
 
   assert.equal(recorder.res.statusCode, 201);
   assert.equal(storageChecked, true);
+});
+
+test('retries when a random six-digit case number collides', async (t) => {
+  let insertAttempts = 0;
+  installBaseFetch(t, async (url, options) => {
+    if (url.pathname === '/rest/v1/ex_support_cases' && (options.method || 'GET') === 'GET') return response([]);
+    if (url.pathname === '/rest/v1/ex_support_cases' && options.method === 'POST') {
+      insertAttempts += 1;
+      const inserted = JSON.parse(options.body);
+      assert.match(String(inserted.case_number), /^\d{6}$/);
+      if (insertAttempts === 1) {
+        return response({ code: '23505', message: 'duplicate key value violates unique constraint' }, 409);
+      }
+      return response([{ id: 'case-after-retry', status: 'open', ...inserted }], 201);
+    }
+    throw new Error(`Unexpected request: ${options.method || 'GET'} ${url.pathname}${url.search}`);
+  });
+
+  const recorder = responseRecorder();
+  await supportCasesHandler(request({
+    category: 'general',
+    description: 'This request verifies collision-safe case numbering.'
+  }), recorder.res);
+
+  assert.equal(recorder.res.statusCode, 201);
+  assert.equal(insertAttempts, 2);
+  assert.match(String(recorder.json().case.case_number), /^\d{6}$/);
 });
 
 test('rejects an image path that belongs to another customer', async (t) => {

@@ -5,7 +5,8 @@ begin;
 
 create table if not exists public.ex_support_cases (
   id uuid primary key default gen_random_uuid(),
-  case_number bigint generated always as identity (start with 100001) unique,
+  case_number integer not null
+    default ((floor(random() * 900000) + 100000)::integer) unique,
   user_id uuid not null references auth.users(id) on delete cascade,
   category text not null default 'general'
     check (category in ('order', 'payment', 'account', 'technical', 'general')),
@@ -24,6 +25,21 @@ create table if not exists public.ex_support_cases (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+-- Older installations used an increasing identity (100001, 100002, ...).
+-- Convert it to a six-digit value; the API supplies a cryptographically random
+-- number and retries the unique constraint if two requests ever collide.
+alter table public.ex_support_cases
+  alter column case_number drop identity if exists;
+alter table public.ex_support_cases
+  alter column case_number type integer using case_number::integer;
+alter table public.ex_support_cases
+  alter column case_number set default ((floor(random() * 900000) + 100000)::integer);
+alter table public.ex_support_cases
+  drop constraint if exists ex_support_cases_case_number_six_digits;
+alter table public.ex_support_cases
+  add constraint ex_support_cases_case_number_six_digits
+  check (case_number between 100000 and 999999);
 
 create index if not exists ex_support_cases_user_created_idx
   on public.ex_support_cases (user_id, created_at desc);

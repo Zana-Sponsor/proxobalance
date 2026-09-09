@@ -1,12 +1,14 @@
 import {
   json, readJson, serviceFetch, withSecurity
 } from './_lib/security.js';
+import { randomInt } from 'node:crypto';
 
 const CASE_BUCKET = 'support-case-images';
 const CATEGORIES = new Set(['order', 'payment', 'account', 'technical', 'general']);
 const MAX_DESCRIPTION = 2000;
 const MAX_CASES_PER_HOUR = 5;
 const MAX_UNRESOLVED_CASES = 10;
+const CASE_NUMBER_ATTEMPTS = 8;
 
 function cleanLine(value, max = 200) {
   return String(value == null ? '' : value)
@@ -40,6 +42,32 @@ async function imageExists(imagePath, userId) {
     body: JSON.stringify({ prefix: userId, search: filename, limit: 10, offset: 0 })
   });
   return Array.isArray(rows) && rows.some(row => row?.name === filename);
+}
+
+function isCaseNumberCollision(error) {
+  return Number(error?.status) === 409 && (
+    error?.details?.code === '23505' || /duplicate|unique/i.test(String(error?.message || ''))
+  );
+}
+
+async function insertSupportCase(payload) {
+  for (let attempt = 0; attempt < CASE_NUMBER_ATTEMPTS; attempt += 1) {
+    const caseNumber = randomInt(100000, 1000000);
+    try {
+      const rows = await serviceFetch('/rest/v1/ex_support_cases?select=id,case_number,user_id,category,order_code,description,image_path,status,admin_note,created_at,updated_at', {
+        method: 'POST',
+        headers: { Prefer: 'return=representation' },
+        body: JSON.stringify({ ...payload, case_number: caseNumber })
+      });
+      return rows?.[0] || null;
+    } catch (error) {
+      if (!isCaseNumberCollision(error)) throw error;
+    }
+  }
+  throw Object.assign(new Error('Could not allocate a support case number'), {
+    status: 503,
+    code: 'SUPPORT_CASE_NUMBER_EXHAUSTED'
+  });
 }
 
 export default withSecurity(async (req, res, { user }) => {
@@ -83,19 +111,15 @@ export default withSecurity(async (req, res, { user }) => {
     return json(res, 422, { error: 'Support image was not found' });
   }
 
-  const rows = await serviceFetch('/rest/v1/ex_support_cases?select=id,case_number,user_id,category,order_code,description,image_path,status,admin_note,created_at,updated_at', {
-    method: 'POST',
-    headers: { Prefer: 'return=representation' },
-    body: JSON.stringify({
-      user_id: user.id,
-      category,
-      order_code: orderCode,
-      description,
-      image_path: imagePath
-    })
+  const createdCase = await insertSupportCase({
+    user_id: user.id,
+    category,
+    order_code: orderCode,
+    description,
+    image_path: imagePath
   });
 
-  return json(res, 201, { ok: true, case: rows?.[0] || null });
+  return json(res, 201, { ok: true, case: createdCase });
 }, {
   auth: 'required',
   methods: ['POST'],

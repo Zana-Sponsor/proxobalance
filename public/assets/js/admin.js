@@ -257,7 +257,10 @@ let _supportCaseFilter='unresolved';
 let _supportCasePoll=null;
 let _lastSupportCaseCount=null;
 
-function supportCaseNumber(row){ return 'PB-'+String(row?.case_number||'—'); }
+function supportCaseNumber(row){
+  const value=Number(row?.case_number);
+  return Number.isInteger(value) ? String(value).padStart(6,'0') : '—';
+}
 function supportCaseStatusLabel(status){
   return status==='open'?'نوێ':status==='in_progress'?'لەژێر پشکنینە':status==='resolved'?'چارەسەرکرا':'داخراوە';
 }
