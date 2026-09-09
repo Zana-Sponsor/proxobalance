@@ -129,6 +129,8 @@ tr:hover td{background:rgba(28,35,51,.015);}
 .badge.pending{background:rgba(217,119,6,.09);color:var(--yw);border:1px solid rgba(217,119,6,.2);}
 .badge.approved,.badge.active{background:rgba(22,163,74,.09);color:var(--gr);border:1px solid rgba(22,163,74,.2);}
 .badge.rejected{background:rgba(220,38,38,.08);color:var(--rd);border:1px solid rgba(220,38,38,.2);}
+.badge.needs-correction{background:rgba(220,38,38,.08);color:var(--rd);border:1px solid rgba(220,38,38,.2);}
+.badge.corrected{background:rgba(8,145,178,.09);color:var(--cy);border:1px solid rgba(8,145,178,.22);}
 .badge.banned{background:rgba(124,58,237,.08);color:var(--pu);border:1px solid rgba(124,58,237,.15);}
 .badge.admin{background:rgba(8,145,178,.09);color:var(--cy);border:1px solid rgba(8,145,178,.22);}
 .badge.order_status{background:rgba(37,99,235,.08);color:var(--bl);border:1px solid rgba(37,99,235,.18);}
@@ -414,6 +416,14 @@ tr:hover td{background:rgba(28,35,51,.015);}
 .support-admin-customer-response b{color:var(--cy)}
 .support-admin-correction-request p,.support-admin-customer-response p{margin:0;white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;line-height:1.75;color:var(--dark)}
 .support-admin-correction-request small,.support-admin-customer-response small{display:block;margin-top:4px;color:var(--mt);font-size:10px;direction:ltr;text-align:right}
+.order-admin-correction{margin-top:10px;padding:11px 12px;border-radius:11px}
+.order-admin-correction.request{border:1px solid rgba(220,38,38,.24);background:rgba(220,38,38,.055)}
+.order-admin-correction.response{border:1px solid rgba(8,145,178,.24);background:rgba(8,145,178,.06)}
+.order-admin-correction b{display:block;font-size:11.5px;margin-bottom:4px}
+.order-admin-correction.request b{color:var(--rd)}
+.order-admin-correction.response b{color:var(--cy)}
+.order-admin-correction p{margin:0;white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;line-height:1.75;color:var(--dark)}
+.order-admin-correction small{display:block;margin-top:4px;color:var(--mt);font-size:10px;direction:ltr;text-align:right}
 .support-admin-controls{border-top:1px dashed var(--b2);padding-top:12px;display:grid;grid-template-columns:minmax(140px,.45fr) minmax(220px,1fr);gap:10px;align-items:end}
 .support-admin-controls label>span{display:block;font-size:10.5px;font-weight:800;color:var(--mt2);margin-bottom:5px}
 .support-admin-controls .minp{margin:0}

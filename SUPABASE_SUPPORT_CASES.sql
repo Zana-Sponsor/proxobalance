@@ -17,15 +17,9 @@ create table if not exists public.ex_support_cases (
   image_path text null
     check (image_path is null or char_length(image_path) between 38 and 500),
   status text not null default 'open'
-    check (status in ('open', 'in_progress', 'needs_correction', 'corrected', 'resolved', 'closed')),
+    check (status in ('open', 'in_progress', 'resolved', 'closed')),
   admin_note text null
     check (admin_note is null or char_length(admin_note) <= 2000),
-  correction_request text null
-    check (correction_request is null or char_length(correction_request) <= 2000),
-  correction_requested_at timestamptz null,
-  customer_response text null
-    check (customer_response is null or char_length(customer_response) <= 2000),
-  customer_responded_at timestamptz null,
   assigned_admin uuid null references auth.users(id) on delete set null,
   resolved_at timestamptz null,
   created_at timestamptz not null default now(),
@@ -47,27 +41,22 @@ alter table public.ex_support_cases
   add constraint ex_support_cases_case_number_six_digits
   check (case_number between 100000 and 999999);
 
--- Correction workflow: admin requests a change, the customer edits the case,
--- then it returns to the admin as a clearly marked corrected case.
-alter table public.ex_support_cases
-  add column if not exists correction_request text null,
-  add column if not exists correction_requested_at timestamptz null,
-  add column if not exists customer_response text null,
-  add column if not exists customer_responded_at timestamptz null;
-
 alter table public.ex_support_cases
   drop constraint if exists ex_support_cases_status_check;
+update public.ex_support_cases
+set status = 'in_progress'
+where status in ('needs_correction', 'corrected');
 alter table public.ex_support_cases
-  drop constraint if exists ex_support_cases_correction_request_check;
-alter table public.ex_support_cases
+  drop constraint if exists ex_support_cases_correction_request_check,
   drop constraint if exists ex_support_cases_customer_response_check;
 alter table public.ex_support_cases
   add constraint ex_support_cases_status_check
-    check (status in ('open', 'in_progress', 'needs_correction', 'corrected', 'resolved', 'closed')),
-  add constraint ex_support_cases_correction_request_check
-    check (correction_request is null or char_length(correction_request) <= 2000),
-  add constraint ex_support_cases_customer_response_check
-    check (customer_response is null or char_length(customer_response) <= 2000);
+    check (status in ('open', 'in_progress', 'resolved', 'closed'));
+alter table public.ex_support_cases
+  drop column if exists correction_request,
+  drop column if exists correction_requested_at,
+  drop column if exists customer_response,
+  drop column if exists customer_responded_at;
 
 create index if not exists ex_support_cases_user_created_idx
   on public.ex_support_cases (user_id, created_at desc);

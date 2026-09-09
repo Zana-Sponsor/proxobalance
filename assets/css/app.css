@@ -328,6 +328,8 @@ input[type="file"].input::file-selector-button:hover{ background:var(--border-st
 .status-badge{ font-size:var(--fs-2xs); padding:4px 12px; border-radius:var(--radius-full); font-weight:var(--fw-bold); border:1px solid var(--warning); color:var(--warning); background:var(--warning-soft); white-space:nowrap; }
 .status-badge.status-success{ border-color:var(--success) !important; color:var(--success) !important; background:var(--success-soft) !important; }
 .status-badge.status-danger{ border-color:var(--error) !important; color:var(--error) !important; background:var(--error-soft) !important; }
+.status-badge.status-correction{ border-color:var(--error) !important; color:var(--error) !important; background:var(--error-soft) !important; }
+.status-badge.status-corrected{ border-color:var(--info) !important; color:var(--info) !important; background:var(--info-soft) !important; }
 
 /* ══════════════════════════════════════════════════════════════
    TOP BAR / IDENTITY (main app header)
@@ -2323,6 +2325,13 @@ h1,h2,h3,.section-title{ letter-spacing:-.015em; line-height:1.3; }
   margin:0; color:var(--text); font-size:var(--fs-sm); line-height:1.75; white-space:pre-wrap; overflow-wrap:anywhere;
 }
 .support-correction-action{ margin-top:10px; }
+.order-correction-notice,.order-correction-response{ margin-top:12px; padding:12px; border-radius:var(--radius-md); }
+.order-correction-notice{ border:1px solid var(--error); background:var(--error-soft); }
+.order-correction-response{ border:1px solid var(--info); background:var(--info-soft); }
+.order-correction-notice b,.order-correction-response b{ display:block; margin-bottom:4px; font-size:var(--fs-xs); }
+.order-correction-notice b{ color:var(--error); }
+.order-correction-response b{ color:var(--info); }
+.order-correction-notice p,.order-correction-response p{ margin:0 0 9px; color:var(--text); font-size:var(--fs-sm); line-height:1.75; white-space:pre-wrap; overflow-wrap:anywhere; }
 
 .support-image-modal{ padding:12px; }
 .support-image-modal-card{

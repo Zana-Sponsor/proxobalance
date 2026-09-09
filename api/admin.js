@@ -42,13 +42,14 @@ const db = new Proxy({}, {
 const STATUS_PENDING  = 'چاوەڕوانە';
 const STATUS_APPROVED = 'پەسەندکرا';
 const STATUS_REJECTED = 'ڕەتکرا';
-const SUPPORT_STATUSES = new Set(['open', 'in_progress', 'needs_correction', 'corrected', 'resolved', 'closed']);
+const STATUS_NEEDS_CORRECTION = 'پێویستی بە ڕاستکردنەوەیە';
+const STATUS_CORRECTED = 'ڕاستکراوەتەوە';
+const REVIEWABLE_ORDER_STATUSES = new Set([STATUS_PENDING, STATUS_CORRECTED]);
+const SUPPORT_STATUSES = new Set(['open', 'in_progress', 'resolved', 'closed']);
 
 function supportStatusLabel(status) {
   return status === 'open' ? 'نوێ'
     : status === 'in_progress' ? 'لەژێر پشکنینە'
-    : status === 'needs_correction' ? 'پێویستی بە ڕاستکردنەوەیە'
-    : status === 'corrected' ? 'کڕیار ڕاستی کردەوە'
     : status === 'resolved' ? 'چارەسەرکرا'
     : 'داخراوە';
 }
@@ -117,8 +118,8 @@ const actions = {
     const { data: order, error: e1 } = await db
       .from('ex_orders').select('*').eq('id', order_id).single();
     if (e1 || !order) throw { status: 404, code: 'not_found', message: 'Order not found' };
-    if (order.status !== STATUS_PENDING) {
-      throw { status: 409, code: 'already_decided', message: 'Order is not pending any more' };
+    if (!REVIEWABLE_ORDER_STATUSES.has(order.status)) {
+      throw { status: 409, code: 'already_decided', message: 'Order is not ready for review' };
     }
 
     const patch = { status: STATUS_APPROVED, decided_at: new Date().toISOString() };
@@ -138,8 +139,8 @@ const actions = {
     const { data: order, error: e1 } = await db
       .from('ex_orders').select('*').eq('id', order_id).single();
     if (e1 || !order) throw { status: 404, code: 'not_found', message: 'Order not found' };
-    if (order.status !== STATUS_PENDING) {
-      throw { status: 409, code: 'already_decided', message: 'Order is not pending any more' };
+    if (!REVIEWABLE_ORDER_STATUSES.has(order.status)) {
+      throw { status: 409, code: 'already_decided', message: 'Order is not ready for review' };
     }
 
     const { data, error } = await db.from('ex_orders').update({
@@ -151,6 +152,52 @@ const actions = {
 
     await audit(ctx.user.id, 'reject_order', order.user_id, data.order_code);
     return data;
+  },
+
+  async request_order_correction({ order_id, reason }, ctx) {
+    if (!order_id) throw { status: 400, code: 'bad_input', message: 'order_id is required' };
+    const correctionRequest = String(reason == null ? '' : reason).trim().slice(0, 2000);
+    if (correctionRequest.length < 5) {
+      throw { status: 422, code: 'correction_required', message: 'Correction request must be at least 5 characters' };
+    }
+
+    const { data: order, error: findError } = await db
+      .from('ex_orders').select('*').eq('id', order_id).single();
+    if (findError || !order) throw { status: 404, code: 'not_found', message: 'Order not found' };
+    if (![STATUS_PENDING, STATUS_CORRECTED, STATUS_NEEDS_CORRECTION].includes(order.status)) {
+      throw { status: 409, code: 'already_decided', message: 'A decided order cannot be corrected' };
+    }
+
+    const now = new Date().toISOString();
+    const { data, error } = await db.from('ex_orders').update({
+      status: STATUS_NEEDS_CORRECTION,
+      correction_request: correctionRequest,
+      correction_requested_at: now,
+      correction_requested_by: ctx.user.id,
+      correction_response: null,
+      correction_responded_at: null,
+      correction_count: Number(order.correction_count || 0) + 1,
+      decided_at: null,
+      updated_at: now
+    }).eq('id', order_id).in('status', [STATUS_PENDING, STATUS_CORRECTED, STATUS_NEEDS_CORRECTION]).select().maybeSingle();
+    if (error) throw { status: 500, code: 'db_error', message: error.message };
+    if (!data) throw { status: 409, code: 'state_changed', message: 'Order state changed; please refresh' };
+
+    let notificationSent = false;
+    try {
+      const code = data.order_code || String(data.order_number || '');
+      const { error: notificationError } = await db.from('ex_notifications').insert({
+        user_id: data.user_id,
+        type: 'order_status',
+        title: `داوای ڕاستکردنەوەی مامەڵەی ${code}`,
+        message: correctionRequest,
+        order_id: data.id
+      });
+      notificationSent = !notificationError;
+    } catch { /* notification failure must not undo the order update */ }
+
+    await audit(ctx.user.id, 'request_order_correction', data.user_id, `${data.order_code || data.order_number}: ${correctionRequest}`);
+    return { ...data, notification_sent: notificationSent };
   },
 
   async set_ban({ user_id, banned }, ctx) {
@@ -195,22 +242,18 @@ const actions = {
   async support_case_summary(_payload, _ctx) {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    const [openResult, progressResult, correctionResult, correctedResult, resolvedResult, todayResult] = await Promise.all([
+    const [openResult, progressResult, resolvedResult, todayResult] = await Promise.all([
       db.from('ex_support_cases').select('id', { count: 'exact', head: true }).eq('status', 'open'),
       db.from('ex_support_cases').select('id', { count: 'exact', head: true }).eq('status', 'in_progress'),
-      db.from('ex_support_cases').select('id', { count: 'exact', head: true }).eq('status', 'needs_correction'),
-      db.from('ex_support_cases').select('id', { count: 'exact', head: true }).eq('status', 'corrected'),
       db.from('ex_support_cases').select('id', { count: 'exact', head: true }).eq('status', 'resolved'),
       db.from('ex_support_cases').select('id', { count: 'exact', head: true }).gte('created_at', today.toISOString())
     ]);
-    const failed = [openResult, progressResult, correctionResult, correctedResult, resolvedResult, todayResult].find(result => result.error);
+    const failed = [openResult, progressResult, resolvedResult, todayResult].find(result => result.error);
     if (failed) throw { status: 500, code: 'db_error', message: failed.error.message };
     return {
       open: openResult.count || 0,
       in_progress: progressResult.count || 0,
-      needs_correction: correctionResult.count || 0,
-      corrected: correctedResult.count || 0,
-      unresolved: (openResult.count || 0) + (progressResult.count || 0) + (correctionResult.count || 0) + (correctedResult.count || 0),
+      unresolved: (openResult.count || 0) + (progressResult.count || 0),
       resolved: resolvedResult.count || 0,
       today: todayResult.count || 0
     };
@@ -220,7 +263,7 @@ const actions = {
     const safeLimit = Math.max(1, Math.min(300, Number(limit) || 200));
     const safeStatus = ['unresolved', 'all', ...SUPPORT_STATUSES].includes(status) ? status : 'unresolved';
     let query = db.from('ex_support_cases').select('*').order('created_at', { ascending: false }).limit(safeLimit);
-    if (safeStatus === 'unresolved') query = query.in('status', ['open', 'in_progress', 'needs_correction', 'corrected']);
+    if (safeStatus === 'unresolved') query = query.in('status', ['open', 'in_progress']);
     else if (safeStatus !== 'all') query = query.eq('status', safeStatus);
     const { data: cases, error } = await query;
     if (error) throw { status: 500, code: 'db_error', message: error.message };
@@ -244,24 +287,17 @@ const actions = {
     }));
   },
 
-  async update_support_case({ id, status, admin_note, correction_request }, ctx) {
+  async update_support_case({ id, status, admin_note }, ctx) {
     if (!id || !SUPPORT_STATUSES.has(status)) {
       throw { status: 400, code: 'bad_input', message: 'Valid case id and status are required' };
     }
     const note = String(admin_note == null ? '' : admin_note).trim().slice(0, 2000) || null;
-    const correctionRequest = String(correction_request == null ? '' : correction_request).trim().slice(0, 2000) || null;
-    if (status === 'needs_correction' && (!correctionRequest || correctionRequest.length < 5)) {
-      throw { status: 422, code: 'correction_required', message: 'Correction request must be at least 5 characters' };
-    }
     const { data: existing, error: findError } = await db
       .from('ex_support_cases').select('*').eq('id', id).maybeSingle();
     if (findError) throw { status: 500, code: 'db_error', message: findError.message };
     if (!existing) throw { status: 404, code: 'not_found', message: 'Support case not found' };
 
     const now = new Date().toISOString();
-    const isNewCorrection = status === 'needs_correction' && (
-      existing.status !== 'needs_correction' || (existing.correction_request || null) !== correctionRequest
-    );
     const patch = {
       status,
       admin_note: note,
@@ -269,30 +305,19 @@ const actions = {
       updated_at: now,
       resolved_at: ['resolved', 'closed'].includes(status) ? (existing.resolved_at || now) : null
     };
-    if (status === 'needs_correction') {
-      patch.correction_request = correctionRequest;
-      if (isNewCorrection) {
-        patch.correction_requested_at = now;
-        patch.customer_response = null;
-        patch.customer_responded_at = null;
-      }
-    }
     const { data, error } = await db.from('ex_support_cases')
       .update(patch).eq('id', id).select().single();
     if (error) throw { status: 500, code: 'db_error', message: error.message };
 
     let notificationSent = false;
-    if (existing.status !== data.status || (existing.admin_note || null) !== note || isNewCorrection) {
+    if (existing.status !== data.status || (existing.admin_note || null) !== note) {
       const caseLabel = String(data.case_number).padStart(6, '0');
-      const isCorrection = data.status === 'needs_correction';
-      const message = isCorrection
-        ? `تکایە کەیسەکەت ڕاست بکەرەوە: ${correctionRequest}`
-        : (`دۆخ: ${supportStatusLabel(data.status)}` + (note ? ` — ${note}` : ''));
+      const message = `دۆخ: ${supportStatusLabel(data.status)}` + (note ? ` — ${note}` : '');
       try {
         const { error: notificationError } = await db.from('ex_notifications').insert({
           user_id: data.user_id,
           type: 'support_case',
-          title: isCorrection ? `داوای ڕاستکردنەوە بۆ کەیسی ${caseLabel}` : `کەیسی ${caseLabel} نوێکرایەوە`,
+          title: `کەیسی ${caseLabel} نوێکرایەوە`,
           message: message.slice(0, 2000),
           support_case_id: data.id
         });

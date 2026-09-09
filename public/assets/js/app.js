@@ -413,10 +413,6 @@ async function openNotifItem(id){
     closeNotifPanel();
     navigate('support');
     await loadSupportCases();
-    if(item.support_case_id){
-      const supportCase=_supportCases.find(row=>row.id===item.support_case_id);
-      if(supportCase?.status==='needs_correction') openSupportCorrection(supportCase.id);
-    }
     return;
   }
   if(item && item.order_id){
@@ -427,6 +423,7 @@ async function openNotifItem(id){
       _txQuery=orderCodeOf(o).toLowerCase(); if(box) box.value=orderCodeOf(o);
       const clr=document.getElementById('txSearchClear'); if(clr) clr.classList.add('show');
       navigate('transactions');
+      if(o.status==='پێویستی بە ڕاستکردنەوەیە') openOrderCorrection(o.id);
       return;
     }
   }
@@ -1634,7 +1631,11 @@ function copyOrderCode(code, ev){
 }
 
 function statusClassOf(status){
-  return status==='پەسەندکرا' ? 'status-success' : (status==='ڕەتکرا' ? 'status-danger' : '');
+  return status==='پەسەندکرا' ? 'status-success'
+    : status==='ڕەتکرا' ? 'status-danger'
+    : status==='پێویستی بە ڕاستکردنەوەیە' ? 'status-correction'
+    : status==='ڕاستکراوەتەوە' ? 'status-corrected'
+    : '';
 }
 
 function orderCardHTML(o){
@@ -1657,11 +1658,150 @@ function orderCardHTML(o){
     + '<div class="detail-item"><span class="detail-ico">'+ICON.send+'</span> ناردرا: '+new Date(o.created_at).toLocaleString('ku-IQ')+'</div>'
     + decidedRow
     + (o.admin_note?'<div class="detail-item"><span class="detail-ico">'+ICON.message+'</span> '+escHtml(o.admin_note)+'</div>':'')
+    + (o.correction_request?'<div class="order-correction-notice"><b>داواکاری ئادمین</b><p>'+escHtml(o.correction_request)+'</p>'
+        +(o.status==='پێویستی بە ڕاستکردنەوەیە'?'<button type="button" class="btn btn-primary btn-block" onclick="event.stopPropagation(); openOrderCorrection(\''+escHtml(o.id)+'\')">ڕاستکردنەوەی مامەڵە</button>':'')+'</div>':'')
+    + (o.correction_response?'<div class="order-correction-response"><b>وەڵامی تۆ</b><p>'+escHtml(o.correction_response)+'</p></div>':'')
     + (hasReceipt?'<div class="detail-item rcpt-hint"><span class="detail-ico">'+ICON.image+'</span> وێنەی پسووڵە بەردەستە — کلیک بکە بۆ بینین</div>'
         + '<div class="rcpt-wrap" id="'+rcptId+'" style="display:none">'
         + '<img src="'+escHtml(o.payout_receipt_url)+'" class="rcpt-img" onclick="event.stopPropagation(); document.getElementById(\''+rcptId+'\').style.display=\'none\';">'
         + '</div>':'')
     + '</div>';
+}
+
+let _orderCorrectionReceiptFile=null;
+let _orderCorrectionPreviewUrl=null;
+
+function clearOrderCorrectionReceiptPreview(){
+  if(_orderCorrectionPreviewUrl){ URL.revokeObjectURL(_orderCorrectionPreviewUrl); _orderCorrectionPreviewUrl=null; }
+  const preview=document.getElementById('orderCorrectionReceiptPreview');
+  const image=document.getElementById('orderCorrectionReceiptPreviewImg');
+  if(preview) preview.style.display='none';
+  if(image) image.removeAttribute('src');
+}
+
+function removeOrderCorrectionReceipt(){
+  _orderCorrectionReceiptFile=null;
+  const input=document.getElementById('orderCorrectionReceiptInput'); if(input) input.value='';
+  const name=document.getElementById('orderCorrectionReceiptName'); if(name) name.textContent='گۆڕینی پسووڵە';
+  const meta=document.getElementById('orderCorrectionReceiptMeta'); if(meta) meta.textContent='JPG، PNG یان WEBP';
+  document.getElementById('orderCorrectionReceiptPicker')?.classList.remove('selected');
+  clearOrderCorrectionReceiptPreview();
+  clearFieldError('orderCorrectionReceipt');
+}
+
+function onOrderCorrectionReceiptSelected(input){
+  clearFieldError('orderCorrectionReceipt');
+  const file=input?.files?.[0]||null;
+  if(!file){ removeOrderCorrectionReceipt(); return; }
+  if(!['image/jpeg','image/png','image/webp'].includes(file.type)){
+    removeOrderCorrectionReceipt();
+    setFieldError('orderCorrectionReceipt','تەنها JPG، PNG یان WEBP قبوڵ دەکرێت');
+    return;
+  }
+  if(file.size>10*1024*1024){
+    removeOrderCorrectionReceipt();
+    setFieldError('orderCorrectionReceipt','قەبارەی وێنە نابێت لە 10MB زیاتر بێت');
+    return;
+  }
+  _orderCorrectionReceiptFile=file;
+  document.getElementById('orderCorrectionReceiptName').textContent=file.name;
+  document.getElementById('orderCorrectionReceiptMeta').textContent=(file.size/1024/1024).toFixed(2)+' MB';
+  document.getElementById('orderCorrectionReceiptPicker')?.classList.add('selected');
+  clearOrderCorrectionReceiptPreview();
+  _orderCorrectionPreviewUrl=URL.createObjectURL(file);
+  const image=document.getElementById('orderCorrectionReceiptPreviewImg'); if(image) image.src=_orderCorrectionPreviewUrl;
+  const preview=document.getElementById('orderCorrectionReceiptPreview'); if(preview) preview.style.display='block';
+}
+
+function openOrderCorrection(id){
+  const order=_orders.find(row=>String(row.id)===String(id));
+  if(!order || order.status!=='پێویستی بە ڕاستکردنەوەیە'){
+    showToast('ئەم مامەڵەیە چاوەڕوانی ڕاستکردنەوە نییە','error');
+    return;
+  }
+  removeOrderCorrectionReceipt();
+  document.getElementById('orderCorrectionId').value=order.id;
+  document.getElementById('orderCorrectionCode').textContent=orderCodeOf(order);
+  document.getElementById('orderCorrectionRequestText').textContent=order.correction_request||'تکایە زانیارییەکانی مامەڵەکەت ڕاست بکەرەوە.';
+  document.getElementById('orderCorrectionPhone').value=order.phone||'';
+  document.getElementById('orderCorrectionSenderPhone').value=order.sender_phone||'';
+  document.getElementById('orderCorrectionSenderWrap').style.display=needsSenderPhone(order.from_method)?'block':'none';
+  document.getElementById('orderCorrectionResponse').value='';
+  ['orderCorrectionPhone','orderCorrectionSenderPhone','orderCorrectionResponse'].forEach(clearFieldError);
+  document.getElementById('orderCorrectionCurrentReceipt').style.display=order.receipt_url?'flex':'none';
+  document.getElementById('orderCorrectionModal').style.display='flex';
+  document.body.style.overflow='hidden';
+}
+
+function closeOrderCorrection(){
+  const modal=document.getElementById('orderCorrectionModal'); if(modal) modal.style.display='none';
+  removeOrderCorrectionReceipt();
+  document.body.style.overflow='';
+}
+
+function openOrderCorrectionReceipt(){
+  const id=document.getElementById('orderCorrectionId')?.value||'';
+  const order=_orders.find(row=>String(row.id)===String(id));
+  if(!order?.receipt_url){ showToast('پسووڵەکە بەردەست نییە','error'); return; }
+  const modal=document.getElementById('supportImageModal');
+  const image=document.getElementById('supportImageModalImg');
+  if(modal && image){ image.src=order.receipt_url; modal.style.display='flex'; document.body.style.overflow='hidden'; }
+}
+
+async function submitOrderCorrection(){
+  if(!curUser || !activeSession?.access_token){ showToast('تکایە دووبارە بچۆ ژوورەوە','error'); return; }
+  const id=document.getElementById('orderCorrectionId')?.value||'';
+  const order=_orders.find(row=>String(row.id)===String(id));
+  if(!order || order.status!=='پێویستی بە ڕاستکردنەوەیە'){
+    showToast('دۆخی مامەڵەکە گۆڕاوە؛ پەڕەکە نوێ بکەرەوە','error'); return;
+  }
+  const phone=(document.getElementById('orderCorrectionPhone')?.value||'').replace(/\s+/g,'');
+  const senderPhone=(document.getElementById('orderCorrectionSenderPhone')?.value||'').replace(/[^0-9]/g,'');
+  const responseText=(document.getElementById('orderCorrectionResponse')?.value||'').trim();
+  ['orderCorrectionPhone','orderCorrectionSenderPhone','orderCorrectionResponse','orderCorrectionReceipt'].forEach(clearFieldError);
+  let valid=true;
+  if(order.to_method==='QiCard' ? phone.length<6 : !/^07\d{9}$/.test(phone)){
+    setFieldError('orderCorrectionPhone','ژمارەی وەرگر دروست نییە'); valid=false;
+  }
+  if(needsSenderPhone(order.from_method) && !/^07\d{9}$/.test(senderPhone)){
+    setFieldError('orderCorrectionSenderPhone','ژمارەی نێرەر دەبێت بە 07 دەست پێبکات و ١١ ژمارە بێت'); valid=false;
+  }
+  if(responseText.length<5){ setFieldError('orderCorrectionResponse','تکایە بنووسە چی ڕاستکرایەوە'); valid=false; }
+  if(!valid) return;
+
+  const btn=document.getElementById('orderCorrectionSubmitBtn');
+  const defaultButton=btn.innerHTML; btn.disabled=true; btn.innerHTML=ICON.spin+' ناردن...';
+  let stage='correction_submit';
+  try{
+    const payload={id,phone,sender_phone:needsSenderPhone(order.from_method)?senderPhone:null,customer_response:responseText};
+    if(_orderCorrectionReceiptFile){
+      stage='receipt_hash';
+      const bytes=await _orderCorrectionReceiptFile.arrayBuffer();
+      const digest=await crypto.subtle.digest('SHA-256',bytes);
+      payload.receipt_hash=Array.from(new Uint8Array(digest),b=>b.toString(16).padStart(2,'0')).join('');
+      const ext=(_orderCorrectionReceiptFile.name.split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,5)||'jpg';
+      stage='receipt_upload';
+      payload.receipt_url=await uploadReceiptWithRetry(_orderCorrectionReceiptFile,ext);
+    }
+    stage='correction_submit';
+    const session=await getOrderSession();
+    const result=await fetch('/api/orders',{
+      method:'PATCH',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+session.access_token},
+      body:JSON.stringify(payload)
+    });
+    let data={}; try{ data=await result.json(); }catch(_){}
+    if(!result.ok || !data.order){ const error=new Error(data.error||'Order correction failed'); error.status=result.status; throw error; }
+    closeOrderCorrection();
+    showToast('مامەڵەکەت ڕاستکرایەوە و بۆ ئادمین نێردرایەوە','success');
+    await loadHistory();
+  }catch(error){
+    reportAppError(error,{operation:'order_correction',stage,order_id:id,file_size:_orderCorrectionReceiptFile?.size||null});
+    const message=error?.status===409?'دۆخی مامەڵەکە گۆڕاوە یان ئەم پسووڵەیە پێشتر بەکارهاتووە'
+      :stage==='receipt_upload'?'پسووڵەکە بارنەکرا؛ تکایە دووبارە هەوڵبدەوە'
+      :'نەتوانرا ڕاستکردنەوەکە بنێردرێت';
+    showToast(message,'error');
+  }finally{ btn.disabled=false; btn.innerHTML=defaultButton; }
 }
 
 function methodLabel(key){
@@ -1686,7 +1826,7 @@ function renderHomePreview(){
 function updateNavBadge(){
   const dot=document.getElementById('bnTxDot');
   if(!dot) return;
-  const pending=_orders.filter(o=>o.status==='چاوەڕوانە').length;
+  const pending=_orders.filter(o=>['چاوەڕوانە','پێویستی بە ڕاستکردنەوەیە','ڕاستکراوەتەوە'].includes(o.status)).length;
   if(pending>0){ dot.style.display='flex'; dot.textContent=String(pending); }
   else dot.style.display='none';
 }
@@ -1747,6 +1887,8 @@ function renderTxPage(){
   if(!document.getElementById('txList')) return;
   const ok    = _orders.filter(o=>o.status==='پەسەندکرا');
   const wait  = _orders.filter(o=>o.status==='چاوەڕوانە');
+  const correction = _orders.filter(o=>o.status==='پێویستی بە ڕاستکردنەوەیە');
+  const corrected = _orders.filter(o=>o.status==='ڕاستکراوەتەوە');
   const no    = _orders.filter(o=>o.status==='ڕەتکرا');
 
   // Totals only count completed exchanges. IQD and USDT are kept apart so the
@@ -1766,6 +1908,8 @@ function renderTxPage(){
 
   document.getElementById('fcAll').textContent  = _orders.length;
   document.getElementById('fcWait').textContent = wait.length;
+  document.getElementById('fcCorrection').textContent = correction.length;
+  document.getElementById('fcCorrected').textContent = corrected.length;
   document.getElementById('fcOk').textContent   = ok.length;
   document.getElementById('fcNo').textContent   = no.length;
 
@@ -2188,18 +2332,16 @@ const SUPPORT_IMAGE_MAX_BYTES=5*1024*1024;
 const SUPPORT_IMAGE_TYPES=new Set(['image/jpeg','image/png','image/webp']);
 let _supportImageFile=null;
 let _supportPreviewUrl=null;
-let _supportCorrectionImageFile=null;
-let _supportCorrectionPreviewUrl=null;
 let _supportCases=[];
 
 function supportCategoryLabel(category){
   return category==='order'?'کێشەی داواکاری':category==='payment'?'کێشەی پارەدان':category==='account'?'کێشەی هەژمار':category==='technical'?'کێشەی تەکنیکی':'کێشەی تر';
 }
 function supportStatusLabel(status){
-  return status==='open'?'نێردراوە':status==='in_progress'?'لەژێر پشکنینە':status==='needs_correction'?'پێویستی بە ڕاستکردنەوەیە':status==='corrected'?'ڕاستکراوەتەوە':status==='resolved'?'چارەسەرکرا':'داخراوە';
+  return status==='open'?'نێردراوە':status==='in_progress'?'لەژێر پشکنینە':status==='resolved'?'چارەسەرکرا':'داخراوە';
 }
 function supportStatusClass(status){
-  return status==='resolved'?'resolved':status==='closed'?'closed':status==='needs_correction'?'needs-correction':status==='corrected'?'corrected':status==='in_progress'?'progress':'open';
+  return status==='resolved'?'resolved':status==='closed'?'closed':status==='in_progress'?'progress':'open';
 }
 function supportCaseNumber(row){
   const value=Number(row?.case_number);
@@ -2277,138 +2419,8 @@ function closeSupportImage(){
   const image=document.getElementById('supportImageModalImg');
   if(modal) modal.style.display='none';
   if(image) image.removeAttribute('src');
-  const correction=document.getElementById('supportCorrectionModal');
+  const correction=document.getElementById('orderCorrectionModal');
   document.body.style.overflow=correction?.style.display==='flex'?'hidden':'';
-}
-
-function clearSupportCorrectionImagePreview(){
-  if(_supportCorrectionPreviewUrl){ URL.revokeObjectURL(_supportCorrectionPreviewUrl); _supportCorrectionPreviewUrl=null; }
-  const preview=document.getElementById('supportCorrectionImagePreview');
-  const image=document.getElementById('supportCorrectionImagePreviewImg');
-  if(preview) preview.style.display='none';
-  if(image) image.removeAttribute('src');
-}
-
-function removeSupportCorrectionImage(){
-  _supportCorrectionImageFile=null;
-  const input=document.getElementById('supportCorrectionImageInput'); if(input) input.value='';
-  const name=document.getElementById('supportCorrectionImageName'); if(name) name.textContent='گۆڕینی وێنە';
-  const meta=document.getElementById('supportCorrectionImageMeta'); if(meta) meta.textContent='JPG، PNG یان WEBP';
-  const picker=document.getElementById('supportCorrectionImagePicker'); if(picker) picker.classList.remove('selected');
-  clearSupportCorrectionImagePreview();
-  clearFieldError('supportCorrectionImage');
-}
-
-function onSupportCorrectionImageSelected(input){
-  clearFieldError('supportCorrectionImage');
-  const file=input?.files?.[0]||null;
-  if(!file){ removeSupportCorrectionImage(); return; }
-  if(!SUPPORT_IMAGE_TYPES.has(file.type)){
-    removeSupportCorrectionImage();
-    setFieldError('supportCorrectionImage','تەنها JPG، PNG یان WEBP قبوڵ دەکرێت');
-    return;
-  }
-  if(file.size>SUPPORT_IMAGE_MAX_BYTES){
-    removeSupportCorrectionImage();
-    setFieldError('supportCorrectionImage','قەبارەی وێنە نابێت لە 5MB زیاتر بێت');
-    return;
-  }
-  _supportCorrectionImageFile=file;
-  const name=document.getElementById('supportCorrectionImageName'); if(name) name.textContent=file.name;
-  const meta=document.getElementById('supportCorrectionImageMeta'); if(meta) meta.textContent=(file.size/1024/1024).toFixed(2)+' MB';
-  const picker=document.getElementById('supportCorrectionImagePicker'); if(picker) picker.classList.add('selected');
-  clearSupportCorrectionImagePreview();
-  _supportCorrectionPreviewUrl=URL.createObjectURL(file);
-  const preview=document.getElementById('supportCorrectionImagePreview');
-  const image=document.getElementById('supportCorrectionImagePreviewImg');
-  if(image) image.src=_supportCorrectionPreviewUrl;
-  if(preview) preview.style.display='block';
-}
-
-function openSupportCorrection(id){
-  const row=_supportCases.find(item=>String(item.id)===String(id));
-  if(!row || row.status!=='needs_correction'){
-    showToast('ئەم کەیسە چاوەڕوانی ڕاستکردنەوە نییە','error');
-    return;
-  }
-  removeSupportCorrectionImage();
-  document.getElementById('supportCorrectionCaseId').value=row.id;
-  document.getElementById('supportCorrectionCaseNumber').textContent=supportCaseNumber(row);
-  document.getElementById('supportCorrectionRequestText').textContent=row.correction_request||'تکایە زانیارییەکانی کەیسەکە بپشکنە و ڕاستی بکەرەوە.';
-  document.getElementById('supportCorrectionCategory').value=row.category||'general';
-  document.getElementById('supportCorrectionOrderCode').value=row.order_code||'';
-  document.getElementById('supportCorrectionDescription').value=row.description||'';
-  document.getElementById('supportCorrectionResponse').value='';
-  clearFieldError('supportCorrectionResponse');
-  const currentImage=document.getElementById('supportCorrectionCurrentImage');
-  if(currentImage) currentImage.style.display=row.image_url?'flex':'none';
-  const modal=document.getElementById('supportCorrectionModal');
-  if(modal) modal.style.display='flex';
-  document.body.style.overflow='hidden';
-}
-
-function closeSupportCorrection(){
-  const modal=document.getElementById('supportCorrectionModal');
-  if(modal) modal.style.display='none';
-  removeSupportCorrectionImage();
-  document.body.style.overflow='';
-}
-
-function openSupportCorrectionCurrentImage(){
-  openSupportImageById(document.getElementById('supportCorrectionCaseId')?.value||'');
-}
-
-async function submitSupportCorrection(){
-  if(!curUser || !activeSession?.access_token){ showToast('تکایە دووبارە بچۆ ژوورەوە','error'); return; }
-  const id=document.getElementById('supportCorrectionCaseId')?.value||'';
-  const row=_supportCases.find(item=>String(item.id)===String(id));
-  if(!row || row.status!=='needs_correction'){ showToast('دۆخی کەیسەکە گۆڕاوە؛ پەڕەکە نوێ بکەرەوە','error'); return; }
-  const category=document.getElementById('supportCorrectionCategory')?.value||'general';
-  const orderCode=(document.getElementById('supportCorrectionOrderCode')?.value||'').trim().toUpperCase();
-  const description=(document.getElementById('supportCorrectionDescription')?.value||'').trim();
-  const customerResponse=(document.getElementById('supportCorrectionResponse')?.value||'').trim();
-  clearFieldError('supportCorrectionResponse'); clearFieldError('supportCorrectionImage');
-  if(description.length<10){ showToast('دەربارەی کێشەکە دەبێت لانیکەم ١٠ پیت بێت','error'); return; }
-  if(orderCode && !/^P[A-Z0-9]{11}$/.test(orderCode)){ showToast('ئایدی مامەڵە دەبێت بە P دەست پێبکات و ١٢ پیت بێت','error'); return; }
-  if(customerResponse.length<5){ setFieldError('supportCorrectionResponse','تکایە بنووسە چی ڕاستکرایەوە'); return; }
-
-  const btn=document.getElementById('supportCorrectionSubmitBtn');
-  const defaultButton=btn.innerHTML;
-  btn.disabled=true; btn.innerHTML=ICON.spin+' ناردن...';
-  let imagePath;
-  let stage='correction_submit';
-  try{
-    if(_supportCorrectionImageFile){
-      stage='correction_image_upload';
-      const unique=(globalThis.crypto?.randomUUID?.()||String(Date.now())+'-'+Math.random().toString(16).slice(2));
-      imagePath=curUser.id+'/'+unique+'.'+supportImageExtension(_supportCorrectionImageFile.type);
-      const {error:uploadError}=await sb.storage.from('support-case-images').upload(imagePath,_supportCorrectionImageFile,{
-        cacheControl:'3600',contentType:_supportCorrectionImageFile.type,upsert:false
-      });
-      if(uploadError){ const err=new Error(uploadError.message||'Support image upload failed'); err.code='SUPPORT_IMAGE_UPLOAD'; throw err; }
-    }
-    stage='correction_submit';
-    const payload={id,category,order_code:orderCode||null,description,customer_response:customerResponse};
-    if(imagePath) payload.image_path=imagePath;
-    const response=await fetch('/api/support-cases',{
-      method:'PATCH',
-      headers:{'Content-Type':'application/json','Authorization':'Bearer '+activeSession.access_token},
-      body:JSON.stringify(payload)
-    });
-    let result={}; try{ result=await response.json(); }catch(_){}
-    if(!response.ok || !result.ok){
-      const error=new Error(result.error||'Support correction failed'); error.status=response.status; throw error;
-    }
-    closeSupportCorrection();
-    showToast('ڕاستکردنەوەکەت نێردرا؛ ئادمین ئاگادار دەبێتەوە','success');
-    await loadSupportCases();
-  }catch(e){
-    reportAppError(e,{operation:'support_case_correction',stage,file_size:_supportCorrectionImageFile?.size,file_type:_supportCorrectionImageFile?.type});
-    const message=e?.status===409?'دۆخی کەیسەکە گۆڕاوە؛ تکایە نوێی بکەرەوە':e?.code==='SUPPORT_IMAGE_UPLOAD'?'وێنەی نوێ بارنەکرا':'نەتوانرا ڕاستکردنەوەکە بنێردرێت';
-    showToast(message,'error');
-  }finally{
-    btn.disabled=false; btn.innerHTML=defaultButton;
-  }
 }
 
 async function submitSupportCase(){
@@ -2485,7 +2497,7 @@ async function loadSupportCases(){
   list.innerHTML='<div class="support-loading">'+ICON.spin+' بارکردن...</div>';
   try{
     const {data,error}=await sb.from('ex_support_cases')
-      .select('id,case_number,category,order_code,description,image_path,status,admin_note,correction_request,correction_requested_at,customer_response,customer_responded_at,created_at,updated_at')
+      .select('id,case_number,category,order_code,description,image_path,status,admin_note,created_at,updated_at')
       .eq('user_id',curUser.id).order('created_at',{ascending:false}).limit(50);
     if(error) throw error;
     _supportCases=await Promise.all((data||[]).map(async row=>{
@@ -2511,8 +2523,6 @@ function renderSupportCases(){
     <div class="support-case-meta"><span>${escHtml(supportCategoryLabel(row.category))}</span>${row.order_code?`<span dir="ltr">${escHtml(row.order_code)}</span>`:''}</div>
     <p class="support-case-description">${escHtml(row.description)}</p>
     ${row.image_url?`<button type="button" class="support-case-image-link" onclick="openSupportImageById('${escHtml(row.id)}')"><img src="${escHtml(row.image_url)}" alt="وێنەی کێشە"><span>بینینی وێنە</span></button>`:''}
-    ${row.correction_request?`<div class="support-correction-notice"><b>داوای ڕاستکردنەوەی ئادمین</b><p>${escHtml(row.correction_request)}</p>${row.status==='needs_correction'?`<button type="button" class="btn btn-primary btn-block support-correction-action" onclick="openSupportCorrection('${escHtml(row.id)}')">ڕاستکردنەوە و دووبارە ناردن</button>`:''}</div>`:''}
-    ${row.customer_response?`<div class="support-customer-response"><b>وەڵامی تۆ</b><p>${escHtml(row.customer_response)}</p></div>`:''}
     ${row.admin_note?`<div class="support-admin-reply"><b>وەڵامی پشتگیری</b><p>${escHtml(row.admin_note)}</p></div>`:''}
   </article>`).join('');
 }
@@ -2708,7 +2718,7 @@ document.addEventListener('keydown', (e)=>{
   const confirmS=document.getElementById('confirmSheet'); if(confirmS.classList.contains('open')){ closeOrderConfirm(); return; }
   const result=document.getElementById('resultModal'); if(result.style.display==='flex'){ closeResultModal(); return; }
   const supportImage=document.getElementById('supportImageModal'); if(supportImage?.style.display==='flex'){ closeSupportImage(); return; }
-  const supportCorrection=document.getElementById('supportCorrectionModal'); if(supportCorrection?.style.display==='flex'){ closeSupportCorrection(); return; }
+  const orderCorrection=document.getElementById('orderCorrectionModal'); if(orderCorrection?.style.display==='flex'){ closeOrderCorrection(); return; }
 });
 window.addEventListener('offline', ()=>showToast('پەیوەندیت بە ئینتەرنێت بڕایەوە','error','کێشەی تۆڕ'));
 window.addEventListener('online', ()=>{ showToast('پەیوەندیت بە ئینتەرنێت گەڕایەوە','success'); flushQueuedErrorLogs(); });

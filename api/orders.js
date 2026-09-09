@@ -5,6 +5,8 @@ import {
 
 const CARRIER_SENDER_METHODS = new Set(['Asiacell', 'Korek']);
 const MIN_AMOUNT = 10000;
+const STATUS_NEEDS_CORRECTION = 'پێویستی بە ڕاستکردنەوەیە';
+const STATUS_CORRECTED = 'ڕاستکراوەتەوە';
 
 function oneLine(value, max = 200) {
   return String(value || '').replace(/[\r\n\t]+/g, ' ').trim().slice(0, max);
@@ -47,20 +49,97 @@ async function logThreat(action, ctx, user, details = {}) {
   });
 }
 
-async function findDuplicate(receiptHash, transactionReference) {
+async function findDuplicate(receiptHash, transactionReference, excludeId = null) {
+  const exclude = excludeId ? `&id=neq.${encodeURIComponent(excludeId)}` : '';
   if (receiptHash) {
-    const rows = await serviceFetch(`/rest/v1/ex_orders?receipt_hash=eq.${encodeURIComponent(receiptHash)}&select=id&limit=1`);
+    const rows = await serviceFetch(`/rest/v1/ex_orders?receipt_hash=eq.${encodeURIComponent(receiptHash)}${exclude}&select=id&limit=1`);
     if (rows?.length) return 'receipt_hash';
   }
   if (transactionReference) {
-    const rows = await serviceFetch(`/rest/v1/ex_orders?transaction_reference=eq.${encodeURIComponent(transactionReference)}&select=id&limit=1`);
+    const rows = await serviceFetch(`/rest/v1/ex_orders?transaction_reference=eq.${encodeURIComponent(transactionReference)}${exclude}&select=id&limit=1`);
     if (rows?.length) return 'transaction_reference';
   }
   return null;
 }
 
+function validRecipient(method, phone) {
+  return method === 'QiCard' ? phone.length >= 6 : /^07\d{9}$/.test(phone);
+}
+
+async function submitOrderCorrection(res, body, user) {
+  const id = oneLine(body.id, 64);
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id)) {
+    return json(res, 422, { error: 'Invalid order id' });
+  }
+
+  const existingRows = await serviceFetch(
+    `/rest/v1/ex_orders?id=eq.${encodeURIComponent(id)}&user_id=eq.${encodeURIComponent(user.id)}&select=*&limit=1`
+  );
+  const order = Array.isArray(existingRows) ? existingRows[0] : null;
+  if (!order) return json(res, 404, { error: 'Order not found' });
+  if (order.status !== STATUS_NEEDS_CORRECTION) {
+    return json(res, 409, { error: 'This order is not waiting for a correction' });
+  }
+
+  const phone = oneLine(body.phone, 32).replace(/\s+/g, '');
+  const carrierSender = CARRIER_SENDER_METHODS.has(order.from_method);
+  const senderPhone = carrierSender
+    ? oneLine(body.sender_phone, 32).replace(/[^0-9]/g, '')
+    : null;
+  const customerResponse = oneLine(body.customer_response, 2000);
+  if (!validRecipient(order.to_method, phone)) {
+    return json(res, 422, { error: 'Invalid recipient number' });
+  }
+  if (carrierSender && !/^07\d{9}$/.test(senderPhone)) {
+    return json(res, 422, { error: 'Invalid sender number' });
+  }
+  if (customerResponse.length < 5) {
+    return json(res, 422, { error: 'Correction response must be at least 5 characters' });
+  }
+
+  const hasReplacementReceipt = Object.prototype.hasOwnProperty.call(body, 'receipt_url');
+  let receiptUrl = order.receipt_url;
+  let receiptHash = order.receipt_hash;
+  if (hasReplacementReceipt) {
+    receiptUrl = cleanReceiptUrl(body.receipt_url);
+    receiptHash = /^[a-f0-9]{64}$/i.test(body.receipt_hash || '')
+      ? String(body.receipt_hash).toLowerCase()
+      : null;
+    if (!receiptUrl || !receiptHash) return json(res, 422, { error: 'Invalid replacement receipt' });
+    const duplicateKind = await findDuplicate(receiptHash, null, id);
+    if (duplicateKind) return json(res, 409, { error: 'This receipt was already used' });
+  }
+
+  const now = new Date().toISOString();
+  const rows = await serviceFetch(
+    `/rest/v1/ex_orders?id=eq.${encodeURIComponent(id)}` +
+    `&user_id=eq.${encodeURIComponent(user.id)}` +
+    `&status=eq.${encodeURIComponent(STATUS_NEEDS_CORRECTION)}&select=*`,
+    {
+      method: 'PATCH',
+      headers: { Prefer: 'return=representation' },
+      body: JSON.stringify({
+        phone,
+        sender_phone: senderPhone,
+        receipt_url: receiptUrl,
+        receipt_hash: receiptHash,
+        correction_response: customerResponse,
+        correction_responded_at: now,
+        status: STATUS_CORRECTED,
+        decided_at: null,
+        updated_at: now
+      })
+    }
+  );
+  const updated = Array.isArray(rows) ? rows[0] : null;
+  if (!updated) return json(res, 409, { error: 'Order state changed; please refresh' });
+  return json(res, 200, { ok: true, order: updated });
+}
+
 export default withSecurity(async (req, res, { context, user }) => {
   const body = await readJson(req);
+
+  if (req.method === 'PATCH') return submitOrderCorrection(res, body, user);
 
   if (oneLine(body.contact_reference, 120)) {
     await logThreat('honeypot', context, user, {
@@ -89,7 +168,7 @@ export default withSecurity(async (req, res, { context, user }) => {
   if (!Number.isFinite(amount) || amount < MIN_AMOUNT || amount > 1_000_000_000) {
     return json(res, 422, { error: 'Invalid amount' });
   }
-  if (toMethod === 'QiCard' ? phone.length < 6 : !/^07\d{9}$/.test(phone)) {
+  if (!validRecipient(toMethod, phone)) {
     return json(res, 422, { error: 'Invalid recipient number' });
   }
   if (carrierSender && !/^07\d{9}$/.test(senderPhone)) {
@@ -193,4 +272,4 @@ export default withSecurity(async (req, res, { context, user }) => {
     }
     throw error;
   }
-}, { auth: 'required', methods: ['POST'] });
+}, { auth: 'required', methods: ['POST', 'PATCH'] });
