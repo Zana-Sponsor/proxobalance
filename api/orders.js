@@ -3,7 +3,6 @@ import {
   json, readJson, rpc, serviceFetch, stealth404, withSecurity, config
 } from './_lib/security.js';
 
-const METHODS = new Set(['FastPay', 'FIB', 'QiCard', 'Asiacell', 'Korek', 'USDT']);
 const CARRIER_SENDER_METHODS = new Set(['Asiacell', 'Korek']);
 const MIN_AMOUNT = 10000;
 
@@ -82,7 +81,9 @@ export default withSecurity(async (req, res, { context, user }) => {
   const receiptHash = /^[a-f0-9]{64}$/i.test(body.receipt_hash || '') ? String(body.receipt_hash).toLowerCase() : null;
   const transactionReference = oneLine(body.transaction_reference, 120) || null;
 
-  if (!METHODS.has(fromMethod) || !METHODS.has(toMethod) || fromMethod === toMethod) {
+  // Wallets and routes are managed from the admin panel. Keep only structural
+  // validation here, then use the live database configuration below.
+  if (!fromMethod || !toMethod || fromMethod === toMethod) {
     return json(res, 422, { error: 'Invalid exchange route' });
   }
   if (!Number.isFinite(amount) || amount < MIN_AMOUNT || amount > 1_000_000_000) {
@@ -95,6 +96,19 @@ export default withSecurity(async (req, res, { context, user }) => {
     return json(res, 422, { error: 'Invalid sender number' });
   }
   if (!receiptUrl || !receiptHash) return json(res, 422, { error: 'Receipt is required' });
+
+  const rates = await serviceFetch(
+    `/rest/v1/ex_rates?from_method=eq.${encodeURIComponent(fromMethod)}&to_method=eq.${encodeURIComponent(toMethod)}&is_active=eq.true&select=rate_type,rate_value&limit=1`
+  );
+  const rate = rates?.[0];
+  if (!rate) return json(res, 409, { error: 'This exchange route is closed' });
+
+  const wallets = await serviceFetch(`/rest/v1/ex_wallets?key=in.(${encodeURIComponent(fromMethod)},${encodeURIComponent(toMethod)})&select=key,is_locked,allow_from,allow_receive`);
+  const source = wallets?.find(w => w.key === fromMethod);
+  const target = wallets?.find(w => w.key === toMethod);
+  if (!source || !target || source.is_locked || target.is_locked || source.allow_from === false || target.allow_receive === false) {
+    return json(res, 409, { error: 'This wallet is currently unavailable' });
+  }
 
   const profileRows = await serviceFetch(`/rest/v1/ex_profiles?id=eq.${encodeURIComponent(user.id)}&select=id,full_name,email,is_banned&limit=1`);
   const profile = profileRows?.[0];
@@ -137,19 +151,6 @@ export default withSecurity(async (req, res, { context, user }) => {
       payload: { duplicate_kind: duplicateKind, from_method: fromMethod, to_method: toMethod }
     });
     return json(res, 409, { error: 'This receipt was already used' });
-  }
-
-  const rates = await serviceFetch(
-    `/rest/v1/ex_rates?from_method=eq.${encodeURIComponent(fromMethod)}&to_method=eq.${encodeURIComponent(toMethod)}&is_active=eq.true&select=rate_type,rate_value&limit=1`
-  );
-  const rate = rates?.[0];
-  if (!rate) return json(res, 409, { error: 'This exchange route is closed' });
-
-  const wallets = await serviceFetch(`/rest/v1/ex_wallets?key=in.(${encodeURIComponent(fromMethod)},${encodeURIComponent(toMethod)})&select=key,is_locked,allow_from,allow_receive`);
-  const source = wallets?.find(w => w.key === fromMethod);
-  const target = wallets?.find(w => w.key === toMethod);
-  if (source?.is_locked || target?.is_locked || source?.allow_from === false || target?.allow_receive === false) {
-    return json(res, 409, { error: 'This wallet is currently unavailable' });
   }
 
   const total = Math.floor(calculateTotal(amount, rate));
