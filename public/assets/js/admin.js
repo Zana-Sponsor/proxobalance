@@ -21,6 +21,7 @@ const RECEIVE_METHODS = ['FastPay','FIB','QiCard'];
 const STATUS_PENDING='چاوەڕوانە', STATUS_APPROVED='پەسەندکرا', STATUS_REJECTED='ڕەتکرا';
 const STATUS_NEEDS_CORRECTION='پێویستی بە ڕاستکردنەوەیە', STATUS_CORRECTED='ڕاستکراوەتەوە';
 const REVIEWABLE_ORDER_STATUSES=new Set([STATUS_PENDING,STATUS_CORRECTED]);
+const CORRECTABLE_ORDER_STATUSES=new Set([STATUS_PENDING,STATUS_CORRECTED,STATUS_NEEDS_CORRECTION]);
 
 let sb, adminUser=null, adminName='ئادمین';
 let allOrders=[], allAccounts=[], allRates=[], allNotifs=[];
@@ -1133,6 +1134,7 @@ function renderOrdersTable(list){
       <td style="font-size:11px;color:var(--mt)">${fmtDateTime(o.created_at)}</td>
       <td onclick="event.stopPropagation()"><div class="act-grp">
         <div class="act-btn dark" onclick='showOrderDetail(${safeAttr(o.id)})'><i class="fas fa-eye"></i></div>
+        ${CORRECTABLE_ORDER_STATUSES.has(o.status)?`<div class="act-btn yw" title="داوای ڕاستکردنەوە" onclick="openOrderCorrectionRequest('${o.id}')"><i class="fas fa-pen-to-square"></i></div>`:''}
         ${REVIEWABLE_ORDER_STATUSES.has(o.status)?`<div class="act-btn gr" onclick="approveOrder('${o.id}')"><i class="fas fa-check"></i></div><div class="act-btn rd" onclick="showRejectReason('${o.id}')"><i class="fas fa-times"></i></div>`:''}
       </div></td>
     </tr>`).join('')}
@@ -1154,10 +1156,12 @@ function renderOrdersCards(list){
         <div class="rec-card-stat gr">${orderCodeChip(o)} • ${formatNum(o.total)} IQD</div>
         <div class="rec-card-date">${fmtDateTime(o.created_at)}</div>
       </div>
-      ${REVIEWABLE_ORDER_STATUSES.has(o.status)?`<div class="rec-card-actions" onclick="event.stopPropagation()">
-        <div class="act-btn gr" onclick="approveOrder('${o.id}')"><i class="fas fa-check"></i> پەسەندکردن</div>
-        <div class="act-btn rd" onclick="showRejectReason('${o.id}')"><i class="fas fa-times"></i> ڕەتکردنەوە</div>
-      </div>`:`<div class="act-btn dark" style="justify-content:center;padding:8px">${'<i class="fas fa-eye"></i> زانیاری تەواو'}</div>`}
+      <div class="rec-card-actions" onclick="event.stopPropagation()">
+        <div class="act-btn dark" onclick="showOrderDetail('${o.id}')"><i class="fas fa-eye"></i> وردەکاری</div>
+        ${CORRECTABLE_ORDER_STATUSES.has(o.status)?`<div class="act-btn yw" onclick="openOrderCorrectionRequest('${o.id}')"><i class="fas fa-pen-to-square"></i> داوای ڕاستکردنەوە</div>`:''}
+        ${REVIEWABLE_ORDER_STATUSES.has(o.status)?`<div class="act-btn gr" onclick="approveOrder('${o.id}')"><i class="fas fa-check"></i> پەسەندکردن</div>
+        <div class="act-btn rd" onclick="showRejectReason('${o.id}')"><i class="fas fa-times"></i> ڕەتکردنەوە</div>`:''}
+      </div>
     </div>`).join('')}</div>`;
 }
 
@@ -1184,6 +1188,7 @@ function showOrderDetail(id){
     ${order.receipt_url?`<div style="margin-top:10px"><div style="font-size:11px;color:var(--mt);margin-bottom:8px">وێنەی پسووڵە (لەلایەن کڕیارەوە)</div><img src="${order.receipt_url}" class="rcpt-img" onclick="showImg('${order.receipt_url}')"></div>`:`<div class="fee-toggle-note" style="margin-top:10px"><i class="fas fa-paper-plane" style="margin-left:4px"></i>وێنەی پسووڵە بۆ تیلیگرامی ئەدمین نێردراوە لەکاتی ناردنی داواکارییەکە.</div>`}
     ${order.correction_request?`<div class="order-admin-correction request"><b><i class="fas fa-pen-to-square"></i> داوای ڕاستکردنەوەی ئادمین</b><p>${esc(order.correction_request)}</p><small>${order.correction_requested_at?esc(fmtDateTime(order.correction_requested_at)):''}</small></div>`:''}
     ${order.correction_response?`<div class="order-admin-correction response"><b><i class="fas fa-reply"></i> وەڵامی کڕیار</b><p>${esc(order.correction_response)}</p><small>${order.correction_responded_at?esc(fmtDateTime(order.correction_responded_at)):''}</small></div>`:''}
+    <div id="odCorrectionHistory" class="order-correction-history-loading"><i class="fas fa-circle-notch fa-spin"></i> مێژووی ڕاستکردنەوە بار دەکرێت...</div>
     ${order.status===STATUS_APPROVED?`<div style="margin-top:10px">
       <div style="font-size:11px;color:var(--mt);margin-bottom:8px">وێنەی پسووڵەی پارەدان (بۆ کڕیار)</div>
       ${order.payout_receipt_url?`<img src="${order.payout_receipt_url}" class="rcpt-img" onclick="showImg('${order.payout_receipt_url}')">`:''}
@@ -1196,7 +1201,7 @@ function showOrderDetail(id){
     <textarea class="minp mta" id="odNote">${esc(order.admin_note||'')}</textarea>
     <div class="act-grp" style="margin-top:12px">
       <div class="act-btn dark" onclick="saveOrderNote('${order.id}')"><i class="fas fa-floppy-disk"></i> پاشەکەوتی تێبینی</div>
-      ${[STATUS_PENDING,STATUS_CORRECTED,STATUS_NEEDS_CORRECTION].includes(order.status)?`<div class="act-btn yw" onclick="openOrderCorrectionRequest('${order.id}')"><i class="fas fa-pen-to-square"></i> داوای ڕاستکردنەوە</div>`:''}
+      ${CORRECTABLE_ORDER_STATUSES.has(order.status)?`<div class="act-btn yw" onclick="openOrderCorrectionRequest('${order.id}')"><i class="fas fa-pen-to-square"></i> داوای ڕاستکردنەوە</div>`:''}
     </div>
     ${REVIEWABLE_ORDER_STATUSES.has(order.status)?`<div class="act-grp" style="margin-top:12px">
       <div class="act-btn gr" style="flex:1;justify-content:center" onclick="approveOrder('${order.id}');closeMo('moOrderDetail')"><i class="fas fa-check"></i> پەسەندکردن</div>
@@ -1204,6 +1209,58 @@ function showOrderDetail(id){
     </div>`:''}
   `;
   openMo('moOrderDetail');
+  loadOrderCorrectionHistory(order.id);
+}
+
+function correctionHistoryValue(value){
+  return value===null || value===undefined || value==='' ? '—' : String(value);
+}
+function correctionHistoryField(label, oldValue, newValue, isReceipt=false){
+  const oldText=correctionHistoryValue(oldValue), newText=correctionHistoryValue(newValue);
+  const changed=oldText!==newText;
+  const renderValue=(value)=>isReceipt && value!=='—'
+    ? `<button type="button" class="correction-history-image" data-url="${esc(value)}" onclick="showImg(this.dataset.url)"><i class="fas fa-image"></i> بینینی وێنە</button>`
+    : `<span dir="ltr">${esc(value)}</span>`;
+  return `<div class="correction-history-field ${changed?'changed':'same'}">
+    <b>${esc(label)}</b>
+    <div><small>کۆن</small>${renderValue(oldText)}</div>
+    <i class="fas fa-arrow-left"></i>
+    <div><small>نوێ</small>${renderValue(newText)}</div>
+  </div>`;
+}
+function renderOrderCorrectionHistory(rows){
+  if(!rows.length) return '';
+  return `<section class="order-correction-history">
+    <h4><i class="fas fa-clock-rotate-left"></i> مێژووی ڕاستکردنەوە</h4>
+    ${rows.map(row=>{
+      const before=row.old_data||{}, after=row.new_data||null;
+      return `<article class="correction-history-entry ${after?'done':'waiting'}">
+        <div class="correction-history-head"><b>ڕاستکردنەوەی ژمارە ${formatNum(row.correction_number)}</b><span>${after?'کڕیار نوێی کردەوە':'چاوەڕوانی کڕیار'}</span></div>
+        <p class="correction-history-request"><b>داواکاری ئادمین:</b> ${esc(row.request||'—')}</p>
+        ${after?`
+          ${correctionHistoryField('ژمارەی وەرگر',before.phone,after.phone)}
+          ${correctionHistoryField('ژمارەی نێرەر',before.sender_phone,after.sender_phone)}
+          ${correctionHistoryField('پسووڵە',before.receipt_url,after.receipt_url,true)}
+          ${row.customer_response?`<p class="correction-history-response"><b>وەڵامی کڕیار:</b> ${esc(row.customer_response)}</p>`:''}
+        `:`<div class="correction-history-pending"><i class="fas fa-hourglass-half"></i> زانیارییە کۆنەکان پارێزراون؛ هێشتا وەڵامی کڕیار نەهاتووە.</div>`}
+        <time>${esc(fmtDateTime(after?(row.responded_at||row.requested_at):row.requested_at))}</time>
+      </article>`;
+    }).join('')}
+  </section>`;
+}
+async function loadOrderCorrectionHistory(orderId){
+  const target=document.getElementById('odCorrectionHistory');
+  if(!target) return;
+  try{
+    const rows=await adminApiRequest('list_order_correction_history',{order_id:orderId});
+    if(!document.getElementById('odCorrectionHistory')) return;
+    target.className='';
+    target.innerHTML=renderOrderCorrectionHistory(Array.isArray(rows)?rows:[]);
+    if(!target.innerHTML) target.style.display='none';
+  }catch(e){
+    target.className='order-correction-history-error';
+    target.textContent='مێژووی ڕاستکردنەوە بار نەکرا: '+e.message;
+  }
 }
 
 let _apFile=null;

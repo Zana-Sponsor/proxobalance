@@ -200,6 +200,23 @@ const actions = {
     return { ...data, notification_sent: notificationSent };
   },
 
+  async list_order_correction_history({ order_id }, _ctx) {
+    if (!order_id) throw { status: 400, code: 'bad_input', message: 'order_id is required' };
+
+    const { data: order, error: orderError } = await db
+      .from('ex_orders').select('id').eq('id', order_id).maybeSingle();
+    if (orderError) throw { status: 500, code: 'db_error', message: orderError.message };
+    if (!order) throw { status: 404, code: 'not_found', message: 'Order not found' };
+
+    const { data, error } = await db
+      .from('ex_order_correction_history')
+      .select('id,order_id,correction_number,request,requested_at,old_data,new_data,customer_response,responded_at')
+      .eq('order_id', order_id)
+      .order('correction_number', { ascending: false });
+    if (error) throw { status: 500, code: 'db_error', message: error.message };
+    return data || [];
+  },
+
   async set_ban({ user_id, banned }, ctx) {
     if (!user_id) throw { status: 400, code: 'bad_input', message: 'user_id is required' };
     if (user_id === ctx.user.id) {
