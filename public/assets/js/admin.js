@@ -256,16 +256,17 @@ let _supportCasesAdmin=[];
 let _supportCaseFilter='unresolved';
 let _supportCasePoll=null;
 let _lastSupportCaseCount=null;
+let _lastCorrectedCaseCount=null;
 
 function supportCaseNumber(row){
   const value=Number(row?.case_number);
   return Number.isInteger(value) ? String(value).padStart(6,'0') : '—';
 }
 function supportCaseStatusLabel(status){
-  return status==='open'?'نوێ':status==='in_progress'?'لەژێر پشکنینە':status==='resolved'?'چارەسەرکرا':'داخراوە';
+  return status==='open'?'نوێ':status==='in_progress'?'لەژێر پشکنینە':status==='needs_correction'?'چاوەڕوانی ڕاستکردنەوە':status==='corrected'?'کڕیار ڕاستی کردەوە':status==='resolved'?'چارەسەرکرا':'داخراوە';
 }
 function supportCaseStatusClass(status){
-  return status==='resolved'?'approved':status==='closed'?'rejected':status==='in_progress'?'pending':'order_status';
+  return status==='resolved'?'approved':status==='closed'?'rejected':status==='needs_correction'?'rejected':status==='corrected'?'approved':status==='in_progress'?'pending':'order_status';
 }
 function supportCaseCategoryLabel(category){
   return category==='order'?'کێشەی داواکاری':category==='payment'?'کێشەی پارەدان':category==='account'?'کێشەی هەژمار':category==='technical'?'کێشەی تەکنیکی':'کێشەی تر';
@@ -283,13 +284,20 @@ async function loadSupportCaseSummary(notify=true){
     const set=(id,value)=>{ const el=document.getElementById(id); if(el) el.textContent=formatNum(value||0); };
     set('caseOpenCount',stats?.open);
     set('caseProgressCount',stats?.in_progress);
+    set('caseCorrectionCount',stats?.needs_correction);
+    set('caseCorrectedCount',stats?.corrected);
     set('caseResolvedCount',stats?.resolved);
     set('caseTodayCount',stats?.today);
-    if(notify && unresolved>0 && (_lastSupportCaseCount===null || unresolved>_lastSupportCaseCount)){
+    const corrected=Number(stats?.corrected||0);
+    if(notify && corrected>0 && (_lastCorrectedCaseCount===null || corrected>_lastCorrectedCaseCount)){
+      const added=_lastCorrectedCaseCount===null?corrected:corrected-_lastCorrectedCaseCount;
+      showToast(added+' کڕیار ڕاستکردنەوەی کەیسی ناردووە','cy');
+    }else if(notify && unresolved>0 && (_lastSupportCaseCount===null || unresolved>_lastSupportCaseCount)){
       const added=_lastSupportCaseCount===null?unresolved:unresolved-_lastSupportCaseCount;
       showToast(added+' کەیسی نوێی کڕیار هەیە','bl');
     }
     _lastSupportCaseCount=unresolved;
+    _lastCorrectedCaseCount=corrected;
     return stats;
   }catch(_){ return null; }
 }
@@ -330,7 +338,7 @@ function renderSupportCasesAdmin(){
   const search=(document.getElementById('caseAdminSearch')?.value||'').trim().toLowerCase();
   const rows=_supportCasesAdmin.filter(row=>{
     if(!search) return true;
-    return [supportCaseNumber(row),row.profile?.full_name,row.profile?.email,row.profile?.phone,row.order_code,row.description,row.admin_note]
+    return [supportCaseNumber(row),row.profile?.full_name,row.profile?.email,row.profile?.phone,row.order_code,row.description,row.admin_note,row.correction_request,row.customer_response]
       .some(value=>String(value||'').toLowerCase().includes(search));
   });
   if(!rows.length){
@@ -353,34 +361,61 @@ function renderSupportCasesAdmin(){
       </div>
       <div class="support-admin-description">${esc(row.description)}</div>
       ${row.image_url?`<button type="button" class="support-image-btn" onclick='showImg(${safeAttr(row.image_url)})'><i class="fas fa-image"></i> بینینی وێنەی کێشە</button>`:''}
+      ${row.correction_request?`<div class="support-admin-correction-request"><b><i class="fas fa-pen-to-square"></i> داوای ڕاستکردنەوە</b><p>${esc(row.correction_request)}</p><small>${row.correction_requested_at?esc(fmtDateTime(row.correction_requested_at)):''}</small></div>`:''}
+      ${row.customer_response?`<div class="support-admin-customer-response"><b><i class="fas fa-reply"></i> وەڵامی کڕیار</b><p>${esc(row.customer_response)}</p><small>${row.customer_responded_at?esc(fmtDateTime(row.customer_responded_at)):''}</small></div>`:''}
       <div class="support-admin-controls">
         <label><span>دۆخی کەیس</span><select class="minp" id="caseStatus-${esc(id)}">
           <option value="open" ${row.status==='open'?'selected':''}>نوێ</option>
           <option value="in_progress" ${row.status==='in_progress'?'selected':''}>لەژێر پشکنینە</option>
+          <option value="needs_correction" ${row.status==='needs_correction'?'selected':''}>داوای ڕاستکردنەوە</option>
+          <option value="corrected" ${row.status==='corrected'?'selected':''}>کڕیار ڕاستی کردەوە</option>
           <option value="resolved" ${row.status==='resolved'?'selected':''}>چارەسەرکرا</option>
           <option value="closed" ${row.status==='closed'?'selected':''}>داخراوە</option>
         </select></label>
         <label class="support-note-field"><span>وەڵام/تێبینی بۆ کڕیار</span><textarea class="minp mta" id="caseNote-${esc(id)}" maxlength="2000" placeholder="چارەسەر یان زانیاری پێویست بۆ کڕیار بنووسە...">${esc(row.admin_note||'')}</textarea></label>
-        <button type="button" class="modal-btn cy support-save-btn" id="caseSave-${esc(id)}" onclick="saveSupportCaseAdmin('${esc(id)}')"><i class="fas fa-check"></i> پاشەکەوت و ئاگادارکردنەوەی کڕیار</button>
+        <label class="support-correction-field"><span>چی دەبێت کڕیار ڕاستی بکاتەوە؟</span><textarea class="minp mta" id="caseCorrection-${esc(id)}" maxlength="2000" placeholder="بۆ نموونە: ژمارەی مامەڵە هەڵەیە؛ تکایە ژمارەی دروست و وێنەی نوێ بنێرە...">${esc(row.correction_request||'')}</textarea></label>
+        <div class="support-admin-actions">
+          <button type="button" class="modal-btn yw support-correction-btn" id="caseCorrectionBtn-${esc(id)}" onclick="sendSupportCorrectionAdmin('${esc(id)}')"><i class="fas fa-pen-to-square"></i> ناردنی داوای ڕاستکردنەوە</button>
+          <button type="button" class="modal-btn cy support-save-btn" id="caseSave-${esc(id)}" onclick="saveSupportCaseAdmin('${esc(id)}')"><i class="fas fa-check"></i> پاشەکەوت و ئاگادارکردنەوەی کڕیار</button>
+        </div>
       </div>
     </article>`;
   }).join('')+'</div>';
 }
 
-async function saveSupportCaseAdmin(id){
-  const status=document.getElementById('caseStatus-'+id)?.value;
+function sendSupportCorrectionAdmin(id){
+  const status=document.getElementById('caseStatus-'+id);
+  if(status) status.value='needs_correction';
+  saveSupportCaseAdmin(id,true);
+}
+
+async function saveSupportCaseAdmin(id,forceCorrection=false){
+  const statusEl=document.getElementById('caseStatus-'+id);
+  if(forceCorrection && statusEl) statusEl.value='needs_correction';
+  const status=statusEl?.value;
   const adminNote=document.getElementById('caseNote-'+id)?.value||'';
+  const correctionRequest=(document.getElementById('caseCorrection-'+id)?.value||'').trim();
+  if(status==='needs_correction' && correctionRequest.length<5){
+    showToast('تکایە بنووسە کڕیار چی ڕاست بکاتەوە','rd');
+    document.getElementById('caseCorrection-'+id)?.focus();
+    return;
+  }
   const btn=document.getElementById('caseSave-'+id);
+  const correctionBtn=document.getElementById('caseCorrectionBtn-'+id);
   if(btn){ btn.disabled=true; btn.innerHTML='<i class="fas fa-circle-notch fa-spin"></i> پاشەکەوتکردن...'; }
+  if(correctionBtn) correctionBtn.disabled=true;
   try{
-    const updated=await adminApiRequest('update_support_case',{id,status,admin_note:adminNote});
-    showToast(updated?.notification_sent
-      ? 'کەیسەکە نوێکرایەوە و کڕیار ئاگادارکرایەوە'
+    const updated=await adminApiRequest('update_support_case',{id,status,admin_note:adminNote,correction_request:correctionRequest});
+    showToast(status==='needs_correction' && updated?.notification_sent
+      ? 'داوای ڕاستکردنەوە نێردرا و کڕیار ئاگادارکرایەوە'
+      : updated?.notification_sent
+        ? 'کەیسەکە نوێکرایەوە و کڕیار ئاگادارکرایەوە'
       : 'کەیسەکە نوێکرایەوە','gr');
     await loadSupportCasesAdmin();
   }catch(e){
     showToast(e.message||'نەتوانرا کەیسەکە نوێ بکرێتەوە','rd');
     if(btn){ btn.disabled=false; btn.innerHTML='<i class="fas fa-check"></i> پاشەکەوت و ئاگادارکردنەوەی کڕیار'; }
+    if(correctionBtn) correctionBtn.disabled=false;
   }
 }
 

@@ -10,7 +10,7 @@
 <!-- Firebase — announcement banner control only (same project as exchange.html) -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-<link rel="stylesheet" href="assets/css/admin.css?v=3">
+<link rel="stylesheet" href="assets/css/admin.css?v=4">
 <link rel="stylesheet" href="assets/css/tokens.css">
 </head>
 <body>
@@ -253,6 +253,8 @@
       <div class="stats-grid support-case-stats">
         <div class="stat-card"><div class="stat-ico rd"><i class="fas fa-inbox"></i></div><div class="stat-info"><div class="stat-val" id="caseOpenCount">—</div><div class="stat-lbl">کەیسی نوێ</div></div></div>
         <div class="stat-card"><div class="stat-ico yw"><i class="fas fa-magnifying-glass"></i></div><div class="stat-info"><div class="stat-val" id="caseProgressCount">—</div><div class="stat-lbl">لەژێر پشکنین</div></div></div>
+        <div class="stat-card"><div class="stat-ico rd"><i class="fas fa-pen-to-square"></i></div><div class="stat-info"><div class="stat-val" id="caseCorrectionCount">—</div><div class="stat-lbl">چاوەڕوانی کڕیار</div></div></div>
+        <div class="stat-card"><div class="stat-ico cy"><i class="fas fa-reply"></i></div><div class="stat-info"><div class="stat-val" id="caseCorrectedCount">—</div><div class="stat-lbl">ڕاستکراوەتەوە</div></div></div>
         <div class="stat-card"><div class="stat-ico gr"><i class="fas fa-circle-check"></i></div><div class="stat-info"><div class="stat-val" id="caseResolvedCount">—</div><div class="stat-lbl">چارەسەرکراو</div></div></div>
         <div class="stat-card"><div class="stat-ico bl"><i class="fas fa-calendar-day"></i></div><div class="stat-info"><div class="stat-val" id="caseTodayCount">—</div><div class="stat-lbl">کەیسی ئەمڕۆ</div></div></div>
       </div>
@@ -263,6 +265,8 @@
           <div class="chip on" data-casef="unresolved" onclick="setSupportCaseFilter('unresolved',this)">چاوەڕوان</div>
           <div class="chip" data-casef="all" onclick="setSupportCaseFilter('all',this)">هەموو</div>
           <div class="chip yw" data-casef="in_progress" onclick="setSupportCaseFilter('in_progress',this)">لەژێر پشکنین</div>
+          <div class="chip rd" data-casef="needs_correction" onclick="setSupportCaseFilter('needs_correction',this)">داوای ڕاستکردنەوە</div>
+          <div class="chip" data-casef="corrected" onclick="setSupportCaseFilter('corrected',this)">وەڵامی کڕیار</div>
           <div class="chip gr" data-casef="resolved" onclick="setSupportCaseFilter('resolved',this)">چارەسەرکراو</div>
           <div class="chip rd" data-casef="closed" onclick="setSupportCaseFilter('closed',this)">داخراو</div>
         </div>
@@ -729,6 +733,6 @@
 <div id="toast"></div>
 
   <script src="assets/js/svg-icons.js"></script>
-  <script src="assets/js/admin.js?v=4"></script>
+  <script src="assets/js/admin.js?v=5"></script>
 </body>
 </html>
