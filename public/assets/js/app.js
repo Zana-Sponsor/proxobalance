@@ -253,9 +253,36 @@ function clearFieldError(inputId){
 }
 function clearAllOrderFieldErrors(){ ['amt','userSenderName','userSenderPhone','userPhone','fileInput'].forEach(clearFieldError); }
 
+let _receiptFileSnapshot=null;
+let _receiptFileSnapshotPromise=null;
+let _receiptFileSnapshotToken=0;
+
+async function readSelectedFileSnapshot(file){
+  if(!file) throw new Error('FILE_READ_PERMISSION');
+  try{
+    // Read while the picker permission is fresh. Android document providers
+    // can revoke the original File handle after the change event.
+    const bytes=await file.arrayBuffer();
+    if(file.size>0 && bytes.byteLength!==file.size) throw new Error('Incomplete file read');
+    return {
+      bytes,
+      name:String(file.name||'receipt.jpg'),
+      type:String(file.type||'image/jpeg'),
+      size:Number(file.size||bytes.byteLength)
+    };
+  }catch(cause){
+    const error=new Error('FILE_READ_PERMISSION');
+    error.cause=cause;
+    throw error;
+  }
+}
+
 function onFileSelected(input){
   clearFieldError('fileInput');
   const file=input && input.files && input.files[0];
+  const token=++_receiptFileSnapshotToken;
+  _receiptFileSnapshot=null;
+  _receiptFileSnapshotPromise=null;
   const name=document.getElementById('filePickerName');
   const meta=document.getElementById('filePickerMeta');
   const picker=document.querySelector('label[for="fileInput"].file-picker');
@@ -263,6 +290,23 @@ function onFileSelected(input){
   picker.classList.toggle('selected', !!file);
   name.textContent=file ? file.name : 'وێنەی پسووڵە هەڵبژێرە';
   meta.textContent=file ? ((file.size/1024/1024).toFixed(file.size>=1048576?1:2)+' MB') : 'JPG، PNG یان WEBP';
+  if(file){
+    _receiptFileSnapshotPromise=readSelectedFileSnapshot(file).then(snapshot=>{
+      if(token!==_receiptFileSnapshotToken) return null;
+      _receiptFileSnapshot=snapshot;
+      return snapshot;
+    }).catch(()=>{
+      if(token===_receiptFileSnapshotToken){
+        _receiptFileSnapshot=null;
+        if(input) input.value='';
+        picker.classList.remove('selected');
+        name.textContent='وێنەی پسووڵە دووبارە هەڵبژێرە';
+        meta.textContent='دەستگەیشتن بە وێنەکە نەکرا';
+        setFieldError('fileInput','نەتوانرا وێنەکە بخوێندرێتەوە؛ تکایە لە Gallery یان Files دووبارە هەڵیبژێرە');
+      }
+      return null;
+    });
+  }
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -982,6 +1026,7 @@ function kuErr(msg){
     'Failed to fetch':'پەیوەندی بە سێرڤەر نەکرا؛ داتای مۆبایل یان Wi‑Fi بپشکنە و دووبارە هەوڵ بدەرەوە',
     'RECEIPT_UPLOAD_NETWORK':'ناردنی وێنەکە بەهۆی کێشەی تۆڕەوە سەرکەوتوو نەبوو؛ پەیوەندییەکەت بپشکنە و دووبارە هەوڵ بدەرەوە',
     'RECEIPT_UPLOAD_FAILED':'نەتوانرا وێنەی پسووڵەکە باربکرێت؛ تکایە وێنەکە دووبارە هەڵبژێرە',
+    'FILE_READ_PERMISSION':'براوزەر نەتوانی وێنەکە بخوێنێتەوە؛ تکایە مۆڵەتی وێنە/فایل بدە و لە Gallery یان Files دووبارە هەڵیبژێرە',
     'SESSION_NETWORK_ERROR':'نەتوانرا هەژمارەکەت پشتڕاست بکرێتەوە؛ پەیوەندییەکەت بپشکنە یان دووبارە بچۆ ژوورەوە',
     'ORDER_NETWORK_ERROR':'داواکارییەکە نەگەیشتە سێرڤەر؛ پەیوەندییەکەت بپشکنە و دووبارە هەوڵ بدەرەوە',
     'Email rate limit exceeded':'زۆر جار ئیمەیل نێردرا، کەمێک چاوەڕوان بە',
@@ -992,6 +1037,7 @@ function kuErr(msg){
     'Invalid sender number':'ژمارەی نێرەر دەبێت بە 07 دەست پێبکات و ١١ ژمارە بێت',
   };
   if(m[msg]) return m[msg];
+  if(/requested file could not be read|notreadableerror|permission problems.*reference to a file/i.test(String(msg||''))) return m.FILE_READ_PERMISSION;
   if(/failed to fetch|networkerror|network request failed|load failed/i.test(String(msg||''))) return m['Failed to fetch'];
   return msg;
 }
@@ -1480,12 +1526,12 @@ async function getOrderSession(){
   throw new Error('Auth session missing');
 }
 
-async function uploadReceiptWithRetry(file,ext){
+async function uploadReceiptWithRetry(fileData,ext,contentType='image/jpeg'){
   let lastError=null;
   for(let attempt=0;attempt<3;attempt++){
     const path=`${curUser.id}/${Date.now()}_${Math.random().toString(36).slice(2,8)}.${ext}`;
     try{
-      const {error}=await sb.storage.from('receipts').upload(path,file,{ upsert:false, contentType:file.type||'image/jpeg' });
+      const {error}=await sb.storage.from('receipts').upload(path,fileData,{ upsert:false, contentType:contentType||'image/jpeg' });
       if(error) throw error;
       const publicUrl=sb.storage.from('receipts').getPublicUrl(path).data.publicUrl;
       if(!publicUrl) throw new Error('RECEIPT_UPLOAD_FAILED');
@@ -1512,7 +1558,7 @@ async function processOrder(){
   const senderName=document.getElementById('userSenderName').value;
   const senderPhone=document.getElementById('userSenderPhone').value;
   const phone=document.getElementById('userPhone').value;
-  const file=document.getElementById('fileInput').files[0];
+  const selectedFile=document.getElementById('fileInput').files[0];
   const amtValue=getAmtRaw();
   const from=document.getElementById('from').value, to=document.getElementById('receiveVia').value;
 
@@ -1520,14 +1566,16 @@ async function processOrder(){
   let orderStage='prepare';
   try{
     let receiptUrl=null, receiptHash=null;
-    if(file){
+    if(selectedFile){
+      orderStage='receipt_read';
+      const file=_receiptFileSnapshot || await _receiptFileSnapshotPromise;
+      if(!file) throw new Error('FILE_READ_PERMISSION');
       orderStage='receipt_hash';
-      const bytes=await file.arrayBuffer();
-      const digest=await crypto.subtle.digest('SHA-256',bytes);
+      const digest=await crypto.subtle.digest('SHA-256',file.bytes);
       receiptHash=Array.from(new Uint8Array(digest),b=>b.toString(16).padStart(2,'0')).join('');
       const ext=(file.name.split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,5)||'jpg';
       orderStage='receipt_upload';
-      receiptUrl=await uploadReceiptWithRetry(file,ext);
+      receiptUrl=await uploadReceiptWithRetry(file.bytes,ext,file.type);
     }
 
     orderStage='session';
@@ -1588,7 +1636,8 @@ async function processOrder(){
     reportAppError(e,{
       operation:'order_submission', stage:orderStage,
       from_method:from, to_method:to,
-      file_size:file?.size||null, file_type:file?.type||null
+      file_size:_receiptFileSnapshot?.size||selectedFile?.size||null,
+      file_type:_receiptFileSnapshot?.type||selectedFile?.type||null
     });
     showResultModal({
       tone:'error',
@@ -1668,7 +1717,9 @@ function orderCardHTML(o){
     + '</div>';
 }
 
-let _orderCorrectionReceiptFile=null;
+let _orderCorrectionReceiptSnapshot=null;
+let _orderCorrectionReceiptPromise=null;
+let _orderCorrectionReceiptToken=0;
 let _orderCorrectionPreviewUrl=null;
 
 function clearOrderCorrectionReceiptPreview(){
@@ -1680,7 +1731,9 @@ function clearOrderCorrectionReceiptPreview(){
 }
 
 function removeOrderCorrectionReceipt(){
-  _orderCorrectionReceiptFile=null;
+  _orderCorrectionReceiptToken++;
+  _orderCorrectionReceiptSnapshot=null;
+  _orderCorrectionReceiptPromise=null;
   const input=document.getElementById('orderCorrectionReceiptInput'); if(input) input.value='';
   const name=document.getElementById('orderCorrectionReceiptName'); if(name) name.textContent='گۆڕینی پسووڵە';
   const meta=document.getElementById('orderCorrectionReceiptMeta'); if(meta) meta.textContent='JPG، PNG یان WEBP';
@@ -1703,14 +1756,31 @@ function onOrderCorrectionReceiptSelected(input){
     setFieldError('orderCorrectionReceipt','قەبارەی وێنە نابێت لە 10MB زیاتر بێت');
     return;
   }
-  _orderCorrectionReceiptFile=file;
+  const token=++_orderCorrectionReceiptToken;
+  _orderCorrectionReceiptSnapshot=null;
   document.getElementById('orderCorrectionReceiptName').textContent=file.name;
-  document.getElementById('orderCorrectionReceiptMeta').textContent=(file.size/1024/1024).toFixed(2)+' MB';
+  document.getElementById('orderCorrectionReceiptMeta').textContent='ئامادەکردنی وێنە...';
   document.getElementById('orderCorrectionReceiptPicker')?.classList.add('selected');
   clearOrderCorrectionReceiptPreview();
-  _orderCorrectionPreviewUrl=URL.createObjectURL(file);
-  const image=document.getElementById('orderCorrectionReceiptPreviewImg'); if(image) image.src=_orderCorrectionPreviewUrl;
-  const preview=document.getElementById('orderCorrectionReceiptPreview'); if(preview) preview.style.display='block';
+  _orderCorrectionReceiptPromise=readSelectedFileSnapshot(file).then(snapshot=>{
+    if(token!==_orderCorrectionReceiptToken) return null;
+    _orderCorrectionReceiptSnapshot=snapshot;
+    document.getElementById('orderCorrectionReceiptMeta').textContent=(snapshot.size/1024/1024).toFixed(2)+' MB';
+    _orderCorrectionPreviewUrl=URL.createObjectURL(new Blob([snapshot.bytes],{type:snapshot.type}));
+    const image=document.getElementById('orderCorrectionReceiptPreviewImg'); if(image) image.src=_orderCorrectionPreviewUrl;
+    const preview=document.getElementById('orderCorrectionReceiptPreview'); if(preview) preview.style.display='block';
+    return snapshot;
+  }).catch(()=>{
+    if(token===_orderCorrectionReceiptToken){
+      _orderCorrectionReceiptSnapshot=null;
+      if(input) input.value='';
+      document.getElementById('orderCorrectionReceiptPicker')?.classList.remove('selected');
+      document.getElementById('orderCorrectionReceiptName').textContent='پسووڵە دووبارە هەڵبژێرە';
+      document.getElementById('orderCorrectionReceiptMeta').textContent='دەستگەیشتن بە وێنەکە نەکرا';
+      setFieldError('orderCorrectionReceipt','نەتوانرا وێنەکە بخوێندرێتەوە؛ تکایە دووبارە هەڵیبژێرە');
+    }
+    return null;
+  });
 }
 
 function openOrderCorrection(id){
@@ -1774,14 +1844,16 @@ async function submitOrderCorrection(){
   let stage='correction_submit';
   try{
     const payload={id,phone,sender_phone:needsSenderPhone(order.from_method)?senderPhone:null,customer_response:responseText};
-    if(_orderCorrectionReceiptFile){
+    if(_orderCorrectionReceiptSnapshot || _orderCorrectionReceiptPromise){
+      stage='receipt_read';
+      const receipt=_orderCorrectionReceiptSnapshot || await _orderCorrectionReceiptPromise;
+      if(!receipt) throw new Error('FILE_READ_PERMISSION');
       stage='receipt_hash';
-      const bytes=await _orderCorrectionReceiptFile.arrayBuffer();
-      const digest=await crypto.subtle.digest('SHA-256',bytes);
+      const digest=await crypto.subtle.digest('SHA-256',receipt.bytes);
       payload.receipt_hash=Array.from(new Uint8Array(digest),b=>b.toString(16).padStart(2,'0')).join('');
-      const ext=(_orderCorrectionReceiptFile.name.split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,5)||'jpg';
+      const ext=(receipt.name.split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,5)||'jpg';
       stage='receipt_upload';
-      payload.receipt_url=await uploadReceiptWithRetry(_orderCorrectionReceiptFile,ext);
+      payload.receipt_url=await uploadReceiptWithRetry(receipt.bytes,ext,receipt.type);
     }
     stage='correction_submit';
     const session=await getOrderSession();
@@ -1796,8 +1868,9 @@ async function submitOrderCorrection(){
     showToast('مامەڵەکەت ڕاستکرایەوە و بۆ ئادمین نێردرایەوە','success');
     await loadHistory();
   }catch(error){
-    reportAppError(error,{operation:'order_correction',stage,order_id:id,file_size:_orderCorrectionReceiptFile?.size||null});
+    reportAppError(error,{operation:'order_correction',stage,order_id:id,file_size:_orderCorrectionReceiptSnapshot?.size||null});
     const message=error?.status===409?'دۆخی مامەڵەکە گۆڕاوە یان ئەم پسووڵەیە پێشتر بەکارهاتووە'
+      :error?.message==='FILE_READ_PERMISSION'?kuErr('FILE_READ_PERMISSION')
       :stage==='receipt_upload'?'پسووڵەکە بارنەکرا؛ تکایە دووبارە هەوڵبدەوە'
       :'نەتوانرا ڕاستکردنەوەکە بنێردرێت';
     showToast(message,'error');
@@ -2330,7 +2403,9 @@ async function saveProfile(){
 // ══════════════════════════════════════════════════════════════
 const SUPPORT_IMAGE_MAX_BYTES=5*1024*1024;
 const SUPPORT_IMAGE_TYPES=new Set(['image/jpeg','image/png','image/webp']);
-let _supportImageFile=null;
+let _supportImageSnapshot=null;
+let _supportImagePromise=null;
+let _supportImageToken=0;
 let _supportPreviewUrl=null;
 let _supportCases=[];
 
@@ -2364,7 +2439,9 @@ function clearSupportImagePreview(){
 }
 
 function removeSupportImage(){
-  _supportImageFile=null;
+  _supportImageToken++;
+  _supportImageSnapshot=null;
+  _supportImagePromise=null;
   const input=document.getElementById('supportImageInput'); if(input) input.value='';
   const name=document.getElementById('supportImageName'); if(name) name.textContent='وێنە هەڵبژێرە';
   const meta=document.getElementById('supportImageMeta'); if(meta) meta.textContent='JPG، PNG یان WEBP';
@@ -2387,16 +2464,33 @@ function onSupportImageSelected(input){
     setFieldError('supportImage','قەبارەی وێنە نابێت لە 5MB زیاتر بێت');
     return;
   }
-  _supportImageFile=file;
+  const token=++_supportImageToken;
+  _supportImageSnapshot=null;
   const name=document.getElementById('supportImageName'); if(name) name.textContent=file.name;
-  const meta=document.getElementById('supportImageMeta'); if(meta) meta.textContent=(file.size/1024/1024).toFixed(2)+' MB';
+  const meta=document.getElementById('supportImageMeta'); if(meta) meta.textContent='ئامادەکردنی وێنە...';
   const picker=document.getElementById('supportImagePicker'); if(picker) picker.classList.add('selected');
   clearSupportImagePreview();
-  _supportPreviewUrl=URL.createObjectURL(file);
-  const preview=document.getElementById('supportImagePreview');
-  const image=document.getElementById('supportImagePreviewImg');
-  if(image) image.src=_supportPreviewUrl;
-  if(preview) preview.style.display='block';
+  _supportImagePromise=readSelectedFileSnapshot(file).then(snapshot=>{
+    if(token!==_supportImageToken) return null;
+    _supportImageSnapshot=snapshot;
+    if(meta) meta.textContent=(snapshot.size/1024/1024).toFixed(2)+' MB';
+    _supportPreviewUrl=URL.createObjectURL(new Blob([snapshot.bytes],{type:snapshot.type}));
+    const preview=document.getElementById('supportImagePreview');
+    const image=document.getElementById('supportImagePreviewImg');
+    if(image) image.src=_supportPreviewUrl;
+    if(preview) preview.style.display='block';
+    return snapshot;
+  }).catch(()=>{
+    if(token===_supportImageToken){
+      _supportImageSnapshot=null;
+      if(input) input.value='';
+      if(picker) picker.classList.remove('selected');
+      if(name) name.textContent='وێنە دووبارە هەڵبژێرە';
+      if(meta) meta.textContent='دەستگەیشتن بە وێنەکە نەکرا';
+      setFieldError('supportImage','نەتوانرا وێنەکە بخوێندرێتەوە؛ تکایە دووبارە هەڵیبژێرە');
+    }
+    return null;
+  });
 }
 
 function supportImageExtension(type){
@@ -2441,12 +2535,15 @@ async function submitSupportCase(){
   let imagePath=null;
   let supportStage='case_create';
   try{
-    if(_supportImageFile){
+    if(_supportImageSnapshot || _supportImagePromise){
+      supportStage='image_read';
+      const supportImage=_supportImageSnapshot || await _supportImagePromise;
+      if(!supportImage) throw new Error('FILE_READ_PERMISSION');
       supportStage='image_upload';
       const unique=(globalThis.crypto?.randomUUID?.()||String(Date.now())+'-'+Math.random().toString(16).slice(2));
-      imagePath=curUser.id+'/'+unique+'.'+supportImageExtension(_supportImageFile.type);
-      const {error:uploadError}=await sb.storage.from('support-case-images').upload(imagePath,_supportImageFile,{
-        cacheControl:'3600', contentType:_supportImageFile.type, upsert:false
+      imagePath=curUser.id+'/'+unique+'.'+supportImageExtension(supportImage.type);
+      const {error:uploadError}=await sb.storage.from('support-case-images').upload(imagePath,supportImage.bytes,{
+        cacheControl:'3600', contentType:supportImage.type, upsert:false
       });
       if(uploadError){
         const err=new Error(uploadError.message||'Support image upload failed'); err.code='SUPPORT_IMAGE_UPLOAD';
@@ -2480,9 +2577,10 @@ async function submitSupportCase(){
     showToast('کەیسەکەت بە سەرکەوتوویی نێردرا','success');
     await loadSupportCases();
   }catch(e){
-    reportAppError(e,{operation:'support_case_submission',stage:supportStage,file_size:_supportImageFile?.size,file_type:_supportImageFile?.type,filename:_supportImageFile?.name});
+    reportAppError(e,{operation:'support_case_submission',stage:supportStage,file_size:_supportImageSnapshot?.size,file_type:_supportImageSnapshot?.type,filename:_supportImageSnapshot?.name});
     const msg=e?.status===429?'لە کاتژمێرێکدا زۆر کەیست ناردووە؛ تکایە دواتر هەوڵبدەوە'
       :e?.status===409?'تکایە چاوەڕێی وەڵامی کەیسە کراوەکانت بکە'
+      :e?.message==='FILE_READ_PERMISSION'?kuErr('FILE_READ_PERMISSION')
       :e?.code==='SUPPORT_IMAGE_UPLOAD'?'وێنەکە بارنەکرا؛ تکایە دووبارە هەوڵبدەوە'
       :'نەتوانرا کەیسەکە بنێردرێت؛ تکایە دووبارە هەوڵبدەوە';
     showToast(msg,'error');
