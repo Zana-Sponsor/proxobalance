@@ -86,8 +86,12 @@
 <!-- Supabase — own dedicated project ("Exchange"), fully separate from Proxo -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+<!-- Solar icons (480 Design, CC BY 4.0) — one stylesheet, all icons as CSS masks.
+     Loaded before app.css so the app's own .icn sizes win. -->
+<link rel="preconnect" href="https://api.iconify.design" crossorigin>
+<link rel="stylesheet" href="https://api.iconify.design/solar.css?icons=alt-arrow-down-linear,alt-arrow-left-linear,alt-arrow-right-linear,arrow-left-down-linear,arrow-left-linear,arrow-right-linear,arrow-right-up-linear,banknote-2-linear,banknote-linear,bell-linear,bell-off-linear,bill-list-linear,bolt-linear,buildings-2-linear,calendar-linear,card-linear,chat-round-dots-linear,check-circle-linear,check-read-linear,clock-circle-linear,close-circle-linear,copy-linear,danger-triangle-linear,diskette-linear,dollar-linear,dollar-minimalistic-linear,download-minimalistic-linear,eye-closed-linear,eye-linear,gallery-linear,graph-down-linear,graph-up-linear,headphones-round-linear,history-2-linear,history-linear,info-circle-linear,key-linear,letter-linear,lock-linear,lock-unlocked-linear,magic-stick-3-linear,magnifer-linear,megaphone-linear,moon-linear,pen-linear,phone-linear,plain-2-linear,power-linear,refresh-linear,sale-linear,shield-check-linear,shield-linear,smartphone-linear,sun-linear,transfer-horizontal-linear,transfer-vertical-linear,tuning-2-linear,upload-linear,upload-minimalistic-linear,user-check-rounded-linear,user-linear,user-plus-rounded-linear,user-rounded-linear,verified-check-linear,wallet-linear,wi-fi-router-linear,wi-fi-router-minimalistic-linear,wi-fi-router-round-linear&amp;mode=mask">
 <link rel="stylesheet" href="/assets/css/tokens.css?v=4">
-<link rel="stylesheet" href="/assets/css/app.css?v=13">
+<link rel="stylesheet" href="/assets/css/app.css?v=14">
 </head>
 
 <body>
@@ -106,7 +110,7 @@
     <h2 id="resultTitle"></h2>
     <p id="resultMsg"></p>
     <div class="result-order-chip" id="resultOrderChip" style="display:none">
-      <svg class="icn icn-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4.2 10A7.9 7.9 0 1 1 5 15.3"/><path d="M4 5v4.5h4.5"/><path d="M12 8v4.3l2.8 1.8"/></svg>
+      <span class="icn icn-sm icon--solar icon--solar--history-linear" aria-hidden="true"></span>
       <span id="resultOrderNum"></span>
     </div>
     <div class="result-modal-actions">
@@ -120,7 +124,7 @@
 <div id="supportImageModal" class="modal-overlay support-image-modal" role="dialog" aria-modal="true" aria-label="بینینی وێنەی کێشە" onclick="if(event.target===this) closeSupportImage()">
   <div class="support-image-modal-card">
     <button type="button" class="support-modal-close" onclick="closeSupportImage()" aria-label="داخستن">
-      <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      <span class="icn icon--solar icon--solar--close-circle-linear" aria-hidden="true"></span>
     </button>
     <img id="supportImageModalImg" alt="وێنەی کێشە">
   </div>
@@ -135,7 +139,7 @@
         <span>ئایدی مامەڵە: <b id="orderCorrectionCode" dir="ltr">—</b></span>
       </div>
       <button type="button" class="support-modal-close inline" onclick="closeOrderCorrection()" aria-label="داخستن">
-        <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+        <span class="icn icon--solar icon--solar--close-circle-linear" aria-hidden="true"></span>
       </button>
     </div>
     <input type="hidden" id="orderCorrectionId">
@@ -158,11 +162,11 @@
     <div class="field">
       <span class="field-label">وێنەی پسووڵەی نوێ <small>(ئارەزوومەندانە — تا 10MB)</small></span>
       <button type="button" class="support-current-image" id="orderCorrectionCurrentReceipt" onclick="openOrderCorrectionReceipt()" style="display:none">
-        <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="3" y="4" width="18" height="16" rx="2.5"/><path d="m4 17 4.5-4.5L12 16l3-3 5 5"/></svg>
+        <span class="icn icon--solar icon--solar--gallery-linear" aria-hidden="true"></span>
         بینینی پسووڵەی ئێستا
       </button>
       <label class="support-image-picker" for="orderCorrectionReceiptInput" id="orderCorrectionReceiptPicker">
-        <span class="support-image-picker-icon"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 20h16"/></svg></span>
+        <span class="support-image-picker-icon"><span class="icn icon--solar icon--solar--upload-minimalistic-linear" aria-hidden="true"></span></span>
         <span><b id="orderCorrectionReceiptName">گۆڕینی پسووڵە</b><small id="orderCorrectionReceiptMeta">JPG، PNG یان WEBP</small></span>
       </label>
       <input type="file" id="orderCorrectionReceiptInput" accept="image/jpeg,image/png,image/webp" hidden onchange="onOrderCorrectionReceiptSelected(this)">
@@ -178,7 +182,7 @@
       <span class="field-error" id="orderCorrectionResponseError"></span>
     </div>
     <button type="button" class="btn btn-primary btn-block" id="orderCorrectionSubmitBtn" onclick="submitOrderCorrection()">
-      <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.8l4.3 4.3L19 7.5"/></svg>
+      <span class="icn icon--solar icon--solar--check-circle-linear" aria-hidden="true"></span>
       ڕاستکردنەوە و دووبارە ناردن
     </button>
   </div>
@@ -193,7 +197,7 @@
     <div class="sheet-head">
       <h3 id="pickerSheetTitle">هەڵبژاردنی ڕێگا</h3>
       <button type="button" class="sheet-close" onclick="closePicker()" aria-label="داخستن">
-        <svg class="icn icn-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        <span class="icn icn-sm icon--solar icon--solar--close-circle-linear" aria-hidden="true"></span>
       </button>
     </div>
     <div class="sheet-body" id="pickerSheetBody"></div>
@@ -209,7 +213,7 @@
     <div class="sheet-head">
       <h3>پشتڕاستکردنەوەی داواکاری</h3>
       <button type="button" class="sheet-close" onclick="closeOrderConfirm()" aria-label="داخستن">
-        <svg class="icn icn-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        <span class="icn icn-sm icon--solar icon--solar--close-circle-linear" aria-hidden="true"></span>
       </button>
     </div>
     <div class="sheet-body">
@@ -218,7 +222,7 @@
     <div class="confirm-actions">
       <button type="button" class="btn btn-ghost" onclick="closeOrderConfirm()">گەڕانەوە</button>
       <button type="button" class="btn btn-primary" id="confirmSendBtn" onclick="confirmAndSubmitOrder()">
-        <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.8l4.3 4.3L19 7.5"/></svg>
+        <span class="icn icon--solar icon--solar--check-circle-linear" aria-hidden="true"></span>
         دڵنیام، بینێرە
       </button>
     </div>
@@ -234,12 +238,12 @@
 <div id="tgModal" class="modal-overlay" hidden style="display:none !important">
   <div class="modal-card">
     <div class="modal-ico-wrap">
-      <svg class="icn icn-xl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2.5l-9.3 19-3-8.1-8.2-3.1z"/><path d="M12.2 13.5l4-6.8"/></svg>
+      <span class="icn icn-xl icon--solar icon--solar--plain-2-linear" aria-hidden="true"></span>
     </div>
     <h2>ئاگاداری نرخەکان بە!</h2>
     <p>بۆ وەرگرتنی دوایین گۆڕانکارییەکانی بازاڕ و نرخەکان، جۆینی تیلیگرام بکەن.</p>
     <a href="https://t.me/proxo_exchange" target="_blank" class="btn btn-primary btn-block" onclick="closeModal()">
-      <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2.5l-9.3 19-3-8.1-8.2-3.1z"/><path d="M12.2 13.5l4-6.8"/></svg>
+      <span class="icn icon--solar icon--solar--plain-2-linear" aria-hidden="true"></span>
       ئێستا جۆین ببە
     </a>
     <button class="btn-text" style="margin-top:16px" onclick="closeModal()">دواتر جۆین دەبم</button>
@@ -260,7 +264,7 @@
 
     <div class="auth-brand">
       <div class="brand-mark">
-        <svg class="icn icn-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h13.5l-3-3.2"/><path d="M20 16H6.5l3 3.2"/></svg>
+        <span class="icn icn-lg icon--solar icon--solar--transfer-horizontal-linear" aria-hidden="true"></span>
       </div>
       <h1>Proxo Balance</h1>
       <p>ئاڵوگۆڕی دراو بە کەمترین لێبڕین — متمانە و خێرایی</p>
@@ -277,16 +281,16 @@
       <!-- Step: email -->
       <div class="auth-step" id="authStepEmail">
         <div class="auth-step-icon">
-          <svg class="icn icn-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v12H4z"/><path d="M4 7l8 6 8-6"/></svg>
+          <span class="icn icn-lg icon--solar icon--solar--letter-linear" aria-hidden="true"></span>
         </div>
         <div class="auth-step-label"><h3>چوونەژوورەوە</h3><p>ئیمەیلەکەت بنووسە</p></div>
         <div class="input-wrap">
-          <span class="input-ico"><svg class="icn icn-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v12H4z"/><path d="M4 7l8 6 8-6"/></svg></span>
+          <span class="input-ico"><span class="icn icn-sm icon--solar icon--solar--letter-linear" aria-hidden="true"></span></span>
           <input class="input" type="email" id="authEmail" placeholder="example@gmail.com" dir="ltr" onkeydown="if(event.key==='Enter')nextAuthStep('email')">
         </div>
         <button class="btn btn-primary btn-block" id="emailNextBtn" onclick="nextAuthStep('email')">
           <span>دواتر</span>
-          <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M11 6.2 5 12l6 5.8"/></svg>
+          <span class="icn icon--solar icon--solar--arrow-left-linear" aria-hidden="true"></span>
         </button>
         <div class="amsg" id="authMsgEmail"></div>
       </div>
@@ -294,20 +298,20 @@
       <!-- Step: signup name (new accounts only) -->
       <div class="auth-step" id="authStepName" style="display:none">
         <div class="auth-step-icon">
-          <svg class="icn icn-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.2" r="3.4"/><path d="M4.8 19.5c1.3-3.8 4-5.7 7.2-5.7s5.9 1.9 7.2 5.7"/></svg>
+          <span class="icn icn-lg icon--solar icon--solar--user-linear" aria-hidden="true"></span>
         </div>
         <div class="auth-step-label"><h3>هەژمارێکی نوێ</h3><p>ناوت بنووسە بۆ دروستکردنی هەژمار</p></div>
         <div class="input-wrap">
-          <span class="input-ico"><svg class="icn icn-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.2" r="3.4"/><path d="M4.8 19.5c1.3-3.8 4-5.7 7.2-5.7s5.9 1.9 7.2 5.7"/></svg></span>
+          <span class="input-ico"><span class="icn icn-sm icon--solar icon--solar--user-linear" aria-hidden="true"></span></span>
           <input class="input" type="text" id="authName" placeholder="ناوی تەواو" onkeydown="if(event.key==='Enter')nextAuthStep('name')">
         </div>
         <button class="btn btn-primary btn-block" id="nameNextBtn" onclick="nextAuthStep('name')">
           <span>دواتر</span>
-          <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M11 6.2 5 12l6 5.8"/></svg>
+          <span class="icn icon--solar icon--solar--arrow-left-linear" aria-hidden="true"></span>
         </button>
         <div class="amsg" id="authMsgName"></div>
         <div class="auth-step-back" onclick="goAuthStep('email')">
-          <svg class="icn icn-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 6.2 19 12l-6 5.8"/></svg>
+          <span class="icn icn-sm icon--solar icon--solar--arrow-right-linear" aria-hidden="true"></span>
           گەڕانەوە
         </div>
       </div>
@@ -315,7 +319,7 @@
       <!-- Step: password -->
       <div class="auth-step" id="authStepPass" style="display:none">
         <div class="auth-step-icon">
-          <svg class="icn icn-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10.5" width="14" height="9" rx="2.2"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></svg>
+          <span class="icn icn-lg icon--solar icon--solar--lock-linear" aria-hidden="true"></span>
         </div>
         <div class="auth-step-label"><h3 id="passStepTitle">وشەی نهێنی</h3><p id="passStepSub">وشەی نهێنیت بنووسە بۆ چوونەژوورەوە</p></div>
         <div class="pass-wrap field">
@@ -324,14 +328,14 @@
         </div>
         <button class="btn btn-primary btn-block" id="authBtn" onclick="nextAuthStep('pass')">
           <span id="authBtnTxt">چوونەژوورەوە</span>
-          <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M11 6.2 5 12l6 5.8"/></svg>
+          <span class="icn icon--solar icon--solar--arrow-left-linear" aria-hidden="true"></span>
         </button>
         <div class="amsg" id="authMsg"></div>
         <div id="forgotLinkWrap" style="text-align:center;margin-top:12px">
           <span class="auth-link" style="font-size:var(--fs-xs)" onclick="showForgotStep()">وشەی نهێنیم لەبیرکردووە</span>
         </div>
         <div class="auth-step-back" onclick="goAuthStep('email')">
-          <svg class="icn icn-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 6.2 19 12l-6 5.8"/></svg>
+          <span class="icn icn-sm icon--solar icon--solar--arrow-right-linear" aria-hidden="true"></span>
           گەڕانەوە
         </div>
       </div>
@@ -339,7 +343,7 @@
       <!-- OTP -->
       <div id="otpStep" style="display:none">
         <div class="auth-step-icon">
-          <svg class="icn icn-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.2l6.8 2.6v5c0 4.8-2.9 7.9-6.8 9.4-3.9-1.5-6.8-4.6-6.8-9.4v-5z"/><path d="M9 12l2.1 2.1L15.4 9.8"/></svg>
+          <span class="icn icn-lg icon--solar icon--solar--shield-check-linear" aria-hidden="true"></span>
         </div>
         <div class="auth-step-label"><h3>کۆدی دڵنیاکردنەوە</h3><p id="otpEmailLbl">کۆدی ٦ ژمارە نێردرا</p></div>
         <div class="otp-inputs">
@@ -352,16 +356,16 @@
         </div>
         <div class="otp-timer" id="otpTimerWrap">ماوەی ئەم کۆدە: <span id="otpTimerVal">10:00</span></div>
         <div class="otp-resend" id="otpResendBtn" onclick="resendOtp()">
-          <svg class="icn icn-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 0 1 13.7-5.7L20 8.5"/><path d="M20 4v4.5h-4.5"/><path d="M20 12a8 8 0 0 1-13.7 5.7L4 15.5"/><path d="M4 20v-4.5h4.5"/></svg>
+          <span class="icn icn-sm icon--solar icon--solar--refresh-linear" aria-hidden="true"></span>
           کۆدی نوێ بنێرە
         </div>
         <button class="btn btn-primary btn-block" id="otpVerifyBtn" onclick="verifyOtp()" style="margin-top:14px">
-          <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.8l4.3 4.3L19 7.5"/></svg>
+          <span class="icn icon--solar icon--solar--check-circle-linear" aria-hidden="true"></span>
           دڵنیاکردنەوە
         </button>
         <div class="amsg" id="otpMsg"></div>
         <div class="auth-step-back" onclick="cancelOtp()">
-          <svg class="icn icn-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 6.2 19 12l-6 5.8"/></svg>
+          <span class="icn icn-sm icon--solar icon--solar--arrow-right-linear" aria-hidden="true"></span>
           گەڕانەوە
         </div>
       </div>
@@ -370,25 +374,25 @@
       <div id="forgotStep" style="display:none">
         <div id="fpStepA">
           <div class="auth-step-icon">
-            <svg class="icn icn-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.8" cy="15.8" r="3.1"/><path d="M10 13.6 17.6 6M17.6 6h-3.4M17.6 6v3.4"/></svg>
+            <span class="icn icn-lg icon--solar icon--solar--key-linear" aria-hidden="true"></span>
           </div>
           <div class="auth-step-label"><h3>گەڕاندنەوەی وشەی نهێنی</h3><p>ئیمەیلەکەت بنووسە</p></div>
           <div class="field">
             <input class="input" type="email" id="forgotEmail" placeholder="example@gmail.com" dir="ltr">
           </div>
           <button class="btn btn-primary btn-block" id="forgotSendBtn" onclick="doForgotSendOtp()">
-            <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2.5l-9.3 19-3-8.1-8.2-3.1z"/><path d="M12.2 13.5l4-6.8"/></svg>
+            <span class="icn icon--solar icon--solar--plain-2-linear" aria-hidden="true"></span>
             ناردنی کۆد
           </button>
           <div class="amsg" id="fpMsgA"></div>
           <div class="auth-step-back" onclick="cancelForgotStep()">
-            <svg class="icn icn-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 6.2 19 12l-6 5.8"/></svg>
+            <span class="icn icn-sm icon--solar icon--solar--arrow-right-linear" aria-hidden="true"></span>
             گەڕانەوە
           </div>
         </div>
         <div id="fpStepB" style="display:none">
           <div class="auth-step-icon">
-            <svg class="icn icn-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.2l6.8 2.6v5c0 4.8-2.9 7.9-6.8 9.4-3.9-1.5-6.8-4.6-6.8-9.4v-5z"/><path d="M9 12l2.1 2.1L15.4 9.8"/></svg>
+            <span class="icn icn-lg icon--solar icon--solar--shield-check-linear" aria-hidden="true"></span>
           </div>
           <p style="text-align:center;font-size:var(--fs-xs);color:var(--text-muted);margin-bottom:14px" id="fpOtpLbl">کۆدی ٦ ژمارە نێردرا</p>
           <div class="otp-inputs">
@@ -401,22 +405,22 @@
           </div>
           <div class="otp-timer" id="fpTimerWrap">ماوەی ئەم کۆدە: <span id="fpTimerVal">10:00</span></div>
           <div class="otp-resend" id="fpResendBtn" onclick="fpResendOtp()">
-            <svg class="icn icn-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 0 1 13.7-5.7L20 8.5"/><path d="M20 4v4.5h-4.5"/><path d="M20 12a8 8 0 0 1-13.7 5.7L4 15.5"/><path d="M4 20v-4.5h4.5"/></svg>
+            <span class="icn icn-sm icon--solar icon--solar--refresh-linear" aria-hidden="true"></span>
             کۆدی نوێ بنێرە
           </div>
           <div class="amsg" id="fpMsgB"></div>
           <button class="btn btn-primary btn-block" id="fpVerifyBtn" onclick="doForgotVerifyOtp()" style="margin-top:14px">
-            <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.8l4.3 4.3L19 7.5"/></svg>
+            <span class="icn icon--solar icon--solar--check-circle-linear" aria-hidden="true"></span>
             دڵنیاکردنەوە
           </button>
           <div class="auth-step-back" onclick="fpBackToA()">
-            <svg class="icn icn-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 6.2 19 12l-6 5.8"/></svg>
+            <span class="icn icn-sm icon--solar icon--solar--arrow-right-linear" aria-hidden="true"></span>
             گەڕانەوە
           </div>
         </div>
         <div id="fpStepC" style="display:none">
           <div class="auth-step-icon success">
-            <svg class="icn icn-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.3"/><path d="M8.2 12.3l2.6 2.6 4.9-5.4"/></svg>
+            <span class="icn icn-lg icon--solar icon--solar--check-circle-linear" aria-hidden="true"></span>
           </div>
           <div class="auth-step-label"><h3>ناسنامەت دڵنیاکرایەوە</h3><p>وشەی نهێنیی نوێت بنووسە</p></div>
           <div class="pass-wrap field">
@@ -429,7 +433,7 @@
           </div>
           <div class="amsg" id="fpMsgC"></div>
           <button class="btn btn-primary btn-block" id="fpSaveBtn" onclick="doForgotSavePass()">
-            <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10.5" width="14" height="9" rx="2.2"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></svg>
+            <span class="icn icon--solar icon--solar--lock-linear" aria-hidden="true"></span>
             پاشەکەوتکردن
           </button>
         </div>
@@ -461,32 +465,32 @@
 
       <nav class="hdr-nav" aria-label="ڕێنیشاندەر">
         <button type="button" class="hdr-nav-link on" data-route="home" onclick="navigate('home')">
-          <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h13.5l-3-3.2"/><path d="M20 16H6.5l3 3.2"/></svg>
+          <span class="icn icon--solar icon--solar--transfer-horizontal-linear" aria-hidden="true"></span>
           ئاڵوگۆڕ
         </button>
         <button type="button" class="hdr-nav-link" data-route="transactions" onclick="navigate('transactions')">
-          <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2.5h12v18.2l-2.2-1.5-2 1.5-2-1.5-2 1.5-2-1.5-2 1.5V2.5z"/><path d="M8.5 7.3h7M8.5 10.8h7M8.5 14.3h4"/></svg>
+          <span class="icn icon--solar icon--solar--bill-list-linear" aria-hidden="true"></span>
           مامەڵەکان
         </button>
         <button type="button" class="hdr-nav-link" data-route="changes" onclick="navigate('changes')">
-          <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+          <span class="icn icon--solar icon--solar--graph-up-linear" aria-hidden="true"></span>
           نرخەکان
         </button>
         <button type="button" class="hdr-nav-link" data-route="rules" onclick="navigate('rules')">
-          <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.2 19 5.8v5.4c0 4.6-2.9 7.7-7 9.2-4.1-1.5-7-4.6-7-9.2V5.8z"/><path d="m9 12 2 2 4-4"/></svg>
+          <span class="icn icon--solar icon--solar--shield-check-linear" aria-hidden="true"></span>
           یاساکان
         </button>
       </nav>
 
       <div class="hdr-actions">
         <button type="button" class="hdr-cta" onclick="focusExchangeForm()">
-          <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h13.5l-3-3.2"/><path d="M20 16H6.5l3 3.2"/></svg>
+          <span class="icn icon--solar icon--solar--transfer-horizontal-linear" aria-hidden="true"></span>
           ئاڵوگۆڕ بکە
         </button>
 
         <div style="position:relative">
           <button type="button" class="icon-btn" id="notifBellBtn" onclick="toggleNotifPanel()" aria-label="ئاگادارییەکان" aria-expanded="false" aria-controls="notifPanel">
-            <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 10.5a6 6 0 0 1 12 0c0 4 1.3 5.4 1.8 6.2.3.5-.1 1.1-.7 1.1H4.9c-.6 0-1-.6-.7-1.1.5-.8 1.8-2.2 1.8-6.2z"/><path d="M9.7 20.3a2.3 2.3 0 0 0 4.6 0"/></svg>
+            <span class="icn icon--solar icon--solar--bell-linear" aria-hidden="true"></span>
             <span class="notif-badge" id="notifBadge" style="display:none">0</span>
           </button>
         </div>
@@ -496,7 +500,7 @@
         </button>
 
         <a id="adminBtn" class="icon-btn" href="exchange-admin.html" style="display:none" aria-label="پانێڵی بەڕێوەبەر">
-          <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.2 19 5.8v5.4c0 4.6-2.9 7.7-7 9.2-4.1-1.5-7-4.6-7-9.2V5.8z"/><path d="m9 12 2 2 4-4"/></svg>
+          <span class="icn icon--solar icon--solar--shield-check-linear" aria-hidden="true"></span>
         </a>
       </div>
 
@@ -511,18 +515,18 @@
     <div class="notif-panel-head">
       <h3>
         <span class="notif-title-icon" aria-hidden="true">
-          <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 10.5a6 6 0 0 1 12 0c0 4 1.3 5.4 1.8 6.2.3.5-.1 1.1-.7 1.1H4.9c-.6 0-1-.6-.7-1.1.5-.8 1.8-2.2 1.8-6.2z"/><path d="M9.7 20.3a2.3 2.3 0 0 0 4.6 0"/></svg>
+          <span class="icn icon--solar icon--solar--bell-linear" aria-hidden="true"></span>
         </span>
         <span>ئاگادارییەکان</span>
         <span class="notif-head-count" id="notifHeadCount" style="display:none">0</span>
       </h3>
       <span class="notif-head-spacer"></span>
       <button type="button" class="notif-read-all" onclick="markAllNotifsRead()">
-        <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3.5 12.5 3.4 3.4 6.3-7"/><path d="m10.5 13.4 2.6 2.5 7.4-8.2"/></svg>
+        <span class="icn icon--solar icon--solar--check-read-linear" aria-hidden="true"></span>
         <span>هەمووی بخوێنەوە</span>
       </button>
       <button type="button" class="notif-close-btn" onclick="closeNotifPanel()" aria-label="داخستنی ئاگادارییەکان">
-        <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+        <span class="icn icon--solar icon--solar--close-circle-linear" aria-hidden="true"></span>
       </button>
     </div>
     <div class="notif-panel-body" id="notifPanelBody" tabindex="0"></div>
@@ -544,7 +548,7 @@
   </div>
 
   <div id="newsBanner" onclick="onNewsBannerClick()">
-    <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.3v3.4a1 1 0 0 0 1 1h1.7l1 4.3h2l-.8-4.3H9l9 3V6.3l-9 3H4a1 1 0 0 0-1 1z"/></svg>
+    <span class="icn icon--solar icon--solar--megaphone-linear" aria-hidden="true"></span>
     <span id="newsText"></span>
   </div>
 
@@ -555,7 +559,7 @@
       <div class="notif-bar-msg" id="notifBarMsg"></div>
     </div>
     <button type="button" class="notif-bar-close" onclick="dismissNotifBar()" aria-label="داخستن">
-      <svg class="icn icn-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      <span class="icn icn-sm icon--solar icon--solar--close-circle-linear" aria-hidden="true"></span>
     </button>
   </div>
 
@@ -563,7 +567,7 @@
 
     <div class="xc-head">
       <span class="xc-head-ico" aria-hidden="true">
-        <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h13.5l-3-3.2"/><path d="M20 16H6.5l3 3.2"/></svg>
+        <span class="icn icon--solar icon--solar--transfer-horizontal-linear" aria-hidden="true"></span>
       </span>
       <div>
         <h2>داواکاری ئاڵوگۆڕ</h2>
@@ -574,12 +578,12 @@
     <div class="wallet-row">
       <div class="wallet-row-line">
         <span class="wallet-label">
-          <svg class="icn icn-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 7.6A2 2 0 0 1 5.5 5.6h11a2 2 0 0 1 2 2V8h.5A1.6 1.6 0 0 1 20.6 9.6v7.8a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2v-9.8z"/><circle cx="16.6" cy="13.5" r="1.3" fill="currentColor" stroke="none"/></svg>
+          <span class="icn icn-sm icon--solar icon--solar--wallet-linear" aria-hidden="true"></span>
           بنێرە بۆ:
         </span>
         <span class="wallet-value" id="myNum" dir="ltr">---</span>
         <button type="button" class="copy-btn" onclick="copyNum()" aria-label="کۆپیکردنی ژمارە">
-          <svg class="icn icn-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8.5" y="8.5" width="11" height="11" rx="2.2"/><path d="M15.5 8.5V6.2A1.7 1.7 0 0 0 13.8 4.5H6.2A1.7 1.7 0 0 0 4.5 6.2v7.6a1.7 1.7 0 0 0 1.7 1.7h2.3"/></svg>
+          <span class="icn icn-sm icon--solar icon--solar--copy-linear" aria-hidden="true"></span>
         </button>
       </div>
     </div>
@@ -589,7 +593,7 @@
       <!-- ── YOU SEND ─────────────────────────────────────── -->
       <div class="xc-group" id="grpSend">
         <div class="xc-group-head">
-          <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg>
+          <span class="icn icon--solar icon--solar--arrow-right-up-linear" aria-hidden="true"></span>
           دەینێریت
           <span class="xc-badge" id="sendLimitBadge">کەمترین 10,000</span>
         </div>
@@ -609,7 +613,7 @@
               <span class="picker-trigger-label">لە کوێوە دەینێریت؟</span>
               <span class="picker-trigger-value" id="fromTriggerLabel"></span>
             </span>
-            <span class="select-chevron"><svg class="icn icn-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9.2 12 15l6-5.8"/></svg></span>
+            <span class="select-chevron"><span class="icn icn-sm icon--solar icon--solar--alt-arrow-down-linear" aria-hidden="true"></span></span>
           </button>
         </div>
 
@@ -617,12 +621,12 @@
           <label class="field-label" for="userSenderName">ناوی خاوەنی هەژماری نێرەر</label>
           <div class="xc-input-wrap">
             <span class="xc-in-ico" aria-hidden="true">
-              <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.2" r="3.4"/><path d="M4.8 19.5c1.3-3.8 4-5.7 7.2-5.7s5.9 1.9 7.2 5.7"/></svg>
+              <span class="icn icon--solar icon--solar--user-linear" aria-hidden="true"></span>
             </span>
             <input type="text" id="userSenderName" class="input" readonly aria-readonly="true" aria-describedby="senderNameHint">
           </div>
           <div class="xc-hint warn" id="senderNameHint">
-            <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4.5 21 19.5H3z"/><path d="M12 10v4"/><circle cx="12" cy="17" r=".9" fill="currentColor"/></svg>
+            <span class="icn icon--solar icon--solar--danger-triangle-linear" aria-hidden="true"></span>
             <span>ناوی خاوەنی هەژماری نێرەر دەبێت هەمان ناوی پڕۆفایلی Proxo بێت.</span>
           </div>
           <span class="field-error" id="userSenderNameError"></span>
@@ -632,14 +636,14 @@
           <label class="field-label" for="userSenderPhone">ژمارەی نێرەر</label>
           <div class="xc-input-wrap">
             <span class="xc-in-ico" aria-hidden="true">
-              <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6.5" y="2.5" width="11" height="19" rx="2.6"/><path d="M10.8 18.6h2.4"/></svg>
+              <span class="icn icon--solar icon--solar--smartphone-linear" aria-hidden="true"></span>
             </span>
             <input type="tel" id="userSenderPhone" class="input" placeholder="07xxxxxxxxx" dir="ltr" maxlength="11" inputmode="numeric"
                    aria-describedby="senderPhoneHint"
                    oninput="this.value=this.value.replace(/[^0-9]/g,''); clearFieldError('userSenderPhone');">
           </div>
           <div class="xc-hint" id="senderPhoneHint">
-            <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.8h.01"/></svg>
+            <span class="icn icon--solar icon--solar--info-circle-linear" aria-hidden="true"></span>
             <span>تەنها بۆ ناردن لە Korek یان Asiacell؛ ژمارەکە دەبێت بە <b>07</b> دەست پێبکات و <b>11</b> ژمارە بێت.</span>
           </div>
           <span class="field-error" id="userSenderPhoneError"></span>
@@ -649,14 +653,14 @@
           <label class="field-label" for="amt">بڕی پارە</label>
           <div class="xc-input-wrap">
             <span class="xc-in-ico" aria-hidden="true">
-              <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="19" height="12" rx="2.4"/><circle cx="12" cy="12" r="2.6"/><path d="M6 12h.01M18 12h.01"/></svg>
+              <span class="icn icon--solar icon--solar--banknote-linear" aria-hidden="true"></span>
             </span>
             <input type="text" inputmode="decimal" id="amt" class="input" placeholder="0" dir="ltr"
                    aria-describedby="amtHint" oninput="formatAmtField(this); calc(); clearFieldError('amt');">
             <span class="xc-in-suffix" id="amtSuffix">IQD</span>
           </div>
           <div class="xc-hint" id="amtHint">
-            <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.8h.01"/></svg>
+            <span class="icn icon--solar icon--solar--info-circle-linear" aria-hidden="true"></span>
             <span>کەمترین بڕ <b>10,000</b> دینارە. بڕەکە دەبێت وەک ئەوە بێت کە ناردووتە.</span>
           </div>
           <span id="formattedHint" class="formatted-amount">0 IQD</span>
@@ -673,7 +677,7 @@
       <div class="xc-swap">
         <span class="xc-swap-line"></span>
         <button type="button" class="xc-swap-btn" onclick="swapMethods()" aria-label="گۆڕینەوەی ئاراستە">
-          <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4v13"/><path d="m4 14 3 3 3-3"/><path d="M17 20V7"/><path d="m14 10 3-3 3 3"/></svg>
+          <span class="icn icon--solar icon--solar--transfer-vertical-linear" aria-hidden="true"></span>
         </button>
         <span class="xc-swap-line"></span>
       </div>
@@ -681,7 +685,7 @@
       <!-- ── YOU RECEIVE ──────────────────────────────────── -->
       <div class="xc-group" id="grpRecv">
         <div class="xc-group-head">
-          <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 7 7 17"/><path d="M16 17H7V8"/></svg>
+          <span class="icn icon--solar icon--solar--arrow-left-down-linear" aria-hidden="true"></span>
           وەریدەگریت
           <span class="xc-badge" id="etaBadge">٥–٣٠ خولەک</span>
         </div>
@@ -698,7 +702,7 @@
               <span class="picker-trigger-label">وەرگرتن لە</span>
               <span class="picker-trigger-value" id="receiveViaTriggerLabel"></span>
             </span>
-            <span class="select-chevron"><svg class="icn icn-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9.2 12 15l6-5.8"/></svg></span>
+            <span class="select-chevron"><span class="icn icn-sm icon--solar icon--solar--alt-arrow-down-linear" aria-hidden="true"></span></span>
           </button>
         </div>
 
@@ -706,14 +710,14 @@
           <label class="field-label" for="userPhone" id="phoneLabel">ژمارەی وەرگرە</label>
           <div class="xc-input-wrap">
             <span class="xc-in-ico" aria-hidden="true">
-              <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6.5" y="2.5" width="11" height="19" rx="2.6"/><path d="M10.8 18.6h2.4"/></svg>
+              <span class="icn icon--solar icon--solar--smartphone-linear" aria-hidden="true"></span>
             </span>
             <input type="tel" id="userPhone" class="input" placeholder="07xxxxxxxxx" dir="ltr" maxlength="19"
                    aria-describedby="phoneHint"
                    oninput="this.value = this.value.replace(/[^0-9]/g, ''); clearFieldError('userPhone'); validatePhoneLive();">
           </div>
           <div class="xc-hint" id="phoneHint">
-            <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.8h.01"/></svg>
+            <span class="icn icon--solar icon--solar--info-circle-linear" aria-hidden="true"></span>
             <span id="phoneHintText">ژمارەی عێراقی بە <b>07</b> دەست پێدەکات و <b>11</b> ژمارەیە.</span>
           </div>
           <span class="field-error" id="userPhoneError"></span>
@@ -725,21 +729,21 @@
     <div class="xc-breakdown" id="xcBreakdown" aria-live="polite">
       <div class="xc-bd-row">
         <span class="lbl">
-          <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h13.5l-3-3.2"/><path d="M20 16H6.5l3 3.2"/></svg>
+          <span class="icn icon--solar icon--solar--transfer-horizontal-linear" aria-hidden="true"></span>
           نرخی ئاڵوگۆڕ
         </span>
         <span class="v" id="bdRate">—</span>
       </div>
       <div class="xc-bd-row">
         <span class="lbl">
-          <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20 20 4"/><circle cx="7" cy="7" r="2.4"/><circle cx="17" cy="17" r="2.4"/></svg>
+          <span class="icn icon--solar icon--solar--sale-linear" aria-hidden="true"></span>
           کرێی خزمەتگوزاری
         </span>
         <span class="v" id="bdFee">—</span>
       </div>
       <div class="xc-bd-row total">
         <span class="lbl">
-          <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 7 7 17"/><path d="M16 17H7V8"/></svg>
+          <span class="icn icon--solar icon--solar--arrow-left-down-linear" aria-hidden="true"></span>
           وەریدەگریت
         </span>
         <span class="v"><span id="totalDisplay" class="total-value">0 IQD</span></span>
@@ -749,15 +753,15 @@
 
     <div class="xc-trust">
       <span class="xc-trust-badge">
-        <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m13 2-9 12h7l-1 8 9-12h-7z"/></svg>
+        <span class="icn icon--solar icon--solar--bolt-linear" aria-hidden="true"></span>
         جێبەجێکردنی خێرا
       </span>
       <span class="xc-trust-badge info">
-        <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.2 19 5.8v5.4c0 4.6-2.9 7.7-7 9.2-4.1-1.5-7-4.6-7-9.2V5.8z"/><path d="m9 12 2 2 4-4"/></svg>
+        <span class="icn icon--solar icon--solar--shield-check-linear" aria-hidden="true"></span>
         دەروازەی پشتڕاستکراو
       </span>
       <span class="xc-trust-badge neutral">
-        <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/></svg>
+        <span class="icn icon--solar icon--solar--check-circle-linear" aria-hidden="true"></span>
         بێ کرێی شاراوە
       </span>
     </div>
@@ -772,25 +776,25 @@
       <input type="file" id="fileInput" class="file-input-native" accept="image/jpeg,image/png,image/webp" onchange="onFileSelected(this)">
       <label class="file-picker" for="fileInput">
         <span class="file-picker-icon" aria-hidden="true">
-          <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4" width="17" height="16" rx="2.5"/><circle cx="8.3" cy="9" r="1.4"/><path d="m4.2 17 4.5-4.6 3.6 3.5 2.7-2.7 4.8 4.8"/></svg>
+          <span class="icn icon--solar icon--solar--gallery-linear" aria-hidden="true"></span>
         </span>
         <span class="file-picker-copy">
           <b id="filePickerName">وێنەی پسووڵە هەڵبژێرە</b>
           <small id="filePickerMeta">JPG، PNG یان WEBP</small>
         </span>
         <span class="file-picker-action" aria-hidden="true">
-          <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4"/><path d="m7.5 8.5 4.5-4.5 4.5 4.5"/><path d="M5 14.5v4A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5v-4"/></svg>
+          <span class="icn icon--solar icon--solar--upload-linear" aria-hidden="true"></span>
         </span>
       </label>
       <div class="xc-hint">
-        <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="14" rx="2.4"/><path d="m4 16 4.5-4.5 3.5 3.5 3-3L20 16"/><circle cx="9" cy="9.5" r="1.2"/></svg>
+        <span class="icn icon--solar icon--solar--gallery-linear" aria-hidden="true"></span>
         <span>وێنەی پسووڵەی ناردن — بەبێ بەڵگە داواکارییەکە ڕەت دەکرێتەوە.</span>
       </div>
       <span class="field-error" id="fileInputError"></span>
     </div>
 
     <button class="btn btn-primary btn-block btn-submit" id="submitBtn" onclick="openOrderConfirm()">
-      <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.5 2.5 2.5 11l7.5 2.8L12.8 21z"/><path d="M21.5 2.5 10 14"/></svg>
+      <span class="icn icon--solar icon--solar--plain-2-linear" aria-hidden="true"></span>
       ناردنی داواکاری
     </button>
   </div>
@@ -802,7 +806,7 @@
          deleting them would break the rest of its stats handler. -->
     <div class="proof-card" hidden style="display:none">
       <div class="proof-top">
-        <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/></svg>
+        <span class="icn icon--solar icon--solar--verified-check-linear" aria-hidden="true"></span>
         مامەڵەی سەرکەوتوو
       </div>
       <div class="proof-num" id="proofCount">—</div>
@@ -815,7 +819,7 @@
 
     <div>
       <h3 class="section-title">
-        <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 1.8"/></svg>
+        <span class="icn icon--solar icon--solar--clock-circle-linear" aria-hidden="true"></span>
         دوایین ئاڵوگۆڕە تەواوبووەکان
       </h3>
       <div class="feed-wrap" id="publicFeed" aria-live="polite">
@@ -875,18 +879,18 @@
         </div>
       </div>
       <div class="xc-hint" style="margin:9px 4px 0">
-        <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <span class="icn icon--solar icon--solar--lock-linear" aria-hidden="true"></span>
         <span>ژمارەکان بۆ پاراستنی تایبەتمەندێتی لەسەر سێرڤەر شاردراونەتەوە — ژمارەی تەواو هەرگیز نانێردرێت بۆ وێبگەڕ.</span>
       </div>
     </div>
   </div>
 
   <h3 class="section-title">
-    <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2.5h12v18.2l-2.2-1.5-2 1.5-2-1.5-2 1.5-2-1.5-2 1.5V2.5z"/><path d="M8.5 7.3h7M8.5 10.8h7M8.5 14.3h4"/></svg>
+    <span class="icn icon--solar icon--solar--bill-list-linear" aria-hidden="true"></span>
     دوایین مامەڵەکان
     <span class="title-link" onclick="navigate('transactions')">
       بینینی هەموو
-      <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>
+      <span class="icn icon--solar icon--solar--alt-arrow-left-linear" aria-hidden="true"></span>
     </span>
   </h3>
   <div id="historyPreview" style="width:100%;">
@@ -913,7 +917,7 @@
   <section class="page" id="pageTx" data-route="transactions">
     <div class="page-head">
       <h2>
-        <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2.5h12v18.2l-2.2-1.5-2 1.5-2-1.5-2 1.5-2-1.5-2 1.5V2.5z"/><path d="M8.5 7.3h7M8.5 10.8h7M8.5 14.3h4"/></svg>
+        <span class="icn icon--solar icon--solar--bill-list-linear" aria-hidden="true"></span>
         مامەڵەکان
       </h2>
       <p>هەموو ئاڵوگۆڕەکانت لێرەدان — بە ئایدی بگەڕێ یان فلتەریان بکە.</p>
@@ -922,7 +926,7 @@
     <div class="stat-grid">
       <div class="stat-card sent">
         <div class="stat-top">
-          <span class="stat-ico"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg></span>
+          <span class="stat-ico"><span class="icn icon--solar icon--solar--arrow-right-up-linear" aria-hidden="true"></span></span>
           کۆی ناردن
         </div>
         <div class="stat-val" id="txTotalSent"><span class="sk sk-num"></span></div>
@@ -930,7 +934,7 @@
       </div>
       <div class="stat-card recv">
         <div class="stat-top">
-          <span class="stat-ico"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 7 7 17"/><path d="M16 17H7V8"/></svg></span>
+          <span class="stat-ico"><span class="icn icon--solar icon--solar--arrow-left-down-linear" aria-hidden="true"></span></span>
           کۆی وەرگرتن
         </div>
         <div class="stat-val" id="txTotalRecv"><span class="sk sk-num"></span></div>
@@ -946,33 +950,33 @@
     </div>
 
     <div class="search-wrap">
-      <span class="search-ico"><svg class="icn icn-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></svg></span>
+      <span class="search-ico"><span class="icn icn-sm icon--solar icon--solar--magnifer-linear" aria-hidden="true"></span></span>
       <input type="text" class="input" id="txSearch" placeholder="گەڕان بە ئایدی مامەڵە — بۆ نمونە P7K2..." oninput="onTxSearch(this.value)">
       <button type="button" class="search-clear" id="txSearchClear" onclick="clearTxSearch()" aria-label="سڕینەوە">
-        <svg class="icn icn-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        <span class="icn icn-sm icon--solar icon--solar--close-circle-linear" aria-hidden="true"></span>
       </button>
     </div>
 
     <div class="filter-scroll" id="txStatusFilters">
       <button type="button" class="filter-chip on" data-status="all" onclick="setTxStatus('all', this)">هەموو <span class="chip-count" id="fcAll">0</span></button>
       <button type="button" class="filter-chip" data-status="چاوەڕوانە" onclick="setTxStatus('چاوەڕوانە', this)">
-        <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.6V12l2.8 1.8"/></svg>
+        <span class="icn icon--solar icon--solar--clock-circle-linear" aria-hidden="true"></span>
         چاوەڕوان <span class="chip-count" id="fcWait">0</span>
       </button>
       <button type="button" class="filter-chip" data-status="پێویستی بە ڕاستکردنەوەیە" onclick="setTxStatus('پێویستی بە ڕاستکردنەوەیە', this)">
-        <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"/></svg>
+        <span class="icn icon--solar icon--solar--pen-linear" aria-hidden="true"></span>
         پێویستی بە ڕاستکردنەوە <span class="chip-count" id="fcCorrection">0</span>
       </button>
       <button type="button" class="filter-chip" data-status="ڕاستکراوەتەوە" onclick="setTxStatus('ڕاستکراوەتەوە', this)">
-        <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>
+        <span class="icn icon--solar icon--solar--check-circle-linear" aria-hidden="true"></span>
         ڕاستکراوەتەوە <span class="chip-count" id="fcCorrected">0</span>
       </button>
       <button type="button" class="filter-chip" data-status="پەسەندکرا" onclick="setTxStatus('پەسەندکرا', this)">
-        <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>
+        <span class="icn icon--solar icon--solar--check-circle-linear" aria-hidden="true"></span>
         پەسەندکراو <span class="chip-count" id="fcOk">0</span>
       </button>
       <button type="button" class="filter-chip" data-status="ڕەتکرا" onclick="setTxStatus('ڕەتکرا', this)">
-        <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        <span class="icn icon--solar icon--solar--close-circle-linear" aria-hidden="true"></span>
         ڕەتکراو <span class="chip-count" id="fcNo">0</span>
       </button>
     </div>
@@ -1016,20 +1020,20 @@
   <section class="page" id="pageChanges" data-route="changes">
     <div class="page-head">
       <h2>
-        <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 16.5 9 11l3.5 3.5L20.5 6.5"/><path d="M15.5 6.5h5v5"/></svg>
+        <span class="icn icon--solar icon--solar--graph-up-linear" aria-hidden="true"></span>
         گۆڕانکاری نرخەکان
       </h2>
       <p>نرخی ئێستا و مێژووی گۆڕانکارییەکان — بەپێی هەر ١٠٠,٠٠٠ دینار کە دەینێریت.</p>
     </div>
 
     <h3 class="section-title">
-      <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v9M14.6 10.1a2.6 2.6 0 0 0-2.6-1.3c-1.5 0-2.6.8-2.6 2s1.1 1.8 2.6 2 2.6.8 2.6 2-1.1 2-2.6 2a2.6 2.6 0 0 1-2.6-1.3"/></svg>
+      <span class="icn icon--solar icon--solar--dollar-minimalistic-linear" aria-hidden="true"></span>
       نرخی ئێستا
     </h3>
     <div class="rates-now" id="ratesNow"></div>
 
     <h3 class="section-title" style="margin-top:var(--space-6)">
-      <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 2.6-6.4"/><path d="M3 4v5h5"/><path d="M12 8v4.5l3 1.8"/></svg>
+      <span class="icn icon--solar icon--solar--history-2-linear" aria-hidden="true"></span>
       مێژووی گۆڕانکاری
     </h3>
     <div id="changesList" style="width:100%;"></div>
@@ -1039,51 +1043,51 @@
   <section class="page" id="pageRules" data-route="rules">
     <div class="page-head">
       <h2>
-        <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.2 19 5.8v5.4c0 4.6-2.9 7.7-7 9.2-4.1-1.5-7-4.6-7-9.2V5.8z"/><path d="m9 12 2 2 4-4"/></svg>
+        <span class="icn icon--solar icon--solar--shield-check-linear" aria-hidden="true"></span>
         یاساکانی ئەپ
       </h2>
       <p>پێش ناردنی داواکاری تکایە ئەم خاڵانە بخوێنەرەوە.</p>
     </div>
 
     <div class="rule-item">
-      <span class="rule-num" aria-label="یاسای یەک"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="2.4"/><circle cx="12" cy="12" r="2.5"/><path d="M6.2 12h.01M17.8 12h.01"/></svg></span>
+      <span class="rule-num" aria-label="یاسای یەک"><span class="icn icon--solar icon--solar--banknote-2-linear" aria-hidden="true"></span></span>
       <div class="rule-txt"><h4>کەمترین بڕی ئاڵوگۆڕ</h4><p>کەمترین بڕ بۆ هەر داواکارییەک <b dir="ltr">10,000</b> دینارە. داواکاری کەمتر لەوە وەرناگیرێت.</p></div>
     </div>
     <div class="rule-item">
-      <span class="rule-num" aria-label="یاسای دوو"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 7.6A2 2 0 0 1 5.5 5.6h11a2 2 0 0 1 2 2V8h.5a1.6 1.6 0 0 1 1.6 1.6v7.8a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2V7.6z"/><circle cx="16.6" cy="13.5" r="1.3"/></svg></span>
+      <span class="rule-num" aria-label="یاسای دوو"><span class="icn icon--solar icon--solar--wallet-linear" aria-hidden="true"></span></span>
       <div class="rule-txt"><h4>ژمارەی واڵێت</h4><p>پێش ناردنی پارە دڵنیابە لە ژمارەی واڵێتی نیشاندراو لە ناو ئەپەکەدا. ئێمە بەرپرسیار نین لە پارەی نێردراو بۆ ژمارەی هەڵە.</p></div>
     </div>
     <div class="rule-item">
-      <span class="rule-num" aria-label="یاسای سێ"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2.5"/><circle cx="8.5" cy="9.5" r="1.4"/><path d="m4 17 4.5-4.5L12 16l3-3 5 5"/></svg></span>
+      <span class="rule-num" aria-label="یاسای سێ"><span class="icn icon--solar icon--solar--gallery-linear" aria-hidden="true"></span></span>
       <div class="rule-txt"><h4>پسووڵەی پارەدان</h4><p>پێویستە وێنەی پسووڵەی ناردن هاوپێچ بکرێت. داواکاری بەبێ بەڵگەی پارەدان ڕەت دەکرێتەوە.</p></div>
     </div>
     <div class="rule-item">
-      <span class="rule-num" aria-label="یاسای چوار"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3.2 1.9"/></svg></span>
+      <span class="rule-num" aria-label="یاسای چوار"><span class="icn icon--solar icon--solar--clock-circle-linear" aria-hidden="true"></span></span>
       <div class="rule-txt"><h4>ماوەی جێبەجێکردن</h4><p>زۆربەی داواکارییەکان لە ماوەی <b>٥ بۆ ٣٠ خولەک</b> جێبەجێ دەکرێن. لە کاتی قەرەباڵغیدا لەوانەیە درێژتر بخایەنێت.</p></div>
     </div>
     <div class="rule-item">
-      <span class="rule-num" aria-label="یاسای پێنج"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20 20 4"/><circle cx="7" cy="7" r="2.4"/><circle cx="17" cy="17" r="2.4"/></svg></span>
+      <span class="rule-num" aria-label="یاسای پێنج"><span class="icn icon--solar icon--solar--sale-linear" aria-hidden="true"></span></span>
       <div class="rule-txt"><h4>نرخ و لێبڕین</h4><p>نرخەکان دەگۆڕێن. ئەو نرخەی لە کاتی ناردنی داواکارییەکەدا نیشان دراوە جێبەجێ دەکرێت. گۆڕانکارییەکان لە بەشی «گۆڕانکاری نرخەکان» دەبینرێن.</p></div>
     </div>
     <div class="rule-item">
-      <span class="rule-num" aria-label="یاسای شەش"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.6h.01"/></svg></span>
+      <span class="rule-num" aria-label="یاسای شەش"><span class="icn icon--solar icon--solar--info-circle-linear" aria-hidden="true"></span></span>
       <div class="rule-txt"><h4>زانیاری هەڵە</h4><p>ژمارەی مۆبایل و شێوازی وەرگرتن دەبێت ڕاست بن. داواکاری بە زانیاری ناتەواو یان هەڵە ڕەت دەکرێتەوە و هۆکارەکەی پێت ڕادەگەیەنرێت.</p></div>
     </div>
     <div class="rule-item">
-      <span class="rule-num" aria-label="یاسای حەوت"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8.2" r="3.3"/><path d="M5 20c.8-4 3.4-6 7-6s6.2 2 7 6"/><path d="M18.5 5.5v4M16.5 7.5h4"/></svg></span>
+      <span class="rule-num" aria-label="یاسای حەوت"><span class="icn icon--solar icon--solar--user-plus-rounded-linear" aria-hidden="true"></span></span>
       <div class="rule-txt"><h4>یەک هەژمار بۆ هەر کەسێک</h4><p>هەژماری چەند جارە یان بەکارهێنانی زانیاری کەسی خەڵکی تر ڕێگەپێدراو نییە و دەبێتە هۆی داخستنی هەژمار.</p></div>
     </div>
     <div class="rule-item">
-      <span class="rule-num" aria-label="یاسای هەشت"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.2 19 5.8v5.4c0 4.6-2.9 7.7-7 9.2-4.1-1.5-7-4.6-7-9.2V5.8z"/><path d="m9 12 2 2 4-4"/></svg></span>
+      <span class="rule-num" aria-label="یاسای هەشت"><span class="icn icon--solar icon--solar--shield-check-linear" aria-hidden="true"></span></span>
       <div class="rule-txt"><h4>بەکارهێنانی یاسایی</h4><p>ئەم خزمەتگوزارییە تەنها بۆ مامەڵەی یاسایی و کەسییە. هەر بەکارهێنانێکی گومانلێکراو ڕادەگیرێت.</p></div>
     </div>
     <div class="rule-item">
-      <span class="rule-num" aria-label="یاسای نۆ"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8.2" r="3.3"/><path d="M5 20c.8-4 3.4-6 7-6s6.2 2 7 6"/><path d="m16 8 1.5 1.5L21 6"/></svg></span>
+      <span class="rule-num" aria-label="یاسای نۆ"><span class="icn icon--solar icon--solar--user-check-rounded-linear" aria-hidden="true"></span></span>
       <div class="rule-txt"><h4>ناسنامەی نێرەر و قوفڵی پڕۆفایل</h4><p>بۆ FastPay، FIB، Qi Card و USDT ناوی پڕۆفایلی Proxo و ناوی خاوەنی هەژماری نێرەر دەبێت هەمان ناو بن. بۆ Korek و Asiacell ناوی نێرەر داوا ناکرێت و تەنها ژمارەی نێرەر پێویستە. دوای گۆڕینی ناو یان ژمارەی مۆبایلی پڕۆفایل، هەردوو خانەکە یەکسەر بۆ <b>٧ ڕۆژ</b> قوفڵ دەبن.</p></div>
     </div>
 
     <div class="rule-note">
-      <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4.5 21 19.5H3z"/><path d="M12 10v4"/><circle cx="12" cy="17" r=".9" fill="currentColor"/></svg>
+      <span class="icn icon--solar icon--solar--danger-triangle-linear" aria-hidden="true"></span>
       <span>ئایدی هەر مامەڵەیەک بە <b dir="ltr">P</b> دەست پێدەکات و ١٢ پیتە. لە کاتی پەیوەندیکردن بە پشتگیریەوە تەنها ئەم ئایدییە بنێرە — هەرگیز وشەی نهێنی یان کۆدی ناردراو بۆ کەس مەنێرە.</span>
     </div>
   </section>
@@ -1092,7 +1096,7 @@
   <section class="page" id="pageProfile" data-route="profile">
     <div class="page-head">
       <h2>
-        <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.2" r="3.4"/><path d="M4.8 19.5c1.3-3.8 4-5.7 7.2-5.7s5.9 1.9 7.2 5.7"/></svg>
+        <span class="icn icon--solar icon--solar--user-linear" aria-hidden="true"></span>
         پڕۆفایل
       </h2>
     </div>
@@ -1103,11 +1107,11 @@
       <div class="pf-email" id="pfEmailLbl">—</div>
       <div class="pf-chips">
         <span class="pf-chip" id="pfJoinedChip">
-          <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3.8" y="5" width="16.4" height="15" rx="2.4"/><path d="M3.8 9.6h16.4M8.5 3.5v3M15.5 3.5v3"/></svg>
+          <span class="icn icon--solar icon--solar--calendar-linear" aria-hidden="true"></span>
           <span id="pfJoined">—</span>
         </span>
         <span class="pf-chip" id="pfAdminChip" style="display:none">
-          <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.2 19 5.8v5.4c0 4.6-2.9 7.7-7 9.2-4.1-1.5-7-4.6-7-9.2V5.8z"/></svg>
+          <span class="icn icon--solar icon--solar--shield-linear" aria-hidden="true"></span>
           بەڕێوەبەر
         </span>
       </div>
@@ -1115,7 +1119,7 @@
 
     <div class="pf-card">
       <div class="pf-card-title">
-        <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20.2 4.6 16 15.8 4.8a1.9 1.9 0 0 1 2.7 0l.7.7a1.9 1.9 0 0 1 0 2.7L8 19.4z"/></svg>
+        <span class="icn icon--solar icon--solar--pen-linear" aria-hidden="true"></span>
         زانیاری کەسی
       </div>
 
@@ -1133,46 +1137,46 @@
       </div>
 
       <div class="xc-hint" id="pfCooldownHint" aria-live="polite">
-        <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3.2 1.9"/></svg>
+        <span class="icn icon--solar icon--solar--clock-circle-linear" aria-hidden="true"></span>
         <span id="pfCooldownText">ناو و ژمارەی مۆبایل هەر ٧ ڕۆژ جارێک دەتوانرێت بگۆڕدرێت.</span>
       </div>
 
-      <button type="button" class="btn btn-primary btn-block" id="pfSaveBtn" onclick="saveProfile()"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h12l2 2v14H5z"/><path d="M8 4v6h8V4M8 20v-6h8v6"/></svg>پاشەکەوتکردن</button>
+      <button type="button" class="btn btn-primary btn-block" id="pfSaveBtn" onclick="saveProfile()"><span class="icn icon--solar icon--solar--diskette-linear" aria-hidden="true"></span>پاشەکەوتکردن</button>
     </div>
 
     <div class="pf-menu">
       <button type="button" class="pf-menu-item" onclick="navigate('transactions')">
-        <span class="pf-menu-ico"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2.5h12v18.2l-2.2-1.5-2 1.5-2-1.5-2 1.5-2-1.5-2 1.5V2.5z"/><path d="M8.5 7.3h7M8.5 10.8h7M8.5 14.3h4"/></svg></span>
+        <span class="pf-menu-ico"><span class="icn icon--solar icon--solar--bill-list-linear" aria-hidden="true"></span></span>
         <span class="pf-menu-txt"><b>مامەڵەکان</b><span>مێژووی داواکارییەکان و کۆی پارە</span></span>
-        <span class="pf-menu-arrow"><svg class="icn icn-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></span>
+        <span class="pf-menu-arrow"><span class="icn icn-sm icon--solar icon--solar--alt-arrow-left-linear" aria-hidden="true"></span></span>
       </button>
       <button type="button" class="pf-menu-item" onclick="navigate('changes')">
-        <span class="pf-menu-ico"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 16.5 9 11l3.5 3.5L20.5 6.5"/><path d="M15.5 6.5h5v5"/></svg></span>
+        <span class="pf-menu-ico"><span class="icn icon--solar icon--solar--graph-up-linear" aria-hidden="true"></span></span>
         <span class="pf-menu-txt"><b>گۆڕانکاری نرخەکان</b><span>دوایین گۆڕانکاری حمولەی دراوەکان</span></span>
-        <span class="pf-menu-arrow"><svg class="icn icn-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></span>
+        <span class="pf-menu-arrow"><span class="icn icn-sm icon--solar icon--solar--alt-arrow-left-linear" aria-hidden="true"></span></span>
       </button>
       <button type="button" class="pf-menu-item" onclick="navigate('rules')">
-        <span class="pf-menu-ico"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.2 19 5.8v5.4c0 4.6-2.9 7.7-7 9.2-4.1-1.5-7-4.6-7-9.2V5.8z"/><path d="m9 12 2 2 4-4"/></svg></span>
+        <span class="pf-menu-ico"><span class="icn icon--solar icon--solar--shield-check-linear" aria-hidden="true"></span></span>
         <span class="pf-menu-txt"><b>یاساکانی ئەپ</b><span>مەرجەکانی بەکارهێنان</span></span>
-        <span class="pf-menu-arrow"><svg class="icn icn-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></span>
+        <span class="pf-menu-arrow"><span class="icn icn-sm icon--solar icon--solar--alt-arrow-left-linear" aria-hidden="true"></span></span>
       </button>
       <button type="button" class="pf-menu-item" onclick="toggleTheme()">
         <span class="pf-menu-ico"><span class="theme-toggle-ico icn"></span></span>
         <span class="pf-menu-txt"><b>ڕووکاری ئەپ</b><span>گۆڕین لەنێوان ڕووناک و تاریک</span></span>
-        <span class="pf-menu-arrow"><svg class="icn icn-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></span>
+        <span class="pf-menu-arrow"><span class="icn icn-sm icon--solar icon--solar--alt-arrow-left-linear" aria-hidden="true"></span></span>
       </button>
       <button type="button" class="pf-menu-item" onclick="navigate('support')">
-        <span class="pf-menu-ico"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13v-2a8 8 0 0 1 16 0v2"/><path d="M4 13a2 2 0 0 1 2-2h1v6H6a2 2 0 0 1-2-2zM20 13a2 2 0 0 0-2-2h-1v6h1a2 2 0 0 0 2-2z"/><path d="M17 17c0 2-1.8 3-5 3"/></svg></span>
+        <span class="pf-menu-ico"><span class="icn icon--solar icon--solar--headphones-round-linear" aria-hidden="true"></span></span>
         <span class="pf-menu-txt"><b>پشتگیری و کەیسەکان</b><span>کێشەیەک بنێرە و دۆخی چارەسەرکردنی ببینە</span></span>
-        <span class="pf-menu-arrow"><svg class="icn icn-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></span>
+        <span class="pf-menu-arrow"><span class="icn icn-sm icon--solar icon--solar--alt-arrow-left-linear" aria-hidden="true"></span></span>
       </button>
       <a class="pf-menu-item" href="https://t.me/proxo_exchange" target="_blank" rel="noopener">
-        <span class="pf-menu-ico"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2.5l-9.3 19-3-8.1-8.2-3.1z"/><path d="M12.2 13.5l4-6.8"/></svg></span>
+        <span class="pf-menu-ico"><span class="icn icon--solar icon--solar--plain-2-linear" aria-hidden="true"></span></span>
         <span class="pf-menu-txt"><b>تیلیگرامی پشتگیری</b><span>پەیوەندی ڕاستەوخۆ بە تیمی پڕۆکسۆ</span></span>
-        <span class="pf-menu-arrow"><svg class="icn icn-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></span>
+        <span class="pf-menu-arrow"><span class="icn icn-sm icon--solar icon--solar--alt-arrow-left-linear" aria-hidden="true"></span></span>
       </a>
       <button type="button" class="pf-menu-item danger" onclick="logout()">
-        <span class="pf-menu-ico"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v7.4"/><path d="M7.3 6.5a8 8 0 1 0 9.4 0"/></svg></span>
+        <span class="pf-menu-ico"><span class="icn icon--solar icon--solar--power-linear" aria-hidden="true"></span></span>
         <span class="pf-menu-txt"><b>چوونەدەرەوە</b><span>دەرچوون لەم هەژمارە</span></span>
       </button>
     </div>
@@ -1184,11 +1188,11 @@
   <section class="page" id="pageSupport" data-route="support">
     <div class="page-head support-page-head">
       <button type="button" class="support-back" onclick="navigate('profile')" aria-label="گەڕانەوە بۆ پڕۆفایل">
-        <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+        <span class="icn icon--solar icon--solar--alt-arrow-right-linear" aria-hidden="true"></span>
       </button>
       <div>
         <h2>
-          <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13v-2a8 8 0 0 1 16 0v2"/><path d="M4 13a2 2 0 0 1 2-2h1v6H6a2 2 0 0 1-2-2zM20 13a2 2 0 0 0-2-2h-1v6h1a2 2 0 0 0 2-2z"/><path d="M17 17c0 2-1.8 3-5 3"/></svg>
+          <span class="icn icon--solar icon--solar--headphones-round-linear" aria-hidden="true"></span>
           پشتگیری
         </h2>
         <p>کێشەکەت بنووسە؛ ژمارەیەکی تایبەتی کەیس وەردەگریت و دۆخەکەی لێرە دەبینیت.</p>
@@ -1197,7 +1201,7 @@
 
     <div class="support-form-card">
       <div class="support-form-title">
-        <span class="support-form-icon"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4z"/></svg></span>
+        <span class="support-form-icon"><span class="icn icon--solar icon--solar--pen-linear" aria-hidden="true"></span></span>
         <div><b>کەیسێکی نوێ</b><span>هەموو زانیارییەکان بە نهێنی دەپارێزرێن</span></div>
       </div>
 
@@ -1226,9 +1230,9 @@
       <div class="field">
         <span class="field-label">وێنەی کێشە <small>(ئارەزوومەندانە — تا 5MB)</small></span>
         <label class="support-image-picker" for="supportImageInput" id="supportImagePicker">
-          <span class="support-image-picker-icon"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2.5"/><circle cx="8.5" cy="9.5" r="1.4"/><path d="m4 17 4.5-4.5L12 16l3-3 5 5"/></svg></span>
+          <span class="support-image-picker-icon"><span class="icn icon--solar icon--solar--gallery-linear" aria-hidden="true"></span></span>
           <span><b id="supportImageName">وێنە هەڵبژێرە</b><small id="supportImageMeta">JPG، PNG یان WEBP</small></span>
-          <svg class="icn support-upload-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 20h16"/></svg>
+          <span class="icn support-upload-arrow icon--solar icon--solar--upload-minimalistic-linear" aria-hidden="true"></span>
         </label>
         <input type="file" id="supportImageInput" accept="image/jpeg,image/png,image/webp" hidden onchange="onSupportImageSelected(this)">
         <div class="support-image-preview" id="supportImagePreview" style="display:none">
@@ -1239,18 +1243,18 @@
       </div>
 
       <button type="button" class="btn btn-primary btn-block support-submit-btn" id="supportSubmitBtn" onclick="submitSupportCase()">
-        <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4z"/><path d="M22 2 11 13"/></svg>
+        <span class="icn icon--solar icon--solar--plain-2-linear" aria-hidden="true"></span>
         ناردنی کەیس
       </button>
 
       <div class="support-success" id="supportSuccess" role="status" aria-live="polite" style="display:none">
-        <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.5 12 2.3 2.3 4.8-5"/></svg>
+        <span class="icn icon--solar icon--solar--check-circle-linear" aria-hidden="true"></span>
         <div><b>کەیسەکەت نێردرا</b><span>ژمارەی کەیس: <strong id="supportSuccessNumber" dir="ltr">—</strong></span></div>
       </div>
     </div>
 
     <h3 class="section-title support-list-title">
-      <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2.5h12v18.2l-2.2-1.5-2 1.5-2-1.5-2 1.5-2-1.5-2 1.5V2.5z"/><path d="M8.5 7.3h7M8.5 10.8h7M8.5 14.3h4"/></svg>
+      <span class="icn icon--solar icon--solar--bill-list-linear" aria-hidden="true"></span>
       کەیسەکانی من
     </h3>
     <div id="supportCasesList"><div class="empty-state">هێشتا هیچ کەیسێکت نییە</div></div>
@@ -1260,22 +1264,22 @@
   <nav class="bottom-nav" id="bottomNav" aria-label="ڕێنیشاندەری سەرەکی">
     <div class="bottom-nav-inner">
       <button type="button" class="bn-item on" data-route="home" onclick="navigate('home')">
-        <span class="bn-ico"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h13.5l-3-3.2"/><path d="M20 16H6.5l3 3.2"/></svg></span>
+        <span class="bn-ico"><span class="icn icon--solar icon--solar--transfer-horizontal-linear" aria-hidden="true"></span></span>
         <span class="bn-label">ئاڵوگۆڕ</span>
       </button>
       <button type="button" class="bn-item" data-route="transactions" onclick="navigate('transactions')">
         <span class="bn-ico">
-          <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2.5h12v18.2l-2.2-1.5-2 1.5-2-1.5-2 1.5-2-1.5-2 1.5V2.5z"/><path d="M8.5 7.3h7M8.5 10.8h7M8.5 14.3h4"/></svg>
+          <span class="icn icon--solar icon--solar--bill-list-linear" aria-hidden="true"></span>
           <span class="bn-dot" id="bnTxDot">0</span>
         </span>
         <span class="bn-label">مامەڵەکان</span>
       </button>
       <button type="button" class="bn-item" data-route="rules" onclick="navigate('rules')">
-        <span class="bn-ico"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.2 19 5.8v5.4c0 4.6-2.9 7.7-7 9.2-4.1-1.5-7-4.6-7-9.2V5.8z"/><path d="m9 12 2 2 4-4"/></svg></span>
+        <span class="bn-ico"><span class="icn icon--solar icon--solar--shield-check-linear" aria-hidden="true"></span></span>
         <span class="bn-label">یاساکان</span>
       </button>
       <button type="button" class="bn-item" data-route="profile" onclick="navigate('profile')">
-        <span class="bn-ico"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.2" r="3.4"/><path d="M4.8 19.5c1.3-3.8 4-5.7 7.2-5.7s5.9 1.9 7.2 5.7"/></svg></span>
+        <span class="bn-ico"><span class="icn icon--solar icon--solar--user-linear" aria-hidden="true"></span></span>
         <span class="bn-label">پڕۆفایل</span>
       </button>
     </div>
@@ -1298,7 +1302,7 @@
   }, 12000);
 })();
 </script>
-<script src="/assets/js/app.js?v=17"></script>
+<script src="/assets/js/app.js?v=18"></script>
 <script src="/assets/js/track.js?v=2"></script>
 </body>
 </html>
