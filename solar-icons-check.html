@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ku" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>پشکنینی ئایکۆنەکانی Solar</title>
+<link href="https://solar-icons.gitlab.io/i/icons.css" rel="stylesheet" crossorigin>
+<style>
+  body{ font-family:system-ui,-apple-system,"Segoe UI",sans-serif; margin:0; padding:22px;
+        background:#0f1115; color:#e7e9ee; }
+  h1{ font-size:19px; margin:0 0 6px; }
+  p{ margin:0 0 18px; color:#9aa3b2; font-size:14px; line-height:1.7; }
+  #status{ padding:12px 14px; border-radius:10px; margin-bottom:18px; font-size:14px;
+           background:#17306b33; border:1px solid #2a4a9e; }
+  #status.bad{ background:#6b171733; border-color:#9e2a2a; }
+  .grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:9px; }
+  .cell{ border:1px solid #262b36; border-radius:10px; padding:14px 8px 10px; text-align:center;
+         background:#171a21; }
+  .solar-icons{ font-size:26px; line-height:1; font-style:normal; display:inline-block; }
+  .cell code{ display:block; margin-top:9px; font-size:10.5px; color:#8b93a3;
+              word-break:break-all; direction:ltr; }
+</style>
+</head>
+<body>
+<h1>پشکنینی ئایکۆنەکانی Solar</h1>
+<p>ئەم ٦٨ ئایکۆنە لە ماڵپەڕی Proxo Balance بەکارهاتوون. ئەگەر خانەیەک بەتاڵ بوو، ئەو ناوە
+لە کۆگای Solarدا نییە — ناوەکەم پێ بڵێ و دەیگۆڕم.</p>
+<div id="status">…</div>
+<div class="grid" id="grid"></div>
+<script>
+const NAMES = "alt-arrow-down,alt-arrow-left,alt-arrow-right,arrow-left,arrow-left-down,arrow-right,arrow-right-up,banknote,banknote-2,bell,bell-off,bill-list,bolt,buildings-2,calendar,card,chat-round-dots,check-circle,check-read,clock-circle,close-circle,copy,danger-triangle,diskette,dollar,dollar-minimalistic,download-minimalistic,eye,eye-closed,gallery,graph-down,graph-up,headphones-round,history,history-2,info-circle,key,letter,lock,lock-unlocked,magic-stick-3,magnifer,megaphone,moon,pen,phone,plain-2,power,refresh,sale,shield,shield-check,smartphone,sun,transfer-horizontal,transfer-vertical,tuning-2,upload,upload-minimalistic,user,user-check-rounded,user-plus-rounded,user-rounded,verified-check,wallet,wi-fi-router,wi-fi-router-minimalistic,wi-fi-router-round".split(',');
+const grid = document.getElementById('grid');
+for (const n of NAMES) {
+  const c = document.createElement('div');
+  c.className = 'cell';
+  c.innerHTML = '<i class="solar-icons" stroke="1.5" icon-name="' + n + '"></i><code>' + n + '</code>';
+  grid.appendChild(c);
+}
+const box = document.getElementById('status');
+setTimeout(() => {
+  const probe = document.querySelector('.solar-icons');
+  const drew = probe && (probe.offsetWidth > 4 || probe.getBoundingClientRect().width > 4);
+  box.textContent = drew
+    ? NAMES.length + ' ئایکۆن نیشان دران — ئەوانەی خانەکەیان بەتاڵە ناویان هەڵەیە.'
+    : 'فایلی icons.css بار نەبوو. واتە پێویستە خۆمان هۆستی بکەین.';
+  if (!drew) box.classList.add('bad');
+}, 1200);
+</script>
+</body>
+</html>
