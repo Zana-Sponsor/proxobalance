@@ -2996,23 +2996,19 @@ h1,h2,h3,.section-title{ letter-spacing:-.015em; line-height:1.3; }
 
 
 
+
 /* ═══════════════ Solar icons (api.iconify.design) ═══════════════
-   Icons are CSS mask images tinted with currentColor, so every existing
-   `.icn` width/height/color rule keeps working untouched.
-   Do NOT declare --svg on `.icon--solar` here: the per-icon rules in the
-   Solar stylesheet use the same specificity, so anything set below would
-   override all of them and blank out every icon. */
-.icon--solar{
-  display:inline-block; vertical-align:middle; flex-shrink:0;
-  background-color:currentColor;
-  -webkit-mask:no-repeat center / 100%; mask:no-repeat center / 100%;
-}
+   The Solar stylesheet already sets display, background-color and the
+   mask properties on .icon--solar. Only add what it does not cover.
+   NEVER write `mask:` or `--svg:` here — the shorthand wipes out
+   mask-image and every icon turns into a solid coloured square. */
+.icon--solar{ vertical-align:middle; flex-shrink:0; }
 .icn.icon--solar{ width:20px; height:20px; }
 .icn-sm.icon--solar{ width:16px; height:16px; }
 .icn-lg.icon--solar{ width:28px; height:28px; }
 .icn-xl.icon--solar{ width:34px; height:34px; }
 /* icons injected by JS into a wrapper that is already sized */
-.icn > .icon--solar{ width:100%; height:100%; display:block; }
+.icn > .icon--solar{ width:100%; height:100%; }
 @media (max-width:380px){
   .icn.icon--solar{ width:16px; height:16px; }
   .icn-sm.icon--solar{ width:13px; height:13px; }
