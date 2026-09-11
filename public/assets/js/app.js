@@ -2,36 +2,36 @@
 // ═══ ICONS (used for dynamically-injected UI) ═══════════════════
 // ══════════════════════════════════════════════════════════════
 const ICON = {
-  spin: '<svg class="icn icn-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3.6a8.4 8.4 0 1 0 8.4 8.4"/></svg>',
-  arrowLeft: '<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M11 6.2 5 12l6 5.8"/></svg>',
-  check: '<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.8l4.3 4.3L19 7.5"/></svg>',
-  send: '<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2.5l-9.3 19-3-8.1-8.2-3.1z"/><path d="M12.2 13.5l4-6.8"/></svg>',
-  lock: '<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10.5" width="14" height="9" rx="2.2"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></svg>',
-  eye: '<svg class="icn icn-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12S6 5.8 12 5.8 21.5 12 21.5 12 18 18.2 12 18.2 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.9"/></svg>',
-  eyeOff: '<svg class="icn icn-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 3.5l17 17"/><path d="M10.6 5.7A10.9 10.9 0 0 1 12 5.6c6 0 9.5 6.4 9.5 6.4a15.7 15.7 0 0 1-3.4 4.2M6.5 6.6C3.9 8.4 2.5 12 2.5 12s3.5 6.4 9.5 6.4c1.3 0 2.5-.3 3.6-.7"/><path d="M9.9 10a3 3 0 0 0 4.1 4.1"/></svg>',
-  sun: '<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.1"/><path d="M12 2.6v2.3M12 19.1v2.3M4.7 4.7l1.6 1.6M17.7 17.7l1.6 1.6M2.6 12h2.3M19.1 12h2.3M4.7 19.3l1.6-1.6M17.7 6.3l1.6-1.6"/></svg>',
-  moon: '<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.3A8.4 8.4 0 1 1 9.7 4a7 7 0 0 0 10.3 10.3z"/></svg>',
-  swap: '<svg class="icn icn-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h13.5l-3-3.2"/><path d="M20 16H6.5l3 3.2"/></svg>',
-  coins: '<svg class="icn icn-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9.3" cy="10" r="5.3"/><path d="M13.2 8a5.3 5.3 0 1 1 0 8.3"/></svg>',
-  checkDouble: '<svg class="icn icn-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.3 12.5l3.8 3.8L14.5 7.8"/><path d="M9 12.5l3.8 3.8 8.5-8.5"/></svg>',
-  phone: '<svg class="icn icn-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6.6 3.6h3l1.4 4-1.9 1.6a12.2 12.2 0 0 0 5.3 5.3l1.6-1.9 4 1.4v3a1.5 1.5 0 0 1-1.6 1.5A16.7 16.7 0 0 1 4.6 5.2a1.5 1.5 0 0 1 2-1.6z"/></svg>',
-  clock: '<svg class="icn icn-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.3"/><path d="M12 7.6V12l3.1 1.9"/></svg>',
-  message: '<svg class="icn icn-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="11" rx="3"/><circle cx="9" cy="10.5" r=".9" fill="currentColor" stroke="none"/><circle cx="12" cy="10.5" r=".9" fill="currentColor" stroke="none"/><circle cx="15" cy="10.5" r=".9" fill="currentColor" stroke="none"/></svg>',
-  warn: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.6 21.5 20H2.5z"/><path d="M12 9.8v4.6"/><circle cx="12" cy="17.3" r=".2" fill="currentColor"/></svg>',
-  cross: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg>',
-  info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.3"/><path d="M12 11v5.2"/><circle cx="12" cy="8" r=".2" fill="currentColor"/></svg>',
-  wifiOff: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8.8a15.8 15.8 0 0 1 5-3.1M22 8.8a15.8 15.8 0 0 0-7.6-4.1M6.5 12.3a9.8 9.8 0 0 1 4-2M17.5 12.3a9.8 9.8 0 0 0-2.6-1.7M9.7 15.8a5.6 5.6 0 0 1 4.6 0M12 19.3v.1M2 2l20 20"/></svg>',
-  telegram: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2.5l-9.3 19-3-8.1-8.2-3.1z"/><path d="M12.2 13.5l4-6.8"/></svg>',
+  spin: '<span class="icn icn-spin icon--solar icon--solar--refresh-linear" aria-hidden="true"></span>',
+  arrowLeft: '<span class="icn icon--solar icon--solar--arrow-left-linear" aria-hidden="true"></span>',
+  check: '<span class="icn icon--solar icon--solar--check-circle-linear" aria-hidden="true"></span>',
+  send: '<span class="icn icon--solar icon--solar--plain-2-linear" aria-hidden="true"></span>',
+  lock: '<span class="icn icon--solar icon--solar--lock-linear" aria-hidden="true"></span>',
+  eye: '<span class="icn icn-sm icon--solar icon--solar--eye-linear" aria-hidden="true"></span>',
+  eyeOff: '<span class="icn icn-sm icon--solar icon--solar--eye-closed-linear" aria-hidden="true"></span>',
+  sun: '<span class="icn icon--solar icon--solar--sun-linear" aria-hidden="true"></span>',
+  moon: '<span class="icn icon--solar icon--solar--moon-linear" aria-hidden="true"></span>',
+  swap: '<span class="icn icn-sm icon--solar icon--solar--transfer-horizontal-linear" aria-hidden="true"></span>',
+  coins: '<span class="icn icn-sm icon--solar icon--solar--banknote-2-linear" aria-hidden="true"></span>',
+  checkDouble: '<span class="icn icn-sm icon--solar icon--solar--check-read-linear" aria-hidden="true"></span>',
+  phone: '<span class="icn icn-sm icon--solar icon--solar--phone-linear" aria-hidden="true"></span>',
+  clock: '<span class="icn icn-sm icon--solar icon--solar--clock-circle-linear" aria-hidden="true"></span>',
+  message: '<span class="icn icn-sm icon--solar icon--solar--chat-round-dots-linear" aria-hidden="true"></span>',
+  warn: '<span class="icon--solar icon--solar--danger-triangle-linear" aria-hidden="true"></span>',
+  cross: '<span class="icon--solar icon--solar--close-circle-linear" aria-hidden="true"></span>',
+  info: '<span class="icon--solar icon--solar--info-circle-linear" aria-hidden="true"></span>',
+  wifiOff: '<span class="icon--solar icon--solar--wi-fi-router-minimalistic-linear" aria-hidden="true"></span>',
+  telegram: '<span class="icon--solar icon--solar--plain-2-linear" aria-hidden="true"></span>',
   whatsapp: '<svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2.2a9.8 9.8 0 0 0-8.4 14.8L2.2 21.8l4.9-1.3A9.8 9.8 0 1 0 12 2.2zm0 1.8a8 8 0 0 1 6.9 12l-.2.4.9 3.1-3.2-.9-.4.2a8 8 0 1 1-4-14.8zm-3.5 4.1c-.2 0-.5 0-.7.3-.2.3-.9.8-.9 2s.9 2.4 1 2.6c.1.2 1.8 2.9 4.5 4 2.2.9 2.7.7 3.2.6.5 0 1.6-.6 1.8-1.2.2-.6.2-1.2.2-1.3-.1-.1-.3-.2-.6-.4-.3-.1-1.6-.8-1.9-.9-.2-.1-.4-.1-.6.1-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-.3-.2-1.2-.5-2.3-1.5-.9-.7-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6l.4-.5c.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5C9.6 9 9 7.7 8.7 7.2c-.2-.5-.4-.4-.6-.5h-.5z"/></svg>',
-  fastpay: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2.5 4.5 14h6l-1 7.5L18.5 10h-6z"/></svg>',
-  fib: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 9.5 12 4l8.5 5.5"/><path d="M5 9.5V19M9 9.5V19M15 9.5V19M19 9.5V19"/><path d="M3.2 19h17.6"/><path d="M3.2 9.5h17.6"/></svg>',
-  qicard: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.7" y="5.5" width="18.6" height="13" rx="2.4"/><path d="M2.7 9.8h18.6"/><path d="M6 14.3h5"/></svg>',
-  asiacell: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5v-2.2"/><path d="M8 20.5a5.7 5.7 0 0 1 8 0"/><path d="M4.8 17.3a10.2 10.2 0 0 1 14.4 0"/><path d="M2 14a14.2 14.2 0 0 1 20 0"/></svg>',
-  korek: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1.1" fill="currentColor" stroke="none"/><path d="M8.3 15.7a5.2 5.2 0 0 1 7.4 0"/><path d="M5.4 12.8a9.3 9.3 0 0 1 13.2 0"/><path d="M2.6 10a13.4 13.4 0 0 1 18.8 0"/></svg>',
-  usdt: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.2"/><path d="M8 8.3h8M12 8.3v3M9.3 12.6c0 1.2 1.2 2 2.7 2s2.7-.8 2.7-1.9c0-1-1-1.5-2.7-1.7-1.7-.2-2.7-.7-2.7-1.7 0-1 1.2-1.8 2.7-1.8s2.5.6 2.6 1.5"/><path d="M12 14.6v3.1"/></svg>',
-  receive: '<svg class="icn icn-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.2v10.8"/><path d="M7.3 9.8 12 14.5l4.7-4.7"/><path d="M4 18.3h16"/></svg>',
-  image: '<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2.5"/><circle cx="8.5" cy="9.5" r="1.5"/><path d="M21 15.5l-5.5-5.5L5 20"/></svg>',
-  banknote: '<svg class="icn icn-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.3" y="6.3" width="19.4" height="11.4" rx="2.2"/><circle cx="12" cy="12" r="2.5"/><path d="M5.3 9.3h.01M18.7 14.7h.01"/></svg>'
+  fastpay: '<span class="icon--solar icon--solar--bolt-linear" aria-hidden="true"></span>',
+  fib: '<span class="icon--solar icon--solar--buildings-2-linear" aria-hidden="true"></span>',
+  qicard: '<span class="icon--solar icon--solar--card-linear" aria-hidden="true"></span>',
+  asiacell: '<span class="icon--solar icon--solar--wi-fi-router-round-linear" aria-hidden="true"></span>',
+  korek: '<span class="icon--solar icon--solar--wi-fi-router-linear" aria-hidden="true"></span>',
+  usdt: '<span class="icon--solar icon--solar--dollar-linear" aria-hidden="true"></span>',
+  receive: '<span class="icn icn-sm icon--solar icon--solar--download-minimalistic-linear" aria-hidden="true"></span>',
+  image: '<span class="icn icon--solar icon--solar--gallery-linear" aria-hidden="true"></span>',
+  banknote: '<span class="icn icn-sm icon--solar icon--solar--banknote-linear" aria-hidden="true"></span>'
 };
 
 // ══════════════════════════════════════════════════════════════
@@ -173,7 +173,7 @@ function openPicker(which){
       + methodIconHTML(key)
       + '<span class="sheet-option-text"><span class="sheet-option-name">'+escHtml(m.label)+'</span>'
       + (reason?'<span class="sheet-option-sub">'+reason+'</span>':'')+'</span>'
-      + '<span class="sheet-option-check"><svg class="icn icn-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.8l4.3 4.3L19 7.5"/></svg></span>'
+      + '<span class="sheet-option-check"><span class="icn icn-sm icon--solar icon--solar--check-circle-linear" aria-hidden="true"></span></span>'
       + '</button>';
   }).join('');
   openSheet(document.getElementById('pickerSheet'));
@@ -205,7 +205,7 @@ function showToast(message, type='info', title){
       + (title?'<div class="toast-title">'+title+'</div>':'')
       + '<div class="toast-msg">'+message+'</div>'
     + '</span>'
-    + '<button type="button" class="toast-x" aria-label="داخستن"><svg class="icn icn-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>';
+    + '<button type="button" class="toast-x" aria-label="داخستن"><span class="icn icn-sm icon--solar icon--solar--close-circle-linear" aria-hidden="true"></span></button>';
   const remove=()=>{ el.classList.add('leaving'); setTimeout(()=>el.remove(),220); };
   el.querySelector('.toast-x').onclick=remove;
   container.appendChild(el);
@@ -2017,21 +2017,21 @@ function toggleReceipt(id){
 // ══════════════════════════════════════════════════════════════
 Object.assign(ICON, {
   // Notification icons — clean, well-formed 24px outline SVGs
-  badgeCheck:'<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/></svg>',
-  xCircle:'<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>',
-  refresh:'<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>',
-  megaphone:'<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>',
-  bellOff:'<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8.7 3A6 6 0 0 1 18 8a21.3 21.3 0 0 0 .6 5"/><path d="M17 17H3s3-2 3-9a4.67 4.67 0 0 1 .3-1.7"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/><path d="m2 2 20 20"/></svg>',
-  copy:'<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>',
-  trendUp:'<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>',
-  trendDown:'<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/></svg>',
-  lockClosed:'<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>',
-  lockOpen:'<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>',
-  sparkles:'<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M18 16.5 18.7 18.3 20.5 19 18.7 19.7 18 21.5 17.3 19.7 15.5 19 17.3 18.3z"/></svg>',
+  badgeCheck:'<span class="icn icon--solar icon--solar--verified-check-linear" aria-hidden="true"></span>',
+  xCircle:'<span class="icn icon--solar icon--solar--close-circle-linear" aria-hidden="true"></span>',
+  refresh:'<span class="icn icon--solar icon--solar--refresh-linear" aria-hidden="true"></span>',
+  megaphone:'<span class="icn icon--solar icon--solar--megaphone-linear" aria-hidden="true"></span>',
+  bellOff:'<span class="icn icon--solar icon--solar--bell-off-linear" aria-hidden="true"></span>',
+  copy:'<span class="icn icon--solar icon--solar--copy-linear" aria-hidden="true"></span>',
+  trendUp:'<span class="icn icon--solar icon--solar--graph-up-linear" aria-hidden="true"></span>',
+  trendDown:'<span class="icn icon--solar icon--solar--graph-down-linear" aria-hidden="true"></span>',
+  lockClosed:'<span class="icn icon--solar icon--solar--lock-linear" aria-hidden="true"></span>',
+  lockOpen:'<span class="icn icon--solar icon--solar--lock-unlocked-linear" aria-hidden="true"></span>',
+  sparkles:'<span class="icn icon--solar icon--solar--magic-stick-3-linear" aria-hidden="true"></span>',
   equals:'<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 9h14M5 15h14"/></svg>',
-  arrowLeftLong:'<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m11 6-6 6 6 6"/></svg>',
-  user:'<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
-  sliders:'<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="4" y1="21" y2="14"/><line x1="4" x2="4" y1="10" y2="3"/><line x1="12" x2="12" y1="21" y2="12"/><line x1="12" x2="12" y1="8" y2="3"/><line x1="20" x2="20" y1="21" y2="16"/><line x1="20" x2="20" y1="12" y2="3"/><line x1="2" x2="6" y1="14" y2="14"/><line x1="10" x2="14" y1="8" y2="8"/><line x1="18" x2="22" y1="16" y2="16"/></svg>'
+  arrowLeftLong:'<span class="icn icon--solar icon--solar--arrow-left-linear" aria-hidden="true"></span>',
+  user:'<span class="icn icon--solar icon--solar--user-rounded-linear" aria-hidden="true"></span>',
+  sliders:'<span class="icn icon--solar icon--solar--tuning-2-linear" aria-hidden="true"></span>'
 });
 
 // ══════════════════════════════════════════════════════════════
@@ -2753,11 +2753,11 @@ function renderPublicFeed(rows){
   el.innerHTML = rows.map(function(r){
     return '<div class="feed-row">'
       + '<span class="feed-id">'
-        + '<svg class="icn" style="width:12px;height:12px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/></svg>'
+        + '<span class="icn icon--solar icon--solar--verified-check-linear" style="width:12px;height:12px" aria-hidden="true"></span>'
         + escHtml(r.id||'') + '</span>'
       + '<span class="feed-route">'
         + methodIconHTML(r.from,'sz-xs') + escHtml(methodLabel(r.from))
-        + '<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="m11 6-6 6 6 6"/></svg>'
+        + '<span class="icn icon--solar icon--solar--arrow-left-linear" aria-hidden="true"></span>'
         + methodIconHTML(r.to,'sz-xs') + escHtml(methodLabel(r.to))
       + '</span>'
       + '<span class="feed-meta">'
