@@ -2020,7 +2020,7 @@ Object.assign(ICON, {
   badgeCheck:'<span class="icn icon--solar icon--solar--verified-check-linear" aria-hidden="true"></span>',
   xCircle:'<span class="icn icon--solar icon--solar--close-circle-linear" aria-hidden="true"></span>',
   refresh:'<span class="icn icon--solar icon--solar--refresh-linear" aria-hidden="true"></span>',
-  megaphone:'<span class="icn icon--solar icon--solar--megaphone-linear" aria-hidden="true"></span>',
+  megaphone:'<span class="icn icon--solar icon--solar--bell-linear" aria-hidden="true"></span>',
   bellOff:'<span class="icn icon--solar icon--solar--bell-off-linear" aria-hidden="true"></span>',
   copy:'<span class="icn icon--solar icon--solar--copy-linear" aria-hidden="true"></span>',
   trendUp:'<span class="icn icon--solar icon--solar--graph-up-linear" aria-hidden="true"></span>',
