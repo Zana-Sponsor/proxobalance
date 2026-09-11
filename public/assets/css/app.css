@@ -314,7 +314,8 @@ input[type="file"].input::file-selector-button:hover{ background:var(--border-st
   text-align:center; max-width:340px; width:100%; box-shadow:var(--shadow-lg); animation:popUp .35s var(--ease);
 }
 .modal-ico-wrap{ width:76px; height:76px; background:rgba(58,178,234,.12); border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; margin:0 auto 18px; color:var(--tg); }
-.modal-ico-wrap svg{ width:34px; height:34px; }
+.modal-ico-wrap svg,
+.modal-ico-wrap .icon--solar{ width:34px; height:34px; }
 .modal-card h2{ font-size:var(--fs-xl); font-weight:var(--fw-bold); margin-bottom:8px; }
 .modal-card p{ font-size:var(--fs-sm); color:var(--text-muted); line-height:1.6; margin-bottom:22px; }
 
@@ -353,7 +354,8 @@ input[type="file"].input::file-selector-button:hover{ background:var(--border-st
 }
 .brand-badge:hover{ transform:translateY(-2px); box-shadow:var(--shadow-md); }
 .brand-badge:active{ transform:translateY(0) scale(.96); }
-.brand-badge svg{ width:19px; height:19px; }
+.brand-badge svg,
+.brand-badge .icon--solar{ width:19px; height:19px; }
 .brand-badge.tg{ background:linear-gradient(135deg,#37b3f5,#1c8fd1); }
 .brand-badge.wa{ background:linear-gradient(135deg,#2fd669,#1fa855); }
 
@@ -376,7 +378,8 @@ input[type="file"].input::file-selector-button:hover{ background:var(--border-st
 .notif-bar.order_approved{ border-inline-start-color:var(--success); }
 .notif-bar.order_rejected{ border-inline-start-color:var(--error); }
 .notif-bar-ico{ width:30px; height:30px; border-radius:9px; flex-shrink:0; display:flex; align-items:center; justify-content:center; color:#fff; }
-.notif-bar-ico svg{ width:16px; height:16px; }
+.notif-bar-ico svg,
+.notif-bar-ico .icon--solar{ width:16px; height:16px; }
 .notif-bar-text{ flex:1; min-width:0; }
 .notif-bar-title{ font-size:var(--fs-sm); font-weight:var(--fw-semibold); color:var(--text); }
 .notif-bar-msg{ font-size:var(--fs-xs); color:var(--text-muted); margin-top:2px; line-height:1.5; }
@@ -397,7 +400,8 @@ input[type="file"].input::file-selector-button:hover{ background:var(--border-st
 .notif-item:hover{ background:var(--surface-hover); }
 .notif-item.unread{ background:var(--secondary-soft); }
 .notif-item-ico{ width:28px; height:28px; border-radius:8px; flex-shrink:0; display:flex; align-items:center; justify-content:center; color:#fff; }
-.notif-item-ico svg{ width:14px; height:14px; }
+.notif-item-ico svg,
+.notif-item-ico .icon--solar{ width:14px; height:14px; }
 .notif-item-text{ flex:1; min-width:0; }
 .notif-item-title{ display:block; font-size:var(--fs-xs); font-weight:var(--fw-semibold); color:var(--text); }
 .notif-item-msg{ display:block; font-size:var(--fs-2xs); color:var(--text-muted); margin-top:2px; line-height:1.5; }
@@ -431,7 +435,8 @@ input[type="file"].input::file-selector-button:hover{ background:var(--border-st
 .detail-item:last-child{ margin-bottom:0; }
 .detail-item b{ color:var(--text); font-weight:var(--fw-semibold); font-variant-numeric:tabular-nums; }
 .detail-ico{ width:26px; height:26px; border-radius:8px; background:var(--surface-2); color:var(--primary); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-.detail-ico svg{ width:16px; height:16px; }
+.detail-ico svg,
+.detail-ico .icon--solar{ width:16px; height:16px; }
 .empty-state{ text-align:center; color:var(--text-faint); font-size:var(--fs-sm); padding:28px 10px; }
 .order-card.has-receipt{ cursor:pointer; transition:border-color .15s var(--ease); }
 .order-card.has-receipt:active{ transform:scale(.995); }
@@ -505,7 +510,8 @@ input[type="file"].input::file-selector-button:hover{ background:var(--border-st
   background:var(--error-soft); border-radius:var(--radius-sm); padding:6px 12px; width:fit-content; max-width:100%;
 }
 .field-error.show{ display:flex; }
-.field-error svg{ width:14px; height:14px; flex-shrink:0; }
+.field-error svg,
+.field-error .icon--solar{ width:14px; height:14px; flex-shrink:0; }
 .input.has-error, .picker-trigger.has-error{ border-color:var(--error) !important; box-shadow:0 0 0 4px var(--error-soft) !important; }
 
 /* ══════════════════════════════════════════════════════════════
@@ -551,11 +557,13 @@ input[type="file"].input::file-selector-button:hover{ background:var(--border-st
   display:flex; align-items:center; justify-content:center; color:#fff;
   box-shadow:var(--shadow-sm); overflow:hidden;
 }
-.method-icon svg{ width:19px; height:19px; }
+.method-icon svg,
+.method-icon .icon--solar{ width:19px; height:19px; }
 .method-icon img{ width:100%; height:100%; object-fit:cover; display:block; }
 .method-icon.has-img{ box-shadow:var(--shadow-sm), inset 0 0 0 1px rgba(0,0,0,.06); }
 .method-icon.sz-sm{ width:28px; height:28px; border-radius:8px; }
-.method-icon.sz-sm svg{ width:15px; height:15px; }
+.method-icon.sz-sm svg,
+.method-icon.sz-sm .icon--solar{ width:15px; height:15px; }
 
 /* ══════════════════════════════════════════════════════════════
    SHEETS (bottom-sheet on mobile / centered popover on desktop)
@@ -633,7 +641,8 @@ input[type="file"].input::file-selector-button:hover{ background:var(--border-st
 @keyframes toastIn{ from{ opacity:0; transform:translateY(-14px) scale(.97); } to{ opacity:1; transform:translateY(0) scale(1); } }
 @keyframes toastOut{ to{ opacity:0; transform:translateY(-10px) scale(.97); } }
 .toast-ico{ width:24px; height:24px; border-radius:var(--radius-full); flex-shrink:0; display:flex; align-items:center; justify-content:center; color:#fff; margin-top:1px; }
-.toast-ico svg{ width:14px; height:14px; }
+.toast-ico svg,
+.toast-ico .icon--solar{ width:14px; height:14px; }
 .toast-text{ flex:1; min-width:0; }
 .toast-title{ font-size:var(--fs-sm); font-weight:var(--fw-semibold); color:var(--text); }
 .toast-msg{ font-size:var(--fs-xs); color:var(--text-muted); margin-top:2px; line-height:1.5; }
@@ -696,7 +705,8 @@ input[type="file"].input::file-selector-button:hover{ background:var(--border-st
   width:27px; height:27px; border-radius:9px; display:flex; align-items:center; justify-content:center;
   background:linear-gradient(135deg, var(--primary), var(--secondary)); color:var(--on-primary); box-shadow:var(--shadow-sm);
 }
-.tb-mark svg{ width:15px; height:15px; }
+.tb-mark svg,
+.tb-mark .icon--solar{ width:15px; height:15px; }
 
 /* ── home greeting ─────────────────────────────────────────── */
 .home-greet{ display:flex; align-items:center; gap:12px; margin:0 2px var(--space-5); }
@@ -814,7 +824,8 @@ body.has-nav{ padding-bottom:calc(84px + env(safe-area-inset-bottom, 0px)); }
   font-family:'Inter','Segoe UI',monospace; transition:background var(--t), transform var(--t);
 }
 .order-code:active{ transform:scale(.97); }
-.order-code svg{ width:13px; height:13px; opacity:.75; }
+.order-code svg,
+.order-code .icon--solar{ width:13px; height:13px; opacity:.75; }
 
 /* ══════════════════════════════════════════════════════════════
    CHANGE LOG PAGE
@@ -964,7 +975,8 @@ body.has-nav{ padding-bottom:calc(84px + env(safe-area-inset-bottom, 0px)); }
 .notif-item.unread.msg::before{ background:var(--secondary); }
 
 .notif-item-ico{ width:36px; height:36px; border-radius:11px; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
-.notif-item-ico svg{ width:17px; height:17px; }
+.notif-item-ico svg,
+.notif-item-ico .icon--solar{ width:17px; height:17px; }
 .notif-item-ico.ok{ background:var(--success-soft); color:var(--success); }
 .notif-item-ico.no{ background:var(--error-soft); color:var(--error); }
 .notif-item-ico.upd{ background:var(--info-soft); color:var(--info); }
@@ -1009,7 +1021,8 @@ body.has-nav{ padding-bottom:calc(84px + env(safe-area-inset-bottom, 0px)); }
    RATE BOARD + CHANGE LOG  (/changes)
    ══════════════════════════════════════════════════════════════ */
 .method-icon.sz-xs{ width:22px; height:22px; border-radius:7px; }
-.method-icon.sz-xs svg{ width:12px; height:12px; }
+.method-icon.sz-xs svg,
+.method-icon.sz-xs .icon--solar{ width:12px; height:12px; }
 
 .rates-now{ display:flex; flex-direction:column; gap:9px; margin-bottom:6px; }
 .rate-card{
@@ -1094,7 +1107,8 @@ body.has-nav{ padding-bottom:calc(84px + env(safe-area-inset-bottom, 0px)); }
   background:none; box-shadow:none; padding:0; overflow:hidden; flex-shrink:0;
 }
 .hdr-mark img{ width:100%; height:100%; object-fit:contain; display:block; }
-.hdr-mark svg{ width:18px; height:18px; }
+.hdr-mark svg,
+.hdr-mark .icon--solar{ width:18px; height:18px; }
 .hdr-word{ display:flex; flex-direction:column; line-height:1.15; }
 .hdr-word b{ font-size:var(--fs-sm); font-weight:var(--fw-bold); letter-spacing:.2px; }
 .hdr-word span{ font-size:9.5px; color:var(--text-faint); letter-spacing:.4px; }
@@ -1356,7 +1370,8 @@ html{
 body{ max-width:100%; overflow-x:clip; }
 .app-wrapper, .site-header, .page, .panel, .xc-group, .feed-wrap{ max-width:100%; min-width:0; }
 .site-header-inner, .bottom-nav-inner{ max-width:100%; }
-img, svg, table, pre{ max-width:100%; }
+img, svg, table, pre,
+.icon--solar{ max-width:100%; }
 
 /* ══════════════════════════════════════════════════════════════
    2 — SPACING / OVERLAP FIXES INSIDE THE EXCHANGE CARD
@@ -1505,7 +1520,8 @@ body{
 }
 button, a, input, label[for]{ -webkit-tap-highlight-color:transparent; }
 button, .picker-trigger, .sheet-option, .file-picker, .bn-item, .pf-menu-item{ touch-action:manipulation; }
-.icn, svg.icn{ shape-rendering:geometricPrecision; }
+.icn, svg.icn,
+.icon--solar.icn{ shape-rendering:geometricPrecision; }
 
 /* one visual language across every page */
 .panel, .auth-card, .page-head, .pf-card, .pf-menu, .pf-hero,
@@ -2475,7 +2491,8 @@ h1,h2,h3,.section-title{ letter-spacing:-.015em; line-height:1.3; }
   box-shadow:0 3px 10px rgba(0,0,0,.08);
 }
 .feed-route .method-icon svg,
-.feed-route .method-icon .icn{
+.feed-route .method-icon .icn,
+.feed-route .method-icon .icon--solar{
   width:22px;
   height:22px;
 }
@@ -2708,7 +2725,8 @@ h1,h2,h3,.section-title{ letter-spacing:-.015em; line-height:1.3; }
   box-shadow:none;
 }
 .feed-route .method-icon svg,
-.feed-route .method-icon .icn{
+.feed-route .method-icon .icn,
+.feed-route .method-icon .icon--solar{
   width:21px;
   height:21px;
 }
@@ -2974,4 +2992,27 @@ h1,h2,h3,.section-title{ letter-spacing:-.015em; line-height:1.3; }
 @media (max-width:520px){
   .support-correction-card{ max-height:94vh; padding:18px 15px; }
   .support-correction-grid{ grid-template-columns:1fr; gap:0; }
+}
+
+
+/* ═══════════════ Solar icons (api.iconify.design) ═══════════════
+   Icons render as CSS mask images tinted with currentColor, so every
+   existing `.icn` width/height/color rule keeps working unchanged. */
+.icon--solar{
+  display:inline-block; vertical-align:middle; flex-shrink:0;
+  background-color:currentColor;
+  /* Fallback shape: shown only if an icon name is missing from the
+     stylesheet, so a typo never renders as a solid block. */
+  --svg:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='9' fill='none' stroke='black' stroke-width='1.4'/%3E%3C/svg%3E");
+}
+/* px sizes from .icn must beat the .icon--solar.icon--solar--x defaults */
+.icn.icon--solar{ width:20px; height:20px; }
+.icn-sm.icon--solar{ width:16px; height:16px; }
+.icn-lg.icon--solar{ width:28px; height:28px; }
+.icn-xl.icon--solar{ width:34px; height:34px; }
+/* icons injected by JS into an already-sized .icn wrapper */
+.icn > .icon--solar{ width:100%; height:100%; display:block; }
+@media (max-width:380px){
+  .icn.icon--solar{ width:16px; height:16px; }
+  .icn-sm.icon--solar{ width:13px; height:13px; }
 }
