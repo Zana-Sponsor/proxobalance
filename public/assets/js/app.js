@@ -2,36 +2,36 @@
 // ═══ ICONS (used for dynamically-injected UI) ═══════════════════
 // ══════════════════════════════════════════════════════════════
 const ICON = {
-  spin: '<span class="icn icn-spin icon--solar icon--solar--refresh-linear" aria-hidden="true"></span>',
-  arrowLeft: '<span class="icn icon--solar icon--solar--arrow-left-linear" aria-hidden="true"></span>',
-  check: '<span class="icn icon--solar icon--solar--check-circle-linear" aria-hidden="true"></span>',
-  send: '<span class="icn icon--solar icon--solar--plain-2-linear" aria-hidden="true"></span>',
-  lock: '<span class="icn icon--solar icon--solar--lock-linear" aria-hidden="true"></span>',
-  eye: '<span class="icn icn-sm icon--solar icon--solar--eye-linear" aria-hidden="true"></span>',
-  eyeOff: '<span class="icn icn-sm icon--solar icon--solar--eye-closed-linear" aria-hidden="true"></span>',
-  sun: '<span class="icn icon--solar icon--solar--sun-linear" aria-hidden="true"></span>',
-  moon: '<span class="icn icon--solar icon--solar--moon-linear" aria-hidden="true"></span>',
-  swap: '<span class="icn icn-sm icon--solar icon--solar--transfer-horizontal-linear" aria-hidden="true"></span>',
-  coins: '<span class="icn icn-sm icon--solar icon--solar--banknote-2-linear" aria-hidden="true"></span>',
-  checkDouble: '<span class="icn icn-sm icon--solar icon--solar--check-read-linear" aria-hidden="true"></span>',
-  phone: '<span class="icn icn-sm icon--solar icon--solar--phone-linear" aria-hidden="true"></span>',
-  clock: '<span class="icn icn-sm icon--solar icon--solar--clock-circle-linear" aria-hidden="true"></span>',
-  message: '<span class="icn icn-sm icon--solar icon--solar--chat-round-dots-linear" aria-hidden="true"></span>',
-  warn: '<span class="icon--solar icon--solar--danger-triangle-linear" aria-hidden="true"></span>',
-  cross: '<span class="icon--solar icon--solar--close-circle-linear" aria-hidden="true"></span>',
-  info: '<span class="icon--solar icon--solar--info-circle-linear" aria-hidden="true"></span>',
-  wifiOff: '<span class="icon--solar icon--solar--wi-fi-router-minimalistic-linear" aria-hidden="true"></span>',
-  telegram: '<span class="icon--solar icon--solar--plain-2-linear" aria-hidden="true"></span>',
+  spin: '<i class="icn icn-spin solar-icons" stroke="1.5" icon-name="refresh" aria-hidden="true"></i>',
+  arrowLeft: '<i class="icn solar-icons" stroke="1.5" icon-name="arrow-left" aria-hidden="true"></i>',
+  check: '<i class="icn solar-icons" stroke="1.5" icon-name="check-circle" aria-hidden="true"></i>',
+  send: '<i class="icn solar-icons" stroke="1.5" icon-name="plain-2" aria-hidden="true"></i>',
+  lock: '<i class="icn solar-icons" stroke="1.5" icon-name="lock" aria-hidden="true"></i>',
+  eye: '<i class="icn icn-sm solar-icons" stroke="1.5" icon-name="eye" aria-hidden="true"></i>',
+  eyeOff: '<i class="icn icn-sm solar-icons" stroke="1.5" icon-name="eye-closed" aria-hidden="true"></i>',
+  sun: '<i class="icn solar-icons" stroke="1.5" icon-name="sun" aria-hidden="true"></i>',
+  moon: '<i class="icn solar-icons" stroke="1.5" icon-name="moon" aria-hidden="true"></i>',
+  swap: '<i class="icn icn-sm solar-icons" stroke="1.5" icon-name="transfer-horizontal" aria-hidden="true"></i>',
+  coins: '<i class="icn icn-sm solar-icons" stroke="1.5" icon-name="banknote-2" aria-hidden="true"></i>',
+  checkDouble: '<i class="icn icn-sm solar-icons" stroke="1.5" icon-name="check-read" aria-hidden="true"></i>',
+  phone: '<i class="icn icn-sm solar-icons" stroke="1.5" icon-name="phone" aria-hidden="true"></i>',
+  clock: '<i class="icn icn-sm solar-icons" stroke="1.5" icon-name="clock-circle" aria-hidden="true"></i>',
+  message: '<i class="icn icn-sm solar-icons" stroke="1.5" icon-name="chat-round-dots" aria-hidden="true"></i>',
+  warn: '<i class="solar-icons" stroke="1.5" icon-name="danger-triangle" aria-hidden="true"></i>',
+  cross: '<i class="solar-icons" stroke="1.5" icon-name="close-circle" aria-hidden="true"></i>',
+  info: '<i class="solar-icons" stroke="1.5" icon-name="info-circle" aria-hidden="true"></i>',
+  wifiOff: '<i class="solar-icons" stroke="1.5" icon-name="wi-fi-router-minimalistic" aria-hidden="true"></i>',
+  telegram: '<i class="solar-icons" stroke="1.5" icon-name="plain-2" aria-hidden="true"></i>',
   whatsapp: '<svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2.2a9.8 9.8 0 0 0-8.4 14.8L2.2 21.8l4.9-1.3A9.8 9.8 0 1 0 12 2.2zm0 1.8a8 8 0 0 1 6.9 12l-.2.4.9 3.1-3.2-.9-.4.2a8 8 0 1 1-4-14.8zm-3.5 4.1c-.2 0-.5 0-.7.3-.2.3-.9.8-.9 2s.9 2.4 1 2.6c.1.2 1.8 2.9 4.5 4 2.2.9 2.7.7 3.2.6.5 0 1.6-.6 1.8-1.2.2-.6.2-1.2.2-1.3-.1-.1-.3-.2-.6-.4-.3-.1-1.6-.8-1.9-.9-.2-.1-.4-.1-.6.1-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-.3-.2-1.2-.5-2.3-1.5-.9-.7-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6l.4-.5c.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5C9.6 9 9 7.7 8.7 7.2c-.2-.5-.4-.4-.6-.5h-.5z"/></svg>',
-  fastpay: '<span class="icon--solar icon--solar--bolt-linear" aria-hidden="true"></span>',
-  fib: '<span class="icon--solar icon--solar--buildings-2-linear" aria-hidden="true"></span>',
-  qicard: '<span class="icon--solar icon--solar--card-linear" aria-hidden="true"></span>',
-  asiacell: '<span class="icon--solar icon--solar--wi-fi-router-round-linear" aria-hidden="true"></span>',
-  korek: '<span class="icon--solar icon--solar--wi-fi-router-linear" aria-hidden="true"></span>',
-  usdt: '<span class="icon--solar icon--solar--dollar-linear" aria-hidden="true"></span>',
-  receive: '<span class="icn icn-sm icon--solar icon--solar--download-minimalistic-linear" aria-hidden="true"></span>',
-  image: '<span class="icn icon--solar icon--solar--gallery-linear" aria-hidden="true"></span>',
-  banknote: '<span class="icn icn-sm icon--solar icon--solar--banknote-linear" aria-hidden="true"></span>'
+  fastpay: '<i class="solar-icons" stroke="1.5" icon-name="bolt" aria-hidden="true"></i>',
+  fib: '<i class="solar-icons" stroke="1.5" icon-name="buildings-2" aria-hidden="true"></i>',
+  qicard: '<i class="solar-icons" stroke="1.5" icon-name="card" aria-hidden="true"></i>',
+  asiacell: '<i class="solar-icons" stroke="1.5" icon-name="wi-fi-router-round" aria-hidden="true"></i>',
+  korek: '<i class="solar-icons" stroke="1.5" icon-name="wi-fi-router" aria-hidden="true"></i>',
+  usdt: '<i class="solar-icons" stroke="1.5" icon-name="dollar" aria-hidden="true"></i>',
+  receive: '<i class="icn icn-sm solar-icons" stroke="1.5" icon-name="download-minimalistic" aria-hidden="true"></i>',
+  image: '<i class="icn solar-icons" stroke="1.5" icon-name="gallery" aria-hidden="true"></i>',
+  banknote: '<i class="icn icn-sm solar-icons" stroke="1.5" icon-name="banknote" aria-hidden="true"></i>'
 };
 
 // ══════════════════════════════════════════════════════════════
@@ -173,7 +173,7 @@ function openPicker(which){
       + methodIconHTML(key)
       + '<span class="sheet-option-text"><span class="sheet-option-name">'+escHtml(m.label)+'</span>'
       + (reason?'<span class="sheet-option-sub">'+reason+'</span>':'')+'</span>'
-      + '<span class="sheet-option-check"><span class="icn icn-sm icon--solar icon--solar--check-circle-linear" aria-hidden="true"></span></span>'
+      + '<span class="sheet-option-check"><i class="icn icn-sm solar-icons" stroke="1.5" icon-name="check-circle" aria-hidden="true"></i></span>'
       + '</button>';
   }).join('');
   openSheet(document.getElementById('pickerSheet'));
@@ -205,7 +205,7 @@ function showToast(message, type='info', title){
       + (title?'<div class="toast-title">'+title+'</div>':'')
       + '<div class="toast-msg">'+message+'</div>'
     + '</span>'
-    + '<button type="button" class="toast-x" aria-label="داخستن"><span class="icn icn-sm icon--solar icon--solar--close-circle-linear" aria-hidden="true"></span></button>';
+    + '<button type="button" class="toast-x" aria-label="داخستن"><i class="icn icn-sm solar-icons" stroke="1.5" icon-name="close-circle" aria-hidden="true"></i></button>';
   const remove=()=>{ el.classList.add('leaving'); setTimeout(()=>el.remove(),220); };
   el.querySelector('.toast-x').onclick=remove;
   container.appendChild(el);
@@ -2017,21 +2017,21 @@ function toggleReceipt(id){
 // ══════════════════════════════════════════════════════════════
 Object.assign(ICON, {
   // Notification icons — clean, well-formed 24px outline SVGs
-  badgeCheck:'<span class="icn icon--solar icon--solar--verified-check-linear" aria-hidden="true"></span>',
-  xCircle:'<span class="icn icon--solar icon--solar--close-circle-linear" aria-hidden="true"></span>',
-  refresh:'<span class="icn icon--solar icon--solar--refresh-linear" aria-hidden="true"></span>',
-  megaphone:'<span class="icn icon--solar icon--solar--megaphone-linear" aria-hidden="true"></span>',
-  bellOff:'<span class="icn icon--solar icon--solar--bell-off-linear" aria-hidden="true"></span>',
-  copy:'<span class="icn icon--solar icon--solar--copy-linear" aria-hidden="true"></span>',
-  trendUp:'<span class="icn icon--solar icon--solar--graph-up-linear" aria-hidden="true"></span>',
-  trendDown:'<span class="icn icon--solar icon--solar--graph-down-linear" aria-hidden="true"></span>',
-  lockClosed:'<span class="icn icon--solar icon--solar--lock-linear" aria-hidden="true"></span>',
-  lockOpen:'<span class="icn icon--solar icon--solar--lock-unlocked-linear" aria-hidden="true"></span>',
-  sparkles:'<span class="icn icon--solar icon--solar--magic-stick-3-linear" aria-hidden="true"></span>',
+  badgeCheck:'<i class="icn solar-icons" stroke="1.5" icon-name="verified-check" aria-hidden="true"></i>',
+  xCircle:'<i class="icn solar-icons" stroke="1.5" icon-name="close-circle" aria-hidden="true"></i>',
+  refresh:'<i class="icn solar-icons" stroke="1.5" icon-name="refresh" aria-hidden="true"></i>',
+  megaphone:'<i class="icn solar-icons" stroke="1.5" icon-name="megaphone" aria-hidden="true"></i>',
+  bellOff:'<i class="icn solar-icons" stroke="1.5" icon-name="bell-off" aria-hidden="true"></i>',
+  copy:'<i class="icn solar-icons" stroke="1.5" icon-name="copy" aria-hidden="true"></i>',
+  trendUp:'<i class="icn solar-icons" stroke="1.5" icon-name="graph-up" aria-hidden="true"></i>',
+  trendDown:'<i class="icn solar-icons" stroke="1.5" icon-name="graph-down" aria-hidden="true"></i>',
+  lockClosed:'<i class="icn solar-icons" stroke="1.5" icon-name="lock" aria-hidden="true"></i>',
+  lockOpen:'<i class="icn solar-icons" stroke="1.5" icon-name="lock-unlocked" aria-hidden="true"></i>',
+  sparkles:'<i class="icn solar-icons" stroke="1.5" icon-name="magic-stick-3" aria-hidden="true"></i>',
   equals:'<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 9h14M5 15h14"/></svg>',
-  arrowLeftLong:'<span class="icn icon--solar icon--solar--arrow-left-linear" aria-hidden="true"></span>',
-  user:'<span class="icn icon--solar icon--solar--user-rounded-linear" aria-hidden="true"></span>',
-  sliders:'<span class="icn icon--solar icon--solar--tuning-2-linear" aria-hidden="true"></span>'
+  arrowLeftLong:'<i class="icn solar-icons" stroke="1.5" icon-name="arrow-left" aria-hidden="true"></i>',
+  user:'<i class="icn solar-icons" stroke="1.5" icon-name="user-rounded" aria-hidden="true"></i>',
+  sliders:'<i class="icn solar-icons" stroke="1.5" icon-name="tuning-2" aria-hidden="true"></i>'
 });
 
 // ══════════════════════════════════════════════════════════════
@@ -2753,11 +2753,11 @@ function renderPublicFeed(rows){
   el.innerHTML = rows.map(function(r){
     return '<div class="feed-row">'
       + '<span class="feed-id">'
-        + '<span class="icn icon--solar icon--solar--verified-check-linear" style="width:12px;height:12px" aria-hidden="true"></span>'
+        + '<i class="icn solar-icons" stroke="1.5" icon-name="verified-check" style="width:12px;height:12px" aria-hidden="true"></i>'
         + escHtml(r.id||'') + '</span>'
       + '<span class="feed-route">'
         + methodIconHTML(r.from,'sz-xs') + escHtml(methodLabel(r.from))
-        + '<span class="icn icon--solar icon--solar--arrow-left-linear" aria-hidden="true"></span>'
+        + '<i class="icn solar-icons" stroke="1.5" icon-name="arrow-left" aria-hidden="true"></i>'
         + methodIconHTML(r.to,'sz-xs') + escHtml(methodLabel(r.to))
       + '</span>'
       + '<span class="feed-meta">'
