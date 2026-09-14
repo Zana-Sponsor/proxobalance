@@ -88,10 +88,6 @@ class BestMetricsHomeSectionState extends State<BestMetricsHomeSection> {
 
   @override
   Widget build(BuildContext context) {
-    if (!_loading && _error == null && _ads.isEmpty) {
-      return const SizedBox.shrink();
-    }
-
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Column(
@@ -111,9 +107,11 @@ class BestMetricsHomeSectionState extends State<BestMetricsHomeSection> {
                         key: const ValueKey('error'),
                         onRetry: () => refresh(),
                       )
-                    : Column(
-                        key: const ValueKey('content'),
-                        children: [
+                    : _ads.isEmpty
+                        ? const _HomeEmpty(key: ValueKey('empty'))
+                        : Column(
+                            key: const ValueKey('content'),
+                            children: [
                           SizedBox(
                             height: 318,
                             child: PageView.builder(
@@ -282,6 +280,44 @@ class _HomeLoading extends StatelessWidget {
           child: CircularProgressIndicator(
             color: _accent,
             strokeWidth: 2.3,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _HomeEmpty extends StatelessWidget {
+  const _HomeEmpty({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      constraints: const BoxConstraints(minHeight: 104),
+      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: _line),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x0A0B0B32),
+            blurRadius: 14,
+            spreadRadius: -5,
+            offset: Offset(0, 6),
+          ),
+        ],
+      ),
+      child: const Center(
+        child: Text(
+          'هێشتا ئەنجامی ئەم هەفتەیە هەڵنەبژێردراوە',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontFamily: kAppFont,
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+            color: _muted,
+            height: 1.5,
           ),
         ),
       ),
