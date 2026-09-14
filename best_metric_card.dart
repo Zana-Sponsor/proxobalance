@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:solar_iconkit/solar_iconkit.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../main.dart' show kAppFont;
+import '../theme/app_theme.dart' show kAppFont;
 import '../services/ad_categories.dart';
 import '../services/best_metrics_service.dart';
 
