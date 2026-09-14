@@ -11,7 +11,7 @@ import '../widgets/proxo_refresh.dart';
 import '../widgets/ad_feedback.dart';
 import '../widgets/proxo_popup.dart';
 import '../widgets/best_metrics_home_section.dart';
-import '../main.dart' show supabase, navigatorKey, kAppFont;
+import '../main.dart' show supabase, navigatorKey;
 
 String? _sCachedUserName;
 
