@@ -10,6 +10,7 @@ import '../widgets/top_bar.dart';
 import '../widgets/proxo_refresh.dart';
 import '../widgets/ad_feedback.dart';
 import '../widgets/proxo_popup.dart';
+import '../widgets/best_metrics_home_section.dart';
 import '../main.dart' show supabase, navigatorKey, kAppFont;
 
 String? _sCachedUserName;
@@ -169,6 +170,8 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen>
     with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   final ScrollController _scrollCtrl = ScrollController();
+  final GlobalKey<BestMetricsHomeSectionState> _bestMetricsKey =
+      GlobalKey<BestMetricsHomeSectionState>();
 
   static const String _kDashColumns =
       'id,title,status,spend,prev_spend,clicks,impressions,'
@@ -209,6 +212,7 @@ class _HomeScreenState extends State<HomeScreen>
   late final AnimationController _intro;
   late final Animation<double> _aBanner;
   late final Animation<double> _aActions;
+  late final Animation<double> _aWeekly;
 
   @override
   void initState() {
@@ -224,6 +228,9 @@ class _HomeScreenState extends State<HomeScreen>
     _aActions = CurvedAnimation(
         parent: _intro,
         curve: const Interval(0.16, 0.68, curve: Curves.easeOutCubic));
+    _aWeekly = CurvedAnimation(
+        parent: _intro,
+        curve: const Interval(0.34, 1.00, curve: Curves.easeOutCubic));
     _intro.forward();
 
     _loadUser();
@@ -250,7 +257,11 @@ class _HomeScreenState extends State<HomeScreen>
     try {
       await Future<void>.delayed(const Duration(milliseconds: 260));
       if (!mounted || !widget.isActive) return;
-      await _loadAds();
+      await Future.wait(<Future<void>>[
+        _loadAds(),
+        _bestMetricsKey.currentState?.refresh(forceRefresh: false) ??
+            Future<void>.value(),
+      ]);
     } finally {
       _activationRefreshQueued = false;
     }
@@ -553,6 +564,7 @@ class _HomeScreenState extends State<HomeScreen>
     await Future.wait(<Future<void>>[
       _loadUser(),
       _loadAds(),
+      _bestMetricsKey.currentState?.refresh() ?? Future<void>.value(),
     ]);
   }
 
@@ -665,6 +677,13 @@ class _HomeScreenState extends State<HomeScreen>
                             ],
                           ),
                         ),
+                      ),
+                    ),
+                    const SizedBox(height: 22),
+                    _Reveal(
+                      animation: _aWeekly,
+                      child: RepaintBoundary(
+                        child: BestMetricsHomeSection(key: _bestMetricsKey),
                       ),
                     ),
                   ],
