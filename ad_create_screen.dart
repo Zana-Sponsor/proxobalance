@@ -7,6 +7,7 @@ import 'package:solar_iconkit/solar_iconkit.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../theme/app_theme.dart';
 import '../services/proxo_pricing.dart';
+import '../services/ad_categories.dart';
 import '../main.dart' show supabase;
 import '../widgets/proxo_toast.dart';
 import '../widgets/wave_overscroll.dart';
@@ -333,6 +334,7 @@ class _AdCreateScreenState extends State<AdCreateScreen>
 
   String _goal = 'messages'; // messages | views
   bool _goalChosen = false;
+  String? _category;
   final Set<String> _ages = {'all'};
   String _gender = 'all'; // all | male | female
   String _location = 'all'; // all | kurdistan | iraq
@@ -374,6 +376,7 @@ class _AdCreateScreenState extends State<AdCreateScreen>
 
   String? _nameError;
   String? _goalError;
+  String? _categoryError;
   String? _assetError;
   String? _linkError;
   String? _codeError;
@@ -500,6 +503,11 @@ class _AdCreateScreenState extends State<AdCreateScreen>
             if (goal == 'views' || goal == 'messages') {
               _goal = goal!;
               _goalChosen = true;
+            }
+
+            final category = card['category']?.toString();
+            if (isSupportedAdCategory(category)) {
+              _category = category;
             }
 
             final deviceType = card['device_type']?.toString();
@@ -1038,6 +1046,9 @@ class _AdCreateScreenState extends State<AdCreateScreen>
     setState(() {
       _nameError = name.isEmpty ? 'ناوی ڕیکلام بنووسە' : null;
       _goalError = !_goalChosen ? 'ئامانجی ڕیکلام هەڵبژێرە' : null;
+      _categoryError = !isSupportedAdCategory(_category)
+          ? 'بەشی ڕیکلام هەڵبژێرە'
+          : null;
       _assetError = _goalChosen &&
               _goal == 'messages' &&
               _selectedAssetId == null
@@ -1060,6 +1071,7 @@ class _AdCreateScreenState extends State<AdCreateScreen>
       for (final error in [
         _nameError,
         _goalError,
+        _categoryError,
         _assetError,
         _linkError,
         _codeError,
@@ -1714,6 +1726,7 @@ class _AdCreateScreenState extends State<AdCreateScreen>
         'p_ad': <String, dynamic>{
           'title': _adNameCtrl.text.trim(),
           'goal': _goal,
+          'category': _category,
           'age_groups': _ages.toList(growable: false),
           'gender': _gender,
           'location': _location,
@@ -1751,6 +1764,7 @@ class _AdCreateScreenState extends State<AdCreateScreen>
         final message = switch (code) {
           'INSUFFICIENT_FUNDS' => 'باڵانسی پێویستت بەردەست نییە',
           'INVALID_PROMO' => 'کۆدی داشکاندن نادروستە یان بەسەرچووە',
+          'INVALID_CATEGORY' => 'بەشی ڕیکلام نادروستە؛ دووبارە هەڵیبژێرە',
           'INVALID_ASSET' => 'ئەم کەرەستەی پەیوەندییە بەردەست نییە؛ یەکێکی دیکە هەڵبژێرە',
           'INVALID_SCHEDULE' => 'بەروار یان کاتی ڕیکلام تێپەڕیوە',
           'FASTPAY_TRANSACTION_REQUIRED' => 'مامەڵەی FastPay دیاری نەکراوە',
@@ -1824,6 +1838,8 @@ class _AdCreateScreenState extends State<AdCreateScreen>
                           _buildGoalFlowSection(),
                           const SizedBox(height: 14),
                           _buildBasicInfoFlowSection(),
+                          const SizedBox(height: 14),
+                          _buildCategoryFlowSection(),
                           const SizedBox(height: 14),
                           _buildAudienceFlowSection(),
                           const SizedBox(height: 14),
@@ -2495,6 +2511,76 @@ class _AdCreateScreenState extends State<AdCreateScreen>
         _assetError = null;
       });
     }
+  }
+
+  Widget _buildCategoryFlowSection() {
+    return _flowCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _flowTitle(
+            'بەشەکان',
+            helper: 'ئەو بەشە هەڵبژێرە کە ڕیکلامەکەت باشتر وەسف دەکات',
+          ),
+          const SizedBox(height: 6),
+          _flowLabel('بەشی ڕیکلام', important: true),
+          const SizedBox(height: 4),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: kAdCategories.map((option) {
+              final selected = _category == option.slug;
+              return ChoiceChip(
+                label: Text(option.label),
+                selected: selected,
+                showCheckmark: false,
+                onSelected: (_) {
+                  if (selected) return;
+                  setState(() {
+                    _category = option.slug;
+                    _categoryError = null;
+                  });
+                  _resetFastPayIntent();
+                },
+                backgroundColor: _cFieldFill,
+                selectedColor: _cAccent.withValues(alpha: 0.08),
+                side: BorderSide(
+                  color: selected ? _cAccent : _cLine,
+                  width: selected ? 1.25 : 1,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(999),
+                ),
+                labelStyle: TextStyle(
+                  fontFamily: kAppFont,
+                  fontSize: 11.5,
+                  fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+                  color: selected ? _cAccent : _cSlate,
+                  height: 1.35,
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 9,
+                  vertical: 7,
+                ),
+              );
+            }).toList(growable: false),
+          ),
+          if (_categoryError != null) ...[
+            const SizedBox(height: 8),
+            Text(
+              _categoryError!,
+              style: const TextStyle(
+                fontFamily: kAppFont,
+                fontSize: 10.5,
+                fontWeight: FontWeight.w500,
+                color: AppColors.red,
+                height: 1.4,
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
   }
 
   Widget _buildAudienceFlowSection() {
