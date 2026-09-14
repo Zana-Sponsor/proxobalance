@@ -47,3 +47,10 @@ where id = '<AD_UUID>';
 The sync trigger copies only display-safe metrics to
 `pa_featured_ads_public`. The Flutter query deliberately does not select or
 render the ad title.
+
+## Backward-compatible rollout
+
+The new Flutter form requires a category. For installed app versions that do
+not yet send the field, the server stores `other` so ad creation and FastPay
+remain available during rollout. Non-empty unknown slugs are still rejected as
+`INVALID_CATEGORY`.
