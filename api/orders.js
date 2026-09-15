@@ -7,6 +7,8 @@ const CARRIER_SENDER_METHODS = new Set(['Asiacell', 'Korek']);
 const MIN_AMOUNT = 10000;
 const STATUS_NEEDS_CORRECTION = 'پێویستی بە ڕاستکردنەوەیە';
 const STATUS_CORRECTED = 'ڕاستکراوەتەوە';
+const STATUS_REJECTED = 'ڕەتکرا';
+const RECEIPT_USED = { code: 'RECEIPT_ALREADY_USED', error: 'This receipt was already used' };
 
 function oneLine(value, max = 200) {
   return String(value || '').replace(/[\r\n\t]+/g, ' ').trim().slice(0, max);
@@ -49,14 +51,19 @@ async function logThreat(action, ctx, user, details = {}) {
   });
 }
 
-async function findDuplicate(receiptHash, transactionReference, excludeId = null) {
+// A receipt counts as used unless the only orders holding it are this same
+// user's rejected orders. That lets a customer resubmit the same transfer
+// after a rejection, while another account can never reuse the receipt.
+async function findDuplicate(receiptHash, transactionReference, { userId, excludeId = null } = {}) {
+  if (!userId) throw new Error('findDuplicate requires userId');
   const exclude = excludeId ? `&id=neq.${encodeURIComponent(excludeId)}` : '';
+  const blocking = `&or=(status.neq.${encodeURIComponent(STATUS_REJECTED)},user_id.neq.${encodeURIComponent(userId)})`;
   if (receiptHash) {
-    const rows = await serviceFetch(`/rest/v1/ex_orders?receipt_hash=eq.${encodeURIComponent(receiptHash)}${exclude}&select=id&limit=1`);
+    const rows = await serviceFetch(`/rest/v1/ex_orders?receipt_hash=eq.${encodeURIComponent(receiptHash)}${exclude}${blocking}&select=id&limit=1`);
     if (rows?.length) return 'receipt_hash';
   }
   if (transactionReference) {
-    const rows = await serviceFetch(`/rest/v1/ex_orders?transaction_reference=eq.${encodeURIComponent(transactionReference)}${exclude}&select=id&limit=1`);
+    const rows = await serviceFetch(`/rest/v1/ex_orders?transaction_reference=eq.${encodeURIComponent(transactionReference)}${exclude}${blocking}&select=id&limit=1`);
     if (rows?.length) return 'transaction_reference';
   }
   return null;
@@ -106,8 +113,8 @@ async function submitOrderCorrection(res, body, user) {
       ? String(body.receipt_hash).toLowerCase()
       : null;
     if (!receiptUrl || !receiptHash) return json(res, 422, { error: 'Invalid replacement receipt' });
-    const duplicateKind = await findDuplicate(receiptHash, null, id);
-    if (duplicateKind) return json(res, 409, { error: 'This receipt was already used' });
+    const duplicateKind = await findDuplicate(receiptHash, null, { userId: user.id, excludeId: id });
+    if (duplicateKind) return json(res, 409, RECEIPT_USED);
   }
 
   const now = new Date().toISOString();
@@ -223,13 +230,13 @@ export default withSecurity(async (req, res, { context, user }) => {
   });
   if (velocity?.banned) return stealth404(res);
 
-  const duplicateKind = await findDuplicate(receiptHash, transactionReference);
+  const duplicateKind = await findDuplicate(receiptHash, transactionReference, { userId: user.id });
   if (duplicateKind) {
     await logThreat('duplicate_transaction_reference', context, user, {
       detail: `Duplicate ${duplicateKind} probe`,
       payload: { duplicate_kind: duplicateKind, from_method: fromMethod, to_method: toMethod }
     });
-    return json(res, 409, { error: 'This receipt was already used' });
+    return json(res, 409, RECEIPT_USED);
   }
 
   const total = Math.floor(calculateTotal(amount, rate));
@@ -268,7 +275,7 @@ export default withSecurity(async (req, res, { context, user }) => {
         detail: 'Unique receipt/reference constraint was triggered',
         payload: { from_method: fromMethod, to_method: toMethod }
       });
-      return json(res, 409, { error: 'This receipt was already used' });
+      return json(res, 409, RECEIPT_USED);
     }
     throw error;
   }
