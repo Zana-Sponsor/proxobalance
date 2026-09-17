@@ -87,9 +87,9 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <!-- Solar Icons (480 Design, CC BY 4.0) — all icons as CSS mask images -->
-<link rel="stylesheet" href="https://api.iconify.design/solar.css?icons=alt-arrow-down-linear,alt-arrow-left-linear,alt-arrow-right-linear,arrow-left-down-linear,arrow-left-linear,arrow-right-linear,arrow-right-up-linear,banknote-2-linear,banknote-linear,bell-linear,bell-off-linear,bill-list-linear,bolt-linear,buildings-2-linear,calendar-linear,card-linear,chat-round-dots-linear,check-circle-linear,check-read-linear,clock-circle-linear,close-circle-linear,copy-linear,danger-triangle-linear,diskette-linear,dollar-linear,dollar-minimalistic-linear,download-minimalistic-linear,eye-closed-linear,eye-linear,gallery-linear,graph-down-linear,graph-up-linear,headphones-round-linear,history-2-linear,history-linear,info-circle-linear,key-linear,letter-linear,lock-linear,lock-unlocked-linear,magic-stick-3-linear,magnifer-linear,moon-linear,pen-linear,phone-linear,plain-2-linear,power-linear,refresh-linear,sale-linear,shield-check-linear,shield-linear,smartphone-linear,sun-linear,transfer-horizontal-linear,transfer-vertical-linear,tuning-2-linear,upload-linear,upload-minimalistic-linear,user-check-rounded-linear,user-linear,user-plus-rounded-linear,user-rounded-linear,verified-check-linear,wallet-linear,wi-fi-router-linear,wi-fi-router-minimalistic-linear,wi-fi-router-round-linear">
+<link rel="stylesheet" href="https://api.iconify.design/solar.css?icons=alt-arrow-down-linear,alt-arrow-left-linear,alt-arrow-right-linear,arrow-left-down-linear,arrow-left-linear,arrow-right-linear,arrow-right-up-linear,banknote-2-linear,banknote-linear,bell-linear,bell-off-linear,bill-list-linear,bolt-linear,buildings-2-linear,calendar-linear,card-linear,chat-round-dots-linear,check-circle-linear,check-read-linear,clock-circle-linear,close-circle-linear,copy-linear,danger-triangle-linear,diskette-linear,dollar-linear,dollar-minimalistic-linear,download-minimalistic-linear,eye-closed-linear,eye-linear,gallery-add-linear,gallery-linear,graph-down-linear,graph-up-linear,headphones-round-linear,history-2-linear,history-linear,info-circle-linear,key-linear,letter-linear,lock-linear,lock-unlocked-linear,magic-stick-3-linear,magnifer-linear,moon-linear,pen-linear,phone-linear,plain-2-linear,power-linear,refresh-linear,sale-linear,shield-check-linear,shield-cross-linear,shield-linear,shield-warning-linear,smartphone-linear,sun-linear,transfer-horizontal-linear,transfer-vertical-linear,tuning-2-linear,upload-linear,upload-minimalistic-linear,user-check-rounded-linear,user-id-linear,user-linear,user-plus-rounded-linear,user-rounded-linear,verified-check-linear,wallet-linear,wi-fi-router-linear,wi-fi-router-minimalistic-linear,wi-fi-router-round-linear">
 <link rel="stylesheet" href="/assets/css/tokens.css?v=4">
-<link rel="stylesheet" href="/assets/css/app.css?v=17">
+<link rel="stylesheet" href="/assets/css/app.css?v=19">
 </head>
 
 <body>
@@ -1099,21 +1099,42 @@
       </h2>
     </div>
 
-    <div class="pf-hero">
-      <div class="pf-avatar" id="pfAvatar">؟</div>
-      <div class="pf-name" id="pfNameLbl">—</div>
-      <div class="pf-email" id="pfEmailLbl">—</div>
+    <div class="pf-hero pf2-hero">
+      <div class="pf2-cover" aria-hidden="true"></div>
+      <div class="pf2-avatar-wrap">
+        <div class="pf-avatar pf2-avatar" id="pfAvatar">؟</div>
+        <span class="pf2-verified-dot" id="pfVerifiedDot" hidden title="ناسنامە پشتڕاستکراوەتەوە">
+          <span class="icn icon--solar icon--solar--verified-check-linear" aria-hidden="true"></span>
+        </span>
+      </div>
+      <div class="pf2-identity">
+        <div class="pf-name" id="pfNameLbl">—</div>
+        <button type="button" class="pf2-handle" id="pfUsernameBtn" onclick="copyUsername()" aria-label="کۆپیکردنی ناوی بەکارهێنەر">
+          <span id="pfUsername" dir="ltr">@—</span>
+          <span class="icn icn-sm icon--solar icon--solar--copy-linear" aria-hidden="true"></span>
+        </button>
+        <div class="pf-email" id="pfEmailLbl">—</div>
+      </div>
+
+      <button type="button" class="kyc-badge" id="pfKycBadge" data-state="loading" onclick="openVerifyPage()" aria-live="polite">
+        <span class="kyc-badge-ico" id="pfKycBadgeIco"><span class="icn icn-sm icn-spin icon--solar icon--solar--refresh-linear" aria-hidden="true"></span></span>
+        <span id="pfKycBadgeText">دۆخی ناسنامە...</span>
+      </button>
+
       <div class="pf-chips">
         <span class="pf-chip" id="pfJoinedChip">
           <span class="icn icon--solar icon--solar--calendar-linear" aria-hidden="true"></span>
           <span id="pfJoined">—</span>
         </span>
-        <span class="pf-chip" id="pfAdminChip" style="display:none">
+        <span class="pf-chip admin" id="pfAdminChip" style="display:none">
           <span class="icn icon--solar icon--solar--shield-linear" aria-hidden="true"></span>
-          بەڕێوەبەر
+          <span id="pfAdminChipText">بەڕێوەبەر</span>
         </span>
       </div>
     </div>
+
+    <!-- Identity verification status (rendered by renderKycProfile) -->
+    <div class="kyc-card" id="pfKycCard" data-state="loading" hidden></div>
 
     <div class="pf-card">
       <div class="pf-card-title">
@@ -1143,6 +1164,11 @@
     </div>
 
     <div class="pf-menu">
+      <button type="button" class="pf-menu-item" onclick="openVerifyPage()">
+        <span class="pf-menu-ico"><span class="icn icon--solar icon--solar--user-id-linear" aria-hidden="true"></span></span>
+        <span class="pf-menu-txt"><b>پشتڕاستکردنەوەی ناسنامە</b><span id="pfMenuKycSub">کارتی نیشتیمانی یان مۆڵەتی شوفێری</span></span>
+        <span class="pf-menu-arrow"><span class="icn icn-sm icon--solar icon--solar--alt-arrow-left-linear" aria-hidden="true"></span></span>
+      </button>
       <button type="button" class="pf-menu-item" onclick="navigate('transactions')">
         <span class="pf-menu-ico"><span class="icn icon--solar icon--solar--bill-list-linear" aria-hidden="true"></span></span>
         <span class="pf-menu-txt"><b>مامەڵەکان</b><span>مێژووی داواکارییەکان و کۆی پارە</span></span>
@@ -1180,6 +1206,165 @@
     </div>
 
     <div class="pf-app-version">Proxo Balance • v3.0</div>
+  </section>
+
+  <!-- ══════════════ PAGE: IDENTITY VERIFICATION (route "/verify") ══════════════ -->
+  <section class="page" id="pageVerify" data-route="verify">
+    <div class="page-head support-page-head">
+      <button type="button" class="support-back" onclick="navigate('profile')" aria-label="گەڕانەوە بۆ پڕۆفایل">
+        <span class="icn icon--solar icon--solar--alt-arrow-right-linear" aria-hidden="true"></span>
+      </button>
+      <div>
+        <h2>
+          <span class="icn icon--solar icon--solar--user-id-linear" aria-hidden="true"></span>
+          پشتڕاستکردنەوەی ناسنامە
+        </h2>
+        <p>بۆ پاراستنی هەژمارەکەت و مامەڵەکانت، ناسنامەکەت بە بەڵگەنامەیەکی فەرمی پشتڕاست بکەرەوە.</p>
+      </div>
+    </div>
+
+    <div class="kyc-banner" id="kycBanner" data-state="loading">
+      <span class="icn icn-spin icon--solar icon--solar--refresh-linear" aria-hidden="true"></span>
+      <div><b>بارکردنی دۆخی ناسنامە...</b></div>
+    </div>
+
+    <div class="kyc-form-card" id="kycFormCard" hidden>
+      <ol class="kyc-steps" aria-hidden="true">
+        <li id="kycStep1" class="on"><span>١</span>جۆری بەڵگەنامە</li>
+        <li id="kycStep2"><span>٢</span>زانیاری</li>
+        <li id="kycStep3"><span>٣</span>وێنەکان</li>
+      </ol>
+
+      <section class="kyc-sec" id="kycSecType">
+        <div class="kyc-sec-title"><span class="kyc-num">١</span><div><b>جۆری بەڵگەنامە هەڵبژێرە</b><small>تەنها بەڵگەنامەی فەرمی و کاراوە قبوڵ دەکرێت</small></div></div>
+        <div class="kyc-doc-grid" role="radiogroup" aria-label="جۆری بەڵگەنامە">
+          <button type="button" class="kyc-doc" data-doc="national_id" role="radio" aria-checked="false" onclick="kycSelectDoc('national_id')">
+            <span class="kyc-doc-ico"><span class="icn icon--solar icon--solar--user-id-linear" aria-hidden="true"></span></span>
+            <span class="kyc-doc-txt"><b>کارتی نیشتیمانی</b><small>کارتی نیشتیمانی یەکگرتووی عێراق</small></span>
+            <span class="kyc-doc-check"><span class="icn icn-sm icon--solar icon--solar--check-circle-linear" aria-hidden="true"></span></span>
+          </button>
+          <button type="button" class="kyc-doc" data-doc="driving_license" role="radio" aria-checked="false" onclick="kycSelectDoc('driving_license')">
+            <span class="kyc-doc-ico"><span class="icn icon--solar icon--solar--card-linear" aria-hidden="true"></span></span>
+            <span class="kyc-doc-txt"><b>مۆڵەتی شوفێری</b><small>مۆڵەتی شوفێریی عێراق یان هەرێمی کوردستان</small></span>
+            <span class="kyc-doc-check"><span class="icn icn-sm icon--solar icon--solar--check-circle-linear" aria-hidden="true"></span></span>
+          </button>
+        </div>
+        <span class="field-error" id="kycDocTypeError"></span>
+      </section>
+
+      <section class="kyc-sec" id="kycSecInfo" data-locked="true">
+        <div class="kyc-sec-title"><span class="kyc-num">٢</span><div><b>زانیارییەکانی بەڵگەنامە</b><small>وەک خۆی و بە تەواوی لەسەر بەڵگەنامەکە بینووسە</small></div></div>
+        <div class="field">
+          <span class="field-label">ناوی تەواوی یاسایی</span>
+          <input type="text" class="input" id="kycName" maxlength="120" autocomplete="name" placeholder="بۆ نموونە: زانا ئەحمەد محەمەد" oninput="clearFieldError('kycName'); kycUpdateSteps()">
+          <span class="field-error" id="kycNameError"></span>
+        </div>
+        <div class="kyc-grid-2">
+          <div class="field">
+            <span class="field-label">بەرواری لەدایکبوون</span>
+            <input type="date" class="input" id="kycDob" dir="ltr" min="1900-01-01" onchange="clearFieldError('kycDob'); kycUpdateSteps()">
+            <span class="field-error" id="kycDobError"></span>
+          </div>
+          <div class="field">
+            <span class="field-label" id="kycNumberLabel">ژمارەی بەڵگەنامە</span>
+            <input type="text" class="input" id="kycNumber" dir="ltr" maxlength="30" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="A12345678" oninput="kycFormatNumber(this); clearFieldError('kycNumber'); kycUpdateSteps()">
+            <span class="field-error" id="kycNumberError"></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="kyc-sec" id="kycSecImages" data-locked="true">
+        <div class="kyc-sec-title"><span class="kyc-num">٣</span><div><b>وێنەی بەڵگەنامە</b><small>وێنەیەکی ڕوون، بێ ڕووناکیی زیادە، و هەموو گۆشەکانی دیار بن</small></div></div>
+        <div class="kyc-upload-grid">
+          <div class="kyc-upload" id="kycFrontBox">
+            <!-- Only two sources: the camera, or the photo gallery. -->
+            <input type="file" id="kycFrontCamera" accept="image/*" capture="environment" hidden onchange="kycOnImage('front', this)">
+            <input type="file" id="kycFrontGallery" accept="image/*" hidden onchange="kycOnImage('front', this)">
+            <div class="kyc-drop" id="kycFrontDrop">
+              <span class="kyc-drop-ico"><span class="icn icon--solar icon--solar--gallery-add-linear" aria-hidden="true"></span></span>
+              <b id="kycFrontTitle">ڕووی پێشەوەی کارت</b>
+              <small id="kycFrontHint">وێنەیەکی ڕوون بگرە یان لە گەلەری هەڵیبژێرە</small>
+              <div class="kyc-src-btns">
+                <label for="kycFrontCamera" class="kyc-src-btn primary" role="button" tabindex="0"><svg class="kyc-src-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l1.6-2.2A1.5 1.5 0 0 1 9.8 5h4.4a1.5 1.5 0 0 1 1.2.8L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1Z"/><circle cx="12" cy="13" r="3.6"/></svg><span>وێنەگرتن</span></label>
+                <label for="kycFrontGallery" class="kyc-src-btn" role="button" tabindex="0"><svg class="kyc-src-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2.5"/><circle cx="9" cy="9.5" r="1.8"/><path d="m21 15-4.5-4.5L7 20"/></svg><span>هەڵبژاردن لە گەلەری</span></label>
+              </div>
+            </div>
+            <div class="kyc-preview" id="kycFrontPreview" hidden>
+              <img id="kycFrontImg" alt="ڕووی پێشەوەی بەڵگەنامە">
+              <div class="kyc-preview-bar">
+                <span class="kyc-preview-meta" id="kycFrontMeta"></span>
+                <span class="kyc-preview-actions">
+                  <label for="kycFrontCamera" class="kyc-mini-btn" role="button" tabindex="0"><svg class="kyc-src-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l1.6-2.2A1.5 1.5 0 0 1 9.8 5h4.4a1.5 1.5 0 0 1 1.2.8L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1Z"/><circle cx="12" cy="13" r="3.6"/></svg>وێنەگرتن</label>
+                  <label for="kycFrontGallery" class="kyc-mini-btn" role="button" tabindex="0"><svg class="kyc-src-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2.5"/><circle cx="9" cy="9.5" r="1.8"/><path d="m21 15-4.5-4.5L7 20"/></svg>گەلەری</label>
+                  <button type="button" class="kyc-mini-btn danger" onclick="kycRemoveImage('front')">لابردن</button>
+                </span>
+              </div>
+            </div>
+            <span class="field-error" id="kycFrontError"></span>
+          </div>
+          <div class="kyc-upload" id="kycBackBox">
+            <!-- Only two sources: the camera, or the photo gallery. -->
+            <input type="file" id="kycBackCamera" accept="image/*" capture="environment" hidden onchange="kycOnImage('back', this)">
+            <input type="file" id="kycBackGallery" accept="image/*" hidden onchange="kycOnImage('back', this)">
+            <div class="kyc-drop" id="kycBackDrop">
+              <span class="kyc-drop-ico"><span class="icn icon--solar icon--solar--gallery-add-linear" aria-hidden="true"></span></span>
+              <b id="kycBackTitle">ڕووی دواوەی کارت</b>
+              <small id="kycBackHint">وێنەیەکی ڕوون بگرە یان لە گەلەری هەڵیبژێرە</small>
+              <div class="kyc-src-btns">
+                <label for="kycBackCamera" class="kyc-src-btn primary" role="button" tabindex="0"><svg class="kyc-src-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l1.6-2.2A1.5 1.5 0 0 1 9.8 5h4.4a1.5 1.5 0 0 1 1.2.8L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1Z"/><circle cx="12" cy="13" r="3.6"/></svg><span>وێنەگرتن</span></label>
+                <label for="kycBackGallery" class="kyc-src-btn" role="button" tabindex="0"><svg class="kyc-src-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2.5"/><circle cx="9" cy="9.5" r="1.8"/><path d="m21 15-4.5-4.5L7 20"/></svg><span>هەڵبژاردن لە گەلەری</span></label>
+              </div>
+            </div>
+            <div class="kyc-preview" id="kycBackPreview" hidden>
+              <img id="kycBackImg" alt="ڕووی دواوەی بەڵگەنامە">
+              <div class="kyc-preview-bar">
+                <span class="kyc-preview-meta" id="kycBackMeta"></span>
+                <span class="kyc-preview-actions">
+                  <label for="kycBackCamera" class="kyc-mini-btn" role="button" tabindex="0"><svg class="kyc-src-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l1.6-2.2A1.5 1.5 0 0 1 9.8 5h4.4a1.5 1.5 0 0 1 1.2.8L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1Z"/><circle cx="12" cy="13" r="3.6"/></svg>وێنەگرتن</label>
+                  <label for="kycBackGallery" class="kyc-mini-btn" role="button" tabindex="0"><svg class="kyc-src-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2.5"/><circle cx="9" cy="9.5" r="1.8"/><path d="m21 15-4.5-4.5L7 20"/></svg>گەلەری</label>
+                  <button type="button" class="kyc-mini-btn danger" onclick="kycRemoveImage('back')">لابردن</button>
+                </span>
+              </div>
+            </div>
+            <span class="field-error" id="kycBackError"></span>
+          </div>
+        </div>
+        <ul class="kyc-tips">
+          <li>وێنەکە پێش ناردن لەسەر مۆبایلەکەت دەپشکنرێت؛ وێنەی ناڕوون یان زۆر بچووک وەرناگیرێت</li>
+          <li>بەڵگەنامەکە لەسەر ڕووێکی تەخت دابنێ و هەموو نووسینەکان خوێندراوە بن</li>
+          <li>وێنەی شاشە، کۆپی یان بەڵگەنامەی بەسەرچوو قبوڵ ناکرێت</li>
+        </ul>
+      </section>
+
+      <div class="kyc-privacy">
+        <span class="icn icon--solar icon--solar--lock-linear" aria-hidden="true"></span>
+        <p>وێنەکان بە نهێنی لە کۆگایەکی تایبەتدا هەڵدەگیرێن. تەنها تیمی پشکنینی پڕۆکسۆ دەتوانێت بیانبینێت و هیچ بەستەرێکی گشتییان نییە.</p>
+      </div>
+
+      <label class="kyc-consent">
+        <input type="checkbox" id="kycConsent" onchange="clearFieldError('kycConsent')">
+        <span>دڵنیام کە ئەم زانیارییانە ڕاستن و بەڵگەنامەکە هی خۆمە.</span>
+      </label>
+      <span class="field-error" id="kycConsentError"></span>
+
+      <div class="kyc-form-error" id="kycFormError" role="alert" hidden></div>
+
+      <button type="button" class="btn btn-primary btn-block kyc-submit-btn" id="kycSubmitBtn" onclick="submitKyc()">
+        <span class="icn icon--solar icon--solar--shield-check-linear" aria-hidden="true"></span>
+        ناردنی داواکاری پشتڕاستکردنەوە
+      </button>
+      <div class="kyc-progress" id="kycProgress" hidden aria-live="polite">
+        <div class="kyc-progress-track"><span id="kycProgressFill"></span></div>
+        <small id="kycProgressText">ئامادەکردن...</small>
+      </div>
+    </div>
+
+    <div class="kyc-success" id="kycSuccess" hidden role="status" aria-live="polite">
+      <span class="kyc-success-ico"><span class="icn icn-xl icon--solar icon--solar--check-circle-linear" aria-hidden="true"></span></span>
+      <h3>داواکارییەکەت نێردرا و لە ژێر پشکنینە</h3>
+      <p>تیمی پشکنین بەم زووانە بەڵگەنامەکەت دەپشکنێت. کاتێک بڕیار درا، ئاگادارت دەکەینەوە.</p>
+      <button type="button" class="btn btn-primary btn-block" onclick="navigate('profile')">گەڕانەوە بۆ پڕۆفایل</button>
+    </div>
   </section>
 
   <!-- ══════════════ PAGE: CUSTOMER SUPPORT ══════════════ -->
@@ -1277,7 +1462,10 @@
         <span class="bn-label">یاساکان</span>
       </button>
       <button type="button" class="bn-item" data-route="profile" onclick="navigate('profile')">
-        <span class="bn-ico"><span class="icn icon--solar icon--solar--user-linear" aria-hidden="true"></span></span>
+        <span class="bn-ico">
+          <span class="icn icon--solar icon--solar--user-linear" aria-hidden="true"></span>
+          <span class="bn-dot bn-dot-alert" id="bnProfileDot" aria-label="پشتڕاستکردنەوەی ناسنامە پێویستە">!</span>
+        </span>
         <span class="bn-label">پڕۆفایل</span>
       </button>
     </div>
@@ -1300,7 +1488,7 @@
   }, 12000);
 })();
 </script>
-<script src="/assets/js/app.js?v=22"></script>
+<script src="/assets/js/app.js?v=24"></script>
 <script src="/assets/js/track.js?v=2"></script>
 </body>
 </html>
