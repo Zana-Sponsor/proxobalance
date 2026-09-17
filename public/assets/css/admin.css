@@ -587,3 +587,90 @@ body{height:100% !important;min-height:0 !important;max-height:100% !important;
   overscroll-behavior:auto !important;
   touch-action:pan-x pan-y !important;
 }
+
+/* ══ ROLES + USERNAME ══ */
+.badge.super{background:rgba(124,58,237,.1);color:var(--pu);border:1px solid rgba(124,58,237,.25);}
+.badge.kyc-none{background:var(--bg);color:var(--mt2);border:1px solid var(--b1);}
+.user-cell-handle{font-size:11px;color:var(--cy);font-weight:700;font-family:ui-monospace,Menlo,Consolas,monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;direction:ltr;text-align:right;}
+
+/* ══ IDENTITY VERIFICATION (KYC) ══ */
+.kyc-stats{grid-template-columns:repeat(4,minmax(0,1fr));}
+.kyc-stat{cursor:pointer;transition:box-shadow .15s,transform .15s;}
+.kyc-stat:hover{box-shadow:0 4px 16px rgba(0,0,0,.06);}
+.kyc-stat:active{transform:scale(.98);}
+
+.kyc-request-panel{padding:16px;margin-bottom:18px;overflow:visible;}
+.kyc-panel-head{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
+.kyc-panel-head b{display:block;font-size:14px;color:var(--dark);}
+.kyc-panel-head small{display:block;font-size:11.5px;color:var(--mt);margin-top:2px;}
+.kyc-panel-ico{width:42px;height:42px;flex:0 0 42px;border-radius:12px;background:rgba(8,145,178,.09);color:var(--cy);display:flex;align-items:center;justify-content:center;font-size:18px;}
+.kyc-search-row{position:relative;}
+.kyc-search-row>svg,.kyc-search-row>i{position:absolute;top:50%;right:14px;transform:translateY(-50%);color:var(--mt);font-size:15px;pointer-events:none;}
+.kyc-search-row .minp{padding-right:40px;}
+.kyc-user-results{display:flex;flex-direction:column;gap:8px;margin-top:10px;max-height:380px;overflow-y:auto;}
+.kyc-user-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px;border:1px solid var(--b1);border-radius:12px;background:var(--w);flex-wrap:wrap;}
+.kyc-user-row .user-cell{min-width:0;flex:1 1 220px;}
+.kyc-user-side{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end;}
+.kyc-empty-line{font-size:12.5px;color:var(--mt);padding:10px 4px;}
+
+.kyc-admin-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:14px;padding:14px;background:var(--bg);}
+.kyc-admin-card{background:var(--w);border:1.5px solid var(--b1);border-right:5px solid var(--bl);border-radius:16px;padding:15px;min-width:0;display:flex;flex-direction:column;gap:11px;}
+.kyc-admin-card.required{border-right-color:var(--yw);}
+.kyc-admin-card.pending{border-right-color:var(--bl);}
+.kyc-admin-card.approved{border-right-color:var(--gr);}
+.kyc-admin-card.rejected{border-right-color:var(--rd);}
+.kyc-admin-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding-bottom:10px;border-bottom:1px solid var(--b1);}
+.kyc-admin-head .user-cell{min-width:0;}
+.kyc-admin-facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;}
+.kyc-admin-facts span{display:flex;flex-direction:column;gap:2px;padding:8px 10px;border-radius:10px;background:var(--bg);min-width:0;}
+.kyc-admin-facts small{font-size:10.5px;color:var(--mt);}
+.kyc-admin-facts b{font-size:12.5px;color:var(--dark);overflow-wrap:anywhere;}
+.kyc-admin-note{padding:10px 12px;border-radius:12px;background:rgba(37,99,235,.05);border:1px solid rgba(37,99,235,.16);margin-top:10px;}
+.kyc-admin-card .kyc-admin-note{margin-top:0;}
+.kyc-admin-note.danger{background:rgba(220,38,38,.05);border-color:rgba(220,38,38,.2);}
+.kyc-admin-note b{display:block;font-size:11px;color:var(--bl);margin-bottom:3px;}
+.kyc-admin-note.danger b{color:var(--rd);}
+.kyc-admin-note p{font-size:13px;color:var(--dark);line-height:1.7;white-space:pre-wrap;overflow-wrap:anywhere;}
+.kyc-admin-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:auto;padding-top:4px;flex-wrap:wrap;}
+.kyc-admin-foot small{font-size:11px;color:var(--mt);}
+
+.kyc-review-modal{max-width:720px !important;}
+.kyc-req-user{padding:12px;border:1px solid var(--b1);border-radius:12px;background:var(--bg);margin-bottom:14px;}
+.kyc-rv-top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:12px;border:1px solid var(--b1);border-radius:14px;background:var(--bg);margin-bottom:14px;}
+.kyc-rv-images{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.kyc-rv-images figure{margin:0;}
+.kyc-rv-images figcaption{font-size:11.5px;font-weight:700;color:var(--mt);margin-bottom:6px;}
+.kyc-img-slot{position:relative;height:210px;border-radius:14px;border:1px solid var(--b1);background:#0b0f18;display:flex;align-items:center;justify-content:center;color:#9aa3b2;overflow:hidden;font-size:18px;}
+.kyc-img-slot img{width:100%;height:100%;object-fit:contain;cursor:zoom-in;}
+.kyc-img-zoom{position:absolute;bottom:8px;left:8px;padding:4px 9px;border-radius:20px;background:rgba(0,0,0,.6);color:#fff;font-size:10.5px;font-weight:700;pointer-events:none;display:flex;align-items:center;gap:4px;}
+.kyc-img-empty{font-size:12px;color:#9aa3b2;text-align:center;padding:10px;display:flex;align-items:center;gap:6px;}
+.kyc-quick{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+.kyc-quick span{padding:5px 10px;border-radius:20px;border:1px solid var(--b1);background:var(--bg);font-size:11px;color:var(--mt2);cursor:pointer;line-height:1.5;}
+.kyc-quick span:hover{border-color:var(--dark);color:var(--dark);}
+.kyc-rv-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.kyc-rv-actions .modal-btn{margin-top:14px;}
+.kyc-timeline{position:relative;display:flex;flex-direction:column;gap:2px;padding-right:4px;}
+.kyc-tl-item{position:relative;display:flex;gap:10px;padding:8px 0;}
+.kyc-tl-item:not(:last-child)::after{content:'';position:absolute;right:5px;top:22px;bottom:-8px;width:2px;background:var(--b1);}
+.kyc-tl-dot{width:12px;height:12px;flex:0 0 12px;border-radius:50%;margin-top:4px;background:var(--mt);box-shadow:0 0 0 3px var(--w);position:relative;z-index:1;}
+.kyc-tl-item.requested .kyc-tl-dot{background:var(--yw);}
+.kyc-tl-item.submitted .kyc-tl-dot,.kyc-tl-item.resubmitted .kyc-tl-dot{background:var(--bl);}
+.kyc-tl-item.approved .kyc-tl-dot{background:var(--gr);}
+.kyc-tl-item.rejected .kyc-tl-dot,.kyc-tl-item.request_cancelled .kyc-tl-dot{background:var(--rd);}
+.kyc-tl-item b{display:block;font-size:12.5px;color:var(--dark);}
+.kyc-tl-item small{display:block;font-size:10.5px;color:var(--mt);margin-top:2px;}
+.kyc-tl-item p{font-size:12px;color:var(--mt2);margin-top:4px;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere;}
+
+@media(max-width:900px){.kyc-stats{grid-template-columns:repeat(2,minmax(0,1fr));}}
+@media(max-width:600px){
+  .kyc-admin-list{grid-template-columns:1fr;padding:10px;}
+  .kyc-admin-facts{grid-template-columns:1fr 1fr;}
+  .kyc-rv-images{grid-template-columns:1fr;}
+  .kyc-img-slot{height:190px;}
+  .kyc-user-side{justify-content:flex-start;}
+}
+.kyc-admin-list,.kyc-admin-card,.kyc-user-results{overscroll-behavior:auto !important;touch-action:pan-x pan-y !important;}
+
+/* Desktop: keep page content beside the fixed sidebar. Two later
+   "#main{margin-right:0}" resets were overriding the rule near the top. */
+@media(min-width:901px){#main{margin-right:var(--sidebar-w) !important;}}
