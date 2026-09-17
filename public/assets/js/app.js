@@ -318,6 +318,7 @@ function _notifKind(type){
   if(type==='order_rejected') return 'no';
   if(type==='order_status')   return 'upd';
   if(type==='support_case')   return 'upd';
+  if(type==='kyc')            return 'upd';
   return 'msg';
 }
 function _notifIcon(type){
@@ -369,6 +370,8 @@ async function loadNotifications(){
     .on('postgres_changes',{event:'INSERT',schema:'public',table:'ex_notifications',filter:'user_id=eq.'+curUser.id}, (payload)=>{
       _notifItems.unshift(payload.new);
       renderNotifPanel(); updateNotifBadge(); showNotifBar(payload.new);
+      // An admin requested / approved / rejected verification: refresh the badge live.
+      if(payload.new && payload.new.type==='kyc') loadKycStatus(true);
     })
     .subscribe();
 }
@@ -453,6 +456,12 @@ function toggleNotifPanel(){
 async function openNotifItem(id){
   const item=_notifItems.find(n=>n.id===id);
   await markNotifRead(id);
+  if(item && item.type==='kyc'){
+    closeNotifPanel();
+    navigate('profile');
+    await loadKycStatus(true);
+    return;
+  }
   if(item && item.type==='support_case'){
     closeNotifPanel();
     navigate('support');
@@ -1150,6 +1159,7 @@ async function startApp(user){
   document.body.classList.add('has-nav');
   applyProfileToUI();
   fillProfileForm();
+  loadKycStatus(true);
   document.getElementById('adminBtn').style.display=curProfile?.is_admin?'flex':'none';
   if(curProfile?.phone){
     const _ph=document.getElementById('userPhone');
@@ -1170,7 +1180,9 @@ async function startApp(user){
   await loadHistory();
   await loadNotifications();
   listenToNews();
-  setTimeout(()=>{ document.getElementById('tgModal').style.display='flex'; },1000);
+  // The Telegram promo is disabled in index.html (hidden attribute); setting
+  // style.display here used to override that and cover the whole app.
+  setTimeout(()=>{ const tg=document.getElementById('tgModal'); if(tg && !tg.hasAttribute('hidden')) tg.style.display='flex'; },1000);
 }
 
 async function logout(){
@@ -2044,14 +2056,15 @@ Object.assign(ICON, {
 //   'hash' → www.domain.com/#/profile. Works on ANY static host with no
 //            server config at all. Switch to this if you cannot add rewrites.
 const ROUTE_MODE = 'path';
-const ROUTES = { home:'pageHome', transactions:'pageTx', changes:'pageChanges', rules:'pageRules', profile:'pageProfile', support:'pageSupport' };
+const ROUTES = { home:'pageHome', transactions:'pageTx', changes:'pageChanges', rules:'pageRules', profile:'pageProfile', support:'pageSupport', verify:'pageVerify' };
 const ROUTE_TITLES = {
   home:'Proxo Balance — ئاڵوگۆڕی دراو',
   transactions:'مامەڵەکان — Proxo Balance',
   changes:'گۆڕانکاری نرخەکان — Proxo Balance',
   rules:'یاساکانی ئەپ — Proxo Balance',
   profile:'پڕۆفایل — Proxo Balance',
-  support:'پشتگیری — Proxo Balance'
+  support:'پشتگیری — Proxo Balance',
+  verify:'پشتڕاستکردنەوەی ناسنامە — Proxo Balance'
 };
 // Everything before the route segment, so the app works at the domain root
 // (/profile) and inside a sub-folder (/exchange/profile) with no edits.
@@ -2084,7 +2097,7 @@ function navigate(route, push){
     if(el) el.classList.toggle('active', r===route);
   });
   // /changes lives under the profile tab
-  const navRoute = (route==='changes' || route==='support') ? 'profile' : route;
+  const navRoute = (route==='changes' || route==='support' || route==='verify') ? 'profile' : route;
   document.querySelectorAll('.bn-item, .hdr-nav-link').forEach(b=>b.classList.toggle('on', b.dataset.route===navRoute));
   if(push){ try{ history.pushState({route:route}, '', urlFor(route)); }catch(_){} }
   document.title = ROUTE_TITLES[route] || 'Proxo Balance';
@@ -2092,7 +2105,8 @@ function navigate(route, push){
   window.scrollTo({ top:0, behavior:'smooth' });
   if(route==='transactions') renderTxPage();
   if(route==='changes')      loadChangeLog();
-  if(route==='profile')      fillProfileForm();
+  if(route==='profile')    { fillProfileForm(); loadKycStatus(true); }
+  if(route==='verify')     { renderVerifyPage(); loadKycStatus(true); }
   if(route==='support')      loadSupportCases();
 }
 window.addEventListener('popstate', function(){ navigate(routeFromLocation(), false); });
@@ -2314,17 +2328,50 @@ function updateProfileCooldownUI(){
 function applyProfileToUI(){
   const name = (curProfile && curProfile.full_name) || (curUser && curUser.email) || '';
   const nameEl=document.getElementById('userName'); if(nameEl) nameEl.innerText=name;
-  const av=document.getElementById('greetAvatar'); if(av) av.textContent=initialOf(name);
-  const pfAv=document.getElementById('pfAvatar'); if(pfAv) pfAv.textContent=initialOf(name);
+  setAvatar(document.getElementById('greetAvatar'), name);
+  setAvatar(document.getElementById('pfAvatar'), name);
+  const handle=document.getElementById('pfUsername');
+  if(handle) handle.textContent=(curProfile && curProfile.username) ? '@'+curProfile.username : '@—';
   const pfName=document.getElementById('pfNameLbl'); if(pfName) pfName.textContent=name||'—';
   const pfMail=document.getElementById('pfEmailLbl'); if(pfMail) pfMail.textContent=(curUser&&curUser.email)||'—';
   syncSenderIdentity();
   const joined=document.getElementById('pfJoined');
   if(joined && curProfile && curProfile.created_at){
-    joined.textContent='بەشدارە لە '+new Date(curProfile.created_at).toLocaleDateString('ku-IQ',{month:'long', year:'numeric'});
+    joined.textContent='بەشدارە لە '+kuMonthYear(curProfile.created_at);
   }
   const adminChip=document.getElementById('pfAdminChip');
   if(adminChip) adminChip.style.display = (curProfile && curProfile.is_admin) ? 'inline-flex' : 'none';
+  const adminChipText=document.getElementById('pfAdminChipText');
+  if(adminChipText) adminChipText.textContent = (curProfile && curProfile.role==='super_admin') ? 'بەڕێوەبەری باڵا' : 'بەڕێوەبەر';
+}
+
+// Profile photo when the account has one (e.g. OAuth metadata); otherwise the
+// initial letter. The image never replaces the node, so the initial is the fallback.
+function profilePhotoUrl(){
+  const meta=(curUser && curUser.user_metadata) || {};
+  const url=String(meta.avatar_url || meta.picture || '').trim();
+  return /^https:\/\//i.test(url) ? url : '';
+}
+function setAvatar(el, name){
+  if(!el) return;
+  const url=profilePhotoUrl();
+  el.textContent=initialOf(name);
+  el.classList.remove('has-photo');
+  if(!url) return;
+  const img=new Image();
+  img.alt=''; img.decoding='async'; img.referrerPolicy='no-referrer';
+  img.onload=()=>{ el.textContent=''; el.appendChild(img); el.classList.add('has-photo'); };
+  img.src=url;
+}
+function copyUsername(){
+  const u=curProfile && curProfile.username;
+  if(!u) return;
+  const text='@'+u;
+  const done=()=>showToast('ناوی بەکارهێنەر کۆپی کرا: '+text,'success');
+  try{
+    if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(text).then(done).catch(()=>{}); return; }
+  }catch(_){}
+  done();
 }
 
 function fillProfileForm(){
@@ -2623,6 +2670,708 @@ function renderSupportCases(){
     ${row.image_url?`<button type="button" class="support-case-image-link" onclick="openSupportImageById('${escHtml(row.id)}')"><img src="${escHtml(row.image_url)}" alt="وێنەی کێشە"><span>بینینی وێنە</span></button>`:''}
     ${row.admin_note?`<div class="support-admin-reply"><b>وەڵامی پشتگیری</b><p>${escHtml(row.admin_note)}</p></div>`:''}
   </article>`).join('');
+}
+
+// ══════════════════════════════════════════════════════════════
+// ═══ IDENTITY VERIFICATION (KYC) ══════════════════════════════
+// Status comes from the ex_kyc_my_status RPC. Images go to the private
+// "identity-documents" bucket under {user_id}/{verification_id}/, and the
+// ex_kyc_submit RPC only accepts a submission once both files exist in
+// Storage. Status changes (approve / reject) are made by admins only —
+// the browser has no write access to the verification tables.
+// ══════════════════════════════════════════════════════════════
+// Customers may start verification without an admin request.
+const KYC_SELF_START_ENABLED = true;
+const KYC_BUCKET = 'identity-documents';
+const KYC_MAX_INPUT_BYTES = 15*1024*1024;   // raw file from the phone
+const KYC_MAX_UPLOAD_BYTES = 10*1024*1024;  // bucket limit
+const KYC_MAX_IMAGE_SIDE = 2200;            // px — re-encoded above this
+// Local clarity check (Canvas only — nothing leaves the device before it passes).
+const KYC_MIN_SHORT_SIDE = 480;             // px — below this a card is unreadable
+const KYC_MIN_LONG_SIDE = 640;
+const KYC_ANALYSIS_SIDE = 640;              // temporary downscaled copy for analysis
+// Calibrated on 193 synthetic ID-card photos (12 MP → 0.3 MP, dim/bright,
+// WhatsApp-compressed, Gaussian blur, horizontal/vertical/diagonal shake):
+// every readable photo scored ≥ 120, every unreadable one ≤ 51.
+const KYC_MIN_SHARPNESS = 55;               // weakest-direction 2nd-derivative variance
+const KYC_MIN_CONTRAST = 6;                 // luminance std-dev; below = blank/black frame
+const KYC_UNCLEAR_MSG = 'وێنەکە ناڕوونە، تکایە وێنەیەکی ڕوونتر بگرە.';
+const KYC_DOC_TYPES = {
+  national_id:     { label:'کارتی نیشتیمانی', numberLabel:'ژمارەی کارتی نیشتیمانی', numberHint:'A12345678', front:'ڕووی پێشەوەی کارت', back:'ڕووی دواوەی کارت', needsBack:true },
+  driving_license: { label:'مۆڵەتی شوفێری', numberLabel:'ژمارەی مۆڵەت', numberHint:'DL-123456', front:'ڕووی پێشەوەی مۆڵەت', back:'ڕووی دواوەی مۆڵەت', needsBack:true }
+};
+const KYC_STATES = {
+  loading:  { label:'دۆخی ناسنامە...',                       icon:'refresh-linear',        spin:true },
+  error:    { label:'دۆخی ناسنامە بەردەست نییە',            icon:'danger-triangle-linear' },
+  none:     { label:'پشتڕاست نەکراوەتەوە',                    icon:'shield-linear' },
+  required: { label:'پشتڕاستکردنەوەی ناسنامە پێویستە',         icon:'shield-warning-linear' },
+  pending:  { label:'لە ژێر پشکنینە',                          icon:'clock-circle-linear' },
+  approved: { label:'ناسنامە پشتڕاستکراوەتەوە ✓',              icon:'verified-check-linear' },
+  rejected: { label:'پێویستی بە دووبارە ناردنەوە هەیە',        icon:'shield-cross-linear' }
+};
+const KYC_ERRORS = {
+  AUTH_REQUIRED:'تکایە دووبارە بچۆ ژوورەوە',
+  ACCOUNT_BANNED:'ئەم هەژمارە بۆیکۆتکراوە',
+  PROFILE_NOT_FOUND:'پڕۆفایلەکەت نەدۆزرایەوە؛ پەڕەکە نوێ بکەرەوە',
+  KYC_ALREADY_PENDING:'داواکارییەکی تۆ پێشتر نێردراوە و لە ژێر پشکنینە',
+  KYC_ALREADY_APPROVED:'ناسنامەکەت پێشتر پشتڕاستکراوەتەوە',
+  KYC_DUPLICATE_SUBMISSION:'ئەم داواکارییە پێشتر نێردراوە',
+  KYC_RATE_LIMIT:'لە ٢٤ کاتژمێردا زۆر داواکاریت ناردووە؛ تکایە دواتر هەوڵبدەوە',
+  KYC_DOCUMENT_TYPE_INVALID:'جۆری بەڵگەنامە هەڵبژێرە',
+  KYC_NAME_INVALID:'ناوی تەواو بە لانیکەم دوو بەش و بەبێ ژمارە یان هێما بنووسە',
+  KYC_DOB_INVALID:'بەرواری لەدایکبوون دروست نییە',
+  KYC_NUMBER_INVALID:'ژمارەی بەڵگەنامە دەبێت ٤ بۆ ٣٠ پیت/ژمارەی ئینگلیزی بێت',
+  KYC_FRONT_PATH_INVALID:'وێنەی ڕووی پێشەوە دروست نییە؛ دووبارە هەڵیبژێرە',
+  KYC_BACK_PATH_INVALID:'وێنەی ڕووی دواوە دروست نییە؛ دووبارە هەڵیبژێرە',
+  KYC_BACK_REQUIRED:'وێنەی ڕووی دواوەی بەڵگەنامە پێویستە',
+  KYC_FRONT_IMAGE_MISSING:'وێنەی ڕووی پێشەوە بارنەکرابوو؛ تکایە دووبارە هەوڵبدەوە',
+  KYC_BACK_IMAGE_MISSING:'وێنەی ڕووی دواوە بارنەکرابوو؛ تکایە دووبارە هەوڵبدەوە',
+  KYC_UPLOAD_FAILED:'وێنەکە بارنەکرا؛ هیچ داواکارییەک نەنێردرا. تکایە دووبارە هەوڵبدەوە',
+  KYC_UPLOAD_NETWORK:'بەهۆی کێشەی تۆڕەوە وێنەکە بارنەکرا؛ پەیوەندییەکەت بپشکنە و دووبارە هەوڵبدەوە',
+  KYC_IMAGE_DECODE:'ئەم فایلە وەک وێنە ناخوێندرێتەوە؛ وێنەیەکی تر هەڵبژێرە',
+  KYC_IMAGE_TOO_SMALL:KYC_UNCLEAR_MSG,
+  KYC_IMAGE_BLURRY:KYC_UNCLEAR_MSG,
+  KYC_IMAGE_TOO_LARGE:'قەبارەی وێنەکە زۆر گەورەیە (زیاتر لە 10MB)',
+  KYC_IMAGE_TYPE:'تکایە تەنها وێنە هەڵبژێرە (بە کامێرا یان لە گەلەری)',
+  KYC_IMAGE_ENCODE:'نەتوانرا وێنەکە ئامادە بکرێت؛ تکایە وێنەیەکی تر بگرە',
+  FILE_READ_PERMISSION:'براوزەر نەتوانی وێنەکە بخوێنێتەوە؛ تکایە دووبارە هەڵیبژێرە'
+};
+
+let _kyc = { status:'loading', data:null, loadedAt:0 };
+let _kycLoadPromise = null;
+let _kycDocType = null;
+let _kycDraftId = null;          // one storage folder per attempt; reused on retry
+let _kycSubmitting = false;
+let _kycPrefilledFor = null;
+const _kycImages = { front:null, back:null };   // { prepared, url, name, promise, token }
+const _kycImageTokens = { front:0, back:0 };
+
+function kycErrorMessage(error){
+  const raw=String(error?.message||error?.code||error||'');
+  const code=Object.keys(KYC_ERRORS).find(k=>raw.includes(k));
+  if(code) return KYC_ERRORS[code];
+  if(/row-level security|violates|unauthorized|403/i.test(raw)) return 'مۆڵەتی ناردنی ئەم وێنەیە نییە؛ پەڕەکە نوێ بکەرەوە و دووبارە هەوڵبدەوە';
+  if(/mime|content type|invalid_mime/i.test(raw)) return KYC_ERRORS.KYC_IMAGE_TYPE;
+  if(/payload too large|maximum allowed size|413/i.test(raw)) return KYC_ERRORS.KYC_IMAGE_TOO_LARGE;
+  const translated=kuErr(raw);
+  return translated && translated!==raw ? translated : 'هەڵەیەک ڕوویدا؛ تکایە دووبارە هەوڵبدەوە';
+}
+
+function kycUuid(){
+  if(globalThis.crypto?.randomUUID) return crypto.randomUUID();
+  const b=new Uint8Array(16); crypto.getRandomValues(b);
+  b[6]=(b[6]&0x0f)|0x40; b[8]=(b[8]&0x3f)|0x80;
+  const h=[...b].map(x=>x.toString(16).padStart(2,'0')).join('');
+  return h.slice(0,8)+'-'+h.slice(8,12)+'-'+h.slice(12,16)+'-'+h.slice(16,20)+'-'+h.slice(20);
+}
+
+// Browsers ship no Sorani month names for 'ku-IQ' (Chrome prints "M09"),
+// so dates are composed explicitly.
+const KU_MONTHS=['کانوونی دووەم','شوبات','ئازار','نیسان','ئایار','حوزەیران','تەممووز','ئاب','ئەیلوول','تشرینی یەکەم','تشرینی دووەم','کانوونی یەکەم'];
+function kuMonthYear(iso){
+  const d=new Date(iso); if(isNaN(d)) return '';
+  return KU_MONTHS[d.getMonth()]+' '+d.getFullYear();
+}
+function kycFmtDate(iso, withTime){
+  if(!iso) return '—';
+  const d=new Date(iso); if(isNaN(d)) return '—';
+  const date=d.getDate()+'ی '+KU_MONTHS[d.getMonth()]+' '+d.getFullYear();
+  if(!withTime) return date;
+  return date+' — '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+}
+function kycSolar(name, extra){
+  return '<span class="icn '+(extra||'')+' icon--solar icon--solar--'+name+'" aria-hidden="true"></span>';
+}
+
+async function loadKycStatus(silent){
+  if(!sb || !curUser) return null;
+  if(_kycLoadPromise) return _kycLoadPromise;
+  if(!silent || !_kyc.data){ _kyc.status=_kyc.data?_kyc.status:'loading'; renderKycProfile(); }
+  _kycLoadPromise=(async()=>{
+    try{
+      const {data,error}=await sb.rpc('ex_kyc_my_status');
+      if(error) throw error;
+      _kyc={ status:data?.status||'none', data:data||{}, loadedAt:Date.now() };
+      if(curProfile && data?.username && curProfile.username!==data.username){
+        curProfile.username=data.username;
+        applyProfileToUI();
+      }
+    }catch(e){
+      if(!_kyc.data) _kyc.status='error';
+      reportAppError(e,{operation:'kyc_status',stage:'rpc'});
+    }finally{
+      _kycLoadPromise=null;
+    }
+    renderKycProfile();
+    if(_route==='verify') renderVerifyPage();
+    return _kyc.data;
+  })();
+  return _kycLoadPromise;
+}
+
+function openVerifyPage(){
+  navigate('verify');
+}
+
+function renderKycProfile(){
+  const status=_kyc.status||'loading';
+  const meta=KYC_STATES[status]||KYC_STATES.none;
+  const badge=document.getElementById('pfKycBadge');
+  if(badge){
+    badge.dataset.state=status;
+    const ico=document.getElementById('pfKycBadgeIco');
+    if(ico) ico.innerHTML=kycSolar(meta.icon,'icn-sm'+(meta.spin?' icn-spin':''));
+    const txt=document.getElementById('pfKycBadgeText');
+    if(txt) txt.textContent=meta.label;
+  }
+  const dot=document.getElementById('pfVerifiedDot');
+  if(dot) dot.hidden = status!=='approved';
+  const sub=document.getElementById('pfMenuKycSub');
+  if(sub) sub.textContent = status==='loading'||status==='error' ? 'کارتی نیشتیمانی یان مۆڵەتی شوفێری' : meta.label;
+  const bn=document.getElementById('bnProfileDot');
+  if(bn) bn.style.display = (status==='required'||status==='rejected') ? 'flex' : 'none';
+
+  const card=document.getElementById('pfKycCard');
+  if(!card) return;
+  card.dataset.state=status;
+  const d=_kyc.data||{};
+  const v=d.verification||null;
+  const req=d.request||null;
+  const docLabel=v && KYC_DOC_TYPES[v.document_type] ? KYC_DOC_TYPES[v.document_type].label : '';
+  let html='';
+  if(status==='loading' || status==='error'){
+    card.hidden = status==='loading';
+    if(status==='error'){
+      html=`<div class="kyc-card-head"><span class="kyc-card-ico">${kycSolar('danger-triangle-linear')}</span>
+        <div><b>نەتوانرا دۆخی ناسنامە باربکرێت</b><small>پەیوەندییەکەت بپشکنە و دووبارە هەوڵبدەوە.</small></div></div>
+        <button type="button" class="btn btn-ghost btn-block kyc-card-btn" onclick="loadKycStatus()">${kycSolar('refresh-linear')} دووبارە هەوڵدانەوە</button>`;
+    }
+    card.innerHTML=html;
+    return;
+  }
+  card.hidden=false;
+  if(status==='required'){
+    html=`<div class="kyc-card-head"><span class="kyc-card-ico">${kycSolar('shield-warning-linear')}</span>
+      <div><b>پشتڕاستکردنەوەی ناسنامە پێویستە</b><small>تیمی پڕۆکسۆ داوای پشتڕاستکردنەوەی ناسنامەکەتی کردووە${req?.created_at?' — '+escHtml(kycFmtDate(req.created_at)):''}.</small></div></div>
+      ${req?.reason?`<div class="kyc-note"><b>تێبینی ئادمین</b><p>${escHtml(req.reason)}</p></div>`:''}
+      <button type="button" class="btn btn-primary btn-block kyc-card-btn" onclick="openVerifyPage()">${kycSolar('user-id-linear')} دەستپێکردنی پشتڕاستکردنەوە</button>`;
+  }else if(status==='rejected'){
+    html=`<div class="kyc-card-head"><span class="kyc-card-ico">${kycSolar('shield-cross-linear')}</span>
+      <div><b>پشتڕاستکردنەوەکەت ڕەتکرایەوە</b><small>زانیاری یان وێنەکان ڕاست بکەرەوە و دووبارە بینێرە.</small></div></div>
+      <div class="kyc-note danger"><b>هۆکاری ڕەتکردنەوە</b><p>${escHtml(v?.rejection_reason||'—')}</p></div>
+      ${req?.reason?`<div class="kyc-note"><b>تێبینی ئادمین</b><p>${escHtml(req.reason)}</p></div>`:''}
+      <button type="button" class="btn btn-primary btn-block kyc-card-btn" onclick="openVerifyPage()">${kycSolar('refresh-linear')} ڕاستکردنەوە و دووبارە ناردن</button>`;
+  }else if(status==='pending'){
+    html=`<div class="kyc-card-head"><span class="kyc-card-ico">${kycSolar('clock-circle-linear')}</span>
+      <div><b>داواکارییەکەت نێردرا و لە ژێر پشکنینە</b><small>ئەنجامەکەت بە ئاگادارییەک پێ ڕادەگەیەنین.</small></div></div>
+      <div class="kyc-facts">
+        <span><small>جۆری بەڵگەنامە</small><b>${escHtml(docLabel||'—')}</b></span>
+        <span><small>کاتی ناردن</small><b>${escHtml(kycFmtDate(v?.submitted_at,true))}</b></span>
+      </div>`;
+  }else if(status==='approved'){
+    html=`<div class="kyc-card-head"><span class="kyc-card-ico">${kycSolar('verified-check-linear')}</span>
+      <div><b>ناسنامە پشتڕاستکراوەتەوە ✓</b><small>هەژمارەکەت بە بەڵگەنامەی فەرمی پشتڕاستکراوەتەوە.</small></div></div>
+      <div class="kyc-facts">
+        <span><small>جۆری بەڵگەنامە</small><b>${escHtml(docLabel||'—')}</b></span>
+        <span><small>بەرواری پشتڕاستکردنەوە</small><b>${escHtml(kycFmtDate(v?.reviewed_at))}</b></span>
+      </div>`;
+  }else{ // none
+    if(!KYC_SELF_START_ENABLED){ card.hidden=true; card.innerHTML=''; return; }
+    html=`<div class="kyc-card-head"><span class="kyc-card-ico">${kycSolar('user-id-linear')}</span>
+      <div><b>ناسنامەکەت پشتڕاست بکەرەوە</b><small>بە کارتی نیشتیمانی یان مۆڵەتی شوفێری، هەژمارەکەت پارێزراوتر و متمانەپێکراوتر دەبێت.</small></div></div>
+      <button type="button" class="btn btn-ghost btn-block kyc-card-btn" onclick="openVerifyPage()">${kycSolar('shield-check-linear')} دەستپێکردنی پشتڕاستکردنەوە</button>`;
+  }
+  card.innerHTML=html;
+}
+
+function renderVerifyPage(){
+  const banner=document.getElementById('kycBanner');
+  const form=document.getElementById('kycFormCard');
+  const success=document.getElementById('kycSuccess');
+  if(!banner || !form) return;
+  const status=_kyc.status||'loading';
+  const d=_kyc.data||{};
+  const v=d.verification||null;
+  const req=d.request||null;
+  if(success && !success.hidden && status==='pending'){ form.hidden=true; banner.hidden=true; return; }
+  if(success) success.hidden=true;
+  banner.hidden=false;
+  banner.dataset.state=status;
+
+  let canSubmit=!!d.can_submit;
+  if(status==='none' && !KYC_SELF_START_ENABLED) canSubmit=false;
+
+  if(status==='loading'){
+    banner.innerHTML=`${kycSolar('refresh-linear','icn-spin')}<div><b>بارکردنی دۆخی ناسنامە...</b></div>`;
+    form.hidden=true; return;
+  }
+  if(status==='error'){
+    banner.innerHTML=`${kycSolar('danger-triangle-linear')}<div><b>نەتوانرا دۆخی ناسنامە باربکرێت</b><p>پەیوەندییەکەت بپشکنە.</p>
+      <button type="button" class="kyc-mini-btn" onclick="loadKycStatus()">دووبارە هەوڵدانەوە</button></div>`;
+    form.hidden=true; return;
+  }
+  if(status==='pending'){
+    banner.innerHTML=`${kycSolar('clock-circle-linear')}<div><b>داواکارییەکەت نێردرا و لە ژێر پشکنینە</b>
+      <p>${escHtml(KYC_DOC_TYPES[v?.document_type]?.label||'')} — ${escHtml(kycFmtDate(v?.submitted_at,true))}</p></div>`;
+  }else if(status==='approved'){
+    banner.innerHTML=`${kycSolar('verified-check-linear')}<div><b>ناسنامە پشتڕاستکراوەتەوە ✓</b>
+      <p>پێویست بە هیچ کارێکی تر ناکات. بەرواری پشتڕاستکردنەوە: ${escHtml(kycFmtDate(v?.reviewed_at))}</p></div>`;
+  }else if(status==='required'){
+    banner.innerHTML=`${kycSolar('shield-warning-linear')}<div><b>پشتڕاستکردنەوەی ناسنامە پێویستە</b>
+      <p>${escHtml(req?.reason||'تکایە بۆ بەردەوامبوون لە بەکارهێنانی خزمەتگوزارییەکان ناسنامەکەت پشتڕاست بکەرەوە.')}</p></div>`;
+  }else if(status==='rejected'){
+    banner.innerHTML=`${kycSolar('shield-cross-linear')}<div><b>پێویستی بە دووبارە ناردنەوە هەیە</b>
+      <p><strong>هۆکار:</strong> ${escHtml(v?.rejection_reason||'—')}</p></div>`;
+  }else{
+    banner.innerHTML=`${kycSolar('shield-linear')}<div><b>پشتڕاست نەکراوەتەوە</b>
+      <p>سێ هەنگاوی کورت: جۆری بەڵگەنامە، زانیارییەکان، وێنەکان.</p></div>`;
+  }
+  form.hidden=!canSubmit;
+  if(canSubmit){
+    const dob=document.getElementById('kycDob');
+    if(dob) dob.max=kycToday();
+    // A rejected submission is pre-filled so only the wrong part needs fixing.
+    if(status==='rejected' && v && _kycPrefilledFor!==v.id){
+      _kycPrefilledFor=v.id;
+      kycSelectDoc(v.document_type, true);
+      const n=document.getElementById('kycName'); if(n && !n.value) n.value=v.full_legal_name||'';
+      const b=document.getElementById('kycDob'); if(b && !b.value) b.value=v.date_of_birth||'';
+      const num=document.getElementById('kycNumber'); if(num && !num.value) num.value=v.document_number||'';
+    }
+    kycUpdateSteps();
+  }
+}
+
+// Local calendar date (YYYY-MM-DD) — date of birth may not be in the future.
+function kycToday(){
+  const d=new Date();
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+function kycIsRealDate(value){
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(value||'')) return false;
+  const [y,m,d]=value.split('-').map(Number);
+  const dt=new Date(Date.UTC(y,m-1,d));
+  return dt.getUTCFullYear()===y && dt.getUTCMonth()===m-1 && dt.getUTCDate()===d;
+}
+
+function kycSelectDoc(type, silent){
+  if(!KYC_DOC_TYPES[type]) return;
+  _kycDocType=type;
+  const cfg=KYC_DOC_TYPES[type];
+  document.querySelectorAll('.kyc-doc').forEach(b=>{
+    const on=b.dataset.doc===type;
+    b.classList.toggle('on',on);
+    b.setAttribute('aria-checked',on?'true':'false');
+  });
+  const set=(id,val)=>{ const el=document.getElementById(id); if(el) el.textContent=val; };
+  set('kycNumberLabel',cfg.numberLabel);
+  set('kycFrontTitle',cfg.front);
+  set('kycBackTitle',cfg.back);
+  const num=document.getElementById('kycNumber'); if(num) num.placeholder=cfg.numberHint;
+  const backBox=document.getElementById('kycBackBox'); if(backBox) backBox.hidden=!cfg.needsBack;
+  clearFieldError('kycDocType');
+  kycUpdateSteps();
+  if(!silent){
+    const info=document.getElementById('kycSecInfo');
+    if(info && window.matchMedia('(max-width: 640px)').matches) info.scrollIntoView({behavior:'smooth',block:'start'});
+  }
+}
+
+function kycFormatNumber(el){
+  const v=String(el.value||'')
+    .replace(/[٠-٩]/g,c=>String(c.charCodeAt(0)-0x660))
+    .replace(/[۰-۹]/g,c=>String(c.charCodeAt(0)-0x6F0))
+    .toUpperCase().replace(/[^A-Z0-9-]/g,'').slice(0,30);
+  if(v!==el.value) el.value=v;
+}
+
+function kycUpdateSteps(){
+  const hasType=!!_kycDocType;
+  const name=(document.getElementById('kycName')?.value||'').trim();
+  const dob=document.getElementById('kycDob')?.value||'';
+  const num=(document.getElementById('kycNumber')?.value||'').trim();
+  const infoDone=hasType && name.length>=5 && !!dob && num.length>=4;
+  const needsBack=hasType && KYC_DOC_TYPES[_kycDocType].needsBack;
+  const imgsDone=!!_kycImages.front?.prepared && (!needsBack || !!_kycImages.back?.prepared);
+  const infoSec=document.getElementById('kycSecInfo'); if(infoSec) infoSec.dataset.locked=hasType?'false':'true';
+  const imgSec=document.getElementById('kycSecImages'); if(imgSec) imgSec.dataset.locked=hasType?'false':'true';
+  const s1=document.getElementById('kycStep1'), s2=document.getElementById('kycStep2'), s3=document.getElementById('kycStep3');
+  if(s1){ s1.classList.toggle('done',hasType); s1.classList.toggle('on',!hasType); }
+  if(s2){ s2.classList.toggle('done',infoDone); s2.classList.toggle('on',hasType && !infoDone); }
+  if(s3){ s3.classList.toggle('done',infoDone && imgsDone); s3.classList.toggle('on',infoDone && !imgsDone); }
+}
+
+// Decode → validate → re-encode as JPEG. Re-encoding strips EXIF/GPS data,
+// fixes phone orientation and keeps uploads well under the bucket limit.
+async function kycDecodeImage(blob){
+  if(window.createImageBitmap){
+    try{ return await createImageBitmap(blob,{imageOrientation:'from-image'}); }catch(_){}
+    try{ return await createImageBitmap(blob); }catch(_){}
+  }
+  return await new Promise((resolve,reject)=>{
+    const url=URL.createObjectURL(blob);
+    const img=new Image();
+    img.onload=()=>{ URL.revokeObjectURL(url); resolve(img); };
+    img.onerror=()=>{ URL.revokeObjectURL(url); reject(Object.assign(new Error('KYC_IMAGE_DECODE'),{code:'KYC_IMAGE_DECODE'})); };
+    img.src=url;
+  });
+}
+// Sharpness = variance of the second derivative, measured in four directions
+// (horizontal, vertical and both diagonals), per tile, on a small grayscale
+// copy. Each direction is scored by the mean of its sharpest 20% of tiles, so
+// a card on a plain table is judged by the card and not by the background.
+// The weakest direction decides: hand shake smears one direction only, which
+// a plain 2-D Laplacian does not notice.
+function kycClarityFromGray(gray, w, h){
+  const n=w*h;
+  let sum=0, sum2=0;
+  for(let i=0;i<n;i++){ const v=gray[i]; sum+=v; sum2+=v*v; }
+  const mean=sum/n;
+  const contrast=Math.sqrt(Math.max(0, sum2/n-mean*mean));
+  const tile=Math.max(24, Math.round(Math.max(w,h)/10));
+  const dirs=[[],[],[],[]];
+  for(let ty=1; ty<h-1; ty+=tile){
+    for(let tx=1; tx<w-1; tx+=tile){
+      const yEnd=Math.min(h-1, ty+tile), xEnd=Math.min(w-1, tx+tile);
+      const s1=[0,0,0,0], s2=[0,0,0,0];
+      let c=0;
+      for(let y=ty; y<yEnd; y++){
+        let i=y*w+tx;
+        for(let x=tx; x<xEnd; x++, i++){
+          const g2=2*gray[i];
+          const a=g2-gray[i-1]-gray[i+1];            // horizontal
+          const b=g2-gray[i-w]-gray[i+w];            // vertical
+          const d=g2-gray[i-w-1]-gray[i+w+1];        // diagonal ↘
+          const e=g2-gray[i-w+1]-gray[i+w-1];        // diagonal ↙
+          s1[0]+=a; s2[0]+=a*a; s1[1]+=b; s2[1]+=b*b;
+          s1[2]+=d; s2[2]+=d*d; s1[3]+=e; s2[3]+=e*e;
+          c++;
+        }
+      }
+      if(c>=64){
+        for(let k=0;k<4;k++){ const m=s1[k]/c; dirs[k].push(s2[k]/c-m*m); }
+      }
+    }
+  }
+  const topMean=a=>{
+    if(!a.length) return 0;
+    a.sort((p,q)=>q-p);
+    const k=Math.min(a.length, Math.max(3, Math.ceil(a.length*0.2)));
+    let t=0; for(let i=0;i<k;i++) t+=a[i];
+    return t/k;
+  };
+  const perDirection=dirs.map(topMean);
+  return { sharpness:Math.min(...perDirection), perDirection, contrast };
+}
+function kycMeasureClarity(bmp, w, h){
+  const scale=Math.min(1, KYC_ANALYSIS_SIDE/Math.max(w,h));
+  const aw=Math.max(3, Math.round(w*scale)), ah=Math.max(3, Math.round(h*scale));
+  const canvas=document.createElement('canvas');
+  canvas.width=aw; canvas.height=ah;
+  const ctx=canvas.getContext('2d',{willReadFrequently:true});
+  ctx.imageSmoothingEnabled=true;
+  ctx.imageSmoothingQuality='high';
+  ctx.drawImage(bmp,0,0,aw,ah);
+  const px=ctx.getImageData(0,0,aw,ah).data;
+  const gray=new Float32Array(aw*ah);
+  for(let i=0,j=0;i<gray.length;i++,j+=4) gray[i]=0.299*px[j]+0.587*px[j+1]+0.114*px[j+2];
+  canvas.width=canvas.height=0;   // release the temporary copy
+  return Object.assign(kycClarityFromGray(gray, aw, ah), { width:w, height:h });
+}
+function kycClarityVerdict(m){
+  if(Math.min(m.width,m.height)<KYC_MIN_SHORT_SIDE || Math.max(m.width,m.height)<KYC_MIN_LONG_SIDE) return 'KYC_IMAGE_TOO_SMALL';
+  if(m.contrast<KYC_MIN_CONTRAST || m.sharpness<KYC_MIN_SHARPNESS) return 'KYC_IMAGE_BLURRY';
+  return null;
+}
+
+async function kycPrepareImage(snapshot){
+  const source=new Blob([snapshot.bytes],{type:snapshot.type||'image/jpeg'});
+  const bmp=await kycDecodeImage(source);
+  try{
+    const w=bmp.naturalWidth||bmp.width, h=bmp.naturalHeight||bmp.height;
+    if(!w || !h) throw Object.assign(new Error('KYC_IMAGE_DECODE'),{code:'KYC_IMAGE_DECODE'});
+    // 1) clarity gate — runs before anything can be uploaded
+    const clarity=kycMeasureClarity(bmp, w, h);
+    const verdict=kycClarityVerdict(clarity);
+    if(verdict) throw Object.assign(new Error(verdict),{code:verdict, clarity});
+    // 2) re-encode as JPEG: fixes orientation and drops EXIF/GPS metadata.
+    //    The original bytes are never uploaded.
+    const scale=Math.min(1, KYC_MAX_IMAGE_SIDE/Math.max(w,h));
+    const cw=Math.round(w*scale), ch=Math.round(h*scale);
+    const canvas=document.createElement('canvas');
+    canvas.width=cw; canvas.height=ch;
+    const ctx=canvas.getContext('2d');
+    ctx.fillStyle='#ffffff'; ctx.fillRect(0,0,cw,ch);
+    ctx.drawImage(bmp,0,0,cw,ch);
+    for(const quality of [0.9, 0.8, 0.7]){
+      const out=await new Promise(res=>canvas.toBlob(res,'image/jpeg',quality));
+      if(out && out.size>0 && out.size<=KYC_MAX_UPLOAD_BYTES){
+        canvas.width=canvas.height=0;
+        return { blob:out, type:'image/jpeg', ext:'jpg', width:cw, height:ch, clarity };
+      }
+    }
+    throw Object.assign(new Error('KYC_IMAGE_ENCODE'),{code:'KYC_IMAGE_ENCODE'});
+  }finally{
+    try{ bmp.close && bmp.close(); }catch(_){}
+  }
+}
+
+function kycSideEls(side){
+  const S=side==='front'?'Front':'Back';
+  return {
+    camera:document.getElementById('kyc'+S+'Camera'),
+    gallery:document.getElementById('kyc'+S+'Gallery'),
+    drop:document.getElementById('kyc'+S+'Drop'),
+    preview:document.getElementById('kyc'+S+'Preview'),
+    img:document.getElementById('kyc'+S+'Img'),
+    meta:document.getElementById('kyc'+S+'Meta'),
+    hint:document.getElementById('kyc'+S+'Hint'),
+    box:document.getElementById('kyc'+S+'Box'),
+    errId:'kyc'+S
+  };
+}
+
+const KYC_PICK_HINT='وێنەیەکی ڕوون بگرە یان لە گەلەری هەڵیبژێرە';
+function kycRemoveImage(side){
+  _kycImageTokens[side]++;
+  const cur=_kycImages[side];
+  if(cur?.url) URL.revokeObjectURL(cur.url);
+  _kycImages[side]=null;
+  const el=kycSideEls(side);
+  if(el.camera) el.camera.value='';
+  if(el.gallery) el.gallery.value='';
+  if(el.preview) el.preview.hidden=true;
+  if(el.img) el.img.removeAttribute('src');
+  if(el.drop){ el.drop.hidden=false; }
+  if(el.hint) el.hint.textContent=KYC_PICK_HINT;
+  if(el.box) el.box.classList.remove('ready','busy');
+  clearFieldError(el.errId);
+  kycUpdateSteps();
+}
+
+function kycOnImage(side, input){
+  const el=kycSideEls(side);
+  clearFieldError(el.errId);
+  const file=input?.files?.[0]||null;
+  if(!file) return;   // picker cancelled: keep the current image
+  if(input) input.value='';   // lets the same photo be chosen again
+  if(file.type && !/^image\//i.test(file.type)){
+    kycRemoveImage(side);
+    setFieldError(el.errId, KYC_ERRORS.KYC_IMAGE_TYPE);
+    return;
+  }
+  if(file.size>KYC_MAX_INPUT_BYTES){
+    kycRemoveImage(side);
+    setFieldError(el.errId, KYC_ERRORS.KYC_IMAGE_TOO_LARGE);
+    return;
+  }
+  const token=++_kycImageTokens[side];
+  if(el.box) el.box.classList.add('busy');
+  if(el.hint) el.hint.textContent='پشکنینی ڕوونی وێنە...';
+  const promise=readSelectedFileSnapshot(file)
+    .then(snapshot=>kycPrepareImage(snapshot))
+    .then(prepared=>{
+      if(token!==_kycImageTokens[side]) return null;
+      const old=_kycImages[side];
+      if(old?.url) URL.revokeObjectURL(old.url);
+      const url=URL.createObjectURL(prepared.blob);
+      _kycImages[side]={ prepared, url, name:file.name, promise:null };
+      if(el.img) el.img.src=url;
+      if(el.meta) el.meta.textContent=prepared.width+'×'+prepared.height+' • '+(prepared.blob.size/1024/1024).toFixed(2)+' MB';
+      if(el.drop) el.drop.hidden=true;
+      if(el.preview) el.preview.hidden=false;
+      if(el.box){ el.box.classList.remove('busy'); el.box.classList.add('ready'); }
+      clearFieldError(el.errId);
+      kycUpdateSteps();
+      return prepared;
+    })
+    .catch(err=>{
+      if(token!==_kycImageTokens[side]) return null;
+      // A rejected photo replaces whatever was there: the side goes back to
+      // the Camera / Gallery choice so nothing unclear can be submitted.
+      kycRemoveImage(side);
+      setFieldError(el.errId, kycErrorMessage(err));
+      return null;
+    });
+  _kycImages[side]=Object.assign(_kycImages[side]||{}, { promise });
+}
+
+// The Camera / Gallery choices are <label>s (they open the file inputs
+// natively on iOS and Android); make them work from the keyboard too.
+document.addEventListener('keydown', e=>{
+  if(e.key!=='Enter' && e.key!==' ') return;
+  const l=e.target && e.target.closest ? e.target.closest('label.kyc-src-btn, label.kyc-mini-btn') : null;
+  if(!l) return;
+  e.preventDefault();
+  l.click();
+});
+
+async function kycAwaitImage(side){
+  const cur=_kycImages[side];
+  if(cur?.promise){ await cur.promise; }
+  return _kycImages[side]?.prepared||null;
+}
+
+function kycSetProgress(pct, text){
+  const wrap=document.getElementById('kycProgress');
+  const fill=document.getElementById('kycProgressFill');
+  const label=document.getElementById('kycProgressText');
+  if(!wrap) return;
+  if(pct===null){ wrap.hidden=true; return; }
+  wrap.hidden=false;
+  if(fill) fill.style.width=Math.max(0,Math.min(100,pct))+'%';
+  if(label) label.textContent=text||'';
+}
+
+async function kycUpload(path, prepared){
+  let lastError=null;
+  for(let attempt=0;attempt<3;attempt++){
+    try{
+      const {error}=await sb.storage.from(KYC_BUCKET).upload(path, prepared.blob, {
+        contentType:prepared.type, upsert:true, cacheControl:'0'
+      });
+      if(error) throw error;
+      return;
+    }catch(error){
+      lastError=error;
+      if(!isTransientNetworkError(error) || attempt===2) break;
+      await waitForNetworkRetry(800*(attempt+1));
+    }
+  }
+  const code=isTransientNetworkError(lastError)?'KYC_UPLOAD_NETWORK':'KYC_UPLOAD_FAILED';
+  const err=new Error(code+': '+String(lastError?.message||''));
+  err.code=code; err.status=lastError?.statusCode||lastError?.status;
+  throw err;
+}
+
+function kycShowFormError(msg){
+  const box=document.getElementById('kycFormError');
+  if(!box) return;
+  if(!msg){ box.hidden=true; box.textContent=''; return; }
+  box.hidden=false;
+  box.innerHTML=ICON.warn+'<span>'+escHtml(msg)+'</span>';
+}
+
+function kycValidate(){
+  let ok=true, first=null;
+  const fail=(id,msg,focusId)=>{ setFieldError(id,msg); ok=false; if(!first) first=document.getElementById(focusId||id); };
+  ['kycDocType','kycName','kycDob','kycNumber','kycFront','kycBack','kycConsent'].forEach(clearFieldError);
+  if(!_kycDocType) fail('kycDocType','تکایە جۆری بەڵگەنامە هەڵبژێرە','kycSecType');
+  const name=(document.getElementById('kycName').value||'').trim().replace(/\s+/g,' ');
+  if(name.length<5 || !name.includes(' ')) fail('kycName','ناوی تەواو بە لانیکەم دوو بەش بنووسە (ناو و ناوی باوک)');
+  else if(/[0-9٠-٩۰-۹<>{}\[\]\\\/@#$%^*=+_|~]/.test(name)) fail('kycName','ناو نابێت ژمارە یان هێمای تێدابێت');
+  const dob=document.getElementById('kycDob').value;
+  if(!dob) fail('kycDob','بەرواری لەدایکبوون دیاری بکە');
+  else if(!kycIsRealDate(dob) || dob<'1900-01-01' || dob>kycToday()) fail('kycDob','بەرواری لەدایکبوون دروست نییە');
+  const num=(document.getElementById('kycNumber').value||'').trim();
+  if(!/^[A-Z0-9-]{4,30}$/.test(num)) fail('kycNumber','ژمارەی بەڵگەنامە دەبێت ٤ بۆ ٣٠ پیت/ژمارەی ئینگلیزی بێت');
+  if(!_kycImages.front?.prepared && !_kycImages.front?.promise) fail('kycFront','وێنەی ڕووی پێشەوە پێویستە','kycFrontBox');
+  if(_kycDocType && KYC_DOC_TYPES[_kycDocType].needsBack && !_kycImages.back?.prepared && !_kycImages.back?.promise)
+    fail('kycBack','وێنەی ڕووی دواوە پێویستە','kycBackBox');
+  if(!document.getElementById('kycConsent').checked) fail('kycConsent','تکایە ڕاستی زانیارییەکان پشتڕاست بکەرەوە');
+  if(first && first.scrollIntoView) first.scrollIntoView({behavior:'smooth',block:'center'});
+  return ok ? { name, dob, num } : null;
+}
+
+async function submitKyc(){
+  if(_kycSubmitting) return;               // double-click guard (DB also enforces it)
+  kycShowFormError(null);
+  if(!curUser){ showToast('تکایە دووبارە بچۆ ژوورەوە','error'); return; }
+  if(!_kyc.data?.can_submit){ showToast(kycErrorMessage(_kyc.status==='pending'?'KYC_ALREADY_PENDING':'KYC_ALREADY_APPROVED'),'warning'); return; }
+  const fields=kycValidate();
+  if(!fields) return;
+
+  const btn=document.getElementById('kycSubmitBtn');
+  const btnHtml=btn.innerHTML;
+  _kycSubmitting=true;
+  btn.disabled=true; btn.innerHTML=ICON.spin+' ناردن...';
+  document.querySelectorAll('#kycFormCard input, #kycFormCard .kyc-doc, #kycFormCard .kyc-mini-btn').forEach(el=>el.setAttribute('disabled',''));
+  let stage='session';
+  try{
+    kycSetProgress(5,'پشتڕاستکردنەوەی چوونەژوورەوە...');
+    await getOrderSession();
+
+    stage='image_prepare';
+    kycSetProgress(12,'ئامادەکردنی وێنەکان...');
+    const needsBack=KYC_DOC_TYPES[_kycDocType].needsBack;
+    const front=await kycAwaitImage('front');
+    const back=needsBack ? await kycAwaitImage('back') : null;
+    // Defence in depth: only images that passed the local clarity gate exist
+    // here, but never upload anything without a passing verdict.
+    const cleared=img=>!!(img && img.clarity && !kycClarityVerdict(img.clarity));
+    if(front && !cleared(front)){ kycRemoveImage('front'); setFieldError('kycFront',KYC_UNCLEAR_MSG); throw Object.assign(new Error('KYC_IMAGE_BLURRY'),{handled:true}); }
+    if(back && !cleared(back)){ kycRemoveImage('back'); setFieldError('kycBack',KYC_UNCLEAR_MSG); throw Object.assign(new Error('KYC_IMAGE_BLURRY'),{handled:true}); }
+    if(!front){ setFieldError('kycFront','وێنەی ڕووی پێشەوە ئامادە نییە؛ دووبارە هەڵیبژێرە'); throw Object.assign(new Error('KYC_FRONT_IMAGE_MISSING'),{handled:true}); }
+    if(needsBack && !back){ setFieldError('kycBack','وێنەی ڕووی دواوە ئامادە نییە؛ دووبارە هەڵیبژێرە'); throw Object.assign(new Error('KYC_BACK_IMAGE_MISSING'),{handled:true}); }
+
+    const vid=_kycDraftId || (_kycDraftId=kycUuid());
+    const base=curUser.id+'/'+vid+'/';
+    const frontPath=base+'front.'+front.ext;
+    const backPath=back ? base+'back.'+back.ext : null;
+
+    stage='upload_front';
+    kycSetProgress(25,'بارکردنی '+KYC_DOC_TYPES[_kycDocType].front+'...');
+    await kycUpload(frontPath, front);
+    if(back){
+      stage='upload_back';
+      kycSetProgress(55,'بارکردنی '+KYC_DOC_TYPES[_kycDocType].back+'...');
+      await kycUpload(backPath, back);
+    }
+
+    // Only after both files are stored is the request created.
+    stage='submit';
+    kycSetProgress(85,'ناردنی زانیارییەکان...');
+    const {error}=await sb.rpc('ex_kyc_submit',{
+      p_verification_id:vid,
+      p_document_type:_kycDocType,
+      p_full_legal_name:fields.name,
+      p_date_of_birth:fields.dob,
+      p_document_number:fields.num,
+      p_front_path:frontPath,
+      p_back_path:backPath
+    });
+    if(error) throw error;
+
+    kycSetProgress(100,'تەواو بوو');
+    _kycDraftId=null;
+    kycResetForm();
+    _kyc.status='pending';
+    if(_kyc.data){ _kyc.data.status='pending'; _kyc.data.can_submit=false; }
+    renderKycProfile();
+    const form=document.getElementById('kycFormCard'); if(form) form.hidden=true;
+    const banner=document.getElementById('kycBanner'); if(banner) banner.hidden=true;
+    const success=document.getElementById('kycSuccess'); if(success) success.hidden=false;
+    window.scrollTo({top:0,behavior:'smooth'});
+    showToast('داواکارییەکەت نێردرا و لە ژێر پشکنینە','success');
+    loadKycStatus(true);
+  }catch(e){
+    const raw=String(e?.message||'');
+    if(/KYC_DUPLICATE_SUBMISSION/.test(raw)) _kycDraftId=null;
+    if(/KYC_ALREADY_PENDING|KYC_ALREADY_APPROVED/.test(raw)) loadKycStatus(true);
+    if(!e?.handled){
+      // Only codes and sizes are reported — never the name, number or images.
+      reportAppError(e,{operation:'kyc_submit',stage,file_size:_kycImages.front?.prepared?.blob?.size,file_type:_kycImages.front?.prepared?.type});
+    }
+    const msg=kycErrorMessage(e);
+    kycShowFormError(msg);
+    showToast(msg,'error');
+  }finally{
+    _kycSubmitting=false;
+    btn.disabled=false; btn.innerHTML=btnHtml;
+    document.querySelectorAll('#kycFormCard [disabled]').forEach(el=>{ if(el!==btn) el.removeAttribute('disabled'); });
+    setTimeout(()=>{ if(!_kycSubmitting) kycSetProgress(null); }, 900);
+  }
+}
+
+function kycResetForm(){
+  kycRemoveImage('front');
+  kycRemoveImage('back');
+  ['kycName','kycDob','kycNumber'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+  const c=document.getElementById('kycConsent'); if(c) c.checked=false;
+  _kycDocType=null;
+  document.querySelectorAll('.kyc-doc').forEach(b=>{ b.classList.remove('on'); b.setAttribute('aria-checked','false'); });
+  kycShowFormError(null);
+  kycUpdateSteps();
 }
 
 // ══════════════════════════════════════════════════════════════

@@ -64,6 +64,14 @@
     'shuffle':'<path d="M3 6h3c4 0 5 12 9 12h6M18 15l3 3-3 3M3 18h3c1.5 0 2.6-1.5 3.5-3M18 3l3 3-3 3M14.5 6H21"/>',
     'robot':'<rect x="4" y="7" width="16" height="13" rx="2"/><path d="M12 3v4M8 12h.01M16 12h.01M8 16h8"/>',
     'screwdriver-wrench':'<path d="m14.7 6.3 3-3a4 4 0 0 1-5 5l-8 8a2 2 0 1 0 3 3l8-8a4 4 0 0 1 5-5l-3 3Z"/>',
+    'id-card':'<rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M6 16a3 3 0 0 1 6 0M14 10h4M14 14h3"/>',
+    'magnifying-glass':'<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
+    'circle-check':'<circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/>',
+    'circle-xmark':'<circle cx="12" cy="12" r="9"/><path d="m15 9-6 6M9 9l6 6"/>',
+    'clock-rotate-left':'<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/>',
+    'calendar-day':'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/><rect x="8" y="13" width="4" height="4" rx="1"/>',
+    'headset':'<path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="2" y="14" width="5" height="6" rx="2"/><rect x="17" y="14" width="5" height="6" rx="2"/>',
+    'bug':'<rect x="8" y="6" width="8" height="14" rx="4"/><path d="M19 7l-3 2M5 7l3 2M19 19l-3-2M5 19l3-2M20 13h-4M4 13h4M10 4l2 2 2-2"/>',
     'dice':'<rect x="4" y="4" width="16" height="16" rx="3"/><circle cx="9" cy="9" r="1"/><circle cx="15" cy="15" r="1"/>'
   };
 

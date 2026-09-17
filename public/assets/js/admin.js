@@ -23,7 +23,7 @@ const STATUS_NEEDS_CORRECTION='پێویستی بە ڕاستکردنەوەیە', 
 const REVIEWABLE_ORDER_STATUSES=new Set([STATUS_PENDING,STATUS_CORRECTED]);
 const CORRECTABLE_ORDER_STATUSES=new Set([STATUS_PENDING,STATUS_CORRECTED,STATUS_NEEDS_CORRECTION]);
 
-let sb, adminUser=null, adminName='ئادمین';
+let sb, adminUser=null, adminName='ئادمین', adminRole='admin';
 let allOrders=[], allAccounts=[], allRates=[], allNotifs=[];
 let orderFilter='all', accFilter='all';
 let _notifTarget='all', _notifSelectedUser=null;
@@ -144,11 +144,12 @@ async function verifyAdmin(uid, email){
   try{
     const {data:prof, error} = await sb
       .from('ex_profiles')
-      .select('full_name,email,is_admin,is_banned')
+      .select('full_name,email,is_admin,is_banned,role,username')
       .eq('id', uid)
       .maybeSingle();
     if(error || !prof || !prof.is_admin || prof.is_banned) return false;
     adminName = prof.full_name || email.split('@')[0];
+    adminRole = prof.role || 'admin';
     return true;
   }catch(e){ return false; }
 }
@@ -190,13 +191,17 @@ function showApp(){
   document.getElementById('main').classList.add('show');
   document.getElementById('sbAv').textContent = (adminName||'A')[0].toUpperCase();
   document.getElementById('sbAdminName').textContent = adminName;
+  const roleEl=document.getElementById('sbAdminRole');
+  if(roleEl) roleEl.textContent = isSuperAdmin() ? 'Super Admin' : 'Admin';
   recordAdminVisit();
   goPage('dashboard');
   subscribeOrdersAdmin();
   subscribeAlerts();
   startErrorLogMonitor();
   startSupportCaseMonitor();
+  startKycMonitor();
 }
+function isSuperAdmin(){ return adminRole==='super_admin'; }
 
 // The admin page does not load the public assets/js/track.js file. Record its
 // authenticated visit here so administrator accounts also get an IP history.
@@ -223,6 +228,7 @@ const pageConfig = {
   dashboard:{ title:'داشبۆرد', sub:'دیمەنی گشتی سیستەم', load: ()=>loadDashboard() },
   orders:{ title:'ئۆردەرەکان', sub:'پەسەندکردن و ڕەتکردنەوەی داواکارییە گۆڕینەوەکان', load: ()=>loadOrders() },
   accounts:{ title:'هەژمارەکان', sub:'بەڕێوەبردنی هەژمارەکانی بەکارهێنەران', load: ()=>loadAccounts() },
+  kyc:{ title:'پشتڕاستکردنەوەی ناسنامە', sub:'داواکردن، پشکنین و پەسەندکردنی بەڵگەنامەی ناسنامە', load: ()=>loadKycAdmin() },
   wallets:{ title:'واڵێتەکان', sub:'زیادکردن، قوفڵکردن و دەستکاریکردنی واڵێتەکانی وەرگرتنی پارە', load: ()=>loadWalletsAdmin() },
   rates:{ title:'نرخ و کرێ', sub:'ڕێکخستنی نرخی گۆڕینەوە و کرێی هەر ڕێگایەک', load: ()=>loadRates() },
   notifications:{ title:'ئاگادارییەکان', sub:'ناردنی ئاگاداری و بینینی مێژوو', load: ()=>loadNotifPage() },
@@ -1022,7 +1028,7 @@ function confirm2(title,msg,icoClass,icoColor,onOk){
 async function loadProfilesFor(userIds){
   const uids=[...new Set(userIds.filter(Boolean))];
   if(!uids.length) return {};
-  const {data} = await sb.from('ex_profiles').select('id,full_name,email,phone,is_admin,is_banned').in('id',uids);
+  const {data} = await sb.from('ex_profiles').select('id,full_name,email,phone,is_admin,is_banned,username,role').in('id',uids);
   const map={}; (data||[]).forEach(p=>{ map[p.id]=p; });
   return map;
 }
@@ -1407,20 +1413,25 @@ function renderAccounts(q=''){
   let list=allAccounts;
   if(accFilter==='banned') list=list.filter(a=>a.is_banned);
   if(accFilter==='admin') list=list.filter(a=>a.is_admin);
-  if(q) list=list.filter(a=>(a.full_name||'').toLowerCase().includes(q)||(a.email||'').toLowerCase().includes(q));
+  if(q){
+    const h=q.replace(/^@/,'');
+    list=list.filter(a=>(a.full_name||'').toLowerCase().includes(q)||(a.email||'').toLowerCase().includes(q)
+      ||(a.username||'').toLowerCase().includes(h)||String(a.id||'')===q);
+  }
   document.getElementById('accountsTableWrap').innerHTML = renderAccTable(list) + renderAccCards(list);
 }
 function accBadges(a){
   let b='';
   b += a.is_banned ? '<span class="badge banned">بۆیکۆتکراو</span>' : '<span class="badge active">چالاک</span>';
-  if(a.is_admin) b += ' <span class="badge admin">ئادمین</span>';
+  if(a.role==='super_admin') b += ' <span class="badge super">سوپەر ئادمین</span>';
+  else if(a.is_admin) b += ' <span class="badge admin">ئادمین</span>';
   return b;
 }
 function renderAccTable(list){
   if(!list.length) return '<div class="empty"><i class="fas fa-user-slash"></i><p>هیچ هەژمارێک نییە</p></div>';
   return `<table><thead><tr><th>بەکارهێنەر</th><th>مۆبایل</th><th>IP و ئامێر</th><th>باری</th><th>بەرواری تۆمارکردن</th><th>کردار</th></tr></thead><tbody>
     ${list.map(a=>`<tr>
-      <td><div class="user-cell"><div class="mini-av">${(a.full_name||a.email||'?')[0].toUpperCase()}</div><div><div class="user-cell-name">${esc(a.full_name||'—')}</div><div class="user-cell-email">${esc(a.email||'—')}</div></div></div></td>
+      <td><div class="user-cell"><div class="mini-av">${(a.full_name||a.email||'?')[0].toUpperCase()}</div><div><div class="user-cell-name">${esc(a.full_name||'—')}</div><div class="user-cell-email">${esc(a.email||'—')}</div>${a.username?`<div class="user-cell-handle" dir="ltr">@${esc(a.username)}</div>`:''}</div></div></td>
       <td style="direction:ltr;font-size:12px">${esc(a.phone||'—')}</td>
       <td>${accIpCell(a.id)}</td>
       <td>${accBadges(a)}</td>
@@ -1429,7 +1440,8 @@ function renderAccTable(list){
         <div class="act-btn bl" onclick="openAccountInfo('${a.id}')"><i class="fas fa-circle-info"></i> زانیاری</div>
         <div class="act-btn dark" onclick="openSetPasswordModal('${a.id}','${esc(a.email||'').replace(/'/g,"\\'")}')"><i class="fas fa-key"></i> گۆڕینی وشەی نهێنی</div>
         <div class="act-btn ${a.is_banned?'gr':'rd'}" onclick="toggleBan('${a.id}',${a.is_banned})"><i class="fas fa-${a.is_banned?'user-check':'user-slash'}"></i> ${a.is_banned?'لابردنی بۆیکۆت':'بۆیکۆتکردن'}</div>
-        <div class="act-btn ${a.is_admin?'yw':'cy'}" onclick="toggleAdmin('${a.id}',${a.is_admin})"><i class="fas fa-shield"></i> ${a.is_admin?'لابردنی ئادمین':'کردن بە ئادمین'}</div>
+        <div class="act-btn cy" onclick="openKycRequestById('${a.id}')"><i class="fas fa-id-card"></i> پشتڕاستکردنەوە</div>
+        ${roleButtonHTML(a)}
       </div></td>
     </tr>`).join('')}
   </tbody></table>`;
@@ -1440,14 +1452,15 @@ function renderAccCards(list){
     <div class="rec-card" style="cursor:default">
       <div class="rec-card-top">
         <div class="mini-av">${(a.full_name||a.email||'?')[0].toUpperCase()}</div>
-        <div class="rec-card-info"><div class="rec-card-name">${esc(a.full_name||'بێ ناو')}</div><div class="rec-card-sub">${esc(a.email||'—')}</div></div>
+        <div class="rec-card-info"><div class="rec-card-name">${esc(a.full_name||'بێ ناو')}</div><div class="rec-card-sub">${esc(a.email||'—')}</div>${a.username?`<div class="rec-card-sub" style="color:var(--cy)">@${esc(a.username)}</div>`:''}</div>
       </div>
       <div class="rec-card-meta">${accBadges(a)}<div class="rec-card-date" dir="ltr">${fmtDateTime(a.created_at)}</div></div>
       <div class="rec-card-actions g3">
         <div class="act-btn bl" onclick="openAccountInfo('${a.id}')"><i class="fas fa-circle-info"></i> زانیاری</div>
         <div class="act-btn dark" onclick="openSetPasswordModal('${a.id}','${esc(a.email||'').replace(/'/g,"\\'")}')"><i class="fas fa-key"></i> وشەی نهێنی</div>
         <div class="act-btn ${a.is_banned?'gr':'rd'}" onclick="toggleBan('${a.id}',${a.is_banned})"><i class="fas fa-${a.is_banned?'user-check':'user-slash'}"></i> ${a.is_banned?'لابردنی بۆیکۆت':'بۆیکۆت'}</div>
-        <div class="act-btn ${a.is_admin?'yw':'cy'}" onclick="toggleAdmin('${a.id}',${a.is_admin})"><i class="fas fa-shield"></i> ${a.is_admin?'لابردنی ئادمین':'کردن بە ئادمین'}</div>
+        <div class="act-btn cy" onclick="openKycRequestById('${a.id}')"><i class="fas fa-id-card"></i> پشتڕاستکردنەوە</div>
+        ${roleButtonHTML(a)}
       </div>
     </div>`).join('')}</div>`;
 }
@@ -1480,7 +1493,9 @@ async function openAccountInfo(id){
   const base=`
     <div class="ai-sec">زانیاری بنەڕەتی</div>
     <div class="detail-row"><div class="lbl">ناوی تەواو</div><div class="val" dir="rtl">${esc(a.full_name||'—')}</div></div>
+    <div class="detail-row"><div class="lbl">ناوی بەکارهێنەر</div><div class="val">${a.username?'@'+esc(a.username):'—'}</div></div>
     <div class="detail-row"><div class="lbl">ئیمەیل</div><div class="val">${esc(a.email||'—')}</div></div>
+    <div class="detail-row"><div class="lbl">ڕۆڵ</div><div class="val" dir="rtl">${a.role==='super_admin'?'سوپەر ئادمین':a.role==='admin'?'ئادمین':'بەکارهێنەر'}</div></div>
     <div class="detail-row"><div class="lbl">ژمارەی مۆبایل</div><div class="val">${esc(a.phone||'—')}</div></div>
     <div class="detail-row"><div class="lbl">باری هەژمار</div><div class="val" dir="rtl">${accBadges(a)}</div></div>
     <div class="detail-row"><div class="lbl">بەرواری تۆمارکردن</div><div class="val">${fmtDate(a.created_at)}</div></div>
@@ -1515,6 +1530,12 @@ async function openAccountInfo(id){
     <div class="detail-row"><div class="lbl">دوایین داواکاری</div><div class="val">${last?fmtDateTime(last.created_at):'—'}</div></div>`;
 
   const ips = ipsRes.ips||[];
+  html += `<div class="ai-sec">پشتڕاستکردنەوەی ناسنامە</div>
+    <div class="detail-row"><div class="lbl">دۆخ</div><div class="val" dir="rtl" id="aiKycStatus"><i class="fas fa-circle-notch fa-spin"></i></div></div>
+    <div class="act-grp" style="margin:8px 0 4px">
+      <div class="act-btn cy" onclick="openKycRequestById('${esc(a.id)}')"><i class="fas fa-id-card"></i> داواکردنی پشتڕاستکردنەوە</div>
+      <div class="act-btn dark" onclick="closeMo('moAccountInfo');goPage('kyc');setTimeout(()=>{const s=document.getElementById('kycListSearch'); if(s){ s.value='${esc(a.username||'')}'; setKycFilter('all'); }},50)"><i class="fas fa-clock-rotate-left"></i> مێژووی پشتڕاستکردنەوە</div>
+    </div>`;
   html += `<div class="ai-sec">IP و ئامێر</div>`;
   if(!ips.length){
     html += `<div class="fee-toggle-note">هیچ IPـیەک بۆ ئەم هەژمارە تۆمار نەکراوە.</div>`;
@@ -1530,24 +1551,36 @@ async function openAccountInfo(id){
   }
 
   document.getElementById('aiBody').innerHTML = html;
+  try{
+    const rows=await sb.rpc('ex_admin_kyc_search_users',{p_query:id,p_limit:1});
+    const st=rows.data?.[0]?.kyc_status||'none';
+    const el=document.getElementById('aiKycStatus');
+    if(el) el.innerHTML=kycBadgeHTML(st);
+  }catch(_){}
 }
 function toggleBan(id, current){
   const next=!current;
   confirm2(next?'بۆیکۆتکردنی هەژمار':'لابردنی بۆیکۆت', next?'ئایا دڵنیایت لە بۆیکۆتکردنی ئەم هەژمارە؟ ناتوانێت بچێتە ژوورەوە.':'ئایا دڵنیایت لە لابردنی بۆیکۆت؟',
     'fas fa-user-slash','var(--rd)', async()=>{
     const {error} = await sb.from('ex_profiles').update({is_banned:next}).eq('id',id);
-    if(error){ showToast('هەڵە: '+error.message,'rd'); return; }
+    if(error){ showToast(adminDbMessage(error),'rd'); return; }
     showToast(next?'هەژمار بۆیکۆتکرا':'بۆیکۆت لابرا', next?'rd':'gr');
     loadAccounts(); loadDashboardStats();
   });
 }
+// Role changes are super-admin only and go through ex_admin_set_role; the
+// database rejects them for everyone else, this only hides the button.
+function roleButtonHTML(a){
+  if(!isSuperAdmin() || (adminUser && a.id===adminUser.id) || a.role==='super_admin') return '';
+  return `<div class="act-btn ${a.is_admin?'yw':'pu'}" onclick="toggleAdmin('${a.id}',${!!a.is_admin})"><i class="fas fa-shield"></i> ${a.is_admin?'لابردنی ئادمین':'کردن بە ئادمین'}</div>`;
+}
 function toggleAdmin(id, current){
+  if(!isSuperAdmin()){ showToast('تەنها سوپەر ئادمین دەتوانێت ڕۆڵ بگۆڕێت','rd'); return; }
   const next=!current;
-  const selfWarn = (adminUser && id===adminUser.id && !next) ? ' — ئاگاداری: ئەمە هەژماری خۆتە!' : '';
-  confirm2(next?'کردن بە ئادمین':'لابردنی ئادمین', (next?'ئایا دەتەوێت مافی ئادمین بدەیت بەم هەژمارە؟':'ئایا دەتەوێت مافی ئادمین لاببەیت؟')+selfWarn,
+  confirm2(next?'کردن بە ئادمین':'لابردنی ئادمین', next?'ئایا دەتەوێت مافی ئادمین بدەیت بەم هەژمارە؟':'ئایا دەتەوێت مافی ئادمین لاببەیت؟',
     'fas fa-shield-halved','var(--cy)', async()=>{
-    const {error} = await sb.from('ex_profiles').update({is_admin:next}).eq('id',id);
-    if(error){ showToast('هەڵە: '+error.message,'rd'); return; }
+    const {error} = await sb.rpc('ex_admin_set_role',{p_user_id:id, p_role: next?'admin':'user'});
+    if(error){ showToast(adminDbMessage(error),'rd'); return; }
     showToast(next?'کرا بە ئادمین':'مافی ئادمین لابرا','gr');
     loadAccounts();
   });
@@ -2196,7 +2229,9 @@ function searchNotifUser(){
   const q=document.getElementById('notifUserSearch').value.trim();
   if(!q){ document.getElementById('notifUserResults').innerHTML=''; return; }
   _notifSearchTimer=setTimeout(async()=>{
-    const {data} = await sb.from('ex_profiles').select('id,full_name,email').or(`full_name.ilike.%${q}%,email.ilike.%${q}%`).limit(6);
+    const cleanQ=q.replace(/[,()*]/g,' ').trim();
+    const handle=cleanQ.replace(/^@/,'');
+    const {data} = await sb.from('ex_profiles').select('id,full_name,email,username').or(`full_name.ilike.%${cleanQ}%,email.ilike.%${cleanQ}%,username.ilike.%${handle}%`).limit(6);
     const box=document.getElementById('notifUserResults');
     if(!data || !data.length){ box.innerHTML='<div style="font-size:12px;color:var(--mt);padding:6px 2px">هیچ نەدۆزرایەوە</div>'; return; }
     box.innerHTML = data.map(u=>`<div onclick='pickNotifUser(${safeAttr(u)})' style="cursor:pointer;display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--b1);border-radius:10px">
@@ -2603,4 +2638,399 @@ function otpDelete(id){
     showToast('تۆمارەکە سڕدرایەوە','gr');
     loadOtp();
   });
+}
+
+// ══════════════════════════════════════════════════════════════
+// ═══ IDENTITY VERIFICATION (KYC) MANAGEMENT ═══════════════════
+// Every read and write goes through ex_admin_kyc_* RPCs, which check
+// the caller's role inside PostgreSQL. Document images are fetched with
+// storage.download() (allowed only for admins by Storage RLS) and shown
+// as in-memory blob URLs — no shareable link is ever created.
+// ══════════════════════════════════════════════════════════════
+const KYC_ADMIN_DOC = { national_id:'کارتی نیشتیمانی', driving_license:'مۆڵەتی شوفێری' };
+const KYC_ADMIN_STATUS = {
+  none:     { label:'پشتڕاست نەکراوەتەوە', cls:'kyc-none' },
+  required: { label:'پشتڕاستکردنەوە پێویستە', cls:'pending' },
+  pending:  { label:'لە ژێر پشکنینە', cls:'order_status' },
+  approved: { label:'پشتڕاستکراوەتەوە ✓', cls:'approved' },
+  rejected: { label:'ڕەتکراوەتەوە', cls:'rejected' }
+};
+const KYC_ADMIN_EVENTS = {
+  requested:'ئادمین داوای پشتڕاستکردنەوەی کرد',
+  request_cancelled:'داواکاری هەڵوەشێنرایەوە',
+  submitted:'بەکارهێنەر بەڵگەنامەی نارد',
+  resubmitted:'بەکارهێنەر دووبارە بەڵگەنامەی نارد',
+  approved:'پەسەندکرا',
+  rejected:'ڕەتکرایەوە'
+};
+const KYC_ADMIN_ERRORS = {
+  ADMIN_REQUIRED:'دەستگەیشتنی ئادمینت نییە',
+  SUPER_ADMIN_REQUIRED:'تەنها سوپەر ئادمین دەتوانێت ئەم کارە بکات',
+  ROLE_CHANGE_FORBIDDEN:'تەنها سوپەر ئادمین دەتوانێت ڕۆڵ بگۆڕێت',
+  ROLE_SELF_CHANGE_FORBIDDEN:'ناتوانیت ڕۆڵی خۆت بگۆڕیت',
+  LAST_SUPER_ADMIN:'دوایین سوپەر ئادمین ناتوانرێت لاببرێت',
+  ADMIN_BAN_FORBIDDEN:'تەنها سوپەر ئادمین دەتوانێت ئادمینێک بۆیکۆت بکات',
+  SELF_BAN_FORBIDDEN:'ناتوانیت هەژماری خۆت بۆیکۆت بکەیت',
+  USER_NOT_FOUND:'بەکارهێنەرەکە نەدۆزرایەوە',
+  KYC_REQUEST_EXISTS:'ئەم بەکارهێنەرە پێشتر داواکارییەکی چالاکی هەیە',
+  KYC_REQUEST_NOT_FOUND:'داواکارییەکە نەدۆزرایەوە',
+  KYC_REQUEST_NOT_ACTIVE:'ئەم داواکارییە چیتر چالاک نییە',
+  KYC_REASON_TOO_LONG:'دەق نابێت لە ٥٠٠ پیت زیاتر بێت',
+  KYC_REASON_REQUIRED:'بۆ ڕەتکردنەوە هۆکار پێویستە (لانیکەم ٣ پیت)',
+  KYC_NOT_FOUND:'داواکارییەکە نەدۆزرایەوە',
+  KYC_ALREADY_REVIEWED:'ئەم داواکارییە پێشتر لەلایەن ئادمینێکی ترەوە بڕیاری لەسەر دراوە',
+  KYC_SELF_REVIEW_FORBIDDEN:'ناتوانیت پشتڕاستکردنەوەی ناسنامەی خۆت پەسەند یان ڕەت بکەیتەوە',
+  KYC_DECISION_INVALID:'بڕیارەکە دروست نییە',
+  KYC_FILTER_INVALID:'فلتەرەکە دروست نییە'
+};
+function adminDbMessage(error){
+  const raw=String(error?.message||error||'');
+  const key=Object.keys(KYC_ADMIN_ERRORS).find(k=>raw.includes(k));
+  if(key) return KYC_ADMIN_ERRORS[key];
+  if(error?.code==='42501' || /permission denied|row-level security/i.test(raw)) return 'مۆڵەتی ئەم کارەت نییە';
+  return 'هەڵە: '+raw;
+}
+function kycBadgeHTML(status){
+  const m=KYC_ADMIN_STATUS[status]||KYC_ADMIN_STATUS.none;
+  return `<span class="badge ${m.cls}">${esc(m.label)}</span>`;
+}
+function kycFillReason(id, el){
+  const t=document.getElementById(id);
+  if(t){ t.value=el.textContent.trim(); t.focus(); }
+}
+
+let _kycFilter='pending';
+let _kycItems=[];
+let _kycPoll=null;
+let _kycLastPending=null;
+let _kycListTimer=null;
+let _kycSearchTimer=null;
+let _kycSearchResults=[];
+let _kycReqTarget=null;
+let _kycReviewItem=null;
+let _kycBlobUrls=[];
+let _kycBusy=false;
+
+async function loadKycSummary(notify){
+  try{
+    const {data,error}=await sb.rpc('ex_admin_kyc_summary');
+    if(error) throw error;
+    const set=(id,v)=>{ const el=document.getElementById(id); if(el) el.textContent=formatNum(v||0); };
+    set('kycRequiredCount',data.required); set('kycPendingCount',data.pending);
+    set('kycApprovedCount',data.approved); set('kycRejectedCount',data.rejected);
+    const pending=Number(data.pending||0);
+    const badge=document.getElementById('sbKycCount');
+    if(badge){ badge.textContent=pending>99?'99+':String(pending); badge.style.display=pending?'inline-flex':'none'; }
+    if(notify && pending>0 && _kycLastPending!==null && pending>_kycLastPending){
+      showToast((pending-_kycLastPending)+' داواکاری نوێی پشتڕاستکردنەوەی ناسنامە هەیە','bl');
+    }
+    _kycLastPending=pending;
+    return data;
+  }catch(_){ return null; }
+}
+function startKycMonitor(){
+  loadKycSummary(false);
+  clearInterval(_kycPoll);
+  _kycPoll=setInterval(()=>{ if(document.visibilityState==='visible') loadKycSummary(true); },30000);
+}
+
+async function loadKycAdmin(){
+  const wrap=document.getElementById('kycListWrap');
+  if(wrap) wrap.innerHTML='<div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>';
+  document.querySelectorAll('[data-kycf]').forEach(c=>c.classList.toggle('on', c.dataset.kycf===_kycFilter));
+  loadKycSummary(false);
+  try{
+    const q=(document.getElementById('kycListSearch')?.value||'').trim();
+    const {data,error}=await sb.rpc('ex_admin_kyc_list',{p_filter:_kycFilter,p_query:q||null,p_limit:200});
+    if(error) throw error;
+    _kycItems=(Array.isArray(data)?data:[]).sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
+    renderKycList();
+  }catch(e){
+    if(wrap) wrap.innerHTML=`<div class="empty"><i class="fas fa-triangle-exclamation"></i><p>${esc(adminDbMessage(e))}</p></div>`;
+  }
+}
+function setKycFilter(f){
+  _kycFilter=f;
+  if(_curPage!=='kyc'){ goPage('kyc'); return; }
+  loadKycAdmin();
+}
+function onKycListSearch(){
+  clearTimeout(_kycListTimer);
+  _kycListTimer=setTimeout(loadKycAdmin,350);
+}
+
+function kycUserLine(u){
+  u=u||{};
+  return `<div class="user-cell"><div class="mini-av">${esc((u.full_name||u.email||'?')[0].toUpperCase())}</div>
+    <div style="min-width:0"><div class="user-cell-name">${esc(u.full_name||'بێ ناو')}</div>
+    <div class="user-cell-handle" dir="ltr">${u.username?'@'+esc(u.username):'—'}</div>
+    <div class="user-cell-email">${esc(u.email||'—')}</div></div></div>`;
+}
+
+function renderKycList(){
+  const wrap=document.getElementById('kycListWrap');
+  if(!wrap) return;
+  if(!_kycItems.length){
+    wrap.innerHTML='<div class="empty"><i class="fas fa-id-card"></i><p>هیچ داواکارییەک لەم بەشەدا نییە</p></div>';
+    return;
+  }
+  wrap.innerHTML='<div class="kyc-admin-list">'+_kycItems.map((it,i)=>{
+    if(it.kind==='request'){
+      const r=it.request||{};
+      return `<article class="kyc-admin-card required">
+        <div class="kyc-admin-head">${kycUserLine(it.user)}${kycBadgeHTML('required')}</div>
+        <div class="kyc-admin-facts">
+          <span><small>داواکراوە لەلایەن</small><b>${esc(r.requested_by||'—')}</b></span>
+          <span><small>کاتی داواکاری</small><b dir="ltr">${esc(fmtDateTime(r.created_at))}</b></span>
+        </div>
+        ${r.reason?`<div class="kyc-admin-note"><b>هۆکار</b><p>${esc(r.reason)}</p></div>`:''}
+        <div class="kyc-admin-foot"><small>چاوەڕوانی ناردنی بەڵگەنامە لەلایەن بەکارهێنەر</small>
+          <div class="act-btn rd" onclick="cancelKycRequest('${esc(r.id)}')"><i class="fas fa-ban"></i> هەڵوەشاندنەوە</div></div>
+      </article>`;
+    }
+    const st=it.status;
+    return `<article class="kyc-admin-card ${esc(st)}">
+      <div class="kyc-admin-head">${kycUserLine(it.user)}${kycBadgeHTML(st)}</div>
+      <div class="kyc-admin-facts">
+        <span><small>جۆری بەڵگەنامە</small><b>${esc(KYC_ADMIN_DOC[it.document_type]||it.document_type)}</b></span>
+        <span><small>ناوی یاسایی</small><b>${esc(it.full_legal_name)}</b></span>
+        <span><small>بەرواری لەدایکبوون</small><b dir="ltr">${esc(it.date_of_birth||'—')}</b></span>
+        <span><small>ژمارەی بەڵگەنامە</small><b dir="ltr">${esc(it.document_number)}</b></span>
+        <span><small>کاتی ناردن</small><b dir="ltr">${esc(fmtDateTime(it.submitted_at))}</b></span>
+        <span><small>${st==='pending'?'داواکاری ئادمین':'پشکنەر'}</small><b>${esc(st==='pending'?(it.request?'بەڵێ':'نەخێر — خۆی دەستی پێکرد'):(it.reviewer?.full_name||'—'))}</b></span>
+      </div>
+      ${it.rejection_reason?`<div class="kyc-admin-note danger"><b>هۆکاری ڕەتکردنەوە</b><p>${esc(it.rejection_reason)}</p></div>`:''}
+      <div class="kyc-admin-foot">
+        <small>${it.reviewed_at?'بڕیار: <span dir="ltr">'+esc(fmtDateTime(it.reviewed_at))+'</span>':'وێنەی پێشەوە و دواوە هەیە'}</small>
+        <div class="act-btn ${st==='pending'?'cy':'dark'}" onclick="openKycReview(${i})"><i class="fas fa-${st==='pending'?'magnifying-glass':'eye'}"></i> ${st==='pending'?'پشکنین':'بینین'}</div>
+      </div>
+    </article>`;
+  }).join('')+'</div>';
+}
+
+// ── user search + "request verification" ────────────────────────
+function searchKycUsers(){
+  clearTimeout(_kycSearchTimer);
+  const q=(document.getElementById('kycUserSearch')?.value||'').trim();
+  const box=document.getElementById('kycUserResults');
+  if(q.length<2){ _kycSearchResults=[]; if(box) box.innerHTML=''; return; }
+  _kycSearchTimer=setTimeout(async()=>{
+    if(box) box.innerHTML='<div class="loading" style="padding:14px"><i class="fas fa-circle-notch fa-spin"></i></div>';
+    const {data,error}=await sb.rpc('ex_admin_kyc_search_users',{p_query:q,p_limit:12});
+    if(error){ if(box) box.innerHTML=`<div class="kyc-empty-line">${esc(adminDbMessage(error))}</div>`; return; }
+    _kycSearchResults=Array.isArray(data)?data:[];
+    renderKycUserResults();
+  },300);
+}
+function renderKycUserResults(){
+  const box=document.getElementById('kycUserResults');
+  if(!box) return;
+  if(!_kycSearchResults.length){ box.innerHTML='<div class="kyc-empty-line">هیچ بەکارهێنەرێک نەدۆزرایەوە</div>'; return; }
+  box.innerHTML=_kycSearchResults.map((u,i)=>{
+    const active=u.request_status==='open'||u.request_status==='submitted';
+    let action;
+    if(active){
+      action=`<div class="act-btn rd" onclick="cancelKycRequest('${esc(u.request_id)}')"><i class="fas fa-ban"></i> هەڵوەشاندنەوەی داواکاری</div>`;
+    }else if(u.kyc_status==='pending'){
+      action=`<div class="act-btn dark" onclick="openKycFromUser('${esc(u.username||'')}')"><i class="fas fa-magnifying-glass"></i> پشکنینی بەڵگەنامە</div>`;
+    }else{
+      action=`<div class="act-btn cy" onclick="openKycRequest(${i})"><i class="fas fa-id-card"></i> داواکردنی پشتڕاستکردنەوە</div>`;
+    }
+    return `<div class="kyc-user-row">
+      ${kycUserLine(u)}
+      <div class="kyc-user-side">${kycBadgeHTML(u.kyc_status)}${u.is_banned?' <span class="badge banned">بۆیکۆتکراو</span>':''}${action}</div>
+    </div>`;
+  }).join('');
+}
+function openKycFromUser(username){
+  const s=document.getElementById('kycListSearch');
+  if(s) s.value=username;
+  _kycFilter='pending';
+  loadKycAdmin();
+  document.getElementById('kycListWrap')?.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function openKycRequest(i){
+  const u=_kycSearchResults[i];
+  if(!u) return;
+  showKycRequestModal(u);
+}
+async function openKycRequestById(userId){
+  const {data,error}=await sb.rpc('ex_admin_kyc_search_users',{p_query:userId,p_limit:1});
+  if(error){ showToast(adminDbMessage(error),'rd'); return; }
+  const u=Array.isArray(data)?data[0]:null;
+  if(!u){ showToast('بەکارهێنەرەکە نەدۆزرایەوە','rd'); return; }
+  if(u.request_status==='open'||u.request_status==='submitted'){
+    showToast('ئەم بەکارهێنەرە پێشتر داواکارییەکی چالاکی هەیە','bl'); return;
+  }
+  showKycRequestModal(u);
+}
+function showKycRequestModal(u){
+  _kycReqTarget=u;
+  document.getElementById('kycReqUser').innerHTML=kycUserLine(u)+`<div style="margin-top:8px">${kycBadgeHTML(u.kyc_status)}</div>`;
+  document.getElementById('kycReqReason').value='';
+  const btn=document.getElementById('kycReqSendBtn');
+  btn.disabled=false;
+  btn.innerHTML='<i class="fas fa-paper-plane"></i> ناردنی داواکاری';
+  openMo('moKycRequest');
+}
+async function confirmKycRequest(){
+  if(_kycBusy || !_kycReqTarget) return;
+  const reason=(document.getElementById('kycReqReason').value||'').trim();
+  if(reason.length>500){ showToast(KYC_ADMIN_ERRORS.KYC_REASON_TOO_LONG,'rd'); return; }
+  const btn=document.getElementById('kycReqSendBtn');
+  _kycBusy=true;
+  btn.disabled=true; btn.innerHTML='<i class="fas fa-circle-notch fa-spin"></i> ناردن...';
+  try{
+    const {error}=await sb.rpc('ex_admin_kyc_request',{p_user_id:_kycReqTarget.id,p_reason:reason||null});
+    if(error) throw error;
+    closeMo('moKycRequest');
+    showToast('داواکاری پشتڕاستکردنەوە بۆ '+(_kycReqTarget.username?'@'+_kycReqTarget.username:'بەکارهێنەر')+' نێردرا','gr');
+    _kycReqTarget=null;
+    if(document.getElementById('kycUserSearch')?.value) searchKycUsers();
+    if(_curPage==='kyc') loadKycAdmin(); else loadKycSummary(false);
+  }catch(e){
+    showToast(adminDbMessage(e),'rd');
+    btn.disabled=false; btn.innerHTML='<i class="fas fa-paper-plane"></i> ناردنی داواکاری';
+  }finally{ _kycBusy=false; }
+}
+function cancelKycRequest(requestId){
+  if(!requestId) return;
+  confirm2('هەڵوەشاندنەوەی داواکاری','ئایا دەتەوێت داواکاری پشتڕاستکردنەوەی ئەم بەکارهێنەرە هەڵبوەشێنیتەوە؟ بەکارهێنەر ئاگادار دەکرێتەوە.',
+    'fas fa-ban','var(--rd)', async()=>{
+      const {error}=await sb.rpc('ex_admin_kyc_cancel_request',{p_request_id:requestId,p_note:null});
+      if(error){ showToast(adminDbMessage(error),'rd'); return; }
+      showToast('داواکارییەکە هەڵوەشێنرایەوە','gr');
+      if(document.getElementById('kycUserSearch')?.value) searchKycUsers();
+      loadKycAdmin();
+    });
+}
+
+// ── review modal ──────────────────────────────────────────────────
+function revokeKycBlobs(){
+  _kycBlobUrls.forEach(u=>{ try{ URL.revokeObjectURL(u); }catch(_){} });
+  _kycBlobUrls=[];
+}
+function closeKycReview(){
+  closeMo('moKycReview');
+  revokeKycBlobs();
+  _kycReviewItem=null;
+}
+async function loadKycImage(path, slotId){
+  const slot=document.getElementById(slotId);
+  if(!slot) return;
+  if(!path){ slot.innerHTML='<div class="kyc-img-empty">وێنە نییە</div>'; return; }
+  try{
+    const {data,error}=await sb.storage.from('identity-documents').download(path);
+    if(error) throw error;
+    const url=URL.createObjectURL(data);
+    _kycBlobUrls.push(url);
+    if(!document.getElementById(slotId)) { URL.revokeObjectURL(url); return; }
+    slot.innerHTML=`<img src="${url}" alt="" onclick="showImg('${url}')"><span class="kyc-img-zoom"><i class="fas fa-eye"></i> گەورەکردن</span>`;
+  }catch(e){
+    slot.innerHTML=`<div class="kyc-img-empty"><i class="fas fa-triangle-exclamation"></i> نەتوانرا وێنەکە باربکرێت</div>`;
+  }
+}
+async function openKycReview(i){
+  const it=_kycItems[i];
+  if(!it || it.kind!=='verification') return;
+  revokeKycBlobs();
+  _kycReviewItem=it;
+  const u=it.user||{};
+  const pending=it.status==='pending';
+  const isSelf=adminUser && u.id===adminUser.id;
+  document.getElementById('kycRvTitle').textContent=(pending?'پشکنینی بەڵگەنامە — ':'بەڵگەنامە — ')+(u.full_name||u.username||'');
+  const r=it.request;
+  document.getElementById('kycRvBody').innerHTML=`
+    <div class="kyc-rv-top">${kycUserLine(u)}${kycBadgeHTML(it.status)}</div>
+    <div class="kyc-rv-images">
+      <figure><figcaption>ڕووی پێشەوە</figcaption><div class="kyc-img-slot" id="kycRvFront"><i class="fas fa-circle-notch fa-spin"></i></div></figure>
+      <figure><figcaption>ڕووی دواوە</figcaption><div class="kyc-img-slot" id="kycRvBack"><i class="fas fa-circle-notch fa-spin"></i></div></figure>
+    </div>
+    <div class="ai-sec">زانیارییەکانی بەڵگەنامە</div>
+    <div class="detail-row"><div class="lbl">جۆری بەڵگەنامە</div><div class="val" dir="rtl">${esc(KYC_ADMIN_DOC[it.document_type]||it.document_type)}</div></div>
+    <div class="detail-row"><div class="lbl">ناوی تەواوی یاسایی</div><div class="val" dir="rtl">${esc(it.full_legal_name)}</div></div>
+    <div class="detail-row"><div class="lbl">بەرواری لەدایکبوون</div><div class="val">${esc(it.date_of_birth||'—')}</div></div>
+    <div class="detail-row"><div class="lbl">ژمارەی بەڵگەنامە</div><div class="val">${esc(it.document_number)}</div></div>
+    <div class="detail-row"><div class="lbl">ناوی هەژمار</div><div class="val" dir="rtl">${esc(u.full_name||'—')}</div></div>
+    <div class="detail-row"><div class="lbl">ئیمەیل</div><div class="val">${esc(u.email||'—')}</div></div>
+    <div class="detail-row"><div class="lbl">کاتی ناردن</div><div class="val">${esc(fmtDateTime(it.submitted_at))}</div></div>
+    ${it.reviewed_at?`<div class="detail-row"><div class="lbl">کاتی بڕیار</div><div class="val">${esc(fmtDateTime(it.reviewed_at))}</div></div>
+    <div class="detail-row"><div class="lbl">بڕیاردەر</div><div class="val" dir="rtl">${esc(it.reviewer?.full_name||'—')}${it.reviewer?.username?' <span dir="ltr">@'+esc(it.reviewer.username)+'</span>':''}</div></div>`:''}
+    ${it.rejection_reason?`<div class="kyc-admin-note danger"><b>هۆکاری ڕەتکردنەوە</b><p>${esc(it.rejection_reason)}</p></div>`:''}
+    ${r?`<div class="kyc-admin-note"><b>داواکاری ئادمین — ${esc(r.requested_by||'')} (${esc(fmtDateTime(r.created_at))})</b><p>${esc(r.reason||'بێ هۆکار')}</p></div>`:''}
+    ${pending ? (isSelf ? `<div class="kyc-admin-note danger"><b>ئاگاداری</b><p>ناتوانیت بەڵگەنامەی خۆت پەسەند یان ڕەت بکەیتەوە.</p></div>` : `
+    <div class="ai-sec">بڕیار</div>
+    <label class="modal-lbl" for="kycRvReason">هۆکاری ڕەتکردنەوە <span style="font-weight:400">(تەنها بۆ ڕەتکردنەوە پێویستە)</span></label>
+    <textarea class="minp mta" id="kycRvReason" maxlength="500" placeholder="بۆ نموونە: وێنەی بەڵگەنامەکە ڕوون نییە."></textarea>
+    <div class="kyc-quick">
+      <span onclick="kycFillReason('kycRvReason',this)">وێنەی بەڵگەنامەکە ڕوون نییە.</span>
+      <span onclick="kycFillReason('kycRvReason',this)">هەموو گۆشەکانی بەڵگەنامەکە دیار نین.</span>
+      <span onclick="kycFillReason('kycRvReason',this)">زانیارییەکان لەگەڵ بەڵگەنامەکە ناگونجێن.</span>
+      <span onclick="kycFillReason('kycRvReason',this)">بەڵگەنامەکە بەسەرچووە.</span>
+      <span onclick="kycFillReason('kycRvReason',this)">The document image is not clear.</span>
+    </div>
+    <div class="kyc-rv-actions">
+      <button class="modal-btn rd" id="kycRvRejectBtn" onclick="reviewKyc('reject')"><i class="fas fa-circle-xmark"></i> ڕەتکردنەوە</button>
+      <button class="modal-btn gr" id="kycRvApproveBtn" onclick="reviewKyc('approve')"><i class="fas fa-circle-check"></i> پەسەندکردن</button>
+    </div>`) : ''}
+    <div class="ai-sec">مێژوو</div>
+    <div id="kycRvHistory" class="kyc-timeline"><div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div></div>`;
+  openMo('moKycReview');
+  loadKycImage(it.front_image_path,'kycRvFront');
+  loadKycImage(it.back_image_path,'kycRvBack');
+  loadKycHistory(u.id);
+}
+async function loadKycHistory(userId){
+  const box=document.getElementById('kycRvHistory');
+  if(!box) return;
+  const {data,error}=await sb.rpc('ex_admin_kyc_history',{p_user_id:userId,p_limit:50});
+  if(error){ box.innerHTML=`<div class="kyc-empty-line">${esc(adminDbMessage(error))}</div>`; return; }
+  const rows=Array.isArray(data)?data:[];
+  if(!rows.length){ box.innerHTML='<div class="kyc-empty-line">هیچ تۆمارێک نییە</div>'; return; }
+  box.innerHTML=rows.map(e=>`<div class="kyc-tl-item ${esc(e.event)}">
+    <span class="kyc-tl-dot"></span>
+    <div><b>${esc(KYC_ADMIN_EVENTS[e.event]||e.event)}</b>
+      <small>${esc(e.actor_name||'—')}${e.actor_username?' <span dir="ltr">@'+esc(e.actor_username)+'</span>':''} · ${esc(e.actor_role==='user'?'بەکارهێنەر':e.actor_role==='super_admin'?'سوپەر ئادمین':e.actor_role==='admin'?'ئادمین':'سیستەم')} · <span dir="ltr">${esc(fmtDateTime(e.created_at))}</span></small>
+      ${e.note?`<p>${esc(e.note)}</p>`:''}
+    </div></div>`).join('');
+}
+async function reviewKyc(decision){
+  const it=_kycReviewItem;
+  if(_kycBusy || !it) return;
+  const reasonEl=document.getElementById('kycRvReason');
+  const reason=(reasonEl?.value||'').trim();
+  if(decision==='reject' && reason.length<3){
+    showToast(KYC_ADMIN_ERRORS.KYC_REASON_REQUIRED,'rd');
+    reasonEl?.focus();
+    return;
+  }
+  const run=async()=>{
+    const aBtn=document.getElementById('kycRvApproveBtn');
+    const rBtn=document.getElementById('kycRvRejectBtn');
+    const btn=decision==='approve'?aBtn:rBtn;
+    const html=btn?.innerHTML;
+    _kycBusy=true;
+    if(aBtn) aBtn.disabled=true;
+    if(rBtn) rBtn.disabled=true;
+    if(btn) btn.innerHTML='<i class="fas fa-circle-notch fa-spin"></i> ...';
+    try{
+      const {error}=await sb.rpc('ex_admin_kyc_review',{p_verification_id:it.id,p_decision:decision,p_reason:decision==='reject'?reason:null});
+      if(error) throw error;
+      showToast(decision==='approve'?'ناسنامەکە پەسەندکرا ✓':'پشتڕاستکردنەوەکە ڕەتکرایەوە و بەکارهێنەر ئاگادارکرایەوە', decision==='approve'?'gr':'rd');
+      closeKycReview();
+      loadKycAdmin();
+    }catch(e){
+      const msg=adminDbMessage(e);
+      showToast(msg,'rd');
+      if(/KYC_ALREADY_REVIEWED/.test(String(e?.message||''))){ closeKycReview(); loadKycAdmin(); return; }
+      if(aBtn) aBtn.disabled=false;
+      if(rBtn) rBtn.disabled=false;
+      if(btn) btn.innerHTML=html;
+    }finally{ _kycBusy=false; }
+  };
+  if(decision==='approve'){
+    confirm2('پەسەندکردنی ناسنامە','دڵنیایت کە وێنە و زانیارییەکان دروستن و هی هەمان کەسن؟','fas fa-circle-check','var(--gr)', run);
+  }else{
+    await run();
+  }
 }
