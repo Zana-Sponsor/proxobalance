@@ -10,7 +10,7 @@
 <!-- Firebase — announcement banner control only (same project as exchange.html) -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-<link rel="stylesheet" href="assets/css/admin.css?v=6">
+<link rel="stylesheet" href="assets/css/admin.css?v=7">
 <link rel="stylesheet" href="assets/css/tokens.css">
 </head>
 <body>
@@ -52,6 +52,7 @@
     <div class="sb-item active" onclick="goPage('dashboard')"><i class="fas fa-chart-pie"></i> داشبۆرد</div>
     <div class="sb-item" onclick="goPage('orders')"><i class="fas fa-money-bill-transfer"></i> ئۆردەرەکان <span class="sb-badge yw" id="sbOrdersCount" style="display:none">0</span></div>
     <div class="sb-item" onclick="goPage('accounts')"><i class="fas fa-users"></i> هەژمارەکان</div>
+    <div class="sb-item" onclick="goPage('kyc')"><i class="fas fa-id-card" style="color:#0891b2"></i> پشتڕاستکردنەوەی ناسنامە <span class="sb-badge yw" id="sbKycCount" style="display:none">0</span></div>
     <div class="sb-section">ڕێکخستن</div>
     <div class="sb-item" onclick="goPage('wallets')"><i class="fas fa-wallet" style="color:#16a34a"></i> واڵێتەکان</div>
     <div class="sb-item" onclick="goPage('rates')"><i class="fas fa-percent" style="color:#f59e0b"></i> نرخ و کرێ</div>
@@ -70,7 +71,7 @@
       <div class="sb-av" id="sbAv">A</div>
       <div style="flex:1;min-width:0;">
         <div class="sb-admin-name" id="sbAdminName">ئادمین</div>
-        <div class="sb-admin-role">Admin Panel</div>
+        <div class="sb-admin-role" id="sbAdminRole">Admin Panel</div>
       </div>
       <button onclick="doLogout()" style="display:flex;align-items:center;gap:7px;padding:8px 14px;background:rgba(220,38,38,.15);border:1.5px solid rgba(220,38,38,.3);border-radius:12px;cursor:pointer;font-family:'R',sans-serif;font-size:13px;font-weight:700;color:#f87171;white-space:nowrap;transition:all .2s;flex-shrink:0">
         <i class="fas fa-right-from-bracket"></i> دەرچوون
@@ -169,6 +170,47 @@
           <div class="chip cy" data-af="admin" onclick="filterAccounts(this)">ئادمین</div>
         </div>
         <div class="tbl-scroll tbl-wrap-scroll-target" id="accountsTableWrap">
+          <div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ IDENTITY VERIFICATION (KYC) ══ -->
+    <div class="pg" id="pgKyc">
+      <div class="sec-hdr">
+        <h3>پشتڕاستکردنەوەی ناسنامە</h3>
+        <div class="act-btn dark" onclick="loadKycAdmin()"><i class="fas fa-arrows-rotate"></i> نوێکردنەوە</div>
+      </div>
+
+      <div class="stats-grid support-case-stats kyc-stats">
+        <div class="stat-card kyc-stat" onclick="setKycFilter('required')"><div class="stat-ico yw"><i class="fas fa-triangle-exclamation"></i></div><div class="stat-info"><div class="stat-val" id="kycRequiredCount">—</div><div class="stat-lbl">داواکراو (چاوەڕوانی کڕیار)</div></div></div>
+        <div class="stat-card kyc-stat" onclick="setKycFilter('pending')"><div class="stat-ico bl"><i class="fas fa-hourglass-end"></i></div><div class="stat-info"><div class="stat-val" id="kycPendingCount">—</div><div class="stat-lbl">چاوەڕوانی پشکنین</div></div></div>
+        <div class="stat-card kyc-stat" onclick="setKycFilter('approved')"><div class="stat-ico gr"><i class="fas fa-circle-check"></i></div><div class="stat-info"><div class="stat-val" id="kycApprovedCount">—</div><div class="stat-lbl">پەسەندکراو</div></div></div>
+        <div class="stat-card kyc-stat" onclick="setKycFilter('rejected')"><div class="stat-ico rd"><i class="fas fa-circle-xmark"></i></div><div class="stat-info"><div class="stat-val" id="kycRejectedCount">—</div><div class="stat-lbl">ڕەتکراوە</div></div></div>
+      </div>
+
+      <div class="tbl-wrap kyc-request-panel">
+        <div class="kyc-panel-head">
+          <div class="kyc-panel-ico"><i class="fas fa-user-shield"></i></div>
+          <div><b>داواکردنی پشتڕاستکردنەوە لە بەکارهێنەرێک</b><small>بە ناوی بەکارهێنەر (@username)، ئیمەیل، ناو یان ئایدی بگەڕێ</small></div>
+        </div>
+        <div class="kyc-search-row">
+          <i class="fas fa-magnifying-glass"></i>
+          <input class="minp" id="kycUserSearch" placeholder="@zana_x7k29 یان zana@gmail.com یان ئایدی بەکارهێنەر" autocomplete="off" dir="auto" oninput="searchKycUsers()">
+        </div>
+        <div id="kycUserResults" class="kyc-user-results"></div>
+      </div>
+
+      <div class="tbl-wrap">
+        <div class="tbl-filter">
+          <input class="tbl-search" id="kycListSearch" placeholder="گەڕان بە ناو، @username، ئیمەیل یان ژمارەی بەڵگەنامە..." oninput="onKycListSearch()">
+          <div class="chip yw" data-kycf="required" onclick="setKycFilter('required')">داواکراو</div>
+          <div class="chip on" data-kycf="pending" onclick="setKycFilter('pending')">چاوەڕوان</div>
+          <div class="chip gr" data-kycf="approved" onclick="setKycFilter('approved')">پەسەندکراو</div>
+          <div class="chip rd" data-kycf="rejected" onclick="setKycFilter('rejected')">ڕەتکراوە</div>
+          <div class="chip" data-kycf="all" onclick="setKycFilter('all')">هەموو</div>
+        </div>
+        <div class="tbl-scroll" id="kycListWrap">
           <div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>
         </div>
       </div>
@@ -726,6 +768,37 @@
 </div>
 
 <!-- ══ IMAGE LIGHTBOX ══ -->
+<!-- ══ KYC: REQUEST VERIFICATION ══ -->
+<div class="overlay" id="moKycRequest">
+  <div class="modal">
+    <div class="modal-hdr">
+      <h3>داواکردنی پشتڕاستکردنەوەی ناسنامە</h3>
+      <div class="modal-close" onclick="closeMo('moKycRequest')"><i class="fas fa-xmark"></i></div>
+    </div>
+    <div id="kycReqUser" class="kyc-req-user"></div>
+    <label class="modal-lbl" for="kycReqReason">هۆکار / پەیام بۆ بەکارهێنەر <span style="font-weight:400">(ئارەزوومەندانە — تا ٥٠٠ پیت)</span></label>
+    <textarea class="minp mta" id="kycReqReason" maxlength="500" placeholder="تکایە پێش بەردەوامبوون لە بەکارهێنانی خزمەتگوزارییەکان ناسنامەکەت پشتڕاست بکەرەوە."></textarea>
+    <div class="kyc-quick" id="kycReqQuick">
+      <span onclick="kycFillReason('kycReqReason',this)">تکایە پێش بەردەوامبوون لە بەکارهێنانی خزمەتگوزارییەکان ناسنامەکەت پشتڕاست بکەرەوە.</span>
+      <span onclick="kycFillReason('kycReqReason',this)">بۆ مامەڵەی بڕی گەورە، پشتڕاستکردنەوەی ناسنامە پێویستە.</span>
+      <span onclick="kycFillReason('kycReqReason',this)">Please verify your identity before continuing to use this service.</span>
+    </div>
+    <div class="fee-toggle-note"><i class="fas fa-circle-info" style="margin-left:4px"></i> تەنها ئەم بەکارهێنەرە ئاگاداری وەردەگرێت و لە پڕۆفایلەکەیدا «پشتڕاستکردنەوەی ناسنامە پێویستە» دەبینێت.</div>
+    <button class="modal-btn cy" id="kycReqSendBtn" onclick="confirmKycRequest()"><i class="fas fa-paper-plane"></i> ناردنی داواکاری</button>
+  </div>
+</div>
+
+<!-- ══ KYC: REVIEW SUBMISSION ══ -->
+<div class="overlay" id="moKycReview">
+  <div class="modal wide kyc-review-modal">
+    <div class="modal-hdr">
+      <h3 id="kycRvTitle">پشکنینی بەڵگەنامە</h3>
+      <div class="modal-close" onclick="closeKycReview()"><i class="fas fa-xmark"></i></div>
+    </div>
+    <div id="kycRvBody"></div>
+  </div>
+</div>
+
 <div class="overlay" id="moImgView" onclick="closeMo('moImgView')" style="align-items:center;padding:20px">
   <img id="imgViewSrc" src="" style="max-width:100%;max-height:90vh;border-radius:14px;">
 </div>
@@ -746,6 +819,6 @@
 <div id="toast"></div>
 
   <script src="assets/js/svg-icons.js"></script>
-  <script src="assets/js/admin.js?v=7"></script>
+  <script src="assets/js/admin.js?v=8"></script>
 </body>
 </html>
