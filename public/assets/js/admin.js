@@ -1396,14 +1396,28 @@ function refreshOrdersEverywhere(){
 async function loadAccounts(){
   document.getElementById('accountsTableWrap').innerHTML='<div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>';
   try{
-    const {data,error} = await sb.from('ex_profiles').select('*').order('created_at',{ascending:false}).limit(300);
-    if(error) throw error;
-    allAccounts = data||[];
+    allAccounts = await fetchAllProfiles();
     await loadAccountIps();     // one round-trip for every account's last IP
     renderAccounts();
   }catch(e){
     document.getElementById('accountsTableWrap').innerHTML=`<div class="empty"><i class="fas fa-triangle-exclamation"></i><p>هەڵە: ${esc(e.message)}</p></div>`;
   }
+}
+// Loads EVERY account. A single request is capped by the API (at most 1000
+// rows, and the old .limit(300) hid the oldest accounts), so read page by
+// page until an empty page comes back — this works whatever the server cap is.
+async function fetchAllProfiles(){
+  const PAGE=1000, rows=[], seen=new Set();
+  for(let from=0, guard=0; guard<200; guard++){
+    const {data,error}=await sb.from('ex_profiles').select('*')
+      .order('created_at',{ascending:false}).order('id',{ascending:true})
+      .range(from, from+PAGE-1);
+    if(error) throw error;
+    if(!data || !data.length) break;
+    for(const r of data){ if(!seen.has(r.id)){ seen.add(r.id); rows.push(r); } }
+    from+=data.length;
+  }
+  return rows;
 }
 function filterAccounts(el){
   if(el){ document.querySelectorAll('[data-af]').forEach(x=>x.classList.remove('on')); el.classList.add('on'); accFilter=el.dataset.af; }
@@ -1417,6 +1431,11 @@ function renderAccounts(q=''){
     const h=q.replace(/^@/,'');
     list=list.filter(a=>(a.full_name||'').toLowerCase().includes(q)||(a.email||'').toLowerCase().includes(q)
       ||(a.username||'').toLowerCase().includes(h)||String(a.id||'')===q);
+  }
+  const countEl=document.getElementById('accCount');
+  if(countEl){
+    const total=formatNum(allAccounts.length);
+    countEl.textContent = list.length===allAccounts.length ? '('+total+')' : '('+formatNum(list.length)+' لە '+total+')';
   }
   document.getElementById('accountsTableWrap').innerHTML = renderAccTable(list) + renderAccCards(list);
 }
