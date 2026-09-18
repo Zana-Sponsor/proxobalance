@@ -3348,3 +3348,43 @@ h1,h2,h3,.section-title{ letter-spacing:-.015em; line-height:1.3; }
   .kyc-src-btns{ flex-direction:row; }
   .kyc-src-btn{ flex:1 1 0; padding-inline:8px; font-size:var(--fs-xs); }
 }
+
+
+/* ══ Exchange blocked until admin-requested KYC is approved ══ */
+#exchangeCard.kyc-locked > :not(.xc-head):not(#exchangeKycGate){ display:none !important; }
+.xc-kyc-gate{
+  display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center;
+  margin-top:6px; padding:22px 16px 18px; border-radius:var(--radius-lg);
+  background:var(--warning-soft); border:1px solid color-mix(in srgb, var(--warning) 45%, transparent);
+  animation:fadeUp .25s var(--ease);
+}
+.xc-kyc-gate[hidden]{ display:none; }
+.xc-kyc-gate-ico{
+  width:56px; height:56px; border-radius:var(--radius-full);
+  display:flex; align-items:center; justify-content:center;
+  background:var(--surface); color:var(--warning); border:1px solid color-mix(in srgb, var(--warning) 35%, transparent);
+}
+.xc-kyc-gate-ico .icn{ width:28px; height:28px; }
+.xc-kyc-gate-msg{ margin:0; font-size:var(--fs-md); font-weight:var(--fw-bold); color:var(--text); line-height:1.7; }
+.xc-kyc-gate-sub{ margin:0; font-size:var(--fs-sm); color:var(--text-muted); line-height:1.7; }
+.xc-kyc-gate-sub:empty{ display:none; }
+.xc-kyc-gate .btn{ margin-top:6px; max-width:360px; }
+
+/* ══ Verified name ══ */
+.pf-name-kyc-hint{
+  display:flex; align-items:center; gap:6px; margin-top:7px;
+  font-size:var(--fs-xs); font-weight:var(--fw-semibold); color:var(--success);
+}
+.pf-name-kyc-hint[hidden]{ display:none; }
+.pf-name-kyc-hint .icn{ width:15px; height:15px; }
+#pfName.is-locked{ background:var(--surface-2); color:var(--text-muted); cursor:not-allowed; }
+.kyc-label-help{ font-weight:var(--fw-regular, 400); color:var(--text-faint); font-size:var(--fs-2xs); }
+.kyc-name-note{
+  margin:8px 0 0; padding:9px 11px; border-radius:var(--radius-md);
+  background:var(--warning-soft); color:var(--text);
+  border:1px solid color-mix(in srgb, var(--warning) 40%, transparent);
+  font-size:var(--fs-xs); line-height:1.75;
+}
+.kyc-name-note[hidden]{ display:none; }
+/* Same name written in the other alphabet — informative, not a warning */
+.kyc-name-note.ok{ background:var(--success-soft); border-color:color-mix(in srgb, var(--success) 40%, transparent); }
