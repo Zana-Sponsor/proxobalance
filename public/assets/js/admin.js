@@ -2680,7 +2680,8 @@ const KYC_ADMIN_EVENTS = {
   submitted:'بەکارهێنەر بەڵگەنامەی نارد',
   resubmitted:'بەکارهێنەر دووبارە بەڵگەنامەی نارد',
   approved:'پەسەندکرا',
-  rejected:'ڕەتکرایەوە'
+  rejected:'ڕەتکرایەوە',
+  name_synced:'ناوی هەژمار بە ناوی ناسنامە نوێکرایەوە'
 };
 const KYC_ADMIN_ERRORS = {
   ADMIN_REQUIRED:'دەستگەیشتنی ئادمینت نییە',
@@ -2700,7 +2701,10 @@ const KYC_ADMIN_ERRORS = {
   KYC_ALREADY_REVIEWED:'ئەم داواکارییە پێشتر لەلایەن ئادمینێکی ترەوە بڕیاری لەسەر دراوە',
   KYC_SELF_REVIEW_FORBIDDEN:'ناتوانیت پشتڕاستکردنەوەی ناسنامەی خۆت پەسەند یان ڕەت بکەیتەوە',
   KYC_DECISION_INVALID:'بڕیارەکە دروست نییە',
-  KYC_FILTER_INVALID:'فلتەرەکە دروست نییە'
+  KYC_FILTER_INVALID:'فلتەرەکە دروست نییە',
+  KYC_NAME_MISMATCH_CONFIRM_REQUIRED:'ناوی هەژمار گۆڕاوە؛ لیستەکە نوێکرایەوە، تکایە دووبارە بیپشکنە و گۆڕینی ناو پشتڕاست بکەرەوە',
+  KYC_NOT_LATEST_APPROVED:'ئەمە دوایین ناسنامەی پەسەندکراوی ئەم بەکارهێنەرە نییە',
+  PROFILE_NAME_LOCKED_BY_KYC:'ناوی ئەم هەژمارە بە ناسنامە پشتڕاستکراوەتەوە و تەنها بە ناوی سەر ناسنامە دەگۆڕدرێت'
 };
 function adminDbMessage(error){
   const raw=String(error?.message||error||'');
@@ -2712,6 +2716,106 @@ function adminDbMessage(error){
 function kycBadgeHTML(status){
   const m=KYC_ADMIN_STATUS[status]||KYC_ADMIN_STATUS.none;
   return `<span class="badge ${m.cls}">${esc(m.label)}</span>`;
+}
+// ── Cross-script name recognition ────────────────────────────────────────
+// An account name written in English and a legal name written in Kurdish are
+// compared through a deterministic consonant skeleton: each script is mapped
+// to the same small alphabet, vowels (which carry no information across
+// scripts) are dropped, and the result must match token for token.
+// No fuzzy distance, no OCR, no external service — the same input always
+// gives the same answer, and genuinely different names stay different.
+function kycNormName(s){
+  const v=String(s??'').normalize('NFC')
+    .replace(/[\u200B-\u200F\u202A-\u202E\u2066-\u2069\u0640\uFEFF]/g,'')
+    .replace(/[\u00A0\u2000-\u200A\u202F\u205F\u3000]/g,' ')
+    .replace(/[\u064A\u0649]/g,'\u06CC').replace(/\u0643/g,'\u06A9').replace(/\u06BE/g,'\u0647')
+    .replace(/\s+/g,' ').trim().toLowerCase();
+  return v || null;
+}
+const KYC_AR2LAT = {
+  'ا':'a','آ':'a','أ':'a','إ':'a','ء':'','ئ':'','ؤ':'w','ة':'h',
+  'ب':'b','پ':'p','ت':'t','ث':'s','ج':'j','چ':'C','ح':'h','خ':'x','د':'d','ذ':'z',
+  'ر':'r','ڕ':'r','ز':'z','ژ':'j','س':'s','ش':'S','ص':'s','ض':'z','ط':'t','ظ':'z',
+  'ع':'','غ':'g','ف':'f','ڤ':'v','ق':'q','ك':'k','ک':'k','گ':'g','ل':'l','ڵ':'l',
+  'م':'m','ن':'n','ه':'h','ھ':'h','ە':'e','و':'w','ۆ':'o','ی':'i','ي':'i','ى':'i','ێ':'e'
+};
+function kycScriptOf(s){
+  const t=String(s||'');
+  const ar=/[\u0600-\u06FF\u0750-\u077F\uFB50-\uFDFF\uFE70-\uFEFF]/.test(t);
+  const la=/[A-Za-z]/.test(t);
+  return (ar&&la) ? 'mixed' : ar ? 'arabic' : la ? 'latin' : 'other';
+}
+function kycSkeleton(token){
+  let s=String(token||'').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+  s=s.replace(/[\u0600-\u06FF]/g, ch => (KYC_AR2LAT[ch] !== undefined ? KYC_AR2LAT[ch] : ' '));
+  // Latin digraphs collapse to the single letters the Kurdish map produces
+  s=s.replace(/tch|ch/g,'C').replace(/sh/g,'S').replace(/kh/g,'x').replace(/zh/g,'j')
+     .replace(/gh/g,'g').replace(/th/g,'s').replace(/ph/g,'f').replace(/ck/g,'k');
+  s=s.replace(/[^bptsjChxdrzSgfvqklmn]/g,'');   // drop vowels, hamza, punctuation
+  return s.replace(/(.)\1+/g,'$1');             // doubled consonants are spelling noise
+}
+// 'same' | 'same_translit' | 'similar' | 'different_script' | 'different' | 'unknown'
+function kycNameRelation(accountName, legalName){
+  const a=kycNormName(accountName), b=kycNormName(legalName);
+  if(!a || !b) return 'unknown';
+  if(a===b) return 'same';
+  const sa=kycScriptOf(a), sb=kycScriptOf(b);
+  const ta=a.split(' ').map(kycSkeleton), tb=b.split(' ').map(kycSkeleton);
+  const enough=ta.join('').length>=4 && tb.join('').length>=4;
+  const equal=ta.length===tb.length && ta.every((t,i)=>t && t===tb[i]);
+  if(equal && enough) return (sa!==sb) ? 'same_translit' : 'similar';
+  return (sa!==sb && sa!=='other' && sb!=='other') ? 'different_script' : 'different';
+}
+
+const KYC_EXCHANGE_BLOCKED_BADGE='<span class="badge banned" title="تا پەسەندکردنی ناسنامە ناتوانێت ئاڵوگۆڕی نوێ بکات">ئاڵوگۆڕ ڕاگیراوە</span>';
+function kycNameCompareHTML(it){
+  const account=it.account_name ?? it.user?.full_name ?? '';
+  const legal=it.full_legal_name||'';
+  const rel=kycNameRelation(account, legal);
+  const same=(rel==='same' || rel==='same_translit');
+  let note;
+  if(rel==='same'){
+    note='<p class="kyc-nc-note ok"><i class="fas fa-circle-check"></i> ناوی هەژمار و ناوی سەر ناسنامە یەکن.</p>';
+  }else if(rel==='same_translit'){
+    // e.g. account "Zana Ahmed" + document "زانا ئەحمەد"
+    note='<p class="kyc-nc-note ok"><i class="fas fa-circle-check"></i> هەمان ناوە، بەڵام بە دوو ئەلفوبێی جیاواز (ئینگلیزی/کوردی) نووسراوە.'
+      +(it.status==='pending'?' دوای پەسەندکردن ناوی هەژمار وەک سەر ناسنامە دەنووسرێتەوە.':'')+'</p>';
+  }else if(rel==='similar'){
+    note='<p class="kyc-nc-note warn"><i class="fas fa-circle-info"></i> ناوەکان نزیکن بەڵام بە هەمان شێوە نەنووسراون؛ تکایە لەگەڵ بەڵگەنامەکە بەراوردی بکە.</p>';
+  }else if(rel==='different_script'){
+    note='<p class="kyc-nc-note warn"><i class="fas fa-triangle-exclamation"></i> ناوەکان بە دوو ئەلفوبێی جیاوازن و وەک یەک ناخوێندرێنەوە؛ تکایە خۆت لە بەڵگەنامەکە دڵنیا بکەرەوە.</p>';
+  }else if(it.status==='pending'){
+    note='<p class="kyc-nc-note bad"><i class="fas fa-triangle-exclamation"></i> ناوەکان جیاوازن. پێش پەسەندکردن دڵنیابە کە هەمان کەسە؛ دوای پەسەندکردن ناوی هەژمار دەگۆڕدرێت بۆ ناوی سەر ناسنامە.</p>';
+  }else{
+    note='<p class="kyc-nc-note bad"><i class="fas fa-triangle-exclamation"></i> ناوی ئێستای هەژمار جیاوازە لەم داواکارییە.</p>';
+  }
+  if(!same && it.status==='approved' && it.is_latest_approved){
+    note+='<button class="modal-btn cy" id="kycSyncNameBtn" onclick="syncKycProfileName()"><i class="fas fa-arrows-rotate"></i> نوێکردنەوەی ناوی هەژمار بە ناوی سەر ناسنامە</button>';
+  }
+  return `<div class="kyc-name-compare ${same?'ok':'bad'}">
+    <div class="kyc-nc-grid">
+      <div><small>ناوی هەژمار</small><b dir="auto">${esc(account||'—')}</b></div>
+      <div><small>ناوی سەر ناسنامە (یاسایی)</small><b dir="auto">${esc(legal||'—')}</b></div>
+    </div>${note}</div>`;
+}
+async function syncKycProfileName(){
+  const it=_kycReviewItem;
+  if(_kycBusy || !it) return;
+  confirm2('نوێکردنەوەی ناوی هەژمار',
+    `ناوی هەژمار دەگۆڕدرێت لە «${it.account_name||'—'}» بۆ «${it.full_legal_name}». بەردەوام دەبیت؟`,
+    'fas fa-arrows-rotate','var(--cy)', async()=>{
+      _kycBusy=true;
+      const btn=document.getElementById('kycSyncNameBtn'); if(btn) btn.disabled=true;
+      try{
+        const {error}=await sb.rpc('ex_admin_kyc_sync_profile_name',{p_verification_id:it.id});
+        if(error) throw error;
+        showToast('ناوی هەژمار نوێکرایەوە','gr');
+        closeKycReview(); loadKycAdmin();
+      }catch(e){
+        showToast(adminDbMessage(e),'rd');
+        if(btn) btn.disabled=false;
+      }finally{ _kycBusy=false; }
+    });
 }
 function kycFillReason(id, el){
   const t=document.getElementById(id);
@@ -2797,7 +2901,7 @@ function renderKycList(){
     if(it.kind==='request'){
       const r=it.request||{};
       return `<article class="kyc-admin-card required">
-        <div class="kyc-admin-head">${kycUserLine(it.user)}${kycBadgeHTML('required')}</div>
+        <div class="kyc-admin-head">${kycUserLine(it.user)}<div class="kyc-badges">${kycBadgeHTML('required')}${KYC_EXCHANGE_BLOCKED_BADGE}</div></div>
         <div class="kyc-admin-facts">
           <span><small>داواکراوە لەلایەن</small><b>${esc(r.requested_by||'—')}</b></span>
           <span><small>کاتی داواکاری</small><b dir="ltr">${esc(fmtDateTime(r.created_at))}</b></span>
@@ -2809,10 +2913,11 @@ function renderKycList(){
     }
     const st=it.status;
     return `<article class="kyc-admin-card ${esc(st)}">
-      <div class="kyc-admin-head">${kycUserLine(it.user)}${kycBadgeHTML(st)}</div>
+      <div class="kyc-admin-head">${kycUserLine(it.user)}<div class="kyc-badges">${kycBadgeHTML(st)}${it.exchange_blocked?KYC_EXCHANGE_BLOCKED_BADGE:''}${(kycNameRelation(it.account_name ?? it.user?.full_name, it.full_legal_name)==='same_translit')?'<span class="badge active" title="هەمان ناوە بە ئەلفوبێیەکی جیاواز">ناو: کوردی/ئینگلیزی</span>':''}${(!['same','same_translit','unknown'].includes(kycNameRelation(it.account_name ?? it.user?.full_name, it.full_legal_name)) && (st==='pending' || it.is_latest_approved))?'<span class="badge pending">⚠ ناو جیاوازە</span>':''}</div></div>
       <div class="kyc-admin-facts">
         <span><small>جۆری بەڵگەنامە</small><b>${esc(KYC_ADMIN_DOC[it.document_type]||it.document_type)}</b></span>
-        <span><small>ناوی یاسایی</small><b>${esc(it.full_legal_name)}</b></span>
+        <span class="${!['same','same_translit','unknown'].includes(kycNameRelation(it.account_name ?? it.user?.full_name, it.full_legal_name))?'kyc-fact-bad':''}"><small>ناوی یاسایی</small><b>${esc(it.full_legal_name)}</b></span>
+        <span class="${!['same','same_translit','unknown'].includes(kycNameRelation(it.account_name ?? it.user?.full_name, it.full_legal_name))?'kyc-fact-bad':''}"><small>ناوی هەژمار</small><b>${esc(it.account_name ?? it.user?.full_name ?? '—')}</b></span>
         <span><small>بەرواری لەدایکبوون</small><b dir="ltr">${esc(it.date_of_birth||'—')}</b></span>
         <span><small>ژمارەی بەڵگەنامە</small><b dir="ltr">${esc(it.document_number)}</b></span>
         <span><small>کاتی ناردن</small><b dir="ltr">${esc(fmtDateTime(it.submitted_at))}</b></span>
@@ -2857,7 +2962,7 @@ function renderKycUserResults(){
     }
     return `<div class="kyc-user-row">
       ${kycUserLine(u)}
-      <div class="kyc-user-side">${kycBadgeHTML(u.kyc_status)}${u.is_banned?' <span class="badge banned">بۆیکۆتکراو</span>':''}${action}</div>
+      <div class="kyc-user-side">${kycBadgeHTML(u.kyc_status)}${active?KYC_EXCHANGE_BLOCKED_BADGE:''}${u.is_banned?' <span class="badge banned">بۆیکۆتکراو</span>':''}${action}</div>
     </div>`;
   }).join('');
 }
@@ -2965,6 +3070,9 @@ async function openKycReview(i){
       <figure><figcaption>ڕووی پێشەوە</figcaption><div class="kyc-img-slot" id="kycRvFront"><i class="fas fa-circle-notch fa-spin"></i></div></figure>
       <figure><figcaption>ڕووی دواوە</figcaption><div class="kyc-img-slot" id="kycRvBack"><i class="fas fa-circle-notch fa-spin"></i></div></figure>
     </div>
+    ${it.exchange_blocked?'<div class="kyc-admin-note danger"><b>ئاڵوگۆڕ ڕاگیراوە</b><p>ئەم بەکارهێنەرە تا پەسەندکردنی ناسنامەکەی ناتوانێت ئاڵوگۆڕی نوێ بکات.</p></div>':''}
+    <div class="ai-sec">ناو</div>
+    ${kycNameCompareHTML(it)}
     <div class="ai-sec">زانیارییەکانی بەڵگەنامە</div>
     <div class="detail-row"><div class="lbl">جۆری بەڵگەنامە</div><div class="val" dir="rtl">${esc(KYC_ADMIN_DOC[it.document_type]||it.document_type)}</div></div>
     <div class="detail-row"><div class="lbl">ناوی تەواوی یاسایی</div><div class="val" dir="rtl">${esc(it.full_legal_name)}</div></div>
@@ -3033,7 +3141,12 @@ async function reviewKyc(decision){
     if(rBtn) rBtn.disabled=true;
     if(btn) btn.innerHTML='<i class="fas fa-circle-notch fa-spin"></i> ...';
     try{
-      const {error}=await sb.rpc('ex_admin_kyc_review',{p_verification_id:it.id,p_decision:decision,p_reason:decision==='reject'?reason:null});
+      const {error}=await sb.rpc('ex_admin_kyc_review',{
+        p_verification_id:it.id, p_decision:decision,
+        p_reason:decision==='reject'?reason:null,
+        p_confirm_name_change: decision==='approve'
+          && kycNormName(it.account_name ?? it.user?.full_name) !== kycNormName(it.full_legal_name)
+      });
       if(error) throw error;
       showToast(decision==='approve'?'ناسنامەکە پەسەندکرا ✓':'پشتڕاستکردنەوەکە ڕەتکرایەوە و بەکارهێنەر ئاگادارکرایەوە', decision==='approve'?'gr':'rd');
       closeKycReview();
@@ -3041,14 +3154,25 @@ async function reviewKyc(decision){
     }catch(e){
       const msg=adminDbMessage(e);
       showToast(msg,'rd');
-      if(/KYC_ALREADY_REVIEWED/.test(String(e?.message||''))){ closeKycReview(); loadKycAdmin(); return; }
+      if(/KYC_ALREADY_REVIEWED|KYC_NAME_MISMATCH_CONFIRM_REQUIRED/.test(String(e?.message||''))){ closeKycReview(); loadKycAdmin(); return; }
       if(aBtn) aBtn.disabled=false;
       if(rBtn) rBtn.disabled=false;
       if(btn) btn.innerHTML=html;
     }finally{ _kycBusy=false; }
   };
   if(decision==='approve'){
-    confirm2('پەسەندکردنی ناسنامە','دڵنیایت کە وێنە و زانیارییەکان دروستن و هی هەمان کەسن؟','fas fa-circle-check','var(--gr)', run);
+    const account=it.account_name ?? it.user?.full_name ?? '';
+    const rel=kycNameRelation(account, it.full_legal_name);
+    const willRename=kycNormName(account)!==kycNormName(it.full_legal_name);
+    let title='پەسەندکردنی ناسنامە', tone='var(--gr)';
+    let msg='دڵنیایت کە وێنە و زانیارییەکان دروستن و هی هەمان کەسن؟';
+    if(rel==='same_translit'){
+      msg=`هەمان ناوە بە ئەلفوبێیەکی جیاواز. دوای پەسەندکردن ناوی هەژمار دەبێت بە «${it.full_legal_name}». بەردەوام دەبیت؟`;
+    }else if(willRename){
+      title='پەسەندکردن و گۆڕینی ناوی هەژمار'; tone='var(--yw)';
+      msg=`⚠ ناوەکان جیاوازن. دوای پەسەندکردن ناوی هەژمار دەگۆڕدرێت لە «${account||'—'}» بۆ «${it.full_legal_name}». دڵنیایت کە هەمان کەسە؟`;
+    }
+    confirm2(title, msg,'fas fa-circle-check', tone, run);
   }else{
     await run();
   }

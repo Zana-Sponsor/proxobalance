@@ -1041,6 +1041,8 @@ function kuErr(msg){
     'Email rate limit exceeded':'زۆر جار ئیمەیل نێردرا، کەمێک چاوەڕوان بە',
     'Auth session missing':'تکایە دووبارە بچۆ ژوورەوە',
     'PROFILE_UPDATE_COOLDOWN':'ناو و ژمارەی مۆبایل تا تەواوبوونی ٧ ڕۆژەکە قوفڵن',
+    'PROFILE_NAME_LOCKED_BY_KYC':'ناوەکەت بە ناسنامە پشتڕاستکراوەتەوە و ناتوانرێت بگۆڕدرێت',
+    'KYC_REQUIRED_FOR_EXCHANGE':'پێش ئەنجامدانی ئاڵوگۆڕ، پێویستە ناسنامەکەت پشتڕاست بکرێتەوە.',
     'SENDER_PHONE_REQUIRED':'ژمارەی نێرەر بۆ Korek و Asiacell پێویستە',
     'SENDER_PHONE_INVALID':'ژمارەی نێرەر دەبێت بە 07 دەست پێبکات و ١١ ژمارە بێت',
     'Invalid sender number':'ژمارەی نێرەر دەبێت بە 07 دەست پێبکات و ١١ ژمارە بێت',
@@ -1371,6 +1373,11 @@ function formatAmtField(el){
 function updateSubmitState(from,to){
   const btn=document.getElementById('submitBtn');
   if(!btn || btn.dataset.submitting==='1') return;
+  if(kycExchangeBlocked()){
+    btn.disabled=true;
+    btn.innerHTML='پشتڕاستکردنەوەی ناسنامە پێویستە';
+    return;
+  }
   const anyLocked = getWalletInfo(from).locked || getWalletInfo(to).locked;
   const same = from===to;
   const closed = !same && !routeAllowed(from,to);
@@ -1484,6 +1491,7 @@ function _validateOrderFields(){
 }
 
 function openOrderConfirm(){
+  if(kycExchangeBlocked()){ showKycExchangeBlocked(); return; }
   if(!_validateOrderFields()) return;
   const senderName=document.getElementById('userSenderName').value;
   const senderPhone=document.getElementById('userSenderPhone').value;
@@ -1577,6 +1585,13 @@ async function processOrder(){
   const btn=document.getElementById('submitBtn'); btn.dataset.submitting='1'; btn.disabled=true; btn.innerHTML=ICON.spin+' ناردن...';
   let orderStage='prepare';
   try{
+    // Fresh check against the database before anything is uploaded: an admin
+    // may have requested verification after this page was opened.
+    orderStage='kyc_gate';
+    const kycNow=await loadKycStatus(true);
+    if(kycNow && kycNow.exchange_blocked){
+      throw Object.assign(new Error('KYC_REQUIRED_FOR_EXCHANGE'),{code:'KYC_REQUIRED_FOR_EXCHANGE'});
+    }
     let receiptUrl=null, receiptHash=null;
     if(selectedFile){
       orderStage='receipt_read';
@@ -1645,6 +1660,12 @@ async function processOrder(){
     clearAllOrderFieldErrors();
     calc();
   }catch(e){
+    if(e && (e.code==='KYC_REQUIRED_FOR_EXCHANGE' || /KYC_REQUIRED_FOR_EXCHANGE/.test(String(e.message||'')))){
+      // Expected business rule, not an application error.
+      await loadKycStatus(true);
+      showKycExchangeBlocked();
+      return;
+    }
     reportAppError(e,{
       operation:'order_submission', stage:orderStage,
       from_method:from, to_method:to,
@@ -2313,14 +2334,19 @@ function updateProfileCooldownUI(){
   const availableAt=profileChangeAvailableAt();
   const locked=!!availableAt && availableAt>Date.now();
 
-  if(nameEl) nameEl.disabled=locked;
+  const nameLocked=kycNameLocked();
+  if(nameEl){ nameEl.disabled=locked; nameEl.readOnly=nameLocked; nameEl.classList.toggle('is-locked',nameLocked); }
   if(phoneEl) phoneEl.disabled=locked;
+  const kycHint=document.getElementById('pfNameKycHint');
+  if(kycHint) kycHint.hidden=!nameLocked;
   if(btn) btn.disabled=locked;
   if(hint) hint.classList.toggle('warn',locked);
   if(txt){
     txt.textContent=locked
       ? 'دەتوانیت لە '+new Date(availableAt).toLocaleString('ku-IQ')+' دووبارە ناو یان ژمارەکەت بگۆڕیت.'
-      : 'ئێستا دەتوانیت ناو و ژمارەکەت نوێ بکەیتەوە؛ دوای پاشەکەوتکردن بۆ ٧ ڕۆژ قوفڵ دەبێت.';
+      : (nameLocked
+          ? 'ئێستا دەتوانیت ژمارەکەت نوێ بکەیتەوە؛ دوای پاشەکەوتکردن بۆ ٧ ڕۆژ قوفڵ دەبێت.'
+          : 'ئێستا دەتوانیت ناو و ژمارەکەت نوێ بکەیتەوە؛ دوای پاشەکەوتکردن بۆ ٧ ڕۆژ قوفڵ دەبێت.');
   }
   return locked;
 }
@@ -2383,6 +2409,9 @@ function fillProfileForm(){
 
 async function saveProfile(){
   const nameEl=document.getElementById('pfName'), phoneEl=document.getElementById('pfPhone');
+  const nameLocked=kycNameLocked();
+  // A verified name cannot change: keep the stored one (the database enforces it too).
+  if(nameLocked) nameEl.value=(curProfile && curProfile.full_name)||nameEl.value;
   const name=(nameEl.value||'').trim(), phone=(phoneEl.value||'').trim();
   clearFieldError('pfName'); clearFieldError('pfPhone');
 
@@ -2406,7 +2435,7 @@ async function saveProfile(){
   btn.disabled=true; btn.innerHTML=ICON.spin+' پاشەکەوتکردن...';
   try{
     const {data,error}=await sb.from('ex_profiles')
-      .update({ full_name:name, phone: phone || null })
+      .update(nameLocked ? { phone: phone || null } : { full_name:name, phone: phone || null })
       .eq('id', curUser.id).select().single();
     if(error) throw error;
     curProfile=Object.assign({},curProfile||{},data||{});
@@ -2431,6 +2460,11 @@ async function saveProfile(){
       showToast(availableAt
         ? 'ناو و ژمارەکەت قوفڵن؛ لە '+new Date(availableAt).toLocaleString('ku-IQ')+' دووبارە دەکرێنەوە'
         : 'ناو و ژمارەی مۆبایل تا تەواوبوونی ٧ ڕۆژەکە قوفڵن','error');
+    }else if(msg.includes('PROFILE_NAME_LOCKED_BY_KYC')){
+      if(curProfile) nameEl.value=curProfile.full_name||'';
+      await loadKycStatus(true);
+      setFieldError('pfName','ناوەکەت بە ناسنامە پشتڕاستکراوەتەوە و ناتوانرێت بگۆڕدرێت');
+      showToast('ناوەکەت بە ناسنامە پشتڕاستکراوەتەوە و ناتوانرێت بگۆڕدرێت','error');
     }else if(msg.includes('PROFILE_NAME_INVALID')){
       showToast('ناو دەبێت لانیکەم ٣ پیت بێت','error');
     }else if(msg.includes('PROFILE_PHONE_INVALID')){
@@ -2791,11 +2825,29 @@ async function loadKycStatus(silent){
     try{
       const {data,error}=await sb.rpc('ex_kyc_my_status');
       if(error) throw error;
-      _kyc={ status:data?.status||'none', data:data||{}, loadedAt:Date.now() };
+      const info=data||{};
+      // Fallback for a site deployed before the database migration: derive the
+      // exchange gate and the name lock from the data we already have, using
+      // the same rule as the database (an active admin request blocks).
+      if(typeof info.exchange_blocked!=='boolean'){
+        info.exchange_blocked=!!(info.request && (info.request.status==='open' || info.request.status==='submitted'));
+      }
+      if(typeof info.name_locked!=='boolean'){
+        info.name_locked=!!(info.verification && info.verification.status==='approved');
+      }
+      _kyc={ status:info.status||'none', data:info, loadedAt:Date.now() };
       if(curProfile && data?.username && curProfile.username!==data.username){
         curProfile.username=data.username;
         applyProfileToUI();
       }
+      // An approval makes the verified legal name the account name.
+      if(curProfile && typeof data?.account_name==='string' && curProfile.full_name!==data.account_name){
+        curProfile.full_name=data.account_name;
+        applyProfileToUI();
+        const pfName=document.getElementById('pfName');
+        if(pfName && document.activeElement!==pfName) pfName.value=data.account_name;
+      }
+      updateProfileCooldownUI();
     }catch(e){
       if(!_kyc.data) _kyc.status='error';
       reportAppError(e,{operation:'kyc_status',stage:'rpc'});
@@ -2830,6 +2882,7 @@ function renderKycProfile(){
   if(sub) sub.textContent = status==='loading'||status==='error' ? 'کارتی نیشتیمانی یان مۆڵەتی شوفێری' : meta.label;
   const bn=document.getElementById('bnProfileDot');
   if(bn) bn.style.display = (status==='required'||status==='rejected') ? 'flex' : 'none';
+  renderExchangeGate();
 
   const card=document.getElementById('pfKycCard');
   if(!card) return;
@@ -2938,6 +2991,11 @@ function renderVerifyPage(){
       const b=document.getElementById('kycDob'); if(b && !b.value) b.value=v.date_of_birth||'';
       const num=document.getElementById('kycNumber'); if(num && !num.value) num.value=v.document_number||'';
     }
+    const nameEl=document.getElementById('kycName');
+    if(nameEl && !nameEl.value && curProfile && curProfile.full_name){
+      nameEl.value=String(curProfile.full_name).replace(/\s+/g,' ').trim();
+    }
+    kycUpdateNameNote();
     kycUpdateSteps();
   }
 }
@@ -2974,6 +3032,114 @@ function kycSelectDoc(type, silent){
   if(!silent){
     const info=document.getElementById('kycSecInfo');
     if(info && window.matchMedia('(max-width: 640px)').matches) info.scrollIntoView({behavior:'smooth',block:'start'});
+  }
+}
+
+// Same rules as public.ex_normalize_person_name in the database: only harmless
+// differences (NFC, invisible characters, tatweel, spacing, Latin case, and the
+// Arabic-keyboard forms ي ى ك ھ) are ignored.
+function kycNormName(s){
+  const v=String(s??'').normalize('NFC')
+    .replace(/[\u200B-\u200F\u202A-\u202E\u2066-\u2069\u0640\uFEFF]/g,'')
+    .replace(/[\u00A0\u2000-\u200A\u202F\u205F\u3000]/g,' ')
+    .replace(/[\u064A\u0649]/g,'\u06CC').replace(/\u0643/g,'\u06A9').replace(/\u06BE/g,'\u0647')
+    .replace(/\s+/g,' ').trim().toLowerCase();
+  return v || null;
+}
+const KYC_AR2LAT = {
+  'ا':'a','آ':'a','أ':'a','إ':'a','ء':'','ئ':'','ؤ':'w','ة':'h',
+  'ب':'b','پ':'p','ت':'t','ث':'s','ج':'j','چ':'C','ح':'h','خ':'x','د':'d','ذ':'z',
+  'ر':'r','ڕ':'r','ز':'z','ژ':'j','س':'s','ش':'S','ص':'s','ض':'z','ط':'t','ظ':'z',
+  'ع':'','غ':'g','ف':'f','ڤ':'v','ق':'q','ك':'k','ک':'k','گ':'g','ل':'l','ڵ':'l',
+  'م':'m','ن':'n','ه':'h','ھ':'h','ە':'e','و':'w','ۆ':'o','ی':'i','ي':'i','ى':'i','ێ':'e'
+};
+function kycScriptOf(s){
+  const t=String(s||'');
+  const ar=/[\u0600-\u06FF\u0750-\u077F\uFB50-\uFDFF\uFE70-\uFEFF]/.test(t);
+  const la=/[A-Za-z]/.test(t);
+  return (ar&&la) ? 'mixed' : ar ? 'arabic' : la ? 'latin' : 'other';
+}
+function kycSkeleton(token){
+  let s=String(token||'').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+  s=s.replace(/[\u0600-\u06FF]/g, ch => (KYC_AR2LAT[ch] !== undefined ? KYC_AR2LAT[ch] : ' '));
+  // Latin digraphs collapse to the single letters the Kurdish map produces
+  s=s.replace(/tch|ch/g,'C').replace(/sh/g,'S').replace(/kh/g,'x').replace(/zh/g,'j')
+     .replace(/gh/g,'g').replace(/th/g,'s').replace(/ph/g,'f').replace(/ck/g,'k');
+  s=s.replace(/[^bptsjChxdrzSgfvqklmn]/g,'');   // drop vowels, hamza, punctuation
+  return s.replace(/(.)\1+/g,'$1');             // doubled consonants are spelling noise
+}
+// 'same' | 'same_translit' | 'similar' | 'different_script' | 'different' | 'unknown'
+function kycNameRelation(accountName, legalName){
+  const a=kycNormName(accountName), b=kycNormName(legalName);
+  if(!a || !b) return 'unknown';
+  if(a===b) return 'same';
+  const sa=kycScriptOf(a), sb=kycScriptOf(b);
+  const ta=a.split(' ').map(kycSkeleton), tb=b.split(' ').map(kycSkeleton);
+  const enough=ta.join('').length>=4 && tb.join('').length>=4;
+  const equal=ta.length===tb.length && ta.every((t,i)=>t && t===tb[i]);
+  if(equal && enough) return (sa!==sb) ? 'same_translit' : 'similar';
+  return (sa!==sb && sa!=='other' && sb!=='other') ? 'different_script' : 'different';
+}
+
+function kycNameLocked(){ return !!(_kyc && _kyc.data && _kyc.data.name_locked); }
+function kycExchangeBlocked(){ return !!(_kyc && _kyc.data && _kyc.data.exchange_blocked); }
+
+const KYC_EXCHANGE_MSG='پێش ئەنجامدانی ئاڵوگۆڕ، پێویستە ناسنامەکەت پشتڕاست بکرێتەوە.';
+// While an admin-requested verification is not approved, the exchange form
+// (including the wallet number to pay into) is replaced by this notice. The
+// database and /api/orders enforce the same rule.
+function renderExchangeGate(){
+  const card=document.getElementById('exchangeCard');
+  const gate=document.getElementById('exchangeKycGate');
+  if(!card || !gate) return;
+  const blocked=kycExchangeBlocked();
+  card.classList.toggle('kyc-locked', blocked);
+  gate.hidden=!blocked;
+  if(blocked){
+    const sub=document.getElementById('exchangeKycGateSub');
+    const st=_kyc.status;
+    if(sub) sub.textContent = st==='pending'
+      ? 'بەڵگەنامەکەت نێردراوە و لە ژێر پشکنینە؛ دوای پەسەندکردن ئاڵوگۆڕ دەکرێتەوە.'
+      : st==='rejected'
+        ? 'پشتڕاستکردنەوەکەت ڕەتکرایەوە؛ تکایە زانیارییەکان ڕاست بکەرەوە و دووبارە بینێرە.'
+        : 'تیمی پڕۆکسۆ داوای پشتڕاستکردنەوەی ناسنامەکەتی کردووە.';
+    const sheet=document.getElementById('confirmSheet');
+    if(sheet && sheet.classList.contains('open')) closeOrderConfirm();
+  }
+  const from=document.getElementById('from'), to=document.getElementById('receiveVia');
+  if(from && to && from.value && to.value) updateSubmitState(from.value,to.value);
+}
+function showKycExchangeBlocked(){
+  renderExchangeGate();
+  showResultModal({
+    tone:'warning',
+    title:'پشتڕاستکردنەوەی ناسنامە پێویستە',
+    message:KYC_EXCHANGE_MSG,
+    primaryText:'دەستپێکردنی پشتڕاستکردنەوە',
+    onPrimary:()=>openVerifyPage(),
+    secondaryText:'داخستن'
+  });
+}
+
+function kycUpdateNameNote(){
+  const note=document.getElementById('kycNameNote');
+  const input=document.getElementById('kycName');
+  if(!note || !input) return;
+  const account=(curProfile && curProfile.full_name) || '';
+  const typed=input.value||'';
+  const rel=kycNameRelation(account, typed);
+  if(!account || !kycNormName(typed) || rel==='same' || rel==='unknown'){
+    note.hidden=true; note.textContent=''; note.classList.remove('ok'); return;
+  }
+  note.hidden=false;
+  const acc=account.replace(/\s+/g,' ').trim();
+  if(rel==='same_translit'){
+    // English account name + Kurdish document name (or the reverse) — same name.
+    note.classList.add('ok');
+    note.textContent='ناوی هەژمارەکەت («'+acc+'») بە ئەلفوبێیەکی جیاوازە بەڵام هەمان ناوە. دوای پەسەندکردن ناوی هەژمارەکەت وەک سەر ناسنامەکە دەنووسرێتەوە.';
+  }else{
+    note.classList.remove('ok');
+    note.textContent='ئەم ناوە جیاوازە لە ناوی هەژمارەکەت («'+acc+'»). ئەگەر پشتڕاستکردنەوەکە پەسەند بکرێت، ناوی هەژمارەکەت دەگۆڕدرێت بۆ ناوی سەر ناسنامەکەت.';
   }
 }
 
