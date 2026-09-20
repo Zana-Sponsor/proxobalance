@@ -8,11 +8,18 @@ import '../services/ad_categories.dart';
 import '../services/best_metrics_service.dart';
 import '../widgets/best_metric_card.dart';
 
-const Color _page = Color(0xFFF7F9FC);
+const Color _page = Colors.white;
 const Color _ink = Color(0xFF0B0B32);
 const Color _muted = Color(0xFF5D6677);
 const Color _accent = Color(0xFF0365FF);
 const Color _line = Color(0xFFE6EAF0);
+const List<BoxShadow> _softCardShadow = <BoxShadow>[
+  BoxShadow(
+    color: Color(0x0F000000),
+    blurRadius: 18,
+    offset: Offset(0, 5),
+  ),
+];
 
 class BestMetricsScreen extends StatefulWidget {
   final List<BestMetricAd> initialAds;
@@ -308,6 +315,7 @@ class _ErrorView extends StatelessWidget {
             color: Colors.white,
             borderRadius: BorderRadius.circular(18),
             border: Border.all(color: _line),
+            boxShadow: _softCardShadow,
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
