@@ -26,7 +26,7 @@ const Color _kDeltaUp    = Color(0xFF74F96E);
 const Color _kDeltaDown  = Color(0xFFFFC0B4);
 const Color _kBannerInk  = AppColors.ink;
 
-const Color _kPageBg = AppColors.surfaceBase;
+const Color _kPageBg = Colors.white;
 
 const double _kRefContentW = 398.0;
 
