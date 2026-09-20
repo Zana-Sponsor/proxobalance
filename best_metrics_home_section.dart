@@ -12,6 +12,13 @@ const Color _ink = Color(0xFF0B0B32);
 const Color _muted = Color(0xFF5D6677);
 const Color _accent = Color(0xFF0365FF);
 const Color _line = Color(0xFFE6EAF0);
+const List<BoxShadow> _softCardShadow = <BoxShadow>[
+  BoxShadow(
+    color: Color(0x0F000000),
+    blurRadius: 18,
+    offset: Offset(0, 5),
+  ),
+];
 
 class BestMetricsHomeSection extends StatefulWidget {
   const BestMetricsHomeSection({super.key});
@@ -272,6 +279,7 @@ class _HomeLoading extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(18),
         border: Border.all(color: _line),
+        boxShadow: _softCardShadow,
       ),
       child: const Center(
         child: SizedBox(
@@ -299,14 +307,7 @@ class _HomeEmpty extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: _line),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x0A0B0B32),
-            blurRadius: 14,
-            spreadRadius: -5,
-            offset: Offset(0, 6),
-          ),
-        ],
+        boxShadow: _softCardShadow,
       ),
       child: const Center(
         child: Text(
@@ -338,6 +339,7 @@ class _HomeError extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: _line),
+        boxShadow: _softCardShadow,
       ),
       child: Row(
         children: [
