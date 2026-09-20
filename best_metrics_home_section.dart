@@ -42,12 +42,12 @@ class BestMetricsHomeSectionState extends State<BestMetricsHomeSection> {
       });
     }
     try {
-      final rows = await BestMetricsService.fetchWeeklyResults(
+      final rows = await BestMetricsService.fetchHomePreview(
         forceRefresh: forceRefresh,
       );
       if (!mounted) return;
       setState(() {
-        _ads = rows.take(5).toList(growable: false);
+        _ads = rows;
         _loading = false;
         _error = null;
         if (_page >= _ads.length) _page = 0;
