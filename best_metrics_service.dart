@@ -94,6 +94,12 @@ class BestMetricsService {
   BestMetricsService._();
 
   static const Duration _cacheTtl = Duration(minutes: 10);
+  static const int homePreviewLimit = 5;
+
+  static String? _previewCacheWeek;
+  static DateTime? _previewCachedAt;
+  static List<BestMetricAd>? _cachedPreviewAds;
+
   static String? _cacheWeek;
   static DateTime? _cachedAt;
   static List<BestMetricAd>? _cachedAds;
@@ -111,6 +117,43 @@ class BestMetricsService {
         two(value.month) +
         '-' +
         two(value.day);
+  }
+
+  /// Lightweight query used only by Home. It deliberately requests a maximum
+  /// of five rows so the complete weekly list is not downloaded or built while
+  /// the user is scrolling the dashboard.
+  static Future<List<BestMetricAd>> fetchHomePreview({
+    bool forceRefresh = false,
+  }) async {
+    final weekStart = currentBaghdadWeekStart();
+    final weekKey = _dateKey(weekStart);
+    final cacheIsFresh = !forceRefresh &&
+        _cachedPreviewAds != null &&
+        _previewCacheWeek == weekKey &&
+        _previewCachedAt != null &&
+        DateTime.now().difference(_previewCachedAt!) < _cacheTtl;
+    if (cacheIsFresh) {
+      return List<BestMetricAd>.unmodifiable(_cachedPreviewAds!);
+    }
+
+    final raw = await supabase
+        .from('pa_featured_ads_public')
+        .select(
+          'id,goal,category,video_link,thumbnail_url,clicks,impressions,'
+          'spend,daily_budget,days,service_budget_usd,featured_sort,'
+          'created_at,featured_week_start,is_featured',
+        )
+        .eq('is_featured', true)
+        .eq('featured_week_start', weekKey)
+        .order('featured_sort', ascending: true)
+        .order('impressions', ascending: false)
+        .limit(homePreviewLimit);
+
+    final rows = _parseRows(raw);
+    _previewCacheWeek = weekKey;
+    _previewCachedAt = DateTime.now();
+    _cachedPreviewAds = rows;
+    return List<BestMetricAd>.unmodifiable(rows);
   }
 
   static Future<List<BestMetricAd>> fetchWeeklyResults({
@@ -138,11 +181,7 @@ class BestMetricsService {
         .order('impressions', ascending: false)
         .limit(100);
 
-    final rows = (raw as List)
-        .map((row) => BestMetricAd.fromMap(
-              Map<String, dynamic>.from(row as Map),
-            ))
-        .toList(growable: false);
+    final rows = _parseRows(raw);
 
     _cacheWeek = weekKey;
     _cachedAt = DateTime.now();
@@ -150,7 +189,18 @@ class BestMetricsService {
     return List<BestMetricAd>.unmodifiable(rows);
   }
 
+  static List<BestMetricAd> _parseRows(dynamic raw) {
+    return (raw as List)
+        .map((row) => BestMetricAd.fromMap(
+              Map<String, dynamic>.from(row as Map),
+            ))
+        .toList(growable: false);
+  }
+
   static void invalidateCache() {
+    _previewCacheWeek = null;
+    _previewCachedAt = null;
+    _cachedPreviewAds = null;
     _cacheWeek = null;
     _cachedAt = null;
     _cachedAds = null;
