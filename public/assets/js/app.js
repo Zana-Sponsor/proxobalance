@@ -1402,10 +1402,22 @@ function calc(){
   const feeEl=document.getElementById('feeDisplay');
   const bdRate=document.getElementById('bdRate');
   const bdFee=document.getElementById('bdFee');
+  const bdSent=document.getElementById('bdSent');
   const setBd=(r,f)=>{ if(bdRate) bdRate.textContent=r; if(bdFee) bdFee.textContent=f; };
+  // A rate line only means something when the two sides are different
+  // currencies; IQD → IQD is a fee, so the row is hidden instead of
+  // printing "1 = 1".
+  const showRate=(on)=>{ const row=document.getElementById('bdRateRow'); if(row) row.hidden=!on; };
+  const showFee=(on)=>{ const row=document.getElementById('bdFeeRow'); if(row) row.hidden=!on; };
+  const isUsdt = from==='USDT' || to==='USDT';
+  if(bdSent) bdSent.textContent = amt>0 ? (formatNum(Math.floor(amt))+(from==='USDT'?' $':' IQD')) : '—';
+  const sentRow=document.getElementById('bdSentRow');
+  if(sentRow) sentRow.hidden = !(amt>0);
+  showRate(isUsdt);
+  showFee(true);
   updateHeaderRate();
 
-  if(from===to){ totalEl.innerText='هەمان واڵێت نابێت'; totalEl.classList.add('warn-text'); feeEl.innerText=''; setBd('—','—'); return; }
+  if(from===to){ totalEl.innerText='هەمان واڵێت نابێت'; totalEl.classList.add('warn-text'); feeEl.innerText=''; setBd('—','—'); showRate(false); showFee(false); return; }
   const r=RATES[from+'>'+to];
   // Closed direction: show it as closed. Never fall back to a guessed rate and
   // never quietly move the order to a different wallet.
@@ -1415,14 +1427,15 @@ function calc(){
     const toLbl=(METHOD_META[to]&&METHOD_META[to].label)||to;
     feeEl.innerText = getWalletInfo(to).locked ? '' : ('گۆڕینەوە بۆ '+toLbl+' لە ئێستادا بەردەست نییە');
     setBd('داخراوە','—');
+    showRate(false); showFee(false);
     return;
   }
   totalEl.classList.remove('warn-text');
 
   // rate line — the exact multiplier or fee the order will be settled at
   if(r.type==='multiplier')      setBd('1 = '+fmtPct(r.value), '—');
-  else if(r.type==='fee_percent')setBd('1 = 1', fmtPct(r.value)+'%');
-  else                           setBd('1 = 1', formatNum(r.value)+' IQD');
+  else if(r.type==='fee_percent')setBd('—', fmtPct(r.value)+'%');
+  else                           setBd('—', formatNum(r.value)+' IQD');
 
   if(amt>0 && amt<MIN_AMOUNT){
     totalEl.innerText='کەمترین بڕ '+formatNum(MIN_AMOUNT)+' دینارە';
@@ -1433,11 +1446,9 @@ function calc(){
   let final=0, feeTxt='', feeVal=0;
   if(r.type==='fee_percent'){
     feeVal=amt*r.value/100; final=amt-feeVal;
-    if(amt>0 && feeVal>0) feeTxt='کرێ: '+formatNum(Math.floor(feeVal))+' IQD';
     if(bdFee) bdFee.textContent = amt>0 ? (formatNum(Math.floor(feeVal))+' IQD ('+fmtPct(r.value)+'%)') : (fmtPct(r.value)+'%');
   }else if(r.type==='fee_fixed'){
     feeVal=r.value; final=Math.max(0, amt-feeVal);
-    if(amt>0 && feeVal>0) feeTxt='کرێ: '+formatNum(Math.floor(feeVal))+' IQD';
     if(bdFee) bdFee.textContent = formatNum(Math.floor(feeVal))+' IQD';
   }else{
     final=amt*r.value;
@@ -1445,11 +1456,10 @@ function calc(){
     // the amount, so it reads as a rate — "کرێ: 15%" — rather than an amount.
     if(r.value<1){
       feeVal=amt-final;
-      feeTxt='کرێ: '+fmtPct(100-r.value*100)+'%';
       if(bdFee) bdFee.textContent = amt>0
         ? (formatNum(Math.floor(feeVal))+' IQD ('+fmtPct(100-r.value*100)+'%)')
         : (fmtPct(100-r.value*100)+'%');
-    }else if(bdFee) bdFee.textContent='بێ کرێ';
+    }else{ showFee(false); if(bdFee) bdFee.textContent='بێ کرێ'; }
   }
   totalEl.innerText=formatNum(Math.floor(final))+' IQD';
   feeEl.innerText=feeTxt;
@@ -1712,42 +1722,124 @@ function copyOrderCode(code, ev){
   catch(_){ showToast('نەتوانرا کۆپی بکرێت','error'); }
 }
 
-function statusClassOf(status){
-  return status==='پەسەندکرا' ? 'status-success'
-    : status==='ڕەتکرا' ? 'status-danger'
-    : status==='پێویستی بە ڕاستکردنەوەیە' ? 'status-correction'
-    : status==='ڕاستکراوەتەوە' ? 'status-corrected'
-    : '';
+// Scannable card: route, amount, date and status only. Everything else is
+// one tap away in the detail sheet (openTxDetail).
+const TX_STATE = {
+  'پەسەندکرا':               { key:'done',     cls:'status-success'    },
+  'ڕەتکرا':                  { key:'rejected', cls:'status-danger'     },
+  'پێویستی بە ڕاستکردنەوەیە':{ key:'action',   cls:'status-correction' },
+  'ڕاستکراوەتەوە':           { key:'pending',  cls:'status-corrected'  },
+  'چاوەڕوانە':               { key:'pending',  cls:''                  }
+};
+function txStateOf(o){ return TX_STATE[o && o.status] || { key:'pending', cls:'' }; }
+function txAmount(value, method){
+  return formatNum(Math.floor(Number(value)||0)) + (method==='USDT' ? ' $' : ' IQD');
+}
+function txWhen(iso, withTime){ return kycFmtDate(iso, withTime); }   // shared Sorani date formatter
+function orderCardHTML(o){
+  const code=orderCodeOf(o);
+  const st=txStateOf(o);
+  const needsAction=o.status==='پێویستی بە ڕاستکردنەوەیە';
+  return '<article class="tx-card'+(needsAction?' needs-action':'')+'" tabindex="0" role="button"'
+    + ' onclick="openTxDetail(\''+escHtml(String(o.id))+'\')"'
+    + ' onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();openTxDetail(\''+escHtml(String(o.id))+'\');}">'
+    + '<div class="tx-card-top">'
+      + '<span class="tx-route">'+escHtml(methodLabel(o.from_method))
+        + '<span class="tx-route-arrow" aria-hidden="true">'+ICON.arrowLeftLong+'</span>'
+        + escHtml(methodLabel(o.to_method))+'</span>'
+      + '<span class="status-badge '+st.cls+'">'+escHtml(o.status||'')+'</span>'
+    + '</div>'
+    + '<div class="tx-card-main">'
+      + '<span class="tx-amount" dir="ltr">'+txAmount(o.total,o.to_method)+'</span>'
+      + '<span class="tx-amount-sent">لە <b dir="ltr">'+txAmount(o.amount,o.from_method)+'</b></span>'
+    + '</div>'
+    + '<div class="tx-card-foot">'
+      + '<span class="tx-when">'+escHtml(txWhen(o.created_at,true))+'</span>'
+      + '<span class="tx-code" dir="ltr">'+escHtml(code)+'</span>'
+    + '</div>'
+    + (needsAction ? '<div class="tx-card-action">پێویستی بە ڕاستکردنەوەی تۆ هەیە</div>' : '')
+    + '</article>';
 }
 
-function orderCardHTML(o){
-  const code = orderCodeOf(o);
-  const decidedRow = (o.status==='پەسەندکرا' || o.status==='ڕەتکرا') && o.decided_at
-    ? '<div class="detail-item"><span class="detail-ico" style="color:'+(o.status==='پەسەندکرا'?'var(--success)':'var(--error)')+'">'+(o.status==='پەسەندکرا'?ICON.check:ICON.cross)+'</span> '+o.status+': '+new Date(o.decided_at).toLocaleString('ku-IQ')+'</div>'
-    : '';
-  const hasReceipt = !!o.payout_receipt_url;
-  const rcptId = 'rcpt_'+o.id;
-  return '<div class="order-card'+(hasReceipt?' has-receipt':'')+'" '+(hasReceipt?'onclick="toggleReceipt(\''+rcptId+'\')"':'')+'>'
-    + '<div class="order-header">'
-      + '<span class="order-code" onclick="copyOrderCode(\''+code+'\', event)" title="کۆپیکردنی ئایدی">'+fmtCode(code)+ICON.copy+'</span>'
-      + '<span class="status-badge '+statusClassOf(o.status)+'">'+escHtml(o.status)+'</span>'
+// ── transaction details ────────────────────────────────────────
+let _txSheetId=null;
+function txRow(label, value, opts){
+  if(value===null || value===undefined || value==='') return '';
+  const o=opts||{};
+  return '<div class="tx-drow"><span class="tx-dlbl">'+escHtml(label)+'</span>'
+    + '<span class="tx-dval'+(o.cls?' '+o.cls:'')+'"'+(o.ltr?' dir="ltr"':'')+'>'+(o.html?value:escHtml(String(value)))+'</span></div>';
+}
+function openTxDetail(id){
+  const o=_orders.find(row=>String(row.id)===String(id));
+  if(!o) return;
+  _txSheetId=String(id);
+  const st=txStateOf(o);
+  const code=orderCodeOf(o);
+  const rate=Number(o.amount)>0 ? (Number(o.total)/Number(o.amount)) : 0;
+  const isUsdt=o.from_method==='USDT';
+  const fee=!isUsdt && Number(o.amount)>Number(o.total) ? Math.floor(Number(o.amount)-Number(o.total)) : 0;
+  let html='<div class="tx-dhead">'
+    + '<span class="status-badge '+st.cls+'">'+escHtml(o.status||'')+'</span>'
+    + '<button type="button" class="tx-dcode" onclick="copyOrderCode(\''+escHtml(code)+'\', event)" title="کۆپیکردنی ئایدی">'
+      + '<span dir="ltr">'+escHtml(code)+'</span>'+ICON.copy+'</button>'
     + '</div>'
-    + '<div class="detail-item"><span class="detail-ico">'+ICON.swap+'</span> '+escHtml(methodLabel(o.from_method))+' <span class="inline-route-icon">'+ICON.arrowLeftLong+'</span> '+escHtml(methodLabel(o.to_method))+'</div>'
-    + '<div class="detail-item"><span class="detail-ico">'+ICON.banknote+'</span> بڕ: <b>'+formatNum(o.amount)+(o.from_method==='USDT'?'$':' IQD')+'</b></div>'
-    + '<div class="detail-item"><span class="detail-ico" style="color:var(--success)">'+ICON.receive+'</span> بڕی وەرگیراو: <b style="color:var(--success)">'+formatNum(Math.floor(o.total))+' IQD</b></div>'
-    + '<div class="detail-item"><span class="detail-ico">'+ICON.phone+'</span> ژمارە: '+escHtml(o.phone||'—')+'</div>'
-    + (o.extra_info?'<div class="detail-item"><span class="detail-ico">'+ICON.info+'</span> زانیاری زیاتر: '+escHtml(o.extra_info)+'</div>':'')
-    + '<div class="detail-item"><span class="detail-ico">'+ICON.send+'</span> ناردرا: '+new Date(o.created_at).toLocaleString('ku-IQ')+'</div>'
-    + decidedRow
-    + (o.admin_note?'<div class="detail-item"><span class="detail-ico">'+ICON.message+'</span> '+escHtml(o.admin_note)+'</div>':'')
-    + (o.correction_request?'<div class="order-correction-notice"><b>داواکاری ئادمین</b><p>'+escHtml(o.correction_request)+'</p>'
-        +(o.status==='پێویستی بە ڕاستکردنەوەیە'?'<button type="button" class="btn btn-primary btn-block" onclick="event.stopPropagation(); openOrderCorrection(\''+escHtml(o.id)+'\')">ڕاستکردنەوەی مامەڵە</button>':'')+'</div>':'')
-    + (o.correction_response?'<div class="order-correction-response"><b>وەڵامی تۆ</b><p>'+escHtml(o.correction_response)+'</p></div>':'')
-    + (hasReceipt?'<div class="detail-item rcpt-hint"><span class="detail-ico">'+ICON.image+'</span> وێنەی پسووڵە بەردەستە — کلیک بکە بۆ بینین</div>'
-        + '<div class="rcpt-wrap" id="'+rcptId+'" style="display:none">'
-        + '<img src="'+escHtml(o.payout_receipt_url)+'" class="rcpt-img" onclick="event.stopPropagation(); document.getElementById(\''+rcptId+'\').style.display=\'none\';">'
-        + '</div>':'')
+    + '<div class="tx-damounts">'
+      + '<div><small>ناردنت</small><b dir="ltr">'+txAmount(o.amount,o.from_method)+'</b></div>'
+      + '<div><small>وەرگرتنت</small><b class="recv" dir="ltr">'+txAmount(o.total,o.to_method)+'</b></div>'
+    + '</div>'
+    + '<div class="tx-dgroup">'
+    // same direction rendering as the list card: source on the right, arrow, destination
+    + txRow('ئاڕاستە', '<span class="tx-droute">'+escHtml(methodLabel(o.from_method))
+        + '<span class="tx-route-arrow" aria-hidden="true">'+ICON.arrowLeftLong+'</span>'
+        + escHtml(methodLabel(o.to_method))+'</span>', {html:true})
+    // A rate only means something across currencies; IQD → IQD is a fee.
+    + (isUsdt && rate ? txRow('نرخی ئاڵوگۆڕ', '1 $ = '+formatNum(Math.round(rate))+' IQD', {ltr:true}) : '')
+    + (fee ? txRow('کرێی خزمەتگوزاری', formatNum(fee)+' IQD', {ltr:true}) : '')
+    + txRow('ژمارەی وەرگر', o.phone, {ltr:true})
+    + (o.sender_phone ? txRow('ژمارەی نێرەر', o.sender_phone, {ltr:true}) : '')
+    + txRow('بەرواری ناردن', txWhen(o.created_at,true))
+    + ((o.status==='پەسەندکرا'||o.status==='ڕەتکرا') && o.decided_at ? txRow('بەرواری بڕیار', txWhen(o.decided_at,true)) : '')
+    + (o.extra_info ? txRow('زانیاری زیاتر', o.extra_info) : '')
     + '</div>';
+  if(o.admin_note){
+    html+='<div class="tx-dnote"><b>تێبینی ئادمین</b><p>'+escHtml(o.admin_note)+'</p></div>';
+  }
+  if(o.correction_request){
+    html+='<div class="tx-dnote warn"><b>داواکاری ڕاستکردنەوە</b><p>'+escHtml(o.correction_request)+'</p>'
+      + (o.status==='پێویستی بە ڕاستکردنەوەیە'
+          ? '<button type="button" class="btn btn-primary btn-block" onclick="closeTxDetail(); openOrderCorrection(\''+escHtml(String(o.id))+'\')">ڕاستکردنەوەی مامەڵە</button>'
+          : '')
+      + '</div>';
+  }
+  if(o.correction_response){
+    html+='<div class="tx-dnote"><b>وەڵامی تۆ</b><p>'+escHtml(o.correction_response)+'</p></div>';
+  }
+  if(o.payout_receipt_url){
+    html+='<div class="tx-dreceipt"><b>پسووڵەی گەیاندن</b>'
+      + '<img src="'+escHtml(o.payout_receipt_url)+'" alt="پسووڵەی گەیاندن" loading="lazy" onclick="openReceiptFull(\''+escHtml(o.payout_receipt_url)+'\')">'
+      + '</div>';
+  }
+  document.getElementById('txSheetBody').innerHTML=html;
+  document.getElementById('txSheetBackdrop').hidden=false;
+  const sheet=document.getElementById('txSheet');
+  sheet.hidden=false;
+  requestAnimationFrame(()=>sheet.classList.add('open'));
+  document.body.style.overflow='hidden';
+}
+function closeTxDetail(){
+  const sheet=document.getElementById('txSheet');
+  const back=document.getElementById('txSheetBackdrop');
+  if(!sheet || sheet.hidden) return;
+  sheet.classList.remove('open');
+  back.hidden=true;
+  _txSheetId=null;
+  document.body.style.overflow='';
+  setTimeout(()=>{ if(!sheet.classList.contains('open')) sheet.hidden=true; }, 200);
+}
+function openReceiptFull(url){
+  const modal=document.getElementById('supportImageModal');
+  const image=document.getElementById('supportImageModalImg');
+  if(modal && image){ image.src=url; modal.style.display='flex'; document.body.style.overflow='hidden'; }
 }
 
 let _orderCorrectionReceiptSnapshot=null;
@@ -1916,6 +2008,9 @@ function methodLabel(key){
 
 function renderHistory(rows){
   _orders = rows || [];
+  // an open detail sheet follows realtime status changes
+  if(_txSheetId && !_orders.some(o=>String(o.id)===_txSheetId)) closeTxDetail();
+  else if(_txSheetId) openTxDetail(_txSheetId);
   renderHomePreview();
   renderTxPage();
   updateNavBadge();
@@ -1972,7 +2067,7 @@ function txTimeOk(o){
   return t >= Date.now() - days*86400000;
 }
 function txMatches(o){
-  if(_txStatus!=='all' && o.status!==_txStatus) return false;
+  if(_txStatus!=='all' && txStateOf(o).key!==_txStatus) return false;
   if(!txTimeOk(o)) return false;
   if(!_txQuery) return true;
   const q=_txQuery.replace(/[\s#-]/g,'');
@@ -1991,11 +2086,8 @@ function txMatches(o){
 
 function renderTxPage(){
   if(!document.getElementById('txList')) return;
-  const ok    = _orders.filter(o=>o.status==='پەسەندکرا');
-  const wait  = _orders.filter(o=>o.status==='چاوەڕوانە');
-  const correction = _orders.filter(o=>o.status==='پێویستی بە ڕاستکردنەوەیە');
-  const corrected = _orders.filter(o=>o.status==='ڕاستکراوەتەوە');
-  const no    = _orders.filter(o=>o.status==='ڕەتکرا');
+  const by=key=>_orders.filter(o=>txStateOf(o).key===key);
+  const ok=by('done'), wait=by('pending'), action=by('action'), no=by('rejected');
 
   // Totals only count completed exchanges. IQD and USDT are kept apart so the
   // number on screen is never a sum of two different currencies.
@@ -2003,21 +2095,20 @@ function renderTxPage(){
   const sentUsdt = ok.filter(o=>o.from_method==='USDT').reduce((s,o)=>s+Number(o.amount||0),0);
   const recvIqd  = ok.reduce((s,o)=>s+Number(o.total||0),0);
 
-  document.getElementById('txTotalSent').textContent = formatNum(Math.floor(sentIqd));
-  document.getElementById('txTotalSentSub').textContent = sentUsdt>0 ? ('IQD  +  '+formatNum(sentUsdt)+' $') : 'IQD';
-  document.getElementById('txTotalRecv').textContent = formatNum(Math.floor(recvIqd));
-
-  document.getElementById('txCntAll').textContent  = _orders.length;
-  document.getElementById('txCntOk').textContent   = ok.length;
-  document.getElementById('txCntWait').textContent = wait.length;
-  document.getElementById('txCntNo').textContent   = no.length;
-
-  document.getElementById('fcAll').textContent  = _orders.length;
-  document.getElementById('fcWait').textContent = wait.length;
-  document.getElementById('fcCorrection').textContent = correction.length;
-  document.getElementById('fcCorrected').textContent = corrected.length;
-  document.getElementById('fcOk').textContent   = ok.length;
-  document.getElementById('fcNo').textContent   = no.length;
+  const set=(id,value)=>{ const el=document.getElementById(id); if(el) el.textContent=value; };
+  set('txTotalSent', formatNum(Math.floor(sentIqd)));
+  set('txTotalSentSub', sentUsdt>0 ? ('IQD  +  '+formatNum(sentUsdt)+' $') : 'IQD');
+  set('txTotalRecv', formatNum(Math.floor(recvIqd)));
+  // nothing completed yet → the totals strip would only show two zeros
+  const sum=document.getElementById('txSummary');
+  if(sum) sum.hidden = ok.length===0;
+  // a count of zero is noise on a filter nobody can use
+  const count=(id,n)=>{ const el=document.getElementById(id); if(el) el.textContent = n>0 ? String(n) : ''; };
+  count('fcAll', _orders.length);
+  count('fcWait', wait.length);
+  count('fcCorrection', action.length);
+  count('fcOk', ok.length);
+  count('fcNo', no.length);
 
   renderTxList();
 }
@@ -2026,7 +2117,8 @@ function renderTxList(){
   const el=document.getElementById('txList'); if(!el) return;
   const list=_orders.filter(txMatches);
   const cnt=document.getElementById('txResultCount');
-  if(cnt) cnt.textContent = _orders.length ? (list.length+' لە '+_orders.length+' مامەڵە') : '';
+  const narrowed = !!_txQuery || _txStatus!=='all' || _txTime!=='all';
+  if(cnt) cnt.textContent = (narrowed && _orders.length) ? (list.length+' لە '+_orders.length+' مامەڵە') : '';
   if(!list.length){
     el.innerHTML = '<div class="empty-state">'
       + (_txQuery ? 'هیچ مامەڵەیەک بەم ئایدییە نەدۆزرایەوە' : 'هیچ مامەڵەیەک نییە بەم فلتەرە')
@@ -2036,11 +2128,6 @@ function renderTxList(){
   el.innerHTML = list.map(orderCardHTML).join('');
 }
 function copyNum(){ navigator.clipboard.writeText(document.getElementById('myNum').innerText); showToast('ژمارەکە کۆپی کرا بۆ کلیپبۆرد','success'); }
-function toggleReceipt(id){
-  const el=document.getElementById(id);
-  if(!el) return;
-  el.style.display = (el.style.display==='none') ? 'block' : 'none';
-}
 
 // Admin panel now lives in its own page — see exchange-admin.html
 
@@ -3726,6 +3813,7 @@ function honeypotTripped(){
 // ══════════════════════════════════════════════════════════════
 document.addEventListener('keydown', (e)=>{
   if(e.key!=='Escape') return;
+  if(document.getElementById('txSheet') && !document.getElementById('txSheet').hidden){ closeTxDetail(); return; }
   const notifP=document.getElementById('notifPanel'); if(notifP && notifP.classList.contains('open')){ closeNotifPanel(); return; }
   const picker=document.getElementById('pickerSheet'); if(picker.classList.contains('open')){ closePicker(); return; }
   const confirmS=document.getElementById('confirmSheet'); if(confirmS.classList.contains('open')){ closeOrderConfirm(); return; }
