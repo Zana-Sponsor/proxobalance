@@ -89,7 +89,7 @@
 <!-- Solar Icons (480 Design, CC BY 4.0) — all icons as CSS mask images -->
 <link rel="stylesheet" href="https://api.iconify.design/solar.css?icons=alt-arrow-down-linear,alt-arrow-left-linear,alt-arrow-right-linear,arrow-left-down-linear,arrow-left-linear,arrow-right-linear,arrow-right-up-linear,banknote-2-linear,banknote-linear,bell-linear,bell-off-linear,bill-list-linear,bolt-linear,buildings-2-linear,calendar-linear,card-linear,chat-round-dots-linear,check-circle-linear,check-read-linear,clock-circle-linear,close-circle-linear,copy-linear,danger-triangle-linear,diskette-linear,dollar-linear,dollar-minimalistic-linear,download-minimalistic-linear,eye-closed-linear,eye-linear,gallery-add-linear,gallery-linear,graph-down-linear,graph-up-linear,headphones-round-linear,history-2-linear,history-linear,info-circle-linear,key-linear,letter-linear,lock-linear,lock-unlocked-linear,magic-stick-3-linear,magnifer-linear,moon-linear,pen-linear,phone-linear,plain-2-linear,power-linear,refresh-linear,sale-linear,shield-check-linear,shield-cross-linear,shield-linear,shield-warning-linear,smartphone-linear,sun-linear,transfer-horizontal-linear,transfer-vertical-linear,tuning-2-linear,upload-linear,upload-minimalistic-linear,user-check-rounded-linear,user-id-linear,user-linear,user-plus-rounded-linear,user-rounded-linear,verified-check-linear,wallet-linear,wi-fi-router-linear,wi-fi-router-minimalistic-linear,wi-fi-router-round-linear">
 <link rel="stylesheet" href="/assets/css/tokens.css?v=4">
-<link rel="stylesheet" href="/assets/css/app.css?v=21">
+<link rel="stylesheet" href="/assets/css/app.css?v=22">
 </head>
 
 <body>
@@ -585,27 +585,12 @@
       </button>
     </div>
 
-    <!-- destination wallet to pay into -->
-    <div class="wallet-row">
-      <div class="wallet-row-line">
-        <span class="wallet-label">
-          <span class="icn icn-sm icon--solar icon--solar--wallet-linear" aria-hidden="true"></span>
-          بنێرە بۆ:
-        </span>
-        <span class="wallet-value" id="myNum" dir="ltr">---</span>
-        <button type="button" class="copy-btn" onclick="copyNum()" aria-label="کۆپیکردنی ژمارە">
-          <span class="icn icn-sm icon--solar icon--solar--copy-linear" aria-hidden="true"></span>
-        </button>
-      </div>
-    </div>
-
     <div class="xc-cols">
 
-      <!-- ── YOU SEND ─────────────────────────────────────── -->
-      <div class="xc-group" id="grpSend">
-        <div class="xc-group-head">
-          <span class="icn icon--solar icon--solar--arrow-right-up-linear" aria-hidden="true"></span>
-          دەینێریت
+      <!-- ── STEP 1 — YOU SEND ───────────────────────────────── -->
+      <section class="xc-step" id="grpSend">
+        <div class="xc-step-head">
+          <h3>دەینێریت</h3>
           <span class="xc-badge" id="sendLimitBadge">کەمترین 10,000</span>
         </div>
 
@@ -628,62 +613,63 @@
           </button>
         </div>
 
-        <div class="field" id="senderNameField" style="margin-top:10px">
-          <label class="field-label" for="userSenderName">ناوی خاوەنی هەژماری نێرەر</label>
-          <div class="xc-input-wrap">
-            <span class="xc-in-ico" aria-hidden="true">
-              <span class="icn icon--solar icon--solar--user-linear" aria-hidden="true"></span>
-            </span>
-            <input type="text" id="userSenderName" class="input" readonly aria-readonly="true" aria-describedby="senderNameHint">
+        <!-- the account to pay into, right where the method is chosen -->
+        <div class="wallet-row">
+          <div class="wallet-row-line">
+            <span class="wallet-label">بنێرە بۆ:</span>
+            <span class="wallet-value" id="myNum" dir="ltr">---</span>
+            <button type="button" class="copy-btn" onclick="copyNum()" aria-label="کۆپیکردنی ژمارە">
+              <span class="icn icn-sm icon--solar icon--solar--copy-linear" aria-hidden="true"></span>
+            </button>
           </div>
-          <div class="xc-hint warn" id="senderNameHint">
-            <span class="icn icon--solar icon--solar--danger-triangle-linear" aria-hidden="true"></span>
-            <span>ناوی خاوەنی هەژماری نێرەر دەبێت هەمان ناوی پڕۆفایلی Proxo بێت.</span>
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="amt">بڕی پارە</label>
+          <div class="xc-input-wrap">
+            <input type="text" inputmode="decimal" id="amt" class="input" placeholder="0" dir="ltr"
+                   aria-describedby="amtHint" oninput="formatAmtField(this); calc(); clearFieldError('amt');">
+            <span class="xc-in-suffix" id="amtSuffix">IQD</span>
+          </div>
+          <div class="quick-amounts">
+            <button type="button" class="quick-amount-btn" onclick="setQuickAmount(10000)">10,000</button>
+            <button type="button" class="quick-amount-btn" onclick="setQuickAmount(50000)">50,000</button>
+            <button type="button" class="quick-amount-btn" onclick="setQuickAmount(100000)">100,000</button>
+          </div>
+          <div class="xc-hint" id="amtHint">
+            <span>کەمترین بڕ <b>10,000</b> دینارە. بڕەکە دەبێت وەک ئەوە بێت کە ناردووتە.</span>
+          </div>
+          <span id="formattedHint" class="formatted-amount" hidden></span>
+          <span class="field-error" id="amtError"></span>
+        </div>
+
+        <div class="field xc-locked" id="senderNameField">
+          <label class="field-label" for="userSenderName">
+            ناوی خاوەنی هەژماری نێرەر
+            <span class="xc-locked-tag" id="senderNameHint">
+              <span class="icn icn-sm icon--solar icon--solar--lock-linear" aria-hidden="true"></span>
+              <span>وەک پڕۆفایلەکەت</span>
+            </span>
+          </label>
+          <div class="xc-input-wrap">
+            <input type="text" id="userSenderName" class="input" readonly aria-readonly="true" aria-describedby="senderNameHint">
           </div>
           <span class="field-error" id="userSenderNameError"></span>
         </div>
 
-        <div class="field" id="senderPhoneField" style="margin-top:10px;display:none">
+        <div class="field" id="senderPhoneField" style="display:none">
           <label class="field-label" for="userSenderPhone">ژمارەی نێرەر</label>
           <div class="xc-input-wrap">
-            <span class="xc-in-ico" aria-hidden="true">
-              <span class="icn icon--solar icon--solar--smartphone-linear" aria-hidden="true"></span>
-            </span>
             <input type="tel" id="userSenderPhone" class="input" placeholder="07xxxxxxxxx" dir="ltr" maxlength="11" inputmode="numeric"
                    aria-describedby="senderPhoneHint"
                    oninput="this.value=this.value.replace(/[^0-9]/g,''); clearFieldError('userSenderPhone');">
           </div>
           <div class="xc-hint" id="senderPhoneHint">
-            <span class="icn icon--solar icon--solar--info-circle-linear" aria-hidden="true"></span>
-            <span>تەنها بۆ ناردن لە Korek یان Asiacell؛ ژمارەکە دەبێت بە <b>07</b> دەست پێبکات و <b>11</b> ژمارە بێت.</span>
+            <span>ژمارەکە دەبێت بە <b>07</b> دەست پێبکات و <b>11</b> ژمارە بێت.</span>
           </div>
           <span class="field-error" id="userSenderPhoneError"></span>
         </div>
-
-        <div class="field" style="margin-top:10px">
-          <label class="field-label" for="amt">بڕی پارە</label>
-          <div class="xc-input-wrap">
-            <span class="xc-in-ico" aria-hidden="true">
-              <span class="icn icon--solar icon--solar--banknote-linear" aria-hidden="true"></span>
-            </span>
-            <input type="text" inputmode="decimal" id="amt" class="input" placeholder="0" dir="ltr"
-                   aria-describedby="amtHint" oninput="formatAmtField(this); calc(); clearFieldError('amt');">
-            <span class="xc-in-suffix" id="amtSuffix">IQD</span>
-          </div>
-          <div class="xc-hint" id="amtHint">
-            <span class="icn icon--solar icon--solar--info-circle-linear" aria-hidden="true"></span>
-            <span>کەمترین بڕ <b>10,000</b> دینارە. بڕەکە دەبێت وەک ئەوە بێت کە ناردووتە.</span>
-          </div>
-          <span id="formattedHint" class="formatted-amount">0 IQD</span>
-          <span class="field-error" id="amtError"></span>
-        </div>
-
-        <div class="quick-amounts">
-          <button type="button" class="quick-amount-btn" onclick="setQuickAmount(10000)">10,000</button>
-          <button type="button" class="quick-amount-btn" onclick="setQuickAmount(50000)">50,000</button>
-          <button type="button" class="quick-amount-btn" onclick="setQuickAmount(100000)">100,000</button>
-        </div>
-      </div>
+      </section>
 
       <div class="xc-swap">
         <span class="xc-swap-line"></span>
@@ -693,11 +679,10 @@
         <span class="xc-swap-line"></span>
       </div>
 
-      <!-- ── YOU RECEIVE ──────────────────────────────────── -->
-      <div class="xc-group" id="grpRecv">
-        <div class="xc-group-head">
-          <span class="icn icon--solar icon--solar--arrow-left-down-linear" aria-hidden="true"></span>
-          وەریدەگریت
+      <!-- ── STEP 2 — YOU RECEIVE ────────────────────────────── -->
+      <section class="xc-step" id="grpRecv">
+        <div class="xc-step-head">
+          <h3>وەریدەگریت</h3>
           <span class="xc-badge" id="etaBadge">٥–٣٠ خولەک</span>
         </div>
 
@@ -717,91 +702,69 @@
           </button>
         </div>
 
-        <div class="field" style="margin-top:10px">
+        <div class="field">
           <label class="field-label" for="userPhone" id="phoneLabel">ژمارەی وەرگرە</label>
           <div class="xc-input-wrap">
-            <span class="xc-in-ico" aria-hidden="true">
-              <span class="icn icon--solar icon--solar--smartphone-linear" aria-hidden="true"></span>
-            </span>
             <input type="tel" id="userPhone" class="input" placeholder="07xxxxxxxxx" dir="ltr" maxlength="19"
                    aria-describedby="phoneHint"
                    oninput="this.value = this.value.replace(/[^0-9]/g, ''); clearFieldError('userPhone'); validatePhoneLive();">
           </div>
           <div class="xc-hint" id="phoneHint">
-            <span class="icn icon--solar icon--solar--info-circle-linear" aria-hidden="true"></span>
             <span id="phoneHintText">ژمارەی عێراقی بە <b>07</b> دەست پێدەکات و <b>11</b> ژمارەیە.</span>
           </div>
           <span class="field-error" id="userPhoneError"></span>
         </div>
-      </div>
+      </section>
     </div>
 
-    <!-- ── LIVE BREAKDOWN ─────────────────────────────────── -->
-    <div class="xc-breakdown" id="xcBreakdown" aria-live="polite">
-      <div class="xc-bd-row">
-        <span class="lbl">
-          <span class="icn icon--solar icon--solar--transfer-horizontal-linear" aria-hidden="true"></span>
-          نرخی ئاڵوگۆڕ
-        </span>
+    <!-- ── RECEIPT ─────────────────────────────────────────── -->
+    <section class="xc-step" id="grpProof">
+        <div class="xc-step-head">
+          <h3>بەڵگەی پارەدان</h3>
+        </div>
+        <div class="file-field">
+          <input type="file" id="fileInput" class="file-input-native" accept="image/jpeg,image/png,image/webp" onchange="onFileSelected(this)">
+          <label class="file-picker" for="fileInput">
+            <span class="file-picker-icon" aria-hidden="true">
+              <span class="icn icon--solar icon--solar--gallery-linear" aria-hidden="true"></span>
+            </span>
+            <span class="file-picker-copy">
+              <b id="filePickerName">وێنەی پسووڵە هەڵبژێرە</b>
+              <small id="filePickerMeta">JPG، PNG یان WEBP</small>
+            </span>
+            <span class="file-picker-action" aria-hidden="true">
+              <span class="icn icon--solar icon--solar--upload-linear" aria-hidden="true"></span>
+            </span>
+          </label>
+          <div class="xc-hint"><span>بەبێ بەڵگەی ناردن داواکارییەکە ڕەت دەکرێتەوە.</span></div>
+          <span class="field-error" id="fileInputError"></span>
+        </div>
+    </section>
+
+    <!-- ── SUMMARY ───────────────────────────────────────────── -->
+    <div class="xc-summary" id="xcBreakdown" aria-live="polite">
+      <div class="xc-sum-row" id="bdSentRow">
+        <span class="lbl">دەینێریت</span>
+        <span class="v" id="bdSent">—</span>
+      </div>
+      <div class="xc-sum-row" id="bdRateRow" hidden>
+        <span class="lbl">نرخی ئاڵوگۆڕ</span>
         <span class="v" id="bdRate">—</span>
       </div>
-      <div class="xc-bd-row">
-        <span class="lbl">
-          <span class="icn icon--solar icon--solar--sale-linear" aria-hidden="true"></span>
-          کرێی خزمەتگوزاری
-        </span>
+      <div class="xc-sum-row" id="bdFeeRow">
+        <span class="lbl">کرێی خزمەتگوزاری</span>
         <span class="v" id="bdFee">—</span>
       </div>
-      <div class="xc-bd-row total">
-        <span class="lbl">
-          <span class="icn icon--solar icon--solar--arrow-left-down-linear" aria-hidden="true"></span>
-          وەریدەگریت
-        </span>
+      <div class="xc-sum-row total">
+        <span class="lbl">وەریدەگریت</span>
         <span class="v"><span id="totalDisplay" class="total-value">0 IQD</span></span>
       </div>
       <div id="feeDisplay" class="fee-note"></div>
     </div>
 
-    <div class="xc-trust">
-      <span class="xc-trust-badge">
-        <span class="icn icon--solar icon--solar--bolt-linear" aria-hidden="true"></span>
-        جێبەجێکردنی خێرا
-      </span>
-      <span class="xc-trust-badge info">
-        <span class="icn icon--solar icon--solar--shield-check-linear" aria-hidden="true"></span>
-        دەروازەی پشتڕاستکراو
-      </span>
-      <span class="xc-trust-badge neutral">
-        <span class="icn icon--solar icon--solar--check-circle-linear" aria-hidden="true"></span>
-        بێ کرێی شاراوە
-      </span>
-    </div>
-
     <div class="hp-field" aria-hidden="true">
       <label for="contact_reference">Contact reference</label>
       <input type="text" id="contact_reference" name="contact_reference" tabindex="-1" autocomplete="off">
-    </div>
-
-    <div class="file-field">
-      <label class="field-label" for="fileInput">بەڵگەی پارەدان</label>
-      <input type="file" id="fileInput" class="file-input-native" accept="image/jpeg,image/png,image/webp" onchange="onFileSelected(this)">
-      <label class="file-picker" for="fileInput">
-        <span class="file-picker-icon" aria-hidden="true">
-          <span class="icn icon--solar icon--solar--gallery-linear" aria-hidden="true"></span>
-        </span>
-        <span class="file-picker-copy">
-          <b id="filePickerName">وێنەی پسووڵە هەڵبژێرە</b>
-          <small id="filePickerMeta">JPG، PNG یان WEBP</small>
-        </span>
-        <span class="file-picker-action" aria-hidden="true">
-          <span class="icn icon--solar icon--solar--upload-linear" aria-hidden="true"></span>
-        </span>
-      </label>
-      <div class="xc-hint">
-        <span class="icn icon--solar icon--solar--gallery-linear" aria-hidden="true"></span>
-        <span>وێنەی پسووڵەی ناردن — بەبێ بەڵگە داواکارییەکە ڕەت دەکرێتەوە.</span>
-      </div>
-      <span class="field-error" id="fileInputError"></span>
     </div>
 
     <button class="btn btn-primary btn-block btn-submit" id="submitBtn" onclick="openOrderConfirm()">
@@ -931,33 +894,23 @@
         <span class="icn icon--solar icon--solar--bill-list-linear" aria-hidden="true"></span>
         مامەڵەکان
       </h2>
-      <p>هەموو ئاڵوگۆڕەکانت لێرەدان — بە ئایدی بگەڕێ یان فلتەریان بکە.</p>
+      <p>هەموو ئاڵوگۆڕەکانت لێرەدان.</p>
     </div>
 
-    <div class="stat-grid">
-      <div class="stat-card sent">
-        <div class="stat-top">
-          <span class="stat-ico"><span class="icn icon--solar icon--solar--arrow-right-up-linear" aria-hidden="true"></span></span>
-          کۆی ناردن
+    <div class="tx-summary" id="txSummary">
+      <span class="tx-sum-cap">ئاڵوگۆڕە تەواوبووەکان</span>
+      <div class="tx-sum-pair">
+        <div class="tx-sum-item sent">
+          <span class="tx-sum-lbl">ناردنت</span>
+          <b class="tx-sum-val" id="txTotalSent" dir="ltr"><span class="sk sk-num"></span></b>
+          <span class="tx-sum-sub" id="txTotalSentSub">IQD</span>
         </div>
-        <div class="stat-val" id="txTotalSent"><span class="sk sk-num"></span></div>
-        <div class="stat-sub" id="txTotalSentSub">IQD</div>
-      </div>
-      <div class="stat-card recv">
-        <div class="stat-top">
-          <span class="stat-ico"><span class="icn icon--solar icon--solar--arrow-left-down-linear" aria-hidden="true"></span></span>
-          کۆی وەرگرتن
+        <div class="tx-sum-item recv">
+          <span class="tx-sum-lbl">وەرگرتنت</span>
+          <b class="tx-sum-val" id="txTotalRecv" dir="ltr"><span class="sk sk-num"></span></b>
+          <span class="tx-sum-sub">IQD</span>
         </div>
-        <div class="stat-val" id="txTotalRecv"><span class="sk sk-num"></span></div>
-        <div class="stat-sub">IQD</div>
       </div>
-    </div>
-
-    <div class="mini-stats">
-      <div class="mini-stat"><b id="txCntAll"><span class="sk sk-num"></span></b><span>هەموو</span></div>
-      <div class="mini-stat ok"><b id="txCntOk"><span class="sk sk-num"></span></b><span>پەسەندکراو</span></div>
-      <div class="mini-stat wait"><b id="txCntWait"><span class="sk sk-num"></span></b><span>چاوەڕوان</span></div>
-      <div class="mini-stat no"><b id="txCntNo"><span class="sk sk-num"></span></b><span>ڕەتکراو</span></div>
     </div>
 
     <div class="search-wrap">
@@ -970,33 +923,10 @@
 
     <div class="filter-scroll" id="txStatusFilters">
       <button type="button" class="filter-chip on" data-status="all" onclick="setTxStatus('all', this)">هەموو <span class="chip-count" id="fcAll">0</span></button>
-      <button type="button" class="filter-chip" data-status="چاوەڕوانە" onclick="setTxStatus('چاوەڕوانە', this)">
-        <span class="icn icon--solar icon--solar--clock-circle-linear" aria-hidden="true"></span>
-        چاوەڕوان <span class="chip-count" id="fcWait">0</span>
-      </button>
-      <button type="button" class="filter-chip" data-status="پێویستی بە ڕاستکردنەوەیە" onclick="setTxStatus('پێویستی بە ڕاستکردنەوەیە', this)">
-        <span class="icn icon--solar icon--solar--pen-linear" aria-hidden="true"></span>
-        پێویستی بە ڕاستکردنەوە <span class="chip-count" id="fcCorrection">0</span>
-      </button>
-      <button type="button" class="filter-chip" data-status="ڕاستکراوەتەوە" onclick="setTxStatus('ڕاستکراوەتەوە', this)">
-        <span class="icn icon--solar icon--solar--check-circle-linear" aria-hidden="true"></span>
-        ڕاستکراوەتەوە <span class="chip-count" id="fcCorrected">0</span>
-      </button>
-      <button type="button" class="filter-chip" data-status="پەسەندکرا" onclick="setTxStatus('پەسەندکرا', this)">
-        <span class="icn icon--solar icon--solar--check-circle-linear" aria-hidden="true"></span>
-        پەسەندکراو <span class="chip-count" id="fcOk">0</span>
-      </button>
-      <button type="button" class="filter-chip" data-status="ڕەتکرا" onclick="setTxStatus('ڕەتکرا', this)">
-        <span class="icn icon--solar icon--solar--close-circle-linear" aria-hidden="true"></span>
-        ڕەتکراو <span class="chip-count" id="fcNo">0</span>
-      </button>
-    </div>
-
-    <div class="filter-scroll" id="txTimeFilters">
-      <button type="button" class="filter-chip on" data-time="all" onclick="setTxTime('all', this)">هەموو کاتێک</button>
-      <button type="button" class="filter-chip" data-time="today" onclick="setTxTime('today', this)">ئەمڕۆ</button>
-      <button type="button" class="filter-chip" data-time="7" onclick="setTxTime('7', this)">٧ ڕۆژی ڕابردوو</button>
-      <button type="button" class="filter-chip" data-time="30" onclick="setTxTime('30', this)">٣٠ ڕۆژی ڕابردوو</button>
+      <button type="button" class="filter-chip" data-status="action" onclick="setTxStatus('action', this)">پێویستی بە ڕاستکردنەوە <span class="chip-count" id="fcCorrection">0</span></button>
+      <button type="button" class="filter-chip" data-status="pending" onclick="setTxStatus('pending', this)">چاوەڕوان <span class="chip-count" id="fcWait">0</span></button>
+      <button type="button" class="filter-chip" data-status="done" onclick="setTxStatus('done', this)">پەسەندکراو <span class="chip-count" id="fcOk">0</span></button>
+      <button type="button" class="filter-chip" data-status="rejected" onclick="setTxStatus('rejected', this)">ڕەتکراو <span class="chip-count" id="fcNo">0</span></button>
     </div>
 
     <div class="result-count" id="txResultCount"></div>
@@ -1026,6 +956,19 @@
   </div>
     </div>
   </section>
+
+  <!-- ══════════════ TRANSACTION DETAILS ══════════════ -->
+  <div class="tx-sheet-backdrop" id="txSheetBackdrop" onclick="closeTxDetail()" hidden></div>
+  <div class="tx-sheet" id="txSheet" role="dialog" aria-modal="true" aria-labelledby="txSheetTitle" hidden>
+    <div class="tx-sheet-grip" aria-hidden="true"></div>
+    <div class="tx-sheet-head">
+      <h3 id="txSheetTitle">وردەکاری مامەڵە</h3>
+      <button type="button" class="tx-sheet-close" onclick="closeTxDetail()" aria-label="داخستن">
+        <span class="icn icn-sm icon--solar icon--solar--close-circle-linear" aria-hidden="true"></span>
+      </button>
+    </div>
+    <div class="tx-sheet-body" id="txSheetBody"></div>
+  </div>
 
   <!-- ══════════════ PAGE: CHANGE LOG (route "/changes") ══════════════ -->
   <section class="page" id="pageChanges" data-route="changes">
@@ -1506,7 +1449,7 @@
   }, 12000);
 })();
 </script>
-<script src="/assets/js/app.js?v=26"></script>
+<script src="/assets/js/app.js?v=27"></script>
 <script src="/assets/js/track.js?v=2"></script>
 </body>
 </html>
