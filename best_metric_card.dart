@@ -12,6 +12,13 @@ const Color _muted = Color(0xFF5D6677);
 const Color _accent = Color(0xFF0365FF);
 const Color _line = Color(0xFFE6EAF0);
 const Color _surface = Colors.white;
+const List<BoxShadow> _softCardShadow = <BoxShadow>[
+  BoxShadow(
+    color: Color(0x0F000000),
+    blurRadius: 18,
+    offset: Offset(0, 5),
+  ),
+];
 
 class BestMetricCard extends StatelessWidget {
   final BestMetricAd ad;
@@ -223,14 +230,7 @@ class BestMetricCard extends StatelessWidget {
           color: _surface,
           borderRadius: radius,
           border: Border.all(color: _line.withValues(alpha: 0.9)),
-          boxShadow: const [
-            BoxShadow(
-              color: Color(0x120B0B32),
-              blurRadius: 18,
-              spreadRadius: -4,
-              offset: Offset(0, 8),
-            ),
-          ],
+          boxShadow: _softCardShadow,
         ),
         child: Material(
           color: Colors.transparent,
