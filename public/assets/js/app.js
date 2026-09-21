@@ -48,16 +48,22 @@ const LOGO_B64 = {
 // ══════════════════════════════════════════════════════════════
 // ═══ PAYMENT METHOD META (drives pickers, wallet row, icons) ═══
 // ══════════════════════════════════════════════════════════════
-let METHOD_META = {
-  FastPay:  { label:'FastPay',         color:'#7c3aed', icon:ICON.fastpay,  img:LOGO_B64.fastpay  },
-  FIB:      { label:'FIB Bank',        color:'#0ea5a4', icon:ICON.fib,      img:LOGO_B64.fib      },
-  QiCard:   { label:'Qi Card',         color:'#2563eb', icon:ICON.qicard,   img:LOGO_B64.qicard   },
-  Asiacell: { label:'Asiacell',        color:'#e11d48', icon:ICON.asiacell, img:LOGO_B64.asiacell },
-  Korek:    { label:'Korek',           color:'#f59e0b', icon:ICON.korek,    img:LOGO_B64.korek    },
-  USDT:     { label:'USDT ($)',        color:'#26a17b', icon:ICON.usdt     }
+// Wallets exist ONLY in the ex_wallets table. Nothing below is a wallet: these
+// are just logos/colours used when a database wallet has no image_url of its
+// own. A key that is not in the database never appears anywhere on the page.
+const WALLET_VISUALS = {
+  FastPay:  { color:'#7c3aed', icon:ICON.fastpay,  img:LOGO_B64.fastpay  },
+  FIB:      { color:'#0ea5a4', icon:ICON.fib,      img:LOGO_B64.fib      },
+  QiCard:   { color:'#2563eb', icon:ICON.qicard,   img:LOGO_B64.qicard   },
+  Asiacell: { color:'#e11d48', icon:ICON.asiacell, img:LOGO_B64.asiacell },
+  Korek:    { color:'#f59e0b', icon:ICON.korek,    img:LOGO_B64.korek    },
+  USDT:     { color:'#26a17b', icon:ICON.usdt                            }
 };
-let FROM_OPTIONS = ['FastPay','FIB','QiCard','Asiacell','Korek','USDT'];
-let RECEIVE_OPTIONS = ['FastPay','FIB','QiCard'];
+let METHOD_META = {};
+let FROM_OPTIONS = [];
+let RECEIVE_OPTIONS = [];
+// 'loading' until ex_wallets answers, then 'ready' or 'error'
+let WALLETS_STATE = 'loading';
 // Palette + helpers so any wallet added later in the admin panel (with no
 // hardcoded icon) still gets a distinct color and a sensible fallback icon.
 const WALLET_PALETTE = ['#7c3aed','#0ea5a4','#2563eb','#e11d48','#f59e0b','#26a17b','#0891b2','#db2777','#65a30d','#9333ea'];
@@ -73,10 +79,10 @@ function escHtml(s){ return String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&
 function rebuildWalletOptions(){
   const rows = Object.keys(WALLET_DATA).map(k=>({ key:k, ...WALLET_DATA[k] })).filter(w=>w.key);
   rows.sort((a,b)=>(a.sort_order??0)-(b.sort_order??0));
-  if(!rows.length) return; // keep existing defaults if ex_wallets is empty/unreachable
+  // An empty table means no wallets — never fall back to a built-in list.
   const newMeta = {};
   rows.forEach(w=>{
-    const known = METHOD_META[w.key];
+    const known = WALLET_VISUALS[w.key];
     newMeta[w.key] = {
       label: w.name || w.key,
       color: (known && known.color) || colorForWalletKey(w.key),
@@ -108,7 +114,14 @@ function methodIconHTML(key, sizeClass, forceId){
 function refreshTrigger(which){
   const selId = which==='from' ? 'from' : 'receiveVia';
   const val = document.getElementById(selId).value;
-  const m = METHOD_META[val]; if(!m) return;
+  const m = METHOD_META[val];
+  if(!m){
+    const icon=document.getElementById(which+'TriggerIcon');
+    if(icon) icon.outerHTML='<span class="method-icon" id="'+which+'TriggerIcon"></span>';
+    const lbl=document.getElementById(which+'TriggerLabel');
+    if(lbl) lbl.textContent = WALLETS_STATE==='loading' ? 'بارکردن…' : 'هیچ واڵێتێک بەردەست نییە';
+    return;
+  }
   document.getElementById(which+'TriggerIcon').outerHTML = methodIconHTML(val, '', which+'TriggerIcon');
   document.getElementById(which+'TriggerLabel').textContent = m.label;
 }
@@ -1197,24 +1210,32 @@ async function logout(){
 // ══════════════════════════════════════════════════════════════
 // ═══ EXCHANGE CALCULATOR (rates come from ex_rates) ═════════════
 // ══════════════════════════════════════════════════════════════
-const wallets = { "FastPay": "07510074008", "FIB": "07510074008", "QiCard": "07510074008", "Asiacell": "07758887488", "Korek": "07510074008", "USDT": "TTaNnxWNt2bjgSvpRY7NpvyCHUXDi6wjYc" };
+// Wallet numbers come only from ex_wallets.wallet_number (admin panel).
 // ═══ LIVE WALLET DATA (numbers + lock state come from ex_wallets, admin panel) ═══
 let WALLET_DATA = {};
 let _walletsChannel = null;
 function getWalletInfo(key){
   const w = WALLET_DATA[key];
-  return { number: (w && w.number) || wallets[key] || null, locked: !!(w && w.locked) };
+  return { number: (w && w.number) || null, locked: !!(w && w.locked) };
 }
 async function loadWallets(){
   try{
     const {data,error} = await sb.from('ex_wallets').select('key,name,image_url,wallet_number,is_locked,allow_from,allow_receive,sort_order').order('sort_order',{ascending:true});
-    if(!error && data){
+    if(error) throw error;
+    if(data){
       WALLET_DATA = {};
       data.forEach(w=>{ if(w.key) WALLET_DATA[w.key] = { number: w.wallet_number || null, locked: !!w.is_locked, name:w.name, image_url:w.image_url, allow_from: w.allow_from!==false, allow_receive:!!w.allow_receive, sort_order:w.sort_order }; });
       rebuildWalletOptions();
+      WALLETS_STATE = 'ready';
     }
-  }catch(e){}
+  }catch(e){
+    // Unreachable database → show no wallets rather than guessed ones.
+    WALLET_DATA = {};
+    rebuildWalletOptions();
+    WALLETS_STATE = 'error';
+  }
 }
+function hasWallets(){ return FROM_OPTIONS.length>0 && RECEIVE_OPTIONS.length>0; }
 function subscribeWalletsUser(){
   if(_walletsChannel) return;
   _walletsChannel = sb.channel('ex_wallets_user')
@@ -1311,8 +1332,12 @@ function updateWallet(){
     numEl.innerHTML = ICON.lock + '<span>ئەم شێوازە لەئێستادا بەردەست نییە</span>';
     numEl.classList.add('locked-text');
     if(copyBtn) copyBtn.style.display = 'none';
+  } else if(!info.number){
+    numEl.textContent = key ? 'ژمارە دیاری نەکراوە' : '—';
+    numEl.classList.add('locked-text');
+    if(copyBtn) copyBtn.style.display = 'none';
   } else {
-    numEl.textContent = info.number || '---';
+    numEl.textContent = info.number;
     numEl.classList.remove('locked-text');
     if(copyBtn) copyBtn.style.display = '';
   }
@@ -1376,6 +1401,11 @@ function updateSubmitState(from,to){
   if(kycExchangeBlocked()){
     btn.disabled=true;
     btn.innerHTML='پشتڕاستکردنەوەی ناسنامە پێویستە';
+    return;
+  }
+  if(!hasWallets()){
+    btn.disabled=true;
+    btn.innerHTML = WALLETS_STATE==='loading' ? 'بارکردنی واڵێتەکان…' : 'هیچ واڵێتێک بەردەست نییە';
     return;
   }
   const anyLocked = getWalletInfo(from).locked || getWalletInfo(to).locked;
@@ -3752,24 +3782,30 @@ function renderProofStats(s){
 function renderPublicFeed(rows){
   const el=document.getElementById('publicFeed'); if(!el) return;
   if(!rows || !rows.length){ el.innerHTML='<div class="empty-state">هێشتا هیچ مامەڵەیەکی تەواوبوو نییە</div>'; return; }
+  // Markup matches the feed CSS: a main column (id, route, masked phone) and
+  // an amount panel (time, received, sent). Rows are right-to-left like the
+  // transaction cards, so the route reads source ← destination.
   el.innerHTML = rows.map(function(r){
+    const cur = r.from==='USDT' ? ' $' : ' IQD';
     return '<div class="feed-row">'
-      + '<span class="feed-id">'
-        + '<span class="icn icon--solar icon--solar--verified-check-linear" style="width:12px;height:12px" aria-hidden="true"></span>'
-        + escHtml(r.id||'') + '</span>'
-      + '<span class="feed-route">'
-        + methodIconHTML(r.from,'sz-xs') + escHtml(methodLabel(r.from))
-        + '<span class="icn icon--solar icon--solar--arrow-left-linear" aria-hidden="true"></span>'
-        + methodIconHTML(r.to,'sz-xs') + escHtml(methodLabel(r.to))
-      + '</span>'
-      + '<span class="feed-meta">'
-        + '<span class="feed-phone">'+escHtml(r.phone||'')+'</span>'
-        + '<span>'+timeAgo(r.at)+'</span>'
-      + '</span>'
-      + '<span class="feed-amount">'
-      +   '<span class="fa-line fa-in"><span class="fa-lbl">وەرگرتن:</span><span class="fa-val">'+formatNum(Math.floor(r.total||0))+'+</span></span>'
-      +   '<span class="fa-line fa-out"><span class="fa-lbl">ناردن:</span><span class="fa-val">'+formatNum(Math.floor(r.amount||0))+(r.from==='USDT'?'$':'')+'-</span></span>'
-      + '</span>'
+      + '<div class="feed-main">'
+        + '<span class="feed-id">'
+          + '<span class="icn icon--solar icon--solar--verified-check-linear" aria-hidden="true"></span>'
+          + escHtml(r.id||'') + '</span>'
+        + '<span class="feed-route">'
+          + methodIconHTML(r.from,'sz-xs') + '<span class="fr-name">'+escHtml(methodLabel(r.from))+'</span>'
+          + '<span class="icn fr-arrow icon--solar icon--solar--arrow-left-linear" aria-hidden="true"></span>'
+          + methodIconHTML(r.to,'sz-xs') + '<span class="fr-name">'+escHtml(methodLabel(r.to))+'</span>'
+        + '</span>'
+        + (r.phone ? '<span class="feed-phone">'+escHtml(r.phone)+'</span>' : '')
+      + '</div>'
+      + '<div class="feed-side">'
+        + '<span class="feed-time">'+escHtml(timeAgo(r.at))+'</span>'
+        + '<span class="fa-line fa-in"><span class="fa-lbl">وەرگرتن</span>'
+          + '<span class="fa-val">+'+formatNum(Math.floor(r.total||0))+' IQD</span></span>'
+        + '<span class="fa-line fa-out"><span class="fa-lbl">ناردن</span>'
+          + '<span class="fa-val">'+formatNum(Math.floor(r.amount||0))+cur+'</span></span>'
+      + '</div>'
       + '</div>';
   }).join('');
 }
