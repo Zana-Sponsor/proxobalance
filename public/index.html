@@ -1,0 +1,1448 @@
+<!DOCTYPE html>
+<html lang="ku" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- ══════════════ SEO — Proxo Balance ══════════════ -->
+<title>Proxo Balance — ئاڵوگۆڕی دراو لە کوردستان و عێراق</title>
+<meta name="description" content="پڕۆکسۆ باڵانس — ماڵپەڕی ئاڵوگۆڕکردنی دراو لەنێوان FastPay، FIB، Qi Card، NassWallet، Korek و Asiacell بە کەمترین بڕی لێبڕین لە هەموو کوردستان و عێراق. متمانە، خێرایی و نرخی ڕاستەقینە.">
+<meta name="keywords" content="Proxo Balance, پڕۆکسۆ باڵانس, ئاڵوگۆڕی دراو, گۆڕینی دراو, صرافة العراق, currency exchange Iraq, FastPay, FIB Bank, Qi Card, NassWallet, Korek, Asiacell, USDT, هەرێمی کوردستان, عێراق, کەمترین لێبڕین">
+<meta name="author" content="Proxo Balance">
+<meta name="application-name" content="Proxo Balance">
+<meta name="apple-mobile-web-app-title" content="Proxo Balance">
+<link rel="canonical" href="https://www.proxobalance.app/">
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+<meta http-equiv="content-language" content="ckb-IQ">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Proxo Balance">
+<meta property="og:title" content="Proxo Balance — ئاڵوگۆڕی دراو لە کوردستان و عێراق">
+<meta property="og:description" content="ئاڵوگۆڕی دراو بە کەمترین لێبڕین لە هەموو کوردستان و عێراق — FastPay، FIB، Qi Card، NassWallet، Korek و Asiacell. متمانە و خێرایی.">
+<meta property="og:url" content="https://www.proxobalance.app/">
+<meta property="og:image" content="https://cdn.imageurlgenerator.com/uploads/bdd57b8f-384b-470e-8a37-31fb03051838.webp">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Proxo Balance — ئاڵوگۆڕی دراو">
+<meta property="og:locale" content="ckb_IQ">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Proxo Balance — ئاڵوگۆڕی دراو لە کوردستان و عێراق">
+<meta name="twitter:description" content="ئاڵوگۆڕی دراو بە کەمترین لێبڕین لە هەموو کوردستان و عێراق — FastPay، FIB، Qi Card، NassWallet، Korek و Asiacell. متمانە و خێرایی.">
+<meta name="twitter:image" content="https://cdn.imageurlgenerator.com/uploads/bdd57b8f-384b-470e-8a37-31fb03051838.webp">
+
+<!-- Icons (temporary — hotlinked; see note) -->
+<link rel="icon" type="image/webp" href="https://cdn.imageurlgenerator.com/uploads/bdd57b8f-384b-470e-8a37-31fb03051838.webp">
+<link rel="apple-touch-icon" href="https://cdn.imageurlgenerator.com/uploads/bdd57b8f-384b-470e-8a37-31fb03051838.webp">
+
+<!-- Structured data — site name shown by Google -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Proxo Balance",
+  "alternateName": ["پڕۆکسۆ باڵانس", "ProxoBalance", "Proxo Balance Exchange"],
+  "url": "https://www.proxobalance.app/"
+}
+</script>
+
+<!-- Structured data — the service itself -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FinancialService",
+  "name": "Proxo Balance",
+  "alternateName": "پڕۆکسۆ باڵانس",
+  "url": "https://www.proxobalance.app/",
+  "image": "https://cdn.imageurlgenerator.com/uploads/bdd57b8f-384b-470e-8a37-31fb03051838.webp",
+  "description": "پڕۆکسۆ باڵانس — ماڵپەڕی ئاڵوگۆڕکردنی دراو لەنێوان FastPay، FIB، Qi Card، NassWallet، Korek و Asiacell بە کەمترین بڕی لێبڕین لە هەموو کوردستان و عێراق. متمانە، خێرایی و نرخی ڕاستەقینە.",
+  "currenciesAccepted": "IQD, USD",
+  "areaServed": [
+    { "@type": "Country", "name": "Iraq" },
+    { "@type": "AdministrativeArea", "name": "Kurdistan Region" }
+  ],
+  "sameAs": ["https://t.me/proxo_exchange"]
+}
+</script>
+
+<meta name="theme-color" id="themeColorMeta" content="#f2f4f9">
+<script>
+(function(){
+  try{
+    var t = localStorage.getItem('zex_theme');
+    // Dark is the default. A visitor who has already chosen light keeps light.
+    if(t!=='light' && t!=='dark') t='dark';
+    document.documentElement.setAttribute('data-theme', t);
+  }catch(e){ document.documentElement.setAttribute('data-theme','dark'); }
+})();
+</script>
+
+<!-- Firebase kept only for the live announcement banner (Realtime DB) -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+<!-- Supabase — own dedicated project ("Exchange"), fully separate from Proxo -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- Solar Icons (480 Design, CC BY 4.0) — all icons as CSS mask images -->
+<link rel="stylesheet" href="https://api.iconify.design/solar.css?icons=alt-arrow-down-linear,alt-arrow-left-linear,alt-arrow-right-linear,arrow-left-down-linear,arrow-left-linear,arrow-right-linear,arrow-right-up-linear,banknote-2-linear,banknote-linear,bell-linear,bell-off-linear,bill-list-linear,bolt-linear,buildings-2-linear,calendar-linear,card-linear,chat-round-dots-linear,check-circle-linear,check-read-linear,clock-circle-linear,close-circle-linear,copy-linear,danger-triangle-linear,diskette-linear,dollar-linear,dollar-minimalistic-linear,download-minimalistic-linear,eye-closed-linear,eye-linear,gallery-add-linear,gallery-linear,graph-down-linear,graph-up-linear,headphones-round-linear,history-2-linear,history-linear,info-circle-linear,key-linear,letter-linear,lock-linear,lock-unlocked-linear,magic-stick-3-linear,magnifer-linear,moon-linear,pen-linear,phone-linear,plain-2-linear,power-linear,refresh-linear,sale-linear,shield-check-linear,shield-cross-linear,shield-linear,shield-warning-linear,smartphone-linear,sun-linear,transfer-horizontal-linear,transfer-vertical-linear,tuning-2-linear,upload-linear,upload-minimalistic-linear,user-check-rounded-linear,user-id-linear,user-linear,user-plus-rounded-linear,user-rounded-linear,verified-check-linear,wallet-linear,wi-fi-router-linear,wi-fi-router-minimalistic-linear,wi-fi-router-round-linear">
+<link rel="stylesheet" href="/assets/css/tokens.css?v=4">
+<link rel="stylesheet" href="/assets/css/app.css?v=24">
+</head>
+
+<body>
+
+<!-- ══════════════════════════════════════════════════════════════
+     TOASTS
+     ══════════════════════════════════════════════════════════════ -->
+<div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     RESULT MODAL (success / error / warning — replaces alert())
+     ══════════════════════════════════════════════════════════════ -->
+<div id="resultModal" class="modal-overlay">
+  <div class="modal-card result-modal-card">
+    <div class="modal-ico-wrap" id="resultIcoWrap"></div>
+    <h2 id="resultTitle"></h2>
+    <p id="resultMsg"></p>
+    <div class="result-order-chip" id="resultOrderChip" style="display:none">
+      <span class="icn icn-sm icon--solar icon--solar--history-linear" aria-hidden="true"></span>
+      <span id="resultOrderNum"></span>
+    </div>
+    <div class="result-modal-actions">
+      <button type="button" class="btn btn-primary btn-block" id="resultPrimaryBtn" onclick="closeResultModal()">باشە</button>
+      <button type="button" class="btn-text" id="resultSecondaryBtn" style="display:none"></button>
+    </div>
+  </div>
+</div>
+
+<!-- Private support image viewer: stays inside the customer app. -->
+<div id="supportImageModal" class="modal-overlay support-image-modal" role="dialog" aria-modal="true" aria-label="بینینی وێنەی کێشە" onclick="if(event.target===this) closeSupportImage()">
+  <div class="support-image-modal-card">
+    <button type="button" class="support-modal-close" onclick="closeSupportImage()" aria-label="داخستن">
+      <span class="icn icon--solar icon--solar--close-circle-linear" aria-hidden="true"></span>
+    </button>
+    <img id="supportImageModalImg" alt="وێنەی کێشە">
+  </div>
+</div>
+
+<!-- Transaction correction form, shown only after an admin requests changes. -->
+<div id="orderCorrectionModal" class="modal-overlay support-correction-modal" role="dialog" aria-modal="true" aria-labelledby="orderCorrectionTitle" onclick="if(event.target===this) closeOrderCorrection()">
+  <div class="modal-card support-correction-card">
+    <div class="support-correction-head">
+      <div>
+        <h2 id="orderCorrectionTitle">ڕاستکردنەوەی مامەڵە</h2>
+        <span>ئایدی مامەڵە: <b id="orderCorrectionCode" dir="ltr">—</b></span>
+      </div>
+      <button type="button" class="support-modal-close inline" onclick="closeOrderCorrection()" aria-label="داخستن">
+        <span class="icn icon--solar icon--solar--close-circle-linear" aria-hidden="true"></span>
+      </button>
+    </div>
+    <input type="hidden" id="orderCorrectionId">
+    <div class="support-correction-request">
+      <b>داواکاری ئادمین</b>
+      <p id="orderCorrectionRequestText"></p>
+    </div>
+    <div class="support-correction-grid">
+      <div class="field">
+        <span class="field-label">ژمارەی وەرگر</span>
+        <input type="tel" class="input" id="orderCorrectionPhone" maxlength="32" dir="ltr" inputmode="numeric" placeholder="07XXXXXXXXX">
+        <span class="field-error" id="orderCorrectionPhoneError"></span>
+      </div>
+      <div class="field" id="orderCorrectionSenderWrap" style="display:none">
+        <span class="field-label">ژمارەی نێرەر</span>
+        <input type="tel" class="input" id="orderCorrectionSenderPhone" maxlength="11" dir="ltr" inputmode="numeric" placeholder="07XXXXXXXXX">
+        <span class="field-error" id="orderCorrectionSenderPhoneError"></span>
+      </div>
+    </div>
+    <div class="field">
+      <span class="field-label">وێنەی پسووڵەی نوێ <small>(ئارەزوومەندانە — تا 10MB)</small></span>
+      <button type="button" class="support-current-image" id="orderCorrectionCurrentReceipt" onclick="openOrderCorrectionReceipt()" style="display:none">
+        <span class="icn icon--solar icon--solar--gallery-linear" aria-hidden="true"></span>
+        بینینی پسووڵەی ئێستا
+      </button>
+      <label class="support-image-picker" for="orderCorrectionReceiptInput" id="orderCorrectionReceiptPicker">
+        <span class="support-image-picker-icon"><span class="icn icon--solar icon--solar--upload-minimalistic-linear" aria-hidden="true"></span></span>
+        <span><b id="orderCorrectionReceiptName">گۆڕینی پسووڵە</b><small id="orderCorrectionReceiptMeta">JPG، PNG یان WEBP</small></span>
+      </label>
+      <input type="file" id="orderCorrectionReceiptInput" accept="image/jpeg,image/png,image/webp" hidden onchange="onOrderCorrectionReceiptSelected(this)">
+      <div class="support-image-preview" id="orderCorrectionReceiptPreview" style="display:none">
+        <img id="orderCorrectionReceiptPreviewImg" alt="پسووڵەی نوێ">
+        <button type="button" onclick="removeOrderCorrectionReceipt()" aria-label="لابردنی وێنە">×</button>
+      </div>
+      <span class="field-error" id="orderCorrectionReceiptError"></span>
+    </div>
+    <div class="field">
+      <span class="field-label">چی ڕاستت کردەوە؟</span>
+      <textarea class="input support-correction-response" id="orderCorrectionResponse" maxlength="2000" placeholder="بۆ نموونە: ژمارەی FIBـم ڕاست کردەوە..."></textarea>
+      <span class="field-error" id="orderCorrectionResponseError"></span>
+    </div>
+    <button type="button" class="btn btn-primary btn-block" id="orderCorrectionSubmitBtn" onclick="submitOrderCorrection()">
+      <span class="icn icon--solar icon--solar--check-circle-linear" aria-hidden="true"></span>
+      ڕاستکردنەوە و دووبارە ناردن
+    </button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     METHOD PICKER SHEET (used for both "from" and "receive via")
+     ══════════════════════════════════════════════════════════════ -->
+<div id="pickerSheet" class="sheet-overlay" onclick="if(event.target===this) closePicker()">
+  <div class="sheet">
+    <div class="sheet-grabber"></div>
+    <div class="sheet-head">
+      <h3 id="pickerSheetTitle">هەڵبژاردنی ڕێگا</h3>
+      <button type="button" class="sheet-close" onclick="closePicker()" aria-label="داخستن">
+        <span class="icn icn-sm icon--solar icon--solar--close-circle-linear" aria-hidden="true"></span>
+      </button>
+    </div>
+    <div class="sheet-body" id="pickerSheetBody"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     ORDER CONFIRM SHEET
+     ══════════════════════════════════════════════════════════════ -->
+<div id="confirmSheet" class="sheet-overlay" onclick="if(event.target===this) closeOrderConfirm()">
+  <div class="sheet">
+    <div class="sheet-grabber"></div>
+    <div class="sheet-head">
+      <h3>پشتڕاستکردنەوەی داواکاری</h3>
+      <button type="button" class="sheet-close" onclick="closeOrderConfirm()" aria-label="داخستن">
+        <span class="icn icn-sm icon--solar icon--solar--close-circle-linear" aria-hidden="true"></span>
+      </button>
+    </div>
+    <div class="sheet-body">
+      <div class="confirm-summary" id="confirmSummary"></div>
+    </div>
+    <div class="confirm-actions">
+      <button type="button" class="btn btn-ghost" onclick="closeOrderConfirm()">گەڕانەوە</button>
+      <button type="button" class="btn btn-primary" id="confirmSendBtn" onclick="confirmAndSubmitOrder()">
+        <span class="icn icon--solar icon--solar--check-circle-linear" aria-hidden="true"></span>
+        دڵنیام، بینێرە
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     TELEGRAM PROMO MODAL — disabled.
+     Kept in the DOM (and hard-hidden with an inline !important, so no
+     class app.js adds can bring it back) because app.js opens and
+     closes it by id; removing the node would throw.
+     ══════════════════════════════════════════════════════════════ -->
+<div id="tgModal" class="modal-overlay" hidden style="display:none !important">
+  <div class="modal-card">
+    <div class="modal-ico-wrap">
+      <span class="icn icn-xl icon--solar icon--solar--plain-2-linear" aria-hidden="true"></span>
+    </div>
+    <h2>ئاگاداری نرخەکان بە!</h2>
+    <p>بۆ وەرگرتنی دوایین گۆڕانکارییەکانی بازاڕ و نرخەکان، جۆینی تیلیگرام بکەن.</p>
+    <a href="https://t.me/proxo_exchange" target="_blank" class="btn btn-primary btn-block" onclick="closeModal()">
+      <span class="icn icon--solar icon--solar--plain-2-linear" aria-hidden="true"></span>
+      ئێستا جۆین ببە
+    </a>
+    <button class="btn-text" style="margin-top:16px" onclick="closeModal()">دواتر جۆین دەبم</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     AUTH — email → (signup name) → password → OTP, + forgot password
+     ══════════════════════════════════════════════════════════════ -->
+<div id="authWrap">
+  <div class="auth-inner">
+
+    <div class="auth-topbar">
+      <button type="button" class="icon-btn" onclick="toggleTheme()" aria-label="گۆڕینی ڕووکار">
+        <span class="theme-toggle-ico icn"></span>
+      </button>
+    </div>
+
+    <div class="auth-brand">
+      <div class="brand-mark">
+        <span class="icn icn-lg icon--solar icon--solar--transfer-horizontal-linear" aria-hidden="true"></span>
+      </div>
+      <h1>Proxo Balance</h1>
+      <p>ئاڵوگۆڕی دراو بە کەمترین لێبڕین — متمانە و خێرایی</p>
+      <div class="auth-proof" aria-label="ئامارەکانی پلاتفۆرم">
+        <div><b id="authProofCount">—</b><span>مامەڵەی سەرکەوتوو</span></div>
+        <div><b id="authProofVolume">—</b><span>قەبارەی ئاڵوگۆڕ (IQD)</span></div>
+        <div><b id="authProofUsers">—</b><span>بەکارهێنەر</span></div>
+      </div>
+    </div>
+
+    <div class="auth-card">
+      <div class="auth-steps"><div class="auth-steps-track" id="authStepsTrack"></div></div>
+
+      <!-- Step: email -->
+      <div class="auth-step" id="authStepEmail">
+        <div class="auth-step-icon">
+          <span class="icn icn-lg icon--solar icon--solar--letter-linear" aria-hidden="true"></span>
+        </div>
+        <div class="auth-step-label"><h3>چوونەژوورەوە</h3><p>ئیمەیلەکەت بنووسە</p></div>
+        <div class="input-wrap">
+          <span class="input-ico"><span class="icn icn-sm icon--solar icon--solar--letter-linear" aria-hidden="true"></span></span>
+          <input class="input" type="email" id="authEmail" placeholder="example@gmail.com" dir="ltr" onkeydown="if(event.key==='Enter')nextAuthStep('email')">
+        </div>
+        <button class="btn btn-primary btn-block" id="emailNextBtn" onclick="nextAuthStep('email')">
+          <span>دواتر</span>
+          <span class="icn icon--solar icon--solar--arrow-left-linear" aria-hidden="true"></span>
+        </button>
+        <div class="amsg" id="authMsgEmail"></div>
+      </div>
+
+      <!-- Step: signup name (new accounts only) -->
+      <div class="auth-step" id="authStepName" style="display:none">
+        <div class="auth-step-icon">
+          <span class="icn icn-lg icon--solar icon--solar--user-linear" aria-hidden="true"></span>
+        </div>
+        <div class="auth-step-label"><h3>هەژمارێکی نوێ</h3><p>ناوت بنووسە بۆ دروستکردنی هەژمار</p></div>
+        <div class="input-wrap">
+          <span class="input-ico"><span class="icn icn-sm icon--solar icon--solar--user-linear" aria-hidden="true"></span></span>
+          <input class="input" type="text" id="authName" placeholder="ناوی تەواو" onkeydown="if(event.key==='Enter')nextAuthStep('name')">
+        </div>
+        <button class="btn btn-primary btn-block" id="nameNextBtn" onclick="nextAuthStep('name')">
+          <span>دواتر</span>
+          <span class="icn icon--solar icon--solar--arrow-left-linear" aria-hidden="true"></span>
+        </button>
+        <div class="amsg" id="authMsgName"></div>
+        <div class="auth-step-back" onclick="goAuthStep('email')">
+          <span class="icn icn-sm icon--solar icon--solar--arrow-right-linear" aria-hidden="true"></span>
+          گەڕانەوە
+        </div>
+      </div>
+
+      <!-- Step: password -->
+      <div class="auth-step" id="authStepPass" style="display:none">
+        <div class="auth-step-icon">
+          <span class="icn icn-lg icon--solar icon--solar--lock-linear" aria-hidden="true"></span>
+        </div>
+        <div class="auth-step-label"><h3 id="passStepTitle">وشەی نهێنی</h3><p id="passStepSub">وشەی نهێنیت بنووسە بۆ چوونەژوورەوە</p></div>
+        <div class="pass-wrap field">
+          <input class="input" type="password" id="authPass" placeholder="وشەی نهێنی" dir="ltr" onkeydown="if(event.key==='Enter')nextAuthStep('pass')">
+          <button type="button" class="pass-eye" onclick="togglePass('authPass',this)" aria-label="پیشاندانی وشەی نهێنی"><span class="pass-eye-ico icn icn-sm"></span></button>
+        </div>
+        <button class="btn btn-primary btn-block" id="authBtn" onclick="nextAuthStep('pass')">
+          <span id="authBtnTxt">چوونەژوورەوە</span>
+          <span class="icn icon--solar icon--solar--arrow-left-linear" aria-hidden="true"></span>
+        </button>
+        <div class="amsg" id="authMsg"></div>
+        <div id="forgotLinkWrap" style="text-align:center;margin-top:12px">
+          <span class="auth-link" style="font-size:var(--fs-xs)" onclick="showForgotStep()">وشەی نهێنیم لەبیرکردووە</span>
+        </div>
+        <div class="auth-step-back" onclick="goAuthStep('email')">
+          <span class="icn icn-sm icon--solar icon--solar--arrow-right-linear" aria-hidden="true"></span>
+          گەڕانەوە
+        </div>
+      </div>
+
+      <!-- OTP -->
+      <div id="otpStep" style="display:none">
+        <div class="auth-step-icon">
+          <span class="icn icn-lg icon--solar icon--solar--shield-check-linear" aria-hidden="true"></span>
+        </div>
+        <div class="auth-step-label"><h3>کۆدی دڵنیاکردنەوە</h3><p id="otpEmailLbl">کۆدی ٦ ژمارە نێردرا</p></div>
+        <div class="otp-inputs">
+          <input class="otp-digit" type="text" inputmode="tel" maxlength="1" id="otp1" oninput="otpMove(this,null,'otp2')" onkeydown="otpBack(event,this,null)">
+          <input class="otp-digit" type="text" inputmode="tel" maxlength="1" id="otp2" oninput="otpMove(this,'otp1','otp3')" onkeydown="otpBack(event,this,'otp1')">
+          <input class="otp-digit" type="text" inputmode="tel" maxlength="1" id="otp3" oninput="otpMove(this,'otp2','otp4')" onkeydown="otpBack(event,this,'otp2')">
+          <input class="otp-digit" type="text" inputmode="tel" maxlength="1" id="otp4" oninput="otpMove(this,'otp3','otp5')" onkeydown="otpBack(event,this,'otp3')">
+          <input class="otp-digit" type="text" inputmode="tel" maxlength="1" id="otp5" oninput="otpMove(this,'otp4','otp6')" onkeydown="otpBack(event,this,'otp4')">
+          <input class="otp-digit" type="text" inputmode="tel" maxlength="1" id="otp6" oninput="otpMove(this,'otp5',null)" onkeydown="otpBack(event,this,'otp5')">
+        </div>
+        <div class="otp-timer" id="otpTimerWrap">ماوەی ئەم کۆدە: <span id="otpTimerVal">10:00</span></div>
+        <div class="otp-resend" id="otpResendBtn" onclick="resendOtp()">
+          <span class="icn icn-sm icon--solar icon--solar--refresh-linear" aria-hidden="true"></span>
+          کۆدی نوێ بنێرە
+        </div>
+        <button class="btn btn-primary btn-block" id="otpVerifyBtn" onclick="verifyOtp()" style="margin-top:14px">
+          <span class="icn icon--solar icon--solar--check-circle-linear" aria-hidden="true"></span>
+          دڵنیاکردنەوە
+        </button>
+        <div class="amsg" id="otpMsg"></div>
+        <div class="auth-step-back" onclick="cancelOtp()">
+          <span class="icn icn-sm icon--solar icon--solar--arrow-right-linear" aria-hidden="true"></span>
+          گەڕانەوە
+        </div>
+      </div>
+
+      <!-- Forgot password -->
+      <div id="forgotStep" style="display:none">
+        <div id="fpStepA">
+          <div class="auth-step-icon">
+            <span class="icn icn-lg icon--solar icon--solar--key-linear" aria-hidden="true"></span>
+          </div>
+          <div class="auth-step-label"><h3>گەڕاندنەوەی وشەی نهێنی</h3><p>ئیمەیلەکەت بنووسە</p></div>
+          <div class="field">
+            <input class="input" type="email" id="forgotEmail" placeholder="example@gmail.com" dir="ltr">
+          </div>
+          <button class="btn btn-primary btn-block" id="forgotSendBtn" onclick="doForgotSendOtp()">
+            <span class="icn icon--solar icon--solar--plain-2-linear" aria-hidden="true"></span>
+            ناردنی کۆد
+          </button>
+          <div class="amsg" id="fpMsgA"></div>
+          <div class="auth-step-back" onclick="cancelForgotStep()">
+            <span class="icn icn-sm icon--solar icon--solar--arrow-right-linear" aria-hidden="true"></span>
+            گەڕانەوە
+          </div>
+        </div>
+        <div id="fpStepB" style="display:none">
+          <div class="auth-step-icon">
+            <span class="icn icn-lg icon--solar icon--solar--shield-check-linear" aria-hidden="true"></span>
+          </div>
+          <p style="text-align:center;font-size:var(--fs-xs);color:var(--text-muted);margin-bottom:14px" id="fpOtpLbl">کۆدی ٦ ژمارە نێردرا</p>
+          <div class="otp-inputs">
+            <input class="otp-digit" type="text" inputmode="tel" maxlength="1" id="fp1" oninput="fpOtpMove(this,null,'fp2')" onkeydown="fpOtpBack(event,this,null)">
+            <input class="otp-digit" type="text" inputmode="tel" maxlength="1" id="fp2" oninput="fpOtpMove(this,'fp1','fp3')" onkeydown="fpOtpBack(event,this,'fp1')">
+            <input class="otp-digit" type="text" inputmode="tel" maxlength="1" id="fp3" oninput="fpOtpMove(this,'fp2','fp4')" onkeydown="fpOtpBack(event,this,'fp2')">
+            <input class="otp-digit" type="text" inputmode="tel" maxlength="1" id="fp4" oninput="fpOtpMove(this,'fp3','fp5')" onkeydown="fpOtpBack(event,this,'fp3')">
+            <input class="otp-digit" type="text" inputmode="tel" maxlength="1" id="fp5" oninput="fpOtpMove(this,'fp4','fp6')" onkeydown="fpOtpBack(event,this,'fp4')">
+            <input class="otp-digit" type="text" inputmode="tel" maxlength="1" id="fp6" oninput="fpOtpMove(this,'fp5',null)" onkeydown="fpOtpBack(event,this,'fp5')">
+          </div>
+          <div class="otp-timer" id="fpTimerWrap">ماوەی ئەم کۆدە: <span id="fpTimerVal">10:00</span></div>
+          <div class="otp-resend" id="fpResendBtn" onclick="fpResendOtp()">
+            <span class="icn icn-sm icon--solar icon--solar--refresh-linear" aria-hidden="true"></span>
+            کۆدی نوێ بنێرە
+          </div>
+          <div class="amsg" id="fpMsgB"></div>
+          <button class="btn btn-primary btn-block" id="fpVerifyBtn" onclick="doForgotVerifyOtp()" style="margin-top:14px">
+            <span class="icn icon--solar icon--solar--check-circle-linear" aria-hidden="true"></span>
+            دڵنیاکردنەوە
+          </button>
+          <div class="auth-step-back" onclick="fpBackToA()">
+            <span class="icn icn-sm icon--solar icon--solar--arrow-right-linear" aria-hidden="true"></span>
+            گەڕانەوە
+          </div>
+        </div>
+        <div id="fpStepC" style="display:none">
+          <div class="auth-step-icon success">
+            <span class="icn icn-lg icon--solar icon--solar--check-circle-linear" aria-hidden="true"></span>
+          </div>
+          <div class="auth-step-label"><h3>ناسنامەت دڵنیاکرایەوە</h3><p>وشەی نهێنیی نوێت بنووسە</p></div>
+          <div class="pass-wrap field">
+            <input class="input" type="password" id="fpNewPass" placeholder="وشەی نهێنیی نوێ — کەمترین ٦ پیت" dir="ltr">
+            <button type="button" class="pass-eye" onclick="togglePass('fpNewPass',this)" aria-label="پیشاندانی وشەی نهێنی"><span class="pass-eye-ico icn icn-sm"></span></button>
+          </div>
+          <div class="pass-wrap field">
+            <input class="input" type="password" id="fpConfirmPass" placeholder="دووبارە وشەی نهێنیی نوێ" dir="ltr">
+            <button type="button" class="pass-eye" onclick="togglePass('fpConfirmPass',this)" aria-label="پیشاندانی وشەی نهێنی"><span class="pass-eye-ico icn icn-sm"></span></button>
+          </div>
+          <div class="amsg" id="fpMsgC"></div>
+          <button class="btn btn-primary btn-block" id="fpSaveBtn" onclick="doForgotSavePass()">
+            <span class="icn icon--solar icon--solar--lock-linear" aria-hidden="true"></span>
+            پاشەکەوتکردن
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     MAIN APP
+     ══════════════════════════════════════════════════════════════ -->
+<div class="app-wrapper" id="mainApp">
+
+  <header class="site-header" id="siteHeader">
+    <div class="site-header-inner">
+
+      <a class="hdr-logo" onclick="navigate('home')" role="button" tabindex="0" aria-label="Proxo Balance">
+        <span class="hdr-mark" style="overflow:hidden;background:none;box-shadow:none;padding:0">
+          <img src="https://cdn.phototourl.com/free/2026-09-06-40f1367e-1da7-4d0b-bc3d-dfe411067da4.png" onerror="this.onerror=null;this.src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAMAAAD04JH5AAAA/1BMVEUAnOYDVN0DT9gAOuoCXekACl8BVdwDgfsAZpkCgfsAKqoArKwA/wAAPz8AfwAAAAAAePoBgf0AaPIAWuUAUdwAff0ATtgDefUAVaoAVf4AP78Cg/gAf78EY/MDd/cDePcDePgAAP8CePQAAH8FaesAM5kDU9sCUtwAZs0A//8APXwFWeIDd/gAqv8Af38DhPgCTdcAa/ADUtgDW+wDafMAVVUDVtgCZu8Ca/UDgvoCTtoCTtoCVuACWuQAf9wAh/oAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIkQtGAAAAQHRSTlMLkckEbwMkbwXUBgQBBAIA/v7+/v4F/lYDAwRWBCzOcLMBLgJRBVarBQEEU40DAi2rFGsttAMyh86SVWyrzgkVH2umDAAABmJJREFUeNrtm2l7qjoQgOl+tnuHxUigFASKVYt67b6dnv//r24IlgMYkrCk/eI8fdRWYd7MTJKZidXgi0XbA+wB9gD1P6Cl5yGPCmoh+RVLB6GwHwDqP6bQWaLOACFE570kWufKPRx2AcAQGH3lu/98ts5ui1atARBE5A663htC//58/g7g4JYADtjGANp1OgT/eU3ueN8aoDcB0a5vGSYEwQvbAvTVnqvPGfTnKLvr5wF8jL6EELyD9zkAOluM72tA92oBtmNtItDPABbqAHSxGBME39QAVGOumcCPGtf4vgAc25cJjHUTQXcAucEXBOcwGxSgdnsxgR6xp+MQAIacH9hx0A1gJ8onEgT+HzQfai+oA8CPVOwG45llgo6bUd0CmF4pIjhnhEFLF+istYdYIJmB0A3kwj8r1NoCxdWc2/sQh0twUvGSuLs1VgDmEOk1AqlZ7pNcEvAKbOFsOIclNydcZPdoL8QCAP+C2A2GjzE/K14AynJb26YP0rK9moRYIIxDl18XLHqVBBgJ3EAnDL8ymruuk7iFOMWT49BfHPrgZT+u6+Vvl+4pcgMxgdOzNoz5bwvcQCYCUlycIoEb/sBcdXWMuG4IqjNRSXnuctxQX4zU9AcyN/iGlA9UNSg4blhXTKCsQ9LoBuOsEgTqWjT3LnEDCyBVDFA4+P6d7G2s/QDCT7HA4oSsB0zRygTKABDM0ob1SCtPA0UA8yVc+E1LQaVI0dRNAePrADCglFsgYKUAZMePfF5WUlmJhgf4JkyLOrhghfNEJEtDPJqfZM+e4xwlJHnxyknODDai/LwdQIxnbgvvN07+piKRDxC7VPkGRZUcNAgC+khfZw+/ism/ScVZvPQ6QMsYZAcTvyhOip5IpTXkz8NsbYtnJPrElYS/lFsJYyfTPpEqTObZmEgk2DJ1+kRuL0gAosCX63/4cxp9s1Tq01K7IQqlvFkAxNiVMn+eFIoTkgRwIN8AIrXhTDj5mzolTIAjuJjobQA0MvmlP+yJ0vLYlZjLNQtEktGimyQEkADAg0BvCRBIdal0k0i9V6UxMolHXYGYuehPK0Fp5rYev4zdzQ/R7VqfSNvRbysZ+Yd+X1txy/MVQuq05wb4xgVwYKJMeab/DvFbNC4zkx9G+XYK8AEWv6QMkAYGL+Ca9Qfgctt0WM4ANpwZLYe+dcAsEXVKxQagpx9sC5h80Z9QeM8FCEFiCqTvZKkK2iqnErF6cFq1Uys8drDhZJEdcbfWrz9FzCPMMsASUkGjc0LMH5O9N2g9ev1uA67oxCScC/a0FNONpApgSsmjx9ZfBiBJkCj6VzjfroJ22s2nC1iJT80QfxJO1h/nXtQCprR288n+Ca7EwaUDlzzzo2Ibw9QCsurvLjGEUke3XAC7ZMMZHEsO/e74EtEUC3oCZOaPy8FycXvBkNtb+vfte5sNTb+xK/v9gWaA9CfJUzs1ChIcy3+FY9kEYEO8qFesCOGtkBeL0uuSxDKMYoBs8QlBmWjlbJgFkGrgAnwKAMsC/q751QEwgnCCsrX/6wBIyXWqWL/AAiT5WKy+EiCrpQVfRFIGQLZwut6TffzocwHM6kaTTYR/Fp8IsJvLmI+gcCmoA7B31M0QX/WUAmjaWC8B4y8FMB9XZTcg1/04X04S+gqpBjDvLsANv9AC1A3bzCqE0+vpzeuUyEv2+DKdHp9CrBzAfMSQ5DX0jVWXV0gGALgW5Hi/byEJc4DRXxmPyc+L5Exd9QCwLNM6zj52Ugcg8jCIC6656jMxHxEc/SgBjOn4R4edd21JgMLXuRtIDJSHP7ZuuoaAFIBlVuKNuOGmqj/zAFYGsBPw1hua1gxwNcegBMBiyGhk/j7YAoxzBGvafbfiAFhsGeUUxfgJxeE8hIEBrEYZjf4GICUgL7pHQA1g+le72QwwqgbgyDroPAWYFrD446+pJwHw20H3AwJwBl8GKPSPR6eAYUiAlvrH035p804MWGYb/RaZgQkMCSA1/BLAdU/9dQCrefIzzG8dPvTOl6UARlX5UD++cvqOfycI5fVb1uEUoH+qXOkTPjQufnUAa3x47cFigNJZqxzYHZgWfx3IgcaHBw/Q9/unrPOCEK4Prt7e3q7q8l9JDl5fbkXNv64A0nld6A5WqtVOzbCDdjpuRUeO/mMhdhxnyJ7F/l8+9wB7gD3A/+2cNp87jZcIAAAAAElFTkSuQmCC'"  alt="" aria-hidden="true" decoding="async" style="width:100%;height:100%;max-width:100%;max-height:100%;object-fit:contain;display:block">
+        </span>
+        <span class="hdr-word"><b>Proxo Balance</b><span>EXCHANGE</span></span>
+      </a>
+
+      <div class="hdr-rate" id="hdrRate" title="نرخی ئێستای ئەو ڕێگایەی هەڵتبژاردووە">
+        <span class="live-dot" aria-hidden="true"></span>
+        <span>نرخی ئێستا</span>
+        <b id="hdrRateVal">—</b>
+      </div>
+
+      <nav class="hdr-nav" aria-label="ڕێنیشاندەر">
+        <button type="button" class="hdr-nav-link on" data-route="home" onclick="navigate('home')">
+          <span class="icn icon--solar icon--solar--transfer-horizontal-linear" aria-hidden="true"></span>
+          ئاڵوگۆڕ
+        </button>
+        <button type="button" class="hdr-nav-link" data-route="transactions" onclick="navigate('transactions')">
+          <span class="icn icon--solar icon--solar--bill-list-linear" aria-hidden="true"></span>
+          مامەڵەکان
+        </button>
+        <button type="button" class="hdr-nav-link" data-route="changes" onclick="navigate('changes')">
+          <span class="icn icon--solar icon--solar--graph-up-linear" aria-hidden="true"></span>
+          نرخەکان
+        </button>
+        <button type="button" class="hdr-nav-link" data-route="rules" onclick="navigate('rules')">
+          <span class="icn icon--solar icon--solar--shield-check-linear" aria-hidden="true"></span>
+          یاساکان
+        </button>
+      </nav>
+
+      <div class="hdr-actions">
+        <button type="button" class="hdr-cta" onclick="focusExchangeForm()">
+          <span class="icn icon--solar icon--solar--transfer-horizontal-linear" aria-hidden="true"></span>
+          ئاڵوگۆڕ بکە
+        </button>
+
+        <div style="position:relative">
+          <button type="button" class="icon-btn" id="notifBellBtn" onclick="toggleNotifPanel()" aria-label="ئاگادارییەکان" aria-expanded="false" aria-controls="notifPanel">
+            <span class="icn icon--solar icon--solar--bell-linear" aria-hidden="true"></span>
+            <span class="notif-badge" id="notifBadge" style="display:none">0</span>
+          </button>
+        </div>
+
+        <button type="button" class="icon-btn" onclick="toggleTheme()" aria-label="گۆڕینی ڕووکار">
+          <span class="theme-toggle-ico icn"></span>
+        </button>
+
+        <a id="adminBtn" class="icon-btn" href="exchange-admin.html" style="display:none" aria-label="پانێڵی بەڕێوەبەر">
+          <span class="icn icon--solar icon--solar--shield-check-linear" aria-hidden="true"></span>
+        </a>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Kept outside the glass/sticky header so position:fixed is relative to
+       the viewport on Android Chrome, not to the header's containing block. -->
+  <div class="notif-backdrop" id="notifBackdrop" onclick="closeNotifPanel()" aria-hidden="true"></div>
+  <aside class="notif-panel" id="notifPanel" role="dialog" aria-modal="true" aria-label="ئاگادارییەکان" aria-hidden="true">
+    <div class="notif-grabber" aria-hidden="true"></div>
+    <div class="notif-panel-head">
+      <h3>
+        <span class="notif-title-icon" aria-hidden="true">
+          <span class="icn icon--solar icon--solar--bell-linear" aria-hidden="true"></span>
+        </span>
+        <span>ئاگادارییەکان</span>
+        <span class="notif-head-count" id="notifHeadCount" style="display:none">0</span>
+      </h3>
+      <span class="notif-head-spacer"></span>
+      <button type="button" class="notif-read-all" onclick="markAllNotifsRead()">
+        <span class="icn icon--solar icon--solar--check-read-linear" aria-hidden="true"></span>
+        <span>هەمووی بخوێنەوە</span>
+      </button>
+      <button type="button" class="notif-close-btn" onclick="closeNotifPanel()" aria-label="داخستنی ئاگادارییەکان">
+        <span class="icn icon--solar icon--solar--close-circle-linear" aria-hidden="true"></span>
+      </button>
+    </div>
+    <div class="notif-panel-body" id="notifPanelBody" tabindex="0"></div>
+  </aside>
+
+  <!-- ══════════════ PAGE: HOME (route "/") ══════════════ -->
+  <section class="page active" id="pageHome" data-route="home">
+
+  <div class="home-greet">
+    <div class="greet-av" id="greetAvatar">؟</div>
+    <div class="greet-txt">
+      <span class="greet-hi">بەخێربێیتەوە</span>
+      <span id="userName">...</span>
+    </div>
+    <div class="greet-rate">
+      <span class="greet-rate-dot" aria-hidden="true"></span>
+      <span class="greet-rate-txt">چالاک</span>
+    </div>
+  </div>
+
+  <div id="newsBanner" onclick="onNewsBannerClick()">
+    <span class="icn icon--solar icon--solar--bell-linear" aria-hidden="true"></span>
+    <span id="newsText"></span>
+  </div>
+
+  <div id="notifBar" class="notif-bar">
+    <span class="notif-bar-ico" id="notifBarIco"></span>
+    <div class="notif-bar-text">
+      <div class="notif-bar-title" id="notifBarTitle"></div>
+      <div class="notif-bar-msg" id="notifBarMsg"></div>
+    </div>
+    <button type="button" class="notif-bar-close" onclick="dismissNotifBar()" aria-label="داخستن">
+      <span class="icn icn-sm icon--solar icon--solar--close-circle-linear" aria-hidden="true"></span>
+    </button>
+  </div>
+
+  <div class="panel" id="exchangeCard">
+
+    <div class="xc-head">
+      <span class="xc-head-ico" aria-hidden="true">
+        <span class="icn icon--solar icon--solar--transfer-horizontal-linear" aria-hidden="true"></span>
+      </span>
+      <div>
+        <h2>داواکاری ئاڵوگۆڕ</h2>
+      </div>
+    </div>
+
+    <!-- Shown instead of the form while an admin-requested verification is not approved -->
+    <div class="xc-kyc-gate" id="exchangeKycGate" role="alert" hidden>
+      <span class="xc-kyc-gate-ico" aria-hidden="true">
+        <span class="icn icon--solar icon--solar--shield-warning-linear"></span>
+      </span>
+      <p class="xc-kyc-gate-msg">پێش ئەنجامدانی ئاڵوگۆڕ، پێویستە ناسنامەکەت پشتڕاست بکرێتەوە.</p>
+      <p class="xc-kyc-gate-sub" id="exchangeKycGateSub"></p>
+      <button type="button" class="btn btn-primary btn-block" id="exchangeKycGateBtn" onclick="openVerifyPage()">
+        <span class="icn icon--solar icon--solar--user-id-linear" aria-hidden="true"></span>
+        دەستپێکردنی پشتڕاستکردنەوە
+      </button>
+    </div>
+
+    <div class="xc-cols">
+
+      <!-- ── STEP 1 — YOU SEND ───────────────────────────────── -->
+      <section class="xc-step" id="grpSend">
+        <div class="xc-step-head">
+          <h3>دەینێریت</h3>
+          <span class="xc-badge" id="sendLimitBadge">کەمترین 10,000</span>
+        </div>
+
+        <div class="select-wrap">
+          <select id="from" class="sr-native-select" onchange="updateWallet()" aria-label="لە کوێوە دەینێریت" tabindex="-1">
+            <!-- filled from ex_wallets only -->
+          </select>
+          <button type="button" class="picker-trigger" id="fromTrigger" onclick="openPicker('from')">
+            <span class="method-icon" id="fromTriggerIcon"></span>
+            <span class="picker-trigger-text">
+              <span class="picker-trigger-label">لە کوێوە دەینێریت؟</span>
+              <span class="picker-trigger-value" id="fromTriggerLabel">بارکردن…</span>
+            </span>
+            <span class="select-chevron"><span class="icn icn-sm icon--solar icon--solar--alt-arrow-down-linear" aria-hidden="true"></span></span>
+          </button>
+        </div>
+
+        <!-- the account to pay into, right where the method is chosen -->
+        <div class="wallet-row">
+          <div class="wallet-row-line">
+            <span class="wallet-label">بنێرە بۆ:</span>
+            <span class="wallet-value" id="myNum" dir="ltr">---</span>
+            <button type="button" class="copy-btn" onclick="copyNum()" aria-label="کۆپیکردنی ژمارە">
+              <span class="icn icn-sm icon--solar icon--solar--copy-linear" aria-hidden="true"></span>
+            </button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="amt">بڕی پارە</label>
+          <div class="xc-input-wrap">
+            <input type="text" inputmode="decimal" id="amt" class="input" placeholder="0" dir="ltr"
+                   aria-describedby="amtHint" oninput="formatAmtField(this); calc(); clearFieldError('amt');">
+            <span class="xc-in-suffix" id="amtSuffix">IQD</span>
+          </div>
+          <div class="quick-amounts">
+            <button type="button" class="quick-amount-btn" onclick="setQuickAmount(10000)">10,000</button>
+            <button type="button" class="quick-amount-btn" onclick="setQuickAmount(50000)">50,000</button>
+            <button type="button" class="quick-amount-btn" onclick="setQuickAmount(100000)">100,000</button>
+          </div>
+          <div class="xc-hint" id="amtHint">
+            <span>کەمترین بڕ <b>10,000</b> دینارە. بڕەکە دەبێت وەک ئەوە بێت کە ناردووتە.</span>
+          </div>
+          <span id="formattedHint" class="formatted-amount" hidden></span>
+          <span class="field-error" id="amtError"></span>
+        </div>
+
+        <div class="field xc-locked" id="senderNameField">
+          <label class="field-label" for="userSenderName">
+            ناوی خاوەنی هەژماری نێرەر
+            <span class="xc-locked-tag" id="senderNameHint">
+              <span class="icn icn-sm icon--solar icon--solar--lock-linear" aria-hidden="true"></span>
+              <span>وەک پڕۆفایلەکەت</span>
+            </span>
+          </label>
+          <div class="xc-input-wrap">
+            <input type="text" id="userSenderName" class="input" readonly aria-readonly="true" aria-describedby="senderNameHint">
+          </div>
+          <span class="field-error" id="userSenderNameError"></span>
+        </div>
+
+        <div class="field" id="senderPhoneField" style="display:none">
+          <label class="field-label" for="userSenderPhone">ژمارەی نێرەر</label>
+          <div class="xc-input-wrap">
+            <input type="tel" id="userSenderPhone" class="input" placeholder="07xxxxxxxxx" dir="ltr" maxlength="11" inputmode="numeric"
+                   aria-describedby="senderPhoneHint"
+                   oninput="this.value=this.value.replace(/[^0-9]/g,''); clearFieldError('userSenderPhone');">
+          </div>
+          <div class="xc-hint" id="senderPhoneHint">
+            <span>ژمارەکە دەبێت بە <b>07</b> دەست پێبکات و <b>11</b> ژمارە بێت.</span>
+          </div>
+          <span class="field-error" id="userSenderPhoneError"></span>
+        </div>
+      </section>
+
+      <div class="xc-swap">
+        <span class="xc-swap-line"></span>
+        <button type="button" class="xc-swap-btn" onclick="swapMethods()" aria-label="گۆڕینەوەی ئاراستە">
+          <span class="icn icon--solar icon--solar--transfer-vertical-linear" aria-hidden="true"></span>
+        </button>
+        <span class="xc-swap-line"></span>
+      </div>
+
+      <!-- ── STEP 2 — YOU RECEIVE ────────────────────────────── -->
+      <section class="xc-step" id="grpRecv">
+        <div class="xc-step-head">
+          <h3>وەریدەگریت</h3>
+          <span class="xc-badge" id="etaBadge">٥–٣٠ خولەک</span>
+        </div>
+
+        <div class="select-wrap">
+          <select id="receiveVia" class="sr-native-select" onchange="updatePlaceholder(); calc();" aria-label="وەرگرتن لە" tabindex="-1">
+            <!-- filled from ex_wallets only -->
+          </select>
+          <button type="button" class="picker-trigger" id="receiveViaTrigger" onclick="openPicker('receiveVia')">
+            <span class="method-icon" id="receiveViaTriggerIcon"></span>
+            <span class="picker-trigger-text">
+              <span class="picker-trigger-label">وەرگرتن لە</span>
+              <span class="picker-trigger-value" id="receiveViaTriggerLabel">بارکردن…</span>
+            </span>
+            <span class="select-chevron"><span class="icn icn-sm icon--solar icon--solar--alt-arrow-down-linear" aria-hidden="true"></span></span>
+          </button>
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="userPhone" id="phoneLabel">ژمارەی وەرگرە</label>
+          <div class="xc-input-wrap">
+            <input type="tel" id="userPhone" class="input" placeholder="07xxxxxxxxx" dir="ltr" maxlength="19"
+                   aria-describedby="phoneHint"
+                   oninput="this.value = this.value.replace(/[^0-9]/g, ''); clearFieldError('userPhone'); validatePhoneLive();">
+          </div>
+          <div class="xc-hint" id="phoneHint">
+            <span id="phoneHintText">ژمارەی عێراقی بە <b>07</b> دەست پێدەکات و <b>11</b> ژمارەیە.</span>
+          </div>
+          <span class="field-error" id="userPhoneError"></span>
+        </div>
+      </section>
+    </div>
+
+    <!-- ── RECEIPT ─────────────────────────────────────────── -->
+    <section class="xc-step" id="grpProof">
+        <div class="xc-step-head">
+          <h3>بەڵگەی پارەدان</h3>
+        </div>
+        <div class="file-field">
+          <input type="file" id="fileInput" class="file-input-native" accept="image/jpeg,image/png,image/webp" onchange="onFileSelected(this)">
+          <label class="file-picker" for="fileInput">
+            <span class="file-picker-icon" aria-hidden="true">
+              <span class="icn icon--solar icon--solar--gallery-linear" aria-hidden="true"></span>
+            </span>
+            <span class="file-picker-copy">
+              <b id="filePickerName">وێنەی پسووڵە هەڵبژێرە</b>
+              <small id="filePickerMeta">JPG، PNG یان WEBP</small>
+            </span>
+            <span class="file-picker-action" aria-hidden="true">
+              <span class="icn icon--solar icon--solar--upload-linear" aria-hidden="true"></span>
+            </span>
+          </label>
+          <div class="xc-hint"><span>بەبێ بەڵگەی ناردن داواکارییەکە ڕەت دەکرێتەوە.</span></div>
+          <span class="field-error" id="fileInputError"></span>
+        </div>
+    </section>
+
+    <!-- ── SUMMARY ───────────────────────────────────────────── -->
+    <div class="xc-summary" id="xcBreakdown" aria-live="polite">
+      <div class="xc-sum-row" id="bdSentRow">
+        <span class="lbl">دەینێریت</span>
+        <span class="v" id="bdSent">—</span>
+      </div>
+      <div class="xc-sum-row" id="bdRateRow" hidden>
+        <span class="lbl">نرخی ئاڵوگۆڕ</span>
+        <span class="v" id="bdRate">—</span>
+      </div>
+      <div class="xc-sum-row" id="bdFeeRow">
+        <span class="lbl">کرێی خزمەتگوزاری</span>
+        <span class="v" id="bdFee">—</span>
+      </div>
+      <div class="xc-sum-row total">
+        <span class="lbl">وەریدەگریت</span>
+        <span class="v"><span id="totalDisplay" class="total-value">0 IQD</span></span>
+      </div>
+      <div id="feeDisplay" class="fee-note"></div>
+    </div>
+
+    <div class="hp-field" aria-hidden="true">
+      <label for="contact_reference">Contact reference</label>
+      <input type="text" id="contact_reference" name="contact_reference" tabindex="-1" autocomplete="off">
+    </div>
+
+    <button class="btn btn-primary btn-block btn-submit" id="submitBtn" onclick="openOrderConfirm()">
+      <span class="icn icon--solar icon--solar--plain-2-linear" aria-hidden="true"></span>
+      ناردنی داواکاری
+    </button>
+  </div>
+
+  <!-- ══════════════ SOCIAL PROOF + PUBLIC FEED ══════════════ -->
+  <div class="proof-wrap">
+    <!-- Banner removed from view. The nodes stay in the DOM (hidden) so app.js
+         can still write proofCount / proof24h / proofUsers without throwing —
+         deleting them would break the rest of its stats handler. -->
+    <div class="proof-card" hidden style="display:none">
+      <div class="proof-top">
+        <span class="icn icon--solar icon--solar--verified-check-linear" aria-hidden="true"></span>
+        مامەڵەی سەرکەوتوو
+      </div>
+      <div class="proof-num" id="proofCount">—</div>
+      <div class="proof-sub">داواکاری پەسەندکراو و گەیشتوو بە دەستی خاوەنەکەی</div>
+      <div class="proof-mini">
+        <div><b id="proof24h">—</b><span>لە ٢٤ کاتژمێری ڕابردوو</span></div>
+        <div><b id="proofUsers">—</b><span>بەکارهێنەری چالاک</span></div>
+      </div>
+    </div>
+
+    <div>
+      <h3 class="section-title">
+        <span class="icn icon--solar icon--solar--clock-circle-linear" aria-hidden="true"></span>
+        دوایین ئاڵوگۆڕە تەواوبووەکان
+      </h3>
+      <div class="feed-wrap" id="publicFeed" aria-live="polite">
+        <div class="feed-skel">
+          <span class="fs-main">
+            <span class="fs-line"><span class="sk" style="width:16px;height:16px;border-radius:50%"></span><span class="sk" style="width:104px;height:11px"></span></span>
+            <span class="fs-line">
+              <span class="sk" style="width:26px;height:26px;border-radius:8px"></span>
+              <span class="sk" style="width:56px;height:14px"></span>
+              <span class="sk" style="width:14px;height:9px"></span>
+              <span class="sk" style="width:26px;height:26px;border-radius:8px"></span>
+              <span class="sk" style="width:64px;height:14px"></span>
+            </span>
+            <span class="fs-line"><span class="sk" style="width:86px;height:11px"></span></span>
+          </span>
+          <span class="fs-side">
+            <span class="sk" style="width:78px;height:10px"></span>
+            <span class="fs-line"><span class="sk" style="width:44px;height:10px"></span><span class="sk" style="width:82px;height:18px"></span></span>
+            <span class="fs-line"><span class="sk" style="width:34px;height:10px"></span><span class="sk" style="width:68px;height:13px"></span></span>
+          </span>
+        </div>
+        <div class="feed-skel">
+          <span class="fs-main">
+            <span class="fs-line"><span class="sk" style="width:16px;height:16px;border-radius:50%"></span><span class="sk" style="width:104px;height:11px"></span></span>
+            <span class="fs-line">
+              <span class="sk" style="width:26px;height:26px;border-radius:8px"></span>
+              <span class="sk" style="width:46px;height:14px"></span>
+              <span class="sk" style="width:14px;height:9px"></span>
+              <span class="sk" style="width:26px;height:26px;border-radius:8px"></span>
+              <span class="sk" style="width:72px;height:14px"></span>
+            </span>
+            <span class="fs-line"><span class="sk" style="width:86px;height:11px"></span></span>
+          </span>
+          <span class="fs-side">
+            <span class="sk" style="width:84px;height:10px"></span>
+            <span class="fs-line"><span class="sk" style="width:44px;height:10px"></span><span class="sk" style="width:74px;height:18px"></span></span>
+            <span class="fs-line"><span class="sk" style="width:34px;height:10px"></span><span class="sk" style="width:62px;height:13px"></span></span>
+          </span>
+        </div>
+        <div class="feed-skel">
+          <span class="fs-main">
+            <span class="fs-line"><span class="sk" style="width:16px;height:16px;border-radius:50%"></span><span class="sk" style="width:104px;height:11px"></span></span>
+            <span class="fs-line">
+              <span class="sk" style="width:26px;height:26px;border-radius:8px"></span>
+              <span class="sk" style="width:62px;height:14px"></span>
+              <span class="sk" style="width:14px;height:9px"></span>
+              <span class="sk" style="width:26px;height:26px;border-radius:8px"></span>
+              <span class="sk" style="width:54px;height:14px"></span>
+            </span>
+            <span class="fs-line"><span class="sk" style="width:86px;height:11px"></span></span>
+          </span>
+          <span class="fs-side">
+            <span class="sk" style="width:72px;height:10px"></span>
+            <span class="fs-line"><span class="sk" style="width:44px;height:10px"></span><span class="sk" style="width:90px;height:18px"></span></span>
+            <span class="fs-line"><span class="sk" style="width:34px;height:10px"></span><span class="sk" style="width:72px;height:13px"></span></span>
+          </span>
+        </div>
+      </div>
+      <div class="xc-hint" style="margin:9px 4px 0">
+        <span class="icn icon--solar icon--solar--lock-linear" aria-hidden="true"></span>
+        <span>ژمارەکان بۆ پاراستنی تایبەتمەندێتی لەسەر سێرڤەر شاردراونەتەوە — ژمارەی تەواو هەرگیز نانێردرێت بۆ وێبگەڕ.</span>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="section-title">
+    <span class="icn icon--solar icon--solar--bill-list-linear" aria-hidden="true"></span>
+    دوایین مامەڵەکان
+    <span class="title-link" onclick="navigate('transactions')">
+      بینینی هەموو
+      <span class="icn icon--solar icon--solar--alt-arrow-left-linear" aria-hidden="true"></span>
+    </span>
+  </h3>
+  <div id="historyPreview" style="width:100%;">
+  <div class="tx-skel">
+    <div class="tx-skel-head"><span class="sk sk-w30"></span><span class="sk sk-pill sk-w30"></span></div>
+    <div class="tx-skel-row"><span class="sk sk-ico"></span><span class="sk sk-w60"></span></div>
+    <div class="tx-skel-row"><span class="sk sk-ico"></span><span class="sk sk-w45"></span></div>
+  </div>
+  <div class="tx-skel">
+    <div class="tx-skel-head"><span class="sk sk-w30"></span><span class="sk sk-pill sk-w30"></span></div>
+    <div class="tx-skel-row"><span class="sk sk-ico"></span><span class="sk sk-w75"></span></div>
+    <div class="tx-skel-row"><span class="sk sk-ico"></span><span class="sk sk-w45"></span></div>
+  </div>
+  <div class="tx-skel">
+    <div class="tx-skel-head"><span class="sk sk-w30"></span><span class="sk sk-pill sk-w30"></span></div>
+    <div class="tx-skel-row"><span class="sk sk-ico"></span><span class="sk sk-w60"></span></div>
+    <div class="tx-skel-row"><span class="sk sk-ico"></span><span class="sk sk-w45"></span></div>
+  </div>
+  </div>
+
+  </section>
+
+  <!-- ══════════════ PAGE: TRANSACTIONS (route "/transactions") ══════════════ -->
+  <section class="page" id="pageTx" data-route="transactions">
+    <div class="page-head">
+      <h2>
+        <span class="icn icon--solar icon--solar--bill-list-linear" aria-hidden="true"></span>
+        مامەڵەکان
+      </h2>
+      <p>هەموو ئاڵوگۆڕەکانت لێرەدان.</p>
+    </div>
+
+    <div class="tx-summary" id="txSummary">
+      <span class="tx-sum-cap">ئاڵوگۆڕە تەواوبووەکان</span>
+      <div class="tx-sum-pair">
+        <div class="tx-sum-item sent">
+          <span class="tx-sum-lbl">ناردنت</span>
+          <b class="tx-sum-val" id="txTotalSent" dir="ltr"><span class="sk sk-num"></span></b>
+          <span class="tx-sum-sub" id="txTotalSentSub">IQD</span>
+        </div>
+        <div class="tx-sum-item recv">
+          <span class="tx-sum-lbl">وەرگرتنت</span>
+          <b class="tx-sum-val" id="txTotalRecv" dir="ltr"><span class="sk sk-num"></span></b>
+          <span class="tx-sum-sub">IQD</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="search-wrap">
+      <span class="search-ico"><span class="icn icn-sm icon--solar icon--solar--magnifer-linear" aria-hidden="true"></span></span>
+      <input type="text" class="input" id="txSearch" placeholder="گەڕان بە ئایدی مامەڵە — بۆ نمونە P7K2..." oninput="onTxSearch(this.value)">
+      <button type="button" class="search-clear" id="txSearchClear" onclick="clearTxSearch()" aria-label="سڕینەوە">
+        <span class="icn icn-sm icon--solar icon--solar--close-circle-linear" aria-hidden="true"></span>
+      </button>
+    </div>
+
+    <div class="filter-scroll" id="txStatusFilters">
+      <button type="button" class="filter-chip on" data-status="all" onclick="setTxStatus('all', this)">هەموو <span class="chip-count" id="fcAll">0</span></button>
+      <button type="button" class="filter-chip" data-status="action" onclick="setTxStatus('action', this)">پێویستی بە ڕاستکردنەوە <span class="chip-count" id="fcCorrection">0</span></button>
+      <button type="button" class="filter-chip" data-status="pending" onclick="setTxStatus('pending', this)">چاوەڕوان <span class="chip-count" id="fcWait">0</span></button>
+      <button type="button" class="filter-chip" data-status="done" onclick="setTxStatus('done', this)">پەسەندکراو <span class="chip-count" id="fcOk">0</span></button>
+      <button type="button" class="filter-chip" data-status="rejected" onclick="setTxStatus('rejected', this)">ڕەتکراو <span class="chip-count" id="fcNo">0</span></button>
+    </div>
+
+    <div class="result-count" id="txResultCount"></div>
+    <div id="txList" style="width:100%;">
+  <div class="tx-skel">
+    <div class="tx-skel-head"><span class="sk sk-w30"></span><span class="sk sk-pill sk-w30"></span></div>
+    <div class="tx-skel-row"><span class="sk sk-ico"></span><span class="sk sk-w75"></span></div>
+    <div class="tx-skel-row"><span class="sk sk-ico"></span><span class="sk sk-w60"></span></div>
+    <div class="tx-skel-row"><span class="sk sk-ico"></span><span class="sk sk-w45"></span></div>
+  </div>
+  <div class="tx-skel">
+    <div class="tx-skel-head"><span class="sk sk-w30"></span><span class="sk sk-pill sk-w30"></span></div>
+    <div class="tx-skel-row"><span class="sk sk-ico"></span><span class="sk sk-w60"></span></div>
+    <div class="tx-skel-row"><span class="sk sk-ico"></span><span class="sk sk-w75"></span></div>
+    <div class="tx-skel-row"><span class="sk sk-ico"></span><span class="sk sk-w45"></span></div>
+  </div>
+  <div class="tx-skel">
+    <div class="tx-skel-head"><span class="sk sk-w30"></span><span class="sk sk-pill sk-w30"></span></div>
+    <div class="tx-skel-row"><span class="sk sk-ico"></span><span class="sk sk-w45"></span></div>
+    <div class="tx-skel-row"><span class="sk sk-ico"></span><span class="sk sk-w60"></span></div>
+    <div class="tx-skel-row"><span class="sk sk-ico"></span><span class="sk sk-w75"></span></div>
+  </div>
+  <div class="tx-skel">
+    <div class="tx-skel-head"><span class="sk sk-w30"></span><span class="sk sk-pill sk-w30"></span></div>
+    <div class="tx-skel-row"><span class="sk sk-ico"></span><span class="sk sk-w60"></span></div>
+    <div class="tx-skel-row"><span class="sk sk-ico"></span><span class="sk sk-w45"></span></div>
+  </div>
+    </div>
+  </section>
+
+  <!-- ══════════════ TRANSACTION DETAILS ══════════════ -->
+  <div class="tx-sheet-backdrop" id="txSheetBackdrop" onclick="closeTxDetail()" hidden></div>
+  <div class="tx-sheet" id="txSheet" role="dialog" aria-modal="true" aria-labelledby="txSheetTitle" hidden>
+    <div class="tx-sheet-grip" aria-hidden="true"></div>
+    <div class="tx-sheet-head">
+      <h3 id="txSheetTitle">وردەکاری مامەڵە</h3>
+      <button type="button" class="tx-sheet-close" onclick="closeTxDetail()" aria-label="داخستن">
+        <span class="icn icn-sm icon--solar icon--solar--close-circle-linear" aria-hidden="true"></span>
+      </button>
+    </div>
+    <div class="tx-sheet-body" id="txSheetBody"></div>
+  </div>
+
+  <!-- ══════════════ PAGE: CHANGE LOG (route "/changes") ══════════════ -->
+  <section class="page" id="pageChanges" data-route="changes">
+    <div class="page-head">
+      <h2>
+        <span class="icn icon--solar icon--solar--graph-up-linear" aria-hidden="true"></span>
+        گۆڕانکاری نرخەکان
+      </h2>
+      <p>نرخی ئێستا و مێژووی گۆڕانکارییەکان — بەپێی هەر ١٠٠,٠٠٠ دینار کە دەینێریت.</p>
+    </div>
+
+    <h3 class="section-title">
+      <span class="icn icon--solar icon--solar--dollar-minimalistic-linear" aria-hidden="true"></span>
+      نرخی ئێستا
+    </h3>
+    <div class="rates-now" id="ratesNow"></div>
+
+    <h3 class="section-title" style="margin-top:var(--space-6)">
+      <span class="icn icon--solar icon--solar--history-2-linear" aria-hidden="true"></span>
+      مێژووی گۆڕانکاری
+    </h3>
+    <div id="changesList" style="width:100%;"></div>
+  </section>
+
+  <!-- ══════════════ PAGE: RULES (route "/rules") ══════════════ -->
+  <section class="page" id="pageRules" data-route="rules">
+    <div class="page-head">
+      <h2>
+        <span class="icn icon--solar icon--solar--shield-check-linear" aria-hidden="true"></span>
+        یاساکانی ئەپ
+      </h2>
+      <p>پێش ناردنی داواکاری تکایە ئەم خاڵانە بخوێنەرەوە.</p>
+    </div>
+
+    <div class="rule-item">
+      <span class="rule-num" aria-label="یاسای یەک"><span class="icn icon--solar icon--solar--banknote-2-linear" aria-hidden="true"></span></span>
+      <div class="rule-txt"><h4>کەمترین بڕی ئاڵوگۆڕ</h4><p>کەمترین بڕ بۆ هەر داواکارییەک <b dir="ltr">10,000</b> دینارە. داواکاری کەمتر لەوە وەرناگیرێت.</p></div>
+    </div>
+    <div class="rule-item">
+      <span class="rule-num" aria-label="یاسای دوو"><span class="icn icon--solar icon--solar--wallet-linear" aria-hidden="true"></span></span>
+      <div class="rule-txt"><h4>ژمارەی واڵێت</h4><p>پێش ناردنی پارە دڵنیابە لە ژمارەی واڵێتی نیشاندراو لە ناو ئەپەکەدا. ئێمە بەرپرسیار نین لە پارەی نێردراو بۆ ژمارەی هەڵە.</p></div>
+    </div>
+    <div class="rule-item">
+      <span class="rule-num" aria-label="یاسای سێ"><span class="icn icon--solar icon--solar--gallery-linear" aria-hidden="true"></span></span>
+      <div class="rule-txt"><h4>پسووڵەی پارەدان</h4><p>پێویستە وێنەی پسووڵەی ناردن هاوپێچ بکرێت. داواکاری بەبێ بەڵگەی پارەدان ڕەت دەکرێتەوە.</p></div>
+    </div>
+    <div class="rule-item">
+      <span class="rule-num" aria-label="یاسای چوار"><span class="icn icon--solar icon--solar--clock-circle-linear" aria-hidden="true"></span></span>
+      <div class="rule-txt"><h4>ماوەی جێبەجێکردن</h4><p>زۆربەی داواکارییەکان لە ماوەی <b>٥ بۆ ٣٠ خولەک</b> جێبەجێ دەکرێن. لە کاتی قەرەباڵغیدا لەوانەیە درێژتر بخایەنێت.</p></div>
+    </div>
+    <div class="rule-item">
+      <span class="rule-num" aria-label="یاسای پێنج"><span class="icn icon--solar icon--solar--sale-linear" aria-hidden="true"></span></span>
+      <div class="rule-txt"><h4>نرخ و لێبڕین</h4><p>نرخەکان دەگۆڕێن. ئەو نرخەی لە کاتی ناردنی داواکارییەکەدا نیشان دراوە جێبەجێ دەکرێت. گۆڕانکارییەکان لە بەشی «گۆڕانکاری نرخەکان» دەبینرێن.</p></div>
+    </div>
+    <div class="rule-item">
+      <span class="rule-num" aria-label="یاسای شەش"><span class="icn icon--solar icon--solar--info-circle-linear" aria-hidden="true"></span></span>
+      <div class="rule-txt"><h4>زانیاری هەڵە</h4><p>ژمارەی مۆبایل و شێوازی وەرگرتن دەبێت ڕاست بن. داواکاری بە زانیاری ناتەواو یان هەڵە ڕەت دەکرێتەوە و هۆکارەکەی پێت ڕادەگەیەنرێت.</p></div>
+    </div>
+    <div class="rule-item">
+      <span class="rule-num" aria-label="یاسای حەوت"><span class="icn icon--solar icon--solar--user-plus-rounded-linear" aria-hidden="true"></span></span>
+      <div class="rule-txt"><h4>یەک هەژمار بۆ هەر کەسێک</h4><p>هەژماری چەند جارە یان بەکارهێنانی زانیاری کەسی خەڵکی تر ڕێگەپێدراو نییە و دەبێتە هۆی داخستنی هەژمار.</p></div>
+    </div>
+    <div class="rule-item">
+      <span class="rule-num" aria-label="یاسای هەشت"><span class="icn icon--solar icon--solar--shield-check-linear" aria-hidden="true"></span></span>
+      <div class="rule-txt"><h4>بەکارهێنانی یاسایی</h4><p>ئەم خزمەتگوزارییە تەنها بۆ مامەڵەی یاسایی و کەسییە. هەر بەکارهێنانێکی گومانلێکراو ڕادەگیرێت.</p></div>
+    </div>
+    <div class="rule-item">
+      <span class="rule-num" aria-label="یاسای نۆ"><span class="icn icon--solar icon--solar--user-check-rounded-linear" aria-hidden="true"></span></span>
+      <div class="rule-txt"><h4>ناسنامەی نێرەر و قوفڵی پڕۆفایل</h4><p>بۆ FastPay، FIB، Qi Card و USDT ناوی پڕۆفایلی Proxo و ناوی خاوەنی هەژماری نێرەر دەبێت هەمان ناو بن. بۆ Korek و Asiacell ناوی نێرەر داوا ناکرێت و تەنها ژمارەی نێرەر پێویستە. دوای گۆڕینی ناو یان ژمارەی مۆبایلی پڕۆفایل، هەردوو خانەکە یەکسەر بۆ <b>٧ ڕۆژ</b> قوفڵ دەبن.</p></div>
+    </div>
+
+    <div class="rule-note">
+      <span class="icn icon--solar icon--solar--danger-triangle-linear" aria-hidden="true"></span>
+      <span>ئایدی هەر مامەڵەیەک بە <b dir="ltr">P</b> دەست پێدەکات و ١٢ پیتە. لە کاتی پەیوەندیکردن بە پشتگیریەوە تەنها ئەم ئایدییە بنێرە — هەرگیز وشەی نهێنی یان کۆدی ناردراو بۆ کەس مەنێرە.</span>
+    </div>
+  </section>
+
+  <!-- ══════════════ PAGE: PROFILE (route "/profile") ══════════════ -->
+  <section class="page" id="pageProfile" data-route="profile">
+    <div class="page-head">
+      <h2>
+        <span class="icn icon--solar icon--solar--user-linear" aria-hidden="true"></span>
+        پڕۆفایل
+      </h2>
+    </div>
+
+    <div class="pf-hero pf2-hero">
+      <div class="pf2-cover" aria-hidden="true"></div>
+      <div class="pf2-avatar-wrap">
+        <div class="pf-avatar pf2-avatar" id="pfAvatar">؟</div>
+        <span class="pf2-verified-dot" id="pfVerifiedDot" hidden title="ناسنامە پشتڕاستکراوەتەوە">
+          <span class="icn icon--solar icon--solar--verified-check-linear" aria-hidden="true"></span>
+        </span>
+      </div>
+      <div class="pf2-identity">
+        <div class="pf-name" id="pfNameLbl">—</div>
+        <button type="button" class="pf2-handle" id="pfUsernameBtn" onclick="copyUsername()" aria-label="کۆپیکردنی ناوی بەکارهێنەر">
+          <span id="pfUsername" dir="ltr">@—</span>
+          <span class="icn icn-sm icon--solar icon--solar--copy-linear" aria-hidden="true"></span>
+        </button>
+        <div class="pf-email" id="pfEmailLbl">—</div>
+      </div>
+
+      <button type="button" class="kyc-badge" id="pfKycBadge" data-state="loading" onclick="openVerifyPage()" aria-live="polite">
+        <span class="kyc-badge-ico" id="pfKycBadgeIco"><span class="icn icn-sm icn-spin icon--solar icon--solar--refresh-linear" aria-hidden="true"></span></span>
+        <span id="pfKycBadgeText">دۆخی ناسنامە...</span>
+      </button>
+
+      <div class="pf-chips">
+        <span class="pf-chip" id="pfJoinedChip">
+          <span class="icn icon--solar icon--solar--calendar-linear" aria-hidden="true"></span>
+          <span id="pfJoined">—</span>
+        </span>
+        <span class="pf-chip admin" id="pfAdminChip" style="display:none">
+          <span class="icn icon--solar icon--solar--shield-linear" aria-hidden="true"></span>
+          <span id="pfAdminChipText">بەڕێوەبەر</span>
+        </span>
+      </div>
+    </div>
+
+    <!-- Identity verification status (rendered by renderKycProfile) -->
+    <div class="kyc-card" id="pfKycCard" data-state="loading" hidden></div>
+
+    <div class="pf-card">
+      <div class="pf-card-title">
+        <span class="icn icon--solar icon--solar--pen-linear" aria-hidden="true"></span>
+        زانیاری کەسی
+      </div>
+
+      <div class="field">
+        <span class="field-label">ناوی تەواو</span>
+        <input type="text" class="input" id="pfName" placeholder="ناوی تەواو" oninput="clearFieldError('pfName')">
+        <span class="field-error" id="pfNameError"></span>
+        <span class="pf-name-kyc-hint" id="pfNameKycHint" hidden>
+          <span class="icn icn-sm icon--solar icon--solar--verified-check-linear" aria-hidden="true"></span>
+          ناوەکەت بە ناسنامە پشتڕاستکراوەتەوە و ناگۆڕدرێت.
+        </span>
+      </div>
+
+      <div class="field">
+        <span class="field-label">ژمارەی مۆبایل</span>
+        <input type="tel" class="input" id="pfPhone" placeholder="07xxxxxxxxx" dir="ltr" maxlength="11" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,''); clearFieldError('pfPhone')">
+        <span class="phone-format-hint" dir="ltr">07xxxxxxxxx</span>
+        <span class="field-error" id="pfPhoneError"></span>
+      </div>
+
+      <div class="xc-hint" id="pfCooldownHint" aria-live="polite">
+        <span class="icn icon--solar icon--solar--clock-circle-linear" aria-hidden="true"></span>
+        <span id="pfCooldownText">ناو و ژمارەی مۆبایل هەر ٧ ڕۆژ جارێک دەتوانرێت بگۆڕدرێت.</span>
+      </div>
+
+      <button type="button" class="btn btn-primary btn-block" id="pfSaveBtn" onclick="saveProfile()"><span class="icn icon--solar icon--solar--diskette-linear" aria-hidden="true"></span>پاشەکەوتکردن</button>
+    </div>
+
+    <div class="pf-menu">
+      <button type="button" class="pf-menu-item" onclick="openVerifyPage()">
+        <span class="pf-menu-ico"><span class="icn icon--solar icon--solar--user-id-linear" aria-hidden="true"></span></span>
+        <span class="pf-menu-txt"><b>پشتڕاستکردنەوەی ناسنامە</b><span id="pfMenuKycSub">کارتی نیشتیمانی یان مۆڵەتی شوفێری</span></span>
+        <span class="pf-menu-arrow"><span class="icn icn-sm icon--solar icon--solar--alt-arrow-left-linear" aria-hidden="true"></span></span>
+      </button>
+      <button type="button" class="pf-menu-item" onclick="navigate('transactions')">
+        <span class="pf-menu-ico"><span class="icn icon--solar icon--solar--bill-list-linear" aria-hidden="true"></span></span>
+        <span class="pf-menu-txt"><b>مامەڵەکان</b><span>مێژووی داواکارییەکان و کۆی پارە</span></span>
+        <span class="pf-menu-arrow"><span class="icn icn-sm icon--solar icon--solar--alt-arrow-left-linear" aria-hidden="true"></span></span>
+      </button>
+      <button type="button" class="pf-menu-item" onclick="navigate('changes')">
+        <span class="pf-menu-ico"><span class="icn icon--solar icon--solar--graph-up-linear" aria-hidden="true"></span></span>
+        <span class="pf-menu-txt"><b>گۆڕانکاری نرخەکان</b><span>دوایین گۆڕانکاری حمولەی دراوەکان</span></span>
+        <span class="pf-menu-arrow"><span class="icn icn-sm icon--solar icon--solar--alt-arrow-left-linear" aria-hidden="true"></span></span>
+      </button>
+      <button type="button" class="pf-menu-item" onclick="navigate('rules')">
+        <span class="pf-menu-ico"><span class="icn icon--solar icon--solar--shield-check-linear" aria-hidden="true"></span></span>
+        <span class="pf-menu-txt"><b>یاساکانی ئەپ</b><span>مەرجەکانی بەکارهێنان</span></span>
+        <span class="pf-menu-arrow"><span class="icn icn-sm icon--solar icon--solar--alt-arrow-left-linear" aria-hidden="true"></span></span>
+      </button>
+      <button type="button" class="pf-menu-item" onclick="toggleTheme()">
+        <span class="pf-menu-ico"><span class="theme-toggle-ico icn"></span></span>
+        <span class="pf-menu-txt"><b>ڕووکاری ئەپ</b><span>گۆڕین لەنێوان ڕووناک و تاریک</span></span>
+        <span class="pf-menu-arrow"><span class="icn icn-sm icon--solar icon--solar--alt-arrow-left-linear" aria-hidden="true"></span></span>
+      </button>
+      <button type="button" class="pf-menu-item" onclick="navigate('support')">
+        <span class="pf-menu-ico"><span class="icn icon--solar icon--solar--headphones-round-linear" aria-hidden="true"></span></span>
+        <span class="pf-menu-txt"><b>پشتگیری و کەیسەکان</b><span>کێشەیەک بنێرە و دۆخی چارەسەرکردنی ببینە</span></span>
+        <span class="pf-menu-arrow"><span class="icn icn-sm icon--solar icon--solar--alt-arrow-left-linear" aria-hidden="true"></span></span>
+      </button>
+      <a class="pf-menu-item" href="https://t.me/proxo_exchange" target="_blank" rel="noopener">
+        <span class="pf-menu-ico"><span class="icn icon--solar icon--solar--plain-2-linear" aria-hidden="true"></span></span>
+        <span class="pf-menu-txt"><b>تیلیگرامی پشتگیری</b><span>پەیوەندی ڕاستەوخۆ بە تیمی پڕۆکسۆ</span></span>
+        <span class="pf-menu-arrow"><span class="icn icn-sm icon--solar icon--solar--alt-arrow-left-linear" aria-hidden="true"></span></span>
+      </a>
+      <button type="button" class="pf-menu-item danger" onclick="logout()">
+        <span class="pf-menu-ico"><span class="icn icon--solar icon--solar--power-linear" aria-hidden="true"></span></span>
+        <span class="pf-menu-txt"><b>چوونەدەرەوە</b><span>دەرچوون لەم هەژمارە</span></span>
+      </button>
+    </div>
+
+    <div class="pf-app-version">Proxo Balance • v3.0</div>
+  </section>
+
+  <!-- ══════════════ PAGE: IDENTITY VERIFICATION (route "/verify") ══════════════ -->
+  <section class="page" id="pageVerify" data-route="verify">
+    <div class="page-head support-page-head">
+      <button type="button" class="support-back" onclick="navigate('profile')" aria-label="گەڕانەوە بۆ پڕۆفایل">
+        <span class="icn icon--solar icon--solar--alt-arrow-right-linear" aria-hidden="true"></span>
+      </button>
+      <div>
+        <h2>
+          <span class="icn icon--solar icon--solar--user-id-linear" aria-hidden="true"></span>
+          پشتڕاستکردنەوەی ناسنامە
+        </h2>
+        <p>بۆ پاراستنی هەژمارەکەت و مامەڵەکانت، ناسنامەکەت بە بەڵگەنامەیەکی فەرمی پشتڕاست بکەرەوە.</p>
+      </div>
+    </div>
+
+    <div class="kyc-banner" id="kycBanner" data-state="loading">
+      <span class="icn icn-spin icon--solar icon--solar--refresh-linear" aria-hidden="true"></span>
+      <div><b>بارکردنی دۆخی ناسنامە...</b></div>
+    </div>
+
+    <div class="kyc-form-card" id="kycFormCard" hidden>
+      <ol class="kyc-steps" aria-hidden="true">
+        <li id="kycStep1" class="on"><span>١</span>جۆری بەڵگەنامە</li>
+        <li id="kycStep2"><span>٢</span>زانیاری</li>
+        <li id="kycStep3"><span>٣</span>وێنەکان</li>
+      </ol>
+
+      <section class="kyc-sec" id="kycSecType">
+        <div class="kyc-sec-title"><span class="kyc-num">١</span><div><b>جۆری بەڵگەنامە هەڵبژێرە</b><small>تەنها بەڵگەنامەی فەرمی و کاراوە قبوڵ دەکرێت</small></div></div>
+        <div class="kyc-doc-grid" role="radiogroup" aria-label="جۆری بەڵگەنامە">
+          <button type="button" class="kyc-doc" data-doc="national_id" role="radio" aria-checked="false" onclick="kycSelectDoc('national_id')">
+            <span class="kyc-doc-ico"><span class="icn icon--solar icon--solar--user-id-linear" aria-hidden="true"></span></span>
+            <span class="kyc-doc-txt"><b>کارتی نیشتیمانی</b><small>کارتی نیشتیمانی یەکگرتووی عێراق</small></span>
+            <span class="kyc-doc-check"><span class="icn icn-sm icon--solar icon--solar--check-circle-linear" aria-hidden="true"></span></span>
+          </button>
+          <button type="button" class="kyc-doc" data-doc="driving_license" role="radio" aria-checked="false" onclick="kycSelectDoc('driving_license')">
+            <span class="kyc-doc-ico"><span class="icn icon--solar icon--solar--card-linear" aria-hidden="true"></span></span>
+            <span class="kyc-doc-txt"><b>مۆڵەتی شوفێری</b><small>مۆڵەتی شوفێریی عێراق یان هەرێمی کوردستان</small></span>
+            <span class="kyc-doc-check"><span class="icn icn-sm icon--solar icon--solar--check-circle-linear" aria-hidden="true"></span></span>
+          </button>
+        </div>
+        <span class="field-error" id="kycDocTypeError"></span>
+      </section>
+
+      <section class="kyc-sec" id="kycSecInfo" data-locked="true">
+        <div class="kyc-sec-title"><span class="kyc-num">٢</span><div><b>زانیارییەکانی بەڵگەنامە</b><small>وەک خۆی و بە تەواوی لەسەر بەڵگەنامەکە بینووسە</small></div></div>
+        <div class="field">
+          <span class="field-label">ناوی تەواوی یاسایی <small class="kyc-label-help">(وەک سەر بەڵگەنامەکە و ناوی هەژمارەکەت)</small></span>
+          <input type="text" class="input" id="kycName" maxlength="120" autocomplete="name" placeholder="بۆ نموونە: زانا ئەحمەد محەمەد" oninput="clearFieldError('kycName'); kycUpdateNameNote(); kycUpdateSteps()">
+          <span class="field-error" id="kycNameError"></span>
+          <p class="kyc-name-note" id="kycNameNote" hidden></p>
+        </div>
+        <div class="kyc-grid-2">
+          <div class="field">
+            <span class="field-label">بەرواری لەدایکبوون</span>
+            <input type="date" class="input" id="kycDob" dir="ltr" min="1900-01-01" onchange="clearFieldError('kycDob'); kycUpdateSteps()">
+            <span class="field-error" id="kycDobError"></span>
+          </div>
+          <div class="field">
+            <span class="field-label" id="kycNumberLabel">ژمارەی بەڵگەنامە</span>
+            <input type="text" class="input" id="kycNumber" dir="ltr" maxlength="30" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="A12345678" oninput="kycFormatNumber(this); clearFieldError('kycNumber'); kycUpdateSteps()">
+            <span class="field-error" id="kycNumberError"></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="kyc-sec" id="kycSecImages" data-locked="true">
+        <div class="kyc-sec-title"><span class="kyc-num">٣</span><div><b>وێنەی بەڵگەنامە</b><small>وێنەیەکی ڕوون، بێ ڕووناکیی زیادە، و هەموو گۆشەکانی دیار بن</small></div></div>
+        <div class="kyc-upload-grid">
+          <div class="kyc-upload" id="kycFrontBox">
+            <!-- Only two sources: the camera, or the photo gallery. -->
+            <input type="file" id="kycFrontCamera" accept="image/*" capture="environment" hidden onchange="kycOnImage('front', this)">
+            <input type="file" id="kycFrontGallery" accept="image/*" hidden onchange="kycOnImage('front', this)">
+            <div class="kyc-drop" id="kycFrontDrop">
+              <span class="kyc-drop-ico"><span class="icn icon--solar icon--solar--gallery-add-linear" aria-hidden="true"></span></span>
+              <b id="kycFrontTitle">ڕووی پێشەوەی کارت</b>
+              <small id="kycFrontHint">وێنەیەکی ڕوون بگرە یان لە گەلەری هەڵیبژێرە</small>
+              <div class="kyc-src-btns">
+                <label for="kycFrontCamera" class="kyc-src-btn primary" role="button" tabindex="0"><svg class="kyc-src-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l1.6-2.2A1.5 1.5 0 0 1 9.8 5h4.4a1.5 1.5 0 0 1 1.2.8L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1Z"/><circle cx="12" cy="13" r="3.6"/></svg><span>وێنەگرتن</span></label>
+                <label for="kycFrontGallery" class="kyc-src-btn" role="button" tabindex="0"><svg class="kyc-src-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2.5"/><circle cx="9" cy="9.5" r="1.8"/><path d="m21 15-4.5-4.5L7 20"/></svg><span>هەڵبژاردن لە گەلەری</span></label>
+              </div>
+            </div>
+            <div class="kyc-preview" id="kycFrontPreview" hidden>
+              <img id="kycFrontImg" alt="ڕووی پێشەوەی بەڵگەنامە">
+              <div class="kyc-preview-bar">
+                <span class="kyc-preview-meta" id="kycFrontMeta"></span>
+                <span class="kyc-preview-actions">
+                  <label for="kycFrontCamera" class="kyc-mini-btn" role="button" tabindex="0"><svg class="kyc-src-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l1.6-2.2A1.5 1.5 0 0 1 9.8 5h4.4a1.5 1.5 0 0 1 1.2.8L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1Z"/><circle cx="12" cy="13" r="3.6"/></svg>وێنەگرتن</label>
+                  <label for="kycFrontGallery" class="kyc-mini-btn" role="button" tabindex="0"><svg class="kyc-src-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2.5"/><circle cx="9" cy="9.5" r="1.8"/><path d="m21 15-4.5-4.5L7 20"/></svg>گەلەری</label>
+                  <button type="button" class="kyc-mini-btn danger" onclick="kycRemoveImage('front')">لابردن</button>
+                </span>
+              </div>
+            </div>
+            <span class="field-error" id="kycFrontError"></span>
+          </div>
+          <div class="kyc-upload" id="kycBackBox">
+            <!-- Only two sources: the camera, or the photo gallery. -->
+            <input type="file" id="kycBackCamera" accept="image/*" capture="environment" hidden onchange="kycOnImage('back', this)">
+            <input type="file" id="kycBackGallery" accept="image/*" hidden onchange="kycOnImage('back', this)">
+            <div class="kyc-drop" id="kycBackDrop">
+              <span class="kyc-drop-ico"><span class="icn icon--solar icon--solar--gallery-add-linear" aria-hidden="true"></span></span>
+              <b id="kycBackTitle">ڕووی دواوەی کارت</b>
+              <small id="kycBackHint">وێنەیەکی ڕوون بگرە یان لە گەلەری هەڵیبژێرە</small>
+              <div class="kyc-src-btns">
+                <label for="kycBackCamera" class="kyc-src-btn primary" role="button" tabindex="0"><svg class="kyc-src-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l1.6-2.2A1.5 1.5 0 0 1 9.8 5h4.4a1.5 1.5 0 0 1 1.2.8L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1Z"/><circle cx="12" cy="13" r="3.6"/></svg><span>وێنەگرتن</span></label>
+                <label for="kycBackGallery" class="kyc-src-btn" role="button" tabindex="0"><svg class="kyc-src-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2.5"/><circle cx="9" cy="9.5" r="1.8"/><path d="m21 15-4.5-4.5L7 20"/></svg><span>هەڵبژاردن لە گەلەری</span></label>
+              </div>
+            </div>
+            <div class="kyc-preview" id="kycBackPreview" hidden>
+              <img id="kycBackImg" alt="ڕووی دواوەی بەڵگەنامە">
+              <div class="kyc-preview-bar">
+                <span class="kyc-preview-meta" id="kycBackMeta"></span>
+                <span class="kyc-preview-actions">
+                  <label for="kycBackCamera" class="kyc-mini-btn" role="button" tabindex="0"><svg class="kyc-src-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l1.6-2.2A1.5 1.5 0 0 1 9.8 5h4.4a1.5 1.5 0 0 1 1.2.8L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1Z"/><circle cx="12" cy="13" r="3.6"/></svg>وێنەگرتن</label>
+                  <label for="kycBackGallery" class="kyc-mini-btn" role="button" tabindex="0"><svg class="kyc-src-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2.5"/><circle cx="9" cy="9.5" r="1.8"/><path d="m21 15-4.5-4.5L7 20"/></svg>گەلەری</label>
+                  <button type="button" class="kyc-mini-btn danger" onclick="kycRemoveImage('back')">لابردن</button>
+                </span>
+              </div>
+            </div>
+            <span class="field-error" id="kycBackError"></span>
+          </div>
+        </div>
+        <ul class="kyc-tips">
+          <li>وێنەکە پێش ناردن لەسەر مۆبایلەکەت دەپشکنرێت؛ وێنەی ناڕوون یان زۆر بچووک وەرناگیرێت</li>
+          <li>بەڵگەنامەکە لەسەر ڕووێکی تەخت دابنێ و هەموو نووسینەکان خوێندراوە بن</li>
+          <li>وێنەی شاشە، کۆپی یان بەڵگەنامەی بەسەرچوو قبوڵ ناکرێت</li>
+        </ul>
+      </section>
+
+      <div class="kyc-privacy">
+        <span class="icn icon--solar icon--solar--lock-linear" aria-hidden="true"></span>
+        <p>وێنەکان بە نهێنی لە کۆگایەکی تایبەتدا هەڵدەگیرێن. تەنها تیمی پشکنینی پڕۆکسۆ دەتوانێت بیانبینێت و هیچ بەستەرێکی گشتییان نییە.</p>
+      </div>
+
+      <label class="kyc-consent">
+        <input type="checkbox" id="kycConsent" onchange="clearFieldError('kycConsent')">
+        <span>دڵنیام کە ئەم زانیارییانە ڕاستن و بەڵگەنامەکە هی خۆمە.</span>
+      </label>
+      <span class="field-error" id="kycConsentError"></span>
+
+      <div class="kyc-form-error" id="kycFormError" role="alert" hidden></div>
+
+      <button type="button" class="btn btn-primary btn-block kyc-submit-btn" id="kycSubmitBtn" onclick="submitKyc()">
+        <span class="icn icon--solar icon--solar--shield-check-linear" aria-hidden="true"></span>
+        ناردنی داواکاری پشتڕاستکردنەوە
+      </button>
+      <div class="kyc-progress" id="kycProgress" hidden aria-live="polite">
+        <div class="kyc-progress-track"><span id="kycProgressFill"></span></div>
+        <small id="kycProgressText">ئامادەکردن...</small>
+      </div>
+    </div>
+
+    <div class="kyc-success" id="kycSuccess" hidden role="status" aria-live="polite">
+      <span class="kyc-success-ico"><span class="icn icn-xl icon--solar icon--solar--check-circle-linear" aria-hidden="true"></span></span>
+      <h3>داواکارییەکەت نێردرا و لە ژێر پشکنینە</h3>
+      <p>تیمی پشکنین بەم زووانە بەڵگەنامەکەت دەپشکنێت. کاتێک بڕیار درا، ئاگادارت دەکەینەوە.</p>
+      <button type="button" class="btn btn-primary btn-block" onclick="navigate('profile')">گەڕانەوە بۆ پڕۆفایل</button>
+    </div>
+  </section>
+
+  <!-- ══════════════ PAGE: CUSTOMER SUPPORT ══════════════ -->
+  <section class="page" id="pageSupport" data-route="support">
+    <div class="page-head support-page-head">
+      <button type="button" class="support-back" onclick="navigate('profile')" aria-label="گەڕانەوە بۆ پڕۆفایل">
+        <span class="icn icon--solar icon--solar--alt-arrow-right-linear" aria-hidden="true"></span>
+      </button>
+      <div>
+        <h2>
+          <span class="icn icon--solar icon--solar--headphones-round-linear" aria-hidden="true"></span>
+          پشتگیری
+        </h2>
+        <p>کێشەکەت بنووسە؛ ژمارەیەکی تایبەتی کەیس وەردەگریت و دۆخەکەی لێرە دەبینیت.</p>
+      </div>
+    </div>
+
+    <div class="support-form-card">
+      <div class="support-form-title">
+        <span class="support-form-icon"><span class="icn icon--solar icon--solar--pen-linear" aria-hidden="true"></span></span>
+        <div><b>کەیسێکی نوێ</b><span>هەموو زانیارییەکان بە نهێنی دەپارێزرێن</span></div>
+      </div>
+
+      <div class="field">
+        <span class="field-label">جۆری کێشە</span>
+        <select class="input support-select" id="supportCategory">
+          <option value="order">کێشەی داواکاری</option>
+          <option value="payment">کێشەی پارەدان</option>
+          <option value="account">کێشەی هەژمار</option>
+          <option value="technical">کێشەی تەکنیکی</option>
+          <option value="general">کێشەی تر</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <span class="field-label">ئایدی مامەڵە <small>(ئارەزوومەندانە)</small></span>
+        <input type="text" class="input" id="supportOrderCode" maxlength="12" dir="ltr" placeholder="PXXXXXXXXXXX" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,12)">
+      </div>
+
+      <div class="field">
+        <span class="field-label support-label-row"><span>دەربارەی کێشەکە</span><small id="supportDescriptionCount">٠ / ٢٠٠٠</small></span>
+        <textarea class="input support-description" id="supportDescription" maxlength="2000" placeholder="کێشەکە بە ڕوونی بنووسە..." oninput="updateSupportDescriptionCount()"></textarea>
+        <span class="field-error" id="supportDescriptionError"></span>
+      </div>
+
+      <div class="field">
+        <span class="field-label">وێنەی کێشە <small>(ئارەزوومەندانە — تا 5MB)</small></span>
+        <label class="support-image-picker" for="supportImageInput" id="supportImagePicker">
+          <span class="support-image-picker-icon"><span class="icn icon--solar icon--solar--gallery-linear" aria-hidden="true"></span></span>
+          <span><b id="supportImageName">وێنە هەڵبژێرە</b><small id="supportImageMeta">JPG، PNG یان WEBP</small></span>
+          <span class="icn support-upload-arrow icon--solar icon--solar--upload-minimalistic-linear" aria-hidden="true"></span>
+        </label>
+        <input type="file" id="supportImageInput" accept="image/jpeg,image/png,image/webp" hidden onchange="onSupportImageSelected(this)">
+        <div class="support-image-preview" id="supportImagePreview" style="display:none">
+          <img id="supportImagePreviewImg" alt="وێنەی هەڵبژێردراو">
+          <button type="button" onclick="removeSupportImage()" aria-label="لابردنی وێنە">×</button>
+        </div>
+        <span class="field-error" id="supportImageError"></span>
+      </div>
+
+      <button type="button" class="btn btn-primary btn-block support-submit-btn" id="supportSubmitBtn" onclick="submitSupportCase()">
+        <span class="icn icon--solar icon--solar--plain-2-linear" aria-hidden="true"></span>
+        ناردنی کەیس
+      </button>
+
+      <div class="support-success" id="supportSuccess" role="status" aria-live="polite" style="display:none">
+        <span class="icn icon--solar icon--solar--check-circle-linear" aria-hidden="true"></span>
+        <div><b>کەیسەکەت نێردرا</b><span>ژمارەی کەیس: <strong id="supportSuccessNumber" dir="ltr">—</strong></span></div>
+      </div>
+    </div>
+
+    <h3 class="section-title support-list-title">
+      <span class="icn icon--solar icon--solar--bill-list-linear" aria-hidden="true"></span>
+      کەیسەکانی من
+    </h3>
+    <div id="supportCasesList"><div class="empty-state">هێشتا هیچ کەیسێکت نییە</div></div>
+  </section>
+
+  <!-- ══════════════ BOTTOM NAV ══════════════ -->
+  <nav class="bottom-nav" id="bottomNav" aria-label="ڕێنیشاندەری سەرەکی">
+    <div class="bottom-nav-inner">
+      <button type="button" class="bn-item on" data-route="home" onclick="navigate('home')">
+        <span class="bn-ico"><span class="icn icon--solar icon--solar--transfer-horizontal-linear" aria-hidden="true"></span></span>
+        <span class="bn-label">ئاڵوگۆڕ</span>
+      </button>
+      <button type="button" class="bn-item" data-route="transactions" onclick="navigate('transactions')">
+        <span class="bn-ico">
+          <span class="icn icon--solar icon--solar--bill-list-linear" aria-hidden="true"></span>
+          <span class="bn-dot" id="bnTxDot">0</span>
+        </span>
+        <span class="bn-label">مامەڵەکان</span>
+      </button>
+      <button type="button" class="bn-item" data-route="rules" onclick="navigate('rules')">
+        <span class="bn-ico"><span class="icn icon--solar icon--solar--shield-check-linear" aria-hidden="true"></span></span>
+        <span class="bn-label">یاساکان</span>
+      </button>
+      <button type="button" class="bn-item" data-route="profile" onclick="navigate('profile')">
+        <span class="bn-ico">
+          <span class="icn icon--solar icon--solar--user-linear" aria-hidden="true"></span>
+          <span class="bn-dot bn-dot-alert" id="bnProfileDot" aria-label="پشتڕاستکردنەوەی ناسنامە پێویستە">!</span>
+        </span>
+        <span class="bn-label">پڕۆفایل</span>
+      </button>
+    </div>
+  </nav>
+
+</div>
+
+<script>
+/* If a request never returns, the placeholders would shimmer forever.
+   Resolve them to readable text after 12s. */
+(function(){
+  setTimeout(function(){
+    ['historyPreview','txList','publicFeed'].forEach(function(id){
+      var el = document.getElementById(id);
+      if (el && el.querySelector('.tx-skel, .feed-skel')) {
+        el.innerHTML = '<div class="empty-state">نەتوانرا داتاکان باربکرێن — تکایە دووبارە هەوڵبدەوە</div>';
+      }
+    });
+    document.querySelectorAll('.sk-num').forEach(function(s){ s.replaceWith('—'); });
+  }, 12000);
+})();
+</script>
+<script src="/assets/js/app.js?v=28"></script>
+<script src="/assets/js/track.js?v=2"></script>
+</body>
+</html>
