@@ -3434,3 +3434,136 @@ h1,h2,h3,.section-title{ letter-spacing:-.015em; line-height:1.3; }
 #exchangeCard .copy-btn{ width:40px; height:40px; flex:0 0 40px; display:inline-flex; align-items:center; justify-content:center; }
 #exchangeCard .wallet-row-line{ gap:10px; min-height:44px; }
 #exchangeCard .xc-swap-btn{ width:40px; height:40px; }
+
+/* ══════════════════════════════════════════════════════════════
+   HOME FEED — layout fixes
+   The stats card that used to fill the first column of .proof-wrap is
+   permanently hidden, so on desktop the feed was squeezed into that 300px
+   column and its route collapsed. The feed now uses the full width, and the
+   main column always keeps room for the route.
+   ══════════════════════════════════════════════════════════════ */
+@media (min-width:1024px){
+  .proof-wrap{ display:block; }
+}
+@media (min-width:421px){
+  .feed-row{ grid-template-columns:minmax(0,1fr) minmax(150px,auto); }
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   PROXO DESIGN SYSTEM — final layer (pixel pass)
+   Everything above this block is older, stacked layers. This block is the
+   single source of truth for size, radius and spacing, using only the
+   tokens defined in :root. One value per role:
+
+     radius   --radius-xl 18px  page panels (exchange, forms, profile hero)
+              --radius-lg 14px  content cards (transactions, feed, rates…)
+              --radius-md 11px  controls (inputs, pickers, buttons)
+              --radius-full     chips and badges
+     padding  18px panels · 14px cards
+     type     --fs-xl page title · --fs-lg panel title · --fs-md section
+              --fs-base body/labels · --fs-xs meta · --fs-2xs micro
+     controls inputs 50px (16px text on touch screens: no iOS zoom)
+              buttons 48px
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ── Page headers: a title, not another card ── */
+.page-head{
+  background:none; border:0; box-shadow:none; border-radius:0;
+  padding:0; margin:var(--space-2) 2px var(--space-5);
+}
+.page-head h2{ font-size:var(--fs-xl); font-weight:var(--fw-bold); line-height:1.35; gap:10px; }
+.page-head h2 .icn{ width:32px; height:32px; padding:6px; border-radius:10px; flex:0 0 32px; }
+.page-head p{ font-size:var(--fs-xs); color:var(--text-muted); margin-top:6px; line-height:1.65; }
+/* pages with a back button: button and title on one row */
+.support-page-head{ display:flex; align-items:center; gap:12px; }
+.support-page-head h2{ font-size:var(--fs-xl); }
+.support-back{ width:40px; height:40px; flex:0 0 40px; border-radius:var(--radius-md); }
+
+/* ── Headings inside a page ── */
+.section-title{
+  font-size:var(--fs-md); font-weight:var(--fw-bold); color:var(--text);
+  margin:var(--space-6) 2px var(--space-3); gap:8px;
+}
+.section-title > .icn{ width:26px; height:26px; padding:5px; border-radius:8px; }
+.xc-head h2{ font-size:var(--fs-lg); }
+.xc-step-head h3{ font-size:var(--fs-base); font-weight:var(--fw-bold); }
+
+/* ── Panels: the one big surface of a page ── */
+.panel, .pf-card, .kyc-form-card, .support-form-card{
+  border-radius:var(--radius-xl); padding:var(--space-5);
+}
+.pf-hero{ border-radius:var(--radius-xl); }
+
+/* ── Content cards ── */
+.tx-card, .feed-row, .rate-card, .rule-item, .kyc-card, .tx-summary,
+.home-greet, .xc-summary, .chg-item{
+  border-radius:var(--radius-lg);
+}
+.tx-card, .rate-card, .rule-item, .kyc-card, .chg-item{ padding:var(--space-4); }
+.tx-card + .tx-card, .rule-item + .rule-item, .rate-card + .rate-card{ margin-top:10px; }
+.pf-menu{ border-radius:var(--radius-lg); }
+
+/* ── Controls ── */
+.input, .picker-trigger, .wallet-row, .file-picker, .quick-amount-btn{ border-radius:var(--radius-md); }
+.input, .picker-trigger{ min-height:50px; }
+.input{ font-size:var(--fs-md); }
+textarea.input{ min-height:110px; }
+.btn{
+  min-height:48px; border-radius:var(--radius-md);
+  font-size:var(--fs-md); font-weight:var(--fw-semibold);
+}
+.quick-amount-btn{ height:40px; font-size:var(--fs-xs); }
+/* iOS Safari zooms into any field under 16px when it is tapped */
+@media (hover:none) and (pointer:coarse), (max-width:768px){
+  .input, textarea.input, select.input{ font-size:16px; }
+}
+
+/* ── Badges: one size ── */
+.status-badge, .xc-badge, .xc-step-head .xc-badge{
+  padding:3px 10px; font-size:var(--fs-2xs); font-weight:var(--fw-semibold);
+  line-height:1.5; border-radius:var(--radius-full);
+}
+
+/* ── Money: a received amount is always green ── */
+.xc-sum-row.total .v, .confirm-row-value.accent{ color:var(--success); }
+
+/* ── Home feed: two zones side by side on phones too ── */
+@media (max-width:767px){
+  .feed-row{ grid-template-columns:minmax(0,1fr) auto; gap:10px; padding:12px 12px 12px 14px; }
+  .feed-main{ gap:7px; }
+  .feed-side{ min-width:118px; padding:8px 10px; gap:3px; display:flex; }
+  .feed-time{ padding-bottom:4px; }
+  .fa-in .fa-val{ font-size:var(--fs-md); }
+}
+@media (max-width:359px){
+  .feed-row{ grid-template-columns:1fr; }
+}
+/* stragglers: older rules with higher specificity */
+.section-title:has(+ .proof-wrap),
+.section-title:has(+ .feed-wrap),
+.proof-wrap .section-title{
+  font-size:var(--fs-md); font-weight:var(--fw-bold); color:var(--text);
+}
+@media (hover:none) and (pointer:coarse), (max-width:768px){
+  .xc-input-wrap .input, .field .xc-input-wrap .input{ font-size:16px; }
+}
+@media (hover:none) and (pointer:coarse), (max-width:768px){
+  #exchangeCard .xc-input-wrap .input{ font-size:16px; }
+}
+@media (hover:none) and (pointer:coarse), (max-width:768px){
+  #exchangeCard #userSenderName{ font-size:16px; }
+}
+/* back-button pages: the back button is the only icon in the header */
+.support-page-head h2 > .icn{ display:none; }
+
+/* home feed on phones: compact amount panel, full wallet names */
+@media (max-width:767px){
+  .feed-side{ min-width:0; padding:8px 10px; gap:2px; align-items:flex-end; text-align:end; }
+  .feed-side .fa-lbl{ display:none; }            /* + / colour already say received vs sent */
+  .feed-side .fa-line{ justify-content:flex-end; }
+  .feed-time{ border-bottom:0; padding-bottom:2px; }
+  .feed-route{ flex-wrap:wrap; row-gap:4px; }
+  .feed-route .method-icon, .feed-route img{ width:24px; height:24px; flex-basis:24px; padding:2px; border-radius:7px; }
+  .fr-name{ max-width:none; font-size:var(--fs-sm); }
+  .fr-arrow{ width:18px; height:18px; flex-basis:18px; padding:3px; }
+}

@@ -677,3 +677,21 @@ body{height:100% !important;min-height:0 !important;max-height:100% !important;
 
 /* Accounts: total / filtered count next to the title */
 .acc-count{font-size:13px;font-weight:600;color:var(--mt);margin-right:6px;}
+
+/* ══ KYC: names + exchange gate ══ */
+.kyc-badges{display:flex;flex-wrap:wrap;gap:5px;justify-content:flex-end;align-items:center;}
+.kyc-fact-bad{background:rgba(217,119,6,.08)!important;box-shadow:inset 0 0 0 1px rgba(217,119,6,.35);}
+.kyc-name-compare{border-radius:14px;padding:12px;border:1.5px solid var(--b1);background:var(--bg);}
+.kyc-name-compare.bad{border-color:rgba(217,119,6,.55);background:rgba(217,119,6,.06);}
+.kyc-name-compare.ok{border-color:rgba(22,163,74,.35);background:rgba(22,163,74,.05);}
+.kyc-nc-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.kyc-nc-grid div{background:var(--w);border:1px solid var(--b1);border-radius:10px;padding:9px 11px;min-width:0;}
+.kyc-nc-grid small{display:block;font-size:10.5px;color:var(--mt);margin-bottom:3px;}
+.kyc-nc-grid b{display:block;font-size:14px;color:var(--dark);overflow-wrap:anywhere;}
+.kyc-nc-note{margin-top:10px;font-size:12.5px;line-height:1.7;display:flex;gap:7px;align-items:flex-start;}
+.kyc-nc-note svg,.kyc-nc-note i{flex:0 0 auto;margin-top:3px;}
+.kyc-nc-note.ok{color:var(--gr);}
+.kyc-nc-note.bad{color:#b45309;font-weight:700;}
+.kyc-nc-note.warn{color:var(--mt2);}
+.kyc-name-compare .modal-btn{margin-top:10px;}
+@media(max-width:600px){.kyc-nc-grid{grid-template-columns:1fr;}}
