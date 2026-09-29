@@ -11,7 +11,7 @@
     },
     {
       "source": "/form-demo",
-      "destination": "/form-demo.html"
+      "destination": "/form.html"
     },
     {
       "source": "/form/:id",
