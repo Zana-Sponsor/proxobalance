@@ -620,3 +620,27 @@ using (
   bucket_id = 'form-assets'
   and (storage.foldername(name))[1] = (select auth.uid())::text
 );
+
+
+-- Explicit function grants.
+-- Supabase may grant EXECUTE directly to anon/authenticated when a function is created,
+-- so revoke/grant the exact roles after all CREATE OR REPLACE statements above.
+
+revoke execute on function public.pa_create_form(text,text,text,text,jsonb) from public, anon;
+grant execute on function public.pa_create_form(text,text,text,text,jsonb) to authenticated, service_role;
+
+revoke execute on function public.pa_attach_form_to_ad(uuid,uuid) from public, anon;
+grant execute on function public.pa_attach_form_to_ad(uuid,uuid) to authenticated, service_role;
+
+-- Trigger helper functions are not public RPC endpoints.
+revoke execute on function public.pa_ads_form_owner_guard() from public, anon, authenticated;
+revoke execute on function public.pa_form_submission_guard() from public, anon, authenticated;
+revoke execute on function public.pa_touch_form_updated_at() from public, anon, authenticated;
+
+-- These two RPCs are intentionally public because the landing page is public.
+-- They expose only display-safe data / validated submissions.
+revoke execute on function public.pa_get_public_form(uuid) from public;
+grant execute on function public.pa_get_public_form(uuid) to anon, authenticated, service_role;
+
+revoke execute on function public.pa_submit_public_form(uuid,uuid,jsonb,jsonb) from public;
+grant execute on function public.pa_submit_public_form(uuid,uuid,jsonb,jsonb) to anon, authenticated, service_role;
