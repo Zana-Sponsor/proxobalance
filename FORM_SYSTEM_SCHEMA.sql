@@ -81,6 +81,73 @@ create index if not exists pa_ads_form_id_idx
   on public.pa_ads (form_id)
   where form_id is not null;
 
+-- Database-level ownership guard: an ad may only reference a form owned by the same user.
+create or replace function public.pa_ads_form_owner_guard()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+begin
+  if new.form_id is not null and not exists (
+    select 1
+    from public.pa_forms f
+    where f.id = new.form_id
+      and f.user_id = new.user_id
+  ) then
+    raise exception 'FORM_OWNER_MISMATCH';
+  end if;
+  return new;
+end;
+$$;
+
+drop trigger if exists pa_ads_form_owner_guard_trg on public.pa_ads;
+create trigger pa_ads_form_owner_guard_trg
+before insert or update of form_id, user_id on public.pa_ads
+for each row execute function public.pa_ads_form_owner_guard();
+
+-- Database-level submission guard: owner is derived from the form, and an optional ad
+-- must belong to that owner and reference that exact form.
+create or replace function public.pa_form_submission_guard()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  v_owner uuid;
+begin
+  select f.user_id into v_owner
+  from public.pa_forms f
+  where f.id = new.form_id
+    and f.status = 'active';
+
+  if v_owner is null then
+    raise exception 'FORM_NOT_ACTIVE';
+  end if;
+
+  new.owner_user_id := v_owner;
+
+  if new.ad_id is not null and not exists (
+    select 1
+    from public.pa_ads a
+    where a.id = new.ad_id
+      and a.user_id = v_owner
+      and a.form_id = new.form_id
+  ) then
+    raise exception 'FORM_AD_MISMATCH';
+  end if;
+
+  return new;
+end;
+$$;
+
+drop trigger if exists pa_form_submission_guard_trg on public.pa_form_submissions;
+create trigger pa_form_submission_guard_trg
+before insert or update of form_id, ad_id, owner_user_id
+on public.pa_form_submissions
+for each row execute function public.pa_form_submission_guard();
+
 alter table public.pa_forms enable row level security;
 alter table public.pa_form_fields enable row level security;
 alter table public.pa_form_submissions enable row level security;
