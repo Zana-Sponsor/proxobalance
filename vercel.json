@@ -10,6 +10,10 @@
       "destination": "/exchange-admin1.html"
     },
     {
+      "source": "/form/:id",
+      "destination": "/form.html"
+    },
+    {
       "source": "/((?!api/|assets/)[^.]*)",
       "destination": "/index.html"
     }
