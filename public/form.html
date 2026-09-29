@@ -3,76 +3,730 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#046CFA">
+  <meta name="theme-color" content="#0E78FF">
+  <meta name="color-scheme" content="light">
   <title>Proxo Form</title>
   <style>
-    :root{--brand:#046CFA;--bg:#f7f9fc;--card:#fff;--text:#151923;--muted:#6e7685;--line:#e9edf3;--danger:#c62828}
+    @font-face{
+      font-family:"Rabar 021";
+      src:url("/assets/fonts/Rabar_021.ttf") format("truetype");
+      font-display:swap;
+    }
+
+    :root{
+      --brand:#0E78FF;
+      --brand-04:rgba(14,120,255,.04);
+      --brand-07:rgba(14,120,255,.07);
+      --brand-10:rgba(14,120,255,.10);
+      --brand-14:rgba(14,120,255,.14);
+      --ink:#111827;
+      --muted:#6B7280;
+      --soft:#F7F9FC;
+      --soft-2:#F3F6FA;
+      --line:#E5EAF1;
+      --white:#FFFFFF;
+      --shadow:0 14px 38px rgba(15,23,42,.07);
+      --shadow-soft:0 7px 22px rgba(15,23,42,.05);
+      --radius-xl:24px;
+      --radius-lg:18px;
+      --radius-md:15px;
+      --text-size:15px;
+    }
+
     *{box-sizing:border-box}
-    body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Tahoma,Arial,sans-serif}
-    .shell{width:min(100%,620px);margin:0 auto;padding:18px 14px 44px}
-    .brand{display:flex;align-items:center;justify-content:center;gap:8px;margin:2px 0 18px;font-weight:800;font-size:20px}
-    .brand-dot{width:12px;height:12px;border-radius:50%;background:var(--brand)}
-    .card{background:var(--card);border:1px solid var(--line);border-radius:22px;box-shadow:0 10px 32px rgba(20,35,60,.06);overflow:hidden}
-    .hero{display:none;aspect-ratio:16/10;background:#eef2f8;overflow:hidden}
-    .hero img{display:block;width:100%;height:100%;object-fit:cover}
-    .content{padding:22px}
-    h1{margin:0 0 8px;font-size:24px;line-height:1.4;font-weight:800}
-    .desc{margin:0 0 22px;color:var(--muted);font-size:14px;line-height:1.9;white-space:pre-wrap}
-    .field{margin:0 0 16px}
-    label{display:block;margin:0 0 7px;font-size:14px;font-weight:700}
-    .required{color:var(--danger);margin-inline-start:3px}
-    input,textarea,select{width:100%;border:1px solid #dce2ea;border-radius:14px;background:#fff;color:var(--text);font:inherit;font-size:15px;padding:13px 14px;outline:none;transition:.16s border-color,.16s box-shadow}
-    input:focus,textarea:focus,select:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(4,108,250,.10)}
-    textarea{min-height:110px;resize:vertical}
-    button{width:100%;border:0;border-radius:15px;background:var(--brand);color:#fff;font:inherit;font-size:16px;font-weight:800;padding:14px 16px;cursor:pointer}
-    button:disabled{opacity:.55;cursor:not-allowed}
-    .privacy{margin:14px 2px 0;color:#8a92a0;font-size:12px;line-height:1.7;text-align:center}
-    .state{padding:42px 22px;text-align:center}
-    .state h2{font-size:21px;margin:10px 0 8px}
-    .state p{color:var(--muted);margin:0;line-height:1.8}
-    .spinner{width:34px;height:34px;margin:0 auto;border:3px solid #e8edf5;border-top-color:var(--brand);border-radius:50%;animation:spin .8s linear infinite}
-    .check{width:56px;height:56px;border-radius:50%;display:grid;place-items:center;margin:0 auto;background:#eaf3ff;color:var(--brand);font-size:28px;font-weight:900}
-    .error{color:var(--danger)}
+    html{background:var(--soft)}
+    body{
+      margin:0;
+      min-height:100vh;
+      background:
+        radial-gradient(circle at 12% -10%,var(--brand-10),transparent 28%),
+        linear-gradient(180deg,#FBFCFE 0%,#F6F8FB 100%);
+      color:var(--ink);
+      font-family:"Rabar 021","Noto Sans Arabic",Tahoma,Arial,sans-serif;
+      font-size:var(--text-size);
+      line-height:1.72;
+      -webkit-font-smoothing:antialiased;
+      text-rendering:optimizeLegibility;
+    }
+
+    button,input,textarea,select{font:inherit}
+    button{touch-action:manipulation}
     .hidden{display:none!important}
+
+    .page{
+      width:min(100%,640px);
+      margin:0 auto;
+      padding:18px 14px calc(40px + env(safe-area-inset-bottom));
+    }
+
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      margin-bottom:16px;
+      direction:ltr;
+    }
+
+    .logo-wrap{
+      width:148px;
+      min-width:148px;
+      display:flex;
+      align-items:center;
+    }
+
+    .logo{
+      display:block;
+      width:100%;
+      height:auto;
+    }
+
+    .trust-chip{
+      direction:rtl;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      min-height:42px;
+      padding:9px 12px;
+      border:1px solid rgba(14,120,255,.12);
+      border-radius:999px;
+      background:rgba(255,255,255,.82);
+      box-shadow:var(--shadow-soft);
+      color:var(--ink);
+      font-size:var(--text-size);
+      font-weight:700;
+      white-space:nowrap;
+      backdrop-filter:blur(12px);
+    }
+
+    .trust-chip svg{width:19px;height:19px;color:var(--brand);flex:0 0 auto}
+
+    .card{
+      background:rgba(255,255,255,.96);
+      border:1px solid rgba(229,234,241,.95);
+      border-radius:var(--radius-xl);
+      box-shadow:var(--shadow);
+    }
+
+    .state-card{
+      padding:38px 22px;
+      text-align:center;
+    }
+
+    .state-card h2,
+    .state-card p{
+      margin:0;
+      font-size:var(--text-size);
+    }
+
+    .state-card h2{font-weight:800;margin-top:12px}
+    .state-card p{color:var(--muted);margin-top:4px}
+
+    .spinner{
+      width:38px;height:38px;margin:0 auto;
+      border:3px solid var(--brand-10);
+      border-top-color:var(--brand);
+      border-radius:50%;
+      animation:spin .8s linear infinite;
+    }
+
     @keyframes spin{to{transform:rotate(360deg)}}
-    @media (max-width:520px){.shell{padding:10px 10px 28px}.card{border-radius:18px}.content{padding:18px}h1{font-size:21px}}
+
+    .product-card{
+      overflow:hidden;
+      margin-bottom:14px;
+    }
+
+    .hero{
+      display:none;
+      width:100%;
+      aspect-ratio:16/10;
+      background:linear-gradient(145deg,#F8FBFF,#EEF5FF);
+      overflow:hidden;
+      position:relative;
+    }
+
+    .hero::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      box-shadow:inset 0 -30px 60px rgba(14,120,255,.04);
+      pointer-events:none;
+    }
+
+    .hero img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+
+    .product-content{padding:20px}
+
+    .mini-label{
+      display:inline-flex;
+      align-items:center;
+      gap:7px;
+      color:var(--brand);
+      background:var(--brand-07);
+      border:1px solid var(--brand-10);
+      border-radius:999px;
+      padding:7px 10px;
+      font-size:var(--text-size);
+      font-weight:800;
+      margin-bottom:12px;
+    }
+
+    .product-title,
+    .section-title,
+    .offer-title,
+    .privacy-title,
+    .success-title,
+    .feedback-title{
+      margin:0;
+      font-size:var(--text-size);
+      font-weight:800;
+      line-height:1.65;
+    }
+
+    .product-description,
+    .section-subtitle,
+    .offer-text,
+    .privacy-text,
+    .success-text,
+    .feedback-subtitle,
+    .countdown-row{
+      margin:0;
+      font-size:var(--text-size);
+      color:var(--muted);
+      line-height:1.72;
+    }
+
+    .product-description{
+      margin-top:6px;
+      white-space:pre-wrap;
+    }
+
+    .offer-card{
+      margin-bottom:14px;
+      padding:16px;
+      display:flex;
+      align-items:flex-start;
+      gap:12px;
+      background:
+        linear-gradient(135deg,rgba(14,120,255,.09),rgba(14,120,255,.035)),
+        var(--white);
+      border-color:rgba(14,120,255,.15);
+    }
+
+    .icon-box{
+      width:44px;
+      height:44px;
+      min-width:44px;
+      border-radius:14px;
+      display:grid;
+      place-items:center;
+      background:var(--brand-10);
+      color:var(--brand);
+      border:1px solid var(--brand-10);
+    }
+
+    .icon-box svg{width:23px;height:23px}
+
+    .offer-copy{min-width:0;flex:1}
+    .offer-text{margin-top:3px;color:var(--ink)}
+
+    .form-card{
+      padding:18px;
+      margin-bottom:14px;
+    }
+
+    .section-head{
+      display:flex;
+      align-items:flex-start;
+      gap:12px;
+      margin-bottom:16px;
+    }
+
+    .section-copy{flex:1;min-width:0}
+    .section-subtitle{margin-top:3px}
+
+    #fields{
+      display:grid;
+      gap:12px;
+    }
+
+    .field{
+      margin:0;
+    }
+
+    .field-label{
+      display:block;
+      margin:0 2px 7px;
+      color:var(--ink);
+      font-size:var(--text-size);
+      font-weight:700;
+      line-height:1.55;
+    }
+
+    .required{color:var(--brand);margin-inline-start:3px}
+
+    .field-shell{
+      position:relative;
+      display:flex;
+      align-items:center;
+      min-height:56px;
+      background:var(--white);
+      border:1px solid #DDE3EC;
+      border-radius:var(--radius-md);
+      box-shadow:0 4px 12px rgba(15,23,42,.025);
+      transition:border-color .18s ease,box-shadow .18s ease,transform .18s ease;
+      overflow:hidden;
+    }
+
+    .field-shell:focus-within{
+      border-color:var(--brand);
+      box-shadow:0 0 0 4px var(--brand-10),0 8px 20px rgba(15,23,42,.04);
+      transform:translateY(-1px);
+    }
+
+    .field-icon{
+      width:50px;
+      min-width:50px;
+      height:54px;
+      display:grid;
+      place-items:center;
+      color:var(--brand);
+      border-inline-start:1px solid #EEF1F5;
+    }
+
+    .field-icon svg{width:21px;height:21px}
+
+    .field-shell input,
+    .field-shell textarea,
+    .field-shell select{
+      width:100%;
+      min-width:0;
+      border:0;
+      outline:0;
+      color:var(--ink);
+      background:transparent;
+      padding:14px 14px;
+      font-size:var(--text-size);
+      line-height:1.6;
+      direction:rtl;
+    }
+
+    .field-shell textarea{
+      min-height:108px;
+      resize:vertical;
+      padding-top:15px;
+    }
+
+    .field-shell select{
+      appearance:none;
+      -webkit-appearance:none;
+      cursor:pointer;
+      padding-inline-start:40px;
+    }
+
+    .field-shell input::placeholder,
+    .field-shell textarea::placeholder{color:#A1A8B3;opacity:1}
+
+    .select-arrow{
+      position:absolute;
+      left:14px;
+      width:18px;height:18px;
+      color:var(--muted);
+      pointer-events:none;
+    }
+
+    .privacy-card{
+      display:flex;
+      align-items:flex-start;
+      gap:12px;
+      padding:16px;
+      margin-bottom:14px;
+      background:
+        linear-gradient(135deg,rgba(14,120,255,.07),rgba(14,120,255,.02)),
+        var(--white);
+      border-color:rgba(14,120,255,.12);
+    }
+
+    .privacy-copy{flex:1;min-width:0}
+    .privacy-text{margin-top:3px}
+
+    .submit-wrap{
+      position:sticky;
+      bottom:max(10px,env(safe-area-inset-bottom));
+      z-index:20;
+      padding-top:2px;
+    }
+
+    .submit-button{
+      width:100%;
+      min-height:58px;
+      border:0;
+      border-radius:17px;
+      color:#fff;
+      background:var(--brand);
+      box-shadow:0 13px 30px rgba(14,120,255,.26);
+      font-size:var(--text-size);
+      font-weight:800;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      transition:transform .16s ease,box-shadow .16s ease,opacity .16s ease;
+    }
+
+    .submit-button:active{transform:scale(.992)}
+    .submit-button:disabled{opacity:.62;cursor:not-allowed}
+    .submit-button svg{width:20px;height:20px}
+    .submit-spinner{
+      width:18px;height:18px;
+      border:2px solid rgba(255,255,255,.4);
+      border-top-color:#fff;
+      border-radius:50%;
+      animation:spin .7s linear infinite;
+    }
+
+    .error-icon{
+      width:56px;height:56px;margin:0 auto;
+      border-radius:18px;
+      display:grid;place-items:center;
+      background:var(--brand-10);
+      color:var(--brand);
+      font-weight:900;
+      font-size:22px;
+    }
+
+    .success-backdrop{
+      position:fixed;
+      inset:0;
+      z-index:100;
+      padding:18px 14px;
+      display:grid;
+      place-items:center;
+      background:rgba(246,248,251,.70);
+      backdrop-filter:blur(12px);
+      -webkit-backdrop-filter:blur(12px);
+      animation:fadeIn .25s ease both;
+    }
+
+    .success-modal{
+      width:min(100%,560px);
+      background:#fff;
+      border:1px solid rgba(14,120,255,.10);
+      border-radius:28px;
+      box-shadow:0 28px 80px rgba(15,23,42,.18);
+      padding:26px 20px 20px;
+      text-align:center;
+      position:relative;
+      overflow:hidden;
+      animation:modalIn .42s cubic-bezier(.2,.9,.25,1.08) both;
+    }
+
+    .success-modal::before{
+      content:"";
+      position:absolute;
+      width:220px;height:220px;
+      border-radius:50%;
+      background:radial-gradient(circle,var(--brand-10),transparent 68%);
+      top:-112px;left:50%;
+      transform:translateX(-50%);
+      pointer-events:none;
+    }
+
+    .success-badge{
+      width:84px;height:84px;
+      margin:0 auto 16px;
+      border-radius:50%;
+      display:grid;
+      place-items:center;
+      color:#fff;
+      background:var(--brand);
+      position:relative;
+      box-shadow:
+        0 0 0 12px var(--brand-07),
+        0 0 0 24px var(--brand-04),
+        0 16px 32px rgba(14,120,255,.24);
+      animation:pulse 1.35s ease-in-out infinite;
+    }
+
+    .success-badge svg{width:40px;height:40px}
+
+    .spark{
+      position:absolute;
+      width:8px;height:8px;
+      border-radius:50%;
+      background:var(--brand);
+      opacity:.72;
+      animation:spark 1.4s ease-in-out infinite;
+    }
+
+    .spark.s1{top:64px;right:20%;animation-delay:.1s}
+    .spark.s2{top:104px;left:18%;width:6px;height:6px;animation-delay:.45s}
+    .spark.s3{top:54px;left:26%;width:5px;height:5px;animation-delay:.75s}
+
+    .success-title{margin-top:4px}
+    .success-text{margin:6px auto 0;max-width:420px}
+
+    .feedback-box{
+      margin-top:18px;
+      padding:16px;
+      border-radius:18px;
+      background:var(--soft);
+      border:1px solid var(--line);
+    }
+
+    .feedback-subtitle{margin-top:2px}
+    .stars{
+      display:flex;
+      direction:ltr;
+      justify-content:center;
+      gap:9px;
+      margin-top:12px;
+    }
+
+    .star{
+      width:42px;height:42px;
+      padding:0;
+      border:1px solid #DCE2EB;
+      border-radius:13px;
+      background:#fff;
+      color:#A5ACB8;
+      cursor:pointer;
+      display:grid;
+      place-items:center;
+      transition:transform .16s ease,border-color .16s ease,color .16s ease,background .16s ease;
+    }
+
+    .star:hover,
+    .star.active{
+      color:var(--brand);
+      border-color:rgba(14,120,255,.24);
+      background:var(--brand-07);
+      transform:translateY(-2px);
+    }
+
+    .star svg{width:23px;height:23px}
+
+    .countdown-row{
+      margin-top:14px;
+      min-height:50px;
+      padding:11px 14px;
+      border:1px solid var(--line);
+      border-radius:15px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:9px;
+      background:#fff;
+    }
+
+    .countdown-row svg{width:20px;height:20px;color:var(--brand);flex:0 0 auto}
+    #countdownValue{color:var(--brand);font-weight:800}
+
+    .success-action{
+      width:100%;
+      min-height:54px;
+      margin-top:14px;
+      border:0;
+      border-radius:16px;
+      color:#fff;
+      background:var(--brand);
+      font-size:var(--text-size);
+      font-weight:800;
+      cursor:pointer;
+    }
+
+    .feedback-thanks{
+      margin-top:10px;
+      color:var(--brand);
+      font-size:var(--text-size);
+      font-weight:700;
+    }
+
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+    @keyframes modalIn{
+      from{opacity:0;transform:translateY(18px) scale(.965)}
+      to{opacity:1;transform:translateY(0) scale(1)}
+    }
+    @keyframes pulse{
+      0%,100%{transform:scale(1)}
+      50%{transform:scale(1.035)}
+    }
+    @keyframes spark{
+      0%,100%{transform:scale(.75);opacity:.28}
+      50%{transform:scale(1.25);opacity:.88}
+    }
+
+    @media (max-width:520px){
+      .page{padding:12px 10px calc(28px + env(safe-area-inset-bottom))}
+      .topbar{margin-bottom:12px}
+      .logo-wrap{width:128px;min-width:128px}
+      .trust-chip{padding:8px 10px;min-height:38px}
+      .product-content,.form-card{padding:16px}
+      .offer-card,.privacy-card{padding:14px}
+      .card{border-radius:20px}
+      .field-shell{min-height:54px}
+      .success-modal{padding:24px 16px 16px;border-radius:24px}
+      .stars{gap:7px}
+      .star{width:39px;height:39px}
+    }
+
+    @media (prefers-reduced-motion:reduce){
+      *,*::before,*::after{
+        animation-duration:.001ms!important;
+        animation-iteration-count:1!important;
+        scroll-behavior:auto!important;
+      }
+    }
   </style>
 </head>
 <body>
-  <main class="shell">
-    <div class="brand" aria-label="Proxo"><span class="brand-dot"></span><span>Proxo</span></div>
+  <main class="page">
+    <header class="topbar">
+      <div class="logo-wrap">
+        <img class="logo" src="/assets/proxo-wordmark.svg" alt="Proxo">
+      </div>
+      <div class="trust-chip">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M12 3 19 6v5c0 4.7-2.8 8-7 10-4.2-2-7-5.3-7-10V6l7-3Z" stroke="currentColor" stroke-width="1.8"/>
+          <path d="m8.8 12 2.1 2.1 4.5-4.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span>فۆڕمی پارێزراو</span>
+      </div>
+    </header>
 
-    <section id="loadingState" class="card state" aria-live="polite">
+    <section id="loadingState" class="card state-card" aria-live="polite">
       <div class="spinner" aria-hidden="true"></div>
       <h2>چاوەڕێ بکە</h2>
       <p>فۆڕمەکە بار دەکرێت…</p>
     </section>
 
-    <section id="errorState" class="card state hidden" aria-live="assertive">
-      <div class="check error" aria-hidden="true">!</div>
+    <section id="errorState" class="card state-card hidden" aria-live="assertive">
+      <div class="error-icon" aria-hidden="true">!</div>
       <h2>فۆڕمەکە بەردەست نییە</h2>
       <p id="errorMessage">تکایە دواتر هەوڵ بدەرەوە.</p>
     </section>
 
-    <section id="formCard" class="card hidden">
-      <div id="hero" class="hero"><img id="productImage" alt=""></div>
-      <div class="content">
-        <h1 id="formTitle"></h1>
-        <p id="formDescription" class="desc hidden"></p>
+    <div id="formExperience" class="hidden">
+      <section class="card product-card">
+        <div id="hero" class="hero">
+          <img id="productImage" alt="">
+        </div>
+        <div class="product-content">
+          <div class="mini-label">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M4 7.5 12 3l8 4.5v9L12 21l-8-4.5v-9Z" stroke="currentColor" stroke-width="1.8"/>
+              <path d="m4.4 7.3 7.6 4.4 7.6-4.4M12 11.7V21" stroke="currentColor" stroke-width="1.8"/>
+            </svg>
+            <span>داواکاری بەرهەم</span>
+          </div>
+          <h1 id="formTitle" class="product-title"></h1>
+          <p id="formDescription" class="product-description hidden"></p>
+        </div>
+      </section>
+
+      <section id="offerCard" class="card offer-card hidden" aria-live="polite">
+        <div class="icon-box" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="m4 12.7 8.7-8.7H20v7.3L11.3 20 4 12.7Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+            <circle cx="16.7" cy="7.3" r="1.2" fill="currentColor"/>
+          </svg>
+        </div>
+        <div class="offer-copy">
+          <h2 class="offer-title">ئۆفەری تایبەت</h2>
+          <p id="offerText" class="offer-text"></p>
+        </div>
+      </section>
+
+      <section class="card form-card">
+        <div class="section-head">
+          <div class="icon-box" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M7 3h7l4 4v14H7V3Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+              <path d="M14 3v5h5M10 12h5M10 16h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="section-copy">
+            <h2 class="section-title">زانیاریی داواکاری</h2>
+            <p class="section-subtitle">تکایە زانیارییەکانت بە دروستی پڕ بکەرەوە.</p>
+          </div>
+        </div>
+
         <form id="leadForm" novalidate>
           <div id="fields"></div>
-          <button id="submitButton" type="submit">داواکاری بنێرە</button>
-          <p class="privacy">بە ناردنی فۆڕمەکە، زانیارییەکانت تەنها بۆ خاوەنی ئەم داواکارییە تۆمار دەکرێن.</p>
         </form>
-      </div>
-    </section>
+      </section>
 
-    <section id="successState" class="card state hidden" aria-live="polite">
-      <div class="check" aria-hidden="true">✓</div>
-      <h2>داواکارییەکەت نێردرا</h2>
-      <p>سوپاس. زانیارییەکانت بە سەرکەوتوویی تۆمار کران.</p>
-    </section>
+      <section class="card privacy-card">
+        <div class="icon-box" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M12 3 19 6v5c0 4.7-2.8 8-7 10-4.2-2-7-5.3-7-10V6l7-3Z" stroke="currentColor" stroke-width="1.8"/>
+            <path d="M9.5 11.3V10a2.5 2.5 0 0 1 5 0v1.3M9 11.3h6v4H9v-4Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="privacy-copy">
+          <h2 class="privacy-title">پاراستنی تایبەتی</h2>
+          <p class="privacy-text">زانیارییەکانت پارێزراون و تەنها بۆ پێشبردنی ئەم داواکارییە بەکاردەهێنرێن.</p>
+        </div>
+      </section>
+
+      <div class="submit-wrap">
+        <button id="submitButton" class="submit-button" type="submit" form="leadForm">
+          <span id="submitButtonText">داواکاری بنێرە</span>
+          <svg id="submitButtonIcon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
   </main>
+
+  <section id="successState" class="success-backdrop hidden" aria-live="polite" aria-modal="true" role="dialog">
+    <div class="success-modal">
+      <span class="spark s1" aria-hidden="true"></span>
+      <span class="spark s2" aria-hidden="true"></span>
+      <span class="spark s3" aria-hidden="true"></span>
+
+      <div class="success-badge" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="m6.5 12.2 3.5 3.5 7.5-7.6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+
+      <h2 class="success-title">داواکارییەکەت بە سەرکەوتوویی تۆمار بوو</h2>
+      <p class="success-text">سوپاس بۆ متمانەکەت. فرۆشیار بە زووترین کات پەیوەندیت پێوە دەکات.</p>
+
+      <div class="feedback-box">
+        <h3 class="feedback-title">فیدباکت بدە</h3>
+        <p class="feedback-subtitle">بۆ باشترکردنی خزمەتگوزاری</p>
+        <div id="stars" class="stars" aria-label="هەڵسەنگاندن بە پێنج ئەستێرە">
+          <button class="star" type="button" data-rating="1" aria-label="1 ئەستێرە"></button>
+          <button class="star" type="button" data-rating="2" aria-label="2 ئەستێرە"></button>
+          <button class="star" type="button" data-rating="3" aria-label="3 ئەستێرە"></button>
+          <button class="star" type="button" data-rating="4" aria-label="4 ئەستێرە"></button>
+          <button class="star" type="button" data-rating="5" aria-label="5 ئەستێرە"></button>
+        </div>
+        <p id="feedbackThanks" class="feedback-thanks hidden">سوپاس بۆ فیدباکەکەت.</p>
+      </div>
+
+      <div class="countdown-row">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.8"/>
+          <path d="M12 7.5V12l3 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        <span>پەڕەکە دوای <strong id="countdownValue">6</strong> چرکە خۆکارانە نوێ دەبێتەوە.</span>
+      </div>
+
+      <button id="successAction" class="success-action" type="button">باشە</button>
+    </div>
+  </section>
+
   <script src="/form.js" defer></script>
 </body>
 </html>
