@@ -26,7 +26,8 @@
   const successAction = $('successAction');
 
   const pathParts = location.pathname.split('/').filter(Boolean);
-  const formId = pathParts[0] === 'form' ? pathParts[1] : '';
+  const isDemo = pathParts[0] === 'form-demo';
+  const formId = isDemo ? 'demo' : (pathParts[0] === 'form' ? pathParts[1] : '');
   const params = new URLSearchParams(location.search);
   const adId = params.get('ad') || '';
 
@@ -191,6 +192,40 @@
   }
 
   async function loadForm() {
+    if (isDemo) {
+      const form = {
+        title: 'سەماعاتی وایەرلێس Proxo',
+        description: 'دەنگێکی پاک، دیزاینێکی مۆدێرن و باترییەکی بەردەوام.',
+        product_image_url: '/assets/demo-product.svg',
+        button_text: 'داواکاری بنێرە',
+        offer_text: 'کاتێک 2 دانە داوا بکەیت، گەیاندن خۆڕاییە.'
+      };
+
+      const fields = [
+        { id: 'demo-name', field_key: 'name', label: 'ناوی تەواو', placeholder: 'ناوی تەواوت بنووسە', field_type: 'text', required: true, options: [] },
+        { id: 'demo-phone', field_key: 'phone', label: 'ژمارەی مۆبایل', placeholder: '07XX XXX XXXX', field_type: 'phone', required: true, options: [] },
+        { id: 'demo-province', field_key: 'province', label: 'پارێزگا', placeholder: 'پارێزگا هەڵبژێرە', field_type: 'select', required: true, options: ['هەولێر','سلێمانی','دهۆک','کەرکووک','بەغدا'] },
+        { id: 'demo-area', field_key: 'area', label: 'شار / ناوچە', placeholder: 'شار یان ناوچە بنووسە', field_type: 'text', required: true, options: [] },
+        { id: 'demo-address', field_key: 'address', label: 'ناونیشان', placeholder: 'ناونیشانی تەواوت بنووسە', field_type: 'text', required: true, options: [] },
+        { id: 'demo-quantity', field_key: 'quantity', label: 'بڕی داواکراو', placeholder: 'ژمارەی دانەکان هەڵبژێرە', field_type: 'select', required: true, options: ['1','2','3','4','5'] },
+        { id: 'demo-note', field_key: 'note', label: 'تێبینی', placeholder: 'هەر تێبینییەکت هەیە بنووسە', field_type: 'textarea', required: false, options: [] }
+      ];
+
+      document.title = 'نمونەی فۆڕمی داواکاری · Proxo';
+      formTitle.textContent = form.title;
+      formDescription.textContent = form.description;
+      formDescription.classList.remove('hidden');
+      productImage.src = form.product_image_url;
+      productImage.alt = form.title;
+      hero.style.display = 'block';
+      offerText.textContent = form.offer_text;
+      offerCard.classList.remove('hidden');
+      submitButtonText.textContent = form.button_text;
+      fieldsRoot.replaceChildren(...fields.map(buildField));
+      showForm();
+      return;
+    }
+
     if (!UUID_RE.test(formId)) {
       fail('لینکی فۆڕمەکە دروست نییە.');
       return;
@@ -341,6 +376,13 @@
 
     const normalButtonText = submitButtonText.textContent;
     setSubmitting(true, normalButtonText);
+
+    if (isDemo) {
+      await new Promise((resolve) => setTimeout(resolve, 650));
+      setSubmitting(false, normalButtonText);
+      showSuccess('demo-submission');
+      return;
+    }
 
     try {
       const response = await fetch('/api/forms', {
