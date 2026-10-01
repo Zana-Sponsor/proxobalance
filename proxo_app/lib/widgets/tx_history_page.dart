@@ -4,17 +4,9 @@ part of 'proxo_sidebar.dart';
 // TxHistoryPage — مێژووی مامەڵەکان (Proxo Transaction History — V1)
 // ═════════════════════════════════════════════════════════════════════════════
 //
-//   ProxoTopBar
-//   مێژووی مامەڵەکان        ← شین، w500
-//   نوێکردنەوە               ← شین، سووک
-//   ┌──────────────────────────────────┐
-//   │ 18/09/2026   12:24 PM   -19,650 د.ع │   ← کارتی بچووک، بێ ئایکۆن
-//   └──────────────────────────────────┘
-//   ProxoBottomNav
-//
-// ⚠ لۆژیکی داتا (هێنان، دووبارەنەبوونەوەی ad_payment، باڵانسی ڕۆیشتوو)
-// وەک خۆی ماوەتەوە — تەنها زانیاری زیادە بۆ پسوولەکە کۆکراوەتەوە.
-// ═════════════════════════════════════════════════════════════════════════════
+// Receipt AppBar, white page, rounded receipt cards and Rabar w400.
+// The page and controls are LTR; Kurdish text keeps its own reading direction.
+// Transaction loading, balances and detail routing remain in this controller.
 
 class _TxItem {
   final String
@@ -186,13 +178,19 @@ class TxHistorySheetState extends State<TxHistoryPage> {
   @override
   void initState() {
     super.initState();
+    ProxoLocale.current.addListener(_onLocaleChanged);
     _load();
   }
 
   @override
   void dispose() {
+    ProxoLocale.current.removeListener(_onLocaleChanged);
     _state.dispose();
     super.dispose();
+  }
+
+  void _onLocaleChanged() {
+    if (mounted) setState(() {});
   }
 
   // amounts >500 stored as IQD; ≤500 stored as USD (×1800)
@@ -555,66 +553,49 @@ class TxHistorySheetState extends State<TxHistoryPage> {
   @override
   Widget build(BuildContext context) {
     final TxStrings l = TxStrings.of(ProxoLocale.current.value);
-    final MediaQueryData mq = MediaQuery.of(context);
     final bool canPop = Navigator.of(context).canPop();
-
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: MediaQuery(
-        data: mq.copyWith(
-          textScaler: mq.textScaler.clamp(
-            minScaleFactor: ReceiptTokens.minTextScale,
-            maxScaleFactor: ReceiptTokens.maxTextScale,
-          ),
-        ),
-        child: Scaffold(
-          backgroundColor: ReceiptTokens.historyPage,
-          appBar: ProxoTopBar(
-            topPadding: mq.padding.top,
-            onBackTap: canPop ? () => Navigator.of(context).maybePop() : null,
-            onNotificationTap: () =>
-                navigatorKey.currentState?.pushNamed('/notifications'),
-          ),
-          body: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              _TxHistoryHeader(l: l, state: _state, onRefresh: _refresh),
-              Expanded(
-                child: ValueListenableBuilder<_TxListState>(
-                  valueListenable: _state,
-                  builder: (BuildContext _, _TxListState s, Widget? __) =>
-                      _buildList(s, l),
-                ),
-              ),
-            ],
-          ),
-          bottomNavigationBar: ValueListenableBuilder<int>(
-            valueListenable: mainShellTab,
-            builder: (BuildContext _, int tab, Widget? __) =>
-                ProxoBottomNav(currentIndex: tab, onTap: _onNavTap),
-          ),
+    return ValueListenableBuilder<_TxListState>(
+      valueListenable: _state,
+      builder: (BuildContext _, _TxListState s, Widget? __) => TxHistoryLayout(
+        title: l.historyTitle,
+        backLabel: l.back,
+        refreshLabel: l.refresh,
+        onBack: canPop ? () => Navigator.of(context).maybePop() : null,
+        onRefresh: s.loading || s.refreshing ? null : _refresh,
+        refreshing: s.refreshing,
+        body: _buildList(s, l),
+        bottomNavigationBar: ValueListenableBuilder<int>(
+          valueListenable: mainShellTab,
+          builder: (BuildContext _, int tab, Widget? __) =>
+              ProxoBottomNav(currentIndex: tab, onTap: _onNavTap),
         ),
       ),
     );
   }
 
   Widget _buildList(_TxListState s, TxStrings l) {
-    if (s.loading) return const _TxSkeletonList();
+    if (s.loading) return const TxHistorySkeletonList();
 
     if (s.items.isEmpty && s.failed) {
-      return ReceiptStateView(
-        title: l.loadErrorTitle,
-        message: l.loadErrorBody,
-        actionLabel: l.retry,
-        onAction: () {
-          _state.value = const _TxListState();
-          _load();
-        },
+      return Directionality(
+        textDirection: TextDirection.rtl,
+        child: ReceiptStateView(
+          title: l.loadErrorTitle,
+          message: l.loadErrorBody,
+          actionLabel: l.retry,
+          onAction: () {
+            _state.value = const _TxListState();
+            _load();
+          },
+        ),
       );
     }
 
     if (s.items.isEmpty) {
-      return ReceiptStateView(title: l.emptyTitle, message: l.emptyBody);
+      return Directionality(
+        textDirection: TextDirection.rtl,
+        child: ReceiptStateView(title: l.emptyTitle, message: l.emptyBody),
+      );
     }
 
     return ListView.separated(
@@ -623,12 +604,12 @@ class TxHistorySheetState extends State<TxHistoryPage> {
       ),
       padding: const EdgeInsets.fromLTRB(
         ReceiptTokens.gutter,
-        0,
+        ReceiptTokens.pageTop,
         ReceiptTokens.gutter,
         ReceiptTokens.pageBottom,
       ),
       itemCount: s.items.length,
-      separatorBuilder: (_, __) => const SizedBox(height: _TxCard.gap),
+      separatorBuilder: (_, __) => const SizedBox(height: TxHistoryCard.gap),
       itemBuilder: (BuildContext _, int i) {
         final _TxItem t = s.items[i];
         return Center(
@@ -644,285 +625,36 @@ class TxHistorySheetState extends State<TxHistoryPage> {
   }
 }
 
-// ═════════════════════════════════════════════════════════════════════════════
-// ناونیشان + نوێکردنەوە
-// ═════════════════════════════════════════════════════════════════════════════
-
-class _TxHistoryHeader extends StatelessWidget {
-  final TxStrings l;
-  final ValueNotifier<_TxListState> state;
-  final Future<void> Function() onRefresh;
-
-  const _TxHistoryHeader({
-    required this.l,
-    required this.state,
-    required this.onRefresh,
-  });
-
-  static final TextStyle _title = ReceiptTokens.heading.copyWith(
-    fontSize: 14,
-    height: 1.30,
-  );
-  static final TextStyle _refresh = ReceiptTokens.rowLabel.copyWith(
-    fontSize: 11.5,
-    color: ReceiptTokens.accent,
-    height: 1.30,
-  );
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(
-          maxWidth: ReceiptTokens.contentMaxWidth + ReceiptTokens.gutter * 2,
-        ),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(
-            ReceiptTokens.gutter,
-            18,
-            ReceiptTokens.gutter,
-            14,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Text(l.historyTitle, style: _title),
-              const SizedBox(height: 6),
-              ValueListenableBuilder<_TxListState>(
-                valueListenable: state,
-                builder: (BuildContext _, _TxListState s, Widget? __) {
-                  final bool busy = s.refreshing || s.loading;
-                  return _PressFade(
-                    onTap: busy ? null : onRefresh,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Text(l.refresh, style: _refresh),
-                        if (s.refreshing) ...const <Widget>[
-                          SizedBox(width: 8),
-                          SizedBox(
-                            width: 11,
-                            height: 11,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 1.6,
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                ReceiptTokens.accent,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ],
-                    ),
-                  );
-                },
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// کاردانەوەیەکی نەرم: کاتی داگرتن تەنها کاڵ دەبێتەوە.
-class _PressFade extends StatefulWidget {
-  final Widget child;
-  final VoidCallback? onTap;
-
-  const _PressFade({required this.child, this.onTap});
-
-  @override
-  State<_PressFade> createState() => _PressFadeState();
-}
-
-class _PressFadeState extends State<_PressFade> {
-  bool _down = false;
-
-  void _set(bool v) {
-    if (_down != v) setState(() => _down = v);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: widget.onTap,
-      onTapDown: widget.onTap == null ? null : (_) => _set(true),
-      onTapUp: (_) => _set(false),
-      onTapCancel: () => _set(false),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 4),
-        child: AnimatedOpacity(
-          opacity: _down ? 0.45 : 1,
-          duration: const Duration(milliseconds: 120),
-          child: widget.child,
-        ),
-      ),
-    );
-  }
-}
-
-// ═════════════════════════════════════════════════════════════════════════════
-// کارتی مامەڵە — بەروار · کات · بڕ
-// ═════════════════════════════════════════════════════════════════════════════
-
+/// Keeps formatting and transaction semantics outside the visual card.
 class _TxCard extends StatelessWidget {
   final _TxItem item;
   final VoidCallback onTap;
 
   const _TxCard({required this.item, required this.onTap});
 
-  static const double gap = 8;
-  static const EdgeInsets _pad = EdgeInsets.symmetric(
-    horizontal: 16,
-    vertical: 14,
-  );
-
-  static final TextStyle _date = ReceiptTokens.rowValue.copyWith(
-    fontSize: 12.5,
-    color: const Color(0xFF27303F),
-    height: 1.40,
-  );
-  static final TextStyle _time = ReceiptTokens.rowLabel.copyWith(
-    fontSize: 11.5,
-    color: const Color(0xFF6B7280),
-    height: 1.40,
-  );
-
   @override
   Widget build(BuildContext context) {
     final _TxItem t = item;
     final DateTime b = receiptBaghdad(t.date) ?? t.date;
     final int iqd = t.amtIqd.round();
-
-    // + سەوز بۆ پارەی زیادکراو، - سوور بۆ پارەی بڕدراو. مامەڵەی
-    // ڕەتکراو/چاوەڕوان هیچ پارەیەکی نەجوڵاندووە → بێ نیشانە، بێ ڕەنگ.
     final String amount;
-    final TextStyle amountStyle;
+    final Color amountColor;
     if (!t.isSettled) {
       amount = receiptIqd(iqd);
-      amountStyle = _time;
+      amountColor = const Color(0xFF6B7280);
     } else if (t.isIn) {
       amount = receiptIqd(iqd, sign: '+');
-      amountStyle = _date.copyWith(color: ReceiptTokens.positive);
+      amountColor = ReceiptTokens.positive;
     } else {
       amount = receiptIqd(iqd, sign: '-');
-      amountStyle = _date.copyWith(color: ReceiptTokens.negative);
+      amountColor = ReceiptTokens.negative;
     }
-
-    return DecoratedBox(
-      decoration: const BoxDecoration(
-        color: ReceiptTokens.card,
-        borderRadius: BorderRadius.zero,
-        boxShadow: ReceiptTokens.cardShadow,
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          splashColor: const Color(0x0A046CFA),
-          highlightColor: const Color(0x08000000),
-          child: Padding(
-            padding: _pad,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.baseline,
-              textBaseline: TextBaseline.alphabetic,
-              children: <Widget>[
-                // ڕاست: بەروار
-                Expanded(
-                  child: Align(
-                    alignment: AlignmentDirectional.centerStart,
-                    child: FittedBox(
-                      fit: BoxFit.scaleDown,
-                      child: Text(
-                        receiptDay(b),
-                        textDirection: TextDirection.ltr,
-                        style: _date,
-                      ),
-                    ),
-                  ),
-                ),
-                // ناوەڕاست: کات
-                Expanded(
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: FittedBox(
-                      fit: BoxFit.scaleDown,
-                      child: Text(
-                        receiptTime(b, spaced: true),
-                        textDirection: TextDirection.ltr,
-                        style: _time,
-                      ),
-                    ),
-                  ),
-                ),
-                // چەپ: بڕ
-                Expanded(
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: FittedBox(
-                      fit: BoxFit.scaleDown,
-                      child: Text(
-                        amount,
-                        textDirection: TextDirection.ltr,
-                        style: amountStyle,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// پلەیسهۆڵدەری بارکردن — هەمان قەبارەی کارتەکان، بێ ئەنیمەیشن.
-class _TxSkeletonList extends StatelessWidget {
-  const _TxSkeletonList();
-
-  @override
-  Widget build(BuildContext context) {
-    Widget bar(double w) =>
-        Container(width: w, height: 10, color: const Color(0xFFEEF0F3));
-    return ListView.separated(
-      physics: const NeverScrollableScrollPhysics(),
-      padding: const EdgeInsets.fromLTRB(
-        ReceiptTokens.gutter,
-        0,
-        ReceiptTokens.gutter,
-        0,
-      ),
-      itemCount: 6,
-      separatorBuilder: (_, __) => const SizedBox(height: _TxCard.gap),
-      itemBuilder: (_, __) => Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(
-            maxWidth: ReceiptTokens.contentMaxWidth,
-          ),
-          child: DecoratedBox(
-            decoration: const BoxDecoration(
-              color: ReceiptTokens.card,
-              boxShadow: ReceiptTokens.cardShadow,
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 19),
-              child: Row(
-                children: <Widget>[
-                  bar(72),
-                  const Spacer(),
-                  bar(52),
-                  const Spacer(),
-                  bar(80),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
+    return TxHistoryCard(
+      date: receiptDay(b),
+      time: receiptTime(b, spaced: true),
+      amount: amount,
+      amountColor: amountColor,
+      onTap: onTap,
     );
   }
 }

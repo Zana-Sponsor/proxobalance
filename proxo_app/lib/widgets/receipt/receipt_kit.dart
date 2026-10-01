@@ -141,14 +141,22 @@ abstract final class ReceiptTokens {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// ReceiptAppBar — Back لە ڕاست (start لە RTL)، ناونیشان ڕاستەقینە لە ناوەڕاست
+// ReceiptAppBar — directional Back, physically centered title.
 // ─────────────────────────────────────────────────────────────────────────────
 
 class ReceiptAppBar extends StatelessWidget {
   final String title;
-  final VoidCallback onBack;
+  final VoidCallback? onBack;
+  final String? backTooltip;
+  final Widget? action;
 
-  const ReceiptAppBar({super.key, required this.title, required this.onBack});
+  const ReceiptAppBar({
+    super.key,
+    required this.title,
+    required this.onBack,
+    this.backTooltip,
+    this.action,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -185,6 +193,7 @@ class ReceiptAppBar extends StatelessWidget {
             child: Center(
               child: Text(
                 title,
+                textDirection: TextDirection.rtl,
                 textAlign: TextAlign.center,
                 style: ReceiptTokens.barTitle,
               ),
@@ -201,11 +210,30 @@ class ReceiptAppBar extends StatelessWidget {
                 height: ReceiptTokens.barTap,
                 child: IconButton(
                   onPressed: onBack,
-                  icon: const ReceiptIcon(Icons.arrow_forward_ios_rounded),
+                  tooltip: backTooltip,
+                  icon: ReceiptIcon(
+                    Directionality.of(context) == TextDirection.ltr
+                        ? Icons.arrow_back_ios_rounded
+                        : Icons.arrow_forward_ios_rounded,
+                  ),
                 ),
               ),
             ),
           ),
+          if (action != null)
+            Padding(
+              padding: const EdgeInsetsDirectional.only(
+                end: ReceiptTokens.barSidePad,
+              ),
+              child: Align(
+                alignment: AlignmentDirectional.centerEnd,
+                child: SizedBox(
+                  width: ReceiptTokens.barTap,
+                  height: ReceiptTokens.barTap,
+                  child: action,
+                ),
+              ),
+            ),
         ],
       ),
     );
@@ -554,14 +582,14 @@ class _ReceiptFittedLine extends StatelessWidget {
 
 class ReceiptIcon extends StatelessWidget {
   final IconData icon;
-  const ReceiptIcon(this.icon, {super.key});
+  final Color color;
+  const ReceiptIcon(this.icon, {super.key, this.color = ReceiptTokens.ink});
   @override
   Widget build(BuildContext context) => SizedBox(
         width: ReceiptTokens.iconBox,
         height: ReceiptTokens.iconBox,
         child: Center(
-          child: Icon(icon,
-              size: ReceiptTokens.iconSize, color: ReceiptTokens.ink),
+          child: Icon(icon, size: ReceiptTokens.iconSize, color: color),
         ),
       );
 }

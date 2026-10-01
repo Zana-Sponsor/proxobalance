@@ -22,6 +22,7 @@ import '../screens/transaction_detail_screen.dart'
 import 'bottom_nav.dart' show ProxoBottomNav;
 import 'top_bar.dart' show ProxoTopBar;
 import 'receipt/receipt_kit.dart';
+import 'receipt/tx_history_layout.dart';
 import 'tasks_page.dart';
 import 'levels_page.dart';
 import '../screens/profile_screen.dart' show ProfileScreen;
