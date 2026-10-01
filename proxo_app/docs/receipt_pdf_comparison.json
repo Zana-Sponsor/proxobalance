@@ -1,0 +1,38 @@
+[
+  {
+    "sample": "narrow_paid",
+    "pages": 1,
+    "page_width": 280.0,
+    "page_height": 950.0,
+    "image_width": 1120,
+    "image_height": 3800,
+    "maximum_pixel_difference": 0
+  },
+  {
+    "sample": "standard_free",
+    "pages": 1,
+    "page_width": 393.0,
+    "page_height": 627.0,
+    "image_width": 1572,
+    "image_height": 2508,
+    "maximum_pixel_difference": 0
+  },
+  {
+    "sample": "transaction_narrow",
+    "pages": 1,
+    "page_width": 280.0,
+    "page_height": 519.0,
+    "image_width": 1120,
+    "image_height": 2076,
+    "maximum_pixel_difference": 0
+  },
+  {
+    "sample": "transaction_standard",
+    "pages": 1,
+    "page_width": 393.0,
+    "page_height": 386.0,
+    "image_width": 1572,
+    "image_height": 1544,
+    "maximum_pixel_difference": 0
+  }
+]

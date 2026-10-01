@@ -1,0 +1,43 @@
+PROXO — MERGED PROJECT UPDATE
+Date: 2026-10-01
+
+Base: your latest uploaded proxo_flutter_fixed.zip.
+Merged: the prepared ad-card, normal-weight typography and thumbnail-protection files from proxo_flutter_thumbnail_hardened.zip.
+
+UPDATED FILES (4)
+- lib/screens/ad_screen.dart
+- lib/widgets/ad_feedback.dart
+- supabase/THUMBNAILS.md
+- supabase/functions/_shared/ad_thumbnail.ts
+
+ADDED SUPPORT FILES (6)
+- n8n/workflows/Proxo_Thumbnail_Backfill_Retired.json
+- supabase/functions/_shared/thumbnail_validation.ts
+- supabase/functions/_shared/thumbnail_validation_test.ts
+- supabase/functions/_shared/vendor/WEBP_LICENSE.txt
+- supabase/functions/_shared/vendor/webp_dec.js
+- supabase/functions/_shared/vendor/webp_wasm.ts
+
+PRESERVED
+- All other files from your latest project, including newer receipt tests and documents.
+- Ad Details and AdReceiptCard implementation matching your reference pictures.
+- Receipt fonts/assets, data models, payment/campaign logic and project configuration.
+- Existing Android and iOS project directories.
+
+INCLUDED BEHAVIOUR
+- Redesigned white ad cards and metric tiles; expanded divider and animated View More/Less.
+- Portrait 3:4 thumbnails with loading/error handling and repeating Proxo fallback.
+- Ad-card Rabar styles at w400 with no added Kurdish text-size bump; completed-card feedback title at w400.
+- Shared canonical thumbnail handler and binary-image validation, including bundled WebP decoder.
+- Inactive n8n retirement export. Including this file does not deactivate a live workflow automatically.
+
+VERIFICATION IN THIS MERGE
+- ZIP CRC/integrity check passed.
+- All 10 incoming files match the prepared updated files byte-for-byte.
+- Every existing file outside the four replacements is preserved byte-for-byte.
+- Relative imports in incoming Dart/TypeScript source resolve inside the merged project.
+- Receipt screen/widget/helper match your latest upload byte-for-byte.
+- No live Supabase or n8n configuration was changed in this merge.
+- Flutter/Dart is unavailable here: no fresh flutter analyze/build/device-run result is claimed.
+
+The existing Rabar_021 font asset is retained. w400 is the requested Flutter style; the font file itself carries Bold metadata. It has not been replaced or edited.

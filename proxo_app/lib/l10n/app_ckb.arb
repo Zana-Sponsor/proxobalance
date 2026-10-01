@@ -1,0 +1,21 @@
+{
+  "@@locale": "ckb",
+  "loginTitle": "چوونەژوورەوە",
+  "loginSubtitle": "بەخێربێیتەوە! تکایە زانیارییەکانت بنووسە",
+  "signupTitle": "دروستکردنی هەژمار",
+  "signupSubtitle": "هەژمارێکی نوێ لە پڕۆکسۆ دروست بکە",
+  "verificationTitle": "کۆدی دڵنیاکردنەوە",
+  "codeSentTo": "کۆد نێردرا بۆ:",
+  "fullName": "ناوی تەواو",
+  "phoneNumber": "ژمارەی مۆبایل",
+  "email": "ئیمەیڵ",
+  "password": "وشەی نهێنی",
+  "confirmPassword": "دووبارەکردنەوەی وشەی نهێنی",
+  "continueAction": "بەردەوامبوون",
+  "verifyAction": "پشتڕاستکردنەوە",
+  "resendCode": "دووبارە ناردنەوەی کۆد",
+  "homeTab": "سەرەکی",
+  "adsTab": "ڕیکلامەکان",
+  "toolsTab": "ئامرازەکان",
+  "profileTab": "پڕۆفایل"
+}

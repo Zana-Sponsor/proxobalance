@@ -1,0 +1,15 @@
+Verification summary - single-line receipt revision, 2026-09-29
+Flutter 3.47.5 / Dart 3.13.4
+109 tests passed (receipt_layout, receipt_pdf, ad_receipt_data, ad_detail_loading).
+78 measured screen cases; 846 rows.
+Maximum label/value baseline error: 0dp.
+Maximum label/value vertical-center error: 0dp.
+Label/value column gap: 8dp in every measured row.
+4 PDFs exported with the production function; one page each.
+Maximum embedded-PDF-image versus screen-capture pixel difference: 0.
+4 PDF renders visually inspected.
+Scoped analyzer: 0 errors, 0 warnings, 1 brace-style info in receipt_pdf_test.dart.
+That brace-style issue was corrected after the test run; no functional code changed.
+The original transient raw log and SDK did not survive the resumed session.
+This file records the observed results; it is not the raw runner output.
+No native APK/iOS build or device sharing test was performed for this revision.

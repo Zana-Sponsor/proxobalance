@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Shown while the Android window is being created. -->
+    <style name="LaunchTheme" parent="@android:style/Theme.Black.NoTitleBar">
+        <item name="android:windowBackground">@drawable/launch_background</item>
+    </style>
+
+    <!-- Shown from the moment the Flutter engine attaches onwards.
+         Was ?android:colorBackground, which resolves to BLACK under
+         Theme.Black.NoTitleBar and caused a dark flash before the
+         Dart splash painted. Now the same colour as the splash. -->
+    <style name="NormalTheme" parent="@android:style/Theme.Black.NoTitleBar">
+        <item name="android:windowBackground">@color/splash_background</item>
+    </style>
+</resources>
