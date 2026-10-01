@@ -1,29 +1,42 @@
 [
   {
-    "sample": "narrow_paid",
-    "pages": 1,
-    "page_width": 280.0,
-    "page_height": 950.0,
-    "image_width": 1120,
-    "image_height": 3800,
-    "maximum_pixel_difference": 0
-  },
-  {
     "sample": "standard_free",
     "pages": 1,
     "page_width": 393.0,
     "page_height": 627.0,
     "image_width": 1572,
     "image_height": 2508,
-    "maximum_pixel_difference": 0
+    "maximum_pixel_difference": 0,
+    "reference_comparisons": [
+      {
+        "image": "02-1000093944.png",
+        "size": [
+          963,
+          1536
+        ],
+        "mean_rgb_difference": 0.4288325011730194,
+        "pixel_maximum_difference": 105.0,
+        "resampling": "bicubic"
+      },
+      {
+        "image": "01-1000093945.png",
+        "size": [
+          964,
+          1536
+        ],
+        "mean_rgb_difference": 1.9811701774597168,
+        "pixel_maximum_difference": 252.0,
+        "resampling": "bicubic"
+      }
+    ]
   },
   {
-    "sample": "transaction_narrow",
+    "sample": "narrow_paid",
     "pages": 1,
     "page_width": 280.0,
-    "page_height": 519.0,
+    "page_height": 653.33333,
     "image_width": 1120,
-    "image_height": 2076,
+    "image_height": 2614,
     "maximum_pixel_difference": 0
   },
   {
@@ -33,6 +46,15 @@
     "page_height": 386.0,
     "image_width": 1572,
     "image_height": 1544,
+    "maximum_pixel_difference": 0
+  },
+  {
+    "sample": "transaction_narrow",
+    "pages": 1,
+    "page_width": 280.0,
+    "page_height": 369.77099,
+    "image_width": 1120,
+    "image_height": 1480,
     "maximum_pixel_difference": 0
   }
 ]

@@ -26,7 +26,7 @@ abstract final class ReceiptTokens {
   // User-selected Rabar_021, requested at normal Flutter weight (w400).
   // The supplied font itself has Bold outlines/metadata; w400 does not
   // manufacture a Regular face or alter those outlines.
-  static const String fontFamily = 'ProxoReceipt';
+  static const String fontFamily = 'Rabar';
   // ── ڕەنگ ─────────────────────────────────────────────────────────────────
   /// White receipt page; the white card is separated only by its soft shadow.
   static const Color page = Color(0xFFFFFFFF);
@@ -68,17 +68,11 @@ abstract final class ReceiptTokens {
   static const double cardRadius = 16;
   static const double cardVerticalPadding = 20;
 
-  static double pageGutter(double width) => width < 340
-      ? 12
-      : width > 430
-          ? 20
-          : 16;
-
-  static double cardInset(double width) => width < 316
-      ? 14
-      : width > 398
-          ? 18
-          : 16;
+  /// Measured reference canvas. One proportional transform preserves every
+  /// fractional coordinate; rounding individual gaps would accumulate drift.
+  static const double referenceWidth = 393;
+  static double pageGutter(double width) => width * gutter / referenceWidth;
+  static double cardInset(double width) => 16;
 
   // ── جیاکەرەوە ─────────────────────────────────────────────────────────────
   /// Divider inset within the responsive card padding.
@@ -255,15 +249,26 @@ class ReceiptSurface extends StatelessWidget {
   const ReceiptSurface({super.key, required this.child});
   @override
   Widget build(BuildContext context) => LayoutBuilder(
-        builder: (context, constraints) => ColoredBox(
-          color: ReceiptTokens.page,
-          child: Padding(
-            padding: EdgeInsets.fromLTRB(
-                ReceiptTokens.pageGutter(constraints.maxWidth),
-                ReceiptTokens.pageTop,
-                ReceiptTokens.pageGutter(constraints.maxWidth),
-                ReceiptTokens.cardToButton),
-            child: SizedBox(width: double.infinity, child: child),
+        builder: (context, constraints) => SizedBox(
+          width: constraints.maxWidth,
+          child: FittedBox(
+            fit: BoxFit.fitWidth,
+            alignment: Alignment.topCenter,
+            child: SizedBox(
+              width: ReceiptTokens.referenceWidth,
+              child: ColoredBox(
+                color: ReceiptTokens.page,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(
+                    ReceiptTokens.gutter,
+                    ReceiptTokens.pageTop,
+                    ReceiptTokens.gutter,
+                    ReceiptTokens.cardToButton,
+                  ),
+                  child: SizedBox(width: double.infinity, child: child),
+                ),
+              ),
+            ),
           ),
         ),
       );

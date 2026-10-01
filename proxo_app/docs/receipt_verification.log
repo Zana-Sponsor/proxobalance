@@ -1,15 +1,16 @@
-Verification summary - single-line receipt revision, 2026-09-29
-Flutter 3.47.5 / Dart 3.13.4
-109 tests passed (receipt_layout, receipt_pdf, ad_receipt_data, ad_detail_loading).
-78 measured screen cases; 846 rows.
-Maximum label/value baseline error: 0dp.
-Maximum label/value vertical-center error: 0dp.
-Label/value column gap: 8dp in every measured row.
+Verification summary - supplied receipt references, 2026-10-02 (Baghdad)
+Flutter 3.47.2 / Dart 3.13.2
+114 tests passed (receipt_layout, receipt_pdf, ad_receipt_data, ad_detail_loading).
+5 canonical-coordinate cases, widths 280 / 393 / 430 / 963 / 964 dp.
+Card bounds, divider positions and all row positions within 0.01 dp.
+78 additional measured screen cases; 846 rows.
+Maximum label/value baseline error: 0.000000000000 dp.
+Maximum label/value vertical-center error: 0.000000000000 dp.
+Column gap: 8 dp multiplied by the common canvas scale.
 4 PDFs exported with the production function; one page each.
 Maximum embedded-PDF-image versus screen-capture pixel difference: 0.
-4 PDF renders visually inspected.
-Scoped analyzer: 0 errors, 0 warnings, 1 brace-style info in receipt_pdf_test.dart.
-That brace-style issue was corrected after the test run; no functional code changed.
-The original transient raw log and SDK did not survive the resumed session.
-This file records the observed results; it is not the raw runner output.
-No native APK/iOS build or device sharing test was performed for this revision.
+4 Poppler PDF renders visually inspected.
+Reference 963 x 1536 mean RGB difference after bicubic resizing: 0.428833 / 255.
+Reference 964 x 1536 mean RGB difference after bicubic resizing: 1.981170 / 255.
+Scoped analyzer: no issues found.
+Native Android/iOS share-sheet interaction was not exercised in this Linux test run.

@@ -3,10 +3,21 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:proxo_app/widgets/receipt/receipt_kit.dart';
 
+/// Includes the canonical canvas transform when auditing physical bounds.
+Rect receiptPaintedRect(WidgetTester tester, Finder finder) {
+  final box = tester.renderObject<RenderBox>(finder);
+  return MatrixUtils.transformRect(
+      box.getTransformTo(null), Offset.zero & box.size);
+}
+
 /// Audit painted text bounds, complete glyph coverage, common baselines,
 /// physical edges and row rhythm, rather than only checking widget flags.
 List<Map<String, dynamic>> auditReceiptRows(WidgetTester tester) {
   final measured = <Map<String, dynamic>>[];
+  final surfaces = find.byType(ReceiptSurface);
+  final factor = surfaces.evaluate().isEmpty
+      ? 1.0
+      : tester.getSize(surfaces.first).width / ReceiptTokens.referenceWidth;
   double? rowHeight;
   for (final element in find.byType(ReceiptRow).evaluate()) {
     final row = element.widget as ReceiptRow;
@@ -15,15 +26,15 @@ List<Map<String, dynamic>> auditReceiptRows(WidgetTester tester) {
     expect(texts, findsNWidgets(2));
     final labelFinder = texts.at(0);
     final valueFinder = texts.at(1);
-    final bounds = tester.getRect(finder);
-    final labelBounds = tester.getRect(labelFinder);
-    final valueBounds = tester.getRect(valueFinder);
+    final bounds = receiptPaintedRect(tester, finder);
+    final labelBounds = receiptPaintedRect(tester, labelFinder);
+    final valueBounds = receiptPaintedRect(tester, valueFinder);
     rowHeight ??= bounds.height;
     expect(bounds.height, closeTo(rowHeight, 0.01));
     expect(labelBounds.right, closeTo(bounds.right, 0.01));
     expect(valueBounds.left, closeTo(bounds.left, 0.01));
     expect(labelBounds.left - valueBounds.right,
-        closeTo(ReceiptTokens.labelToValue, 0.01));
+        closeTo(ReceiptTokens.labelToValue * factor, 0.01));
     expect(labelBounds.center.dy, closeTo(bounds.center.dy, 0.01));
     expect(valueBounds.center.dy, closeTo(bounds.center.dy, 0.01));
 
@@ -85,9 +96,9 @@ List<Map<String, dynamic>> auditReceiptRows(WidgetTester tester) {
         of: find.byWidget(group.widget), matching: find.byType(ReceiptRow));
     for (var i = 1; i < rows.evaluate().length; i++) {
       expect(
-          tester.getRect(rows.at(i)).top -
-              tester.getRect(rows.at(i - 1)).bottom,
-          closeTo(ReceiptTokens.rowToRow, 0.01));
+          receiptPaintedRect(tester, rows.at(i)).top -
+              receiptPaintedRect(tester, rows.at(i - 1)).bottom,
+          closeTo(ReceiptTokens.rowToRow * factor, 0.01));
     }
   }
   return measured;

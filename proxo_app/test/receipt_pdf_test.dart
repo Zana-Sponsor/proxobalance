@@ -130,20 +130,23 @@ void main() {
         } else {
           expect(find.text(receipt.adId), findsOneWidget);
           expect(find.text(receipt.uid), findsOneWidget);
-          expect(tester.getRect(find.text(receipt.uid)).top,
-              greaterThan(tester.getRect(find.text(receipt.adName)).bottom));
+          expect(receiptPaintedRect(tester, find.text(receipt.uid)).top,
+              greaterThan(receiptPaintedRect(tester, find.text(receipt.adName)).bottom));
         }
         final boundary =
             key.currentContext!.findRenderObject() as RenderRepaintBoundary;
-        final surfaceRect = tester.getRect(find.byType(ReceiptSurface));
-        final cardRect = tester.getRect(find.byType(ReceiptCard));
+        final surfaceRect = receiptPaintedRect(tester, find.byType(ReceiptSurface));
+        final cardRect = receiptPaintedRect(tester, find.byType(ReceiptCard));
         expect(boundary.size.width, narrow ? 280 : 393);
-        expect(cardRect.left - surfaceRect.left, narrow ? 12 : 16);
-        expect(cardRect.top - surfaceRect.top, ReceiptTokens.pageTop);
+        final factor = boundary.size.width / ReceiptTokens.referenceWidth;
+        expect(cardRect.left - surfaceRect.left, closeTo(16 * factor, 0.01));
+        expect(cardRect.top - surfaceRect.top,
+            closeTo(ReceiptTokens.pageTop * factor, 0.01));
         expect(
-            surfaceRect.bottom - cardRect.bottom, ReceiptTokens.cardToButton);
+            surfaceRect.bottom - cardRect.bottom,
+            closeTo(ReceiptTokens.cardToButton * factor, 0.01));
         if (narrow && !transaction) {
-          expect(boundary.size.height, greaterThan(640));
+          expect(boundary.size.height, greaterThan(500));
         }
         late Future<bool> future;
         await tester.runAsync(() async {
