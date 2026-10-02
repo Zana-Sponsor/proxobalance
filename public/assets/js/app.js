@@ -544,17 +544,14 @@ async function dismissNotifBar(){
 // ══════════════════════════════════════════════════════════════
 // ═══ THEME ═══════════════════════════════════════════════════════
 // ══════════════════════════════════════════════════════════════
-function applyTheme(t){
-  document.documentElement.setAttribute('data-theme', t);
-  try{ localStorage.setItem('zex_theme', t); }catch(_){}
-  document.querySelectorAll('.theme-toggle-ico').forEach(el=>{ el.innerHTML = t==='dark' ? ICON.sun : ICON.moon; });
+// Light-only interface: a legacy saved dark preference must never re-enable dark mode.
+function applyTheme(){
+  document.documentElement.setAttribute('data-theme','light');
+  try{ localStorage.setItem('zex_theme','light'); }catch(_){}
   const meta=document.getElementById('themeColorMeta');
-  if(meta) meta.setAttribute('content', t==='dark' ? '#0b0e14' : '#f2f4f9');
+  if(meta)meta.setAttribute('content','#f8fafc');
 }
-function toggleTheme(){
-  const cur = document.documentElement.getAttribute('data-theme')==='light' ? 'light':'dark';
-  applyTheme(cur==='dark' ? 'light':'dark');
-}
+function toggleTheme(){ applyTheme(); }
 
 // ══════════════════════════════════════════════════════════════
 // ═══ SUPABASE + FIREBASE (news only) ═══════════════════════════
