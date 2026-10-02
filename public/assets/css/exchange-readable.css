@@ -290,3 +290,9 @@
 /* Small descriptions maintain comfortable contrast on light cards. */
 #pageProfile .pf-menu-item span:not(.icn),#pageProfile .pf-email,
 #pageTx .tx-card-foot,#pageTx .tx-amount-sent,#pageTx .tx-sum-lbl{color:#526176}
+
+/* Restore blue headings on customer profile and transactions; controls stay neutral. */
+#pageProfile .page-head h2,#pageTx .page-head h2,
+#pageProfile .pf-card-title,#pageTx .tx-sum-cap,
+#pageProfile .section-title,#pageTx .section-title,
+.tx-sheet .tx-sheet-head h3{color:#1685fa!important}
