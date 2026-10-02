@@ -142,3 +142,147 @@
 @media(prefers-reduced-motion:reduce){
  #pageProfile *,#pageTx *,.tx-sheet *{transition-duration:.01ms!important;animation-duration:.01ms!important}
 }
+
+
+/* Calm, consistent controls for customers: not every action needs a blue fill.
+   Main submissions use charcoal; passive controls are neutral and low-glare. */
+:root{
+  --calm-control:#eef0f3;
+  --calm-control-text:#293445;
+  --calm-control-border:#dce2e9;
+}
+.btn.btn-primary{
+  background:#edf0f4;
+  color:#293445;
+  border:1px solid #dfe5ed;
+  box-shadow:none;
+  filter:none;
+  font-weight:500;
+}
+.btn.btn-primary:hover{
+  background:#e4e8ed;
+  border-color:#cbd5e1;
+  color:#232e3e;
+  box-shadow:none;
+  filter:none;
+  transform:none;
+}
+.btn.btn-primary:active{background:#dce2e9;transform:scale(.99)}
+/* Submit, confirm and sign-in are the only solid, high-contrast actions. */
+#submitBtn,#confirmSendBtn,#pfSaveBtn,#kycSubmitBtn,
+#supportSubmitBtn,#orderCorrectionSubmitBtn,
+#authBtn,#emailNextBtn,#nameNextBtn,#otpVerifyBtn,
+#forgotSendBtn,#fpVerifyBtn,#fpSaveBtn{
+  background:#303946;
+  border:1px solid #303946;
+  color:#fff;
+  box-shadow:none;
+  font-weight:550;
+}
+#submitBtn:hover,#confirmSendBtn:hover,#pfSaveBtn:hover,
+#kycSubmitBtn:hover,#supportSubmitBtn:hover,
+#orderCorrectionSubmitBtn:hover,#authBtn:hover,
+#emailNextBtn:hover,#nameNextBtn:hover,#otpVerifyBtn:hover,
+#forgotSendBtn:hover,#fpVerifyBtn:hover,#fpSaveBtn:hover{
+  background:#242c38;
+  border-color:#242c38;
+  box-shadow:none;
+}
+.btn.btn-ghost,.quick-amount-btn,.icon-btn,.search-clear{
+  background:#f4f5f7;
+  border-color:#e0e5eb;
+  color:#344155;
+  box-shadow:none;
+}
+.btn.btn-ghost:hover,.quick-amount-btn:hover,.icon-btn:hover,.search-clear:hover{
+  background:#e9edf1;
+  border-color:#cbd5df;
+  color:#293547;
+  box-shadow:none;
+}
+.bn-item.on,.hdr-nav-link.on{
+  background:transparent;
+  color:#344357;
+  font-weight:550;
+}
+.bn-item.on .bn-ico{
+  background:#e9edf2;
+  color:#344357;
+}
+.hdr-nav-link.on{background:#eef0f3}
+.filter-chip.on,
+#pageTx .filter-chip.on{
+  background:#e9edf2;
+  border-color:#cbd5df;
+  color:#303d4f;
+  font-weight:550;
+}
+.filter-chip.on .chip-count,
+#pageTx .filter-chip.on .chip-count{
+  background:#dce2e9;
+  color:#39485e;
+}
+#pageProfile .pf-card-title,#pageTx .tx-sum-cap{
+  color:#263342;
+  font-weight:550;
+}
+#pageProfile .pf-menu-ico{
+  background:#f0f2f5;
+  color:#59697f;
+}
+#pageProfile .pf2-avatar:not(.has-photo){
+  background:#e9eef4;
+  color:#3d4d63;
+  box-shadow:none;
+}
+#pageProfile .pf2-handle{
+  background:#f2f4f7;
+  border-color:#e1e7ed;
+  color:#475970;
+}
+#pageProfile .pf-chip{
+  background:#f5f6f8;
+  border-color:#e6eaf0;
+  color:#4f5e73;
+}
+#pageTx .tx-sum-item,#pageTx .tx-damounts>div{
+  background:#f7f8fa;
+}
+#pageTx .tx-amount,#pageTx .tx-sum-val,
+#pageTx .tx-sum-item.recv .tx-sum-val{color:#263342}
+#pageProfile .page-head .icn,#pageTx .page-head .icn{color:#657589}
+/* Keep true errors, warnings, verified/success status and alerts semantic. */
+.btn:focus-visible,.filter-chip:focus-visible,.bn-item:focus-visible,
+.hdr-nav-link:focus-visible,.pf-menu-item:focus-visible{
+  outline:2px solid #526985;
+  outline-offset:3px;
+}
+[data-theme="dark"] .btn.btn-primary{
+  background:#303a48;
+  border-color:#455164;
+  color:#e9edf3;
+}
+[data-theme="dark"] .btn.btn-ghost,
+[data-theme="dark"] .quick-amount-btn,
+[data-theme="dark"] .icon-btn{
+  background:#252d39;
+  border-color:#394559;
+  color:#e2e8f0;
+}
+[data-theme="dark"] .filter-chip.on,
+[data-theme="dark"] .bn-item.on .bn-ico,
+[data-theme="dark"] .hdr-nav-link.on{
+  background:#303a48;
+  border-color:#526174;
+  color:#e6edf5;
+}
+[data-theme="dark"] #submitBtn,[data-theme="dark"] #confirmSendBtn,
+[data-theme="dark"] #pfSaveBtn,[data-theme="dark"] #kycSubmitBtn,
+[data-theme="dark"] #supportSubmitBtn{
+  background:#414d5e;
+  border-color:#57667b;
+  color:#fff;
+}
+@media(prefers-reduced-motion:reduce){
+ .btn,.icon-btn,.filter-chip,.bn-item{transition:none!important}
+}
