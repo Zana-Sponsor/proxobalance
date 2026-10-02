@@ -67,16 +67,11 @@
 }
 </script>
 
-<meta name="theme-color" id="themeColorMeta" content="#f2f4f9">
+<meta name="theme-color" id="themeColorMeta" content="#f8fafc">
 <script>
-(function(){
-  try{
-    var t = localStorage.getItem('zex_theme');
-    // Light is the default receipt design; keep a visitor's explicit theme choice.
-    if(t!=='light' && t!=='dark') t='light';
-    document.documentElement.setAttribute('data-theme', t);
-  }catch(e){ document.documentElement.setAttribute('data-theme','light'); }
-})();
+/* Consistent light-only UI, including accounts with a saved dark preference. */
+document.documentElement.setAttribute('data-theme','light');
+try{localStorage.setItem('zex_theme','light')}catch(e){}
 </script>
 
 <!-- Firebase kept only for the live announcement banner (Realtime DB) -->
@@ -260,9 +255,7 @@
   <div class="auth-inner">
 
     <div class="auth-topbar">
-      <button type="button" class="icon-btn" onclick="toggleTheme()" aria-label="گۆڕینی ڕووکار">
-        <span class="theme-toggle-ico icn"></span>
-      </button>
+      
     </div>
 
     <div class="auth-brand">
@@ -498,9 +491,7 @@
           </button>
         </div>
 
-        <button type="button" class="icon-btn" onclick="toggleTheme()" aria-label="گۆڕینی ڕووکار">
-          <span class="theme-toggle-ico icn"></span>
-        </button>
+        
 
         <a id="adminBtn" class="icon-btn" href="exchange-admin.html" style="display:none" aria-label="پانێڵی بەڕێوەبەر">
           <span class="icn icon--solar icon--solar--shield-check-linear" aria-hidden="true"></span>
@@ -1149,11 +1140,7 @@
         <span class="pf-menu-txt"><b>یاساکانی ئەپ</b><span>مەرجەکانی بەکارهێنان</span></span>
         <span class="pf-menu-arrow"><span class="icn icn-sm icon--solar icon--solar--alt-arrow-left-linear" aria-hidden="true"></span></span>
       </button>
-      <button type="button" class="pf-menu-item" onclick="toggleTheme()">
-        <span class="pf-menu-ico"><span class="theme-toggle-ico icn"></span></span>
-        <span class="pf-menu-txt"><b>ڕووکاری ئەپ</b><span>گۆڕین لەنێوان ڕووناک و تاریک</span></span>
-        <span class="pf-menu-arrow"><span class="icn icn-sm icon--solar icon--solar--alt-arrow-left-linear" aria-hidden="true"></span></span>
-      </button>
+      
       <button type="button" class="pf-menu-item" onclick="navigate('support')">
         <span class="pf-menu-ico"><span class="icn icon--solar icon--solar--headphones-round-linear" aria-hidden="true"></span></span>
         <span class="pf-menu-txt"><b>پشتگیری و کەیسەکان</b><span>کێشەیەک بنێرە و دۆخی چارەسەرکردنی ببینە</span></span>
@@ -1455,7 +1442,7 @@
 })();
 </script>
 <script src="/assets/js/index-svg-icons.js?v=1"></script>
-<script src="/assets/js/app.js?v=30"></script>
+<script src="/assets/js/app.js?v=31"></script>
 <script src="/assets/js/receipt-download.js?v=1"></script>
 <script src="/assets/js/track.js?v=2"></script>
 </body>
