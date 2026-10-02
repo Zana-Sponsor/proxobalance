@@ -68,9 +68,18 @@ function exStatsRender(){
     (rows.length>exStatsState.limit?'<button type="button" class="ex-btn" style="width:100%" id="exShowMore">بینینی زیاتر ('+exNum(rows.length-exStatsState.limit)+')</button>':'');
   document.getElementById('exShowMore')?.addEventListener('click',()=>{exStatsState.limit+=60;exStatsRender()});
 }
-document.addEventListener('click',e=>{const b=e.target.closest('[data-ex-order]');if(!b)return;const o=exStatsState.rows.find(x=>x.id===b.dataset.exOrder);
-  if(!o)return;allOrders=allOrders||[];if(!allOrders.some(x=>x.id===o.id))allOrders.push(o);showOrderDetail(o.id);
-});
+async function exOpenOrder(id){
+  try{
+    const {data,error}=await sb.from('ex_orders').select('*').eq('id',id).maybeSingle();
+    if(error)throw error;if(!data)throw Error('مامەڵەکە نەدۆزرایەوە');
+    const profiles=typeof loadProfilesFor==='function'?await loadProfilesFor([data.user_id]):{};
+    const full={...data,profile:profiles?.[data.user_id]||null};
+    const idx=allOrders.findIndex(o=>String(o.id)===String(id));
+    if(idx>=0)allOrders[idx]=full;else allOrders.push(full);
+    showOrderDetail(id);
+  }catch(e){showToast('هەڵە لە بینینی مامەڵە: '+e.message,'rd')}
+}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-ex-order]');if(b)exOpenOrder(b.dataset.exOrder)});
 function exExcelSafe(v){const s=String(v==null?'':v);return /^[=+\-@\t\r]/.test(s)?"'"+s:s;}
 function exCsvValue(v){return '"'+exExcelSafe(v).replace(/"/g,'""')+'"';}
 function exDownload(text,name,mime){const blob=new Blob([text],{type:mime}),url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download=name;document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1200);}
