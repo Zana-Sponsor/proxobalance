@@ -1849,6 +1849,11 @@ function openTxDetail(id){
       + '<img src="'+escHtml(o.payout_receipt_url)+'" alt="پسووڵەی گەیاندن" loading="lazy" onclick="openReceiptFull(\''+escHtml(o.payout_receipt_url)+'\')">'
       + '</div>';
   }
+  // A signed-in customer can download their own saved transaction as a Kurdish PDF.
+  html+='<div class="tx-receipt-actions"><button type="button" class="btn btn-ghost" onclick="downloadTransactionReceipt(\''+
+    escHtml(String(o.id))+'\')">'+
+    '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m-4-4 4 4 4-4M5 18v3h14v-3"/></svg>'+
+    'داگرتنی پسووڵەی مامەڵە (PDF)</button></div>';
   document.getElementById('txSheetBody').innerHTML=html;
   document.getElementById('txSheetBackdrop').hidden=false;
   const sheet=document.getElementById('txSheet');
@@ -2989,7 +2994,9 @@ function renderKycProfile(){
   if(badge){
     badge.dataset.state=status;
     const ico=document.getElementById('pfKycBadgeIco');
-    if(ico) ico.innerHTML=kycSolar(meta.icon,'icn-sm'+(meta.spin?' icn-spin':''));
+    if(ico) ico.innerHTML=(status==='none'||status==='required')
+      ? '<svg class="receipt-plus-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>'
+      : kycSolar(meta.icon,'icn-sm'+(meta.spin?' icn-spin':''));
     const txt=document.getElementById('pfKycBadgeText');
     if(txt) txt.textContent=meta.label;
   }
