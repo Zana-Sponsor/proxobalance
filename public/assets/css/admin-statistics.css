@@ -47,3 +47,21 @@
 @media(max-width:1100px){#pgStatistics .sx-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}#pgStatistics .sx-ad-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:560px){#pgStatistics .sx-sheet{padding:17px 13px;border-radius:21px}#pgStatistics .sx-brand{font-size:26px}#pgStatistics .sx-metric{padding:13px 11px}#pgStatistics .sx-metric .number{font-size:18px}#pgStatistics .sx-ad{padding:14px}#pgStatistics .sx-btn{padding:9px 11px}#pgStatistics .sx-select{flex:1}#pgDashboard .sx-quick{padding:15px}}
 @media(prefers-reduced-motion:reduce){#pgStatistics .sx-ad{transition:none}}
+
+/* Bring the existing pricing controls into the same receipt-style design. */
+#pgAdPricing>div[style*="background:var(--w)"]{background:#fff!important;border:1px solid #edf1f5!important;border-radius:25px!important;box-shadow:0 10px 36px rgba(21,47,79,.045);padding:23px 25px!important}
+#pgAdPricing>div[style*="background:var(--w)"]>div:first-child{font-size:16px!important;font-weight:600!important;color:#1685fa!important;line-height:1.7}
+#pgAdPricing>div[style*="background:var(--w)"]>div:nth-child(2){font-size:12px!important;font-weight:400!important;line-height:1.9}
+#pgAdPricing #apStats>div{background:#fff!important;border:1px solid #e9eef5!important;border-radius:17px!important;box-shadow:0 5px 21px rgba(26,49,85,.035);padding:16px 17px!important}
+#pgAdPricing #apStats>div>div:first-child{font-weight:600!important;color:#1685fa!important}
+#pgAdPricing #apStats>div>div:last-child{font-size:12px!important;color:#8391a2!important;line-height:1.9}
+#pgAdPricing #apWrap{overflow-x:auto;border-radius:15px}
+#pgAdPricing #apWrap th{background:#f6f9fd;color:#69798e!important;font-size:12px}
+#pgAdPricing #apWrap td{font-size:12px;color:#24364a;vertical-align:middle}
+#pgAdPricing #apWrap td b{font-weight:500!important}
+#pgAdPricing #apWrap input[type=number],#pgAdPricing #apWrap select{background:#fff;border:1px solid #dee6f0!important;border-radius:10px!important;font-family:Inter,Rabar,Arial,sans-serif!important;font-size:12px!important;padding:9px!important;min-height:38px}
+#pgAdPricing #apWrap input[type=number]:focus,#pgAdPricing #apWrap select:focus{outline:2px solid rgba(22,133,250,.24);border-color:#1685fa!important}
+#pgAdPricing .chip{border-radius:12px;padding:9px 12px;font-weight:400}
+#pgDashboard .stat-card{border-radius:19px;border:1px solid #eaf0f6;box-shadow:0 6px 26px rgba(18,47,80,.035)}
+#pgDashboard .stat-val{font-weight:600}
+@media(max-width:560px){#pgAdPricing>div[style*="background:var(--w)"]{padding:18px 14px!important;border-radius:21px!important}}
