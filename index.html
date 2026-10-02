@@ -90,7 +90,7 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
 <link rel="stylesheet" href="/assets/css/exchange-readable.css?v=3">
 <link rel="stylesheet" href="/assets/css/exchange-typography.css?v=1">
 <link rel="stylesheet" href="/assets/css/index-receipt-theme.css?v=2">
-<link rel="stylesheet" href="/assets/css/exchange-light-panel.css?v=10">
+<link rel="stylesheet" href="/assets/css/exchange-light-panel.css?v=11">
 </head>
 
 <body>
@@ -585,9 +585,12 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
       <span class="xc-head-ico" aria-hidden="true">
         <span class="icn icon--solar icon--solar--transfer-horizontal-linear" aria-hidden="true"></span>
       </span>
-      <div>
+      <div class="xc-head-copy">
+        <span class="xc-eyebrow">ئاڵوگۆڕی دراو</span>
         <h2>داواکاری ئاڵوگۆڕ</h2>
+        <p>ڕێگاکانی ناردن و وەرگرتن هەڵبژێرە و زانیارییەکان تەواو بکە.</p>
       </div>
+      <span class="xc-head-tag">پارەدان بە ئاسانی</span>
     </div>
 
     <!-- Shown instead of the form while an admin-requested verification is not approved -->
@@ -608,6 +611,7 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
       <!-- ── STEP 1 — YOU SEND ───────────────────────────────── -->
       <section class="xc-step" id="grpSend">
         <div class="xc-step-head">
+          <span class="xc-step-index" aria-hidden="true">١</span>
           <h3>دەینێریت</h3>
           <span class="xc-badge" id="sendLimitBadge">کەمترین 10,000</span>
         </div>
@@ -695,6 +699,7 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
       <!-- ── STEP 2 — YOU RECEIVE ────────────────────────────── -->
       <section class="xc-step" id="grpRecv">
         <div class="xc-step-head">
+          <span class="xc-step-index" aria-hidden="true">٢</span>
           <h3>وەریدەگریت</h3>
           <span class="xc-badge" id="etaBadge">٥–٣٠ خولەک</span>
         </div>
@@ -728,9 +733,35 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
       </section>
     </div>
 
-    <!-- ── RECEIPT ─────────────────────────────────────────── -->
+    <!-- ── SUMMARY ───────────────────────────────────────────── -->
+    <div class="xc-summary" id="xcBreakdown" aria-live="polite">
+      <div class="xc-summary-head">
+        <h3>پوختەی ئاڵوگۆڕ</h3>
+        <span>بڕی ناردن و وەرگرتن</span>
+      </div>
+      <div class="xc-sum-row" id="bdSentRow">
+        <span class="lbl">دەینێریت</span>
+        <span class="v" id="bdSent">—</span>
+      </div>
+      <div class="xc-sum-row" id="bdRateRow" hidden>
+        <span class="lbl">نرخی ئاڵوگۆڕ</span>
+        <span class="v" id="bdRate">—</span>
+      </div>
+      <div class="xc-sum-row" id="bdFeeRow">
+        <span class="lbl">کرێی خزمەتگوزاری</span>
+        <span class="v" id="bdFee">—</span>
+      </div>
+      <div class="xc-sum-row total">
+        <span class="lbl">وەریدەگریت</span>
+        <span class="v"><span id="totalDisplay" class="total-value">0 IQD</span></span>
+      </div>
+      <div id="feeDisplay" class="fee-note"></div>
+    </div>
+
+    <!-- ── STEP 3: PROOF OF PAYMENT ──────────────────────── -->
     <section class="xc-step" id="grpProof">
         <div class="xc-step-head">
+          <span class="xc-step-index" aria-hidden="true">٣</span>
           <h3>بەڵگەی پارەدان</h3>
         </div>
         <div class="file-field">
@@ -752,36 +783,18 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
         </div>
     </section>
 
-    <!-- ── SUMMARY ───────────────────────────────────────────── -->
-    <div class="xc-summary" id="xcBreakdown" aria-live="polite">
-      <div class="xc-sum-row" id="bdSentRow">
-        <span class="lbl">دەینێریت</span>
-        <span class="v" id="bdSent">—</span>
-      </div>
-      <div class="xc-sum-row" id="bdRateRow" hidden>
-        <span class="lbl">نرخی ئاڵوگۆڕ</span>
-        <span class="v" id="bdRate">—</span>
-      </div>
-      <div class="xc-sum-row" id="bdFeeRow">
-        <span class="lbl">کرێی خزمەتگوزاری</span>
-        <span class="v" id="bdFee">—</span>
-      </div>
-      <div class="xc-sum-row total">
-        <span class="lbl">وەریدەگریت</span>
-        <span class="v"><span id="totalDisplay" class="total-value">0 IQD</span></span>
-      </div>
-      <div id="feeDisplay" class="fee-note"></div>
-    </div>
-
     <div class="hp-field" aria-hidden="true">
       <label for="contact_reference">Contact reference</label>
       <input type="text" id="contact_reference" name="contact_reference" tabindex="-1" autocomplete="off">
     </div>
 
-    <button class="btn btn-primary btn-block btn-submit" id="submitBtn" onclick="openOrderConfirm()">
-      <span class="icn icon--solar icon--solar--plain-2-linear" aria-hidden="true"></span>
-      ناردنی داواکاری
-    </button>
+    <div class="xc-submit-wrap">
+      <button class="btn btn-primary btn-block btn-submit" id="submitBtn" onclick="openOrderConfirm()">
+        <span class="icn icon--solar icon--solar--plain-2-linear" aria-hidden="true"></span>
+        ناردنی داواکاری
+      </button>
+      <p class="xc-submit-note">پێش ناردن، ژمارە و بڕی پارەکە دووبارە بپشکنە.</p>
+    </div>
   </div>
 
   <!-- ══════════════ SOCIAL PROOF + PUBLIC FEED ══════════════ -->
@@ -870,10 +883,11 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
     </div>
   </div>
 
+  <div class="home-history-panel">
   <h3 class="section-title">
     <span class="icn icon--solar icon--solar--bill-list-linear" aria-hidden="true"></span>
     دوایین مامەڵەکان
-    <span class="title-link" onclick="navigate('transactions')">
+    <span class="title-link" role="button" tabindex="0" onclick="navigate('transactions')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navigate('transactions')}">
       بینینی هەموو
       <span class="icn icon--solar icon--solar--alt-arrow-left-linear" aria-hidden="true"></span>
     </span>
@@ -893,6 +907,7 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
     <div class="tx-skel-head"><span class="sk sk-w30"></span><span class="sk sk-pill sk-w30"></span></div>
     <div class="tx-skel-row"><span class="sk sk-ico"></span><span class="sk sk-w60"></span></div>
     <div class="tx-skel-row"><span class="sk sk-ico"></span><span class="sk sk-w45"></span></div>
+  </div>
   </div>
   </div>
 
