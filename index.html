@@ -85,7 +85,7 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
 
 <!-- Solar Icons (480 Design, CC BY 4.0) — all icons as CSS mask images -->
 <link rel="stylesheet" href="/assets/css/tokens.css?v=4">
-<link rel="stylesheet" href="/assets/css/app.css?v=22">
+<link rel="stylesheet" href="/assets/css/app.css?v=24">
 <link rel="stylesheet" href="/assets/css/proxo-refresh.css?v=1">
 <link rel="stylesheet" href="/assets/css/exchange-readable.css?v=3">
 <link rel="stylesheet" href="/assets/css/exchange-typography.css?v=1">
@@ -593,18 +593,13 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
 
         <div class="select-wrap">
           <select id="from" class="sr-native-select" onchange="updateWallet()" aria-label="لە کوێوە دەینێریت" tabindex="-1">
-            <option value="FastPay">FastPay</option>
-            <option value="FIB">FIB Bank</option>
-            <option value="QiCard">Qi Card</option>
-            <option value="Asiacell">Asiacell Transfer</option>
-            <option value="Korek">Korek Transfer</option>
-            <option value="USDT">USDT ($)</option>
+            <!-- filled from ex_wallets only -->
           </select>
           <button type="button" class="picker-trigger" id="fromTrigger" onclick="openPicker('from')">
             <span class="method-icon" id="fromTriggerIcon"></span>
             <span class="picker-trigger-text">
               <span class="picker-trigger-label">لە کوێوە دەینێریت؟</span>
-              <span class="picker-trigger-value" id="fromTriggerLabel"></span>
+              <span class="picker-trigger-value" id="fromTriggerLabel">بارکردن…</span>
             </span>
             <span class="select-chevron"><span class="icn icn-sm icon--solar icon--solar--alt-arrow-down-linear" aria-hidden="true"></span></span>
           </button>
@@ -685,15 +680,13 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
 
         <div class="select-wrap">
           <select id="receiveVia" class="sr-native-select" onchange="updatePlaceholder(); calc();" aria-label="وەرگرتن لە" tabindex="-1">
-            <option value="FastPay">وەرگرتن لە FastPay</option>
-            <option value="FIB">وەرگرتن لە FIB Bank</option>
-            <option value="QiCard">وەرگرتن لە Qi Card</option>
+            <!-- filled from ex_wallets only -->
           </select>
           <button type="button" class="picker-trigger" id="receiveViaTrigger" onclick="openPicker('receiveVia')">
             <span class="method-icon" id="receiveViaTriggerIcon"></span>
             <span class="picker-trigger-text">
               <span class="picker-trigger-label">وەرگرتن لە</span>
-              <span class="picker-trigger-value" id="receiveViaTriggerLabel"></span>
+              <span class="picker-trigger-value" id="receiveViaTriggerLabel">بارکردن…</span>
             </span>
             <span class="select-chevron"><span class="icn icn-sm icon--solar icon--solar--alt-arrow-down-linear" aria-hidden="true"></span></span>
           </button>
