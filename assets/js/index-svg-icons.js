@@ -56,7 +56,7 @@ const A={
 'copy-linear':'copy','magnifer-linear':'search','dollar-minimalistic-linear':'dollar','dollar-linear':'dollar',
 'banknote-2-linear':'wallet','wallet-linear':'wallet','sale-linear':'dollar','info-circle-linear':'info',
 'danger-triangle-linear':'warning','calendar-linear':'calendar','pen-linear':'edit','diskette-linear':'save',
-'headphones-round-linear':'headset','power-linear':'power','card-linear':'card'
+'headphones-round-linear':'headset','power-linear':'power','card-linear':'card','eye-linear':'info','eye-closed-linear':'info','sun-linear':'info','moon-linear':'info','phone-linear':'phone','chat-round-dots-linear':'mail','wi-fi-router-minimalistic-linear':'wallet','wi-fi-router-round-linear':'wallet','wi-fi-router-linear':'wallet','bolt-linear':'graph','buildings-2-linear':'wallet','banknote-linear':'wallet','bell-off-linear':'bell','graph-down-linear':'graph','lock-unlocked-linear':'lock','magic-stick-3-linear':'plus','user-rounded-linear':'user','tuning-2-linear':'edit'
 };
 function convert(node){
  const cls=[...node.classList].find(c=>c.indexOf('icon--solar--')===0);if(!cls)return;
