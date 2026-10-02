@@ -142,8 +142,8 @@ function pbReceiptPrintCSS(){
   '.pb-rhead h2{font-weight:500;font-size:16px;flex:1;text-align:center}.pb-rhead strong{color:#1685fa;font:bold 25px Arial}'+
   '.pb-rsection{padding:14px 0 10px;border-bottom:1px solid #e8edf3}'+
   '.pb-rsection h3{color:#1685fa;font-size:15px;font-weight:500;text-align:center}'+
-  '.pb-rrow{display:flex;gap:20px;justify-content:space-between;padding:9px 0;font-size:14px;line-height:1.7}'+
-  '.pb-rkey{color:#64748b}.pb-rval{color:#253246;font-weight:500;text-align:left;overflow-wrap:anywhere}'+
+  '.pb-rrow{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start;gap:18px;padding:11px 4px;font-size:14px;line-height:1.75}'+
+  '.pb-rkey{color:#64748b;text-align:right;min-width:0}.pb-rval{color:#253246;font-weight:500;text-align:left;min-width:0;overflow-wrap:anywhere}.pb-rval[dir=ltr]{direction:ltr;unicode-bidi:isolate}'+
   '.pb-rfooter{padding-top:17px;font-size:12px;line-height:1.85;text-align:center;color:#64748b}'+
   '@media print{body{padding:8px}.pb-receipt-print{border:0;border-radius:0}}';
 }
