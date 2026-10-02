@@ -416,3 +416,8 @@ body,#main{background:#f8fafc;color:#171d28}
 @media(prefers-reduced-motion:reduce){
  .ex-btn,.act-btn,.modal-btn,.sb-item{transition:none!important;transform:none!important}
 }
+
+/* Readable metadata at normal text sizes (not washed-out blue/gray). */
+.ex-label,.stat-lbl,.profit-help,.profit-date,.ex-order-footer,.ex-head p,
+#pgDashboard .profit-dash-head p,#pgDashboard .ex-dash-shortcut p,
+.sb-section{color:#566578!important}
