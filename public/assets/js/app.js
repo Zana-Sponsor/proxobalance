@@ -572,48 +572,12 @@ let _newsIdx = 0;
 let _newsTimer = null;
 let _newsSlideTimer = null;
 let _newsSlideToken = 0;
-let _newsIntervalSec = 5;
-let _newsSuppressClickUntil = 0;
 function newsCursorFor(item){ return (item && item.action && item.action.type && item.action.type!=='none') ? 'pointer' : 'default'; }
-function newsPointerHover(){
-    const banner=document.getElementById('newsBanner');
-    return !!(banner && window.matchMedia && window.matchMedia('(hover:hover)').matches && banner.matches(':hover'));
-}
-function newsKeyboardFocus(){
-    const banner=document.getElementById('newsBanner');
-    return !!(banner && banner.contains(document.activeElement) && document.activeElement?.matches(':focus-visible'));
-}
 function updateNewsCounter(){
     const counter=document.getElementById('newsCounter');
-    const controls=document.getElementById('newsControls');
-    const dots=document.getElementById('newsDots');
-    const multiple=_newsItems.length>1;
-    if(controls)controls.hidden=!multiple;
-    if(counter){
-        counter.hidden=!multiple;
-        counter.textContent=(_newsIdx+1)+' / '+_newsItems.length;
-    }
-    if(!dots)return;
-    // Compact dots for small sets; the counter handles longer announcement queues.
-    const dotCount=_newsItems.length<=6?_newsItems.length:0;
-    dots.hidden=!multiple||!dotCount;
-    if(dots.childElementCount!==dotCount){
-        dots.replaceChildren();
-        for(let j=0;j<dotCount;j++){
-            const dot=document.createElement('button');
-            dot.type='button';
-            dot.className='news-slide-dot';
-            dot.setAttribute('aria-label','ئاگاداریی ژمارە '+(j+1));
-            dot.addEventListener('click',event=>{
-                event.stopPropagation();
-                goToNews(j);
-            });
-            dots.appendChild(dot);
-        }
-    }
-    Array.from(dots.children).forEach((dot,j)=>{
-        dot.setAttribute('aria-current',j===_newsIdx?'true':'false');
-    });
+    if(!counter)return;
+    counter.hidden=_newsItems.length<=1;
+    counter.textContent=(_newsIdx+1)+' / '+_newsItems.length;
 }
 function showNewsItem(i,immediate=false){
     const txt=document.getElementById('newsText');
@@ -625,16 +589,7 @@ function showNewsItem(i,immediate=false){
     const render=()=>{
         if(token!==_newsSlideToken)return;
         txt.textContent=item.text||'';
-        const actionable=newsCursorFor(item)==='pointer';
-        banner.style.cursor=actionable?'pointer':'default';
-        banner.classList.toggle('is-actionable',actionable);
-        if(actionable){
-            banner.setAttribute('role','button');
-            banner.tabIndex=0;
-        }else{
-            banner.removeAttribute('role');
-            banner.removeAttribute('tabindex');
-        }
+        banner.style.cursor=newsCursorFor(item);
         updateNewsCounter();
     };
     const reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -658,46 +613,15 @@ function showNewsItem(i,immediate=false){
 }
 function startNewsRotation(intervalSec){
     if(_newsTimer){clearInterval(_newsTimer);_newsTimer=null;}
-    _newsIntervalSec=Math.max(2,Number(intervalSec)||5);
     if(_newsItems.length<=1)return;
+    const ms=Math.max(2,Number(intervalSec)||5)*1000;
     _newsTimer=setInterval(()=>{
-        if(document.hidden||newsPointerHover()||newsKeyboardFocus())return;
+        if(document.hidden)return;
         _newsIdx=(_newsIdx+1)%_newsItems.length;
         showNewsItem(_newsIdx);
-    },_newsIntervalSec*1000);
-}
-function pauseNewsRotation(){
-    if(_newsTimer){clearInterval(_newsTimer);_newsTimer=null;}
-}
-function resumeNewsRotation(event){
-    if(event?.currentTarget?.contains(event.relatedTarget))return;
-    if(!newsPointerHover()&&!newsKeyboardFocus()&&!_newsTimer&&_newsItems.length>1)
-        startNewsRotation(_newsIntervalSec);
-}
-function goToNews(index){
-    if(_newsItems.length<=1)return;
-    _newsIdx=((index%_newsItems.length)+_newsItems.length)%_newsItems.length;
-    showNewsItem(_newsIdx);
-    pauseNewsRotation();
-    if(!newsPointerHover()&&!newsKeyboardFocus())
-        resumeNewsRotation();
-}
-function stepNews(step,event){
-    if(event){event.preventDefault();event.stopPropagation();}
-    goToNews(_newsIdx+step);
-}
-function onNewsBannerKey(event){
-    if(event.target!==event.currentTarget)return;
-    if(event.key==='ArrowRight'||event.key==='ArrowLeft'){
-        event.preventDefault();
-        stepNews(event.key==='ArrowRight'?-1:1);
-    }else if(event.key==='Enter'||event.key===' '){
-        event.preventDefault();
-        onNewsBannerClick();
-    }
+    },ms);
 }
 function onNewsBannerClick(){
-    if(Date.now()<_newsSuppressClickUntil)return;
     const item = _newsItems[_newsIdx];
     const action = item && item.action;
     if(!action || action.type==='none') return;
@@ -729,7 +653,7 @@ function listenToNews() {
         if(data && data.show && items.length){
             _newsItems = items;
             _newsIdx = 0;
-            document.getElementById('newsBanner').style.display='grid';
+            document.getElementById('newsBanner').style.display='flex';
             showNewsItem(0,true);
             startNewsRotation(data.interval);
         } else {
@@ -742,29 +666,6 @@ function listenToNews() {
         }
     });
 }
-
-// Swipe the live banner without opening its optional announcement link.
-// Pointer events support touch and mouse; vertical page scrolling is untouched.
-(function setupNewsSwipe(){
-    const banner=document.getElementById('newsBanner');
-    if(!banner)return;
-    let start=null;
-    banner.addEventListener('pointerdown',event=>{
-        if(event.target.closest('.news-slide-controls')){start=null;return;}
-        start={x:event.clientX,y:event.clientY};
-    },{passive:true});
-    banner.addEventListener('pointerup',event=>{
-        if(!start)return;
-        const dx=event.clientX-start.x;
-        const dy=event.clientY-start.y;
-        start=null;
-        if(_newsItems.length>1&&Math.abs(dx)>44&&Math.abs(dx)>Math.abs(dy)*1.25){
-            _newsSuppressClickUntil=Date.now()+500;
-            stepNews(dx>0?-1:1);
-        }
-    },{passive:true});
-    banner.addEventListener('pointercancel',()=>{start=null;},{passive:true});
-})();
 
 // ══════════════════════════════════════════════════════════════
 // ═══ OTP SYSTEM (own webhook + own ex_otp_codes table) ═════════
