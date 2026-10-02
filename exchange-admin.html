@@ -55,7 +55,7 @@
   <div class="sb-nav">
     <div class="sb-section">سەرەکی</div>
     <div class="sb-item active" onclick="goPage('dashboard')"><i class="fas fa-chart-pie"></i> داشبۆرد</div>
-    <div class="sb-item" onclick="goPage('profit')"><i class="fas fa-chart-line" aria-hidden="true"></i> ئاماری قازانج</div>
+    <div class="sb-item" onclick="goPage('profit')"><i class="fas fa-chart-line" aria-hidden="true"></i> ئاماری لێبڕین</div>
     <div class="sb-item" onclick="goPage('statistics')"><i class="fas fa-chart-column" style="color:#1685fa"></i> ئامار و ڕاپۆرت</div>
     <div class="sb-item" onclick="goPage('orders')"><i class="fas fa-money-bill-transfer"></i> ئۆردەرەکان <span class="sb-badge yw" id="sbOrdersCount" style="display:none">0</span></div>
     <div class="sb-item" onclick="goPage('accounts')"><i class="fas fa-users"></i> هەژمارەکان</div>
@@ -107,8 +107,8 @@
 
     <!-- ══ DASHBOARD ══ -->
     <div class="pg on" id="pgDashboard">
-      <section class="profit-dash-strip" aria-label="پوختەی قازانج"><div class="profit-dash-head"><div><h3>قازانجی تۆمارکراو</h3><p>ئاماری ڕاستەقینەی داهات و تێچووی مامەڵە پەسەندکراوەکان</p></div><button type="button" class="ex-btn" onclick="goPage('profit')">بینینی وردەکاری <i class="fas fa-arrow-left"></i></button></div><div class="ex-grid" id="profitDashSummary"><div class="ex-note">ئاماری قازانج بار دەکرێت...</div></div></section>
-      <div class="ex-dash-shortcut"><div><h3>ئامار و نرخەکانی ئاڵوگۆڕ</h3><p>بینینی کۆی مامەڵەکان، داگرتنی ڕاپۆرت و دەستکاری نرخی گۆڕینەوە</p></div><div class="ex-actions"><button type="button" class="ex-btn primary" onclick="goPage('profit')"><i class="fas fa-chart-line"></i> قازانج</button><button type="button" class="ex-btn" onclick="goPage('statistics')"><i class="fas fa-chart-column"></i> ئامارەکان</button><button type="button" class="ex-btn" onclick="goPage('rates')"><i class="fas fa-pen"></i> دەستکاری نرخ</button></div></div>
+      <section class="profit-dash-strip" aria-label="پوختەی لێبڕین"><div class="profit-dash-head"><div><h3>کۆی لێبڕینی مامەڵەکان</h3><p>کۆی لێبڕین لە مامەڵە پەسەندکراوەکان</p></div><button type="button" class="ex-btn" onclick="goPage('profit')">بینینی وردەکاری <i class="fas fa-arrow-left"></i></button></div><div class="ex-grid" id="profitDashSummary"><div class="ex-note">ئاماری لێبڕین بار دەکرێت...</div></div></section>
+      <div class="ex-dash-shortcut"><div><h3>ئامار و نرخەکانی ئاڵوگۆڕ</h3><p>بینینی کۆی مامەڵەکان، داگرتنی ڕاپۆرت و دەستکاری نرخی گۆڕینەوە</p></div><div class="ex-actions"><button type="button" class="ex-btn primary" onclick="goPage('profit')"><i class="fas fa-chart-line"></i> لێبڕین</button><button type="button" class="ex-btn" onclick="goPage('statistics')"><i class="fas fa-chart-column"></i> ئامارەکان</button><button type="button" class="ex-btn" onclick="goPage('rates')"><i class="fas fa-pen"></i> دەستکاری نرخ</button></div></div>
 
       <!-- ══ LIVE SUSPICIOUS ACTIVITY ══ -->
       <div id="alertZone">
@@ -149,14 +149,14 @@
     <div class="pg" id="pgProfit">
       <section class="ex-sheet">
         <div class="ex-head">
-          <div><h3>ئاماری قازانج</h3><p id="profitStamp">داهات، تێچوو و قازانجی پاک بە دیناری عێراقی</p></div>
+          <div><h3>ئاماری لێبڕین</h3><p id="profitStamp">لێبڕینی مامەڵە پەسەندکراوەکان بە دیناری عێراقی</p></div>
           <div class="ex-logo" dir="ltr">Proxo</div>
         </div>
-        <div class="ex-title">پوختەی قازانج</div>
+        <div class="ex-title">پوختەی لێبڕین</div>
         <div class="ex-grid" id="profitOverview" aria-live="polite"></div>
-        <div class="ex-title">قازانج بەپێی ڕێگای وەرگرتن</div>
+        <div class="ex-title">لێبڕین بەپێی ڕێگای وەرگرتن</div>
         <div class="ex-grid" id="profitMethods" aria-live="polite"></div>
-        <div class="ex-note" id="profitNotice">قازانج تەنها بۆ ئەو مامەڵانە هەژمار دەکرێت کە داهات و تێچوویان تۆمارکراوە.</div>
+        <div class="ex-note" id="profitNotice">لێبڕین = بڕی نێردراو − بڕی وەرگیراو؛ تەنها مامەڵە پەسەندکراوەکان هەژمار دەکرێن.</div>
         <div class="ex-title">پاڵاوتن و داگرتنی ڕاپۆرت</div>
         <div class="ex-actions profit-toolbar">
           <label class="profit-date-label">لە ڕێکەوت <input id="profitFrom" class="ex-input" type="date" aria-label="لە ڕێکەوت"></label>
@@ -167,7 +167,7 @@
           <button class="ex-btn" type="button" onclick="profitExport('csv')"><i class="fas fa-file-csv"></i> CSV</button>
         </div>
         <p id="profitMessage" role="status" class="profit-message" hidden></p>
-        <div class="ex-title">تۆمارکردنی قازانجی مامەڵەکان <small id="profitCount" class="ex-count"></small></div>
+        <div class="ex-title">وردەکاری لێبڕینی مامەڵەکان <small id="profitCount" class="ex-count"></small></div>
         <div class="ex-list" id="profitOrders"><div class="ex-note">مامەڵەکان لە داتابەیس بار دەکرێن.</div></div>
       </section>
     </div>
@@ -816,6 +816,6 @@
   <script src="assets/js/svg-icons.js"></script>
   <script src="assets/js/admin.js?v=7"></script>
   <script src="assets/js/exchange-insights.js?v=1"></script>
-  <script src="assets/js/exchange-profit.js?v=1"></script>
+  <script src="assets/js/exchange-profit.js?v=2"></script>
 </body>
 </html>
