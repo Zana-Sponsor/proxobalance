@@ -131,3 +131,20 @@ async function profitExportPdf(name){
   }catch(e){console.error(e);showToast('دروستکردنی PDF سەرکەوتوو نەبوو','rd')}finally{source.remove()}
 }
 pageConfig.profit={title:'ئاماری قازانج',sub:'داهات، تێچوو، قازانجی پاک و مێژووی مامەڵەکان',load:()=>loadProfitStats()};
+
+async function loadProfitQuick(){
+  const el=document.getElementById('profitDashSummary');if(!el)return;
+  try{
+    const {data,error}=await sb.rpc('ex_admin_profit_stats',{p_from:null,p_to:null,p_limit:1});
+    if(error)throw error;
+    const n=Number(data.recorded_orders)||0;
+    el.innerHTML=
+      profitCard('کۆی قازانج',n?profitMoney(data.total_profit_iqd):'—','fa-chart-line')+
+      profitCard('قازانجی ئەمڕۆ',n?profitMoney(data.today_profit_iqd):'—','fa-calendar-day')+
+      profitCard('قازانجی ئەم مانگە',n?profitMoney(data.month_profit_iqd):'—','fa-coins')+
+      profitCard('تۆمار نەکراوە',profitNum(data.unrecorded_orders),'fa-clock');
+  }catch(e){el.innerHTML='<div class="ex-note" role="status">ئاماری قازانج بار نەبوو: '+profitEsc(e.message)+'</div>';}
+}
+const originalProfitDashboardLoad=pageConfig.dashboard.load;
+pageConfig.dashboard.load=()=>{if(originalProfitDashboardLoad)originalProfitDashboardLoad();loadProfitQuick()};
+
