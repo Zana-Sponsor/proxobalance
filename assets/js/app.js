@@ -1853,7 +1853,7 @@ function openTxDetail(id){
   html+='<div class="tx-receipt-actions"><button type="button" class="btn btn-ghost" onclick="downloadTransactionReceipt(\''+
     escHtml(String(o.id))+'\')">'+
     '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m-4-4 4 4 4-4M5 18v3h14v-3"/></svg>'+
-    'داگرتنی پسووڵەی مامەڵە (PDF)</button></div>';
+    '<span>داگرتنی پسووڵە</span></button></div>';
   document.getElementById('txSheetBody').innerHTML=html;
   document.getElementById('txSheetBackdrop').hidden=false;
   const sheet=document.getElementById('txSheet');
