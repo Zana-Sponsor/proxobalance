@@ -281,3 +281,11 @@ body,#main{background:#f8fafc;color:#171d28}
   .stat-card{padding:14px}
   #pgDashboard .profit-dash-strip,#pgDashboard .ex-dash-shortcut{border-radius:20px}
 }
+
+/* Login uses the same light surface rather than the old full-screen navy. */
+#authWrap{background:#f8fafc}
+.auth-box{border:1px solid #e9edf3;box-shadow:0 20px 65px rgba(17,35,62,.07)}
+.auth-logo h1{color:#1685fa!important}
+.auth-logo h1 span{color:#171d28!important}
+.auth-logo p{color:#8492a4;font-weight:400}
+.auth-badge{background:#eff6ff;border-color:#dceaff;color:#1685fa;font-weight:500}
