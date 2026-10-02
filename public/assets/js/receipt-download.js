@@ -138,8 +138,8 @@ function pbReceiptPrintCSS(){
   return '@font-face{font-family:Rabar;src:url(https://raw.githubusercontent.com/Zana-Sponsor/Zana-Sponsor/main/Rabar_021.woff2) format(woff2);font-weight:300 800;font-display:swap}'+
   'body{margin:0;padding:24px;background:#fff;font-family:Rabar,Tahoma,Arial,sans-serif;direction:rtl}'+
   '.pb-receipt-print{max-width:720px;margin:auto;padding:30px;border:1px solid #e8edf3;border-radius:26px;box-sizing:border-box;color:#253246}'+
-  '.pb-rhead{display:flex;justify-content:space-between;align-items:center;padding-bottom:18px;border-bottom:1px solid #e8edf3}'+
-  '.pb-rhead h2{font-weight:500;font-size:16px;flex:1;text-align:center}.pb-rhead strong{color:#1685fa;font:bold 25px Arial}'+
+  '.pb-rhead{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:8px;padding-bottom:18px;border-bottom:1px solid #e8edf3}'+
+  '.pb-rhead h2{grid-column:1/-1;grid-row:1;font-weight:500;font-size:16px;text-align:center}.pb-rhead strong{grid-column:3;grid-row:1;justify-self:end;color:#1685fa;font:bold 25px Arial}'+
   '.pb-rsection{padding:14px 0 10px;border-bottom:1px solid #e8edf3}'+
   '.pb-rsection h3{color:#1685fa;font-size:15px;font-weight:500;text-align:center}'+
   '.pb-rrow{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start;gap:18px;padding:11px 4px;font-size:14px;line-height:1.75}'+
