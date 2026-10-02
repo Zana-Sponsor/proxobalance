@@ -575,6 +575,14 @@ let _newsSlideToken = 0;
 let _newsIntervalSec = 5;
 let _newsSuppressClickUntil = 0;
 function newsCursorFor(item){ return (item && item.action && item.action.type && item.action.type!=='none') ? 'pointer' : 'default'; }
+function newsPointerHover(){
+    const banner=document.getElementById('newsBanner');
+    return !!(banner && window.matchMedia && window.matchMedia('(hover:hover)').matches && banner.matches(':hover'));
+}
+function newsKeyboardFocus(){
+    const banner=document.getElementById('newsBanner');
+    return !!(banner && banner.contains(document.activeElement) && document.activeElement?.matches(':focus-visible'));
+}
 function updateNewsCounter(){
     const counter=document.getElementById('newsCounter');
     const controls=document.getElementById('newsControls');
@@ -653,8 +661,7 @@ function startNewsRotation(intervalSec){
     _newsIntervalSec=Math.max(2,Number(intervalSec)||5);
     if(_newsItems.length<=1)return;
     _newsTimer=setInterval(()=>{
-        if(document.hidden||document.getElementById('newsBanner')?.matches(':hover'))return;
-        if(document.getElementById('newsBanner')?.contains(document.activeElement))return;
+        if(document.hidden||newsPointerHover()||newsKeyboardFocus())return;
         _newsIdx=(_newsIdx+1)%_newsItems.length;
         showNewsItem(_newsIdx);
     },_newsIntervalSec*1000);
@@ -664,15 +671,15 @@ function pauseNewsRotation(){
 }
 function resumeNewsRotation(event){
     if(event?.currentTarget?.contains(event.relatedTarget))return;
-    if(!_newsTimer&&_newsItems.length>1)startNewsRotation(_newsIntervalSec);
+    if(!newsPointerHover()&&!newsKeyboardFocus()&&!_newsTimer&&_newsItems.length>1)
+        startNewsRotation(_newsIntervalSec);
 }
 function goToNews(index){
     if(_newsItems.length<=1)return;
     _newsIdx=((index%_newsItems.length)+_newsItems.length)%_newsItems.length;
     showNewsItem(_newsIdx);
     pauseNewsRotation();
-    const banner=document.getElementById('newsBanner');
-    if(!banner?.matches(':hover')&&!banner?.contains(document.activeElement))
+    if(!newsPointerHover()&&!newsKeyboardFocus())
         resumeNewsRotation();
 }
 function stepNews(step,event){
