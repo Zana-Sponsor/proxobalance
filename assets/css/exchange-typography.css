@@ -1,0 +1,206 @@
+/* Proxo Balance typography — one measured hierarchy for every page.
+ * Normal text remains at the site's established size. No Rabar size multipliers.
+ * Headings are modestly larger; figures and secondary labels stay easy to scan.
+ */
+:root{
+  --pb-copy:14px;
+  --pb-label:13px;
+  --pb-heading:16px;
+  --pb-figure:15px;
+  --pb-leading:1.75;
+}
+body{font-synthesis:none;-webkit-font-smoothing:antialiased}
+/* Admin uses its bundled Rabar ('R'); Inter only for short Latin IDs when needed. */
+body:has(#sidebar){
+  font-family:'R',Rabar,Arial,sans-serif;
+  font-size:var(--pb-copy);
+  font-weight:400;
+  line-height:var(--pb-leading);
+  font-variant-numeric:tabular-nums;
+}
+body:has(#sidebar) .sb-item,
+body:has(#sidebar) .sb-section,
+body:has(#sidebar) .topbar-titles p,
+body:has(#sidebar) .modal-lbl,
+body:has(#sidebar) .tbl-wrap td,
+body:has(#sidebar) .tbl-scroll td,
+body:has(#sidebar) .tbl-search,
+body:has(#sidebar) .minp,
+body:has(#sidebar) .ex-input,
+body:has(#sidebar) .ex-btn,
+body:has(#sidebar) .act-btn,
+body:has(#sidebar) .modal-btn,
+body:has(#sidebar) .profit-order,
+body:has(#sidebar) .ex-order,
+body:has(#sidebar) .ex-rate{
+  font-family:inherit;
+  font-size:var(--pb-copy);
+  font-weight:400;
+  line-height:var(--pb-leading);
+}
+body:has(#sidebar) .stat-lbl,
+body:has(#sidebar) .ex-label,
+body:has(#sidebar) .profit-help,
+body:has(#sidebar) .profit-date,
+body:has(#sidebar) .ex-order-footer,
+body:has(#sidebar) .ex-head p,
+body:has(#sidebar) .sx-metric .name,
+body:has(#sidebar) .ex-count{
+  font-family:inherit;
+  font-size:var(--pb-label);
+  font-weight:400;
+  line-height:var(--pb-leading);
+}
+body:has(#sidebar) .stat-val,
+body:has(#sidebar) .ex-value,
+body:has(#sidebar) .profit-order-summary b,
+body:has(#sidebar) .ex-order-details .ex-value,
+body:has(#sidebar) .ex-rate .ex-value,
+body:has(#sidebar) #pgStatistics .sx-metric .number,
+body:has(#sidebar) #pgStatistics .sx-ad-stats .number,
+body:has(#sidebar) .stat-card .stat-val,
+body:has(#sidebar) #pgProfit .ex-value,
+body:has(#sidebar) #pgDashboard .ex-value{
+  font-family:inherit;
+  font-size:var(--pb-figure);
+  font-weight:500;
+  line-height:1.65;
+  letter-spacing:normal;
+  font-variant-numeric:tabular-nums;
+  overflow-wrap:anywhere;
+}
+body:has(#sidebar) .ex-order-title,
+body:has(#sidebar) .profit-order-title,
+body:has(#sidebar) .ex-rate h4,
+body:has(#sidebar) .rec-card-name,
+body:has(#sidebar) .user-cell-name,
+body:has(#sidebar) .sb-admin-name{
+  font-size:var(--pb-copy);
+  font-weight:500;
+  line-height:var(--pb-leading);
+}
+body:has(#sidebar) .topbar-titles h2,
+body:has(#sidebar) .pg>.sec-hdr h3,
+body:has(#sidebar) .sec-hdr h3,
+body:has(#sidebar) .modal-hdr h3,
+body:has(#sidebar) .modal-head h3,
+body:has(#sidebar) .ex-head h3,
+body:has(#sidebar) .ex-title,
+body:has(#sidebar) #pgDashboard .profit-dash-head h3,
+body:has(#sidebar) #pgDashboard .ex-dash-shortcut h3,
+body:has(#sidebar) #pgStatistics h3,
+body:has(#sidebar) #pgAccounts .sec-hdr h3,
+body:has(#sidebar) #pgOrders .sec-hdr h3{
+  font-family:inherit;
+  font-size:var(--pb-heading);
+  font-weight:500;
+  line-height:1.65;
+}
+/* Keep paired labels and values in separate, consistently spaced columns. */
+body:has(#sidebar) .ex-grid{gap:12px}
+body:has(#sidebar) .ex-card,
+body:has(#sidebar) .stat-card{padding:16px;min-width:0}
+body:has(#sidebar) .ex-label,
+body:has(#sidebar) .stat-lbl{margin:0}
+body:has(#sidebar) .ex-value{margin-top:6px}
+body:has(#sidebar) .profit-order-summary,
+body:has(#sidebar) .ex-order-details,
+body:has(#sidebar) .sx-ad-stats{gap:12px;align-items:start}
+body:has(#sidebar) .profit-order-summary>div,
+body:has(#sidebar) .ex-order-details>div,
+body:has(#sidebar) .ex-grid>*{min-width:0}
+body:has(#sidebar) .ex-order-code,
+body:has(#sidebar) .profit-order-id{font-size:var(--pb-label);direction:ltr;unicode-bidi:isolate;overflow-wrap:anywhere}
+body:has(#sidebar) [dir="ltr"]{unicode-bidi:isolate;letter-spacing:normal}
+/* Customer pages: retain the current default Rabar body font size. */
+#pageProfile,#pageTx{
+  font-family:Rabar,Arial,sans-serif;
+  font-weight:400;
+  line-height:var(--pb-leading);
+}
+#pageProfile .pf-name,
+#pageProfile .pf2-identity .pf-name,
+#pageProfile .pf-card-title,
+#pageProfile .page-head h2,
+#pageTx .page-head h2,
+#pageTx .section-title,
+#pageTx .tx-sum-cap,
+.tx-sheet .tx-sheet-head h3{
+  font-family:inherit;
+  font-size:var(--pb-heading);
+  font-weight:500;
+  line-height:1.65;
+}
+#pageProfile .pf-name,
+#pageProfile .pf2-identity .pf-name{font-size:var(--pb-figure);font-weight:500}
+#pageProfile .field-label,
+#pageProfile input.input,
+#pageProfile .pf-menu-item,
+#pageProfile .pf-menu-item b,
+#pageProfile .pf-menu-item span:not(.icn),
+#pageProfile .pf-chip,
+#pageProfile .pf2-handle,
+#pageTx input.input,
+#pageTx .tx-route,
+#pageTx .tx-amount-sent,
+#pageTx .tx-amount-sent b,
+#pageTx .filter-chip,
+#pageTx .tx-sum-lbl,
+#pageTx .tx-sum-sub,
+#pageTx .tx-card-foot,
+#pageTx .tx-dlbl,
+#pageTx .tx-dval,
+.tx-sheet .tx-dlbl,
+.tx-sheet .tx-dval,
+.tx-sheet .tx-damounts small,
+.tx-sheet .tx-dnote p{
+  font-family:inherit;
+  font-size:var(--pb-copy);
+  font-weight:400;
+  line-height:var(--pb-leading);
+}
+#pageTx .tx-amount,
+#pageTx .tx-sum-val,
+#pageTx .tx-sum-item.recv .tx-sum-val,
+#pageTx .tx-sum-item.recv .tx-amount,
+.tx-sheet .tx-damounts b,
+.tx-sheet .tx-damounts b.recv,
+#pageTx .tx-dval,
+.tx-sheet .tx-dval{
+  font-family:inherit;
+  font-size:var(--pb-figure);
+  font-weight:500;
+  line-height:1.65;
+  letter-spacing:normal;
+  font-variant-numeric:tabular-nums;
+  overflow-wrap:anywhere;
+}
+#pageTx .tx-card-top,
+#pageTx .tx-card-foot,
+#pageTx .tx-card-main,
+#pageProfile .pf2-identity{gap:10px}
+#pageTx .tx-card-main{align-items:center;row-gap:7px}
+#pageTx .tx-sum-pair{gap:12px;align-items:stretch}
+#pageTx .tx-sum-item{gap:6px;min-width:0}
+#pageTx .tx-sum-val,
+#pageTx .tx-amount,
+#pageTx .tx-code,
+.tx-sheet [dir="ltr"],
+#pageProfile [dir="ltr"]{
+  direction:ltr;
+  unicode-bidi:isolate;
+  letter-spacing:normal;
+}
+#pageProfile .pf-card .field{margin-bottom:14px}
+#pageProfile .pf-menu-item{gap:12px}
+#pageProfile .pf-menu-txt{min-width:0}
+#pageProfile .pf-menu-txt span{overflow-wrap:anywhere}
+#pageTx .tx-drow,.tx-sheet .tx-drow{gap:14px;align-items:center}
+#pageTx .tx-dlbl,.tx-sheet .tx-dlbl{min-width:0}
+#pageTx .tx-dval,.tx-sheet .tx-dval{min-width:0;text-align:end}
+@media(max-width:560px){
+  body:has(#sidebar) .ex-card,
+  body:has(#sidebar) .stat-card{padding:13px}
+  #pageTx .tx-sum-pair{gap:8px}
+  #pageTx .tx-sum-item{padding:12px 10px}
+}
