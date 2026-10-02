@@ -90,7 +90,7 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
 <link rel="stylesheet" href="/assets/css/exchange-readable.css?v=3">
 <link rel="stylesheet" href="/assets/css/exchange-typography.css?v=1">
 <link rel="stylesheet" href="/assets/css/index-receipt-theme.css?v=2">
-<link rel="stylesheet" href="/assets/css/exchange-light-panel.css?v=9">
+<link rel="stylesheet" href="/assets/css/exchange-light-panel.css?v=10">
 </head>
 
 <body>
@@ -900,15 +900,18 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
 
   <!-- ══════════════ PAGE: TRANSACTIONS (route "/transactions") ══════════════ -->
   <section class="page" id="pageTx" data-route="transactions">
-    <div class="page-head">
-      <h2>
-        <span class="icn icon--solar icon--solar--bill-list-linear" aria-hidden="true"></span>
-        مامەڵەکان
-      </h2>
-      <p>هەموو ئاڵوگۆڕەکانت لێرەدان.</p>
-    </div>
+    <!-- Customer transactions mirror the admin 'ئاماری لێبڕین' report panel. -->
+    <section class="tx-profit-panel" aria-label="مامەڵەکان">
+      <div class="page-head tx-profit-head">
+        <div class="tx-profit-head-copy">
+          <h2>مامەڵەکان</h2>
+          <p>هەموو ئاڵوگۆڕەکانت لێرەدان.</p>
+        </div>
+        <span class="tx-profit-logo" dir="ltr">Proxo</span>
+      </div>
 
-    <div class="tx-summary" id="txSummary">
+      <h3 class="tx-profit-title">پوختەی مامەڵەکان</h3>
+      <div class="tx-summary tx-profit-summary" id="txSummary">
       <span class="tx-sum-cap">ئاڵوگۆڕە تەواوبووەکان</span>
       <div class="tx-sum-pair">
         <div class="tx-sum-item sent">
@@ -924,7 +927,9 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
       </div>
     </div>
 
-    <div class="search-wrap">
+    <h3 class="tx-profit-title">پاڵاوتنی مامەڵەکان</h3>
+    <div class="tx-profit-tools">
+      <div class="search-wrap">
       <span class="search-ico"><span class="icn icn-sm icon--solar icon--solar--magnifer-linear" aria-hidden="true"></span></span>
       <input type="text" class="input" id="txSearch" placeholder="گەڕان بە ئایدی مامەڵە — بۆ نمونە P7K2..." oninput="onTxSearch(this.value)">
       <button type="button" class="search-clear" id="txSearchClear" onclick="clearTxSearch()" aria-label="سڕینەوە">
@@ -940,8 +945,9 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
       <button type="button" class="filter-chip" data-status="rejected" onclick="setTxStatus('rejected', this)">ڕەتکراو <span class="chip-count" id="fcNo">0</span></button>
     </div>
 
-    <div class="result-count" id="txResultCount"></div>
-    <div id="txList" style="width:100%;">
+    </div>
+    <h3 class="tx-profit-title tx-profit-detail-title">وردەکاری مامەڵەکان <small class="result-count tx-profit-count" id="txResultCount"></small></h3>
+    <div id="txList" class="tx-profit-list" style="width:100%;">
   <div class="tx-skel">
     <div class="tx-skel-head"><span class="sk sk-w30"></span><span class="sk sk-pill sk-w30"></span></div>
     <div class="tx-skel-row"><span class="sk sk-ico"></span><span class="sk sk-w75"></span></div>
@@ -966,6 +972,7 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
     <div class="tx-skel-row"><span class="sk sk-ico"></span><span class="sk sk-w45"></span></div>
   </div>
     </div>
+    </section>
   </section>
 
   <!-- ══════════════ TRANSACTION DETAILS ══════════════ -->
