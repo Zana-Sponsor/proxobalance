@@ -28,8 +28,8 @@ function pbBuildReceipt(order){
   const id=document.createElement('div');id.className='pb-rsection';
   const idtitle=document.createElement('h3');idtitle.textContent='زانیاری مامەڵە';
   id.append(idtitle,
-    pbReceiptLabel('ئایدی مامەڵە',typeof orderCodeOf==='function'?orderCodeOf(order):order.order_code||order.id,true),
-    pbReceiptLabel('بەرواری ناردن',pbReceiptWhen(order.created_at)),
+    pbReceiptLabel('ژمارەی مامەڵە',typeof orderCodeOf==='function'?orderCodeOf(order):order.order_code||order.id,true),
+    pbReceiptLabel('بەرواری داواکاری',pbReceiptWhen(order.created_at)),
     pbReceiptLabel('دۆخی مامەڵە',order.status||'—'));
   if(order.decided_at && (order.status==='پەسەندکرا'||order.status==='ڕەتکرا')){
     id.append(pbReceiptLabel('بەرواری بڕیار',pbReceiptWhen(order.decided_at)));
@@ -38,8 +38,8 @@ function pbBuildReceipt(order){
   const payments=document.createElement('section');payments.className='pb-rsection';
   const payTitle=document.createElement('h3');payTitle.textContent='وردەکاری ئاڵوگۆڕ';
   payments.append(payTitle,
-    pbReceiptLabel('لە ڕێگای',pbReceiptMethod(order.from_method)),
-    pbReceiptLabel('بۆ ڕێگای',pbReceiptMethod(order.to_method)),
+    pbReceiptLabel('ڕێگای ناردن',pbReceiptMethod(order.from_method)),
+    pbReceiptLabel('ڕێگای وەرگرتن',pbReceiptMethod(order.to_method)),
     pbReceiptLabel('بڕی نێردراو',pbReceiptAmount(order.amount,order.from_method),true),
     pbReceiptLabel('بڕی وەرگیراو',pbReceiptAmount(order.total,order.to_method),true));
   if(order.from_method!=='USDT'&&order.to_method!=='USDT'&&Number(order.amount)>Number(order.total)){
@@ -143,8 +143,23 @@ async function downloadTransactionReceipt(orderId){
   const receipt=pbBuildReceipt(order);
   const printWindow=window.open('','_blank');
   if(!printWindow){
-    /* Restricted browsers may block the print window. */
-    return pbDownloadReceiptRaster(orderId);
+    /* Print in the same tab if a browser blocks opening a new window. */
+    const printStyle=document.createElement('style');
+    printStyle.textContent=pbReceiptPrintCSS()+
+      '@media print{body>*:not(.pb-receipt-print){display:none!important}'+
+      '.pb-receipt-print{display:block!important;position:static!important;'+
+      'width:auto!important;max-width:none!important;box-shadow:none!important}}';
+    document.head.append(printStyle);
+    document.body.append(receipt);
+    let cleaned=false;
+    const cleanup=()=>{if(cleaned)return;cleaned=true;receipt.remove();printStyle.remove();};
+    window.addEventListener('afterprint',cleanup,{once:true});
+    try{
+      if(document.fonts){await document.fonts.load('400 14px Rabar','پسووڵەی مامەڵە');await document.fonts.ready;}
+      window.print();
+      showToast('بۆ PDF، «Save as PDF» هەڵبژێرە','info');
+    }catch(error){cleanup();console.error('Receipt print error',error);showToast('چاپکردنی پسووڵە سەرکەوتوو نەبوو','error');}
+    return;
   }
   try{
     const name='Proxo-pswla-'+String(typeof orderCodeOf==='function'?orderCodeOf(order):order.id).replace(/[^A-Za-z0-9_-]/g,'');
@@ -163,7 +178,7 @@ async function downloadTransactionReceipt(orderId){
   }catch(err){
     console.error('Native Kurdish receipt PDF error',err);
     try{printWindow.close();}catch(_){}
-    return pbDownloadReceiptRaster(orderId);
+    showToast('چاپکردنی پسووڵە سەرکەوتوو نەبوو؛ تکایە دووبارە هەوڵ بدەرەوە','error');
   }
 }
 function pbReceiptPrintCSS(){
