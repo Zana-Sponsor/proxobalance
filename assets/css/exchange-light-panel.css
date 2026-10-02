@@ -756,3 +756,349 @@ body:has(#sidebar) .stat-ico.gr .svg-icon{color:#1685fa!important}
  [data-theme="light"] .xc-cols,
  [data-theme="light"] .tx-sum-pair{gap:10px}
 }
+
+
+/* Compact profile revision — match the admin panel without oversized text.
+   Keep all original IDs, handlers, KYC states and profile functionality. */
+[data-theme="light"] #pageProfile{
+ --pf-text:14px;
+ --pf-sub:13px;
+ --pf-line:#e9edf3;
+ --pf-blue:#1685fa;
+ font-family:Rabar,Arial,sans-serif;
+ font-size:14px;
+ font-weight:400;
+ line-height:1.7;
+ color:#171d28;
+ background:#f8fafc;
+}
+[data-theme="light"] #pageProfile>.page-head{
+ margin:0 0 14px;
+}
+[data-theme="light"] #pageProfile>.page-head h2{
+ margin:0;
+ color:var(--pf-blue)!important;
+ font-size:16px!important;
+ font-weight:500!important;
+ line-height:1.65;
+}
+[data-theme="light"] #pageProfile .pf2-hero{
+ display:grid!important;
+ grid-template-columns:56px minmax(0,1fr);
+ column-gap:12px;
+ row-gap:8px;
+ align-items:center;
+ justify-items:stretch;
+ text-align:start;
+ gap:8px 12px;
+ padding:16px!important;
+ margin-bottom:12px;
+ border:1px solid var(--pf-line)!important;
+ border-radius:18px!important;
+ background:#fff!important;
+ box-shadow:0 7px 30px rgba(17,35,62,.032)!important;
+ overflow:visible;
+}
+[data-theme="light"] #pageProfile .pf2-cover{
+ display:none!important;
+}
+[data-theme="light"] #pageProfile .pf2-avatar-wrap{
+ grid-column:1;grid-row:1 / span 2;
+ position:relative;
+ width:56px;height:56px;
+ margin:0!important;
+ align-self:start;
+ justify-self:start;
+}
+[data-theme="light"] #pageProfile .pf2-avatar{
+ width:56px;height:56px;
+ padding:0;
+ border:2px solid #fff;
+ border-radius:50%;
+ background:#eef2f6;
+ box-shadow:0 0 0 1px #e0e6ee;
+ color:#374151;
+ font-family:Rabar,Arial,sans-serif;
+ font-size:16px!important;
+ font-weight:500;
+}
+[data-theme="light"] #pageProfile .pf2-verified-dot{
+ width:19px;height:19px;
+ inset-inline-end:-2px;
+ inset-block-end:-1px;
+ border:2px solid #fff;
+}
+[data-theme="light"] #pageProfile .pf2-verified-dot .pb-svg-icon,
+[data-theme="light"] #pageProfile .pf2-verified-dot .icn{
+ width:12px;height:12px;
+}
+[data-theme="light"] #pageProfile .pf2-identity{
+ grid-column:2;grid-row:1;
+ min-width:0;width:100%;
+ align-items:flex-start;
+ text-align:start;
+ gap:3px!important;
+}
+[data-theme="light"] #pageProfile .pf-name,
+[data-theme="light"] #pageProfile .pf2-identity .pf-name{
+ font-family:Rabar,Arial,sans-serif;
+ color:#171d28!important;
+ font-size:14px!important;
+ font-weight:500!important;
+ line-height:1.7;
+ margin:0;
+ max-width:100%;
+ overflow-wrap:anywhere;
+}
+[data-theme="light"] #pageProfile .pf-email{
+ max-width:100%;
+ font-size:13px!important;
+ line-height:1.65;
+ font-weight:400;
+ color:#526072!important;
+ direction:ltr;
+ unicode-bidi:isolate;
+ text-align:start;
+ overflow-wrap:anywhere;
+}
+[data-theme="light"] #pageProfile .pf2-handle{
+ display:inline-flex;
+ max-width:100%;
+ align-items:center;
+ gap:6px;
+ padding:3px 9px;
+ border:1px solid #e3e9ef!important;
+ border-radius:9px;
+ background:#f6f7f9!important;
+ box-shadow:none!important;
+ color:#374151!important;
+ font-family:inherit;
+ font-size:13px!important;
+ font-weight:400!important;
+ line-height:1.65;
+}
+[data-theme="light"] #pageProfile .pf2-handle span[dir="ltr"]{
+ font:inherit;
+ font-variant-numeric:tabular-nums;
+ direction:ltr;
+ unicode-bidi:isolate;
+ overflow:hidden;
+ text-overflow:ellipsis;
+}
+[data-theme="light"] #pageProfile .pf2-handle .pb-svg-icon{
+ display:inline-block;
+ width:14px;height:14px;flex-basis:14px;
+}
+[data-theme="light"] #pageProfile .kyc-badge{
+ grid-column:2;grid-row:2;
+ justify-self:start;
+ display:inline-flex;
+ align-items:center;
+ gap:7px;
+ margin:0;
+ padding:5px 10px;
+ max-width:100%;
+ min-height:30px;
+ border-radius:10px;
+ font-family:inherit;
+ font-size:13px!important;
+ font-weight:400!important;
+ line-height:1.5;
+ box-shadow:none!important;
+}
+[data-theme="light"] #pageProfile .kyc-badge-ico{
+ width:19px;height:19px;flex:0 0 19px;
+}
+[data-theme="light"] #pageProfile .kyc-badge-ico .pb-svg-icon,
+[data-theme="light"] #pageProfile .kyc-badge-ico .receipt-plus-svg{
+ display:block!important;
+ width:14px;height:14px;
+}
+[data-theme="light"] #pageProfile .pf-chips{
+ grid-column:1 / -1;grid-row:3;
+ justify-content:flex-start;
+ align-items:center;
+ gap:7px;
+ margin:4px 0 0;
+ padding-top:11px;
+ border-top:1px solid #edf0f4;
+}
+[data-theme="light"] #pageProfile .pf-chip{
+ display:inline-flex;
+ align-items:center;
+ gap:6px;
+ min-height:28px;
+ padding:4px 9px;
+ border:1px solid #e9edf3!important;
+ border-radius:9px;
+ background:#f6f7f9!important;
+ color:#526072!important;
+ font-size:13px!important;
+ font-weight:400!important;
+ line-height:1.5;
+}
+[data-theme="light"] #pageProfile .pf-chip .pb-svg-icon{
+ width:14px;height:14px;flex-basis:14px;
+}
+[data-theme="light"] #pageProfile .pf-card,
+[data-theme="light"] #pageProfile .pf-menu,
+[data-theme="light"] #pageProfile .kyc-card{
+ background:#fff!important;
+ border:1px solid #e9edf3!important;
+ border-radius:18px!important;
+ box-shadow:0 7px 30px rgba(17,35,62,.032)!important;
+ min-width:0;
+}
+[data-theme="light"] #pageProfile .pf-card{
+ padding:16px!important;
+ margin-bottom:12px;
+}
+[data-theme="light"] #pageProfile .pf-card-title{
+ display:flex;align-items:center;
+ margin:0 0 14px;
+ color:#1685fa!important;
+ font-size:16px!important;
+ font-weight:500!important;
+ line-height:1.65;
+}
+[data-theme="light"] #pageProfile .pf-card-title .pb-svg-icon,
+[data-theme="light"] #pageProfile .pf-card-title .icn{
+ display:none!important;
+}
+[data-theme="light"] #pageProfile .pf-card .field{margin-bottom:12px}
+[data-theme="light"] #pageProfile .field-label{
+ display:block;
+ margin-bottom:5px;
+ color:#374151!important;
+ font-size:14px!important;
+ font-weight:400!important;
+ line-height:1.65;
+}
+[data-theme="light"] #pageProfile input.input{
+ width:100%;
+ min-height:44px;
+ padding:10px 12px;
+ font-family:Rabar,Arial,sans-serif;
+ font-size:14px!important;
+ font-weight:400!important;
+ line-height:1.65;
+ text-align:start;
+ color:#171d28!important;
+ background:#fff!important;
+ border:1px solid #dce3eb!important;
+ border-radius:11px!important;
+ box-shadow:none!important;
+}
+[data-theme="light"] #pageProfile input.input[dir="ltr"]{
+ direction:ltr;text-align:left;
+ font-variant-numeric:tabular-nums;
+}
+[data-theme="light"] #pageProfile .pf-name-kyc-hint,
+[data-theme="light"] #pageProfile .phone-format-hint,
+[data-theme="light"] #pageProfile .xc-hint,
+[data-theme="light"] #pageProfile .pf-app-version{
+ font-size:13px!important;
+ font-weight:400!important;
+ line-height:1.7;
+ color:#526072;
+}
+[data-theme="light"] #pageProfile .xc-hint{
+ display:flex;align-items:flex-start;gap:8px;
+ background:#f6f7f9;
+ border:1px solid #e9edf3;
+ border-radius:10px;
+ padding:9px 10px;
+}
+[data-theme="light"] #pageProfile #pfSaveBtn{
+ min-height:44px;
+ width:100%;
+ font-size:14px!important;
+ font-weight:500!important;
+ border-radius:11px!important;
+ background:#303946!important;
+ color:#fff!important;
+ border-color:#303946!important;
+ box-shadow:none!important;
+}
+[data-theme="light"] #pageProfile .pf-menu{
+ overflow:hidden;
+ margin-bottom:12px;
+}
+[data-theme="light"] #pageProfile .pf-menu-item{
+ display:flex;
+ align-items:center;
+ gap:10px;
+ width:100%;
+ min-height:54px;
+ padding:11px 13px;
+ font-family:Rabar,Arial,sans-serif;
+ font-size:14px!important;
+ font-weight:400!important;
+ line-height:1.65;
+ color:#171d28!important;
+ background:#fff;
+ border:0;
+ border-bottom:1px solid #edf0f4;
+ text-align:start;
+}
+[data-theme="light"] #pageProfile .pf-menu-item:last-child{border-bottom:0}
+[data-theme="light"] #pageProfile .pf-menu-item:hover{background:#f2f4f7!important}
+[data-theme="light"] #pageProfile .pf-menu-txt{
+ min-width:0;
+ flex:1;
+}
+[data-theme="light"] #pageProfile .pf-menu-txt b{
+ display:block;
+ font-size:14px!important;
+ font-weight:400!important;
+ line-height:1.65;
+ color:#171d28!important;
+}
+[data-theme="light"] #pageProfile .pf-menu-txt span{
+ display:block;
+ margin-top:2px;
+ font-size:13px!important;
+ font-weight:400!important;
+ line-height:1.65;
+ color:#526072!important;
+ overflow-wrap:anywhere;
+}
+[data-theme="light"] #pageProfile .pf-menu-ico{
+ flex:0 0 30px;
+ width:30px;height:30px;
+ display:flex!important;
+ justify-content:center;align-items:center;
+ background:#f2f4f7!important;
+ color:#566578!important;
+ border-radius:9px;
+}
+[data-theme="light"] #pageProfile .pf-menu-ico .pb-svg-icon{
+ width:17px;height:17px;flex-basis:17px;
+ color:inherit;
+}
+[data-theme="light"] #pageProfile .pf-menu-arrow{
+ display:none!important;
+}
+[data-theme="light"] #pageProfile .pf-menu-item.danger .pf-menu-ico{
+ color:#b54444!important;
+ background:#fff3f3!important;
+}
+[data-theme="light"] #pageProfile .pf-menu-item.danger .pf-menu-txt b{
+ color:#b54444!important;
+}
+[data-theme="light"] #pageProfile .kyc-card{
+ padding:13px 14px;
+ margin-bottom:12px;
+ font-size:14px;
+ line-height:1.7;
+}
+[data-theme="light"] #pageProfile .pf-app-version{
+ text-align:center;
+ padding:6px 0 10px;
+}
+@media(max-width:560px){
+ [data-theme="light"] #pageProfile{padding:14px 11px 20px}
+ [data-theme="light"] #pageProfile .pf2-hero,
+ [data-theme="light"] #pageProfile .pf-card{padding:14px!important}
+ [data-theme="light"] #pageProfile .pf-menu-item{padding:10px 12px}
+}
