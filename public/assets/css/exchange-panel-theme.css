@@ -289,3 +289,130 @@ body,#main{background:#f8fafc;color:#171d28}
 .auth-logo h1 span{color:#171d28!important}
 .auth-logo p{color:#8492a4;font-weight:400}
 .auth-badge{background:#eff6ff;border-color:#dceaff;color:#1685fa;font-weight:500}
+
+
+/* 2026 calm-control correction: the receipt is the visual reference.
+   Navigation, information and secondary actions stay neutral; emphasis is rare.
+   Semantic red/amber/green statuses and destructive actions are left intact. */
+:root{
+  --calm-ink:#242c39;
+  --calm-quiet:#526072;
+  --calm-line:#e5e9ef;
+  --calm-hover:#f2f4f7;
+  --calm-muted:#f6f7f9;
+  --calm-strong:#303946;
+}
+#sidebar .sb-item,
+#sidebar .sb-item:hover{
+  background:transparent!important;
+  color:#394352!important;
+  box-shadow:none;
+}
+#sidebar .sb-item:hover{
+  background:#f4f5f7!important;
+  color:#222b38!important;
+}
+#sidebar .sb-item.active{
+  background:#eef0f3!important;
+  color:#212c3b!important;
+  box-shadow:inset -2px 0 0 #879aae;
+  font-weight:550;
+}
+#sidebar .sb-item .svg-icon,
+#sidebar .sb-item i,
+#sidebar .sb-item i[style]{
+  color:#7b8797!important;
+}
+#sidebar .sb-item.active .svg-icon,
+#sidebar .sb-item.active i,
+#sidebar .sb-item.active i[style]{
+  color:#34455a!important;
+}
+#sidebar .sb-section{color:#919aa8!important}
+.topbar .svg-icon,.topbar-titles h2{color:#283343}
+.pg>.sec-hdr h3,.sec-hdr h3,
+.modal-hdr h3,.modal-head h3,
+.ex-head h3,.ex-title,
+#pgDashboard .profit-dash-head h3,
+#pgDashboard .ex-dash-shortcut h3{
+  color:#263241!important;
+  font-weight:550;
+}
+.ex-title{border-inline-start:2px solid #a6b6c8;padding-inline-start:10px}
+.ex-logo,.sb-logo-text h1,.auth-logo h1{color:#1685fa!important}
+.stat-ico,.stat-ico.dark,.stat-ico.gr,.stat-ico.rd,.stat-ico.yw,
+.stat-ico.bl,.stat-ico.pu,.stat-ico.cy{
+  background:#f0f2f5!important;
+  color:#667386!important;
+}
+.stat-ico .svg-icon,.stat-ico .svg-icon[style],
+.proxo-profit-card .ex-label .svg-icon,
+.proxo-profit-card .ex-label i{
+  color:#667386!important;
+}
+#pgDashboard .profit-dash-strip .ex-card,
+#pgStatistics .ex-card,#pgProfit .ex-card{box-shadow:none}
+.profit-order-summary .profit-net,
+#pgProfit .profit-order-summary .profit-net{
+  color:#273449!important;
+}
+.profit-chip.recorded{background:#eef2f6;color:#45596e}
+/* Normal controls: white/light gray, never blue-filled. */
+.ex-btn,.ex-btn:not(.primary),
+.act-btn.dark,.act-btn.bl,.act-btn.cy,.act-btn.pu,
+.act-btn:not(.rd):not(.gr):not(.yw):not(.dark):not(.bl),
+.modal-btn:not(.rd):not(.gr):not(.yw):not(.dark):not(.cy){
+  background:#fff!important;
+  color:#334155!important;
+  border:1px solid #dce3eb!important;
+  box-shadow:none!important;
+  border-radius:11px;
+  font-weight:500;
+}
+.ex-btn:hover,.ex-btn:not(.primary):hover,
+.act-btn.dark:hover,.act-btn.bl:hover,.act-btn.cy:hover,.act-btn.pu:hover,
+.act-btn:not(.rd):not(.gr):not(.yw):hover{
+  background:#f2f4f7!important;
+  color:#243143!important;
+  border-color:#cbd5e1!important;
+  box-shadow:none!important;
+}
+.ex-btn.primary,.modal-btn.dark,.modal-btn.cy,.abtn{
+  background:#303946!important;
+  color:#fff!important;
+  border:1px solid #303946!important;
+  border-radius:12px;
+  box-shadow:none!important;
+  font-weight:550;
+}
+.ex-btn.primary:hover,.modal-btn.dark:hover,.modal-btn.cy:hover,.abtn:hover{
+  background:#242c38!important;
+  color:#fff!important;
+  border-color:#242c38!important;
+  box-shadow:none!important;
+}
+/* Reading/downloading/reloading is secondary; keep one clear primary save. */
+.ex-btn.primary[onclick^="load"],
+.ex-btn.primary[onclick^="exExport"],
+.ex-btn.primary[onclick^="goPage"]{
+  background:#fff!important;
+  color:#334155!important;
+  border-color:#dce3eb!important;
+}
+.ex-btn.primary[onclick^="load"]:hover,
+.ex-btn.primary[onclick^="exExport"]:hover,
+.ex-btn.primary[onclick^="goPage"]:hover{background:#f2f4f7!important}
+.chip.on,.chip.gr.on,.chip.rd.on,.chip.yw.on{
+  background:#e9edf2!important;
+  border-color:#cbd5df!important;
+  color:#334155!important;
+}
+.chip:hover{background:#f2f4f7;border-color:#cbd5df}
+.ex-btn:focus-visible,.act-btn:focus-visible,.modal-btn:focus-visible,
+.abtn:focus-visible,.chip:focus-visible,.sb-item:focus-visible{
+  outline:2px solid #526985!important;
+  outline-offset:3px;
+}
+@media(prefers-reduced-motion:reduce){
+ .ex-btn,.act-btn,.modal-btn,.sb-item{transition:none!important;transform:none!important}
+}
