@@ -12,6 +12,10 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <link rel="stylesheet" href="assets/css/admin.css?v=9">
 <link rel="stylesheet" href="assets/css/tokens.css">
+<link rel="stylesheet" href="assets/css/exchange-insights.css?v=1">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
 
@@ -50,6 +54,7 @@
   <div class="sb-nav">
     <div class="sb-section">سەرەکی</div>
     <div class="sb-item active" onclick="goPage('dashboard')"><i class="fas fa-chart-pie"></i> داشبۆرد</div>
+    <div class="sb-item" onclick="goPage('statistics')"><i class="fas fa-chart-column" style="color:#1685fa"></i> ئامار و ڕاپۆرت</div>
     <div class="sb-item" onclick="goPage('orders')"><i class="fas fa-money-bill-transfer"></i> ئۆردەرەکان <span class="sb-badge yw" id="sbOrdersCount" style="display:none">0</span></div>
     <div class="sb-item" onclick="goPage('accounts')"><i class="fas fa-users"></i> هەژمارەکان</div>
     <div class="sb-item" onclick="goPage('kyc')"><i class="fas fa-id-card" style="color:#0891b2"></i> پشتڕاستکردنەوەی ناسنامە <span class="sb-badge yw" id="sbKycCount" style="display:none">0</span></div>
@@ -101,6 +106,7 @@
 
     <!-- ══ DASHBOARD ══ -->
     <div class="pg on" id="pgDashboard">
+      <div class="ex-dash-shortcut"><div><h3>ئامار و نرخەکانی ئاڵوگۆڕ</h3><p>بینینی کۆی مامەڵەکان، داگرتنی ڕاپۆرت و دەستکاری نرخی گۆڕینەوە</p></div><div class="ex-actions"><button type="button" class="ex-btn primary" onclick="goPage('statistics')"><i class="fas fa-chart-column"></i> ئامارەکان</button><button type="button" class="ex-btn" onclick="goPage('rates')"><i class="fas fa-pen"></i> دەستکاری نرخ</button></div></div>
 
       <!-- ══ LIVE SUSPICIOUS ACTIVITY ══ -->
       <div id="alertZone">
@@ -135,6 +141,37 @@
           <div class="loading"><i class="fas fa-circle-notch fa-spin"></i> چوارچێوەکردن...</div>
         </div>
       </div>
+    </div>
+
+    <!-- ══ Exchange admin statistics: populated only after admin sign-in ══ -->
+    <div class="pg" id="pgStatistics">
+      <section class="ex-sheet" aria-label="ئامار و ڕاپۆرتی ئاڵوگۆڕ">
+        <div class="ex-head"><div><h3>ئامار و ڕاپۆرتی ئاڵوگۆڕ</h3><p id="exLastLoaded">پوختەی مامەڵەکان و ڕێگاکانی پارەدان</p></div><div class="ex-logo">Proxo</div></div>
+        <div class="ex-title">پوختەی ئامارەکان</div>
+        <div class="ex-grid" id="exSummary" aria-live="polite"></div>
+        <div class="ex-title">بڕی پەسەندکراو بەپێی ڕێگای وەرگرتن</div>
+        <div class="ex-grid" id="exMethodTotals" aria-live="polite"></div>
+        <div class="ex-title">ڕاپۆرتی مامەڵەکان</div>
+        <div class="ex-actions">
+          <button type="button" class="ex-btn primary" onclick="exExport('pdf')"><i class="fas fa-file-pdf"></i> داگرتنی PDF</button>
+          <button type="button" class="ex-btn" onclick="exExport('xlsx')"><i class="fas fa-file-excel"></i> Excel</button>
+          <button type="button" class="ex-btn" onclick="exExport('csv')"><i class="fas fa-file-csv"></i> CSV</button>
+          <button type="button" class="ex-btn" onclick="exLoadStatistics()"><i class="fas fa-rotate"></i> نوێکردنەوە</button>
+          <button type="button" class="ex-btn" onclick="goPage('rates')"><i class="fas fa-pen"></i> دەستکاری نرخ</button>
+        </div>
+        <div class="ex-controls">
+          <input class="ex-input" id="exSearch" type="search" placeholder="گەڕان بە ئایدی مامەڵە یان ڕێگا..." aria-label="گەڕانی مامەڵە" oninput="exStatsState.limit=60;exStatsRender()">
+          <select class="ex-input" id="exStatus" aria-label="پاڵاوتنی باری مامەڵە" onchange="exSetFilter(this.value)">
+            <option value="all">هەموو بارەکان</option><option value="پەسەندکرا">پەسەندکراو</option><option value="چاوەڕوانە">چاوەڕوان</option>
+            <option value="ڕاستکراوەتەوە">ڕاستکراوەتەوە</option><option value="پێویستی بە ڕاستکردنەوەیە">پێویستی بە ڕاستکردنەوەیە</option><option value="ڕەتکرا">ڕەتکراو</option>
+          </select>
+          <input class="ex-input" id="exFromDate" type="date" aria-label="لە ڕێکەوت" onchange="exStatsState.limit=60;exStatsRender()">
+          <input class="ex-input" id="exToDate" type="date" aria-label="تا ڕێکەوت" onchange="exStatsState.limit=60;exStatsRender()">
+          <span class="ex-count" id="exResultCount" aria-live="polite">—</span>
+        </div>
+        <div class="ex-list" id="exOrderList"><div class="ex-note">بۆ بینینی ئامارەکان ئەم پەڕەیە بکەرەوە.</div></div>
+        <div class="ex-note" id="exStatsNotice">بڕەکان بە ڕێگای وەرگرتن جیاکراونەتەوە.</div>
+      </section>
     </div>
 
     <!-- ══ ORDERS ══ -->
@@ -233,6 +270,7 @@
         <h3>نرخی گۆڕینەوە و کرێ</h3>
         <div class="act-btn dark" onclick="openRateModal(null)"><i class="fas fa-plus"></i> زیادکردنی ڕێگا</div>
       </div>
+      <section class="ex-sheet"><div class="ex-head"><div><h3>دەستکاری خێرای نرخ</h3><p>نرخی هەر ڕێگایەک بە جیا دەستکاری بکە؛ پاشەکەوتکردن بە هەمان سیستەمی ئێستا دەکرێت.</p></div><div class="ex-logo">Proxo</div></div><div class="ex-rates" id="exRatesQuick"><div class="ex-note">نرخەکان بار دەکرێن...</div></div></section>
       <div class="tbl-wrap">
         <div class="tbl-scroll" id="ratesTableWrap">
           <div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>
@@ -820,5 +858,6 @@
 
   <script src="assets/js/svg-icons.js"></script>
   <script src="assets/js/admin.js?v=11"></script>
+  <script src="assets/js/exchange-insights.js?v=1"></script>
 </body>
 </html>
