@@ -421,3 +421,13 @@ body,#main{background:#f8fafc;color:#171d28}
 .ex-label,.stat-lbl,.profit-help,.profit-date,.ex-order-footer,.ex-head p,
 #pgDashboard .profit-dash-head p,#pgDashboard .ex-dash-shortcut p,
 .sb-section{color:#566578!important}
+
+/* Headings only: restore Proxo blue without recoloring buttons, values or body text. */
+:root{--proxo-heading-blue:#1685fa}
+.pg>.sec-hdr h3,.sec-hdr h3,.modal-hdr h3,.modal-head h3,
+.ex-head h3,.ex-title,#pgDashboard .profit-dash-head h3,
+#pgDashboard .ex-dash-shortcut h3,#pgProfit .ex-title,
+#pgStatistics .ex-title,#pgRates .ex-title,
+#pgAccounts .sec-hdr h3,#pgOrders .sec-hdr h3,
+.topbar-titles h2,#pgProfit .ex-head h3,
+#pgDashboard .profit-dash-head h3{color:var(--proxo-heading-blue)!important}
