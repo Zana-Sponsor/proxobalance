@@ -241,3 +241,96 @@
  [data-theme="light"] .panel,
  [data-theme="light"] .btn{transition:none!important;animation:none!important}
 }
+
+/* Centered Sorani transaction receipt; rendered identically for PDF capture. */
+.pb-receipt-print{
+ box-sizing:border-box;width:720px;max-width:100%;
+ background:#fff;color:#202c3c;
+ border:1px solid #e6ecf3;border-radius:26px;
+ padding:27px 31px 23px;
+ font-family:Rabar,Tahoma,Arial,sans-serif;
+ font-size:14px;font-weight:400;line-height:1.8;
+ direction:rtl;box-shadow:none;
+}
+.pb-rhead{
+ display:flex;align-items:center;justify-content:space-between;
+ gap:18px;padding-bottom:18px;border-bottom:1px solid #e7ecf3;
+}
+.pb-rhead h2{
+ flex:1;text-align:center;margin:0;
+ color:#1685fa;font-size:16px;font-weight:500;
+}
+.pb-rhead strong{
+ flex:0 0 auto;font:750 25px/1.3 Arial,sans-serif;
+ color:#1685fa;letter-spacing:-1px;
+}
+.pb-rsection{
+ padding:17px 0 14px;
+ border-bottom:1px solid #e7ecf3;
+}
+.pb-rsection h3{
+ margin:0 0 12px;text-align:center;
+ font-size:15px;line-height:1.7;font-weight:500;
+ color:#1685fa;
+}
+.pb-rrow{
+ display:flex;align-items:flex-start;justify-content:space-between;
+ gap:20px;padding:10px 6px;
+ font-size:14px;line-height:1.7;
+}
+.pb-rrow+.pb-rrow{border-top:1px solid #f1f3f6}
+.pb-rkey{
+ min-width:0;color:#58677d;font-weight:400;
+ text-align:right;overflow-wrap:anywhere;
+}
+.pb-rval{
+ min-width:0;max-width:65%;color:#233147;
+ font-size:14px;font-weight:500;text-align:left;
+ overflow-wrap:anywhere;font-variant-numeric:tabular-nums;
+}
+.pb-rval[dir="ltr"]{direction:ltr;unicode-bidi:isolate;letter-spacing:normal}
+.pb-rfooter{
+ margin:0;padding:20px 16px 2px;
+ text-align:center;color:#63738a;
+ font-size:12px;font-weight:400;line-height:1.9;
+}
+[data-theme="light"] #newsBanner{
+ background:#f5f8fc;
+ color:#28374b;
+ border:1px solid #e6edf4;
+ box-shadow:none;
+}
+[data-theme="light"] #newsBanner .icn{color:#677b91}
+[data-theme="light"] .notif-bar,
+[data-theme="light"] .notif-panel,
+[data-theme="light"] .feed-card,
+[data-theme="light"] .rate-row,
+[data-theme="light"] .rule-item{
+ background:#fff;color:#243449;
+ border-color:#e8edf3;
+ box-shadow:none;
+}
+[data-theme="light"] .topbar,
+[data-theme="light"] .bottom-nav{
+ background:#fff;border-color:#e8edf3;
+ box-shadow:0 3px 16px rgba(27,44,68,.03);
+}
+[data-theme="light"] .hdr-nav-link,
+[data-theme="light"] .bn-item{
+ color:#52647a;font-weight:400;
+}
+[data-theme="light"] .hdr-nav-link.on,
+[data-theme="light"] .bn-item.on{color:#35475e;font-weight:500}
+[data-theme="light"] .proof-card{
+ color:#28374b;background:#fff;border:1px solid #e6edf4;
+}
+[data-theme="light"] .proof-card h3,
+[data-theme="light"] .rule-txt h4,
+[data-theme="light"] .support-page-head h2{
+ color:#1685fa;font-size:16px;font-weight:500;
+}
+@media(max-width:560px){
+ .pb-receipt-print{padding:20px 18px;border-radius:20px}
+ .pb-rrow{gap:12px}
+ .pb-rval{max-width:61%}
+}
