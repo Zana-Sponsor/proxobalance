@@ -286,3 +286,7 @@
 @media(prefers-reduced-motion:reduce){
  .btn,.icon-btn,.filter-chip,.bn-item{transition:none!important}
 }
+
+/* Small descriptions maintain comfortable contrast on light cards. */
+#pageProfile .pf-menu-item span:not(.icn),#pageProfile .pf-email,
+#pageTx .tx-card-foot,#pageTx .tx-amount-sent,#pageTx .tx-sum-lbl{color:#526176}
