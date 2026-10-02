@@ -60,7 +60,7 @@ function pbBuildReceipt(order){
   box.append(footer);
   return box;
 }
-async function downloadTransactionReceipt(orderId){
+async function pbDownloadReceiptRaster(orderId){
   const order=_orders.find(o=>String(o.id)===String(orderId));
   if(!order){showToast('مامەڵەکە نەدۆزرایەوە','error');return;}
   const name='Proxo-pswla-'+String(typeof orderCodeOf==='function'?orderCodeOf(order):order.id).replace(/[^A-Za-z0-9_-]/g,'');
@@ -134,6 +134,38 @@ async function downloadTransactionReceipt(orderId){
     }else showToast('داگرتنی PDF سەرکەوتوو نەبوو؛ تکایە دووبارە هەوڵ بدەرەوە','error');
   }finally{source.remove();}
 }
+/* Native browser PDF is primary: it preserves Kurdish shaping and selectable
+   letters, instead of flattening them with html2canvas/jspdf. This function
+   runs inside the direct click handler to avoid popup blocking. */
+async function downloadTransactionReceipt(orderId){
+  const order=_orders.find(o=>String(o.id)===String(orderId));
+  if(!order){showToast('مامەڵەکە نەدۆزرایەوە','error');return;}
+  const receipt=pbBuildReceipt(order);
+  const printWindow=window.open('','_blank');
+  if(!printWindow){
+    /* Restricted browsers may block the print window. */
+    return pbDownloadReceiptRaster(orderId);
+  }
+  try{
+    const name='Proxo-pswla-'+String(typeof orderCodeOf==='function'?orderCodeOf(order):order.id).replace(/[^A-Za-z0-9_-]/g,'');
+    const html='<!doctype html><html lang="ku" dir="rtl"><head><meta charset="utf-8">'+
+      '<meta name="viewport" content="width=device-width,initial-scale=1">'+
+      '<title>'+name+'</title><style>'+pbReceiptPrintCSS()+'</style></head>'+
+      '<body>'+receipt.outerHTML+
+      '<script>window.addEventListener("load",async function(){'+
+      'try{if(document.fonts){await document.fonts.load("400 14px Rabar","پسووڵەی مامەڵە");'+
+      'await document.fonts.load("500 14px Rabar","زانیاری مامەڵە");await document.fonts.ready;}}catch(e){}'+
+      'window.focus();window.print();});<\/script></body></html>';
+    printWindow.document.open();
+    printWindow.document.write(html);
+    printWindow.document.close();
+    showToast('بۆ داگرتنی PDF، «Save as PDF» هەڵبژێرە','info');
+  }catch(err){
+    console.error('Native Kurdish receipt PDF error',err);
+    try{printWindow.close();}catch(_){}
+    return pbDownloadReceiptRaster(orderId);
+  }
+}
 function pbReceiptPrintCSS(){
   return '@font-face{font-family:Rabar;src:url(https://raw.githubusercontent.com/Zana-Sponsor/Zana-Sponsor/main/Rabar_021.woff2) format(woff2);font-weight:300 800;font-display:swap}'+
   'body{margin:0;padding:24px;background:#fff;font-family:Rabar,Tahoma,Arial,sans-serif;direction:rtl}'+
@@ -145,5 +177,5 @@ function pbReceiptPrintCSS(){
   '.pb-rrow{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start;gap:18px;padding:11px 4px;font-size:14px;line-height:1.75}'+
   '.pb-rkey{color:#64748b;text-align:right;min-width:0}.pb-rval{color:#253246;font-weight:500;text-align:left;min-width:0;overflow-wrap:anywhere}.pb-rval[dir=ltr]{direction:ltr;unicode-bidi:isolate}'+
   '.pb-rfooter{padding-top:17px;font-size:12px;line-height:1.85;text-align:center;color:#64748b}'+
-  '@media print{body{padding:8px}.pb-receipt-print{border:0;border-radius:0}}';
+  '@page{size:A4;margin:12mm}@media print{html,body{width:auto!important;max-width:100%!important;background:#fff;print-color-adjust:exact;-webkit-print-color-adjust:exact}body{padding:0}.pb-receipt-print{border:0;border-radius:0;padding:0;max-width:none}.pb-rhead,.pb-rrow,.pb-rsection,.pb-rfooter{break-inside:avoid;page-break-inside:avoid}.pb-rsection h3{break-after:avoid;page-break-after:avoid}}';
 }
