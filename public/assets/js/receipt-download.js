@@ -64,41 +64,79 @@ async function downloadTransactionReceipt(orderId){
   const order=_orders.find(o=>String(o.id)===String(orderId));
   if(!order){showToast('مامەڵەکە نەدۆزرایەوە','error');return;}
   const name='Proxo-pswla-'+String(typeof orderCodeOf==='function'?orderCodeOf(order):order.id).replace(/[^A-Za-z0-9_-]/g,'');
-  const source=pbBuildReceipt(order);source.classList.add('pb-receipt-capture');
-  source.style.position='fixed';source.style.left='-10000px';source.style.top='0';source.style.width='720px';
+  const source=pbBuildReceipt(order);
+  source.classList.add('pb-receipt-capture');
+  /* Keep it at a renderable viewport position. A -10000px offset breaks
+     html2canvas layout and can leave Kurdish letters clipped or distorted. */
+  source.style.cssText='position:fixed;inset:0 auto auto 0;width:720px;max-width:none;z-index:-1;pointer-events:none;';
   document.body.append(source);
   try{
-    if(!window.html2canvas||!window.jspdf?.jsPDF){
-      throw new Error('PDF_LIBRARIES_UNAVAILABLE');
+    if(!window.html2canvas||!window.jspdf?.jsPDF)throw new Error('PDF_LIBRARIES_UNAVAILABLE');
+    if(document.fonts){
+      await document.fonts.load('400 14px Rabar','پسووڵەی مامەڵە');
+      await document.fonts.load('500 14px Rabar','زانیاری مامەڵە');
+      await document.fonts.ready;
+      if(!document.fonts.check('400 14px Rabar','پسووڵە')){
+        throw new Error('KURDISH_FONT_UNAVAILABLE');
+      }
     }
-    if(document.fonts)await document.fonts.ready;
-    const canvas=await window.html2canvas(source,{scale:2,backgroundColor:'#fff',useCORS:true,logging:false,windowWidth:780});
+    const canvas=await window.html2canvas(source,{
+      scale:3,backgroundColor:'#ffffff',useCORS:true,logging:false,
+      windowWidth:780,scrollX:0,scrollY:0,
+      onclone:doc=>{
+        const copy=doc.querySelector('.pb-receipt-capture');
+        if(copy)copy.style.cssText='position:absolute;inset:0 auto auto 0;width:720px;max-width:none;z-index:0;pointer-events:none;';
+      }
+    });
     if(!canvas.width||!canvas.height)throw new Error('EMPTY_PDF_CAPTURE');
     const pdf=new window.jspdf.jsPDF({unit:'mm',format:'a4',compress:true});
-    const width=190,height=canvas.height*width/canvas.width,onePage=277;
-    const image=canvas.toDataURL('image/jpeg',.96);
-    for(let offset=0;offset<height;offset+=onePage){
-      if(offset)pdf.addPage();
-      pdf.addImage(image,'JPEG',10,10-offset,width,height);
+    const mmWidth=190,mmAvailableHeight=277;
+    const maxPagePixels=Math.floor(mmAvailableHeight*canvas.width/mmWidth);
+    /* Prefer the bottom of a whole receipt row or section. Never shear the
+       same JPEG across pages: that blurs Sorani glyphs and splits baselines. */
+    const base=source.getBoundingClientRect();
+    const ratio=canvas.height/base.height;
+    const edges=[...source.querySelectorAll('.pb-rhead,.pb-rsection h3,.pb-rrow,.pb-rfooter')]
+      .map(el=>Math.round((el.getBoundingClientRect().bottom-base.top)*ratio))
+      .filter(y=>y>0&&y<=canvas.height).sort((a,b)=>a-b);
+    let top=0;
+    while(top<canvas.height){
+      let bottom=Math.min(top+maxPagePixels,canvas.height);
+      if(bottom<canvas.height){
+        const safe=edges.filter(y=>y>top+maxPagePixels*.4&&y<=bottom-18).pop();
+        if(safe)bottom=safe;
+      }
+      if(bottom<=top)throw new Error('INVALID_PDF_PAGE');
+      const part=document.createElement('canvas');
+      part.width=canvas.width;part.height=bottom-top;
+      const ctx=part.getContext('2d',{alpha:false});
+      if(!ctx)throw new Error('PDF_CANVAS_UNAVAILABLE');
+      ctx.fillStyle='#ffffff';ctx.fillRect(0,0,part.width,part.height);
+      ctx.drawImage(canvas,0,top,canvas.width,part.height,0,0,part.width,part.height);
+      if(top)pdf.addPage();
+      pdf.addImage(part.toDataURL('image/png'),'PNG',10,10,mmWidth,part.height*mmWidth/part.width);
+      top=bottom;
     }
     pdf.save(name+'.pdf');
     showToast('پسووڵەکە دابەزێنرا','success');
   }catch(err){
     console.error('Receipt PDF error',err);
-    /* Printing is a supported fallback when the remote PDF libraries are blocked. */
+    /* Native print retains the browser's Kurdish shaping when the font or
+       third-party PDF libraries cannot be used. */
     const printWindow=window.open('','_blank');
     if(printWindow){
       printWindow.document.open();
       printWindow.document.write('<!doctype html><html lang="ku" dir="rtl"><head><meta charset="utf-8"><title>پسووڵەی مامەڵە</title>'+
-        '<style>'+pbReceiptPrintCSS()+'<\/style></head><body>'+source.outerHTML.replace(/style="position:[^"]*"/,'')+
-        '<script>window.onload=function(){window.print()}<\/script></body></html>');
+        '<style>'+pbReceiptPrintCSS()+'<\/style></head><body>'+source.outerHTML.replace(/style="[^"]*"/,'')+
+        '<script>window.onload=async function(){if(document.fonts)await document.fonts.ready;window.print()}<\/script></body></html>');
       printWindow.document.close();
       showToast('لە چاپکردنەوە «Save as PDF» هەڵبژێرە','info');
     }else showToast('داگرتنی PDF سەرکەوتوو نەبوو؛ تکایە دووبارە هەوڵ بدەرەوە','error');
   }finally{source.remove();}
 }
 function pbReceiptPrintCSS(){
-  return 'body{margin:0;padding:24px;background:#fff;font-family:Rabar,Tahoma,Arial,sans-serif}'+
+  return '@font-face{font-family:Rabar;src:url(https://raw.githubusercontent.com/Zana-Sponsor/Zana-Sponsor/main/Rabar_021.woff2) format(woff2);font-weight:300 800;font-display:swap}'+
+  'body{margin:0;padding:24px;background:#fff;font-family:Rabar,Tahoma,Arial,sans-serif;direction:rtl}'+
   '.pb-receipt-print{max-width:720px;margin:auto;padding:30px;border:1px solid #e8edf3;border-radius:26px;box-sizing:border-box;color:#253246}'+
   '.pb-rhead{display:flex;justify-content:space-between;align-items:center;padding-bottom:18px;border-bottom:1px solid #e8edf3}'+
   '.pb-rhead h2{font-weight:500;font-size:16px;flex:1;text-align:center}.pb-rhead strong{color:#1685fa;font:bold 25px Arial}'+
