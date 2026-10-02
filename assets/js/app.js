@@ -2,36 +2,36 @@
 // ═══ ICONS (used for dynamically-injected UI) ═══════════════════
 // ══════════════════════════════════════════════════════════════
 const ICON = {
-  spin: '<svg class="icn icn-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3.6a8.4 8.4 0 1 0 8.4 8.4"/></svg>',
-  arrowLeft: '<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M11 6.2 5 12l6 5.8"/></svg>',
-  check: '<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.8l4.3 4.3L19 7.5"/></svg>',
-  send: '<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2.5l-9.3 19-3-8.1-8.2-3.1z"/><path d="M12.2 13.5l4-6.8"/></svg>',
-  lock: '<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10.5" width="14" height="9" rx="2.2"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></svg>',
-  eye: '<svg class="icn icn-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12S6 5.8 12 5.8 21.5 12 21.5 12 18 18.2 12 18.2 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.9"/></svg>',
-  eyeOff: '<svg class="icn icn-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 3.5l17 17"/><path d="M10.6 5.7A10.9 10.9 0 0 1 12 5.6c6 0 9.5 6.4 9.5 6.4a15.7 15.7 0 0 1-3.4 4.2M6.5 6.6C3.9 8.4 2.5 12 2.5 12s3.5 6.4 9.5 6.4c1.3 0 2.5-.3 3.6-.7"/><path d="M9.9 10a3 3 0 0 0 4.1 4.1"/></svg>',
-  sun: '<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.1"/><path d="M12 2.6v2.3M12 19.1v2.3M4.7 4.7l1.6 1.6M17.7 17.7l1.6 1.6M2.6 12h2.3M19.1 12h2.3M4.7 19.3l1.6-1.6M17.7 6.3l1.6-1.6"/></svg>',
-  moon: '<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.3A8.4 8.4 0 1 1 9.7 4a7 7 0 0 0 10.3 10.3z"/></svg>',
-  swap: '<svg class="icn icn-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h13.5l-3-3.2"/><path d="M20 16H6.5l3 3.2"/></svg>',
-  coins: '<svg class="icn icn-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9.3" cy="10" r="5.3"/><path d="M13.2 8a5.3 5.3 0 1 1 0 8.3"/></svg>',
-  checkDouble: '<svg class="icn icn-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.3 12.5l3.8 3.8L14.5 7.8"/><path d="M9 12.5l3.8 3.8 8.5-8.5"/></svg>',
-  phone: '<svg class="icn icn-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6.6 3.6h3l1.4 4-1.9 1.6a12.2 12.2 0 0 0 5.3 5.3l1.6-1.9 4 1.4v3a1.5 1.5 0 0 1-1.6 1.5A16.7 16.7 0 0 1 4.6 5.2a1.5 1.5 0 0 1 2-1.6z"/></svg>',
-  clock: '<svg class="icn icn-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.3"/><path d="M12 7.6V12l3.1 1.9"/></svg>',
-  message: '<svg class="icn icn-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="11" rx="3"/><circle cx="9" cy="10.5" r=".9" fill="currentColor" stroke="none"/><circle cx="12" cy="10.5" r=".9" fill="currentColor" stroke="none"/><circle cx="15" cy="10.5" r=".9" fill="currentColor" stroke="none"/></svg>',
-  warn: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.6 21.5 20H2.5z"/><path d="M12 9.8v4.6"/><circle cx="12" cy="17.3" r=".2" fill="currentColor"/></svg>',
-  cross: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg>',
-  info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.3"/><path d="M12 11v5.2"/><circle cx="12" cy="8" r=".2" fill="currentColor"/></svg>',
-  wifiOff: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8.8a15.8 15.8 0 0 1 5-3.1M22 8.8a15.8 15.8 0 0 0-7.6-4.1M6.5 12.3a9.8 9.8 0 0 1 4-2M17.5 12.3a9.8 9.8 0 0 0-2.6-1.7M9.7 15.8a5.6 5.6 0 0 1 4.6 0M12 19.3v.1M2 2l20 20"/></svg>',
-  telegram: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2.5l-9.3 19-3-8.1-8.2-3.1z"/><path d="M12.2 13.5l4-6.8"/></svg>',
+  spin: '<span class="icn icn-spin icon--solar icon--solar--refresh-linear" aria-hidden="true"></span>',
+  arrowLeft: '<span class="icn icon--solar icon--solar--arrow-left-linear" aria-hidden="true"></span>',
+  check: '<span class="icn icon--solar icon--solar--check-circle-linear" aria-hidden="true"></span>',
+  send: '<span class="icn icon--solar icon--solar--plain-2-linear" aria-hidden="true"></span>',
+  lock: '<span class="icn icon--solar icon--solar--lock-linear" aria-hidden="true"></span>',
+  eye: '<span class="icn icn-sm icon--solar icon--solar--eye-linear" aria-hidden="true"></span>',
+  eyeOff: '<span class="icn icn-sm icon--solar icon--solar--eye-closed-linear" aria-hidden="true"></span>',
+  sun: '<span class="icn icon--solar icon--solar--sun-linear" aria-hidden="true"></span>',
+  moon: '<span class="icn icon--solar icon--solar--moon-linear" aria-hidden="true"></span>',
+  swap: '<span class="icn icn-sm icon--solar icon--solar--transfer-horizontal-linear" aria-hidden="true"></span>',
+  coins: '<span class="icn icn-sm icon--solar icon--solar--banknote-2-linear" aria-hidden="true"></span>',
+  checkDouble: '<span class="icn icn-sm icon--solar icon--solar--check-read-linear" aria-hidden="true"></span>',
+  phone: '<span class="icn icn-sm icon--solar icon--solar--phone-linear" aria-hidden="true"></span>',
+  clock: '<span class="icn icn-sm icon--solar icon--solar--clock-circle-linear" aria-hidden="true"></span>',
+  message: '<span class="icn icn-sm icon--solar icon--solar--chat-round-dots-linear" aria-hidden="true"></span>',
+  warn: '<span class="icon--solar icon--solar--danger-triangle-linear" aria-hidden="true"></span>',
+  cross: '<span class="icon--solar icon--solar--close-circle-linear" aria-hidden="true"></span>',
+  info: '<span class="icon--solar icon--solar--info-circle-linear" aria-hidden="true"></span>',
+  wifiOff: '<span class="icon--solar icon--solar--wi-fi-router-minimalistic-linear" aria-hidden="true"></span>',
+  telegram: '<span class="icon--solar icon--solar--plain-2-linear" aria-hidden="true"></span>',
   whatsapp: '<svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2.2a9.8 9.8 0 0 0-8.4 14.8L2.2 21.8l4.9-1.3A9.8 9.8 0 1 0 12 2.2zm0 1.8a8 8 0 0 1 6.9 12l-.2.4.9 3.1-3.2-.9-.4.2a8 8 0 1 1-4-14.8zm-3.5 4.1c-.2 0-.5 0-.7.3-.2.3-.9.8-.9 2s.9 2.4 1 2.6c.1.2 1.8 2.9 4.5 4 2.2.9 2.7.7 3.2.6.5 0 1.6-.6 1.8-1.2.2-.6.2-1.2.2-1.3-.1-.1-.3-.2-.6-.4-.3-.1-1.6-.8-1.9-.9-.2-.1-.4-.1-.6.1-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-.3-.2-1.2-.5-2.3-1.5-.9-.7-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6l.4-.5c.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5C9.6 9 9 7.7 8.7 7.2c-.2-.5-.4-.4-.6-.5h-.5z"/></svg>',
-  fastpay: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2.5 4.5 14h6l-1 7.5L18.5 10h-6z"/></svg>',
-  fib: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 9.5 12 4l8.5 5.5"/><path d="M5 9.5V19M9 9.5V19M15 9.5V19M19 9.5V19"/><path d="M3.2 19h17.6"/><path d="M3.2 9.5h17.6"/></svg>',
-  qicard: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.7" y="5.5" width="18.6" height="13" rx="2.4"/><path d="M2.7 9.8h18.6"/><path d="M6 14.3h5"/></svg>',
-  asiacell: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5v-2.2"/><path d="M8 20.5a5.7 5.7 0 0 1 8 0"/><path d="M4.8 17.3a10.2 10.2 0 0 1 14.4 0"/><path d="M2 14a14.2 14.2 0 0 1 20 0"/></svg>',
-  korek: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1.1" fill="currentColor" stroke="none"/><path d="M8.3 15.7a5.2 5.2 0 0 1 7.4 0"/><path d="M5.4 12.8a9.3 9.3 0 0 1 13.2 0"/><path d="M2.6 10a13.4 13.4 0 0 1 18.8 0"/></svg>',
-  usdt: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.2"/><path d="M8 8.3h8M12 8.3v3M9.3 12.6c0 1.2 1.2 2 2.7 2s2.7-.8 2.7-1.9c0-1-1-1.5-2.7-1.7-1.7-.2-2.7-.7-2.7-1.7 0-1 1.2-1.8 2.7-1.8s2.5.6 2.6 1.5"/><path d="M12 14.6v3.1"/></svg>',
-  receive: '<svg class="icn icn-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.2v10.8"/><path d="M7.3 9.8 12 14.5l4.7-4.7"/><path d="M4 18.3h16"/></svg>',
-  image: '<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2.5"/><circle cx="8.5" cy="9.5" r="1.5"/><path d="M21 15.5l-5.5-5.5L5 20"/></svg>',
-  banknote: '<svg class="icn icn-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.3" y="6.3" width="19.4" height="11.4" rx="2.2"/><circle cx="12" cy="12" r="2.5"/><path d="M5.3 9.3h.01M18.7 14.7h.01"/></svg>'
+  fastpay: '<span class="icon--solar icon--solar--bolt-linear" aria-hidden="true"></span>',
+  fib: '<span class="icon--solar icon--solar--buildings-2-linear" aria-hidden="true"></span>',
+  qicard: '<span class="icon--solar icon--solar--card-linear" aria-hidden="true"></span>',
+  asiacell: '<span class="icon--solar icon--solar--wi-fi-router-round-linear" aria-hidden="true"></span>',
+  korek: '<span class="icon--solar icon--solar--wi-fi-router-linear" aria-hidden="true"></span>',
+  usdt: '<span class="icon--solar icon--solar--dollar-linear" aria-hidden="true"></span>',
+  receive: '<span class="icn icn-sm icon--solar icon--solar--download-minimalistic-linear" aria-hidden="true"></span>',
+  image: '<span class="icn icon--solar icon--solar--gallery-linear" aria-hidden="true"></span>',
+  banknote: '<span class="icn icn-sm icon--solar icon--solar--banknote-linear" aria-hidden="true"></span>'
 };
 
 // ══════════════════════════════════════════════════════════════
@@ -48,16 +48,22 @@ const LOGO_B64 = {
 // ══════════════════════════════════════════════════════════════
 // ═══ PAYMENT METHOD META (drives pickers, wallet row, icons) ═══
 // ══════════════════════════════════════════════════════════════
-let METHOD_META = {
-  FastPay:  { label:'FastPay',         color:'#7c3aed', icon:ICON.fastpay,  img:LOGO_B64.fastpay  },
-  FIB:      { label:'FIB Bank',        color:'#0ea5a4', icon:ICON.fib,      img:LOGO_B64.fib      },
-  QiCard:   { label:'Qi Card',         color:'#2563eb', icon:ICON.qicard,   img:LOGO_B64.qicard   },
-  Asiacell: { label:'Asiacell',        color:'#e11d48', icon:ICON.asiacell, img:LOGO_B64.asiacell },
-  Korek:    { label:'Korek',           color:'#f59e0b', icon:ICON.korek,    img:LOGO_B64.korek    },
-  USDT:     { label:'USDT ($)',        color:'#26a17b', icon:ICON.usdt     }
+// Wallets exist ONLY in the ex_wallets table. Nothing below is a wallet: these
+// are just logos/colours used when a database wallet has no image_url of its
+// own. A key that is not in the database never appears anywhere on the page.
+const WALLET_VISUALS = {
+  FastPay:  { color:'#7c3aed', icon:ICON.fastpay,  img:LOGO_B64.fastpay  },
+  FIB:      { color:'#0ea5a4', icon:ICON.fib,      img:LOGO_B64.fib      },
+  QiCard:   { color:'#2563eb', icon:ICON.qicard,   img:LOGO_B64.qicard   },
+  Asiacell: { color:'#e11d48', icon:ICON.asiacell, img:LOGO_B64.asiacell },
+  Korek:    { color:'#f59e0b', icon:ICON.korek,    img:LOGO_B64.korek    },
+  USDT:     { color:'#26a17b', icon:ICON.usdt                            }
 };
-let FROM_OPTIONS = ['FastPay','FIB','QiCard','Asiacell','Korek','USDT'];
-let RECEIVE_OPTIONS = ['FastPay','FIB','QiCard'];
+let METHOD_META = {};
+let FROM_OPTIONS = [];
+let RECEIVE_OPTIONS = [];
+// 'loading' until ex_wallets answers, then 'ready' or 'error'
+let WALLETS_STATE = 'loading';
 // Palette + helpers so any wallet added later in the admin panel (with no
 // hardcoded icon) still gets a distinct color and a sensible fallback icon.
 const WALLET_PALETTE = ['#7c3aed','#0ea5a4','#2563eb','#e11d48','#f59e0b','#26a17b','#0891b2','#db2777','#65a30d','#9333ea'];
@@ -73,10 +79,10 @@ function escHtml(s){ return String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&
 function rebuildWalletOptions(){
   const rows = Object.keys(WALLET_DATA).map(k=>({ key:k, ...WALLET_DATA[k] })).filter(w=>w.key);
   rows.sort((a,b)=>(a.sort_order??0)-(b.sort_order??0));
-  if(!rows.length) return; // keep existing defaults if ex_wallets is empty/unreachable
+  // An empty table means no wallets — never fall back to a built-in list.
   const newMeta = {};
   rows.forEach(w=>{
-    const known = METHOD_META[w.key];
+    const known = WALLET_VISUALS[w.key];
     newMeta[w.key] = {
       label: w.name || w.key,
       color: (known && known.color) || colorForWalletKey(w.key),
@@ -108,7 +114,14 @@ function methodIconHTML(key, sizeClass, forceId){
 function refreshTrigger(which){
   const selId = which==='from' ? 'from' : 'receiveVia';
   const val = document.getElementById(selId).value;
-  const m = METHOD_META[val]; if(!m) return;
+  const m = METHOD_META[val];
+  if(!m){
+    const icon=document.getElementById(which+'TriggerIcon');
+    if(icon) icon.outerHTML='<span class="method-icon" id="'+which+'TriggerIcon"></span>';
+    const lbl=document.getElementById(which+'TriggerLabel');
+    if(lbl) lbl.textContent = WALLETS_STATE==='loading' ? 'بارکردن…' : 'هیچ واڵێتێک بەردەست نییە';
+    return;
+  }
   document.getElementById(which+'TriggerIcon').outerHTML = methodIconHTML(val, '', which+'TriggerIcon');
   document.getElementById(which+'TriggerLabel').textContent = m.label;
 }
@@ -173,7 +186,7 @@ function openPicker(which){
       + methodIconHTML(key)
       + '<span class="sheet-option-text"><span class="sheet-option-name">'+escHtml(m.label)+'</span>'
       + (reason?'<span class="sheet-option-sub">'+reason+'</span>':'')+'</span>'
-      + '<span class="sheet-option-check"><svg class="icn icn-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.8l4.3 4.3L19 7.5"/></svg></span>'
+      + '<span class="sheet-option-check"><span class="icn icn-sm icon--solar icon--solar--check-circle-linear" aria-hidden="true"></span></span>'
       + '</button>';
   }).join('');
   openSheet(document.getElementById('pickerSheet'));
@@ -205,7 +218,7 @@ function showToast(message, type='info', title){
       + (title?'<div class="toast-title">'+title+'</div>':'')
       + '<div class="toast-msg">'+message+'</div>'
     + '</span>'
-    + '<button type="button" class="toast-x" aria-label="داخستن"><svg class="icn icn-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>';
+    + '<button type="button" class="toast-x" aria-label="داخستن"><span class="icn icn-sm icon--solar icon--solar--close-circle-linear" aria-hidden="true"></span></button>';
   const remove=()=>{ el.classList.add('leaving'); setTimeout(()=>el.remove(),220); };
   el.querySelector('.toast-x').onclick=remove;
   container.appendChild(el);
@@ -318,6 +331,7 @@ function _notifKind(type){
   if(type==='order_rejected') return 'no';
   if(type==='order_status')   return 'upd';
   if(type==='support_case')   return 'upd';
+  if(type==='kyc')            return 'upd';
   return 'msg';
 }
 function _notifIcon(type){
@@ -369,6 +383,8 @@ async function loadNotifications(){
     .on('postgres_changes',{event:'INSERT',schema:'public',table:'ex_notifications',filter:'user_id=eq.'+curUser.id}, (payload)=>{
       _notifItems.unshift(payload.new);
       renderNotifPanel(); updateNotifBadge(); showNotifBar(payload.new);
+      // An admin requested / approved / rejected verification: refresh the badge live.
+      if(payload.new && payload.new.type==='kyc') loadKycStatus(true);
     })
     .subscribe();
 }
@@ -453,6 +469,12 @@ function toggleNotifPanel(){
 async function openNotifItem(id){
   const item=_notifItems.find(n=>n.id===id);
   await markNotifRead(id);
+  if(item && item.type==='kyc'){
+    closeNotifPanel();
+    navigate('profile');
+    await loadKycStatus(true);
+    return;
+  }
   if(item && item.type==='support_case'){
     closeNotifPanel();
     navigate('support');
@@ -1032,6 +1054,8 @@ function kuErr(msg){
     'Email rate limit exceeded':'زۆر جار ئیمەیل نێردرا، کەمێک چاوەڕوان بە',
     'Auth session missing':'تکایە دووبارە بچۆ ژوورەوە',
     'PROFILE_UPDATE_COOLDOWN':'ناو و ژمارەی مۆبایل تا تەواوبوونی ٧ ڕۆژەکە قوفڵن',
+    'PROFILE_NAME_LOCKED_BY_KYC':'ناوەکەت بە ناسنامە پشتڕاستکراوەتەوە و ناتوانرێت بگۆڕدرێت',
+    'KYC_REQUIRED_FOR_EXCHANGE':'پێش ئەنجامدانی ئاڵوگۆڕ، پێویستە ناسنامەکەت پشتڕاست بکرێتەوە.',
     'SENDER_PHONE_REQUIRED':'ژمارەی نێرەر بۆ Korek و Asiacell پێویستە',
     'SENDER_PHONE_INVALID':'ژمارەی نێرەر دەبێت بە 07 دەست پێبکات و ١١ ژمارە بێت',
     'Invalid sender number':'ژمارەی نێرەر دەبێت بە 07 دەست پێبکات و ١١ ژمارە بێت',
@@ -1150,6 +1174,7 @@ async function startApp(user){
   document.body.classList.add('has-nav');
   applyProfileToUI();
   fillProfileForm();
+  loadKycStatus(true);
   document.getElementById('adminBtn').style.display=curProfile?.is_admin?'flex':'none';
   if(curProfile?.phone){
     const _ph=document.getElementById('userPhone');
@@ -1170,7 +1195,9 @@ async function startApp(user){
   await loadHistory();
   await loadNotifications();
   listenToNews();
-  setTimeout(()=>{ document.getElementById('tgModal').style.display='flex'; },1000);
+  // The Telegram promo is disabled in index.html (hidden attribute); setting
+  // style.display here used to override that and cover the whole app.
+  setTimeout(()=>{ const tg=document.getElementById('tgModal'); if(tg && !tg.hasAttribute('hidden')) tg.style.display='flex'; },1000);
 }
 
 async function logout(){
@@ -1183,24 +1210,32 @@ async function logout(){
 // ══════════════════════════════════════════════════════════════
 // ═══ EXCHANGE CALCULATOR (rates come from ex_rates) ═════════════
 // ══════════════════════════════════════════════════════════════
-const wallets = { "FastPay": "07510074008", "FIB": "07510074008", "QiCard": "07510074008", "Asiacell": "07758887488", "Korek": "07510074008", "USDT": "TTaNnxWNt2bjgSvpRY7NpvyCHUXDi6wjYc" };
+// Wallet numbers come only from ex_wallets.wallet_number (admin panel).
 // ═══ LIVE WALLET DATA (numbers + lock state come from ex_wallets, admin panel) ═══
 let WALLET_DATA = {};
 let _walletsChannel = null;
 function getWalletInfo(key){
   const w = WALLET_DATA[key];
-  return { number: (w && w.number) || wallets[key] || null, locked: !!(w && w.locked) };
+  return { number: (w && w.number) || null, locked: !!(w && w.locked) };
 }
 async function loadWallets(){
   try{
     const {data,error} = await sb.from('ex_wallets').select('key,name,image_url,wallet_number,is_locked,allow_from,allow_receive,sort_order').order('sort_order',{ascending:true});
-    if(!error && data){
+    if(error) throw error;
+    if(data){
       WALLET_DATA = {};
       data.forEach(w=>{ if(w.key) WALLET_DATA[w.key] = { number: w.wallet_number || null, locked: !!w.is_locked, name:w.name, image_url:w.image_url, allow_from: w.allow_from!==false, allow_receive:!!w.allow_receive, sort_order:w.sort_order }; });
       rebuildWalletOptions();
+      WALLETS_STATE = 'ready';
     }
-  }catch(e){}
+  }catch(e){
+    // Unreachable database → show no wallets rather than guessed ones.
+    WALLET_DATA = {};
+    rebuildWalletOptions();
+    WALLETS_STATE = 'error';
+  }
 }
+function hasWallets(){ return FROM_OPTIONS.length>0 && RECEIVE_OPTIONS.length>0; }
 function subscribeWalletsUser(){
   if(_walletsChannel) return;
   _walletsChannel = sb.channel('ex_wallets_user')
@@ -1297,8 +1332,12 @@ function updateWallet(){
     numEl.innerHTML = ICON.lock + '<span>ئەم شێوازە لەئێستادا بەردەست نییە</span>';
     numEl.classList.add('locked-text');
     if(copyBtn) copyBtn.style.display = 'none';
+  } else if(!info.number){
+    numEl.textContent = key ? 'ژمارە دیاری نەکراوە' : '—';
+    numEl.classList.add('locked-text');
+    if(copyBtn) copyBtn.style.display = 'none';
   } else {
-    numEl.textContent = info.number || '---';
+    numEl.textContent = info.number;
     numEl.classList.remove('locked-text');
     if(copyBtn) copyBtn.style.display = '';
   }
@@ -1359,6 +1398,16 @@ function formatAmtField(el){
 function updateSubmitState(from,to){
   const btn=document.getElementById('submitBtn');
   if(!btn || btn.dataset.submitting==='1') return;
+  if(kycExchangeBlocked()){
+    btn.disabled=true;
+    btn.innerHTML='پشتڕاستکردنەوەی ناسنامە پێویستە';
+    return;
+  }
+  if(!hasWallets()){
+    btn.disabled=true;
+    btn.innerHTML = WALLETS_STATE==='loading' ? 'بارکردنی واڵێتەکان…' : 'هیچ واڵێتێک بەردەست نییە';
+    return;
+  }
   const anyLocked = getWalletInfo(from).locked || getWalletInfo(to).locked;
   const same = from===to;
   const closed = !same && !routeAllowed(from,to);
@@ -1383,10 +1432,22 @@ function calc(){
   const feeEl=document.getElementById('feeDisplay');
   const bdRate=document.getElementById('bdRate');
   const bdFee=document.getElementById('bdFee');
+  const bdSent=document.getElementById('bdSent');
   const setBd=(r,f)=>{ if(bdRate) bdRate.textContent=r; if(bdFee) bdFee.textContent=f; };
+  // A rate line only means something when the two sides are different
+  // currencies; IQD → IQD is a fee, so the row is hidden instead of
+  // printing "1 = 1".
+  const showRate=(on)=>{ const row=document.getElementById('bdRateRow'); if(row) row.hidden=!on; };
+  const showFee=(on)=>{ const row=document.getElementById('bdFeeRow'); if(row) row.hidden=!on; };
+  const isUsdt = from==='USDT' || to==='USDT';
+  if(bdSent) bdSent.textContent = amt>0 ? (formatNum(Math.floor(amt))+(from==='USDT'?' $':' IQD')) : '—';
+  const sentRow=document.getElementById('bdSentRow');
+  if(sentRow) sentRow.hidden = !(amt>0);
+  showRate(isUsdt);
+  showFee(true);
   updateHeaderRate();
 
-  if(from===to){ totalEl.innerText='هەمان واڵێت نابێت'; totalEl.classList.add('warn-text'); feeEl.innerText=''; setBd('—','—'); return; }
+  if(from===to){ totalEl.innerText='هەمان واڵێت نابێت'; totalEl.classList.add('warn-text'); feeEl.innerText=''; setBd('—','—'); showRate(false); showFee(false); return; }
   const r=RATES[from+'>'+to];
   // Closed direction: show it as closed. Never fall back to a guessed rate and
   // never quietly move the order to a different wallet.
@@ -1396,14 +1457,15 @@ function calc(){
     const toLbl=(METHOD_META[to]&&METHOD_META[to].label)||to;
     feeEl.innerText = getWalletInfo(to).locked ? '' : ('گۆڕینەوە بۆ '+toLbl+' لە ئێستادا بەردەست نییە');
     setBd('داخراوە','—');
+    showRate(false); showFee(false);
     return;
   }
   totalEl.classList.remove('warn-text');
 
   // rate line — the exact multiplier or fee the order will be settled at
   if(r.type==='multiplier')      setBd('1 = '+fmtPct(r.value), '—');
-  else if(r.type==='fee_percent')setBd('1 = 1', fmtPct(r.value)+'%');
-  else                           setBd('1 = 1', formatNum(r.value)+' IQD');
+  else if(r.type==='fee_percent')setBd('—', fmtPct(r.value)+'%');
+  else                           setBd('—', formatNum(r.value)+' IQD');
 
   if(amt>0 && amt<MIN_AMOUNT){
     totalEl.innerText='کەمترین بڕ '+formatNum(MIN_AMOUNT)+' دینارە';
@@ -1414,11 +1476,9 @@ function calc(){
   let final=0, feeTxt='', feeVal=0;
   if(r.type==='fee_percent'){
     feeVal=amt*r.value/100; final=amt-feeVal;
-    if(amt>0 && feeVal>0) feeTxt='کرێ: '+formatNum(Math.floor(feeVal))+' IQD';
     if(bdFee) bdFee.textContent = amt>0 ? (formatNum(Math.floor(feeVal))+' IQD ('+fmtPct(r.value)+'%)') : (fmtPct(r.value)+'%');
   }else if(r.type==='fee_fixed'){
     feeVal=r.value; final=Math.max(0, amt-feeVal);
-    if(amt>0 && feeVal>0) feeTxt='کرێ: '+formatNum(Math.floor(feeVal))+' IQD';
     if(bdFee) bdFee.textContent = formatNum(Math.floor(feeVal))+' IQD';
   }else{
     final=amt*r.value;
@@ -1426,11 +1486,10 @@ function calc(){
     // the amount, so it reads as a rate — "کرێ: 15%" — rather than an amount.
     if(r.value<1){
       feeVal=amt-final;
-      feeTxt='کرێ: '+fmtPct(100-r.value*100)+'%';
       if(bdFee) bdFee.textContent = amt>0
         ? (formatNum(Math.floor(feeVal))+' IQD ('+fmtPct(100-r.value*100)+'%)')
         : (fmtPct(100-r.value*100)+'%');
-    }else if(bdFee) bdFee.textContent='بێ کرێ';
+    }else{ showFee(false); if(bdFee) bdFee.textContent='بێ کرێ'; }
   }
   totalEl.innerText=formatNum(Math.floor(final))+' IQD';
   feeEl.innerText=feeTxt;
@@ -1472,6 +1531,7 @@ function _validateOrderFields(){
 }
 
 function openOrderConfirm(){
+  if(kycExchangeBlocked()){ showKycExchangeBlocked(); return; }
   if(!_validateOrderFields()) return;
   const senderName=document.getElementById('userSenderName').value;
   const senderPhone=document.getElementById('userSenderPhone').value;
@@ -1565,6 +1625,13 @@ async function processOrder(){
   const btn=document.getElementById('submitBtn'); btn.dataset.submitting='1'; btn.disabled=true; btn.innerHTML=ICON.spin+' ناردن...';
   let orderStage='prepare';
   try{
+    // Fresh check against the database before anything is uploaded: an admin
+    // may have requested verification after this page was opened.
+    orderStage='kyc_gate';
+    const kycNow=await loadKycStatus(true);
+    if(kycNow && kycNow.exchange_blocked){
+      throw Object.assign(new Error('KYC_REQUIRED_FOR_EXCHANGE'),{code:'KYC_REQUIRED_FOR_EXCHANGE'});
+    }
     let receiptUrl=null, receiptHash=null;
     if(selectedFile){
       orderStage='receipt_read';
@@ -1633,6 +1700,12 @@ async function processOrder(){
     clearAllOrderFieldErrors();
     calc();
   }catch(e){
+    if(e && (e.code==='KYC_REQUIRED_FOR_EXCHANGE' || /KYC_REQUIRED_FOR_EXCHANGE/.test(String(e.message||'')))){
+      // Expected business rule, not an application error.
+      await loadKycStatus(true);
+      showKycExchangeBlocked();
+      return;
+    }
     reportAppError(e,{
       operation:'order_submission', stage:orderStage,
       from_method:from, to_method:to,
@@ -1679,42 +1752,129 @@ function copyOrderCode(code, ev){
   catch(_){ showToast('نەتوانرا کۆپی بکرێت','error'); }
 }
 
-function statusClassOf(status){
-  return status==='پەسەندکرا' ? 'status-success'
-    : status==='ڕەتکرا' ? 'status-danger'
-    : status==='پێویستی بە ڕاستکردنەوەیە' ? 'status-correction'
-    : status==='ڕاستکراوەتەوە' ? 'status-corrected'
-    : '';
+// Scannable card: route, amount, date and status only. Everything else is
+// one tap away in the detail sheet (openTxDetail).
+const TX_STATE = {
+  'پەسەندکرا':               { key:'done',     cls:'status-success'    },
+  'ڕەتکرا':                  { key:'rejected', cls:'status-danger'     },
+  'پێویستی بە ڕاستکردنەوەیە':{ key:'action',   cls:'status-correction' },
+  'ڕاستکراوەتەوە':           { key:'pending',  cls:'status-corrected'  },
+  'چاوەڕوانە':               { key:'pending',  cls:''                  }
+};
+function txStateOf(o){ return TX_STATE[o && o.status] || { key:'pending', cls:'' }; }
+function txAmount(value, method){
+  return formatNum(Math.floor(Number(value)||0)) + (method==='USDT' ? ' $' : ' IQD');
+}
+function txWhen(iso, withTime){ return kycFmtDate(iso, withTime); }   // shared Sorani date formatter
+function orderCardHTML(o){
+  const code=orderCodeOf(o);
+  const st=txStateOf(o);
+  const needsAction=o.status==='پێویستی بە ڕاستکردنەوەیە';
+  return '<article class="tx-card'+(needsAction?' needs-action':'')+'" tabindex="0" role="button"'
+    + ' onclick="openTxDetail(\''+escHtml(String(o.id))+'\')"'
+    + ' onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();openTxDetail(\''+escHtml(String(o.id))+'\');}">'
+    + '<div class="tx-card-top">'
+      + '<span class="tx-route">'+escHtml(methodLabel(o.from_method))
+        + '<span class="tx-route-arrow" aria-hidden="true">'+ICON.arrowLeftLong+'</span>'
+        + escHtml(methodLabel(o.to_method))+'</span>'
+      + '<span class="status-badge '+st.cls+'">'+escHtml(o.status||'')+'</span>'
+    + '</div>'
+    + '<div class="tx-card-main">'
+      + '<span class="tx-amount" dir="ltr">'+txAmount(o.total,o.to_method)+'</span>'
+      + '<span class="tx-amount-sent">لە <b dir="ltr">'+txAmount(o.amount,o.from_method)+'</b></span>'
+    + '</div>'
+    + '<div class="tx-card-foot">'
+      + '<span class="tx-when">'+escHtml(txWhen(o.created_at,true))+'</span>'
+      + '<span class="tx-code" dir="ltr">'+escHtml(code)+'</span>'
+    + '</div>'
+    + (needsAction ? '<div class="tx-card-action">پێویستی بە ڕاستکردنەوەی تۆ هەیە</div>' : '')
+    + '</article>';
 }
 
-function orderCardHTML(o){
-  const code = orderCodeOf(o);
-  const decidedRow = (o.status==='پەسەندکرا' || o.status==='ڕەتکرا') && o.decided_at
-    ? '<div class="detail-item"><span class="detail-ico" style="color:'+(o.status==='پەسەندکرا'?'var(--success)':'var(--error)')+'">'+(o.status==='پەسەندکرا'?ICON.check:ICON.cross)+'</span> '+o.status+': '+new Date(o.decided_at).toLocaleString('ku-IQ')+'</div>'
-    : '';
-  const hasReceipt = !!o.payout_receipt_url;
-  const rcptId = 'rcpt_'+o.id;
-  return '<div class="order-card'+(hasReceipt?' has-receipt':'')+'" '+(hasReceipt?'onclick="toggleReceipt(\''+rcptId+'\')"':'')+'>'
-    + '<div class="order-header">'
-      + '<span class="order-code" onclick="copyOrderCode(\''+code+'\', event)" title="کۆپیکردنی ئایدی">'+fmtCode(code)+ICON.copy+'</span>'
-      + '<span class="status-badge '+statusClassOf(o.status)+'">'+escHtml(o.status)+'</span>'
+// ── transaction details ────────────────────────────────────────
+let _txSheetId=null;
+function txRow(label, value, opts){
+  if(value===null || value===undefined || value==='') return '';
+  const o=opts||{};
+  return '<div class="tx-drow"><span class="tx-dlbl">'+escHtml(label)+'</span>'
+    + '<span class="tx-dval'+(o.cls?' '+o.cls:'')+'"'+(o.ltr?' dir="ltr"':'')+'>'+(o.html?value:escHtml(String(value)))+'</span></div>';
+}
+function openTxDetail(id){
+  const o=_orders.find(row=>String(row.id)===String(id));
+  if(!o) return;
+  _txSheetId=String(id);
+  const st=txStateOf(o);
+  const code=orderCodeOf(o);
+  const rate=Number(o.amount)>0 ? (Number(o.total)/Number(o.amount)) : 0;
+  const isUsdt=o.from_method==='USDT';
+  const fee=!isUsdt && Number(o.amount)>Number(o.total) ? Math.floor(Number(o.amount)-Number(o.total)) : 0;
+  let html='<div class="tx-dhead">'
+    + '<span class="status-badge '+st.cls+'">'+escHtml(o.status||'')+'</span>'
+    + '<button type="button" class="tx-dcode" onclick="copyOrderCode(\''+escHtml(code)+'\', event)" title="کۆپیکردنی ئایدی">'
+      + '<span dir="ltr">'+escHtml(code)+'</span>'+ICON.copy+'</button>'
     + '</div>'
-    + '<div class="detail-item"><span class="detail-ico">'+ICON.swap+'</span> '+escHtml(methodLabel(o.from_method))+' <span class="inline-route-icon">'+ICON.arrowLeftLong+'</span> '+escHtml(methodLabel(o.to_method))+'</div>'
-    + '<div class="detail-item"><span class="detail-ico">'+ICON.banknote+'</span> بڕ: <b>'+formatNum(o.amount)+(o.from_method==='USDT'?'$':' IQD')+'</b></div>'
-    + '<div class="detail-item"><span class="detail-ico" style="color:var(--success)">'+ICON.receive+'</span> بڕی وەرگیراو: <b style="color:var(--success)">'+formatNum(Math.floor(o.total))+' IQD</b></div>'
-    + '<div class="detail-item"><span class="detail-ico">'+ICON.phone+'</span> ژمارە: '+escHtml(o.phone||'—')+'</div>'
-    + (o.extra_info?'<div class="detail-item"><span class="detail-ico">'+ICON.info+'</span> زانیاری زیاتر: '+escHtml(o.extra_info)+'</div>':'')
-    + '<div class="detail-item"><span class="detail-ico">'+ICON.send+'</span> ناردرا: '+new Date(o.created_at).toLocaleString('ku-IQ')+'</div>'
-    + decidedRow
-    + (o.admin_note?'<div class="detail-item"><span class="detail-ico">'+ICON.message+'</span> '+escHtml(o.admin_note)+'</div>':'')
-    + (o.correction_request?'<div class="order-correction-notice"><b>داواکاری ئادمین</b><p>'+escHtml(o.correction_request)+'</p>'
-        +(o.status==='پێویستی بە ڕاستکردنەوەیە'?'<button type="button" class="btn btn-primary btn-block" onclick="event.stopPropagation(); openOrderCorrection(\''+escHtml(o.id)+'\')">ڕاستکردنەوەی مامەڵە</button>':'')+'</div>':'')
-    + (o.correction_response?'<div class="order-correction-response"><b>وەڵامی تۆ</b><p>'+escHtml(o.correction_response)+'</p></div>':'')
-    + (hasReceipt?'<div class="detail-item rcpt-hint"><span class="detail-ico">'+ICON.image+'</span> وێنەی پسووڵە بەردەستە — کلیک بکە بۆ بینین</div>'
-        + '<div class="rcpt-wrap" id="'+rcptId+'" style="display:none">'
-        + '<img src="'+escHtml(o.payout_receipt_url)+'" class="rcpt-img" onclick="event.stopPropagation(); document.getElementById(\''+rcptId+'\').style.display=\'none\';">'
-        + '</div>':'')
+    + '<div class="tx-damounts">'
+      + '<div><small>ناردنت</small><b dir="ltr">'+txAmount(o.amount,o.from_method)+'</b></div>'
+      + '<div><small>وەرگرتنت</small><b class="recv" dir="ltr">'+txAmount(o.total,o.to_method)+'</b></div>'
+    + '</div>'
+    + '<div class="tx-dgroup">'
+    // same direction rendering as the list card: source on the right, arrow, destination
+    + txRow('ئاڕاستە', '<span class="tx-droute">'+escHtml(methodLabel(o.from_method))
+        + '<span class="tx-route-arrow" aria-hidden="true">'+ICON.arrowLeftLong+'</span>'
+        + escHtml(methodLabel(o.to_method))+'</span>', {html:true})
+    // A rate only means something across currencies; IQD → IQD is a fee.
+    + (isUsdt && rate ? txRow('نرخی ئاڵوگۆڕ', '1 $ = '+formatNum(Math.round(rate))+' IQD', {ltr:true}) : '')
+    + (fee ? txRow('کرێی خزمەتگوزاری', formatNum(fee)+' IQD', {ltr:true}) : '')
+    + txRow('ژمارەی وەرگر', o.phone, {ltr:true})
+    + (o.sender_phone ? txRow('ژمارەی نێرەر', o.sender_phone, {ltr:true}) : '')
+    + txRow('بەرواری ناردن', txWhen(o.created_at,true))
+    + ((o.status==='پەسەندکرا'||o.status==='ڕەتکرا') && o.decided_at ? txRow('بەرواری بڕیار', txWhen(o.decided_at,true)) : '')
+    + (o.extra_info ? txRow('زانیاری زیاتر', o.extra_info) : '')
     + '</div>';
+  if(o.admin_note){
+    html+='<div class="tx-dnote"><b>تێبینی ئادمین</b><p>'+escHtml(o.admin_note)+'</p></div>';
+  }
+  if(o.correction_request){
+    html+='<div class="tx-dnote warn"><b>داواکاری ڕاستکردنەوە</b><p>'+escHtml(o.correction_request)+'</p>'
+      + (o.status==='پێویستی بە ڕاستکردنەوەیە'
+          ? '<button type="button" class="btn btn-primary btn-block" onclick="closeTxDetail(); openOrderCorrection(\''+escHtml(String(o.id))+'\')">ڕاستکردنەوەی مامەڵە</button>'
+          : '')
+      + '</div>';
+  }
+  if(o.correction_response){
+    html+='<div class="tx-dnote"><b>وەڵامی تۆ</b><p>'+escHtml(o.correction_response)+'</p></div>';
+  }
+  if(o.payout_receipt_url){
+    html+='<div class="tx-dreceipt"><b>پسووڵەی گەیاندن</b>'
+      + '<img src="'+escHtml(o.payout_receipt_url)+'" alt="پسووڵەی گەیاندن" loading="lazy" onclick="openReceiptFull(\''+escHtml(o.payout_receipt_url)+'\')">'
+      + '</div>';
+  }
+  // A signed-in customer can download their own saved transaction as a Kurdish PDF.
+  html+='<div class="tx-receipt-actions"><button type="button" class="btn btn-ghost" onclick="downloadTransactionReceipt(\''+
+    escHtml(String(o.id))+'\')">'+
+    '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m-4-4 4 4 4-4M5 18v3h14v-3"/></svg>'+
+    'داگرتنی پسووڵەی مامەڵە (PDF)</button></div>';
+  document.getElementById('txSheetBody').innerHTML=html;
+  document.getElementById('txSheetBackdrop').hidden=false;
+  const sheet=document.getElementById('txSheet');
+  sheet.hidden=false;
+  requestAnimationFrame(()=>sheet.classList.add('open'));
+  document.body.style.overflow='hidden';
+}
+function closeTxDetail(){
+  const sheet=document.getElementById('txSheet');
+  const back=document.getElementById('txSheetBackdrop');
+  if(!sheet || sheet.hidden) return;
+  sheet.classList.remove('open');
+  back.hidden=true;
+  _txSheetId=null;
+  document.body.style.overflow='';
+  setTimeout(()=>{ if(!sheet.classList.contains('open')) sheet.hidden=true; }, 200);
+}
+function openReceiptFull(url){
+  const modal=document.getElementById('supportImageModal');
+  const image=document.getElementById('supportImageModalImg');
+  if(modal && image){ image.src=url; modal.style.display='flex'; document.body.style.overflow='hidden'; }
 }
 
 let _orderCorrectionReceiptSnapshot=null;
@@ -1883,6 +2043,9 @@ function methodLabel(key){
 
 function renderHistory(rows){
   _orders = rows || [];
+  // an open detail sheet follows realtime status changes
+  if(_txSheetId && !_orders.some(o=>String(o.id)===_txSheetId)) closeTxDetail();
+  else if(_txSheetId) openTxDetail(_txSheetId);
   renderHomePreview();
   renderTxPage();
   updateNavBadge();
@@ -1939,7 +2102,7 @@ function txTimeOk(o){
   return t >= Date.now() - days*86400000;
 }
 function txMatches(o){
-  if(_txStatus!=='all' && o.status!==_txStatus) return false;
+  if(_txStatus!=='all' && txStateOf(o).key!==_txStatus) return false;
   if(!txTimeOk(o)) return false;
   if(!_txQuery) return true;
   const q=_txQuery.replace(/[\s#-]/g,'');
@@ -1958,11 +2121,8 @@ function txMatches(o){
 
 function renderTxPage(){
   if(!document.getElementById('txList')) return;
-  const ok    = _orders.filter(o=>o.status==='پەسەندکرا');
-  const wait  = _orders.filter(o=>o.status==='چاوەڕوانە');
-  const correction = _orders.filter(o=>o.status==='پێویستی بە ڕاستکردنەوەیە');
-  const corrected = _orders.filter(o=>o.status==='ڕاستکراوەتەوە');
-  const no    = _orders.filter(o=>o.status==='ڕەتکرا');
+  const by=key=>_orders.filter(o=>txStateOf(o).key===key);
+  const ok=by('done'), wait=by('pending'), action=by('action'), no=by('rejected');
 
   // Totals only count completed exchanges. IQD and USDT are kept apart so the
   // number on screen is never a sum of two different currencies.
@@ -1970,21 +2130,20 @@ function renderTxPage(){
   const sentUsdt = ok.filter(o=>o.from_method==='USDT').reduce((s,o)=>s+Number(o.amount||0),0);
   const recvIqd  = ok.reduce((s,o)=>s+Number(o.total||0),0);
 
-  document.getElementById('txTotalSent').textContent = formatNum(Math.floor(sentIqd));
-  document.getElementById('txTotalSentSub').textContent = sentUsdt>0 ? ('IQD  +  '+formatNum(sentUsdt)+' $') : 'IQD';
-  document.getElementById('txTotalRecv').textContent = formatNum(Math.floor(recvIqd));
-
-  document.getElementById('txCntAll').textContent  = _orders.length;
-  document.getElementById('txCntOk').textContent   = ok.length;
-  document.getElementById('txCntWait').textContent = wait.length;
-  document.getElementById('txCntNo').textContent   = no.length;
-
-  document.getElementById('fcAll').textContent  = _orders.length;
-  document.getElementById('fcWait').textContent = wait.length;
-  document.getElementById('fcCorrection').textContent = correction.length;
-  document.getElementById('fcCorrected').textContent = corrected.length;
-  document.getElementById('fcOk').textContent   = ok.length;
-  document.getElementById('fcNo').textContent   = no.length;
+  const set=(id,value)=>{ const el=document.getElementById(id); if(el) el.textContent=value; };
+  set('txTotalSent', formatNum(Math.floor(sentIqd)));
+  set('txTotalSentSub', sentUsdt>0 ? ('IQD  +  '+formatNum(sentUsdt)+' $') : 'IQD');
+  set('txTotalRecv', formatNum(Math.floor(recvIqd)));
+  // nothing completed yet → the totals strip would only show two zeros
+  const sum=document.getElementById('txSummary');
+  if(sum) sum.hidden = ok.length===0;
+  // a count of zero is noise on a filter nobody can use
+  const count=(id,n)=>{ const el=document.getElementById(id); if(el) el.textContent = n>0 ? String(n) : ''; };
+  count('fcAll', _orders.length);
+  count('fcWait', wait.length);
+  count('fcCorrection', action.length);
+  count('fcOk', ok.length);
+  count('fcNo', no.length);
 
   renderTxList();
 }
@@ -1993,7 +2152,8 @@ function renderTxList(){
   const el=document.getElementById('txList'); if(!el) return;
   const list=_orders.filter(txMatches);
   const cnt=document.getElementById('txResultCount');
-  if(cnt) cnt.textContent = _orders.length ? (list.length+' لە '+_orders.length+' مامەڵە') : '';
+  const narrowed = !!_txQuery || _txStatus!=='all' || _txTime!=='all';
+  if(cnt) cnt.textContent = (narrowed && _orders.length) ? (list.length+' لە '+_orders.length+' مامەڵە') : '';
   if(!list.length){
     el.innerHTML = '<div class="empty-state">'
       + (_txQuery ? 'هیچ مامەڵەیەک بەم ئایدییە نەدۆزرایەوە' : 'هیچ مامەڵەیەک نییە بەم فلتەرە')
@@ -2003,11 +2163,6 @@ function renderTxList(){
   el.innerHTML = list.map(orderCardHTML).join('');
 }
 function copyNum(){ navigator.clipboard.writeText(document.getElementById('myNum').innerText); showToast('ژمارەکە کۆپی کرا بۆ کلیپبۆرد','success'); }
-function toggleReceipt(id){
-  const el=document.getElementById(id);
-  if(!el) return;
-  el.style.display = (el.style.display==='none') ? 'block' : 'none';
-}
 
 // Admin panel now lives in its own page — see exchange-admin.html
 
@@ -2017,21 +2172,21 @@ function toggleReceipt(id){
 // ══════════════════════════════════════════════════════════════
 Object.assign(ICON, {
   // Notification icons — clean, well-formed 24px outline SVGs
-  badgeCheck:'<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/></svg>',
-  xCircle:'<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>',
-  refresh:'<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>',
-  megaphone:'<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>',
-  bellOff:'<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8.7 3A6 6 0 0 1 18 8a21.3 21.3 0 0 0 .6 5"/><path d="M17 17H3s3-2 3-9a4.67 4.67 0 0 1 .3-1.7"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/><path d="m2 2 20 20"/></svg>',
-  copy:'<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>',
-  trendUp:'<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>',
-  trendDown:'<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/></svg>',
-  lockClosed:'<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>',
-  lockOpen:'<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>',
-  sparkles:'<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M18 16.5 18.7 18.3 20.5 19 18.7 19.7 18 21.5 17.3 19.7 15.5 19 17.3 18.3z"/></svg>',
+  badgeCheck:'<span class="icn icon--solar icon--solar--verified-check-linear" aria-hidden="true"></span>',
+  xCircle:'<span class="icn icon--solar icon--solar--close-circle-linear" aria-hidden="true"></span>',
+  refresh:'<span class="icn icon--solar icon--solar--refresh-linear" aria-hidden="true"></span>',
+  megaphone:'<span class="icn icon--solar icon--solar--bell-linear" aria-hidden="true"></span>',
+  bellOff:'<span class="icn icon--solar icon--solar--bell-off-linear" aria-hidden="true"></span>',
+  copy:'<span class="icn icon--solar icon--solar--copy-linear" aria-hidden="true"></span>',
+  trendUp:'<span class="icn icon--solar icon--solar--graph-up-linear" aria-hidden="true"></span>',
+  trendDown:'<span class="icn icon--solar icon--solar--graph-down-linear" aria-hidden="true"></span>',
+  lockClosed:'<span class="icn icon--solar icon--solar--lock-linear" aria-hidden="true"></span>',
+  lockOpen:'<span class="icn icon--solar icon--solar--lock-unlocked-linear" aria-hidden="true"></span>',
+  sparkles:'<span class="icn icon--solar icon--solar--magic-stick-3-linear" aria-hidden="true"></span>',
   equals:'<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 9h14M5 15h14"/></svg>',
-  arrowLeftLong:'<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m11 6-6 6 6 6"/></svg>',
-  user:'<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
-  sliders:'<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="4" y1="21" y2="14"/><line x1="4" x2="4" y1="10" y2="3"/><line x1="12" x2="12" y1="21" y2="12"/><line x1="12" x2="12" y1="8" y2="3"/><line x1="20" x2="20" y1="21" y2="16"/><line x1="20" x2="20" y1="12" y2="3"/><line x1="2" x2="6" y1="14" y2="14"/><line x1="10" x2="14" y1="8" y2="8"/><line x1="18" x2="22" y1="16" y2="16"/></svg>'
+  arrowLeftLong:'<span class="icn icon--solar icon--solar--arrow-left-linear" aria-hidden="true"></span>',
+  user:'<span class="icn icon--solar icon--solar--user-rounded-linear" aria-hidden="true"></span>',
+  sliders:'<span class="icn icon--solar icon--solar--tuning-2-linear" aria-hidden="true"></span>'
 });
 
 // ══════════════════════════════════════════════════════════════
@@ -2044,14 +2199,15 @@ Object.assign(ICON, {
 //   'hash' → www.domain.com/#/profile. Works on ANY static host with no
 //            server config at all. Switch to this if you cannot add rewrites.
 const ROUTE_MODE = 'path';
-const ROUTES = { home:'pageHome', transactions:'pageTx', changes:'pageChanges', rules:'pageRules', profile:'pageProfile', support:'pageSupport' };
+const ROUTES = { home:'pageHome', transactions:'pageTx', changes:'pageChanges', rules:'pageRules', profile:'pageProfile', support:'pageSupport', verify:'pageVerify' };
 const ROUTE_TITLES = {
   home:'Proxo Balance — ئاڵوگۆڕی دراو',
   transactions:'مامەڵەکان — Proxo Balance',
   changes:'گۆڕانکاری نرخەکان — Proxo Balance',
   rules:'یاساکانی ئەپ — Proxo Balance',
   profile:'پڕۆفایل — Proxo Balance',
-  support:'پشتگیری — Proxo Balance'
+  support:'پشتگیری — Proxo Balance',
+  verify:'پشتڕاستکردنەوەی ناسنامە — Proxo Balance'
 };
 // Everything before the route segment, so the app works at the domain root
 // (/profile) and inside a sub-folder (/exchange/profile) with no edits.
@@ -2084,7 +2240,7 @@ function navigate(route, push){
     if(el) el.classList.toggle('active', r===route);
   });
   // /changes lives under the profile tab
-  const navRoute = (route==='changes' || route==='support') ? 'profile' : route;
+  const navRoute = (route==='changes' || route==='support' || route==='verify') ? 'profile' : route;
   document.querySelectorAll('.bn-item, .hdr-nav-link').forEach(b=>b.classList.toggle('on', b.dataset.route===navRoute));
   if(push){ try{ history.pushState({route:route}, '', urlFor(route)); }catch(_){} }
   document.title = ROUTE_TITLES[route] || 'Proxo Balance';
@@ -2092,7 +2248,8 @@ function navigate(route, push){
   window.scrollTo({ top:0, behavior:'smooth' });
   if(route==='transactions') renderTxPage();
   if(route==='changes')      loadChangeLog();
-  if(route==='profile')      fillProfileForm();
+  if(route==='profile')    { fillProfileForm(); loadKycStatus(true); }
+  if(route==='verify')     { renderVerifyPage(); loadKycStatus(true); }
   if(route==='support')      loadSupportCases();
 }
 window.addEventListener('popstate', function(){ navigate(routeFromLocation(), false); });
@@ -2299,14 +2456,19 @@ function updateProfileCooldownUI(){
   const availableAt=profileChangeAvailableAt();
   const locked=!!availableAt && availableAt>Date.now();
 
-  if(nameEl) nameEl.disabled=locked;
+  const nameLocked=kycNameLocked();
+  if(nameEl){ nameEl.disabled=locked; nameEl.readOnly=nameLocked; nameEl.classList.toggle('is-locked',nameLocked); }
   if(phoneEl) phoneEl.disabled=locked;
+  const kycHint=document.getElementById('pfNameKycHint');
+  if(kycHint) kycHint.hidden=!nameLocked;
   if(btn) btn.disabled=locked;
   if(hint) hint.classList.toggle('warn',locked);
   if(txt){
     txt.textContent=locked
       ? 'دەتوانیت لە '+new Date(availableAt).toLocaleString('ku-IQ')+' دووبارە ناو یان ژمارەکەت بگۆڕیت.'
-      : 'ئێستا دەتوانیت ناو و ژمارەکەت نوێ بکەیتەوە؛ دوای پاشەکەوتکردن بۆ ٧ ڕۆژ قوفڵ دەبێت.';
+      : (nameLocked
+          ? 'ئێستا دەتوانیت ژمارەکەت نوێ بکەیتەوە؛ دوای پاشەکەوتکردن بۆ ٧ ڕۆژ قوفڵ دەبێت.'
+          : 'ئێستا دەتوانیت ناو و ژمارەکەت نوێ بکەیتەوە؛ دوای پاشەکەوتکردن بۆ ٧ ڕۆژ قوفڵ دەبێت.');
   }
   return locked;
 }
@@ -2314,17 +2476,50 @@ function updateProfileCooldownUI(){
 function applyProfileToUI(){
   const name = (curProfile && curProfile.full_name) || (curUser && curUser.email) || '';
   const nameEl=document.getElementById('userName'); if(nameEl) nameEl.innerText=name;
-  const av=document.getElementById('greetAvatar'); if(av) av.textContent=initialOf(name);
-  const pfAv=document.getElementById('pfAvatar'); if(pfAv) pfAv.textContent=initialOf(name);
+  setAvatar(document.getElementById('greetAvatar'), name);
+  setAvatar(document.getElementById('pfAvatar'), name);
+  const handle=document.getElementById('pfUsername');
+  if(handle) handle.textContent=(curProfile && curProfile.username) ? '@'+curProfile.username : '@—';
   const pfName=document.getElementById('pfNameLbl'); if(pfName) pfName.textContent=name||'—';
   const pfMail=document.getElementById('pfEmailLbl'); if(pfMail) pfMail.textContent=(curUser&&curUser.email)||'—';
   syncSenderIdentity();
   const joined=document.getElementById('pfJoined');
   if(joined && curProfile && curProfile.created_at){
-    joined.textContent='بەشدارە لە '+new Date(curProfile.created_at).toLocaleDateString('ku-IQ',{month:'long', year:'numeric'});
+    joined.textContent='بەشدارە لە '+kuMonthYear(curProfile.created_at);
   }
   const adminChip=document.getElementById('pfAdminChip');
   if(adminChip) adminChip.style.display = (curProfile && curProfile.is_admin) ? 'inline-flex' : 'none';
+  const adminChipText=document.getElementById('pfAdminChipText');
+  if(adminChipText) adminChipText.textContent = (curProfile && curProfile.role==='super_admin') ? 'بەڕێوەبەری باڵا' : 'بەڕێوەبەر';
+}
+
+// Profile photo when the account has one (e.g. OAuth metadata); otherwise the
+// initial letter. The image never replaces the node, so the initial is the fallback.
+function profilePhotoUrl(){
+  const meta=(curUser && curUser.user_metadata) || {};
+  const url=String(meta.avatar_url || meta.picture || '').trim();
+  return /^https:\/\//i.test(url) ? url : '';
+}
+function setAvatar(el, name){
+  if(!el) return;
+  const url=profilePhotoUrl();
+  el.textContent=initialOf(name);
+  el.classList.remove('has-photo');
+  if(!url) return;
+  const img=new Image();
+  img.alt=''; img.decoding='async'; img.referrerPolicy='no-referrer';
+  img.onload=()=>{ el.textContent=''; el.appendChild(img); el.classList.add('has-photo'); };
+  img.src=url;
+}
+function copyUsername(){
+  const u=curProfile && curProfile.username;
+  if(!u) return;
+  const text='@'+u;
+  const done=()=>showToast('ناوی بەکارهێنەر کۆپی کرا: '+text,'success');
+  try{
+    if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(text).then(done).catch(()=>{}); return; }
+  }catch(_){}
+  done();
 }
 
 function fillProfileForm(){
@@ -2336,6 +2531,9 @@ function fillProfileForm(){
 
 async function saveProfile(){
   const nameEl=document.getElementById('pfName'), phoneEl=document.getElementById('pfPhone');
+  const nameLocked=kycNameLocked();
+  // A verified name cannot change: keep the stored one (the database enforces it too).
+  if(nameLocked) nameEl.value=(curProfile && curProfile.full_name)||nameEl.value;
   const name=(nameEl.value||'').trim(), phone=(phoneEl.value||'').trim();
   clearFieldError('pfName'); clearFieldError('pfPhone');
 
@@ -2359,7 +2557,7 @@ async function saveProfile(){
   btn.disabled=true; btn.innerHTML=ICON.spin+' پاشەکەوتکردن...';
   try{
     const {data,error}=await sb.from('ex_profiles')
-      .update({ full_name:name, phone: phone || null })
+      .update(nameLocked ? { phone: phone || null } : { full_name:name, phone: phone || null })
       .eq('id', curUser.id).select().single();
     if(error) throw error;
     curProfile=Object.assign({},curProfile||{},data||{});
@@ -2384,6 +2582,11 @@ async function saveProfile(){
       showToast(availableAt
         ? 'ناو و ژمارەکەت قوفڵن؛ لە '+new Date(availableAt).toLocaleString('ku-IQ')+' دووبارە دەکرێنەوە'
         : 'ناو و ژمارەی مۆبایل تا تەواوبوونی ٧ ڕۆژەکە قوفڵن','error');
+    }else if(msg.includes('PROFILE_NAME_LOCKED_BY_KYC')){
+      if(curProfile) nameEl.value=curProfile.full_name||'';
+      await loadKycStatus(true);
+      setFieldError('pfName','ناوەکەت بە ناسنامە پشتڕاستکراوەتەوە و ناتوانرێت بگۆڕدرێت');
+      showToast('ناوەکەت بە ناسنامە پشتڕاستکراوەتەوە و ناتوانرێت بگۆڕدرێت','error');
     }else if(msg.includes('PROFILE_NAME_INVALID')){
       showToast('ناو دەبێت لانیکەم ٣ پیت بێت','error');
     }else if(msg.includes('PROFILE_PHONE_INVALID')){
@@ -2397,7 +2600,6 @@ async function saveProfile(){
   }
 }
 
-// ══════════════════════════════════════════════════════════════
 // ═══ CUSTOMER SUPPORT CASES ═══════════════════════════════════
 // Images live in a private bucket. The user's JWT and Storage RLS restrict
 // both upload and signed-URL creation to this user's own folder.
@@ -2626,6 +2828,841 @@ function renderSupportCases(){
   </article>`).join('');
 }
 
+// ══════════════════════════════════════════════════════════════
+// ═══ IDENTITY VERIFICATION (KYC) ══════════════════════════════
+// Status comes from the ex_kyc_my_status RPC. Images go to the private
+// "identity-documents" bucket under {user_id}/{verification_id}/, and the
+// ex_kyc_submit RPC only accepts a submission once both files exist in
+// Storage. Status changes (approve / reject) are made by admins only —
+// the browser has no write access to the verification tables.
+// ══════════════════════════════════════════════════════════════
+// Customers may start verification without an admin request.
+const KYC_SELF_START_ENABLED = true;
+const KYC_BUCKET = 'identity-documents';
+const KYC_MAX_INPUT_BYTES = 15*1024*1024;   // raw file from the phone
+const KYC_MAX_UPLOAD_BYTES = 10*1024*1024;  // bucket limit
+const KYC_MAX_IMAGE_SIDE = 2200;            // px — re-encoded above this
+// Local clarity check (Canvas only — nothing leaves the device before it passes).
+const KYC_MIN_SHORT_SIDE = 480;             // px — below this a card is unreadable
+const KYC_MIN_LONG_SIDE = 640;
+const KYC_ANALYSIS_SIDE = 640;              // temporary downscaled copy for analysis
+// Calibrated on 193 synthetic ID-card photos (12 MP → 0.3 MP, dim/bright,
+// WhatsApp-compressed, Gaussian blur, horizontal/vertical/diagonal shake):
+// every readable photo scored ≥ 120, every unreadable one ≤ 51.
+const KYC_MIN_SHARPNESS = 55;               // weakest-direction 2nd-derivative variance
+const KYC_MIN_CONTRAST = 6;                 // luminance std-dev; below = blank/black frame
+const KYC_UNCLEAR_MSG = 'وێنەکە ناڕوونە، تکایە وێنەیەکی ڕوونتر بگرە.';
+const KYC_DOC_TYPES = {
+  national_id:     { label:'کارتی نیشتیمانی', numberLabel:'ژمارەی کارتی نیشتیمانی', numberHint:'A12345678', front:'ڕووی پێشەوەی کارت', back:'ڕووی دواوەی کارت', needsBack:true },
+  driving_license: { label:'مۆڵەتی شوفێری', numberLabel:'ژمارەی مۆڵەت', numberHint:'DL-123456', front:'ڕووی پێشەوەی مۆڵەت', back:'ڕووی دواوەی مۆڵەت', needsBack:true }
+};
+const KYC_STATES = {
+  loading:  { label:'دۆخی ناسنامە...',                       icon:'refresh-linear',        spin:true },
+  error:    { label:'دۆخی ناسنامە بەردەست نییە',            icon:'danger-triangle-linear' },
+  none:     { label:'پشتڕاست نەکراوەتەوە',                    icon:'shield-linear' },
+  required: { label:'پشتڕاستکردنەوەی ناسنامە پێویستە',         icon:'shield-warning-linear' },
+  pending:  { label:'لە ژێر پشکنینە',                          icon:'clock-circle-linear' },
+  approved: { label:'ناسنامە پشتڕاستکراوەتەوە ✓',              icon:'verified-check-linear' },
+  rejected: { label:'پێویستی بە دووبارە ناردنەوە هەیە',        icon:'shield-cross-linear' }
+};
+const KYC_ERRORS = {
+  AUTH_REQUIRED:'تکایە دووبارە بچۆ ژوورەوە',
+  ACCOUNT_BANNED:'ئەم هەژمارە بۆیکۆتکراوە',
+  PROFILE_NOT_FOUND:'پڕۆفایلەکەت نەدۆزرایەوە؛ پەڕەکە نوێ بکەرەوە',
+  KYC_ALREADY_PENDING:'داواکارییەکی تۆ پێشتر نێردراوە و لە ژێر پشکنینە',
+  KYC_ALREADY_APPROVED:'ناسنامەکەت پێشتر پشتڕاستکراوەتەوە',
+  KYC_DUPLICATE_SUBMISSION:'ئەم داواکارییە پێشتر نێردراوە',
+  KYC_RATE_LIMIT:'لە ٢٤ کاتژمێردا زۆر داواکاریت ناردووە؛ تکایە دواتر هەوڵبدەوە',
+  KYC_DOCUMENT_TYPE_INVALID:'جۆری بەڵگەنامە هەڵبژێرە',
+  KYC_NAME_INVALID:'ناوی تەواو بە لانیکەم دوو بەش و بەبێ ژمارە یان هێما بنووسە',
+  KYC_DOB_INVALID:'بەرواری لەدایکبوون دروست نییە',
+  KYC_NUMBER_INVALID:'ژمارەی بەڵگەنامە دەبێت ٤ بۆ ٣٠ پیت/ژمارەی ئینگلیزی بێت',
+  KYC_FRONT_PATH_INVALID:'وێنەی ڕووی پێشەوە دروست نییە؛ دووبارە هەڵیبژێرە',
+  KYC_BACK_PATH_INVALID:'وێنەی ڕووی دواوە دروست نییە؛ دووبارە هەڵیبژێرە',
+  KYC_BACK_REQUIRED:'وێنەی ڕووی دواوەی بەڵگەنامە پێویستە',
+  KYC_FRONT_IMAGE_MISSING:'وێنەی ڕووی پێشەوە بارنەکرابوو؛ تکایە دووبارە هەوڵبدەوە',
+  KYC_BACK_IMAGE_MISSING:'وێنەی ڕووی دواوە بارنەکرابوو؛ تکایە دووبارە هەوڵبدەوە',
+  KYC_UPLOAD_FAILED:'وێنەکە بارنەکرا؛ هیچ داواکارییەک نەنێردرا. تکایە دووبارە هەوڵبدەوە',
+  KYC_UPLOAD_NETWORK:'بەهۆی کێشەی تۆڕەوە وێنەکە بارنەکرا؛ پەیوەندییەکەت بپشکنە و دووبارە هەوڵبدەوە',
+  KYC_IMAGE_DECODE:'ئەم فایلە وەک وێنە ناخوێندرێتەوە؛ وێنەیەکی تر هەڵبژێرە',
+  KYC_IMAGE_TOO_SMALL:KYC_UNCLEAR_MSG,
+  KYC_IMAGE_BLURRY:KYC_UNCLEAR_MSG,
+  KYC_IMAGE_TOO_LARGE:'قەبارەی وێنەکە زۆر گەورەیە (زیاتر لە 10MB)',
+  KYC_IMAGE_TYPE:'تکایە تەنها وێنە هەڵبژێرە (بە کامێرا یان لە گەلەری)',
+  KYC_IMAGE_ENCODE:'نەتوانرا وێنەکە ئامادە بکرێت؛ تکایە وێنەیەکی تر بگرە',
+  FILE_READ_PERMISSION:'براوزەر نەتوانی وێنەکە بخوێنێتەوە؛ تکایە دووبارە هەڵیبژێرە'
+};
+
+let _kyc = { status:'loading', data:null, loadedAt:0 };
+let _kycLoadPromise = null;
+let _kycDocType = null;
+let _kycDraftId = null;          // one storage folder per attempt; reused on retry
+let _kycSubmitting = false;
+let _kycPrefilledFor = null;
+const _kycImages = { front:null, back:null };   // { prepared, url, name, promise, token }
+const _kycImageTokens = { front:0, back:0 };
+
+function kycErrorMessage(error){
+  const raw=String(error?.message||error?.code||error||'');
+  const code=Object.keys(KYC_ERRORS).find(k=>raw.includes(k));
+  if(code) return KYC_ERRORS[code];
+  if(/row-level security|violates|unauthorized|403/i.test(raw)) return 'مۆڵەتی ناردنی ئەم وێنەیە نییە؛ پەڕەکە نوێ بکەرەوە و دووبارە هەوڵبدەوە';
+  if(/mime|content type|invalid_mime/i.test(raw)) return KYC_ERRORS.KYC_IMAGE_TYPE;
+  if(/payload too large|maximum allowed size|413/i.test(raw)) return KYC_ERRORS.KYC_IMAGE_TOO_LARGE;
+  const translated=kuErr(raw);
+  return translated && translated!==raw ? translated : 'هەڵەیەک ڕوویدا؛ تکایە دووبارە هەوڵبدەوە';
+}
+
+function kycUuid(){
+  if(globalThis.crypto?.randomUUID) return crypto.randomUUID();
+  const b=new Uint8Array(16); crypto.getRandomValues(b);
+  b[6]=(b[6]&0x0f)|0x40; b[8]=(b[8]&0x3f)|0x80;
+  const h=[...b].map(x=>x.toString(16).padStart(2,'0')).join('');
+  return h.slice(0,8)+'-'+h.slice(8,12)+'-'+h.slice(12,16)+'-'+h.slice(16,20)+'-'+h.slice(20);
+}
+
+// Browsers ship no Sorani month names for 'ku-IQ' (Chrome prints "M09"),
+// so dates are composed explicitly.
+const KU_MONTHS=['کانوونی دووەم','شوبات','ئازار','نیسان','ئایار','حوزەیران','تەممووز','ئاب','ئەیلوول','تشرینی یەکەم','تشرینی دووەم','کانوونی یەکەم'];
+function kuMonthYear(iso){
+  const d=new Date(iso); if(isNaN(d)) return '';
+  return KU_MONTHS[d.getMonth()]+' '+d.getFullYear();
+}
+function kycFmtDate(iso, withTime){
+  if(!iso) return '—';
+  const d=new Date(iso); if(isNaN(d)) return '—';
+  const date=d.getDate()+'ی '+KU_MONTHS[d.getMonth()]+' '+d.getFullYear();
+  if(!withTime) return date;
+  return date+' — '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+}
+function kycSolar(name, extra){
+  return '<span class="icn '+(extra||'')+' icon--solar icon--solar--'+name+'" aria-hidden="true"></span>';
+}
+
+async function loadKycStatus(silent){
+  if(!sb || !curUser) return null;
+  if(_kycLoadPromise) return _kycLoadPromise;
+  if(!silent || !_kyc.data){ _kyc.status=_kyc.data?_kyc.status:'loading'; renderKycProfile(); }
+  _kycLoadPromise=(async()=>{
+    try{
+      const {data,error}=await sb.rpc('ex_kyc_my_status');
+      if(error) throw error;
+      const info=data||{};
+      // Fallback for a site deployed before the database migration: derive the
+      // exchange gate and the name lock from the data we already have, using
+      // the same rule as the database (an active admin request blocks).
+      if(typeof info.exchange_blocked!=='boolean'){
+        info.exchange_blocked=!!(info.request && (info.request.status==='open' || info.request.status==='submitted'));
+      }
+      if(typeof info.name_locked!=='boolean'){
+        info.name_locked=!!(info.verification && info.verification.status==='approved');
+      }
+      _kyc={ status:info.status||'none', data:info, loadedAt:Date.now() };
+      if(curProfile && data?.username && curProfile.username!==data.username){
+        curProfile.username=data.username;
+        applyProfileToUI();
+      }
+      // An approval makes the verified legal name the account name.
+      if(curProfile && typeof data?.account_name==='string' && curProfile.full_name!==data.account_name){
+        curProfile.full_name=data.account_name;
+        applyProfileToUI();
+        const pfName=document.getElementById('pfName');
+        if(pfName && document.activeElement!==pfName) pfName.value=data.account_name;
+      }
+      updateProfileCooldownUI();
+    }catch(e){
+      if(!_kyc.data) _kyc.status='error';
+      reportAppError(e,{operation:'kyc_status',stage:'rpc'});
+    }finally{
+      _kycLoadPromise=null;
+    }
+    renderKycProfile();
+    if(_route==='verify') renderVerifyPage();
+    return _kyc.data;
+  })();
+  return _kycLoadPromise;
+}
+
+function openVerifyPage(){
+  navigate('verify');
+}
+
+function renderKycProfile(){
+  const status=_kyc.status||'loading';
+  const meta=KYC_STATES[status]||KYC_STATES.none;
+  const badge=document.getElementById('pfKycBadge');
+  if(badge){
+    badge.dataset.state=status;
+    const ico=document.getElementById('pfKycBadgeIco');
+    if(ico) ico.innerHTML=(status==='none'||status==='required')
+      ? '<svg class="receipt-plus-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>'
+      : kycSolar(meta.icon,'icn-sm'+(meta.spin?' icn-spin':''));
+    const txt=document.getElementById('pfKycBadgeText');
+    if(txt) txt.textContent=meta.label;
+  }
+  const dot=document.getElementById('pfVerifiedDot');
+  if(dot) dot.hidden = status!=='approved';
+  const sub=document.getElementById('pfMenuKycSub');
+  if(sub) sub.textContent = status==='loading'||status==='error' ? 'کارتی نیشتیمانی یان مۆڵەتی شوفێری' : meta.label;
+  const bn=document.getElementById('bnProfileDot');
+  if(bn) bn.style.display = (status==='required'||status==='rejected') ? 'flex' : 'none';
+  renderExchangeGate();
+
+  const card=document.getElementById('pfKycCard');
+  if(!card) return;
+  card.dataset.state=status;
+  const d=_kyc.data||{};
+  const v=d.verification||null;
+  const req=d.request||null;
+  const docLabel=v && KYC_DOC_TYPES[v.document_type] ? KYC_DOC_TYPES[v.document_type].label : '';
+  let html='';
+  if(status==='loading' || status==='error'){
+    card.hidden = status==='loading';
+    if(status==='error'){
+      html=`<div class="kyc-card-head"><span class="kyc-card-ico">${kycSolar('danger-triangle-linear')}</span>
+        <div><b>نەتوانرا دۆخی ناسنامە باربکرێت</b><small>پەیوەندییەکەت بپشکنە و دووبارە هەوڵبدەوە.</small></div></div>
+        <button type="button" class="btn btn-ghost btn-block kyc-card-btn" onclick="loadKycStatus()">${kycSolar('refresh-linear')} دووبارە هەوڵدانەوە</button>`;
+    }
+    card.innerHTML=html;
+    return;
+  }
+  card.hidden=false;
+  if(status==='required'){
+    html=`<div class="kyc-card-head"><span class="kyc-card-ico">${kycSolar('shield-warning-linear')}</span>
+      <div><b>پشتڕاستکردنەوەی ناسنامە پێویستە</b><small>تیمی پڕۆکسۆ داوای پشتڕاستکردنەوەی ناسنامەکەتی کردووە${req?.created_at?' — '+escHtml(kycFmtDate(req.created_at)):''}.</small></div></div>
+      ${req?.reason?`<div class="kyc-note"><b>تێبینی ئادمین</b><p>${escHtml(req.reason)}</p></div>`:''}
+      <button type="button" class="btn btn-primary btn-block kyc-card-btn" onclick="openVerifyPage()">${kycSolar('user-id-linear')} دەستپێکردنی پشتڕاستکردنەوە</button>`;
+  }else if(status==='rejected'){
+    html=`<div class="kyc-card-head"><span class="kyc-card-ico">${kycSolar('shield-cross-linear')}</span>
+      <div><b>پشتڕاستکردنەوەکەت ڕەتکرایەوە</b><small>زانیاری یان وێنەکان ڕاست بکەرەوە و دووبارە بینێرە.</small></div></div>
+      <div class="kyc-note danger"><b>هۆکاری ڕەتکردنەوە</b><p>${escHtml(v?.rejection_reason||'—')}</p></div>
+      ${req?.reason?`<div class="kyc-note"><b>تێبینی ئادمین</b><p>${escHtml(req.reason)}</p></div>`:''}
+      <button type="button" class="btn btn-primary btn-block kyc-card-btn" onclick="openVerifyPage()">${kycSolar('refresh-linear')} ڕاستکردنەوە و دووبارە ناردن</button>`;
+  }else if(status==='pending'){
+    html=`<div class="kyc-card-head"><span class="kyc-card-ico">${kycSolar('clock-circle-linear')}</span>
+      <div><b>داواکارییەکەت نێردرا و لە ژێر پشکنینە</b><small>ئەنجامەکەت بە ئاگادارییەک پێ ڕادەگەیەنین.</small></div></div>
+      <div class="kyc-facts">
+        <span><small>جۆری بەڵگەنامە</small><b>${escHtml(docLabel||'—')}</b></span>
+        <span><small>کاتی ناردن</small><b>${escHtml(kycFmtDate(v?.submitted_at,true))}</b></span>
+      </div>`;
+  }else if(status==='approved'){
+    html=`<div class="kyc-card-head"><span class="kyc-card-ico">${kycSolar('verified-check-linear')}</span>
+      <div><b>ناسنامە پشتڕاستکراوەتەوە ✓</b><small>هەژمارەکەت بە بەڵگەنامەی فەرمی پشتڕاستکراوەتەوە.</small></div></div>
+      <div class="kyc-facts">
+        <span><small>جۆری بەڵگەنامە</small><b>${escHtml(docLabel||'—')}</b></span>
+        <span><small>بەرواری پشتڕاستکردنەوە</small><b>${escHtml(kycFmtDate(v?.reviewed_at))}</b></span>
+      </div>`;
+  }else{ // none
+    if(!KYC_SELF_START_ENABLED){ card.hidden=true; card.innerHTML=''; return; }
+    html=`<div class="kyc-card-head"><span class="kyc-card-ico">${kycSolar('user-id-linear')}</span>
+      <div><b>ناسنامەکەت پشتڕاست بکەرەوە</b><small>بە کارتی نیشتیمانی یان مۆڵەتی شوفێری، هەژمارەکەت پارێزراوتر و متمانەپێکراوتر دەبێت.</small></div></div>
+      <button type="button" class="btn btn-ghost btn-block kyc-card-btn" onclick="openVerifyPage()">${kycSolar('shield-check-linear')} دەستپێکردنی پشتڕاستکردنەوە</button>`;
+  }
+  card.innerHTML=html;
+}
+
+function renderVerifyPage(){
+  const banner=document.getElementById('kycBanner');
+  const form=document.getElementById('kycFormCard');
+  const success=document.getElementById('kycSuccess');
+  if(!banner || !form) return;
+  const status=_kyc.status||'loading';
+  const d=_kyc.data||{};
+  const v=d.verification||null;
+  const req=d.request||null;
+  if(success && !success.hidden && status==='pending'){ form.hidden=true; banner.hidden=true; return; }
+  if(success) success.hidden=true;
+  banner.hidden=false;
+  banner.dataset.state=status;
+
+  let canSubmit=!!d.can_submit;
+  if(status==='none' && !KYC_SELF_START_ENABLED) canSubmit=false;
+
+  if(status==='loading'){
+    banner.innerHTML=`${kycSolar('refresh-linear','icn-spin')}<div><b>بارکردنی دۆخی ناسنامە...</b></div>`;
+    form.hidden=true; return;
+  }
+  if(status==='error'){
+    banner.innerHTML=`${kycSolar('danger-triangle-linear')}<div><b>نەتوانرا دۆخی ناسنامە باربکرێت</b><p>پەیوەندییەکەت بپشکنە.</p>
+      <button type="button" class="kyc-mini-btn" onclick="loadKycStatus()">دووبارە هەوڵدانەوە</button></div>`;
+    form.hidden=true; return;
+  }
+  if(status==='pending'){
+    banner.innerHTML=`${kycSolar('clock-circle-linear')}<div><b>داواکارییەکەت نێردرا و لە ژێر پشکنینە</b>
+      <p>${escHtml(KYC_DOC_TYPES[v?.document_type]?.label||'')} — ${escHtml(kycFmtDate(v?.submitted_at,true))}</p></div>`;
+  }else if(status==='approved'){
+    banner.innerHTML=`${kycSolar('verified-check-linear')}<div><b>ناسنامە پشتڕاستکراوەتەوە ✓</b>
+      <p>پێویست بە هیچ کارێکی تر ناکات. بەرواری پشتڕاستکردنەوە: ${escHtml(kycFmtDate(v?.reviewed_at))}</p></div>`;
+  }else if(status==='required'){
+    banner.innerHTML=`${kycSolar('shield-warning-linear')}<div><b>پشتڕاستکردنەوەی ناسنامە پێویستە</b>
+      <p>${escHtml(req?.reason||'تکایە بۆ بەردەوامبوون لە بەکارهێنانی خزمەتگوزارییەکان ناسنامەکەت پشتڕاست بکەرەوە.')}</p></div>`;
+  }else if(status==='rejected'){
+    banner.innerHTML=`${kycSolar('shield-cross-linear')}<div><b>پێویستی بە دووبارە ناردنەوە هەیە</b>
+      <p><strong>هۆکار:</strong> ${escHtml(v?.rejection_reason||'—')}</p></div>`;
+  }else{
+    banner.innerHTML=`${kycSolar('shield-linear')}<div><b>پشتڕاست نەکراوەتەوە</b>
+      <p>سێ هەنگاوی کورت: جۆری بەڵگەنامە، زانیارییەکان، وێنەکان.</p></div>`;
+  }
+  form.hidden=!canSubmit;
+  if(canSubmit){
+    const dob=document.getElementById('kycDob');
+    if(dob) dob.max=kycToday();
+    // A rejected submission is pre-filled so only the wrong part needs fixing.
+    if(status==='rejected' && v && _kycPrefilledFor!==v.id){
+      _kycPrefilledFor=v.id;
+      kycSelectDoc(v.document_type, true);
+      const n=document.getElementById('kycName'); if(n && !n.value) n.value=v.full_legal_name||'';
+      const b=document.getElementById('kycDob'); if(b && !b.value) b.value=v.date_of_birth||'';
+      const num=document.getElementById('kycNumber'); if(num && !num.value) num.value=v.document_number||'';
+    }
+    const nameEl=document.getElementById('kycName');
+    if(nameEl && !nameEl.value && curProfile && curProfile.full_name){
+      nameEl.value=String(curProfile.full_name).replace(/\s+/g,' ').trim();
+    }
+    kycUpdateNameNote();
+    kycUpdateSteps();
+  }
+}
+
+// Local calendar date (YYYY-MM-DD) — date of birth may not be in the future.
+function kycToday(){
+  const d=new Date();
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+function kycIsRealDate(value){
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(value||'')) return false;
+  const [y,m,d]=value.split('-').map(Number);
+  const dt=new Date(Date.UTC(y,m-1,d));
+  return dt.getUTCFullYear()===y && dt.getUTCMonth()===m-1 && dt.getUTCDate()===d;
+}
+
+function kycSelectDoc(type, silent){
+  if(!KYC_DOC_TYPES[type]) return;
+  _kycDocType=type;
+  const cfg=KYC_DOC_TYPES[type];
+  document.querySelectorAll('.kyc-doc').forEach(b=>{
+    const on=b.dataset.doc===type;
+    b.classList.toggle('on',on);
+    b.setAttribute('aria-checked',on?'true':'false');
+  });
+  const set=(id,val)=>{ const el=document.getElementById(id); if(el) el.textContent=val; };
+  set('kycNumberLabel',cfg.numberLabel);
+  set('kycFrontTitle',cfg.front);
+  set('kycBackTitle',cfg.back);
+  const num=document.getElementById('kycNumber'); if(num) num.placeholder=cfg.numberHint;
+  const backBox=document.getElementById('kycBackBox'); if(backBox) backBox.hidden=!cfg.needsBack;
+  clearFieldError('kycDocType');
+  kycUpdateSteps();
+  if(!silent){
+    const info=document.getElementById('kycSecInfo');
+    if(info && window.matchMedia('(max-width: 640px)').matches) info.scrollIntoView({behavior:'smooth',block:'start'});
+  }
+}
+
+// Same rules as public.ex_normalize_person_name in the database: only harmless
+// differences (NFC, invisible characters, tatweel, spacing, Latin case, and the
+// Arabic-keyboard forms ي ى ك ھ) are ignored.
+function kycNormName(s){
+  const v=String(s??'').normalize('NFC')
+    .replace(/[\u200B-\u200F\u202A-\u202E\u2066-\u2069\u0640\uFEFF]/g,'')
+    .replace(/[\u00A0\u2000-\u200A\u202F\u205F\u3000]/g,' ')
+    .replace(/[\u064A\u0649]/g,'\u06CC').replace(/\u0643/g,'\u06A9').replace(/\u06BE/g,'\u0647')
+    .replace(/\s+/g,' ').trim().toLowerCase();
+  return v || null;
+}
+const KYC_AR2LAT = {
+  'ا':'a','آ':'a','أ':'a','إ':'a','ء':'','ئ':'','ؤ':'w','ة':'h',
+  'ب':'b','پ':'p','ت':'t','ث':'s','ج':'j','چ':'C','ح':'h','خ':'x','د':'d','ذ':'z',
+  'ر':'r','ڕ':'r','ز':'z','ژ':'j','س':'s','ش':'S','ص':'s','ض':'z','ط':'t','ظ':'z',
+  'ع':'','غ':'g','ف':'f','ڤ':'v','ق':'q','ك':'k','ک':'k','گ':'g','ل':'l','ڵ':'l',
+  'م':'m','ن':'n','ه':'h','ھ':'h','ە':'e','و':'w','ۆ':'o','ی':'i','ي':'i','ى':'i','ێ':'e'
+};
+function kycScriptOf(s){
+  const t=String(s||'');
+  const ar=/[\u0600-\u06FF\u0750-\u077F\uFB50-\uFDFF\uFE70-\uFEFF]/.test(t);
+  const la=/[A-Za-z]/.test(t);
+  return (ar&&la) ? 'mixed' : ar ? 'arabic' : la ? 'latin' : 'other';
+}
+function kycSkeleton(token){
+  let s=String(token||'').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+  s=s.replace(/[\u0600-\u06FF]/g, ch => (KYC_AR2LAT[ch] !== undefined ? KYC_AR2LAT[ch] : ' '));
+  // Latin digraphs collapse to the single letters the Kurdish map produces
+  s=s.replace(/tch|ch/g,'C').replace(/sh/g,'S').replace(/kh/g,'x').replace(/zh/g,'j')
+     .replace(/gh/g,'g').replace(/th/g,'s').replace(/ph/g,'f').replace(/ck/g,'k');
+  s=s.replace(/[^bptsjChxdrzSgfvqklmn]/g,'');   // drop vowels, hamza, punctuation
+  return s.replace(/(.)\1+/g,'$1');             // doubled consonants are spelling noise
+}
+// 'same' | 'same_translit' | 'similar' | 'different_script' | 'different' | 'unknown'
+function kycNameRelation(accountName, legalName){
+  const a=kycNormName(accountName), b=kycNormName(legalName);
+  if(!a || !b) return 'unknown';
+  if(a===b) return 'same';
+  const sa=kycScriptOf(a), sb=kycScriptOf(b);
+  const ta=a.split(' ').map(kycSkeleton), tb=b.split(' ').map(kycSkeleton);
+  const enough=ta.join('').length>=4 && tb.join('').length>=4;
+  const equal=ta.length===tb.length && ta.every((t,i)=>t && t===tb[i]);
+  if(equal && enough) return (sa!==sb) ? 'same_translit' : 'similar';
+  return (sa!==sb && sa!=='other' && sb!=='other') ? 'different_script' : 'different';
+}
+
+function kycNameLocked(){ return !!(_kyc && _kyc.data && _kyc.data.name_locked); }
+function kycExchangeBlocked(){ return !!(_kyc && _kyc.data && _kyc.data.exchange_blocked); }
+
+const KYC_EXCHANGE_MSG='پێش ئەنجامدانی ئاڵوگۆڕ، پێویستە ناسنامەکەت پشتڕاست بکرێتەوە.';
+// While an admin-requested verification is not approved, the exchange form
+// (including the wallet number to pay into) is replaced by this notice. The
+// database and /api/orders enforce the same rule.
+function renderExchangeGate(){
+  const card=document.getElementById('exchangeCard');
+  const gate=document.getElementById('exchangeKycGate');
+  if(!card || !gate) return;
+  const blocked=kycExchangeBlocked();
+  card.classList.toggle('kyc-locked', blocked);
+  gate.hidden=!blocked;
+  if(blocked){
+    const sub=document.getElementById('exchangeKycGateSub');
+    const st=_kyc.status;
+    if(sub) sub.textContent = st==='pending'
+      ? 'بەڵگەنامەکەت نێردراوە و لە ژێر پشکنینە؛ دوای پەسەندکردن ئاڵوگۆڕ دەکرێتەوە.'
+      : st==='rejected'
+        ? 'پشتڕاستکردنەوەکەت ڕەتکرایەوە؛ تکایە زانیارییەکان ڕاست بکەرەوە و دووبارە بینێرە.'
+        : 'تیمی پڕۆکسۆ داوای پشتڕاستکردنەوەی ناسنامەکەتی کردووە.';
+    const sheet=document.getElementById('confirmSheet');
+    if(sheet && sheet.classList.contains('open')) closeOrderConfirm();
+  }
+  const from=document.getElementById('from'), to=document.getElementById('receiveVia');
+  if(from && to && from.value && to.value) updateSubmitState(from.value,to.value);
+}
+function showKycExchangeBlocked(){
+  renderExchangeGate();
+  showResultModal({
+    tone:'warning',
+    title:'پشتڕاستکردنەوەی ناسنامە پێویستە',
+    message:KYC_EXCHANGE_MSG,
+    primaryText:'دەستپێکردنی پشتڕاستکردنەوە',
+    onPrimary:()=>openVerifyPage(),
+    secondaryText:'داخستن'
+  });
+}
+
+function kycUpdateNameNote(){
+  const note=document.getElementById('kycNameNote');
+  const input=document.getElementById('kycName');
+  if(!note || !input) return;
+  const account=(curProfile && curProfile.full_name) || '';
+  const typed=input.value||'';
+  const rel=kycNameRelation(account, typed);
+  if(!account || !kycNormName(typed) || rel==='same' || rel==='unknown'){
+    note.hidden=true; note.textContent=''; note.classList.remove('ok'); return;
+  }
+  note.hidden=false;
+  const acc=account.replace(/\s+/g,' ').trim();
+  if(rel==='same_translit'){
+    // English account name + Kurdish document name (or the reverse) — same name.
+    note.classList.add('ok');
+    note.textContent='ناوی هەژمارەکەت («'+acc+'») بە ئەلفوبێیەکی جیاوازە بەڵام هەمان ناوە. دوای پەسەندکردن ناوی هەژمارەکەت وەک سەر ناسنامەکە دەنووسرێتەوە.';
+  }else{
+    note.classList.remove('ok');
+    note.textContent='ئەم ناوە جیاوازە لە ناوی هەژمارەکەت («'+acc+'»). ئەگەر پشتڕاستکردنەوەکە پەسەند بکرێت، ناوی هەژمارەکەت دەگۆڕدرێت بۆ ناوی سەر ناسنامەکەت.';
+  }
+}
+
+function kycFormatNumber(el){
+  const v=String(el.value||'')
+    .replace(/[٠-٩]/g,c=>String(c.charCodeAt(0)-0x660))
+    .replace(/[۰-۹]/g,c=>String(c.charCodeAt(0)-0x6F0))
+    .toUpperCase().replace(/[^A-Z0-9-]/g,'').slice(0,30);
+  if(v!==el.value) el.value=v;
+}
+
+function kycUpdateSteps(){
+  const hasType=!!_kycDocType;
+  const name=(document.getElementById('kycName')?.value||'').trim();
+  const dob=document.getElementById('kycDob')?.value||'';
+  const num=(document.getElementById('kycNumber')?.value||'').trim();
+  const infoDone=hasType && name.length>=5 && !!dob && num.length>=4;
+  const needsBack=hasType && KYC_DOC_TYPES[_kycDocType].needsBack;
+  const imgsDone=!!_kycImages.front?.prepared && (!needsBack || !!_kycImages.back?.prepared);
+  const infoSec=document.getElementById('kycSecInfo'); if(infoSec) infoSec.dataset.locked=hasType?'false':'true';
+  const imgSec=document.getElementById('kycSecImages'); if(imgSec) imgSec.dataset.locked=hasType?'false':'true';
+  const s1=document.getElementById('kycStep1'), s2=document.getElementById('kycStep2'), s3=document.getElementById('kycStep3');
+  if(s1){ s1.classList.toggle('done',hasType); s1.classList.toggle('on',!hasType); }
+  if(s2){ s2.classList.toggle('done',infoDone); s2.classList.toggle('on',hasType && !infoDone); }
+  if(s3){ s3.classList.toggle('done',infoDone && imgsDone); s3.classList.toggle('on',infoDone && !imgsDone); }
+}
+
+// Decode → validate → re-encode as JPEG. Re-encoding strips EXIF/GPS data,
+// fixes phone orientation and keeps uploads well under the bucket limit.
+async function kycDecodeImage(blob){
+  if(window.createImageBitmap){
+    try{ return await createImageBitmap(blob,{imageOrientation:'from-image'}); }catch(_){}
+    try{ return await createImageBitmap(blob); }catch(_){}
+  }
+  return await new Promise((resolve,reject)=>{
+    const url=URL.createObjectURL(blob);
+    const img=new Image();
+    img.onload=()=>{ URL.revokeObjectURL(url); resolve(img); };
+    img.onerror=()=>{ URL.revokeObjectURL(url); reject(Object.assign(new Error('KYC_IMAGE_DECODE'),{code:'KYC_IMAGE_DECODE'})); };
+    img.src=url;
+  });
+}
+// Sharpness = variance of the second derivative, measured in four directions
+// (horizontal, vertical and both diagonals), per tile, on a small grayscale
+// copy. Each direction is scored by the mean of its sharpest 20% of tiles, so
+// a card on a plain table is judged by the card and not by the background.
+// The weakest direction decides: hand shake smears one direction only, which
+// a plain 2-D Laplacian does not notice.
+function kycClarityFromGray(gray, w, h){
+  const n=w*h;
+  let sum=0, sum2=0;
+  for(let i=0;i<n;i++){ const v=gray[i]; sum+=v; sum2+=v*v; }
+  const mean=sum/n;
+  const contrast=Math.sqrt(Math.max(0, sum2/n-mean*mean));
+  const tile=Math.max(24, Math.round(Math.max(w,h)/10));
+  const dirs=[[],[],[],[]];
+  for(let ty=1; ty<h-1; ty+=tile){
+    for(let tx=1; tx<w-1; tx+=tile){
+      const yEnd=Math.min(h-1, ty+tile), xEnd=Math.min(w-1, tx+tile);
+      const s1=[0,0,0,0], s2=[0,0,0,0];
+      let c=0;
+      for(let y=ty; y<yEnd; y++){
+        let i=y*w+tx;
+        for(let x=tx; x<xEnd; x++, i++){
+          const g2=2*gray[i];
+          const a=g2-gray[i-1]-gray[i+1];            // horizontal
+          const b=g2-gray[i-w]-gray[i+w];            // vertical
+          const d=g2-gray[i-w-1]-gray[i+w+1];        // diagonal ↘
+          const e=g2-gray[i-w+1]-gray[i+w-1];        // diagonal ↙
+          s1[0]+=a; s2[0]+=a*a; s1[1]+=b; s2[1]+=b*b;
+          s1[2]+=d; s2[2]+=d*d; s1[3]+=e; s2[3]+=e*e;
+          c++;
+        }
+      }
+      if(c>=64){
+        for(let k=0;k<4;k++){ const m=s1[k]/c; dirs[k].push(s2[k]/c-m*m); }
+      }
+    }
+  }
+  const topMean=a=>{
+    if(!a.length) return 0;
+    a.sort((p,q)=>q-p);
+    const k=Math.min(a.length, Math.max(3, Math.ceil(a.length*0.2)));
+    let t=0; for(let i=0;i<k;i++) t+=a[i];
+    return t/k;
+  };
+  const perDirection=dirs.map(topMean);
+  return { sharpness:Math.min(...perDirection), perDirection, contrast };
+}
+function kycMeasureClarity(bmp, w, h){
+  const scale=Math.min(1, KYC_ANALYSIS_SIDE/Math.max(w,h));
+  const aw=Math.max(3, Math.round(w*scale)), ah=Math.max(3, Math.round(h*scale));
+  const canvas=document.createElement('canvas');
+  canvas.width=aw; canvas.height=ah;
+  const ctx=canvas.getContext('2d',{willReadFrequently:true});
+  ctx.imageSmoothingEnabled=true;
+  ctx.imageSmoothingQuality='high';
+  ctx.drawImage(bmp,0,0,aw,ah);
+  const px=ctx.getImageData(0,0,aw,ah).data;
+  const gray=new Float32Array(aw*ah);
+  for(let i=0,j=0;i<gray.length;i++,j+=4) gray[i]=0.299*px[j]+0.587*px[j+1]+0.114*px[j+2];
+  canvas.width=canvas.height=0;   // release the temporary copy
+  return Object.assign(kycClarityFromGray(gray, aw, ah), { width:w, height:h });
+}
+function kycClarityVerdict(m){
+  if(Math.min(m.width,m.height)<KYC_MIN_SHORT_SIDE || Math.max(m.width,m.height)<KYC_MIN_LONG_SIDE) return 'KYC_IMAGE_TOO_SMALL';
+  if(m.contrast<KYC_MIN_CONTRAST || m.sharpness<KYC_MIN_SHARPNESS) return 'KYC_IMAGE_BLURRY';
+  return null;
+}
+
+async function kycPrepareImage(snapshot){
+  const source=new Blob([snapshot.bytes],{type:snapshot.type||'image/jpeg'});
+  const bmp=await kycDecodeImage(source);
+  try{
+    const w=bmp.naturalWidth||bmp.width, h=bmp.naturalHeight||bmp.height;
+    if(!w || !h) throw Object.assign(new Error('KYC_IMAGE_DECODE'),{code:'KYC_IMAGE_DECODE'});
+    // 1) clarity gate — runs before anything can be uploaded
+    const clarity=kycMeasureClarity(bmp, w, h);
+    const verdict=kycClarityVerdict(clarity);
+    if(verdict) throw Object.assign(new Error(verdict),{code:verdict, clarity});
+    // 2) re-encode as JPEG: fixes orientation and drops EXIF/GPS metadata.
+    //    The original bytes are never uploaded.
+    const scale=Math.min(1, KYC_MAX_IMAGE_SIDE/Math.max(w,h));
+    const cw=Math.round(w*scale), ch=Math.round(h*scale);
+    const canvas=document.createElement('canvas');
+    canvas.width=cw; canvas.height=ch;
+    const ctx=canvas.getContext('2d');
+    ctx.fillStyle='#ffffff'; ctx.fillRect(0,0,cw,ch);
+    ctx.drawImage(bmp,0,0,cw,ch);
+    for(const quality of [0.9, 0.8, 0.7]){
+      const out=await new Promise(res=>canvas.toBlob(res,'image/jpeg',quality));
+      if(out && out.size>0 && out.size<=KYC_MAX_UPLOAD_BYTES){
+        canvas.width=canvas.height=0;
+        return { blob:out, type:'image/jpeg', ext:'jpg', width:cw, height:ch, clarity };
+      }
+    }
+    throw Object.assign(new Error('KYC_IMAGE_ENCODE'),{code:'KYC_IMAGE_ENCODE'});
+  }finally{
+    try{ bmp.close && bmp.close(); }catch(_){}
+  }
+}
+
+function kycSideEls(side){
+  const S=side==='front'?'Front':'Back';
+  return {
+    camera:document.getElementById('kyc'+S+'Camera'),
+    gallery:document.getElementById('kyc'+S+'Gallery'),
+    drop:document.getElementById('kyc'+S+'Drop'),
+    preview:document.getElementById('kyc'+S+'Preview'),
+    img:document.getElementById('kyc'+S+'Img'),
+    meta:document.getElementById('kyc'+S+'Meta'),
+    hint:document.getElementById('kyc'+S+'Hint'),
+    box:document.getElementById('kyc'+S+'Box'),
+    errId:'kyc'+S
+  };
+}
+
+const KYC_PICK_HINT='وێنەیەکی ڕوون بگرە یان لە گەلەری هەڵیبژێرە';
+function kycRemoveImage(side){
+  _kycImageTokens[side]++;
+  const cur=_kycImages[side];
+  if(cur?.url) URL.revokeObjectURL(cur.url);
+  _kycImages[side]=null;
+  const el=kycSideEls(side);
+  if(el.camera) el.camera.value='';
+  if(el.gallery) el.gallery.value='';
+  if(el.preview) el.preview.hidden=true;
+  if(el.img) el.img.removeAttribute('src');
+  if(el.drop){ el.drop.hidden=false; }
+  if(el.hint) el.hint.textContent=KYC_PICK_HINT;
+  if(el.box) el.box.classList.remove('ready','busy');
+  clearFieldError(el.errId);
+  kycUpdateSteps();
+}
+
+function kycOnImage(side, input){
+  const el=kycSideEls(side);
+  clearFieldError(el.errId);
+  const file=input?.files?.[0]||null;
+  if(!file) return;   // picker cancelled: keep the current image
+  if(input) input.value='';   // lets the same photo be chosen again
+  if(file.type && !/^image\//i.test(file.type)){
+    kycRemoveImage(side);
+    setFieldError(el.errId, KYC_ERRORS.KYC_IMAGE_TYPE);
+    return;
+  }
+  if(file.size>KYC_MAX_INPUT_BYTES){
+    kycRemoveImage(side);
+    setFieldError(el.errId, KYC_ERRORS.KYC_IMAGE_TOO_LARGE);
+    return;
+  }
+  const token=++_kycImageTokens[side];
+  if(el.box) el.box.classList.add('busy');
+  if(el.hint) el.hint.textContent='پشکنینی ڕوونی وێنە...';
+  const promise=readSelectedFileSnapshot(file)
+    .then(snapshot=>kycPrepareImage(snapshot))
+    .then(prepared=>{
+      if(token!==_kycImageTokens[side]) return null;
+      const old=_kycImages[side];
+      if(old?.url) URL.revokeObjectURL(old.url);
+      const url=URL.createObjectURL(prepared.blob);
+      _kycImages[side]={ prepared, url, name:file.name, promise:null };
+      if(el.img) el.img.src=url;
+      if(el.meta) el.meta.textContent=prepared.width+'×'+prepared.height+' • '+(prepared.blob.size/1024/1024).toFixed(2)+' MB';
+      if(el.drop) el.drop.hidden=true;
+      if(el.preview) el.preview.hidden=false;
+      if(el.box){ el.box.classList.remove('busy'); el.box.classList.add('ready'); }
+      clearFieldError(el.errId);
+      kycUpdateSteps();
+      return prepared;
+    })
+    .catch(err=>{
+      if(token!==_kycImageTokens[side]) return null;
+      // A rejected photo replaces whatever was there: the side goes back to
+      // the Camera / Gallery choice so nothing unclear can be submitted.
+      kycRemoveImage(side);
+      setFieldError(el.errId, kycErrorMessage(err));
+      return null;
+    });
+  _kycImages[side]=Object.assign(_kycImages[side]||{}, { promise });
+}
+
+// The Camera / Gallery choices are <label>s (they open the file inputs
+// natively on iOS and Android); make them work from the keyboard too.
+document.addEventListener('keydown', e=>{
+  if(e.key!=='Enter' && e.key!==' ') return;
+  const l=e.target && e.target.closest ? e.target.closest('label.kyc-src-btn, label.kyc-mini-btn') : null;
+  if(!l) return;
+  e.preventDefault();
+  l.click();
+});
+
+async function kycAwaitImage(side){
+  const cur=_kycImages[side];
+  if(cur?.promise){ await cur.promise; }
+  return _kycImages[side]?.prepared||null;
+}
+
+function kycSetProgress(pct, text){
+  const wrap=document.getElementById('kycProgress');
+  const fill=document.getElementById('kycProgressFill');
+  const label=document.getElementById('kycProgressText');
+  if(!wrap) return;
+  if(pct===null){ wrap.hidden=true; return; }
+  wrap.hidden=false;
+  if(fill) fill.style.width=Math.max(0,Math.min(100,pct))+'%';
+  if(label) label.textContent=text||'';
+}
+
+async function kycUpload(path, prepared){
+  let lastError=null;
+  for(let attempt=0;attempt<3;attempt++){
+    try{
+      const {error}=await sb.storage.from(KYC_BUCKET).upload(path, prepared.blob, {
+        contentType:prepared.type, upsert:true, cacheControl:'0'
+      });
+      if(error) throw error;
+      return;
+    }catch(error){
+      lastError=error;
+      if(!isTransientNetworkError(error) || attempt===2) break;
+      await waitForNetworkRetry(800*(attempt+1));
+    }
+  }
+  const code=isTransientNetworkError(lastError)?'KYC_UPLOAD_NETWORK':'KYC_UPLOAD_FAILED';
+  const err=new Error(code+': '+String(lastError?.message||''));
+  err.code=code; err.status=lastError?.statusCode||lastError?.status;
+  throw err;
+}
+
+function kycShowFormError(msg){
+  const box=document.getElementById('kycFormError');
+  if(!box) return;
+  if(!msg){ box.hidden=true; box.textContent=''; return; }
+  box.hidden=false;
+  box.innerHTML=ICON.warn+'<span>'+escHtml(msg)+'</span>';
+}
+
+function kycValidate(){
+  let ok=true, first=null;
+  const fail=(id,msg,focusId)=>{ setFieldError(id,msg); ok=false; if(!first) first=document.getElementById(focusId||id); };
+  ['kycDocType','kycName','kycDob','kycNumber','kycFront','kycBack','kycConsent'].forEach(clearFieldError);
+  if(!_kycDocType) fail('kycDocType','تکایە جۆری بەڵگەنامە هەڵبژێرە','kycSecType');
+  const name=(document.getElementById('kycName').value||'').trim().replace(/\s+/g,' ');
+  if(name.length<5 || !name.includes(' ')) fail('kycName','ناوی تەواو بە لانیکەم دوو بەش بنووسە (ناو و ناوی باوک)');
+  else if(/[0-9٠-٩۰-۹<>{}\[\]\\\/@#$%^*=+_|~]/.test(name)) fail('kycName','ناو نابێت ژمارە یان هێمای تێدابێت');
+  const dob=document.getElementById('kycDob').value;
+  if(!dob) fail('kycDob','بەرواری لەدایکبوون دیاری بکە');
+  else if(!kycIsRealDate(dob) || dob<'1900-01-01' || dob>kycToday()) fail('kycDob','بەرواری لەدایکبوون دروست نییە');
+  const num=(document.getElementById('kycNumber').value||'').trim();
+  if(!/^[A-Z0-9-]{4,30}$/.test(num)) fail('kycNumber','ژمارەی بەڵگەنامە دەبێت ٤ بۆ ٣٠ پیت/ژمارەی ئینگلیزی بێت');
+  if(!_kycImages.front?.prepared && !_kycImages.front?.promise) fail('kycFront','وێنەی ڕووی پێشەوە پێویستە','kycFrontBox');
+  if(_kycDocType && KYC_DOC_TYPES[_kycDocType].needsBack && !_kycImages.back?.prepared && !_kycImages.back?.promise)
+    fail('kycBack','وێنەی ڕووی دواوە پێویستە','kycBackBox');
+  if(!document.getElementById('kycConsent').checked) fail('kycConsent','تکایە ڕاستی زانیارییەکان پشتڕاست بکەرەوە');
+  if(first && first.scrollIntoView) first.scrollIntoView({behavior:'smooth',block:'center'});
+  return ok ? { name, dob, num } : null;
+}
+
+async function submitKyc(){
+  if(_kycSubmitting) return;               // double-click guard (DB also enforces it)
+  kycShowFormError(null);
+  if(!curUser){ showToast('تکایە دووبارە بچۆ ژوورەوە','error'); return; }
+  if(!_kyc.data?.can_submit){ showToast(kycErrorMessage(_kyc.status==='pending'?'KYC_ALREADY_PENDING':'KYC_ALREADY_APPROVED'),'warning'); return; }
+  const fields=kycValidate();
+  if(!fields) return;
+
+  const btn=document.getElementById('kycSubmitBtn');
+  const btnHtml=btn.innerHTML;
+  _kycSubmitting=true;
+  btn.disabled=true; btn.innerHTML=ICON.spin+' ناردن...';
+  document.querySelectorAll('#kycFormCard input, #kycFormCard .kyc-doc, #kycFormCard .kyc-mini-btn').forEach(el=>el.setAttribute('disabled',''));
+  let stage='session';
+  try{
+    kycSetProgress(5,'پشتڕاستکردنەوەی چوونەژوورەوە...');
+    await getOrderSession();
+
+    stage='image_prepare';
+    kycSetProgress(12,'ئامادەکردنی وێنەکان...');
+    const needsBack=KYC_DOC_TYPES[_kycDocType].needsBack;
+    const front=await kycAwaitImage('front');
+    const back=needsBack ? await kycAwaitImage('back') : null;
+    // Defence in depth: only images that passed the local clarity gate exist
+    // here, but never upload anything without a passing verdict.
+    const cleared=img=>!!(img && img.clarity && !kycClarityVerdict(img.clarity));
+    if(front && !cleared(front)){ kycRemoveImage('front'); setFieldError('kycFront',KYC_UNCLEAR_MSG); throw Object.assign(new Error('KYC_IMAGE_BLURRY'),{handled:true}); }
+    if(back && !cleared(back)){ kycRemoveImage('back'); setFieldError('kycBack',KYC_UNCLEAR_MSG); throw Object.assign(new Error('KYC_IMAGE_BLURRY'),{handled:true}); }
+    if(!front){ setFieldError('kycFront','وێنەی ڕووی پێشەوە ئامادە نییە؛ دووبارە هەڵیبژێرە'); throw Object.assign(new Error('KYC_FRONT_IMAGE_MISSING'),{handled:true}); }
+    if(needsBack && !back){ setFieldError('kycBack','وێنەی ڕووی دواوە ئامادە نییە؛ دووبارە هەڵیبژێرە'); throw Object.assign(new Error('KYC_BACK_IMAGE_MISSING'),{handled:true}); }
+
+    const vid=_kycDraftId || (_kycDraftId=kycUuid());
+    const base=curUser.id+'/'+vid+'/';
+    const frontPath=base+'front.'+front.ext;
+    const backPath=back ? base+'back.'+back.ext : null;
+
+    stage='upload_front';
+    kycSetProgress(25,'بارکردنی '+KYC_DOC_TYPES[_kycDocType].front+'...');
+    await kycUpload(frontPath, front);
+    if(back){
+      stage='upload_back';
+      kycSetProgress(55,'بارکردنی '+KYC_DOC_TYPES[_kycDocType].back+'...');
+      await kycUpload(backPath, back);
+    }
+
+    // Only after both files are stored is the request created.
+    stage='submit';
+    kycSetProgress(85,'ناردنی زانیارییەکان...');
+    const {error}=await sb.rpc('ex_kyc_submit',{
+      p_verification_id:vid,
+      p_document_type:_kycDocType,
+      p_full_legal_name:fields.name,
+      p_date_of_birth:fields.dob,
+      p_document_number:fields.num,
+      p_front_path:frontPath,
+      p_back_path:backPath
+    });
+    if(error) throw error;
+
+    kycSetProgress(100,'تەواو بوو');
+    _kycDraftId=null;
+    kycResetForm();
+    _kyc.status='pending';
+    if(_kyc.data){ _kyc.data.status='pending'; _kyc.data.can_submit=false; }
+    renderKycProfile();
+    const form=document.getElementById('kycFormCard'); if(form) form.hidden=true;
+    const banner=document.getElementById('kycBanner'); if(banner) banner.hidden=true;
+    const success=document.getElementById('kycSuccess'); if(success) success.hidden=false;
+    window.scrollTo({top:0,behavior:'smooth'});
+    showToast('داواکارییەکەت نێردرا و لە ژێر پشکنینە','success');
+    loadKycStatus(true);
+  }catch(e){
+    const raw=String(e?.message||'');
+    if(/KYC_DUPLICATE_SUBMISSION/.test(raw)) _kycDraftId=null;
+    if(/KYC_ALREADY_PENDING|KYC_ALREADY_APPROVED/.test(raw)) loadKycStatus(true);
+    if(!e?.handled){
+      // Only codes and sizes are reported — never the name, number or images.
+      reportAppError(e,{operation:'kyc_submit',stage,file_size:_kycImages.front?.prepared?.blob?.size,file_type:_kycImages.front?.prepared?.type});
+    }
+    const msg=kycErrorMessage(e);
+    kycShowFormError(msg);
+    showToast(msg,'error');
+  }finally{
+    _kycSubmitting=false;
+    btn.disabled=false; btn.innerHTML=btnHtml;
+    document.querySelectorAll('#kycFormCard [disabled]').forEach(el=>{ if(el!==btn) el.removeAttribute('disabled'); });
+    setTimeout(()=>{ if(!_kycSubmitting) kycSetProgress(null); }, 900);
+  }
+}
+
+function kycResetForm(){
+  kycRemoveImage('front');
+  kycRemoveImage('back');
+  ['kycName','kycDob','kycNumber'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+  const c=document.getElementById('kycConsent'); if(c) c.checked=false;
+  _kycDocType=null;
+  document.querySelectorAll('.kyc-doc').forEach(b=>{ b.classList.remove('on'); b.setAttribute('aria-checked','false'); });
+  kycShowFormError(null);
+  kycUpdateSteps();
+}
 
 // ══════════════════════════════════════════════════════════════
 // ═══ HEADER — shadow on scroll + live rate pill + nav state ════
@@ -2752,21 +3789,30 @@ function renderProofStats(s){
 function renderPublicFeed(rows){
   const el=document.getElementById('publicFeed'); if(!el) return;
   if(!rows || !rows.length){ el.innerHTML='<div class="empty-state">هێشتا هیچ مامەڵەیەکی تەواوبوو نییە</div>'; return; }
+  // Markup matches the feed CSS: a main column (id, route, masked phone) and
+  // an amount panel (time, received, sent). Rows are right-to-left like the
+  // transaction cards, so the route reads source ← destination.
   el.innerHTML = rows.map(function(r){
+    const cur = r.from==='USDT' ? ' $' : ' IQD';
     return '<div class="feed-row">'
-      + '<span class="feed-id">'
-        + '<svg class="icn" style="width:12px;height:12px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/></svg>'
-        + escHtml(r.id||'') + '</span>'
-      + '<span class="feed-route">'
-        + methodIconHTML(r.from,'sz-xs') + escHtml(methodLabel(r.from))
-        + '<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="m11 6-6 6 6 6"/></svg>'
-        + methodIconHTML(r.to,'sz-xs') + escHtml(methodLabel(r.to))
-      + '</span>'
-      + '<span class="feed-meta">'
-        + '<span class="feed-phone">'+escHtml(r.phone||'')+'</span>'
-        + '<span>'+timeAgo(r.at)+'</span>'
-      + '</span>'
-      + '<span class="feed-amount">'+formatNum(Math.floor(r.total||0))+' IQD<small>لە '+formatNum(Math.floor(r.amount||0))+(r.from==='USDT'?'$':'')+'</small></span>'
+      + '<div class="feed-main">'
+        + '<span class="feed-id">'
+          + '<span class="icn icon--solar icon--solar--verified-check-linear" aria-hidden="true"></span>'
+          + escHtml(r.id||'') + '</span>'
+        + '<span class="feed-route">'
+          + methodIconHTML(r.from,'sz-xs') + '<span class="fr-name">'+escHtml(methodLabel(r.from))+'</span>'
+          + '<span class="icn fr-arrow icon--solar icon--solar--arrow-left-linear" aria-hidden="true"></span>'
+          + methodIconHTML(r.to,'sz-xs') + '<span class="fr-name">'+escHtml(methodLabel(r.to))+'</span>'
+        + '</span>'
+        + (r.phone ? '<span class="feed-phone">'+escHtml(r.phone)+'</span>' : '')
+      + '</div>'
+      + '<div class="feed-side">'
+        + '<span class="feed-time">'+escHtml(timeAgo(r.at))+'</span>'
+        + '<span class="fa-line fa-in"><span class="fa-lbl">وەرگرتن</span>'
+          + '<span class="fa-val">+'+formatNum(Math.floor(r.total||0))+' IQD</span></span>'
+        + '<span class="fa-line fa-out"><span class="fa-lbl">ناردن</span>'
+          + '<span class="fa-val">'+formatNum(Math.floor(r.amount||0))+cur+'</span></span>'
+      + '</div>'
       + '</div>';
   }).join('');
 }
@@ -2810,6 +3856,7 @@ function honeypotTripped(){
 // ══════════════════════════════════════════════════════════════
 document.addEventListener('keydown', (e)=>{
   if(e.key!=='Escape') return;
+  if(document.getElementById('txSheet') && !document.getElementById('txSheet').hidden){ closeTxDetail(); return; }
   const notifP=document.getElementById('notifPanel'); if(notifP && notifP.classList.contains('open')){ closeNotifPanel(); return; }
   const picker=document.getElementById('pickerSheet'); if(picker.classList.contains('open')){ closePicker(); return; }
   const confirmS=document.getElementById('confirmSheet'); if(confirmS.classList.contains('open')){ closeOrderConfirm(); return; }
