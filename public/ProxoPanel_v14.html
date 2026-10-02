@@ -3055,7 +3055,7 @@ const pageConfig={
   deposits:{title:'داواکاریەکانی پارەدان',sub:'پەسەندکردن و ڕەتکردنەوەی داواکاریەکان',load:loadDeposits},
   ads:{title:'ڕیکلامەکان',sub:'بەڕێوەبردنی ڕیکلامەکان',load:loadAds},
   bestMetrics:{title:'باشترین ئامارەکان',sub:'هەڵبژاردنی ڕیکلامەکان و دانانی وێنۆچکە بۆ هەر مانگێک',load:loadBestMetrics},
-  statistics:{title:'ئامارەکانی ڕیکلامەکان',sub:'پوختە، کارایی، گەڕان و داگرتنی ڕاپۆرتی ڕیکلامەکان',load:loadStatistics},
+  statistics:{title:'ئامارەکانی ڕیکلامەکان',sub:'پوختە، کارایی، گەڕان و داگرتنی ڕاپۆرتی ڕیکلامەکان',load:()=>loadStatistics()},
   adsData:{title:'داتای وردەکاری ڕیکلامەکان',sub:'ئایدی ڕیکلام، ئەڤدەرتایزەر، بینین، کلیک، کۆنڤێرشن (ئێستا + پێشوو)، CPM و بودجەی خەرجکراو',load:loadAdsData},
   fullData:{title:'هەموو داتای ڕیکلامەکان',sub:'یەک پەڕە بۆ هەموو داتاکان — ئایدی، ناو، ئیمەیل، بینین، ڤیدیۆ ڤیوس، سەردانی پڕۆفایل، شەیر، CTR، CPC، تێچووی کۆنڤێرشن و دوایین نوێکردنەوە — لەگەڵ گەڕان و دەستکاری',load:()=>loadFullData()},
   approval:{title:'Approval Workflow',sub:'پەسەندکردنی داواکاریەکانی چاوەڕوان — TikTok Ad ID و بەروار',load:loadApprovalWorkflow},
