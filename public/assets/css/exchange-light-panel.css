@@ -301,3 +301,141 @@ body:has(#sidebar) .stat-ico.gr .svg-icon{
  grid-row:1;grid-column:3;
  justify-self:end;
 }
+
+
+/* Final compact hierarchy: text and numeric columns have equal visual weight. */
+:root,[data-theme="light"]{
+ --pb-body-size:14px;
+ --pb-value-size:14px;
+ --pb-heading-size:16px;
+ --pb-number-gap:12px;
+ --pb-ink:#1f2937;
+ --pb-secondary:#374151;
+}
+[data-theme="light"] body,
+body:has(#sidebar){font-size:14px;line-height:1.75;font-weight:400}
+[data-theme="light"] .pb-rrow,
+[data-theme="light"] .tx-drow,
+.tx-sheet .tx-drow{
+ display:grid;
+ grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+ column-gap:12px;
+ row-gap:5px;
+ align-items:start;
+}
+[data-theme="light"] .pb-rkey,
+[data-theme="light"] .pb-rval,
+[data-theme="light"] .tx-dlbl,
+[data-theme="light"] .tx-dval,
+.tx-sheet .tx-dlbl,
+.tx-sheet .tx-dval,
+body:has(#sidebar) .stat-lbl,
+body:has(#sidebar) .ex-label,
+body:has(#sidebar) .stat-val,
+body:has(#sidebar) .ex-value{
+ font-size:14px!important;
+ line-height:1.75;
+ letter-spacing:normal;
+ word-spacing:normal;
+ margin-top:0;
+ min-width:0;
+ overflow-wrap:anywhere;
+}
+[data-theme="light"] .pb-rkey,
+[data-theme="light"] .tx-dlbl,
+.tx-sheet .tx-dlbl{font-weight:400;text-align:start}
+[data-theme="light"] .pb-rval,
+[data-theme="light"] .tx-dval,
+.tx-sheet .tx-dval{font-weight:500;text-align:end}
+[data-theme="light"] .pb-rval[dir="ltr"],
+[data-theme="light"] .tx-dval[dir="ltr"],
+.tx-sheet .tx-dval[dir="ltr"]{
+ direction:ltr;unicode-bidi:isolate;text-align:left;
+ font-variant-numeric:tabular-nums;
+}
+[data-theme="light"] .tx-amount,
+[data-theme="light"] .tx-sum-val,
+[data-theme="light"] .tx-sum-sub,
+[data-theme="light"] .tx-amount-sent,
+body:has(#sidebar) .profit-order-summary b{
+ font-size:14px!important;
+ line-height:1.75;
+ font-variant-numeric:tabular-nums;
+}
+[data-theme="light"] .tx-sum-lbl,
+[data-theme="light"] .tx-dlbl,
+[data-theme="light"] .field-label,
+body:has(#sidebar) .stat-lbl,
+body:has(#sidebar) .ex-label{margin-bottom:4px}
+[data-theme="light"] .tx-sum-val,
+[data-theme="light"] .tx-amount,
+[data-theme="light"] .tx-dval,
+body:has(#sidebar) .stat-val,
+body:has(#sidebar) .ex-value{margin-block-start:0}
+[data-theme="light"] .tx-sum-item,
+body:has(#sidebar) .stat-info{display:flex;flex-direction:column;gap:5px}
+[data-theme="light"] .page-head h2,
+[data-theme="light"] .section-title,
+[data-theme="light"] .xc-head h2,
+[data-theme="light"] .xc-step-head h3,
+[data-theme="light"] .pf-card-title,
+[data-theme="light"] .pb-rhead h2,
+[data-theme="light"] .pb-rsection h3,
+body:has(#sidebar) .sec-hdr h3,
+body:has(#sidebar) .ex-head h3,
+body:has(#sidebar) .topbar-titles h2,
+body:has(#sidebar) .profit-dash-head h3{
+ color:#1685fa!important;font-size:16px!important;
+ font-weight:500!important;line-height:1.65;
+}
+/* Only meaningful highlighted figures and links use blue, body text stays dark. */
+[data-theme="light"] .tx-sum-item.recv .tx-sum-val,
+[data-theme="light"] .pf2-handle,
+body:has(#sidebar) .profit-net,
+body:has(#sidebar) .ex-logo{
+ color:#1685fa!important;
+}
+[data-theme="light"] .tx-dlbl,
+[data-theme="light"] .tx-amount-sent,
+[data-theme="light"] .pb-rkey,
+body:has(#sidebar) .stat-lbl,
+body:has(#sidebar) .ex-label{color:#374151!important}
+[data-theme="light"] .pb-rval,
+[data-theme="light"] .tx-dval,
+[data-theme="light"] .tx-amount,
+body:has(#sidebar) .stat-val,
+body:has(#sidebar) .ex-value{color:#1f2937!important}
+/* Icons are meaningful in primary navigation, receipt, KYC and alerts.
+   Hide decorative heading/metric icons but keep functional affordances. */
+[data-theme="light"] .bn-item > .bn-ico > .pb-svg-icon,
+[data-theme="light"] .bn-item > .bn-ico > .icn{
+ display:inline-block!important;
+ width:18px!important;height:18px!important;flex:0 0 18px;
+ color:#54657b!important;
+}
+[data-theme="light"] .bn-item.on > .bn-ico > .pb-svg-icon,
+[data-theme="light"] .bn-item.on > .bn-ico > .icn{color:#1685fa!important}
+[data-theme="light"] .pf-menu-item[onclick*="openVerifyPage"] .pf-menu-ico,
+[data-theme="light"] .pf-menu-item[onclick*="transactions"] .pf-menu-ico,
+[data-theme="light"] .pf-menu-item[onclick*="support"] .pf-menu-ico,
+[data-theme="light"] .pf-menu-item[onclick*="logout"] .pf-menu-ico{
+ display:flex!important;width:32px;height:32px;align-items:center;justify-content:center;
+}
+[data-theme="light"] .pf-menu-ico .pb-svg-icon{width:18px;height:18px;flex-basis:18px}
+[data-theme="light"] .tx-receipt-actions .btn > svg,
+[data-theme="light"] .bn-dot-plus svg,
+[data-theme="light"] .file-picker-icon .receipt-plus-svg{display:block!important}
+body:has(#sidebar) #sidebar .sb-item .svg-icon,
+body:has(#sidebar) #sidebar .sb-item i{color:#56657a!important}
+body:has(#sidebar) .stat-ico:not(.gr){display:none!important}
+body:has(#sidebar) .stat-ico.gr{
+ background:#eef3fb!important;color:#1685fa!important;
+}
+body:has(#sidebar) .stat-ico.gr .svg-icon{color:#1685fa!important}
+/* Status colors convey state; section titles and informational highlights use blue. */
+[data-theme="light"] .status-success,
+[data-theme="light"] .status-approved{color:#247344}
+@media(max-width:560px){
+ [data-theme="light"] .pb-rrow,
+ [data-theme="light"] .tx-drow,.tx-sheet .tx-drow{column-gap:10px}
+}
