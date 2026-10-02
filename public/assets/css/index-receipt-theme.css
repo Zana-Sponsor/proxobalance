@@ -334,3 +334,80 @@
  .pb-rrow{gap:12px}
  .pb-rval{max-width:61%}
 }
+
+
+/* Final index-wide receipt system — applies to every routed customer page. */
+[data-theme="light"] #pageHome,
+[data-theme="light"] #pageTx,
+[data-theme="light"] #pageChanges,
+[data-theme="light"] #pageRules,
+[data-theme="light"] #pageProfile,
+[data-theme="light"] #pageVerify,
+[data-theme="light"] #pageSupport{
+ color:#202c3c;
+}
+[data-theme="light"] #pageHome .home-card,
+[data-theme="light"] #pageHome .exchange-card,
+[data-theme="light"] #pageHome .xc-step,
+[data-theme="light"] #pageHome .xc-summary,
+[data-theme="light"] #pageHome .feed-wrap,
+[data-theme="light"] #pageTx .tx-summary,
+[data-theme="light"] #pageTx .tx-card,
+[data-theme="light"] #pageChanges .change-card,
+[data-theme="light"] #pageChanges .rate-history,
+[data-theme="light"] #pageRules .rule-item,
+[data-theme="light"] #pageProfile .pf-hero,
+[data-theme="light"] #pageProfile .pf-card,
+[data-theme="light"] #pageProfile .pf-menu,
+[data-theme="light"] #pageVerify .kyc-card,
+[data-theme="light"] #pageSupport .support-form,
+[data-theme="light"] #pageSupport .support-case-card{
+ background:#fff;border:1px solid #e8edf3;border-radius:20px;
+ box-shadow:0 6px 24px rgba(23,43,72,.035);
+}
+[data-theme="light"] #pageHome h2,[data-theme="light"] #pageHome h3,
+[data-theme="light"] #pageTx .page-head h2,[data-theme="light"] #pageTx .section-title,
+[data-theme="light"] #pageChanges .page-head h2,[data-theme="light"] #pageChanges .section-title,
+[data-theme="light"] #pageRules .page-head h2,[data-theme="light"] #pageRules .section-title,
+[data-theme="light"] #pageProfile .page-head h2,[data-theme="light"] #pageProfile .pf-card-title,
+[data-theme="light"] #pageVerify .page-head h2,[data-theme="light"] #pageVerify .section-title,
+[data-theme="light"] #pageSupport .page-head h2,[data-theme="light"] #pageSupport .section-title{
+ color:#1685fa;font-size:16px;font-weight:500;line-height:1.65;
+}
+.pb-svg-icon{
+ display:inline-block;width:20px;height:20px;flex:0 0 20px;
+ vertical-align:middle;color:inherit;
+}
+.pb-svg-icon.icn-sm{width:16px;height:16px;flex-basis:16px}
+.pb-svg-icon.icn-xl{width:28px;height:28px;flex-basis:28px}
+.receipt-plus-svg,.bn-dot-plus svg{
+ width:15px;height:15px;display:block;fill:none;stroke:currentColor;
+ stroke-width:2;stroke-linecap:round;
+}
+.file-picker-icon .receipt-plus-svg{width:22px;height:22px}
+.bn-dot-plus{
+ display:flex!important;align-items:center;justify-content:center;
+ font-size:0!important;line-height:1;
+}
+.tx-receipt-actions{
+ display:flex;justify-content:center;align-items:center;
+ margin-top:16px;padding-top:14px;border-top:1px solid #edf0f4;
+}
+.tx-receipt-actions .btn{
+ width:auto;min-width:190px;justify-content:center;text-align:center;
+ gap:8px;font-family:Rabar,Arial,sans-serif;font-size:14px;font-weight:400;
+}
+.tx-receipt-actions .btn svg{width:18px;height:18px;flex:0 0 18px}
+.pb-rhead h2,.pb-rsection h3{text-align:center}
+.pb-rfooter{text-align:center}
+.pb-receipt-print{font-family:Rabar,Tahoma,Arial,sans-serif}
+.pb-rrow{align-items:flex-start}
+.pb-rkey{font-size:14px;font-weight:400}
+.pb-rval{font-size:14px;font-weight:500}
+@media(max-width:560px){
+ [data-theme="light"] #pageHome .xc-step,
+ [data-theme="light"] #pageTx .tx-card,
+ [data-theme="light"] #pageProfile .pf-card,
+ [data-theme="light"] #pageSupport .support-form{border-radius:17px}
+ .tx-receipt-actions .btn{width:100%;min-width:0}
+}
