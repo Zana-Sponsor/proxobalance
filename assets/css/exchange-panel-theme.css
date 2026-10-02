@@ -99,3 +99,185 @@ button:not(:disabled):active{transform:scale(.987)}
 #pgDashboard .profit-dash-strip .ex-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
 @media(max-width:990px){#pgDashboard .profit-dash-strip .ex-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:530px){#pgDashboard .profit-dash-strip{padding:15px 13px;border-radius:17px}}
+
+
+/* ═══════════════════════════════════════════════════════════════════
+   Receipt-matched visual system: one WHITE navigation and WHITE content
+   surface, BLACK copy and values, BLUE accents only. Shared by every pg.
+   Appended last intentionally to override earlier legacy dark theme.
+   ═══════════════════════════════════════════════════════════════════ */
+:root{
+  --bg:#f8fafc;--w:#ffffff;--b1:#e9edf3;--b2:#dce4ed;
+  --dark:#151b26;--dark2:#263346;--tx:#171d28;--pri:#1685fa;
+  --bl:#1685fa;--cy:#1685fa;--mt:#8994a5;--mt2:#64748b;
+  --ex-blue:#1685fa;--ex-text:#171d28;--ex-line:#e9edf2;
+  --sidebar-w:274px;
+}
+body,#main{background:#f8fafc;color:#171d28}
+#sidebar{
+  background:#ffffff!important;
+  color:#171d28;
+  border-left:1px solid #edf0f4;
+  box-shadow:-12px 0 44px rgba(17,31,53,.065);
+}
+.sb-logo{
+  padding:25px 21px 22px;
+  border-bottom:1px solid #edf0f4!important;
+  background:#fff;
+}
+.sb-logo-text h1{
+  color:#1685fa!important;
+  font-size:22px;
+  font-weight:750;
+  letter-spacing:-.85px;
+}
+.sb-logo-text h1 span{color:#171d28!important}
+.sb-logo-text p{color:#8691a2!important;font-weight:400;font-size:11px}
+.sb-close-btn{
+  color:#566579;
+  background:#f6f8fb;
+  border:1px solid #e9edf3;
+  border-radius:11px;
+  width:42px;height:42px;
+}
+.sb-close-btn:hover{color:#1685fa;background:#eef6ff;border-color:#d5eaff}
+.sb-nav{padding:21px 14px 13px;scrollbar-color:#e6ecf4 transparent;scrollbar-width:thin}
+.sb-nav::-webkit-scrollbar{width:5px}
+.sb-nav::-webkit-scrollbar-thumb{background:#e4eaf3;border-radius:8px}
+.sb-section{
+  color:#98a2b1!important;
+  letter-spacing:0;
+  font-weight:500;
+  font-size:11px;
+  padding:15px 12px 9px;
+}
+.sb-item{
+  color:#222c3c!important;
+  font-weight:400;
+  border-radius:13px;
+  min-height:51px;
+  margin-bottom:5px;
+  padding:12px 14px;
+  background:transparent;
+  transition:background-color .18s ease,color .18s ease,transform .18s ease;
+}
+.sb-item .svg-icon,
+.sb-item i,.sb-item i[style]{
+  color:#66788f!important;
+  width:19px;height:19px;
+  flex:0 0 19px;
+}
+.sb-item:hover{
+  color:#121b2c!important;
+  background:#f4f8fe!important;
+}
+.sb-item:hover .svg-icon,.sb-item:hover i{color:#1685fa!important}
+.sb-item.active{
+  color:#126ad1!important;
+  font-weight:550;
+  background:#edf5ff!important;
+  box-shadow:inset -3px 0 0 #1685fa;
+}
+.sb-item.active .svg-icon,.sb-item.active i,.sb-item.active i[style]{color:#1685fa!important}
+.sb-footer{
+  background:#fff;
+  border-top:1px solid #edf0f4!important;
+  padding:16px 14px max(17px,env(safe-area-inset-bottom,0px));
+}
+.sb-av{
+  background:#edf5ff;
+  color:#1685fa;
+  border:1px solid #dceafe;
+  font-weight:600;
+}
+.sb-admin-name{color:#1b2636!important;font-weight:550;font-size:12.5px}
+.sb-admin-role{color:#8795a7!important;font-size:10.5px}
+.sb-footer button[onclick="doLogout()"]{
+  background:#fff5f5!important;
+  border:1px solid #f2d3d3!important;
+  color:#c84343!important;
+  border-radius:11px!important;
+  font-weight:500!important;
+}
+.sb-footer button[onclick="doLogout()"]:hover{background:#ffecec!important}
+#sidebarOverlay{background:rgba(13,25,43,.32)!important}
+.topbar{
+  background:#fff;
+  border-bottom:1px solid #e9edf3;
+  box-shadow:0 2px 12px rgba(20,34,52,.02);
+}
+.topbar-titles h2{font-size:17px;font-weight:600;color:#171d28}
+.topbar-titles p{color:#8994a5;font-weight:400}
+.topbar .svg-icon{color:#52667e}
+.content{padding-top:23px}
+.pg>.sec-hdr h3,.sec-hdr h3{
+  color:#1685fa;
+  font-weight:600;
+}
+.stat-card,.tbl-wrap,.alert-card,.acc-card,.rec-card,
+.wallet-card,.wallet-item,.support-admin-card,.error-log-card,
+#pgDashboard .profit-dash-strip,#pgDashboard .ex-dash-shortcut,
+#pgStatistics .ex-sheet,#pgProfit .ex-sheet,#pgRates .ex-sheet,
+.ex-card,.ex-order,.ex-rate,.profit-order{
+  background:#fff;
+  border:1px solid #edf0f4;
+  border-radius:20px;
+  box-shadow:0 7px 30px rgba(17,35,62,.032);
+}
+.ex-card,.ex-rate{border-radius:16px}
+.stat-card{gap:13px;padding:18px}
+.stat-ico,.stat-ico.dark,.stat-ico.gr,.stat-ico.rd,.stat-ico.yw,
+.stat-ico.bl,.stat-ico.pu,.stat-ico.cy{
+  color:#1685fa!important;
+  background:#f0f7ff!important;
+  border-radius:13px;
+}
+.stat-ico .svg-icon,.stat-ico .svg-icon[style]{color:#1685fa!important}
+.stat-val,.ex-value,.profit-order-summary b{
+  color:#171d28!important;
+  font-weight:550;
+}
+.stat-lbl,.ex-label{color:#8290a2;font-weight:400}
+.ex-head{border-bottom:1px solid #e9edf3}
+.ex-head h3,.ex-title{color:#1685fa;font-weight:600}
+.ex-logo{color:#1685fa;font-weight:750}
+.profit-order-summary .profit-net{color:#1685fa!important}
+.tbl-wrap th,.tbl-scroll th{background:#fbfcfe;color:#617287;font-weight:500}
+.tbl-wrap td,.tbl-scroll td{color:#202c3b;font-weight:400}
+.tbl-filter{background:#fff;border-color:#edf0f4}
+.modal,.auth-box,.tbl-wrap{border:1px solid #e9edf3}
+.modal-hdr h3,.modal-head h3{font-weight:600;color:#1685fa}
+.act-btn.dark,.act-btn.bl,.abtn,.modal-btn.dark,
+.ex-btn.primary,.profit-edit .ex-btn.primary{
+  background:#1685fa!important;color:#fff!important;border-color:#1685fa!important;
+  box-shadow:none;
+}
+.act-btn.dark:hover,.act-btn.bl:hover,.abtn:hover,
+.modal-btn.dark:hover,.ex-btn.primary:hover{
+  background:#0f73de!important;border-color:#0f73de!important;
+}
+.act-btn:not(.dark):not(.bl):not(.rd):not(.gr):not(.yw),
+.ex-btn:not(.primary){
+  background:#fff;color:#1d334a;border-color:#e1e8f1;
+}
+.ex-btn:not(.primary):hover{background:#f6faff}
+.chip.on{color:#1685fa;background:#eff6ff;border-color:#a9d1fe}
+.tbl-search,.minp,.ainp,.mta,.ex-input,.profit-edit input{
+  background:#fff;color:#171d28;border-color:#e0e7f0;
+}
+.tbl-search:focus,.minp:focus,.ainp:focus,.mta:focus,
+.ex-input:focus,.profit-edit input:focus{
+  border-color:#1685fa;
+  box-shadow:0 0 0 3px rgba(22,133,250,.09);
+}
+@media(max-width:900px){
+  #sidebar{width:min(82vw,310px)}
+  .sb-nav{padding:16px 12px 12px}
+  .sb-item{min-height:51px}
+  .content{padding:17px 12px 30px}
+}
+@media(max-width:560px){
+  #pgStatistics .ex-sheet,#pgProfit .ex-sheet,#pgRates .ex-sheet{padding:18px 14px;border-radius:22px}
+  .stat-card{padding:14px}
+  #pgDashboard .profit-dash-strip,#pgDashboard .ex-dash-shortcut{border-radius:20px}
+}
