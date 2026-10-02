@@ -1,0 +1,92 @@
+/* Unified 2026 Proxo Balance admin theme: dark ink, Proxo blue, clean receipt surfaces.
+   Preserve the red/green/amber semantics of warning and transaction statuses. */
+:root{
+ --bg:#f7f9fc;--w:#fff;--b1:#e6ecf4;--b2:#d5dfea;
+ --dark:#101d31;--dark2:#243a55;--pri:#1685fa;
+ --bl:#1685fa;--cy:#1685fa;--mt:#8291a4;--mt2:#637389;--tx:#18283e;
+ --ex-blue:#1685fa;--ex-text:#172337;--ex-line:#e7ecf3;
+ --ui-ease:cubic-bezier(.22,1,.36,1);
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--tx);-webkit-font-smoothing:antialiased;font-synthesis:none}
+#sidebar{background:#101d31;box-shadow:-10px 0 38px rgba(11,26,47,.12)}
+.sb-logo{border-color:rgba(255,255,255,.09);padding-top:25px;padding-bottom:23px}
+.sb-logo-text h1,.auth-logo h1{color:#fff;font-weight:750;letter-spacing:-.9px}
+.auth-logo h1{color:#14243d}
+.sb-logo-text h1 span,.auth-logo h1 span{color:#1685fa}
+.sb-section{color:rgba(231,241,255,.48);font-weight:500;letter-spacing:.4px}
+.sb-item{border-radius:13px;color:rgba(236,244,255,.73);font-weight:400;padding:12px;line-height:1.6}
+.sb-item:hover{background:rgba(22,133,250,.12);color:#fff}
+.sb-item.active{background:rgba(22,133,250,.2);color:#fff;font-weight:550}
+.sb-item .svg-icon{width:18px;height:18px;color:#8fc5ff!important;flex-shrink:0}
+.sb-item.active .svg-icon{color:#fff!important}
+#main{background:#f7f9fc}
+.topbar{height:68px;background:rgba(255,255,255,.96);border-color:#e7edf5;backdrop-filter:blur(12px)}
+.topbar-titles h2{font-weight:600;color:#16273e;letter-spacing:0}
+.topbar-titles p{font-weight:400;color:#8390a2}
+.content{max-width:1600px;width:100%;margin-inline:auto}
+.pg>.sec-hdr h3,.sec-hdr h3,.modal-hdr h3,.modal-head h3{font-weight:600;color:#1685fa;line-height:1.7}
+.pg>.sec-hdr{gap:10px;flex-wrap:wrap}
+.stat-card,.tbl-wrap,.wallet-card,.wallet-item,.acc-card,.rec-card,.support-admin-card,.error-log-card,.alert-card{
+ background:#fff;border-color:#e7edf5;border-radius:19px;
+ box-shadow:0 7px 27px rgba(22,39,69,.035);
+}
+.stat-val{color:#142840;font-weight:600;font-family:Inter,R,Arial,sans-serif;letter-spacing:-.25px}
+.stat-lbl{color:#7d8a9c;font-weight:400;line-height:1.7}
+.stat-ico{background:rgba(22,133,250,.09)!important;color:#1685fa!important}
+.stat-ico .svg-icon{color:#1685fa}
+.tbl-wrap th,.tbl-wrap thead,.tbl-scroll th{background:#f8faff;color:#63758a;font-weight:500}
+.tbl-wrap td,.tbl-scroll td{font-weight:400;color:#22364e;line-height:1.75;border-bottom-color:#edf1f5}
+.tbl-filter{background:#fff;gap:9px}
+.tbl-search,.minp,.ainp,.mta,.modal input:not([type=checkbox]),.modal select,.modal textarea{
+ background:#fff;border-color:#e0e8f1;border-radius:12px;color:#172b45;font-weight:400;
+}
+.tbl-search:focus,.minp:focus,.ainp:focus,.mta:focus,.modal input:focus,.modal select:focus,.modal textarea:focus{
+ border-color:#1685fa;outline:none;box-shadow:0 0 0 3px rgba(22,133,250,.1)
+}
+.modal,.auth-box{background:#fff;border-radius:23px;box-shadow:0 20px 66px rgba(14,34,65,.13)}
+.modal-lbl{font-weight:500;color:#354962}
+.abtn,.modal-btn.dark{background:#1685fa;color:#fff;border-color:#1685fa}
+.abtn:hover,.modal-btn.dark:hover{background:#0969d1;border-color:#0969d1}
+.act-btn{border-radius:11px;font-weight:500}
+.act-btn.dark,.act-btn.bl{background:#1685fa;border-color:#1685fa;color:#fff}
+.act-btn.dark:hover,.act-btn.bl:hover{background:#076bd4;border-color:#076bd4}
+.chip{border-radius:11px;font-weight:400}
+.chip.on{border-color:#1685fa;color:#1685fa;background:rgba(22,133,250,.09)}
+.sec-hdr .svg-icon,.topbar .svg-icon{color:#1685fa}
+.ex-head h3,.ex-title{color:#1685fa}
+.ex-btn:focus-visible,.act-btn:focus-visible,.modal-btn:focus-visible,.sb-item:focus-visible{
+ outline:3px solid rgba(22,133,250,.4);outline-offset:2px
+}
+button:not(:disabled):active{transform:scale(.987)}
+[hidden]{display:none!important}
+/* Profit accounting */
+#pgProfit .ex-sheet{background:#fff;border:1px solid #edf1f5;border-radius:29px;padding:28px;box-shadow:0 12px 42px rgba(24,42,70,.045)}
+#pgProfit .profit-toolbar{padding:4px 0 7px}
+.profit-date-label{display:flex;align-items:center;gap:8px;color:#77899d;font-weight:400;font-size:12px;flex-wrap:wrap}
+.profit-date-label input{max-width:170px}
+.proxo-profit-card .ex-label{display:flex;align-items:center;gap:7px}
+.proxo-profit-card .ex-label .svg-icon,.proxo-profit-card .ex-label i{width:17px;height:17px;color:#1685fa}
+.profit-help{font-size:11px;color:#91a0af;line-height:1.8;margin-top:5px;font-weight:400}
+.profit-message{border:1px solid rgba(22,133,250,.25);background:#f1f7ff;color:#1559a9;padding:12px 14px;border-radius:12px;margin-top:14px;font-size:12px;line-height:1.8}
+.profit-message.error{border-color:#f4c0c0;background:#fff5f5;color:#be3333}
+.profit-order{border:1px solid #e7edf5;border-radius:17px;padding:17px;background:#fff}
+.profit-order-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.profit-order-title{font-size:14px;font-weight:500;color:#1c314b}
+.profit-order-id{font-size:11px;color:#8394a8;direction:ltr;text-align:right;margin-top:4px;font-family:Inter,Arial,sans-serif;overflow-wrap:anywhere}
+.profit-chip{font-size:11px;border-radius:20px;padding:5px 10px;background:#ecf5ff;color:#1685fa}
+.profit-chip.missing{background:#fff6e7;color:#a56c07}
+.profit-order-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:14px;padding:13px 0;border-block:1px solid #e8edf4}
+.profit-order-summary b{display:block;font-family:Inter,R,Arial,sans-serif;font-size:15px;font-weight:500;color:#172b44;overflow-wrap:anywhere;direction:ltr;text-align:right;margin-top:5px}
+.profit-order-summary .profit-net{color:#1685fa}
+.profit-edit{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;margin-top:15px;align-items:end}
+.profit-edit label{display:grid;gap:7px;font-size:12px;color:#63758b;line-height:1.6;min-width:0}
+.profit-edit input{width:100%;min-width:0;min-height:43px;border:1px solid #dfe8f2;border-radius:11px;padding:9px 11px;background:#fff;color:#182c43;font:400 13px Inter,R,Arial,sans-serif}
+.profit-edit input:focus{outline:2px solid rgba(22,133,250,.28);border-color:#1685fa}
+.profit-edit button{min-height:43px}
+.profit-date{font-size:11px;color:#8a98aa;margin-top:11px}
+#profitOverview{grid-template-columns:repeat(4,minmax(0,1fr))}
+#profitMethods{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+@media(max-width:1050px){#profitOverview{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){#pgProfit .ex-sheet{border-radius:21px;padding:16px 13px}.profit-edit{grid-template-columns:1fr}.profit-order-summary{grid-template-columns:repeat(2,minmax(0,1fr))}.profit-order{padding:14px}.profit-date-label input{max-width:100%}.topbar{height:60px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}button,.act-btn,.sb-item{transition:none!important}}
