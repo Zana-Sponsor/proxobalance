@@ -1,5 +1,5 @@
 /* Customer receipt, based exclusively on an order already loaded for the signed-in user.
-   Kurdish Sorani labels and native RTL rendering; the PDF retains glyphs as an image. */
+   Native print-to-PDF preserves searchable Kurdish Sorani lettering and RTL shaping. */
 'use strict';
 const pbReceiptIcon='<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m-4-4 4 4 4-4M5 18v3h14v-3"/></svg>';
 function pbReceiptLabel(label,value,ltr){
@@ -59,80 +59,6 @@ function pbBuildReceipt(order){
   footer.textContent='ئەم پسووڵەیە لە زانیارییە تۆمارکراوەکانی مامەڵەکەت دروستکراوە. دۆخی مامەڵە بەپێی دوایین زانیاری پیشان دەدرێت.';
   box.append(footer);
   return box;
-}
-async function pbDownloadReceiptRaster(orderId){
-  const order=_orders.find(o=>String(o.id)===String(orderId));
-  if(!order){showToast('مامەڵەکە نەدۆزرایەوە','error');return;}
-  const name='Proxo-pswla-'+String(typeof orderCodeOf==='function'?orderCodeOf(order):order.id).replace(/[^A-Za-z0-9_-]/g,'');
-  const source=pbBuildReceipt(order);
-  source.classList.add('pb-receipt-capture');
-  /* Keep it at a renderable viewport position. A -10000px offset breaks
-     html2canvas layout and can leave Kurdish letters clipped or distorted. */
-  source.style.cssText='position:fixed;inset:0 auto auto 0;width:720px;max-width:none;z-index:-1;pointer-events:none;';
-  document.body.append(source);
-  try{
-    if(!window.html2canvas||!window.jspdf?.jsPDF)throw new Error('PDF_LIBRARIES_UNAVAILABLE');
-    if(document.fonts){
-      await document.fonts.load('400 14px Rabar','پسووڵەی مامەڵە');
-      await document.fonts.load('500 14px Rabar','زانیاری مامەڵە');
-      await document.fonts.ready;
-      if(!document.fonts.check('400 14px Rabar','پسووڵە')){
-        throw new Error('KURDISH_FONT_UNAVAILABLE');
-      }
-    }
-    const canvas=await window.html2canvas(source,{
-      scale:3,backgroundColor:'#ffffff',useCORS:true,logging:false,
-      windowWidth:780,scrollX:0,scrollY:0,
-      onclone:doc=>{
-        const copy=doc.querySelector('.pb-receipt-capture');
-        if(copy)copy.style.cssText='position:absolute;inset:0 auto auto 0;width:720px;max-width:none;z-index:0;pointer-events:none;';
-      }
-    });
-    if(!canvas.width||!canvas.height)throw new Error('EMPTY_PDF_CAPTURE');
-    const pdf=new window.jspdf.jsPDF({unit:'mm',format:'a4',compress:true});
-    const mmWidth=190,mmAvailableHeight=277;
-    const maxPagePixels=Math.floor(mmAvailableHeight*canvas.width/mmWidth);
-    /* Prefer the bottom of a whole receipt row or section. Never shear the
-       same JPEG across pages: that blurs Sorani glyphs and splits baselines. */
-    const base=source.getBoundingClientRect();
-    const ratio=canvas.height/base.height;
-    const edges=[...source.querySelectorAll('.pb-rhead,.pb-rsection h3,.pb-rrow,.pb-rfooter')]
-      .map(el=>Math.round((el.getBoundingClientRect().bottom-base.top)*ratio))
-      .filter(y=>y>0&&y<=canvas.height).sort((a,b)=>a-b);
-    let top=0;
-    while(top<canvas.height){
-      let bottom=Math.min(top+maxPagePixels,canvas.height);
-      if(bottom<canvas.height){
-        const safe=edges.filter(y=>y>top+maxPagePixels*.4&&y<=bottom-18).pop();
-        if(safe)bottom=safe;
-      }
-      if(bottom<=top)throw new Error('INVALID_PDF_PAGE');
-      const part=document.createElement('canvas');
-      part.width=canvas.width;part.height=bottom-top;
-      const ctx=part.getContext('2d',{alpha:false});
-      if(!ctx)throw new Error('PDF_CANVAS_UNAVAILABLE');
-      ctx.fillStyle='#ffffff';ctx.fillRect(0,0,part.width,part.height);
-      ctx.drawImage(canvas,0,top,canvas.width,part.height,0,0,part.width,part.height);
-      if(top)pdf.addPage();
-      pdf.addImage(part.toDataURL('image/png'),'PNG',10,10,mmWidth,part.height*mmWidth/part.width);
-      top=bottom;
-    }
-    pdf.save(name+'.pdf');
-    showToast('پسووڵەکە دابەزێنرا','success');
-  }catch(err){
-    console.error('Receipt PDF error',err);
-    /* Native print retains the browser's Kurdish shaping when the font or
-       third-party PDF libraries cannot be used. */
-    const printWindow=window.open('','_blank');
-    if(printWindow){
-      printWindow.document.open();
-      printWindow.document.write('<!doctype html><html lang="ku" dir="rtl"><head><meta charset="utf-8"><title>پسووڵەی مامەڵە</title>'+
-        '<style>'+pbReceiptPrintCSS()+'<\/style></head><body>'+source.outerHTML.replace(/style="[^"]*"/,'')+
-        '<script>window.onload=async function(){if(document.fonts)await document.fonts.ready;window.print()}<\/script></body></html>');
-      printWindow.document.close();
-      showToast('لە چاپکردنەوە «Save as PDF» هەڵبژێرە','info');
-    }else showToast('داگرتنی PDF سەرکەوتوو نەبوو؛ تکایە دووبارە هەوڵ بدەرەوە','error');
-  }finally{source.remove();}
 }
 /* Native browser PDF is primary: it preserves Kurdish shaping and selectable
    letters, instead of flattening them with html2canvas/jspdf. This function
