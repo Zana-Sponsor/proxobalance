@@ -157,3 +157,109 @@ body:has(#sidebar) [dir="ltr"]{
 @media(prefers-reduced-motion:reduce){
  .btn,.act-btn,.ex-btn,.modal-btn,.sb-item{transition:none!important}
 }
+
+
+/* Measured separation between ordinary Kurdish labels and LTR numbers.
+   Preserve the existing 14px body/15px value sizes — spacing, not scaling. */
+:root,[data-theme="light"]{--pb-number-gap:12px}
+[data-theme="light"] .pb-rrow,
+[data-theme="light"] .tx-drow,
+.tx-sheet .tx-drow{
+ column-gap:var(--pb-number-gap);
+ row-gap:6px;
+ align-items:start;
+}
+[data-theme="light"] .pb-rrow{
+ display:grid;
+ grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+ padding:11px 4px;
+}
+[data-theme="light"] .pb-rkey{
+ min-width:0;
+ margin:0;
+ text-align:start;
+ font-size:inherit;
+ font-weight:400;
+ line-height:1.75;
+}
+[data-theme="light"] .pb-rval{
+ min-width:0;
+ max-width:none;
+ margin:0;
+ text-align:end;
+ font-size:inherit;
+ font-weight:500;
+ line-height:1.75;
+ overflow-wrap:anywhere;
+}
+[data-theme="light"] .pb-rval[dir="ltr"]{
+ direction:ltr;
+ unicode-bidi:isolate;
+ text-align:left;
+}
+[data-theme="light"] .tx-sum-lbl,
+[data-theme="light"] .tx-dlbl,
+[data-theme="light"] .field-label,
+body:has(#sidebar) .stat-lbl,
+body:has(#sidebar) .ex-label{
+ display:block;
+ margin-bottom:6px;
+}
+[data-theme="light"] .tx-sum-val,
+[data-theme="light"] .tx-amount,
+[data-theme="light"] .tx-dval,
+body:has(#sidebar) .stat-val,
+body:has(#sidebar) .ex-value{
+ margin-block-start:4px;
+ letter-spacing:normal;
+ word-spacing:normal;
+}
+[data-theme="light"] .tx-sum-item,
+body:has(#sidebar) .stat-info,
+body:has(#sidebar) .ex-card{min-width:0}
+[data-theme="light"] .tx-drow,
+.tx-sheet .tx-drow{gap:16px;padding-block:12px}
+[data-theme="light"] .tx-drow>*,
+.tx-sheet .tx-drow>*{min-width:0}
+[data-theme="light"] .tx-amount[dir="ltr"],
+[data-theme="light"] .tx-dval[dir="ltr"],
+body:has(#sidebar) .ex-value[dir="ltr"]{
+ direction:ltr;
+ unicode-bidi:isolate;
+ font-variant-numeric:tabular-nums;
+}
+/* Decorative icons belong only to green success/confirmation areas.
+   Preserve essential icon-only controls, receipt download, and the requested
+   profile plus control so those actions remain usable. */
+[data-theme="light"] .page-head h2 .pb-svg-icon,
+[data-theme="light"] .page-head h2 > .icn,
+[data-theme="light"] .section-title .pb-svg-icon,
+[data-theme="light"] .xc-step-head h3 .pb-svg-icon,
+[data-theme="light"] .xc-head-ico,
+[data-theme="light"] .pf-menu-ico,
+[data-theme="light"] .pf-menu-arrow .pb-svg-icon,
+[data-theme="light"] .pf-menu-arrow > .icn,
+[data-theme="light"] .proof-ico,
+[data-theme="light"] .feed-ico,
+[data-theme="light"] .rule-ico,
+[data-theme="light"] .bn-item > .bn-ico > .pb-svg-icon,
+[data-theme="light"] .bn-item > .bn-ico > .icn,
+body:has(#sidebar) .stat-ico:not(.gr),
+body:has(#sidebar) .ex-label > .svg-icon,
+body:has(#sidebar) .ex-label > i,
+body:has(#sidebar) .sec-hdr h3 > .svg-icon,
+body:has(#sidebar) .sec-hdr h3 > i{
+ display:none!important;
+}
+[data-theme="light"] .status-success .pb-svg-icon,
+[data-theme="light"] .status-approved .pb-svg-icon,
+[data-theme="light"] .success .pb-svg-icon,
+body:has(#sidebar) .stat-ico.gr{
+ display:inline-flex!important;
+}
+[data-theme="light"] .pf-menu-item{gap:12px}
+[data-theme="light"] .bn-item .bn-ico:has(> .bn-dot-plus){display:flex}
+@media(max-width:560px){
+ [data-theme="light"] .pb-rrow{column-gap:12px}
+ [data-theme="light"] .tx-drow,.tx-sheet .tx-drow{column-gap:12px}
+}
