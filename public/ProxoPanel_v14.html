@@ -627,6 +627,7 @@ tr:hover td{background:rgba(28,35,51,.015);}
 .sw-label input:checked+.sw-slider:before{transform:translateX(20px);}
 </style>
 <link rel="stylesheet" href="/assets/css/proxo-refresh.css?v=1">
+<link rel="stylesheet" href="/assets/css/admin-statistics.css?v=1">
 </head>
 <body>
 
@@ -671,6 +672,7 @@ tr:hover td{background:rgba(28,35,51,.015);}
     <div class="sb-section">مامەڵەکان</div>
     <div class="sb-item" onclick="goPage('deposits')"><i class="fas fa-money-bill-wave"></i> داواکاری پارەدان <span class="sb-badge yw" id="sbDepCount">0</span></div>
     <div class="sb-item" onclick="goPage('ads')"><i class="fas fa-rectangle-ad"></i> ڕیکلامەکان <span class="sb-badge yw" id="sbAdsCount">0</span></div>
+    <div class="sb-item" onclick="goPage('statistics')"><i class="fas fa-chart-line" style="color:#60a5fa"></i> ئامارەکانی ڕیکلام <span class="sb-badge gr" id="sbStatisticsCount" style="display:none"></span></div>
     <div class="sb-item" onclick="goPage('adsData')"><i class="fas fa-chart-bar" style="color:#a855f7"></i> داتای وردەکاری ڕیکلامەکان</div>
     <div class="sb-item" onclick="goPage('fullData')"><i class="fas fa-table-list" style="color:#0891b2"></i> هەموو داتای ڕیکلامەکان</div>
     <div class="sb-item" onclick="goPage('bestMetrics')"><i class="fas fa-trophy" style="color:#f59e0b"></i> باشترین ئامارەکان <span class="sb-badge yw" id="sbBmCount" style="display:none">0</span></div>
@@ -747,6 +749,10 @@ tr:hover td{background:rgba(28,35,51,.015);}
 
     <!-- ══ DASHBOARD ══ -->
     <div class="pg on" id="pgDashboard">
+      <div class="sx-quick">
+        <div><h3>ئامار و نرخی ڕیکلامەکان</h3><p>ڕاپۆرتی ڕوون، داگرتنی ئامارەکان و دەستکاری نرخی ڕیکلام لە یەک شوێن</p></div>
+        <div class="sx-quick-actions"><button type="button" onclick="goPage('statistics')"><i class="fas fa-chart-line"></i> ئامارەکان</button><button type="button" onclick="goPage('adPricing')"><i class="fas fa-pen"></i> دەستکاری نرخ</button></div>
+      </div>
       <div class="stats-row" id="statsRow">
         <div class="stat-card"><div class="stat-ico dark"><i class="fas fa-users"></i></div><div class="stat-info"><div class="stat-val" id="stUsers">—</div><div class="stat-lbl">کۆی بەکارهێنەران</div></div></div>
         <div class="stat-card"><div class="stat-ico gr"><i class="fas fa-coins"></i></div><div class="stat-info"><div class="stat-val" id="stBalance">—</div><div class="stat-lbl">کۆی باڵانس</div></div></div>
@@ -822,6 +828,40 @@ tr:hover td{background:rgba(28,35,51,.015);}
           <div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>
         </div>
       </div>
+    </div>
+
+    <!-- ══ AD STATISTICS: receipt-inspired, readable, exportable ══ -->
+    <div class="pg" id="pgStatistics">
+      <section class="sx-sheet" aria-label="ئامارەکانی ڕیکلامەکان">
+        <div class="sx-head">
+          <div><h3>ئامارەکانی ڕیکلامەکان</h3><p class="sx-sub" id="sxUpdated">بینین، کلیک، خەرجی و ئەنجامەکانی ڕیکلامەکان</p></div>
+          <div class="sx-brand" aria-label="Proxo">Proxo</div>
+        </div>
+        <div class="sx-section-title">پوختەی ئامارەکان</div>
+        <div class="sx-metrics" id="sxMetrics" aria-live="polite"></div>
+        <div class="sx-section-title">ڕاپۆرتی ڕیکلامەکان</div>
+        <div class="sx-actions" aria-label="داگرتنی ڕاپۆرت">
+          <button type="button" class="sx-btn primary" onclick="sxExport('pdf')"><i class="fas fa-file-pdf"></i> داگرتنی PDF</button>
+          <button type="button" class="sx-btn" onclick="sxExport('xlsx')"><i class="fas fa-file-excel"></i> Excel</button>
+          <button type="button" class="sx-btn" onclick="sxExport('csv')"><i class="fas fa-file-csv"></i> CSV</button>
+          <button type="button" class="sx-btn" onclick="loadStatistics()"><i class="fas fa-rotate-right"></i> نوێکردنەوە</button>
+          <button type="button" class="sx-btn" onclick="goPage('adPricing')"><i class="fas fa-pen"></i> دەستکاری نرخ</button>
+        </div>
+        <div class="sx-controls">
+          <input class="sx-input" id="sxSearch" type="search" placeholder="گەڕان بە ئایدی یان ناوی ڕیکلام..." aria-label="گەڕان لە ڕیکلامەکان" oninput="_sxLimit=60;sxRender()">
+          <select class="sx-select" id="sxStatus" aria-label="پاڵاوتن بەپێی باری ڕیکلام" onchange="sxSetFilter(this.value)">
+            <option value="all">هەموو ڕیکلامەکان</option>
+            <option value="active">چالاک</option>
+            <option value="completed">تەواوبوو</option>
+            <option value="pending">چاوەڕوان</option>
+            <option value="paused">وەستاوە</option>
+            <option value="rejected">ڕەتکراو</option>
+          </select>
+          <span class="sx-count" id="sxCount" aria-live="polite">—</span>
+        </div>
+        <div class="sx-list" id="sxList"><div class="sx-state">چاوەڕوانی بارکردنی ئامارەکان...</div></div>
+        <div class="sx-alert" id="sxWarning">— واتە ئەو ئامارە هێشتا بەردەست نییە.</div>
+      </section>
     </div>
 
     <!-- ══ ADS DATA (وردەکاری) ══ -->
@@ -3015,6 +3055,7 @@ const pageConfig={
   deposits:{title:'داواکاریەکانی پارەدان',sub:'پەسەندکردن و ڕەتکردنەوەی داواکاریەکان',load:loadDeposits},
   ads:{title:'ڕیکلامەکان',sub:'بەڕێوەبردنی ڕیکلامەکان',load:loadAds},
   bestMetrics:{title:'باشترین ئامارەکان',sub:'هەڵبژاردنی ڕیکلامەکان و دانانی وێنۆچکە بۆ هەر مانگێک',load:loadBestMetrics},
+  statistics:{title:'ئامارەکانی ڕیکلامەکان',sub:'پوختە، کارایی، گەڕان و داگرتنی ڕاپۆرتی ڕیکلامەکان',load:loadStatistics},
   adsData:{title:'داتای وردەکاری ڕیکلامەکان',sub:'ئایدی ڕیکلام، ئەڤدەرتایزەر، بینین، کلیک، کۆنڤێرشن (ئێستا + پێشوو)، CPM و بودجەی خەرجکراو',load:loadAdsData},
   fullData:{title:'هەموو داتای ڕیکلامەکان',sub:'یەک پەڕە بۆ هەموو داتاکان — ئایدی، ناو، ئیمەیل، بینین، ڤیدیۆ ڤیوس، سەردانی پڕۆفایل، شەیر، CTR، CPC، تێچووی کۆنڤێرشن و دوایین نوێکردنەوە — لەگەڵ گەڕان و دەستکاری',load:()=>loadFullData()},
   approval:{title:'Approval Workflow',sub:'پەسەندکردنی داواکاریەکانی چاوەڕوان — TikTok Ad ID و بەروار',load:loadApprovalWorkflow},
@@ -13998,7 +14039,7 @@ function adPriceLabel(ad){return adPriceIQD(ad).toLocaleString()+' IQD';}
 function _apMerge(id,patch){[_apAds,(typeof _fdAds!=='undefined'?_fdAds:null),(typeof _allAdsData!=='undefined'?_allAdsData:null),(typeof allAds!=='undefined'?allAds:null)].forEach(a=>{const r=(a||[]).find(x=>x.id===id);if(r)Object.assign(r,patch||{});});}
 async function adRateInit(client){const c=client||sb;if(!c)return;try{await _apLoadRates(c);}catch(e){console.warn(e)}if(_apPricingRt)try{await c.removeChannel(_apPricingRt)}catch(_){};_apPricingRt=c.channel('pa_ad_service_pricing_rt').on('postgres_changes',{event:'*',schema:'public',table:'pa_ad_pricing_rates'},()=>{clearTimeout(_apRtTimer);_apRtTimer=setTimeout(async()=>{try{await _apLoadRates(c);await adRateRefreshViews(true)}catch(e){console.warn(e)}},80)}).on('postgres_changes',{event:'UPDATE',schema:'public',table:'pa_ads'},p=>{if(p.new?.id){_apMerge(p.new.id,p.new);try{apRender();apStats()}catch(_){}}}).subscribe();adRateRefreshViews(false);}
 async function adRateRefreshViews(refetch){if(refetch){const ids=[...new Set([...(typeof allAds!=='undefined'?(allAds||[]):[]),...(typeof _allAdsData!=='undefined'?(_allAdsData||[]):[]),...(typeof _fdAds!=='undefined'?(_fdAds||[]):[]),...(_apAds||[])].map(a=>a?.id).filter(Boolean))];if(ids.length){const{data}=await sb.from('pa_ads').select('id,service_type,service_budget_usd,total_budget,daily_budget,days,budget,usd_iqd_rate,effective_usd_iqd_rate,pricing_source,price_iqd,price_updated_at').in('id',ids);(data||[]).forEach(r=>_apMerge(r.id,r));}}const input=document.getElementById('apGlobal');if(input&&document.activeElement!==input)input.value=_adRate;const cur=document.getElementById('apCurrent');if(cur)cur.innerHTML='نرخی گشتیی چالاک: <strong style="color:#16a34a;font-family:Inter">$1 = '+_adRate.toLocaleString()+' IQD</strong>';try{apRenderServices();apRender();apStats()}catch(_){};try{if(typeof fdRender==='function')fdRender()}catch(_){};}
-async function loadAdPricing(){const wrap=document.getElementById('apWrap');if(wrap)wrap.innerHTML='<div class="loading"><i class="fas fa-circle-notch fa-spin"></i> بارکردن...</div>';try{const[,res]=await Promise.all([_apLoadRates(sb),sb.from('pa_ads').select('*').order('created_at',{ascending:false}).limit(500)]);if(res.error)throw res.error;const ads=res.data||[],ids=[...new Set(ads.map(a=>a.user_id).filter(Boolean))];const pr=ids.length?await sb.from('profiles').select('id,full_name,email').in('id',ids):{data:[]};const m={};(pr.data||[]).forEach(p=>m[p.id]=p);_apAds=ads.map(a=>({...a,profiles:m[a.user_id]||null}));document.getElementById('apGlobal').value=_adRate;apPreview();adRateRefreshViews(false)}catch(e){if(wrap)wrap.innerHTML='<div class="empty"><p>هەڵە: '+_apEsc(e.message)+'</p></div>'}}
+async function loadAdPricing(){const wrap=document.getElementById('apWrap');if(wrap)wrap.innerHTML='<div class="loading"><i class="fas fa-circle-notch fa-spin"></i> بارکردن...</div>';try{const[,res]=await Promise.all([_apLoadRates(sb),sb.from('pa_ads').select('*').order('created_at',{ascending:false}).limit(500)]);if(res.error)throw res.error;const ads=res.data||[],ids=[...new Set(ads.map(a=>a.user_id).filter(Boolean))];const pr=ids.length?await sb.from('profiles').select('id,full_name,email').in('id',ids):{data:[]};const m={};(pr.data||[]).forEach(p=>m[p.id]=p);_apAds=ads.map(a=>({...a,profiles:m[a.user_id]||null}));document.getElementById('apGlobal').value=_adRate;apPreview();adRateRefreshViews(false);if(window._sxPriceFocus){const query=window._sxPriceFocus;window._sxPriceFocus=null;const search=document.getElementById('apSearch');if(search){search.value=query;apRender();search.scrollIntoView({behavior:'smooth',block:'center'});}}}catch(e){if(wrap)wrap.innerHTML='<div class="empty"><p>هەڵە: '+_apEsc(e.message)+'</p></div>'}}
 function apPreview(){const el=document.getElementById('apPreview');if(!el)return;const r=_apNum(document.getElementById('apGlobal')?.value);el.innerHTML=!r?'<span style="color:var(--rd)">نرخێکی دروست بنووسە</span>':[10,20,50,100,200,500,1000].map(u=>'<span style="display:inline-block;padding:3px 9px;margin:2px;background:var(--bg);border-radius:8px;font-family:Inter">$'+u+' = '+Math.round(u*r).toLocaleString()+' IQD</span>').join('');}
 function apRenderServices(){const w=document.getElementById('apServicesWrap');if(!w)return;const rows=_apServiceRates.filter(r=>r.service_type!=='*');w.innerHTML=rows.length?rows.map(r=>'<div style="border:1px solid rgba(124,58,237,.18);background:rgba(124,58,237,.04);border-radius:12px;padding:12px"><div style="display:flex;justify-content:space-between;gap:8px"><div><b>'+_apEsc(r.display_name||r.service_type)+'</b><div style="font:10px monospace;color:var(--mt)">'+_apEsc(r.service_type)+'</div></div><strong style="font-family:Inter;color:#7c3aed;direction:ltr">$1 = '+Number(r.rate_iqd_per_usd).toLocaleString()+' IQD</strong></div><div style="display:flex;justify-content:flex-end;gap:7px;margin-top:9px"><button class="act-btn" onclick="apEditService(\''+r.service_type+'\')"><i class="fas fa-pen"></i></button><button class="act-btn rd" onclick="apDeleteServiceRate(\''+r.service_type+'\')"><i class="fas fa-trash"></i></button></div></div>').join(''):'<div style="grid-column:1/-1;padding:12px;border:1px dashed var(--b1);border-radius:11px;color:var(--mt);text-align:center">هیچ نرخێکی خزمەتگوزاری دانەنراوە.</div>';}
 function apEditService(k){const r=_apRateMap[k];if(!r)return;document.getElementById('apServiceType').value=k;document.getElementById('apServiceName').value=r.display_name||'';document.getElementById('apServiceRate').value=r.rate_iqd_per_usd;}
@@ -14013,5 +14054,6 @@ async function apSaveRate(id,v,el){const raw=String(v??'').trim(),r=raw===''?nul
 async function apSaveServiceType(id,k,el){if(el)el.disabled=true;const{data,error}=await sb.rpc('pa_admin_set_ad_service_type',{p_ad_id:id,p_service_type:k});if(el)el.disabled=false;if(error)return showToast('هەڵە: '+error.message,'rd');if(data?.ok)_apMerge(id,{service_type:data.service_type,usd_iqd_rate:data.ad_override_rate,effective_usd_iqd_rate:data.effective_rate,pricing_source:data.pricing_source,service_budget_usd:data.service_budget_usd,price_iqd:data.price_iqd});apRender();apStats();showToast('✅ خزمەتگوزاری و نرخ نوێ کرایەوە','gr');}
 </script>
 
+<script src="/assets/js/admin-statistics.js?v=1"></script>
 </body>
 </html>
