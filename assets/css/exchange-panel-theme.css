@@ -90,3 +90,12 @@ button:not(:disabled):active{transform:scale(.987)}
 @media(max-width:1050px){#profitOverview{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:560px){#pgProfit .ex-sheet{border-radius:21px;padding:16px 13px}.profit-edit{grid-template-columns:1fr}.profit-order-summary{grid-template-columns:repeat(2,minmax(0,1fr))}.profit-order{padding:14px}.profit-date-label input{max-width:100%}.topbar{height:60px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}button,.act-btn,.sb-item{transition:none!important}}
+
+/* Dashboard profit overview */
+#pgDashboard .profit-dash-strip{background:#fff;border:1px solid #e7edf5;border-radius:20px;padding:19px 20px;margin-bottom:17px;box-shadow:0 7px 27px rgba(22,39,69,.035)}
+#pgDashboard .profit-dash-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:15px}
+#pgDashboard .profit-dash-head h3{color:#1685fa;font-size:15px;font-weight:600}
+#pgDashboard .profit-dash-head p{color:#8090a4;font-size:12px;line-height:1.8;margin-top:5px}
+#pgDashboard .profit-dash-strip .ex-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media(max-width:990px){#pgDashboard .profit-dash-strip .ex-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:530px){#pgDashboard .profit-dash-strip{padding:15px 13px;border-radius:17px}}
