@@ -263,3 +263,41 @@ body:has(#sidebar) .stat-ico.gr{
  [data-theme="light"] .pb-rrow{column-gap:12px}
  [data-theme="light"] .tx-drow,.tx-sheet .tx-drow{column-gap:12px}
 }
+
+
+/* Text-labelled actions are icon-free; green success controls keep their SVG. */
+body:has(#sidebar) .act-btn:not(.gr) > .svg-icon,
+body:has(#sidebar) .ex-btn:not(.gr) > .svg-icon,
+body:has(#sidebar) .modal-btn:not(.gr) > .svg-icon,
+[data-theme="light"] .btn:not(.success):not(.btn-icon-only) > .pb-svg-icon,
+[data-theme="light"] .btn:not(.success):not(.btn-icon-only) > .icn{
+ display:none!important;
+}
+[data-theme="light"] .tx-receipt-actions .btn > svg,
+[data-theme="light"] .file-picker-icon .receipt-plus-svg,
+[data-theme="light"] .bn-dot-plus svg{
+ display:block!important;
+}
+body:has(#sidebar) .stat-ico.gr{
+ background:#eaf6ed!important;color:#257646!important;
+}
+body:has(#sidebar) .stat-ico.gr .svg-icon{
+ color:#257646!important;
+}
+/* Receipt title stays truly centered even when the Proxo logo is beside it. */
+.pb-receipt-print .pb-rhead{
+ display:grid;
+ grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);
+ align-items:center;
+ column-gap:8px;
+}
+.pb-receipt-print .pb-rhead h2{
+ grid-row:1;grid-column:1 / -1;
+ justify-self:center;
+ max-width:100%;
+ text-align:center;
+}
+.pb-receipt-print .pb-rhead strong{
+ grid-row:1;grid-column:3;
+ justify-self:end;
+}
