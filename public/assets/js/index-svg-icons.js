@@ -72,8 +72,8 @@ function convert(node){
  svg.innerHTML=S[key]||S.info;node.replaceWith(svg);
 }
 function scan(root=document){
- if(root.matches?.('.icon--solar'))convert(root);
- root.querySelectorAll?.('.icon--solar').forEach(convert);
+ if(root.matches?.('[class*="icon--solar--"]'))convert(root);
+ root.querySelectorAll?.('[class*="icon--solar--"]').forEach(convert);
 }
 scan();
 new MutationObserver(records=>{for(const r of records)for(const n of r.addedNodes)if(n.nodeType===1)scan(n);})
