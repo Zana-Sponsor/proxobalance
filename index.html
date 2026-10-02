@@ -91,6 +91,7 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
 <link rel="stylesheet" href="/assets/css/exchange-typography.css?v=1">
 <link rel="stylesheet" href="/assets/css/index-receipt-theme.css?v=2">
 <link rel="stylesheet" href="/assets/css/exchange-light-panel.css?v=12">
+<link rel="stylesheet" href="/assets/css/exchange-ux.css?v=1">
 </head>
 
 <body>
@@ -581,16 +582,31 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
 
   <div class="panel" id="exchangeCard">
 
-    <div class="xc-head">
+    <div class="xc-head ux-exchange-head">
       <span class="xc-head-ico" aria-hidden="true">
         <span class="icn icon--solar icon--solar--transfer-horizontal-linear" aria-hidden="true"></span>
       </span>
       <div class="xc-head-copy">
-        <span class="xc-eyebrow">ئاڵوگۆڕی دراو</span>
-        <h2>داواکاری ئاڵوگۆڕ</h2>
-        <p>ڕێگاکانی ناردن و وەرگرتن هەڵبژێرە و زانیارییەکان تەواو بکە.</p>
+        <span class="xc-eyebrow">پڕۆکسۆ باڵانس</span>
+        <h2>ئاڵوگۆڕی دراو</h2>
+        <p>بە سێ هەنگاوی ئاسان داواکارییەکەت تەواو بکە.</p>
       </div>
-      <span class="xc-head-tag">پارەدان بە ئاسانی</span>
+      <span class="ux-exchange-head-note">داواکاری نوێ</span>
+    </div>
+
+    <div class="ux-progress" role="list" aria-label="هەنگاوەکانی ئاڵوگۆڕ">
+      <div class="ux-progress-item is-current" data-ux-stage="send" role="listitem" aria-current="step">
+        <span class="ux-progress-index" aria-hidden="true">١</span>
+        <span class="ux-progress-copy"><span>ناردن</span><small>ڕێگا و بڕ</small></span>
+      </div>
+      <div class="ux-progress-item" data-ux-stage="receive" role="listitem">
+        <span class="ux-progress-index" aria-hidden="true">٢</span>
+        <span class="ux-progress-copy"><span>وەرگرتن</span><small>ژمارەی وەرگر</small></span>
+      </div>
+      <div class="ux-progress-item" data-ux-stage="proof" role="listitem">
+        <span class="ux-progress-index" aria-hidden="true">٣</span>
+        <span class="ux-progress-copy"><span>پسووڵە</span><small>پشتڕاستکردنەوە</small></span>
+      </div>
     </div>
 
     <!-- Shown instead of the form while an admin-requested verification is not approved -->
@@ -612,9 +628,10 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
       <section class="xc-step" id="grpSend">
         <div class="xc-step-head">
           <span class="xc-step-index" aria-hidden="true">١</span>
-          <h3>دەینێریت</h3>
+          <h3>لە کوێوە دەنێریت؟</h3>
           <span class="xc-badge" id="sendLimitBadge">کەمترین 10,000</span>
         </div>
+        <p class="ux-step-intro">شێوازی پارەدان هەڵبژێرە و ئەو بڕە بنووسە کە دەتنێریت.</p>
 
         <div class="select-wrap">
           <select id="from" class="sr-native-select" onchange="updateWallet()" aria-label="لە کوێوە دەینێریت" tabindex="-1">
@@ -630,13 +647,17 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
           </button>
         </div>
 
-        <!-- the account to pay into, right where the method is chosen -->
-        <div class="wallet-row">
+        <!-- Show the actual transfer destination next to the selected method. -->
+        <div class="wallet-row ux-payment-destination">
+          <div class="ux-wallet-head">
+            <span class="wallet-label">ژمارەی هەژماری ناردن</span>
+            <span class="ux-wallet-help">پارەکە بۆ ئەم ژمارەیە بنێرە</span>
+          </div>
           <div class="wallet-row-line">
-            <span class="wallet-label">بنێرە بۆ:</span>
             <span class="wallet-value" id="myNum" dir="ltr">---</span>
             <button type="button" class="copy-btn" onclick="copyNum()" aria-label="کۆپیکردنی ژمارە">
               <span class="icn icn-sm icon--solar icon--solar--copy-linear" aria-hidden="true"></span>
+              <span>کۆپی</span>
             </button>
           </div>
         </div>
@@ -700,9 +721,10 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
       <section class="xc-step" id="grpRecv">
         <div class="xc-step-head">
           <span class="xc-step-index" aria-hidden="true">٢</span>
-          <h3>وەریدەگریت</h3>
+          <h3>لە کوێ وەریدەگریت؟</h3>
           <span class="xc-badge" id="etaBadge">٥–٣٠ خولەک</span>
         </div>
+        <p class="ux-step-intro">شێوازی وەرگرتن و ژمارەی هەژماری وەرگر دیاری بکە.</p>
 
         <div class="select-wrap">
           <select id="receiveVia" class="sr-native-select" onchange="updatePlaceholder(); calc();" aria-label="وەرگرتن لە" tabindex="-1">
@@ -733,11 +755,13 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
       </section>
     </div>
 
+    <div class="ux-review-grid">
+      <div class="ux-review-column">
     <!-- ── SUMMARY ───────────────────────────────────────────── -->
     <div class="xc-summary" id="xcBreakdown" aria-live="polite">
       <div class="xc-summary-head">
-        <h3>پوختەی ئاڵوگۆڕ</h3>
-        <span>بڕی ناردن و وەرگرتن</span>
+        <h3>پوختەی داواکاری</h3>
+        <span>پێش ناردن بڕەکان بپشکنە</span>
       </div>
       <div class="xc-sum-row" id="bdSentRow">
         <span class="lbl">دەینێریت</span>
@@ -758,12 +782,15 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
       <div id="feeDisplay" class="fee-note"></div>
     </div>
 
+      </div>
+      <div class="ux-proof-column">
     <!-- ── STEP 3: PROOF OF PAYMENT ──────────────────────── -->
     <section class="xc-step" id="grpProof">
         <div class="xc-step-head">
           <span class="xc-step-index" aria-hidden="true">٣</span>
-          <h3>بەڵگەی پارەدان</h3>
+          <h3>پسووڵەی پارەدان</h3>
         </div>
+        <p class="ux-step-intro">دوای ناردنی پارەکە، وێنەی ڕوونی پسووڵە زیاد بکە.</p>
         <div class="file-field">
           <input type="file" id="fileInput" class="file-input-native" accept="image/jpeg,image/png,image/webp" onchange="onFileSelected(this)">
           <label class="file-picker" for="fileInput">
@@ -783,6 +810,9 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
         </div>
     </section>
 
+      </div>
+    </div>
+
     <div class="hp-field" aria-hidden="true">
       <label for="contact_reference">Contact reference</label>
       <input type="text" id="contact_reference" name="contact_reference" tabindex="-1" autocomplete="off">
@@ -793,7 +823,7 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
         <span class="icn icon--solar icon--solar--plain-2-linear" aria-hidden="true"></span>
         ناردنی داواکاری
       </button>
-      <p class="xc-submit-note">پێش ناردن، ژمارە و بڕی پارەکە دووبارە بپشکنە.</p>
+      <p class="xc-submit-note">بە ناردنی داواکاری، دەتوانیت وردەکارییەکان لە هەنگاوی دواتردا بپشکنیت.</p>
     </div>
   </div>
 
@@ -1480,6 +1510,7 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
 </script>
 <script src="/assets/js/index-svg-icons.js?v=1"></script>
 <script src="/assets/js/app.js?v=34"></script>
+<script src="/assets/js/exchange-ux.js?v=1"></script>
 <script src="/assets/js/receipt-download.js?v=4"></script>
 <script src="/assets/js/track.js?v=2"></script>
 </body>
