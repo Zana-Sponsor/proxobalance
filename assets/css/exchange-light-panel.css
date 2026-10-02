@@ -3133,3 +3133,202 @@ body:has(#sidebar) .stat-ico.gr .svg-icon{color:#1685fa!important}
  [data-theme="light"] #pageHome .xc-swap-btn,
  [data-theme="light"] #pageHome .tx-card{transition:none!important}
 }
+
+
+/* Exchange text rhythm — consistent Rabar sizes and measured label/value spacing. */
+[data-theme="light"] #pageHome{
+ --ex-text-size:14px;
+ --ex-label-size:13px;
+ --ex-caption-size:12px;
+ --ex-title-size:15px;
+ --ex-text-line:1.7;
+ --ex-label-gap:7px;
+ --ex-field-gap:14px;
+ --ex-value-gap:12px;
+ font-family:Rabar,Arial,sans-serif;
+ font-size:var(--ex-text-size);
+ font-weight:400;
+ line-height:var(--ex-text-line);
+ letter-spacing:normal;
+ word-spacing:normal;
+}
+[data-theme="light"] #pageHome :is(
+ .xc-head h2,.xc-step-head h3,.xc-summary-head h3,.section-title
+){
+ color:#1685fa!important;
+ font-family:Rabar,Arial,sans-serif;
+ font-size:var(--ex-title-size)!important;
+ font-weight:400!important;
+ line-height:var(--ex-text-line);
+ letter-spacing:normal;
+ word-spacing:normal;
+}
+[data-theme="light"] #pageHome :is(
+ .field-label,.picker-trigger-label,.wallet-label,
+ .xc-sum-row .lbl,.file-picker-copy b,.feed-route,
+ .tx-route,.tx-amount-sent,.xc-sum-row
+){
+ font-family:Rabar,Arial,sans-serif;
+ font-size:var(--ex-label-size)!important;
+ font-weight:400!important;
+ line-height:var(--ex-text-line);
+ letter-spacing:normal;
+ word-spacing:normal;
+}
+[data-theme="light"] #pageHome :is(
+ #userName,.picker-trigger-value,.wallet-value,
+ .xc-input-wrap .input,.xc-sum-row .v,
+ .xc-sum-row .v > span,.tx-amount,#totalDisplay
+){
+ font-family:Rabar,Arial,sans-serif;
+ font-size:var(--ex-text-size)!important;
+ font-weight:400!important;
+ line-height:var(--ex-text-line);
+ letter-spacing:normal;
+ word-spacing:normal;
+}
+[data-theme="light"] #pageHome :is(
+ .greet-hi,.xc-eyebrow,.xc-head p,.xc-head-tag,
+ .xc-step-head .xc-badge,.xc-locked-tag,.xc-hint,
+ .formatted-amount,.xc-in-suffix,#filePickerMeta,
+ .xc-summary-head > span,#feeDisplay,.xc-submit-note,
+ .tx-card-foot,.feed-meta,.feed-id,.feed-amount small
+){
+ font-family:Rabar,Arial,sans-serif;
+ font-size:var(--ex-caption-size)!important;
+ font-weight:400!important;
+ line-height:var(--ex-text-line);
+ letter-spacing:normal;
+ word-spacing:normal;
+}
+[data-theme="light"] #pageHome .xc-head-copy{
+ gap:3px;
+}
+[data-theme="light"] #pageHome .xc-head p{
+ margin:3px 0 0;
+ max-width:54ch;
+ overflow-wrap:break-word;
+}
+[data-theme="light"] #pageHome .xc-step-head{
+ column-gap:9px;
+ row-gap:6px;
+ margin-bottom:13px;
+ padding-bottom:10px;
+}
+[data-theme="light"] #pageHome .xc-step-head h3{
+ min-width:0;
+ overflow-wrap:break-word;
+}
+[data-theme="light"] #pageHome .picker-trigger{
+ gap:var(--ex-value-gap);
+}
+[data-theme="light"] #pageHome .picker-trigger-text{
+ gap:3px;
+}
+[data-theme="light"] #pageHome .picker-trigger-value{
+ min-width:0;
+}
+[data-theme="light"] #pageHome .wallet-row-line{
+ column-gap:10px;
+ row-gap:5px;
+}
+[data-theme="light"] #pageHome .wallet-label{
+ flex:0 0 auto;
+}
+[data-theme="light"] #pageHome .wallet-value{
+ min-width:0;
+ word-spacing:normal;
+ font-variant-numeric:tabular-nums;
+}
+[data-theme="light"] #pageHome .xc-step .field-label{
+ gap:7px;
+ margin:0 0 var(--ex-label-gap);
+}
+[data-theme="light"] #pageHome .xc-step .field + .field{
+ margin-top:var(--ex-field-gap);
+}
+[data-theme="light"] #pageHome .xc-input-wrap .input{
+ padding-block:9px;
+}
+[data-theme="light"] #pageHome .quick-amounts{
+ gap:8px;
+ margin-top:10px;
+}
+[data-theme="light"] #pageHome .quick-amount-btn{
+ font-size:var(--ex-label-size)!important;
+ font-weight:400!important;
+ line-height:1.6;
+ font-variant-numeric:tabular-nums;
+ letter-spacing:normal;
+}
+[data-theme="light"] #pageHome .xc-hint{
+ gap:7px;
+ margin-top:9px;
+ padding:8px 10px;
+ overflow-wrap:break-word;
+}
+[data-theme="light"] #pageHome .xc-summary-head{
+ column-gap:var(--ex-value-gap);
+ row-gap:4px;
+ margin-bottom:4px;
+}
+[data-theme="light"] #pageHome .xc-sum-row{
+ column-gap:var(--ex-value-gap);
+ row-gap:4px;
+ padding-block:10px;
+ align-items:center;
+}
+[data-theme="light"] #pageHome .xc-sum-row .lbl{
+ min-width:0;
+ text-align:start;
+ overflow-wrap:break-word;
+}
+[data-theme="light"] #pageHome .xc-sum-row .v,
+[data-theme="light"] #pageHome .xc-sum-row .v > span{
+ min-width:0;
+ text-align:end;
+ direction:ltr;
+ unicode-bidi:isolate;
+ font-variant-numeric:tabular-nums;
+ overflow-wrap:anywhere;
+}
+[data-theme="light"] #pageHome .file-picker{
+ column-gap:12px;
+ row-gap:6px;
+}
+[data-theme="light"] #pageHome .file-picker-copy{
+ gap:4px;
+}
+[data-theme="light"] #pageHome .xc-submit-wrap{
+ gap:8px;
+}
+[data-theme="light"] #pageHome #submitBtn{
+ font-size:var(--ex-text-size)!important;
+ font-weight:400!important;
+ line-height:var(--ex-text-line);
+}
+[data-theme="light"] #pageHome .section-title{
+ column-gap:9px;
+ row-gap:5px;
+ margin-bottom:12px!important;
+}
+[data-theme="light"] #pageHome :is(#historyPreview,#publicFeed) .tx-card-main{
+ column-gap:var(--ex-value-gap);
+ row-gap:5px;
+}
+[data-theme="light"] #pageHome .tx-card-foot{
+ column-gap:var(--ex-value-gap);
+ row-gap:4px;
+}
+@media(max-width:600px){
+ [data-theme="light"] #pageHome{
+  --ex-value-gap:10px;
+  --ex-field-gap:12px;
+ }
+ [data-theme="light"] #pageHome .xc-step-head{
+  margin-bottom:11px;
+ }
+ [data-theme="light"] #pageHome .xc-sum-row{
+  padding-block:9px;
+ }
+}
