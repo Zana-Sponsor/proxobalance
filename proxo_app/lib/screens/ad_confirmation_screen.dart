@@ -438,7 +438,7 @@ class _AdConfirmationScreenState extends State<AdConfirmationScreen>
       (
         'دەستپێک',
         d.immediate
-            ? 'زووترین کاتی بەردەست'
+            ? 'ئێستا'
             : s == null
                 ? ''
                 : '${two(s.day)}/${two(s.month)}/${s.year} ${two(s.hour)}:${two(s.minute)}'

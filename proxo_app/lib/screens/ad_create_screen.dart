@@ -461,21 +461,21 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
                                               CrossAxisAlignment.stretch,
                                           children: [
                                             _information(context),
-                                            const SizedBox(height: 18),
+                                            const SizedBox(height: AdUi.sectionGap),
                                             _objective(context),
-                                            const SizedBox(height: 18),
+                                            const SizedBox(height: AdUi.sectionGap),
                                             _audience(context),
-                                            const SizedBox(height: 18),
+                                            const SizedBox(height: AdUi.sectionGap),
                                             _budget(context),
-                                            const SizedBox(height: 18),
+                                            const SizedBox(height: AdUi.sectionGap),
                                             _schedule(context),
-                                            const SizedBox(height: 18),
+                                            const SizedBox(height: AdUi.sectionGap),
                                             _couponSection(context),
-                                            const SizedBox(height: 18),
+                                            const SizedBox(height: AdUi.sectionGap),
                                             _forecast(context),
-                                            const SizedBox(height: 18),
+                                            const SizedBox(height: AdUi.sectionGap),
                                             _pricing(context),
-                                            const SizedBox(height: 18),
+                                            const SizedBox(height: AdUi.sectionGap),
                                             _submission(context),
                                           ])),
                                 ]))),
@@ -501,7 +501,7 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
             )),
       ));
   Widget _label(BuildContext context, String label) => Padding(
-      padding: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.only(bottom: 10),
       child: ProxoText(label,
           style: AdUi.text(context), textAlign: TextAlign.right));
   Widget _error(BuildContext context, String key) => _fieldErrors[key] == null
@@ -539,12 +539,13 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
       title: 'زانیاری ڕیکلام',
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         _field(context, 'title', _name, 'ناوی ڕیکلام'),
-        const SizedBox(height: 16),
+        const SizedBox(height: 20),
         _field(context, 'code', _code, 'کۆدی ڤیدیۆ', ltr: true),
-        const SizedBox(height: 16),
+        const SizedBox(height: 20),
         // Existing video processing and thumbnails require the URL as well as the authorization code.
         _field(context, 'link', _link, 'بەستەری ڤیدیۆ',
             ltr: true, keyboard: TextInputType.url),
+        const SizedBox(height: 8),
         ExpansionTile(
             tilePadding: EdgeInsets.zero,
             childrenPadding: EdgeInsets.zero,
@@ -555,8 +556,8 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
   Widget _choices(BuildContext context, String field, String value,
           List<(String, String)> options, ValueChanged<String> onChanged) =>
       Wrap(
-          spacing: 8,
-          runSpacing: 8,
+          spacing: 10,
+          runSpacing: 10,
           textDirection: TextDirection.rtl,
           children: [
             for (final o in options)
@@ -586,7 +587,7 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
             child: _goal != 'messages'
                 ? const SizedBox.shrink()
                 : Padding(
-                    padding: const EdgeInsets.only(top: 18),
+                    padding: const EdgeInsets.only(top: 24),
                     child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
@@ -612,6 +613,7 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
                                 isDense: false,
                                 itemHeight: null,
                                 style: AdUi.text(context),
+                                decoration: AdUi.dropdownDecoration,
                                 hint:
                                     const ProxoText('پەڕەی پەیوەندی هەڵبژێرە'),
                                 items: [
@@ -625,7 +627,7 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
                                       _fieldErrors.remove('asset');
                                     })),
                           _error(context, 'asset'),
-                          const SizedBox(height: 10),
+                          const SizedBox(height: 14),
                           Align(
                               alignment: Alignment.centerRight,
                               child: OutlinedButton(
@@ -648,9 +650,9 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
               ('iraq', 'عێراق')
             ],
             (v) => setState(() => _location = v)),
-        const SizedBox(height: 18),
+        const SizedBox(height: 24),
         _label(context, 'تەمەن'),
-        Wrap(spacing: 8, runSpacing: 8, children: [
+        Wrap(spacing: 10, runSpacing: 10, children: [
           for (final age in const [
             'all',
             '18-24',
@@ -675,7 +677,7 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
                       }
                     }))
         ]),
-        const SizedBox(height: 18),
+        const SizedBox(height: 24),
         _label(context, 'ڕەگەز'),
         _choices(
             context,
@@ -683,7 +685,7 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
             _gender,
             const [('all', 'هەموو'), ('male', 'نێر'), ('female', 'مێ')],
             (v) => setState(() => _gender = v)),
-        const SizedBox(height: 18),
+        const SizedBox(height: 24),
         _label(context, 'پۆل'),
         DropdownButtonFormField<String>(
             key: ValueKey('category-$_category'),
@@ -692,6 +694,7 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
             isDense: false,
             itemHeight: null,
             style: AdUi.text(context),
+            decoration: AdUi.dropdownDecoration,
             hint: const ProxoText('پۆلی ڕیکلام هەڵبژێرە'),
             items: [
               for (final c in kAdCategories)
@@ -702,7 +705,7 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
                   _fieldErrors.remove('category');
                 })),
         _error(context, 'category'),
-        const SizedBox(height: 18),
+        const SizedBox(height: 24),
         _label(context, 'ئامێر'),
         _choices(
             context,
@@ -721,7 +724,9 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
   Widget _budget(BuildContext context) => AdFormSection(
       title: 'بودجە و ماوەی ڕیکلام',
       child: Column(children: [
-        AdValueRow(label: 'بودجەی ڕۆژانە', value: _budgetIqd(_daily)),
+        AdValueRow(label: 'بودجەی ڕۆژانە', value: _budgetIqd(_daily),
+            valueColor: AdUi.blue),
+        const SizedBox(height: 6),
         Directionality(
             textDirection: TextDirection.ltr,
             child: Slider(
@@ -736,8 +741,12 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
                   setState(() => _daily = _budgets[v.round()]);
                   _refreshQuote();
                 })),
-        const SizedBox(height: 12),
-        AdValueRow(label: 'ماوەی ڕیکلام', value: '$_days ڕۆژ'),
+        AdValueRow(label: _budgetIqd(_budgets.last),
+            value: _budgetIqd(_budgets.first), color: AdUi.secondary),
+        const SizedBox(height: 24),
+        AdValueRow(label: 'ماوەی ڕیکلام', value: '$_days ڕۆژ',
+            valueColor: AdUi.blue),
+        const SizedBox(height: 6),
         Directionality(
             textDirection: TextDirection.ltr,
             child: Slider(
@@ -752,7 +761,9 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
                   setState(() => _days = v.round());
                   _refreshQuote();
                 })),
-        const Divider(height: 24, color: ReceiptTokens.divider),
+        const AdValueRow(label: '7 ڕۆژ', value: '1 ڕۆژ',
+            color: AdUi.secondary),
+        const Divider(height: 32, color: AdUi.controlLine),
         AdValueRow(
             label: 'کۆی بودجە',
             value: _budgetIqd(_daily * _days),
@@ -767,13 +778,17 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
             'schedule',
             _immediate ? 'now' : 'later',
             const [
-              ('now', 'زووترین کاتی بەردەست'),
+              ('now', 'ئێستا'),
               ('later', 'دیاریکردنی کات')
             ],
             (v) => setState(() => _immediate = v == 'now')),
-        if (!_immediate) ...[
-          const SizedBox(height: 16),
-          Wrap(spacing: 10, runSpacing: 10, children: [
+        AnimatedSize(
+            duration: const Duration(milliseconds: 240),
+            curve: Curves.easeOutCubic,
+            alignment: Alignment.topRight,
+            child: _immediate ? const SizedBox.shrink() : Padding(
+              padding: const EdgeInsets.only(top: 20),
+              child: Wrap(spacing: 10, runSpacing: 10, children: [
             OutlinedButton(
                 key: const ValueKey('ad-date'),
                 onPressed: () async {
@@ -823,8 +838,7 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
                 child: ProxoText(_time == null
                     ? 'کات هەڵبژێرە'
                     : '${_time!.hour.toString().padLeft(2, '0')}:${_time!.minute.toString().padLeft(2, '0')}')),
-          ])
-        ],
+          ]))),
         _error(context, 'schedule'),
       ]));
   Widget _couponSection(BuildContext context) => AdFormSection(
@@ -850,7 +864,7 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
                 },
                 decoration: const InputDecoration(
                     hint: ProxoText('کۆدی داشکاندن (ئارەزوومەندانە)')))),
-        const SizedBox(height: 10),
+        const SizedBox(height: 14),
         Align(
             alignment: Alignment.centerRight,
             child: OutlinedButton(
@@ -883,25 +897,35 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
             ProxoText('سەرەتا ئامانجی ڕیکلام هەڵبژێرە.',
                 style: AdUi.text(context, color: AdUi.secondary))
           else ...[
-            AdValueRow(
-                label: 'پێشبینی بینینەکان',
-                value: range(f.viewsLow, f.viewsHigh)),
+            Container(
+                key: const ValueKey('forecast-results'),
+                padding: const EdgeInsets.all(14),
+                decoration: const BoxDecoration(
+                    color: AdUi.controlSurface,
+                    borderRadius: AdUi.controlRadius),
+                child: Column(children: [
+                  AdValueRow(
+                      label: 'پێشبینی بینینەکان',
+                      value: range(f.viewsLow, f.viewsHigh)),
+                  if (_goal == 'messages') ...[
+                    const Divider(height: 28, color: AdUi.controlLine),
+                    AdValueRow(
+                        label: 'پێشبینی کرتەکان',
+                        value: range(f.clicksLow!, f.clicksHigh!)),
+                  ],
+                ])),
             if (_goal == 'messages') ...[
               const SizedBox(height: 12),
-              AdValueRow(
-                  label: 'پێشبینی کرتەکان',
-                  value: range(f.clicksLow!, f.clicksHigh!)),
-              const SizedBox(height: 6),
               ProxoText('کرتەی پەڕەی پەیوەندی؛ بە گریمانەی کاتی.',
                   style: AdUi.text(context, color: AdUi.secondary))
             ],
             if (f.provisionalViews) ...[
-              const SizedBox(height: 6),
+              const SizedBox(height: 10),
               ProxoText('پێشبینی بینین بە گریمانەی کاتی.',
                   style: AdUi.text(context, color: AdUi.secondary))
             ],
           ],
-          const SizedBox(height: 14),
+          const SizedBox(height: 18),
           ProxoText(adForecastDisclaimer,
               style: AdUi.text(context, color: AdUi.secondary)),
         ]));
@@ -912,10 +936,16 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         if (_quote != null) ...[
           AdPriceDetails(quote: _quote!),
-          const SizedBox(height: 18),
-          AdValueRow(
-              label: 'باڵانسی بەردەست',
-              value: adIqd(_quote!.balanceUsd * _quote!.rate)),
+          const SizedBox(height: 16),
+          Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+              decoration: const BoxDecoration(
+                  color: AdUi.controlSurface,
+                  borderRadius: AdUi.controlRadius),
+              child: AdValueRow(
+                  label: 'باڵانسی بەردەست',
+                  value: adIqd(_quote!.balanceUsd * _quote!.rate),
+                  color: AdUi.secondary, valueColor: AdUi.ink)),
           if (_payment == 'app_balance' &&
               _quote!.balanceUsd + 0.000001 < _quote!.costUsd) ...[
             const SizedBox(height: 10),
@@ -949,13 +979,15 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
             const [('app_balance', 'باڵانسی هەژمار'), ('fastpay', 'FastPay')],
             (v) => setState(() => _payment = v)),
         _error(context, 'payment'),
-        const SizedBox(height: 18),
-        FilledButton(
+        const SizedBox(height: 24),
+        Padding(
+            padding: const EdgeInsets.only(bottom: 4),
+            child: FilledButton(
             key: const ValueKey('review-ad'),
             onPressed: _openingConfirmation || _couponBusy || _pendingLoading
                 ? null
                 : _checkout,
             child: ProxoText(
-                _openingConfirmation ? 'پشکنین…' : 'پشکنین و ناردنی ڕیکلام')),
+                _openingConfirmation ? 'پشکنین…' : 'پشکنین و ناردنی ڕیکلام'))),
       ]));
 }

@@ -11,7 +11,22 @@ abstract final class AdUi {
   static const secondary = AppColors.inkMuted;
   static const green = Color(0xFF157347);
   static const greenSoft = Color(0xFFECF8F0);
-  static const radius = BorderRadius.all(Radius.circular(16));
+  static const radius = BorderRadius.all(Radius.circular(18));
+  static const controlRadius = BorderRadius.all(Radius.circular(14));
+  static const controlSurface = Color(0xFFFCFDFF);
+  static const controlLine = Color(0xFFE8EDF4);
+  static const selectedLine = Color(0xFFCCDFFF);
+  static const sectionGap = 22.0;
+  static const cardPadding = EdgeInsets.all(20);
+  static const cardShadow = [
+    BoxShadow(color: Color(0x0C0F172A), blurRadius: 24, offset: Offset(0, 6)),
+    BoxShadow(color: Color(0x040F172A), blurRadius: 4, offset: Offset(0, 2)),
+  ];
+  // A non-dense dropdown already provides a 48 dp interactive child.
+  // Keep its outer inset small so single-line fields have the same rhythm,
+  // while long selections can still grow without a fixed text height.
+  static const dropdownDecoration = InputDecoration(
+      contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 4));
 
   static TextStyle text(BuildContext context, {Color color = ink}) =>
       Theme.of(context)
@@ -50,33 +65,46 @@ abstract final class AdUi {
       ),
       inputDecorationTheme: const InputDecorationTheme(
         filled: true,
-        fillColor: Colors.white,
-        contentPadding: EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+        fillColor: controlSurface,
+        constraints: BoxConstraints(minHeight: 56),
+        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 18),
         border: OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(12))),
+            borderRadius: controlRadius),
         enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(12)),
-            borderSide: BorderSide(color: ReceiptTokens.divider)),
+            borderRadius: controlRadius,
+            borderSide: BorderSide(color: controlLine)),
         focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(12)),
+            borderRadius: controlRadius,
             borderSide: BorderSide(color: blue)),
+      ),
+      sliderTheme: base.sliderTheme.copyWith(
+        trackHeight: 3,
+        activeTrackColor: blue,
+        inactiveTrackColor: AppColors.accentSoft,
+        thumbColor: blue,
+        overlayColor: const Color(0x14046CFA),
+        thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8),
+        overlayShape: const RoundSliderOverlayShape(overlayRadius: 18),
+        tickMarkShape: SliderTickMarkShape.noTickMark,
       ),
       filledButtonTheme: FilledButtonThemeData(
           style: FilledButton.styleFrom(
         backgroundColor: blue,
         foregroundColor: Colors.white,
-        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+        minimumSize: const Size(0, 52),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
         shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(12))),
+            borderRadius: controlRadius),
         textStyle: t.labelLarge?.copyWith(fontWeight: FontWeight.w400),
       )),
       outlinedButtonTheme: OutlinedButtonThemeData(
           style: OutlinedButton.styleFrom(
         foregroundColor: blue,
-        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
-        side: const BorderSide(color: ReceiptTokens.divider),
+        minimumSize: const Size(0, 48),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
+        side: const BorderSide(color: controlLine),
         shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(12))),
+            borderRadius: controlRadius),
         textStyle: t.labelLarge?.copyWith(fontWeight: FontWeight.w400),
       )),
     );
@@ -91,11 +119,11 @@ class AdFormSection extends StatelessWidget {
       {super.key, required this.title, required this.child, this.subtitle});
   @override
   Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.all(18),
+        padding: AdUi.cardPadding,
         decoration: const BoxDecoration(
             color: Colors.white,
             borderRadius: AdUi.radius,
-            boxShadow: ReceiptTokens.cardShadow),
+            boxShadow: AdUi.cardShadow),
         child: Material(
             type: MaterialType.transparency,
             child: Column(
@@ -108,7 +136,7 @@ class AdFormSection extends StatelessWidget {
                     ProxoText(subtitle!,
                         style: AdUi.text(context, color: AdUi.secondary)),
                   ],
-                  const SizedBox(height: 18),
+                  const SizedBox(height: 20),
                   child,
                 ])),
       );
@@ -130,21 +158,24 @@ class AdChoice extends StatelessWidget {
         child: Material(
             color: Colors.transparent,
             child: InkWell(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: AdUi.controlRadius,
               onTap: onTap,
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 180),
+                curve: Curves.easeOutCubic,
+                constraints: const BoxConstraints(minHeight: 48),
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 decoration: BoxDecoration(
                     color: selected ? AppColors.accentSoft : Colors.white,
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: AdUi.controlRadius,
                     border: Border.all(
-                        color: selected ? AdUi.blue : ReceiptTokens.divider)),
-                child: ProxoText(label,
+                        color: selected ? AdUi.selectedLine : AdUi.controlLine)),
+                child: Center(widthFactor: 1, heightFactor: 1,
+                    child: ProxoText(label,
                     textAlign: TextAlign.center,
                     style: AdUi.text(context,
-                        color: selected ? AdUi.blue : AdUi.ink)),
+                        color: selected ? AdUi.blue : AdUi.ink))),
               ),
             )),
       );
@@ -157,25 +188,25 @@ class AdPriceDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Column(children: [
         AdValueRow(label: 'نرخی سەرەتایی', value: adIqd(quote.sponsorIqd)),
-        const SizedBox(height: 12),
+        const SizedBox(height: 16),
         AdValueRow(label: 'ماوەی ڕیکلام', value: '${quote.days} ڕۆژ'),
-        const SizedBox(height: 12),
+        const SizedBox(height: 16),
         AdValueRow(label: 'تێچووی خزمەتگوزاری', value: adIqd(quote.serviceIqd)),
         if (quote.promoUsd > 0 && quote.promoIqd > 0) ...[
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
           Container(
               key: const ValueKey('coupon-discount'),
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
+              padding: const EdgeInsets.all(14),
+              decoration: const BoxDecoration(
                   color: AdUi.greenSoft,
-                  borderRadius: BorderRadius.circular(10)),
+                  borderRadius: AdUi.controlRadius),
               child: AdValueRow(
                   label: 'داشکاندنی کۆبۆن',
                   value: adIqd(quote.promoIqd, discount: true),
                   color: AdUi.green)),
         ],
         if (quote.levelUsd > 0 && quote.levelIqd > 0) ...[
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
           AdValueRow(
               label: 'داشکاندنی ئاست',
               value: adIqd(quote.levelIqd, discount: true),
@@ -183,11 +214,16 @@ class AdPriceDetails extends StatelessWidget {
         ],
         if (showTotal) ...[
           const Divider(height: 32, color: ReceiptTokens.divider),
-          AdValueRow(
+          Container(
+              padding: const EdgeInsets.all(14),
+              decoration: const BoxDecoration(
+                  color: AppColors.accentSoft,
+                  borderRadius: AdUi.controlRadius),
+              child: AdValueRow(
               key: const ValueKey('ad-total'),
               label: 'کۆی گشتی',
               value: adIqd(quote.totalIqd),
-              color: AdUi.blue),
+              color: AdUi.blue)),
         ],
       ]);
 }
@@ -195,11 +231,13 @@ class AdPriceDetails extends StatelessWidget {
 class AdValueRow extends StatelessWidget {
   final String label, value;
   final Color color;
+  final Color? valueColor;
   const AdValueRow(
       {super.key,
       required this.label,
       required this.value,
-      this.color = AdUi.ink});
+      this.color = AdUi.ink,
+      this.valueColor});
   @override
   Widget build(BuildContext context) => LayoutBuilder(
     builder: (context, constraints) {
@@ -217,7 +255,7 @@ class AdValueRow extends StatelessWidget {
 
       final valueText = ProxoText(
         value,
-        style: style,
+        style: style.copyWith(color: valueColor ?? color),
         textAlign: TextAlign.left,
       );
       final labelText = ProxoText(

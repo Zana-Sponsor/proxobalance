@@ -36,8 +36,8 @@ Additional checks exercise a long contact-page dropdown at 320 × 568 with 3× t
 
 | Check | Result |
 | --- | --- |
-| Full Flutter test suite | 260 passed |
-| Responsive widget suite | 32 passed, including two screenshot renders |
+| Full Flutter test suite | 262 passed after the UI refinement |
+| Responsive widget suite | 33 passed, including two screenshot renders and a field/slider gesture check |
 | Analysis of changed source and tests | No issues found |
 | Whole-project analysis | No errors; 303 existing warning/info diagnostics in other files |
 | Flutter bundle for linux-x64 | Built successfully |
@@ -55,6 +55,8 @@ flutter build bundle --no-pub --target-platform=linux-x64
 ```
 
 ## Flutter-rendered previews
+
+The current spacing, controls and scheduling labels are documented in [Create Ad UI refinement](CREATE_AD_UI_REFINEMENT.md).
 
 ![Tablet Create Ad](create_ad_tablet_preview.png)
 

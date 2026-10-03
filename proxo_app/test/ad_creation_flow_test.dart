@@ -223,6 +223,10 @@ void main() {
   testWidgets(
       'valid coupon highlights label and value; invalid coupon has no discount',
       (tester) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(393, 852);
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
     await tester
         .pumpWidget(host(AdCreateScreen(repository: TestAdRepository())));
     await tester.pumpAndSettle();
@@ -238,6 +242,11 @@ void main() {
       expect(t.style!.color, AdUi.green);
     }
     expect(find.text('−2,000 د.ع'), findsOneWidget);
+    await Scrollable.ensureVisible(tester.element(find.byType(AdPriceDetails)),
+        alignment: 0.05);
+    await tester.pumpAndSettle();
+    await capturePng(tester, 'docs/create_ad_coupon_preview.png');
+    await tester.ensureVisible(input);
     await tester.enterText(input, 'BAD');
     await tester.pumpAndSettle();
     await tapVisible(tester, find.text('بەکارهێنانی کۆد'));
@@ -316,11 +325,27 @@ void main() {
   testWidgets(
       'future scheduling uses date/time controls and survives confirmation',
       (tester) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(393, 852);
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
     final repo = TestAdRepository();
     await tester.pumpWidget(host(
         AdCreateScreen(repository: repo, proxoCard: validDraft().toJson())));
     await tester.pumpAndSettle();
+    final nowChoice = find.byKey(const ValueKey('schedule-now'));
+    final laterChoice = find.byKey(const ValueKey('schedule-later'));
+    final dateButton = find.byKey(const ValueKey('ad-date'));
+    final timeButton = find.byKey(const ValueKey('ad-time'));
+    expect(find.text('ئێستا'), findsOneWidget);
+    expect(find.text('دیاریکردنی کات'), findsOneWidget);
+    expect(tester.widget<AdChoice>(nowChoice).selected, isTrue);
+    expect(tester.widget<AdChoice>(laterChoice).selected, isFalse);
+    expect(dateButton, findsNothing);
+    expect(timeButton, findsNothing);
     await tapVisible(tester, find.byKey(const ValueKey('schedule-later')));
+    expect(tester.widget<AdChoice>(nowChoice).selected, isFalse);
+    expect(tester.widget<AdChoice>(laterChoice).selected, isTrue);
     await tapVisible(tester, find.byKey(const ValueKey('ad-date')));
     await tester.pumpAndSettle();
     final now = adScheduleNow(),
@@ -338,6 +363,21 @@ void main() {
     expect(find.byType(TimePickerDialog), findsOneWidget);
     await tester.tap(find.text('OK'));
     await tester.pumpAndSettle();
+    String pickerText(Finder button) => tester.widget<ProxoText>(
+        find.descendant(of: button, matching: find.byType(ProxoText))).data!;
+    final dateText = pickerText(dateButton), timeText = pickerText(timeButton);
+    await Scrollable.ensureVisible(
+        tester.element(find.text('بەروار و کاتی دەستپێک')), alignment: 0.15);
+    await tester.pumpAndSettle();
+    await capturePng(tester, 'docs/create_ad_schedule_preview.png');
+    await tapVisible(tester, nowChoice);
+    expect(tester.widget<AdChoice>(nowChoice).selected, isTrue);
+    expect(tester.widget<AdChoice>(laterChoice).selected, isFalse);
+    expect(dateButton, findsNothing);
+    expect(timeButton, findsNothing);
+    await tapVisible(tester, laterChoice);
+    expect(pickerText(dateButton), dateText);
+    expect(pickerText(timeButton), timeText);
     await tapVisible(tester, find.byKey(const ValueKey('review-ad')));
     expect(find.byType(AdConfirmationScreen), findsOneWidget);
     final draft = tester
@@ -350,6 +390,22 @@ void main() {
     expect(repo.lastQuoteDraft!.schedule, draft.schedule);
     await tester.tap(find.byKey(const ValueKey('cancel-submission')));
     await tester.pumpAndSettle();
+  });
+  testWidgets('incomplete future scheduling cannot reach confirmation',
+      (tester) async {
+    final repo = TestAdRepository();
+    final draft = validDraft().toJson()
+      ..remove('start_date')
+      ..remove('start_time');
+    await tester.pumpWidget(host(AdCreateScreen(
+        repository: repo, proxoCard: draft)));
+    await tester.pumpAndSettle();
+    await tapVisible(tester, find.byKey(const ValueKey('schedule-later')));
+    await tapVisible(tester, find.byKey(const ValueKey('review-ad')));
+    expect(find.byType(AdConfirmationScreen), findsNothing);
+    expect(repo.submissions, 0);
+    expect(find.byType(AdValidationNotifications), findsOneWidget);
+    expect(tester.takeException(), isNull);
   });
   testWidgets('cancel countdown returns to entered form without submitting',
       (tester) async {

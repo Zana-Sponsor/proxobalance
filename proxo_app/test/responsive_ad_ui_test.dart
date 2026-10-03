@@ -7,6 +7,7 @@ import 'package:proxo_app/screens/ad_confirmation_screen.dart';
 import 'package:proxo_app/screens/ad_create_screen.dart';
 import 'package:proxo_app/services/ad_submission.dart';
 import 'package:proxo_app/theme/app_theme.dart';
+import 'package:proxo_app/widgets/ad_form_components.dart';
 import 'package:proxo_app/widgets/receipt/receipt_kit.dart';
 import 'ad_creation_flow_test.dart'
     show TestAdRepository, AdPaintBinding, capture, capturePng;
@@ -346,6 +347,38 @@ void main() {
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
     await capturePng(tester, 'docs/create_ad_tablet_preview.png');
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+  testWidgets('refined fields align and sliders accept drag gestures',
+      (tester) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(393, 852);
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final repo = TestAdRepository();
+    await tester.pumpWidget(responsiveHost(AdCreateScreen(repository: repo,
+        proxoCard: validDraft().toJson()), 1, EdgeInsets.zero));
+    await tester.pumpAndSettle();
+    final code = find.byKey(const ValueKey('ad-code'));
+    final category = find.byType(DropdownButtonFormField<String>).first;
+    expect(tester.getSize(category).height,
+        closeTo(tester.getSize(code).height, 1));
+    final budget = find.byKey(const ValueKey('daily-budget-slider'));
+    await tester.ensureVisible(budget);
+    await tester.pumpAndSettle();
+    await tester.drag(budget, const Offset(100, 0));
+    await tester.pumpAndSettle();
+    expect(repo.lastQuoteDraft!.dailyBudget, greaterThan(10));
+    final duration = find.byKey(const ValueKey('duration-slider'));
+    await tester.ensureVisible(duration);
+    await tester.pumpAndSettle();
+    await tester.drag(duration, const Offset(90, 0));
+    await tester.pumpAndSettle();
+    expect(repo.lastQuoteDraft!.days, greaterThan(1));
+    final quote = tester.widget<AdPriceDetails>(find.byType(AdPriceDetails)).quote;
+    expect(quote.grossUsd,
+        repo.lastQuoteDraft!.dailyBudget * repo.lastQuoteDraft!.days);
+    expect(tester.takeException(), isNull);
     await tester.pumpWidget(const SizedBox.shrink());
   });
   testWidgets('render large-text narrow confirmation preview', (tester) async {
