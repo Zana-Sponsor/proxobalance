@@ -234,8 +234,10 @@ Widget? proxoFieldText(String? text) => text == null ? null : ProxoText(text);
 
 /// Updates native editable direction when typing or changing a controller.
 /// The same controller, selection, composing range and callbacks are retained.
+/// Controller notifications rebuild the field only when direction changes;
+/// cursor/composition updates are handled by EditableText itself.
 /// Uncontrolled uses in this app are read-only initial-value form fields.
-class ProxoDirectionalInput extends StatelessWidget {
+class ProxoDirectionalInput extends StatefulWidget {
   final TextEditingController? controller;
   final String? initialValue;
   final TextInputType? keyboardType;
@@ -251,18 +253,58 @@ class ProxoDirectionalInput extends StatelessWidget {
     required this.builder,
   });
 
-  Widget _build(BuildContext context, String text) => builder(
-        context,
-        forceLtr || ProxoTextDirection.isLtrInput(keyboardType)
-            ? TextDirection.ltr
-            : ProxoTextDirection.of(text, fallback: Directionality.of(context)),
-      );
+  @override
+  State<ProxoDirectionalInput> createState() => _ProxoDirectionalInputState();
+}
+
+class _ProxoDirectionalInputState extends State<ProxoDirectionalInput> {
+  TextDirection _fallback = TextDirection.rtl;
+  TextDirection _direction = TextDirection.rtl;
+
+  TextDirection _detect() =>
+      widget.forceLtr || ProxoTextDirection.isLtrInput(widget.keyboardType)
+          ? TextDirection.ltr
+          : ProxoTextDirection.of(
+              widget.controller?.text ?? widget.initialValue ?? '',
+              fallback: _fallback,
+            );
 
   @override
-  Widget build(BuildContext context) => controller == null
-      ? _build(context, initialValue ?? '')
-      : ValueListenableBuilder<TextEditingValue>(
-          valueListenable: controller!,
-          builder: (context, value, _) => _build(context, value.text),
-        );
+  void initState() {
+    super.initState();
+    widget.controller?.addListener(_updateDirection);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _fallback = Directionality.of(context);
+    _direction = _detect();
+  }
+
+  @override
+  void didUpdateWidget(ProxoDirectionalInput oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.controller != widget.controller) {
+      oldWidget.controller?.removeListener(_updateDirection);
+      widget.controller?.addListener(_updateDirection);
+    }
+    _direction = _detect();
+  }
+
+  void _updateDirection() {
+    final direction = _detect();
+    if (direction != _direction) {
+      setState(() => _direction = direction);
+    }
+  }
+
+  @override
+  void dispose() {
+    widget.controller?.removeListener(_updateDirection);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.builder(context, _direction);
 }

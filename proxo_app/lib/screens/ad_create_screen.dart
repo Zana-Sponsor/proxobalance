@@ -531,14 +531,19 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
                 textInputAction: maxLines == 1
                     ? TextInputAction.next
                     : TextInputAction.newline,
-                onChanged: (_) => setState(() => _fieldErrors.remove(id)),
+                onChanged: (_) {
+                  if (_fieldErrors.containsKey(id)) {
+                    setState(() => _fieldErrors.remove(id));
+                  }
+                },
                 decoration: const InputDecoration())),
         _error(context, id),
       ]);
   Widget _information(BuildContext context) => AdFormSection(
       title: 'زانیاری ڕیکلام',
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        _field(context, 'title', _name, 'ناوی ڕیکلام'),
+        _field(context, 'title', _name, 'ناوی ڕیکلام',
+            keyboard: TextInputType.name),
         const SizedBox(height: 20),
         _field(context, 'code', _code, 'کۆدی ڤیدیۆ', ltr: true),
         const SizedBox(height: 20),
