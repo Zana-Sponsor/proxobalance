@@ -13,6 +13,10 @@
       "destination": "/exchange-admin1.html"
     },
     {
+      "source": "/contact/:id",
+      "destination": "/api/contact?id=:id"
+    },
+    {
       "source": "/form-demo",
       "destination": "/form.html"
     },
