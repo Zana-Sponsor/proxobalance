@@ -189,7 +189,11 @@ void main() {
     for (final days in [2.0, 3.0, 5.0, 1.0, 7.0, 2.0]) {
       tester.widget<Slider>(duration).onChanged!(days);
       await tester.pumpAndSettle();
-      expect(find.text('\$10 × ${days.toInt()} = \$${10 * days.toInt()}'),
+      final totalRow = find.ancestor(
+          of: find.text('کۆی بودجە'), matching: find.byType(AdValueRow));
+      expect(
+          find.descendant(
+              of: totalRow, matching: find.text(adIqd(10 * days * 1800))),
           findsOneWidget);
       expect(
           tester
@@ -202,7 +206,16 @@ void main() {
         .widget<Slider>(find.byKey(const ValueKey('daily-budget-slider')))
         .onChanged!(2);
     await tester.pumpAndSettle();
-    expect(find.text('\$50 × 2 = \$100'), findsOneWidget);
+    final budgetRow = find.ancestor(
+        of: find.text('کۆی بودجە'), matching: find.byType(AdValueRow));
+    expect(
+        find.descendant(of: budgetRow, matching: find.text('180,000 د.ع')),
+        findsOneWidget);
+    expect(
+        tester
+            .widget<Slider>(find.byKey(const ValueKey('daily-budget-slider')))
+            .label,
+        '90,000 د.ع');
     expect(find.text('پێشبینی کرتەکان'), findsNothing);
     await tapVisible(tester, find.byKey(const ValueKey('goal-messages')));
     expect(find.text('پێشبینی کرتەکان'), findsOneWidget);
@@ -566,5 +579,51 @@ void main() {
         repository: TestAdRepository())));
     await tester.pump(const Duration(milliseconds: 300));
     await capturePng(tester, 'docs/ad_confirmation_preview.png');
+  });
+  testWidgets('render budget preview in Iraqi dinars', (tester) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(393, 852);
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    await tester.pumpWidget(
+      host(
+        AdCreateScreen(
+          repository: TestAdRepository(),
+          proxoCard: {...validDraft().toJson(), 'days': 2},
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    final slider = find.byKey(const ValueKey('daily-budget-slider'));
+    await Scrollable.ensureVisible(tester.element(slider), alignment: 0.15);
+    await tester.pumpAndSettle();
+    expect(tester.widget<Slider>(slider).label, '18,000 د.ع');
+    expect(find.text('36,000 د.ع'), findsWidgets);
+    expect(tester.takeException(), isNull);
+    await capturePng(tester, 'docs/create_ad_budget_preview.png');
+  });
+  testWidgets('render complete Create Ad design', (tester) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(393, 852);
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    await tester.pumpWidget(
+      host(
+        AdCreateScreen(
+          repository: TestAdRepository(),
+          proxoCard: {...validDraft().toJson(), 'days': 2},
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    final scroll = find.byKey(const ValueKey('ad-form-scroll'));
+    final content =
+        find.descendant(of: scroll, matching: find.byType(Center)).first;
+    final height =
+        tester.getSize(content).height + tester.getTopLeft(scroll).dy + 48;
+    tester.view.physicalSize = Size(393, height.ceilToDouble());
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    await capturePng(tester, 'docs/create_ad_full_preview.png');
   });
 }
