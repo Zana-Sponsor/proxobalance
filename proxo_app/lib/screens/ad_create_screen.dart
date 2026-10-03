@@ -711,10 +711,12 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
             (v) => setState(() => _device = v)),
         _error(context, 'audience'),
       ]));
+  String _budgetIqd(int usd) => adIqd(usd * (_quote?.rate ?? 1800));
+
   Widget _budget(BuildContext context) => AdFormSection(
       title: 'بودجە و ماوەی ڕیکلام',
       child: Column(children: [
-        AdValueRow(label: 'بودجەی ڕۆژانە', value: '\$$_daily'),
+        AdValueRow(label: 'بودجەی ڕۆژانە', value: _budgetIqd(_daily)),
         Directionality(
             textDirection: TextDirection.ltr,
             child: Slider(
@@ -724,7 +726,7 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
                 divisions: _budgets.length - 1,
                 value: _budgets.indexOf(_daily).toDouble(),
                 activeColor: AdUi.blue,
-                label: '\$$_daily',
+                label: _budgetIqd(_daily),
                 onChanged: (v) {
                   setState(() => _daily = _budgets[v.round()]);
                   _refreshQuote();
@@ -748,7 +750,7 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
         const Divider(height: 24, color: ReceiptTokens.divider),
         AdValueRow(
             label: 'کۆی بودجە',
-            value: '\$$_daily × $_days = \$${_daily * _days}',
+            value: _budgetIqd(_daily * _days),
             color: AdUi.blue),
         _error(context, 'budget'),
       ]));
