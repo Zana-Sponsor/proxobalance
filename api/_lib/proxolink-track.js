@@ -1,6 +1,6 @@
 import { realClientIp } from './security.js';
 import {
-  proxoRows, proxoWrite, cardById, contactDestination
+  proxoRows, proxoWrite, cardById, contactDestination, normalizedPlatforms
 } from './proxolink.js';
 
 const TOKEN_PATTERN=/^[A-Za-z0-9_-]{20,128}$/;
@@ -43,9 +43,10 @@ export async function recordContactEvent(req,linkId,type,platformId=null) {
   await proxoWrite('pa_contact_events','POST',record,'','return=minimal');
 }
 export function actionUrl(card,id) {
+  const platforms=normalizedPlatforms(card.platforms);
   if(!Object.prototype.hasOwnProperty.call(PLATFORM_TYPE,id)
-    || !Object.prototype.hasOwnProperty.call(card.platforms||{},id))
+    || !Object.prototype.hasOwnProperty.call(platforms,id))
     throw Error('invalid_button');
   // The destination is always constructed server-side from trusted card data.
-  return contactDestination(id,card.platforms[id]);
+  return contactDestination(id,platforms[id]);
 }
