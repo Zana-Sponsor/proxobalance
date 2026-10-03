@@ -35,7 +35,7 @@ View-rate history is accepted only from at least five comparable TikTok campaign
 
 | Check | Result |
 | --- | --- |
-| Complete Flutter test suite | **225 passed**, including model, Flutter engine widget/runtime, auth regression, receipt layout and PDF export tests. |
+| Complete Flutter test suite | **226 passed**, including model, Flutter engine widget/runtime, auth regression, receipt layout and PDF export tests. |
 | Responsive Create Ad | 280, 393, 430 and 768 dp at normal and 1.5 accessibility text scale; no rendering exceptions. |
 | Responsive confirmation | 280, 393 and 768 dp with long mixed values and 1.5 accessibility text scale; cancellation stays visible. |
 | Interactive workflow | Inputs, objective-dependent contact selection, page creation/return, supported targeting, sliders, repeated duration changes, coupon application/expiration, date/time controls, invalid/insufficient forms, countdown, cancellation, background pause, success and recovery. |
@@ -44,7 +44,7 @@ View-rate history is accepted only from at least five comparable TikTok campaign
 | RPC/private-table access | New RPCs execute for authenticated users, not anonymous users. Fixed empty search paths. Private retry schema/table is inaccessible to anonymous and authenticated roles. |
 | Bidirectional source audit | All application Text constructors use the shared helper; native editable fields carry wrapper-controlled direction; decoration strings are direction-aware widgets. No unhandled source gaps. |
 | Analysis | No compile errors or diagnostics introduced by this implementation. Existing repository warnings/info remain, so full analysis is not globally warning-free. |
-| Build | `flutter build bundle --no-pub --target-platform=linux-x64` succeeded. |
+| Builds | Linux Flutter bundle succeeded. [GitHub Android release AAB build](https://github.com/Zana-Sponsor/proxobalance/actions/runs/37099745141) succeeded for implementation commit `840b4a07aae89c36828b99416e07165bbabd7126`; `proxo-release-aab` was uploaded. |
 | Visual inspection | Production-widget renders reviewed for form, pricing, confirmation and validation stack. Existing receipt/history/PDF tests passed. |
 
 Reproduce with Flutter 3.47.2:
@@ -60,7 +60,7 @@ The migration `20261003043057_ad_confirmation_idempotency.sql` was applied to th
 
 ## Verification still unavailable
 
-- Android APK/AAB build and physical Android/iOS sessions: local Android SDK and mobile device are unavailable.
+- Physical Android/iOS sessions and an iOS release build: mobile device/macOS tooling are unavailable. Local Android SDK is unavailable; the Android release AAB was successfully built by GitHub Actions.
 - Web build: this mobile project has no configured web target; none was added.
 - A real FastPay payment, live TikTok publication/thumbnail creation for a new paid ad, and a signed-in device end-to-end run: required payment/device credentials were unavailable.
 - Parallel financial requests against a dedicated test database: database replay/rollback and client concurrency were tested; a multi-connection live financial load test was not performed.

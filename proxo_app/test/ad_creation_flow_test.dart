@@ -360,6 +360,38 @@ void main() {
         validDraft().title);
   });
   testWidgets(
+      'successful confirmation returns refresh and invokes creation once',
+      (tester) async {
+    final repo = TestAdRepository();
+    var created = 0;
+    String? result;
+    await tester.pumpWidget(host(Builder(
+        builder: (context) => Scaffold(
+            body: FilledButton(
+                onPressed: () async {
+                  result = await Navigator.of(context).push<String>(
+                      MaterialPageRoute(
+                          builder: (_) => AdCreateScreen(
+                              repository: repo,
+                              proxoCard: validDraft().toJson(),
+                              onAdCreated: () => created++)));
+                },
+                child: const ProxoText('Open ad form'))))));
+    await tester.tap(find.text('Open ad form'));
+    await tester.pumpAndSettle();
+    await tapVisible(tester, find.byKey(const ValueKey('review-ad')));
+    expect(repo.submissions, 0);
+    await tester.pump(const Duration(seconds: 11));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.pumpAndSettle();
+    expect(repo.submissions, 1);
+    expect(created, 1);
+    expect(result, 'refresh');
+    expect(find.byType(AdCreateScreen), findsNothing);
+    expect(repo.saved, isNull);
+  });
+  testWidgets(
       'countdown submits once and disables cancellation while processing',
       (tester) async {
     final repo = TestAdRepository()..completion = Completer<String>();

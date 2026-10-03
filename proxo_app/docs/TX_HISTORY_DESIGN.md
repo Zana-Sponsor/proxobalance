@@ -23,7 +23,7 @@ refreshing, and shows a spinner during refresh. Language changes update an open
 history page. Transaction queries, amounts, balances and detail routes retain
 their existing behavior. The AppBar back button returns to the existing shell.
 
-Validation: 225 widget/model/PDF tests passed, including narrow screens, larger
+Validation: 226 widget/model/PDF tests passed, including narrow screens, larger
 text, Kurdish and Arabic titles, long amounts, loading placeholders, and button
 callbacks. The complete verification report is in `AD_CREATION_IMPLEMENTATION.md`.
 
