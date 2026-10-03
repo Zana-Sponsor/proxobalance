@@ -246,7 +246,7 @@ export function renderTemplate(template,card,{adToken=null}={}) {
   // In tracked mode a link-scoped URL is the only source of attribution.
   const handlers=parts.map(p=>{
     const url=adToken
-      ?'/a/'+encodeURIComponent(adToken)+'/action/'+TYPES[p.id]
+      ?'/a/'+encodeURIComponent(adToken)+'/action/'+p.id
       :p.url;
     return "document.getElementById('"+p.id+"').onclick=function(){"
       +"askConfirm('"+p.type+"','"+safeJs(url)+"','"+safeJs(p.label)+"');};";
