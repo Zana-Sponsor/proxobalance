@@ -1,7 +1,7 @@
 import {
   trackedContext, recordContactEvent, actionUrl
-} from './_lib/proxolink-track.js';
-import { renderedPage, publicPage, unavailable } from './_lib/proxolink.js';
+} from '../proxolink-track.js';
+import { renderedPage, publicPage, unavailable } from '../proxolink.js';
 
 export default async function handler(req,res) {
   if(req.method!=='GET')return unavailable(res);
@@ -11,14 +11,14 @@ export default async function handler(req,res) {
     const action=typeof req.query?.action==='string'?req.query.action:null;
     if(action) {
       const url=actionUrl(card,action);
-      await recordContactEvent(req,link.id,'button_click',action);
+      await recordContactEvent(req,res,link.id,'button_click',action);
       res.statusCode=302;
       res.setHeader('Cache-Control','no-store');
       res.setHeader('Location',url);
       return res.end();
     }
     const html=await renderedPage(card,{adToken:token});
-    await recordContactEvent(req,link.id,'page_view');
+    await recordContactEvent(req,res,link.id,'page_view');
     return publicPage(res,html);
   } catch {
     // No guessed ad identity, no fallback to another user's card.

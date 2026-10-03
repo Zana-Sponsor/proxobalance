@@ -16,6 +16,30 @@ export function makePreviewToken(card) {
   ])).toString('base64url');
   return payload+'.'+signature(payload);
 }
+
+export function makeTemplateToken(userId, key, version) {
+  if(!validUuid(userId)||!/^[a-z][a-z0-9_-]{0,39}$/.test(key)
+    ||!Number.isInteger(version)||version<1)throw Error('invalid_template');
+  const payload=Buffer.from(JSON.stringify({kind:'template',userId,key,version,
+    expires:Math.floor(Date.now()/1000)+300})).toString('base64url');
+  return payload+'.'+signature(payload);
+}
+
+export function templateTokenData(token) {
+  try {
+    if(typeof token!=='string'||token.length>512)return null;
+    const [payload,mac,extra]=token.split('.');
+    if(!payload||!mac||extra!==undefined)return null;
+    const expected=Buffer.from(signature(payload)),actual=Buffer.from(mac);
+    if(expected.length!==actual.length||!timingSafeEqual(expected,actual))return null;
+    const data=JSON.parse(Buffer.from(payload,'base64url').toString('utf8'));
+    if(data.kind!=='template'||!validUuid(data.userId)
+      ||!/^[a-z][a-z0-9_-]{0,39}$/.test(data.key)
+      ||!Number.isInteger(data.version)||data.version<1
+      ||!Number.isInteger(data.expires)||data.expires<Math.floor(Date.now()/1000))return null;
+    return data;
+  } catch {return null;}
+}
 export function validPreviewToken(token,card) {
   try {
     if(typeof token!=='string'||token.length>512)return false;

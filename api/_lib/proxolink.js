@@ -1,4 +1,6 @@
 import { createHash } from 'node:crypto';
+import { verifyBearer } from './security.js';
+import sharp from 'sharp';
 
 const URL_BASE = (process.env.PROXO_SUPABASE_URL || '').replace(/\/$/, '');
 const SERVICE_KEY = process.env.PROXO_SUPABASE_SERVICE_ROLE_KEY || '';
@@ -22,7 +24,8 @@ export function normalizedPlatforms(platforms) {
   for(const [key,value] of Object.entries(platforms)) {
     const id=PLATFORM_ALIASES[key.toLowerCase()];
     if(!id)throw err(422,'invalid_platform_value');
-    if(value==null||String(value).trim()==='')continue;
+    if(value==null||value==='')continue;
+    if(typeof value!=='string'||value.length>100)throw err(422,'invalid_platform_value');
     if(normalized[id]!==undefined && normalized[id]!==value)
       throw err(422,'invalid_platform_value');
     normalized[id]=String(value).trim();
@@ -60,6 +63,18 @@ export function safeHtml(value) {
   return String(value ?? '').replaceAll('&','&amp;').replaceAll('<','&lt;')
     .replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#39;');
 }
+// Equivalent to the existing Flutter ProxoTextDirection.html policy.
+export function safeText(value) {
+  const text=String(value??'');
+  if(!/[\u0590-\u08FF\uFB1D-\uFDFF\uFE70-\uFEFF]/u.test(text))return safeHtml(text);
+  const run=/[+\-−$#@]{0,2}[A-Za-z\u00C0-\u024F0-9\u0660-\u0669\u06F0-\u06F9][A-Za-z\u00C0-\u024F0-9\u0660-\u0669\u06F0-\u06F9\p{M}_.,:/@+%?=&~\u066A\u066B\u066C\-]*(?:[ \t]+[+\-−$#@]{0,2}[A-Za-z\u00C0-\u024F0-9\u0660-\u0669\u06F0-\u06F9][A-Za-z\u00C0-\u024F0-9\u0660-\u0669\u06F0-\u06F9\p{M}_.,:/@+%?=&~\u066A\u066B\u066C\-]*)*/gu;
+  let offset=0,result='';
+  for(const match of text.matchAll(run)) {
+    result+=safeHtml(text.slice(offset,match.index))+'<bdi dir="ltr">'+safeHtml(match[0])+'</bdi>';
+    offset=match.index+match[0].length;
+  }
+  return result+safeHtml(text.slice(offset));
+}
 function safeJs(value) {
   // The string is embedded in a single-quoted inline JS literal.
   return String(value).replaceAll('\\','\\\\').replaceAll("'", "\\'")
@@ -68,6 +83,7 @@ function safeJs(value) {
     .replace(/\u2028|\u2029/g,' ');
 }
 function digits(value) {
+  if(typeof value!=='string'||!/^\+?[0-9\s()-]+$/.test(value))throw err(422,'invalid_platform_value');
   const result = String(value ?? '').replace(/[^\d]/g,'');
   if (result.length < 8 || result.length > 15) throw err(422,'invalid_platform_value');
   return result;
@@ -108,7 +124,7 @@ function configuration() {
 async function request(path,options={}) {
   const c=configuration();
   const headers = {apikey:c.key,Authorization:'Bearer '+c.key,...options.headers};
-  const response=await fetch(c.base+path,{...options,headers});
+  const response=await fetch(c.base+path,{signal:AbortSignal.timeout(10000),...options,headers});
   if (!response.ok) throw err(response.status===404?404:503,'backend_unavailable');
   return response;
 }
@@ -127,6 +143,12 @@ export async function verifyPublicAvatar(path) {
     &&String.fromCharCode(...data.slice(8,12))==='WEBP';
   if(!((jpeg&&mime==='image/jpeg')||(png&&mime==='image/png')
     ||(webp&&mime==='image/webp')))throw err(422,'invalid_avatar');
+  try {
+    const decoded=sharp(data,{limitInputPixels:25000000,failOn:'warning'});
+    const info=await decoded.metadata();
+    if(!info.width||!info.height||info.width>8192||info.height>8192)throw Error();
+    await decoded.raw().toBuffer();
+  } catch {throw err(422,'invalid_avatar');}
   return true;
 }
 export async function proxoRows(table,filters='',columns='*') {
@@ -142,20 +164,14 @@ export async function proxoWrite(table,method,data,filters='',prefer='return=rep
   return res.status===204?[]:res.json();
 }
 export async function authenticatedUser(req) {
-  const token=String(req.headers?.authorization||'').match(/^Bearer\s+(.+)$/i)?.[1];
-  if (!token) throw err(401,'unauthorized');
   const c=configuration();
-  const response=await fetch(c.base+'/auth/v1/user',{
-    headers:{apikey:c.key,Authorization:'Bearer '+token}
-  });
-  if(!response.ok) throw err(401,'unauthorized');
-  const user=await response.json();
+  const user=await verifyBearer(req,c);
   if(!validUuid(user?.id)) throw err(401,'unauthorized');
   return user;
 }
 export async function cardById(id) {
   if(!validUuid(id)) throw err(404,'card_not_found');
-  const cols='id,user_id,name,bio,tt,tiktok,platforms,style,color_theme,template_key,template_version,card_language,avatar_path,status,publish_status';
+  const cols='id,user_id,name,bio,tt,tiktok,platforms,style,color_theme,template_key,template_version,card_language,avatar_path,status,publish_status,card_number,created_at,updated_at,published_at';
   const rows=await proxoRows('proxolink_cards','&id=eq.'+id+'&limit=1',cols);
   if(!rows.length) throw err(404,'card_not_found');
   return rows[0];
@@ -185,6 +201,7 @@ export async function privateTemplate(record) {
   return raw;
 }
 function avatarHtml(card) {
+  if(card.demo===true) return '<img src="/assets/proxolink-demo-avatar.png" style="width:100%;height:100%;object-fit:cover;border-radius:50%">';
   if(card.avatar_path) {
     const prefix=card.user_id+'/'+card.id+'/';
     if(!String(card.avatar_path).startsWith(prefix)) throw err(422,'invalid_avatar');
@@ -208,14 +225,14 @@ function iconClass(id) {return id==='ph'||id==='as'?'fas':'fab';}
 function gridButton(p,shine) {
   return '<a id="'+p.id+'" class="btn'+(shine?' shine-active':'')+'">'
     +'<i class="'+iconClass(p.id)+' '+ICON[p.id]+'" style="font-size:'+ICON_SIZE[p.id]+'px"></i>'
-    +'<span>'+safeHtml(p.label)+'</span></a>';
+    +'<span dir="auto">'+safeText(p.label)+'</span></a>';
 }
 function badgeUrl(tt) {return 'https://www.tiktok.com/@'+encodeURIComponent(tt);}
-function darkLight(parts,tt) {
+function darkLight(parts,tt,ttHref) {
   const btns=[...parts], idx=btns.findIndex(p=>p.id==='wa');
   if(idx===0 && btns.length>=2) [btns[0],btns[1]]=[btns[1],btns[0]];
   else if(idx>1) btns.splice(1,0,btns.splice(idx,1)[0]);
-  const ttUrl=safeHtml(badgeUrl(tt)), label=safeHtml(tt);
+  const ttUrl=safeHtml(ttHref||badgeUrl(tt)), label=safeHtml(tt);
   const pill='<a href="'+ttUrl+'" target="_blank" class="tt-pill"><span>@'+label
     +'</span><i class="fab fa-tiktok"></i></a>';
   const badge='<div class="tt-wrap"><a href="'+ttUrl
@@ -237,13 +254,13 @@ function pillButton(p,shine,shadow) {
   return '<a id="'+p.id+'" class="pl-btn'+(shine?' shine-active':'')+'"'
     +' style="background:'+BACKGROUND[p.id]+';box-shadow:'+shadow+';">'
     +'<span style="width:44px;flex-shrink:0;"></span>'
-    +'<span class="pl-lbl">'+safeHtml(p.label)+'</span>'
+    +'<span class="pl-lbl" dir="auto">'+safeText(p.label)+'</span>'
     +'<i class="'+iconClass(p.id)+' '+ICON[p.id]+'"'
     +' style="font-size:'+ICON_SIZE[p.id]+'px;width:44px;flex-shrink:0;text-align:center;"></i></a>';
 }
-function contactButtons(style,parts,tt) {
-  if(style==='dark'||style==='light')return {...darkLight(parts,tt),ttInline:''};
-  const ttUrl=safeHtml(badgeUrl(tt)), label=safeHtml(tt);
+function contactButtons(style,parts,tt,ttHref) {
+  if(style==='dark'||style==='light')return {...darkLight(parts,tt,ttHref),ttInline:''};
+  const ttUrl=safeHtml(ttHref||badgeUrl(tt)), label=safeHtml(tt);
   let ttBadge=tt?'<div class="tt-wrap"><a href="'+ttUrl
     +'" target="_blank" class="tt-sm"><span dir="ltr">@'+label
     +'</span><i class="fab fa-tiktok" style="font-size:18px"></i></a></div>':'';
@@ -258,7 +275,7 @@ function contactButtons(style,parts,tt) {
     return {
       buttons:parts.map((p,i)=>'<a id="'+p.id+'" class="btn-classic'+(i===0?' shine-active':'')
       +'" style="background:'+CLASSIC[p.id]+'"><div class="ic-spacer"></div>'
-      +'<span>'+safeHtml(p.label)+'</span><div class="ic-wrap"><i class="'
+      +'<span dir="auto">'+safeText(p.label)+'</span><div class="ic-wrap"><i class="'
       +iconClass(p.id)+' '+ICON[p.id]+'"></i></div></a>').join(''),
       ttBadge:tt?'<a href="'+ttUrl+'" target="_blank" class="tt-classic">'
         +'<span dir="ltr">@'+label+'</span><i class="fab fa-tiktok"></i></a>':'',
@@ -276,10 +293,10 @@ function contactButtons(style,parts,tt) {
 export function renderTemplate(template,card,{adToken=null}={}) {
   validateCardData(card);
   const style=card.template_key||card.style;
-  const colors=THEMES[card.color_theme]||THEMES.purple;
+  const colors=THEMES[card.color_theme]||Object.values(THEMES).find(pair=>pair.some(c=>c===String(card.color_theme).toLowerCase()))||THEMES.purple;
   const tt=card.tt||card.tiktok?handle(card.tt||card.tiktok):'';
   const parts=selectedPlatforms(card);
-  const pieces=contactButtons(style,parts,tt);
+  const pieces=contactButtons(style,parts,tt,adToken?'/a/'+encodeURIComponent(adToken)+'/action/tt':null);
   // In tracked mode a link-scoped URL is the only source of attribution.
   const handlers=parts.map(p=>{
     const url=adToken
@@ -289,7 +306,7 @@ export function renderTemplate(template,card,{adToken=null}={}) {
       +"askConfirm('"+p.type+"','"+safeJs(url)+"','"+safeJs(p.label)+"');};";
   }).join('\n  ');
   const placeholders={
-    NAME:safeHtml(card.name),BIO:safeHtml(card.bio||''),
+    NAME:safeText(card.name),BIO:safeText(card.bio||''),
     AVATAR:avatarHtml(card),GRAD:'linear-gradient(to right,'+colors[0]+','+colors[1]+')',
     BUTTONS:pieces.buttons,TT_BADGE:pieces.ttBadge,TT_INLINE:pieces.ttInline,
     THEME_FROM:colors[0],THEME_TO:colors[1],HANDLERS:handlers
@@ -299,15 +316,17 @@ export function renderTemplate(template,card,{adToken=null}={}) {
     return placeholders[k];
   });
   if(/\{\{[A-Z_]+\}\}/.test(html))throw err(503,'template_invalid');
-  return html;
+  return html.replaceAll('https://raw.githubusercontent.com/Zana-Sponsor/Zana-Sponsor/main/Rabar_021.woff2','/assets/fonts/Rabar_021.woff2')
+    .replace('<html dir="rtl" lang="ku">','<html dir="'+(card.card_language==='en'?'ltr':'rtl')+'" lang="'+(card.card_language||'ku')+'">');
 }
 export async function renderedPage(card,{adToken=null,preview=false}={}) {
   validateCardData(card);
   const meta=await activeTemplate(card);
-  if(meta.requires_avatar && !card.avatar_path) throw err(422,'avatar_required');
+  if(meta.requires_avatar && !card.avatar_path && card.demo!==true) throw err(422,'avatar_required');
   const template=await privateTemplate(meta);
   const html=renderTemplate(template,card,{adToken});
-  if(!preview)return html;
+  if(!preview && /^[A-Za-z0-9]{5,60}$/.test(process.env.PROXO_TIKTOK_PIXEL_ID||''))
+    return html.replace(/ttq\.load\(['"][^'"]+['"]\)/g,"ttq.load('"+process.env.PROXO_TIKTOK_PIXEL_ID+"')");
   // Strip the non-visual legacy TikTok Pixel bootstrap in owner preview.
   // All eight v1 templates use this same bootstrap. Contact button script
   // checks window.ttq before tracking, so it safely becomes a no-op.
@@ -321,7 +340,15 @@ export function publicPage(res,html) {
   res.setHeader('Content-Type','text/html; charset=utf-8');
   res.setHeader('Cache-Control','no-store');
   res.setHeader('X-Content-Type-Options','nosniff');
-  res.setHeader('Referrer-Policy','strict-origin-when-cross-origin');
+  res.setHeader('Referrer-Policy','no-referrer');
+  res.setHeader('Permissions-Policy','camera=(), microphone=(), geolocation=()');
+  const hashes=[...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)]
+    .map(m=>"'sha256-"+createHash('sha256').update(m[1]).digest('base64')+"'");
+  res.setHeader('Content-Security-Policy', "default-src 'none'; base-uri 'none'; object-src 'none'; frame-ancestors 'none'; "
+    +"script-src 'self' "+hashes.join(' ')+" https://analytics.tiktok.com; "
+    +"style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; "
+    +"font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self' https: data:; "
+    +"connect-src 'self' https://analytics.tiktok.com https://*.tiktok.com;");
   res.end(html);
 }
 export function unavailable(res) {

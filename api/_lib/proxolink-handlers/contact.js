@@ -1,5 +1,5 @@
-import { validPreviewToken } from './_lib/proxolink-preview.js';
-import { cardById, renderedPage, publicPage, unavailable } from './_lib/proxolink.js';
+import { validPreviewToken } from '../proxolink-preview.js';
+import { cardById, renderedPage, publicPage, unavailable } from '../proxolink.js';
 
 export default async function handler(req,res) {
   if(req.method!=='GET') return unavailable(res);

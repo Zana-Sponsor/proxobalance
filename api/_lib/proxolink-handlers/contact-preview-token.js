@@ -1,10 +1,9 @@
-import { readJson, json } from './_lib/security.js';
-import { authenticatedUser, cardById, validUuid } from './_lib/proxolink.js';
-import { makePreviewToken } from './_lib/proxolink-preview.js';
-export default async function handler(req,res) {
+import { readJson, json, withSecurity } from '../security.js';
+import { authenticatedUser, cardById, validUuid } from '../proxolink.js';
+import { makePreviewToken } from '../proxolink-preview.js';
+async function handler(req,res,{user}) {
   if(req.method!=='POST')return json(res,405,{ok:false,error:'method_not_allowed'});
   try {
-    const user=await authenticatedUser(req);
     const body=await readJson(req,1024);
     if(!validUuid(body?.card_id))return json(res,422,{ok:false,error:'invalid_card'});
     const card=await cardById(body.card_id);
@@ -17,3 +16,5 @@ export default async function handler(req,res) {
     });
   } catch {return json(res,503,{ok:false,error:'preview_unavailable'});}
 }
+
+export default withSecurity(handler, {auth:'required', methods:['POST'],autoLog:false,resolveUser:authenticatedUser});

@@ -1,8 +1,9 @@
-import { readJson, json } from './_lib/security.js';
+import { readJson, json, withSecurity } from '../security.js';
+import { createHash } from 'node:crypto';
 import {
   authenticatedUser, cardById, activeTemplate, renderedPage,
   validateCardData, normalizedPlatforms, verifyPublicAvatar, proxoRows, proxoWrite, validUuid
-} from './_lib/proxolink.js';
+} from '../proxolink.js';
 
 const STYLES=new Set(['dark','light','classic','pill','card','neon','zoom','banner']);
 const THEMES=new Set(['purple','blue','green','red','yellow','cyan','pink','dark']);
@@ -35,7 +36,7 @@ function validatePayload(body,userId,id,old=null) {
   };
   if(!STYLES.has(data.template_key)
     ||!Number.isInteger(data.template_version)||data.template_version<1
-    ||!THEMES.has(data.color_theme)||!['ku','ar'].includes(data.card_language))
+    ||!THEMES.has(data.color_theme)||!['ku','ar','en'].includes(data.card_language))
     throw Object.assign(new Error('invalid_request'),{code:'invalid_request'});
   if(typeof data.tt!=='string')
     throw Object.assign(new Error('invalid_request'),{code:'invalid_request'});
@@ -44,7 +45,7 @@ function validatePayload(body,userId,id,old=null) {
     const expected=userId+'/'+id+'/';
     if(typeof data.avatar_path!=='string'
       ||!data.avatar_path.startsWith(expected)
-      ||!/\.(webp|jpe?g|png)$/i.test(data.avatar_path))
+      ||!/^[a-zA-Z0-9_-]+\.(webp|jpe?g|png)$/i.test(data.avatar_path.slice(expected.length)))
       throw Object.assign(new Error('invalid_avatar'),{code:'invalid_avatar'});
   }
   validateCardData(data);
@@ -69,29 +70,37 @@ async function create(req,res,userId,body) {
   const id=body.client_request_id;
   if(!validUuid(id)||body.id && body.id!==id)
     return json(res,422,{ok:false,error:'invalid_request'});
+  const data=validatePayload(body,userId,id);
+  const hash=createHash('sha256').update(JSON.stringify({...data,
+    platforms:Object.fromEntries(Object.entries(data.platforms).sort())})).digest('hex');
   const existing=await proxoRows('proxolink_cards',
     '&id=eq.'+id+'&limit=1',
-    'id,user_id,name,status,publish_status');
+    'id,user_id,name,status,publish_status,creation_request_hash');
   if(existing.length) {
     if(existing[0].user_id!==userId)
       return json(res,409,{ok:false,error:'invalid_request'});
+    if(existing[0].creation_request_hash!==hash)
+      return json(res,409,{ok:false,error:'idempotency_conflict'});
     return json(res,200,{ok:true,card:publicCard(existing[0]),reused:true});
   }
-  const data=validatePayload(body,userId,id);
   let card;
   try {
     const inserted=await proxoWrite('proxolink_cards','POST',{
       ...data,style:data.template_key,tiktok:data.tt,
       status:'inactive',publish_status:'creating',
-      client_request_id:id
-    },'select=id,user_id,name,status,publish_status');
+      client_request_id:id,creation_request_hash:hash
+    },'select=id,user_id,name,status,publish_status,updated_at');
     card=inserted[0];
   } catch(error) {
     // Concurrent duplicate POST: re-read the exact same idempotency key.
     const rows=await proxoRows('proxolink_cards',
       '&id=eq.'+id+'&user_id=eq.'+userId+'&limit=1',
-      'id,user_id,name,status,publish_status');
-    if(rows.length)return json(res,200,{ok:true,card:publicCard(rows[0]),reused:true});
+      'id,user_id,name,status,publish_status,creation_request_hash');
+    if(rows.length) {
+      if(rows[0].creation_request_hash!==hash)
+        return json(res,409,{ok:false,error:'idempotency_conflict'});
+      return json(res,200,{ok:true,card:publicCard(rows[0]),reused:true});
+    }
     throw error;
   }
   try {
@@ -100,14 +109,16 @@ async function create(req,res,userId,body) {
       publish_status:'ready',status:'active',
       last_publish_error_code:null,last_publish_error_at:null,
       published_at:new Date().toISOString()
-    },'id=eq.'+id+'&user_id=eq.'+userId+'&select=id,user_id,name,status,publish_status');
+    },'id=eq.'+id+'&user_id=eq.'+userId+'&updated_at=eq.'+encodeURIComponent(card.updated_at)+'&select=id,user_id,name,status,publish_status');
+    if(!updated.length)return json(res,200,{ok:true,card:publicCard(await cardById(id)),reused:true});
     return json(res,201,{ok:true,card:publicCard(updated[0])});
   } catch(error) {
     const failed=await proxoWrite('proxolink_cards','PATCH',{
       publish_status:'failed',status:'inactive',
       last_publish_error_code:String(error?.code||'render_failed').slice(0,80),
       last_publish_error_at:new Date().toISOString()
-    },'id=eq.'+id+'&user_id=eq.'+userId+'&select=id,user_id,name,status,publish_status');
+    },'id=eq.'+id+'&user_id=eq.'+userId+'&updated_at=eq.'+encodeURIComponent(card.updated_at)+'&select=id,user_id,name,status,publish_status');
+    if(!failed.length)return json(res,200,{ok:true,card:publicCard(await cardById(id)),reused:true});
     return json(res,422,{ok:false,error:'publish_failed',
       card:publicCard(failed[0])});
   }
@@ -118,6 +129,8 @@ async function edit(req,res,userId,body,id) {
   if(current.user_id!==userId)
     return json(res,403,{ok:false,error:'forbidden'});
   const proposed=validatePayload(body,userId,id,current);
+  if(Date.parse(body.expected_updated_at)!==Date.parse(current.updated_at))
+    return json(res,409,{ok:false,error:'edit_conflict'});
   // Render in memory BEFORE changing a currently published card.
   await readiness(proposed);
   const fields={
@@ -131,15 +144,20 @@ async function edit(req,res,userId,body,id) {
   };
   // Keep an intentionally inactive card inactive; editing must not expose it.
   const updated=await proxoWrite('proxolink_cards','PATCH',fields,
-    'id=eq.'+id+'&user_id=eq.'+userId+'&select=id,user_id,name,status,publish_status');
-  if(!updated.length)throw Error('backend_unavailable');
+    'id=eq.'+id+'&user_id=eq.'+userId+'&updated_at=eq.'+encodeURIComponent(current.updated_at)
+      +'&select=id,user_id,name,status,publish_status');
+  if(!updated.length)return json(res,409,{ok:false,error:'edit_conflict'});
   return json(res,200,{ok:true,card:publicCard(updated[0])});
 }
-export default async function handler(req,res) {
-  if(!['POST','PATCH'].includes(req.method))
+async function handler(req,res,{user}) {
+  if(!['POST','PATCH','GET'].includes(req.method))
     return json(res,405,{ok:false,error:'method_not_allowed'});
   try {
-    const user=await authenticatedUser(req);
+    if(req.method==='GET') {
+      const cards=await proxoRows('proxolink_cards','&user_id=eq.'+user.id+'&order=created_at.desc',
+        'id,user_id,name,bio,tt,platforms,template_key,template_version,style,color_theme,card_language,avatar_path,status,publish_status,card_number,created_at,updated_at');
+      return json(res,200,{ok:true,cards});
+    }
     const body=await readJson(req,64*1024);
     if(!body||typeof body!=='object'||Array.isArray(body))
       return json(res,422,{ok:false,error:'invalid_request'});
@@ -148,3 +166,5 @@ export default async function handler(req,res) {
       typeof req.query?.id==='string'?req.query.id:'');
   } catch(error) {return failure(res,error);}
 }
+
+export default withSecurity(handler, {auth:'required', methods:['POST','PATCH','GET'],autoLog:false,resolveUser:authenticatedUser});

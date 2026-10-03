@@ -1,12 +1,11 @@
 import { randomBytes } from 'node:crypto';
-import { readJson, json } from './_lib/security.js';
-import { authenticatedUser, validUuid, proxoWrite } from './_lib/proxolink.js';
+import { readJson, json, withSecurity } from '../security.js';
+import { authenticatedUser, validUuid, proxoWrite } from '../proxolink.js';
 
-export default async function handler(req,res) {
+async function handler(req,res,{user}) {
   if(req.method!=='POST')
     return json(res,405,{ok:false,error:'method_not_allowed'});
   try {
-    const user=await authenticatedUser(req);
     const body=await readJson(req,1024);
     if(!validUuid(body?.ad_id))
       return json(res,422,{ok:false,error:'invalid_ad'});
@@ -26,3 +25,5 @@ export default async function handler(req,res) {
     return json(res,422,{ok:false,error:'ad_link_unavailable'});
   }
 }
+
+export default withSecurity(handler, {auth:'required', methods:['POST'],autoLog:false,resolveUser:authenticatedUser});

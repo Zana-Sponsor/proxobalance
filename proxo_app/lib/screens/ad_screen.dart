@@ -1622,6 +1622,9 @@ class _AdScreenState extends State<AdScreen>
             .from('proxolink_cards')
             .select('id')
             .eq('id', assetId)
+            .eq('user_id', supabase.auth.currentUser!.id)
+            .eq('status', 'active')
+            .eq('publish_status', 'ready')
             .maybeSingle();
         if (assetRow == null) {
           assetId = null;
