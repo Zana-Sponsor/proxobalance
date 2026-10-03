@@ -281,12 +281,20 @@ export function renderTemplate(template,card,{adToken=null}={}) {
   if(/\{\{[A-Z_]+\}\}/.test(html))throw err(503,'template_invalid');
   return html;
 }
-export async function renderedPage(card,{adToken=null}={}) {
+export async function renderedPage(card,{adToken=null,preview=false}={}) {
   validateCardData(card);
   const meta=await activeTemplate(card);
   if(meta.requires_avatar && !card.avatar_path) throw err(422,'avatar_required');
   const template=await privateTemplate(meta);
-  return renderTemplate(template,card,{adToken});
+  const html=renderTemplate(template,card,{adToken});
+  if(!preview)return html;
+  // Strip the non-visual legacy TikTok Pixel bootstrap in owner preview.
+  // All eight v1 templates use this same bootstrap. Contact button script
+  // checks window.ttq before tracking, so it safely becomes a no-op.
+  return html.replace(
+    /!function\s*\(w,\s*d,\s*t\)\s*\{[\s\S]*?\}\(window,\s*document,\s*['"]ttq['"]\);/g,
+    ''
+  );
 }
 export function publicPage(res,html) {
   res.statusCode=200;
