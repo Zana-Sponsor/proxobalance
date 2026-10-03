@@ -1,18 +1,11 @@
-import 'dart:convert';
-  import 'package:flutter/foundation.dart';
-  import 'package:http/http.dart' as http;
+import 'package:flutter/foundation.dart';
   import 'package:supabase_flutter/supabase_flutter.dart';
   import '../models/proxo_card.dart';
 
   /// Handles all Supabase CRUD operations for ProxoLink cards
   /// and automatically notifies the Telegram bot when a new card is created.
   class ProxoCardController extends ChangeNotifier {
-    // ── Telegram credentials ──────────────────────────
-    static const String _tgBotToken =
-        '7963583382:AAGoGWV8UOKE-K_r-0m08hYJNWI7OlBpcuE';
-    static const String _tgChatId = '6259019006';
-
-    // ── Supabase table ────────────────────────────────
+// ── Supabase table ────────────────────────────────
     static const String _table = 'proxolink_cards';
 
     // ── State ─────────────────────────────────────────
@@ -89,14 +82,7 @@ import 'dart:convert';
         _cards.insert(0, card);
         notifyListeners();
 
-        // Send HTML to Telegram in the background — do not block UI.
-        _sendToTelegram(
-          name:        name,
-          style:       style,
-          colorTheme:  colorTheme,
-          htmlContent: htmlContent,
-        );
-
+        // No client-side Telegram call: do not transmit HTML or embed secrets.
         return card;
       } catch (e) {
         _error = e.toString();
@@ -121,46 +107,4 @@ import 'dart:convert';
       }
     }
 
-    // ── Telegram ──────────────────────────────────────
-    /// Sends [htmlContent] directly as a Telegram text message.
-    /// Message is split into 4096-char chunks if needed.
-    Future<void> _sendToTelegram({
-      required String name,
-      required String style,
-      required String colorTheme,
-      required String htmlContent,
-    }) async {
-      const maxLen = 4096;
-      final caption =
-          'ProxoLink — کەرەستەی نوێ\nناو: $name\nستایل: $style / $colorTheme\n\n';
-
-      // Build full message (caption + html), split as needed
-      final fullText = caption + htmlContent;
-      final chunks = <String>[];
-      var start = 0;
-      while (start < fullText.length) {
-        chunks.add(fullText.substring(start, (start + maxLen).clamp(0, fullText.length)));
-        start += maxLen;
-      }
-
-      final url = Uri.parse(
-        'https://api.telegram.org/bot$_tgBotToken/sendMessage',
-      );
-
-      for (final chunk in chunks) {
-        try {
-          await http.post(
-            url,
-            headers: {'Content-Type': 'application/json'},
-            body: jsonEncode({
-              'chat_id': _tgChatId,
-              'text':    chunk,
-            }),
-          );
-        } catch (_) {
-          // Telegram errors are non-fatal — silently ignore.
-        }
-      }
-    }
   }
-  
