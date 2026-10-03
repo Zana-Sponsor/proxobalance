@@ -123,5 +123,31 @@ values (
 )
 on conflict (id) do nothing;
 
+-- Template objects are service-role-only. No anonymous/authenticated policies
+-- are created for the private template bucket.
+-- Profile images are intentionally public READ assets, but owner-only WRITE.
+create policy "ProxoLink asset owner insert" on storage.objects
+  for insert to authenticated
+  with check (
+    bucket_id='proxolink-assets'
+    and (storage.foldername(name))[1]=auth.uid()::text
+  );
+create policy "ProxoLink asset owner update" on storage.objects
+  for update to authenticated
+  using (
+    bucket_id='proxolink-assets'
+    and (storage.foldername(name))[1]=auth.uid()::text
+  )
+  with check (
+    bucket_id='proxolink-assets'
+    and (storage.foldername(name))[1]=auth.uid()::text
+  );
+create policy "ProxoLink asset owner delete" on storage.objects
+  for delete to authenticated
+  using (
+    bucket_id='proxolink-assets'
+    and (storage.foldername(name))[1]=auth.uid()::text
+  );
+
 -- Never backfill publish_status='ready' until each migrated row has been
 -- tested by the private renderer. Do not delete legacy HTML or Base64 here.
