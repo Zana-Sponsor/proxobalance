@@ -17,6 +17,14 @@
       "destination": "/api/contact?id=:id"
     },
     {
+      "source": "/a/:token/action/:action",
+      "destination": "/api/contact-ad?token=:token&action=:action"
+    },
+    {
+      "source": "/a/:token",
+      "destination": "/api/contact-ad?token=:token"
+    },
+    {
       "source": "/form-demo",
       "destination": "/form.html"
     },
