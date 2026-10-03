@@ -11,6 +11,8 @@ import '../widgets/proxo_refresh.dart';
 import '../widgets/ad_feedback.dart';
 import '../widgets/proxo_popup.dart';
 import '../widgets/best_metrics_home_section.dart';
+import '../widgets/home_quick_actions.dart';
+import '../widgets/ad_form_components.dart';
 import '../main.dart' show supabase, navigatorKey;
 import 'package:proxo_app/widgets/proxo_text.dart';
 
@@ -36,78 +38,6 @@ double _scaleFor(double contentWidth) =>
 
 const TextStyle _kBase =
     TextStyle(fontFamily: kAppFont, decoration: TextDecoration.none);
-
-const TextStyle _kBaseKu = TextStyle(
-  fontFamily: kAppFont,
-  fontFamilyFallback: ['Arial', 'sans-serif'],
-  decoration: TextDecoration.none,
-);
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Quick Actions Tokens — هاوسەنگکراو و توندوتۆڵ
-// ─────────────────────────────────────────────────────────────────────────────
-
-const double _kQaRadius     = 16.0;
-const double _kQaPadH       = 14.0;
-/// ⚠ بوو 14 ⇒ بەرزایی کارت 72. 16 دەیکاتە 76 — هەمان بۆکسی ئایکۆن،
-/// بۆشاییەکی زیاتر لە دەوریدا، بۆیە ڕیزەکە چڕ دەرناکەوێت.
-const double _kQaPadV       = 16.0;
-const double _kQaGapBanner  = 16.0;
-const double _kQaGapCard    = 10.0; 
-
-// بۆکسی ئایکۆن — سکوێرکڵێکی 44×44 بە پاشبنەمایەکی پاستێلی سووک.
-// 44 هەروەها کەمترین ئامانجی دەستلێدانی پێشنیارکراوە، بۆیە ئایکۆنەکە
-// خۆی ناوچەیەکی گونجاوی هەیە تەنانەت ئەگەر ڕۆژێک دەستلێدانی جیای هەبوو.
-const double _kQaIconBox    = 44.0;
-const double _kQaIconRadius = 14.0; // ≈ 0.32 × بۆکس — سکوێرکڵ، نەک بازنە
-const double _kQaIconSize   = 22.0;
-const double _kQaIconGap    = 14.0; // ⚠ بوو 12
-
-const double _kQaChevron    = 22.0; // پێشتر 26.0 بوو
-const double _kQaChevronGap =  8.0; 
-
-// تایپۆگرافی — ژمارە کۆتاییەکانی بریفەکە بە dp. ⚠ ئەم فایلە
-// `kKuFontBump` جێبەجێ **ناکات** (هەرگیز نەیکردووە)، بۆیە ئەمانە
-// دەقاودەق ئەوەن کە دەکێشرێن، تەنها بە `s`ی شاشە.
-const double _kQaFsTitle    = 15.0; // w700
-const double _kQaFsSub      = 12.0; // w400
-const double _kQaTitleGap   =  3.5; // بۆشاییەکی مامناوەندی گونجاو
-const double _kQaLhTitle    = 1.22; // بەرزایی هێڵی سروشتی
-const double _kQaLhSub      = 1.30; 
-
-/// چیڤرۆن — سووکترین توخمی کارتەکە. ⚠ نابێت شین بێت: ئەوە وەک
-/// دوگمەیەکی جیاواز دەخوێندرێتەوە، لە کاتێکدا هەموو کارتەکە خۆی
-/// دەستلێدانێکە.
-const Color _kQaChevronInk = Color(0xFFCBD5E1);
-
-// ── ڕووی کارت ──────────────────────────────────────────────────────────────
-// ⚠ پێشتر `kProxoCardBorder` (#D4D9E1) + `kProxoCardShadow`
-// (0 8px 30px rgba(15,23,42,.07)) بوون — تۆکنی کارتی گەورەی ئەپەکە. لەسەر
-// سێ ڕیزی بچووکی تەنیشت یەکتر ئەو سێبەرە قووڵە وا دەکرد کارتەکان وەک سێ
-// تەختەی مەلەوەر دەربکەون نەک وەک یەک لیست. ئەمانە تایبەتن بەم ڕیزانە:
-// سنوورێکی زۆر سووک + سێبەرێکی 3٪ی نزیک.
-/// ⚠ بوو #F1F5F9. لەسەر پەڕەیەکی #FAFAFA ئەو سنوورە بە زەحمەت
-/// دەبینرا، بۆیە کارتەکان پشتیان بە سێبەرەکە دەبەست بۆ دیاریکردنی
-/// لێوارەکەیان — و ئەوە وای دەکرد قورس و «تۆخ» دەربکەون. سنوورێکی
-/// دیارتر واتە دەکرێت سێبەرەکە سووکتر بێت.
-const Color _kQaBorder = Color(0xFFE2E8F0);
-const double _kQaBorderW = 1.0;
-/// ⚠ بوو `0x08000000 / blur 10 / (0,4)`. لەگەڵ سنوورێکی دیارتردا
-/// ئەو قووڵاییە زیادە بوو و کارتەکانی وەک تەختەی مەلەوەر دەردەخست.
-const List<BoxShadow> _kQaShadow = [
-  BoxShadow(color: Color(0x05000000), blurRadius: 8, offset: Offset(0, 2)),
-];
-
-const Color _kQaFillCreate = Color(0xFFEEF2FF); // سووک و پاک
-const Color _kQaFillTools  = Color(0xFFECFDF5);
-const Color _kQaFillFaq    = Color(0xFFEFF6FF);
-
-/// ⚠ کردنەوەی کەمپەین کرداری سەرەکیی ئەم شاشەیەیە، بۆیە ئایکۆنەکەی
-/// شینی سەرەکی وەردەگرێت. دووانەکەی تر تۆنی خۆیان دەپارێزن — ئەگەر هەر
-/// سێکیان شین بن، هیچیان جیا نابێتەوە.
-const Color _kQaInkCreate = AppColors.accent;
-const Color _kQaInkTools  = Color(0xFF059669);
-const Color _kQaInkFaq     = Color(0xFF2563EB);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Formatting helpers
@@ -637,50 +567,18 @@ class _HomeScreenState extends State<HomeScreen>
                         ),
                       ),
                     ),
-                    SizedBox(height: _kQaGapBanner * s),
-                    Directionality(
-                      textDirection: TextDirection.rtl,
-                      child: _Reveal(
-                        animation: _aActions,
-                        child: RepaintBoundary(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              _QuickActionCard(
-                                scale: s,
-                                icon: Icons.add_rounded,
-                                title: 'کەمپەینی نوێ',
-                                iconFill: _kQaFillCreate,
-                                iconInk: _kQaInkCreate,
-                                subtitle: 'کەمپەینێکی نوێ دروست بکە!',
-                                onTap: widget.onCreateTap,
-                              ),
-                              SizedBox(height: _kQaGapCard * s),
-                              _QuickActionCard(
-                                scale: s,
-                                icon: Icons.link_rounded,
-                                title: 'ئامرازی پەیوەندی',
-                                iconFill: _kQaFillTools,
-                                iconInk: _kQaInkTools,
-                                subtitle: 'لاندینگ پەیجێکی پەیوەندی دروست بکە!',
-                                onTap: widget.onToolsTap,
-                              ),
-                              SizedBox(height: _kQaGapCard * s),
-                              _QuickActionCard(
-                                scale: s,
-                                icon: Icons.question_mark_rounded,
-                                title: 'پرسیارە دووبارەکان',
-                                iconFill: _kQaFillFaq,
-                                iconInk: _kQaInkFaq,
-                                subtitle: 'وەڵامی پرسیارە باوەکان ببینە!',
-                                onTap: widget.onFaqTap,
-                              ),
-                            ],
-                          ),
+                    const SizedBox(height: AdUi.sectionGap),
+                    _Reveal(
+                      animation: _aActions,
+                      child: RepaintBoundary(
+                        child: HomeQuickActions(
+                          onCreateTap: widget.onCreateTap,
+                          onToolsTap: widget.onToolsTap,
+                          onFaqTap: widget.onFaqTap,
                         ),
                       ),
                     ),
-                    const SizedBox(height: 22),
+                    const SizedBox(height: AdUi.sectionGap),
                     _Reveal(
                       animation: _aWeekly,
                       child: RepaintBoundary(
@@ -741,150 +639,6 @@ class _Reveal extends StatelessWidget {
           child: child,
         ),
       );
-}
-
-class _QuickActionIcon extends StatelessWidget {
-  final double scale;
-  final IconData icon;
-  final Color fill;
-  final Color ink;
-
-  const _QuickActionIcon({
-    required this.scale,
-    required this.icon,
-    required this.fill,
-    required this.ink,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final s = scale;
-    return Container(
-      width: _kQaIconBox * s,
-      height: _kQaIconBox * s,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: fill,
-        borderRadius: BorderRadius.circular(_kQaIconRadius * s),
-      ),
-      child: Icon(
-        icon,
-        size: _kQaIconSize * s,
-        color: ink,
-      ),
-    );
-  }
-}
-
-class _QuickActionCard extends StatelessWidget {
-  final double scale;
-  final IconData icon;
-  final String title;
-  final String subtitle;
-  final Color iconFill;
-  final Color iconInk;
-  final VoidCallback? onTap;
-
-  const _QuickActionCard({
-    required this.scale,
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-    required this.iconFill,
-    required this.iconInk,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final s = scale;
-    final radius = BorderRadius.circular(_kQaRadius * s);
-
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.surfaceCard,
-        borderRadius: radius,
-        boxShadow: _kQaShadow,
-      ),
-      // `foregroundDecoration` بۆ سنوورەکە، نەک `decoration`: سنوورێکی
-      // ناوەوە لەسەر `InkWell`ـەکە دەکێشرێت، بۆیە ڕیپڵی داگرتن لە ژێریدا
-      // دەڕوات و لێوارەکە قایم دەمێنێتەوە.
-      foregroundDecoration: BoxDecoration(
-        borderRadius: radius,
-        border: Border.all(color: _kQaBorder, width: _kQaBorderW),
-      ),
-      child: Material(
-        color: Colors.transparent,
-        borderRadius: radius,
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: radius,
-          child: Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: _kQaPadH * s,
-              vertical: _kQaPadV * s,
-            ),
-            child: Directionality(
-              textDirection: TextDirection.ltr,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.chevron_left_rounded,
-                    size: _kQaChevron * s,
-                    color: _kQaChevronInk,
-                  ),
-                  SizedBox(width: _kQaChevronGap * s),
-                  Expanded(
-                    child: Directionality(
-                      textDirection: TextDirection.rtl,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ProxoText(
-                            title,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: _kBaseKu.copyWith(
-                              color: AppColors.ink,
-                              fontSize: _kQaFsTitle * s,
-                              fontWeight: FontWeight.w700,
-                              height: _kQaLhTitle,
-                            ),
-                          ),
-                          SizedBox(height: _kQaTitleGap * s),
-                          ProxoText(
-                            subtitle,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: _kBaseKu.copyWith(
-                              color: AppColors.inkMuted,
-                              fontSize: _kQaFsSub * s,
-                              fontWeight: FontWeight.w400,
-                              height: _kQaLhSub,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: _kQaIconGap * s),
-                  _QuickActionIcon(
-                    scale: s,
-                    icon: icon,
-                    fill: iconFill,
-                    ink: iconInk,
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
 }
 
 class ProxoOverviewBanner extends StatelessWidget {

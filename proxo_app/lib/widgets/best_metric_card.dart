@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../theme/app_theme.dart' show kAppFont;
 import '../services/ad_categories.dart';
 import '../services/best_metrics_service.dart';
+import 'home_best_result_card.dart';
 import 'package:proxo_app/widgets/proxo_text.dart';
 
 const Color _ink = Color(0xFF0B0B32);
@@ -68,6 +69,13 @@ class BestMetricCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (compact) {
+      return HomeBestResultCard(
+        ad: ad,
+        rank: rank,
+        onOpenDetails: onOpenDetails,
+      );
+    }
     final radius = BorderRadius.circular(18);
     final body = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,

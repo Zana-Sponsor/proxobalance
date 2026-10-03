@@ -1,41 +1,35 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:solar_iconkit/solar_iconkit.dart';
+import 'package:flutter/rendering.dart';
 
-import '../theme/app_theme.dart' show kAppFont;
 import '../screens/best_metrics_screen.dart';
 import '../services/best_metrics_service.dart';
+import 'ad_form_components.dart';
 import 'best_metric_card.dart';
-import 'package:proxo_app/widgets/proxo_text.dart';
+import 'proxo_text.dart';
 
-const Color _ink = Color(0xFF0B0B32);
-const Color _muted = Color(0xFF5D6677);
-const Color _accent = Color(0xFF0365FF);
-const Color _line = Color(0xFFE6EAF0);
-const List<BoxShadow> _softCardShadow = <BoxShadow>[
-  BoxShadow(
-    color: Color(0x0F000000),
-    blurRadius: 18,
-    offset: Offset(0, 5),
-  ),
-];
+typedef HomeResultsLoader = Future<List<BestMetricAd>> Function({
+  bool forceRefresh,
+});
 
 class BestMetricsHomeSection extends StatefulWidget {
-  const BestMetricsHomeSection({super.key});
-
+  final HomeResultsLoader? loadPreview;
+  const BestMetricsHomeSection({super.key, this.loadPreview});
   @override
-  State<BestMetricsHomeSection> createState() =>
-      BestMetricsHomeSectionState();
+  State<BestMetricsHomeSection> createState() => BestMetricsHomeSectionState();
 }
 
 class BestMetricsHomeSectionState extends State<BestMetricsHomeSection> {
-  final PageController _pageController = PageController(viewportFraction: 0.88);
+  final PageController _pageController = PageController(viewportFraction: 0.94);
+  final Map<String, double> _cardHeights = {};
+  double? _layoutWidth;
+  TextScaler? _textScaler;
   List<BestMetricAd> _ads = const <BestMetricAd>[];
   bool _loading = true;
   Object? _error;
   int _page = 0;
-
   @override
   void initState() {
     super.initState();
@@ -50,16 +44,26 @@ class BestMetricsHomeSectionState extends State<BestMetricsHomeSection> {
       });
     }
     try {
-      final rows = await BestMetricsService.fetchHomePreview(
+      final rows =
+          await (widget.loadPreview ?? BestMetricsService.fetchHomePreview)(
         forceRefresh: forceRefresh,
       );
       if (!mounted) return;
+      final resetPage = _page >= rows.length;
       setState(() {
         _ads = rows;
         _loading = false;
         _error = null;
-        if (_page >= _ads.length) _page = 0;
+        _cardHeights.removeWhere((id, _) => !rows.any((ad) => ad.id == id));
+        if (resetPage) _page = 0;
       });
+      if (resetPage) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted && _pageController.hasClients) {
+            _pageController.jumpToPage(0);
+          }
+        });
+      }
     } catch (error) {
       if (!mounted) return;
       setState(() {
@@ -79,13 +83,15 @@ class BestMetricsHomeSectionState extends State<BestMetricsHomeSection> {
             parent: animation,
             curve: Curves.easeOutCubic,
           ),
-          child: BestMetricsScreen(
-            initialAds: _ads,
-            initialAdId: initialAdId,
-          ),
+          child: BestMetricsScreen(initialAds: _ads, initialAdId: initialAdId),
         ),
       ),
     );
+  }
+
+  void _recordHeight(String id, Size size) {
+    if (!mounted || ((_cardHeights[id] ?? 0) - size.height).abs() < 0.1) return;
+    setState(() => _cardHeights[id] = size.height);
   }
 
   @override
@@ -95,281 +101,278 @@ class BestMetricsHomeSectionState extends State<BestMetricsHomeSection> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          _SectionHeader(
-            canOpen: _ads.isNotEmpty,
-            onOpen: _openAll,
+  Widget build(BuildContext context) => Align(
+        alignment: Alignment.topCenter,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 600),
+          child: Theme(
+            data: AdUi.theme(context),
+            child: Directionality(
+              textDirection: TextDirection.rtl,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _SectionHeader(canOpen: _ads.isNotEmpty, onOpen: _openAll),
+                  const SizedBox(height: 20),
+                  AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 220),
+                    child: _loading && _ads.isEmpty
+                        ? const _HomeLoading(key: ValueKey('loading'))
+                        : _error != null && _ads.isEmpty
+                            ? _HomeError(
+                                key: const ValueKey('error'),
+                                onRetry: () => refresh(),
+                              )
+                            : _ads.isEmpty
+                                ? const _HomeEmpty(key: ValueKey('empty'))
+                                : _carousel(),
+                  ),
+                ],
+              ),
+            ),
           ),
-          const SizedBox(height: 12),
-          AnimatedSwitcher(
-            duration: const Duration(milliseconds: 220),
-            child: _loading && _ads.isEmpty
-                ? const _HomeLoading(key: ValueKey('loading'))
-                : _error != null && _ads.isEmpty
-                    ? _HomeError(
-                        key: const ValueKey('error'),
-                        onRetry: () => refresh(),
-                      )
-                    : _ads.isEmpty
-                        ? const _HomeEmpty(key: ValueKey('empty'))
-                        : Column(
-                            key: const ValueKey('content'),
-                            children: [
-                          SizedBox(
-                            height: 318,
-                            child: PageView.builder(
-                              controller: _pageController,
-                              clipBehavior: Clip.none,
-                              padEnds: false,
-                              physics: const BouncingScrollPhysics(),
-                              itemCount: _ads.length,
-                              onPageChanged: (value) {
-                                if (mounted) setState(() => _page = value);
-                              },
-                              itemBuilder: (context, index) {
-                                final ad = _ads[index];
-                                return Padding(
-                                  padding: const EdgeInsets.only(left: 12),
-                                  child: TweenAnimationBuilder<double>(
-                                    key: ValueKey('weekly-' + ad.id),
-                                    tween: Tween<double>(begin: 0, end: 1),
-                                    duration: Duration(
-                                      milliseconds: 360 + (index * 55),
-                                    ),
-                                    curve: Curves.easeOutCubic,
-                                    builder: (context, value, child) {
-                                      return Opacity(
-                                        opacity: value,
-                                        child: Transform.translate(
-                                          offset: Offset(0, 18 * (1 - value)),
-                                          child: child,
-                                        ),
-                                      );
-                                    },
-                                    child: BestMetricCard(
-                                      ad: ad,
-                                      rank: index + 1,
-                                      compact: true,
-                                      onOpenDetails: () =>
-                                          _openAll(initialAdId: ad.id),
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
+        ),
+      );
+
+  Widget _carousel() => LayoutBuilder(
+        key: const ValueKey('content'),
+        builder: (context, constraints) {
+          final scaler = MediaQuery.textScalerOf(context);
+          if (_layoutWidth != constraints.maxWidth || _textScaler != scaler) {
+            _layoutWidth = constraints.maxWidth;
+            _textScaler = scaler;
+            _cardHeights.clear();
+          }
+          final height = _cardHeights.isEmpty
+              ? 272.0
+              : _cardHeights.values.reduce(math.max);
+          return Column(
+            children: [
+              SizedBox(
+                height: height,
+                child: PageView.builder(
+                  key: const ValueKey('home-results-carousel'),
+                  controller: _pageController,
+              clipBehavior: Clip.hardEdge,
+                  padEnds: false,
+                  physics: const BouncingScrollPhysics(),
+                  itemCount: _ads.length,
+                  onPageChanged: (value) {
+                    if (mounted) setState(() => _page = value);
+                  },
+                  itemBuilder: (context, index) {
+                    final ad = _ads[index];
+                    // Measure the actual unbounded card rather than truncate scaled
+                    // text to a fixed carousel height. The outer Home scroll stays in charge.
+                    return SingleChildScrollView(
+                      physics: const NeverScrollableScrollPhysics(),
+                      child: _CardSizeObserver(
+                        onSize: (size) => _recordHeight(ad.id, size),
+                        child: Padding(
+                      // Leave enough room for the shared soft shadow below
+                      // the card while keeping the carousel inside its width.
+                      padding: const EdgeInsets.fromLTRB(0, 6, 12, 24),
+                          child: BestMetricCard(
+                            key: ValueKey('weekly-${ad.id}'),
+                            ad: ad,
+                            rank: index + 1,
+                            compact: true,
+                            onOpenDetails: () => _openAll(initialAdId: ad.id),
                           ),
-                          if (_ads.length > 1) ...[
-                            const SizedBox(height: 12),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: List<Widget>.generate(
-                                _ads.length,
-                                (index) => AnimatedContainer(
-                                  duration: const Duration(milliseconds: 180),
-                                  margin:
-                                      const EdgeInsets.symmetric(horizontal: 3),
-                                  width: index == _page ? 18 : 6,
-                                  height: 6,
-                                  decoration: BoxDecoration(
-                                    color: index == _page
-                                        ? _accent
-                                        : const Color(0xFFD7DCE5),
-                                    borderRadius: BorderRadius.circular(999),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ],
+                        ),
                       ),
-          ),
-        ],
-      ),
-    );
-  }
+                    );
+                  },
+                ),
+              ),
+              if (_ads.length > 1) ...[
+            const SizedBox(height: 4),
+                Semantics(
+                  label: 'ڕیکلامی ${_page + 1} لە ${_ads.length}',
+                  child: Row(
+                    key: const ValueKey('home-results-dots'),
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: List.generate(
+                      _ads.length,
+                      (index) => AnimatedContainer(
+                        duration: const Duration(milliseconds: 180),
+                        margin: const EdgeInsets.symmetric(horizontal: 3),
+                        width: index == _page ? 18 : 6,
+                        height: 6,
+                        decoration: BoxDecoration(
+                          color: index == _page ? AdUi.blue : AdUi.controlLine,
+                          borderRadius: AdUi.controlRadius,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ],
+          );
+        },
+      );
 }
 
 class _SectionHeader extends StatelessWidget {
   final bool canOpen;
   final VoidCallback onOpen;
-
-  const _SectionHeader({
-    required this.canOpen,
-    required this.onOpen,
-  });
-
+  const _SectionHeader({required this.canOpen, required this.onOpen});
   @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Container(
-          width: 38,
-          height: 38,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: const Color(0xFFFFF6E8),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: const SolarIcon(
-            SolarIcons.medalStar,
-            style: SolarIconStyle.linear,
-            size: 21,
-            color: Color(0xFFE19A13),
-          ),
-        ),
-        const SizedBox(width: 10),
-        const Expanded(
-          child: ProxoText(
-            'باشترین ئەنجامەکانی هەفتە',
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              fontFamily: kAppFont,
-              fontSize: 15,
-              fontWeight: FontWeight.w800,
-              color: _ink,
+  Widget build(BuildContext context) => LayoutBuilder(
+        builder: (context, constraints) {
+          const title = 'باشترین ئەنجامەکانی هەفتە';
+          const action = 'بینینی هەموو';
+          double width(String text, TextStyle style) {
+            final painter = TextPainter(
+              text: TextSpan(text: text, style: style),
+              textDirection: TextDirection.rtl,
+              textScaler: MediaQuery.textScalerOf(context),
+            )..layout();
+            final result = painter.width;
+            painter.dispose();
+            return result;
+          }
+
+          final heading = ProxoText(title, style: AdUi.heading(context));
+          final button = TextButton(
+            key: const ValueKey('home-results-view-all'),
+            onPressed: canOpen ? onOpen : null,
+            style: TextButton.styleFrom(
+              minimumSize: const Size(0, 48),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
+              shape: const RoundedRectangleBorder(
+                  borderRadius: AdUi.controlRadius),
             ),
-          ),
-        ),
-        TextButton(
-          onPressed: canOpen ? onOpen : null,
-          style: TextButton.styleFrom(
-            foregroundColor: _accent,
-            disabledForegroundColor: _muted,
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-          ),
-          child: const Row(
-            mainAxisSize: MainAxisSize.min,
+            child: ProxoText(
+              action,
+              style: AdUi.text(
+                context,
+                color: canOpen ? AdUi.blue : AdUi.secondary,
+              ),
+            ),
+          );
+          if (width(title, AdUi.heading(context)) +
+                  width(action, AdUi.text(context)) +
+                  48 >
+              constraints.maxWidth) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                heading,
+                const SizedBox(height: 8),
+                Align(alignment: Alignment.centerLeft, child: button),
+              ],
+            );
+          }
+          return Row(
             children: [
-              ProxoText(
-                'بینینی هەموو',
-                style: TextStyle(
-                  fontFamily: kAppFont,
-                  fontSize: 11.5,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              SizedBox(width: 4),
-              SolarIcon(
-                SolarIcons.altArrowLeft,
-                style: SolarIconStyle.linear,
-                size: 16,
-                matchTextDirection: true,
-              ),
+              Expanded(child: heading),
+              button,
             ],
-          ),
+          );
+        },
+      );
+}
+
+class _StateCard extends StatelessWidget {
+  final Widget child;
+  const _StateCard({required this.child});
+  @override
+  Widget build(BuildContext context) => Container(
+        padding: AdUi.cardPadding,
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: AdUi.radius,
+          boxShadow: AdUi.cardShadow,
         ),
-      ],
-    );
-  }
+        child: child,
+      );
 }
 
 class _HomeLoading extends StatelessWidget {
   const _HomeLoading({super.key});
-
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 222,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: _line),
-        boxShadow: _softCardShadow,
-      ),
-      child: const Center(
+  Widget build(BuildContext context) => const _StateCard(
         child: SizedBox(
-          width: 23,
-          height: 23,
-          child: CircularProgressIndicator(
-            color: _accent,
-            strokeWidth: 2.3,
+          height: 104,
+          child: Center(
+            child: SizedBox(
+              width: 24,
+              height: 24,
+              child:
+                  CircularProgressIndicator(color: AdUi.blue, strokeWidth: 2),
+            ),
           ),
         ),
-      ),
-    );
-  }
+      );
 }
 
 class _HomeEmpty extends StatelessWidget {
   const _HomeEmpty({super.key});
-
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      constraints: const BoxConstraints(minHeight: 104),
-      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _line),
-        boxShadow: _softCardShadow,
-      ),
-      child: const Center(
+  Widget build(BuildContext context) => _StateCard(
         child: ProxoText(
           'هێشتا ئەنجامی ئەم هەفتەیە هەڵنەبژێردراوە',
           textAlign: TextAlign.center,
-          style: TextStyle(
-            fontFamily: kAppFont,
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
-            color: _muted,
-            height: 1.5,
-          ),
+          style: AdUi.text(context, color: AdUi.secondary),
         ),
-      ),
-    );
-  }
+      );
 }
 
 class _HomeError extends StatelessWidget {
   final VoidCallback onRetry;
-
   const _HomeError({super.key, required this.onRetry});
-
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _line),
-        boxShadow: _softCardShadow,
-      ),
-      child: Row(
-        children: [
-          const SolarIcon(
-            SolarIcons.dangerTriangle,
-            style: SolarIconStyle.linear,
-            size: 21,
-            color: Color(0xFFE5484D),
-          ),
-          const SizedBox(width: 9),
-          const Expanded(
-            child: ProxoText(
+  Widget build(BuildContext context) => _StateCard(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            ProxoText(
               'ئەنجامەکان بار نەبوون',
-              style: TextStyle(
-                fontFamily: kAppFont,
-                fontSize: 12,
-                color: _muted,
+              style: AdUi.text(context, color: AdUi.secondary),
+            ),
+            const SizedBox(height: 12),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: OutlinedButton(
+                key: const ValueKey('home-results-retry'),
+                onPressed: onRetry,
+                child: ProxoText(
+                  'دووبارە',
+                  style: AdUi.text(context, color: AdUi.blue),
+                ),
               ),
             ),
-          ),
-          TextButton(
-            onPressed: onRetry,
-            child: const ProxoText(
-              'دووبارە',
-              style: TextStyle(fontFamily: kAppFont, fontSize: 11.5),
-            ),
-          ),
-        ],
-      ),
-    );
+          ],
+        ),
+      );
+}
+
+class _CardSizeObserver extends SingleChildRenderObjectWidget {
+  final ValueChanged<Size> onSize;
+  const _CardSizeObserver({required this.onSize, required super.child});
+  @override
+  RenderObject createRenderObject(BuildContext context) =>
+      _CardSizeRender(onSize);
+  @override
+  void updateRenderObject(BuildContext context, _CardSizeRender renderObject) {
+    renderObject.onSize = onSize;
+  }
+}
+
+class _CardSizeRender extends RenderProxyBox {
+  ValueChanged<Size> onSize;
+  bool _queued = false;
+  _CardSizeRender(this.onSize);
+  @override
+  void performLayout() {
+    super.performLayout();
+    if (_queued) return;
+    _queued = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _queued = false;
+      if (attached) onSize(size);
+    });
   }
 }
