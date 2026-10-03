@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../theme/app_theme.dart' show ProxoInk;
 import 'auth_design.dart';
+import 'package:proxo_app/widgets/proxo_text.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // AuthTextField
@@ -70,36 +71,49 @@ class AuthTextField extends StatelessWidget {
           ),
         ],
       ),
-      child: TextField(
+      child: ProxoDirectionalInput(
         controller: controller,
-        focusNode: focusNode,
-        obscureText: obscure,
-        textDirection: forceLtr ? TextDirection.ltr : null,
-        textAlign: TextAlign.start,
-        enabled: enabled,
         keyboardType: keyboardType,
-        inputFormatters: inputFormatters,
-        textInputAction: textInputAction,
-        autofillHints: autofillHints,
-        onChanged: onChanged,
-        onSubmitted: onSubmitted,
-        style: AuthTokens.fieldText,
-        cursorColor: AuthTokens.accent,
-        decoration: InputDecoration(
-          hintText: hint,
-          hintStyle: AuthTokens.fieldText.copyWith(color: AuthTokens.placeholder),
-          filled: true,
-          fillColor: enabled ? Colors.white : AuthTokens.fieldFillOff,
-          isDense: true,
-          contentPadding: AuthTokens.fieldContentPadding,
-          prefixIcon: Icon(icon,
-              size: 19, color: hasError ? AuthTokens.dangerField : AuthTokens.placeholder),
-          prefix: prefix,
-          suffixIcon: trailing,
-          border: _border(AuthTokens.line),
-          enabledBorder: _border(hasError ? AuthTokens.dangerField : AuthTokens.line),
-          focusedBorder: _border(hasError ? AuthTokens.dangerField : AuthTokens.accent, width: 1.3),
-          disabledBorder: _border(AuthTokens.lineOff),
+        forceLtr: forceLtr,
+        builder: (context, inputDirection) => TextField(
+          controller: controller,
+          focusNode: focusNode,
+          obscureText: obscure,
+          textDirection: inputDirection,
+          textAlign: TextAlign.start,
+          enabled: enabled,
+          keyboardType: keyboardType,
+          inputFormatters: inputFormatters,
+          textInputAction: textInputAction,
+          autofillHints: autofillHints,
+          onChanged: onChanged,
+          onSubmitted: onSubmitted,
+          style: AuthTokens.fieldText,
+          cursorColor: AuthTokens.accent,
+          decoration: InputDecoration(
+            hint: proxoFieldText(hint),
+            hintStyle: AuthTokens.fieldText.copyWith(color: AuthTokens.placeholder),
+            filled: true,
+            fillColor: enabled ? Colors.white : AuthTokens.fieldFillOff,
+            isDense: true,
+            contentPadding: AuthTokens.fieldContentPadding,
+            prefixIcon: Icon(
+              icon,
+              size: 19,
+              color: hasError ? AuthTokens.dangerField : AuthTokens.placeholder,
+            ),
+            prefix: prefix,
+            suffixIcon: trailing,
+            border: _border(AuthTokens.line),
+            enabledBorder: _border(
+              hasError ? AuthTokens.dangerField : AuthTokens.line,
+            ),
+            focusedBorder: _border(
+              hasError ? AuthTokens.dangerField : AuthTokens.accent,
+              width: 1.3,
+            ),
+            disabledBorder: _border(AuthTokens.lineOff),
+          ),
         ),
       ),
     );
@@ -110,7 +124,7 @@ class AuthTextField extends StatelessWidget {
         Padding(
           padding: const EdgeInsetsDirectional.only(
               start: 2, bottom: AuthTokens.gapLabelToField),
-          child: Text(label, style: AuthTokens.fieldLabel),
+          child: ProxoText(label, style: AuthTokens.fieldLabel),
         ),
         if (ltr)
           Directionality(textDirection: TextDirection.ltr, child: field)
@@ -119,7 +133,7 @@ class AuthTextField extends StatelessWidget {
         if (hasError)
           Padding(
             padding: const EdgeInsets.only(top: 4.0, right: 2.0),
-            child: Text(
+            child: ProxoText(
               error!,
               style: AuthTokens.inlineError.copyWith(color: AuthTokens.dangerField),
             ),
@@ -209,7 +223,7 @@ class _AuthPrimaryButtonState extends State<AuthPrimaryButton> {
                     strokeWidth: 2.2,
                   ),
                 )
-              : Text(widget.label,
+              : ProxoText(widget.label,
                   key: const ValueKey('label'), style: AuthTokens.buttonText),
         ),
       ),
@@ -240,7 +254,7 @@ class AuthTextLink extends StatelessWidget {
       borderRadius: BorderRadius.circular(6),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-        child: Text(
+        child: ProxoText(
           label,
           style: (style ?? AuthTokens.link).copyWith(color: AuthTokens.accent),
         ),
@@ -321,7 +335,7 @@ class AuthAlert extends StatelessWidget {
           ),
           const SizedBox(width: 8),
           Expanded(
-            child: Text(
+            child: ProxoText(
               message!,
               style: AuthTokens.subtitle.copyWith(
                 fontSize: AuthTokens.textSize,
@@ -359,13 +373,13 @@ class PasswordStrengthMeter extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
+            ProxoText(
               AuthStrings.strengthHeader,
               style: AuthTokens.ruleText.copyWith(color: AuthTokens.inkMuted),
             ),
             AnimatedSwitcher(
               duration: AuthTokens.microTransition,
-              child: Text(
+              child: ProxoText(
                 strength.label,
                 key: ValueKey<PasswordStrength>(strength),
                 style: AuthTokens.ruleText.copyWith(
@@ -434,7 +448,7 @@ class _RuleRow extends StatelessWidget {
           ),
           const SizedBox(width: 6),
           Expanded(
-            child: Text(
+            child: ProxoText(
               label,
               style: AuthTokens.ruleText.copyWith(
                 color: tone,
@@ -649,7 +663,7 @@ class _Chip extends StatelessWidget {
             borderRadius: BorderRadius.circular(AuthTokens.chipRadius),
             border: Border.all(color: AuthTokens.line),
           ),
-          child: Text(
+          child: ProxoText(
             label,
             textDirection: TextDirection.ltr,
             style: AuthTokens.chipText.copyWith(color: AuthTokens.accent),
@@ -693,7 +707,7 @@ class AuthLockoutNotice extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                ProxoText(
                   AuthStrings.lockoutBody,
                   style: AuthTokens.subtitle.copyWith(
                     fontSize: AuthTokens.textSize,
@@ -703,7 +717,7 @@ class AuthLockoutNotice extends StatelessWidget {
                 const SizedBox(height: 4),
                 GestureDetector(
                   onTap: onContactSupport,
-                  child: Text(
+                  child: ProxoText(
                     AuthStrings.lockoutAction,
                     style: AuthTokens.link.copyWith(
                       color: AuthTokens.accent,
@@ -778,12 +792,12 @@ class AuthFastAccountCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
+                      ProxoText(
                         AuthStrings.continueAsPrefix.trim(),
                         style: AuthTokens.ruleText
                             .copyWith(color: AuthTokens.inkMuted),
                       ),
-                      Text(
+                      ProxoText(
                         email,
                         textDirection: TextDirection.ltr,
                         textAlign: TextAlign.left,
@@ -913,7 +927,7 @@ class AuthSegmentedControl extends StatelessWidget {
                                   : AuthTokens.inkMuted,
                             ),
                             child: Center(
-                              child: Text(
+                              child: ProxoText(
                                 labels[i],
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,

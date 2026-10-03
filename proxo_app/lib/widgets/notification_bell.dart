@@ -37,6 +37,7 @@ import 'dart:async';
 import '../theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:proxo_app/widgets/proxo_text.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // NotificationBell  — public widget
@@ -236,7 +237,7 @@ class _NotificationBellState extends State<NotificationBell>
                     ),
                   ),
                   child: Center(
-                    child: Text(
+                    child: ProxoText(
                       _label,
                       style: const TextStyle(
                         fontFamily:  kAppFont,

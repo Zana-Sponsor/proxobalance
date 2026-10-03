@@ -6,7 +6,6 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:proxo_app/l10n/tx_strings.dart';
-import 'package:proxo_app/widgets/bottom_nav.dart';
 import 'package:proxo_app/widgets/receipt/receipt_kit.dart';
 import 'package:proxo_app/widgets/receipt/tx_history_layout.dart';
 
@@ -72,10 +71,6 @@ Widget historyHost({
                         ),
                       ),
                     ),
-              bottomNavigationBar: ProxoBottomNav(
-                currentIndex: 0,
-                onTap: (_) {},
-              ),
             ),
           ),
         ),
@@ -106,6 +101,7 @@ void main() {
         await tester.pumpWidget(historyHost(scale: scale));
         await tester.pumpAndSettle();
         expect(tester.takeException(), isNull);
+        expect(tester.widget<Scaffold>(find.byType(Scaffold)).bottomNavigationBar, isNull);
         final l = TxStrings.of(const Locale('ckb'));
         final title = find.text(l.historyTitle);
         final back = find.byTooltip(l.back);
@@ -120,7 +116,9 @@ void main() {
         expect(tester.widget<Scaffold>(find.byType(Scaffold)).backgroundColor,
             ReceiptTokens.page);
         final card = find.byKey(firstCardKey);
-        final texts = find.descendant(of: card, matching: find.byType(Text));
+        final texts = find.descendant(
+            of: card,
+            matching: find.byWidgetPredicate((widget) => widget is Text));
         expect(texts, findsNWidgets(3));
         final bounds = [
           for (var i = 0; i < 3; i++) receiptPaintedRect(tester, texts.at(i)),

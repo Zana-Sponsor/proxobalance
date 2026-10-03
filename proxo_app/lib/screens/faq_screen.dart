@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../theme/app_theme.dart';
+import 'package:proxo_app/widgets/proxo_text.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // FaqScreen — پرسیارە دووبارەکان
@@ -325,7 +326,7 @@ class _TopBar extends StatelessWidget {
             back,
             Expanded(
               child: Center(
-                child: Text(
+                child: ProxoText(
                   title,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -427,7 +428,7 @@ class _FaqTileState extends State<_FaqTile> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Expanded(
-                      child: Text(
+                      child: ProxoText(
                         widget.item.question,
                         // بێ `maxLines`: پرسیاری درێژی کوردی بە ئاسایی
                         // دەپێچێتەوە و هەرگیز نابڕدرێت.
@@ -484,7 +485,7 @@ class _FaqTileState extends State<_FaqTile> {
                             color: _kHairline,
                           ),
                           SizedBox(height: _kAnswerGap * s),
-                          Text(
+                          ProxoText(
                             widget.item.answer,
                             textAlign: TextAlign.start,
                             style: TextStyle(

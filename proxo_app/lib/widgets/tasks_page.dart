@@ -10,6 +10,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../theme/app_theme.dart';
 import '../main.dart' show supabase;
 import 'proxo_toast.dart';
+import 'package:proxo_app/widgets/proxo_text.dart';
 
 class TasksPage extends StatefulWidget {
   const TasksPage({super.key});
@@ -147,7 +148,7 @@ class _TasksPageState extends State<TasksPage> {
         ),
         const SizedBox(width: 12),
         Expanded(
-          child: Text('ئەرکەکان',
+          child: ProxoText('ئەرکەکان',
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             // AppBar-title role: SemiBold, not Bold
@@ -185,7 +186,7 @@ class _TasksPageState extends State<TasksPage> {
                 child: FaIcon(FontAwesomeIcons.listCheck, size: 28,
                   color: Color(0xFF8B5CF6)))),
             const SizedBox(height: 16),
-            Text('هیچ ئەرکێکی چالاک نییە ئێستا',
+            ProxoText('هیچ ئەرکێکی چالاک نییە ئێستا',
               style: AppTypography.body(color: AppColors.muted)),
           ],
         ),
@@ -253,7 +254,7 @@ class _TasksPageState extends State<TasksPage> {
           // ── Title row + reward badges
           Row(children: [
             Expanded(
-              child: Text(title,
+              child: ProxoText(title,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 // cardTitle role: SemiBold, not Bold
@@ -273,7 +274,7 @@ class _TasksPageState extends State<TasksPage> {
 
           if (description.isNotEmpty) ...[
             const SizedBox(height: 6),
-            Text(description,
+            ProxoText(description,
               style: const TextStyle(fontFamily: kAppFont, fontSize: 12,
                 fontWeight: FontWeight.w400,
                 color: AppColors.muted,
@@ -298,7 +299,7 @@ class _TasksPageState extends State<TasksPage> {
           const SizedBox(height: 8),
 
           // ── Goal label
-          Text(goalLabel,
+          ProxoText(goalLabel,
             style: AppTypography.caption(color: AppColors.muted)),
 
           // ── Claim button
@@ -320,7 +321,7 @@ class _TasksPageState extends State<TasksPage> {
                           width: 18, height: 18,
                           child: CircularProgressIndicator(
                             color: Colors.white, strokeWidth: 2))
-                      : Text('وەرگرتنی خەڵات',
+                      : ProxoText('وەرگرتنی خەڵات',
                           // button role: SemiBold, not Bold
                           style: AppTypography.button(
                               color: Colors.white, size: 13)))),
@@ -342,7 +343,7 @@ class _TasksPageState extends State<TasksPage> {
                   FaIcon(FontAwesomeIcons.circleCheck, size: 14,
                     color: Color(0xFF22C55E)),
                   SizedBox(width: 6),
-                  Text('خەڵاتەکەت وەرگیرا',
+                  ProxoText('خەڵاتەکەت وەرگیرا',
                     style: TextStyle(fontFamily: kAppFont, fontSize: 13,
                       // was Bold — routine positive feedback, not a rare/
                       // blocking moment
@@ -367,7 +368,7 @@ class _TasksPageState extends State<TasksPage> {
       // container forcing it; the badge has no hard-coded height, so it
       // grows with the text instead of clipping (same fix as the
       // ProxoLink chip in proxo_cards_list_screen.dart).
-      child: Text(text,
+      child: ProxoText(text,
         style: AppTypography.caption(color: color, weight: FontWeight.w600)));
   }
 }

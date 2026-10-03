@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../theme/app_theme.dart' show kAppFont;
 import '../services/ad_categories.dart';
 import '../services/best_metrics_service.dart';
+import 'package:proxo_app/widgets/proxo_text.dart';
 
 const Color _ink = Color(0xFF0B0B32);
 const Color _muted = Color(0xFF5D6677);
@@ -60,7 +61,7 @@ class BestMetricCard extends StatelessWidget {
     final opened = await launchUrl(uri, mode: LaunchMode.externalApplication);
     if (!opened && context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('ڤیدیۆکە نەکرایەوە')),
+        const SnackBar(content: ProxoText('ڤیدیۆکە نەکرایەوە')),
       );
     }
   }
@@ -133,7 +134,7 @@ class BestMetricCard extends StatelessWidget {
                                 color: _accent,
                               ),
                               SizedBox(width: 7),
-                              Text(
+                              ProxoText(
                                 'بینینی ڤیدیۆ',
                                 style: TextStyle(
                                   fontFamily: kAppFont,
@@ -160,7 +161,7 @@ class BestMetricCard extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Text(
+                            const ProxoText(
                               'بینینی زیاتر',
                               style: TextStyle(
                                 fontFamily: kAppFont,
@@ -407,7 +408,7 @@ class _RankBadge extends StatelessWidget {
               color: Color(0xFFE19A13),
             ),
             const SizedBox(width: 5),
-            Text(
+            ProxoText(
               '#' + rank.toString(),
               style: const TextStyle(
                 fontFamily: kAppFont,
@@ -461,7 +462,7 @@ class _CategoryPill extends StatelessWidget {
           color: const Color(0xFFF0F5FF),
           borderRadius: BorderRadius.circular(999),
         ),
-        child: Text(
+        child: ProxoText(
           label,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
@@ -507,7 +508,7 @@ class _MetricValue extends StatelessWidget {
             color: _muted,
           ),
           const SizedBox(height: 4),
-          Text(
+          ProxoText(
             value,
             maxLines: 1,
             overflow: TextOverflow.fade,
@@ -520,7 +521,7 @@ class _MetricValue extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 2),
-          Text(
+          ProxoText(
             label,
             maxLines: 1,
             style: const TextStyle(
@@ -571,7 +572,7 @@ class _DetailCapsule extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                ProxoText(
                   label,
                   maxLines: 1,
                   style: const TextStyle(
@@ -582,7 +583,7 @@ class _DetailCapsule extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 2),
-                Text(
+                ProxoText(
                   value,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,

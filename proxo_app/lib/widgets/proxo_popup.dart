@@ -47,6 +47,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../main.dart' show supabase;
 import '../theme/app_theme.dart';
+import 'package:proxo_app/widgets/proxo_text.dart';
 
 const Color _kPopupMuted = Color(0xFF64748B);
 const Color _kPopupSurface = Color(0xFFF1F5F9);
@@ -371,7 +372,7 @@ class _ProxoPopupDialog extends StatelessWidget {
                     borderRadius: BorderRadius.circular(13),
                     onTap: () => _openLink(context),
                     child: const Center(
-                      child: Text(
+                      child: ProxoText(
                         'کردنەوە',
                         style: TextStyle(
                           fontFamily: kAppFont,
@@ -392,7 +393,7 @@ class _ProxoPopupDialog extends StatelessWidget {
               child: GestureDetector(
                 onTap: () => Navigator.of(context).pop(),
                 behavior: HitTestBehavior.opaque,
-                child: const Text(
+                child: const ProxoText(
                   'داخستن',
                   style: TextStyle(
                     fontFamily: kAppFont,

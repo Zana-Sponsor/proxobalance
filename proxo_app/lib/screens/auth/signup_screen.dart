@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../widgets/auth/auth_design.dart';
 import '../../widgets/auth/auth_header.dart';
+import 'package:proxo_app/widgets/proxo_text.dart';
 
 class SignupScreen extends StatelessWidget {
   const SignupScreen({
@@ -19,12 +20,12 @@ class SignupScreen extends StatelessWidget {
       children: <Widget>[
         AuthHeader.inner(onBack: onBack),
         const SizedBox(height: 24),
-        Text(
+        ProxoText(
           AuthStrings.signUpTitle,
           style: AuthTokens.title.copyWith(color: AuthTokens.accent),
         ),
         const SizedBox(height: AuthTokens.gapTitleToSubtitle),
-        Text(AuthStrings.signUpSubtitle, style: AuthTokens.subtitle),
+        ProxoText(AuthStrings.signUpSubtitle, style: AuthTokens.subtitle),
         const SizedBox(height: AuthTokens.gapSubtitleToForm),
         content,
         const SizedBox(height: AuthTokens.gapSectionBottom),

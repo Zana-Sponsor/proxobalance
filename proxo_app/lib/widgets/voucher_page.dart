@@ -206,7 +206,7 @@ class _VoucherPageState extends State<VoucherPage>
                 ),
                 const SizedBox(width: 12),
                 const Expanded(
-                  child: Text('فاوچەرەکان',
+                  child: ProxoText('فاوچەرەکان',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     // Was 18 — every other in-page bar title in the app
@@ -246,7 +246,7 @@ class _VoucherPageState extends State<VoucherPage>
                     children: [
 
                   // ── Code input section ───────────────────────────────────────
-                  const Text('کۆدی فاوچەر',
+                  const ProxoText('کۆدی فاوچەر',
                     style: TextStyle(fontFamily: kAppFont, fontSize: 12.5,
                       fontWeight: FontWeight.w600, color: _cDark,
                       decoration: TextDecoration.none)),
@@ -264,43 +264,45 @@ class _VoucherPageState extends State<VoucherPage>
                         child: Padding(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 14, vertical: 4),
-                          child: TextField(
+                          child: ProxoDirectionalInput(
                             controller: _codeCtrl,
-                            textDirection: TextDirection.ltr,
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              fontFamily: kAppFont,
-                              // "Regular for ... form fields" — was Bold
-                              fontWeight: FontWeight.w400,
-                              letterSpacing: 1.5,
-                              fontSize: 13,
-                              color: _cDark,
-                              decoration: TextDecoration.none,
-                            ),
-                            decoration: const InputDecoration(
-                              hintText: 'کۆدەکەت لێرە بنووسە',
-                              hintStyle: TextStyle(
+                            forceLtr: true,
+                            builder: (context, inputDirection) => TextField(
+                              controller: _codeCtrl,
+                              textDirection: inputDirection,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
                                 fontFamily: kAppFont,
+                                // "Regular for ... form fields" — was Bold
                                 fontWeight: FontWeight.w400,
-                                letterSpacing: 0,
+                                letterSpacing: 1.5,
                                 fontSize: 13,
-                                color: _cMt,
+                                color: _cDark,
+                                decoration: TextDecoration.none,
                               ),
-                              border: InputBorder.none,
-                              isDense: true,
-                              contentPadding:
-                                  EdgeInsets.symmetric(vertical: 12),
+                              decoration: const InputDecoration(
+                                hint: ProxoText('کۆدەکەت لێرە بنووسە'),
+                                hintStyle: TextStyle(
+                                  fontFamily: kAppFont,
+                                  fontWeight: FontWeight.w400,
+                                  letterSpacing: 0,
+                                  fontSize: 13,
+                                  color: _cMt,
+                                ),
+                                border: InputBorder.none,
+                                isDense: true,
+                                contentPadding: EdgeInsets.symmetric(vertical: 12),
+                              ),
+                              onChanged: (v) {
+                                if (v != v.toUpperCase()) {
+                                  _codeCtrl.value = _codeCtrl.value.copyWith(
+                                    text: v.toUpperCase(),
+                                    selection: TextSelection.collapsed(offset: v.length),
+                                  );
+                                }
+                              },
+                              onSubmitted: (_) => _onClaim(),
                             ),
-                            onChanged: (v) {
-                              if (v != v.toUpperCase()) {
-                                _codeCtrl.value = _codeCtrl.value.copyWith(
-                                  text: v.toUpperCase(),
-                                  selection: TextSelection.collapsed(
-                                      offset: v.length),
-                                );
-                              }
-                            },
-                            onSubmitted: (_) => _onClaim(),
                           ),
                         ),
                       ),
@@ -365,7 +367,7 @@ class _VoucherPageState extends State<VoucherPage>
                             const FaIcon(FontAwesomeIcons.ticket,
                                 size: 14, color: Colors.white),
                           const SizedBox(width: 8),
-                          Text(_claiming ? 'چاوەڕوانبە...' : 'چالاککردن',
+                          ProxoText(_claiming ? 'چاوەڕوانبە...' : 'چالاککردن',
                             style: const TextStyle(
                               fontFamily: kAppFont,
                               fontSize: 13.5,
@@ -453,7 +455,7 @@ class _VoucherPageState extends State<VoucherPage>
         child: Center(child: FaIcon(icon, size: 13, color: iconFg)),
       ),
       const SizedBox(width: 8),
-      Text(label,
+      ProxoText(label,
         style: const TextStyle(
           fontFamily: kAppFont,
           fontSize: 13.5,
@@ -508,14 +510,14 @@ class _VoucherPageState extends State<VoucherPage>
           Expanded(child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(meta['label'] as String,
+              ProxoText(meta['label'] as String,
                 style: const TextStyle(
                   fontFamily: kAppFont, fontSize: 13,
                   // card-title role: SemiBold, not Bold
                   fontWeight: FontWeight.w600, color: _cDark,
                   decoration: TextDecoration.none)),
               if (sentTxt.isNotEmpty)
-                Text(sentTxt,
+                ProxoText(sentTxt,
                   style: const TextStyle(
                     fontFamily: kAppFont, fontSize: 11.5,
                     fontWeight: FontWeight.w400,
@@ -523,14 +525,14 @@ class _VoucherPageState extends State<VoucherPage>
             ],
           )),
           Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-            Text(_fmtIqd(amt.round()),
+            ProxoText(_fmtIqd(amt.round()),
               style: const TextStyle(
                 fontFamily: kAppFont, fontSize: 14,
                 // value role: SemiBold, not Bold (matches metricLarge's
                 // default — big numbers still don't default to Bold)
                 fontWeight: FontWeight.w600, color: _cDark,
                 decoration: TextDecoration.none)),
-            const Text('IQD',
+            const ProxoText('IQD',
               style: TextStyle(fontFamily: kAppFont, fontSize: 11.5,
                 fontWeight: FontWeight.w400,
                 color: _cMt, decoration: TextDecoration.none)),
@@ -551,7 +553,7 @@ class _VoucherPageState extends State<VoucherPage>
             const FaIcon(FontAwesomeIcons.ticket, size: 11, color: _cMt),
             const SizedBox(width: 8),
             Expanded(
-              child: Text(
+              child: ProxoText(
                 (v['code'] ?? '—').toString(),
                 textDirection: TextDirection.ltr,
                 style: const TextStyle(
@@ -574,7 +576,7 @@ class _VoucherPageState extends State<VoucherPage>
           const FaIcon(FontAwesomeIcons.clock, size: 9, color: _cMt),
           const SizedBox(width: 5),
           Flexible(
-            child: Text(leftTxt,
+            child: ProxoText(leftTxt,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(fontFamily: kAppFont, fontSize: 11.5,
@@ -602,7 +604,7 @@ class _VoucherPageState extends State<VoucherPage>
               children: [
                 const FaIcon(FontAwesomeIcons.check, size: 12, color: Colors.white),
                 const SizedBox(width: 6),
-                const Text('چالاککردن',
+                const ProxoText('چالاککردن',
                   style: TextStyle(fontFamily: kAppFont, fontSize: 13,
                     // button role: SemiBold, not Bold; was 12.5, just under
                     // the button-role floor
@@ -652,7 +654,7 @@ class _VoucherPageState extends State<VoucherPage>
         Expanded(child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text((v['code'] ?? '—').toString(),
+            ProxoText((v['code'] ?? '—').toString(),
               textDirection: TextDirection.ltr,
               style: const TextStyle(
                 fontFamily: kAppFont,
@@ -663,7 +665,7 @@ class _VoucherPageState extends State<VoucherPage>
                 fontSize: 13,
                 color: _cDark,
                 decoration: TextDecoration.none)),
-            Text(when,
+            ProxoText(when,
               textDirection: TextDirection.ltr,
               style: const TextStyle(fontFamily: kAppFont, fontSize: 11.5,
                 fontWeight: FontWeight.w400,
@@ -671,12 +673,12 @@ class _VoucherPageState extends State<VoucherPage>
           ],
         )),
         Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-          Text('+${_fmtIqd(amt.round())}',
+          ProxoText('+${_fmtIqd(amt.round())}',
             style: const TextStyle(fontFamily: kAppFont, fontSize: 12.5,
               // value role: SemiBold, not Bold
               fontWeight: FontWeight.w600, color: Color(0xFF16A34A),
               decoration: TextDecoration.none)),
-          const Text('IQD',
+          const ProxoText('IQD',
             style: TextStyle(fontFamily: kAppFont, fontSize: 11.5,
               fontWeight: FontWeight.w400,
               color: _cMt, decoration: TextDecoration.none)),
@@ -700,7 +702,7 @@ class _VoucherPageState extends State<VoucherPage>
           child: const Center(
             child: FaIcon(FontAwesomeIcons.gift, size: 26, color: _cMt))),
         const SizedBox(height: 14),
-        const Text('هیچ فاوچەرێکی چالاکت بەردەست نییە!',
+        const ProxoText('هیچ فاوچەرێکی چالاکت بەردەست نییە!',
           textAlign: TextAlign.center,
           style: TextStyle(fontFamily: kAppFont, fontSize: 13,
             fontWeight: FontWeight.w400, height: 1.30,

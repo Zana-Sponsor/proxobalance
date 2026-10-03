@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
+import 'package:proxo_app/widgets/proxo_text.dart';
 
 class ProxoLogo extends StatelessWidget {
   final double size;
@@ -34,7 +35,7 @@ class ProxoLogo extends StatelessWidget {
         ],
       ),
       child: Center(
-        child: Text(
+        child: ProxoText(
           'P',
           style: TextStyle(
             fontFamily: kAppFont,

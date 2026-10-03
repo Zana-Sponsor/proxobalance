@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../theme/app_theme.dart';
 import 'proxo_error_ui.dart';
+import 'package:proxo_app/widgets/proxo_text.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // ProxoNoInternetBanner
@@ -136,12 +137,12 @@ class _BannerContent extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  ProxoText(
                     offline ? 'ئینتەرنێت نییە' : 'پەیوەندی گەڕایەوە',
                     style: ProxoErrorType.label(p.accent, kAppFont),
                   ),
                   const SizedBox(height: ProxoErrorStyle.s2),
-                  Text(
+                  ProxoText(
                     offline
                         ? 'تکایە پەیوەندی ئینتەرنێتەکەت بپشکنەوە'
                         : 'ئێستا دەتوانیت بەردەوام بی',

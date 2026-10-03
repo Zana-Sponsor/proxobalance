@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 
 import '../main.dart' show supabase;
 import '../theme/app_theme.dart';
+import 'package:proxo_app/widgets/proxo_text.dart';
 
 const Color _kFeedbackInk = Color(0xFF0F172A);
 const Color _kFeedbackMuted = Color(0xFF64748B);
@@ -155,7 +156,7 @@ class _AdFeedbackDialogState extends State<_AdFeedbackDialog> {
                     Row(
                       children: <Widget>[
                         const Expanded(
-                          child: Text(
+                          child: ProxoText(
                             'هەڵسەنگاندنی ڕیکلام',
                             style: TextStyle(
                               fontFamily: kAppFont,
@@ -189,7 +190,7 @@ class _AdFeedbackDialogState extends State<_AdFeedbackDialog> {
                       thumbnailUrl: widget.thumbnailUrl,
                     ),
                     const SizedBox(height: 20),
-                    const Text(
+                    const ProxoText(
                       'ئەم ڕیکلامە چۆن بوو؟',
                       textAlign: TextAlign.center,
                       style: TextStyle(
@@ -201,7 +202,7 @@ class _AdFeedbackDialogState extends State<_AdFeedbackDialog> {
                       ),
                     ),
                     const SizedBox(height: 6),
-                    const Text(
+                    const ProxoText(
                       'ئەستێرەیەک هەڵبژێرە؛ فیدباکەکەت یارمەتیمان دەدات باشتر بین.',
                       textAlign: TextAlign.center,
                       style: TextStyle(
@@ -237,7 +238,7 @@ class _AdFeedbackDialogState extends State<_AdFeedbackDialog> {
                         duration: const Duration(milliseconds: 140),
                         switchInCurve: Curves.easeOut,
                         switchOutCurve: Curves.easeOut,
-                        child: Text(
+                        child: ProxoText(
                           _rating == 0
                               ? 'هەڵسەنگاندنێک هەڵبژێرە'
                               : _kRatingLabels[_rating],
@@ -256,7 +257,7 @@ class _AdFeedbackDialogState extends State<_AdFeedbackDialog> {
                     ),
                     if (_error != null) ...<Widget>[
                       const SizedBox(height: 8),
-                      Text(
+                      ProxoText(
                         _error!,
                         textAlign: TextAlign.center,
                         style: const TextStyle(
@@ -293,7 +294,7 @@ class _AdFeedbackDialogState extends State<_AdFeedbackDialog> {
                                   color: Colors.white,
                                 ),
                               )
-                            : const Text(
+                            : const ProxoText(
                                 'ناردنی فیدباک',
                                 style: TextStyle(
                                   fontFamily: kAppFont,
@@ -419,7 +420,7 @@ class _FeedbackAdIdentity extends StatelessWidget {
           ),
           const SizedBox(width: 12),
           Expanded(
-            child: Text(
+            child: ProxoText(
               title.trim().isEmpty ? 'ڕیکلام' : title.trim(),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
@@ -495,7 +496,7 @@ class CompletedAdFeedbackTile extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text(
+                    ProxoText(
                       rated
                           ? 'سوپاس بۆ فیدباکەکەت'
                           : 'ئەم ڕیکلامە چۆن بوو؟',
@@ -512,7 +513,7 @@ class CompletedAdFeedbackTile extends StatelessWidget {
                     SizedBox(height: 3 * s),
                     rated
                         ? _CompactStars(rating: safeRating, scale: s)
-                        : Text(
+                        : ProxoText(
                             'بە ئەستێرە هەڵیسەنگێنە',
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,

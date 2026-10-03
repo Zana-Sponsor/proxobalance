@@ -6,6 +6,7 @@ import 'package:flutter/rendering.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
+import 'package:proxo_app/widgets/proxo_text.dart';
 
 // ═════════════════════════════════════════════════════════════════════════════
 // Receipt Kit — دیزاین سیستەمی هاوبەشی پسوولەکان
@@ -163,7 +164,7 @@ class ReceiptAppBar extends StatelessWidget {
     final double top = MediaQuery.paddingOf(context).top;
     final titlePainter = TextPainter(
       text: TextSpan(text: title, style: ReceiptTokens.barTitle),
-      textDirection: TextDirection.rtl,
+      textDirection: receiptDirOf(title),
       textScaler: MediaQuery.textScalerOf(context),
     )..layout(
         maxWidth: (MediaQuery.sizeOf(context).width -
@@ -191,7 +192,7 @@ class ReceiptAppBar extends StatelessWidget {
               horizontal: ReceiptTokens.barTap + ReceiptTokens.barSidePad + 4,
             ),
             child: Center(
-              child: Text(
+              child: ProxoText(
                 title,
                 textDirection: TextDirection.rtl,
                 textAlign: TextAlign.center,
@@ -347,7 +348,7 @@ class ReceiptHeader extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
         Expanded(
-          child: Text(
+          child: ProxoText(
             title,
             textDirection: TextDirection.rtl,
             textAlign: TextAlign.start,
@@ -409,7 +410,7 @@ class ReceiptSectionHeading extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: ReceiptTokens.headingToRow),
       child: Align(
         alignment: AlignmentDirectional.centerStart,
-        child: Text(
+        child: ProxoText(
           text,
           style: ReceiptTokens.heading,
           textAlign: TextAlign.start,
@@ -429,7 +430,9 @@ class ReceiptRow extends StatelessWidget {
 
   /// ئاراستەی ناوەوەی بەهاکە. `ltr` بۆ UID، ژمارە، دراو، بەروار و ناوی
   /// لاتینی — بۆ ئەوەی پێچەوانە نەبنەوە. شوێنی بینراوی هەمیشە چەپە.
-  final TextDirection valueDirection;
+  final TextDirection _fallbackValueDirection;
+  TextDirection get valueDirection =>
+      ProxoTextDirection.of(value, fallback: _fallbackValueDirection);
   final TextStyle? valueStyle;
   final VoidCallback? onLongPress;
 
@@ -437,10 +440,10 @@ class ReceiptRow extends StatelessWidget {
     super.key,
     required this.label,
     required this.value,
-    this.valueDirection = TextDirection.rtl,
+    TextDirection valueDirection = TextDirection.rtl,
     this.valueStyle,
     this.onLongPress,
-  });
+  }) : _fallbackValueDirection = valueDirection;
 
   @override
   Widget build(BuildContext context) {
@@ -473,7 +476,7 @@ class ReceiptRow extends StatelessWidget {
         final painter = TextPainter(
           text: TextSpan(
               text: receiptSingleLine(label), style: ReceiptTokens.rowLabel),
-          textDirection: TextDirection.rtl,
+          textDirection: receiptDirOf(label),
           textScaler: scaler,
           maxLines: 1,
         )..layout();
@@ -493,7 +496,7 @@ class ReceiptRow extends StatelessWidget {
                 width: labelWidth,
                 child: _ReceiptFittedLine(
                   text: label,
-                  direction: TextDirection.rtl,
+                  direction: receiptDirOf(label),
                   alignment: TextAlign.right,
                   style: ReceiptTokens.rowLabel,
                   strut: strut,
@@ -546,12 +549,15 @@ class _ReceiptFittedLine extends StatelessWidget {
   Widget build(BuildContext context) => LayoutBuilder(
         builder: (context, constraints) {
           final String line = receiptSingleLine(text);
+          final valueDirection =
+              ProxoTextDirection.of(line, fallback: direction);
           final double naturalSize =
               MediaQuery.textScalerOf(context).scale(style.fontSize!);
           final naturalStyle = style.copyWith(fontSize: naturalSize);
           final painter = TextPainter(
-            text: TextSpan(text: line, style: naturalStyle),
-            textDirection: direction,
+            text: TextSpan(
+                text: ProxoTextDirection.display(line), style: naturalStyle),
+            textDirection: valueDirection,
             textScaler: TextScaler.noScaling,
             maxLines: 1,
           )..layout();
@@ -564,10 +570,10 @@ class _ReceiptFittedLine extends StatelessWidget {
                   .clamp(0.0, 1.0)
                   .toDouble();
           painter.dispose();
-          return Text(
+          return ProxoText(
             line,
             semanticsLabel: text,
-            textDirection: direction,
+            textDirection: valueDirection,
             textAlign: alignment,
             maxLines: 1,
             softWrap: false,
@@ -730,7 +736,7 @@ class _ReceiptPdfButtonState extends State<ReceiptPdfButton> {
                           ),
                         ),
                       )
-                    : Text(
+                    : ProxoText(
                         widget.label,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -785,7 +791,7 @@ class ReceiptStateView extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
-                    Text(
+                    ProxoText(
                       title,
                       textAlign: TextAlign.center,
                       style: ReceiptTokens.receiptTitle.copyWith(
@@ -793,7 +799,7 @@ class ReceiptStateView extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    Text(
+                    ProxoText(
                       message,
                       textAlign: TextAlign.center,
                       style: ReceiptTokens.rowValue,
@@ -844,7 +850,7 @@ void showReceiptMessage(BuildContext context, String message) {
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
       content: Directionality(
         textDirection: TextDirection.rtl,
-        child: Text(message, style: ReceiptTokens.rowValue),
+        child: ProxoText(message, style: ReceiptTokens.rowValue),
       ),
     ),
   );
@@ -977,18 +983,8 @@ String receiptDateTime(dynamic raw) {
   return b == null ? '—' : '${receiptDay(b)} ${receiptTime(b)}';
 }
 
-final RegExp _rtlChar = RegExp(r'[\u0590-\u08FF\uFB1D-\uFDFF\uFE70-\uFEFF]');
-final RegExp _ltrChar = RegExp(r'[A-Za-z\u00C0-\u024F]');
-
 /// ئاراستەی دەقێک بەپێی یەکەم پیتی بەهێز.
-TextDirection receiptDirOf(String s) {
-  for (int i = 0; i < s.length; i++) {
-    final String c = s[i];
-    if (_rtlChar.hasMatch(c)) return TextDirection.rtl;
-    if (_ltrChar.hasMatch(c)) return TextDirection.ltr;
-  }
-  return TextDirection.rtl;
-}
+TextDirection receiptDirOf(String s) => ProxoTextDirection.of(s);
 
 /// Imported multi-line names/labels still display all words on a single line.
 /// IDs and their stored/copyable values are never shortened or rewritten.

@@ -18,6 +18,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../theme/app_theme.dart';
 import '../main.dart' show supabase;
 import 'proxo_toast.dart';
+import 'package:proxo_app/widgets/proxo_text.dart';
 
 class LevelsPage extends StatefulWidget {
   const LevelsPage({super.key});
@@ -311,7 +312,7 @@ class _LevelsPageState extends State<LevelsPage> with WidgetsBindingObserver {
         ),
         const SizedBox(width: 12),
         const Expanded(
-          child: Text('ئاستەکان',
+          child: ProxoText('ئاستەکان',
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             // AppBar-title role: SemiBold, not Bold
@@ -356,7 +357,7 @@ class _LevelsPageState extends State<LevelsPage> with WidgetsBindingObserver {
 
     if (_levels.isEmpty) {
       return const Center(
-        child: Text('هیچ ئاستێک بەردەست نییە',
+        child: ProxoText('هیچ ئاستێک بەردەست نییە',
           style: TextStyle(fontFamily: kAppFont, fontSize: 13,
             fontWeight: FontWeight.w400,
             color: AppColors.muted, height: 1.30,
@@ -373,7 +374,7 @@ class _LevelsPageState extends State<LevelsPage> with WidgetsBindingObserver {
         children: [
           _buildHeroCard(),
           const SizedBox(height: 20),
-          const Text('هەموو ئاستەکان',
+          const ProxoText('هەموو ئاستەکان',
             style: TextStyle(fontFamily: kAppFont, fontSize: 13,
               fontWeight: FontWeight.w600, color: AppColors.muted,
               decoration: TextDecoration.none)),
@@ -425,12 +426,12 @@ class _LevelsPageState extends State<LevelsPage> with WidgetsBindingObserver {
               child: FaIcon(levelIcon, size: 22, color: levelColor))),
           const SizedBox(width: 14),
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            const Text('ئاستی ئێستا',
+            const ProxoText('ئاستی ئێستا',
               style: TextStyle(fontFamily: kAppFont, fontSize: 11.5,
                 fontWeight: FontWeight.w400,
                 color: Colors.white54, decoration: TextDecoration.none)),
             const SizedBox(height: 2),
-            Text(levelName,
+            ProxoText(levelName,
               style: TextStyle(fontFamily: kAppFont, fontSize: 18,
                 fontWeight: FontWeight.w700, color: levelColor,
                 decoration: TextDecoration.none)),
@@ -447,14 +448,14 @@ class _LevelsPageState extends State<LevelsPage> with WidgetsBindingObserver {
                 duration: const Duration(milliseconds: 300),
                 transitionBuilder: (child, anim) =>
                     ScaleTransition(scale: anim, child: child),
-                child: Text(
+                child: ProxoText(
                   _userPoints.toInt().toString(),
                   key: ValueKey(_userPoints.toInt()),
                   style: const TextStyle(fontFamily: kAppFont, fontSize: 16,
                     fontWeight: FontWeight.w700, color: Colors.white,
                     decoration: TextDecoration.none)),
               ),
-              const Text('خاڵ',
+              const ProxoText('خاڵ',
                 style: TextStyle(fontFamily: kAppFont, fontSize: 11.5,
                   fontWeight: FontWeight.w400,
                   color: Colors.white60, decoration: TextDecoration.none)),
@@ -481,12 +482,12 @@ class _LevelsPageState extends State<LevelsPage> with WidgetsBindingObserver {
 
         // Progress label
         if (isMax)
-          const Text('تۆ لە بەرزترین ئاستدایت! 🎉',
+          const ProxoText('تۆ لە بەرزترین ئاستدایت! 🎉',
             style: TextStyle(fontFamily: kAppFont, fontSize: 12.5,
               fontWeight: FontWeight.w400, height: 1.16,
               color: Colors.white70, decoration: TextDecoration.none))
         else
-          Text(
+          ProxoText(
             '${pointsToNext.toInt()} خاڵ ماوە بۆ ${next!['name_ku']}',
             style: const TextStyle(fontFamily: kAppFont, fontSize: 12.5,
               fontWeight: FontWeight.w400, height: 1.16,
@@ -549,7 +550,7 @@ class _LevelsPageState extends State<LevelsPage> with WidgetsBindingObserver {
                 // old below-floor 9.5), so a long level name truncates
                 // instead of overflowing the row on a narrow phone.
                 Flexible(
-                  child: Text(levelName,
+                  child: ProxoText(levelName,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(fontFamily: kAppFont, fontSize: 14,
@@ -566,7 +567,7 @@ class _LevelsPageState extends State<LevelsPage> with WidgetsBindingObserver {
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
                         color: levelColor.withOpacity(0.3))),
-                    child: Text('ئاستی ئێستا',
+                    child: ProxoText('ئاستی ئێستا',
                       // Was 9.5/Bold — below the caption floor, and an
                       // ordinary status tag rather than a rare/high-priority
                       // moment; the pill has no fixed height so it grows
@@ -577,7 +578,7 @@ class _LevelsPageState extends State<LevelsPage> with WidgetsBindingObserver {
                 ],
               ]),
               const SizedBox(height: 3),
-              Text('$minPts خاڵ پێویستە',
+              ProxoText('$minPts خاڵ پێویستە',
                 style: const TextStyle(fontFamily: kAppFont, fontSize: 11.5,
                   fontWeight: FontWeight.w400,
                   color: AppColors.muted, decoration: TextDecoration.none)),
@@ -625,7 +626,7 @@ class _LevelsPageState extends State<LevelsPage> with WidgetsBindingObserver {
       // Was 10.5/Bold — same fix as the reward badge in tasks_page.dart:
       // below the caption floor, and the pill has no fixed height so it
       // grows with the text instead of clipping.
-      child: Text(text,
+      child: ProxoText(text,
         style: TextStyle(fontFamily: kAppFont, fontSize: 11.5,
           fontWeight: FontWeight.w600, color: color,
           decoration: TextDecoration.none)));

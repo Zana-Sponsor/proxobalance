@@ -118,12 +118,12 @@ body { font-family: 'Inter', 'Rabar_021', sans-serif; margin: 0; padding: 0; dis
 </style>
 </head>
 <body>
-<div class="modal-overlay" id="confirm-modal"><div class="modal-content"><h3 id="modal-title">...</h3><p>ئایا دەتەوێت پەیوەندیمان پێوە بکەی؟</p><button id="main-confirm-btn" class="btn-confirm" onclick="goLink()">بەڵێ، بەردەوام بە</button><div class="btn-cancel" onclick="closeModal()">پاشگەزبوونەوە</div></div></div>
+<div class="modal-overlay" id="confirm-modal"><div class="modal-content"><h3 id="modal-title" dir="auto">...</h3><p>ئایا دەتەوێت پەیوەندیمان پێوە بکەی؟</p><button id="main-confirm-btn" class="btn-confirm" onclick="goLink()">بەڵێ، بەردەوام بە</button><div class="btn-cancel" onclick="closeModal()">پاشگەزبوونەوە</div></div></div>
 <div class="page">
   <div class="top-section"><div class="gradient-bg"></div><div class="avatar">{{AVATAR}}</div></div>
   <div class="content">
-    <h1 class="name">{{NAME}}</h1>
-    <p class="desc">{{BIO}}</p>
+    <h1 class="name" dir="auto">{{NAME}}</h1>
+    <p class="desc" dir="auto">{{BIO}}</p>
     <div class="grid">{{BUTTONS}}</div>{{TT_BADGE}}
     <div class="footer"><small>سپۆنسەرکراوە لەئەپی</small><a href="https://www.tiktok.com/@proxo_iq" target="_blank"><img src="https://image2url.com/r2/default/images/1772757087694-7bee9862-8ba7-44c2-9056-a4543f25aa32.webp" alt="Proxo"></a><div class="legal"><a href="https://proxopages.com/policy" target="_blank">Privacy Policy</a> | <a href="https://proxopages.com/terms" target="_blank">Terms &amp; Conditions</a></div></div>
   </div>
@@ -294,12 +294,12 @@ body { font-family: 'Inter', 'Rabar_021', sans-serif; margin: 0; padding: 0; dis
 </style>
 </head>
 <body>
-<div class="modal-overlay" id="confirm-modal"><div class="modal-content"><h3 id="modal-title">...</h3><p>ئایا دەتەوێت پەیوەندیمان پێوە بکەی؟</p><button id="main-confirm-btn" class="btn-confirm" onclick="goLink()">بەڵێ، بەردەوام بە</button><div class="btn-cancel" onclick="closeModal()">پاشگەزبوونەوە</div></div></div>
+<div class="modal-overlay" id="confirm-modal"><div class="modal-content"><h3 id="modal-title" dir="auto">...</h3><p>ئایا دەتەوێت پەیوەندیمان پێوە بکەی؟</p><button id="main-confirm-btn" class="btn-confirm" onclick="goLink()">بەڵێ، بەردەوام بە</button><div class="btn-cancel" onclick="closeModal()">پاشگەزبوونەوە</div></div></div>
 <div class="page">
   <div class="top-section"><div class="gradient-bg"></div><div class="avatar">{{AVATAR}}</div></div>
   <div class="content">
-    <h1 class="name">{{NAME}}</h1>
-    <p class="desc">{{BIO}}</p>
+    <h1 class="name" dir="auto">{{NAME}}</h1>
+    <p class="desc" dir="auto">{{BIO}}</p>
     <div class="grid">{{BUTTONS}}</div>{{TT_BADGE}}
     <div class="footer"><small>سپۆنسەرکراوە لەئەپی</small><a href="https://www.tiktok.com/@proxo_iq" target="_blank"><img src="https://image2url.com/r2/default/images/1772757087694-7bee9862-8ba7-44c2-9056-a4543f25aa32.webp" alt="Proxo"></a><div class="legal"><a href="https://proxopages.com/policy" target="_blank">Privacy Policy</a> | <a href="https://proxopages.com/terms" target="_blank">Terms &amp; Conditions</a></div></div>
   </div>
@@ -446,9 +446,9 @@ body { font-family: 'Rabar_021', sans-serif; background: #f0f0f0; display: flex;
 </style>
 </head>
 <body>
-<div class="modal-overlay" id="confirm-modal"><div class="modal-content"><h3 id="modal-title">...</h3><p>ئایا دەتەوێت پەیوەندیمان پێوە بکەی؟</p><button id="main-confirm-btn" class="btn-confirm" onclick="goLink()">بەڵێ، بەردەوام بە</button><div class="btn-cancel" onclick="closeModal()">پاشگەزبوونەوە</div></div></div>
+<div class="modal-overlay" id="confirm-modal"><div class="modal-content"><h3 id="modal-title" dir="auto">...</h3><p>ئایا دەتەوێت پەیوەندیمان پێوە بکەی؟</p><button id="main-confirm-btn" class="btn-confirm" onclick="goLink()">بەڵێ، بەردەوام بە</button><div class="btn-cancel" onclick="closeModal()">پاشگەزبوونەوە</div></div></div>
 <div class="page">
-  <div class="top-banner"><h1 class="name">{{NAME}}</h1><p class="desc">{{BIO}}</p></div>
+  <div class="top-banner"><h1 class="name" dir="auto">{{NAME}}</h1><p class="desc" dir="auto">{{BIO}}</p></div>
   <div class="content"><div class="card-inner">{{BUTTONS}}{{TT_BADGE}}</div></div>
   <div class="footer"><small>سپۆنسەرکراوە لەئەپی</small><a href="https://www.tiktok.com/@proxo_iq" target="_blank"><img src="https://image2url.com/r2/default/images/1772757087694-7bee9862-8ba7-44c2-9056-a4543f25aa32.webp" alt="Proxo"></a><div class="legal"><a href="https://proxopages.com/policy" target="_blank">Privacy Policy</a> | <a href="https://proxopages.com/terms" target="_blank">Terms &amp; Conditions</a></div></div>
 </div>
@@ -570,7 +570,7 @@ body{font-family:'R',sans-serif;background:#f0f2f8;min-height:100vh;display:flex
 <div class="wrap">
   <div class="hdr"></div>
   <div class="av-wrap"><div class="av">{{AVATAR}}</div></div>
-  <div class="profile"><div class="uname">{{NAME}}</div><div class="ubio">{{BIO}}</div></div>
+  <div class="profile"><div class="uname" dir="auto">{{NAME}}</div><div class="ubio" dir="auto">{{BIO}}</div></div>
   <div class="btns">{{BUTTONS}}</div>
   <div class="tt-wrap">{{TT_BADGE}}</div>
   <div class="footer"><small>سپۆنسەر کراوە لەئەپی</small><a href="https://www.tiktok.com/@proxo_iq" target="_blank"><img src="https://image2url.com/r2/default/images/1772757087694-7bee9862-8ba7-44c2-9056-a4543f25aa32.webp" alt="Proxo"></a><div class="legal"><a href="https://proxopages.com/policy" target="_blank">Privacy Policy</a> | <a href="https://proxopages.com/terms" target="_blank">Terms &amp; Conditions</a></div></div>
@@ -638,7 +638,7 @@ body{font-family:'R',sans-serif;background:#eef0f5;min-height:100vh;display:flex
 <div class="wrap">
   <div class="hdr"></div>
   <div class="av-wrap"><div class="av">{{AVATAR}}</div></div>
-  <div class="profile"><div class="uname">{{NAME}}</div><div class="ubio">{{BIO}}</div></div>
+  <div class="profile"><div class="uname" dir="auto">{{NAME}}</div><div class="ubio" dir="auto">{{BIO}}</div></div>
   <div class="btns">{{BUTTONS}}</div>
   <div class="tt-wrap">{{TT_BADGE}}</div>
   <div class="footer"><small>سپۆنسەر کراوە لەئەپی</small><a href="https://www.tiktok.com/@proxo_iq" target="_blank"><img src="https://image2url.com/r2/default/images/1772757087694-7bee9862-8ba7-44c2-9056-a4543f25aa32.webp" alt="Proxo"></a><div class="legal"><a href="https://proxopages.com/policy" target="_blank">Privacy Policy</a> | <a href="https://proxopages.com/terms" target="_blank">Terms &amp; Conditions</a></div></div>
@@ -708,7 +708,7 @@ body{font-family:'R',sans-serif;background:#060810;min-height:100vh;display:flex
 <div class="wrap">
   <div class="hdr"></div>
   <div class="av-wrap"><div class="av">{{AVATAR}}</div></div>
-  <div class="profile"><div class="uname">{{NAME}}</div><div class="ubio">{{BIO}}</div></div>
+  <div class="profile"><div class="uname" dir="auto">{{NAME}}</div><div class="ubio" dir="auto">{{BIO}}</div></div>
   <div class="btns">{{BUTTONS}}</div>
   <div class="tt-wrap">{{TT_BADGE}}</div>
   <div class="footer"><small>سپۆنسەر کراوە لەئەپی</small><a href="https://www.tiktok.com/@proxo_iq" target="_blank"><img src="https://image2url.com/r2/default/images/1772757087694-7bee9862-8ba7-44c2-9056-a4543f25aa32.webp" alt="Proxo"></a><div class="legal"><a href="https://proxopages.com/policy" target="_blank">Privacy Policy</a> | <a href="https://proxopages.com/terms" target="_blank">Terms &amp; Conditions</a></div></div>
@@ -777,7 +777,7 @@ body{font-family:'R',sans-serif;background:#f0f2f8;min-height:100vh;display:flex
 <div class="wrap">
   <div class="hdr"></div>
   <div class="av-wrap"><div class="av">{{AVATAR}}</div></div>
-  <div class="profile"><div class="uname">{{NAME}}</div><div class="ubio">{{BIO}}</div></div>
+  <div class="profile"><div class="uname" dir="auto">{{NAME}}</div><div class="ubio" dir="auto">{{BIO}}</div></div>
   <div class="btns">{{BUTTONS}}</div>
   <div class="tt-wrap">{{TT_BADGE}}</div>
   <div class="footer"><small>سپۆنسەر کراوە لەئەپی</small><a href="https://www.tiktok.com/@proxo_iq" target="_blank"><img src="https://image2url.com/r2/default/images/1772757087694-7bee9862-8ba7-44c2-9056-a4543f25aa32.webp" alt="Proxo"></a><div class="legal"><a href="https://proxopages.com/policy" target="_blank">Privacy Policy</a> | <a href="https://proxopages.com/terms" target="_blank">Terms &amp; Conditions</a></div></div>
@@ -842,8 +842,8 @@ body{font-family:'R',sans-serif;background:#eef0f5;min-height:100vh;display:flex
   <div class="hdr">
     <div class="hdr-av">{{AVATAR}}</div>
     <div class="hdr-info">
-      <div class="hdr-name">{{NAME}}</div>
-      <div class="hdr-bio">{{BIO}}</div>
+      <div class="hdr-name" dir="auto">{{NAME}}</div>
+      <div class="hdr-bio" dir="auto">{{BIO}}</div>
       {{TT_INLINE}}
     </div>
   </div>

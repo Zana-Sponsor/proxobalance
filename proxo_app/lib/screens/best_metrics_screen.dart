@@ -7,6 +7,7 @@ import '../theme/app_theme.dart' show kAppFont;
 import '../services/ad_categories.dart';
 import '../services/best_metrics_service.dart';
 import '../widgets/best_metric_card.dart';
+import 'package:proxo_app/widgets/proxo_text.dart';
 
 const Color _page = Colors.white;
 const Color _ink = Color(0xFF0B0B32);
@@ -209,7 +210,7 @@ class _Header extends StatelessWidget {
           ),
           const SizedBox(width: 9),
           const Expanded(
-            child: Text(
+            child: ProxoText(
               'باشترین ئەنجامەکانی هەفتە',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
@@ -255,7 +256,7 @@ class _CategoryFilter extends StatelessWidget {
           final option = options[index];
           final selected = option.slug == value;
           return ChoiceChip(
-            label: Text(option.label),
+            label: ProxoText(option.label),
             selected: selected,
             showCheckmark: false,
             onSelected: (_) => onChanged(option.slug),
@@ -327,7 +328,7 @@ class _ErrorView extends StatelessWidget {
                 color: Color(0xFFE5484D),
               ),
               const SizedBox(height: 10),
-              const Text(
+              const ProxoText(
                 'ئەنجامەکان بار نەبوون',
                 style: TextStyle(
                   fontFamily: kAppFont,
@@ -339,7 +340,7 @@ class _ErrorView extends StatelessWidget {
               const SizedBox(height: 10),
               TextButton(
                 onPressed: onRetry,
-                child: const Text(
+                child: const ProxoText(
                   'دووبارە هەوڵ بدەرەوە',
                   style: TextStyle(fontFamily: kAppFont),
                 ),
@@ -360,7 +361,7 @@ class _EmptyView extends StatelessWidget {
     return const Center(
       child: Padding(
         padding: EdgeInsets.all(24),
-        child: Text(
+        child: ProxoText(
           'لەو بەشەدا هیچ ئەنجامێک نییە',
           textAlign: TextAlign.center,
           style: TextStyle(

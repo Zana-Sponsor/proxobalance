@@ -12,6 +12,7 @@ import '../widgets/ad_feedback.dart';
 import '../widgets/proxo_popup.dart';
 import '../widgets/best_metrics_home_section.dart';
 import '../main.dart' show supabase, navigatorKey;
+import 'package:proxo_app/widgets/proxo_text.dart';
 
 String? _sCachedUserName;
 
@@ -842,7 +843,7 @@ class _QuickActionCard extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
+                          ProxoText(
                             title,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -854,7 +855,7 @@ class _QuickActionCard extends StatelessWidget {
                             ),
                           ),
                           SizedBox(height: _kQaTitleGap * s),
-                          Text(
+                          ProxoText(
                             subtitle,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -948,7 +949,7 @@ class ProxoOverviewBanner extends StatelessWidget {
               child: Row(
                 children: [
                   Expanded(
-                    child: Text(
+                    child: ProxoText(
                       'Overview',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -1074,7 +1075,7 @@ class _StatColumn extends StatelessWidget {
           SizedBox(height: 13 * s),
           FittedBox(
             fit: BoxFit.scaleDown,
-            child: Text(
+            child: ProxoText(
               label,
               maxLines: 1,
               style: _kBase.copyWith(
@@ -1088,7 +1089,7 @@ class _StatColumn extends StatelessWidget {
           SizedBox(height: 10 * s),
           FittedBox(
             fit: BoxFit.scaleDown,
-            child: Text(
+            child: ProxoText(
               value,
               maxLines: 1,
               style: _kBase.copyWith(
@@ -1120,7 +1121,7 @@ class _StatColumn extends StatelessWidget {
                         : (positive ? _kDeltaUp : _kDeltaDown),
                   ),
                   SizedBox(width: 4 * s),
-                  Text(
+                  ProxoText(
                     d == null ? '—' : '${d.abs().round()}%',
                     maxLines: 1,
                     style: _kBase.copyWith(
@@ -1185,7 +1186,7 @@ class _RangePill extends StatelessWidget {
             child: Row(
               children: [
                 Expanded(
-                  child: Text(
+                  child: ProxoText(
                     r,
                     style: _kBase.copyWith(
                       fontSize: 12.5 * scale,
@@ -1225,7 +1226,7 @@ class _RangePill extends StatelessWidget {
                 Icon(Icons.calendar_today_outlined,
                     size: 14 * s, color: kProxoBlue),
                 SizedBox(width: 3 * s),
-                Text(
+                ProxoText(
                   label,
                   maxLines: 1,
                   style: _kBase.copyWith(

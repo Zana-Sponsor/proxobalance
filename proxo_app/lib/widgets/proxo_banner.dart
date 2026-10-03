@@ -57,6 +57,7 @@ import 'package:firebase_database/firebase_database.dart';
 import '../theme/app_theme.dart';
 import 'proxo_error_ui.dart';
 import '../main.dart' show supabase, firebaseAvailable;
+import 'package:proxo_app/widgets/proxo_text.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // FIX 1 — Shared CacheManager singleton
@@ -605,7 +606,7 @@ class _OfflineBannerState extends State<OfflineBanner>
                   ),
                   const SizedBox(width: ProxoErrorStyle.s8),
                   Flexible(
-                    child: Text(
+                    child: ProxoText(
                       'ئینتەرنێت پچڕاوە — تکایە پەیوەندی بکەرەوە',
                       style: ProxoErrorType.body(p.ink, kAppFont),
                       textDirection: TextDirection.rtl,
@@ -1164,7 +1165,7 @@ class _SupaHero extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                ProxoText(
                   banner.title,
                   // Bold kept: a promo hero headline's whole job is to grab
                   // attention, which is the "high-priority emphasis" case.
@@ -1180,7 +1181,7 @@ class _SupaHero extends StatelessWidget {
                 ),
                 if (banner.subtitle.isNotEmpty) ...[
                   const SizedBox(height: 6),
-                  Text(
+                  ProxoText(
                     banner.subtitle,
                     style: TextStyle(
                       fontFamily: kAppFont,
@@ -1204,7 +1205,7 @@ class _SupaHero extends StatelessWidget {
                     children: [
                       const Icon(Icons.play_arrow_rounded, size: 14, color: Colors.white),
                       const SizedBox(width: 6),
-                      Text(
+                      ProxoText(
                         banner.btnText.isNotEmpty ? banner.btnText : 'دەستپێکردن',
                         style: const TextStyle(
                           fontFamily: kAppFont,
@@ -1270,7 +1271,7 @@ class _StaticHero extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                const ProxoText(
                   'ڕیکلامی تیک تۆک بەردەستە',
                   // Same reasoning as _SupaHero above: Bold kept (hero
                   // headline), explicit height added where none existed.
@@ -1283,7 +1284,7 @@ class _StaticHero extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 6),
-                Text(
+                ProxoText(
                   'ڕیکلامەکانت بڕوانە و بیکەرەوە بە ئاسانی لەگەڵ Proxo',
                   style: TextStyle(
                     fontFamily: kAppFont,
@@ -1306,7 +1307,7 @@ class _StaticHero extends StatelessWidget {
                     children: [
                       Icon(Icons.play_arrow_rounded, size: 14, color: Colors.white),
                       SizedBox(width: 6),
-                      Text(
+                      ProxoText(
                         'دەستپێکردن',
                         style: TextStyle(
                           fontFamily: kAppFont,

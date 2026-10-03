@@ -3,6 +3,7 @@ import '../../theme/app_locale.dart';
 import 'auth_design.dart';
 import 'auth_logo.dart';
 import 'auth_widgets.dart';
+import 'package:proxo_app/widgets/proxo_text.dart';
 
 class AuthHeader extends StatelessWidget {
   const AuthHeader.login({super.key})
@@ -68,11 +69,11 @@ class AuthLanguageSelector extends StatelessWidget {
           itemBuilder: (context) => const <PopupMenuEntry<Locale>>[
             PopupMenuItem<Locale>(
               value: ProxoLocale.kurdishSorani,
-              child: Text('کوردی'),
+              child: ProxoText('کوردی'),
             ),
             PopupMenuItem<Locale>(
               value: ProxoLocale.arabic,
-              child: Text('العربية'),
+              child: ProxoText('العربية'),
             ),
           ],
           child: Container(
@@ -89,7 +90,7 @@ class AuthLanguageSelector extends StatelessWidget {
                 const Icon(Icons.language_rounded,
                     size: 18, color: AuthTokens.inkMuted),
                 const SizedBox(width: 6),
-                Text(
+                ProxoText(
                   locale.languageCode == 'ar' ? 'العربية' : 'کوردی',
                   style: AuthTokens.helper.copyWith(
                     color: AuthTokens.ink,

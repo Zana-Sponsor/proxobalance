@@ -14,12 +14,11 @@ import 'package:image_picker/image_picker.dart';
 import 'package:solar_iconkit/solar_iconkit.dart';
 import '../theme/app_theme.dart';
 import '../main.dart'
-    show supabase, kIqdRate, navigatorKey, mainShellTab, mainShellTabRequest;
+    show supabase, kIqdRate, navigatorKey;
 import '../l10n/tx_strings.dart';
 import '../theme/app_locale.dart';
 import '../screens/transaction_detail_screen.dart'
     show TransactionDetailScreen, TxReceiptData, TxReceiptKind;
-import 'bottom_nav.dart' show ProxoBottomNav;
 import 'top_bar.dart' show ProxoTopBar;
 import 'receipt/receipt_kit.dart';
 import 'receipt/tx_history_layout.dart';
@@ -29,6 +28,7 @@ import '../screens/profile_screen.dart' show ProfileScreen;
 import 'proxo_error_ui.dart';
 import '../screens/auth_screen.dart' show AuthScreen;
 import '../screens/deposit_screen.dart' show DepositScreen;
+import 'package:proxo_app/widgets/proxo_text.dart';
 
 part 'tx_history_page.dart';
 part 'voucher_page.dart';
@@ -680,7 +680,7 @@ class _ProxoSidebarState extends State<ProxoSidebar>
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(name,
+                      ProxoText(name,
                         style: _kBase.copyWith(
                           fontSize: m.nameSize,
                           fontWeight: FontWeight.w600,
@@ -689,7 +689,7 @@ class _ProxoSidebarState extends State<ProxoSidebar>
                           letterSpacing: -0.1),
                         maxLines: 1, overflow: TextOverflow.ellipsis),
                       SizedBox(height: m.nameToEmail),
-                      Text(_userEmail,
+                      ProxoText(_userEmail,
                         style: _kBase.copyWith(
                           fontSize: m.emailSize,
                           fontWeight: FontWeight.w400,
@@ -756,7 +756,7 @@ class _ProxoSidebarState extends State<ProxoSidebar>
                   ),
                   SizedBox(width: m.tileGap),
                   Expanded(
-                    child: Text(label,
+                    child: ProxoText(label,
                       style: _kBase.copyWith(
                         fontSize: m.labelSize,
                         fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
@@ -789,7 +789,7 @@ class _ProxoSidebarState extends State<ProxoSidebar>
           decoration: BoxDecoration(
             color: _navPrimary,
             borderRadius: BorderRadius.circular(m.badgeSize)),
-          child: Text(count > 99 ? '+99' : '$count',
+          child: ProxoText(count > 99 ? '+99' : '$count',
             maxLines: 1,
             style: _kBase.copyWith(
               fontSize: m.badgeTextSize, fontWeight: FontWeight.w700,
@@ -837,7 +837,7 @@ class _ProxoSidebarState extends State<ProxoSidebar>
                 ),
                 SizedBox(width: m.tileGap),
                 Expanded(
-                  child: Text('چوونەدەرەوە',
+                  child: ProxoText('چوونەدەرەوە',
                     style: _kBase.copyWith(
                       fontSize: m.labelSize,
                       fontWeight: FontWeight.w600,

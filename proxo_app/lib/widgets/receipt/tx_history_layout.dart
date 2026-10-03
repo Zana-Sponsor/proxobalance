@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'receipt_kit.dart';
+import 'package:proxo_app/widgets/proxo_text.dart';
 
 /// Receipt styling with LTR controls and correctly shaped Kurdish text.
 class TxHistoryLayout extends StatelessWidget {
@@ -12,7 +13,6 @@ class TxHistoryLayout extends StatelessWidget {
   final VoidCallback? onRefresh;
   final bool refreshing;
   final Widget body;
-  final Widget bottomNavigationBar;
 
   const TxHistoryLayout({
     super.key,
@@ -23,7 +23,6 @@ class TxHistoryLayout extends StatelessWidget {
     required this.onRefresh,
     required this.refreshing,
     required this.body,
-    required this.bottomNavigationBar,
   });
 
   @override
@@ -74,7 +73,6 @@ class TxHistoryLayout extends StatelessWidget {
                 Expanded(child: body),
               ],
             ),
-            bottomNavigationBar: bottomNavigationBar,
           ),
         ),
       ),
@@ -109,7 +107,7 @@ class TxHistoryCard extends StatelessWidget {
           alignment: alignment,
           child: FittedBox(
             fit: BoxFit.scaleDown,
-            child: Text(
+            child: ProxoText(
               text,
               textDirection: TextDirection.ltr,
               maxLines: 1,

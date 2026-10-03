@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import 'proxo_error_stack.dart';
+import 'package:proxo_app/widgets/proxo_text.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Proxo Error UI — SHARED VISUAL LANGUAGE ONLY
@@ -399,7 +400,7 @@ class _ProxoErrorButtonState extends State<ProxoErrorButton> {
           const SizedBox(width: ProxoErrorStyle.s8),
         ],
         Flexible(
-          child: Text(
+          child: ProxoText(
             widget.label,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
@@ -506,7 +507,7 @@ class ProxoFieldError extends StatelessWidget {
                   ),
                   const SizedBox(width: ProxoErrorStyle.s6),
                   Flexible(
-                    child: Text(
+                    child: ProxoText(
                       text!,
                       style: ProxoErrorType.field(p.accent, fontFamily),
                     ),
@@ -585,12 +586,12 @@ class ProxoInlineError extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   if (title != null) ...[
-                    Text(title!,
+                    ProxoText(title!,
                         textAlign: textAlign,
                         style: ProxoErrorType.label(p.accent, fontFamily)),
                     const SizedBox(height: ProxoErrorStyle.s4),
                   ],
-                  Text(message,
+                  ProxoText(message,
                       textAlign: textAlign,
                       style: ProxoErrorType.body(p.ink, fontFamily)),
                   if (actionLabel != null && onAction != null) ...[
@@ -600,7 +601,7 @@ class ProxoInlineError extends StatelessWidget {
                       behavior: HitTestBehavior.opaque,
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 2),
-                        child: Text(
+                        child: ProxoText(
                           actionLabel!,
                           style: ProxoErrorType.button(p.accent, fontFamily)
                               .copyWith(decoration: TextDecoration.underline),
@@ -708,10 +709,10 @@ class _ProxoSnackBody extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 if (label.isNotEmpty) ...[
-                  Text(label, style: ProxoErrorType.label(p.accent, fontFamily)),
+                  ProxoText(label, style: ProxoErrorType.label(p.accent, fontFamily)),
                   const SizedBox(height: ProxoErrorStyle.s2),
                 ],
-                Text(
+                ProxoText(
                   message,
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis,
@@ -734,7 +735,7 @@ class _ProxoSnackBody extends StatelessWidget {
                   borderRadius: BorderRadius.circular(ProxoErrorStyle.rField),
                   border: Border.all(color: p.border),
                 ),
-                child: Text(actionLabel!,
+                child: ProxoText(actionLabel!,
                     style: ProxoErrorType.button(p.accent, fontFamily)),
               ),
             ),
@@ -832,12 +833,12 @@ Future<T?> showProxoErrorSheet<T>(
                           ),
                         ),
                         const SizedBox(height: ProxoErrorStyle.s16),
-                        Text(title,
+                        ProxoText(title,
                             textAlign: TextAlign.center,
                             style: ProxoErrorType.titleLarge(
                                 AppColors.dark, fontFamily)),
                         const SizedBox(height: ProxoErrorStyle.s8),
-                        Text(message,
+                        ProxoText(message,
                             textAlign: TextAlign.center,
                             style: ProxoErrorType.bodyQuiet(
                                 AppColors.muted2, fontFamily)),
@@ -934,11 +935,11 @@ Future<T?> showProxoErrorDialog<T>(
                 ),
               ),
               const SizedBox(height: ProxoErrorStyle.s16),
-              Text(title,
+              ProxoText(title,
                   textAlign: TextAlign.center,
                   style: ProxoErrorType.title(AppColors.dark, fontFamily)),
               const SizedBox(height: ProxoErrorStyle.s8),
-              Text(message,
+              ProxoText(message,
                   textAlign: TextAlign.center,
                   style:
                       ProxoErrorType.bodyQuiet(AppColors.muted2, fontFamily)),
@@ -1055,12 +1056,12 @@ class ProxoErrorView extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: ProxoErrorStyle.s20),
-                    Text(title,
+                    ProxoText(title,
                         textAlign: TextAlign.center,
                         style: ProxoErrorType.titleLarge(
                             AppColors.dark, fontFamily)),
                     const SizedBox(height: ProxoErrorStyle.s8),
-                    Text(message,
+                    ProxoText(message,
                         textAlign: TextAlign.center,
                         style: ProxoErrorType.bodyQuiet(
                             AppColors.muted, fontFamily)),
@@ -1157,11 +1158,11 @@ class ProxoErrorCard extends StatelessWidget {
                   // This is a card title (14 / SemiBold), not a dialog
                   // headline, so it goes through `cardTitle` directly
                   // rather than downsizing `title`'s Bold dialog weight.
-                  Text(title,
+                  ProxoText(title,
                       style: AppTypography.cardTitle(color: AppColors.dark)
                           .copyWith(fontFamily: fontFamily)),
                   const SizedBox(height: ProxoErrorStyle.s4),
-                  Text(message,
+                  ProxoText(message,
                       style: ProxoErrorType.bodyQuiet(AppColors.muted2, fontFamily)
                           .copyWith(fontSize: 12.5)),
                   if (actionLabel != null && onAction != null) ...[

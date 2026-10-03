@@ -28,6 +28,7 @@
 import 'package:flutter/material.dart';
 
 import '../theme/app_theme.dart';
+import 'package:proxo_app/widgets/proxo_text.dart';
 
 class SectionTitleWithGradientDividers extends StatelessWidget {
   /// دەقی سەردێڕ. بۆ ئەم بەشە: «باشترین ئامارەکان».
@@ -121,7 +122,7 @@ class SectionTitleWithGradientDividers extends StatelessWidget {
                 constraints: BoxConstraints(maxWidth: maxTitle),
                 child: Directionality(
                   textDirection: titleDirection,
-                  child: Text(
+                  child: ProxoText(
                     title,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,

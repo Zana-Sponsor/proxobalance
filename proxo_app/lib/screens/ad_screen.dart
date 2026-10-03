@@ -19,6 +19,7 @@ import '../widgets/proxo_refresh.dart';
 import '../widgets/ad_feedback.dart';
 import 'ad_create_screen.dart';
 import 'ad_detail_screen.dart';
+import 'package:proxo_app/widgets/proxo_text.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // AdScreen — ڕیکلامەکانم
@@ -816,7 +817,7 @@ class _DsPrimaryButton extends StatelessWidget {
                     SizedBox(width: (leadingGap ?? 8) * s),
                   ],
                   Flexible(
-                    child: Text(label,
+                    child: ProxoText(label,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         textAlign: TextAlign.center,
@@ -1854,7 +1855,7 @@ class _AdScreenState extends State<AdScreen>
                   ),
                   const SizedBox(width: 10),
                   const Expanded(
-                    child: Text('ڕەتکردنەوەی ڕیکلام',
+                    child: ProxoText('ڕەتکردنەوەی ڕیکلام',
                       textAlign: TextAlign.right,
                       style: TextStyle(
                         fontFamily: kAppFont, fontSize: 16,
@@ -1864,7 +1865,7 @@ class _AdScreenState extends State<AdScreen>
                 const SizedBox(height: 6),
                 const Align(
                   alignment: Alignment.centerRight,
-                  child: Text('هۆکاری ڕەتکردنەوە هەڵبژێرە، بودجەکەت بەتەواوی دەگەڕێتەوە بۆ باڵانسەکەت.',
+                  child: ProxoText('هۆکاری ڕەتکردنەوە هەڵبژێرە، بودجەکەت بەتەواوی دەگەڕێتەوە بۆ باڵانسەکەت.',
                     textAlign: TextAlign.right,
                     style: TextStyle(
                       fontFamily: kAppFont, fontSize: 12, height: 1.6,
@@ -1903,7 +1904,7 @@ class _AdScreenState extends State<AdScreen>
                           ) : null,
                         ),
                         const SizedBox(width: 10),
-                        Expanded(child: Text(_cancelReasons[i],
+                        Expanded(child: ProxoText(_cancelReasons[i],
                           textAlign: TextAlign.right,
                           style: TextStyle(
                             fontFamily: kAppFont, fontSize: 12.5,
@@ -1915,19 +1916,29 @@ class _AdScreenState extends State<AdScreen>
                 }),
                 if (selReason == 4) ...[
                   const SizedBox(height: 4),
-                  TextField(
+                  ProxoDirectionalInput(
                     controller: otherCtrl,
-                    textAlign: TextAlign.right,
-                    maxLines: 2,
-                    onChanged: (_) => setSheetState(() {}),
-                    style: const TextStyle(fontFamily: kAppFont, fontSize: 13),
-                    decoration: InputDecoration(
-                      hintText: 'هۆکارەکەت بنووسە...',
-                      hintStyle: const TextStyle(fontFamily: kAppFont, fontSize: 12, color: Color(0xFFBBBDC8)),
-                      filled: true, fillColor: AppColors.bg,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(14),
-                        borderSide: BorderSide(color: AppColors.border1)),
+                    builder: (context, inputDirection) => TextField(
+                      textDirection: inputDirection,
+                      controller: otherCtrl,
+                      textAlign: TextAlign.start,
+                      maxLines: 2,
+                      onChanged: (_) => setSheetState(() {}),
+                      style: const TextStyle(fontFamily: kAppFont, fontSize: 13),
+                      decoration: InputDecoration(
+                        hint: const ProxoText('هۆکارەکەت بنووسە...'),
+                        hintStyle: const TextStyle(
+                          fontFamily: kAppFont,
+                          fontSize: 12,
+                          color: Color(0xFFBBBDC8),
+                        ),
+                        filled: true,
+                        fillColor: AppColors.bg,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(14),
+                          borderSide: BorderSide(color: AppColors.border1),
+                        ),
+                      ),
                     ),
                   ),
                 ],
@@ -1952,7 +1963,7 @@ class _AdScreenState extends State<AdScreen>
                           ? const SizedBox(
                               width: 18, height: 18,
                               child: CircularProgressIndicator(strokeWidth: 2.2, color: Colors.white))
-                          : Text('دڵنیام، ڕەتی بکەوە',
+                          : ProxoText('دڵنیام، ڕەتی بکەوە',
                               style: TextStyle(
                                 fontFamily: kAppFont, fontSize: 14, fontWeight: FontWeight.w700,
                                 // دۆخی ناچالاک — تۆنێکی تۆختر لە #9CA3AFی
@@ -2141,7 +2152,7 @@ class _AdScreenState extends State<AdScreen>
                           ),
                           const SizedBox(width: 10),
                           Expanded(
-                            child: Text(
+                            child: ProxoText(
                               kuLabel,
                               textAlign: TextAlign.right,
                               style: TextStyle(
@@ -2225,7 +2236,7 @@ class _AdScreenState extends State<AdScreen>
                     ),
                     const SizedBox(width: 10),
                     Expanded(
-                      child: Text(
+                      child: ProxoText(
                         value.isEmpty ? 'هەڵبژێرە' : value,
                         textDirection: TextDirection.ltr,
                         textAlign: TextAlign.left,
@@ -2242,33 +2253,37 @@ class _AdScreenState extends State<AdScreen>
               );
             }
 
-            return TextField(
+            return ProxoDirectionalInput(
               controller: ctrl,
-              autofocus: true,
-              // کۆد و لینک هەردووکیان لاتینن — LTR بۆ ئەوەی پیتەکان
-              // پێچەوانە نەبنەوە لەناو فۆرمێکی RTLدا.
-              textDirection: TextDirection.ltr,
-              textAlign: TextAlign.left,
-              keyboardType:
-                  isLink ? TextInputType.url : TextInputType.text,
-              textInputAction: TextInputAction.done,
-              onChanged: (String v) => setSheetState(() {
-                value = v;
-                errText = null;
-              }),
-              onSubmitted: (_) => save(),
-              style: const TextStyle(fontFamily: kAppFont, fontSize: 13),
-              decoration: InputDecoration(
-                hintText: label,
-                hintStyle: const TextStyle(
+              keyboardType: isLink ? TextInputType.url : TextInputType.text,
+              builder: (context, inputDirection) => TextField(
+                controller: ctrl,
+                autofocus: true,
+                // کۆد و لینک هەردووکیان لاتینن — LTR بۆ ئەوەی پیتەکان
+                // پێچەوانە نەبنەوە لەناو فۆرمێکی RTLدا.
+                textDirection: inputDirection,
+                textAlign: TextAlign.start,
+                keyboardType: isLink ? TextInputType.url : TextInputType.text,
+                textInputAction: TextInputAction.done,
+                onChanged: (String v) => setSheetState(() {
+                  value = v;
+                  errText = null;
+                }),
+                onSubmitted: (_) => save(),
+                style: const TextStyle(fontFamily: kAppFont, fontSize: 13),
+                decoration: InputDecoration(
+                  hint: proxoFieldText(label),
+                  hintStyle: const TextStyle(
                     fontFamily: kAppFont,
                     fontSize: 12,
-                    color: Color(0xFFBBBDC8)),
-                filled: true,
-                fillColor: AppColors.bg,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(14),
-                  borderSide: BorderSide(color: AppColors.border1),
+                    color: Color(0xFFBBBDC8),
+                  ),
+                  filled: true,
+                  fillColor: AppColors.bg,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14),
+                    borderSide: BorderSide(color: AppColors.border1),
+                  ),
                 ),
               ),
             );
@@ -2311,7 +2326,7 @@ class _AdScreenState extends State<AdScreen>
                     ),
                     const SizedBox(width: 10),
                     Expanded(
-                      child: Text(
+                      child: ProxoText(
                         label,
                         textAlign: TextAlign.right,
                         style: const TextStyle(
@@ -2335,7 +2350,7 @@ class _AdScreenState extends State<AdScreen>
                         borderRadius: BorderRadius.circular(14),
                         border: Border.all(color: _kAdcFixBorder),
                       ),
-                      child: Text(
+                      child: ProxoText(
                         reason,
                         textAlign: TextAlign.right,
                         style: const TextStyle(
@@ -2374,7 +2389,7 @@ class _AdScreenState extends State<AdScreen>
                               child: CircularProgressIndicator(
                                   strokeWidth: 2.2, color: Colors.white),
                             )
-                          : const Text(
+                          : const ProxoText(
                               _kAdcFixSave,
                               style: TextStyle(
                                 fontFamily: kAppFont,
@@ -2627,7 +2642,7 @@ class _AdScreenState extends State<AdScreen>
           ),
           SizedBox(width: _dsTileGutter * s),
           Expanded(
-            child: Text('پەیوەندی نییە — داتای پاشەکەوتکراو نیشان دەدرێت',
+            child: ProxoText('پەیوەندی نییە — داتای پاشەکەوتکراو نیشان دەدرێت',
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: t.subtitle),
@@ -2640,7 +2655,7 @@ class _AdScreenState extends State<AdScreen>
               behavior: HitTestBehavior.opaque,
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: _dsTileGutter * s),
-                child: Text('دووبارە',
+                child: ProxoText('دووبارە',
                     style: TextStyle(
                         fontFamily: kAppFont,
                         fontSize: _dsFsAction * s,
@@ -2936,7 +2951,7 @@ class _AdScreenState extends State<AdScreen>
                                 vertical: _dsRowGap *
                                     _responsiveScale(context)),
                             child: Center(
-                              child: Text(
+                              child: ProxoText(
                                 'هەموو ${items.length} ڕیکلام نیشان دران',
                                 style:
                                     _T.of(_responsiveScale(context)).micro,
@@ -3076,7 +3091,7 @@ class _AdScreenState extends State<AdScreen>
                         semanticLabel: 'هێشتا هیچ ڕیکلامێک نییە!',
                       ),
                       SizedBox(height: _kEmptyArtGap * s),
-                      Text(
+                      ProxoText(
                         'هێشتا هیچ ڕیکلامێک نییە!',
                         textAlign: TextAlign.center,
                         style: TextStyle(
@@ -3091,7 +3106,7 @@ class _AdScreenState extends State<AdScreen>
                       ConstrainedBox(
                         constraints:
                             BoxConstraints(maxWidth: _kEmptyBodyMax * s),
-                        child: Text(
+                        child: ProxoText(
                           'کاتێک ڕیکلامێک تۆمار دەکەیت، لێرە دەردەکەوێت.',
                           maxLines: 3,
                           overflow: TextOverflow.ellipsis,
@@ -3142,7 +3157,7 @@ class _AdScreenState extends State<AdScreen>
                             mainAxisSize: MainAxisSize.min,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text(
+                              ProxoText(
                                 'ڕیکلامێک بکە',
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
@@ -3217,10 +3232,10 @@ class _AdScreenState extends State<AdScreen>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(title, maxLines: 1,
+                  ProxoText(title, maxLines: 1,
                       overflow: TextOverflow.ellipsis, style: t.title),
                   SizedBox(height: _dsTitleGap * s),
-                  Text(body, maxLines: 3,
+                  ProxoText(body, maxLines: 3,
                       overflow: TextOverflow.ellipsis, style: t.subtitle),
                 ],
               ),
@@ -3580,7 +3595,7 @@ class _AdCardState extends State<_AdCard> {
               _kFbSheetGutter * s,
               22 * s,
             ),
-            child: Text(
+            child: ProxoText(
               body,
               textAlign: TextAlign.start,
               style: TextStyle(
@@ -3713,7 +3728,7 @@ class _AdCardState extends State<_AdCard> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
+                ProxoText(
                   title,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -3742,7 +3757,7 @@ class _AdCardState extends State<_AdCard> {
                   // ("PLWMBEVKHYSE#"). لەبەر ئەوەی ستوونەکە
                   // `crossAxisAlignment.start`ە، بۆکسی دەقەکە خۆی لە
                   // لێواری ڕاست دادەنیشێت و تەنها ڕیزبەندی ناوەوەی LTR-ە.
-                  child: Text(
+                  child: ProxoText(
                     idText,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -4449,7 +4464,7 @@ class _AdcStatusNote extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
+          ProxoText(
             title,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
@@ -4462,7 +4477,7 @@ class _AdcStatusNote extends StatelessWidget {
             ),
           ),
           SizedBox(height: 3 * s),
-          Text(
+          ProxoText(
             body,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
@@ -4544,7 +4559,7 @@ class _AdcFixBanner extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
+                ProxoText(
                   submitted ? _kAdcFixSent : _kAdcFixTitle,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -4558,7 +4573,7 @@ class _AdcFixBanner extends StatelessWidget {
                 ),
                 if (!submitted && reason.isNotEmpty) ...[
                   SizedBox(height: 2 * s),
-                  Text(
+                  ProxoText(
                     reason,
                     // دوو دێڕ بەسە بۆ تێبینییەکی وەک «کۆدی ڤیدیۆ
                     // نادروستە، تکایە چاکی بکە» — درێژتری لە شاشەی
@@ -4595,7 +4610,7 @@ class _AdcFixBanner extends StatelessWidget {
                   color: _kAdcFixInk,
                   borderRadius: BorderRadius.circular(8 * s),
                 ),
-                child: Text(
+                child: ProxoText(
                   _kAdcFixCta,
                   maxLines: 1,
                   style: TextStyle(
@@ -4683,7 +4698,7 @@ class _AdcBudgetProgress extends StatelessWidget {
         Row(
           children: [
             Expanded(
-              child: Text(
+              child: ProxoText(
                 'بەکارهێنانی بودجە',
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -4697,7 +4712,7 @@ class _AdcBudgetProgress extends StatelessWidget {
               ),
             ),
             SizedBox(width: 8 * s),
-            Text(
+            ProxoText(
               '${(safe * 100).round()}%',
               textDirection: TextDirection.ltr,
               style: TextStyle(
@@ -4820,7 +4835,7 @@ class _AdcMetricTile extends StatelessWidget {
             SizedBox(
               height: labelHeight,
               child: Center(
-                child: Text(
+                child: ProxoText(
                   label,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -4838,7 +4853,7 @@ class _AdcMetricTile extends StatelessWidget {
             SizedBox(height: 4 * scale),
             FittedBox(
               fit: BoxFit.scaleDown,
-              child: Text(
+              child: ProxoText(
                 value,
                 maxLines: 1,
                 textDirection: TextDirection.ltr,
@@ -4902,7 +4917,7 @@ class _AdcExpandToggle extends StatelessWidget {
             SizedBox(width: _kAdcToggleGap * s),
             Expanded(
               child: Center(
-                child: Text(
+                child: ProxoText(
                   label,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -5004,7 +5019,7 @@ class _StatusChipState extends State<_StatusChip> {
             children: [
               Padding(
                 padding: EdgeInsets.only(bottom: 2 * s),
-                child: Text(
+                child: ProxoText(
                   widget.label,
                   maxLines: 1,
                   softWrap: false,
@@ -5379,7 +5394,7 @@ class _IosSheetHeader extends StatelessWidget {
             bottom: 0,
             child: Align(
               alignment: AlignmentDirectional.centerStart,
-              child: Text(
+              child: ProxoText(
                 title,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -5522,7 +5537,7 @@ class _IosRadioRowState extends State<_IosRadioRow> {
             child: Row(
               children: [
                 Expanded(
-                  child: Text(
+                  child: ProxoText(
                     widget.label,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -5678,7 +5693,7 @@ class _CampaignStatusBadge extends StatelessWidget {
           ),
           SizedBox(width: 5 * s),
           Flexible(
-            child: Text(
+            child: ProxoText(
               label,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,

@@ -7,6 +7,7 @@ import '../theme/app_theme.dart' show kAppFont;
 import '../screens/best_metrics_screen.dart';
 import '../services/best_metrics_service.dart';
 import 'best_metric_card.dart';
+import 'package:proxo_app/widgets/proxo_text.dart';
 
 const Color _ink = Color(0xFF0B0B32);
 const Color _muted = Color(0xFF5D6677);
@@ -223,7 +224,7 @@ class _SectionHeader extends StatelessWidget {
         ),
         const SizedBox(width: 10),
         const Expanded(
-          child: Text(
+          child: ProxoText(
             'باشترین ئەنجامەکانی هەفتە',
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
@@ -245,7 +246,7 @@ class _SectionHeader extends StatelessWidget {
           child: const Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
+              ProxoText(
                 'بینینی هەموو',
                 style: TextStyle(
                   fontFamily: kAppFont,
@@ -310,7 +311,7 @@ class _HomeEmpty extends StatelessWidget {
         boxShadow: _softCardShadow,
       ),
       child: const Center(
-        child: Text(
+        child: ProxoText(
           'هێشتا ئەنجامی ئەم هەفتەیە هەڵنەبژێردراوە',
           textAlign: TextAlign.center,
           style: TextStyle(
@@ -351,7 +352,7 @@ class _HomeError extends StatelessWidget {
           ),
           const SizedBox(width: 9),
           const Expanded(
-            child: Text(
+            child: ProxoText(
               'ئەنجامەکان بار نەبوون',
               style: TextStyle(
                 fontFamily: kAppFont,
@@ -362,7 +363,7 @@ class _HomeError extends StatelessWidget {
           ),
           TextButton(
             onPressed: onRetry,
-            child: const Text(
+            child: const ProxoText(
               'دووبارە',
               style: TextStyle(fontFamily: kAppFont, fontSize: 11.5),
             ),

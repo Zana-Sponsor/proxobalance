@@ -22,7 +22,9 @@ List<Map<String, dynamic>> auditReceiptRows(WidgetTester tester) {
   for (final element in find.byType(ReceiptRow).evaluate()) {
     final row = element.widget as ReceiptRow;
     final finder = find.byWidget(row);
-    final texts = find.descendant(of: finder, matching: find.byType(Text));
+    final texts = find.descendant(
+        of: finder,
+        matching: find.byWidgetPredicate((widget) => widget is Text));
     expect(texts, findsNWidgets(2));
     final labelFinder = texts.at(0);
     final valueFinder = texts.at(1);
@@ -53,8 +55,10 @@ List<Map<String, dynamic>> auditReceiptRows(WidgetTester tester) {
       expect(text.style!.fontWeight, FontWeight.w400);
       expect(text.style!.fontFamily, ReceiptTokens.fontFamily);
       expect(paragraph.didExceedMaxLines, false);
+      final rendered =
+          paragraph.text.toPlainText(includeSemanticsLabels: false);
       final glyphs = paragraph.getBoxesForSelection(
-          TextSelection(baseOffset: 0, extentOffset: text.data!.length));
+          TextSelection(baseOffset: 0, extentOffset: rendered.length));
       for (final box in glyphs) {
         expect(box.left, greaterThanOrEqualTo(-0.05));
         expect(box.right, lessThanOrEqualTo(paragraph.size.width + 0.05));
@@ -63,11 +67,16 @@ List<Map<String, dynamic>> auditReceiptRows(WidgetTester tester) {
         expect(box.bottom, closeTo(glyphs.first.bottom, 0.01));
       }
       // The final character is still laid out, even for a very long UUID/name.
-      if (text.data!.isNotEmpty) {
+      var finalCharacter = rendered.length - 1;
+      while (finalCharacter >= 0 &&
+          rendered.codeUnitAt(finalCharacter) >= 0x2066 &&
+          rendered.codeUnitAt(finalCharacter) <= 0x2069) {
+        finalCharacter--;
+      }
+      if (finalCharacter >= 0) {
         expect(
             paragraph.getBoxesForSelection(TextSelection(
-                baseOffset: text.data!.length - 1,
-                extentOffset: text.data!.length)),
+                baseOffset: finalCharacter, extentOffset: finalCharacter + 1)),
             isNotEmpty);
       }
       final baseline = paragraph.getDryBaseline(

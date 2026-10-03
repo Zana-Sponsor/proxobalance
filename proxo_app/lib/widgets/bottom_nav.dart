@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../theme/app_theme.dart';
 import '../theme/app_locale.dart';
+import 'package:proxo_app/widgets/proxo_text.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // ProxoBottomNav
@@ -652,7 +653,7 @@ class _NavItemState extends State<_NavItem> with TickerProviderStateMixin {
                       child: Center(
                         child: FittedBox(
                           fit: BoxFit.scaleDown,
-                          child: Text(
+                          child: ProxoText(
                             widget.label,
                             maxLines: 1,
                             softWrap: false,

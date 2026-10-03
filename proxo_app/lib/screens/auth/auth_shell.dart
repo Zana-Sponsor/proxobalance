@@ -23,6 +23,7 @@ import 'login_screen.dart';
 import 'signup_screen.dart';
 import 'otp_screen.dart';
 import 'auth_service.dart';
+import 'package:proxo_app/widgets/proxo_text.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Enums
@@ -1352,7 +1353,7 @@ class _AuthShellState extends State<AuthShell> {
                                   ),
                                   const SizedBox(width: 10.0),
                                   Expanded(
-                                    child: Text(
+                                    child: ProxoText(
                                       _bannerError!,
                                       style: TextStyle(
                                         fontFamily: kAppFont,
@@ -1638,7 +1639,7 @@ class _AuthShellState extends State<AuthShell> {
           // پێشگری کۆدی وڵات لەناو خودی خانەکەدا — یەک سنوور، یەک فۆکەس.
           prefix: Padding(
             padding: const EdgeInsetsDirectional.only(end: 8),
-            child: Text(
+            child: ProxoText(
               '🇮🇶  ${AuthStrings.phonePrefix}',
               textDirection: TextDirection.ltr,
               style: AuthTokens.fieldText.copyWith(
@@ -1720,7 +1721,7 @@ class _AuthShellState extends State<AuthShell> {
           enabled: !_loading,
           prefix: Padding(
             padding: const EdgeInsetsDirectional.only(end: 8),
-            child: Text(
+            child: ProxoText(
               '🇮🇶  ${AuthStrings.phonePrefix}',
               textDirection: TextDirection.ltr,
               style: AuthTokens.fieldText.copyWith(
@@ -1937,7 +1938,7 @@ class _AuthShellState extends State<AuthShell> {
     // جیاواز، بۆیە لە چرکەی سفردا ڕیزەکە پانییەکەی دەگۆڕا و ئەوەی
     // ژێری هەڵدەبەزی. `SizedBox(height:)` بەرزاییەکە دەبەستێتەوە، و
     // `Center` هەردووکیان لە یەک خاڵدا ناوەڕاست دەکات.
-    return Text.rich(
+    return ProxoText.rich(
       TextSpan(children: [
         TextSpan(text: '${AuthStrings.resendIn} '),
         TextSpan(
@@ -1960,9 +1961,9 @@ class _AuthShellState extends State<AuthShell> {
       children: [
         AuthHeader.inner(onBack: _goToSignIn),
         const SizedBox(height: 24),
-        Text(AuthStrings.resetPasswordTitle, style: _kTitle),
+        ProxoText(AuthStrings.resetPasswordTitle, style: _kTitle),
         const SizedBox(height: 4),
-        Text(AuthStrings.resetPasswordSubtitle, style: _kSub),
+        ProxoText(AuthStrings.resetPasswordSubtitle, style: _kSub),
         const SizedBox(height: 16),
         AuthTextField(
           controller: _fpEmailCtrl,
@@ -2013,9 +2014,9 @@ class _AuthShellState extends State<AuthShell> {
         AuthHeader.inner(
             onBack: () => setState(() => _step = _Step.forgotOtp)),
         const SizedBox(height: 24),
-        Text(AuthStrings.resetPasswordTitle, style: _kTitle),
+        ProxoText(AuthStrings.resetPasswordTitle, style: _kTitle),
         const SizedBox(height: 4),
-        Text(AuthStrings.resetPasswordSubtitle, style: _kSub),
+        ProxoText(AuthStrings.resetPasswordSubtitle, style: _kSub),
 
         const SizedBox(height: 16),
         ValueListenableBuilder<bool>(
@@ -2117,7 +2118,7 @@ class _AuthShellState extends State<AuthShell> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text(lead, style: _kSub.copyWith(fontSize: AuthTokens.textSize)),
+        ProxoText(lead, style: _kSub.copyWith(fontSize: AuthTokens.textSize)),
         const SizedBox(width: 4),
         AuthTextLink(
           label: action,

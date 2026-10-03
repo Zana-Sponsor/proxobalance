@@ -42,6 +42,7 @@ import '../widgets/custom_toast.dart';
 import '../widgets/proxo_error_ui.dart';
 import '../widgets/proxo_toast.dart';
 import 'ad_create_screen.dart';
+import 'package:proxo_app/widgets/proxo_text.dart';
 
 // ═════════════════════════════════════════════════════════════════════════════
 // TOKENS
@@ -358,14 +359,16 @@ enum PlView { list, form }
 
 class ToolsScreen extends StatelessWidget {
   final void Function(Map<String, dynamic>)? onUseForAd;
-  const ToolsScreen({super.key, this.onUseForAd});
+  final bool initialCreate;
+  const ToolsScreen({super.key, this.onUseForAd, this.initialCreate = false});
   @override
-  Widget build(BuildContext context) => ProxolinkPage(onUseForAd: onUseForAd);
+  Widget build(BuildContext context) => ProxolinkPage(onUseForAd: onUseForAd, initialCreate: initialCreate);
 }
 
 class ProxolinkPage extends StatefulWidget {
   final void Function(Map<String, dynamic>)? onUseForAd;
-  const ProxolinkPage({super.key, this.onUseForAd});
+  final bool initialCreate;
+  const ProxolinkPage({super.key, this.onUseForAd, this.initialCreate = false});
   @override
   State<ProxolinkPage> createState() => _ProxolinkPageState();
 }
@@ -379,6 +382,7 @@ class _ProxolinkPageState extends State<ProxolinkPage> {
   @override
   void initState() {
     super.initState();
+    if (widget.initialCreate) _view = PlView.form;
     _loadCards();
   }
 
@@ -450,6 +454,10 @@ class _ProxolinkPageState extends State<ProxolinkPage> {
   void _goToList() => setState(() => _view = PlView.list);
 
   void _onCardCreated(Map<String, dynamic> card) {
+    if (widget.initialCreate && widget.onUseForAd != null) {
+      widget.onUseForAd!(card);
+      return;
+    }
     setState(() {
       _cards.insert(0, card);
       _view = PlView.list;
@@ -574,7 +582,7 @@ class _ToolsTopBar extends StatelessWidget {
           const SizedBox(width: _kBarTap),
           Expanded(
             child: Center(
-              child: Text(
+              child: ProxoText(
                 title,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -667,12 +675,12 @@ class _SectionLabel extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(text,
+          ProxoText(text,
               style: _t(
                   size: _kFsSection * t, weight: FontWeight.w600)),
           if (subtitle != null) ...[
             const SizedBox(height: _kGapSubtitle),
-            Text(subtitle!,
+            ProxoText(subtitle!,
                 style: _t(size: _kFsSub * t, color: _kSlate)),
           ],
         ],
@@ -692,7 +700,7 @@ class _FieldLabel extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
+            ProxoText(
               text,
               style: _t(
                 size: _kFsLabel * _typeScale(_scaleFor(context)),
@@ -702,7 +710,7 @@ class _FieldLabel extends StatelessWidget {
             if (required)
               Padding(
                 padding: const EdgeInsetsDirectional.only(start: 4),
-                child: Text('*',
+                child: ProxoText('*',
                     style: _t(
                         size: _kFsLabel * 0.9, color: _kDanger, height: 1.0)),
               ),
@@ -787,20 +795,20 @@ class _ListView extends StatelessWidget {
           surfaceTintColor: _kSurface,
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(_kR)),
-          title: Text('سڕینەوەی ئامراز',
+          title: ProxoText('سڕینەوەی ئامراز',
               style: _t(size: 15, weight: FontWeight.w600)),
-          content: Text('دڵنیایت لە سڕینەوەی "$name"؟',
+          content: ProxoText('دڵنیایت لە سڕینەوەی "$name"؟',
               style: _t(size: 13, color: _kSlate, height: 1.7)),
           actionsPadding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: Text('پاشگەزبوونەوە',
+              child: ProxoText('پاشگەزبوونەوە',
                   style: _t(size: 13, weight: FontWeight.w600, color: _kSlate)),
             ),
             TextButton(
               onPressed: () => Navigator.pop(context, true),
-              child: Text('سڕینەوە',
+              child: ProxoText('سڕینەوە',
                   style: _t(size: 13, weight: FontWeight.w600, color: _kDanger)),
             ),
           ],
@@ -837,7 +845,7 @@ class _NewToolPill extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             // ناوەڕۆکی ناو دوگمەی شین: سپیی ڕەق — دەق و ئایکۆن پێکەوە.
-            Text(_kTxtNew,
+            ProxoText(_kTxtNew,
                 style: _t(
                     size: _kFsAction * t,
                     weight: FontWeight.w700,
@@ -961,7 +969,7 @@ class _ToolCardState extends State<_ToolCard> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(
+                    ProxoText(
                       name.isEmpty ? 'بێ ناو' : name,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -972,7 +980,7 @@ class _ToolCardState extends State<_ToolCard> {
                     ),
                     if (created != null) ...[
                       SizedBox(height: 4 * s),
-                      Text(
+                      ProxoText(
                         created,
                         textDirection: TextDirection.ltr,
                         maxLines: 1,
@@ -1013,7 +1021,7 @@ class _ToolCardState extends State<_ToolCard> {
                   color: _kChipBg,
                   borderRadius: BorderRadius.circular(_kRChip),
                 ),
-                child: Text(style.nameKu,
+                child: ProxoText(style.nameKu,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: _t(
@@ -1035,7 +1043,7 @@ class _ToolCardState extends State<_ToolCard> {
                       // «پێشبینین» لینکی دەقییە، نەک لەیبڵ. شینەکە لێرە
                       // ڕێپێدراوە بە هەمان لۆژیکی `AuthTextLink` — دەقی
                       // شین لەسەر ڕووی سپی، نەک ڕووێکی شین.
-                      Text('پێشبینین',
+                      ProxoText('پێشبینین',
                           style: _t(
                               size: _kFsAction * t,
                               weight: FontWeight.w600,
@@ -1128,7 +1136,7 @@ class _Avatar extends StatelessWidget {
 
   // ⚠ پیتەکە بوو `_kPrimary` (شین). ئەڤاتار ئایکۆنێکی ئاسایی کارتە،
   // نەک دوگمە — بۆیە مەرەکەب.
-  Widget _initial() => Text(
+  Widget _initial() => ProxoText(
         name.trim().isNotEmpty ? name.trim()[0].toUpperCase() : '؟',
         style: _t(
             size: size * 0.40,
@@ -1166,7 +1174,7 @@ class _EmptyState extends StatelessWidget {
               child: Icon(Icons.link_rounded, size: 24 * s, color: _kSlate),
             ),
             SizedBox(height: 16 * s),
-            Text(
+            ProxoText(
               'هیچ ئامرازێک نییە',
               textAlign: TextAlign.center,
               style: _t(
@@ -1176,7 +1184,7 @@ class _EmptyState extends StatelessWidget {
               ),
             ),
             SizedBox(height: 7 * s),
-            Text(
+            ProxoText(
               'یەکەم پەڕەی دابەزینی پەیوەندیت دروست بکە و لەگەڵ کڕیارەکانت هاوبەشی بکە.',
               textAlign: TextAlign.center,
               // ⚠ 1.40, not the old 1.75. At 1.75 the two lines sat so far
@@ -1535,7 +1543,7 @@ class _StyleTile extends StatelessWidget {
                 child: child,
               ),
               SizedBox(height: 6 * s),
-              Text(
+              ProxoText(
                 style.displayEn,
                 textAlign: TextAlign.center,
                 textDirection: TextDirection.ltr,
@@ -1961,7 +1969,7 @@ class _FormViewState extends State<_FormView> {
                             // Only the counter repaints per keystroke — the
                             // form itself never rebuilds while typing.
                             animation: _bioCtrl,
-                            builder: (_, __) => Text(
+                            builder: (_, __) => ProxoText(
                               '${_bioCtrl.text.length} / 150',
                               textDirection: TextDirection.ltr,
                               style: _t(
@@ -2130,47 +2138,60 @@ class _Field extends StatelessWidget {
 
     return SizedBox(
       height: h,
-      child: TextField(
+      child: ProxoDirectionalInput(
         controller: controller,
-        maxLength: maxLength,
-        maxLines: multiline ? null : 1,
-        expands: multiline,
-        onChanged: onChanged,
-        textDirection: ltr ? TextDirection.ltr : TextDirection.rtl,
-        // Latin handles / phone numbers stay left-aligned and readable even
-        // inside the RTL screen; Kurdish text stays right-aligned.
-        textAlign: ltr ? TextAlign.left : TextAlign.right,
-        textAlignVertical:
-            multiline ? TextAlignVertical.top : TextAlignVertical.center,
-        keyboardType: keyboard ??
-            (multiline ? TextInputType.multiline : TextInputType.text),
-        textInputAction:
-            multiline ? TextInputAction.newline : TextInputAction.next,
-        // شینی فۆکەس و کێرسەر دەمێننەوە: `AuthTextField` هەمان شت دەکات
-        // (`focusedBorder: AuthTokens.accent`). ئەمە کەنارە، نەک ڕوو.
-        cursorColor: _kAccent,
-        style: _t(size: _kFsInput * t),
-        decoration: InputDecoration(
-          isDense: true,
-          counterText: '',
-          hintText: hint,
-          hintTextDirection: ltr ? TextDirection.ltr : TextDirection.rtl,
-          // ⚠ جێگرەوە بوو #64748B — هەمان تۆخی ژێرناوەکان، بۆیە خانەی
-          // بەتاڵ وەک خانەیەکی پڕکراوە دەخوێندرایەوە. ئێستا #94A3B8،
-          // دەقاودەق `AuthTokens.placeholder`.
-          hintStyle: _t(size: _kFsInput * t, color: _kMuted),
-          prefixText: prefix,
-          prefixStyle: _t(size: _kFsInput * t, color: _kMuted),
-          filled: true,
-          fillColor: hasError ? _kFillErr : _kFill,
-          contentPadding:
-              EdgeInsets.symmetric(horizontal: _kGutter * s, vertical: padV),
-          border: border,
-          enabledBorder: border,
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(_kR),
-            borderSide:
-                BorderSide(color: hasError ? _kDanger : _kAccent, width: 1.3),
+        keyboardType:
+            keyboard ?? (multiline ? TextInputType.multiline : TextInputType.text),
+        forceLtr: ltr,
+        builder: (context, inputDirection) => TextField(
+          controller: controller,
+          maxLength: maxLength,
+          maxLines: multiline ? null : 1,
+          expands: multiline,
+          onChanged: onChanged,
+          textDirection: inputDirection,
+          // Latin handles / phone numbers stay left-aligned and readable even
+          // inside the RTL screen; Kurdish text stays right-aligned.
+          textAlign: TextAlign.start,
+          textAlignVertical: multiline
+              ? TextAlignVertical.top
+              : TextAlignVertical.center,
+          keyboardType:
+              keyboard ??
+              (multiline ? TextInputType.multiline : TextInputType.text),
+          textInputAction: multiline
+              ? TextInputAction.newline
+              : TextInputAction.next,
+          // شینی فۆکەس و کێرسەر دەمێننەوە: `AuthTextField` هەمان شت دەکات
+          // (`focusedBorder: AuthTokens.accent`). ئەمە کەنارە، نەک ڕوو.
+          cursorColor: _kAccent,
+          style: _t(size: _kFsInput * t),
+          decoration: InputDecoration(
+            isDense: true,
+            counterText: '',
+            hint: proxoFieldText(hint),
+            hintTextDirection: ltr ? TextDirection.ltr : TextDirection.rtl,
+            // ⚠ جێگرەوە بوو #64748B — هەمان تۆخی ژێرناوەکان، بۆیە خانەی
+            // بەتاڵ وەک خانەیەکی پڕکراوە دەخوێندرایەوە. ئێستا #94A3B8،
+            // دەقاودەق `AuthTokens.placeholder`.
+            hintStyle: _t(size: _kFsInput * t, color: _kMuted),
+            prefix: proxoFieldText(prefix),
+            prefixStyle: _t(size: _kFsInput * t, color: _kMuted),
+            filled: true,
+            fillColor: hasError ? _kFillErr : _kFill,
+            contentPadding: EdgeInsets.symmetric(
+              horizontal: _kGutter * s,
+              vertical: padV,
+            ),
+            border: border,
+            enabledBorder: border,
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(_kR),
+              borderSide: BorderSide(
+                color: hasError ? _kDanger : _kAccent,
+                width: 1.3,
+              ),
+            ),
           ),
         ),
       ),
@@ -2287,7 +2308,7 @@ class _PlatformCard extends StatelessWidget {
           children: [
             FaIcon(_platformIcon(platform.id), size: _kPlatIcon * s, color: fg),
             SizedBox(height: _kPlatIconGap * s),
-            Text(
+            ProxoText(
               platform.label,
               textAlign: TextAlign.center,
               maxLines: 2,
@@ -2356,13 +2377,13 @@ class _LogoField extends StatelessWidget {
                           size: _kLogoGlyph * s, color: _kGreen),
                     ),
                     SizedBox(height: _kLogoGap1 * s),
-                    Text('لۆگۆ باربکە',
+                    ProxoText('لۆگۆ باربکە',
                         style: _t(
                             size: _kFsLogoT * t,
                             weight: FontWeight.w600,
                             height: 1.2)),
                     SizedBox(height: _kLogoGap2 * s),
-                    Text('کرتە بکە یان ڕابکێشە',
+                    ProxoText('کرتە بکە یان ڕابکێشە',
                         style: _t(
                             size: _kFsLogoS * t,
                             color: _kSlate,
@@ -2389,7 +2410,7 @@ class _LogoField extends StatelessWidget {
                     ),
                     SizedBox(height: _kLogoGap1 * s),
                     // ⚠ بوو شین. ئەمە ژێرنووسی ڕێنمایییە، نەک لینک.
-                    Text('کرتە بکە بۆ گۆڕین',
+                    ProxoText('کرتە بکە بۆ گۆڕین',
                         style: _t(
                             size: _kFsLogoS * t,
                             weight: FontWeight.w600,
@@ -2529,7 +2550,7 @@ class _LangToggle extends StatelessWidget {
                   color: isOn ? _kInk : Colors.transparent,
                   borderRadius: BorderRadius.circular(_kR - 3),
                 ),
-                child: Text(
+                child: ProxoText(
                   lang.label,
                   style: _t(
                     size: _kFsPlatform * t,
@@ -2560,7 +2581,7 @@ class _TextAction extends StatelessWidget {
         behavior: HitTestBehavior.opaque,
         child: Padding(
           padding: const EdgeInsets.only(bottom: 8, left: 2, right: 2),
-          child: Text(
+          child: ProxoText(
             label,
             style: _t(
               size: 11.5 * _typeScale(_scaleFor(context)),
@@ -2599,7 +2620,7 @@ class _BioSampleSheet extends StatelessWidget {
             children: [
               Padding(
                 padding: EdgeInsets.fromLTRB(18, 16 * s, 18, 12 * s),
-                child: Text('نموونەکان',
+                child: ProxoText('نموونەکان',
                     style: _t(
                         size: _kFsSection * t,
                         weight: FontWeight.w600)),
@@ -2622,7 +2643,7 @@ class _BioSampleSheet extends StatelessWidget {
                     child: Padding(
                       padding: EdgeInsets.symmetric(
                           horizontal: 18, vertical: 13 * s),
-                      child: Text(
+                      child: ProxoText(
                         kBioChips[i],
                         style: _t(
                             size: _kFsLogoS * t,
@@ -2707,7 +2728,7 @@ class _PrimaryButton extends StatelessWidget {
                           // پەدینگی ئاسۆیی کە دەق لە لێواری دوگمەکە
                           // دوور دەخاتەوە بەبێ ئەوەی دوگمەکە پان بکاتەوە.
                           padding: EdgeInsets.symmetric(horizontal: 14 * s),
-                          child: Text(
+                          child: ProxoText(
                             busy ? (busyLabel ?? 'چاوەڕوان بە...') : label,
                             maxLines: 1,
                             textAlign: TextAlign.center,

@@ -7,6 +7,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../theme/app_theme.dart';
 import '../main.dart' show supabase;
 import '../widgets/proxo_error_ui.dart';
+import 'package:proxo_app/widgets/proxo_text.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Palette
@@ -695,7 +696,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       title: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Text(
+          const ProxoText(
             'ئاگادارییەکان',
             style: TextStyle(
               fontFamily: kAppFont,
@@ -713,7 +714,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                 color: _Palette.primary,
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Text(
+              child: ProxoText(
                 unread > 99 ? '٩٩+' : _kd(unread),
                 style: const TextStyle(
                   fontFamily: kAppFont,
@@ -833,7 +834,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                     size: 34, color: _Palette.primary),
               ),
               const SizedBox(height: 16),
-              const Text(
+              const ProxoText(
                 'هیچ ئاگادارییەک نییە',
                 style: TextStyle(
                   fontFamily: kAppFont,
@@ -844,7 +845,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                 ),
               ),
               const SizedBox(height: 4),
-              const Text(
+              const ProxoText(
                 'کاتێک ئاگادارییەکی نوێت هەبێت لێرە دەردەکەوێت',
                 textAlign: TextAlign.center,
                 style: TextStyle(
@@ -917,7 +918,7 @@ class _SectionHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(top: 10, bottom: 6, right: 2),
-      child: Text(
+      child: ProxoText(
         label,
         style: const TextStyle(
           fontFamily: kAppFont,
@@ -1066,7 +1067,7 @@ class _NotifCardState extends State<_NotifCard> {
                                   size: 11, color: _Palette.textSecondary),
                             ),
                           Expanded(
-                            child: Text(
+                            child: ProxoText(
                               title,
                               maxLines: _expanded ? null : 1,
                               overflow: _expanded
@@ -1096,7 +1097,7 @@ class _NotifCardState extends State<_NotifCard> {
                         ],
                       ),
                       const SizedBox(height: 2),
-                      Text(
+                      ProxoText(
                         body,
                         maxLines: _expanded ? null : 1,
                         overflow: _expanded
@@ -1115,7 +1116,7 @@ class _NotifCardState extends State<_NotifCard> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          Text(
+                          ProxoText(
                             _timeAgo(n.createdAt),
                             style: const TextStyle(
                               fontFamily: kAppFont,
@@ -1134,7 +1135,7 @@ class _NotifCardState extends State<_NotifCard> {
                             ),
                           ),
                           const SizedBox(width: 5),
-                          Text(
+                          ProxoText(
                             _formatKurdishTime(n.createdAt),
                             textDirection: TextDirection.ltr,
                             style: const TextStyle(
@@ -1189,7 +1190,7 @@ class _SwipeBackground extends StatelessWidget {
         children: [
           Icon(icon, color: Colors.white, size: 17),
           const SizedBox(width: 6),
-          Text(
+          ProxoText(
             label,
             style: const TextStyle(
               fontFamily: kAppFont,
@@ -1324,7 +1325,7 @@ class _ActionTile extends StatelessWidget {
             ),
             const SizedBox(width: 12),
             Expanded(
-              child: Text(
+              child: ProxoText(
                 label,
                 style: const TextStyle(
                   fontFamily: kAppFont,
@@ -1380,7 +1381,7 @@ class _FilterSheetState extends State<_FilterSheet> {
           color: selected ? _Palette.primary : const Color(0xFFF1F5F9),
           borderRadius: BorderRadius.circular(10),
         ),
-        child: Text(
+        child: ProxoText(
           label,
           style: TextStyle(
             fontFamily: kAppFont,
@@ -1424,7 +1425,7 @@ class _FilterSheetState extends State<_FilterSheet> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
+                    const ProxoText(
                       'فلتەر',
                       style: TextStyle(
                         fontFamily: kAppFont,
@@ -1438,7 +1439,7 @@ class _FilterSheetState extends State<_FilterSheet> {
                         _cat = _FilterCategory.all;
                         _date = _FilterDate.all;
                       }),
-                      child: const Text(
+                      child: const ProxoText(
                         'پاک بکەرەوە',
                         style: TextStyle(
                           fontFamily: kAppFont,
@@ -1451,7 +1452,7 @@ class _FilterSheetState extends State<_FilterSheet> {
                   ],
                 ),
                 const SizedBox(height: 16),
-                const Text(
+                const ProxoText(
                   'جۆر',
                   style: TextStyle(
                     fontFamily: kAppFont,
@@ -1472,7 +1473,7 @@ class _FilterSheetState extends State<_FilterSheet> {
                   }).toList(),
                 ),
                 const SizedBox(height: 16),
-                const Text(
+                const ProxoText(
                   'بەروار',
                   style: TextStyle(
                     fontFamily: kAppFont,
@@ -1505,7 +1506,7 @@ class _FilterSheetState extends State<_FilterSheet> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     alignment: Alignment.center,
-                    child: const Text(
+                    child: const ProxoText(
                       'جێبەجێ بکە',
                       style: TextStyle(
                         fontFamily: kAppFont,

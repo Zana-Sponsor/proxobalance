@@ -20,6 +20,7 @@ import 'ad_screen.dart';
 import 'deposit_screen.dart';
 import 'faq_screen.dart' show FaqItem, kFaqItems;
 import 'tools_screen.dart';
+import 'package:proxo_app/widgets/proxo_text.dart';
 
 const String _emailChangeWebhookUrl =
     'https://email.proxopages.com/webhook/send_otp';
@@ -334,7 +335,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ..hideCurrentSnackBar()
       ..showSnackBar(
         SnackBar(
-          content: Text(message, textDirection: TextDirection.rtl),
+          content: ProxoText(message, textDirection: TextDirection.rtl),
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -463,7 +464,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     ),
                                   ),
                                   const SizedBox(height: 20),
-                                  const Text(
+                                  const ProxoText(
                                     'وەشانی ١.٠.٠',
                                     textAlign: TextAlign.center,
                                     style: _ProfileText.version,
@@ -937,7 +938,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       ..hideCurrentSnackBar()
       ..showSnackBar(
         SnackBar(
-          content: Text(message, textDirection: TextDirection.rtl),
+          content: ProxoText(message, textDirection: TextDirection.rtl),
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -995,7 +996,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 ),
                               ),
                               const SizedBox(height: 9),
-                              Text(
+                              ProxoText(
                                 'بۆ گۆڕینی وێنە کلیک بکە',
                                 textAlign: TextAlign.center,
                                 style: _ProfileText.userContact.copyWith(
@@ -1005,21 +1006,24 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               const SizedBox(height: 28),
                               const _FieldLabel('ناوی تەواو'),
                               const SizedBox(height: 7),
-                              TextFormField(
-                                initialValue: widget.initialFullName.isEmpty
-                                    ? '—'
-                                    : widget.initialFullName,
-                                readOnly: true,
-                                enableInteractiveSelection: true,
-                                canRequestFocus: false,
-                                style: _ProfileText.field.copyWith(
-                                  color: _ProfileColors.muted,
-                                ),
-                                decoration: _profileInputDecoration(
-                                  hint: '—',
-                                  icon: SolarIconsOutline.userRounded,
+                              ProxoDirectionalInput(
+                                initialValue: widget.initialFullName.isEmpty ? '—' : widget.initialFullName,
+                                builder: (context, inputDirection) => TextFormField(
+                                  textDirection: inputDirection,
+                                  errorBuilder: (context, message) => ProxoText(message),
+                                  initialValue: widget.initialFullName.isEmpty
+                                      ? '—'
+                                      : widget.initialFullName,
                                   readOnly: true,
-                                  suffixIcon: SolarIconsOutline.lock,
+                                  enableInteractiveSelection: true,
+                                  canRequestFocus: false,
+                                  style: _ProfileText.field.copyWith(color: _ProfileColors.muted),
+                                  decoration: _profileInputDecoration(
+                                    hint: '—',
+                                    icon: SolarIconsOutline.userRounded,
+                                    readOnly: true,
+                                    suffixIcon: SolarIconsOutline.lock,
+                                  ),
                                 ),
                               ),
                               const SizedBox(height: 16),
@@ -1027,25 +1031,30 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               const SizedBox(height: 7),
                               Directionality(
                                 textDirection: TextDirection.ltr,
-                                child: TextFormField(
+                                child: ProxoDirectionalInput(
                                   controller: _emailController,
-                                  enabled: !_saving && !_deleting,
-                                  validator: _validateEmail,
                                   keyboardType: TextInputType.emailAddress,
-                                  textInputAction: TextInputAction.done,
-                                  onFieldSubmitted: (_) => _save(),
-                                  autocorrect: false,
-                                  textCapitalization: TextCapitalization.none,
-                                  autofillHints: const <String>[
-                                    AutofillHints.email,
-                                  ],
-                                  inputFormatters: <TextInputFormatter>[
-                                    LengthLimitingTextInputFormatter(254),
-                                  ],
-                                  style: _ProfileText.field,
-                                  decoration: _profileInputDecoration(
-                                    hint: 'name@gmail.com',
-                                    icon: SolarIconsOutline.letter,
+                                  forceLtr: true,
+                                  builder: (context, inputDirection) => TextFormField(
+                                    textDirection: inputDirection,
+                                    errorBuilder: (context, message) => ProxoText(message),
+                                    controller: _emailController,
+                                    enabled: !_saving && !_deleting,
+                                    validator: _validateEmail,
+                                    keyboardType: TextInputType.emailAddress,
+                                    textInputAction: TextInputAction.done,
+                                    onFieldSubmitted: (_) => _save(),
+                                    autocorrect: false,
+                                    textCapitalization: TextCapitalization.none,
+                                    autofillHints: const <String>[AutofillHints.email],
+                                    inputFormatters: <TextInputFormatter>[
+                                      LengthLimitingTextInputFormatter(254),
+                                    ],
+                                    style: _ProfileText.field,
+                                    decoration: _profileInputDecoration(
+                                      hint: 'name@gmail.com',
+                                      icon: SolarIconsOutline.letter,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -1054,21 +1063,22 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               const SizedBox(height: 7),
                               Directionality(
                                 textDirection: TextDirection.ltr,
-                                child: TextFormField(
-                                  initialValue: widget.initialPhone.isEmpty
-                                      ? '—'
-                                      : widget.initialPhone,
-                                  readOnly: true,
-                                  enableInteractiveSelection: true,
-                                  canRequestFocus: false,
-                                  style: _ProfileText.field.copyWith(
-                                    color: _ProfileColors.muted,
-                                  ),
-                                  decoration: _profileInputDecoration(
-                                    hint: '—',
-                                    icon: SolarIconsOutline.smartphone,
+                                child: ProxoDirectionalInput(
+                                  initialValue: widget.initialPhone.isEmpty ? '—' : widget.initialPhone,
+                                  builder: (context, inputDirection) => TextFormField(
+                                    textDirection: inputDirection,
+                                    errorBuilder: (context, message) => ProxoText(message),
+                                    initialValue: widget.initialPhone.isEmpty ? '—' : widget.initialPhone,
                                     readOnly: true,
-                                    suffixIcon: SolarIconsOutline.lock,
+                                    enableInteractiveSelection: true,
+                                    canRequestFocus: false,
+                                    style: _ProfileText.field.copyWith(color: _ProfileColors.muted),
+                                    decoration: _profileInputDecoration(
+                                      hint: '—',
+                                      icon: SolarIconsOutline.smartphone,
+                                      readOnly: true,
+                                      suffixIcon: SolarIconsOutline.lock,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -1097,7 +1107,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                             color: Colors.white,
                                           ),
                                         )
-                                      : const Text('پاشەکەوتکردن'),
+                                      : const ProxoText('پاشەکەوتکردن'),
                                 ),
                               ),
                               const SizedBox(height: 34),
@@ -1135,12 +1145,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: <Widget>[
-                                              Text(
+                                              ProxoText(
                                                 'سڕینەوەی هەژمار',
                                                 style: _ProfileText.dangerTitle,
                                               ),
                                               SizedBox(height: 3),
-                                              Text(
+                                              ProxoText(
                                                 'هەموو داتاکانت بە هەمیشەیی دەسڕێتەوە',
                                                 style: _ProfileText.dangerSub,
                                               ),
@@ -1306,7 +1316,7 @@ class _ProfileTopBar extends StatelessWidget {
                     ),
               Expanded(
                 child: showBack
-                    ? const Text(
+                    ? const ProxoText(
                         'پرۆفایل',
                         textAlign: TextAlign.center,
                         maxLines: 1,
@@ -1357,7 +1367,7 @@ class _SimpleTopBar extends StatelessWidget {
                 onTap: onBack,
               ),
               Expanded(
-                child: Text(
+                child: ProxoText(
                   title,
                   textAlign: TextAlign.center,
                   maxLines: 1,
@@ -1423,7 +1433,7 @@ class _ProfileIdentity extends StatelessWidget {
       children: <Widget>[
         _ProfileAvatar(data: data),
         const SizedBox(height: 11),
-        Text(
+        ProxoText(
           data.displayName,
           textAlign: TextAlign.center,
           maxLines: 1,
@@ -1435,7 +1445,7 @@ class _ProfileIdentity extends StatelessWidget {
           textDirection: _containsArabic(data.contact)
               ? TextDirection.rtl
               : TextDirection.ltr,
-          child: Text(
+          child: ProxoText(
             data.contact,
             textAlign: TextAlign.center,
             maxLines: 1,
@@ -1748,7 +1758,7 @@ class _BalanceCardState extends State<_BalanceCard>
                           ),
                         ),
                         SizedBox(width: 8),
-                        Text(
+                        ProxoText(
                           'باڵانسی ڕیکلام',
                           style: _ProfileText.balanceLabel,
                         ),
@@ -1765,7 +1775,7 @@ class _BalanceCardState extends State<_BalanceCard>
                               textDirection: TextDirection.ltr,
                               child: ValueListenableBuilder<double?>(
                                 valueListenable: widget.balanceIqd,
-                                builder: (_, value, __) => Text(
+                                builder: (_, value, __) => ProxoText(
                                   visible
                                       ? _formatIqd(value)
                                       : '•••••• د.ع',
@@ -1902,7 +1912,7 @@ class _QuickActionCard extends StatelessWidget {
               children: <Widget>[
                 Icon(icon, size: 23, color: _ProfileColors.iconInk),
                 const SizedBox(height: 6),
-                Text(
+                ProxoText(
                   label,
                   textAlign: TextAlign.center,
                   maxLines: 1,
@@ -1925,7 +1935,7 @@ class _SectionTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(text, style: _ProfileText.sectionTitle);
+    return ProxoText(text, style: _ProfileText.sectionTitle);
   }
 }
 
@@ -2012,7 +2022,7 @@ class _SettingsTile extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text(
+                    ProxoText(
                       entry.title,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -2020,7 +2030,7 @@ class _SettingsTile extends StatelessWidget {
                     ),
                     if (entry.subtitle != null) ...<Widget>[
                       const SizedBox(height: 2),
-                      Text(
+                      ProxoText(
                         entry.subtitle!,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -2083,7 +2093,7 @@ class _SignOutTile extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
                 const Expanded(
-                  child: Text('دەرچوون', style: _ProfileText.signOut),
+                  child: ProxoText('دەرچوون', style: _ProfileText.signOut),
                 ),
                 if (busy)
                   const SizedBox.square(
@@ -2161,7 +2171,7 @@ class _SupportSheet extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 18),
-              const Text(
+              const ProxoText(
                 'چۆن دەتوانین پەیوەندیتان پێوە بکەین؟',
                 textAlign: TextAlign.center,
                 style: _ProfileText.supportQuestion,
@@ -2244,7 +2254,7 @@ class _SupportChannelButton extends StatelessWidget {
                 child: Icon(icon, size: 20, color: foreground),
               ),
               const SizedBox(width: 9),
-              Text(
+              ProxoText(
                 label,
                 maxLines: 1,
                 style: _ProfileText.supportButton.copyWith(color: foreground),
@@ -2296,7 +2306,7 @@ class _AboutAppSheet extends StatelessWidget {
                     children: <Widget>[
                       const SizedBox(width: 44),
                       const Expanded(
-                        child: Text(
+                        child: ProxoText(
                           'دەربارەی ئەپڵیکەیشن',
                           textAlign: TextAlign.center,
                           style: _ProfileText.screenTitle,
@@ -2410,11 +2420,11 @@ class _PolicySection extends StatelessWidget {
             children: <Widget>[
               Icon(icon, size: 20, color: _ProfileColors.ink),
               const SizedBox(width: 9),
-              Expanded(child: Text(title, style: _ProfileText.policyTitle)),
+              Expanded(child: ProxoText(title, style: _ProfileText.policyTitle)),
             ],
           ),
           const SizedBox(height: 10),
-          Text(body, style: _ProfileText.policyBody),
+          ProxoText(body, style: _ProfileText.policyBody),
         ],
       ),
     );
@@ -2492,7 +2502,7 @@ class _FaqExpansionCard extends StatelessWidget {
           childrenPadding: const EdgeInsets.fromLTRB(14, 0, 14, 15),
           iconColor: _ProfileColors.muted,
           collapsedIconColor: _ProfileColors.muted,
-          title: Text(item.question, style: _ProfileText.faqQuestion),
+          title: ProxoText(item.question, style: _ProfileText.faqQuestion),
           children: <Widget>[
             const Divider(
               height: 16,
@@ -2501,7 +2511,7 @@ class _FaqExpansionCard extends StatelessWidget {
             ),
             Align(
               alignment: AlignmentDirectional.centerStart,
-              child: Text(item.answer, style: _ProfileText.faqAnswer),
+              child: ProxoText(item.answer, style: _ProfileText.faqAnswer),
             ),
           ],
         ),
@@ -2517,7 +2527,7 @@ class _FieldLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(text, style: _ProfileText.fieldLabel);
+    return ProxoText(text, style: _ProfileText.fieldLabel);
   }
 }
 
@@ -2535,7 +2545,7 @@ InputDecoration _profileInputDecoration({
     borderSide: BorderSide(color: _ProfileColors.border),
   );
   return InputDecoration(
-    hintText: hint,
+    hint: proxoFieldText(hint),
     hintStyle: _ProfileText.hint,
     prefixIcon: Icon(icon, size: 20, color: _ProfileColors.muted),
     suffixIcon: suffixIcon == null
@@ -2581,12 +2591,12 @@ Future<bool?> _showConfirmationDialog(
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(20)),
         ),
-        title: Text(title, style: _ProfileText.dialogTitle),
-        content: Text(message, style: _ProfileText.dialogBody),
+        title: ProxoText(title, style: _ProfileText.dialogTitle),
+        content: ProxoText(message, style: _ProfileText.dialogBody),
         actions: <Widget>[
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(false),
-            child: const Text('پاشگەزبوونەوە'),
+            child: const ProxoText('پاشگەزبوونەوە'),
           ),
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(true),
@@ -2596,7 +2606,7 @@ Future<bool?> _showConfirmationDialog(
                   : _ProfileColors.primary,
               textStyle: _ProfileText.dialogAction,
             ),
-            child: Text(confirmText),
+            child: ProxoText(confirmText),
           ),
         ],
       ),
@@ -2619,8 +2629,8 @@ Future<void> _showInformationDialog(
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(20)),
         ),
-        title: Text(title, style: _ProfileText.dialogTitle),
-        content: Text(message, style: _ProfileText.dialogBody),
+        title: ProxoText(title, style: _ProfileText.dialogTitle),
+        content: ProxoText(message, style: _ProfileText.dialogBody),
         actions: <Widget>[
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(),
@@ -2628,7 +2638,7 @@ Future<void> _showInformationDialog(
               foregroundColor: _ProfileColors.primary,
               textStyle: _ProfileText.dialogAction,
             ),
-            child: const Text('باشە'),
+            child: const ProxoText('باشە'),
           ),
         ],
       ),
@@ -2733,7 +2743,7 @@ class _EmailChangeVerificationDialogState
           shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(20)),
           ),
-          title: const Text(
+          title: const ProxoText(
             'پشتڕاستکردنەوەی ئیمەیڵ',
             style: _ProfileText.dialogTitle,
           ),
@@ -2743,14 +2753,14 @@ class _EmailChangeVerificationDialogState
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
-                Text(
+                ProxoText(
                   'کۆدی ٦ ژمارەیی نێردرا بۆ:',
                   style: _ProfileText.dialogBody,
                 ),
                 const SizedBox(height: 5),
                 Directionality(
                   textDirection: TextDirection.ltr,
-                  child: Text(
+                  child: ProxoText(
                     widget.email,
                     textAlign: TextAlign.center,
                     style: _ProfileText.field.copyWith(
@@ -2761,44 +2771,48 @@ class _EmailChangeVerificationDialogState
                 const SizedBox(height: 18),
                 Directionality(
                   textDirection: TextDirection.ltr,
-                  child: TextField(
+                  child: ProxoDirectionalInput(
                     controller: _codeController,
-                    focusNode: _codeFocus,
-                    autofocus: true,
-                    enabled: !_busy,
                     keyboardType: TextInputType.number,
-                    textInputAction: TextInputAction.done,
-                    textAlign: TextAlign.center,
-                    autofillHints: const <String>[AutofillHints.oneTimeCode],
-                    inputFormatters: <TextInputFormatter>[
-                      FilteringTextInputFormatter.allow(
-                        RegExp(r'[0-9٠-٩۰-۹]'),
+                    forceLtr: true,
+                    builder: (context, inputDirection) => TextField(
+                      textDirection: inputDirection,
+                      controller: _codeController,
+                      focusNode: _codeFocus,
+                      autofocus: true,
+                      enabled: !_busy,
+                      keyboardType: TextInputType.number,
+                      textInputAction: TextInputAction.done,
+                      textAlign: TextAlign.center,
+                      autofillHints: const <String>[AutofillHints.oneTimeCode],
+                      inputFormatters: <TextInputFormatter>[
+                        FilteringTextInputFormatter.allow(RegExp(r'[0-9٠-٩۰-۹]')),
+                        LengthLimitingTextInputFormatter(6),
+                      ],
+                      onChanged: (_) {
+                        if (_error != null || _notice != null) {
+                          setState(() {
+                            _error = null;
+                            _notice = null;
+                          });
+                        }
+                      },
+                      onSubmitted: (_) => _verify(),
+                      style: _ProfileText.field.copyWith(
+                        fontSize: 22,
+                        letterSpacing: 7,
+                        fontWeight: FontWeight.w700,
                       ),
-                      LengthLimitingTextInputFormatter(6),
-                    ],
-                    onChanged: (_) {
-                      if (_error != null || _notice != null) {
-                        setState(() {
-                          _error = null;
-                          _notice = null;
-                        });
-                      }
-                    },
-                    onSubmitted: (_) => _verify(),
-                    style: _ProfileText.field.copyWith(
-                      fontSize: 22,
-                      letterSpacing: 7,
-                      fontWeight: FontWeight.w700,
+                      decoration: _profileInputDecoration(
+                        hint: '000000',
+                        icon: SolarIconsOutline.shieldCheck,
+                      ).copyWith(error: proxoFieldText(_error)),
                     ),
-                    decoration: _profileInputDecoration(
-                      hint: '000000',
-                      icon: SolarIconsOutline.shieldCheck,
-                    ).copyWith(errorText: _error),
                   ),
                 ),
                 if (_notice != null) ...<Widget>[
                   const SizedBox(height: 7),
-                  Text(
+                  ProxoText(
                     _notice!,
                     textAlign: TextAlign.center,
                     style: _ProfileText.error.copyWith(
@@ -2816,7 +2830,7 @@ class _EmailChangeVerificationDialogState
                             dimension: 16,
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
-                        : const Text('کۆدت پێ نەگەیشت؟ دووبارە بنێرەوە'),
+                        : const ProxoText('کۆدت پێ نەگەیشت؟ دووبارە بنێرەوە'),
                   ),
                 ),
               ],
@@ -2825,7 +2839,7 @@ class _EmailChangeVerificationDialogState
           actions: <Widget>[
             TextButton(
               onPressed: _busy ? null : () => Navigator.of(context).pop(false),
-              child: const Text('پاشگەزبوونەوە'),
+              child: const ProxoText('پاشگەزبوونەوە'),
             ),
             FilledButton(
               onPressed: _busy ? null : _verify,
@@ -2842,7 +2856,7 @@ class _EmailChangeVerificationDialogState
                         color: Colors.white,
                       ),
                     )
-                  : const Text('پشتڕاستکردنەوە'),
+                  : const ProxoText('پشتڕاستکردنەوە'),
             ),
           ],
         ),

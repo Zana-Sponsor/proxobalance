@@ -35,6 +35,7 @@ import '../main.dart' show supabase, kIqdRate;
 import '../theme/app_theme.dart';
 import '../widgets/fastpay_checkout_sheet.dart';
 import '../widgets/proxo_toast.dart';
+import 'package:proxo_app/widgets/proxo_text.dart';
 
 // ── Palette ────────────────────────────────────────────────────────────
 const Color _cInk = Color(0xFF0F172A);
@@ -263,13 +264,13 @@ class _DepositScreenState extends State<DepositScreen> {
           const SizedBox(height: 12),
           ListTile(
             leading: const Icon(Icons.photo_camera_rounded, color: _cInk),
-            title: const Text('کامێرا',
+            title: const ProxoText('کامێرا',
                 style: TextStyle(fontFamily: kAppFont, color: _cInk)),
             onTap: () => Navigator.pop(ctx, ImageSource.camera),
           ),
           ListTile(
             leading: const Icon(Icons.photo_library_rounded, color: _cInk),
-            title: const Text('گەلەری',
+            title: const ProxoText('گەلەری',
                 style: TextStyle(fontFamily: kAppFont, color: _cInk)),
             onTap: () => Navigator.pop(ctx, ImageSource.gallery),
           ),
@@ -512,28 +513,33 @@ class _DepositScreenState extends State<DepositScreen> {
       child: Row(children: [
         const SizedBox(width: 14),
         Expanded(
-          child: TextField(
+          child: ProxoDirectionalInput(
             controller: _amtCtrl,
             keyboardType: TextInputType.number,
-            textDirection: TextDirection.ltr,
-            textAlign: TextAlign.right,
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-            onChanged: (_) => setState(() => _quickSelected = null),
-            style: const TextStyle(
-              fontFamily: kAppFont,
-              fontSize: 22,
-              fontWeight: FontWeight.w700,
-              color: _cInk,
-            ),
-            decoration: const InputDecoration(
-              border: InputBorder.none,
-              isDense: true,
-              hintText: '0',
-              hintStyle: TextStyle(
+            forceLtr: true,
+            builder: (context, inputDirection) => TextField(
+              controller: _amtCtrl,
+              keyboardType: TextInputType.number,
+              textDirection: inputDirection,
+              textAlign: TextAlign.start,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              onChanged: (_) => setState(() => _quickSelected = null),
+              style: const TextStyle(
                 fontFamily: kAppFont,
                 fontSize: 22,
                 fontWeight: FontWeight.w700,
-                color: _cMuted,
+                color: _cInk,
+              ),
+              decoration: const InputDecoration(
+                border: InputBorder.none,
+                isDense: true,
+                hint: ProxoText('0'),
+                hintStyle: TextStyle(
+                  fontFamily: kAppFont,
+                  fontSize: 22,
+                  fontWeight: FontWeight.w700,
+                  color: _cMuted,
+                ),
               ),
             ),
           ),
@@ -547,7 +553,7 @@ class _DepositScreenState extends State<DepositScreen> {
             borderRadius: BorderRadius.circular(9),
             border: Border.all(color: _cLine),
           ),
-          child: const Text('IQD',
+          child: const ProxoText('IQD',
               style: TextStyle(
                 fontFamily: kAppFont,
                 fontSize: 12,
@@ -569,7 +575,7 @@ class _DepositScreenState extends State<DepositScreen> {
         borderRadius: BorderRadius.circular(10),
         border: Border.all(color: const Color(0xFFFDE68A)),
       ),
-      child: Text(
+      child: ProxoText(
         'بڕی پارەی وەرگیراو: ${_fmt(w.creditedIqd(_iqd))} دینار '
         '(${w.feePercentLabel}% کەمتر بەهۆی باجی باڵانس)',
         style: const TextStyle(
@@ -603,7 +609,7 @@ class _DepositScreenState extends State<DepositScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               alignment: Alignment.center,
               decoration: ProxoInk.toggle(active, radius: 19),
-              child: Text(
+              child: ProxoText(
                 _fmt(v),
                 style: TextStyle(
                   fontFamily: kAppFont,
@@ -629,16 +635,26 @@ class _DepositScreenState extends State<DepositScreen> {
         border: Border.all(color: _cLine),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 14),
-      child: TextField(
+      child: ProxoDirectionalInput(
         controller: c,
-        style: const TextStyle(
-            fontFamily: kAppFont, fontSize: 13.5, color: _cInk),
-        decoration: InputDecoration(
-          border: InputBorder.none,
-          isDense: true,
-          hintText: hint,
-          hintStyle: const TextStyle(
-              fontFamily: kAppFont, fontSize: 13, color: _cMuted),
+        builder: (context, inputDirection) => TextField(
+          textDirection: inputDirection,
+          controller: c,
+          style: const TextStyle(
+            fontFamily: kAppFont,
+            fontSize: 13.5,
+            color: _cInk,
+          ),
+          decoration: InputDecoration(
+            border: InputBorder.none,
+            isDense: true,
+            hint: proxoFieldText(hint),
+            hintStyle: const TextStyle(
+              fontFamily: kAppFont,
+              fontSize: 13,
+              color: _cMuted,
+            ),
+          ),
         ),
       ),
     );
@@ -661,7 +677,7 @@ class _DepositScreenState extends State<DepositScreen> {
           ),
           const SizedBox(width: 12),
           const Expanded(
-            child: Text('وەسڵەکە دانرا',
+            child: ProxoText('وەسڵەکە دانرا',
                 style: TextStyle(
                   fontFamily: kAppFont,
                   fontSize: 13.5,
@@ -693,7 +709,7 @@ class _DepositScreenState extends State<DepositScreen> {
                   color: _cSlate, size: 24),
             ),
             const SizedBox(height: 12),
-            const Text('دانانی وەسڵی پارەدان',
+            const ProxoText('دانانی وەسڵی پارەدان',
                 style: TextStyle(
                   fontFamily: kAppFont,
                   fontSize: 14,
@@ -701,7 +717,7 @@ class _DepositScreenState extends State<DepositScreen> {
                   color: _cInk,
                 )),
             const SizedBox(height: 4),
-            const Text('کلیک بکە بۆ هەڵبژاردنی وێنە لە کامێرا یان گەلەری',
+            const ProxoText('کلیک بکە بۆ هەڵبژاردنی وێنە لە کامێرا یان گەلەری',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     fontFamily: kAppFont, fontSize: 12, color: _cMuted)),
@@ -752,7 +768,7 @@ class _DepositScreenState extends State<DepositScreen> {
             color: const Color(0xFF0265FF),
             borderRadius: BorderRadius.circular(16),
           ),
-          child: const Text('بەردەوامبە بۆ پارەدان',
+          child: const ProxoText('بەردەوامبە بۆ پارەدان',
               style: TextStyle(
                 fontFamily: kAppFont,
                 fontSize: 15,
@@ -778,7 +794,7 @@ class _DepositScreenState extends State<DepositScreen> {
                 child: CircularProgressIndicator(
                     strokeWidth: 2.4, color: _cMuted),
               )
-            : const Text('ناردنی داواکاری',
+            : const ProxoText('ناردنی داواکاری',
                 style: TextStyle(
                   fontFamily: kAppFont,
                   fontSize: 15,
@@ -810,7 +826,7 @@ class _DepositAppBar extends StatelessWidget implements PreferredSizeWidget {
         bottom: false,
         child: Stack(children: [
           const Center(
-            child: Text('زیادکردنی باڵانس',
+            child: ProxoText('زیادکردنی باڵانس',
                 style: TextStyle(
                   fontFamily: kAppFont,
                   fontSize: 16,
@@ -842,7 +858,7 @@ class _SectionLabel extends StatelessWidget {
   const _SectionLabel(this.text);
 
   @override
-  Widget build(BuildContext context) => Text(
+  Widget build(BuildContext context) => ProxoText(
         text,
         style: const TextStyle(
           fontFamily: kAppFont,
@@ -905,7 +921,7 @@ class _WalletCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(wallet.name,
+                ProxoText(wallet.name,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
@@ -915,7 +931,7 @@ class _WalletCard extends StatelessWidget {
                       color: _cInk,
                     )),
                 const SizedBox(height: 2),
-                Text(
+                ProxoText(
                   wallet.numberIsPlaceholder ? 'ژمارە دانەنراوە' : wallet.number,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -956,7 +972,7 @@ class _InstructionCard extends StatelessWidget {
         ],
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text('ژمارەی وەرگر — ${wallet.name}',
+        ProxoText('ژمارەی وەرگر — ${wallet.name}',
             style: const TextStyle(
               fontFamily: kAppFont,
               fontSize: 12.5,
@@ -986,7 +1002,7 @@ class _InstructionCard extends StatelessWidget {
             ),
             const SizedBox(width: 12),
             Expanded(
-              child: Text(
+              child: ProxoText(
                 wallet.number,
                 textDirection: TextDirection.ltr,
                 textAlign: TextAlign.left,
@@ -1003,7 +1019,7 @@ class _InstructionCard extends StatelessWidget {
         ),
         if (wallet.numberIsPlaceholder) ...[
           const SizedBox(height: 8),
-          const Text(
+          const ProxoText(
             '⚠ ژمارەی ئەم ڕێگایە هێشتا دانەنراوە — تکایە ڕێگایەکی تر هەڵبژێرە',
             style: TextStyle(
                 fontFamily: kAppFont, fontSize: 12, color: Color(0xFFB45309)),
@@ -1022,7 +1038,7 @@ class _InstructionCard extends StatelessWidget {
                 ),
                 const SizedBox(width: 9),
                 Expanded(
-                  child: Text(s,
+                  child: ProxoText(s,
                       style: const TextStyle(
                         fontFamily: kAppFont,
                         fontSize: 12.5,
@@ -1060,7 +1076,7 @@ class _MiniAction extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           border: Border.all(color: _cLine),
         ),
-        child: Text(label,
+        child: ProxoText(label,
             style: TextStyle(
               fontFamily: kAppFont,
               fontSize: 12,

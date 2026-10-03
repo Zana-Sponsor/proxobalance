@@ -111,7 +111,7 @@ class _DiscountCodesPageState extends State<DiscountCodesPage> {
           backgroundColor: AppColors.surfaceCard,
           elevation: 0,
           foregroundColor: _kTextDark,
-          title: Text('Discount Codes',
+          title: ProxoText('Discount Codes',
             // AppBar title role → SemiBold, not Bold
             style: _kBase.copyWith(fontSize: 16, fontWeight: FontWeight.w600, color: _kTextDark)),
         ),
@@ -126,7 +126,7 @@ class _DiscountCodesPageState extends State<DiscountCodesPage> {
                     onAction: _load,
                   )
                 : _codes.isEmpty
-                ? Center(child: Text('No discount codes available right now.',
+                ? Center(child: ProxoText('No discount codes available right now.',
                     style: _kBase.copyWith(fontSize: 13, color: _kTextMuted)))
                 : ListView.separated(
                     padding: const EdgeInsets.all(16),
@@ -146,20 +146,20 @@ class _DiscountCodesPageState extends State<DiscountCodesPage> {
                         child: Row(children: [
                           Expanded(
                             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                              Text(c.code,
+                              ProxoText(c.code,
                                 // card-title role → SemiBold, not Bold
                                 style: _kBase.copyWith(fontSize: 15, fontWeight: FontWeight.w600, color: _kTextDark)),
                               const SizedBox(height: 3),
-                              Text(label,
+                              ProxoText(label,
                                 style: _kBase.copyWith(fontSize: 13, fontWeight: FontWeight.w600, color: _kActiveBlue)),
                               if (c.description != null && c.description!.isNotEmpty) ...[
                                 const SizedBox(height: 3),
-                                Text(c.description!,
+                                ProxoText(c.description!,
                                   style: _kBase.copyWith(fontSize: 12, color: _kTextMuted)),
                               ],
                               if (c.expiresAt != null) ...[
                                 const SizedBox(height: 3),
-                                Text('Expires ${c.expiresAt!.toLocal().toString().split(' ').first}',
+                                ProxoText('Expires ${c.expiresAt!.toLocal().toString().split(' ').first}',
                                   style: _kBase.copyWith(fontSize: 11.5, color: _kTextMuted)),
                               ],
                             ]),
@@ -170,7 +170,7 @@ class _DiscountCodesPageState extends State<DiscountCodesPage> {
                             child: Container(
                               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                               decoration: BoxDecoration(color: _kActiveBlue, borderRadius: BorderRadius.circular(10)),
-                              child: Text('Copy',
+                              child: ProxoText('Copy',
                                 // button role: 13 (not 12.5) / SemiBold (not Bold)
                                 style: _kBase.copyWith(fontSize: 13, fontWeight: FontWeight.w600, color: Colors.white)),
                             ),

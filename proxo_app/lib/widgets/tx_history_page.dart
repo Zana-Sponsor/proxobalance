@@ -130,7 +130,7 @@ class _TxItem {
 }
 
 /// دۆخی لیست — لە `ValueNotifier`ێکدایە بۆ ئەوەی نوێکردنەوە تەنها
-/// لیستەکە دووبارە دروست بکاتەوە، نەک AppBar، ناونیشان یان Bottom Nav.
+/// لیستەکە دووبارە دروست بکاتەوە، نەک AppBar یان ناونیشان.
 @immutable
 class _TxListState {
   final List<_TxItem> items;
@@ -542,12 +542,6 @@ class TxHistorySheetState extends State<TxHistoryPage> {
     );
   }
 
-  /// Bottom Nav: دەگەڕێتەوە بۆ شێڵ و تابەکە دەگۆڕێت.
-  void _onNavTap(int index) {
-    Navigator.of(context).popUntil((Route<dynamic> r) => r.isFirst);
-    mainShellTabRequest.value = index;
-  }
-
   // ── بنیاتنان ──────────────────────────────────────────────────────────────
 
   @override
@@ -564,11 +558,6 @@ class TxHistorySheetState extends State<TxHistoryPage> {
         onRefresh: s.loading || s.refreshing ? null : _refresh,
         refreshing: s.refreshing,
         body: _buildList(s, l),
-        bottomNavigationBar: ValueListenableBuilder<int>(
-          valueListenable: mainShellTab,
-          builder: (BuildContext _, int tab, Widget? __) =>
-              ProxoBottomNav(currentIndex: tab, onTap: _onNavTap),
-        ),
       ),
     );
   }

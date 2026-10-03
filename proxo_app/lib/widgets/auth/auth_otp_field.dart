@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'auth_design.dart';
+import 'package:proxo_app/widgets/proxo_text.dart';
 
 class AuthOtpBoxes extends StatefulWidget {
   const AuthOtpBoxes({
@@ -267,27 +268,34 @@ class _AuthOtpBoxesState extends State<AuthOtpBoxes>
               ),
             ],
           ),
-          child: TextField(
+          child: ProxoDirectionalInput(
             controller: _boxes[i],
-            focusNode: _nodes[i],
-            enabled: widget.enabled,
-            textAlign: TextAlign.center,
             keyboardType: TextInputType.number,
-            autofillHints: i == 0 ? const <String>[AutofillHints.oneTimeCode] : null,
-            inputFormatters: const <TextInputFormatter>[],
-            style: AuthTokens.otpDigit,
-            cursorColor: AuthTokens.accent,
-            showCursor: false,
-            decoration: const InputDecoration(
-              counterText: '',
-              border: InputBorder.none,
-              enabledBorder: InputBorder.none,
-              focusedBorder: InputBorder.none,
-              contentPadding: EdgeInsets.zero,
+            forceLtr: true,
+            builder: (context, inputDirection) => TextField(
+              textDirection: inputDirection,
+              controller: _boxes[i],
+              focusNode: _nodes[i],
+              enabled: widget.enabled,
+              textAlign: TextAlign.center,
+              keyboardType: TextInputType.number,
+              autofillHints: i == 0 ? const <String>[AutofillHints.oneTimeCode] : null,
+              inputFormatters: const <TextInputFormatter>[],
+              style: AuthTokens.otpDigit,
+              cursorColor: AuthTokens.accent,
+              showCursor: false,
+              decoration: const InputDecoration(
+                counterText: '',
+                border: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
+                contentPadding: EdgeInsets.zero,
+              ),
+              onChanged: (v) => _onChanged(i, v),
+              onTap: () => _boxes[i].selection = TextSelection.collapsed(
+                offset: _boxes[i].text.length,
+              ),
             ),
-            onChanged: (v) => _onChanged(i, v),
-            onTap: () => _boxes[i].selection =
-                TextSelection.collapsed(offset: _boxes[i].text.length),
           ),
         ),
       ),

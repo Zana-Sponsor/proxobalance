@@ -401,11 +401,11 @@ class MainShellState extends State<MainShell> {
         // FIX: هەڵە → بگەڕێوە سەرەکی + refresh هەموو بەشەکان
         if (result == 'refresh' && mounted) {
           setState(() {
-            _tabIndex = 0;
+            _tabIndex = 1;
             _refreshCounter++;
-            _builtTabs.add(0);
+            _builtTabs.add(1);
           });
-          mainShellTab.value = 0;
+          mainShellTab.value = 1;
         }
         return;
       }

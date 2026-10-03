@@ -31,6 +31,7 @@ import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import '../theme/app_theme.dart';
+import 'package:proxo_app/widgets/proxo_text.dart';
 
 class HtmlPreviewSheet extends StatefulWidget {
   const HtmlPreviewSheet({super.key, required this.html, this.title});
@@ -112,7 +113,7 @@ class _HtmlPreviewSheetState extends State<HtmlPreviewSheet> {
             tooltip: 'داخستن',
             onPressed: () => Navigator.of(context).pop(),
           ),
-          title: Text(
+          title: ProxoText(
             widget.title?.trim().isNotEmpty == true
                 ? widget.title!.trim()
                 : 'پێشبینین',

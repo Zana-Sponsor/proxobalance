@@ -5,6 +5,7 @@ import '../widgets/html_preview_sheet.dart';
 import '../widgets/proxo_toast.dart';
 import '../widgets/proxo_error_ui.dart';
 import '../theme/app_theme.dart';
+import 'package:proxo_app/widgets/proxo_text.dart';
 
 class ProxoCardsListScreen extends StatefulWidget {
   final VoidCallback? onCreateTap;
@@ -58,20 +59,20 @@ class _ProxoCardsListScreenState extends State<ProxoCardsListScreen> {
         child: AlertDialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
           backgroundColor: Colors.white,
-          title: const Text('سڕینەوەی کەرەستە',
+          title: const ProxoText('سڕینەوەی کەرەستە',
               style: TextStyle(fontFamily: kAppFont, fontSize: 15,
                   fontWeight: FontWeight.w700, color: _ink)),
-          content: Text('دڵنیای؟  "$cardName"  دەسڕیتەوە.',
+          content: ProxoText('دڵنیای؟  "$cardName"  دەسڕیتەوە.',
               style: const TextStyle(fontFamily: kAppFont, fontSize: 13,
                   color: _muted, height: 1.35)),
           actionsPadding: const EdgeInsets.fromLTRB(12, 0, 12, 14),
           actions: [
             TextButton(onPressed: () => Navigator.pop(ctx, false),
-                child: const Text('پاشگەزبوونەوە',
+                child: const ProxoText('پاشگەزبوونەوە',
                     style: TextStyle(fontFamily: kAppFont, color: _muted,
                         fontWeight: FontWeight.w600))),
             TextButton(onPressed: () => Navigator.pop(ctx, true),
-                child: const Text('سڕینەوە',
+                child: const ProxoText('سڕینەوە',
                     style: TextStyle(fontFamily: kAppFont, color: _red,
                         fontWeight: FontWeight.w700))),
           ],
@@ -152,7 +153,7 @@ class _Header extends StatelessWidget {
                 child: const Row(mainAxisSize: MainAxisSize.min, children: [
                   Icon(Icons.add_rounded, color: Colors.white, size: 15),
                   SizedBox(width: 5),
-                  Text('نوێ', style: TextStyle(fontFamily: kAppFont, fontSize: 12,
+                  ProxoText('نوێ', style: TextStyle(fontFamily: kAppFont, fontSize: 12,
                       // Was Bold — an ordinary "create" pill, not a rare/
                       // high-priority moment.
                       fontWeight: FontWeight.w600, color: Colors.white)),
@@ -162,10 +163,10 @@ class _Header extends StatelessWidget {
             const Spacer(),
             // Title
             Column(crossAxisAlignment: CrossAxisAlignment.end, children: const [
-              Text('کەرەستەی پەیوەندی', style: TextStyle(fontFamily: kAppFont,
+              ProxoText('کەرەستەی پەیوەندی', style: TextStyle(fontFamily: kAppFont,
                   fontSize: 16, fontWeight: FontWeight.w600, color: _ink)),
               SizedBox(height: 1),
-              Text('ProxoLink Cards', style: TextStyle(fontFamily: kAppFont,
+              ProxoText('ProxoLink Cards', style: TextStyle(fontFamily: kAppFont,
                   fontSize: 11.5, fontWeight: FontWeight.w600, color: AppColors.inkMuted)),
             ]),
             const SizedBox(width: 10),
@@ -209,13 +210,13 @@ class _CardRow extends StatelessWidget {
         Container(
           width: 36, height: 36,
           decoration: const BoxDecoration(color: _ink, shape: BoxShape.circle),
-          child: Center(child: Text(init, style: const TextStyle(fontFamily: kAppFont,
+          child: Center(child: ProxoText(init, style: const TextStyle(fontFamily: kAppFont,
               color: Colors.white, fontSize: 14, fontWeight: FontWeight.w700))),
         ),
         const SizedBox(width: 11),
         // Name + chips
         Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(card.name, style: const TextStyle(fontFamily: kAppFont, fontSize: 14,
+          ProxoText(card.name, style: const TextStyle(fontFamily: kAppFont, fontSize: 14,
               fontWeight: FontWeight.w600, color: _ink)),
           const SizedBox(height: 4),
           Row(children: [
@@ -248,7 +249,7 @@ class _Chip extends StatelessWidget {
       // Was 9/Bold — below the smallest defined role (11.5) with no fixed-
       // size container forcing it; the chip has no hard-coded height, so it
       // grows with the text instead of clipping.
-      child: Text(label, style: TextStyle(fontFamily: kAppFont, fontSize: 11.5,
+      child: ProxoText(label, style: TextStyle(fontFamily: kAppFont, fontSize: 11.5,
           fontWeight: FontWeight.w600,
           color: dark ? Colors.white : AppColors.inkMuted)),
     );
@@ -286,10 +287,10 @@ class _EmptyState extends StatelessWidget {
           child: const Icon(Icons.link_rounded, color: Colors.white, size: 32),
         ),
         const SizedBox(height: 18),
-        const Text('هیچ کەرەستەیەک نییە', style: TextStyle(fontFamily: kAppFont,
+        const ProxoText('هیچ کەرەستەیەک نییە', style: TextStyle(fontFamily: kAppFont,
             fontSize: 16, fontWeight: FontWeight.w600, color: _ink)),
         const SizedBox(height: 7),
-        const Text('بەکەم کلیک کارتی پەیوەندیت دروستبکە.', style: TextStyle(
+        const ProxoText('بەکەم کلیک کارتی پەیوەندیت دروستبکە.', style: TextStyle(
             fontFamily: kAppFont, fontSize: 12, color: AppColors.inkMuted, height: 1.35),
             textAlign: TextAlign.center),
         const SizedBox(height: 22),
@@ -301,7 +302,7 @@ class _EmptyState extends StatelessWidget {
             child: const Row(mainAxisSize: MainAxisSize.min, children: [
               Icon(Icons.add_rounded, color: Colors.white, size: 16),
               SizedBox(width: 7),
-              Text('دروستبکە', style: TextStyle(fontFamily: kAppFont, fontSize: 13,
+              ProxoText('دروستبکە', style: TextStyle(fontFamily: kAppFont, fontSize: 13,
                   fontWeight: FontWeight.w700, color: Colors.white)),
             ]),
           ),

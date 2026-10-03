@@ -8,6 +8,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../theme/app_theme.dart';
 import '../main.dart' show supabase;
 import '../widgets/proxo_toast.dart';
+import 'package:proxo_app/widgets/proxo_text.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // TutorialScreen — فێرکاری
@@ -202,7 +203,7 @@ class _TutorialScreenState extends State<TutorialScreen> {
               // ── Title ──────────────────────────────────────
               Padding(
                 padding: const EdgeInsets.fromLTRB(14, 12, 14, 14),
-                child: Text(
+                child: ProxoText(
                   title,
                   textAlign: TextAlign.right,
                   // cardTitle role: SemiBold not Bold; relaxed-band height
@@ -249,7 +250,7 @@ class _TutorialScreenState extends State<TutorialScreen> {
               ),
             ),
             const SizedBox(height: 14),
-            Text(
+            ProxoText(
               'هیچ فێرکارییەک نەدۆزرایەوە',
               // sectionHeading role: SemiBold not Bold
               style: AppTypography.sectionHeading(),

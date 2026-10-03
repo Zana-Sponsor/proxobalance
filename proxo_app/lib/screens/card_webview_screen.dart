@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:proxo_app/widgets/proxo_text.dart';
   import 'package:webview_flutter/webview_flutter.dart';
 
   import '../theme/app_theme.dart';
@@ -61,7 +62,7 @@ import 'package:flutter/material.dart';
           appBar: AppBar(
             backgroundColor: AppColors.ink,
             foregroundColor: Colors.white,
-            title: Text(
+            title: ProxoText(
               widget.title,
               // Was missing `fontFamily: kAppFont` entirely (silently fell
               // back to the platform default font) and used Bold where the

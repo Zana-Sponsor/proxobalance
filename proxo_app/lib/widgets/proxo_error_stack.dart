@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../theme/app_theme.dart' show kAppFont;
+import 'package:proxo_app/widgets/proxo_text.dart';
 
 // ═════════════════════════════════════════════════════════════════════════════
 // ProxoErrorStack — کارتی هەڵەی سپی، دەقی ڕەش، کۆبووە وەک ستاکێکی 3D
@@ -327,7 +328,7 @@ class _StackCardState extends State<_StackCard>
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               Expanded(
-                child: Text(
+                child: ProxoText(
                   item.message,
                   style: _T.text,
                   maxLines: 2,
@@ -343,7 +344,7 @@ class _StackCardState extends State<_StackCard>
                       _tapDismiss();
                       item.onAction!();
                     },
-                    child: Text(item.actionLabel!, style: _T.actionText),
+                    child: ProxoText(item.actionLabel!, style: _T.actionText),
                   ),
                 ),
             ],

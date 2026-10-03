@@ -26,6 +26,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../templates/card_templates.dart';
+import 'package:proxo_app/widgets/proxo_text.dart';
 
 // ─────────────────────────────────────────────────────────────
 // STYLES
@@ -250,6 +251,10 @@ String _escHtml(String s) => s
     .replaceAll('&', '&amp;').replaceAll('<', '&lt;')
     .replaceAll('>', '&gt;').replaceAll('"', '&quot;');
 
+String _escHtmlText(String text) =>
+    ProxoTextDirection.html(text, escape: _escHtml);
+
+
 /// Escapes text embedded inside a single-quoted inline `<script>` string
 /// literal (e.g. inside `askConfirm('...', '...', '...')`). proxo-tools.js
 /// does not escape this at all, which means a contact value containing a
@@ -360,7 +365,7 @@ String _gridBtn(_ActivePlatform p, bool shine) {
   // rule of its own, purely for exact DOM-structure fidelity.
   return '<a id="' + id + '" class="btn' + (shine ? ' shine-active' : '') + '">'
       + '<i class="' + cls + ' ' + ico + '" style="font-size:' + sz + 'px"></i>'
-      + '<span>' + _escHtml(p.cardLabel) + '</span></a>';
+      + '<span dir="auto">' + _escHtmlText(p.cardLabel) + '</span></a>';
 }
 
 _DarkLightLayout _buildDarkLightLayout(List<_ActivePlatform> activePlats, String tt) {
@@ -418,7 +423,7 @@ String _buildPlBtn(_ActivePlatform p, bool shine, String boxShadow) {
   return '<a id="' + id + '" class="pl-btn' + (shine ? ' shine-active' : '') + '"'
       + ' style="background:' + bg + ';box-shadow:' + boxShadow + ';">'
       + '<span style="width:44px;flex-shrink:0;"></span>'
-      + '<span class="pl-lbl">' + _escHtml(p.cardLabel) + '</span>'
+      + '<span class="pl-lbl" dir="auto">' + _escHtmlText(p.cardLabel) + '</span>'
       + '<i class="' + (_icoClass[id] ?? 'fas') + ' ' + (_btnIco[id] ?? 'fa-circle') + '"'
       + ' style="font-size:' + sz + 'px;width:44px;flex-shrink:0;text-align:center;"></i></a>';
 }
@@ -467,7 +472,7 @@ String _buildClassicButtons(List<_ActivePlatform> plats) {
     buf.write('<a id="' + id + '" class="btn-classic' + (i == 0 ? ' shine-active' : '')
         + '" style="background:' + bg + '">'
         + '<div class="ic-spacer"></div>'
-        + '<span>' + _escHtml(p.cardLabel) + '</span>'
+        + '<span dir="auto">' + _escHtmlText(p.cardLabel) + '</span>'
         + '<div class="ic-wrap"><i class="' + cls + ' ' + ico + '"></i></div></a>');
   }
   return buf.toString();
@@ -597,8 +602,8 @@ String buildCardHtml({
 
   String html = CardTemplates.forStyle(style.nameEn);
   html = html
-      .replaceAll('{{NAME}}',         _escHtml(name))
-      .replaceAll('{{BIO}}',          _escHtml(bio))
+      .replaceAll('{{NAME}}',         _escHtmlText(name))
+      .replaceAll('{{BIO}}',          _escHtmlText(bio))
       .replaceAll('{{AVATAR}}',       avatarHtml)
       .replaceAll('{{GRAD}}',         grad)
       .replaceAll('{{BUTTONS}}',      buttons)

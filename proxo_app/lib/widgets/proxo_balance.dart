@@ -4,6 +4,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../theme/app_theme.dart';
 import '../main.dart' show supabase, firebaseAvailable, kIqdRate;
+import 'package:proxo_app/widgets/proxo_text.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // ProxoBalanceNotifier
@@ -206,7 +207,7 @@ class _BalanceTextState extends State<BalanceText> {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
+    return ProxoText(
       _text,
       style: widget.style ??
           AppTypography.body(
