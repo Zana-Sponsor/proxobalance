@@ -1,7 +1,7 @@
 import { readJson, json } from './_lib/security.js';
 import {
   authenticatedUser, cardById, activeTemplate, renderedPage,
-  validateCardData, verifyPublicAvatar, proxoRows, proxoWrite, validUuid
+  validateCardData, normalizedPlatforms, verifyPublicAvatar, proxoRows, proxoWrite, validUuid
 } from './_lib/proxolink.js';
 
 const STYLES=new Set(['dark','light','classic','pill','card','neon','zoom','banner']);
@@ -37,12 +37,9 @@ function validatePayload(body,userId,id,old=null) {
     ||!Number.isInteger(data.template_version)||data.template_version<1
     ||!THEMES.has(data.color_theme)||!['ku','ar'].includes(data.card_language))
     throw Object.assign(new Error('invalid_request'),{code:'invalid_request'});
-  if(typeof data.tt!=='string'||!data.tt)
+  if(typeof data.tt!=='string')
     throw Object.assign(new Error('invalid_request'),{code:'invalid_request'});
-  if(typeof data.platforms!=='object'||data.platforms===null
-    ||Array.isArray(data.platforms)
-    ||Object.keys(data.platforms).some(x=>!PLATFORMS.has(x)))
-    throw Object.assign(new Error('invalid_platform_value'),{code:'invalid_platform_value'});
+  data.platforms=normalizedPlatforms(data.platforms);
   if(data.avatar_path) {
     const expected=userId+'/'+id+'/';
     if(typeof data.avatar_path!=='string'
