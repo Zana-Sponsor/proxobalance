@@ -726,6 +726,15 @@ function listenToNews() {
             return {text:(x&&x.text)||'', action:(x&&x.action)||{type:'none'}};
         }).filter(it=>it.text && String(it.text).trim()) : [];
         if(!items.length && data && data.text) items = [{text:data.text, action:{type:'none'}}];
+        // Repeated announcement copy must not appear on consecutive slides.
+        // Deduplicate only the rendered list; keep the admin's saved data intact.
+        const seenNewsText=new Set();
+        items=items.filter(item=>{
+            const key=String(item.text||'').trim().replace(/\s+/g,' ');
+            if(!key||seenNewsText.has(key))return false;
+            seenNewsText.add(key);
+            return true;
+        });
         if(data && data.show && items.length){
             _newsItems = items;
             _newsIdx = 0;
