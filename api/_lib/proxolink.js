@@ -10,6 +10,26 @@ const THEMES = {
   pink:['#831843','#be185d'], dark:['#0d1021','#1c2333']
 };
 const IDS = ['wa','vb','tg','ig','ph','as'];
+const PLATFORM_ALIASES={
+  wa:'wa',whatsapp:'wa', vb:'vb',viber:'vb',
+  tg:'tg',telegram:'tg', ig:'ig',instagram:'ig',
+  ph:'ph',phone:'ph',korek:'ph', as:'as',asya:'as',asiacell:'as'
+};
+export function normalizedPlatforms(platforms) {
+  if(!platforms || typeof platforms!=='object' || Array.isArray(platforms))
+    throw err(422,'invalid_platform_value');
+  const normalized={};
+  for(const [key,value] of Object.entries(platforms)) {
+    const id=PLATFORM_ALIASES[key.toLowerCase()];
+    if(!id)throw err(422,'invalid_platform_value');
+    if(value==null||String(value).trim()==='')continue;
+    if(normalized[id]!==undefined && normalized[id]!==value)
+      throw err(422,'invalid_platform_value');
+    normalized[id]=String(value).trim();
+  }
+  return normalized;
+}
+
 const TYPES = {wa:'whatsapp',vb:'viber',tg:'telegram',ig:'instagram',ph:'phone',as:'asya'};
 const LABELS = {
   wa:['واتسئاپ','واتساب'], vb:['ڤایبەر','فايبر'],
@@ -72,12 +92,11 @@ export function validateCardData(card) {
   if (typeof card.name !== 'string' || !card.name.trim() || card.name.length > 160)
     throw err(422,'invalid_card_name');
   if (String(card.bio||'').length > 2000) throw err(422,'invalid_bio');
-  const platform = card.platforms;
-  if (!platform || typeof platform !== 'object' || Array.isArray(platform))
+  const platform=normalizedPlatforms(card.platforms);
+  const keys=Object.keys(platform);
+  if(!keys.length && !(card.tt||card.tiktok))
     throw err(422,'invalid_platform_value');
-  const keys = Object.keys(platform);
-  if (!keys.length || keys.some(id=>!IDS.includes(id))) throw err(422,'invalid_platform_value');
-  for (const id of keys) contactDestination(id,platform[id]);
+  for(const id of keys) contactDestination(id,platform[id]);
   if (card.tt || card.tiktok) handle(card.tt || card.tiktok);
   return true;
 }
@@ -178,10 +197,11 @@ function avatarHtml(card) {
     +safeHtml(Array.from(card.name)[0]?.toUpperCase()||'P')+'</span>';
 }
 function selectedPlatforms(card) {
-  return IDS.filter(id=>card.platforms[id]).map(id=>({
+  const platforms=normalizedPlatforms(card.platforms);
+  return IDS.filter(id=>platforms[id]).map(id=>({
     id, label:LABELS[id][card.card_language==='ar'?1:0],
-    type:TYPES[id],value:card.platforms[id],
-    url:contactDestination(id,card.platforms[id])
+    type:TYPES[id],value:platforms[id],
+    url:contactDestination(id,platforms[id])
   }));
 }
 function iconClass(id) {return id==='ph'||id==='as'?'fas':'fab';}
