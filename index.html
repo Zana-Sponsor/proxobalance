@@ -552,7 +552,7 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
       <span class="icn icon--solar icon--solar--bell-linear"></span>
     </span>
     <span class="news-slide-viewport">
-      <span class="news-banner-label">ئاگادارییە گشتییەکان</span>
+      <span class="news-banner-label">ئاگاداری</span>
       <span id="newsText" class="news-slide-text" aria-live="polite" aria-atomic="true"></span>
     </span>
     <span id="newsControls" class="news-slide-controls" hidden>
@@ -587,25 +587,22 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
         <span class="icn icon--solar icon--solar--transfer-horizontal-linear" aria-hidden="true"></span>
       </span>
       <div class="xc-head-copy">
-        <span class="xc-eyebrow">پڕۆکسۆ باڵانس</span>
         <h2>ئاڵوگۆڕی دراو</h2>
-        <p>بە سێ هەنگاوی ئاسان داواکارییەکەت تەواو بکە.</p>
       </div>
-      <span class="ux-exchange-head-note">داواکاری نوێ</span>
     </div>
 
     <div class="ux-progress" role="list" aria-label="هەنگاوەکانی ئاڵوگۆڕ">
       <div class="ux-progress-item is-current" data-ux-stage="send" role="listitem" aria-current="step">
         <span class="ux-progress-index" aria-hidden="true">١</span>
-        <span class="ux-progress-copy"><span>ناردن</span><small>ڕێگا و بڕ</small></span>
+        <span class="ux-progress-copy"><span>ناردن</span></span>
       </div>
       <div class="ux-progress-item" data-ux-stage="receive" role="listitem">
         <span class="ux-progress-index" aria-hidden="true">٢</span>
-        <span class="ux-progress-copy"><span>وەرگرتن</span><small>ژمارەی وەرگر</small></span>
+        <span class="ux-progress-copy"><span>وەرگرتن</span></span>
       </div>
       <div class="ux-progress-item" data-ux-stage="proof" role="listitem">
         <span class="ux-progress-index" aria-hidden="true">٣</span>
-        <span class="ux-progress-copy"><span>پسووڵە</span><small>پشتڕاستکردنەوە</small></span>
+        <span class="ux-progress-copy"><span>پسووڵە</span></span>
       </div>
     </div>
 
@@ -628,10 +625,9 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
       <section class="xc-step" id="grpSend">
         <div class="xc-step-head">
           <span class="xc-step-index" aria-hidden="true">١</span>
-          <h3>لە کوێوە دەنێریت؟</h3>
+          <h3>زانیاری ناردن</h3>
           <span class="xc-badge" id="sendLimitBadge">کەمترین 10,000</span>
         </div>
-        <p class="ux-step-intro">شێوازی پارەدان هەڵبژێرە و ئەو بڕە بنووسە کە دەتنێریت.</p>
 
         <div class="select-wrap">
           <select id="from" class="sr-native-select" onchange="updateWallet()" aria-label="لە کوێوە دەینێریت" tabindex="-1">
@@ -640,7 +636,7 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
           <button type="button" class="picker-trigger" id="fromTrigger" onclick="openPicker('from')">
             <span class="method-icon" id="fromTriggerIcon"></span>
             <span class="picker-trigger-text">
-              <span class="picker-trigger-label">لە کوێوە دەینێریت؟</span>
+              <span class="picker-trigger-label">ڕێگای ناردن</span>
               <span class="picker-trigger-value" id="fromTriggerLabel">بارکردن…</span>
             </span>
             <span class="select-chevron"><span class="icn icn-sm icon--solar icon--solar--alt-arrow-down-linear" aria-hidden="true"></span></span>
@@ -651,7 +647,6 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
         <div class="wallet-row ux-payment-destination">
           <div class="ux-wallet-head">
             <span class="wallet-label">ژمارەی هەژماری ناردن</span>
-            <span class="ux-wallet-help">پارەکە بۆ ئەم ژمارەیە بنێرە</span>
           </div>
           <div class="wallet-row-line">
             <span class="wallet-value" id="myNum" dir="ltr">---</span>
@@ -675,7 +670,7 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
             <button type="button" class="quick-amount-btn" onclick="setQuickAmount(100000)">100,000</button>
           </div>
           <div class="xc-hint" id="amtHint">
-            <span>کەمترین بڕ <b>10,000</b> دینارە. بڕەکە دەبێت وەک ئەوە بێت کە ناردووتە.</span>
+            <span>بڕەکە لەگەڵ ئەو پارەیەی دەنێریت یەکسان بێت.</span>
           </div>
           <span id="formattedHint" class="formatted-amount" hidden></span>
           <span class="field-error" id="amtError"></span>
@@ -721,10 +716,9 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
       <section class="xc-step" id="grpRecv">
         <div class="xc-step-head">
           <span class="xc-step-index" aria-hidden="true">٢</span>
-          <h3>لە کوێ وەریدەگریت؟</h3>
+          <h3>زانیاری وەرگرتن</h3>
           <span class="xc-badge" id="etaBadge">٥–٣٠ خولەک</span>
         </div>
-        <p class="ux-step-intro">شێوازی وەرگرتن و ژمارەی هەژماری وەرگر دیاری بکە.</p>
 
         <div class="select-wrap">
           <select id="receiveVia" class="sr-native-select" onchange="updatePlaceholder(); calc();" aria-label="وەرگرتن لە" tabindex="-1">
@@ -733,7 +727,7 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
           <button type="button" class="picker-trigger" id="receiveViaTrigger" onclick="openPicker('receiveVia')">
             <span class="method-icon" id="receiveViaTriggerIcon"></span>
             <span class="picker-trigger-text">
-              <span class="picker-trigger-label">وەرگرتن لە</span>
+              <span class="picker-trigger-label">ڕێگای وەرگرتن</span>
               <span class="picker-trigger-value" id="receiveViaTriggerLabel">بارکردن…</span>
             </span>
             <span class="select-chevron"><span class="icn icn-sm icon--solar icon--solar--alt-arrow-down-linear" aria-hidden="true"></span></span>
@@ -761,7 +755,6 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
     <div class="xc-summary" id="xcBreakdown" aria-live="polite">
       <div class="xc-summary-head">
         <h3>پوختەی داواکاری</h3>
-        <span>پێش ناردن بڕەکان بپشکنە</span>
       </div>
       <div class="xc-sum-row" id="bdSentRow">
         <span class="lbl">دەینێریت</span>
@@ -790,7 +783,6 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
           <span class="xc-step-index" aria-hidden="true">٣</span>
           <h3>پسووڵەی پارەدان</h3>
         </div>
-        <p class="ux-step-intro">دوای ناردنی پارەکە، وێنەی ڕوونی پسووڵە زیاد بکە.</p>
         <div class="file-field">
           <input type="file" id="fileInput" class="file-input-native" accept="image/jpeg,image/png,image/webp" onchange="onFileSelected(this)">
           <label class="file-picker" for="fileInput">
@@ -823,7 +815,6 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
         <span class="icn icon--solar icon--solar--plain-2-linear" aria-hidden="true"></span>
         ناردنی داواکاری
       </button>
-      <p class="xc-submit-note">بە ناردنی داواکاری، دەتوانیت وردەکارییەکان لە هەنگاوی دواتردا بپشکنیت.</p>
     </div>
   </div>
 
