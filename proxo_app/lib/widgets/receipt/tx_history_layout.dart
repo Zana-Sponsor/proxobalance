@@ -27,23 +27,16 @@ class TxHistoryLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final mq = MediaQuery.of(context);
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.dark.copyWith(
         statusBarColor: ReceiptTokens.bar,
       ),
       child: Directionality(
         textDirection: TextDirection.ltr,
-        child: MediaQuery(
-          data: mq.copyWith(
-            textScaler: mq.textScaler.clamp(
-              minScaleFactor: ReceiptTokens.minTextScale,
-              maxScaleFactor: ReceiptTokens.maxTextScale,
-            ),
-          ),
-          child: Scaffold(
+        child: Scaffold(
             backgroundColor: ReceiptTokens.page,
-            body: Column(
+            body: SafeArea(
+                top: false, bottom: false, child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
                 ReceiptAppBar(
@@ -72,8 +65,7 @@ class TxHistoryLayout extends StatelessWidget {
                 ),
                 Expanded(child: body),
               ],
-            ),
-          ),
+            )),
         ),
       ),
     );
@@ -140,7 +132,28 @@ class TxHistoryCard extends StatelessWidget {
                 constraints: const BoxConstraints(
                   minHeight: ReceiptTokens.rowMinHeight,
                 ),
-                child: Row(
+                child: MediaQuery.textScalerOf(context).scale(1) >
+                        ReceiptTokens.maxTextScale
+                    ? Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          ProxoText(amount,
+                              textAlign: TextAlign.left,
+                              style: ReceiptTokens.rowValue
+                                  .copyWith(color: amountColor)),
+                          const SizedBox(height: ReceiptTokens.rowToRow),
+                          Wrap(
+                              alignment: WrapAlignment.spaceBetween,
+                              spacing: ReceiptTokens.labelToValue,
+                              runSpacing: ReceiptTokens.rowToRow,
+                              children: [
+                                ProxoText(time,
+                                    style: ReceiptTokens.rowLabel.copyWith(
+                                        color: const Color(0xFF6B7280))),
+                                ProxoText(date, style: ReceiptTokens.rowValue),
+                              ]),
+                        ])
+                    : Row(
                   textDirection: TextDirection.ltr,
                   children: <Widget>[
                     _value(amount, Alignment.centerLeft,

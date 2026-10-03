@@ -20,13 +20,15 @@ Widget receiptHost({
   required AdDetailStrings strings,
   required Map<String, dynamic> data,
   required double scale,
+  EdgeInsets padding = EdgeInsets.zero,
   Future<void> Function()? onPdf,
 }) =>
     MaterialApp(
       home: Builder(
         builder: (context) => MediaQuery(
           data: MediaQuery.of(context)
-              .copyWith(textScaler: TextScaler.linear(scale)),
+              .copyWith(textScaler: TextScaler.linear(scale),
+                  padding: padding, viewPadding: padding),
           child: Directionality(
             textDirection: TextDirection.rtl,
             child: Scaffold(
@@ -35,7 +37,7 @@ Widget receiptHost({
                 children: <Widget>[
                   ReceiptAppBar(title: strings.appBarTitle, onBack: () {}),
                   Expanded(
-                    child: ReceiptBody(
+                    child: SafeArea(top: false, bottom: false, child: ReceiptBody(
                       children: <Widget>[
                         ReceiptSurface(
                           child: AdReceiptCard(
@@ -51,7 +53,7 @@ Widget receiptHost({
                           ),
                         ),
                       ],
-                    ),
+                    )),
                   ),
                 ],
               ),

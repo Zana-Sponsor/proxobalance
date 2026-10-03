@@ -201,18 +201,46 @@ class AdValueRow extends StatelessWidget {
       required this.value,
       this.color = AdUi.ink});
   @override
-  Widget build(BuildContext context) => Row(
-          textDirection: TextDirection.ltr,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-                child: ProxoText(value,
-                    style: AdUi.text(context, color: color),
-                    textAlign: TextAlign.left)),
-            const SizedBox(width: 16),
-            Expanded(
-                child: ProxoText(label,
-                    style: AdUi.text(context, color: color),
-                    textAlign: TextAlign.right)),
-          ]);
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (context, constraints) {
+      final style = AdUi.text(context, color: color);
+      double minimumWidth(String text) {
+        final painter = TextPainter(
+          text: TextSpan(text: ProxoTextDirection.display(text), style: style),
+          textDirection: ProxoTextDirection.of(text),
+          textScaler: MediaQuery.textScalerOf(context),
+        )..layout();
+        final width = painter.minIntrinsicWidth;
+        painter.dispose();
+        return width;
+      }
+
+      final valueText = ProxoText(
+        value,
+        style: style,
+        textAlign: TextAlign.left,
+      );
+      final labelText = ProxoText(
+        label,
+        style: style,
+        textAlign: TextAlign.right,
+      );
+      final cellWidth = (constraints.maxWidth - 16) / 2;
+      if (minimumWidth(value) > cellWidth || minimumWidth(label) > cellWidth) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [labelText, const SizedBox(height: 6), valueText],
+        );
+      }
+      return Row(
+        textDirection: TextDirection.ltr,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(child: valueText),
+          const SizedBox(width: 16),
+          Expanded(child: labelText),
+        ],
+      );
+    },
+  );
 }

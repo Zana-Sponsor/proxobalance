@@ -25,6 +25,7 @@ Widget historyHost({
   bool refreshing = false,
   bool skeleton = false,
   String amount = '-0 د.ع',
+  EdgeInsets padding = const EdgeInsets.only(top: 24, bottom: 16),
   VoidCallback? onBack,
   VoidCallback? onRefresh,
   VoidCallback? onOpen,
@@ -36,7 +37,8 @@ Widget historyHost({
         key: captureKey,
         child: MediaQuery(
           data: MediaQuery.of(context).copyWith(
-            padding: const EdgeInsets.only(top: 24, bottom: 16),
+            padding: padding,
+            viewPadding: padding,
             textScaler: TextScaler.linear(scale),
           ),
           child: Directionality(

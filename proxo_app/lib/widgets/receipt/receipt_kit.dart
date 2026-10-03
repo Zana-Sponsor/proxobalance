@@ -160,14 +160,19 @@ class ReceiptAppBar extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => SafeArea(
+      top: false,
+      bottom: false,
+      child: LayoutBuilder(builder: _buildBar));
+
+  Widget _buildBar(BuildContext context, BoxConstraints constraints) {
     final double top = MediaQuery.paddingOf(context).top;
     final titlePainter = TextPainter(
       text: TextSpan(text: title, style: ReceiptTokens.barTitle),
       textDirection: receiptDirOf(title),
       textScaler: MediaQuery.textScalerOf(context),
     )..layout(
-        maxWidth: (MediaQuery.sizeOf(context).width -
+        maxWidth: (constraints.maxWidth -
                 2 * (ReceiptTokens.barTap + ReceiptTokens.barSidePad + 4))
             .clamp(1.0, double.infinity));
     final barHeight = (titlePainter.height + 16)

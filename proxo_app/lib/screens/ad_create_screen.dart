@@ -404,7 +404,8 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
             textDirection: TextDirection.rtl,
             child: Scaffold(
               backgroundColor: Colors.white,
-              body: Column(children: [
+              body: SafeArea(
+                  top: false, bottom: false, child: Column(children: [
                 ReceiptAppBar(
                     title: 'دروستکردنی ڕیکلام',
                     onBack: () => Navigator.of(context).maybePop()),
@@ -412,7 +413,8 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
                     child: Stack(children: [
                   SingleChildScrollView(
                     key: const ValueKey('ad-form-scroll'),
-                    padding: const EdgeInsets.fromLTRB(16, 20, 16, 28),
+                    padding: EdgeInsets.fromLTRB(16, 20, 16,
+                        28 + MediaQuery.paddingOf(context).bottom),
                     child: Center(
                         child: ConstrainedBox(
                             constraints: const BoxConstraints(maxWidth: 600),
@@ -495,7 +497,7 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
                                       child: AdValidationNotifications(
                                           controller: _errors)))))),
                 ])),
-              ]),
+              ])),
             )),
       ));
   Widget _label(BuildContext context, String label) => Padding(
@@ -607,6 +609,8 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
                                     'asset-$_assetId-${_assets.length}'),
                                 initialValue: _assetId,
                                 isExpanded: true,
+                                isDense: false,
+                                itemHeight: null,
                                 style: AdUi.text(context),
                                 hint:
                                     const ProxoText('پەڕەی پەیوەندی هەڵبژێرە'),
@@ -614,8 +618,7 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
                                   for (final a in _assets)
                                     DropdownMenuItem(
                                         value: '${a['id']}',
-                                        child: ProxoText('${a['name'] ?? ''}',
-                                            maxLines: 2))
+                                        child: ProxoText('${a['name'] ?? ''}'))
                                 ],
                                 onChanged: (v) => setState(() {
                                       _assetId = v;
@@ -686,6 +689,8 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
             key: ValueKey('category-$_category'),
             initialValue: _category,
             isExpanded: true,
+            isDense: false,
+            itemHeight: null,
             style: AdUi.text(context),
             hint: const ProxoText('پۆلی ڕیکلام هەڵبژێرە'),
             items: [

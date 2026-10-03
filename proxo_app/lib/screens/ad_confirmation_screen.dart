@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 import '../services/ad_categories.dart';
@@ -149,7 +150,8 @@ class _AdConfirmationScreenState extends State<AdConfirmationScreen>
               },
               child: Scaffold(
                 backgroundColor: Colors.white,
-                body: Column(children: [
+                body: SafeArea(
+                    top: false, bottom: false, child: Column(children: [
                   ReceiptAppBar(
                       title: 'پشتڕاستکردنەوەی ڕیکلام',
                       onBack: _canCancel ? _cancel : null),
@@ -209,6 +211,14 @@ class _AdConfirmationScreenState extends State<AdConfirmationScreen>
                                       textAlign: TextAlign.center,
                                       style: AdUi.text(context,
                                           color: AdUi.secondary)),
+                                  if (_failure != null) ...[
+                                    const SizedBox(height: 16),
+                                    FilledButton(
+                                        key: const ValueKey('retry-submission'),
+                                        onPressed: _processing ? null : _submit,
+                                        child: const ProxoText(
+                                            'دووبارە پشکنینی هەمان داواکاری')),
+                                  ],
                                   const SizedBox(height: 24),
                                   Container(
                                       padding: const EdgeInsets.all(16),
@@ -279,23 +289,19 @@ class _AdConfirmationScreenState extends State<AdConfirmationScreen>
                                   ],
                                 ]))),
                   )),
-                ]),
+                ])),
                 bottomNavigationBar: SafeArea(
                   top: false,
                   child: Padding(
                       padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
-                      child: Column(
+                      child: Center(
+                          heightFactor: 1,
+                          child: ConstrainedBox(
+                              constraints: const BoxConstraints(maxWidth: 600),
+                              child: Column(
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            if (_failure != null) ...[
-                              FilledButton(
-                                  key: const ValueKey('retry-submission'),
-                                  onPressed: _processing ? null : _submit,
-                                  child: const ProxoText(
-                                      'دووبارە پشکنینی هەمان داواکاری')),
-                              const SizedBox(height: 8),
-                            ],
                             OutlinedButton(
                                 key: const ValueKey('cancel-submission'),
                                 onPressed: _canCancel ? _cancel : null,
@@ -303,53 +309,120 @@ class _AdConfirmationScreenState extends State<AdConfirmationScreen>
                                     _failure != null && !_failure!.uncertain
                                         ? 'گەڕانەوە بۆ دەستکاری'
                                         : 'پاشگەزبوونەوە')),
-                          ])),
+                          ])))),
                 ),
               ),
             )),
       ));
 
   Widget _timer(BuildContext context) => AnimatedBuilder(
-      animation: _countdown,
-      builder: (context, _) {
-        final seconds = (_countdown.duration!.inMilliseconds *
-                (1 - _countdown.value) /
-                1000)
-            .ceil();
-        return SizedBox(
-            width: 144,
-            height: 144,
-            child: Stack(alignment: Alignment.center, children: [
-              const DecoratedBox(
-                  decoration: BoxDecoration(
-                      color: Color(0xFFF5F9FF), shape: BoxShape.circle),
-                  child: SizedBox.expand()),
-              Positioned.fill(
-                  child: CircularProgressIndicator(
-                      value: _processing || widget.resume
-                          ? null
-                          : 1 - _countdown.value,
-                      color: AdUi.blue,
-                      backgroundColor: const Color(0xFFEAF1FF),
-                      strokeWidth: 3)),
-              Column(mainAxisSize: MainAxisSize.min, children: [
-                AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 180),
-                    child: ProxoText(
-                        _processing || widget.resume ? '…' : '$seconds',
-                        key: ValueKey(seconds),
-                        style: Theme.of(context)
-                            .textTheme
-                            .headlineMedium!
-                            .copyWith(
-                                color: AdUi.blue, fontWeight: FontWeight.w400),
-                        textAlign: TextAlign.center)),
-                if (!_processing && !widget.resume)
-                  ProxoText('چرکە',
-                      style: AdUi.text(context, color: AdUi.secondary)),
-              ]),
-            ]));
-      });
+    animation: _countdown,
+    builder: (context, _) {
+      final seconds =
+          (_countdown.duration!.inMilliseconds * (1 - _countdown.value) / 1000)
+              .ceil();
+      final number = _processing || widget.resume ? '…' : '$seconds';
+      final numberStyle = Theme.of(context).textTheme.headlineMedium!.copyWith(
+        color: AdUi.blue,
+        fontWeight: FontWeight.w400,
+      );
+      final numberPainter = TextPainter(
+        text: TextSpan(text: number, style: numberStyle),
+        textDirection: TextDirection.ltr,
+        textScaler: MediaQuery.textScalerOf(context),
+      )..layout();
+      final unitPainter = TextPainter(
+        text: TextSpan(text: 'چرکە', style: AdUi.text(context)),
+        textDirection: TextDirection.rtl,
+        textScaler: MediaQuery.textScalerOf(context),
+      )..layout();
+      final contentHeight =
+          numberPainter.height +
+          (_processing || widget.resume ? 0 : unitPainter.height);
+      final contentWidth =
+          numberPainter.width > unitPainter.width
+              ? numberPainter.width
+              : unitPainter.width;
+      // Grow the timer around inherited text rather than shrinking the text.
+      final diameter = (math.sqrt(contentHeight * contentHeight +
+                  contentWidth * contentWidth) + 24).clamp(
+        144.0,
+        double.infinity,
+      );
+      final numberDiameter = math.sqrt(
+          numberPainter.height * numberPainter.height +
+          numberPainter.width * numberPainter.width) + 24;
+      numberPainter.dispose();
+      unitPainter.dispose();
+      return LayoutBuilder(
+        builder: (context, constraints) {
+          final unitOutside =
+              diameter > constraints.maxWidth && !_processing && !widget.resume;
+          final side = (unitOutside ? numberDiameter : diameter)
+              .clamp(144.0, double.infinity)
+              .clamp(0.0, constraints.maxWidth);
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(
+                width: side,
+                height: side,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    const DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: Color(0xFFF5F9FF),
+                        shape: BoxShape.circle,
+                      ),
+                      child: SizedBox.expand(),
+                    ),
+                    Positioned.fill(
+                      child: CircularProgressIndicator(
+                        value:
+                            _processing || widget.resume
+                                ? null
+                                : 1 - _countdown.value,
+                        color: AdUi.blue,
+                        backgroundColor: const Color(0xFFEAF1FF),
+                        strokeWidth: 3,
+                      ),
+                    ),
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 180),
+                          child: ProxoText(
+                            number,
+                            key: ValueKey(seconds),
+                            style: numberStyle,
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        if (!_processing && !widget.resume && !unitOutside)
+                          ProxoText(
+                            'چرکە',
+                            style: AdUi.text(context, color: AdUi.secondary),
+                          ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              if (unitOutside) ...[
+                const SizedBox(height: 8),
+                ProxoText(
+                  'چرکە',
+                  style: AdUi.text(context, color: AdUi.secondary),
+                ),
+              ],
+            ],
+          );
+        },
+      );
+    },
+  );
 
   Widget _summary() {
     final d = widget.request.draft;
