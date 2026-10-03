@@ -93,6 +93,23 @@ async function request(path,options={}) {
   if (!response.ok) throw err(response.status===404?404:503,'backend_unavailable');
   return response;
 }
+export async function verifyPublicAvatar(path) {
+  if(!path)return false;
+  const encoded=String(path).split('/').map(encodeURIComponent).join('/');
+  const response=await request('/storage/v1/object/proxolink-assets/'+encoded);
+  const mime=String(response.headers.get('content-type')||'').split(';')[0].toLowerCase();
+  if(!['image/jpeg','image/png','image/webp'].includes(mime))
+    throw err(422,'invalid_avatar');
+  const data=new Uint8Array(await response.arrayBuffer());
+  if(!data.length || data.length>10*1024*1024)throw err(422,'invalid_avatar');
+  const jpeg=data[0]===0xff&&data[1]===0xd8&&data[2]===0xff;
+  const png=data[0]===0x89&&data[1]===0x50&&data[2]===0x4e&&data[3]===0x47;
+  const webp=String.fromCharCode(...data.slice(0,4))==='RIFF'
+    &&String.fromCharCode(...data.slice(8,12))==='WEBP';
+  if(!((jpeg&&mime==='image/jpeg')||(png&&mime==='image/png')
+    ||(webp&&mime==='image/webp')))throw err(422,'invalid_avatar');
+  return true;
+}
 export async function proxoRows(table,filters='',columns='*') {
   const q='/rest/v1/'+table+'?select='+encodeURIComponent(columns)+filters;
   const res=await request(q,{headers:{Accept:'application/json'}});
