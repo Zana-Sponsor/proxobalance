@@ -156,7 +156,7 @@ class AdPriceDetails extends StatelessWidget {
   const AdPriceDetails({super.key, required this.quote, this.showTotal = true});
   @override
   Widget build(BuildContext context) => Column(children: [
-        AdValueRow(label: 'کرێی سپۆنسەرکردن', value: adIqd(quote.sponsorIqd)),
+        AdValueRow(label: 'نرخی سەرەتایی', value: adIqd(quote.sponsorIqd)),
         const SizedBox(height: 12),
         AdValueRow(label: 'ماوەی ڕیکلام', value: '${quote.days} ڕۆژ'),
         const SizedBox(height: 12),
