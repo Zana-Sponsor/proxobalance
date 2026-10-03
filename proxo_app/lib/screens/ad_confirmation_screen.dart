@@ -361,7 +361,7 @@ class _AdConfirmationScreenState extends State<AdConfirmationScreen>
       ('ئامانج', d.goal == 'messages' ? 'نامە و فرۆش' : 'کارلێک و بینین'),
       if (d.goal == 'messages')
         ('پەڕەی پەیوەندی', d.assetName ?? d.assetId ?? ''),
-      ('بودجەی ڕۆژانە', '\$${d.dailyBudget}'),
+      ('بودجەی ڕۆژانە', adIqd(d.dailyBudget * widget.request.quote.rate)),
       (
         'دەستپێک',
         d.immediate
