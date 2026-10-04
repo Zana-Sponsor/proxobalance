@@ -35,8 +35,50 @@ jobs:
           chmod +x android/gradlew
       - name: Build credential-free native test APK
         run: flutter build apk --debug --target-platform android-x64 -t integration_test/proxolink_live_test.dart --dart-define=PROXO_PUBLIC_BASE_URL=https://proxobalance-git-feat-proxolink-private-re-00a2aa-proxoapp-1758.vercel.app
+      - name: Split APK for bounded artifact downloads
+        run: split -b 24M -d build/app/outputs/flutter-apk/app-debug.apk build/app/outputs/flutter-apk/native.part.
       - uses: actions/upload-artifact@v4
         with:
           name: proxolink-native-verification-apk
           path: proxo_app/build/app/outputs/flutter-apk/app-debug.apk
+          retention-days: 1
+      - uses: actions/upload-artifact@v4
+        with:
+          name: proxolink-native-part-00
+          path: proxo_app/build/app/outputs/flutter-apk/native.part.00
+          retention-days: 1
+      - uses: actions/upload-artifact@v4
+        with:
+          name: proxolink-native-part-01
+          path: proxo_app/build/app/outputs/flutter-apk/native.part.01
+          retention-days: 1
+      - uses: actions/upload-artifact@v4
+        with:
+          name: proxolink-native-part-02
+          path: proxo_app/build/app/outputs/flutter-apk/native.part.02
+          retention-days: 1
+      - uses: actions/upload-artifact@v4
+        with:
+          name: proxolink-native-part-03
+          path: proxo_app/build/app/outputs/flutter-apk/native.part.03
+          retention-days: 1
+      - uses: actions/upload-artifact@v4
+        with:
+          name: proxolink-native-part-04
+          path: proxo_app/build/app/outputs/flutter-apk/native.part.04
+          retention-days: 1
+      - uses: actions/upload-artifact@v4
+        with:
+          name: proxolink-native-part-05
+          path: proxo_app/build/app/outputs/flutter-apk/native.part.05
+          retention-days: 1
+      - uses: actions/upload-artifact@v4
+        with:
+          name: proxolink-native-part-06
+          path: proxo_app/build/app/outputs/flutter-apk/native.part.06
+          retention-days: 1
+      - uses: actions/upload-artifact@v4
+        with:
+          name: proxolink-native-part-07
+          path: proxo_app/build/app/outputs/flutter-apk/native.part.07
           retention-days: 1
