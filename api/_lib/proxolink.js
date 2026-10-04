@@ -131,8 +131,8 @@ async function request(path,options={}) {
   if (!response.ok) throw err(response.status===404?404:503,'backend_unavailable');
   return response;
 }
-export async function verifyPublicAvatar(path) {
-  if(!path)return false;
+export async function avatarBytes(path) {
+  if(!path)throw err(404,'avatar_not_found');
   const encoded=String(path).split('/').map(encodeURIComponent).join('/');
   const response=await request('/storage/v1/object/proxolink-assets/'+encoded);
   const mime=String(response.headers.get('content-type')||'').split(';')[0].toLowerCase();
@@ -152,6 +152,11 @@ export async function verifyPublicAvatar(path) {
     if(!info.width||!info.height||info.width>8192||info.height>8192)throw Error();
     await decoded.raw().toBuffer();
   } catch {throw err(422,'invalid_avatar');}
+  return {data,mime};
+}
+export async function verifyPublicAvatar(path) {
+  if(!path)return false;
+  await avatarBytes(path);
   return true;
 }
 export async function proxoRows(table,filters='',columns='*') {
@@ -206,13 +211,14 @@ export async function privateTemplate(record) {
     throw err(503,'template_invalid');
   return raw;
 }
-function avatarHtml(card) {
+function avatarHtml(card,publicAvatarUrl) {
   if(card.demo===true) return '<img src="/assets/proxolink-demo-avatar.png" style="width:100%;height:100%;object-fit:cover;border-radius:50%">';
   if(card.avatar_path) {
     const prefix=card.user_id+'/'+card.id+'/';
     if(!String(card.avatar_path).startsWith(prefix)) throw err(422,'invalid_avatar');
-    const path=String(card.avatar_path).split('/').map(encodeURIComponent).join('/');
-    const url=configuration().base+'/storage/v1/object/public/proxolink-assets/'+path;
+    // The public document identifies the card, never its Auth owner or the
+    // internal Storage object. The route enforces the same page availability.
+    const url=publicAvatarUrl||'/contact/'+encodeURIComponent(card.id)+'/avatar';
     return '<img src="'+safeHtml(url)+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">';
   }
   // Preserve the existing visual fallback.
@@ -299,7 +305,7 @@ function contactButtons(style,parts,tt,ttHref) {
   }).join('');
   return {buttons,ttBadge,ttInline};
 }
-export function renderTemplate(template,card,{adToken=null,variant='standard',rendererOptions={}}={}) {
+export function renderTemplate(template,card,{adToken=null,variant='standard',rendererOptions={},publicAvatarUrl=null}={}) {
   const legacy=['legacy_dark_inline','legacy_standard'].includes(variant);
   validateCardData(card,{legacy});
   const style=card.template_key||card.style;
@@ -326,7 +332,7 @@ export function renderTemplate(template,card,{adToken=null,variant='standard',re
   }).join('\n  ');
   const placeholders={
     NAME:safeText(card.name),BIO:safeText(card.bio||''),
-    AVATAR:avatarHtml(card),GRAD:'linear-gradient(to right,'+colors[0]+','+colors[1]+')',
+    AVATAR:avatarHtml(card,publicAvatarUrl),GRAD:'linear-gradient(to right,'+colors[0]+','+colors[1]+')',
     BUTTONS:pieces.buttons,TT_BADGE:pieces.ttBadge,TT_INLINE:pieces.ttInline,
     THEME_FROM:colors[0],THEME_TO:colors[1],HANDLERS:handlers
   };
@@ -338,12 +344,15 @@ export function renderTemplate(template,card,{adToken=null,variant='standard',re
   return html.replaceAll('https://raw.githubusercontent.com/Zana-Sponsor/Zana-Sponsor/main/Rabar_021.woff2','/assets/fonts/Rabar_021.woff2')
     .replace('<html dir="rtl" lang="ku">','<html dir="'+(card.card_language==='en'?'ltr':'rtl')+'" lang="'+(card.card_language||'ku')+'">');
 }
-export async function renderedPage(card,{adToken=null,preview=false}={}) {
+export async function renderedPage(card,{adToken=null,preview=false,previewToken=null}={}) {
   const meta=await activeTemplate(card);
   validateCardData(card,{legacy:['legacy_dark_inline','legacy_standard'].includes(meta.renderer_variant)});
   if(meta.requires_avatar && !card.avatar_path && card.demo!==true) throw err(422,'avatar_required');
   const template=await privateTemplate(meta);
-  const html=renderTemplate(template,card,{adToken,variant:meta.renderer_variant||'standard',rendererOptions:meta.renderer_options||{}});
+  const publicAvatarUrl=adToken?'/a/'+encodeURIComponent(adToken)+'/avatar'
+    :'/contact/'+encodeURIComponent(card.id)+'/avatar'
+      +(preview&&previewToken?'?preview_token='+encodeURIComponent(previewToken):'');
+  const html=renderTemplate(template,card,{adToken,publicAvatarUrl,variant:meta.renderer_variant||'standard',rendererOptions:meta.renderer_options||{}});
   if(!preview && /^[A-Za-z0-9]{5,60}$/.test(process.env.PROXO_TIKTOK_PIXEL_ID||''))
     return html.replace(/ttq\.load\(['"][^'"]+['"]\)/g,"ttq.load('"+process.env.PROXO_TIKTOK_PIXEL_ID+"')");
   // Strip the non-visual legacy TikTok Pixel bootstrap in owner preview.

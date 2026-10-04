@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -16,12 +18,14 @@ class ProxoLinkPreview extends StatefulWidget {
   /// Production callers use the empty default; values are never logged.
   final Map<String, String> requestHeaders;
   final ValueChanged<WebViewController>? onControllerCreated;
+  final Duration loadTimeout;
   const ProxoLinkPreview({
     super.key,
     required this.loadUrl,
     this.allowContactActions = false,
     this.requestHeaders = const {},
     this.onControllerCreated,
+    this.loadTimeout = const Duration(seconds: 45),
   });
   @override
   State<ProxoLinkPreview> createState() => _ProxoLinkPreviewState();
@@ -32,6 +36,21 @@ class _ProxoLinkPreviewState extends State<ProxoLinkPreview> {
   Uri? _page;
   bool _loading = true, _failed = false;
   int _request = 0;
+  Timer? _watchdog;
+
+  bool _current(int request) => mounted && request == _request;
+
+  void _fail(int request) {
+    if (!_current(request)) return;
+    _watchdog?.cancel();
+    _request++;
+    setState(() {
+      _page = null;
+      _controller = null;
+      _failed = true;
+      _loading = false;
+    });
+  }
   @override
   void initState() {
     super.initState();
@@ -47,10 +66,14 @@ class _ProxoLinkPreviewState extends State<ProxoLinkPreview> {
 
   Future<void> _load() async {
     final request = ++_request;
+    _watchdog?.cancel();
+    _watchdog = Timer(widget.loadTimeout, () => _fail(request));
     if (mounted)
       setState(() {
         _loading = true;
         _failed = false;
+        _page = null;
+        _controller = null;
       });
     try {
       final page = await widget.loadUrl();
@@ -68,26 +91,27 @@ class _ProxoLinkPreviewState extends State<ProxoLinkPreview> {
         ..setBackgroundColor(Colors.white)
         ..setNavigationDelegate(
           NavigationDelegate(
-            onNavigationRequest: _navigation,
+            onNavigationRequest: (navigation) => _current(request)
+                ? _navigation(navigation)
+                : Future.value(NavigationDecision.prevent),
             onPageStarted: (_) {
-              if (mounted) setState(() => _loading = true);
+              if (_current(request)) {
+                _watchdog?.cancel();
+                _watchdog = Timer(widget.loadTimeout, () => _fail(request));
+                setState(() => _loading = true);
+              }
             },
             onPageFinished: (_) {
-              if (mounted) setState(() => _loading = false);
+              if (_current(request)) {
+                _watchdog?.cancel();
+                setState(() => _loading = false);
+              }
             },
             onWebResourceError: (error) {
-              if (error.isForMainFrame == true && mounted)
-                setState(() {
-                  _failed = true;
-                  _loading = false;
-                });
+              if (error.isForMainFrame == true) _fail(request);
             },
             onHttpError: (error) {
-              if (error.request?.uri == page && mounted)
-                setState(() {
-                  _failed = true;
-                  _loading = false;
-                });
+              if (error.request?.uri == page) _fail(request);
             },
           ),
         );
@@ -96,11 +120,7 @@ class _ProxoLinkPreviewState extends State<ProxoLinkPreview> {
       widget.onControllerCreated?.call(controller);
       await controller.loadRequest(page, headers: widget.requestHeaders);
     } catch (_) {
-      if (mounted && request == _request)
-        setState(() {
-          _failed = true;
-          _loading = false;
-        });
+      _fail(request);
     }
   }
 
@@ -156,6 +176,7 @@ class _ProxoLinkPreviewState extends State<ProxoLinkPreview> {
   @override
   void dispose() {
     _request++;
+    _watchdog?.cancel();
     super.dispose();
   }
 

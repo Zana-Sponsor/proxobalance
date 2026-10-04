@@ -14,14 +14,15 @@ const linkA='55555555-5555-4555-8555-555555555555',linkB='66666666-6666-4666-866
 const tokenA='aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',tokenB='bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb';
 const card={id,user_id:owner,name:'Proxo',bio:'Hello',tt:'proxo_iq',template_key:'classic',template_version:1,
  color_theme:'purple',platforms:{wa:'9647501234567',vb:'9647501234567',tg:'proxo_iq'},status:'active',publish_status:'ready',updated_at:'2026-10-03T00:00:00Z'};
-const template='<!DOCTYPE html><html dir="rtl" lang="ku"><head></head><body><h1>{{NAME}}</h1><p>{{BIO}}</p>{{BUTTONS}}{{TT_BADGE}}<script>{{HANDLERS}}</script></body></html>';
+const template='<!DOCTYPE html><html dir="rtl" lang="ku"><head></head><body><h1>{{NAME}}</h1><p>{{BIO}}</p>{{AVATAR}}{{BUTTONS}}{{TT_BADGE}}<script>{{HANDLERS}}</script></body></html>';
 const metadata={template_key:'classic',version:1,display_name_ckb:'کلاسیک',storage_path:'classic/v1/template.html',
  checksum_sha256:createHash('sha256').update(template).digest('hex'),requires_avatar:false,is_active:true};
 function response() {return {statusCode:0,headers:{},setHeader(k,v){this.headers[k.toLowerCase()]=v;},end(v=''){this.body=v;}};}
-function mockFetch({currentCard=card,events=[],writes=[],links=true,failTemplate=false}={}) {
+function mockFetch({currentCard=card,events=[],writes=[],links=true,failTemplate=false,image=null}={}) {
  return async(url,options={})=>{
   const u=new URL(url);
   if(u.pathname==='/auth/v1/user')return Response.json({id:owner});
+  if(u.pathname.includes('/storage/v1/object/proxolink-assets/'))return new Response(image,{headers:{'Content-Type':'image/png'}});
   if(u.pathname.includes('/storage/'))return new Response(failTemplate?'bad':template);
   if(u.pathname==='/rest/v1/pa_contact_events') {events.push(JSON.parse(options.body));return new Response(null,{status:201});}
   if(u.pathname==='/rest/v1/proxolink_cards') {
@@ -122,12 +123,12 @@ test('server renderer preserves mixed direction text and trusted contact attribu
  assert.doesNotMatch(html,/href="<bdi/);
 });
 
-function publishingStore({failStorage=false}={}) {
+function publishingStore({failStorage=false,onStorage=null}={}) {
  const rows=new Map(),audits=[];let tick=0;
  const state={rows,audits,failStorage,fetch:async(url,options={})=>{
   const u=new URL(url),method=options.method||'GET';
   if(u.pathname==='/auth/v1/user')return Response.json({id:owner});
-  if(u.pathname.includes('/storage/'))return new Response(state.failStorage?'corrupted':template);
+  if(u.pathname.includes('/storage/')){onStorage?.(rows);return new Response(state.failStorage?'corrupted':template);}
   if(u.pathname==='/rest/v1/proxolink_templates')return Response.json([metadata]);
   if(u.pathname==='/rest/v1/proxolink_publish_attempts'){audits.push(JSON.parse(options.body));return new Response(null,{status:204});}
   if(u.pathname==='/rest/v1/proxolink_cards') {
@@ -229,4 +230,78 @@ test('client IP comes from the socket locally and Vercel-reserved headers only o
   process.env.VERCEL='1';
   assert.equal(realClientIp(request,{proxyMode:'vercel'}),'9.9.9.9');
  }finally{if(old===undefined)delete process.env.VERCEL;else process.env.VERCEL=old;}
+});
+
+test('public avatar markup contains no Auth owner, project URL, or Storage path',()=>{
+ const avatarPath=owner+'/'+id+'/avatar.png';
+ const html=renderTemplate(template+'{{AVATAR}}',{...card,avatar_path:avatarPath});
+ assert.match(html,new RegExp('src="/contact/'+id+'/avatar"'));
+ assert.ok(!html.includes(owner));assert.ok(!html.includes(avatarPath));
+ assert.doesNotMatch(html,/supabase\.co|\/storage\/v1/);
+});
+test('avatar delivery returns original binary bytes and requires page availability',async()=>{
+ const sharp=(await import('sharp')).default;
+ const image=await sharp({create:{width:2,height:2,channels:3,background:'#046cfa'}}).png().toBuffer();
+ const imageCard={...card,avatar_path:owner+'/'+id+'/avatar.png'},events=[];
+ global.fetch=mockFetch({currentCard:imageCard,image,events});
+ const active=await invoke({op:'avatar',id},{auth:false});
+ assert.equal(active.statusCode,200);assert.equal(active.headers['content-type'],'image/png');
+ assert.deepEqual(active.body,image);assert.equal(active.headers['cache-control'],'no-store');
+ const inactive={...imageCard,status:'inactive'};
+ global.fetch=mockFetch({currentCard:inactive,image,events});
+ assert.equal((await invoke({op:'avatar',id},{auth:false})).statusCode,404);
+ const signed=await invoke({op:'avatar',id,preview_token:makePreviewToken(inactive)},{auth:false});
+ assert.equal(signed.statusCode,200);assert.deepEqual(signed.body,image);
+ const rendered=await invoke({op:'contact',id,preview_token:makePreviewToken(inactive)},{auth:false});
+ assert.equal(rendered.statusCode,200);
+ assert.match(rendered.body,new RegExp('/contact/'+id+'/avatar\\?preview_token='));
+ assert.ok(!rendered.body.includes(owner));
+ assert.equal((await invoke({op:'avatar',id,preview_token:'forged'},{auth:false})).statusCode,404);
+ assert.equal(events.length,0);
+});
+test('tracked avatar requests keep exact ad validation and write zero analytics',async()=>{
+ const sharp=(await import('sharp')).default;
+ const image=await sharp({create:{width:2,height:2,channels:3,background:'#fff'}}).png().toBuffer(),events=[];
+ global.fetch=mockFetch({currentCard:{...card,avatar_path:owner+'/'+id+'/avatar.png'},image,events});
+ for(const token of [tokenA,tokenB])assert.equal((await invoke({op:'avatar',token},{auth:false})).statusCode,200);
+ assert.equal((await invoke({op:'avatar',token:'invalid'},{auth:false})).statusCode,404);
+ global.fetch=mockFetch({currentCard:{...card,user_id:adB,avatar_path:adB+'/'+id+'/avatar.png'},image,events});
+ assert.equal((await invoke({op:'avatar',token:tokenA},{auth:false})).statusCode,404);
+ assert.equal(events.length,0);
+});
+test('avatar routing rejects another owner folder and invalid image bytes',async()=>{
+ global.fetch=mockFetch({currentCard:{...card,avatar_path:adB+'/'+id+'/avatar.png'}});
+ assert.equal((await invoke({op:'avatar',id},{auth:false})).statusCode,404);
+ global.fetch=mockFetch({currentCard:{...card,avatar_path:owner+'/'+id+'/avatar.png'},image:'not an image'});
+ assert.equal((await invoke({op:'avatar',id},{auth:false})).statusCode,404);
+});
+test('retry returns a conflict when a concurrent edit takes over its publication lease',async()=>{
+ let race=false;
+ const store=publishingStore({failStorage:true,onStorage:rows=>{
+  if(race)rows.get(id).updated_at='2026-10-04T23:00:00Z';
+ }});global.fetch=store.fetch;
+ await invoke({op:'cards'},{method:'POST',body:createPayload});
+ store.failStorage=false;race=true;
+ const result=await invoke({op:'card-action'},{method:'POST',body:{card_id:id,action:'retry'}});
+ assert.equal(result.statusCode,409);assert.equal(JSON.parse(result.body).error,'edit_conflict');
+ assert.equal(store.rows.get(id).publish_status,'creating');
+ assert.ok(!store.audits.some(a=>a.operation==='retry'&&a.result==='success'));
+});
+test('a failed retry cannot overwrite or report failure for a newer publication lease',async()=>{
+ let race=false;
+ const store=publishingStore({failStorage:true,onStorage:rows=>{
+  if(race)Object.assign(rows.get(id),{updated_at:'2026-10-04T23:00:00Z',publish_status:'ready',status:'active'});
+ }});global.fetch=store.fetch;
+ await invoke({op:'cards'},{method:'POST',body:createPayload});race=true;
+ const result=await invoke({op:'card-action'},{method:'POST',body:{card_id:id,action:'retry'}});
+ assert.equal(result.statusCode,409);assert.equal(store.rows.get(id).publish_status,'ready');
+ assert.equal(store.rows.get(id).status,'active');
+ assert.ok(!store.audits.some(a=>a.operation==='retry'&&a.result==='failed'));
+});
+test('analytics retain only the canonical token route and discard caller query details',async()=>{
+ const events=[];global.fetch=mockFetch({events});
+ await invoke({op:'ad',token:tokenA,email:'private@example.invalid',ip:'8.8.8.8'},{auth:false});
+ await invoke({op:'ad',token:tokenA,action:'wa',email:'private@example.invalid'},{auth:false});
+ assert.deepEqual(events.map(e=>e.request_path),['/a/'+tokenA,'/a/'+tokenA+'/action/wa']);
+ assert.doesNotMatch(JSON.stringify(events),/private@example|8\.8\.8\.8/);
 });

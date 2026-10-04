@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 import 'dart:io';
 import 'dart:ui' as ui;
@@ -11,6 +12,7 @@ import 'package:proxo_app/models/proxo_card.dart';
 import 'package:proxo_app/screens/tools_screen.dart';
 import 'package:proxo_app/services/proxolink_service.dart';
 import 'package:proxo_app/theme/app_theme.dart';
+import 'package:proxo_app/widgets/proxolink_preview.dart';
 
 Future<void> captureUi(WidgetTester tester, GlobalKey key, String name) async {
   await tester.runAsync(() async {
@@ -109,6 +111,46 @@ void main() {
     await icons.load();
   });
   setUp(() => SharedPreferences.setMockInitialValues({}));
+  testWidgets('a stalled signed-preview request times out and offers retry', (tester) async {
+    final pending = Completer<Uri>();
+    var requests = 0;
+    await tester.pumpWidget(MaterialApp(
+      theme: buildAppTheme(),
+      home: Scaffold(body: ProxoLinkPreview(
+        loadTimeout: const Duration(seconds: 2),
+        loadUrl: () { requests++; return pending.future; },
+      )),
+    ));
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    await tester.pump(const Duration(seconds: 2));
+    expect(find.text('پێشبینین نەکرایەوە'), findsOneWidget);
+    await tester.tap(find.text('دووبارە هەوڵبدەرەوە'));
+    await tester.pump();
+    expect(requests, 2);
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    await tester.pumpWidget(const SizedBox.shrink());
+    pending.complete(Uri.parse('https://www.proxobalance.app/contact-preview?token=late'));
+    await tester.pump();
+    expect(tester.takeException(), isNull);
+  });
+  testWidgets('a late preview response cannot replace its timeout error state', (tester) async {
+    final pending = Completer<Uri>();
+    var controllers = 0;
+    await tester.pumpWidget(MaterialApp(
+      theme: buildAppTheme(),
+      home: Scaffold(body: ProxoLinkPreview(
+        loadTimeout: const Duration(seconds: 1),
+        loadUrl: () => pending.future,
+        onControllerCreated: (_) => controllers++,
+      )),
+    ));
+    await tester.pump(const Duration(seconds: 1));
+    pending.complete(Uri.parse('https://www.proxobalance.app/contact-preview?token=late'));
+    await tester.pump();
+    expect(controllers, 0);
+    expect(find.text('پێشبینین نەکرایەوە'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
   test(
     'states gate public sharing, ad selection, preview and same-ID retry',
     () {

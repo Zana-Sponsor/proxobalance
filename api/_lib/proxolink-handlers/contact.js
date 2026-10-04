@@ -10,7 +10,7 @@ export default async function handler(req,res) {
     if(!preview&&(card.status!=='active'||card.publish_status!=='ready'))
       return unavailable(res);
     if(card.publish_status!=='ready')return unavailable(res);
-    const html=await renderedPage(card,{preview});
+    const html=await renderedPage(card,{preview,previewToken:preview?req.query.preview_token:null});
     return publicPage(res,html);
   } catch {
     // Public responses never disclose owner identity, storage paths or errors.

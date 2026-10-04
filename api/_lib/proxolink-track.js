@@ -48,7 +48,11 @@ export async function recordContactEvent(req,res,linkId,type,platformId=null) {
     device_type:context.device,browser:context.browser,os:context.os,
     user_agent:String(req.headers?.['user-agent']||'').slice(0,800),
     referrer:(()=>{try{return new URL(req.headers?.referer||'').origin;}catch{return null;}})(),
-    request_path:String(req.url||'').slice(0,300)
+    // Store only the validated attribution route. Caller-supplied query
+    // strings may contain visitor details and must not enter retained history.
+    request_path:TOKEN_PATTERN.test(req.query?.token||'')
+      ?'/a/'+req.query.token+(type==='button_click'?'/action/'+platformId:'')
+      :null
   };
   await proxoWrite('pa_contact_events','POST',record,'','return=minimal');
 }

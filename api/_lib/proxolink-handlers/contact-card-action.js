@@ -63,19 +63,21 @@ async function handler(req,res,{user}) {
     await publishAudit(card,action,'started');
     try {
       await renderReady(card);
-      await proxoWrite('proxolink_cards','PATCH',{
+      const published=await proxoWrite('proxolink_cards','PATCH',{
         status:'active',publish_status:'ready',
         last_publish_error_code:null,last_publish_error_at:null,
         published_at:card.published_at||new Date().toISOString()
-      },filter,'return=minimal');
+      },filter+'&select=id');
+      if(!published.length)return json(res,409,{ok:false,error:'edit_conflict'});
       await publishAudit(card,action,'success');
       return responseCard(res,id,user.id);
     } catch(error) {
-      await proxoWrite('proxolink_cards','PATCH',{
+      const failed=await proxoWrite('proxolink_cards','PATCH',{
         status:'inactive',publish_status:'failed',
         last_publish_error_code:String(error?.code||'render_failed').slice(0,80),
         last_publish_error_at:new Date().toISOString()
-      },filter,'return=minimal');
+      },filter+'&select=id');
+      if(!failed.length)return json(res,409,{ok:false,error:'edit_conflict'});
       await publishAudit(card,action,'failed',error?.code||'render_failed');
       return json(res,422,{ok:false,error:'publish_failed',card_id:id});
     }

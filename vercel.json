@@ -37,8 +37,16 @@
       "destination": "/api/proxolink?op=cards"
     },
     {
+      "source": "/contact/:id/avatar",
+      "destination": "/api/proxolink?op=avatar&id=:id"
+    },
+    {
       "source": "/contact/:id",
       "destination": "/api/proxolink?op=contact&id=:id"
+    },
+    {
+      "source": "/a/:token/avatar",
+      "destination": "/api/proxolink?op=avatar&token=:token"
     },
     {
       "source": "/a/:token/action/:action",
