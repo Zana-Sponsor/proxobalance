@@ -40,6 +40,18 @@ test('dangerous customer content and URLs are rejected or escaped',()=>{
   const html=renderTemplate(template,{...card,name:'<script>alert(1)</script>'});
   assert.doesNotMatch(html,/<title><script>/);
 });
+test('all eight signed demos retain visuals without real contact or TikTok destinations',()=>{
+  for(const templateKey of ['dark','light','classic','pill','card','neon','zoom','banner']) {
+    const doc=renderTemplate(template,{...card,template_key:templateKey,demo:true});
+    assert.match(doc,/href="#"/);
+    assert.match(doc,/askConfirm\('whatsapp','#'/);
+    assert.match(doc,/window\.goLink=function/);
+    assert.doesNotMatch(doc,/(?:whatsapp|viber):\/\/|tel:|https:\/\/(?:www\.)?(?:instagram\.com|t\.me|tiktok\.com)\//);
+  }
+  const publicDoc=renderTemplate(template,card);
+  assert.match(publicDoc,/whatsapp:\/\/send/);
+  assert.match(publicDoc,/https:\/\/www\.tiktok\.com\//);
+});
 test('only valid stable identifiers are accepted',()=>{
   assert.equal(validUuid(id),true);
   assert.equal(validUuid('../../../secrets'),false);

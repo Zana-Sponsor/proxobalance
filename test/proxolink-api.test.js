@@ -64,6 +64,8 @@ test('template preview renders the selected real template and records no events'
  const events=[];global.fetch=mockFetch({events});
  const res=await invoke({op:'template-preview',token:makeTemplateToken(owner,'classic',1)},{auth:false});
  assert.equal(res.statusCode,200);assert.match(res.body,/<h1>Proxo<\/h1>/);assert.equal(events.length,0);
+ assert.match(res.body,/window\.goLink=function/);
+ assert.doesNotMatch(res.body,/(?:whatsapp|viber):\/\/|tel:|https:\/\/(?:www\.)?(?:instagram\.com|t\.me|tiktok\.com)\//);
  const invalid=await invoke({op:'template-preview',token:'tampered'},{auth:false});assert.equal(invalid.statusCode,404);
 });
 test('inactive public card is hidden; owner signed preview remains available without analytics',async()=>{

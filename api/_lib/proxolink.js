@@ -312,11 +312,11 @@ export function renderTemplate(template,card,{adToken=null,variant='standard',re
   const colors=THEMES[card.color_theme]||Object.values(THEMES).find(pair=>pair.some(c=>c===String(card.color_theme).toLowerCase()))||THEMES.purple;
   const tt=card.tt||card.tiktok?(legacy?(card.tt||card.tiktok):handle(card.tt||card.tiktok)):'';
   const parts=selectedPlatforms(card);
-  const pieces=contactButtons(style,parts,tt,adToken?'/a/'+encodeURIComponent(adToken)+'/action/tt':null);
+  const pieces=contactButtons(style,parts,tt,card.demo===true?'#':(adToken?'/a/'+encodeURIComponent(adToken)+'/action/tt':null));
   if(variant==='legacy_dark_inline') {
     const colors={wa:'#25d366',vb:'#7360f2',ig:'#fff',tg:'#29a8eb',ph:'#fff',as:'#fff'};
-    pieces.buttons=parts.map(p=>'<a href="'+safeHtml(adToken?'/a/'+encodeURIComponent(adToken)+'/action/'+p.id:p.url)+'" target="_blank" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:14px 8px;border-radius:18px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);text-decoration:none;color:#fff;font-size:13px;font-weight:600;transition:.15s;flex:1;min-width:calc(50% - 6px)"><i class="'+iconClass(p.id)+' '+ICON[p.id]+'" style="font-size:26px;color:'+colors[p.id]+'"></i>'+safeText(p.label)+'</a>').join('');
-    pieces.ttBadge=tt?'<a href="'+safeHtml(adToken?'/a/'+encodeURIComponent(adToken)+'/action/tt':badgeUrl(tt))+'" target="_blank" class="tt-link"><i class="fab fa-tiktok"></i>@'+safeHtml(tt)+'</a>':'';
+    pieces.buttons=parts.map(p=>'<a href="'+safeHtml(card.demo===true?'#':(adToken?'/a/'+encodeURIComponent(adToken)+'/action/'+p.id:p.url))+'" target="_blank" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:14px 8px;border-radius:18px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);text-decoration:none;color:#fff;font-size:13px;font-weight:600;transition:.15s;flex:1;min-width:calc(50% - 6px)"><i class="'+iconClass(p.id)+' '+ICON[p.id]+'" style="font-size:26px;color:'+colors[p.id]+'"></i>'+safeText(p.label)+'</a>').join('');
+    pieces.ttBadge=tt?'<a href="'+safeHtml(card.demo===true?'#':(adToken?'/a/'+encodeURIComponent(adToken)+'/action/tt':badgeUrl(tt)))+'" target="_blank" class="tt-link"><i class="fab fa-tiktok"></i>@'+safeHtml(tt)+'</a>':'';
   }
   if(legacy && rendererOptions.tt_prefix_at===false) {
     pieces.ttBadge=pieces.ttBadge.replace('>@'+safeHtml(tt)+'<','>'+safeHtml(tt)+'<');
@@ -324,7 +324,7 @@ export function renderTemplate(template,card,{adToken=null,variant='standard',re
   }
   // In tracked mode a link-scoped URL is the only source of attribution.
   const handlers=parts.map(p=>{
-    const url=adToken
+    const url=card.demo===true?'#':adToken
       ?'/a/'+encodeURIComponent(adToken)+'/action/'+p.id
       :p.url;
     return "document.getElementById('"+p.id+"').onclick=function(){"
@@ -341,7 +341,16 @@ export function renderTemplate(template,card,{adToken=null,variant='standard',re
     return placeholders[k];
   });
   if(/\{\{[A-Z_]+\}\}/.test(html))throw err(503,'template_invalid');
-  return html.replaceAll('https://raw.githubusercontent.com/Zana-Sponsor/Zana-Sponsor/main/Rabar_021.woff2','/assets/fonts/Rabar_021.woff2')
+  // A signed template demo can also open in a normal browser, outside Flutter's
+  // WebView navigation guard. Keep the original modal/press visuals, but make
+  // every demo contact/TikTok destination inert and close confirmations locally.
+  const demoGuard=card.demo===true
+    ? `<script>window.goLink=function(){if(typeof closeModal==='function')closeModal();else if(typeof closeMod==='function')closeMod();};document.querySelectorAll('a[href="#"]').forEach(function(a){a.addEventListener('click',function(e){e.preventDefault();});});</script>`
+    : '';
+  const guardedHtml=demoGuard
+    ? (/<\/body\s*>/i.test(html)?html.replace(/<\/body\s*>/i,demoGuard+'</body>'):html+demoGuard)
+    : html;
+  return guardedHtml.replaceAll('https://raw.githubusercontent.com/Zana-Sponsor/Zana-Sponsor/main/Rabar_021.woff2','/assets/fonts/Rabar_021.woff2')
     .replace('<html dir="rtl" lang="ku">','<html dir="'+(card.card_language==='en'?'ltr':'rtl')+'" lang="'+(card.card_language||'ku')+'">');
 }
 export async function renderedPage(card,{adToken=null,preview=false,previewToken=null}={}) {
