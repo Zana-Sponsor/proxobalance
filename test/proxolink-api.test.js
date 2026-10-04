@@ -176,10 +176,10 @@ test('signed preview tokens expire and cannot be used as a different token kind'
  assert.equal(validPreviewToken(demo,card),false);assert.equal(templateTokenData(token),null);
  try{Date.now=()=>start()+301000;assert.equal(validPreviewToken(token,card),false);assert.equal(templateTokenData(demo),null);}finally{Date.now=start;}
 });
-test('the renderer uses one original TikTok container and tracks the banner badge',()=>{
+test('the renderer preserves original TikTok badge spacing and tracks the banner badge',()=>{
  const source='<h1>{{NAME}}</h1><p>{{BIO}}</p><div class="tt-wrap">{{TT_BADGE}}</div>{{BUTTONS}}';
  const html=renderTemplate(source,{...card,template_key:'card'});
- assert.equal((html.match(/class="tt-wrap"/g)||[]).length,1);
+ assert.equal((html.match(/class="tt-wrap"/g)||[]).length,2);
  const banner=renderTemplate('<h1>{{NAME}}</h1><p>{{BIO}}</p>{{TT_INLINE}}{{BUTTONS}}',{...card,template_key:'banner'},{adToken:tokenA});
  assert.match(banner,new RegExp('href="/a/'+tokenA+'/action/tt"'));assert.match(banner,/text-decoration:none/);
 });
@@ -208,4 +208,16 @@ test('a rejected bearer cannot reach protected data operations',async()=>{
  let protectedReads=0;
  global.fetch=async url=>{if(new URL(url).pathname==='/auth/v1/user')return new Response('',{status:401});protectedReads++;throw Error('Protected data access');};
  assert.equal((await invoke({op:'cards'})).statusCode,401);assert.equal(protectedReads,0);
+});
+
+test('client IP comes from the socket locally and Vercel-reserved headers only on Vercel',async()=>{
+ const{realClientIp}=await import('../api/_lib/security.js');
+ const old=process.env.VERCEL;const request={headers:{'x-forwarded-for':'8.8.8.8','x-vercel-forwarded-for':'9.9.9.9'},socket:{remoteAddress:'127.0.0.1'}};
+ try {
+  delete process.env.VERCEL;
+  assert.equal(realClientIp(request,{proxyMode:'direct'}),'127.0.0.1');
+  assert.equal(realClientIp(request,{proxyMode:'vercel'}),'127.0.0.1');
+  process.env.VERCEL='1';
+  assert.equal(realClientIp(request,{proxyMode:'vercel'}),'9.9.9.9');
+ }finally{if(old===undefined)delete process.env.VERCEL;else process.env.VERCEL=old;}
 });

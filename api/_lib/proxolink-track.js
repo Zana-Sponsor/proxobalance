@@ -33,7 +33,7 @@ export async function recordContactEvent(req,res,linkId,type,platformId=null) {
   if(!['page_view','button_click'].includes(type)
     || (type==='button_click'&&!PLATFORM_TYPE[platformId]))
     throw Error('invalid_event');
-  const ip=realClientIp(req);
+  const ip=realClientIp(req,{proxyMode:process.env.VERCEL?'vercel':'direct'});
   const context=requestContext(req);
   const cookie=String(req.headers?.cookie||'').match(/(?:^|;\s*)proxo_contact_session=([0-9a-f-]{36})(?:;|$)/i)?.[1];
   const sessionId=/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(cookie||'')?cookie:randomUUID();

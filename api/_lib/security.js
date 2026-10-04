@@ -24,8 +24,8 @@ function forwardedCandidate(value, fromRight = 0) {
   return list[Math.max(0, list.length - 1 - fromRight)] || null;
 }
 
-export function realClientIp(req) {
-  const mode = (process.env.TRUSTED_PROXY || (process.env.VERCEL ? 'vercel' : 'direct')).toLowerCase();
+export function realClientIp(req, {proxyMode} = {}) {
+  const mode = (proxyMode || process.env.TRUSTED_PROXY || (process.env.VERCEL ? 'vercel' : 'direct')).toLowerCase();
 
   if (mode === 'cloudflare' && header(req, 'cf-ray')) {
     const ip = normalizeIp(header(req, 'cf-connecting-ip'));

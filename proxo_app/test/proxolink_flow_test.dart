@@ -105,6 +105,9 @@ void main() {
     final font = FontLoader('Rabar')
       ..addFont(rootBundle.load('assets/fonts/Rabar_021.ttf'));
     await font.load();
+    final icons = FontLoader('MaterialIcons')
+      ..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf'));
+    await icons.load();
   });
   setUp(() => SharedPreferences.setMockInitialValues({}));
   test(
@@ -182,6 +185,7 @@ void main() {
     testWidgets('form and real-preview failure recovery fit width $width', (
       tester,
     ) async {
+      final screenshotKey = GlobalKey();
       tester.view.physicalSize = Size(width, 1000);
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.resetPhysicalSize);
@@ -189,7 +193,13 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           theme: buildAppTheme(),
-          home: ToolsScreen(initialCreate: true, repository: FakeProxoLink([])),
+          home: RepaintBoundary(
+            key: screenshotKey,
+            child: ToolsScreen(
+              initialCreate: true,
+              repository: FakeProxoLink([]),
+            ),
+          ),
         ),
       );
       await tester.pump();
@@ -197,6 +207,7 @@ void main() {
       expect(find.text('classic'), findsOneWidget);
       expect(find.text('پێشبینین نەکرایەوە'), findsOneWidget);
       expect(tester.takeException(), isNull);
+      await captureUi(tester, screenshotKey, 'form-$width');
     });
   }
   for (final width in [320.0, 393.0, 768.0]) {

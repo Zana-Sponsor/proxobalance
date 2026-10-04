@@ -265,10 +265,11 @@ function pillButton(p,shine,shadow) {
 function contactButtons(style,parts,tt,ttHref) {
   if(style==='dark'||style==='light')return {...darkLight(parts,tt,ttHref),ttInline:''};
   const ttUrl=safeHtml(ttHref||badgeUrl(tt)), label=safeHtml(tt);
-  // These original templates already contain their own .tt-wrap.
-  let ttBadge=tt?'<a href="'+ttUrl
+  // Preserve the original generator markup, including its inner .tt-wrap:
+  // removing it changes the original templates' visible badge spacing.
+  let ttBadge=tt?'<div class="tt-wrap"><a href="'+ttUrl
     +'" target="_blank" class="tt-sm"><span dir="ltr">@'+label
-    +'</span><i class="fab fa-tiktok" style="font-size:18px"></i></a>':'';
+    +'</span><i class="fab fa-tiktok" style="font-size:18px"></i></a></div>':'';
   let ttInline='';
   if(style==='banner') {
     ttBadge='';
