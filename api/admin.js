@@ -217,6 +217,77 @@ const actions = {
     return data || [];
   },
 
+  // All reward writes are server-only, after requireAdmin() verifies the JWT
+  // and ex_profiles.is_admin. Never accept reward values from the customer UI.
+  async list_rewards({ limit = 100 }, _ctx) {
+    const count = Number.isInteger(Number(limit)) ? Math.min(200, Math.max(1, Number(limit))) : 100;
+    const db = getDb();
+    const { data, error } = await db.from('ex_user_rewards').select('*')
+      .order('created_at', { ascending: false }).limit(count);
+    if (error) throw error;
+    const ids = [...new Set((data || []).map(r => r.user_id))];
+    let profiles = [];
+    if (ids.length) {
+      const result = await db.from('ex_profiles').select('id,full_name,username,email').in('id', ids);
+      if (result.error) throw result.error;
+      profiles = result.data || [];
+    }
+    const names = new Map(profiles.map(p => [p.id, p]));
+    return (data || []).map(r => ({ ...r, profile: names.get(r.user_id) || null }));
+  },
+
+  async grant_reward({ user_id, kind, discount_percent, max_uses, valid_until, note }, ctx) {
+    if (!/^[0-9a-f-]{36}$/i.test(String(user_id || '')))
+      throw { status: 400, code: 'bad_user', message: 'A valid user is required' };
+    if (!['free_transactions', 'fee_discount'].includes(kind))
+      throw { status: 400, code: 'bad_kind', message: 'Invalid reward type' };
+    const percent = kind === 'free_transactions' ? 100 : Number(discount_percent);
+    if (!Number.isFinite(percent) || percent <= 0 || percent > 100)
+      throw { status: 400, code: 'bad_discount', message: 'Discount must be between 0 and 100%' };
+    const uses = max_uses == null || max_uses === '' ? null : Number(max_uses);
+    if ((uses === null && kind === 'free_transactions') ||
+        (uses !== null && (!Number.isInteger(uses) || uses < 1 || uses > 1000)))
+      throw { status: 400, code: 'bad_uses', message: 'Free transactions need a valid use limit (1–1000)' };
+    const expiry = valid_until ? new Date(valid_until) : null;
+    if (expiry && (!Number.isFinite(expiry.getTime()) || expiry.getTime() <= Date.now()))
+      throw { status: 400, code: 'bad_expiry', message: 'Expiration must be in the future' };
+    const db = getDb();
+    const { data: profile, error: profileError } = await db.from('ex_profiles')
+      .select('id,is_banned').eq('id', user_id).maybeSingle();
+    if (profileError) throw profileError;
+    if (!profile || profile.is_banned)
+      throw { status: 400, code: 'invalid_recipient', message: 'Recipient is missing or banned' };
+    const { data, error } = await db.from('ex_user_rewards').insert({
+      user_id, kind, discount_percent: percent, max_uses: uses,
+      valid_until: expiry ? expiry.toISOString() : null,
+      note: String(note || '').trim().slice(0, 200) || null,
+      created_by: ctx.user.id
+    }).select().single();
+    if (error) throw error;
+    await audit(ctx.user.id, 'grant_reward', user_id, data.id + ' ' + kind + ' ' + percent + '% / ' + (uses ?? 'unlimited'));
+    // A failed notification must never undo an already committed reward.
+    try {
+      await db.from('ex_notifications').insert({
+        user_id, type: 'admin', title: 'پاداشتێکت پێدرا',
+        message: kind === 'free_transactions'
+          ? 'ژمارەی ' + uses + ' مامەڵەی بێ لێبڕینت پێدرا.'
+          : 'داشکاندنی ' + percent + '% لە لێبڕینت پێدرا.'
+      });
+    } catch (_) { /* reward is already saved */ }
+    return data;
+  },
+
+  async revoke_reward({ id }, ctx) {
+    if (!/^[0-9a-f-]{36}$/i.test(String(id || '')))
+      throw { status: 400, code: 'bad_reward', message: 'Valid reward ID required' };
+    const { data, error } = await getDb().from('ex_user_rewards')
+      .update({ active: false, updated_at: new Date().toISOString() })
+      .eq('id', id).eq('active', true).select().maybeSingle();
+    if (error) throw error;
+    if (data) await audit(ctx.user.id, 'revoke_reward', data.user_id, data.id);
+    return { revoked: !!data };
+  },
+
   async set_ban({ user_id, banned }, ctx) {
     if (!user_id) throw { status: 400, code: 'bad_input', message: 'user_id is required' };
     if (user_id === ctx.user.id) {
