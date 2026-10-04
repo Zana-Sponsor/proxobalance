@@ -59,7 +59,7 @@ test('legacy Telegram data is hidden from all eight public and demo layouts',()=
   for(const templateKey of ['dark','light','classic','pill','card','neon','zoom','banner']) {
     for(const demo of [false,true]) {
       const doc=renderTemplate(template,{...historical,template_key:templateKey,demo});
-      assert.doesNotMatch(doc,/fa-telegram|t\\.me\\/|archived_account|id="tg"|action\\/tg/);
+      assert.doesNotMatch(doc,/fa-telegram|t\.me\/|archived_account|id="tg"|action\/tg/);
       assert.match(doc,/id="wa"/);
       assert.match(doc,/id="ig"/);
     }
