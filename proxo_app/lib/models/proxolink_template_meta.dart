@@ -141,7 +141,7 @@ CardTheme themeByKey(String? key) {
 }
 
 CardTheme themeBySwatch(Color c) => kCardThemes.firstWhere(
-  (t) => t.swatch.value == c.value,
+  (t) => t.swatch.toARGB32() == c.toARGB32(),
   orElse: () => kCardThemes[0],
 );
 
@@ -163,7 +163,7 @@ class PlatformBtn {
 }
 
 final List<PlatformBtn> kPlatformBtns = [
-  PlatformBtn(
+  const PlatformBtn(
     id: 'wa',
     label: 'واتسئاپ',
     iconWidget: const FaIcon(
@@ -177,7 +177,7 @@ final List<PlatformBtn> kPlatformBtns = [
     placeholder: '9647XXXXXXXXX',
     isNumeric: true,
   ),
-  PlatformBtn(
+  const PlatformBtn(
     id: 'vb',
     label: 'ڤایبەر',
     iconWidget: const FaIcon(
@@ -191,7 +191,7 @@ final List<PlatformBtn> kPlatformBtns = [
     placeholder: '9647XXXXXXXXX',
     isNumeric: true,
   ),
-  PlatformBtn(
+  const PlatformBtn(
     id: 'tg',
     label: 'تیلیگرام',
     iconWidget: const FaIcon(
@@ -205,7 +205,7 @@ final List<PlatformBtn> kPlatformBtns = [
     placeholder: 'username یان 964XXXXXXXX',
     isNumeric: false,
   ),
-  PlatformBtn(
+  const PlatformBtn(
     id: 'ig',
     label: 'ئینستاگرام',
     iconWidget: const FaIcon(
@@ -219,7 +219,7 @@ final List<PlatformBtn> kPlatformBtns = [
     placeholder: 'username',
     isNumeric: false,
   ),
-  PlatformBtn(
+  const PlatformBtn(
     id: 'ph',
     label: 'کۆرەک',
     iconWidget: const FaIcon(
@@ -233,7 +233,7 @@ final List<PlatformBtn> kPlatformBtns = [
     placeholder: '9647XXXXXXXXX',
     isNumeric: true,
   ),
-  PlatformBtn(
+  const PlatformBtn(
     id: 'as',
     label: 'ئاسیا سێڵ',
     iconWidget: const FaIcon(

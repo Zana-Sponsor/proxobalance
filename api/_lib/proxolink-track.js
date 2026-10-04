@@ -53,12 +53,15 @@ export async function recordContactEvent(req,res,linkId,type,platformId=null) {
   await proxoWrite('pa_contact_events','POST',record,'','return=minimal');
 }
 export function actionUrl(card,id) {
-  if(id==='tt'&&/^[a-zA-Z0-9._]{1,40}$/.test(card.tt||card.tiktok||''))
+  if(id==='tt'&&(card.template_key==='dark'&&card.template_version===1001?/^[a-zA-Z0-9._@-]{1,100}$/:/^[a-zA-Z0-9._]{1,40}$/).test(card.tt||card.tiktok||''))
     return 'https://www.tiktok.com/@'+encodeURIComponent(card.tt||card.tiktok);
   const platforms=normalizedPlatforms(card.platforms);
   if(!Object.prototype.hasOwnProperty.call(PLATFORM_TYPE,id)
     || !Object.prototype.hasOwnProperty.call(platforms,id))
     throw Error('invalid_button');
   // The destination is always constructed server-side from trusted card data.
-  return contactDestination(id,platforms[id]);
+  const destination=contactDestination(id,platforms[id]);
+  // WhatsApp's universal link opens the app when installed and provides the
+  // supported web fallback otherwise. It retains the validated phone number.
+  return id==='wa'?'https://wa.me/'+destination.split('phone=')[1]:destination;
 }

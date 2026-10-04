@@ -103,7 +103,7 @@ export function contactDestination(id, raw) {
     default: throw err(422,'invalid_platform_value');
   }
 }
-export function validateCardData(card) {
+export function validateCardData(card,{legacy=false}={}) {
   if (!STYLES.has(card.template_key || card.style)) throw err(422,'template_not_found');
   if (typeof card.name !== 'string' || !card.name.trim() || card.name.length > 160)
     throw err(422,'invalid_card_name');
@@ -113,7 +113,10 @@ export function validateCardData(card) {
   if(!keys.length && !(card.tt||card.tiktok))
     throw err(422,'invalid_platform_value');
   for(const id of keys) contactDestination(id,platform[id]);
-  if (card.tt || card.tiktok) handle(card.tt || card.tiktok);
+  if (card.tt || card.tiktok) {
+    if(legacy) { if(!/^[a-zA-Z0-9._@-]{1,100}$/.test(card.tt||card.tiktok))throw err(422,'invalid_platform_value'); }
+    else handle(card.tt || card.tiktok);
+  }
   return true;
 }
 function configuration() {
@@ -183,7 +186,7 @@ export async function activeTemplate(card) {
     throw err(404,'template_not_found');
   const rows=await proxoRows('proxolink_templates',
     '&template_key=eq.'+encodeURIComponent(key)+'&version=eq.'+version+'&is_active=eq.true&limit=1',
-    'template_key,version,storage_path,checksum_sha256,requires_avatar');
+    'template_key,version,storage_path,checksum_sha256,requires_avatar,renderer_variant,is_catalog_visible');
   if(rows.length!==1) throw err(404,'template_not_found');
   return rows[0];
 }
@@ -290,13 +293,19 @@ function contactButtons(style,parts,tt,ttHref) {
   }).join('');
   return {buttons,ttBadge,ttInline};
 }
-export function renderTemplate(template,card,{adToken=null}={}) {
-  validateCardData(card);
+export function renderTemplate(template,card,{adToken=null,variant='standard'}={}) {
+  const legacy=variant==='legacy_dark_inline';
+  validateCardData(card,{legacy});
   const style=card.template_key||card.style;
   const colors=THEMES[card.color_theme]||Object.values(THEMES).find(pair=>pair.some(c=>c===String(card.color_theme).toLowerCase()))||THEMES.purple;
-  const tt=card.tt||card.tiktok?handle(card.tt||card.tiktok):'';
+  const tt=card.tt||card.tiktok?(legacy?(card.tt||card.tiktok):handle(card.tt||card.tiktok)):'';
   const parts=selectedPlatforms(card);
   const pieces=contactButtons(style,parts,tt,adToken?'/a/'+encodeURIComponent(adToken)+'/action/tt':null);
+  if(legacy) {
+    const colors={wa:'#25d366',vb:'#7360f2',ig:'#fff',tg:'#29a8eb',ph:'#fff',as:'#fff'};
+    pieces.buttons=parts.map(p=>'<a href="'+safeHtml(adToken?'/a/'+encodeURIComponent(adToken)+'/action/'+p.id:p.url)+'" target="_blank" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:14px 8px;border-radius:18px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);text-decoration:none;color:#fff;font-size:13px;font-weight:600;transition:.15s;flex:1;min-width:calc(50% - 6px)"><i class="'+iconClass(p.id)+' '+ICON[p.id]+'" style="font-size:26px;color:'+colors[p.id]+'"></i>'+safeText(p.label)+'</a>').join('');
+    pieces.ttBadge=tt?'<a href="'+safeHtml(adToken?'/a/'+encodeURIComponent(adToken)+'/action/tt':badgeUrl(tt))+'" target="_blank" class="tt-link"><i class="fab fa-tiktok"></i>@'+safeHtml(tt)+'</a>':'';
+  }
   // In tracked mode a link-scoped URL is the only source of attribution.
   const handlers=parts.map(p=>{
     const url=adToken
@@ -320,11 +329,11 @@ export function renderTemplate(template,card,{adToken=null}={}) {
     .replace('<html dir="rtl" lang="ku">','<html dir="'+(card.card_language==='en'?'ltr':'rtl')+'" lang="'+(card.card_language||'ku')+'">');
 }
 export async function renderedPage(card,{adToken=null,preview=false}={}) {
-  validateCardData(card);
   const meta=await activeTemplate(card);
+  validateCardData(card,{legacy:meta.renderer_variant==='legacy_dark_inline'});
   if(meta.requires_avatar && !card.avatar_path && card.demo!==true) throw err(422,'avatar_required');
   const template=await privateTemplate(meta);
-  const html=renderTemplate(template,card,{adToken});
+  const html=renderTemplate(template,card,{adToken,variant:meta.renderer_variant||'standard'});
   if(!preview && /^[A-Za-z0-9]{5,60}$/.test(process.env.PROXO_TIKTOK_PIXEL_ID||''))
     return html.replace(/ttq\.load\(['"][^'"]+['"]\)/g,"ttq.load('"+process.env.PROXO_TIKTOK_PIXEL_ID+"')");
   // Strip the non-visual legacy TikTok Pixel bootstrap in owner preview.
@@ -344,8 +353,11 @@ export function publicPage(res,html) {
   res.setHeader('Permissions-Policy','camera=(), microphone=(), geolocation=()');
   const hashes=[...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)]
     .map(m=>"'sha256-"+createHash('sha256').update(m[1]).digest('base64')+"'");
+  const eventHashes=[...html.matchAll(/\sonclick="([^"]+)"/g)]
+    .filter(m=>['goLink()','closeModal()','closeMod()'].includes(m[1]))
+    .map(m=>"'sha256-"+createHash('sha256').update(m[1]).digest('base64')+"'");
   res.setHeader('Content-Security-Policy', "default-src 'none'; base-uri 'none'; object-src 'none'; frame-ancestors 'none'; "
-    +"script-src 'self' "+hashes.join(' ')+" https://analytics.tiktok.com; "
+    +"script-src 'self' 'unsafe-hashes' "+[...hashes,...eventHashes].join(' ')+" https://analytics.tiktok.com; "
     +"style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; "
     +"font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self' https: data:; "
     +"connect-src 'self' https://analytics.tiktok.com https://*.tiktok.com;");

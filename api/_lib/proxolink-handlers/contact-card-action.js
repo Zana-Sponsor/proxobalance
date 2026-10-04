@@ -1,3 +1,4 @@
+import { publishAudit } from '../proxolink-audit.js';
 import { readJson, json, withSecurity } from '../security.js';
 import {
   authenticatedUser, cardById, renderedPage, verifyPublicAvatar,
@@ -59,6 +60,7 @@ async function handler(req,res,{user}) {
       'id=eq.'+id+'&user_id=eq.'+user.id+'&updated_at=eq.'+encodeURIComponent(card.updated_at)+'&select=updated_at');
     if(!leased.length)return json(res,409,{ok:false,error:'edit_conflict'});
     const filter='id=eq.'+id+'&user_id=eq.'+user.id+'&updated_at=eq.'+encodeURIComponent(leased[0].updated_at);
+    await publishAudit(card,action,'started');
     try {
       await renderReady(card);
       await proxoWrite('proxolink_cards','PATCH',{
@@ -66,6 +68,7 @@ async function handler(req,res,{user}) {
         last_publish_error_code:null,last_publish_error_at:null,
         published_at:card.published_at||new Date().toISOString()
       },filter,'return=minimal');
+      await publishAudit(card,action,'success');
       return responseCard(res,id,user.id);
     } catch(error) {
       await proxoWrite('proxolink_cards','PATCH',{
@@ -73,6 +76,7 @@ async function handler(req,res,{user}) {
         last_publish_error_code:String(error?.code||'render_failed').slice(0,80),
         last_publish_error_at:new Date().toISOString()
       },filter,'return=minimal');
+      await publishAudit(card,action,'failed',error?.code||'render_failed');
       return json(res,422,{ok:false,error:'publish_failed',card_id:id});
     }
   } catch {

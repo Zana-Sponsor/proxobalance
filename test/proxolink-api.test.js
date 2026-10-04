@@ -103,3 +103,12 @@ test('TikTok tracked badges carry the same exact ad token',()=>{
  const html=renderTemplate(template,card,{adToken:tokenA});
  assert.match(html,new RegExp('/a/'+tokenA+'/action/tt'));assert.doesNotMatch(html,/href="https:\/\/www.tiktok.com/);
 });
+
+test('server renderer preserves mixed direction text and trusted contact attributes',()=>{
+ const html=renderTemplate(template,{...card,name:'Zana',bio:'کۆد ABC-123، بڕ -12,345.67 IQD <script>',platforms:{wa:'9647501234567'}});
+ assert.match(html,/<bdi dir="ltr">ABC-123<\/bdi>/);
+ assert.match(html,/<bdi dir="ltr">-12,345.67 IQD<\/bdi>/);
+ assert.match(html,/&lt;<bdi dir="ltr">script<\/bdi>&gt;/);
+ assert.match(html,/9647501234567/);
+ assert.doesNotMatch(html,/href="<bdi/);
+});

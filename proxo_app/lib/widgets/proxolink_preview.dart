@@ -73,8 +73,8 @@ class _ProxoLinkPreviewState extends State<ProxoLinkPreview> {
                   _loading = false;
                 });
             },
-            onHttpError: (_) {
-              if (mounted)
+            onHttpError: (error) {
+              if (error.request?.uri == page && mounted)
                 setState(() {
                   _failed = true;
                   _loading = false;
@@ -117,25 +117,27 @@ class _ProxoLinkPreviewState extends State<ProxoLinkPreview> {
         {'whatsapp', 'viber', 'tel', 'mailto'}.contains(uri.scheme) ||
         (uri.scheme == 'https' && hosts.contains(uri.host.toLowerCase()));
     if (allowed) {
+      bool opened = false;
       try {
-        final opened = await launchUrl(
-          uri,
-          mode: LaunchMode.externalApplication,
-        );
-        if (!opened && uri.scheme == 'whatsapp') {
+        opened = await launchUrl(uri, mode: LaunchMode.externalApplication);
+      } catch (_) {
+        // A missing native app may throw instead of returning false.
+      }
+      if (!opened && uri.scheme == 'whatsapp') {
+        try {
           final phone = uri.queryParameters['phone'];
           if (phone != null && RegExp(r'^\d{8,15}$').hasMatch(phone)) {
-            await launchUrl(
+            opened = await launchUrl(
               Uri.https('wa.me', '/$phone'),
               mode: LaunchMode.externalApplication,
             );
           }
-        }
-      } catch (_) {
-        if (mounted)
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: ProxoText('نەتوانرا ئەپەکە بکرێتەوە.')),
-          );
+        } catch (_) {}
+      }
+      if (!opened && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: ProxoText('نەتوانرا ئەپەکە بکرێتەوە.')),
+        );
       }
     }
     return NavigationDecision.prevent;

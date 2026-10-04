@@ -1,3 +1,4 @@
+import { publishAudit } from '../proxolink-audit.js';
 import { readJson, json, withSecurity } from '../security.js';
 import { createHash } from 'node:crypto';
 import {
@@ -48,11 +49,13 @@ function validatePayload(body,userId,id,old=null) {
       ||!/^[a-zA-Z0-9_-]+\.(webp|jpe?g|png)$/i.test(data.avatar_path.slice(expected.length)))
       throw Object.assign(new Error('invalid_avatar'),{code:'invalid_avatar'});
   }
-  validateCardData(data);
+  validateCardData(data,{legacy:old?.template_key==='dark' && old?.template_version===1001
+    && data.template_key===old.template_key && data.template_version===old.template_version});
   return data;
 }
-async function readiness(data) {
+async function readiness(data,{allowLegacy=false}={}) {
   const meta=await activeTemplate(data);
+  if(meta.is_catalog_visible===false&&!allowLegacy)throw Object.assign(new Error('invalid_request'),{code:'invalid_request'});
   if(meta.requires_avatar&&!data.avatar_path)
     throw Object.assign(new Error('avatar_required'),{code:'avatar_required'});
   if(data.avatar_path)await verifyPublicAvatar(data.avatar_path);
@@ -103,6 +106,7 @@ async function create(req,res,userId,body) {
     }
     throw error;
   }
+  await publishAudit(data,'create','started');
   try {
     await readiness(data);
     const updated=await proxoWrite('proxolink_cards','PATCH',{
@@ -111,6 +115,7 @@ async function create(req,res,userId,body) {
       published_at:new Date().toISOString()
     },'id=eq.'+id+'&user_id=eq.'+userId+'&updated_at=eq.'+encodeURIComponent(card.updated_at)+'&select=id,user_id,name,status,publish_status');
     if(!updated.length)return json(res,200,{ok:true,card:publicCard(await cardById(id)),reused:true});
+    await publishAudit(data,'create','success');
     return json(res,201,{ok:true,card:publicCard(updated[0])});
   } catch(error) {
     const failed=await proxoWrite('proxolink_cards','PATCH',{
@@ -119,6 +124,7 @@ async function create(req,res,userId,body) {
       last_publish_error_at:new Date().toISOString()
     },'id=eq.'+id+'&user_id=eq.'+userId+'&updated_at=eq.'+encodeURIComponent(card.updated_at)+'&select=id,user_id,name,status,publish_status');
     if(!failed.length)return json(res,200,{ok:true,card:publicCard(await cardById(id)),reused:true});
+    await publishAudit(data,'create','failed',error?.code||'render_failed');
     return json(res,422,{ok:false,error:'publish_failed',
       card:publicCard(failed[0])});
   }
@@ -132,7 +138,7 @@ async function edit(req,res,userId,body,id) {
   if(Date.parse(body.expected_updated_at)!==Date.parse(current.updated_at))
     return json(res,409,{ok:false,error:'edit_conflict'});
   // Render in memory BEFORE changing a currently published card.
-  await readiness(proposed);
+  await readiness(proposed,{allowLegacy:proposed.template_key===current.template_key&&proposed.template_version===current.template_version});
   const fields={
     name:proposed.name,bio:proposed.bio,tt:proposed.tt,tiktok:proposed.tt,
     style:proposed.template_key,template_key:proposed.template_key,
@@ -147,6 +153,7 @@ async function edit(req,res,userId,body,id) {
     'id=eq.'+id+'&user_id=eq.'+userId+'&updated_at=eq.'+encodeURIComponent(current.updated_at)
       +'&select=id,user_id,name,status,publish_status');
   if(!updated.length)return json(res,409,{ok:false,error:'edit_conflict'});
+  await publishAudit(proposed,'edit_publish','success');
   return json(res,200,{ok:true,card:publicCard(updated[0])});
 }
 async function handler(req,res,{user}) {

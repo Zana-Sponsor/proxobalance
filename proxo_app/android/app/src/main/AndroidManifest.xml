@@ -116,23 +116,6 @@
             </intent-filter>
         </activity>
 
-        <!-- ── Local landing-page preview provider ────────────────────── -->
-        <!-- Exposes ONLY <cache>/proxo_preview/*.html to an external
-             browser as a content:// URI with a temporary read grant.
-             ⚠ The authority must stay in sync with AUTHORITY_SUFFIX in
-             MainActivity.kt. It is deliberately different from the
-             authorities share_plus (.flutter.share_provider) and
-             image_picker (.flutter.image_provider) already register. -->
-        <provider
-            android:name="androidx.core.content.FileProvider"
-            android:authorities="${applicationId}.previewprovider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/proxo_file_paths"/>
-        </provider>
-
         <!-- ── FCM background/terminated message handler service ───────── -->
         <!-- Without this the OS cannot wake the app when it is terminated -->
         <service

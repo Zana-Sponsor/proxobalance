@@ -56,7 +56,7 @@ create policy "Owner reads own ProxoLink publish history"
 
 create table if not exists public.pa_ad_contact_links (
   id uuid primary key default gen_random_uuid(),
-  ad_id uuid not null references public.pa_ads(id) on delete cascade,
+  ad_id uuid not null references public.pa_ads(id) on delete restrict,
   card_id uuid not null references public.proxolink_cards(id) on delete restrict,
   owner_user_id uuid not null references auth.users(id) on delete cascade,
   public_token text not null unique,
@@ -80,7 +80,7 @@ create policy "Owner reads own ad contact links"
 create table if not exists public.pa_contact_events (
   id uuid primary key default gen_random_uuid(),
   ad_contact_link_id uuid not null
-    references public.pa_ad_contact_links(id) on delete cascade,
+    references public.pa_ad_contact_links(id) on delete restrict,
   event_type text not null check (event_type in ('page_view','button_click')),
   button_type text check (
     button_type is null or button_type in

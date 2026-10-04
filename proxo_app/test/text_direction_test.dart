@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:proxo_app/services/html_generator.dart';
 import 'package:proxo_app/widgets/auth/auth_widgets.dart';
 import 'package:proxo_app/widgets/proxo_text.dart';
 import 'package:proxo_app/widgets/receipt/receipt_kit.dart';
@@ -249,28 +248,6 @@ void main() {
       expect(controller.text, '-123456');
     }
   });
-
-  for (final style in PlStyle.values) {
-    test('generated ${style.name} contact card keeps directions and raw links',
-        () {
-      final html = buildCardHtml(
-        name: 'Zana',
-        bio: 'کۆد ABC-123، بڕ -12,345.67 IQD <script>',
-        tt: 'zana_123',
-        logoB64: '',
-        themeKey: 'blue',
-        style: style,
-        checked: [true],
-        contacts: {0: '9647501234567'},
-      );
-      expect(html, contains('dir="auto">Zana'));
-      expect(html, contains('<bdi dir="ltr">ABC-123</bdi>'));
-      expect(html, contains('<bdi dir="ltr">-12,345.67 IQD</bdi>'));
-      expect(html, contains('&lt;<bdi dir="ltr">script</bdi>&gt;'));
-      expect(html, contains('9647501234567'));
-      expect(html, isNot(contains('href="<bdi')));
-    });
-  }
 
   testWidgets('render direction examples with the receipt typography',
       (tester) async {

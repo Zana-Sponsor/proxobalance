@@ -6,7 +6,7 @@ export default withSecurity(async (req, res, {user}) => {
   try {
     const key=req.query?.template_key,version=Number(req.query?.version);
     const selected=typeof key==='string'&&['dark','light','classic','pill','card','neon','zoom','banner'].includes(key)&&Number.isInteger(version)&&version>0;
-    const rows=await proxoRows('proxolink_templates','&is_active=eq.true&order=template_key.asc,version.desc'+(selected?'&template_key=eq.'+key+'&version=eq.'+version:''),
+    const rows=await proxoRows('proxolink_templates','&is_active=eq.true&order=template_key.asc,version.desc'+(selected?'&template_key=eq.'+key+'&version=eq.'+version:'&is_catalog_visible=eq.true'),
       'template_key,version,display_name_ckb,display_name_en,requires_avatar,is_active');
     const seen=new Set();
     const templates=rows.filter(row=>!seen.has(row.template_key)&&seen.add(row.template_key))

@@ -8,6 +8,8 @@ revoke all on proxolink_private.cards_backup_20261003 from public,anon,authentic
 grant usage on schema proxolink_private to service_role;
 grant select on proxolink_private.cards_backup_20261003 to service_role;
 
+alter table public.proxolink_templates add column if not exists renderer_variant text not null default 'standard' check(renderer_variant in ('standard','legacy_dark_inline'));
+alter table public.proxolink_templates add column if not exists is_catalog_visible boolean not null default true;
 alter table public.proxolink_cards add column if not exists creation_request_hash text;
 alter table public.proxolink_cards drop constraint if exists proxolink_card_language_check;
 alter table public.proxolink_cards add constraint proxolink_card_language_check check(card_language in ('ku','ar','en'));
@@ -52,8 +54,7 @@ begin
   return new;
 end $$;
 revoke all on function proxolink_private.validate_ad_card() from public,anon,authenticated;
-create trigger proxolink_validate_ad_card before insert or update of asset_id,card_id,user_id,goal on public.pa_ads
-for each row execute function proxolink_private.validate_ad_card();
+-- The validate_ad_card trigger is installed by the verified cutover migration.
 
 create or replace function proxolink_private.protect_live_card() returns trigger
 language plpgsql security definer set search_path='' as $$
@@ -99,7 +100,7 @@ returns table (
   link_id uuid, link_ad_id uuid, link_card_id uuid,
   link_public_token text, link_version integer
 )
-language plpgsql security definer set search_path=public,pg_temp as $$
+language plpgsql security definer set search_path='' as $$
 declare
   v_ad public.pa_ads%rowtype;
   v_card public.proxolink_cards%rowtype;
@@ -116,7 +117,8 @@ begin
   -- links. The caller must have been verified by Proxo Auth on the server.
   select * into v_ad from public.pa_ads
   where id=p_ad_id and user_id=p_owner_user_id for update;
-  if not found or coalesce(v_ad.asset_id,v_ad.card_id) is null then
+  if not found or coalesce(v_ad.asset_id,v_ad.card_id) is null
+    or v_ad.status in ('completed','rejected','cancelled','canceled','failed','inactive','paused') then
     raise exception 'ad_not_found_or_not_owned';
   end if;
   select * into v_card from public.proxolink_cards
@@ -172,8 +174,7 @@ begin
   return new;
 end $$;
 revoke all on function proxolink_private.sync_ad_link() from public,anon,authenticated;
-create trigger proxolink_sync_ad_link after insert or update of asset_id,card_id,status on public.pa_ads
-for each row execute function proxolink_private.sync_ad_link();
+-- The sync_ad_link trigger is installed by the verified cutover migration.
 
 -- Preserve raw event counts/history; remove visitor identifiers after 30 days.
 create or replace function proxolink_private.retain_contact_events() returns void
@@ -183,3 +184,34 @@ language sql security definer set search_path='' as $$
 $$;
 revoke all on function proxolink_private.retain_contact_events() from public,anon,authenticated;
 grant execute on function proxolink_private.retain_contact_events() to service_role;
+
+create index if not exists pa_contact_events_retention_idx on public.pa_contact_events(created_at);
+create index if not exists proxolink_publish_attempts_owner_date_idx on public.proxolink_publish_attempts(user_id,created_at desc);
+create extension if not exists pg_cron;
+select cron.schedule('proxolink-visitor-retention','17 3 * * *','select proxolink_private.retain_contact_events()');
+
+-- Only totals and the precise ad's current token are returned to its owner/admin.
+-- No visitor identifiers, raw event rows or template paths are client-visible.
+create or replace function public.proxolink_ad_summary(p_ad_id uuid) returns jsonb
+language plpgsql stable security definer set search_path='' as $$
+declare v_ad public.pa_ads%rowtype; v_path text; v_version integer; v_counts jsonb;
+begin
+ if auth.uid() is null then raise exception 'NOT_AUTHENTICATED'; end if;
+ select * into v_ad from public.pa_ads where id=p_ad_id;
+ if not found or (v_ad.user_id<>auth.uid() and not public.pa_is_admin()) then raise exception 'NOT_FOUND'; end if;
+ select '/a/'||l.public_token,l.version into v_path,v_version
+ from public.pa_ad_contact_links l join public.proxolink_cards c on c.id=l.card_id
+ where l.ad_id=v_ad.id and l.is_current and l.status='active' and c.status='active' and c.publish_status='ready'
+   and l.card_id=coalesce(v_ad.asset_id,v_ad.card_id) and l.owner_user_id=v_ad.user_id
+   and v_ad.status not in ('completed','rejected','cancelled','canceled','failed','inactive','paused');
+ select jsonb_build_object('page_views',count(*) filter(where e.event_type='page_view'),
+   'button_clicks',count(*) filter(where e.event_type='button_click'),
+   'buttons',jsonb_build_object('whatsapp',count(*) filter(where e.button_type='whatsapp'),
+    'viber',count(*) filter(where e.button_type='viber'),'telegram',count(*) filter(where e.button_type='telegram'),
+    'instagram',count(*) filter(where e.button_type='instagram'),'phone',count(*) filter(where e.button_type='phone'),
+    'tiktok',count(*) filter(where e.button_type='tiktok'))) into v_counts
+ from public.pa_ad_contact_links l join public.pa_contact_events e on e.ad_contact_link_id=l.id where l.ad_id=v_ad.id;
+ return jsonb_build_object('ad_id',v_ad.id,'card_id',coalesce(v_ad.asset_id,v_ad.card_id),'tracked_path',v_path,'version',v_version)||v_counts;
+end $$;
+revoke all on function public.proxolink_ad_summary(uuid) from public,anon;
+grant execute on function public.proxolink_ad_summary(uuid) to authenticated;
