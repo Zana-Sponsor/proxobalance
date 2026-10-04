@@ -1,6 +1,15 @@
 # ProxoLink Private Template Rendering & Automated Contact Card System
 ## V5 — Verified GitHub Architecture, Automated User Pages, Secure Visual Previews & Production Gates
 
+> **AUTHORITATIVE V5 OWNER AMENDMENT — NO TELEGRAM IN PROXOLINK (4 OCTOBER 2026).** This decision supersedes every contrary Telegram-related instruction, example, checklist, preview fixture, UI element and release gate in Sections 0–144 and in older V2/V3/V4 plans. Historical mentions below are retained solely for traceability, NOT as active requirements. See [the no-Telegram acceptance criteria](PROXOLINK_V5_NO_TELEGRAM_ACCEPTANCE.md).
+>
+> **Required current behavior:** ProxoLink offers WhatsApp, Viber, Instagram, TikTok and existing phone contacts only. Remove Telegram from all contact forms, platform selectors, public and owner-rendered pages, eight genuine server-rendered demo previews, external-link navigation, tracked actions and native tests. ProxoLink sends no bot notifications, HTML files or messages and requires no Telegram bot, chat ID, token, server configuration or replacement credentials. Preserve the exact identity of all eight designs except the intentional loss/reflow of that contact button and the already approved typography, bio, spacing and press refinements.
+>
+> **Non-destructive compatibility:** Keep all existing customer IDs, original card rows, legacy HTML and historical platform JSON intact until separately authorized migration/cleanup; hide historical Telegram values from client responses and render output, reject Telegram in new requests, and preserve historical values when a card is edited. Previously exposed bot tokens should be revoked once by their owner using BotFather as a separate security task; do not issue a replacement for ProxoLink or make revocation a prerequisite for implementing or testing non-Telegram features. Unrelated order-notification services are outside this ProxoLink-only change and must not be silently broken.
+>
+> **Release gates unchanged:** Maintain Draft PR #7, private template versions, RLS, existing advertisement links, secure preview protection and the separate approval requirements for customer cutover, merge, production deployment or destructive cleanup. Native/pixel tests must now compare the approved no-Telegram output, not claim pixel identity against a historical page containing that button.
+
+
 
 > **HISTORICAL V2/V3/V4 CONTEXT — follow the authoritative V5 live-code corrections and Sections 139–144 in case of conflict**
 >
@@ -944,7 +953,7 @@ Telegram bot credentials
 
 ---
 
-# 14. Platform Normalization
+# 14. Platform Normalization — historical Telegram examples superseded by owner amendment
 
 Preserve the existing supported contact options unless product requirements explicitly change.
 
@@ -2104,7 +2113,7 @@ Do not delete shared template files.
 
 ---
 
-# 46. Telegram Behavior
+# 46. Retired Telegram Behavior — historical text superseded by owner amendment
 
 The current architecture sends generated HTML through a delivery pipeline.
 
@@ -2145,7 +2154,7 @@ Remember: any value compiled into Flutter can be extracted from the APK/IPA.
 
 ---
 
-# 47. Legacy Credential Remediation
+# 47. Legacy Credential Remediation — one-time revocation, no replacement for ProxoLink
 
 The old hardcoded Telegram token discovered in the supplied Flutter project must be treated as leaked.
 

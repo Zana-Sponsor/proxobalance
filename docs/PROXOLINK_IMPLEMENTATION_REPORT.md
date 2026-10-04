@@ -1,5 +1,14 @@
 # ProxoLink implementation and verification report
 
+## V5 owner amendment: ProxoLink without Telegram (4 October 2026)
+
+The current feature branch removes Telegram from new card input, five active contact choices, server-rendered public/owner/demo buttons, tracked redirects and Flutter WebView navigation. The renderer still accepts archived platform fields internally but never generates a Telegram button or destination. Existing Telegram JSON values are retained through edits and omitted from the client catalog/card response. Demo clicks remain inert; normal WhatsApp, Viber, Instagram, TikTok and phone actions remain server-validated. Backend, Flutter and native-probe regression cases have been updated. This section describes source changes, **not** a completed live native/pixel certification.
+
+The live read-only snapshot before these source changes contained 21 customer cards, 27 ads, 16 card relationships and two customer rows with historical Telegram values. No customer row, original private template object, production deployment or database schema was changed. Existing template source and old backup HTML remain untouched until separately approved cutover/cleanup. The previous historical 40/40 pixel comparisons are not proof of pixel parity for the intentionally altered five-contact layout; new no-Telegram comparisons are needed.
+
+Telegram bot integration is not a ProxoLink release requirement and no replacement bot credentials are needed. Historically exposed credential revocation remains a **one-time owner security action**; unrelated order notification code must be evaluated independently before any shared environment setting is removed. Vercel project access and protected native test settings remain external blockers; code-only CI cannot certify real Android WebViews. See [current no-Telegram acceptance criteria](PROXOLINK_V5_NO_TELEGRAM_ACCEPTANCE.md).
+
+
 Updated on 4 October 2026. The corrected implementation is pushed to the requested feature branch and has a READY protected Vercel Preview. Production implementation and end-to-end certification are **not complete**: the new live Android WebView run is blocked by missing secure runtime configuration, authenticated checks of the new deployment are blocked by the Vercel connection, and customer cutover/merge/production promotion have not occurred. The pull request remains draft and unmerged under the user's earlier approval limits. No customer records or production settings were changed during this re-audit.
 
 The supplied attachment was `PROXOLINK_PRIVATE_TEMPLATES_FULL_IMPLEMENTATION_PROMPT_UPDATED_V2(3).md`, containing 4,891 lines and sections 0–132. It was read from beginning to end before edits. The later user instructions requiring genuine server-rendered previews and the existing Ad UI design system supersede its older static-preview instructions. A separate V3 attachment was not available.
@@ -196,7 +205,7 @@ The eight templates are otherwise verified as real server responses by the 71 pr
 1. **Customer cutover:** requires separate approval before applying the guarded 21-card/16-link cutover.
 2. **Legacy cleanup:** requires a later, separate approval after the observation window.
 3. **Merge and production promotion:** require separate approval. PR #7 remains draft and Vercel production is unchanged.
-4. **Telegram credential:** rotate the historically exposed bot credential with [@BotFather](https://t.me/BotFather). Client delivery code is removed, but rotation cannot be confirmed by repository changes.
+4. **Historical Telegram credential (separate security task, NOT a ProxoLink dependency):** revoke the exposed bot credential once using [@BotFather](https://t.me/BotFather); no new bot or replacement credentials are needed for ProxoLink. Coordinate separately if unrelated order notifications still use it.
 5. **Supabase service-role credential:** rotate the Proxo project credential because it was pasted into the conversation. Coordinate consumers, replace the Vercel sensitive environment value, and redeploy at the approved time. Do not paste the replacement into chat.
 6. **Native certification and protected API access:** reauthorize Vercel for the stated team/project, configure the four secure runtime settings above, rerun the KVM-backed native workflow (or use a physical device), and complete external contact-launch and iOS verification before store release. The skipped runtime job is not a pass for this requirement.
 7. **Attachment provenance:** provide the specifically named V3 file if it differs from the fully read 4,891-line V2(3) attachment.
