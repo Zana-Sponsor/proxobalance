@@ -6,6 +6,7 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { STYLES, WIDTHS, validateRuntime, safeRequest, verifyReadOnlySecurity,
   validateNativeResults } from './proxolink-verification-security.mjs';
+import {validateViewport, compareNativePixels, createPreviewReferenceBrowser} from './proxolink-pixel-comparison.mjs';
 
 const styles=STYLES;
 const packageId='com.proxo.proxoapp';
@@ -28,6 +29,8 @@ const pause=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 let authorization=null;
 let userId=null;
 let securityVerified=false;
+let referenceBrowser=null;
+let currentPreviews={};
 async function jsonRequest(url,{headers={},...options}={}) {
   const response=await safeRequest(url,{...options,headers});
   if(!response.ok)throw Error('verification_endpoint_unavailable');
@@ -82,6 +85,7 @@ async function configure() {
   }
   // tee's stdout is captured and discarded. It is never printed or uploaded.
   appWrite('proxolink-verification.json',JSON.stringify({origin:base,previews,headers:protection}));
+  currentPreviews=previews;
 }
 let capturedPreviewHeaders=false;
 
@@ -93,27 +97,39 @@ async function main() {
   adb(['shell','wm','density','160']);
   adb(['shell','run-as',packageId,'mkdir','-p','files']);
   await configure();
+  referenceBrowser=await createPreviewReferenceBrowser({protection:{'x-vercel-protection-bypass':bypass}});
   adb(['shell','am','start','-n',packageId+'/.MainActivity']);
   let configuredAt=Date.now();
   const captured=new Set();
+  const pixels={};
   const deadline=Date.now()+15*60*1000;
   while(Date.now()<deadline) {
     if(Date.now()-configuredAt>60000) {await configure();configuredAt=Date.now();}
     const result=appRead('proxolink-verification-results.json');
     if(result) {
       const data=JSON.parse(result);
-      const safe=validateNativeResults(data,captured);
+      const safe=validateNativeResults(data,captured,pixels);
       writeFileSync(output+'/results.json',JSON.stringify(safe,null,2));
-      console.log('8/8 real native WebView previews passed at all four widths (32/32 cases).');
+      console.log('8/8 real native WebView previews and exact browser pixel comparisons passed at all five widths (40/40 cases).');
       return;
     }
     const current=appRead('proxolink-verification-case.json');
     if(current) {
-      const {style,width}=JSON.parse(current),id=style+'-'+width;
+      const {style,width,viewport}=JSON.parse(current),id=style+'-'+width;
       if(styles.includes(style)&&WIDTHS.includes(width)&&!captured.has(id)) {
         const png=adb(['exec-out','screencap','-p']);
         if(!png?.length)throw Error('native_screenshot_failed');
         writeFileSync(output+'/'+id+'.png',png);
+        const crop=validateViewport(viewport,width);
+        const reference=await referenceBrowser.screenshot(currentPreviews[style],crop);
+        const comparison=await compareNativePixels(png,reference,crop);
+        writeFileSync(output+'/'+id+'-webview.png',comparison.native);
+        writeFileSync(output+'/'+id+'-browser.png',reference);
+        writeFileSync(output+'/'+id+'-diff.png',comparison.diff);
+        pixels[id]=comparison.metrics;
+        writeFileSync(output+'/pixels.json',JSON.stringify({environment:'Android 35 WebView versus Chromium '+referenceBrowser.version,
+          animation_state:'fresh page; scroll zero; CSS animations paused at zero',cases:pixels},null,2));
+        if(!comparison.metrics.exact_pixels_equal)throw Error('native_browser_pixel_difference');
         captured.add(id);
         appWrite('proxolink-verification-ack',id);
         console.log('Native evidence captured for '+id+'.');
@@ -129,6 +145,7 @@ catch {
   console.error('Native verification did not complete. Review configuration and safe evidence artifacts.');
   process.exitCode=1;
 } finally {
+  if(referenceBrowser)await referenceBrowser.close();
   adb(['shell','am','force-stop',packageId],null,true);
   for(const name of ['proxolink-verification.json','proxolink-verification-ack'])
     adb(['shell','run-as',packageId,'rm','-f','files/'+name],null,true);

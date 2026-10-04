@@ -18,7 +18,7 @@ const _styles = <String>[
   'zoom',
   'banner',
 ];
-const _widths = <int>[320, 393, 430, 768];
+const _widths = <int>[320, 375, 393, 430, 768];
 
 Directory get _files => Directory('${Directory.systemTemp.parent.path}/files');
 File get _configuration => File('${_files.path}/proxolink-verification.json');
@@ -88,6 +88,7 @@ class _NativeProbeScreen extends StatefulWidget {
 
 class _NativeProbeScreenState extends State<_NativeProbeScreen> {
   final _results = <String, dynamic>{};
+  final _viewportKey = GlobalKey();
   int _index = 0;
   String _status = 'Preparing secure live previews…';
   bool _complete = false;
@@ -106,12 +107,12 @@ class _NativeProbeScreenState extends State<_NativeProbeScreen> {
   Future<void> _runCurrent() async {
     if (_index >= _styles.length * _widths.length) {
       await _write('proxolink-verification-results.json', _results);
-      if (mounted) setState(() { _complete = true; _status = '32/32 live preview cases verified'; });
+      if (mounted) setState(() { _complete = true; _status = '40/40 live preview cases verified'; });
       return;
     }
     final style = _styles[_index ~/ _widths.length];
     final width = _widths[_index % _widths.length];
-    if (mounted) setState(() => _status = 'Loading $style at $width dp (${_index + 1}/32)…');
+    if (mounted) setState(() => _status = 'Loading $style at $width dp (${_index + 1}/40)…');
   }
 
   Future<void> _verify(String style, int width, WebViewController controller) async {
@@ -207,6 +208,30 @@ class _NativeProbeScreenState extends State<_NativeProbeScreen> {
         if (await controller.currentUrl() != expected) throw StateError('Navigation escaped preview');
       }
 
+      // Reload after modal checks: the original modal scripts suspend some
+      // decorations. Compare fresh documents in identical initial states.
+      await controller.reload();
+      var fresh = false;
+      for (var attempt = 0; attempt < 90; attempt++) {
+        await Future<void>.delayed(const Duration(seconds: 1));
+        final page = await _pageState(controller);
+        if (page['ready'] == true && page['fonts'] == true &&
+            page['images'] == true && page['icons'] == true &&
+            await controller.currentUrl() == expected) { fresh = true; break; }
+      }
+      if (!fresh) throw StateError('Fresh comparison frame unavailable');
+      await controller.runJavaScript('window.scrollTo(0,0);document.getAnimations().forEach(a=>{a.pause();a.currentTime=0;});');
+      if (mounted) setState(() => _status = '$caseId passed; comparing pixels…');
+      await Future<void>.delayed(const Duration(milliseconds: 100));
+      if (!mounted) return;
+      final box = _viewportKey.currentContext!.findRenderObject()! as RenderBox;
+      final origin = box.localToGlobal(Offset.zero);
+      if (MediaQuery.devicePixelRatioOf(context) != 1) throw StateError('Comparison requires density 160');
+      final crop = <String, int>{
+        'left': origin.dx.round(), 'top': origin.dy.round(),
+        'width': box.size.width.round(), 'height': box.size.height.round(),
+        'css_height': box.size.height.round(),
+      };
       _results[caseId] = {
         'passed': true,
         'width': state['width'],
@@ -219,8 +244,7 @@ class _NativeProbeScreenState extends State<_NativeProbeScreen> {
         'confirmation': true,
         'navigation_blocked': true,
       };
-      await _write('proxolink-verification-case.json', {'style': style, 'width': width});
-      if (mounted) setState(() => _status = '$caseId passed; capturing evidence…');
+      await _write('proxolink-verification-case.json', {'style': style, 'width': width, 'viewport': crop});
       final ack = File('${_files.path}/proxolink-verification-ack');
       var acknowledged = false;
       for (var attempt = 0; attempt < 120; attempt++) {
@@ -261,6 +285,7 @@ class _NativeProbeScreenState extends State<_NativeProbeScreen> {
                     title: 'پێشبینینی ڕاستەوخۆ',
                     subtitle: _status,
                     child: SizedBox(
+                      key: _viewportKey,
                       height: MediaQuery.sizeOf(context).height * 0.68,
                       child: _complete
                           ? Center(child: Text(_status, style: AdUi.heading(context)))

@@ -3,7 +3,7 @@
 export const PREVIEW_ORIGIN='https://proxobalance-git-feat-proxolink-private-re-00a2aa-proxoapp-1758.vercel.app';
 export const SUPABASE_ORIGIN='https://cojchkwssmasiejcgvbk.supabase.co';
 export const STYLES=['dark','light','classic','pill','card','neon','zoom','banner'];
-export const WIDTHS=[320,393,430,768];
+export const WIDTHS=[320,375,393,430,768];
 
 export function validateRuntime(env) {
   if(env.GITHUB_REPOSITORY!=='Zana-Sponsor/proxobalance'
@@ -74,7 +74,7 @@ export async function verifyReadOnlySecurity({authorization,key,userId,protectio
   return checks;
 }
 
-export function validateNativeResults(data,captured) {
+export function validateNativeResults(data,captured,pixels) {
   const cases=STYLES.flatMap(style=>WIDTHS.map(width=>style+'-'+width));
   if(Object.keys(data||{}).length!==cases.length||captured.size!==cases.length
     ||!cases.every(id=>captured.has(id)&&data[id]?.passed===true
@@ -82,7 +82,10 @@ export function validateNativeResults(data,captured) {
       &&data[id].icons_loaded===true&&data[id].width===Number(id.split('-')[1])
       &&Number.isInteger(data[id].animation_count)&&data[id].animation_count>0
       &&data[id].animation_checked===true&&data[id].contact_destinations===true
-      &&data[id].confirmation===true&&data[id].navigation_blocked===true))
+      &&data[id].confirmation===true&&data[id].navigation_blocked===true)
+    ||Object.keys(pixels||{}).length!==cases.length
+    ||!cases.every(id=>pixels[id]?.exact_pixels_equal===true
+      &&pixels[id]?.changed_pixels===0&&pixels[id]?.width===Number(id.split('-')[1])))
     throw Error('native_evidence_incomplete');
   // Explicit allowlist prevents runtime credentials/URLs or arbitrary page
   // data from accidentally entering a public CI artifact.

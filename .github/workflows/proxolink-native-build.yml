@@ -125,6 +125,11 @@ jobs:
         if: steps.configuration.outputs.ready == 'true'
         with:
           node-version: '24'
+      - name: Install locked reference-browser dependencies without runtime secrets
+        if: steps.configuration.outputs.ready == 'true'
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
       - uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3
         if: steps.configuration.outputs.ready == 'true'
         with:
