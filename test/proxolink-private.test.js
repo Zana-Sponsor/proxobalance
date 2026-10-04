@@ -71,8 +71,8 @@ test('the original modal script loses its retired Telegram branch and demo foote
   const publicDoc=renderTemplate(original,card);
   const demoDoc=renderTemplate(original,{...card,demo:true});
   assert.doesNotMatch(publicDoc,/n==='telegram'|ok-te/);
-  assert.doesNotMatch(demoDoc,/n==='telegram'|ok-te|tiktok\\.com/);
-  assert.match(publicDoc,/https:\/\/www\\.tiktok\\.com\/@proxo_iq/);
+  assert.doesNotMatch(demoDoc,/n==='telegram'|ok-te|tiktok[.]com/);
+  assert.match(publicDoc,/www[.]tiktok[.]com\/\@proxo_iq/);
   assert.match(demoDoc,/href="#"/);
 });
 test('only valid stable identifiers are accepted',()=>{
