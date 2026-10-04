@@ -2,7 +2,11 @@ name: Build ProxoLink native verification
 on:
   push:
     branches: [feat/proxolink-private-renderer-migration]
-    paths: ['proxo_app/integration_test/**', '.github/workflows/proxolink-native-build.yml']
+    paths:
+      - 'proxo_app/integration_test/**'
+      - 'proxo_app/lib/widgets/proxolink_preview.dart'
+      - 'proxo_app/pubspec.yaml'
+      - '.github/workflows/proxolink-native-build.yml'
   workflow_dispatch:
 permissions:
   contents: read
@@ -24,7 +28,7 @@ jobs:
           channel: stable
           cache: true
       - run: flutter pub get
-      - run: flutter analyze --no-fatal-infos integration_test/proxolink_live_test.dart
+      - run: flutter analyze --no-fatal-infos integration_test
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.14.3'
@@ -34,7 +38,7 @@ jobs:
           fi
           chmod +x android/gradlew
       - name: Build credential-free native test APK
-        run: flutter build apk --debug --target-platform android-x64 -t integration_test/proxolink_live_test.dart --dart-define=PROXO_PUBLIC_BASE_URL=https://proxobalance-git-feat-proxolink-private-re-00a2aa-proxoapp-1758.vercel.app
+        run: flutter build apk --debug --target-platform android-x64 -t integration_test/proxolink_native_probe.dart --dart-define=PROXO_PUBLIC_BASE_URL=https://proxobalance-git-feat-proxolink-private-re-00a2aa-proxoapp-1758.vercel.app
       - name: Split APK for bounded artifact downloads
         run: split -b 24M -d build/app/outputs/flutter-apk/app-debug.apk build/app/outputs/flutter-apk/native.part.
       - uses: actions/upload-artifact@v4
