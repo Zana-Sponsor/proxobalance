@@ -186,7 +186,7 @@ export async function activeTemplate(card) {
     throw err(404,'template_not_found');
   const rows=await proxoRows('proxolink_templates',
     '&template_key=eq.'+encodeURIComponent(key)+'&version=eq.'+version+'&is_active=eq.true&limit=1',
-    'template_key,version,storage_path,checksum_sha256,requires_avatar,renderer_variant,is_catalog_visible');
+    'template_key,version,storage_path,checksum_sha256,requires_avatar,renderer_variant,renderer_options,is_catalog_visible');
   if(rows.length!==1) throw err(404,'template_not_found');
   return rows[0];
 }
@@ -235,6 +235,7 @@ function darkLight(parts,tt,ttHref) {
   const btns=[...parts], idx=btns.findIndex(p=>p.id==='wa');
   if(idx===0 && btns.length>=2) [btns[0],btns[1]]=[btns[1],btns[0]];
   else if(idx>1) btns.splice(1,0,btns.splice(idx,1)[0]);
+  if(!tt)return {buttons:btns.map((p,i)=>gridButton(p,i===1)).join(''),ttBadge:''};
   const ttUrl=safeHtml(ttHref||badgeUrl(tt)), label=safeHtml(tt);
   const pill='<a href="'+ttUrl+'" target="_blank" class="tt-pill"><span>@'+label
     +'</span><i class="fab fa-tiktok"></i></a>';
@@ -264,15 +265,16 @@ function pillButton(p,shine,shadow) {
 function contactButtons(style,parts,tt,ttHref) {
   if(style==='dark'||style==='light')return {...darkLight(parts,tt,ttHref),ttInline:''};
   const ttUrl=safeHtml(ttHref||badgeUrl(tt)), label=safeHtml(tt);
-  let ttBadge=tt?'<div class="tt-wrap"><a href="'+ttUrl
+  // These original templates already contain their own .tt-wrap.
+  let ttBadge=tt?'<a href="'+ttUrl
     +'" target="_blank" class="tt-sm"><span dir="ltr">@'+label
-    +'</span><i class="fab fa-tiktok" style="font-size:18px"></i></a></div>':'';
+    +'</span><i class="fab fa-tiktok" style="font-size:18px"></i></a>':'';
   let ttInline='';
   if(style==='banner') {
     ttBadge='';
-    if(tt)ttInline='<div style="display:inline-flex;align-items:center;gap:5px;background:rgba(0,0,0,.28);'
-      +'padding:4px 12px;border-radius:20px;color:rgba(255,255,255,.92);font-size:12px;margin-top:6px;">'
-      +'<span dir="ltr">@'+label+'</span><i class="fab fa-tiktok"></i></div>';
+    if(tt)ttInline='<a href="'+ttUrl+'" target="_blank" style="display:inline-flex;align-items:center;gap:5px;background:rgba(0,0,0,.28);'
+      +'padding:4px 12px;border-radius:20px;color:rgba(255,255,255,.92);font-size:12px;margin-top:6px;text-decoration:none;">'
+      +'<span dir="ltr">@'+label+'</span><i class="fab fa-tiktok"></i></a>';
   }
   if(style==='classic') {
     return {
@@ -293,18 +295,22 @@ function contactButtons(style,parts,tt,ttHref) {
   }).join('');
   return {buttons,ttBadge,ttInline};
 }
-export function renderTemplate(template,card,{adToken=null,variant='standard'}={}) {
-  const legacy=variant==='legacy_dark_inline';
+export function renderTemplate(template,card,{adToken=null,variant='standard',rendererOptions={}}={}) {
+  const legacy=['legacy_dark_inline','legacy_standard'].includes(variant);
   validateCardData(card,{legacy});
   const style=card.template_key||card.style;
   const colors=THEMES[card.color_theme]||Object.values(THEMES).find(pair=>pair.some(c=>c===String(card.color_theme).toLowerCase()))||THEMES.purple;
   const tt=card.tt||card.tiktok?(legacy?(card.tt||card.tiktok):handle(card.tt||card.tiktok)):'';
   const parts=selectedPlatforms(card);
   const pieces=contactButtons(style,parts,tt,adToken?'/a/'+encodeURIComponent(adToken)+'/action/tt':null);
-  if(legacy) {
+  if(variant==='legacy_dark_inline') {
     const colors={wa:'#25d366',vb:'#7360f2',ig:'#fff',tg:'#29a8eb',ph:'#fff',as:'#fff'};
     pieces.buttons=parts.map(p=>'<a href="'+safeHtml(adToken?'/a/'+encodeURIComponent(adToken)+'/action/'+p.id:p.url)+'" target="_blank" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:14px 8px;border-radius:18px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);text-decoration:none;color:#fff;font-size:13px;font-weight:600;transition:.15s;flex:1;min-width:calc(50% - 6px)"><i class="'+iconClass(p.id)+' '+ICON[p.id]+'" style="font-size:26px;color:'+colors[p.id]+'"></i>'+safeText(p.label)+'</a>').join('');
     pieces.ttBadge=tt?'<a href="'+safeHtml(adToken?'/a/'+encodeURIComponent(adToken)+'/action/tt':badgeUrl(tt))+'" target="_blank" class="tt-link"><i class="fab fa-tiktok"></i>@'+safeHtml(tt)+'</a>':'';
+  }
+  if(legacy && rendererOptions.tt_prefix_at===false) {
+    pieces.ttBadge=pieces.ttBadge.replace('>@'+safeHtml(tt)+'<','>'+safeHtml(tt)+'<');
+    pieces.ttInline=pieces.ttInline.replace('>@'+safeHtml(tt)+'<','>'+safeHtml(tt)+'<');
   }
   // In tracked mode a link-scoped URL is the only source of attribution.
   const handlers=parts.map(p=>{
@@ -330,10 +336,10 @@ export function renderTemplate(template,card,{adToken=null,variant='standard'}={
 }
 export async function renderedPage(card,{adToken=null,preview=false}={}) {
   const meta=await activeTemplate(card);
-  validateCardData(card,{legacy:meta.renderer_variant==='legacy_dark_inline'});
+  validateCardData(card,{legacy:['legacy_dark_inline','legacy_standard'].includes(meta.renderer_variant)});
   if(meta.requires_avatar && !card.avatar_path && card.demo!==true) throw err(422,'avatar_required');
   const template=await privateTemplate(meta);
-  const html=renderTemplate(template,card,{adToken,variant:meta.renderer_variant||'standard'});
+  const html=renderTemplate(template,card,{adToken,variant:meta.renderer_variant||'standard',rendererOptions:meta.renderer_options||{}});
   if(!preview && /^[A-Za-z0-9]{5,60}$/.test(process.env.PROXO_TIKTOK_PIXEL_ID||''))
     return html.replace(/ttq\.load\(['"][^'"]+['"]\)/g,"ttq.load('"+process.env.PROXO_TIKTOK_PIXEL_ID+"')");
   // Strip the non-visual legacy TikTok Pixel bootstrap in owner preview.

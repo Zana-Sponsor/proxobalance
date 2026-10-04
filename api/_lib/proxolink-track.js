@@ -53,7 +53,7 @@ export async function recordContactEvent(req,res,linkId,type,platformId=null) {
   await proxoWrite('pa_contact_events','POST',record,'','return=minimal');
 }
 export function actionUrl(card,id) {
-  if(id==='tt'&&(card.template_key==='dark'&&card.template_version===1001?/^[a-zA-Z0-9._@-]{1,100}$/:/^[a-zA-Z0-9._]{1,40}$/).test(card.tt||card.tiktok||''))
+  if(id==='tt'&&(card.template_version>=1000?/^[a-zA-Z0-9._@-]{1,100}$/:/^[a-zA-Z0-9._]{1,40}$/).test(card.tt||card.tiktok||''))
     return 'https://www.tiktok.com/@'+encodeURIComponent(card.tt||card.tiktok);
   const platforms=normalizedPlatforms(card.platforms);
   if(!Object.prototype.hasOwnProperty.call(PLATFORM_TYPE,id)

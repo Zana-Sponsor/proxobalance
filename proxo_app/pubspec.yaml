@@ -47,11 +47,7 @@ dependencies:
   firebase_messaging: ^15.0.3
   flutter_local_notifications: ^17.2.2
   url_launcher: ^6.3.0
-  # Direct browser API import in local_html_preview_web.dart.
-  web: ^1.1.1
-  # ⚠ پێشبینینی ناوەکی. پێشتر HTMLـەکە بە `Intent.ACTION_VIEW`ـەوە
-  # دەدرا بە ئەپێکی دەرەکی، کە هەڵبژێرەری سیستەمی دەکردەوە — و
-  # ئەدیتەرەکانی کۆدیش تێیدا بوون. بڕوانە `widgets/html_preview_sheet.dart`.
+  # Secure in-app previews load only signed HTTPS server-rendered pages.
   webview_flutter: ^4.10.0
   image_picker: ^1.2.3
   cached_network_image: ^3.3.1
@@ -101,7 +97,6 @@ flutter:
     - assets/logos/proxo_logo_white.png
     - assets/logos/proxo_notification_logo.png
     - assets/logos/tiktok_icon.png
-    - assets/styles/
   fonts:
     # User-selected Rabar_021 at normal Flutter weight. The bundled font
     # itself is Bold; this registration does not alter its glyph outlines.

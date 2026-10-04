@@ -1,12 +1,31 @@
 import 'dart:typed_data';
+import 'dart:io';
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/rendering.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:proxo_app/models/proxo_card.dart';
 import 'package:proxo_app/screens/tools_screen.dart';
 import 'package:proxo_app/services/proxolink_service.dart';
 import 'package:proxo_app/theme/app_theme.dart';
+import 'package:proxo_app/widgets/proxolink_ad_section.dart';
+
+Future<void> captureUi(WidgetTester tester, GlobalKey key, String name) async {
+  await tester.runAsync(() async {
+    final boundary =
+        key.currentContext!.findRenderObject() as RenderRepaintBoundary;
+    final image = await boundary.toImage();
+    final png = await image.toByteData(format: ui.ImageByteFormat.png);
+    final folder = Directory('build/ui-verification')
+      ..createSync(recursive: true);
+    File('${folder.path}/$name.png')
+        .writeAsBytesSync(png!.buffer.asUint8List());
+    image.dispose();
+  });
+}
 
 ProxoCard card({String status = 'active', String publish = 'ready'}) =>
     ProxoCard(
@@ -81,6 +100,12 @@ class FakeProxoLink extends ProxoLinkRepository {
 }
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+  setUpAll(() async {
+    final font = FontLoader('Rabar')
+      ..addFont(rootBundle.load('assets/fonts/Rabar_021.ttf'));
+    await font.load();
+  });
   setUp(() => SharedPreferences.setMockInitialValues({}));
   test(
     'states gate public sharing, ad selection, preview and same-ID retry',
@@ -107,6 +132,7 @@ void main() {
     testWidgets(
       'long RTL card at width $width has no overflow at enlarged system text',
       (tester) async {
+        final screenshotKey = GlobalKey();
         tester.view.physicalSize = Size(width, 1100);
         tester.view.devicePixelRatio = 1;
         addTearDown(tester.view.resetPhysicalSize);
@@ -119,7 +145,10 @@ void main() {
                   .copyWith(textScaler: const TextScaler.linear(1.6)),
               child: child!,
             ),
-            home: ToolsScreen(repository: FakeProxoLink([card()])),
+            home: RepaintBoundary(
+              key: screenshotKey,
+              child: ToolsScreen(repository: FakeProxoLink([card()])),
+            ),
           ),
         );
         await tester.pump();
@@ -127,6 +156,7 @@ void main() {
         expect(find.text('چالاکە'), findsOneWidget);
         expect(find.text('ڕیکلام'), findsOneWidget);
         expect(tester.takeException(), isNull);
+        await captureUi(tester, screenshotKey, 'cards-$width');
       },
     );
   }
@@ -167,6 +197,53 @@ void main() {
       expect(find.text('classic'), findsOneWidget);
       expect(find.text('پێشبینین نەکرایەوە'), findsOneWidget);
       expect(tester.takeException(), isNull);
+    });
+  }
+  for (final width in [320.0, 393.0, 768.0]) {
+    testWidgets('exact-ad totals and tracked link fit width $width', (
+      tester,
+    ) async {
+      tester.view.physicalSize = Size(width, 1100);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final screenshotKey = GlobalKey();
+      final requests = <String>[];
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: buildAppTheme(),
+          home: RepaintBoundary(
+            key: screenshotKey,
+            child: Scaffold(
+              body: Directionality(
+                textDirection: TextDirection.rtl,
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(16),
+                  child: ProxoLinkAdSection(
+                    adId: card().id,
+                    loadSummary: (id) async {
+                      requests.add(id);
+                      return {
+                        'ad_id': id,
+                        'page_views': 12,
+                        'button_clicks': 5,
+                        'buttons': {'whatsapp': 3, 'tiktok': 2},
+                        'tracked_path': '/a/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+                      };
+                    },
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+      expect(requests, [card().id]);
+      expect(find.text('12'), findsOneWidget);
+      expect(find.text('TikTok: 2'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+      await captureUi(tester, screenshotKey, 'ad-stats-$width');
     });
   }
 }

@@ -39,8 +39,13 @@ jobs:
           cache: true
       - run: flutter pub get
       - name: Analyze changed ProxoLink code
-        run: flutter analyze --no-fatal-infos lib/screens/tools_screen.dart lib/screens/card_webview_screen.dart lib/screens/proxo_cards_list_screen.dart lib/widgets/proxolink_preview.dart lib/services/proxolink_service.dart lib/models/proxo_card.dart lib/models/proxolink_template_meta.dart lib/controllers/proxo_card_controller.dart
+        run: flutter analyze --no-fatal-infos lib/screens/tools_screen.dart lib/screens/card_webview_screen.dart lib/screens/proxo_cards_list_screen.dart lib/screens/ad_detail_screen.dart lib/widgets/proxolink_preview.dart lib/widgets/proxolink_ad_section.dart lib/services/proxolink_service.dart lib/models/proxo_card.dart lib/models/proxolink_template_meta.dart lib/controllers/proxo_card_controller.dart
       - run: flutter test test/proxolink_flow_test.dart test/ad_repository_test.dart test/ad_creation_flow_test.dart test/ad_submission_test.dart test/text_direction_test.dart
+      - uses: actions/upload-artifact@v4
+        with:
+          name: proxolink-ui-verification
+          path: proxo_app/build/ui-verification/*.png
+          retention-days: 7
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.14.3'
@@ -56,8 +61,17 @@ jobs:
           python3 - <<'PY'
           import zipfile
           with zipfile.ZipFile('build/app/outputs/flutter-apk/app-release.apk') as apk:
+              assert not any('/assets/styles/' in n for n in apk.namelist()), 'Static template previews were bundled'
               data = b''.join(apk.read(n) for n in apk.namelist())
               for marker in [b'ttq.load', b'{{HANDLERS}}', b'function askConfirm', b'const urlParams = new URLSearchParams(window.location.search)', b'buildCardHtml', b'api.telegram.org/bot']:
                   assert marker not in data, 'Forbidden template/credential marker: ' + marker.decode()
           print('Release APK source-privacy scan passed')
           PY
+  edge-functions:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - run: deno check proxo_app/supabase/functions/delete-user/index.ts

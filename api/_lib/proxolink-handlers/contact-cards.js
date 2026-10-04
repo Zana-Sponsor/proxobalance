@@ -10,6 +10,8 @@ const STYLES=new Set(['dark','light','classic','pill','card','neon','zoom','bann
 const THEMES=new Set(['purple','blue','green','red','yellow','cyan','pink','dark']);
 const PLATFORMS=new Set(['wa','vb','tg','ig','ph','as']);
 function failure(res,error) {
+  if(error?.status===413)return json(res,413,{ok:false,error:'payload_too_large'});
+  if(error instanceof SyntaxError)return json(res,422,{ok:false,error:'invalid_request'});
   const code=['unauthorized','invalid_request','invalid_card_name','invalid_bio',
     'invalid_platform_value','invalid_avatar','avatar_required',
     'template_not_found','template_invalid','forbidden'].includes(error?.code)
@@ -49,7 +51,7 @@ function validatePayload(body,userId,id,old=null) {
       ||!/^[a-zA-Z0-9_-]+\.(webp|jpe?g|png)$/i.test(data.avatar_path.slice(expected.length)))
       throw Object.assign(new Error('invalid_avatar'),{code:'invalid_avatar'});
   }
-  validateCardData(data,{legacy:old?.template_key==='dark' && old?.template_version===1001
+  validateCardData(data,{legacy:old?.template_version>=1000
     && data.template_key===old.template_key && data.template_version===old.template_version});
   return data;
 }
