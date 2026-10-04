@@ -23,7 +23,7 @@ function mockFetch({currentCard=card,events=[],writes=[],links=true,failTemplate
   const u=new URL(url);
   if(u.pathname==='/auth/v1/user')return Response.json({id:owner});
   if(u.pathname.includes('/storage/'))return new Response(failTemplate?'bad':template);
-  if(u.pathname==='/rest/v1/pa_contact_events') {events.push(JSON.parse(options.body));return new Response(null,{status:204});}
+  if(u.pathname==='/rest/v1/pa_contact_events') {events.push(JSON.parse(options.body));return new Response(null,{status:201});}
   if(u.pathname==='/rest/v1/proxolink_cards') {
    if(options.method==='PATCH'){writes.push(JSON.parse(options.body));return Response.json([{...currentCard,...JSON.parse(options.body)}]);}
    return Response.json([currentCard]);
@@ -44,6 +44,15 @@ async function invoke(query,{body={},method='GET',auth=true,cookie=''}={}) {
 }
 const originalFetch=global.fetch;
 test.afterEach(()=>{global.fetch=originalFetch;});
+test('minimal Supabase writes accept empty INSERT and DELETE responses',async()=>{
+ const {proxoWrite}=await import('../api/_lib/proxolink.js');
+ for(const status of [201,204]) {
+  global.fetch=async()=>new Response(null,{status});
+  assert.deepEqual(await proxoWrite('pa_contact_events',status===201?'POST':'DELETE',null,'','return=minimal'),[]);
+ }
+ global.fetch=async()=>Response.json([{id}],{status:201});
+ assert.deepEqual(await proxoWrite('proxolink_cards','POST',{id}),[{id}]);
+});
 test('catalog returns live signed previews without raw storage metadata',async()=>{
  global.fetch=mockFetch();const res=await invoke({op:'templates'});
  assert.equal(res.statusCode,200);const body=JSON.parse(res.body);

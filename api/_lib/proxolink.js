@@ -164,7 +164,10 @@ export async function proxoWrite(table,method,data,filters='',prefer='return=rep
     method,headers:{'Content-Type':'application/json',Prefer:prefer},
     body:JSON.stringify(data)
   });
-  return res.status===204?[]:res.json();
+  // PostgREST returns an empty 201 for INSERT with return=minimal; PATCH
+  // and DELETE may return an empty 204. Both are successful writes.
+  const body=await res.text();
+  return body.trim()?JSON.parse(body):[];
 }
 export async function authenticatedUser(req) {
   const c=configuration();
