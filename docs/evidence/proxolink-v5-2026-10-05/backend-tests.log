@@ -1,0 +1,73 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> exchange-security@1.0.0 test
+> node --test test/*.test.js
+
+✔ accepts an active admin-configured route that is not hard-coded (14.675521ms)
+✔ lets the owner correct the recipient number on an admin-requested order (3.923313ms)
+✔ does not let a customer edit an order that is not awaiting correction (2.997418ms)
+✔ minimal Supabase writes accept empty INSERT and DELETE responses (7.29135ms)
+✔ catalog returns live signed previews without raw storage metadata (3.44975ms)
+✔ catalog preserves original style order and chooses the newest catalog version (1.675225ms)
+✔ selected theme and language are signed, rendered and cannot be overridden by a query (5.767339ms)
+✔ malformed selected preview requests fail before reading private metadata (2.757115ms)
+✔ template preview renders the selected real template and records no events (3.05582ms)
+✔ inactive public card is hidden; owner signed preview remains available without analytics (7.077743ms)
+✔ organic visits produce no advertisement event (1.945232ms)
+✔ same-card ads in two tabs preserve exact token identity despite shared/fake session and client IP (4.19291ms)
+✔ historical Telegram tracked action cannot redirect or record events (0.744442ms)
+✔ invalid token and arbitrary destination create no events and no redirects (0.781167ms)
+✔ invalid edit renders first and leaves existing published fields intact (0.962541ms)
+✔ optimistic edit rejects stale state before writing (0.78921ms)
+✔ new Telegram platforms are rejected and old values remain stored but not exposed on edit (5.286678ms)
+✔ server rejects non-string platform values and escapes mixed direction data (0.631532ms)
+✔ TikTok tracked badges carry the same exact ad token (0.323878ms)
+✔ server renderer preserves mixed direction text and trusted contact attributes (0.400874ms)
+✔ duplicate create reuses one stable UUID and rejects a changed payload (6.225263ms)
+✔ a failed publication remains recoverable and retry publishes the same UUID (3.929172ms)
+✔ owner-only APIs reject another owner and require a bearer session (0.614726ms)
+✔ large and malformed JSON never writes a card (0.638663ms)
+✔ signed preview tokens expire and cannot be used as a different token kind (0.719805ms)
+✔ the renderer preserves original TikTok badge spacing and tracks the banner badge (0.350768ms)
+✔ WhatsApp tracking derives a universal app/web fallback from the validated card phone (0.370138ms)
+✔ avatar publication fully decodes bytes and rejects truncation or a false MIME (23.192833ms)
+✔ the verified JWT owner overrides forged JSON ownership (1.911491ms)
+✔ a rejected bearer cannot reach protected data operations (0.29838ms)
+✔ client IP comes from the socket locally and Vercel-reserved headers only on Vercel (0.423328ms)
+✔ public avatar markup contains no Auth owner, project URL, or Storage path (0.313182ms)
+✔ avatar delivery returns original binary bytes and requires page availability (8.882949ms)
+✔ tracked avatar requests keep exact ad validation and write zero analytics (5.371797ms)
+✔ avatar routing rejects another owner folder and invalid image bytes (0.751142ms)
+✔ retry returns a conflict when a concurrent edit takes over its publication lease (1.845312ms)
+✔ a failed retry cannot overwrite or report failure for a newer publication lease (2.128107ms)
+✔ analytics retain only the canonical token route and discard caller query details (1.839703ms)
+✔ native comparison crops system/Flutter chrome and detects a single changed pixel (58.73743ms)
+✔ invalid viewport and mismatched reference cannot produce a pixel parity result (10.327807ms)
+✔ safe rendering escapes customer HTML without changing layout placeholders (4.395586ms)
+✔ two advertisements using one card retain distinct tracked actions (0.553714ms)
+✔ dangerous customer content and URLs are rejected or escaped (0.69664ms)
+✔ all eight signed demos retain visuals without real contact or TikTok destinations (1.838151ms)
+✔ legacy Telegram data is hidden from all eight public and demo layouts (1.556176ms)
+✔ the original modal script loses its retired Telegram branch and demo footer is inert (0.370188ms)
+✔ demo footer links cannot open real profiles or external pages (0.443338ms)
+✔ only valid stable identifiers are accepted (0.25899ms)
+✔ private v2 generation retains original structure and removes only retired code plus approved deltas (4.194323ms)
+✔ staging runner refuses production/preview projects, credential-bearing URLs and service keys (1.41959ms)
+✔ staging HTTP scope never forwards bypass to Supabase or follows credential redirects (5.464126ms)
+✔ staging orchestrator exercises all eight lifecycles through the actual API handlers using controlled provider fixtures (191.628815ms)
+✔ runtime verification refuses production, other repositories/branches and service keys (1.484197ms)
+✔ requests never send protection headers to Supabase, follow redirects or mutate card data (1.423716ms)
+✔ live checks require app authentication independently of the Vercel bypass and retain only booleans (4.682648ms)
+✔ native evidence requires 40 captured cases plus exact browser pixel comparisons (3.438719ms)
+✔ creates a numbered support case for the authenticated customer (9.478166ms)
+✔ verifies that an attached image exists in the customer private folder (3.673467ms)
+✔ retries when a random six-digit case number collides (5.256373ms)
+✔ rejects an image path that belongs to another customer (1.062141ms)
+ℹ tests 60
+ℹ suites 0
+ℹ pass 60
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 399.729832

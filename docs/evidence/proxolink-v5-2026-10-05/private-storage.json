@@ -1,0 +1,53 @@
+{
+  "environment": "Fresh anonymous requests to production private-object public routes; no credentials or source bodies read",
+  "cases": [
+    {
+      "style": "dark",
+      "http_status": 400,
+      "private_source_denied": true,
+      "content_type": "text/plain"
+    },
+    {
+      "style": "light",
+      "http_status": 400,
+      "private_source_denied": true,
+      "content_type": "text/plain"
+    },
+    {
+      "style": "classic",
+      "http_status": 400,
+      "private_source_denied": true,
+      "content_type": "text/plain"
+    },
+    {
+      "style": "pill",
+      "http_status": 400,
+      "private_source_denied": true,
+      "content_type": "text/plain"
+    },
+    {
+      "style": "card",
+      "http_status": 400,
+      "private_source_denied": true,
+      "content_type": "text/plain"
+    },
+    {
+      "style": "neon",
+      "http_status": 400,
+      "private_source_denied": true,
+      "content_type": "text/plain"
+    },
+    {
+      "style": "zoom",
+      "http_status": 400,
+      "private_source_denied": true,
+      "content_type": "text/plain"
+    },
+    {
+      "style": "banner",
+      "http_status": 400,
+      "private_source_denied": true,
+      "content_type": "text/plain"
+    }
+  ]
+}

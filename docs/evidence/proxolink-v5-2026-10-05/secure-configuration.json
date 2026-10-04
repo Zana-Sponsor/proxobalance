@@ -1,0 +1,52 @@
+{
+  "scope": "Read-only signed-in GitHub and Vercel dashboard metadata; no credential values opened",
+  "github_environment": {
+    "name": "proxolink-preview-verification",
+    "url": "https://github.com/Zana-Sponsor/proxobalance/settings/environments/23442858482/edit",
+    "settings": [
+      { "name": "PROXO_NATIVE_ANON_KEY", "type": "environment variable", "status": "VERIFIED: present" },
+      { "name": "PROXO_NATIVE_TEST_EMAIL", "type": "environment secret", "status": "VERIFIED: present" },
+      { "name": "PROXO_NATIVE_TEST_PASSWORD", "type": "environment secret", "status": "VERIFIED: present" },
+      { "name": "PROXO_NATIVE_VERCEL_BYPASS", "type": "environment secret", "status": "VERIFIED: present", "updated_at": "2026-10-04T22:44:23Z" }
+    ],
+    "branch_policy": "Selected branches and tags",
+    "expected_branch_rule_present": true,
+    "branch": "feat/proxolink-private-renderer-migration",
+    "required_reviewers_enabled": false,
+    "prevent_self_review_enabled": false,
+    "administrator_bypass_allowed": true,
+    "protected_release_status": "FAILED: reviewer requirement from authoritative V5 section 144 is not configured",
+    "setting_value_validity": "BLOCKED: no native runtime attempted"
+  },
+  "vercel": {
+    "project": "proxoapp-1758/proxobalance",
+    "dashboard_access": "VERIFIED",
+    "dashboard_url": "https://vercel.com/proxoapp-1758/proxobalance",
+    "connector_project_lookup": "404 Project not found",
+    "connector_matching_projects": 0,
+    "preview_dashboard_status": "Ready",
+    "preview_dashboard_id": "8DwKFE7L4NMV95qeeat9jZAkG22i",
+    "production_branch": "main",
+    "production_commit": "e7c1d3060c2777cae7ff2bc293df7df5ebfd4cd6",
+    "server_variable_names_present": [
+      "PROXO_SUPABASE_SERVICE_ROLE_KEY",
+      "PROXO_SUPABASE_URL",
+      "PROXO_PUBLIC_BASE_URL",
+      "PROXO_PREVIEW_SIGNING_SECRET",
+      "PROXO_ANALYTICS_HASH_SECRET",
+      "PROXO_TIKTOK_PIXEL_ID"
+    ],
+    "targets_observed_for_each": ["Preview", "Production"],
+    "sensitive_or_encrypted_types": "Not independently certified by this DOM inspection",
+    "values_opened": false,
+    "bypass_audit_url": "https://vercel.com/proxoapp-1758/proxobalance/settings/activity",
+    "bypass_removal_audit_observed": true,
+    "replacement_addition_audit_observed": true,
+    "replacement_note": "proxolink-preview-verification",
+    "active_masked_automation_entries": 1,
+    "retirement_replacement_metadata": "VERIFIED",
+    "github_to_vercel_capability_correspondence": "Not tested; values never opened",
+    "bypass_used": false
+  },
+  "mutations": "None: no provider configuration changes or credential replacement performed by this pass"
+}

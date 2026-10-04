@@ -1,0 +1,22 @@
+{
+  "status": "BLOCKED",
+  "execution_environment": "Android 35 native WebView required; not executed",
+  "expected_cases": 40,
+  "executed_cases": 0,
+  "passed_cases": 0,
+  "failed_cases": 0,
+  "latest_observed_native_run": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/37240391300",
+  "latest_native_runtime_conclusion": "skipped",
+  "protected_environment": "proxolink-preview-verification",
+  "settings": {
+    "PROXO_NATIVE_ANON_KEY": "VERIFIED: environment variable present",
+    "PROXO_NATIVE_TEST_EMAIL": "VERIFIED: environment secret present",
+    "PROXO_NATIVE_TEST_PASSWORD": "VERIFIED: environment secret present",
+    "PROXO_NATIVE_VERCEL_BYPASS": "VERIFIED: environment secret present"
+  },
+  "bypass_revocation_and_replacement": "VERIFIED metadata: Vercel removal and replacement addition audit records; one active masked replacement; actual GitHub value correspondence untested",
+  "immediate_blocker": "Required reviewers disabled and administrator bypass enabled; authoritative V5 section 144 requires reviewer approval before credential release",
+  "configuration_evidence": "secure-configuration.json",
+  "collection_fix": "Pixel differences no longer end collection after the first case; final zero-difference gate retained",
+  "actual_native_pixel_parity": "not established"
+}

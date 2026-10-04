@@ -1,0 +1,29 @@
+{
+  "environment": "Read-only production metadata checkpoints",
+  "before": {
+    "cards": 21,
+    "ads": 27,
+    "card_relationships": 16,
+    "card_checkpoint": "08aec9f6c7a6428a9ea0b3847e01cf4a",
+    "relationship_checkpoint": "cd801cc3fdf6d05a3533c81c30f72066",
+    "v2_templates": 0
+  },
+  "after": {
+    "cards": 21,
+    "ads": 27,
+    "card_relationships": 16,
+    "card_checkpoint": "08aec9f6c7a6428a9ea0b3847e01cf4a",
+    "relationship_checkpoint": "cd801cc3fdf6d05a3533c81c30f72066",
+    "v2_templates": 0,
+    "card_number_default": "nextval('proxolink_cards_card_number_seq'::regclass)",
+    "retention_job": [
+      {
+        "jobname": "proxolink-visitor-retention",
+        "active": true
+      }
+    ]
+  },
+  "card_rows_unchanged": true,
+  "relationships_unchanged": true,
+  "production_writes": 0
+}

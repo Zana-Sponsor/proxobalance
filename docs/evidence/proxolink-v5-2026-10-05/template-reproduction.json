@@ -1,0 +1,77 @@
+{
+  "source": "Historical main template constants; SHA-256 matched fresh private metadata; not a remote Storage download",
+  "cases": [
+    {
+      "style": "dark",
+      "source_checksum_matches_live_metadata": true,
+      "v2_checksum_matches_reviewed_output": true,
+      "v2_inactive": true,
+      "seed_dry_run": true,
+      "native_status": "BLOCKED",
+      "staging_status": "BLOCKED"
+    },
+    {
+      "style": "light",
+      "source_checksum_matches_live_metadata": true,
+      "v2_checksum_matches_reviewed_output": true,
+      "v2_inactive": true,
+      "seed_dry_run": true,
+      "native_status": "BLOCKED",
+      "staging_status": "BLOCKED"
+    },
+    {
+      "style": "classic",
+      "source_checksum_matches_live_metadata": true,
+      "v2_checksum_matches_reviewed_output": true,
+      "v2_inactive": true,
+      "seed_dry_run": true,
+      "native_status": "BLOCKED",
+      "staging_status": "BLOCKED"
+    },
+    {
+      "style": "pill",
+      "source_checksum_matches_live_metadata": true,
+      "v2_checksum_matches_reviewed_output": true,
+      "v2_inactive": true,
+      "seed_dry_run": true,
+      "native_status": "BLOCKED",
+      "staging_status": "BLOCKED"
+    },
+    {
+      "style": "card",
+      "source_checksum_matches_live_metadata": true,
+      "v2_checksum_matches_reviewed_output": true,
+      "v2_inactive": true,
+      "seed_dry_run": true,
+      "native_status": "BLOCKED",
+      "staging_status": "BLOCKED"
+    },
+    {
+      "style": "neon",
+      "source_checksum_matches_live_metadata": true,
+      "v2_checksum_matches_reviewed_output": true,
+      "v2_inactive": true,
+      "seed_dry_run": true,
+      "native_status": "BLOCKED",
+      "staging_status": "BLOCKED"
+    },
+    {
+      "style": "zoom",
+      "source_checksum_matches_live_metadata": true,
+      "v2_checksum_matches_reviewed_output": true,
+      "v2_inactive": true,
+      "seed_dry_run": true,
+      "native_status": "BLOCKED",
+      "staging_status": "BLOCKED"
+    },
+    {
+      "style": "banner",
+      "source_checksum_matches_live_metadata": true,
+      "v2_checksum_matches_reviewed_output": true,
+      "v2_inactive": true,
+      "seed_dry_run": true,
+      "native_status": "BLOCKED",
+      "staging_status": "BLOCKED"
+    }
+  ]
+}

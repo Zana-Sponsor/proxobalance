@@ -129,7 +129,10 @@ async function main() {
         pixels[id]=comparison.metrics;
         writeFileSync(output+'/pixels.json',JSON.stringify({environment:'Android 35 WebView versus Chromium '+referenceBrowser.version,
           animation_state:'fresh page; scroll zero; CSS animations paused at zero',cases:pixels},null,2));
-        if(!comparison.metrics.exact_pixels_equal)throw Error('native_browser_pixel_difference');
+        // Keep evidence for every requested case, including pixel differences.
+        // The final validateNativeResults gate still rejects any changed pixel.
+        if(!comparison.metrics.exact_pixels_equal)
+          console.log('Native pixel difference recorded for '+id+'.');
         captured.add(id);
         appWrite('proxolink-verification-ack',id);
         console.log('Native evidence captured for '+id+'.');

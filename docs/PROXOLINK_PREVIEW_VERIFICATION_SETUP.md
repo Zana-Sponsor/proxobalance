@@ -8,7 +8,7 @@ This procedure does not authorize customer cutover, database writes, merge, prod
 2. In ChatGPT, open Plugins, then Installed, then Vercel. Open its connected-account controls and choose Reconnect. If the interface only offers Disconnect/Connect, reconnect the existing Vercel account that way; do not uninstall the plugin or create a second custom MCP server.
 3. Complete Vercel's OAuth prompt using the same project-owning account. If an account/team/project selector appears, select `proxoapp-1758` / `proxobalance` only. Review the requested provider permissions.
 4. Vercel's documented MCP access follows the connected Vercel user's access. A project-only OAuth picker is not guaranteed. On this Hobby team, use the existing project-owning account. On plans with project RBAC, a team owner can grant the connected identity the needed project role through project Access. Do not grant unrelated identities broader access or change project ownership.
-5. Return to this conversation with a non-secret confirmation. We will recheck project/deployment access. Update, 4 October: project lookup by `prj_TCDpM3JNJAZNREZAVyxBLfiZGFxq`, deployment READY metadata and server-variable names/targets are now verified. The protected-fetch helper still gets HTTP 403 while reading deployment aliases, before it can fetch the application page. Reconnect only if protected deployment authorization remains unavailable; project discovery is no longer the blocker.
+5. Return to this conversation with a non-secret confirmation. Current check, 5 October: the connector lists the team, but project lookup by name and `prj_TCDpM3JNJAZNREZAVyxBLfiZGFxq` returns 404 and the matching project list is empty. The signed-in dashboard does open the correct project, shows the feature Preview as Ready, and verifies six Proxo server-variable names with Preview/Production targets without opening values. Connector authorization remains incomplete; actual runtime validity has not been tested.
 
 If the owner account can open the project but the reconnected integration still cannot, stop and diagnose the connection; do not disable protection or paste an API token into chat as a workaround.
 
@@ -17,6 +17,8 @@ References: [ChatGPT plugins](https://learn.chatgpt.com/docs/plugins), [Vercel M
 ## 2. Create the protected GitHub testing environment
 
 Use a GitHub account with repository administration permission.
+
+Current inspection verifies that this environment and all four correctly typed settings already exist. The exact feature-branch rule is present. **Required reviewers is disabled and administrator bypass is enabled.** Complete steps 3–4 below before requesting the native runtime; do not recreate existing settings. This reviewer requirement comes from authoritative V5 section 144 as well as this procedure.
 
 1. Open [Zana-Sponsor/proxobalance](https://github.com/Zana-Sponsor/proxobalance), then Settings → Environments → New environment.
 2. Name it exactly `proxolink-preview-verification`, then select Configure environment.
@@ -41,6 +43,8 @@ References: [GitHub environments](https://docs.github.com/en/actions/how-tos/dep
 
 ## 3. Create a dedicated temporary Vercel automation secret
 
+Before testing, the previously exposed capability must be revoked. Current dashboard Activity records removal of an automation bypass and addition of a `proxolink-preview-verification` replacement; the protection page has one active masked entry with that note. The GitHub bypass secret is present and was updated at `2026-10-04T22:44:23Z`. No value was revealed. Ensure the existing GitHub entry corresponds to the replacement privately; runtime validity is still untested. Existing completed rotation does not need to be repeated.
+
 1. In your own Vercel browser, open team `proxoapp-1758` → project `proxobalance` → Settings → Deployment Protection.
 2. Keep existing Vercel Authentication/protection settings enabled.
 3. In Protection Bypass for Automation, create a separate secret for this testing workflow, with a descriptive label such as `proxolink-preview-verification`. Do not regenerate an existing secret used by another integration, select a production redeploy, or alter the current system environment-variable selection.
@@ -62,7 +66,7 @@ Reference: [Vercel Protection Bypass for Automation](https://vercel.com/docs/dep
 5. The credential-free APK build runs first. After approval, a KVM-backed Android 35 emulator runs all eight real server pages through the production `ProxoLinkPreview` widget at 320/375/393/430/768 dp: **40 cases**.
 6. Results must include 40 successful cases and 40 screenshots, loaded/applied Rabar and icon fonts, decoded images, advancing CSS animations, modal open/cancel/reopen/confirm-close, working original WhatsApp/Viber/Instagram/phone confirmation UI and inert demonstration destinations, plus an inert TikTok badge and absence of Telegram controls, no horizontal overflow and blocked external/other-path/invalid-capability/file navigation. Demo contact launches are deliberately suppressed; no calls or messages are sent.
 7. Read-only security results must confirm app-authentication independence, ordinary-user RLS, denied internal template/link/event/audit reads, denied private public-object URLs, invalid capabilities and response CSP/cache/referrer headers. Only allowlisted booleans/numbers/case identifiers and controlled demo screenshots are uploaded; runtime tokens, URLs, Auth session and credentials are excluded.
-8. We will inspect artifacts and report each result honestly. Each case now also records the actual WebView crop, a Chromium render of the same signed demo with the same viewport, and a lossless pixel diff. Both engines start from a fresh page, scroll zero and CSS animations paused at time zero after motion has been tested. Any changed pixel fails the parity check; engine/font rasterization differences are reported as differences rather than excused with a tolerance. Android animation settings remain enabled. A build-only, skipped, partial, pixel-different or configuration-failed job is not native certification. Missing settings now fail an explicitly requested runtime job.
+8. We will inspect artifacts and report each result honestly. Each case records the actual WebView crop, a Chromium render of the same signed demo with the same viewport, and a lossless pixel diff. Both engines start from a fresh page, scroll zero and CSS animations paused at time zero after motion has been tested. A pixel mismatch is recorded while collection continues through the remaining cases; the final gate still rejects any changed pixel. Engine/font rasterization differences are reported as differences rather than excused with a tolerance. Android animation settings remain enabled. A build-only, skipped, partial, pixel-different or configuration-failed job is not native certification. Missing settings fail an explicitly requested runtime job.
 
 ## 5. Owner/device work still required
 
