@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/rendering.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:proxo_app/models/proxo_card.dart';
+import 'package:proxo_app/models/proxolink_template_meta.dart';
 import 'package:proxo_app/screens/tools_screen.dart';
 import 'package:proxo_app/services/proxolink_service.dart';
 import 'package:proxo_app/theme/app_theme.dart';
@@ -111,6 +112,17 @@ void main() {
     await icons.load();
   });
   setUp(() => SharedPreferences.setMockInitialValues({}));
+  test('ProxoLink offers no Telegram control and hides archived platform data', () {
+    expect(kPlatformBtns.map((p) => p.id), ['wa', 'vb', 'ig', 'ph', 'as']);
+    expect(kPlatformCardLabels.containsKey('tg'), isFalse);
+    expect(kPlatformUrlScheme.containsKey('tg'), isFalse);
+    final historical = ProxoCard.fromJson({
+      ...card().toJson(),
+      'platforms': {'wa': '9647501234567', 'tg': 'archived_account'},
+    });
+    expect(historical.platforms['wa'], '9647501234567');
+    expect(historical.platforms.containsKey('tg'), isFalse);
+  });
   testWidgets('a stalled signed-preview request times out and offers retry', (tester) async {
     final pending = Completer<Uri>();
     var requests = 0;

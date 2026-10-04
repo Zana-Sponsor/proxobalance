@@ -192,20 +192,6 @@ final List<PlatformBtn> kPlatformBtns = [
     isNumeric: true,
   ),
   const PlatformBtn(
-    id: 'tg',
-    label: 'تیلیگرام',
-    iconWidget: const FaIcon(
-      FontAwesomeIcons.telegram,
-      size: 20,
-      color: Colors.white,
-    ),
-    iconColor: const Color(0xFF229ED9),
-    bgColor: const Color(0xFFE8F6FD),
-    type: 'telegram',
-    placeholder: 'username یان 964XXXXXXXX',
-    isNumeric: false,
-  ),
-  const PlatformBtn(
     id: 'ig',
     label: 'ئینستاگرام',
     iconWidget: const FaIcon(
@@ -265,7 +251,6 @@ const List<String> kBioChips = [
 const Map<String, Map<String, String>> kPlatformCardLabels = {
   'wa': {'ku': 'واتسئاپ', 'ar': 'واتساب'},
   'vb': {'ku': 'ڤایبەر', 'ar': 'فايبر'},
-  'tg': {'ku': 'تیلیگرام', 'ar': 'تيليجرام'},
   'ig': {'ku': 'ئینستاگرام', 'ar': 'إنستغرام'},
   'ph': {'ku': 'کۆرەک', 'ar': 'كورك'},
   'as': {'ku': 'ئاسیا سێڵ', 'ar': 'آسيا سيل'},
@@ -275,7 +260,6 @@ const Map<String, String> kPlatformUrlScheme = {
   'wa': 'whatsapp://send?phone=',
   'vb': 'viber://chat?number=',
   'ig': 'https://instagram.com/',
-  'tg': 'https://t.me/',
   'ph': 'tel:',
   'as': 'tel:',
 };

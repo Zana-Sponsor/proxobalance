@@ -135,7 +135,6 @@ class _ProxoLinkPreviewState extends State<ProxoLinkPreview> {
     if (!widget.allowContactActions) return NavigationDecision.prevent;
     const hosts = {
       'wa.me',
-      't.me',
       'instagram.com',
       'www.instagram.com',
       'tiktok.com',

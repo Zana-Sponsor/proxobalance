@@ -44,7 +44,8 @@ Future<Map<String, dynamic>> _pageState(WebViewController controller) => _readMa
       fonts: Array.from(document.fonts).some(f => ['R','Rabar','Rabar_021'].includes(f.family.replaceAll("'",'')) && f.status === 'loaded'),
       fontApplied: /\bR\b|Rabar/.test(getComputedStyle(document.body).fontFamily),
       icons: !!document.querySelector('.fa,.fab,.fas') && Array.from(document.fonts).some(f => /Awesome/.test(f.family) && f.status === 'loaded') && Array.from(document.querySelectorAll('.fa,.fab,.fas')).every(e => /Awesome/.test(getComputedStyle(e).fontFamily)),
-      contact: !!document.getElementById('wa'),
+      contact: !!document.getElementById('wa') && !!document.getElementById('ig') &&
+         !document.getElementById('tg') && !document.querySelector('.fa-telegram'),
       sourcePlaceholders: document.body.textContent.includes('{{HANDLERS}}'),
       pixel: typeof window.ttq !== 'undefined',
       animations: document.getAnimations().filter(a => a.playState === 'running').map(a => ({name:a.animationName || '', time:a.currentTime}))
@@ -154,11 +155,13 @@ class _NativeProbeScreenState extends State<_NativeProbeScreen> {
         };
         window.open = function(url) { window.__proxoProbe.opened = url; return null; };
       ''');
+      // Demo destinations are inert; backend tests verify real destinations.
       const destinations = {
-        'wa': ['whatsapp', 'whatsapp://send?phone=9647501234567'],
-        'vb': ['viber', 'viber://chat?number=9647501234567'],
-        'tg': ['telegram', 'https://t.me/proxo_iq'],
-        'ig': ['instagram', 'https://instagram.com/proxo_iq'],
+        'wa': ['whatsapp', '#'],
+        'vb': ['viber', '#'],
+        'ig': ['instagram', '#'],
+        'ph': ['phone', '#'],
+        'as': ['asya', '#'],
       };
       const cancel = "Array.from(document.querySelectorAll('[onclick]')).find(e=>/closeMod/.test(e.getAttribute('onclick')) && e.getBoundingClientRect().height>0)";
       const confirm = "Array.from(document.querySelectorAll('[onclick]')).find(e=>e.getAttribute('onclick')==='goLink()' && e.getBoundingClientRect().height>0)";
@@ -185,8 +188,8 @@ class _NativeProbeScreenState extends State<_NativeProbeScreen> {
         await controller.runJavaScript('window.__proxoProbe.opened=null');
       }
       final tiktok = await controller.runJavaScriptReturningResult(
-          "Array.from(document.links).some(a=>a.href==='https://www.tiktok.com/@proxo_iq')");
-      if (tiktok.toString() != 'true') throw StateError('TikTok destination failed');
+          "Array.from(document.links).some(a=>a.textContent.includes('@proxo_iq') && a.getAttribute('href')==='#')");
+      if (tiktok.toString() != 'true') throw StateError('Demo TikTok action is not inert');
       await controller.runJavaScript('window.askConfirm=window.__proxoProbe.ask;window.open=window.__proxoProbe.open;delete window.__proxoProbe');
       final configuration = await _readConfiguration();
       final expected = await controller.currentUrl();
@@ -198,7 +201,7 @@ class _NativeProbeScreenState extends State<_NativeProbeScreen> {
       for (final destination in ['https://example.invalid/',
         '${configuration['origin']}/api/contact-templates',
         '${configuration['origin']}/contact-preview?token=invalid',
-        'file:///etc/passwd', 'https://t.me/proxo_iq']) {
+        'file:///etc/passwd']) {
         await controller.runJavaScript('window.location.href=${jsonEncode(destination)}');
         await Future<void>.delayed(const Duration(milliseconds: 350));
         if (await controller.currentUrl() != expected) throw StateError('Navigation escaped preview');

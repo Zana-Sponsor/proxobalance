@@ -551,7 +551,6 @@ class _ContactFormState extends State<_ContactForm> {
     const aliases = {
       'whatsapp': 'wa',
       'viber': 'vb',
-      'telegram': 'tg',
       'instagram': 'ig',
       'phone': 'ph',
       'asya': 'as',

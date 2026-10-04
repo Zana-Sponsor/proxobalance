@@ -59,7 +59,8 @@ class ProxoCard {
     updatedAt: DateTime.parse((j['updated_at'] ?? j['created_at']) as String),
     platforms: {
       for (final e in (j['platforms'] as Map? ?? {}).entries)
-        e.key.toString(): e.value.toString(),
+        if (!{'tg', 'telegram'}.contains(e.key.toString().toLowerCase()))
+          e.key.toString(): e.value.toString(),
     },
   );
   Map<String, dynamic> toJson() => {
