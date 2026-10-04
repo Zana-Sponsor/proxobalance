@@ -1,0 +1,42 @@
+name: Build ProxoLink native verification
+on:
+  push:
+    branches: [feat/proxolink-private-renderer-migration]
+    paths: ['proxo_app/integration_test/**', '.github/workflows/proxolink-native-build.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native-verification-apk:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: proxo_app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.47.2'
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - run: flutter analyze --no-fatal-infos integration_test/proxolink_live_test.dart
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.14.3'
+      - run: |
+          if [ ! -f android/gradlew ]; then
+            (cd android && gradle wrapper --gradle-version 8.14.3)
+          fi
+          chmod +x android/gradlew
+      - name: Build credential-free native test APK
+        run: flutter build apk --debug --target-platform android-x64 -t integration_test/proxolink_live_test.dart --dart-define=PROXO_PUBLIC_BASE_URL=https://proxobalance-git-feat-proxolink-private-re-00a2aa-proxoapp-1758.vercel.app
+      - uses: actions/upload-artifact@v4
+        with:
+          name: proxolink-native-verification-apk
+          path: proxo_app/build/app/outputs/flutter-apk/app-debug.apk
+          retention-days: 1

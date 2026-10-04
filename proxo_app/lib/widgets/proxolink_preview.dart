@@ -9,10 +9,15 @@ import 'proxo_text.dart';
 class ProxoLinkPreview extends StatefulWidget {
   final Future<Uri> Function() loadUrl;
   final bool allowContactActions;
+
+  /// Initial request headers for access-controlled preview environments.
+  /// Production callers use the empty default; values are never logged.
+  final Map<String, String> requestHeaders;
   const ProxoLinkPreview({
     super.key,
     required this.loadUrl,
     this.allowContactActions = false,
+    this.requestHeaders = const {},
   });
   @override
   State<ProxoLinkPreview> createState() => _ProxoLinkPreviewState();
@@ -84,7 +89,7 @@ class _ProxoLinkPreviewState extends State<ProxoLinkPreview> {
         );
       if (!mounted || request != _request) return;
       setState(() => _controller = controller);
-      await controller.loadRequest(page);
+      await controller.loadRequest(page, headers: widget.requestHeaders);
     } catch (_) {
       if (mounted && request == _request)
         setState(() {

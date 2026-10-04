@@ -87,8 +87,7 @@ grant select(id,user_id,name,bio,tt,tiktok,platforms,style,color_theme,template_
  last_publish_error_code,last_publish_error_at) on public.proxolink_cards to authenticated;
 grant all on public.proxolink_cards to service_role;
 
--- Existing full rows were verified in the private rollback backup before any
--- cleanup. No client can retrieve legacy HTML/base64, even through SELECT *.
-alter table public.proxolink_cards drop column html_content;
-alter table public.proxolink_cards drop column avatar_b64;
-alter table public.proxolink_cards drop column logo_b64;
+-- Preserve all legacy customer columns. The safe column grants above prevent
+-- client retrieval without deleting the original HTML/base64 data.
+-- Cleanup is a separate, explicitly approved operation; verification alone
+-- never authorizes it. See proxolink_legacy_cleanup.sql.

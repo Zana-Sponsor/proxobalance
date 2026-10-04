@@ -46,5 +46,10 @@ do $test$ begin
  end;
 end $test$;
 reset role;
-select 'passed' attribution_same_card_two_ads,'passed' cross_owner_access,'passed' client_analytics_blocked,'passed' raw_ip_blocking,'passed' visitor_retention,'rolled_back' customer_changes;
+do $test$ begin
+ if exists(select 1 from public.proxolink_cards c join proxolink_private.card_migration_manifest_20261004 m on m.card_id=c.id
+   where md5(coalesce(c.html_content,''))<>m.expected_legacy_html_md5 or md5(coalesce(c.avatar_b64,''))<>m.expected_avatar_md5)
+ then raise exception 'Legacy customer data changed during non-destructive cutover'; end if;
+end $test$;
+select 'passed' attribution_same_card_two_ads,'passed' cross_owner_access,'passed' client_analytics_blocked,'passed' raw_ip_blocking,'passed' visitor_retention,'passed' legacy_data_preserved,'rolled_back' customer_changes;
 rollback;
