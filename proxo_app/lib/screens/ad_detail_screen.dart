@@ -11,7 +11,6 @@ import '../theme/app_locale.dart';
 import '../theme/app_theme.dart';
 import '../widgets/receipt/ad_receipt_card.dart';
 import '../widgets/receipt/receipt_kit.dart';
-import '../widgets/proxolink_ad_section.dart';
 
 // ═════════════════════════════════════════════════════════════════════════════
 // AdDetailScreen — پسوولەی ڕیکلام (Proxo Ad Detail — V2)
@@ -48,8 +47,7 @@ import '../widgets/proxolink_ad_section.dart';
 const String kAdsTable = 'pa_ads';
 
 /// تەنها ئەو کۆڵۆمانەی پسوولەکە پێویستیەتی.
-const String _kAdColumns =
-    'id,public_ad_id,title,status,asset_id,card_id,'
+const String _kAdColumns = 'id,public_ad_id,title,status,'
     'created_at,updated_at,thumbnail_url,needs_update,reject_reason,'
     'age_groups,target_age,gender,target_gender,location,target_location,'
     'device_type,category,payment_method,'
@@ -232,10 +230,10 @@ class _AdDetailScreenState extends State<AdDetailScreen> {
       final dynamic res = loader != null
           ? await loader(widget.adId)
           : await supabase
-                .from(kAdsTable)
-                .select(_kAdColumns)
-                .eq('id', widget.adId)
-                .maybeSingle();
+              .from(kAdsTable)
+              .select(_kAdColumns)
+              .eq('id', widget.adId)
+              .maybeSingle();
       if (!mounted || request != _requestVersion) return;
 
       if (res == null) {
@@ -313,8 +311,7 @@ class _AdDetailScreenState extends State<AdDetailScreen> {
   Future<void> _repairThumbnailIfNeeded(Map<String, dynamic> ad) async {
     if (_thumbnailRepairing) return;
     final Uri? parsed = Uri.tryParse(_str(ad['thumbnail_url']));
-    final bool hasThumb =
-        parsed != null &&
+    final bool hasThumb = parsed != null &&
         (parsed.scheme == 'https' || parsed.scheme == 'http') &&
         parsed.host.isNotEmpty;
     final String id = _str(ad['id']);
@@ -445,16 +442,6 @@ class _AdDetailScreenState extends State<AdDetailScreen> {
             child: AdReceiptCard(r: r, l: l, onCopy: (String v) => _copy(v)),
           ),
         ),
-        if (_ad?['asset_id'] != null || _ad?['card_id'] != null)
-          _fullWidth(
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20),
-              child: ProxoLinkAdSection(
-                key: ValueKey(widget.adId),
-                adId: widget.adId,
-              ),
-            ),
-          ),
         _fullWidth(
           ReceiptPdfButton(label: l.pdfButton, onPressed: () => _exportPdf(l)),
         ),

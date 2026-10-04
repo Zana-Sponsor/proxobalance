@@ -11,7 +11,6 @@ import 'package:proxo_app/models/proxo_card.dart';
 import 'package:proxo_app/screens/tools_screen.dart';
 import 'package:proxo_app/services/proxolink_service.dart';
 import 'package:proxo_app/theme/app_theme.dart';
-import 'package:proxo_app/widgets/proxolink_ad_section.dart';
 
 Future<void> captureUi(WidgetTester tester, GlobalKey key, String name) async {
   await tester.runAsync(() async {
@@ -208,53 +207,6 @@ void main() {
       expect(find.text('پێشبینین نەکرایەوە'), findsOneWidget);
       expect(tester.takeException(), isNull);
       await captureUi(tester, screenshotKey, 'form-$width');
-    });
-  }
-  for (final width in [320.0, 393.0, 768.0]) {
-    testWidgets('exact-ad totals and tracked link fit width $width', (
-      tester,
-    ) async {
-      tester.view.physicalSize = Size(width, 1100);
-      tester.view.devicePixelRatio = 1;
-      addTearDown(tester.view.resetPhysicalSize);
-      addTearDown(tester.view.resetDevicePixelRatio);
-      final screenshotKey = GlobalKey();
-      final requests = <String>[];
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: buildAppTheme(),
-          home: RepaintBoundary(
-            key: screenshotKey,
-            child: Scaffold(
-              body: Directionality(
-                textDirection: TextDirection.rtl,
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(16),
-                  child: ProxoLinkAdSection(
-                    adId: card().id,
-                    loadSummary: (id) async {
-                      requests.add(id);
-                      return {
-                        'ad_id': id,
-                        'page_views': 12,
-                        'button_clicks': 5,
-                        'buttons': {'whatsapp': 3, 'tiktok': 2},
-                        'tracked_path': '/a/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
-                      };
-                    },
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      );
-      await tester.pump();
-      expect(requests, [card().id]);
-      expect(find.text('12'), findsOneWidget);
-      expect(find.text('TikTok: 2'), findsOneWidget);
-      expect(tester.takeException(), isNull);
-      await captureUi(tester, screenshotKey, 'ad-stats-$width');
     });
   }
 }

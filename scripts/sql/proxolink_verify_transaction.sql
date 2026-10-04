@@ -20,7 +20,7 @@ begin
  perform set_config('request.jwt.claim.sub',v_a.owner_user_id::text,true);
  perform set_config('request.jwt.claims',jsonb_build_object('sub',v_a.owner_user_id,'role','authenticated')::text,true);
 end $test$;
-set local role authenticated;
+set local role service_role;
 do $test$
 declare v_a jsonb;v_b jsonb;
 begin
@@ -37,5 +37,14 @@ begin
  end;
 end $test$;
 reset role;
-select 'passed' attribution_same_card_two_ads,'passed' cross_owner_access,'passed' raw_ip_blocking,'passed' visitor_retention,'rolled_back' customer_changes;
+set local role authenticated;
+do $test$ begin
+ begin
+  perform public.proxolink_ad_summary(current_setting('proxolink.verify_ad_a')::uuid);
+  raise exception 'Ordinary client accessed hidden analytics';
+ exception when insufficient_privilege then null;
+ end;
+end $test$;
+reset role;
+select 'passed' attribution_same_card_two_ads,'passed' cross_owner_access,'passed' client_analytics_blocked,'passed' raw_ip_blocking,'passed' visitor_retention,'rolled_back' customer_changes;
 rollback;
