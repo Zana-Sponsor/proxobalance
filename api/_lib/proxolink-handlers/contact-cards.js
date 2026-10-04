@@ -8,7 +8,6 @@ import {
 
 const STYLES=new Set(['dark','light','classic','pill','card','neon','zoom','banner']);
 const THEMES=new Set(['purple','blue','green','red','yellow','cyan','pink','dark']);
-const PLATFORMS=new Set(['wa','vb','tg','ig','ph','as']);
 function failure(res,error) {
   if(error?.status===413)return json(res,413,{ok:false,error:'payload_too_large'});
   if(error instanceof SyntaxError)return json(res,422,{ok:false,error:'invalid_request'});
@@ -43,7 +42,17 @@ function validatePayload(body,userId,id,old=null) {
     throw Object.assign(new Error('invalid_request'),{code:'invalid_request'});
   if(typeof data.tt!=='string')
     throw Object.assign(new Error('invalid_request'),{code:'invalid_request'});
-  data.platforms=normalizedPlatforms(data.platforms);
+  // New clients cannot submit Telegram. Retain existing legacy values in
+  // storage during edits, without exposing or enabling them in the renderer.
+  data.platforms=normalizedPlatforms(data.platforms,{
+    historical:Boolean(old && body.platforms===undefined)
+  });
+  if(old?.platforms && typeof old.platforms==='object') {
+    for(const legacyKey of ['tg','telegram']) {
+      if(typeof old.platforms[legacyKey]==='string' && old.platforms[legacyKey])
+        data.platforms[legacyKey]=old.platforms[legacyKey];
+    }
+  }
   if(data.avatar_path) {
     const expected=userId+'/'+id+'/';
     if(typeof data.avatar_path!=='string'
@@ -165,7 +174,10 @@ async function handler(req,res,{user}) {
     if(req.method==='GET') {
       const cards=await proxoRows('proxolink_cards','&user_id=eq.'+user.id+'&order=created_at.desc',
         'id,user_id,name,bio,tt,platforms,template_key,template_version,style,color_theme,card_language,avatar_path,status,publish_status,card_number,created_at,updated_at');
-      return json(res,200,{ok:true,cards});
+      return json(res,200,{ok:true,cards:cards.map(card=>({
+        ...card,platforms:Object.fromEntries(Object.entries(card.platforms||{})
+          .filter(([key])=>!['tg','telegram'].includes(key.toLowerCase())))
+      }))});
     }
     const body=await readJson(req,64*1024);
     if(!body||typeof body!=='object'||Array.isArray(body))

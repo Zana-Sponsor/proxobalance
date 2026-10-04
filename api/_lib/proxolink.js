@@ -11,19 +11,19 @@ const THEMES = {
   yellow:['#78350f','#d97706'], cyan:['#164e63','#0891b2'],
   pink:['#831843','#be185d'], dark:['#0d1021','#1c2333']
 };
-const IDS = ['wa','vb','tg','ig','ph','as'];
+const IDS = ['wa','vb','ig','ph','as'];
 const PLATFORM_ALIASES={
   wa:'wa',whatsapp:'wa', vb:'vb',viber:'vb',
   tg:'tg',telegram:'tg', ig:'ig',instagram:'ig',
   ph:'ph',phone:'ph',korek:'ph', as:'as',asya:'as',asiacell:'as'
 };
-export function normalizedPlatforms(platforms) {
+export function normalizedPlatforms(platforms,{historical=false}={}) {
   if(!platforms || typeof platforms!=='object' || Array.isArray(platforms))
     throw err(422,'invalid_platform_value');
   const normalized={};
   for(const [key,value] of Object.entries(platforms)) {
     const id=PLATFORM_ALIASES[key.toLowerCase()];
-    if(!id)throw err(422,'invalid_platform_value');
+    if(!id || (id==='tg' && !historical))throw err(422,'invalid_platform_value');
     if(value==null||value==='')continue;
     if(typeof value!=='string'||value.length>100)throw err(422,'invalid_platform_value');
     if(normalized[id]!==undefined && normalized[id]!==value)
@@ -33,27 +33,26 @@ export function normalizedPlatforms(platforms) {
   return normalized;
 }
 
-const TYPES = {wa:'whatsapp',vb:'viber',tg:'telegram',ig:'instagram',ph:'phone',as:'asya'};
+const TYPES = {wa:'whatsapp',vb:'viber',ig:'instagram',ph:'phone',as:'asya'};
 const LABELS = {
   wa:['واتسئاپ','واتساب'], vb:['ڤایبەر','فايبر'],
-  tg:['تیلیگرام','تيليجرام'], ig:['ئینستاگرام','إنستغرام'],
+  ig:['ئینستاگرام','إنستغرام'],
   ph:['کۆرەک','كورك'], as:['ئاسیا سێڵ','آسيا سيل']
 };
-const ICON = {wa:'fa-whatsapp',vb:'fa-viber',tg:'fa-telegram',
+const ICON = {wa:'fa-whatsapp',vb:'fa-viber',
   ig:'fa-instagram',ph:'fa-phone-alt',as:'fa-phone-alt'};
-const ICON_SIZE = {wa:25,vb:22,tg:22,ig:22,ph:20,as:20};
+const ICON_SIZE = {wa:25,vb:22,ig:22,ph:20,as:20};
 const BACKGROUND = {
   wa:'linear-gradient(to left,#128c7e,#25d366)',
   vb:'linear-gradient(to left,#5c4fd6,#7360f2)',
-  tg:'linear-gradient(to left,#229ed9,#2aabee)',
   ig:'linear-gradient(to left,#833ab4,#fd1d1d,#f09433)',
   ph:'linear-gradient(to left,#1d4ed8,#2563eb)',
   as:'linear-gradient(to left,#b91c1c,#dc2626)'
 };
 const SHADOW = {wa:'rgba(37,211,102,.42)',vb:'rgba(115,96,242,.42)',
-  tg:'rgba(42,171,238,.42)',ig:'rgba(220,39,67,.42)',
+  ig:'rgba(220,39,67,.42)',
   ph:'rgba(37,99,235,.42)',as:'rgba(220,38,38,.42)'};
-const CLASSIC = {wa:'#25d366',vb:'#7360F2',tg:'#29a8eb',
+const CLASSIC = {wa:'#25d366',vb:'#7360F2',
   ig:'linear-gradient(to right,#8a2387,#e94057,#f27121)',
   ph:'#e03030',as:'#e03030'};
 export const validUuid = value =>
@@ -97,7 +96,6 @@ export function contactDestination(id, raw) {
   switch(id) {
     case 'wa': return 'whatsapp://send?phone='+digits(raw);
     case 'vb': return 'viber://chat?number='+digits(raw);
-    case 'tg': return 'https://t.me/'+handle(raw);
     case 'ig': return 'https://instagram.com/'+handle(raw);
     case 'ph': case 'as': return 'tel:'+digits(raw);
     default: throw err(422,'invalid_platform_value');
@@ -108,8 +106,9 @@ export function validateCardData(card,{legacy=false}={}) {
   if (typeof card.name !== 'string' || !card.name.trim() || card.name.length > 160)
     throw err(422,'invalid_card_name');
   if (String(card.bio||'').length > 2000) throw err(422,'invalid_bio');
-  const platform=normalizedPlatforms(card.platforms);
-  const keys=Object.keys(platform);
+  // Historical Telegram fields remain stored but are never actionable.
+  const platform=normalizedPlatforms(card.platforms,{historical:true});
+  const keys=Object.keys(platform).filter(id=>id!=='tg');
   if(!keys.length && !(card.tt||card.tiktok))
     throw err(422,'invalid_platform_value');
   for(const id of keys) contactDestination(id,platform[id]);
@@ -226,7 +225,7 @@ function avatarHtml(card,publicAvatarUrl) {
     +safeHtml(Array.from(card.name)[0]?.toUpperCase()||'P')+'</span>';
 }
 function selectedPlatforms(card) {
-  const platforms=normalizedPlatforms(card.platforms);
+  const platforms=normalizedPlatforms(card.platforms,{historical:true});
   return IDS.filter(id=>platforms[id]).map(id=>({
     id, label:LABELS[id][card.card_language==='ar'?1:0],
     type:TYPES[id],value:platforms[id],
@@ -314,7 +313,7 @@ export function renderTemplate(template,card,{adToken=null,variant='standard',re
   const parts=selectedPlatforms(card);
   const pieces=contactButtons(style,parts,tt,card.demo===true?'#':(adToken?'/a/'+encodeURIComponent(adToken)+'/action/tt':null));
   if(variant==='legacy_dark_inline') {
-    const colors={wa:'#25d366',vb:'#7360f2',ig:'#fff',tg:'#29a8eb',ph:'#fff',as:'#fff'};
+    const colors={wa:'#25d366',vb:'#7360f2',ig:'#fff',ph:'#fff',as:'#fff'};
     pieces.buttons=parts.map(p=>'<a href="'+safeHtml(card.demo===true?'#':(adToken?'/a/'+encodeURIComponent(adToken)+'/action/'+p.id:p.url))+'" target="_blank" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:14px 8px;border-radius:18px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);text-decoration:none;color:#fff;font-size:13px;font-weight:600;transition:.15s;flex:1;min-width:calc(50% - 6px)"><i class="'+iconClass(p.id)+' '+ICON[p.id]+'" style="font-size:26px;color:'+colors[p.id]+'"></i>'+safeText(p.label)+'</a>').join('');
     pieces.ttBadge=tt?'<a href="'+safeHtml(card.demo===true?'#':(adToken?'/a/'+encodeURIComponent(adToken)+'/action/tt':badgeUrl(tt)))+'" target="_blank" class="tt-link"><i class="fab fa-tiktok"></i>@'+safeHtml(tt)+'</a>':'';
   }

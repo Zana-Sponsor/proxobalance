@@ -90,6 +90,12 @@ test('same-card ads in two tabs preserve exact token identity despite shared/fak
  assert.ok(events.every(e=>e.session_id==='77777777-7777-4777-8777-777777777777'&&e.ip_address===null));
  assert.ok(events.every(e=>!('ad_id'in e)&&!('card_id'in e)));
 });
+test('historical Telegram tracked action cannot redirect or record events',async()=>{
+ const events=[];global.fetch=mockFetch({events});
+ const blocked=await invoke({op:'ad',token:tokenA,action:'tg'},{auth:false});
+ assert.equal(blocked.statusCode,404);assert.equal(blocked.headers.location,undefined);
+ assert.equal(events.length,0);
+});
 test('invalid token and arbitrary destination create no events and no redirects',async()=>{
  const events=[];global.fetch=mockFetch({events});
  assert.equal((await invoke({op:'ad',token:'invalid'},{auth:false})).statusCode,404);
@@ -105,6 +111,17 @@ test('optimistic edit rejects stale state before writing',async()=>{
  const writes=[];global.fetch=mockFetch({writes});
  const res=await invoke({op:'cards',id},{method:'PATCH',body:{expected_updated_at:'2000-01-01T00:00:00Z',name:'Updated'}});
  assert.equal(res.statusCode,409);assert.equal(writes.length,0);
+});
+test('new Telegram platforms are rejected and old values remain stored but not exposed on edit',async()=>{
+ const store=publishingStore();global.fetch=store.fetch;
+ const rejected=await invoke({op:'cards'},{method:'POST',body:{...createPayload,platforms:{tg:'not_supported'}}});
+ assert.equal(rejected.statusCode,422);assert.equal(store.rows.size,0);
+ const created=await invoke({op:'cards'},{method:'POST',body:createPayload});assert.equal(created.statusCode,201);
+ const saved=store.rows.get(id);saved.platforms={...saved.platforms,tg:'historical_username'};
+ const edit=await invoke({op:'cards',id},{method:'PATCH',body:{expected_updated_at:saved.updated_at,name:'Updated',platforms:{wa:'9647501234567'}}});
+ assert.equal(edit.statusCode,200);assert.equal(store.rows.get(id).platforms.tg,'historical_username');
+ const list=await invoke({op:'cards'});assert.equal(list.statusCode,200);
+ assert.ok(!JSON.stringify(JSON.parse(list.body).cards[0].platforms).includes('tg'));
 });
 test('server rejects non-string platform values and escapes mixed direction data',()=>{
  assert.throws(()=>normalizedPlatforms({wa:{number:'9647501234567'}}));

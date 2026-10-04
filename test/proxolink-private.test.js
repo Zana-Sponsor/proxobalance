@@ -36,6 +36,8 @@ test('dangerous customer content and URLs are rejected or escaped',()=>{
   assert.equal(safeHtml('<script>"'), '&lt;script&gt;&quot;');
   assert.throws(()=>contactDestination('ig','javascript:alert(1)'));
   assert.throws(()=>contactDestination('wa','123'));
+  assert.throws(()=>contactDestination('tg','legacy_username'));
+  assert.throws(()=>validateCardData({...card,platforms:{tg:'legacy_username'},tt:''}));
   assert.throws(()=>validateCardData({...card,platforms:{evil:'http://site'}}));
   const html=renderTemplate(template,{...card,name:'<script>alert(1)</script>'});
   assert.doesNotMatch(html,/<title><script>/);
@@ -51,6 +53,17 @@ test('all eight signed demos retain visuals without real contact or TikTok desti
   const publicDoc=renderTemplate(template,card);
   assert.match(publicDoc,/whatsapp:\/\/send/);
   assert.match(publicDoc,/https:\/\/www\.tiktok\.com\//);
+});
+test('legacy Telegram data is hidden from all eight public and demo layouts',()=>{
+  const historical={...card,platforms:{...card.platforms,tg:'archived_account'}};
+  for(const templateKey of ['dark','light','classic','pill','card','neon','zoom','banner']) {
+    for(const demo of [false,true]) {
+      const doc=renderTemplate(template,{...historical,template_key:templateKey,demo});
+      assert.doesNotMatch(doc,/fa-telegram|t\\.me\\/|archived_account|id="tg"|action\\/tg/);
+      assert.match(doc,/id="wa"/);
+      assert.match(doc,/id="ig"/);
+    }
+  }
 });
 test('only valid stable identifiers are accepted',()=>{
   assert.equal(validUuid(id),true);

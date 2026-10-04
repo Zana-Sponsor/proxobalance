@@ -30,7 +30,7 @@ export async function templatePreview(req,res) {
       name:'Proxo',bio:'لەڕێگەی دووگمەکانەوە پەیوەندیمان پێوە بکەن.',tt:'proxo_iq',
       template_key:data.key,template_version:data.version,color_theme:'purple',
       card_language:'ku',platforms:{wa:'9647501234567',vb:'9647501234567',
-        tg:'proxo_iq',ig:'proxo_iq'},demo:true};
+        ig:'proxo_iq',ph:'9647501234567',as:'9647501234567'},demo:true};
     return publicPage(res,await renderedPage(card,{preview:true}));
   } catch {return unavailable(res);}
 }

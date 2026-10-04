@@ -6,7 +6,7 @@ import {
 
 const TOKEN_PATTERN=/^[A-Za-z0-9_-]{20,128}$/;
 export const PLATFORM_TYPE={
-  wa:'whatsapp',vb:'viber',tg:'telegram',
+  wa:'whatsapp',vb:'viber',
   ig:'instagram',ph:'phone',as:'phone',tt:'tiktok'
 };
 export async function trackedContext(token) {
@@ -59,7 +59,7 @@ export async function recordContactEvent(req,res,linkId,type,platformId=null) {
 export function actionUrl(card,id) {
   if(id==='tt'&&(card.template_version>=1000?/^[a-zA-Z0-9._@-]{1,100}$/:/^[a-zA-Z0-9._]{1,40}$/).test(card.tt||card.tiktok||''))
     return 'https://www.tiktok.com/@'+encodeURIComponent(card.tt||card.tiktok);
-  const platforms=normalizedPlatforms(card.platforms);
+  const platforms=normalizedPlatforms(card.platforms,{historical:true});
   if(!Object.prototype.hasOwnProperty.call(PLATFORM_TYPE,id)
     || !Object.prototype.hasOwnProperty.call(platforms,id))
     throw Error('invalid_button');
