@@ -18,6 +18,7 @@ const _styles = <String>[
   'zoom',
   'banner',
 ];
+const _widths = <int>[320, 393, 430, 768];
 
 Directory get _files => Directory('${Directory.systemTemp.parent.path}/files');
 File get _configuration => File('${_files.path}/proxolink-verification.json');
@@ -26,8 +27,14 @@ late Map<String, dynamic> _runtime;
 Future<Map<String, dynamic>> _readConfiguration() async =>
     Map<String, dynamic>.from(jsonDecode(await _configuration.readAsString()) as Map);
 
-Future<Map<String, dynamic>> _pageState(WebViewController controller) async {
-  final raw = await controller.runJavaScriptReturningResult(r'''
+Future<Map<String, dynamic>> _readMap(WebViewController controller, String script) async {
+  final raw = await controller.runJavaScriptReturningResult(script);
+  dynamic decoded = raw is String ? jsonDecode(raw) : raw;
+  if (decoded is String) decoded = jsonDecode(decoded);
+  return Map<String, dynamic>.from(decoded as Map);
+}
+
+Future<Map<String, dynamic>> _pageState(WebViewController controller) => _readMap(controller, r'''
     JSON.stringify({
       ready: document.readyState === 'complete',
       language: document.documentElement.lang,
@@ -35,15 +42,23 @@ Future<Map<String, dynamic>> _pageState(WebViewController controller) async {
       scroll: document.documentElement.scrollWidth,
       images: Array.from(document.images).every(i => i.complete && i.naturalWidth > 0),
       fonts: Array.from(document.fonts).some(f => ['R','Rabar','Rabar_021'].includes(f.family.replaceAll("'",'')) && f.status === 'loaded'),
-      icons: Array.from(document.styleSheets).some(s => /font-awesome/i.test(s.href || '')) || !!document.querySelector('.fa,.fab,.fas'),
+      fontApplied: /\bR\b|Rabar/.test(getComputedStyle(document.body).fontFamily),
+      icons: !!document.querySelector('.fa,.fab,.fas') && Array.from(document.fonts).some(f => /Awesome/.test(f.family) && f.status === 'loaded') && Array.from(document.querySelectorAll('.fa,.fab,.fas')).every(e => /Awesome/.test(getComputedStyle(e).fontFamily)),
       contact: !!document.getElementById('wa'),
       sourcePlaceholders: document.body.textContent.includes('{{HANDLERS}}'),
-      pixel: typeof window.ttq !== 'undefined'
+      pixel: typeof window.ttq !== 'undefined',
+      animations: document.getAnimations().filter(a => a.playState === 'running').map(a => ({name:a.animationName || '', time:a.currentTime}))
     })
   ''');
-  dynamic decoded = raw is String ? jsonDecode(raw) : raw;
-  if (decoded is String) decoded = jsonDecode(decoded);
-  return Map<String, dynamic>.from(decoded as Map);
+
+bool _visibleWebView(BuildContext context) {
+  var found = false;
+  void visit(Element element) {
+    if (element.widget is WebViewWidget) found = true;
+    element.visitChildElements(visit);
+  }
+  context.visitChildElements(visit);
+  return found;
 }
 
 Future<void> main() async {
@@ -88,15 +103,18 @@ class _NativeProbeScreenState extends State<_NativeProbeScreen> {
   }
 
   Future<void> _runCurrent() async {
-    if (_index >= _styles.length) {
+    if (_index >= _styles.length * _widths.length) {
       await _write('proxolink-verification-results.json', _results);
-      if (mounted) setState(() { _complete = true; _status = '8/8 live previews verified'; });
+      if (mounted) setState(() { _complete = true; _status = '32/32 live preview cases verified'; });
       return;
     }
-    if (mounted) setState(() => _status = 'Loading ${_styles[_index]} (${_index + 1}/8)…');
+    final style = _styles[_index ~/ _widths.length];
+    final width = _widths[_index % _widths.length];
+    if (mounted) setState(() => _status = 'Loading $style at $width dp (${_index + 1}/32)…');
   }
 
-  Future<void> _verify(String style, WebViewController controller) async {
+  Future<void> _verify(String style, int width, WebViewController controller) async {
+    final caseId = '$style-$width';
     try {
       Map<String, dynamic>? state;
       for (var attempt = 0; attempt < 120; attempt++) {
@@ -107,60 +125,123 @@ class _NativeProbeScreenState extends State<_NativeProbeScreen> {
               state['images'] == true && state['contact'] == true) break;
         } catch (_) {}
       }
-      if (state == null || state['ready'] != true || state['fonts'] != true ||
+      if (state == null || state['ready'] != true || state['fonts'] != true || state['fontApplied'] != true ||
           state['images'] != true || state['icons'] != true ||
           state['contact'] != true || state['language'] != 'ku' ||
-          (state['scroll'] as num) > (state['width'] as num) ||
+          (state['scroll'] as num) > (state['width'] as num) + 1 ||
+          ((state['width'] as num) - width).abs() > 1 ||
+          !mounted || !_visibleWebView(context) ||
           state['sourcePlaceholders'] != false || state['pixel'] != false) {
         throw StateError('Rendered page checks failed');
       }
 
-      await controller.runJavaScript("document.getElementById('wa').click()");
-      await Future<void>.delayed(const Duration(milliseconds: 350));
-      final modal = await controller.runJavaScriptReturningResult(
-        "Array.from(document.querySelectorAll('[onclick]')).some(e=>/closeMod/.test(e.getAttribute('onclick')) && e.getBoundingClientRect().height>0)",
-      );
-      if (modal.toString() != 'true') throw StateError('Confirmation did not open');
-      await controller.runJavaScript(
-        "Array.from(document.querySelectorAll('[onclick]')).find(e=>/closeMod/.test(e.getAttribute('onclick'))).click()",
-      );
-      final configuration = await _readConfiguration();
-      await controller.runJavaScript("window.location.href='https://example.invalid/'");
+      final animations = state['animations'] as List;
       await Future<void>.delayed(const Duration(milliseconds: 600));
-      if (!(await controller.currentUrl())!.startsWith(configuration['origin'] as String)) {
-        throw StateError('Navigation escaped the preview origin');
+      final after = (await _pageState(controller))['animations'] as List;
+      final moving = animations.any((a) => after.any((b) =>
+          a['name'] == b['name'] && a['time'] is num && b['time'] is num &&
+          (b['time'] as num) > (a['time'] as num) + 100));
+      if (animations.isEmpty || !moving) throw StateError('Animation did not advance');
+
+      // Observe original handlers and suppress window.open only in this probe.
+      // Original modal visuals/functions remain in place; no real call/message
+      // is sent from demo previews and no advertisement is created or visited.
+      await controller.runJavaScript(r'''
+        window.__proxoProbe = {args:null,opened:null,ask:window.askConfirm,open:window.open};
+        window.askConfirm = function(type,url,label) {
+          window.__proxoProbe.args = {type,url};
+          return window.__proxoProbe.ask(type,url,label);
+        };
+        window.open = function(url) { window.__proxoProbe.opened = url; return null; };
+      ''');
+      const destinations = {
+        'wa': ['whatsapp', 'whatsapp://send?phone=9647501234567'],
+        'vb': ['viber', 'viber://chat?number=9647501234567'],
+        'tg': ['telegram', 'https://t.me/proxo_iq'],
+        'ig': ['instagram', 'https://instagram.com/proxo_iq'],
+      };
+      const cancel = "Array.from(document.querySelectorAll('[onclick]')).find(e=>/closeMod/.test(e.getAttribute('onclick')) && e.getBoundingClientRect().height>0)";
+      const confirm = "Array.from(document.querySelectorAll('[onclick]')).find(e=>e.getAttribute('onclick')==='goLink()' && e.getBoundingClientRect().height>0)";
+      for (final entry in destinations.entries) {
+        await controller.runJavaScript("document.getElementById('${entry.key}').click()");
+        await Future<void>.delayed(const Duration(milliseconds: 250));
+        final opened = await _readMap(controller, '''
+          JSON.stringify({modal:!!($cancel),confirm:!!($confirm),
+            destination:window.__proxoProbe.args.url===${jsonEncode(entry.value[1])},
+            type:window.__proxoProbe.args.type===${jsonEncode(entry.value[0])}})
+        ''');
+        if (opened.values.any((value) => value != true)) throw StateError('Contact confirmation failed');
+        await controller.runJavaScript('($cancel).click()');
+        await Future<void>.delayed(const Duration(milliseconds: 250));
+        final canceled = await _readMap(controller, 'JSON.stringify({closed:!($cancel),unlaunched:window.__proxoProbe.opened===null})');
+        if (canceled.values.any((value) => value != true)) throw StateError('Cancel failed');
+        await controller.runJavaScript("document.getElementById('${entry.key}').click()");
+        await Future<void>.delayed(const Duration(milliseconds: 250));
+        await controller.runJavaScript('($confirm).click()');
+        await Future<void>.delayed(const Duration(milliseconds: 250));
+        final confirmed = await _readMap(controller, '''JSON.stringify({closed:!($cancel),
+          destination:window.__proxoProbe.opened===null || window.__proxoProbe.opened===${jsonEncode(entry.value[1])}})''');
+        if (confirmed.values.any((value) => value != true)) throw StateError('Confirm failed');
+        await controller.runJavaScript('window.__proxoProbe.opened=null');
+      }
+      final tiktok = await controller.runJavaScriptReturningResult(
+          "Array.from(document.links).some(a=>a.href==='https://www.tiktok.com/@proxo_iq')");
+      if (tiktok.toString() != 'true') throw StateError('TikTok destination failed');
+      await controller.runJavaScript('window.askConfirm=window.__proxoProbe.ask;window.open=window.__proxoProbe.open;delete window.__proxoProbe');
+      final configuration = await _readConfiguration();
+      final expected = await controller.currentUrl();
+      final actual = expected == null ? null : Uri.tryParse(expected);
+      if (actual == null || actual.origin != configuration['origin'] ||
+          actual.path != '/contact-preview' || !actual.queryParameters.containsKey('token')) {
+        throw StateError('Preview URL changed');
+      }
+      for (final destination in ['https://example.invalid/',
+        '${configuration['origin']}/api/contact-templates',
+        '${configuration['origin']}/contact-preview?token=invalid',
+        'file:///etc/passwd', 'https://t.me/proxo_iq']) {
+        await controller.runJavaScript('window.location.href=${jsonEncode(destination)}');
+        await Future<void>.delayed(const Duration(milliseconds: 350));
+        if (await controller.currentUrl() != expected) throw StateError('Navigation escaped preview');
       }
 
-      _results[style] = {
+      _results[caseId] = {
         'passed': true,
         'width': state['width'],
         'font_loaded': true,
         'images_loaded': true,
         'icons_loaded': true,
+        'animation_checked': true,
+        'animation_count': animations.length,
+        'contact_destinations': true,
         'confirmation': true,
         'navigation_blocked': true,
       };
-      await _write('proxolink-verification-case.json', {'style': style});
-      if (mounted) setState(() => _status = '$style passed; capturing evidence…');
+      await _write('proxolink-verification-case.json', {'style': style, 'width': width});
+      if (mounted) setState(() => _status = '$caseId passed; capturing evidence…');
       final ack = File('${_files.path}/proxolink-verification-ack');
+      var acknowledged = false;
       for (var attempt = 0; attempt < 120; attempt++) {
-        if (await ack.exists() && (await ack.readAsString()).trim() == style) break;
+        if (await ack.exists() && (await ack.readAsString()).trim() == caseId) { acknowledged = true; break; }
         await Future<void>.delayed(const Duration(milliseconds: 250));
       }
+      if (!acknowledged) throw StateError('Screenshot evidence missing');
       if (await ack.exists()) await ack.delete();
       if (!mounted) return;
       setState(() => _index++);
       await _runCurrent();
     } catch (error) {
-      _results[style] = {'passed': false, 'error': error.runtimeType.toString()};
+      _results[caseId] = {'passed': false, 'error': error.runtimeType.toString()};
       await _write('proxolink-verification-results.json', _results);
-      if (mounted) setState(() { _complete = true; _status = '$style failed'; });
+      if (mounted) setState(() { _complete = true; _status = '$caseId failed'; });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final style = _index < _styles.length ? _styles[_index] : _styles.last;
+    final total = _styles.length * _widths.length;
+    final current = _index < total ? _index : total - 1;
+    final style = _styles[current ~/ _widths.length];
+    final width = _widths[current % _widths.length];
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
@@ -169,7 +250,7 @@ class _NativeProbeScreenState extends State<_NativeProbeScreen> {
         body: SafeArea(
           child: Center(
             child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 600),
+              constraints: BoxConstraints(maxWidth: (width + 72).toDouble()),
               child: ListView(
                 padding: const EdgeInsets.all(16),
                 children: [
@@ -181,7 +262,7 @@ class _NativeProbeScreenState extends State<_NativeProbeScreen> {
                       child: _complete
                           ? Center(child: Text(_status, style: AdUi.heading(context)))
                           : ProxoLinkPreview(
-                              key: ValueKey(style),
+                              key: ValueKey('$style-$width'),
                               requestHeaders: Map<String, String>.from(
                                 _runtime['headers'] as Map,
                               ),
@@ -189,7 +270,7 @@ class _NativeProbeScreenState extends State<_NativeProbeScreen> {
                                 final current = await _readConfiguration();
                                 return Uri.parse((current['previews'] as Map)[style] as String);
                               },
-                              onControllerCreated: (controller) => _verify(style, controller),
+                              onControllerCreated: (controller) => _verify(style, width, controller),
                             ),
                     ),
                   ),

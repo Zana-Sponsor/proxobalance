@@ -2,12 +2,6 @@ name: Build ProxoLink native verification
 on:
   push:
     branches: [feat/proxolink-private-renderer-migration]
-    paths:
-      - 'proxo_app/integration_test/**'
-      - 'proxo_app/lib/widgets/proxolink_preview.dart'
-      - 'proxo_app/pubspec.yaml'
-      - '.github/workflows/proxolink-native-build.yml'
-      - 'scripts/run-proxolink-native.mjs'
   workflow_dispatch:
 permissions:
   contents: read
@@ -89,19 +83,27 @@ jobs:
           retention-days: 1
   native-runtime:
     needs: native-verification-apk
+    # Runtime secrets are released only for the approved feature branch and an
+    # explicit live-test request. Ordinary pushes build the credential-free APK.
+    if: github.repository == 'Zana-Sponsor/proxobalance' && github.ref == 'refs/heads/feat/proxolink-private-renderer-migration' && (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[proxolink-live-verification]'))
+    environment: proxolink-preview-verification
+    concurrency:
+      group: proxolink-preview-verification
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     timeout-minutes: 25
     env:
       PROXO_NATIVE_BASE_URL: https://proxobalance-git-feat-proxolink-private-re-00a2aa-proxoapp-1758.vercel.app
       PROXO_NATIVE_SUPABASE_URL: https://cojchkwssmasiejcgvbk.supabase.co
-      PROXO_NATIVE_ANON_KEY: ${{ vars.PROXO_NATIVE_ANON_KEY }}
-      PROXO_NATIVE_TEST_EMAIL: ${{ secrets.PROXO_NATIVE_TEST_EMAIL }}
-      PROXO_NATIVE_TEST_PASSWORD: ${{ secrets.PROXO_NATIVE_TEST_PASSWORD }}
-      PROXO_NATIVE_VERCEL_BYPASS: ${{ secrets.PROXO_NATIVE_VERCEL_BYPASS }}
     steps:
       - name: Check secure runtime configuration
         id: configuration
         shell: bash
+        env:
+          PROXO_NATIVE_ANON_KEY: ${{ vars.PROXO_NATIVE_ANON_KEY }}
+          PROXO_NATIVE_TEST_EMAIL: ${{ secrets.PROXO_NATIVE_TEST_EMAIL }}
+          PROXO_NATIVE_TEST_PASSWORD: ${{ secrets.PROXO_NATIVE_TEST_PASSWORD }}
+          PROXO_NATIVE_VERCEL_BYPASS: ${{ secrets.PROXO_NATIVE_VERCEL_BYPASS }}
         run: |
           ready=true
           for key in PROXO_NATIVE_ANON_KEY PROXO_NATIVE_TEST_EMAIL PROXO_NATIVE_TEST_PASSWORD PROXO_NATIVE_VERCEL_BYPASS; do
@@ -113,19 +115,22 @@ jobs:
           echo "ready=$ready" >> "$GITHUB_OUTPUT"
           if [ "$ready" = false ]; then
             echo 'Native live verification was NOT RUN: secure runtime settings are missing. APK build success is not native certification.' >> "$GITHUB_STEP_SUMMARY"
+            exit 1
           fi
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         if: steps.configuration.outputs.ready == 'true'
-      - uses: actions/setup-node@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         if: steps.configuration.outputs.ready == 'true'
         with:
           node-version: '24'
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3
         if: steps.configuration.outputs.ready == 'true'
         with:
           distribution: temurin
           java-version: '17'
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
         if: steps.configuration.outputs.ready == 'true'
         with:
           name: proxolink-native-verification-apk
@@ -139,7 +144,12 @@ jobs:
           test -r /dev/kvm
       - name: Run real server pages through the production WebView widget
         if: steps.configuration.outputs.ready == 'true'
-        uses: reactivecircus/android-emulator-runner@v2
+        uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d
+        env:
+          PROXO_NATIVE_ANON_KEY: ${{ vars.PROXO_NATIVE_ANON_KEY }}
+          PROXO_NATIVE_TEST_EMAIL: ${{ secrets.PROXO_NATIVE_TEST_EMAIL }}
+          PROXO_NATIVE_TEST_PASSWORD: ${{ secrets.PROXO_NATIVE_TEST_PASSWORD }}
+          PROXO_NATIVE_VERCEL_BYPASS: ${{ secrets.PROXO_NATIVE_VERCEL_BYPASS }}
         with:
           api-level: 35
           arch: x86_64
@@ -147,7 +157,7 @@ jobs:
           disable-animations: true
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -memory 2048
           script: node scripts/run-proxolink-native.mjs
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always() && steps.configuration.outputs.ready == 'true'
         with:
           name: proxolink-native-runtime-evidence

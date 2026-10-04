@@ -67,14 +67,30 @@ Run 37212964578 completed its APK build, then explicitly reported all four missi
 
 | Setting | Location and intended value |
 | --- | --- |
-| `PROXO_NATIVE_ANON_KEY` | Repository variable; the project's publishable/anon key only |
-| `PROXO_NATIVE_TEST_EMAIL` | Actions secret; dedicated ordinary verification account |
-| `PROXO_NATIVE_TEST_PASSWORD` | Actions secret; that account's password |
-| `PROXO_NATIVE_VERCEL_BYPASS` | Actions secret; a temporary protected-preview automation capability |
+| `PROXO_NATIVE_ANON_KEY` | Protected environment variable; the project's publishable/anon key only |
+| `PROXO_NATIVE_TEST_EMAIL` | Protected environment secret; existing ordinary verification account |
+| `PROXO_NATIVE_TEST_PASSWORD` | Protected environment secret; that account's password |
+| `PROXO_NATIVE_VERCEL_BYPASS` | Protected environment secret; a temporary protected-preview automation capability |
 
-Configure these through the provider's secure settings, never chat or source. Then rerun the native workflow and verify eight completed WebView cases/screenshots. Revoke the temporary protection capability and remove temporary runtime secrets after verification. No new verification account or persistent credential was created in this re-audit. External-app contact launches and iOS device verification also remain outstanding.
+The preview-only continuation below supersedes the previous repository-wide configuration advice. Use the protected environment for all four settings, including the variable. Configure these through the provider's secure settings, never chat or source. Do not rerun the old workflow revision. Revoke the temporary protection capability and remove temporary runtime secrets after verification. No new verification account or persistent credential was created in this re-audit. External-app contact launches and iOS device verification also remain outstanding.
 
 Local Flutter execution was rejected by automatic approval review because the toolchain attempted to access a cloud instance metadata endpoint, creating a possible credential/metadata exposure risk. This was not retried or bypassed. GitHub CI provided the Flutter analysis, tests and builds instead. The local host also lacks KVM; the earlier software-emulated Android attempt is described below and is not native certification.
+
+## Preview-only verification continuation
+
+The user expressly requested continuing verification without any production changes. PR #7 stays Draft; no cutover, merge, production deployment, legacy deletion or live test-data writes are authorized. The fresh read-only checkpoint still has 21 cards, 27 ads, 16 valid references, zero links/events, zero altered manifest entries and a private template bucket.
+
+- Restricted native runtime to the exact feature branch/repository, an explicit live-test request and the protected `proxolink-preview-verification` GitHub environment. Runtime actions are pinned; secrets are scoped to the preflight/runtime steps rather than the entire job. An explicitly requested run fails if configuration is absent instead of appearing certified.
+- Expanded the real WebView probe to eight styles at four widths (320/393/430/768): 32 cases. It checks applied/loaded Rabar and icon fonts, original images, no horizontal overflow, advancing animations, original modal open/cancel/reopen/confirm-close, exact controlled sample contact destinations and blocked external/other-path/invalid-token/file navigation.
+- The runner requires 32 captured screenshots and 32 successful cases. Artifact fields are allowlisted; arbitrary page data, signed URLs, runtime sessions and credentials are excluded.
+- Added read-only live authentication/RLS/private-template/invalid-capability/header checks. The bypass is sent only to the fixed feature Preview; redirects are rejected, production origins and service-role keys are refused, and only sign-in POST is allowed. No card/advertisement/link/event mutation is sent.
+- Four additional runner/security regression tests bring the local backend suite to 45 passing tests. The runtime checks have **not** executed without secure owner configuration. Compilation/build results of this expanded probe must be checked in its new GitHub run before live testing.
+
+Exact owner configuration steps and provider limits are in [PROXOLINK_PREVIEW_VERIFICATION_SETUP.md](PROXOLINK_PREVIEW_VERIFICATION_SETUP.md). GitHub environment credentials are environment-scoped and require explicit reviewer verification of the authorized workflow/commit. Vercel's automation secret is project-wide, not inherently preview-only or workflow-bound; temporary isolated use is enforced by the workflow/reviewer/origin controls and revocation. A requirement for provider-enforced preview-only secret scope instead needs an isolated preview project.
+
+The no-production-mutation constraint also means current write-path/public-avatar/exact-ad live fixtures require an isolated staging project or separate named-fixture authorization. Earlier historical live tests and the 45 current regressions do not certify those new end-to-end paths. Bot/Supabase credential rotations, real external-app launches and iOS verification remain owner/device gates.
+
+The fresh privilege check confirms all five ProxoLink tables have RLS and anon has no direct reads. Internal template/link/event/audit tables deny authenticated CRUD. The legacy card table still grants authenticated owner CRUD/reads under its existing owner/admin policies; restricting clients to safe structured columns and server-only mutations remains part of the unapplied guarded cutover. This production security transition is not claimed complete and was not changed during preview-only verification.
 
 ## Flutter application
 
