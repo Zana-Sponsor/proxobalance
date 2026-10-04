@@ -24,8 +24,8 @@ function forwardedCandidate(value, fromRight = 0) {
   return list[Math.max(0, list.length - 1 - fromRight)] || null;
 }
 
-export function realClientIp(req) {
-  const mode = (process.env.TRUSTED_PROXY || (process.env.VERCEL ? 'vercel' : 'direct')).toLowerCase();
+export function realClientIp(req, {proxyMode} = {}) {
+  const mode = (proxyMode || process.env.TRUSTED_PROXY || (process.env.VERCEL ? 'vercel' : 'direct')).toLowerCase();
 
   if (mode === 'cloudflare' && header(req, 'cf-ray')) {
     const ip = normalizeIp(header(req, 'cf-connecting-ip'));
@@ -40,10 +40,9 @@ export function realClientIp(req) {
     const ip = forwardedCandidate(header(req, 'x-forwarded-for'), trustedHops);
     if (ip) return ip;
   }
-  // Vercel always sets x-forwarded-for; fall back to it so an IP is never lost.
+  // Direct requests must never treat caller-supplied forwarding headers as IP.
   return normalizeIp(req.socket?.remoteAddress)
       || normalizeIp(req.connection?.remoteAddress)
-      || forwardedCandidate(header(req, 'x-forwarded-for'))
       || null;
 }
 
@@ -123,18 +122,23 @@ export function rpc(name, payload) {
   });
 }
 
-export async function bearerUser(req) {
+export async function verifyBearer(req, { base, key }) {
   const auth = header(req, 'authorization');
   const match = auth.match(/^Bearer\s+(.+)$/i);
   if (!match) return null;
-  requireServerSecrets();
+  if (!key) throw Object.assign(new Error('Server configuration incomplete'), { status: 503 });
   try {
-    return await parseResponse(await fetch(`${SUPABASE_URL}/auth/v1/user`, {
-      headers: { apikey: SERVICE_KEY, Authorization: `Bearer ${match[1]}` }
+    return await parseResponse(await fetch(`${base}/auth/v1/user`, {
+      signal: AbortSignal.timeout(10000),
+      headers: { apikey: key, Authorization: `Bearer ${match[1]}` }
     }));
   } catch {
     return null;
   }
+}
+
+export async function bearerUser(req) {
+  return verifyBearer(req, { base: SUPABASE_URL, key: SERVICE_KEY });
 }
 
 // Admin rights live in ex_profiles.is_admin — the same source the panel and the
@@ -327,8 +331,14 @@ function throttled(key) {
 export async function readJson(req, maxBytes = 64 * 1024) {
   const declared = Number(header(req, 'content-length') || 0);
   if (declared > maxBytes) throw Object.assign(new Error('Payload too large'), { status: 413 });
-  if (req.body && typeof req.body === 'object') return req.body;
-  if (typeof req.body === 'string') return JSON.parse(req.body || '{}');
+  if (req.body && typeof req.body === 'object') {
+    if(Buffer.byteLength(JSON.stringify(req.body))>maxBytes)throw Object.assign(new Error('Payload too large'),{status:413});
+    return req.body;
+  }
+  if (typeof req.body === 'string') {
+    if(Buffer.byteLength(req.body)>maxBytes)throw Object.assign(new Error('Payload too large'),{status:413});
+    return JSON.parse(req.body || '{}');
+  }
   let size = 0;
   const chunks = [];
   for await (const chunk of req) {
@@ -393,7 +403,8 @@ export function withSecurity(handler, {
   methods = ['GET', 'POST'],
   event = null,
   risk = 0,
-  autoLog = true
+  autoLog = true,
+  resolveUser = bearerUser
 } = {}) {
   return async function secured(req, res) {
     let context = null;
@@ -414,7 +425,7 @@ export function withSecurity(handler, {
         return stealth404(res);
       }
 
-      user = auth === 'none' ? null : await bearerUser(req);
+      user = auth === 'none' ? null : await resolveUser(req);
       if ((auth === 'required' || auth === 'admin') && !user) {
         await recordEvent(context, { type: 'unauthorized_request', detail: context.path, risk: 5 });
         return json(res, 401, { error: 'Unauthorized' });

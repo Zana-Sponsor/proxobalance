@@ -386,7 +386,9 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
   Future<List<Map<String, dynamic>>> loadAssets() async =>
       List<Map<String, dynamic>>.from(await client
           .from('proxolink_cards')
-          .select('id,name,style,color_theme,card_number,avatar_b64')
+          .select('id,name,template_key,template_version,style,color_theme,card_number,avatar_path,status,publish_status')
+          .eq('status', 'active')
+          .eq('publish_status', 'ready')
           .eq('user_id', _user)
           .order('created_at', ascending: false));
 

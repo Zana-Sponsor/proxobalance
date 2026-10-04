@@ -102,6 +102,32 @@ Deno.serve(async (req: Request) => {
             .list(userId, { limit: 1000 });
 
           if (files && files.length > 0) {
+            if (bucket.name === "proxolink-assets") {
+              // ProxoLink avatars use user/card/immutable-file paths.
+              // Remove nested files before deleting their auth owner.
+              const paths: string[] = [];
+              async function visit(prefix: string, depth = 0): Promise<void> {
+                if (depth > 4) throw new Error("Unexpected avatar folder depth");
+                for (let offset = 0; ; offset += 1000) {
+                  const { data, error } = await admin.storage.from(bucket.name)
+                    .list(prefix, { limit: 1000, offset });
+                  if (error) throw error;
+                  for (const file of data ?? []) {
+                    const path = `${prefix}/${file.name}`;
+                    if (file.id == null) await visit(path, depth + 1);
+                    else paths.push(path);
+                  }
+                  if ((data?.length ?? 0) < 1000) break;
+                }
+              }
+              await visit(userId);
+              for (let offset = 0; offset < paths.length; offset += 100) {
+                const { error } = await admin.storage.from(bucket.name)
+                  .remove(paths.slice(offset, offset + 100));
+                if (error) throw error;
+              }
+              continue;
+            }
             const paths = files.map((f) => `${userId}/${f.name}`);
             const { error: removeError } = await admin.storage
               .from(bucket.name)
@@ -124,6 +150,24 @@ Deno.serve(async (req: Request) => {
       // Log it but continue — the real FK check happens at deleteUser time.
       console.warn("[delete-user] storage cleanup skipped:", String(storageErr));
     }
+
+    // Explicit account deletion removes the owner's contact history first.
+    // Normal card/ad deletion remains restricted so history is preserved.
+    for (let offset = 0; ; offset += 1000) {
+      const { data: links, error: linksError } = await admin
+        .from("pa_ad_contact_links").select("id").eq("owner_user_id", userId)
+        .order("id").range(offset, offset + 999);
+      if (linksError && !isTableNotFound(linksError)) throw linksError;
+      for (const link of links ?? []) {
+        const { error } = await admin.from("pa_contact_events")
+          .delete().eq("ad_contact_link_id", link.id);
+        if (error) throw error;
+      }
+      if ((links?.length ?? 0) < 1000) break;
+    }
+    const { error: contactLinksError } = await admin.from("pa_ad_contact_links")
+      .delete().eq("owner_user_id", userId);
+    if (contactLinksError && !isTableNotFound(contactLinksError)) throw contactLinksError;
 
     // ── Step 4: Delete ALL public rows (child tables before parents) ───────
     // Single-column tables

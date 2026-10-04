@@ -1,0 +1,12 @@
+node_modules/
+.env
+.env.*
+!.env.example
+.vercel/
+private-proxolink*/
+proxo_app/supabase/.temp/
+public/index.html
+public/assets/fonts/
+public/assets/proxolink-demo-avatar.png
+public/assets/css/exchange-ux.css
+public/assets/js/exchange-ux.js
