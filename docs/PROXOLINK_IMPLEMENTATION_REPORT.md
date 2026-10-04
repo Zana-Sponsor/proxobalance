@@ -1,5 +1,7 @@
 # ProxoLink implementation and verification report
 
+> **Current V5 evidence:** see [the 4 October 2026 verification report](PROXOLINK_V5_VERIFICATION_2026-10-04.md) for executable revision `121be74`, 55 backend tests, 96 Flutter tests, 40 local Chromium comparisons, prepared-but-unregistered private v2 refinements, the complete sections 0–144 matrix and current provider/device/staging blockers. The sections below retain historical evidence and revision boundaries; their “current” deployment/test assertions do not certify the latest executable revision. PR #7 remains Draft; no cutover, production promotion or cleanup was performed.
+
 ## V5 owner amendment: ProxoLink without Telegram (4 October 2026)
 
 The current feature branch removes Telegram from new card input, five active contact choices, server-rendered public/owner/demo buttons, tracked redirects and Flutter WebView navigation. The renderer still accepts archived platform fields internally but never generates a Telegram button or destination. Existing Telegram JSON values are retained through edits and omitted from the client catalog/card response. Demo clicks remain inert; normal WhatsApp, Viber, Instagram, TikTok and phone actions remain server-validated. Backend, Flutter and native-probe regression cases have been updated. This section describes source changes, **not** a completed live native/pixel certification.
