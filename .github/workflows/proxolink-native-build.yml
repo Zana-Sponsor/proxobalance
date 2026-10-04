@@ -159,7 +159,9 @@ jobs:
           api-level: 35
           arch: x86_64
           target: google_apis
-          disable-animations: true
+          # CSS motion is part of acceptance; Android's disabled animator
+          # setting can advertise reduced motion to the platform WebView.
+          disable-animations: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -memory 2048
           script: node scripts/run-proxolink-native.mjs
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02

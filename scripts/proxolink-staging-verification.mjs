@@ -2,6 +2,7 @@
 // No production fallback, service credential, template edit or customer cleanup.
 import {randomUUID,createHash} from 'node:crypto';
 import assert from 'node:assert/strict';
+import sharp from 'sharp';
 import {STYLES,SUPABASE_ORIGIN,PREVIEW_ORIGIN} from './proxolink-verification-security.mjs';
 
 export function validateStagingConfiguration(env) {
@@ -33,7 +34,7 @@ export function stagingTransport(config,fetcher=fetch) {
       throw Error('staging_request_scope');
     const allowed=supabase
       ?url.pathname==='/auth/v1/token'||url.pathname==='/rest/v1/proxolink_cards'
-        ||/^\/storage\/v1\/object\/proxolink-assets\/[0-9a-f-]{36}\/[0-9a-f-]{36}\/avatar\.png$/.test(url.pathname)
+        ||/^\/storage\/v1\/object\/proxolink-assets\/[0-9a-f-]{36}\/[0-9a-f-]{36}\/avatar(?:-edited)?\.png$/.test(url.pathname)
       :['/api/contact-templates','/api/contact-cards','/api/contact-card-action','/api/contact-preview-token'].includes(url.pathname)
         ||/^\/contact\/[0-9a-f-]{36}(?:\/avatar)?$/.test(url.pathname);
     if(!allowed||!['GET','POST','PATCH'].includes(method))throw Error('staging_request_scope');
@@ -71,6 +72,7 @@ export async function verifyStagingLifecycle(config,avatar,fetcher=fetch,{uuid=r
   assert.equal(catalog.status,200,'staging_catalog_required');
   assert.doesNotMatch(JSON.stringify(catalog.body),/storage_path|checksum_sha256|html_content|template\.html/);
   const fixtures=[];
+  const replacementAvatar=await sharp(avatar).modulate({brightness:0.9}).png().toBuffer();
   const inspect=async id=>{
     const list=await api('/api/contact-cards');assert.equal(list.status,200);
     const card=list.body.cards.find(row=>row.id===id);assert.ok(card,'saved_fixture_required');return card;
@@ -108,9 +110,22 @@ export async function verifyStagingLifecycle(config,avatar,fetcher=fetch,{uuid=r
     assert.equal(createHash('sha256').update(Buffer.from(await publicAvatar.arrayBuffer())).digest('hex'),
       createHash('sha256').update(avatar).digest('hex'),'public_avatar_bytes');
     const before=await inspect(id);
+    const replacementPath=session.user.id+'/'+id+'/avatar-edited.png';
+    const replacement=await request('/storage/v1/object/proxolink-assets/'+replacementPath,{supabase:true,
+      authorization,method:'POST',contentType:'image/png',body:replacementAvatar});
+    assert.ok(replacement.ok,'staging_avatar_replacement_failed');
+    const nextStyle=STYLES[(STYLES.indexOf(style)+1)%STYLES.length];
     const updated=await api('/api/contact-cards?id='+id,{...body({name:'Edited Proxo '+style,
-      bio:'Updated fixture',expected_updated_at:before.updated_at}),method:'PATCH'});
+      bio:'Updated fixture',template_key:nextStyle,template_version:2,color_theme:'blue',card_language:'en',
+      platforms:{wa:'12025550124',vb:'12025550124',ig:'proxo_staging_edited',ph:'12025550124'},
+      avatar_path:replacementPath,expected_updated_at:before.updated_at}),method:'PATCH'});
     assert.equal(updated.status,200);assert.equal(updated.body.card.id,id);assert.equal(updated.body.card.public_path,publicPath);
+    const edited=await inspect(id);
+    assert.equal(edited.template_key,nextStyle);assert.equal(edited.color_theme,'blue');assert.equal(edited.card_language,'en');
+    assert.equal(edited.platforms.wa,'12025550124');assert.equal(edited.avatar_path,replacementPath);
+    const editedAvatar=await request(publicPath+'/avatar');assert.equal(editedAvatar.status,200);
+    assert.equal(createHash('sha256').update(Buffer.from(await editedAvatar.arrayBuffer())).digest('hex'),
+      createHash('sha256').update(replacementAvatar).digest('hex'),'replacement_avatar_bytes');
     const invalid=await api('/api/contact-cards?id='+id,{...body({name:'',expected_updated_at:(await inspect(id)).updated_at}),method:'PATCH'});
     assert.equal(invalid.status,422);assert.equal((await inspect(id)).name,'Edited Proxo '+style);await page(id,200);
     const off=await api('/api/contact-card-action',body({card_id:id,action:'deactivate'}));assert.equal(off.status,200);
@@ -123,6 +138,7 @@ export async function verifyStagingLifecycle(config,avatar,fetcher=fetch,{uuid=r
     assert.equal(on.body.card.id,id);assert.equal(on.body.card.public_path,publicPath);await page(id,200);
     fixtures.push({style,version:2,fixture_id:id,failed_publish_recovered:true,duplicate_reused:true,
       stable_edit_link:true,invalid_edit_preserved:true,public_avatar_bytes:true,inactive_hidden:true,
+      template_theme_language_contacts_edited:true,avatar_replaced:true,
       owner_inactive_preview:true,reactivated_same_link:true});
   }
   const list=await api('/api/contact-cards');
