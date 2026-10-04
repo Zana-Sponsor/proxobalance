@@ -1,0 +1,77 @@
+{
+  "executable_commit": "ff7e63abd41071f3630f1098c566d03003f27a33",
+  "checks_scope": "CI and credential-free APK build; no native runtime or live staging",
+  "workflow_runs": [
+    {
+      "id": 37245147244,
+      "name": "Verify ProxoLink",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/37245147244",
+      "head_sha": "ff7e63abd41071f3630f1098c566d03003f27a33"
+    },
+    {
+      "id": 37245145086,
+      "name": "Build ProxoLink native verification",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/37245145086",
+      "head_sha": "ff7e63abd41071f3630f1098c566d03003f27a33"
+    },
+    {
+      "id": 37245145050,
+      "name": "Verify ProxoLink",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/37245145050",
+      "head_sha": "ff7e63abd41071f3630f1098c566d03003f27a33"
+    }
+  ],
+  "backend": {
+    "tests": 60,
+    "pass": 60,
+    "fail": 0,
+    "job_id": 111561452699
+  },
+  "edge_functions": {
+    "result": "success",
+    "job_id": 111561452835,
+    "retirement_replacement_deno_checked": true
+  },
+  "flutter": {
+    "tests_passed": 96,
+    "analysis_info_count": 28,
+    "release_apk_mb": 83.2,
+    "source_privacy_scan_passed": true,
+    "job_id": 111561452857
+  },
+  "native_jobs": [
+    {
+      "id": 111561446109,
+      "name": "native-verification-apk",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 111562247129,
+      "name": "native-runtime",
+      "status": "completed",
+      "conclusion": "skipped"
+    }
+  ],
+  "native_runtime_artifacts_present": false,
+  "native_artifact_names": [
+    "proxolink-native-part-02",
+    "proxolink-native-part-00",
+    "proxolink-native-part-03",
+    "proxolink-native-part-01",
+    "proxolink-native-verification-apk"
+  ],
+  "android_cases_executed": 0,
+  "live_staging_flows_executed": 0,
+  "production_mutations": "None",
+  "documentation_followup": "CI result updates change documentation/evidence only; redundant builds are skipped"
+}

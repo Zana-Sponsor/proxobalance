@@ -10,8 +10,8 @@ The existing native runner stopped on its first pixel mismatch, preventing colle
 | --- | --- |
 | Existing backend/security suite | **VERIFIED: 60/60**, freshly executed after the runner fix; [log](evidence/proxolink-v5-2026-10-05/backend-tests.log). Controlled provider fixtures do not certify live staging. |
 | Backend build, source scan, function limit | **VERIFIED**; [build](evidence/proxolink-v5-2026-10-05/build.log), [source scan](evidence/proxolink-v5-2026-10-05/source-scan.log), 10 top-level API functions. Generated unrelated build outputs were restored. |
-| Current inspected CI at `970165dce5c274714146b7226cb8b69ff8c20268` | [PR CI](https://github.com/Zana-Sponsor/proxobalance/actions/runs/37240394546) and [push CI](https://github.com/Zana-Sponsor/proxobalance/actions/runs/37240391242) passed: 60 backend tests, 96 Flutter tests, analysis with 28 informational issues, Edge checks, 83.2 MB release APK and APK source-privacy scan. These Flutter/Edge files are unchanged by this pass. |
-| Android native runtime | **BLOCKED**, not executed. [Latest native build](https://github.com/Zana-Sponsor/proxobalance/actions/runs/37240391300) succeeded, but `native-runtime` was **SKIPPED**; artifacts contain APK pieces, no runtime evidence. [Explicit 0/40 status](evidence/proxolink-v5-2026-10-05/native-results.json). |
+| Current inspected CI at `ff7e63abd41071f3630f1098c566d03003f27a33` | [PR CI](https://github.com/Zana-Sponsor/proxobalance/actions/runs/37245147244) and [push CI](https://github.com/Zana-Sponsor/proxobalance/actions/runs/37245145050) passed: 60 backend tests, 96 Flutter tests, analysis with 28 informational issues, Edge checks, 83.2 MB release APK and APK source-privacy scan. These Flutter/Edge files are unchanged by this pass. |
+| Android native runtime | **BLOCKED**, not executed. [Latest native build](https://github.com/Zana-Sponsor/proxobalance/actions/runs/37245145086) succeeded, but `native-runtime` was **SKIPPED**; artifacts contain APK pieces, no runtime evidence. [Explicit 0/40 status](evidence/proxolink-v5-2026-10-05/native-results.json). |
 | Live isolated staging | **BLOCKED**, not executed. Only production Zana and unrelated Exchange projects are visible; Zana has no development branches. No isolated target or staging runtime settings are configured in this execution environment. [Explicit 0/8 status](evidence/proxolink-v5-2026-10-05/staging-results.json). |
 | Eight prepared V2 refinements | **VERIFIED preparation only**: eight historical source hashes match fresh private metadata; eight generated V2 hashes match the reviewed outputs; seed dry run passes. [Reproduction evidence](evidence/proxolink-v5-2026-10-05/template-reproduction.json). No private source/manifests uploaded to Git or CI artifacts; no V2 registration/activation. |
 | Private object access | **VERIFIED: 8/8 anonymous public-object requests returned HTTP 400**; [responses](evidence/proxolink-v5-2026-10-05/private-storage.json). The bucket remains private. |
@@ -41,7 +41,7 @@ Feature-branch ProxoLink has no Telegram inputs, buttons, selectors, demo destin
 
 However, fresh provider inspection found production Edge Function **`notify-tool-created`, version 3, ACTIVE**, with `api.telegram.org` / `sendDocument` in its deployed source and no `proxolink_html_delivery_retired` response. The function was **not invoked**; no messages or documents were sent. Therefore **complete live Telegram removal is FAILED**. [Audit](evidence/proxolink-v5-2026-10-05/telegram-audit.json).
 
-The already committed replacement in `proxo_app/supabase/functions/notify-tool-created/index.ts` returns **HTTP 410**, never parses or forwards legacy payloads and needs no Telegram credential. Its Deno check passed in CI at `970165d`. It remains undeployed because the owner explicitly prohibited production deployment without separate approval. The correction is concrete and reviewable in PR #7; deploying only this retirement replacement with JWT verification retained is a separate production gate. No new bot or replacement Telegram credentials are required.
+The already committed replacement in `proxo_app/supabase/functions/notify-tool-created/index.ts` returns **HTTP 410**, never parses or forwards legacy payloads and needs no Telegram credential. Its Deno check passed in CI at `ff7e63a`. It remains undeployed because the owner explicitly prohibited production deployment without separate approval. The correction is concrete and reviewable in PR #7; deploying only this retirement replacement with JWT verification retained is a separate production gate. No new bot or replacement Telegram credentials are required.
 
 ## Eight direct visual comparisons
 
@@ -73,7 +73,9 @@ The owner's explicit production-deployment restriction prevents live retirement 
 
 ## Scope, migrations and rollback
 
-Executable change in this pass: only `scripts/run-proxolink-native.mjs`. This report, safe evidence files and corrections to the current access/collection statements in `PROXOLINK_PREVIEW_VERIFICATION_SETUP.md` are the remaining changes. Existing Flutter UI, eight template identities and schema files were not rewritten.
+Executable change in this pass: only `scripts/run-proxolink-native.mjs`. This report, safe evidence files and corrections to the preview setup and no-Telegram acceptance documents are the remaining changes. Existing Flutter UI, eight template identities and schema files were not rewritten.
+
+The executable collector fix and initial evidence are committed in [`ff7e63a`](https://github.com/Zana-Sponsor/proxobalance/commit/ff7e63abd41071f3630f1098c566d03003f27a33). All three new CI runs passed; [final CI metadata](evidence/proxolink-v5-2026-10-05/ci-results.json) records the inspected 60 backend and 96 Flutter tests, Edge checks, 83.2 MB release APK/privacy scan and native-runtime SKIPPED result. This final report-only follow-up changes no executable file and skips redundant CI.
 
 Fresh registry inspection confirms earlier ProxoLink migrations: `20261003202251` private staging, `20261003212627` production integrity, `20261004005907` legacy versions, `20261004005953` indexes, `20261004010739` migration manifest and `20261004013754` hidden analytics. **No migration was applied in this pass.** All 21 customer rows remain legacy/precutover, `active` + `creating`; final HTML/client-privilege cleanup, readiness backfill, existing-ad token issuance and V2 activation remain unapplied. Retention job metadata is active; its real execution is unverified. Project-wide advisor warnings remain unresolved; the [safe metadata file](evidence/proxolink-v5-2026-10-05/provider-security.json) includes their official remediation links.
 
@@ -81,7 +83,7 @@ Rollback is a feature-branch revert of the native collection change. It requires
 
 ## Requirement matrix — all sections 0–144
 
-C = freshly passed backend/security tests and source/build checks, limited to code/controlled provider fixtures. F = successful Flutter/Edge CI at `970165d`, unchanged application files. D = fresh read-only Supabase metadata/checkpoints. P = fresh eight anonymous private-object denials. L = retained historical Chromium evidence, with V2 hashes reproduced; no new browser/native run. N = actual native/device gate. S = actual isolated staging gate. V = current untested protected Vercel application runtime; dashboard metadata is accessible. O = separate production/credential gate. A VERIFIED row is limited to its stated evidence environment and does not certify the deployed product.
+C = freshly passed backend/security tests and source/build checks, limited to code/controlled provider fixtures. F = successful Flutter/Edge CI at `ff7e63a`, unchanged application files. D = fresh read-only Supabase metadata/checkpoints. P = fresh eight anonymous private-object denials. L = retained historical Chromium evidence, with V2 hashes reproduced; no new browser/native run. N = actual native/device gate. S = actual isolated staging gate. V = current untested protected Vercel application runtime; dashboard metadata is accessible. O = separate production/credential gate. A VERIFIED row is limited to its stated evidence environment and does not certify the deployed product.
 
 | Section | Requirement | Status | Evidence / remaining gate |
 | --- | --- | --- | --- |
@@ -115,7 +117,7 @@ C = freshly passed backend/security tests and source/build checks, limited to co
 | 27 | WebView Preview — Must Match Chrome | **BLOCKED** | N: real Android/iOS WebView-versus-Chrome comparison not executed. |
 | 28 | Preview Tracking Safety | **BLOCKED** | C demo/owner analytics suppression passes; N/V: actual platform preview zero-event proof pending. |
 | 29 | WebView Navigation Behavior | **BLOCKED** | C navigation restrictions present; N: platform denial and external launch/fallback untested. |
-| 30 | Card List UI — Unify with Create Ad and Ad Details | **VERIFIED** | F/source: shared Ad UI components and responsive card-list tests pass at 970165d; actual native UI acceptance remains separately blocked. |
+| 30 | Card List UI — Unify with Create Ad and Ad Details | **VERIFIED** | F/source: shared Ad UI components and responsive card-list tests pass at ff7e63a; actual native UI acceptance remains separately blocked. |
 | 31 | Active Card Actions | **BLOCKED** | F model/UI gating present; S/N: active Preview/Copy/Share/Edit/Use for Ad integrated flow pending. |
 | 32 | Inactive Card Actions | **BLOCKED** | C/F inactive gates present; S/N: real inactive owner preview/activation/actions pending. |
 | 33 | Failed Card Actions | **BLOCKED** | C/F failure/retry gates present; S: full real failed-card recovery/actions pending. |
@@ -141,7 +143,7 @@ C = freshly passed backend/security tests and source/build checks, limited to co
 | 53 | Template Placeholder Contract | **VERIFIED** | C and private reproduction: eight source checksums match fresh metadata; all eight V2 output hashes match reviewed outputs; seed dry run passes. |
 | 54 | Template Versioning | **VERIFIED** | C/private dry run: separate immutable V2 outputs reproduced with inactive/hidden flags; D zero V2 registrations and unchanged pinned customer rows. |
 | 55 | Future Automatic Template Management | **VERIFIED** | C: newest eligible catalog revision selected per style without changing restored pending requests. |
-| 56 | GitHub Workflow | **VERIFIED** | GitHub: feature PR remains Draft/unmerged; push/PR CI at 970165d passed. New runner fix retains branch/environment gates. |
+| 56 | GitHub Workflow | **VERIFIED** | GitHub: feature PR remains Draft/unmerged; push/PR CI at ff7e63a passed. New runner fix retains branch/environment gates. |
 | 57 | Vercel Routing | **BLOCKED** | Consolidated rewrites retained; V: actual deployed Vercel routes not reached. |
 | 58 | Vercel Environment Variables | **BLOCKED** | Dashboard verifies all six Proxo server-variable names and Preview/Production targets. Values and sensitive/encrypted types were not opened; runtime credential validity remains unverified. Connector access still returns 404. |
 | 59 | Server Error Handling | **VERIFIED** | C/F: invalid inputs, stalled previews, late responses, stale edits and publish failures handled. |
@@ -160,7 +162,7 @@ C = freshly passed backend/security tests and source/build checks, limited to co
 | 72 | Testing Matrix | **BLOCKED** | C 60/60 and F 96 tests pass. Native 0/40 and live staging 0/8; controlled fixtures are not integrated acceptance. |
 | 73 | UI Localization | **VERIFIED** | C/F: ku/ar/en labels and signed choices; mixed-direction text preserved in tests. |
 | 74 | Design Rules for Status UI | **BLOCKED** | F shared styling present; N/S: all real status/keyboard/system-scale device combinations pending. |
-| 75 | Card Row Layout | **VERIFIED** | F: responsive long-RTL row tests passed at 970165d; retained widget images are explicitly not native-WebView evidence. |
+| 75 | Card Row Layout | **VERIFIED** | F: responsive long-RTL row tests passed at ff7e63a; retained widget images are explicitly not native-WebView evidence. |
 | 76 | Creation Success UX | **BLOCKED** | F/C success handling present; S: real create-to-ready success UX pending. |
 | 77 | Creation Failure UX | **BLOCKED** | F/C retained inputs/retry behavior present; S/N: real create/publish/network-failure UX pending. |
 | 78 | Public URL Security | **VERIFIED** | C: strict stable identifier/path validation; no client-supplied public origin trust. |
@@ -228,7 +230,7 @@ C = freshly passed backend/security tests and source/build checks, limited to co
 | 140 | V5 PRODUCT CONTRACT — Fully Automatic Customer-Owned Contact Pages | **BLOCKED** | S/N/V: complete automatic ordinary-user management journey requires authorized write proof. |
 | 141 | V5 VISUAL PREVIEW AND APPROVED UI REFINEMENTS — What Must Actually Be Visible | **BLOCKED** | L/F changes prepared and tested; S/N: refinements not deployed, real selector/device rendering pending. |
 | 142 | V5 SECURE SERVER CONFIGURATION — Actual Variable Names and Access Boundaries | **FAILED** | Four exact GitHub settings and six Vercel server names/targets present; bypass removal/replacement audit metadata observed. Required reviewers is disabled and administrator bypass enabled, violating the protected-release procedure. Values/runtime validity remain untested. No values requested in chat or exposed. |
-| 143 | V5 VERIFICATION AND DEPLOYMENT GATES — What Is Actually Known | **BLOCKED** | Latest inspected CI passes at 970165d; native-runtime skipped. New local backend tests pass after collection fix. Dashboard Preview is Ready, but real native/staging/application/release gates remain incomplete. |
+| 143 | V5 VERIFICATION AND DEPLOYMENT GATES — What Is Actually Known | **BLOCKED** | Latest inspected CI passes at ff7e63a; native-runtime skipped. New local backend tests pass after collection fix. Dashboard Preview is Ready, but real native/staging/application/release gates remain incomplete. |
 | 144 | V5 EXECUTION PRIORITY, OWNER HANDOFF AND DONE DEFINITION | **BLOCKED** | Independent work executed and evidence published; complete product done definition remains blocked by N/S/V/O and confirmed live Telegram retirement failure. |
 
 Section totals: 52 VERIFIED, 2 FAILED, 91 BLOCKED.

@@ -5,7 +5,7 @@
   "executed_cases": 0,
   "passed_cases": 0,
   "failed_cases": 0,
-  "latest_observed_native_run": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/37240391300",
+  "latest_observed_native_run": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/37245145086",
   "latest_native_runtime_conclusion": "skipped",
   "protected_environment": "proxolink-preview-verification",
   "settings": {
@@ -18,5 +18,6 @@
   "immediate_blocker": "Required reviewers disabled and administrator bypass enabled; authoritative V5 section 144 requires reviewer approval before credential release",
   "configuration_evidence": "secure-configuration.json",
   "collection_fix": "Pixel differences no longer end collection after the first case; final zero-difference gate retained",
-  "actual_native_pixel_parity": "not established"
+  "actual_native_pixel_parity": "not established",
+  "latest_executable_commit": "ff7e63abd41071f3630f1098c566d03003f27a33"
 }
