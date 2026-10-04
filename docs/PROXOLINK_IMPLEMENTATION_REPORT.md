@@ -1,6 +1,6 @@
 # ProxoLink implementation and verification report
 
-Verified on 4 October 2026. The implementation is complete on the requested feature branch and is available as a protected Vercel Preview. The pull request remains draft and unmerged. Production promotion, customer cutover, legacy-column cleanup, and release publication remain approval-gated.
+Updated on 4 October 2026. The corrected implementation is pushed to the requested feature branch and has a READY protected Vercel Preview. Production implementation and end-to-end certification are **not complete**: the new live Android WebView run is blocked by missing secure runtime configuration, authenticated checks of the new deployment are blocked by the Vercel connection, and customer cutover/merge/production promotion have not occurred. The pull request remains draft and unmerged under the user's earlier approval limits. No customer records or production settings were changed during this re-audit.
 
 The supplied attachment was `PROXOLINK_PRIVATE_TEMPLATES_FULL_IMPLEMENTATION_PROMPT_UPDATED_V2(3).md`, containing 4,891 lines and sections 0–132. It was read from beginning to end before edits. The later user instructions requiring genuine server-rendered previews and the existing Ad UI design system supersede its older static-preview instructions. A separate V3 attachment was not available.
 
@@ -11,15 +11,70 @@ The supplied attachment was `PROXOLINK_PRIVATE_TEMPLATES_FULL_IMPLEMENTATION_PRO
 | Repository | [Zana-Sponsor/proxobalance](https://github.com/Zana-Sponsor/proxobalance) |
 | Branch | `feat/proxolink-private-renderer-migration` |
 | Pull request | [Draft PR #7](https://github.com/Zana-Sponsor/proxobalance/pull/7) |
-| Tested revision | `9e06751e41c0b9436de7ea51b690206ee74d9e70` |
-| Main verification | [Run 37192633694](https://github.com/Zana-Sponsor/proxobalance/actions/runs/37192633694): passed |
-| Native APK build | [Run 37192631788](https://github.com/Zana-Sponsor/proxobalance/actions/runs/37192631788): passed |
-| Protected Preview | [proxobalance-pl7xiadni-proxoapp-1758.vercel.app](https://proxobalance-pl7xiadni-proxoapp-1758.vercel.app), deployment `dpl_9rCV68gGtaxo9ttwbHAMepHgUTVt`: READY |
+| Current tested code revision | `d9894d92db3ff6ed6494043657ccaecba9a743b1` |
+| Current main verification | [Run 37212967155](https://github.com/Zana-Sponsor/proxobalance/actions/runs/37212967155): backend, Flutter and Edge Function jobs passed; tested PR merge revision `4c9ac5d6112b79b7f771e78c40af9ac5a92b074a` |
+| Current native APK build | [Run 37212964578](https://github.com/Zana-Sponsor/proxobalance/actions/runs/37212964578): build passed; live runtime steps skipped because configuration is missing |
+| Current protected Preview | [proxobalance-m3i211mkp-proxoapp-1758.vercel.app](https://proxobalance-m3i211mkp-proxoapp-1758.vercel.app), deployment `dpl_JVLgM12PfZoEJhsizZ1oH8hQYXFM`: READY; 18-second deployment observed in the signed-in dashboard |
 | Preview protection | Vercel SSO enabled for all non-custom-domain deployments; temporary automation bypass revoked |
-| Production | Existing production deployment unchanged; feature branch not promoted |
+| Production | Existing main revision `e7c1d3060c2777cae7ff2bc293df7df5ebfd4cd6`, deployment `dpl_H3aJZtYpfVhePK5n1ZL7pxwiLbvQ`, unchanged; feature branch not promoted |
 | Merge | None; PR remains draft |
-| Android artifact | Debug verification APK, 93,758,173 bytes, SHA-256 `1185286da315f64bf3a17a7d4733cbaf1e9c96bae5b467220507eb06e75a8a54` |
+| Android artifacts | Current credential-free debug verification APK in run 37212964578; current release APK built at 83.2 MB and passed the privacy scan in run 37212967155. The prior debug artifact's hash is historical evidence, not the current APK hash. |
 | Store release | Not published; no private release keystore was supplied |
+
+## Corrections made during the current re-audit
+
+The partial branch already contained the private renderer, live WebView integration, Ad UI components and additive migrations described below. The current code commit fixes concrete remaining defects without changing any original template layout, CSS, JavaScript or customer fields:
+
+- **Public avatar identity:** rendered pages previously exposed Supabase Storage URLs containing the owner's Auth UUID. They now use card-scoped `/contact/:id/avatar` or exact-ad `/a/:token/avatar` routes. The server resolves the owner/card path privately, fully decodes the original JPEG/PNG/WebP, and returns unchanged bytes with no-store/nosniff headers. Inactive owner-preview images require the same short-lived preview capability. Image loads create no analytics events.
+- **Publication races:** retry and activation now require the conditional database update to return the matching row. A newer edit taking the publication lease returns `409 edit_conflict`; an old failed render cannot overwrite the newer Ready state.
+- **Analytics retention:** recorded request paths use the canonical validated advertisement/action path. Arbitrary visitor query strings are excluded from retained analytics history. Exact-ad resolution remains unchanged.
+- **Stalled live previews:** Flutter now times out stalled signed-URL requests and page loads after 45 seconds, offers the existing Ad UI retry control, rejects late responses/old controller callbacks, and cancels timers on disposal. Typography and component styling remain inherited.
+- **Repeatable native verification:** a KVM-backed GitHub Actions runtime job now installs the credential-free probe APK and provisions eight short-lived server preview capabilities through the app's private runtime file. Credentials, tokens and protection headers are not compiled into the APK or uploaded as artifacts. The runner captures safe screenshots and per-style results only when all required settings exist.
+
+Changed code is covered by seven additional backend regression tests and two Flutter timeout/race regression tests. No reusable template files or template bytes were modified.
+
+## Current verification evidence
+
+These results apply to code revision `d9894d9`, unlike the historical browser/pixel results later in this report.
+
+| Check | Current result |
+| --- | --- |
+| Backend/security regressions | 41 passed, 0 failed locally and in CI |
+| Flutter selected suites | 94 tests passed in CI |
+| Flutter analysis | Passed; informational lints only |
+| Backend build and Vercel function limit | Passed; consolidated avatar operation adds no new top-level function |
+| Release APK | Built successfully, 83.2 MB; source-privacy scan passed |
+| Standalone native probe | Analyzed and built successfully without embedded runtime credentials |
+| Edge Function type check | Passed |
+| Source privacy scan | Passed: no reusable template source or static style-preview delivery in Flutter/public output |
+| Responsive Flutter checks | Card list at 320/375/393/430/768 dp and form/retry layout at 320/393/768 dp passed; fresh 320 and 768 dp artifacts visually inspected |
+| UI artifact boundary | The widget-test screenshots show the real-preview failure/retry state; they do **not** prove native WebView rendering |
+| Customer checkpoint | All 21 cards exactly match the private migration manifest; 27 ads and 16 card-referencing ads preserved; no orphan/cross-owner references |
+| Customer avatars | All 19 objects returned HTTP 200, matched manifest SHA-256, and fully decoded; two cards have no avatar |
+| Private template bucket | Private flag retained; anonymous public-object requests for all eight catalog templates denied |
+| Client access | RLS enabled; anon/authenticated direct access to internal templates, links, events and publication attempts remains denied |
+| Retention | Existing 30-day visitor-detail cleanup job remains active; raw IP remains suppressed |
+| Live database mutations in this re-audit | None |
+| New deployment authenticated API/native checks | Not completed; access/runtime configuration blockers below |
+
+The main CI UI artifact is `proxolink-ui-verification` (artifact 11307446475). Historical 40/40 pixel comparisons, 103 browser cases and 71 protected API checks were conducted on `9e06751`, not repeated against this new deployment. They remain useful preservation evidence but do not certify the new avatar route end to end.
+
+### Current access and native blockers
+
+The Vercel connector returned project/deployment access failures, including an explicit 403 while obtaining the protected-preview automation capability. The signed-in dashboard nevertheless confirms the new deployment is READY. A direct browser attempt to open its API returned `net::ERR_BLOCKED_BY_CLIENT`; no authenticated API success is claimed for the new deployment. Reauthorize the Vercel connection for team `proxoapp-1758` and project `proxobalance` before continuing protected API checks.
+
+Run 37212964578 completed its APK build, then explicitly reported all four missing GitHub runtime settings:
+
+| Setting | Location and intended value |
+| --- | --- |
+| `PROXO_NATIVE_ANON_KEY` | Repository variable; the project's publishable/anon key only |
+| `PROXO_NATIVE_TEST_EMAIL` | Actions secret; dedicated ordinary verification account |
+| `PROXO_NATIVE_TEST_PASSWORD` | Actions secret; that account's password |
+| `PROXO_NATIVE_VERCEL_BYPASS` | Actions secret; a temporary protected-preview automation capability |
+
+Configure these through the provider's secure settings, never chat or source. Then rerun the native workflow and verify eight completed WebView cases/screenshots. Revoke the temporary protection capability and remove temporary runtime secrets after verification. No new verification account or persistent credential was created in this re-audit. External-app contact launches and iOS device verification also remain outstanding.
+
+Local Flutter execution was rejected by automatic approval review because the toolchain attempted to access a cloud instance metadata endpoint, creating a possible credential/metadata exposure risk. This was not retried or bypassed. GitHub CI provided the Flutter analysis, tests and builds instead. The local host also lacks KVM; the earlier software-emulated Android attempt is described below and is not native certification.
 
 ## Flutter application
 
@@ -92,7 +147,7 @@ The guarded `scripts/sql/proxolink_verified_cutover.sql` was rehearsed in a tran
 
 The live verification created only isolated users/cards/ads/links/events with `example.invalid` addresses. Cleanup validated the expected fixture counts before deletion, removed two avatar objects through the Storage API, deleted only rows owned by those two fixture users, and required the final 21-card/27-ad/zero-link/zero-event state before commit.
 
-## Verification results
+## Historical verification results at revision 9e06751
 
 | Verification | Result |
 | --- | --- |
@@ -127,7 +182,7 @@ The eight templates are otherwise verified as real server responses by the 71 pr
 3. **Merge and production promotion:** require separate approval. PR #7 remains draft and Vercel production is unchanged.
 4. **Telegram credential:** rotate the historically exposed bot credential with [@BotFather](https://t.me/BotFather). Client delivery code is removed, but rotation cannot be confirmed by repository changes.
 5. **Supabase service-role credential:** rotate the Proxo project credential because it was pasted into the conversation. Coordinate consumers, replace the Vercel sensitive environment value, and redeploy at the approved time. Do not paste the replacement into chat.
-6. **Native certification:** run the standalone probe on a physical device or KVM-enabled Android runner and complete iOS verification before store release.
+6. **Native certification and protected API access:** reauthorize Vercel for the stated team/project, configure the four secure runtime settings above, rerun the KVM-backed native workflow (or use a physical device), and complete external contact-launch and iOS verification before store release. The skipped runtime job is not a pass for this requirement.
 7. **Attachment provenance:** provide the specifically named V3 file if it differs from the fully read 4,891-line V2(3) attachment.
 
 ## Rollback
