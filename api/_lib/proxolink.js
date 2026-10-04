@@ -349,7 +349,14 @@ export function renderTemplate(template,card,{adToken=null,variant='standard',re
   const guardedHtml=demoGuard
     ? (/<\/body\s*>/i.test(html)?html.replace(/<\/body\s*>/i,demoGuard+'</body>'):html+demoGuard)
     : html;
-  return guardedHtml.replaceAll('https://raw.githubusercontent.com/Zana-Sponsor/Zana-Sponsor/main/Rabar_021.woff2','/assets/fonts/Rabar_021.woff2')
+  // Five original private templates retain a retired Telegram-only modal
+  // branch. Remove that dead branch from the delivered document without
+  // changing its signed, versioned source or any supported button styling.
+  const page=guardedHtml.replace(/if\s*\(\s*n\s*===\s*['"]telegram['"]\s*\)\s*cls\s*=\s*['"]ok-te['"]\s*;/g,'');
+  // Original Proxo footer links remain functional on public cards, but no
+  // external destination should be actionable in a signed browser demo.
+  const safePage=card.demo===true?page.replaceAll('https://www.tiktok.com/@proxo_iq','#'):page;
+  return safePage.replaceAll('https://raw.githubusercontent.com/Zana-Sponsor/Zana-Sponsor/main/Rabar_021.woff2','/assets/fonts/Rabar_021.woff2')
     .replace('<html dir="rtl" lang="ku">','<html dir="'+(card.card_language==='en'?'ltr':'rtl')+'" lang="'+(card.card_language||'ku')+'">');
 }
 export async function renderedPage(card,{adToken=null,preview=false,previewToken=null}={}) {
