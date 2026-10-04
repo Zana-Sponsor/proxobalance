@@ -35,9 +35,9 @@ export function normalizedPlatforms(platforms,{historical=false}={}) {
 
 const TYPES = {wa:'whatsapp',vb:'viber',ig:'instagram',ph:'phone',as:'asya'};
 const LABELS = {
-  wa:['واتسئاپ','واتساب'], vb:['ڤایبەر','فايبر'],
-  ig:['ئینستاگرام','إنستغرام'],
-  ph:['کۆرەک','كورك'], as:['ئاسیا سێڵ','آسيا سيل']
+  wa:['واتسئاپ','واتساب','WhatsApp'], vb:['ڤایبەر','فايبر','Viber'],
+  ig:['ئینستاگرام','إنستغرام','Instagram'],
+  ph:['کۆرەک','كورك','Korek'], as:['ئاسیا سێڵ','آسيا سيل','Asiacell']
 };
 const ICON = {wa:'fa-whatsapp',vb:'fa-viber',
   ig:'fa-instagram',ph:'fa-phone-alt',as:'fa-phone-alt'};
@@ -227,7 +227,7 @@ function avatarHtml(card,publicAvatarUrl) {
 function selectedPlatforms(card) {
   const platforms=normalizedPlatforms(card.platforms,{historical:true});
   return IDS.filter(id=>platforms[id]).map(id=>({
-    id, label:LABELS[id][card.card_language==='ar'?1:0],
+    id, label:LABELS[id][card.card_language==='en'?2:card.card_language==='ar'?1:0],
     type:TYPES[id],value:platforms[id],
     url:contactDestination(id,platforms[id])
   }));
@@ -335,11 +335,14 @@ export function renderTemplate(template,card,{adToken=null,variant='standard',re
     BUTTONS:pieces.buttons,TT_BADGE:pieces.ttBadge,TT_INLINE:pieces.ttInline,
     THEME_FROM:colors[0],THEME_TO:colors[1],HANDLERS:handlers
   };
-  const html=template.replace(/\{\{([A-Z_]+)\}\}/g,(_,k)=>{
+  let html=template.replace(/\{\{([A-Z_]+)\}\}/g,(_,k)=>{
     if(!Object.prototype.hasOwnProperty.call(placeholders,k))throw err(503,'template_invalid');
     return placeholders[k];
   });
   if(/\{\{[A-Z_]+\}\}/.test(html))throw err(503,'template_invalid');
+  // The original footer includes a brand TikTok link and legal links. In a
+  // selector demo these also stay inert, including when opened outside Flutter.
+  if(card.demo===true)html=html.replace(/(<a\b[^>]*\bhref=)(["'])(.*?)\2/gi,'$1$2#$2');
   // A signed template demo can also open in a normal browser, outside Flutter's
   // WebView navigation guard. Keep the original modal/press visuals, but make
   // every demo contact/TikTok destination inert and close confirmations locally.

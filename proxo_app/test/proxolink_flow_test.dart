@@ -47,6 +47,7 @@ class FakeProxoLink extends ProxoLinkRepository {
   List<ProxoCard> rows;
   Map<String, dynamic>? submitted;
   String? actionId, actionName;
+  final previewRequests = <String>[];
   FakeProxoLink(this.rows);
   @override
   Future<List<ProxoCard>> cards() async => rows;
@@ -75,8 +76,13 @@ class FakeProxoLink extends ProxoLinkRepository {
     'https://www.proxobalance.app/contact/$id?preview_token=signed',
   );
   @override
-  Future<Uri> templatePreview(String key, int version) async =>
-      Uri.parse('https://www.proxobalance.app/contact-preview?token=signed');
+  Future<Uri> templatePreview(String key, int version, {
+    String theme = 'purple',
+    String language = 'ku',
+  }) async {
+    previewRequests.add('$key/$version/$theme/$language');
+    return Uri.parse('https://www.proxobalance.app/contact-preview?token=signed');
+  }
   @override
   Future<ProxoCard> save(
     Map<String, dynamic> data, {
@@ -143,6 +149,35 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
     pending.complete(Uri.parse('https://www.proxobalance.app/contact-preview?token=late'));
     await tester.pump();
+    expect(tester.takeException(), isNull);
+  });
+  testWidgets('theme and language reload one live demo while retaining form input', (tester) async {
+    final repo = FakeProxoLink([]);
+    await tester.pumpWidget(MaterialApp(
+      theme: buildAppTheme(),
+      home: ToolsScreen(initialCreate: true, repository: repo),
+    ));
+    await tester.pumpAndSettle();
+    final nameField = find.byType(TextFormField).first;
+    await tester.ensureVisible(nameField);
+    await tester.enterText(nameField, 'فرۆشگای Proxo 2026');
+    final blue = find.byWidgetPredicate(
+      (widget) => widget is Semantics && widget.properties.label == 'blue',
+    );
+    await tester.ensureVisible(blue);
+    await tester.tap(blue);
+    await tester.pumpAndSettle();
+    expect(repo.previewRequests.last, 'dark/1/blue/ku');
+    final language = find.byType(DropdownButtonFormField<String>);
+    await tester.ensureVisible(language);
+    await tester.tap(language);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('English').last);
+    await tester.pumpAndSettle();
+    expect(repo.previewRequests.last, 'dark/1/blue/en');
+    expect(find.byType(ProxoLinkPreview), findsOneWidget);
+    expect(tester.widget<TextFormField>(nameField).controller!.text,
+        'فرۆشگای Proxo 2026');
     expect(tester.takeException(), isNull);
   });
   testWidgets('a late preview response cannot replace its timeout error state', (tester) async {

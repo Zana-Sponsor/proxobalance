@@ -17,10 +17,14 @@ export function makePreviewToken(card) {
   return payload+'.'+signature(payload);
 }
 
-export function makeTemplateToken(userId, key, version) {
+const THEMES=new Set(['purple','blue','green','red','yellow','cyan','pink','dark']);
+const LANGUAGES=new Set(['ku','ar','en']);
+export function makeTemplateToken(userId, key, version, {theme='purple',language='ku'}={}) {
   if(!validUuid(userId)||!/^[a-z][a-z0-9_-]{0,39}$/.test(key)
-    ||!Number.isInteger(version)||version<1)throw Error('invalid_template');
+    ||!Number.isInteger(version)||version<1||!THEMES.has(theme)
+    ||!LANGUAGES.has(language))throw Error('invalid_template');
   const payload=Buffer.from(JSON.stringify({kind:'template',userId,key,version,
+    theme,language,
     expires:Math.floor(Date.now()/1000)+300})).toString('base64url');
   return payload+'.'+signature(payload);
 }
@@ -37,6 +41,9 @@ export function templateTokenData(token) {
       ||!/^[a-z][a-z0-9_-]{0,39}$/.test(data.key)
       ||!Number.isInteger(data.version)||data.version<1
       ||!Number.isInteger(data.expires)||data.expires<Math.floor(Date.now()/1000))return null;
+    // Previously issued five-minute capabilities keep their original defaults.
+    data.theme??='purple'; data.language??='ku';
+    if(!THEMES.has(data.theme)||!LANGUAGES.has(data.language))return null;
     return data;
   } catch {return null;}
 }

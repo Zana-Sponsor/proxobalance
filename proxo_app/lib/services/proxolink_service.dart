@@ -40,7 +40,10 @@ abstract class ProxoLinkRepository {
   Future<ProxoCard> save(Map<String, dynamic> data, {ProxoCard? existing});
   Future<void> action(String id, String action);
   Future<Uri> preview(String id);
-  Future<Uri> templatePreview(String key, int version);
+  Future<Uri> templatePreview(String key, int version, {
+    String theme = 'purple',
+    String language = 'ku',
+  });
   Future<String> uploadAvatar(String id, Uint8List bytes);
   Uri publicUrl(String id);
 }
@@ -155,9 +158,12 @@ class ProxoLinkService implements ProxoLinkRepository {
         as String,
   );
   @override
-  Future<Uri> templatePreview(String key, int version) async => _url(
+  Future<Uri> templatePreview(String key, int version, {
+    String theme = 'purple',
+    String language = 'ku',
+  }) async => _url(
     ((await _request(
-              '/api/contact-templates?template_key=${Uri.encodeQueryComponent(key)}&version=$version',
+              '/api/contact-templates?template_key=${Uri.encodeQueryComponent(key)}&version=$version&theme=${Uri.encodeQueryComponent(theme)}&language=${Uri.encodeQueryComponent(language)}',
             ))['templates']
             as List)
         .map((j) => ProxoTemplate.fromJson(Map<String, dynamic>.from(j as Map)))

@@ -522,6 +522,7 @@ class _ContactFormState extends State<_ContactForm> {
   int _version = 1;
   List<ProxoTemplate>? _templates;
   bool _catalogFailed = false, _saving = false;
+  bool _restoredDraft = false;
   String? _error;
   late final String _pendingKey;
   @override
@@ -573,9 +574,10 @@ class _ContactFormState extends State<_ContactForm> {
       );
       if (pending != null && mounted) {
         try {
-          setState(
-            () => _fill(Map<String, dynamic>.from(jsonDecode(pending) as Map)),
-          );
+          setState(() {
+            _fill(Map<String, dynamic>.from(jsonDecode(pending) as Map));
+            _restoredDraft = true;
+          });
         } catch (_) {
           /* Leave an invalid local draft untouched; no server mutation. */
         }
@@ -595,7 +597,7 @@ class _ContactFormState extends State<_ContactForm> {
         _catalogFailed = false;
         if (!templates.any((t) => t.key == _template))
           _template = templates.first.key;
-        if (widget.existing == null) {
+        if (widget.existing == null && !_restoredDraft) {
           _version = templates.firstWhere((t) => t.key == _template).version;
         }
       });
@@ -793,9 +795,10 @@ class _ContactFormState extends State<_ContactForm> {
                               child: SizedBox(
                                 height: 460,
                                 child: ProxoLinkPreview(
-                                  key: ValueKey('$_template/$_version'),
+                                  key: ValueKey('$_template/$_version/$_theme/$_language'),
                                   loadUrl: () => widget.repository
-                                      .templatePreview(_template, _version),
+                                      .templatePreview(_template, _version,
+                                        theme: _theme, language: _language),
                                 ),
                               ),
                             ),
@@ -808,7 +811,8 @@ class _ContactFormState extends State<_ContactForm> {
                                     title: 'پێشبینینی شێواز',
                                     allowContactActions: false,
                                     loadUrl: () => widget.repository
-                                        .templatePreview(_template, _version),
+                                        .templatePreview(_template, _version,
+                                          theme: _theme, language: _language),
                                   ),
                                 ),
                               ),

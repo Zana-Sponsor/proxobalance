@@ -2,19 +2,29 @@ import { json, withSecurity } from '../security.js';
 import { authenticatedUser, proxoRows, renderedPage, publicPage, unavailable } from '../proxolink.js';
 import { makeTemplateToken, templateTokenData } from '../proxolink-preview.js';
 
+const ORDER=['dark','light','classic','pill','card','neon','zoom','banner'];
+const THEMES=['purple','blue','green','red','yellow','cyan','pink','dark'];
+const LANGUAGES=['ku','ar','en'];
 export default withSecurity(async (req, res, {user}) => {
   try {
     const key=req.query?.template_key,version=Number(req.query?.version);
-    const selected=typeof key==='string'&&['dark','light','classic','pill','card','neon','zoom','banner'].includes(key)&&Number.isInteger(version)&&version>0;
+    const selected=key!==undefined||req.query?.version!==undefined;
+    const theme=req.query?.theme??'purple',language=req.query?.language??'ku';
+    if((selected&&!(typeof key==='string'&&ORDER.includes(key)
+      &&typeof req.query?.version==='string'&&/^[1-9][0-9]*$/.test(req.query.version)
+      &&Number.isSafeInteger(version)))||!THEMES.includes(theme)||!LANGUAGES.includes(language))
+      return json(res,422,{ok:false,error:'invalid_request'});
     const rows=await proxoRows('proxolink_templates','&is_active=eq.true&order=template_key.asc,version.desc'+(selected?'&template_key=eq.'+key+'&version=eq.'+version:'&is_catalog_visible=eq.true'),
       'template_key,version,display_name_ckb,display_name_en,requires_avatar,is_active');
     const seen=new Set();
-    const templates=rows.filter(row=>!seen.has(row.template_key)&&seen.add(row.template_key))
+    const templates=rows.filter(row=>ORDER.includes(row.template_key)
+      &&!seen.has(row.template_key)&&seen.add(row.template_key))
+      .sort((a,b)=>ORDER.indexOf(a.template_key)-ORDER.indexOf(b.template_key))
       .map(row=>({template_key:row.template_key,version:row.version,
         display_name_ckb:row.display_name_ckb,display_name_en:row.display_name_en,
         requires_avatar:row.requires_avatar,is_active:row.is_active,
         preview_path:'/contact-preview?token='+encodeURIComponent(
-        makeTemplateToken(user.id,row.template_key,row.version))}));
+        makeTemplateToken(user.id,row.template_key,row.version,{theme,language}))}));
     return json(res,200,{ok:true,templates,expires_in:300});
   } catch {return json(res,503,{ok:false,error:'templates_unavailable'});}
 }, {auth:'required',methods:['GET'],autoLog:false,resolveUser:authenticatedUser});
@@ -27,9 +37,10 @@ export async function templatePreview(req,res) {
     // A selected real private template, rendered with controlled sample data.
     // This never inserts a card, publishes a link, or writes analytics.
     const card={id:'00000000-0000-4000-8000-000000000001',user_id:data.userId,
-      name:'Proxo',bio:'لەڕێگەی دووگمەکانەوە پەیوەندیمان پێوە بکەن.',tt:'proxo_iq',
-      template_key:data.key,template_version:data.version,color_theme:'purple',
-      card_language:'ku',platforms:{wa:'9647501234567',vb:'9647501234567',
+      name:'Proxo',bio:{ku:'لەڕێگەی دووگمەکانەوە پەیوەندیمان پێوە بکەن.',
+        ar:'تواصلوا معنا عبر الأزرار أدناه.',en:'Contact us using the buttons below.'}[data.language],tt:'proxo_iq',
+      template_key:data.key,template_version:data.version,color_theme:data.theme,
+      card_language:data.language,platforms:{wa:'9647501234567',vb:'9647501234567',
         ig:'proxo_iq',ph:'9647501234567',as:'9647501234567'},demo:true};
     return publicPage(res,await renderedPage(card,{preview:true}));
   } catch {return unavailable(res);}

@@ -60,6 +60,48 @@ test('catalog returns live signed previews without raw storage metadata',async()
  assert.match(body.templates[0].preview_path,/^\/contact-preview\?token=/);
  assert.doesNotMatch(res.body,/storage_path|checksum_sha256|template.html/);
 });
+test('catalog preserves original style order and chooses the newest catalog version',async()=>{
+ const delegate=mockFetch();
+ global.fetch=async(url,options)=>new URL(url).pathname==='/rest/v1/proxolink_templates'
+  ?Response.json(['banner','card','classic','dark','light','neon','pill','zoom']
+   .flatMap(template_key=>[{...metadata,template_key,version:2},{...metadata,template_key,version:1}]))
+  :delegate(url,options);
+ const body=JSON.parse((await invoke({op:'templates'})).body);
+ assert.deepEqual(body.templates.map(t=>t.template_key),['dark','light','classic','pill','card','neon','zoom','banner']);
+ assert.ok(body.templates.every(t=>t.version===2));
+});
+test('selected theme and language are signed, rendered and cannot be overridden by a query',async()=>{
+ const {templateTokenData}=await import('../api/_lib/proxolink-preview.js');
+ const events=[],delegate=mockFetch({events});
+ const source=template.replace('<head>','<head><style>.color{background:{{GRAD}}}</style>');
+ global.fetch=async(url,options)=>{
+  const path=new URL(url).pathname;
+  if(path==='/rest/v1/proxolink_templates')return Response.json([{...metadata,checksum_sha256:createHash('sha256').update(source).digest('hex')}]);
+  if(path.includes('/storage/'))return new Response(source);
+  return delegate(url,options);
+ };
+ const result=await invoke({op:'templates',template_key:'classic',version:'1',theme:'blue',language:'en'});
+ assert.equal(result.statusCode,200);
+ const token=new URL(JSON.parse(result.body).templates[0].preview_path,'https://local.test').searchParams.get('token');
+ assert.equal(templateTokenData(token).theme,'blue');assert.equal(templateTokenData(token).language,'en');
+ const rendered=await invoke({op:'template-preview',token,theme:'red',language:'ar'},{auth:false});
+ assert.equal(rendered.statusCode,200);assert.match(rendered.body,/<html dir="ltr" lang="en">/);
+ assert.match(rendered.body,/#1e3a8a,#2563eb/);assert.match(rendered.body,/Contact us using the buttons below/);
+ assert.match(rendered.body,/>WhatsApp</);assert.equal(events.length,0);
+ const [payload,signature]=token.split('.');
+ const forged=Buffer.from(JSON.stringify({...JSON.parse(Buffer.from(payload,'base64url')),theme:'red'})).toString('base64url')+'.'+signature;
+ assert.equal((await invoke({op:'template-preview',token:forged},{auth:false})).statusCode,404);
+});
+test('malformed selected preview requests fail before reading private metadata',async()=>{
+ let metadataReads=0;const delegate=mockFetch();
+ global.fetch=async(url,options)=>{if(new URL(url).pathname==='/rest/v1/proxolink_templates')metadataReads++;return delegate(url,options);};
+ for(const query of [
+  {template_key:'unknown',version:'1'}, {template_key:'classic'},
+  {version:'1'}, {template_key:'classic',version:'1.5'},
+  {template_key:'classic',version:['1']}, {theme:'<style>'}, {language:'xx'}
+ ])assert.equal((await invoke({op:'templates',...query})).statusCode,422);
+ assert.equal(metadataReads,0);
+});
 test('template preview renders the selected real template and records no events',async()=>{
  const events=[];global.fetch=mockFetch({events});
  const res=await invoke({op:'template-preview',token:makeTemplateToken(owner,'classic',1)},{auth:false});

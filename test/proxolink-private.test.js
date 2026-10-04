@@ -75,6 +75,15 @@ test('the original modal script loses its retired Telegram branch and demo foote
   assert.match(publicDoc,/www[.]tiktok[.]com\/\@proxo_iq/);
   assert.match(demoDoc,/href="#"/);
 });
+test('demo footer links cannot open real profiles or external pages',()=>{
+  const source=template.replace('</html>',
+    '<footer><a href="https://www.tiktok.com/@proxo_iq" target="_blank">Proxo</a>'
+    +'<a href="https://proxopages.com/policy">Privacy Policy</a></footer></html>');
+  const demo=renderTemplate(source,{...card,demo:true});
+  assert.doesNotMatch(demo,/href="https:/);assert.match(demo,/>Privacy Policy</);
+  const real=renderTemplate(source,card);
+  assert.match(real,/href="https:\/\/proxopages.com\/policy"/);
+});
 test('only valid stable identifiers are accepted',()=>{
   assert.equal(validUuid(id),true);
   assert.equal(validUuid('../../../secrets'),false);

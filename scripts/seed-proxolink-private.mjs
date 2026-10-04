@@ -31,7 +31,7 @@ async function api(pathname,method,body,headers={}) {
 }
 for(const entry of entries) {
   const {template_key:k,version,storage_path:p,checksum_sha256:expected,requires_avatar}=entry;
-  if(!KEYS.includes(k)||version!==1||p!==k+'/v1/template.html'
+  if(!KEYS.includes(k)||![1,2].includes(version)||p!==k+'/v'+version+'/template.html'
     ||typeof expected!=='string'||!/^[a-f0-9]{64}$/.test(expected))
     throw Error('Unsafe template metadata');
   const filepath=path.resolve(root,p);
@@ -43,7 +43,7 @@ for(const entry of entries) {
     ||!data.includes(Buffer.from('{{BIO}}')))
     throw Error('Private template verification failed: '+k);
   if(!apply) {
-    process.stdout.write('DRY RUN OK: '+k+' v1, verified SHA-256\n');
+    process.stdout.write('DRY RUN OK: '+k+' v'+version+', verified SHA-256\n');
     continue;
   }
   const objectPath='/storage/v1/object/proxolink-templates/'
@@ -62,16 +62,23 @@ for(const entry of entries) {
       'x-upsert':'false'
     });
   } else throw Error('Cannot verify private object: '+k);
+  const downloaded=await api(objectPath,'GET');
+  const downloadedHash=createHash('sha256').update(
+    Buffer.from(await downloaded.arrayBuffer())
+  ).digest('hex');
+  if(downloadedHash!==expected)throw Error('Uploaded private object checksum mismatch: '+k);
   await api('/rest/v1/proxolink_templates?on_conflict=template_key,version',
     'POST',JSON.stringify({
       template_key:k,version,
       display_name_ckb:LABELS[k][0],display_name_en:LABELS[k][1],
       storage_path:p,checksum_sha256:expected,
-      requires_avatar:requires_avatar===true,is_active:true
+      requires_avatar:requires_avatar===true,
+      is_active:version===1?true:entry.is_active===true,
+      is_catalog_visible:version===1?true:entry.is_catalog_visible===true
     }),{
       'Content-Type':'application/json',
       Prefer:'resolution=merge-duplicates,return=minimal'
     });
-  process.stdout.write('PRIVATE UPLOAD VERIFIED: '+k+' v1\n');
+  process.stdout.write('PRIVATE UPLOAD VERIFIED: '+k+' v'+version+'\n');
 }
 process.stdout.write(apply?'Private seeding completed.\n':'Dry run completed: no upload performed.\n');
