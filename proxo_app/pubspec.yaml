@@ -33,14 +33,8 @@ dependencies:
   # ── Backend: Supabase
   supabase_flutter: 2.5.0
   http: ^1.2.1
-  # Both of these were already imported in lib/ but never declared — they
-  # only resolved because another package happened to pull them in. That
-  # trips `depend_on_referenced_packages` in `flutter analyze`, and breaks
-  # outright the day a transitive parent drops them.
-  #   path_provider → local_html_preview / tools_screen / ad_screen / tutorial
-  #   http_parser   → telegram_delivery_service (MediaType)
+  # Tutorial downloads use path_provider directly.
   path_provider: ^2.1.3
-  http_parser: ^4.0.2
   # ── Backend: Firebase
   firebase_core: ^3.3.0
   firebase_database: ^11.1.0
