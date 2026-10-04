@@ -75,3 +75,4 @@ jobs:
         with:
           deno-version: v2.x
       - run: deno check proxo_app/supabase/functions/delete-user/index.ts
+      - run: deno check proxo_app/supabase/functions/notify-tool-created/index.ts
