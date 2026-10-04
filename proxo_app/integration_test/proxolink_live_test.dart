@@ -55,6 +55,7 @@ void main() {
   ]) {
     testWidgets('live native WebView renders $style securely', (tester) async {
       final configuration = await runtimeConfiguration();
+      WebViewController? controller;
       await tester.pumpWidget(
         MaterialApp(
           theme: buildAppTheme(),
@@ -62,6 +63,7 @@ void main() {
             appBar: AppBar(title: const Text('ProxoLink')),
             body: ProxoLinkPreview(
               key: ValueKey(style),
+              onControllerCreated: (value) => controller = value,
               requestHeaders: Map<String, String>.from(
                 configuration['headers'] as Map,
               ),
@@ -73,15 +75,13 @@ void main() {
           ),
         ),
       );
-      WebViewController? controller;
       Map<String, dynamic>? state;
       for (var attempt = 0; attempt < 90; attempt++) {
         await tester.pump(const Duration(seconds: 1));
-        final views = find.byType(WebViewWidget);
-        if (views.evaluate().isNotEmpty) {
-          controller = tester.widget<WebViewWidget>(views.first).controller;
+        final activeController = controller;
+        if (activeController != null) {
           try {
-            state = await pageState(controller);
+            state = await pageState(activeController);
             if (state['ready'] == true &&
                 state['fonts'] == true &&
                 state['images'] == true &&
@@ -99,25 +99,26 @@ void main() {
       expect(state?['scroll'], lessThanOrEqualTo(state?['width'] as num));
       expect(state?['sourcePlaceholders'], isFalse);
       expect(state?['pixel'], isFalse);
+      final web = controller!;
       // Exercise the original JavaScript confirmation without launching a
       // real contact app or recording an advertisement event.
-      await controller!.runJavaScript("document.getElementById('wa').click()");
+      await web.runJavaScript("document.getElementById('wa').click()");
       await tester.pump(const Duration(milliseconds: 300));
-      final opened = await controller.runJavaScriptReturningResult(
+      final opened = await web.runJavaScriptReturningResult(
         "Array.from(document.querySelectorAll('[onclick]')).some(e=>/closeMod/.test(e.getAttribute('onclick')) && e.getBoundingClientRect().height>0)",
       );
       expect(opened.toString(), 'true');
-      await controller.runJavaScript(
+      await web.runJavaScript(
         "Array.from(document.querySelectorAll('[onclick]')).find(e=>/closeMod/.test(e.getAttribute('onclick'))).click()",
       );
       // Same-origin external navigation is rejected by the actual widget's
       // navigation delegate; no unchecked destination replaces the preview.
-      await controller.runJavaScript(
+      await web.runJavaScript(
         "window.location.href='https://example.invalid/'",
       );
       await tester.pump(const Duration(milliseconds: 500));
       expect(
-        await controller.currentUrl(),
+        await web.currentUrl(),
         startsWith(configuration['origin'] as String),
       );
       results[style] = {

@@ -13,11 +13,13 @@ class ProxoLinkPreview extends StatefulWidget {
   /// Initial request headers for access-controlled preview environments.
   /// Production callers use the empty default; values are never logged.
   final Map<String, String> requestHeaders;
+  final ValueChanged<WebViewController>? onControllerCreated;
   const ProxoLinkPreview({
     super.key,
     required this.loadUrl,
     this.allowContactActions = false,
     this.requestHeaders = const {},
+    this.onControllerCreated,
   });
   @override
   State<ProxoLinkPreview> createState() => _ProxoLinkPreviewState();
@@ -89,6 +91,7 @@ class _ProxoLinkPreviewState extends State<ProxoLinkPreview> {
         );
       if (!mounted || request != _request) return;
       setState(() => _controller = controller);
+      widget.onControllerCreated?.call(controller);
       await controller.loadRequest(page, headers: widget.requestHeaders);
     } catch (_) {
       if (mounted && request == _request)
