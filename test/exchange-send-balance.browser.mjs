@@ -110,14 +110,15 @@ try{
           const q={select(){return q;},eq(key,value){filters[key]=value;return q;},order(){return q;},
             insert(value){operation='insert';row=value;return q;},
             update(value){operation='update';row=value;return q;},delete(){operation='delete';return q;},
+            single(){return q.then(result=>({...result,data:result.data?.[0]||null}));},
             then(resolve,reject){
               const target=table==='ex_wallet_badge_views'?fixtureBadgeViews:fixtureRecipients;
-              const matches=v=>Object.entries(filters).every(([key,value])=>v[key]===value);
+              const matches=v=>Object.entries(filters).every(([key,value])=>v[key]===value),before=target.filter(matches);
               if(operation==='insert')target.push({id:'recipient-'+target.length,...row});
               if(operation==='update')target.filter(matches).forEach(v=>Object.assign(v,row));
               if(operation==='delete'){for(let i=target.length-1;i>=0;i--)if(matches(target[i]))target.splice(i,1);}
               if(operation!=='read')fixtureWrites.push({table,operation,row,filters});
-              return Promise.resolve({data:target.filter(matches),error:null}).then(resolve,reject);
+              return Promise.resolve({data:operation==='delete'?before:operation==='insert'?[target.at(-1)]:target.filter(matches),error:null}).then(resolve,reject);
             }
           };return q;
         }};
@@ -157,6 +158,49 @@ try{
     await page.evaluate(()=>{curUser={id:'other-browser-fixture'};return loadCustomerConveniences();});
     assert.equal(await page.locator('.saved-recipient').count(),0,'Different owner sees no former recipients');
     assert.ok(await page.evaluate(()=>walletBadgeHTML('FastPay').includes('نوێ')),'Badge is new for another account');
+    // Two actual browser tabs share a synthetic database. Real feature/UI
+    // modules receive simulated owner-only database change signals.
+    const peer=await browser.newPage({viewport:{width,height:900}});
+    await peer.route('**/*',route=>route.abort());
+    await peer.setContent(offlineHtml('index.html'),{waitUntil:'domcontentloaded'});
+    let sharedRecipients=[];
+    for(const livePage of [page,peer]){
+      await livePage.exposeFunction('fixtureReadOwn',owner=>sharedRecipients.filter(r=>r.user_id===owner));
+      await livePage.evaluate(()=>{
+        window.curUser={id:'two-tabs-owner'};window._route='home';window._changesLoaded=false;window.liveHandlers=[];
+        window.RECEIVE_OPTIONS=['FIB'];window.METHOD_META={FIB:{label:'FIB Bank'}};
+        window.WALLET_DATA={};window.getWalletInfo=()=>({locked:false});window.routeAllowed=()=>true;
+        window.escHtml=v=>String(v||'');window.showToast=()=>{};
+        window.loadWallets=async()=>{};window.loadRates=async()=>{};window.loadMyRewards=async()=>{};window.loadMyBalance=async()=>{};
+        window.refreshTrigger=()=>{};window.updateWallet=()=>{};window.updatePlaceholder=()=>{};
+        window.calc=()=>{};window.openPicker=()=>{};
+        window.openSheet=el=>{el.style.display='flex';el.classList.add('open');};
+        window.closeSheet=el=>{el.style.display='none';el.classList.remove('open');};
+        document.getElementById('authWrap').style.display='none';document.getElementById('mainApp').style.display='block';
+        document.getElementById('receiveVia').innerHTML='<option value="FIB">FIB</option>';
+        window.sb={
+          from(table){let owner;const q={select(){return q;},eq(k,v){owner=v;return q;},order(){return q;},
+            then(resolve,reject){return (table==='ex_saved_recipients'?fixtureReadOwn(owner):Promise.resolve([]))
+              .then(data=>({data,error:null})).then(resolve,reject);}};return q;},
+          channel(){const c={on(kind,filter,fn){liveHandlers.push({filter,fn});return c;},
+            subscribe(fn){fn('SUBSCRIBED');return c;}};return c;},
+          removeChannel:async()=>{}
+        };
+      });
+      await livePage.addScriptTag({content:read('assets/js/exchange-live.js')});
+      if(livePage===peer)await livePage.addScriptTag({content:read('assets/js/exchange-customer-features.js')});
+      await livePage.evaluate(()=>{resetCustomerConveniences();openSavedRecipients();startCustomerLive();});
+    }
+    sharedRecipients=[{id:'remote-recipient',user_id:'two-tabs-owner',label:'Remote recipient',wallet_key:'FIB',phone:'07700000008'}];
+    const signal=()=>Promise.all([page,peer].map(p=>p.evaluate(()=>{
+      liveHandlers.find(h=>h.filter.table==='ex_customer_feature_changes'&&h.filter.event==='UPDATE').fn();
+    })));
+    await signal();
+    for(const livePage of [page,peer])await livePage.waitForFunction(()=>document.getElementById('savedRecipientList').textContent.includes('Remote recipient'));
+    sharedRecipients=[];await signal();
+    for(const livePage of [page,peer])await livePage.waitForFunction(()=>!document.getElementById('savedRecipientList').textContent.includes('Remote recipient'));
+    await peer.close();
+    console.log('PASS: '+width+'px two-tab recipient insert/delete synchronization with owner-only signals');
     console.log('PASS: '+width+'px observed badge persistence, unseen badge, recipient create/select/edit/delete, owner switch and alerts');
     console.log('PASS: '+width+'px real HTML/CSS, KYC-locked and unlocked Send, zero/positive balances');
     await page.close();
@@ -171,7 +215,7 @@ try{
       window.closeMo=id=>document.getElementById(id).classList.remove('on');
       window.sb={from(){const q={select(){return q;},eq(){return q;},maybeSingle:async()=>({
         data:{id:'staff-fixture',full_name:'Fixture Staff',is_admin:true,role:'admin',staff_permissions:['view']},error:null})};return q;},
-        rpc:async(name,args)=>{fixturePermissionCalls.push({name,args});return {error:null};}};
+        rpc:async(name,args)=>{fixturePermissionCalls.push({name,args});return {data:{user_id:args.p_user_id,permissions:args.p_permissions},error:null};}};
       document.getElementById('authWrap').style.display='none';document.getElementById('main').classList.add('show');document.getElementById('pgAccounts').classList.add('on');
     });
     await adminPage.addScriptTag({content:read('assets/js/exchange-staff.js')});

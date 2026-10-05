@@ -200,6 +200,7 @@ function showApp(){
   recordAdminVisit();
   goPage('dashboard');
   subscribeOrdersAdmin();
+  startAdminLive();
   if(staffFullAdmin()){
     subscribeAlerts();startErrorLogMonitor();startSupportCaseMonitor();startKycMonitor();
   }
@@ -1937,12 +1938,7 @@ async function loadRates(){
   }
   subscribeRatesAdmin();
 }
-function subscribeRatesAdmin(){
-  if(_ratesAdminChannel) return;
-  _ratesAdminChannel = sb.channel('ex_rates_admin')
-    .on('postgres_changes', {event:'*',schema:'public',table:'ex_rates'}, ()=>{ if(_curPage==='rates') loadRates(); })
-    .subscribe();
-}
+function subscribeRatesAdmin(){if(typeof startAdminLive==='function')startAdminLive();}
 // Method options for the rate From/To selects: the original fixed methods (kept so
 // existing rates like Korek/USDT — which have no ex_wallets row — still edit correctly)
 // merged live with whatever wallets exist in ex_wallets, so a newly-added wallet shows
@@ -2058,8 +2054,8 @@ async function saveRate(){
 let allWallets=[];
 let _walletsAdminChannel=null;
 
-async function loadWalletsAdmin(){
-  document.getElementById('walletsGridWrap').innerHTML='<div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>';
+async function loadWalletsAdmin(quiet=false){
+  if(!quiet)document.getElementById('walletsGridWrap').innerHTML='<div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>';
   try{
     const {data,error} = await sb.from('ex_wallets').select('*').order('sort_order',{ascending:true});
     if(error) throw error;
@@ -2071,19 +2067,7 @@ async function loadWalletsAdmin(){
   }
   subscribeWalletsAdmin();
 }
-function subscribeWalletsAdmin(){
-  if(_walletsAdminChannel) return;
-  const refreshWalletsPage = ()=>{
-    if(_curPage!=='wallets') return;
-    // don't yank data out from under an admin who is mid-edit
-    if(document.getElementById('moWallet').classList.contains('on')) return;
-    loadWalletsAdmin();
-  };
-  _walletsAdminChannel = sb.channel('ex_wallets_admin')
-    .on('postgres_changes', {event:'*',schema:'public',table:'ex_wallets'}, refreshWalletsPage)
-    .on('postgres_changes', {event:'*',schema:'public',table:'ex_rates'}, refreshWalletsPage)
-    .subscribe();
-}
+function subscribeWalletsAdmin(){if(typeof startAdminLive==='function')startAdminLive();}
 function renderWalletsGrid(){
   const wrap=document.getElementById('walletsGridWrap');
   if(!allWallets.length){ wrap.innerHTML='<div class="empty"><i class="fas fa-wallet"></i><p>هیچ واڵێتێک زیاد نەکراوە</p></div>'; return; }
@@ -2215,22 +2199,23 @@ async function saveWallet(){
   if(!name){ showToast('ناوی واڵێت بنووسە','rd'); return; }
   if(!key){ showToast('کلیلی واڵێت بنووسە','rd'); return; }
   if(!allow_from && !allow_receive){ showToast('پێویستە لانیکەم یەکێک لە «ناردن» یان «وەرگرتن» چالاک بێت','rd'); return; }
-  const btn=document.getElementById('walletSaveBtn'); btn.disabled=true;
+  const btn=document.getElementById('walletSaveBtn');if(btn.disabled)return;btn.disabled=true;
+  const previousLabel=btn.innerHTML;btn.textContent='پاشەکەوت دەکرێت…';
+  const errorBox=document.getElementById('walletSaveError');errorBox.textContent='';
   const badge=document.getElementById('walletBadge').value;
-  const payload={ name, key, wallet_number: wallet_number||null, image_url, price, fee, fee_type, allow_from, allow_receive, is_locked, badge };
-  let error;
-  if(id){
-    ({error} = await sb.from('ex_wallets').update(payload).eq('id',id));
-  }else{
-    payload.sort_order = allWallets.length ? Math.max(...allWallets.map(w=>w.sort_order||0))+1 : 1;
-    ({error} = await sb.from('ex_wallets').insert(payload));
-  }
-  if(error){ btn.disabled=false; await handleDbWriteError(error); return; }
-  await syncWalletPairs(key, id ? _walletOldKey : '');
-  btn.disabled=false;
-  showToast('پاشەکەوتکرا','gr');
-  closeMo('moWallet');
-  loadWalletsAdmin();
+  const payload={name,key,wallet_number:wallet_number||null,image_url,price,fee,fee_type,allow_from,allow_receive,is_locked,badge};
+  try{
+    if((price!==null&&!Number.isFinite(price))||(fee!==null&&!Number.isFinite(fee)))throw new Error('نرخ و حمولەی دروست بنووسە');
+    const routes=walletPairRows(key,id?_walletOldKey:'');
+    const {data:saved,error}=await sb.rpc('ex_staff_save_wallet',{p_wallet_id:id||null,p_wallet:payload,p_routes:routes});
+    if(error)throw error;
+    if(!saved?.id)throw new Error('نەتوانرا پاشەکەوتکردن پشتڕاست بکرێتەوە');
+    allWallets=allWallets.filter(w=>w.id!==saved.id);allWallets.push(saved);
+    renderWalletsGrid();closeMo('moWallet');showToast('جزدان و ڕێگاکان پاشەکەوتکران','gr');
+    loadWalletsAdmin(true);
+  }catch(e){errorBox.textContent=adminDbMessage(e);await handleDbWriteError(e);}
+  finally{btn.disabled=false;btn.innerHTML=previousLabel;}
+
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -2368,36 +2353,24 @@ function applyPairBulk(){
 }
 // Writes the matrix back to ex_rates. Closed directions keep their row with
 // is_active=false so the fee is still there when they're re-opened later.
-async function syncWalletPairs(newKey, oldKey){
-  if(oldKey && oldKey!==newKey){
-    await sb.from('ex_rates').update({from_method:newKey}).eq('from_method',oldKey);
-    await sb.from('ex_rates').update({to_method:newKey}).eq('to_method',oldKey);
-  }
-  const known = allPairs.map(r=>({
-    from_method: (oldKey && r.from_method===oldKey) ? newKey : r.from_method,
-    to_method:   (oldKey && r.to_method===oldKey)   ? newKey : r.to_method,
-    rate_type:r.rate_type, rate_value:r.rate_value
-  }));
-  const rows=[]; let skipped=0;
+function walletPairRows(newKey,oldKey){
+  const known=allPairs.map(r=>({...r,
+    from_method:oldKey&&r.from_method===oldKey?newKey:r.from_method,
+    to_method:oldKey&&r.to_method===oldKey?newKey:r.to_method}));
+  const rows=[];
   const push=(f,t,st)=>{
-    if(!f||!t||f===t) return;
-    const prev=known.find(r=>r.from_method===f && r.to_method===t);
+    if(!f||!t||f===t)return;
+    const prev=known.find(r=>r.from_method===f&&r.to_method===t);
     if(st.on){
-      const val=parseFloat(st.value);
-      if(isNaN(val)){ skipped++; return; }
-      rows.push({from_method:f,to_method:t,rate_type:st.type,rate_value:val,is_active:true});
-    }else if(prev){
-      rows.push({from_method:f,to_method:t,rate_type:prev.rate_type,rate_value:prev.rate_value,is_active:false});
-    }
+      const value=Number(st.value);
+      if(String(st.value).trim()===''||!Number.isFinite(value)||value<0)throw new Error('بەهای حمولەی ڕێگای '+f+' ← '+t+' دروست بنووسە');
+      if(!prev||prev.is_active!==true||prev.rate_type!==st.type||Number(prev.rate_value)!==value)
+        rows.push({from_method:f,to_method:t,rate_type:st.type,rate_value:value,is_active:true});
+    }else if(prev&&prev.is_active!==false)rows.push({from_method:f,to_method:t,rate_type:prev.rate_type,rate_value:prev.rate_value,is_active:false});
   };
   Object.keys(_pairDraft.out).forEach(k=>push(newKey,k,_pairDraft.out[k]));
   Object.keys(_pairDraft.in).forEach(k=>push(k,newKey,_pairDraft.in[k]));
-  if(rows.length){
-    const {error} = await sb.from('ex_rates').upsert(rows,{onConflict:'from_method,to_method'});
-    if(error){ await handleDbWriteError(error); return false; }
-  }
-  if(skipped) showToast(skipped+' ڕێگا پاشەکەوت نەکرا — بەهای حمولەی بۆ نەنووسرابوو','rd');
-  return true;
+  return rows;
 }
 
 // ── Original admin module 5 ──

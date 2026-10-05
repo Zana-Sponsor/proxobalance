@@ -29,3 +29,9 @@ Applied migrations: exchange_customer_staff_features_20261005 and exchange_rewar
 ## Verification
 
 53 Node tests passed. Real Chromium flows passed at 390px and 1280px for wallet visibility, saved recipient CRUD, account isolation, and staff permissions. Database rollback tests verified owner RLS, permission escalation prevention, badge campaign versions, and reminder deduplication. Existing balance-source, admin-refund/reward-cap and scoped-reward SQL regressions passed. Production fixture changes were rolled back.
+
+## Live synchronization and confirmed saves
+
+SUPABASE_EXCHANGE_LIVE_SAVES.sql adds owner-only change signals for recipient insert, update and delete and badge reads. Realtime is enabled for rates, rewards, profiles, customer balances, payout requests and these signals; existing RLS remains in force. Private recipient DELETE payloads are not published. Clients coalesce change bursts, refresh on reconnect/resume and poll while disconnected. Subscriptions and pending jobs are cleared on account changes.
+
+Wallet and route settings use the authenticated, RLS-enforced ex_staff_save_wallet RPC in one transaction. An invalid route or missing wallet rolls back the entire write. Recipient writes return the affected row, and staff permission writes return the confirmed target; empty results and network failures keep editors open with errors and restore save buttons. Successful recipient rows appear immediately from the committed result. Initial customer reads run concurrently.

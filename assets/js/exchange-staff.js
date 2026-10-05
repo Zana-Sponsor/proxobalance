@@ -78,11 +78,34 @@ async function saveStaffPermissions(){
  const id=document.getElementById('staffTarget').value,full=document.getElementById('staffFullAccess').checked;
  const selected=Array.from(document.querySelectorAll('[data-staff-permission]:checked'),el=>el.dataset.staffPermission);
  if(selected.length&&!selected.includes('view'))selected.unshift('view');
- const button=document.getElementById('staffPermissionSave');button.disabled=true;
- const {error}=await sb.rpc('ex_staff_set_permissions',{p_user_id:id,p_permissions:full?null:selected});
- button.disabled=false;
- if(error){document.getElementById('staffPermissionError').textContent=adminDbMessage(error);return;}
- showToast('دەسەڵاتەکان پاشەکەوتکران','gr');closeMo('moStaffPermissions');loadAccounts();
+ const button=document.getElementById('staffPermissionSave');if(button.disabled)return;button.disabled=true;
+ try{
+  const {data,error}=await sb.rpc('ex_staff_set_permissions',{p_user_id:id,p_permissions:full?null:selected});
+  if(error)throw error;
+  if(data?.user_id!==id)throw new Error('نەتوانرا پاشەکەوتکردن پشتڕاست بکرێتەوە');
+  const row=allAccounts.find(a=>a.id===id);if(row)row.staff_permissions=data.permissions;
+  showToast('دەسەڵاتەکان پاشەکەوتکران','gr');closeMo('moStaffPermissions');loadAccounts();
+ }catch(e){document.getElementById('staffPermissionError').textContent=adminDbMessage(e);}
+ finally{button.disabled=false;}
+}
+function startAdminLive(){
+ const owner=adminUser?.id;if(!owner||typeof ProxoLive==='undefined')return;
+ const refreshWallets=()=>{if(_curPage==='wallets'&&!document.getElementById('moWallet').classList.contains('on'))return loadWalletsAdmin(true);};
+ ProxoLive.start(sb,'admin',owner,[
+  {key:'wallets',table:'ex_wallets',events:['*'],read:refreshWallets},
+  {key:'rates',table:'ex_rates',events:['*'],read:()=>{
+   if(_curPage==='rates'&&!document.querySelector('#moRate.on'))return loadRates();
+   return refreshWallets();
+  }},
+  {key:'permissions',table:'ex_profiles',filter:'id=eq.'+owner,read:async()=>{
+   const ok=await verifyAdmin(owner,adminUser.email);
+   if(!ok){ProxoLive.stop();await sb.auth.signOut();location.reload();return;}
+   applyStaffUI();if(!staffPageAllowed(_curPage))goPage('dashboard');
+  }},
+  {key:'accounts',table:'ex_profiles',read:()=>{
+   if(_curPage==='accounts'&&!document.querySelector('#moStaffPermissions.on'))return loadAccounts();
+  }}
+ ]);
 }
 document.addEventListener('DOMContentLoaded',()=>{
  new MutationObserver(()=>applyStaffUI()).observe(document.body,{childList:true,subtree:true});
