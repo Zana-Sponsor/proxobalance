@@ -55,8 +55,8 @@ create or replace function public.ex_rewards_apply_on_order()
 returns trigger language plpgsql security definer set search_path = ''
 as $fn$
 declare v_reward public.ex_user_rewards%rowtype;
-declare v_fee numeric;
-declare v_discount numeric;
+  v_fee numeric;
+  v_discount numeric;
 begin
   -- Never accept a caller-supplied reward, discount or fee snapshot.
   new.reward_id := null;
