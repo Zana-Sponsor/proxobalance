@@ -36,6 +36,8 @@ def hasReleaseSigning = releaseStoreFile != null &&
 android {
     namespace "com.proxo.proxoapp"
     compileSdk flutter.compileSdkVersion
+    // The native WebView JNI dependency requires this backward-compatible NDK.
+    ndkVersion "28.2.13676358"
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
@@ -89,9 +91,5 @@ flutter {
 
 dependencies {
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.4'
-    // androidx.core.content.FileProvider — used by MainActivity to expose
-    // the local preview .html file as a content:// URI. The Flutter
-    // embedding already pulls androidx.core in transitively; pinning it
-    // here just makes the version deterministic.
-    implementation 'androidx.core:core:1.13.1'
+
 }

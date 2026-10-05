@@ -1,0 +1,175 @@
+name: Build ProxoLink native verification
+on:
+  push:
+    branches: [feat/proxolink-private-renderer-migration]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native-verification-apk:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: proxo_app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.47.2'
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - run: flutter analyze --no-fatal-infos integration_test
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.14.3'
+      - run: |
+          if [ ! -f android/gradlew ]; then
+            (cd android && gradle wrapper --gradle-version 8.14.3)
+          fi
+          chmod +x android/gradlew
+      - name: Build credential-free native test APK
+        run: flutter build apk --debug --target-platform android-x64 -t integration_test/proxolink_native_probe.dart --dart-define=PROXO_PUBLIC_BASE_URL=https://proxobalance-git-feat-proxolink-private-re-00a2aa-proxoapp-1758.vercel.app
+      - name: Split APK for bounded artifact downloads
+        run: split -b 24M -d build/app/outputs/flutter-apk/app-debug.apk build/app/outputs/flutter-apk/native.part.
+      - uses: actions/upload-artifact@v4
+        with:
+          name: proxolink-native-verification-apk
+          path: proxo_app/build/app/outputs/flutter-apk/app-debug.apk
+          retention-days: 1
+      - uses: actions/upload-artifact@v4
+        with:
+          name: proxolink-native-part-00
+          path: proxo_app/build/app/outputs/flutter-apk/native.part.00
+          retention-days: 1
+      - uses: actions/upload-artifact@v4
+        with:
+          name: proxolink-native-part-01
+          path: proxo_app/build/app/outputs/flutter-apk/native.part.01
+          retention-days: 1
+      - uses: actions/upload-artifact@v4
+        with:
+          name: proxolink-native-part-02
+          path: proxo_app/build/app/outputs/flutter-apk/native.part.02
+          retention-days: 1
+      - uses: actions/upload-artifact@v4
+        with:
+          name: proxolink-native-part-03
+          path: proxo_app/build/app/outputs/flutter-apk/native.part.03
+          retention-days: 1
+      - uses: actions/upload-artifact@v4
+        with:
+          name: proxolink-native-part-04
+          path: proxo_app/build/app/outputs/flutter-apk/native.part.04
+          retention-days: 1
+      - uses: actions/upload-artifact@v4
+        with:
+          name: proxolink-native-part-05
+          path: proxo_app/build/app/outputs/flutter-apk/native.part.05
+          retention-days: 1
+      - uses: actions/upload-artifact@v4
+        with:
+          name: proxolink-native-part-06
+          path: proxo_app/build/app/outputs/flutter-apk/native.part.06
+          retention-days: 1
+      - uses: actions/upload-artifact@v4
+        with:
+          name: proxolink-native-part-07
+          path: proxo_app/build/app/outputs/flutter-apk/native.part.07
+          retention-days: 1
+  native-runtime:
+    needs: native-verification-apk
+    # Runtime secrets are released only for the approved feature branch and an
+    # explicit live-test request. Ordinary pushes build the credential-free APK.
+    if: github.repository == 'Zana-Sponsor/proxobalance' && github.ref == 'refs/heads/feat/proxolink-private-renderer-migration' && (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[proxolink-live-verification]'))
+    environment: proxolink-preview-verification
+    concurrency:
+      group: proxolink-preview-verification
+      cancel-in-progress: false
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      PROXO_NATIVE_BASE_URL: https://proxobalance-git-feat-proxolink-private-re-00a2aa-proxoapp-1758.vercel.app
+      PROXO_NATIVE_SUPABASE_URL: https://cojchkwssmasiejcgvbk.supabase.co
+    steps:
+      - name: Check secure runtime configuration
+        id: configuration
+        shell: bash
+        env:
+          # Keep the original public variable unchanged. GitHub prints variable
+          # values in step setup; the protected secret copy is auto-masked.
+          PROXO_NATIVE_ANON_KEY: ${{ secrets.PROXO_NATIVE_ANON_KEY }}
+          PROXO_NATIVE_TEST_EMAIL: ${{ secrets.PROXO_NATIVE_TEST_EMAIL }}
+          PROXO_NATIVE_TEST_PASSWORD: ${{ secrets.PROXO_NATIVE_TEST_PASSWORD }}
+          PROXO_NATIVE_VERCEL_BYPASS: ${{ secrets.PROXO_NATIVE_VERCEL_BYPASS }}
+        run: |
+          ready=true
+          for key in PROXO_NATIVE_ANON_KEY PROXO_NATIVE_TEST_EMAIL PROXO_NATIVE_TEST_PASSWORD PROXO_NATIVE_VERCEL_BYPASS; do
+            if [ -z "${!key}" ]; then
+              ready=false
+              echo "Missing runtime setting: $key"
+            fi
+          done
+          echo "ready=$ready" >> "$GITHUB_OUTPUT"
+          if [ "$ready" = false ]; then
+            echo 'Native live verification was NOT RUN: secure runtime settings are missing. APK build success is not native certification.' >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        if: steps.configuration.outputs.ready == 'true'
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        if: steps.configuration.outputs.ready == 'true'
+        with:
+          node-version: '24'
+      - name: Install locked reference-browser dependencies without runtime secrets
+        if: steps.configuration.outputs.ready == 'true'
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+      - uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3
+        if: steps.configuration.outputs.ready == 'true'
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        if: steps.configuration.outputs.ready == 'true'
+        with:
+          name: proxolink-native-verification-apk
+          path: proxo_app/build/app/outputs/flutter-apk
+      - name: Enable KVM for the disposable emulator
+        if: steps.configuration.outputs.ready == 'true'
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+          test -r /dev/kvm
+      - name: Run real server pages through the production WebView widget
+        if: steps.configuration.outputs.ready == 'true'
+        uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d
+        env:
+          PROXO_NATIVE_ANON_KEY: ${{ secrets.PROXO_NATIVE_ANON_KEY }}
+          PROXO_NATIVE_TEST_EMAIL: ${{ secrets.PROXO_NATIVE_TEST_EMAIL }}
+          PROXO_NATIVE_TEST_PASSWORD: ${{ secrets.PROXO_NATIVE_TEST_PASSWORD }}
+          PROXO_NATIVE_VERCEL_BYPASS: ${{ secrets.PROXO_NATIVE_VERCEL_BYPASS }}
+        with:
+          api-level: 35
+          arch: x86_64
+          target: google_apis
+          # CSS motion is part of acceptance; Android's disabled animator
+          # setting can advertise reduced motion to the platform WebView.
+          disable-animations: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -memory 2048
+          script: node scripts/run-proxolink-native.mjs
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always() && steps.configuration.outputs.ready == 'true'
+        with:
+          name: proxolink-native-runtime-evidence
+          path: proxo_app/build/native-verification
+          if-no-files-found: error
+          retention-days: 7

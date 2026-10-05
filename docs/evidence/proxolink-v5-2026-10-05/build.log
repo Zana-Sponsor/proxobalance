@@ -1,0 +1,7 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> exchange-security@1.0.0 build
+> node scripts/prepare-vercel.mjs
+
+Deployment prepared from ROOT index.html and ROOT assets/.
+Output: public/index.html; verified 14 referenced assets.

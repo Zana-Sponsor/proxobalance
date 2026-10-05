@@ -1,0 +1,331 @@
+{
+  "scope": "Executed retries of the existing protected Android native workflow; metadata and allowlisted failure codes only. No credential values.",
+  "environment": "proxolink-preview-verification",
+  "branch": "feat/proxolink-private-renderer-migration",
+  "attempts": [
+    {
+      "run_id": 37365392466,
+      "run_attempt": 1,
+      "sha": "a3a36fd86d8ee2be689b2ab136ffa0784860bdf9",
+      "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/37365392466/attempts/1",
+      "apk_job_id": 111949160481,
+      "apk_conclusion": "cancelled",
+      "native_job_id": 111954439184,
+      "native_conclusion": "skipped",
+      "failure": "Hosted runner never acquired; internal server error; no executable job logs",
+      "cases_executed": 0,
+      "credentials_released": false
+    },
+    {
+      "run_id": 37365392466,
+      "run_attempt": 2,
+      "sha": "a3a36fd86d8ee2be689b2ab136ffa0784860bdf9",
+      "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/37365392466/attempts/2",
+      "apk_job_id": 111994830044,
+      "apk_conclusion": "success",
+      "native_job_id": 111996568715,
+      "native_conclusion": "failure",
+      "approval": {
+        "run_id": 37365392466,
+        "attempt": 2,
+        "job_id": 111996568715,
+        "sha": "a3a36fd86d8ee2be689b2ab136ffa0784860bdf9",
+        "ref": "refs/heads/feat/proxolink-private-renderer-migration",
+        "environment": "proxolink-preview-verification",
+        "approver": "Zana-Sponsor",
+        "authorized": true
+      },
+      "android_booted_at": "2026-10-05T21:59:59.1728709Z",
+      "failure_at": "2026-10-05T22:00:07.1568836Z",
+      "stage": "read_only_security",
+      "code": "unclassified_failure",
+      "sign_in_status": 200,
+      "masking": {
+        "PROXO_NATIVE_ANON_KEY": {
+          "setup_lines": 2,
+          "all_masked": true
+        },
+        "PROXO_NATIVE_TEST_EMAIL": {
+          "setup_lines": 2,
+          "all_masked": true
+        },
+        "PROXO_NATIVE_TEST_PASSWORD": {
+          "setup_lines": 2,
+          "all_masked": true
+        },
+        "PROXO_NATIVE_VERCEL_BYPASS": {
+          "setup_lines": 2,
+          "all_masked": true
+        }
+      },
+      "cases_executed": 0,
+      "artifact": {
+        "id": 11372622902,
+        "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/37365392466/artifacts/11372622902",
+        "sha256": "b717983f3b23acbcab7513eda9ffcedc25dcf796eb9a8b190e23ce7592b0961a",
+        "retained_safe_failure": "native-retry-failure.json"
+      },
+      "approval_screenshot": "native-retry-approval.jpg"
+    },
+    {
+      "run_id": 37380086444,
+      "run_attempt": 1,
+      "sha": "6ebcf969dcb1203d36da0db37c7a19125765960a",
+      "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/37380086444",
+      "apk_job_id": 111999522445,
+      "apk_conclusion": "success",
+      "native_job_id": 112001281310,
+      "native_conclusion": "failure",
+      "approval": {
+        "run_id": 37380086444,
+        "job_id": 112001281310,
+        "head_sha": "6ebcf969dcb1203d36da0db37c7a19125765960a",
+        "environment": "proxolink-preview-verification",
+        "reviewer": "Zana-Sponsor",
+        "approved": true
+      },
+      "android_booted_at": "2026-10-05T22:12:36.8096650Z",
+      "failure_at": "2026-10-05T22:12:43.5154889Z",
+      "stage": "read_only_security",
+      "code": "unclassified_failure",
+      "preflight_check": "bypass_without_app_auth",
+      "transport_code": "redirect_blocked",
+      "sign_in_status": 200,
+      "masking": {
+        "PROXO_NATIVE_ANON_KEY": {
+          "setup_lines": 2,
+          "all_masked": true
+        },
+        "PROXO_NATIVE_TEST_EMAIL": {
+          "setup_lines": 2,
+          "all_masked": true
+        },
+        "PROXO_NATIVE_TEST_PASSWORD": {
+          "setup_lines": 2,
+          "all_masked": true
+        },
+        "PROXO_NATIVE_VERCEL_BYPASS": {
+          "setup_lines": 2,
+          "all_masked": true
+        }
+      },
+      "cases_executed": 0,
+      "artifact": {
+        "id": 11375205048,
+        "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/37380086444/artifacts/11375205048",
+        "sha256": "438689d1ef7c5ddf6cade43dbf5c0302d26313278dc44d141607879f7c21104e",
+        "retained_safe_failure": "native-transport-failure.json"
+      },
+      "approval_screenshot": "native-transport-approval.jpg",
+      "preview": {
+        "project": "proxoapp-1758/proxobalance",
+        "deployment_id": "dpl_GVRVbjbuPK12RDocZxfua8Hfx3Y3",
+        "deployment_url": "https://vercel.com/proxoapp-1758/proxobalance/GVRVbjbuPK12RDocZxfua8Hfx3Y3",
+        "state": "READY",
+        "environment": "Preview",
+        "head_sha": "6ebcf969dcb1203d36da0db37c7a19125765960a",
+        "branch": "feat/proxolink-private-renderer-migration",
+        "alias": "https://proxobalance-git-feat-proxolink-private-re-00a2aa-proxoapp-1758.vercel.app",
+        "observed_via": "authenticated Vercel deployment dashboard; metadata only"
+      }
+    },
+    {
+      "run_id": 37381128088,
+      "run_attempt": 1,
+      "sha": "7207eebbd331fbc24a81280a7a183d7c6e62d26b",
+      "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/37381128088",
+      "apk_job_id": 112003099718,
+      "apk_conclusion": "success",
+      "native_job_id": 112004823621,
+      "native_conclusion": "failure",
+      "approval": {
+        "run_id": 37381128088,
+        "job_id": 112004823621,
+        "head_sha": "7207eebbd331fbc24a81280a7a183d7c6e62d26b",
+        "environment": "proxolink-preview-verification",
+        "reviewer": "Zana-Sponsor",
+        "approved": true
+      },
+      "android_booted_at": "2026-10-05T22:21:50.0752791Z",
+      "read_only_security_passed_at": "2026-10-05T22:22:18.2746559Z",
+      "rendered_headers_8_of_8_passed_at": "2026-10-05T22:22:26.4274020Z",
+      "sign_in_status": 200,
+      "masking": {
+        "PROXO_NATIVE_ANON_KEY": {
+          "setup_lines": 2,
+          "all_masked": true
+        },
+        "PROXO_NATIVE_TEST_EMAIL": {
+          "setup_lines": 2,
+          "all_masked": true
+        },
+        "PROXO_NATIVE_TEST_PASSWORD": {
+          "setup_lines": 2,
+          "all_masked": true
+        },
+        "PROXO_NATIVE_VERCEL_BYPASS": {
+          "setup_lines": 2,
+          "all_masked": true
+        }
+      },
+      "captured_cases": [
+        "dark-320",
+        "dark-375"
+      ],
+      "exact_pixel_passes": 0,
+      "native_failure": "native_case_collection / native_evidence_incomplete",
+      "failed_case_detail": "Not retained by old collector; subsequent existing-probe correction retains fixed check identifiers and continues execution",
+      "artifact": {
+        "id": 11375895902,
+        "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/37381128088/artifacts/11375895902",
+        "sha256": "a680f3302ab250a9a7849ebed61da7a7fd6bfd4fbd0df5bf5260a6c39791984c",
+        "retained_folder": "native-cookie-correction"
+      },
+      "approval_screenshot": "native-cookie-correction-approval.jpg"
+    },
+    {
+      "run_id": 37382755434,
+      "sha": "622eddacd593cc74790350341854ff7c356b8054",
+      "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/37382755434",
+      "apk_job_id": 112008555771,
+      "apk_conclusion": "success",
+      "native_job_id": 112010035002,
+      "native_conclusion": "failure",
+      "approval": {
+        "run_id": 37382755434,
+        "job_id": 112010035002,
+        "head_sha": "622eddacd593cc74790350341854ff7c356b8054",
+        "environment": "proxolink-preview-verification",
+        "reviewer": "Zana-Sponsor",
+        "approved": true
+      },
+      "masking": {
+        "PROXO_NATIVE_ANON_KEY": {
+          "setup_lines": 2,
+          "all_masked": true
+        },
+        "PROXO_NATIVE_TEST_EMAIL": {
+          "setup_lines": 2,
+          "all_masked": true
+        },
+        "PROXO_NATIVE_TEST_PASSWORD": {
+          "setup_lines": 2,
+          "all_masked": true
+        },
+        "PROXO_NATIVE_VERCEL_BYPASS": {
+          "setup_lines": 2,
+          "all_masked": true
+        }
+      },
+      "cases_executed": 40,
+      "native_page_passes": 40,
+      "exact_pixel_passes": 0,
+      "exact_pixel_failures": 40,
+      "failure": {
+        "status": "FAILED",
+        "stage": "native_case_collection",
+        "code": "native_evidence_incomplete",
+        "preflight_check": null,
+        "transport_code": "unclassified_transport",
+        "last_json_response_status": 200,
+        "credential_values_included": false
+      },
+      "artifact": {
+        "id": 11376920475,
+        "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/37382755434/artifacts/11376920475",
+        "files": 164,
+        "size_bytes": 12572450,
+        "sha256": "5e213f5c364dd562565bc36ad329920bdf7ef5fd71e8e09072b7de1d83960709",
+        "expires_at": "2026-10-12T22:49:29Z"
+      },
+      "approval_screenshot": "native-collection-approval.jpg",
+      "safe_executed_log_markers": [
+        "2026-10-05T22:36:09.0646260Z Emulator booted.",
+        "2026-10-05T22:36:31.5144596Z Read-only application-auth, RLS and private-template boundaries passed.",
+        "2026-10-05T22:36:39.2299105Z 8/8 live rendered-preview response security checks passed.",
+        "2026-10-05T22:37:17.4300236Z Native evidence captured for dark-320.",
+        "2026-10-05T22:37:42.1924278Z Native evidence captured for dark-375.",
+        "2026-10-05T22:38:03.1280860Z Native evidence captured for dark-393.",
+        "2026-10-05T22:38:22.5384455Z Native evidence captured for dark-430.",
+        "2026-10-05T22:38:44.3915408Z Native evidence captured for dark-768.",
+        "2026-10-05T22:39:02.4250033Z Native evidence captured for light-320.",
+        "2026-10-05T22:39:20.2704320Z Native evidence captured for light-375.",
+        "2026-10-05T22:39:37.8444649Z Native evidence captured for light-393.",
+        "2026-10-05T22:39:55.4833964Z Native evidence captured for light-430.",
+        "2026-10-05T22:40:16.8319393Z Native evidence captured for light-768.",
+        "2026-10-05T22:40:33.5048746Z Native evidence captured for classic-320.",
+        "2026-10-05T22:40:53.5100880Z Native evidence captured for classic-375.",
+        "2026-10-05T22:41:10.3184308Z Native evidence captured for classic-393.",
+        "2026-10-05T22:41:28.0962945Z Native evidence captured for classic-430.",
+        "2026-10-05T22:41:48.6606393Z Native evidence captured for classic-768.",
+        "2026-10-05T22:42:07.1041047Z Native evidence captured for pill-320.",
+        "2026-10-05T22:42:24.8932082Z Native evidence captured for pill-375.",
+        "2026-10-05T22:42:43.7222363Z Native evidence captured for pill-393.",
+        "2026-10-05T22:43:01.2349122Z Native evidence captured for pill-430.",
+        "2026-10-05T22:43:23.0294800Z Native evidence captured for pill-768.",
+        "2026-10-05T22:43:41.2660717Z Native evidence captured for card-320.",
+        "2026-10-05T22:43:58.4033595Z Native evidence captured for card-375.",
+        "2026-10-05T22:44:14.5935616Z Native evidence captured for card-393.",
+        "2026-10-05T22:44:34.2005232Z Native evidence captured for card-430.",
+        "2026-10-05T22:44:55.7757901Z Native evidence captured for card-768.",
+        "2026-10-05T22:45:11.8318627Z Native evidence captured for neon-320.",
+        "2026-10-05T22:45:29.1880524Z Native evidence captured for neon-375.",
+        "2026-10-05T22:45:46.2429442Z Native evidence captured for neon-393.",
+        "2026-10-05T22:46:03.6082267Z Native evidence captured for neon-430.",
+        "2026-10-05T22:46:21.0735124Z Native evidence captured for neon-768.",
+        "2026-10-05T22:46:38.8601408Z Native evidence captured for zoom-320.",
+        "2026-10-05T22:46:56.1964200Z Native evidence captured for zoom-375.",
+        "2026-10-05T22:47:13.0558190Z Native evidence captured for zoom-393.",
+        "2026-10-05T22:47:31.3082971Z Native evidence captured for zoom-430.",
+        "2026-10-05T22:47:52.6612460Z Native evidence captured for zoom-768.",
+        "2026-10-05T22:48:09.5348364Z Native evidence captured for banner-320.",
+        "2026-10-05T22:48:27.4530528Z Native evidence captured for banner-375.",
+        "2026-10-05T22:48:44.3016845Z Native evidence captured for banner-393.",
+        "2026-10-05T22:49:01.8129499Z Native evidence captured for banner-430.",
+        "2026-10-05T22:49:23.1528158Z Native evidence captured for banner-768.",
+        "2026-10-05T22:49:24.1768401Z Native verification did not complete: native_case_collection / native_evidence_incomplete."
+      ]
+    }
+  ],
+  "corrections": [
+    {
+      "sha": "b7b126803f495624f43387ec98a6a4f93d26077f",
+      "scope": "Existing workflow consumes masked environment secret PROXO_NATIVE_ANON_KEY; original variable preserved"
+    },
+    {
+      "sha": "6ebcf969dcb1203d36da0db37c7a19125765960a",
+      "scope": "Add fixed request identifiers and allowlisted transport codes to the existing failure artifact"
+    },
+    {
+      "sha": "7207eebbd331fbc24a81280a7a183d7c6e62d26b",
+      "scope": "Remove optional Vercel cookie redirect directive from HTTP preflight; retain only for initial WebView requests",
+      "reference": "https://vercel.com/docs/deployment-protection/methods-to-bypass-deployment-protection/protection-bypass-automation",
+      "redirect_policy": "error; unchanged",
+      "security_assertions": "unchanged",
+      "pixel_gate": "zero changed pixels; unchanged",
+      "regression_tests_passed": 6
+    },
+    {
+      "sha": "622eddacd593cc74790350341854ff7c356b8054",
+      "scope": "Existing probe continues through failed cases; existing runner retains only allowlisted case details; positive Android physical origin is truncated instead of rounding an odd centered width",
+      "executed_crop_defect": "dark-375 physical WebView columns 412 through 786; old crop started at 413 and included a Flutter-white column",
+      "corrected_capture_reanalysis": {
+        "changed_pixels": 119401,
+        "total_pixels": 484500,
+        "exact_pixels_equal": false,
+        "scope": "Reanalysis of existing capture, not a new native execution"
+      },
+      "pixel_gate": "zero changed pixels; unchanged",
+      "source_tests": "Six existing regression tests pass"
+    }
+  ],
+  "restrictions": {
+    "pr_draft": true,
+    "production_feature_promotion": false,
+    "template_v2_activation": false,
+    "customer_cutover": false,
+    "customer_card_advertisement_writes": 0,
+    "destructive_cleanup": false,
+    "telegram_changed": false
+  }
+}

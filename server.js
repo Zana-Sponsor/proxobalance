@@ -11,12 +11,14 @@ import balanceHandler from './api/balance.js';
 import publicHandler from './api/public.js';
 import securityAdminHandler from './api/security-admin.js';
 import trackHandler from './api/track.js';
+import proxolinkHandler from './api/proxolink.js';
+import formsHandler from './api/forms.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = 3000;
+const PORT = Number(process.env.PORT || 3000);
 
 // Body parsing
 app.use(express.json({ limit: '10mb' }));
@@ -36,8 +38,27 @@ app.all('/api/public', publicHandler);
 app.all('/api/security-admin', securityAdminHandler);
 app.all('/api/track', trackHandler);
 
-// Static files
-app.use(express.static(__dirname, { extensions: ['html'] }));
+// Keep the same public URLs as Vercel's consolidated function rewrites.
+const proxoRoute=(op,parameters=()=>({}))=>(req,res)=>{
+  Object.defineProperty(req,'query',{value:{...req.query,...parameters(req),op},configurable:true});
+  return proxolinkHandler(req,res);
+};
+app.all('/api/proxolink',proxolinkHandler);
+app.all('/api/forms',formsHandler);
+for(const op of ['cards','card-action','preview-token','ad-links','templates'])
+  app.all('/api/contact-'+op,proxoRoute(op));
+app.get('/contact-preview',proxoRoute('template-preview'));
+app.get('/contact/:id',proxoRoute('contact',req=>({id:req.params.id})));
+app.get('/a/:token/action/:action',proxoRoute('ad',req=>({...req.params})));
+app.get('/a/:token',proxoRoute('ad',req=>({token:req.params.token})));
+
+// Never expose repository files, Flutter source or server code through static serving.
+app.use(express.static(path.join(__dirname,'public'), { extensions: ['html'] }));
+app.get(/\.html$/, (req,res,next)=>{
+  const name=path.basename(req.path);
+  if(req.path==='/'+name) return res.sendFile(path.join(__dirname,name),error=>{if(error)next();});
+  next();
+});
 
 // SPA fallback for non-file routes
 app.use((req, res) => {

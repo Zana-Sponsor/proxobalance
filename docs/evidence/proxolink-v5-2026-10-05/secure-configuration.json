@@ -1,0 +1,213 @@
+{
+  "scope": "Setting names, saved GitHub controls, executed masking booleans and sign-in status; Vercel deployment metadata. No credential values.",
+  "github_environment": {
+    "name": "proxolink-preview-verification",
+    "url": "https://github.com/Zana-Sponsor/proxobalance/settings/environments/23442858482/edit",
+    "settings": [
+      {
+        "name": "PROXO_NATIVE_ANON_KEY",
+        "type": "environment variable",
+        "status": "VERIFIED: present"
+      },
+      {
+        "name": "PROXO_NATIVE_TEST_EMAIL",
+        "type": "environment secret",
+        "status": "VERIFIED: present"
+      },
+      {
+        "name": "PROXO_NATIVE_TEST_PASSWORD",
+        "type": "environment secret",
+        "status": "VERIFIED: present"
+      },
+      {
+        "name": "PROXO_NATIVE_VERCEL_BYPASS",
+        "type": "environment secret",
+        "status": "VERIFIED: present",
+        "updated_at": "2026-10-04T22:44:23Z"
+      },
+      {
+        "name": "PROXO_NATIVE_ANON_KEY",
+        "type": "environment secret",
+        "status": "VERIFIED: present; masked in all completed retries"
+      }
+    ],
+    "branch_policy": "Selected branches and tags",
+    "expected_branch_rule_present": true,
+    "branch": "feat/proxolink-private-renderer-migration",
+    "required_reviewers_enabled": true,
+    "prevent_self_review_enabled": false,
+    "administrator_bypass_allowed": false,
+    "protected_release_status": "VERIFIED: owner reviewer required, administrator bypass disabled, exact workflow/job/ref/SHA approved",
+    "setting_value_validity": "VERIFIED: sign-in and six read-only access boundaries passed; eight live preview headers and all 40 native page assertions passed in run 37382755434. Exact pixel gate FAILED.",
+    "prepared_unsaved_change": {
+      "required_reviewers": [
+        "Zana-Sponsor"
+      ],
+      "administrator_bypass_allowed": false,
+      "status": "Historical only; explicit approval subsequently received and controls saved",
+      "saved": true
+    },
+    "current_followup": {
+      "status": "VERIFIED: saved controls",
+      "environment": "proxolink-preview-verification",
+      "required_reviewers_enabled": true,
+      "required_reviewers": [
+        "Zana-Sponsor"
+      ],
+      "administrator_bypass_allowed": false,
+      "branch": "feat/proxolink-private-renderer-migration",
+      "exact_branch_rule_preserved": true,
+      "setting_names_present": [
+        "PROXO_NATIVE_ANON_KEY",
+        "PROXO_NATIVE_TEST_EMAIL",
+        "PROXO_NATIVE_TEST_PASSWORD",
+        "PROXO_NATIVE_VERCEL_BYPASS"
+      ],
+      "credential_values_opened_printed_rotated_replaced_copied_by_agent": false,
+      "persistence_verification": "Controls re-read after save and fresh page reload",
+      "owner_authorization": "Explicit 5 October approval of these exact controls and this native workflow",
+      "screenshot": "native-collection-approval.jpg",
+      "run_id": 37382755434,
+      "run_url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/37382755434",
+      "scope": "No change to other environments, secrets/variables, production feature release or retired Telegram function",
+      "approved_deployment": {
+        "run_id": 37382755434,
+        "job_id": 112010035002,
+        "head_sha": "622eddacd593cc74790350341854ff7c356b8054",
+        "environment": "proxolink-preview-verification",
+        "reviewer": "Zana-Sponsor",
+        "approved": true
+      },
+      "masked_anon_secret_present": true,
+      "original_setting_values_preserved": true,
+      "privacy_check": {
+        "status": "VERIFIED for executed masked retries",
+        "original_variable_preserved": true,
+        "environment_secret_names_present": [
+          "PROXO_NATIVE_ANON_KEY",
+          "PROXO_NATIVE_TEST_EMAIL",
+          "PROXO_NATIVE_TEST_PASSWORD",
+          "PROXO_NATIVE_VERCEL_BYPASS"
+        ],
+        "all_four_values_masked_in_step_setup": true,
+        "executed_runtime_jobs": [
+          111996568715,
+          112001281310,
+          112004823621,
+          112010035002
+        ],
+        "values_in_chat_source_commits_reports": false,
+        "agent_copied_or_entered_value": false,
+        "owner_secure_entry_required": false,
+        "masking": {
+          "PROXO_NATIVE_ANON_KEY": {
+            "setup_lines": 2,
+            "all_masked": true
+          },
+          "PROXO_NATIVE_TEST_EMAIL": {
+            "setup_lines": 2,
+            "all_masked": true
+          },
+          "PROXO_NATIVE_TEST_PASSWORD": {
+            "setup_lines": 2,
+            "all_masked": true
+          },
+          "PROXO_NATIVE_VERCEL_BYPASS": {
+            "setup_lines": 2,
+            "all_masked": true
+          }
+        }
+      },
+      "prior_37337348399_logging_failure": {
+        "status": "FAILED",
+        "public_anon_variable_printed_by_CI_setup": true,
+        "three_secret_values_masked": true,
+        "values_in_chat_source_commits_reports": false,
+        "current_workflow_uses_masked_secret": true,
+        "additional_secret_name": "PROXO_NATIVE_ANON_KEY",
+        "additional_secret_location": "Environment secrets in proxolink-preview-verification",
+        "agent_copied_or_entered_value": false,
+        "owner_secure_entry_required": false,
+        "remediation": "Owner supplied additional environment secret; all four values masked in every completed current retry."
+      },
+      "current_retry_evidence": "native-retries.json",
+      "historical_trigger": {
+        "sha": "549ef0621bdca3d7e9f9191118c59317a6845fc6",
+        "parent": "11e10e19dd9d91b85d0058f7c23404bb2d1e3af9",
+        "tree": "a78523c32730cd73a73ce8bc7c3adef21e0d4fa5",
+        "branch": "feat/proxolink-private-renderer-migration",
+        "no_source_changes": true,
+        "environment": "proxolink-preview-verification"
+      }
+    }
+  },
+  "vercel": {
+    "project": "proxoapp-1758/proxobalance",
+    "dashboard_access": "VERIFIED",
+    "dashboard_url": "https://vercel.com/proxoapp-1758/proxobalance",
+    "connector_project_lookup": "VERIFIED: stable-ID lookup succeeds; name lookup returns 404",
+    "preview_dashboard_status": "Ready",
+    "preview_dashboard_id": "8DwKFE7L4NMV95qeeat9jZAkG22i",
+    "production_branch": "main",
+    "production_commit": "db95ae062a38f95280715f5ae8e938196413242a",
+    "server_variable_names_present": [
+      "PROXO_SUPABASE_SERVICE_ROLE_KEY",
+      "PROXO_SUPABASE_URL",
+      "PROXO_PUBLIC_BASE_URL",
+      "PROXO_PREVIEW_SIGNING_SECRET",
+      "PROXO_ANALYTICS_HASH_SECRET",
+      "PROXO_TIKTOK_PIXEL_ID"
+    ],
+    "targets_observed_for_each": [
+      "Preview",
+      "Production"
+    ],
+    "sensitive_or_encrypted_types": "VERIFIED from non-decrypted connector metadata",
+    "values_opened": false,
+    "bypass_audit_url": "https://vercel.com/proxoapp-1758/proxobalance/settings/activity",
+    "bypass_removal_audit_observed": true,
+    "replacement_addition_audit_observed": true,
+    "replacement_note": "proxolink-preview-verification",
+    "active_masked_automation_entries": 1,
+    "retirement_replacement_metadata": "VERIFIED",
+    "github_to_vercel_capability_correspondence": "VERIFIED runtime access in exact approved job: app-auth boundary, invalid paths and eight signed previews passed; values never opened.",
+    "bypass_used": true,
+    "project_id": "prj_TCDpM3JNJAZNREZAVyxBLfiZGFxq",
+    "team_id": "team_8HiDsaKfcCegaE9FgXwmVrUJ",
+    "inspected_feature_deployment_id": "dpl_2hbtGYf7EesDnwDNXS9De44q87Kc",
+    "inspected_feature_deployment_sha": "8a900ee08155b28995baf74be8dd71ae76cf2997",
+    "inspected_feature_deployment_state": "READY",
+    "production_deployment_id": "dpl_9N9Vnr9YPS1U4uWaDf4mnnsBTWAc",
+    "production_change_scope": "Independent main Exchange release; no production action by this task",
+    "protected_app_fetch": "403 capability denial; not retried",
+    "server_variable_types": {
+      "PROXO_SUPABASE_SERVICE_ROLE_KEY": "sensitive",
+      "PROXO_SUPABASE_URL": "encrypted",
+      "PROXO_PUBLIC_BASE_URL": "encrypted",
+      "PROXO_PREVIEW_SIGNING_SECRET": "sensitive",
+      "PROXO_ANALYTICS_HASH_SECRET": "sensitive",
+      "PROXO_TIKTOK_PIXEL_ID": "encrypted"
+    },
+    "observation_scope": "Preceding 5 October inspection; independently advancing main is not frozen by this task",
+    "current_connector_project_lookup": "INVALID_ARGUMENT; no value returned. Authenticated dashboard project and Ready feature Preview metadata VERIFIED.",
+    "current_preview": {
+      "deployment_id": "dpl_GVRVbjbuPK12RDocZxfua8Hfx3Y3",
+      "state": "READY",
+      "environment": "Preview",
+      "head_sha": "6ebcf969dcb1203d36da0db37c7a19125765960a",
+      "url": "https://vercel.com/proxoapp-1758/proxobalance/GVRVbjbuPK12RDocZxfua8Hfx3Y3",
+      "alias": "https://proxobalance-git-feat-proxolink-private-re-00a2aa-proxoapp-1758.vercel.app",
+      "observation": "Authenticated deployment dashboard; metadata only"
+    },
+    "bypass_use_scope": "Only exact approved native-runtime jobs in proxolink-preview-verification; credentials never opened by the agent",
+    "current_protected_preview_runtime": {
+      "status": "VERIFIED access and page checks; FAILED exact pixels",
+      "run_id": 37382755434,
+      "security_evidence": "native-all40/security.json",
+      "all_eight_response_header_checks_passed": true,
+      "native_page_checks_passed": 40,
+      "all_native_cases_passed": false
+    }
+  },
+  "mutations": "No credential changes, production feature release, customer writes, V2 activation or Telegram changes. Only necessary corrections to the existing native diagnostic, HTTP preflight and collector."
+}

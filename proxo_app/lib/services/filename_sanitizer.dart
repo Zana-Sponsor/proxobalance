@@ -1,6 +1,6 @@
 // ═══════════════════════════════════════════════════════════════════════
 // FILENAME SANITIZER — turns a card's display name into a safe .html
-// filename for local save + Telegram delivery.
+// filename for local receipt saves and sharing.
 //
 // Rules:
 //  - trim leading/trailing spaces

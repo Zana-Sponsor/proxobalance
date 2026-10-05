@@ -1,0 +1,406 @@
+{
+  "environment": "Android 35 WebView versus Chromium 151.0.7922.34",
+  "animation_state": "fresh page; scroll zero; CSS animations paused at zero",
+  "cases": {
+    "dark-320": {
+      "width": 320,
+      "height": 1292,
+      "changed_pixels": 98402,
+      "total_pixels": 413440,
+      "changed_fraction": 0.2380079334365325,
+      "mean_channel_error": 1.5932775412796698,
+      "max_channel_error": 235,
+      "exact_pixels_equal": false
+    },
+    "dark-375": {
+      "width": 375,
+      "height": 1292,
+      "changed_pixels": 119450,
+      "total_pixels": 484500,
+      "changed_fraction": 0.24654282765737875,
+      "mean_channel_error": 1.5342566219470244,
+      "max_channel_error": 235,
+      "exact_pixels_equal": false
+    },
+    "dark-393": {
+      "width": 393,
+      "height": 1292,
+      "changed_pixels": 125497,
+      "total_pixels": 507756,
+      "changed_fraction": 0.24716005325392512,
+      "mean_channel_error": 1.4316640276038097,
+      "max_channel_error": 235,
+      "exact_pixels_equal": false
+    },
+    "dark-430": {
+      "width": 430,
+      "height": 1292,
+      "changed_pixels": 135907,
+      "total_pixels": 555560,
+      "changed_fraction": 0.24463064295485637,
+      "mean_channel_error": 1.2194608443132455,
+      "max_channel_error": 235,
+      "exact_pixels_equal": false
+    },
+    "dark-768": {
+      "width": 768,
+      "height": 1292,
+      "changed_pixels": 134103,
+      "total_pixels": 992256,
+      "changed_fraction": 0.13514959849071206,
+      "mean_channel_error": 0.6813577678878568,
+      "max_channel_error": 235,
+      "exact_pixels_equal": false
+    },
+    "light-320": {
+      "width": 320,
+      "height": 1292,
+      "changed_pixels": 69902,
+      "total_pixels": 413440,
+      "changed_fraction": 0.16907410990712074,
+      "mean_channel_error": 1.2538981875644994,
+      "max_channel_error": 238,
+      "exact_pixels_equal": false
+    },
+    "light-375": {
+      "width": 375,
+      "height": 1292,
+      "changed_pixels": 90522,
+      "total_pixels": 484500,
+      "changed_fraction": 0.1868359133126935,
+      "mean_channel_error": 1.2775232198142414,
+      "max_channel_error": 238,
+      "exact_pixels_equal": false
+    },
+    "light-393": {
+      "width": 393,
+      "height": 1292,
+      "changed_pixels": 94399,
+      "total_pixels": 507756,
+      "changed_fraction": 0.18591410047345575,
+      "mean_channel_error": 1.1999516828292855,
+      "max_channel_error": 238,
+      "exact_pixels_equal": false
+    },
+    "light-430": {
+      "width": 430,
+      "height": 1292,
+      "changed_pixels": 93297,
+      "total_pixels": 555560,
+      "changed_fraction": 0.16793325653394772,
+      "mean_channel_error": 0.9559435524515804,
+      "max_channel_error": 238,
+      "exact_pixels_equal": false
+    },
+    "light-768": {
+      "width": 768,
+      "height": 1292,
+      "changed_pixels": 90392,
+      "total_pixels": 992256,
+      "changed_fraction": 0.09109745872033023,
+      "mean_channel_error": 0.532219507868937,
+      "max_channel_error": 238,
+      "exact_pixels_equal": false
+    },
+    "classic-320": {
+      "width": 320,
+      "height": 1292,
+      "changed_pixels": 49696,
+      "total_pixels": 413440,
+      "changed_fraction": 0.12020123839009288,
+      "mean_channel_error": 1.1070054502063984,
+      "max_channel_error": 238,
+      "exact_pixels_equal": false
+    },
+    "classic-375": {
+      "width": 375,
+      "height": 1292,
+      "changed_pixels": 65848,
+      "total_pixels": 484500,
+      "changed_fraction": 0.1359091847265222,
+      "mean_channel_error": 1.0718947368421052,
+      "max_channel_error": 238,
+      "exact_pixels_equal": false
+    },
+    "classic-393": {
+      "width": 393,
+      "height": 1292,
+      "changed_pixels": 68633,
+      "total_pixels": 507756,
+      "changed_fraction": 0.13516925452382642,
+      "mean_channel_error": 1.0258129232676063,
+      "max_channel_error": 238,
+      "exact_pixels_equal": false
+    },
+    "classic-430": {
+      "width": 430,
+      "height": 1292,
+      "changed_pixels": 69397,
+      "total_pixels": 555560,
+      "changed_fraction": 0.12491360069119448,
+      "mean_channel_error": 0.8993694050447596,
+      "max_channel_error": 238,
+      "exact_pixels_equal": false
+    },
+    "classic-768": {
+      "width": 768,
+      "height": 1292,
+      "changed_pixels": 66315,
+      "total_pixels": 992256,
+      "changed_fraction": 0.06683255127708979,
+      "mean_channel_error": 0.472703280873753,
+      "max_channel_error": 238,
+      "exact_pixels_equal": false
+    },
+    "pill-320": {
+      "width": 320,
+      "height": 1292,
+      "changed_pixels": 100465,
+      "total_pixels": 413440,
+      "changed_fraction": 0.24299777476780185,
+      "mean_channel_error": 1.1501467363261093,
+      "max_channel_error": 238,
+      "exact_pixels_equal": false
+    },
+    "pill-375": {
+      "width": 375,
+      "height": 1292,
+      "changed_pixels": 141317,
+      "total_pixels": 484500,
+      "changed_fraction": 0.2916759545923633,
+      "mean_channel_error": 1.126921912624699,
+      "max_channel_error": 238,
+      "exact_pixels_equal": false
+    },
+    "pill-393": {
+      "width": 393,
+      "height": 1292,
+      "changed_pixels": 147667,
+      "total_pixels": 507756,
+      "changed_fraction": 0.29082275738740654,
+      "mean_channel_error": 1.0826184230220814,
+      "max_channel_error": 238,
+      "exact_pixels_equal": false
+    },
+    "pill-430": {
+      "width": 430,
+      "height": 1292,
+      "changed_pixels": 134404,
+      "total_pixels": 555560,
+      "changed_fraction": 0.24192526459788322,
+      "mean_channel_error": 0.8930040559675523,
+      "max_channel_error": 238,
+      "exact_pixels_equal": false
+    },
+    "pill-768": {
+      "width": 768,
+      "height": 1292,
+      "changed_pixels": 134402,
+      "total_pixels": 992256,
+      "changed_fraction": 0.13545093201754385,
+      "mean_channel_error": 0.5000372887641898,
+      "max_channel_error": 238,
+      "exact_pixels_equal": false
+    },
+    "card-320": {
+      "width": 320,
+      "height": 1292,
+      "changed_pixels": 107881,
+      "total_pixels": 413440,
+      "changed_fraction": 0.26093508126934983,
+      "mean_channel_error": 1.159905508255934,
+      "max_channel_error": 238,
+      "exact_pixels_equal": false
+    },
+    "card-375": {
+      "width": 375,
+      "height": 1292,
+      "changed_pixels": 150148,
+      "total_pixels": 484500,
+      "changed_fraction": 0.3099029927760578,
+      "mean_channel_error": 1.1542119023047817,
+      "max_channel_error": 238,
+      "exact_pixels_equal": false
+    },
+    "card-393": {
+      "width": 393,
+      "height": 1292,
+      "changed_pixels": 156776,
+      "total_pixels": 507756,
+      "changed_fraction": 0.30876247646507377,
+      "mean_channel_error": 1.1094777806663043,
+      "max_channel_error": 238,
+      "exact_pixels_equal": false
+    },
+    "card-430": {
+      "width": 430,
+      "height": 1292,
+      "changed_pixels": 143344,
+      "total_pixels": 555560,
+      "changed_fraction": 0.2580171358629131,
+      "mean_channel_error": 0.9058853529171766,
+      "max_channel_error": 238,
+      "exact_pixels_equal": false
+    },
+    "card-768": {
+      "width": 768,
+      "height": 1292,
+      "changed_pixels": 143986,
+      "total_pixels": 992256,
+      "changed_fraction": 0.14510972974716202,
+      "mean_channel_error": 0.5076142984606123,
+      "max_channel_error": 238,
+      "exact_pixels_equal": false
+    },
+    "neon-320": {
+      "width": 320,
+      "height": 1292,
+      "changed_pixels": 142136,
+      "total_pixels": 413440,
+      "changed_fraction": 0.3437886996904025,
+      "mean_channel_error": 1.2714751031991745,
+      "max_channel_error": 230,
+      "exact_pixels_equal": false
+    },
+    "neon-375": {
+      "width": 375,
+      "height": 1292,
+      "changed_pixels": 179050,
+      "total_pixels": 484500,
+      "changed_fraction": 0.3695562435500516,
+      "mean_channel_error": 1.2066185070519435,
+      "max_channel_error": 229,
+      "exact_pixels_equal": false
+    },
+    "neon-393": {
+      "width": 393,
+      "height": 1292,
+      "changed_pixels": 186518,
+      "total_pixels": 507756,
+      "changed_fraction": 0.3673378551902883,
+      "mean_channel_error": 1.1626772176662281,
+      "max_channel_error": 229,
+      "exact_pixels_equal": false
+    },
+    "neon-430": {
+      "width": 430,
+      "height": 1292,
+      "changed_pixels": 184531,
+      "total_pixels": 555560,
+      "changed_fraction": 0.3321531427748578,
+      "mean_channel_error": 1.0133804929560564,
+      "max_channel_error": 229,
+      "exact_pixels_equal": false
+    },
+    "neon-768": {
+      "width": 768,
+      "height": 1292,
+      "changed_pixels": 192034,
+      "total_pixels": 992256,
+      "changed_fraction": 0.19353271736326108,
+      "mean_channel_error": 0.5757257535689715,
+      "max_channel_error": 229,
+      "exact_pixels_equal": false
+    },
+    "zoom-320": {
+      "width": 320,
+      "height": 1292,
+      "changed_pixels": 103322,
+      "total_pixels": 413440,
+      "changed_fraction": 0.24990808823529412,
+      "mean_channel_error": 1.1949109907120743,
+      "max_channel_error": 238,
+      "exact_pixels_equal": false
+    },
+    "zoom-375": {
+      "width": 375,
+      "height": 1292,
+      "changed_pixels": 143215,
+      "total_pixels": 484500,
+      "changed_fraction": 0.29559339525283795,
+      "mean_channel_error": 1.1607072583419333,
+      "max_channel_error": 238,
+      "exact_pixels_equal": false
+    },
+    "zoom-393": {
+      "width": 393,
+      "height": 1292,
+      "changed_pixels": 149462,
+      "total_pixels": 507756,
+      "changed_fraction": 0.29435791994580074,
+      "mean_channel_error": 1.1147329294648085,
+      "max_channel_error": 238,
+      "exact_pixels_equal": false
+    },
+    "zoom-430": {
+      "width": 430,
+      "height": 1292,
+      "changed_pixels": 137190,
+      "total_pixels": 555560,
+      "changed_fraction": 0.24694002447980415,
+      "mean_channel_error": 0.9260997912016704,
+      "max_channel_error": 238,
+      "exact_pixels_equal": false
+    },
+    "zoom-768": {
+      "width": 768,
+      "height": 1292,
+      "changed_pixels": 137262,
+      "total_pixels": 992256,
+      "changed_fraction": 0.13833325270897834,
+      "mean_channel_error": 0.518624226006192,
+      "max_channel_error": 238,
+      "exact_pixels_equal": false
+    },
+    "banner-320": {
+      "width": 320,
+      "height": 1292,
+      "changed_pixels": 108143,
+      "total_pixels": 413440,
+      "changed_fraction": 0.2615687886996904,
+      "mean_channel_error": 0.9430735616615067,
+      "max_channel_error": 230,
+      "exact_pixels_equal": false
+    },
+    "banner-375": {
+      "width": 375,
+      "height": 1292,
+      "changed_pixels": 145624,
+      "total_pixels": 484500,
+      "changed_fraction": 0.3005655314757482,
+      "mean_channel_error": 0.9243570691434468,
+      "max_channel_error": 229,
+      "exact_pixels_equal": false
+    },
+    "banner-393": {
+      "width": 393,
+      "height": 1292,
+      "changed_pixels": 152387,
+      "total_pixels": 507756,
+      "changed_fraction": 0.300118560883574,
+      "mean_channel_error": 0.8875805176764693,
+      "max_channel_error": 229,
+      "exact_pixels_equal": false
+    },
+    "banner-430": {
+      "width": 430,
+      "height": 1292,
+      "changed_pixels": 140255,
+      "total_pixels": 555560,
+      "changed_fraction": 0.25245698034415726,
+      "mean_channel_error": 0.7445754433964529,
+      "max_channel_error": 229,
+      "exact_pixels_equal": false
+    },
+    "banner-768": {
+      "width": 768,
+      "height": 1292,
+      "changed_pixels": 140609,
+      "total_pixels": 992256,
+      "changed_fraction": 0.14170637416150672,
+      "mean_channel_error": 0.4170526557662539,
+      "max_channel_error": 229,
+      "exact_pixels_equal": false
+    }
+  }
+}

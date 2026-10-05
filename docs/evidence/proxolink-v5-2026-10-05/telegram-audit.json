@@ -1,0 +1,48 @@
+{
+  "feature_source": {
+    "status": "VERIFIED",
+    "no_active_control_or_destination": true,
+    "no_proxolink_bot_notification_calls": true,
+    "no_telegram_delivery_dependency_declaration_or_lock_entry": true,
+    "historical_customer_fields_preserved": true,
+    "fresh_merged_tree_source_scan": "PASS: existing source/privacy scan executed at dfa7c94"
+  },
+  "production": {
+    "status": "VERIFIED",
+    "function": "notify-tool-created",
+    "version": 4,
+    "state": "ACTIVE",
+    "jwt_verification": true,
+    "telegram_endpoint_in_source": false,
+    "send_document_in_source": false,
+    "retirement_response_in_source": true,
+    "exact_checked_source_match": true,
+    "authenticated_post_status": 410,
+    "unauthenticated_post_status": 401,
+    "options_status": 204,
+    "old_delivery_function_invoked": false,
+    "new_retirement_endpoint_invoked": true,
+    "customer_data_writes": 0
+  },
+  "prepared_retirement": {
+    "source_commit": "970165dce5c274714146b7226cb8b69ff8c20268",
+    "http_status": 410,
+    "does_not_parse_legacy_payload": true,
+    "does_not_forward_to_telegram": true,
+    "edge_check": "passed in CI 37240394546",
+    "deployed": true,
+    "deployed_version": 4
+  },
+  "remaining_gate": "Scoped retirement completed. Native/staging contact-page rendering remains BLOCKED; historical credential revocation is separately unverified. No new Telegram bot/token/integration required.",
+  "previous_production_inspection": {
+    "status": "FAILED",
+    "function": "notify-tool-created",
+    "version": 3,
+    "state": "ACTIVE",
+    "telegram_endpoint_in_source": true,
+    "send_document_in_source": true,
+    "retirement_response_in_source": false,
+    "delivery_function_invoked_by_this_pass": false
+  },
+  "execution_evidence": "retirement-execution.json"
+}
