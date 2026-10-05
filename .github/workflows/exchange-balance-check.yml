@@ -1,0 +1,51 @@
+name: Exchange Balance Checks
+on:
+  pull_request:
+    paths:
+      - 'api/admin.js'
+      - 'api/balance.js'
+      - 'assets/js/**'
+      - 'assets/css/exchange-balance.css'
+      - 'index.html'
+      - 'exchange-admin.html'
+      - 'scripts/prepare-vercel.mjs'
+      - 'SUPABASE_EXCHANGE_*.sql'
+      - '.github/workflows/exchange-balance-check.yml'
+  push:
+    branches: [feat/exchange-refund-balance-20261005]
+jobs:
+  static-and-build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate server and browser JavaScript
+        run: |
+          node --check api/admin.js
+          node --check api/balance.js
+          node --check assets/js/admin.js
+          node --check assets/js/app.js
+          node --check assets/js/exchange-balance.js
+          node --check assets/js/exchange-balance-admin.js
+      - name: Build Vercel static output
+        run: node scripts/prepare-vercel.mjs
+      - name: Verify deployed asset and board paths
+        run: |
+          node --input-type=module -e "
+            import { existsSync,readFileSync } from 'node:fs';
+            const check = (value,message) => { if(!value)throw new Error(message); };
+            for(const file of ['public/index.html','public/exchange-admin.html',
+              'public/assets/js/exchange-balance.js',
+              'public/assets/js/exchange-balance-admin.js',
+              'public/assets/css/exchange-balance.css','api/balance.js'])
+              check(existsSync(file),'Missing '+file);
+            check(readFileSync('public/index.html','utf8').includes('id=\"balanceSendSection\"'),
+              'Missing customer send balance');
+            check(readFileSync('public/exchange-admin.html','utf8').includes('id=\"pgBalance\"'),
+              'Missing admin balance board');
+            console.log('PASS: Exchange customer/admin build and balance assets');
+          "
