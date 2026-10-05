@@ -1,13 +1,30 @@
 {
-  "scope": "Read-only signed-in GitHub and Vercel dashboard metadata; no credential values opened",
+  "scope": "Read-only GitHub dashboard and Vercel non-decrypted metadata; no credential values decrypted or disclosed",
   "github_environment": {
     "name": "proxolink-preview-verification",
     "url": "https://github.com/Zana-Sponsor/proxobalance/settings/environments/23442858482/edit",
     "settings": [
-      { "name": "PROXO_NATIVE_ANON_KEY", "type": "environment variable", "status": "VERIFIED: present" },
-      { "name": "PROXO_NATIVE_TEST_EMAIL", "type": "environment secret", "status": "VERIFIED: present" },
-      { "name": "PROXO_NATIVE_TEST_PASSWORD", "type": "environment secret", "status": "VERIFIED: present" },
-      { "name": "PROXO_NATIVE_VERCEL_BYPASS", "type": "environment secret", "status": "VERIFIED: present", "updated_at": "2026-10-04T22:44:23Z" }
+      {
+        "name": "PROXO_NATIVE_ANON_KEY",
+        "type": "environment variable",
+        "status": "VERIFIED: present"
+      },
+      {
+        "name": "PROXO_NATIVE_TEST_EMAIL",
+        "type": "environment secret",
+        "status": "VERIFIED: present"
+      },
+      {
+        "name": "PROXO_NATIVE_TEST_PASSWORD",
+        "type": "environment secret",
+        "status": "VERIFIED: present"
+      },
+      {
+        "name": "PROXO_NATIVE_VERCEL_BYPASS",
+        "type": "environment secret",
+        "status": "VERIFIED: present",
+        "updated_at": "2026-10-04T22:44:23Z"
+      }
     ],
     "branch_policy": "Selected branches and tags",
     "expected_branch_rule_present": true,
@@ -16,18 +33,25 @@
     "prevent_self_review_enabled": false,
     "administrator_bypass_allowed": true,
     "protected_release_status": "FAILED: reviewer requirement from authoritative V5 section 144 is not configured",
-    "setting_value_validity": "BLOCKED: no native runtime attempted"
+    "setting_value_validity": "BLOCKED: no native runtime attempted",
+    "prepared_unsaved_change": {
+      "required_reviewers": [
+        "Zana-Sponsor"
+      ],
+      "administrator_bypass_allowed": false,
+      "status": "BLOCKED: automatic approval review rejected save as inspection-only authorization",
+      "saved": false
+    }
   },
   "vercel": {
     "project": "proxoapp-1758/proxobalance",
     "dashboard_access": "VERIFIED",
     "dashboard_url": "https://vercel.com/proxoapp-1758/proxobalance",
-    "connector_project_lookup": "404 Project not found",
-    "connector_matching_projects": 0,
+    "connector_project_lookup": "VERIFIED: stable-ID lookup succeeds; name lookup returns 404",
     "preview_dashboard_status": "Ready",
     "preview_dashboard_id": "8DwKFE7L4NMV95qeeat9jZAkG22i",
     "production_branch": "main",
-    "production_commit": "e7c1d3060c2777cae7ff2bc293df7df5ebfd4cd6",
+    "production_commit": "db95ae062a38f95280715f5ae8e938196413242a",
     "server_variable_names_present": [
       "PROXO_SUPABASE_SERVICE_ROLE_KEY",
       "PROXO_SUPABASE_URL",
@@ -36,8 +60,11 @@
       "PROXO_ANALYTICS_HASH_SECRET",
       "PROXO_TIKTOK_PIXEL_ID"
     ],
-    "targets_observed_for_each": ["Preview", "Production"],
-    "sensitive_or_encrypted_types": "Not independently certified by this DOM inspection",
+    "targets_observed_for_each": [
+      "Preview",
+      "Production"
+    ],
+    "sensitive_or_encrypted_types": "VERIFIED from non-decrypted connector metadata",
     "values_opened": false,
     "bypass_audit_url": "https://vercel.com/proxoapp-1758/proxobalance/settings/activity",
     "bypass_removal_audit_observed": true,
@@ -46,7 +73,23 @@
     "active_masked_automation_entries": 1,
     "retirement_replacement_metadata": "VERIFIED",
     "github_to_vercel_capability_correspondence": "Not tested; values never opened",
-    "bypass_used": false
+    "bypass_used": false,
+    "project_id": "prj_TCDpM3JNJAZNREZAVyxBLfiZGFxq",
+    "team_id": "team_8HiDsaKfcCegaE9FgXwmVrUJ",
+    "inspected_feature_deployment_id": "dpl_2hbtGYf7EesDnwDNXS9De44q87Kc",
+    "inspected_feature_deployment_sha": "8a900ee08155b28995baf74be8dd71ae76cf2997",
+    "inspected_feature_deployment_state": "READY",
+    "production_deployment_id": "dpl_9N9Vnr9YPS1U4uWaDf4mnnsBTWAc",
+    "production_change_scope": "Independent main Exchange release; no production action by this task",
+    "protected_app_fetch": "403 capability denial; not retried",
+    "server_variable_types": {
+      "PROXO_SUPABASE_SERVICE_ROLE_KEY": "sensitive",
+      "PROXO_SUPABASE_URL": "encrypted",
+      "PROXO_PUBLIC_BASE_URL": "encrypted",
+      "PROXO_PREVIEW_SIGNING_SECRET": "sensitive",
+      "PROXO_ANALYTICS_HASH_SECRET": "sensitive",
+      "PROXO_TIKTOK_PIXEL_ID": "encrypted"
+    }
   },
   "mutations": "None: no provider configuration changes or credential replacement performed by this pass"
 }

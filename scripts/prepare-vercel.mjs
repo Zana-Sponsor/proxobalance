@@ -19,6 +19,11 @@ mkdirSync(output, { recursive: true });
 // replacing stale copies of files that have an authoritative root version.
 cpSync(sourceAssets, join(output, 'assets'), { recursive: true, force: true });
 copyFileSync(sourceIndex, outputIndex);
+// The canonical Exchange admin panel is also edited at the repository root.
+// Always copy it into public/ so Vercel does not serve an older admin page.
+const sourceAdmin = join(root, 'exchange-admin.html');
+if (!existsSync(sourceAdmin)) throw new Error('Missing root Exchange admin panel.');
+copyFileSync(sourceAdmin, join(output, 'exchange-admin.html'));
 
 const html = readFileSync(sourceIndex, 'utf8');
 if (!html.includes('id="pageHome"') || !html.includes('id="exchangeCard"')) {

@@ -93,6 +93,7 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
 <link rel="stylesheet" href="/assets/css/exchange-light-panel.css?v=12">
 <link rel="stylesheet" href="/assets/css/exchange-ux.css?v=1">
 <link rel="stylesheet" href="/assets/css/panel-consistency.css?v=1">
+<link rel="stylesheet" href="/assets/css/exchange-balance.css?v=2">
 </head>
 
 <body>
@@ -592,6 +593,34 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
       </div>
     </div>
 
+    <!-- Balance appears only in the Send section; payout never happens automatically. -->
+    <section class="pb-balance" id="balanceSendSection" aria-label="باڵانسی هەژمار">
+      <div class="pb-balance-top">
+        <div><h3>باڵانسی هەژمارەکەت</h3><p>پارەی گەڕێندراوە لە مامەڵەکان</p></div>
+        <button type="button" class="pb-refresh" onclick="loadMyBalance()" aria-label="نوێکردنەوەی باڵانس">↻</button>
+      </div>
+      <div class="pb-bal-grid">
+        <div><span>بەردەست</span><strong id="balanceAvailable">—</strong></div>
+        <div><span>لە چاوەڕوانیدا</span><strong id="balanceHeld">—</strong></div>
+      </div>
+      <div class="pb-actions">
+        <button type="button" id="balancePayoutToggle" class="pb-btn" onclick="toggleBalancePayout()" disabled>ناردنی باڵانس بۆ جزدان</button>
+        <button type="button" class="pb-btn pb-secondary" onclick="toggleBalanceHistory()">مێژووی باڵانس</button>
+      </div>
+      <p class="pb-message" id="balanceStatusMessage" tabindex="-1" role="status">باڵانس بار دەکرێت...</p>
+      <form id="balancePayoutForm" class="pb-form" hidden onsubmit="requestBalancePayout(event)">
+        <label for="balanceDestWallet">جزدانی وەرگر</label>
+        <select id="balanceDestWallet" required></select>
+        <label for="balanceDestNumber">ژمارەی جزدانی خاوەنی هەژمار</label>
+        <input id="balanceDestNumber" required autocomplete="off" inputmode="numeric" dir="ltr" placeholder="ژمارەی جزدان">
+        <label for="balancePayoutAmount">بڕی ناردن (دینار)</label>
+        <input id="balancePayoutAmount" type="number" min="10000" step="1" required dir="ltr" placeholder="10000">
+        <p class="pb-message">ناردن دەستییە؛ دوای پشتڕاستکردنەوەی بەڕێوەبەر و خاوەندارێتی جزدان ئەنجام دەدرێت.</p>
+        <button type="submit" id="balancePayoutSubmit" class="pb-btn">داواکاری ناردن</button>
+      </form>
+      <div id="balanceHistoryList" class="pb-history" hidden></div>
+    </section>
+
     <div class="ux-progress" role="list" aria-label="هەنگاوەکانی ئاڵوگۆڕ">
       <div class="ux-progress-item is-current" data-ux-stage="send" role="listitem" aria-current="step">
         <span class="ux-progress-index" aria-hidden="true">١</span>
@@ -774,6 +803,7 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
         <span class="v"><span id="totalDisplay" class="total-value">0 IQD</span></span>
       </div>
       <div id="feeDisplay" class="fee-note"></div>
+      <div id="rewardBanner" class="fee-note" role="status" aria-live="polite" style="color:#1568ba;margin-top:6px;white-space:pre-line" hidden></div>
     </div>
 
       </div>
@@ -1500,7 +1530,9 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
 })();
 </script>
 <script src="/assets/js/index-svg-icons.js?v=1"></script>
-<script src="/assets/js/app.js?v=35"></script>
+<script src="/assets/js/exchange-reward-pricing.js?v=2"></script>
+<script src="/assets/js/app.js?v=40"></script>
+<script src="/assets/js/exchange-balance.js?v=3"></script>
 <script src="/assets/js/exchange-ux.js?v=1"></script>
 <script src="/assets/js/receipt-download.js?v=4"></script>
 <script src="/assets/js/track.js?v=2"></script>

@@ -1,0 +1,55 @@
+{
+  "date": "2026-10-05",
+  "repository": "Zana-Sponsor/proxobalance",
+  "branch": "feat/proxolink-private-renderer-migration",
+  "feature_parent": "8a900ee08155b28995baf74be8dd71ae76cf2997",
+  "main_parent": "db95ae062a38f95280715f5ae8e938196413242a",
+  "merge_scope": "Main incorporated into draft feature branch; PR not merged into main",
+  "textual_conflicts": 0,
+  "local_checks": {
+    "npm_test": {
+      "passed": 103,
+      "failed": 0,
+      "skipped": 0
+    },
+    "npm_run_build": "PASS",
+    "node_check_server": "PASS",
+    "source_privacy_scan": "PASS",
+    "api_function_count": 11,
+    "api_function_limit": 12
+  },
+  "combined_tree_ci": "PENDING: new normal push; live-verification trigger excluded",
+  "native": {
+    "executed": 0,
+    "required": 40,
+    "status": "BLOCKED: reviewer protection save rejected; no runtime trigger"
+  },
+  "live_staging": {
+    "executed": 0,
+    "required": 8,
+    "status": "BLOCKED: no isolated provider target configured"
+  },
+  "production_writes": false,
+  "database_writes": false,
+  "template_v2_activation": false,
+  "credential_rotation": false,
+  "production_baseline": {
+    "cards": 21,
+    "ads": 27,
+    "asset_references": 16,
+    "orphan_asset_references": 0,
+    "cross_owner_asset_references": 0,
+    "contact_links": 0,
+    "contact_events": 0,
+    "ready_cards": 0
+  },
+  "environment_protection": {
+    "save_attempt": "REJECTED by automatic approval review",
+    "reason": "Material security and deployment-access change authorized for inspection only",
+    "changes_saved": false,
+    "prepared_reviewers": [
+      "Zana-Sponsor"
+    ],
+    "prepared_administrator_bypass_allowed": false
+  }
+}

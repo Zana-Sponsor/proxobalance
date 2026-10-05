@@ -230,6 +230,8 @@ const pageConfig = {
   accounts:{ title:'هەژمارەکان', sub:'بەڕێوەبردنی هەژمارەکانی بەکارهێنەران', load: ()=>loadAccounts() },
   kyc:{ title:'پشتڕاستکردنەوەی ناسنامە', sub:'داواکردن، پشکنین و پەسەندکردنی بەڵگەنامەی ناسنامە', load: ()=>loadKycAdmin() },
   wallets:{ title:'واڵێتەکان', sub:'زیادکردن، قوفڵکردن و دەستکاریکردنی واڵێتەکانی وەرگرتنی پارە', load: ()=>loadWalletsAdmin() },
+  rewards:{ title:'پاداشت و داشکاندن', sub:'داشکاندنی لێبڕین و مامەڵەی بێ لێبڕین بۆ بەکارهێنەری دیاریکراو', load: ()=>loadRewardsPanel() },
+  balance:{title:'ڕیفاوند و باڵانس',sub:'گەڕاندنەوەی پارە، داواکاری ناردن و چاودێریی دارایی',load:()=>loadBalanceAdmin()},
   rates:{ title:'نرخ و کرێ', sub:'ڕێکخستنی نرخی گۆڕینەوە و کرێی هەر ڕێگایەک', load: ()=>loadRates() },
   notifications:{ title:'ئاگادارییەکان', sub:'ناردنی ئاگاداری و بینینی مێژوو', load: ()=>loadNotifPage() },
   cases:{ title:'کەیسەکانی کڕیار', sub:'وێنە، وردەکاری و چارەسەرکردنی کێشەکانی کڕیار', load: ()=>loadSupportCasesAdmin() },
@@ -1047,7 +1049,7 @@ async function loadDashboardStats(){
     const [{count:usersCount}, {count:bannedCount}, {count:pendingCount}, {data:approvedRows}, {count:rejectedCount}] = await Promise.all([
       sb.from('ex_profiles').select('*',{count:'exact',head:true}),
       sb.from('ex_profiles').select('*',{count:'exact',head:true}).eq('is_banned',true),
-      sb.from('ex_orders').select('*',{count:'exact',head:true}).in('status',[STATUS_PENDING,STATUS_CORRECTED]),
+      sb.from('ex_orders').select('*',{count:'exact',head:true}).in('status',[STATUS_PENDING,STATUS_CORRECTED]).is('balance_refunded_at',null),
       sb.from('ex_orders').select('total').eq('status',STATUS_APPROVED),
       sb.from('ex_orders').select('*',{count:'exact',head:true}).eq('status',STATUS_REJECTED),
     ]);
@@ -1116,7 +1118,7 @@ function filterOrders(el){
 }
 function renderOrders(q=''){
   let list=allOrders;
-  if(orderFilter!=='all') list=list.filter(o=>o.status===orderFilter);
+  if(orderFilter!=='all') list=list.filter(o=>orderFilter==='refunded'?!!o.balance_refunded_at:(!o.balance_refunded_at&&o.status===orderFilter));
   if(q){
     const qq=q.replace(/[\s#-]/g,'');
     list=list.filter(o=>(o.profile?.full_name||'').toLowerCase().includes(q)
@@ -1136,12 +1138,12 @@ function renderOrdersTable(list){
       <td>${methodPill(o.from_method)} <i class="fas fa-arrow-left" style="font-size:10px;color:var(--mt);margin:0 4px"></i> ${methodPill(o.to_method)}</td>
       <td style="font-family:'Inter';font-weight:700">${formatNum(o.amount)}${o.from_method==='USDT'?'$':''}</td>
       <td style="font-family:'Inter';font-weight:800;color:var(--gr)">${formatNum(o.total)} IQD</td>
-      <td><span class="badge ${statusBadgeClass(o.status)}">${esc(o.status)}</span></td>
+      <td><span class="badge ${statusBadgeClass(o.balance_refunded_at?'پەسەندکرا':o.status)}">${esc(o.balance_refunded_at?'ڕیفاوندکرا':o.status)}</span></td>
       <td style="font-size:11px;color:var(--mt)">${fmtDateTime(o.created_at)}</td>
       <td onclick="event.stopPropagation()"><div class="act-grp">
         <div class="act-btn dark" onclick='showOrderDetail(${safeAttr(o.id)})'><i class="fas fa-eye"></i></div>
-        ${CORRECTABLE_ORDER_STATUSES.has(o.status)?`<div class="act-btn yw" title="داوای ڕاستکردنەوە" onclick="openOrderCorrectionRequest('${o.id}')"><i class="fas fa-pen-to-square"></i></div>`:''}
-        ${REVIEWABLE_ORDER_STATUSES.has(o.status)?`<div class="act-btn gr" onclick="approveOrder('${o.id}')"><i class="fas fa-check"></i></div><div class="act-btn rd" onclick="showRejectReason('${o.id}')"><i class="fas fa-times"></i></div>`:''}
+        ${!o.balance_refunded_at && CORRECTABLE_ORDER_STATUSES.has(o.status)?`<div class="act-btn yw" title="داوای ڕاستکردنەوە" onclick="openOrderCorrectionRequest('${o.id}')"><i class="fas fa-pen-to-square"></i></div>`:''}
+        ${!o.balance_refunded_at && REVIEWABLE_ORDER_STATUSES.has(o.status)?`<div class="act-btn gr" onclick="approveOrder('${o.id}')"><i class="fas fa-check"></i></div><div class="act-btn rd" onclick="showRejectReason('${o.id}')"><i class="fas fa-times"></i></div>`:''}
       </div></td>
     </tr>`).join('')}
   </tbody></table>`;
@@ -1153,7 +1155,7 @@ function renderOrdersCards(list){
       <div class="rec-card-top">
         <div class="mini-av">${(o.profile?.full_name||o.profile?.email||'?')[0].toUpperCase()}</div>
         <div class="rec-card-info"><div class="rec-card-name">${esc(o.profile?.full_name||'بێ ناو')}</div><div class="rec-card-sub">${esc(o.profile?.email||'—')}</div></div>
-        <span class="badge ${statusBadgeClass(o.status)}">${esc(o.status)}</span>
+        <span class="badge ${statusBadgeClass(o.balance_refunded_at?'پەسەندکرا':o.status)}">${esc(o.balance_refunded_at?'ڕیفاوندکرا':o.status)}</span>
       </div>
       <div class="rec-card-meta">
         <span style="font-size:12px">${methodPill(o.from_method)} <i class="fas fa-arrow-left" style="font-size:9px;color:var(--mt);margin:0 3px"></i> ${methodPill(o.to_method)}</span>
@@ -1164,8 +1166,8 @@ function renderOrdersCards(list){
       </div>
       <div class="rec-card-actions" onclick="event.stopPropagation()">
         <div class="act-btn dark" onclick="showOrderDetail('${o.id}')"><i class="fas fa-eye"></i> وردەکاری</div>
-        ${CORRECTABLE_ORDER_STATUSES.has(o.status)?`<div class="act-btn yw" onclick="openOrderCorrectionRequest('${o.id}')"><i class="fas fa-pen-to-square"></i> داوای ڕاستکردنەوە</div>`:''}
-        ${REVIEWABLE_ORDER_STATUSES.has(o.status)?`<div class="act-btn gr" onclick="approveOrder('${o.id}')"><i class="fas fa-check"></i> پەسەندکردن</div>
+        ${!o.balance_refunded_at && CORRECTABLE_ORDER_STATUSES.has(o.status)?`<div class="act-btn yw" onclick="openOrderCorrectionRequest('${o.id}')"><i class="fas fa-pen-to-square"></i> داوای ڕاستکردنەوە</div>`:''}
+        ${!o.balance_refunded_at && REVIEWABLE_ORDER_STATUSES.has(o.status)?`<div class="act-btn gr" onclick="approveOrder('${o.id}')"><i class="fas fa-check"></i> پەسەندکردن</div>
         <div class="act-btn rd" onclick="showRejectReason('${o.id}')"><i class="fas fa-times"></i> ڕەتکردنەوە</div>`:''}
       </div>
     </div>`).join('')}</div>`;
@@ -1189,7 +1191,7 @@ function showOrderDetail(id){
     <div class="detail-row"><span class="lbl">بڕی وەرگیراو</span><span class="val" style="color:var(--gr)">${formatNum(order.total)} IQD</span></div>
     <div class="detail-row"><span class="lbl">ژمارەی وەرگر</span><span class="val">${esc(order.phone||'—')}</span></div>
     ${order.extra_info?`<div class="detail-row"><span class="lbl">زانیاری زیاتر</span><span class="val">${esc(order.extra_info)}</span></div>`:''}
-    <div class="detail-row"><span class="lbl">باری</span><span class="val"><span class="badge ${statusBadgeClass(order.status)}">${esc(order.status)}</span></span></div>
+    <div class="detail-row"><span class="lbl">باری</span><span class="val"><span class="badge ${statusBadgeClass(order.balance_refunded_at?'پەسەندکرا':order.status)}">${esc(order.balance_refunded_at?'ڕیفاوندکرا':order.status)}</span></span></div>
     <div class="detail-row"><span class="lbl">بەروار</span><span class="val">${new Date(order.created_at).toLocaleString('ku')}</span></div>
     ${order.receipt_url?`<div style="margin-top:10px"><div style="font-size:11px;color:var(--mt);margin-bottom:8px">وێنەی پسووڵە (لەلایەن کڕیارەوە)</div><img src="${order.receipt_url}" class="rcpt-img" onclick="showImg('${order.receipt_url}')"></div>`:`<div class="fee-toggle-note" style="margin-top:10px"><i class="fas fa-paper-plane" style="margin-left:4px"></i>وێنەی پسووڵە بۆ تیلیگرامی ئەدمین نێردراوە لەکاتی ناردنی داواکارییەکە.</div>`}
     ${order.correction_request?`<div class="order-admin-correction request"><b><i class="fas fa-pen-to-square"></i> داوای ڕاستکردنەوەی ئادمین</b><p>${esc(order.correction_request)}</p><small>${order.correction_requested_at?esc(fmtDateTime(order.correction_requested_at)):''}</small></div>`:''}
@@ -1207,9 +1209,12 @@ function showOrderDetail(id){
     <textarea class="minp mta" id="odNote">${esc(order.admin_note||'')}</textarea>
     <div class="act-grp" style="margin-top:12px">
       <div class="act-btn dark" onclick="saveOrderNote('${order.id}')"><i class="fas fa-floppy-disk"></i> پاشەکەوتی تێبینی</div>
-      ${CORRECTABLE_ORDER_STATUSES.has(order.status)?`<div class="act-btn yw" onclick="openOrderCorrectionRequest('${order.id}')"><i class="fas fa-pen-to-square"></i> داوای ڕاستکردنەوە</div>`:''}
+      ${!order.balance_refunded_at && CORRECTABLE_ORDER_STATUSES.has(order.status)?`<div class="act-btn yw" onclick="openOrderCorrectionRequest('${order.id}')"><i class="fas fa-pen-to-square"></i> داوای ڕاستکردنەوە</div>`:''}
     </div>
-    ${REVIEWABLE_ORDER_STATUSES.has(order.status)?`<div class="act-grp" style="margin-top:12px">
+    ${!order.balance_refunded_at && order.status!==STATUS_APPROVED && !order.payout_receipt_url && order.from_method!=='USDT' && order.to_method!=='USDT'?`<div class="act-grp" style="margin-top:12px">
+      <button type="button" class="act-btn rd" onclick="openOrderRefund('${order.id}')"><i class="fas fa-wallet"></i> ڕەتکردنەوە و گەڕاندنەوە بۆ باڵانس</button>
+    </div>`:''}
+    ${!order.balance_refunded_at && REVIEWABLE_ORDER_STATUSES.has(order.status)?`<div class="act-grp" style="margin-top:12px">
       <div class="act-btn gr" style="flex:1;justify-content:center" onclick="approveOrder('${order.id}');closeMo('moOrderDetail')"><i class="fas fa-check"></i> پەسەندکردن</div>
       <div class="act-btn rd" style="flex:1;justify-content:center" onclick="showRejectReason('${order.id}');closeMo('moOrderDetail')"><i class="fas fa-times"></i> ڕەتکردنەوە</div>
     </div>`:''}
@@ -1393,12 +1398,35 @@ function refreshOrdersEverywhere(){
 // ══════════════════════════════════════════════════════════════
 // ═══ ACCOUNTS ════════════════════════════════════════════════════
 // ══════════════════════════════════════════════════════════════
+let _accountBalances = Object.create(null);
+async function loadAccountBalances(userIds){
+  const balances=Object.create(null);
+  for(let from=0;from<userIds.length;from+=200){
+    const rows=await adminApiRequest('account_balances',{user_ids:userIds.slice(from,from+200)});
+    rows.forEach(row=>{balances[row.user_id]=row;});
+  }
+  _accountBalances=balances;
+}
+function accountBalanceValue(row){
+  return row ? formatNum(row.available_iqd)+' دینار' : '—';
+}
+function accountBalanceCell(id){
+  const row=_accountBalances[id];
+  return '<div>'+accountBalanceValue(row)+'</div>'+
+    (row&&Number(row.held_iqd)>0?'<div class="rec-card-sub">پارەی گیراو: '+formatNum(row.held_iqd)+' دینار</div>':'');
+}
+function accountBalanceDetails(row){
+  return '<div class="ai-sec">باڵانسی هەژمار</div>'+
+    '<div class="detail-row"><div class="lbl">باڵانسی بەردەست</div><div class="val">'+accountBalanceValue(row)+'</div></div>'+
+    '<div class="detail-row"><div class="lbl">پارەی گیراو</div><div class="val">'+(row?formatNum(row.held_iqd)+' دینار':'—')+'</div></div>'+
+    '<div class="detail-row"><div class="lbl">دوایین نوێکردنەوە</div><div class="val">'+(row?.updated_at?fmtDateTime(row.updated_at):'—')+'</div></div>';
+}
 async function loadAccounts(){
   document.getElementById('accountsTableWrap').innerHTML='<div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>';
   try{
     allAccounts = await fetchAllProfiles();
-    await loadAccountIps();     // one round-trip for every account's last IP
-    renderAccounts();
+    await Promise.all([loadAccountIps(),loadAccountBalances(allAccounts.map(a=>a.id))]);
+    filterAccounts();
   }catch(e){
     document.getElementById('accountsTableWrap').innerHTML=`<div class="empty"><i class="fas fa-triangle-exclamation"></i><p>هەڵە: ${esc(e.message)}</p></div>`;
   }
@@ -1448,9 +1476,10 @@ function accBadges(a){
 }
 function renderAccTable(list){
   if(!list.length) return '<div class="empty"><i class="fas fa-user-slash"></i><p>هیچ هەژمارێک نییە</p></div>';
-  return `<table><thead><tr><th>بەکارهێنەر</th><th>مۆبایل</th><th>IP و ئامێر</th><th>باری</th><th>بەرواری تۆمارکردن</th><th>کردار</th></tr></thead><tbody>
+  return `<table><thead><tr><th>بەکارهێنەر</th><th>باڵانسی بەردەست</th><th>مۆبایل</th><th>IP و ئامێر</th><th>باری</th><th>بەرواری تۆمارکردن</th><th>کردار</th></tr></thead><tbody>
     ${list.map(a=>`<tr>
       <td><div class="user-cell"><div class="mini-av">${(a.full_name||a.email||'?')[0].toUpperCase()}</div><div><div class="user-cell-name">${esc(a.full_name||'—')}</div><div class="user-cell-email">${esc(a.email||'—')}</div>${a.username?`<div class="user-cell-handle" dir="ltr">@${esc(a.username)}</div>`:''}</div></div></td>
+      <td>${accountBalanceCell(a.id)}</td>
       <td style="direction:ltr;font-size:12px">${esc(a.phone||'—')}</td>
       <td>${accIpCell(a.id)}</td>
       <td>${accBadges(a)}</td>
@@ -1474,6 +1503,7 @@ function renderAccCards(list){
         <div class="rec-card-info"><div class="rec-card-name">${esc(a.full_name||'بێ ناو')}</div><div class="rec-card-sub">${esc(a.email||'—')}</div>${a.username?`<div class="rec-card-sub" style="color:var(--cy)">@${esc(a.username)}</div>`:''}</div>
       </div>
       <div class="rec-card-meta">${accBadges(a)}<div class="rec-card-date" dir="ltr">${fmtDateTime(a.created_at)}</div></div>
+      <div class="detail-row"><div class="lbl">باڵانسی بەردەست</div><div class="val">${accountBalanceCell(a.id)}</div></div>
       <div class="rec-card-actions g3">
         <div class="act-btn bl" onclick="openAccountInfo('${a.id}')"><i class="fas fa-circle-info"></i> زانیاری</div>
         <div class="act-btn dark" onclick="openSetPasswordModal('${a.id}','${esc(a.email||'').replace(/'/g,"\\'")}')"><i class="fas fa-key"></i> وشەی نهێنی</div>
@@ -1488,6 +1518,7 @@ function renderAccCards(list){
 // ═══ ACCOUNT INFO ════════════════════════════════════════════════
 // Injected from JS so no change to exchange-admin.html is needed.
 // ══════════════════════════════════════════════════════════════
+let _accountInfoLoad=0;
 function ensureAccountInfoModal(){
   if(document.getElementById('moAccountInfo')) return;
   const o=document.createElement('div');
@@ -1507,6 +1538,7 @@ async function openAccountInfo(id){
   const a=allAccounts.find(x=>x.id===id);
   if(!a){ showToast('هەژمارەکە نەدۆزرایەوە','rd'); return; }
   ensureAccountInfoModal();
+  const loadId=++_accountInfoLoad;
   document.getElementById('aiTitle').textContent=a.full_name||a.email||'زانیاری هەژمار';
 
   const base=`
@@ -1522,14 +1554,24 @@ async function openAccountInfo(id){
     <div class="detail-row"><div class="lbl">تەمەنی هەژمار</div><div class="val" dir="rtl">${fmtAgo(a.created_at)||'—'}</div></div>
     <div class="detail-row"><div class="lbl">ئایدی بەکارهێنەر</div><div class="val" style="font-size:11px">${esc(a.id)}</div></div>`;
 
-  document.getElementById('aiBody').innerHTML = base +
+  document.getElementById('aiBody').innerHTML = base + accountBalanceDetails(null) +
     `<div class="ai-sec">چالاکی</div><div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>`;
   openMo('moAccountInfo');
 
-  const [ordersRes, ipsRes] = await Promise.all([
+  const [ordersRes, ipsRes, balanceRes] = await Promise.all([
     sb.from('ex_orders').select('status,total,created_at').eq('user_id',id).order('created_at',{ascending:false}),
-    securityRequest('user-ips',{query:'&user_id='+encodeURIComponent(id)+'&limit=5'}).catch(()=>({ips:[]}))
+    securityRequest('user-ips',{query:'&user_id='+encodeURIComponent(id)+'&limit=5'}).catch(()=>({ips:[]})),
+    adminApiRequest('account_balances',{user_ids:[id]}).then(data=>({data})).catch(error=>({error}))
   ]);
+
+  if(loadId!==_accountInfoLoad)return;
+  if(!balanceRes.error){
+    _accountBalances[id]=balanceRes.data[0];
+    if(_curPage==='accounts')filterAccounts();
+  }
+  const balanceHtml=balanceRes.error
+    ? '<div class="ai-sec">باڵانسی هەژمار</div><div class="fee-toggle-note">نەتوانرا باڵانس بخوێندرێتەوە: '+esc(balanceRes.error.message)+'</div>'
+    : accountBalanceDetails(balanceRes.data[0]);
 
   const orders = ordersRes.data||[];
   const n  = s => orders.filter(o=>o.status===s).length;
@@ -1537,7 +1579,7 @@ async function openAccountInfo(id){
                        .reduce((s,o)=>s+(parseFloat(o.total)||0),0);
   const last = orders[0];
 
-  let html = base + `
+  let html = base + balanceHtml + `
     <div class="ai-sec">چالاکی داواکارییەکان</div>
     <div class="ai-stats">
       <div class="ai-stat"><b>${formatNum(orders.length)}</b><span>کۆی داواکاری</span></div>
@@ -1572,6 +1614,7 @@ async function openAccountInfo(id){
   document.getElementById('aiBody').innerHTML = html;
   try{
     const rows=await sb.rpc('ex_admin_kyc_search_users',{p_query:id,p_limit:1});
+    if(loadId!==_accountInfoLoad)return;
     const st=rows.data?.[0]?.kyc_status||'none';
     const el=document.getElementById('aiKycStatus');
     if(el) el.innerHTML=kycBadgeHTML(st);
@@ -1755,6 +1798,123 @@ async function submitCreateUser(){
   }finally{
     btn.disabled=false; btn.innerHTML='<i class="fas fa-check"></i> دروستکردن';
   }
+}
+
+// ═══ PER-CUSTOMER FEE REWARDS (server-only admin writes) ════════════
+let rewardSelectedUserId = null;
+let rewardAdminRows = [];
+async function loadRewardsPanel(){
+  const wrap=document.getElementById('rewardsTableWrap');
+  if(wrap) wrap.textContent='بارکردنی پاداشتەکان...';
+  try{
+    const [users, rewards] = await Promise.all([
+      allAccounts.length ? Promise.resolve(allAccounts) : fetchAllProfiles(),
+      adminApiRequest('list_rewards',{ limit:200 })
+    ]);
+    allAccounts=users;
+    rewardAdminRows=Array.isArray(rewards)?rewards:[];
+    renderRewardsList();
+    searchRewardUsers();
+  }catch(e){
+    if(wrap) wrap.textContent='هەڵە لە بارکردن: '+e.message;
+  }
+}
+function updateRewardKind(){
+  const free=document.getElementById('rewardKind').value==='free_transactions';
+  const percent=document.getElementById('rewardPercent');
+  percent.disabled=free;
+  if(free)percent.value=100;
+  const uses=document.getElementById('rewardUses');
+  if(free && !uses.value)uses.value=2;
+}
+function searchRewardUsers(){
+  rewardSelectedUserId=null;
+  const selected=document.getElementById('rewardSelectedUser');
+  if(selected)selected.textContent='';
+  const el=document.getElementById('rewardUserSearch');
+  const out=document.getElementById('rewardUserResults');
+  if(!el || !out)return;
+  const q=el.value.trim().toLowerCase().replace(/^@/,'');
+  if(!q){out.innerHTML='';return;}
+  const found=allAccounts.filter(a=>!a.is_banned && (
+    String(a.id||'').toLowerCase()===q ||
+    String(a.full_name||'').toLowerCase().includes(q) ||
+    String(a.email||'').toLowerCase().includes(q) ||
+    String(a.username||'').toLowerCase().includes(q))).slice(0,12);
+  out.innerHTML=found.map(a=>'<button type="button" class="act-btn dark" style="text-align:right;display:block;width:100%" onclick="pickRewardUser(\''+a.id+'\')">'+
+    esc(a.full_name||a.username||a.email||a.id)+' — '+esc(a.username?'@'+a.username:(a.email||''))+'</button>').join('') ||
+    '<div class="ex-note">هیچ بەکارهێنەرێک نەدۆزرایەوە</div>';
+}
+function pickRewardUser(id){
+  const user=allAccounts.find(a=>a.id===id && !a.is_banned);
+  if(!user)return;
+  rewardSelectedUserId=id;
+  document.getElementById('rewardUserSearch').value=user.username?'@'+user.username:(user.email||user.full_name||id);
+  document.getElementById('rewardSelectedUser').textContent='بەکارهێنەری هەڵبژێردراو: '+(user.full_name||user.email||id);
+  document.getElementById('rewardUserResults').innerHTML='';
+}
+async function saveUserReward(){
+  const err=document.getElementById('rewardError');
+  err.textContent='';
+  if(!rewardSelectedUserId){err.textContent='سەرەتا بەکارهێنەرێک هەڵبژێرە';return;}
+  const kind=document.getElementById('rewardKind').value;
+  const reward_scope=document.getElementById('rewardScope').value;
+  const discount_percent=kind==='free_transactions'?100:Number(document.getElementById('rewardPercent').value);
+  const rawUses=document.getElementById('rewardUses').value.trim();
+  const max_uses=rawUses===''?null:Number(rawUses);
+  const rawCap=document.getElementById('rewardAmountCap').value.trim();
+  const max_amount_iqd=rawCap===''?null:Number(rawCap);
+  const dateValue=document.getElementById('rewardUntil').value;
+  const valid_until=dateValue?new Date(dateValue).toISOString():null;
+  if(!(discount_percent>0 && discount_percent<=100) ||
+     (max_uses===null && kind==='free_transactions') ||
+     (max_uses!==null && (!Number.isInteger(max_uses)||max_uses<1||max_uses>1000))){
+    err.textContent='ڕێژە و ژمارەی مامەڵەکان بە دروستی دیاری بکە';return;
+  }
+  if(max_amount_iqd!==null&&(!Number.isSafeInteger(max_amount_iqd)||max_amount_iqd<1||max_amount_iqd>1000000000)){
+    err.textContent='سنووری بڕی پاداشت دەبێت ژمارەیەکی تەواو بێت لە 1 تا 1,000,000,000 دینار';return;
+  }
+  if(valid_until && new Date(valid_until)<=new Date()){
+    err.textContent='بەرواری بەسەرچوون دەبێت لە داهاتوودا بێت';return;
+  }
+  if(!confirm('پاداشت بۆ ئەم بەکارهێنەرە بنێردرێت؟'))return;
+  const button=document.getElementById('rewardSendBtn');
+  button.disabled=true;
+  try{
+    await adminApiRequest('grant_reward',{
+      user_id:rewardSelectedUserId, kind, discount_percent,max_uses,max_amount_iqd,reward_scope,valid_until,
+      note:document.getElementById('rewardNote').value
+    });
+    showToast('پاداشتەکە بە سەرکەوتوویی نێردرا','gr');
+    document.getElementById('rewardNote').value='';
+    await loadRewardsPanel();
+  }catch(e){err.textContent=e.message;}
+  finally{button.disabled=false;}
+}
+function renderRewardsList(){
+  const wrap=document.getElementById('rewardsTableWrap');
+  if(!wrap)return;
+  if(!rewardAdminRows.length){wrap.innerHTML='<div class="empty">هیچ پاداشتێک تۆمار نەکراوە</div>';return;}
+  wrap.innerHTML='<table><thead><tr><th>بەکارهێنەر</th><th>پاداشت</th><th>تایبەت بە</th><th>سنووری بڕ / مامەڵە</th><th>بەکارهاتوو / کۆی</th><th>بەسەرچوون</th><th>دۆخ</th><th>کردار</th></tr></thead><tbody>'+
+    rewardAdminRows.map(r=>{
+      const p=r.profile||{};
+      const expired=r.valid_until && Date.parse(r.valid_until)<=Date.now();
+      const exhausted=r.max_uses!==null && r.used_count>=r.max_uses;
+      const status=!r.active?'هەڵوەشاوە':expired?'بەسەرچووە':exhausted?'تەواوبووە':'چالاک';
+      return '<tr><td>'+esc(p.full_name||p.username||p.email||r.user_id)+'</td>'+
+        '<td>'+esc(r.kind==='free_transactions'?'بێ لێبڕین':'داشکاندنی '+r.discount_percent+'%')+'</td>'+
+        '<td>'+esc(({wallets:'جزدانەکان',korek:'کۆڕەک',asiacell:'ئاسیاسێڵ'})[r.reward_scope||'wallets'])+'</td>'+
+        '<td>'+esc(r.max_amount_iqd==null?'بێ سنوور':formatNum(r.max_amount_iqd)+' دینار')+'</td>'+
+        '<td dir="ltr">'+esc(r.used_count)+' / '+esc(r.max_uses===null?'∞':r.max_uses)+'</td>'+
+        '<td>'+esc(r.valid_until?fmtDate(r.valid_until):'بێ کۆتایی')+'</td>'+
+        '<td>'+esc(status)+'</td>'+
+        '<td>'+(r.active?'<button type="button" class="act-btn rd" onclick="revokeUserReward(\''+r.id+'\')">هەڵوەشاندنەوە</button>':'—')+'</td></tr>';
+    }).join('')+'</tbody></table>';
+}
+async function revokeUserReward(id){
+  if(!confirm('ئەم پاداشتە هەڵبوەشێتەوە؟ مامەڵەکانی پێشوو ناگۆڕدرێن.'))return;
+  try{await adminApiRequest('revoke_reward',{id});showToast('پاداشت هەڵوەشێندرایەوە','gr');await loadRewardsPanel();}
+  catch(e){document.getElementById('rewardError').textContent=e.message;}
 }
 
 // ══════════════════════════════════════════════════════════════
