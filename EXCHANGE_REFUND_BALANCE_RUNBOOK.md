@@ -10,6 +10,7 @@
 7. Keep original proof images and ledger records under the retention policy. The ledger, refund cases and their entries are append-only; correction requires a new audited operation.
 
 ## Controls
+- New orders must use the authenticated `/api/orders` endpoint. `SUPABASE_EXCHANGE_SERVER_ONLY_ORDERS.sql` removes legacy table and column INSERT grants that would otherwise let customers submit their own total and bypass wallet/rate/receipt checks. It preserves customer history reads, existing admin note/receipt updates and trusted server writes. Verify with `test/exchange-order-permissions.sql`.
 - Service-only Postgres RPCs implement double-entry postings inside transactions; row locks protect against concurrent overspending.
 - Authenticated customers can read only their own balances, ledger, refund cases and payout requests. They cannot directly INSERT/UPDATE/DELETE those tables.
 - The user sees the balance and requests manual payout only inside the Send section.
