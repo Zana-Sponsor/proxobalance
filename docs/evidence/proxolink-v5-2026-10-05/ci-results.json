@@ -57,7 +57,7 @@
   },
   "flutter_latest_observed_log_summary": [
     "2026-10-05T02:24:04.3449001Z 28 issues found. (ran in 15.4s)",
-    "2026-10-05T02:28:21.8856299Z ✓ Built build/app/outputs/flutter-apk/app-release.apk (83.2MB)",
+    "2026-10-05T02:28:21.8856299Z \u2713 Built build/app/outputs/flutter-apk/app-release.apk (83.2MB)",
     "2026-10-05T02:28:21.9068283Z \u001b[36;1mprint('Release APK source-privacy scan passed')\u001b[0m",
     "2026-10-05T02:28:22.4990430Z Release APK source-privacy scan passed"
   ],
@@ -162,5 +162,62 @@
     "production_mutations": "None",
     "documentation_followup": "CI result updates change documentation/evidence only; redundant builds are skipped"
   },
-  "documentation_followup": "Evidence-only follow-up; redundant build/test infrastructure changes excluded"
+  "documentation_followup": "Necessary existing-workflow masking correction and safe diagnostic; no live retry while additional masked secret is absent.",
+  "latest_native_attempt": {
+    "run_id": 37337348399,
+    "sha": "549ef0621bdca3d7e9f9191118c59317a6845fc6",
+    "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/37337348399",
+    "apk_job": {
+      "id": 111855372369,
+      "conclusion": "success"
+    },
+    "runtime_job": {
+      "id": 111857313809,
+      "conclusion": "failure"
+    },
+    "environment_approval": "VERIFIED exact job/ref/SHA",
+    "android_booted": true,
+    "android_boot_milliseconds": 37063,
+    "cases_executed": 0,
+    "runtime_evidence_artifacts": 0,
+    "unmasked_public_anon_variable_in_step_setup": true,
+    "three_secrets_masked": true,
+    "values_in_report": false
+  },
+  "current_tooling_fix_validation": {
+    "existing_tests_passed": 6,
+    "existing_tests_failed": 0,
+    "scope": "Existing pixel/security regression tests; not native cases",
+    "runner_syntax": "PASS"
+  },
+  "latest_executed_source_checks": {
+    "executable_commit": "549ef0621bdca3d7e9f9191118c59317a6845fc6",
+    "workflow_runs": [
+      {
+        "id": 37337357552,
+        "name": "Verify ProxoLink",
+        "event": "pull_request",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/37337357552"
+      },
+      {
+        "id": 37337348337,
+        "name": "Verify ProxoLink",
+        "event": "push",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/37337348337"
+      },
+      {
+        "id": 37337357533,
+        "name": "Exchange Balance Checks",
+        "event": "pull_request",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/37337357533"
+      }
+    ],
+    "scope": "Source CI for the unchanged tree used by the failed native attempt; subsequent masking and safe-diagnostic changes have only local syntax and six existing regression-test evidence."
+  }
 }

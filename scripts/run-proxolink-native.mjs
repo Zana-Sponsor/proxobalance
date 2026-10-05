@@ -31,13 +31,29 @@ let userId=null;
 let securityVerified=false;
 let referenceBrowser=null;
 let currentPreviews={};
+let stage='runtime_configuration';
+let lastJsonResponseStatus=null;
+const safeErrorCodes=new Set([
+  'approved_preview_workflow_required','runtime_setting_required','publishable_key_required',
+  'approved_origin_required','protection_header_scope','read_only_verification_required',
+  'device_command_failed','verification_endpoint_unavailable','verification_sign_in_failed',
+  'application_auth_boundary_failed','invalid_capability_boundary_failed',
+  'internal_table_access_failed','verification_user_required','ordinary_account_rls_required',
+  'private_template_access_failed','catalog_metadata_boundary_failed','eight_templates_required',
+  'invalid_preview_capability','rendered_preview_security_failed','preview_source_boundary_failed',
+  'native_evidence_incomplete','native_screenshot_failed','native_verification_timeout',
+  'native_viewport_invalid','native_crop_outside_screen','reference_viewport_mismatch',
+  'reference_capability_required','reference_preview_unavailable','reference_assets_or_viewport_failed',
+]);
 async function jsonRequest(url,{headers={},...options}={}) {
   const response=await safeRequest(url,{...options,headers});
+  lastJsonResponseStatus=response.status;
   if(!response.ok)throw Error('verification_endpoint_unavailable');
   return response.json();
 }
 async function configure() {
   if(!authorization) {
+    stage='verification_sign_in';
     const session=await jsonRequest(supabase+'/auth/v1/token?grant_type=password',{
       method:'POST',headers:{apikey:key,'Content-Type':'application/json'},
       body:JSON.stringify({email,password})
@@ -48,15 +64,18 @@ async function configure() {
   }
   const protection=bypass?{'x-vercel-protection-bypass':bypass,'x-vercel-set-bypass-cookie':'true'}:{};
   if(!securityVerified) {
+    stage='read_only_security';
     const checks=await verifyReadOnlySecurity({authorization,key,userId,protection});
     writeFileSync(output+'/security.json',JSON.stringify(checks,null,2));
     securityVerified=true;
     console.log('Read-only application-auth, RLS and private-template boundaries passed.');
   }
+  stage='template_catalog';
   const catalog=await jsonRequest(base+'/api/contact-templates',{headers:{...protection,Authorization:authorization}});
   if(/storage_path|checksum_sha256|template\.html|html_content/.test(JSON.stringify(catalog)))
     throw Error('catalog_metadata_boundary_failed');
   const previews={};
+  stage='template_capabilities';
   for(const style of styles) {
     const item=catalog.templates?.find(t=>t.template_key===style&&t.version===1);
     if(!item||typeof item.preview_path!=='string')throw Error('eight_templates_required');
@@ -66,6 +85,7 @@ async function configure() {
     previews[style]=url.href;
   }
   if(!capturedPreviewHeaders) {
+    stage='rendered_preview_headers';
     for(const style of styles) {
       const response=await safeRequest(previews[style],{headers:protection});
       const csp=response.headers.get('content-security-policy')||'';
@@ -84,6 +104,7 @@ async function configure() {
     console.log('8/8 live rendered-preview response security checks passed.');
   }
   // tee's stdout is captured and discarded. It is never printed or uploaded.
+  stage='write_private_configuration';
   appWrite('proxolink-verification.json',JSON.stringify({origin:base,previews,headers:protection}));
   currentPreviews=previews;
 }
@@ -92,19 +113,23 @@ let capturedPreviewHeaders=false;
 async function main() {
   validateRuntime(process.env);
   mkdirSync(output,{recursive:true});
+  stage='native_install';
   adb(['install','-r','proxo_app/build/app/outputs/flutter-apk/app-debug.apk']);
+  stage='prepare_device';
   adb(['shell','wm','size','1200x1900']);
   adb(['shell','wm','density','160']);
   adb(['shell','run-as',packageId,'mkdir','-p','files']);
   await configure();
+  stage='reference_browser';
   referenceBrowser=await createPreviewReferenceBrowser({protection:{'x-vercel-protection-bypass':bypass}});
+  stage='native_case_collection';
   adb(['shell','am','start','-n',packageId+'/.MainActivity']);
   let configuredAt=Date.now();
   const captured=new Set();
   const pixels={};
   const deadline=Date.now()+15*60*1000;
   while(Date.now()<deadline) {
-    if(Date.now()-configuredAt>60000) {await configure();configuredAt=Date.now();}
+    if(Date.now()-configuredAt>60000) {await configure();configuredAt=Date.now();stage='native_case_collection';}
     const result=appRead('proxolink-verification-results.json');
     if(result) {
       const data=JSON.parse(result);
@@ -143,9 +168,13 @@ async function main() {
   throw Error('native_verification_timeout');
 }
 try {await main();}
-catch {
+catch(error) {
   // Never print fetch errors, URLs, runtime files, bearer values or credentials.
-  console.error('Native verification did not complete. Review configuration and safe evidence artifacts.');
+  const code=safeErrorCodes.has(error?.message)?error.message:'unclassified_failure';
+  mkdirSync(output,{recursive:true});
+  writeFileSync(output+'/failure.json',JSON.stringify({status:'FAILED',stage,code,
+    last_json_response_status:lastJsonResponseStatus,credential_values_included:false},null,2));
+  console.error('Native verification did not complete: '+stage+' / '+code+'.');
   process.exitCode=1;
 } finally {
   if(referenceBrowser)await referenceBrowser.close();

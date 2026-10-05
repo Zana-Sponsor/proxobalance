@@ -29,41 +29,72 @@
     "branch_policy": "Selected branches and tags",
     "expected_branch_rule_present": true,
     "branch": "feat/proxolink-private-renderer-migration",
-    "required_reviewers_enabled": false,
+    "required_reviewers_enabled": true,
     "prevent_self_review_enabled": false,
-    "administrator_bypass_allowed": true,
-    "protected_release_status": "FAILED: reviewer requirement from authoritative V5 section 144 is not configured",
+    "administrator_bypass_allowed": false,
+    "protected_release_status": "VERIFIED: owner reviewer required, administrator bypass disabled, exact workflow/job/ref/SHA approved",
     "setting_value_validity": "BLOCKED: no native runtime attempted",
     "prepared_unsaved_change": {
       "required_reviewers": [
         "Zana-Sponsor"
       ],
       "administrator_bypass_allowed": false,
-      "status": "BLOCKED: automatic approval review rejected save as inspection-only authorization",
-      "saved": false
+      "status": "Historical only; explicit approval subsequently received and controls saved",
+      "saved": true
     },
     "current_followup": {
-      "saved_required_reviewers_enabled": false,
-      "saved_administrator_bypass_allowed": true,
-      "required_setting_names_present": 4,
-      "controls_available": true,
-      "changes_performed": false,
-      "automatic_approval_review": {
-        "action": "Enable Required reviewers and disable administrator bypass in this environment",
-        "result": "REJECTED before action",
-        "reason": "This changes GitHub environment protection and administrator-bypass permissions; the user authorized verification/use of the corrected settings, but did not explicitly authorize modifying those access controls."
+      "status": "VERIFIED: saved controls",
+      "environment": "proxolink-preview-verification",
+      "required_reviewers_enabled": true,
+      "required_reviewers": [
+        "Zana-Sponsor"
+      ],
+      "administrator_bypass_allowed": false,
+      "branch": "feat/proxolink-private-renderer-migration",
+      "exact_branch_rule_preserved": true,
+      "setting_names_present": [
+        "PROXO_NATIVE_ANON_KEY",
+        "PROXO_NATIVE_TEST_EMAIL",
+        "PROXO_NATIVE_TEST_PASSWORD",
+        "PROXO_NATIVE_VERCEL_BYPASS"
+      ],
+      "credential_values_opened_printed_rotated_replaced_copied_by_agent": false,
+      "persistence_verification": "Controls re-read after save and fresh page reload",
+      "owner_authorization": "Explicit 5 October approval of these exact controls and this native workflow",
+      "screenshot": "protection-saved.jpg",
+      "native_trigger": {
+        "sha": "549ef0621bdca3d7e9f9191118c59317a6845fc6",
+        "parent": "11e10e19dd9d91b85d0058f7c23404bb2d1e3af9",
+        "tree": "a78523c32730cd73a73ce8bc7c3adef21e0d4fa5",
+        "branch": "feat/proxolink-private-renderer-migration",
+        "no_source_changes": true,
+        "environment": "proxolink-preview-verification"
       },
-      "exact_pending_change": {
-        "reviewer": "Zana-Sponsor",
-        "required_reviewers_enabled": true,
-        "administrator_bypass_allowed": false,
-        "save": true,
-        "keep_branch": "feat/proxolink-private-renderer-migration",
-        "keep_setting_values": true
+      "run_id": 37337348399,
+      "run_url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/37337348399",
+      "scope": "No change to other environments, secrets/variables, production feature release or retired Telegram function",
+      "approved_deployment": {
+        "run_id": 37337348399,
+        "job_id": 111857313809,
+        "sha": "549ef0621bdca3d7e9f9191118c59317a6845fc6",
+        "ref": "refs/heads/feat/proxolink-private-renderer-migration",
+        "environment": "proxolink-preview-verification",
+        "approver": "Zana-Sponsor",
+        "approved_by_user_explicit_instruction": true
       },
-      "workflow_job_approval_already_authorized": true,
-      "native_live_trigger_requested": false,
-      "screenshot": "Capture timed out; no fresh screenshot available; historical protection-review.jpg is not persisted-state proof"
+      "masked_anon_secret_present": false,
+      "original_setting_values_preserved": true,
+      "privacy_check": {
+        "status": "FAILED",
+        "public_anon_variable_printed_by_CI_setup": true,
+        "three_secret_values_masked": true,
+        "values_in_chat_source_commits_reports": false,
+        "current_workflow_uses_masked_secret": true,
+        "additional_secret_name": "PROXO_NATIVE_ANON_KEY",
+        "additional_secret_location": "Environment secrets in proxolink-preview-verification",
+        "agent_copied_or_entered_value": false,
+        "owner_secure_entry_required": true
+      }
     }
   },
   "vercel": {
@@ -115,5 +146,5 @@
     },
     "observation_scope": "Preceding 5 October inspection; independently advancing main is not frozen by this task"
   },
-  "mutations": "No GitHub/Vercel environment/access-control/credential mutations. Separate explicitly authorized Supabase function retirement is recorded in retirement-execution.json."
+  "mutations": "Only explicitly approved reviewer/admin-bypass controls saved. Original four entries and branch restriction preserved. No value copied, rotated or replaced. Approved native job attempted; Telegram retirement unchanged."
 }

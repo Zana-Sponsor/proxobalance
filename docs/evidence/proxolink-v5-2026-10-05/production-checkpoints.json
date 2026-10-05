@@ -67,5 +67,43 @@
     "card_rows_unchanged": true,
     "relationships_unchanged": true,
     "production_writes": 0
+  },
+  "native_verification_window": {
+    "before": {
+      "ads_count": 27,
+      "ads_digest": "01f9a6343d720fff80035bc54396b420",
+      "cards_count": 21,
+      "cards_digest": "cc6478be4f6823a8d12987323f347a90",
+      "v2_templates": 0,
+      "contact_events": 0,
+      "tracking_links": 0,
+      "orphan_references": 0,
+      "relationships_count": 16,
+      "relationships_digest": "b0173142f0f95c211a889e0629ad2ce8",
+      "cross_owner_references": 0
+    },
+    "after": {
+      "ads_count": 27,
+      "ads_digest": "79625584b0eb4276ac1be12c21c6d495",
+      "cards_count": 21,
+      "cards_digest": "cc6478be4f6823a8d12987323f347a90",
+      "v2_templates": 0,
+      "contact_events": 0,
+      "tracking_links": 0,
+      "orphan_references": 0,
+      "relationships_count": 16,
+      "relationships_digest": "b0173142f0f95c211a889e0629ad2ce8",
+      "cross_owner_references": 0
+    },
+    "full_card_rows_unchanged": true,
+    "advertisement_identity_and_card_relationships_unchanged": true,
+    "full_advertisement_rows_unchanged": false,
+    "advertisement_content_change_cause": "Unverified concurrent change",
+    "customer_card_advertisement_writes_by_this_task": 0,
+    "storage_mutations": 0,
+    "allowed_auth_sign_in": "Only allowed POST; internal session/timestamp effects not audited",
+    "v2_templates_activated": 0,
+    "tracking_link_event_rows": 0,
+    "telegram_function_changed": false
   }
 }

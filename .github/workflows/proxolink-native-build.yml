@@ -100,7 +100,9 @@ jobs:
         id: configuration
         shell: bash
         env:
-          PROXO_NATIVE_ANON_KEY: ${{ vars.PROXO_NATIVE_ANON_KEY }}
+          # Keep the original public variable unchanged. GitHub prints variable
+          # values in step setup; the protected secret copy is auto-masked.
+          PROXO_NATIVE_ANON_KEY: ${{ secrets.PROXO_NATIVE_ANON_KEY }}
           PROXO_NATIVE_TEST_EMAIL: ${{ secrets.PROXO_NATIVE_TEST_EMAIL }}
           PROXO_NATIVE_TEST_PASSWORD: ${{ secrets.PROXO_NATIVE_TEST_PASSWORD }}
           PROXO_NATIVE_VERCEL_BYPASS: ${{ secrets.PROXO_NATIVE_VERCEL_BYPASS }}
@@ -151,7 +153,7 @@ jobs:
         if: steps.configuration.outputs.ready == 'true'
         uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d
         env:
-          PROXO_NATIVE_ANON_KEY: ${{ vars.PROXO_NATIVE_ANON_KEY }}
+          PROXO_NATIVE_ANON_KEY: ${{ secrets.PROXO_NATIVE_ANON_KEY }}
           PROXO_NATIVE_TEST_EMAIL: ${{ secrets.PROXO_NATIVE_TEST_EMAIL }}
           PROXO_NATIVE_TEST_PASSWORD: ${{ secrets.PROXO_NATIVE_TEST_PASSWORD }}
           PROXO_NATIVE_VERCEL_BYPASS: ${{ secrets.PROXO_NATIVE_VERCEL_BYPASS }}

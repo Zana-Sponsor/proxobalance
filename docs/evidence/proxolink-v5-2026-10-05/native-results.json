@@ -1,33 +1,33 @@
 {
-  "status": "BLOCKED",
-  "execution_environment": "Android 35 native WebView required; not executed",
+  "status": "BLOCKED: approved runtime attempted and failed before cases",
+  "execution_environment": "Android35 emulator booted; native runner invoked; no rendered WebView case evidence",
   "expected_cases": 40,
   "executed_cases": 0,
   "passed_cases": 0,
   "failed_cases": 0,
-  "latest_observed_native_run": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/37255195714",
-  "latest_native_runtime_conclusion": "skipped",
+  "latest_observed_native_run": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/37337348399",
+  "latest_native_runtime_conclusion": "failure",
   "protected_environment": "proxolink-preview-verification",
   "settings": {
-    "PROXO_NATIVE_ANON_KEY": "VERIFIED: environment variable present",
+    "PROXO_NATIVE_ANON_KEY": "Original environment variable VERIFIED present and unchanged; additional masked environment secret BLOCKED: absent",
     "PROXO_NATIVE_TEST_EMAIL": "VERIFIED: environment secret present",
     "PROXO_NATIVE_TEST_PASSWORD": "VERIFIED: environment secret present",
     "PROXO_NATIVE_VERCEL_BYPASS": "VERIFIED: environment secret present"
   },
   "bypass_revocation_and_replacement": "VERIFIED metadata: Vercel removal and replacement addition audit records; one active masked replacement; actual GitHub value correspondence untested",
-  "immediate_blocker": "Required reviewers disabled and administrator bypass enabled; authoritative V5 section 144 requires reviewer approval before credential release",
+  "immediate_blocker": "Additional environment secret PROXO_NATIVE_ANON_KEY is absent. Original variable remains; new workflow uses the masked secret to prevent repeating actual variable exposure in CI setup.",
   "configuration_evidence": "secure-configuration.json",
   "collection_fix": "Pixel differences no longer end collection after the first case; final zero-difference gate retained",
   "actual_native_pixel_parity": "not established",
-  "latest_executable_commit": "dfa7c9480c4b14efab18756a689274ee499613c7",
+  "latest_executable_commit": "549ef0621bdca3d7e9f9191118c59317a6845fc6",
   "blocked_cases": 40,
   "latest_native_runtime_job": {
-    "id": 111591563746,
-    "conclusion": "skipped"
+    "id": 111857313809,
+    "conclusion": "failure"
   },
   "actual_rendering_fonts_spacing_responsiveness_animations_buttons_direction_navigation": "BLOCKED: actual native runtime did not execute",
-  "trigger_requested_in_this_followup": false,
-  "access_control_change_attempt": "Rejected by automatic approval review; no protection or credential changes",
+  "trigger_requested_in_this_followup": true,
+  "access_control_change_attempt": "Explicitly approved changes saved and reload-verified; exact native environment deployment approved",
   "case_statuses": [
     {
       "style": "dark",
@@ -36,7 +36,7 @@
       "executed": false,
       "pixel_metrics": null,
       "native_images": null,
-      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+      "reason": "Approved Android runtime failed before case evidence; unresolved preflight and missing masked key secret block a safe retry"
     },
     {
       "style": "dark",
@@ -45,7 +45,7 @@
       "executed": false,
       "pixel_metrics": null,
       "native_images": null,
-      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+      "reason": "Approved Android runtime failed before case evidence; unresolved preflight and missing masked key secret block a safe retry"
     },
     {
       "style": "dark",
@@ -54,7 +54,7 @@
       "executed": false,
       "pixel_metrics": null,
       "native_images": null,
-      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+      "reason": "Approved Android runtime failed before case evidence; unresolved preflight and missing masked key secret block a safe retry"
     },
     {
       "style": "dark",
@@ -63,7 +63,7 @@
       "executed": false,
       "pixel_metrics": null,
       "native_images": null,
-      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+      "reason": "Approved Android runtime failed before case evidence; unresolved preflight and missing masked key secret block a safe retry"
     },
     {
       "style": "dark",
@@ -72,7 +72,7 @@
       "executed": false,
       "pixel_metrics": null,
       "native_images": null,
-      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+      "reason": "Approved Android runtime failed before case evidence; unresolved preflight and missing masked key secret block a safe retry"
     },
     {
       "style": "light",
@@ -81,7 +81,7 @@
       "executed": false,
       "pixel_metrics": null,
       "native_images": null,
-      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+      "reason": "Approved Android runtime failed before case evidence; unresolved preflight and missing masked key secret block a safe retry"
     },
     {
       "style": "light",
@@ -90,7 +90,7 @@
       "executed": false,
       "pixel_metrics": null,
       "native_images": null,
-      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+      "reason": "Approved Android runtime failed before case evidence; unresolved preflight and missing masked key secret block a safe retry"
     },
     {
       "style": "light",
@@ -99,7 +99,7 @@
       "executed": false,
       "pixel_metrics": null,
       "native_images": null,
-      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+      "reason": "Approved Android runtime failed before case evidence; unresolved preflight and missing masked key secret block a safe retry"
     },
     {
       "style": "light",
@@ -108,7 +108,7 @@
       "executed": false,
       "pixel_metrics": null,
       "native_images": null,
-      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+      "reason": "Approved Android runtime failed before case evidence; unresolved preflight and missing masked key secret block a safe retry"
     },
     {
       "style": "light",
@@ -117,7 +117,7 @@
       "executed": false,
       "pixel_metrics": null,
       "native_images": null,
-      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+      "reason": "Approved Android runtime failed before case evidence; unresolved preflight and missing masked key secret block a safe retry"
     },
     {
       "style": "classic",
@@ -126,7 +126,7 @@
       "executed": false,
       "pixel_metrics": null,
       "native_images": null,
-      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+      "reason": "Approved Android runtime failed before case evidence; unresolved preflight and missing masked key secret block a safe retry"
     },
     {
       "style": "classic",
@@ -135,7 +135,7 @@
       "executed": false,
       "pixel_metrics": null,
       "native_images": null,
-      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+      "reason": "Approved Android runtime failed before case evidence; unresolved preflight and missing masked key secret block a safe retry"
     },
     {
       "style": "classic",
@@ -144,7 +144,7 @@
       "executed": false,
       "pixel_metrics": null,
       "native_images": null,
-      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+      "reason": "Approved Android runtime failed before case evidence; unresolved preflight and missing masked key secret block a safe retry"
     },
     {
       "style": "classic",
@@ -153,7 +153,7 @@
       "executed": false,
       "pixel_metrics": null,
       "native_images": null,
-      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+      "reason": "Approved Android runtime failed before case evidence; unresolved preflight and missing masked key secret block a safe retry"
     },
     {
       "style": "classic",
@@ -162,7 +162,7 @@
       "executed": false,
       "pixel_metrics": null,
       "native_images": null,
-      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+      "reason": "Approved Android runtime failed before case evidence; unresolved preflight and missing masked key secret block a safe retry"
     },
     {
       "style": "pill",
@@ -171,7 +171,7 @@
       "executed": false,
       "pixel_metrics": null,
       "native_images": null,
-      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+      "reason": "Approved Android runtime failed before case evidence; unresolved preflight and missing masked key secret block a safe retry"
     },
     {
       "style": "pill",
@@ -180,7 +180,7 @@
       "executed": false,
       "pixel_metrics": null,
       "native_images": null,
-      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+      "reason": "Approved Android runtime failed before case evidence; unresolved preflight and missing masked key secret block a safe retry"
     },
     {
       "style": "pill",
@@ -189,7 +189,7 @@
       "executed": false,
       "pixel_metrics": null,
       "native_images": null,
-      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+      "reason": "Approved Android runtime failed before case evidence; unresolved preflight and missing masked key secret block a safe retry"
     },
     {
       "style": "pill",
@@ -198,7 +198,7 @@
       "executed": false,
       "pixel_metrics": null,
       "native_images": null,
-      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+      "reason": "Approved Android runtime failed before case evidence; unresolved preflight and missing masked key secret block a safe retry"
     },
     {
       "style": "pill",
@@ -207,7 +207,7 @@
       "executed": false,
       "pixel_metrics": null,
       "native_images": null,
-      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+      "reason": "Approved Android runtime failed before case evidence; unresolved preflight and missing masked key secret block a safe retry"
     },
     {
       "style": "card",
@@ -216,7 +216,7 @@
       "executed": false,
       "pixel_metrics": null,
       "native_images": null,
-      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+      "reason": "Approved Android runtime failed before case evidence; unresolved preflight and missing masked key secret block a safe retry"
     },
     {
       "style": "card",
@@ -225,7 +225,7 @@
       "executed": false,
       "pixel_metrics": null,
       "native_images": null,
-      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+      "reason": "Approved Android runtime failed before case evidence; unresolved preflight and missing masked key secret block a safe retry"
     },
     {
       "style": "card",
@@ -234,7 +234,7 @@
       "executed": false,
       "pixel_metrics": null,
       "native_images": null,
-      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+      "reason": "Approved Android runtime failed before case evidence; unresolved preflight and missing masked key secret block a safe retry"
     },
     {
       "style": "card",
@@ -243,7 +243,7 @@
       "executed": false,
       "pixel_metrics": null,
       "native_images": null,
-      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+      "reason": "Approved Android runtime failed before case evidence; unresolved preflight and missing masked key secret block a safe retry"
     },
     {
       "style": "card",
@@ -252,7 +252,7 @@
       "executed": false,
       "pixel_metrics": null,
       "native_images": null,
-      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+      "reason": "Approved Android runtime failed before case evidence; unresolved preflight and missing masked key secret block a safe retry"
     },
     {
       "style": "neon",
@@ -261,7 +261,7 @@
       "executed": false,
       "pixel_metrics": null,
       "native_images": null,
-      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+      "reason": "Approved Android runtime failed before case evidence; unresolved preflight and missing masked key secret block a safe retry"
     },
     {
       "style": "neon",
@@ -270,7 +270,7 @@
       "executed": false,
       "pixel_metrics": null,
       "native_images": null,
-      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+      "reason": "Approved Android runtime failed before case evidence; unresolved preflight and missing masked key secret block a safe retry"
     },
     {
       "style": "neon",
@@ -279,7 +279,7 @@
       "executed": false,
       "pixel_metrics": null,
       "native_images": null,
-      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+      "reason": "Approved Android runtime failed before case evidence; unresolved preflight and missing masked key secret block a safe retry"
     },
     {
       "style": "neon",
@@ -288,7 +288,7 @@
       "executed": false,
       "pixel_metrics": null,
       "native_images": null,
-      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+      "reason": "Approved Android runtime failed before case evidence; unresolved preflight and missing masked key secret block a safe retry"
     },
     {
       "style": "neon",
@@ -297,7 +297,7 @@
       "executed": false,
       "pixel_metrics": null,
       "native_images": null,
-      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+      "reason": "Approved Android runtime failed before case evidence; unresolved preflight and missing masked key secret block a safe retry"
     },
     {
       "style": "zoom",
@@ -306,7 +306,7 @@
       "executed": false,
       "pixel_metrics": null,
       "native_images": null,
-      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+      "reason": "Approved Android runtime failed before case evidence; unresolved preflight and missing masked key secret block a safe retry"
     },
     {
       "style": "zoom",
@@ -315,7 +315,7 @@
       "executed": false,
       "pixel_metrics": null,
       "native_images": null,
-      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+      "reason": "Approved Android runtime failed before case evidence; unresolved preflight and missing masked key secret block a safe retry"
     },
     {
       "style": "zoom",
@@ -324,7 +324,7 @@
       "executed": false,
       "pixel_metrics": null,
       "native_images": null,
-      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+      "reason": "Approved Android runtime failed before case evidence; unresolved preflight and missing masked key secret block a safe retry"
     },
     {
       "style": "zoom",
@@ -333,7 +333,7 @@
       "executed": false,
       "pixel_metrics": null,
       "native_images": null,
-      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+      "reason": "Approved Android runtime failed before case evidence; unresolved preflight and missing masked key secret block a safe retry"
     },
     {
       "style": "zoom",
@@ -342,7 +342,7 @@
       "executed": false,
       "pixel_metrics": null,
       "native_images": null,
-      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+      "reason": "Approved Android runtime failed before case evidence; unresolved preflight and missing masked key secret block a safe retry"
     },
     {
       "style": "banner",
@@ -351,7 +351,7 @@
       "executed": false,
       "pixel_metrics": null,
       "native_images": null,
-      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+      "reason": "Approved Android runtime failed before case evidence; unresolved preflight and missing masked key secret block a safe retry"
     },
     {
       "style": "banner",
@@ -360,7 +360,7 @@
       "executed": false,
       "pixel_metrics": null,
       "native_images": null,
-      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+      "reason": "Approved Android runtime failed before case evidence; unresolved preflight and missing masked key secret block a safe retry"
     },
     {
       "style": "banner",
@@ -369,7 +369,7 @@
       "executed": false,
       "pixel_metrics": null,
       "native_images": null,
-      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+      "reason": "Approved Android runtime failed before case evidence; unresolved preflight and missing masked key secret block a safe retry"
     },
     {
       "style": "banner",
@@ -378,7 +378,7 @@
       "executed": false,
       "pixel_metrics": null,
       "native_images": null,
-      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+      "reason": "Approved Android runtime failed before case evidence; unresolved preflight and missing masked key secret block a safe retry"
     },
     {
       "style": "banner",
@@ -387,8 +387,41 @@
       "executed": false,
       "pixel_metrics": null,
       "native_images": null,
-      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+      "reason": "Approved Android runtime failed before case evidence; unresolved preflight and missing masked key secret block a safe retry"
     }
   ],
-  "native_runtime_artifacts_present": false
+  "native_runtime_artifacts_present": false,
+  "approved_deployment": {
+    "run_id": 37337348399,
+    "job_id": 111857313809,
+    "sha": "549ef0621bdca3d7e9f9191118c59317a6845fc6",
+    "ref": "refs/heads/feat/proxolink-private-renderer-migration",
+    "environment": "proxolink-preview-verification",
+    "approver": "Zana-Sponsor",
+    "approved_by_user_explicit_instruction": true
+  },
+  "android_boot": {
+    "passed": true,
+    "milliseconds": 37063
+  },
+  "workflow_failure": "Generic runner failure before read-only security/page/case evidence; exact preflight cause unresolved",
+  "privacy": {
+    "anon_key_line_present": true,
+    "anon_key_masked": false,
+    "anon_key_is_expression": false,
+    "anon_key_is_public_format": true,
+    "jwt_role": null,
+    "jwt_expected_project": null,
+    "email_password_bypass_lines_masked": true,
+    "no_render_or_security_evidence": true,
+    "actual_native_cases": 0,
+    "key_metadata": {
+      "key_kind": "publishable",
+      "jwt_role": null,
+      "jwt_payload_decoded": false,
+      "jwt_expected_project": null,
+      "values_output": false
+    }
+  },
+  "safe_diagnostic_fix": "Existing runner now produces only allowlisted failure stage/error/status metadata. Not executed as a successful retry."
 }

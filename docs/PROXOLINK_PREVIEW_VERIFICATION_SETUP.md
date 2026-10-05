@@ -18,7 +18,7 @@ References: [ChatGPT plugins](https://learn.chatgpt.com/docs/plugins), [Vercel M
 
 Use a GitHub account with repository administration permission.
 
-Current inspection verifies that this environment and all four correctly typed settings already exist. The exact feature-branch rule is present. **Required reviewers is disabled and administrator bypass is enabled.** Complete steps 3–4 below before requesting the native runtime; do not recreate existing settings. This reviewer requirement comes from authoritative V5 section 144 as well as this procedure.
+Latest authorized execution on 5 October: Required reviewers is enabled with `Zana-Sponsor`, administrator bypass is disabled, and the exact feature-branch rule is preserved. These controls were saved and verified after reload. All four original settings remain unchanged. Run `37337348399` was explicitly reviewed and approved, then failed before producing any native cases. Its setup log printed the public anonymous variable; the three secrets remained masked. The existing workflow now consumes a protected secret for the anonymous key to prevent another such disclosure. That additional secret is currently absent; the owner must enter it privately before another live trigger. No key rotation or replacement is required.
 
 1. Open [Zana-Sponsor/proxobalance](https://github.com/Zana-Sponsor/proxobalance), then Settings → Environments → New environment.
 2. Name it exactly `proxolink-preview-verification`, then select Configure environment.
@@ -34,6 +34,8 @@ Current inspection verifies that this environment and all four correctly typed s
 | `PROXO_NATIVE_TEST_EMAIL` | Environment secret | An existing ordinary verification account's email |
 | `PROXO_NATIVE_TEST_PASSWORD` | Environment secret | That account's password |
 | `PROXO_NATIVE_VERCEL_BYPASS` | Environment secret | The dedicated temporary automation secret described next |
+
+**Necessary logging correction after the first actual runtime attempt:** keep the original `PROXO_NATIVE_ANON_KEY` environment variable exactly as configured. In the same environment, select Add secret and create an additional **environment secret** also named `PROXO_NATIVE_ANON_KEY`, using the same existing public anonymous/publishable key. The variable and secret can coexist with that name. The agent must not read/copy the value or enter it; the owner completes entry privately in GitHub. Do not send any value here, create a new API key, alter the three existing secrets or change other environments. The workflow uses `${{ secrets.PROXO_NATIVE_ANON_KEY }}` so GitHub masks its step-setup value automatically. A missing secret must fail configuration rather than fall back to the unmasked variable. [GitHub masking guidance](https://docs.github.com/en/actions/how-tos/write-workflows/choose-what-workflows-do/use-secrets).
 
 Use an ordinary account without an administrator role. The runner rejects cross-owner access and service-role/secret API keys. It signs in and makes read-only application/Storage/PostgREST requests; it does not create cards, advertisements, links or events. Creating a new account in the live Auth project is outside this no-production-mutation pass. If there is no existing ordinary verification account, identify that blocker without sending an email/password here so an isolated test-account/staging arrangement can be authorized.
 
@@ -60,7 +62,7 @@ Reference: [Vercel Protection Bypass for Automation](https://vercel.com/docs/dep
 ## 4. Trigger and review the new verification run
 
 1. Once the configuration above is complete, reply only `Configuration complete` in this conversation, without values or credential screenshots.
-2. We will recheck Vercel access and trigger the current feature-branch workflow with an explicit `[proxolink-live-verification]` request. Do not rerun the old `d9894d9` job: it predates the environment restrictions and expanded checks.
+2. Trigger the current feature-branch workflow with an explicit `[proxolink-live-verification]` request after the masked secret is present. Do not rerun `37337348399` or older jobs: they use the previous unmasked variable binding and generic failure reporting. The current collector retains strict pixel acceptance and includes a safe `failure.json` with allowlisted stage/error/status metadata; it never reports raw exceptions, credentials or preview URLs.
 3. The workflow may not offer Run workflow while its definition exists only on this feature branch. No merge into `main` is needed: a tagged feature-branch commit can trigger the authorized push workflow. A no-code-change commit can request that run.
 4. Open repository Actions → Build ProxoLink native verification → the new run. Approve the waiting `proxolink-preview-verification` environment job only after confirming its workflow file, feature branch and reviewed commit.
 5. The credential-free APK build runs first. After approval, a KVM-backed Android 35 emulator runs all eight real server pages through the production `ProxoLinkPreview` widget at 320/375/393/430/768 dp: **40 cases**.
