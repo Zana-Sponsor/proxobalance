@@ -1328,19 +1328,17 @@ async function startApp(user){
   navigate(routeFromLocation(), false);
   refreshFormHints();
   startProofPolling();
-  await loadWallets();
-  if(typeof loadCustomerConveniences==='function')await loadCustomerConveniences();
-  await loadRates();
-  await loadMyRewards();
+  await Promise.all([loadWallets(),loadRates(),loadMyRewards(),
+    ...(typeof loadCustomerConveniences==='function'?[loadCustomerConveniences()]:[])]);
   pickInitialWallets();
   refreshTrigger('from');
   refreshTrigger('receiveVia');
   updateWallet();
   updatePlaceholder();
+  if(typeof renderSavedRecipients==='function')renderSavedRecipients();
   subscribeWalletsUser();
   subscribeRatesUser();
-  await loadHistory();
-  await loadNotifications();
+  await Promise.all([loadHistory(),loadNotifications()]);
   listenToNews();
   // The Telegram promo is disabled in index.html (hidden attribute); setting
   // style.display here used to override that and cover the whole app.
@@ -1383,29 +1381,8 @@ async function loadWallets(){
   }
 }
 function hasWallets(){ return FROM_OPTIONS.length>0 && RECEIVE_OPTIONS.length>0; }
-function subscribeWalletsUser(){
-  if(_walletsChannel) return;
-  _walletsChannel = sb.channel('ex_wallets_user')
-    .on('postgres_changes', {event:'*',schema:'public',table:'ex_wallets'}, async ()=>{
-      await loadWallets();
-      refreshTrigger('from');
-      refreshTrigger('receiveVia');
-      updateWallet();
-      updatePlaceholder();
-    }).subscribe();
-}
-let _ratesChannel = null;
-function subscribeRatesUser(){
-  if(_ratesChannel) return;
-  _ratesChannel = sb.channel('ex_rates_user')
-    .on('postgres_changes', {event:'*',schema:'public',table:'ex_rates'}, async ()=>{
-      await loadRates();
-      calc();
-      // the rate board is now stale — refresh it if the user is looking at it
-      _changesLoaded=false;
-      if(_route==='changes') loadChangeLog(true);
-    }).subscribe();
-}
+function subscribeWalletsUser(){if(typeof startCustomerLive==='function')startCustomerLive();}
+function subscribeRatesUser(){if(typeof startCustomerLive==='function')startCustomerLive();}
 const FALLBACK_RATES = {
   'Korek>FastPay':{type:'multiplier',value:0.82}, 'Korek>FIB':{type:'multiplier',value:0.825}, 'Korek>QiCard':{type:'multiplier',value:0.81},
   'Asiacell>FastPay':{type:'multiplier',value:0.84}, 'Asiacell>FIB':{type:'multiplier',value:0.82}, 'Asiacell>QiCard':{type:'multiplier',value:0.835},

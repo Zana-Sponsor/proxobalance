@@ -17,6 +17,8 @@ on:
       - 'test/exchange-scoped-rewards.sql'
       - 'test/exchange-balance-source.sql'
       - 'test/exchange-customer-staff-features.sql'
+      - 'test/exchange-live-saves.sql'
+      - 'test/exchange-live-saves.test.js'
       - 'test/exchange-admin-refund-reward-cap.sql'
       - 'assets/js/**'
       - 'assets/css/exchange-balance.css'
@@ -51,12 +53,13 @@ jobs:
           node --check assets/js/exchange-balance-admin.js
           node --check assets/js/exchange-reward-pricing.js
           node --check assets/js/exchange-insights.js
+          node --check assets/js/exchange-live.js
           node --check assets/js/exchange-staff.js
           node --check assets/js/exchange-customer-features.js
       - name: Build Vercel static output
         run: node scripts/prepare-vercel.mjs
       - name: Verify authenticated orders, admin refunds and capped fee rewards
-        run: node --test test/orders-route.test.js test/exchange-reward-pricing.test.js test/exchange-admin-rewards-refund.test.js test/exchange-account-balances-ui.test.js test/exchange-send-balance.test.js test/exchange-statistics-order-codes.test.js
+        run: node --test test/orders-route.test.js test/exchange-reward-pricing.test.js test/exchange-admin-rewards-refund.test.js test/exchange-account-balances-ui.test.js test/exchange-send-balance.test.js test/exchange-statistics-order-codes.test.js test/exchange-live-saves.test.js
       - name: Verify deployed asset and board paths
         run: |
           node --input-type=module -e "

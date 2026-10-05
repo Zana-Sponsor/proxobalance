@@ -3,6 +3,7 @@
 let _customerFeatureOwner=null,_customerFeatureLoad=0,_savedRecipients=[];
 let _walletBadgeSeen=new Set(),_walletBadgeObserver=null,_recipientEditing=null;
 function resetCustomerConveniences(){
+ if(typeof ProxoLive!=='undefined')ProxoLive.stop();
  ++_customerFeatureLoad;_customerFeatureOwner=null;_savedRecipients=[];_walletBadgeSeen.clear();
  _walletBadgeObserver?.disconnect();_walletBadgeObserver=null;_recipientEditing=null;
  const list=document.getElementById('savedRecipientList');if(list)list.innerHTML='';
@@ -22,6 +23,9 @@ async function loadCustomerConveniences(){
  if(views.status==='fulfilled'&&!views.value.error)
   _walletBadgeSeen=new Set((views.value.data||[]).map(v=>v.wallet_id+':'+v.badge_version));
  if(recipients.status==='fulfilled'&&!recipients.value.error)_savedRecipients=recipients.value.data||[];
+ else if(document.getElementById('recipientSheet')?.classList.contains('open')){
+  document.getElementById('recipientError').textContent='نەتوانرا وەرگرەکان نوێ بکرێنەوە؛ پەیوەندییەکەت بپشکنە';
+ }
  renderSavedRecipients();
 }
 function walletBadgeHTML(key){
@@ -119,23 +123,55 @@ async function saveRecipient(){
   !(wallet_key==='QiCard'?/^\d{6,32}$/:/^07\d{9}$/).test(phone)){
   error.textContent='ناو، جزدان و ژمارەی دروست بنووسە';return;
  }
- const button=document.getElementById('recipientSave');button.disabled=true;
+ const button=document.getElementById('recipientSave');if(button.disabled)return;button.disabled=true;
+ const previousLabel=button.textContent;button.textContent='پاشەکەوت دەکرێت…';
  try{
   const existing=_recipientEditing||_savedRecipients.find(r=>r.wallet_key===wallet_key&&r.phone===phone)?.id;
   const query=existing?sb.from('ex_saved_recipients').update({label,wallet_key,phone}).eq('id',existing).eq('user_id',owner):
    sb.from('ex_saved_recipients').insert({user_id:owner,label,wallet_key,phone});
-  const {error:dbError}=await query;if(dbError)throw dbError;
+  const {data:saved,error:dbError}=await query.select('id,label,wallet_key,phone').single();
+  if(dbError)throw dbError;
+  if(!saved?.id)throw new Error('نەتوانرا پاشەکەوتکردن پشتڕاست بکرێتەوە');
   if(curUser?.id!==owner)return;
+  ++_customerFeatureLoad;_customerFeatureOwner=owner;
+  _savedRecipients=_savedRecipients.filter(r=>r.id!==saved.id);_savedRecipients.push(saved);
   _recipientEditing=null;document.getElementById('recipientLabel').value='';
-  await loadCustomerConveniences();showToast('وەرگر پاشەکەوتکرا','success');
+  renderSavedRecipients();showToast('وەرگر پاشەکەوتکرا','success');
  }catch(e){if(curUser?.id===owner)error.textContent=e.code==='23505'?'ئەم وەرگرە پێشتر پاشەکەوتکراوە':e.message;}
- finally{button.disabled=false;}
+ finally{button.disabled=false;button.textContent=previousLabel;}
 }
 async function deleteSavedRecipient(id){
  const owner=curUser?.id;if(!owner||!_savedRecipients.some(r=>r.id===id))return;
  if(!window.confirm('ئایا ئەم وەرگرە پاشەکەوتکراوە دەسڕیتەوە؟'))return;
- const {error}=await sb.from('ex_saved_recipients').delete().eq('id',id).eq('user_id',owner);
- if(curUser?.id!==owner)return;
- if(error){showToast('نەتوانرا وەرگر بسڕدرێتەوە','error');return;}
- await loadCustomerConveniences();
+ try{
+  const {data,error}=await sb.from('ex_saved_recipients').delete().eq('id',id).eq('user_id',owner).select('id').single();
+  if(error||!data?.id)throw error||new Error('نەتوانرا سڕینەوە پشتڕاست بکرێتەوە');
+  if(curUser?.id!==owner)return;
+  ++_customerFeatureLoad;_savedRecipients=_savedRecipients.filter(r=>r.id!==id);renderSavedRecipients();
+ }catch(e){if(curUser?.id===owner)showToast(e.message||'نەتوانرا وەرگر بسڕدرێتەوە','error');}
+}
+function refreshOpenWalletPicker(){
+ const sheet=document.getElementById('pickerSheet');
+ if(!sheet?.classList.contains('open'))return;
+ const body=document.getElementById('pickerSheetBody'),scroll=body.scrollTop;
+ openPicker(_pickerContext);body.scrollTop=scroll;
+}
+function startCustomerLive(){
+ const owner=curUser?.id;if(!owner||typeof ProxoLive==='undefined')return;
+ const owned=table=>({table,filter:'user_id=eq.'+owner});
+ ProxoLive.start(sb,'customer',owner,[
+  {key:'wallets',table:'ex_wallets',events:['*'],read:async()=>{
+   await loadWallets();if(curUser?.id!==owner)return;
+   refreshTrigger('from');refreshTrigger('receiveVia');updateWallet();updatePlaceholder();
+   renderRecipientWallets();renderSavedRecipients();refreshOpenWalletPicker();
+  }},
+  {key:'rates',table:'ex_rates',events:['*'],read:async()=>{
+   await loadRates();if(curUser?.id!==owner)return;calc();refreshOpenWalletPicker();
+   _changesLoaded=false;if(_route==='changes')loadChangeLog(true);
+  }},
+  {key:'features',...owned('ex_customer_feature_changes'),read:loadCustomerConveniences},
+  {key:'rewards',...owned('ex_user_rewards'),read:loadMyRewards},
+  {key:'balance',...owned('ex_customer_balances'),read:()=>typeof loadMyBalance==='function'?loadMyBalance():null},
+  {key:'payouts',...owned('ex_payout_requests'),read:()=>typeof loadMyBalance==='function'?loadMyBalance():null}
+ ]);
 }
