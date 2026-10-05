@@ -19,6 +19,19 @@ const _styles = <String>[
   'banner',
 ];
 const _widths = <int>[320, 375, 393, 430, 768];
+const _failureChecks = <String, String>{
+  'Rendered page checks failed': 'rendered_page_checks',
+  'Animation did not advance': 'animation_motion',
+  'Contact confirmation failed': 'contact_confirmation',
+  'Cancel failed': 'contact_cancel',
+  'Confirm failed': 'contact_confirm',
+  'Demo TikTok action is not inert': 'inert_tiktok',
+  'Preview URL changed': 'preview_url',
+  'Navigation escaped preview': 'navigation_boundary',
+  'Fresh comparison frame unavailable': 'fresh_frame',
+  'Comparison requires density 160': 'pixel_density',
+  'Screenshot evidence missing': 'screenshot_ack',
+};
 
 Directory get _files => Directory('${Directory.systemTemp.parent.path}/files');
 File get _configuration => File('${_files.path}/proxolink-verification.json');
@@ -107,7 +120,7 @@ class _NativeProbeScreenState extends State<_NativeProbeScreen> {
   Future<void> _runCurrent() async {
     if (_index >= _styles.length * _widths.length) {
       await _write('proxolink-verification-results.json', _results);
-      if (mounted) setState(() { _complete = true; _status = '40/40 live preview cases verified'; });
+      if (mounted) setState(() { _complete = true; _status = '40/40 live preview cases completed'; });
       return;
     }
     final style = _styles[_index ~/ _widths.length];
@@ -117,8 +130,8 @@ class _NativeProbeScreenState extends State<_NativeProbeScreen> {
 
   Future<void> _verify(String style, int width, WebViewController controller) async {
     final caseId = '$style-$width';
+    Map<String, dynamic>? state;
     try {
-      Map<String, dynamic>? state;
       for (var attempt = 0; attempt < 120; attempt++) {
         await Future<void>.delayed(const Duration(seconds: 1));
         try {
@@ -228,7 +241,11 @@ class _NativeProbeScreenState extends State<_NativeProbeScreen> {
       final origin = box.localToGlobal(Offset.zero);
       if (MediaQuery.devicePixelRatioOf(context) != 1) throw StateError('Comparison requires density 160');
       final crop = <String, int>{
-        'left': origin.dx.round(), 'top': origin.dy.round(),
+        // Android positions its platform view at integer coordinates. At an
+        // odd centered width, rounding .5 clipped one real column and included
+        // a Flutter-white column in the executed comparison. Truncate the
+        // positive screen origin to the actual native surface boundary.
+        'left': origin.dx.floor(), 'top': origin.dy.floor(),
         'width': box.size.width.round(), 'height': box.size.height.round(),
         'css_height': box.size.height.round(),
       };
@@ -257,9 +274,24 @@ class _NativeProbeScreenState extends State<_NativeProbeScreen> {
       setState(() => _index++);
       await _runCurrent();
     } catch (error) {
-      _results[caseId] = {'passed': false, 'error': error.runtimeType.toString()};
-      await _write('proxolink-verification-results.json', _results);
-      if (mounted) setState(() { _complete = true; _status = '$caseId failed'; });
+      final failure = error is StateError
+          ? _failureChecks[error.message] ?? 'unclassified_native_check'
+          : 'unclassified_native_check';
+      // Fixed identifiers and observed booleans/numbers only, never raw
+      // platform errors, capabilities, credentials or page text.
+      _results[caseId] = {
+        'passed': false, 'failed_check': failure,
+        'width': state?['width'],
+        'font_loaded': state?['fonts'],
+        'font_applied': state?['fontApplied'],
+        'images_loaded': state?['images'],
+        'icons_loaded': state?['icons'],
+      };
+      // One failed case must not prevent the other requested cases from
+      // executing. The existing final native/pixel gate still rejects it.
+      if (!mounted) return;
+      setState(() => _index++);
+      await _runCurrent();
     }
   }
 

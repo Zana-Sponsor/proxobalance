@@ -54,6 +54,10 @@ const safePreflightChecks=new Set([
 ]);
 const safeTransportCodes=new Set(['ENOTFOUND','EAI_AGAIN','ETIMEDOUT','ECONNRESET',
   'ECONNREFUSED','CERT_HAS_EXPIRED','UNABLE_TO_VERIFY_LEAF_SIGNATURE']);
+const safeNativeChecks=new Set(['rendered_page_checks','animation_motion',
+  'contact_confirmation','contact_cancel','contact_confirm','inert_tiktok',
+  'preview_url','navigation_boundary','fresh_frame','pixel_density',
+  'screenshot_ack','unclassified_native_check']);
 async function jsonRequest(url,{headers={},...options}={}) {
   const response=await safeRequest(url,{...options,headers});
   lastJsonResponseStatus=response.status;
@@ -145,6 +149,17 @@ async function main() {
     const result=appRead('proxolink-verification-results.json');
     if(result) {
       const data=JSON.parse(result);
+      // Retain safe executed-case details even when the strict final gate
+      // rejects a failed page or pixel difference. Never upload the raw map.
+      const caseIds=styles.flatMap(style=>WIDTHS.map(width=>style+'-'+width));
+      const observed=Object.fromEntries(caseIds.filter(id=>data[id]).map(id=>[id,
+        Object.fromEntries(Object.entries(data[id]).filter(([name,value])=>
+          name==='failed_check'?safeNativeChecks.has(value):
+          ['width','animation_count'].includes(name)?Number.isInteger(value):
+          ['passed','font_loaded','font_applied','images_loaded','icons_loaded',
+            'animation_checked','contact_destinations','confirmation','navigation_blocked']
+            .includes(name)&&typeof value==='boolean'))]));
+      writeFileSync(output+'/case-results.json',JSON.stringify(observed,null,2));
       const safe=validateNativeResults(data,captured,pixels);
       writeFileSync(output+'/results.json',JSON.stringify(safe,null,2));
       console.log('8/8 real native WebView previews and exact browser pixel comparisons passed at all five widths (40/40 cases).');
