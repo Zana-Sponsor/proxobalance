@@ -50,9 +50,9 @@ export default withSecurity(async(req,res,{user,context})=>{
   const key=String(body.request_key||'');
   const amount=Number(body.amount_iqd);
   const wallet=String(body.destination_wallet||'').trim().slice(0,40);
-  const number=String(body.destination_number||'').replace(/\\s/g,'').slice(0,32);
+  const number=String(body.destination_number||'').replace(/\s/g,'').slice(0,32);
   if(!uuid.test(key)||!Number.isSafeInteger(amount)||amount<10000||amount>1000000000||
-     !wallet||!/^\\d{6,32}$/.test(number))
+     !wallet||!/^\d{6,32}$/.test(number))
     return json(res,422,{error:'Invalid payout request'});
   // A retried request uses the same idempotency key; do not rate-limit the retry.
   const old=await serviceFetch('/rest/v1/ex_payout_requests?user_id=eq.'+
