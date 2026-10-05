@@ -1,0 +1,40 @@
+name: Exchange Production Smoke
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+jobs:
+  verify-live-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Verify the live customer page, admin panel and bundled assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="https://www.proxobalance.app"
+          curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/" -o index.html
+          grep -q 'id="balanceSendSection"' index.html
+          grep -q 'id="rewardBanner"' index.html
+          grep -q '/assets/js/exchange-balance.js' index.html
+          curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/exchange-admin" -o exchange-admin.html
+          grep -q 'id="pgBalance"' exchange-admin.html
+          grep -q 'id="pgRewards"' exchange-admin.html
+          grep -q 'exchange-balance-admin.js' exchange-admin.html
+          curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/assets/js/exchange-balance.js?v=1" -o exchange-balance.js
+          grep -q 'requestBalancePayout' exchange-balance.js
+          curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/assets/js/exchange-balance-admin.js?v=1" -o exchange-balance-admin.js
+          grep -q 'creditVerifiedRefund' exchange-balance-admin.js
+          echo "PASS: customer balance and reward UI, admin refund and reward UI, and both balance modules are live."
+      - name: Verify unauthorized clients cannot read balances
+        shell: bash
+        run: |
+          set -euo pipefail
+          http="$(curl -sS -L --max-time 25 -o balance-response.json -w '%{http_code}' 'https://www.proxobalance.app/api/balance')"
+          if [ "$http" != "401" ]; then
+            echo "FAIL: unauthenticated balance API returned HTTP $http; expected 401"
+            exit 1
+          fi
+          grep -q 'Unauthorized' balance-response.json
+          echo "PASS: balance API requires authentication (HTTP 401)."
