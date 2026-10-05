@@ -174,6 +174,28 @@ const actions = {
     return data;
   },
 
+  async balance_claim_payout({payout_id,verification},ctx){
+    const {data,error}=await db.rpc('ex_balance_claim_payout',{
+      p_payout_id:payout_id,p_admin_id:ctx.user.id,
+      p_verification:String(verification||'').trim().slice(0,500)
+    });
+    if(error)throw {status:409,code:error.code||'claim_failed',message:error.message};
+    return data;
+  },
+
+  async balance_abort_processing({payout_id,reason,bank_reference,confirmed_unpaid},ctx){
+    if(confirmed_unpaid!==true)
+      throw {status:400,code:'proof_required',message:'Bank confirmation of nonpayment required'};
+    const {data,error}=await db.rpc('ex_balance_abort_processing',{
+      p_payout_id:payout_id,p_admin_id:ctx.user.id,
+      p_reason:String(reason||'').trim().slice(0,500),
+      p_bank_reference:String(bank_reference||'').trim().slice(0,160),
+      p_confirmed_unpaid:true
+    });
+    if(error)throw {status:409,code:error.code||'abort_failed',message:error.message};
+    return data;
+  },
+
   async balance_cancel_payout({payout_id,reason},ctx){
     const {data,error}=await db.rpc('ex_balance_cancel_payout',{
       p_payout_id:payout_id,p_actor:ctx.user.id,
@@ -181,34 +203,6 @@ const actions = {
     });
     if(error)throw {status:409,code:error.code||'cancel_failed',message:error.message};
     await audit(ctx.user.id,'balance_payout_cancelled',data.user_id,String(data.id));
-    return data;
-  },
-
-  // Atomically claim a pending payout *before* an operator sends money.
-  // While processing, customer/admin cancellation is disallowed by PostgreSQL.
-  async balance_start_payout({payout_id,destination_verification},ctx){
-    const proof=String(destination_verification||'').trim().slice(0,160);
-    if(proof.length<6)
-      throw {status:400,code:'verification_required',message:'Independent destination ownership verification is required'};
-    const {data,error}=await db.rpc('ex_balance_start_payout',{
-      p_payout_id:payout_id,p_admin_id:ctx.user.id,p_destination_verification:proof
-    });
-    if(error)throw {status:409,code:error.code||'claim_failed',message:error.message};
-    return data;
-  },
-
-  // Processing payouts may be released only after checking the bank confirms
-  // that no external transfer occurred. This action leaves an audit trail.
-  async balance_abort_processing({payout_id,reason,bank_reference,confirmed_unpaid},ctx){
-    const note=String(reason||'').trim().slice(0,500);
-    const reference=String(bank_reference||'').trim().slice(0,160);
-    if(confirmed_unpaid!==true||note.length<10||reference.length<6)
-      throw {status:400,code:'bank_proof_required',message:'Bank-confirmed nonpayment proof and a detailed reason are required'};
-    const {data,error}=await db.rpc('ex_balance_abort_processing',{
-      p_payout_id:payout_id,p_admin_id:ctx.user.id,p_reason:note,
-      p_bank_reference:reference,p_confirmed_unpaid:true
-    });
-    if(error)throw {status:409,code:error.code||'abort_failed',message:error.message};
     return data;
   },
 
