@@ -25,6 +25,7 @@ jobs:
           node-version: '22'
       - name: Validate server and browser JavaScript
         run: |
+          node --check server.js
           node --check api/admin.js
           node --check api/balance.js
           node --check assets/js/admin.js
