@@ -607,7 +607,7 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
         <button type="button" id="balancePayoutToggle" class="pb-btn" onclick="toggleBalancePayout()" disabled>ناردنی باڵانس بۆ جزدان</button>
         <button type="button" class="pb-btn pb-secondary" onclick="toggleBalanceHistory()">مێژووی باڵانس</button>
       </div>
-      <p class="pb-message" id="balanceStatusMessage">باڵانس بار دەکرێت...</p>
+      <p class="pb-message" id="balanceStatusMessage" tabindex="-1" role="status">باڵانس بار دەکرێت...</p>
       <form id="balancePayoutForm" class="pb-form" hidden onsubmit="requestBalancePayout(event)">
         <label for="balanceDestWallet">جزدانی وەرگر</label>
         <select id="balanceDestWallet" required></select>
@@ -1531,8 +1531,8 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
 </script>
 <script src="/assets/js/index-svg-icons.js?v=1"></script>
 <script src="/assets/js/exchange-reward-pricing.js?v=2"></script>
-<script src="/assets/js/app.js?v=39"></script>
-<script src="/assets/js/exchange-balance.js?v=2"></script>
+<script src="/assets/js/app.js?v=40"></script>
+<script src="/assets/js/exchange-balance.js?v=3"></script>
 <script src="/assets/js/exchange-ux.js?v=1"></script>
 <script src="/assets/js/receipt-download.js?v=4"></script>
 <script src="/assets/js/track.js?v=2"></script>

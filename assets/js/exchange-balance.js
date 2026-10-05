@@ -80,6 +80,21 @@ function toggleBalancePayout(){
   form.hidden=!form.hidden;
   if(!form.hidden)document.getElementById('balancePayoutAmount').focus();
 }
+async function openAccountBalanceSend(){
+  if(!curUser)return;
+  const owner=curUser.id;
+  await loadMyBalance();
+  if(curUser?.id!==owner)return;
+  const wrap=document.getElementById('balanceSendSection');
+  wrap.scrollIntoView({behavior:'smooth',block:'start'});
+  const btn=document.getElementById('balancePayoutToggle');
+  if(_myBalanceData?.payouts_enabled && !btn.disabled){
+    document.getElementById('balancePayoutForm').hidden=false;
+    document.getElementById('balanceDestWallet').focus({preventScroll:true});
+  }else{
+    document.getElementById('balanceStatusMessage').focus({preventScroll:true});
+  }
+}
 function toggleBalanceHistory(){
   const el=document.getElementById('balanceHistoryList');el.hidden=!el.hidden;
   if(!el.hidden)renderBalanceHistory();

@@ -165,12 +165,21 @@ function openPicker(which){
   const opts = which==='from' ? FROM_OPTIONS : RECEIVE_OPTIONS;
   document.getElementById('pickerSheetTitle').textContent = which==='from' ? 'لە کوێوە دەنێریت' : 'وەرگرتن لە';
   const body = document.getElementById('pickerSheetBody');
-  if(!opts.length){
+  // Internal funds use the authenticated balance payout flow, not a wallet
+  // order or an invented ex_wallets/ex_rates route.
+  const balanceOption = which==='from' && curUser
+    ? '<button type="button" id="accountBalanceSourceOption" class="sheet-option" onclick="selectAccountBalanceSource()">'
+      + '<span class="method-icon">'+ICON.banknote+'</span>'
+      + '<span class="sheet-option-text"><span class="sheet-option-name">باڵانسی هەژمار</span>'
+      + '<span class="sheet-option-sub">'+escHtml(document.getElementById('balanceAvailable')?.textContent||'—')+'</span></span>'
+      + '<span class="sheet-option-check"><span class="icn icn-sm icon--solar icon--solar--check-circle-linear" aria-hidden="true"></span></span></button>'
+    : '';
+  if(!opts.length && !balanceOption){
     body.innerHTML = '<div class="picker-empty">هیچ واڵێتێک بۆ ئەم بەشە زیاد نەکراوە.</div>';
     openSheet(document.getElementById('pickerSheet'));
     return;
   }
-  body.innerHTML = opts.map(key=>{
+  body.innerHTML = balanceOption + opts.map(key=>{
     const m = METHOD_META[key]; if(!m) return '';
     const sel = key===curVal;
     const walletLocked = getWalletInfo(key).locked;
@@ -193,6 +202,11 @@ function openPicker(which){
 }
 function closePicker(){
   closeSheet(document.getElementById('pickerSheet'));
+}
+function selectAccountBalanceSource(){
+  if(_pickerContext!=='from'||!curUser)return;
+  closePicker();
+  if(typeof openAccountBalanceSend==='function')return openAccountBalanceSend();
 }
 function selectPickerOption(value){
   const which=_pickerContext; if(!which) return;
