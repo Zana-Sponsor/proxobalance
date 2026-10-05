@@ -21,11 +21,13 @@ jobs:
           curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/exchange-admin" -o exchange-admin.html
           grep -q 'id="pgBalance"' exchange-admin.html
           grep -q 'id="pgRewards"' exchange-admin.html
-          grep -q 'exchange-balance-admin.js' exchange-admin.html
+          grep -q 'exchange-balance-admin.js?v=2' exchange-admin.html
           curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/assets/js/exchange-balance.js?v=1" -o exchange-balance.js
           grep -q 'requestBalancePayout' exchange-balance.js
-          curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/assets/js/exchange-balance-admin.js?v=1" -o exchange-balance-admin.js
+          curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/assets/js/exchange-balance-admin.js?v=2" -o exchange-balance-admin.js
           grep -q 'creditVerifiedRefund' exchange-balance-admin.js
+          grep -q 'startBalancePayout' exchange-balance-admin.js
+          grep -q 'abortProcessingPayout' exchange-balance-admin.js
           echo "PASS: customer balance and reward UI, admin refund and reward UI, and both balance modules are live."
       - name: Verify unauthorized clients cannot read balances
         shell: bash
