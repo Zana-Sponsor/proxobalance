@@ -133,7 +133,7 @@ const actions = {
     if(!/^(?:[0-9a-f-]{36}|P[A-Z0-9]{11})$/i.test(q))
       throw {status:400,code:'invalid_order',message:'Enter an exact order code or UUID'};
     let query=db.from('ex_orders')
-      .select('id,order_code,user_id,amount,total,fee,from_method,to_method,receipt_url,receipt_hash,status,created_at,decided_at')
+      .select('id,order_code,user_id,amount,total,fee,from_method,to_method,receipt_url,receipt_hash,status,created_at,decided_at,balance_refunded_at')
       .limit(1);
     query=/^[0-9a-f-]{36}$/i.test(q)?query.eq('id',q):query.eq('order_code',q.toUpperCase());
     const {data:order,error}=await query.maybeSingle();
@@ -217,7 +217,7 @@ const actions = {
     const { data: order, error: e1 } = await db
       .from('ex_orders').select('*').eq('id', order_id).single();
     if (e1 || !order) throw { status: 404, code: 'not_found', message: 'Order not found' };
-    if (!REVIEWABLE_ORDER_STATUSES.has(order.status)) {
+    if (order.balance_refunded_at || !REVIEWABLE_ORDER_STATUSES.has(order.status)) {
       throw { status: 409, code: 'already_decided', message: 'Order is not ready for review' };
     }
 
@@ -238,7 +238,7 @@ const actions = {
     const { data: order, error: e1 } = await db
       .from('ex_orders').select('*').eq('id', order_id).single();
     if (e1 || !order) throw { status: 404, code: 'not_found', message: 'Order not found' };
-    if (!REVIEWABLE_ORDER_STATUSES.has(order.status)) {
+    if (order.balance_refunded_at || !REVIEWABLE_ORDER_STATUSES.has(order.status)) {
       throw { status: 409, code: 'already_decided', message: 'Order is not ready for review' };
     }
 
