@@ -177,7 +177,7 @@ const actions = {
   async balance_claim_payout({payout_id,verification},ctx){
     const {data,error}=await db.rpc('ex_balance_claim_payout',{
       p_payout_id:payout_id,p_admin_id:ctx.user.id,
-      p_verification:String(verification||'').trim().slice(0,500)
+      p_verification:String(verification||'').trim().slice(0,160)
     });
     if(error)throw {status:409,code:error.code||'claim_failed',message:error.message};
     return data;
