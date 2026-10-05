@@ -145,12 +145,14 @@ async function verifyAdmin(uid, email){
   try{
     const {data:prof, error} = await sb
       .from('ex_profiles')
-      .select('full_name,email,is_admin,is_banned,role,username')
+      .select('full_name,email,is_admin,is_banned,role,username,staff_permissions')
       .eq('id', uid)
       .maybeSingle();
     if(error || !prof || !prof.is_admin || prof.is_banned) return false;
     adminName = prof.full_name || email.split('@')[0];
     adminRole = prof.role || 'admin';
+    adminStaffPermissions=prof.staff_permissions??null;
+    if(!staffCan('view'))return false;
     return true;
   }catch(e){ return false; }
 }
@@ -193,14 +195,14 @@ function showApp(){
   document.getElementById('sbAv').textContent = (adminName||'A')[0].toUpperCase();
   document.getElementById('sbAdminName').textContent = adminName;
   const roleEl=document.getElementById('sbAdminRole');
-  if(roleEl) roleEl.textContent = isSuperAdmin() ? 'Super Admin' : 'Admin';
+  if(roleEl) roleEl.textContent = isSuperAdmin() ? 'سوپەر ئادمین' : staffFullAdmin()?'ئادمین':'کارمەند';
+  applyStaffUI();
   recordAdminVisit();
   goPage('dashboard');
   subscribeOrdersAdmin();
-  subscribeAlerts();
-  startErrorLogMonitor();
-  startSupportCaseMonitor();
-  startKycMonitor();
+  if(staffFullAdmin()){
+    subscribeAlerts();startErrorLogMonitor();startSupportCaseMonitor();startKycMonitor();
+  }
 }
 function isSuperAdmin(){ return adminRole==='super_admin'; }
 
@@ -243,6 +245,7 @@ const pageConfig = {
 };
 let _curPage='dashboard';
 function goPage(p){
+  if(typeof staffPageAllowed==='function'&&!staffPageAllowed(p)){showToast('مۆڵەتی ئەم بەشەت نییە','rd');return;}
   _curPage=p;
   document.querySelectorAll('.pg').forEach(x=>x.classList.remove('on'));
   document.querySelectorAll('.sb-item').forEach(x=>x.classList.remove('active'));
@@ -1043,7 +1046,7 @@ async function loadProfilesFor(userIds){
 async function loadDashboard(){
   loadDashboardStats();
   loadDashOrders();
-  loadAlerts();
+  if(typeof staffFullAdmin!=='function'||staffFullAdmin())loadAlerts();
 }
 async function loadDashboardStats(){
   try{
@@ -1331,8 +1334,7 @@ async function uploadPayoutReceiptDirect(input, id){
   if(lbl) lbl.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> بارکردن...';
   try{
     const url = await uploadReceiptFile(file, order.user_id, 'payout');
-    const {error} = await sb.from('ex_orders').update({payout_receipt_url:url}).eq('id',id);
-    if(error) throw error;
+    await adminApiRequest('save_payout_receipt',{order_id:id,payout_receipt_url:url});
     showToast('وێنەی پسووڵە نێردرا بۆ کڕیار','gr');
     refreshOrdersEverywhere();
     showOrderDetail(id);
@@ -1385,8 +1387,8 @@ async function confirmOrderCorrectionRequest(){
 }
 async function saveOrderNote(id){
   const note=document.getElementById('odNote').value.trim();
-  const {error} = await sb.from('ex_orders').update({admin_note: note || null}).eq('id',id);
-  if(error){ showToast('هەڵە: '+error.message,'rd'); return; }
+  try{await adminApiRequest('save_order_note',{order_id:id,admin_note:note});}
+  catch(error){showToast('هەڵە: '+error.message,'rd');return;}
   showToast('تێبینی پاشەکەوتکرا','gr');
   refreshOrdersEverywhere();
 }
@@ -1426,7 +1428,7 @@ async function loadAccounts(){
   document.getElementById('accountsTableWrap').innerHTML='<div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>';
   try{
     allAccounts = await fetchAllProfiles();
-    await Promise.all([loadAccountIps(),loadAccountBalances(allAccounts.map(a=>a.id))]);
+    await Promise.all([(typeof staffFullAdmin!=='function'||staffFullAdmin())?loadAccountIps():Promise.resolve(),loadAccountBalances(allAccounts.map(a=>a.id))]);
     filterAccounts();
   }catch(e){
     document.getElementById('accountsTableWrap').innerHTML=`<div class="empty"><i class="fas fa-triangle-exclamation"></i><p>هەڵە: ${esc(e.message)}</p></div>`;
@@ -1635,7 +1637,8 @@ function toggleBan(id, current){
 // database rejects them for everyone else, this only hides the button.
 function roleButtonHTML(a){
   if(!isSuperAdmin() || (adminUser && a.id===adminUser.id) || a.role==='super_admin') return '';
-  return `<div class="act-btn ${a.is_admin?'yw':'pu'}" onclick="toggleAdmin('${a.id}',${!!a.is_admin})"><i class="fas fa-shield"></i> ${a.is_admin?'لابردنی ئادمین':'کردن بە ئادمین'}</div>`;
+  return `<div class="act-btn ${a.is_admin?'yw':'pu'}" onclick="toggleAdmin('${a.id}',${!!a.is_admin})"><i class="fas fa-shield"></i> ${a.is_admin?'لابردنی ئادمین':'کردن بە ئادمین'}</div>`+
+    (typeof staffPermissionButton==='function'?staffPermissionButton(a):'');
 }
 function toggleAdmin(id, current){
   if(!isSuperAdmin()){ showToast('تەنها سوپەر ئادمین دەتوانێت ڕۆڵ بگۆڕێت','rd'); return; }
@@ -2097,6 +2100,7 @@ function renderWalletsGrid(){
       </div>
       <div class="wallet-card-num">${esc(w.wallet_number||'—')}</div>
       <div class="wallet-card-meta">
+        ${w.badge&&w.badge!=='none'?'<span class="wallet-card-badge">'+esc(({popular:'باو',most_popular:'باوترین',new:'نوێ'})[w.badge])+'</span>':''}
         ${w.allow_from!==false?'<span class="wallet-card-badge"><i class="fas fa-arrow-up"></i> ناردن چالاکە</span>':''}
         ${w.allow_receive?'<span class="wallet-card-badge gr"><i class="fas fa-arrow-down"></i> وەرگرتن چالاکە</span>':''}
         ${w.price!=null?`<span class="wallet-card-badge">نرخ: ${esc(w.price)}</span>`:''}
@@ -2147,6 +2151,7 @@ function onWalletImgFile(input){
   reader.readAsDataURL(file);
 }
 function openWalletModal(w){
+  document.getElementById('walletBadge').value=w?(w.badge||'none'):'new';
   document.getElementById('walletKey').readOnly=w?.key==='AccountBalance';
   document.getElementById('walletCanReceive').disabled=w?.key==='AccountBalance';
   document.getElementById('walletKey').dataset.touched='0';
@@ -2204,7 +2209,8 @@ async function saveWallet(){
   if(!key){ showToast('کلیلی واڵێت بنووسە','rd'); return; }
   if(!allow_from && !allow_receive){ showToast('پێویستە لانیکەم یەکێک لە «ناردن» یان «وەرگرتن» چالاک بێت','rd'); return; }
   const btn=document.getElementById('walletSaveBtn'); btn.disabled=true;
-  const payload={ name, key, wallet_number: wallet_number||null, image_url, price, fee, fee_type, allow_from, allow_receive, is_locked };
+  const badge=document.getElementById('walletBadge').value;
+  const payload={ name, key, wallet_number: wallet_number||null, image_url, price, fee, fee_type, allow_from, allow_receive, is_locked, badge };
   let error;
   if(id){
     ({error} = await sb.from('ex_wallets').update(payload).eq('id',id));

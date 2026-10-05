@@ -92,7 +92,99 @@ try{
     await page.evaluate(()=>openPicker('receive'));
     assert.equal(await page.locator('#accountBalanceSourceOption').count(),0,'Balance is a send source only');
     await page.evaluate(()=>closePicker());
+    // New wallet badges are remembered only after intersecting the visible picker.
+    // Recipient CRUD uses synthetic, owner-scoped in-memory rows in this browser.
+    await page.evaluate(()=>{
+      window.fixtureRecipients=[];window.fixtureBadgeViews=[];window.fixtureWrites=[];window.fixtureRpc=[];
+      window.WALLET_DATA={FastPay:{id:'wallet-fast',badge:'new',badge_version:'campaign-1'},
+        AccountBalance:{id:'wallet-balance',badge:'popular',badge_version:'campaign-1'}};
+      for(let i=0;i<15;i++){
+        const key='Extra'+i;FROM_OPTIONS.push(key);METHOD_META[key]={label:key};
+        WALLET_DATA[key]={id:key,badge:i===14?'new':'none',badge_version:'campaign-1'};
+      }
+      window.showToast=()=>{};window.validatePhoneLive=()=>{};window.confirm=()=>true;
+      window.sb={rpc:async(name)=>{fixtureRpc.push(name);return {data:0,error:null};},
+        from(table){
+          let operation='read',row,filters={};
+          const q={select(){return q;},eq(key,value){filters[key]=value;return q;},order(){return q;},
+            insert(value){operation='insert';row=value;return q;},
+            update(value){operation='update';row=value;return q;},delete(){operation='delete';return q;},
+            then(resolve,reject){
+              const target=table==='ex_wallet_badge_views'?fixtureBadgeViews:fixtureRecipients;
+              const matches=v=>Object.entries(filters).every(([key,value])=>v[key]===value);
+              if(operation==='insert')target.push({id:'recipient-'+target.length,...row});
+              if(operation==='update')target.filter(matches).forEach(v=>Object.assign(v,row));
+              if(operation==='delete'){for(let i=target.length-1;i>=0;i--)if(matches(target[i]))target.splice(i,1);}
+              if(operation!=='read')fixtureWrites.push({table,operation,row,filters});
+              return Promise.resolve({data:target.filter(matches),error:null}).then(resolve,reject);
+            }
+          };return q;
+        }};
+    });
+    await page.addScriptTag({content:read('assets/js/exchange-customer-features.js')});
+    await page.evaluate(()=>loadCustomerConveniences());
+    await page.evaluate(()=>openPicker('from'));
+    assert.equal(await page.locator('[data-new-wallet="FastPay"]').textContent(),'نوێ');
+    await page.waitForFunction(()=>fixtureBadgeViews.some(v=>v.wallet_id==='wallet-fast'));
+    assert.equal(await page.evaluate(()=>fixtureBadgeViews.some(v=>v.wallet_id==='Extra14')),false,'Unseen wallet stays new');
+    await page.evaluate(()=>closePicker());await page.evaluate(()=>openPicker('from'));
+    assert.equal(await page.locator('[data-new-wallet="FastPay"]').count(),0);
+    assert.equal(await page.locator('.badge-popular').textContent(),'باو');
+    assert.equal(await page.locator('[data-new-wallet="Extra14"]').count(),1);
+    await page.locator('[data-new-wallet="Extra14"]').scrollIntoViewIfNeeded();
+    await page.waitForFunction(()=>fixtureBadgeViews.some(v=>v.wallet_id==='Extra14'));
+    await page.evaluate(()=>closePicker());
+    await page.evaluate(()=>openSavedRecipients());
+    await page.locator('#recipientLabel').fill('Fixture Recipient');
+    await page.locator('#recipientPhone').fill('07700000001');
+    await page.locator('#recipientSave').click();
+    await page.waitForFunction(()=>document.getElementById('savedRecipientList').textContent.includes('Fixture Recipient'));
+    assert.equal(await page.locator('.recipient-select strong').textContent(),'Fixture Recipient');
+    await page.locator('.recipient-select').click();
+    assert.equal(await page.locator('#userPhone').inputValue(),'07700000001');
+    assert.equal(await page.locator('#receiveVia').inputValue(),'FastPay');
+    await page.evaluate(()=>openSavedRecipients());
+    await page.locator('.recipient-actions button').first().click();
+    await page.locator('#recipientLabel').fill('Updated Recipient');
+    await page.locator('#recipientSave').click();
+    await page.waitForFunction(()=>document.getElementById('savedRecipientList').textContent.includes('Updated Recipient'));
+    if(width===390)await page.screenshot({path:'/workspace/scratch/068a40bbfdcc/customer-features-mobile.png'});
+    await page.locator('.recipient-actions button').last().click();
+    await page.waitForFunction(()=>fixtureRecipients.length===0);
+    await page.evaluate(()=>refreshRewardAlerts());
+    assert.ok(await page.evaluate(()=>fixtureRpc.includes('ex_refresh_reward_alerts')));
+    await page.evaluate(()=>{curUser={id:'other-browser-fixture'};return loadCustomerConveniences();});
+    assert.equal(await page.locator('.saved-recipient').count(),0,'Different owner sees no former recipients');
+    assert.ok(await page.evaluate(()=>walletBadgeHTML('FastPay').includes('نوێ')),'Badge is new for another account');
+    console.log('PASS: '+width+'px observed badge persistence, unseen badge, recipient create/select/edit/delete, owner switch and alerts');
     console.log('PASS: '+width+'px real HTML/CSS, KYC-locked and unlocked Send, zero/positive balances');
     await page.close();
+    const adminPage=await browser.newPage({viewport:{width,height:900}});
+    await adminPage.route('**/*',route=>route.abort());
+    await adminPage.setContent(offlineHtml('exchange-admin.html'),{waitUntil:'domcontentloaded'});
+    await adminPage.evaluate(()=>{
+      window.adminUser={id:'super-fixture'};window.fixtureSuper=false;window.fixturePermissionCalls=[];
+      window.isSuperAdmin=()=>fixtureSuper;window.esc=v=>String(v||'');window.adminDbMessage=e=>e.message;
+      window.showToast=()=>{};window.loadAccounts=()=>{};
+      window.openMo=id=>document.getElementById(id).classList.add('on');
+      window.closeMo=id=>document.getElementById(id).classList.remove('on');
+      window.sb={from(){const q={select(){return q;},eq(){return q;},maybeSingle:async()=>({
+        data:{id:'staff-fixture',full_name:'Fixture Staff',is_admin:true,role:'admin',staff_permissions:['view']},error:null})};return q;},
+        rpc:async(name,args)=>{fixturePermissionCalls.push({name,args});return {error:null};}};
+      document.getElementById('authWrap').style.display='none';document.getElementById('main').classList.add('show');
+    });
+    await adminPage.addScriptTag({content:read('assets/js/exchange-staff.js')});
+    await adminPage.evaluate(()=>{adminStaffPermissions=['view'];applyStaffUI();});
+    assert.equal(await adminPage.locator('.sb-item[onclick="goPage(\'wallets\')"]').isVisible(),false);
+    assert.equal(await adminPage.evaluate(()=>staffPageAllowed('statistics')),true);
+    assert.equal(await adminPage.evaluate(()=>staffCan('refunds')),false);
+    await adminPage.evaluate(()=>{fixtureSuper=true;return openStaffPermissions('staff-fixture');});
+    await adminPage.locator('[data-staff-permission="manage_fees"]').check();
+    if(width===390)await adminPage.screenshot({path:'/workspace/scratch/068a40bbfdcc/staff-permissions-mobile.png'});
+    await adminPage.locator('#staffPermissionSave').click();
+    assert.deepEqual(await adminPage.evaluate(()=>fixturePermissionCalls[0].args.p_permissions),['view','manage_fees']);
+    assert.equal(await adminPage.evaluate(()=>staffCan('refunds')),true,'Super admin retains access');
+    console.log('PASS: '+width+'px staff page restrictions and super-admin permission editor');
+    await adminPage.close();
   }
 }finally{await browser.close();}

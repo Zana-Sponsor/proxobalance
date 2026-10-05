@@ -94,6 +94,7 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
 <link rel="stylesheet" href="/assets/css/exchange-ux.css?v=1">
 <link rel="stylesheet" href="/assets/css/panel-consistency.css?v=1">
 <link rel="stylesheet" href="/assets/css/exchange-balance.css?v=2">
+<link rel="stylesheet" href="/assets/css/exchange-features.css?v=1">
 </head>
 
 <body>
@@ -193,6 +194,26 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
 <!-- ══════════════════════════════════════════════════════════════
      METHOD PICKER SHEET (used for both "from" and "receive via")
      ══════════════════════════════════════════════════════════════ -->
+<div id="recipientSheet" class="sheet-overlay" aria-hidden="true" onclick="if(event.target===this) closeSheet(this)">
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="recipientSheetTitle">
+    <div class="sheet-grabber"></div>
+    <div class="sheet-head"><h3 id="recipientSheetTitle">وەرگرە پاشەکەوتکراوەکان</h3>
+      <button type="button" class="sheet-close" onclick="closeSheet(document.getElementById('recipientSheet'))" aria-label="داخستن">×</button></div>
+    <div class="sheet-body">
+      <form class="recipient-form" onsubmit="event.preventDefault();saveRecipient()">
+        <label for="recipientLabel">ناوی وەرگر</label>
+        <input id="recipientLabel" class="input" maxlength="60" autocomplete="off" required>
+        <label for="recipientWallet">جزدان</label>
+        <select id="recipientWallet" class="input"></select>
+        <label for="recipientPhone">ژمارەی وەرگر</label>
+        <input id="recipientPhone" class="input" dir="ltr" inputmode="numeric" maxlength="32" required>
+        <span id="recipientError" role="alert"></span>
+        <button id="recipientSave" type="submit" class="btn btn-primary">پاشەکەوتکردنی وەرگر</button>
+      </form>
+      <div id="savedRecipientList"></div>
+    </div>
+  </div>
+</div>
 <div id="pickerSheet" class="sheet-overlay" onclick="if(event.target===this) closePicker()">
   <div class="sheet">
     <div class="sheet-grabber"></div>
@@ -775,6 +796,7 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
             <span id="phoneHintText">ژمارەی عێراقی بە <b>07</b> دەست پێدەکات و <b>11</b> ژمارەیە.</span>
           </div>
           <span class="field-error" id="userPhoneError"></span>
+          <div class="recipient-shortcut"><button type="button" onclick="openSavedRecipients()">وەرگرە پاشەکەوتکراوەکان</button></div>
         </div>
       </section>
     </div>
@@ -1531,7 +1553,8 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
 </script>
 <script src="/assets/js/index-svg-icons.js?v=1"></script>
 <script src="/assets/js/exchange-reward-pricing.js?v=2"></script>
-<script src="/assets/js/app.js?v=41"></script>
+<script src="/assets/js/app.js?v=42"></script>
+<script src="/assets/js/exchange-customer-features.js?v=1"></script>
 <script src="/assets/js/exchange-balance.js?v=4"></script>
 <script src="/assets/js/exchange-ux.js?v=1"></script>
 <script src="/assets/js/receipt-download.js?v=4"></script>
