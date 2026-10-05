@@ -52,6 +52,7 @@ try{
     await page.addScriptTag({content:read('assets/js/exchange-balance.js')});
     await page.evaluate(()=>loadMyBalance());
     assert.equal(await page.locator('#balanceSendSection').isVisible(),true);
+    assert.equal(await page.locator('#savedRecipientsShortcut').isVisible(),true,'Saved recipients remain discoverable in the Send heading');
     assert.equal(await page.locator('#balanceAvailable').textContent(),'40,000 د.ع');
     assert.equal(await page.locator('#balanceHeld').textContent(),'10,000 د.ع');
     assert.equal(await page.locator('#grpSend').isVisible(),false,'KYC still locks the exchange form');
@@ -134,7 +135,7 @@ try{
     await page.locator('[data-new-wallet="Extra14"]').scrollIntoViewIfNeeded();
     await page.waitForFunction(()=>fixtureBadgeViews.some(v=>v.wallet_id==='Extra14'));
     await page.evaluate(()=>closePicker());
-    await page.evaluate(()=>openSavedRecipients());
+    await page.locator('#savedRecipientsShortcut').click();
     await page.locator('#recipientLabel').fill('Fixture Recipient');
     await page.locator('#recipientPhone').fill('07700000001');
     await page.locator('#recipientSave').click();
@@ -163,7 +164,7 @@ try{
     await adminPage.route('**/*',route=>route.abort());
     await adminPage.setContent(offlineHtml('exchange-admin.html'),{waitUntil:'domcontentloaded'});
     await adminPage.evaluate(()=>{
-      window.adminUser={id:'super-fixture'};window.fixtureSuper=false;window.fixturePermissionCalls=[];
+      window.adminUser={id:'super-fixture'};window.fixtureSuper=false;window.fixturePermissionCalls=[];window.allAccounts=[];
       window.isSuperAdmin=()=>fixtureSuper;window.esc=v=>String(v||'');window.adminDbMessage=e=>e.message;
       window.showToast=()=>{};window.loadAccounts=()=>{};
       window.openMo=id=>document.getElementById(id).classList.add('on');
@@ -171,14 +172,20 @@ try{
       window.sb={from(){const q={select(){return q;},eq(){return q;},maybeSingle:async()=>({
         data:{id:'staff-fixture',full_name:'Fixture Staff',is_admin:true,role:'admin',staff_permissions:['view']},error:null})};return q;},
         rpc:async(name,args)=>{fixturePermissionCalls.push({name,args});return {error:null};}};
-      document.getElementById('authWrap').style.display='none';document.getElementById('main').classList.add('show');
+      document.getElementById('authWrap').style.display='none';document.getElementById('main').classList.add('show');document.getElementById('pgAccounts').classList.add('on');
     });
     await adminPage.addScriptTag({content:read('assets/js/exchange-staff.js')});
     await adminPage.evaluate(()=>{adminStaffPermissions=['view'];applyStaffUI();});
     assert.equal(await adminPage.locator('.sb-item[onclick="goPage(\'wallets\')"]').isVisible(),false);
     assert.equal(await adminPage.evaluate(()=>staffPageAllowed('statistics')),true);
     assert.equal(await adminPage.evaluate(()=>staffCan('refunds')),false);
-    await adminPage.evaluate(()=>{fixtureSuper=true;return openStaffPermissions('staff-fixture');});
+    assert.equal(await adminPage.locator('#staffDirectoryButton').isVisible(),false,'Scoped staff cannot manage permissions');
+    await adminPage.evaluate(()=>{fixtureSuper=true;applyStaffUI();return openStaffDirectory();});
+    assert.equal(await adminPage.locator('#staffDirectoryButton').isVisible(),true);
+    assert.match(await adminPage.locator('#staffDirectoryList').textContent(),/هێشتا کارمەندی ئادمین نییە/,'A super admin can discover the feature before staff exist');
+    await adminPage.evaluate(()=>{closeMo('moStaffDirectory');document.getElementById('pgAccounts').classList.add('on');allAccounts=[{id:'staff-fixture',full_name:'Fixture Staff',role:'admin',is_admin:true}];return openStaffDirectory();});
+    await adminPage.locator('#staffDirectoryList button').click();
+    assert.equal(await adminPage.locator('#moStaffDirectory').isVisible(),false);
     await adminPage.locator('[data-staff-permission="manage_fees"]').check();
     if(width===390)await adminPage.screenshot({path:'/workspace/scratch/068a40bbfdcc/staff-permissions-mobile.png'});
     await adminPage.locator('#staffPermissionSave').click();

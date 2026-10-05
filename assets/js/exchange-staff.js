@@ -16,6 +16,7 @@ function staffPageAllowed(page){
  return !!permission&&staffCan(permission);
 }
 function applyStaffUI(){
+ document.querySelectorAll('[data-super-admin-only]').forEach(el=>el.hidden=!isSuperAdmin());
  document.querySelectorAll('.sb-item[onclick]').forEach(el=>{
   const page=el.getAttribute('onclick').match(/goPage\('([^']+)'\)/)?.[1];
   if(page)el.hidden=!staffPageAllowed(page);
@@ -26,7 +27,7 @@ function applyStaffUI(){
   openOrderRefund:'refunds',creditVerifiedRefund:'refunds',cancelBalancePayout:'refunds',
   abortProcessingPayout:'refunds',claimBalancePayout:'approve_orders',reviewBalancePayout:'approve_orders',
   startBalancePayout:'approve_orders',completeBalancePayout:'approve_orders',saveUserReward:'manage_rewards',revokeUserReward:'manage_rewards',
-  openWalletModal:'manage_fees',saveWallet:'manage_fees',deleteWallet:'manage_fees',
+  openWalletModal:'manage_fees',openWalletBadge:'manage_fees',saveWallet:'manage_fees',deleteWallet:'manage_fees',
   openRateModal:'manage_fees',saveRate:'manage_fees',deleteRate:'manage_fees',
   toggleBan:'full',openSetPasswordModal:'full',openCreateUserModal:'full',saveOrderNote:'approve_orders',
   sendNotification:'full',resolveBalanceRisk:'full'
@@ -47,11 +48,20 @@ function staffPermissionButton(a){
  if(!isSuperAdmin()||!a.is_admin||a.role==='super_admin'||a.id===adminUser?.id)return '';
  return '<button type="button" class="act-btn dark" onclick="openStaffPermissions(\''+esc(a.id)+'\')"><i class="fas fa-key"></i> دەسەڵاتەکان</button>';
 }
+async function openStaffDirectory(){
+ if(!isSuperAdmin())return;
+ if(!allAccounts.length)await loadAccounts();
+ const candidates=allAccounts.filter(a=>a.is_admin&&a.role!=='super_admin'&&a.id!==adminUser?.id);
+ document.getElementById('staffDirectoryList').innerHTML=candidates.length?candidates.map(a=>
+  '<div class="staff-directory-row"><span>'+esc(a.full_name||a.email)+'</span>'+staffPermissionButton(a)+'</div>').join(''):
+  '<p class="feature-help">هێشتا کارمەندی ئادمین نییە. لە هەژمارەکان، بۆ کەسێکی دیاریکراو «کردن بە ئادمین» هەڵبژێرە؛ پاشان دەتوانیت دەسەڵاتەکانی دیاری بکەیت.</p>';
+ openMo('moStaffDirectory');
+}
 async function openStaffPermissions(id){
  if(!isSuperAdmin())return;
  const {data,error}=await sb.from('ex_profiles').select('id,full_name,email,role,is_admin,staff_permissions').eq('id',id).maybeSingle();
  if(error||!data||!data.is_admin||data.role==='super_admin'){showToast('نەتوانرا کارمەند بخوێندرێتەوە','rd');return;}
- document.getElementById('staffTarget').value=id;
+ closeMo('moStaffDirectory');document.getElementById('staffTarget').value=id;
  document.getElementById('staffTargetName').textContent=data.full_name||data.email;
  document.getElementById('staffFullAccess').checked=data.staff_permissions==null;
  document.getElementById('staffPermissionOptions').innerHTML=Object.entries(STAFF_PERMISSION_LABELS).map(([key,label])=>

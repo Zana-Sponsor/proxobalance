@@ -93,6 +93,7 @@ function renderSavedRecipients(){
  ).join(''):'<p class="xc-hint">هێشتا وەرگرێکت پاشەکەوت نەکردووە.</p>';
 }
 function chooseSavedRecipient(id){
+ if(typeof kycExchangeBlocked==='function'&&kycExchangeBlocked()){showToast('پێش ناردن، ناسنامەکەت پشتڕاست بکەرەوە','warning');return;}
  const r=_savedRecipients.find(r=>r.id===id);
  if(!r||!recipientAvailable(r)){showToast('ئەم ڕێڕەوە بەردەست نییە','warning');return;}
  document.getElementById('receiveVia').value=r.wallet_key;

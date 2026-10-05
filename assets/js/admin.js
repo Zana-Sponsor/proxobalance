@@ -2108,6 +2108,7 @@ function renderWalletsGrid(){
       </div>
       ${walletPairsHTML(w)}
       <div class="act-grp">
+        <button type="button" class="act-btn cy" onclick="openWalletBadge('${w.id}')"><i class="fas fa-tag"></i> نیشانی جزدان</button>
         <div class="act-btn dark" onclick='openWalletModal(${safeAttr(w)})'><i class="fas fa-pen"></i> دەستکاری</div>
         <div class="act-btn rd" onclick="deleteWallet('${w.id}','${esc(w.key)}')"><i class="fas fa-trash"></i></div>
       </div>
@@ -2149,6 +2150,12 @@ function onWalletImgFile(input){
     document.getElementById('walletImgPreview').innerHTML = `<img src="${reader.result}" style="width:100%;height:100%;object-fit:cover">`;
   };
   reader.readAsDataURL(file);
+}
+function openWalletBadge(id){
+  const w=allWallets.find(w=>w.id===id);if(!w)return;
+  openWalletModal(w);
+  const select=document.getElementById('walletBadge');
+  select.scrollIntoView({block:'center'});select.focus();
 }
 function openWalletModal(w){
   document.getElementById('walletBadge').value=w?(w.badge||'none'):'new';
