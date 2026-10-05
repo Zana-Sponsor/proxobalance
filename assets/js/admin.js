@@ -1786,6 +1786,9 @@ function updateRewardKind(){
   if(free && !uses.value)uses.value=2;
 }
 function searchRewardUsers(){
+  rewardSelectedUserId=null;
+  const selected=document.getElementById('rewardSelectedUser');
+  if(selected)selected.textContent='';
   const el=document.getElementById('rewardUserSearch');
   const out=document.getElementById('rewardUserResults');
   if(!el || !out)return;
