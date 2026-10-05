@@ -1,0 +1,67 @@
+{
+  "status": "VERIFIED",
+  "scope": "Only the owner's explicitly authorized production notify-tool-created Telegram retirement",
+  "repository": "Zana-Sponsor/proxobalance",
+  "source_commit": "dfa7c9480c4b14efab18756a689274ee499613c7",
+  "project_id": "cojchkwssmasiejcgvbk",
+  "function": "notify-tool-created",
+  "previous_version": 3,
+  "deployed_version": 4,
+  "state": "ACTIVE",
+  "deployed_at": "2026-10-05T15:24:36.567Z",
+  "jwt_verification_retained": true,
+  "source_path": "proxo_app/supabase/functions/notify-tool-created/index.ts",
+  "source_sha256": "acea4f591e33c241722f4ccd82b24719e6d560c9880ec05907861f5510fc5896",
+  "source_verification": {
+    "exact_source_match": true,
+    "no_telegram_api": true,
+    "no_request_body_read": true,
+    "no_database_or_storage": true,
+    "http_410": true,
+    "retirement_error": true
+  },
+  "packaging": {
+    "first_attempt": "Failed before activation: inherited v3 import-map absolute path does not exist",
+    "resolved_with": "Same checked index.ts and an empty deno.json imports map",
+    "new_runtime_dependency": false
+  },
+  "http_checks": [
+    {
+      "method": "OPTIONS",
+      "authentication": "none",
+      "status": 204
+    },
+    {
+      "method": "POST",
+      "authentication": "none",
+      "status": 401,
+      "jwt_guard_preserved": true
+    },
+    {
+      "method": "POST",
+      "status": 410,
+      "public_anon_jwt_used": true,
+      "retired_error": "proxolink_html_delivery_retired",
+      "cache_control": "no-store",
+      "content_type": "application/json; charset=utf-8",
+      "credential_values_in_output": false
+    }
+  ],
+  "credentials": {
+    "existing_project_public_anon_jwt_used_only_for_retired_endpoint": true,
+    "service_role_key_used_for_http": false,
+    "values_in_source_commits_logs_reports": false
+  },
+  "previous_telegram_delivery_version_invoked": false,
+  "telegram_messages_sent": 0,
+  "legacy_payloads_read_or_forwarded": 0,
+  "other_function_versions_and_update_timestamps_unchanged": true,
+  "customer_database_storage_auth_writes": 0,
+  "v2_activated": false,
+  "customer_cutover": false,
+  "vercel_feature_production_promotion": false,
+  "pr_merged": false,
+  "destructive_cleanup": false,
+  "preservation_evidence": "production-checkpoints.json",
+  "native_evidence": "native-results.json"
+}

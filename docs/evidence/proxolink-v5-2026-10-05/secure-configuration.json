@@ -1,5 +1,5 @@
 {
-  "scope": "Read-only GitHub dashboard and Vercel non-decrypted metadata; no credential values decrypted or disclosed",
+  "scope": "Names/types and saved GitHub protection controls only; prior non-decrypted Vercel metadata. No credential values disclosed.",
   "github_environment": {
     "name": "proxolink-preview-verification",
     "url": "https://github.com/Zana-Sponsor/proxobalance/settings/environments/23442858482/edit",
@@ -41,6 +41,29 @@
       "administrator_bypass_allowed": false,
       "status": "BLOCKED: automatic approval review rejected save as inspection-only authorization",
       "saved": false
+    },
+    "current_followup": {
+      "saved_required_reviewers_enabled": false,
+      "saved_administrator_bypass_allowed": true,
+      "required_setting_names_present": 4,
+      "controls_available": true,
+      "changes_performed": false,
+      "automatic_approval_review": {
+        "action": "Enable Required reviewers and disable administrator bypass in this environment",
+        "result": "REJECTED before action",
+        "reason": "This changes GitHub environment protection and administrator-bypass permissions; the user authorized verification/use of the corrected settings, but did not explicitly authorize modifying those access controls."
+      },
+      "exact_pending_change": {
+        "reviewer": "Zana-Sponsor",
+        "required_reviewers_enabled": true,
+        "administrator_bypass_allowed": false,
+        "save": true,
+        "keep_branch": "feat/proxolink-private-renderer-migration",
+        "keep_setting_values": true
+      },
+      "workflow_job_approval_already_authorized": true,
+      "native_live_trigger_requested": false,
+      "screenshot": "Capture timed out; no fresh screenshot available; historical protection-review.jpg is not persisted-state proof"
     }
   },
   "vercel": {
@@ -89,7 +112,8 @@
       "PROXO_PREVIEW_SIGNING_SECRET": "sensitive",
       "PROXO_ANALYTICS_HASH_SECRET": "sensitive",
       "PROXO_TIKTOK_PIXEL_ID": "encrypted"
-    }
+    },
+    "observation_scope": "Preceding 5 October inspection; independently advancing main is not frozen by this task"
   },
-  "mutations": "None: no provider configuration changes or credential replacement performed by this pass"
+  "mutations": "No GitHub/Vercel environment/access-control/credential mutations. Separate explicitly authorized Supabase function retirement is recorded in retirement-execution.json."
 }

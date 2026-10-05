@@ -18,7 +18,7 @@
     "api_function_count": 11,
     "api_function_limit": 12
   },
-  "combined_tree_ci": "PENDING: new normal push; live-verification trigger excluded",
+  "combined_tree_ci": "SUCCESS: runs 37255198628 / 37255195613; native build 37255195714 succeeds with native-runtime SKIPPED",
   "native": {
     "executed": 0,
     "required": 40,
@@ -51,5 +51,23 @@
       "Zana-Sponsor"
     ],
     "prepared_administrator_bypass_allowed": false
+  },
+  "latest_authorized_followup": {
+    "source_commit": "dfa7c9480c4b14efab18756a689274ee499613c7",
+    "telegram_retirement": "VERIFIED: notify-tool-created v4 with actual HTTP 410",
+    "retirement_evidence": "retirement-execution.json",
+    "native_executed": 0,
+    "native_required": 40,
+    "native_blocked": 40,
+    "environment_control_changes": "REJECTED by automatic approval review; no changes performed",
+    "customer_data_writes": 0,
+    "template_v2_activation": false,
+    "feature_production_promotion": false,
+    "pr_draft": true,
+    "acceptance_totals": {
+      "VERIFIED": 53,
+      "FAILED": 1,
+      "BLOCKED": 91
+    }
   }
 }

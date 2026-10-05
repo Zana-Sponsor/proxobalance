@@ -5,7 +5,7 @@
   "executed_cases": 0,
   "passed_cases": 0,
   "failed_cases": 0,
-  "latest_observed_native_run": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/37245145086",
+  "latest_observed_native_run": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/37255195714",
   "latest_native_runtime_conclusion": "skipped",
   "protected_environment": "proxolink-preview-verification",
   "settings": {
@@ -19,5 +19,376 @@
   "configuration_evidence": "secure-configuration.json",
   "collection_fix": "Pixel differences no longer end collection after the first case; final zero-difference gate retained",
   "actual_native_pixel_parity": "not established",
-  "latest_executable_commit": "ff7e63abd41071f3630f1098c566d03003f27a33"
+  "latest_executable_commit": "dfa7c9480c4b14efab18756a689274ee499613c7",
+  "blocked_cases": 40,
+  "latest_native_runtime_job": {
+    "id": 111591563746,
+    "conclusion": "skipped"
+  },
+  "actual_rendering_fonts_spacing_responsiveness_animations_buttons_direction_navigation": "BLOCKED: actual native runtime did not execute",
+  "trigger_requested_in_this_followup": false,
+  "access_control_change_attempt": "Rejected by automatic approval review; no protection or credential changes",
+  "case_statuses": [
+    {
+      "style": "dark",
+      "width_css_px": 320,
+      "status": "BLOCKED",
+      "executed": false,
+      "pixel_metrics": null,
+      "native_images": null,
+      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+    },
+    {
+      "style": "dark",
+      "width_css_px": 375,
+      "status": "BLOCKED",
+      "executed": false,
+      "pixel_metrics": null,
+      "native_images": null,
+      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+    },
+    {
+      "style": "dark",
+      "width_css_px": 393,
+      "status": "BLOCKED",
+      "executed": false,
+      "pixel_metrics": null,
+      "native_images": null,
+      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+    },
+    {
+      "style": "dark",
+      "width_css_px": 430,
+      "status": "BLOCKED",
+      "executed": false,
+      "pixel_metrics": null,
+      "native_images": null,
+      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+    },
+    {
+      "style": "dark",
+      "width_css_px": 768,
+      "status": "BLOCKED",
+      "executed": false,
+      "pixel_metrics": null,
+      "native_images": null,
+      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+    },
+    {
+      "style": "light",
+      "width_css_px": 320,
+      "status": "BLOCKED",
+      "executed": false,
+      "pixel_metrics": null,
+      "native_images": null,
+      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+    },
+    {
+      "style": "light",
+      "width_css_px": 375,
+      "status": "BLOCKED",
+      "executed": false,
+      "pixel_metrics": null,
+      "native_images": null,
+      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+    },
+    {
+      "style": "light",
+      "width_css_px": 393,
+      "status": "BLOCKED",
+      "executed": false,
+      "pixel_metrics": null,
+      "native_images": null,
+      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+    },
+    {
+      "style": "light",
+      "width_css_px": 430,
+      "status": "BLOCKED",
+      "executed": false,
+      "pixel_metrics": null,
+      "native_images": null,
+      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+    },
+    {
+      "style": "light",
+      "width_css_px": 768,
+      "status": "BLOCKED",
+      "executed": false,
+      "pixel_metrics": null,
+      "native_images": null,
+      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+    },
+    {
+      "style": "classic",
+      "width_css_px": 320,
+      "status": "BLOCKED",
+      "executed": false,
+      "pixel_metrics": null,
+      "native_images": null,
+      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+    },
+    {
+      "style": "classic",
+      "width_css_px": 375,
+      "status": "BLOCKED",
+      "executed": false,
+      "pixel_metrics": null,
+      "native_images": null,
+      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+    },
+    {
+      "style": "classic",
+      "width_css_px": 393,
+      "status": "BLOCKED",
+      "executed": false,
+      "pixel_metrics": null,
+      "native_images": null,
+      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+    },
+    {
+      "style": "classic",
+      "width_css_px": 430,
+      "status": "BLOCKED",
+      "executed": false,
+      "pixel_metrics": null,
+      "native_images": null,
+      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+    },
+    {
+      "style": "classic",
+      "width_css_px": 768,
+      "status": "BLOCKED",
+      "executed": false,
+      "pixel_metrics": null,
+      "native_images": null,
+      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+    },
+    {
+      "style": "pill",
+      "width_css_px": 320,
+      "status": "BLOCKED",
+      "executed": false,
+      "pixel_metrics": null,
+      "native_images": null,
+      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+    },
+    {
+      "style": "pill",
+      "width_css_px": 375,
+      "status": "BLOCKED",
+      "executed": false,
+      "pixel_metrics": null,
+      "native_images": null,
+      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+    },
+    {
+      "style": "pill",
+      "width_css_px": 393,
+      "status": "BLOCKED",
+      "executed": false,
+      "pixel_metrics": null,
+      "native_images": null,
+      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+    },
+    {
+      "style": "pill",
+      "width_css_px": 430,
+      "status": "BLOCKED",
+      "executed": false,
+      "pixel_metrics": null,
+      "native_images": null,
+      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+    },
+    {
+      "style": "pill",
+      "width_css_px": 768,
+      "status": "BLOCKED",
+      "executed": false,
+      "pixel_metrics": null,
+      "native_images": null,
+      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+    },
+    {
+      "style": "card",
+      "width_css_px": 320,
+      "status": "BLOCKED",
+      "executed": false,
+      "pixel_metrics": null,
+      "native_images": null,
+      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+    },
+    {
+      "style": "card",
+      "width_css_px": 375,
+      "status": "BLOCKED",
+      "executed": false,
+      "pixel_metrics": null,
+      "native_images": null,
+      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+    },
+    {
+      "style": "card",
+      "width_css_px": 393,
+      "status": "BLOCKED",
+      "executed": false,
+      "pixel_metrics": null,
+      "native_images": null,
+      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+    },
+    {
+      "style": "card",
+      "width_css_px": 430,
+      "status": "BLOCKED",
+      "executed": false,
+      "pixel_metrics": null,
+      "native_images": null,
+      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+    },
+    {
+      "style": "card",
+      "width_css_px": 768,
+      "status": "BLOCKED",
+      "executed": false,
+      "pixel_metrics": null,
+      "native_images": null,
+      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+    },
+    {
+      "style": "neon",
+      "width_css_px": 320,
+      "status": "BLOCKED",
+      "executed": false,
+      "pixel_metrics": null,
+      "native_images": null,
+      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+    },
+    {
+      "style": "neon",
+      "width_css_px": 375,
+      "status": "BLOCKED",
+      "executed": false,
+      "pixel_metrics": null,
+      "native_images": null,
+      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+    },
+    {
+      "style": "neon",
+      "width_css_px": 393,
+      "status": "BLOCKED",
+      "executed": false,
+      "pixel_metrics": null,
+      "native_images": null,
+      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+    },
+    {
+      "style": "neon",
+      "width_css_px": 430,
+      "status": "BLOCKED",
+      "executed": false,
+      "pixel_metrics": null,
+      "native_images": null,
+      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+    },
+    {
+      "style": "neon",
+      "width_css_px": 768,
+      "status": "BLOCKED",
+      "executed": false,
+      "pixel_metrics": null,
+      "native_images": null,
+      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+    },
+    {
+      "style": "zoom",
+      "width_css_px": 320,
+      "status": "BLOCKED",
+      "executed": false,
+      "pixel_metrics": null,
+      "native_images": null,
+      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+    },
+    {
+      "style": "zoom",
+      "width_css_px": 375,
+      "status": "BLOCKED",
+      "executed": false,
+      "pixel_metrics": null,
+      "native_images": null,
+      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+    },
+    {
+      "style": "zoom",
+      "width_css_px": 393,
+      "status": "BLOCKED",
+      "executed": false,
+      "pixel_metrics": null,
+      "native_images": null,
+      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+    },
+    {
+      "style": "zoom",
+      "width_css_px": 430,
+      "status": "BLOCKED",
+      "executed": false,
+      "pixel_metrics": null,
+      "native_images": null,
+      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+    },
+    {
+      "style": "zoom",
+      "width_css_px": 768,
+      "status": "BLOCKED",
+      "executed": false,
+      "pixel_metrics": null,
+      "native_images": null,
+      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+    },
+    {
+      "style": "banner",
+      "width_css_px": 320,
+      "status": "BLOCKED",
+      "executed": false,
+      "pixel_metrics": null,
+      "native_images": null,
+      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+    },
+    {
+      "style": "banner",
+      "width_css_px": 375,
+      "status": "BLOCKED",
+      "executed": false,
+      "pixel_metrics": null,
+      "native_images": null,
+      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+    },
+    {
+      "style": "banner",
+      "width_css_px": 393,
+      "status": "BLOCKED",
+      "executed": false,
+      "pixel_metrics": null,
+      "native_images": null,
+      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+    },
+    {
+      "style": "banner",
+      "width_css_px": 430,
+      "status": "BLOCKED",
+      "executed": false,
+      "pixel_metrics": null,
+      "native_images": null,
+      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+    },
+    {
+      "style": "banner",
+      "width_css_px": 768,
+      "status": "BLOCKED",
+      "executed": false,
+      "pixel_metrics": null,
+      "native_images": null,
+      "reason": "Saved reviewer protection incomplete; access-control change rejected by automatic approval review"
+    }
+  ],
+  "native_runtime_artifacts_present": false
 }
