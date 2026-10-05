@@ -9,6 +9,19 @@ jobs:
     permissions:
       contents: read
     steps:
+      - name: Wait for the current admin bundle to finish deploying
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 24); do
+            if curl -fLsS --max-time 15 'https://www.proxobalance.app/exchange-admin' -o current-admin.html &&
+               grep -q 'assets/js/admin.js?v=16' current-admin.html; then
+              exit 0
+            fi
+            sleep 5
+          done
+          echo 'FAIL: current admin bundle was not published within the deployment window.'
+          exit 1
       - name: Verify the live customer page, admin panel and bundled assets
         shell: bash
         run: |
@@ -25,6 +38,11 @@ jobs:
           grep -q 'id="rewardAmountCap"' exchange-admin.html
           grep -q 'ڕەتکردنەوە و گەڕاندنەوە بۆ باڵانس' exchange-admin.html
           grep -q 'exchange-balance-admin.js?v=3' exchange-admin.html
+          grep -q 'admin.js?v=16' exchange-admin.html
+          curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/assets/js/admin.js?v=16" -o admin.js
+          grep -q 'accountBalanceCell' admin.js
+          grep -q 'accountBalanceDetails' admin.js
+          grep -q "'account_balances'" admin.js
           curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/assets/js/exchange-balance.js?v=1" -o exchange-balance.js
           grep -q 'requestBalancePayout' exchange-balance.js
           curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/assets/js/exchange-balance-admin.js?v=3" -o exchange-balance-admin.js
@@ -45,3 +63,9 @@ jobs:
           fi
           grep -q 'Unauthorized' balance-response.json
           echo "PASS: balance API requires authentication (HTTP 401)."
+          http="$(curl -sS -L --max-time 25 -o account-response.json -w '%{http_code}' -H 'Content-Type: application/json' --data '{"action":"account_balances","payload":{"user_ids":[]}}' 'https://www.proxobalance.app/api/admin')"
+          if [ "$http" != "401" ]; then
+            echo "FAIL: unauthenticated per-user balance lookup returned HTTP $http; expected 401"
+            exit 1
+          fi
+          echo "PASS: per-user admin balance lookup requires authentication (HTTP 401)."

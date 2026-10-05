@@ -26,6 +26,7 @@
 - `ex_orders` and `ex_reward_usages` store the applied cap, covered principal and discount snapshots so later reward changes cannot erase the historical calculation.
 
 ## Access and ledger controls
+- The admin Accounts section shows each user's available balance on desktop rows and mobile cards, including zero for an account with no balance record. Account details refresh available/held amounts and the balance timestamp through the authenticated `account_balances` admin action. Lookup requests are limited to 200 IDs and the account list reads all batches, independent of the recent-record limit on the balance board. Read errors are reported instead of displaying a false zero. The refresh button preserves the current user filter/search.
 - New orders use authenticated `/api/orders`. Legacy table and column INSERT grants have been revoked so customers cannot bypass server route, receipt or price checks.
 - Customers read only their own balances, ledger, refund cases, rewards and payout requests. They cannot directly create or alter these financial records or execute refund RPCs.
 - The user sees account balance and payout requests inside the Send section. The database stores the full financial history, including actor, note, evidence, date and transaction links.
