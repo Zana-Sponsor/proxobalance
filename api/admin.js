@@ -123,9 +123,12 @@ const actions = {
       ...(payouts.data||[]),...(alerts.data||[])].map(x=>x.user_id).filter(Boolean))];
     const names=ids.length?await db.from('ex_profiles').select('id,full_name,username,email').in('id',ids):{data:[],error:null};
     if(names.error)throw names.error;
+    const reconciliation=await db.rpc('ex_admin_balance_reconcile',{p_admin_id:_ctx.user.id});
+    if(reconciliation.error)throw reconciliation.error;
     const profiles=Object.fromEntries((names.data||[]).map(p=>[p.id,p]));
     return {balances:balances.data||[],refunds:refunds.data||[],
-      payouts:payouts.data||[],alerts:alerts.data||[],config:config.data,profiles};
+      payouts:payouts.data||[],alerts:alerts.data||[],config:config.data,profiles,
+      reconciliation:reconciliation.data};
   },
 
   async balance_lookup_order({search},_ctx){
