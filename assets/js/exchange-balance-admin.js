@@ -42,7 +42,7 @@ async function loadBalanceAdmin(){
         '<button type="button" class="act-btn rd" onclick="abortProcessingPayout(\''+p.id+'\')">ناردن شکستی هێنا</button>':
         p.payout_receipt_url?'<a class="act-btn dark" href="'+esc(p.payout_receipt_url)+'" target="_blank" rel="noopener noreferrer">پسووڵە</a>':'—')+'</td></tr>');
     document.getElementById('balanceRefundList').innerHTML=balanceTable(
-      ['بەکارهێنەر','ئایدی مامەڵە','بڕی ڕیفاوند','بەڵگەی بانک','تێبینی','بەروار'],refunds,r=>
+      ['بەکارهێنەر','ئایدی مامەڵە','بڕی ڕیفاوند','ژمارەی بەڵگە','تێبینی','بەروار'],refunds,r=>
       '<tr><td>'+balanceOwner(r.user_id)+'</td><td><span dir="ltr">'+esc(r.order_id)+'</span></td>'+
       '<td>'+balanceMoney(r.amount_iqd)+'</td><td>'+esc(r.bank_verification_reference)+'</td>'+
       '<td>'+esc(r.failure_reason)+'</td><td>'+balanceDate(r.created_at)+'</td></tr>');
@@ -67,6 +67,15 @@ function balanceResetChosen(){
   document.getElementById('balanceFoundOrder').textContent='مامەڵەی پشتڕاستکراوە هەڵنەبژێردراوە';
 }
 document.getElementById('balanceOrderSearch')?.addEventListener('input',balanceResetChosen);
+async function openOrderRefund(id){
+  const order=allOrders.find(o=>String(o.id)===String(id));
+  closeMo('moOrderDetail');goPage('balance');
+  document.getElementById('balanceOrderSearch').value=order?.order_code||id;
+  document.getElementById('balanceFundsVerified').checked=false;
+  document.getElementById('balanceBankReference').value='';
+  document.getElementById('balanceRefundReason').value='';
+  await lookupBalanceOrder();
+}
 async function lookupBalanceOrder(){
   balanceResetChosen();
   const out=document.getElementById('balanceFoundOrder');
@@ -76,13 +85,13 @@ async function lookupBalanceOrder(){
       search:document.getElementById('balanceOrderSearch').value.trim()
     });
     const o=result.order,p=result.profile||{};
-    const eligible=!result.refund&&o.status!=='پەسەندکرا'&&o.from_method!=='USDT'&&o.to_method!=='USDT';
+    const eligible=!result.refund&&o.status!=='پەسەندکرا'&&!o.payout_receipt_url&&!!o.receipt_url&&o.from_method!=='USDT'&&o.to_method!=='USDT';
     out.innerHTML='<div><b>'+esc(o.order_code)+'</b> — '+esc(p.full_name||p.email||o.user_id)+'</div>'+
       '<div>بڕی پارە: <b>'+balanceMoney(o.amount)+'</b> | '+esc(o.from_method)+' → '+esc(o.to_method)+'</div>'+
       '<div>بار: '+esc(o.status)+' | '+balanceDate(o.created_at)+'</div>'+
       '<div>'+(o.receipt_url?'<a target="_blank" rel="noopener noreferrer" href="'+esc(o.receipt_url)+'">بینینی پسووڵەی نێرەر</a>':'بەبێ پسووڵە')+'</div>'+
       (result.refund?'<b style="color:#b91c1c">ئەم مامەڵەیە پێشتر ڕیفاوند کراوە.</b>':'')+
-      (!eligible?'<div style="color:#b91c1c">ئەم مامەڵەیە بۆ ڕیفاوندی خۆکاری گونجاو نییە.</div>':'');
+      (!eligible?'<div style="color:#b91c1c">ئەم مامەڵەیە بۆ گەڕاندنەوە بۆ باڵانس گونجاو نییە.</div>':'');
     _balanceChosenOrder=eligible?o:null;
     document.getElementById('balanceCreditBtn').disabled=!eligible;
   }catch(e){out.textContent='مامەڵە نەدۆزرایەوە';err.textContent=e.message;}
@@ -93,22 +102,20 @@ async function creditVerifiedRefund(){
   const ref=document.getElementById('balanceBankReference').value.trim();
   const reason=document.getElementById('balanceRefundReason').value.trim();
   const confirmed_received=document.getElementById('balanceFundsVerified').checked;
-  const confirmed_failed=document.getElementById('balancePayoutFailed').checked;
-  if(ref.length<6||reason.length<10||!confirmed_received||!confirmed_failed){
-    err.textContent='ژمارەی بانک، هۆکار و هەردوو پشتڕاستکردنەوەکە پێویستن.';return;
+  if(ref.length<6||reason.length<10||!confirmed_received){
+    err.textContent='ژمارەی بەڵگە، هۆکاری گەڕاندنەوە و پشتڕاستکردنەوەی وەرگرتنی پارە پێویستن.';return;
   }
-  if(!confirm('ئایا بەڵگەی بانکت پشتڕاست کردووەتەوە؟ '+balanceMoney(_balanceChosenOrder.amount)+' بۆ باڵانسی کڕیار زیاد دەکرێت.'))return;
+  if(!confirm('ئەم مامەڵەیە ڕەت بکرێتەوە و '+balanceMoney(_balanceChosenOrder.amount)+' بگەڕێتەوە بۆ باڵانسی کڕیار؟'))return;
   const btn=document.getElementById('balanceCreditBtn');btn.disabled=true;
   try{
     await adminApiRequest('balance_credit_refund',{
-      order_id:_balanceChosenOrder.id,verification_reference:ref,failure_reason:reason,
-      confirmed_received,confirmed_failed
+      order_id:_balanceChosenOrder.id,verification_reference:ref,reason,
+      confirmed_received
     });
     showToast('ڕیفاوند و تۆماری دارایی بە سەرکەوتوویی ئەنجام درا','gr');
     document.getElementById('balanceBankReference').value='';
     document.getElementById('balanceRefundReason').value='';
     document.getElementById('balanceFundsVerified').checked=false;
-    document.getElementById('balancePayoutFailed').checked=false;
     await lookupBalanceOrder();await loadBalanceAdmin();
   }catch(e){err.textContent=e.message;btn.disabled=false;}
 }

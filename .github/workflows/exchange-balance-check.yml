@@ -8,6 +8,9 @@ on:
       - 'api/_lib/security.js'
       - 'test/orders-route.test.js'
       - 'test/exchange-order-permissions.sql'
+      - 'test/exchange-reward-pricing.test.js'
+      - 'test/exchange-admin-rewards-refund.test.js'
+      - 'test/exchange-admin-refund-reward-cap.sql'
       - 'assets/js/**'
       - 'assets/css/exchange-balance.css'
       - 'index.html'
@@ -16,7 +19,7 @@ on:
       - 'SUPABASE_EXCHANGE_*.sql'
       - '.github/workflows/exchange-balance-check.yml'
   push:
-    branches: [feat/exchange-refund-balance-20261005]
+    branches: [feat/exchange-refund-balance-20261005, feat/exchange-admin-refund-capped-rewards-20261005]
 jobs:
   static-and-build:
     runs-on: ubuntu-latest
@@ -36,10 +39,11 @@ jobs:
           node --check assets/js/app.js
           node --check assets/js/exchange-balance.js
           node --check assets/js/exchange-balance-admin.js
+          node --check assets/js/exchange-reward-pricing.js
       - name: Build Vercel static output
         run: node scripts/prepare-vercel.mjs
-      - name: Verify authenticated order calculation and corrections
-        run: node --test test/orders-route.test.js
+      - name: Verify authenticated orders, admin refunds and capped fee rewards
+        run: node --test test/orders-route.test.js test/exchange-reward-pricing.test.js test/exchange-admin-rewards-refund.test.js
       - name: Verify deployed asset and board paths
         run: |
           node --input-type=module -e "
@@ -48,6 +52,7 @@ jobs:
             for(const file of ['public/index.html','public/exchange-admin.html',
               'public/assets/js/exchange-balance.js',
               'public/assets/js/exchange-balance-admin.js',
+              'public/assets/js/exchange-reward-pricing.js',
               'public/assets/css/exchange-balance.css','api/balance.js'])
               check(existsSync(file),'Missing '+file);
             check(readFileSync('public/index.html','utf8').includes('id=\"balanceSendSection\"'),

@@ -136,7 +136,7 @@ const actions = {
     if(!/^(?:[0-9a-f-]{36}|P[A-Z0-9]{11})$/i.test(q))
       throw {status:400,code:'invalid_order',message:'Enter an exact order code or UUID'};
     let query=db.from('ex_orders')
-      .select('id,order_code,user_id,amount,total,fee,from_method,to_method,receipt_url,receipt_hash,status,created_at,decided_at,balance_refunded_at')
+      .select('id,order_code,user_id,amount,total,fee,from_method,to_method,receipt_url,receipt_hash,payout_receipt_url,status,created_at,decided_at,balance_refunded_at')
       .limit(1);
     query=/^[0-9a-f-]{36}$/i.test(q)?query.eq('id',q):query.eq('order_code',q.toUpperCase());
     const {data:order,error}=await query.maybeSingle();
@@ -151,15 +151,15 @@ const actions = {
     return {order,profile:p.data,refund:r.data};
   },
 
-  async balance_credit_refund({order_id,verification_reference,failure_reason,
-    confirmed_received,confirmed_failed},ctx){
-    if(confirmed_received!==true||confirmed_failed!==true)
-      throw {status:400,code:'confirmation_required',message:'Both bank verification checkboxes are required'};
-    const {data,error}=await db.rpc('ex_balance_credit_refund',{
+  async balance_credit_refund({order_id,verification_reference,reason,failure_reason,
+    confirmed_received},ctx){
+    if(confirmed_received!==true)
+      throw {status:400,code:'confirmation_required',message:'Confirm that customer funds were received'};
+    const {data,error}=await db.rpc('ex_admin_reject_and_refund',{
       p_order_id:order_id,p_admin_id:ctx.user.id,
       p_verification_reference:String(verification_reference||'').trim().slice(0,160),
-      p_failure_reason:String(failure_reason||'').trim().slice(0,2000),
-      p_confirmed_received:true,p_confirmed_failed:true
+      p_reason:String(reason||failure_reason||'').trim().slice(0,2000),
+      p_confirmed_received:true
     });
     if(error){
       if(['23505','23514'].includes(error.code)){
@@ -360,7 +360,7 @@ const actions = {
     return (data || []).map(r => ({ ...r, profile: names.get(r.user_id) || null }));
   },
 
-  async grant_reward({ user_id, kind, discount_percent, max_uses, valid_until, note }, ctx) {
+  async grant_reward({ user_id, kind, discount_percent, max_uses, max_amount_iqd, valid_until, note }, ctx) {
     if (!/^[0-9a-f-]{36}$/i.test(String(user_id || '')))
       throw { status: 400, code: 'bad_user', message: 'A valid user is required' };
     if (!['free_transactions', 'fee_discount'].includes(kind))
@@ -372,6 +372,9 @@ const actions = {
     if ((uses === null && kind === 'free_transactions') ||
         (uses !== null && (!Number.isInteger(uses) || uses < 1 || uses > 1000)))
       throw { status: 400, code: 'bad_uses', message: 'Free transactions need a valid use limit (1–1000)' };
+    const cap = max_amount_iqd == null || max_amount_iqd === '' ? null : Number(max_amount_iqd);
+    if (cap !== null && (!Number.isSafeInteger(cap) || cap < 1 || cap > 1000000000))
+      throw { status: 400, code: 'bad_amount_cap', message: 'Reward amount cap must be 1–1,000,000,000 IQD' };
     const expiry = valid_until ? new Date(valid_until) : null;
     if (expiry && (!Number.isFinite(expiry.getTime()) || expiry.getTime() <= Date.now()))
       throw { status: 400, code: 'bad_expiry', message: 'Expiration must be in the future' };
@@ -382,20 +385,21 @@ const actions = {
     if (!profile || profile.is_banned)
       throw { status: 400, code: 'invalid_recipient', message: 'Recipient is missing or banned' };
     const { data, error } = await db.from('ex_user_rewards').insert({
-      user_id, kind, discount_percent: percent, max_uses: uses,
+      user_id, kind, discount_percent: percent, max_uses: uses, max_amount_iqd: cap,
       valid_until: expiry ? expiry.toISOString() : null,
       note: String(note || '').trim().slice(0, 200) || null,
       created_by: ctx.user.id
     }).select().single();
     if (error) throw error;
-    await audit(ctx.user.id, 'grant_reward', user_id, data.id + ' ' + kind + ' ' + percent + '% / ' + (uses ?? 'unlimited'));
+    await audit(ctx.user.id, 'grant_reward', user_id, data.id + ' ' + kind + ' ' + percent + '% / ' + (uses ?? 'unlimited') + ' cap_iqd:' + (cap ?? 'unlimited'));
     // A failed notification must never undo an already committed reward.
     try {
       await db.from('ex_notifications').insert({
         user_id, type: 'admin', title: 'پاداشتێکت پێدرا',
-        message: kind === 'free_transactions'
+        message: (kind === 'free_transactions'
           ? 'ژمارەی ' + uses + ' مامەڵەی بێ لێبڕینت پێدرا.'
-          : 'داشکاندنی ' + percent + '% لە لێبڕینت پێدرا.'
+          : 'داشکاندنی ' + percent + '% لە لێبڕینت پێدرا.') +
+          (cap !== null ? ' پاداشت تا بڕی ' + cap.toLocaleString('en-US') + ' دینار بۆ هەر مامەڵەیەکە؛ بڕی زیادە بە لێبڕینی ئاسایی هەژمار دەکرێت.' : '')
       });
     } catch (_) { /* reward is already saved */ }
     return data;

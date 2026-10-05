@@ -305,7 +305,7 @@
       <div class="sec-hdr"><h3>پاداشتی بەکارهێنەران</h3>
         <div class="act-btn dark" onclick="loadRewardsPanel()"><i class="fas fa-arrows-rotate"></i> نوێکردنەوە</div></div>
       <section class="ex-sheet" style="padding:18px;margin-bottom:16px">
-        <div class="ex-head"><div><h3>ناردنی پاداشت</h3><p>پاداشت تەنها بۆ هەژماری هەڵبژێردراوە. ژمارەی بەکارهێنان و بەرواری بەسەرچوون دیاری بکە.</p></div></div>
+        <div class="ex-head"><div><h3>ناردنی پاداشت</h3><p>بەکارهێنەر، سنووری بڕ بۆ هەر مامەڵە، ژمارەی بەکارهێنان و بەرواری بەسەرچوون دیاری بکە.</p></div></div>
         <label class="modal-lbl" for="rewardUserSearch">بەکارهێنەر</label>
         <input class="minp" id="rewardUserSearch" placeholder="گەڕان بە ناو، @username، ئیمەیل یان ئایدی" autocomplete="off" oninput="searchRewardUsers()">
         <div id="rewardUserResults" style="display:flex;flex-direction:column;gap:6px;max-height:200px;overflow:auto;margin:8px 0"></div>
@@ -320,9 +320,12 @@
             <input class="minp" type="number" id="rewardPercent" min="0.01" max="100" step="0.01" value="100" dir="ltr" disabled></div>
           <div><label class="modal-lbl" for="rewardUses">ژمارەی مامەڵە (بەتاڵ = بێ سنوور بۆ داشکاندن)</label>
             <input class="minp" type="number" id="rewardUses" min="1" max="1000" step="1" value="2" dir="ltr"></div>
+          <div><label class="modal-lbl" for="rewardAmountCap">زۆرترین بڕی پاداشت بۆ هەر مامەڵە (دینار)</label>
+            <input class="minp" type="number" id="rewardAmountCap" min="1" max="1000000000" step="1" value="50000" placeholder="بەتاڵ = بێ سنوور" dir="ltr"></div>
           <div><label class="modal-lbl" for="rewardUntil">بەرواری بەسەرچوون (ئارەزوومەندانە)</label>
             <input class="minp" type="datetime-local" id="rewardUntil" dir="ltr"></div>
         </div>
+        <p class="ex-note">ئەگەر سنوور 50,000 دینار بێت و مامەڵە 60,000 دینار بێت، پاداشت تەنها 50,000 دینار دەگرێتەوە؛ 10,000 دینارەکەی تر بە لێبڕینی ئاسایی هەژمار دەکرێت.</p>
         <label class="modal-lbl" for="rewardNote">تێبینی (ئارەزوومەندانە)</label>
         <input class="minp" id="rewardNote" maxlength="200" placeholder="هۆکاری پاداشت">
         <div id="rewardError" role="alert" style="color:#dc2626;margin:8px 0;font-size:12px"></div>
@@ -338,8 +341,8 @@
         <button type="button" class="act-btn dark" onclick="loadBalanceAdmin()"><i class="fas fa-rotate"></i> نوێکردنەوە</button></div>
       <div class="ex-rates" id="balanceAdminStats"><div class="ex-note">زانیارییەکان بار دەکرێن...</div></div>
       <section class="ex-sheet" style="padding:18px;margin:14px 0">
-        <div class="ex-head"><div><h3>گەڕاندنەوەی پارە بۆ باڵانس</h3>
-          <p>پێش پەسەندکردن، دڵنیابەرەوە کە پارەی کڕیار بەڕاستی گەیشتووە و ناردنی پارە بۆ وەرگر شکستی هێناوە. ئەم کردارە گەڕاندنەوەی ئاسان نییە.</p></div></div>
+        <div class="ex-head"><div><h3>ڕەتکردنەوەی مامەڵە و گەڕاندنەوە بۆ باڵانس</h3>
+          <p>بە بڕیاری ئادمین، مامەڵە ڕەت دەکرێتەوە و هەموو بڕی وەرگیراو بۆ باڵانسی کڕیار دەگەڕێتەوە. هۆکار، پسووڵە، بەروار و تۆماری کردارەکە دەپارێزرێن.</p></div></div>
         <label class="modal-lbl" for="balanceOrderSearch">ئایدی یان کۆدی مامەڵە</label>
         <div style="display:flex;gap:8px;flex-wrap:wrap">
           <input class="minp" id="balanceOrderSearch" dir="ltr" placeholder="PXXXXXXXXXXX یان UUID" style="flex:1;min-width:170px">
@@ -348,13 +351,12 @@
         <div id="balanceFoundOrder" class="ex-note" style="margin:12px 0">سەرەتا مامەڵە هەڵبژێرە.</div>
         <label class="modal-lbl" for="balanceBankReference">ژمارەی پشتڕاستکردنەوەی پارە لە بانک / جزدان</label>
         <input class="minp" id="balanceBankReference" maxlength="160" dir="ltr" autocomplete="off" placeholder="ژمارەی ڕاستەقینەی مامەڵەی پارەدان">
-        <label class="modal-lbl" for="balanceRefundReason">هۆکاری شکستی ناردن و تێبینی</label>
+        <label class="modal-lbl" for="balanceRefundReason">هۆکاری ڕەتکردنەوە و گەڕاندنەوەی پارە</label>
         <textarea class="minp mta" id="balanceRefundReason" maxlength="2000" placeholder="هۆکار و بەڵگەکانی پشتڕاستکردنەوە" rows="3"></textarea>
         <label style="display:block;margin-top:10px;font-size:12px"><input type="checkbox" id="balanceFundsVerified"> پشتڕاستم کردووەتەوە کە پارەکە بەڕاستی وەرگیراوە</label>
-        <label style="display:block;margin-top:8px;font-size:12px"><input type="checkbox" id="balancePayoutFailed"> پشتڕاستم کردووەتەوە کە پارە بۆ وەرگر نەگەیشتووە</label>
         <div id="balanceRefundError" role="alert" style="color:#b91c1c;margin:10px 0;font-size:12px"></div>
         <button type="button" id="balanceCreditBtn" class="modal-btn dark" style="max-width:280px" disabled onclick="creditVerifiedRefund()">
-          پشتڕاستکردنەوە و زیادکردنی باڵانس</button>
+          ڕەتکردنەوە و گەڕاندنەوە بۆ باڵانس</button>
       </section>
       <div class="sec-hdr"><h3>داواکاری ناردنی باڵانس</h3></div>
       <div class="tbl-wrap"><div class="tbl-scroll" id="balancePayoutsList"><div class="loading">بارکردن...</div></div></div>
@@ -975,8 +977,8 @@
 <div id="toast"></div>
 
   <script src="assets/js/svg-icons.js"></script>
-  <script src="assets/js/admin.js?v=14"></script>
-  <script src="assets/js/exchange-balance-admin.js?v=2"></script>
+  <script src="assets/js/admin.js?v=15"></script>
+  <script src="assets/js/exchange-balance-admin.js?v=3"></script>
   <script src="assets/js/exchange-insights.js?v=1"></script>
   <script src="assets/js/exchange-profit.js?v=2"></script>
 </body>

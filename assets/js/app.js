@@ -1428,7 +1428,7 @@ async function loadMyRewards(){
   try{
     if(curUser && sb){
       const {data,error}=await sb.from('ex_user_rewards')
-        .select('id,kind,discount_percent,max_uses,used_count,valid_until,active,created_at')
+        .select('id,kind,discount_percent,max_uses,used_count,max_amount_iqd,valid_until,active,created_at')
         .eq('user_id',curUser.id).eq('active',true).order('created_at');
       if(error)throw error;
       MY_REWARDS=data||[];
@@ -1659,22 +1659,25 @@ function calc(){
         : (fmtPct(100-r.value*100)+'%');
     }else{ showFee(false); if(bdFee) bdFee.textContent='بێ کرێ'; }
   }
-  // Always preview the same fee calculation as the server (floor base payout).
-  const basePayout=Math.floor(final);
-  const baseFee=Math.max(0,amt-basePayout);
+  // Match the database's decimal calculation, including the uncovered principal.
+  const baseQuote=isUsdt?null:ProxoRewardPricing.quote(amt,r,null);
+  const basePayout=baseQuote?baseQuote.total:Math.floor(final);
+  const baseFee=baseQuote?baseQuote.fee:Math.max(0,amt-basePayout);
+  if(baseQuote){final=baseQuote.total;if(bdFee&&amt>0)bdFee.textContent=formatNum(baseQuote.fee)+' IQD';}
   const reward=availableFeeReward(from,to,baseFee);
   if(reward){
-    const saved=reward.kind==='free_transactions'?baseFee:
-      Math.floor(baseFee*Number(reward.discount_percent)/100);
-    const discount=Math.min(baseFee,Math.max(0,saved));
-    if(discount>0){
-      final=basePayout+discount;
-      if(bdFee)bdFee.textContent=formatNum(Math.floor(baseFee-discount))+' IQD';
+    const quote=ProxoRewardPricing.quote(amt,r,reward);
+    if(quote.discount_iqd>0){
+      final=quote.total;
+      if(bdFee)bdFee.textContent=formatNum(quote.fee)+' IQD';
       if(rewardBanner){
         rewardBanner.hidden=false;
         const left=reward.max_uses==null?'بێ سنوور':formatNum(reward.max_uses-reward.used_count)+' مامەڵەی ماوە';
         rewardBanner.textContent=(reward.kind==='free_transactions'?'پاداشتی مامەڵەی بێ لێبڕین':'داشکاندنی '+reward.discount_percent+'% لە لێبڕین')+
-          ' — '+left+' (پشتڕاستکردنەوە لە کاتی ناردن)';
+          (reward.max_amount_iqd==null?'':' تا '+formatNum(reward.max_amount_iqd)+' دینار بۆ هەر مامەڵە')+
+          ' — '+left+'\nبڕی پاداشت: '+formatNum(quote.covered_amount_iqd)+' دینار'+
+          (quote.excess_amount_iqd>0?' | بڕی زیادە بە لێبڕینی ئاسایی: '+formatNum(quote.excess_amount_iqd)+' دینار':'')+
+          ' (پشتڕاستکردنەوە لە کاتی ناردن)';
       }
     }
   }

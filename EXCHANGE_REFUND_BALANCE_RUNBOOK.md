@@ -1,35 +1,42 @@
-# Proxo Balance: controlled refund and IQD balance runbook
+# Proxo Balance: admin refunds, IQD balance and capped fee rewards
 
-## Release order
-1. The additive **Exchange** Supabase migrations have been applied. Existing order amounts, receipts, customers and production balances were not changed. Keep the new GitHub PR Draft until preview and finance review complete.
-2. Deploy the new server and UI together after review. The updated Vercel build copies `exchange-admin.html` from the repository root and `assets/` into `public/`.
-3. Confirm `/api/balance` rejects anonymous users and that the admin balance actions reject non-admins. Test two concurrent payout requests and a rejected duplicate refund on staging.
-4. Reconcile banking statements with every refund's `bank_verification_reference`. Only credit a verified receipt whose outbound transfer failed. The credited amount is always the original IQD `ex_orders.amount`, never a client-supplied number.
-5. Leave `ex_balance_config.payouts_enabled = false` until regulatory, safeguarding, settlement and operational approvals are complete. **Do not turn on the flag merely to make the button clickable.** A payout is always manual: verify recipient ownership and make the real transfer first, then record the unique transfer reference and actual receipt.
-6. Run `ex_admin_balance_reconcile(admin_uuid)` with the connected service-role backend. The admin board shows journal, balance, held-funds and refund inconsistencies. Any mismatch requires a finance review before further disbursement.
-7. Keep original proof images and ledger records under the retention policy. The ledger, refund cases and their entries are append-only; correction requires a new audited operation.
+## Release and verification
+1. Apply Exchange migrations in their original order, followed by `SUPABASE_EXCHANGE_SERVER_ONLY_ORDERS.sql` and `SUPABASE_EXCHANGE_ADMIN_REFUND_REWARD_CAP.sql`. These migrations create no refund credits or reward grants and leave existing financial records unchanged.
+2. Deploy the server and UI together. The Vercel build copies root `index.html`, `exchange-admin.html` and `assets/` into `public/`, including `exchange-reward-pricing.js` before `app.js`.
+3. Run the Node route/pricing tests, `test/exchange-order-permissions.sql` and `test/exchange-admin-refund-reward-cap.sql`. The last script uses synthetic users and financial entries inside an explicit transaction and rolls everything back. It verifies capped quotes, restored quotas, repeat refunds, duplicate evidence rollback and admin permissions.
+4. Check that `/api/balance` rejects anonymous callers and admin actions reject ordinary customers. The production smoke workflow checks the live customer/admin pages and their bundled assets.
+5. Leave `ex_balance_config.payouts_enabled` unchanged. External payouts are a separate manual flow: the admin verifies recipient ownership and makes the real transfer before recording its unique reference and actual receipt.
+6. Reconcile banking statements with refund evidence references and run `ex_admin_balance_reconcile(admin_uuid)` through the connected service backend. Investigate journal, balance, held-funds or refund mismatches before further disbursement.
 
-## Controls
-- New orders must use the authenticated `/api/orders` endpoint. `SUPABASE_EXCHANGE_SERVER_ONLY_ORDERS.sql` removes legacy table and column INSERT grants that would otherwise let customers submit their own total and bypass wallet/rate/receipt checks. It preserves customer history reads, existing admin note/receipt updates and trusted server writes. Verify with `test/exchange-order-permissions.sql`.
-- Service-only Postgres RPCs implement double-entry postings inside transactions; row locks protect against concurrent overspending.
-- Authenticated customers can read only their own balances, ledger, refund cases and payout requests. They cannot directly INSERT/UPDATE/DELETE those tables.
-- The user sees the balance and requests manual payout only inside the Send section.
-- No external wallet is paid automatically, no real refund is issued by a migration or test, and none of the tests enable payouts permanently.
-- `ex_balance_risk_alerts` records repeated payout attempts, overdraft attempts and suspicious duplicate refund requests.
-- The admin can cancel a pending payout to release held money. Paid or cancelled payouts cannot be reversed by repeating that action.
-- A credited order is marked with its refund case and time; its amount, receipt, route and status are thereafter protected against modification.
-- Redeemed fee-discount/free-transaction rewards are restored once when their order is refunded.
+## Explicit admin rejection and refund
+- The admin chooses **reject and refund to balance** from the order details or balance board. This is an explicit decision; an ordinary rejection or payout failure does not automatically credit money.
+- The admin verifies that the original funds were actually received, enters a unique settlement/evidence reference and explains the decision. A failed outbound transfer is not a prerequisite or a required confirmation.
+- The service-only `ex_admin_reject_and_refund` RPC checks the authenticated admin, locks the order, rejects it, credits its full original IQD `ex_orders.amount`, restores any used reward once and writes the refund case, journal, audit entry and notification in one transaction. It accepts no client-selected refund amount.
+- New cases use `refund_kind = 'admin_rejection'` and `confirmed_payout_failed = false`. Legacy failed-payout records retain their original meaning. The older `ex_balance_credit_refund` RPC delegates to the new function for deployment compatibility; its former failed flag is no longer a precondition.
+- A repeat request for the same order returns its existing case without another credit. Reused evidence references or receipt hashes are blocked. A failure rolls back status, balance and reward changes together.
+- Only IQD-to-IQD orders with an original receipt and verified received funds are eligible. Approved orders or orders with payout proof are blocked; USDT needs separate reconciliation.
+- A credited order retains its original proof and refund timestamps. Its amount, receipt, route and status are then protected against modification. Journals, entries and refund cases are append-only.
 
-## Sample read-only reconciliation
+## Per-transaction reward amount cap
+- The admin sets `max_amount_iqd` on each user's reward, alongside its use count, percentage and expiry. The form defaults to 50,000 IQD. A blank cap means unlimited amount coverage; existing rewards remain unlimited until replaced by an admin.
+- The cap covers principal **per transaction**, not a cumulative spending allowance. With a 50,000 cap and a 60,000 transfer, the first 50,000 receives the reward and the excess 10,000 uses the normal route fee. At a 2% route fee, a free reward results in a 200 IQD fee and 59,800 IQD received.
+- Percentage discounts reduce only the fee eligible under the covered principal. A 50% discount in the same example gives a 700 IQD final fee: 500 on the covered portion plus 200 on the excess.
+- A fixed per-transfer fee still applies when any principal exceeds the cap. If a capped reward produces no saving, it does not consume a use. Fees use the route's existing payout-rounding rules.
+- The user sees the reward cap, remaining uses, covered amount, excess amount and actual final fee before submitting. The database recalculates the authoritative amount and consumes a use under a row lock; caller-supplied reward values are discarded.
+- `ex_orders` and `ex_reward_usages` store the applied cap, covered principal and discount snapshots so later reward changes cannot erase the historical calculation.
+
+## Access and ledger controls
+- New orders use authenticated `/api/orders`. Legacy table and column INSERT grants have been revoked so customers cannot bypass server route, receipt or price checks.
+- Customers read only their own balances, ledger, refund cases, rewards and payout requests. They cannot directly create or alter these financial records or execute refund RPCs.
+- The user sees account balance and payout requests inside the Send section. The database stores the full financial history, including actor, note, evidence, date and transaction links.
+- Service-only functions use double-entry postings and row locks. Risk alerts record repeated payout attempts, overdraft attempts and suspicious duplicate refund requests.
+- Cancelling a pending payout releases held funds; repeating a paid/cancelled operation cannot pay or release the same money twice.
+
+## Read-only reconciliation
 ```sql
-select sum(delta_iqd) from public.ex_balance_entries group by journal_id
+select journal_id, sum(delta_iqd)
+from public.ex_balance_entries
+group by journal_id
 having sum(delta_iqd) <> 0;
 ```
-This must return **zero rows**. Also inspect the full result of `ex_admin_balance_reconcile` from an authorized service backend.
-
-## Release limitations
-- Only IQD-to-IQD orders can be credited to the internal IQD balance. USDT and already approved/payout-completed orders require separate human reconciliation and do not use the auto-credit workflow.
-- A submitted sender receipt is not proof the business actually received funds. An admin must independently verify the actual incoming settlement and failed outbound transfer.
-- Wallet payouts remain disabled by default. When enabled after approval, a customer can request a configured receive wallet, but an admin manually checks wallet ownership, transfer proof and reference.
-- The current payout list shows recent records; the database stores all financial entries permanently. The connected application does not autonomously move money between external wallets.
-- Remaining live browser/UI verification and any outstanding security advisor findings outside this feature must be reviewed before merging and rollout.
+This must return zero rows. Also inspect the full authorized `ex_admin_balance_reconcile` result. The application records manual settlement decisions; it does not autonomously transfer funds between external wallets.

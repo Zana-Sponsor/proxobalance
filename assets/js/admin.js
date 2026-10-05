@@ -1211,6 +1211,9 @@ function showOrderDetail(id){
       <div class="act-btn dark" onclick="saveOrderNote('${order.id}')"><i class="fas fa-floppy-disk"></i> پاشەکەوتی تێبینی</div>
       ${!order.balance_refunded_at && CORRECTABLE_ORDER_STATUSES.has(order.status)?`<div class="act-btn yw" onclick="openOrderCorrectionRequest('${order.id}')"><i class="fas fa-pen-to-square"></i> داوای ڕاستکردنەوە</div>`:''}
     </div>
+    ${!order.balance_refunded_at && order.status!==STATUS_APPROVED && !order.payout_receipt_url && order.from_method!=='USDT' && order.to_method!=='USDT'?`<div class="act-grp" style="margin-top:12px">
+      <button type="button" class="act-btn rd" onclick="openOrderRefund('${order.id}')"><i class="fas fa-wallet"></i> ڕەتکردنەوە و گەڕاندنەوە بۆ باڵانس</button>
+    </div>`:''}
     ${!order.balance_refunded_at && REVIEWABLE_ORDER_STATUSES.has(order.status)?`<div class="act-grp" style="margin-top:12px">
       <div class="act-btn gr" style="flex:1;justify-content:center" onclick="approveOrder('${order.id}');closeMo('moOrderDetail')"><i class="fas fa-check"></i> پەسەندکردن</div>
       <div class="act-btn rd" style="flex:1;justify-content:center" onclick="showRejectReason('${order.id}');closeMo('moOrderDetail')"><i class="fas fa-times"></i> ڕەتکردنەوە</div>
@@ -1820,12 +1823,17 @@ async function saveUserReward(){
   const discount_percent=kind==='free_transactions'?100:Number(document.getElementById('rewardPercent').value);
   const rawUses=document.getElementById('rewardUses').value.trim();
   const max_uses=rawUses===''?null:Number(rawUses);
+  const rawCap=document.getElementById('rewardAmountCap').value.trim();
+  const max_amount_iqd=rawCap===''?null:Number(rawCap);
   const dateValue=document.getElementById('rewardUntil').value;
   const valid_until=dateValue?new Date(dateValue).toISOString():null;
   if(!(discount_percent>0 && discount_percent<=100) ||
      (max_uses===null && kind==='free_transactions') ||
      (max_uses!==null && (!Number.isInteger(max_uses)||max_uses<1||max_uses>1000))){
     err.textContent='ڕێژە و ژمارەی مامەڵەکان بە دروستی دیاری بکە';return;
+  }
+  if(max_amount_iqd!==null&&(!Number.isSafeInteger(max_amount_iqd)||max_amount_iqd<1||max_amount_iqd>1000000000)){
+    err.textContent='سنووری بڕی پاداشت دەبێت ژمارەیەکی تەواو بێت لە 1 تا 1,000,000,000 دینار';return;
   }
   if(valid_until && new Date(valid_until)<=new Date()){
     err.textContent='بەرواری بەسەرچوون دەبێت لە داهاتوودا بێت';return;
@@ -1835,7 +1843,7 @@ async function saveUserReward(){
   button.disabled=true;
   try{
     await adminApiRequest('grant_reward',{
-      user_id:rewardSelectedUserId, kind, discount_percent,max_uses,valid_until,
+      user_id:rewardSelectedUserId, kind, discount_percent,max_uses,max_amount_iqd,valid_until,
       note:document.getElementById('rewardNote').value
     });
     showToast('پاداشتەکە بە سەرکەوتوویی نێردرا','gr');
@@ -1848,7 +1856,7 @@ function renderRewardsList(){
   const wrap=document.getElementById('rewardsTableWrap');
   if(!wrap)return;
   if(!rewardAdminRows.length){wrap.innerHTML='<div class="empty">هیچ پاداشتێک تۆمار نەکراوە</div>';return;}
-  wrap.innerHTML='<table><thead><tr><th>بەکارهێنەر</th><th>پاداشت</th><th>بەکارهاتوو / کۆی</th><th>بەسەرچوون</th><th>دۆخ</th><th>کردار</th></tr></thead><tbody>'+
+  wrap.innerHTML='<table><thead><tr><th>بەکارهێنەر</th><th>پاداشت</th><th>سنووری بڕ / مامەڵە</th><th>بەکارهاتوو / کۆی</th><th>بەسەرچوون</th><th>دۆخ</th><th>کردار</th></tr></thead><tbody>'+
     rewardAdminRows.map(r=>{
       const p=r.profile||{};
       const expired=r.valid_until && Date.parse(r.valid_until)<=Date.now();
@@ -1856,6 +1864,7 @@ function renderRewardsList(){
       const status=!r.active?'هەڵوەشاوە':expired?'بەسەرچووە':exhausted?'تەواوبووە':'چالاک';
       return '<tr><td>'+esc(p.full_name||p.username||p.email||r.user_id)+'</td>'+
         '<td>'+esc(r.kind==='free_transactions'?'بێ لێبڕین':'داشکاندنی '+r.discount_percent+'%')+'</td>'+
+        '<td>'+esc(r.max_amount_iqd==null?'بێ سنوور':formatNum(r.max_amount_iqd)+' دینار')+'</td>'+
         '<td dir="ltr">'+esc(r.used_count)+' / '+esc(r.max_uses===null?'∞':r.max_uses)+'</td>'+
         '<td>'+esc(r.valid_until?fmtDate(r.valid_until):'بێ کۆتایی')+'</td>'+
         '<td>'+esc(status)+'</td>'+
