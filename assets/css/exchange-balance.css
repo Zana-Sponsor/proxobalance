@@ -1,6 +1,9 @@
 /* Proxo Balance — deliberately restrained, light-only send balance section. */
 .pb-balance{background:#fff;border:1px solid #e8edf5;border-radius:16px;padding:15px;margin:12px 0;box-shadow:0 3px 14px rgba(20,38,73,.045);color:#1c2333;font-family:inherit}
 .pb-balance[hidden],.pb-form[hidden],.pb-history[hidden]{display:none!important}
+/* Account balances remain readable while identity verification locks the exchange form. */
+#exchangeCard.kyc-locked > #balanceSendSection:not([hidden]),
+[data-theme="light"] #pageHome #exchangeCard.kyc-locked > #balanceSendSection:not([hidden]){display:block!important}
 .pb-balance-top{display:flex;justify-content:space-between;align-items:center;gap:10px}
 .pb-balance h3{font-size:14px;font-weight:600;color:#2563eb;margin:0 0 3px}
 .pb-balance p{font-size:12px;font-weight:400;line-height:1.65;color:#68768c;margin:0}
