@@ -8,6 +8,13 @@ const context = vm.createContext({});
 vm.runInContext(pricing, context);
 const quote = context.ProxoRewardPricing.quote;
 const free = {kind:'free_transactions',discount_percent:100,max_amount_iqd:50000};
+test('carrier legs use separate scopes and USDT receives no fee reward',()=>{
+  for(const [from,to,expected] of [
+    ['FastPay','FIB','wallets'],['Korek','FIB','korek'],['Asiacell','FIB','asiacell'],
+    ['FIB','Korek','korek'],['FIB','Asiacell','asiacell'],['Korek','Asiacell','korek'],
+    ['USDT','FIB',null],['Korek','USDT',null]
+  ])assert.equal(context.ProxoRewardPricing.routeScope(from,to),expected);
+});
 const cases = [
   ['60k transfer, 50k free cap',60000,'fee_percent',2,free,59800,200,1000],
   ['at the cap',50000,'fee_percent',2,free,50000,0,1000],
@@ -67,4 +74,22 @@ test('the real customer calculation shows 50k covered, 10k excess and a 200 IQD 
   c.MY_REWARDS[0].used_count=2;c.amount='60000';c.calc();
   assert.equal(element('rewardBanner').hidden,true);
   assert.equal(element('bdFee').textContent,'1,200 IQD');
+  c.RATES['Korek>FIB']={type:'fee_percent',value:20};
+  c.RATES['Asiacell>FIB']={type:'multiplier',value:0.86};
+  const reward=(id,scope,percent,cap)=>({id,reward_scope:scope,kind:'fee_discount',discount_percent:percent,
+    max_amount_iqd:cap,max_uses:3,used_count:0,active:true,created_at:'2026-01-01T00:00:00Z'});
+  c.MY_REWARDS=[{...free,id:'wallet-only',active:true,max_uses:2,used_count:0}];
+  element('from').value='Korek';c.calc();
+  assert.equal(element('bdFee').textContent,'12,000 IQD');
+  assert.equal(element('rewardBanner').hidden,true);
+  c.MY_REWARDS.push(reward('korek-only','korek',25,40000),reward('asia-only','asiacell',50,30000));
+  c.calc();
+  assert.equal(c.availableFeeReward('Korek','FIB',12000).id,'korek-only');
+  assert.equal(element('bdFee').textContent,'10,000 IQD');
+  assert.equal(element('totalDisplay').innerText,'50,000 IQD');
+  assert.match(element('rewardBanner').textContent,/کۆڕەک/);
+  element('from').value='Asiacell';c.calc();
+  assert.equal(element('bdFee').textContent,'6,300 IQD');
+  assert.equal(element('totalDisplay').innerText,'53,700 IQD');
+  assert.match(element('rewardBanner').textContent,/ئاسیاسێڵ/);
 });

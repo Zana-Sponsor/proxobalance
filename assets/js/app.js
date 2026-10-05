@@ -1325,7 +1325,6 @@ async function startApp(user){
   await loadWallets();
   await loadRates();
   await loadMyRewards();
-  await loadMyBalance();
   pickInitialWallets();
   refreshTrigger('from');
   refreshTrigger('receiveVia');
@@ -1428,7 +1427,7 @@ async function loadMyRewards(){
   try{
     if(curUser && sb){
       const {data,error}=await sb.from('ex_user_rewards')
-        .select('id,kind,discount_percent,max_uses,used_count,max_amount_iqd,valid_until,active,created_at')
+        .select('id,kind,discount_percent,max_uses,used_count,max_amount_iqd,reward_scope,valid_until,active,created_at')
         .eq('user_id',curUser.id).eq('active',true).order('created_at');
       if(error)throw error;
       MY_REWARDS=data||[];
@@ -1439,7 +1438,8 @@ async function loadMyRewards(){
 function availableFeeReward(from,to,fee){
   if(!curUser || from==='USDT' || to==='USDT' || fee<=0)return null;
   const now=Date.now();
-  return MY_REWARDS.filter(r=>r.active && (r.max_uses==null || Number(r.used_count)<Number(r.max_uses))
+  const scope=ProxoRewardPricing.routeScope(from,to);
+  return MY_REWARDS.filter(r=>(r.reward_scope||'wallets')===scope && r.active && (r.max_uses==null || Number(r.used_count)<Number(r.max_uses))
       && (!r.valid_until || Date.parse(r.valid_until)>now))
     .sort((a,b)=>(a.valid_until?Date.parse(a.valid_until):Infinity)-
       (b.valid_until?Date.parse(b.valid_until):Infinity) ||
@@ -1675,6 +1675,7 @@ function calc(){
         const left=reward.max_uses==null?'بێ سنوور':formatNum(reward.max_uses-reward.used_count)+' مامەڵەی ماوە';
         rewardBanner.textContent=(reward.kind==='free_transactions'?'پاداشتی مامەڵەی بێ لێبڕین':'داشکاندنی '+reward.discount_percent+'% لە لێبڕین')+
           (reward.max_amount_iqd==null?'':' تا '+formatNum(reward.max_amount_iqd)+' دینار بۆ هەر مامەڵە')+
+          ' — تایبەت بە '+ProxoRewardPricing.scopeLabel(reward.reward_scope||'wallets')+
           ' — '+left+'\nبڕی پاداشت: '+formatNum(quote.covered_amount_iqd)+' دینار'+
           (quote.excess_amount_iqd>0?' | بڕی زیادە بە لێبڕینی ئاسایی: '+formatNum(quote.excess_amount_iqd)+' دینار':'')+
           ' (پشتڕاستکردنەوە لە کاتی ناردن)';
@@ -2441,6 +2442,7 @@ function navigate(route, push){
   closeNotifPanel();
   window.scrollTo({ top:0, behavior:'smooth' });
   if(route==='transactions') renderTxPage();
+  if(route==='home' && curUser && typeof loadMyBalance==='function')loadMyBalance();
   if(route==='changes')      loadChangeLog();
   if(route==='profile')    { fillProfileForm(); loadKycStatus(true); }
   if(route==='verify')     { renderVerifyPage(); loadKycStatus(true); }
@@ -4079,7 +4081,10 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   refreshTrigger('receiveVia');
   if(!window.supabase){ showAmsg('هەڵەی بارکردنی سیستەم، پەڕەکە نوێ بکەرەوە','err'); return; }
   sb=window.supabase.createClient(SB_URL,SB_KEY,{ auth:{ persistSession:true, autoRefreshToken:true, storageKey:'zex_sb_session' } });
-  sb.auth.onAuthStateChange((_event,nextSession)=>{ activeSession=nextSession||null; });
+  sb.auth.onAuthStateChange((_event,nextSession)=>{
+    activeSession=nextSession||null;
+    if(_event==='SIGNED_OUT' && typeof resetMyBalance==='function')resetMyBalance();
+  });
   let session=null;
   try{
     const result=await sb.auth.getSession();

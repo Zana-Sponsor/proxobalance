@@ -1,6 +1,16 @@
 // Customer refund balance is visible ONLY in the Send section.
 // Actual payouts are manual, gated in the database and reviewed by an admin.
-let _myBalanceData=null,_balanceRequestKey=null;
+let _myBalanceData=null,_balanceRequestKey=null,_balanceLoadId=0;
+function resetMyBalance(){
+  ++_balanceLoadId;_myBalanceData=null;_balanceRequestKey=null;
+  const wrap=document.getElementById('balanceSendSection');if(wrap)wrap.hidden=true;
+  for(const id of ['balanceAvailable','balanceHeld']){
+    const el=document.getElementById(id);if(el)el.textContent='—';
+  }
+  const btn=document.getElementById('balancePayoutToggle');if(btn)btn.disabled=true;
+  const form=document.getElementById('balancePayoutForm');if(form){form.hidden=true;form.reset();}
+  const history=document.getElementById('balanceHistoryList');if(history){history.hidden=true;history.textContent='';}
+}
 function balanceIqd(n){return Number(n||0).toLocaleString('en-US')+' د.ع';}
 function balanceTime(iso){return iso?new Date(iso).toLocaleString('en-GB'):'—';}
 async function balanceApi(method,body){
@@ -20,18 +30,26 @@ async function balanceApi(method,body){
 }
 async function loadMyBalance(){
   const wrap=document.getElementById('balanceSendSection');
-  if(!wrap||!curUser)return;
+  if(!wrap)return;
+  if(!curUser){resetMyBalance();return;}
+  const owner=curUser.id,loadId=++_balanceLoadId;
   wrap.hidden=false;
   const note=document.getElementById('balanceStatusMessage');
+  note.textContent='باڵانس بار دەکرێت...';
+  document.getElementById('balancePayoutToggle').disabled=true;
   try{
-    _myBalanceData=await balanceApi('GET');
+    const data=await balanceApi('GET');
+    if(loadId!==_balanceLoadId||curUser?.id!==owner)return;
+    _myBalanceData=data;
     document.getElementById('balanceAvailable').textContent=balanceIqd(_myBalanceData.balance.available_iqd);
     document.getElementById('balanceHeld').textContent=balanceIqd(_myBalanceData.balance.held_iqd);
     const enabled=_myBalanceData.payouts_enabled===true;
     const available=Number(_myBalanceData.balance.available_iqd||0);
+    const kycBlocked=typeof kycExchangeBlocked==='function'&&kycExchangeBlocked();
     const btn=document.getElementById('balancePayoutToggle');
-    btn.disabled=!enabled||available<10000;
-    note.textContent=!enabled?'داواکاری ناردنی باڵانس تا تەواوبوونی پشکنینە یاساییەکان ناچالاکە.':
+    btn.disabled=!enabled||available<10000||kycBlocked;
+    note.textContent=kycBlocked?'باڵانس و مێژووەکەت بەردەستن؛ بۆ ناردن، پشتڕاستکردنەوەی ناسنامە تەواو بکە.':
+      !enabled?'ناردنی باڵانس ئێستا ناچالاکە؛ باڵانس و مێژووەکەت بەردەستن.':
       available<10000?'کەمترین بڕی ناردن 10,000 دینارە.':
       'ناردن پاش پشتڕاستکردنەوەی بەڕێوەبەر جێبەجێ دەکرێت.';
     const select=document.getElementById('balanceDestWallet');
@@ -44,13 +62,21 @@ async function loadMyBalance(){
     if((_myBalanceData.wallets||[]).some(w=>w.key===previous))select.value=previous;
     document.getElementById('balancePayoutAmount').max=String(Math.min(available,
       Number(_myBalanceData.max_single_payout_iqd||1000000)));
-    if(!enabled)document.getElementById('balancePayoutForm').hidden=true;
+    if(!enabled||kycBlocked)document.getElementById('balancePayoutForm').hidden=true;
     renderBalanceHistory();
-  }catch(e){note.textContent='کێشە لە بارکردنی باڵانس: '+e.message;}
+  }catch(e){
+    if(loadId!==_balanceLoadId||curUser?.id!==owner)return;
+    _myBalanceData=null;
+    document.getElementById('balanceAvailable').textContent='—';
+    document.getElementById('balanceHeld').textContent='—';
+    document.getElementById('balancePayoutForm').hidden=true;
+    note.textContent='کێشە لە بارکردنی باڵانس: '+e.message;
+  }
 }
 function toggleBalancePayout(){
   const form=document.getElementById('balancePayoutForm');
-  if(!_myBalanceData?.payouts_enabled||Number(_myBalanceData.balance.available_iqd||0)<10000)return;
+  if(!_myBalanceData?.payouts_enabled||Number(_myBalanceData.balance.available_iqd||0)<10000||
+    (typeof kycExchangeBlocked==='function'&&kycExchangeBlocked()))return;
   form.hidden=!form.hidden;
   if(!form.hidden)document.getElementById('balancePayoutAmount').focus();
 }
@@ -88,7 +114,8 @@ document.getElementById('balancePayoutForm')?.addEventListener('input',()=>{
 async function requestBalancePayout(event){
   event.preventDefault();
   const btn=document.getElementById('balancePayoutSubmit');
-  if(btn.disabled||!_myBalanceData?.payouts_enabled)return;
+  if(btn.disabled||!_myBalanceData?.payouts_enabled||
+    (typeof kycExchangeBlocked==='function'&&kycExchangeBlocked()))return;
   const amount=Number(document.getElementById('balancePayoutAmount').value);
   const wallet=document.getElementById('balanceDestWallet').value;
   const number=document.getElementById('balanceDestNumber').value.trim().replace(/\s/g,'');
@@ -118,3 +145,14 @@ async function cancelMyBalancePayout(id){
     await loadMyBalance();
   }catch(e){showToast(e.message,'error');}
 }
+
+// Refresh when the customer returns to Send or resumes the page after a refund.
+function refreshVisibleBalance(){
+  if(curUser&&document.visibilityState!=='hidden'&&
+    (typeof _route==='undefined'||_route==='home'))return loadMyBalance();
+}
+window.addEventListener('focus',refreshVisibleBalance);
+window.addEventListener('pageshow',refreshVisibleBalance);
+document.addEventListener('visibilitychange',refreshVisibleBalance);
+window.setInterval(refreshVisibleBalance,30000);
+if(document.readyState!=='loading')refreshVisibleBalance();

@@ -46,5 +46,16 @@
       excess_amount_iqd:value(n-covered),discount_iqd:value(discount),
       total:value(base*d+discount),fee:value(positive(n-base*d-discount))};
   }
-  root.ProxoRewardPricing=Object.freeze({quote});
+  function routeScope(from,to){
+    if(from==='USDT'||to==='USDT')return null;
+    if(from==='Korek')return 'korek';
+    if(from==='Asiacell')return 'asiacell';
+    if(to==='Korek')return 'korek';
+    if(to==='Asiacell')return 'asiacell';
+    return 'wallets';
+  }
+  function scopeLabel(scope){
+    return scope==='korek'?'کۆڕەک':scope==='asiacell'?'ئاسیاسێڵ':'جزدانەکان';
+  }
+  root.ProxoRewardPricing=Object.freeze({quote,routeScope,scopeLabel});
 })(globalThis);

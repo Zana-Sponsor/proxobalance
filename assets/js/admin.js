@@ -1858,6 +1858,7 @@ async function saveUserReward(){
   err.textContent='';
   if(!rewardSelectedUserId){err.textContent='سەرەتا بەکارهێنەرێک هەڵبژێرە';return;}
   const kind=document.getElementById('rewardKind').value;
+  const reward_scope=document.getElementById('rewardScope').value;
   const discount_percent=kind==='free_transactions'?100:Number(document.getElementById('rewardPercent').value);
   const rawUses=document.getElementById('rewardUses').value.trim();
   const max_uses=rawUses===''?null:Number(rawUses);
@@ -1881,7 +1882,7 @@ async function saveUserReward(){
   button.disabled=true;
   try{
     await adminApiRequest('grant_reward',{
-      user_id:rewardSelectedUserId, kind, discount_percent,max_uses,max_amount_iqd,valid_until,
+      user_id:rewardSelectedUserId, kind, discount_percent,max_uses,max_amount_iqd,reward_scope,valid_until,
       note:document.getElementById('rewardNote').value
     });
     showToast('پاداشتەکە بە سەرکەوتوویی نێردرا','gr');
@@ -1894,7 +1895,7 @@ function renderRewardsList(){
   const wrap=document.getElementById('rewardsTableWrap');
   if(!wrap)return;
   if(!rewardAdminRows.length){wrap.innerHTML='<div class="empty">هیچ پاداشتێک تۆمار نەکراوە</div>';return;}
-  wrap.innerHTML='<table><thead><tr><th>بەکارهێنەر</th><th>پاداشت</th><th>سنووری بڕ / مامەڵە</th><th>بەکارهاتوو / کۆی</th><th>بەسەرچوون</th><th>دۆخ</th><th>کردار</th></tr></thead><tbody>'+
+  wrap.innerHTML='<table><thead><tr><th>بەکارهێنەر</th><th>پاداشت</th><th>تایبەت بە</th><th>سنووری بڕ / مامەڵە</th><th>بەکارهاتوو / کۆی</th><th>بەسەرچوون</th><th>دۆخ</th><th>کردار</th></tr></thead><tbody>'+
     rewardAdminRows.map(r=>{
       const p=r.profile||{};
       const expired=r.valid_until && Date.parse(r.valid_until)<=Date.now();
@@ -1902,6 +1903,7 @@ function renderRewardsList(){
       const status=!r.active?'هەڵوەشاوە':expired?'بەسەرچووە':exhausted?'تەواوبووە':'چالاک';
       return '<tr><td>'+esc(p.full_name||p.username||p.email||r.user_id)+'</td>'+
         '<td>'+esc(r.kind==='free_transactions'?'بێ لێبڕین':'داشکاندنی '+r.discount_percent+'%')+'</td>'+
+        '<td>'+esc(({wallets:'جزدانەکان',korek:'کۆڕەک',asiacell:'ئاسیاسێڵ'})[r.reward_scope||'wallets'])+'</td>'+
         '<td>'+esc(r.max_amount_iqd==null?'بێ سنوور':formatNum(r.max_amount_iqd)+' دینار')+'</td>'+
         '<td dir="ltr">'+esc(r.used_count)+' / '+esc(r.max_uses===null?'∞':r.max_uses)+'</td>'+
         '<td>'+esc(r.valid_until?fmtDate(r.valid_until):'بێ کۆتایی')+'</td>'+

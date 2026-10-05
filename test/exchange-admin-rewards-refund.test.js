@@ -93,9 +93,29 @@ test('admin grants a 50k principal cap and the customer notification includes it
   assert.equal(result.status,200);
   const grant=app.calls.find(c=>c.table==='ex_user_rewards');
   assert.equal(grant.row.max_amount_iqd,50000);
+  assert.equal(grant.row.reward_scope,'wallets');
   assert.equal(grant.row.discount_percent,100);
   assert.equal(grant.row.created_by,adminId);
   assert.match(app.calls.find(c=>c.table==='ex_notifications').row.message,/50,000/);
+});
+for(const [scope,label] of [['wallets','جزدانەکان'],['korek','کۆڕەک'],['asiacell','ئاسیاسێڵ']]){
+  test('admin separately grants a scoped reward for '+scope,async()=>{
+    const app=application();
+    const result=await app.request('grant_reward',{user_id:userId,kind:'fee_discount',discount_percent:25,
+      max_uses:3,max_amount_iqd:40000,reward_scope:scope});
+    assert.equal(result.status,200);
+    assert.equal(app.calls.find(c=>c.table==='ex_user_rewards').row.reward_scope,scope);
+    assert.ok(app.calls.find(c=>c.table==='ex_notifications').row.message.includes(label));
+  });
+}
+test('an unknown or combined reward scope is rejected',async()=>{
+  for(const scope of ['all','Korek',null]){
+    const app=application();
+    const result=await app.request('grant_reward',{user_id:userId,kind:'free_transactions',max_uses:2,reward_scope:scope});
+    assert.equal(result.status,400);
+    assert.equal(result.data.code,'bad_scope');
+    assert.equal(app.calls.length,0);
+  }
 });
 for(const cap of [0,-1,50000.5,1000000001,'bad']){
   test('rejects invalid reward amount cap '+cap,async()=>{

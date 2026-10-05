@@ -375,11 +375,13 @@ const actions = {
     return (data || []).map(r => ({ ...r, profile: names.get(r.user_id) || null }));
   },
 
-  async grant_reward({ user_id, kind, discount_percent, max_uses, max_amount_iqd, valid_until, note }, ctx) {
+  async grant_reward({ user_id, kind, discount_percent, max_uses, max_amount_iqd, reward_scope = 'wallets', valid_until, note }, ctx) {
     if (!/^[0-9a-f-]{36}$/i.test(String(user_id || '')))
       throw { status: 400, code: 'bad_user', message: 'A valid user is required' };
     if (!['free_transactions', 'fee_discount'].includes(kind))
       throw { status: 400, code: 'bad_kind', message: 'Invalid reward type' };
+    if (!['wallets','korek','asiacell'].includes(reward_scope))
+      throw {status:400,code:'bad_scope',message:'Choose wallets, Korek or Asiacell'};
     const percent = kind === 'free_transactions' ? 100 : Number(discount_percent);
     if (!Number.isFinite(percent) || percent <= 0 || percent > 100)
       throw { status: 400, code: 'bad_discount', message: 'Discount must be between 0 and 100%' };
@@ -400,13 +402,13 @@ const actions = {
     if (!profile || profile.is_banned)
       throw { status: 400, code: 'invalid_recipient', message: 'Recipient is missing or banned' };
     const { data, error } = await db.from('ex_user_rewards').insert({
-      user_id, kind, discount_percent: percent, max_uses: uses, max_amount_iqd: cap,
+      user_id, kind, discount_percent: percent, max_uses: uses, max_amount_iqd: cap, reward_scope,
       valid_until: expiry ? expiry.toISOString() : null,
       note: String(note || '').trim().slice(0, 200) || null,
       created_by: ctx.user.id
     }).select().single();
     if (error) throw error;
-    await audit(ctx.user.id, 'grant_reward', user_id, data.id + ' ' + kind + ' ' + percent + '% / ' + (uses ?? 'unlimited') + ' cap_iqd:' + (cap ?? 'unlimited'));
+    await audit(ctx.user.id, 'grant_reward', user_id, data.id + ' ' + kind + ' ' + percent + '% / ' + (uses ?? 'unlimited') + ' cap_iqd:' + (cap ?? 'unlimited')+' scope:'+reward_scope);
     // A failed notification must never undo an already committed reward.
     try {
       await db.from('ex_notifications').insert({
@@ -414,7 +416,8 @@ const actions = {
         message: (kind === 'free_transactions'
           ? 'ژمارەی ' + uses + ' مامەڵەی بێ لێبڕینت پێدرا.'
           : 'داشکاندنی ' + percent + '% لە لێبڕینت پێدرا.') +
-          (cap !== null ? ' پاداشت تا بڕی ' + cap.toLocaleString('en-US') + ' دینار بۆ هەر مامەڵەیەکە؛ بڕی زیادە بە لێبڕینی ئاسایی هەژمار دەکرێت.' : '')
+          (cap !== null ? ' پاداشت تا بڕی ' + cap.toLocaleString('en-US') + ' دینار بۆ هەر مامەڵەیەکە؛ بڕی زیادە بە لێبڕینی ئاسایی هەژمار دەکرێت.' : '')+
+          ' تایبەت بە '+({wallets:'جزدانەکان',korek:'کۆڕەک',asiacell:'ئاسیاسێڵ'})[reward_scope]+'.'
       });
     } catch (_) { /* reward is already saved */ }
     return data;

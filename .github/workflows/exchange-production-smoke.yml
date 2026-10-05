@@ -15,7 +15,11 @@ jobs:
           set -euo pipefail
           for attempt in $(seq 1 24); do
             if curl -fLsS --max-time 15 'https://www.proxobalance.app/exchange-admin' -o current-admin.html &&
-               grep -q 'assets/js/admin.js?v=16' current-admin.html; then
+               grep -q 'assets/js/admin.js?v=17' current-admin.html &&
+               curl -fLsS --max-time 15 'https://www.proxobalance.app/assets/js/app.js?v=39' -o current-app.js &&
+               grep -q "'wallets')===scope" current-app.js &&
+               curl -fLsS --max-time 15 'https://www.proxobalance.app/assets/js/exchange-balance.js?v=2' -o current-balance.js &&
+               grep -q 'refreshVisibleBalance' current-balance.js; then
               exit 0
             fi
             sleep 5
@@ -31,26 +35,29 @@ jobs:
           grep -q 'id="balanceSendSection"' index.html
           grep -q 'id="rewardBanner"' index.html
           grep -q '/assets/js/exchange-balance.js' index.html
-          grep -q '/assets/js/exchange-reward-pricing.js?v=1' index.html
+          grep -q '/assets/js/exchange-reward-pricing.js?v=2' index.html
           curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/exchange-admin" -o exchange-admin.html
           grep -q 'id="pgBalance"' exchange-admin.html
           grep -q 'id="pgRewards"' exchange-admin.html
           grep -q 'id="rewardAmountCap"' exchange-admin.html
+          grep -q 'id="rewardScope"' exchange-admin.html
           grep -q 'ڕەتکردنەوە و گەڕاندنەوە بۆ باڵانس' exchange-admin.html
           grep -q 'exchange-balance-admin.js?v=3' exchange-admin.html
-          grep -q 'admin.js?v=16' exchange-admin.html
-          curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/assets/js/admin.js?v=16" -o admin.js
+          grep -q 'admin.js?v=17' exchange-admin.html
+          curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/assets/js/admin.js?v=17" -o admin.js
           grep -q 'accountBalanceCell' admin.js
           grep -q 'accountBalanceDetails' admin.js
           grep -q "'account_balances'" admin.js
-          curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/assets/js/exchange-balance.js?v=1" -o exchange-balance.js
+          curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/assets/js/exchange-balance.js?v=2" -o exchange-balance.js
           grep -q 'requestBalancePayout' exchange-balance.js
+          grep -q 'refreshVisibleBalance' exchange-balance.js
           curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/assets/js/exchange-balance-admin.js?v=3" -o exchange-balance-admin.js
           grep -q 'creditVerifiedRefund' exchange-balance-admin.js
           grep -q 'startBalancePayout' exchange-balance-admin.js
           grep -q 'abortProcessingPayout' exchange-balance-admin.js
-          curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/assets/js/exchange-reward-pricing.js?v=1" -o exchange-reward-pricing.js
+          curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/assets/js/exchange-reward-pricing.js?v=2" -o exchange-reward-pricing.js
           grep -q 'ProxoRewardPricing' exchange-reward-pricing.js
+          grep -q 'routeScope' exchange-reward-pricing.js
           echo "PASS: customer balance and reward UI, admin refund and reward UI, and both balance modules are live."
       - name: Verify unauthorized clients cannot read balances
         shell: bash

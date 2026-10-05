@@ -312,6 +312,12 @@
         <div id="rewardUserResults" style="display:flex;flex-direction:column;gap:6px;max-height:200px;overflow:auto;margin:8px 0"></div>
         <div id="rewardSelectedUser" style="margin:8px 0;color:#2563eb;font-size:12px"></div>
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin:12px 0">
+          <div><label class="modal-lbl" for="rewardScope">پاداشت تایبەت بە</label>
+            <select class="msel" id="rewardScope">
+              <option value="wallets">جزدانەکان — بەبێ کۆڕەک و ئاسیاسێڵ</option>
+              <option value="korek">مامەڵەکانی کۆڕەک</option>
+              <option value="asiacell">مامەڵەکانی ئاسیاسێڵ</option>
+            </select></div>
           <div><label class="modal-lbl" for="rewardKind">جۆری پاداشت</label>
             <select class="msel" id="rewardKind" onchange="updateRewardKind()">
               <option value="free_transactions">مامەڵەی بێ لێبڕین</option>
@@ -327,6 +333,7 @@
             <input class="minp" type="datetime-local" id="rewardUntil" dir="ltr"></div>
         </div>
         <p class="ex-note">ئەگەر سنوور 50,000 دینار بێت و مامەڵە 60,000 دینار بێت، پاداشت تەنها 50,000 دینار دەگرێتەوە؛ 10,000 دینارەکەی تر بە لێبڕینی ئاسایی هەژمار دەکرێت.</p>
+        <p class="ex-note">پاداشتی جزدانەکان بۆ کۆڕەک و ئاسیاسێڵ جێبەجێ نابێت. بۆ هەر یەکێکیان پاداشتی جیا بە ڕێژە، سنووری بڕ و ژمارەی مامەڵەی تایبەت دیاری بکە. لێبڕینی ئاسایی ڕێڕەوەکە ناگۆڕدرێت.</p>
         <label class="modal-lbl" for="rewardNote">تێبینی (ئارەزوومەندانە)</label>
         <input class="minp" id="rewardNote" maxlength="200" placeholder="هۆکاری پاداشت">
         <div id="rewardError" role="alert" style="color:#dc2626;margin:8px 0;font-size:12px"></div>
@@ -978,7 +985,7 @@
 <div id="toast"></div>
 
   <script src="assets/js/svg-icons.js"></script>
-  <script src="assets/js/admin.js?v=16"></script>
+  <script src="assets/js/admin.js?v=17"></script>
   <script src="assets/js/exchange-balance-admin.js?v=3"></script>
   <script src="assets/js/exchange-insights.js?v=1"></script>
   <script src="assets/js/exchange-profit.js?v=2"></script>
