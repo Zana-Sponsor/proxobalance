@@ -21,7 +21,7 @@ async function loadBalanceAdmin(){
       '<div class="ex-note"><b>باڵانسی بەردەست: '+balanceMoney(total)+'</b></div>'+
       '<div class="ex-note"><b>لە چاوەڕوانیدا: '+balanceMoney(held)+'</b></div>'+
       '<div class="ex-note"><b>ڕیفاوندەکان: '+refunds.length+'</b></div>'+
-      '<div class="ex-note"><b>داواکارییە چاوەڕوانەکان: '+payouts.filter(p=>p.status==='pending').length+'</b></div>'+
+      '<div class="ex-note"><b>داواکارییە چاوەڕوانەکان: '+payouts.filter(p=>p.status==='pending'||p.status==='processing').length+'</b></div>'+
       '<div class="ex-note"><b>ناردنی باڵانس: '+(d.config?.payouts_enabled?'چالاک (پەسەندکردنی دەستی)':'ناچالاک تا پشکنینی یاسایی')+'</b></div>';
     const rec=d.reconciliation||{};
     const discrepancies=Number(rec.unbalanced_journals||0)+Number(rec.balance_mismatches||0)+
@@ -36,8 +36,10 @@ async function loadBalanceAdmin(){
       '<tr><td>'+balanceOwner(p.user_id)+'</td><td>'+balanceMoney(p.amount_iqd)+'</td>'+
       '<td>'+esc(p.destination_wallet)+' / <span dir="ltr">'+esc(p.destination_number)+'</span><div>'+esc(p.destination_owner)+'</div></td>'+
       '<td>'+esc(p.status)+'</td><td>'+balanceDate(p.created_at)+'</td><td>'+
-      (p.status==='pending'?'<button type="button" class="act-btn gr" onclick="reviewBalancePayout(\''+p.id+'\')">پشکنین</button> '+
+      (p.status==='pending'?'<button type="button" class="act-btn gr" onclick="startBalancePayout(\''+p.id+'\')">پشکنین</button> '+
         '<button type="button" class="act-btn rd" onclick="cancelBalancePayout(\''+p.id+'\')">هەڵوەشاندنەوە</button>':
+        p.status==='processing'?'<button type="button" class="act-btn gr" onclick="reviewBalancePayout(\''+p.id+'\')">تۆمارکردنی ناردن</button> '+
+        '<button type="button" class="act-btn rd" onclick="abortProcessingPayout(\''+p.id+'\')">ناردن شکستی هێنا</button>':
         p.payout_receipt_url?'<a class="act-btn dark" href="'+esc(p.payout_receipt_url)+'" target="_blank" rel="noopener noreferrer">پسووڵە</a>':'—')+'</td></tr>');
     document.getElementById('balanceRefundList').innerHTML=balanceTable(
       ['بەکارهێنەر','ئایدی مامەڵە','بڕی ڕیفاوند','بەڵگەی بانک','تێبینی','بەروار'],refunds,r=>
@@ -110,8 +112,36 @@ async function creditVerifiedRefund(){
     await lookupBalanceOrder();await loadBalanceAdmin();
   }catch(e){err.textContent=e.message;btn.disabled=false;}
 }
-function reviewBalancePayout(id){
+async function startBalancePayout(id){
   const p=(_balanceAdminData?.payouts||[]).find(x=>x.id===id&&x.status==='pending');
+  if(!p)return;
+  const verification=prompt('خاوەندارێتی جزدان، ژمارە و ناوی وەرگر پشتڕاست بکەرەوە. ژمارە/تێبینی بەڵگەی پشتڕاستکردنەوە بنووسە:');
+  if(!verification||verification.trim().length<10){showToast('بەڵگەی پشتڕاستکردنەوە پێویستە','rd');return;}
+  if(!confirm('داواکاری دەچێتە باری ناردن؛ کڕیار چیتر ناتوانێت هەڵیبوشێنێتەوە. ئایا خاوەندارێتی جزدان پشتڕاست کراوەتەوە؟'))return;
+  try{
+    await adminApiRequest('balance_claim_payout',{payout_id:id,verification:verification.trim()});
+    await loadBalanceAdmin();reviewBalancePayout(id);
+  }catch(e){showToast(e.message,'rd');}
+}
+async function abortProcessingPayout(id){
+  const p=(_balanceAdminData?.payouts||[]).find(x=>x.id===id&&x.status==='processing');
+  if(!p)return;
+  const reason=prompt('هۆکاری شکستی ناردن بنووسە (لانیکەم ١٠ پیت):');
+  if(!reason||reason.trim().length<10)return;
+  const bank_reference=prompt('ژمارەی پشتڕاستکردنەوەی بانک کە پارە نەگەیشتووە:');
+  if(!bank_reference||bank_reference.trim().length<6)return;
+  if(!confirm('تەنها ئەگەر بانک پشتڕاستی کردووەتەوە کە پارە نەگوازراوەتەوە، باڵانس بگەڕێنەوە. دڵنیایت؟'))return;
+  try{
+    await adminApiRequest('balance_abort_processing',{
+      payout_id:id,reason:reason.trim(),bank_reference:bank_reference.trim(),confirmed_unpaid:true
+    });
+    document.getElementById('balancePayReview').hidden=true;
+    showToast('پارەی نەنێردراو بۆ باڵانس گەڕێندرایەوە','gr');
+    await loadBalanceAdmin();
+  }catch(e){showToast(e.message,'rd');}
+}
+function reviewBalancePayout(id){
+  const p=(_balanceAdminData?.payouts||[]).find(x=>x.id===id&&x.status==='processing');
   if(!p)return;
   const panel=document.getElementById('balancePayReview');
   panel.hidden=false;
