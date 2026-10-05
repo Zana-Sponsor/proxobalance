@@ -74,12 +74,12 @@ function renderBalanceHistory(){
       '<small>'+escHtml(j.note||'')+'</small></div>'+
       '<b dir="ltr">'+(amount>0?'+':'')+balanceIqd(amount)+'</b></div>';
   }).join('');
-  const requests=(_myBalanceData.payouts||[]).filter(p=>p.status==='pending').slice(0,5);
-  html+=requests.map(p=>'<div class="pb-history-row"><div><b>داواکاری چاوەڕوانە</b>'+
+  const requests=(_myBalanceData.payouts||[]).filter(p=>['pending','processing'].includes(p.status)).slice(0,5);
+  html+=requests.map(p=>'<div class="pb-history-row"><div><b>'+(p.status==='processing'?'داواکاری لەژێر پشکنینە':'داواکاری چاوەڕوانە')+'</b>'+
     '<small>'+escHtml(p.destination_wallet)+' / '+escHtml(p.destination_number)+'</small>'+
     '<small>'+escHtml(balanceTime(p.created_at))+'</small></div>'+
-    '<button type="button" class="pb-btn pb-secondary" onclick="cancelMyBalancePayout(\''+
-       escHtml(p.id)+'\')">هەڵوەشاندنەوە</button></div>').join('');
+    (p.status==='pending'?'<button type="button" class="pb-btn pb-secondary" onclick="cancelMyBalancePayout(\''+
+       escHtml(p.id)+'\')">هەڵوەشاندنەوە</button>':'<small>هەڵوەشاندنەوە لەم قۆناغەدا ڕێگەپێدراو نییە</small>')+'</div>').join('');
   el.innerHTML=html||'<p class="pb-message">هێشتا هیچ جوڵەیەکی باڵانس نییە.</p>';
 }
 document.getElementById('balancePayoutForm')?.addEventListener('input',()=>{
