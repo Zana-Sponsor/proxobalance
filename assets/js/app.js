@@ -565,6 +565,7 @@ const db = firebase.database();
 const SB_URL=atob('aHR0cHM6Ly9weWN4dXVnb2Jsa3NsdndlYnh1dS5zdXBhYmFzZS5jbw==');
 const SB_KEY=atob('ZXlKaGJHY2lPaUpJVXpJMU5pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SnBjM01pT2lKemRYQmhZbUZ6WlNJc0luSmxaaUk2SW5CNVkzaDFkV2R2WW14cmMyeDJkMlZpZUhWMUlpd2ljbTlzWlNJNkltRnViMjRpTENKcFlYUWlPakUzT0RZeU1UazNPVGtzSW1WNGNDSTZNakV3TVRjNU5UYzVPWDAuVlJSd3hubnVMc19XT1J1VlVPM29YM0NMeHJQdGdHX3Vld0lKYUdyem5fcw==');
 let sb, curUser=null, curProfile=null, activeSession=null, RATES={};
+let MY_REWARDS=[];
 const N8N_WEBHOOK = 'https://email.proxopages.com/webhook/otp_exchange';
 
 let _newsItems = []; // [{text, action}]
@@ -1323,6 +1324,7 @@ async function startApp(user){
   startProofPolling();
   await loadWallets();
   await loadRates();
+  await loadMyRewards();
   pickInitialWallets();
   refreshTrigger('from');
   refreshTrigger('receiveVia');
@@ -1417,6 +1419,31 @@ async function loadRates(){
     }
   }catch(e){}
   if(!RATES_STRICT) RATES=Object.assign({},FALLBACK_RATES);
+}
+// Customer sees only their own rewards (RLS). The database order trigger
+// is authoritative: browser previews never decide or consume a reward.
+async function loadMyRewards(){
+  MY_REWARDS=[];
+  try{
+    if(curUser && sb){
+      const {data,error}=await sb.from('ex_user_rewards')
+        .select('id,kind,discount_percent,max_uses,used_count,valid_until,active,created_at')
+        .eq('user_id',curUser.id).eq('active',true).order('created_at');
+      if(error)throw error;
+      MY_REWARDS=data||[];
+    }
+  }catch(_){ MY_REWARDS=[]; }
+  calc();
+}
+function availableFeeReward(from,to,fee){
+  if(!curUser || from==='USDT' || to==='USDT' || fee<=0)return null;
+  const now=Date.now();
+  return MY_REWARDS.filter(r=>r.active && (r.max_uses==null || Number(r.used_count)<Number(r.max_uses))
+      && (!r.valid_until || Date.parse(r.valid_until)>now))
+    .sort((a,b)=>(a.valid_until?Date.parse(a.valid_until):Infinity)-
+      (b.valid_until?Date.parse(b.valid_until):Infinity) ||
+      (a.kind==='free_transactions'?0:1)-(b.kind==='free_transactions'?0:1) ||
+      Date.parse(a.created_at)-Date.parse(b.created_at) || String(a.id).localeCompare(String(b.id)))[0]||null;
 }
 // Smallest amount any exchange is accepted for, in IQD.
 const MIN_AMOUNT = 10000;
@@ -1568,6 +1595,8 @@ function calc(){
   document.getElementById('formattedHint').innerText=formatNum(val)+(from==='USDT'?' $':' IQD');
   const totalEl=document.getElementById('totalDisplay');
   const feeEl=document.getElementById('feeDisplay');
+  const rewardBanner=document.getElementById('rewardBanner');
+  if(rewardBanner)rewardBanner.hidden=true;
   const bdRate=document.getElementById('bdRate');
   const bdFee=document.getElementById('bdFee');
   const bdSent=document.getElementById('bdSent');
@@ -1628,6 +1657,25 @@ function calc(){
         ? (formatNum(Math.floor(feeVal))+' IQD ('+fmtPct(100-r.value*100)+'%)')
         : (fmtPct(100-r.value*100)+'%');
     }else{ showFee(false); if(bdFee) bdFee.textContent='بێ کرێ'; }
+  }
+  // Always preview the same fee calculation as the server (floor base payout).
+  const basePayout=Math.floor(final);
+  const baseFee=Math.max(0,amt-basePayout);
+  const reward=availableFeeReward(from,to,baseFee);
+  if(reward){
+    const saved=reward.kind==='free_transactions'?baseFee:
+      Math.floor(baseFee*Number(reward.discount_percent)/100);
+    const discount=Math.min(baseFee,Math.max(0,saved));
+    if(discount>0){
+      final=basePayout+discount;
+      if(bdFee)bdFee.textContent=formatNum(Math.floor(baseFee-discount))+' IQD';
+      if(rewardBanner){
+        rewardBanner.hidden=false;
+        const left=reward.max_uses==null?'بێ سنوور':formatNum(reward.max_uses-reward.used_count)+' مامەڵەی ماوە';
+        rewardBanner.textContent=(reward.kind==='free_transactions'?'پاداشتی مامەڵەی بێ لێبڕین':'داشکاندنی '+reward.discount_percent+'% لە لێبڕین')+
+          ' — '+left+' (پشتڕاستکردنەوە لە کاتی ناردن)';
+      }
+    }
   }
   totalEl.innerText=formatNum(Math.floor(final))+' IQD';
   feeEl.innerText=feeTxt;
@@ -1809,6 +1857,8 @@ async function processOrder(){
       throw responseError;
     }
     const orderRow=orderPayload.order;
+    // Fetch the new remaining quota; a rejected order restores it on the server.
+    await loadMyRewards();
 
     // The Telegram alert is sent by /api/notify-order. The bot token lives in a
     // Vercel environment variable, so it never reaches the browser, and the
