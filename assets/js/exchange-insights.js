@@ -9,7 +9,7 @@ function exAmount(v){return v==null||!Number.isFinite(Number(v))?'—':exNum(v,2
 function exDate(v){if(!v)return '—';const d=new Date(v);return Number.isNaN(d.getTime())?'—':d.toLocaleString('en-GB',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});}
 function exDateKey(v){const d=new Date(v);if(Number.isNaN(d.getTime()))return '';const p=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());}
 function exMethod(m){return String((typeof METHOD_META!=='undefined'&&METHOD_META[m]?.label)||m||'—');}
-function exCode(o){return typeof orderCodeOf==='function'?orderCodeOf(o):o.order_number||o.id||'—';}
+function exCode(o){return o?.order_code||'—';}
 function exStatus(s){return s===STATUS_APPROVED?'پەسەندکرا':s===STATUS_REJECTED?'ڕەتکرا':s===STATUS_PENDING?'چاوەڕوان':s===STATUS_CORRECTED?'ڕاستکراوەتەوە':s===STATUS_NEEDS_CORRECTION?'پێویستی بە ڕاستکردنەوەیە':s||'—';}
 function exCard(label,value){return '<div class="ex-card"><div class="ex-label">'+label+'</div><div class="ex-value">'+value+'</div></div>';}
 function exFiltered(){
@@ -28,7 +28,7 @@ async function exLoadStatistics(){
     if(!sb)throw Error('داتابەیس پەیوەست نەبووە');
     const rows=[],size=500,max=10000;let more=true,p=0;
     while(more&&rows.length<max){
-      const {data,error}=await sb.from('ex_orders').select('id,order_number,from_method,to_method,amount,total,status,created_at').order('created_at',{ascending:false}).range(p*size,(p+1)*size-1);
+      const {data,error}=await sb.from('ex_orders').select('id,order_code,order_number,from_method,to_method,amount,total,status,created_at').order('created_at',{ascending:false}).range(p*size,(p+1)*size-1);
       if(error)throw error;const batch=data||[];rows.push(...batch);more=batch.length===size;p++;
     }
     exStatsState.rows=rows;exStatsState.partial=more;exStatsState.loaded=true;exStatsState.limit=60;
@@ -86,13 +86,13 @@ function exDownload(text,name,mime){const blob=new Blob([text],{type:mime}),url=
 function exExport(kind){
   if(!exStatsState.loaded){showToast('سەرەتا ئامارەکان باربکە','rd');return}
   const rows=exFiltered();if(!rows.length){showToast('هیچ مامەڵەیەک نییە بۆ داگرتن','rd');return}
-  const fields=[['order_number','ژمارەی مامەڵە'],['id','ئایدی سیستەم'],['from_method','ڕێگای ناردن'],['to_method','ڕێگای وەرگرتن'],['amount','بڕی نێردراو'],['total','بڕی وەرگیراو'],['status','بار'],['created_at','ڕێکەوت']];
+  const fields=[['order_code','ئایدی مامەڵە'],['from_method','ڕێگای ناردن'],['to_method','ڕێگای وەرگرتن'],['amount','بڕی نێردراو'],['total','بڕی وەرگیراو'],['status','بار'],['created_at','ڕێکەوت']];
   const table=[fields.map(x=>x[1]),...rows.map(o=>fields.map(([k])=>o[k]??''))];
   const filename='Proxo-Balance-statistics-'+exDateKey(new Date());
   if(kind==='csv'){exDownload('\ufeff'+table.map(row=>row.map(exCsvValue).join(',')).join('\r\n'),filename+'.csv','text/csv;charset=utf-8');showToast('CSV ئامادەکرا','gr');return}
   if(kind==='xlsx'){if(typeof XLSX==='undefined')return showToast('کتێبخانەی Excel بار نەبووە','rd');
     const workbook=XLSX.utils.book_new(),sheet=XLSX.utils.aoa_to_sheet([table[0],...table.slice(1).map(row=>row.map(exExcelSafe))]);
-    sheet['!cols']=[{wch:22},{wch:38},{wch:18},{wch:18},{wch:19},{wch:19},{wch:27},{wch:23}];
+    sheet['!cols']=[{wch:22},{wch:18},{wch:18},{wch:19},{wch:19},{wch:27},{wch:23}];
     XLSX.utils.book_append_sheet(workbook,sheet,'Exchange orders');XLSX.writeFile(workbook,filename+'.xlsx');showToast('Excel ئامادەکرا','gr');return;
   }
   if(kind==='pdf')exExportPdf(rows,filename);
