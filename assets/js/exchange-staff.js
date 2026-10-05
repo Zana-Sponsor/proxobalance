@@ -98,7 +98,8 @@ function startAdminLive(){
    return refreshWallets();
   }},
   {key:'permissions',table:'ex_profiles',filter:'id=eq.'+owner,read:async()=>{
-   const ok=await verifyAdmin(owner,adminUser.email);
+   const ok=await verifyAdmin(owner,adminUser.email,{strict:true});
+   if(adminUser?.id!==owner)return;
    if(!ok){ProxoLive.stop();await sb.auth.signOut();location.reload();return;}
    applyStaffUI();if(!staffPageAllowed(_curPage))goPage('dashboard');
   }},

@@ -138,7 +138,7 @@ function updateClock(){ document.getElementById('currentTime').textContent = new
 // ══════════════════════════════════════════════════════════════
 // ═══ AUTH ════════════════════════════════════════════════════════
 // ══════════════════════════════════════════════════════════════
-async function verifyAdmin(uid, email){
+async function verifyAdmin(uid, email, {strict=false}={}){
   // Admin rights live in ex_profiles.is_admin — the same column the panel's
   // "کردن بە ئادمین" button writes and the database's is_ex_admin() RLS
   // helper reads. (The old security_admins table does not exist.)
@@ -148,13 +148,14 @@ async function verifyAdmin(uid, email){
       .select('full_name,email,is_admin,is_banned,role,username,staff_permissions')
       .eq('id', uid)
       .maybeSingle();
-    if(error || !prof || !prof.is_admin || prof.is_banned) return false;
+    if(error){if(strict)throw error;return false;}
+    if(!prof || !prof.is_admin || prof.is_banned) return false;
     adminName = prof.full_name || email.split('@')[0];
     adminRole = prof.role || 'admin';
     adminStaffPermissions=prof.staff_permissions??null;
     if(!staffCan('view'))return false;
     return true;
-  }catch(e){ return false; }
+  }catch(e){if(strict)throw e;return false;}
 }
 
 async function doLogin(){
