@@ -40,34 +40,45 @@ export async function safeRequest(url,options={},fetcher=fetch) {
 
 export async function verifyReadOnlySecurity({authorization,key,userId,protection},fetcher=fetch) {
   const checks={};
-  const request=(url,headers)=>safeRequest(url,{headers},fetcher);
+  const request=async (url,headers,check)=>{
+    try {return await safeRequest(url,{headers},fetcher);}
+    catch(error) {
+      // Fixed check identifiers only; never attach URLs, headers or credentials.
+      error.verificationCheck=check;
+      throw error;
+    }
+  };
   for(const [name,auth] of [['bypass_without_app_auth',null],['forged_app_auth','Bearer invalid']]) {
     const response=await request(PREVIEW_ORIGIN+'/api/contact-templates',
-      {...protection,...(auth?{Authorization:auth}:{})});
+      {...protection,...(auth?{Authorization:auth}:{})},name);
     if(response.status!==401)throw Error('application_auth_boundary_failed');
     checks[name]=true;
   }
   for(const path of ['/contact-preview?token=invalid','/a/invalid','/contact/invalid/avatar']) {
-    const response=await request(PREVIEW_ORIGIN+path,protection);
+    const response=await request(PREVIEW_ORIGIN+path,protection,
+      path.startsWith('/contact-preview')?'invalid_preview_capability':
+        path.startsWith('/a/')?'invalid_ad_token':'invalid_avatar_card');
     if(response.status!==404)throw Error('invalid_capability_boundary_failed');
   }
   checks.invalid_capabilities=true;
   for(const auth of [null,authorization]) {
     const headers={apikey:key,...(auth?{Authorization:auth}:{})};
     for(const table of ['proxolink_templates','pa_ad_contact_links','pa_contact_events','proxolink_publish_attempts']) {
-      const response=await request(SUPABASE_ORIGIN+'/rest/v1/'+table+'?select=id&limit=1',headers);
+      const response=await request(SUPABASE_ORIGIN+'/rest/v1/'+table+'?select=id&limit=1',headers,
+        (auth?'authenticated_':'anonymous_')+table);
       if(![401,403].includes(response.status))throw Error('internal_table_access_failed');
     }
   }
   checks.internal_client_access_denied=true;
   if(!/^[0-9a-f-]{36}$/i.test(userId||''))throw Error('verification_user_required');
   const otherCards=await request(SUPABASE_ORIGIN+'/rest/v1/proxolink_cards?select=id&user_id=neq.'+userId+'&limit=1',
-    {apikey:key,Authorization:authorization});
+    {apikey:key,Authorization:authorization},'ordinary_account_other_cards_rls');
   if(otherCards.status!==200||JSON.stringify(await otherCards.json())!=='[]')
     throw Error('ordinary_account_rls_required');
   checks.other_owner_cards_hidden=true;
   for(const style of STYLES) {
-    const response=await request(SUPABASE_ORIGIN+'/storage/v1/object/public/proxolink-templates/'+style+'/v1/template.html',{});
+    const response=await request(SUPABASE_ORIGIN+'/storage/v1/object/public/proxolink-templates/'+style+'/v1/template.html',{},
+      'private_template_'+style);
     if(![400,401,403,404].includes(response.status))throw Error('private_template_access_failed');
   }
   checks.private_templates_denied=true;

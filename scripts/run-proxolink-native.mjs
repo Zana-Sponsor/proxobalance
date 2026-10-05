@@ -45,6 +45,15 @@ const safeErrorCodes=new Set([
   'native_viewport_invalid','native_crop_outside_screen','reference_viewport_mismatch',
   'reference_capability_required','reference_preview_unavailable','reference_assets_or_viewport_failed',
 ]);
+const safePreflightChecks=new Set([
+  'bypass_without_app_auth','forged_app_auth','invalid_preview_capability',
+  'invalid_ad_token','invalid_avatar_card','ordinary_account_other_cards_rls',
+  ...['anonymous_','authenticated_'].flatMap(prefix=>['proxolink_templates',
+    'pa_ad_contact_links','pa_contact_events','proxolink_publish_attempts'].map(table=>prefix+table)),
+  ...styles.map(style=>'private_template_'+style),
+]);
+const safeTransportCodes=new Set(['ENOTFOUND','EAI_AGAIN','ETIMEDOUT','ECONNRESET',
+  'ECONNREFUSED','CERT_HAS_EXPIRED','UNABLE_TO_VERIFY_LEAF_SIGNATURE']);
 async function jsonRequest(url,{headers={},...options}={}) {
   const response=await safeRequest(url,{...options,headers});
   lastJsonResponseStatus=response.status;
@@ -171,10 +180,16 @@ try {await main();}
 catch(error) {
   // Never print fetch errors, URLs, runtime files, bearer values or credentials.
   const code=safeErrorCodes.has(error?.message)?error.message:'unclassified_failure';
+  const check=safePreflightChecks.has(error?.verificationCheck)?error.verificationCheck:null;
+  const transport=error?.cause?.message==='unexpected redirect'?'redirect_blocked':
+    ['TimeoutError','AbortError'].includes(error?.name)?'request_timeout':
+    safeTransportCodes.has(error?.cause?.code)?error.cause.code:'unclassified_transport';
   mkdirSync(output,{recursive:true});
   writeFileSync(output+'/failure.json',JSON.stringify({status:'FAILED',stage,code,
+    preflight_check:check,transport_code:transport,
     last_json_response_status:lastJsonResponseStatus,credential_values_included:false},null,2));
-  console.error('Native verification did not complete: '+stage+' / '+code+'.');
+  console.error('Native verification did not complete: '+stage+' / '+code+
+    (check?' / '+check+' / '+transport:'')+'.');
   process.exitCode=1;
 } finally {
   if(referenceBrowser)await referenceBrowser.close();
