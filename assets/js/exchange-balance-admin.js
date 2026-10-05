@@ -21,7 +21,7 @@ async function loadBalanceAdmin(){
       '<div class="ex-note"><b>باڵانسی بەردەست: '+balanceMoney(total)+'</b></div>'+
       '<div class="ex-note"><b>لە چاوەڕوانیدا: '+balanceMoney(held)+'</b></div>'+
       '<div class="ex-note"><b>ڕیفاوندەکان: '+refunds.length+'</b></div>'+
-      '<div class="ex-note"><b>داواکارییە چاوەڕوانەکان: '+payouts.filter(p=>p.status==='pending').length+'</b></div>'+
+      '<div class="ex-note"><b>داواکارییە چاوەڕوانەکان: '+payouts.filter(p=>p.status==='pending'||p.status==='processing').length+'</b></div>'+
       '<div class="ex-note"><b>ناردنی باڵانس: '+(d.config?.payouts_enabled?'چالاک (پەسەندکردنی دەستی)':'ناچالاک تا پشکنینی یاسایی')+'</b></div>';
     const rec=d.reconciliation||{};
     const discrepancies=Number(rec.unbalanced_journals||0)+Number(rec.balance_mismatches||0)+
@@ -36,8 +36,10 @@ async function loadBalanceAdmin(){
       '<tr><td>'+balanceOwner(p.user_id)+'</td><td>'+balanceMoney(p.amount_iqd)+'</td>'+
       '<td>'+esc(p.destination_wallet)+' / <span dir="ltr">'+esc(p.destination_number)+'</span><div>'+esc(p.destination_owner)+'</div></td>'+
       '<td>'+esc(p.status)+'</td><td>'+balanceDate(p.created_at)+'</td><td>'+
-      (p.status==='pending'?'<button type="button" class="act-btn gr" onclick="reviewBalancePayout(\''+p.id+'\')">پشکنین</button> '+
-        '<button type="button" class="act-btn rd" onclick="cancelBalancePayout(\''+p.id+'\')">هەڵوەشاندنەوە</button>':
+      (p.status==='pending'?'<button type="button" class="act-btn gr" onclick="startBalancePayout(\\''+p.id+'\\')">دەستپێکردنی ناردن</button> '+
+        '<button type="button" class="act-btn rd" onclick="cancelBalancePayout(\\''+p.id+'\\')">هەڵوەشاندنەوە</button>':
+        p.status==='processing'?'<button type="button" class="act-btn gr" onclick="reviewBalancePayout(\\''+p.id+'\\')">تۆمارکردنی ناردن</button> '+
+        '<button type="button" class="act-btn rd" onclick="abortBalanceProcessing(\\''+p.id+'\\')">وەستاندن بە بەڵگەی بانک</button>':
         p.payout_receipt_url?'<a class="act-btn dark" href="'+esc(p.payout_receipt_url)+'" target="_blank" rel="noopener noreferrer">پسووڵە</a>':'—')+'</td></tr>');
     document.getElementById('balanceRefundList').innerHTML=balanceTable(
       ['بەکارهێنەر','ئایدی مامەڵە','بڕی ڕیفاوند','بەڵگەی بانک','تێبینی','بەروار'],refunds,r=>
@@ -110,8 +112,41 @@ async function creditVerifiedRefund(){
     await lookupBalanceOrder();await loadBalanceAdmin();
   }catch(e){err.textContent=e.message;btn.disabled=false;}
 }
-function reviewBalancePayout(id){
+async function startBalancePayout(id){
   const p=(_balanceAdminData?.payouts||[]).find(x=>x.id===id&&x.status==='pending');
+  if(!p)return;
+  const proof=prompt('پێش ناردنی پارە، خاوەندارێتی جزدان لە سەرچاوەی سەربەخۆ پشتڕاست بکەرەوە. ژمارەی بەڵگەی پشتڕاستکردنەوە بنووسە:');
+  if(proof===null)return;
+  if(proof.trim().length<6){showToast('بەڵگەی خاوەندارێتی جزدان پێویستە','rd');return;}
+  if(!confirm('ئەم داواکارییە قوفڵ بکرێت بۆ ناردنی دەستی؟ تا تەواوبوون کڕیار ناتوانێت هەڵیبوەشێنێتەوە.'))return;
+  try{
+    await adminApiRequest('balance_start_payout',{payout_id:id,destination_verification:proof.trim()});
+    await loadBalanceAdmin();
+    reviewBalancePayout(id);
+  }catch(e){showToast(e.message,'rd');}
+}
+async function abortBalanceProcessing(id){
+  const p=(_balanceAdminData?.payouts||[]).find(x=>x.id===id&&x.status==='processing');
+  if(!p)return;
+  const reference=prompt('بەڵگەی سەربەخۆی بانک کە هیچ ناردنێک ئەنجام نەدراوە (ژمارەی پشتڕاستکردنەوە):');
+  if(reference===null)return;
+  const reason=prompt('هۆکاری وردی هەڵوەشاندنەوە (لانیکەم 10 پیت):');
+  if(reason===null)return;
+  if(reference.trim().length<6||reason.trim().length<10){
+    showToast('بەڵگەی بانک و هۆکاری ورد پێویستن','rd');return;
+  }
+  if(!confirm('دڵنیایت بانک پشتڕاستی کردووەتەوە پارە نەگەیشتووە؟ تەنها لەم دۆخەدا باڵانس بگەڕێنەوە.'))return;
+  try{
+    await adminApiRequest('balance_abort_processing',{
+      payout_id:id,bank_reference:reference.trim(),reason:reason.trim(),confirmed_unpaid:true
+    });
+    document.getElementById('balancePayReview').hidden=true;
+    showToast('دوای بەڵگەی بانک، باڵانس بۆ کڕیار گەڕێندرایەوە','gr');
+    await loadBalanceAdmin();
+  }catch(e){showToast(e.message,'rd');}
+}
+function reviewBalancePayout(id){
+  const p=(_balanceAdminData?.payouts||[]).find(x=>x.id===id&&x.status==='processing');
   if(!p)return;
   const panel=document.getElementById('balancePayReview');
   panel.hidden=false;
@@ -119,7 +154,8 @@ function reviewBalancePayout(id){
   document.getElementById('balanceReviewLabel').textContent=
     balanceOwner(p.user_id)+' — '+balanceMoney(p.amount_iqd)+' بۆ '+p.destination_wallet+' / '+p.destination_number;
   document.getElementById('balanceTransferReference').value='';
-  document.getElementById('balanceDestVerification').value='';
+  document.getElementById('balanceDestVerification').value=p.verification_reference||'';
+  document.getElementById('balanceDestVerification').readOnly=true;
   document.getElementById('balancePayoutReceipt').value='';
   document.getElementById('balancePayoutNote').value='';
   document.getElementById('balancePayConfirmed').checked=false;
