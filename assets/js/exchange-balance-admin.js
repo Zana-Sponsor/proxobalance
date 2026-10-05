@@ -23,6 +23,14 @@ async function loadBalanceAdmin(){
       '<div class="ex-note"><b>ڕیفاوندەکان: '+refunds.length+'</b></div>'+
       '<div class="ex-note"><b>داواکارییە چاوەڕوانەکان: '+payouts.filter(p=>p.status==='pending').length+'</b></div>'+
       '<div class="ex-note"><b>ناردنی باڵانس: '+(d.config?.payouts_enabled?'چالاک (پەسەندکردنی دەستی)':'ناچالاک تا پشکنینی یاسایی')+'</b></div>';
+    const rec=d.reconciliation||{};
+    const discrepancies=Number(rec.unbalanced_journals||0)+Number(rec.balance_mismatches||0)+
+      Number(rec.held_payout_mismatches||0)+Number(rec.unlinked_refunds||0)+
+      (rec.clearing_mismatch?1:0);
+    document.getElementById('balanceAdminStats').innerHTML+=
+      '<div class="ex-note" style="color:'+(discrepancies?'#b91c1c':'#15803d')+'"><b>'+
+      (discrepancies?'ئاگاداری: '+discrepancies+' نایەکسانی لە حسابداری هەیە؛ پشکنین پێویستە.':
+      'حسابداری و تۆماری جوڵەکان یەکدەگرنەوە.')+'</b></div>';
     document.getElementById('balancePayoutsList').innerHTML=balanceTable(
       ['بەکارهێنەر','بڕ','جزدانی وەرگر','دۆخ','کات','کردار'],payouts,p=>
       '<tr><td>'+balanceOwner(p.user_id)+'</td><td>'+balanceMoney(p.amount_iqd)+'</td>'+
