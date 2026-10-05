@@ -8,7 +8,7 @@ function customer(){
   const els=new Map(),events={},calls=[];
   const el=id=>{
     if(!els.has(id))els.set(id,{hidden:true,disabled:false,textContent:'',innerHTML:'',value:'',
-      addEventListener(){},appendChild(){},reset(){},focus(){}});
+      addEventListener(){},appendChild(){},reset(){},focus(){this.focused=true;},scrollIntoView(){this.scrolled=true;}});
     return els.get(id);
   };
   let payload={ok:true,balance:{available_iqd:40000,held_iqd:10000},
@@ -73,4 +73,24 @@ test('returning to an active Send page refreshes the latest refund balance',asyn
   assert.equal(p.el('balanceAvailable').textContent,'80,000 د.ع');
   const before=p.calls.length;p.c._route='profile';await p.events.focus();
   assert.equal(p.calls.length,before);
+});
+test('choosing account balance opens its funded payout form when enabled',async()=>{
+  const p=customer();p.enable();await p.c.openAccountBalanceSend();
+  assert.equal(p.el('balanceSendSection').scrolled,true);
+  assert.equal(p.el('balancePayoutForm').hidden,false);
+  assert.equal(p.el('balanceDestWallet').focused,true);
+  assert.equal(p.calls.length,1);
+  assert.equal(p.calls[0].options.method,'GET');
+});
+test('choosing balance explains disabled, insufficient and KYC-blocked payouts',async()=>{
+  for(const state of ['disabled','insufficient','kyc','error']){
+    const p=customer();
+    if(state==='insufficient'){p.enable();p.setBalance(0);}
+    if(state==='kyc'){p.enable();p.block();}
+    if(state==='error')p.error();
+    await p.c.openAccountBalanceSend();
+    assert.equal(p.el('balancePayoutForm').hidden,true,state);
+    assert.equal(p.el('balanceStatusMessage').focused,true,state);
+    assert.equal(p.calls.every(c=>c.options.method==='GET'),true);
+  }
 });

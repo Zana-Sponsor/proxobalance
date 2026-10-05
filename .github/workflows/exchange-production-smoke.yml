@@ -16,10 +16,10 @@ jobs:
           for attempt in $(seq 1 24); do
             if curl -fLsS --max-time 15 'https://www.proxobalance.app/exchange-admin' -o current-admin.html &&
                grep -q 'assets/js/admin.js?v=17' current-admin.html &&
-               curl -fLsS --max-time 15 'https://www.proxobalance.app/assets/js/app.js?v=39' -o current-app.js &&
-               grep -q "'wallets')===scope" current-app.js &&
-               curl -fLsS --max-time 15 'https://www.proxobalance.app/assets/js/exchange-balance.js?v=2' -o current-balance.js &&
-               grep -q 'refreshVisibleBalance' current-balance.js; then
+               curl -fLsS --max-time 15 'https://www.proxobalance.app/assets/js/app.js?v=40' -o current-app.js &&
+               grep -q 'accountBalanceSourceOption' current-app.js &&
+               curl -fLsS --max-time 15 'https://www.proxobalance.app/assets/js/exchange-balance.js?v=3' -o current-balance.js &&
+               grep -q 'openAccountBalanceSend' current-balance.js; then
               exit 0
             fi
             sleep 5
@@ -48,7 +48,7 @@ jobs:
           grep -q 'accountBalanceCell' admin.js
           grep -q 'accountBalanceDetails' admin.js
           grep -q "'account_balances'" admin.js
-          curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/assets/js/exchange-balance.js?v=2" -o exchange-balance.js
+          curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/assets/js/exchange-balance.js?v=3" -o exchange-balance.js
           grep -q 'requestBalancePayout' exchange-balance.js
           grep -q 'refreshVisibleBalance' exchange-balance.js
           curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/assets/js/exchange-balance-admin.js?v=3" -o exchange-balance-admin.js

@@ -43,9 +43,11 @@ try{
       window.kycExchangeBlocked=()=>document.getElementById('exchangeCard').classList.contains('kyc-locked');
       window.escHtml=text=>String(text||'');
       window.fixtureAmount=40000;
+      window.fixtureEnabled=false;
       window.fetch=async()=>({ok:true,status:200,json:async()=>({ok:true,
         balance:{available_iqd:window.fixtureAmount,held_iqd:10000},
-        payouts_enabled:false,max_single_payout_iqd:1000000,wallets:[],journal:[],payouts:[]})});
+        payouts_enabled:window.fixtureEnabled,max_single_payout_iqd:1000000,
+        wallets:[{key:'FastPay',name:'FastPay'}],journal:[],payouts:[]})});
     });
     await page.addScriptTag({content:read('assets/js/exchange-balance.js')});
     await page.evaluate(()=>loadMyBalance());
@@ -63,6 +65,34 @@ try{
     });
     assert.equal(await page.locator('#grpSend').isVisible(),true);
     assert.equal(await page.locator('#balanceSendSection').isVisible(),true);
+    // Exercise the actual source picker shown in the customer's screenshot.
+    await page.evaluate(()=>{
+      window.FROM_OPTIONS=['FastPay'];window.RECEIVE_OPTIONS=['FastPay'];
+      window.METHOD_META={FastPay:{label:'FastPay'}};window.ICON={banknote:''};
+      window.getWalletInfo=()=>({locked:false});window.routeAllowed=()=>true;
+      window.methodIconHTML=()=>'';
+      document.getElementById('from').innerHTML='<option value="FastPay">FastPay</option>';
+      document.getElementById('receiveVia').innerHTML='<option value="FastPay">FastPay</option>';
+    });
+    const app=read('assets/js/app.js');
+    await page.addScriptTag({content:app.slice(app.indexOf('const _sheetCloseTimers'),app.indexOf('const TOAST_ICON'))});
+    await page.locator('#fromTrigger').click();
+    assert.equal(await page.locator('#accountBalanceSourceOption').isVisible(),true);
+    assert.match(await page.locator('#accountBalanceSourceOption').textContent(),/باڵانسی هەژمار/);
+    await page.locator('#accountBalanceSourceOption').click();
+    await page.waitForFunction(()=>document.activeElement.id==='balanceStatusMessage');
+    assert.equal(await page.locator('#balancePayoutForm').isVisible(),false);
+    assert.equal(await page.locator('#from').inputValue(),'FastPay','Internal funds must not become a forged wallet order');
+    await page.waitForFunction(()=>document.getElementById('pickerSheet').style.display==='none');
+    await page.evaluate(()=>{window.fixtureEnabled=true;window.fixtureAmount=40000;});
+    await page.locator('#fromTrigger').click();
+    await page.locator('#accountBalanceSourceOption').click();
+    await page.waitForFunction(()=>document.activeElement.id==='balanceDestWallet');
+    assert.equal(await page.locator('#balancePayoutForm').isVisible(),true);
+    await page.waitForFunction(()=>document.getElementById('pickerSheet').style.display==='none');
+    await page.evaluate(()=>openPicker('receive'));
+    assert.equal(await page.locator('#accountBalanceSourceOption').count(),0,'Balance is a send source only');
+    await page.evaluate(()=>closePicker());
     console.log('PASS: '+width+'px real HTML/CSS, KYC-locked and unlocked Send, zero/positive balances');
     await page.close();
   }
