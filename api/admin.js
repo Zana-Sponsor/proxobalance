@@ -174,6 +174,28 @@ const actions = {
     return data;
   },
 
+  async balance_claim_payout({payout_id,verification},ctx){
+    const {data,error}=await db.rpc('ex_balance_claim_payout',{
+      p_payout_id:payout_id,p_admin_id:ctx.user.id,
+      p_verification:String(verification||'').trim().slice(0,500)
+    });
+    if(error)throw {status:409,code:error.code||'claim_failed',message:error.message};
+    return data;
+  },
+
+  async balance_abort_processing({payout_id,reason,bank_reference,confirmed_unpaid},ctx){
+    if(confirmed_unpaid!==true)
+      throw {status:400,code:'proof_required',message:'Bank confirmation of nonpayment required'};
+    const {data,error}=await db.rpc('ex_balance_abort_processing',{
+      p_payout_id:payout_id,p_admin_id:ctx.user.id,
+      p_reason:String(reason||'').trim().slice(0,500),
+      p_bank_reference:String(bank_reference||'').trim().slice(0,160),
+      p_confirmed_unpaid:true
+    });
+    if(error)throw {status:409,code:error.code||'abort_failed',message:error.message};
+    return data;
+  },
+
   async balance_cancel_payout({payout_id,reason},ctx){
     const {data,error}=await db.rpc('ex_balance_cancel_payout',{
       p_payout_id:payout_id,p_actor:ctx.user.id,
