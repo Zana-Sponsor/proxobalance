@@ -105,5 +105,51 @@
     "v2_templates_activated": 0,
     "tracking_link_event_rows": 0,
     "telegram_function_changed": false
+  },
+  "masked_native_retry_window": {
+    "before": {
+      "ads_count": 27,
+      "ads_digest": "64269812c8d8a6ce68fd8b4424070ce7",
+      "cards_count": 21,
+      "cards_digest": "9e6d3b3376117240b3c906ff6ed0ba18",
+      "v2_templates": 0,
+      "contact_events": 0,
+      "tracking_links": 0,
+      "orphan_references": 0,
+      "relationships_count": 16,
+      "relationships_digest": "d615c3b4023a7caa4a95d41a350e66ee",
+      "cross_owner_references": 0
+    },
+    "after": {
+      "ads_count": 27,
+      "ads_digest": "16d0dfe3e6bd09b6cd17e96687945ac3",
+      "cards_count": 21,
+      "cards_digest": "9e6d3b3376117240b3c906ff6ed0ba18",
+      "v2_templates": 0,
+      "contact_events": 0,
+      "tracking_links": 0,
+      "orphan_references": 0,
+      "relationships_count": 16,
+      "relationships_digest": "d615c3b4023a7caa4a95d41a350e66ee",
+      "cross_owner_references": 0
+    },
+    "checkpoint_algorithm": "MD5 of ordered JSONB aggregation of full rows; relationships use ordered [advertisement id, coalesced asset/card id] arrays. Compare only this window with the same query.",
+    "full_card_rows_unchanged": true,
+    "relationships_unchanged": true,
+    "full_ad_rows_unchanged": false,
+    "advertisement_content_change_cause": "Unattributed concurrent change; this task made no advertisement writes. Full advertisement-row immutability is not claimed.",
+    "customer_card_advertisement_writes_by_task": 0,
+    "preview_event_rows_before_after": [
+      0,
+      0
+    ],
+    "tracking_links_before_after": [
+      0,
+      0
+    ],
+    "active_v2_before_after": [
+      0,
+      0
+    ]
   }
 }

@@ -53,24 +53,27 @@
     "prepared_administrator_bypass_allowed": false
   },
   "latest_authorized_followup": {
-    "source_commit": "549ef0621bdca3d7e9f9191118c59317a6845fc6",
-    "telegram_retirement": "Already VERIFIED; not changed again",
-    "environment_controls": "Saved and reload-verified as explicitly authorized",
-    "native_approval": "Exact workflow/job/ref/SHA approved",
-    "native_workflow_status": "FAILED before page/case evidence",
-    "native_cases_executed": 0,
-    "native_required": 40,
-    "native_blocked": 40,
-    "missing_setting": "Environment secret PROXO_NATIVE_ANON_KEY; original variable preserved",
-    "customer_card_advertisement_writes": 0,
-    "storage_mutations": 0,
-    "template_v2_activation": false,
-    "feature_production_promotion": false,
+    "executable_commit": "622eddacd593cc74790350341854ff7c356b8054",
+    "native": {
+      "status": "FAILED",
+      "run_id": 37382755434,
+      "run_url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/37382755434",
+      "executed_cases": 40,
+      "native_page_checks_passed": 40,
+      "exact_pixel_comparisons_passed": 0,
+      "exact_pixel_comparisons_failed": 40,
+      "blocked_cases": 0
+    },
+    "protected_credentials": "All four runtime settings masked; exact environment review approved",
+    "current_preflight": "VERIFIED: six read-only security boundaries and eight header checks",
+    "live_staging": "0/8 BLOCKED; no isolated target",
+    "production_customer_writes": 0,
+    "telegram_changed": false,
     "pr_draft": true,
-    "acceptance_totals": {
+    "acceptance_matrix": {
+      "BLOCKED": 90,
       "VERIFIED": 53,
-      "FAILED": 1,
-      "BLOCKED": 91
+      "FAILED": 2
     }
   }
 }
