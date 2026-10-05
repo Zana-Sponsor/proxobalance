@@ -71,7 +71,9 @@ async function configure() {
     authorization='Bearer '+session.access_token;
     userId=session.user?.id;
   }
-  const protection=bypass?{'x-vercel-protection-bypass':bypass,'x-vercel-set-bypass-cookie':'true'}:{};
+  // HTTP checks authenticate each request directly and reject redirects. The
+  // optional cookie header deliberately redirects and is only for WebView.
+  const protection=bypass?{'x-vercel-protection-bypass':bypass}:{};
   if(!securityVerified) {
     stage='read_only_security';
     const checks=await verifyReadOnlySecurity({authorization,key,userId,protection});
@@ -114,7 +116,8 @@ async function configure() {
   }
   // tee's stdout is captured and discarded. It is never printed or uploaded.
   stage='write_private_configuration';
-  appWrite('proxolink-verification.json',JSON.stringify({origin:base,previews,headers:protection}));
+  appWrite('proxolink-verification.json',JSON.stringify({origin:base,previews,
+    headers:{...protection,'x-vercel-set-bypass-cookie':'true'}}));
   currentPreviews=previews;
 }
 let capturedPreviewHeaders=false;
