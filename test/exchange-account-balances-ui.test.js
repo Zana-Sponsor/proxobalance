@@ -61,6 +61,18 @@ test('all accounts beyond the balance dashboard limit are fetched in bounded bat
   assert.deepEqual(p.calls.map(ids=>ids.length),[200,200,1]);
   assert.match(p.context.accountBalanceCell(ids[400]),/0 دینار/);
 });
+test('a late response from another account cannot overwrite the currently opened balance',async()=>{
+  const p=panel(),c=p.context,pending=new Map();
+  c.adminApiRequest=async(action,{user_ids})=>new Promise(resolve=>pending.set(user_ids[0],resolve));
+  const first=c.openAccountInfo(userId),second=c.openAccountInfo(zeroId);
+  pending.get(zeroId)([{user_id:zeroId,available_iqd:0,held_iqd:0,updated_at:null}]);
+  await second;
+  pending.get(userId)([{user_id:userId,available_iqd:40000,held_iqd:0,updated_at:null}]);
+  await first;
+  assert.equal(p.el('aiTitle').textContent,'Customer Two');
+  assert.match(p.el('aiBody').innerHTML,/Customer Two/);
+  assert.doesNotMatch(p.el('aiBody').innerHTML,/Customer One|40,000 دینار/);
+});
 test('failed balance refresh preserves known values and shows an error in account details',async()=>{
   const p=panel(),c=p.context;
   await c.loadAccountBalances([userId]);p.fail();

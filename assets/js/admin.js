@@ -1518,6 +1518,7 @@ function renderAccCards(list){
 // ═══ ACCOUNT INFO ════════════════════════════════════════════════
 // Injected from JS so no change to exchange-admin.html is needed.
 // ══════════════════════════════════════════════════════════════
+let _accountInfoLoad=0;
 function ensureAccountInfoModal(){
   if(document.getElementById('moAccountInfo')) return;
   const o=document.createElement('div');
@@ -1537,6 +1538,7 @@ async function openAccountInfo(id){
   const a=allAccounts.find(x=>x.id===id);
   if(!a){ showToast('هەژمارەکە نەدۆزرایەوە','rd'); return; }
   ensureAccountInfoModal();
+  const loadId=++_accountInfoLoad;
   document.getElementById('aiTitle').textContent=a.full_name||a.email||'زانیاری هەژمار';
 
   const base=`
@@ -1562,6 +1564,7 @@ async function openAccountInfo(id){
     adminApiRequest('account_balances',{user_ids:[id]}).then(data=>({data})).catch(error=>({error}))
   ]);
 
+  if(loadId!==_accountInfoLoad)return;
   if(!balanceRes.error){
     _accountBalances[id]=balanceRes.data[0];
     if(_curPage==='accounts')filterAccounts();
@@ -1611,6 +1614,7 @@ async function openAccountInfo(id){
   document.getElementById('aiBody').innerHTML = html;
   try{
     const rows=await sb.rpc('ex_admin_kyc_search_users',{p_query:id,p_limit:1});
+    if(loadId!==_accountInfoLoad)return;
     const st=rows.data?.[0]?.kyc_status||'none';
     const el=document.getElementById('aiKycStatus');
     if(el) el.innerHTML=kycBadgeHTML(st);
