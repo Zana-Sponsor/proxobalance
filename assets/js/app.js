@@ -1325,6 +1325,7 @@ async function startApp(user){
   await loadWallets();
   await loadRates();
   await loadMyRewards();
+  await loadMyBalance();
   pickInitialWallets();
   refreshTrigger('from');
   refreshTrigger('receiveVia');
@@ -1949,7 +1950,8 @@ const TX_STATE = {
   'ڕاستکراوەتەوە':           { key:'pending',  cls:'status-corrected'  },
   'چاوەڕوانە':               { key:'pending',  cls:''                  }
 };
-function txStateOf(o){ return TX_STATE[o && o.status] || { key:'pending', cls:'' }; }
+function txStateOf(o){ return o?.balance_refunded_at ? {key:'done',cls:'status-success'} : (TX_STATE[o && o.status] || {key:'pending',cls:''}); }
+function txLabelOf(o){ return o?.balance_refunded_at?'پارە گەڕێندرایەوە':(o?.status||''); }
 function txAmount(value, method){
   return formatNum(Math.floor(Number(value)||0)) + (method==='USDT' ? ' $' : ' IQD');
 }
@@ -1957,7 +1959,7 @@ function txWhen(iso, withTime){ return kycFmtDate(iso, withTime); }   // shared 
 function orderCardHTML(o){
   const code=orderCodeOf(o);
   const st=txStateOf(o);
-  const needsAction=o.status==='پێویستی بە ڕاستکردنەوەیە';
+  const needsAction=!o.balance_refunded_at && o.status==='پێویستی بە ڕاستکردنەوەیە';
   return '<article class="tx-card'+(needsAction?' needs-action':'')+'" tabindex="0" role="button"'
     + ' onclick="openTxDetail(\''+escHtml(String(o.id))+'\')"'
     + ' onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();openTxDetail(\''+escHtml(String(o.id))+'\');}">'
@@ -1965,7 +1967,7 @@ function orderCardHTML(o){
       + '<span class="tx-route">'+escHtml(methodLabel(o.from_method))
         + '<span class="tx-route-arrow" aria-hidden="true">'+ICON.arrowLeftLong+'</span>'
         + escHtml(methodLabel(o.to_method))+'</span>'
-      + '<span class="status-badge '+st.cls+'">'+escHtml(o.status||'')+'</span>'
+      + '<span class="status-badge '+st.cls+'">'+escHtml(txLabelOf(o))+'</span>'
     + '</div>'
     + '<div class="tx-card-main">'
       + '<span class="tx-amount" dir="ltr">'+txAmount(o.total,o.to_method)+'</span>'
@@ -1997,7 +1999,7 @@ function openTxDetail(id){
   const isUsdt=o.from_method==='USDT';
   const fee=!isUsdt && Number(o.amount)>Number(o.total) ? Math.floor(Number(o.amount)-Number(o.total)) : 0;
   let html='<div class="tx-dhead">'
-    + '<span class="status-badge '+st.cls+'">'+escHtml(o.status||'')+'</span>'
+    + '<span class="status-badge '+st.cls+'">'+escHtml(txLabelOf(o))+'</span>'
     + '<button type="button" class="tx-dcode" onclick="copyOrderCode(\''+escHtml(code)+'\', event)" title="کۆپیکردنی ئایدی">'
       + '<span dir="ltr">'+escHtml(code)+'</span>'+ICON.copy+'</button>'
     + '</div>'
@@ -2016,13 +2018,14 @@ function openTxDetail(id){
     + txRow('ژمارەی وەرگر', o.phone, {ltr:true})
     + (o.sender_phone ? txRow('ژمارەی نێرەر', o.sender_phone, {ltr:true}) : '')
     + txRow('بەرواری ناردن', txWhen(o.created_at,true))
+    + (o.balance_refunded_at ? txRow('ڕیفاوند بۆ باڵانس',txWhen(o.balance_refunded_at,true)) : '')
     + ((o.status==='پەسەندکرا'||o.status==='ڕەتکرا') && o.decided_at ? txRow('بەرواری بڕیار', txWhen(o.decided_at,true)) : '')
     + (o.extra_info ? txRow('زانیاری زیاتر', o.extra_info) : '')
     + '</div>';
   if(o.admin_note){
     html+='<div class="tx-dnote"><b>تێبینی ئادمین</b><p>'+escHtml(o.admin_note)+'</p></div>';
   }
-  if(o.correction_request){
+  if(o.correction_request && !o.balance_refunded_at){
     html+='<div class="tx-dnote warn"><b>داواکاری ڕاستکردنەوە</b><p>'+escHtml(o.correction_request)+'</p>'
       + (o.status==='پێویستی بە ڕاستکردنەوەیە'
           ? '<button type="button" class="btn btn-primary btn-block" onclick="closeTxDetail(); openOrderCorrection(\''+escHtml(String(o.id))+'\')">ڕاستکردنەوەی مامەڵە</button>'
@@ -2250,7 +2253,7 @@ function renderHomePreview(){
 function updateNavBadge(){
   const dot=document.getElementById('bnTxDot');
   if(!dot) return;
-  const pending=_orders.filter(o=>['چاوەڕوانە','پێویستی بە ڕاستکردنەوەیە','ڕاستکراوەتەوە'].includes(o.status)).length;
+  const pending=_orders.filter(o=>!o.balance_refunded_at && ['چاوەڕوانە','پێویستی بە ڕاستکردنەوەیە','ڕاستکراوەتەوە'].includes(o.status)).length;
   if(pending>0){ dot.style.display='flex'; dot.textContent=String(pending); }
   else dot.style.display='none';
 }
