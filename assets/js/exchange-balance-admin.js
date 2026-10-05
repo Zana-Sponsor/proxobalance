@@ -149,7 +149,8 @@ function reviewBalancePayout(id){
   document.getElementById('balanceReviewLabel').textContent=
     balanceOwner(p.user_id)+' — '+balanceMoney(p.amount_iqd)+' بۆ '+p.destination_wallet+' / '+p.destination_number;
   document.getElementById('balanceTransferReference').value='';
-  document.getElementById('balanceDestVerification').value='';
+  document.getElementById('balanceDestVerification').value=p.processing_verification||'';
+  document.getElementById('balanceDestVerification').readOnly=true;
   document.getElementById('balancePayoutReceipt').value='';
   document.getElementById('balancePayoutNote').value='';
   document.getElementById('balancePayConfirmed').checked=false;
