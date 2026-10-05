@@ -91,7 +91,7 @@ async function requestBalancePayout(event){
   if(btn.disabled||!_myBalanceData?.payouts_enabled)return;
   const amount=Number(document.getElementById('balancePayoutAmount').value);
   const wallet=document.getElementById('balanceDestWallet').value;
-  const number=document.getElementById('balanceDestNumber').value.trim().replace(/\\s/g,'');
+  const number=document.getElementById('balanceDestNumber').value.trim().replace(/\s/g,'');
   if(!Number.isSafeInteger(amount)||amount<10000||
      amount>Number(_myBalanceData.balance.available_iqd||0)||
      amount>Number(_myBalanceData.max_single_payout_iqd||0)||
