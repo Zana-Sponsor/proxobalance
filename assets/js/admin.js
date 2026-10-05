@@ -1142,8 +1142,8 @@ function renderOrdersTable(list){
       <td style="font-size:11px;color:var(--mt)">${fmtDateTime(o.created_at)}</td>
       <td onclick="event.stopPropagation()"><div class="act-grp">
         <div class="act-btn dark" onclick='showOrderDetail(${safeAttr(o.id)})'><i class="fas fa-eye"></i></div>
-        ${CORRECTABLE_ORDER_STATUSES.has(o.status)?`<div class="act-btn yw" title="داوای ڕاستکردنەوە" onclick="openOrderCorrectionRequest('${o.id}')"><i class="fas fa-pen-to-square"></i></div>`:''}
-        ${REVIEWABLE_ORDER_STATUSES.has(o.status)?`<div class="act-btn gr" onclick="approveOrder('${o.id}')"><i class="fas fa-check"></i></div><div class="act-btn rd" onclick="showRejectReason('${o.id}')"><i class="fas fa-times"></i></div>`:''}
+        ${!o.balance_refunded_at && CORRECTABLE_ORDER_STATUSES.has(o.status)?`<div class="act-btn yw" title="داوای ڕاستکردنەوە" onclick="openOrderCorrectionRequest('${o.id}')"><i class="fas fa-pen-to-square"></i></div>`:''}
+        ${!o.balance_refunded_at && REVIEWABLE_ORDER_STATUSES.has(o.status)?`<div class="act-btn gr" onclick="approveOrder('${o.id}')"><i class="fas fa-check"></i></div><div class="act-btn rd" onclick="showRejectReason('${o.id}')"><i class="fas fa-times"></i></div>`:''}
       </div></td>
     </tr>`).join('')}
   </tbody></table>`;
@@ -1166,8 +1166,8 @@ function renderOrdersCards(list){
       </div>
       <div class="rec-card-actions" onclick="event.stopPropagation()">
         <div class="act-btn dark" onclick="showOrderDetail('${o.id}')"><i class="fas fa-eye"></i> وردەکاری</div>
-        ${CORRECTABLE_ORDER_STATUSES.has(o.status)?`<div class="act-btn yw" onclick="openOrderCorrectionRequest('${o.id}')"><i class="fas fa-pen-to-square"></i> داوای ڕاستکردنەوە</div>`:''}
-        ${REVIEWABLE_ORDER_STATUSES.has(o.status)?`<div class="act-btn gr" onclick="approveOrder('${o.id}')"><i class="fas fa-check"></i> پەسەندکردن</div>
+        ${!o.balance_refunded_at && CORRECTABLE_ORDER_STATUSES.has(o.status)?`<div class="act-btn yw" onclick="openOrderCorrectionRequest('${o.id}')"><i class="fas fa-pen-to-square"></i> داوای ڕاستکردنەوە</div>`:''}
+        ${!o.balance_refunded_at && REVIEWABLE_ORDER_STATUSES.has(o.status)?`<div class="act-btn gr" onclick="approveOrder('${o.id}')"><i class="fas fa-check"></i> پەسەندکردن</div>
         <div class="act-btn rd" onclick="showRejectReason('${o.id}')"><i class="fas fa-times"></i> ڕەتکردنەوە</div>`:''}
       </div>
     </div>`).join('')}</div>`;
