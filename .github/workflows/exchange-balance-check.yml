@@ -16,9 +16,13 @@ on:
       - 'test/exchange-send-balance.browser.mjs'
       - 'test/exchange-scoped-rewards.sql'
       - 'test/exchange-balance-source.sql'
+      - 'test/exchange-customer-staff-features.sql'
       - 'test/exchange-admin-refund-reward-cap.sql'
       - 'assets/js/**'
       - 'assets/css/exchange-balance.css'
+      - 'assets/css/exchange-features.css'
+      - 'supabase/functions/admin-create-user/**'
+      - 'supabase/functions/admin-set-password/**'
       - 'index.html'
       - 'exchange-admin.html'
       - 'scripts/prepare-vercel.mjs'
@@ -47,6 +51,8 @@ jobs:
           node --check assets/js/exchange-balance-admin.js
           node --check assets/js/exchange-reward-pricing.js
           node --check assets/js/exchange-insights.js
+          node --check assets/js/exchange-staff.js
+          node --check assets/js/exchange-customer-features.js
       - name: Build Vercel static output
         run: node scripts/prepare-vercel.mjs
       - name: Verify authenticated orders, admin refunds and capped fee rewards

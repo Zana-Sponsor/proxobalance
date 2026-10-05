@@ -12,10 +12,11 @@ function application(isAdmin=true,options={}){
     rpc:async(name,args)=>{calls.push({rpc:name,args});return {data:{id:'refund',refund_kind:'admin_rejection'},error:null};},
     from(table){
       let inserted=null;
-      const q={select(){return q;},eq(){return q;},
+      const q={select(){return q;},eq(){return q;},is(){return q;},
         in(column,ids){calls.push({table,column,ids});return q;},
         insert(row){inserted=row;calls.push({table,row});return q;},
-        async single(){return {data:table==='ex_profiles'?{id:adminId,is_admin:isAdmin,is_banned:false}:{id:'reward',...inserted},error:null};},
+        update(row){inserted=row;calls.push({table,patch:row});return q;},
+        async single(){return {data:table==='ex_profiles'?{id:adminId,is_admin:isAdmin,is_banned:false,...options.profile}:table==='ex_orders'?{...options.order,...inserted}:{id:'reward',...inserted},error:null};},
         async maybeSingle(){return {data:{id:userId,is_banned:false},error:null};},
         then(resolve,reject){return Promise.resolve(table==='ex_customer_balances'
           ? {data:options.balances||[],error:options.balanceError||null}
@@ -25,7 +26,8 @@ function application(isAdmin=true,options={}){
   };
   const source=readFileSync(new URL('../api/admin.js',import.meta.url),'utf8')
     .replace("import { createClient } from '@supabase/supabase-js';",'const createClient=globalThis.createClient;')
-    .replace('export default async function handler','async function handler');
+    .replace('export default async function handler','async function handler')
+    .replace('export function assertStaffAction','function assertStaffAction');
   const c=vm.createContext({createClient:()=>db,process:{env:{SUPABASE_SERVICE_ROLE_KEY:'test-only-placeholder'}},console,URL,Date});
   vm.runInContext(source+'\nglobalThis.handler=handler;',c);
   return {calls,async request(action,payload,authorized=true){
@@ -55,6 +57,43 @@ test('ordinary customers cannot issue refunds or grant rewards',async()=>{
     assert.equal((await app.request(action,{})).status,403);
   }
   assert.equal(app.calls.length,0);
+});
+test('view-only staff cannot invoke privileged actions even with a valid admin session',async()=>{
+  const app=application(true,{profile:{role:'admin',staff_permissions:['view']}});
+  for(const action of ['balance_credit_refund','approve_order','reject_order','grant_reward',
+    'revoke_reward','set_ban','broadcast','balance_mark_payout_paid','resolve_all_error_logs',
+    'save_order_note','save_payout_receipt']){
+    const result=await app.request(action,{});
+    assert.equal(result.status,403,action);
+    assert.equal(result.data.code,'staff_permission_required');
+  }
+  assert.equal(app.calls.length,0);
+  assert.equal((await app.request('account_balances',{user_ids:[userId]})).status,200);
+});
+test('refund and reward permissions are separate and evaluated from the fresh profile',async()=>{
+  const refund=application(true,{profile:{role:'admin',staff_permissions:['view','refunds']}});
+  assert.equal((await refund.request('grant_reward',{})).status,403);
+  assert.equal((await refund.request('balance_credit_refund',{order_id:userId,
+    verification_reference:'fixture-proof',reason:'Approved manual fixture refund',confirmed_received:true})).status,200);
+  assert.equal(refund.calls.find(c=>c.rpc).rpc,'ex_admin_reject_and_refund');
+  const rewards=application(true,{profile:{role:'admin',staff_permissions:['view','manage_rewards']}});
+  assert.equal((await rewards.request('balance_credit_refund',{})).status,403);
+  assert.equal((await rewards.request('approve_order',{})).status,403);
+});
+test('approval staff save notes and owned payout proofs through the server, with refund guards',async()=>{
+  const options={profile:{role:'admin',staff_permissions:['view','approve_orders']},
+    order:{id:userId,user_id:userId,order_code:'P123456789AB',balance_refunded_at:null}};
+  const app=application(true,options);
+  assert.equal((await app.request('save_order_note',{order_id:userId,admin_note:'Fixture review note'})).status,200);
+  assert.equal(app.calls.find(c=>c.patch).patch.admin_note,'Fixture review note');
+  const payout_receipt_url='https://pycxuugoblkslvwebxuu.supabase.co/storage/v1/object/public/receipts/'+userId+'/fixture.jpg';
+  assert.equal((await app.request('save_payout_receipt',{order_id:userId,payout_receipt_url})).status,200);
+  const patches=app.calls.filter(c=>c.patch).length;
+  assert.equal((await app.request('save_payout_receipt',{order_id:userId,payout_receipt_url:'https://example.invalid/foreign.jpg'})).status,400);
+  assert.equal(app.calls.filter(c=>c.patch).length,patches);
+  const refunded=application(true,{...options,order:{...options.order,balance_refunded_at:'2026-10-05T10:00:00Z'}});
+  assert.equal((await refunded.request('save_payout_receipt',{order_id:userId,payout_receipt_url})).status,409);
+  assert.equal(refunded.calls.filter(c=>c.patch).length,0);
 });
 test('per-user balances include actual available/held amounts and zero for an uninitialized account',async()=>{
   const app=application(true,{balances:[{user_id:userId,available_iqd:40000,held_iqd:10000,updated_at:'2026-10-05T00:00:00Z'}]});

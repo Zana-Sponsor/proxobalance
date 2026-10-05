@@ -186,11 +186,13 @@ function openPicker(which){
       + (which==='from' && key==='AccountBalance'?' id="accountBalanceSourceOption"':'')+'>'
       + methodIconHTML(key)
       + '<span class="sheet-option-text"><span class="sheet-option-name">'+escHtml(m.label)+'</span>'
+      + (typeof walletBadgeHTML==='function'?walletBadgeHTML(key):'')
       + (key==='AccountBalance'?'<span class="sheet-option-sub">'+escHtml(document.getElementById('balanceAvailable')?.textContent||'—')+'</span>':reason?'<span class="sheet-option-sub">'+reason+'</span>':'')+'</span>'
       + '<span class="sheet-option-check"><span class="icn icn-sm icon--solar icon--solar--check-circle-linear" aria-hidden="true"></span></span>'
       + '</button>';
   }).join('');
   openSheet(document.getElementById('pickerSheet'));
+  if(typeof observeWalletBadges==='function')observeWalletBadges();
 }
 function closePicker(){
   closeSheet(document.getElementById('pickerSheet'));
@@ -372,6 +374,7 @@ function dayLabel(iso){
 
 async function loadNotifications(){
   try{
+    if(typeof refreshRewardAlerts==='function')await refreshRewardAlerts();
     const {data}=await sb.from('ex_notifications').select('*').eq('user_id',curUser.id).order('created_at',{ascending:false}).limit(30);
     _notifItems = data||[];
   }catch(_){ _notifItems=[]; }
@@ -1298,6 +1301,7 @@ async function ensureExProfile(user){
 
 async function startApp(user){
   curUser=user;
+  if(typeof resetCustomerConveniences==='function')resetCustomerConveniences();
   flushQueuedErrorLogs();
   curProfile=await ensureExProfile(user);
   if(curProfile?.is_banned){
@@ -1325,6 +1329,7 @@ async function startApp(user){
   refreshFormHints();
   startProofPolling();
   await loadWallets();
+  if(typeof loadCustomerConveniences==='function')await loadCustomerConveniences();
   await loadRates();
   await loadMyRewards();
   pickInitialWallets();
@@ -1362,11 +1367,11 @@ function getWalletInfo(key){
 }
 async function loadWallets(){
   try{
-    const {data,error} = await sb.from('ex_wallets').select('key,name,image_url,wallet_number,is_locked,allow_from,allow_receive,sort_order').order('sort_order',{ascending:true});
+    const {data,error} = await sb.from('ex_wallets').select('id,key,name,image_url,wallet_number,is_locked,allow_from,allow_receive,sort_order,badge,badge_version').order('sort_order',{ascending:true});
     if(error) throw error;
     if(data){
       WALLET_DATA = {};
-      data.forEach(w=>{ if(w.key) WALLET_DATA[w.key] = { number: w.wallet_number || null, locked: !!w.is_locked, name:w.name, image_url:w.image_url, allow_from: w.allow_from!==false, allow_receive:!!w.allow_receive, sort_order:w.sort_order }; });
+      data.forEach(w=>{ if(w.key) WALLET_DATA[w.key] = { id:w.id,badge:w.badge,badge_version:w.badge_version,number: w.wallet_number || null, locked: !!w.is_locked, name:w.name, image_url:w.image_url, allow_from: w.allow_from!==false, allow_receive:!!w.allow_receive, sort_order:w.sort_order }; });
       rebuildWalletOptions();
       WALLETS_STATE = 'ready';
     }
@@ -4106,7 +4111,7 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   sb=window.supabase.createClient(SB_URL,SB_KEY,{ auth:{ persistSession:true, autoRefreshToken:true, storageKey:'zex_sb_session' } });
   sb.auth.onAuthStateChange((_event,nextSession)=>{
     activeSession=nextSession||null;
-    if(_event==='SIGNED_OUT'){++_rewardLoadId;MY_REWARDS=[];if(typeof resetMyBalance==='function')resetMyBalance();}
+    if(_event==='SIGNED_OUT'){++_rewardLoadId;MY_REWARDS=[];if(typeof resetMyBalance==='function')resetMyBalance();if(typeof resetCustomerConveniences==='function')resetCustomerConveniences();}
   });
   let session=null;
   try{

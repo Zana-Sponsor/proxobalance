@@ -143,10 +143,11 @@ export async function isSecurityAdmin(userId) {
   if (!userId) return false;
   try {
     const rows = await serviceFetch(
-      `/rest/v1/ex_profiles?id=eq.${encodeURIComponent(userId)}&select=is_admin,is_banned&limit=1`
+      `/rest/v1/ex_profiles?id=eq.${encodeURIComponent(userId)}&select=is_admin,is_banned,role,staff_permissions&limit=1`
     );
     const row = Array.isArray(rows) ? rows[0] : null;
-    return !!row && row.is_admin === true && row.is_banned !== true;
+    return !!row && row.is_admin === true && row.is_banned !== true &&
+      (row.role==='super_admin' || row.staff_permissions==null);
   } catch {
     return false;
   }

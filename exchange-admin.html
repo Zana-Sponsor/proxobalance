@@ -13,6 +13,7 @@
 <link rel="stylesheet" href="assets/css/admin.css?v=9">
 <link rel="stylesheet" href="assets/css/tokens.css">
 <link rel="stylesheet" href="assets/css/exchange-insights.css?v=2">
+<link rel="stylesheet" href="assets/css/exchange-features.css?v=1">
 <link rel="stylesheet" href="assets/css/exchange-panel-theme.css?v=4">
 <link rel="stylesheet" href="assets/css/exchange-readable.css?v=3">
 <link rel="stylesheet" href="assets/css/exchange-typography.css?v=1">
@@ -743,6 +744,9 @@
 
     <label class="modal-lbl">کلیل (Key — بەکاردەهێنرێت لە کۆدەکەدا، بێ بۆشایی)</label>
     <input class="minp" id="walletKey" dir="ltr" placeholder="FastPay">
+    <label class="modal-lbl" for="walletBadge">نیشانی جزدان</label>
+    <select class="msel" id="walletBadge"><option value="none">بەبێ نیشان</option><option value="popular">باو</option><option value="most_popular">باوترین</option><option value="new">نوێ</option></select>
+    <div class="fee-toggle-note">نیشانی «نوێ» تەنها یەک جار بۆ هەر بەکارھێنەر دەردەکەوێت، دوای بینینی لادەچێت.</div>
 
     <label class="modal-lbl">ژمارە/ناونیشانی وەرگرتن</label>
     <input class="minp" id="walletNumber" dir="ltr" placeholder="07XXXXXXXXX یان ناونیشانی USDT">
@@ -985,7 +989,17 @@
 <div id="toast"></div>
 
   <script src="assets/js/svg-icons.js"></script>
-  <script src="assets/js/admin.js?v=18"></script>
+  <div class="overlay" id="moStaffPermissions">
+    <div class="modal" style="max-width:520px">
+      <div class="modal-hdr"><h3>دەسەڵاتەکانی کارمەند</h3><button type="button" class="modal-close" onclick="closeMo('moStaffPermissions')" aria-label="داخستن">×</button></div>
+      <input type="hidden" id="staffTarget"><p id="staffTargetName"></p>
+      <label class="staff-permission-row"><input id="staffFullAccess" type="checkbox" onchange="updateStaffPermissionForm()">دەسەڵاتی تەواوی ئادمین</label>
+      <div id="staffPermissionOptions"></div><p id="staffPermissionError" role="alert"></p>
+      <button type="button" id="staffPermissionSave" class="act-btn gr" onclick="saveStaffPermissions()">پاشەکەوتکردنی دەسەڵاتەکان</button>
+    </div>
+  </div>
+  <script src="assets/js/admin.js?v=19"></script>
+  <script src="assets/js/exchange-staff.js?v=1"></script>
   <script src="assets/js/exchange-balance-admin.js?v=4"></script>
   <script src="assets/js/exchange-insights.js?v=2"></script>
   <script src="assets/js/exchange-profit.js?v=2"></script>

@@ -87,7 +87,7 @@ async function requireAdmin(req) {
 
   const { data: profile, error: profErr } = await db
     .from('ex_profiles')
-    .select('id, is_admin, is_banned, full_name, email')
+    .select('id, is_admin, is_banned, full_name, email, role, staff_permissions')
     .eq('id', user.id)
     .single();
 
@@ -106,8 +106,45 @@ async function audit(adminId, action, targetUserId, detail) {
   } catch { /* auditing must never break the operation */ }
 }
 
+// Fresh database profile rights, never browser/JWT user_metadata claims.
+export function assertStaffAction(profile,action){
+  if(profile.role==='super_admin' || profile.staff_permissions==null)return;
+  const permissions={
+    ping:'view',account_balances:'view',balance_dashboard:'view',balance_lookup_order:'view',
+    list_order_correction_history:'view',list_rewards:'view',
+    approve_order:'approve_orders',reject_order:'approve_orders',request_order_correction:'approve_orders',
+    save_order_note:'approve_orders',save_payout_receipt:'approve_orders',
+    balance_credit_refund:'refunds',balance_cancel_payout:'refunds',balance_abort_processing:'refunds',
+    balance_claim_payout:'approve_orders',balance_mark_payout_paid:'approve_orders',
+    grant_reward:'manage_rewards',revoke_reward:'manage_rewards'
+  };
+  const required=permissions[action];
+  if(!required || !profile.staff_permissions.includes(required))
+    throw {status:403,code:'staff_permission_required',message:'مۆڵەتی ئەنجامدانی ئەم کارەت نییە'};
+}
+
 // ── actions ──────────────────────────────────────────────────
 const actions = {
+  async save_order_note({order_id,admin_note},ctx){
+    const note=String(admin_note||'').trim();
+    if(!order_id||note.length>500)throw {status:400,code:'bad_note',message:'Invalid order note'};
+    const {data,error}=await db.from('ex_orders').update({admin_note:note||null}).eq('id',order_id).select().single();
+    if(error||!data)throw {status:404,code:'not_found',message:'Order not found'};
+    await audit(ctx.user.id,'save_order_note',data.user_id,data.order_code);
+    return data;
+  },
+  async save_payout_receipt({order_id,payout_receipt_url},ctx){
+    const {data:order,error:readError}=await db.from('ex_orders').select('id,user_id,balance_refunded_at').eq('id',order_id).single();
+    if(readError||!order)throw {status:404,code:'not_found',message:'Order not found'};
+    if(order.balance_refunded_at)throw {status:409,code:'already_refunded',message:'Order was already refunded'};
+    const prefix=SUPABASE_URL+'/storage/v1/object/public/receipts/'+order.user_id+'/';
+    if(typeof payout_receipt_url!=='string'||!payout_receipt_url.startsWith(prefix)||payout_receipt_url.length>2000)
+      throw {status:400,code:'invalid_receipt',message:'Invalid payout receipt'};
+    const {data,error}=await db.from('ex_orders').update({payout_receipt_url}).eq('id',order_id).is('balance_refunded_at',null).select().single();
+    if(error||!data)throw {status:409,code:'receipt_not_saved',message:'Receipt could not be saved'};
+    await audit(ctx.user.id,'save_payout_receipt',order.user_id,data.order_code);
+    return data;
+  },
   async account_balances({user_ids}) {
     if (!Array.isArray(user_ids) || user_ids.length > 200 ||
         user_ids.some(id => typeof id !== 'string' ||
@@ -151,7 +188,7 @@ const actions = {
     if(!/^(?:[0-9a-f-]{36}|P[A-Z0-9]{11})$/i.test(q))
       throw {status:400,code:'invalid_order',message:'Enter an exact order code or UUID'};
     let query=db.from('ex_orders')
-      .select('id,order_code,user_id,amount,total,fee,from_method,to_method,receipt_url,receipt_hash,payout_receipt_url,status,created_at,decided_at,balance_refunded_at')
+      .select('id,order_code,user_id,amount,total,fee,from_method,to_method,receipt_url,receipt_hash,payout_receipt_url,status,created_at,decided_at,balance_refunded_at,balance_debit_journal_id')
       .limit(1);
     query=/^[0-9a-f-]{36}$/i.test(q)?query.eq('id',q):query.eq('order_code',q.toUpperCase());
     const {data:order,error}=await query.maybeSingle();
@@ -629,6 +666,8 @@ export default async function handler(req, res) {
     const run  = actions[name];
 
     if (!run) return fail(res, 400, 'Unknown action: ' + name, 'unknown_action');
+
+    assertStaffAction(ctx.profile,name);
 
     const data = await run(body.payload || {}, ctx);
     return ok(res, data);
