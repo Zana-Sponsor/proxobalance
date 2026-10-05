@@ -14,7 +14,7 @@ function response(data, status = 200) {
   });
 }
 
-test('accepts an active admin-configured route that is not hard-coded', async (t) => {
+test('calculates a configured route, ignores forged rewards and returns the saved discount', async (t) => {
   const calls = [];
   const originalFetch = globalThis.fetch;
 
@@ -50,7 +50,14 @@ test('accepts an active admin-configured route that is not hard-coded', async (t
       assert.equal(payload.from_method, 'NassWallet');
       assert.equal(payload.to_method, 'QiCard');
       assert.equal(payload.total, 9850);
-      return response([{ id: 'order-1', ...payload }], 201);
+      assert.equal(payload.user_id, 'user-1');
+      for (const field of ['fee', 'reward_id', 'reward_discount_iqd', 'reward_original_fee_iqd']) {
+        assert.equal(Object.hasOwn(payload, field), false, 'Customer supplied ' + field);
+      }
+      // Simulate the database applying a legitimate fee reward after INSERT.
+      // The API must return this persisted result instead of its base estimate.
+      return response([{ id: 'order-1', ...payload, total: 10000, fee: 0,
+        reward_id: 'saved-reward', reward_discount_iqd: 150 }], 201);
     }
 
     throw new Error(`Unexpected request: ${options.method || 'GET'} ${url.pathname}${url.search}`);
@@ -69,6 +76,12 @@ test('accepts an active admin-configured route that is not hard-coded', async (t
       from_method: 'NassWallet',
       to_method: 'QiCard',
       amount: 10000,
+      user_id: 'another-customer',
+      total: 99999999,
+      fee: -99999999,
+      reward_id: 'forged-reward',
+      reward_discount_iqd: 99999999,
+      reward_original_fee_iqd: 99999999,
       phone: '07510070000',
       receipt_url: 'https://pycxuugoblkslvwebxuu.supabase.co/storage/v1/object/public/receipts/test.jpg',
       receipt_hash: 'a'.repeat(64)
@@ -85,6 +98,9 @@ test('accepts an active admin-configured route that is not hard-coded', async (t
 
   assert.equal(res.statusCode, 201);
   assert.equal(JSON.parse(body).ok, true);
+  assert.equal(JSON.parse(body).order.total, 10000);
+  assert.equal(JSON.parse(body).order.fee, 0);
+  assert.equal(JSON.parse(body).order.reward_id, 'saved-reward');
   assert.ok(calls.some(call => call.path === '/rest/v1/ex_rates'));
 });
 
