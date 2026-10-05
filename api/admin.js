@@ -108,6 +108,21 @@ async function audit(adminId, action, targetUserId, detail) {
 
 // ── actions ──────────────────────────────────────────────────
 const actions = {
+  async account_balances({user_ids}) {
+    if (!Array.isArray(user_ids) || user_ids.length > 200 ||
+        user_ids.some(id => typeof id !== 'string' ||
+          !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)))
+      throw {status:400,code:'bad_users',message:'Provide up to 200 valid user IDs'};
+    const ids = [...new Set(user_ids.map(id => id.toLowerCase()))];
+    if (!ids.length) return [];
+    const {data,error} = await db.from('ex_customer_balances')
+      .select('user_id,available_iqd,held_iqd,updated_at').in('user_id',ids);
+    if (error) throw {status:500,code:'db_error',message:error.message};
+    const balances = new Map((data || []).map(row => [row.user_id,row]));
+    return ids.map(user_id => balances.get(user_id) ||
+      {user_id,available_iqd:0,held_iqd:0,updated_at:null});
+  },
+
   // Refund credits and wallet payouts are committed atomically by service-only
   // PostgreSQL RPCs. A browser never chooses a balance delta.
   async balance_dashboard(_payload,_ctx) {

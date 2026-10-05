@@ -10,6 +10,7 @@ on:
       - 'test/exchange-order-permissions.sql'
       - 'test/exchange-reward-pricing.test.js'
       - 'test/exchange-admin-rewards-refund.test.js'
+      - 'test/exchange-account-balances-ui.test.js'
       - 'test/exchange-admin-refund-reward-cap.sql'
       - 'assets/js/**'
       - 'assets/css/exchange-balance.css'
@@ -19,7 +20,7 @@ on:
       - 'SUPABASE_EXCHANGE_*.sql'
       - '.github/workflows/exchange-balance-check.yml'
   push:
-    branches: [feat/exchange-refund-balance-20261005, feat/exchange-admin-refund-capped-rewards-20261005]
+    branches: [feat/exchange-refund-balance-20261005, feat/exchange-admin-refund-capped-rewards-20261005, fix/exchange-per-user-balances-20261005]
 jobs:
   static-and-build:
     runs-on: ubuntu-latest
@@ -43,7 +44,7 @@ jobs:
       - name: Build Vercel static output
         run: node scripts/prepare-vercel.mjs
       - name: Verify authenticated orders, admin refunds and capped fee rewards
-        run: node --test test/orders-route.test.js test/exchange-reward-pricing.test.js test/exchange-admin-rewards-refund.test.js
+        run: node --test test/orders-route.test.js test/exchange-reward-pricing.test.js test/exchange-admin-rewards-refund.test.js test/exchange-account-balances-ui.test.js
       - name: Verify deployed asset and board paths
         run: |
           node --input-type=module -e "

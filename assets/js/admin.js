@@ -1398,12 +1398,35 @@ function refreshOrdersEverywhere(){
 // ══════════════════════════════════════════════════════════════
 // ═══ ACCOUNTS ════════════════════════════════════════════════════
 // ══════════════════════════════════════════════════════════════
+let _accountBalances = Object.create(null);
+async function loadAccountBalances(userIds){
+  const balances=Object.create(null);
+  for(let from=0;from<userIds.length;from+=200){
+    const rows=await adminApiRequest('account_balances',{user_ids:userIds.slice(from,from+200)});
+    rows.forEach(row=>{balances[row.user_id]=row;});
+  }
+  _accountBalances=balances;
+}
+function accountBalanceValue(row){
+  return row ? formatNum(row.available_iqd)+' دینار' : '—';
+}
+function accountBalanceCell(id){
+  const row=_accountBalances[id];
+  return '<div>'+accountBalanceValue(row)+'</div>'+
+    (row&&Number(row.held_iqd)>0?'<div class="rec-card-sub">پارەی گیراو: '+formatNum(row.held_iqd)+' دینار</div>':'');
+}
+function accountBalanceDetails(row){
+  return '<div class="ai-sec">باڵانسی هەژمار</div>'+
+    '<div class="detail-row"><div class="lbl">باڵانسی بەردەست</div><div class="val">'+accountBalanceValue(row)+'</div></div>'+
+    '<div class="detail-row"><div class="lbl">پارەی گیراو</div><div class="val">'+(row?formatNum(row.held_iqd)+' دینار':'—')+'</div></div>'+
+    '<div class="detail-row"><div class="lbl">دوایین نوێکردنەوە</div><div class="val">'+(row?.updated_at?fmtDateTime(row.updated_at):'—')+'</div></div>';
+}
 async function loadAccounts(){
   document.getElementById('accountsTableWrap').innerHTML='<div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>';
   try{
     allAccounts = await fetchAllProfiles();
-    await loadAccountIps();     // one round-trip for every account's last IP
-    renderAccounts();
+    await Promise.all([loadAccountIps(),loadAccountBalances(allAccounts.map(a=>a.id))]);
+    filterAccounts();
   }catch(e){
     document.getElementById('accountsTableWrap').innerHTML=`<div class="empty"><i class="fas fa-triangle-exclamation"></i><p>هەڵە: ${esc(e.message)}</p></div>`;
   }
@@ -1453,9 +1476,10 @@ function accBadges(a){
 }
 function renderAccTable(list){
   if(!list.length) return '<div class="empty"><i class="fas fa-user-slash"></i><p>هیچ هەژمارێک نییە</p></div>';
-  return `<table><thead><tr><th>بەکارهێنەر</th><th>مۆبایل</th><th>IP و ئامێر</th><th>باری</th><th>بەرواری تۆمارکردن</th><th>کردار</th></tr></thead><tbody>
+  return `<table><thead><tr><th>بەکارهێنەر</th><th>باڵانسی بەردەست</th><th>مۆبایل</th><th>IP و ئامێر</th><th>باری</th><th>بەرواری تۆمارکردن</th><th>کردار</th></tr></thead><tbody>
     ${list.map(a=>`<tr>
       <td><div class="user-cell"><div class="mini-av">${(a.full_name||a.email||'?')[0].toUpperCase()}</div><div><div class="user-cell-name">${esc(a.full_name||'—')}</div><div class="user-cell-email">${esc(a.email||'—')}</div>${a.username?`<div class="user-cell-handle" dir="ltr">@${esc(a.username)}</div>`:''}</div></div></td>
+      <td>${accountBalanceCell(a.id)}</td>
       <td style="direction:ltr;font-size:12px">${esc(a.phone||'—')}</td>
       <td>${accIpCell(a.id)}</td>
       <td>${accBadges(a)}</td>
@@ -1479,6 +1503,7 @@ function renderAccCards(list){
         <div class="rec-card-info"><div class="rec-card-name">${esc(a.full_name||'بێ ناو')}</div><div class="rec-card-sub">${esc(a.email||'—')}</div>${a.username?`<div class="rec-card-sub" style="color:var(--cy)">@${esc(a.username)}</div>`:''}</div>
       </div>
       <div class="rec-card-meta">${accBadges(a)}<div class="rec-card-date" dir="ltr">${fmtDateTime(a.created_at)}</div></div>
+      <div class="detail-row"><div class="lbl">باڵانسی بەردەست</div><div class="val">${accountBalanceCell(a.id)}</div></div>
       <div class="rec-card-actions g3">
         <div class="act-btn bl" onclick="openAccountInfo('${a.id}')"><i class="fas fa-circle-info"></i> زانیاری</div>
         <div class="act-btn dark" onclick="openSetPasswordModal('${a.id}','${esc(a.email||'').replace(/'/g,"\\'")}')"><i class="fas fa-key"></i> وشەی نهێنی</div>
@@ -1493,6 +1518,7 @@ function renderAccCards(list){
 // ═══ ACCOUNT INFO ════════════════════════════════════════════════
 // Injected from JS so no change to exchange-admin.html is needed.
 // ══════════════════════════════════════════════════════════════
+let _accountInfoLoad=0;
 function ensureAccountInfoModal(){
   if(document.getElementById('moAccountInfo')) return;
   const o=document.createElement('div');
@@ -1512,6 +1538,7 @@ async function openAccountInfo(id){
   const a=allAccounts.find(x=>x.id===id);
   if(!a){ showToast('هەژمارەکە نەدۆزرایەوە','rd'); return; }
   ensureAccountInfoModal();
+  const loadId=++_accountInfoLoad;
   document.getElementById('aiTitle').textContent=a.full_name||a.email||'زانیاری هەژمار';
 
   const base=`
@@ -1527,14 +1554,24 @@ async function openAccountInfo(id){
     <div class="detail-row"><div class="lbl">تەمەنی هەژمار</div><div class="val" dir="rtl">${fmtAgo(a.created_at)||'—'}</div></div>
     <div class="detail-row"><div class="lbl">ئایدی بەکارهێنەر</div><div class="val" style="font-size:11px">${esc(a.id)}</div></div>`;
 
-  document.getElementById('aiBody').innerHTML = base +
+  document.getElementById('aiBody').innerHTML = base + accountBalanceDetails(null) +
     `<div class="ai-sec">چالاکی</div><div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>`;
   openMo('moAccountInfo');
 
-  const [ordersRes, ipsRes] = await Promise.all([
+  const [ordersRes, ipsRes, balanceRes] = await Promise.all([
     sb.from('ex_orders').select('status,total,created_at').eq('user_id',id).order('created_at',{ascending:false}),
-    securityRequest('user-ips',{query:'&user_id='+encodeURIComponent(id)+'&limit=5'}).catch(()=>({ips:[]}))
+    securityRequest('user-ips',{query:'&user_id='+encodeURIComponent(id)+'&limit=5'}).catch(()=>({ips:[]})),
+    adminApiRequest('account_balances',{user_ids:[id]}).then(data=>({data})).catch(error=>({error}))
   ]);
+
+  if(loadId!==_accountInfoLoad)return;
+  if(!balanceRes.error){
+    _accountBalances[id]=balanceRes.data[0];
+    if(_curPage==='accounts')filterAccounts();
+  }
+  const balanceHtml=balanceRes.error
+    ? '<div class="ai-sec">باڵانسی هەژمار</div><div class="fee-toggle-note">نەتوانرا باڵانس بخوێندرێتەوە: '+esc(balanceRes.error.message)+'</div>'
+    : accountBalanceDetails(balanceRes.data[0]);
 
   const orders = ordersRes.data||[];
   const n  = s => orders.filter(o=>o.status===s).length;
@@ -1542,7 +1579,7 @@ async function openAccountInfo(id){
                        .reduce((s,o)=>s+(parseFloat(o.total)||0),0);
   const last = orders[0];
 
-  let html = base + `
+  let html = base + balanceHtml + `
     <div class="ai-sec">چالاکی داواکارییەکان</div>
     <div class="ai-stats">
       <div class="ai-stat"><b>${formatNum(orders.length)}</b><span>کۆی داواکاری</span></div>
@@ -1577,6 +1614,7 @@ async function openAccountInfo(id){
   document.getElementById('aiBody').innerHTML = html;
   try{
     const rows=await sb.rpc('ex_admin_kyc_search_users',{p_query:id,p_limit:1});
+    if(loadId!==_accountInfoLoad)return;
     const st=rows.data?.[0]?.kyc_status||'none';
     const el=document.getElementById('aiKycStatus');
     if(el) el.innerHTML=kycBadgeHTML(st);
