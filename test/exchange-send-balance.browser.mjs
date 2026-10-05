@@ -67,28 +67,27 @@ try{
     assert.equal(await page.locator('#balanceSendSection').isVisible(),true);
     // Exercise the actual source picker shown in the customer's screenshot.
     await page.evaluate(()=>{
-      window.FROM_OPTIONS=['FastPay'];window.RECEIVE_OPTIONS=['FastPay'];
-      window.METHOD_META={FastPay:{label:'FastPay'}};window.ICON={banknote:''};
+      window.FROM_OPTIONS=['FastPay','AccountBalance'];window.RECEIVE_OPTIONS=['FastPay'];
+      window.METHOD_META={FastPay:{label:'FastPay'},AccountBalance:{label:'باڵانسی هەژمار',color:'#2563eb',icon:'<svg viewBox="0 0 24 24"><path d="M2 5h20v14H2z"/></svg>'}};window.ICON={banknote:''};
+      window.needsSenderPhone=()=>false;window._balanceOrderKey=null;window.clearFieldError=()=>{};window.calc=()=>{};
+      window.updatePlaceholder=()=>{};window.kycExchangeBlocked=()=>false;
       window.getWalletInfo=()=>({locked:false});window.routeAllowed=()=>true;
-      window.methodIconHTML=()=>'';
-      document.getElementById('from').innerHTML='<option value="FastPay">FastPay</option>';
+
+      document.getElementById('from').innerHTML='<option value="FastPay">FastPay</option><option value="AccountBalance">باڵانسی هەژمار</option>';
       document.getElementById('receiveVia').innerHTML='<option value="FastPay">FastPay</option>';
     });
     const app=read('assets/js/app.js');
-    await page.addScriptTag({content:app.slice(app.indexOf('const _sheetCloseTimers'),app.indexOf('const TOAST_ICON'))});
+    const actualIcon=app.match(/AccountBalance: \{ color:'#2563eb', icon:'([^']*)' \}/)[1];
+    await page.evaluate(icon=>{window.METHOD_META.AccountBalance.icon=icon;},actualIcon);
+    await page.addScriptTag({content:app.slice(app.indexOf('function methodIconHTML'),app.indexOf('const TOAST_ICON'))+app.slice(app.indexOf('function updateWallet(){'),app.indexOf('function updatePlaceholder(){'))});
     await page.locator('#fromTrigger').click();
     assert.equal(await page.locator('#accountBalanceSourceOption').isVisible(),true);
     assert.match(await page.locator('#accountBalanceSourceOption').textContent(),/باڵانسی هەژمار/);
     await page.locator('#accountBalanceSourceOption').click();
-    await page.waitForFunction(()=>document.activeElement.id==='balanceStatusMessage');
-    assert.equal(await page.locator('#balancePayoutForm').isVisible(),false);
-    assert.equal(await page.locator('#from').inputValue(),'FastPay','Internal funds must not become a forged wallet order');
-    await page.waitForFunction(()=>document.getElementById('pickerSheet').style.display==='none');
-    await page.evaluate(()=>{window.fixtureEnabled=true;window.fixtureAmount=40000;});
-    await page.locator('#fromTrigger').click();
-    await page.locator('#accountBalanceSourceOption').click();
-    await page.waitForFunction(()=>document.activeElement.id==='balanceDestWallet');
-    assert.equal(await page.locator('#balancePayoutForm').isVisible(),true);
+    assert.equal(await page.locator('#from').inputValue(),'AccountBalance','Balance must be a selected source');
+    assert.equal(await page.locator('#fromTriggerLabel').textContent(),'باڵانسی هەژمار');
+    assert.equal(await page.locator('#fromTriggerIcon svg').count(),1,'Balance has an actual wallet icon');
+    assert.equal(await page.locator('#grpProof').isVisible(),false,'Internal funds require no external receipt');
     await page.waitForFunction(()=>document.getElementById('pickerSheet').style.display==='none');
     await page.evaluate(()=>openPicker('receive'));
     assert.equal(await page.locator('#accountBalanceSourceOption').count(),0,'Balance is a send source only');

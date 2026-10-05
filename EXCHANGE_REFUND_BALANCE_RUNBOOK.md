@@ -43,3 +43,11 @@ group by journal_id
 having sum(delta_iqd) <> 0;
 ```
 This must return zero rows. Also inspect the full authorized `ex_admin_balance_reconcile` result. The application records manual settlement decisions; it does not autonomously transfer funds between external wallets.
+
+
+## Account balance as an exchange source
+Apply `SUPABASE_EXCHANGE_BALANCE_SOURCE.sql` before releasing the AccountBalance order API. This seeds only the new Send source and its outgoing routes at 2%; it changes no prior wallet or carrier fee. The admin wallet/pair and Rates editors manage these routes normally. Incoming deposits to AccountBalance and USDT balance routes are blocked.
+
+AccountBalance is selected in the same Send picker/form. Its wallet icon and available amount are visible, sender identity comes from the authenticated profile, and no external payment receipt is required. POST `/api/orders` invokes a service-only atomic RPC: configured pricing/rewards, order creation, full principal debit, and double-entry journal either all commit or all roll back. Per-user request keys prevent repeated debits and reject changed retry payloads. Debit proof is shown in the admin order details; explicit admin refund verifies that proof and restores the full principal once. Ordinary rejection does not refund automatically.
+
+This exchange path is controlled by the AccountBalance wallet lock and outgoing route switches; the older standalone payout configuration remains unchanged. The balance card directs customers into this exchange source. Reward quotas refresh when Send resumes, periodically, before confirmation, and after submission. The customer fee line now displays the actual fee, including the ordinary route fee after the quota is exhausted.

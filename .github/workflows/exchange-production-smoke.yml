@@ -15,10 +15,10 @@ jobs:
           set -euo pipefail
           for attempt in $(seq 1 24); do
             if curl -fLsS --max-time 15 'https://www.proxobalance.app/exchange-admin' -o current-admin.html &&
-               grep -q 'assets/js/admin.js?v=17' current-admin.html &&
-               curl -fLsS --max-time 15 'https://www.proxobalance.app/assets/js/app.js?v=40' -o current-app.js &&
+               grep -q 'assets/js/admin.js?v=18' current-admin.html &&
+               curl -fLsS --max-time 15 'https://www.proxobalance.app/assets/js/app.js?v=41' -o current-app.js &&
                grep -q 'accountBalanceSourceOption' current-app.js &&
-               curl -fLsS --max-time 15 'https://www.proxobalance.app/assets/js/exchange-balance.js?v=3' -o current-balance.js &&
+               curl -fLsS --max-time 15 'https://www.proxobalance.app/assets/js/exchange-balance.js?v=4' -o current-balance.js &&
                grep -q 'openAccountBalanceSend' current-balance.js; then
               exit 0
             fi
@@ -42,16 +42,16 @@ jobs:
           grep -q 'id="rewardAmountCap"' exchange-admin.html
           grep -q 'id="rewardScope"' exchange-admin.html
           grep -q 'ڕەتکردنەوە و گەڕاندنەوە بۆ باڵانس' exchange-admin.html
-          grep -q 'exchange-balance-admin.js?v=3' exchange-admin.html
-          grep -q 'admin.js?v=17' exchange-admin.html
-          curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/assets/js/admin.js?v=17" -o admin.js
+          grep -q 'exchange-balance-admin.js?v=4' exchange-admin.html
+          grep -q 'admin.js?v=18' exchange-admin.html
+          curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/assets/js/admin.js?v=18" -o admin.js
           grep -q 'accountBalanceCell' admin.js
           grep -q 'accountBalanceDetails' admin.js
           grep -q "'account_balances'" admin.js
-          curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/assets/js/exchange-balance.js?v=3" -o exchange-balance.js
+          curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/assets/js/exchange-balance.js?v=4" -o exchange-balance.js
           grep -q 'requestBalancePayout' exchange-balance.js
           grep -q 'refreshVisibleBalance' exchange-balance.js
-          curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/assets/js/exchange-balance-admin.js?v=3" -o exchange-balance-admin.js
+          curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/assets/js/exchange-balance-admin.js?v=4" -o exchange-balance-admin.js
           grep -q 'creditVerifiedRefund' exchange-balance-admin.js
           grep -q 'startBalancePayout' exchange-balance-admin.js
           grep -q 'abortProcessingPayout' exchange-balance-admin.js

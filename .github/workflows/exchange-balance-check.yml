@@ -14,6 +14,7 @@ on:
       - 'test/exchange-send-balance.test.js'
       - 'test/exchange-send-balance.browser.mjs'
       - 'test/exchange-scoped-rewards.sql'
+      - 'test/exchange-balance-source.sql'
       - 'test/exchange-admin-refund-reward-cap.sql'
       - 'assets/js/**'
       - 'assets/css/exchange-balance.css'

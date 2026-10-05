@@ -161,6 +161,7 @@ export default withSecurity(async (req, res, { context, user }) => {
   const toMethod = oneLine(body.to_method, 30);
   const amount = Number(body.amount);
   const phone = oneLine(body.phone, 32).replace(/\s+/g, '');
+  const balanceSource = fromMethod === 'AccountBalance';
   const carrierSender = CARRIER_SENDER_METHODS.has(fromMethod);
   const senderPhone = oneLine(body.sender_phone, 32).replace(/[^0-9]/g, '');
   const receiptUrl = cleanReceiptUrl(body.receipt_url);
@@ -181,7 +182,11 @@ export default withSecurity(async (req, res, { context, user }) => {
   if (carrierSender && !/^07\d{9}$/.test(senderPhone)) {
     return json(res, 422, { error: 'Invalid sender number' });
   }
-  if (!receiptUrl || !receiptHash) return json(res, 422, { error: 'Receipt is required' });
+  if (balanceSource && (!Number.isSafeInteger(amount) || toMethod==='USDT' ||
+      !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(body.request_key||''))))
+    return json(res,422,{error:'Valid balance request key and whole IQD amount required'});
+  if (toMethod==='AccountBalance') return json(res,422,{error:'Account balance is a Send source only'});
+  if (!balanceSource && (!receiptUrl || !receiptHash)) return json(res, 422, { error: 'Receipt is required' });
 
   const rates = await serviceFetch(
     `/rest/v1/ex_rates?from_method=eq.${encodeURIComponent(fromMethod)}&to_method=eq.${encodeURIComponent(toMethod)}&is_active=eq.true&select=rate_type,rate_value&limit=1`
@@ -223,14 +228,14 @@ export default withSecurity(async (req, res, { context, user }) => {
       amount,
       phone_masked: maskedPhone,
       sender_phone_masked: maskedSenderPhone,
-      receipt_hash_prefix: receiptHash.slice(0, 12)
+      receipt_hash_prefix: balanceSource ? null : receiptHash.slice(0, 12)
     },
     p_threshold: 3,
     p_auto_ban_threshold: 8
   });
   if (velocity?.banned) return stealth404(res);
 
-  const duplicateKind = await findDuplicate(receiptHash, transactionReference, { userId: user.id });
+  const duplicateKind = balanceSource ? null : await findDuplicate(receiptHash, transactionReference, { userId: user.id });
   if (duplicateKind) {
     await logThreat('duplicate_transaction_reference', context, user, {
       detail: `Duplicate ${duplicateKind} probe`,
@@ -256,6 +261,13 @@ export default withSecurity(async (req, res, { context, user }) => {
   };
 
   try {
+    if (balanceSource) {
+      const order = await rpc('ex_balance_create_order', {
+        p_user_id:user.id,p_request_key:body.request_key,p_to:toMethod,
+        p_amount:amount,p_phone:phone,p_security_log_id:velocity?.log_id||null
+      });
+      return json(res,201,{ok:true,order});
+    }
     const rows = await serviceFetch('/rest/v1/ex_orders?select=*', {
       method: 'POST',
       headers: { Prefer: 'return=representation' },
@@ -270,6 +282,11 @@ export default withSecurity(async (req, res, { context, user }) => {
       }
     });
   } catch (error) {
+    if (balanceSource) {
+      const message=String(error.message||'Balance order failed');
+      return json(res,409,{error:/INSUFFICIENT_BALANCE/.test(message)
+        ? 'باڵانسی بەردەست بەشی ئەم بڕە ناکات' : message});
+    }
     if (error.details?.code === '23505') {
       await logThreat('duplicate_transaction_reference', context, user, {
         detail: 'Unique receipt/reference constraint was triggered',

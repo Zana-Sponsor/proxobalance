@@ -85,14 +85,15 @@ async function lookupBalanceOrder(){
       search:document.getElementById('balanceOrderSearch').value.trim()
     });
     const o=result.order,p=result.profile||{};
-    const eligible=!result.refund&&o.status!=='پەسەندکرا'&&!o.payout_receipt_url&&!!o.receipt_url&&o.from_method!=='USDT'&&o.to_method!=='USDT';
+    const eligible=!result.refund&&o.status!=='پەسەندکرا'&&!o.payout_receipt_url&&(!!o.receipt_url||!!o.balance_debit_journal_id)&&o.from_method!=='USDT'&&o.to_method!=='USDT';
     out.innerHTML='<div><b>'+esc(o.order_code)+'</b> — '+esc(p.full_name||p.email||o.user_id)+'</div>'+
       '<div>بڕی پارە: <b>'+balanceMoney(o.amount)+'</b> | '+esc(o.from_method)+' → '+esc(o.to_method)+'</div>'+
       '<div>بار: '+esc(o.status)+' | '+balanceDate(o.created_at)+'</div>'+
-      '<div>'+(o.receipt_url?'<a target="_blank" rel="noopener noreferrer" href="'+esc(o.receipt_url)+'">بینینی پسووڵەی نێرەر</a>':'بەبێ پسووڵە')+'</div>'+
+      '<div>'+(o.receipt_url?'<a target="_blank" rel="noopener noreferrer" href="'+esc(o.receipt_url)+'">بینینی پسووڵەی نێرەر</a>':o.balance_debit_journal_id?'کەمکردنەوە لە باڵانس: '+esc(o.balance_debit_journal_id):'بەبێ پسووڵە')+'</div>'+
       (result.refund?'<b style="color:#b91c1c">ئەم مامەڵەیە پێشتر ڕیفاوند کراوە.</b>':'')+
       (!eligible?'<div style="color:#b91c1c">ئەم مامەڵەیە بۆ گەڕاندنەوە بۆ باڵانس گونجاو نییە.</div>':'');
     _balanceChosenOrder=eligible?o:null;
+    if(eligible&&o.balance_debit_journal_id)document.getElementById('balanceBankReference').value='balance-debit:'+o.balance_debit_journal_id;
     document.getElementById('balanceCreditBtn').disabled=!eligible;
   }catch(e){out.textContent='مامەڵە نەدۆزرایەوە';err.textContent=e.message;}
 }
