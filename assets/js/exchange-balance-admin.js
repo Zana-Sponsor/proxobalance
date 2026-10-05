@@ -116,7 +116,7 @@ async function startBalancePayout(id){
   const p=(_balanceAdminData?.payouts||[]).find(x=>x.id===id&&x.status==='pending');
   if(!p)return;
   const verification=prompt('خاوەندارێتی جزدان، ژمارە و ناوی وەرگر پشتڕاست بکەرەوە. ژمارە/تێبینی بەڵگەی پشتڕاستکردنەوە بنووسە:');
-  if(!verification||verification.trim().length<10){showToast('بەڵگەی پشتڕاستکردنەوە پێویستە','rd');return;}
+  if(!verification||verification.trim().length<10||verification.trim().length>160){showToast('بەڵگەی پشتڕاستکردنەوە پێویستە','rd');return;}
   if(!confirm('داواکاری دەچێتە باری ناردن؛ کڕیار چیتر ناتوانێت هەڵیبوشێنێتەوە. ئایا خاوەندارێتی جزدان پشتڕاست کراوەتەوە؟'))return;
   try{
     await adminApiRequest('balance_claim_payout',{payout_id:id,verification:verification.trim()});
