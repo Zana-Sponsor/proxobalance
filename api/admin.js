@@ -108,6 +108,108 @@ async function audit(adminId, action, targetUserId, detail) {
 
 // ── actions ──────────────────────────────────────────────────
 const actions = {
+  // Refund credits and wallet payouts are committed atomically by service-only
+  // PostgreSQL RPCs. A browser never chooses a balance delta.
+  async balance_dashboard(_payload,_ctx) {
+    const [balances,refunds,payouts,alerts,config] = await Promise.all([
+      db.from('ex_customer_balances').select('*').or('available_iqd.gt.0,held_iqd.gt.0').order('updated_at',{ascending:false}).limit(150),
+      db.from('ex_refund_cases').select('*').order('created_at',{ascending:false}).limit(150),
+      db.from('ex_payout_requests').select('*').order('created_at',{ascending:false}).limit(150),
+      db.from('ex_balance_risk_alerts').select('*').eq('status','open').order('created_at',{ascending:false}).limit(100),
+      db.from('ex_balance_config').select('*').eq('id',true).single()
+    ]);
+    for(const r of [balances,refunds,payouts,alerts,config]) if(r.error)throw r.error;
+    const ids=[...new Set([...(balances.data||[]),...(refunds.data||[]),
+      ...(payouts.data||[]),...(alerts.data||[])].map(x=>x.user_id).filter(Boolean))];
+    const names=ids.length?await db.from('ex_profiles').select('id,full_name,username,email').in('id',ids):{data:[],error:null};
+    if(names.error)throw names.error;
+    const reconciliation=await db.rpc('ex_admin_balance_reconcile',{p_admin_id:_ctx.user.id});
+    if(reconciliation.error)throw reconciliation.error;
+    const profiles=Object.fromEntries((names.data||[]).map(p=>[p.id,p]));
+    return {balances:balances.data||[],refunds:refunds.data||[],
+      payouts:payouts.data||[],alerts:alerts.data||[],config:config.data,profiles,
+      reconciliation:reconciliation.data};
+  },
+
+  async balance_lookup_order({search},_ctx){
+    const q=String(search||'').trim();
+    if(!/^(?:[0-9a-f-]{36}|P[A-Z0-9]{11})$/i.test(q))
+      throw {status:400,code:'invalid_order',message:'Enter an exact order code or UUID'};
+    let query=db.from('ex_orders')
+      .select('id,order_code,user_id,amount,total,fee,from_method,to_method,receipt_url,receipt_hash,status,created_at,decided_at,balance_refunded_at')
+      .limit(1);
+    query=/^[0-9a-f-]{36}$/i.test(q)?query.eq('id',q):query.eq('order_code',q.toUpperCase());
+    const {data:order,error}=await query.maybeSingle();
+    if(error)throw error;
+    if(!order)throw {status:404,code:'order_not_found',message:'Order not found'};
+    const [p,r]=await Promise.all([
+      db.from('ex_profiles').select('id,full_name,username,email').eq('id',order.user_id).maybeSingle(),
+      db.from('ex_refund_cases').select('id,status,amount_iqd,created_at,bank_verification_reference')
+        .eq('order_id',order.id).maybeSingle()
+    ]);
+    if(p.error)throw p.error;if(r.error)throw r.error;
+    return {order,profile:p.data,refund:r.data};
+  },
+
+  async balance_credit_refund({order_id,verification_reference,failure_reason,
+    confirmed_received,confirmed_failed},ctx){
+    if(confirmed_received!==true||confirmed_failed!==true)
+      throw {status:400,code:'confirmation_required',message:'Both bank verification checkboxes are required'};
+    const {data,error}=await db.rpc('ex_balance_credit_refund',{
+      p_order_id:order_id,p_admin_id:ctx.user.id,
+      p_verification_reference:String(verification_reference||'').trim().slice(0,160),
+      p_failure_reason:String(failure_reason||'').trim().slice(0,2000),
+      p_confirmed_received:true,p_confirmed_failed:true
+    });
+    if(error){
+      if(['23505','23514'].includes(error.code)){
+        const order=await db.from('ex_orders').select('user_id').eq('id',order_id).maybeSingle();
+        await db.from('ex_balance_risk_alerts').insert({
+          user_id:order.data?.user_id||null,kind:'duplicate_or_ineligible_refund',
+          reference_id:order_id,details:{code:error.code,actor:ctx.user.id}
+        });
+      }
+      throw {status:409,code:error.code||'refund_failed',message:error.message};
+    }
+    return data;
+  },
+
+  async balance_cancel_payout({payout_id,reason},ctx){
+    const {data,error}=await db.rpc('ex_balance_cancel_payout',{
+      p_payout_id:payout_id,p_actor:ctx.user.id,
+      p_reason:String(reason||'Cancelled by admin').slice(0,500)
+    });
+    if(error)throw {status:409,code:error.code||'cancel_failed',message:error.message};
+    await audit(ctx.user.id,'balance_payout_cancelled',data.user_id,String(data.id));
+    return data;
+  },
+
+  async balance_mark_payout_paid({payout_id,transfer_reference,
+    destination_verification,receipt_url,note,confirmed},ctx){
+    if(confirmed!==true)
+      throw {status:400,code:'confirmation_required',message:'Actual external transfer must be verified'};
+    const {data,error}=await db.rpc('ex_balance_mark_payout_paid',{
+      p_payout_id:payout_id,p_admin_id:ctx.user.id,
+      p_reference:String(transfer_reference||'').trim().slice(0,160),
+      p_verification_reference:String(destination_verification||'').trim().slice(0,160),
+      p_receipt_url:String(receipt_url||'').trim().slice(0,2000),
+      p_note:String(note||'').trim().slice(0,500)
+    });
+    if(error)throw {status:409,code:error.code||'payout_failed',message:error.message};
+    return data;
+  },
+
+  async balance_resolve_risk({id,status},ctx){
+    if(!['reviewed','dismissed'].includes(status))
+      throw {status:400,code:'bad_status',message:'Invalid resolution'};
+    const {data,error}=await db.from('ex_balance_risk_alerts').update({
+      status,resolved_at:new Date().toISOString(),resolved_by:ctx.user.id
+    }).eq('id',id).eq('status','open').select().maybeSingle();
+    if(error)throw error;
+    if(data)await audit(ctx.user.id,'balance_risk_'+status,data.user_id,String(id));
+    return {updated:!!data};
+  },
+
   async ping(_payload, ctx) {
     return { pong: true, admin: ctx.profile.email };
   },
@@ -118,7 +220,7 @@ const actions = {
     const { data: order, error: e1 } = await db
       .from('ex_orders').select('*').eq('id', order_id).single();
     if (e1 || !order) throw { status: 404, code: 'not_found', message: 'Order not found' };
-    if (!REVIEWABLE_ORDER_STATUSES.has(order.status)) {
+    if (order.balance_refunded_at || !REVIEWABLE_ORDER_STATUSES.has(order.status)) {
       throw { status: 409, code: 'already_decided', message: 'Order is not ready for review' };
     }
 
@@ -139,7 +241,7 @@ const actions = {
     const { data: order, error: e1 } = await db
       .from('ex_orders').select('*').eq('id', order_id).single();
     if (e1 || !order) throw { status: 404, code: 'not_found', message: 'Order not found' };
-    if (!REVIEWABLE_ORDER_STATUSES.has(order.status)) {
+    if (order.balance_refunded_at || !REVIEWABLE_ORDER_STATUSES.has(order.status)) {
       throw { status: 409, code: 'already_decided', message: 'Order is not ready for review' };
     }
 
@@ -215,6 +317,77 @@ const actions = {
       .order('correction_number', { ascending: false });
     if (error) throw { status: 500, code: 'db_error', message: error.message };
     return data || [];
+  },
+
+  // All reward writes are server-only, after requireAdmin() verifies the JWT
+  // and ex_profiles.is_admin. Never accept reward values from the customer UI.
+  async list_rewards({ limit = 100 }, _ctx) {
+    const count = Number.isInteger(Number(limit)) ? Math.min(200, Math.max(1, Number(limit))) : 100;
+    const db = getDb();
+    const { data, error } = await db.from('ex_user_rewards').select('*')
+      .order('created_at', { ascending: false }).limit(count);
+    if (error) throw error;
+    const ids = [...new Set((data || []).map(r => r.user_id))];
+    let profiles = [];
+    if (ids.length) {
+      const result = await db.from('ex_profiles').select('id,full_name,username,email').in('id', ids);
+      if (result.error) throw result.error;
+      profiles = result.data || [];
+    }
+    const names = new Map(profiles.map(p => [p.id, p]));
+    return (data || []).map(r => ({ ...r, profile: names.get(r.user_id) || null }));
+  },
+
+  async grant_reward({ user_id, kind, discount_percent, max_uses, valid_until, note }, ctx) {
+    if (!/^[0-9a-f-]{36}$/i.test(String(user_id || '')))
+      throw { status: 400, code: 'bad_user', message: 'A valid user is required' };
+    if (!['free_transactions', 'fee_discount'].includes(kind))
+      throw { status: 400, code: 'bad_kind', message: 'Invalid reward type' };
+    const percent = kind === 'free_transactions' ? 100 : Number(discount_percent);
+    if (!Number.isFinite(percent) || percent <= 0 || percent > 100)
+      throw { status: 400, code: 'bad_discount', message: 'Discount must be between 0 and 100%' };
+    const uses = max_uses == null || max_uses === '' ? null : Number(max_uses);
+    if ((uses === null && kind === 'free_transactions') ||
+        (uses !== null && (!Number.isInteger(uses) || uses < 1 || uses > 1000)))
+      throw { status: 400, code: 'bad_uses', message: 'Free transactions need a valid use limit (1–1000)' };
+    const expiry = valid_until ? new Date(valid_until) : null;
+    if (expiry && (!Number.isFinite(expiry.getTime()) || expiry.getTime() <= Date.now()))
+      throw { status: 400, code: 'bad_expiry', message: 'Expiration must be in the future' };
+    const db = getDb();
+    const { data: profile, error: profileError } = await db.from('ex_profiles')
+      .select('id,is_banned').eq('id', user_id).maybeSingle();
+    if (profileError) throw profileError;
+    if (!profile || profile.is_banned)
+      throw { status: 400, code: 'invalid_recipient', message: 'Recipient is missing or banned' };
+    const { data, error } = await db.from('ex_user_rewards').insert({
+      user_id, kind, discount_percent: percent, max_uses: uses,
+      valid_until: expiry ? expiry.toISOString() : null,
+      note: String(note || '').trim().slice(0, 200) || null,
+      created_by: ctx.user.id
+    }).select().single();
+    if (error) throw error;
+    await audit(ctx.user.id, 'grant_reward', user_id, data.id + ' ' + kind + ' ' + percent + '% / ' + (uses ?? 'unlimited'));
+    // A failed notification must never undo an already committed reward.
+    try {
+      await db.from('ex_notifications').insert({
+        user_id, type: 'admin', title: 'پاداشتێکت پێدرا',
+        message: kind === 'free_transactions'
+          ? 'ژمارەی ' + uses + ' مامەڵەی بێ لێبڕینت پێدرا.'
+          : 'داشکاندنی ' + percent + '% لە لێبڕینت پێدرا.'
+      });
+    } catch (_) { /* reward is already saved */ }
+    return data;
+  },
+
+  async revoke_reward({ id }, ctx) {
+    if (!/^[0-9a-f-]{36}$/i.test(String(id || '')))
+      throw { status: 400, code: 'bad_reward', message: 'Valid reward ID required' };
+    const { data, error } = await getDb().from('ex_user_rewards')
+      .update({ active: false, updated_at: new Date().toISOString() })
+      .eq('id', id).eq('active', true).select().maybeSingle();
+    if (error) throw error;
+    if (data) await audit(ctx.user.id, 'revoke_reward', data.user_id, data.id);
+    return { revoked: !!data };
   },
 
   async set_ban({ user_id, banned }, ctx) {

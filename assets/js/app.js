@@ -565,6 +565,7 @@ const db = firebase.database();
 const SB_URL=atob('aHR0cHM6Ly9weWN4dXVnb2Jsa3NsdndlYnh1dS5zdXBhYmFzZS5jbw==');
 const SB_KEY=atob('ZXlKaGJHY2lPaUpJVXpJMU5pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SnBjM01pT2lKemRYQmhZbUZ6WlNJc0luSmxaaUk2SW5CNVkzaDFkV2R2WW14cmMyeDJkMlZpZUhWMUlpd2ljbTlzWlNJNkltRnViMjRpTENKcFlYUWlPakUzT0RZeU1UazNPVGtzSW1WNGNDSTZNakV3TVRjNU5UYzVPWDAuVlJSd3hubnVMc19XT1J1VlVPM29YM0NMeHJQdGdHX3Vld0lKYUdyem5fcw==');
 let sb, curUser=null, curProfile=null, activeSession=null, RATES={};
+let MY_REWARDS=[];
 const N8N_WEBHOOK = 'https://email.proxopages.com/webhook/otp_exchange';
 
 let _newsItems = []; // [{text, action}]
@@ -1323,6 +1324,8 @@ async function startApp(user){
   startProofPolling();
   await loadWallets();
   await loadRates();
+  await loadMyRewards();
+  await loadMyBalance();
   pickInitialWallets();
   refreshTrigger('from');
   refreshTrigger('receiveVia');
@@ -1417,6 +1420,31 @@ async function loadRates(){
     }
   }catch(e){}
   if(!RATES_STRICT) RATES=Object.assign({},FALLBACK_RATES);
+}
+// Customer sees only their own rewards (RLS). The database order trigger
+// is authoritative: browser previews never decide or consume a reward.
+async function loadMyRewards(){
+  MY_REWARDS=[];
+  try{
+    if(curUser && sb){
+      const {data,error}=await sb.from('ex_user_rewards')
+        .select('id,kind,discount_percent,max_uses,used_count,valid_until,active,created_at')
+        .eq('user_id',curUser.id).eq('active',true).order('created_at');
+      if(error)throw error;
+      MY_REWARDS=data||[];
+    }
+  }catch(_){ MY_REWARDS=[]; }
+  calc();
+}
+function availableFeeReward(from,to,fee){
+  if(!curUser || from==='USDT' || to==='USDT' || fee<=0)return null;
+  const now=Date.now();
+  return MY_REWARDS.filter(r=>r.active && (r.max_uses==null || Number(r.used_count)<Number(r.max_uses))
+      && (!r.valid_until || Date.parse(r.valid_until)>now))
+    .sort((a,b)=>(a.valid_until?Date.parse(a.valid_until):Infinity)-
+      (b.valid_until?Date.parse(b.valid_until):Infinity) ||
+      (a.kind==='free_transactions'?0:1)-(b.kind==='free_transactions'?0:1) ||
+      Date.parse(a.created_at)-Date.parse(b.created_at) || String(a.id).localeCompare(String(b.id)))[0]||null;
 }
 // Smallest amount any exchange is accepted for, in IQD.
 const MIN_AMOUNT = 10000;
@@ -1568,6 +1596,8 @@ function calc(){
   document.getElementById('formattedHint').innerText=formatNum(val)+(from==='USDT'?' $':' IQD');
   const totalEl=document.getElementById('totalDisplay');
   const feeEl=document.getElementById('feeDisplay');
+  const rewardBanner=document.getElementById('rewardBanner');
+  if(rewardBanner)rewardBanner.hidden=true;
   const bdRate=document.getElementById('bdRate');
   const bdFee=document.getElementById('bdFee');
   const bdSent=document.getElementById('bdSent');
@@ -1628,6 +1658,25 @@ function calc(){
         ? (formatNum(Math.floor(feeVal))+' IQD ('+fmtPct(100-r.value*100)+'%)')
         : (fmtPct(100-r.value*100)+'%');
     }else{ showFee(false); if(bdFee) bdFee.textContent='بێ کرێ'; }
+  }
+  // Always preview the same fee calculation as the server (floor base payout).
+  const basePayout=Math.floor(final);
+  const baseFee=Math.max(0,amt-basePayout);
+  const reward=availableFeeReward(from,to,baseFee);
+  if(reward){
+    const saved=reward.kind==='free_transactions'?baseFee:
+      Math.floor(baseFee*Number(reward.discount_percent)/100);
+    const discount=Math.min(baseFee,Math.max(0,saved));
+    if(discount>0){
+      final=basePayout+discount;
+      if(bdFee)bdFee.textContent=formatNum(Math.floor(baseFee-discount))+' IQD';
+      if(rewardBanner){
+        rewardBanner.hidden=false;
+        const left=reward.max_uses==null?'بێ سنوور':formatNum(reward.max_uses-reward.used_count)+' مامەڵەی ماوە';
+        rewardBanner.textContent=(reward.kind==='free_transactions'?'پاداشتی مامەڵەی بێ لێبڕین':'داشکاندنی '+reward.discount_percent+'% لە لێبڕین')+
+          ' — '+left+' (پشتڕاستکردنەوە لە کاتی ناردن)';
+      }
+    }
   }
   totalEl.innerText=formatNum(Math.floor(final))+' IQD';
   feeEl.innerText=feeTxt;
@@ -1809,6 +1858,8 @@ async function processOrder(){
       throw responseError;
     }
     const orderRow=orderPayload.order;
+    // Fetch the new remaining quota; a rejected order restores it on the server.
+    await loadMyRewards();
 
     // The Telegram alert is sent by /api/notify-order. The bot token lives in a
     // Vercel environment variable, so it never reaches the browser, and the
@@ -1899,7 +1950,8 @@ const TX_STATE = {
   'ڕاستکراوەتەوە':           { key:'pending',  cls:'status-corrected'  },
   'چاوەڕوانە':               { key:'pending',  cls:''                  }
 };
-function txStateOf(o){ return TX_STATE[o && o.status] || { key:'pending', cls:'' }; }
+function txStateOf(o){ return o?.balance_refunded_at ? {key:'done',cls:'status-success'} : (TX_STATE[o && o.status] || {key:'pending',cls:''}); }
+function txLabelOf(o){ return o?.balance_refunded_at?'پارە گەڕێندرایەوە':(o?.status||''); }
 function txAmount(value, method){
   return formatNum(Math.floor(Number(value)||0)) + (method==='USDT' ? ' $' : ' IQD');
 }
@@ -1907,7 +1959,7 @@ function txWhen(iso, withTime){ return kycFmtDate(iso, withTime); }   // shared 
 function orderCardHTML(o){
   const code=orderCodeOf(o);
   const st=txStateOf(o);
-  const needsAction=o.status==='پێویستی بە ڕاستکردنەوەیە';
+  const needsAction=!o.balance_refunded_at && o.status==='پێویستی بە ڕاستکردنەوەیە';
   return '<article class="tx-card'+(needsAction?' needs-action':'')+'" tabindex="0" role="button"'
     + ' onclick="openTxDetail(\''+escHtml(String(o.id))+'\')"'
     + ' onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();openTxDetail(\''+escHtml(String(o.id))+'\');}">'
@@ -1915,7 +1967,7 @@ function orderCardHTML(o){
       + '<span class="tx-route">'+escHtml(methodLabel(o.from_method))
         + '<span class="tx-route-arrow" aria-hidden="true">'+ICON.arrowLeftLong+'</span>'
         + escHtml(methodLabel(o.to_method))+'</span>'
-      + '<span class="status-badge '+st.cls+'">'+escHtml(o.status||'')+'</span>'
+      + '<span class="status-badge '+st.cls+'">'+escHtml(txLabelOf(o))+'</span>'
     + '</div>'
     + '<div class="tx-card-main">'
       + '<span class="tx-amount" dir="ltr">'+txAmount(o.total,o.to_method)+'</span>'
@@ -1947,7 +1999,7 @@ function openTxDetail(id){
   const isUsdt=o.from_method==='USDT';
   const fee=!isUsdt && Number(o.amount)>Number(o.total) ? Math.floor(Number(o.amount)-Number(o.total)) : 0;
   let html='<div class="tx-dhead">'
-    + '<span class="status-badge '+st.cls+'">'+escHtml(o.status||'')+'</span>'
+    + '<span class="status-badge '+st.cls+'">'+escHtml(txLabelOf(o))+'</span>'
     + '<button type="button" class="tx-dcode" onclick="copyOrderCode(\''+escHtml(code)+'\', event)" title="کۆپیکردنی ئایدی">'
       + '<span dir="ltr">'+escHtml(code)+'</span>'+ICON.copy+'</button>'
     + '</div>'
@@ -1966,13 +2018,14 @@ function openTxDetail(id){
     + txRow('ژمارەی وەرگر', o.phone, {ltr:true})
     + (o.sender_phone ? txRow('ژمارەی نێرەر', o.sender_phone, {ltr:true}) : '')
     + txRow('بەرواری ناردن', txWhen(o.created_at,true))
+    + (o.balance_refunded_at ? txRow('ڕیفاوند بۆ باڵانس',txWhen(o.balance_refunded_at,true)) : '')
     + ((o.status==='پەسەندکرا'||o.status==='ڕەتکرا') && o.decided_at ? txRow('بەرواری بڕیار', txWhen(o.decided_at,true)) : '')
     + (o.extra_info ? txRow('زانیاری زیاتر', o.extra_info) : '')
     + '</div>';
   if(o.admin_note){
     html+='<div class="tx-dnote"><b>تێبینی ئادمین</b><p>'+escHtml(o.admin_note)+'</p></div>';
   }
-  if(o.correction_request){
+  if(o.correction_request && !o.balance_refunded_at){
     html+='<div class="tx-dnote warn"><b>داواکاری ڕاستکردنەوە</b><p>'+escHtml(o.correction_request)+'</p>'
       + (o.status==='پێویستی بە ڕاستکردنەوەیە'
           ? '<button type="button" class="btn btn-primary btn-block" onclick="closeTxDetail(); openOrderCorrection(\''+escHtml(String(o.id))+'\')">ڕاستکردنەوەی مامەڵە</button>'
@@ -2200,7 +2253,7 @@ function renderHomePreview(){
 function updateNavBadge(){
   const dot=document.getElementById('bnTxDot');
   if(!dot) return;
-  const pending=_orders.filter(o=>['چاوەڕوانە','پێویستی بە ڕاستکردنەوەیە','ڕاستکراوەتەوە'].includes(o.status)).length;
+  const pending=_orders.filter(o=>!o.balance_refunded_at && ['چاوەڕوانە','پێویستی بە ڕاستکردنەوەیە','ڕاستکراوەتەوە'].includes(o.status)).length;
   if(pending>0){ dot.style.display='flex'; dot.textContent=String(pending); }
   else dot.style.display='none';
 }
