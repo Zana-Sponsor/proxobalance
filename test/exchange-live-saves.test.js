@@ -99,3 +99,12 @@ test('a label-only wallet edit does not rewrite unchanged fees',async()=>{
  const p=wallet();p.c._pairDraft.out.FIB.value='2';await p.c.saveWallet();
  assert.equal(p.calls[0].args.p_routes.length,0);
 });
+test('a temporary permission read failure does not report revoked admin access during live refresh',async()=>{
+ const src=read('assets/js/admin.js');
+ const c=vm.createContext({sb:{from(){const q={select(){return q;},eq(){return q;},
+  maybeSingle:async()=>({data:null,error:{message:'Temporary network failure'}})};return q;}},
+  staffCan:()=>true});
+ vm.runInContext(src.slice(src.indexOf('async function verifyAdmin('),src.indexOf('async function doLogin(')),c);
+ await assert.rejects(c.verifyAdmin('fixture','fixture@example.invalid',{strict:true}),e=>e.message==='Temporary network failure');
+ assert.equal(await c.verifyAdmin('fixture','fixture@example.invalid'),false);
+});
