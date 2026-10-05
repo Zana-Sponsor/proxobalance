@@ -57,6 +57,7 @@ const WALLET_VISUALS = {
   QiCard:   { color:'#2563eb', icon:ICON.qicard,   img:LOGO_B64.qicard   },
   Asiacell: { color:'#e11d48', icon:ICON.asiacell, img:LOGO_B64.asiacell },
   Korek:    { color:'#f59e0b', icon:ICON.korek,    img:LOGO_B64.korek    },
+  AccountBalance: { color:'#2563eb', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M4 5h14v3M4 5a2 2 0 0 0-2 2v12h20V8H4a1.5 1.5 0 0 1 0-3Z"/><path d="M22 12h-6v4h6"/><circle cx="18" cy="14" r=".7"/></svg>' },
   USDT:     { color:'#26a17b', icon:ICON.usdt                            }
 };
 let METHOD_META = {};
@@ -92,7 +93,7 @@ function rebuildWalletOptions(){
   });
   METHOD_META = newMeta;
   FROM_OPTIONS = rows.filter(w=>w.allow_from!==false).map(w=>w.key);
-  RECEIVE_OPTIONS = rows.filter(w=>w.allow_receive).map(w=>w.key);
+  RECEIVE_OPTIONS = rows.filter(w=>w.allow_receive&&w.key!=='AccountBalance').map(w=>w.key);
   syncNativeSelect('from', FROM_OPTIONS);
   syncNativeSelect('receiveVia', RECEIVE_OPTIONS);
 }
@@ -165,21 +166,12 @@ function openPicker(which){
   const opts = which==='from' ? FROM_OPTIONS : RECEIVE_OPTIONS;
   document.getElementById('pickerSheetTitle').textContent = which==='from' ? 'لە کوێوە دەنێریت' : 'وەرگرتن لە';
   const body = document.getElementById('pickerSheetBody');
-  // Internal funds use the authenticated balance payout flow, not a wallet
-  // order or an invented ex_wallets/ex_rates route.
-  const balanceOption = which==='from' && curUser
-    ? '<button type="button" id="accountBalanceSourceOption" class="sheet-option" onclick="selectAccountBalanceSource()">'
-      + '<span class="method-icon">'+ICON.banknote+'</span>'
-      + '<span class="sheet-option-text"><span class="sheet-option-name">باڵانسی هەژمار</span>'
-      + '<span class="sheet-option-sub">'+escHtml(document.getElementById('balanceAvailable')?.textContent||'—')+'</span></span>'
-      + '<span class="sheet-option-check"><span class="icn icn-sm icon--solar icon--solar--check-circle-linear" aria-hidden="true"></span></span></button>'
-    : '';
-  if(!opts.length && !balanceOption){
+  if(!opts.length){
     body.innerHTML = '<div class="picker-empty">هیچ واڵێتێک بۆ ئەم بەشە زیاد نەکراوە.</div>';
     openSheet(document.getElementById('pickerSheet'));
     return;
   }
-  body.innerHTML = balanceOption + opts.map(key=>{
+  body.innerHTML = opts.map(key=>{
     const m = METHOD_META[key]; if(!m) return '';
     const sel = key===curVal;
     const walletLocked = getWalletInfo(key).locked;
@@ -191,10 +183,10 @@ function openPicker(which){
       : routeClosed ? 'ئەم ڕێڕەوە داخراوە' : '';
     return '<button type="button" class="sheet-option'+(sel?' selected':'')+(unavailable?' locked-option':'')+'"'
       + (unavailable ? ' disabled' : ' onclick="selectPickerOption(\''+key+'\')"')
-      + '>'
+      + (which==='from' && key==='AccountBalance'?' id="accountBalanceSourceOption"':'')+'>'
       + methodIconHTML(key)
       + '<span class="sheet-option-text"><span class="sheet-option-name">'+escHtml(m.label)+'</span>'
-      + (reason?'<span class="sheet-option-sub">'+reason+'</span>':'')+'</span>'
+      + (key==='AccountBalance'?'<span class="sheet-option-sub">'+escHtml(document.getElementById('balanceAvailable')?.textContent||'—')+'</span>':reason?'<span class="sheet-option-sub">'+reason+'</span>':'')+'</span>'
       + '<span class="sheet-option-check"><span class="icn icn-sm icon--solar icon--solar--check-circle-linear" aria-hidden="true"></span></span>'
       + '</button>';
   }).join('');
@@ -203,14 +195,10 @@ function openPicker(which){
 function closePicker(){
   closeSheet(document.getElementById('pickerSheet'));
 }
-function selectAccountBalanceSource(){
-  if(_pickerContext!=='from'||!curUser)return;
-  closePicker();
-  if(typeof openAccountBalanceSend==='function')return openAccountBalanceSend();
-}
 function selectPickerOption(value){
   const which=_pickerContext; if(!which) return;
   const selId = which==='from' ? 'from' : 'receiveVia';
+  if(which==='from'||which==='receiveVia')_balanceOrderKey=null;
   document.getElementById(selId).value = value;
   refreshTrigger(which);
   closePicker();
@@ -1436,17 +1424,20 @@ async function loadRates(){
 }
 // Customer sees only their own rewards (RLS). The database order trigger
 // is authoritative: browser previews never decide or consume a reward.
+let _rewardLoadId=0;
 async function loadMyRewards(){
-  MY_REWARDS=[];
+  const generation=++_rewardLoadId,owner=curUser?.id;
   try{
     if(curUser && sb){
       const {data,error}=await sb.from('ex_user_rewards')
         .select('id,kind,discount_percent,max_uses,used_count,max_amount_iqd,reward_scope,valid_until,active,created_at')
         .eq('user_id',curUser.id).eq('active',true).order('created_at');
       if(error)throw error;
+      if(generation!==_rewardLoadId||curUser?.id!==owner)return;
       MY_REWARDS=data||[];
     }
-  }catch(_){ MY_REWARDS=[]; }
+  }catch(_){ if(generation!==_rewardLoadId||curUser?.id!==owner)return;MY_REWARDS=[]; }
+  if(!owner)MY_REWARDS=[];
   calc();
 }
 function availableFeeReward(from,to,fee){
@@ -1466,7 +1457,6 @@ const CARRIER_SENDER_METHODS = new Set(['Korek','Asiacell']);
 function needsSenderPhone(method){ return CARRIER_SENDER_METHODS.has(method); }
 function routeAllowed(from,to){
   if(!from || !to || from===to) return false;
-  if(!RATES_STRICT) return true;
   return !!RATES[from+'>'+to];
 }
 function allowedReceiveOptions(from){
@@ -1481,7 +1471,7 @@ function pickInitialWallets(){
   const fromSel = document.getElementById('from');
   const toSel   = document.getElementById('receiveVia');
   if(!fromSel || !toSel) return;
-  const free = k => !!k && !getWalletInfo(k).locked;
+  const free = k => !!k && !getWalletInfo(k).locked && (k!=='AccountBalance'||Number(_myBalanceData?.balance?.available_iqd||0)>=MIN_AMOUNT);
   const targetsFor = f => allowedReceiveOptions(f).filter(t => t!==f && free(t));
 
   let from = FROM_OPTIONS.includes(fromSel.value) ? fromSel.value : (FROM_OPTIONS[0]||'');
@@ -1505,10 +1495,15 @@ function fmtOrderNo(n){ return '\u2068#P-'+String(n).padStart(6,'0')+'\u2069'; }
 function closeModal(){ document.getElementById('tgModal').style.display='none'; }
 function updateWallet(){
   const key = document.getElementById('from').value;
+  const internal=key==='AccountBalance';
   const info = getWalletInfo(key);
   const numEl = document.getElementById('myNum');
   const copyBtn = document.querySelector('.wallet-row .copy-btn');
-  if(info.locked){
+  if(internal){
+    numEl.textContent='باڵانسی بەردەست: '+(document.getElementById('balanceAvailable')?.textContent||'—');
+    numEl.classList.remove('locked-text');
+    if(copyBtn)copyBtn.style.display='none';
+  } else if(info.locked){
     numEl.innerHTML = ICON.lock + '<span>ئەم شێوازە لەئێستادا بەردەست نییە</span>';
     numEl.classList.add('locked-text');
     if(copyBtn) copyBtn.style.display = 'none';
@@ -1521,6 +1516,8 @@ function updateWallet(){
     numEl.classList.remove('locked-text');
     if(copyBtn) copyBtn.style.display = '';
   }
+  const proof=document.getElementById('grpProof');if(proof)proof.hidden=internal;
+  if(internal && typeof loadMyBalance==='function')loadMyBalance();
   updateSenderIdentityFields();
   refreshTrigger('from');
   calc();
@@ -1528,15 +1525,15 @@ function updateWallet(){
 
 function updateSenderIdentityFields(){
   const from=document.getElementById('from')?.value||'';
-  const carrier=needsSenderPhone(from);
+  const carrier=needsSenderPhone(from),internal=from==='AccountBalance';
   const nameField=document.getElementById('senderNameField');
   const phoneField=document.getElementById('senderPhoneField');
   const senderName=document.getElementById('userSenderName');
   const senderPhone=document.getElementById('userSenderPhone');
 
-  if(nameField) nameField.style.display=carrier?'none':'';
+  if(nameField) nameField.style.display=(carrier||internal)?'none':'';
   if(phoneField) phoneField.style.display=carrier?'':'none';
-  if(senderName) senderName.disabled=carrier;
+  if(senderName) senderName.disabled=carrier||internal;
   if(senderPhone){
     senderPhone.disabled=!carrier;
     if(!carrier) senderPhone.value='';
@@ -1655,7 +1652,7 @@ function calc(){
     feeEl.innerText='';
     return;
   }
-  let final=0, feeTxt='', feeVal=0;
+  let final=0, feeTxt='', feeVal=0,displayFee=0;
   if(r.type==='fee_percent'){
     feeVal=amt*r.value/100; final=amt-feeVal;
     if(bdFee) bdFee.textContent = amt>0 ? (formatNum(Math.floor(feeVal))+' IQD ('+fmtPct(r.value)+'%)') : (fmtPct(r.value)+'%');
@@ -1677,12 +1674,13 @@ function calc(){
   const baseQuote=isUsdt?null:ProxoRewardPricing.quote(amt,r,null);
   const basePayout=baseQuote?baseQuote.total:Math.floor(final);
   const baseFee=baseQuote?baseQuote.fee:Math.max(0,amt-basePayout);
+  displayFee=baseFee;
   if(baseQuote){final=baseQuote.total;if(bdFee&&amt>0)bdFee.textContent=formatNum(baseQuote.fee)+' IQD';}
   const reward=availableFeeReward(from,to,baseFee);
   if(reward){
     const quote=ProxoRewardPricing.quote(amt,r,reward);
     if(quote.discount_iqd>0){
-      final=quote.total;
+      final=quote.total;displayFee=quote.fee;
       if(bdFee)bdFee.textContent=formatNum(quote.fee)+' IQD';
       if(rewardBanner){
         rewardBanner.hidden=false;
@@ -1697,7 +1695,7 @@ function calc(){
     }
   }
   totalEl.innerText=formatNum(Math.floor(final))+' IQD';
-  feeEl.innerText=feeTxt;
+  feeEl.innerText=amt>0 && !isUsdt ? 'حمولە: '+formatNum(displayFee)+' IQD' : '';
 }
 
 function _validateOrderFields(){
@@ -1714,7 +1712,7 @@ function _validateOrderFields(){
   if(carrierSender && !/^07\d{9}$/.test(senderPhone)){
     setFieldError('userSenderPhone','ژمارەی نێرەر دەبێت بە 07 دەست پێبکات و ١١ ژمارە بێت');
     ok=false;
-  }else if(!carrierSender && (!profileName || normalizePersonName(senderName)!==normalizePersonName(profileName))){
+  }else if(from!=='AccountBalance' && !carrierSender && (!profileName || normalizePersonName(senderName)!==normalizePersonName(profileName))){
     setFieldError('userSenderName','ناوی خاوەنی هەژماری نێرەر دەبێت لەگەڵ ناوی پڕۆفایلی Proxo یەکسان بێت');
     ok=false;
   }
@@ -1723,8 +1721,12 @@ function _validateOrderFields(){
   if(to==='QiCard'){
     if(!phone || phone.length<6){ setFieldError('userPhone','ژمارەی کارتی Qi Card داخڵ بکە'); ok=false; }
   } else if(!phone.startsWith("07")||phone.length!==11){ setFieldError('userPhone','تەنها ژمارەی عێراقی (07) بە 11 ژمارە داخڵ بکە'); ok=false; }
-  if(!file){ setFieldError('fileInput','وێنەی پسووڵەی پارەدان زیاد بکە'); ok=false; }
-  else if(file.size>10*1024*1024){ setFieldError('fileInput','قەبارەی وێنەکە دەبێت لە ١٠ MB کەمتر بێت'); ok=false; }
+  if(from==='AccountBalance' && (!Number.isSafeInteger(Number(amtValue)) ||
+      Number(amtValue)>Number(_myBalanceData?.balance?.available_iqd||0))){
+    setFieldError('amt','بڕەکە دەبێت دیناری تەواو بێت و لە باڵانسی بەردەست زیاتر نەبێت');ok=false;
+  }
+  if(from!=='AccountBalance' && !file){ setFieldError('fileInput','وێنەی پسووڵەی پارەدان زیاد بکە'); ok=false; }
+  else if(from!=='AccountBalance' && file?.size>10*1024*1024){ setFieldError('fileInput','قەبارەی وێنەکە دەبێت لە ١٠ MB کەمتر بێت'); ok=false; }
   if(from===to){ showToast('لە هەمان واڵێت وەرناگیرێت — ڕێگایەکی جیاواز هەڵبژێرە بۆ وەرگرتن','warning','هەمان واڵێت هەڵبژێردراوە'); ok=false; }
   if(getWalletInfo(from).locked){ showToast('ئەم شێوازە لەئێستادا بەردەست نییە بۆ ناردن','error','بەردەست نییە'); ok=false; }
   if(getWalletInfo(to).locked){ showToast('ئەم شێوازە لەئێستادا بەردەست نییە بۆ وەرگرتن','error','بەردەست نییە'); ok=false; }
@@ -1735,7 +1737,9 @@ function _validateOrderFields(){
   return ok;
 }
 
-function openOrderConfirm(){
+async function openOrderConfirm(){
+  await loadMyRewards();
+  if(document.getElementById('from').value==='AccountBalance')await loadMyBalance();
   if(kycExchangeBlocked()){ showKycExchangeBlocked(); return; }
   if(!_validateOrderFields()) return;
   const senderName=document.getElementById('userSenderName').value;
@@ -1743,7 +1747,7 @@ function openOrderConfirm(){
   const phone=document.getElementById('userPhone').value;
   const amtValue=getAmtRaw();
   const from=document.getElementById('from').value, to=document.getElementById('receiveVia').value;
-  const senderIdentityRow=needsSenderPhone(from)
+  const senderIdentityRow=from==='AccountBalance' ? '' : needsSenderPhone(from)
     ? '<div class="confirm-row"><span class="confirm-row-label">ژمارەی نێرەر</span><span class="confirm-row-value" dir="ltr">'+escHtml(senderPhone)+'</span></div>'
     : '<div class="confirm-row"><span class="confirm-row-label">ناوی نێرەر</span><span class="confirm-row-value">'+escHtml(senderName)+'</span></div>';
   const totalTxt=document.getElementById('totalDisplay').innerText;
@@ -1810,6 +1814,8 @@ async function uploadReceiptWithRetry(fileData,ext,contentType='image/jpeg'){
   throw new Error(isTransientNetworkError(lastError)?'RECEIPT_UPLOAD_NETWORK':'RECEIPT_UPLOAD_FAILED');
 }
 
+let _balanceOrderKey=null;
+for(const id of ['from','receiveVia','amt','userPhone'])document.getElementById(id)?.addEventListener('input',()=>{_balanceOrderKey=null;});
 async function processOrder(){
   if(!_validateOrderFields()) return;
 
@@ -1823,7 +1829,7 @@ async function processOrder(){
   const senderName=document.getElementById('userSenderName').value;
   const senderPhone=document.getElementById('userSenderPhone').value;
   const phone=document.getElementById('userPhone').value;
-  const selectedFile=document.getElementById('fileInput').files[0];
+  const selectedFile=document.getElementById('from').value==='AccountBalance'?null:document.getElementById('fileInput').files[0];
   const amtValue=getAmtRaw();
   const from=document.getElementById('from').value, to=document.getElementById('receiveVia').value;
 
@@ -1862,7 +1868,8 @@ async function processOrder(){
           from_method:from,to_method:to,amount:parseFloat(amtValue),phone,
           sender_name:needsSenderPhone(from)?null:senderName,
           sender_phone:needsSenderPhone(from)?senderPhone:null,
-          receipt_url:receiptUrl,receipt_hash:receiptHash,contact_reference:''
+          receipt_url:receiptUrl,receipt_hash:receiptHash,contact_reference:'',
+          request_key:from==='AccountBalance'?(_balanceOrderKey=_balanceOrderKey||crypto.randomUUID()):undefined
         })
       });
     }catch(_){ throw new Error('ORDER_NETWORK_ERROR'); }
@@ -1875,7 +1882,8 @@ async function processOrder(){
       responseError.code=orderPayload.code||('ORDER_HTTP_'+orderResponse.status);
       throw responseError;
     }
-    const orderRow=orderPayload.order;
+    const orderRow=orderPayload.order;_balanceOrderKey=null;
+    if(from==='AccountBalance')await loadMyBalance();
     // Fetch the new remaining quota; a rejected order restores it on the server.
     await loadMyRewards();
 
@@ -3937,6 +3945,7 @@ function refreshFormHints(){
   if(hint){
     hint.querySelector('span').innerHTML = isUsdt
       ? 'بڕەکە بە دۆلار داخڵ بکە. نرخی گۆڕین لە خانەی خوارەوە دەردەکەوێت.'
+      : from==='AccountBalance' ? 'بڕەکە لە باڵانسی هەژمارەکەت کەم دەکرێتەوە؛ پسووڵەی پارەدان پێویست نییە.'
       : 'کەمترین بڕ <b>'+formatNum(MIN_AMOUNT)+'</b> دینارە. بڕەکە دەبێت وەک ئەوە بێت کە ناردووتە.';
   }
 
@@ -4097,7 +4106,7 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   sb=window.supabase.createClient(SB_URL,SB_KEY,{ auth:{ persistSession:true, autoRefreshToken:true, storageKey:'zex_sb_session' } });
   sb.auth.onAuthStateChange((_event,nextSession)=>{
     activeSession=nextSession||null;
-    if(_event==='SIGNED_OUT' && typeof resetMyBalance==='function')resetMyBalance();
+    if(_event==='SIGNED_OUT'){++_rewardLoadId;MY_REWARDS=[];if(typeof resetMyBalance==='function')resetMyBalance();}
   });
   let session=null;
   try{

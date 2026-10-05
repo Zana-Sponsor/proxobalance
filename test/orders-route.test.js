@@ -190,3 +190,51 @@ test('does not let a customer edit an order that is not awaiting correction', as
   assert.equal(res.statusCode, 409);
   assert.equal(JSON.parse(body).error, 'This order is not waiting for a correction');
 });
+
+test('AccountBalance orders use authenticated atomic RPC, not receipt insertion or client totals',async(t)=>{
+  const original=globalThis.fetch;let saved=null;
+  globalThis.fetch=async(input,options={})=>{
+    const url=new URL(String(input));
+    if(url.pathname==='/rest/v1/rpc/ex_ip_check')return response([{banned:false}]);
+    if(url.pathname==='/auth/v1/user')return response({id:'user-1',email:'fixture@example.invalid'});
+    if(url.pathname==='/rest/v1/rpc/ex_record_event')return response(null);
+    if(url.pathname==='/rest/v1/ex_rates')return response([{rate_type:'fee_percent',rate_value:2}]);
+    if(url.pathname==='/rest/v1/ex_wallets')return response([
+      {key:'AccountBalance',is_locked:false,allow_from:true,allow_receive:false},
+      {key:'FastPay',is_locked:false,allow_from:true,allow_receive:true}]);
+    if(url.pathname==='/rest/v1/ex_profiles')return response([{id:'user-1',full_name:'Fixture'}]);
+    if(url.pathname==='/rest/v1/rpc/security_record_order_attempt')return response({banned:false});
+    if(url.pathname==='/rest/v1/rpc/ex_balance_create_order'){
+      saved=JSON.parse(options.body);
+      return response({id:'fixture-order',from_method:'AccountBalance',total:39200,fee:800,balance_debit_journal_id:'fixture-journal'});
+    }
+    throw Error('Unexpected '+url.pathname);
+  };
+  t.after(()=>{globalThis.fetch=original;});
+  const req={method:'POST',url:'/api/orders',headers:{authorization:'Bearer fixture-token'},socket:{remoteAddress:'127.0.0.1'},
+    body:{from_method:'AccountBalance',to_method:'FastPay',amount:40000,phone:'07700000001',
+      request_key:'33333333-3333-4333-8333-333333333333',user_id:'forged-owner',total:40000,reward_id:'forged'}};
+  let body;const res={statusCode:0,setHeader(){},end(v){body=JSON.parse(v);}};
+  await ordersHandler(req,res);
+  assert.equal(res.statusCode,201);assert.equal(body.order.fee,800);
+  assert.equal(saved.p_user_id,'user-1');assert.equal(saved.p_amount,40000);
+  assert.equal(saved.p_to,'FastPay');assert.equal(saved.p_phone,'07700000001');
+  assert.equal(Object.hasOwn(saved,'total'),false);assert.equal(Object.hasOwn(saved,'reward_id'),false);
+});
+
+test('AccountBalance requires idempotency and whole IQD before accessing its debit RPC',async(t)=>{
+  const original=globalThis.fetch;
+  globalThis.fetch=async(input)=>{
+    const url=new URL(String(input));
+    if(url.pathname==='/rest/v1/rpc/ex_ip_check')return response([{banned:false}]);
+    if(url.pathname==='/auth/v1/user')return response({id:'user-1'});
+    if(url.pathname==='/rest/v1/rpc/ex_record_event')return response(null);
+    throw Error('Invalid request reached database mutation: '+url.pathname);
+  };t.after(()=>{globalThis.fetch=original;});
+  for(const change of [{request_key:null},{amount:10000.5},{to_method:'USDT'}]){
+    const req={method:'POST',url:'/api/orders',headers:{authorization:'Bearer fixture-token'},socket:{remoteAddress:'127.0.0.1'},
+      body:{from_method:'AccountBalance',to_method:'FastPay',amount:10000,phone:'07700000001',
+        request_key:'44444444-4444-4444-8444-444444444444',...change}};
+    const res={statusCode:0,setHeader(){},end(){}};await ordersHandler(req,res);assert.equal(res.statusCode,422);
+  }
+});

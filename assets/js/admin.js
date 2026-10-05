@@ -9,6 +9,7 @@ firebase.initializeApp(firebaseConfig);
 const fbdb = firebase.database();
 
 const METHOD_META = {
+  AccountBalance: {label:'باڵانسی هەژمار',color:'#2563eb'},
   FastPay:  { label:'FastPay',  color:'#7c3aed' },
   FIB:      { label:'FIB Bank', color:'#0ea5a4' },
   QiCard:   { label:'Qi Card',  color:'#2563eb' },
@@ -1193,7 +1194,7 @@ function showOrderDetail(id){
     ${order.extra_info?`<div class="detail-row"><span class="lbl">زانیاری زیاتر</span><span class="val">${esc(order.extra_info)}</span></div>`:''}
     <div class="detail-row"><span class="lbl">باری</span><span class="val"><span class="badge ${statusBadgeClass(order.balance_refunded_at?'پەسەندکرا':order.status)}">${esc(order.balance_refunded_at?'ڕیفاوندکرا':order.status)}</span></span></div>
     <div class="detail-row"><span class="lbl">بەروار</span><span class="val">${new Date(order.created_at).toLocaleString('ku')}</span></div>
-    ${order.receipt_url?`<div style="margin-top:10px"><div style="font-size:11px;color:var(--mt);margin-bottom:8px">وێنەی پسووڵە (لەلایەن کڕیارەوە)</div><img src="${order.receipt_url}" class="rcpt-img" onclick="showImg('${order.receipt_url}')"></div>`:`<div class="fee-toggle-note" style="margin-top:10px"><i class="fas fa-paper-plane" style="margin-left:4px"></i>وێنەی پسووڵە بۆ تیلیگرامی ئەدمین نێردراوە لەکاتی ناردنی داواکارییەکە.</div>`}
+    ${order.balance_debit_journal_id?`<div class="detail-row"><span class="lbl">تۆماری کەمکردنەوە لە باڵانس</span><span class="val" dir="ltr">${esc(order.balance_debit_journal_id)}</span></div>`:order.receipt_url?`<div style="margin-top:10px"><div style="font-size:11px;color:var(--mt);margin-bottom:8px">وێنەی پسووڵە (لەلایەن کڕیارەوە)</div><img src="${order.receipt_url}" class="rcpt-img" onclick="showImg('${order.receipt_url}')"></div>`:`<div class="fee-toggle-note" style="margin-top:10px"><i class="fas fa-paper-plane" style="margin-left:4px"></i>وێنەی پسووڵە بۆ تیلیگرامی ئەدمین نێردراوە لەکاتی ناردنی داواکارییەکە.</div>`}
     ${order.correction_request?`<div class="order-admin-correction request"><b><i class="fas fa-pen-to-square"></i> داوای ڕاستکردنەوەی ئادمین</b><p>${esc(order.correction_request)}</p><small>${order.correction_requested_at?esc(fmtDateTime(order.correction_requested_at)):''}</small></div>`:''}
     ${order.correction_response?`<div class="order-admin-correction response"><b><i class="fas fa-reply"></i> وەڵامی کڕیار</b><p>${esc(order.correction_response)}</p><small>${order.correction_responded_at?esc(fmtDateTime(order.correction_responded_at)):''}</small></div>`:''}
     <div id="odCorrectionHistory" class="order-correction-history-loading"><i class="fas fa-circle-notch fa-spin"></i> مێژووی ڕاستکردنەوە بار دەکرێت...</div>
@@ -2084,7 +2085,7 @@ function renderWalletsGrid(){
   const wrap=document.getElementById('walletsGridWrap');
   if(!allWallets.length){ wrap.innerHTML='<div class="empty"><i class="fas fa-wallet"></i><p>هیچ واڵێتێک زیاد نەکراوە</p></div>'; return; }
   wrap.innerHTML = allWallets.map(w=>{
-    const avatarInner = w.image_url ? `<img src="${esc(w.image_url)}" alt="">` : `<i class="fas fa-wallet"></i>`;
+    const avatarInner = w.key==='AccountBalance'?'<i class="fas fa-wallet"></i>':w.image_url ? `<img src="${esc(w.image_url)}" alt="">` : `<i class="fas fa-wallet"></i>`;
     const avatarBg = w.image_url ? '' : `background:${esc(w.color||'#1c2333')}`;
     return `<div class="wallet-card ${w.is_locked?'locked':''}">
       <div class="wallet-card-top">
@@ -2146,6 +2147,8 @@ function onWalletImgFile(input){
   reader.readAsDataURL(file);
 }
 function openWalletModal(w){
+  document.getElementById('walletKey').readOnly=w?.key==='AccountBalance';
+  document.getElementById('walletCanReceive').disabled=w?.key==='AccountBalance';
   document.getElementById('walletKey').dataset.touched='0';
   _walletOldKey = w ? (w.key||'') : '';
   if(w){
@@ -2195,7 +2198,7 @@ async function saveWallet(){
   const fee = feeRaw===''?null:parseFloat(feeRaw);
   const fee_type=document.getElementById('walletFeeType').value;
   const allow_from=document.getElementById('walletCanSend').checked;
-  const allow_receive=document.getElementById('walletCanReceive').checked;
+  const allow_receive=key==='AccountBalance'?false:document.getElementById('walletCanReceive').checked;
   const is_locked=document.getElementById('walletLocked').checked;
   if(!name){ showToast('ناوی واڵێت بنووسە','rd'); return; }
   if(!key){ showToast('کلیلی واڵێت بنووسە','rd'); return; }

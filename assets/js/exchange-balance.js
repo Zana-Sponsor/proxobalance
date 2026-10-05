@@ -8,6 +8,7 @@ function resetMyBalance(){
     const el=document.getElementById(id);if(el)el.textContent='—';
   }
   const btn=document.getElementById('balancePayoutToggle');if(btn)btn.disabled=true;
+  if(typeof _balanceOrderKey!=='undefined')_balanceOrderKey=null;
   const form=document.getElementById('balancePayoutForm');if(form){form.hidden=true;form.reset();}
   const history=document.getElementById('balanceHistoryList');if(history){history.hidden=true;history.textContent='';}
 }
@@ -47,11 +48,13 @@ async function loadMyBalance(){
     const available=Number(_myBalanceData.balance.available_iqd||0);
     const kycBlocked=typeof kycExchangeBlocked==='function'&&kycExchangeBlocked();
     const btn=document.getElementById('balancePayoutToggle');
-    btn.disabled=!enabled||available<10000||kycBlocked;
+    btn.disabled=kycBlocked;
     note.textContent=kycBlocked?'باڵانس و مێژووەکەت بەردەستن؛ بۆ ناردن، پشتڕاستکردنەوەی ناسنامە تەواو بکە.':
-      !enabled?'ناردنی باڵانس ئێستا ناچالاکە؛ باڵانس و مێژووەکەت بەردەستن.':
       available<10000?'کەمترین بڕی ناردن 10,000 دینارە.':
-      'ناردن پاش پشتڕاستکردنەوەی بەڕێوەبەر جێبەجێ دەکرێت.';
+      'باڵانسی هەژمار لە ڕێگای ناردن هەڵبژێرە؛ حمولە بەپێی جزدانی وەرگر هەژمار دەکرێت.';
+    if(document.getElementById('from')?.value==='AccountBalance'){
+      const num=document.getElementById('myNum');if(num)num.textContent='باڵانسی بەردەست: '+balanceIqd(available);
+    }
     const select=document.getElementById('balanceDestWallet');
     const previous=select.value;
     select.textContent='';
@@ -82,18 +85,18 @@ function toggleBalancePayout(){
 }
 async function openAccountBalanceSend(){
   if(!curUser)return;
-  const owner=curUser.id;
-  await loadMyBalance();
-  if(curUser?.id!==owner)return;
-  const wrap=document.getElementById('balanceSendSection');
-  wrap.scrollIntoView({behavior:'smooth',block:'start'});
-  const btn=document.getElementById('balancePayoutToggle');
-  if(_myBalanceData?.payouts_enabled && !btn.disabled){
-    document.getElementById('balancePayoutForm').hidden=false;
-    document.getElementById('balanceDestWallet').focus({preventScroll:true});
-  }else{
-    document.getElementById('balanceStatusMessage').focus({preventScroll:true});
+  if(typeof kycExchangeBlocked==='function'&&kycExchangeBlocked())return;
+  if(typeof FROM_OPTIONS==='undefined'||!FROM_OPTIONS.includes('AccountBalance')){
+    if(typeof loadWallets==='function')await loadWallets();
+    if(typeof loadRates==='function')await loadRates();
   }
+  const from=document.getElementById('from');
+  if(!from||typeof FROM_OPTIONS==='undefined'||!FROM_OPTIONS.includes('AccountBalance'))return;
+  from.value='AccountBalance';
+  if(typeof _balanceOrderKey!=='undefined')_balanceOrderKey=null;
+  updateWallet();
+  document.getElementById('grpSend')?.scrollIntoView({behavior:'smooth',block:'start'});
+  document.getElementById('amt')?.focus({preventScroll:true});
 }
 function toggleBalanceHistory(){
   const el=document.getElementById('balanceHistoryList');el.hidden=!el.hidden;
@@ -102,7 +105,7 @@ function toggleBalanceHistory(){
 function renderBalanceHistory(){
   const el=document.getElementById('balanceHistoryList');
   if(!el||!_myBalanceData)return;
-  const kinds={verified_refund:'گەڕاندنەوەی پارە',payout_hold:'داواکاری ناردن',
+  const kinds={order_debit:'ناردن لە باڵانسی هەژمار',verified_refund:'گەڕاندنەوەی پارە',payout_hold:'داواکاری ناردن',
     payout_cancel:'هەڵوەشاندنەوەی ناردن',payout_paid:'ناردنی سەرکەوتوو'};
   const journal=(_myBalanceData.journal||[]).slice(0,20);
   let html=journal.map(j=>{
@@ -164,7 +167,8 @@ async function cancelMyBalancePayout(id){
 // Refresh when the customer returns to Send or resumes the page after a refund.
 function refreshVisibleBalance(){
   if(curUser&&document.visibilityState!=='hidden'&&
-    (typeof _route==='undefined'||_route==='home'))return loadMyBalance();
+    (typeof _route==='undefined'||_route==='home'))return Promise.all([loadMyBalance(),
+      ...(typeof loadMyRewards==='function'?[loadMyRewards()]:[])]);
 }
 window.addEventListener('focus',refreshVisibleBalance);
 window.addEventListener('pageshow',refreshVisibleBalance);
