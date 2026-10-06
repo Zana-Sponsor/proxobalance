@@ -1,23 +1,25 @@
+import { createPage, editPage } from './independent-pages.js';
 import { publishAudit } from '../proxolink-audit.js';
 import { readJson, json, withSecurity } from '../security.js';
 import { createHash } from 'node:crypto';
 import {
-  authenticatedUser, cardById, activeTemplate, renderedPage,
+  authenticatedUser, cardById, cardRows, activeTemplate, renderedPage,
   validateCardData, normalizedPlatforms, verifyPublicAvatar, proxoRows, proxoWrite, validUuid
 } from '../proxolink.js';
 
-const STYLES=new Set(['dark','light','classic','pill','card','neon','zoom','banner']);
+const STYLES=new Set(['dark','light','classic','pill','card','neon','zoom','banner','pill-mint','pill-dark','pill-white']);
 const THEMES=new Set(['purple','blue','green','red','yellow','cyan','pink','dark']);
 function failure(res,error) {
   if(error?.status===413)return json(res,413,{ok:false,error:'payload_too_large'});
   if(error instanceof SyntaxError)return json(res,422,{ok:false,error:'invalid_request'});
   const code=['unauthorized','invalid_request','invalid_card_name','invalid_bio',
     'invalid_platform_value','invalid_avatar','avatar_required',
-    'template_not_found','template_invalid','forbidden'].includes(error?.code)
+    'template_not_found','template_invalid','forbidden','invalid_provider_destination',
+    'invalid_page_settings','invalid_page_type','provider_required','isolated_staging_required'].includes(error?.code)
       ?error.code:'backend_unavailable';
   const status=code==='unauthorized'?401:
     code==='forbidden'?403:
-    code==='backend_unavailable'?503:422;
+    ['backend_unavailable','isolated_staging_required'].includes(code)?503:422;
   return json(res,status,{ok:false,error:code});
 }
 function validatePayload(body,userId,id,old=null) {
@@ -81,8 +83,9 @@ const publicCard=(card)=>({
 async function create(req,res,userId,body) {
   // One client-generated UUID is also the idempotency key and avatar folder ID.
   // The owner always comes from the verified Proxo JWT, not request JSON.
+  if(body.page_kind!==undefined)return createPage(res,userId,body);
   const id=body.client_request_id;
-  if(!validUuid(id)||body.id && body.id!==id)
+  if(!validUuid(id)||id===userId||body.id && body.id!==id)
     return json(res,422,{ok:false,error:'invalid_request'});
   const data=validatePayload(body,userId,id);
   const hash=createHash('sha256').update(JSON.stringify({...data,
@@ -145,6 +148,8 @@ async function edit(req,res,userId,body,id) {
   const current=await cardById(id);
   if(current.user_id!==userId)
     return json(res,403,{ok:false,error:'forbidden'});
+  if(current.page_kind)return editPage(res,userId,body,current);
+  if(body.page_kind!==undefined)return json(res,422,{ok:false,error:'invalid_page_type'});
   const proposed=validatePayload(body,userId,id,current);
   if(Date.parse(body.expected_updated_at)!==Date.parse(current.updated_at))
     return json(res,409,{ok:false,error:'edit_conflict'});
@@ -172,11 +177,11 @@ async function handler(req,res,{user}) {
     return json(res,405,{ok:false,error:'method_not_allowed'});
   try {
     if(req.method==='GET') {
-      const cards=await proxoRows('proxolink_cards','&user_id=eq.'+user.id+'&order=created_at.desc',
+      const cards=await cardRows('&user_id=eq.'+user.id+'&order=created_at.desc',
         'id,user_id,name,bio,tt,platforms,template_key,template_version,style,color_theme,card_language,avatar_path,status,publish_status,card_number,created_at,updated_at');
-      return json(res,200,{ok:true,cards:cards.map(card=>({
+      return json(res,200,{ok:true,cards:cards.filter(card=>!card.archived_at).map(card=>({
         ...card,platforms:Object.fromEntries(Object.entries(card.platforms||{})
-          .filter(([key])=>!['tg','telegram'].includes(key.toLowerCase())))
+          .filter(([key])=>card.page_kind||!['tg','telegram'].includes(key.toLowerCase())))
       }))});
     }
     const body=await readJson(req,64*1024);

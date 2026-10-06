@@ -1,47 +1,46 @@
 import { json, withSecurity } from '../security.js';
-import { authenticatedUser, proxoRows, renderedPage, publicPage, unavailable } from '../proxolink.js';
+import { authenticatedUser, renderedPage, publicPage, unavailable } from '../proxolink.js';
 import { makeTemplateToken, templateTokenData } from '../proxolink-preview.js';
-
-const ORDER=['dark','light','classic','pill','card','neon','zoom','banner'];
-const THEMES=['purple','blue','green','red','yellow','cyan','pink','dark'];
-const LANGUAGES=['ku','ar','en'];
-export default withSecurity(async (req, res, {user}) => {
+import { PREPARED_DESIGNS, PREPARED_VERSION, PAGE_TYPES, PROVIDER_REGISTRY, registryMetadata, assertIsolatedWrites } from '../proxolink-pages.js';
+import { preparedMetadata } from '../proxolink-prepared.js';
+export default withSecurity(async(req,res,{user})=>{
   try {
-    const key=req.query?.template_key,version=Number(req.query?.version);
-    const selected=key!==undefined||req.query?.version!==undefined;
-    const theme=req.query?.theme??'purple',language=req.query?.language??'ku';
-    if((selected&&!(typeof key==='string'&&ORDER.includes(key)
-      &&typeof req.query?.version==='string'&&/^[1-9][0-9]*$/.test(req.query.version)
-      &&Number.isSafeInteger(version)))||!THEMES.includes(theme)||!LANGUAGES.includes(language))
+    const key=req.query?.template_key,version=req.query?.version;
+    const theme=req.query?.theme??'purple',language=req.query?.language??'ku',pageType=req.query?.page_type??'contact';
+    const baseline=req.query?.baseline==='true';
+    if((key!==undefined&&(!PREPARED_DESIGNS.includes(key)||version!==String(PREPARED_VERSION)))
+      ||(key===undefined&&version!==undefined)||!PAGE_TYPES.includes(pageType)
+      ||!['purple','blue','green','red','yellow','cyan','pink','dark'].includes(theme)
+      ||!['ku','ar','en'].includes(language)||(req.query?.baseline!==undefined&&!['true','false'].includes(req.query.baseline)))
       return json(res,422,{ok:false,error:'invalid_request'});
-    const rows=await proxoRows('proxolink_templates','&is_active=eq.true&order=template_key.asc,version.desc'+(selected?'&template_key=eq.'+key+'&version=eq.'+version:'&is_catalog_visible=eq.true'),
-      'template_key,version,display_name_ckb,display_name_en,requires_avatar,is_active');
-    const seen=new Set();
-    const templates=rows.filter(row=>ORDER.includes(row.template_key)
-      &&!seen.has(row.template_key)&&seen.add(row.template_key))
-      .sort((a,b)=>ORDER.indexOf(a.template_key)-ORDER.indexOf(b.template_key))
-      .map(row=>({template_key:row.template_key,version:row.version,
-        display_name_ckb:row.display_name_ckb,display_name_en:row.display_name_en,
-        requires_avatar:row.requires_avatar,is_active:row.is_active,
-        preview_path:'/contact-preview?token='+encodeURIComponent(
-        makeTemplateToken(user.id,row.template_key,row.version,{theme,language}))}));
+    const templates=await Promise.all((key?[key]:PREPARED_DESIGNS).map(async key=>{
+      const meta=await preparedMetadata(key);
+      return {template_key:key,version:meta.version,display_name_ckb:meta.display_name_ckb,
+        display_name_en:meta.display_name_en,requires_avatar:meta.requires_avatar,is_active:true,
+        preview_path:'/contact-preview?token='+encodeURIComponent(makeTemplateToken(user.id,key,meta.version,{theme,language,pageType,baseline}))};
+    }));
     return json(res,200,{ok:true,templates,expires_in:300});
-  } catch {return json(res,503,{ok:false,error:'templates_unavailable'});}
-}, {auth:'required',methods:['GET'],autoLog:false,resolveUser:authenticatedUser});
-
+  }catch{return json(res,503,{ok:false,error:'templates_unavailable'});}
+},{auth:'required',methods:['GET'],autoLog:false,resolveUser:authenticatedUser});
+export const providers=withSecurity(async(req,res)=>{let writes_enabled=false;try{assertIsolatedWrites();writes_enabled=true;}catch{}
+  return json(res,200,{ok:true,providers:registryMetadata(),page_types:PAGE_TYPES,writes_enabled});},
+  {auth:'required',methods:['GET'],autoLog:false,resolveUser:authenticatedUser});
 export async function templatePreview(req,res) {
   if(req.method!=='GET')return unavailable(res);
-  const data=templateTokenData(req.query?.token);
-  if(!data)return unavailable(res);
+  const data=templateTokenData(req.query?.token);if(!data)return unavailable(res);
+  if(!PREPARED_DESIGNS.includes(data.key)||data.version!==6)return unavailable(res);
   try {
-    // A selected real private template, rendered with controlled sample data.
-    // This never inserts a card, publishes a link, or writes analytics.
-    const card={id:'00000000-0000-4000-8000-000000000001',user_id:data.userId,
-      name:'Proxo',bio:{ku:'لەڕێگەی دووگمەکانەوە پەیوەندیمان پێوە بکەن.',
-        ar:'تواصلوا معنا عبر الأزرار أدناه.',en:'Contact us using the buttons below.'}[data.language],tt:'proxo_iq',
-      template_key:data.key,template_version:data.version,color_theme:data.theme,
-      card_language:data.language,platforms:{wa:'9647501234567',vb:'9647501234567',
-        ig:'proxo_iq',ph:'9647501234567',as:'9647501234567'},demo:true};
-    return publicPage(res,await renderedPage(card,{preview:true}));
-  } catch {return unavailable(res);}
+    const destinations={whatsapp:'+9647501234567',viber:'+9647501234567',instagram:'proxo_iq',telegram:'proxo_iq',
+      korek:'+9647501234567',asiacell:'+9647701234567',talabat:'https://iraq.talabat.com/iraq/restaurant/proxo',
+      toters:'https://www.totersapp.com/restaurant/proxo',lezzoo:'https://www.lezzoo.com/restaurant/proxo',
+      wade:'https://wadedelivery.com/restaurant/proxo',google_play:'https://play.google.com/store/apps/details?id=com.proxo.app',
+      app_store:'https://apps.apple.com/app/proxo/id123456789'};
+    const card={id:'00000000-0000-4000-8000-000000000001',client_request_id:'00000000-0000-4000-8000-000000000002',user_id:data.userId,
+      page_kind:data.pageType,name:'Proxo',bio:{ku:'لەڕێگەی دووگمەکانەوە پەیوەندیمان پێوە بکەن.',
+        ar:'تواصلوا معنا عبر الأزرار أدناه.',en:'Contact us using the buttons below.'}[data.language],
+      template_key:data.key,template_version:6,color_theme:data.theme,card_language:data.language,demo:true,
+      settings:{providers:Object.entries(PROVIDER_REGISTRY).filter(([,p])=>p.page_type===data.pageType)
+        .map(([provider_key],sort_order)=>({provider_key,destination_url:destinations[provider_key],enabled:true,sort_order}))}};
+    return publicPage(res,await renderedPage(card,{preview:true,baseline:data.baseline}));
+  }catch{return unavailable(res);}
 }

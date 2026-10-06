@@ -60,15 +60,15 @@ test('catalog returns live signed previews without raw storage metadata',async()
  assert.match(body.templates[0].preview_path,/^\/contact-preview\?token=/);
  assert.doesNotMatch(res.body,/storage_path|checksum_sha256|template.html/);
 });
-test('catalog preserves original style order and chooses the newest catalog version',async()=>{
+test('catalog exposes exactly the four prepared designs without activating historical styles',async()=>{
  const delegate=mockFetch();
  global.fetch=async(url,options)=>new URL(url).pathname==='/rest/v1/proxolink_templates'
   ?Response.json(['banner','card','classic','dark','light','neon','pill','zoom']
    .flatMap(template_key=>[{...metadata,template_key,version:2},{...metadata,template_key,version:1}]))
   :delegate(url,options);
  const body=JSON.parse((await invoke({op:'templates'})).body);
- assert.deepEqual(body.templates.map(t=>t.template_key),['dark','light','classic','pill','card','neon','zoom','banner']);
- assert.ok(body.templates.every(t=>t.version===2));
+ assert.deepEqual(body.templates.map(t=>t.template_key),['pill','pill-mint','pill-dark','pill-white']);
+ assert.ok(body.templates.every(t=>t.version===6));
 });
 test('selected theme and language are signed, rendered and cannot be overridden by a query',async()=>{
  const {templateTokenData}=await import('../api/_lib/proxolink-preview.js');
@@ -80,14 +80,14 @@ test('selected theme and language are signed, rendered and cannot be overridden 
   if(path.includes('/storage/'))return new Response(source);
   return delegate(url,options);
  };
- const result=await invoke({op:'templates',template_key:'classic',version:'1',theme:'blue',language:'en'});
+ const result=await invoke({op:'templates',template_key:'pill-white',version:'6',theme:'blue',language:'en'});
  assert.equal(result.statusCode,200);
  const token=new URL(JSON.parse(result.body).templates[0].preview_path,'https://local.test').searchParams.get('token');
  assert.equal(templateTokenData(token).theme,'blue');assert.equal(templateTokenData(token).language,'en');
  const rendered=await invoke({op:'template-preview',token,theme:'red',language:'ar'},{auth:false});
- assert.equal(rendered.statusCode,200);assert.match(rendered.body,/<html dir="ltr" lang="en">/);
- assert.match(rendered.body,/#1e3a8a,#2563eb/);assert.match(rendered.body,/Contact us using the buttons below/);
- assert.match(rendered.body,/>WhatsApp</);assert.equal(events.length,0);
+ assert.equal(rendered.statusCode,200);assert.match(rendered.body,/"direction":"ltr"/);
+ assert.equal(templateTokenData(token).theme,'blue');assert.match(rendered.body,/Contact us using the buttons below/);
+ assert.match(rendered.body,/"label":"WhatsApp"/);assert.equal(events.length,0);
  const [payload,signature]=token.split('.');
  const forged=Buffer.from(JSON.stringify({...JSON.parse(Buffer.from(payload,'base64url')),theme:'red'})).toString('base64url')+'.'+signature;
  assert.equal((await invoke({op:'template-preview',token:forged},{auth:false})).statusCode,404);
@@ -104,10 +104,10 @@ test('malformed selected preview requests fail before reading private metadata',
 });
 test('template preview renders the selected real template and records no events',async()=>{
  const events=[];global.fetch=mockFetch({events});
- const res=await invoke({op:'template-preview',token:makeTemplateToken(owner,'classic',1)},{auth:false});
- assert.equal(res.statusCode,200);assert.match(res.body,/<h1>Proxo<\/h1>/);assert.equal(events.length,0);
- assert.match(res.body,/window\.goLink=function/);
- assert.doesNotMatch(res.body,/(?:whatsapp|viber):\/\/|tel:|https:\/\/(?:www\.)?(?:instagram\.com|t\.me|tiktok\.com)\//);
+ const res=await invoke({op:'template-preview',token:makeTemplateToken(owner,'pill-white',6)},{auth:false});
+ assert.equal(res.statusCode,200);assert.match(res.body,/"name":"Proxo"/);assert.equal(events.length,0);
+ assert.equal(JSON.parse(res.body.match(/id="proxo-config">([\s\S]*?)<\/script>/)[1]).preview,true);
+ assert.match(res.body,/if\(current\.preview\)\{event\.preventDefault\(\)/);
  const invalid=await invoke({op:'template-preview',token:'tampered'},{auth:false});assert.equal(invalid.statusCode,404);
 });
 test('inactive public card is hidden; owner signed preview remains available without analytics',async()=>{
@@ -243,7 +243,7 @@ test('large and malformed JSON never writes a card',async()=>{
 });
 test('signed preview tokens expire and cannot be used as a different token kind',async()=>{
  const {templateTokenData,validPreviewToken}=await import('../api/_lib/proxolink-preview.js');
- const start=Date.now,token=makePreviewToken(card),demo=makeTemplateToken(owner,'classic',1);
+ const start=Date.now,token=makePreviewToken(card),demo=makeTemplateToken(owner,'pill-white',6);
  assert.equal(validPreviewToken(demo,card),false);assert.equal(templateTokenData(token),null);
  try{Date.now=()=>start()+301000;assert.equal(validPreviewToken(token,card),false);assert.equal(templateTokenData(demo),null);}finally{Date.now=start;}
 });

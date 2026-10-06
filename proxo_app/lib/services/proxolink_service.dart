@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/proxo_card.dart';
+import '../models/proxolink_page_type.dart';
 
 String newProxoRequestId() {
   final random = Random.secure();
@@ -22,6 +23,8 @@ class ProxoLinkFailure implements Exception {
   const ProxoLinkFailure(this.code, {this.savedCardId});
   String get message => switch (code) {
     'ad_dependency' => 'ئەم پەڕەیە لە ڕیکلامێکدا بەکارهاتووە و ناتوانرێت ئێستا ناچالاک بکرێت یان بسڕدرێتەوە.',
+    'isolated_staging_required' => 'ئەم تایبەتمەندییە ئێستا تەنها لە ژینگەی تاقیکردنەوەدا چالاکە.',
+    'invalid_provider_destination' || 'invalid_page_settings' => 'تکایە بەستەری دووگمەکان بپشکنە.',
     'edit_conflict' =>
       'پەڕەکە لە شوێنێکی تر دەستکاری کراوە. تکایە نوێی بکەرەوە.',
     'unauthorized' => 'تکایە دووبارە بچۆ ژوورەوە.',
@@ -37,15 +40,18 @@ class ProxoLinkFailure implements Exception {
 abstract class ProxoLinkRepository {
   Future<List<ProxoCard>> cards();
   Future<List<ProxoTemplate>> templates();
+  Future<List<ProxoProvider>> providers();
+  Future<Uri> formPreview(Map<String,dynamic> data, {ProxoCard? existing});
   Future<ProxoCard> save(Map<String, dynamic> data, {ProxoCard? existing});
   Future<void> action(String id, String action);
   Future<Uri> preview(String id);
   Future<Uri> templatePreview(String key, int version, {
     String theme = 'purple',
     String language = 'ku',
+    String pageType = 'contact',
   });
   Future<String> uploadAvatar(String id, Uint8List bytes);
-  Uri publicUrl(String id);
+  Uri publicUrl(String id, {String pageType = 'contact'});
 }
 
 class ProxoLinkService implements ProxoLinkRepository {
@@ -116,6 +122,16 @@ class ProxoLinkService implements ProxoLinkRepository {
         ProxoTemplate.fromJson(Map<String, dynamic>.from(j as Map)),
     ];
   }
+  @override
+  Future<List<ProxoProvider>> providers() async {
+    final body=await _request('/api/page-providers');
+    return [for(final j in body['providers'] as List)
+      ProxoProvider.fromJson(Map<String,dynamic>.from(j as Map))];
+  }
+  @override
+  Future<Uri> formPreview(Map<String,dynamic> data, {ProxoCard? existing}) async => _url(
+    (await _request('/api/page-preview-token',method:'POST',data:{...data,
+      if(existing != null) 'card_id':existing.id}))['preview_path'] as String);
 
   @override
   Future<ProxoCard> save(
@@ -161,9 +177,10 @@ class ProxoLinkService implements ProxoLinkRepository {
   Future<Uri> templatePreview(String key, int version, {
     String theme = 'purple',
     String language = 'ku',
+    String pageType = 'contact',
   }) async => _url(
     ((await _request(
-              '/api/contact-templates?template_key=${Uri.encodeQueryComponent(key)}&version=$version&theme=${Uri.encodeQueryComponent(theme)}&language=${Uri.encodeQueryComponent(language)}',
+              '/api/contact-templates?template_key=${Uri.encodeQueryComponent(key)}&version=$version&theme=${Uri.encodeQueryComponent(theme)}&language=${Uri.encodeQueryComponent(language)}&page_type=${Uri.encodeQueryComponent(pageType)}',
             ))['templates']
             as List)
         .map((j) => ProxoTemplate.fromJson(Map<String, dynamic>.from(j as Map)))
@@ -171,7 +188,10 @@ class ProxoLinkService implements ProxoLinkRepository {
         .previewPath,
   );
   @override
-  Uri publicUrl(String id) => _url('/contact/$id');
+  Uri publicUrl(String id, {String pageType = 'contact'}) {
+    if(!ProxoPageType.values.any((t)=>t.key==pageType))throw const ProxoLinkFailure('invalid_request');
+    return _url('/$pageType/$id');
+  }
   @override
   Future<String> uploadAvatar(String id, Uint8List bytes) async {
     if (bytes.length < 12 || bytes.length > 10 * 1024 * 1024)
@@ -193,6 +213,9 @@ class ProxoLinkService implements ProxoLinkRepository {
       mime = 'image/webp';
     } else {
       throw const ProxoLinkFailure('invalid_avatar');
+    }
+    if((await _request('/api/page-providers'))['writes_enabled'] != true) {
+      throw const ProxoLinkFailure('isolated_staging_required');
     }
     final user = db.auth.currentUser?.id;
     if (user == null) throw const ProxoLinkFailure('unauthorized');

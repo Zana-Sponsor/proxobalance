@@ -1,3 +1,5 @@
+import 'proxolink_page_type.dart';
+
 class ProxoCard {
   static const safeColumns =
       'id,user_id,name,bio,tt,platforms,template_key,template_version,style,color_theme,card_language,avatar_path,status,publish_status,card_number,created_at,updated_at';
@@ -7,6 +9,8 @@ class ProxoCard {
   final int templateVersion, cardNumber;
   final DateTime createdAt, updatedAt;
   final Map<String, String> platforms;
+  final String? pageKind, clientRequestId;
+  final Map<String, dynamic> settings;
 
   const ProxoCard({
     required this.id,
@@ -25,6 +29,9 @@ class ProxoCard {
     required this.createdAt,
     required this.updatedAt,
     this.platforms = const {},
+    this.pageKind,
+    this.clientRequestId,
+    this.settings = const {},
   });
   bool get available => status == 'active' && publishStatus == 'ready';
   bool get canPreview => publishStatus == 'ready';
@@ -37,10 +44,11 @@ class ProxoCard {
     'failed' => 'دروستکردن سەرکەوتوو نەبوو',
     _ => status == 'active' ? 'چالاکە' : 'ناچالاکە',
   };
-  String get publicPath => '/contact/$id';
-  String? get avatarUrl => avatarPath == null
-      ? null
-      : 'https://cojchkwssmasiejcgvbk.supabase.co/storage/v1/object/public/proxolink-assets/$avatarPath';
+  ProxoPageType get pageType => ProxoPageTypeInfo.parse(pageKind);
+  String get publicPath => '/${pageType.key}/$id';
+  // The private image is served using the same short-lived owner preview.
+  // No account UUID or storage object path is embedded in a public image URL.
+  String? get avatarUrl => null;
   factory ProxoCard.fromJson(Map<String, dynamic> j) => ProxoCard(
     id: j['id'] as String,
     userId: j['user_id'] as String,
@@ -57,9 +65,12 @@ class ProxoCard {
     cardNumber: (j['card_number'] as num?)?.toInt() ?? 0,
     createdAt: DateTime.parse(j['created_at'] as String),
     updatedAt: DateTime.parse((j['updated_at'] ?? j['created_at']) as String),
+    pageKind: j['page_kind'] as String?,
+    clientRequestId: j['client_request_id'] as String?,
+    settings: Map<String,dynamic>.from(j['settings'] as Map? ?? {}),
     platforms: {
       for (final e in (j['platforms'] as Map? ?? {}).entries)
-        if (!{'tg', 'telegram'}.contains(e.key.toString().toLowerCase()))
+        if (j['page_kind'] != null || !{'tg', 'telegram'}.contains(e.key.toString().toLowerCase()))
           e.key.toString(): e.value.toString(),
     },
   );
@@ -81,6 +92,9 @@ class ProxoCard {
     'created_at': createdAt.toIso8601String(),
     'updated_at': updatedAt.toIso8601String(),
     'platforms': platforms,
+    if(pageKind != null) 'page_kind': pageKind,
+    if(clientRequestId != null) 'client_request_id': clientRequestId,
+    'settings': settings,
   };
 }
 

@@ -2,9 +2,10 @@
 // credentials stay in the CI environment; the app receives only short-lived
 // preview capabilities through its private runtime file, never dart-define.
 import { spawnSync } from 'node:child_process';
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { mkdirSync, writeFileSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { STYLES, WIDTHS, validateRuntime, safeRequest, verifyReadOnlySecurity,
+import sharp from 'sharp';
+import { STYLES, WIDTHS, PAGE_TYPES, LANGUAGES, NATIVE_CASE_IDS, validateRuntime, safeRequest, verifyReadOnlySecurity,
   validateNativeResults } from './proxolink-verification-security.mjs';
 import {validateViewport, compareNativePixels, createPreviewReferenceBrowser} from './proxolink-pixel-comparison.mjs';
 
@@ -39,7 +40,7 @@ const safeErrorCodes=new Set([
   'device_command_failed','verification_endpoint_unavailable','verification_sign_in_failed',
   'application_auth_boundary_failed','invalid_capability_boundary_failed',
   'internal_table_access_failed','verification_user_required','ordinary_account_rls_required',
-  'private_template_access_failed','catalog_metadata_boundary_failed','eight_templates_required',
+  'private_template_access_failed','catalog_metadata_boundary_failed','four_templates_required',
   'invalid_preview_capability','rendered_preview_security_failed','preview_source_boundary_failed',
   'native_evidence_incomplete','native_screenshot_failed','native_verification_timeout',
   'native_viewport_invalid','native_crop_outside_screen','reference_viewport_mismatch',
@@ -56,7 +57,7 @@ const safeTransportCodes=new Set(['ENOTFOUND','EAI_AGAIN','ETIMEDOUT','ECONNRESE
   'ECONNREFUSED','CERT_HAS_EXPIRED','UNABLE_TO_VERIFY_LEAF_SIGNATURE']);
 const safeNativeChecks=new Set(['rendered_page_checks','animation_motion',
   'contact_confirmation','contact_cancel','contact_confirm','inert_tiktok',
-  'preview_url','navigation_boundary','fresh_frame','pixel_density',
+  'preview_url','navigation_boundary','fresh_frame','pixel_density','preview_actions','whatsapp_hint',
   'screenshot_ack','unclassified_native_check']);
 async function jsonRequest(url,{headers={},...options}={}) {
   const response=await safeRequest(url,{...options,headers});
@@ -92,17 +93,20 @@ async function configure() {
   const previews={};
   stage='template_capabilities';
   for(const style of styles) {
-    const item=catalog.templates?.find(t=>t.template_key===style&&t.version===1);
-    if(!item||typeof item.preview_path!=='string')throw Error('eight_templates_required');
-    const url=new URL(item.preview_path,base);
-    if(url.origin!==base||url.pathname!=='/contact-preview'||!url.searchParams.has('token'))
-      throw Error('invalid_preview_capability');
-    previews[style]=url.href;
+    const item=catalog.templates?.find(t=>t.template_key===style&&t.version===6);
+    if(!item||typeof item.preview_path!=='string')throw Error('four_templates_required');
+    for(const type of PAGE_TYPES)for(const language of LANGUAGES)for(const baseline of [false,true]) {
+      const selected=await jsonRequest(base+'/api/contact-templates?template_key='+style+'&version=6&page_type='+type+'&language='+language+'&baseline='+baseline,
+        {headers:{...protection,Authorization:authorization}});
+      const url=new URL(selected.templates[0].preview_path,base);
+      if(url.origin!==base||url.pathname!=='/contact-preview'||!url.searchParams.has('token'))throw Error('invalid_preview_capability');
+      previews[style+'-'+type+'-'+language+(baseline?'-baseline':'')]=url.href;
+    }
   }
   if(!capturedPreviewHeaders) {
     stage='rendered_preview_headers';
     for(const style of styles) {
-      const response=await safeRequest(previews[style],{headers:protection});
+      const response=await safeRequest(previews[style+'-contact-ku'],{headers:protection});
       const csp=response.headers.get('content-security-policy')||'';
       if(response.status!==200||!response.headers.get('content-type')?.startsWith('text/html')
         ||response.headers.get('cache-control')!=='no-store'
@@ -116,7 +120,7 @@ async function configure() {
         ||/ttq\.load\(/.test(html))throw Error('preview_source_boundary_failed');
     }
     capturedPreviewHeaders=true;
-    console.log('8/8 live rendered-preview response security checks passed.');
+    console.log('4/4 live rendered-preview response security checks passed.');
   }
   // tee's stdout is captured and discarded. It is never printed or uploaded.
   stage='write_private_configuration';
@@ -136,14 +140,14 @@ async function main() {
   adb(['shell','wm','density','160']);
   adb(['shell','run-as',packageId,'mkdir','-p','files']);
   await configure();
-  stage='reference_browser';
-  referenceBrowser=await createPreviewReferenceBrowser({protection:{'x-vercel-protection-bypass':bypass}});
+  // Exact parity uses the same Android WebView for baseline and candidate.
+  const captures=new Map();
   stage='native_case_collection';
   adb(['shell','am','start','-n',packageId+'/.MainActivity']);
   let configuredAt=Date.now();
   const captured=new Set();
   const pixels={};
-  const deadline=Date.now()+15*60*1000;
+  const deadline=Date.now()+45*60*1000;
   while(Date.now()<deadline) {
     if(Date.now()-configuredAt>60000) {await configure();configuredAt=Date.now();stage='native_case_collection';}
     const result=appRead('proxolink-verification-results.json');
@@ -151,7 +155,7 @@ async function main() {
       const data=JSON.parse(result);
       // Retain safe executed-case details even when the strict final gate
       // rejects a failed page or pixel difference. Never upload the raw map.
-      const caseIds=styles.flatMap(style=>WIDTHS.map(width=>style+'-'+width));
+      const caseIds=NATIVE_CASE_IDS;
       const observed=Object.fromEntries(caseIds.filter(id=>data[id]).map(id=>[id,
         Object.fromEntries(Object.entries(data[id]).filter(([name,value])=>
           name==='failed_check'?safeNativeChecks.has(value):
@@ -162,32 +166,32 @@ async function main() {
       writeFileSync(output+'/case-results.json',JSON.stringify(observed,null,2));
       const safe=validateNativeResults(data,captured,pixels);
       writeFileSync(output+'/results.json',JSON.stringify(safe,null,2));
-      console.log('8/8 real native WebView previews and exact browser pixel comparisons passed at all five widths (40/40 cases).');
+      console.log('All 120 live native cases and exact same-device Android WebView baseline/candidate comparisons passed.');
       return;
     }
     const current=appRead('proxolink-verification-case.json');
     if(current) {
-      const {style,width,viewport}=JSON.parse(current),id=style+'-'+width;
-      if(styles.includes(style)&&WIDTHS.includes(width)&&!captured.has(id)) {
-        const png=adb(['exec-out','screencap','-p']);
-        if(!png?.length)throw Error('native_screenshot_failed');
-        writeFileSync(output+'/'+id+'.png',png);
+      const {id,capture_id,style,type,language,width,variant,viewport}=JSON.parse(current);
+      if(NATIVE_CASE_IDS.includes(id)&&capture_id===id+'-'+variant&&['candidate','baseline'].includes(variant)&&!captures.has(capture_id)) {
+        const png=adb(['exec-out','screencap','-p']);if(!png?.length)throw Error('native_screenshot_failed');
         const crop=validateViewport(viewport,width);
-        const reference=await referenceBrowser.screenshot(currentPreviews[style],crop);
-        const comparison=await compareNativePixels(png,reference,crop);
-        writeFileSync(output+'/'+id+'-webview.png',comparison.native);
-        writeFileSync(output+'/'+id+'-browser.png',reference);
-        writeFileSync(output+'/'+id+'-diff.png',comparison.diff);
-        pixels[id]=comparison.metrics;
-        writeFileSync(output+'/pixels.json',JSON.stringify({environment:'Android 35 WebView versus Chromium '+referenceBrowser.version,
-          animation_state:'fresh page; scroll zero; CSS animations paused at zero',cases:pixels},null,2));
-        // Keep evidence for every requested case, including pixel differences.
-        // The final validateNativeResults gate still rejects any changed pixel.
-        if(!comparison.metrics.exact_pixels_equal)
-          console.log('Native pixel difference recorded for '+id+'.');
-        captured.add(id);
-        appWrite('proxolink-verification-ack',id);
-        console.log('Native evidence captured for '+id+'.');
+        writeFileSync(output+'/'+capture_id+'.png',png);
+        captures.set(capture_id,{png,crop});
+        if(captures.has(id+'-candidate')&&captures.has(id+'-baseline')) {
+          const candidate=captures.get(id+'-candidate'),baseline=captures.get(id+'-baseline');
+          if(JSON.stringify(candidate.crop)!==JSON.stringify(baseline.crop))throw Error('reference_viewport_mismatch');
+          const reference=await sharp(baseline.png).extract({left:baseline.crop.left,top:baseline.crop.top,width:baseline.crop.width,height:baseline.crop.height}).removeAlpha().png().toBuffer();
+          const comparison=await compareNativePixels(candidate.png,reference,candidate.crop);
+          writeFileSync(output+'/'+id+'-webview.png',comparison.native);
+          writeFileSync(output+'/'+id+'-baseline-webview.png',reference);
+          writeFileSync(output+'/'+id+'-diff.png',comparison.diff);
+          pixels[id]=comparison.metrics;captured.add(id);
+          writeFileSync(output+'/pixels.json',JSON.stringify({environment:'Same Android 35 emulator / WebView / DPR 1 baseline versus candidate',
+            animation_state:'CSS animations paused at zero; hint/toast hidden; original CSS/assets unchanged',cases:pixels},null,2));
+          if(!comparison.metrics.exact_pixels_equal)console.log('Native pixel difference recorded for '+id+'.');
+        }
+        appWrite('proxolink-verification-ack',capture_id);
+        console.log('Native evidence captured for '+capture_id+'.');
       }
     }
     await pause(1000);

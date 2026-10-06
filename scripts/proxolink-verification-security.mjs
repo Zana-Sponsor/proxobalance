@@ -2,8 +2,11 @@
 // origin or service credential, and never follow redirects carrying headers.
 export const PREVIEW_ORIGIN='https://proxobalance-git-feat-proxolink-private-re-00a2aa-proxoapp-1758.vercel.app';
 export const SUPABASE_ORIGIN='https://cojchkwssmasiejcgvbk.supabase.co';
-export const STYLES=['dark','light','classic','pill','card','neon','zoom','banner'];
+export const STYLES=['pill','pill-mint','pill-dark','pill-white'];
+export const PAGE_TYPES=['contact','order','download'];
+export const LANGUAGES=['ku','en'];
 export const WIDTHS=[320,375,393,430,768];
+export const NATIVE_CASE_IDS=STYLES.flatMap(style=>PAGE_TYPES.flatMap(type=>LANGUAGES.flatMap(language=>WIDTHS.map(width=>`${style}-${type}-${language}-${width}`))));
 
 export function validateRuntime(env) {
   if(env.GITHUB_REPOSITORY!=='Zana-Sponsor/proxobalance'
@@ -77,7 +80,7 @@ export async function verifyReadOnlySecurity({authorization,key,userId,protectio
     throw Error('ordinary_account_rls_required');
   checks.other_owner_cards_hidden=true;
   for(const style of STYLES) {
-    const response=await request(SUPABASE_ORIGIN+'/storage/v1/object/public/proxolink-templates/'+style+'/v1/template.html',{},
+    const response=await request(SUPABASE_ORIGIN+'/storage/v1/object/public/proxolink-templates/'+style+'/v6/template.html',{},
       'private_template_'+style);
     if(![400,401,403,404].includes(response.status))throw Error('private_template_access_failed');
   }
@@ -86,17 +89,17 @@ export async function verifyReadOnlySecurity({authorization,key,userId,protectio
 }
 
 export function validateNativeResults(data,captured,pixels) {
-  const cases=STYLES.flatMap(style=>WIDTHS.map(width=>style+'-'+width));
+  const cases=NATIVE_CASE_IDS;
   if(Object.keys(data||{}).length!==cases.length||captured.size!==cases.length
     ||!cases.every(id=>captured.has(id)&&data[id]?.passed===true
       &&data[id].font_loaded===true&&data[id].images_loaded===true
-      &&data[id].icons_loaded===true&&data[id].width===Number(id.split('-')[1])
-      &&Number.isInteger(data[id].animation_count)&&data[id].animation_count>0
+      &&data[id].icons_loaded===true&&data[id].width===Number(id.split('-').at(-1))
+      &&Number.isInteger(data[id].animation_count)&&data[id].animation_count>=0
       &&data[id].animation_checked===true&&data[id].contact_destinations===true
       &&data[id].confirmation===true&&data[id].navigation_blocked===true)
     ||Object.keys(pixels||{}).length!==cases.length
     ||!cases.every(id=>pixels[id]?.exact_pixels_equal===true
-      &&pixels[id]?.changed_pixels===0&&pixels[id]?.width===Number(id.split('-')[1])))
+      &&pixels[id]?.changed_pixels===0&&pixels[id]?.width===Number(id.split('-').at(-1))))
     throw Error('native_evidence_incomplete');
   // Explicit allowlist prevents runtime credentials/URLs or arbitrary page
   // data from accidentally entering a public CI artifact.

@@ -3,7 +3,7 @@
 import {randomUUID,createHash} from 'node:crypto';
 import assert from 'node:assert/strict';
 import sharp from 'sharp';
-import {STYLES,SUPABASE_ORIGIN,PREVIEW_ORIGIN} from './proxolink-verification-security.mjs';
+import {STYLES,PAGE_TYPES,SUPABASE_ORIGIN,PREVIEW_ORIGIN} from './proxolink-verification-security.mjs';
 
 export function validateStagingConfiguration(env) {
   const ref=env.PROXO_STAGING_PROJECT_REF;
@@ -35,8 +35,8 @@ export function stagingTransport(config,fetcher=fetch) {
     const allowed=supabase
       ?url.pathname==='/auth/v1/token'||url.pathname==='/rest/v1/proxolink_cards'
         ||/^\/storage\/v1\/object\/proxolink-assets\/[0-9a-f-]{36}\/[0-9a-f-]{36}\/avatar(?:-edited)?\.png$/.test(url.pathname)
-      :['/api/contact-templates','/api/contact-cards','/api/contact-card-action','/api/contact-preview-token'].includes(url.pathname)
-        ||/^\/contact\/[0-9a-f-]{36}(?:\/avatar)?$/.test(url.pathname);
+      :['/api/contact-templates','/api/contact-cards','/api/contact-card-action','/api/contact-preview-token','/api/page-providers','/api/page-preview-token'].includes(url.pathname)
+        ||/^\/(?:contact|order|download)\/[0-9a-f-]{36}(?:\/avatar)?$/.test(url.pathname);
     if(!allowed||!['GET','POST','PATCH'].includes(method))throw Error('staging_request_scope');
     if(supabase && ((url.pathname==='/auth/v1/token'&&method!=='POST')
       ||(url.pathname==='/rest/v1/proxolink_cards'&&method!=='GET')
@@ -77,25 +77,27 @@ export async function verifyStagingLifecycle(config,avatar,fetcher=fetch,{uuid=r
     const list=await api('/api/contact-cards');assert.equal(list.status,200);
     const card=list.body.cards.find(row=>row.id===id);assert.ok(card,'saved_fixture_required');return card;
   };
-  const page=async(id,expected)=>{
-    const response=await request('/contact/'+id);
+  const page=async(type,id,expected)=>{
+    const response=await request('/'+type+'/'+id);
     assert.equal(response.status,expected,'public_renderer_status');
     if(expected===200){assert.match(response.headers.get('content-type')||'',/^text\/html/);
-      const html=await response.text();assert.doesNotMatch(html,/\{\{[A-Z_]+\}\}|proxolink-templates\/|fa-telegram|api\.telegram\.org/);}
+      const html=await response.text();assert.doesNotMatch(html,/\{\{[A-Z_]+\}\}|proxolink-templates\/|api\.telegram\.org/);}
   };
-  for(const style of STYLES) {
-    const meta=catalog.body.templates.find(item=>item.template_key===style&&item.version===2);
-    assert.ok(meta,'reviewed_staging_v2_required');
-    const id=uuid(),path=session.user.id+'/'+id+'/avatar.png';
-    const payload={client_request_id:id,name:'Proxo staging '+style,bio:'Isolated verification fixture',
-      tt:'proxo_staging_fixture',template_key:style,template_version:2,color_theme:'purple',card_language:'ku',
-      avatar_path:path,platforms:{wa:'12025550123',vb:'12025550123',ig:'proxo_staging_fixture',ph:'12025550123'}};
+  for(const type of PAGE_TYPES)for(const style of STYLES) {
+    const meta=catalog.body.templates.find(item=>item.template_key===style&&item.version===6);
+    assert.ok(meta,'four_prepared_designs_required');
+    const requestId=uuid(),path=session.user.id+'/'+requestId+'/avatar.png';
+    const destinations={contact:['telegram','https://t.me/proxo_staging_fixture'],order:['talabat','https://iraq.talabat.com/iraq/restaurant/proxo-staging'],download:['google_play','https://play.google.com/store/apps/details?id=com.proxo.staging']};
+    const [provider_key,destination_url]=destinations[type];
+    const payload={client_request_id:requestId,page_kind:type,name:'Proxo staging '+style,bio:'Isolated verification fixture',
+      template_key:style,template_version:6,color_theme:'purple',card_language:'ku',avatar_path:path,
+      settings:{providers:[{provider_key,destination_url,enabled:true,sort_order:0}]}};
     // A new fixture references a not-yet-uploaded avatar. This causes a genuine
     // publication failure without changing templates or other users' rows.
     const failed=await api('/api/contact-cards',body(payload));
     assert.equal(failed.status,422);assert.equal(failed.body.error,'publish_failed');
-    assert.equal(failed.body.card?.id,id);assert.equal(failed.body.card?.publish_status,'failed');
-    await page(id,404);
+    const id=failed.body.card?.id;assert.ok(id&&id!==requestId&&id!==session.user.id);assert.equal(failed.body.card?.publish_status,'failed');
+    await page(type,id,404);
     const duplicate=await api('/api/contact-cards',body(payload));
     assert.equal(duplicate.status,200);assert.equal(duplicate.body.reused,true);assert.equal(duplicate.body.card.id,id);
     const upload=await request('/storage/v1/object/proxolink-assets/'+path,{supabase:true,
@@ -104,8 +106,8 @@ export async function verifyStagingLifecycle(config,avatar,fetcher=fetch,{uuid=r
     const retried=await api('/api/contact-card-action',body({card_id:id,action:'retry'}));
     assert.equal(retried.status,200);assert.equal(retried.body.card.id,id);
     assert.equal(retried.body.card.publish_status,'ready');assert.equal(retried.body.card.status,'active');
-    const publicPath='/contact/'+id;assert.equal(retried.body.card.public_path,publicPath);
-    await page(id,200);
+    const publicPath='/'+type+'/'+id;assert.equal(retried.body.card.public_path,publicPath);
+    await page(type,id,200);
     const publicAvatar=await request(publicPath+'/avatar');assert.equal(publicAvatar.status,200);
     assert.equal(createHash('sha256').update(Buffer.from(await publicAvatar.arrayBuffer())).digest('hex'),
       createHash('sha256').update(avatar).digest('hex'),'public_avatar_bytes');
@@ -116,27 +118,27 @@ export async function verifyStagingLifecycle(config,avatar,fetcher=fetch,{uuid=r
     assert.ok(replacement.ok,'staging_avatar_replacement_failed');
     const nextStyle=STYLES[(STYLES.indexOf(style)+1)%STYLES.length];
     const updated=await api('/api/contact-cards?id='+id,{...body({name:'Edited Proxo '+style,
-      bio:'Updated fixture',template_key:nextStyle,template_version:2,color_theme:'blue',card_language:'en',
-      platforms:{wa:'12025550124',vb:'12025550124',ig:'proxo_staging_edited',ph:'12025550124'},
+      bio:'Updated fixture',template_key:nextStyle,template_version:6,color_theme:'blue',card_language:'en',
+      settings:{providers:[{provider_key,destination_url,enabled:true,sort_order:0}]},
       avatar_path:replacementPath,expected_updated_at:before.updated_at}),method:'PATCH'});
     assert.equal(updated.status,200);assert.equal(updated.body.card.id,id);assert.equal(updated.body.card.public_path,publicPath);
     const edited=await inspect(id);
     assert.equal(edited.template_key,nextStyle);assert.equal(edited.color_theme,'blue');assert.equal(edited.card_language,'en');
-    assert.equal(edited.platforms.wa,'12025550124');assert.equal(edited.avatar_path,replacementPath);
+    assert.equal(edited.settings.providers[0].provider_key,provider_key);assert.equal(edited.avatar_path,replacementPath);
     const editedAvatar=await request(publicPath+'/avatar');assert.equal(editedAvatar.status,200);
     assert.equal(createHash('sha256').update(Buffer.from(await editedAvatar.arrayBuffer())).digest('hex'),
       createHash('sha256').update(replacementAvatar).digest('hex'),'replacement_avatar_bytes');
     const invalid=await api('/api/contact-cards?id='+id,{...body({name:'',expected_updated_at:(await inspect(id)).updated_at}),method:'PATCH'});
-    assert.equal(invalid.status,422);assert.equal((await inspect(id)).name,'Edited Proxo '+style);await page(id,200);
+    assert.equal(invalid.status,422);assert.equal((await inspect(id)).name,'Edited Proxo '+style);await page(type,id,200);
     const off=await api('/api/contact-card-action',body({card_id:id,action:'deactivate'}));assert.equal(off.status,200);
-    assert.equal(off.body.card.status,'inactive');assert.equal(off.body.card.public_path,null);await page(id,404);
+    assert.equal(off.body.card.status,'inactive');assert.equal(off.body.card.public_path,null);await page(type,id,404);
     const preview=await api('/api/contact-preview-token',body({card_id:id}));assert.equal(preview.status,200);
     const previewPath=preview.body.preview_path;
     assert.ok(typeof previewPath==='string'&&previewPath.startsWith(publicPath+'?preview_token='),'owner_preview_required');
     const ownerPage=await request(previewPath);assert.equal(ownerPage.status,200);
     const on=await api('/api/contact-card-action',body({card_id:id,action:'activate'}));assert.equal(on.status,200);
-    assert.equal(on.body.card.id,id);assert.equal(on.body.card.public_path,publicPath);await page(id,200);
-    fixtures.push({style,version:2,fixture_id:id,failed_publish_recovered:true,duplicate_reused:true,
+    assert.equal(on.body.card.id,id);assert.equal(on.body.card.public_path,publicPath);await page(type,id,200);
+    fixtures.push({type,style,version:6,fixture_id:id,failed_publish_recovered:true,duplicate_reused:true,
       stable_edit_link:true,invalid_edit_preserved:true,public_avatar_bytes:true,inactive_hidden:true,
       template_theme_language_contacts_edited:true,avatar_replaced:true,
       owner_inactive_preview:true,reactivated_same_link:true});
@@ -145,5 +147,5 @@ export async function verifyStagingLifecycle(config,avatar,fetcher=fetch,{uuid=r
   for(const fixture of fixtures)assert.equal(list.body.cards.filter(card=>card.id===fixture.fixture_id).length,1);
   return {environment:'Isolated staging; real HTTP APIs; ordinary account; fictional retained fixtures',
     application_auth_required:true,cases:fixtures,
-    coverage_exclusions:['native rendering','OS copy/share','external app launches','exact-ad live analytics','iOS']};
+    coverage_exclusions:['native rendering','OS copy/share','external app launches','iOS']};
 }

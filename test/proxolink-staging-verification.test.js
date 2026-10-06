@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {createHash} from 'node:crypto';
+import {createHash,randomUUID} from 'node:crypto';
 import {Readable} from 'node:stream';
 import {validateStagingConfiguration,stagingTransport,verifyStagingLifecycle} from '../scripts/proxolink-staging-verification.mjs';
 
@@ -36,8 +36,9 @@ test('staging HTTP scope never forwards bypass to Supabase or follows credential
   assert.equal(calls.length,2);
 });
 
-test('staging orchestrator exercises all eight lifecycles through the actual API handlers using controlled provider fixtures',async()=>{
+test('staging orchestrator exercises all twelve independent page/design lifecycles through the actual API handlers using controlled provider fixtures',async()=>{
   process.env.PROXO_SUPABASE_URL=config.supabase;
+  process.env.PROXO_V6_WRITE_MODE='isolated';
   process.env.PROXO_SUPABASE_SERVICE_ROLE_KEY='server-fixture-only';
   process.env.PROXO_PREVIEW_SIGNING_SECRET='fixture-secret-at-least-32-characters';
   const {default:handler}=await import('../api/proxolink.js');
@@ -63,10 +64,11 @@ test('staging orchestrator exercises all eight lifecycles through the actual API
       if(u.pathname==='/rest/v1/proxolink_cards') {
         const id=u.searchParams.get('id')?.slice(3);
         if(method==='POST') {
-          const data=JSON.parse(options.body);cards.set(data.id,{...data,card_number:cards.size+1,updated_at:'2026-10-05T00:00:00.001Z'});
-          return Response.json([cards.get(data.id)],{status:201});
+          const data=JSON.parse(options.body);const id=data.id||randomUUID();cards.set(id,{...data,id,card_number:cards.size+1,updated_at:'2026-10-05T00:00:00.001Z'});
+          return Response.json([cards.get(id)],{status:201});
         }
         const values=[...cards.values()].filter(card=>(!id||card.id===id)
+          &&(!u.searchParams.get('client_request_id')||card.client_request_id===u.searchParams.get('client_request_id').slice(3))
           &&(!u.searchParams.get('updated_at')||card.updated_at===u.searchParams.get('updated_at').slice(3)));
         if(method==='PATCH')for(const card of values)Object.assign(card,JSON.parse(options.body),{updated_at:new Date(1791158400000+(++serial)).toISOString()});
         return Response.json(values);
@@ -76,10 +78,10 @@ test('staging orchestrator exercises all eight lifecycles through the actual API
       throw Error('Unexpected provider fixture request');
     }
     assert.equal(u.origin,config.base);
-    const operation=u.pathname.startsWith('/contact/')?(u.pathname.endsWith('/avatar')?'avatar':'contact'):
+    const operation=/^\/(contact|order|download)\//.test(u.pathname)?(u.pathname.endsWith('/avatar')?'avatar':u.pathname.split('/')[1]):
       {'/api/contact-templates':'templates','/api/contact-cards':'cards','/api/contact-card-action':'card-action','/api/contact-preview-token':'preview-token'}[u.pathname];
     const query={...Object.fromEntries(u.searchParams),op:operation};
-    if(u.pathname.startsWith('/contact/'))query.id=u.pathname.split('/')[2];
+    if(/^\/(contact|order|download)\//.test(u.pathname)){query.id=u.pathname.split('/')[2];query.page_type=u.pathname.split('/')[1];}
     const req=Readable.from(options.body?[Buffer.from(options.body)]:[]);
     Object.assign(req,{query,method,headers:{...Object.fromEntries(Object.entries(options.headers||{}).map(([k,v])=>[k.toLowerCase(),v])),host:'proxolink-staging-fixtures.vercel.app'},socket:{remoteAddress:'127.0.0.1'},url:u.pathname+u.search});
     const res={statusCode:200,headers:{},setHeader(name,value){this.headers[name]=value;},end(data=''){this.body=data;}};
@@ -91,7 +93,7 @@ test('staging orchestrator exercises all eight lifecycles through the actual API
     const sharp=(await import('sharp')).default;
     const image=await sharp({create:{width:10,height:10,channels:3,background:'#046cfa'}}).png().toBuffer();
     const result=await verifyStagingLifecycle(config,image,fetcher);
-    assert.equal(result.cases.length,8);assert.equal(cards.size,8);
+    assert.equal(result.cases.length,12);assert.equal(cards.size,12);
     assert.ok(result.cases.every(entry=>entry.failed_publish_recovered&&entry.stable_edit_link&&entry.owner_inactive_preview));
     assert.doesNotMatch(JSON.stringify(result),/ordinary-fixture-session|server-fixture-only|test-only|preview_token/);
   }finally{global.fetch=original;}

@@ -1,5 +1,5 @@
 import { readFileSync, readdirSync, statSync } from 'node:fs';
-const forbidden=['buildCardHtml(', 'loadHtmlString(', 'sendHtmlDocument(', 'api.telegram.org/bot', '{{HANDLERS}}', 'function askConfirm('];
+const forbidden=['buildCardHtml(', 'loadHtmlString(', 'sendHtmlDocument(', 'api.telegram.org/bot', '{{HANDLERS}}', 'function askConfirm(', '{{PROXO_CONFIG}}', 'api.telegram.org', 'TELEGRAM_BOT_TOKEN'];
 function scan(folder) {
   for(const name of readdirSync(folder)) {
     const path=folder+'/'+name;
@@ -10,15 +10,8 @@ function scan(folder) {
   }
 }
 scan('proxo_app/lib');
-// Scope the no-Telegram rule to ProxoLink. Other unrelated application areas
-// are not modified by this feature-branch migration.
-for (const path of ['proxo_app/lib/models/proxolink_template_meta.dart',
-  'proxo_app/lib/screens/tools_screen.dart',
-  'proxo_app/lib/widgets/proxolink_preview.dart']) {
-  const source=readFileSync(path,'utf8');
-  for(const token of ['FontAwesomeIcons.telegram', "id: 'tg'", "'t.me'", "'telegram': 'tg'"])
-    if(source.includes(token))throw Error('Retired Telegram ProxoLink control in '+path);
-}
+// Telegram is an ordinary optional Contact destination. Bot credentials and
+// reusable templates remain forbidden in the client and static output.
 for(const folder of ['public','assets']) {
   const walk=(directory)=>{for(const name of readdirSync(directory)) {
     const path=directory+'/'+name;

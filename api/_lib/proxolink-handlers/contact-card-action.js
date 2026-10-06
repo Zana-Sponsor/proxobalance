@@ -1,7 +1,9 @@
+import { assertIsolatedWrites, publicPath } from '../proxolink-pages.js';
+import { archivePage } from './independent-pages.js';
 import { publishAudit } from '../proxolink-audit.js';
 import { readJson, json, withSecurity } from '../security.js';
 import {
-  authenticatedUser, cardById, renderedPage, verifyPublicAvatar,
+  authenticatedUser, cardById, cardRows, renderedPage, verifyPublicAvatar,
   activeTemplate, proxoRows, proxoWrite, validUuid
 } from '../proxolink.js';
 
@@ -13,13 +15,13 @@ async function renderReady(card) {
   await renderedPage(card);
 }
 async function responseCard(res,id,userId,status=200) {
-  const rows=await proxoRows('proxolink_cards',
+  const rows=await cardRows(
     '&id=eq.'+id+'&user_id=eq.'+userId+'&limit=1',
     'id,name,status,publish_status');
   const card=rows[0];
   return json(res,status,{ok:true,card:{
     ...card,public_path:card.status==='active'&&card.publish_status==='ready'
-      ?'/contact/'+id:null
+      ?publicPath(card):null
   }});
 }
 async function handler(req,res,{user}) {
@@ -33,6 +35,10 @@ async function handler(req,res,{user}) {
     const card=await cardById(id);
     if(card.user_id!==user.id)
       return json(res,404,{ok:false,error:'not_found'});
+    if(card.page_kind){
+      assertIsolatedWrites();
+      if(card.archived_at)return json(res,409,{ok:false,error:'page_archived'});
+    }
     if(action==='deactivate'||action==='delete') {
       // Conservative: do not break any ad still referring to this card.
       const ads=await proxoRows('pa_ads',
@@ -40,6 +46,7 @@ async function handler(req,res,{user}) {
       if(ads.length)
         return json(res,409,{ok:false,error:'ad_dependency'});
       if(action==='delete') {
+        if(card.page_kind)return archivePage(res,user.id,card);
         await proxoWrite('proxolink_cards','DELETE',null,
           'id=eq.'+id+'&user_id=eq.'+user.id,'return=minimal');
         return json(res,200,{ok:true,deleted:id});
@@ -81,7 +88,8 @@ async function handler(req,res,{user}) {
       await publishAudit(card,action,'failed',error?.code||'render_failed');
       return json(res,422,{ok:false,error:'publish_failed',card_id:id});
     }
-  } catch {
+  } catch(error) {
+    if(error?.code==='isolated_staging_required')return json(res,503,{ok:false,error:error.code});
     return json(res,503,{ok:false,error:'backend_unavailable'});
   }
 }

@@ -13,6 +13,22 @@
       "destination": "/exchange-admin1.html"
     },
     {
+      "source": "/api/page-providers",
+      "destination": "/api/proxolink?op=providers"
+    },
+    {
+      "source": "/api/page-preview-token",
+      "destination": "/api/proxolink?op=form-preview-token"
+    },
+    {
+      "source": "/page-preview",
+      "destination": "/api/proxolink?op=form-preview"
+    },
+    {
+      "source": "/page-preview-avatar",
+      "destination": "/api/proxolink?op=form-preview-avatar"
+    },
+    {
       "source": "/contact-preview",
       "destination": "/api/proxolink?op=template-preview"
     },
@@ -35,6 +51,22 @@
     {
       "source": "/api/contact-cards",
       "destination": "/api/proxolink?op=cards"
+    },
+    {
+      "source": "/order/:id/avatar",
+      "destination": "/api/proxolink?op=avatar&page_type=order&id=:id"
+    },
+    {
+      "source": "/download/:id/avatar",
+      "destination": "/api/proxolink?op=avatar&page_type=download&id=:id"
+    },
+    {
+      "source": "/order/:id",
+      "destination": "/api/proxolink?op=order&id=:id"
+    },
+    {
+      "source": "/download/:id",
+      "destination": "/api/proxolink?op=download&id=:id"
     },
     {
       "source": "/contact/:id/avatar",

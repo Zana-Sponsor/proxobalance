@@ -48,7 +48,15 @@ app.all('/api/forms',formsHandler);
 for(const op of ['cards','card-action','preview-token','ad-links','templates'])
   app.all('/api/contact-'+op,proxoRoute(op));
 app.get('/contact-preview',proxoRoute('template-preview'));
-app.get('/contact/:id',proxoRoute('contact',req=>({id:req.params.id})));
+for(const kind of ['contact','order','download']) {
+  app.get('/'+kind+'/:id/avatar',proxoRoute('avatar',req=>({id:req.params.id,page_type:kind})));
+  app.get('/'+kind+'/:id',proxoRoute(kind,req=>({id:req.params.id})));
+}
+app.get('/a/:token/avatar',proxoRoute('avatar',req=>({token:req.params.token})));
+app.get('/api/page-providers',proxoRoute('providers'));
+app.post('/api/page-preview-token',proxoRoute('form-preview-token'));
+app.get('/page-preview',proxoRoute('form-preview'));
+app.get('/page-preview-avatar',proxoRoute('form-preview-avatar'));
 app.get('/a/:token/action/:action',proxoRoute('ad',req=>({...req.params})));
 app.get('/a/:token',proxoRoute('ad',req=>({token:req.params.token})));
 

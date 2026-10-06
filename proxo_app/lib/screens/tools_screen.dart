@@ -10,6 +10,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/proxo_card.dart';
+import '../models/proxolink_page_type.dart';
 import '../models/proxolink_template_meta.dart';
 import '../services/proxolink_service.dart';
 import '../widgets/ad_form_components.dart';
@@ -217,7 +218,7 @@ class _ToolsScreenState extends State<ToolsScreen> {
     }
     if (choice == 'copy') {
       await Clipboard.setData(
-        ClipboardData(text: _repository.publicUrl(card.id).toString()),
+        ClipboardData(text: _repository.publicUrl(card.id, pageType: card.pageType.key).toString()),
       );
       _message('بەستەرەکە کۆپی کرا');
       return;
@@ -225,7 +226,7 @@ class _ToolsScreenState extends State<ToolsScreen> {
     if (choice == 'share') {
       final box = context.findRenderObject() as RenderBox?;
       await Share.share(
-        '${card.name}\n${_repository.publicUrl(card.id)}',
+        '${card.name}\n${_repository.publicUrl(card.id, pageType: card.pageType.key)}',
         sharePositionOrigin: box == null
             ? null
             : box.localToGlobal(Offset.zero) & box.size,
@@ -443,6 +444,7 @@ class _ContactRow extends StatelessWidget {
           spacing: 8,
           runSpacing: 8,
           children: [
+            _QuietChip(label: card.pageType.label),
             _QuietChip(label: card.templateKey),
             _QuietChip(label: card.stateLabel),
             if (busy || card.publishStatus == 'creating')
@@ -518,8 +520,33 @@ class _ContactFormState extends State<_ContactForm> {
   late String _id;
   String? _avatarPath;
   Uint8List? _avatar;
-  String _template = 'dark', _theme = 'purple', _language = 'ku';
-  int _version = 1;
+  bool _avatarUploaded=false;
+  Uri? _remoteAvatar;
+  String _template = 'pill', _theme = 'purple', _language = 'ku';
+  int _version = 6;
+  ProxoPageType? _kind;
+  List<ProxoProvider>? _providers;
+  final _order = <String>[];
+  Timer? _previewDebounce;
+  int _previewRevision = 0;
+  bool get _legacy => widget.existing != null && widget.existing!.pageKind == null;
+  List<ProxoProvider> get _typeProviders => (_providers ?? []).where((p)=>p.pageType == _kind?.key).toList()
+    ..sort((a,b)=>_order.indexOf(a.key).compareTo(_order.indexOf(b.key)));
+  void _changed() {
+    _previewDebounce?.cancel();
+    _previewDebounce = Timer(const Duration(milliseconds: 500), () {
+      if(mounted) setState(()=>_previewRevision++);
+    });
+  }
+  void _moveProvider(String key,int delta){
+    final visible=_typeProviders.map((p)=>p.key).toList(),index=visible.indexOf(key);
+    final target=index+delta;if(target<0 || target>=visible.length)return;
+    final a=_order.indexOf(key),b=_order.indexOf(visible[target]);
+    _order[a]=visible[target];_order[b]=key;_previewRevision++;
+  }
+  Future<Uri> _livePreview() => _legacy
+    ? widget.repository.templatePreview(_template,_version,theme:_theme,language:_language)
+    : widget.repository.formPreview({..._data(), 'name':_name.text.trim().isEmpty ? _kind!.nameLabel : _name.text.trim()},existing:widget.existing);
   List<ProxoTemplate>? _templates;
   bool _catalogFailed = false, _saving = false;
   bool _restoredDraft = false;
@@ -528,9 +555,8 @@ class _ContactFormState extends State<_ContactForm> {
   @override
   void initState() {
     super.initState();
-    for (final p in kPlatformBtns) {
-      _contacts[p.id] = TextEditingController();
-    }
+    _name.addListener(_changed);
+    _bio.addListener(_changed);
     _id = widget.existing?.id ?? newProxoRequestId();
     _pendingKey =
         'proxolink.pending.${widget.repository is ProxoLinkService ? (widget.repository as ProxoLinkService).db.auth.currentUser?.id : 'test'}';
@@ -542,32 +568,39 @@ class _ContactFormState extends State<_ContactForm> {
     _name.text = j['name'] as String? ?? '';
     _bio.text = j['bio'] as String? ?? '';
     _tt.text = j['tt'] as String? ?? '';
-    _template = j['template_key'] as String? ?? 'dark';
-    _version = (j['template_version'] as num?)?.toInt() ?? 1;
+    _kind = ProxoPageTypeInfo.parse(j['page_kind'] as String?);
+    _template = j['template_key'] as String? ?? 'pill';
+    _version = (j['template_version'] as num?)?.toInt() ?? 6;
+    if(widget.existing == null){
+      const aliases={'dark':'pill-dark','light':'pill-white','classic':'pill-white','card':'pill-white','neon':'pill-mint','zoom':'pill','banner':'pill'};
+      _template=aliases[_template] ?? _template;_version=6;
+    }
     _theme = themeByKey(j['color_theme'] as String?).key;
     _language = j['card_language'] as String? ?? 'ku';
     _avatarPath = j['avatar_path'] as String?;
     _id = j['client_request_id'] as String? ?? _id;
-    final values = j['platforms'] as Map? ?? {};
+    _enabled.clear();
+    final configured = (j['settings'] as Map?)?['providers'] as List?;
+    if(configured != null){
+      final keys=configured.map((p)=>(p as Map)['provider_key'] as String).toList();
+      _order..removeWhere(keys.contains)..insertAll(0,keys);
+    }
+    final values = configured == null ? j['platforms'] as Map? ?? {} : {for(final p in configured) (p as Map)['provider_key']:p['destination_url']};
     const aliases = {
-      'whatsapp': 'wa',
-      'viber': 'vb',
-      'instagram': 'ig',
-      'phone': 'ph',
-      'asya': 'as',
-      'asiacell': 'as',
-      'korek': 'ph',
+      'wa': 'whatsapp', 'vb': 'viber', 'ig': 'instagram', 'tg': 'telegram',
+      'ph': 'korek', 'as': 'asiacell', 'phone':'korek', 'asya':'asiacell',
     };
     for (final e in values.entries) {
       final key = aliases[e.key] ?? e.key;
       if (_contacts.containsKey(key)) {
         _contacts[key]!.text = e.value.toString();
-        _enabled.add(key as String);
+        if(configured == null || configured.any((p)=>(p as Map)['provider_key']==key && p['enabled']==true)) _enabled.add(key as String);
       }
     }
   }
 
   Future<void> _initialize() async {
+    await _loadCatalog();
     if (widget.existing == null && widget.repository is ProxoLinkService) {
       final pending = (await SharedPreferences.getInstance()).getString(
         _pendingKey,
@@ -583,17 +616,31 @@ class _ContactFormState extends State<_ContactForm> {
         }
       }
     }
-    await _loadCatalog();
   }
 
   Future<void> _loadCatalog() async {
     try {
       final templates = await widget.repository.templates();
+      final providers = await widget.repository.providers();
+      Uri? avatar;
+      if(widget.existing?.avatarPath != null){
+        try{final preview=await widget.repository.preview(widget.existing!.id);avatar=preview.replace(path:'${widget.existing!.publicPath}/avatar');}catch(_){}
+      }
+      if(!mounted)return;
+      _providers = providers;
+      for(final p in providers){
+        if(!_contacts.containsKey(p.key)){
+          _contacts[p.key]=TextEditingController()..addListener(_changed);
+          _order.add(p.key);
+        }
+      }
+      if(widget.existing != null)_fill(widget.existing!.toJson());
       if (templates.isEmpty)
         throw const ProxoLinkFailure('templates_unavailable');
       if (!mounted) return;
       setState(() {
         _templates = templates;
+        _remoteAvatar = avatar;
         _catalogFailed = false;
         if (!templates.any((t) => t.key == _template))
           _template = templates.first.key;
@@ -608,6 +655,7 @@ class _ContactFormState extends State<_ContactForm> {
 
   @override
   void dispose() {
+    _previewDebounce?.cancel();
     _name.dispose();
     _bio.dispose();
     _tt.dispose();
@@ -632,8 +680,14 @@ class _ContactFormState extends State<_ContactForm> {
         throw const ProxoLinkFailure('invalid_avatar');
       setState(() {
         _avatar = bytes;
+        _avatarUploaded=false;
         _error = null;
       });
+      final uploaded = await widget.repository.uploadAvatar(_id,bytes);
+      if(!mounted)return;
+      setState(() { _avatarPath=uploaded; _avatarUploaded=true; _previewRevision++; });
+    } on ProxoLinkFailure catch(e){
+      if(mounted)setState(()=>_error=e.message);
     } catch (_) {
       if (mounted)
         setState(
@@ -644,15 +698,22 @@ class _ContactFormState extends State<_ContactForm> {
 
   Map<String, dynamic> _data() => {
     'client_request_id': _id,
-    'name': _name.text.trim(),
-    'bio': _bio.text.trim(),
-    'tt': _tt.text.trim().replaceFirst(RegExp(r'^@'), ''),
-    'template_key': _template,
-    'template_version': _version,
-    'color_theme': _theme,
-    'card_language': _language,
-    'avatar_path': _avatarPath,
-    'platforms': {for (final key in _enabled) key: _contacts[key]!.text.trim()},
+    'name': _name.text.trim(), 'bio': _bio.text.trim(),
+    'template_key': _template, 'template_version': _version,
+    'color_theme': _theme, 'card_language': _language, 'avatar_path': _avatarPath,
+    if(!_legacy) 'page_kind':_kind!.key,
+    if(!_legacy) 'settings':{'providers':[
+      for(final p in _typeProviders)
+        if(_contacts[p.key]!.text.trim().isNotEmpty)
+          {'provider_key':p.key,'destination_url':_contacts[p.key]!.text.trim(),
+           'enabled':_enabled.contains(p.key),'sort_order':_typeProviders.indexOf(p)},
+    ]},
+    if(_legacy) 'tt': _tt.text.trim().replaceFirst(RegExp(r'^@'), ''),
+    if(_legacy) 'platforms': {
+      for(final p in kPlatformBtns)
+        if(_enabled.contains(p.type == 'phone' ? 'korek' : p.type == 'asya' ? 'asiacell' : p.type))
+          p.id:_contacts[p.type == 'phone' ? 'korek' : p.type == 'asya' ? 'asiacell' : p.type]!.text.trim(),
+    },
   };
   Future<void> _save() async {
     if (_saving || _templates == null || !_form.currentState!.validate())
@@ -664,8 +725,8 @@ class _ContactFormState extends State<_ContactForm> {
       );
       return;
     }
-    if (_enabled.isEmpty && _tt.text.trim().isEmpty) {
-      setState(() => _error = 'تکایە کەمترین یەک ڕێگای پەیوەندی زیاد بکە.');
+    if (!_typeProviders.any((p)=>_enabled.contains(p.key)) && (!_legacy || _tt.text.trim().isEmpty)) {
+      setState(() => _error = 'تکایە کەمترین یەک دووگمە زیاد بکە.');
       return;
     }
     FocusScope.of(context).unfocus();
@@ -674,7 +735,7 @@ class _ContactFormState extends State<_ContactForm> {
       _error = null;
     });
     try {
-      if (_avatar != null) {
+      if (_avatar != null && !_avatarUploaded) {
         _avatarPath = await widget.repository.uploadAvatar(_id, _avatar!);
         _avatar = null;
       }
@@ -748,7 +809,15 @@ class _ContactFormState extends State<_ContactForm> {
     ),
   );
   @override
-  Widget build(BuildContext context) => AbsorbPointer(
+  Widget build(BuildContext context) => _kind == null ? Center(
+    child: Padding(padding: const EdgeInsets.all(16),child:Column(
+      mainAxisSize:MainAxisSize.min,crossAxisAlignment:CrossAxisAlignment.stretch,
+      children:[const ProxoText('جۆری پەڕە هەڵبژێرە'),const SizedBox(height:20),
+        for(final type in ProxoPageType.values) Padding(padding:const EdgeInsets.only(bottom:12),
+          child:OutlinedButton(onPressed:()=>setState(()=>_kind=type),child:ProxoText(type.label))),
+      ],
+    )),
+  ) : AbsorbPointer(
     absorbing: _saving,
     child: SingleChildScrollView(
       padding: EdgeInsets.fromLTRB(
@@ -766,61 +835,37 @@ class _ContactFormState extends State<_ContactForm> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 AdFormSection(
-                  title: 'شێوازی پەڕە',
-                  child: _catalogFailed
-                      ? _LoadFailure(onRetry: _loadCatalog)
-                      : _templates == null
-                      ? const Center(child: CircularProgressIndicator())
-                      : Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Wrap(
-                              spacing: 10,
-                              runSpacing: 10,
-                              children: [
-                                for (final t in _templates!)
-                                  AdChoice(
-                                    label: t.label,
-                                    selected: t.key == _template,
-                                    onTap: () => setState(() {
-                                      _template = t.key;
-                                      _version = t.version;
-                                    }),
-                                  ),
-                              ],
-                            ),
-                            const SizedBox(height: 20),
-                            ClipRRect(
-                              borderRadius: AdUi.controlRadius,
-                              child: SizedBox(
-                                height: 460,
-                                child: ProxoLinkPreview(
-                                  key: ValueKey('$_template/$_version/$_theme/$_language'),
-                                  loadUrl: () => widget.repository
-                                      .templatePreview(_template, _version,
-                                        theme: _theme, language: _language),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 12),
-                            OutlinedButton.icon(
-                              onPressed: () => Navigator.push(
-                                context,
-                                MaterialPageRoute<void>(
-                                  builder: (_) => CardWebViewScreen(
-                                    title: 'پێشبینینی شێواز',
-                                    allowContactActions: false,
-                                    loadUrl: () => widget.repository
-                                        .templatePreview(_template, _version,
-                                          theme: _theme, language: _language),
-                                  ),
-                                ),
-                              ),
-                              icon: const Icon(Icons.open_in_full),
-                              label: const ProxoText('پێشبینینی تەواو'),
-                            ),
-                          ],
+                  title: _kind!.imageLabel,
+                  child: Column(
+                    children: [
+                      if (_avatar != null)
+                        ClipOval(
+                          child: Image.memory(
+                            _avatar!,
+                            width: 80,
+                            height: 80,
+                            fit: BoxFit.cover,
+                          ),
+                        )
+                      else if (_remoteAvatar != null)
+                        ClipOval(
+                          child: Image.network(
+                            _remoteAvatar.toString(),
+                            width: 80,
+                            height: 80,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) =>
+                                const Icon(Icons.person_outline),
+                          ),
                         ),
+                      const SizedBox(height: 12),
+                      OutlinedButton.icon(
+                        onPressed: _pickAvatar,
+                        icon: const Icon(Icons.photo_outlined),
+                        label: const ProxoText('هەڵبژاردنی وێنە'),
+                      ),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: AdUi.sectionGap),
                 AdFormSection(
@@ -828,9 +873,9 @@ class _ContactFormState extends State<_ContactForm> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      _field(_name, 'ناو', required: true, limit: 160),
-                      _field(_bio, 'دەربارە', lines: 4, limit: 2000),
-                      _field(_tt, 'ناوی تیکتۆک', ltr: true, limit: 40),
+                      _field(_name, _kind!.nameLabel, required: true, limit: 160),
+                      _field(_bio, 'بایۆ', lines: 4, limit: 2000),
+                      if(_legacy) _field(_tt, 'ناوی تیکتۆک', ltr: true, limit: 40),
                       DropdownButtonFormField<String>(
                         initialValue: _language,
                         isExpanded: true,
@@ -891,64 +936,39 @@ class _ContactFormState extends State<_ContactForm> {
                 ),
                 const SizedBox(height: AdUi.sectionGap),
                 AdFormSection(
-                  title: 'وێنەی پرۆفایل',
+                  title: _kind!.label,
                   child: Column(
                     children: [
-                      if (_avatar != null)
-                        ClipOval(
-                          child: Image.memory(
-                            _avatar!,
-                            width: 80,
-                            height: 80,
-                            fit: BoxFit.cover,
-                          ),
-                        )
-                      else if (widget.existing?.avatarUrl != null)
-                        ClipOval(
-                          child: Image.network(
-                            widget.existing!.avatarUrl!,
-                            width: 80,
-                            height: 80,
-                            fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) =>
-                                const Icon(Icons.person_outline),
-                          ),
-                        ),
-                      const SizedBox(height: 12),
-                      OutlinedButton.icon(
-                        onPressed: _pickAvatar,
-                        icon: const Icon(Icons.photo_outlined),
-                        label: const ProxoText('هەڵبژاردنی وێنە'),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: AdUi.sectionGap),
-                AdFormSection(
-                  title: 'ڕێگاکانی پەیوەندی',
-                  child: Column(
-                    children: [
-                      for (final p in kPlatformBtns) ...[
+                      for (final p in _typeProviders) ...[
                         SwitchListTile(
                           contentPadding: EdgeInsets.zero,
                           title: ProxoText(p.label, style: AdUi.text(context)),
-                          value: _enabled.contains(p.id),
+                          subtitle: Row(children:[
+                            IconButton(tooltip:'بۆ سەرەوە',icon:const Icon(Icons.arrow_upward),onPressed:()=>setState((){
+                              _moveProvider(p.key,-1);
+                            })),
+                            IconButton(tooltip:'بۆ خوارەوە',icon:const Icon(Icons.arrow_downward),onPressed:()=>setState((){
+                              _moveProvider(p.key,1);
+                            })),
+                          ]),
+                          value: _enabled.contains(p.key),
                           onChanged: (enabled) => setState(() {
                             if (enabled) {
-                              _enabled.add(p.id);
+                              _enabled.add(p.key);
                             } else {
-                              _enabled.remove(p.id);
+                              _enabled.remove(p.key);
                             }
+                            _previewRevision++;
                           }),
                         ),
-                        if (_enabled.contains(p.id))
+                        if (_enabled.contains(p.key))
                           _field(
-                            _contacts[p.id]!,
-                            p.placeholder,
+                            _contacts[p.key]!,
+                            p.hint,
                             ltr: true,
                             required: true,
-                            limit: 100,
-                            keyboard: p.isNumeric
+                            limit: 2048,
+                            keyboard: p.inputKind == 'phone'
                                 ? TextInputType.phone
                                 : TextInputType.text,
                           ),
@@ -956,6 +976,60 @@ class _ContactFormState extends State<_ContactForm> {
                     ],
                   ),
                 ),
+                AdFormSection(
+                  title: 'شێوازی پەڕە',
+                  child: _catalogFailed
+                      ? _LoadFailure(onRetry: _loadCatalog)
+                      : _templates == null
+                      ? const Center(child: CircularProgressIndicator())
+                      : Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Wrap(
+                              spacing: 10,
+                              runSpacing: 10,
+                              children: [
+                                for (final t in _templates!)
+                                  AdChoice(
+                                    label: t.label,
+                                    selected: t.key == _template,
+                                    onTap: () => setState(() {
+                                      _template = t.key;
+                                      _version = t.version;
+                                    }),
+                                  ),
+                              ],
+                            ),
+                            const SizedBox(height: 20),
+                            ClipRRect(
+                              borderRadius: AdUi.controlRadius,
+                              child: SizedBox(
+                                height: 460,
+                                child: ProxoLinkPreview(
+                                  key: ValueKey('$_template/$_version/$_theme/$_language/${_kind!.key}/$_previewRevision'),
+                                  loadUrl: _livePreview,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            OutlinedButton.icon(
+                              onPressed: () => Navigator.push(
+                                context,
+                                MaterialPageRoute<void>(
+                                  builder: (_) => CardWebViewScreen(
+                                    title: 'پێشبینینی شێواز',
+                                    allowContactActions: false,
+                                    loadUrl: _livePreview,
+                                  ),
+                                ),
+                              ),
+                              icon: const Icon(Icons.open_in_full),
+                              label: const ProxoText('پێشبینینی تەواو'),
+                            ),
+                          ],
+                        ),
+                ),
+                const SizedBox(height: AdUi.sectionGap),
                 if (_error != null)
                   Padding(
                     padding: const EdgeInsets.only(top: 20),

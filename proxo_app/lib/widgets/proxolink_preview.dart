@@ -81,8 +81,8 @@ class _ProxoLinkPreviewState extends State<ProxoLinkPreview> {
       final base = Uri.parse(ProxoLinkService.publicBase);
       if (page.scheme != 'https' ||
           page.origin != base.origin ||
-          !(page.path.startsWith('/contact/') ||
-              page.path == '/contact-preview')) {
+          !(RegExp(r'^/(contact|order|download)/[0-9a-fA-F-]{36}$').hasMatch(page.path) ||
+              page.path == '/contact-preview' || page.path == '/page-preview')) {
         throw const ProxoLinkFailure('invalid_request');
       }
       _page = page;
@@ -134,7 +134,8 @@ class _ProxoLinkPreviewState extends State<ProxoLinkPreview> {
       return NavigationDecision.navigate;
     if (!widget.allowContactActions) return NavigationDecision.prevent;
     const hosts = {
-      'wa.me',
+      'wa.me', 'api.whatsapp.com', 't.me', 'telegram.me',
+      'play.google.com', 'apps.apple.com',
       'instagram.com',
       'www.instagram.com',
       'tiktok.com',
@@ -142,10 +143,17 @@ class _ProxoLinkPreviewState extends State<ProxoLinkPreview> {
       'vm.tiktok.com',
       'vt.tiktok.com',
     };
-    final allowed =
+    const orderHosts = {'talabat.com','totersapp.com','toters.com','lezzoo.com','lezzoodevs.com','wadedelivery.com','trytiptop.com'};
+    final safeUri = uri.userInfo.isEmpty && !uri.hasFragment && (!uri.hasPort || uri.port == 443);
+    final allowed = safeUri && (
         {'whatsapp', 'viber', 'tel', 'mailto'}.contains(uri.scheme) ||
-        (uri.scheme == 'https' && hosts.contains(uri.host.toLowerCase()));
-    if (allowed) {
+        (uri.scheme == 'https' && (hosts.contains(uri.host.toLowerCase()) || orderHosts.any((h)=>uri.host==h || uri.host.endsWith('.$h')))));
+    final safeScheme = uri.scheme == 'https' ||
+      (uri.scheme == 'tel' && RegExp(r'^tel:\+?[1-9][0-9]{7,14}$').hasMatch(uri.toString())) ||
+      (uri.scheme == 'viber' && uri.host == 'chat' && uri.path.isEmpty && uri.queryParameters.length == 1 &&
+       RegExp(r'^\+?[1-9][0-9]{7,14}$').hasMatch(uri.queryParameters['number'] ?? '')) ||
+      (uri.scheme == 'whatsapp' && uri.host == 'send' && RegExp(r'^[1-9][0-9]{7,14}$').hasMatch(uri.queryParameters['phone'] ?? ''));
+    if (allowed && safeScheme) {
       bool opened = false;
       try {
         opened = await launchUrl(uri, mode: LaunchMode.externalApplication);

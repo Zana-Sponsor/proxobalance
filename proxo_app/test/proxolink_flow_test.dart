@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/rendering.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:proxo_app/models/proxo_card.dart';
+import 'package:proxo_app/models/proxolink_page_type.dart';
 import 'package:proxo_app/models/proxolink_template_meta.dart';
 import 'package:proxo_app/screens/tools_screen.dart';
 import 'package:proxo_app/services/proxolink_service.dart';
@@ -53,24 +54,27 @@ class FakeProxoLink extends ProxoLinkRepository {
   Future<List<ProxoCard>> cards() async => rows;
   @override
   Future<List<ProxoTemplate>> templates() async => [
-    for (final key in [
-      'classic',
-      'dark',
-      'light',
-      'pill',
-      'card',
-      'neon',
-      'zoom',
-      'banner',
-    ])
+    for (final key in ['pill','pill-mint','pill-dark','pill-white'])
       ProxoTemplate(
         key: key,
         label: key,
         previewPath: '/contact-preview?token=signed',
-        version: 1,
+        version: 6,
         requiresAvatar: false,
       ),
   ];
+  @override
+  Future<List<ProxoProvider>> providers() async => [
+    for(final entry in {'contact':['whatsapp','viber','instagram','telegram','korek','asiacell'],
+      'order':['talabat','toters'],'download':['google_play','app_store']}.entries)
+      for(final key in entry.value) ProxoProvider(key:key,pageType:entry.key,label:key,icon:key,
+        inputKind:entry.key=='contact' ? (['instagram','telegram'].contains(key)?'handle':'phone'):'url'),
+  ];
+  @override
+  Future<Uri> formPreview(Map<String,dynamic> data, {ProxoCard? existing}) async {
+    previewRequests.add('${data['template_key']}/${data['template_version']}/${data['color_theme']}/${data['card_language']}');
+    return Uri.parse('https://www.proxobalance.app/page-preview?token=encrypted');
+  }
   @override
   Future<Uri> preview(String id) async => Uri.parse(
     'https://www.proxobalance.app/contact/$id?preview_token=signed',
@@ -79,6 +83,7 @@ class FakeProxoLink extends ProxoLinkRepository {
   Future<Uri> templatePreview(String key, int version, {
     String theme = 'purple',
     String language = 'ku',
+    String pageType = 'contact',
   }) async {
     previewRequests.add('$key/$version/$theme/$language');
     return Uri.parse('https://www.proxobalance.app/contact-preview?token=signed');
@@ -103,8 +108,8 @@ class FakeProxoLink extends ProxoLinkRepository {
   Future<String> uploadAvatar(String id, Uint8List bytes) async =>
       '$id/avatar.jpg';
   @override
-  Uri publicUrl(String id) =>
-      Uri.parse('https://www.proxobalance.app/contact/$id');
+  Uri publicUrl(String id, {String pageType = 'contact'}) =>
+      Uri.parse('https://www.proxobalance.app/$pageType/$id');
 }
 
 void main() {
@@ -158,6 +163,8 @@ void main() {
       home: ToolsScreen(initialCreate: true, repository: repo),
     ));
     await tester.pumpAndSettle();
+    await tester.tap(find.text('پەیوەندی').first);
+    await tester.pumpAndSettle();
     final nameField = find.byType(TextFormField).first;
     await tester.ensureVisible(nameField);
     await tester.enterText(nameField, 'فرۆشگای Proxo 2026');
@@ -167,14 +174,14 @@ void main() {
     await tester.ensureVisible(blue);
     await tester.tap(blue);
     await tester.pumpAndSettle();
-    expect(repo.previewRequests.last, 'dark/1/blue/ku');
+    expect(repo.previewRequests.last, 'pill/6/blue/ku');
     final language = find.byType(DropdownButtonFormField<String>);
     await tester.ensureVisible(language);
     await tester.tap(language);
     await tester.pumpAndSettle();
     await tester.tap(find.text('English').last);
     await tester.pumpAndSettle();
-    expect(repo.previewRequests.last, 'dark/1/blue/en');
+    expect(repo.previewRequests.last, 'pill/6/blue/en');
     expect(find.byType(ProxoLinkPreview), findsOneWidget);
     expect(tester.widget<TextFormField>(nameField).controller!.text,
         'فرۆشگای Proxo 2026');
@@ -292,7 +299,9 @@ void main() {
       );
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
-      expect(find.text('classic'), findsOneWidget);
+      await tester.tap(find.text('پەیوەندی').first);
+      await tester.pumpAndSettle();
+      expect(find.text('pill'), findsOneWidget);
       expect(find.text('پێشبینین نەکرایەوە'), findsOneWidget);
       expect(tester.takeException(), isNull);
       await captureUi(tester, screenshotKey, 'form-$width');

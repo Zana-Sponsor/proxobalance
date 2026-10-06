@@ -21,6 +21,36 @@ jobs:
       - run: npm run build
       - run: test "$(find api -maxdepth 1 -name '*.js' | wc -l)" -le 12
       - run: node scripts/scan-proxolink-source.mjs
+  database:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: isolated-fixture
+          POSTGRES_DB: proxo_v6_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      PGHOST: 127.0.0.1
+      PGPORT: 5432
+      PGUSER: postgres
+      PGPASSWORD: isolated-fixture
+      PGDATABASE: proxo_v6_test
+      PROXO_V6_DATABASE_URL: postgresql://postgres:isolated-fixture@127.0.0.1:5432/proxo_v6_test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm ci
+      - run: psql -v ON_ERROR_STOP=1 -f test/fixtures/proxolink-v5-database.sql
+      - run: psql -v ON_ERROR_STOP=1 -f proxo_app/supabase/migrations/20261006220119_proxolink_v6_independent_pages.sql
+      - name: Verify additive migration is rerunnable
+        run: psql -v ON_ERROR_STOP=1 -f proxo_app/supabase/migrations/20261006220119_proxolink_v6_independent_pages.sql
+      - run: psql -v ON_ERROR_STOP=1 -f test/proxolink-v6-database.sql
+      - run: node scripts/proxolink-v6-database.mjs
   flutter:
     runs-on: ubuntu-latest
     defaults:
@@ -39,8 +69,8 @@ jobs:
           cache: true
       - run: flutter pub get
       - name: Analyze changed ProxoLink code
-        run: flutter analyze --no-fatal-infos lib/screens/tools_screen.dart lib/screens/card_webview_screen.dart lib/screens/proxo_cards_list_screen.dart lib/screens/ad_detail_screen.dart lib/widgets/proxolink_preview.dart lib/services/proxolink_service.dart lib/models/proxo_card.dart lib/models/proxolink_template_meta.dart lib/controllers/proxo_card_controller.dart
-      - run: flutter test test/proxolink_flow_test.dart test/ad_repository_test.dart test/ad_creation_flow_test.dart test/ad_submission_test.dart test/text_direction_test.dart
+        run: flutter analyze --no-fatal-infos lib/screens/tools_screen.dart lib/screens/card_webview_screen.dart lib/screens/proxo_cards_list_screen.dart lib/screens/ad_detail_screen.dart lib/widgets/proxolink_preview.dart lib/services/proxolink_service.dart lib/models/proxo_card.dart lib/models/proxolink_page_type.dart lib/models/proxolink_template_meta.dart lib/controllers/proxo_card_controller.dart
+      - run: flutter test test/proxolink_v6_flow_test.dart test/proxolink_flow_test.dart test/ad_repository_test.dart test/ad_creation_flow_test.dart test/ad_submission_test.dart test/text_direction_test.dart
       - uses: actions/upload-artifact@v4
         with:
           name: proxolink-ui-verification

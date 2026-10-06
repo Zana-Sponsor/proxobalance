@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {PREVIEW_ORIGIN,SUPABASE_ORIGIN,STYLES,WIDTHS,validateRuntime,
+import {PREVIEW_ORIGIN,SUPABASE_ORIGIN,STYLES,WIDTHS,NATIVE_CASE_IDS,validateRuntime,
   safeRequest,verifyReadOnlySecurity,validateNativeResults} from '../scripts/proxolink-verification-security.mjs';
 const environment={GITHUB_REPOSITORY:'Zana-Sponsor/proxobalance',
  GITHUB_REF:'refs/heads/feat/proxolink-private-renderer-migration',
@@ -46,16 +46,16 @@ test('live checks require app authentication independently of the Vercel bypass 
  await assert.rejects(verifyReadOnlySecurity({authorization:'Bearer test-only',key:'test',
   userId:'11111111-1111-4111-8111-111111111111',protection:{}},async()=>new Response(null,{status:200})));
 });
-test('native evidence requires 40 captured cases plus exact browser pixel comparisons',()=>{
- const entries=STYLES.flatMap(style=>WIDTHS.map(width=>[style+'-'+width,{passed:true,width,
+test('native evidence requires 120 captured cases plus exact same-device Android WebView pixel comparisons',()=>{
+ const entries=NATIVE_CASE_IDS.map(id=>[id,{passed:true,width:Number(id.split('-').at(-1)),
   font_loaded:true,images_loaded:true,icons_loaded:true,animation_count:1,animation_checked:true,contact_destinations:true,
-  confirmation:true,navigation_blocked:true,private_token:'not-for-artifacts'}]));
+  confirmation:true,navigation_blocked:true,private_token:'not-for-artifacts'}]);
  const data=Object.fromEntries(entries),captured=new Set(entries.map(([id])=>id));
  const pixels=Object.fromEntries(entries.map(([id,value])=>[id,{width:value.width,changed_pixels:0,exact_pixels_equal:true}]));
- assert.equal(entries.length,40);
+ assert.equal(entries.length,120);
  assert.doesNotMatch(JSON.stringify(validateNativeResults(data,captured,pixels)),/private_token|not-for-artifacts/);
  assert.throws(()=>validateNativeResults(data,captured));
- pixels['dark-320'].changed_pixels=1;assert.throws(()=>validateNativeResults(data,captured,pixels));
- pixels['dark-320'].changed_pixels=0;
- captured.delete('dark-320');assert.throws(()=>validateNativeResults(data,captured,pixels));
+ pixels[NATIVE_CASE_IDS[0]].changed_pixels=1;assert.throws(()=>validateNativeResults(data,captured,pixels));
+ pixels[NATIVE_CASE_IDS[0]].changed_pixels=0;
+ captured.delete(NATIVE_CASE_IDS[0]);assert.throws(()=>validateNativeResults(data,captured,pixels));
 });

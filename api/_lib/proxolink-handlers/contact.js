@@ -1,3 +1,4 @@
+import { pageKind, PAGE_TYPES } from '../proxolink-pages.js';
 import { validPreviewToken } from '../proxolink-preview.js';
 import { cardById, renderedPage, publicPage, unavailable } from '../proxolink.js';
 
@@ -6,6 +7,8 @@ export default async function handler(req,res) {
   try {
     const id=typeof req.query?.id==='string'?req.query.id:'';
     const card=await cardById(id);
+    const route=req.query?.page_type||'contact';
+    if(!PAGE_TYPES.includes(route)||pageKind(card)!==route||card.archived_at)return unavailable(res);
     const preview=validPreviewToken(req.query?.preview_token,card);
     if(!preview&&(card.status!=='active'||card.publish_status!=='ready'))
       return unavailable(res);

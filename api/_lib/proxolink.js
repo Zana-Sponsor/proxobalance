@@ -1,6 +1,8 @@
 import { createHash } from 'node:crypto';
 import { verifyBearer } from './security.js';
 import sharp from 'sharp';
+import { PREPARED_DESIGNS, DESIGN_ALIASES, normalizeSettings, assertAvatar, publicPath } from './proxolink-pages.js';
+import { preparedMetadata, preparedSource, renderPrepared, nativeBaselineSource } from './proxolink-prepared.js';
 
 const URL_BASE = (process.env.PROXO_SUPABASE_URL || '').replace(/\/$/, '');
 const SERVICE_KEY = process.env.PROXO_SUPABASE_SERVICE_ROLE_KEY || '';
@@ -102,6 +104,12 @@ export function contactDestination(id, raw) {
   }
 }
 export function validateCardData(card,{legacy=false}={}) {
+  if(card.page_kind){
+    if(!PREPARED_DESIGNS.includes(card.template_key)||card.template_version!==6)throw err(422,'template_not_found');
+    normalizeSettings(card.page_kind,card.settings,{allowEmpty:card.demo===true});
+    assertAvatar(card);return true;
+  }
+  if(PREPARED_DESIGNS.includes(card.template_key)&&card.template_version===6)return true;
   if (!STYLES.has(card.template_key || card.style)) throw err(422,'template_not_found');
   if (typeof card.name !== 'string' || !card.name.trim() || card.name.length > 160)
     throw err(422,'invalid_card_name');
@@ -127,7 +135,10 @@ async function request(path,options={}) {
   const c=configuration();
   const headers = {apikey:c.key,Authorization:'Bearer '+c.key,...options.headers};
   const response=await fetch(c.base+path,{signal:AbortSignal.timeout(10000),...options,headers});
-  if (!response.ok) throw err(response.status===404?404:503,'backend_unavailable');
+  if (!response.ok) {
+    let code;try{code=(await response.json()).code;}catch{}
+    throw Object.assign(err(response.status===404?404:503,'backend_unavailable'),{databaseCode:code});
+  }
   return response;
 }
 export async function avatarBytes(path) {
@@ -179,16 +190,28 @@ export async function authenticatedUser(req) {
   if(!validUuid(user?.id)) throw err(401,'unauthorized');
   return user;
 }
+export const CARD_COLUMNS='id,user_id,name,bio,tt,tiktok,platforms,style,color_theme,template_key,template_version,card_language,avatar_path,status,publish_status,card_number,created_at,updated_at,published_at';
+export async function cardRows(filters='',columns=CARD_COLUMNS) {
+  try{return await proxoRows('proxolink_cards',filters,columns+',page_kind,settings,client_request_id,archived_at');}
+  catch(error){
+    // A feature preview can read production V5 before the additive migration.
+    // Only a known missing-column error permits the explicit legacy adapter.
+    if(!['42703','PGRST204'].includes(error.databaseCode))throw error;
+    return proxoRows('proxolink_cards',filters,columns);
+  }
+}
 export async function cardById(id) {
   if(!validUuid(id)) throw err(404,'card_not_found');
   const cols='id,user_id,name,bio,tt,tiktok,platforms,style,color_theme,template_key,template_version,card_language,avatar_path,status,publish_status,card_number,created_at,updated_at,published_at';
-  const rows=await proxoRows('proxolink_cards','&id=eq.'+id+'&limit=1',cols);
+  const rows=await cardRows('&id=eq.'+id+'&limit=1',cols);
   if(!rows.length) throw err(404,'card_not_found');
   return rows[0];
 }
 export async function activeTemplate(card) {
   const key=card.template_key || card.style;
   const version=card.template_version||1;
+  if(PREPARED_DESIGNS.includes(key)&&version===6)return preparedMetadata(key);
+  if(card.page_kind)throw err(404,'template_not_found');
   if(!STYLES.has(key) || !Number.isInteger(version) || version<1)
     throw err(404,'template_not_found');
   const rows=await proxoRows('proxolink_templates',
@@ -198,6 +221,7 @@ export async function activeTemplate(card) {
   return rows[0];
 }
 export async function privateTemplate(record) {
+  if(record.renderer_variant==='prepared_v6')return preparedSource(record);
   const expected=record.template_key+'/v'+record.version+'/template.html';
   if(record.storage_path!==expected) throw err(503,'template_invalid');
   const p=expected.split('/').map(encodeURIComponent).join('/');
@@ -304,7 +328,8 @@ function contactButtons(style,parts,tt,ttHref) {
   }).join('');
   return {buttons,ttBadge,ttInline};
 }
-export function renderTemplate(template,card,{adToken=null,variant='standard',rendererOptions={},publicAvatarUrl=null}={}) {
+export function renderTemplate(template,card,{adToken=null,variant='standard',rendererOptions={},publicAvatarUrl=null,preview=false}={}) {
+  if(template.includes('{{PROXO_CONFIG}}'))return renderPrepared(template,card,{preview,publicAvatarUrl});
   const legacy=['legacy_dark_inline','legacy_standard'].includes(variant);
   validateCardData(card,{legacy});
   const style=card.template_key||card.style;
@@ -362,15 +387,17 @@ export function renderTemplate(template,card,{adToken=null,variant='standard',re
   return safePage.replaceAll('https://raw.githubusercontent.com/Zana-Sponsor/Zana-Sponsor/main/Rabar_021.woff2','/assets/fonts/Rabar_021.woff2')
     .replace('<html dir="rtl" lang="ku">','<html dir="'+(card.card_language==='en'?'ltr':'rtl')+'" lang="'+(card.card_language||'ku')+'">');
 }
-export async function renderedPage(card,{adToken=null,preview=false,previewToken=null}={}) {
+export async function renderedPage(card,{adToken=null,preview=false,previewToken=null,publicAvatarUrl:overrideAvatar=null,baseline=false}={}) {
   const meta=await activeTemplate(card);
   validateCardData(card,{legacy:['legacy_dark_inline','legacy_standard'].includes(meta.renderer_variant)});
   if(meta.requires_avatar && !card.avatar_path && card.demo!==true) throw err(422,'avatar_required');
-  const template=await privateTemplate(meta);
-  const publicAvatarUrl=adToken?'/a/'+encodeURIComponent(adToken)+'/avatar'
-    :'/contact/'+encodeURIComponent(card.id)+'/avatar'
-      +(preview&&previewToken?'?preview_token='+encodeURIComponent(previewToken):'');
-  const html=renderTemplate(template,card,{adToken,publicAvatarUrl,variant:meta.renderer_variant||'standard',rendererOptions:meta.renderer_options||{}});
+  const template=baseline&&preview&&card.demo===true?await nativeBaselineSource(meta.template_key):await privateTemplate(meta);
+  if(card.page_kind)assertAvatar(card);
+  const publicAvatarUrl=overrideAvatar||(adToken&&!card.page_kind?'/a/'+encodeURIComponent(adToken)+'/avatar'
+    :publicPath(card)+'/avatar'
+      +(preview&&previewToken?'?preview_token='+encodeURIComponent(previewToken):''));
+  const html=renderTemplate(template,card,{adToken,publicAvatarUrl,variant:meta.renderer_variant||'standard',rendererOptions:meta.renderer_options||{},preview});
+  if(card.page_kind||meta.renderer_variant==='prepared_v6')return html;
   if(!preview && /^[A-Za-z0-9]{5,60}$/.test(process.env.PROXO_TIKTOK_PIXEL_ID||''))
     return html.replace(/ttq\.load\(['"][^'"]+['"]\)/g,"ttq.load('"+process.env.PROXO_TIKTOK_PIXEL_ID+"')");
   // Strip the non-visual legacy TikTok Pixel bootstrap in owner preview.
@@ -396,7 +423,7 @@ export function publicPage(res,html) {
   res.setHeader('Content-Security-Policy', "default-src 'none'; base-uri 'none'; object-src 'none'; frame-ancestors 'none'; "
     +"script-src 'self' 'unsafe-hashes' "+[...hashes,...eventHashes].join(' ')+" https://analytics.tiktok.com; "
     +"style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; "
-    +"font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self' https: data:; "
+    +"font-src 'self' data: https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self' https: data:; "
     +"connect-src 'self' https://analytics.tiktok.com https://*.tiktok.com;");
   res.end(html);
 }
