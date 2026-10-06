@@ -23,7 +23,13 @@ try{
     {id:'internal-two',order_code:'P8A3B5C7D9E2',handled_by:'staff-two',handling_admin_name:'ئادمینی دووەم',amount:50000,total:49000,deduction_iqd:1000}].map(o=>({...o,from_method:'FastPay',to_method:'FIB',status:STATUS_APPROVED,created_at:'2026-10-06T18:00:00Z',accounted_at:'2026-10-06T18:00:00Z'}));
    window.reportData={scope:'all',approved_orders:2,recorded_orders:2,unrecorded_orders:0,total_deduction_iqd:3000,today_deduction_iqd:3000,month_deduction_iqd:3000,avg_deduction_iqd:1500,orders:reportRows,
     by_method:[{method:'FIB',approved_orders:2,recorded_orders:2,deduction_iqd:3000}],by_admin:reportRows.map(o=>({...o,approved_orders:1,recorded_orders:1}))};
-   window.sb={rpc:async()=>({data:reportData,error:null}),from:table=>({select(){return this;},order(){return this;},
+   window.sb={rpc:async(name,args)=>{
+    if(name!=='ex_admin_deduction_stats_filtered')return {data:reportData,error:null};
+    const rows=reportData.orders.filter(o=>args.p_unassigned?!o.handled_by:o.handled_by===args.p_admin_id),sum=rows.reduce((n,o)=>n+o.deduction_iqd,0);
+    return {data:{...reportData,report_admin_id:args.p_admin_id,report_admin_name:rows[0]?.handling_admin_name,report_unassigned:args.p_unassigned,
+      orders:rows,approved_orders:rows.length,total_deduction_iqd:sum,by_admin:reportData.by_admin.filter(o=>o.handled_by===args.p_admin_id),
+      by_method:[{method:'FIB',approved_orders:rows.length,recorded_orders:rows.length,deduction_iqd:sum}]},error:null};
+   },from:table=>({select(){return this;},order(){return this;},
     async range(){return {data:reportRows,error:null};},async in(){return {data:reportRows.map(o=>({id:o.handled_by,full_name:o.handling_admin_name})),error:null};},
     then(resolve,reject){return Promise.resolve({data:[{id:'route',is_active:true}],error:null}).then(resolve,reject);}})};
    const capture=window.html2canvas;
@@ -45,6 +51,8 @@ try{
   for(const module of ['profit','statistics']){
    if(module==='statistics')await page.evaluate(()=>{document.getElementById('pgProfit').classList.remove('on');document.getElementById('pgStatistics').classList.add('on');return exLoadStatistics();});
    for(const kind of ['csv','xlsx','pdf']){
+    // Chromium throttles bursts of automatic downloads; use normal user click cadence.
+    await page.waitForTimeout(1200);
     const pending=page.waitForEvent('download');
     await page.evaluate(({module,kind})=>module==='profit'?profitExport(kind):exExport(kind),{module,kind});
     const download=await pending,path=output+'/'+module+'-'+width+'.'+kind;await download.saveAs(path);assert.equal(await download.failure(),null);
@@ -56,10 +64,31 @@ try{
     }
     if(kind==='pdf'){assert.equal(file.subarray(0,5).toString(),'%PDF-');const table=await page.evaluate(()=>pdfTables.at(-1));assert.deepEqual(table.map(r=>r.at(-1)),['ئادمینی یەکەم','ئادمینی دووەم']);assert.deepEqual(table.map(r=>r[0]),['P7K9M2Q4R6T8','P8A3B5C7D9E2']);}
    }
+   const selector=module==='profit'?'#profitAdmin':'#exAdmin';
+   await page.locator(selector).selectOption('staff-two');
+   if(module==='profit')await page.waitForFunction(()=>document.querySelectorAll('#profitOrders .profit-order').length===1&&document.getElementById('profitOrders').textContent.includes('P8A3B5C7D9E2'));
+   for(const kind of ['csv','xlsx','pdf']){
+    // Chromium throttles bursts of automatic downloads; use normal user click cadence.
+    await page.waitForTimeout(1200);
+    const pending=page.waitForEvent('download');
+    await page.evaluate(({module,kind})=>module==='profit'?profitExport(kind):exExport(kind),{module,kind});
+    const download=await pending,path=output+'/'+module+'-selected-'+width+'.'+kind;await download.saveAs(path);
+    assert.ok(download.suggestedFilename().includes('ئادمینی دووەم'),'Filename identifies the selected admin');
+    const file=readFileSync(path);
+    if(kind==='csv'){const text=file.toString();assert.ok(text.includes('P8A3B5C7D9E2'));assert.ok(!text.includes('P7K9M2Q4R6T8'));assert.ok(!text.includes('ئادمینی یەکەم'));}
+    if(kind==='xlsx'){
+     const rows=await page.evaluate(b64=>{const wb=XLSX.read(b64,{type:'base64'});return XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1});},file.toString('base64'));
+     assert.equal(rows.length,2);assert.equal(rows[1][0],'P8A3B5C7D9E2');assert.equal(rows[1].at(-1),'ئادمینی دووەم');
+    }
+    if(kind==='pdf'){const table=await page.evaluate(()=>pdfTables.at(-1));assert.equal(table.length,1);assert.equal(table[0][0],'P8A3B5C7D9E2');assert.equal(table[0].at(-1),'ئادمینی دووەم');}
+   }
+   await page.locator(selector).selectOption('');
+   if(module==='profit')await page.waitForFunction(()=>document.querySelectorAll('#profitOrders .profit-order').length===2);
   }
   await page.evaluate(()=>{reportData.scope='own';reportData.orders=reportRows.slice(0,1);return loadProfitStats();});
   assert.equal(await page.locator('#profitAdminSummary').isVisible(),false);
+  assert.equal(await page.locator('#profitAdminFilter').isVisible(),false);
   assert.ok((await page.locator('#profitScope').textContent()).includes('خۆت'));
-  await page.close();console.log('PASS: '+width+'px real CSV/Excel/PDF downloads, handling names, P codes and report layout');
+  await page.close();console.log('PASS: '+width+'px real all/selected-admin CSV/Excel/PDF downloads, isolated rows, names, P codes and report layout');
  }
 }finally{await browser.close();}

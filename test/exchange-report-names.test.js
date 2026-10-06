@@ -55,3 +55,41 @@ test('regular staff retain their own report and a failed reload cannot export st
   await c.loadProfitStats();c.profitExport('csv');assert.equal(f.downloads.length,1);
   assert.match(f.get('profitOrders').innerHTML,/Report unavailable/);
 });
+function filteredData(data,id){
+  const orders=data.orders.filter(o=>id==='unassigned'?!o.handled_by:o.handled_by===id);
+  return {...data,report_admin_id:id==='unassigned'?null:id,report_unassigned:id==='unassigned',report_admin_name:orders[0]?.handling_admin_name,
+    orders,by_admin:data.by_admin.filter(o=>id==='unassigned'?!o.handled_by:o.handled_by===id),approved_orders:orders.length,
+    total_deduction_iqd:orders.reduce((sum,o)=>sum+(o.deduction_iqd||0),0)};
+}
+test('selected staff and unassigned exports exclude every other handler in all three formats',async()=>{
+  const f=fixture(),{context:c}=f,calls=[];
+  c.sb.rpc=async(name,args)=>{calls.push({name,args});return {data:name.endsWith('_filtered')?filteredData(f.data,args.p_unassigned?'unassigned':args.p_admin_id):f.data,error:null};};
+  await c.loadProfitStats();
+  assert.equal(f.get('profitAdminFilter').hidden,false);
+  for(const id of ['staff-one','staff-two','unassigned']){
+    f.get('profitAdmin').value=id;await c.loadProfitStats();
+    c.profitExport('csv');c.profitExport('xlsx');await c.profitExportPdf('fixture');
+    const selected=f.data.orders.find(o=>id==='unassigned'?!o.handled_by:o.handled_by===id);
+    const csv=f.downloads.at(-1).text,pdf=f.pdfSources.at(-1);
+    assert.ok(csv.includes(selected.order_code));assert.ok(pdf.includes(selected.order_code));
+    for(const other of f.data.orders.filter(o=>o!==selected)){assert.ok(!csv.includes(other.order_code));assert.ok(!pdf.includes(other.order_code));}
+    assert.equal(f.sheets.at(-1).length,2);assert.equal(f.sheets.at(-1)[1][0],selected.order_code);
+  }
+  const filtered=calls.filter(c=>c.name.endsWith('_filtered'));assert.equal(filtered.length,3);
+  assert.equal(filtered[0].args.p_admin_id,'staff-one');assert.equal(filtered[2].args.p_admin_id,null);assert.equal(filtered[2].args.p_unassigned,true);
+  f.get('profitAdmin').value='staff-one';c.profitExport('csv');assert.equal(f.downloads.length,3,'Changing the selector blocks a stale export until reload finishes');
+});
+test('a slower previous selection cannot replace the latest report',async()=>{
+  const f=fixture(),{context:c}=f;let resolveOne;
+  c.sb.rpc=async(name,args)=>{
+    if(!name.endsWith('_filtered'))return {data:f.data,error:null};
+    if(args.p_admin_id==='staff-one')return new Promise(resolve=>{resolveOne=resolve;});
+    return {data:filteredData(f.data,args.p_admin_id),error:null};
+  };
+  f.get('profitAdmin').value='staff-one';const old=c.loadProfitStats();
+  await new Promise(resolve=>setImmediate(resolve));
+  f.get('profitAdmin').value='staff-two';await c.loadProfitStats();
+  resolveOne({data:filteredData(f.data,'staff-one'),error:null});await old;
+  c.profitExport('csv');assert.ok(f.downloads[0].text.includes('P8A3B5C7D9E2'));assert.ok(!f.downloads[0].text.includes('P7K9M2Q4R6T8'));
+  assert.equal(f.get('profitAdmin').value,'staff-two');
+});

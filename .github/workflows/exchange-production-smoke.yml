@@ -19,12 +19,12 @@ jobs:
                grep -q 'exchange-customer-polish.css?v=2' current-index.html &&
                curl -fLsS --max-time 15 'https://www.proxobalance.app/exchange-admin' -o current-admin.html &&
                grep -q 'assets/js/admin.js?v=24' current-admin.html &&
-               grep -q 'assets/js/exchange-insights.js?v=4' current-admin.html &&
-               curl -fLsS --max-time 15 'https://www.proxobalance.app/assets/js/exchange-insights.js?v=4' -o current-insights.js &&
+               grep -q 'assets/js/exchange-insights.js?v=5' current-admin.html &&
+               curl -fLsS --max-time 15 'https://www.proxobalance.app/assets/js/exchange-insights.js?v=5' -o current-insights.js &&
                grep -q 'handling_admin_name' current-insights.js &&
-               grep -q 'exchange-profit.js?v=3' current-admin.html &&
-               curl -fLsS --max-time 15 'https://www.proxobalance.app/assets/js/exchange-profit.js?v=3' -o current-profit.js &&
-               grep -q 'profitAdminName' current-profit.js &&
+               grep -q 'exchange-profit.js?v=4' current-admin.html &&
+               curl -fLsS --max-time 15 'https://www.proxobalance.app/assets/js/exchange-profit.js?v=4' -o current-profit.js &&
+               grep -q 'ex_admin_deduction_stats_filtered' current-profit.js &&
                curl -fLsS --max-time 15 'https://www.proxobalance.app/assets/js/app.js?v=46' -o current-app.js &&
                grep -q 'accountBalanceSourceOption' current-app.js &&
                curl -fLsS --max-time 15 'https://www.proxobalance.app/assets/js/exchange-balance.js?v=4' -o current-balance.js &&
@@ -68,10 +68,12 @@ jobs:
           grep -q 'ڕەتکردنەوە و گەڕاندنەوە بۆ باڵانس' exchange-admin.html
           grep -q 'exchange-balance-admin.js?v=4' exchange-admin.html
           grep -q 'admin.js?v=24' exchange-admin.html
-          grep -q 'exchange-insights.js?v=4' exchange-admin.html
-          grep -q 'exchange-profit.js?v=3' exchange-admin.html
+          grep -q 'exchange-insights.js?v=5' exchange-admin.html
+          grep -q 'exchange-profit.js?v=4' exchange-admin.html
           grep -q 'id="profitAdminSummary"' exchange-admin.html
-          curl -fLsS --max-time 25 "$root/assets/js/exchange-profit.js?v=3" -o profit.js
+          grep -q 'id="profitAdmin"' exchange-admin.html
+          grep -q 'id="exAdmin"' exchange-admin.html
+          curl -fLsS --max-time 25 "$root/assets/js/exchange-profit.js?v=4" -o profit.js
           grep -q 'handling_admin_name' profit.js
           curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/assets/js/admin.js?v=24" -o admin.js
           grep -q 'accountBalanceCell' admin.js

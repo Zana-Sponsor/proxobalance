@@ -22,6 +22,7 @@ on:
       - 'test/exchange-statistics-order-codes.test.js'
       - 'test/exchange-report-names.test.js'
       - 'test/exchange-report-names.sql'
+      - 'test/exchange-report-filter.sql'
       - 'test/exchange-report-names.browser.mjs'
       - 'test/exchange-send-balance.browser.mjs'
       - 'test/exchange-scoped-rewards.sql'

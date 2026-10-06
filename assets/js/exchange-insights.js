@@ -22,10 +22,22 @@ async function exAttachAdminNames(rows){
 }
 function exStatus(s){return s===STATUS_APPROVED?'پەسەندکرا':s===STATUS_REJECTED?'ڕەتکرا':s===STATUS_PENDING?'چاوەڕوان':s===STATUS_CORRECTED?'ڕاستکراوەتەوە':s===STATUS_NEEDS_CORRECTION?'پێویستی بە ڕاستکردنەوەیە':s||'—';}
 function exCard(label,value){return '<div class="ex-card"><div class="ex-label">'+label+'</div><div class="ex-value">'+value+'</div></div>';}
+function exSetAdminOptions(){
+  const el=document.getElementById('exAdmin');if(!el)return;
+  const selected=el.value,admins=new Map();
+  exStatsState.rows.forEach(o=>admins.set(o.handled_by||'unassigned',exAdminName(o)));
+  el.innerHTML='<option value="">هەموو ئادمینەکان</option>'+[...admins].sort((a,b)=>a[1].localeCompare(b[1])).map(([id,name])=>'<option value="'+exSafe(id)+'">'+exSafe(name)+'</option>').join('');
+  el.value=admins.has(selected)?selected:'';
+}
+function exReportAdminLabel(){
+  const id=document.getElementById('exAdmin')?.value||'';if(!id)return 'هەموو ئادمینەکان';
+  return id==='unassigned'?'نەدیاریکراو':exAdminName(exStatsState.rows.find(o=>o.handled_by===id));
+}
 function exFiltered(){
   const q=(document.getElementById('exSearch')?.value||'').trim().toLowerCase().replace(/^#/,'');
   const from=document.getElementById('exFromDate')?.value||'',to=document.getElementById('exToDate')?.value||'';
-  return exStatsState.rows.filter(o=>(exStatsState.filter==='all'||o.status===exStatsState.filter)&&
+  const admin=document.getElementById('exAdmin')?.value||'';
+  return exStatsState.rows.filter(o=>(!admin||(admin==='unassigned'?!o.handled_by:o.handled_by===admin))&&(exStatsState.filter==='all'||o.status===exStatsState.filter)&&
     (!from||exDateKey(o.created_at)>=from)&&(!to||exDateKey(o.created_at)<=to)&&
     (!q||[exCode(o),o.order_number,o.id,o.from_method,o.to_method,o.status,o.handling_admin_name].join(' ').toLowerCase().includes(q)));
 }
@@ -42,7 +54,7 @@ async function exLoadStatistics(){
       if(error)throw error;const batch=data||[];rows.push(...batch);more=batch.length===size;p++;
     }
     await exAttachAdminNames(rows);
-    exStatsState.rows=rows;exStatsState.partial=more;exStatsState.loaded=true;exStatsState.limit=60;
+    exStatsState.rows=rows;exStatsState.partial=more;exStatsState.loaded=true;exStatsState.limit=60;exSetAdminOptions();
     const {data:rates,error:rateError}=await sb.from('ex_rates').select('id,is_active');
     exStatsState.rateCount=rateError?null:(rates||[]).filter(r=>r.is_active).length;
     const stamp=document.getElementById('exLastLoaded');if(stamp)stamp.textContent='دوایین نوێکردنەوە: '+exDate(new Date());
@@ -99,7 +111,8 @@ function exExport(kind){
   const rows=exFiltered();if(!rows.length){showToast('هیچ مامەڵەیەک نییە بۆ داگرتن','rd');return}
   const fields=[['order_code','ئایدی مامەڵە'],['from_method','ڕێگای ناردن'],['to_method','ڕێگای وەرگرتن'],['amount','بڕی نێردراو'],['total','بڕی وەرگیراو'],['status','بار'],['created_at','ڕێکەوت'],['handling_admin_name','ناوی ئادمین']];
   const table=[fields.map(x=>x[1]),...rows.map(o=>fields.map(([k])=>o[k]??''))];
-  const filename='Proxo-Balance-statistics-'+exDateKey(new Date());
+  const admin=document.getElementById('exAdmin')?.value||'';
+  const filename='Proxo-Balance-statistics-'+(admin?(admin==='unassigned'?'unassigned-':exReportAdminLabel().replace(/[\\/:*?"<>|\x00-\x1f]/g,'_').slice(0,80)+'-'):'')+exDateKey(new Date());
   if(kind==='csv'){exDownload('\ufeff'+table.map(row=>row.map(exCsvValue).join(',')).join('\r\n'),filename+'.csv','text/csv;charset=utf-8');showToast('CSV ئامادەکرا','gr');return}
   if(kind==='xlsx'){if(typeof XLSX==='undefined')return showToast('کتێبخانەی Excel بار نەبووە','rd');
     const workbook=XLSX.utils.book_new(),sheet=XLSX.utils.aoa_to_sheet([table[0],...table.slice(1).map(row=>row.map(exExcelSafe))]);
@@ -116,6 +129,7 @@ async function exExportPdf(rows,filename){
     p.count++;if(o.total!=null&&Number.isFinite(v))p.sum+=v;byMethod.set(k,p)});
   const groups=[...byMethod].map(([method,p])=>'<tr><td>'+exSafe(exMethod(method))+'</td><td>'+exNum(p.count)+'</td><td>'+exAmount(p.sum)+'</td></tr>').join('');
   source.innerHTML='<div class="ex-head"><h3>ڕاپۆرتی ئامارەکان</h3><div class="ex-logo">Proxo</div></div>'+
+    '<div class="ex-note">ئادمین: '+exSafe(exReportAdminLabel())+'</div>'+
     '<div class="ex-title">پوختەی مامەڵەکان</div><div class="ex-grid">'+exCard('کۆی مامەڵەکان',exNum(rows.length))+exCard('پەسەندکراو',exNum(approved.length))+
     exCard('چاوەڕوان',exNum(rows.filter(o=>[STATUS_PENDING,STATUS_CORRECTED,STATUS_NEEDS_CORRECTION].includes(o.status)).length))+exCard('ڕەتکراو',exNum(rows.filter(o=>o.status===STATUS_REJECTED).length))+'</div>'+
     '<div class="ex-title">کۆی پەسەندکراو بەپێی ڕێگای وەرگرتن</div><table><thead><tr><th>ڕێگا</th><th>ژمارە</th><th>بڕی وەرگیراو</th></tr></thead><tbody>'+groups+'</tbody></table>'+

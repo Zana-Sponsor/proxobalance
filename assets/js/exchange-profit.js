@@ -1,9 +1,9 @@
 /* Proxo Balance — true deduction from approved IQD exchange orders.
    Historical fees use the original saved fee in Supabase, with the handling admin. */
 'use strict';
-let _profitData=null;
+let _profitData=null,_profitLoadId=0;
 function profitAdminName(o){return String(o?.handling_admin_name||'').trim()||'نەدیاریکراو';}
-function profitScope(d){return d.scope==='all'?'قازانجی لێبڕینی هەموو ئادمینەکان':'قازانجی لێبڕینی مامەڵەکانی خۆت';}
+function profitScope(d){if(d.report_unassigned)return 'مامەڵەکانی بێ ئادمینی دیاریکراو';if(d.report_admin_id)return 'قازانجی لێبڕینی ئادمین: '+profitAdminName({handling_admin_name:d.report_admin_name});return d.scope==='all'?'قازانجی لێبڕینی هەموو ئادمینەکان':'قازانجی لێبڕینی مامەڵەکانی خۆت';}
 function profitEsc(v){return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]));}
 function profitNum(v,d=0){if(v==null||!Number.isFinite(Number(v)))return '—';return Number(v).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});}
 function profitMoney(v){return v==null?'—':profitNum(v,2)+' د.ع';}
@@ -11,24 +11,39 @@ function profitMethod(m){return typeof exMethod==='function'?exMethod(m):m||'—
 function profitTime(v){return typeof exDate==='function'?exDate(v):v||'—';}
 function profitCard(label,value,icon,note=''){return '<article class="ex-card proxo-profit-card"><div class="ex-label"><i class="fas '+icon+'"></i> '+label+'</div><div class="ex-value" dir="ltr">'+value+'</div>'+(note?'<div class="profit-help">'+note+'</div>':'')+'</article>';}
 function profitShowMessage(msg){const el=document.getElementById('profitMessage');if(el){el.hidden=false;el.textContent=msg;}}
-async function profitFetch(limit){
+function profitSetAdminFilter(choices,selected,scope){
+  const wrap=document.getElementById('profitAdminFilter'),el=document.getElementById('profitAdmin');if(!el)return;
+  if(wrap)wrap.hidden=scope!=='all';
+  const admins=scope==='all'?choices:[];
+  el.innerHTML='<option value="">هەموو ئادمینەکان</option>'+admins.map(a=>'<option value="'+profitEsc(a.handled_by||'unassigned')+'">'+profitEsc(profitAdminName(a))+'</option>').join('');
+  el.value=scope==='all'?selected:'';
+}
+async function profitFetch(limit,selected=''){
   const from=document.getElementById('profitFrom')?.value||null,to=document.getElementById('profitTo')?.value||null;
   if(from&&to&&from>to)throw Error('ڕێکەوتی دەستپێک دەبێت پێش ڕێکەوتی کۆتایی بێت.');
-  const {data,error}=await sb.rpc('ex_admin_deduction_stats',{p_from:from,p_to:to,p_limit:limit});
+  const {data:global,error}=await sb.rpc('ex_admin_deduction_stats',{p_from:from,p_to:to,p_limit:selected?1:limit});
   if(error)throw error;
-  return data;
+  const choices=[...(global.by_admin||[])];
+  if(global.scope!=='all'||!selected)return {data:global,choices,selected:''};
+  const {data,error:filterError}=await sb.rpc('ex_admin_deduction_stats_filtered',{p_from:from,p_to:to,p_limit:limit,p_admin_id:selected==='unassigned'?null:selected,p_unassigned:selected==='unassigned'});
+  if(filterError)throw filterError;
+  if(!choices.some(x=>(x.handled_by||'unassigned')===selected))choices.push({handled_by:data.report_admin_id,handling_admin_name:data.report_admin_name});
+  return {data,choices,selected};
 }
 async function loadProfitStats(){
+  const loadId=++_profitLoadId,selected=document.getElementById('profitAdmin')?.value||'';
   _profitData=null;
   const wrap=document.getElementById('profitOrders');
   if(wrap)wrap.innerHTML='<div class="ex-note">ئاماری لێبڕین بار دەکرێت...</div>';
   try{
-    const data=await profitFetch(500);_profitData=data;
+    const result=await profitFetch(500,selected);if(loadId!==_profitLoadId)return;
+    const {data,choices}=result;_profitData=data;
+    profitSetAdminFilter(choices,result.selected,data.scope);
     const msg=document.getElementById('profitMessage');if(msg)msg.hidden=true;
     renderProfitStats(data);
     const stamp=document.getElementById('profitStamp');
     if(stamp)stamp.textContent='دوایین نوێکردنەوە: '+profitTime(new Date());
-  }catch(e){if(wrap)wrap.innerHTML='<div class="ex-note" role="alert">'+profitEsc(e.message)+'</div>';profitShowMessage('هەڵە لە بارکردنی ئامار: '+e.message);}
+  }catch(e){if(loadId!==_profitLoadId)return;if(wrap)wrap.innerHTML='<div class="ex-note" role="alert">'+profitEsc(e.message)+'</div>';profitShowMessage('هەڵە لە بارکردنی ئامار: '+e.message);}
 }
 function renderProfitStats(d){
   const scope=document.getElementById('profitScope');if(scope)scope.textContent=profitScope(d);
@@ -67,13 +82,13 @@ function renderProfitStats(d){
     '<div class="ex-note">هیچ مامەڵەیەک لەم ماوەیەدا نییە.</div>';
 }
 function profitExport(kind){
-  if(!_profitData)return showToast('سەرەتا ئاماری لێبڕین باربکە','rd');
+  if(!_profitData||String(_profitData.report_admin_id||(_profitData.report_unassigned?'unassigned':''))!==(document.getElementById('profitAdmin')?.value||''))return showToast('سەرەتا ئاماری لێبڕین باربکە','rd');
   const d=_profitData,rows=d.orders||[];
   if(!rows.length)return showToast('هیچ مامەڵەیەک بۆ داگرتن نییە','rd');
   const fields=[['order_code','Order'],['from_method','From'],['to_method','To'],['amount','Sent'],['total','Received'],['deduction_iqd','Deduction IQD'],['accounted_at','Date'],['handling_admin_name','ناوی ئادمین']];
   const safe=v=>{const x=String(v==null?'':v);return /^[=+\-@\t\r]/.test(x)?"'"+x:x};
   const table=[fields.map(x=>x[1]),...rows.map(o=>fields.map(([k])=>safe(k==='handling_admin_name'?profitAdminName(o):o[k])))];
-  const filename='Proxo-Balance-deductions-'+new Date().toISOString().slice(0,10);
+  const filename='Proxo-Balance-deductions-'+(d.report_admin_id?profitAdminName({handling_admin_name:d.report_admin_name}).replace(/[\\/:*?"<>|\x00-\x1f]/g,'_').slice(0,80)+'-':d.report_unassigned?'unassigned-':'')+new Date().toISOString().slice(0,10);
   if(kind==='csv'){
     const quote=x=>'"'+safe(x).replace(/"/g,'""')+'"';
     exDownload('\ufeff'+table.map(r=>r.map(quote).join(',')).join('\r\n'),filename+'.csv','text/csv;charset=utf-8');
