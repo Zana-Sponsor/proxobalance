@@ -960,3 +960,131 @@ Examples:
 There is no requirement in this prompt to collect WhatsApp/Talabat/store-button clicks or similar outbound-click analytics.
 
 Focus on reliable page creation, structured data, per-page UUIDs, stable URLs, safe ownership, live previews, private rendering, responsive design and correct page-type behavior.
+
+---
+
+# 34. Mandatory Final Test Gate — Execute, Do Not Only Prepare
+
+Testing is mandatory before this work may be reported as complete.
+
+The agent must actually execute the available test suites and retain evidence. Merely writing tests, preparing scripts, building an APK, or describing expected behavior is not sufficient.
+
+Before final completion, execute and report all applicable checks below:
+
+## Backend / API
+
+- create/read/update behavior for Contact, Order and Download pages
+- page UUID generation
+- owner UUID kept separate from page UUID
+- route/page-type matching
+- malformed UUID rejection
+- unauthorized owner update rejection
+- provider allowlist enforcement
+- unsafe URL/scheme rejection
+- HTML/JavaScript injection rejection
+- backward-compatibility checks for existing ProxoLink records
+
+## Database / RLS / migration safety
+
+- additive migration validation
+- ownership/RLS behavior
+- existing production-data preservation checks
+- existing advertisement/card relationship checks
+- stable page UUID after edit
+- rollback/dry-run validation where applicable
+
+## Flutter
+
+- analyze/lint
+- unit/widget tests
+- Create Page type selector
+- Contact form
+- Order form
+- Download form
+- edit flow
+- page list/management cards
+- state preservation
+- RTL/LTR
+- long text and mixed-script behavior
+- no overflow
+
+## Live WebView preview
+
+For every supported page type, verify real server-rendered preview in Flutter WebView.
+
+Do not substitute a static image for live preview verification.
+
+Verify that preview actions are safely intercepted/inert and that private reusable template source is not bundled into Flutter.
+
+## Public rendering
+
+Execute representative public-page tests for:
+
+- Contact
+- Order
+- Download
+- every existing visual template/style that is supported by the implementation
+- 320 / 375 / 393 / 430 / 768 widths
+- RTL and LTR
+- long names and descriptions
+- one and multiple configured provider buttons
+- no horizontal overflow
+
+## Android native
+
+Run the existing protected Android verification workflow and execute actual WebView cases.
+
+Where pixel parity is required, use same-environment Android WebView baseline vs candidate for strict deterministic comparison.
+
+Do not claim native parity from Chromium screenshots alone.
+
+## Isolated staging end-to-end
+
+When isolated staging is available, execute real write-path tests for all three page types:
+
+1. create page
+2. confirm a new database PAGE UUID is generated
+3. confirm account/auth UUID is not used in the public URL
+4. confirm correct route is generated
+5. open public URL
+6. edit page
+7. confirm UUID and URL remain unchanged
+8. preview again
+9. activate/deactivate where supported
+10. retry where supported
+11. verify unauthorized account cannot modify the page
+12. verify wrong page-type route is rejected
+
+If isolated staging is unavailable, these tests must be explicitly reported as BLOCKED rather than VERIFIED.
+
+## Security / privacy
+
+Execute existing ProxoLink security checks, including:
+
+- application authentication boundary
+- ownership/RLS
+- private-template access
+- signed preview validation
+- secret masking in CI
+- no service-role secret in Flutter
+- no raw private template source in APK/source bundles
+- no Telegram reintroduction
+- no new click-tracking/event collection for the page buttons described by this prompt
+
+## Final acceptance rule
+
+The final report must list each major requirement as exactly one of:
+
+```text
+VERIFIED
+FAILED
+BLOCKED
+```
+
+A requirement may be marked VERIFIED only when supported by executed evidence.
+
+Do not mark a requirement VERIFIED because code exists, a test was prepared, or a build succeeded.
+
+If any required test fails, fix the genuine defect and rerun the relevant suite. Do not weaken security checks or silently relax visual acceptance merely to obtain a pass.
+
+Keep PR #7 Draft and keep production release/cutover gates unchanged unless separately approved by the owner.
