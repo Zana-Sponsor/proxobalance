@@ -2,7 +2,6 @@ name: Exchange Balance Checks
 on:
   pull_request:
     paths:
-      - 'api/access.js'
       - 'ip-blocked.html'
       - 'test/exchange-access.test.js'
       - 'test/exchange-admin-workspace.browser.mjs'

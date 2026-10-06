@@ -18,7 +18,7 @@ try{
    assert.equal(await page.locator('#'+id).isVisible(),true);
   }
   await page.evaluate(()=>{document.getElementById('otpStep').style.display='none';document.getElementById('authStepEmail').style.display='block';});
-  if(width===390)await page.screenshot({path:'/workspace/scratch/068a40bbfdcc/auth-app-preview.png',animations:'disabled'});
+  if(width===390&&process.env.PROXO_AUTH_SCREENSHOT)await page.screenshot({path:process.env.PROXO_AUTH_SCREENSHOT,animations:'disabled'});
   await page.setContent(html('exchange-admin.html'));
   await page.evaluate(()=>{document.getElementById('authWrap').style.display='none';document.getElementById('moWallet').classList.add('on');window.allWallets=[];window.allRates=[{from_method:'FastPay',to_method:'FIB',is_active:true}];window.METHOD_META={};});
   await page.addScriptTag({content:read('assets/js/exchange-admin-workspace.js')});

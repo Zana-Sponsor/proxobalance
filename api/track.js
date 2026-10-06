@@ -22,6 +22,7 @@ const ALLOWED = {
 };
 
 export default withSecurity(async (req, res, { user, log }) => {
+  if(req.method==='GET')return json(res,200,{ok:true});
   const body = await readJson(req, 4096).catch(() => ({}));
   const type = String(body.type || 'page_view');
 
@@ -41,7 +42,7 @@ export default withSecurity(async (req, res, { user, log }) => {
   return json(res, 200, { ok: true });
 }, {
   auth: 'optional',      // signed out visitors are logged too, with user_id null
-  methods: ['POST'],
+  methods: ['GET','POST'],
   autoLog: false         // the handler writes its own event; don't double-log
 });
 

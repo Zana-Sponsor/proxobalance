@@ -11,7 +11,6 @@ import balanceHandler from './api/balance.js';
 import publicHandler from './api/public.js';
 import securityAdminHandler from './api/security-admin.js';
 import trackHandler from './api/track.js';
-import accessHandler from './api/access.js';
 import {stealthBanMiddleware} from './api/_lib/security.js';
 import proxoLinkHandler from './api/proxolink.js';
 
@@ -40,7 +39,6 @@ app.all('/api/balance', balanceHandler);
 app.all('/api/public', publicHandler);
 app.all('/api/security-admin', securityAdminHandler);
 app.all('/api/track', trackHandler);
-app.all('/api/access',accessHandler);
 app.all('/api/proxolink', proxoLinkHandler);
 
 // Match Vercel rewrites locally so browser checks exercise the real API.

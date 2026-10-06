@@ -6,7 +6,7 @@
  async function check(){
   if(pending)return pending;
   pending=(async()=>{
-   try{const r=await fetch('/api/access',{cache:'no-store'});if(r.status===403)return blocked();if(!r.ok)throw new Error('Access unavailable');return true;}
+   try{const r=await fetch('/api/track',{cache:'no-store'});if(r.status===403)return blocked();if(!r.ok)throw new Error('Access unavailable');return true;}
    catch(e){return false;}
    finally{pending=null;}
   })();

@@ -89,7 +89,7 @@ jobs:
           grep -q 'data-wallet-tab="routes"' exchange-admin.html
           curl -fLsS --max-time 25 "$root/ip-blocked.html" -o blocked.html
           grep -q 'ئایپی ئامێرەکەت بلۆک کراوە' blocked.html
-          curl -fLsS --max-time 25 "$root/api/access" -o access.json
+          curl -fLsS --max-time 25 "$root/api/track" -o access.json
           grep -q '"ok":true' access.json
       - name: Verify unauthorized clients cannot read balances
         shell: bash
