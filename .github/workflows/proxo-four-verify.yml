@@ -38,7 +38,7 @@ jobs:
           cache: true
       - run: flutter pub get
       - name: Analyze changed app code
-        run: flutter analyze --no-fatal-infos lib/screens/tools_screen.dart lib/screens/card_webview_screen.dart lib/screens/proxo_cards_list_screen.dart lib/widgets/proxolink_preview.dart lib/services/proxolink_service.dart lib/models/proxo_card.dart lib/models/proxolink_template_meta.dart lib/controllers/proxo_card_controller.dart test/proxo_four_flow_test.dart
+        run: flutter analyze --no-fatal-infos lib/screens/tools_screen.dart lib/screens/card_webview_screen.dart lib/screens/proxo_cards_list_screen.dart lib/widgets/proxolink_preview.dart lib/services/proxolink_service.dart lib/models/proxo_card.dart lib/models/proxolink_template_meta.dart lib/controllers/proxo_card_controller.dart lib/services/ad_submission.dart lib/screens/ad_create_screen.dart test/proxo_four_flow_test.dart test/text_direction_test.dart
       - name: Verify page creation and existing ad flows
         run: flutter test test/proxo_four_flow_test.dart test/ad_creation_flow_test.dart test/ad_submission_test.dart test/ad_repository_test.dart test/text_direction_test.dart
       - uses: gradle/actions/setup-gradle@v4

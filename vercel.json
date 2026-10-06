@@ -70,10 +70,7 @@
     }
   ],
   "functions": {
-    "api/*.js": {
-      "maxDuration": 15
-    },
-    "api/proxolink.js": {
+    "server.js": {
       "maxDuration": 30,
       "includeFiles": "api/_lib/proxolink-templates/*.html"
     }

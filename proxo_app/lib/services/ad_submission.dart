@@ -10,7 +10,6 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'ad_categories.dart';
 import 'proxo_pricing.dart';
-import 'proxolink_service.dart';
 
 DateTime adScheduleNow() =>
     DateTime.now().toUtc().add(const Duration(hours: 3));
@@ -355,17 +354,42 @@ class AdPaymentProgress {
 }
 
 abstract class AdCreationRepository {
-  Future<List<Map<String, dynamic>>> loadAssets() async => [
-    for (final card in await ProxoLinkService(client).cards())
-      if(card.available) card.toJson(),
-  ];
+  Future<List<Map<String, dynamic>>> loadAssets();
+  Future<AdQuote> quote(AdDraft draft);
+  Future<AdPendingSubmission?> pending();
+  Future<String> submit(
+      AdPendingSubmission request, ValueNotifier<AdPaymentProgress> progress);
+  Future<void> openPayment(String url) async {
+    final uri = Uri.tryParse(url);
+    if (uri == null ||
+        !const ['https', 'appfpp', 'fastpay']
+            .contains(uri.scheme.toLowerCase())) {
+      return;
+    }
+    await launchUrl(uri, mode: LaunchMode.externalApplication);
+  }
+}
+
+/// All money mutations live in pa_submit_ad / pa_create_ad, never in Flutter.
+class SupabaseAdCreationRepository extends AdCreationRepository {
+  static final Map<String, (String, Future<String>)> _activeSubmissions = {};
+  final SupabaseClient client;
+  SupabaseAdCreationRepository(this.client);
+  String get _user =>
+      client.auth.currentUser?.id ??
+      (throw const AdSubmissionFailure('NOT_AUTHENTICATED'));
+  String get _storageKey => 'proxo.pending-ad.v1.$_user';
+  Map<String, dynamic> _map(dynamic raw) =>
+      Map<String, dynamic>.from(raw as Map);
 
   @override
   Future<List<Map<String, dynamic>>> loadAssets() async =>
       List<Map<String, dynamic>>.from(await client
           .from('proxolink_cards')
-          .select('id,name,style,color_theme,card_number,avatar_b64')
+          .select('id,name,style,color_theme,card_number,page_type')
           .eq('user_id', _user)
+          .eq('status', 'active')
+          .eq('publish_status', 'ready')
           .order('created_at', ascending: false));
 
   @override

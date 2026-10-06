@@ -4,6 +4,7 @@ class ProxoCard {
   final String id, userId, name, bio, tt, templateKey, colorTheme;
   final String language, status, publishStatus, pageType;
   final String? avatarPath;
+  final bool hasAvatar;
   final int templateVersion, cardNumber;
   final DateTime createdAt, updatedAt;
   final Map<String, String> platforms;
@@ -20,6 +21,7 @@ class ProxoCard {
     this.language = 'ku',
     this.pageType = 'contact',
     this.avatarPath,
+    this.hasAvatar = false,
     this.status = 'inactive',
     this.publishStatus = 'creating',
     required this.cardNumber,
@@ -39,7 +41,7 @@ class ProxoCard {
     _ => status == 'active' ? 'چالاکە' : 'ناچالاکە',
   };
   String get publicPath => '/contact/$id';
-  String? get avatarUrl => avatarPath == null
+  String? get avatarUrl => avatarPath == null && !hasAvatar
       ? null
       : 'https://www.proxobalance.app/contact/$id/avatar';
   factory ProxoCard.fromJson(Map<String, dynamic> j) => ProxoCard(
@@ -54,6 +56,7 @@ class ProxoCard {
     language: j['card_language'] as String? ?? 'ku',
     pageType: j['page_type'] as String? ?? 'contact',
     avatarPath: j['avatar_path'] as String?,
+    hasAvatar: j['has_avatar'] == true,
     status: j['status'] as String? ?? 'inactive',
     publishStatus: j['publish_status'] as String? ?? 'creating',
     cardNumber: (j['card_number'] as num?)?.toInt() ?? 0,

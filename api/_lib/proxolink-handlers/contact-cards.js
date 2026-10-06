@@ -168,8 +168,8 @@ async function handler(req,res,{user}) {
   try {
     if(req.method==='GET') {
       const cards=await proxoRows('proxolink_cards','&user_id=eq.'+user.id+'&order=created_at.desc',
-        'id,user_id,name,bio,tt,platforms,template_key,template_version,style,color_theme,card_language,page_type,avatar_path,status,publish_status,card_number,created_at,updated_at');
-      return json(res,200,{ok:true,cards});
+        'id,user_id,name,bio,tt,platforms,template_key,template_version,style,color_theme,card_language,page_type,avatar_path,avatar_b64,logo_b64,status,publish_status,card_number,created_at,updated_at');
+      return json(res,200,{ok:true,cards:cards.map(({avatar_b64,logo_b64,...card})=>({...card,has_avatar:Boolean(card.avatar_path||avatar_b64||logo_b64)}))});
     }
     const body=await readJson(req,64*1024);
     if(!body||typeof body!=='object'||Array.isArray(body))

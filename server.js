@@ -36,6 +36,7 @@ app.all('/api/balance', balanceHandler);
 app.all('/api/public', publicHandler);
 app.all('/api/security-admin', securityAdminHandler);
 app.all('/api/track', trackHandler);
+app.all('/api/proxolink', proxoLinkHandler);
 
 // Match Vercel rewrites locally so browser checks exercise the real API.
 const proxoRoute = (route, op) => app.all(route, (req, res) => {

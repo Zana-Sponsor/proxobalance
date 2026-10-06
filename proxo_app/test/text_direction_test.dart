@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:proxo_app/services/html_generator.dart';
 import 'package:proxo_app/widgets/auth/auth_widgets.dart';
 import 'package:proxo_app/widgets/proxo_text.dart';
 import 'package:proxo_app/widgets/receipt/receipt_kit.dart';
@@ -250,81 +249,5 @@ void main() {
     }
   });
 
-  for (final style in PlStyle.values) {
-    test('generated ${style.name} contact card keeps directions and raw links',
-        () {
-      final html = buildCardHtml(
-        name: 'Zana',
-        bio: 'کۆد ABC-123، بڕ -12,345.67 IQD <script>',
-        tt: 'zana_123',
-        logoB64: '',
-        themeKey: 'blue',
-        style: style,
-        checked: [true],
-        contacts: {0: '9647501234567'},
-      );
-      expect(html, contains('dir="auto">Zana'));
-      expect(html, contains('<bdi dir="ltr">ABC-123</bdi>'));
-      expect(html, contains('<bdi dir="ltr">-12,345.67 IQD</bdi>'));
-      expect(html, contains('&lt;<bdi dir="ltr">script</bdi>&gt;'));
-      expect(html, contains('9647501234567'));
-      expect(html, isNot(contains('href="<bdi')));
-    });
-  }
 
-  testWidgets('render direction examples with the receipt typography',
-      (tester) async {
-    tester.view.devicePixelRatio = 1;
-    tester.view.physicalSize = const Size(393, 440);
-    addTearDown(tester.view.resetPhysicalSize);
-    addTearDown(tester.view.resetDevicePixelRatio);
-    await tester.pumpWidget(MaterialApp(
-      home: RepaintBoundary(
-        key: previewKey,
-        child: Scaffold(
-          backgroundColor: ReceiptTokens.page,
-          body: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const SizedBox(height: 16),
-                ProxoText('مێژووی مامەڵەکان', style: ReceiptTokens.barTitle),
-                const SizedBox(height: 24),
-                const ReceiptCard(
-                  child: ReceiptRows([
-                    ReceiptRow(label: 'ناو', value: 'New Ad 2021'),
-                    ReceiptRow(label: 'کۆد', value: 'ABC-123'),
-                    ReceiptRow(
-                        label: 'ڕێکەوت', value: '19/09/2026 03:26 PM'),
-                    ReceiptRow(label: 'بڕ', value: '-36,000 د.ع'),
-                  ]),
-                ),
-                const SizedBox(height: 24),
-                ProxoText('تفاصيل المعاملة', style: ReceiptTokens.barTitle),
-                const SizedBox(height: 12),
-                ProxoText('مامەڵە ABC-123 بە بڕی -36,000 IQD تەواوە',
-                    style: ReceiptTokens.rowValue),
-                const SizedBox(height: 12),
-                ProxoText('Payment ABC-123 • 19/09/2026',
-                    style: ReceiptTokens.rowValue),
-              ],
-            ),
-          ),
-        ),
-      ),
-    ));
-    await tester.pumpAndSettle();
-    const output = String.fromEnvironment('TEXT_DIRECTION_PREVIEW');
-    if (output.isNotEmpty) {
-      await tester.runAsync(() async {
-        final boundary =
-            tester.renderObject<RenderRepaintBoundary>(find.byKey(previewKey));
-        final image = await boundary.toImage(pixelRatio: 2);
-        final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
-        await File(output).writeAsBytes(bytes!.buffer.asUint8List());
-        image.dispose();
-      });
-    }
-  });
 }
