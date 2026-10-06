@@ -6,7 +6,8 @@ export const STYLES=['pill','pill-mint','pill-dark','pill-white'];
 export const PAGE_TYPES=['contact','order','download'];
 export const LANGUAGES=['ku','en'];
 export const WIDTHS=[320,375,393,430,768];
-export const NATIVE_CASE_IDS=STYLES.flatMap(style=>PAGE_TYPES.flatMap(type=>LANGUAGES.flatMap(language=>WIDTHS.map(width=>`${style}-${type}-${language}-${width}`))));
+export const ORIENTATIONS=['portrait','landscape'];
+export const NATIVE_CASE_IDS=STYLES.flatMap(style=>PAGE_TYPES.flatMap(type=>LANGUAGES.flatMap(language=>ORIENTATIONS.flatMap(orientation=>WIDTHS.map(width=>`${style}-${type}-${language}-${orientation}-${width}`)))));
 
 export function validateRuntime(env) {
   if(env.GITHUB_REPOSITORY!=='Zana-Sponsor/proxobalance'

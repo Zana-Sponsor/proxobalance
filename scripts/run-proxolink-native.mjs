@@ -167,7 +167,7 @@ async function main() {
       writeFileSync(output+'/case-results.json',JSON.stringify(observed,null,2));
       const safe=validateNativeResults(data,captured,pixels);
       writeFileSync(output+'/results.json',JSON.stringify(safe,null,2));
-      console.log('All 120 live native cases and exact same-device Android WebView baseline/candidate comparisons passed.');
+      console.log('All 240 live native cases and exact same-device Android WebView baseline/candidate comparisons passed.');
       return;
     }
     const current=appRead('proxolink-verification-case.json');

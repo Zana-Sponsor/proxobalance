@@ -82,18 +82,18 @@ void main(){
    await tester.pumpWidget(const SizedBox.shrink());await tester.pump();
   });
  }
- for(final width in [320.0,375.0,393.0,430.0,768.0])for(final type in ProxoPageType.values)for(final direction in TextDirection.values){
-  testWidgets('${type.key} form $width $direction at 1.6 text scale has correct labels/providers, four designs and no overflow',(tester)async{
+ for(final height in [1100.0,240.0])for(final width in [320.0,375.0,393.0,430.0,768.0])for(final type in ProxoPageType.values)for(final direction in TextDirection.values){
+  testWidgets('${type.key} form ${width}x$height $direction at 1.6 text scale has correct labels/providers, four designs and no overflow',(tester)async{
    final errorHandler=FlutterError.onError;
    FlutterError.onError=(details){debugPrint(details.toString());errorHandler?.call(details);};
    addTearDown(()=>FlutterError.onError=errorHandler);
-   tester.view.physicalSize=Size(width,1100);tester.view.devicePixelRatio=1;
+   tester.view.physicalSize=Size(width,height);tester.view.devicePixelRatio=1;
    addTearDown(tester.view.resetPhysicalSize);addTearDown(tester.view.resetDevicePixelRatio);
    final repository=FakeProxoLink([]);
    await tester.pumpWidget(MaterialApp(theme:buildAppTheme(),builder:(context,child)=>MediaQuery(
     data:MediaQuery.of(context).copyWith(textScaler:const TextScaler.linear(1.6)),
     child:Directionality(textDirection:direction,child:child!)),home:ToolsScreen(initialCreate:true,repository:repository)));
-   await tester.pumpAndSettle();await tester.tap(find.text(type.label).first);await tester.pumpAndSettle();
+   await tester.pumpAndSettle();await tester.ensureVisible(find.text(type.label).first);await tester.tap(find.text(type.label).first);await tester.pumpAndSettle();
    final fields=find.byType(TextFormField);
    await tester.ensureVisible(fields.first);await tester.enterText(fields.first,'پڕۆکسۆ Proxo '+ 'Long '.padRight(140,'x'));await tester.pump(const Duration(milliseconds:600));
    expect(find.text(type.imageLabel),findsOneWidget);expect(find.text(type.nameLabel),findsOneWidget);expect(find.text('بایۆ'),findsOneWidget);

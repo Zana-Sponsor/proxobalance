@@ -820,13 +820,13 @@ class _ContactFormState extends State<_ContactForm> {
   );
   @override
   Widget build(BuildContext context) => _kind == null ? Center(
-    child: Padding(padding: const EdgeInsets.all(16),child:Column(
+    child: SingleChildScrollView(child:Padding(padding: const EdgeInsets.all(16),child:Column(
       mainAxisSize:MainAxisSize.min,crossAxisAlignment:CrossAxisAlignment.stretch,
       children:[const ProxoText('جۆری پەڕە هەڵبژێرە'),const SizedBox(height:20),
         for(final type in ProxoPageType.values) Padding(padding:const EdgeInsets.only(bottom:12),
           child:OutlinedButton(onPressed:()=>setState(()=>_kind=type),child:ProxoText(type.label))),
       ],
-    )),
+    ))),
   ) : AbsorbPointer(
     absorbing: _saving,
     child: SingleChildScrollView(

@@ -25,8 +25,9 @@ const executablePath=process.env.PROXO_CHROMIUM_PATH;
 const browser=await chromium.launch({...(executablePath?{executablePath}:{}),args:['--no-sandbox','--disable-dev-shm-usage']});
 const results=[],headers=new Map(),base='http://127.0.0.1:'+server.address().port;
 try{
- for(const width of [320,375,393,430,768])for(const key of PREPARED_DESIGNS)for(const type of PAGE_TYPES)for(const language of ['ku','en'])for(const long of [false,true]){
-  const page=await browser.newPage({viewport:{width,height:1100},deviceScaleFactor:1}),errors=[];
+ for(const orientation of ['portrait','landscape'])for(const width of [320,375,393,430,768])for(const key of PREPARED_DESIGNS)for(const type of PAGE_TYPES)for(const language of ['ku','en'])for(const long of [false,true]){
+  const height=orientation==='portrait'?1100:240;
+  const page=await browser.newPage({viewport:{width,height},deviceScaleFactor:1}),errors=[];
   page.on('pageerror',error=>errors.push(error.message));
   await page.goto(base+`/${key}/${type}/${language}/${long}/false`);await page.evaluate(()=>document.fonts.ready);
   await page.waitForFunction(()=>[...document.images].every(i=>i.complete&&i.naturalWidth>0));
@@ -35,12 +36,14 @@ try{
    avatar:{width:document.getElementById('avatar').getBoundingClientRect().width,height:document.getElementById('avatar').getBoundingClientRect().height},
    targets:[...document.querySelectorAll('[data-provider],.legal a,.footer-brand')].map(b=>({width:b.getBoundingClientRect().width,height:b.getBoundingClientRect().height})),
    footerLogo:!!document.querySelector('.footer-logo'),preview:window.ProxoLink.getConfig().preview,
+   badges:[...document.querySelectorAll('.store-link img')].map(e=>({width:e.getBoundingClientRect().width,height:e.getBoundingClientRect().height,natural_width:e.naturalWidth,natural_height:e.naturalHeight,label:e.parentElement.getAttribute('aria-label')})),
    header:['avatar','name','bio'].map(id=>{const e=document.getElementById(id),r=e.getBoundingClientRect(),s=getComputedStyle(e);return {id,x:r.x,y:r.y,width:r.width,height:r.height,font:s.fontFamily,font_size:s.fontSize,line_height:s.lineHeight};})}));
   assert.ok(state.scroll<=width+1,`${key}/${type}/${language}/${width} overflow`);assert.equal(state.dir,language==='en'?'ltr':'rtl');
   assert.ok(state.font.includes('Bahij'));assert.ok(state.targets.every(b=>b.height>=44));assert.equal(state.avatar.width,88);assert.equal(state.avatar.height,88);
   assert.ok(state.providers.every(k=>PROVIDER_REGISTRY[k].page_type===type));assert.equal(state.providers.length,long?Object.values(PROVIDER_REGISTRY).filter(p=>p.page_type===type).length:1);
   assert.equal(state.preview,false);assert.equal(state.footerLogo,true);assert.equal(errors.length,0);
-  const headerId=[key,language,long,width].join('/'),geometry=JSON.stringify(state.header);
+  for(const badge of state.badges){assert.ok(badge.label);assert.ok(Math.abs(badge.width/badge.height-badge.natural_width/badge.natural_height)<.01,'store badge aspect ratio changed');}
+  const headerId=[key,language,long,width,orientation].join('/'),geometry=JSON.stringify(state.header);
   if(headers.has(headerId))assert.equal(geometry,headers.get(headerId),'shared top-profile geometry changed by page type');else headers.set(headerId,geometry);
   // Execute public button behavior with a safe event interceptor: no external
   // app, person or order is contacted during this browser verification.
@@ -67,8 +70,8 @@ try{
   await page.evaluate(()=>{document.getAnimations().forEach(a=>{a.pause();a.currentTime=0;});});
   await page.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));
   const baseline=await page.screenshot();if(!candidate.equals(baseline)){writeFileSync(output+'/failed-candidate.png',candidate);writeFileSync(output+'/failed-baseline.png',baseline);}assert.ok(candidate.equals(baseline),'prepared design pixel difference '+[key,type,language,width,long].join('/'));
-  if(width===393&&!long){writeFileSync(`${output}/${key}-${type}-${language}.png`,candidate);}
-  results.push({design:key,type,language,width,long_text:long,provider_count:state.providers.length,text_scale:1.6,overflow:false,targets_min_44:true,public_actions_checked:true,shared_header_equal:true,preview_inert:true,prepared_baseline_exact:true});
+  if(width===393&&!long&&orientation==='portrait'){writeFileSync(`${output}/${key}-${type}-${language}.png`,candidate);}
+  results.push({design:key,type,language,width,height,orientation,long_text:long,provider_count:state.providers.length,text_scale:1.6,overflow:false,targets_min_44:true,store_badges_undistorted:true,public_actions_checked:true,shared_header_equal:true,preview_inert:true,prepared_baseline_exact:true});
   await page.close();
  }
  writeFileSync(output+'/results.json',JSON.stringify({status:'VERIFIED',engine:'Chromium '+browser.version(),cases:results},null,2));

@@ -9,8 +9,9 @@ const _styles=['pill','pill-mint','pill-dark','pill-white'];
 const _types=['contact','order','download'];
 const _languages=['ku','en'];
 const _widths=[320,375,393,430,768];
+const _orientations=['portrait','landscape'];
 final _cases=[for(final style in _styles)for(final type in _types)for(final language in _languages)
-  for(final width in _widths) {'style':style,'type':type,'language':language,'width':width}];
+  for(final orientation in _orientations)for(final width in _widths) {'style':style,'type':type,'language':language,'orientation':orientation,'width':width}];
 Directory get _files=>Directory('${Directory.systemTemp.parent.path}/files');
 Future<Map<String,dynamic>> _configuration() async => Map<String,dynamic>.from(
   jsonDecode(await File('${_files.path}/proxolink-verification.json').readAsString()) as Map);
@@ -47,7 +48,7 @@ class _ProbeState extends State<_Probe> {
  final _viewport=GlobalKey(),_results=<String,dynamic>{},_candidateChecks=<String,Map<String,dynamic>>{};
  int _index=0;bool _baseline=false,_complete=false;
  Map<String,String> _headers={};
- String get _id {final c=_cases[_index.clamp(0,_cases.length-1)];return '${c['style']}-${c['type']}-${c['language']}-${c['width']}';}
+ String get _id {final c=_cases[_index.clamp(0,_cases.length-1)];return '${c['style']}-${c['type']}-${c['language']}-${c['orientation']}-${c['width']}';}
  @override void initState(){super.initState();_configure();}
  Future<void> _configure() async {final config=await _configuration();if(mounted)setState(()=>_headers=Map<String,String>.from(config['headers'] as Map));}
  Future<void> _write(String file,Object value) async {await File('${_files.path}/$file').writeAsString(jsonEncode(value));}
@@ -109,7 +110,7 @@ class _ProbeState extends State<_Probe> {
    if(MediaQuery.devicePixelRatioOf(context)!=1)throw StateError('pixel_density');
    final captureId='$id-${baseline?'baseline':'candidate'}';
    await _write('proxolink-verification-case.json',{'id':id,'capture_id':captureId,'style':c['style'],'type':c['type'],'language':c['language'],'width':c['width'],
-    'variant':baseline?'baseline':'candidate','viewport':{'left':origin.dx.floor(),'top':origin.dy.floor(),'width':box.size.width.round(),'height':box.size.height.round(),'css_height':box.size.height.round()}});
+    'variant':baseline?'baseline':'candidate','orientation':c['orientation'],'viewport':{'left':origin.dx.floor(),'top':origin.dy.floor(),'width':box.size.width.round(),'height':box.size.height.round(),'css_height':box.size.height.round()}});
    final ack=File('${_files.path}/proxolink-verification-ack');var seen=false;
    for(var i=0;i<240;i++){
     if(await ack.exists()&&(await ack.readAsString()).trim()==captureId){seen=true;await ack.delete();break;}
@@ -129,7 +130,7 @@ class _ProbeState extends State<_Probe> {
  @override Widget build(BuildContext context){
   final c=_cases[_index];
   return Scaffold(backgroundColor:AppColors.page,appBar:AppBar(title:const Text('ProxoLink')),body:SafeArea(child:Center(
-   child:SizedBox(width:(c['width'] as int).toDouble(),height:MediaQuery.sizeOf(context).height*.80,
+   child:SizedBox(width:(c['width'] as int).toDouble(),height:c['orientation']=='landscape'?(c['width'] as int)*.6:MediaQuery.sizeOf(context).height*.80,
     child:SizedBox(key:_viewport,child:_complete?Text('${_cases.length} native cases completed'):_headers.isEmpty?const CircularProgressIndicator():ProxoLinkPreview(
      key:ValueKey('$_id/$_baseline'),requestHeaders:_headers,
      loadUrl:()async {final r=await _configuration();return Uri.parse((r['previews'] as Map)['${c['style']}-${c['type']}-${c['language']}${_baseline?'-baseline':''}'] as String);},
