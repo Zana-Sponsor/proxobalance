@@ -64,8 +64,6 @@ begin
     (v_admin,'cap-admin-'||v_admin||'@example.invalid','{"full_name":"Regression Admin"}'),
     (v_user,'cap-user-'||v_user||'@example.invalid','{"full_name":"Regression Customer"}');
   update public.ex_profiles set is_admin=true where id=v_admin;
-  -- Welcome grants are tested separately; these fixtures exercise admin grants.
-  update public.ex_user_rewards set active=false where user_id in(v_user,v_admin) and campaign_key='welcome_signup_v1';
   insert into public.ex_rates(from_method,to_method,rate_type,rate_value)
     values(v_route,v_route||'-destination','fee_percent',2);
   insert into public.ex_user_rewards(user_id,kind,discount_percent,max_uses,

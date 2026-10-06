@@ -13,7 +13,7 @@
 <link rel="stylesheet" href="assets/css/admin.css?v=9">
 <link rel="stylesheet" href="assets/css/tokens.css">
 <link rel="stylesheet" href="assets/css/exchange-insights.css?v=2">
-<link rel="stylesheet" href="assets/css/exchange-features.css?v=3">
+<link rel="stylesheet" href="assets/css/exchange-features.css?v=2">
 <link rel="stylesheet" href="assets/css/exchange-panel-theme.css?v=4">
 <link rel="stylesheet" href="assets/css/exchange-readable.css?v=3">
 <link rel="stylesheet" href="assets/css/exchange-typography.css?v=1">
@@ -21,9 +21,6 @@
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<link rel="stylesheet" href="assets/css/exchange-admin-workspace.css?v=1">
-<link rel="stylesheet" href="assets/css/exchange-auth-app.css?v=1">
-<script src="assets/js/exchange-access.js?v=1"></script>
 </head>
 <body>
 
@@ -37,8 +34,8 @@
     <div style="text-align:center;margin-bottom:18px">
       <div class="auth-badge"><i class="fas fa-shield-halved"></i> دەسترسی ئادمین تەنها</div>
     </div>
-    <input class="ainp" type="email" autocomplete="username" id="loginEmail" placeholder="ئیمەیلی ئادمین" dir="ltr">
-    <input class="ainp" type="password" autocomplete="current-password" id="loginPass" placeholder="پاسۆرد" dir="ltr" onkeydown="if(event.key==='Enter')doLogin()">
+    <input class="ainp" type="email" id="loginEmail" placeholder="ئیمەیلی ئادمین" dir="ltr">
+    <input class="ainp" type="password" id="loginPass" placeholder="پاسۆرد" dir="ltr" onkeydown="if(event.key==='Enter')doLogin()">
     <button class="abtn" id="loginBtn" onclick="doLogin()">
       <i class="fas fa-arrow-left"></i> چوونەژوورەوە
     </button>
@@ -117,7 +114,6 @@
 
     <!-- ══ DASHBOARD ══ -->
     <div class="pg on" id="pgDashboard">
-      <section class="my-activity-sheet"><h3>چالاکی من لە ئەم مانگەدا</h3><p id="myMonthlyNote">ئاماری تایبەت بە هەژماری ئادمینی تۆ</p><div id="myMonthlyActivity" class="my-activity-grid" aria-live="polite">بارکردن...</div></section>
       <section class="profit-dash-strip" aria-label="پوختەی لێبڕین"><div class="profit-dash-head"><div><h3>کۆی لێبڕینی مامەڵەکان</h3><p>کۆی لێبڕین لە مامەڵە پەسەندکراوەکان</p></div><button type="button" class="ex-btn" onclick="goPage('profit')">بینینی وردەکاری <i class="fas fa-arrow-left"></i></button></div><div class="ex-grid" id="profitDashSummary"><div class="ex-note">ئاماری لێبڕین بار دەکرێت...</div></div></section>
       <div class="ex-dash-shortcut"><div><h3>ئامار و نرخەکانی ئاڵوگۆڕ</h3><p>بینینی کۆی مامەڵەکان، داگرتنی ڕاپۆرت و دەستکاری نرخی گۆڕینەوە</p></div><div class="ex-actions"><button type="button" class="ex-btn primary" onclick="goPage('profit')"><i class="fas fa-chart-line"></i> لێبڕین</button><button type="button" class="ex-btn" onclick="goPage('statistics')"><i class="fas fa-chart-column"></i> ئامارەکان</button><button type="button" class="ex-btn" onclick="goPage('rates')"><i class="fas fa-pen"></i> دەستکاری نرخ</button></div></div>
 
@@ -164,11 +160,9 @@
           <div class="ex-logo" dir="ltr">Proxo</div>
         </div>
         <div class="ex-title">پوختەی لێبڕین</div>
-        <p class="profit-help" id="profitScope"></p>
         <div class="ex-grid" id="profitOverview" aria-live="polite"></div>
         <div class="ex-title">لێبڕین بەپێی ڕێگای وەرگرتن</div>
         <div class="ex-grid" id="profitMethods" aria-live="polite"></div>
-        <div id="profitAdminSummary" hidden></div>
         <div class="ex-note" id="profitNotice">لێبڕین = بڕی نێردراو − بڕی وەرگیراو؛ تەنها مامەڵە پەسەندکراوەکان هەژمار دەکرێن.</div>
         <div class="ex-title">پاڵاوتن و داگرتنی ڕاپۆرت</div>
         <div class="ex-actions profit-toolbar">
@@ -241,7 +235,7 @@
       <div class="sec-hdr">
         <h3>هەموو بەکارهێنەران <span class="acc-count" id="accCount"></span></h3>
         <button type="button" class="act-btn bl" onclick="loadAccounts()">نوێکردنەوە</button>
-        <button type="button" id="staffDirectoryButton" data-super-admin-only class="act-btn cy" onclick="openStaffDirectory()"><i class="fas fa-key"></i> بەڕێوەبردنی ئادمینەکان</button>
+        <button type="button" id="staffDirectoryButton" data-super-admin-only class="act-btn cy" onclick="openStaffDirectory()"><i class="fas fa-key"></i> دەسەڵاتی کارمەندان</button>
         <div class="act-btn dark" onclick="openCreateUserModal()"><i class="fas fa-user-plus"></i> زیادکردنی هەژمار</div>
       </div>
       <div class="tbl-wrap">
@@ -407,12 +401,11 @@
         <h3>نرخی گۆڕینەوە و کرێ</h3>
         <div class="act-btn dark" onclick="openRateModal(null)"><i class="fas fa-plus"></i> زیادکردنی ڕێگا</div>
       </div>
-      <div class="admin-rate-toolbar"><input id="adminRateSearch" class="minp" type="search" aria-label="گەڕان بە ناوی جزدان" placeholder="گەڕان بە ناوی جزدان..." oninput="filterAdminRates()"><select id="adminRateState" class="msel" aria-label="دۆخی ڕێگا" onchange="filterAdminRates()"><option value="all">هەموو ڕێگاکان</option><option value="active">چالاکەکان</option><option value="inactive">ناچالاکەکان</option></select></div>
       <section class="ex-sheet"><div class="ex-head"><div><h3>دەستکاری خێرای نرخ</h3><p>نرخی هەر ڕێگایەک بە جیا دەستکاری بکە؛ پاشەکەوتکردن بە هەمان سیستەمی ئێستا دەکرێت.</p></div><div class="ex-logo">Proxo</div></div><div class="ex-rates" id="exRatesQuick"><div class="ex-note">نرخەکان بار دەکرێن...</div></div></section>
       <div class="tbl-wrap">
-        <details class="admin-rate-details"><summary>بینینی خشتەی وردەکاری ڕێگاکان</summary><div class="tbl-scroll" id="ratesTableWrap">
+        <div class="tbl-scroll" id="ratesTableWrap">
           <div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>
-        </div></details>
+        </div>
       </div>
     </div>
 
@@ -712,14 +705,14 @@
       </div>
     </div>
     <label class="modal-lbl">جۆری نرخ</label>
-    <select class="msel" id="rateType" onchange="updateRateValueHint();updateAdminRatePreview()">
+    <select class="msel" id="rateType" onchange="updateRateValueHint()">
       <option value="multiplier">مەزراپ (Multiplier)</option>
       <option value="fee_percent">حمولە بە ڕێژە (Fee %)</option>
       <option value="fee_fixed">حمولەی جێگیر (د.ع)</option>
     </select>
     <label class="modal-lbl">بەها</label>
-    <input class="minp" type="number" step="0.0001" id="rateValue" dir="ltr" placeholder="0.00" oninput="updateAdminRatePreview()">
-    <div class="fee-toggle-note" id="rateValueHint"></div><section class="rate-example"><label class="modal-lbl" for="adminRateExample">نموونەی بڕی ناردن</label><input class="minp" type="number" id="adminRateExample" value="100000" min="1" dir="ltr" oninput="updateAdminRatePreview()"><output id="adminRatePreview" dir="ltr"></output><p>ئەمە نموونەی ئەم ڕێگایەیە؛ حمولەی جزدانەکانی تر ناگۆڕێت.</p></section>
+    <input class="minp" type="number" step="0.0001" id="rateValue" dir="ltr" placeholder="0.00">
+    <div class="fee-toggle-note" id="rateValueHint"></div>
     <div class="mswitch-row">
       <span>چالاکە (بەکاردەهێنرێت لە ئەپدا)</span>
       <label class="mswitch"><input type="checkbox" id="rateActive" checked><span class="track"></span></label>
@@ -735,7 +728,7 @@
       <h3 id="walletModalTitle">زیادکردنی واڵێتی نوێ</h3>
       <div class="modal-close" onclick="closeMo('moWallet')"><i class="fas fa-xmark"></i></div>
     </div>
-    <div class="wallet-editor-tabs" role="tablist"><button type="button" role="tab" data-wallet-tab="info" onclick="switchWalletSection('info')">زانیاری جزدان</button><button type="button" role="tab" data-wallet-tab="routes" onclick="switchWalletSection('routes')">حمولە و ڕێگاکان</button></div><input type="hidden" id="walletId"><section data-wallet-section="info">
+    <input type="hidden" id="walletId">
     <div style="display:flex;align-items:center;gap:14px;margin-bottom:6px">
       <div id="walletImgPreview" style="width:58px;height:58px;border-radius:16px;background:var(--bg);border:1.5px dashed var(--b2);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;color:var(--mt);font-size:20px"><i class="fas fa-image"></i></div>
       <div style="flex:1;min-width:0">
@@ -751,8 +744,8 @@
     <label class="modal-lbl">ناوی واڵێت</label>
     <input class="minp" id="walletName" placeholder="بۆ نموونە: FastPay" oninput="autoFillWalletKey()">
 
-    <details class="wallet-advanced"><summary>کلیلی ناساندنی جزدان</summary><label class="modal-lbl">کلیلی ناساندن — بەبێ بۆشایی</label>
-    <input class="minp" id="walletKey" dir="ltr" placeholder="FastPay"></details>
+    <label class="modal-lbl">کلیل (Key — بەکاردەهێنرێت لە کۆدەکەدا، بێ بۆشایی)</label>
+    <input class="minp" id="walletKey" dir="ltr" placeholder="FastPay">
     <label class="modal-lbl" for="walletBadge">نیشانی جزدان</label>
     <select class="msel" id="walletBadge"><option value="none">بەبێ نیشان</option><option value="popular">باو</option><option value="most_popular">باوترین</option><option value="new">نوێ</option></select>
     <div class="fee-toggle-note">نیشانی «نوێ» تەنها یەک جار بۆ هەر بەکارھێنەر دەردەکەوێت، دوای بینینی لادەچێت.</div>
@@ -760,7 +753,7 @@
     <label class="modal-lbl">ژمارە/ناونیشانی وەرگرتن</label>
     <input class="minp" id="walletNumber" dir="ltr" placeholder="07XXXXXXXXX یان ناونیشانی USDT">
 
-    <details class="wallet-advanced"><summary>زانیاری نرخی پیشاندان</summary><div class="modal-row">
+    <div class="modal-row">
       <div>
         <label class="modal-lbl">نرخ (Price) — تەنها پیشاندان</label>
         <input class="minp" type="number" step="0.0001" id="walletPrice" dir="ltr" placeholder="ئارەزوومەندانە">
@@ -777,7 +770,6 @@
     </select>
     <div class="fee-toggle-note"><i class="fas fa-circle-info" style="margin-left:4px"></i>ئەم دوو خانەیە تەنها بۆ پیشاندانن. حمولەی ڕاستەقینەی هەر گۆڕینەوەیەک لە بەشی خوارەوە («گۆڕینەوە و حمولە بەرامبەر هەر واڵێتێکی تر») دیاری دەکرێت.</div>
 
-</details>
     <div class="mswitch-row">
       <span>دەتوانرێت لێی بنێردرێت (لە لیستی «لە»ی ناردندا دەردەکەوێت)</span>
       <label class="mswitch"><input type="checkbox" id="walletCanSend" onchange="renderPairList()"><span class="track"></span></label>
@@ -791,14 +783,14 @@
       <label class="mswitch"><input type="checkbox" id="walletLocked"><span class="track"></span></label>
     </div>
 
-    </section><section data-wallet-section="routes" hidden><div class="pair-block">
+    <div class="pair-block">
       <div class="pair-hdr"><i class="fas fa-right-left" style="color:#2563eb"></i> گۆڕینەوە و حمولە بەرامبەر هەر واڵێتێکی تر</div>
       <div class="pair-sub">هەر ئاراستەیەک سەربەخۆیە: دەتوانیت «A ← B» بکەیتەوە و «B ← A» دابخەیت. ئەو ئاراستەیەی داخراوە، بەکارهێنەر بە هیچ شێوەیەک ناتوانێت بەکاری بهێنێت و لە لیستەکەیدا دەرناکەوێت.</div>
       <div class="pair-tabs">
         <div class="pair-tab on" data-ptab="out" onclick="switchPairTab('out')"><i class="fas fa-arrow-left"></i> ناردن بۆ <span class="cnt" id="pairCntOut">0</span></div>
         <div class="pair-tab" data-ptab="in" onclick="switchPairTab('in')"><i class="fas fa-arrow-right"></i> وەرگرتن لە <span class="cnt" id="pairCntIn">0</span></div>
       </div>
-      <details class="wallet-advanced"><summary>دانانی یەک حمولە بۆ هەموو ڕێگاکانی ئەم ئاراستەیە</summary><div class="pair-bulk">
+      <div class="pair-bulk">
         <select class="msel" id="pairBulkType">
           <option value="fee_percent">حمولە بە ڕێژە (%)</option>
           <option value="fee_fixed">حمولەی جێگیر (د.ع)</option>
@@ -807,10 +799,10 @@
         <input class="minp" id="pairBulkValue" type="number" step="0.0001" dir="ltr" placeholder="بەها">
         <button type="button" class="act-btn dark" onclick="applyPairBulk()"><i class="fas fa-bolt"></i> بۆ هەمووی</button>
       </div>
-      </details><div class="pair-list" id="pairListWrap"></div>
+      <div class="pair-list" id="pairListWrap"></div>
     </div>
 
-    </section><p id="walletSaveError" role="alert" style="color:var(--rd);font-size:13px"></p>
+    <p id="walletSaveError" role="alert" style="color:var(--rd);font-size:13px"></p>
     <button class="modal-btn dark" id="walletSaveBtn" onclick="saveWallet()"><i class="fas fa-check"></i> پاشەکەوتکردن</button>
   </div>
 </div>
@@ -1004,23 +996,23 @@
     <div class="modal" style="max-width:520px">
       <div class="modal-hdr"><h3>دەسەڵاتەکانی کارمەند</h3><button type="button" class="modal-close" onclick="closeMo('moStaffPermissions')" aria-label="داخستن">×</button></div>
       <input type="hidden" id="staffTarget"><p id="staffTargetName"></p>
-      <label class="staff-permission-row"><input id="staffFullAccess" type="checkbox" onchange="updateStaffPermissionForm()">دەسەڵاتی تەواوی ئاڵوگۆڕ (بەبێ لۆگ و OTP)</label>
+      <label class="staff-permission-row"><input id="staffFullAccess" type="checkbox" onchange="updateStaffPermissionForm()">دەسەڵاتی تەواوی ئادمین</label>
       <div id="staffPermissionOptions"></div><p id="staffPermissionError" role="alert"></p>
       <button type="button" id="staffPermissionSave" class="act-btn gr" onclick="saveStaffPermissions()">پاشەکەوتکردنی دەسەڵاتەکان</button>
     </div>
   </div>
   <div class="overlay" id="moStaffDirectory">
     <div class="modal" style="max-width:520px">
-      <div class="modal-hdr"><h3>بەڕێوەبردنی ئادمینەکان</h3><button type="button" class="modal-close" onclick="closeMo('moStaffDirectory')" aria-label="داخستن">×</button></div>
-      <p class="feature-help">دیاریکردن و وەستاندنی دەسەڵات، بۆیکۆتکردن، لابردنی ئادمین و گۆڕینی وشەی نهێنی.</p>
+      <div class="modal-hdr"><h3>دەسەڵاتی کارمەندان</h3><button type="button" class="modal-close" onclick="closeMo('moStaffDirectory')" aria-label="داخستن">×</button></div>
+      <p class="feature-help">کارمەندێک هەڵبژێرە بۆ دیاریکردنی مافی بینین، مامەڵە، ڕیفاوند، حمولە و پاداشت.</p>
       <div id="staffDirectoryList"></div>
     </div>
   </div>
   <script src="assets/js/exchange-live.js?v=1"></script>
-<script src="assets/js/admin.js?v=24"></script>
-  <script src="assets/js/exchange-staff.js?v=6"></script>
+<script src="assets/js/admin.js?v=22"></script>
+  <script src="assets/js/exchange-staff.js?v=4"></script>
   <script src="assets/js/exchange-balance-admin.js?v=4"></script>
-  <script src="assets/js/exchange-insights.js?v=4"></script>
-  <script src="assets/js/exchange-profit.js?v=3"></script><script src="assets/js/exchange-admin-workspace.js?v=1"></script><script src="assets/js/track.js?v=3"></script>
+  <script src="assets/js/exchange-insights.js?v=2"></script>
+  <script src="assets/js/exchange-profit.js?v=2"></script>
 </body>
 </html>

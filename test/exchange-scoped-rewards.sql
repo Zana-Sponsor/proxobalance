@@ -20,8 +20,6 @@ begin
     (u,'scope-user-'||u||'@example.invalid','{"full_name":"Scope Fixture Customer"}'),
     (a,'scope-admin-'||a||'@example.invalid','{"full_name":"Scope Fixture Admin"}');
   update public.ex_profiles set is_admin=true where id=a;
-  -- Isolate these manual-reward examples from the automatic signup campaign.
-  update public.ex_user_rewards set active=false where user_id in(u,a) and campaign_key='welcome_signup_v1';
   insert into public.ex_rates(from_method,to_method,rate_type,rate_value) values
     (route,dest,'fee_percent',2),('Korek',dest,'fee_percent',20),
     ('Asiacell',dest,'multiplier',0.86),(route,'Korek','fee_percent',18);

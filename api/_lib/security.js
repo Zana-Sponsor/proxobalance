@@ -1,6 +1,5 @@
 import { createHmac } from 'node:crypto';
 import { isIP } from 'node:net';
-import {readFileSync} from 'node:fs';
 
 const SUPABASE_URL = (process.env.SUPABASE_URL || 'https://pycxuugoblkslvwebxuu.supabase.co').replace(/\/$/, '');
 const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
@@ -44,6 +43,7 @@ export function realClientIp(req) {
   // Vercel always sets x-forwarded-for; fall back to it so an IP is never lost.
   return normalizeIp(req.socket?.remoteAddress)
       || normalizeIp(req.connection?.remoteAddress)
+      || forwardedCandidate(header(req, 'x-forwarded-for'))
       || null;
 }
 
@@ -152,7 +152,7 @@ export async function isSecurityAdmin(userId) {
     );
     const row = Array.isArray(rows) ? rows[0] : null;
     return !!row && row.is_admin === true && row.is_banned !== true &&
-      row.role==='super_admin';
+      (row.role==='super_admin' || row.staff_permissions==null);
   } catch {
     return false;
   }
@@ -363,14 +363,6 @@ export function stealth404(res) {
   res.end('Not Found');
 }
 
-export function blockedResponse(req,res){
- if(!String(req.url||'').startsWith('/api/')){
-  res.statusCode=403;res.setHeader('Content-Type','text/html; charset=utf-8');res.setHeader('Cache-Control','no-store');
-  return res.end(readFileSync(new URL('../../ip-blocked.html',import.meta.url),'utf8'));
- }
- return json(res,403,{error:'IP_BLOCKED',blocked:true,redirect:'/ip-blocked.html'});
-}
-
 // Express/Node adapter: mount this before static files and before every route
 // (`app.use(stealthBanMiddleware)`) when the whole site is served by Node.
 export async function stealthBanMiddleware(req, res, next) {
@@ -382,7 +374,7 @@ export async function stealthBanMiddleware(req, res, next) {
       if (!throttled(`blocked|${context.ip || '-'}`)) {
         await recordEvent(context, { type: 'blocked_request', detail: gate.reason, risk: 0 }).catch(() => {});
       }
-      return blockedResponse(req,res);
+      return stealth404(res);
     }
     req.securityContext = context;
     return next();
@@ -429,7 +421,7 @@ export function withSecurity(handler, {
         if (!throttled(`blocked|${context.ip || '-'}`)) {
           await recordEvent(context, { type: 'blocked_request', detail: gate.reason, risk: 0 });
         }
-        return blockedResponse(req,res);
+        return stealth404(res);
       }
 
       user = auth === 'none' ? null : await resolveUser(req);
@@ -491,4 +483,3 @@ export function withSecurity(handler, {
 }
 
 export const config = { SUPABASE_URL };
-

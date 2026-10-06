@@ -10,16 +10,6 @@ function exDate(v){if(!v)return '—';const d=new Date(v);return Number.isNaN(d.
 function exDateKey(v){const d=new Date(v);if(Number.isNaN(d.getTime()))return '';const p=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());}
 function exMethod(m){return String((typeof METHOD_META!=='undefined'&&METHOD_META[m]?.label)||m||'—');}
 function exCode(o){return o?.order_code||'—';}
-function exAdminName(o){return String(o?.handling_admin_name||'').trim()||'نەدیاریکراو';}
-async function exAttachAdminNames(rows){
-  const ids=[...new Set(rows.map(o=>o.handled_by).filter(Boolean))],names=new Map();
-  for(let start=0;start<ids.length;start+=100){
-    const {data,error}=await sb.from('ex_profiles').select('id,full_name').in('id',ids.slice(start,start+100));
-    if(error)throw error;
-    (data||[]).forEach(p=>names.set(p.id,p.full_name));
-  }
-  rows.forEach(o=>{o.handling_admin_name=exAdminName({handling_admin_name:names.get(o.handled_by)});});
-}
 function exStatus(s){return s===STATUS_APPROVED?'پەسەندکرا':s===STATUS_REJECTED?'ڕەتکرا':s===STATUS_PENDING?'چاوەڕوان':s===STATUS_CORRECTED?'ڕاستکراوەتەوە':s===STATUS_NEEDS_CORRECTION?'پێویستی بە ڕاستکردنەوەیە':s||'—';}
 function exCard(label,value){return '<div class="ex-card"><div class="ex-label">'+label+'</div><div class="ex-value">'+value+'</div></div>';}
 function exFiltered(){
@@ -27,7 +17,7 @@ function exFiltered(){
   const from=document.getElementById('exFromDate')?.value||'',to=document.getElementById('exToDate')?.value||'';
   return exStatsState.rows.filter(o=>(exStatsState.filter==='all'||o.status===exStatsState.filter)&&
     (!from||exDateKey(o.created_at)>=from)&&(!to||exDateKey(o.created_at)<=to)&&
-    (!q||[exCode(o),o.order_number,o.id,o.from_method,o.to_method,o.status,o.handling_admin_name].join(' ').toLowerCase().includes(q)));
+    (!q||[exCode(o),o.order_number,o.id,o.from_method,o.to_method,o.status].join(' ').toLowerCase().includes(q)));
 }
 async function exLoadStatistics(){
   if(exStatsState.busy)return;
@@ -38,10 +28,9 @@ async function exLoadStatistics(){
     if(!sb)throw Error('داتابەیس پەیوەست نەبووە');
     const rows=[],size=500,max=10000;let more=true,p=0;
     while(more&&rows.length<max){
-      const {data,error}=await sb.from('ex_orders').select('id,order_code,order_number,from_method,to_method,amount,total,status,created_at,handled_by').order('created_at',{ascending:false}).range(p*size,(p+1)*size-1);
+      const {data,error}=await sb.from('ex_orders').select('id,order_code,order_number,from_method,to_method,amount,total,status,created_at').order('created_at',{ascending:false}).range(p*size,(p+1)*size-1);
       if(error)throw error;const batch=data||[];rows.push(...batch);more=batch.length===size;p++;
     }
-    await exAttachAdminNames(rows);
     exStatsState.rows=rows;exStatsState.partial=more;exStatsState.loaded=true;exStatsState.limit=60;
     const {data:rates,error:rateError}=await sb.from('ex_rates').select('id,is_active');
     exStatsState.rateCount=rateError?null:(rates||[]).filter(r=>r.is_active).length;
@@ -75,7 +64,7 @@ function exStatsRender(){
     '<div class="ex-order-details"><div><div class="ex-label">بڕی نێردراو</div><div class="ex-value">'+exAmount(o.amount)+'</div><div class="ex-label">'+exSafe(exMethod(o.from_method))+'</div></div>'+
     '<div><div class="ex-label">بڕی وەرگیراو</div><div class="ex-value">'+exAmount(o.total)+'</div><div class="ex-label">'+exSafe(exMethod(o.to_method))+'</div></div>'+
     '<div><div class="ex-label">ڕێکەوت</div><div class="ex-value" style="font-size:13px">'+exSafe(exDate(o.created_at))+'</div></div></div>'+
-    '<div class="ex-order-footer"><span>ئادمین: <bdi>'+exSafe(exAdminName(o))+'</bdi></span><button type="button" class="ex-btn" data-ex-order="'+exSafe(o.id)+'"><i class="fas fa-eye"></i> وردەکاری</button></div></article>').join('')+
+    '<div class="ex-order-footer"><span>مامەڵەی ئاڵوگۆڕ</span><button type="button" class="ex-btn" data-ex-order="'+exSafe(o.id)+'"><i class="fas fa-eye"></i> وردەکاری</button></div></article>').join('')+
     (rows.length>exStatsState.limit?'<button type="button" class="ex-btn" style="width:100%" id="exShowMore">بینینی زیاتر ('+exNum(rows.length-exStatsState.limit)+')</button>':'');
   document.getElementById('exShowMore')?.addEventListener('click',()=>{exStatsState.limit+=60;exStatsRender()});
 }
@@ -97,13 +86,13 @@ function exDownload(text,name,mime){const blob=new Blob([text],{type:mime}),url=
 function exExport(kind){
   if(!exStatsState.loaded){showToast('سەرەتا ئامارەکان باربکە','rd');return}
   const rows=exFiltered();if(!rows.length){showToast('هیچ مامەڵەیەک نییە بۆ داگرتن','rd');return}
-  const fields=[['order_code','ئایدی مامەڵە'],['from_method','ڕێگای ناردن'],['to_method','ڕێگای وەرگرتن'],['amount','بڕی نێردراو'],['total','بڕی وەرگیراو'],['status','بار'],['created_at','ڕێکەوت'],['handling_admin_name','ناوی ئادمین']];
+  const fields=[['order_code','ئایدی مامەڵە'],['from_method','ڕێگای ناردن'],['to_method','ڕێگای وەرگرتن'],['amount','بڕی نێردراو'],['total','بڕی وەرگیراو'],['status','بار'],['created_at','ڕێکەوت']];
   const table=[fields.map(x=>x[1]),...rows.map(o=>fields.map(([k])=>o[k]??''))];
   const filename='Proxo-Balance-statistics-'+exDateKey(new Date());
   if(kind==='csv'){exDownload('\ufeff'+table.map(row=>row.map(exCsvValue).join(',')).join('\r\n'),filename+'.csv','text/csv;charset=utf-8');showToast('CSV ئامادەکرا','gr');return}
   if(kind==='xlsx'){if(typeof XLSX==='undefined')return showToast('کتێبخانەی Excel بار نەبووە','rd');
     const workbook=XLSX.utils.book_new(),sheet=XLSX.utils.aoa_to_sheet([table[0],...table.slice(1).map(row=>row.map(exExcelSafe))]);
-    sheet['!cols']=fields.map(([key])=>({wch:key==='handling_admin_name'?28:key==='status'?27:23}));
+    sheet['!cols']=[{wch:22},{wch:18},{wch:18},{wch:19},{wch:19},{wch:27},{wch:23}];
     XLSX.utils.book_append_sheet(workbook,sheet,'Exchange orders');XLSX.writeFile(workbook,filename+'.xlsx');showToast('Excel ئامادەکرا','gr');return;
   }
   if(kind==='pdf')exExportPdf(rows,filename);
@@ -119,8 +108,8 @@ async function exExportPdf(rows,filename){
     '<div class="ex-title">پوختەی مامەڵەکان</div><div class="ex-grid">'+exCard('کۆی مامەڵەکان',exNum(rows.length))+exCard('پەسەندکراو',exNum(approved.length))+
     exCard('چاوەڕوان',exNum(rows.filter(o=>[STATUS_PENDING,STATUS_CORRECTED,STATUS_NEEDS_CORRECTION].includes(o.status)).length))+exCard('ڕەتکراو',exNum(rows.filter(o=>o.status===STATUS_REJECTED).length))+'</div>'+
     '<div class="ex-title">کۆی پەسەندکراو بەپێی ڕێگای وەرگرتن</div><table><thead><tr><th>ڕێگا</th><th>ژمارە</th><th>بڕی وەرگیراو</th></tr></thead><tbody>'+groups+'</tbody></table>'+
-    '<div class="ex-title">دواترین مامەڵەکان (تا 20 مامەڵە)</div><table><thead><tr><th>ئایدی</th><th>لە / بۆ</th><th>بڕی نێردراو</th><th>بڕی وەرگیراو</th><th>بار</th><th>ناوی ئادمین</th></tr></thead><tbody>'+
-    rows.slice(0,20).map(o=>'<tr><td dir="ltr">'+exSafe(exCode(o))+'</td><td>'+exSafe(exMethod(o.from_method))+' / '+exSafe(exMethod(o.to_method))+'</td><td>'+exAmount(o.amount)+'</td><td>'+exAmount(o.total)+'</td><td>'+exSafe(exStatus(o.status))+'</td><td>'+exSafe(exAdminName(o))+'</td></tr>').join('')+
+    '<div class="ex-title">دواترین مامەڵەکان (تا 20 مامەڵە)</div><table><thead><tr><th>ئایدی</th><th>لە / بۆ</th><th>بڕی نێردراو</th><th>بڕی وەرگیراو</th><th>بار</th></tr></thead><tbody>'+
+    rows.slice(0,20).map(o=>'<tr><td dir="ltr">'+exSafe(exCode(o))+'</td><td>'+exSafe(exMethod(o.from_method))+' / '+exSafe(exMethod(o.to_method))+'</td><td>'+exAmount(o.amount)+'</td><td>'+exAmount(o.total)+'</td><td>'+exSafe(exStatus(o.status))+'</td></tr>').join('')+
     '</tbody></table><div class="ex-note">ڕاپۆرتی PDF پوختەی مامەڵەکان و 20 مامەڵەی دوایین دەگرێتەوە. بۆ لیستی تەواو Excel یان CSV دابگرە.</div>';
   document.body.appendChild(source);
   try{
@@ -135,7 +124,7 @@ async function exExportPdf(rows,filename){
 function exRenderRateCards(){
   const wrap=document.getElementById('exRatesQuick');if(!wrap)return;
   if(!allRates?.length){wrap.innerHTML='<div class="ex-note">هێشتا هیچ نرخێک زیاد نەکراوە.</div>';return}
-  wrap.innerHTML=(typeof filteredAdminRates==='function'?filteredAdminRates():allRates).map(r=>'<article class="ex-rate"><div class="ex-rate-top"><h4>'+exSafe(exMethod(r.from_method))+' ← '+exSafe(exMethod(r.to_method))+'</h4>'+
+  wrap.innerHTML=allRates.map(r=>'<article class="ex-rate"><div class="ex-rate-top"><h4>'+exSafe(exMethod(r.from_method))+' ← '+exSafe(exMethod(r.to_method))+'</h4>'+
     '<span class="badge '+(r.is_active?'approved':'rejected')+'">'+(r.is_active?'چالاک':'ناچالاک')+'</span></div>'+
     '<div class="ex-value">'+(r.rate_type==='fee_percent'?exNum(r.rate_value,2)+'%':r.rate_type==='fee_fixed'?exNum(r.rate_value,2):'×'+exNum(r.rate_value,4))+'</div>'+
     '<small>'+exSafe(typeof rateTypeLabel==='function'?rateTypeLabel(r.rate_type):r.rate_type)+'</small>'+
@@ -147,4 +136,3 @@ if(typeof loadRates==='function'){
   loadRates=async function(){await originalExchangeLoadRates();exRenderRateCards()};
 }
 pageConfig.statistics={title:'ئامارەکانی ئاڵوگۆڕ',sub:'ڕاپۆرت، پاڵاوتن، کۆی مامەڵەکان و داگرتنی ئامار',load:()=>exLoadStatistics()};
-

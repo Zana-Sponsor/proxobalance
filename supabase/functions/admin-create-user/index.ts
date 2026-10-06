@@ -66,8 +66,6 @@ Deno.serve(async (req: Request) => {
     return json({ error: "forbidden", message: "تۆ مافی ئەم کردارە نییت" }, 403);
   }
 
-  if (makeAdmin && callerProfile.role !== "super_admin") return json({error:"super_admin_required"},403);
-
   const adminClient = createClient(SUPABASE_URL, SERVICE_ROLE_KEY);
 
   const { data: created, error: createErr } = await adminClient.auth.admin.createUser({
@@ -97,5 +95,4 @@ Deno.serve(async (req: Request) => {
 
   return json({ success: true, user_id: newUserId });
 });
-
 

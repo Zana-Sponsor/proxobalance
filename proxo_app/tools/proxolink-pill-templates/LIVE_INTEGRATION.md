@@ -1,7 +1,8 @@
-The production renderer uses four v5 templates: pill, pill-mint, pill-dark and
-pill-white. This release adds white provider labels/icons, accessible saturated
-three-stop gradients, and the official Talabat, Lezzoo, Toters and WADE marks
-embedded from their websites. Original source artwork, checksums and rendering
+The production renderer uses four v6 templates: pill, pill-mint, pill-dark and
+pill-white. This release adds balanced 48px official store badges in quiet 80px cards,
+a separated caption/wordmark/legal footer, a contact group without a visible
+heading, and soft 180ms press feedback with immediate navigation. White labels,
+accessible saturated gradients and official delivery marks remain embedded. Original source artwork, checksums and rendering
 treatments are documented in official-logo-sources.json and assets/official.
 
 The WhatsApp speech card appears after exactly two seconds above the physical
@@ -12,9 +13,9 @@ WhatsApp 25px, Viber 22px and phone 20px glyph sizes still match zoom.html.
 Symmetric 44px slots center labels at every mobile width; food marks occupy
 24px boxes without stretching their artwork.
 
-Register scripts/sql/proxo_brand_v5_prepare.sql before deploying the matching
-renderer. Retire v4 only after the exact v5 production pages pass verification,
-using scripts/sql/proxo_brand_v5_retire.sql. Existing customer cards, profile and
+Register scripts/sql/proxo_footer_v6_prepare.sql before deploying the matching
+renderer. Retire v5 only after the exact v6 production pages pass verification,
+using scripts/sql/proxo_footer_v6_retire.sql. Existing customer cards, profile and
 contact values, avatars and advertisement relationships are not rewritten.
 
 The Flutter form offers Contact, Order food and Download the app and reads the

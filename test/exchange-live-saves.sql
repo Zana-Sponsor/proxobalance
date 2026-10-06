@@ -82,8 +82,7 @@ begin
   raise exception 'Fake badge version accepted';
  exception when insufficient_privilege then null;end;
  perform public.ex_refresh_reward_alerts();
- if (select count(*) from public.ex_notifications n join public.ex_user_rewards r on r.id=n.reward_id
-     where n.reward_alert_kind is not null and r.campaign_key is null)<>2 then raise exception 'Alert refresh duplicated';end if;
+ if (select count(*) from public.ex_notifications where reward_alert_kind is not null)<>2 then raise exception 'Alert refresh duplicated';end if;
  delete from public.ex_saved_recipients where id=v;
 end $test$;
 select set_config('request.jwt.claim.sub',(select staff::text from feature_fixture),true);

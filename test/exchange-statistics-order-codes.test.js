@@ -9,13 +9,12 @@ const admin=readFileSync(new URL('../assets/js/admin.js',import.meta.url),'utf8'
 test('statistics, code search and every report use the persisted public transaction ID',async()=>{
   const orders=[
     {id:'11111111-1111-4111-8111-111111111111',order_code:'P7K9M2Q4R6T8',order_number:123,
-      user_id:'customer-one',handled_by:'staff-one',from_method:'FastPay',to_method:'FIB',amount:60000,total:58800,
+      user_id:'customer-one',from_method:'FastPay',to_method:'FIB',amount:60000,total:58800,
       status:'approved',created_at:'2026-10-05T09:00:00Z'},
     {id:'22222222-2222-4222-8222-222222222222',order_code:'P8A3B5C7D9E2',order_number:124,
-      user_id:'customer-two',handled_by:'staff-two',from_method:'QiCard',to_method:'FastPay',amount:40000,total:39200,
+      user_id:'customer-two',from_method:'QiCard',to_method:'FastPay',amount:40000,total:39200,
       status:'pending',created_at:'2026-10-05T08:00:00Z'}
   ];
-  const profiles=[{id:'staff-one',full_name:'ئادمینی یەکەم'},{id:'staff-two',full_name:'=دووەم, "ئادمین"'}];
   const elements=new Map(),downloads=[],spreadsheets=[],pdfSources=[],opened=[];
   const element=id=>{
     if(!elements.has(id))elements.set(id,{value:'',innerHTML:'',textContent:'',addEventListener(){}});
@@ -39,7 +38,6 @@ test('statistics, code search and every report use the persisted public transact
       let columns='*',id;
       const query={
         select(value){columns=value;return query;},order(){return query;},
-        async in(key,ids){assert.equal(table,'ex_profiles');assert.equal(columns,'id,full_name');assert.equal(key,'id');return {data:profiles.filter(p=>ids.includes(p.id)),error:null};},
         eq(key,value){assert.equal(key,'id');id=value;return query;},
         async range(from,to){
           assert.equal(table,'ex_orders');
@@ -80,27 +78,14 @@ test('statistics, code search and every report use the persisted public transact
     assert.ok(downloads[0].text.includes('"'+order.order_code+'",'));
     assert.ok(!downloads[0].text.includes(order.id));
   }
-  assert.ok(downloads[0].text.includes('ناوی ئادمین'));
-  assert.ok(downloads[0].text.includes('ئادمینی یەکەم'));
-  assert.ok(downloads[0].text.includes("'=دووەم, "));
-  element('exSearch').value='ئادمینی یەکەم';
-  assert.equal(context.exFiltered().length,1);element('exSearch').value='';
   context.exExport('xlsx');
   assert.equal(spreadsheets[0][0][0],'ئایدی مامەڵە');
   assert.deepEqual(Array.from(spreadsheets[0].slice(1),row=>row[0]),orders.map(row=>row.order_code));
-  assert.equal(spreadsheets[0][0].at(-1),'ناوی ئادمین');
-  assert.equal(spreadsheets[0][1].at(-1),profiles[0].full_name);
-  assert.equal(spreadsheets[0][2].at(-1),"'"+profiles[1].full_name);
-  assert.equal(context.exAdminName({handled_by:'no-profile'}),'نەدیاریکراو');
   await context.exExportPdf(context.exFiltered(),'fixture-report');
   for(const order of orders){
     assert.ok(pdfSources[0].includes('<td dir="ltr">'+order.order_code+'</td>'));
     assert.ok(!pdfSources[0].includes(order.id));
   }
-
-  assert.ok(pdfSources[0].includes('<th>ناوی ئادمین</th>'));
-  assert.ok(pdfSources[0].includes('ئادمینی یەکەم'));
-  assert.ok(pdfSources[0].includes('=دووەم, &quot;ئادمین&quot;'));
 
   // UUIDs remain the internal lookup keys when opening transaction details.
   await context.exOpenOrder(orders[0].id);
@@ -108,4 +93,3 @@ test('statistics, code search and every report use the persisted public transact
   assert.equal(context.allOrders[0].order_code,orders[0].order_code);
   assert.equal(context.exCode({id:orders[0].id,order_number:123}),'—');
 });
-

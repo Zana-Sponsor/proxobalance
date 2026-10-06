@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 200" role="img" aria-labelledby="title">
+  <title id="title">Proxo</title>
+  <rect width="700" height="200" fill="none"/>
+  <text x="0" y="153"
+        font-family="Arial Black, Arial, Helvetica, sans-serif"
+        font-size="178"
+        font-weight="900"
+        letter-spacing="-13"
+        fill="#0E78FF">Proxo</text>
+</svg>

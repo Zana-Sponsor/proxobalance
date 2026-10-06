@@ -16,6 +16,20 @@ const foodProviders = ['talabat','lezzoo','toters','wade'];
 const results = {browser:'Chromium 154 headless, Linux',mode:'Actual rendered browser measurements; not Android/iOS native WebView',cases:[],checks:[]};
 function luminance(rgb) {return rgb.map(c=>c/255).map(c=>c<=.04045?c/12.92:((c+.055)/1.055)**2.4).reduce((s,c,i)=>s+c*[.2126,.7152,.0722][i],0);}
 function contrast(a,b){const [x,y]=[luminance(a),luminance(b)].sort((a,b)=>a-b);return (y+.05)/(x+.05);}
+async function verifyFooter(page){
+ const footer=await page.locator('.footer').evaluate(n=>{
+  const box=n=>{const r=n.getBoundingClientRect();return {left:r.left,right:r.right,top:r.top,bottom:r.bottom,width:r.width,height:r.height}};
+  const caption=n.querySelector('small'),brand=n.querySelector('.footer-brand'),logo=n.querySelector('.footer-logo'),legal=n.querySelector('.legal');
+  return {caption:box(caption),brand:box(brand),logo:box(logo),legal:box(legal),loaded:logo.naturalWidth>0,source:logo.src,direction:getComputedStyle(legal).direction,links:[...legal.children].map(a=>({...box(a),fits:a.scrollWidth<=a.clientWidth+1})),width:innerWidth};
+ });
+ assert(footer.loaded,'Footer wordmark must load');assert.equal(footer.direction,'ltr');
+ assert(footer.caption.bottom<=footer.brand.top&&footer.brand.bottom<=footer.legal.top,'Footer rows must not overlap');
+ assert.equal(footer.logo.width,98);assert.equal(footer.logo.height,28);assert(footer.brand.height>=44);
+ assert(Buffer.from(footer.source.split(',')[1],'base64').equals(fs.readFileSync(path.join(root,'assets/proxo-wordmark.svg'))),'Footer uses the existing Proxo wordmark');
+ for(const a of footer.links){assert(a.height>=44&&a.left>=0&&a.right<=footer.width&&a.fits,'Legal links fit and remain tappable');}
+ for(let i=0;i<footer.links.length;i++)for(let j=i+1;j<footer.links.length;j++){const a=footer.links[i],b=footer.links[j];assert(a.right<=b.left||b.right<=a.left||a.bottom<=b.top||b.bottom<=a.top,'Legal links must not overlap');}
+ assert.equal(await page.locator('[data-group="contact"] .section-title').count(),0,'Contact card heading is removed');
+}
 (async()=>{
  const officialSources=JSON.parse(fs.readFileSync(path.join(root,'official-logo-sources.json'),'utf8'));
  assert.deepEqual(officialSources.map(a=>a.provider),foodProviders);
@@ -43,10 +57,12 @@ function contrast(a,b){const [x,y]=[luminance(a),luminance(b)].sort((a,b)=>a-b);
     assert(b.contrast>=4.5,`${b.provider}: gradient contrast ${b.contrast}`);assert(b.box.x>=0&&b.box.x+b.box.width<=width+.1);
    }
    for(const list of measured.lists)assert.equal(list.gap,'12px');
-   const message=await page.locator('.wa-message-card').evaluate(n=>{const r=n.getBoundingClientRect(),b=n.parentElement.getBoundingClientRect(),before=n.parentElement.previousElementSibling||n.parentElement.parentElement.previousElementSibling;return{text:n.textContent,bg:getComputedStyle(n).backgroundColor,fg:getComputedStyle(n).color,font:getComputedStyle(n).fontSize,animation:getComputedStyle(n).animationName,left:r.left,right:r.right,bottom:r.bottom,top:r.top,buttonTop:b.top,buttonRight:b.right,previousBottom:before.getBoundingClientRect().bottom};});
+   const message=await page.locator('.wa-message-card').evaluate(n=>{const r=n.getBoundingClientRect(),b=n.parentElement.getBoundingClientRect(),before=n.parentElement.previousElementSibling;return{text:n.textContent,bg:getComputedStyle(n).backgroundColor,fg:getComputedStyle(n).color,font:getComputedStyle(n).fontSize,animation:getComputedStyle(n).animationName,left:r.left,right:r.right,bottom:r.bottom,top:r.top,buttonTop:b.top,buttonRight:b.right,previousBottom:before?before.getBoundingClientRect().bottom:n.parentElement.parentElement.getBoundingClientRect().top};});
    assert.equal(message.text,'پەیوەندی بکە');assert.equal(message.bg,'rgb(8, 125, 67)');assert.equal(message.fg,'rgb(255, 255, 255)');assert.equal(message.font,'12px');assert.equal(message.animation,'none');assert(message.left>=0&&message.right<=width);assert(Math.abs(message.right-(message.buttonRight-12))<.1,'WhatsApp card must be on the physical right');assert(message.bottom<message.buttonTop);assert(message.top>=message.previousBottom);
-   for(const store of measured.stores){assert(Math.abs(store.box.height-64)<.1,`${store.provider} target height ${store.box.height}`);assert(store.loaded);assert(store.gradient.startsWith('linear-gradient('));}
-   assert(Math.abs(measured.stores[0].image.height-40)<.1);assert(Math.abs(measured.stores[1].image.height*168/250-40)<.1);
+   for(const store of measured.stores){assert(Math.abs(store.box.height-80)<.1,`${store.provider} target height ${store.box.height}`);assert(store.loaded);assert.equal(store.gradient,'none');assert(store.image.x>=store.box.x+12&&store.image.x+store.image.width<=store.box.x+store.box.width-12,'Badge clearspace preserved');}
+   assert(Math.abs(measured.stores[0].image.height-48)<.1);assert(Math.abs(measured.stores[1].image.height*168/250-48)<.1);
+   assert(measured.stores[0].image.y-measured.stores[0].box.y>=12,'Apple badge has quarter-height clearspace');
+   await verifyFooter(page);
    results.cases.push({theme,width,height,...measured});
   }
   const painted=await page.evaluate(async()=>{
@@ -77,13 +93,16 @@ function contrast(a,b){const [x,y]=[luminance(a),luminance(b)].sort((a,b)=>a-b);
   await page.clock.fastForward(2000);
   assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
   assert(await page.evaluate(()=>[...document.querySelectorAll('.pl-lbl')].every(n=>n.scrollWidth<=n.clientWidth+1)));
-  assert(await page.locator('.wa-message-card').evaluate(n=>{const r=n.getBoundingClientRect(),prev=n.parentElement.previousElementSibling||n.parentElement.parentElement.previousElementSibling;return n.scrollWidth<=n.clientWidth+1&&r.top>=prev.getBoundingClientRect().bottom;}));
+  assert(await page.locator('.wa-message-card').evaluate(n=>{const r=n.getBoundingClientRect(),prev=n.parentElement.previousElementSibling;return n.scrollWidth<=n.clientWidth+1&&r.top>=(prev?prev.getBoundingClientRect().bottom:n.parentElement.parentElement.getBoundingClientRect().top);}));
+  await verifyFooter(page);
   results.checks.push({theme,check:'320px, 200% root text size, long mixed-language name/bio/button label',passed:true});
   await page.evaluate(()=>document.documentElement.style.fontSize='');
   await page.evaluate(()=>{const c=ProxoLink.getConfig();c.direction='ltr';c.lang='en';c.name='Proxo business';ProxoLink.setConfig(c)});
   await page.clock.fastForward(2000);
   assert(await page.evaluate(()=>document.documentElement.dir==='ltr'&&document.documentElement.scrollWidth<=innerWidth));
   assert(await page.locator('.wa-message-card').evaluate(n=>Math.abs(n.parentElement.getBoundingClientRect().right-n.getBoundingClientRect().right-12)<.1));
+  await verifyFooter(page);
+  results.checks.push({theme,check:'48px balanced official store badges, no contact heading, separated footer rows and 44px legal targets across viewports and 200% RTL/LTR text',passed:true});
   results.checks.push({theme,check:'LTR language, physical-right WhatsApp card and no horizontal overflow',passed:true});
  }
  await page.goto('file://'+path.join(templates,'pill-white.html'));await page.evaluate(()=>document.fonts.ready);
@@ -94,6 +113,13 @@ function contrast(a,b){const [x,y]=[luminance(a),luminance(b)].sort((a,b)=>a-b);
  await page.waitForTimeout(4100);assert(await page.locator('.wa-message-card').evaluate(n=>n.getAnimations().every(a=>a.playState==='finished')));
  await page.emulateMedia({reducedMotion:'reduce'});assert.equal(await page.locator('.wa-message-card').evaluate(n=>getComputedStyle(n).animationName),'none');
  results.checks.push({check:'WhatsApp message card on all themes/viewports, no overlap at 200% text, finite entrance/float animation, reduced motion remains visible',passed:true});
+ await page.emulateMedia({reducedMotion:'no-preference'});
+ const pressed=page.locator('[data-provider="telegram"]');await pressed.scrollIntoViewIfNeeded();const resting=await pressed.boundingBox();await page.mouse.move(resting.x+resting.width/2,resting.y+resting.height/2);await page.mouse.down();await page.waitForTimeout(220);
+ const feedback=await pressed.evaluate(n=>({width:n.getBoundingClientRect().width,duration:getComputedStyle(n).transitionDuration}));
+ assert(Math.abs(feedback.width/resting.width-.985)<.002,'Pressed button softly scales after its entrance has finished');assert.equal(feedback.duration,'0.18s, 0.18s');await page.mouse.up();await page.waitForTimeout(220);assert(Math.abs((await pressed.boundingBox()).width-resting.width)<.1);
+ const store=page.locator('[data-provider="app_store"]');await store.scrollIntoViewIfNeeded();const badge=await store.locator('img').boundingBox(),target=await store.boundingBox();await page.mouse.move(target.x+target.width/2,target.y+target.height/2);await page.mouse.down();await page.waitForTimeout(220);assert.deepEqual(await store.locator('img').boundingBox(),badge,'Official store artwork does not animate on press');await page.mouse.up();
+ await page.emulateMedia({reducedMotion:'reduce'});assert.equal(await pressed.evaluate(n=>getComputedStyle(n).transitionDuration),'0s');
+ results.checks.push({check:'Soft 180ms press/release after entrance; store artwork stays still; reduced-motion feedback and immediate link navigation preserved',passed:true});
  const urlTests=await page.evaluate(()=>{
   const good=[['whatsapp','https://wa.me/9647500000000'],['telegram','https://t.me/proxo_iq'],['viber','viber://chat?number=%2B9647500000000'],['korek','+9647500000000'],['asiacell','٠٧٧٠٠٠٠٠٠٠٠'],['talabat','https://www.talabat.com/iraq'],['lezzoo','https://www.lezzoo.com/'],['toters','https://www.totersapp.com/'],['wade','https://wadedelivery.com/en'],['app_store','https://apps.apple.com/us/app/wade-delivery-taxi/id1538884916'],['google_play','https://play.google.com/store/apps/details?id=app.trytiptop.customer']];
   const bad=[['whatsapp','javascript:alert(1)'],['lezzoo','https://lezzoo.com.evil.invalid/store'],['talabat','https://evil.invalid'],['telegram','https://t.me@evil.invalid/'],['viber','viber://chat?number=%2B9647500000000&evil=1'],['korek','tel:*123#'],['app_store','https://apps.apple.com'],['google_play','https://play.google.com/store'],['lezzoo','http://www.lezzoo.com/'],['unknown','https://example.com']];

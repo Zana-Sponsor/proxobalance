@@ -65,7 +65,7 @@ test('view-only staff cannot invoke privileged actions even with a valid admin s
     'save_order_note','save_payout_receipt']){
     const result=await app.request(action,{});
     assert.equal(result.status,403,action);
-    assert.equal(result.data.code,['set_ban','resolve_all_error_logs'].includes(action)?'super_admin_required':'staff_permission_required');
+    assert.equal(result.data.code,'staff_permission_required');
   }
   assert.equal(app.calls.length,0);
   assert.equal((await app.request('account_balances',{user_ids:[userId]})).status,200);
@@ -165,13 +165,3 @@ for(const cap of [0,-1,50000.5,1000000001,'bad']){
     assert.equal(app.calls.length,0);
   });
 }
-
-
-test('even legacy full admins cannot ban users or read error logs',async()=>{
- const app=application(true,{profile:{role:'admin',staff_permissions:null}});
- for(const action of ['set_ban','error_log_summary','list_error_logs','resolve_error_log','resolve_all_error_logs']){
-  const result=await app.request(action,{});assert.equal(result.status,403,action);
-  assert.equal(result.data.code,'super_admin_required');
- }
- assert.equal(app.calls.length,0);
-});

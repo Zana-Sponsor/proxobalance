@@ -10,8 +10,6 @@ begin
  (u,'balance-source-'||u||'@example.invalid','{"full_name":"Balance Source Fixture"}'),
  (a,'balance-source-admin-'||a||'@example.invalid','{"full_name":"Balance Admin Fixture"}');
  update public.ex_profiles set is_admin=true where id=a;
- -- Keep the balance/manual-reward scenarios independent of signup rewards.
- update public.ex_user_rewards set active=false where user_id in(u,a) and campaign_key='welcome_signup_v1';
  perform public.ex_balance_post(u,100000,0,'verified_refund','fixture-source:'||u,null,null,a,'Fixture opening funds');
  insert into public.ex_user_rewards(user_id,kind,discount_percent,max_uses,max_amount_iqd,reward_scope,created_by)
  values(u,'free_transactions',100,1,50000,'wallets',a) returning id into reward;

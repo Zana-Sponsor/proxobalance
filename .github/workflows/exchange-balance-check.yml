@@ -2,9 +2,6 @@ name: Exchange Balance Checks
 on:
   pull_request:
     paths:
-      - 'ip-blocked.html'
-      - 'test/exchange-access.test.js'
-      - 'test/exchange-admin-workspace.browser.mjs'
       - 'api/admin.js'
       - 'api/balance.js'
       - 'api/orders.js'
@@ -12,17 +9,10 @@ on:
       - 'test/orders-route.test.js'
       - 'test/exchange-order-permissions.sql'
       - 'test/exchange-reward-pricing.test.js'
-      - 'test/exchange-customer-polish.test.js'
-      - 'test/exchange-staff-management.test.js'
-      - 'test/exchange-customer-polish.browser.mjs'
-      - 'test/exchange-welcome-reward.sql'
       - 'test/exchange-admin-rewards-refund.test.js'
       - 'test/exchange-account-balances-ui.test.js'
       - 'test/exchange-send-balance.test.js'
       - 'test/exchange-statistics-order-codes.test.js'
-      - 'test/exchange-report-names.test.js'
-      - 'test/exchange-report-names.sql'
-      - 'test/exchange-report-names.browser.mjs'
       - 'test/exchange-send-balance.browser.mjs'
       - 'test/exchange-scoped-rewards.sql'
       - 'test/exchange-balance-source.sql'
@@ -33,7 +23,6 @@ on:
       - 'assets/js/**'
       - 'assets/css/exchange-balance.css'
       - 'assets/css/exchange-features.css'
-      - 'assets/css/exchange-customer-polish.css'
       - 'supabase/functions/admin-create-user/**'
       - 'supabase/functions/admin-set-password/**'
       - 'index.html'
@@ -64,16 +53,13 @@ jobs:
           node --check assets/js/exchange-balance-admin.js
           node --check assets/js/exchange-reward-pricing.js
           node --check assets/js/exchange-insights.js
-          node --check assets/js/exchange-profit.js
-          node --check assets/js/exchange-access.js
-          node --check assets/js/exchange-admin-workspace.js
           node --check assets/js/exchange-live.js
           node --check assets/js/exchange-staff.js
           node --check assets/js/exchange-customer-features.js
       - name: Build Vercel static output
         run: node scripts/prepare-vercel.mjs
       - name: Verify authenticated orders, admin refunds and capped fee rewards
-        run: node --test test/orders-route.test.js test/exchange-reward-pricing.test.js test/exchange-admin-rewards-refund.test.js test/exchange-account-balances-ui.test.js test/exchange-send-balance.test.js test/exchange-statistics-order-codes.test.js test/exchange-report-names.test.js test/exchange-live-saves.test.js test/exchange-access.test.js test/exchange-customer-polish.test.js test/exchange-staff-management.test.js
+        run: node --test test/orders-route.test.js test/exchange-reward-pricing.test.js test/exchange-admin-rewards-refund.test.js test/exchange-account-balances-ui.test.js test/exchange-send-balance.test.js test/exchange-statistics-order-codes.test.js test/exchange-live-saves.test.js
       - name: Verify deployed asset and board paths
         run: |
           node --input-type=module -e "

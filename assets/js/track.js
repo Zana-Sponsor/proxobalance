@@ -20,7 +20,6 @@
   // page view look anonymous to /api/track.
   var SESSION_KEYS = [
     'zex_sb_session',
-    'zex_admin_sb_session',
     'sb-pycxuugoblkslvwebxuu-auth-token'
   ];
 
@@ -59,7 +58,7 @@
           type: type || 'page_view',
           detail: detail || location.pathname
         })
-      }).then(function(r){if(r.status===403)location.replace('/ip-blocked.html');}).catch(function () {});
+      }).catch(function () {});
     } catch (e) { /* tracking must never affect the page */ }
   }
 
@@ -96,4 +95,3 @@
     if (e.persisted) send('page_view');
   });
 })();
-
