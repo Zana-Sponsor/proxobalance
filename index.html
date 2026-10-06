@@ -96,6 +96,7 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
 <link rel="stylesheet" href="/assets/css/exchange-balance.css?v=2">
 <link rel="stylesheet" href="/assets/css/exchange-features.css?v=2">
 <link rel="stylesheet" href="/assets/css/exchange-auth-app.css?v=1"><script src="/assets/js/exchange-access.js?v=1"></script>
+<link rel="stylesheet" href="/assets/css/exchange-customer-polish.css?v=1">
 </head>
 
 <body>
@@ -644,6 +645,10 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
       <div id="balanceHistoryList" class="pb-history" hidden></div>
     </section>
 
+    <aside class="welcome-reward" id="welcomeReward" aria-label="پاداشتی هەژماری نوێ" hidden>
+      <span class="welcome-reward-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11v10h16V11M3 7h18v4H3zM12 7v14"/><path d="M12 7H8a2.5 2.5 0 1 1 2.5-2.5L12 7Zm0 0h4a2.5 2.5 0 1 0-2.5-2.5L12 7Z"/></svg></span>
+      <div><h3>پاداشتی هەژماری نوێ</h3><p><b dir="ltr">50%</b> داشکاندنی لێبڕینی واڵێتەکان · یەک جار تا <b dir="ltr">30,000 IQD</b></p><small id="welcomeRewardExpiry"></small></div>
+    </aside>
     <div class="ux-progress" role="list" aria-label="هەنگاوەکانی ئاڵوگۆڕ">
       <div class="ux-progress-item is-current" data-ux-stage="send" role="listitem" aria-current="step">
         <span class="ux-progress-index" aria-hidden="true">١</span>
@@ -807,7 +812,7 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
     <!-- ── SUMMARY ───────────────────────────────────────────── -->
     <div class="xc-summary" id="xcBreakdown" aria-live="polite">
       <div class="xc-summary-head">
-        <h3>پوختەی داواکاری</h3>
+        <h3>وردەکاری بڕ و لێبڕین</h3>
       </div>
       <div class="xc-sum-row" id="bdSentRow">
         <span class="lbl">دەینێریت</span>
@@ -821,12 +826,15 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
         <span class="lbl">کرێی خزمەتگوزاری</span>
         <span class="v" id="bdFee">—</span>
       </div>
+      <div class="xc-sum-row fee-saving" id="bdDiscountRow" hidden>
+        <span class="lbl">سوودی داشکاندن</span><span class="v" id="bdDiscount" dir="ltr">—</span>
+      </div>
       <div class="xc-sum-row total">
         <span class="lbl">وەریدەگریت</span>
         <span class="v"><span id="totalDisplay" class="total-value">0 IQD</span></span>
       </div>
-      <div id="feeDisplay" class="fee-note"></div>
-      <div id="rewardBanner" class="fee-note" role="status" aria-live="polite" style="color:#1568ba;margin-top:6px;white-space:pre-line" hidden></div>
+      <div id="feeDisplay" class="fee-note" hidden></div>
+      <div id="rewardBanner" class="fee-note reward-detail" role="status" hidden></div>
     </div>
 
       </div>
@@ -997,11 +1005,10 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
           <h2>مامەڵەکان</h2>
           <p>هەموو ئاڵوگۆڕەکانت لێرەدان.</p>
         </div>
-        <span class="tx-profit-logo" dir="ltr">Proxo</span>
       </div>
 
       <div class="tx-summary tx-profit-summary" id="txSummary">
-      <span class="tx-sum-cap">ئاڵوگۆڕە تەواوبووەکان</span>
+      <span class="tx-sum-cap">ئاڵوگۆڕە تەواوبووەکان <span id="txCompletedCount" class="tx-completed-count"></span></span>
       <div class="tx-sum-pair">
         <div class="tx-sum-item sent">
           <span class="tx-sum-lbl">ناردنت</span>
@@ -1011,12 +1018,11 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
         <div class="tx-sum-item recv">
           <span class="tx-sum-lbl">وەرگرتنت</span>
           <b class="tx-sum-val" id="txTotalRecv" dir="ltr"><span class="sk sk-num"></span></b>
-          <span class="tx-sum-sub">IQD</span>
+          <span class="tx-sum-sub" id="txTotalRecvSub">IQD</span>
         </div>
       </div>
     </div>
 
-    <h3 class="tx-profit-title">پاڵاوتنی مامەڵەکان</h3>
     <div class="tx-profit-tools">
       <div class="search-wrap">
       <span class="search-ico"><span class="icn icn-sm icon--solar icon--solar--magnifer-linear" aria-hidden="true"></span></span>
@@ -1035,7 +1041,7 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
     </div>
 
     </div>
-    <h3 class="tx-profit-title tx-profit-detail-title">وردەکاری مامەڵەکان <small class="result-count tx-profit-count" id="txResultCount"></small></h3>
+    <h3 class="tx-profit-title tx-profit-detail-title">مێژووی مامەڵەکان <small class="result-count tx-profit-count" id="txResultCount"></small></h3>
     <div id="txList" class="tx-profit-list" style="width:100%;">
   <div class="tx-skel">
     <div class="tx-skel-head"><span class="sk sk-w30"></span><span class="sk sk-pill sk-w30"></span></div>
@@ -1555,7 +1561,7 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
 <script src="/assets/js/index-svg-icons.js?v=1"></script>
 <script src="/assets/js/exchange-reward-pricing.js?v=2"></script>
 <script src="/assets/js/exchange-live.js?v=1"></script>
-<script src="/assets/js/app.js?v=44"></script>
+<script src="/assets/js/app.js?v=45"></script>
 <script src="/assets/js/exchange-customer-features.js?v=3"></script>
 <script src="/assets/js/exchange-balance.js?v=4"></script>
 <script src="/assets/js/exchange-ux.js?v=1"></script>
@@ -1563,4 +1569,3 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
 <script src="/assets/js/track.js?v=3"></script>
 </body>
 </html>
-

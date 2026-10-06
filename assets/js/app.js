@@ -1416,7 +1416,7 @@ async function loadMyRewards(){
   try{
     if(curUser && sb){
       const {data,error}=await sb.from('ex_user_rewards')
-        .select('id,kind,discount_percent,max_uses,used_count,max_amount_iqd,reward_scope,valid_until,active,created_at')
+        .select('id,kind,discount_percent,max_uses,used_count,max_amount_iqd,reward_scope,valid_until,active,created_at,campaign_key')
         .eq('user_id',curUser.id).eq('active',true).order('created_at');
       if(error)throw error;
       if(generation!==_rewardLoadId||curUser?.id!==owner)return;
@@ -1425,6 +1425,22 @@ async function loadMyRewards(){
   }catch(_){ if(generation!==_rewardLoadId||curUser?.id!==owner)return;MY_REWARDS=[]; }
   if(!owner)MY_REWARDS=[];
   calc();
+}
+let _welcomeRewardExpiryTimer=null;
+function renderWelcomeReward(){
+  clearTimeout(_welcomeRewardExpiryTimer);_welcomeRewardExpiryTimer=null;
+  const box=document.getElementById('welcomeReward');
+  if(!box)return;
+  const reward=curUser && MY_REWARDS.find(r=>r.campaign_key==='welcome_signup_v1' && r.active &&
+    Number(r.used_count)<Number(r.max_uses) && Date.parse(r.valid_until)>Date.now());
+  box.hidden=!reward;
+  const expiry=document.getElementById('welcomeRewardExpiry');
+  if(expiry)expiry.textContent=reward?'کارایە تا '+kycFmtDate(reward.valid_until,true):'';
+  if(reward){
+    const owner=curUser.id;
+    _welcomeRewardExpiryTimer=setTimeout(()=>{if(curUser?.id===owner)calc();},
+      Math.min(2147483647,Math.max(100,Date.parse(reward.valid_until)-Date.now()+50)));
+  }
 }
 function availableFeeReward(from,to,fee){
   if(!curUser || from==='USDT' || to==='USDT' || fee<=0)return null;
@@ -1584,6 +1600,7 @@ function updateSubmitState(from,to){
     : 'ناردنی داواکاری';
 }
 function calc(){
+  if(typeof renderWelcomeReward==='function')renderWelcomeReward();
   const val=getAmtRaw();
   const amt=parseFloat(val)||0;
   const from=document.getElementById('from').value;
@@ -1593,8 +1610,11 @@ function calc(){
   document.getElementById('formattedHint').innerText=formatNum(val)+(from==='USDT'?' $':' IQD');
   const totalEl=document.getElementById('totalDisplay');
   const feeEl=document.getElementById('feeDisplay');
+  feeEl.hidden=true;
   const rewardBanner=document.getElementById('rewardBanner');
   if(rewardBanner)rewardBanner.hidden=true;
+  const discountRow=document.getElementById('bdDiscountRow');
+  if(discountRow)discountRow.hidden=true;
   const bdRate=document.getElementById('bdRate');
   const bdFee=document.getElementById('bdFee');
   const bdSent=document.getElementById('bdSent');
@@ -1621,6 +1641,7 @@ function calc(){
     totalEl.classList.add('warn-text');
     const toLbl=(METHOD_META[to]&&METHOD_META[to].label)||to;
     feeEl.innerText = getWalletInfo(to).locked ? '' : ('گۆڕینەوە بۆ '+toLbl+' لە ئێستادا بەردەست نییە');
+    feeEl.hidden=!feeEl.innerText;
     setBd('داخراوە','—');
     showRate(false); showFee(false);
     return;
@@ -1668,15 +1689,16 @@ function calc(){
     if(quote.discount_iqd>0){
       final=quote.total;displayFee=quote.fee;
       if(bdFee)bdFee.textContent=formatNum(quote.fee)+' IQD';
+      if(discountRow)discountRow.hidden=false;
+      const saving=document.getElementById('bdDiscount');
+      if(saving)saving.textContent=formatNum(quote.discount_iqd)+' IQD';
       if(rewardBanner){
         rewardBanner.hidden=false;
         const left=reward.max_uses==null?'بێ سنوور':formatNum(reward.max_uses-reward.used_count)+' مامەڵەی ماوە';
         rewardBanner.textContent=(reward.kind==='free_transactions'?'پاداشتی مامەڵەی بێ لێبڕین':'داشکاندنی '+reward.discount_percent+'% لە لێبڕین')+
-          (reward.max_amount_iqd==null?'':' تا '+formatNum(reward.max_amount_iqd)+' دینار بۆ هەر مامەڵە')+
-          ' — تایبەت بە '+ProxoRewardPricing.scopeLabel(reward.reward_scope||'wallets')+
-          ' — '+left+'\nبڕی پاداشت: '+formatNum(quote.covered_amount_iqd)+' دینار'+
-          (quote.excess_amount_iqd>0?' | بڕی زیادە بە لێبڕینی ئاسایی: '+formatNum(quote.excess_amount_iqd)+' دینار':'')+
-          ' (پشتڕاستکردنەوە لە کاتی ناردن)';
+          (reward.max_amount_iqd==null?'':' تا '+formatNum(reward.max_amount_iqd)+' دینار')+
+          ' · '+ProxoRewardPricing.scopeLabel(reward.reward_scope||'wallets')+' · '+left+
+          (quote.excess_amount_iqd>0?'\nبڕی زیادە بە لێبڕینی ئاسایی: '+formatNum(quote.excess_amount_iqd)+' دینار':'');
       }
     }
   }
@@ -1953,8 +1975,7 @@ function copyOrderCode(code, ev){
   catch(_){ showToast('نەتوانرا کۆپی بکرێت','error'); }
 }
 
-// Scannable card: route, amount, date and status only. Everything else is
-// one tap away in the detail sheet (openTxDetail).
+// The list remains compact; saved fees, receipts and notes are in the detail sheet.
 const TX_STATE = {
   'پەسەندکرا':               { key:'done',     cls:'status-success'    },
   'ڕەتکرا':                  { key:'rejected', cls:'status-danger'     },
@@ -1972,22 +1993,24 @@ function orderCardHTML(o){
   const code=orderCodeOf(o);
   const st=txStateOf(o);
   const needsAction=!o.balance_refunded_at && o.status==='پێویستی بە ڕاستکردنەوەیە';
-  return '<article class="tx-card'+(needsAction?' needs-action':'')+'" tabindex="0" role="button"'
+  const refunded=!!o.balance_refunded_at;
+  return '<article class="tx-card'+(needsAction?' needs-action':'')+(st.key==='done'?' is-complete':'')+'" tabindex="0" role="button"'
     + ' onclick="openTxDetail(\''+escHtml(String(o.id))+'\')"'
     + ' onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();openTxDetail(\''+escHtml(String(o.id))+'\');}">'
     + '<div class="tx-card-top">'
-      + '<span class="tx-route">'+escHtml(methodLabel(o.from_method))
-        + '<span class="tx-route-arrow" aria-hidden="true">'+ICON.arrowLeftLong+'</span>'
-        + escHtml(methodLabel(o.to_method))+'</span>'
+      + '<span class="tx-code" dir="ltr">'+escHtml(code)+'</span>'
       + '<span class="status-badge '+st.cls+'">'+escHtml(txLabelOf(o))+'</span>'
     + '</div>'
+    + '<div class="tx-route">'+escHtml(methodLabel(o.from_method))
+      + '<span class="tx-route-arrow" aria-hidden="true">'+ICON.arrowLeftLong+'</span>'
+      + escHtml(methodLabel(refunded?'AccountBalance':o.to_method))+'</div>'
     + '<div class="tx-card-main">'
-      + '<span class="tx-amount" dir="ltr">'+txAmount(o.total,o.to_method)+'</span>'
-      + '<span class="tx-amount-sent">لە <b dir="ltr">'+txAmount(o.amount,o.from_method)+'</b></span>'
+      + '<div class="tx-money"><small>ناردنت</small><span class="tx-amount-sent" dir="ltr">'+txAmount(o.amount,o.from_method)+'</span></div>'
+      + '<div class="tx-money tx-money-received"><small>'+(refunded?'گەڕاوە بۆ باڵانس':'وەرگرتنت')+'</small><span class="tx-amount" dir="ltr">'+txAmount(refunded?o.amount:o.total,refunded?'AccountBalance':o.to_method)+'</span></div>'
     + '</div>'
     + '<div class="tx-card-foot">'
       + '<span class="tx-when">'+escHtml(txWhen(o.created_at,true))+'</span>'
-      + '<span class="tx-code" dir="ltr">'+escHtml(code)+'</span>'
+      + '<span class="tx-detail-link">وردەکاری <span aria-hidden="true">‹</span></span>'
     + '</div>'
     + (needsAction ? '<div class="tx-card-action">پێویستی بە ڕاستکردنەوەی تۆ هەیە</div>' : '')
     + '</article>';
@@ -2009,7 +2032,7 @@ function openTxDetail(id){
   const code=orderCodeOf(o);
   const rate=Number(o.amount)>0 ? (Number(o.total)/Number(o.amount)) : 0;
   const isUsdt=o.from_method==='USDT';
-  const fee=!isUsdt && Number(o.amount)>Number(o.total) ? Math.floor(Number(o.amount)-Number(o.total)) : 0;
+  const fee=!isUsdt && o.to_method!=='USDT' && Number(o.amount)>Number(o.total) ? Math.floor(Number(o.amount)-Number(o.total)) : 0;
   let html='<div class="tx-dhead">'
     + '<span class="status-badge '+st.cls+'">'+escHtml(txLabelOf(o))+'</span>'
     + '<button type="button" class="tx-dcode" onclick="copyOrderCode(\''+escHtml(code)+'\', event)" title="کۆپیکردنی ئایدی">'
@@ -2017,7 +2040,7 @@ function openTxDetail(id){
     + '</div>'
     + '<div class="tx-damounts">'
       + '<div><small>ناردنت</small><b dir="ltr">'+txAmount(o.amount,o.from_method)+'</b></div>'
-      + '<div><small>وەرگرتنت</small><b class="recv" dir="ltr">'+txAmount(o.total,o.to_method)+'</b></div>'
+      + '<div><small>'+(o.balance_refunded_at?'گەڕاوە بۆ باڵانس':'وەرگرتنت')+'</small><b class="recv" dir="ltr">'+txAmount(o.balance_refunded_at?o.amount:o.total,o.balance_refunded_at?'AccountBalance':o.to_method)+'</b></div>'
     + '</div>'
     + '<div class="tx-dgroup">'
     // same direction rendering as the list card: source on the right, arrow, destination
@@ -2026,7 +2049,8 @@ function openTxDetail(id){
         + escHtml(methodLabel(o.to_method))+'</span>', {html:true})
     // A rate only means something across currencies; IQD → IQD is a fee.
     + (isUsdt && rate ? txRow('نرخی ئاڵوگۆڕ', '1 $ = '+formatNum(Math.round(rate))+' IQD', {ltr:true}) : '')
-    + (fee ? txRow('کرێی خزمەتگوزاری', formatNum(fee)+' IQD', {ltr:true}) : '')
+    + (!o.balance_refunded_at && !isUsdt && o.to_method!=='USDT' ? txRow('کرێی خزمەتگوزاری', formatNum(fee)+' IQD', {ltr:true}) : '')
+    + (!o.balance_refunded_at && Number(o.reward_discount_iqd)>0 ? txRow('سوودی داشکاندن',formatNum(o.reward_discount_iqd)+' IQD',{ltr:true}) : '')
     + txRow('ژمارەی وەرگر', o.phone, {ltr:true})
     + (o.sender_phone ? txRow('ژمارەی نێرەر', o.sender_phone, {ltr:true}) : '')
     + txRow('بەرواری ناردن', txWhen(o.created_at,true))
@@ -2322,6 +2346,12 @@ function txMatches(o){
   return hay.replace(/[\s#-]/g,'').includes(q) || hay.includes(_txQuery);
 }
 
+function completedTxTotals(rows){
+  const completed=rows.filter(o=>o.status==='پەسەندکرا'&&!o.balance_refunded_at);
+  const total=(side,currency)=>completed.filter(o=>currency==='USDT'?o[side+'_method']==='USDT':o[side+'_method']!=='USDT')
+    .reduce((s,o)=>s+Number(o[side==='from'?'amount':'total']||0),0);
+  return {count:completed.length,sentIqd:total('from','IQD'),sentUsdt:total('from','USDT'),recvIqd:total('to','IQD'),recvUsdt:total('to','USDT')};
+}
 function renderTxPage(){
   if(!document.getElementById('txList')) return;
   const by=key=>_orders.filter(o=>txStateOf(o).key===key);
@@ -2329,17 +2359,17 @@ function renderTxPage(){
 
   // Totals only count completed exchanges. IQD and USDT are kept apart so the
   // number on screen is never a sum of two different currencies.
-  const sentIqd  = ok.filter(o=>o.from_method!=='USDT').reduce((s,o)=>s+Number(o.amount||0),0);
-  const sentUsdt = ok.filter(o=>o.from_method==='USDT').reduce((s,o)=>s+Number(o.amount||0),0);
-  const recvIqd  = ok.reduce((s,o)=>s+Number(o.total||0),0);
+  const {count:completedCount,sentIqd,sentUsdt,recvIqd,recvUsdt}=completedTxTotals(_orders);
 
   const set=(id,value)=>{ const el=document.getElementById(id); if(el) el.textContent=value; };
   set('txTotalSent', formatNum(Math.floor(sentIqd)));
   set('txTotalSentSub', sentUsdt>0 ? ('IQD  +  '+formatNum(sentUsdt)+' $') : 'IQD');
   set('txTotalRecv', formatNum(Math.floor(recvIqd)));
+  set('txTotalRecvSub',recvUsdt>0 ? ('IQD  +  '+formatNum(recvUsdt)+' $') : 'IQD');
+  set('txCompletedCount',formatNum(completedCount)+' مامەڵە');
   // nothing completed yet → the totals strip would only show two zeros
   const sum=document.getElementById('txSummary');
-  if(sum) sum.hidden = ok.length===0;
+  if(sum) sum.hidden = completedCount===0;
   // a count of zero is noise on a filter nobody can use
   const count=(id,n)=>{ const el=document.getElementById(id); if(el) el.textContent = n>0 ? String(n) : ''; };
   count('fcAll', _orders.length);
@@ -4092,7 +4122,7 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   sb=window.supabase.createClient(SB_URL,SB_KEY,{ auth:{ persistSession:true, autoRefreshToken:true, storageKey:'zex_sb_session' } });
   sb.auth.onAuthStateChange((_event,nextSession)=>{
     activeSession=nextSession||null;
-    if(_event==='SIGNED_OUT'){++_rewardLoadId;MY_REWARDS=[];if(typeof resetMyBalance==='function')resetMyBalance();if(typeof resetCustomerConveniences==='function')resetCustomerConveniences();}
+    if(_event==='SIGNED_OUT'){++_rewardLoadId;MY_REWARDS=[];renderWelcomeReward();if(typeof resetMyBalance==='function')resetMyBalance();if(typeof resetCustomerConveniences==='function')resetCustomerConveniences();}
   });
   let session=null;
   try{
@@ -4113,4 +4143,3 @@ document.addEventListener('DOMContentLoaded', async ()=>{
     goAuthStep('email');
   }
 });
-
