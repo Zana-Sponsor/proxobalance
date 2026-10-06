@@ -8,6 +8,8 @@ import 'package:proxo_app/screens/tools_screen.dart';
 import 'package:proxo_app/services/proxolink_service.dart';
 import 'package:proxo_app/theme/app_theme.dart';
 
+const fixtureTemplateVersion = 3;
+
 class FakePages extends ProxoLinkRepository {
   List<ProxoCard> rows = [];
   Map<String, dynamic>? submitted;
@@ -17,7 +19,7 @@ class FakePages extends ProxoLinkRepository {
   @override
   Future<List<ProxoTemplate>> templates() async => [
     for (final key in proxoTemplateKeys)
-      ProxoTemplate(key: key, label: key, previewPath: '/contact-preview?token=test', version: 3, requiresAvatar: false),
+      ProxoTemplate(key: key, label: key, previewPath: '/contact-preview?token=test', version: fixtureTemplateVersion, requiresAvatar: false),
   ];
   @override
   Future<Uri> templatePreview(String key, int version, {
@@ -96,21 +98,21 @@ void main() {
   testWidgets('food page saves merchant links and remains selectable for an ad', (t) async {
     final repo=FakePages();await openForm(t,repo);
     await t.tap(find.text('داواکردنی خواردن'));await t.pumpAndSettle();
-    expect(repo.previews.last,'pill-white/2/food/ku');
+    expect(repo.previews.last,'pill-white/$fixtureTemplateVersion/food/ku');
     expect(find.byType(SwitchListTile),findsNWidgets(4));
     await fill(t,'ناو','ڕیستۆرانتی Proxo');
     final toggle=find.widgetWithText(SwitchListTile,'تەڵەبات');
     await t.ensureVisible(toggle);await t.tap(toggle);await t.pumpAndSettle();
     await fill(t,'https://www.talabat.com/…','https://www.talabat.com/iraq/restaurant/123');
     final save=find.text('دروستکردن');await t.ensureVisible(save);await t.tap(save);await t.pumpAndSettle();
-    expect(repo.submitted?['page_type'],'food');expect(repo.submitted?['template_version'],3);
+    expect(repo.submitted?['page_type'],'food');expect(repo.submitted?['template_version'],fixtureTemplateVersion);
     expect(repo.submitted?['platforms'],{'talabat':'https://www.talabat.com/iraq/restaurant/123'});
     expect(find.text('ڕیکلام'),findsOneWidget);expect(t.takeException(),isNull);
   });
   testWidgets('download type offers only the two stores and rejects a malformed app link', (t) async {
     final repo=FakePages();await openForm(t,repo);
     await t.tap(find.text('دابەزاندنی ئەپ'));await t.pumpAndSettle();
-    expect(repo.previews.last,'pill-white/2/download/ku');expect(find.byType(SwitchListTile),findsNWidgets(2));
+    expect(repo.previews.last,'pill-white/$fixtureTemplateVersion/download/ku');expect(find.byType(SwitchListTile),findsNWidgets(2));
     await fill(t,'ناو','Proxo');
     final toggle=find.widgetWithText(SwitchListTile,'Google Play');await t.ensureVisible(toggle);await t.tap(toggle);await t.pumpAndSettle();
     await fill(t,'https://play.google.com/store/apps/details?id=…','https://evil.example/app');
@@ -122,7 +124,7 @@ void main() {
     final repo=FakePages();await openForm(t,repo);await fill(t,'ناو','Proxo 2026');
     await t.ensureVisible(find.text('pill-dark'));await t.tap(find.text('pill-dark'));await t.pumpAndSettle();
     await t.ensureVisible(find.text('داواکردنی خواردن'));await t.tap(find.text('داواکردنی خواردن'));await t.pumpAndSettle();
-    expect(repo.previews.last,'pill-dark/2/food/ku');expect(t.widget<TextFormField>(field('ناو')).controller!.text,'Proxo 2026');
+    expect(repo.previews.last,'pill-dark/$fixtureTemplateVersion/food/ku');expect(t.widget<TextFormField>(field('ناو')).controller!.text,'Proxo 2026');
     expect(t.takeException(),isNull);
   });
 }
