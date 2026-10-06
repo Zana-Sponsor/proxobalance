@@ -17,7 +17,7 @@ class FakePages extends ProxoLinkRepository {
   @override
   Future<List<ProxoTemplate>> templates() async => [
     for (final key in proxoTemplateKeys)
-      ProxoTemplate(key: key, label: key, previewPath: '/contact-preview?token=test', version: 2, requiresAvatar: false),
+      ProxoTemplate(key: key, label: key, previewPath: '/contact-preview?token=test', version: 3, requiresAvatar: false),
   ];
   @override
   Future<Uri> templatePreview(String key, int version, {
@@ -103,7 +103,7 @@ void main() {
     await t.ensureVisible(toggle);await t.tap(toggle);await t.pumpAndSettle();
     await fill(t,'https://www.talabat.com/…','https://www.talabat.com/iraq/restaurant/123');
     final save=find.text('دروستکردن');await t.ensureVisible(save);await t.tap(save);await t.pumpAndSettle();
-    expect(repo.submitted?['page_type'],'food');expect(repo.submitted?['template_version'],2);
+    expect(repo.submitted?['page_type'],'food');expect(repo.submitted?['template_version'],3);
     expect(repo.submitted?['platforms'],{'talabat':'https://www.talabat.com/iraq/restaurant/123'});
     expect(find.text('ڕیکلام'),findsOneWidget);expect(t.takeException(),isNull);
   });

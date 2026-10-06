@@ -8,15 +8,15 @@ process.env.PROXO_PREVIEW_SIGNING_SECRET='test-preview-key-at-least-32-character
 const {default:handler}=await import('../api/proxolink.js');
 const {makePreviewToken,makeTemplateToken,templateTokenData,validPreviewToken}=await import('../api/_lib/proxolink-preview.js');
 const {renderTemplate,normalizedPlatforms,privateTemplate,verifyPublicAvatar}=await import('../api/_lib/proxolink.js');
-const {destination,TEMPLATE_KEYS,PROVIDERS}=await import('../api/_lib/proxolink-catalog.js');
+const {destination,TEMPLATE_KEYS,TEMPLATE_VERSION,PROVIDERS}=await import('../api/_lib/proxolink-catalog.js');
 const owner='11111111-1111-4111-8111-111111111111';
 const id='22222222-2222-4222-8222-222222222222';
 const other='33333333-3333-4333-8333-333333333333';
 const token='aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
-const card={id,user_id:owner,name:'Proxo',bio:'Hello',tt:'proxo_iq',template_key:'pill-white',template_version:2,page_type:'contact',color_theme:'purple',card_language:'ku',platforms:{wa:'07501234567',tg:'proxo_iq'},status:'active',publish_status:'ready',updated_at:'2026-10-06T00:00:00Z'};
+const card={id,user_id:owner,name:'Proxo',bio:'Hello',tt:'proxo_iq',template_key:'pill-white',template_version:TEMPLATE_VERSION,page_type:'contact',color_theme:'purple',card_language:'ku',platforms:{wa:'07501234567',tg:'proxo_iq'},status:'active',publish_status:'ready',updated_at:'2026-10-06T00:00:00Z'};
 const templates=TEMPLATE_KEYS.map(key=>{
  const source=readFileSync(new URL('../api/_lib/proxolink-templates/'+key+'.html',import.meta.url),'utf8');
- return {template_key:key,version:2,display_name_ckb:key,display_name_en:key,storage_path:key+'/v2/template.html',checksum_sha256:createHash('sha256').update(source).digest('hex'),requires_avatar:false,is_active:true,is_catalog_visible:true};
+ return {template_key:key,version:TEMPLATE_VERSION,display_name_ckb:key,display_name_en:key,storage_path:key+'/v'+TEMPLATE_VERSION+'/template.html',checksum_sha256:createHash('sha256').update(source).digest('hex'),requires_avatar:false,is_active:true,is_catalog_visible:true};
 });
 const source=readFileSync(new URL('../api/_lib/proxolink-templates/pill-white.html',import.meta.url),'utf8');
 function response(){return {statusCode:0,headers:{},setHeader(k,v){this.headers[k.toLowerCase()]=v;},end(v=''){this.body=v;}};}
@@ -55,17 +55,17 @@ async function invoke(query,{body={},method='GET',auth=true}={}){
  const res=response();await handler({method,query,body,url:'/contact/test',headers:{...(auth?{authorization:'Bearer user-token'}:{}),'user-agent':'Mozilla/5.0 Android Chrome/100'},socket:{remoteAddress:'127.0.0.1'}},res);return res;
 }
 function config(html){return JSON.parse(html.match(/<script type="application\/json" id="proxo-config">([\s\S]*?)<\/script>/)[1]);}
-const payload={client_request_id:id,name:'Proxo',bio:'Hello',template_key:'pill-white',template_version:2,page_type:'contact',color_theme:'purple',card_language:'ku',platforms:{wa:'07501234567',tg:'proxo_iq'}};
+const payload={client_request_id:id,name:'Proxo',bio:'Hello',template_key:'pill-white',template_version:TEMPLATE_VERSION,page_type:'contact',color_theme:'purple',card_language:'ku',platforms:{wa:'07501234567',tg:'proxo_iq'}};
 const oldFetch=global.fetch;test.afterEach(()=>{global.fetch=oldFetch;});
-test('only four reviewed v2 themes appear in the signed catalog',async()=>{
+test('only four reviewed current themes appear in the signed catalog',async()=>{
  global.fetch=store().fetch;const r=await invoke({op:'templates'});assert.equal(r.statusCode,200);
- const body=JSON.parse(r.body);assert.deepEqual(body.templates.map(t=>t.template_key),TEMPLATE_KEYS);assert.ok(body.templates.every(t=>t.version===2));assert.doesNotMatch(r.body,/storage_path|checksum_sha256|html_content/);
+ const body=JSON.parse(r.body);assert.deepEqual(body.templates.map(t=>t.template_key),TEMPLATE_KEYS);assert.ok(body.templates.every(t=>t.version===TEMPLATE_VERSION));assert.doesNotMatch(r.body,/storage_path|checksum_sha256|html_content/);
  for(const key of ['dark','light','classic','card','neon','zoom','banner'])assert.equal((await invoke({op:'templates',template_key:key,version:'1'})).statusCode,422);
 });
 test('each signed demo selects its language and page purpose and never records analytics',async()=>{
  const s=store();global.fetch=s.fetch;
  for(const key of TEMPLATE_KEYS)for(const pageType of ['contact','food','download']){
-  const signed=makeTemplateToken(owner,key,2,{language:'en',pageType});
+  const signed=makeTemplateToken(owner,key,TEMPLATE_VERSION,{language:'en',pageType});
   const r=await invoke({op:'template-preview',token:signed,page_type:'contact',language:'ar'},{auth:false});assert.equal(r.statusCode,200);
   const c=config(r.body);assert.equal(c.template,key);assert.equal(c.lang,'en');assert.equal(c.preview,true);
   assert.ok(c.buttons.every(b=>Object.values(PROVIDERS).find(p=>p.type===b.type).group===pageType));assert.ok(c.buttons.length>=2);
@@ -73,7 +73,7 @@ test('each signed demo selects its language and page purpose and never records a
  assert.equal(s.events.length,0);
 });
 test('expired or altered tokens and cross-kind capabilities are rejected',()=>{
- const demo=makeTemplateToken(owner,'pill-white',2),preview=makePreviewToken(card),now=Date.now;
+ const demo=makeTemplateToken(owner,'pill-white',TEMPLATE_VERSION),preview=makePreviewToken(card),now=Date.now;
  assert.equal(validPreviewToken(demo,card),false);assert.equal(templateTokenData(preview),null);assert.equal(templateTokenData(demo+'bad'),null);
  try{Date.now=()=>now()+301000;assert.equal(templateTokenData(demo),null);assert.equal(validPreviewToken(preview,card),false);}finally{Date.now=now;}
 });
@@ -161,4 +161,11 @@ test('the old eight reusable client styles and HTML generator are absent',()=>{
 
 test('existing empty customer pages stay renderable without inventing links',()=>{
  const c=config(renderTemplate(source,{...card,platforms:{},tt:''}));assert.deepEqual(c.buttons,[]);assert.equal(c.name,card.name);
+});
+
+test('editing a previous published template version upgrades its renderer without changing contact values',async()=>{
+ const previous={...card,template_version:2},s=store({rows:[previous]});global.fetch=s.fetch;
+ const r=await invoke({op:'cards',id},{method:'PATCH',body:{expected_updated_at:card.updated_at,name:'Updated'}});
+ assert.equal(r.statusCode,200);assert.equal(s.rows.get(id).template_version,TEMPLATE_VERSION);
+ assert.deepEqual(s.rows.get(id).platforms,previous.platforms);assert.equal(s.rows.get(id).id,previous.id);
 });

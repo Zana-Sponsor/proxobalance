@@ -1,22 +1,16 @@
-The active integration uses four server-rendered v2 templates: pill, pill-mint,
-pill-dark and pill-white. The Flutter form offers Contact, Order food and
-Download the app. Food links point to the merchant listing; store links point
-to the advertised app's own App Store / Google Play listing.
+The production renderer uses four v3 templates: pill, pill-mint, pill-dark and
+pill-white. The v3 release adds optically balanced SVG glyphs and vivid three-stop
+provider gradients, including charcoal wrappers around unchanged store badges.
 
-Private server documents live in api/_lib/proxolink-templates and are bundled
-only into the API function. Their checksums are registered by the prepare SQL.
-Profile data is serialized safely as JSON and inserted with textContent.
-The standalone HTML files and editor in this folder are development tools.
+Private documents are traced into the API function. Checksums are registered by
+scripts/sql/proxo_gradients_v3_prepare.sql before deploying the matching renderer.
+Retire the prior v2 catalog rows only after the v3 production pages are verified,
+using scripts/sql/proxo_gradients_v3_retire.sql. Customer cards and ad links are
+not rewritten for this visual release. Existing cards render with the current
+reviewed source; a successful later edit upgrades their stored version.
 
-Activation order:
-1. Run scripts/sql/proxo_four_prepare.sql (additive schema/catalog preparation).
-2. Verify the exact preview commit: backend tests, Flutter tests/build, browser
-   dimensions, link navigation and the WhatsApp message-card motion.
-3. Run scripts/sql/proxo_four_activate.sql, preserving card IDs, owners, profile
-   values and ad relationships; this also archives the prior rows privately.
-4. Promote the verified deployment and merge the same changes to main.
-5. Verify the live catalog, customer pages and ad selection.
-
-The old eight client style assets and renderer are removed. Telegram here is a
-customer contact link; the retired Telegram document-delivery bot stays removed.
-Existing merchant Instagram contact data remains usable.
+The Flutter form offers Contact, Order food and Download the app, reading the
+version from the server catalog. Food links open the merchant listing; store
+links open the advertised app's own App Store / Google Play listing. External
+navigation, ownership checks, safe JSON rendering and original store badge
+artwork are preserved.

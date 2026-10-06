@@ -24,7 +24,7 @@ Contact, order and download are separate sections; empty sections disappear. Pre
 | Profile circle | 88 × 88 px; image fills interior with `object-fit: cover` |
 | Name / bio | 20 / 14 px at default text size |
 | Provider button | Minimum 56 px high; full available width |
-| Provider label / icon | 16 px / 22 × 22 px |
+| Provider label / icon | 16 px / 24 × 24 px SVG slot; visible artwork approximately 21–22 px |
 | Label alignment | True center with symmetric icon/spacer slots |
 | Within-section button gap | 12 px |
 | Between sections | 22 px on either side of a divider |
@@ -39,23 +39,25 @@ The layout handles safe-area insets, portrait/landscape, RTL/LTR, long labels, r
 
 ## Button palette and contrast
 
-These are Proxo UI colors, with provenance per provider in `button-catalog.json`. A color observed in site CSS or sampled from a logo is not a certified brand palette. Contrasts below are measured from the rendered default button colors, using the WCAG relative-luminance formula. All normal provider labels exceed 4.5:1.
+All four themes use the same three-stop, 135-degree Proxo gradients in each provider's color family. These are UI colors rather than certified official brand gradients. Normal label contrast is measured across both gradient segments, including intermediate colors, and remains at least 4.5:1.
 
-| Provider | Background | Text/icon | Contrast | Basis |
-|---|---|---|---|---|
-| WhatsApp | `#25D366` | `#10231A` | 8.29:1 | Proxo green in the brand color family |
-| Telegram | `#0073B5` | `#FFFFFF` | 5.10:1 | Adapted accessible blue |
-| Viber | `#6F5BED` | `#FFFFFF` | 4.78:1 | Adapted from published `#7360F2` |
-| Korek | `#0060AB` | `#FFFFFF` | 6.44:1 | Official SVG color |
-| Asiacell | `#C61932` | `#FFFFFF` | 5.86:1 | Adapted accessible red |
-| talabat | `#FF5A00` | `#241509` | 5.66:1 | Proxo orange in the brand color family |
-| Lezzoo | `#E63946` | `#111111` | 4.53:1 | Official site CSS color |
-| Toters | `#10B899` | `#102A24` | 6.05:1 | Sampled from official logo |
-| WADE | `#00C6E8` | `#10252C` | 7.74:1 | Adapted from app-icon cyan |
-| App Store | Official black badge | Original artwork | — | Unmodified Apple asset |
-| Google Play | Official black badge | Original artwork | — | Unmodified Google asset |
+| Provider | Gradient stops | Text/icon | Minimum contrast |
+|---|---|---|---|
+| WhatsApp | `#46E98B` → `#25D366` → `#18B85E` | `#083B25` | 4.85:1 |
+| Telegram | `#38BDF8` → `#18A5E3` → `#0797D2` | `#062538` | 4.79:1 |
+| Viber | `#8351F0` → `#7547E4` → `#612ACF` | `#FFFFFF` | 4.77:1 |
+| Korek | `#0E74CC` → `#075FB8` → `#0753A2` | `#FFFFFF` | 4.78:1 |
+| Asiacell | `#E21B3F` → `#CA1539` → `#B01236` | `#FFFFFF` | 4.71:1 |
+| talabat | `#FF9A24` → `#FF761A` → `#F85F08` | `#281508` | 5.52:1 |
+| Lezzoo | `#FF617A` → `#F34B68` → `#E83C57` | `#210B16` | 4.64:1 |
+| Toters | `#2AE0BC` → `#14C7A9` → `#08AE93` | `#063329` | 4.95:1 |
+| WADE | `#40DDF7` → `#14C8E8` → `#06B3D6` | `#062B36` | 5.99:1 |
+| App Store | `#2C3B54` → `#1E2A3D` → `#111827` | `#FFFFFF` | 11.29:1 |
+| Google Play | `#2C3B54` → `#1E2A3D` → `#111827` | `#FFFFFF` | 11.29:1 |
 
-Viber's published purple with white text measures about 4.48:1, so the button background is slightly darker. The store badges retain their original proportions and artwork; Apple appears first. The Google PNG's transparent margins are preserved: its entire image is 59.52381 px high, with a 40 px visible badge. Do not stretch it or treat the transparent source height as the visible badge height.
+Icons keep their original proportions inside a 24px slot. Their SVG view boxes remove inconsistent empty margins: outlined glyphs occupy approximately 22px, while Telegram's filled disc is optically adjusted to 21px. Phone and food-order glyphs no longer appear much smaller than messaging icons. Labels remain centered using equal spacer and icon slots.
+
+App Store and Google Play use charcoal gradient click targets around their unmodified official badge artwork. The visible badges remain 40px high. Google PNG transparent margins and Apple clearspace are preserved.
 
 ## Configuration API
 
@@ -84,23 +86,15 @@ Use `ProxoLink.getConfig()` to read the current configuration and `ProxoLink.val
 
 WhatsApp entries can set `intents: true` and use a top-level `intents` array of `{emoji, label, message}` objects. The accessible dialog sends a URL-encoded message only after selection, supports Escape/Cancel and restores focus. Other providers open directly. Optional `videoUrl` can prefix WhatsApp messages with a validated TikTok URL. Optional `tiktokUrl` adds a separate video link.
 
-## Proxo integration boundary
+## Proxo integration
 
-This directory is a development kit under `proxo_app/tools/`, not a Flutter asset or an enabled production renderer. It changes no app template registry, `pubspec.yaml`, renderer route, analytics pixel, database record or deployed customer page. Existing PR #7 and its native migration evidence remain separate.
+The production renderer uses the four private documents in `api/_lib/proxolink-templates`, with version 3 catalog checksums. This toolkit contains standalone previews and an editor; it is not bundled as a public Flutter asset. The native form reads template versions from the authenticated server catalog. The host JavaScript channel `ProxoLinkNavigation` revalidates provider destinations before opening external apps.
 
-For a future native integration, register the JavaScript channel `ProxoLinkNavigation` and have its `postMessage` receive a JSON object:
-
-```json
-{"type":"openExternal","provider":"telegram","url":"https://t.me/YOUR_USERNAME","fallbackUrl":null}
-```
-
-Revalidate URLs and schemes in the native handler before launching them. Intercept navigation at the WebView level as well, including footer links. Register the bridge before enabling live links; bridge registration/lifecycle varies by native WebView package. The `proxo:navigate` event is cancellable for host adapters and browser tests. `window.__PROXO_INTERCEPT_NAVIGATION__ = true` routes direct provider links through that event; without a bridge/cancelled event, browser navigation proceeds normally.
-
-Keep the source-template delivery strategy consistent with the private renderer migration; do not add these HTML sources to publicly served assets or bundle them into Flutter simply to activate this kit. The repository's current web build copies root `index.html` and root `assets/` into `public/`, not this tools directory.
+For the staged gradient release, register `scripts/sql/proxo_gradients_v3_prepare.sql`, verify the exact preview and production renderer, then run `scripts/sql/proxo_gradients_v3_retire.sql`. Version 2 remains available while the previous production build is serving. Customer card IDs, profile/contact values, avatars and ad relationships stay unchanged. Old-version cards render with the current reviewed template and upgrade their stored version on their next successful edit.
 
 ## Verification
 
-`verification-summary.json` records 40 actual Chromium-rendered viewport/theme combinations and functional checks. It is browser evidence, not a claim of native Android/iOS testing.
+`verification-summary.json` records 40 actual Chromium-rendered viewport/theme combinations, rasterized icon measurements, gradient contrast and functional checks. It is browser evidence, not a claim of native Android/iOS testing.
 
 To reproduce from this kit directory with Node and Playwright installed:
 
