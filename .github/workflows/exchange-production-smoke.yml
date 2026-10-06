@@ -9,12 +9,15 @@ jobs:
     permissions:
       contents: read
     steps:
-      - name: Wait for the current admin bundle to finish deploying
+      - name: Wait for the current customer and admin bundles to finish deploying
         shell: bash
         run: |
           set -euo pipefail
           for attempt in $(seq 1 24); do
-            if curl -fLsS --max-time 15 'https://www.proxobalance.app/exchange-admin' -o current-admin.html &&
+            if curl -fLsS --max-time 15 'https://www.proxobalance.app/' -o current-index.html &&
+               grep -q 'app.js?v=45' current-index.html &&
+               grep -q 'exchange-customer-polish.css?v=1' current-index.html &&
+               curl -fLsS --max-time 15 'https://www.proxobalance.app/exchange-admin' -o current-admin.html &&
                grep -q 'assets/js/admin.js?v=23' current-admin.html &&
                grep -q 'assets/js/exchange-insights.js?v=3' current-admin.html &&
                curl -fLsS --max-time 15 'https://www.proxobalance.app/assets/js/exchange-insights.js?v=3' -o current-insights.js &&
