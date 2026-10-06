@@ -1,7 +1,7 @@
 import {randomUUID} from 'node:crypto';
 export const OWNER='11111111-1111-4111-8111-111111111111',OTHER='99999999-9999-4999-8999-999999999999';
 export function localService({onRequest}={}) {
-  const rows=[],writes=[],events=[];let tick=0;
+  const rows=[],writes=[],events=[],ads=[];let tick=0;
   function matches(row,url) {
     for(const [key,value] of url.searchParams){
       if(['select','order','limit','or'].includes(key))continue;
@@ -15,7 +15,7 @@ export function localService({onRequest}={}) {
     if(url.pathname==='/auth/v1/user')return options.headers?.Authorization==='Bearer other-token'?Response.json({id:OTHER}):Response.json({id:OWNER});
     if(url.pathname==='/rest/v1/pa_contact_events'){events.push(JSON.parse(options.body));return new Response(null,{status:201});}
     if(url.pathname==='/rest/v1/proxolink_publish_attempts')return new Response(null,{status:201});
-    if(url.pathname==='/rest/v1/pa_ads')return Response.json([]);
+    if(url.pathname==='/rest/v1/pa_ads')return Response.json(ads.filter(r=>matches(r,url)).map(r=>selected(r,url)));
     if(url.pathname==='/rest/v1/proxolink_cards'){
       const method=options.method||'GET',body=options.body?JSON.parse(options.body):null;
       if(method==='POST'){
@@ -32,7 +32,7 @@ export function localService({onRequest}={}) {
     if(url.pathname.startsWith('/storage/'))return new Response('missing',{status:404});
     throw Error('Unexpected fixture endpoint: '+url.pathname);
   }
-  return {fetcher,rows,writes,events};
+  return {fetcher,rows,writes,events,ads};
 }
 export function pagePayload(type,providers,extra={}) {
   const destinations={whatsapp:'07501234567',viber:'+9647501234567',instagram:'proxo_iq',telegram:'proxo_iq',korek:'07501234567',asiacell:'07701234567',

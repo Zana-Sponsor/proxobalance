@@ -72,11 +72,24 @@ export function providerDestination(key,raw) {
     if(url.search||!/^\/[A-Za-z0-9._]+\/?$/.test(url.pathname))throw pageError('invalid_provider_destination');
     return providerDestination(key,url.pathname.replaceAll('/',''));
   }
-  if(key==='google_play'&&(!/^\/store\/apps\/details\/?$/.test(url.pathname)
-    ||! /^[A-Za-z][A-Za-z0-9_]*(?:\.[A-Za-z][A-Za-z0-9_]*)+$/.test(url.searchParams.get('id')||'')
-    ||[...url.searchParams.keys()].some(k=>!['id','hl','gl'].includes(k))))throw pageError('invalid_provider_destination');
-  if(key==='app_store'&&(!/^\/(?:[a-z]{2}\/)?app\/(?:[^/]+\/)?id[1-9]\d*\/?$/.test(url.pathname)
-    ||[...url.searchParams.keys()].some(k=>!['mt','l','platform','ct','pt'].includes(k))))throw pageError('invalid_provider_destination');
+  if(key==='google_play'){
+    const id=url.searchParams.get('id');
+    if(!/^\/store\/apps\/details\/?$/.test(url.pathname)
+      ||! /^[A-Za-z][A-Za-z0-9_]*(?:\.[A-Za-z][A-Za-z0-9_]*)+$/.test(id||'')
+      ||[...url.searchParams.keys()].some(k=>!['id','hl','gl'].includes(k))
+      ||new Set(url.searchParams.keys()).size!==[...url.searchParams.keys()].length)throw pageError('invalid_provider_destination');
+    const canonical=new URL('https://play.google.com/store/apps/details');canonical.searchParams.set('id',id);
+    for(const key of ['hl','gl'])if(url.searchParams.has(key)){
+      const value=url.searchParams.get(key);if(!/^[A-Za-z_-]{2,20}$/.test(value))throw pageError('invalid_provider_destination');canonical.searchParams.set(key,value);
+    }
+    return canonical.href;
+  }
+  if(key==='app_store'){
+    if(!/^\/(?:[a-z]{2}\/)?app\/(?:[^/]+\/)?id[1-9]\d*\/?$/.test(url.pathname)
+      ||[...url.searchParams.keys()].some(k=>!['mt','l','platform','ct','pt'].includes(k))
+      ||new Set(url.searchParams.keys()).size!==[...url.searchParams.keys()].length)throw pageError('invalid_provider_destination');
+    for(const value of url.searchParams.values())if(!/^[A-Za-z0-9_%.-]+$/.test(value))throw pageError('invalid_provider_destination');
+  }
   if(p.page_type==='order'&&url.pathname==='/')throw pageError('invalid_provider_destination');
   return url.href;
 }

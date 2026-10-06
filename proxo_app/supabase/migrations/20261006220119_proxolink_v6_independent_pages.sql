@@ -61,6 +61,11 @@ DO $$ BEGIN
         AND client_request_id IS NOT NULL AND id <> client_request_id AND user_id <> client_request_id
         AND public.proxolink_v6_settings_valid(page_kind,settings)
         AND template_key IN ('pill','pill-mint','pill-dark','pill-white') AND template_version = 6
+        AND length(btrim(name)) BETWEEN 1 AND 160 AND (bio IS NULL OR length(bio)<=2000)
+        AND card_language IN ('ku','ar','en')
+        AND (avatar_path IS NULL OR (length(avatar_path)<=200 AND split_part(avatar_path,'/',1)=user_id::text
+          AND split_part(avatar_path,'/',2) IN (id::text,client_request_id::text)
+          AND avatar_path ~ '^[0-9a-f-]{36}/[0-9a-f-]{36}/[A-Za-z0-9_-]+[.](webp|jpe?g|png)$'))
       )
     ) NOT VALID;
   END IF;

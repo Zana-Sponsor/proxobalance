@@ -116,3 +116,17 @@ test('preview capability expiration, tampering and route-type binding reject saf
  const form=makeFormToken({...card,page_kind:'download'});assert.ok(formTokenData(form));
  try{Date.now=()=>time()+301000;assert.equal(formTokenData(form),null);}finally{Date.now=time;}
 });
+test('typed advertisement links use the stable page URL without tokens, RPCs or events and verify ownership',async()=>{
+ for(const kind of PAGE_TYPES){
+  const result=await call('cards',{method:'POST',body:pagePayload(kind,[{contact:'telegram',order:'talabat',download:'app_store'}[kind]])});
+  assert.equal(result.status,201);
+  const id=result.json().card.id,ad_id=randomUUID();fixture.ads.push({id:ad_id,user_id:OWNER,card_id:id,status:'active'});
+  const link=await call('ad-links',{method:'POST',body:{ad_id}});assert.equal(link.status,200,link.body);
+  assert.equal(link.json().tracked,false);assert.equal(link.json().public_path,`/${kind}/${id}`);
+  assert.equal(link.json().tracked_path,`/${kind}/${id}`);assert.doesNotMatch(link.body,/\/a\/|public_token/);
+  assert.equal((await call('ad-links',{method:'POST',body:{ad_id},auth:'other-token'})).status,422);
+  assert.equal((await call('card-action',{method:'POST',body:{card_id:id,action:'delete'}})).status,409);
+ }
+ assert.equal(fixture.events.length,0);
+ // The fixture has no token-issuing RPC handler; any such call fails this test.
+});

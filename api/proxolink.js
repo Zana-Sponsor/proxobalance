@@ -12,7 +12,7 @@ import { json } from './_lib/security.js';
 
 const handlers = { cards, 'card-action': action, 'preview-token': preview,
   'ad-links': links, contact, order:contact, download:contact, ad, avatar, templates, providers,
-  'form-preview-token':createFormPreview, 'form-preview':renderFormPreview, 'form-preview-avatar':formPreviewAvatar, 'template-preview': templatePreview, providers };
+  'form-preview-token':createFormPreview, 'form-preview':renderFormPreview, 'form-preview-avatar':formPreviewAvatar, 'template-preview': templatePreview };
 export default async function handler(req, res) {
   const op = typeof req.query?.op === 'string' ? req.query.op : '';
   const selected = Object.hasOwn(handlers, op) && handlers[op];

@@ -642,8 +642,11 @@ class _ContactFormState extends State<_ContactForm> {
         _templates = templates;
         _remoteAvatar = avatar;
         _catalogFailed = false;
-        if (!templates.any((t) => t.key == _template))
-          _template = templates.first.key;
+        if (!templates.any((t) => t.key == _template)) {
+          const aliases={'dark':'pill-dark','light':'pill-white','classic':'pill-white','card':'pill-white','neon':'pill-mint','zoom':'pill','banner':'pill'};
+          _template=aliases[_template] ?? templates.first.key;
+          _version=templates.firstWhere((t)=>t.key==_template).version;
+        }
         if (widget.existing == null && !_restoredDraft) {
           _version = templates.firstWhere((t) => t.key == _template).version;
         }
@@ -696,6 +699,7 @@ class _ContactFormState extends State<_ContactForm> {
     }
   }
 
+  String _legacyProviderId(String key) => const {'whatsapp':'wa','viber':'vb','instagram':'ig','telegram':'tg','korek':'ph','asiacell':'as'}[key]!;
   Map<String, dynamic> _data() => {
     'client_request_id': _id,
     'name': _name.text.trim(), 'bio': _bio.text.trim(),
@@ -710,9 +714,9 @@ class _ContactFormState extends State<_ContactForm> {
     ]},
     if(_legacy) 'tt': _tt.text.trim().replaceFirst(RegExp(r'^@'), ''),
     if(_legacy) 'platforms': {
-      for(final p in kPlatformBtns)
-        if(_enabled.contains(p.type == 'phone' ? 'korek' : p.type == 'asya' ? 'asiacell' : p.type))
-          p.id:_contacts[p.type == 'phone' ? 'korek' : p.type == 'asya' ? 'asiacell' : p.type]!.text.trim(),
+      for(final p in _typeProviders)
+        if(_enabled.contains(p.key))
+          _legacyProviderId(p.key):_contacts[p.key]!.text.trim(),
     },
   };
   Future<void> _save() async {
@@ -943,14 +947,6 @@ class _ContactFormState extends State<_ContactForm> {
                         SwitchListTile(
                           contentPadding: EdgeInsets.zero,
                           title: ProxoText(p.label, style: AdUi.text(context)),
-                          subtitle: Row(children:[
-                            IconButton(tooltip:'بۆ سەرەوە',icon:const Icon(Icons.arrow_upward),onPressed:()=>setState((){
-                              _moveProvider(p.key,-1);
-                            })),
-                            IconButton(tooltip:'بۆ خوارەوە',icon:const Icon(Icons.arrow_downward),onPressed:()=>setState((){
-                              _moveProvider(p.key,1);
-                            })),
-                          ]),
                           value: _enabled.contains(p.key),
                           onChanged: (enabled) => setState(() {
                             if (enabled) {
@@ -961,6 +957,22 @@ class _ContactFormState extends State<_ContactForm> {
                             _previewRevision++;
                           }),
                         ),
+                        Row(children: [
+                          IconButton(
+                            tooltip: 'بۆ سەرەوە',
+                            icon: const Icon(Icons.arrow_upward),
+                            onPressed: () => setState(() {
+                              _moveProvider(p.key, -1);
+                            }),
+                          ),
+                          IconButton(
+                            tooltip: 'بۆ خوارەوە',
+                            icon: const Icon(Icons.arrow_downward),
+                            onPressed: () => setState(() {
+                              _moveProvider(p.key, 1);
+                            }),
+                          ),
+                        ]),
                         if (_enabled.contains(p.key))
                           _field(
                             _contacts[p.key]!,

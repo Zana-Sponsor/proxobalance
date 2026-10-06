@@ -1,3 +1,4 @@
+import { providerDestination } from '../proxolink-pages.js';
 import { createPage, editPage } from './independent-pages.js';
 import { publishAudit } from '../proxolink-audit.js';
 import { readJson, json, withSecurity } from '../security.js';
@@ -47,9 +48,10 @@ function validatePayload(body,userId,id,old=null) {
   // New clients cannot submit Telegram. Retain existing legacy values in
   // storage during edits, without exposing or enabling them in the renderer.
   data.platforms=normalizedPlatforms(data.platforms,{
-    historical:Boolean(old && body.platforms===undefined)
+    historical:Boolean(old && body.platforms===undefined) || data.template_version===6
   });
-  if(old?.platforms && typeof old.platforms==='object') {
+  if(data.template_version===6 && data.platforms.tg)providerDestination('telegram',data.platforms.tg);
+  if(old?.platforms && typeof old.platforms==='object' && data.template_version!==6) {
     for(const legacyKey of ['tg','telegram']) {
       if(typeof old.platforms[legacyKey]==='string' && old.platforms[legacyKey])
         data.platforms[legacyKey]=old.platforms[legacyKey];

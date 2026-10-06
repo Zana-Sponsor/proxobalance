@@ -124,8 +124,9 @@ async function configure() {
   }
   // tee's stdout is captured and discarded. It is never printed or uploaded.
   stage='write_private_configuration';
-  appWrite('proxolink-verification.json',JSON.stringify({origin:base,previews,
+  appWrite('proxolink-verification.next.json',JSON.stringify({origin:base,previews,
     headers:{...protection,'x-vercel-set-bypass-cookie':'true'}}));
+  adb(['shell','run-as',packageId,'mv','files/proxolink-verification.next.json','files/proxolink-verification.json']);
   currentPreviews=previews;
 }
 let capturedPreviewHeaders=false;
