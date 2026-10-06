@@ -16,14 +16,15 @@ export function validateStagingConfiguration(env) {
   if(base.protocol!=='https:'||base.username||base.password||base.pathname!=='/'||base.search||base.hash
     ||!/^proxolink-staging(?:-[a-z0-9-]+)?\.vercel\.app$/.test(base.hostname)
     ||base.origin===PREVIEW_ORIGIN)throw Error('isolated_staging_origin_required');
-  for(const name of ['PROXO_STAGING_ANON_KEY','PROXO_STAGING_TEST_EMAIL','PROXO_STAGING_TEST_PASSWORD'])
+  for(const name of ['PROXO_STAGING_ANON_KEY','PROXO_STAGING_TEST_EMAIL','PROXO_STAGING_TEST_PASSWORD','PROXO_STAGING_OTHER_EMAIL','PROXO_STAGING_OTHER_PASSWORD'])
     if(typeof env[name]!=='string'||!env[name])throw Error('staging_setting_required');
   const key=env.PROXO_STAGING_ANON_KEY;
   let role;
   try{role=JSON.parse(Buffer.from(key.split('.')[1],'base64url')).role;}catch{}
   if(!key.startsWith('sb_publishable_')&&role!=='anon')throw Error('publishable_key_required');
   return {base:base.origin,supabase,key,email:env.PROXO_STAGING_TEST_EMAIL,
-    password:env.PROXO_STAGING_TEST_PASSWORD,bypass:env.PROXO_STAGING_VERCEL_BYPASS||''};
+    password:env.PROXO_STAGING_TEST_PASSWORD,otherEmail:env.PROXO_STAGING_OTHER_EMAIL,
+    otherPassword:env.PROXO_STAGING_OTHER_PASSWORD,bypass:env.PROXO_STAGING_VERCEL_BYPASS||''};
 }
 
 export function stagingTransport(config,fetcher=fetch) {
@@ -37,7 +38,8 @@ export function stagingTransport(config,fetcher=fetch) {
         ||/^\/storage\/v1\/object\/proxolink-assets\/[0-9a-f-]{36}\/[0-9a-f-]{36}\/avatar(?:-edited)?\.png$/.test(url.pathname)
       :['/api/contact-templates','/api/contact-cards','/api/contact-card-action','/api/contact-preview-token','/api/page-providers','/api/page-preview-token'].includes(url.pathname)
         ||/^\/(?:contact|order|download)\/[0-9a-f-]{36}(?:\/avatar)?$/.test(url.pathname);
-    if(!allowed||!['GET','POST','PATCH'].includes(method))throw Error('staging_request_scope');
+    const livePreview=!supabase&&['/page-preview','/page-preview-avatar'].includes(url.pathname)&&method==='GET';
+    if((!allowed&&!livePreview)||!['GET','POST','PATCH'].includes(method))throw Error('staging_request_scope');
     if(supabase && ((url.pathname==='/auth/v1/token'&&method!=='POST')
       ||(url.pathname==='/rest/v1/proxolink_cards'&&method!=='GET')
       ||(url.pathname.startsWith('/storage/')&&method!=='POST')))
@@ -64,6 +66,11 @@ export async function verifyStagingLifecycle(config,avatar,fetcher=fetch,{uuid=r
   const session=signed.body;
   assert.ok(session.access_token&&/^[0-9a-f-]{36}$/.test(session.user?.id||''),'staging_user_required');
   const authorization='Bearer '+session.access_token;
+  const otherSigned=await json('/auth/v1/token?grant_type=password',{supabase:true,method:'POST',
+    contentType:'application/json',body:JSON.stringify({email:config.otherEmail,password:config.otherPassword})});
+  assert.equal(otherSigned.status,200,'second_staging_sign_in_failed');
+  assert.ok(otherSigned.body.access_token&&otherSigned.body.user?.id&&otherSigned.body.user.id!==session.user.id,'distinct_staging_owner_required');
+  const otherAuthorization='Bearer '+otherSigned.body.access_token;
   const api=(path,options={})=>json(path,{authorization,...options});
   const body=data=>({method:'POST',contentType:'application/json',body:JSON.stringify(data)});
   const noAuth=await json('/api/contact-templates');
@@ -108,6 +115,8 @@ export async function verifyStagingLifecycle(config,avatar,fetcher=fetch,{uuid=r
     assert.equal(retried.body.card.publish_status,'ready');assert.equal(retried.body.card.status,'active');
     const publicPath='/'+type+'/'+id;assert.equal(retried.body.card.public_path,publicPath);
     await page(type,id,200);
+    for(const wrong of PAGE_TYPES)if(wrong!==type)await page(wrong,id,404);
+    await page(type,session.user.id,404);
     const publicAvatar=await request(publicPath+'/avatar');assert.equal(publicAvatar.status,200);
     assert.equal(createHash('sha256').update(Buffer.from(await publicAvatar.arrayBuffer())).digest('hex'),
       createHash('sha256').update(avatar).digest('hex'),'public_avatar_bytes');
@@ -125,6 +134,17 @@ export async function verifyStagingLifecycle(config,avatar,fetcher=fetch,{uuid=r
     const edited=await inspect(id);
     assert.equal(edited.template_key,nextStyle);assert.equal(edited.color_theme,'blue');assert.equal(edited.card_language,'en');
     assert.equal(edited.settings.providers[0].provider_key,provider_key);assert.equal(edited.avatar_path,replacementPath);
+    const takeover=await api('/api/contact-cards?id='+id,{...body({name:'Unauthorized',expected_updated_at:edited.updated_at}),method:'PATCH',authorization:otherAuthorization});
+    assert.ok([403,404].includes(takeover.status),'cross_owner_update_rejected');
+    const foreign=await json('/rest/v1/proxolink_cards?id=eq.'+id+'&select=id',{supabase:true,authorization:otherAuthorization});
+    assert.equal(foreign.status,200);assert.deepEqual(foreign.body,[],'cross_owner_rls_required');
+    const live=await api('/api/page-preview-token',body({...payload,name:'Unsaved '+type,template_key:nextStyle,
+      card_id:id,avatar_path:replacementPath,card_language:'en'}));
+    assert.equal(live.status,200,'current_form_preview_required');
+    const liveResponse=await request(live.body.preview_path);assert.equal(liveResponse.status,200);
+    const liveHtml=await liveResponse.text(),liveConfig=JSON.parse(liveHtml.match(/id="proxo-config">([\s\S]*?)<\/script>/)[1]);
+    assert.equal(liveConfig.name,'Unsaved '+type);assert.equal(liveConfig.preview,true);
+    assert.equal((await inspect(id)).name,'Edited Proxo '+style,'preview_must_not_persist');
     const editedAvatar=await request(publicPath+'/avatar');assert.equal(editedAvatar.status,200);
     assert.equal(createHash('sha256').update(Buffer.from(await editedAvatar.arrayBuffer())).digest('hex'),
       createHash('sha256').update(replacementAvatar).digest('hex'),'replacement_avatar_bytes');
@@ -141,6 +161,8 @@ export async function verifyStagingLifecycle(config,avatar,fetcher=fetch,{uuid=r
     fixtures.push({type,style,version:6,fixture_id:id,failed_publish_recovered:true,duplicate_reused:true,
       stable_edit_link:true,invalid_edit_preserved:true,public_avatar_bytes:true,inactive_hidden:true,
       template_theme_language_contacts_edited:true,avatar_replaced:true,
+      wrong_routes_rejected:true,owner_uuid_rejected:true,unauthorized_edit_rejected:true,other_owner_rls:true,
+      unsaved_live_preview_inert:true,preview_did_not_persist:true,
       owner_inactive_preview:true,reactivated_same_link:true});
   }
   const list=await api('/api/contact-cards');

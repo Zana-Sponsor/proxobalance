@@ -8,7 +8,8 @@ const environment={PROXO_STAGING_PROJECT_REF:'abcdefghijklmnopqrst',
   PROXO_STAGING_SUPABASE_URL:'https://abcdefghijklmnopqrst.supabase.co',
   PROXO_STAGING_BASE_URL:'https://proxolink-staging-fixtures.vercel.app',
   PROXO_STAGING_ANON_KEY:'sb_publishable_fixture',PROXO_STAGING_TEST_EMAIL:'fictional@example.invalid',
-  PROXO_STAGING_TEST_PASSWORD:'test-only',PROXO_STAGING_VERCEL_BYPASS:'test-only'};
+  PROXO_STAGING_TEST_PASSWORD:'test-only',PROXO_STAGING_VERCEL_BYPASS:'test-only',
+  PROXO_STAGING_OTHER_EMAIL:'other@example.invalid',PROXO_STAGING_OTHER_PASSWORD:'test-only-other'};
 const config=validateStagingConfiguration(environment);
 
 test('staging runner refuses production/preview projects, credential-bearing URLs and service keys',()=>{
@@ -42,14 +43,15 @@ test('staging orchestrator exercises all twelve independent page/design lifecycl
   process.env.PROXO_SUPABASE_SERVICE_ROLE_KEY='server-fixture-only';
   process.env.PROXO_PREVIEW_SIGNING_SECRET='fixture-secret-at-least-32-characters';
   const {default:handler}=await import('../api/proxolink.js');
-  const owner='11111111-1111-4111-8111-111111111111';
+  const owner='11111111-1111-4111-8111-111111111111',other='99999999-9999-4999-8999-999999999999';
   const cards=new Map(),images=new Map();let serial=0;
   const source='<!DOCTYPE html><html><head></head><body>{{NAME}}{{BIO}}{{AVATAR}}{{BUTTONS}}<script>{{HANDLERS}}</script></body></html>';
   const fetcher=async(url,options={})=>{
     const u=new URL(url),method=options.method||'GET';
     if(u.origin===config.supabase) {
-      if(u.pathname==='/auth/v1/token')return Response.json({access_token:'ordinary-fixture-session',user:{id:owner}});
-      if(u.pathname==='/auth/v1/user')return Response.json({id:owner});
+      if(u.pathname==='/auth/v1/token')return JSON.parse(options.body).email===config.otherEmail
+        ?Response.json({access_token:'other-fixture-session',user:{id:other}}):Response.json({access_token:'ordinary-fixture-session',user:{id:owner}});
+      if(u.pathname==='/auth/v1/user')return Response.json({id:options.headers.Authorization==='Bearer other-fixture-session'?other:owner});
       if(u.pathname==='/rest/v1/proxolink_templates') {
         const style=u.searchParams.get('template_key')?.slice(3);
         return Response.json((style?[style]:['dark','light','classic','pill','card','neon','zoom','banner']).map(key=>({
@@ -68,6 +70,7 @@ test('staging orchestrator exercises all twelve independent page/design lifecycl
           return Response.json([cards.get(id)],{status:201});
         }
         const values=[...cards.values()].filter(card=>(!id||card.id===id)
+          &&(options.headers.Authorization!=='Bearer other-fixture-session'||card.user_id===other)
           &&(!u.searchParams.get('client_request_id')||card.client_request_id===u.searchParams.get('client_request_id').slice(3))
           &&(!u.searchParams.get('updated_at')||card.updated_at===u.searchParams.get('updated_at').slice(3)));
         if(method==='PATCH')for(const card of values)Object.assign(card,JSON.parse(options.body),{updated_at:new Date(1791158400000+(++serial)).toISOString()});
@@ -79,7 +82,8 @@ test('staging orchestrator exercises all twelve independent page/design lifecycl
     }
     assert.equal(u.origin,config.base);
     const operation=/^\/(contact|order|download)\//.test(u.pathname)?(u.pathname.endsWith('/avatar')?'avatar':u.pathname.split('/')[1]):
-      {'/api/contact-templates':'templates','/api/contact-cards':'cards','/api/contact-card-action':'card-action','/api/contact-preview-token':'preview-token'}[u.pathname];
+      {'/api/contact-templates':'templates','/api/contact-cards':'cards','/api/contact-card-action':'card-action','/api/contact-preview-token':'preview-token',
+        '/api/page-preview-token':'form-preview-token','/page-preview':'form-preview'}[u.pathname];
     const query={...Object.fromEntries(u.searchParams),op:operation};
     if(/^\/(contact|order|download)\//.test(u.pathname)){query.id=u.pathname.split('/')[2];query.page_type=u.pathname.split('/')[1];}
     const req=Readable.from(options.body?[Buffer.from(options.body)]:[]);

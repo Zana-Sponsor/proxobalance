@@ -46,6 +46,18 @@ jobs:
           node-version: '24'
       - run: npm ci
       - run: psql -v ON_ERROR_STOP=1 -f test/fixtures/proxolink-v5-database.sql
+      - name: Verify migration transaction rollback
+        run: |
+          psql -v ON_ERROR_STOP=1 <<'SQL'
+          BEGIN;
+          \i proxo_app/supabase/migrations/20261006220119_proxolink_v6_independent_pages.sql
+          ROLLBACK;
+          DO $$ BEGIN
+            IF EXISTS(SELECT 1 FROM information_schema.columns WHERE table_schema='public' AND table_name='proxolink_cards' AND column_name='page_kind') THEN
+              RAISE EXCEPTION 'V6 migration rollback did not restore the legacy schema';
+            END IF;
+          END $$;
+          SQL
       - run: psql -v ON_ERROR_STOP=1 -f proxo_app/supabase/migrations/20261006220119_proxolink_v6_independent_pages.sql
       - name: Verify additive migration is rerunnable
         run: psql -v ON_ERROR_STOP=1 -f proxo_app/supabase/migrations/20261006220119_proxolink_v6_independent_pages.sql

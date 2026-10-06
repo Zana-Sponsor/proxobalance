@@ -84,14 +84,20 @@ class _ToolsScreenState extends State<ToolsScreen> {
           .showSnackBar(SnackBar(content: ProxoText(text)));
   }
 
-  void _create() => setState(() {
-    _editing = null;
-    _form = true;
-  });
-  void _edit(ProxoCard card) => setState(() {
-    _editing = card;
-    _form = true;
-  });
+  void _create() {
+    ScaffoldMessenger.of(context).clearSnackBars();
+    setState(() {
+      _editing = null;
+      _form = true;
+    });
+  }
+  void _edit(ProxoCard card) {
+    ScaffoldMessenger.of(context).clearSnackBars();
+    setState(() {
+      _editing = card;
+      _form = true;
+    });
+  }
   void _use(ProxoCard card) {
     if (!card.available) return;
     if (widget.onUseForAd != null) {
