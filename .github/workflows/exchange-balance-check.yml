@@ -2,6 +2,10 @@ name: Exchange Balance Checks
 on:
   pull_request:
     paths:
+      - 'api/access.js'
+      - 'ip-blocked.html'
+      - 'test/exchange-access.test.js'
+      - 'test/exchange-admin-workspace.browser.mjs'
       - 'api/admin.js'
       - 'api/balance.js'
       - 'api/orders.js'
@@ -53,13 +57,15 @@ jobs:
           node --check assets/js/exchange-balance-admin.js
           node --check assets/js/exchange-reward-pricing.js
           node --check assets/js/exchange-insights.js
+          node --check assets/js/exchange-access.js
+          node --check assets/js/exchange-admin-workspace.js
           node --check assets/js/exchange-live.js
           node --check assets/js/exchange-staff.js
           node --check assets/js/exchange-customer-features.js
       - name: Build Vercel static output
         run: node scripts/prepare-vercel.mjs
       - name: Verify authenticated orders, admin refunds and capped fee rewards
-        run: node --test test/orders-route.test.js test/exchange-reward-pricing.test.js test/exchange-admin-rewards-refund.test.js test/exchange-account-balances-ui.test.js test/exchange-send-balance.test.js test/exchange-statistics-order-codes.test.js test/exchange-live-saves.test.js
+        run: node --test test/orders-route.test.js test/exchange-reward-pricing.test.js test/exchange-admin-rewards-refund.test.js test/exchange-account-balances-ui.test.js test/exchange-send-balance.test.js test/exchange-statistics-order-codes.test.js test/exchange-live-saves.test.js test/exchange-access.test.js
       - name: Verify deployed asset and board paths
         run: |
           node --input-type=module -e "
@@ -77,3 +83,4 @@ jobs:
               'Missing admin balance board');
             console.log('PASS: Exchange customer/admin build and balance assets');
           "
+

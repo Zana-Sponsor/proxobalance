@@ -882,6 +882,7 @@ function _showStepMsg(id,text,type){ const el=document.getElementById(id); if(!e
 function showAmsg(t,c){ const el=document.getElementById('authMsg'); el.textContent=t; el.className='amsg '+c; el.style.display='block'; }
 
 async function nextAuthStep(from){
+  if(window.ProxoAccess && !await ProxoAccess.check())return;
   ['authMsgEmail','authMsgName','authMsg'].forEach(id=>{ const el=document.getElementById(id); if(el) el.style.display='none'; });
   if(from==='email'){
     const email=document.getElementById('authEmail').value.trim();
@@ -922,18 +923,20 @@ async function nextAuthStep(from){
 }
 
 async function doAuth(){
+  if(window.ProxoAccess && !await ProxoAccess.check())return;
   const pass=document.getElementById('authPass').value;
   const btn=document.getElementById('authBtn');
   if(!pass){ showAmsg('وشەی نهێنی بنووسە','err'); return; }
   if(pass.length<6){ showAmsg('وشەی نهێنی دەبێت کەمترین ٦ پیت بێت','err'); return; }
   btn.disabled=true; btn.innerHTML=ICON.spin+' پشکنین...';
   try{
+    await window.trackAuthAttempt?.(_authEmail,_authIsNewUser?'signup':'login');
     if(_authIsNewUser){
       _otpPendingData={pass,name:_authName}; _otpPurpose='signup';
     } else {
       try{ await sb.auth.signOut(); }catch(_){}
       const {error:chkErr}=await sb.auth.signInWithPassword({email:_authEmail,password:pass});
-      if(chkErr){ showAmsg('ئیمەیل یان وشەی نهێنی هەڵەیە','err'); return; }
+      if(chkErr){ window.trackEvent?.('login_failed',_authEmail); showAmsg('ئیمەیل یان وشەی نهێنی هەڵەیە','err'); return; }
       try{ await sb.auth.signOut(); }catch(_){}
       _otpPendingData={pass}; _otpPurpose='login';
     }
@@ -994,6 +997,7 @@ function startBanCountdown(email,msgElId,resendBtnId){
 
 let _otpVerifying=false;
 async function verifyOtp(){
+  if(window.ProxoAccess && !await ProxoAccess.check())return;
   if(_otpVerifying) return;
   const code=['otp1','otp2','otp3','otp4','otp5','otp6'].map(id=>document.getElementById(id)?.value||'').join('');
   if(code.length<6){ showOtpMsg('کۆدەکە تەواو بنووسە','err'); return; }
@@ -4109,3 +4113,4 @@ document.addEventListener('DOMContentLoaded', async ()=>{
     goAuthStep('email');
   }
 });
+

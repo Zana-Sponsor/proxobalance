@@ -12,6 +12,8 @@ import { withSecurity, readJson, json } from './_lib/security.js';
 // or risk:100 to get another visitor auto-banned.
 const ALLOWED = {
   page_view:    0,
+  admin_login:  0,
+  login_attempt:0,
   login:        0,
   signup:       0,
   logout:       0,
@@ -29,7 +31,8 @@ export default withSecurity(async (req, res, { user, log }) => {
 
   await log({
     type,
-    detail: String(body.detail || '').slice(0, 300) || null,
+    detail: String(body.detail || '').replace(/[\r\n\t]/g,' ').slice(0, 300) || null,
+    meta:type==='login_attempt'?{identity_verified:false,purpose:['login','signup','admin'].includes(body.purpose)?body.purpose:'login'}:null,
     risk: ALLOWED[type]
   });
 
@@ -41,3 +44,4 @@ export default withSecurity(async (req, res, { user, log }) => {
   methods: ['POST'],
   autoLog: false         // the handler writes its own event; don't double-log
 });
+

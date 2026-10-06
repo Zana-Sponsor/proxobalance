@@ -108,6 +108,8 @@ async function audit(adminId, action, targetUserId, detail) {
 
 // Fresh database profile rights, never browser/JWT user_metadata claims.
 export function assertStaffAction(profile,action){
+  if(action==='set_ban' && profile.role!=='super_admin')throw {status:403,code:'super_admin_required',message:'SUPER_ADMIN_REQUIRED'};
+  if(['error_log_summary','list_error_logs','resolve_error_log','resolve_all_error_logs'].includes(action)&&profile.role!=='super_admin')throw {status:403,code:'super_admin_required',message:'SUPER_ADMIN_REQUIRED'};
   if(profile.role==='super_admin' || profile.staff_permissions==null)return;
   const permissions={
     ping:'view',account_balances:'view',balance_dashboard:'view',balance_lookup_order:'view',
@@ -298,11 +300,11 @@ const actions = {
       throw { status: 409, code: 'already_decided', message: 'Order is not ready for review' };
     }
 
-    const patch = { status: STATUS_APPROVED, decided_at: new Date().toISOString() };
+    const patch = { status: STATUS_APPROVED, decided_at: new Date().toISOString(), handled_by:ctx.user.id };
     if (payout_receipt_url) patch.payout_receipt_url = String(payout_receipt_url).slice(0, 2000);
     if (admin_note)         patch.admin_note         = String(admin_note).slice(0, 500);
 
-    const { data, error } = await db.from('ex_orders').update(patch).eq('id', order_id).select().single();
+    const { data, error } = await db.from('ex_orders').update(patch).eq('id', order_id).in('status',[...REVIEWABLE_ORDER_STATUSES]).is('balance_refunded_at',null).select().single();
     if (error) throw { status: 500, code: 'db_error', message: error.message };
 
     await audit(ctx.user.id, 'approve_order', order.user_id, data.order_code);
@@ -320,11 +322,11 @@ const actions = {
     }
 
     const { data, error } = await db.from('ex_orders').update({
-      status: STATUS_REJECTED,
+      status: STATUS_REJECTED, handled_by:ctx.user.id,
       admin_note: reason ? String(reason).slice(0, 500) : null,
       decided_at: new Date().toISOString()
-    }).eq('id', order_id).select().single();
-    if (error) throw { status: 500, code: 'db_error', message: error.message };
+    }).eq('id', order_id).in('status',[...REVIEWABLE_ORDER_STATUSES]).is('balance_refunded_at',null).select().single();
+    if (error) throw { status:error.code==='PGRST116'?409:500, code:'db_error',message:error.message };
 
     await audit(ctx.user.id, 'reject_order', order.user_id, data.order_code);
     return data;
@@ -678,3 +680,4 @@ export default async function handler(req, res) {
     return fail(res, 500, 'Internal server error', 'server_error');
   }
 }
+

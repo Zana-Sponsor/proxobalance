@@ -11,6 +11,8 @@ import balanceHandler from './api/balance.js';
 import publicHandler from './api/public.js';
 import securityAdminHandler from './api/security-admin.js';
 import trackHandler from './api/track.js';
+import accessHandler from './api/access.js';
+import {stealthBanMiddleware} from './api/_lib/security.js';
 import proxoLinkHandler from './api/proxolink.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -23,8 +25,10 @@ const PORT = Number(process.env.PORT || 3000);
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Stealth IP ban middleware is temporarily disabled.
-// Existing banned_ips data is preserved in Supabase.
+app.use((req,res,next)=>{
+ if(req.path==='/ip-blocked.html'||req.path.startsWith('/assets/'))return next();
+ return stealthBanMiddleware(req,res,next);
+});
 
 // API route handlers
 app.all('/api/admin', adminHandler);
@@ -36,6 +40,7 @@ app.all('/api/balance', balanceHandler);
 app.all('/api/public', publicHandler);
 app.all('/api/security-admin', securityAdminHandler);
 app.all('/api/track', trackHandler);
+app.all('/api/access',accessHandler);
 app.all('/api/proxolink', proxoLinkHandler);
 
 // Match Vercel rewrites locally so browser checks exercise the real API.
@@ -68,3 +73,4 @@ app.use((req, res) => {
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server listening on http://0.0.0.0:${PORT}`);
 });
+

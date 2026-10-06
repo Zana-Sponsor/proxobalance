@@ -125,6 +125,12 @@ Deno.serve(async (req: Request) => {
       auth: { persistSession: false, autoRefreshToken: false },
     });
 
+    const {data: targetProfile,error:targetProfileError}=await adminClient.from("ex_profiles")
+      .select("is_admin,role").eq("id",targetUserId).single();
+    if(targetProfileError || (targetProfile?.is_admin && callerProfile.role!=="super_admin")){
+      return json({error:"forbidden",message:"SUPER_ADMIN_REQUIRED_FOR_STAFF_PASSWORD"},403);
+    }
+
     const { data: targetUser, error: getErr } = await adminClient.auth.admin
       .getUserById(targetUserId);
     if (getErr || !targetUser?.user) {
@@ -203,4 +209,5 @@ Deno.serve(async (req: Request) => {
     }, 500);
   }
 });
+
 
