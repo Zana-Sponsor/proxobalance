@@ -95,6 +95,8 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
 <link rel="stylesheet" href="/assets/css/panel-consistency.css?v=1">
 <link rel="stylesheet" href="/assets/css/exchange-balance.css?v=2">
 <link rel="stylesheet" href="/assets/css/exchange-features.css?v=2">
+<link rel="stylesheet" href="/assets/css/exchange-auth-app.css?v=1"><script src="/assets/js/exchange-access.js?v=1"></script>
+<link rel="stylesheet" href="/assets/css/exchange-customer-polish.css?v=2">
 </head>
 
 <body>
@@ -288,8 +290,8 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
         <span class="icn icn-lg icon--solar icon--solar--transfer-horizontal-linear" aria-hidden="true"></span>
       </div>
       <h1>Proxo Balance</h1>
-      <p>ئاڵوگۆڕی دراو بە کەمترین لێبڕین — متمانە و خێرایی</p>
-      <div class="auth-proof" aria-label="ئامارەکانی پلاتفۆرم">
+      <p>بەخێربێیت بۆ هەژمارەکەت</p>
+      <div class="auth-proof" hidden aria-label="ئامارەکانی پلاتفۆرم">
         <div><b id="authProofCount">—</b><span>مامەڵەی سەرکەوتوو</span></div>
         <div><b id="authProofVolume">—</b><span>قەبارەی ئاڵوگۆڕ (IQD)</span></div>
         <div><b id="authProofUsers">—</b><span>بەکارهێنەر</span></div>
@@ -304,10 +306,10 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
         <div class="auth-step-icon">
           <span class="icn icn-lg icon--solar icon--solar--letter-linear" aria-hidden="true"></span>
         </div>
-        <div class="auth-step-label"><h3>چوونەژوورەوە</h3><p>ئیمەیلەکەت بنووسە</p></div>
+        <div class="auth-step-label"><h3>با دەست پێ بکەین</h3><p>ئیمەیلەکەت بنووسە؛ هەژمار هەبێت دەچیتە ژوورەوە، نەبێت هەژمار دروست دەکەیت.</p></div>
         <div class="input-wrap">
           <span class="input-ico"><span class="icn icn-sm icon--solar icon--solar--letter-linear" aria-hidden="true"></span></span>
-          <input class="input" type="email" id="authEmail" placeholder="example@gmail.com" dir="ltr" onkeydown="if(event.key==='Enter')nextAuthStep('email')">
+          <input class="input" type="email" autocomplete="username" aria-label="ئیمەیل" id="authEmail" placeholder="example@gmail.com" dir="ltr" onkeydown="if(event.key==='Enter')nextAuthStep('email')">
         </div>
         <button class="btn btn-primary btn-block" id="emailNextBtn" onclick="nextAuthStep('email')">
           <span>دواتر</span>
@@ -324,7 +326,7 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
         <div class="auth-step-label"><h3>هەژمارێکی نوێ</h3><p>ناوت بنووسە بۆ دروستکردنی هەژمار</p></div>
         <div class="input-wrap">
           <span class="input-ico"><span class="icn icn-sm icon--solar icon--solar--user-linear" aria-hidden="true"></span></span>
-          <input class="input" type="text" id="authName" placeholder="ناوی تەواو" onkeydown="if(event.key==='Enter')nextAuthStep('name')">
+          <input class="input" type="text" autocomplete="name" aria-label="ناوی تەواو" id="authName" placeholder="ناوی تەواو" onkeydown="if(event.key==='Enter')nextAuthStep('name')">
         </div>
         <button class="btn btn-primary btn-block" id="nameNextBtn" onclick="nextAuthStep('name')">
           <span>دواتر</span>
@@ -344,7 +346,7 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
         </div>
         <div class="auth-step-label"><h3 id="passStepTitle">وشەی نهێنی</h3><p id="passStepSub">وشەی نهێنیت بنووسە بۆ چوونەژوورەوە</p></div>
         <div class="pass-wrap field">
-          <input class="input" type="password" id="authPass" placeholder="وشەی نهێنی" dir="ltr" onkeydown="if(event.key==='Enter')nextAuthStep('pass')">
+          <input class="input" type="password" autocomplete="current-password" aria-label="وشەی نهێنی" id="authPass" placeholder="وشەی نهێنی" dir="ltr" onkeydown="if(event.key==='Enter')nextAuthStep('pass')">
           <button type="button" class="pass-eye" onclick="togglePass('authPass',this)" aria-label="پیشاندانی وشەی نهێنی"><span class="pass-eye-ico icn icn-sm"></span></button>
         </div>
         <button class="btn btn-primary btn-block" id="authBtn" onclick="nextAuthStep('pass')">
@@ -643,6 +645,10 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
       <div id="balanceHistoryList" class="pb-history" hidden></div>
     </section>
 
+    <aside class="welcome-reward" id="welcomeReward" aria-label="پاداشتی هەژماری نوێ" hidden>
+      <span class="welcome-reward-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11v10h16V11M3 7h18v4H3zM12 7v14"/><path d="M12 7H8a2.5 2.5 0 1 1 2.5-2.5L12 7Zm0 0h4a2.5 2.5 0 1 0-2.5-2.5L12 7Z"/></svg></span>
+      <div><h3>پاداشتی هەژماری نوێ</h3><p><b dir="ltr">50%</b> داشکاندنی لێبڕینی واڵێتەکان · یەک جار تا <b dir="ltr">30,000 IQD</b></p><small id="welcomeRewardExpiry"></small></div>
+    </aside>
     <div class="ux-progress" role="list" aria-label="هەنگاوەکانی ئاڵوگۆڕ">
       <div class="ux-progress-item is-current" data-ux-stage="send" role="listitem" aria-current="step">
         <span class="ux-progress-index" aria-hidden="true">١</span>
@@ -806,7 +812,7 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
     <!-- ── SUMMARY ───────────────────────────────────────────── -->
     <div class="xc-summary" id="xcBreakdown" aria-live="polite">
       <div class="xc-summary-head">
-        <h3>پوختەی داواکاری</h3>
+        <h3>وردەکاری بڕ و لێبڕین</h3>
       </div>
       <div class="xc-sum-row" id="bdSentRow">
         <span class="lbl">دەینێریت</span>
@@ -820,12 +826,15 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
         <span class="lbl">کرێی خزمەتگوزاری</span>
         <span class="v" id="bdFee">—</span>
       </div>
+      <div class="xc-sum-row fee-saving" id="bdDiscountRow" hidden>
+        <span class="lbl">سوودی داشکاندن</span><span class="v" id="bdDiscount" dir="ltr">—</span>
+      </div>
       <div class="xc-sum-row total">
         <span class="lbl">وەریدەگریت</span>
         <span class="v"><span id="totalDisplay" class="total-value">0 IQD</span></span>
       </div>
-      <div id="feeDisplay" class="fee-note"></div>
-      <div id="rewardBanner" class="fee-note" role="status" aria-live="polite" style="color:#1568ba;margin-top:6px;white-space:pre-line" hidden></div>
+      <div id="feeDisplay" class="fee-note" hidden></div>
+      <div id="rewardBanner" class="fee-note reward-detail" role="status" hidden></div>
     </div>
 
       </div>
@@ -996,26 +1005,8 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
           <h2>مامەڵەکان</h2>
           <p>هەموو ئاڵوگۆڕەکانت لێرەدان.</p>
         </div>
-        <span class="tx-profit-logo" dir="ltr">Proxo</span>
       </div>
 
-      <div class="tx-summary tx-profit-summary" id="txSummary">
-      <span class="tx-sum-cap">ئاڵوگۆڕە تەواوبووەکان</span>
-      <div class="tx-sum-pair">
-        <div class="tx-sum-item sent">
-          <span class="tx-sum-lbl">ناردنت</span>
-          <b class="tx-sum-val" id="txTotalSent" dir="ltr"><span class="sk sk-num"></span></b>
-          <span class="tx-sum-sub" id="txTotalSentSub">IQD</span>
-        </div>
-        <div class="tx-sum-item recv">
-          <span class="tx-sum-lbl">وەرگرتنت</span>
-          <b class="tx-sum-val" id="txTotalRecv" dir="ltr"><span class="sk sk-num"></span></b>
-          <span class="tx-sum-sub">IQD</span>
-        </div>
-      </div>
-    </div>
-
-    <h3 class="tx-profit-title">پاڵاوتنی مامەڵەکان</h3>
     <div class="tx-profit-tools">
       <div class="search-wrap">
       <span class="search-ico"><span class="icn icn-sm icon--solar icon--solar--magnifer-linear" aria-hidden="true"></span></span>
@@ -1034,7 +1025,7 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
     </div>
 
     </div>
-    <h3 class="tx-profit-title tx-profit-detail-title">وردەکاری مامەڵەکان <small class="result-count tx-profit-count" id="txResultCount"></small></h3>
+    <h3 class="tx-profit-title tx-profit-detail-title">مێژووی مامەڵەکان <small class="result-count tx-profit-count" id="txResultCount"></small></h3>
     <div id="txList" class="tx-profit-list" style="width:100%;">
   <div class="tx-skel">
     <div class="tx-skel-head"><span class="sk sk-w30"></span><span class="sk sk-pill sk-w30"></span></div>
@@ -1554,11 +1545,11 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
 <script src="/assets/js/index-svg-icons.js?v=1"></script>
 <script src="/assets/js/exchange-reward-pricing.js?v=2"></script>
 <script src="/assets/js/exchange-live.js?v=1"></script>
-<script src="/assets/js/app.js?v=43"></script>
+<script src="/assets/js/app.js?v=46"></script>
 <script src="/assets/js/exchange-customer-features.js?v=3"></script>
 <script src="/assets/js/exchange-balance.js?v=4"></script>
 <script src="/assets/js/exchange-ux.js?v=1"></script>
 <script src="/assets/js/receipt-download.js?v=4"></script>
-<script src="/assets/js/track.js?v=2"></script>
+<script src="/assets/js/track.js?v=3"></script>
 </body>
 </html>

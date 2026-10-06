@@ -19,6 +19,7 @@ mkdirSync(output, { recursive: true });
 // replacing stale copies of files that have an authoritative root version.
 cpSync(sourceAssets, join(output, 'assets'), { recursive: true, force: true });
 copyFileSync(sourceIndex, outputIndex);
+copyFileSync(join(root,'ip-blocked.html'),join(output,'ip-blocked.html'));
 // The canonical Exchange admin panel is also edited at the repository root.
 // Always copy it into public/ so Vercel does not serve an older admin page.
 const sourceAdmin = join(root, 'exchange-admin.html');
@@ -41,3 +42,4 @@ for (const asset of new Set(assetRefs)) {
 
 console.log('Deployment prepared from ROOT index.html and ROOT assets/.');
 console.log('Output: public/index.html; verified ' + new Set(assetRefs).size + ' referenced assets.');
+
