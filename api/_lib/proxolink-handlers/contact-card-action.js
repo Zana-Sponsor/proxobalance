@@ -35,7 +35,7 @@ async function handler(req,res,{user}) {
     const card=await cardById(id);
     if(card.user_id!==user.id)
       return json(res,404,{ok:false,error:'not_found'});
-    if(card.page_kind){
+    if(card.page_kind||card.template_version===6){
       assertIsolatedWrites();
       if(card.archived_at)return json(res,409,{ok:false,error:'page_archived'});
     }

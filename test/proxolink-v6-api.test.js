@@ -130,3 +130,31 @@ test('typed advertisement links use the stable page URL without tokens, RPCs or 
  assert.equal(fixture.events.length,0);
  // The fixture has no token-issuing RPC handler; any such call fails this test.
 });
+test('typed avatar routes cannot be changed by a page_type query or attribution token',async()=>{
+ const sharp=(await import('sharp')).default;
+ const image=await sharp({create:{width:20,height:20,channels:3,background:'#128c7e'}}).png().toBuffer();
+ const delegate=fixture.fetcher;
+ global.fetch=async(raw,options)=>new URL(raw).pathname.startsWith('/storage/')
+   ?new Response(image,{headers:{'Content-Type':'image/png'}}):delegate(raw,options);
+ for(const kind of PAGE_TYPES){
+  const body=pagePayload(kind,[{contact:'telegram',order:'talabat',download:'app_store'}[kind]]);
+  body.avatar_path=OWNER+'/'+body.client_request_id+'/avatar.png';
+  const created=await call('cards',{method:'POST',body});assert.equal(created.status,201,created.body);
+  const id=created.json().card.id;
+  for(const route of PAGE_TYPES){
+   const result=await call(route==='contact'?'avatar':route+'-avatar',{query:{id,page_type:kind,token:'fake-attribution-token'},auth:null});
+   assert.equal(result.status,kind===route?200:404,kind+' on '+route);
+  }
+ }
+ assert.equal(fixture.events.length,0);
+});
+test('V6 cannot create through the legacy UUID protocol or rewrite legacy customers outside isolated staging',async()=>{
+ const id=randomUUID(),legacy={id,user_id:OWNER,name:'Existing customer',bio:'',platforms:{wa:'9647501234567'},
+  template_key:'classic',template_version:1,status:'active',publish_status:'ready',updated_at:new Date().toISOString()};
+ fixture.rows.push(legacy);
+ assert.equal((await call('cards',{method:'POST',body:{client_request_id:randomUUID(),name:'V6',template_key:'pill-white',template_version:6,platforms:{tg:'proxo_iq'}}})).status,422);
+ process.env.PROXO_V6_WRITE_MODE='disabled';
+ const edit=await call('cards',{method:'PATCH',query:{id},body:{template_key:'pill-white',template_version:6,expected_updated_at:legacy.updated_at}});
+ assert.equal(edit.status,503);assert.equal(edit.json().error,'isolated_staging_required');
+ assert.equal(legacy.template_key,'classic');assert.equal(fixture.writes.length,0);
+});

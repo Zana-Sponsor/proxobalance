@@ -109,7 +109,11 @@ export function validateCardData(card,{legacy=false}={}) {
     normalizeSettings(card.page_kind,card.settings,{allowEmpty:card.demo===true});
     assertAvatar(card);return true;
   }
-  if(PREPARED_DESIGNS.includes(card.template_key)&&card.template_version===6)return true;
+  if(PREPARED_DESIGNS.includes(card.template_key)&&card.template_version===6){
+    if(typeof card.name!=='string'||!card.name.trim()||card.name.length>160)throw err(422,'invalid_card_name');
+    if(typeof (card.bio??'')!=='string'||String(card.bio||'').length>2000)throw err(422,'invalid_bio');
+    return true;
+  }
   if (!STYLES.has(card.template_key || card.style)) throw err(422,'template_not_found');
   if (typeof card.name !== 'string' || !card.name.trim() || card.name.length > 160)
     throw err(422,'invalid_card_name');

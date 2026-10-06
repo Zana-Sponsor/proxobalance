@@ -54,11 +54,11 @@
     },
     {
       "source": "/order/:id/avatar",
-      "destination": "/api/proxolink?op=avatar&page_type=order&id=:id"
+      "destination": "/api/proxolink?op=order-avatar&id=:id"
     },
     {
       "source": "/download/:id/avatar",
-      "destination": "/api/proxolink?op=avatar&page_type=download&id=:id"
+      "destination": "/api/proxolink?op=download-avatar&id=:id"
     },
     {
       "source": "/order/:id",
@@ -78,7 +78,7 @@
     },
     {
       "source": "/a/:token/avatar",
-      "destination": "/api/proxolink?op=avatar&token=:token"
+      "destination": "/api/proxolink?op=ad-avatar&token=:token"
     },
     {
       "source": "/a/:token/action/:action",

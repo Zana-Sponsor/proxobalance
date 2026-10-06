@@ -31,6 +31,7 @@ JSON.stringify({ready:document.readyState==='complete',width:innerWidth,scroll:d
  providers:Array.from(document.querySelectorAll('[data-provider]')).map(e=>e.dataset.provider),
  pixel:typeof window.ttq!=='undefined',placeholders:document.body.textContent.includes('{{PROXO_CONFIG}}'),
  motion:Array.from(document.querySelectorAll('[data-provider]')).every(e=>getComputedStyle(e).transitionDuration.split(',').some(t=>parseFloat(t)>0)),
+ animations:document.getAnimations().map(a=>Number(a.currentTime)||0),
  waVisible:!!document.querySelector('.wa-message-card:not([hidden])')})
 ''');
 Future<void> main() async {WidgetsFlutterBinding.ensureInitialized();runApp(const _ProbeApp());}
@@ -43,7 +44,7 @@ class _Probe extends StatefulWidget {
  @override State<_Probe> createState()=>_ProbeState();
 }
 class _ProbeState extends State<_Probe> {
- final _viewport=GlobalKey(),_results=<String,dynamic>{};
+ final _viewport=GlobalKey(),_results=<String,dynamic>{},_candidateChecks=<String,Map<String,dynamic>>{};
  int _index=0;bool _baseline=false,_complete=false;
  Map<String,String> _headers={};
  String get _id {final c=_cases[_index.clamp(0,_cases.length-1)];return '${c['style']}-${c['type']}-${c['language']}-${c['width']}';}
@@ -66,11 +67,27 @@ class _ProbeState extends State<_Probe> {
     ||(state['scroll'] as num)>(state['width'] as num)+1||((state['width'] as num)-(c['width'] as int)).abs()>1
     ||jsonEncode(state['providers'])!=jsonEncode(expectedProviders)||state['motion']!=true)throw StateError('rendered_page_checks');
    if(!baseline){
+    final times=state['animations'] as List;
+    if(times.isNotEmpty){
+     await Future<void>.delayed(const Duration(milliseconds:150));
+     final later=(await _state(controller))['animations'] as List;
+     if(!List.generate(times.length,(i)=>i).any((i)=>i<later.length&&(later[i] as num)>(times[i] as num)))throw StateError('animation_motion');
+    }
     final before=await controller.currentUrl();
     await controller.runJavaScript('window.__probeOpened=0;window.open=function(){window.__probeOpened++;};document.querySelectorAll("[data-provider]").forEach(e=>e.click());');
     await Future<void>.delayed(const Duration(milliseconds:200));
     final inert=await _read(controller,'JSON.stringify({inert:window.__probeOpened===0,dialog:!document.getElementById("intent-dialog").open})');
     if(inert['inert']!=true||inert['dialog']!=true||await controller.currentUrl()!=before)throw StateError('preview_actions');
+    final publicActions=await _read(controller,r'''
+(()=>{const config=window.ProxoLink.getConfig(),opened=[];
+ window.__PROXO_INTERCEPT_NAVIGATION__=true;
+ window.addEventListener('proxo:navigate',e=>{opened.push(e.detail);e.preventDefault();});
+ window.ProxoLink.setConfig({...config,preview:false});
+ document.querySelectorAll('[data-provider]').forEach(e=>e.click());
+ const valid=opened.length===config.buttons.length&&opened.every((a,i)=>a.provider===config.buttons[i].type&&a.url===config.buttons[i].url);
+ window.ProxoLink.setConfig(config);return JSON.stringify({valid});})()
+''');
+    if(publicActions['valid']!=true||await controller.currentUrl()!=before)throw StateError('public_actions');
     final configuration=await _configuration();
     for(final url in ['https://example.invalid/','${configuration['origin']}/api/contact-templates','${configuration['origin']}/page-preview?token=invalid','file:///etc/passwd']){
      await controller.runJavaScript('location.href=${jsonEncode(url)}');await Future<void>.delayed(const Duration(milliseconds:150));
@@ -80,6 +97,9 @@ class _ProbeState extends State<_Probe> {
      await Future<void>.delayed(const Duration(milliseconds:2200));
      if((await _state(controller))['waVisible']!=true)throw StateError('whatsapp_hint');
     }
+    _candidateChecks[id]={'width':state['width'],'font_loaded':state['fonts'],'font_applied':state['fontApplied'],
+     'images_loaded':state['images'],'icons_loaded':state['icons'],'animation_checked':true,'animation_count':times.length,
+     'provider_types':true,'preview_inert':true,'public_actions_checked':publicActions['valid'],'navigation_blocked':true};
    }
    // Same WebView/device/DPR and frozen original CSS on both documents.
    await controller.runJavaScript('window.scrollTo(0,0);document.getAnimations().forEach(a=>{a.pause();a.currentTime=0;});const toast=document.getElementById("toast");toast.hidden=true;document.querySelectorAll(".wa-message-card").forEach(e=>{e.hidden=true;new MutationObserver(()=>{if(!e.hidden)e.hidden=true;}).observe(e,{attributes:true,attributeFilter:["hidden"]});});');
@@ -96,8 +116,7 @@ class _ProbeState extends State<_Probe> {
     await Future<void>.delayed(const Duration(milliseconds:250));
    }
    if(!seen)throw StateError('screenshot_ack');
-   if(baseline)_results[id]={'passed':true,'width':state['width'],'font_loaded':true,'font_applied':true,'images_loaded':true,'icons_loaded':true,
-    'animation_checked':true,'animation_count':0,'contact_destinations':true,'confirmation':true,'navigation_blocked':true};
+   if(baseline)_results[id]={'passed':true,..._candidateChecks[id]!};
   }catch(error){
    _results[id]={'passed':false,'failed_check':error is StateError?error.message:'unclassified_native_check',
     'width':state?['width'],'font_loaded':state?['fonts'],'font_applied':state?['fontApplied'],'images_loaded':state?['images'],'icons_loaded':state?['icons']};

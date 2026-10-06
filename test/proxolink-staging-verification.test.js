@@ -81,7 +81,8 @@ test('staging orchestrator exercises all twelve independent page/design lifecycl
       throw Error('Unexpected provider fixture request');
     }
     assert.equal(u.origin,config.base);
-    const operation=/^\/(contact|order|download)\//.test(u.pathname)?(u.pathname.endsWith('/avatar')?'avatar':u.pathname.split('/')[1]):
+    const pageType=u.pathname.split('/')[1];
+    const operation=/^\/(contact|order|download)\//.test(u.pathname)?(u.pathname.endsWith('/avatar')?(pageType==='contact'?'avatar':pageType+'-avatar'):pageType):
       {'/api/contact-templates':'templates','/api/contact-cards':'cards','/api/contact-card-action':'card-action','/api/contact-preview-token':'preview-token',
         '/api/page-preview-token':'form-preview-token','/page-preview':'form-preview'}[u.pathname];
     const query={...Object.fromEntries(u.searchParams),op:operation};

@@ -57,7 +57,7 @@ const safeTransportCodes=new Set(['ENOTFOUND','EAI_AGAIN','ETIMEDOUT','ECONNRESE
   'ECONNREFUSED','CERT_HAS_EXPIRED','UNABLE_TO_VERIFY_LEAF_SIGNATURE']);
 const safeNativeChecks=new Set(['rendered_page_checks','animation_motion',
   'contact_confirmation','contact_cancel','contact_confirm','inert_tiktok',
-  'preview_url','navigation_boundary','fresh_frame','pixel_density','preview_actions','whatsapp_hint',
+  'preview_url','navigation_boundary','fresh_frame','pixel_density','preview_actions','public_actions','whatsapp_hint',
   'screenshot_ack','unclassified_native_check']);
 async function jsonRequest(url,{headers={},...options}={}) {
   const response=await safeRequest(url,{...options,headers});
@@ -162,7 +162,7 @@ async function main() {
           name==='failed_check'?safeNativeChecks.has(value):
           ['width','animation_count'].includes(name)?Number.isInteger(value):
           ['passed','font_loaded','font_applied','images_loaded','icons_loaded',
-            'animation_checked','contact_destinations','confirmation','navigation_blocked']
+            'animation_checked','provider_types','preview_inert','public_actions_checked','navigation_blocked']
             .includes(name)&&typeof value==='boolean'))]));
       writeFileSync(output+'/case-results.json',JSON.stringify(observed,null,2));
       const safe=validateNativeResults(data,captured,pixels);

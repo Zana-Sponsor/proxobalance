@@ -48,8 +48,8 @@ test('live checks require app authentication independently of the Vercel bypass 
 });
 test('native evidence requires 120 captured cases plus exact same-device Android WebView pixel comparisons',()=>{
  const entries=NATIVE_CASE_IDS.map(id=>[id,{passed:true,width:Number(id.split('-').at(-1)),
-  font_loaded:true,images_loaded:true,icons_loaded:true,animation_count:1,animation_checked:true,contact_destinations:true,
-  confirmation:true,navigation_blocked:true,private_token:'not-for-artifacts'}]);
+  font_loaded:true,font_applied:true,images_loaded:true,icons_loaded:true,animation_count:1,animation_checked:true,provider_types:true,
+  preview_inert:true,public_actions_checked:true,navigation_blocked:true,private_token:'not-for-artifacts'}]);
  const data=Object.fromEntries(entries),captured=new Set(entries.map(([id])=>id));
  const pixels=Object.fromEntries(entries.map(([id,value])=>[id,{width:value.width,changed_pixels:0,exact_pixels_equal:true}]));
  assert.equal(entries.length,120);

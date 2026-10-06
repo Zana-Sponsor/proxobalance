@@ -49,10 +49,10 @@ for(const op of ['cards','card-action','preview-token','ad-links','templates'])
   app.all('/api/contact-'+op,proxoRoute(op));
 app.get('/contact-preview',proxoRoute('template-preview'));
 for(const kind of ['contact','order','download']) {
-  app.get('/'+kind+'/:id/avatar',proxoRoute('avatar',req=>({id:req.params.id,page_type:kind})));
+  app.get('/'+kind+'/:id/avatar',proxoRoute(kind==='contact'?'avatar':kind+'-avatar',req=>({id:req.params.id})));
   app.get('/'+kind+'/:id',proxoRoute(kind,req=>({id:req.params.id})));
 }
-app.get('/a/:token/avatar',proxoRoute('avatar',req=>({token:req.params.token})));
+app.get('/a/:token/avatar',proxoRoute('ad-avatar',req=>({token:req.params.token})));
 app.get('/api/page-providers',proxoRoute('providers'));
 app.post('/api/page-preview-token',proxoRoute('form-preview-token'));
 app.get('/page-preview',proxoRoute('form-preview'));

@@ -11,12 +11,19 @@ import { createFormPreview, renderFormPreview, formPreviewAvatar } from './_lib/
 import { json } from './_lib/security.js';
 
 const handlers = { cards, 'card-action': action, 'preview-token': preview,
-  'ad-links': links, contact, order:contact, download:contact, ad, avatar, templates, providers,
+  'ad-links': links, contact, order:contact, download:contact, ad, avatar,
+  'order-avatar':avatar, 'download-avatar':avatar, 'ad-avatar':avatar, templates, providers,
   'form-preview-token':createFormPreview, 'form-preview':renderFormPreview, 'form-preview-avatar':formPreviewAvatar, 'template-preview': templatePreview };
 export default async function handler(req, res) {
   const op = typeof req.query?.op === 'string' ? req.query.op : '';
   const selected = Object.hasOwn(handlers, op) && handlers[op];
   if (!selected) return json(res, 404, { ok: false, error: 'not_found' });
   if(['contact','order','download'].includes(op))req.query.page_type=op;
+  const avatarTypes={avatar:'contact','order-avatar':'order','download-avatar':'download'};
+  if(Object.hasOwn(avatarTypes,op)){
+    req.query.page_type=avatarTypes[op];
+    if(req.query.id!==undefined)delete req.query.token;
+  }
+  if(op==='ad-avatar')delete req.query.id;
   return selected(req, res);
 }

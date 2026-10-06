@@ -1,4 +1,4 @@
-import { providerDestination } from '../proxolink-pages.js';
+import { providerDestination, assertIsolatedWrites } from '../proxolink-pages.js';
 import { createPage, editPage } from './independent-pages.js';
 import { publishAudit } from '../proxolink-audit.js';
 import { readJson, json, withSecurity } from '../security.js';
@@ -45,8 +45,8 @@ function validatePayload(body,userId,id,old=null) {
     throw Object.assign(new Error('invalid_request'),{code:'invalid_request'});
   if(typeof data.tt!=='string')
     throw Object.assign(new Error('invalid_request'),{code:'invalid_request'});
-  // New clients cannot submit Telegram. Retain existing legacy values in
-  // storage during edits, without exposing or enabling them in the renderer.
+  // Historical V5 Telegram data stays stored and inert. The prepared V6
+  // renderer supports Telegram only as a validated ordinary Contact button.
   data.platforms=normalizedPlatforms(data.platforms,{
     historical:Boolean(old && body.platforms===undefined) || data.template_version===6
   });
@@ -86,6 +86,7 @@ async function create(req,res,userId,body) {
   // One client-generated UUID is also the idempotency key and avatar folder ID.
   // The owner always comes from the verified Proxo JWT, not request JSON.
   if(body.page_kind!==undefined)return createPage(res,userId,body);
+  if(body.template_version===6)return json(res,422,{ok:false,error:'invalid_page_type'});
   const id=body.client_request_id;
   if(!validUuid(id)||id===userId||body.id && body.id!==id)
     return json(res,422,{ok:false,error:'invalid_request'});
@@ -153,6 +154,7 @@ async function edit(req,res,userId,body,id) {
   if(current.page_kind)return editPage(res,userId,body,current);
   if(body.page_kind!==undefined)return json(res,422,{ok:false,error:'invalid_page_type'});
   const proposed=validatePayload(body,userId,id,current);
+  if(proposed.template_version===6)assertIsolatedWrites();
   if(Date.parse(body.expected_updated_at)!==Date.parse(current.updated_at))
     return json(res,409,{ok:false,error:'edit_conflict'});
   // Render in memory BEFORE changing a currently published card.
