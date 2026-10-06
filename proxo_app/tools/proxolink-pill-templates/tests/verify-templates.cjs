@@ -21,19 +21,35 @@ function contrast(a,b){const [x,y]=[luminance(a),luminance(b)].sort((a,b)=>a-b);
    await page.setViewportSize({width,height});
    const measured=await page.evaluate(()=>{
     const box=n=>{const r=n.getBoundingClientRect();return {x:r.x,y:r.y,width:r.width,height:r.height}};
-    return {overflow:document.documentElement.scrollWidth>innerWidth,font:document.fonts.check('16px ProxoBahij'),avatar:box(document.getElementById('avatar')),buttons:[...document.querySelectorAll('.pl-btn')].map(n=>({provider:n.dataset.provider,box:box(n),font:getComputedStyle(n.querySelector('.pl-lbl')).fontSize,icon:box(n.querySelector('svg')),bg:getComputedStyle(n).backgroundColor,fg:getComputedStyle(n).color,center:box(n.querySelector('.pl-lbl')).x+box(n.querySelector('.pl-lbl')).width/2})),stores:[...document.querySelectorAll('.store-link')].map(n=>({provider:n.dataset.provider,box:box(n),image:box(n.querySelector('img')),loaded:n.querySelector('img').naturalWidth>0})),lists:[...document.querySelectorAll('.list')].map(n=>({gap:getComputedStyle(n).gap,heights:[...n.children].map(b=>box(b).height)}))};
+    return {overflow:document.documentElement.scrollWidth>innerWidth,font:document.fonts.check('16px ProxoBahij'),avatar:box(document.getElementById('avatar')),buttons:[...document.querySelectorAll('.pl-btn')].map(n=>({provider:n.dataset.provider,box:box(n),font:getComputedStyle(n.querySelector('.pl-lbl')).fontSize,icon:box(n.querySelector('svg')),bg:getComputedStyle(n).backgroundColor,gradient:getComputedStyle(n).backgroundImage,fg:getComputedStyle(n).color,center:box(n.querySelector('.pl-lbl')).x+box(n.querySelector('.pl-lbl')).width/2})),stores:[...document.querySelectorAll('.store-link')].map(n=>({provider:n.dataset.provider,box:box(n),image:box(n.querySelector('img')),gradient:getComputedStyle(n).backgroundImage,loaded:n.querySelector('img').naturalWidth>0})),lists:[...document.querySelectorAll('.list')].map(n=>({gap:getComputedStyle(n).gap,heights:[...n.children].map(b=>box(b).height)}))};
    });
    assert(!measured.overflow,`${theme} ${width}: overflow`);assert(measured.font,`${theme}: font unavailable`);assert.equal(measured.avatar.width,88);assert.equal(measured.avatar.height,88);assert.equal(measured.buttons.length,9);assert.equal(measured.stores.length,2);
-   for(const b of measured.buttons){assert(Math.abs(b.box.height-56)<.1,`${b.provider} height ${b.box.height}`);assert.equal(b.font,'16px');assert(Math.abs(b.icon.width-22)<.1);assert(Math.abs(b.center-(b.box.x+b.box.width/2))<.1,`${b.provider}: not centered`);
-    const rgb=s=>s.match(/[\d.]+/g).slice(0,3).map(Number);b.contrast=contrast(rgb(b.bg),rgb(b.fg));assert(b.contrast>=4.5,`${b.provider}: contrast ${b.contrast}`);assert(b.box.x>=0&&b.box.x+b.box.width<=width+.1);
+   for(const b of measured.buttons){assert(Math.abs(b.box.height-56)<.1,`${b.provider} height ${b.box.height}`);assert.equal(b.font,'16px');assert(Math.abs(b.icon.width-24)<.1);assert(Math.abs(b.icon.height-24)<.1);assert(Math.abs(b.center-(b.box.x+b.box.width/2))<.1,`${b.provider}: not centered`);
+    const rgb=s=>s.match(/[\d.]+/g).slice(0,3).map(Number);const stops=[...b.gradient.matchAll(/rgb\(([^)]+)\)/g)].map(m=>m[1].split(',').map(Number));assert.equal(stops.length,3,`${b.provider}: missing gradient`);
+    b.contrast=Infinity;for(let i=1;i<stops.length;i++)for(let n=0;n<=200;n++){const t=n/200;b.contrast=Math.min(b.contrast,contrast(stops[i-1].map((v,k)=>v+(stops[i][k]-v)*t),rgb(b.fg)));}
+    assert(b.contrast>=4.5,`${b.provider}: gradient contrast ${b.contrast}`);assert(b.box.x>=0&&b.box.x+b.box.width<=width+.1);
    }
    for(const list of measured.lists)assert.equal(list.gap,'12px');
    const message=await page.locator('.wa-message-card').evaluate(n=>{const r=n.getBoundingClientRect(),b=n.parentElement.getBoundingClientRect(),before=n.parentElement.previousElementSibling||n.parentElement.parentElement.previousElementSibling;return{text:n.textContent,bg:getComputedStyle(n).backgroundColor,font:getComputedStyle(n).fontSize,animation:getComputedStyle(n).animationName,left:r.left,right:r.right,bottom:r.bottom,top:r.top,buttonTop:b.top,previousBottom:before.getBoundingClientRect().bottom};});
    assert.equal(message.text,'پەیوەندی بکە');assert.equal(message.bg,'rgb(37, 211, 102)');assert.equal(message.font,'12px');assert.equal(message.animation,'none');assert(message.left>=0&&message.right<=width);assert(message.bottom<message.buttonTop);assert(message.top>=message.previousBottom);
-   for(const store of measured.stores){assert(Math.abs(store.box.height-64)<.1,`${store.provider} target height ${store.box.height}`);assert(store.loaded);}
+   for(const store of measured.stores){assert(Math.abs(store.box.height-64)<.1,`${store.provider} target height ${store.box.height}`);assert(store.loaded);assert(store.gradient.startsWith('linear-gradient('));}
    assert(Math.abs(measured.stores[0].image.height-40)<.1);assert(Math.abs(measured.stores[1].image.height*168/250-40)<.1);
    results.cases.push({theme,width,height,...measured});
   }
+  const painted=await page.evaluate(async()=>{
+   const result=[];
+   for(const node of document.querySelectorAll('.pl-btn')){
+    const svg=node.querySelector('svg').cloneNode(true);svg.setAttribute('width','240');svg.setAttribute('height','240');svg.style.color='#000000';
+    const img=new Image();img.src='data:image/svg+xml,'+encodeURIComponent(new XMLSerializer().serializeToString(svg));await img.decode();
+    const canvas=document.createElement('canvas');canvas.width=canvas.height=240;const ctx=canvas.getContext('2d');ctx.drawImage(img,0,0,240,240);
+    const rgba=ctx.getImageData(0,0,240,240).data;let left=240,top=240,right=-1,bottom=-1;
+    for(let y=0;y<240;y++)for(let x=0;x<240;x++)if(rgba[(y*240+x)*4+3]>=32){left=Math.min(left,x);top=Math.min(top,y);right=Math.max(right,x);bottom=Math.max(bottom,y);}
+    result.push({provider:node.dataset.provider,width:(right-left+1)/10,height:(bottom-top+1)/10,centerX:(left+right+1)/20,centerY:(top+bottom+1)/20});
+   }
+   return result;
+  });
+  for(const icon of painted){assert(Math.max(icon.width,icon.height)>=20.8&&Math.max(icon.width,icon.height)<=22.5,`${icon.provider}: unbalanced painted icon`);assert(Math.abs(icon.centerX-12)<=.4&&Math.abs(icon.centerY-12)<=.4,`${icon.provider}: artwork off center`);}
+  results.checks.push({theme,check:'Rasterized visible icon artwork is centered in 24px slots with 21–22px optical size',passed:true,painted});
   await page.setViewportSize({width:390,height:844});await page.screenshot({path:path.join(root,'verification',theme+'-rendered.png'),fullPage:true});
   await page.setViewportSize({width:320,height:568});
   await page.evaluate(()=>{document.documentElement.style.fontSize='200%';const c=ProxoLink.getConfig();c.name='ناوی درێژی فرۆشگا و خزمەتگوزارییەکانی کڕیار ABC 123';c.bio='ناسێنەری درێژ بۆ پشکنینی دەق و ڕێکخستنی پەڕە '.repeat(10);c.buttons[0].label='پەیوەندی و پرسیار دەربارەی بەرهەمەکان و خزمەتگوزارییەکان';ProxoLink.setConfig(c);});

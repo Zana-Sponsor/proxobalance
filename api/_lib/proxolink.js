@@ -142,7 +142,7 @@ const templateSources={
 };
 export async function privateTemplate(record) {
   if(!STYLES.has(record.template_key)||record.version!==TEMPLATE_VERSION
-    ||record.storage_path!==record.template_key+'/v2/template.html')throw err(503,'template_invalid');
+    ||record.storage_path!==record.template_key+'/v'+TEMPLATE_VERSION+'/template.html')throw err(503,'template_invalid');
   // These four reviewed documents are private server assets, traced into the
   // deployment. Never serve arbitrary customer HTML or resurrect old styles.
   const raw=await templateSources[record.template_key]();

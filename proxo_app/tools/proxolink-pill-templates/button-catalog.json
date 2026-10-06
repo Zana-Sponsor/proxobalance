@@ -5,7 +5,7 @@
     "name": "WhatsApp",
     "group": "contact",
     "bg": "#25D366",
-    "fg": "#10231A",
+    "fg": "#083B25",
     "icon": "whatsapp",
     "hosts": [
       "wa.me",
@@ -13,15 +13,22 @@
       "www.whatsapp.com"
     ],
     "source": "https://www.meta.com/brand/resources/whatsapp/whatsapp-brand/",
-    "note": "Proxo UI green; logo colors must remain unchanged."
+    "note": "Proxo gradient in the provider color family; not a certified official brand gradient.",
+    "gradient": "linear-gradient(135deg,#46E98B 0%,#25D366 52%,#18B85E 100%)",
+    "gradientStops": [
+      "#46E98B",
+      "#25D366",
+      "#18B85E"
+    ],
+    "glow": "37,211,102"
   },
   {
     "id": "telegram",
     "label": "تیلیگرام",
     "name": "Telegram",
     "group": "contact",
-    "bg": "#0073B5",
-    "fg": "#FFFFFF",
+    "bg": "#18A5E3",
+    "fg": "#062538",
     "icon": "telegram",
     "hosts": [
       "t.me",
@@ -29,14 +36,21 @@
       "telegram.org"
     ],
     "source": "https://telegram.org/tour/screenshots",
-    "note": "Accessible Proxo blue derived from the Telegram blue family, not a certified official hex."
+    "note": "Proxo gradient in the provider color family; not a certified official brand gradient.",
+    "gradient": "linear-gradient(135deg,#38BDF8 0%,#18A5E3 52%,#0797D2 100%)",
+    "gradientStops": [
+      "#38BDF8",
+      "#18A5E3",
+      "#0797D2"
+    ],
+    "glow": "24,165,227"
   },
   {
     "id": "viber",
     "label": "ڤایبەر",
     "name": "Viber",
     "group": "contact",
-    "bg": "#6F5BED",
+    "bg": "#7547E4",
     "fg": "#FFFFFF",
     "brandColor": "#7360F2",
     "icon": "viber",
@@ -45,131 +59,201 @@
       "viber.com"
     ],
     "source": "https://www.viber.com/en/brand-center/",
-    "note": "Official Main Purple #7360F2; Proxo button uses slightly darker #6F5BED so normal white text exceeds 4.5:1."
+    "note": "Proxo gradient in the provider color family; not a certified official brand gradient.",
+    "gradient": "linear-gradient(135deg,#8351F0 0%,#7547E4 52%,#612ACF 100%)",
+    "gradientStops": [
+      "#8351F0",
+      "#7547E4",
+      "#612ACF"
+    ],
+    "glow": "117,71,228"
   },
   {
     "id": "korek",
     "label": "کۆڕەک",
     "name": "Korek",
     "group": "contact",
-    "bg": "#0060AB",
+    "bg": "#075FB8",
     "fg": "#FFFFFF",
     "icon": "phone",
     "hosts": [],
     "source": "https://www.korektel.com/",
-    "note": "Blue #0060AB read from the official Korek_En.svg; calls use the customer phone number."
+    "note": "Proxo gradient in the provider color family; not a certified official brand gradient.",
+    "gradient": "linear-gradient(135deg,#0E74CC 0%,#075FB8 52%,#0753A2 100%)",
+    "gradientStops": [
+      "#0E74CC",
+      "#075FB8",
+      "#0753A2"
+    ],
+    "glow": "7,95,184"
   },
   {
     "id": "asiacell",
     "label": "ئاسیاسێڵ",
     "name": "Asiacell",
     "group": "contact",
-    "bg": "#C61932",
+    "bg": "#CA1539",
     "fg": "#FFFFFF",
     "icon": "phone",
     "hosts": [],
     "source": "https://www.asiacell.com/personal",
-    "note": "Accessible Proxo red; no public certified hex palette was found."
+    "note": "Proxo gradient in the provider color family; not a certified official brand gradient.",
+    "gradient": "linear-gradient(135deg,#E21B3F 0%,#CA1539 52%,#B01236 100%)",
+    "gradientStops": [
+      "#E21B3F",
+      "#CA1539",
+      "#B01236"
+    ],
+    "glow": "202,21,57"
   },
   {
     "id": "talabat",
     "label": "تەڵەبات",
     "name": "talabat",
     "group": "order",
-    "bg": "#FF5A00",
-    "fg": "#241509",
+    "bg": "#FF761A",
+    "fg": "#281508",
     "icon": "bag",
     "hosts": [
       "talabat.com"
     ],
     "source": "https://iraq.talabat.com/",
-    "note": "Orange family from the official site; Proxo UI hue, not a certified palette."
+    "note": "Proxo gradient in the provider color family; not a certified official brand gradient.",
+    "gradient": "linear-gradient(135deg,#FF9A24 0%,#FF761A 52%,#F85F08 100%)",
+    "gradientStops": [
+      "#FF9A24",
+      "#FF761A",
+      "#F85F08"
+    ],
+    "glow": "255,118,26"
   },
   {
     "id": "lezzoo",
     "label": "لەزوو",
     "name": "Lezzoo",
     "group": "order",
-    "bg": "#E63946",
-    "fg": "#111111",
+    "bg": "#F34B68",
+    "fg": "#210B16",
     "icon": "bag",
     "hosts": [
       "lezzoo.com",
       "lezzoodevs.com"
     ],
     "source": "https://www.lezzoo.com/",
-    "note": "Red #E63946 read from the official site CSS; dark text preserves contrast."
+    "note": "Proxo gradient in the provider color family; not a certified official brand gradient.",
+    "gradient": "linear-gradient(135deg,#FF617A 0%,#F34B68 52%,#E83C57 100%)",
+    "gradientStops": [
+      "#FF617A",
+      "#F34B68",
+      "#E83C57"
+    ],
+    "glow": "243,75,104"
   },
   {
     "id": "toters",
     "label": "توتەرز",
     "name": "Toters",
     "group": "order",
-    "bg": "#10B899",
-    "fg": "#102A24",
+    "bg": "#14C7A9",
+    "fg": "#063329",
     "icon": "bag",
     "hosts": [
       "totersapp.com",
       "toters.com"
     ],
     "source": "https://www.totersapp.com/",
-    "note": "Teal sampled from the official LOGO GREEN-01.png; not a published hex specification."
+    "note": "Proxo gradient in the provider color family; not a certified official brand gradient.",
+    "gradient": "linear-gradient(135deg,#2AE0BC 0%,#14C7A9 52%,#08AE93 100%)",
+    "gradientStops": [
+      "#2AE0BC",
+      "#14C7A9",
+      "#08AE93"
+    ],
+    "glow": "20,199,169"
   },
   {
     "id": "wade",
     "label": "وادێ",
     "name": "WADE",
     "group": "order",
-    "bg": "#00C6E8",
-    "fg": "#10252C",
+    "bg": "#14C8E8",
+    "fg": "#062B36",
     "icon": "bag",
     "hosts": [
       "wadedelivery.com",
       "trytiptop.com"
     ],
     "source": "https://wadedelivery.com/ckb",
-    "note": "Cyan derived from the official WADE App Store icon; not a published hex specification."
+    "note": "Proxo gradient in the provider color family; not a certified official brand gradient.",
+    "gradient": "linear-gradient(135deg,#40DDF7 0%,#14C8E8 52%,#06B3D6 100%)",
+    "gradientStops": [
+      "#40DDF7",
+      "#14C8E8",
+      "#06B3D6"
+    ],
+    "glow": "20,200,232"
   },
   {
     "id": "app_store",
     "label": "ئەپ ستۆر",
     "name": "App Store",
     "group": "download",
-    "bg": "#000000",
+    "bg": "#1E2A3D",
     "fg": "#FFFFFF",
     "icon": "store",
     "hosts": [
       "apps.apple.com"
     ],
     "source": "https://developer.apple.com/app-store/marketing/guidelines/",
-    "note": "Unmodified preferred black official badge, 40px high, at least 10px clearspace."
+    "note": "Unmodified official store badge on a Proxo charcoal gradient wrapper.",
+    "gradient": "linear-gradient(135deg,#2C3B54 0%,#1E2A3D 52%,#111827 100%)",
+    "gradientStops": [
+      "#2C3B54",
+      "#1E2A3D",
+      "#111827"
+    ],
+    "glow": "30,42,61"
   },
   {
     "id": "google_play",
     "label": "گۆگڵ پلەی",
     "name": "Google Play",
     "group": "download",
-    "bg": "#000000",
+    "bg": "#1E2A3D",
     "fg": "#FFFFFF",
     "icon": "store",
     "hosts": [
       "play.google.com"
     ],
     "source": "https://partnermarketinghub.withgoogle.com/brands/google-play/",
-    "note": "Unmodified official badge PNG including transparent clearspace; visible badge 40px high."
+    "note": "Unmodified official store badge on a Proxo charcoal gradient wrapper.",
+    "gradient": "linear-gradient(135deg,#2C3B54 0%,#1E2A3D 52%,#111827 100%)",
+    "gradientStops": [
+      "#2C3B54",
+      "#1E2A3D",
+      "#111827"
+    ],
+    "glow": "30,42,61"
   },
   {
     "id": "instagram",
     "label": "ئینستاگرام",
     "name": "Instagram",
     "group": "contact",
-    "bg": "#B52B9C",
+    "bg": "#AE2BBA",
     "fg": "#FFFFFF",
     "icon": "camera",
     "hosts": [
       "instagram.com"
     ],
     "source": "https://www.meta.com/brand/resources/instagram/",
-    "note": "Proxo UI magenta."
+    "note": "Proxo gradient in the provider color family; not a certified official brand gradient.",
+    "gradient": "linear-gradient(135deg,#D12D81 0%,#AE2BBA 52%,#7938D6 100%)",
+    "gradientStops": [
+      "#D12D81",
+      "#AE2BBA",
+      "#7938D6"
+    ],
+    "glow": "174,43,186"
   }
 ]

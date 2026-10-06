@@ -31,7 +31,7 @@ function validatePayload(body,userId,id,old=null) {
     template_key:body.template_key===undefined
       ?(old?.template_key||old?.style):body.template_key,
     template_version:body.template_version===undefined
-      ?(old?.template_version||TEMPLATE_VERSION):body.template_version,
+      ?TEMPLATE_VERSION:body.template_version,
     page_type:body.page_type===undefined?(old?.page_type||'contact'):body.page_type,
     color_theme:body.color_theme===undefined?(old?.color_theme||'purple'):body.color_theme,
     card_language:body.card_language===undefined?(old?.card_language||'ku'):body.card_language,
