@@ -133,12 +133,19 @@ export async function activeTemplate(card) {
   if(rows.length!==1)throw err(404,'template_not_found');
   return rows[0];
 }
+// Literal paths let Vercel trace these private files without exposing them in public/.
+const templateSources={
+  pill:()=>readFile(new URL('./proxolink-templates/pill.html',import.meta.url),'utf8'),
+  'pill-mint':()=>readFile(new URL('./proxolink-templates/pill-mint.html',import.meta.url),'utf8'),
+  'pill-dark':()=>readFile(new URL('./proxolink-templates/pill-dark.html',import.meta.url),'utf8'),
+  'pill-white':()=>readFile(new URL('./proxolink-templates/pill-white.html',import.meta.url),'utf8'),
+};
 export async function privateTemplate(record) {
   if(!STYLES.has(record.template_key)||record.version!==TEMPLATE_VERSION
     ||record.storage_path!==record.template_key+'/v2/template.html')throw err(503,'template_invalid');
   // These four reviewed documents are private server assets, traced into the
   // deployment. Never serve arbitrary customer HTML or resurrect old styles.
-  const raw=await readFile(new URL('./proxolink-templates/'+record.template_key+'.html',import.meta.url),'utf8');
+  const raw=await templateSources[record.template_key]();
   if(raw.length>1500000||!raw.includes('{{PROXO_CONFIG}}'))throw err(503,'template_invalid');
   const actual=createHash('sha256').update(raw).digest('hex');
   if(!record.checksum_sha256||actual!==record.checksum_sha256)throw err(503,'template_invalid');
