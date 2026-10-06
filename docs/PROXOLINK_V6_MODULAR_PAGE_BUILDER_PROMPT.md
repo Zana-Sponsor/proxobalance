@@ -149,7 +149,60 @@ All ownership-sensitive operations must still verify the authenticated user's in
 
 ---
 
-# 5. Public Routing
+# 5. User-Facing Names for the Three Page Types
+
+Use three clear user-facing page-type names.
+
+For Kurdish/Sorani UI, use:
+
+1. `پەیوەندی` — Contact
+2. `داواکردنی خواردن` — Order / Food Ordering
+3. `داگرتنی ئەپ` — App Download
+
+These are three separate page types, not sections inside one public page.
+
+When the user taps one type in the Flutter create flow, show only the fields relevant to that page type.
+
+## Contact / پەیوەندی
+
+Show configurable buttons for:
+
+- WhatsApp
+- Viber
+- Instagram
+- Telegram
+- Korek
+- Asiacell
+
+Do not show a generic `Phone` provider.
+
+Korek and Asiacell are explicit contact providers in the UI. Each should accept the customer's relevant phone number, validate it safely, and render its own clearly named button using the appropriate approved brand asset/icon.
+
+Only configured providers should appear on the public Contact page.
+
+## Order / داواکردنی خواردن
+
+Show ordering/delivery providers such as:
+
+- Talabat
+- Toters
+
+and future supported ordering providers from the backend-authoritative registry.
+
+Do not show Contact or App Download providers in the Order form.
+
+## App Download / داگرتنی ئەپ
+
+Show app-store destinations:
+
+- Google Play
+- Apple App Store
+
+Do not show Contact or Order providers in the Download form.
+
+---
+
+# 6. Public Routing
 
 Use clear page-type routes.
 
@@ -179,7 +232,7 @@ Editing the page must not change its UUID or public URL.
 
 ---
 
-# 6. Contact Page
+# 7. Contact Page
 
 The Contact page is for direct contact methods.
 
@@ -188,8 +241,9 @@ Use the existing supported contact functionality where valid, for example:
 - WhatsApp
 - Viber
 - Instagram
-- phone
 - Telegram
+- Korek
+- Asiacell
 - other currently approved contact methods
 
 Only configured methods should render.
@@ -214,7 +268,7 @@ Public route:
 
 ---
 
-# 7. Restaurant / Food Ordering Page
+# 8. Restaurant / Food Ordering Page
 
 Add a dedicated Order page type.
 
@@ -258,7 +312,7 @@ Use official/provider-approved logo assets where available. Do not fabricate fak
 
 ---
 
-# 8. App Download Page
+# 9. App Download Page
 
 Add a dedicated Download page type.
 
@@ -299,7 +353,7 @@ Use recognized official store badges/assets where appropriate and permitted.
 
 ---
 
-# 9. No Click-Tracking Requirement
+# 10. No Click-Tracking Requirement
 
 Do NOT add click collection or click analytics for the new page types.
 
@@ -339,7 +393,7 @@ not click collection.
 
 ---
 
-# 10. Account UUID vs Page UUID
+# 11. Account UUID vs Page UUID
 
 This rule is mandatory.
 
@@ -373,7 +427,7 @@ Never expose ownership decisions by trusting a page UUID supplied by the client 
 
 ---
 
-# 11. Flutter Page Builder
+# 12. Flutter Page Builder
 
 The Flutter ProxoLink management UI should let the customer choose what type of page to create.
 
@@ -409,7 +463,7 @@ For example:
 
 ---
 
-# 12. Page List / Management
+# 13. Page List / Management
 
 The user should be able to see all pages they own.
 
@@ -431,7 +485,7 @@ Use the page UUID/public URL when a technical identifier is needed.
 
 ---
 
-# 13. Create Flow
+# 14. Create Flow
 
 Create flow:
 
@@ -458,7 +512,7 @@ Download -> /download/{new_page_uuid}
 
 ---
 
-# 14. Edit Flow
+# 15. Edit Flow
 
 Edit flow:
 
@@ -477,7 +531,7 @@ Do not change `page_type` in-place if doing so would make an existing public rou
 
 ---
 
-# 15. Delete / Deactivate Safety
+# 16. Delete / Deactivate Safety
 
 If delete functionality exists, do not hard-delete by default without reviewing existing data relationships.
 
@@ -489,7 +543,7 @@ Any production deletion/cutover remains a separate approval.
 
 ---
 
-# 16. Live Preview
+# 17. Live Preview
 
 Continue using genuine server-rendered visual preview inside Flutter WebView.
 
@@ -512,7 +566,7 @@ No click analytics are required in preview or public pages under this prompt.
 
 ---
 
-# 17. Provider Registry
+# 18. Provider Registry
 
 Use a maintainable provider registry or equivalent contract for supported external actions.
 
@@ -523,8 +577,9 @@ contact:
   whatsapp
   viber
   instagram
-  phone
   telegram
+  korek
+  asiacell
 
 order:
   talabat
@@ -550,7 +605,7 @@ Do not expose server secrets or reusable private template source.
 
 ---
 
-# 18. Data Validation
+# 19. Data Validation
 
 Validate all customer input server-side.
 
@@ -572,12 +627,14 @@ Examples:
 - App Store belongs to Download
 - WhatsApp belongs to Contact
 - Telegram belongs to Contact
+- Korek belongs to Contact
+- Asiacell belongs to Contact
 
 Do not trust only the Flutter client for validation.
 
 ---
 
-# 19. Backward Compatibility
+# 20. Backward Compatibility
 
 Preserve existing customer cards/pages and current relationships.
 
@@ -591,7 +648,7 @@ Do not reuse an existing account UUID as the UUID of newly created pages merely 
 
 ---
 
-# 20. Database Migration Safety
+# 21. Database Migration Safety
 
 Any new schema must be additive first.
 
@@ -612,7 +669,21 @@ A unified `pages` table or compatible normalized structure is preferred if it cl
 
 ---
 
-# 21. Visual Design
+# 21. Existing Four Prepared Designs
+
+The owner already has four prepared ProxoLink visual designs.
+
+Do not create a new visual design system and do not replace those four designs.
+
+Inspect the repository and identify the exact existing four prepared design/template keys and reuse them as the authoritative visual choices for Contact, Order and Download pages.
+
+Do not invent template names if the repository already defines them.
+
+The same prepared design system should be reusable across the three page types while preserving each design's own visual identity.
+
+If the current repository contains older or extra template experiments beyond the four prepared designs, do not activate or expose them merely because they exist; preserve them safely and follow the owner's four prepared designs as the active V6 design set.
+
+# 22. Visual Design
 
 The surrounding Flutter UI must match the existing Proxo design system used by Create Ad and Ad Details.
 
@@ -638,7 +709,7 @@ Use icons where they improve clarity.
 
 ---
 
-# 22. Existing Template Identity
+# 23. Existing Template Identity
 
 Preserve existing template identities.
 
@@ -661,7 +732,7 @@ Adding Order/Download is not authorization for a broad template redesign.
 
 ---
 
-# 23. Responsive Requirements
+# 24. Responsive Requirements
 
 Test at minimum:
 
@@ -688,7 +759,7 @@ Verify:
 
 ---
 
-# 24. Brand Assets
+# 25. Brand Assets
 
 For Talabat, Toters, Google Play and App Store:
 
@@ -704,7 +775,7 @@ If an approved asset is unavailable, report it as a missing asset requirement ra
 
 ---
 
-# 25. Security
+# 26. Security
 
 Keep private reusable templates server-side.
 
@@ -727,7 +798,7 @@ Public UUIDs are routing identifiers, not authorization credentials.
 
 ---
 
-# 26. Telegram Contact Button
+# 27. Telegram Contact Button
 
 Telegram is supported in V6 as a normal Contact-page destination.
 
@@ -755,7 +826,7 @@ unless the owner separately requests those features.
 
 ---
 
-# 27. Native Android Verification
+# 28. Native Android Verification
 
 Use the existing protected Android verification workflow.
 
@@ -771,7 +842,7 @@ Do not treat prepared scripts as executed verification.
 
 ---
 
-# 28. Required Functional Tests
+# 29. Required Functional Tests
 
 At minimum test:
 
@@ -818,7 +889,7 @@ No click-count verification is required.
 
 ---
 
-# 29. Isolated Staging
+# 30. Isolated Staging
 
 Use isolated staging for write-path verification.
 
@@ -844,7 +915,7 @@ Do not silently use production as staging.
 
 ---
 
-# 30. Existing Advertisement Relationships
+# 31. Existing Advertisement Relationships
 
 Preserve existing advertisement/customer relationships.
 
@@ -858,7 +929,7 @@ Any future change to advertisement tracking is a separate feature unless explici
 
 ---
 
-# 31. Fresh Workspace Execution Order
+# 32. Fresh Workspace Execution Order
 
 A fresh workspace must:
 
@@ -887,7 +958,7 @@ Do not spend time implementing click analytics because it is not part of this sc
 
 ---
 
-# 32. Definition of Done
+# 33. Definition of Done
 
 The work is complete only when an authenticated customer can independently create:
 
@@ -926,7 +997,7 @@ And:
 
 ---
 
-# 33. Final Reporting
+# 34. Final Reporting
 
 At completion report:
 
@@ -981,7 +1052,7 @@ Focus on reliable page creation, structured data, per-page UUIDs, stable URLs, s
 
 ---
 
-# 34. Mandatory Final Test Gate — Execute, Do Not Only Prepare
+# 35. Mandatory Final Test Gate — Execute, Do Not Only Prepare
 
 Testing is mandatory before this work may be reported as complete.
 
