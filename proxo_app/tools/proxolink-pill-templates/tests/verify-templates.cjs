@@ -8,23 +8,30 @@ const evidence = path.join(root,'verification');
 fs.mkdirSync(evidence,{recursive:true});
 const sizes = [[320,568],[360,640],[375,667],[390,844],[412,915],[430,932],[768,1024],[1024,768],[568,320],[844,390]];
 const themes = ['pill','pill-mint','pill-dark','pill-white'];
+// Independent dimensions from the supplied zoom.html: Font Awesome 6.5.0
+// WhatsApp 25px, Viber 22px and phone-alt 20px inside equal 44px slots.
+const iconBoxes = {whatsapp:[22,25],viber:[22,22],telegram:[21,22],korek:[20,20],asiacell:[20,20]};
 const results = {browser:'Chromium 154 headless, Linux',mode:'Actual rendered browser measurements; not Android/iOS native WebView',cases:[],checks:[]};
 function luminance(rgb) {return rgb.map(c=>c/255).map(c=>c<=.04045?c/12.92:((c+.055)/1.055)**2.4).reduce((s,c,i)=>s+c*[.2126,.7152,.0722][i],0);}
 function contrast(a,b){const [x,y]=[luminance(a),luminance(b)].sort((a,b)=>a-b);return (y+.05)/(x+.05);}
 (async()=>{
  const browser = await chromium.launch({headless:true,...(process.env.CHROMIUM_EXECUTABLE_PATH ? {executablePath:process.env.CHROMIUM_EXECUTABLE_PATH} : {}),args:['--no-sandbox']});
  const context=await browser.newContext({reducedMotion:'reduce'});
- const page=await context.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ const page=await context.newPage();await page.clock.install({time:new Date('2026-10-06T00:00:00Z')});await page.clock.pauseAt(new Date('2026-10-06T00:00:01Z'));const errors=[];page.on('pageerror',e=>errors.push(e.message));
  for(const theme of themes){
   await page.goto('file://'+path.join(templates,theme+'.html'));await page.evaluate(()=>document.fonts.ready);
+  assert(!await page.locator('.wa-message-card').isVisible());
+  await page.clock.fastForward(1999);assert(!await page.locator('.wa-message-card').isVisible());
+  await page.clock.fastForward(1);assert(await page.locator('.wa-message-card').isVisible());
+  results.checks.push({theme,check:'WhatsApp speech card hidden at 0 and 1999ms; revealed at 2000ms',passed:true});
   for(const [width,height]of sizes){
    await page.setViewportSize({width,height});
    const measured=await page.evaluate(()=>{
     const box=n=>{const r=n.getBoundingClientRect();return {x:r.x,y:r.y,width:r.width,height:r.height}};
-    return {overflow:document.documentElement.scrollWidth>innerWidth,font:document.fonts.check('16px ProxoBahij'),avatar:box(document.getElementById('avatar')),buttons:[...document.querySelectorAll('.pl-btn')].map(n=>({provider:n.dataset.provider,box:box(n),font:getComputedStyle(n.querySelector('.pl-lbl')).fontSize,icon:box(n.querySelector('svg')),bg:getComputedStyle(n).backgroundColor,gradient:getComputedStyle(n).backgroundImage,fg:getComputedStyle(n).color,center:box(n.querySelector('.pl-lbl')).x+box(n.querySelector('.pl-lbl')).width/2})),stores:[...document.querySelectorAll('.store-link')].map(n=>({provider:n.dataset.provider,box:box(n),image:box(n.querySelector('img')),gradient:getComputedStyle(n).backgroundImage,loaded:n.querySelector('img').naturalWidth>0})),lists:[...document.querySelectorAll('.list')].map(n=>({gap:getComputedStyle(n).gap,heights:[...n.children].map(b=>box(b).height)}))};
+    return {overflow:document.documentElement.scrollWidth>innerWidth,font:document.fonts.check('16px ProxoBahij'),avatar:box(document.getElementById('avatar')),buttons:[...document.querySelectorAll('.pl-btn')].map(n=>({provider:n.dataset.provider,box:box(n),font:getComputedStyle(n.querySelector('.pl-lbl')).fontSize,icon:box(n.querySelector('.pl-ic > *')),bg:getComputedStyle(n).backgroundColor,gradient:getComputedStyle(n).backgroundImage,fg:getComputedStyle(n).color,center:box(n.querySelector('.pl-lbl')).x+box(n.querySelector('.pl-lbl')).width/2})),stores:[...document.querySelectorAll('.store-link')].map(n=>({provider:n.dataset.provider,box:box(n),image:box(n.querySelector('img')),gradient:getComputedStyle(n).backgroundImage,loaded:n.querySelector('img').naturalWidth>0})),lists:[...document.querySelectorAll('.list')].map(n=>({gap:getComputedStyle(n).gap,heights:[...n.children].map(b=>box(b).height)}))};
    });
    assert(!measured.overflow,`${theme} ${width}: overflow`);assert(measured.font,`${theme}: font unavailable`);assert.equal(measured.avatar.width,88);assert.equal(measured.avatar.height,88);assert.equal(measured.buttons.length,9);assert.equal(measured.stores.length,2);
-   for(const b of measured.buttons){assert(Math.abs(b.box.height-56)<.1,`${b.provider} height ${b.box.height}`);assert.equal(b.font,'16px');assert(Math.abs(b.icon.width-24)<.1);assert(Math.abs(b.icon.height-24)<.1);assert(Math.abs(b.center-(b.box.x+b.box.width/2))<.1,`${b.provider}: not centered`);
+   for(const b of measured.buttons){assert(Math.abs(b.box.height-56)<.1,`${b.provider} height ${b.box.height}`);assert.equal(b.font,'16px');const expected=iconBoxes[b.provider]||[22,22];assert(Math.abs(b.icon.width-expected[0])<.1);assert(Math.abs(b.icon.height-expected[1])<.1);assert(Math.abs(b.center-(b.box.x+b.box.width/2))<.1,`${b.provider}: not centered`);
     const rgb=s=>s.match(/[\d.]+/g).slice(0,3).map(Number);const stops=[...b.gradient.matchAll(/rgb\(([^)]+)\)/g)].map(m=>m[1].split(',').map(Number));assert.equal(stops.length,3,`${b.provider}: missing gradient`);
     b.contrast=Infinity;for(let i=1;i<stops.length;i++)for(let n=0;n<=200;n++){const t=n/200;b.contrast=Math.min(b.contrast,contrast(stops[i-1].map((v,k)=>v+(stops[i][k]-v)*t),rgb(b.fg)));}
     assert(b.contrast>=4.5,`${b.provider}: gradient contrast ${b.contrast}`);assert(b.box.x>=0&&b.box.x+b.box.width<=width+.1);
@@ -39,20 +46,28 @@ function contrast(a,b){const [x,y]=[luminance(a),luminance(b)].sort((a,b)=>a-b);
   const painted=await page.evaluate(async()=>{
    const result=[];
    for(const node of document.querySelectorAll('.pl-btn')){
-    const svg=node.querySelector('svg').cloneNode(true);svg.setAttribute('width','240');svg.setAttribute('height','240');svg.style.color='#000000';
-    const img=new Image();img.src='data:image/svg+xml,'+encodeURIComponent(new XMLSerializer().serializeToString(svg));await img.decode();
-    const canvas=document.createElement('canvas');canvas.width=canvas.height=240;const ctx=canvas.getContext('2d');ctx.drawImage(img,0,0,240,240);
-    const rgba=ctx.getImageData(0,0,240,240).data;let left=240,top=240,right=-1,bottom=-1;
-    for(let y=0;y<240;y++)for(let x=0;x<240;x++)if(rgba[(y*240+x)*4+3]>=32){left=Math.min(left,x);top=Math.min(top,y);right=Math.max(right,x);bottom=Math.max(bottom,y);}
-    result.push({provider:node.dataset.provider,width:(right-left+1)/10,height:(bottom-top+1)/10,centerX:(left+right+1)/20,centerY:(top+bottom+1)/20});
+    const original=node.querySelector('.pl-ic > *'),size=original.getBoundingClientRect();
+    const width=Math.round(size.width*10),height=Math.round(size.height*10);
+    const canvas=document.createElement('canvas');canvas.width=width;canvas.height=height;const ctx=canvas.getContext('2d');
+    if(original.matches('.provider-glyph')){
+     const style=getComputedStyle(original);ctx.font=style.fontWeight+' '+(parseFloat(style.fontSize)*10)+'px '+style.fontFamily;
+     const metrics=ctx.measureText(original.textContent);ctx.fillText(original.textContent,0,(height+metrics.fontBoundingBoxAscent-metrics.fontBoundingBoxDescent)/2);
+    }else{
+     const svg=original.cloneNode(true);svg.setAttribute('width',String(width));svg.setAttribute('height',String(height));svg.style.color='#000000';
+     const img=new Image();img.src='data:image/svg+xml,'+encodeURIComponent(new XMLSerializer().serializeToString(svg));await img.decode();ctx.drawImage(img,0,0,width,height);
+    }
+    const rgba=ctx.getImageData(0,0,width,height).data;let left=width,top=height,right=-1,bottom=-1;
+    for(let y=0;y<height;y++)for(let x=0;x<width;x++)if(rgba[(y*width+x)*4+3]>=32){left=Math.min(left,x);top=Math.min(top,y);right=Math.max(right,x);bottom=Math.max(bottom,y);}
+    result.push({provider:node.dataset.provider,width:(right-left+1)/10,height:(bottom-top+1)/10,centerX:(left+right+1)/20,centerY:(top+bottom+1)/20,boxWidth:size.width,boxHeight:size.height});
    }
    return result;
   });
-  for(const icon of painted){assert(Math.max(icon.width,icon.height)>=20.8&&Math.max(icon.width,icon.height)<=22.5,`${icon.provider}: unbalanced painted icon`);assert(Math.abs(icon.centerX-12)<=.4&&Math.abs(icon.centerY-12)<=.4,`${icon.provider}: artwork off center`);}
-  results.checks.push({theme,check:'Rasterized visible icon artwork is centered in 24px slots with 21–22px optical size',passed:true,painted});
+  for(const icon of painted){assert(Math.max(icon.width,icon.height)>=19.7&&Math.max(icon.width,icon.height)<=22.3,`${icon.provider}: unbalanced painted icon`);assert(Math.abs(icon.centerX-icon.boxWidth/2)<=.4&&Math.abs(icon.centerY-icon.boxHeight/2)<=.4,`${icon.provider}: artwork off center`);}
+  results.checks.push({theme,check:'Reference Font Awesome sizes and centered visible artwork in symmetric 44px slots',passed:true,painted});
   await page.setViewportSize({width:390,height:844});await page.screenshot({path:path.join(root,'verification',theme+'-rendered.png'),fullPage:true});
   await page.setViewportSize({width:320,height:568});
   await page.evaluate(()=>{document.documentElement.style.fontSize='200%';const c=ProxoLink.getConfig();c.name='ناوی درێژی فرۆشگا و خزمەتگوزارییەکانی کڕیار ABC 123';c.bio='ناسێنەری درێژ بۆ پشکنینی دەق و ڕێکخستنی پەڕە '.repeat(10);c.buttons[0].label='پەیوەندی و پرسیار دەربارەی بەرهەمەکان و خزمەتگوزارییەکان';ProxoLink.setConfig(c);});
+  await page.clock.fastForward(2000);
   assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
   assert(await page.evaluate(()=>[...document.querySelectorAll('.pl-lbl')].every(n=>n.scrollWidth<=n.clientWidth+1)));
   assert(await page.locator('.wa-message-card').evaluate(n=>{const r=n.getBoundingClientRect(),prev=n.parentElement.previousElementSibling||n.parentElement.parentElement.previousElementSibling;return n.scrollWidth<=n.clientWidth+1&&r.top>=prev.getBoundingClientRect().bottom;}));
@@ -64,6 +79,7 @@ function contrast(a,b){const [x,y]=[luminance(a),luminance(b)].sort((a,b)=>a-b);
  }
  await page.goto('file://'+path.join(templates,'pill-white.html'));await page.evaluate(()=>document.fonts.ready);
  await page.emulateMedia({reducedMotion:'no-preference'});await page.evaluate(()=>ProxoLink.setConfig(ProxoLink.getConfig()));
+ assert(!await page.locator('.wa-message-card').isVisible());await page.clock.fastForward(2000);
  const messageAnimations=await page.locator('.wa-message-card').evaluate(n=>n.getAnimations().map(a=>({name:a.animationName,duration:a.effect.getTiming().duration,iterations:a.effect.getTiming().iterations})));
  assert(messageAnimations.some(a=>a.name==='wa-message-in'));assert(messageAnimations.some(a=>a.name==='wa-message-float'&&a.iterations===2));
  await page.waitForTimeout(4100);assert(await page.locator('.wa-message-card').evaluate(n=>n.getAnimations().every(a=>a.playState==='finished')));
@@ -76,6 +92,7 @@ function contrast(a,b){const [x,y]=[luminance(a),luminance(b)].sort((a,b)=>a-b);
  });
  assert(urlTests.good.every(x=>x.result));assert(urlTests.bad.every(x=>!x.result));results.checks.push({check:'11 supported providers and 10 unsafe/malformed URL cases',passed:true});
  await page.evaluate(()=>{window.__PROXO_INTERCEPT_NAVIGATION__=true;window.captured=[];addEventListener('proxo:navigate',e=>{captured.push(e.detail);e.preventDefault()});const c=ProxoLink.getConfig();c.preview=false;c.buttons=[{type:'whatsapp',url:'https://wa.me/9647500000000',intents:true},{type:'lezzoo',url:'https://www.lezzoo.com/'},{type:'wade',url:'https://wadedelivery.com/en'},{type:'app_store',url:'https://apps.apple.com/us/app/wade-delivery-taxi/id1538884916'},{type:'google_play',url:'https://play.google.com/store/apps/details?id=app.trytiptop.customer'}];ProxoLink.setConfig(c);});
+ await page.clock.fastForward(2000);
  await page.locator('.wa-message-card').click();assert(await page.locator('#intent-dialog').evaluate(n=>n.open));await page.locator('#cancel').click();assert(!await page.locator('#intent-dialog').evaluate(n=>n.open));assert.equal(await page.evaluate(()=>document.activeElement.dataset.provider),'whatsapp');
  await page.locator('[data-provider="whatsapp"]').click();await page.locator('.opt').first().click();assert.equal(await page.evaluate(()=>captured.length),1);assert((await page.evaluate(()=>captured[0].url)).includes('text='));
  for(const id of ['lezzoo','wade','app_store','google_play'])await page.locator(`[data-provider="${id}"]`).click();assert.equal(await page.evaluate(()=>captured.length),5);
@@ -83,6 +100,7 @@ function contrast(a,b){const [x,y]=[luminance(a),luminance(b)].sort((a,b)=>a-b);
  await page.evaluate(()=>{const c=ProxoLink.getConfig();c.name='<img src=x onerror=alert(1)>';c.preview=true;c.buttons=[{type:'lezzoo',url:'',label:'<script>alert(1)</script>'}];ProxoLink.setConfig(c)});assert.equal(await page.locator('#name img').count(),0);assert.equal(await page.locator('.pl-lbl script').count(),0);
  await page.locator('[data-provider="lezzoo"]').click();assert(await page.locator('#toast').isVisible());
  results.checks.push({check:'WhatsApp intent dialog/cancel/focus restoration/prefill; direct links; disabled/invalid filtering; text injection; inert preview',passed:true});
+ await page.clock.resume();
  await page.goto('file://'+path.join(templates,'proxo-template-editor.html'));await page.locator('#preview').waitFor();
  await page.waitForFunction(()=>document.getElementById('preview').srcdoc.includes('ProxoLink'));
  for(const [width,height]of [[320,568],[390,844],[1024,768]]){await page.setViewportSize({width,height});assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));}

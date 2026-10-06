@@ -1,0 +1,122 @@
+{
+  "passed": true,
+  "referenceFile": "zoom.html",
+  "reference": {
+    "whatsapp": {
+      "emHeight": 25,
+      "slot": 44,
+      "paintedWidth": 22,
+      "paintedHeight": 23
+    },
+    "viber": {
+      "emHeight": 22,
+      "slot": 44,
+      "paintedWidth": 22,
+      "paintedHeight": 23
+    },
+    "asiacell": {
+      "emHeight": 20,
+      "slot": 44,
+      "paintedWidth": 21,
+      "paintedHeight": 21
+    }
+  },
+  "cases": [
+    {
+      "theme": "pill",
+      "matchedReference": true,
+      "actual": {
+        "whatsapp": {
+          "emHeight": 25,
+          "slot": 44,
+          "paintedWidth": 22,
+          "paintedHeight": 23
+        },
+        "viber": {
+          "emHeight": 22,
+          "slot": 44,
+          "paintedWidth": 22,
+          "paintedHeight": 23
+        },
+        "asiacell": {
+          "emHeight": 20,
+          "slot": 44,
+          "paintedWidth": 21,
+          "paintedHeight": 21
+        }
+      }
+    },
+    {
+      "theme": "pill-mint",
+      "matchedReference": true,
+      "actual": {
+        "whatsapp": {
+          "emHeight": 25,
+          "slot": 44,
+          "paintedWidth": 22,
+          "paintedHeight": 23
+        },
+        "viber": {
+          "emHeight": 22,
+          "slot": 44,
+          "paintedWidth": 22,
+          "paintedHeight": 23
+        },
+        "asiacell": {
+          "emHeight": 20,
+          "slot": 44,
+          "paintedWidth": 21,
+          "paintedHeight": 21
+        }
+      }
+    },
+    {
+      "theme": "pill-dark",
+      "matchedReference": true,
+      "actual": {
+        "whatsapp": {
+          "emHeight": 25,
+          "slot": 44,
+          "paintedWidth": 22,
+          "paintedHeight": 23
+        },
+        "viber": {
+          "emHeight": 22,
+          "slot": 44,
+          "paintedWidth": 22,
+          "paintedHeight": 23
+        },
+        "asiacell": {
+          "emHeight": 20,
+          "slot": 44,
+          "paintedWidth": 21,
+          "paintedHeight": 21
+        }
+      }
+    },
+    {
+      "theme": "pill-white",
+      "matchedReference": true,
+      "actual": {
+        "whatsapp": {
+          "emHeight": 25,
+          "slot": 44,
+          "paintedWidth": 22,
+          "paintedHeight": 23
+        },
+        "viber": {
+          "emHeight": 22,
+          "slot": 44,
+          "paintedWidth": 22,
+          "paintedHeight": 23
+        },
+        "asiacell": {
+          "emHeight": 20,
+          "slot": 44,
+          "paintedWidth": 21,
+          "paintedHeight": 21
+        }
+      }
+    }
+  ]
+}

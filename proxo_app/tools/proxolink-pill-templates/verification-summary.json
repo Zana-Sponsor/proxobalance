@@ -3,171 +3,2460 @@
   "mode": "Actual rendered browser measurements; not Android/iOS native WebView",
   "passed": true,
   "renderedCases": 40,
-  "checks": 18,
-  "viewports": [
-    [
-      320,
-      568
-    ],
-    [
-      360,
-      640
-    ],
-    [
-      375,
-      667
-    ],
-    [
-      390,
-      844
-    ],
-    [
-      412,
-      915
-    ],
-    [
-      430,
-      932
-    ],
-    [
-      768,
-      1024
-    ],
-    [
-      1024,
-      768
-    ],
-    [
-      568,
-      320
-    ],
-    [
-      844,
-      390
-    ]
-  ],
-  "paintedIcons": [
+  "functionalChecks": 22,
+  "reference": "zoom.html",
+  "cases": [
     {
-      "provider": "whatsapp",
-      "width": 22,
-      "height": 22,
-      "centerX": 12,
-      "centerY": 12
+      "theme": "pill",
+      "viewport": [
+        320,
+        568
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "providerHeights": [
+        56
+      ],
+      "icons": {
+        "whatsapp": [
+          22,
+          25
+        ],
+        "telegram": [
+          21,
+          22
+        ],
+        "viber": [
+          22,
+          22
+        ],
+        "korek": [
+          20,
+          20
+        ],
+        "asiacell": [
+          20,
+          20
+        ],
+        "talabat": [
+          22,
+          22
+        ],
+        "lezzoo": [
+          22,
+          22
+        ],
+        "toters": [
+          22,
+          22
+        ],
+        "wade": [
+          22,
+          22
+        ]
+      },
+      "minimumLabelContrast": 4.639294809063802
     },
     {
-      "provider": "telegram",
-      "width": 21,
-      "height": 21,
-      "centerX": 12,
-      "centerY": 12
+      "theme": "pill",
+      "viewport": [
+        360,
+        640
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "providerHeights": [
+        56
+      ],
+      "icons": {
+        "whatsapp": [
+          22,
+          25
+        ],
+        "telegram": [
+          21,
+          22
+        ],
+        "viber": [
+          22,
+          22
+        ],
+        "korek": [
+          20,
+          20
+        ],
+        "asiacell": [
+          20,
+          20
+        ],
+        "talabat": [
+          22,
+          22
+        ],
+        "lezzoo": [
+          22,
+          22
+        ],
+        "toters": [
+          22,
+          22
+        ],
+        "wade": [
+          22,
+          22
+        ]
+      },
+      "minimumLabelContrast": 4.639294809063802
     },
     {
-      "provider": "viber",
-      "width": 21,
-      "height": 22,
-      "centerX": 12,
-      "centerY": 12
+      "theme": "pill",
+      "viewport": [
+        375,
+        667
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "providerHeights": [
+        56
+      ],
+      "icons": {
+        "whatsapp": [
+          22,
+          25
+        ],
+        "telegram": [
+          21,
+          22
+        ],
+        "viber": [
+          22,
+          22
+        ],
+        "korek": [
+          20,
+          20
+        ],
+        "asiacell": [
+          20,
+          20
+        ],
+        "talabat": [
+          22,
+          22
+        ],
+        "lezzoo": [
+          22,
+          22
+        ],
+        "toters": [
+          22,
+          22
+        ],
+        "wade": [
+          22,
+          22
+        ]
+      },
+      "minimumLabelContrast": 4.639294809063802
     },
     {
-      "provider": "korek",
-      "width": 22,
-      "height": 22,
-      "centerX": 12,
-      "centerY": 12
+      "theme": "pill",
+      "viewport": [
+        390,
+        844
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "providerHeights": [
+        56
+      ],
+      "icons": {
+        "whatsapp": [
+          22,
+          25
+        ],
+        "telegram": [
+          21,
+          22
+        ],
+        "viber": [
+          22,
+          22
+        ],
+        "korek": [
+          20,
+          20
+        ],
+        "asiacell": [
+          20,
+          20
+        ],
+        "talabat": [
+          22,
+          22
+        ],
+        "lezzoo": [
+          22,
+          22
+        ],
+        "toters": [
+          22,
+          22
+        ],
+        "wade": [
+          22,
+          22
+        ]
+      },
+      "minimumLabelContrast": 4.639294809063802
     },
     {
-      "provider": "asiacell",
-      "width": 22,
-      "height": 22,
-      "centerX": 12,
-      "centerY": 12
+      "theme": "pill",
+      "viewport": [
+        412,
+        915
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "providerHeights": [
+        56
+      ],
+      "icons": {
+        "whatsapp": [
+          22,
+          25
+        ],
+        "telegram": [
+          21,
+          22
+        ],
+        "viber": [
+          22,
+          22
+        ],
+        "korek": [
+          20,
+          20
+        ],
+        "asiacell": [
+          20,
+          20
+        ],
+        "talabat": [
+          22,
+          22
+        ],
+        "lezzoo": [
+          22,
+          22
+        ],
+        "toters": [
+          22,
+          22
+        ],
+        "wade": [
+          22,
+          22
+        ]
+      },
+      "minimumLabelContrast": 4.639294809063802
     },
     {
-      "provider": "talabat",
-      "width": 18.8,
-      "height": 22,
-      "centerX": 12,
-      "centerY": 12
+      "theme": "pill",
+      "viewport": [
+        430,
+        932
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "providerHeights": [
+        56
+      ],
+      "icons": {
+        "whatsapp": [
+          22,
+          25
+        ],
+        "telegram": [
+          21,
+          22
+        ],
+        "viber": [
+          22,
+          22
+        ],
+        "korek": [
+          20,
+          20
+        ],
+        "asiacell": [
+          20,
+          20
+        ],
+        "talabat": [
+          22,
+          22
+        ],
+        "lezzoo": [
+          22,
+          22
+        ],
+        "toters": [
+          22,
+          22
+        ],
+        "wade": [
+          22,
+          22
+        ]
+      },
+      "minimumLabelContrast": 4.639294809063802
     },
     {
-      "provider": "lezzoo",
-      "width": 18.8,
-      "height": 22,
-      "centerX": 12,
-      "centerY": 12
+      "theme": "pill",
+      "viewport": [
+        768,
+        1024
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "providerHeights": [
+        56
+      ],
+      "icons": {
+        "whatsapp": [
+          22,
+          25
+        ],
+        "telegram": [
+          21,
+          22
+        ],
+        "viber": [
+          22,
+          22
+        ],
+        "korek": [
+          20,
+          20
+        ],
+        "asiacell": [
+          20,
+          20
+        ],
+        "talabat": [
+          22,
+          22
+        ],
+        "lezzoo": [
+          22,
+          22
+        ],
+        "toters": [
+          22,
+          22
+        ],
+        "wade": [
+          22,
+          22
+        ]
+      },
+      "minimumLabelContrast": 4.639294809063802
     },
     {
-      "provider": "toters",
-      "width": 18.8,
-      "height": 22,
-      "centerX": 12,
-      "centerY": 12
+      "theme": "pill",
+      "viewport": [
+        1024,
+        768
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "providerHeights": [
+        56
+      ],
+      "icons": {
+        "whatsapp": [
+          22,
+          25
+        ],
+        "telegram": [
+          21,
+          22
+        ],
+        "viber": [
+          22,
+          22
+        ],
+        "korek": [
+          20,
+          20
+        ],
+        "asiacell": [
+          20,
+          20
+        ],
+        "talabat": [
+          22,
+          22
+        ],
+        "lezzoo": [
+          22,
+          22
+        ],
+        "toters": [
+          22,
+          22
+        ],
+        "wade": [
+          22,
+          22
+        ]
+      },
+      "minimumLabelContrast": 4.639294809063802
     },
     {
-      "provider": "wade",
-      "width": 18.8,
-      "height": 22,
-      "centerX": 12,
-      "centerY": 12
+      "theme": "pill",
+      "viewport": [
+        568,
+        320
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "providerHeights": [
+        56
+      ],
+      "icons": {
+        "whatsapp": [
+          22,
+          25
+        ],
+        "telegram": [
+          21,
+          22
+        ],
+        "viber": [
+          22,
+          22
+        ],
+        "korek": [
+          20,
+          20
+        ],
+        "asiacell": [
+          20,
+          20
+        ],
+        "talabat": [
+          22,
+          22
+        ],
+        "lezzoo": [
+          22,
+          22
+        ],
+        "toters": [
+          22,
+          22
+        ],
+        "wade": [
+          22,
+          22
+        ]
+      },
+      "minimumLabelContrast": 4.639294809063802
+    },
+    {
+      "theme": "pill",
+      "viewport": [
+        844,
+        390
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "providerHeights": [
+        56
+      ],
+      "icons": {
+        "whatsapp": [
+          22,
+          25
+        ],
+        "telegram": [
+          21,
+          22
+        ],
+        "viber": [
+          22,
+          22
+        ],
+        "korek": [
+          20,
+          20
+        ],
+        "asiacell": [
+          20,
+          20
+        ],
+        "talabat": [
+          22,
+          22
+        ],
+        "lezzoo": [
+          22,
+          22
+        ],
+        "toters": [
+          22,
+          22
+        ],
+        "wade": [
+          22,
+          22
+        ]
+      },
+      "minimumLabelContrast": 4.639294809063802
+    },
+    {
+      "theme": "pill-mint",
+      "viewport": [
+        320,
+        568
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "providerHeights": [
+        56
+      ],
+      "icons": {
+        "whatsapp": [
+          22,
+          25
+        ],
+        "telegram": [
+          21,
+          22
+        ],
+        "viber": [
+          22,
+          22
+        ],
+        "korek": [
+          20,
+          20
+        ],
+        "asiacell": [
+          20,
+          20
+        ],
+        "talabat": [
+          22,
+          22
+        ],
+        "lezzoo": [
+          22,
+          22
+        ],
+        "toters": [
+          22,
+          22
+        ],
+        "wade": [
+          22,
+          22
+        ]
+      },
+      "minimumLabelContrast": 4.639294809063802
+    },
+    {
+      "theme": "pill-mint",
+      "viewport": [
+        360,
+        640
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "providerHeights": [
+        56
+      ],
+      "icons": {
+        "whatsapp": [
+          22,
+          25
+        ],
+        "telegram": [
+          21,
+          22
+        ],
+        "viber": [
+          22,
+          22
+        ],
+        "korek": [
+          20,
+          20
+        ],
+        "asiacell": [
+          20,
+          20
+        ],
+        "talabat": [
+          22,
+          22
+        ],
+        "lezzoo": [
+          22,
+          22
+        ],
+        "toters": [
+          22,
+          22
+        ],
+        "wade": [
+          22,
+          22
+        ]
+      },
+      "minimumLabelContrast": 4.639294809063802
+    },
+    {
+      "theme": "pill-mint",
+      "viewport": [
+        375,
+        667
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "providerHeights": [
+        56
+      ],
+      "icons": {
+        "whatsapp": [
+          22,
+          25
+        ],
+        "telegram": [
+          21,
+          22
+        ],
+        "viber": [
+          22,
+          22
+        ],
+        "korek": [
+          20,
+          20
+        ],
+        "asiacell": [
+          20,
+          20
+        ],
+        "talabat": [
+          22,
+          22
+        ],
+        "lezzoo": [
+          22,
+          22
+        ],
+        "toters": [
+          22,
+          22
+        ],
+        "wade": [
+          22,
+          22
+        ]
+      },
+      "minimumLabelContrast": 4.639294809063802
+    },
+    {
+      "theme": "pill-mint",
+      "viewport": [
+        390,
+        844
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "providerHeights": [
+        56
+      ],
+      "icons": {
+        "whatsapp": [
+          22,
+          25
+        ],
+        "telegram": [
+          21,
+          22
+        ],
+        "viber": [
+          22,
+          22
+        ],
+        "korek": [
+          20,
+          20
+        ],
+        "asiacell": [
+          20,
+          20
+        ],
+        "talabat": [
+          22,
+          22
+        ],
+        "lezzoo": [
+          22,
+          22
+        ],
+        "toters": [
+          22,
+          22
+        ],
+        "wade": [
+          22,
+          22
+        ]
+      },
+      "minimumLabelContrast": 4.639294809063802
+    },
+    {
+      "theme": "pill-mint",
+      "viewport": [
+        412,
+        915
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "providerHeights": [
+        56
+      ],
+      "icons": {
+        "whatsapp": [
+          22,
+          25
+        ],
+        "telegram": [
+          21,
+          22
+        ],
+        "viber": [
+          22,
+          22
+        ],
+        "korek": [
+          20,
+          20
+        ],
+        "asiacell": [
+          20,
+          20
+        ],
+        "talabat": [
+          22,
+          22
+        ],
+        "lezzoo": [
+          22,
+          22
+        ],
+        "toters": [
+          22,
+          22
+        ],
+        "wade": [
+          22,
+          22
+        ]
+      },
+      "minimumLabelContrast": 4.639294809063802
+    },
+    {
+      "theme": "pill-mint",
+      "viewport": [
+        430,
+        932
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "providerHeights": [
+        56
+      ],
+      "icons": {
+        "whatsapp": [
+          22,
+          25
+        ],
+        "telegram": [
+          21,
+          22
+        ],
+        "viber": [
+          22,
+          22
+        ],
+        "korek": [
+          20,
+          20
+        ],
+        "asiacell": [
+          20,
+          20
+        ],
+        "talabat": [
+          22,
+          22
+        ],
+        "lezzoo": [
+          22,
+          22
+        ],
+        "toters": [
+          22,
+          22
+        ],
+        "wade": [
+          22,
+          22
+        ]
+      },
+      "minimumLabelContrast": 4.639294809063802
+    },
+    {
+      "theme": "pill-mint",
+      "viewport": [
+        768,
+        1024
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "providerHeights": [
+        56
+      ],
+      "icons": {
+        "whatsapp": [
+          22,
+          25
+        ],
+        "telegram": [
+          21,
+          22
+        ],
+        "viber": [
+          22,
+          22
+        ],
+        "korek": [
+          20,
+          20
+        ],
+        "asiacell": [
+          20,
+          20
+        ],
+        "talabat": [
+          22,
+          22
+        ],
+        "lezzoo": [
+          22,
+          22
+        ],
+        "toters": [
+          22,
+          22
+        ],
+        "wade": [
+          22,
+          22
+        ]
+      },
+      "minimumLabelContrast": 4.639294809063802
+    },
+    {
+      "theme": "pill-mint",
+      "viewport": [
+        1024,
+        768
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "providerHeights": [
+        56
+      ],
+      "icons": {
+        "whatsapp": [
+          22,
+          25
+        ],
+        "telegram": [
+          21,
+          22
+        ],
+        "viber": [
+          22,
+          22
+        ],
+        "korek": [
+          20,
+          20
+        ],
+        "asiacell": [
+          20,
+          20
+        ],
+        "talabat": [
+          22,
+          22
+        ],
+        "lezzoo": [
+          22,
+          22
+        ],
+        "toters": [
+          22,
+          22
+        ],
+        "wade": [
+          22,
+          22
+        ]
+      },
+      "minimumLabelContrast": 4.639294809063802
+    },
+    {
+      "theme": "pill-mint",
+      "viewport": [
+        568,
+        320
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "providerHeights": [
+        56
+      ],
+      "icons": {
+        "whatsapp": [
+          22,
+          25
+        ],
+        "telegram": [
+          21,
+          22
+        ],
+        "viber": [
+          22,
+          22
+        ],
+        "korek": [
+          20,
+          20
+        ],
+        "asiacell": [
+          20,
+          20
+        ],
+        "talabat": [
+          22,
+          22
+        ],
+        "lezzoo": [
+          22,
+          22
+        ],
+        "toters": [
+          22,
+          22
+        ],
+        "wade": [
+          22,
+          22
+        ]
+      },
+      "minimumLabelContrast": 4.639294809063802
+    },
+    {
+      "theme": "pill-mint",
+      "viewport": [
+        844,
+        390
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "providerHeights": [
+        56
+      ],
+      "icons": {
+        "whatsapp": [
+          22,
+          25
+        ],
+        "telegram": [
+          21,
+          22
+        ],
+        "viber": [
+          22,
+          22
+        ],
+        "korek": [
+          20,
+          20
+        ],
+        "asiacell": [
+          20,
+          20
+        ],
+        "talabat": [
+          22,
+          22
+        ],
+        "lezzoo": [
+          22,
+          22
+        ],
+        "toters": [
+          22,
+          22
+        ],
+        "wade": [
+          22,
+          22
+        ]
+      },
+      "minimumLabelContrast": 4.639294809063802
+    },
+    {
+      "theme": "pill-dark",
+      "viewport": [
+        320,
+        568
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "providerHeights": [
+        56
+      ],
+      "icons": {
+        "whatsapp": [
+          22,
+          25
+        ],
+        "telegram": [
+          21,
+          22
+        ],
+        "viber": [
+          22,
+          22
+        ],
+        "korek": [
+          20,
+          20
+        ],
+        "asiacell": [
+          20,
+          20
+        ],
+        "talabat": [
+          22,
+          22
+        ],
+        "lezzoo": [
+          22,
+          22
+        ],
+        "toters": [
+          22,
+          22
+        ],
+        "wade": [
+          22,
+          22
+        ]
+      },
+      "minimumLabelContrast": 4.639294809063802
+    },
+    {
+      "theme": "pill-dark",
+      "viewport": [
+        360,
+        640
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "providerHeights": [
+        56
+      ],
+      "icons": {
+        "whatsapp": [
+          22,
+          25
+        ],
+        "telegram": [
+          21,
+          22
+        ],
+        "viber": [
+          22,
+          22
+        ],
+        "korek": [
+          20,
+          20
+        ],
+        "asiacell": [
+          20,
+          20
+        ],
+        "talabat": [
+          22,
+          22
+        ],
+        "lezzoo": [
+          22,
+          22
+        ],
+        "toters": [
+          22,
+          22
+        ],
+        "wade": [
+          22,
+          22
+        ]
+      },
+      "minimumLabelContrast": 4.639294809063802
+    },
+    {
+      "theme": "pill-dark",
+      "viewport": [
+        375,
+        667
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "providerHeights": [
+        56
+      ],
+      "icons": {
+        "whatsapp": [
+          22,
+          25
+        ],
+        "telegram": [
+          21,
+          22
+        ],
+        "viber": [
+          22,
+          22
+        ],
+        "korek": [
+          20,
+          20
+        ],
+        "asiacell": [
+          20,
+          20
+        ],
+        "talabat": [
+          22,
+          22
+        ],
+        "lezzoo": [
+          22,
+          22
+        ],
+        "toters": [
+          22,
+          22
+        ],
+        "wade": [
+          22,
+          22
+        ]
+      },
+      "minimumLabelContrast": 4.639294809063802
+    },
+    {
+      "theme": "pill-dark",
+      "viewport": [
+        390,
+        844
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "providerHeights": [
+        56
+      ],
+      "icons": {
+        "whatsapp": [
+          22,
+          25
+        ],
+        "telegram": [
+          21,
+          22
+        ],
+        "viber": [
+          22,
+          22
+        ],
+        "korek": [
+          20,
+          20
+        ],
+        "asiacell": [
+          20,
+          20
+        ],
+        "talabat": [
+          22,
+          22
+        ],
+        "lezzoo": [
+          22,
+          22
+        ],
+        "toters": [
+          22,
+          22
+        ],
+        "wade": [
+          22,
+          22
+        ]
+      },
+      "minimumLabelContrast": 4.639294809063802
+    },
+    {
+      "theme": "pill-dark",
+      "viewport": [
+        412,
+        915
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "providerHeights": [
+        56
+      ],
+      "icons": {
+        "whatsapp": [
+          22,
+          25
+        ],
+        "telegram": [
+          21,
+          22
+        ],
+        "viber": [
+          22,
+          22
+        ],
+        "korek": [
+          20,
+          20
+        ],
+        "asiacell": [
+          20,
+          20
+        ],
+        "talabat": [
+          22,
+          22
+        ],
+        "lezzoo": [
+          22,
+          22
+        ],
+        "toters": [
+          22,
+          22
+        ],
+        "wade": [
+          22,
+          22
+        ]
+      },
+      "minimumLabelContrast": 4.639294809063802
+    },
+    {
+      "theme": "pill-dark",
+      "viewport": [
+        430,
+        932
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "providerHeights": [
+        56
+      ],
+      "icons": {
+        "whatsapp": [
+          22,
+          25
+        ],
+        "telegram": [
+          21,
+          22
+        ],
+        "viber": [
+          22,
+          22
+        ],
+        "korek": [
+          20,
+          20
+        ],
+        "asiacell": [
+          20,
+          20
+        ],
+        "talabat": [
+          22,
+          22
+        ],
+        "lezzoo": [
+          22,
+          22
+        ],
+        "toters": [
+          22,
+          22
+        ],
+        "wade": [
+          22,
+          22
+        ]
+      },
+      "minimumLabelContrast": 4.639294809063802
+    },
+    {
+      "theme": "pill-dark",
+      "viewport": [
+        768,
+        1024
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "providerHeights": [
+        56
+      ],
+      "icons": {
+        "whatsapp": [
+          22,
+          25
+        ],
+        "telegram": [
+          21,
+          22
+        ],
+        "viber": [
+          22,
+          22
+        ],
+        "korek": [
+          20,
+          20
+        ],
+        "asiacell": [
+          20,
+          20
+        ],
+        "talabat": [
+          22,
+          22
+        ],
+        "lezzoo": [
+          22,
+          22
+        ],
+        "toters": [
+          22,
+          22
+        ],
+        "wade": [
+          22,
+          22
+        ]
+      },
+      "minimumLabelContrast": 4.639294809063802
+    },
+    {
+      "theme": "pill-dark",
+      "viewport": [
+        1024,
+        768
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "providerHeights": [
+        56
+      ],
+      "icons": {
+        "whatsapp": [
+          22,
+          25
+        ],
+        "telegram": [
+          21,
+          22
+        ],
+        "viber": [
+          22,
+          22
+        ],
+        "korek": [
+          20,
+          20
+        ],
+        "asiacell": [
+          20,
+          20
+        ],
+        "talabat": [
+          22,
+          22
+        ],
+        "lezzoo": [
+          22,
+          22
+        ],
+        "toters": [
+          22,
+          22
+        ],
+        "wade": [
+          22,
+          22
+        ]
+      },
+      "minimumLabelContrast": 4.639294809063802
+    },
+    {
+      "theme": "pill-dark",
+      "viewport": [
+        568,
+        320
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "providerHeights": [
+        56
+      ],
+      "icons": {
+        "whatsapp": [
+          22,
+          25
+        ],
+        "telegram": [
+          21,
+          22
+        ],
+        "viber": [
+          22,
+          22
+        ],
+        "korek": [
+          20,
+          20
+        ],
+        "asiacell": [
+          20,
+          20
+        ],
+        "talabat": [
+          22,
+          22
+        ],
+        "lezzoo": [
+          22,
+          22
+        ],
+        "toters": [
+          22,
+          22
+        ],
+        "wade": [
+          22,
+          22
+        ]
+      },
+      "minimumLabelContrast": 4.639294809063802
+    },
+    {
+      "theme": "pill-dark",
+      "viewport": [
+        844,
+        390
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "providerHeights": [
+        56
+      ],
+      "icons": {
+        "whatsapp": [
+          22,
+          25
+        ],
+        "telegram": [
+          21,
+          22
+        ],
+        "viber": [
+          22,
+          22
+        ],
+        "korek": [
+          20,
+          20
+        ],
+        "asiacell": [
+          20,
+          20
+        ],
+        "talabat": [
+          22,
+          22
+        ],
+        "lezzoo": [
+          22,
+          22
+        ],
+        "toters": [
+          22,
+          22
+        ],
+        "wade": [
+          22,
+          22
+        ]
+      },
+      "minimumLabelContrast": 4.639294809063802
+    },
+    {
+      "theme": "pill-white",
+      "viewport": [
+        320,
+        568
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "providerHeights": [
+        56
+      ],
+      "icons": {
+        "whatsapp": [
+          22,
+          25
+        ],
+        "telegram": [
+          21,
+          22
+        ],
+        "viber": [
+          22,
+          22
+        ],
+        "korek": [
+          20,
+          20
+        ],
+        "asiacell": [
+          20,
+          20
+        ],
+        "talabat": [
+          22,
+          22
+        ],
+        "lezzoo": [
+          22,
+          22
+        ],
+        "toters": [
+          22,
+          22
+        ],
+        "wade": [
+          22,
+          22
+        ]
+      },
+      "minimumLabelContrast": 4.639294809063802
+    },
+    {
+      "theme": "pill-white",
+      "viewport": [
+        360,
+        640
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "providerHeights": [
+        56
+      ],
+      "icons": {
+        "whatsapp": [
+          22,
+          25
+        ],
+        "telegram": [
+          21,
+          22
+        ],
+        "viber": [
+          22,
+          22
+        ],
+        "korek": [
+          20,
+          20
+        ],
+        "asiacell": [
+          20,
+          20
+        ],
+        "talabat": [
+          22,
+          22
+        ],
+        "lezzoo": [
+          22,
+          22
+        ],
+        "toters": [
+          22,
+          22
+        ],
+        "wade": [
+          22,
+          22
+        ]
+      },
+      "minimumLabelContrast": 4.639294809063802
+    },
+    {
+      "theme": "pill-white",
+      "viewport": [
+        375,
+        667
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "providerHeights": [
+        56
+      ],
+      "icons": {
+        "whatsapp": [
+          22,
+          25
+        ],
+        "telegram": [
+          21,
+          22
+        ],
+        "viber": [
+          22,
+          22
+        ],
+        "korek": [
+          20,
+          20
+        ],
+        "asiacell": [
+          20,
+          20
+        ],
+        "talabat": [
+          22,
+          22
+        ],
+        "lezzoo": [
+          22,
+          22
+        ],
+        "toters": [
+          22,
+          22
+        ],
+        "wade": [
+          22,
+          22
+        ]
+      },
+      "minimumLabelContrast": 4.639294809063802
+    },
+    {
+      "theme": "pill-white",
+      "viewport": [
+        390,
+        844
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "providerHeights": [
+        56
+      ],
+      "icons": {
+        "whatsapp": [
+          22,
+          25
+        ],
+        "telegram": [
+          21,
+          22
+        ],
+        "viber": [
+          22,
+          22
+        ],
+        "korek": [
+          20,
+          20
+        ],
+        "asiacell": [
+          20,
+          20
+        ],
+        "talabat": [
+          22,
+          22
+        ],
+        "lezzoo": [
+          22,
+          22
+        ],
+        "toters": [
+          22,
+          22
+        ],
+        "wade": [
+          22,
+          22
+        ]
+      },
+      "minimumLabelContrast": 4.639294809063802
+    },
+    {
+      "theme": "pill-white",
+      "viewport": [
+        412,
+        915
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "providerHeights": [
+        56
+      ],
+      "icons": {
+        "whatsapp": [
+          22,
+          25
+        ],
+        "telegram": [
+          21,
+          22
+        ],
+        "viber": [
+          22,
+          22
+        ],
+        "korek": [
+          20,
+          20
+        ],
+        "asiacell": [
+          20,
+          20
+        ],
+        "talabat": [
+          22,
+          22
+        ],
+        "lezzoo": [
+          22,
+          22
+        ],
+        "toters": [
+          22,
+          22
+        ],
+        "wade": [
+          22,
+          22
+        ]
+      },
+      "minimumLabelContrast": 4.639294809063802
+    },
+    {
+      "theme": "pill-white",
+      "viewport": [
+        430,
+        932
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "providerHeights": [
+        56
+      ],
+      "icons": {
+        "whatsapp": [
+          22,
+          25
+        ],
+        "telegram": [
+          21,
+          22
+        ],
+        "viber": [
+          22,
+          22
+        ],
+        "korek": [
+          20,
+          20
+        ],
+        "asiacell": [
+          20,
+          20
+        ],
+        "talabat": [
+          22,
+          22
+        ],
+        "lezzoo": [
+          22,
+          22
+        ],
+        "toters": [
+          22,
+          22
+        ],
+        "wade": [
+          22,
+          22
+        ]
+      },
+      "minimumLabelContrast": 4.639294809063802
+    },
+    {
+      "theme": "pill-white",
+      "viewport": [
+        768,
+        1024
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "providerHeights": [
+        56
+      ],
+      "icons": {
+        "whatsapp": [
+          22,
+          25
+        ],
+        "telegram": [
+          21,
+          22
+        ],
+        "viber": [
+          22,
+          22
+        ],
+        "korek": [
+          20,
+          20
+        ],
+        "asiacell": [
+          20,
+          20
+        ],
+        "talabat": [
+          22,
+          22
+        ],
+        "lezzoo": [
+          22,
+          22
+        ],
+        "toters": [
+          22,
+          22
+        ],
+        "wade": [
+          22,
+          22
+        ]
+      },
+      "minimumLabelContrast": 4.639294809063802
+    },
+    {
+      "theme": "pill-white",
+      "viewport": [
+        1024,
+        768
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "providerHeights": [
+        56
+      ],
+      "icons": {
+        "whatsapp": [
+          22,
+          25
+        ],
+        "telegram": [
+          21,
+          22
+        ],
+        "viber": [
+          22,
+          22
+        ],
+        "korek": [
+          20,
+          20
+        ],
+        "asiacell": [
+          20,
+          20
+        ],
+        "talabat": [
+          22,
+          22
+        ],
+        "lezzoo": [
+          22,
+          22
+        ],
+        "toters": [
+          22,
+          22
+        ],
+        "wade": [
+          22,
+          22
+        ]
+      },
+      "minimumLabelContrast": 4.639294809063802
+    },
+    {
+      "theme": "pill-white",
+      "viewport": [
+        568,
+        320
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "providerHeights": [
+        56
+      ],
+      "icons": {
+        "whatsapp": [
+          22,
+          25
+        ],
+        "telegram": [
+          21,
+          22
+        ],
+        "viber": [
+          22,
+          22
+        ],
+        "korek": [
+          20,
+          20
+        ],
+        "asiacell": [
+          20,
+          20
+        ],
+        "talabat": [
+          22,
+          22
+        ],
+        "lezzoo": [
+          22,
+          22
+        ],
+        "toters": [
+          22,
+          22
+        ],
+        "wade": [
+          22,
+          22
+        ]
+      },
+      "minimumLabelContrast": 4.639294809063802
+    },
+    {
+      "theme": "pill-white",
+      "viewport": [
+        844,
+        390
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "providerHeights": [
+        56
+      ],
+      "icons": {
+        "whatsapp": [
+          22,
+          25
+        ],
+        "telegram": [
+          21,
+          22
+        ],
+        "viber": [
+          22,
+          22
+        ],
+        "korek": [
+          20,
+          20
+        ],
+        "asiacell": [
+          20,
+          20
+        ],
+        "talabat": [
+          22,
+          22
+        ],
+        "lezzoo": [
+          22,
+          22
+        ],
+        "toters": [
+          22,
+          22
+        ],
+        "wade": [
+          22,
+          22
+        ]
+      },
+      "minimumLabelContrast": 4.639294809063802
     }
   ],
-  "minimumGradientContrast": {
-    "whatsapp": 4.8457,
-    "telegram": 4.7886,
-    "viber": 4.7724,
-    "korek": 4.785,
-    "asiacell": 4.7061,
-    "talabat": 5.5218,
-    "lezzoo": 4.6393,
-    "toters": 4.9469,
-    "wade": 5.9911
-  },
-  "functionalChecks": [
+  "checks": [
     {
-      "check": "Rasterized visible icon artwork is centered in 24px slots with 21–22px optical size",
+      "theme": "pill",
+      "check": "WhatsApp speech card hidden at 0 and 1999ms; revealed at 2000ms",
       "passed": true
     },
     {
+      "theme": "pill",
+      "check": "Reference Font Awesome sizes and centered visible artwork in symmetric 44px slots",
+      "passed": true,
+      "painted": [
+        {
+          "provider": "whatsapp",
+          "width": 21.9,
+          "height": 21.9,
+          "centerX": 10.95,
+          "centerY": 12.65,
+          "boxWidth": 22,
+          "boxHeight": 25
+        },
+        {
+          "provider": "telegram",
+          "width": 21,
+          "height": 21.3,
+          "centerX": 10.5,
+          "centerY": 11.05,
+          "boxWidth": 21,
+          "boxHeight": 22
+        },
+        {
+          "provider": "viber",
+          "width": 21,
+          "height": 22,
+          "centerX": 11,
+          "centerY": 11,
+          "boxWidth": 22,
+          "boxHeight": 22
+        },
+        {
+          "provider": "korek",
+          "width": 20,
+          "height": 20,
+          "centerX": 10,
+          "centerY": 10,
+          "boxWidth": 20,
+          "boxHeight": 20
+        },
+        {
+          "provider": "asiacell",
+          "width": 20,
+          "height": 20,
+          "centerX": 10,
+          "centerY": 10,
+          "boxWidth": 20,
+          "boxHeight": 20
+        },
+        {
+          "provider": "talabat",
+          "width": 17.4,
+          "height": 20.2,
+          "centerX": 11,
+          "centerY": 11,
+          "boxWidth": 22,
+          "boxHeight": 22
+        },
+        {
+          "provider": "lezzoo",
+          "width": 17.4,
+          "height": 20.2,
+          "centerX": 11,
+          "centerY": 11,
+          "boxWidth": 22,
+          "boxHeight": 22
+        },
+        {
+          "provider": "toters",
+          "width": 17.4,
+          "height": 20.2,
+          "centerX": 11,
+          "centerY": 11,
+          "boxWidth": 22,
+          "boxHeight": 22
+        },
+        {
+          "provider": "wade",
+          "width": 17.4,
+          "height": 20.2,
+          "centerX": 11,
+          "centerY": 11,
+          "boxWidth": 22,
+          "boxHeight": 22
+        }
+      ]
+    },
+    {
+      "theme": "pill",
       "check": "320px, 200% root text size, long mixed-language name/bio/button label",
       "passed": true
     },
     {
+      "theme": "pill",
       "check": "LTR language and no horizontal overflow",
       "passed": true
     },
     {
-      "check": "Rasterized visible icon artwork is centered in 24px slots with 21–22px optical size",
+      "theme": "pill-mint",
+      "check": "WhatsApp speech card hidden at 0 and 1999ms; revealed at 2000ms",
       "passed": true
     },
     {
+      "theme": "pill-mint",
+      "check": "Reference Font Awesome sizes and centered visible artwork in symmetric 44px slots",
+      "passed": true,
+      "painted": [
+        {
+          "provider": "whatsapp",
+          "width": 21.9,
+          "height": 21.9,
+          "centerX": 10.95,
+          "centerY": 12.65,
+          "boxWidth": 22,
+          "boxHeight": 25
+        },
+        {
+          "provider": "telegram",
+          "width": 21,
+          "height": 21.3,
+          "centerX": 10.5,
+          "centerY": 11.05,
+          "boxWidth": 21,
+          "boxHeight": 22
+        },
+        {
+          "provider": "viber",
+          "width": 21,
+          "height": 22,
+          "centerX": 11,
+          "centerY": 11,
+          "boxWidth": 22,
+          "boxHeight": 22
+        },
+        {
+          "provider": "korek",
+          "width": 20,
+          "height": 20,
+          "centerX": 10,
+          "centerY": 10,
+          "boxWidth": 20,
+          "boxHeight": 20
+        },
+        {
+          "provider": "asiacell",
+          "width": 20,
+          "height": 20,
+          "centerX": 10,
+          "centerY": 10,
+          "boxWidth": 20,
+          "boxHeight": 20
+        },
+        {
+          "provider": "talabat",
+          "width": 17.4,
+          "height": 20.2,
+          "centerX": 11,
+          "centerY": 11,
+          "boxWidth": 22,
+          "boxHeight": 22
+        },
+        {
+          "provider": "lezzoo",
+          "width": 17.4,
+          "height": 20.2,
+          "centerX": 11,
+          "centerY": 11,
+          "boxWidth": 22,
+          "boxHeight": 22
+        },
+        {
+          "provider": "toters",
+          "width": 17.4,
+          "height": 20.2,
+          "centerX": 11,
+          "centerY": 11,
+          "boxWidth": 22,
+          "boxHeight": 22
+        },
+        {
+          "provider": "wade",
+          "width": 17.4,
+          "height": 20.2,
+          "centerX": 11,
+          "centerY": 11,
+          "boxWidth": 22,
+          "boxHeight": 22
+        }
+      ]
+    },
+    {
+      "theme": "pill-mint",
       "check": "320px, 200% root text size, long mixed-language name/bio/button label",
       "passed": true
     },
     {
+      "theme": "pill-mint",
       "check": "LTR language and no horizontal overflow",
       "passed": true
     },
     {
-      "check": "Rasterized visible icon artwork is centered in 24px slots with 21–22px optical size",
+      "theme": "pill-dark",
+      "check": "WhatsApp speech card hidden at 0 and 1999ms; revealed at 2000ms",
       "passed": true
     },
     {
+      "theme": "pill-dark",
+      "check": "Reference Font Awesome sizes and centered visible artwork in symmetric 44px slots",
+      "passed": true,
+      "painted": [
+        {
+          "provider": "whatsapp",
+          "width": 21.9,
+          "height": 21.9,
+          "centerX": 10.95,
+          "centerY": 12.65,
+          "boxWidth": 22,
+          "boxHeight": 25
+        },
+        {
+          "provider": "telegram",
+          "width": 21,
+          "height": 21.3,
+          "centerX": 10.5,
+          "centerY": 11.05,
+          "boxWidth": 21,
+          "boxHeight": 22
+        },
+        {
+          "provider": "viber",
+          "width": 21,
+          "height": 22,
+          "centerX": 11,
+          "centerY": 11,
+          "boxWidth": 22,
+          "boxHeight": 22
+        },
+        {
+          "provider": "korek",
+          "width": 20,
+          "height": 20,
+          "centerX": 10,
+          "centerY": 10,
+          "boxWidth": 20,
+          "boxHeight": 20
+        },
+        {
+          "provider": "asiacell",
+          "width": 20,
+          "height": 20,
+          "centerX": 10,
+          "centerY": 10,
+          "boxWidth": 20,
+          "boxHeight": 20
+        },
+        {
+          "provider": "talabat",
+          "width": 17.4,
+          "height": 20.2,
+          "centerX": 11,
+          "centerY": 11,
+          "boxWidth": 22,
+          "boxHeight": 22
+        },
+        {
+          "provider": "lezzoo",
+          "width": 17.4,
+          "height": 20.2,
+          "centerX": 11,
+          "centerY": 11,
+          "boxWidth": 22,
+          "boxHeight": 22
+        },
+        {
+          "provider": "toters",
+          "width": 17.4,
+          "height": 20.2,
+          "centerX": 11,
+          "centerY": 11,
+          "boxWidth": 22,
+          "boxHeight": 22
+        },
+        {
+          "provider": "wade",
+          "width": 17.4,
+          "height": 20.2,
+          "centerX": 11,
+          "centerY": 11,
+          "boxWidth": 22,
+          "boxHeight": 22
+        }
+      ]
+    },
+    {
+      "theme": "pill-dark",
       "check": "320px, 200% root text size, long mixed-language name/bio/button label",
       "passed": true
     },
     {
+      "theme": "pill-dark",
       "check": "LTR language and no horizontal overflow",
       "passed": true
     },
     {
-      "check": "Rasterized visible icon artwork is centered in 24px slots with 21–22px optical size",
+      "theme": "pill-white",
+      "check": "WhatsApp speech card hidden at 0 and 1999ms; revealed at 2000ms",
       "passed": true
     },
     {
+      "theme": "pill-white",
+      "check": "Reference Font Awesome sizes and centered visible artwork in symmetric 44px slots",
+      "passed": true,
+      "painted": [
+        {
+          "provider": "whatsapp",
+          "width": 21.9,
+          "height": 21.9,
+          "centerX": 10.95,
+          "centerY": 12.65,
+          "boxWidth": 22,
+          "boxHeight": 25
+        },
+        {
+          "provider": "telegram",
+          "width": 21,
+          "height": 21.3,
+          "centerX": 10.5,
+          "centerY": 11.05,
+          "boxWidth": 21,
+          "boxHeight": 22
+        },
+        {
+          "provider": "viber",
+          "width": 21,
+          "height": 22,
+          "centerX": 11,
+          "centerY": 11,
+          "boxWidth": 22,
+          "boxHeight": 22
+        },
+        {
+          "provider": "korek",
+          "width": 20,
+          "height": 20,
+          "centerX": 10,
+          "centerY": 10,
+          "boxWidth": 20,
+          "boxHeight": 20
+        },
+        {
+          "provider": "asiacell",
+          "width": 20,
+          "height": 20,
+          "centerX": 10,
+          "centerY": 10,
+          "boxWidth": 20,
+          "boxHeight": 20
+        },
+        {
+          "provider": "talabat",
+          "width": 17.4,
+          "height": 20.2,
+          "centerX": 11,
+          "centerY": 11,
+          "boxWidth": 22,
+          "boxHeight": 22
+        },
+        {
+          "provider": "lezzoo",
+          "width": 17.4,
+          "height": 20.2,
+          "centerX": 11,
+          "centerY": 11,
+          "boxWidth": 22,
+          "boxHeight": 22
+        },
+        {
+          "provider": "toters",
+          "width": 17.4,
+          "height": 20.2,
+          "centerX": 11,
+          "centerY": 11,
+          "boxWidth": 22,
+          "boxHeight": 22
+        },
+        {
+          "provider": "wade",
+          "width": 17.4,
+          "height": 20.2,
+          "centerX": 11,
+          "centerY": 11,
+          "boxWidth": 22,
+          "boxHeight": 22
+        }
+      ]
+    },
+    {
+      "theme": "pill-white",
       "check": "320px, 200% root text size, long mixed-language name/bio/button label",
       "passed": true
     },
     {
+      "theme": "pill-white",
       "check": "LTR language and no horizontal overflow",
       "passed": true
     },

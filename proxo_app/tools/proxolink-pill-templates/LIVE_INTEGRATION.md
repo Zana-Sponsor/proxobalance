@@ -1,11 +1,15 @@
-The production renderer uses four v3 templates: pill, pill-mint, pill-dark and
-pill-white. The v3 release adds optically balanced SVG glyphs and vivid three-stop
-provider gradients, including charcoal wrappers around unchanged store badges.
+The production renderer uses four v4 templates: pill, pill-mint, pill-dark and
+pill-white. The v4 release matches the supplied zoom.html icon sizes: WhatsApp
+25px, Viber 22px and phone 20px, with symmetric 44px slots and exact embedded
+Font Awesome 6.5.0 font glyphs with their original metrics and hinting. The green WhatsApp speech card remains hidden for two
+seconds, then appears above the button with a finite animation. Reduced motion
+preserves the delay and displays a static card. The vivid provider gradients
+and original store badges remain in place.
 
 Private documents are traced into the API function. Checksums are registered by
-scripts/sql/proxo_gradients_v3_prepare.sql before deploying the matching renderer.
-Retire the prior v2 catalog rows only after the v3 production pages are verified,
-using scripts/sql/proxo_gradients_v3_retire.sql. Customer cards and ad links are
+scripts/sql/proxo_icons_v4_prepare.sql before deploying the matching renderer.
+Retire the prior v3 catalog rows only after the v4 production pages are verified,
+using scripts/sql/proxo_icons_v4_retire.sql. Customer cards and ad links are
 not rewritten for this visual release. Existing cards render with the current
 reviewed source; a successful later edit upgrades their stored version.
 

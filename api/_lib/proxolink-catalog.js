@@ -1,5 +1,5 @@
 export const TEMPLATE_KEYS = ['pill','pill-mint','pill-dark','pill-white'];
-export const TEMPLATE_VERSION = 3;
+export const TEMPLATE_VERSION = 4;
 export const PROVIDERS = {
   wa:{type:'whatsapp',group:'contact',hosts:['wa.me','api.whatsapp.com','www.whatsapp.com']},
   tg:{type:'telegram',group:'contact',hosts:['t.me','telegram.me','telegram.org']},
