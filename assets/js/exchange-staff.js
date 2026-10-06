@@ -10,6 +10,7 @@ function staffCan(permission){
 }
 function staffFullAdmin(){return isSuperAdmin()||adminStaffPermissions==null;}
 function staffPageAllowed(page){
+ if(['otp','activity','security','errors','audit'].includes(page))return isSuperAdmin();
  if(staffFullAdmin())return true;
  const permission={dashboard:'view',orders:'view',accounts:'view',statistics:'view',profit:'view',
   balance:'view',wallets:'manage_fees',rates:'manage_fees',rewards:'manage_rewards'}[page];
@@ -29,13 +30,14 @@ function applyStaffUI(){
   startBalancePayout:'approve_orders',completeBalancePayout:'approve_orders',saveUserReward:'manage_rewards',revokeUserReward:'manage_rewards',
   openWalletModal:'manage_fees',openWalletBadge:'manage_fees',saveWallet:'manage_fees',deleteWallet:'manage_fees',
   openRateModal:'manage_fees',saveRate:'manage_fees',deleteRate:'manage_fees',
-  toggleBan:'full',openSetPasswordModal:'full',openCreateUserModal:'full',saveOrderNote:'approve_orders',
+  toggleBan:'super',openSetPasswordModal:'full',openCreateUserModal:'full',saveOrderNote:'approve_orders',
   sendNotification:'full',resolveBalanceRisk:'full'
  };
  document.querySelectorAll('[onclick]').forEach(el=>{
   const fn=el.getAttribute('onclick').match(/^\s*([A-Za-z_]\w*)\(/)?.[1],required=actions[fn];
   if(!required)return;
-  const denied=required==='full'?!staffFullAdmin():!staffCan(required);
+  const denied=required==='super'?!isSuperAdmin():required==='full'?!staffFullAdmin():!staffCan(required);
+  if(required==='super')el.hidden=denied;
   el.classList.toggle('staff-action-denied',denied);
   if(denied){el.setAttribute('aria-disabled','true');el.setAttribute('title','مۆڵەتی ئەم کارەت نییە');}
  });
@@ -92,6 +94,7 @@ function startAdminLive(){
  const owner=adminUser?.id;if(!owner||typeof ProxoLive==='undefined')return;
  const refreshWallets=()=>{if(_curPage==='wallets'&&!document.getElementById('moWallet').classList.contains('on'))return loadWalletsAdmin(true);};
  ProxoLive.start(sb,'admin',owner,[
+  {key:'myactivity',table:'ex_orders',filter:'handled_by=eq.'+owner,events:['UPDATE'],read:()=>loadMyMonthlyActivity()},
   {key:'wallets',table:'ex_wallets',events:['*'],read:refreshWallets},
   {key:'rates',table:'ex_rates',events:['*'],read:()=>{
    if(_curPage==='rates'&&!document.querySelector('#moRate.on'))return loadRates();
@@ -111,3 +114,4 @@ function startAdminLive(){
 document.addEventListener('DOMContentLoaded',()=>{
  new MutationObserver(()=>applyStaffUI()).observe(document.body,{childList:true,subtree:true});
 });
+

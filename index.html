@@ -95,6 +95,7 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
 <link rel="stylesheet" href="/assets/css/panel-consistency.css?v=1">
 <link rel="stylesheet" href="/assets/css/exchange-balance.css?v=2">
 <link rel="stylesheet" href="/assets/css/exchange-features.css?v=2">
+<link rel="stylesheet" href="/assets/css/exchange-auth-app.css?v=1"><script src="/assets/js/exchange-access.js?v=1"></script>
 </head>
 
 <body>
@@ -288,8 +289,8 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
         <span class="icn icn-lg icon--solar icon--solar--transfer-horizontal-linear" aria-hidden="true"></span>
       </div>
       <h1>Proxo Balance</h1>
-      <p>ئاڵوگۆڕی دراو بە کەمترین لێبڕین — متمانە و خێرایی</p>
-      <div class="auth-proof" aria-label="ئامارەکانی پلاتفۆرم">
+      <p>بەخێربێیت بۆ هەژمارەکەت</p>
+      <div class="auth-proof" hidden aria-label="ئامارەکانی پلاتفۆرم">
         <div><b id="authProofCount">—</b><span>مامەڵەی سەرکەوتوو</span></div>
         <div><b id="authProofVolume">—</b><span>قەبارەی ئاڵوگۆڕ (IQD)</span></div>
         <div><b id="authProofUsers">—</b><span>بەکارهێنەر</span></div>
@@ -304,10 +305,10 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
         <div class="auth-step-icon">
           <span class="icn icn-lg icon--solar icon--solar--letter-linear" aria-hidden="true"></span>
         </div>
-        <div class="auth-step-label"><h3>چوونەژوورەوە</h3><p>ئیمەیلەکەت بنووسە</p></div>
+        <div class="auth-step-label"><h3>با دەست پێ بکەین</h3><p>ئیمەیلەکەت بنووسە؛ هەژمار هەبێت دەچیتە ژوورەوە، نەبێت هەژمار دروست دەکەیت.</p></div>
         <div class="input-wrap">
           <span class="input-ico"><span class="icn icn-sm icon--solar icon--solar--letter-linear" aria-hidden="true"></span></span>
-          <input class="input" type="email" id="authEmail" placeholder="example@gmail.com" dir="ltr" onkeydown="if(event.key==='Enter')nextAuthStep('email')">
+          <input class="input" type="email" autocomplete="username" aria-label="ئیمەیل" id="authEmail" placeholder="example@gmail.com" dir="ltr" onkeydown="if(event.key==='Enter')nextAuthStep('email')">
         </div>
         <button class="btn btn-primary btn-block" id="emailNextBtn" onclick="nextAuthStep('email')">
           <span>دواتر</span>
@@ -324,7 +325,7 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
         <div class="auth-step-label"><h3>هەژمارێکی نوێ</h3><p>ناوت بنووسە بۆ دروستکردنی هەژمار</p></div>
         <div class="input-wrap">
           <span class="input-ico"><span class="icn icn-sm icon--solar icon--solar--user-linear" aria-hidden="true"></span></span>
-          <input class="input" type="text" id="authName" placeholder="ناوی تەواو" onkeydown="if(event.key==='Enter')nextAuthStep('name')">
+          <input class="input" type="text" autocomplete="name" aria-label="ناوی تەواو" id="authName" placeholder="ناوی تەواو" onkeydown="if(event.key==='Enter')nextAuthStep('name')">
         </div>
         <button class="btn btn-primary btn-block" id="nameNextBtn" onclick="nextAuthStep('name')">
           <span>دواتر</span>
@@ -344,7 +345,7 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
         </div>
         <div class="auth-step-label"><h3 id="passStepTitle">وشەی نهێنی</h3><p id="passStepSub">وشەی نهێنیت بنووسە بۆ چوونەژوورەوە</p></div>
         <div class="pass-wrap field">
-          <input class="input" type="password" id="authPass" placeholder="وشەی نهێنی" dir="ltr" onkeydown="if(event.key==='Enter')nextAuthStep('pass')">
+          <input class="input" type="password" autocomplete="current-password" aria-label="وشەی نهێنی" id="authPass" placeholder="وشەی نهێنی" dir="ltr" onkeydown="if(event.key==='Enter')nextAuthStep('pass')">
           <button type="button" class="pass-eye" onclick="togglePass('authPass',this)" aria-label="پیشاندانی وشەی نهێنی"><span class="pass-eye-ico icn icn-sm"></span></button>
         </div>
         <button class="btn btn-primary btn-block" id="authBtn" onclick="nextAuthStep('pass')">
@@ -1554,11 +1555,12 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
 <script src="/assets/js/index-svg-icons.js?v=1"></script>
 <script src="/assets/js/exchange-reward-pricing.js?v=2"></script>
 <script src="/assets/js/exchange-live.js?v=1"></script>
-<script src="/assets/js/app.js?v=43"></script>
+<script src="/assets/js/app.js?v=44"></script>
 <script src="/assets/js/exchange-customer-features.js?v=3"></script>
 <script src="/assets/js/exchange-balance.js?v=4"></script>
 <script src="/assets/js/exchange-ux.js?v=1"></script>
 <script src="/assets/js/receipt-download.js?v=4"></script>
-<script src="/assets/js/track.js?v=2"></script>
+<script src="/assets/js/track.js?v=3"></script>
 </body>
 </html>
+

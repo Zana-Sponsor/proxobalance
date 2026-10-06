@@ -124,7 +124,7 @@ async function exExportPdf(rows,filename){
 function exRenderRateCards(){
   const wrap=document.getElementById('exRatesQuick');if(!wrap)return;
   if(!allRates?.length){wrap.innerHTML='<div class="ex-note">هێشتا هیچ نرخێک زیاد نەکراوە.</div>';return}
-  wrap.innerHTML=allRates.map(r=>'<article class="ex-rate"><div class="ex-rate-top"><h4>'+exSafe(exMethod(r.from_method))+' ← '+exSafe(exMethod(r.to_method))+'</h4>'+
+  wrap.innerHTML=(typeof filteredAdminRates==='function'?filteredAdminRates():allRates).map(r=>'<article class="ex-rate"><div class="ex-rate-top"><h4>'+exSafe(exMethod(r.from_method))+' ← '+exSafe(exMethod(r.to_method))+'</h4>'+
     '<span class="badge '+(r.is_active?'approved':'rejected')+'">'+(r.is_active?'چالاک':'ناچالاک')+'</span></div>'+
     '<div class="ex-value">'+(r.rate_type==='fee_percent'?exNum(r.rate_value,2)+'%':r.rate_type==='fee_fixed'?exNum(r.rate_value,2):'×'+exNum(r.rate_value,4))+'</div>'+
     '<small>'+exSafe(typeof rateTypeLabel==='function'?rateTypeLabel(r.rate_type):r.rate_type)+'</small>'+
@@ -136,3 +136,4 @@ if(typeof loadRates==='function'){
   loadRates=async function(){await originalExchangeLoadRates();exRenderRateCards()};
 }
 pageConfig.statistics={title:'ئامارەکانی ئاڵوگۆڕ',sub:'ڕاپۆرت، پاڵاوتن، کۆی مامەڵەکان و داگرتنی ئامار',load:()=>exLoadStatistics()};
+

@@ -15,11 +15,11 @@ jobs:
           set -euo pipefail
           for attempt in $(seq 1 24); do
             if curl -fLsS --max-time 15 'https://www.proxobalance.app/exchange-admin' -o current-admin.html &&
-               grep -q 'assets/js/admin.js?v=22' current-admin.html &&
-               grep -q 'assets/js/exchange-insights.js?v=2' current-admin.html &&
-               curl -fLsS --max-time 15 'https://www.proxobalance.app/assets/js/exchange-insights.js?v=2' -o current-insights.js &&
+               grep -q 'assets/js/admin.js?v=23' current-admin.html &&
+               grep -q 'assets/js/exchange-insights.js?v=3' current-admin.html &&
+               curl -fLsS --max-time 15 'https://www.proxobalance.app/assets/js/exchange-insights.js?v=3' -o current-insights.js &&
                grep -q 'id,order_code,order_number' current-insights.js &&
-               curl -fLsS --max-time 15 'https://www.proxobalance.app/assets/js/app.js?v=43' -o current-app.js &&
+               curl -fLsS --max-time 15 'https://www.proxobalance.app/assets/js/app.js?v=44' -o current-app.js &&
                grep -q 'accountBalanceSourceOption' current-app.js &&
                curl -fLsS --max-time 15 'https://www.proxobalance.app/assets/js/exchange-balance.js?v=4' -o current-balance.js &&
                grep -q 'openAccountBalanceSend' current-balance.js; then
@@ -52,9 +52,9 @@ jobs:
           grep -q 'id="staffDirectoryButton"' exchange-admin.html
           grep -q 'ڕەتکردنەوە و گەڕاندنەوە بۆ باڵانس' exchange-admin.html
           grep -q 'exchange-balance-admin.js?v=4' exchange-admin.html
-          grep -q 'admin.js?v=22' exchange-admin.html
-          grep -q 'exchange-insights.js?v=2' exchange-admin.html
-          curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/assets/js/admin.js?v=22" -o admin.js
+          grep -q 'admin.js?v=23' exchange-admin.html
+          grep -q 'exchange-insights.js?v=3' exchange-admin.html
+          curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/assets/js/admin.js?v=23" -o admin.js
           grep -q 'accountBalanceCell' admin.js
           grep -q 'accountBalanceDetails' admin.js
           grep -q "'account_balances'" admin.js
@@ -72,13 +72,25 @@ jobs:
           grep -q 'observeWalletBadges' customer-features.js
           grep -q 'saveRecipient' customer-features.js
           grep -q 'ex_refresh_reward_alerts' customer-features.js
-          curl -fLsS --max-time 25 "$root/assets/js/exchange-staff.js?v=4" -o staff.js
+          curl -fLsS --max-time 25 "$root/assets/js/exchange-staff.js?v=5" -o staff.js
           grep -q 'staffPageAllowed' staff.js
           curl -fLsS --max-time 25 "$root/assets/js/exchange-live.js?v=1" -o live.js
           grep -q 'postgres_changes' live.js
           grep -q 'ex_staff_save_wallet' admin.js
           grep -q 'startCustomerLive' customer-features.js
           echo "PASS: customer balance and reward UI, admin refund and reward UI, and both balance modules are live."
+      - name: Verify app authentication and IP block release
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="https://www.proxobalance.app"
+          grep -q 'exchange-auth-app.css?v=1' index.html
+          grep -q 'id="myMonthlyActivity"' exchange-admin.html
+          grep -q 'data-wallet-tab="routes"' exchange-admin.html
+          curl -fLsS --max-time 25 "$root/ip-blocked.html" -o blocked.html
+          grep -q 'ئایپی ئامێرەکەت بلۆک کراوە' blocked.html
+          curl -fLsS --max-time 25 "$root/api/track" -o access.json
+          grep -q '"ok":true' access.json
       - name: Verify unauthorized clients cannot read balances
         shell: bash
         run: |

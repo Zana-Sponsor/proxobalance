@@ -36,6 +36,7 @@ let _profMap={};
 // security_alerts, security_admins — none of which exist here).
 // The response shape is kept identical so no call site had to change.
 async function securityRequest(view, options={}){
+  if(!isSuperAdmin())throw new Error('SUPER_ADMIN_REQUIRED');
   const {data:{session}}=await sb.auth.getSession();
   if(!session) throw new Error('تکایە دووبارە بچۆ ژوورەوە');
 
@@ -165,7 +166,10 @@ async function doLogin(){
   if(!email||!pass){ showAuthErr('ئیمەیل و پاسۆرد پڕ بکەرەوە'); return; }
   btn.disabled=true; btn.innerHTML='<i class="fas fa-circle-notch fa-spin"></i>';
   try{
+    if(window.ProxoAccess && !await ProxoAccess.check())return;
+    await window.trackAuthAttempt?.(email,'admin');
     const {data,error} = await sb.auth.signInWithPassword({email,password:pass});
+    if(error)window.trackEvent?.('login_failed',email);
     if(error){ showAuthErr('ئیمەیل یان پاسۆرد هەڵەیە'); return; }
     adminUser = data.user;
     const ok = await verifyAdmin(adminUser.id, adminUser.email);
@@ -242,7 +246,7 @@ const pageConfig = {
   cases:{ title:'کەیسەکانی کڕیار', sub:'وێنە، وردەکاری و چارەسەرکردنی کێشەکانی کڕیار', load: ()=>loadSupportCasesAdmin() },
   announcement:{ title:'بانەری ئاگاداری', sub:'ئاگاداری گشتی سەرەوەی ئەپەکە', load: ()=>loadAnnouncement() },
   otp:{ title:'کۆدەکانی OTP', sub:'بینین و بەڕێوەبردنی کۆدەکانی دڵنیاکردنەوە', load: ()=>loadOtp() },
-  security:{ title:'ئاسایش و IP', sub:'ڕووداوە گومانلێکراوەکان و بلۆککردنی نهێنی (404)', load: ()=>loadSecurity() },
+  security:{ title:'ئاسایش و IP', sub:'ڕووداوە گومانلێکراوەکان و بلۆککردنی IP و پەڕەی ئاگادارکردنەوە', load: ()=>loadSecurity() },
   errors:{ title:'لۆگی هەڵەکان', sub:'هەڵەکانی ماڵپەڕی بەکارهێنەر و سێرڤەر', load: ()=>loadErrorLogs() },
 };
 let _curPage='dashboard';
@@ -641,7 +645,7 @@ function renderAlerts(){
         ${a.ip_is_banned || !a.ip_address
           ? `<span class="alert-banned-tag"><i class="fas fa-ban"></i> ${a.ip_address?'ئەم IPـیە بلۆککراوە':'بێ IP'}</span>`
           : `<button class="alert-btn ban" onclick="banFromAlert('${a.id}')">
-               <i class="fas fa-user-secret"></i> بلۆککردنی نهێنی (404)
+               <i class="fas fa-user-secret"></i> بلۆککردنی IP و پەڕەی ئاگادارکردنەوە
              </button>`}
         <button class="alert-btn safe" onclick="dismissAlert('${a.id}')">
           <i class="fas fa-check"></i> سەلامەتە — لابردن
@@ -1048,7 +1052,8 @@ async function loadProfilesFor(userIds){
 async function loadDashboard(){
   loadDashboardStats();
   loadDashOrders();
-  if(typeof staffFullAdmin!=='function'||staffFullAdmin())loadAlerts();
+  if(isSuperAdmin())loadAlerts();
+  loadMyMonthlyActivity();
 }
 async function loadDashboardStats(){
   try{
@@ -1626,10 +1631,11 @@ async function openAccountInfo(id){
   }catch(_){}
 }
 function toggleBan(id, current){
+  if(!isSuperAdmin())return;
   const next=!current;
   confirm2(next?'بۆیکۆتکردنی هەژمار':'لابردنی بۆیکۆت', next?'ئایا دڵنیایت لە بۆیکۆتکردنی ئەم هەژمارە؟ ناتوانێت بچێتە ژوورەوە.':'ئایا دڵنیایت لە لابردنی بۆیکۆت؟',
     'fas fa-user-slash','var(--rd)', async()=>{
-    const {error} = await sb.from('ex_profiles').update({is_banned:next}).eq('id',id);
+    let error;try{await adminApiRequest('set_ban',{user_id:id,banned:next});}catch(e){error=e;}
     if(error){ showToast(adminDbMessage(error),'rd'); return; }
     showToast(next?'هەژمار بۆیکۆتکرا':'بۆیکۆت لابرا', next?'rd':'gr');
     loadAccounts(); loadDashboardStats();
@@ -1779,6 +1785,7 @@ function openCreateUserModal(){
   document.getElementById('cuPass').value = '';
   document.getElementById('cuIsAdmin').checked = false;
   document.getElementById('cuErr').style.display='none';
+  document.getElementById('cuIsAdmin').closest('.mswitch-row').hidden=!isSuperAdmin();
   openMo('moCreateUser');
 }
 async function submitCreateUser(){
@@ -1964,7 +1971,7 @@ function rateTypeLabel(t){ return t==='fee_percent' ? 'حمولە %' : t==='fee_
 function renderRates(){
   if(!allRates.length){ document.getElementById('ratesTableWrap').innerHTML='<div class="empty"><i class="fas fa-percent"></i><p>هیچ ڕێگایەک زیاد نەکراوە</p></div>'; return; }
   document.getElementById('ratesTableWrap').innerHTML = `<table><thead><tr><th>لە</th><th>بۆ</th><th>جۆر</th><th>بەها</th><th>چالاک</th><th>کردار</th></tr></thead><tbody>
-    ${allRates.map(r=>`<tr>
+    ${filteredAdminRates().map(r=>`<tr>
       <td>${methodPill(r.from_method)}</td>
       <td>${methodPill(r.to_method)}</td>
       <td style="font-size:12px">${rateTypeLabel(r.rate_type)}</td>
@@ -2011,11 +2018,11 @@ async function openRateModal(rate){
     document.getElementById('rateModalTitle').textContent='زیادکردنی ڕێگای نوێ';
     document.getElementById('rateId').value='';
     fromSel.selectedIndex=0; toSel.selectedIndex=0;
-    document.getElementById('rateType').value='multiplier';
+    document.getElementById('rateType').value='fee_percent';
     document.getElementById('rateValue').value='';
     document.getElementById('rateActive').checked=true;
   }
-  updateRateValueHint();
+  updateRateValueHint();updateAdminRatePreview();
   openMo('moRate');
 }
 function updateRateValueHint(){
@@ -2027,25 +2034,20 @@ function updateRateValueHint(){
     : 'بڕی وەرگیراو = بڕی نێردراو × ژمارەی مەزراپ';
 }
 async function saveRate(){
-  const id=document.getElementById('rateId').value;
-  const from=document.getElementById('rateFrom').value, to=document.getElementById('rateTo').value;
-  const rate_type=document.getElementById('rateType').value;
-  const rate_value=parseFloat(document.getElementById('rateValue').value);
-  const is_active=document.getElementById('rateActive').checked;
-  if(from===to){ showToast('نابێت لە و بۆ یەکسان بن','rd'); return; }
-  if(isNaN(rate_value)){ showToast('بەهای دروست بنووسە','rd'); return; }
-  const btn=document.getElementById('rateSaveBtn'); btn.disabled=true;
-  let error;
-  if(id){
-    ({error} = await sb.from('ex_rates').update({from_method:from,to_method:to,rate_type,rate_value,is_active}).eq('id',id));
-  }else{
-    ({error} = await sb.from('ex_rates').insert({from_method:from,to_method:to,rate_type,rate_value,is_active}));
-  }
-  btn.disabled=false;
-  if(error){ await handleDbWriteError(error); return; }
-  showToast('پاشەکەوتکرا','gr');
-  closeMo('moRate');
-  loadRates();
+ const id=document.getElementById('rateId').value;
+ const from=document.getElementById('rateFrom').value,to=document.getElementById('rateTo').value;
+ const rate_type=document.getElementById('rateType').value;
+ const rate_value=Number(document.getElementById('rateValue').value),is_active=document.getElementById('rateActive').checked;
+ if(from===to||!document.getElementById('rateValue').value.trim()||!Number.isFinite(rate_value)||rate_value<0){showToast('ڕێگا و بەهای دروست هەڵبژێرە','rd');return;}
+ const btn=document.getElementById('rateSaveBtn');if(btn.disabled)return;btn.disabled=true;
+ try{
+  const row={from_method:from,to_method:to,rate_type,rate_value,is_active};
+  const query=id?sb.from('ex_rates').update(row).eq('id',id):sb.from('ex_rates').insert(row);
+  const {data,error}=await query.select('*').single();if(error)throw error;
+  if(!data?.id)throw new Error('پاشەکەوتکردن پشتڕاست نەکرایەوە');
+  allRates=allRates.filter(r=>r.id!==data.id).concat(data);filterAdminRates();
+  closeMo('moRate');showToast('نرخی ئەم ڕێگایە پاشەکەوتکرا','gr');
+ }catch(e){showToast(adminDbMessage(e),'rd');}finally{btn.disabled=false;}
 }
 
 // ── Original admin module 4 ──
@@ -2091,7 +2093,7 @@ function renderWalletsGrid(){
         ${w.price!=null?`<span class="wallet-card-badge">نرخ: ${esc(w.price)}</span>`:''}
         ${w.fee!=null?`<span class="wallet-card-badge">کرێ: ${esc(w.fee)}${w.fee_type==='percent'?'%':' د.ع'}</span>`:''}
       </div>
-      ${walletPairsHTML(w)}
+      <button type="button" class="act-btn cy" onclick="openWalletRoutes('${w.id}')"><i class="fas fa-percent"></i> حمولە و ڕێگاکان</button>
       <div class="act-grp">
         <button type="button" class="act-btn cy" onclick="openWalletBadge('${w.id}')"><i class="fas fa-tag"></i> نیشانی جزدان</button>
         <div class="act-btn dark" onclick='openWalletModal(${safeAttr(w)})'><i class="fas fa-pen"></i> دەستکاری</div>
@@ -2181,6 +2183,7 @@ function openWalletModal(w){
   document.getElementById('walletImgFile').value='';
   document.getElementById('pairBulkValue').value='';
   buildPairDraft(w);
+  switchWalletSection('info');
   openMo('moWallet');
 }
 async function saveWallet(){
@@ -3327,3 +3330,4 @@ async function reviewKyc(decision){
     await run();
   }
 }
+
