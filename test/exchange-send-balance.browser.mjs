@@ -208,12 +208,12 @@ try{
     await adminPage.route('**/*',route=>route.abort());
     await adminPage.setContent(offlineHtml('exchange-admin.html'),{waitUntil:'domcontentloaded'});
     await adminPage.evaluate(()=>{
-      window.adminUser={id:'super-fixture'};window.fixtureSuper=false;window.fixturePermissionCalls=[];window.allAccounts=[];
+      window.adminUser={id:'super-fixture'};window.fixtureSuper=false;window.fixturePermissionCalls=[];window.allAccounts=[];window.fixtureStaffRows=[];
       window.isSuperAdmin=()=>fixtureSuper;window.esc=v=>String(v||'');window.adminDbMessage=e=>e.message;
       window.showToast=()=>{};window.loadAccounts=()=>{};
       window.openMo=id=>document.getElementById(id).classList.add('on');
       window.closeMo=id=>document.getElementById(id).classList.remove('on');
-      window.sb={from(){const q={select(){return q;},eq(){return q;},maybeSingle:async()=>({
+      window.sb={from(){const q={select(){return q;},eq(){return q;},order(){return q;},range:async start=>({data:start===0?fixtureStaffRows:[],error:null}),maybeSingle:async()=>({
         data:{id:'staff-fixture',full_name:'Fixture Staff',is_admin:true,role:'admin',staff_permissions:['view']},error:null})};return q;},
         rpc:async(name,args)=>{fixturePermissionCalls.push({name,args});return {data:{user_id:args.p_user_id,permissions:args.p_permissions},error:null};}};
       document.getElementById('authWrap').style.display='none';document.getElementById('main').classList.add('show');document.getElementById('pgAccounts').classList.add('on');
@@ -226,9 +226,9 @@ try{
     assert.equal(await adminPage.locator('#staffDirectoryButton').isVisible(),false,'Scoped staff cannot manage permissions');
     await adminPage.evaluate(()=>{fixtureSuper=true;applyStaffUI();return openStaffDirectory();});
     assert.equal(await adminPage.locator('#staffDirectoryButton').isVisible(),true);
-    assert.match(await adminPage.locator('#staffDirectoryList').textContent(),/هێشتا کارمەندی ئادمین نییە/,'A super admin can discover the feature before staff exist');
-    await adminPage.evaluate(()=>{closeMo('moStaffDirectory');document.getElementById('pgAccounts').classList.add('on');allAccounts=[{id:'staff-fixture',full_name:'Fixture Staff',role:'admin',is_admin:true}];return openStaffDirectory();});
-    await adminPage.locator('#staffDirectoryList button').click();
+    assert.match(await adminPage.locator('#staffDirectoryList').textContent(),/هێشتا ئادمین نییە/,'A super admin can discover the feature before staff exist');
+    await adminPage.evaluate(()=>{closeMo('moStaffDirectory');document.getElementById('pgAccounts').classList.add('on');fixtureStaffRows=[{id:'staff-fixture',full_name:'Fixture Staff',role:'admin',is_admin:true}];return openStaffDirectory();});
+    await adminPage.locator('#staffDirectoryList').getByRole('button',{name:'دەسەڵاتەکان',exact:true}).click();
     assert.equal(await adminPage.locator('#moStaffDirectory').isVisible(),false);
     await adminPage.locator('[data-staff-permission="manage_fees"]').check();
     if(width===390)await adminPage.screenshot({path:'/workspace/scratch/068a40bbfdcc/staff-permissions-mobile.png'});

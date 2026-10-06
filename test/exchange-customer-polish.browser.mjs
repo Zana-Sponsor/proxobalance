@@ -9,7 +9,7 @@ const app=read('assets/js/app.js');
 const realFunctions=app.slice(app.indexOf('let _welcomeRewardExpiryTimer='),app.indexOf('// Smallest amount'))+
   app.slice(app.indexOf('function calc(){'),app.indexOf('function _validateOrderFields()'))+
   app.slice(app.indexOf('function orderCodeOf('),app.indexOf('// ── transaction details'))+
-  app.slice(app.indexOf('function completedTxTotals('),app.indexOf('function copyNum()'));
+  app.slice(app.indexOf('function renderTxPage('),app.indexOf('function copyNum()'));
 const html=read('index.html').replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,'')
   .replace(/<link\b[^>]*>/gi,tag=>{
     const ref=tag.match(/href="\/?(assets\/css\/[^"?]+)(?:\?[^" ]*)?"/);
@@ -80,8 +80,8 @@ try{
       document.getElementById('pageHome').classList.remove('active');
       document.getElementById('pageTx').classList.add('active');renderTxPage();
     });
-    assert.equal(await page.locator('#txTotalSent').textContent(),'60,000');
-    assert.equal(await page.locator('#txTotalRecv').textContent(),'59,100');
+    assert.equal(await page.locator('#txSummary').count(),0);
+    assert.equal(await page.locator('#txList .tx-money').count(),0);
     assert.equal(await page.locator('#txList .tx-card').count(),2);
     assert.equal(await page.locator('#txList .tx-card').nth(1).locator('.tx-amount').textContent(),'40,000 IQD');
     await page.locator('#txList .tx-card').first().focus();await page.keyboard.press('Enter');

@@ -26,6 +26,30 @@ begin
  select * into f from admin_workspace_fixture;
  if (select staff_permissions from public.ex_profiles where id=f.staff) is distinct from array['view','approve_orders']::text[] then raise exception 'New admin got unrestricted permissions';end if;
  perform public.ex_staff_set_permissions(f.staff,null); -- legacy/full permissions still cannot grant security access
+ perform public.ex_staff_set_permissions(f.staff,array['view']::text[]);
+ perform set_config('request.jwt.claim.sub',f.staff::text,true);
+ if public.ex_staff_has('approve_orders') then raise exception 'Super admin could not restrict staff rights';end if;
+ perform set_config('request.jwt.claim.sub',f.super_admin::text,true);
+ perform public.ex_staff_set_permissions(f.staff,array[]::text[]);
+ perform set_config('request.jwt.claim.sub',f.staff::text,true);
+ if public.ex_staff_has('view') then raise exception 'Super admin could not suspend staff rights';end if;
+ perform set_config('request.jwt.claim.sub',f.super_admin::text,true);
+ update public.ex_profiles set is_banned=true where id=f.staff;
+ perform public.ex_staff_set_permissions(f.staff,null);
+ perform set_config('request.jwt.claim.sub',f.staff::text,true);
+ if public.ex_staff_has('view') then raise exception 'Banned staff retained permissions';end if;
+ perform set_config('request.jwt.claim.sub',f.super_admin::text,true);
+ update public.ex_profiles set is_banned=false where id=f.staff;
+ perform public.ex_admin_set_role(f.staff,'user');
+ perform set_config('request.jwt.claim.sub',f.staff::text,true);
+ if (select is_admin from public.ex_profiles where id=f.staff) or public.ex_staff_has('view') then
+  raise exception 'Super admin could not remove staff role';end if;
+ perform set_config('request.jwt.claim.sub',f.super_admin::text,true);
+ perform public.ex_admin_set_role(f.staff,'admin');
+ perform public.ex_staff_set_permissions(f.staff,null);
+ perform set_config('request.jwt.claim.sub',f.staff::text,true);
+ if not public.ex_staff_has('approve_orders') then raise exception 'Super admin could not restore staff rights';end if;
+ perform set_config('request.jwt.claim.sub',f.super_admin::text,true);
  update public.ex_profiles set is_banned=true where id=f.customer;
  update public.ex_profiles set is_banned=false where id=f.customer;
 end $test$;
