@@ -156,12 +156,24 @@ Use three clear user-facing page-type names.
 For Kurdish/Sorani UI, use:
 
 1. `پەیوەندی` — Contact
-2. `داواکردنی خواردن` — Order / Food Ordering
+2. `خواردنگە و ڕێستۆرانت` — Restaurant / Food Ordering
 3. `داگرتنی ئەپ` — App Download
 
 These are three separate page types, not sections inside one public page.
 
-When the user taps one type in the Flutter create flow, show only the fields relevant to that page type.
+All three page types MUST use the same profile-header design and the same three common profile fields:
+
+- Profile Image
+- Profile Name
+- Bio
+
+The visual design, position, spacing, card treatment, typography and behavior of Profile Image, Profile Name and Bio must be identical across Contact, Restaurant and App Download pages.
+
+Do not rename these common fields to Restaurant Logo, Restaurant Name, App Icon, App Name, Business Name, or similar type-specific labels in the main profile header. Keep the same user-facing profile structure for every page type.
+
+Only the type-specific action area below the shared profile header changes.
+
+When the user taps one type in the Flutter create flow, always show the same common Profile Image + Profile Name + Bio fields first, then show only the additional fields/actions relevant to that page type.
 
 ## Contact / پەیوەندی
 
@@ -180,7 +192,7 @@ Korek and Asiacell are explicit contact providers in the UI. Each should accept 
 
 Only configured providers should appear on the public Contact page.
 
-## Order / داواکردنی خواردن
+## Restaurant / خواردنگە و ڕێستۆرانت
 
 Show ordering/delivery providers such as:
 
@@ -443,15 +455,15 @@ Selecting a page type opens that type's own form.
 
 ## Contact form
 
-Show common profile fields plus contact methods.
+Show the shared Profile Image + Profile Name + Bio fields, then Contact methods.
 
-## Order form
+## Restaurant form
 
-Show common business/profile fields plus restaurant/order provider configuration.
+Show the same shared Profile Image + Profile Name + Bio fields, then restaurant/order provider configuration.
 
 ## Download form
 
-Show common app/profile fields plus Google Play/App Store configuration.
+Show the same shared Profile Image + Profile Name + Bio fields, then Google Play/App Store configuration.
 
 Do not show irrelevant fields from other page types.
 
@@ -974,6 +986,7 @@ The customer account UUID is used internally for ownership only and is not the p
 
 Each created page must:
 
+- use the identical shared Profile Image + Profile Name + Bio header design
 - be stored in the database
 - own its page UUID
 - have a stable public URL
