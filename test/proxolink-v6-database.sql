@@ -37,12 +37,21 @@ DO $$ DECLARE kind text; config jsonb;BEGIN
   ('download','{"providers":[{"provider_key":"google_play","destination_url":"javascript:evil","enabled":true,"sort_order":0}]}'::jsonb),
   ('contact','{"providers":[{"provider_key":"talabat","destination_url":"https://talabat.com/test","enabled":true,"sort_order":0}]}'::jsonb),
   ('order','{"providers":[{"provider_key":"talabat","destination_url":"https://talabat.com.evil.example/test","enabled":true,"sort_order":0}]}'::jsonb),
+  ('order','{"providers":[{"provider_key":"talabat","destination_url":"https://talabat.com/test#evil","enabled":true,"sort_order":0}]}'::jsonb),
   ('download','{"providers":[{"provider_key":"app_store","destination_url":"https://apps.apple.com/app/no-id","enabled":true,"sort_order":0}]}'::jsonb),
   ('contact','{"providers":[{"provider_key":"telegram","enabled":true,"sort_order":0}]}'::jsonb),
   ('contact','{"providers":[{"provider_key":"phone","destination_url":"tel:+9647501234567","enabled":true,"sort_order":0}]}'::jsonb)
  LOOP
   IF public.proxolink_v6_settings_valid(kind,config) IS DISTINCT FROM false THEN RAISE EXCEPTION 'invalid settings accepted';END IF;
  END LOOP;
+END $$;
+DO $$ BEGIN
+ BEGIN INSERT INTO public.proxolink_cards(user_id,name,page_kind,template_key,template_version,client_request_id,settings)
+ VALUES ('11111111-1111-4111-8111-111111111111','Null template','contact',NULL,6,gen_random_uuid(),'{"providers":[{"provider_key":"telegram","destination_url":"https://t.me/proxo_iq","enabled":true,"sort_order":0}]}');
+ RAISE EXCEPTION 'NULL template bypassed V6 constraint';EXCEPTION WHEN check_violation THEN NULL;END;
+ BEGIN INSERT INTO public.proxolink_cards(user_id,name,page_kind,template_key,template_version,card_language,client_request_id,settings)
+ VALUES ('11111111-1111-4111-8111-111111111111','Null language','contact','pill',6,NULL,gen_random_uuid(),'{"providers":[{"provider_key":"telegram","destination_url":"https://t.me/proxo_iq","enabled":true,"sort_order":0}]}');
+ RAISE EXCEPTION 'NULL language bypassed V6 constraint';EXCEPTION WHEN check_violation THEN NULL;END;
 END $$;
 ROLLBACK;
 SELECT 'VERIFIED: additive migration, legacy/ad preservation, database UUIDs, immutable identities, owner RLS, safe providers, archive boundary';

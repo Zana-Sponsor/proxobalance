@@ -207,22 +207,24 @@ class _ProxoLinkPreviewState extends State<ProxoLinkPreview> {
           child: Center(
             child: Padding(
               padding: const EdgeInsets.all(20),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  ProxoText('پێشبینین نەکرایەوە', style: AdUi.heading(context)),
-                  const SizedBox(height: 12),
-                  ProxoText(
-                    'تکایە پەیوەندی ئینتەرنێتەکەت بپشکنە.',
-                    style: AdUi.text(context, color: AdUi.secondary),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 16),
-                  OutlinedButton(
-                    onPressed: _load,
-                    child: const ProxoText('دووبارە هەوڵبدەرەوە'),
-                  ),
-                ],
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ProxoText('پێشبینین نەکرایەوە', style: AdUi.heading(context)),
+                    const SizedBox(height: 12),
+                    ProxoText(
+                      'تکایە پەیوەندی ئینتەرنێتەکەت بپشکنە.',
+                      style: AdUi.text(context, color: AdUi.secondary),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 16),
+                    OutlinedButton(
+                      onPressed: _load,
+                      child: const ProxoText('دووبارە هەوڵبدەرەوە'),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

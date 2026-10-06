@@ -31,7 +31,7 @@ BEGIN
         ELSE RETURN false;
       END CASE;
     ELSIF kind = 'order' THEN
-      IF u !~ '^https://[A-Za-z0-9.-]+/[^#]+' THEN RETURN false; END IF;
+      IF u !~ '^https://[A-Za-z0-9.-]+/[^#]+$' THEN RETURN false; END IF;
       host := substring(u FROM '^https://([A-Za-z0-9.-]+)/');
       CASE k
         WHEN 'talabat' THEN IF host !~ '(^|[.])talabat[.]com$' THEN RETURN false; END IF;
@@ -66,7 +66,7 @@ DO $$ BEGIN
         AND (avatar_path IS NULL OR (length(avatar_path)<=200 AND split_part(avatar_path,'/',1)=user_id::text
           AND split_part(avatar_path,'/',2) IN (id::text,client_request_id::text)
           AND avatar_path ~ '^[0-9a-f-]{36}/[0-9a-f-]{36}/[A-Za-z0-9_-]+[.](webp|jpe?g|png)$'))
-      )
+      ) IS TRUE
     ) NOT VALID;
   END IF;
 END $$;
