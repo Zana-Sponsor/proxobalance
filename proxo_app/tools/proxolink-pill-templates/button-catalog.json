@@ -217,7 +217,7 @@
       "apps.apple.com"
     ],
     "source": "https://developer.apple.com/app-store/marketing/guidelines/",
-    "note": "Unmodified official store badge on a Proxo charcoal gradient wrapper.",
+    "note": "Unmodified official store badge on a quiet rounded card; visible artwork 48px high with 12px clearspace.",
     "gradient": "linear-gradient(135deg,#2C3B54 0%,#1E2A3D 52%,#111827 100%)",
     "gradientStops": [
       "#2C3B54",
@@ -238,7 +238,7 @@
       "play.google.com"
     ],
     "source": "https://partnermarketinghub.withgoogle.com/brands/google-play/",
-    "note": "Unmodified official store badge on a Proxo charcoal gradient wrapper.",
+    "note": "Unmodified official store badge on a quiet rounded card; visible artwork 48px high with 12px clearspace.",
     "gradient": "linear-gradient(135deg,#2C3B54 0%,#1E2A3D 52%,#111827 100%)",
     "gradientStops": [
       "#2C3B54",

@@ -31,9 +31,9 @@ Contact, order and download are separate sections; empty sections disappear. Pre
 | Label alignment | True center with symmetric icon/spacer slots |
 | Within-section button gap | 12 px |
 | Between sections | 22 px on either side of a divider |
-| Store click target | 64 px high |
-| Visible App Store / Google Play badge | 40 px high each |
-| Store clearspace | At least 10 px; official badges unchanged |
+| Store click target | 80 px high; softly outlined 18 px rounded card |
+| Visible App Store / Google Play badge | 48 px high each, original proportions |
+| Store clearspace | At least 12 px; official badges unchanged |
 | Editor controls / reorder controls | Minimum 48 px high |
 
 The WhatsApp button includes a small green message card reading `پەیوەندی بکە`, with a 12 px label and a speech-bubble tail. It is hidden for the first two seconds after the page renders, then appears above the physical right side of the WhatsApp button in RTL and LTR. Its white label, small message symbol, rounded speech-card corners and right-side tail share the green gradient of the button. Space is reserved from the start so its reveal does not shift the layout or cover another button. A soft entrance and two short floating movements finish 3.9 seconds after the reveal. Reduced motion preserves the same two-second delay and shows a static card; tapping it uses the same WhatsApp action as its parent button. Reconfiguring the page cancels the previous timer and starts a fresh two-second delay.
@@ -60,7 +60,7 @@ All four themes use the same three-stop, 135-degree Proxo gradients in each prov
 
 The supplied `zoom.html` uses Font Awesome Free 6.5.0 with 25px WhatsApp, 22px Viber and 20px phone-alt icons in 44px slots. The exact font glyphs are embedded in small WOFF subsets, retaining their metrics and browser hinting. At the verified browser sizes, the WhatsApp font box is 22 × 25px, Viber 22 × 22px, and phone 20 × 20px. Font painting is measured against the reference at the actual display sizes. Telegram retains its 22px em box. Delivery buttons use the identifying marks taken from each official website in a 24px square box, with approximately 22px of visible artwork. Their original aspect ratios and internal clearspace are preserved. Equal 44px spacer and icon slots keep labels truly centered even at 320px. No external font or icon CDN is needed at runtime.
 
-App Store and Google Play use charcoal gradient click targets around their unmodified official badge artwork. The visible badges remain 40px high. Google PNG transparent margins and Apple clearspace are preserved.
+App Store and Google Play use quiet rounded cards with a thin theme-aware outline. The original black badge artwork is centered at 48px visible height inside 80px click targets. Google PNG transparent margins and at least 12px clearspace are preserved; the badge itself never animates. Press feedback changes only the surrounding card background and outline.
 
 ## Configuration API
 
@@ -91,9 +91,9 @@ WhatsApp entries can set `intents: true` and use a top-level `intents` array of 
 
 ## Proxo integration
 
-The production renderer uses the four private documents in `api/_lib/proxolink-templates`, with version 5 catalog checksums. This toolkit contains standalone previews and an editor; it is not bundled as a public Flutter asset. The native form reads template versions from the authenticated server catalog. The host JavaScript channel `ProxoLinkNavigation` revalidates provider destinations before opening external apps.
+The production renderer uses the four private documents in `api/_lib/proxolink-templates`, with version 6 catalog checksums. This toolkit contains standalone previews and an editor; it is not bundled as a public Flutter asset. The native form reads template versions from the authenticated server catalog. The host JavaScript channel `ProxoLinkNavigation` revalidates provider destinations before opening external apps.
 
-For the staged white-label/official-logo release, register `scripts/sql/proxo_brand_v5_prepare.sql`, verify the exact preview and production renderer, then run `scripts/sql/proxo_brand_v5_retire.sql`. Version 4 remains available while the previous production build is serving. Customer card IDs, profile/contact values, avatars and ad relationships stay unchanged. Old-version cards render with the current reviewed template and upgrade their stored version on their next successful edit.
+For the staged store/footer release, register `scripts/sql/proxo_footer_v6_prepare.sql`, verify the exact preview and production renderer, then run `scripts/sql/proxo_footer_v6_retire.sql`. Version 5 remains available while the previous production build is serving. Customer card IDs, profile/contact values, avatars and ad relationships stay unchanged. Old-version cards render with the current reviewed template and upgrade their stored version on their next successful edit.
 
 ## Verification
 
@@ -125,3 +125,9 @@ Research checked 2026-10-06. Per-provider source links and color qualifications 
 `official-logo-sources.json` records the exact source URLs, retrieval date and original byte checksums. The untouched source files are included in `assets/official`. Talabat uses the original t path from its white header logo; Lezzoo uses the mark in its official apple-touch icon; Toters uses the fruit symbol from its header logo, preserving the slice divisions; WADE uses its original two arrow paths. Display-only SVG clipping and monochrome filters apply the requested white treatment; the identifying geometry is not redrawn or stretched. These are brand-identifying link buttons, not a claim of endorsement.
 
 All provider labels and messaging/delivery icon pixels are white. The store badges keep their original artwork, including the official multicolor Google Play symbol. No logo CDN requests are needed when a page opens.
+
+## Footer and press feedback
+
+The contact group retains an accessible section label without a visible heading above its card. The footer has separate caption, Proxo wordmark and legal-link rows. `assets/proxo-wordmark.svg` is the unchanged wordmark already used by this repository, embedded locally so it cannot fall back to the Arabic page font. English legal links use an isolated LTR flex row, wrap at narrow widths and retain 44px touch targets.
+
+Provider buttons use a restrained 1.5% press scale and 180ms ease-out transitions. Entrance animations fill backwards only, allowing press feedback after they finish. No timeout is added to link navigation or native bridge handoff. Reduced motion disables motion while retaining active background/shadow feedback.
