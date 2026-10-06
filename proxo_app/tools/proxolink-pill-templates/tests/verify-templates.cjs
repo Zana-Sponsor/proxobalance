@@ -28,6 +28,8 @@ function contrast(a,b){const [x,y]=[luminance(a),luminance(b)].sort((a,b)=>a-b);
     const rgb=s=>s.match(/[\d.]+/g).slice(0,3).map(Number);b.contrast=contrast(rgb(b.bg),rgb(b.fg));assert(b.contrast>=4.5,`${b.provider}: contrast ${b.contrast}`);assert(b.box.x>=0&&b.box.x+b.box.width<=width+.1);
    }
    for(const list of measured.lists)assert.equal(list.gap,'12px');
+   const message=await page.locator('.wa-message-card').evaluate(n=>{const r=n.getBoundingClientRect(),b=n.parentElement.getBoundingClientRect(),before=n.parentElement.previousElementSibling||n.parentElement.parentElement.previousElementSibling;return{text:n.textContent,bg:getComputedStyle(n).backgroundColor,font:getComputedStyle(n).fontSize,animation:getComputedStyle(n).animationName,left:r.left,right:r.right,bottom:r.bottom,top:r.top,buttonTop:b.top,previousBottom:before.getBoundingClientRect().bottom};});
+   assert.equal(message.text,'پەیوەندی بکە');assert.equal(message.bg,'rgb(37, 211, 102)');assert.equal(message.font,'12px');assert.equal(message.animation,'none');assert(message.left>=0&&message.right<=width);assert(message.bottom<message.buttonTop);assert(message.top>=message.previousBottom);
    for(const store of measured.stores){assert(Math.abs(store.box.height-64)<.1,`${store.provider} target height ${store.box.height}`);assert(store.loaded);}
    assert(Math.abs(measured.stores[0].image.height-40)<.1);assert(Math.abs(measured.stores[1].image.height*168/250-40)<.1);
    results.cases.push({theme,width,height,...measured});
@@ -37,6 +39,7 @@ function contrast(a,b){const [x,y]=[luminance(a),luminance(b)].sort((a,b)=>a-b);
   await page.evaluate(()=>{document.documentElement.style.fontSize='200%';const c=ProxoLink.getConfig();c.name='ناوی درێژی فرۆشگا و خزمەتگوزارییەکانی کڕیار ABC 123';c.bio='ناسێنەری درێژ بۆ پشکنینی دەق و ڕێکخستنی پەڕە '.repeat(10);c.buttons[0].label='پەیوەندی و پرسیار دەربارەی بەرهەمەکان و خزمەتگوزارییەکان';ProxoLink.setConfig(c);});
   assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
   assert(await page.evaluate(()=>[...document.querySelectorAll('.pl-lbl')].every(n=>n.scrollWidth<=n.clientWidth+1)));
+  assert(await page.locator('.wa-message-card').evaluate(n=>{const r=n.getBoundingClientRect(),prev=n.parentElement.previousElementSibling||n.parentElement.parentElement.previousElementSibling;return n.scrollWidth<=n.clientWidth+1&&r.top>=prev.getBoundingClientRect().bottom;}));
   results.checks.push({theme,check:'320px, 200% root text size, long mixed-language name/bio/button label',passed:true});
   await page.evaluate(()=>document.documentElement.style.fontSize='');
   await page.evaluate(()=>{const c=ProxoLink.getConfig();c.direction='ltr';c.lang='en';c.name='Proxo business';ProxoLink.setConfig(c)});
@@ -44,6 +47,12 @@ function contrast(a,b){const [x,y]=[luminance(a),luminance(b)].sort((a,b)=>a-b);
   results.checks.push({theme,check:'LTR language and no horizontal overflow',passed:true});
  }
  await page.goto('file://'+path.join(templates,'pill-white.html'));await page.evaluate(()=>document.fonts.ready);
+ await page.emulateMedia({reducedMotion:'no-preference'});await page.evaluate(()=>ProxoLink.setConfig(ProxoLink.getConfig()));
+ const messageAnimations=await page.locator('.wa-message-card').evaluate(n=>n.getAnimations().map(a=>({name:a.animationName,duration:a.effect.getTiming().duration,iterations:a.effect.getTiming().iterations})));
+ assert(messageAnimations.some(a=>a.name==='wa-message-in'));assert(messageAnimations.some(a=>a.name==='wa-message-float'&&a.iterations===2));
+ await page.waitForTimeout(4100);assert(await page.locator('.wa-message-card').evaluate(n=>n.getAnimations().every(a=>a.playState==='finished')));
+ await page.emulateMedia({reducedMotion:'reduce'});assert.equal(await page.locator('.wa-message-card').evaluate(n=>getComputedStyle(n).animationName),'none');
+ results.checks.push({check:'WhatsApp message card on all themes/viewports, no overlap at 200% text, finite entrance/float animation, reduced motion remains visible',passed:true});
  const urlTests=await page.evaluate(()=>{
   const good=[['whatsapp','https://wa.me/9647500000000'],['telegram','https://t.me/proxo_iq'],['viber','viber://chat?number=%2B9647500000000'],['korek','+9647500000000'],['asiacell','٠٧٧٠٠٠٠٠٠٠٠'],['talabat','https://www.talabat.com/iraq'],['lezzoo','https://www.lezzoo.com/'],['toters','https://www.totersapp.com/'],['wade','https://wadedelivery.com/en'],['app_store','https://apps.apple.com/us/app/wade-delivery-taxi/id1538884916'],['google_play','https://play.google.com/store/apps/details?id=app.trytiptop.customer']];
   const bad=[['whatsapp','javascript:alert(1)'],['lezzoo','https://lezzoo.com.evil.invalid/store'],['talabat','https://evil.invalid'],['telegram','https://t.me@evil.invalid/'],['viber','viber://chat?number=%2B9647500000000&evil=1'],['korek','tel:*123#'],['app_store','https://apps.apple.com'],['google_play','https://play.google.com/store'],['lezzoo','http://www.lezzoo.com/'],['unknown','https://example.com']];
@@ -51,7 +60,7 @@ function contrast(a,b){const [x,y]=[luminance(a),luminance(b)].sort((a,b)=>a-b);
  });
  assert(urlTests.good.every(x=>x.result));assert(urlTests.bad.every(x=>!x.result));results.checks.push({check:'11 supported providers and 10 unsafe/malformed URL cases',passed:true});
  await page.evaluate(()=>{window.__PROXO_INTERCEPT_NAVIGATION__=true;window.captured=[];addEventListener('proxo:navigate',e=>{captured.push(e.detail);e.preventDefault()});const c=ProxoLink.getConfig();c.preview=false;c.buttons=[{type:'whatsapp',url:'https://wa.me/9647500000000',intents:true},{type:'lezzoo',url:'https://www.lezzoo.com/'},{type:'wade',url:'https://wadedelivery.com/en'},{type:'app_store',url:'https://apps.apple.com/us/app/wade-delivery-taxi/id1538884916'},{type:'google_play',url:'https://play.google.com/store/apps/details?id=app.trytiptop.customer'}];ProxoLink.setConfig(c);});
- await page.locator('[data-provider="whatsapp"]').click();assert(await page.locator('#intent-dialog').evaluate(n=>n.open));await page.locator('#cancel').click();assert(!await page.locator('#intent-dialog').evaluate(n=>n.open));assert.equal(await page.evaluate(()=>document.activeElement.dataset.provider),'whatsapp');
+ await page.locator('.wa-message-card').click();assert(await page.locator('#intent-dialog').evaluate(n=>n.open));await page.locator('#cancel').click();assert(!await page.locator('#intent-dialog').evaluate(n=>n.open));assert.equal(await page.evaluate(()=>document.activeElement.dataset.provider),'whatsapp');
  await page.locator('[data-provider="whatsapp"]').click();await page.locator('.opt').first().click();assert.equal(await page.evaluate(()=>captured.length),1);assert((await page.evaluate(()=>captured[0].url)).includes('text='));
  for(const id of ['lezzoo','wade','app_store','google_play'])await page.locator(`[data-provider="${id}"]`).click();assert.equal(await page.evaluate(()=>captured.length),5);
  await page.evaluate(()=>{const c=ProxoLink.getConfig();c.buttons=[{type:'lezzoo',url:'javascript:alert(1)'},{type:'whatsapp',url:''},{type:'telegram',url:'https://t.me/proxo_iq',enabled:false}];ProxoLink.setConfig(c)});assert.equal(await page.locator('[data-provider]').count(),0);

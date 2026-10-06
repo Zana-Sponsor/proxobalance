@@ -33,6 +33,8 @@ Contact, order and download are separate sections; empty sections disappear. Pre
 | Store clearspace | At least 10 px; official badges unchanged |
 | Editor controls / reorder controls | Minimum 48 px high |
 
+The WhatsApp button includes a small green message card reading `پەیوەندی بکە`, with a 12 px label and a speech-bubble tail. Space is reserved above that button so the card does not cover the section heading or other buttons. A soft entrance and two short floating movements finish within 3.9 seconds. The card remains visible and static when reduced motion is requested; tapping it uses the same WhatsApp action as its parent button.
+
 The layout handles safe-area insets, portrait/landscape, RTL/LTR, long labels, reduced motion and 200% text sizing. Buttons grow for wrapped text; their minimum height is not a fixed cap. Mobile browser measurements passed at 320–430 px and larger/tablet/landscape widths. Actual iOS/Android WebView, device text scaling and installed-app handoffs remain separate integration checks.
 
 ## Button palette and contrast

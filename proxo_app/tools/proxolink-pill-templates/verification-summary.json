@@ -45,6 +45,10 @@
       "passed": true
     },
     {
+      "check": "WhatsApp message card on all themes/viewports, no overlap at 200% text, finite entrance/float animation, reduced motion remains visible",
+      "passed": true
+    },
+    {
       "check": "11 supported providers and 10 unsafe/malformed URL cases",
       "passed": true
     },
