@@ -1,0 +1,1030 @@
+{
+  "browser": "Chromium 154 headless, Linux",
+  "mode": "Actual rendered browser measurements; not Android/iOS native WebView",
+  "passed": true,
+  "renderedCases": 40,
+  "checks": [
+    {
+      "theme": "pill",
+      "check": "320px, 200% root text size, long mixed-language name/bio/button label",
+      "passed": true
+    },
+    {
+      "theme": "pill",
+      "check": "LTR language and no horizontal overflow",
+      "passed": true
+    },
+    {
+      "theme": "pill-mint",
+      "check": "320px, 200% root text size, long mixed-language name/bio/button label",
+      "passed": true
+    },
+    {
+      "theme": "pill-mint",
+      "check": "LTR language and no horizontal overflow",
+      "passed": true
+    },
+    {
+      "theme": "pill-dark",
+      "check": "320px, 200% root text size, long mixed-language name/bio/button label",
+      "passed": true
+    },
+    {
+      "theme": "pill-dark",
+      "check": "LTR language and no horizontal overflow",
+      "passed": true
+    },
+    {
+      "theme": "pill-white",
+      "check": "320px, 200% root text size, long mixed-language name/bio/button label",
+      "passed": true
+    },
+    {
+      "theme": "pill-white",
+      "check": "LTR language and no horizontal overflow",
+      "passed": true
+    },
+    {
+      "check": "11 supported providers and 10 unsafe/malformed URL cases",
+      "passed": true
+    },
+    {
+      "check": "WhatsApp intent dialog/cancel/focus restoration/prefill; direct links; disabled/invalid filtering; text injection; inert preview",
+      "passed": true
+    },
+    {
+      "check": "Editor at 320/390/1024px; select/deselect all 11; theme selection; export rejects missing URLs",
+      "passed": true
+    },
+    {
+      "check": "Editor imports config, reorders buttons, exports usable JSON and HTML, preserves dollar signs and escapes HTML in customer text",
+      "passed": true
+    },
+    {
+      "check": "No browser JavaScript errors",
+      "passed": true
+    }
+  ],
+  "cases": [
+    {
+      "theme": "pill",
+      "viewport": [
+        320,
+        568
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "avatarSize": [
+        88,
+        88
+      ],
+      "providerMinHeights": [
+        56
+      ],
+      "labelFontSizes": [
+        "16px"
+      ],
+      "iconSize": 22,
+      "buttonGap": 12,
+      "storeTargetHeight": 64,
+      "storeVisibleBadgeHeight": 40,
+      "minimumLabelContrast": 4.530396220577528
+    },
+    {
+      "theme": "pill",
+      "viewport": [
+        360,
+        640
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "avatarSize": [
+        88,
+        88
+      ],
+      "providerMinHeights": [
+        56
+      ],
+      "labelFontSizes": [
+        "16px"
+      ],
+      "iconSize": 22,
+      "buttonGap": 12,
+      "storeTargetHeight": 64,
+      "storeVisibleBadgeHeight": 40,
+      "minimumLabelContrast": 4.530396220577528
+    },
+    {
+      "theme": "pill",
+      "viewport": [
+        375,
+        667
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "avatarSize": [
+        88,
+        88
+      ],
+      "providerMinHeights": [
+        56
+      ],
+      "labelFontSizes": [
+        "16px"
+      ],
+      "iconSize": 22,
+      "buttonGap": 12,
+      "storeTargetHeight": 64,
+      "storeVisibleBadgeHeight": 40,
+      "minimumLabelContrast": 4.530396220577528
+    },
+    {
+      "theme": "pill",
+      "viewport": [
+        390,
+        844
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "avatarSize": [
+        88,
+        88
+      ],
+      "providerMinHeights": [
+        56
+      ],
+      "labelFontSizes": [
+        "16px"
+      ],
+      "iconSize": 22,
+      "buttonGap": 12,
+      "storeTargetHeight": 64,
+      "storeVisibleBadgeHeight": 40,
+      "minimumLabelContrast": 4.530396220577528
+    },
+    {
+      "theme": "pill",
+      "viewport": [
+        412,
+        915
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "avatarSize": [
+        88,
+        88
+      ],
+      "providerMinHeights": [
+        56
+      ],
+      "labelFontSizes": [
+        "16px"
+      ],
+      "iconSize": 22,
+      "buttonGap": 12,
+      "storeTargetHeight": 64,
+      "storeVisibleBadgeHeight": 40,
+      "minimumLabelContrast": 4.530396220577528
+    },
+    {
+      "theme": "pill",
+      "viewport": [
+        430,
+        932
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "avatarSize": [
+        88,
+        88
+      ],
+      "providerMinHeights": [
+        56
+      ],
+      "labelFontSizes": [
+        "16px"
+      ],
+      "iconSize": 22,
+      "buttonGap": 12,
+      "storeTargetHeight": 64,
+      "storeVisibleBadgeHeight": 40,
+      "minimumLabelContrast": 4.530396220577528
+    },
+    {
+      "theme": "pill",
+      "viewport": [
+        768,
+        1024
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "avatarSize": [
+        88,
+        88
+      ],
+      "providerMinHeights": [
+        56
+      ],
+      "labelFontSizes": [
+        "16px"
+      ],
+      "iconSize": 22,
+      "buttonGap": 12,
+      "storeTargetHeight": 64,
+      "storeVisibleBadgeHeight": 40,
+      "minimumLabelContrast": 4.530396220577528
+    },
+    {
+      "theme": "pill",
+      "viewport": [
+        1024,
+        768
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "avatarSize": [
+        88,
+        88
+      ],
+      "providerMinHeights": [
+        56
+      ],
+      "labelFontSizes": [
+        "16px"
+      ],
+      "iconSize": 22,
+      "buttonGap": 12,
+      "storeTargetHeight": 64,
+      "storeVisibleBadgeHeight": 40,
+      "minimumLabelContrast": 4.530396220577528
+    },
+    {
+      "theme": "pill",
+      "viewport": [
+        568,
+        320
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "avatarSize": [
+        88,
+        88
+      ],
+      "providerMinHeights": [
+        56
+      ],
+      "labelFontSizes": [
+        "16px"
+      ],
+      "iconSize": 22,
+      "buttonGap": 12,
+      "storeTargetHeight": 64,
+      "storeVisibleBadgeHeight": 40,
+      "minimumLabelContrast": 4.530396220577528
+    },
+    {
+      "theme": "pill",
+      "viewport": [
+        844,
+        390
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "avatarSize": [
+        88,
+        88
+      ],
+      "providerMinHeights": [
+        56
+      ],
+      "labelFontSizes": [
+        "16px"
+      ],
+      "iconSize": 22,
+      "buttonGap": 12,
+      "storeTargetHeight": 64,
+      "storeVisibleBadgeHeight": 40,
+      "minimumLabelContrast": 4.530396220577528
+    },
+    {
+      "theme": "pill-mint",
+      "viewport": [
+        320,
+        568
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "avatarSize": [
+        88,
+        88
+      ],
+      "providerMinHeights": [
+        56
+      ],
+      "labelFontSizes": [
+        "16px"
+      ],
+      "iconSize": 22,
+      "buttonGap": 12,
+      "storeTargetHeight": 64,
+      "storeVisibleBadgeHeight": 40,
+      "minimumLabelContrast": 4.530396220577528
+    },
+    {
+      "theme": "pill-mint",
+      "viewport": [
+        360,
+        640
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "avatarSize": [
+        88,
+        88
+      ],
+      "providerMinHeights": [
+        56
+      ],
+      "labelFontSizes": [
+        "16px"
+      ],
+      "iconSize": 22,
+      "buttonGap": 12,
+      "storeTargetHeight": 64,
+      "storeVisibleBadgeHeight": 40,
+      "minimumLabelContrast": 4.530396220577528
+    },
+    {
+      "theme": "pill-mint",
+      "viewport": [
+        375,
+        667
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "avatarSize": [
+        88,
+        88
+      ],
+      "providerMinHeights": [
+        56
+      ],
+      "labelFontSizes": [
+        "16px"
+      ],
+      "iconSize": 22,
+      "buttonGap": 12,
+      "storeTargetHeight": 64,
+      "storeVisibleBadgeHeight": 40,
+      "minimumLabelContrast": 4.530396220577528
+    },
+    {
+      "theme": "pill-mint",
+      "viewport": [
+        390,
+        844
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "avatarSize": [
+        88,
+        88
+      ],
+      "providerMinHeights": [
+        56
+      ],
+      "labelFontSizes": [
+        "16px"
+      ],
+      "iconSize": 22,
+      "buttonGap": 12,
+      "storeTargetHeight": 64,
+      "storeVisibleBadgeHeight": 40,
+      "minimumLabelContrast": 4.530396220577528
+    },
+    {
+      "theme": "pill-mint",
+      "viewport": [
+        412,
+        915
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "avatarSize": [
+        88,
+        88
+      ],
+      "providerMinHeights": [
+        56
+      ],
+      "labelFontSizes": [
+        "16px"
+      ],
+      "iconSize": 22,
+      "buttonGap": 12,
+      "storeTargetHeight": 64,
+      "storeVisibleBadgeHeight": 40,
+      "minimumLabelContrast": 4.530396220577528
+    },
+    {
+      "theme": "pill-mint",
+      "viewport": [
+        430,
+        932
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "avatarSize": [
+        88,
+        88
+      ],
+      "providerMinHeights": [
+        56
+      ],
+      "labelFontSizes": [
+        "16px"
+      ],
+      "iconSize": 22,
+      "buttonGap": 12,
+      "storeTargetHeight": 64,
+      "storeVisibleBadgeHeight": 40,
+      "minimumLabelContrast": 4.530396220577528
+    },
+    {
+      "theme": "pill-mint",
+      "viewport": [
+        768,
+        1024
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "avatarSize": [
+        88,
+        88
+      ],
+      "providerMinHeights": [
+        56
+      ],
+      "labelFontSizes": [
+        "16px"
+      ],
+      "iconSize": 22,
+      "buttonGap": 12,
+      "storeTargetHeight": 64,
+      "storeVisibleBadgeHeight": 40,
+      "minimumLabelContrast": 4.530396220577528
+    },
+    {
+      "theme": "pill-mint",
+      "viewport": [
+        1024,
+        768
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "avatarSize": [
+        88,
+        88
+      ],
+      "providerMinHeights": [
+        56
+      ],
+      "labelFontSizes": [
+        "16px"
+      ],
+      "iconSize": 22,
+      "buttonGap": 12,
+      "storeTargetHeight": 64,
+      "storeVisibleBadgeHeight": 40,
+      "minimumLabelContrast": 4.530396220577528
+    },
+    {
+      "theme": "pill-mint",
+      "viewport": [
+        568,
+        320
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "avatarSize": [
+        88,
+        88
+      ],
+      "providerMinHeights": [
+        56
+      ],
+      "labelFontSizes": [
+        "16px"
+      ],
+      "iconSize": 22,
+      "buttonGap": 12,
+      "storeTargetHeight": 64,
+      "storeVisibleBadgeHeight": 40,
+      "minimumLabelContrast": 4.530396220577528
+    },
+    {
+      "theme": "pill-mint",
+      "viewport": [
+        844,
+        390
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "avatarSize": [
+        88,
+        88
+      ],
+      "providerMinHeights": [
+        56
+      ],
+      "labelFontSizes": [
+        "16px"
+      ],
+      "iconSize": 22,
+      "buttonGap": 12,
+      "storeTargetHeight": 64,
+      "storeVisibleBadgeHeight": 40,
+      "minimumLabelContrast": 4.530396220577528
+    },
+    {
+      "theme": "pill-dark",
+      "viewport": [
+        320,
+        568
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "avatarSize": [
+        88,
+        88
+      ],
+      "providerMinHeights": [
+        56
+      ],
+      "labelFontSizes": [
+        "16px"
+      ],
+      "iconSize": 22,
+      "buttonGap": 12,
+      "storeTargetHeight": 64,
+      "storeVisibleBadgeHeight": 40,
+      "minimumLabelContrast": 4.530396220577528
+    },
+    {
+      "theme": "pill-dark",
+      "viewport": [
+        360,
+        640
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "avatarSize": [
+        88,
+        88
+      ],
+      "providerMinHeights": [
+        56
+      ],
+      "labelFontSizes": [
+        "16px"
+      ],
+      "iconSize": 22,
+      "buttonGap": 12,
+      "storeTargetHeight": 64,
+      "storeVisibleBadgeHeight": 40,
+      "minimumLabelContrast": 4.530396220577528
+    },
+    {
+      "theme": "pill-dark",
+      "viewport": [
+        375,
+        667
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "avatarSize": [
+        88,
+        88
+      ],
+      "providerMinHeights": [
+        56
+      ],
+      "labelFontSizes": [
+        "16px"
+      ],
+      "iconSize": 22,
+      "buttonGap": 12,
+      "storeTargetHeight": 64,
+      "storeVisibleBadgeHeight": 40,
+      "minimumLabelContrast": 4.530396220577528
+    },
+    {
+      "theme": "pill-dark",
+      "viewport": [
+        390,
+        844
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "avatarSize": [
+        88,
+        88
+      ],
+      "providerMinHeights": [
+        56
+      ],
+      "labelFontSizes": [
+        "16px"
+      ],
+      "iconSize": 22,
+      "buttonGap": 12,
+      "storeTargetHeight": 64,
+      "storeVisibleBadgeHeight": 40,
+      "minimumLabelContrast": 4.530396220577528
+    },
+    {
+      "theme": "pill-dark",
+      "viewport": [
+        412,
+        915
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "avatarSize": [
+        88,
+        88
+      ],
+      "providerMinHeights": [
+        56
+      ],
+      "labelFontSizes": [
+        "16px"
+      ],
+      "iconSize": 22,
+      "buttonGap": 12,
+      "storeTargetHeight": 64,
+      "storeVisibleBadgeHeight": 40,
+      "minimumLabelContrast": 4.530396220577528
+    },
+    {
+      "theme": "pill-dark",
+      "viewport": [
+        430,
+        932
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "avatarSize": [
+        88,
+        88
+      ],
+      "providerMinHeights": [
+        56
+      ],
+      "labelFontSizes": [
+        "16px"
+      ],
+      "iconSize": 22,
+      "buttonGap": 12,
+      "storeTargetHeight": 64,
+      "storeVisibleBadgeHeight": 40,
+      "minimumLabelContrast": 4.530396220577528
+    },
+    {
+      "theme": "pill-dark",
+      "viewport": [
+        768,
+        1024
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "avatarSize": [
+        88,
+        88
+      ],
+      "providerMinHeights": [
+        56
+      ],
+      "labelFontSizes": [
+        "16px"
+      ],
+      "iconSize": 22,
+      "buttonGap": 12,
+      "storeTargetHeight": 64,
+      "storeVisibleBadgeHeight": 40,
+      "minimumLabelContrast": 4.530396220577528
+    },
+    {
+      "theme": "pill-dark",
+      "viewport": [
+        1024,
+        768
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "avatarSize": [
+        88,
+        88
+      ],
+      "providerMinHeights": [
+        56
+      ],
+      "labelFontSizes": [
+        "16px"
+      ],
+      "iconSize": 22,
+      "buttonGap": 12,
+      "storeTargetHeight": 64,
+      "storeVisibleBadgeHeight": 40,
+      "minimumLabelContrast": 4.530396220577528
+    },
+    {
+      "theme": "pill-dark",
+      "viewport": [
+        568,
+        320
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "avatarSize": [
+        88,
+        88
+      ],
+      "providerMinHeights": [
+        56
+      ],
+      "labelFontSizes": [
+        "16px"
+      ],
+      "iconSize": 22,
+      "buttonGap": 12,
+      "storeTargetHeight": 64,
+      "storeVisibleBadgeHeight": 40,
+      "minimumLabelContrast": 4.530396220577528
+    },
+    {
+      "theme": "pill-dark",
+      "viewport": [
+        844,
+        390
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "avatarSize": [
+        88,
+        88
+      ],
+      "providerMinHeights": [
+        56
+      ],
+      "labelFontSizes": [
+        "16px"
+      ],
+      "iconSize": 22,
+      "buttonGap": 12,
+      "storeTargetHeight": 64,
+      "storeVisibleBadgeHeight": 40,
+      "minimumLabelContrast": 4.530396220577528
+    },
+    {
+      "theme": "pill-white",
+      "viewport": [
+        320,
+        568
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "avatarSize": [
+        88,
+        88
+      ],
+      "providerMinHeights": [
+        56
+      ],
+      "labelFontSizes": [
+        "16px"
+      ],
+      "iconSize": 22,
+      "buttonGap": 12,
+      "storeTargetHeight": 64,
+      "storeVisibleBadgeHeight": 40,
+      "minimumLabelContrast": 4.530396220577528
+    },
+    {
+      "theme": "pill-white",
+      "viewport": [
+        360,
+        640
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "avatarSize": [
+        88,
+        88
+      ],
+      "providerMinHeights": [
+        56
+      ],
+      "labelFontSizes": [
+        "16px"
+      ],
+      "iconSize": 22,
+      "buttonGap": 12,
+      "storeTargetHeight": 64,
+      "storeVisibleBadgeHeight": 40,
+      "minimumLabelContrast": 4.530396220577528
+    },
+    {
+      "theme": "pill-white",
+      "viewport": [
+        375,
+        667
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "avatarSize": [
+        88,
+        88
+      ],
+      "providerMinHeights": [
+        56
+      ],
+      "labelFontSizes": [
+        "16px"
+      ],
+      "iconSize": 22,
+      "buttonGap": 12,
+      "storeTargetHeight": 64,
+      "storeVisibleBadgeHeight": 40,
+      "minimumLabelContrast": 4.530396220577528
+    },
+    {
+      "theme": "pill-white",
+      "viewport": [
+        390,
+        844
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "avatarSize": [
+        88,
+        88
+      ],
+      "providerMinHeights": [
+        56
+      ],
+      "labelFontSizes": [
+        "16px"
+      ],
+      "iconSize": 22,
+      "buttonGap": 12,
+      "storeTargetHeight": 64,
+      "storeVisibleBadgeHeight": 40,
+      "minimumLabelContrast": 4.530396220577528
+    },
+    {
+      "theme": "pill-white",
+      "viewport": [
+        412,
+        915
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "avatarSize": [
+        88,
+        88
+      ],
+      "providerMinHeights": [
+        56
+      ],
+      "labelFontSizes": [
+        "16px"
+      ],
+      "iconSize": 22,
+      "buttonGap": 12,
+      "storeTargetHeight": 64,
+      "storeVisibleBadgeHeight": 40,
+      "minimumLabelContrast": 4.530396220577528
+    },
+    {
+      "theme": "pill-white",
+      "viewport": [
+        430,
+        932
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "avatarSize": [
+        88,
+        88
+      ],
+      "providerMinHeights": [
+        56
+      ],
+      "labelFontSizes": [
+        "16px"
+      ],
+      "iconSize": 22,
+      "buttonGap": 12,
+      "storeTargetHeight": 64,
+      "storeVisibleBadgeHeight": 40,
+      "minimumLabelContrast": 4.530396220577528
+    },
+    {
+      "theme": "pill-white",
+      "viewport": [
+        768,
+        1024
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "avatarSize": [
+        88,
+        88
+      ],
+      "providerMinHeights": [
+        56
+      ],
+      "labelFontSizes": [
+        "16px"
+      ],
+      "iconSize": 22,
+      "buttonGap": 12,
+      "storeTargetHeight": 64,
+      "storeVisibleBadgeHeight": 40,
+      "minimumLabelContrast": 4.530396220577528
+    },
+    {
+      "theme": "pill-white",
+      "viewport": [
+        1024,
+        768
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "avatarSize": [
+        88,
+        88
+      ],
+      "providerMinHeights": [
+        56
+      ],
+      "labelFontSizes": [
+        "16px"
+      ],
+      "iconSize": 22,
+      "buttonGap": 12,
+      "storeTargetHeight": 64,
+      "storeVisibleBadgeHeight": 40,
+      "minimumLabelContrast": 4.530396220577528
+    },
+    {
+      "theme": "pill-white",
+      "viewport": [
+        568,
+        320
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "avatarSize": [
+        88,
+        88
+      ],
+      "providerMinHeights": [
+        56
+      ],
+      "labelFontSizes": [
+        "16px"
+      ],
+      "iconSize": 22,
+      "buttonGap": 12,
+      "storeTargetHeight": 64,
+      "storeVisibleBadgeHeight": 40,
+      "minimumLabelContrast": 4.530396220577528
+    },
+    {
+      "theme": "pill-white",
+      "viewport": [
+        844,
+        390
+      ],
+      "horizontalOverflow": false,
+      "fontLoaded": true,
+      "avatarSize": [
+        88,
+        88
+      ],
+      "providerMinHeights": [
+        56
+      ],
+      "labelFontSizes": [
+        "16px"
+      ],
+      "iconSize": 22,
+      "buttonGap": 12,
+      "storeTargetHeight": 64,
+      "storeVisibleBadgeHeight": 40,
+      "minimumLabelContrast": 4.530396220577528
+    }
+  ]
+}
