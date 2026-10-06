@@ -4,8 +4,8 @@
     "label": "واتسئاپ",
     "name": "WhatsApp",
     "group": "contact",
-    "bg": "#25D366",
-    "fg": "#083B25",
+    "bg": "#087D43",
+    "fg": "#FFFFFF",
     "icon": "whatsapp",
     "hosts": [
       "wa.me",
@@ -14,21 +14,21 @@
     ],
     "source": "https://www.meta.com/brand/resources/whatsapp/whatsapp-brand/",
     "note": "Proxo gradient in the provider color family; not a certified official brand gradient.",
-    "gradient": "linear-gradient(135deg,#46E98B 0%,#25D366 52%,#18B85E 100%)",
+    "gradient": "linear-gradient(135deg,#0F8548 0%,#087D43 52%,#066D37 100%)",
     "gradientStops": [
-      "#46E98B",
-      "#25D366",
-      "#18B85E"
+      "#0F8548",
+      "#087D43",
+      "#066D37"
     ],
-    "glow": "37,211,102"
+    "glow": "8,125,67"
   },
   {
     "id": "telegram",
     "label": "تیلیگرام",
     "name": "Telegram",
     "group": "contact",
-    "bg": "#18A5E3",
-    "fg": "#062538",
+    "bg": "#0870B2",
+    "fg": "#FFFFFF",
     "icon": "telegram",
     "hosts": [
       "t.me",
@@ -37,13 +37,13 @@
     ],
     "source": "https://telegram.org/tour/screenshots",
     "note": "Proxo gradient in the provider color family; not a certified official brand gradient.",
-    "gradient": "linear-gradient(135deg,#38BDF8 0%,#18A5E3 52%,#0797D2 100%)",
+    "gradient": "linear-gradient(135deg,#117BC0 0%,#0870B2 52%,#065B9B 100%)",
     "gradientStops": [
-      "#38BDF8",
-      "#18A5E3",
-      "#0797D2"
+      "#117BC0",
+      "#0870B2",
+      "#065B9B"
     ],
-    "glow": "24,165,227"
+    "glow": "8,112,178"
   },
   {
     "id": "viber",
@@ -111,87 +111,99 @@
     "label": "تەڵەبات",
     "name": "talabat",
     "group": "order",
-    "bg": "#FF761A",
-    "fg": "#281508",
-    "icon": "bag",
+    "bg": "#BE3B00",
+    "fg": "#FFFFFF",
+    "icon": "talabat",
     "hosts": [
       "talabat.com"
     ],
     "source": "https://iraq.talabat.com/",
     "note": "Proxo gradient in the provider color family; not a certified official brand gradient.",
-    "gradient": "linear-gradient(135deg,#FF9A24 0%,#FF761A 52%,#F85F08 100%)",
+    "gradient": "linear-gradient(135deg,#CF4A00 0%,#BE3B00 52%,#AB2F00 100%)",
     "gradientStops": [
-      "#FF9A24",
-      "#FF761A",
-      "#F85F08"
+      "#CF4A00",
+      "#BE3B00",
+      "#AB2F00"
     ],
-    "glow": "255,118,26"
+    "glow": "190,59,0",
+    "logoSource": "https://iraq.talabat.com/assets/images/logo.svg",
+    "logoSha256": "2f68c00a124aa9252f020e69798d0aa523cf135cd214366ba6671473a6b27597",
+    "logoTreatment": "The original first t subpath, unchanged; centered without stretching."
   },
   {
     "id": "lezzoo",
     "label": "لەزوو",
     "name": "Lezzoo",
     "group": "order",
-    "bg": "#F34B68",
-    "fg": "#210B16",
-    "icon": "bag",
+    "bg": "#CF1F49",
+    "fg": "#FFFFFF",
+    "icon": "lezzoo",
     "hosts": [
       "lezzoo.com",
       "lezzoodevs.com"
     ],
     "source": "https://www.lezzoo.com/",
     "note": "Proxo gradient in the provider color family; not a certified official brand gradient.",
-    "gradient": "linear-gradient(135deg,#FF617A 0%,#F34B68 52%,#E83C57 100%)",
+    "gradient": "linear-gradient(135deg,#E02B4D 0%,#CF1F49 52%,#B9163E 100%)",
     "gradientStops": [
-      "#FF617A",
-      "#F34B68",
-      "#E83C57"
+      "#E02B4D",
+      "#CF1F49",
+      "#B9163E"
     ],
-    "glow": "243,75,104"
+    "glow": "207,31,73",
+    "logoSource": "https://www.lezzoo.com/apple-icon.png",
+    "logoSha256": "694ee8b7f0a83e25e0ba2c2bc09190db21812f07f66f11d1ea6d74e4a960c814",
+    "logoTreatment": "Official apple-touch icon linked by the website; white foreground isolated by an SVG display filter."
   },
   {
     "id": "toters",
     "label": "توتەرز",
     "name": "Toters",
     "group": "order",
-    "bg": "#14C7A9",
-    "fg": "#063329",
-    "icon": "bag",
+    "bg": "#007961",
+    "fg": "#FFFFFF",
+    "icon": "toters",
     "hosts": [
       "totersapp.com",
       "toters.com"
     ],
     "source": "https://www.totersapp.com/",
     "note": "Proxo gradient in the provider color family; not a certified official brand gradient.",
-    "gradient": "linear-gradient(135deg,#2AE0BC 0%,#14C7A9 52%,#08AE93 100%)",
+    "gradient": "linear-gradient(135deg,#07836E 0%,#007961 52%,#006951 100%)",
     "gradientStops": [
-      "#2AE0BC",
-      "#14C7A9",
-      "#08AE93"
+      "#07836E",
+      "#007961",
+      "#006951"
     ],
-    "glow": "20,199,169"
+    "glow": "0,121,97",
+    "logoSource": "https://images.squarespace-cdn.com/content/v1/570b5c4162cd9478edc625af/1587042359495-DT89KU48IBU7YDMOQ89Z/LOGO+GREEN-01.png?format=1500w",
+    "logoSha256": "63be9e5d8a18310aa827d19b170d4f7a3281e52c3a6ca7ce59eb189112d3593b",
+    "logoTreatment": "Official website header; fruit mark clipped in the SVG viewport and displayed white."
   },
   {
     "id": "wade",
     "label": "وادێ",
     "name": "WADE",
     "group": "order",
-    "bg": "#14C8E8",
-    "fg": "#062B36",
-    "icon": "bag",
+    "bg": "#006F8E",
+    "fg": "#FFFFFF",
+    "icon": "wade",
     "hosts": [
       "wadedelivery.com",
       "trytiptop.com"
     ],
     "source": "https://wadedelivery.com/ckb",
     "note": "Proxo gradient in the provider color family; not a certified official brand gradient.",
-    "gradient": "linear-gradient(135deg,#40DDF7 0%,#14C8E8 52%,#06B3D6 100%)",
+    "gradient": "linear-gradient(135deg,#067F9D 0%,#006F8E 52%,#005D7C 100%)",
     "gradientStops": [
-      "#40DDF7",
-      "#14C8E8",
-      "#06B3D6"
+      "#067F9D",
+      "#006F8E",
+      "#005D7C"
     ],
-    "glow": "20,200,232"
+    "glow": "0,111,142",
+    "logoSource": "https://wadedelivery.com/logo-light.svg",
+    "logoSha256": "9aedaf36205735df8c01d43aa24f66bac8c1a8ece2cd81c669f14f8c44d44d20",
+    "logoTreatment": "Official website footer; two original arrow paths, unchanged, displayed white."
   },
   {
     "id": "app_store",

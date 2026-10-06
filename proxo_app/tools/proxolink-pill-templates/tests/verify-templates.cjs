@@ -2,6 +2,7 @@ const { chromium } = require('playwright');
 const fs = require('fs');
 const path = require('path');
 const assert = require('assert/strict');
+const { createHash } = require('crypto');
 const root = process.env.PROXO_KIT_ROOT || path.resolve(__dirname, '..');
 const templates = fs.existsSync(path.join(root,'outputs')) ? path.join(root,'outputs') : root;
 const evidence = path.join(root,'verification');
@@ -11,10 +12,15 @@ const themes = ['pill','pill-mint','pill-dark','pill-white'];
 // Independent dimensions from the supplied zoom.html: Font Awesome 6.5.0
 // WhatsApp 25px, Viber 22px and phone-alt 20px inside equal 44px slots.
 const iconBoxes = {whatsapp:[22,25],viber:[22,22],telegram:[21,22],korek:[20,20],asiacell:[20,20]};
+const foodProviders = ['talabat','lezzoo','toters','wade'];
 const results = {browser:'Chromium 154 headless, Linux',mode:'Actual rendered browser measurements; not Android/iOS native WebView',cases:[],checks:[]};
 function luminance(rgb) {return rgb.map(c=>c/255).map(c=>c<=.04045?c/12.92:((c+.055)/1.055)**2.4).reduce((s,c,i)=>s+c*[.2126,.7152,.0722][i],0);}
 function contrast(a,b){const [x,y]=[luminance(a),luminance(b)].sort((a,b)=>a-b);return (y+.05)/(x+.05);}
 (async()=>{
+ const officialSources=JSON.parse(fs.readFileSync(path.join(root,'official-logo-sources.json'),'utf8'));
+ assert.deepEqual(officialSources.map(a=>a.provider),foodProviders);
+ for(const a of officialSources){assert.equal(createHash('sha256').update(fs.readFileSync(path.join(root,a.file))).digest('hex'),a.sha256);assert(new URL(a.sourceUrl).protocol==='https:');}
+ results.checks.push({check:'Four official website logo assets retained with their exact source byte checksums',passed:true});
  const browser = await chromium.launch({headless:true,...(process.env.CHROMIUM_EXECUTABLE_PATH ? {executablePath:process.env.CHROMIUM_EXECUTABLE_PATH} : {}),args:['--no-sandbox']});
  const context=await browser.newContext({reducedMotion:'reduce'});
  const page=await context.newPage();await page.clock.install({time:new Date('2026-10-06T00:00:00Z')});await page.clock.pauseAt(new Date('2026-10-06T00:00:01Z'));const errors=[];page.on('pageerror',e=>errors.push(e.message));
@@ -31,14 +37,14 @@ function contrast(a,b){const [x,y]=[luminance(a),luminance(b)].sort((a,b)=>a-b);
     return {overflow:document.documentElement.scrollWidth>innerWidth,font:document.fonts.check('16px ProxoBahij'),avatar:box(document.getElementById('avatar')),buttons:[...document.querySelectorAll('.pl-btn')].map(n=>({provider:n.dataset.provider,box:box(n),font:getComputedStyle(n.querySelector('.pl-lbl')).fontSize,icon:box(n.querySelector('.pl-ic > *')),bg:getComputedStyle(n).backgroundColor,gradient:getComputedStyle(n).backgroundImage,fg:getComputedStyle(n).color,center:box(n.querySelector('.pl-lbl')).x+box(n.querySelector('.pl-lbl')).width/2})),stores:[...document.querySelectorAll('.store-link')].map(n=>({provider:n.dataset.provider,box:box(n),image:box(n.querySelector('img')),gradient:getComputedStyle(n).backgroundImage,loaded:n.querySelector('img').naturalWidth>0})),lists:[...document.querySelectorAll('.list')].map(n=>({gap:getComputedStyle(n).gap,heights:[...n.children].map(b=>box(b).height)}))};
    });
    assert(!measured.overflow,`${theme} ${width}: overflow`);assert(measured.font,`${theme}: font unavailable`);assert.equal(measured.avatar.width,88);assert.equal(measured.avatar.height,88);assert.equal(measured.buttons.length,9);assert.equal(measured.stores.length,2);
-   for(const b of measured.buttons){assert(Math.abs(b.box.height-56)<.1,`${b.provider} height ${b.box.height}`);assert.equal(b.font,'16px');const expected=iconBoxes[b.provider]||[22,22];assert(Math.abs(b.icon.width-expected[0])<.1);assert(Math.abs(b.icon.height-expected[1])<.1);assert(Math.abs(b.center-(b.box.x+b.box.width/2))<.1,`${b.provider}: not centered`);
+   for(const b of measured.buttons){assert(Math.abs(b.box.height-56)<.1,`${b.provider} height ${b.box.height}`);assert.equal(b.font,'16px');assert.equal(b.fg,'rgb(255, 255, 255)');const expected=iconBoxes[b.provider]||(foodProviders.includes(b.provider)?[24,24]:[22,22]);assert(Math.abs(b.icon.width-expected[0])<.1);assert(Math.abs(b.icon.height-expected[1])<.1);assert(Math.abs(b.center-(b.box.x+b.box.width/2))<.1,`${b.provider}: not centered`);
     const rgb=s=>s.match(/[\d.]+/g).slice(0,3).map(Number);const stops=[...b.gradient.matchAll(/rgb\(([^)]+)\)/g)].map(m=>m[1].split(',').map(Number));assert.equal(stops.length,3,`${b.provider}: missing gradient`);
     b.contrast=Infinity;for(let i=1;i<stops.length;i++)for(let n=0;n<=200;n++){const t=n/200;b.contrast=Math.min(b.contrast,contrast(stops[i-1].map((v,k)=>v+(stops[i][k]-v)*t),rgb(b.fg)));}
     assert(b.contrast>=4.5,`${b.provider}: gradient contrast ${b.contrast}`);assert(b.box.x>=0&&b.box.x+b.box.width<=width+.1);
    }
    for(const list of measured.lists)assert.equal(list.gap,'12px');
-   const message=await page.locator('.wa-message-card').evaluate(n=>{const r=n.getBoundingClientRect(),b=n.parentElement.getBoundingClientRect(),before=n.parentElement.previousElementSibling||n.parentElement.parentElement.previousElementSibling;return{text:n.textContent,bg:getComputedStyle(n).backgroundColor,font:getComputedStyle(n).fontSize,animation:getComputedStyle(n).animationName,left:r.left,right:r.right,bottom:r.bottom,top:r.top,buttonTop:b.top,previousBottom:before.getBoundingClientRect().bottom};});
-   assert.equal(message.text,'پەیوەندی بکە');assert.equal(message.bg,'rgb(37, 211, 102)');assert.equal(message.font,'12px');assert.equal(message.animation,'none');assert(message.left>=0&&message.right<=width);assert(message.bottom<message.buttonTop);assert(message.top>=message.previousBottom);
+   const message=await page.locator('.wa-message-card').evaluate(n=>{const r=n.getBoundingClientRect(),b=n.parentElement.getBoundingClientRect(),before=n.parentElement.previousElementSibling||n.parentElement.parentElement.previousElementSibling;return{text:n.textContent,bg:getComputedStyle(n).backgroundColor,fg:getComputedStyle(n).color,font:getComputedStyle(n).fontSize,animation:getComputedStyle(n).animationName,left:r.left,right:r.right,bottom:r.bottom,top:r.top,buttonTop:b.top,buttonRight:b.right,previousBottom:before.getBoundingClientRect().bottom};});
+   assert.equal(message.text,'پەیوەندی بکە');assert.equal(message.bg,'rgb(8, 125, 67)');assert.equal(message.fg,'rgb(255, 255, 255)');assert.equal(message.font,'12px');assert.equal(message.animation,'none');assert(message.left>=0&&message.right<=width);assert(Math.abs(message.right-(message.buttonRight-12))<.1,'WhatsApp card must be on the physical right');assert(message.bottom<message.buttonTop);assert(message.top>=message.previousBottom);
    for(const store of measured.stores){assert(Math.abs(store.box.height-64)<.1,`${store.provider} target height ${store.box.height}`);assert(store.loaded);assert(store.gradient.startsWith('linear-gradient('));}
    assert(Math.abs(measured.stores[0].image.height-40)<.1);assert(Math.abs(measured.stores[1].image.height*168/250-40)<.1);
    results.cases.push({theme,width,height,...measured});
@@ -50,19 +56,20 @@ function contrast(a,b){const [x,y]=[luminance(a),luminance(b)].sort((a,b)=>a-b);
     const width=Math.round(size.width*10),height=Math.round(size.height*10);
     const canvas=document.createElement('canvas');canvas.width=width;canvas.height=height;const ctx=canvas.getContext('2d');
     if(original.matches('.provider-glyph')){
-     const style=getComputedStyle(original);ctx.font=style.fontWeight+' '+(parseFloat(style.fontSize)*10)+'px '+style.fontFamily;
+     const style=getComputedStyle(original);ctx.fillStyle=style.color;ctx.font=style.fontWeight+' '+(parseFloat(style.fontSize)*10)+'px '+style.fontFamily;
      const metrics=ctx.measureText(original.textContent);ctx.fillText(original.textContent,0,(height+metrics.fontBoundingBoxAscent-metrics.fontBoundingBoxDescent)/2);
     }else{
-     const svg=original.cloneNode(true);svg.setAttribute('width',String(width));svg.setAttribute('height',String(height));svg.style.color='#000000';
+     const svg=original.cloneNode(true);svg.setAttribute('width',String(width));svg.setAttribute('height',String(height));svg.style.color=getComputedStyle(original).color;
      const img=new Image();img.src='data:image/svg+xml,'+encodeURIComponent(new XMLSerializer().serializeToString(svg));await img.decode();ctx.drawImage(img,0,0,width,height);
     }
     const rgba=ctx.getImageData(0,0,width,height).data;let left=width,top=height,right=-1,bottom=-1;
-    for(let y=0;y<height;y++)for(let x=0;x<width;x++)if(rgba[(y*width+x)*4+3]>=32){left=Math.min(left,x);top=Math.min(top,y);right=Math.max(right,x);bottom=Math.max(bottom,y);}
-    result.push({provider:node.dataset.provider,width:(right-left+1)/10,height:(bottom-top+1)/10,centerX:(left+right+1)/20,centerY:(top+bottom+1)/20,boxWidth:size.width,boxHeight:size.height});
+    let white=true;
+    for(let y=0;y<height;y++)for(let x=0;x<width;x++)if(rgba[(y*width+x)*4+3]>=32){left=Math.min(left,x);top=Math.min(top,y);right=Math.max(right,x);bottom=Math.max(bottom,y);const k=(y*width+x)*4;white&&=rgba[k]>=254&&rgba[k+1]>=254&&rgba[k+2]>=254;}
+    result.push({provider:node.dataset.provider,width:(right-left+1)/10,height:(bottom-top+1)/10,centerX:(left+right+1)/20,centerY:(top+bottom+1)/20,boxWidth:size.width,boxHeight:size.height,white});
    }
    return result;
   });
-  for(const icon of painted){assert(Math.max(icon.width,icon.height)>=19.7&&Math.max(icon.width,icon.height)<=22.3,`${icon.provider}: unbalanced painted icon`);assert(Math.abs(icon.centerX-icon.boxWidth/2)<=.4&&Math.abs(icon.centerY-icon.boxHeight/2)<=.4,`${icon.provider}: artwork off center`);}
+  for(const icon of painted){assert(icon.white,`${icon.provider}: visible icon pixels must be white`);assert(Math.max(icon.width,icon.height)>=19.7&&Math.max(icon.width,icon.height)<=22.3,`${icon.provider}: unbalanced painted icon`);assert(Math.abs(icon.centerX-icon.boxWidth/2)<=.4&&Math.abs(icon.centerY-icon.boxHeight/2)<=.4,`${icon.provider}: artwork off center`);}
   results.checks.push({theme,check:'Reference Font Awesome sizes and centered visible artwork in symmetric 44px slots',passed:true,painted});
   await page.setViewportSize({width:390,height:844});await page.screenshot({path:path.join(root,'verification',theme+'-rendered.png'),fullPage:true});
   await page.setViewportSize({width:320,height:568});
@@ -74,8 +81,10 @@ function contrast(a,b){const [x,y]=[luminance(a),luminance(b)].sort((a,b)=>a-b);
   results.checks.push({theme,check:'320px, 200% root text size, long mixed-language name/bio/button label',passed:true});
   await page.evaluate(()=>document.documentElement.style.fontSize='');
   await page.evaluate(()=>{const c=ProxoLink.getConfig();c.direction='ltr';c.lang='en';c.name='Proxo business';ProxoLink.setConfig(c)});
+  await page.clock.fastForward(2000);
   assert(await page.evaluate(()=>document.documentElement.dir==='ltr'&&document.documentElement.scrollWidth<=innerWidth));
-  results.checks.push({theme,check:'LTR language and no horizontal overflow',passed:true});
+  assert(await page.locator('.wa-message-card').evaluate(n=>Math.abs(n.parentElement.getBoundingClientRect().right-n.getBoundingClientRect().right-12)<.1));
+  results.checks.push({theme,check:'LTR language, physical-right WhatsApp card and no horizontal overflow',passed:true});
  }
  await page.goto('file://'+path.join(templates,'pill-white.html'));await page.evaluate(()=>document.fonts.ready);
  await page.emulateMedia({reducedMotion:'no-preference'});await page.evaluate(()=>ProxoLink.setConfig(ProxoLink.getConfig()));
