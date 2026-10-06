@@ -172,6 +172,7 @@
         <div class="ex-note" id="profitNotice">لێبڕین = بڕی نێردراو − بڕی وەرگیراو؛ تەنها مامەڵە پەسەندکراوەکان هەژمار دەکرێن.</div>
         <div class="ex-title">پاڵاوتن و داگرتنی ڕاپۆرت</div>
         <div class="ex-actions profit-toolbar">
+          <label class="profit-date-label" id="profitAdminFilter" hidden>ئادمین <select id="profitAdmin" class="ex-input" style="width:200px;max-width:100%" aria-label="هەڵبژاردنی ئادمینی ڕاپۆرتی لێبڕین" onchange="loadProfitStats()"><option value="">هەموو ئادمینەکان</option></select></label>
           <label class="profit-date-label">لە ڕێکەوت <input id="profitFrom" class="ex-input" type="date" aria-label="لە ڕێکەوت"></label>
           <label class="profit-date-label">تا ڕێکەوت <input id="profitTo" class="ex-input" type="date" aria-label="تا ڕێکەوت"></label>
           <button class="ex-btn primary" type="button" onclick="loadProfitStats()"><i class="fas fa-arrows-rotate"></i> نوێکردنەوە</button>
@@ -202,6 +203,7 @@
           <button type="button" class="ex-btn" onclick="goPage('rates')"><i class="fas fa-pen"></i> دەستکاری نرخ</button>
         </div>
         <div class="ex-controls">
+          <select class="ex-input" id="exAdmin" style="width:200px;max-width:100%" aria-label="هەڵبژاردنی ئادمینی ڕاپۆرتی ئاڵوگۆڕ" onchange="exStatsState.limit=60;exStatsRender()"><option value="">هەموو ئادمینەکان</option></select>
           <input class="ex-input" id="exSearch" type="search" placeholder="گەڕان بە ئایدی مامەڵە یان ڕێگا..." aria-label="گەڕانی مامەڵە" oninput="exStatsState.limit=60;exStatsRender()">
           <select class="ex-input" id="exStatus" aria-label="پاڵاوتنی باری مامەڵە" onchange="exSetFilter(this.value)">
             <option value="all">هەموو بارەکان</option><option value="پەسەندکرا">پەسەندکراو</option><option value="چاوەڕوانە">چاوەڕوان</option>
@@ -1020,7 +1022,7 @@
 <script src="assets/js/admin.js?v=24"></script>
   <script src="assets/js/exchange-staff.js?v=6"></script>
   <script src="assets/js/exchange-balance-admin.js?v=4"></script>
-  <script src="assets/js/exchange-insights.js?v=4"></script>
-  <script src="assets/js/exchange-profit.js?v=3"></script><script src="assets/js/exchange-admin-workspace.js?v=1"></script><script src="assets/js/track.js?v=3"></script>
+  <script src="assets/js/exchange-insights.js?v=5"></script>
+  <script src="assets/js/exchange-profit.js?v=4"></script><script src="assets/js/exchange-admin-workspace.js?v=1"></script><script src="assets/js/track.js?v=3"></script>
 </body>
 </html>

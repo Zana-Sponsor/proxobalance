@@ -102,10 +102,21 @@ test('statistics, code search and every report use the persisted public transact
   assert.ok(pdfSources[0].includes('ئادمینی یەکەم'));
   assert.ok(pdfSources[0].includes('=دووەم, &quot;ئادمین&quot;'));
 
+  // Select by handler ID so even identical display names cannot mix accounts.
+  element('exAdmin').value='staff-two';context.exStatsRender();
+  assert.equal(context.exFiltered().length,1);
+  context.exExport('csv');context.exExport('xlsx');await context.exExportPdf(context.exFiltered(),'selected-admin');
+  assert.ok(downloads.at(-1).text.includes(orders[1].order_code));
+  assert.ok(!downloads.at(-1).text.includes(orders[0].order_code));
+  assert.equal(spreadsheets.at(-1).length,2);
+  assert.ok(pdfSources.at(-1).includes(orders[1].order_code));
+  assert.ok(!pdfSources.at(-1).includes(orders[0].order_code));
+  element('exAdmin').value='unassigned';assert.equal(context.exFiltered().length,0);
+  element('exAdmin').value='';
+
   // UUIDs remain the internal lookup keys when opening transaction details.
   await context.exOpenOrder(orders[0].id);
   assert.deepEqual(opened,[orders[0].id]);
   assert.equal(context.allOrders[0].order_code,orders[0].order_code);
   assert.equal(context.exCode({id:orders[0].id,order_number:123}),'—');
 });
-
