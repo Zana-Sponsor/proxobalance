@@ -1,0 +1,62 @@
+[
+  {
+    "provider": "talabat",
+    "sourcePage": "https://iraq.talabat.com/",
+    "sourceUrl": "https://iraq.talabat.com/assets/images/logo.svg",
+    "file": "assets/official/talabat-logo.svg",
+    "sha256": "2f68c00a124aa9252f020e69798d0aa523cf135cd214366ba6671473a6b27597",
+    "bytes": 3921,
+    "retrievedAt": "2026-10-06",
+    "displayTreatment": "The original first t subpath, unchanged; centered without stretching.",
+    "boxCssPx": [
+      24,
+      24
+    ],
+    "slotCssPx": 44
+  },
+  {
+    "provider": "lezzoo",
+    "sourcePage": "https://www.lezzoo.com/",
+    "sourceUrl": "https://www.lezzoo.com/apple-icon.png",
+    "file": "assets/official/lezzoo-apple.png",
+    "sha256": "694ee8b7f0a83e25e0ba2c2bc09190db21812f07f66f11d1ea6d74e4a960c814",
+    "bytes": 22880,
+    "retrievedAt": "2026-10-06",
+    "displayTreatment": "Official apple-touch icon linked by the website; white foreground isolated by an SVG display filter.",
+    "boxCssPx": [
+      24,
+      24
+    ],
+    "slotCssPx": 44
+  },
+  {
+    "provider": "toters",
+    "sourcePage": "https://www.totersapp.com/",
+    "sourceUrl": "https://images.squarespace-cdn.com/content/v1/570b5c4162cd9478edc625af/1587042359495-DT89KU48IBU7YDMOQ89Z/LOGO+GREEN-01.png?format=1500w",
+    "file": "assets/official/toters-logo.png",
+    "sha256": "63be9e5d8a18310aa827d19b170d4f7a3281e52c3a6ca7ce59eb189112d3593b",
+    "bytes": 6207,
+    "retrievedAt": "2026-10-06",
+    "displayTreatment": "Official website header; fruit mark clipped in the SVG viewport and displayed white.",
+    "boxCssPx": [
+      24,
+      24
+    ],
+    "slotCssPx": 44
+  },
+  {
+    "provider": "wade",
+    "sourcePage": "https://wadedelivery.com/en",
+    "sourceUrl": "https://wadedelivery.com/logo-light.svg",
+    "file": "assets/official/wade-logo.svg",
+    "sha256": "9aedaf36205735df8c01d43aa24f66bac8c1a8ece2cd81c669f14f8c44d44d20",
+    "bytes": 4063,
+    "retrievedAt": "2026-10-06",
+    "displayTreatment": "Official website footer; two original arrow paths, unchanged, displayed white.",
+    "boxCssPx": [
+      24,
+      24
+    ],
+    "slotCssPx": 44
+  }
+]
