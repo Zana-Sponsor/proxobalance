@@ -187,7 +187,7 @@ class _ProxoLinkPreviewState extends State<ProxoLinkPreview> {
         ColoredBox(
           color: Colors.white,
           child: Center(
-            child: Padding(
+            child: SingleChildScrollView(
               padding: const EdgeInsets.all(20),
               child: Column(
                 mainAxisSize: MainAxisSize.min,

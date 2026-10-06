@@ -158,3 +158,7 @@ test('private avatar MIME and full decode are verified before publishing',async(
 test('the old eight reusable client styles and HTML generator are absent',()=>{
  for(const path of ['proxo_app/assets/styles','proxo_app/lib/templates/card_templates.dart','proxo_app/lib/services/html_generator.dart','proxo_app/lib/services/telegram_delivery_service.dart'])assert.equal(existsSync(path),false,path);
 });
+
+test('existing empty customer pages stay renderable without inventing links',()=>{
+ const c=config(renderTemplate(source,{...card,platforms:{},tt:''}));assert.deepEqual(c.buttons,[]);assert.equal(c.name,card.name);
+});

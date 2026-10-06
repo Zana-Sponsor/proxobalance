@@ -44,14 +44,14 @@ export function contactDestination(id,raw) {
   if(!url)throw err(422,'invalid_platform_value');
   return url;
 }
-export function validateCardData(card) {
+export function validateCardData(card,{allowEmpty=false}={}) {
   const key=LEGACY_TEMPLATE_MAP[card.template_key||card.style]||card.template_key||card.style;
   if(!STYLES.has(key))throw err(422,'template_not_found');
   if(typeof card.name!=='string'||!card.name.trim()||card.name.length>160)throw err(422,'invalid_card_name');
   if(String(card.bio||'').length>2000)throw err(422,'invalid_bio');
   if(!['contact','food','download'].includes(card.page_type||'contact'))throw err(422,'invalid_request');
   const platforms=normalizedPlatforms(card.platforms);
-  if(!Object.keys(platforms).length&&!(card.tt||card.tiktok))throw err(422,'invalid_platform_value');
+  if(!allowEmpty&&!Object.keys(platforms).length&&!(card.tt||card.tiktok))throw err(422,'invalid_platform_value');
   for(const [id,value] of Object.entries(platforms))contactDestination(id,value);
   if((card.tt||card.tiktok)&&!/^[a-zA-Z0-9._-]{1,100}$/.test(String(card.tt||card.tiktok).replace(/^@/,'')))throw err(422,'invalid_platform_value');
   return true;
@@ -160,7 +160,7 @@ const localized={
   wade:['وادێ','وادي','WADE'],toters:['توتەرز','توترز','Toters']
 };
 export function renderTemplate(template,card,{adToken=null,publicAvatarUrl=null}={}) {
-  validateCardData(card);
+  validateCardData(card,{allowEmpty:true});
   const key=LEGACY_TEMPLATE_MAP[card.template_key||card.style]||card.template_key||card.style;
   const index=card.card_language==='en'?2:card.card_language==='ar'?1:0;
   const tt=String(card.tt||card.tiktok||'').replace(/^@/,'');
@@ -185,7 +185,7 @@ export function renderTemplate(template,card,{adToken=null,publicAvatarUrl=null}
 }
 export async function renderedPage(card,{adToken=null,preview=false,previewToken=null}={}) {
   const meta=await activeTemplate(card);
-  validateCardData(card);
+  validateCardData(card,{allowEmpty:true});
   const template=await privateTemplate(meta);
   if(card.avatar_path){
     const prefix=card.user_id+'/'+card.id+'/';
