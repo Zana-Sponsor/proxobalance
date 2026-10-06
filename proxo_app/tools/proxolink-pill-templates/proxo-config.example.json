@@ -1,0 +1,50 @@
+{
+  "template": "pill-white",
+  "preview": false,
+  "name": "ProxoLink",
+  "bio": "لەڕێگەی دووگمەکانەوە پەیوەندیمان پێوە بکەن.",
+  "direction": "rtl",
+  "lang": "ku",
+  "avatarUrl": "",
+  "tiktokUrl": "",
+  "buttons": [
+    {
+      "type": "whatsapp",
+      "enabled": true,
+      "url": "https://wa.me/REPLACE_WITH_PHONE",
+      "intents": true
+    },
+    {
+      "type": "lezzoo",
+      "enabled": true,
+      "url": "https://www.lezzoo.com/REPLACE_WITH_YOUR_STORE_LINK"
+    },
+    {
+      "type": "app_store",
+      "enabled": true,
+      "url": "https://apps.apple.com/app/REPLACE_WITH_APP_ID"
+    },
+    {
+      "type": "google_play",
+      "enabled": true,
+      "url": "https://play.google.com/store/apps/details?id=REPLACE_WITH_PACKAGE_NAME"
+    }
+  ],
+  "intents": [
+    {
+      "emoji": "🏷️",
+      "label": "داواکردنی نرخ",
+      "message": "سڵاو، دەمەوێت نرخەکان بزانم."
+    },
+    {
+      "emoji": "📦",
+      "label": "داواکاری و کڕین",
+      "message": "سڵاو، دەمەوێت داواکارییەک بکەم."
+    },
+    {
+      "emoji": "❓",
+      "label": "پرسیارێکی تر",
+      "message": "سڵاو، پرسیارێکم هەیە."
+    }
+  ]
+}
