@@ -161,19 +161,32 @@ For Kurdish/Sorani UI, use:
 
 These are three separate page types, not sections inside one public page.
 
-All three page types MUST use the same profile-header design and the same three common profile fields:
+All three page types MUST use the same profile-header LAYOUT and visual structure, but the field labels/content meaning must adapt naturally to the page type.
 
-- Profile Image
-- Profile Name
-- Bio
+Keep the same size, position, spacing, card treatment, typography and overall header composition across Contact, Restaurant and App Download pages.
 
-The visual design, position, spacing, card treatment, typography and behavior of Profile Image, Profile Name and Bio must be identical across Contact, Restaurant and App Download pages.
+Use these type-specific field labels:
 
-Do not rename these common fields to Restaurant Logo, Restaurant Name, App Icon, App Name, Business Name, or similar type-specific labels in the main profile header. Keep the same user-facing profile structure for every page type.
+## Contact / پەیوەندی
+- Page Image / وێنەی پەڕە
+- Page Name / ناوی پەڕە
+- Bio / بایۆ
 
-Only the type-specific action area below the shared profile header changes.
+## Restaurant / خواردنگە و ڕێستۆرانت
+- Restaurant Logo / لۆگۆی ڕێستۆرانت
+- Restaurant Name / ناوی ڕێستۆرانت
+- Bio / بایۆ
 
-When the user taps one type in the Flutter create flow, always show the same common Profile Image + Profile Name + Bio fields first, then show only the additional fields/actions relevant to that page type.
+## App Download / داگرتنی ئەپ
+- App Icon / ئایکۆنی ئەپ
+- App Name / ناوی ئەپ
+- Bio / بایۆ
+
+These are semantic labels only. Do not redesign the header separately for each page type.
+
+Only the type-specific action area below the shared header changes.
+
+When the user taps one type in the Flutter create flow, show that page type's correctly labeled image/name/bio fields first, then show only the additional fields/actions relevant to that page type.
 
 ## Contact / پەیوەندی
 
@@ -455,15 +468,17 @@ Selecting a page type opens that type's own form.
 
 ## Contact form
 
-Show the shared Profile Image + Profile Name + Bio fields, then Contact methods.
+Show Page Image + Page Name + Bio, then Contact methods.
 
 ## Restaurant form
 
-Show the same shared Profile Image + Profile Name + Bio fields, then restaurant/order provider configuration.
+Show Restaurant Logo + Restaurant Name + Bio, then restaurant/order provider configuration.
 
 ## Download form
 
-Show the same shared Profile Image + Profile Name + Bio fields, then Google Play/App Store configuration.
+Show App Icon + App Name + Bio, then Google Play/App Store configuration.
+
+The three forms must keep the same visual header layout and dimensions even though their labels differ.
 
 Do not show irrelevant fields from other page types.
 
@@ -986,7 +1001,7 @@ The customer account UUID is used internally for ownership only and is not the p
 
 Each created page must:
 
-- use the identical shared Profile Image + Profile Name + Bio header design
+- use the same shared header layout with type-correct labels: Page Image/Page Name, Restaurant Logo/Restaurant Name, or App Icon/App Name, plus Bio
 - be stored in the database
 - own its page UUID
 - have a stable public URL
