@@ -13,6 +13,50 @@
       "destination": "/exchange-admin1.html"
     },
     {
+      "source": "/contact-preview",
+      "destination": "/api/proxolink?op=template-preview"
+    },
+    {
+      "source": "/api/contact-templates",
+      "destination": "/api/proxolink?op=templates"
+    },
+    {
+      "source": "/api/contact-ad-links",
+      "destination": "/api/proxolink?op=ad-links"
+    },
+    {
+      "source": "/api/contact-preview-token",
+      "destination": "/api/proxolink?op=preview-token"
+    },
+    {
+      "source": "/api/contact-card-action",
+      "destination": "/api/proxolink?op=card-action"
+    },
+    {
+      "source": "/api/contact-cards",
+      "destination": "/api/proxolink?op=cards"
+    },
+    {
+      "source": "/contact/:id/avatar",
+      "destination": "/api/proxolink?op=avatar&id=:id"
+    },
+    {
+      "source": "/contact/:id",
+      "destination": "/api/proxolink?op=contact&id=:id"
+    },
+    {
+      "source": "/a/:token/avatar",
+      "destination": "/api/proxolink?op=avatar&token=:token"
+    },
+    {
+      "source": "/a/:token/action/:action",
+      "destination": "/api/proxolink?op=ad&token=:token&action=:action"
+    },
+    {
+      "source": "/a/:token",
+      "destination": "/api/proxolink?op=ad&token=:token"
+    },
+    {
       "source": "/form-demo",
       "destination": "/form.html"
     },
@@ -27,7 +71,7 @@
   ],
   "functions": {
     "api/*.js": {
-      "maxDuration": 15
+      "maxDuration": 30
     }
   },
   "headers": [

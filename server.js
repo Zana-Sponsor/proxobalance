@@ -11,12 +11,13 @@ import balanceHandler from './api/balance.js';
 import publicHandler from './api/public.js';
 import securityAdminHandler from './api/security-admin.js';
 import trackHandler from './api/track.js';
+import proxoLinkHandler from './api/proxolink.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = 3000;
+const PORT = Number(process.env.PORT || 3000);
 
 // Body parsing
 app.use(express.json({ limit: '10mb' }));
@@ -35,9 +36,23 @@ app.all('/api/balance', balanceHandler);
 app.all('/api/public', publicHandler);
 app.all('/api/security-admin', securityAdminHandler);
 app.all('/api/track', trackHandler);
+app.all('/api/proxolink', proxoLinkHandler);
+
+// Match Vercel rewrites locally so browser checks exercise the real API.
+const proxoRoute = (route, op) => app.all(route, (req, res) => {
+  Object.defineProperty(req, 'query', { value: {...req.query, ...req.params, op}, configurable: true });
+  return proxoLinkHandler(req, res);
+});
+for(const [path,op] of Object.entries({
+  '/api/contact-cards':'cards','/api/contact-card-action':'card-action',
+  '/api/contact-preview-token':'preview-token','/api/contact-ad-links':'ad-links',
+  '/api/contact-templates':'templates','/contact-preview':'template-preview',
+  '/contact/:id/avatar':'avatar','/contact/:id':'contact',
+  '/a/:token/avatar':'avatar','/a/:token/action/:action':'ad','/a/:token':'ad'
+}))proxoRoute(path,op);
 
 // Static files
-app.use(express.static(__dirname, { extensions: ['html'] }));
+app.use(express.static(path.join(__dirname, 'public'), { extensions: ['html'] }));
 
 // SPA fallback for non-file routes
 app.use((req, res) => {
@@ -47,7 +62,7 @@ app.use((req, res) => {
   if (path.extname(req.path) || req.path.startsWith('/assets/')) {
     return res.status(404).type('text/plain').send('Not found');
   }
-  res.sendFile(path.join(__dirname, 'index.html'));
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 app.listen(PORT, '0.0.0.0', () => {
