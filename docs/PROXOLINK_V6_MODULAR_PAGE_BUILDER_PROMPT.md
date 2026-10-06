@@ -183,30 +183,28 @@ Editing the page must not change its UUID or public URL.
 
 The Contact page is for direct contact methods.
 
-Use the existing supported non-Telegram contact functionality where valid, for example:
+Use the existing supported contact functionality where valid, for example:
 
 - WhatsApp
 - Viber
 - Instagram
 - phone
+- Telegram
 - other currently approved contact methods
 
 Only configured methods should render.
 
 Do not show empty buttons.
 
-Telegram is not wanted in ProxoLink.
+Telegram must be available as a normal Contact-page method.
 
-Do not add:
+Allow the customer to configure Telegram using a validated Telegram username and/or supported `https://t.me/...` destination.
 
-- Telegram fields
-- Telegram buttons
-- Telegram demo links
-- Telegram notifications
-- Telegram Bot API calls
-- replacement Telegram credentials
+Render a Telegram button only when the Contact page has a valid configured Telegram destination.
 
-Preserve historical data only where required for compatibility/rollback, but do not expose Telegram as an active ProxoLink option.
+Telegram in this specification is a contact button only. Do not create or require a Telegram bot, Telegram notification workflow, Bot API token, document-delivery flow, or new Telegram credential unless separately requested by the owner.
+
+If historical Telegram contact data already exists and is valid, preserve compatibility where safe.
 
 Public route:
 
@@ -308,6 +306,7 @@ Do NOT add click collection or click analytics for the new page types.
 This prompt does not require collecting:
 
 - WhatsApp button clicks
+- Telegram button clicks
 - Viber button clicks
 - Instagram button clicks
 - phone clicks
@@ -525,6 +524,7 @@ contact:
   viber
   instagram
   phone
+  telegram
 
 order:
   talabat
@@ -571,6 +571,7 @@ Examples:
 - Google Play belongs to Download
 - App Store belongs to Download
 - WhatsApp belongs to Contact
+- Telegram belongs to Contact
 
 Do not trust only the Flutter client for validation.
 
@@ -726,15 +727,31 @@ Public UUIDs are routing identifiers, not authorization credentials.
 
 ---
 
-# 26. Telegram Retirement
+# 26. Telegram Contact Button
 
-Telegram remains retired from ProxoLink.
+Telegram is supported in V6 as a normal Contact-page destination.
 
-Do not reintroduce it.
+Requirements:
 
-Do not request or create a new Telegram bot/token.
+- allow a validated Telegram username and/or `https://t.me/...` URL
+- render an official Telegram contact button when configured
+- keep Telegram optional
+- do not show an empty Telegram button
+- validate and normalize the destination server-side
+- keep the Telegram button visually consistent with the selected ProxoLink template
+- use an approved Telegram icon/brand asset
 
-Do not change the already verified retirement behavior unless separately authorized.
+This does not authorize reintroducing the old Telegram notification/delivery backend.
+
+Do not create or require:
+
+- a Telegram bot
+- Bot API credentials
+- document-delivery notifications
+- background Telegram messaging
+- a replacement notification integration
+
+unless the owner separately requests those features.
 
 ---
 
@@ -763,7 +780,7 @@ At minimum test:
 - create Contact page
 - receives Contact page UUID
 - URL is `/contact/{page_uuid}`
-- configured non-Telegram buttons render
+- configured Contact buttons render, including Telegram when configured
 - edit preserves UUID and URL
 - unauthorized owner cannot edit
 
@@ -901,7 +918,8 @@ And:
 - Contact shows contact actions
 - Order shows configured food-ordering services such as Talabat/Toters
 - Download shows configured Google Play/App Store destinations
-- Telegram is absent
+- Telegram is available as an optional Contact-page button
+- no Telegram bot/notification system is required
 - no new button-click collection is required
 - existing production data is preserved
 - private template source remains protected
@@ -957,7 +975,7 @@ Examples:
 /download/{download_page_uuid}
 ```
 
-There is no requirement in this prompt to collect WhatsApp/Talabat/store-button clicks or similar outbound-click analytics.
+There is no requirement in this prompt to collect WhatsApp/Telegram/Talabat/store-button clicks or similar outbound-click analytics.
 
 Focus on reliable page creation, structured data, per-page UUIDs, stable URLs, safe ownership, live previews, private rendering, responsive design and correct page-type behavior.
 
@@ -1068,7 +1086,8 @@ Execute existing ProxoLink security checks, including:
 - secret masking in CI
 - no service-role secret in Flutter
 - no raw private template source in APK/source bundles
-- no Telegram reintroduction
+- Telegram Contact button works only as a validated outbound contact destination
+- no Telegram bot/notification backend is introduced
 - no new click-tracking/event collection for the page buttons described by this prompt
 
 ## Final acceptance rule
