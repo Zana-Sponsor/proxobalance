@@ -1,727 +1,666 @@
-# ProxoLink V6 — Modular Multi-Section Page Builder
+# ProxoLink V6 — Independent Page Types with Per-Page UUID
 ## Self-contained implementation prompt for a fresh workspace
 
 Read this complete document before changing code.
 
-This is an implementation specification for the existing Proxo ecosystem. Work in:
-
-- Repository: `Zana-Sponsor/proxobalance`
+Repository:
+- `Zana-Sponsor/proxobalance`
 - Flutter app: `proxo_app/`
-- Existing ProxoLink feature branch: `feat/proxolink-private-renderer-migration`
+- Existing feature branch: `feat/proxolink-private-renderer-migration`
 - Existing Draft PR: #7
 - Existing Vercel project: `proxoapp-1758/proxobalance`
 
-Do not restart the project from scratch. Inspect current code first, reuse verified V5 work, and implement only the new modular-page-builder requirements and any genuine defects.
+Do not restart the project from scratch. Inspect the current ProxoLink code and reuse completed V5 work.
 
-PR #7 must remain Draft unless the owner separately authorizes merge.
-
-Do not deploy the ProxoLink feature branch to production, activate V2 templates for existing customers, migrate production customer rows, delete legacy data, or make destructive production changes without separate explicit approval.
+Keep PR #7 Draft. Do not merge, activate new template versions for production customers, migrate customer data, perform destructive cleanup, or deploy the ProxoLink feature branch to production without separate explicit approval.
 
 ---
 
 # 1. Product Goal
 
-ProxoLink must become a flexible page builder that lets each customer create one personal public page automatically, then edit it later without changing its stable public URL.
+ProxoLink must support several independent business page types.
 
-The page is not limited to contact buttons.
+Confirmed page types:
 
-A single customer page may contain multiple functional sections.
+1. Contact Page
+2. Restaurant / Food Ordering Page
+3. App Download Page
 
-Confirmed sections in this specification are:
+More page types may be added later, so the architecture must be extensible.
 
-1. Contact
-2. Restaurant / Food Ordering
-3. App Download
+Each created page is an independent database record with its own UUID.
 
-The owner mentioned that more sections are planned. Only the three sections above are defined here. Do not invent a fourth business feature without explicit requirements.
+A user account UUID is NOT the public page UUID.
 
-The architecture must make future sections easy to add without redesigning the database or renderer.
+Do not put the user's account/auth UUID in the public URL.
+
+The public URL must use only the UUID of the page record that was created and stored in the database.
+
+Examples:
+
+```text
+www.domain.com/contact/{CONTACT_PAGE_UUID}
+www.domain.com/order/{ORDER_PAGE_UUID}
+www.domain.com/download/{DOWNLOAD_PAGE_UUID}
+```
+
+Example for one customer who creates three separate pages:
+
+```text
+/contact/6f8c0c1a-....
+/order/a31d2047-....
+/download/b92e9130-....
+```
+
+Those three UUIDs are different because they identify three different page records.
+
+Internally, the database may associate all three pages with the same authenticated owner through `owner_id` / `user_id`, but that account ID must not be used as the public page identity.
 
 ---
 
-# 2. Critical Concept — Template Style and Page Section Are Different
+# 2. Critical Architecture Rule
 
-Do not confuse visual template styles with functional page sections.
+Do not model Contact, Order and Download as tabs inside one public page.
 
-## Template Style
+They are separate pages.
 
-The existing eight visual ProxoLink templates remain:
+Each page has:
 
-- dark
-- light
-- classic
-- pill
-- card
-- neon
-- zoom
-- banner
+- its own page UUID
+- its own public URL
+- its own page type
+- its own selected visual template/style
+- its own title/profile/business data where applicable
+- its own type-specific settings
+- its own status
+- its own created/updated timestamps
+- the same authenticated owner if created by the same customer
 
-These determine the visual identity of the public page.
-
-## Page Section
-
-Sections determine which type of actions/content the customer wants to expose:
-
-- Contact
-- Restaurant / Food Ordering
-- App Download
-
-A customer chooses one template style, then may enable one or more page sections inside that template.
+A customer may create multiple pages of the same type if the product allows it.
 
 Example:
 
 ```text
-Template style: Neon
+Restaurant A -> /order/{uuid-1}
+Restaurant B -> /order/{uuid-2}
+Main contact page -> /contact/{uuid-3}
+Mobile app -> /download/{uuid-4}
+```
 
-Enabled sections:
+Do not derive page identity from the owner account UUID.
+
+---
+
+# 3. Visual Styles and Page Types Are Different
+
+Do not confuse visual template/style with page type.
+
+A page type defines what the page does:
+
 - Contact
-- Restaurant
-- App Download
-```
+- Order
+- Download
 
-The page must still look like the Neon template. The sections are functional modules inside that design.
+A visual template/style defines how that page looks.
 
-Do not create separate duplicate template libraries such as `neon_restaurant`, `neon_download`, etc.
+Preserve the existing ProxoLink visual-template architecture and current verified private renderer.
 
----
+If the repository currently contains eight established ProxoLink templates, preserve their identities and make the new page types compatible with the template system instead of cloning the template source per page type.
 
-# 3. Public Page Behavior
+Do not create unsafe user-editable HTML/CSS/JavaScript.
 
-The public page should show the customer's common profile information first:
-
-- profile image
-- profile/business name
-- bio
-- optional TikTok/profile identifier where already supported
-- existing theme/language behavior
-
-Below the profile area, show a section selector when more than one section is enabled.
-
-Example section labels:
-
-```text
-پەیوەندی
-داواکردنی خواردن
-داگرتنی ئەپ
-```
-
-Use localized labels based on the selected page language.
-
-When only one section is enabled, the section selector may be hidden and that section can be shown directly.
-
-When the visitor selects a section, only that section's own action buttons should appear in the action area.
-
-This is important.
-
-Example:
-
-If the visitor selects Restaurant:
-
-```text
-Talabat
-Toters
-other customer-enabled delivery services
-```
-
-should appear in the action area instead of WhatsApp/Viber contact actions.
-
-If the visitor selects Contact:
-
-```text
-WhatsApp
-Viber
-Instagram
-phone / existing supported non-Telegram contact methods
-```
-
-should appear.
-
-If the visitor selects App Download:
-
-```text
-Google Play
-App Store
-```
-
-should appear.
-
-Use a smooth, light transition when switching sections. Do not reload the entire page.
+Do not expose reusable private template source in Flutter.
 
 ---
 
-# 4. Customer Builder UX
+# 4. Common Page Record
 
-The customer must be able to create the page without coding.
+Use an additive structured model.
 
-The create/edit flow must include:
+A suitable unified model is conceptually:
 
-## A. Common page information
+```text
+id                UUID PRIMARY KEY        <-- generated page UUID
+owner_id          UUID                    <-- authenticated account owner, internal only
+page_type         contact | order | download
+template_key
+title
+bio
+avatar_url
+language
+status
+settings          structured JSON or normalized child rows
+created_at
+updated_at
+```
 
-- profile/business name
-- profile image
-- bio
-- language
-- color/theme if supported
-- visual template selector
-- genuine live preview
+This is an architectural example, not a requirement to use these exact column names.
 
-## B. Section manager
+The important rule is:
 
-Add a clear section-management UI.
+```text
+page.id = public page UUID
+owner_id = internal ownership/account relationship
+```
 
-The customer can:
+Never use `owner_id` as the public route identifier.
 
-- enable or disable supported sections
-- configure each enabled section
-- reorder sections
-- edit section-specific links
-- preview the result immediately
-
-Do not force every customer to configure every section.
-
-If a restaurant only needs food-ordering links, it can enable only Restaurant.
-
-If a company only wants its app downloaded, it can enable only App Download.
-
-If a business wants Contact + Restaurant + App Download on the same page, it can enable all three.
-
-Preserve form state while switching between sections or templates.
+All ownership-sensitive operations must still verify the authenticated user's internal owner ID server-side.
 
 ---
 
-# 5. Contact Section
+# 5. Public Routing
 
-The Contact section uses the existing ProxoLink contact functionality, excluding Telegram.
+Use clear page-type routes.
 
-Telegram is not wanted in ProxoLink.
+Required route model:
 
-Do not add Telegram fields, buttons, demo links, bot notifications, Bot API calls, or replacement Telegram integrations.
+```text
+/contact/{page_uuid}
+/order/{page_uuid}
+/download/{page_uuid}
+```
 
-Preserve existing supported non-Telegram contact methods where valid, including current WhatsApp, Viber, Instagram and phone-style actions.
+The route and database page type must agree.
 
-Only enabled contact methods should render.
+Examples:
+
+- a Contact page UUID must render through `/contact/{uuid}`
+- an Order page UUID must render through `/order/{uuid}`
+- a Download page UUID must render through `/download/{uuid}`
+
+A mismatched route must not silently render another page type.
+
+For example, if an Order UUID is requested at `/contact/{uuid}`, return a safe not-found/invalid-page response rather than rendering the wrong page.
+
+Keep URLs stable after creation.
+
+Editing the page must not change its UUID or public URL.
+
+---
+
+# 6. Contact Page
+
+The Contact page is for direct contact methods.
+
+Use the existing supported non-Telegram contact functionality where valid, for example:
+
+- WhatsApp
+- Viber
+- Instagram
+- phone
+- other currently approved contact methods
+
+Only configured methods should render.
 
 Do not show empty buttons.
 
+Telegram is not wanted in ProxoLink.
+
+Do not add:
+
+- Telegram fields
+- Telegram buttons
+- Telegram demo links
+- Telegram notifications
+- Telegram Bot API calls
+- replacement Telegram credentials
+
+Preserve historical data only where required for compatibility/rollback, but do not expose Telegram as an active ProxoLink option.
+
+Public route:
+
+```text
+/contact/{CONTACT_PAGE_UUID}
+```
+
 ---
 
-# 6. Restaurant / Food Ordering Section
+# 7. Restaurant / Food Ordering Page
 
-Add a dedicated Restaurant / Food Ordering section.
+Add a dedicated Order page type.
 
-The customer should be able to select the delivery/order services their restaurant uses.
+Public route:
+
+```text
+/order/{ORDER_PAGE_UUID}
+```
+
+The customer should be able to configure the food-ordering/delivery services used by that restaurant.
 
 Confirmed providers:
 
 - Talabat
 - Toters
 
-The design must support adding more delivery providers later without schema redesign.
+The architecture must allow more supported providers later.
 
-Do not hardcode customer-specific restaurant links.
-
-For every enabled provider, collect and store a validated destination belonging to that customer/business.
-
-Use a provider registry or equivalent structured configuration with fields such as:
+For each provider, store structured data such as:
 
 ```text
 provider_key
-display_name
-icon_asset
-allowed URL/deep-link rules
+destination_url
 enabled
 sort_order
 ```
 
-Do not accept executable HTML or JavaScript from users.
+Use a provider registry or equivalent backend-authoritative configuration.
 
-Do not invent undocumented URL schemes.
+Do not hardcode a specific customer's order links.
 
-Prefer validated HTTPS provider/store URLs unless an officially supported deep link is already verified.
+Do not accept arbitrary HTML or JavaScript.
 
-Use official/provider-approved brand assets supplied or verified for use. Do not draw fake logos or substitute unrelated icons.
+Do not invent undocumented deep-link schemes.
 
-A restaurant may enable only Talabat, only Toters, both, or future supported services.
+Use validated HTTPS destinations or officially verified provider link formats.
 
-The public page should render only the customer's enabled ordering services.
+Render only the providers enabled for that Order page.
+
+Use official/provider-approved logo assets where available. Do not fabricate fake brand logos.
 
 ---
 
-# 7. App Download Section
+# 8. App Download Page
 
-Add a dedicated App Download section for customers who own an application.
+Add a dedicated Download page type.
 
-Confirmed download destinations:
+Public route:
+
+```text
+/download/{DOWNLOAD_PAGE_UUID}
+```
+
+Confirmed store destinations:
 
 - Google Play
 - Apple App Store
 
-The customer may enable one or both.
+The customer may configure one or both.
 
-Collect validated store URLs.
-
-For Google Play, validate the URL as an allowed Google Play application destination.
-
-For Apple App Store, validate the URL as an allowed Apple App Store application destination.
-
-Do not accept arbitrary JavaScript URLs, file URLs or unsafe schemes.
-
-Use official store badges/assets where appropriate and allowed.
-
-The customer should be able to configure:
+Suggested structured fields:
 
 ```text
-App name
-optional short description
-Google Play URL
-App Store URL
+app_name
+short_description
+google_play_url
+app_store_url
 ```
 
-Do not require both stores if the app exists on only one.
+Validate store destinations server-side.
 
-On the public page, show only configured store buttons.
+Do not accept unsafe schemes such as:
 
----
-
-# 8. Section Selector Design
-
-The section selector is part of the public template.
-
-It must fit each template's existing visual identity.
-
-Do not make all eight templates look identical.
-
-Examples of acceptable adaptation:
-
-- pill template: compact pill-style section selector
-- classic template: restrained classic tabs/buttons
-- neon template: subtle neon-accented selector
-- card template: card-style segmented selector
-
-The selector must:
-
-- be easy to understand
-- remain compact
-- work in RTL and LTR
-- support long localized labels
-- not overflow small screens
-- have a clear selected state
-- animate gently
-- remain keyboard/accessibility friendly on web
-- preserve reduced-motion preferences where supported
-
-Do not make section controls oversized.
-
----
-
-# 9. Existing Template Preservation
-
-Preserve the distinctive identity of all eight templates.
-
-Keep:
-
-- backgrounds
-- gradients
-- card structure
-- icon language
-- avatar treatment
-- established spacing identity
-- typography identity
-- existing approved animation language
-
-The previously approved targeted refinements remain valid:
-
-- profile name may be slightly more prominent
-- bio wrapping should be balanced and readable
-- spacing should be cleaner
-- button press feedback should be soft
-- regular text should remain natural, not oversized
-
-Adding page sections does not authorize a broad redesign of the templates.
-
----
-
-# 10. Live Template Preview
-
-The builder must continue using genuine server-rendered live previews inside Flutter WebView.
-
-Do not return to static `assets/styles/*` preview images.
-
-Do not show raw HTML/CSS/JavaScript to users.
-
-The preview should use the customer's current unsaved builder state where safely possible, including:
-
-- chosen template
-- language
-- color/theme
-- enabled sections
-- section order
-- configured provider buttons
-
-If preview data is temporary, use a short-lived signed preview mechanism and do not write advertisement analytics.
-
-Preview buttons must be inert or safely intercepted so testing a preview cannot call a real person, place an order, open an unrelated customer account, or create ad analytics.
-
----
-
-# 11. Recommended Structured Data Model
-
-Do not store raw customer HTML.
-
-Keep structured customer data.
-
-Implement an additive section configuration compatible with existing cards.
-
-A suitable model may resemble:
-
-```json
-{
-  "sections": [
-    {
-      "type": "contact",
-      "enabled": true,
-      "sort_order": 1,
-      "items": [
-        {"provider": "whatsapp", "value": "..."},
-        {"provider": "viber", "value": "..."}
-      ]
-    },
-    {
-      "type": "restaurant",
-      "enabled": true,
-      "sort_order": 2,
-      "items": [
-        {"provider": "talabat", "url": "..."},
-        {"provider": "toters", "url": "..."}
-      ]
-    },
-    {
-      "type": "app_download",
-      "enabled": true,
-      "sort_order": 3,
-      "app_name": "...",
-      "description": "...",
-      "items": [
-        {"provider": "google_play", "url": "..."},
-        {"provider": "app_store", "url": "..."}
-      ]
-    }
-  ]
-}
-```
-
-This is an architectural example, not a requirement to use this exact JSON layout.
-
-Choose the safest additive database representation after inspecting the existing schema.
-
-Requirements:
-
-- structured data only
-- server-side validation
-- ownership enforced
-- deterministic rendering
-- backward compatibility with current Contact-only cards
-- no destructive migration
-- easy future section/provider expansion
-
-Do not silently rewrite production rows.
-
-Prepare migrations safely and keep production cutover behind explicit approval.
-
----
-
-# 12. Backward Compatibility
-
-Existing ProxoLink cards must continue to work.
-
-A current legacy/current structured Contact-only page should behave as:
-
-```text
-Enabled sections:
-- Contact
-```
-
-without requiring the owner to recreate the card.
-
-Existing stable public card UUIDs and URLs must remain unchanged.
-
-Edit and Retry must retain the same card identity.
-
-Do not invalidate existing advertisements that reference a card.
-
----
-
-# 13. Create and Edit Flow
-
-Create:
-
-1. customer opens ProxoLink
-2. enters common profile information
-3. chooses visual template
-4. enables desired sections
-5. configures each section
-6. sees live visual preview
-7. submits
-8. server validates structured data
-9. one stable public page is created automatically
-10. customer can immediately preview/share/use it when Ready
-
-Edit:
-
-1. open existing page
-2. change common fields, template or sections
-3. preserve unsaved state while navigating builder UI
-4. validate before commit
-5. keep same UUID and same public URL
-6. publish atomically
-7. if render/publish fails, preserve recoverable prior state and expose Retry
-
----
-
-# 14. Section Validation Rules
-
-Validate every section independently.
-
-## Contact
-
-Validate each platform using its known value rules.
-
-## Restaurant
-
-Validate each ordering destination.
-
-Reject:
-
-- empty enabled providers
-- unsupported URL schemes
-- malformed URLs
 - javascript:
 - file:
-- data:
-- arbitrary HTML
-- unsupported provider spoofing
+- arbitrary data:
+- injected HTML
 
-## App Download
+Do not require both stores if the application is available on only one.
 
-Validate allowed Google Play and App Store destinations.
-
-Do not trust button labels supplied by the client to determine provider identity.
-
-Use server-recognized provider keys.
+Use recognized official store badges/assets where appropriate and permitted.
 
 ---
 
-# 15. Provider Registry
+# 9. No Click-Tracking Requirement
 
-Do not scatter provider definitions across Flutter and backend.
+Do NOT add click collection or click analytics for the new page types.
 
-Create a maintainable provider registry or equivalent single-source contract.
+This prompt does not require collecting:
 
-The backend is authoritative.
+- WhatsApp button clicks
+- Viber button clicks
+- Instagram button clicks
+- phone clicks
+- Talabat clicks
+- Toters clicks
+- Google Play clicks
+- App Store clicks
+- outbound button-click events
+- per-provider click counters
+- conversion events for these page buttons
 
-Flutter receives safe metadata such as:
+Do not add a new event table, tracking pixel, click RPC, outbound-click API, or analytics dependency for these actions.
+
+Do not block implementation waiting for click analytics.
+
+If old ProxoLink/ad infrastructure already contains unrelated historical tracking, preserve it unless a separately authorized task changes it, but do not expand it as part of this feature.
+
+The new page-type implementation should focus on:
+
+- creating pages
+- storing structured page data
+- rendering pages
+- editing pages
+- validation
+- stable URLs
+- ownership/security
+- visual preview
+
+not click collection.
+
+---
+
+# 10. Account UUID vs Page UUID
+
+This rule is mandatory.
+
+When an authenticated customer creates a page:
+
+1. authenticate the customer
+2. server determines the internal owner/account ID
+3. create a new page database row
+4. generate/use the page row's UUID
+5. store the internal owner relationship separately
+6. build the public URL from the PAGE UUID only
+
+Correct:
 
 ```text
-provider_key
-section_type
-localized display label
-icon identifier / safe asset reference
-input type
-validation hint
-enabled state
-sort order
+page.id = 6f8c...
+page.owner_id = 91ab...
+
+public URL = /contact/6f8c...
 ```
 
-Do not expose private renderer internals.
+Incorrect:
 
-Future delivery services should be addable without redesigning the entire form.
+```text
+public URL = /contact/91ab...
+```
+
+where `91ab...` is the user's account/auth UUID.
+
+Never expose ownership decisions by trusting a page UUID supplied by the client alone. Management APIs must authenticate the user and check page ownership.
 
 ---
 
-# 16. UI Requirements in Flutter
+# 11. Flutter Page Builder
 
-The surrounding ProxoLink Flutter UI must continue matching Create Ad and Ad Details.
+The Flutter ProxoLink management UI should let the customer choose what type of page to create.
+
+Example create-page choices:
+
+```text
+Contact Page
+Restaurant / Order Page
+App Download Page
+```
+
+Selecting a page type opens that type's own form.
+
+## Contact form
+
+Show common profile fields plus contact methods.
+
+## Order form
+
+Show common business/profile fields plus restaurant/order provider configuration.
+
+## Download form
+
+Show common app/profile fields plus Google Play/App Store configuration.
+
+Do not show irrelevant fields from other page types.
+
+For example:
+
+- an Order page should not require WhatsApp/Viber
+- a Download page should not require Talabat/Toters
+- a Contact page should not require app-store links
+
+---
+
+# 12. Page List / Management
+
+The user should be able to see all pages they own.
+
+Each management card should clearly show:
+
+- page name/title
+- page type
+- selected visual style
+- status
+- public page URL or copy/share action
+- Edit
+- Preview
+- Activate/Deactivate where supported
+- Retry when publication/rendering state genuinely requires it
+
+Do not use the authenticated account UUID as a display/public URL identifier.
+
+Use the page UUID/public URL when a technical identifier is needed.
+
+---
+
+# 13. Create Flow
+
+Create flow:
+
+1. user opens ProxoLink
+2. taps Create Page
+3. chooses page type
+4. enters common information
+5. configures type-specific fields
+6. chooses a visual style/template
+7. sees a genuine live preview
+8. submits
+9. backend validates ownership and structured data
+10. database creates a new page row with a new page UUID
+11. the page receives its stable public type-specific URL
+12. user can preview/share it
+
+Examples:
+
+```text
+Contact -> /contact/{new_page_uuid}
+Order -> /order/{new_page_uuid}
+Download -> /download/{new_page_uuid}
+```
+
+---
+
+# 14. Edit Flow
+
+Edit flow:
+
+1. authenticate user
+2. load page by page UUID
+3. verify page.owner_id matches authenticated user
+4. edit allowed fields
+5. validate page-type-specific settings
+6. update the same page row
+7. preserve the same page UUID
+8. preserve the same public URL
+
+Do not generate a new UUID merely because the page was edited.
+
+Do not change `page_type` in-place if doing so would make an existing public route semantically incorrect. Prefer creating a new page of another type if the user wants a fundamentally different page type.
+
+---
+
+# 15. Delete / Deactivate Safety
+
+If delete functionality exists, do not hard-delete by default without reviewing existing data relationships.
+
+Prefer existing safe status/deactivation behavior where appropriate.
+
+Do not perform destructive production cleanup under this implementation prompt.
+
+Any production deletion/cutover remains a separate approval.
+
+---
+
+# 16. Live Preview
+
+Continue using genuine server-rendered visual preview inside Flutter WebView.
+
+Do not replace live preview with static screenshots.
+
+Do not expose raw reusable HTML/CSS/JavaScript.
+
+The preview should represent:
+
+- selected page type
+- selected visual style
+- title/profile data
+- configured providers/buttons
+- RTL/LTR language
+- current unsaved form state where safely supported
+
+Preview actions should be inert or intercepted so previewing does not contact real people, place actual orders, or launch unsafe destinations.
+
+No click analytics are required in preview or public pages under this prompt.
+
+---
+
+# 17. Provider Registry
+
+Use a maintainable provider registry or equivalent contract for supported external actions.
+
+Example categories:
+
+```text
+contact:
+  whatsapp
+  viber
+  instagram
+  phone
+
+order:
+  talabat
+  toters
+
+download:
+  google_play
+  app_store
+```
+
+The backend must remain authoritative for:
+
+- provider key
+- allowed page type
+- validation rules
+- safe URL/value format
+- enabled/disabled support
+- icon/asset identity
+
+Flutter may receive safe metadata required to build forms.
+
+Do not expose server secrets or reusable private template source.
+
+---
+
+# 18. Data Validation
+
+Validate all customer input server-side.
+
+For all page types:
+
+- reject invalid UUID references
+- reject unauthorized page updates
+- escape rendered text
+- reject arbitrary HTML/JS injection
+- validate URLs
+- reject unsafe schemes
+- enforce type/provider compatibility
+
+Examples:
+
+- Talabat belongs to Order
+- Toters belongs to Order
+- Google Play belongs to Download
+- App Store belongs to Download
+- WhatsApp belongs to Contact
+
+Do not trust only the Flutter client for validation.
+
+---
+
+# 19. Backward Compatibility
+
+Preserve existing customer cards/pages and current relationships.
+
+Do not silently convert production records.
+
+If current ProxoLink uses a different table/model, implement additive compatibility or a safe adapter.
+
+Existing stable public URLs must continue working unless a separately approved migration explicitly replaces them.
+
+Do not reuse an existing account UUID as the UUID of newly created pages merely for compatibility.
+
+---
+
+# 20. Database Migration Safety
+
+Any new schema must be additive first.
+
+Before production cutover:
+
+- inspect existing schema
+- preserve current rows
+- preserve existing page/card UUIDs
+- preserve advertisement relationships
+- preserve legacy columns needed for rollback
+- test migration in isolated staging/transaction
+- verify rollback path
+- compare row counts/checkpoints
+
+No destructive cleanup in this task.
+
+A unified `pages` table or compatible normalized structure is preferred if it cleanly supports independent page rows, but inspect the existing schema first rather than introducing a redundant parallel system.
+
+---
+
+# 21. Visual Design
+
+The surrounding Flutter UI must match the existing Proxo design system used by Create Ad and Ad Details.
 
 Use:
 
-- existing Rabar typography
-- normal weight for regular text
+- Rabar
+- normal font weight for normal text
 - blue headings
 - black primary text
 - gray secondary text
 - white cards
 - soft shadows
-- existing radii
 - balanced spacing
-- responsive layout
-- correct RTL Sorani/Arabic
-- correct LTR URLs, handles, IDs and numbers
+- consistent radii
+- correct Sorani/Arabic RTL
+- correct URLs/IDs/numbers LTR
 
-The section manager should feel native to the existing Proxo app.
-
-Do not manually enlarge Kurdish text.
+Do not manually inflate Kurdish font sizes.
 
 Do not make every button blue.
 
-Use icons only where useful.
+Use icons where they improve clarity.
 
 ---
 
-# 17. Section Configuration UX
+# 22. Existing Template Identity
 
-Use a simple pattern.
+Preserve existing template identities.
 
-Example:
+Do not make every page/style look the same.
 
-```text
-[ Contact ] [ Restaurant ] [ App Download ]
+Keep established:
 
-Contact
-✓ WhatsApp
-✓ Viber
-□ Instagram
+- backgrounds
+- gradients
+- card structures
+- avatar/profile treatment
+- spacing language
+- animations
+- button language
+- visual character
 
-Restaurant
-✓ Talabat
-✓ Toters
-+ Add supported service
+Type-specific buttons should adapt to the selected template without destroying its identity.
 
-App Download
-✓ Google Play
-✓ App Store
-```
-
-This is conceptual only.
-
-The actual visual implementation should match the existing app design system.
-
-When the customer taps a section in the builder, show that section's settings without losing data from other sections.
+Adding Order/Download is not authorization for a broad template redesign.
 
 ---
 
-# 18. Public Button Behavior
-
-Each section has its own action buttons.
-
-Do not mix irrelevant actions into the active panel.
-
-Restaurant active:
-- ordering buttons
-
-App Download active:
-- store download buttons
-
-Contact active:
-- contact buttons
-
-The visitor can switch sections using the section selector.
-
-Switching sections must not create a new page navigation or reload the full document.
-
-Use accessible state and predictable browser history behavior.
-
----
-
-# 19. Analytics Separation
-
-Do not break exact-ad attribution.
-
-Existing tracked advertisement architecture must remain isolated per advertisement.
-
-Section switching itself should not automatically count as an external contact conversion.
-
-If section interaction analytics are added later, keep them distinct from:
-
-- page views
-- advertisement clicks
-- outbound contact/order/download actions
-
-Preview traffic must create zero advertisement analytics.
-
-Organic traffic must not be falsely attributed to an ad.
-
-Do not implement new production analytics without verifying privacy and retention requirements.
-
----
-
-# 20. Security
-
-Keep reusable HTML/CSS/JS template sources private on the server.
-
-Flutter must not bundle reusable template source.
-
-The user sees the rendered page, not source code.
-
-Server-side rules must enforce:
-
-- authenticated management operations
-- card ownership
-- provider allowlists
-- safe URLs
-- private template access
-- structured content escaping
-- no arbitrary HTML/JS injection
-- no service-role keys in Flutter
-- no secrets in source/logs/chat
-- signed short-lived owner/template previews
-
-Continue existing CSP, no-store, nosniff and referrer/privacy protections.
-
----
-
-# 21. Telegram
-
-Telegram is retired from ProxoLink.
-
-Do not add it back.
-
-Do not create:
-
-- Telegram contact fields
-- Telegram action buttons
-- Telegram demo providers
-- bot delivery
-- Bot API calls
-- Telegram notifications
-- replacement Telegram credentials
-
-Historical customer data may remain preserved for rollback/history, but it must not become an active ProxoLink control.
-
-Do not modify the already verified retired production notification behavior unless separately authorized.
-
----
-
-# 22. Restaurant Brand Assets
-
-For Talabat, Toters and future providers:
-
-- use verified official/provider-approved logos or assets
-- keep assets optimized
-- preserve correct aspect ratio
-- never stretch
-- include accessible labels
-- do not fabricate brand marks
-- do not download arbitrary third-party assets at runtime without review
-
-If the repository already contains approved official assets, reuse them.
-
-If no approved asset exists, report the missing asset requirement instead of inventing one.
-
----
-
-# 23. Store Badges
-
-For Google Play and Apple App Store:
-
-- use recognized official badges/assets where permitted
-- preserve their proportions
-- do not recreate fake store logos
-- keep labels readable
-- localize surrounding UI without altering protected brand artwork
-
----
-
-# 24. Responsive Requirements
+# 23. Responsive Requirements
 
 Test at minimum:
 
@@ -731,209 +670,241 @@ Test at minimum:
 - 430
 - 768
 
-Validate:
+Verify:
 
-- section selector
-- long business names
-- long bios
-- one / two / three enabled sections
-- many restaurant providers
-- one or both app stores
+- long names
+- long bios/descriptions
+- one and multiple providers
 - RTL
 - LTR
-- mixed-script content
+- mixed-script text
 - text scaling
 - portrait
 - landscape
-- keyboard overlap in edit forms
-
-No horizontal overflow.
+- no horizontal overflow
+- safe provider-logo sizing
+- correct official store-badge proportions
 
 ---
 
-# 25. Native Android Verification
+# 24. Brand Assets
+
+For Talabat, Toters, Google Play and App Store:
+
+- use official or approved assets when available
+- preserve aspect ratio
+- do not stretch
+- do not fabricate fake logos
+- include accessible labels
+- optimize assets
+- do not fetch arbitrary unreviewed third-party artwork at runtime
+
+If an approved asset is unavailable, report it as a missing asset requirement rather than inventing one.
+
+---
+
+# 25. Security
+
+Keep private reusable templates server-side.
+
+Flutter must not bundle private template HTML/CSS/JS.
+
+Keep:
+
+- authenticated management APIs
+- ownership checks
+- RLS where applicable
+- service-role secrets server-only
+- safe URL validation
+- private template storage
+- signed short-lived previews
+- CSP/no-store/nosniff/referrer protections where already implemented
+
+Possessing a public page UUID must not grant edit access.
+
+Public UUIDs are routing identifiers, not authorization credentials.
+
+---
+
+# 26. Telegram Retirement
+
+Telegram remains retired from ProxoLink.
+
+Do not reintroduce it.
+
+Do not request or create a new Telegram bot/token.
+
+Do not change the already verified retirement behavior unless separately authorized.
+
+---
+
+# 27. Native Android Verification
 
 Use the existing protected Android verification workflow.
 
-Do not create a parallel verification system unless absolutely necessary.
+Do not build a parallel system unless necessary.
 
-For template comparison, compare same-environment Android WebView baseline vs candidate when testing strict pixel parity.
+Test actual WebView rendering for all supported page types and representative visual templates.
 
-Cross-renderer Chromium screenshots may remain reference evidence but must not be treated as deterministic zero-pixel native equality.
+When strict pixel comparison is required, compare deterministic same-environment Android WebView baseline vs candidate.
 
-Execute real native cases.
+Keep Chromium screenshots only as cross-renderer reference evidence when appropriate.
 
-Do not report prepared scripts as completed tests.
+Do not treat prepared scripts as executed verification.
 
 ---
 
-# 26. New Modular Section Test Matrix
+# 28. Required Functional Tests
 
-Add tests for at least:
+At minimum test:
 
-## Contact only
+## Contact
 
-- page renders Contact directly
-- correct buttons
-- no Restaurant or Download controls
+- create Contact page
+- receives Contact page UUID
+- URL is `/contact/{page_uuid}`
+- configured non-Telegram buttons render
+- edit preserves UUID and URL
+- unauthorized owner cannot edit
 
-## Restaurant only
+## Order
 
+- create Order page
+- receives different independent UUID
+- URL is `/order/{page_uuid}`
 - Talabat only
 - Toters only
 - Talabat + Toters
-- no Contact actions displayed
-- provider links validated
+- invalid provider destination rejected
+- edit preserves UUID and URL
 
-## App Download only
+## Download
 
+- create Download page
+- receives independent UUID
+- URL is `/download/{page_uuid}`
 - Google Play only
 - App Store only
 - both stores
-- malformed store URL rejected
+- malformed store URLs rejected
+- edit preserves UUID and URL
 
-## Multi-section
+## Route/type integrity
 
-- Contact + Restaurant
-- Contact + App Download
-- Restaurant + App Download
-- all three
+- Contact UUID at Contact route works
+- Order UUID at Order route works
+- Download UUID at Download route works
+- wrong page-type route does not render another type
+- owner account UUID cannot be used as a substitute page UUID
 
-For multi-section cases verify:
-
-- selector labels
-- selected state
-- panel switching
-- no form-state loss
-- no page reload
-- no stale buttons from previous section
-- correct RTL/LTR
-- live preview matches public page
+No click-count verification is required.
 
 ---
 
-# 27. Existing Eight Templates
-
-Run representative section tests across all eight templates.
-
-At minimum verify every template with:
-
-- one single-section page
-- one multi-section page
-- section switching
-- long text
-- actual WebView
-- mobile width
-
-Do not certify only one template and assume the rest.
-
----
-
-# 28. Staging First
-
-Do not use production customer records as disposable test fixtures.
+# 29. Isolated Staging
 
 Use isolated staging for write-path verification.
 
-Verify:
+Do not create disposable production customer data.
 
-- create
+Verify in staging:
+
+- create each page type
+- independent UUID generation
+- correct route generation
 - edit
 - stable URL
-- activate
-- deactivate
-- retry
-- section enable/disable
-- section reorder
-- restaurant provider validation
-- store URL validation
+- activate/deactivate if supported
+- retry if supported
+- validation
+- ownership
 - preview
 - public render
-- advertisement selection compatibility
 
-If isolated staging does not exist, mark the write-path tests BLOCKED and provide exact setup requirements.
+If isolated staging is unavailable, mark write-path tests BLOCKED and provide exact setup requirements.
 
-Do not silently test destructive flows in production.
-
----
-
-# 29. Migration Safety
-
-Any schema change must be additive first.
-
-Before production cutover:
-
-- back up affected rows
-- verify exact existing row counts
-- preserve existing card UUIDs
-- preserve ad relationships
-- preserve legacy columns
-- validate rollback
-- rehearse migration in a transaction/staging
-- compare hashes/checkpoints
-
-No destructive cleanup in this task.
+Do not silently use production as staging.
 
 ---
 
-# 30. Current Release Gates
+# 30. Existing Advertisement Relationships
 
-The following remain separate owner approvals:
+Preserve existing advertisement/customer relationships.
 
-- activate new template versions for production customers
-- production customer cutover
-- merge PR #7
-- production deployment of the ProxoLink feature
-- destructive legacy cleanup
+Do not break an existing advertisement that references an existing ProxoLink record.
 
-Do not combine these approvals.
+New page-type support must not automatically rewrite advertisement rows.
+
+This prompt does not require new outbound-click tracking or per-button conversion analytics.
+
+Any future change to advertisement tracking is a separate feature unless explicitly requested.
 
 ---
 
 # 31. Fresh Workspace Execution Order
 
-A fresh workspace must follow this order:
+A fresh workspace must:
 
-1. Inspect repository, current branch and Draft PR #7.
-2. Read current ProxoLink implementation and verification reports.
-3. Identify already completed V5 work.
-4. Do not rewrite working private-renderer/security infrastructure.
-5. Design the additive modular-section model.
-6. Implement section registry and server validation.
-7. Update Flutter create/edit builder.
-8. Update live preview payload/state.
-9. Update server renderer for section selector and panels.
-10. Preserve all eight template identities.
-11. Add tests.
-12. Run backend/Flutter/security CI.
-13. Run Android native verification.
-14. Run isolated staging write flows when an isolated target exists.
-15. Update evidence matrix.
-16. Stop before production release gates unless separately approved.
+1. inspect repo, current branch and Draft PR #7
+2. read current ProxoLink implementation/evidence
+3. identify completed V5 work
+4. preserve verified renderer/security infrastructure
+5. inspect current page/card schema
+6. design additive independent-page model
+7. ensure page UUID and owner UUID are separate
+8. implement type-specific routing
+9. implement Contact page
+10. implement Order page
+11. implement Download page
+12. update Flutter management/create/edit UI
+13. update live previews
+14. add provider validation/registry
+15. preserve visual templates
+16. run backend/Flutter/security tests
+17. run Android native verification
+18. run isolated staging write-path tests when available
+19. update evidence
+20. stop before production release gates
+
+Do not spend time implementing click analytics because it is not part of this scope.
 
 ---
 
 # 32. Definition of Done
 
-This feature is complete only when a normal customer can:
+The work is complete only when an authenticated customer can independently create:
 
-1. open ProxoLink
-2. create one personal page automatically
-3. choose one of the eight visual templates
-4. enable Contact, Restaurant and/or App Download sections
-5. configure only the providers they use
-6. see a genuine live preview
-7. publish one stable public URL
-8. edit it later without changing that URL
-9. switch sections on the public page
-10. see only the correct action buttons for the selected section
-11. use Talabat/Toters links configured by a restaurant
-12. use Google Play/App Store links configured by an app owner
-13. use existing non-Telegram contact methods in Contact
-14. keep all private template source and server secrets protected
-15. preserve existing customer/ad relationships
+```text
+/contact/{contact_page_uuid}
+/order/{order_page_uuid}
+/download/{download_page_uuid}
+```
 
-And verification must show real executed evidence, not only prepared code.
+with different UUIDs representing different database page records.
+
+The customer account UUID is used internally for ownership only and is not the public page identifier.
+
+Each created page must:
+
+- be stored in the database
+- own its page UUID
+- have a stable public URL
+- render the correct page type
+- use the selected visual style
+- support safe edit/preview
+- preserve its UUID after editing
+- validate its own provider fields
+- enforce ownership for management actions
+
+And:
+
+- Contact shows contact actions
+- Order shows configured food-ordering services such as Talabat/Toters
+- Download shows configured Google Play/App Store destinations
+- Telegram is absent
+- no new button-click collection is required
+- existing production data is preserved
+- private template source remains protected
 
 ---
 
@@ -942,20 +913,23 @@ And verification must show real executed evidence, not only prepared code.
 At completion report:
 
 - exact files changed
-- database migrations prepared/applied
-- compatibility behavior for existing cards
-- section/provider registry design
-- Flutter builder screenshots/evidence
-- live public-page evidence
-- all eight template results
-- Android native results
-- isolated staging results
-- tests passed/failed
+- schema/migrations prepared
+- page table/model used
+- how `page.id` differs from `owner_id`
+- URL routing implementation
+- Contact results
+- Order results
+- Download results
+- live preview results
+- Flutter tests
+- backend/security tests
+- Android results
+- staging results
 - production state
-- current PR state
-- any BLOCKED items
+- Draft PR state
+- any blocked items
 
-Use:
+Use only:
 
 ```text
 VERIFIED
@@ -963,26 +937,26 @@ FAILED
 BLOCKED
 ```
 
-Never report a blocked or unexecuted test as verified.
+Never report unexecuted work as verified.
 
 ---
 
 # Final Intent
 
-The owner wants ProxoLink to evolve from a contact-link page into a modular business page builder.
+ProxoLink should support multiple independent page types.
 
-One customer should be able to create one page and decide what that page contains.
+A customer's account may own many pages, but every created page has its own independent UUID stored in the database.
 
-For example, a restaurant can expose ordering options such as Talabat and Toters; an app owner can expose Google Play and App Store downloads; a normal business can expose contact methods; and a business that needs several of these can place them together on the same page as switchable sections.
+The public URL uses the created PAGE UUID, never the account/auth UUID.
 
-Each section must show its own relevant buttons.
+Examples:
 
-The eight ProxoLink template styles remain visual designs. They are not the same thing as the functional sections.
+```text
+/contact/{contact_page_uuid}
+/order/{order_page_uuid}
+/download/{download_page_uuid}
+```
 
-Do not add Telegram.
+There is no requirement in this prompt to collect WhatsApp/Talabat/store-button clicks or similar outbound-click analytics.
 
-Do not expose source code.
-
-Do not replace live previews with screenshots.
-
-Do not break stable public URLs, ad relationships, existing customer data or security boundaries.
+Focus on reliable page creation, structured data, per-page UUIDs, stable URLs, safe ownership, live previews, private rendering, responsive design and correct page-type behavior.
