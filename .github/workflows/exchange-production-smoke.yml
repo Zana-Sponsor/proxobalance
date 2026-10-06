@@ -9,17 +9,20 @@ jobs:
     permissions:
       contents: read
     steps:
-      - name: Wait for the current admin bundle to finish deploying
+      - name: Wait for the current customer and admin bundles to finish deploying
         shell: bash
         run: |
           set -euo pipefail
           for attempt in $(seq 1 24); do
-            if curl -fLsS --max-time 15 'https://www.proxobalance.app/exchange-admin' -o current-admin.html &&
+            if curl -fLsS --max-time 15 'https://www.proxobalance.app/' -o current-index.html &&
+               grep -q 'app.js?v=45' current-index.html &&
+               grep -q 'exchange-customer-polish.css?v=1' current-index.html &&
+               curl -fLsS --max-time 15 'https://www.proxobalance.app/exchange-admin' -o current-admin.html &&
                grep -q 'assets/js/admin.js?v=23' current-admin.html &&
                grep -q 'assets/js/exchange-insights.js?v=3' current-admin.html &&
                curl -fLsS --max-time 15 'https://www.proxobalance.app/assets/js/exchange-insights.js?v=3' -o current-insights.js &&
                grep -q 'id,order_code,order_number' current-insights.js &&
-               curl -fLsS --max-time 15 'https://www.proxobalance.app/assets/js/app.js?v=44' -o current-app.js &&
+               curl -fLsS --max-time 15 'https://www.proxobalance.app/assets/js/app.js?v=45' -o current-app.js &&
                grep -q 'accountBalanceSourceOption' current-app.js &&
                curl -fLsS --max-time 15 'https://www.proxobalance.app/assets/js/exchange-balance.js?v=4' -o current-balance.js &&
                grep -q 'openAccountBalanceSend' current-balance.js; then
@@ -37,6 +40,11 @@ jobs:
           curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/" -o index.html
           grep -q 'id="balanceSendSection"' index.html
           grep -q 'id="rewardBanner"' index.html
+          grep -q 'id="welcomeReward"' index.html
+          grep -q 'app.js?v=45' index.html
+          grep -q 'exchange-customer-polish.css?v=1' index.html
+          curl -fLsS --max-time 25 "$root/assets/css/exchange-customer-polish.css?v=1" -o customer-polish.css
+          grep -q 'tx-money-received' customer-polish.css
           grep -q 'id="recipientSheet"' index.html
           grep -q 'id="savedRecipientsShortcut"' index.html
           grep -q 'exchange-customer-features.js?v=3' index.html

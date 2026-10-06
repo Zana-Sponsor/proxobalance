@@ -12,6 +12,9 @@ on:
       - 'test/orders-route.test.js'
       - 'test/exchange-order-permissions.sql'
       - 'test/exchange-reward-pricing.test.js'
+      - 'test/exchange-customer-polish.test.js'
+      - 'test/exchange-customer-polish.browser.mjs'
+      - 'test/exchange-welcome-reward.sql'
       - 'test/exchange-admin-rewards-refund.test.js'
       - 'test/exchange-account-balances-ui.test.js'
       - 'test/exchange-send-balance.test.js'
@@ -26,6 +29,7 @@ on:
       - 'assets/js/**'
       - 'assets/css/exchange-balance.css'
       - 'assets/css/exchange-features.css'
+      - 'assets/css/exchange-customer-polish.css'
       - 'supabase/functions/admin-create-user/**'
       - 'supabase/functions/admin-set-password/**'
       - 'index.html'
@@ -64,7 +68,7 @@ jobs:
       - name: Build Vercel static output
         run: node scripts/prepare-vercel.mjs
       - name: Verify authenticated orders, admin refunds and capped fee rewards
-        run: node --test test/orders-route.test.js test/exchange-reward-pricing.test.js test/exchange-admin-rewards-refund.test.js test/exchange-account-balances-ui.test.js test/exchange-send-balance.test.js test/exchange-statistics-order-codes.test.js test/exchange-live-saves.test.js test/exchange-access.test.js
+        run: node --test test/orders-route.test.js test/exchange-reward-pricing.test.js test/exchange-admin-rewards-refund.test.js test/exchange-account-balances-ui.test.js test/exchange-send-balance.test.js test/exchange-statistics-order-codes.test.js test/exchange-live-saves.test.js test/exchange-access.test.js test/exchange-customer-polish.test.js
       - name: Verify deployed asset and board paths
         run: |
           node --input-type=module -e "
@@ -82,4 +86,3 @@ jobs:
               'Missing admin balance board');
             console.log('PASS: Exchange customer/admin build and balance assets');
           "
-

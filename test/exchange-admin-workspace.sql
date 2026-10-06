@@ -13,6 +13,8 @@ begin
  (f.staff,'workspace-staff-'||f.staff||'@example.invalid','{"full_name":"Workspace Staff"}'),
  (f.other_staff,'workspace-other-'||f.other_staff||'@example.invalid','{"full_name":"Workspace Other"}');
  update public.ex_profiles set role='super_admin' where id=f.super_admin;
+ -- Personal-report fee fixtures use their normal, undiscounted route prices.
+ update public.ex_user_rewards set active=false where user_id in(f.customer,f.super_admin,f.staff,f.other_staff) and campaign_key='welcome_signup_v1';
 end $test$;
 set local role authenticated;
 set local request.jwt.claim.role='authenticated';
