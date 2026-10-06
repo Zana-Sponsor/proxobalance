@@ -13,7 +13,7 @@
 <link rel="stylesheet" href="assets/css/admin.css?v=9">
 <link rel="stylesheet" href="assets/css/tokens.css">
 <link rel="stylesheet" href="assets/css/exchange-insights.css?v=2">
-<link rel="stylesheet" href="assets/css/exchange-features.css?v=2">
+<link rel="stylesheet" href="assets/css/exchange-features.css?v=3">
 <link rel="stylesheet" href="assets/css/exchange-panel-theme.css?v=4">
 <link rel="stylesheet" href="assets/css/exchange-readable.css?v=3">
 <link rel="stylesheet" href="assets/css/exchange-typography.css?v=1">
@@ -239,7 +239,7 @@
       <div class="sec-hdr">
         <h3>هەموو بەکارهێنەران <span class="acc-count" id="accCount"></span></h3>
         <button type="button" class="act-btn bl" onclick="loadAccounts()">نوێکردنەوە</button>
-        <button type="button" id="staffDirectoryButton" data-super-admin-only class="act-btn cy" onclick="openStaffDirectory()"><i class="fas fa-key"></i> دەسەڵاتی کارمەندان</button>
+        <button type="button" id="staffDirectoryButton" data-super-admin-only class="act-btn cy" onclick="openStaffDirectory()"><i class="fas fa-key"></i> بەڕێوەبردنی ئادمینەکان</button>
         <div class="act-btn dark" onclick="openCreateUserModal()"><i class="fas fa-user-plus"></i> زیادکردنی هەژمار</div>
       </div>
       <div class="tbl-wrap">
@@ -1009,17 +1009,16 @@
   </div>
   <div class="overlay" id="moStaffDirectory">
     <div class="modal" style="max-width:520px">
-      <div class="modal-hdr"><h3>دەسەڵاتی کارمەندان</h3><button type="button" class="modal-close" onclick="closeMo('moStaffDirectory')" aria-label="داخستن">×</button></div>
-      <p class="feature-help">کارمەندێک هەڵبژێرە بۆ دیاریکردنی مافی بینین، مامەڵە، ڕیفاوند، حمولە و پاداشت.</p>
+      <div class="modal-hdr"><h3>بەڕێوەبردنی ئادمینەکان</h3><button type="button" class="modal-close" onclick="closeMo('moStaffDirectory')" aria-label="داخستن">×</button></div>
+      <p class="feature-help">دیاریکردن و وەستاندنی دەسەڵات، بۆیکۆتکردن، لابردنی ئادمین و گۆڕینی وشەی نهێنی.</p>
       <div id="staffDirectoryList"></div>
     </div>
   </div>
   <script src="assets/js/exchange-live.js?v=1"></script>
-<script src="assets/js/admin.js?v=23"></script>
-  <script src="assets/js/exchange-staff.js?v=5"></script>
+<script src="assets/js/admin.js?v=24"></script>
+  <script src="assets/js/exchange-staff.js?v=6"></script>
   <script src="assets/js/exchange-balance-admin.js?v=4"></script>
   <script src="assets/js/exchange-insights.js?v=3"></script>
   <script src="assets/js/exchange-profit.js?v=2"></script><script src="assets/js/exchange-admin-workspace.js?v=1"></script><script src="assets/js/track.js?v=3"></script>
 </body>
 </html>
-

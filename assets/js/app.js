@@ -2001,12 +2001,10 @@ function orderCardHTML(o){
       + '<span class="tx-code" dir="ltr">'+escHtml(code)+'</span>'
       + '<span class="status-badge '+st.cls+'">'+escHtml(txLabelOf(o))+'</span>'
     + '</div>'
-    + '<div class="tx-route">'+escHtml(methodLabel(o.from_method))
+    + '<div class="tx-card-content"><div class="tx-route">'+escHtml(methodLabel(o.from_method))
       + '<span class="tx-route-arrow" aria-hidden="true">'+ICON.arrowLeftLong+'</span>'
       + escHtml(methodLabel(refunded?'AccountBalance':o.to_method))+'</div>'
-    + '<div class="tx-card-main">'
-      + '<div class="tx-money"><small>ناردنت</small><span class="tx-amount-sent" dir="ltr">'+txAmount(o.amount,o.from_method)+'</span></div>'
-      + '<div class="tx-money tx-money-received"><small>'+(refunded?'گەڕاوە بۆ باڵانس':'وەرگرتنت')+'</small><span class="tx-amount" dir="ltr">'+txAmount(refunded?o.amount:o.total,refunded?'AccountBalance':o.to_method)+'</span></div>'
+      + '<div class="tx-card-value"><small>'+(refunded?'گەڕاوە بۆ باڵانس':'وەرگرتنت')+'</small><span class="tx-amount" dir="ltr">'+txAmount(refunded?o.amount:o.total,refunded?'AccountBalance':o.to_method)+'</span></div>'
     + '</div>'
     + '<div class="tx-card-foot">'
       + '<span class="tx-when">'+escHtml(txWhen(o.created_at,true))+'</span>'
@@ -2346,37 +2344,17 @@ function txMatches(o){
   return hay.replace(/[\s#-]/g,'').includes(q) || hay.includes(_txQuery);
 }
 
-function completedTxTotals(rows){
-  const completed=rows.filter(o=>o.status==='پەسەندکرا'&&!o.balance_refunded_at);
-  const total=(side,currency)=>completed.filter(o=>currency==='USDT'?o[side+'_method']==='USDT':o[side+'_method']!=='USDT')
-    .reduce((s,o)=>s+Number(o[side==='from'?'amount':'total']||0),0);
-  return {count:completed.length,sentIqd:total('from','IQD'),sentUsdt:total('from','USDT'),recvIqd:total('to','IQD'),recvUsdt:total('to','USDT')};
-}
 function renderTxPage(){
   if(!document.getElementById('txList')) return;
-  const by=key=>_orders.filter(o=>txStateOf(o).key===key);
-  const ok=by('done'), wait=by('pending'), action=by('action'), no=by('rejected');
-
-  // Totals only count completed exchanges. IQD and USDT are kept apart so the
-  // number on screen is never a sum of two different currencies.
-  const {count:completedCount,sentIqd,sentUsdt,recvIqd,recvUsdt}=completedTxTotals(_orders);
-
-  const set=(id,value)=>{ const el=document.getElementById(id); if(el) el.textContent=value; };
-  set('txTotalSent', formatNum(Math.floor(sentIqd)));
-  set('txTotalSentSub', sentUsdt>0 ? ('IQD  +  '+formatNum(sentUsdt)+' $') : 'IQD');
-  set('txTotalRecv', formatNum(Math.floor(recvIqd)));
-  set('txTotalRecvSub',recvUsdt>0 ? ('IQD  +  '+formatNum(recvUsdt)+' $') : 'IQD');
-  set('txCompletedCount',formatNum(completedCount)+' مامەڵە');
-  // nothing completed yet → the totals strip would only show two zeros
-  const sum=document.getElementById('txSummary');
-  if(sum) sum.hidden = completedCount===0;
+  const counts={done:0,pending:0,action:0,rejected:0};
+  for(const order of _orders)counts[txStateOf(order).key]++;
   // a count of zero is noise on a filter nobody can use
   const count=(id,n)=>{ const el=document.getElementById(id); if(el) el.textContent = n>0 ? String(n) : ''; };
   count('fcAll', _orders.length);
-  count('fcWait', wait.length);
-  count('fcCorrection', action.length);
-  count('fcOk', ok.length);
-  count('fcNo', no.length);
+  count('fcWait', counts.pending);
+  count('fcCorrection', counts.action);
+  count('fcOk', counts.done);
+  count('fcNo', counts.rejected);
 
   renderTxList();
 }

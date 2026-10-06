@@ -1733,6 +1733,7 @@ async function callAdminFn(fnName, payload){
 }
 
 function openSetPasswordModal(userId, email){
+  if(typeof staffPasswordAllowed==='function'&&!staffPasswordAllowed(userId)){showToast('تەنها سوپەر ئادمین دەتوانێت وشەی نهێنی ئادمینێک بگۆڕێت','rd');return;}
   document.getElementById('spUserId').value = userId;
   document.getElementById('spUserLabel').textContent = email || '—';
   document.getElementById('spNewPass').value = '';
@@ -3330,4 +3331,3 @@ async function reviewKyc(decision){
     await run();
   }
 }
-
