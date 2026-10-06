@@ -123,18 +123,23 @@ export function rpc(name, payload) {
   });
 }
 
-export async function bearerUser(req) {
+export async function verifyBearer(req, { base, key }) {
   const auth = header(req, 'authorization');
   const match = auth.match(/^Bearer\s+(.+)$/i);
   if (!match) return null;
-  requireServerSecrets();
+  if (!key || !base) throw Object.assign(new Error('Server configuration incomplete'), { status: 503 });
   try {
-    return await parseResponse(await fetch(`${SUPABASE_URL}/auth/v1/user`, {
-      headers: { apikey: SERVICE_KEY, Authorization: `Bearer ${match[1]}` }
+    return await parseResponse(await fetch(`${base}/auth/v1/user`, {
+      signal: AbortSignal.timeout(10000),
+      headers: { apikey: key, Authorization: `Bearer ${match[1]}` }
     }));
   } catch {
     return null;
   }
+}
+
+export async function bearerUser(req) {
+  return verifyBearer(req, { base: SUPABASE_URL, key: SERVICE_KEY });
 }
 
 // Admin rights live in ex_profiles.is_admin — the same source the panel and the
@@ -328,8 +333,11 @@ function throttled(key) {
 export async function readJson(req, maxBytes = 64 * 1024) {
   const declared = Number(header(req, 'content-length') || 0);
   if (declared > maxBytes) throw Object.assign(new Error('Payload too large'), { status: 413 });
-  if (req.body && typeof req.body === 'object') return req.body;
-  if (typeof req.body === 'string') return JSON.parse(req.body || '{}');
+  if (req.body !== undefined && req.body !== null) {
+    const raw = typeof req.body === 'string' ? req.body : JSON.stringify(req.body);
+    if (Buffer.byteLength(raw, 'utf8') > maxBytes) throw Object.assign(new Error('Payload too large'), { status: 413 });
+    return typeof req.body === 'string' ? JSON.parse(raw || '{}') : req.body;
+  }
   let size = 0;
   const chunks = [];
   for await (const chunk of req) {
@@ -394,7 +402,8 @@ export function withSecurity(handler, {
   methods = ['GET', 'POST'],
   event = null,
   risk = 0,
-  autoLog = true
+  autoLog = true,
+  resolveUser = bearerUser
 } = {}) {
   return async function secured(req, res) {
     let context = null;
@@ -415,7 +424,7 @@ export function withSecurity(handler, {
         return stealth404(res);
       }
 
-      user = auth === 'none' ? null : await bearerUser(req);
+      user = auth === 'none' ? null : await resolveUser(req);
       if ((auth === 'required' || auth === 'admin') && !user) {
         await recordEvent(context, { type: 'unauthorized_request', detail: context.path, risk: 5 });
         return json(res, 401, { error: 'Unauthorized' });

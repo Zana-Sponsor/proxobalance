@@ -10,11 +10,13 @@
     "dev": "node server.js",
     "build": "node scripts/prepare-vercel.mjs",
     "start": "node server.js",
-    "lint": "node --check server.js"
+    "lint": "node --check server.js",
+    "test": "node --test test/*.test.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.115.0",
     "@vercel/functions": "^3.4.6",
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "sharp": "0.34.5"
   }
 }

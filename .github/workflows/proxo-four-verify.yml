@@ -1,0 +1,59 @@
+name: Verify four Proxo templates
+on:
+  push:
+    branches: [feat/proxo-four-live]
+  pull_request:
+    paths: ['api/**','proxo_app/**','test/**','.github/workflows/proxo-four-verify.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+      - run: test "$(find api -maxdepth 1 -name '*.js' | wc -l)" -le 12
+  flutter:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: proxo_app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.47.2'
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - name: Analyze changed app code
+        run: flutter analyze --no-fatal-infos lib/screens/tools_screen.dart lib/screens/card_webview_screen.dart lib/screens/proxo_cards_list_screen.dart lib/widgets/proxolink_preview.dart lib/services/proxolink_service.dart lib/models/proxo_card.dart lib/models/proxolink_template_meta.dart lib/controllers/proxo_card_controller.dart test/proxo_four_flow_test.dart
+      - name: Verify page creation and existing ad flows
+        run: flutter test test/proxo_four_flow_test.dart test/ad_creation_flow_test.dart test/ad_submission_test.dart test/ad_repository_test.dart test/text_direction_test.dart
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.14.3'
+      - name: Restore missing wrapper
+        run: |
+          if [ ! -f android/gradlew ]; then
+            (cd android && gradle wrapper --gradle-version 8.14.3)
+          fi
+          chmod +x android/gradlew
+      - name: Build updated Android app
+        run: flutter build apk --release --no-tree-shake-icons
+      - uses: actions/upload-artifact@v4
+        with:
+          name: proxo-four-release-apk
+          path: proxo_app/build/app/outputs/flutter-apk/app-release.apk
+          retention-days: 30
