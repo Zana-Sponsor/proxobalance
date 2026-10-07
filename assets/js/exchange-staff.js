@@ -32,7 +32,7 @@ function applyStaffUI(){
   startBalancePayout:'approve_orders',completeBalancePayout:'approve_orders',saveUserReward:'manage_rewards',revokeUserReward:'manage_rewards',
   openWalletModal:'manage_fees',openWalletBadge:'manage_fees',saveWallet:'manage_fees',deleteWallet:'manage_fees',
   openRateModal:'manage_fees',saveRate:'manage_fees',deleteRate:'manage_fees',
-  toggleBan:'super',openSetPasswordModal:'full',openCreateUserModal:'full',saveOrderNote:'approve_orders',
+  toggleBan:'super',openSetPasswordModal:'super',openCreateUserModal:'super',saveOrderNote:'approve_orders',
   sendNotification:'full',resolveBalanceRisk:'full'
  };
  document.querySelectorAll('[onclick]').forEach(el=>{
@@ -92,11 +92,8 @@ async function openStaffDirectory(){
    list.innerHTML='<p class="feature-help" role="alert">'+esc(adminDbMessage(e))+'</p>';
  }
 }
-function staffPasswordAllowed(id){
- if(!adminUser||!staffFullAdmin())return false;
- if(isSuperAdmin())return true;
- const target=(typeof allAccounts!=='undefined'?allAccounts:[]).find(a=>a.id===id)||_staffDirectoryRows.find(a=>a.id===id);
- return !!target&&!target.is_admin&&target.role!=='super_admin';
+function staffPasswordAllowed(_id){
+ return !!adminUser&&isSuperAdmin();
 }
 function staffDirectoryAction(id,action){
  if(!isSuperAdmin())return;
