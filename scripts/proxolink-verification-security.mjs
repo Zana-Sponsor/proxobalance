@@ -97,7 +97,8 @@ export function validateNativeResults(data,captured,pixels) {
       &&data[id].icons_loaded===true&&data[id].width===Number(id.split('-').at(-1))
       &&Number.isInteger(data[id].animation_count)&&data[id].animation_count>=0
       &&data[id].animation_checked===true&&data[id].provider_types===true
-      &&data[id].preview_inert===true&&data[id].public_actions_checked===true&&data[id].navigation_blocked===true)
+      &&data[id].preview_inert===true&&data[id].public_actions_checked===true&&data[id].navigation_blocked===true
+      &&data[id].fresh_native_views===true)
     ||Object.keys(pixels||{}).length!==cases.length
     ||!cases.every(id=>pixels[id]?.exact_pixels_equal===true
       &&pixels[id]?.changed_pixels===0&&pixels[id]?.width===Number(id.split('-').at(-1))))
@@ -106,7 +107,7 @@ export function validateNativeResults(data,captured,pixels) {
   // data from accidentally entering a public CI artifact.
   return Object.fromEntries(cases.map(id=>[id,Object.fromEntries(
     ['passed','width','font_loaded','font_applied','images_loaded','icons_loaded','animation_checked',
-      'animation_count','provider_types','preview_inert','public_actions_checked','navigation_blocked']
+      'animation_count','provider_types','preview_inert','public_actions_checked','navigation_blocked','fresh_native_views']
       .map(key=>[key,data[id][key]])
   )]));
 }

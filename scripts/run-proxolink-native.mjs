@@ -58,7 +58,7 @@ const safeTransportCodes=new Set(['ENOTFOUND','EAI_AGAIN','ETIMEDOUT','ECONNRESE
 const safeNativeChecks=new Set(['rendered_page_checks','animation_motion',
   'contact_confirmation','contact_cancel','contact_confirm','inert_tiktok',
   'preview_url','navigation_boundary','fresh_frame','pixel_density','preview_actions','public_actions','whatsapp_hint',
-  'screenshot_ack','capture_visibility','public_navigation','unclassified_native_check']);
+  'screenshot_ack','capture_visibility','fresh_native_view','public_navigation','unclassified_native_check']);
 const safeDiagnosticBooleans=new Set(['valid','public_url_unchanged','legacy_viber_url_parser',
   ...['whatsapp','viber','instagram','telegram','korek','asiacell','talabat','toters','lezzoo','wade','google_play','app_store'].map(p=>p+'_destination_match')]);
 function safeCaseResults(data){
@@ -66,7 +66,7 @@ function safeCaseResults(data){
   Object.fromEntries(Object.entries(data[id]).filter(([name,value])=>
    name==='failed_check'?safeNativeChecks.has(value):
    ['width','animation_count','expected_count','observed_count'].includes(name)?Number.isInteger(value):
-   (['passed','font_loaded','font_applied','images_loaded','icons_loaded','animation_checked','provider_types','preview_inert','public_actions_checked','navigation_blocked'].includes(name)||safeDiagnosticBooleans.has(name))&&typeof value==='boolean'))]));
+   (['passed','font_loaded','font_applied','images_loaded','icons_loaded','animation_checked','provider_types','preview_inert','public_actions_checked','navigation_blocked','fresh_native_views'].includes(name)||safeDiagnosticBooleans.has(name))&&typeof value==='boolean'))]));
 }
 async function jsonRequest(url,{headers={},...options}={}) {
   const response=await safeRequest(url,{...options,headers});
@@ -209,7 +209,7 @@ async function main() {
           writeFileSync(output+'/'+id+'-diff.png',comparison.diff);
           pixels[id]=comparison.metrics;captured.add(id);
           writeFileSync(output+'/pixels.json',JSON.stringify({environment:'Same Android 35 emulator / WebView / DPR 1 baseline versus candidate',
-            animation_state:'Both documents freshly reloaded after behavior checks; finite entrances completed; infinite animations paused at zero; hint/toast hidden; original CSS/assets unchanged',cases:pixels},null,2));
+            animation_state:'Behavior view retired; candidate and baseline use separate fresh production WebViews with identical initial-load/reload/settle history; finite entrances completed; infinite animations paused at zero; hint/toast hidden; original CSS/assets unchanged',cases:pixels},null,2));
           if(!comparison.metrics.exact_pixels_equal)console.log('Native pixel difference recorded for '+id+'.');
         }
         appWrite('proxolink-verification-ack',capture_id);

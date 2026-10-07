@@ -46,14 +46,15 @@ class _Probe extends StatefulWidget {
 }
 class _ProbeState extends State<_Probe> {
  final _viewport=GlobalKey(),_results=<String,dynamic>{},_candidateChecks=<String,Map<String,dynamic>>{};
- int _index=0;bool _baseline=false,_complete=false;
+ int _index=0;bool _baseline=false,_behavior=true,_complete=false;
+ WebViewController? _behaviorController,_candidateCaptureController;
  Map<String,String> _headers={};
  String get _id {final c=_cases[_index.clamp(0,_cases.length-1)];return '${c['style']}-${c['type']}-${c['language']}-${c['orientation']}-${c['width']}';}
  @override void initState(){super.initState();_configure();}
  Future<void> _configure() async {final config=await _configuration();if(mounted)setState(()=>_headers=Map<String,String>.from(config['headers'] as Map));}
  Future<void> _write(String file,Object value) async {await File('${_files.path}/$file').writeAsString(jsonEncode(value));}
  Future<void> _verify(WebViewController controller) async {
-  final id=_id,baseline=_baseline,c=_cases[_index];Map<String,dynamic>? state;
+  final id=_id,baseline=_baseline,behavior=_behavior,c=_cases[_index];Map<String,dynamic>? state;
   final actionDiagnostics=<String,dynamic>{};
   try {
    for(var i=0;i<120;i++){
@@ -68,7 +69,8 @@ class _ProbeState extends State<_Probe> {
     ||state['language']!=c['language']||state['direction']!=(c['language']=='en'?'ltr':'rtl')||state['pixel']!=false||state['placeholders']!=false
     ||(state['scroll'] as num)>(state['width'] as num)+1||((state['width'] as num)-(c['width'] as int)).abs()>1
     ||jsonEncode(state['providers'])!=jsonEncode(expectedProviders)||state['motion']!=true)throw StateError('rendered_page_checks');
-   if(!baseline){
+   if(behavior){
+    _behaviorController=controller;
     // Observe the original entrance animations from one fresh render. Keep
     // their references so an animation finishing during the sample is still
     // measured, rather than disappearing from document.getAnimations().
@@ -113,10 +115,17 @@ class _ProbeState extends State<_Probe> {
     _candidateChecks[id]={'width':state['width'],'font_loaded':state['fonts'],'font_applied':state['fontApplied'],
      'images_loaded':state['images'],'icons_loaded':state['icons'],'animation_checked':true,'animation_count':times.length,
      'provider_types':true,'preview_inert':true,'public_actions_checked':publicActions['valid'],'legacy_viber_url_parser':publicActions['legacy_viber_url_parser'],'navigation_blocked':true};
+    // A document reload retains the native WebView/compositor that performed
+    // the interactions. Retire that view before either parity capture. Both
+    // capture roles now create the same production widget from a fresh view,
+    // with identical initial-load/reload/settle history and no action tests.
+    if(mounted)setState(()=>_behavior=false);
+    return;
    }
-   // Behavior checks re-render the candidate and animate its WhatsApp hint.
-   // Capture both sides from a fresh document to remove unequal prior
-   // compositing/animation history from the exact pixel comparison.
+   if(identical(controller,_behaviorController)
+     ||(baseline&&identical(controller,_candidateCaptureController)))throw StateError('fresh_native_view');
+   if(!baseline)_candidateCaptureController=controller;
+   // Both newly created views reload once and use the same settled state.
    final previousFrame=await _read(controller,'JSON.stringify({time:performance.timeOrigin})');
    final captureUrl=await controller.currentUrl();
    if(captureUrl==null)throw StateError('fresh_frame');
@@ -155,7 +164,7 @@ class _ProbeState extends State<_Probe> {
     await Future<void>.delayed(const Duration(milliseconds:250));
    }
    if(!seen)throw StateError('screenshot_ack');
-   if(baseline)_results[id]={'passed':true,..._candidateChecks[id]!};
+   if(baseline)_results[id]={'passed':true,..._candidateChecks[id]!,'fresh_native_views':true};
   }catch(error){
    _results[id]={'passed':false,'failed_check':error is StateError?error.message:'unclassified_native_check',
     'width':state?['width'],'font_loaded':state?['fonts'],'font_applied':state?['fontApplied'],'images_loaded':state?['images'],'icons_loaded':state?['icons'],...actionDiagnostics};
@@ -164,14 +173,14 @@ class _ProbeState extends State<_Probe> {
   if(!baseline&&!_results.containsKey(id)){setState(()=>_baseline=true);return;}
   await _write('proxolink-verification-progress.json',_results);
   if(_index+1==_cases.length){await _write('proxolink-verification-results.json',_results);setState(()=>_complete=true);}
-  else setState((){_index++;_baseline=false;});
+  else setState((){_index++;_baseline=false;_behavior=true;_behaviorController=null;_candidateCaptureController=null;});
  }
  @override Widget build(BuildContext context){
   final c=_cases[_index];
   return Scaffold(backgroundColor:AppColors.page,appBar:AppBar(title:const Text('ProxoLink')),body:SafeArea(child:Center(
    child:SizedBox(width:(c['width'] as int).toDouble(),height:c['orientation']=='landscape'?(c['width'] as int)*.6:MediaQuery.sizeOf(context).height*.80,
     child:SizedBox(key:_viewport,child:_complete?Text('${_cases.length} native cases completed'):_headers.isEmpty?const CircularProgressIndicator():ProxoLinkPreview(
-     key:ValueKey('$_id/$_baseline'),requestHeaders:_headers,
+     key:ValueKey('$_id/$_baseline/$_behavior'),requestHeaders:_headers,
      loadUrl:()async {final r=await _configuration();return Uri.parse((r['previews'] as Map)['${c['style']}-${c['type']}-${c['language']}${_baseline?'-baseline':''}'] as String);},
      onControllerCreated:_verify,
     )),
