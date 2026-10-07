@@ -24,6 +24,24 @@ await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
 const executablePath=process.env.PROXO_CHROMIUM_PATH;
 const browser=await chromium.launch({...(executablePath?{executablePath}:{}),args:['--no-sandbox','--disable-dev-shm-usage']});
 const results=[],headers=new Map(),base='http://127.0.0.1:'+server.address().port;
+async function settleCapture(page){
+ await page.evaluate(()=>{
+  window.scrollTo(0,0);
+  for(const animation of document.getAnimations()){
+   if(Number.isFinite(animation.effect.getComputedTiming().endTime))animation.finish();
+   else{animation.pause();animation.currentTime=0;}
+  }
+  document.getElementById('toast').hidden=true;
+  for(const hint of document.querySelectorAll('.wa-message-card')){
+   hint.hidden=true;
+   new MutationObserver(()=>{if(!hint.hidden)hint.hidden=true;}).observe(hint,{attributes:true,attributeFilter:['hidden']});
+  }
+ });
+ await page.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));
+ assert.ok(await page.evaluate(()=>[...document.querySelectorAll('[data-provider]')].every(e=>
+  Number(getComputedStyle(e).opacity)===1&&getComputedStyle(e).visibility==='visible'&&e.getBoundingClientRect().width>0)),
+  'capture must show fully visible action buttons');
+}
 try{
  for(const orientation of ['portrait','landscape'])for(const width of [320,375,393,430,768])for(const key of PREPARED_DESIGNS)for(const type of PAGE_TYPES)for(const language of ['ku','en'])for(const long of [false,true]){
   const height=orientation==='portrait'?1100:240;
@@ -62,16 +80,15 @@ try{
   // Enlarged text retains the real responsive CSS and does not replace the template.
   await page.evaluate(()=>document.documentElement.style.fontSize='160%');
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'enlarged text overflow');
-  await page.evaluate(()=>{document.documentElement.style.fontSize='';window.ProxoLink.setConfig({...window.ProxoLink.getConfig(),preview:false});document.getAnimations().forEach(a=>{a.pause();a.currentTime=0;});document.getElementById('toast').hidden=true;});
-  await page.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));
+  await page.evaluate(()=>{document.documentElement.style.fontSize='';window.ProxoLink.setConfig({...window.ProxoLink.getConfig(),preview:false});});
+  await settleCapture(page);
   const candidate=await page.screenshot();
   await page.goto(base+`/${key}/${type}/${language}/${long}/true`);await page.evaluate(()=>document.fonts.ready);
   await page.waitForFunction(()=>[...document.images].every(i=>i.complete&&i.naturalWidth>0));
-  await page.evaluate(()=>{document.getAnimations().forEach(a=>{a.pause();a.currentTime=0;});});
-  await page.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));
+  await settleCapture(page);
   const baseline=await page.screenshot();if(!candidate.equals(baseline)){writeFileSync(output+'/failed-candidate.png',candidate);writeFileSync(output+'/failed-baseline.png',baseline);}assert.ok(candidate.equals(baseline),'prepared design pixel difference '+[key,type,language,width,long].join('/'));
   if(width===393&&!long&&orientation==='portrait'){writeFileSync(`${output}/${key}-${type}-${language}.png`,candidate);}
-  results.push({design:key,type,language,width,height,orientation,long_text:long,provider_count:state.providers.length,text_scale:1.6,overflow:false,targets_min_44:true,store_badges_undistorted:true,public_actions_checked:true,shared_header_equal:true,preview_inert:true,prepared_baseline_exact:true});
+  results.push({design:key,type,language,width,height,orientation,long_text:long,provider_count:state.providers.length,text_scale:1.6,overflow:false,targets_min_44:true,store_badges_undistorted:true,public_actions_checked:true,shared_header_equal:true,preview_inert:true,capture_actions_visible:true,prepared_baseline_exact:true});
   await page.close();
  }
  writeFileSync(output+'/results.json',JSON.stringify({status:'VERIFIED',engine:'Chromium '+browser.version(),cases:results},null,2));

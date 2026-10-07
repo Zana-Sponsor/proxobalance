@@ -58,7 +58,16 @@ const safeTransportCodes=new Set(['ENOTFOUND','EAI_AGAIN','ETIMEDOUT','ECONNRESE
 const safeNativeChecks=new Set(['rendered_page_checks','animation_motion',
   'contact_confirmation','contact_cancel','contact_confirm','inert_tiktok',
   'preview_url','navigation_boundary','fresh_frame','pixel_density','preview_actions','public_actions','whatsapp_hint',
-  'screenshot_ack','capture_visibility','unclassified_native_check']);
+  'screenshot_ack','capture_visibility','public_navigation','unclassified_native_check']);
+const safeDiagnosticBooleans=new Set(['valid','public_url_unchanged',
+  ...['whatsapp','viber','instagram','telegram','korek','asiacell','talabat','toters','lezzoo','wade','google_play','app_store'].map(p=>p+'_destination_match')]);
+function safeCaseResults(data){
+ return Object.fromEntries(NATIVE_CASE_IDS.filter(id=>data[id]).map(id=>[id,
+  Object.fromEntries(Object.entries(data[id]).filter(([name,value])=>
+   name==='failed_check'?safeNativeChecks.has(value):
+   ['width','animation_count','expected_count','observed_count'].includes(name)?Number.isInteger(value):
+   (['passed','font_loaded','font_applied','images_loaded','icons_loaded','animation_checked','provider_types','preview_inert','public_actions_checked','navigation_blocked'].includes(name)||safeDiagnosticBooleans.has(name))&&typeof value==='boolean'))]));
+}
 async function jsonRequest(url,{headers={},...options}={}) {
   const response=await safeRequest(url,{...options,headers});
   lastJsonResponseStatus=response.status;
@@ -148,22 +157,25 @@ async function main() {
   let configuredAt=Date.now();
   const captured=new Set();
   const pixels={};
+  const reportedFailures=new Set();
   const deadline=Date.now()+45*60*1000;
   while(Date.now()<deadline) {
     if(Date.now()-configuredAt>60000) {await configure();configuredAt=Date.now();stage='native_case_collection';}
+    const progress=appRead('proxolink-verification-progress.json');
+    if(progress){
+      const observed=safeCaseResults(JSON.parse(progress));
+      writeFileSync(output+'/case-results.json',JSON.stringify(observed,null,2));
+      for(const [id,item] of Object.entries(observed))if(item.passed===false&&!reportedFailures.has(id)){
+        reportedFailures.add(id);
+        console.log('Native case failed for '+id+': '+JSON.stringify(item));
+      }
+    }
     const result=appRead('proxolink-verification-results.json');
     if(result) {
       const data=JSON.parse(result);
       // Retain safe executed-case details even when the strict final gate
       // rejects a failed page or pixel difference. Never upload the raw map.
-      const caseIds=NATIVE_CASE_IDS;
-      const observed=Object.fromEntries(caseIds.filter(id=>data[id]).map(id=>[id,
-        Object.fromEntries(Object.entries(data[id]).filter(([name,value])=>
-          name==='failed_check'?safeNativeChecks.has(value):
-          ['width','animation_count'].includes(name)?Number.isInteger(value):
-          ['passed','font_loaded','font_applied','images_loaded','icons_loaded',
-            'animation_checked','provider_types','preview_inert','public_actions_checked','navigation_blocked']
-            .includes(name)&&typeof value==='boolean'))]));
+      const observed=safeCaseResults(data);
       writeFileSync(output+'/case-results.json',JSON.stringify(observed,null,2));
       const safe=validateNativeResults(data,captured,pixels);
       writeFileSync(output+'/results.json',JSON.stringify(safe,null,2));

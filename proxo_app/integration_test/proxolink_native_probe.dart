@@ -54,6 +54,7 @@ class _ProbeState extends State<_Probe> {
  Future<void> _write(String file,Object value) async {await File('${_files.path}/$file').writeAsString(jsonEncode(value));}
  Future<void> _verify(WebViewController controller) async {
   final id=_id,baseline=_baseline,c=_cases[_index];Map<String,dynamic>? state;
+  final actionDiagnostics=<String,dynamic>{};
   try {
    for(var i=0;i<120;i++){
     await Future<void>.delayed(const Duration(milliseconds:100));
@@ -92,9 +93,13 @@ class _ProbeState extends State<_Probe> {
  document.querySelectorAll('[data-provider]').forEach(e=>e.click());
  const expected=new Map(config.buttons.filter(b=>b.enabled!==false).map(b=>[b.type,b.url]));
  const valid=opened.length===expected.size&&new Set(opened.map(a=>a.provider)).size===expected.size&&opened.every(a=>expected.get(a.provider)===a.url);
- window.ProxoLink.setConfig(config);return JSON.stringify({valid});})()
+ const matches=Object.fromEntries([...expected].map(([provider,url])=>[provider+'_destination_match',opened.filter(a=>a.provider===provider).length===1&&opened.find(a=>a.provider===provider)?.url===url]));
+ window.ProxoLink.setConfig(config);return JSON.stringify({valid,expected_count:expected.size,observed_count:opened.length,...matches});})()
 ''');
-    if(publicActions['valid']!=true||await controller.currentUrl()!=before)throw StateError('public_actions');
+    actionDiagnostics.addAll(publicActions);
+    actionDiagnostics['public_url_unchanged']=await controller.currentUrl()==before;
+    if(publicActions['valid']!=true)throw StateError('public_actions');
+    if(actionDiagnostics['public_url_unchanged']!=true)throw StateError('public_navigation');
     final configuration=await _configuration();
     for(final url in ['https://example.invalid/','${configuration['origin']}/api/contact-templates','${configuration['origin']}/page-preview?token=invalid','file:///etc/passwd']){
      await controller.runJavaScript('location.href=${jsonEncode(url)}');await Future<void>.delayed(const Duration(milliseconds:150));
@@ -130,10 +135,11 @@ class _ProbeState extends State<_Probe> {
    if(baseline)_results[id]={'passed':true,..._candidateChecks[id]!};
   }catch(error){
    _results[id]={'passed':false,'failed_check':error is StateError?error.message:'unclassified_native_check',
-    'width':state?['width'],'font_loaded':state?['fonts'],'font_applied':state?['fontApplied'],'images_loaded':state?['images'],'icons_loaded':state?['icons']};
+    'width':state?['width'],'font_loaded':state?['fonts'],'font_applied':state?['fontApplied'],'images_loaded':state?['images'],'icons_loaded':state?['icons'],...actionDiagnostics};
   }
   if(!mounted)return;
   if(!baseline&&!_results.containsKey(id)){setState(()=>_baseline=true);return;}
+  await _write('proxolink-verification-progress.json',_results);
   if(_index+1==_cases.length){await _write('proxolink-verification-results.json',_results);setState(()=>_complete=true);}
   else setState((){_index++;_baseline=false;});
  }
