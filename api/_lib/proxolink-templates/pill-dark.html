@@ -46,7 +46,8 @@ function safeUrl(id,value){
  const s=digits(value||'').trim(),p=byId[id];if(!p||!s||s.length>2048)return null;
  if(id==='korek'||id==='asiacell'){let number=s.replace(/^tel:/i,'').replace(/[\s()-]/g,'');if(/^07\d{9}$/.test(number))number='+964'+number.slice(1);return /^\+?[1-9]\d{6,14}$/.test(number)?'tel:'+number:null;}
  if(id==='viber'&&/^viber:/i.test(s)){
-  try{const u=new URL(s),n=u.searchParams.get('number');if(u.hostname!=='chat'||u.pathname||u.hash||[...u.searchParams.keys()].some(k=>k!=='number')||!/^\+?[1-9]\d{6,14}$/.test(n||''))return null;return 'viber://chat?number='+encodeURIComponent(n);}catch{return null;}
+  // Validate the exact deep-link grammar; older Android URL parsers treat custom schemes as opaque.
+  try{const match=/^viber:\/\/chat\?number=((?:%[0-9a-f]{2}|[0-9])+)$/i.exec(s);if(!match)return null;const n=decodeURIComponent(match[1]);if(!/^\+?[1-9]\d{6,14}$/.test(n))return null;return 'viber://chat?number='+encodeURIComponent(n);}catch{return null;}
  }
  try{const u=new URL(s);if(u.protocol!=='https:'||u.username||u.password||(u.port&&u.port!=='443'))return null;
   const host=u.hostname.toLowerCase();if(!p.hosts.some(h=>host===h||host.endsWith('.'+h)))return null;

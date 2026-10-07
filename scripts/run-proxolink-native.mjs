@@ -59,7 +59,7 @@ const safeNativeChecks=new Set(['rendered_page_checks','animation_motion',
   'contact_confirmation','contact_cancel','contact_confirm','inert_tiktok',
   'preview_url','navigation_boundary','fresh_frame','pixel_density','preview_actions','public_actions','whatsapp_hint',
   'screenshot_ack','capture_visibility','public_navigation','unclassified_native_check']);
-const safeDiagnosticBooleans=new Set(['valid','public_url_unchanged',
+const safeDiagnosticBooleans=new Set(['valid','public_url_unchanged','legacy_viber_url_parser',
   ...['whatsapp','viber','instagram','telegram','korek','asiacell','talabat','toters','lezzoo','wade','google_play','app_store'].map(p=>p+'_destination_match')]);
 function safeCaseResults(data){
  return Object.fromEntries(NATIVE_CASE_IDS.filter(id=>data[id]).map(id=>[id,

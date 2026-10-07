@@ -91,10 +91,11 @@ class _ProbeState extends State<_Probe> {
  window.addEventListener('proxo:navigate',e=>{opened.push(e.detail);e.preventDefault();});
  window.ProxoLink.setConfig({...config,preview:false});
  document.querySelectorAll('[data-provider]').forEach(e=>e.click());
+ const legacy_viber_url_parser=config.buttons.some(b=>b.type==='viber'&&new URL(b.url).hostname==='');
  const expected=new Map(config.buttons.filter(b=>b.enabled!==false).map(b=>[b.type,b.url]));
  const valid=opened.length===expected.size&&new Set(opened.map(a=>a.provider)).size===expected.size&&opened.every(a=>expected.get(a.provider)===a.url);
  const matches=Object.fromEntries([...expected].map(([provider,url])=>[provider+'_destination_match',opened.filter(a=>a.provider===provider).length===1&&opened.find(a=>a.provider===provider)?.url===url]));
- window.ProxoLink.setConfig(config);return JSON.stringify({valid,expected_count:expected.size,observed_count:opened.length,...matches});})()
+ window.ProxoLink.setConfig(config);return JSON.stringify({valid,legacy_viber_url_parser,expected_count:expected.size,observed_count:opened.length,...matches});})()
 ''');
     actionDiagnostics.addAll(publicActions);
     actionDiagnostics['public_url_unchanged']=await controller.currentUrl()==before;
@@ -111,7 +112,7 @@ class _ProbeState extends State<_Probe> {
     }
     _candidateChecks[id]={'width':state['width'],'font_loaded':state['fonts'],'font_applied':state['fontApplied'],
      'images_loaded':state['images'],'icons_loaded':state['icons'],'animation_checked':true,'animation_count':times.length,
-     'provider_types':true,'preview_inert':true,'public_actions_checked':publicActions['valid'],'navigation_blocked':true};
+     'provider_types':true,'preview_inert':true,'public_actions_checked':publicActions['valid'],'legacy_viber_url_parser':publicActions['legacy_viber_url_parser'],'navigation_blocked':true};
    }
    // Capture the same fully entered state of the original CSS on both
    // documents. Freezing an in-flight entrance at zero hides its buttons,

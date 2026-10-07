@@ -1,6 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {randomUUID} from 'node:crypto';
+import {readFile} from 'node:fs/promises';
+import vm from 'node:vm';
 import {localService,pagePayload,OWNER,OTHER,invoke,configFromHtml} from './fixtures/proxolink-v6-service.mjs';
 import {PAGE_TYPES,PREPARED_DESIGNS,PROVIDER_REGISTRY,providerDestination} from '../api/_lib/proxolink-pages.js';
 process.env.PROXO_SUPABASE_URL='https://v6-isolated.supabase.co';
@@ -157,4 +159,25 @@ test('V6 cannot create through the legacy UUID protocol or rewrite legacy custom
  const edit=await call('cards',{method:'PATCH',query:{id},body:{template_key:'pill-white',template_version:6,expected_updated_at:legacy.updated_at}});
  assert.equal(edit.status,503);assert.equal(edit.json().error,'isolated_staging_required');
  assert.equal(legacy.template_key,'classic');assert.equal(fixture.writes.length,0);
+});
+
+// Older Android WebViews parse non-special schemes as opaque URLs. The
+// prepared template must validate the narrow Viber grammar independently.
+test('prepared Viber actions work with legacy WebView URL parsing and reject ambiguous destinations',async()=>{
+ class LegacyURL extends URL {
+  constructor(value,...args){super(value,...args);if(String(value).startsWith('viber:'))Object.defineProperty(this,'hostname',{value:''});}
+ }
+ for(const key of PREPARED_DESIGNS){
+  const html=await readFile(new URL('../api/_lib/proxolink-templates/'+key+'.html',import.meta.url),'utf8');
+  const source=html.slice(html.indexOf('function digits('),html.indexOf('function safeImage('));
+  const context=vm.createContext({URL:LegacyURL,byId:{viber:{hosts:['viber.com','www.viber.com']}}});
+  vm.runInContext(source,context);
+  assert.equal(context.safeUrl('viber','viber://chat?number=%2B9647501234567'),'viber://chat?number=%2B9647501234567',key);
+  for(const value of ['viber://evil?number=%2B9647501234567','viber://user@chat?number=%2B9647501234567',
+   'viber://chat/path?number=%2B9647501234567','viber://chat?number=%2B9647501234567#x',
+   'viber://chat?number=%2B9647501234567&redirect=https://evil.example',
+   'viber://chat?number=%2B9647501234567&number=%2B9647701234567','viber://chat?number=%252B9647501234567',
+   'viber://chat?number=+9647501234567','viber://chat?number=%00','viber://chat?number=%',
+   'viber://chat?number=%2B123','viber://chat?number=%2B9647501234567%0A'])assert.equal(context.safeUrl('viber',value),null,value);
+ }
 });
