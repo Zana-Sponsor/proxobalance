@@ -1,0 +1,81 @@
+{
+  "observed_on": "2026-10-07",
+  "status": "BLOCKED",
+  "workspace": {
+    "execution_connection": "409 Conflict / environment_offline / Environment is not connected",
+    "browser_connection": "409 Conflict / environment_offline / Environment is not connected",
+    "repository_connection": "Available through GitHub connector",
+    "credential_replacement_required": false
+  },
+  "native": {
+    "run_id": 37647222280,
+    "sha": "de501a9557cbd83520c5916e0c0085ec5c5a470e",
+    "runtime_job_id": 112883427603,
+    "environment": "proxolink-preview-verification",
+    "required_reviewer": "Zana-Sponsor",
+    "current_user_can_approve": true,
+    "approval_review_supported_by_connector": false,
+    "approval_bypassed": false,
+    "pending_runtime_cancelled": false,
+    "actual_runtime_cases_on_retry": 0
+  },
+  "staging": {
+    "observed_on": "2026-10-07",
+    "status": "BLOCKED",
+    "expected_hosted_lifecycles": 12,
+    "executed_hosted_lifecycles": 0,
+    "production_fallback": false,
+    "inventory": {
+      "supabase_projects": [
+        {
+          "name": "Zana",
+          "ref": "cojchkwssmasiejcgvbk",
+          "purpose": "production"
+        },
+        {
+          "name": "Exchange",
+          "ref": "pycxuugoblkslvwebxuu",
+          "purpose": "unrelated application"
+        }
+      ],
+      "zana_development_branches": [],
+      "vercel_search": "proxolink-staging",
+      "matching_vercel_projects": []
+    },
+    "required_missing_settings": [
+      "PROXO_STAGING_PROJECT_REF",
+      "PROXO_STAGING_SUPABASE_URL",
+      "PROXO_STAGING_BASE_URL",
+      "PROXO_STAGING_ANON_KEY",
+      "PROXO_STAGING_TEST_EMAIL",
+      "PROXO_STAGING_TEST_PASSWORD",
+      "PROXO_STAGING_OTHER_EMAIL",
+      "PROXO_STAGING_OTHER_PASSWORD"
+    ],
+    "optional_setting": "PROXO_STAGING_VERCEL_BYPASS",
+    "server_requirements": [
+      "separate staging project and deployment",
+      "existing V5 prerequisites and additive V6 migration applied only there",
+      "server service/signing secrets scoped to isolated staging",
+      "PROXO_V6_WRITE_MODE=isolated",
+      "two ordinary fictional staging accounts"
+    ],
+    "prior_guard_execution": {
+      "command": "node scripts/run-proxolink-staging.mjs",
+      "exit_code": 1,
+      "boundary": "Missing isolated configuration rejected before fixtures or network mutations",
+      "executed_before_workspace_disconnection": true
+    },
+    "cases_blocked": [
+      "Contact create/edit/unsaved live preview/public rendering/stable UUID URL/ownership/retry/activation/deactivation",
+      "Restaurant create/edit/unsaved live preview/public rendering/stable UUID URL/ownership/retry/activation/deactivation",
+      "App Download create/edit/unsaved live preview/public rendering/stable UUID URL/ownership/retry/activation/deactivation",
+      "real Flutter native management journey against hosted isolated staging"
+    ]
+  },
+  "artifact_retention": {
+    "native_last_executed_expires_at": "2026-10-14T15:35:20Z",
+    "all_native_screenshot_files_committed": false,
+    "reason": "Workspace disconnected after archive inspection; safe log index, aggregates, earlier already-uploaded blobs and original full artifact link retained"
+  }
+}

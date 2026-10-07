@@ -1,0 +1,104 @@
+{
+  "observed_on": "2026-10-07",
+  "last_executed": {
+    "revision": "5dbf391f7abe749325a4e61d5dc0ac152c39d44f",
+    "run_id": 37602803930,
+    "job_id": 112732357361,
+    "status": "FAILED",
+    "failure": {
+      "stage": "native_case_collection",
+      "code": "native_verification_timeout",
+      "collection_budget_minutes": 45
+    },
+    "expected_cases": 240,
+    "completed_runtime_cases": 169,
+    "runtime_passed": 169,
+    "runtime_failed": 0,
+    "cases_not_completed": 71,
+    "captured_complete_pairs": 169,
+    "candidate_only_capture": "pill-dark-download-ku-landscape-768",
+    "pixel_passed": 112,
+    "pixel_failed": 57,
+    "changed_pixel_threshold": 0,
+    "pixel_environment": "Same Android 35 emulator / WebView / DPR 1 baseline and candidate",
+    "completed_by_type": {
+      "contact": 60,
+      "order": 60,
+      "download": 49
+    },
+    "completed_by_design": {
+      "pill": 60,
+      "pill-mint": 60,
+      "pill-dark": 49,
+      "pill-white": 0
+    },
+    "max_observed_channel_difference": 1,
+    "artifact": {
+      "id": 11493772137,
+      "files": 850,
+      "bytes": 64739807,
+      "digest": "sha256:9fa3dae80698c19cc49dc50f539f8e2deb41afd7564eed91915a13b59c538cf7",
+      "expires_at": "2026-10-14T15:35:20Z",
+      "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/37602803930/artifacts/11493772137"
+    },
+    "read_only_security": "VERIFIED",
+    "live_preview_response_headers": "VERIFIED",
+    "secret_masking": {
+      "PROXO_NATIVE_ANON_KEY": {
+        "setup_blocks_seen": 2,
+        "all_masked": true
+      },
+      "PROXO_NATIVE_TEST_EMAIL": {
+        "setup_blocks_seen": 2,
+        "all_masked": true
+      },
+      "PROXO_NATIVE_TEST_PASSWORD": {
+        "setup_blocks_seen": 2,
+        "all_masked": true
+      },
+      "PROXO_NATIVE_VERCEL_BYPASS": {
+        "setup_blocks_seen": 2,
+        "all_masked": true
+      }
+    }
+  },
+  "current_retry": {
+    "revision": "de501a9557cbd83520c5916e0c0085ec5c5a470e",
+    "run_id": 37647222280,
+    "job_id": 112883427603,
+    "status": "BLOCKED",
+    "apk_job_id": 112881034656,
+    "apk_build": "VERIFIED",
+    "integration_test_analyze": {
+      "status": "VERIFIED",
+      "infos": 3,
+      "warnings": 0,
+      "errors": 0
+    },
+    "runtime_executed": false,
+    "protected_environment": "proxolink-preview-verification",
+    "workflow_state": "waiting",
+    "required_reviewer": "Zana-Sponsor",
+    "current_user_can_approve": true,
+    "blocking_reason": "The existing exact-run protected environment review remains pending. Native runtime has not started. The workspace and browser returned 409 environment_offline; the GitHub connector has read access to pending deployments but exposes no environment-review mutation.",
+    "changes": {
+      "fresh_reload": "Both baseline/candidate reload their current approved document after behavior checks; new timeOrigin, ready/fonts/images/icons/provider checks required before capture",
+      "capability_acquisition_concurrency": 4,
+      "capability_refresh_seconds": 180,
+      "capability_expiry_seconds": 300,
+      "collection_budget_minutes": 90,
+      "workflow_budget_minutes": 105,
+      "unchanged": [
+        "zero changed pixels gate",
+        "required 240 successful runtime cases",
+        "behavior and WhatsApp timing assertions",
+        "CSS and prepared assets",
+        "auth, RLS, read-only URLs and private-template checks",
+        "secret masking",
+        "existing protected environment and credentials"
+      ]
+    },
+    "was_prior_runtime_cancelled": false,
+    "parity_verified": false
+  }
+}

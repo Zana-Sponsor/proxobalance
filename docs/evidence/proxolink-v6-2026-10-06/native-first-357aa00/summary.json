@@ -1,0 +1,36 @@
+{
+  "status": "FAILED",
+  "revision": "357aa002f771ad5212912afaf09953c8b7bd365c",
+  "run_id": 37543594962,
+  "job_id": 112543614961,
+  "artifact_id": 11456380359,
+  "artifact_sha256": "08c374a219402c7b35ef0791663b03366deaed3f47fd4b87f33212bb11b01762",
+  "cases_executed": 240,
+  "runtime_passed": 80,
+  "runtime_failed": 160,
+  "pixel_pairs": 80,
+  "pixel_passed": 3,
+  "pixel_failed": 77,
+  "security_status": "VERIFIED",
+  "live_header_checks": 4,
+  "masked_settings": {
+    "PROXO_NATIVE_ANON_KEY": {
+      "occurrences": 2,
+      "all_masked": true
+    },
+    "PROXO_NATIVE_TEST_EMAIL": {
+      "occurrences": 2,
+      "all_masked": true
+    },
+    "PROXO_NATIVE_TEST_PASSWORD": {
+      "occurrences": 2,
+      "all_masked": true
+    },
+    "PROXO_NATIVE_VERCEL_BYPASS": {
+      "occurrences": 2,
+      "all_masked": true
+    }
+  },
+  "production_writes": 0,
+  "strict_zero_changed_pixels_preserved": true
+}

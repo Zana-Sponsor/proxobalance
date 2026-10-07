@@ -1,0 +1,1933 @@
+{
+  "revision": "5dbf391f7abe749325a4e61d5dc0ac152c39d44f",
+  "run_id": 37602803930,
+  "job_id": 112732357361,
+  "source": "Executed GitHub job log; matched complete baseline/candidate pairs, not Chromium images",
+  "captures": [
+    {
+      "time": "2026-10-07T14:50:40.8503923Z",
+      "id": "pill-contact-ku-portrait-320",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T14:50:45.9376071Z",
+      "id": "pill-contact-ku-portrait-320",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T14:50:55.3915791Z",
+      "id": "pill-contact-ku-portrait-375",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T14:51:00.2045339Z",
+      "id": "pill-contact-ku-portrait-375",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T14:51:09.7527712Z",
+      "id": "pill-contact-ku-portrait-393",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T14:51:46.0774118Z",
+      "id": "pill-contact-ku-portrait-393",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T14:51:55.2510517Z",
+      "id": "pill-contact-ku-portrait-430",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T14:51:59.9783705Z",
+      "id": "pill-contact-ku-portrait-430",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T14:52:09.2141982Z",
+      "id": "pill-contact-ku-portrait-768",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T14:52:14.2123704Z",
+      "id": "pill-contact-ku-portrait-768",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T14:52:22.0622641Z",
+      "id": "pill-contact-ku-landscape-320",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T14:52:26.7365267Z",
+      "id": "pill-contact-ku-landscape-320",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T14:52:34.5930602Z",
+      "id": "pill-contact-ku-landscape-375",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T14:52:39.2192602Z",
+      "id": "pill-contact-ku-landscape-375",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T14:53:17.2350424Z",
+      "id": "pill-contact-ku-landscape-393",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T14:53:20.8445820Z",
+      "id": "pill-contact-ku-landscape-393",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T14:53:28.7963063Z",
+      "id": "pill-contact-ku-landscape-430",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T14:53:33.4710848Z",
+      "id": "pill-contact-ku-landscape-430",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T14:53:41.5442323Z",
+      "id": "pill-contact-ku-landscape-768",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T14:53:46.4490375Z",
+      "id": "pill-contact-ku-landscape-768",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T14:53:54.5990480Z",
+      "id": "pill-contact-en-portrait-320",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T14:53:59.3163068Z",
+      "id": "pill-contact-en-portrait-320",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T14:54:07.3785584Z",
+      "id": "pill-contact-en-portrait-375",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T14:54:12.1867665Z",
+      "id": "pill-contact-en-portrait-375",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T14:54:54.8773576Z",
+      "id": "pill-contact-en-portrait-393",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T14:54:59.7872186Z",
+      "id": "pill-contact-en-portrait-393",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T14:55:08.9221458Z",
+      "id": "pill-contact-en-portrait-430",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T14:55:13.6967086Z",
+      "id": "pill-contact-en-portrait-430",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T14:55:22.9181679Z",
+      "id": "pill-contact-en-portrait-768",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T14:55:27.9070172Z",
+      "id": "pill-contact-en-portrait-768",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T14:55:35.7933633Z",
+      "id": "pill-contact-en-landscape-320",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T14:55:39.3272644Z",
+      "id": "pill-contact-en-landscape-320",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T14:55:45.9853940Z",
+      "id": "pill-contact-en-landscape-375",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T14:55:50.6830987Z",
+      "id": "pill-contact-en-landscape-375",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T14:56:32.0054118Z",
+      "id": "pill-contact-en-landscape-393",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T14:56:35.6053795Z",
+      "id": "pill-contact-en-landscape-393",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T14:56:43.4824025Z",
+      "id": "pill-contact-en-landscape-430",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T14:56:48.1308244Z",
+      "id": "pill-contact-en-landscape-430",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T14:56:56.3073733Z",
+      "id": "pill-contact-en-landscape-768",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T14:57:01.0759272Z",
+      "id": "pill-contact-en-landscape-768",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T14:57:06.9158365Z",
+      "id": "pill-order-ku-portrait-320",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T14:57:10.4584622Z",
+      "id": "pill-order-ku-portrait-320",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T14:57:16.3320657Z",
+      "id": "pill-order-ku-portrait-375",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T14:57:19.9321179Z",
+      "id": "pill-order-ku-portrait-375",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T14:57:26.9898777Z",
+      "id": "pill-order-ku-portrait-393",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T14:57:30.5850986Z",
+      "id": "pill-order-ku-portrait-393",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T14:58:09.6819227Z",
+      "id": "pill-order-ku-portrait-430",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T14:58:13.3287634Z",
+      "id": "pill-order-ku-portrait-430",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T14:58:19.1942130Z",
+      "id": "pill-order-ku-portrait-768",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T14:58:22.8039639Z",
+      "id": "pill-order-ku-portrait-768",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T14:58:28.5372770Z",
+      "id": "pill-order-ku-landscape-320",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T14:58:32.0391074Z",
+      "id": "pill-order-ku-landscape-320",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T14:58:36.5905570Z",
+      "id": "pill-order-ku-landscape-375",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T14:58:40.0731876Z",
+      "id": "pill-order-ku-landscape-375",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T14:58:45.7626807Z",
+      "id": "pill-order-ku-landscape-393",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T14:58:49.2396635Z",
+      "id": "pill-order-ku-landscape-393",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T14:58:54.9348414Z",
+      "id": "pill-order-ku-landscape-430",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T14:58:58.4165523Z",
+      "id": "pill-order-ku-landscape-430",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T14:59:05.3155874Z",
+      "id": "pill-order-ku-landscape-768",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T14:59:08.8983192Z",
+      "id": "pill-order-ku-landscape-768",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T14:59:42.9596254Z",
+      "id": "pill-order-en-portrait-320",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T14:59:46.5016759Z",
+      "id": "pill-order-en-portrait-320",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T14:59:53.4895550Z",
+      "id": "pill-order-en-portrait-375",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T14:59:57.1527623Z",
+      "id": "pill-order-en-portrait-375",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:00:03.0240869Z",
+      "id": "pill-order-en-portrait-393",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:00:06.6298502Z",
+      "id": "pill-order-en-portrait-393",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:00:12.5630782Z",
+      "id": "pill-order-en-portrait-430",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:00:17.2937402Z",
+      "id": "pill-order-en-portrait-430",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:00:23.1665439Z",
+      "id": "pill-order-en-portrait-768",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:00:26.8013975Z",
+      "id": "pill-order-en-portrait-768",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:00:32.5689297Z",
+      "id": "pill-order-en-landscape-320",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:00:36.0360054Z",
+      "id": "pill-order-en-landscape-320",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:00:40.5543488Z",
+      "id": "pill-order-en-landscape-375",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:01:17.6078024Z",
+      "id": "pill-order-en-landscape-375",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:01:23.3655984Z",
+      "id": "pill-order-en-landscape-393",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:01:26.8373518Z",
+      "id": "pill-order-en-landscape-393",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:01:31.4714951Z",
+      "id": "pill-order-en-landscape-430",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:01:34.9531218Z",
+      "id": "pill-order-en-landscape-430",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:01:40.8032509Z",
+      "id": "pill-order-en-landscape-768",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:01:44.4487548Z",
+      "id": "pill-order-en-landscape-768",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:01:50.1713128Z",
+      "id": "pill-download-ku-portrait-320",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:01:53.6919377Z",
+      "id": "pill-download-ku-portrait-320",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:01:59.4218714Z",
+      "id": "pill-download-ku-portrait-375",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:02:03.0169777Z",
+      "id": "pill-download-ku-portrait-375",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:02:08.7639370Z",
+      "id": "pill-download-ku-portrait-393",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:02:12.3561900Z",
+      "id": "pill-download-ku-portrait-393",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:02:46.1741979Z",
+      "id": "pill-download-ku-portrait-430",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:02:49.7091104Z",
+      "id": "pill-download-ku-portrait-430",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:02:55.4624048Z",
+      "id": "pill-download-ku-portrait-768",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:03:00.2166090Z",
+      "id": "pill-download-ku-portrait-768",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:03:05.9204872Z",
+      "id": "pill-download-ku-landscape-320",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:03:09.4019285Z",
+      "id": "pill-download-ku-landscape-320",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:03:15.0704635Z",
+      "id": "pill-download-ku-landscape-375",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:03:18.5692674Z",
+      "id": "pill-download-ku-landscape-375",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:03:24.3059514Z",
+      "id": "pill-download-ku-landscape-393",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:03:27.7834180Z",
+      "id": "pill-download-ku-landscape-393",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:03:33.4764028Z",
+      "id": "pill-download-ku-landscape-430",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:03:36.9582717Z",
+      "id": "pill-download-ku-landscape-430",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:03:42.7360041Z",
+      "id": "pill-download-ku-landscape-768",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:04:23.8007858Z",
+      "id": "pill-download-ku-landscape-768",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:04:29.4731577Z",
+      "id": "pill-download-en-portrait-320",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:04:32.9952525Z",
+      "id": "pill-download-en-portrait-320",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:04:38.7255677Z",
+      "id": "pill-download-en-portrait-375",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:04:42.3003065Z",
+      "id": "pill-download-en-portrait-375",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:04:48.0248339Z",
+      "id": "pill-download-en-portrait-393",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:04:51.5990159Z",
+      "id": "pill-download-en-portrait-393",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:04:57.3243082Z",
+      "id": "pill-download-en-portrait-430",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:05:00.8538072Z",
+      "id": "pill-download-en-portrait-430",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:05:06.6112655Z",
+      "id": "pill-download-en-portrait-768",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:05:10.2959303Z",
+      "id": "pill-download-en-portrait-768",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:05:15.9562326Z",
+      "id": "pill-download-en-landscape-320",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:05:19.4359056Z",
+      "id": "pill-download-en-landscape-320",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:05:57.3337117Z",
+      "id": "pill-download-en-landscape-375",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:06:00.8033779Z",
+      "id": "pill-download-en-landscape-375",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:06:06.4667648Z",
+      "id": "pill-download-en-landscape-393",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:06:09.9428575Z",
+      "id": "pill-download-en-landscape-393",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:06:15.7137462Z",
+      "id": "pill-download-en-landscape-430",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:06:19.2063327Z",
+      "id": "pill-download-en-landscape-430",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:06:23.7787879Z",
+      "id": "pill-download-en-landscape-768",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:06:27.2950536Z",
+      "id": "pill-download-en-landscape-768",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:06:36.4600852Z",
+      "id": "pill-mint-contact-ku-portrait-320",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:06:40.1252289Z",
+      "id": "pill-mint-contact-ku-portrait-320",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:06:48.1483132Z",
+      "id": "pill-mint-contact-ku-portrait-375",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:06:52.9087831Z",
+      "id": "pill-mint-contact-ku-portrait-375",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:07:31.1582279Z",
+      "id": "pill-mint-contact-ku-portrait-393",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:07:35.9072621Z",
+      "id": "pill-mint-contact-ku-portrait-393",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:07:45.0251299Z",
+      "id": "pill-mint-contact-ku-portrait-430",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:07:48.6792185Z",
+      "id": "pill-mint-contact-ku-portrait-430",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:07:57.8791477Z",
+      "id": "pill-mint-contact-ku-portrait-768",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:08:02.7887340Z",
+      "id": "pill-mint-contact-ku-portrait-768",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:08:09.4574048Z",
+      "id": "pill-mint-contact-ku-landscape-320",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:08:14.0840026Z",
+      "id": "pill-mint-contact-ku-landscape-320",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:08:21.9318963Z",
+      "id": "pill-mint-contact-ku-landscape-375",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:08:25.4537479Z",
+      "id": "pill-mint-contact-ku-landscape-375",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:09:00.4068884Z",
+      "id": "pill-mint-contact-ku-landscape-393",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:09:03.9440450Z",
+      "id": "pill-mint-contact-ku-landscape-393",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:09:11.8622369Z",
+      "id": "pill-mint-contact-ku-landscape-430",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:09:16.5115703Z",
+      "id": "pill-mint-contact-ku-landscape-430",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:09:24.5404052Z",
+      "id": "pill-mint-contact-ku-landscape-768",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:09:28.0947312Z",
+      "id": "pill-mint-contact-ku-landscape-768",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:09:37.1963682Z",
+      "id": "pill-mint-contact-en-portrait-320",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:09:42.0775527Z",
+      "id": "pill-mint-contact-en-portrait-320",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:09:50.1706550Z",
+      "id": "pill-mint-contact-en-portrait-375",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:09:54.9509996Z",
+      "id": "pill-mint-contact-en-portrait-375",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:10:29.9742573Z",
+      "id": "pill-mint-contact-en-portrait-393",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:10:34.7771260Z",
+      "id": "pill-mint-contact-en-portrait-393",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:10:43.9599198Z",
+      "id": "pill-mint-contact-en-portrait-430",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:10:48.6783829Z",
+      "id": "pill-mint-contact-en-portrait-430",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:10:56.8447446Z",
+      "id": "pill-mint-contact-en-portrait-768",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:11:01.7053901Z",
+      "id": "pill-mint-contact-en-portrait-768",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:11:09.5534349Z",
+      "id": "pill-mint-contact-en-landscape-320",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:11:14.2067383Z",
+      "id": "pill-mint-contact-en-landscape-320",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:11:22.0655602Z",
+      "id": "pill-mint-contact-en-landscape-375",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:11:26.7215151Z",
+      "id": "pill-mint-contact-en-landscape-375",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:11:56.7018614Z",
+      "id": "pill-mint-contact-en-landscape-393",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:12:01.3653632Z",
+      "id": "pill-mint-contact-en-landscape-393",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:12:09.2785721Z",
+      "id": "pill-mint-contact-en-landscape-430",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:12:12.8606971Z",
+      "id": "pill-mint-contact-en-landscape-430",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:12:21.0600431Z",
+      "id": "pill-mint-contact-en-landscape-768",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:12:26.9159511Z",
+      "id": "pill-mint-contact-en-landscape-768",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:12:32.7892381Z",
+      "id": "pill-mint-order-ku-portrait-320",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:12:36.3698580Z",
+      "id": "pill-mint-order-ku-portrait-320",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:12:42.2723213Z",
+      "id": "pill-mint-order-ku-portrait-375",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:12:45.9407670Z",
+      "id": "pill-mint-order-ku-portrait-375",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:12:51.8308619Z",
+      "id": "pill-mint-order-ku-portrait-393",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:12:55.5460091Z",
+      "id": "pill-mint-order-ku-portrait-393",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:13:24.8592731Z",
+      "id": "pill-mint-order-ku-portrait-430",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:13:28.4316127Z",
+      "id": "pill-mint-order-ku-portrait-430",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:13:35.3621642Z",
+      "id": "pill-mint-order-ku-portrait-768",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:13:39.0518553Z",
+      "id": "pill-mint-order-ku-portrait-768",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:13:44.7208205Z",
+      "id": "pill-mint-order-ku-landscape-320",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:13:48.1943884Z",
+      "id": "pill-mint-order-ku-landscape-320",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:13:53.9877940Z",
+      "id": "pill-mint-order-ku-landscape-375",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:13:58.6265579Z",
+      "id": "pill-mint-order-ku-landscape-375",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:14:04.3163684Z",
+      "id": "pill-mint-order-ku-landscape-393",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:14:07.8009036Z",
+      "id": "pill-mint-order-ku-landscape-393",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:14:13.5792976Z",
+      "id": "pill-mint-order-ku-landscape-430",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:14:17.0737899Z",
+      "id": "pill-mint-order-ku-landscape-430",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:14:23.0162797Z",
+      "id": "pill-mint-order-ku-landscape-768",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:14:58.6284981Z",
+      "id": "pill-mint-order-ku-landscape-768",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:15:05.4969306Z",
+      "id": "pill-mint-order-en-portrait-320",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:15:09.1707272Z",
+      "id": "pill-mint-order-en-portrait-320",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:15:15.0976135Z",
+      "id": "pill-mint-order-en-portrait-375",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:15:18.8232753Z",
+      "id": "pill-mint-order-en-portrait-375",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:15:24.7316697Z",
+      "id": "pill-mint-order-en-portrait-393",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:15:28.4001980Z",
+      "id": "pill-mint-order-en-portrait-393",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:15:35.4642289Z",
+      "id": "pill-mint-order-en-portrait-430",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:15:39.1328625Z",
+      "id": "pill-mint-order-en-portrait-430",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:15:46.0360758Z",
+      "id": "pill-mint-order-en-portrait-768",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:15:49.7522373Z",
+      "id": "pill-mint-order-en-portrait-768",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:15:55.4417549Z",
+      "id": "pill-mint-order-en-landscape-320",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:16:35.2180328Z",
+      "id": "pill-mint-order-en-landscape-320",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:16:40.9322755Z",
+      "id": "pill-mint-order-en-landscape-375",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:16:44.4276819Z",
+      "id": "pill-mint-order-en-landscape-375",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:16:50.1147726Z",
+      "id": "pill-mint-order-en-landscape-393",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:16:53.5822946Z",
+      "id": "pill-mint-order-en-landscape-393",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:16:59.2590143Z",
+      "id": "pill-mint-order-en-landscape-430",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:17:02.7527210Z",
+      "id": "pill-mint-order-en-landscape-430",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:17:08.6776534Z",
+      "id": "pill-mint-order-en-landscape-768",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:17:12.2279970Z",
+      "id": "pill-mint-order-en-landscape-768",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:17:16.8640237Z",
+      "id": "pill-mint-download-ku-portrait-320",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:17:20.3916044Z",
+      "id": "pill-mint-download-ku-portrait-320",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:17:26.2661100Z",
+      "id": "pill-mint-download-ku-portrait-375",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:17:29.8662969Z",
+      "id": "pill-mint-download-ku-portrait-375",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:17:34.6322476Z",
+      "id": "pill-mint-download-ku-portrait-393",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:18:05.3692179Z",
+      "id": "pill-mint-download-ku-portrait-393",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:18:11.1273008Z",
+      "id": "pill-mint-download-ku-portrait-430",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:18:14.6706187Z",
+      "id": "pill-mint-download-ku-portrait-430",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:18:20.4512083Z",
+      "id": "pill-mint-download-ku-portrait-768",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:18:24.0460706Z",
+      "id": "pill-mint-download-ku-portrait-768",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:18:29.7257451Z",
+      "id": "pill-mint-download-ku-landscape-320",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:18:34.4261608Z",
+      "id": "pill-mint-download-ku-landscape-320",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:18:39.0682850Z",
+      "id": "pill-mint-download-ku-landscape-375",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:18:42.5580537Z",
+      "id": "pill-mint-download-ku-landscape-375",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:18:47.0729818Z",
+      "id": "pill-mint-download-ku-landscape-393",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:18:50.5500932Z",
+      "id": "pill-mint-download-ku-landscape-393",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:18:55.2005055Z",
+      "id": "pill-mint-download-ku-landscape-430",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:18:58.6889808Z",
+      "id": "pill-mint-download-ku-landscape-430",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:19:04.4385412Z",
+      "id": "pill-mint-download-ku-landscape-768",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:19:38.1562781Z",
+      "id": "pill-mint-download-ku-landscape-768",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:19:43.8825778Z",
+      "id": "pill-mint-download-en-portrait-320",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:19:47.4194050Z",
+      "id": "pill-mint-download-en-portrait-320",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:19:51.9832635Z",
+      "id": "pill-mint-download-en-portrait-375",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:19:55.5909165Z",
+      "id": "pill-mint-download-en-portrait-375",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:20:00.3267000Z",
+      "id": "pill-mint-download-en-portrait-393",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:20:03.9392423Z",
+      "id": "pill-mint-download-en-portrait-393",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:20:09.6649867Z",
+      "id": "pill-mint-download-en-portrait-430",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:20:14.4309093Z",
+      "id": "pill-mint-download-en-portrait-430",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:20:20.1947725Z",
+      "id": "pill-mint-download-en-portrait-768",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:20:23.8072377Z",
+      "id": "pill-mint-download-en-portrait-768",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:20:29.5301085Z",
+      "id": "pill-mint-download-en-landscape-320",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:20:33.0173602Z",
+      "id": "pill-mint-download-en-landscape-320",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:20:37.6909732Z",
+      "id": "pill-mint-download-en-landscape-375",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:21:12.7823723Z",
+      "id": "pill-mint-download-en-landscape-375",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:21:18.4857717Z",
+      "id": "pill-mint-download-en-landscape-393",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:21:21.9753230Z",
+      "id": "pill-mint-download-en-landscape-393",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:21:27.7133644Z",
+      "id": "pill-mint-download-en-landscape-430",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:21:31.2385005Z",
+      "id": "pill-mint-download-en-landscape-430",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:21:37.0544837Z",
+      "id": "pill-mint-download-en-landscape-768",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:21:40.5831248Z",
+      "id": "pill-mint-download-en-landscape-768",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:21:49.7724892Z",
+      "id": "pill-dark-contact-ku-portrait-320",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:21:53.4807086Z",
+      "id": "pill-dark-contact-ku-portrait-320",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:22:01.5430756Z",
+      "id": "pill-dark-contact-ku-portrait-375",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:22:06.3071547Z",
+      "id": "pill-dark-contact-ku-portrait-375",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:22:45.4532341Z",
+      "id": "pill-dark-contact-ku-portrait-393",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:22:49.1223299Z",
+      "id": "pill-dark-contact-ku-portrait-393",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:22:58.3623808Z",
+      "id": "pill-dark-contact-ku-portrait-430",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:23:03.2692691Z",
+      "id": "pill-dark-contact-ku-portrait-430",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:23:11.5067033Z",
+      "id": "pill-dark-contact-ku-portrait-768",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:23:15.2815386Z",
+      "id": "pill-dark-contact-ku-portrait-768",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:23:23.2279040Z",
+      "id": "pill-dark-contact-ku-landscape-320",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:23:26.8080465Z",
+      "id": "pill-dark-contact-ku-landscape-320",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:23:34.6948062Z",
+      "id": "pill-dark-contact-ku-landscape-375",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:23:39.3336879Z",
+      "id": "pill-dark-contact-ku-landscape-375",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:24:23.0902800Z",
+      "id": "pill-dark-contact-ku-landscape-393",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:24:27.9470256Z",
+      "id": "pill-dark-contact-ku-landscape-393",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:24:35.9362661Z",
+      "id": "pill-dark-contact-ku-landscape-430",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:24:39.5180908Z",
+      "id": "pill-dark-contact-ku-landscape-430",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:24:47.4685410Z",
+      "id": "pill-dark-contact-ku-landscape-768",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:24:52.2295744Z",
+      "id": "pill-dark-contact-ku-landscape-768",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:25:01.5791484Z",
+      "id": "pill-dark-contact-en-portrait-320",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:25:05.2243600Z",
+      "id": "pill-dark-contact-en-portrait-320",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:25:13.3798860Z",
+      "id": "pill-dark-contact-en-portrait-375",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:25:18.1975305Z",
+      "id": "pill-dark-contact-en-portrait-375",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:25:59.6680166Z",
+      "id": "pill-dark-contact-en-portrait-393",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:26:03.3641195Z",
+      "id": "pill-dark-contact-en-portrait-393",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:26:11.5689296Z",
+      "id": "pill-dark-contact-en-portrait-430",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:26:16.4095993Z",
+      "id": "pill-dark-contact-en-portrait-430",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:26:25.7593522Z",
+      "id": "pill-dark-contact-en-portrait-768",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:26:30.9068183Z",
+      "id": "pill-dark-contact-en-portrait-768",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:26:38.8117506Z",
+      "id": "pill-dark-contact-en-landscape-320",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:26:42.3066920Z",
+      "id": "pill-dark-contact-en-landscape-320",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:26:50.1528220Z",
+      "id": "pill-dark-contact-en-landscape-375",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:26:54.9229482Z",
+      "id": "pill-dark-contact-en-landscape-375",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:27:33.2721115Z",
+      "id": "pill-dark-contact-en-landscape-393",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:27:36.7684297Z",
+      "id": "pill-dark-contact-en-landscape-393",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:27:44.7472166Z",
+      "id": "pill-dark-contact-en-landscape-430",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:27:49.4282729Z",
+      "id": "pill-dark-contact-en-landscape-430",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:27:58.6488389Z",
+      "id": "pill-dark-contact-en-landscape-768",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:28:03.4577181Z",
+      "id": "pill-dark-contact-en-landscape-768",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:28:09.3338926Z",
+      "id": "pill-dark-order-ku-portrait-320",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:28:12.9220126Z",
+      "id": "pill-dark-order-ku-portrait-320",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:28:18.8179209Z",
+      "id": "pill-dark-order-ku-portrait-375",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:28:22.4279202Z",
+      "id": "pill-dark-order-ku-portrait-375",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:28:28.2244720Z",
+      "id": "pill-dark-order-ku-portrait-393",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:28:31.9951340Z",
+      "id": "pill-dark-order-ku-portrait-393",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:29:02.9224770Z",
+      "id": "pill-dark-order-ku-portrait-430",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:29:07.6720713Z",
+      "id": "pill-dark-order-ku-portrait-430",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:29:14.7185227Z",
+      "id": "pill-dark-order-ku-portrait-768",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:29:18.5120744Z",
+      "id": "pill-dark-order-ku-portrait-768",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:29:24.2449926Z",
+      "id": "pill-dark-order-ku-landscape-320",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:29:27.7536192Z",
+      "id": "pill-dark-order-ku-landscape-320",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:29:32.3883256Z",
+      "id": "pill-dark-order-ku-landscape-375",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:29:35.8987336Z",
+      "id": "pill-dark-order-ku-landscape-375",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:29:41.6679107Z",
+      "id": "pill-dark-order-ku-landscape-393",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:29:45.1653413Z",
+      "id": "pill-dark-order-ku-landscape-393",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:29:51.0034359Z",
+      "id": "pill-dark-order-ku-landscape-430",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:29:54.5359708Z",
+      "id": "pill-dark-order-ku-landscape-430",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:30:01.5425365Z",
+      "id": "pill-dark-order-ku-landscape-768",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:30:39.9108048Z",
+      "id": "pill-dark-order-ku-landscape-768",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:30:45.8146047Z",
+      "id": "pill-dark-order-en-portrait-320",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:30:49.4035205Z",
+      "id": "pill-dark-order-en-portrait-320",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:30:55.4064096Z",
+      "id": "pill-dark-order-en-portrait-375",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:30:59.0416329Z",
+      "id": "pill-dark-order-en-portrait-375",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:31:06.1126209Z",
+      "id": "pill-dark-order-en-portrait-393",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:31:09.7756101Z",
+      "id": "pill-dark-order-en-portrait-393",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:31:16.9640722Z",
+      "id": "pill-dark-order-en-portrait-430",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:31:20.5822418Z",
+      "id": "pill-dark-order-en-portrait-430",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:31:27.7148747Z",
+      "id": "pill-dark-order-en-portrait-768",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:31:31.4466085Z",
+      "id": "pill-dark-order-en-portrait-768",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:31:37.1676825Z",
+      "id": "pill-dark-order-en-landscape-320",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:32:11.5121998Z",
+      "id": "pill-dark-order-en-landscape-320",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:32:17.2752879Z",
+      "id": "pill-dark-order-en-landscape-375",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:32:20.7649243Z",
+      "id": "pill-dark-order-en-landscape-375",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:32:26.4630052Z",
+      "id": "pill-dark-order-en-landscape-393",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:32:29.9513893Z",
+      "id": "pill-dark-order-en-landscape-393",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:32:34.6244138Z",
+      "id": "pill-dark-order-en-landscape-430",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:32:38.1203929Z",
+      "id": "pill-dark-order-en-landscape-430",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:32:43.9825989Z",
+      "id": "pill-dark-order-en-landscape-768",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:32:47.6747142Z",
+      "id": "pill-dark-order-en-landscape-768",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:32:53.4070307Z",
+      "id": "pill-dark-download-ku-portrait-320",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:32:56.9399733Z",
+      "id": "pill-dark-download-ku-portrait-320",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:33:01.5470915Z",
+      "id": "pill-dark-download-ku-portrait-375",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:33:05.0953581Z",
+      "id": "pill-dark-download-ku-portrait-375",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:33:10.8457714Z",
+      "id": "pill-dark-download-ku-portrait-393",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:33:42.3890045Z",
+      "id": "pill-dark-download-ku-portrait-393",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:33:48.1499925Z",
+      "id": "pill-dark-download-ku-portrait-430",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:33:51.7643446Z",
+      "id": "pill-dark-download-ku-portrait-430",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:33:56.4382260Z",
+      "id": "pill-dark-download-ku-portrait-768",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:34:00.0170497Z",
+      "id": "pill-dark-download-ku-portrait-768",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:34:04.6294718Z",
+      "id": "pill-dark-download-ku-landscape-320",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:34:08.1418112Z",
+      "id": "pill-dark-download-ku-landscape-320",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:34:13.8217223Z",
+      "id": "pill-dark-download-ku-landscape-375",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:34:17.3157627Z",
+      "id": "pill-dark-download-ku-landscape-375",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:34:23.0293086Z",
+      "id": "pill-dark-download-ku-landscape-393",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:34:27.7252639Z",
+      "id": "pill-dark-download-ku-landscape-393",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:34:33.4369347Z",
+      "id": "pill-dark-download-ku-landscape-430",
+      "variant": "candidate"
+    },
+    {
+      "time": "2026-10-07T15:34:36.9515026Z",
+      "id": "pill-dark-download-ku-landscape-430",
+      "variant": "baseline"
+    },
+    {
+      "time": "2026-10-07T15:35:13.7544588Z",
+      "id": "pill-dark-download-ku-landscape-768",
+      "variant": "candidate"
+    }
+  ],
+  "pixel_differences": [
+    {
+      "time": "2026-10-07T14:50:45.9169348Z",
+      "id": "pill-contact-ku-portrait-320"
+    },
+    {
+      "time": "2026-10-07T14:51:00.1835604Z",
+      "id": "pill-contact-ku-portrait-375"
+    },
+    {
+      "time": "2026-10-07T14:51:46.0546731Z",
+      "id": "pill-contact-ku-portrait-393"
+    },
+    {
+      "time": "2026-10-07T14:51:59.9575645Z",
+      "id": "pill-contact-ku-portrait-430"
+    },
+    {
+      "time": "2026-10-07T14:52:14.1902148Z",
+      "id": "pill-contact-ku-portrait-768"
+    },
+    {
+      "time": "2026-10-07T14:53:46.4266177Z",
+      "id": "pill-contact-ku-landscape-768"
+    },
+    {
+      "time": "2026-10-07T14:53:59.2943527Z",
+      "id": "pill-contact-en-portrait-320"
+    },
+    {
+      "time": "2026-10-07T14:54:12.1635998Z",
+      "id": "pill-contact-en-portrait-375"
+    },
+    {
+      "time": "2026-10-07T14:54:59.7658470Z",
+      "id": "pill-contact-en-portrait-393"
+    },
+    {
+      "time": "2026-10-07T14:55:13.6740218Z",
+      "id": "pill-contact-en-portrait-430"
+    },
+    {
+      "time": "2026-10-07T14:55:27.8852909Z",
+      "id": "pill-contact-en-portrait-768"
+    },
+    {
+      "time": "2026-10-07T14:57:01.0533465Z",
+      "id": "pill-contact-en-landscape-768"
+    },
+    {
+      "time": "2026-10-07T14:58:22.7798015Z",
+      "id": "pill-order-ku-portrait-768"
+    },
+    {
+      "time": "2026-10-07T15:00:26.7787818Z",
+      "id": "pill-order-en-portrait-768"
+    },
+    {
+      "time": "2026-10-07T15:03:00.1940501Z",
+      "id": "pill-download-ku-portrait-768"
+    },
+    {
+      "time": "2026-10-07T15:03:27.7609621Z",
+      "id": "pill-download-ku-landscape-393"
+    },
+    {
+      "time": "2026-10-07T15:03:36.9345480Z",
+      "id": "pill-download-ku-landscape-430"
+    },
+    {
+      "time": "2026-10-07T15:05:10.2699037Z",
+      "id": "pill-download-en-portrait-768"
+    },
+    {
+      "time": "2026-10-07T15:06:09.9211814Z",
+      "id": "pill-download-en-landscape-393"
+    },
+    {
+      "time": "2026-10-07T15:06:19.1835450Z",
+      "id": "pill-download-en-landscape-430"
+    },
+    {
+      "time": "2026-10-07T15:06:40.1035963Z",
+      "id": "pill-mint-contact-ku-portrait-320"
+    },
+    {
+      "time": "2026-10-07T15:06:52.8851263Z",
+      "id": "pill-mint-contact-ku-portrait-375"
+    },
+    {
+      "time": "2026-10-07T15:07:35.8840241Z",
+      "id": "pill-mint-contact-ku-portrait-393"
+    },
+    {
+      "time": "2026-10-07T15:07:48.6564837Z",
+      "id": "pill-mint-contact-ku-portrait-430"
+    },
+    {
+      "time": "2026-10-07T15:08:02.7661424Z",
+      "id": "pill-mint-contact-ku-portrait-768"
+    },
+    {
+      "time": "2026-10-07T15:09:28.0724179Z",
+      "id": "pill-mint-contact-ku-landscape-768"
+    },
+    {
+      "time": "2026-10-07T15:09:42.0543988Z",
+      "id": "pill-mint-contact-en-portrait-320"
+    },
+    {
+      "time": "2026-10-07T15:09:54.9293981Z",
+      "id": "pill-mint-contact-en-portrait-375"
+    },
+    {
+      "time": "2026-10-07T15:10:34.7551054Z",
+      "id": "pill-mint-contact-en-portrait-393"
+    },
+    {
+      "time": "2026-10-07T15:10:48.6567047Z",
+      "id": "pill-mint-contact-en-portrait-430"
+    },
+    {
+      "time": "2026-10-07T15:11:01.6830250Z",
+      "id": "pill-mint-contact-en-portrait-768"
+    },
+    {
+      "time": "2026-10-07T15:12:26.8928702Z",
+      "id": "pill-mint-contact-en-landscape-768"
+    },
+    {
+      "time": "2026-10-07T15:13:28.4081393Z",
+      "id": "pill-mint-order-ku-portrait-430"
+    },
+    {
+      "time": "2026-10-07T15:13:39.0291128Z",
+      "id": "pill-mint-order-ku-portrait-768"
+    },
+    {
+      "time": "2026-10-07T15:13:58.6043352Z",
+      "id": "pill-mint-order-ku-landscape-375"
+    },
+    {
+      "time": "2026-10-07T15:14:17.0508325Z",
+      "id": "pill-mint-order-ku-landscape-430"
+    },
+    {
+      "time": "2026-10-07T15:15:39.1101484Z",
+      "id": "pill-mint-order-en-portrait-430"
+    },
+    {
+      "time": "2026-10-07T15:15:49.7280463Z",
+      "id": "pill-mint-order-en-portrait-768"
+    },
+    {
+      "time": "2026-10-07T15:17:20.3677340Z",
+      "id": "pill-mint-download-ku-portrait-320"
+    },
+    {
+      "time": "2026-10-07T15:18:14.6470721Z",
+      "id": "pill-mint-download-ku-portrait-430"
+    },
+    {
+      "time": "2026-10-07T15:18:24.0227446Z",
+      "id": "pill-mint-download-ku-portrait-768"
+    },
+    {
+      "time": "2026-10-07T15:19:47.3967079Z",
+      "id": "pill-mint-download-en-portrait-320"
+    },
+    {
+      "time": "2026-10-07T15:20:14.4079720Z",
+      "id": "pill-mint-download-en-portrait-430"
+    },
+    {
+      "time": "2026-10-07T15:20:23.7840279Z",
+      "id": "pill-mint-download-en-portrait-768"
+    },
+    {
+      "time": "2026-10-07T15:21:31.2135004Z",
+      "id": "pill-mint-download-en-landscape-430"
+    },
+    {
+      "time": "2026-10-07T15:21:53.4573824Z",
+      "id": "pill-dark-contact-ku-portrait-320"
+    },
+    {
+      "time": "2026-10-07T15:22:06.2832315Z",
+      "id": "pill-dark-contact-ku-portrait-375"
+    },
+    {
+      "time": "2026-10-07T15:22:49.0988841Z",
+      "id": "pill-dark-contact-ku-portrait-393"
+    },
+    {
+      "time": "2026-10-07T15:23:03.2443985Z",
+      "id": "pill-dark-contact-ku-portrait-430"
+    },
+    {
+      "time": "2026-10-07T15:23:15.2574497Z",
+      "id": "pill-dark-contact-ku-portrait-768"
+    },
+    {
+      "time": "2026-10-07T15:24:52.2070286Z",
+      "id": "pill-dark-contact-ku-landscape-768"
+    },
+    {
+      "time": "2026-10-07T15:25:05.2011108Z",
+      "id": "pill-dark-contact-en-portrait-320"
+    },
+    {
+      "time": "2026-10-07T15:25:18.1738925Z",
+      "id": "pill-dark-contact-en-portrait-375"
+    },
+    {
+      "time": "2026-10-07T15:26:03.3412818Z",
+      "id": "pill-dark-contact-en-portrait-393"
+    },
+    {
+      "time": "2026-10-07T15:26:16.3828644Z",
+      "id": "pill-dark-contact-en-portrait-430"
+    },
+    {
+      "time": "2026-10-07T15:26:30.8834275Z",
+      "id": "pill-dark-contact-en-portrait-768"
+    },
+    {
+      "time": "2026-10-07T15:28:03.4332966Z",
+      "id": "pill-dark-contact-en-landscape-768"
+    }
+  ]
+}

@@ -1,0 +1,138 @@
+{
+  "scope": "Exact files added by the evidence-only publication, excluding product/source changes already pushed",
+  "source_revision": "9ec6264940628c75fa0fc114edc88013a61cbab5",
+  "files": [
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/ci-results.json",
+      "origin": "Connector-generated safe report from actual executed job logs, saved inspected evidence or read-only inventory"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/evidence-files.json",
+      "origin": "This exact-path manifest"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/execution-blockers.json",
+      "origin": "Connector-generated safe report from actual executed job logs, saved inspected evidence or read-only inventory"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-approval-357aa00.jpg",
+      "bytes": 93790,
+      "git_blob_sha": "88068bf02603cf20ebc4d265320d15864716a51c",
+      "origin": "Previously inspected actual native artifact or protected approval screenshot"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-approval-5dbf391.jpg",
+      "bytes": 95976,
+      "git_blob_sha": "853db36654b03d7d46bda905267ac52103bb9a8a",
+      "origin": "Previously inspected actual native artifact or protected approval screenshot"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-approval-947dc34.jpg",
+      "bytes": 95488,
+      "git_blob_sha": "0e9df1f3e28b45ff4815ec0382fa12eebdb6f2fb",
+      "origin": "Previously inspected actual native artifact or protected approval screenshot"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-first-357aa00/case-results.json",
+      "bytes": 65322,
+      "git_blob_sha": "b4c06d07112b332648a009cf069b87a14bf18d1f",
+      "origin": "Previously inspected actual native artifact or protected approval screenshot"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-first-357aa00/failure.json",
+      "bytes": 249,
+      "git_blob_sha": "fbecbfea3181c89f4009474d27b1c5b570de2442",
+      "origin": "Previously inspected actual native artifact or protected approval screenshot"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-first-357aa00/pill-order-ku-portrait-320-baseline-webview.png",
+      "bytes": 58080,
+      "git_blob_sha": "a7ea1612496b6b745c1565355a6fd1dcd9b1de33",
+      "origin": "Previously inspected actual native artifact or protected approval screenshot"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-first-357aa00/pill-order-ku-portrait-320-diff.png",
+      "bytes": 23189,
+      "git_blob_sha": "2f87c520f1a878c54f4333861abd644ff0fbb683",
+      "origin": "Previously inspected actual native artifact or protected approval screenshot"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-first-357aa00/pill-order-ku-portrait-320-webview.png",
+      "bytes": 76475,
+      "git_blob_sha": "7293e1e6a876314615b81f0f4cb8d321e09c3307",
+      "origin": "Previously inspected actual native artifact or protected approval screenshot"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-first-357aa00/pixels.json",
+      "bytes": 24805,
+      "git_blob_sha": "eafb2ae765e7c867a00a77118f5c31e313b1acb3",
+      "origin": "Previously inspected actual native artifact or protected approval screenshot"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-first-357aa00/security.json",
+      "bytes": 209,
+      "git_blob_sha": "82989408c93cbbb3a516ff19fd984472ff53d0a9",
+      "origin": "Previously inspected actual native artifact or protected approval screenshot"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-first-357aa00/summary.json",
+      "bytes": 912,
+      "git_blob_sha": "34c536f54d9fd1da43da9439099eadcbfef9211f",
+      "origin": "Previously inspected actual native artifact or protected approval screenshot"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-partial-947dc34/case-results.json",
+      "bytes": 26079,
+      "git_blob_sha": "8f2a2cf30d2e6ded56fc7ede55b46d5bb9aee5a9",
+      "origin": "Previously inspected actual native artifact or protected approval screenshot"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-partial-947dc34/pill-download-ku-landscape-375-baseline-webview.png",
+      "bytes": 41580,
+      "git_blob_sha": "40f39ce918acb022367884efc2a4f80aa2a57834",
+      "origin": "Previously inspected actual native artifact or protected approval screenshot"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-partial-947dc34/pill-download-ku-landscape-375-diff.png",
+      "bytes": 10394,
+      "git_blob_sha": "fe5f7868eb041446929a4d7753526d17361380ac",
+      "origin": "Previously inspected actual native artifact or protected approval screenshot"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-results.json",
+      "origin": "Connector-generated safe report from actual executed job logs, saved inspected evidence or read-only inventory"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-settled-5dbf391/capture-log-index.json",
+      "origin": "Connector-generated safe report from actual executed job logs, saved inspected evidence or read-only inventory"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/prepared-design-preservation.json",
+      "origin": "Connector-generated safe report from actual executed job logs, saved inspected evidence or read-only inventory"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/production-checkpoints.json",
+      "origin": "Connector-generated safe report from actual executed job logs, saved inspected evidence or read-only inventory"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/README.md",
+      "origin": "Connector-generated safe report from actual executed job logs, saved inspected evidence or read-only inventory"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/source-files.json",
+      "origin": "Connector-generated safe report from actual executed job logs, saved inspected evidence or read-only inventory"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/staging-results.json",
+      "origin": "Connector-generated safe report from actual executed job logs, saved inspected evidence or read-only inventory"
+    },
+    {
+      "path": "docs/PROXOLINK_V6_EXECUTION_2026-10-07.md",
+      "origin": "Connector-generated safe report from actual executed job logs, saved inspected evidence or read-only inventory"
+    },
+    {
+      "path": "docs/PROXOLINK_V6_ISOLATED_STAGING_SETUP.md",
+      "origin": "Connector-generated safe report from actual executed job logs, saved inspected evidence or read-only inventory"
+    }
+  ]
+}
