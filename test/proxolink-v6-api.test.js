@@ -24,7 +24,8 @@ for(const [kind,sets] of Object.entries({contact:[['whatsapp','viber','instagram
    assert.notEqual(id,OWNER);assert.notEqual(id,body.client_request_id);
    assert.equal(result.public_path,`/${kind}/${id}`);
    assert.equal(fixture.writes[0].body.id,undefined);
-   const same=await call('cards',{method:'POST',body});assert.equal(same.status,200);assert.equal(same.json().card.id,id);assert.equal(fixture.rows.length,1);
+   const same=await call('cards',{method:'POST',body});assert.equal(same.status,200);assert.equal(same.json().card.id,id);
+   assert.equal(same.json().card.page_kind,kind);assert.equal(same.json().card.public_path,`/${kind}/${id}`);assert.equal(fixture.rows.length,1);
    const conflict=await call('cards',{method:'POST',body:{...body,name:'different'}});assert.equal(conflict.status,409);
    const read=await call(kind,{query:{id},auth:null});assert.equal(read.status,200);
    const config=configFromHtml(read.body);assert.equal(config.name,body.name);assert.equal(config.preview,false);
