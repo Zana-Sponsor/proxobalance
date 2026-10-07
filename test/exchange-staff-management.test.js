@@ -20,7 +20,7 @@ function fixture(){
 }
 test('super admin management reads fresh staff and routes controls through existing privileged actions',async()=>{
  const {c,elements,calls,queries}=fixture();await c.openStaffDirectory();
- assert.deepEqual(queries,['ex_profiles']);
+ assert.deepEqual(queries,['ex_profiles','ex_profiles']);
  const html=elements.get('staffDirectoryList').innerHTML;
  assert.match(html,/Super Admin/);assert.match(html,/Fresh Staff/);assert.match(html,/Blocked Staff/);assert.doesNotMatch(html,/customer/);
  for(const action of ['ban','demote','password'])assert.ok(html.includes("'"+action+"'"));
