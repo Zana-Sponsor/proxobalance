@@ -1497,10 +1497,7 @@ function renderAccTable(list){
       <td class="ai-when"><b dir="ltr">${fmtDate(a.created_at)}</b><span dir="ltr">${fmtTime(a.created_at)}</span><div>${fmtAgo(a.created_at)}</div></td>
       <td><div class="act-grp">
         <div class="act-btn bl" onclick="openAccountInfo('${a.id}')"><i class="fas fa-circle-info"></i> زانیاری</div>
-        <div class="act-btn dark" onclick="openSetPasswordModal('${a.id}','${esc(a.email||'').replace(/'/g,"\\'")}')"><i class="fas fa-key"></i> گۆڕینی وشەی نهێنی</div>
-        <div class="act-btn ${a.is_banned?'gr':'rd'}" onclick="toggleBan('${a.id}',${a.is_banned})"><i class="fas fa-${a.is_banned?'user-check':'user-slash'}"></i> ${a.is_banned?'لابردنی بۆیکۆت':'بۆیکۆتکردن'}</div>
-        <div class="act-btn cy" onclick="openKycRequestById('${a.id}')"><i class="fas fa-id-card"></i> پشتڕاستکردنەوە</div>
-        ${roleButtonHTML(a)}
+        ${accountAdminActionsHTML(a)}
       </div></td>
     </tr>`).join('')}
   </tbody></table>`;
@@ -1517,10 +1514,7 @@ function renderAccCards(list){
       <div class="detail-row"><div class="lbl">باڵانسی بەردەست</div><div class="val">${accountBalanceCell(a.id)}</div></div>
       <div class="rec-card-actions g3">
         <div class="act-btn bl" onclick="openAccountInfo('${a.id}')"><i class="fas fa-circle-info"></i> زانیاری</div>
-        <div class="act-btn dark" onclick="openSetPasswordModal('${a.id}','${esc(a.email||'').replace(/'/g,"\\'")}')"><i class="fas fa-key"></i> وشەی نهێنی</div>
-        <div class="act-btn ${a.is_banned?'gr':'rd'}" onclick="toggleBan('${a.id}',${a.is_banned})"><i class="fas fa-${a.is_banned?'user-check':'user-slash'}"></i> ${a.is_banned?'لابردنی بۆیکۆت':'بۆیکۆت'}</div>
-        <div class="act-btn cy" onclick="openKycRequestById('${a.id}')"><i class="fas fa-id-card"></i> پشتڕاستکردنەوە</div>
-        ${roleButtonHTML(a)}
+        ${accountAdminActionsHTML(a)}
       </div>
     </div>`).join('')}</div>`;
 }
@@ -1631,6 +1625,13 @@ async function openAccountInfo(id){
     if(el) el.innerHTML=kycBadgeHTML(st);
   }catch(_){}
 }
+function accountAdminActionsHTML(a){
+  if(!isSuperAdmin()) return '';
+  return `<div class="act-btn dark" onclick="openSetPasswordModal('${a.id}','${esc(a.email||'').replace(/'/g,"\\'")}')"><i class="fas fa-key"></i> گۆڕینی وشەی نهێنی</div>
+    <div class="act-btn ${a.is_banned?'gr':'rd'}" onclick="toggleBan('${a.id}',${a.is_banned})"><i class="fas fa-${a.is_banned?'user-check':'user-slash'}"></i> ${a.is_banned?'لابردنی بۆیکۆت':'بۆیکۆتکردن'}</div>
+    <div class="act-btn cy" onclick="openKycRequestById('${a.id}')"><i class="fas fa-id-card"></i> پشتڕاستکردنەوە</div>
+    ${roleButtonHTML(a)}`;
+}
 function toggleBan(id, current){
   if(!isSuperAdmin())return;
   const next=!current;
@@ -1734,7 +1735,7 @@ async function callAdminFn(fnName, payload){
 }
 
 function openSetPasswordModal(userId, email){
-  if(typeof staffPasswordAllowed==='function'&&!staffPasswordAllowed(userId)){showToast('تەنها سوپەر ئادمین دەتوانێت وشەی نهێنی ئادمینێک بگۆڕێت','rd');return;}
+  if(!isSuperAdmin()){showToast('تەنها سوپەر ئادمین دەتوانێت وشەی نهێنی بگۆڕێت','rd');return;}
   document.getElementById('spUserId').value = userId;
   document.getElementById('spUserLabel').textContent = email || '—';
   document.getElementById('spNewPass').value = '';
@@ -1753,6 +1754,7 @@ function toggleSpVisibility(){
 }
 async function submitSetPassword(){
   const errEl = document.getElementById('spErr');
+  if(!isSuperAdmin()){errEl.textContent='تەنها سوپەر ئادمین مافی گۆڕینی وشەی نهێنی هەیە';errEl.style.display='block';return;}
   errEl.style.display='none';
   const userId = document.getElementById('spUserId').value;
   const pass = document.getElementById('spNewPass').value;
@@ -1781,6 +1783,7 @@ async function submitSetPassword(){
 // ═══ ADMIN: CREATE USER (via secure Edge Function) ══════════════
 // ══════════════════════════════════════════════════════════════
 function openCreateUserModal(){
+  if(!isSuperAdmin()){showToast('تەنها سوپەر ئادمین دەتوانێت هەژمار زیاد بکات','rd');return;}
   document.getElementById('cuName').value = '';
   document.getElementById('cuEmail').value = '';
   document.getElementById('cuPhone').value = '';
@@ -1792,6 +1795,7 @@ function openCreateUserModal(){
 }
 async function submitCreateUser(){
   const errEl = document.getElementById('cuErr');
+  if(!isSuperAdmin()){errEl.textContent='تەنها سوپەر ئادمین مافی زیادکردنی هەژمار هەیە';errEl.style.display='block';return;}
   errEl.style.display='none';
   const full_name = document.getElementById('cuName').value.trim();
   const email = document.getElementById('cuEmail').value.trim();
