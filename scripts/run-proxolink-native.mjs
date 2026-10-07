@@ -58,7 +58,7 @@ const safeTransportCodes=new Set(['ENOTFOUND','EAI_AGAIN','ETIMEDOUT','ECONNRESE
 const safeNativeChecks=new Set(['rendered_page_checks','animation_motion',
   'contact_confirmation','contact_cancel','contact_confirm','inert_tiktok',
   'preview_url','navigation_boundary','fresh_frame','pixel_density','preview_actions','public_actions','whatsapp_hint',
-  'screenshot_ack','unclassified_native_check']);
+  'screenshot_ack','capture_visibility','unclassified_native_check']);
 async function jsonRequest(url,{headers={},...options}={}) {
   const response=await safeRequest(url,{...options,headers});
   lastJsonResponseStatus=response.status;
@@ -188,7 +188,7 @@ async function main() {
           writeFileSync(output+'/'+id+'-diff.png',comparison.diff);
           pixels[id]=comparison.metrics;captured.add(id);
           writeFileSync(output+'/pixels.json',JSON.stringify({environment:'Same Android 35 emulator / WebView / DPR 1 baseline versus candidate',
-            animation_state:'CSS animations paused at zero; hint/toast hidden; original CSS/assets unchanged',cases:pixels},null,2));
+            animation_state:'Finite entrance animations completed; infinite animations paused at zero; hint/toast hidden; original CSS/assets unchanged',cases:pixels},null,2));
           if(!comparison.metrics.exact_pixels_equal)console.log('Native pixel difference recorded for '+id+'.');
         }
         appWrite('proxolink-verification-ack',capture_id);

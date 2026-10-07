@@ -68,10 +68,15 @@ class _ProbeState extends State<_Probe> {
     ||(state['scroll'] as num)>(state['width'] as num)+1||((state['width'] as num)-(c['width'] as int)).abs()>1
     ||jsonEncode(state['providers'])!=jsonEncode(expectedProviders)||state['motion']!=true)throw StateError('rendered_page_checks');
    if(!baseline){
-    final times=state['animations'] as List;
+    // Observe the original entrance animations from one fresh render. Keep
+    // their references so an animation finishing during the sample is still
+    // measured, rather than disappearing from document.getAnimations().
+    await controller.runJavaScript('window.ProxoLink.setConfig(window.ProxoLink.getConfig());window.__probeAnimations=document.getAnimations();');
+    final times=(await _read(controller,'JSON.stringify({times:window.__probeAnimations.map(a=>Number(a.currentTime)||0)})'))['times'] as List;
+    if(c['type']!='download'&&times.isEmpty)throw StateError('animation_motion');
     if(times.isNotEmpty){
      await Future<void>.delayed(const Duration(milliseconds:150));
-     final later=(await _state(controller))['animations'] as List;
+     final later=(await _read(controller,'JSON.stringify({times:window.__probeAnimations.map(a=>Number(a.currentTime)||0)})'))['times'] as List;
      if(!List.generate(times.length,(i)=>i).any((i)=>i<later.length&&(later[i] as num)>(times[i] as num)))throw StateError('animation_motion');
     }
     final before=await controller.currentUrl();
@@ -85,7 +90,8 @@ class _ProbeState extends State<_Probe> {
  window.addEventListener('proxo:navigate',e=>{opened.push(e.detail);e.preventDefault();});
  window.ProxoLink.setConfig({...config,preview:false});
  document.querySelectorAll('[data-provider]').forEach(e=>e.click());
- const valid=opened.length===config.buttons.length&&opened.every((a,i)=>a.provider===config.buttons[i].type&&a.url===config.buttons[i].url);
+ const expected=new Map(config.buttons.filter(b=>b.enabled!==false).map(b=>[b.type,b.url]));
+ const valid=opened.length===expected.size&&new Set(opened.map(a=>a.provider)).size===expected.size&&opened.every(a=>expected.get(a.provider)===a.url);
  window.ProxoLink.setConfig(config);return JSON.stringify({valid});})()
 ''');
     if(publicActions['valid']!=true||await controller.currentUrl()!=before)throw StateError('public_actions');
@@ -102,9 +108,13 @@ class _ProbeState extends State<_Probe> {
      'images_loaded':state['images'],'icons_loaded':state['icons'],'animation_checked':true,'animation_count':times.length,
      'provider_types':true,'preview_inert':true,'public_actions_checked':publicActions['valid'],'navigation_blocked':true};
    }
-   // Same WebView/device/DPR and frozen original CSS on both documents.
-   await controller.runJavaScript('window.scrollTo(0,0);document.getAnimations().forEach(a=>{a.pause();a.currentTime=0;});const toast=document.getElementById("toast");toast.hidden=true;document.querySelectorAll(".wa-message-card").forEach(e=>{e.hidden=true;new MutationObserver(()=>{if(!e.hidden)e.hidden=true;}).observe(e,{attributes:true,attributeFilter:["hidden"]});});');
+   // Capture the same fully entered state of the original CSS on both
+   // documents. Freezing an in-flight entrance at zero hides its buttons,
+   // while a completed backwards-fill entrance is already fully visible.
+   await controller.runJavaScript('window.scrollTo(0,0);document.getAnimations().forEach(a=>{if(Number.isFinite(a.effect.getComputedTiming().endTime)){a.finish();}else{a.pause();a.currentTime=0;}});const toast=document.getElementById("toast");toast.hidden=true;document.querySelectorAll(".wa-message-card").forEach(e=>{e.hidden=true;new MutationObserver(()=>{if(!e.hidden)e.hidden=true;}).observe(e,{attributes:true,attributeFilter:["hidden"]});});');
    await Future<void>.delayed(const Duration(milliseconds:150));
+   final capture=await _read(controller,'JSON.stringify({visible:Array.from(document.querySelectorAll("[data-provider]")).every(e=>Number(getComputedStyle(e).opacity)===1&&e.getBoundingClientRect().width>0)})');
+   if(capture['visible']!=true)throw StateError('capture_visibility');
    if(!mounted)return;
    final box=_viewport.currentContext!.findRenderObject()! as RenderBox,origin=box.localToGlobal(Offset.zero);
    if(MediaQuery.devicePixelRatioOf(context)!=1)throw StateError('pixel_density');
