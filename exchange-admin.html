@@ -22,7 +22,7 @@
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <link rel="stylesheet" href="assets/css/exchange-admin-workspace.css?v=1">
-<link rel="stylesheet" href="assets/css/admin-contracts.css?v=1">
+<link rel="stylesheet" href="assets/css/admin-contracts.css?v=2">
 <link rel="stylesheet" href="assets/css/exchange-auth-app.css?v=1">
 <script src="assets/js/exchange-access.js?v=1"></script>
 </head>
@@ -307,10 +307,17 @@
       <div class="contract-page-intro">
         <div>
           <h3>گرێبەستەکان</h3>
-          <p>گرێبەستی بەکرێدانی پڕۆکسۆ باڵانس و واژووی دیجیتاڵی هەردوو ئادمین. هەر لایەن تەنها واژووی خۆی دەتوانێت تۆمار بکات.</p>
+          <p>هەر لایەن ناوی تەواوی خۆی دەنووسێت، واژوو دەکات و «ڕازیم بە هەموو مەرج و ڕێساکان» پەسەند دەکات. تەنها سوپەر ئادمین گرێبەست دروست و دەستکاری دەکات.</p>
         </div>
-        <button type="button" class="act-btn dark" onclick="loadContracts()"><i class="fas fa-rotate"></i> نوێکردنەوە</button>
+        <div class="contract-toolbar">
+          <button type="button" class="act-btn dark" data-super-admin-only hidden onclick="openContractEditor()"><i class="fas fa-plus"></i> گرێبەستی نوێ</button>
+          <button type="button" class="act-btn" onclick="loadContracts()"><i class="fas fa-rotate"></i> نوێکردنەوە</button>
+        </div>
       </div>
+      <section class="contract-admin-panel">
+        <h4>ئادمینە چالاکەکان</h4>
+        <div id="contractAdminsWrap" class="contract-admin-list"><div class="loading">بارکردن...</div></div>
+      </section>
       <div id="contractsWrap">
         <div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>
       </div>
@@ -1018,23 +1025,94 @@
 <div class="overlay" id="moContractSignature">
   <div class="modal" style="max-width:620px">
     <div class="modal-hdr">
-      <h3>واژووی گرێبەست</h3>
+      <h3>ناو، واژوو و ڕازیبوون</h3>
       <button type="button" class="modal-close" onclick="closeMo('moContractSignature')" aria-label="داخستن">×</button>
     </div>
     <input type="hidden" id="contractSignId">
     <input type="hidden" id="contractSignSide">
     <div class="fee-toggle-note" style="margin-bottom:10px">
-      واژوو بۆ: <strong id="contractSignName" style="color:#1f2937"></strong>
+      گرێبەست بۆ: <strong id="contractSignName" style="color:#1f2937"></strong>
     </div>
+
+    <label class="modal-lbl" for="contractSignerTypedName">ناوی تەواوی خۆت بنووسە</label>
+    <input class="minp" id="contractSignerTypedName" autocomplete="name" placeholder="ناوی تەواو">
+
+    <div id="contractExistingSignatureWrap" class="contract-existing-signature" hidden>
+      <div class="fee-toggle-note">واژووی پێشووت پارێزراوە</div>
+      <img id="contractExistingSignatureImg" alt="واژووی پێشوو">
+    </div>
+
     <div class="contract-pad-wrap">
       <canvas id="contractSignatureCanvas" aria-label="شوێنی واژوو"></canvas>
     </div>
-    <p class="contract-pad-hint">بە پەنجە یان ماوس واژووت لەم ناوچەیە بکە. کات و هەژماری واژووکار خۆکارانە تۆمار دەکرێت.</p>
+    <p class="contract-pad-hint" id="contractSignatureHint">بە پەنجە یان ماوس واژووت بکە.</p>
+
+    <label class="contract-acceptance-check">
+      <input type="checkbox" id="contractTermsAccepted">
+      <span>ڕازیم بە هەموو مەرج و ڕێساکانی ئەم گرێبەستە و بە ناو و واژووی خۆم پەسەندی دەکەم.</span>
+    </label>
+
     <div id="contractSignError" class="contract-error"></div>
     <div class="contract-modal-actions">
-      <button type="button" class="modal-btn" style="background:#f1f5f9;color:#334155" onclick="resetContractPad()">پاککردنەوە</button>
-      <button type="button" class="modal-btn dark" id="contractSignSave" onclick="saveContractSignature()">تۆمارکردنی واژوو</button>
+      <button type="button" class="modal-btn" style="background:#f1f5f9;color:#334155" onclick="resetContractPad()">پاککردنەوەی واژووی نوێ</button>
+      <button type="button" class="modal-btn dark" id="contractSignSave" onclick="saveContractSignature()">ڕازیم و تۆمارکردن</button>
     </div>
+  </div>
+</div>
+
+<div class="overlay" id="moContractEditor">
+  <div class="modal wide" style="max-width:760px">
+    <div class="modal-hdr">
+      <h3 id="contractEditorTitle">گرێبەستی نوێ</h3>
+      <button type="button" class="modal-close" onclick="closeMo('moContractEditor')" aria-label="داخستن">×</button>
+    </div>
+    <input type="hidden" id="contractEditId">
+
+    <div id="contractEditorWarning" class="contract-editor-warning" hidden>
+      ئاگاداری: ئەگەر ناوەڕۆکی گرێبەست دەستکاری بکەیت، واژوو و ڕازیبوونی پێشوو پووچەڵ دەبن و هەردوو لایەن دەبێت دووبارە پەسەندی بکەن.
+    </div>
+
+    <div class="contract-editor-grid">
+      <div>
+        <label class="modal-lbl" for="contractEditNumber">ژمارەی گرێبەست</label>
+        <input class="minp" id="contractEditNumber" dir="ltr">
+      </div>
+      <div>
+        <label class="modal-lbl" for="contractEditTitle">ناونیشانی گرێبەست</label>
+        <input class="minp" id="contractEditTitle">
+      </div>
+      <div>
+        <label class="modal-lbl" for="contractEditWebsite">ناوی ماڵپەڕ</label>
+        <input class="minp" id="contractEditWebsite">
+      </div>
+      <div>
+        <label class="modal-lbl" for="contractEditRent">کرێی مانگانە (د.ع)</label>
+        <input class="minp" type="number" min="1" step="1" id="contractEditRent" dir="ltr">
+      </div>
+      <div>
+        <label class="modal-lbl" for="contractEditStart">دەستپێکی ماوە</label>
+        <input class="minp" type="datetime-local" id="contractEditStart">
+      </div>
+      <div>
+        <label class="modal-lbl" for="contractEditEnd">کۆتایی ماوە</label>
+        <input class="minp" type="datetime-local" id="contractEditEnd">
+      </div>
+      <div>
+        <label class="modal-lbl" for="contractEditOwner">خاوەن</label>
+        <select class="msel" id="contractEditOwner"></select>
+      </div>
+      <div>
+        <label class="modal-lbl" for="contractEditRenter">بەکرێگر</label>
+        <select class="msel" id="contractEditRenter"></select>
+      </div>
+      <div class="full">
+        <label class="modal-lbl" for="contractEditTerms">مەرج و ڕێساکان — هەر خاڵێک لە هێڵێکی جیاواز</label>
+        <textarea class="minp mta" id="contractEditTerms" rows="10"></textarea>
+      </div>
+    </div>
+
+    <div id="contractEditorError" class="contract-error"></div>
+    <button type="button" class="modal-btn dark" id="contractEditorSave" onclick="saveContractEditor()">پاشەکەوتکردنی گرێبەست</button>
   </div>
 </div>
 
@@ -1059,7 +1137,7 @@
   </div>
   <script src="assets/js/exchange-live.js?v=1"></script>
 <script src="assets/js/admin.js?v=24"></script>
-<script src="assets/js/admin-contracts.js?v=1"></script>
+<script src="assets/js/admin-contracts.js?v=2"></script>
   <script src="assets/js/exchange-staff.js?v=6"></script>
   <script src="assets/js/exchange-balance-admin.js?v=4"></script>
   <script src="assets/js/exchange-insights.js?v=5"></script>
