@@ -15,7 +15,7 @@ function staffPageAllowed(page){
  if(['otp','activity','security','errors','audit'].includes(page))return isSuperAdmin();
  if(staffFullAdmin())return true;
  const permission={dashboard:'view',orders:'view',accounts:'view',statistics:'view',profit:'view',
-  balance:'view',wallets:'manage_fees',rates:'manage_fees',rewards:'manage_rewards'}[page];
+  balance:'view',contracts:'view',wallets:'manage_fees',rates:'manage_fees',rewards:'manage_rewards'}[page];
  return !!permission&&staffCan(permission);
 }
 function applyStaffUI(){

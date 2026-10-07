@@ -60,6 +60,7 @@ jobs:
           node --check api/admin.js
           node --check api/balance.js
           node --check assets/js/admin.js
+          node --check assets/js/admin-contracts.js
           node --check assets/js/app.js
           node --check assets/js/exchange-balance.js
           node --check assets/js/exchange-balance-admin.js
@@ -81,7 +82,7 @@ jobs:
             import { existsSync,readFileSync } from 'node:fs';
             const check = (value,message) => { if(!value)throw new Error(message); };
             for(const file of ['public/index.html','public/exchange-admin.html',
-              'public/assets/js/exchange-balance.js',
+              'public/assets/js/exchange-balance.js','public/assets/js/admin-contracts.js',
               'public/assets/js/exchange-balance-admin.js',
               'public/assets/js/exchange-reward-pricing.js',
               'public/assets/css/exchange-balance.css','api/balance.js'])
@@ -90,5 +91,7 @@ jobs:
               'Missing customer send balance');
             check(readFileSync('public/exchange-admin.html','utf8').includes('id=\"pgBalance\"'),
               'Missing admin balance board');
+            check(readFileSync('public/exchange-admin.html','utf8').includes('id=\"pgContracts\"'),
+              'Missing admin contracts board');
             console.log('PASS: Exchange customer/admin build and balance assets');
           "

@@ -22,6 +22,7 @@
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <link rel="stylesheet" href="assets/css/exchange-admin-workspace.css?v=1">
+<link rel="stylesheet" href="assets/css/admin-contracts.css?v=1">
 <link rel="stylesheet" href="assets/css/exchange-auth-app.css?v=1">
 <script src="assets/js/exchange-access.js?v=1"></script>
 </head>
@@ -72,6 +73,7 @@
     <div class="sb-section">ڕێکخستن</div>
     <div class="sb-item" onclick="goPage('wallets')"><i class="fas fa-wallet" style="color:#16a34a"></i> واڵێتەکان</div>
     <div class="sb-item" onclick="goPage('rates')"><i class="fas fa-percent" style="color:#f59e0b"></i> نرخ و کرێ</div>
+    <div class="sb-item" onclick="goPage('contracts')"><i class="fas fa-file-signature" style="color:#1685fa"></i> گرێبەست</div>
     <div class="sb-section">پەیوەندی</div>
     <div class="sb-item" onclick="goPage('notifications')"><i class="fas fa-bell" style="color:#7c3aed"></i> ئاگادارییەکان</div>
     <div class="sb-item" onclick="goPage('cases')"><i class="fas fa-headset" style="color:#2563eb"></i> کەیسەکانی کڕیار <span class="sb-badge rd" id="sbCaseCount" style="display:none">0</span></div>
@@ -297,6 +299,20 @@
         <div class="tbl-scroll" id="kycListWrap">
           <div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>
         </div>
+      </div>
+    </div>
+
+    <!-- ══ CONTRACTS ══ -->
+    <div class="pg" id="pgContracts">
+      <div class="contract-page-intro">
+        <div>
+          <h3>گرێبەستەکان</h3>
+          <p>گرێبەستی بەکرێدانی پڕۆکسۆ باڵانس و واژووی دیجیتاڵی هەردوو ئادمین. هەر لایەن تەنها واژووی خۆی دەتوانێت تۆمار بکات.</p>
+        </div>
+        <button type="button" class="act-btn dark" onclick="loadContracts()"><i class="fas fa-rotate"></i> نوێکردنەوە</button>
+      </div>
+      <div id="contractsWrap">
+        <div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>
       </div>
     </div>
 
@@ -999,6 +1015,29 @@
   </div>
 </div>
 
+<div class="overlay" id="moContractSignature">
+  <div class="modal" style="max-width:620px">
+    <div class="modal-hdr">
+      <h3>واژووی گرێبەست</h3>
+      <button type="button" class="modal-close" onclick="closeMo('moContractSignature')" aria-label="داخستن">×</button>
+    </div>
+    <input type="hidden" id="contractSignId">
+    <input type="hidden" id="contractSignSide">
+    <div class="fee-toggle-note" style="margin-bottom:10px">
+      واژوو بۆ: <strong id="contractSignName" style="color:#1f2937"></strong>
+    </div>
+    <div class="contract-pad-wrap">
+      <canvas id="contractSignatureCanvas" aria-label="شوێنی واژوو"></canvas>
+    </div>
+    <p class="contract-pad-hint">بە پەنجە یان ماوس واژووت لەم ناوچەیە بکە. کات و هەژماری واژووکار خۆکارانە تۆمار دەکرێت.</p>
+    <div id="contractSignError" class="contract-error"></div>
+    <div class="contract-modal-actions">
+      <button type="button" class="modal-btn" style="background:#f1f5f9;color:#334155" onclick="resetContractPad()">پاککردنەوە</button>
+      <button type="button" class="modal-btn dark" id="contractSignSave" onclick="saveContractSignature()">تۆمارکردنی واژوو</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast"></div>
 
   <script src="assets/js/svg-icons.js"></script>
@@ -1020,6 +1059,7 @@
   </div>
   <script src="assets/js/exchange-live.js?v=1"></script>
 <script src="assets/js/admin.js?v=24"></script>
+<script src="assets/js/admin-contracts.js?v=1"></script>
   <script src="assets/js/exchange-staff.js?v=6"></script>
   <script src="assets/js/exchange-balance-admin.js?v=4"></script>
   <script src="assets/js/exchange-insights.js?v=5"></script>
