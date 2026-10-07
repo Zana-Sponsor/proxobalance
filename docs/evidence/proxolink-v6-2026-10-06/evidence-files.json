@@ -287,6 +287,12 @@
       "bytes": 594,
       "sha256": "22000da5f6b40a256a5d1b134d299d7a941650e8d6016923b13a5257e7d20506",
       "origin": "Safe derived audit of the unchanged digest-verified original Android artifact and sanitized capture acknowledgements"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-5bf533b-attempt2-infrastructure.json",
+      "bytes": 2346,
+      "sha256": "d8964e5e70fd1cd981e14fff96cf29d399ec7fed6c9eed9205e76e174da86ac0",
+      "origin": "Safe allowlisted job-step and error diagnosis; no credentials, capabilities, environment values or raw logs"
     }
   ],
   "current_native_revision": "1dca41a315b6988d98006f40ae4bee810be137f6",

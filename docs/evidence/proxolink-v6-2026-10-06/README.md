@@ -7,7 +7,7 @@
 | [Source CI](ci-results.json) | VERIFIED at 5bf533b | Run 37694585981: backend 121, Flutter 189, responsive 480, DB/RLS, 7 API lifecycles, edge functions and release APK privacy |
 | [Last executed Android results](native-results.json) | FAILED | Run 37669328941, attempt 1: expected 240; candidate 240, baseline 240, missing 0; 240 behavior passed, 0 failed; 235 exact pixel pairs, 5 failed |
 | [CURRENT native evidence](native-1dca41a/summary.json) | Inspected | Downloaded artifact digest verified; safe per-case JSON, all five failed crop/baseline/diff triples and exact RGB/coordinate diagnosis |
-| Native capture correction | BLOCKED on approval | Run 37694585964, attempt 2, 5bf533b: APK SUCCESS; runtime job 113046619691 waiting in proxolink-preview-verification for Zana-Sponsor. Expected 240, executed 0, candidate/baseline 0/0, 240 per role pending, pixels NOT EXECUTED |
+| Native capture correction | BLOCKED on approval | Run 37694585964, attempt 3, 5bf533b: successful APK reused; runtime job 113055174154 waiting in proxolink-preview-verification for Zana-Sponsor. Expected 240, executed 0, candidate/baseline 0/0, 240 per role pending, pixels NOT EXECUTED |
 | Native chooser → large WebView | NOT VERIFIED | 0 native chooser cases; probe directly renders production ProxoLinkPreview |
 | [Prepared design preservation](prepared-design-preservation.json) | VERIFIED | Four original CSS blocks remain identical; no product template or thumbnail change |
 | [Isolated staging](staging-results.json) | Historical BLOCKED | Separate target still required; no new staging work in this native-only continuation |
@@ -23,3 +23,5 @@ The previous complete V6 run 37647222280 is separately FAILED (240 behavior pass
 The thumbnail implementation stays complete: 12 real inert server-renderer PNGs, all four formal Kurdish labels and the large live WebView preview. Widget chooser checks and Chromium screenshots are separately scoped, not Android chooser certification.
 
 No credentials, bearer capabilities, runtime configuration, customer fixtures, private storage metadata or raw runtime logs are retained. Original CSS/assets and zero changed-pixel acceptance are preserved. PR #7 stays Draft/open/unmerged.
+
+Attempt 2 of the corrected run started after authorized approval but stopped at KVM setup before the emulator. It executed 0 native cases/captures/pixel pairs, and evidence upload failed because no runtime evidence directory existed. [Safe infrastructure diagnosis](native-5bf533b-attempt2-infrastructure.json) records the exact failure and uncertainty: the logs do not prove why KVM readiness failed. Only the failed job was retried in the same run; attempt 3 again awaits authorized approval. No source/workflow/acceptance/protection edit was made for this retry. Documentation-head source CI 37696341020 at 4b9e6fa passed all five jobs.
