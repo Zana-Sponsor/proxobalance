@@ -7,7 +7,7 @@ import { resolve } from 'node:path';
 import sharp from 'sharp';
 import { STYLES, WIDTHS, PAGE_TYPES, LANGUAGES, NATIVE_CASE_IDS, validateRuntime, safeRequest, verifyReadOnlySecurity,
   validateNativeResults } from './proxolink-verification-security.mjs';
-import {validateViewport, compareNativePixels, createPreviewReferenceBrowser} from './proxolink-pixel-comparison.mjs';
+import {validateViewport, compareNativePixels, captureNativeFrames, createPreviewReferenceBrowser} from './proxolink-pixel-comparison.mjs';
 
 const styles=STYLES;
 const packageId='com.proxo.proxoapp';
@@ -43,6 +43,7 @@ const safeErrorCodes=new Set([
   'private_template_access_failed','catalog_metadata_boundary_failed','four_templates_required',
   'invalid_preview_capability','rendered_preview_security_failed','preview_source_boundary_failed',
   'native_evidence_incomplete','native_screenshot_failed','native_verification_timeout',
+  'native_capture_unstable','native_pixel_parity_failed',
   'native_viewport_invalid','native_crop_outside_screen','reference_viewport_mismatch',
   'reference_capability_required','reference_preview_unavailable','reference_assets_or_viewport_failed',
 ]);
@@ -58,7 +59,7 @@ const safeTransportCodes=new Set(['ENOTFOUND','EAI_AGAIN','ETIMEDOUT','ECONNRESE
 const safeNativeChecks=new Set(['rendered_page_checks','animation_motion',
   'contact_confirmation','contact_cancel','contact_confirm','inert_tiktok',
   'preview_url','navigation_boundary','fresh_frame','pixel_density','preview_actions','public_actions','whatsapp_hint',
-  'screenshot_ack','capture_visibility','fresh_native_view','public_navigation','unclassified_native_check']);
+  'screenshot_ack','capture_visibility','fresh_native_view','native_paint_barrier','public_navigation','unclassified_native_check']);
 const safeDiagnosticBooleans=new Set(['valid','public_url_unchanged','legacy_viber_url_parser',
   ...['whatsapp','viber','instagram','telegram','korek','asiacell','talabat','toters','lezzoo','wade','google_play','app_store'].map(p=>p+'_destination_match')]);
 function safeCaseResults(data){
@@ -66,7 +67,7 @@ function safeCaseResults(data){
   Object.fromEntries(Object.entries(data[id]).filter(([name,value])=>
    name==='failed_check'?safeNativeChecks.has(value):
    ['width','animation_count','expected_count','observed_count'].includes(name)?Number.isInteger(value):
-   (['passed','font_loaded','font_applied','images_loaded','icons_loaded','animation_checked','provider_types','preview_inert','public_actions_checked','navigation_blocked','fresh_native_views'].includes(name)||safeDiagnosticBooleans.has(name))&&typeof value==='boolean'))]));
+   (['passed','font_loaded','font_applied','images_loaded','icons_loaded','animation_checked','provider_types','preview_inert','public_actions_checked','navigation_blocked','fresh_native_views','native_paint_barriers'].includes(name)||safeDiagnosticBooleans.has(name))&&typeof value==='boolean'))]));
 }
 async function jsonRequest(url,{headers={},...options}={}) {
   const response=await safeRequest(url,{...options,headers});
@@ -157,13 +158,14 @@ async function main() {
   adb(['shell','wm','density','160']);
   adb(['shell','run-as',packageId,'mkdir','-p','files']);
   await configure();
-  // Exact parity uses the same Android WebView for baseline and candidate.
+  // Exact parity uses the same Android emulator/WebView version for both roles.
   const captures=new Map();
   stage='native_case_collection';
-  adb(['shell','am','start','-n',packageId+'/.MainActivity']);
+  adb(['shell','am','start','-n',packageId+'/.ProxoLinkNativeProbeActivity']);
   let configuredAt=Date.now();
   const captured=new Set();
   const pixels={};
+  const repeatability={};
   const reportedFailures=new Set();
   const deadline=Date.now()+90*60*1000;
   while(Date.now()<deadline) {
@@ -195,10 +197,14 @@ async function main() {
     if(current) {
       const {id,capture_id,style,type,language,width,variant,viewport}=JSON.parse(current);
       if(NATIVE_CASE_IDS.includes(id)&&capture_id===id+'-'+variant&&['candidate','baseline'].includes(variant)&&!captures.has(capture_id)) {
-        const png=adb(['exec-out','screencap','-p']);if(!png?.length)throw Error('native_screenshot_failed');
         const crop=validateViewport(viewport,width);
-        writeFileSync(output+'/'+capture_id+'.png',png);
-        captures.set(capture_id,{png,crop});
+        const frame=await captureNativeFrames(()=>adb(['exec-out','screencap','-p']),crop);
+        writeFileSync(output+'/'+capture_id+'.png',frame.png);
+        frame.repeated.forEach((sample,index)=>writeFileSync(output+'/'+capture_id+'-repeat-'+(index+2)+'-webview.png',sample.native));
+        repeatability[capture_id]=frame.repeatability;
+        writeFileSync(output+'/capture-repeatability.json',JSON.stringify(repeatability,null,2));
+        if(!frame.repeatability.exact_pixels_equal)console.log('Native capture instability recorded for '+capture_id+'.');
+        captures.set(capture_id,{png:frame.png,crop,repeatability:frame.repeatability});
         if(captures.has(id+'-candidate')&&captures.has(id+'-baseline')) {
           const candidate=captures.get(id+'-candidate'),baseline=captures.get(id+'-baseline');
           if(JSON.stringify(candidate.crop)!==JSON.stringify(baseline.crop))throw Error('reference_viewport_mismatch');
@@ -207,9 +213,10 @@ async function main() {
           writeFileSync(output+'/'+id+'-webview.png',comparison.native);
           writeFileSync(output+'/'+id+'-baseline-webview.png',reference);
           writeFileSync(output+'/'+id+'-diff.png',comparison.diff);
-          pixels[id]=comparison.metrics;captured.add(id);
+          pixels[id]={...comparison.metrics,capture_samples:3,
+            capture_stable:candidate.repeatability.exact_pixels_equal&&baseline.repeatability.exact_pixels_equal};captured.add(id);
           writeFileSync(output+'/pixels.json',JSON.stringify({environment:'Same Android 35 emulator / WebView / DPR 1 baseline versus candidate',
-            animation_state:'Behavior view retired; candidate and baseline use separate fresh production WebViews with identical initial-load/reload/settle history; finite entrances completed; infinite animations paused at zero; hint/toast hidden; original CSS/assets unchanged',cases:pixels},null,2));
+            animation_state:'Behavior view retired; fresh production WebViews with identical load/reload/settle history; finite entrances completed; infinite animations paused at zero; hint/toast hidden; Android visual-state callback and native draw acknowledged; three fixed captures per role must be identical; first frames compared; original CSS/assets unchanged',cases:pixels},null,2));
           if(!comparison.metrics.exact_pixels_equal)console.log('Native pixel difference recorded for '+id+'.');
         }
         appWrite('proxolink-verification-ack',capture_id);

@@ -49,16 +49,22 @@ test('live checks require app authentication independently of the Vercel bypass 
 test('native evidence requires 240 captured cases plus exact same-device Android WebView pixel comparisons',()=>{
  const entries=NATIVE_CASE_IDS.map(id=>[id,{passed:true,width:Number(id.split('-').at(-1)),
   font_loaded:true,font_applied:true,images_loaded:true,icons_loaded:true,animation_count:1,animation_checked:true,provider_types:true,
-  preview_inert:true,public_actions_checked:true,navigation_blocked:true,fresh_native_views:true,private_token:'not-for-artifacts'}]);
+  preview_inert:true,public_actions_checked:true,navigation_blocked:true,fresh_native_views:true,native_paint_barriers:true,private_token:'not-for-artifacts'}]);
  const data=Object.fromEntries(entries),captured=new Set(entries.map(([id])=>id));
- const pixels=Object.fromEntries(entries.map(([id,value])=>[id,{width:value.width,changed_pixels:0,exact_pixels_equal:true}]));
+ const pixels=Object.fromEntries(entries.map(([id,value])=>[id,{width:value.width,changed_pixels:0,exact_pixels_equal:true,capture_stable:true,capture_samples:3}]));
  assert.equal(entries.length,240);
  assert.doesNotMatch(JSON.stringify(validateNativeResults(data,captured,pixels)),/private_token|not-for-artifacts/);
  assert.throws(()=>validateNativeResults(data,captured));
- pixels[NATIVE_CASE_IDS[0]].changed_pixels=1;assert.throws(()=>validateNativeResults(data,captured,pixels));
+ pixels[NATIVE_CASE_IDS[0]].changed_pixels=1;assert.throws(()=>validateNativeResults(data,captured,pixels),/native_pixel_parity_failed/);
  pixels[NATIVE_CASE_IDS[0]].changed_pixels=0;
  data[NATIVE_CASE_IDS[0]].fresh_native_views=false;assert.throws(()=>validateNativeResults(data,captured,pixels));
  delete data[NATIVE_CASE_IDS[0]].fresh_native_views;assert.throws(()=>validateNativeResults(data,captured,pixels));
  data[NATIVE_CASE_IDS[0]].fresh_native_views=true;
+ data[NATIVE_CASE_IDS[0]].native_paint_barriers=false;assert.throws(()=>validateNativeResults(data,captured,pixels),/native_evidence_incomplete/);
+ data[NATIVE_CASE_IDS[0]].native_paint_barriers=true;
+ pixels[NATIVE_CASE_IDS[0]].capture_stable=false;assert.throws(()=>validateNativeResults(data,captured,pixels),/native_capture_unstable/);
+ pixels[NATIVE_CASE_IDS[0]].capture_stable=true;
+ pixels[NATIVE_CASE_IDS[0]].capture_samples=1;assert.throws(()=>validateNativeResults(data,captured,pixels),/native_capture_unstable/);
+ pixels[NATIVE_CASE_IDS[0]].capture_samples=3;
  captured.delete(NATIVE_CASE_IDS[0]);assert.throws(()=>validateNativeResults(data,captured,pixels));
 });

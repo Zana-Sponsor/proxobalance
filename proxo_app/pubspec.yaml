@@ -67,6 +67,8 @@ dependency_overrides:
   app_links: 3.5.1
 
 dev_dependencies:
+  # Debug native probe uses the existing plugin's public native-view identifier.
+  webview_flutter_android: 4.14.1
   integration_test:
     sdk: flutter
   flutter_test:

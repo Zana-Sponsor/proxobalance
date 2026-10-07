@@ -1,5 +1,5 @@
 {
-  "scope": "Exact files added by the evidence-only publication, excluding product/source changes already pushed",
+  "scope": "Historical V6 evidence retained plus current 1dca41a terminal Android results and capture correction",
   "source_revision": "9ec6264940628c75fa0fc114edc88013a61cbab5",
   "files": [
     {
@@ -133,6 +133,137 @@
     {
       "path": "docs/PROXOLINK_V6_ISOLATED_STAGING_SETUP.md",
       "origin": "Connector-generated safe report from actual executed job logs, saved inspected evidence or read-only inventory"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-1dca41a/case-results.json",
+      "bytes": 104602,
+      "sha256": "0947ac9d11d024a9da2abbe121038019d6c0a40be61231f36c322a2bf37b6d65",
+      "origin": "Allowlisted actual terminal native artifact or inspected safe aggregate/diagnosis"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-1dca41a/diagnosis.json",
+      "bytes": 3034,
+      "sha256": "26be7983e0e85543d87b9681dc73a64e18d4bba2229788557107c9417d474ec4",
+      "origin": "Allowlisted actual terminal native artifact or inspected safe aggregate/diagnosis"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-1dca41a/failure.json",
+      "bytes": 249,
+      "sha256": "93393bde5cc8257b8ba17766db1781549e73ab95c7f98617e4161d10a82f8e6d",
+      "origin": "Allowlisted actual terminal native artifact or inspected safe aggregate/diagnosis"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-1dca41a/pill-contact-en-portrait-768-baseline-webview.png",
+      "bytes": 121131,
+      "sha256": "801e67ef998dd4eb95661961db726fc3b2fbd04a64ddbfacf8e9bffd90ff0f97",
+      "origin": "Allowlisted actual terminal native artifact or inspected safe aggregate/diagnosis"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-1dca41a/pill-contact-en-portrait-768-diff.png",
+      "bytes": 46449,
+      "sha256": "71a09b124915c43e7a1617f9a5553d04630e1435e8f098f5a17203472822ee5f",
+      "origin": "Allowlisted actual terminal native artifact or inspected safe aggregate/diagnosis"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-1dca41a/pill-contact-en-portrait-768-webview.png",
+      "bytes": 121130,
+      "sha256": "bf902bba07a12090fb5ec3d4a67ef95d7dca4132d2b9b789fc7e6046be3bdc59",
+      "origin": "Allowlisted actual terminal native artifact or inspected safe aggregate/diagnosis"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-1dca41a/pill-mint-order-en-portrait-430-baseline-webview.png",
+      "bytes": 87421,
+      "sha256": "af4622d5c231fc075f789f956c81e06422f476404074569df171fcfb0406a3ae",
+      "origin": "Allowlisted actual terminal native artifact or inspected safe aggregate/diagnosis"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-1dca41a/pill-mint-order-en-portrait-430-diff.png",
+      "bytes": 30305,
+      "sha256": "a153483dc724fb56887e628afc2e790f38c66898e1f10f2fc0a7befaec208664",
+      "origin": "Allowlisted actual terminal native artifact or inspected safe aggregate/diagnosis"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-1dca41a/pill-mint-order-en-portrait-430-webview.png",
+      "bytes": 87422,
+      "sha256": "d305258ae0cabdd745e8a2328a8ef6a0c7756e53ea2ebe91970ebcb97a0eb850",
+      "origin": "Allowlisted actual terminal native artifact or inspected safe aggregate/diagnosis"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-1dca41a/pill-mint-order-en-portrait-768-baseline-webview.png",
+      "bytes": 106931,
+      "sha256": "df2995369c6b75ca11fa65d7fc490863c33b493f1860d6c247a9880154bd3713",
+      "origin": "Allowlisted actual terminal native artifact or inspected safe aggregate/diagnosis"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-1dca41a/pill-mint-order-en-portrait-768-diff.png",
+      "bytes": 40330,
+      "sha256": "cb0df8b7000d6a99593bd2e3601d4c236a48a2b3ed00caa7e46f7b17451dbf2f",
+      "origin": "Allowlisted actual terminal native artifact or inspected safe aggregate/diagnosis"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-1dca41a/pill-mint-order-en-portrait-768-webview.png",
+      "bytes": 106928,
+      "sha256": "a6f053ded891b7306e82bef1b5f584ff7700de0fb7dca9a239b7b5062f360dd2",
+      "origin": "Allowlisted actual terminal native artifact or inspected safe aggregate/diagnosis"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-1dca41a/pill-order-en-portrait-768-baseline-webview.png",
+      "bytes": 102370,
+      "sha256": "89ef017015ccbab64cf08000cb6c525b2a21309d22f633387e85ba55f0e3d58d",
+      "origin": "Allowlisted actual terminal native artifact or inspected safe aggregate/diagnosis"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-1dca41a/pill-order-en-portrait-768-diff.png",
+      "bytes": 39073,
+      "sha256": "9f84c9a72d7d364813e0b5847c8de63b95a4e951065d69863f7545f3432deb73",
+      "origin": "Allowlisted actual terminal native artifact or inspected safe aggregate/diagnosis"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-1dca41a/pill-order-en-portrait-768-webview.png",
+      "bytes": 102373,
+      "sha256": "2511a0cb7aa5af4b20f5d0a1154df8b0bb35230e02439c6ddd2cc11216064237",
+      "origin": "Allowlisted actual terminal native artifact or inspected safe aggregate/diagnosis"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-1dca41a/pill-order-ku-portrait-768-baseline-webview.png",
+      "bytes": 103697,
+      "sha256": "b7404d776df753b1b21827a45f0d7aa0fa202acdeab9f73a6bfe048897730528",
+      "origin": "Allowlisted actual terminal native artifact or inspected safe aggregate/diagnosis"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-1dca41a/pill-order-ku-portrait-768-diff.png",
+      "bytes": 40067,
+      "sha256": "5c03ec1a0dbbb7162d02845935dbcc0a76312cf56171319f6dea4a6d4de122cc",
+      "origin": "Allowlisted actual terminal native artifact or inspected safe aggregate/diagnosis"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-1dca41a/pill-order-ku-portrait-768-webview.png",
+      "bytes": 103696,
+      "sha256": "5b9209692f1c898986957d72d561b273caa96d0f71e4511e6daa43d29494e2ab",
+      "origin": "Allowlisted actual terminal native artifact or inspected safe aggregate/diagnosis"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-1dca41a/pixels.json",
+      "bytes": 65496,
+      "sha256": "07302a0fa2694cf1392a73df97f15023aac16861d88622b69459e139a9467a62",
+      "origin": "Allowlisted actual terminal native artifact or inspected safe aggregate/diagnosis"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-1dca41a/security.json",
+      "bytes": 209,
+      "sha256": "fc9075a9bed59ce0355d1d0026fdac59dfbd7669a9b15fba428fa7c99671ae83",
+      "origin": "Allowlisted actual terminal native artifact or inspected safe aggregate/diagnosis"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-1dca41a/summary.json",
+      "bytes": 4313,
+      "sha256": "1f3d387649d5210ec800ebfa48253d80a85c50b83e7fb9536c67c01c4f22c01a",
+      "origin": "Allowlisted actual terminal native artifact or inspected safe aggregate/diagnosis"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-capture-correction-files.json",
+      "origin": "Exact verification-source correction paths and SHA-256 hashes"
     }
-  ]
+  ],
+  "current_native_revision": "1dca41a315b6988d98006f40ae4bee810be137f6"
 }

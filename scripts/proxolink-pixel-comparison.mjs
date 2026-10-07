@@ -41,6 +41,27 @@ export async function compareNativePixels(screenshot, reference, viewport) {
       max_channel_error:maxError,exact_pixels_equal:changed===0}};
 }
 
+// Three predetermined captures of each role independently. Always compare the
+// first frame; never search for a frame that matches the other role, average
+// pixels, mask differences or retry a failing parity comparison.
+export async function captureNativeFrames(readScreenshot, viewport, wait = ms =>
+  new Promise(resolve => setTimeout(resolve, ms))) {
+  const screenshots=[];
+  for(let sample=0;sample<3;sample++) {
+    if(sample)await wait(250);
+    const png=await readScreenshot();
+    if(!png?.length)throw Error('native_screenshot_failed');
+    screenshots.push(png);
+  }
+  const crop={left:viewport.left,top:viewport.top,width:viewport.width,height:viewport.height};
+  const reference=await sharp(screenshots[0]).extract(crop).removeAlpha().png().toBuffer();
+  const repeated=[];
+  for(const screenshot of screenshots.slice(1))repeated.push(await compareNativePixels(screenshot,reference,viewport));
+  return {png:screenshots[0],repeated,
+    repeatability:{samples:3,exact_pixels_equal:repeated.every(frame=>frame.metrics.exact_pixels_equal),
+      changed_pixels:repeated.map(frame=>frame.metrics.changed_pixels)}};
+}
+
 // Both engines start at scroll zero with CSS animations held at time zero.
 // Motion is tested separately before this deterministic screenshot is taken.
 export const FREEZE_FRAME_SCRIPT=`window.scrollTo(0,0);document.getAnimations().forEach(a=>{a.pause();a.currentTime=0;});`;

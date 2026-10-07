@@ -1,0 +1,116 @@
+{
+  "run_id": 37669328941,
+  "revision": "1dca41a315b6988d98006f40ae4bee810be137f6",
+  "failure_coordinates": [
+    {
+      "case": "pill-contact-en-portrait-768",
+      "changed_pixels": 1,
+      "max_channel_error": 1,
+      "locations": [
+        {
+          "x": 380,
+          "y": 222,
+          "candidate_rgb": [
+            215,
+            222,
+            236
+          ],
+          "baseline_rgb": [
+            215,
+            221,
+            236
+          ]
+        }
+      ]
+    },
+    {
+      "case": "pill-order-ku-portrait-768",
+      "changed_pixels": 1,
+      "max_channel_error": 1,
+      "locations": [
+        {
+          "x": 380,
+          "y": 222,
+          "candidate_rgb": [
+            220,
+            227,
+            240
+          ],
+          "baseline_rgb": [
+            220,
+            226,
+            240
+          ]
+        }
+      ]
+    },
+    {
+      "case": "pill-order-en-portrait-768",
+      "changed_pixels": 1,
+      "max_channel_error": 1,
+      "locations": [
+        {
+          "x": 380,
+          "y": 222,
+          "candidate_rgb": [
+            215,
+            222,
+            236
+          ],
+          "baseline_rgb": [
+            215,
+            221,
+            236
+          ]
+        }
+      ]
+    },
+    {
+      "case": "pill-mint-order-en-portrait-430",
+      "changed_pixels": 1,
+      "max_channel_error": 1,
+      "locations": [
+        {
+          "x": 282,
+          "y": 184,
+          "candidate_rgb": [
+            237,
+            247,
+            244
+          ],
+          "baseline_rgb": [
+            237,
+            247,
+            243
+          ]
+        }
+      ]
+    },
+    {
+      "case": "pill-mint-order-en-portrait-768",
+      "changed_pixels": 1,
+      "max_channel_error": 1,
+      "locations": [
+        {
+          "x": 290,
+          "y": 228,
+          "candidate_rgb": [
+            234,
+            245,
+            241
+          ],
+          "baseline_rgb": [
+            234,
+            246,
+            241
+          ]
+        }
+      ]
+    }
+  ],
+  "source_observation": "Candidate and prepared-baseline CSS are byte-for-byte identical in all four designs; no renderer/CSS/font/image/thumbnail product change is justified by this evidence",
+  "capture_observation": "Pinned probe publishes screenshot-ready after JS checks and a two-second delay without Android postVisualStateCallback/onDraw acknowledgement; runner takes only one screenshot per role",
+  "causality": "Missing native paint synchronization is a proven harness gap. Its causal link to the five one-level gradient/text-edge pixels remains unverified until the protected rerun. No defect in the prepared product designs has been established.",
+  "correction_scope": "Test-only native synchronization and exact repeated-frame checks; original first-frame parity gate remains zero changed pixels",
+  "technical_reference": "https://developer.android.com/reference/android/webkit/WebView#postVisualStateCallback(long,%20android.webkit.WebView.VisualStateCallback)"
+}

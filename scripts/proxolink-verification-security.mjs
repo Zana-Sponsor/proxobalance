@@ -98,16 +98,19 @@ export function validateNativeResults(data,captured,pixels) {
       &&Number.isInteger(data[id].animation_count)&&data[id].animation_count>=0
       &&data[id].animation_checked===true&&data[id].provider_types===true
       &&data[id].preview_inert===true&&data[id].public_actions_checked===true&&data[id].navigation_blocked===true
-      &&data[id].fresh_native_views===true)
+      &&data[id].fresh_native_views===true&&data[id].native_paint_barriers===true)
     ||Object.keys(pixels||{}).length!==cases.length
-    ||!cases.every(id=>pixels[id]?.exact_pixels_equal===true
-      &&pixels[id]?.changed_pixels===0&&pixels[id]?.width===Number(id.split('-').at(-1))))
+    ||!cases.every(id=>pixels[id]?.width===Number(id.split('-').at(-1))))
     throw Error('native_evidence_incomplete');
+  if(!cases.every(id=>pixels[id].capture_stable===true&&pixels[id].capture_samples===3))
+    throw Error('native_capture_unstable');
+  if(!cases.every(id=>pixels[id].exact_pixels_equal===true&&pixels[id].changed_pixels===0))
+    throw Error('native_pixel_parity_failed');
   // Explicit allowlist prevents runtime credentials/URLs or arbitrary page
   // data from accidentally entering a public CI artifact.
   return Object.fromEntries(cases.map(id=>[id,Object.fromEntries(
     ['passed','width','font_loaded','font_applied','images_loaded','icons_loaded','animation_checked',
-      'animation_count','provider_types','preview_inert','public_actions_checked','navigation_blocked','fresh_native_views']
+      'animation_count','provider_types','preview_inert','public_actions_checked','navigation_blocked','fresh_native_views','native_paint_barriers']
       .map(key=>[key,data[id][key]])
   )]));
 }

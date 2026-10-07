@@ -1,0 +1,189 @@
+{
+  "observed_on": "2026-10-07",
+  "status": "FAILED",
+  "run_id": 37669328941,
+  "attempt": 1,
+  "revision": "1dca41a315b6988d98006f40ae4bee810be137f6",
+  "runtime_job_id": 112958862311,
+  "workflow_url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/37669328941",
+  "workflow_path": ".github/workflows/proxolink-native-build.yml",
+  "environment": "proxolink-preview-verification",
+  "required_reviewer": "Zana-Sponsor",
+  "authorized_gate_completed": true,
+  "completed_at": "2026-10-07T21:45:03Z",
+  "expected_cases": 240,
+  "executed_cases": 240,
+  "passed_cases": 240,
+  "failed_cases": 0,
+  "pixel_pairs": 240,
+  "pixel_exact": 235,
+  "pixel_failed": 5,
+  "changed_pixel_threshold": 0,
+  "max_channel_error": 1,
+  "total_changed_pixels": 5,
+  "counts_by_type": {
+    "contact": 80,
+    "order": 80,
+    "download": 80
+  },
+  "counts_by_design": {
+    "pill": 60,
+    "pill-mint": 60,
+    "pill-dark": 60,
+    "pill-white": 60
+  },
+  "rtl_cases": 120,
+  "ltr_cases": 120,
+  "orientations": [
+    "portrait",
+    "landscape"
+  ],
+  "widths": [
+    320,
+    375,
+    393,
+    430,
+    768
+  ],
+  "provider_assertions": "PASSED",
+  "overflow_assertions": "PASSED",
+  "safe_inert_navigation_assertions": "PASSED",
+  "read_only_security": "PASSED",
+  "rendered_response_security_checks": 4,
+  "native_thumbnail_chooser_cases": 0,
+  "native_thumbnail_to_webview_selection": "NOT VERIFIED; production ProxoLinkPreview is rendered directly",
+  "original_failure": {
+    "status": "FAILED",
+    "stage": "native_case_collection",
+    "code": "native_evidence_incomplete",
+    "preflight_check": null,
+    "transport_code": "unclassified_transport",
+    "last_json_response_status": 200,
+    "credential_values_included": false
+  },
+  "artifact": {
+    "id": 11513497183,
+    "bytes": 79889382,
+    "files": 1204,
+    "sha256": "10b54dbe2e62104f9b12f8476e5962ce6ddcb7e6f8e3f80eacd92451ce7f6417",
+    "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/37669328941/artifacts/11513497183",
+    "expires_at": "2026-10-14T21:44:57Z",
+    "downloaded_and_digest_verified": true
+  },
+  "failed_pixel_cases": [
+    {
+      "case": "pill-contact-en-portrait-768",
+      "changed_pixels": 1,
+      "max_channel_error": 1,
+      "locations": [
+        {
+          "x": 380,
+          "y": 222,
+          "candidate_rgb": [
+            215,
+            222,
+            236
+          ],
+          "baseline_rgb": [
+            215,
+            221,
+            236
+          ]
+        }
+      ]
+    },
+    {
+      "case": "pill-order-ku-portrait-768",
+      "changed_pixels": 1,
+      "max_channel_error": 1,
+      "locations": [
+        {
+          "x": 380,
+          "y": 222,
+          "candidate_rgb": [
+            220,
+            227,
+            240
+          ],
+          "baseline_rgb": [
+            220,
+            226,
+            240
+          ]
+        }
+      ]
+    },
+    {
+      "case": "pill-order-en-portrait-768",
+      "changed_pixels": 1,
+      "max_channel_error": 1,
+      "locations": [
+        {
+          "x": 380,
+          "y": 222,
+          "candidate_rgb": [
+            215,
+            222,
+            236
+          ],
+          "baseline_rgb": [
+            215,
+            221,
+            236
+          ]
+        }
+      ]
+    },
+    {
+      "case": "pill-mint-order-en-portrait-430",
+      "changed_pixels": 1,
+      "max_channel_error": 1,
+      "locations": [
+        {
+          "x": 282,
+          "y": 184,
+          "candidate_rgb": [
+            237,
+            247,
+            244
+          ],
+          "baseline_rgb": [
+            237,
+            247,
+            243
+          ]
+        }
+      ]
+    },
+    {
+      "case": "pill-mint-order-en-portrait-768",
+      "changed_pixels": 1,
+      "max_channel_error": 1,
+      "locations": [
+        {
+          "x": 290,
+          "y": 228,
+          "candidate_rgb": [
+            234,
+            245,
+            241
+          ],
+          "baseline_rgb": [
+            234,
+            246,
+            241
+          ]
+        }
+      ]
+    }
+  ],
+  "evidence_allowlist": [
+    "case-results.json",
+    "pixels.json",
+    "security.json",
+    "failure.json",
+    "*-webview.png (failed pairs only)",
+    "*-baseline-webview.png (failed pairs only)",
+    "*-diff.png (failed pairs only)"
+  ]
+}

@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:webview_flutter_android/webview_flutter_android.dart';
 import 'package:proxo_app/theme/app_theme.dart';
 import 'package:proxo_app/widgets/proxolink_preview.dart';
 
@@ -10,6 +12,7 @@ const _types=['contact','order','download'];
 const _languages=['ku','en'];
 const _widths=[320,375,393,430,768];
 const _orientations=['portrait','landscape'];
+const _nativeCapture=MethodChannel('proxo/native-capture');
 final _cases=[for(final style in _styles)for(final type in _types)for(final language in _languages)
   for(final orientation in _orientations)for(final width in _widths) {'style':style,'type':type,'language':language,'orientation':orientation,'width':width}];
 Directory get _files=>Directory('${Directory.systemTemp.parent.path}/files');
@@ -152,6 +155,15 @@ class _ProbeState extends State<_Probe> {
    await Future<void>.delayed(const Duration(seconds:2));
    final capture=await _read(controller,'JSON.stringify({visible:Array.from(document.querySelectorAll("[data-provider]")).every(e=>Number(getComputedStyle(e).opacity)===1&&e.getBoundingClientRect().width>0),hintHidden:Array.from(document.querySelectorAll(".wa-message-card")).every(e=>e.hidden),toastHidden:document.getElementById("toast").hidden})');
    if(capture['visible']!=true||capture['hintHidden']!=true||capture['toastHidden']!=true)throw StateError('capture_visibility');
+   // DOM readiness and a delay do not acknowledge Android's asynchronous
+   // raster/draw. Wait for the real native view before publishing capture-ready.
+   final platform=controller.platform;
+   if(platform is! AndroidWebViewController)throw StateError('native_paint_barrier');
+   bool? drawn;
+   try{drawn=await _nativeCapture.invokeMethod<bool>('awaitDraw',
+     {'webViewIdentifier':platform.webViewIdentifier});}
+   catch(_){throw StateError('native_paint_barrier');}
+   if(drawn!=true)throw StateError('native_paint_barrier');
    if(!mounted)return;
    final box=_viewport.currentContext!.findRenderObject()! as RenderBox,origin=box.localToGlobal(Offset.zero);
    if(MediaQuery.devicePixelRatioOf(context)!=1)throw StateError('pixel_density');
@@ -164,7 +176,7 @@ class _ProbeState extends State<_Probe> {
     await Future<void>.delayed(const Duration(milliseconds:250));
    }
    if(!seen)throw StateError('screenshot_ack');
-   if(baseline)_results[id]={'passed':true,..._candidateChecks[id]!,'fresh_native_views':true};
+   if(baseline)_results[id]={'passed':true,..._candidateChecks[id]!,'fresh_native_views':true,'native_paint_barriers':true};
   }catch(error){
    _results[id]={'passed':false,'failed_check':error is StateError?error.message:'unclassified_native_check',
     'width':state?['width'],'font_loaded':state?['fonts'],'font_applied':state?['fontApplied'],'images_loaded':state?['images'],'icons_loaded':state?['icons'],...actionDiagnostics};
