@@ -89,9 +89,9 @@ jobs:
               check(existsSync(file),'Missing '+file);
             check(readFileSync('public/index.html','utf8').includes('id=\"balanceSendSection\"'),
               'Missing customer send balance');
-            check(readFileSync('public/exchange-admin.html','utf8').includes('id="pgBalance"'),
+            check(readFileSync('public/exchange-admin.html','utf8').includes('id=\"pgBalance\"'),
               'Missing admin balance board');
-            check(readFileSync('public/exchange-admin.html','utf8').includes('id="pgContracts"'),
+            check(readFileSync('public/exchange-admin.html','utf8').includes('id=\"pgContracts\"'),
               'Missing admin contracts board');
             console.log('PASS: Exchange customer/admin build and balance assets');
           "
