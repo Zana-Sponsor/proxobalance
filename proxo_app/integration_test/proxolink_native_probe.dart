@@ -118,7 +118,10 @@ class _ProbeState extends State<_Probe> {
    // documents. Freezing an in-flight entrance at zero hides its buttons,
    // while a completed backwards-fill entrance is already fully visible.
    await controller.runJavaScript('window.scrollTo(0,0);document.getAnimations().forEach(a=>{if(Number.isFinite(a.effect.getComputedTiming().endTime)){a.finish();}else{a.pause();a.currentTime=0;}});const toast=document.getElementById("toast");toast.hidden=true;document.querySelectorAll(".wa-message-card").forEach(e=>{e.hidden=true;new MutationObserver(()=>{if(!e.hidden)e.hidden=true;}).observe(e,{attributes:true,attributeFilter:["hidden"]});});');
-   await Future<void>.delayed(const Duration(milliseconds:150));
+   // Android briefly paints its native scrollbar after a new document loads.
+   // Use the same settled interval for both captures, without masking pixels
+   // or changing the original page CSS, assets, geometry or acceptance limit.
+   await Future<void>.delayed(const Duration(seconds:2));
    final capture=await _read(controller,'JSON.stringify({visible:Array.from(document.querySelectorAll("[data-provider]")).every(e=>Number(getComputedStyle(e).opacity)===1&&e.getBoundingClientRect().width>0)})');
    if(capture['visible']!=true)throw StateError('capture_visibility');
    if(!mounted)return;
