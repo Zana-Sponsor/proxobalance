@@ -62,11 +62,10 @@ Deno.serve(async (req: Request) => {
     .eq("id", callerId)
     .single();
 
-  if (profErr || !callerProfile?.is_admin || callerProfile.is_banned || (callerProfile.role !== "super_admin" && callerProfile.staff_permissions != null)) {
-    return json({ error: "forbidden", message: "تۆ مافی ئەم کردارە نییت" }, 403);
+  if (profErr || !callerProfile?.is_admin || callerProfile.is_banned || callerProfile.role !== "super_admin") {
+    return json({ error: "forbidden", message: "تەنها سوپەر ئادمین مافی زیادکردنی هەژمار هەیە" }, 403);
   }
 
-  if (makeAdmin && callerProfile.role !== "super_admin") return json({error:"super_admin_required"},403);
 
   const adminClient = createClient(SUPABASE_URL, SERVICE_ROLE_KEY);
 
