@@ -1,5 +1,5 @@
 {
-  "scope": "Historical V6 evidence retained plus current 1dca41a terminal Android results and capture correction",
+  "scope": "Historical V6 evidence retained; complete 1dca41a failed native artifact audit; corrected 5bf533b source CI success and protected native approval wait",
   "source_revision": "9ec6264940628c75fa0fc114edc88013a61cbab5",
   "files": [
     {
@@ -263,7 +263,32 @@
     {
       "path": "docs/evidence/proxolink-v6-2026-10-06/native-capture-correction-files.json",
       "origin": "Exact verification-source correction paths and SHA-256 hashes"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-1dca41a/capture-file-manifest.json",
+      "bytes": 269186,
+      "sha256": "332ceba90aa5767e62753481407011d1a97e4038c6f0a13727441cde40f34a12",
+      "origin": "Safe derived audit of the unchanged digest-verified original Android artifact and sanitized capture acknowledgements"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-1dca41a/capture-log-index.json",
+      "bytes": 61808,
+      "sha256": "706fd9f3015a5cfdbdc70f8149dee642d9025122aed9d2fb5f950d2403178d28",
+      "origin": "Safe derived audit of the unchanged digest-verified original Android artifact and sanitized capture acknowledgements"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-1dca41a/evidence-inventory.json",
+      "bytes": 2783,
+      "sha256": "5c1ae8f1daa731f0e10e2cf0585f178ba32da5526ede33cd6613bbe0fbf9d1ac",
+      "origin": "Safe derived audit of the unchanged digest-verified original Android artifact and sanitized capture acknowledgements"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-1dca41a/validator-replay.json",
+      "bytes": 594,
+      "sha256": "22000da5f6b40a256a5d1b134d299d7a941650e8d6016923b13a5257e7d20506",
+      "origin": "Safe derived audit of the unchanged digest-verified original Android artifact and sanitized capture acknowledgements"
     }
   ],
-  "current_native_revision": "1dca41a315b6988d98006f40ae4bee810be137f6"
+  "current_native_revision": "1dca41a315b6988d98006f40ae4bee810be137f6",
+  "corrected_native_revision": "5bf533b11b7f638acc65395b65da1512e3275f5f"
 }

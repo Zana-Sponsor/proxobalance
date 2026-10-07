@@ -284,6 +284,28 @@
       "passed": 121,
       "failed": 0
     },
-    "exact_cause_limit": "The missing native paint acknowledgement is established in the pinned probe. Whether it causes all five one-level pixels is an inference requiring the protected rerun, not a proven product defect."
+    "exact_cause_limit": "The missing native paint acknowledgement is established in the pinned probe. Whether it causes all five one-level pixels is an inference requiring the protected rerun, not a proven product defect.",
+    "source_ci": "SUCCESS at 5bf533b / run 37694585981"
+  },
+  "current_retry": {
+    "run_id": 37694585964,
+    "attempt": 2,
+    "revision": "5bf533b11b7f638acc65395b65da1512e3275f5f",
+    "apk_job_id": 113044672963,
+    "apk_build": "SUCCESS",
+    "runtime_job_id": 113046619691,
+    "status": "BLOCKED",
+    "workflow_state": "waiting",
+    "expected_cases": 240,
+    "executed_cases": 0,
+    "candidate_captures": 0,
+    "baseline_captures": 0,
+    "pending_candidate_captures": 240,
+    "pending_baseline_captures": 240,
+    "pixel_parity": "NOT EXECUTED",
+    "environment": "proxolink-preview-verification",
+    "required_reviewer": "Zana-Sponsor",
+    "approval_bypassed": false,
+    "initial_build_transient": "Attempt 1 NDK archive was not a ZIP; attempt 2 same-run retry built successfully"
   }
 }

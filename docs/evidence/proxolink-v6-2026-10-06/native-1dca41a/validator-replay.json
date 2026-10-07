@@ -1,0 +1,19 @@
+{
+  "revision": "1dca41a315b6988d98006f40ae4bee810be137f6",
+  "expected_cases": 240,
+  "data_entries": 240,
+  "captured_pairs": 240,
+  "pixel_entries": 240,
+  "all_metadata_checks_pass": true,
+  "all_pixel_widths_match": true,
+  "failed_pixel_predicate_ids": [
+    "pill-contact-en-portrait-768",
+    "pill-order-ku-portrait-768",
+    "pill-order-en-portrait-768",
+    "pill-mint-order-en-portrait-430",
+    "pill-mint-order-en-portrait-768"
+  ],
+  "replayed_terminal_error": "native_evidence_incomplete",
+  "actual_results_unmodified": true,
+  "no_android_runtime_reexecution_claimed": true
+}

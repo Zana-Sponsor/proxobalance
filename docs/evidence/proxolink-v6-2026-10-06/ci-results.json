@@ -1,60 +1,49 @@
 {
-  "observed_on": "2026-10-07",
-  "revision": "1dca41a315b6988d98006f40ae4bee810be137f6",
-  "workflow_run": 37669328976,
+  "revision": "5bf533b11b7f638acc65395b65da1512e3275f5f",
+  "workflow_run": 37694585981,
   "status": "VERIFIED",
-  "workflow_url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/37669328976",
+  "conclusion": "success",
+  "workflow_url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/37694585981",
   "jobs": [
     {
-      "id": 112956673537,
-      "name": "edge-functions",
+      "id": 113043028085,
+      "name": "flutter",
       "status": "completed",
       "conclusion": "success"
     },
     {
-      "id": 112956673936,
-      "name": "responsive",
-      "status": "completed",
-      "conclusion": "success"
-    },
-    {
-      "id": 112956673941,
+      "id": 113043028330,
       "name": "backend",
       "status": "completed",
       "conclusion": "success"
     },
     {
-      "id": 112956673965,
+      "id": 113043028378,
+      "name": "responsive",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113043028455,
       "name": "database",
       "status": "completed",
       "conclusion": "success"
     },
     {
-      "id": 112956674014,
-      "name": "flutter",
+      "id": 113043028461,
+      "name": "edge-functions",
       "status": "completed",
       "conclusion": "success"
     }
   ],
   "backend": {
-    "passed": 120,
+    "passed": 121,
     "failed": 0,
-    "skipped": 0,
     "evidence": [
-      "2026-10-07T18:46:15.0810045Z ℹ tests 120",
-      "2026-10-07T18:46:15.0810836Z ℹ pass 120",
-      "2026-10-07T18:46:15.0811218Z ℹ fail 0",
-      "2026-10-07T18:46:15.0812023Z ℹ skipped 0",
-      "2026-10-07T18:46:15.3314194Z Flutter and public output contain no reusable template source or HTML delivery."
-    ]
-  },
-  "database": {
-    "migration_rollback_rerun": "PASSED",
-    "rls": "PASSED",
-    "api_lifecycles": 7,
-    "evidence": [
-      "2026-10-07T18:46:26.8210130Z  VERIFIED: additive migration, legacy/ad preservation, database UUIDs, immutable identities, owner RLS, safe providers, archive boundary",
-      "2026-10-07T18:46:36.0437522Z VERIFIED: 7 PostgreSQL-backed API lifecycles; generated UUIDs, ownership, edit stability, typed routes, preview, activate/deactivate, soft archive, zero outbound events; legacy advertisements preserved."
+      "2026-10-07T22:11:59.4064587Z ℹ tests 121",
+      "2026-10-07T22:11:59.4064951Z ℹ pass 121",
+      "2026-10-07T22:11:59.4065148Z ℹ fail 0",
+      "2026-10-07T22:11:59.6064087Z Flutter and public output contain no reusable template source or HTML delivery."
     ]
   },
   "flutter": {
@@ -65,9 +54,9 @@
     "analysis_errors": 0,
     "release_apk_source_privacy": "PASSED",
     "evidence": [
-      "2026-10-07T18:46:51.5517945Z 27 issues found. (ran in 16.8s)",
-      "2026-10-07T18:51:41.4104623Z Release APK source-privacy scan passed",
-      "2026-10-07T18:47:36.3556472Z 🎉 189 tests passed."
+      "2026-10-07T22:12:43.3721156Z 27 issues found. (ran in 11.3s)",
+      "2026-10-07T22:13:13.7048801Z 🎉 189 tests passed.",
+      "2026-10-07T22:16:31.8923216Z Release APK source-privacy scan passed"
     ]
   },
   "responsive": {
@@ -75,51 +64,73 @@
     "passed": 480,
     "failed": 0,
     "evidence": [
-      "2026-10-07T18:51:55.4699563Z VERIFIED: 480 actual renderer/browser cases, five widths, all page types/designs, RTL/LTR, long text, 1.6 text scale, inert previews, and exact prepared-design baseline pixels."
+      "2026-10-07T22:15:23.5574036Z VERIFIED: 480 actual renderer/browser cases, five widths, all page types/designs, RTL/LTR, long text, 1.6 text scale, inert previews, and exact prepared-design baseline pixels."
     ]
   },
-  "capture_correction": {
-    "source_ci": "PENDING",
-    "native_runtime": "PENDING protected rerun",
-    "local_backend": {
-      "passed": 121,
-      "failed": 0
-    },
-    "local_source_privacy": "PASSED",
-    "native_certification": false
+  "database": {
+    "migration_rollback_rerun": "PASSED",
+    "rls": "PASSED",
+    "api_lifecycles": 7,
+    "evidence": [
+      "2026-10-07T22:12:13.6736233Z  VERIFIED: additive migration, legacy/ad preservation, database UUIDs, immutable identities, owner RLS, safe providers, archive boundary",
+      "2026-10-07T22:12:22.9366261Z VERIFIED: 7 PostgreSQL-backed API lifecycles; generated UUIDs, ownership, edit stability, typed routes, preview, activate/deactivate, soft archive, zero outbound events; legacy advertisements preserved."
+    ]
+  },
+  "native_correction": {
+    "run_id": 37694585964,
+    "attempt": 2,
+    "revision": "5bf533b11b7f638acc65395b65da1512e3275f5f",
+    "apk_job_id": 113044672963,
+    "apk_build": "SUCCESS",
+    "runtime_job_id": 113046619691,
+    "status": "BLOCKED",
+    "workflow_state": "waiting",
+    "expected_cases": 240,
+    "executed_cases": 0,
+    "candidate_captures": 0,
+    "baseline_captures": 0,
+    "pending_candidate_captures": 240,
+    "pending_baseline_captures": 240,
+    "pixel_parity": "NOT EXECUTED",
+    "environment": "proxolink-preview-verification",
+    "required_reviewer": "Zana-Sponsor",
+    "approval_bypassed": false,
+    "initial_build_transient": "Attempt 1 NDK archive was not a ZIP; attempt 2 same-run retry built successfully"
   },
   "previous_source_ci": {
-    "revision": "9ec6264940628c75fa0fc114edc88013a61cbab5",
-    "workflow_run": 37650583921,
+    "observed_on": "2026-10-07",
+    "revision": "1dca41a315b6988d98006f40ae4bee810be137f6",
+    "workflow_run": 37669328976,
     "status": "VERIFIED",
+    "workflow_url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/37669328976",
     "jobs": [
       {
-        "id": 112892553471,
-        "name": "responsive",
-        "status": "completed",
-        "conclusion": "success"
-      },
-      {
-        "id": 112892553670,
-        "name": "flutter",
-        "status": "completed",
-        "conclusion": "success"
-      },
-      {
-        "id": 112892553692,
-        "name": "database",
-        "status": "completed",
-        "conclusion": "success"
-      },
-      {
-        "id": 112892553709,
+        "id": 112956673537,
         "name": "edge-functions",
         "status": "completed",
         "conclusion": "success"
       },
       {
-        "id": 112892553726,
+        "id": 112956673936,
+        "name": "responsive",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 112956673941,
         "name": "backend",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 112956673965,
+        "name": "database",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 112956674014,
+        "name": "flutter",
         "status": "completed",
         "conclusion": "success"
       }
@@ -129,143 +140,222 @@
       "failed": 0,
       "skipped": 0,
       "evidence": [
-        "2026-10-07T16:15:36.3249593Z ✔ contact whatsapp+viber+instagram+telegram+korek+asiacell: create/database UUID/edit/stable typed URL/public/owner preview (167.707431ms)",
-        "2026-10-07T16:15:36.3251353Z ✔ order talabat: create/database UUID/edit/stable typed URL/public/owner preview (47.3756ms)",
-        "2026-10-07T16:15:36.3252563Z ✔ order toters: create/database UUID/edit/stable typed URL/public/owner preview (44.632847ms)",
-        "2026-10-07T16:15:36.3253851Z ✔ order talabat+toters: create/database UUID/edit/stable typed URL/public/owner preview (51.088585ms)",
-        "2026-10-07T16:15:36.3255404Z ✔ download google_play: create/database UUID/edit/stable typed URL/public/owner preview (50.345641ms)",
-        "2026-10-07T16:15:36.3257339Z ✔ download app_store: create/database UUID/edit/stable typed URL/public/owner preview (47.004394ms)",
-        "2026-10-07T16:15:36.3258575Z ✔ download google_play+app_store: create/database UUID/edit/stable typed URL/public/owner preview (58.476168ms)",
-        "2026-10-07T16:15:36.3259592Z ✔ one owner has multiple independent pages of each kind and request keys are owner-scoped (36.549518ms)",
-        "2026-10-07T16:15:36.3261176Z ✔ auth/provider/type/owner spoofing/disabled-only settings fail before mutation (3.293277ms)",
-        "2026-10-07T16:15:36.3262291Z ✔ malformed provider/store URLs rejected and canonical destinations revalidate (2.781963ms)",
-        "2026-10-07T16:15:36.3263171Z ✔ all four prepared designs support all three typed signed demos, no secrets/private metadata (114.359568ms)",
-        "2026-10-07T16:15:36.3264457Z ✔ unsaved live form preview is encrypted/type-bound/inert, preserves draft values without writes (20.550242ms)",
-        "2026-10-07T16:15:36.3265313Z ✔ preview capability expiration, tampering and route-type binding reject safely (1.160607ms)",
-        "2026-10-07T16:15:36.3266215Z ✔ typed advertisement links use the stable page URL without tokens, RPCs or events and verify ownership (23.381267ms)",
-        "2026-10-07T16:15:36.3267506Z ✔ typed avatar routes cannot be changed by a page_type query or attribution token (31.100035ms)",
-        "2026-10-07T16:15:36.3268413Z ✔ V6 cannot create through the legacy UUID protocol or rewrite legacy customers outside isolated staging (1.2695ms)",
-        "2026-10-07T16:15:36.3269346Z ✔ prepared Viber actions work with legacy WebView URL parsing and reject ambiguous destinations (8.780391ms)",
-        "2026-10-07T16:15:36.3270887Z ✔ runtime verification refuses production, other repositories/branches and service keys (3.925909ms)",
-        "2026-10-07T16:15:36.3272901Z ✔ requests never send protection headers to Supabase, follow redirects or mutate card data (39.447999ms)",
-        "2026-10-07T16:15:36.3274717Z ✔ live checks require app authentication independently of the Vercel bypass and retain only booleans (5.829672ms)",
-        "2026-10-07T16:15:36.3276835Z ✔ native evidence requires 240 captured cases plus exact same-device Android WebView pixel comparisons (5.955016ms)",
-        "2026-10-07T16:15:36.3281664Z ℹ tests 120",
-        "2026-10-07T16:15:36.3282115Z ℹ pass 120",
-        "2026-10-07T16:15:36.3282639Z ℹ fail 0",
-        "2026-10-07T16:15:36.3283107Z ℹ cancelled 0",
-        "2026-10-07T16:15:36.3283648Z ℹ skipped 0",
-        "2026-10-07T16:15:36.3284109Z ℹ todo 0"
+        "2026-10-07T18:46:15.0810045Z ℹ tests 120",
+        "2026-10-07T18:46:15.0810836Z ℹ pass 120",
+        "2026-10-07T18:46:15.0811218Z ℹ fail 0",
+        "2026-10-07T18:46:15.0812023Z ℹ skipped 0",
+        "2026-10-07T18:46:15.3314194Z Flutter and public output contain no reusable template source or HTML delivery."
+      ]
+    },
+    "database": {
+      "migration_rollback_rerun": "PASSED",
+      "rls": "PASSED",
+      "api_lifecycles": 7,
+      "evidence": [
+        "2026-10-07T18:46:26.8210130Z  VERIFIED: additive migration, legacy/ad preservation, database UUIDs, immutable identities, owner RLS, safe providers, archive boundary",
+        "2026-10-07T18:46:36.0437522Z VERIFIED: 7 PostgreSQL-backed API lifecycles; generated UUIDs, ownership, edit stability, typed routes, preview, activate/deactivate, soft archive, zero outbound events; legacy advertisements preserved."
       ]
     },
     "flutter": {
       "passed": 189,
       "failed": 0,
-      "analyze": {
-        "scope": "Existing explicit ten-item ProxoLink analysis command",
-        "infos": 27,
-        "warnings": 0,
-        "errors": 0,
-        "all_repository_files_analyzed": false
-      },
-      "release_apk_built": true,
-      "release_apk_privacy_scan": "VERIFIED",
+      "analysis_infos": 27,
+      "analysis_warnings": 0,
+      "analysis_errors": 0,
+      "release_apk_source_privacy": "PASSED",
       "evidence": [
-        "2026-10-07T16:16:13.1617891Z Analyzing 10 items...                                           ",
-        "2026-10-07T16:16:13.1732519Z 27 issues found. (ran in 12.3s)",
-        "2026-10-07T16:16:48.0004202Z 🎉 189 tests passed.",
-        "2026-10-07T16:20:13.0145459Z ✓ Built build/app/outputs/flutter-apk/app-release.apk (84.1MB)",
-        "2026-10-07T16:20:13.6167901Z Release APK source-privacy scan passed"
-      ]
-    },
-    "database": {
-      "status": "VERIFIED",
-      "postgres": "17.11",
-      "api_lifecycles": 7,
-      "migration_rollback": "VERIFIED",
-      "migration_rerun": "VERIFIED",
-      "direct_rls": "VERIFIED",
-      "evidence": [
-        "2026-10-07T16:15:48.1443819Z  VERIFIED: additive migration, legacy/ad preservation, database UUIDs, immutable identities, owner RLS, safe providers, archive boundary",
-        "2026-10-07T16:15:54.5533708Z VERIFIED: 7 PostgreSQL-backed API lifecycles; generated UUIDs, ownership, edit stability, typed routes, preview, activate/deactivate, soft archive, zero outbound events; legacy advertisements preserved."
+        "2026-10-07T18:46:51.5517945Z 27 issues found. (ran in 16.8s)",
+        "2026-10-07T18:51:41.4104623Z Release APK source-privacy scan passed",
+        "2026-10-07T18:47:36.3556472Z 🎉 189 tests passed."
       ]
     },
     "responsive": {
-      "status": "VERIFIED",
-      "cases_passed": 480,
-      "cases_failed": 0,
-      "widths": [
-        320,
-        375,
-        393,
-        430,
-        768
-      ],
-      "page_types": [
-        "contact",
-        "order",
-        "download"
-      ],
-      "designs": [
-        "pill",
-        "pill-mint",
-        "pill-dark",
-        "pill-white"
-      ],
-      "languages": [
-        "ku",
-        "en"
-      ],
-      "orientations": [
-        "portrait",
-        "landscape"
-      ],
-      "text_states": [
-        "normal",
-        "long text with 1.6 text scale"
-      ],
-      "baseline": "Same Chromium environment; original prepared design compared with candidate",
-      "native_certification": false,
+      "executed": 480,
+      "passed": 480,
+      "failed": 0,
       "evidence": [
-        "2026-10-07T16:19:21.8510765Z VERIFIED: 480 actual renderer/browser cases, five widths, all page types/designs, RTL/LTR, long text, 1.6 text scale, inert previews, and exact prepared-design baseline pixels."
+        "2026-10-07T18:51:55.4699563Z VERIFIED: 480 actual renderer/browser cases, five widths, all page types/designs, RTL/LTR, long text, 1.6 text scale, inert previews, and exact prepared-design baseline pixels."
       ]
     },
-    "artifacts": [
-      {
-        "id": 11496552525,
-        "name": "proxolink-ui-verification",
-        "bytes": 634395,
-        "digest": "sha256:8a765fe67519b1249e767c558daa1f59b59093db4fe49a23e41c803e1c3da3cd",
-        "expires_at": "2026-10-14T16:16:48Z",
-        "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/37650583921/artifacts/11496552525"
-      },
-      {
-        "id": 11495494600,
-        "name": "proxolink-v6-responsive",
-        "bytes": 1591811,
-        "digest": "sha256:9016e9ca0c752d99e7626288b2a2839892b9f2ccf5b0779ddef4c03273e78506",
-        "expires_at": "2026-10-14T16:19:22Z",
-        "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/37650583921/artifacts/11495494600"
-      }
-    ],
-    "source_privacy_scan": "VERIFIED",
-    "edge_functions": "VERIFIED",
-    "source_build": "VERIFIED",
-    "additional_retry_regression": {
+    "previous_source_ci": {
       "revision": "9ec6264940628c75fa0fc114edc88013a61cbab5",
-      "run_id": 37650583921,
-      "backend_job_id": 112892553726,
-      "backend_passed": 120,
-      "backend_failed": 0,
-      "new_assertions": "All seven existing type/provider lifecycle cases now assert the stored page_kind and exact typed stable public_path on a repeated create request",
-      "real_product_defect_reproduced": false,
-      "production_api_changed": false,
-      "explanation": "cardRows already appends the typed fields; the suspicion was rejected by actual execution",
-      "other_ci_jobs_status": "completed_success"
-    },
-    "prior_same_product_source_ci": {
-      "revision": "de501a9557cbd83520c5916e0c0085ec5c5a470e",
-      "run_id": 37647222338
+      "workflow_run": 37650583921,
+      "status": "VERIFIED",
+      "jobs": [
+        {
+          "id": 112892553471,
+          "name": "responsive",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 112892553670,
+          "name": "flutter",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 112892553692,
+          "name": "database",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 112892553709,
+          "name": "edge-functions",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 112892553726,
+          "name": "backend",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "backend": {
+        "passed": 120,
+        "failed": 0,
+        "skipped": 0,
+        "evidence": [
+          "2026-10-07T16:15:36.3249593Z ✔ contact whatsapp+viber+instagram+telegram+korek+asiacell: create/database UUID/edit/stable typed URL/public/owner preview (167.707431ms)",
+          "2026-10-07T16:15:36.3251353Z ✔ order talabat: create/database UUID/edit/stable typed URL/public/owner preview (47.3756ms)",
+          "2026-10-07T16:15:36.3252563Z ✔ order toters: create/database UUID/edit/stable typed URL/public/owner preview (44.632847ms)",
+          "2026-10-07T16:15:36.3253851Z ✔ order talabat+toters: create/database UUID/edit/stable typed URL/public/owner preview (51.088585ms)",
+          "2026-10-07T16:15:36.3255404Z ✔ download google_play: create/database UUID/edit/stable typed URL/public/owner preview (50.345641ms)",
+          "2026-10-07T16:15:36.3257339Z ✔ download app_store: create/database UUID/edit/stable typed URL/public/owner preview (47.004394ms)",
+          "2026-10-07T16:15:36.3258575Z ✔ download google_play+app_store: create/database UUID/edit/stable typed URL/public/owner preview (58.476168ms)",
+          "2026-10-07T16:15:36.3259592Z ✔ one owner has multiple independent pages of each kind and request keys are owner-scoped (36.549518ms)",
+          "2026-10-07T16:15:36.3261176Z ✔ auth/provider/type/owner spoofing/disabled-only settings fail before mutation (3.293277ms)",
+          "2026-10-07T16:15:36.3262291Z ✔ malformed provider/store URLs rejected and canonical destinations revalidate (2.781963ms)",
+          "2026-10-07T16:15:36.3263171Z ✔ all four prepared designs support all three typed signed demos, no secrets/private metadata (114.359568ms)",
+          "2026-10-07T16:15:36.3264457Z ✔ unsaved live form preview is encrypted/type-bound/inert, preserves draft values without writes (20.550242ms)",
+          "2026-10-07T16:15:36.3265313Z ✔ preview capability expiration, tampering and route-type binding reject safely (1.160607ms)",
+          "2026-10-07T16:15:36.3266215Z ✔ typed advertisement links use the stable page URL without tokens, RPCs or events and verify ownership (23.381267ms)",
+          "2026-10-07T16:15:36.3267506Z ✔ typed avatar routes cannot be changed by a page_type query or attribution token (31.100035ms)",
+          "2026-10-07T16:15:36.3268413Z ✔ V6 cannot create through the legacy UUID protocol or rewrite legacy customers outside isolated staging (1.2695ms)",
+          "2026-10-07T16:15:36.3269346Z ✔ prepared Viber actions work with legacy WebView URL parsing and reject ambiguous destinations (8.780391ms)",
+          "2026-10-07T16:15:36.3270887Z ✔ runtime verification refuses production, other repositories/branches and service keys (3.925909ms)",
+          "2026-10-07T16:15:36.3272901Z ✔ requests never send protection headers to Supabase, follow redirects or mutate card data (39.447999ms)",
+          "2026-10-07T16:15:36.3274717Z ✔ live checks require app authentication independently of the Vercel bypass and retain only booleans (5.829672ms)",
+          "2026-10-07T16:15:36.3276835Z ✔ native evidence requires 240 captured cases plus exact same-device Android WebView pixel comparisons (5.955016ms)",
+          "2026-10-07T16:15:36.3281664Z ℹ tests 120",
+          "2026-10-07T16:15:36.3282115Z ℹ pass 120",
+          "2026-10-07T16:15:36.3282639Z ℹ fail 0",
+          "2026-10-07T16:15:36.3283107Z ℹ cancelled 0",
+          "2026-10-07T16:15:36.3283648Z ℹ skipped 0",
+          "2026-10-07T16:15:36.3284109Z ℹ todo 0"
+        ]
+      },
+      "flutter": {
+        "passed": 189,
+        "failed": 0,
+        "analyze": {
+          "scope": "Existing explicit ten-item ProxoLink analysis command",
+          "infos": 27,
+          "warnings": 0,
+          "errors": 0,
+          "all_repository_files_analyzed": false
+        },
+        "release_apk_built": true,
+        "release_apk_privacy_scan": "VERIFIED",
+        "evidence": [
+          "2026-10-07T16:16:13.1617891Z Analyzing 10 items...                                           ",
+          "2026-10-07T16:16:13.1732519Z 27 issues found. (ran in 12.3s)",
+          "2026-10-07T16:16:48.0004202Z 🎉 189 tests passed.",
+          "2026-10-07T16:20:13.0145459Z ✓ Built build/app/outputs/flutter-apk/app-release.apk (84.1MB)",
+          "2026-10-07T16:20:13.6167901Z Release APK source-privacy scan passed"
+        ]
+      },
+      "database": {
+        "status": "VERIFIED",
+        "postgres": "17.11",
+        "api_lifecycles": 7,
+        "migration_rollback": "VERIFIED",
+        "migration_rerun": "VERIFIED",
+        "direct_rls": "VERIFIED",
+        "evidence": [
+          "2026-10-07T16:15:48.1443819Z  VERIFIED: additive migration, legacy/ad preservation, database UUIDs, immutable identities, owner RLS, safe providers, archive boundary",
+          "2026-10-07T16:15:54.5533708Z VERIFIED: 7 PostgreSQL-backed API lifecycles; generated UUIDs, ownership, edit stability, typed routes, preview, activate/deactivate, soft archive, zero outbound events; legacy advertisements preserved."
+        ]
+      },
+      "responsive": {
+        "status": "VERIFIED",
+        "cases_passed": 480,
+        "cases_failed": 0,
+        "widths": [
+          320,
+          375,
+          393,
+          430,
+          768
+        ],
+        "page_types": [
+          "contact",
+          "order",
+          "download"
+        ],
+        "designs": [
+          "pill",
+          "pill-mint",
+          "pill-dark",
+          "pill-white"
+        ],
+        "languages": [
+          "ku",
+          "en"
+        ],
+        "orientations": [
+          "portrait",
+          "landscape"
+        ],
+        "text_states": [
+          "normal",
+          "long text with 1.6 text scale"
+        ],
+        "baseline": "Same Chromium environment; original prepared design compared with candidate",
+        "native_certification": false,
+        "evidence": [
+          "2026-10-07T16:19:21.8510765Z VERIFIED: 480 actual renderer/browser cases, five widths, all page types/designs, RTL/LTR, long text, 1.6 text scale, inert previews, and exact prepared-design baseline pixels."
+        ]
+      },
+      "artifacts": [
+        {
+          "id": 11496552525,
+          "name": "proxolink-ui-verification",
+          "bytes": 634395,
+          "digest": "sha256:8a765fe67519b1249e767c558daa1f59b59093db4fe49a23e41c803e1c3da3cd",
+          "expires_at": "2026-10-14T16:16:48Z",
+          "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/37650583921/artifacts/11496552525"
+        },
+        {
+          "id": 11495494600,
+          "name": "proxolink-v6-responsive",
+          "bytes": 1591811,
+          "digest": "sha256:9016e9ca0c752d99e7626288b2a2839892b9f2ccf5b0779ddef4c03273e78506",
+          "expires_at": "2026-10-14T16:19:22Z",
+          "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/37650583921/artifacts/11495494600"
+        }
+      ],
+      "source_privacy_scan": "VERIFIED",
+      "edge_functions": "VERIFIED",
+      "source_build": "VERIFIED",
+      "additional_retry_regression": {
+        "revision": "9ec6264940628c75fa0fc114edc88013a61cbab5",
+        "run_id": 37650583921,
+        "backend_job_id": 112892553726,
+        "backend_passed": 120,
+        "backend_failed": 0,
+        "new_assertions": "All seven existing type/provider lifecycle cases now assert the stored page_kind and exact typed stable public_path on a repeated create request",
+        "real_product_defect_reproduced": false,
+        "production_api_changed": false,
+        "explanation": "cardRows already appends the typed fields; the suspicion was rejected by actual execution",
+        "other_ci_jobs_status": "completed_success"
+      },
+      "prior_same_product_source_ci": {
+        "revision": "de501a9557cbd83520c5916e0c0085ec5c5a470e",
+        "run_id": 37647222338
+      }
     }
   }
 }

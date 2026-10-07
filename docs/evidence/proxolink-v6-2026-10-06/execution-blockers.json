@@ -1,6 +1,6 @@
 {
   "observed_on": "2026-10-07",
-  "status": "FAILED acceptance; correction pending protected rerun",
+  "status": "BLOCKED: corrected native run awaits authorized approval; last executed acceptance FAILED",
   "workspace": {
     "execution_connection": "Available for local source analysis and Node tests",
     "repository_connection": "Available through GitHub connector",
@@ -23,10 +23,35 @@
     "workflow_changed": false,
     "pending_runtime_cancelled": false,
     "remaining_blockers": [
-      "Capture correction must execute in the same protected workflow after authorized environment approval",
+      "Run 37694585964 attempt 2 runtime job 113046619691 awaits authorized approval in the unchanged protected environment",
+      "Corrected native runtime must pass all 240 cases with complete evidence, exact repeatability and zero changed pixels",
       "Native thumbnail chooser taps to correct large WebView have not executed; 0 native chooser cases"
     ],
-    "failure_reason": "Five exact pixel comparisons failed; each differs at one pixel by one channel level"
+    "failure_reason": "Five exact pixel comparisons failed; each differs at one pixel by one channel level",
+    "current_retry": {
+      "run_id": 37694585964,
+      "attempt": 2,
+      "revision": "5bf533b11b7f638acc65395b65da1512e3275f5f",
+      "apk_job_id": 113044672963,
+      "apk_build": "SUCCESS",
+      "runtime_job_id": 113046619691,
+      "status": "BLOCKED",
+      "workflow_state": "waiting",
+      "expected_cases": 240,
+      "executed_cases": 0,
+      "candidate_captures": 0,
+      "baseline_captures": 0,
+      "pending_candidate_captures": 240,
+      "pending_baseline_captures": 240,
+      "pixel_parity": "NOT EXECUTED",
+      "environment": "proxolink-preview-verification",
+      "required_reviewer": "Zana-Sponsor",
+      "approval_bypassed": false,
+      "initial_build_transient": "Attempt 1 NDK archive was not a ZIP; attempt 2 same-run retry built successfully"
+    },
+    "missing_captures": 0,
+    "candidate_captures": 240,
+    "baseline_captures": 240
   },
   "staging": {
     "observed_on": "2026-10-07",
@@ -87,6 +112,6 @@
     "current_artifact_expires_at": "2026-10-14T21:44:57Z",
     "downloaded_and_digest_verified": true,
     "all_native_screenshots_committed": false,
-    "retained": "Safe per-case JSON, metrics, summary, diagnosis, all five failed crop/baseline/diff triples; full verified artifact linked"
+    "retained": "Safe per-case JSON, metrics, summary, diagnosis, all five failed crop/baseline/diff triples, full 1200-file hash/dimension inventory, 480 safe capture acknowledgements and original validator replay; full verified artifact linked"
   }
 }

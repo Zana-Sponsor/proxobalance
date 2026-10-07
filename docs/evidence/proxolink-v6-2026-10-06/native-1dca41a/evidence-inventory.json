@@ -1,0 +1,77 @@
+{
+  "run_id": 37669328941,
+  "attempt": 1,
+  "revision": "1dca41a315b6988d98006f40ae4bee810be137f6",
+  "expected_native_cases": 240,
+  "expected_dimensions": "4 designs \u00d7 3 types \u00d7 2 languages \u00d7 2 orientations \u00d7 5 widths",
+  "candidate_captures": 240,
+  "baseline_captures": 240,
+  "missing_capture_ids": [],
+  "missing_metadata_case_ids": [],
+  "extra_metadata_case_ids": [],
+  "invalid_metadata_case_ids": [],
+  "missing_pixel_case_ids": [],
+  "invalid_pixel_geometry_case_ids": [],
+  "behavior_passed": 240,
+  "behavior_failed": 0,
+  "skipped_case_ids": [],
+  "pixel_pairs": 240,
+  "pixel_exact": 235,
+  "pixel_failed_case_ids": [
+    "pill-contact-en-portrait-768",
+    "pill-order-ku-portrait-768",
+    "pill-order-en-portrait-768",
+    "pill-mint-order-en-portrait-430",
+    "pill-mint-order-en-portrait-768"
+  ],
+  "files_by_role": {
+    "candidate": {
+      "expected": 240,
+      "present": 240,
+      "missing": []
+    },
+    "baseline": {
+      "expected": 240,
+      "present": 240,
+      "missing": []
+    },
+    "webview": {
+      "expected": 240,
+      "present": 240,
+      "missing": []
+    },
+    "baseline-webview": {
+      "expected": 240,
+      "present": 240,
+      "missing": []
+    },
+    "diff": {
+      "expected": 240,
+      "present": 240,
+      "missing": []
+    }
+  },
+  "json_files_present": [
+    "case-results.json",
+    "failure.json",
+    "pixels.json",
+    "security.json"
+  ],
+  "results_json_present": false,
+  "results_json_absence_cause": "run-proxolink-native.mjs calls validateNativeResults BEFORE writeFileSync(results.json). The pixel gate throws, so this success-only output is not written. Its absence is a consequence of failed parity, not missing captures.",
+  "capture_log_records": {
+    "total": 480,
+    "unique": 480,
+    "candidate": 240,
+    "baseline": 240,
+    "missing": []
+  },
+  "failed_validator_condition": "!cases.every(id => pixels[id]?.exact_pixels_equal === true && pixels[id]?.changed_pixels === 0 && pixels[id]?.width === Number(id.split(\"-\").at(-1)))",
+  "root_cause_of_terminal_error": "Five exact pixel comparisons failed. The pinned validator combines completeness and parity in one condition and labels every failure native_evidence_incomplete. All required case maps/candidate/baseline/crop/diff files are present.",
+  "early_adb_offline": "Observed at 20:47:51 UTC; recovered. All 480 captures completed afterwards, so no final missing capture can be attributed to it.",
+  "pixel_render_cause_limit": "The cause of the one-level native renderer differences is not proven by file completeness. No source/CSS change is justified by this evidence.",
+  "archive_entry_count": 1204,
+  "missing_archive_entries": [],
+  "unexpected_archive_entries": [],
+  "artifact_sha256_reverified": true
+}
