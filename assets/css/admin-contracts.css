@@ -53,3 +53,30 @@
  .pb-c-section,.pb-c-row,.pb-c-sign-card,.pb-c-footer{break-inside:avoid;page-break-inside:avoid}
  @page{size:A4;margin:12mm}
 }
+
+.contract-admin-panel{margin:0 0 16px;padding:14px;background:#fff;border:1px solid #e6ecf3;border-radius:18px}
+.contract-admin-panel h4{margin:0 0 10px;color:#1685fa;font-size:14px;font-weight:600}
+.contract-admin-list{display:flex;gap:8px;flex-wrap:wrap}
+.contract-admin-chip{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid #e4e9f0;border-radius:13px;background:#f8fafc;min-width:180px}
+.contract-admin-avatar{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#eef4fb;color:#2563eb;font-weight:700}
+.contract-admin-chip strong{display:block;color:#223149;font-size:12.5px}
+.contract-admin-chip small{display:block;color:#64748b;font-size:10.5px;margin-top:2px}
+.contract-admin-empty{color:#64748b;font-size:12px}
+.pb-c-written-name{font-size:12px;color:#334155;margin-top:3px;line-height:1.7}
+.pb-c-accepted,.pb-c-waiting{display:inline-flex;align-items:center;gap:6px;margin-top:5px;padding:5px 8px;border-radius:999px;font-size:11px;font-weight:600}
+.pb-c-accepted{background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0}
+.pb-c-waiting{background:#fffbeb;color:#a16207;border:1px solid #fde68a}
+.contract-existing-signature{border:1px solid #dbe3ec;border-radius:14px;background:#f8fafc;padding:10px;margin:10px 0}
+.contract-existing-signature img{display:block;width:100%;height:90px;object-fit:contain;filter:grayscale(1) contrast(1.4)}
+.contract-acceptance-check{display:flex;align-items:flex-start;gap:9px;margin-top:12px;padding:11px 12px;border:1px solid #dbe3ec;border-radius:13px;background:#f8fafc;color:#253246;font-size:12.5px;line-height:1.7;cursor:pointer}
+.contract-acceptance-check input{margin-top:4px;accent-color:#1685fa}
+.contract-editor-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.contract-editor-grid .full{grid-column:1/-1}
+.contract-editor-warning{margin:10px 0;padding:10px 12px;border:1px solid #fde68a;border-radius:12px;background:#fffbeb;color:#92400e;font-size:12px;line-height:1.8}
+.contract-export{box-shadow:none!important}
+.contract-export .pb-c-sign-action{display:none!important}
+@media(max-width:650px){
+ .contract-admin-chip{min-width:0;width:100%}
+ .contract-editor-grid{grid-template-columns:1fr}
+ .contract-editor-grid .full{grid-column:auto}
+}
