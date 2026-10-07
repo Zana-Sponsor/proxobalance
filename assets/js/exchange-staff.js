@@ -66,21 +66,27 @@ async function openStaffDirectory(){
   const rows=[];
   for(let start=0,guard=0;guard<200;guard++){
    const {data,error}=await sb.from('ex_profiles').select('id,full_name,email,role,is_admin,is_banned,staff_permissions')
-    .eq('role','admin').order('id').range(start,start+999);
+    .eq('is_admin',true).order('full_name',{ascending:true}).range(start,start+999);
    if(error)throw error;
    if(generation!==_staffDirectoryLoad||adminUser?.id!==owner||!isSuperAdmin())return;
    if(!data?.length)break;
    rows.push(...data);start+=data.length;
   }
-  _staffDirectoryRows=rows.filter(a=>a.is_admin&&a.id!==owner);
-  list.innerHTML=_staffDirectoryRows.length?_staffDirectoryRows.map(a=>
-   '<div class="staff-directory-row"><div><span>'+esc(a.full_name||a.email)+'</span>'+
-    '<small class="feature-help">'+(a.is_banned?'بۆیکۆتکراو':a.staff_permissions?.length===0?'دەسەڵاتەکان وەستێنراون':'چالاک')+'</small></div>'+
-    '<div class="staff-directory-actions">'+staffPermissionButton(a)+
-    '<button type="button" class="act-btn '+(a.is_banned?'gr':'rd')+'" onclick="staffDirectoryAction(\''+esc(a.id)+'\',\'ban\')">'+(a.is_banned?'لابردنی بۆیکۆت':'بۆیکۆتکردن')+'</button>'+
-    '<button type="button" class="act-btn yw" onclick="staffDirectoryAction(\''+esc(a.id)+'\',\'demote\')">لابردنی ئادمین</button>'+
-    '<button type="button" class="act-btn dark" onclick="staffDirectoryAction(\''+esc(a.id)+'\',\'password\')">وشەی نهێنی</button></div></div>').join(''):
-   '<p class="feature-help">هێشتا ئادمین نییە. لە بەشی هەژمارەکان «کردن بە ئادمین» هەڵبژێرە.</p>';
+  _staffDirectoryRows=rows.filter(a=>a.is_admin);
+  list.innerHTML=_staffDirectoryRows.length?_staffDirectoryRows.map(a=>{
+   const superRow=a.role==='super_admin',self=a.id===owner;
+   const state=a.is_banned?'بۆیکۆتکراو':superRow?'سوپەر ئادمین':a.staff_permissions?.length===0?'دەسەڵاتەکان وەستێنراون':'چالاک';
+   const actions=(!superRow&&!self)
+    ?staffPermissionButton(a)+
+      '<button type="button" class="act-btn '+(a.is_banned?'gr':'rd')+'" onclick="staffDirectoryAction(\''+esc(a.id)+'\',\'ban\')">'+(a.is_banned?'لابردنی بۆیکۆت':'بۆیکۆتکردن')+'</button>'+
+      '<button type="button" class="act-btn yw" onclick="staffDirectoryAction(\''+esc(a.id)+'\',\'demote\')">لابردنی ئادمین</button>'+
+      '<button type="button" class="act-btn dark" onclick="staffDirectoryAction(\''+esc(a.id)+'\',\'password\')">وشەی نهێنی</button>'
+    :'<span class="badge admin">'+(superRow?'سوپەر ئادمین':'هەژماری تۆ')+'</span>';
+   return '<div class="staff-directory-row"><div><span>'+esc(a.full_name||a.email)+'</span>'+
+    '<small class="feature-help">'+state+(self?' • تۆ':'')+'</small></div>'+
+    '<div class="staff-directory-actions">'+actions+'</div></div>';
+  }).join(''):
+   '<p class="feature-help">هێشتا هیچ ئادمینێک نییە.</p>';
  }catch(e){
   if(generation===_staffDirectoryLoad&&adminUser?.id===owner&&isSuperAdmin())
    list.innerHTML='<p class="feature-help" role="alert">'+esc(adminDbMessage(e))+'</p>';
