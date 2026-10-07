@@ -61,7 +61,8 @@ void main(){
  });
  for(final type in ProxoPageType.values)for(final width in [320.0,375.0,393.0,430.0])for(final direction in TextDirection.values){
   testWidgets('${type.key} thumbnail chooser at $width $direction loads four images, wraps names, selects cards and has no WebView',(tester)async{
-   final semantics=tester.ensureSemantics();addTearDown(semantics.dispose);
+   final semantics=tester.ensureSemantics();
+   try{
    tester.view.physicalSize=Size(width,1600);tester.view.devicePixelRatio=1;
    addTearDown(tester.view.resetPhysicalSize);addTearDown(tester.view.resetDevicePixelRatio);
    String selected='pill';final templates=await FakeProxoLink([]).templates();
@@ -115,6 +116,7 @@ void main(){
     });
    }
    await tester.pumpWidget(const SizedBox.shrink());await tester.pump();
+   }finally{semantics.dispose();}
   });
  }
  for(final type in ProxoPageType.values)testWidgets('${type.key} thumbnail selection preserves draft and updates only the large live preview',(tester)async{
