@@ -1626,7 +1626,7 @@ async function openAccountInfo(id){
   }catch(_){}
 }
 function accountAdminActionsHTML(a){
-  if(!isSuperAdmin()) return '';
+  if(typeof isSuperAdmin!=='function' || !isSuperAdmin()) return '';
   return `<div class="act-btn dark" onclick="openSetPasswordModal('${a.id}','${esc(a.email||'').replace(/'/g,"\\'")}')"><i class="fas fa-key"></i> گۆڕینی وشەی نهێنی</div>
     <div class="act-btn ${a.is_banned?'gr':'rd'}" onclick="toggleBan('${a.id}',${a.is_banned})"><i class="fas fa-${a.is_banned?'user-check':'user-slash'}"></i> ${a.is_banned?'لابردنی بۆیکۆت':'بۆیکۆتکردن'}</div>
     <div class="act-btn cy" onclick="openKycRequestById('${a.id}')"><i class="fas fa-id-card"></i> پشتڕاستکردنەوە</div>
