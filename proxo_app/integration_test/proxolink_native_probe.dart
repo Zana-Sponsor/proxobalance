@@ -114,6 +114,25 @@ class _ProbeState extends State<_Probe> {
      'images_loaded':state['images'],'icons_loaded':state['icons'],'animation_checked':true,'animation_count':times.length,
      'provider_types':true,'preview_inert':true,'public_actions_checked':publicActions['valid'],'legacy_viber_url_parser':publicActions['legacy_viber_url_parser'],'navigation_blocked':true};
    }
+   // Behavior checks re-render the candidate and animate its WhatsApp hint.
+   // Capture both sides from a fresh document to remove unequal prior
+   // compositing/animation history from the exact pixel comparison.
+   final previousFrame=await _read(controller,'JSON.stringify({time:performance.timeOrigin})');
+   final captureUrl=await controller.currentUrl();
+   if(captureUrl==null)throw StateError('fresh_frame');
+   await controller.loadRequest(Uri.parse(captureUrl),headers:_headers);
+   var fresh=false;
+   for(var i=0;i<120;i++){
+    await Future<void>.delayed(const Duration(milliseconds:100));
+    try{
+     final frame=await _read(controller,'JSON.stringify({time:performance.timeOrigin})');
+     final loaded=await _state(controller);
+     if(frame['time']!=previousFrame['time']&&loaded['ready']==true&&loaded['fonts']==true
+       &&loaded['images']==true&&loaded['icons']==true
+       &&jsonEncode(loaded['providers'])==jsonEncode(expectedProviders)){fresh=true;break;}
+    }catch(_){}
+   }
+   if(!fresh)throw StateError('fresh_frame');
    // Capture the same fully entered state of the original CSS on both
    // documents. Freezing an in-flight entrance at zero hides its buttons,
    // while a completed backwards-fill entrance is already fully visible.
@@ -122,8 +141,8 @@ class _ProbeState extends State<_Probe> {
    // Use the same settled interval for both captures, without masking pixels
    // or changing the original page CSS, assets, geometry or acceptance limit.
    await Future<void>.delayed(const Duration(seconds:2));
-   final capture=await _read(controller,'JSON.stringify({visible:Array.from(document.querySelectorAll("[data-provider]")).every(e=>Number(getComputedStyle(e).opacity)===1&&e.getBoundingClientRect().width>0)})');
-   if(capture['visible']!=true)throw StateError('capture_visibility');
+   final capture=await _read(controller,'JSON.stringify({visible:Array.from(document.querySelectorAll("[data-provider]")).every(e=>Number(getComputedStyle(e).opacity)===1&&e.getBoundingClientRect().width>0),hintHidden:Array.from(document.querySelectorAll(".wa-message-card")).every(e=>e.hidden),toastHidden:document.getElementById("toast").hidden})');
+   if(capture['visible']!=true||capture['hintHidden']!=true||capture['toastHidden']!=true)throw StateError('capture_visibility');
    if(!mounted)return;
    final box=_viewport.currentContext!.findRenderObject()! as RenderBox,origin=box.localToGlobal(Offset.zero);
    if(MediaQuery.devicePixelRatioOf(context)!=1)throw StateError('pixel_density');

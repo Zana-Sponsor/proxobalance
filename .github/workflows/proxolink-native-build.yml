@@ -91,7 +91,7 @@ jobs:
       group: proxolink-preview-verification
       cancel-in-progress: false
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 105
     env:
       PROXO_NATIVE_BASE_URL: https://proxobalance-git-feat-proxolink-private-re-00a2aa-proxoapp-1758.vercel.app
       PROXO_NATIVE_SUPABASE_URL: https://cojchkwssmasiejcgvbk.supabase.co

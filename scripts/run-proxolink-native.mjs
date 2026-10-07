@@ -100,17 +100,24 @@ async function configure() {
   if(/storage_path|checksum_sha256|template\.html|html_content/.test(JSON.stringify(catalog)))
     throw Error('catalog_metadata_boundary_failed');
   const previews={};
+  const selections=[];
   stage='template_capabilities';
   for(const style of styles) {
     const item=catalog.templates?.find(t=>t.template_key===style&&t.version===6);
     if(!item||typeof item.preview_path!=='string')throw Error('four_templates_required');
-    for(const type of PAGE_TYPES)for(const language of LANGUAGES)for(const baseline of [false,true]) {
+    for(const type of PAGE_TYPES)for(const language of LANGUAGES)for(const baseline of [false,true])
+      selections.push({style,type,language,baseline});
+  }
+  // These are independent authenticated reads. Bound concurrency to four;
+  // repeated sequential acquisition was consuming the collection deadline.
+  for(let offset=0;offset<selections.length;offset+=4){
+    await Promise.all(selections.slice(offset,offset+4).map(async({style,type,language,baseline})=>{
       const selected=await jsonRequest(base+'/api/contact-templates?template_key='+style+'&version=6&page_type='+type+'&language='+language+'&baseline='+baseline,
         {headers:{...protection,Authorization:authorization}});
       const url=new URL(selected.templates[0].preview_path,base);
       if(url.origin!==base||url.pathname!=='/contact-preview'||!url.searchParams.has('token'))throw Error('invalid_preview_capability');
       previews[style+'-'+type+'-'+language+(baseline?'-baseline':'')]=url.href;
-    }
+    }));
   }
   if(!capturedPreviewHeaders) {
     stage='rendered_preview_headers';
@@ -158,9 +165,11 @@ async function main() {
   const captured=new Set();
   const pixels={};
   const reportedFailures=new Set();
-  const deadline=Date.now()+45*60*1000;
+  const deadline=Date.now()+90*60*1000;
   while(Date.now()<deadline) {
-    if(Date.now()-configuredAt>60000) {await configure();configuredAt=Date.now();stage='native_case_collection';}
+    // Five-minute capabilities are refreshed after three minutes, leaving
+    // headroom for the bounded acquisition and the current WebView case.
+    if(Date.now()-configuredAt>180000) {await configure();configuredAt=Date.now();stage='native_case_collection';}
     const progress=appRead('proxolink-verification-progress.json');
     if(progress){
       const observed=safeCaseResults(JSON.parse(progress));
@@ -200,7 +209,7 @@ async function main() {
           writeFileSync(output+'/'+id+'-diff.png',comparison.diff);
           pixels[id]=comparison.metrics;captured.add(id);
           writeFileSync(output+'/pixels.json',JSON.stringify({environment:'Same Android 35 emulator / WebView / DPR 1 baseline versus candidate',
-            animation_state:'Finite entrance animations completed; infinite animations paused at zero; hint/toast hidden; original CSS/assets unchanged',cases:pixels},null,2));
+            animation_state:'Both documents freshly reloaded after behavior checks; finite entrances completed; infinite animations paused at zero; hint/toast hidden; original CSS/assets unchanged',cases:pixels},null,2));
           if(!comparison.metrics.exact_pixels_equal)console.log('Native pixel difference recorded for '+id+'.');
         }
         appWrite('proxolink-verification-ack',capture_id);
