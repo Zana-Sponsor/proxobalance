@@ -246,7 +246,7 @@
         <h3>هەموو بەکارهێنەران <span class="acc-count" id="accCount"></span></h3>
         <button type="button" class="act-btn bl" onclick="loadAccounts()">نوێکردنەوە</button>
         <button type="button" id="staffDirectoryButton" data-super-admin-only class="act-btn cy" onclick="openStaffDirectory()"><i class="fas fa-key"></i> بەڕێوەبردنی ئادمینەکان</button>
-        <div class="act-btn dark" onclick="openCreateUserModal()"><i class="fas fa-user-plus"></i> زیادکردنی هەژمار</div>
+        <div class="act-btn dark" data-super-admin-only hidden onclick="openCreateUserModal()"><i class="fas fa-user-plus"></i> زیادکردنی هەژمار</div>
       </div>
       <div class="tbl-wrap">
         <div class="tbl-filter">
