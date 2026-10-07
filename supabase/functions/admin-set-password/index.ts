@@ -111,11 +111,11 @@ Deno.serve(async (req: Request) => {
         message: profErr.message,
       }, 500);
     }
-    if (!callerProfile?.is_admin || callerProfile.is_banned || (callerProfile.role !== "super_admin" && callerProfile.staff_permissions != null)) {
+    if (!callerProfile?.is_admin || callerProfile.is_banned || callerProfile.role !== "super_admin") {
       return json({
         error: "forbidden",
         stage: "admin_check",
-        message: "تۆ مافی ئەم کردارە نییت",
+        message: "تەنها سوپەر ئادمین مافی گۆڕینی وشەی نهێنی هەیە",
       }, 403);
     }
 
