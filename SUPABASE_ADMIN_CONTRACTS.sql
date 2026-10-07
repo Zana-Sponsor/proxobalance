@@ -41,6 +41,11 @@ create table if not exists public.ex_admin_contracts (
   constraint ex_admin_contract_owner_signature_chk check(owner_signature_data is null or (length(owner_signature_data)<=350000 and owner_signature_data like 'data:image/png;base64,%')),
   constraint ex_admin_contract_renter_signature_chk check(renter_signature_data is null or (length(renter_signature_data)<=350000 and renter_signature_data like 'data:image/png;base64,%'))
 );
+create index if not exists ex_admin_contracts_owner_admin_idx
+  on public.ex_admin_contracts(owner_admin_id);
+create index if not exists ex_admin_contracts_renter_admin_idx
+  on public.ex_admin_contracts(renter_admin_id);
+
 alter table public.ex_admin_contracts enable row level security;
 revoke all on table public.ex_admin_contracts from anon, authenticated;
 grant select on table public.ex_admin_contracts to authenticated;
