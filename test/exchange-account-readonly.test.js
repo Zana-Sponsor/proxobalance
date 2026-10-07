@@ -9,7 +9,7 @@ const passwordFn=readFileSync(new URL('../supabase/functions/admin-set-password/
 const createFn=readFileSync(new URL('../supabase/functions/admin-create-user/index.ts',import.meta.url),'utf8');
 
 test('ordinary admins get read-only account controls',()=>{
-  assert.match(admin,/function accountAdminActionsHTML\(a\)\{\s*if\(!isSuperAdmin\(\)\) return '';/);
+  assert.ok(admin.includes("function accountAdminActionsHTML(a){\n  if(typeof isSuperAdmin!=='function' || !isSuperAdmin()) return '';"));
   assert.match(admin,/function openSetPasswordModal\(userId, email\)\{\s*if\(!isSuperAdmin\(\)\)/);
   assert.match(admin,/async function submitSetPassword\(\)\{[\s\S]*?if\(!isSuperAdmin\(\)\)/);
   assert.match(admin,/function openCreateUserModal\(\)\{\s*if\(!isSuperAdmin\(\)\)/);
