@@ -301,7 +301,8 @@ void main() {
       await tester.pump(const Duration(milliseconds: 100));
       await tester.tap(find.text('پەیوەندی').first);
       await tester.pumpAndSettle();
-      expect(find.text('pill'), findsOneWidget);
+      expect(find.text('ستایلی کلاسیک'), findsOneWidget);
+      expect(find.text('pill'), findsNothing);
       expect(find.text('پێشبینین نەکرایەوە'), findsOneWidget);
       expect(tester.takeException(), isNull);
       await captureUi(tester, screenshotKey, 'form-$width');

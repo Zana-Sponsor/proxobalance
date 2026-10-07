@@ -11,6 +11,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/proxo_card.dart';
 import '../models/proxolink_page_type.dart';
+import '../models/proxolink_design.dart';
+import '../widgets/proxolink_design_selector.dart';
 import '../models/proxolink_template_meta.dart';
 import '../services/proxolink_service.dart';
 import '../widgets/ad_form_components.dart';
@@ -451,7 +453,7 @@ class _ContactRow extends StatelessWidget {
           runSpacing: 8,
           children: [
             _QuietChip(label: card.pageType.label),
-            _QuietChip(label: card.templateKey),
+            _QuietChip(label: ProxoLinkDesign.label(card.templateKey)),
             _QuietChip(label: card.stateLabel),
             if (busy || card.publishStatus == 'creating')
               const SizedBox(
@@ -1003,20 +1005,17 @@ class _ContactFormState extends State<_ContactForm> {
                       : Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            Wrap(
-                              spacing: 10,
-                              runSpacing: 10,
-                              children: [
-                                for (final t in _templates!)
-                                  AdChoice(
-                                    label: t.label,
-                                    selected: t.key == _template,
-                                    onTap: () => setState(() {
-                                      _template = t.key;
-                                      _version = t.version;
-                                    }),
-                                  ),
-                              ],
+                            ProxoLinkDesignSelector(
+                              templates: _templates!,
+                              pageType: _kind!,
+                              selectedKey: _template,
+                              onSelected: (template) {
+                                if (_template == template.key) return;
+                                setState(() {
+                                  _template = template.key;
+                                  _version = template.version;
+                                });
+                              },
                             ),
                             const SizedBox(height: 20),
                             ClipRRect(

@@ -79,6 +79,7 @@ flutter:
   assets:
     # proxo_logo.png is the centred wordmark in ProxoTopBar. This directory
     # was NOT declared before, so any Image.asset from it threw at runtime.
+    - assets/proxolink_thumbnails/
     - assets/images/
     - assets/icons/
     - assets/icons/ad_card/

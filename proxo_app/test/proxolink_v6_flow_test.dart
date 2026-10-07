@@ -1,10 +1,16 @@
 import 'dart:convert';
+import 'dart:ui' as ui;
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:proxo_app/models/proxo_card.dart';
 import 'package:proxo_app/models/proxolink_page_type.dart';
+import 'package:proxo_app/models/proxolink_design.dart';
+import 'package:proxo_app/widgets/proxolink_design_selector.dart';
+import 'package:proxo_app/widgets/proxolink_preview.dart';
 import 'package:proxo_app/screens/tools_screen.dart';
 import 'package:proxo_app/theme/app_theme.dart';
 import 'proxolink_flow_test.dart' show FakeProxoLink;
@@ -31,6 +37,97 @@ class V6Repository extends FakeProxoLink {
 }
 void main(){
  setUp(()=>SharedPreferences.setMockInitialValues({}));
+ test('the four formal Kurdish names preserve authoritative template keys',(){
+  expect(ProxoLinkDesign.labels,{
+   'pill':'ستایلی کلاسیک','pill-mint':'ستایلی سروشتی',
+   'pill-dark':'ستایلی تاریک','pill-white':'ستایلی ڕووناک'});
+  expect(()=>ProxoLinkDesign.thumbnail('neon',ProxoPageType.contact),throwsArgumentError);
+ });
+ testWidgets('all twelve real-renderer thumbnails decode as PNG images',(tester)async{
+  await tester.runAsync(()async{
+   for(final type in ProxoPageType.values)for(final key in ProxoLinkDesign.labels.keys){
+    final bytes=await rootBundle.load(ProxoLinkDesign.thumbnail(key,type));
+    expect(bytes.buffer.asUint8List().take(8).toList(),[137,80,78,71,13,10,26,10]);
+    final codec=await ui.instantiateImageCodec(bytes.buffer.asUint8List());
+    final frame=await codec.getNextFrame();expect(frame.image.width,240);expect(frame.image.height,635);
+    frame.image.dispose();codec.dispose();
+   }
+  });
+ });
+ for(final type in ProxoPageType.values)for(final width in [320.0,375.0,393.0,430.0])for(final direction in TextDirection.values){
+  testWidgets('${type.key} thumbnail chooser at $width $direction loads four images, wraps names, selects cards and has no WebView',(tester)async{
+   tester.view.physicalSize=Size(width,1600);tester.view.devicePixelRatio=1;
+   addTearDown(tester.view.resetPhysicalSize);addTearDown(tester.view.resetDevicePixelRatio);
+   String selected='pill';final templates=await FakeProxoLink([]).templates();
+   final boundary=GlobalKey();
+   await tester.pumpWidget(
+    MaterialApp(
+     theme:buildAppTheme(),
+     home:Scaffold(
+      body:SingleChildScrollView(
+       child:MediaQuery(
+        data:const MediaQueryData(textScaler:TextScaler.linear(1.6)),
+        child:Directionality(
+         textDirection:direction,
+         child:Padding(
+          padding:const EdgeInsets.all(36),
+          child:RepaintBoundary(
+           key:boundary,
+           child:StatefulBuilder(
+            builder:(context,setState)=>ProxoLinkDesignSelector(
+             templates:templates,pageType:type,selectedKey:selected,
+             onSelected:(template)=>setState(()=>selected=template.key),
+            ),
+           ),
+          ),
+         ),
+        ),
+       ),
+      ),
+     ),
+    ),
+   );
+   await tester.pumpAndSettle();expect(find.byType(Image),findsNWidgets(4));
+   expect(find.byType(ProxoLinkPreview),findsNothing);
+   for(final key in ProxoLinkDesign.labels.keys){
+    final card=find.byKey(ValueKey('proxolink-design-$key'));
+    await tester.ensureVisible(card);await tester.tap(card);await tester.pumpAndSettle();
+    expect(selected,key);expect(find.text(ProxoLinkDesign.label(key)),findsOneWidget);
+    expect(find.byWidgetPredicate((w)=>w is Semantics&&w.properties.selected==true),findsOneWidget);
+    expect(tester.takeException(),isNull);
+   }
+   if(width==393&&direction==TextDirection.rtl){
+    await tester.ensureVisible(find.byKey(const ValueKey('proxolink-design-pill')));await tester.pumpAndSettle();
+    await tester.runAsync(()async{
+     final image=await (boundary.currentContext!.findRenderObject() as RenderRepaintBoundary).toImage();
+     final png=await image.toByteData(format:ui.ImageByteFormat.png);
+     // The existing CI uploads UI evidence from this directory.
+     final file=File('build/ui-verification/thumbnails-${type.key}.png');
+     file.parent.createSync(recursive:true);file.writeAsBytesSync(png!.buffer.asUint8List());image.dispose();
+    });
+   }
+   await tester.pumpWidget(const SizedBox.shrink());await tester.pump();
+  });
+ }
+ for(final type in ProxoPageType.values)testWidgets('${type.key} thumbnail selection preserves draft and updates only the large live preview',(tester)async{
+  tester.view.physicalSize=const Size(393,1100);tester.view.devicePixelRatio=1;
+  addTearDown(tester.view.resetPhysicalSize);addTearDown(tester.view.resetDevicePixelRatio);
+  final repo=V6Repository();await tester.pumpWidget(MaterialApp(theme:buildAppTheme(),home:ToolsScreen(initialCreate:true,repository:repo)));
+  await tester.pumpAndSettle();await tester.tap(find.text(type.label).first);await tester.pumpAndSettle();
+  final name=find.byWidgetPredicate((w)=>w is TextField&&w.decoration?.labelText==type.nameLabel);
+  await tester.ensureVisible(name);await tester.enterText(name,'ناوی پەڕەی تاقیکردنەوە');
+  await tester.pump(const Duration(milliseconds:600));await tester.pumpAndSettle();
+  for(final key in ProxoLinkDesign.labels.keys){
+   final card=find.byKey(ValueKey('proxolink-design-$key'));await tester.ensureVisible(card);await tester.tap(card);await tester.pumpAndSettle();
+   expect(tester.widget<ProxoLinkDesignSelector>(find.byType(ProxoLinkDesignSelector)).selectedKey,key);
+   expect(repo.drafts.last['template_key'],key);expect(repo.drafts.last['page_kind'],type.key);
+   expect(repo.drafts.last['name'],'ناوی پەڕەی تاقیکردنەوە');
+   expect(find.byType(ProxoLinkPreview),findsOneWidget);expect(find.text('پێشبینینی تەواو'),findsOneWidget);
+   final count=repo.drafts.length;await tester.tap(card);await tester.pumpAndSettle();expect(repo.drafts.length,count);
+  }
+  expect(tester.takeException(),isNull);await tester.pumpWidget(const SizedBox.shrink());await tester.pump();
+ });
+
  test('page type maps independent UUID to typed URL, retains Telegram, and excludes owner UUID',(){
   for(final type in ProxoPageType.values){
    final page=ProxoCard.fromJson({'id':'22222222-2222-4222-8222-222222222222','user_id':'11111111-1111-4111-8111-111111111111',
@@ -103,7 +200,11 @@ void main(){
    if(type==ProxoPageType.contact){expect(labels,containsAll(['telegram','korek','asiacell']));expect(labels, isNot(contains('phone')));}
    if(type==ProxoPageType.order)expect(labels,containsAll(['talabat','toters']));
    if(type==ProxoPageType.download)expect(labels,containsAll(['google_play','app_store']));
-   for(final key in ['pill','pill-mint','pill-dark','pill-white'])expect(find.text(key),findsOneWidget);
+   for(final key in ProxoLinkDesign.labels.keys){
+    expect(find.text(ProxoLinkDesign.label(key)),findsOneWidget);
+    expect(find.text(key),findsNothing);
+    expect(find.byKey(ValueKey('proxolink-thumbnail-${type.key}-$key')),findsOneWidget);
+   }
    expect(tester.takeException(),isNull);await tester.pumpWidget(const SizedBox.shrink());await tester.pump();
   });
  }
