@@ -35,9 +35,11 @@ test('ordinary admins cannot open staff management or reset staff passwords',asy
  const {c,calls,queries}=fixture();await c.openStaffDirectory();queries.length=0;calls.length=0;c.superMode=false;
  await c.openStaffDirectory();c.staffDirectoryAction('staff','demote');
  assert.deepEqual(queries,[]);assert.deepEqual(calls,[]);
- assert.equal(c.staffPasswordAllowed('staff'),false);assert.equal(c.staffPasswordAllowed('customer'),true);
- vm.runInContext("adminStaffPermissions=['view'];",c);
+ assert.equal(c.staffPasswordAllowed('staff'),false);assert.equal(c.staffPasswordAllowed('customer'),false);
+ vm.runInContext("adminStaffPermissions=null;",c);
  assert.equal(c.staffPasswordAllowed('customer'),false);
+ c.superMode=true;
+ assert.equal(c.staffPasswordAllowed('customer'),true);
 });
 test('a failed or stale staff read cannot enable actions from an earlier directory',async()=>{
  const {c,elements,calls}=fixture();await c.openStaffDirectory();c.failure=true;calls.length=0;
