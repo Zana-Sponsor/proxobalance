@@ -33,6 +33,17 @@ class ProxoLinkDesignSelector extends StatelessWidget {
         final columns = constraints.maxWidth >= 260 ? 2 : 1;
         final width = math.min(210.0,
             (constraints.maxWidth - (columns - 1) * 12) / columns);
+        final textStyle = AdUi.text(context);
+        var labelHeight = 0.0;
+        for (final label in ProxoLinkDesign.labels.values) {
+          final painter = TextPainter(
+            text: TextSpan(text: label, style: textStyle),
+            textScaler: MediaQuery.textScalerOf(context),
+            textDirection: Directionality.of(context),
+          )..layout(maxWidth: math.max(0, width - 16));
+          labelHeight = math.max(labelHeight, painter.height);
+          painter.dispose();
+        }
         return Wrap(
           spacing: 12,
           runSpacing: 12,
@@ -46,6 +57,7 @@ class ProxoLinkDesignSelector extends StatelessWidget {
                   template: template,
                   pageType: pageType,
                   selected: selectedKey == template.key,
+                  labelHeight: labelHeight,
                   onTap: () => onSelected(template),
                 ),
               ),
@@ -60,9 +72,10 @@ class _DesignCard extends StatelessWidget {
   final ProxoTemplate template;
   final ProxoPageType pageType;
   final bool selected;
+  final double labelHeight;
   final VoidCallback onTap;
   const _DesignCard({required this.template, required this.pageType,
-    required this.selected, required this.onTap});
+    required this.selected, required this.labelHeight, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -120,9 +133,14 @@ class _DesignCard extends StatelessWidget {
                     ),
                 ]),
                 const SizedBox(height: 10),
-                ProxoText(label, textAlign: TextAlign.center,
-                    style: AdUi.text(context,
-                        color: selected ? AdUi.blue : AdUi.ink)),
+                SizedBox(
+                  height: labelHeight,
+                  child: Center(
+                    child: ProxoText(label, textAlign: TextAlign.center,
+                        style: AdUi.text(context,
+                            color: selected ? AdUi.blue : AdUi.ink)),
+                  ),
+                ),
                 const SizedBox(height: 4),
               ]),
             ),

@@ -96,6 +96,8 @@ void main(){
    );
    await tester.pumpAndSettle();expect(find.byType(Image),findsNWidgets(4));
    expect(find.byType(ProxoLinkPreview),findsNothing);
+   final cardHeights=ProxoLinkDesign.labels.keys.map((key)=>tester.getSize(find.byKey(ValueKey('proxolink-design-$key'))).height).toSet();
+   expect(cardHeights,hasLength(1),reason:'All four cards retain equal heights when Kurdish labels wrap.');
    for(final key in ProxoLinkDesign.labels.keys){
     final card=find.byKey(ValueKey('proxolink-design-$key'));
     await tester.ensureVisible(card);await tester.tap(card);await tester.pumpAndSettle();
