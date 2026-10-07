@@ -71,6 +71,8 @@ class _DesignCard extends StatelessWidget {
       button: true,
       selected: selected,
       label: label,
+      onTap: onTap,
+      excludeSemantics: true,
       child: DecoratedBox(
         decoration: const BoxDecoration(
           borderRadius: AdUi.controlRadius,

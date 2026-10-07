@@ -36,6 +36,11 @@ class V6Repository extends FakeProxoLink {
  }
 }
 void main(){
+ TestWidgetsFlutterBinding.ensureInitialized();
+ setUpAll(()async{
+  await (FontLoader(kAppFont)..addFont(rootBundle.load('assets/fonts/Rabar_021.ttf'))).load();
+  await (FontLoader('MaterialIcons')..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf'))).load();
+ });
  setUp(()=>SharedPreferences.setMockInitialValues({}));
  test('the four formal Kurdish names preserve authoritative template keys',(){
   expect(ProxoLinkDesign.labels,{
@@ -56,6 +61,7 @@ void main(){
  });
  for(final type in ProxoPageType.values)for(final width in [320.0,375.0,393.0,430.0])for(final direction in TextDirection.values){
   testWidgets('${type.key} thumbnail chooser at $width $direction loads four images, wraps names, selects cards and has no WebView',(tester)async{
+   final semantics=tester.ensureSemantics();addTearDown(semantics.dispose);
    tester.view.physicalSize=Size(width,1600);tester.view.devicePixelRatio=1;
    addTearDown(tester.view.resetPhysicalSize);addTearDown(tester.view.resetDevicePixelRatio);
    String selected='pill';final templates=await FakeProxoLink([]).templates();
@@ -94,6 +100,8 @@ void main(){
     await tester.ensureVisible(card);await tester.tap(card);await tester.pumpAndSettle();
     expect(selected,key);expect(find.text(ProxoLinkDesign.label(key)),findsOneWidget);
     expect(find.byWidgetPredicate((w)=>w is Semantics&&w.properties.selected==true),findsOneWidget);
+    final selectedNode=tester.getSemantics(find.byWidgetPredicate((w)=>w is Semantics&&w.properties.selected==true)).getSemanticsData();
+    expect(selectedNode.label,ProxoLinkDesign.label(key));expect(selectedNode.hasAction(ui.SemanticsAction.tap),true);
     expect(tester.takeException(),isNull);
    }
    if(width==393&&direction==TextDirection.rtl){
