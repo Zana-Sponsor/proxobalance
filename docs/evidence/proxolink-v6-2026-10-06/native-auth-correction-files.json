@@ -1,6 +1,6 @@
 {
   "base_revision": "634ad507135d742d5fc4b6e455fbde59f691a999",
-  "native_run_revision": "5bf533b11b7f638acc65395b65da1512e3275f5f",
+  "native_run_revision": "c06bd3dccf9b0ea124447a2fc2ff4a47a6e096f1",
   "scope": "Harness authentication lifecycle only, after actual catalog HTTP 401 terminated native collection; no acceptance, workflow, protection or product changes",
   "files": [
     {
@@ -27,10 +27,10 @@
     "javascript_syntax": "PASSED",
     "diff_whitespace": "PASSED"
   },
-  "native_verification": "NOT EXECUTED for this authentication correction",
+  "native_verification": "BLOCKED: run 37759310377 attempt 2 awaits authorized environment approval; attempt 1 failed before emulator startup",
   "cause_limit": "Pinned runner demonstrably caches one app access token without expiry handling. Final catalog HTTP 401 is observed; token expiry is a timing/source inference, not directly proven by retained JWT/server diagnostics.",
   "pixel_remedy_claimed": false,
-  "additional_protected_native_run_created": false,
+  "additional_protected_native_run_created": true,
   "source_ci": {
     "revision": "edcaa048289c9b5a4ee5e1e97f71035ca0731a91",
     "run_id": 37709592066,
@@ -56,5 +56,12 @@
     "prior_attempt_failure": "KVM setup before emulator startup",
     "explicitly_authorized_new_run": true,
     "source_changed_since_passing_parent": false
-  }
+  },
+  "historical_authentication_fix_checkpoint": {
+    "revision": "edcaa048289c9b5a4ee5e1e97f71035ca0731a91",
+    "additional_protected_native_run_created": false,
+    "native_verification": "NOT EXECUTED at the source-fix checkpoint"
+  },
+  "failure_run_revision": "5bf533b11b7f638acc65395b65da1512e3275f5f",
+  "additional_protected_native_run_explicitly_authorized": true
 }

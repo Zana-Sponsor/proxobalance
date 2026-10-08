@@ -14,8 +14,8 @@
     {
       "path": "docs/evidence/proxolink-v6-2026-10-06/execution-blockers.json",
       "origin": "Current authorized execution checkpoint; historical audit preserved separately",
-      "bytes": 8127,
-      "git_blob_sha": "49d5e8a7a318af0a851f62d27ab0c1ccba40600c"
+      "bytes": 8744,
+      "git_blob_sha": "5ba6d4c11170e9c7d52c7d94666858f4bbb448ad"
     },
     {
       "path": "docs/evidence/proxolink-v6-2026-10-06/native-approval-357aa00.jpg",
@@ -534,8 +534,8 @@
     {
       "path": "docs/evidence/proxolink-v6-2026-10-06/native-auth-correction-files.json",
       "origin": "Current authorized execution checkpoint; historical audit preserved separately",
-      "bytes": 2452,
-      "git_blob_sha": "dbcc19d187c0d0af10d470a90002a168a2b0e4fb"
+      "bytes": 2892,
+      "git_blob_sha": "3afa8e65b1b0242e4cdfb58474e60874e3d977ce"
     },
     {
       "path": "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt1-infrastructure.json",

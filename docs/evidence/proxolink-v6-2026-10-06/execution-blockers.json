@@ -97,10 +97,16 @@
     "inventory_scope": "Historical inventory retained; no new staging/customer/DDL work in this native-only continuation"
   },
   "artifact_retention": {
-    "current_artifact_expires_at": "2026-10-14T23:51:16Z",
-    "downloaded_and_digest_verified": true,
-    "all_native_screenshots_committed": false,
-    "retained": "All five allowlisted JSON files; nine failed candidate/baseline/diff triples; full 1967-file hash/dimension manifest; 436 sanitized capture acknowledgements; exact missing-case/file inventory; strict validator replay; summary/diagnosis. Complete artifact is linked."
+    "current_native_runtime_artifact": null,
+    "current_native_runtime_artifact_expires_at": null,
+    "current_native_evidence_uploaded": false,
+    "reason": "Attempt 1 stopped before emulator startup; current attempt 2 awaits authorized approval.",
+    "credential_free_apk_artifact": {
+      "id": 11542240080,
+      "expires_at": "2026-10-09T09:53:54Z",
+      "native_runtime_evidence": false
+    },
+    "safe_infrastructure_diagnosis": "native-c06bd3d-attempt1-infrastructure.json"
   },
   "authentication_fix_source_ci": {
     "revision": "edcaa048289c9b5a4ee5e1e97f71035ca0731a91",
@@ -175,5 +181,14 @@
       "pill-white-download-en-landscape-768"
     ],
     "authentication_correction_manifest": "native-auth-correction-files.json"
+  },
+  "historical_5bf533b_artifact_retention": {
+    "run_id": 37694585964,
+    "attempt": 3,
+    "artifact_id": 11518923127,
+    "current_artifact_expires_at": "2026-10-14T23:51:16Z",
+    "downloaded_and_digest_verified": true,
+    "all_native_screenshots_committed": false,
+    "retained": "All five allowlisted JSON files; nine failed candidate/baseline/diff triples; full 1967-file hash/dimension manifest; 436 sanitized capture acknowledgements; exact missing-case/file inventory; strict validator replay; summary/diagnosis. Complete artifact is linked."
   }
 }
