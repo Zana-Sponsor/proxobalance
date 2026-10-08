@@ -1,38 +1,38 @@
 {
-  "revision": "edcaa048289c9b5a4ee5e1e97f71035ca0731a91",
-  "workflow_run": 37709592066,
+  "revision": "c06bd3dccf9b0ea124447a2fc2ff4a47a6e096f1",
+  "workflow_run": 37759310220,
   "status": "VERIFIED",
   "conclusion": "success",
-  "workflow_url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/37709592066",
-  "completed_at": "2026-10-08T00:53:32Z",
+  "workflow_url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/37759310220",
+  "completed_at": "2026-10-08T09:54:09Z",
   "jobs": [
     {
-      "id": 113092107206,
+      "id": 113251555425,
       "name": "database",
       "status": "completed",
       "conclusion": "success"
     },
     {
-      "id": 113092107446,
+      "id": 113251555731,
       "name": "backend",
       "status": "completed",
       "conclusion": "success"
     },
     {
-      "id": 113092107476,
+      "id": 113251555794,
+      "name": "edge-functions",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113251555832,
       "name": "flutter",
       "status": "completed",
       "conclusion": "success"
     },
     {
-      "id": 113092107480,
+      "id": 113251555898,
       "name": "responsive",
-      "status": "completed",
-      "conclusion": "success"
-    },
-    {
-      "id": 113092107487,
-      "name": "edge-functions",
       "status": "completed",
       "conclusion": "success"
     }
@@ -42,14 +42,11 @@
     "failed": 0,
     "skipped": 0,
     "evidence": [
-      "2026-10-08T00:47:40.2122489Z ✔ native capability refresh keeps app authentication valid beyond a one-hour run (1.714392ms)",
-      "2026-10-08T00:47:40.2123337Z ✔ native session renewal honors an earlier absolute expiry and rejects an account change (0.778735ms)",
-      "2026-10-08T00:47:40.2124162Z ✔ native session renewal fails closed on missing, expired or invalid sign-in metadata (0.783343ms)",
-      "2026-10-08T00:47:40.2128197Z ℹ tests 124",
-      "2026-10-08T00:47:40.2128623Z ℹ pass 124",
-      "2026-10-08T00:47:40.2128821Z ℹ fail 0",
-      "2026-10-08T00:47:40.2129247Z ℹ skipped 0",
-      "2026-10-08T00:47:40.4624230Z Flutter and public output contain no reusable template source or HTML delivery."
+      "2026-10-08T09:49:37.3893978Z ℹ tests 124",
+      "2026-10-08T09:49:37.3894416Z ℹ pass 124",
+      "2026-10-08T09:49:37.3894621Z ℹ fail 0",
+      "2026-10-08T09:49:37.3895057Z ℹ skipped 0",
+      "2026-10-08T09:49:37.6470509Z Flutter and public output contain no reusable template source or HTML delivery."
     ]
   },
   "flutter": {
@@ -60,10 +57,9 @@
     "analysis_errors": 0,
     "release_apk_source_privacy": "PASSED",
     "evidence": [
-      "2026-10-08T00:48:20.7251531Z 27 issues found. (ran in 17.7s)",
-      "2026-10-08T00:49:09.8385184Z 🎉 189 tests passed.",
-      "2026-10-08T00:53:24.1340832Z ✓ Built build/app/outputs/flutter-apk/app-release.apk (84.1MB)",
-      "2026-10-08T00:53:24.7513968Z Release APK source-privacy scan passed"
+      "2026-10-08T09:50:15.6384066Z 27 issues found. (ran in 10.9s)",
+      "2026-10-08T09:50:49.8780342Z 🎉 189 tests passed.",
+      "2026-10-08T09:54:03.2838544Z Release APK source-privacy scan passed"
     ]
   },
   "responsive": {
@@ -71,7 +67,7 @@
     "passed": 480,
     "failed": 0,
     "evidence": [
-      "2026-10-08T00:50:52.4669824Z VERIFIED: 480 actual renderer/browser cases, five widths, all page types/designs, RTL/LTR, long text, 1.6 text scale, inert previews, and exact prepared-design baseline pixels."
+      "2026-10-08T09:53:25.0585509Z VERIFIED: 480 actual renderer/browser cases, five widths, all page types/designs, RTL/LTR, long text, 1.6 text scale, inert previews, and exact prepared-design baseline pixels."
     ]
   },
   "database": {
@@ -79,16 +75,17 @@
     "rls": "PASSED",
     "api_lifecycles": 7,
     "evidence": [
-      "2026-10-08T00:48:04.9397035Z  VERIFIED: additive migration, legacy/ad preservation, database UUIDs, immutable identities, owner RLS, safe providers, archive boundary",
-      "2026-10-08T00:48:13.7714459Z VERIFIED: 7 PostgreSQL-backed API lifecycles; generated UUIDs, ownership, edit stability, typed routes, preview, activate/deactivate, soft archive, zero outbound events; legacy advertisements preserved."
+      "2026-10-08T09:49:47.9847740Z  VERIFIED: additive migration, legacy/ad preservation, database UUIDs, immutable identities, owner RLS, safe providers, archive boundary",
+      "2026-10-08T09:49:56.1121072Z VERIFIED: 7 PostgreSQL-backed API lifecycles; generated UUIDs, ownership, edit stability, typed routes, preview, activate/deactivate, soft archive, zero outbound events; legacy advertisements preserved."
     ]
   },
   "edge_functions": "PASSED",
   "ordinary_apk_workflow": {
-    "run_id": 37709592144,
-    "revision": "edcaa048289c9b5a4ee5e1e97f71035ca0731a91",
-    "status": "SUCCESS",
-    "native_runtime": "SKIPPED; no protected native execution"
+    "run_id": 37759310377,
+    "revision": "c06bd3dccf9b0ea124447a2fc2ff4a47a6e096f1",
+    "apk_job_id": 113251558088,
+    "apk_build": "SUCCESS",
+    "protected_runtime": "Authorized live execution; attempt 1 failed at KVM before emulator; attempt 2 awaiting approval. APK success is not runtime certification."
   },
   "native_draw_correction_source_ci": {
     "revision": "5bf533b11b7f638acc65395b65da1512e3275f5f",
@@ -846,12 +843,19 @@
     "native_acceptance_unexecuted_cases": 22
   },
   "authentication_correction": {
-    "status": "SOURCE CI SUCCESS; protected native UNEXECUTED",
+    "status": "SOURCE CI SUCCESS; protected runtime pending authorized approval after KVM infrastructure failure",
     "revision": "edcaa048289c9b5a4ee5e1e97f71035ca0731a91",
     "run_id": 37709592066,
     "manifest": "native-auth-correction-files.json",
     "backend_passed": 124,
     "backend_failed": 0,
-    "protected_android_runtime": "UNEXECUTED; no additional protected native execution created"
+    "protected_android_runtime": "BLOCKED: current run 37759310377 attempt 2 waiting for authorized reviewer"
+  },
+  "prior_authentication_fix_source_ci": {
+    "revision": "edcaa048289c9b5a4ee5e1e97f71035ca0731a91",
+    "workflow_run": 37709592066,
+    "status": "VERIFIED",
+    "conclusion": "success",
+    "workflow_url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/37709592066"
   }
 }

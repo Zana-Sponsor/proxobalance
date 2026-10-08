@@ -1,11 +1,21 @@
 # ProxoLink V6 executed evidence
 
-[Execution report](../../PROXOLINK_V6_EXECUTION_2026-10-07.md) · [CURRENT Android summary](native-5bf533b-attempt3/summary.json) · [Exact missing cases/files](native-5bf533b-attempt3/evidence-inventory.json) · [Diagnosis](native-5bf533b-attempt3/diagnosis.json) · [Authentication correction files](native-auth-correction-files.json) · [Evidence paths](evidence-files.json).
+[Execution report](../../PROXOLINK_V6_EXECUTION_2026-10-07.md) · [CURRENT native checkpoint](native-results.json) · [Current-run infrastructure diagnosis](native-c06bd3d-attempt1-infrastructure.json) · [Authentication correction](native-auth-correction-files.json) · [Evidence paths](evidence-files.json).
+
+CURRENT Android runtime is **BLOCKED**: authorized fresh run [37759310377](https://github.com/Zana-Sponsor/proxobalance/actions/runs/37759310377), attempt 2 at `c06bd3dccf9b0ea124447a2fc2ff4a47a6e096f1`, job `113255054733`, awaits `Zana-Sponsor` approval in unchanged `proxolink-preview-verification`. Expected 240; executed/passed/failed 0/0/0; candidate/baseline 0/0; all 240 cases and 480 first captures pending. Pixel pairs/exact/failed 0/0/0, all 240 unexecuted. Authentication correction is not exercised yet. No runtime artifact exists.
+
+Attempt 1 was approved but failed at KVM setup before emulator startup, 2026-10-08 09:55:23 UTC; native action SKIPPED. Underlying KVM cause is unknown. One same-run failed-job retry carries the successful APK, with no rebuild, source/workflow/protection/acceptance change. The approval gate remains intact. Exact source CI [37759310220](https://github.com/Zana-Sponsor/proxobalance/actions/runs/37759310220) passed all five jobs (124 backend, 189 Flutter, 480 browser, database/RLS + seven API lifecycles, edge checks and APK privacy). The trigger commit changes zero files from its passing parent.
+
+All 240 cases, complete real Android evidence, three fixed exact samples per 480 roles, native paint barriers and zero changed pixels remain mandatory. Previous nine pixel failures must be measured anew. Native chooser coverage remains 0 / NOT VERIFIED. Completed thumbnails/templates/live preview remain preserved. PR #7 is Draft/open/unmerged.
+
+The following evidence table and audit are historical for the previous completed run, before this newly authorized execution.
+
+[Execution report](../../PROXOLINK_V6_EXECUTION_2026-10-07.md) · [HISTORICAL Android summary](native-5bf533b-attempt3/summary.json) · [Exact missing cases/files](native-5bf533b-attempt3/evidence-inventory.json) · [Diagnosis](native-5bf533b-attempt3/diagnosis.json) · [Authentication correction files](native-auth-correction-files.json) · [Evidence paths](evidence-files.json).
 
 | Evidence | Status | Scope |
 |---|---|---|
 | [Source CI](ci-results.json) | SUCCESS at edcaa048 | Run 37709592066: backend 124, Flutter 189, responsive 480, DB/RLS, 7 API lifecycles, edge functions and release APK privacy; prior 5bf533b/634ad50 CI stays historical |
-| [CURRENT Android runtime](native-results.json) | FAILED | Run 37694585964 attempt 3 at 5bf533b: expected 240; 218 behavior executed/passed, 0 failed, 22 not reached |
+| [HISTORICAL Android runtime](native-results.json) | FAILED | Run 37694585964 attempt 3 at 5bf533b: expected 240; 218 behavior executed/passed, 0 failed, 22 not reached |
 | [Capture completeness](native-5bf533b-attempt3/evidence-inventory.json) | FAILED | 218 candidate + 218 baseline first captures; 22 missing per role (44 total); 1962/2160 required PNGs present; 198 PNGs missing |
 | [Strict same-emulator parity](native-5bf533b-attempt3/pixels.json) | FAILED | 209 exact / 9 failed among 218 pairs; 10 changed pixels total, max channel error 1; 22 pairs unexecuted |
 | [Fixed native capture repeatability](native-5bf533b-attempt3/capture-repeatability.json) | PASSED for captured roles | All 436/480 roles have exactly 3 samples and pixels.capture_stable=true; 1308 screenshots; all 872 saved repeat-crop comparisons independently recomputed exact |
@@ -20,7 +30,7 @@ Missing cases are pill-white-order-en-landscape at widths 430/768 and all 20 pil
 
 The pinned runner signs in once and ignores access-token expiry while repeatedly refreshing preview capabilities. That is a proven harness gap. The approximately one-hour timing is consistent with token expiry, but the underlying HTTP 401 is not directly proven to be expiry by retained JWT/server diagnostics. The smallest authentication correction renews at existing configuration boundaries, honors returned expires_in/expires_at with five-minute headroom, enforces the same user and fails closed. It changes only the three files in the correction manifest. It does not remedy or explain nine independently stable pixel pair differences; their exact cause remains unknown.
 
-No extra native run, environment approval, protection change or workflow replacement was performed. The current instruction prohibits a new native run, so execution of the authentication correction requires a new authorized action in the unchanged protected workflow. All 240 cases, complete evidence, three fixed exact samples per role and zero changed pixels remain mandatory. Matching-frame searches, masks, averaging, tolerances and adaptive pixel retries remain prohibited.
+No extra native run, environment approval, protection change or workflow replacement was performed. The instruction at that historical checkpoint prohibited a new native run, so execution of the authentication correction requires a new authorized action in the unchanged protected workflow. All 240 cases, complete evidence, three fixed exact samples per role and zero changed pixels remain mandatory. Matching-frame searches, masks, averaging, tolerances and adaptive pixel retries remain prohibited.
 
 Historical results stay separate: run 37669328941 at 1dca41a had 240 behavior passes, 240 candidate/240 baseline captures, 0 missing and 235 exact / 5 failed pixel pairs. Its native_evidence_incomplete classification incorrectly conflated pixel failures with missing evidence; [original inventory](native-1dca41a/evidence-inventory.json) and [validator replay](native-1dca41a/validator-replay.json) preserve that proof. Run 37647222280 at de501a9 had 240 behavior passes and 233 exact / 7 failed pairs. Both remain FAILED. The corrected run's attempt 2 failed at KVM before any native capture; [infrastructure diagnosis](native-5bf533b-attempt2-infrastructure.json) remains historical and does not explain attempt 3.
 

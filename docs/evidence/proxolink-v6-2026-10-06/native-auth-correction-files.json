@@ -44,5 +44,17 @@
     "edge_functions": "PASSED",
     "release_apk_privacy": "PASSED",
     "protected_native_runtime": "UNEXECUTED; the ordinary source push runtime job was skipped"
+  },
+  "protected_native_execution": {
+    "run_id": 37759310377,
+    "attempt": 2,
+    "revision": "c06bd3dccf9b0ea124447a2fc2ff4a47a6e096f1",
+    "runtime_job_id": 113255054733,
+    "status": "BLOCKED",
+    "reason": "waiting_for_authorized_environment_approval",
+    "authentication_result": "UNEXECUTED",
+    "prior_attempt_failure": "KVM setup before emulator startup",
+    "explicitly_authorized_new_run": true,
+    "source_changed_since_passing_parent": false
   }
 }

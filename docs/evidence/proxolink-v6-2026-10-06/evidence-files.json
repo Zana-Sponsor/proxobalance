@@ -1,17 +1,21 @@
 {
-  "scope": "CURRENT failed protected Android 5bf533b attempt 3 artifact audit and minimal runner authentication correction; historical native results preserved separately",
+  "scope": "CURRENT authorized protected run 37759310377 attempt 2 awaits environment approval; attempt 1 KVM failure safely diagnosed; historical complete/partial native audits preserved separately",
   "files": [
     {
       "path": "docs/evidence/proxolink-v6-2026-10-06/ci-results.json",
-      "origin": "CURRENT V6 terminal Android and source-validation report; historical evidence preserved separately"
+      "origin": "Current authorized execution checkpoint; historical audit preserved separately",
+      "bytes": 28928,
+      "git_blob_sha": "d293659c9c83ffdafe3da2a209b5109ecb7990f2"
     },
     {
       "path": "docs/evidence/proxolink-v6-2026-10-06/evidence-files.json",
-      "origin": "This exact-path manifest"
+      "origin": "Current authorized execution checkpoint; historical audit preserved separately"
     },
     {
       "path": "docs/evidence/proxolink-v6-2026-10-06/execution-blockers.json",
-      "origin": "CURRENT V6 terminal Android and source-validation report; historical evidence preserved separately"
+      "origin": "Current authorized execution checkpoint; historical audit preserved separately",
+      "bytes": 8127,
+      "git_blob_sha": "49d5e8a7a318af0a851f62d27ab0c1ccba40600c"
     },
     {
       "path": "docs/evidence/proxolink-v6-2026-10-06/native-approval-357aa00.jpg",
@@ -99,7 +103,9 @@
     },
     {
       "path": "docs/evidence/proxolink-v6-2026-10-06/native-results.json",
-      "origin": "CURRENT V6 terminal Android and source-validation report; historical evidence preserved separately"
+      "origin": "Current authorized execution checkpoint; historical audit preserved separately",
+      "bytes": 32276,
+      "git_blob_sha": "d6b76c8712ee76dd24aed575d2faef9fb66494ef"
     },
     {
       "path": "docs/evidence/proxolink-v6-2026-10-06/native-settled-5dbf391/capture-log-index.json",
@@ -115,7 +121,9 @@
     },
     {
       "path": "docs/evidence/proxolink-v6-2026-10-06/README.md",
-      "origin": "CURRENT V6 terminal Android and source-validation report; historical evidence preserved separately"
+      "origin": "Current authorized execution checkpoint; historical audit preserved separately",
+      "bytes": 7527,
+      "git_blob_sha": "e6db30d3164906717b07220e9bce24b92385e2a2"
     },
     {
       "path": "docs/evidence/proxolink-v6-2026-10-06/source-files.json",
@@ -127,7 +135,9 @@
     },
     {
       "path": "docs/PROXOLINK_V6_EXECUTION_2026-10-07.md",
-      "origin": "CURRENT V6 terminal Android and source-validation report; historical evidence preserved separately"
+      "origin": "Current authorized execution checkpoint; historical audit preserved separately",
+      "bytes": 42321,
+      "git_blob_sha": "81594dc5722188155c218cff3a6dbb8141e21bcd"
     },
     {
       "path": "docs/PROXOLINK_V6_ISOLATED_STAGING_SETUP.md",
@@ -523,18 +533,35 @@
     },
     {
       "path": "docs/evidence/proxolink-v6-2026-10-06/native-auth-correction-files.json",
-      "bytes": 1985,
-      "sha256": "93175578a4bcd0aa3049e4e4efa8a38716166854b094e65b5a301d90eafeb02c",
-      "origin": "Digest-verified safe Android artifact or exact allowlisted derived audit; no credentials/configuration/customer/raw-log content"
+      "origin": "Current authorized execution checkpoint; historical audit preserved separately",
+      "bytes": 2452,
+      "git_blob_sha": "dbcc19d187c0d0af10d470a90002a168a2b0e4fb"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt1-infrastructure.json",
+      "origin": "Safe allowlisted step diagnostics from failed current-run attempt 1; no raw logs or runtime configuration",
+      "bytes": 2594,
+      "git_blob_sha": "d91dfd8e6298b78102b8ff44b8d99fb14db4e415"
     }
   ],
-  "current_native_revision": "5bf533b11b7f638acc65395b65da1512e3275f5f",
+  "current_native_revision": "c06bd3dccf9b0ea124447a2fc2ff4a47a6e096f1",
   "corrected_native_revision": "5bf533b11b7f638acc65395b65da1512e3275f5f",
   "historical_source_revision": "9ec6264940628c75fa0fc114edc88013a61cbab5",
-  "current_native_run_id": 37694585964,
-  "current_native_attempt": 3,
-  "current_artifact_id": 11518923127,
+  "current_native_run_id": 37759310377,
+  "current_native_attempt": 2,
+  "current_artifact_id": null,
   "authentication_correction_manifest": "docs/evidence/proxolink-v6-2026-10-06/native-auth-correction-files.json",
-  "latest_verified_code_revision": "edcaa048289c9b5a4ee5e1e97f71035ca0731a91",
-  "latest_verified_code_ci_run": 37709592066
+  "latest_verified_code_revision": "c06bd3dccf9b0ea124447a2fc2ff4a47a6e096f1",
+  "latest_verified_code_ci_run": 37759310220,
+  "current_native_status": "BLOCKED",
+  "continuation_changed_files": [
+    "docs/PROXOLINK_V6_EXECUTION_2026-10-07.md",
+    "docs/evidence/proxolink-v6-2026-10-06/README.md",
+    "docs/evidence/proxolink-v6-2026-10-06/ci-results.json",
+    "docs/evidence/proxolink-v6-2026-10-06/evidence-files.json",
+    "docs/evidence/proxolink-v6-2026-10-06/execution-blockers.json",
+    "docs/evidence/proxolink-v6-2026-10-06/native-auth-correction-files.json",
+    "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt1-infrastructure.json",
+    "docs/evidence/proxolink-v6-2026-10-06/native-results.json"
+  ]
 }
