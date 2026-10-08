@@ -1,0 +1,6011 @@
+{
+  "comparison_input": "FIRST candidate crop versus FIRST same-emulator baseline crop",
+  "channels": "RGB; alpha removed as in pinned comparator",
+  "tolerance": 0,
+  "diff_files_verified": true,
+  "pairs": [
+    {
+      "case": "pill-contact-ku-portrait-320",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-contact-ku-portrait-375",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-contact-ku-portrait-393",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-contact-ku-portrait-430",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-contact-ku-portrait-768",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-contact-ku-landscape-320",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-contact-ku-landscape-375",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-contact-ku-landscape-393",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-contact-ku-landscape-430",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-contact-ku-landscape-768",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-contact-en-portrait-320",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-contact-en-portrait-375",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-contact-en-portrait-393",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-contact-en-portrait-430",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-contact-en-portrait-768",
+      "changed_pixels": 1,
+      "max_channel_error": 1,
+      "mean_channel_error": 2.8554459064327486e-07,
+      "exact_pixels_equal": false
+    },
+    {
+      "case": "pill-contact-en-landscape-320",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-contact-en-landscape-375",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-contact-en-landscape-393",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-contact-en-landscape-430",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-contact-en-landscape-768",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-order-ku-portrait-320",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-order-ku-portrait-375",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-order-ku-portrait-393",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-order-ku-portrait-430",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-order-ku-portrait-768",
+      "changed_pixels": 1,
+      "max_channel_error": 1,
+      "mean_channel_error": 2.8554459064327486e-07,
+      "exact_pixels_equal": false
+    },
+    {
+      "case": "pill-order-ku-landscape-320",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-order-ku-landscape-375",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-order-ku-landscape-393",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-order-ku-landscape-430",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-order-ku-landscape-768",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-order-en-portrait-320",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-order-en-portrait-375",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-order-en-portrait-393",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-order-en-portrait-430",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-order-en-portrait-768",
+      "changed_pixels": 1,
+      "max_channel_error": 1,
+      "mean_channel_error": 2.8554459064327486e-07,
+      "exact_pixels_equal": false
+    },
+    {
+      "case": "pill-order-en-landscape-320",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-order-en-landscape-375",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-order-en-landscape-393",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-order-en-landscape-430",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-order-en-landscape-768",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-download-ku-portrait-320",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-download-ku-portrait-375",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-download-ku-portrait-393",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-download-ku-portrait-430",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-download-ku-portrait-768",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-download-ku-landscape-320",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-download-ku-landscape-375",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-download-ku-landscape-393",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-download-ku-landscape-430",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-download-ku-landscape-768",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-download-en-portrait-320",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-download-en-portrait-375",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-download-en-portrait-393",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-download-en-portrait-430",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-download-en-portrait-768",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-download-en-landscape-320",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-download-en-landscape-375",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-download-en-landscape-393",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-download-en-landscape-430",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-download-en-landscape-768",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-mint-contact-ku-portrait-320",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-mint-contact-ku-portrait-375",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-mint-contact-ku-portrait-393",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-mint-contact-ku-portrait-430",
+      "changed_pixels": 1,
+      "max_channel_error": 1,
+      "mean_channel_error": 5.099959200326398e-07,
+      "exact_pixels_equal": false
+    },
+    {
+      "case": "pill-mint-contact-ku-portrait-768",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-mint-contact-ku-landscape-320",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-mint-contact-ku-landscape-375",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-mint-contact-ku-landscape-393",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-mint-contact-ku-landscape-430",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-mint-contact-ku-landscape-768",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-mint-contact-en-portrait-320",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-mint-contact-en-portrait-375",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-mint-contact-en-portrait-393",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-mint-contact-en-portrait-430",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-mint-contact-en-portrait-768",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-mint-contact-en-landscape-320",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-mint-contact-en-landscape-375",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-mint-contact-en-landscape-393",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-mint-contact-en-landscape-430",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-mint-contact-en-landscape-768",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-mint-order-ku-portrait-320",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-mint-order-ku-portrait-375",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-mint-order-ku-portrait-393",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-mint-order-ku-portrait-430",
+      "changed_pixels": 1,
+      "max_channel_error": 1,
+      "mean_channel_error": 5.099959200326398e-07,
+      "exact_pixels_equal": false
+    },
+    {
+      "case": "pill-mint-order-ku-portrait-768",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-mint-order-ku-landscape-320",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-mint-order-ku-landscape-375",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-mint-order-ku-landscape-393",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-mint-order-ku-landscape-430",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-mint-order-ku-landscape-768",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-mint-order-en-portrait-320",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-mint-order-en-portrait-375",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-mint-order-en-portrait-393",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-mint-order-en-portrait-430",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-mint-order-en-portrait-768",
+      "changed_pixels": 1,
+      "max_channel_error": 1,
+      "mean_channel_error": 2.8554459064327486e-07,
+      "exact_pixels_equal": false
+    },
+    {
+      "case": "pill-mint-order-en-landscape-320",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-mint-order-en-landscape-375",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-mint-order-en-landscape-393",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-mint-order-en-landscape-430",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-mint-order-en-landscape-768",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-mint-download-ku-portrait-320",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-mint-download-ku-portrait-375",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-mint-download-ku-portrait-393",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-mint-download-ku-portrait-430",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-mint-download-ku-portrait-768",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-mint-download-ku-landscape-320",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-mint-download-ku-landscape-375",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-mint-download-ku-landscape-393",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-mint-download-ku-landscape-430",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-mint-download-ku-landscape-768",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-mint-download-en-portrait-320",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-mint-download-en-portrait-375",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-mint-download-en-portrait-393",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-mint-download-en-portrait-430",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-mint-download-en-portrait-768",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-mint-download-en-landscape-320",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-mint-download-en-landscape-375",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-mint-download-en-landscape-393",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-mint-download-en-landscape-430",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-mint-download-en-landscape-768",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-dark-contact-ku-portrait-320",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-dark-contact-ku-portrait-375",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-dark-contact-ku-portrait-393",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-dark-contact-ku-portrait-430",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-dark-contact-ku-portrait-768",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-dark-contact-ku-landscape-320",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-dark-contact-ku-landscape-375",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-dark-contact-ku-landscape-393",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-dark-contact-ku-landscape-430",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-dark-contact-ku-landscape-768",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-dark-contact-en-portrait-320",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-dark-contact-en-portrait-375",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-dark-contact-en-portrait-393",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-dark-contact-en-portrait-430",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-dark-contact-en-portrait-768",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-dark-contact-en-landscape-320",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-dark-contact-en-landscape-375",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-dark-contact-en-landscape-393",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-dark-contact-en-landscape-430",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-dark-contact-en-landscape-768",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-dark-order-ku-portrait-320",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-dark-order-ku-portrait-375",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-dark-order-ku-portrait-393",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-dark-order-ku-portrait-430",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-dark-order-ku-portrait-768",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-dark-order-ku-landscape-320",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-dark-order-ku-landscape-375",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-dark-order-ku-landscape-393",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-dark-order-ku-landscape-430",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-dark-order-ku-landscape-768",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-dark-order-en-portrait-320",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-dark-order-en-portrait-375",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-dark-order-en-portrait-393",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-dark-order-en-portrait-430",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-dark-order-en-portrait-768",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-dark-order-en-landscape-320",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-dark-order-en-landscape-375",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-dark-order-en-landscape-393",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-dark-order-en-landscape-430",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-dark-order-en-landscape-768",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-dark-download-ku-portrait-320",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-dark-download-ku-portrait-375",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-dark-download-ku-portrait-393",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-dark-download-ku-portrait-430",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-dark-download-ku-portrait-768",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-dark-download-ku-landscape-320",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-dark-download-ku-landscape-375",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-dark-download-ku-landscape-393",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-dark-download-ku-landscape-430",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-dark-download-ku-landscape-768",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-dark-download-en-portrait-320",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-dark-download-en-portrait-375",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-dark-download-en-portrait-393",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-dark-download-en-portrait-430",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-dark-download-en-portrait-768",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-dark-download-en-landscape-320",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-dark-download-en-landscape-375",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-dark-download-en-landscape-393",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-dark-download-en-landscape-430",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-dark-download-en-landscape-768",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-white-contact-ku-portrait-320",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-white-contact-ku-portrait-375",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-white-contact-ku-portrait-393",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-white-contact-ku-portrait-430",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-white-contact-ku-portrait-768",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-white-contact-ku-landscape-320",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-white-contact-ku-landscape-375",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-white-contact-ku-landscape-393",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-white-contact-ku-landscape-430",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-white-contact-ku-landscape-768",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-white-contact-en-portrait-320",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-white-contact-en-portrait-375",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-white-contact-en-portrait-393",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-white-contact-en-portrait-430",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-white-contact-en-portrait-768",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-white-contact-en-landscape-320",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-white-contact-en-landscape-375",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-white-contact-en-landscape-393",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-white-contact-en-landscape-430",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-white-contact-en-landscape-768",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-white-order-ku-portrait-320",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-white-order-ku-portrait-375",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-white-order-ku-portrait-393",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-white-order-ku-portrait-430",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-white-order-ku-portrait-768",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-white-order-ku-landscape-320",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-white-order-ku-landscape-375",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-white-order-ku-landscape-393",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-white-order-ku-landscape-430",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-white-order-ku-landscape-768",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-white-order-en-portrait-320",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-white-order-en-portrait-375",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-white-order-en-portrait-393",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-white-order-en-portrait-430",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-white-order-en-portrait-768",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-white-order-en-landscape-320",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-white-order-en-landscape-375",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-white-order-en-landscape-393",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-white-order-en-landscape-430",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-white-order-en-landscape-768",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-white-download-ku-portrait-320",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-white-download-ku-portrait-375",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-white-download-ku-portrait-393",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-white-download-ku-portrait-430",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-white-download-ku-portrait-768",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-white-download-ku-landscape-320",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-white-download-ku-landscape-375",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-white-download-ku-landscape-393",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-white-download-ku-landscape-430",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-white-download-ku-landscape-768",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-white-download-en-portrait-320",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-white-download-en-portrait-375",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-white-download-en-portrait-393",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-white-download-en-portrait-430",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-white-download-en-portrait-768",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-white-download-en-landscape-320",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-white-download-en-landscape-375",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-white-download-en-landscape-393",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-white-download-en-landscape-430",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    },
+    {
+      "case": "pill-white-download-en-landscape-768",
+      "changed_pixels": 0,
+      "max_channel_error": 0,
+      "mean_channel_error": 0.0,
+      "exact_pixels_equal": true
+    }
+  ],
+  "repeat_crop_comparisons": 960,
+  "role_repeatability": [
+    {
+      "capture_id": "pill-contact-ku-portrait-320-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-contact-ku-portrait-320-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-contact-ku-portrait-375-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-contact-ku-portrait-375-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-contact-ku-portrait-393-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-contact-ku-portrait-393-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-contact-ku-portrait-430-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-contact-ku-portrait-430-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-contact-ku-portrait-768-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-contact-ku-portrait-768-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-contact-ku-landscape-320-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-contact-ku-landscape-320-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-contact-ku-landscape-375-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-contact-ku-landscape-375-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-contact-ku-landscape-393-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-contact-ku-landscape-393-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-contact-ku-landscape-430-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-contact-ku-landscape-430-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-contact-ku-landscape-768-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-contact-ku-landscape-768-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-contact-en-portrait-320-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-contact-en-portrait-320-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-contact-en-portrait-375-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-contact-en-portrait-375-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-contact-en-portrait-393-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-contact-en-portrait-393-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-contact-en-portrait-430-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-contact-en-portrait-430-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-contact-en-portrait-768-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-contact-en-portrait-768-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-contact-en-landscape-320-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-contact-en-landscape-320-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-contact-en-landscape-375-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-contact-en-landscape-375-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-contact-en-landscape-393-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-contact-en-landscape-393-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-contact-en-landscape-430-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-contact-en-landscape-430-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-contact-en-landscape-768-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-contact-en-landscape-768-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-order-ku-portrait-320-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-order-ku-portrait-320-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-order-ku-portrait-375-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-order-ku-portrait-375-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-order-ku-portrait-393-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-order-ku-portrait-393-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-order-ku-portrait-430-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-order-ku-portrait-430-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-order-ku-portrait-768-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-order-ku-portrait-768-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-order-ku-landscape-320-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-order-ku-landscape-320-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-order-ku-landscape-375-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-order-ku-landscape-375-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-order-ku-landscape-393-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-order-ku-landscape-393-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-order-ku-landscape-430-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-order-ku-landscape-430-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-order-ku-landscape-768-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-order-ku-landscape-768-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-order-en-portrait-320-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-order-en-portrait-320-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-order-en-portrait-375-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-order-en-portrait-375-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-order-en-portrait-393-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-order-en-portrait-393-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-order-en-portrait-430-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-order-en-portrait-430-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-order-en-portrait-768-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-order-en-portrait-768-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-order-en-landscape-320-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-order-en-landscape-320-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-order-en-landscape-375-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-order-en-landscape-375-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-order-en-landscape-393-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-order-en-landscape-393-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-order-en-landscape-430-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-order-en-landscape-430-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-order-en-landscape-768-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-order-en-landscape-768-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-download-ku-portrait-320-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-download-ku-portrait-320-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-download-ku-portrait-375-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-download-ku-portrait-375-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-download-ku-portrait-393-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-download-ku-portrait-393-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-download-ku-portrait-430-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-download-ku-portrait-430-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-download-ku-portrait-768-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-download-ku-portrait-768-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-download-ku-landscape-320-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-download-ku-landscape-320-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-download-ku-landscape-375-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-download-ku-landscape-375-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-download-ku-landscape-393-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-download-ku-landscape-393-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-download-ku-landscape-430-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-download-ku-landscape-430-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-download-ku-landscape-768-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-download-ku-landscape-768-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-download-en-portrait-320-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-download-en-portrait-320-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-download-en-portrait-375-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-download-en-portrait-375-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-download-en-portrait-393-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-download-en-portrait-393-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-download-en-portrait-430-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-download-en-portrait-430-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-download-en-portrait-768-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-download-en-portrait-768-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-download-en-landscape-320-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-download-en-landscape-320-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-download-en-landscape-375-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-download-en-landscape-375-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-download-en-landscape-393-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-download-en-landscape-393-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-download-en-landscape-430-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-download-en-landscape-430-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-download-en-landscape-768-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-download-en-landscape-768-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-contact-ku-portrait-320-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-contact-ku-portrait-320-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-contact-ku-portrait-375-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-contact-ku-portrait-375-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-contact-ku-portrait-393-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-contact-ku-portrait-393-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-contact-ku-portrait-430-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-contact-ku-portrait-430-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-contact-ku-portrait-768-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-contact-ku-portrait-768-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-contact-ku-landscape-320-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-contact-ku-landscape-320-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-contact-ku-landscape-375-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-contact-ku-landscape-375-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-contact-ku-landscape-393-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-contact-ku-landscape-393-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-contact-ku-landscape-430-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-contact-ku-landscape-430-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-contact-ku-landscape-768-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-contact-ku-landscape-768-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-contact-en-portrait-320-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-contact-en-portrait-320-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-contact-en-portrait-375-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-contact-en-portrait-375-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-contact-en-portrait-393-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-contact-en-portrait-393-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-contact-en-portrait-430-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-contact-en-portrait-430-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-contact-en-portrait-768-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-contact-en-portrait-768-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-contact-en-landscape-320-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-contact-en-landscape-320-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-contact-en-landscape-375-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-contact-en-landscape-375-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-contact-en-landscape-393-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-contact-en-landscape-393-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-contact-en-landscape-430-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-contact-en-landscape-430-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-contact-en-landscape-768-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-contact-en-landscape-768-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-order-ku-portrait-320-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-order-ku-portrait-320-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-order-ku-portrait-375-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-order-ku-portrait-375-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-order-ku-portrait-393-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-order-ku-portrait-393-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-order-ku-portrait-430-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-order-ku-portrait-430-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-order-ku-portrait-768-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-order-ku-portrait-768-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-order-ku-landscape-320-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-order-ku-landscape-320-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-order-ku-landscape-375-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-order-ku-landscape-375-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-order-ku-landscape-393-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-order-ku-landscape-393-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-order-ku-landscape-430-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-order-ku-landscape-430-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-order-ku-landscape-768-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-order-ku-landscape-768-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-order-en-portrait-320-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-order-en-portrait-320-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-order-en-portrait-375-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-order-en-portrait-375-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-order-en-portrait-393-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-order-en-portrait-393-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-order-en-portrait-430-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-order-en-portrait-430-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-order-en-portrait-768-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-order-en-portrait-768-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-order-en-landscape-320-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-order-en-landscape-320-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-order-en-landscape-375-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-order-en-landscape-375-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-order-en-landscape-393-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-order-en-landscape-393-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-order-en-landscape-430-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-order-en-landscape-430-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-order-en-landscape-768-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-order-en-landscape-768-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-download-ku-portrait-320-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-download-ku-portrait-320-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-download-ku-portrait-375-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-download-ku-portrait-375-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-download-ku-portrait-393-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-download-ku-portrait-393-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-download-ku-portrait-430-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-download-ku-portrait-430-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-download-ku-portrait-768-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-download-ku-portrait-768-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-download-ku-landscape-320-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-download-ku-landscape-320-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-download-ku-landscape-375-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-download-ku-landscape-375-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-download-ku-landscape-393-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-download-ku-landscape-393-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-download-ku-landscape-430-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-download-ku-landscape-430-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-download-ku-landscape-768-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-download-ku-landscape-768-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-download-en-portrait-320-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-download-en-portrait-320-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-download-en-portrait-375-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-download-en-portrait-375-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-download-en-portrait-393-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-download-en-portrait-393-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-download-en-portrait-430-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-download-en-portrait-430-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-download-en-portrait-768-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-download-en-portrait-768-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-download-en-landscape-320-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-download-en-landscape-320-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-download-en-landscape-375-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-download-en-landscape-375-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-download-en-landscape-393-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-download-en-landscape-393-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-download-en-landscape-430-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-download-en-landscape-430-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-download-en-landscape-768-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-mint-download-en-landscape-768-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-contact-ku-portrait-320-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-contact-ku-portrait-320-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-contact-ku-portrait-375-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-contact-ku-portrait-375-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-contact-ku-portrait-393-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-contact-ku-portrait-393-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-contact-ku-portrait-430-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-contact-ku-portrait-430-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-contact-ku-portrait-768-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-contact-ku-portrait-768-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-contact-ku-landscape-320-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-contact-ku-landscape-320-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-contact-ku-landscape-375-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-contact-ku-landscape-375-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-contact-ku-landscape-393-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-contact-ku-landscape-393-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-contact-ku-landscape-430-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-contact-ku-landscape-430-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-contact-ku-landscape-768-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-contact-ku-landscape-768-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-contact-en-portrait-320-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-contact-en-portrait-320-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-contact-en-portrait-375-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-contact-en-portrait-375-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-contact-en-portrait-393-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-contact-en-portrait-393-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-contact-en-portrait-430-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-contact-en-portrait-430-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-contact-en-portrait-768-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-contact-en-portrait-768-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-contact-en-landscape-320-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-contact-en-landscape-320-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-contact-en-landscape-375-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-contact-en-landscape-375-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-contact-en-landscape-393-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-contact-en-landscape-393-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-contact-en-landscape-430-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-contact-en-landscape-430-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-contact-en-landscape-768-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-contact-en-landscape-768-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-order-ku-portrait-320-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-order-ku-portrait-320-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-order-ku-portrait-375-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-order-ku-portrait-375-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-order-ku-portrait-393-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-order-ku-portrait-393-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-order-ku-portrait-430-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-order-ku-portrait-430-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-order-ku-portrait-768-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-order-ku-portrait-768-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-order-ku-landscape-320-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-order-ku-landscape-320-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-order-ku-landscape-375-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-order-ku-landscape-375-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-order-ku-landscape-393-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-order-ku-landscape-393-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-order-ku-landscape-430-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-order-ku-landscape-430-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-order-ku-landscape-768-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-order-ku-landscape-768-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-order-en-portrait-320-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-order-en-portrait-320-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-order-en-portrait-375-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-order-en-portrait-375-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-order-en-portrait-393-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-order-en-portrait-393-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-order-en-portrait-430-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-order-en-portrait-430-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-order-en-portrait-768-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-order-en-portrait-768-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-order-en-landscape-320-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-order-en-landscape-320-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-order-en-landscape-375-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-order-en-landscape-375-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-order-en-landscape-393-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-order-en-landscape-393-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-order-en-landscape-430-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-order-en-landscape-430-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-order-en-landscape-768-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-order-en-landscape-768-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-download-ku-portrait-320-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-download-ku-portrait-320-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-download-ku-portrait-375-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-download-ku-portrait-375-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-download-ku-portrait-393-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-download-ku-portrait-393-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-download-ku-portrait-430-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-download-ku-portrait-430-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-download-ku-portrait-768-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-download-ku-portrait-768-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-download-ku-landscape-320-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-download-ku-landscape-320-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-download-ku-landscape-375-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-download-ku-landscape-375-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-download-ku-landscape-393-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-download-ku-landscape-393-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-download-ku-landscape-430-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-download-ku-landscape-430-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-download-ku-landscape-768-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-download-ku-landscape-768-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-download-en-portrait-320-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-download-en-portrait-320-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-download-en-portrait-375-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-download-en-portrait-375-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-download-en-portrait-393-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-download-en-portrait-393-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-download-en-portrait-430-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-download-en-portrait-430-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-download-en-portrait-768-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-download-en-portrait-768-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-download-en-landscape-320-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-download-en-landscape-320-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-download-en-landscape-375-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-download-en-landscape-375-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-download-en-landscape-393-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-download-en-landscape-393-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-download-en-landscape-430-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-download-en-landscape-430-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-download-en-landscape-768-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-dark-download-en-landscape-768-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-contact-ku-portrait-320-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-contact-ku-portrait-320-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-contact-ku-portrait-375-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-contact-ku-portrait-375-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-contact-ku-portrait-393-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-contact-ku-portrait-393-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-contact-ku-portrait-430-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-contact-ku-portrait-430-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-contact-ku-portrait-768-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-contact-ku-portrait-768-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-contact-ku-landscape-320-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-contact-ku-landscape-320-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-contact-ku-landscape-375-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-contact-ku-landscape-375-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-contact-ku-landscape-393-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-contact-ku-landscape-393-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-contact-ku-landscape-430-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-contact-ku-landscape-430-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-contact-ku-landscape-768-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-contact-ku-landscape-768-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-contact-en-portrait-320-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-contact-en-portrait-320-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-contact-en-portrait-375-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-contact-en-portrait-375-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-contact-en-portrait-393-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-contact-en-portrait-393-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-contact-en-portrait-430-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-contact-en-portrait-430-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-contact-en-portrait-768-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-contact-en-portrait-768-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-contact-en-landscape-320-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-contact-en-landscape-320-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-contact-en-landscape-375-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-contact-en-landscape-375-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-contact-en-landscape-393-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-contact-en-landscape-393-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-contact-en-landscape-430-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-contact-en-landscape-430-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-contact-en-landscape-768-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-contact-en-landscape-768-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-order-ku-portrait-320-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-order-ku-portrait-320-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-order-ku-portrait-375-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-order-ku-portrait-375-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-order-ku-portrait-393-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-order-ku-portrait-393-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-order-ku-portrait-430-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-order-ku-portrait-430-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-order-ku-portrait-768-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-order-ku-portrait-768-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-order-ku-landscape-320-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-order-ku-landscape-320-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-order-ku-landscape-375-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-order-ku-landscape-375-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-order-ku-landscape-393-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-order-ku-landscape-393-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-order-ku-landscape-430-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-order-ku-landscape-430-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-order-ku-landscape-768-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-order-ku-landscape-768-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-order-en-portrait-320-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-order-en-portrait-320-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-order-en-portrait-375-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-order-en-portrait-375-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-order-en-portrait-393-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-order-en-portrait-393-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-order-en-portrait-430-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-order-en-portrait-430-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-order-en-portrait-768-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-order-en-portrait-768-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-order-en-landscape-320-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-order-en-landscape-320-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-order-en-landscape-375-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-order-en-landscape-375-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-order-en-landscape-393-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-order-en-landscape-393-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-order-en-landscape-430-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-order-en-landscape-430-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-order-en-landscape-768-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-order-en-landscape-768-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-download-ku-portrait-320-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-download-ku-portrait-320-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-download-ku-portrait-375-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-download-ku-portrait-375-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-download-ku-portrait-393-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-download-ku-portrait-393-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-download-ku-portrait-430-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-download-ku-portrait-430-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-download-ku-portrait-768-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-download-ku-portrait-768-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-download-ku-landscape-320-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-download-ku-landscape-320-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-download-ku-landscape-375-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-download-ku-landscape-375-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-download-ku-landscape-393-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-download-ku-landscape-393-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-download-ku-landscape-430-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-download-ku-landscape-430-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-download-ku-landscape-768-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-download-ku-landscape-768-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-download-en-portrait-320-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-download-en-portrait-320-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-download-en-portrait-375-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-download-en-portrait-375-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-download-en-portrait-393-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-download-en-portrait-393-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-download-en-portrait-430-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-download-en-portrait-430-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-download-en-portrait-768-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-download-en-portrait-768-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-download-en-landscape-320-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-download-en-landscape-320-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-download-en-landscape-375-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-download-en-landscape-375-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-download-en-landscape-393-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-download-en-landscape-393-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-download-en-landscape-430-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-download-en-landscape-430-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-download-en-landscape-768-candidate",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    },
+    {
+      "capture_id": "pill-white-download-en-landscape-768-baseline",
+      "samples": 3,
+      "changed_pixels": [
+        0,
+        0
+      ],
+      "exact_pixels_equal": true
+    }
+  ]
+}

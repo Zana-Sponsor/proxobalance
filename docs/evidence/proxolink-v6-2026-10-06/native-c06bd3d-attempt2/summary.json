@@ -1,0 +1,350 @@
+{
+  "observed_on": "2026-10-08",
+  "status": "FAILED",
+  "run_id": 37759310377,
+  "attempt": 2,
+  "revision": "c06bd3dccf9b0ea124447a2fc2ff4a47a6e096f1",
+  "runtime_job_id": 113255054733,
+  "workflow_url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/37759310377",
+  "workflow_path": ".github/workflows/proxolink-native-build.yml",
+  "workflow_state": "completed",
+  "workflow_conclusion": "failure",
+  "environment": "proxolink-preview-verification",
+  "required_reviewer": "Zana-Sponsor",
+  "authorized_gate_completed": true,
+  "approval_bypassed": false,
+  "completed_at": "2026-10-08T11:42:45Z",
+  "apk_job_id": 113255053774,
+  "apk_build": "SUCCESS",
+  "apk_reused_from_successful_attempt_1": true,
+  "kvm_setup": "SUCCESS",
+  "production_android_webview_executed": true,
+  "expected_cases": 240,
+  "executed_cases": 240,
+  "passed_cases": 240,
+  "failed_cases": 0,
+  "unexecuted_cases": 0,
+  "candidate_captures": 240,
+  "baseline_captures": 240,
+  "missing_candidate_captures": 0,
+  "missing_baseline_captures": 0,
+  "missing_captures": 0,
+  "pixel_pairs": 240,
+  "pixel_exact": 234,
+  "pixel_failed": 6,
+  "total_changed_pixels": 6,
+  "max_channel_error": 1,
+  "changed_pixel_threshold": 0,
+  "expected_pixel_pairs": 240,
+  "unexecuted_pixel_pairs": 0,
+  "repeatability_expected_roles": 480,
+  "repeatability_executed_roles": 480,
+  "repeatability_stable_roles": 480,
+  "repeatability_unstable_roles": 0,
+  "samples_per_role": 3,
+  "fixed_screenshot_samples": 1440,
+  "native_paint_barriers": "PASSED for all 240 cases",
+  "counts_by_type": {
+    "contact": 80,
+    "order": 80,
+    "download": 80
+  },
+  "counts_by_design": {
+    "pill": 60,
+    "pill-mint": 60,
+    "pill-dark": 60,
+    "pill-white": 60
+  },
+  "rtl_cases": 120,
+  "ltr_cases": 120,
+  "counts_by_orientation": {
+    "portrait": 120,
+    "landscape": 120
+  },
+  "counts_by_width": {
+    "320": 48,
+    "375": 48,
+    "393": 48,
+    "430": 48,
+    "768": 48
+  },
+  "provider_assertions": "PASSED for all 240 cases",
+  "overflow_assertions": "PASSED for all 240 cases under pinned probe checks",
+  "safe_inert_navigation_assertions": "PASSED for all 240 cases",
+  "read_only_security": "PASSED (6 checks)",
+  "native_thumbnail_chooser_cases": 0,
+  "native_thumbnail_to_webview_selection": "NOT VERIFIED; production ProxoLinkPreview is rendered directly",
+  "authentication_outcome": {
+    "matrix_completed": true,
+    "previous_template_catalog_401_recurred": false,
+    "last_json_response_status": 200,
+    "renewal_count": "NOT RETAINED",
+    "limit": "All 240 cases reached final validation without the prior catalog 401; exact session expiry/renewal diagnostics are not retained."
+  },
+  "terminal_failure": {
+    "status": "FAILED",
+    "stage": "native_case_collection",
+    "code": "native_pixel_parity_failed",
+    "preflight_check": null,
+    "transport_code": "unclassified_transport",
+    "last_json_response_status": 200,
+    "credential_values_included": false
+  },
+  "missing_case_ids": [],
+  "failed_pixel_cases": [
+    {
+      "case": "pill-contact-en-portrait-768",
+      "changed_pixels": 1,
+      "max_channel_error": 1,
+      "coordinate_space": "zero-based WebView crop",
+      "locations": [
+        {
+          "x": 380,
+          "y": 222,
+          "candidate_rgb": [
+            215,
+            221,
+            236
+          ],
+          "baseline_rgb": [
+            215,
+            222,
+            236
+          ],
+          "candidate_minus_baseline_rgb": [
+            0,
+            -1,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "case": "pill-order-ku-portrait-768",
+      "changed_pixels": 1,
+      "max_channel_error": 1,
+      "coordinate_space": "zero-based WebView crop",
+      "locations": [
+        {
+          "x": 380,
+          "y": 222,
+          "candidate_rgb": [
+            220,
+            227,
+            240
+          ],
+          "baseline_rgb": [
+            220,
+            226,
+            240
+          ],
+          "candidate_minus_baseline_rgb": [
+            0,
+            1,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "case": "pill-order-en-portrait-768",
+      "changed_pixels": 1,
+      "max_channel_error": 1,
+      "coordinate_space": "zero-based WebView crop",
+      "locations": [
+        {
+          "x": 380,
+          "y": 222,
+          "candidate_rgb": [
+            215,
+            222,
+            236
+          ],
+          "baseline_rgb": [
+            215,
+            221,
+            236
+          ],
+          "candidate_minus_baseline_rgb": [
+            0,
+            1,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "case": "pill-mint-contact-ku-portrait-430",
+      "changed_pixels": 1,
+      "max_channel_error": 1,
+      "coordinate_space": "zero-based WebView crop",
+      "locations": [
+        {
+          "x": 282,
+          "y": 184,
+          "candidate_rgb": [
+            237,
+            247,
+            244
+          ],
+          "baseline_rgb": [
+            237,
+            247,
+            243
+          ],
+          "candidate_minus_baseline_rgb": [
+            0,
+            0,
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "case": "pill-mint-order-ku-portrait-430",
+      "changed_pixels": 1,
+      "max_channel_error": 1,
+      "coordinate_space": "zero-based WebView crop",
+      "locations": [
+        {
+          "x": 282,
+          "y": 184,
+          "candidate_rgb": [
+            237,
+            247,
+            244
+          ],
+          "baseline_rgb": [
+            237,
+            247,
+            243
+          ],
+          "candidate_minus_baseline_rgb": [
+            0,
+            0,
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "case": "pill-mint-order-en-portrait-768",
+      "changed_pixels": 1,
+      "max_channel_error": 1,
+      "coordinate_space": "zero-based WebView crop",
+      "locations": [
+        {
+          "x": 290,
+          "y": 228,
+          "candidate_rgb": [
+            234,
+            245,
+            241
+          ],
+          "baseline_rgb": [
+            234,
+            246,
+            241
+          ],
+          "candidate_minus_baseline_rgb": [
+            0,
+            -1,
+            0
+          ]
+        }
+      ]
+    }
+  ],
+  "artifact": {
+    "id": 11548551620,
+    "bytes": 138610344,
+    "files": 2165,
+    "png_files": 2160,
+    "json_files": 5,
+    "sha256": "97192f255e06ea104088f8f7220fd8f7690b983e6fdcf8cb35cb10bf32cf4b79",
+    "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/37759310377/artifacts/11548551620",
+    "created_at": "2026-10-08T11:42:42Z",
+    "expires_at": "2026-10-15T11:42:37Z",
+    "downloaded_and_digest_verified": true
+  },
+  "evidence_allowlist": [
+    "case-results.json",
+    "pixels.json",
+    "security.json",
+    "failure.json",
+    "capture-repeatability.json",
+    "*-webview.png (failed pairs only)",
+    "*-baseline-webview.png (failed pairs only)",
+    "*-diff.png (failed pairs only)",
+    "safe inventories and sanitized capture acknowledgement index"
+  ],
+  "behavior_passed_cases": 240,
+  "behavior_failed_cases": 0,
+  "native_acceptance_passed_cases": 234,
+  "native_acceptance_failed_cases": 6,
+  "native_acceptance_unexecuted_cases": 0,
+  "rendered_response_security_checks": 4,
+  "original_successful_apk_job_id": 113251558088,
+  "new_execution_explicitly_authorized_by_user": true,
+  "product_or_harness_files_changed_after_native_testing": [],
+  "documentation_files_changed_after_native_testing": [
+    "docs/PROXOLINK_V6_EXECUTION_2026-10-07.md",
+    "docs/evidence/proxolink-v6-2026-10-06/README.md",
+    "docs/evidence/proxolink-v6-2026-10-06/ci-results.json",
+    "docs/evidence/proxolink-v6-2026-10-06/evidence-files.json",
+    "docs/evidence/proxolink-v6-2026-10-06/execution-blockers.json",
+    "docs/evidence/proxolink-v6-2026-10-06/native-auth-correction-files.json",
+    "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/capture-file-manifest.json",
+    "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/capture-log-index.json",
+    "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/capture-repeatability.json",
+    "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/case-results.json",
+    "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/diagnosis.json",
+    "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/evidence-inventory.json",
+    "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/failure.json",
+    "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/independent-pixel-audit.json",
+    "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-contact-en-portrait-768-baseline-webview.png",
+    "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-contact-en-portrait-768-diff.png",
+    "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-contact-en-portrait-768-webview.png",
+    "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-mint-contact-ku-portrait-430-baseline-webview.png",
+    "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-mint-contact-ku-portrait-430-diff.png",
+    "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-mint-contact-ku-portrait-430-webview.png",
+    "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-mint-order-en-portrait-768-baseline-webview.png",
+    "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-mint-order-en-portrait-768-diff.png",
+    "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-mint-order-en-portrait-768-webview.png",
+    "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-mint-order-ku-portrait-430-baseline-webview.png",
+    "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-mint-order-ku-portrait-430-diff.png",
+    "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-mint-order-ku-portrait-430-webview.png",
+    "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-order-en-portrait-768-baseline-webview.png",
+    "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-order-en-portrait-768-diff.png",
+    "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-order-en-portrait-768-webview.png",
+    "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-order-ku-portrait-768-baseline-webview.png",
+    "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-order-ku-portrait-768-diff.png",
+    "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-order-ku-portrait-768-webview.png",
+    "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pixels.json",
+    "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/security.json",
+    "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/summary.json",
+    "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/validator-replay.json",
+    "docs/evidence/proxolink-v6-2026-10-06/native-results.json"
+  ],
+  "prior_attempt_infrastructure_diagnosis": "native-c06bd3d-attempt1-infrastructure.json",
+  "source_identity": {
+    "passing_parent_revision": "ce561f6bbc688680e37c1bc03b92e202478d068b",
+    "tree_sha": "0114f0870256e18069ec4a6325463da95166b54f",
+    "trigger_commit_changed_files": 0,
+    "authentication_fix_revision": "edcaa048289c9b5a4ee5e1e97f71035ca0731a91"
+  },
+  "acceptance": {
+    "required_cases": 240,
+    "required_candidate_first_captures": 240,
+    "required_baseline_first_captures": 240,
+    "required_roles": 480,
+    "fixed_samples_per_role": 3,
+    "required_native_paint_barriers": true,
+    "first_candidate_and_first_baseline_only": true,
+    "allowed_missing_cases": 0,
+    "allowed_missing_captures": 0,
+    "allowed_unstable_captures": 0,
+    "allowed_changed_pixels": 0,
+    "masking_tolerance_averaging_frame_search_or_adaptive_pixel_retry": false
+  }
+}

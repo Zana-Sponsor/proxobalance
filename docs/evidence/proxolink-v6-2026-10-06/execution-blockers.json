@@ -1,6 +1,6 @@
 {
   "observed_on": "2026-10-08",
-  "status": "BLOCKED: authorized current run 37759310377 attempt 2 awaits environment approval; attempt 1 stopped at KVM before Android execution",
+  "status": "FAILED: complete protected Android matrix has six nonzero FIRST-frame pixel pairs; underlying pixel cause unknown",
   "workspace": {
     "execution_connection": "Available for local source analysis and Node tests",
     "repository_connection": "Available through GitHub connector",
@@ -12,32 +12,52 @@
     "attempt": 2,
     "revision": "c06bd3dccf9b0ea124447a2fc2ff4a47a6e096f1",
     "runtime_job_id": 113255054733,
-    "status": "BLOCKED",
+    "status": "FAILED",
     "expected_cases": 240,
-    "behavior_executed": 0,
-    "behavior_passed": 0,
+    "behavior_executed": 240,
+    "behavior_passed": 240,
     "behavior_failed": 0,
-    "unexecuted_cases": 240,
-    "pixel_exact": 0,
-    "pixel_failed": 0,
-    "unexecuted_pixel_pairs": 240,
-    "candidate_captures": 0,
-    "baseline_captures": 0,
-    "missing_captures": 480,
-    "capture_count_scope": "All 480 first captures are pending; runtime has not executed in this attempt.",
+    "unexecuted_cases": 0,
+    "pixel_exact": 234,
+    "pixel_failed": 6,
+    "changed_pixels": 6,
+    "unexecuted_pixel_pairs": 0,
+    "candidate_captures": 240,
+    "baseline_captures": 240,
+    "missing_captures": 0,
+    "capture_count_scope": "All 480 FIRST captures present; all 2160 required PNGs valid, 240 metadata/pixel entries and 480 unique acknowledgements.",
+    "repeatability_stable_roles": 480,
+    "repeatability_unstable_roles": 0,
+    "samples_per_role": 3,
+    "repeat_comparisons_exact": 960,
     "environment": "proxolink-preview-verification",
     "required_reviewer": "Zana-Sponsor",
-    "authorized_gate_completed": false,
+    "authorized_gate_completed": true,
     "approval_bypassed": false,
     "workflow_changed": false,
     "runtime_cancelled": false,
+    "failure_reason": "native_case_collection / native_pixel_parity_failed",
+    "authentication_outcome": {
+      "matrix_completed": true,
+      "previous_template_catalog_401_recurred": false,
+      "last_json_response_status": 200,
+      "renewal_count": "NOT RETAINED",
+      "limit": "All 240 cases reached final validation without the prior catalog 401; exact session expiry/renewal diagnostics are not retained."
+    },
     "remaining_blockers": [
-      "Authorized Zana-Sponsor environment approval for current retry is pending; preserve the gate",
-      "All 240 Android cases, 480 role captures with three exact samples each, complete evidence and 240 zero-difference pairs remain to be executed",
-      "Authentication renewal fix has passing source CI but no native authentication result because attempt 1 stopped at KVM before emulator startup",
-      "Previous nine pair differences are historical and must be measured anew; pixel cause remains unknown",
-      "Native thumbnail chooser taps remain 0 / NOT VERIFIED"
+      "Six FIRST candidate/baseline pairs differ by one channel level at one pixel each; exact underlying cause remains UNKNOWN.",
+      "Native thumbnail-to-large-WebView chooser coverage remains 0 / NOT VERIFIED.",
+      "The one authorized protected execution is terminal; any additional native execution requires new authorization."
     ],
+    "failed_case_ids": [
+      "pill-contact-en-portrait-768",
+      "pill-order-ku-portrait-768",
+      "pill-order-en-portrait-768",
+      "pill-mint-contact-ku-portrait-430",
+      "pill-mint-order-ku-portrait-430",
+      "pill-mint-order-en-portrait-768"
+    ],
+    "diagnosis": "native-c06bd3d-attempt2/diagnosis.json",
     "prior_attempt_failure_diagnosis": "native-c06bd3d-attempt1-infrastructure.json",
     "authentication_correction_manifest": "native-auth-correction-files.json"
   },
@@ -97,16 +117,20 @@
     "inventory_scope": "Historical inventory retained; no new staging/customer/DDL work in this native-only continuation"
   },
   "artifact_retention": {
-    "current_native_runtime_artifact": null,
-    "current_native_runtime_artifact_expires_at": null,
-    "current_native_evidence_uploaded": false,
-    "reason": "Attempt 1 stopped before emulator startup; current attempt 2 awaits authorized approval.",
+    "current_native_runtime_artifact": 11548551620,
+    "current_native_runtime_artifact_expires_at": "2026-10-15T11:42:37Z",
+    "current_native_evidence_uploaded": true,
+    "reason": "Terminal complete evidence is retained through safe allowlisted JSON, failed crop triples, full file hash inventory and independent replay.",
     "credential_free_apk_artifact": {
       "id": 11542240080,
       "expires_at": "2026-10-09T09:53:54Z",
       "native_runtime_evidence": false
     },
-    "safe_infrastructure_diagnosis": "native-c06bd3d-attempt1-infrastructure.json"
+    "safe_infrastructure_diagnosis": "native-c06bd3d-attempt1-infrastructure.json",
+    "sha256": "97192f255e06ea104088f8f7220fd8f7690b983e6fdcf8cb35cb10bf32cf4b79",
+    "downloaded_and_digest_verified": true,
+    "all_native_screenshots_committed": false,
+    "retained": "Five safe artifact JSON files, 18 failed-pair PNG crops/diffs, full 2165-file manifest, 480 safe acknowledgements, completeness and 960-repeat independent audits, diagnosis, summary and strict validator replay."
   },
   "authentication_fix_source_ci": {
     "revision": "edcaa048289c9b5a4ee5e1e97f71035ca0731a91",
@@ -190,5 +214,39 @@
     "downloaded_and_digest_verified": true,
     "all_native_screenshots_committed": false,
     "retained": "All five allowlisted JSON files; nine failed candidate/baseline/diff triples; full 1967-file hash/dimension manifest; 436 sanitized capture acknowledgements; exact missing-case/file inventory; strict validator replay; summary/diagnosis. Complete artifact is linked."
+  },
+  "historical_current_run_approval_checkpoint": {
+    "run_id": 37759310377,
+    "attempt": 2,
+    "revision": "c06bd3dccf9b0ea124447a2fc2ff4a47a6e096f1",
+    "runtime_job_id": 113255054733,
+    "status": "BLOCKED",
+    "expected_cases": 240,
+    "behavior_executed": 0,
+    "behavior_passed": 0,
+    "behavior_failed": 0,
+    "unexecuted_cases": 240,
+    "pixel_exact": 0,
+    "pixel_failed": 0,
+    "unexecuted_pixel_pairs": 240,
+    "candidate_captures": 0,
+    "baseline_captures": 0,
+    "missing_captures": 480,
+    "capture_count_scope": "All 480 first captures are pending; runtime has not executed in this attempt.",
+    "environment": "proxolink-preview-verification",
+    "required_reviewer": "Zana-Sponsor",
+    "authorized_gate_completed": false,
+    "approval_bypassed": false,
+    "workflow_changed": false,
+    "runtime_cancelled": false,
+    "remaining_blockers": [
+      "Authorized Zana-Sponsor environment approval for current retry is pending; preserve the gate",
+      "All 240 Android cases, 480 role captures with three exact samples each, complete evidence and 240 zero-difference pairs remain to be executed",
+      "Authentication renewal fix has passing source CI but no native authentication result because attempt 1 stopped at KVM before emulator startup",
+      "Previous nine pair differences are historical and must be measured anew; pixel cause remains unknown",
+      "Native thumbnail chooser taps remain 0 / NOT VERIFIED"
+    ],
+    "prior_attempt_failure_diagnosis": "native-c06bd3d-attempt1-infrastructure.json",
+    "authentication_correction_manifest": "native-auth-correction-files.json"
   }
 }

@@ -27,7 +27,7 @@
     "javascript_syntax": "PASSED",
     "diff_whitespace": "PASSED"
   },
-  "native_verification": "BLOCKED: run 37759310377 attempt 2 awaits authorized environment approval; attempt 1 failed before emulator startup",
+  "native_verification": "FAILED only strict pixel gate: current protected run completed 240/240 behavior cases; prior catalog HTTP 401 did not recur",
   "cause_limit": "Pinned runner demonstrably caches one app access token without expiry handling. Final catalog HTTP 401 is observed; token expiry is a timing/source inference, not directly proven by retained JWT/server diagnostics.",
   "pixel_remedy_claimed": false,
   "additional_protected_native_run_created": true,
@@ -50,12 +50,24 @@
     "attempt": 2,
     "revision": "c06bd3dccf9b0ea124447a2fc2ff4a47a6e096f1",
     "runtime_job_id": 113255054733,
-    "status": "BLOCKED",
-    "reason": "waiting_for_authorized_environment_approval",
-    "authentication_result": "UNEXECUTED",
+    "status": "FAILED",
+    "reason": "native_pixel_parity_failed",
+    "authentication_result": "All 240 cases completed; prior catalog HTTP 401 did not recur; last JSON response 200. Exact renewals not retained.",
     "prior_attempt_failure": "KVM setup before emulator startup",
     "explicitly_authorized_new_run": true,
-    "source_changed_since_passing_parent": false
+    "source_changed_since_passing_parent": false,
+    "expected_cases": 240,
+    "executed_cases": 240,
+    "behavior_passed": 240,
+    "behavior_failed": 0,
+    "candidate_captures": 240,
+    "baseline_captures": 240,
+    "missing_captures": 0,
+    "pixel_exact": 234,
+    "pixel_failed": 6,
+    "repeatability_stable_roles": 480,
+    "repeatability_unstable_roles": 0,
+    "artifact_id": 11548551620
   },
   "historical_authentication_fix_checkpoint": {
     "revision": "edcaa048289c9b5a4ee5e1e97f71035ca0731a91",
@@ -63,5 +75,13 @@
     "native_verification": "NOT EXECUTED at the source-fix checkpoint"
   },
   "failure_run_revision": "5bf533b11b7f638acc65395b65da1512e3275f5f",
-  "additional_protected_native_run_explicitly_authorized": true
+  "additional_protected_native_run_explicitly_authorized": true,
+  "current_authentication_outcome": {
+    "matrix_completed": true,
+    "previous_template_catalog_401_recurred": false,
+    "last_json_response_status": 200,
+    "renewal_count": "NOT RETAINED",
+    "limit": "All 240 cases reached final validation without the prior catalog 401; exact session expiry/renewal diagnostics are not retained."
+  },
+  "changes_after_native_testing": []
 }

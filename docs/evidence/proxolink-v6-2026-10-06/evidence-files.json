@@ -1,147 +1,53 @@
 {
-  "scope": "CURRENT authorized protected run 37759310377 attempt 2 awaits environment approval; attempt 1 KVM failure safely diagnosed; historical complete/partial native audits preserved separately",
+  "scope": "CURRENT terminal protected run 37759310377 attempt 2 FAILED strict parity with complete stable evidence; historical audits preserved separately",
   "files": [
     {
-      "path": "docs/evidence/proxolink-v6-2026-10-06/ci-results.json",
-      "origin": "Current authorized execution checkpoint; historical audit preserved separately",
-      "bytes": 28928,
-      "git_blob_sha": "d293659c9c83ffdafe3da2a209b5109ecb7990f2"
-    },
-    {
-      "path": "docs/evidence/proxolink-v6-2026-10-06/evidence-files.json",
-      "origin": "Current authorized execution checkpoint; historical audit preserved separately"
-    },
-    {
-      "path": "docs/evidence/proxolink-v6-2026-10-06/execution-blockers.json",
-      "origin": "Current authorized execution checkpoint; historical audit preserved separately",
-      "bytes": 8744,
-      "git_blob_sha": "5ba6d4c11170e9c7d52c7d94666858f4bbb448ad"
-    },
-    {
-      "path": "docs/evidence/proxolink-v6-2026-10-06/native-approval-357aa00.jpg",
-      "bytes": 93790,
-      "git_blob_sha": "88068bf02603cf20ebc4d265320d15864716a51c",
-      "origin": "Previously inspected actual native artifact or protected approval screenshot"
-    },
-    {
-      "path": "docs/evidence/proxolink-v6-2026-10-06/native-approval-5dbf391.jpg",
-      "bytes": 95976,
-      "git_blob_sha": "853db36654b03d7d46bda905267ac52103bb9a8a",
-      "origin": "Previously inspected actual native artifact or protected approval screenshot"
-    },
-    {
-      "path": "docs/evidence/proxolink-v6-2026-10-06/native-approval-947dc34.jpg",
-      "bytes": 95488,
-      "git_blob_sha": "0e9df1f3e28b45ff4815ec0382fa12eebdb6f2fb",
-      "origin": "Previously inspected actual native artifact or protected approval screenshot"
-    },
-    {
-      "path": "docs/evidence/proxolink-v6-2026-10-06/native-first-357aa00/case-results.json",
-      "bytes": 65322,
-      "git_blob_sha": "b4c06d07112b332648a009cf069b87a14bf18d1f",
-      "origin": "Previously inspected actual native artifact or protected approval screenshot"
-    },
-    {
-      "path": "docs/evidence/proxolink-v6-2026-10-06/native-first-357aa00/failure.json",
-      "bytes": 249,
-      "git_blob_sha": "fbecbfea3181c89f4009474d27b1c5b570de2442",
-      "origin": "Previously inspected actual native artifact or protected approval screenshot"
-    },
-    {
-      "path": "docs/evidence/proxolink-v6-2026-10-06/native-first-357aa00/pill-order-ku-portrait-320-baseline-webview.png",
-      "bytes": 58080,
-      "git_blob_sha": "a7ea1612496b6b745c1565355a6fd1dcd9b1de33",
-      "origin": "Previously inspected actual native artifact or protected approval screenshot"
-    },
-    {
-      "path": "docs/evidence/proxolink-v6-2026-10-06/native-first-357aa00/pill-order-ku-portrait-320-diff.png",
-      "bytes": 23189,
-      "git_blob_sha": "2f87c520f1a878c54f4333861abd644ff0fbb683",
-      "origin": "Previously inspected actual native artifact or protected approval screenshot"
-    },
-    {
-      "path": "docs/evidence/proxolink-v6-2026-10-06/native-first-357aa00/pill-order-ku-portrait-320-webview.png",
-      "bytes": 76475,
-      "git_blob_sha": "7293e1e6a876314615b81f0f4cb8d321e09c3307",
-      "origin": "Previously inspected actual native artifact or protected approval screenshot"
-    },
-    {
-      "path": "docs/evidence/proxolink-v6-2026-10-06/native-first-357aa00/pixels.json",
-      "bytes": 24805,
-      "git_blob_sha": "eafb2ae765e7c867a00a77118f5c31e313b1acb3",
-      "origin": "Previously inspected actual native artifact or protected approval screenshot"
-    },
-    {
-      "path": "docs/evidence/proxolink-v6-2026-10-06/native-first-357aa00/security.json",
-      "bytes": 209,
-      "git_blob_sha": "82989408c93cbbb3a516ff19fd984472ff53d0a9",
-      "origin": "Previously inspected actual native artifact or protected approval screenshot"
-    },
-    {
-      "path": "docs/evidence/proxolink-v6-2026-10-06/native-first-357aa00/summary.json",
-      "bytes": 912,
-      "git_blob_sha": "34c536f54d9fd1da43da9439099eadcbfef9211f",
-      "origin": "Previously inspected actual native artifact or protected approval screenshot"
-    },
-    {
-      "path": "docs/evidence/proxolink-v6-2026-10-06/native-partial-947dc34/case-results.json",
-      "bytes": 26079,
-      "git_blob_sha": "8f2a2cf30d2e6ded56fc7ede55b46d5bb9aee5a9",
-      "origin": "Previously inspected actual native artifact or protected approval screenshot"
-    },
-    {
-      "path": "docs/evidence/proxolink-v6-2026-10-06/native-partial-947dc34/pill-download-ku-landscape-375-baseline-webview.png",
-      "bytes": 41580,
-      "git_blob_sha": "40f39ce918acb022367884efc2a4f80aa2a57834",
-      "origin": "Previously inspected actual native artifact or protected approval screenshot"
-    },
-    {
-      "path": "docs/evidence/proxolink-v6-2026-10-06/native-partial-947dc34/pill-download-ku-landscape-375-diff.png",
-      "bytes": 10394,
-      "git_blob_sha": "fe5f7868eb041446929a4d7753526d17361380ac",
-      "origin": "Previously inspected actual native artifact or protected approval screenshot"
-    },
-    {
-      "path": "docs/evidence/proxolink-v6-2026-10-06/native-results.json",
-      "origin": "Current authorized execution checkpoint; historical audit preserved separately",
-      "bytes": 32276,
-      "git_blob_sha": "d6b76c8712ee76dd24aed575d2faef9fb66494ef"
-    },
-    {
-      "path": "docs/evidence/proxolink-v6-2026-10-06/native-settled-5dbf391/capture-log-index.json",
-      "origin": "Connector-generated safe report from actual executed job logs, saved inspected evidence or read-only inventory"
-    },
-    {
-      "path": "docs/evidence/proxolink-v6-2026-10-06/prepared-design-preservation.json",
-      "origin": "Connector-generated safe report from actual executed job logs, saved inspected evidence or read-only inventory"
-    },
-    {
-      "path": "docs/evidence/proxolink-v6-2026-10-06/production-checkpoints.json",
-      "origin": "Connector-generated safe report from actual executed job logs, saved inspected evidence or read-only inventory"
-    },
-    {
-      "path": "docs/evidence/proxolink-v6-2026-10-06/README.md",
-      "origin": "Current authorized execution checkpoint; historical audit preserved separately",
-      "bytes": 7527,
-      "git_blob_sha": "e6db30d3164906717b07220e9bce24b92385e2a2"
-    },
-    {
-      "path": "docs/evidence/proxolink-v6-2026-10-06/source-files.json",
-      "origin": "Connector-generated safe report from actual executed job logs, saved inspected evidence or read-only inventory"
-    },
-    {
-      "path": "docs/evidence/proxolink-v6-2026-10-06/staging-results.json",
-      "origin": "Connector-generated safe report from actual executed job logs, saved inspected evidence or read-only inventory"
-    },
-    {
       "path": "docs/PROXOLINK_V6_EXECUTION_2026-10-07.md",
-      "origin": "Current authorized execution checkpoint; historical audit preserved separately",
-      "bytes": 42321,
-      "git_blob_sha": "81594dc5722188155c218cff3a6dbb8141e21bcd"
+      "origin": "Current terminal digest-verified safe Android artifact or exact independent audit/report; no credentials/configuration/customer/raw-log content",
+      "bytes": 43997,
+      "sha256": "e58eeed2753ca502b762085ed1cbf2f404c7d6670287773d3df69f5b861922a8",
+      "git_blob_sha": "dd7fff8f6642cee2486640a32eb81a09185b2fa6"
     },
     {
       "path": "docs/PROXOLINK_V6_ISOLATED_STAGING_SETUP.md",
       "origin": "Connector-generated safe report from actual executed job logs, saved inspected evidence or read-only inventory"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/README.md",
+      "origin": "Current terminal digest-verified safe Android artifact or exact independent audit/report; no credentials/configuration/customer/raw-log content",
+      "bytes": 9058,
+      "sha256": "94710a4f651055fd4f5c5e1327a9340075975291a4acab252a0220d4a3a7faaa",
+      "git_blob_sha": "822e16fc20b8dcedc38eb3f4690b5f59160637ed"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/ci-results.json",
+      "origin": "Current terminal digest-verified safe Android artifact or exact independent audit/report; no credentials/configuration/customer/raw-log content",
+      "bytes": 43005,
+      "sha256": "0e0b1221b5393d6b1e9f7c19549997d0ff65d5692f2d228a3c520c490636903e",
+      "git_blob_sha": "54aa56f922ba1dfe8913d843d60193b110400d1f"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/evidence-files.json",
+      "origin": "Current terminal digest-verified safe Android artifact or exact independent audit/report; no credentials/configuration/customer/raw-log content"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/execution-blockers.json",
+      "origin": "Current terminal digest-verified safe Android artifact or exact independent audit/report; no credentials/configuration/customer/raw-log content",
+      "bytes": 11565,
+      "sha256": "c8c27444419b304160559e52d80ace72676448bf068492303c29ac485f257931",
+      "git_blob_sha": "8b2a3e58e30914dddd8c5ea8f24530d3818fcb44"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-1dca41a/capture-file-manifest.json",
+      "bytes": 269186,
+      "sha256": "332ceba90aa5767e62753481407011d1a97e4038c6f0a13727441cde40f34a12",
+      "origin": "Safe derived audit of the unchanged digest-verified original Android artifact and sanitized capture acknowledgements"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-1dca41a/capture-log-index.json",
+      "bytes": 61808,
+      "sha256": "706fd9f3015a5cfdbdc70f8149dee642d9025122aed9d2fb5f950d2403178d28",
+      "origin": "Safe derived audit of the unchanged digest-verified original Android artifact and sanitized capture acknowledgements"
     },
     {
       "path": "docs/evidence/proxolink-v6-2026-10-06/native-1dca41a/case-results.json",
@@ -154,6 +60,12 @@
       "bytes": 3034,
       "sha256": "26be7983e0e85543d87b9681dc73a64e18d4bba2229788557107c9417d474ec4",
       "origin": "Allowlisted actual terminal native artifact or inspected safe aggregate/diagnosis"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-1dca41a/evidence-inventory.json",
+      "bytes": 2783,
+      "sha256": "5c1ae8f1daa731f0e10e2cf0585f178ba32da5526ede33cd6613bbe0fbf9d1ac",
+      "origin": "Safe derived audit of the unchanged digest-verified original Android artifact and sanitized capture acknowledgements"
     },
     {
       "path": "docs/evidence/proxolink-v6-2026-10-06/native-1dca41a/failure.json",
@@ -268,28 +180,6 @@
       "bytes": 4313,
       "sha256": "1f3d387649d5210ec800ebfa48253d80a85c50b83e7fb9536c67c01c4f22c01a",
       "origin": "Allowlisted actual terminal native artifact or inspected safe aggregate/diagnosis"
-    },
-    {
-      "path": "docs/evidence/proxolink-v6-2026-10-06/native-capture-correction-files.json",
-      "origin": "Exact verification-source correction paths and SHA-256 hashes"
-    },
-    {
-      "path": "docs/evidence/proxolink-v6-2026-10-06/native-1dca41a/capture-file-manifest.json",
-      "bytes": 269186,
-      "sha256": "332ceba90aa5767e62753481407011d1a97e4038c6f0a13727441cde40f34a12",
-      "origin": "Safe derived audit of the unchanged digest-verified original Android artifact and sanitized capture acknowledgements"
-    },
-    {
-      "path": "docs/evidence/proxolink-v6-2026-10-06/native-1dca41a/capture-log-index.json",
-      "bytes": 61808,
-      "sha256": "706fd9f3015a5cfdbdc70f8149dee642d9025122aed9d2fb5f950d2403178d28",
-      "origin": "Safe derived audit of the unchanged digest-verified original Android artifact and sanitized capture acknowledgements"
-    },
-    {
-      "path": "docs/evidence/proxolink-v6-2026-10-06/native-1dca41a/evidence-inventory.json",
-      "bytes": 2783,
-      "sha256": "5c1ae8f1daa731f0e10e2cf0585f178ba32da5526ede33cd6613bbe0fbf9d1ac",
-      "origin": "Safe derived audit of the unchanged digest-verified original Android artifact and sanitized capture acknowledgements"
     },
     {
       "path": "docs/evidence/proxolink-v6-2026-10-06/native-1dca41a/validator-replay.json",
@@ -532,16 +422,342 @@
       "origin": "Digest-verified safe Android artifact or exact allowlisted derived audit; no credentials/configuration/customer/raw-log content"
     },
     {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-approval-357aa00.jpg",
+      "bytes": 93790,
+      "git_blob_sha": "88068bf02603cf20ebc4d265320d15864716a51c",
+      "origin": "Previously inspected actual native artifact or protected approval screenshot"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-approval-5dbf391.jpg",
+      "bytes": 95976,
+      "git_blob_sha": "853db36654b03d7d46bda905267ac52103bb9a8a",
+      "origin": "Previously inspected actual native artifact or protected approval screenshot"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-approval-947dc34.jpg",
+      "bytes": 95488,
+      "git_blob_sha": "0e9df1f3e28b45ff4815ec0382fa12eebdb6f2fb",
+      "origin": "Previously inspected actual native artifact or protected approval screenshot"
+    },
+    {
       "path": "docs/evidence/proxolink-v6-2026-10-06/native-auth-correction-files.json",
-      "origin": "Current authorized execution checkpoint; historical audit preserved separately",
-      "bytes": 2892,
-      "git_blob_sha": "3afa8e65b1b0242e4cdfb58474e60874e3d977ce"
+      "origin": "Current terminal digest-verified safe Android artifact or exact independent audit/report; no credentials/configuration/customer/raw-log content",
+      "bytes": 3723,
+      "sha256": "702e999ad7855db0b87acc2552ff188fb5077eb591198568610ba799ff57e283",
+      "git_blob_sha": "53db16b4c29026a83760976666d1fcb107639221"
     },
     {
       "path": "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt1-infrastructure.json",
       "origin": "Safe allowlisted step diagnostics from failed current-run attempt 1; no raw logs or runtime configuration",
       "bytes": 2594,
       "git_blob_sha": "d91dfd8e6298b78102b8ff44b8d99fb14db4e415"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/capture-file-manifest.json",
+      "origin": "Current terminal digest-verified safe Android artifact or exact independent audit/report; no credentials/configuration/customer/raw-log content",
+      "bytes": 555357,
+      "sha256": "ffab41e6b1e5418c9f68f585089a73fa70da3c11b10723ef50857b9502ee044c",
+      "git_blob_sha": "cb6c213818c3fb2323c3d873902ecd95cc17b919"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/capture-log-index.json",
+      "origin": "Current terminal digest-verified safe Android artifact or exact independent audit/report; no credentials/configuration/customer/raw-log content",
+      "bytes": 61922,
+      "sha256": "7fbc77ae9355c559531b26d0b8511efbc2f68f6e9d1888230e1f92c0cd2b44bb",
+      "git_blob_sha": "39a1394851926c18a1bace7e005dc0693991b1e7"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/capture-repeatability.json",
+      "origin": "Current terminal digest-verified safe Android artifact or exact independent audit/report; no credentials/configuration/customer/raw-log content",
+      "bytes": 72802,
+      "sha256": "f98ae943cd1723c3f73c478f169ee102c02a1393dd4c28a33dd36d883acfb204",
+      "git_blob_sha": "33dfd9eacbb67900e57ed1af422e4305e74a7be4"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/case-results.json",
+      "origin": "Current terminal digest-verified safe Android artifact or exact independent audit/report; no credentials/configuration/customer/raw-log content",
+      "bytes": 113002,
+      "sha256": "add9886236c65ef9b685d7ae5dc0c59801051c1f94017941e5314db358b2e038",
+      "git_blob_sha": "bfdd2e7499064e6a5d522d86a6b34664ab227a8b"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/diagnosis.json",
+      "origin": "Current terminal digest-verified safe Android artifact or exact independent audit/report; no credentials/configuration/customer/raw-log content",
+      "bytes": 5577,
+      "sha256": "ecd6cfb56b1b26141e63a370e357c336d425b2e3a41083fa184947f7303e6a96",
+      "git_blob_sha": "ef86b9759e9da11c0b6ea8741ee162f27844eff9"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/evidence-inventory.json",
+      "origin": "Current terminal digest-verified safe Android artifact or exact independent audit/report; no credentials/configuration/customer/raw-log content",
+      "bytes": 21191,
+      "sha256": "9df42d8717413c905b85b2523b59501a1b8bd346036e6aaa40f0a292d4b8fdc6",
+      "git_blob_sha": "dcd5213992608a1125f1ede96aca4f7a89e0135f"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/failure.json",
+      "origin": "Current terminal digest-verified safe Android artifact or exact independent audit/report; no credentials/configuration/customer/raw-log content",
+      "bytes": 249,
+      "sha256": "9e648c1d9264c5d63442af4d4e749bbb525cc20980242c3296861dd9e408c202",
+      "git_blob_sha": "91ad5a8a6b14f34383a609de77f57891b96c2888"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/independent-pixel-audit.json",
+      "origin": "Current terminal digest-verified safe Android artifact or exact independent audit/report; no credentials/configuration/customer/raw-log content",
+      "bytes": 135158,
+      "sha256": "f1021a00a2ef9aa984e679daccdf6013874de8830962473eb7e3301bcb321a8b",
+      "git_blob_sha": "aa6ddef5bad866d8e78fb7f6904b53dda011439c"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-contact-en-portrait-768-baseline-webview.png",
+      "origin": "Current terminal digest-verified safe Android artifact or exact independent audit/report; no credentials/configuration/customer/raw-log content",
+      "bytes": 121130,
+      "sha256": "bf902bba07a12090fb5ec3d4a67ef95d7dca4132d2b9b789fc7e6046be3bdc59",
+      "git_blob_sha": "b5f6845d3de8e19283c73255d9c090caafae4205"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-contact-en-portrait-768-diff.png",
+      "origin": "Current terminal digest-verified safe Android artifact or exact independent audit/report; no credentials/configuration/customer/raw-log content",
+      "bytes": 46449,
+      "sha256": "71a09b124915c43e7a1617f9a5553d04630e1435e8f098f5a17203472822ee5f",
+      "git_blob_sha": "875e015074a18fa8c6ebcbbfccdd8b1072c09ae3"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-contact-en-portrait-768-webview.png",
+      "origin": "Current terminal digest-verified safe Android artifact or exact independent audit/report; no credentials/configuration/customer/raw-log content",
+      "bytes": 121131,
+      "sha256": "801e67ef998dd4eb95661961db726fc3b2fbd04a64ddbfacf8e9bffd90ff0f97",
+      "git_blob_sha": "8d3d989fda498359c7806cc6dd2777bcb983a052"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-mint-contact-ku-portrait-430-baseline-webview.png",
+      "origin": "Current terminal digest-verified safe Android artifact or exact independent audit/report; no credentials/configuration/customer/raw-log content",
+      "bytes": 104305,
+      "sha256": "8966bb4c5bbb6d66323b206f621ae3b4cf879a4459124c3628551c185a7803a1",
+      "git_blob_sha": "6a14653f4d9d72d9e04c1b2e9d99e5ca9e457958"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-mint-contact-ku-portrait-430-diff.png",
+      "origin": "Current terminal digest-verified safe Android artifact or exact independent audit/report; no credentials/configuration/customer/raw-log content",
+      "bytes": 37625,
+      "sha256": "54c318813748ab3a786a10ae382aac6c0ddebab55bfad101819a767189e84552",
+      "git_blob_sha": "dc68221e4f5e8e60186572401c7b0b4ad0980de0"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-mint-contact-ku-portrait-430-webview.png",
+      "origin": "Current terminal digest-verified safe Android artifact or exact independent audit/report; no credentials/configuration/customer/raw-log content",
+      "bytes": 104308,
+      "sha256": "5284c460f2aa947f90a6c1d453333299de26bec7f9a5785849764809d5592d68",
+      "git_blob_sha": "3f5891c1091ad7b0cc19efc8ef61c44bef30ce51"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-mint-order-en-portrait-768-baseline-webview.png",
+      "origin": "Current terminal digest-verified safe Android artifact or exact independent audit/report; no credentials/configuration/customer/raw-log content",
+      "bytes": 106931,
+      "sha256": "df2995369c6b75ca11fa65d7fc490863c33b493f1860d6c247a9880154bd3713",
+      "git_blob_sha": "5931be708263389d9ac74724ca599c741f8c7a66"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-mint-order-en-portrait-768-diff.png",
+      "origin": "Current terminal digest-verified safe Android artifact or exact independent audit/report; no credentials/configuration/customer/raw-log content",
+      "bytes": 40330,
+      "sha256": "cb0df8b7000d6a99593bd2e3601d4c236a48a2b3ed00caa7e46f7b17451dbf2f",
+      "git_blob_sha": "21e3137f235db4fe7d58fb6bb878384c01a174d5"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-mint-order-en-portrait-768-webview.png",
+      "origin": "Current terminal digest-verified safe Android artifact or exact independent audit/report; no credentials/configuration/customer/raw-log content",
+      "bytes": 106928,
+      "sha256": "a6f053ded891b7306e82bef1b5f584ff7700de0fb7dca9a239b7b5062f360dd2",
+      "git_blob_sha": "3c39fb46cd8f4d6e27f7f1ca0fd883e79b4cea00"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-mint-order-ku-portrait-430-baseline-webview.png",
+      "origin": "Current terminal digest-verified safe Android artifact or exact independent audit/report; no credentials/configuration/customer/raw-log content",
+      "bytes": 89520,
+      "sha256": "e42a4cb56a0fc6021801d7e39a9356b50e5ed10cc1cdcc84e82f6343d41d99bb",
+      "git_blob_sha": "7e1222201d8f01d7dd230f84656c1b6a2b469765"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-mint-order-ku-portrait-430-diff.png",
+      "origin": "Current terminal digest-verified safe Android artifact or exact independent audit/report; no credentials/configuration/customer/raw-log content",
+      "bytes": 31082,
+      "sha256": "3c1c86b39eed19d16eb21161cec68614c9a2b800f22d3c994e16148382ae6d49",
+      "git_blob_sha": "7ab3deb8af1376e5c39bda550d5122f2cd5e427d"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-mint-order-ku-portrait-430-webview.png",
+      "origin": "Current terminal digest-verified safe Android artifact or exact independent audit/report; no credentials/configuration/customer/raw-log content",
+      "bytes": 89524,
+      "sha256": "0ec0c0cabbfdbfe651d4f8b859f80a50f7ccbf555adbfa7a59bdaba11d751d64",
+      "git_blob_sha": "8a58756f3c1023c6fb2424620d54d3999dcbadec"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-order-en-portrait-768-baseline-webview.png",
+      "origin": "Current terminal digest-verified safe Android artifact or exact independent audit/report; no credentials/configuration/customer/raw-log content",
+      "bytes": 102370,
+      "sha256": "89ef017015ccbab64cf08000cb6c525b2a21309d22f633387e85ba55f0e3d58d",
+      "git_blob_sha": "a5796ffe417cf28f801e815f058fbe57b7d3d54f"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-order-en-portrait-768-diff.png",
+      "origin": "Current terminal digest-verified safe Android artifact or exact independent audit/report; no credentials/configuration/customer/raw-log content",
+      "bytes": 39073,
+      "sha256": "9f84c9a72d7d364813e0b5847c8de63b95a4e951065d69863f7545f3432deb73",
+      "git_blob_sha": "ec8fac3d1f8cb76e16f55f772afee6a40bcb6340"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-order-en-portrait-768-webview.png",
+      "origin": "Current terminal digest-verified safe Android artifact or exact independent audit/report; no credentials/configuration/customer/raw-log content",
+      "bytes": 102373,
+      "sha256": "2511a0cb7aa5af4b20f5d0a1154df8b0bb35230e02439c6ddd2cc11216064237",
+      "git_blob_sha": "1e610ad4688bff11ce8105750bed8a5ab54fc7f9"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-order-ku-portrait-768-baseline-webview.png",
+      "origin": "Current terminal digest-verified safe Android artifact or exact independent audit/report; no credentials/configuration/customer/raw-log content",
+      "bytes": 103697,
+      "sha256": "b7404d776df753b1b21827a45f0d7aa0fa202acdeab9f73a6bfe048897730528",
+      "git_blob_sha": "bedc1cd15e16e73dc2a1455c09dd4fa029d22a30"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-order-ku-portrait-768-diff.png",
+      "origin": "Current terminal digest-verified safe Android artifact or exact independent audit/report; no credentials/configuration/customer/raw-log content",
+      "bytes": 40067,
+      "sha256": "5c03ec1a0dbbb7162d02845935dbcc0a76312cf56171319f6dea4a6d4de122cc",
+      "git_blob_sha": "63a0f3072d9ae640f60c947ffdb4badbecaa86ff"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-order-ku-portrait-768-webview.png",
+      "origin": "Current terminal digest-verified safe Android artifact or exact independent audit/report; no credentials/configuration/customer/raw-log content",
+      "bytes": 103696,
+      "sha256": "5b9209692f1c898986957d72d561b273caa96d0f71e4511e6daa43d29494e2ab",
+      "git_blob_sha": "3640023c1a50679107d56151e3b5893bde21c6ac"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pixels.json",
+      "origin": "Current terminal digest-verified safe Android artifact or exact independent audit/report; no credentials/configuration/customer/raw-log content",
+      "bytes": 79547,
+      "sha256": "6c0574972e38e42369a69700e83c50d8948838326575ceaf74ffdda5f573f893",
+      "git_blob_sha": "7a2f6b158d556d7094b8bf9f60f659bf31982c13"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/security.json",
+      "origin": "Current terminal digest-verified safe Android artifact or exact independent audit/report; no credentials/configuration/customer/raw-log content",
+      "bytes": 209,
+      "sha256": "fc9075a9bed59ce0355d1d0026fdac59dfbd7669a9b15fba428fa7c99671ae83",
+      "git_blob_sha": "82989408c93cbbb3a516ff19fd984472ff53d0a9"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/summary.json",
+      "origin": "Current terminal digest-verified safe Android artifact or exact independent audit/report; no credentials/configuration/customer/raw-log content",
+      "bytes": 11955,
+      "sha256": "caaf534e792b1089d54ea3bf8010c7f1f5999f8a610d8ab5814b2590610afc3f",
+      "git_blob_sha": "40454766ef6835676cb55836d261fa5222f862be"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/validator-replay.json",
+      "origin": "Current terminal digest-verified safe Android artifact or exact independent audit/report; no credentials/configuration/customer/raw-log content",
+      "bytes": 1619,
+      "sha256": "73aaf1292608b502f635c3ec0207aae5e19aaf7bc824d6c3fa1211bd7367f63f",
+      "git_blob_sha": "a4adf8b42c122dd37aef8656f7cfa5aa6af4aaea"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-capture-correction-files.json",
+      "origin": "Exact verification-source correction paths and SHA-256 hashes"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-first-357aa00/case-results.json",
+      "bytes": 65322,
+      "git_blob_sha": "b4c06d07112b332648a009cf069b87a14bf18d1f",
+      "origin": "Previously inspected actual native artifact or protected approval screenshot"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-first-357aa00/failure.json",
+      "bytes": 249,
+      "git_blob_sha": "fbecbfea3181c89f4009474d27b1c5b570de2442",
+      "origin": "Previously inspected actual native artifact or protected approval screenshot"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-first-357aa00/pill-order-ku-portrait-320-baseline-webview.png",
+      "bytes": 58080,
+      "git_blob_sha": "a7ea1612496b6b745c1565355a6fd1dcd9b1de33",
+      "origin": "Previously inspected actual native artifact or protected approval screenshot"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-first-357aa00/pill-order-ku-portrait-320-diff.png",
+      "bytes": 23189,
+      "git_blob_sha": "2f87c520f1a878c54f4333861abd644ff0fbb683",
+      "origin": "Previously inspected actual native artifact or protected approval screenshot"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-first-357aa00/pill-order-ku-portrait-320-webview.png",
+      "bytes": 76475,
+      "git_blob_sha": "7293e1e6a876314615b81f0f4cb8d321e09c3307",
+      "origin": "Previously inspected actual native artifact or protected approval screenshot"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-first-357aa00/pixels.json",
+      "bytes": 24805,
+      "git_blob_sha": "eafb2ae765e7c867a00a77118f5c31e313b1acb3",
+      "origin": "Previously inspected actual native artifact or protected approval screenshot"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-first-357aa00/security.json",
+      "bytes": 209,
+      "git_blob_sha": "82989408c93cbbb3a516ff19fd984472ff53d0a9",
+      "origin": "Previously inspected actual native artifact or protected approval screenshot"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-first-357aa00/summary.json",
+      "bytes": 912,
+      "git_blob_sha": "34c536f54d9fd1da43da9439099eadcbfef9211f",
+      "origin": "Previously inspected actual native artifact or protected approval screenshot"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-partial-947dc34/case-results.json",
+      "bytes": 26079,
+      "git_blob_sha": "8f2a2cf30d2e6ded56fc7ede55b46d5bb9aee5a9",
+      "origin": "Previously inspected actual native artifact or protected approval screenshot"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-partial-947dc34/pill-download-ku-landscape-375-baseline-webview.png",
+      "bytes": 41580,
+      "git_blob_sha": "40f39ce918acb022367884efc2a4f80aa2a57834",
+      "origin": "Previously inspected actual native artifact or protected approval screenshot"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-partial-947dc34/pill-download-ku-landscape-375-diff.png",
+      "bytes": 10394,
+      "git_blob_sha": "fe5f7868eb041446929a4d7753526d17361380ac",
+      "origin": "Previously inspected actual native artifact or protected approval screenshot"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-results.json",
+      "origin": "Current terminal digest-verified safe Android artifact or exact independent audit/report; no credentials/configuration/customer/raw-log content",
+      "bytes": 55697,
+      "sha256": "d230b8d99e3217187596eac6cb6b807e118bf426b451077d225d88da6d30544c",
+      "git_blob_sha": "6d9af81a24f7bb1a8a2f7cb9183c95109a55c0be"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-settled-5dbf391/capture-log-index.json",
+      "origin": "Connector-generated safe report from actual executed job logs, saved inspected evidence or read-only inventory"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/prepared-design-preservation.json",
+      "origin": "Connector-generated safe report from actual executed job logs, saved inspected evidence or read-only inventory"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/production-checkpoints.json",
+      "origin": "Connector-generated safe report from actual executed job logs, saved inspected evidence or read-only inventory"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/source-files.json",
+      "origin": "Connector-generated safe report from actual executed job logs, saved inspected evidence or read-only inventory"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/staging-results.json",
+      "origin": "Connector-generated safe report from actual executed job logs, saved inspected evidence or read-only inventory"
     }
   ],
   "current_native_revision": "c06bd3dccf9b0ea124447a2fc2ff4a47a6e096f1",
@@ -549,11 +765,11 @@
   "historical_source_revision": "9ec6264940628c75fa0fc114edc88013a61cbab5",
   "current_native_run_id": 37759310377,
   "current_native_attempt": 2,
-  "current_artifact_id": null,
+  "current_artifact_id": 11548551620,
   "authentication_correction_manifest": "docs/evidence/proxolink-v6-2026-10-06/native-auth-correction-files.json",
   "latest_verified_code_revision": "c06bd3dccf9b0ea124447a2fc2ff4a47a6e096f1",
   "latest_verified_code_ci_run": 37759310220,
-  "current_native_status": "BLOCKED",
+  "current_native_status": "FAILED",
   "continuation_changed_files": [
     "docs/PROXOLINK_V6_EXECUTION_2026-10-07.md",
     "docs/evidence/proxolink-v6-2026-10-06/README.md",
@@ -561,7 +777,39 @@
     "docs/evidence/proxolink-v6-2026-10-06/evidence-files.json",
     "docs/evidence/proxolink-v6-2026-10-06/execution-blockers.json",
     "docs/evidence/proxolink-v6-2026-10-06/native-auth-correction-files.json",
-    "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt1-infrastructure.json",
+    "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/capture-file-manifest.json",
+    "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/capture-log-index.json",
+    "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/capture-repeatability.json",
+    "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/case-results.json",
+    "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/diagnosis.json",
+    "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/evidence-inventory.json",
+    "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/failure.json",
+    "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/independent-pixel-audit.json",
+    "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-contact-en-portrait-768-baseline-webview.png",
+    "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-contact-en-portrait-768-diff.png",
+    "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-contact-en-portrait-768-webview.png",
+    "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-mint-contact-ku-portrait-430-baseline-webview.png",
+    "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-mint-contact-ku-portrait-430-diff.png",
+    "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-mint-contact-ku-portrait-430-webview.png",
+    "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-mint-order-en-portrait-768-baseline-webview.png",
+    "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-mint-order-en-portrait-768-diff.png",
+    "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-mint-order-en-portrait-768-webview.png",
+    "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-mint-order-ku-portrait-430-baseline-webview.png",
+    "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-mint-order-ku-portrait-430-diff.png",
+    "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-mint-order-ku-portrait-430-webview.png",
+    "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-order-en-portrait-768-baseline-webview.png",
+    "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-order-en-portrait-768-diff.png",
+    "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-order-en-portrait-768-webview.png",
+    "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-order-ku-portrait-768-baseline-webview.png",
+    "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-order-ku-portrait-768-diff.png",
+    "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-order-ku-portrait-768-webview.png",
+    "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pixels.json",
+    "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/security.json",
+    "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/summary.json",
+    "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/validator-replay.json",
     "docs/evidence/proxolink-v6-2026-10-06/native-results.json"
-  ]
+  ],
+  "continuation_base_revision": "0ab03eb11dd9915f0efe0bc538a60f6d4ea34b3e",
+  "continuation_changed_file_count": 37,
+  "product_or_harness_files_changed_after_native_testing": []
 }
