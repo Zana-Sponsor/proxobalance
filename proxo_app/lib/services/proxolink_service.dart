@@ -20,11 +20,23 @@ String newProxoRequestId() {
 class ProxoLinkFailure implements Exception {
   final String code;
   final String? savedCardId;
-  const ProxoLinkFailure(this.code, {this.savedCardId});
+  final ProxoCard? savedCard;
+  const ProxoLinkFailure(this.code, {this.savedCardId, this.savedCard});
   String get message => switch (code) {
+    'forbidden' ||
+    'not_found' ||
+    'card_not_found' => 'پەڕەکە نەدۆزرایەوە یان دەسەڵاتی دەستکاری نییە.',
+    'page_archived' => 'ئەم پەڕەیە ئەرشیف کراوە.',
+    'invalid_page_type' => 'جۆری پەڕەکە گونجاو نییە.',
+    'provider_required' => 'تکایە کەمترین یەک دووگمە زیاد بکە.',
+    'idempotency_conflict' =>
+      'ئەم داواکارییە پێشتر پاشەکەوت کراوە. پەڕەکانت نوێ بکەرەوە.',
+    'saved_refresh_failed' => 'پەڕەکە پاشەکەوت کرا. بۆ بینینی نوێی بکەرەوە.',
     'ad_dependency' => 'ئەم پەڕەیە لە ڕیکلامێکدا بەکارهاتووە و ناتوانرێت ئێستا ناچالاک بکرێت یان بسڕدرێتەوە.',
-    'isolated_staging_required' => 'ئەم تایبەتمەندییە ئێستا تەنها لە ژینگەی تاقیکردنەوەدا چالاکە.',
-    'invalid_provider_destination' || 'invalid_page_settings' => 'تکایە بەستەری دووگمەکان بپشکنە.',
+    'isolated_staging_required' =>
+      'ئەم تایبەتمەندییە ئێستا تەنها لە ژینگەی تاقیکردنەوەدا چالاکە.',
+    'invalid_provider_destination' ||
+    'invalid_page_settings' => 'تکایە بەستەری دووگمەکان بپشکنە.',
     'edit_conflict' =>
       'پەڕەکە لە شوێنێکی تر دەستکاری کراوە. تکایە نوێی بکەرەوە.',
     'unauthorized' => 'تکایە دووبارە بچۆ ژوورەوە.',
@@ -38,14 +50,27 @@ class ProxoLinkFailure implements Exception {
 }
 
 abstract class ProxoLinkRepository {
+  String? get ownerScope => null;
   Future<List<ProxoCard>> cards();
+  Future<ProxoCard?> card(String id) async {
+    for (final card in await cards()) {
+      if (card.id == id) return card;
+    }
+    return null;
+  }
+
+  Future<Uri?> avatar(ProxoCard card) async => null;
+  Future<void> manage(ProxoCard card, String action) =>
+      this.action(card.id, action);
   Future<List<ProxoTemplate>> templates();
   Future<List<ProxoProvider>> providers();
-  Future<Uri> formPreview(Map<String,dynamic> data, {ProxoCard? existing});
+  Future<Uri> formPreview(Map<String, dynamic> data, {ProxoCard? existing});
   Future<ProxoCard> save(Map<String, dynamic> data, {ProxoCard? existing});
   Future<void> action(String id, String action);
   Future<Uri> preview(String id);
-  Future<Uri> templatePreview(String key, int version, {
+  Future<Uri> templatePreview(
+    String key,
+    int version, {
     String theme = 'purple',
     String language = 'ku',
     String pageType = 'contact',
@@ -61,6 +86,8 @@ class ProxoLinkService implements ProxoLinkRepository {
   );
   final SupabaseClient db;
   ProxoLinkService(this.db);
+  @override
+  String? get ownerScope => db.auth.currentUser?.id;
   Uri _url(String path) {
     final base = Uri.parse(publicBase);
     final result = base.resolve(path);
@@ -89,12 +116,24 @@ class ProxoLinkService implements ProxoLinkRepository {
           .send()
           .then(http.Response.fromStream)
           .timeout(const Duration(seconds: 30));
+      if (db.auth.currentUser?.id != session.user.id) {
+        throw const ProxoLinkFailure('unauthorized');
+      }
       final body =
           jsonDecode(utf8.decode(response.bodyBytes)) as Map<String, dynamic>;
       if (response.statusCode >= 400 || body['ok'] != true) {
+        final card = body['card'] is Map
+            ? Map<String, dynamic>.from(body['card'] as Map)
+            : null;
         throw ProxoLinkFailure(
           body['error'] as String? ?? 'network_error',
           savedCardId: (body['card'] as Map?)?['id'] as String?,
+          savedCard:
+              card?['user_id'] is String &&
+                  card?['created_at'] is String &&
+                  card?['updated_at'] is String
+              ? ProxoCard.fromJson(card!)
+              : null,
         );
       }
       return body;
@@ -115,6 +154,26 @@ class ProxoLinkService implements ProxoLinkRepository {
   }
 
   @override
+  Future<ProxoCard?> card(String id) async {
+    try {
+      final body = await _request(
+        '/api/contact-cards?id=${Uri.encodeQueryComponent(id)}',
+      );
+      return ProxoCard.fromJson(Map<String, dynamic>.from(body['card'] as Map));
+    } on ProxoLinkFailure catch (e) {
+      if (e.code == 'not_found') return null;
+      rethrow;
+    }
+  }
+
+  @override
+  Future<Uri?> avatar(ProxoCard card) async {
+    if (card.avatarPath == null || !card.canPreview) return null;
+    final signed = await preview(card.id);
+    return signed.replace(path: '${card.publicPath}/avatar');
+  }
+
+  @override
   Future<List<ProxoTemplate>> templates() async {
     final body = await _request('/api/contact-templates');
     return [
@@ -122,16 +181,28 @@ class ProxoLinkService implements ProxoLinkRepository {
         ProxoTemplate.fromJson(Map<String, dynamic>.from(j as Map)),
     ];
   }
+
   @override
   Future<List<ProxoProvider>> providers() async {
-    final body=await _request('/api/page-providers');
-    return [for(final j in body['providers'] as List)
-      ProxoProvider.fromJson(Map<String,dynamic>.from(j as Map))];
+    final body = await _request('/api/page-providers');
+    return [
+      for (final j in body['providers'] as List)
+        ProxoProvider.fromJson(Map<String, dynamic>.from(j as Map)),
+    ];
   }
+
   @override
-  Future<Uri> formPreview(Map<String,dynamic> data, {ProxoCard? existing}) async => _url(
-    (await _request('/api/page-preview-token',method:'POST',data:{...data,
-      if(existing != null) 'card_id':existing.id}))['preview_path'] as String);
+  Future<Uri> formPreview(
+    Map<String, dynamic> data, {
+    ProxoCard? existing,
+  }) async => _url(
+    (await _request(
+          '/api/page-preview-token',
+          method: 'POST',
+          data: {...data, if (existing != null) 'card_id': existing.id},
+        ))['preview_path']
+        as String,
+  );
 
   @override
   Future<ProxoCard> save(
@@ -148,8 +219,16 @@ class ProxoLinkService implements ProxoLinkRepository {
       },
     );
     final id = (result['card'] as Map)['id'];
+    final returned = Map<String, dynamic>.from(result['card'] as Map);
+    if (returned['user_id'] is String &&
+        returned['created_at'] is String &&
+        returned['updated_at'] is String) {
+      return ProxoCard.fromJson(returned);
+    }
     try {
-      return (await cards()).firstWhere((card) => card.id == id);
+      final saved = await card(id as String);
+      if (saved == null) throw const ProxoLinkFailure('not_found');
+      return saved;
     } catch (_) {
       throw ProxoLinkFailure('saved_refresh_failed', savedCardId: id as String);
     }
@@ -165,6 +244,19 @@ class ProxoLinkService implements ProxoLinkRepository {
   }
 
   @override
+  Future<void> manage(ProxoCard card, String action) async {
+    await _request(
+      '/api/contact-card-action',
+      method: 'POST',
+      data: {
+        'card_id': card.id,
+        'action': action,
+        'expected_updated_at': card.updatedAt.toIso8601String(),
+      },
+    );
+  }
+
+  @override
   Future<Uri> preview(String id) async => _url(
     (await _request(
           '/api/contact-preview-token',
@@ -174,7 +266,9 @@ class ProxoLinkService implements ProxoLinkRepository {
         as String,
   );
   @override
-  Future<Uri> templatePreview(String key, int version, {
+  Future<Uri> templatePreview(
+    String key,
+    int version, {
     String theme = 'purple',
     String language = 'ku',
     String pageType = 'contact',
@@ -189,9 +283,11 @@ class ProxoLinkService implements ProxoLinkRepository {
   );
   @override
   Uri publicUrl(String id, {String pageType = 'contact'}) {
-    if(!ProxoPageType.values.any((t)=>t.key==pageType))throw const ProxoLinkFailure('invalid_request');
+    if (!ProxoPageType.values.any((t) => t.key == pageType))
+      throw const ProxoLinkFailure('invalid_request');
     return _url('/$pageType/$id');
   }
+
   @override
   Future<String> uploadAvatar(String id, Uint8List bytes) async {
     if (bytes.length < 12 || bytes.length > 10 * 1024 * 1024)
@@ -214,7 +310,7 @@ class ProxoLinkService implements ProxoLinkRepository {
     } else {
       throw const ProxoLinkFailure('invalid_avatar');
     }
-    if((await _request('/api/page-providers'))['writes_enabled'] != true) {
+    if ((await _request('/api/page-providers'))['writes_enabled'] != true) {
       throw const ProxoLinkFailure('isolated_staging_required');
     }
     final user = db.auth.currentUser?.id;

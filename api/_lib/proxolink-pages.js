@@ -4,6 +4,10 @@ export const PREPARED_DESIGNS = ['pill', 'pill-mint', 'pill-dark', 'pill-white']
 export const PREPARED_VERSION = 6;
 export const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 export const pageError = code => Object.assign(new Error(code), {code, status:422});
+export const AUTHORING_PROVIDERS = Object.freeze({
+  contact:['whatsapp','viber','instagram','telegram','korek','asiacell'],
+  order:['talabat','toters'], download:['google_play','app_store'],
+});
 const provider = (pageType, label, icon, inputKind, hosts=[]) =>
   Object.freeze({page_type:pageType,label,icon,input_kind:inputKind,hosts,enabled:true});
 export const PROVIDER_REGISTRY = Object.freeze({
@@ -27,7 +31,8 @@ export const DESIGN_ALIASES={dark:'pill-dark',light:'pill-white',classic:'pill-w
 export const pageKind = card => card.page_kind || 'contact'; // Explicit legacy route adapter.
 export const publicPath = card => '/'+pageKind(card)+'/'+card.id;
 export function registryMetadata() {
-  return Object.entries(PROVIDER_REGISTRY).map(([key,p])=>({provider_key:key,...p}));
+  return Object.entries(PROVIDER_REGISTRY).filter(([key,p])=>AUTHORING_PROVIDERS[p.page_type].includes(key))
+    .map(([key,p])=>({provider_key:key,...p}));
 }
 function phone(raw) {
   let value=raw.replace(/[٠-٩۰-۹]/g,c=>String(c.charCodeAt(0)-(c<='٩'?1632:1776)))
@@ -93,7 +98,7 @@ export function providerDestination(key,raw) {
   if(p.page_type==='order'&&url.pathname==='/')throw pageError('invalid_provider_destination');
   return url.href;
 }
-export function normalizeSettings(kind,settings,{allowEmpty=false}={}) {
+export function normalizeSettings(kind,settings,{allowEmpty=false,allowStoredProviders=false,legacyProviders=[]}={}) {
   if(!PAGE_TYPES.includes(kind)||!settings||typeof settings!=='object'||Array.isArray(settings)
     ||Object.keys(settings).some(k=>k!=='providers')||!Array.isArray(settings.providers)
     ||settings.providers.length>12)throw pageError('invalid_page_settings');
@@ -102,6 +107,9 @@ export function normalizeSettings(kind,settings,{allowEmpty=false}={}) {
     if(!item||typeof item!=='object'||Array.isArray(item)
       ||Object.keys(item).some(k=>!['provider_key','destination_url','enabled','sort_order'].includes(k))
       ||!Object.hasOwn(PROVIDER_REGISTRY,item.provider_key)||PROVIDER_REGISTRY[item.provider_key].page_type!==kind
+      ||(!AUTHORING_PROVIDERS[kind].includes(item.provider_key) && !allowStoredProviders &&
+        !legacyProviders.some(old=>old.provider_key===item.provider_key &&
+          old.destination_url===item.destination_url && old.enabled===item.enabled && old.sort_order===item.sort_order))
       ||seen.has(item.provider_key)||typeof item.enabled!=='boolean'||!Number.isInteger(item.sort_order)
       ||item.sort_order<0||item.sort_order>100||orders.has(item.sort_order))throw pageError('invalid_page_settings');
     seen.add(item.provider_key);orders.add(item.sort_order);
@@ -129,7 +137,8 @@ export function validatePage(body,owner,{old=null,allowEmpty=false}={}) {
     template_key:body.template_key??old?.template_key,template_version:body.template_version??old?.template_version??6,
     color_theme:body.color_theme??old?.color_theme??'purple',card_language:body.card_language??old?.card_language??'ku',
     avatar_path:body.avatar_path===undefined?old?.avatar_path??null:body.avatar_path,
-    settings:normalizeSettings(kind,body.settings??old?.settings,{allowEmpty})};
+    settings:normalizeSettings(kind,body.settings??old?.settings,{allowEmpty,
+      legacyProviders:old?.settings?.providers||[]})};
   if(!UUID.test(card.client_request_id||'')||card.client_request_id===owner)throw pageError('invalid_request');
   if(typeof card.name!=='string'||!card.name.trim()||card.name.length>160)throw pageError('invalid_card_name');
   if(typeof card.bio!=='string'||card.bio.length>2000)throw pageError('invalid_bio');

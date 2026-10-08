@@ -2,7 +2,7 @@ import {createServer} from 'node:http';
 import {mkdirSync,writeFileSync} from 'node:fs';
 import assert from 'node:assert/strict';
 import {chromium} from 'playwright';
-import {PAGE_TYPES,PREPARED_DESIGNS,PROVIDER_REGISTRY,validatePage} from '../api/_lib/proxolink-pages.js';
+import {PAGE_TYPES,PREPARED_DESIGNS,PROVIDER_REGISTRY,AUTHORING_PROVIDERS,validatePage} from '../api/_lib/proxolink-pages.js';
 import {preparedMetadata,preparedSource,nativeBaselineSource,renderPrepared} from '../api/_lib/proxolink-prepared.js';
 import {publicPage} from '../api/_lib/proxolink.js';
 import {pagePayload,OWNER} from '../test/fixtures/proxolink-v6-service.mjs';
@@ -11,7 +11,7 @@ const html=new Map();
 for(const key of PREPARED_DESIGNS)for(const type of PAGE_TYPES)for(const language of ['ku','en'])for(const long of [false,true]){
  const name=long?(language==='ku'?'پڕۆکسۆ Proxo 2026 ':'Proxo 2026 ').padEnd(160,'X'):'Proxo';
  const bio=long?(language==='ku'?'بایۆ زانیاری Proxo 2026 ':'Bio Proxo 2026 ').repeat(150).slice(0,2000):'Proxo 2026';
- const available=Object.keys(PROVIDER_REGISTRY).filter(k=>PROVIDER_REGISTRY[k].page_type===type);
+ const available=AUTHORING_PROVIDERS[type];
  const config=validatePage(pagePayload(type,long?available:available.slice(0,1),
   {name,bio,template_key:key,card_language:language}),OWNER);
  for(const baseline of [false,true]){
@@ -58,7 +58,7 @@ try{
    header:['avatar','name','bio'].map(id=>{const e=document.getElementById(id),r=e.getBoundingClientRect(),s=getComputedStyle(e);return {id,x:r.x,y:r.y,width:r.width,height:r.height,font:s.fontFamily,font_size:s.fontSize,line_height:s.lineHeight};})}));
   assert.ok(state.scroll<=width+1,`${key}/${type}/${language}/${width} overflow`);assert.equal(state.dir,language==='en'?'ltr':'rtl');
   assert.ok(state.font.includes('Bahij'));assert.ok(state.targets.every(b=>b.height>=44));assert.equal(state.avatar.width,88);assert.equal(state.avatar.height,88);
-  assert.ok(state.providers.every(k=>PROVIDER_REGISTRY[k].page_type===type));assert.equal(state.providers.length,long?Object.values(PROVIDER_REGISTRY).filter(p=>p.page_type===type).length:1);
+  assert.ok(state.providers.every(k=>PROVIDER_REGISTRY[k].page_type===type));assert.equal(state.providers.length,long?AUTHORING_PROVIDERS[type].length:1);
   assert.equal(state.preview,false);assert.equal(state.footerLogo,true);assert.equal(errors.length,0);
   for(const badge of state.badges){assert.ok(badge.label);assert.ok(Math.abs(badge.width/badge.height-badge.natural_width/badge.natural_height)<.01,'store badge aspect ratio changed');}
   const headerId=[key,language,long,width,orientation].join('/'),geometry=JSON.stringify(state.header);

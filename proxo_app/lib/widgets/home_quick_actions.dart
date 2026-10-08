@@ -8,12 +8,14 @@ import 'proxo_text.dart';
 class HomeQuickActions extends StatelessWidget {
   final VoidCallback? onCreateTap;
   final VoidCallback? onToolsTap;
+  final VoidCallback? onCreatePageTap;
   final VoidCallback? onFaqTap;
 
   const HomeQuickActions({
     super.key,
     this.onCreateTap,
     this.onToolsTap,
+    this.onCreatePageTap,
     this.onFaqTap,
   });
 
@@ -40,11 +42,21 @@ class HomeQuickActions extends StatelessWidget {
                 _QuickActionCard(
                   key: const ValueKey('home-contact-tools'),
                   icon: Icons.link_rounded,
-                  title: 'ئامرازی پەیوەندی',
-                  subtitle: 'لاندینگ پەیجێکی پەیوەندی دروست بکە!',
+                  title: 'ProxoLink — پەڕەکانم',
+                  subtitle: 'پەڕەکانت ببینە و بەڕێوەیان ببە.',
                   onTap: onToolsTap,
                 ),
                 const SizedBox(height: 16),
+                if (onCreatePageTap != null) ...[
+                  _QuickActionCard(
+                    key: const ValueKey('home-create-page'),
+                    icon: Icons.add_link,
+                    title: 'دروستکردنی پەڕە',
+                    subtitle: 'پەیوەندی، ڕێستۆرانت یان داگرتنی ئەپ.',
+                    onTap: onCreatePageTap,
+                  ),
+                  const SizedBox(height: 16),
+                ],
                 _QuickActionCard(
                   key: const ValueKey('home-faq'),
                   icon: Icons.question_mark_rounded,

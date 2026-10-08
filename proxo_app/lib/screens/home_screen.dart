@@ -76,6 +76,7 @@ class HomeScreen extends StatefulWidget {
   final VoidCallback? onCreateTap;
   final VoidCallback? onGoToAds;
   final VoidCallback? onToolsTap;
+  final VoidCallback? onCreatePageTap;
   final VoidCallback? onFaqTap;
   final VoidCallback? onDuplicateTap;
   final VoidCallback? onReportsTap;
@@ -89,6 +90,7 @@ class HomeScreen extends StatefulWidget {
     this.onCreateTap,
     this.onGoToAds,
     this.onToolsTap,
+    this.onCreatePageTap,
     this.onFaqTap,
     this.onDuplicateTap,
     this.onReportsTap,
@@ -574,6 +576,7 @@ class _HomeScreenState extends State<HomeScreen>
                         child: HomeQuickActions(
                           onCreateTap: widget.onCreateTap,
                           onToolsTap: widget.onToolsTap,
+                          onCreatePageTap: widget.onCreatePageTap,
                           onFaqTap: widget.onFaqTap,
                         ),
                       ),

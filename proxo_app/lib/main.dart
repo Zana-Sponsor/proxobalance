@@ -428,6 +428,8 @@ class MainShellState extends State<MainShell> {
           //     (هەمان شێوازی `AdCreateScreen`) — باری خوارەوە و تابەکان
           //     دەستیان لێنەدراوە، و «دواوە» دەگەڕێتەوە سەر پەڕەی سەرەکی.
           onToolsTap:  () => _onTabTap(3),
+          onCreatePageTap: () => Navigator.of(context).push(
+            ProxoPageRoute<void>(builder: (_) => const ToolsScreen(initialCreate: true))),
           onFaqTap:    () => Navigator.of(context).push(
                 ProxoPageRoute<void>(builder: (_) => const FaqScreen()),
               ),
@@ -447,9 +449,9 @@ class MainShellState extends State<MainShell> {
           ),
         );
       case 3:
-        return const RepaintBoundary(
-          key: ValueKey('tools'),
-          child: ToolsScreen(),
+        return RepaintBoundary(
+          key: const ValueKey('tools'),
+          child: ToolsScreen(isActive: _tabIndex == 3),
         );
       case 4:
         return RepaintBoundary(
@@ -467,6 +469,8 @@ class MainShellState extends State<MainShell> {
           onCreateTap: () => _onTabTap(2),
           onGoToAds:   () => _onTabTap(1),
           onToolsTap:  () => _onTabTap(3),
+          onCreatePageTap: () => Navigator.of(context).push(
+            ProxoPageRoute<void>(builder: (_) => const ToolsScreen(initialCreate: true))),
           onFaqTap:    () => Navigator.of(context).push(
                 ProxoPageRoute<void>(builder: (_) => const FaqScreen()),
               ),

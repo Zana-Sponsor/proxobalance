@@ -62,6 +62,21 @@ jobs:
       - name: Verify additive migration is rerunnable
         run: psql -v ON_ERROR_STOP=1 -f proxo_app/supabase/migrations/20261006220119_proxolink_v6_independent_pages.sql
       - run: psql -v ON_ERROR_STOP=1 -f test/proxolink-v6-database.sql
+      - name: Verify page-management migration transaction and contract
+        run: |
+          psql -v ON_ERROR_STOP=1 <<'SQL'
+          BEGIN;
+          \i proxo_app/supabase/migrations/20261008234009_proxolink_page_management_contract.sql
+          ROLLBACK;
+          DO $$ BEGIN
+            IF EXISTS(SELECT 1 FROM pg_trigger WHERE tgname='proxolink_v6_management_guard') THEN
+              RAISE EXCEPTION 'management migration rollback failed';
+            END IF;
+          END $$;
+          SQL
+          psql -v ON_ERROR_STOP=1 -f proxo_app/supabase/migrations/20261008234009_proxolink_page_management_contract.sql
+          psql -v ON_ERROR_STOP=1 -f proxo_app/supabase/migrations/20261008234009_proxolink_page_management_contract.sql
+          psql -v ON_ERROR_STOP=1 -f test/proxolink-page-management.sql
       - run: node scripts/proxolink-v6-database.mjs
   responsive:
     runs-on: ubuntu-latest
@@ -98,8 +113,8 @@ jobs:
           cache: true
       - run: flutter pub get
       - name: Analyze changed ProxoLink code
-        run: flutter analyze --no-fatal-infos lib/screens/tools_screen.dart lib/screens/card_webview_screen.dart lib/screens/proxo_cards_list_screen.dart lib/screens/ad_detail_screen.dart lib/widgets/proxolink_preview.dart lib/services/proxolink_service.dart lib/models/proxo_card.dart lib/models/proxolink_page_type.dart lib/models/proxolink_template_meta.dart lib/controllers/proxo_card_controller.dart
-      - run: flutter test test/proxolink_v6_flow_test.dart test/proxolink_flow_test.dart test/ad_repository_test.dart test/ad_creation_flow_test.dart test/ad_submission_test.dart test/text_direction_test.dart
+        run: flutter analyze --no-fatal-infos lib/screens/tools_screen.dart lib/screens/proxolink_page_editor.dart lib/screens/proxolink_page_editor_screen.dart lib/screens/proxolink_page_details_screen.dart lib/screens/card_webview_screen.dart lib/screens/proxo_cards_list_screen.dart lib/screens/ad_detail_screen.dart lib/widgets/proxolink_preview.dart lib/widgets/proxolink_page_card.dart lib/services/proxolink_service.dart lib/models/proxo_card.dart lib/models/proxolink_page_type.dart lib/models/proxolink_template_meta.dart lib/controllers/proxo_card_controller.dart lib/controllers/proxolink_pages_controller.dart
+      - run: flutter test test/proxolink_v6_flow_test.dart test/proxolink_flow_test.dart test/proxolink_page_management_test.dart test/ad_repository_test.dart test/ad_creation_flow_test.dart test/ad_submission_test.dart test/text_direction_test.dart
       - uses: actions/upload-artifact@v4
         with:
           name: proxolink-ui-verification

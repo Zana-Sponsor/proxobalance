@@ -48,7 +48,7 @@ const labels={whatsapp:['واتسئاپ','واتساب','WhatsApp'],viber:['ڤا
   lezzoo:['لەزوو','ليزو','Lezzoo'],wade:['وادێ','وادي','WADE']};
 export function preparedConfig(card,{preview=false,publicAvatarUrl=null}={}) {
   let providers;
-  if(card.page_kind)providers=normalizeSettings(card.page_kind,card.settings,{allowEmpty:preview}).providers;
+  if(card.page_kind)providers=normalizeSettings(card.page_kind,card.settings,{allowEmpty:preview,allowStoredProviders:true}).providers;
   else providers=Object.entries(card.platforms||{}).flatMap(([id,raw],i)=>{
     const key=Object.keys(LEGACY_PROVIDER_IDS).find(k=>LEGACY_PROVIDER_IDS[k]===id)||id;
     if(!Object.hasOwn(PROVIDER_REGISTRY,key))return [];

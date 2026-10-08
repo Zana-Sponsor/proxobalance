@@ -106,7 +106,7 @@ export function contactDestination(id, raw) {
 export function validateCardData(card,{legacy=false}={}) {
   if(card.page_kind){
     if(!PREPARED_DESIGNS.includes(card.template_key)||card.template_version!==6)throw err(422,'template_not_found');
-    normalizeSettings(card.page_kind,card.settings,{allowEmpty:card.demo===true});
+    normalizeSettings(card.page_kind,card.settings,{allowEmpty:card.demo===true,allowStoredProviders:true});
     assertAvatar(card);return true;
   }
   if(PREPARED_DESIGNS.includes(card.template_key)&&card.template_version===6){

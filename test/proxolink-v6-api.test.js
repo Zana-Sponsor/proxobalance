@@ -4,7 +4,7 @@ import {randomUUID} from 'node:crypto';
 import {readFile} from 'node:fs/promises';
 import vm from 'node:vm';
 import {localService,pagePayload,OWNER,OTHER,invoke,configFromHtml} from './fixtures/proxolink-v6-service.mjs';
-import {PAGE_TYPES,PREPARED_DESIGNS,PROVIDER_REGISTRY,providerDestination} from '../api/_lib/proxolink-pages.js';
+import {PAGE_TYPES,PREPARED_DESIGNS,PROVIDER_REGISTRY,providerDestination,registryMetadata} from '../api/_lib/proxolink-pages.js';
 process.env.PROXO_SUPABASE_URL='https://v6-isolated.supabase.co';
 process.env.PROXO_SUPABASE_SERVICE_ROLE_KEY='isolated-fixture-key';
 process.env.PROXO_PREVIEW_SIGNING_SECRET='isolated-preview-signing-secret-at-least-32';
@@ -16,6 +16,53 @@ let fixture;
 test.beforeEach(()=>{fixture=localService();global.fetch=fixture.fetcher;process.env.PROXO_V6_WRITE_MODE='isolated';});
 test.afterEach(()=>{global.fetch=original;});
 const call=(op,options)=>invoke(handler,op,options);
+test('owner details GET is scoped before reading; archive and unknown/other UUIDs are unavailable',async()=>{
+  const created=await call('cards',{method:'POST',body:pagePayload('contact',['telegram'])});
+  const id=created.json().card.id;
+  const owned=await call('cards',{query:{id}});
+  assert.equal(owned.status,200);assert.equal(owned.json().card.user_id,OWNER);
+  assert.equal(owned.json().card.page_kind,'contact');
+  assert.ok(owned.json().card.created_at);assert.ok(owned.json().card.updated_at);
+  assert.equal((await call('cards',{query:{id},auth:'other-token'})).status,404);
+  assert.equal((await call('cards',{query:{id:randomUUID()}})).status,404);
+  assert.equal((await call('cards',{query:{id:OWNER}})).status,404);
+  assert.equal((await call('cards',{query:{id:'bad'},auth:null})).status,401);
+  assert.equal((await call('cards',{query:{id:'bad'}})).status,422);
+  await call('card-action',{method:'POST',body:{card_id:id,action:'delete'}});
+  assert.equal((await call('cards',{query:{id}})).status,404);
+});
+test('authoring exposes exactly ten providers; unsupported legacy order links cannot be newly authored',async()=>{
+  assert.deepEqual(registryMetadata().map(p=>p.provider_key),
+    ['whatsapp','viber','instagram','telegram','korek','asiacell','talabat','toters','google_play','app_store']);
+  for(const key of ['lezzoo','wade']){
+    assert.equal((await call('cards',{method:'POST',body:pagePayload('order',[key])})).status,422);
+    assert.equal((await call('form-preview-token',{method:'POST',body:pagePayload('order',[key])})).status,422);
+  }
+  assert.equal(fixture.writes.length,0);
+});
+test('stored legacy order providers remain unchanged and renderable, but cannot be injected or rewritten',async()=>{
+  const created=await call('cards',{method:'POST',body:pagePayload('order',['talabat'])});
+  const page=fixture.rows[0];
+  const historical=pagePayload('order',['lezzoo']).settings.providers[0];
+  historical.sort_order=4;page.settings.providers.push(historical);page.platforms.lezzoo=historical.destination_url;
+  const id=created.json().card.id,url=page.updated_at;
+  assert.equal((await call('order',{query:{id},auth:null})).status,200);
+  assert.equal((await call('cards',{method:'PATCH',query:{id},body:{name:'Preserved',expected_updated_at:url}})).status,200);
+  assert.deepEqual(page.settings.providers[1],historical);
+  const bad=structuredClone(page.settings);bad.providers[1].destination_url='https://lezzoo.com/changed';
+  assert.equal((await call('cards',{method:'PATCH',query:{id},body:{settings:bad,expected_updated_at:page.updated_at}})).status,422);
+});
+test('stale management action and concurrent deactivation fail closed instead of overwriting',async()=>{
+  const created=await call('cards',{method:'POST',body:pagePayload('download',['app_store'])});
+  const id=created.json().card.id,stamp=fixture.rows[0].updated_at;
+  for(const action of ['activate','deactivate','delete','retry']) {
+    const result=await call('card-action',{method:'POST',body:{card_id:id,action,expected_updated_at:'2000-01-01T00:00:00Z'}});
+    assert.equal(result.status,409);assert.equal(result.json().error,'edit_conflict');
+  }
+  assert.equal(fixture.rows[0].status,'active');assert.equal(fixture.rows[0].archived_at,undefined);
+  assert.equal((await call('card-action',{method:'POST',body:{card_id:id,action:'deactivate',expected_updated_at:stamp}})).status,200);
+  assert.equal(fixture.rows[0].id,id);
+});
 for(const [kind,sets] of Object.entries({contact:[['whatsapp','viber','instagram','telegram','korek','asiacell']],order:[['talabat'],['toters'],['talabat','toters']],download:[['google_play'],['app_store'],['google_play','app_store']]})){
  for(const providers of sets)test(`${kind} ${providers.join('+')}: create/database UUID/edit/stable typed URL/public/owner preview`,async()=>{
    const body=pagePayload(kind,providers),created=await call('cards',{method:'POST',body});

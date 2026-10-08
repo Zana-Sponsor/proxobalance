@@ -35,6 +35,11 @@ async function handler(req,res,{user}) {
     const card=await cardById(id);
     if(card.user_id!==user.id)
       return json(res,404,{ok:false,error:'not_found'});
+    if(body.expected_updated_at!==undefined &&
+      (!Number.isFinite(Date.parse(body.expected_updated_at)) ||
+        Date.parse(body.expected_updated_at)!==Date.parse(card.updated_at))) {
+      return json(res,409,{ok:false,error:'edit_conflict'});
+    }
     if(card.page_kind||card.template_version===6){
       assertIsolatedWrites();
       if(card.archived_at)return json(res,409,{ok:false,error:'page_archived'});
@@ -51,8 +56,9 @@ async function handler(req,res,{user}) {
           'id=eq.'+id+'&user_id=eq.'+user.id,'return=minimal');
         return json(res,200,{ok:true,deleted:id});
       }
-      await proxoWrite('proxolink_cards','PATCH',{status:'inactive'},
-        'id=eq.'+id+'&user_id=eq.'+user.id,'return=minimal');
+      const changed=await proxoWrite('proxolink_cards','PATCH',{status:'inactive'},
+        'id=eq.'+id+'&user_id=eq.'+user.id+'&updated_at=eq.'+encodeURIComponent(card.updated_at)+'&select=id');
+      if(!changed.length)return json(res,409,{ok:false,error:'edit_conflict'});
       return responseCard(res,id,user.id);
     }
     if(action==='retry'&&card.publish_status==='ready')

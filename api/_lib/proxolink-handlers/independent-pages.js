@@ -3,8 +3,10 @@ import { json } from '../security.js';
 import { cardById, cardRows, proxoWrite, renderedPage, verifyPublicAvatar } from '../proxolink.js';
 import { validatePage, assertIsolatedWrites, publicPath } from '../proxolink-pages.js';
 import { publishAudit } from '../proxolink-audit.js';
-const safeCard=card=>({id:card.id,name:card.name,page_kind:card.page_kind,status:card.status,
-  publish_status:card.publish_status,public_path:!card.archived_at&&card.status==='active'&&card.publish_status==='ready'?publicPath(card):null});
+const managementColumns='id,user_id,name,bio,tt,page_kind,client_request_id,settings,platforms,template_key,template_version,color_theme,card_language,avatar_path,status,publish_status,card_number,created_at,updated_at';
+// Authenticated owner response only; never returned by a public renderer.
+const safeCard=card=>({...Object.fromEntries(managementColumns.split(',').map(key=>[key,card[key]])),
+  public_path:!card.archived_at&&card.status==='active'&&card.publish_status==='ready'?publicPath(card):null});
 async function ready(card) {
   if(card.avatar_path)await verifyPublicAvatar(card.avatar_path);
   await renderedPage(card);
@@ -14,7 +16,7 @@ export async function createPage(res,owner,body) {
   assertIsolatedWrites();
   const hash=createHash('sha256').update(JSON.stringify(data)).digest('hex');
   const filter='&user_id=eq.'+owner+'&client_request_id=eq.'+data.client_request_id+'&limit=1';
-  const find=()=>cardRows(filter,'id,user_id,name,status,publish_status,creation_request_hash');
+  const find=()=>cardRows(filter,managementColumns+',creation_request_hash');
   const reused=rows=>rows[0].creation_request_hash===hash
     ?json(res,200,{ok:true,card:safeCard(rows[0]),reused:true})
     :json(res,409,{ok:false,error:'idempotency_conflict'});
@@ -43,14 +45,14 @@ export async function createPage(res,owner,body) {
     const published=await proxoWrite('proxolink_cards','PATCH',{
       publish_status:'ready',status:'active',last_publish_error_code:null,last_publish_error_at:null,
       published_at:new Date().toISOString(),updated_at:new Date().toISOString(),
-    },filterWrite+'&select=id,name,page_kind,status,publish_status');
+    },filterWrite+'&select='+managementColumns);
     if(!published.length)return json(res,409,{ok:false,error:'edit_conflict'});
     await publishAudit(card,'create','success');
     return json(res,201,{ok:true,card:safeCard(published[0])});
   } catch(error) {
     const failed=await proxoWrite('proxolink_cards','PATCH',{
       publish_status:'failed',status:'inactive',last_publish_error_code:'render_failed',last_publish_error_at:new Date().toISOString(),
-    },filterWrite+'&select=id,name,page_kind,status,publish_status');
+    },filterWrite+'&select='+managementColumns);
     await publishAudit(card,'create','failed','render_failed');
     return json(res,422,{ok:false,error:'publish_failed',card:safeCard(failed[0]||card)});
   }
@@ -68,7 +70,7 @@ export async function editPage(res,owner,body,current) {
     ...fields,style:data.template_key,publish_status:'ready',last_publish_error_code:null,
     last_publish_error_at:null,updated_at:new Date().toISOString(),
   },'id=eq.'+id+'&user_id=eq.'+owner+'&updated_at=eq.'+encodeURIComponent(current.updated_at)
-    +'&select=id,name,page_kind,status,publish_status');
+    +'&select='+managementColumns);
   if(!updated.length)return json(res,409,{ok:false,error:'edit_conflict'});
   await publishAudit(data,'edit_publish','success');
   return json(res,200,{ok:true,card:safeCard(updated[0])});

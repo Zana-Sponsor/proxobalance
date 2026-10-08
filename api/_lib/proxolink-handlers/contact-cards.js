@@ -11,6 +11,7 @@ import {
 const STYLES=new Set(['dark','light','classic','pill','card','neon','zoom','banner','pill-mint','pill-dark','pill-white']);
 const THEMES=new Set(['purple','blue','green','red','yellow','cyan','pink','dark']);
 function failure(res,error) {
+  if(error?.code==='card_not_found')return json(res,404,{ok:false,error:'not_found'});
   if(error?.status===413)return json(res,413,{ok:false,error:'payload_too_large'});
   if(error instanceof SyntaxError)return json(res,422,{ok:false,error:'invalid_request'});
   const code=['unauthorized','invalid_request','invalid_card_name','invalid_bio',
@@ -181,6 +182,16 @@ async function handler(req,res,{user}) {
     return json(res,405,{ok:false,error:'method_not_allowed'});
   try {
     if(req.method==='GET') {
+      if(req.query?.id!==undefined) {
+        const id=req.query.id;
+        if(typeof id!=='string'||!validUuid(id))return json(res,422,{ok:false,error:'invalid_request'});
+        const owned=await cardRows('&id=eq.'+id+'&user_id=eq.'+user.id+'&limit=1',
+          'id,user_id,name,bio,tt,platforms,template_key,template_version,style,color_theme,card_language,avatar_path,status,publish_status,card_number,created_at,updated_at');
+        if(!owned.length||owned[0].archived_at)return json(res,404,{ok:false,error:'not_found'});
+        const card=owned[0];
+        return json(res,200,{ok:true,card:{...card,platforms:Object.fromEntries(Object.entries(card.platforms||{})
+          .filter(([key])=>card.page_kind||!['tg','telegram'].includes(key.toLowerCase())))}});
+      }
       const cards=await cardRows('&user_id=eq.'+user.id+'&order=created_at.desc',
         'id,user_id,name,bio,tt,platforms,template_key,template_version,style,color_theme,card_language,avatar_path,status,publish_status,card_number,created_at,updated_at');
       return json(res,200,{ok:true,cards:cards.filter(card=>!card.archived_at).map(card=>({
