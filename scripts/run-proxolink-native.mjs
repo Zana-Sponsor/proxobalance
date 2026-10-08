@@ -8,6 +8,8 @@ import sharp from 'sharp';
 import { STYLES, WIDTHS, PAGE_TYPES, LANGUAGES, NATIVE_CASE_IDS, validateRuntime, safeRequest, verifyReadOnlySecurity,
   validateNativeResults, createNativeVerificationSession } from './proxolink-verification-security.mjs';
 import {validateViewport, compareNativePixels, captureNativeFrames, createPreviewReferenceBrowser} from './proxolink-pixel-comparison.mjs';
+import {DIAGNOSTIC_POINTS,CHOOSER_IDS,safeRenderDiagnostics,safeChooserResults,validateChooserResults,
+  diagnosticSample,diagnosePixelPair,validateDiagnosticRoles,safeSurface} from './proxolink-native-diagnostics.mjs';
 
 const styles=STYLES;
 const packageId='com.proxo.proxoapp';
@@ -44,6 +46,7 @@ const safeErrorCodes=new Set([
   'invalid_preview_capability','rendered_preview_security_failed','preview_source_boundary_failed',
   'native_evidence_incomplete','native_screenshot_failed','native_verification_timeout',
   'native_capture_unstable','native_pixel_parity_failed',
+  'native_diagnostics_invalid','native_diagnostics_incomplete','native_diagnostics_environment_mismatch','native_chooser_failed',
   'native_viewport_invalid','native_crop_outside_screen','reference_viewport_mismatch',
   'reference_capability_required','reference_preview_unavailable','reference_assets_or_viewport_failed',
 ]);
@@ -154,6 +157,14 @@ async function main() {
   stage='prepare_device';
   adb(['shell','wm','size','1200x1900']);
   adb(['shell','wm','density','160']);
+  const compositor=adb(['shell','dumpsys','SurfaceFlinger'],null,true)?.toString()||'';
+  const renderer=compositor.split('\n').find(line=>/^\s*GLES:/.test(line))?.trim();
+  writeFileSync(output+'/diagnostic-environment.json',JSON.stringify({
+    android_api:35,requested_screen:[1200,1900],requested_density_dpi:160,
+    emulator_gpu_mode:'swiftshader_indirect',
+    compositor_renderer:renderer&&renderer.length<512&&/^[\w ,.:\/()\[\]+-]+$/.test(renderer)?renderer:null,
+    previous_run_webview_version:'Not retained in the historical artifact; no WebView installation/update or emulator-setting change requested',
+  },null,2));
   adb(['shell','run-as',packageId,'mkdir','-p','files']);
   await configure();
   // Exact parity uses the same Android emulator/WebView version for both roles.
@@ -164,6 +175,16 @@ async function main() {
   const captured=new Set();
   const pixels={};
   const repeatability={};
+  const diagnosticRoles={},diagnosticPairs={};
+  const chooserTaps=new Set(),chooserCaptures=new Set();
+  const chooserSetups=new Set();
+  let matrixFinished=false;
+  const diagnosticWrite=()=>writeFileSync(output+'/render-diagnostics.json',JSON.stringify({
+    purpose:'Observational only; FIRST of three predetermined ADB frames remains acceptance input',
+    clocks:'capture_timing: host monotonic milliseconds; native: Android elapsedRealtime milliseconds; DOM: performance time origin and now',
+    frame_commit_scope:'Submitted for rendering; not proof of display presentation. Two postOnAnimation callbacks are not compositor presentation acknowledgements.',
+    surface_scope:'One fixed PixelCopy of the existing Flutter SurfaceView after the three acceptance samples; diagnostic only, never a replacement frame',
+    historical_points:DIAGNOSTIC_POINTS,roles:diagnosticRoles,pairs:diagnosticPairs},null,2));
   const reportedFailures=new Set();
   const deadline=Date.now()+90*60*1000;
   while(Date.now()<deadline) {
@@ -173,6 +194,7 @@ async function main() {
     const progress=appRead('proxolink-verification-progress.json');
     if(progress){
       const observed=safeCaseResults(JSON.parse(progress));
+      matrixFinished=Object.keys(observed).length===NATIVE_CASE_IDS.length;
       writeFileSync(output+'/case-results.json',JSON.stringify(observed,null,2));
       for(const [id,item] of Object.entries(observed))if(item.passed===false&&!reportedFailures.has(id)){
         reportedFailures.add(id);
@@ -186,23 +208,76 @@ async function main() {
       // rejects a failed page or pixel difference. Never upload the raw map.
       const observed=safeCaseResults(data);
       writeFileSync(output+'/case-results.json',JSON.stringify(observed,null,2));
+      const chooser=safeChooserResults(JSON.parse(appRead('proxolink-chooser-results.json')||'{}'));
+      writeFileSync(output+'/chooser-results.json',JSON.stringify(chooser,null,2));
+      // Retain all independent outcomes even when another gate fails first.
+      const gates={};let firstError;
+      for(const [name,check] of Object.entries({matrix:()=>validateNativeResults(data,captured,pixels),
+        diagnostics:()=>validateDiagnosticRoles(diagnosticRoles),chooser:()=>validateChooserResults(chooser,chooserTaps,chooserCaptures)})){
+        try{check();gates[name]={passed:true};}catch(error){gates[name]={passed:false,code:safeErrorCodes.has(error.message)?error.message:'unclassified_failure'};firstError??=error;}
+      }
+      writeFileSync(output+'/acceptance-gates.json',JSON.stringify(gates,null,2));
+      if(firstError)throw firstError;
       const safe=validateNativeResults(data,captured,pixels);
       writeFileSync(output+'/results.json',JSON.stringify(safe,null,2));
-      console.log('All 240 live native cases and exact same-device Android WebView baseline/candidate comparisons passed.');
+      console.log('All 240 live native cases, exact same-device pixels and 12 native thumbnail chooser cases passed.');
       return;
     }
     const current=appRead('proxolink-verification-case.json');
     if(current) {
-      const {id,capture_id,style,type,language,width,variant,viewport}=JSON.parse(current);
+      const {id,capture_id,style,type,language,width,variant,viewport,diagnostics}=JSON.parse(current);
       if(NATIVE_CASE_IDS.includes(id)&&capture_id===id+'-'+variant&&['candidate','baseline'].includes(variant)&&!captures.has(capture_id)) {
         const crop=validateViewport(viewport,width);
-        const frame=await captureNativeFrames(()=>adb(['exec-out','screencap','-p']),crop);
+        const timing=[];
+        const clock=()=>Number(process.hrtime.bigint())/1e6;
+        const anchor=()=>{
+          const host_started_ms=clock();
+          const device_elapsed_ms=Number.parseFloat(adb(['shell','cat','/proc/uptime']).toString())*1000;
+          if(!Number.isFinite(device_elapsed_ms))throw Error('native_diagnostics_invalid');
+          return {host_started_ms,host_completed_ms:clock(),device_elapsed_ms};
+        };
+        const clockAnchor=DIAGNOSTIC_POINTS[id]?anchor():null;
+        const frame=await captureNativeFrames(()=>{
+          const started_ms=clock(),png=adb(['exec-out','screencap','-p']);
+          timing.push({sample:timing.length+1,started_ms,completed_ms:clock()});return png;
+        },crop);
         writeFileSync(output+'/'+capture_id+'.png',frame.png);
         frame.repeated.forEach((sample,index)=>writeFileSync(output+'/'+capture_id+'-repeat-'+(index+2)+'-webview.png',sample.native));
         repeatability[capture_id]=frame.repeatability;
         writeFileSync(output+'/capture-repeatability.json',JSON.stringify(repeatability,null,2));
         if(!frame.repeatability.exact_pixels_equal)console.log('Native capture instability recorded for '+capture_id+'.');
         captures.set(capture_id,{png:frame.png,crop,repeatability:frame.repeatability});
+        if(DIAGNOSTIC_POINTS[id]){
+          const point=DIAGNOSTIC_POINTS[id],state=safeRenderDiagnostics(diagnostics);
+          const first=await sharp(frame.png).extract({left:crop.left,top:crop.top,width:crop.width,height:crop.height}).png().toBuffer();
+          diagnosticRoles[capture_id]={state,viewport:crop,crop_coordinate:point,
+            case:{id,style:id.match(/^(pill(?:-(?:mint|dark|white))?)-/)[1],type:id.match(/-(contact|order|download)-/)[1],
+              language:id.match(/-(ku|en)-/)[1],orientation:id.match(/-(portrait|landscape)-/)[1],width:crop.width},
+            clock_anchor:clockAnchor,
+            screen_coordinate:[point[0]+crop.left,point[1]+crop.top],capture_timing:timing,
+            samples:await Promise.all([first,...frame.repeated.map(x=>x.native)].map(png=>diagnosticSample(png,point)))};
+          diagnosticWrite();
+          // Fixed fourth diagnostic read, never an acceptance frame or matching-frame search.
+          appWrite('proxolink-diagnostic-request',capture_id);
+          let surface;
+          for(let poll=0;poll<60;poll++){
+            const value=appRead('proxolink-diagnostic-surface.json');
+            if(value){const response=JSON.parse(value);if(response.id===capture_id){
+              surface=safeSurface(response.surface);diagnosticRoles[capture_id].state_after=safeRenderDiagnostics(response.state_after);break;
+            }}
+            await pause(250);
+          }
+          if(!surface)throw Error('native_diagnostics_incomplete');
+          diagnosticRoles[capture_id].surface=surface;
+          if(surface.status===0){
+            const png=adb(['exec-out','run-as',packageId,'cat','files/proxolink-diagnostic-surface.png']);
+            writeFileSync(output+'/'+capture_id+'-diagnostic-surface.png',png);
+            const coordinate=[point[0]+crop.left-surface.screen_x,point[1]+crop.top-surface.screen_y];
+            diagnosticRoles[capture_id].surface_sample=await diagnosticSample(png,coordinate);
+            diagnosticRoles[capture_id].surface_coordinate=coordinate;
+          }
+          diagnosticWrite();
+        }
         if(captures.has(id+'-candidate')&&captures.has(id+'-baseline')) {
           const candidate=captures.get(id+'-candidate'),baseline=captures.get(id+'-baseline');
           if(JSON.stringify(candidate.crop)!==JSON.stringify(baseline.crop))throw Error('reference_viewport_mismatch');
@@ -211,6 +286,10 @@ async function main() {
           writeFileSync(output+'/'+id+'-webview.png',comparison.native);
           writeFileSync(output+'/'+id+'-baseline-webview.png',reference);
           writeFileSync(output+'/'+id+'-diff.png',comparison.diff);
+          if(DIAGNOSTIC_POINTS[id]||!comparison.metrics.exact_pixels_equal){
+            diagnosticPairs[id]=await diagnosePixelPair(comparison.native,reference,candidate.crop,DIAGNOSTIC_POINTS[id]);
+            diagnosticWrite();
+          }
           pixels[id]={...comparison.metrics,capture_samples:3,
             capture_stable:candidate.repeatability.exact_pixels_equal&&baseline.repeatability.exact_pixels_equal};captured.add(id);
           writeFileSync(output+'/pixels.json',JSON.stringify({environment:'Same Android 35 emulator / WebView / DPR 1 baseline versus candidate',
@@ -220,6 +299,31 @@ async function main() {
         appWrite('proxolink-verification-ack',capture_id);
         console.log('Native evidence captured for '+capture_id+'.');
       }
+    }
+    if(matrixFinished){
+    const chooserProgress=appRead('proxolink-chooser-results.json');
+    if(chooserProgress)writeFileSync(output+'/chooser-results.json',JSON.stringify(safeChooserResults(JSON.parse(chooserProgress)),null,2));
+    const chooserRequest=appRead('proxolink-chooser-request.json');
+    if(chooserRequest){
+      const request=JSON.parse(chooserRequest),{id,phase,x,y}=request;
+      if(PAGE_TYPES.map(type=>'chooser-setup-'+type).includes(id)&&phase==='setup'&&!chooserSetups.has(id)){
+        if(!Number.isInteger(x)||!Number.isInteger(y)||x<0||x>=1200||y<0||y>=1900)throw Error('native_chooser_failed');
+        adb(['shell','input','tap',String(x),String(y)]);chooserSetups.add(id);
+      }
+      if(CHOOSER_IDS.includes(id)){
+        if(phase==='tap'&&!chooserTaps.has(id)){
+          if(!Number.isInteger(x)||!Number.isInteger(y)||x<0||x>=1200||y<0||y>=1900)throw Error('native_chooser_failed');
+          adb(['shell','input','tap',String(x),String(y)]);chooserTaps.add(id);
+          console.log('Native chooser Android input tap for '+id+'.');
+        }else if(phase==='capture'&&!chooserCaptures.has(id)){
+          if(!chooserTaps.has(id))throw Error('native_chooser_failed');
+          writeFileSync(output+'/'+id+'.png',adb(['exec-out','screencap','-p']));chooserCaptures.add(id);
+          appWrite('proxolink-chooser-ack',id);
+          console.log('Native chooser preview evidence captured for '+id+'.');
+        }
+        writeFileSync(output+'/chooser-input-evidence.json',JSON.stringify({builder_type_taps:[...chooserSetups],taps:[...chooserTaps],captures:[...chooserCaptures]},null,2));
+      }
+    }
     }
     await pause(1000);
   }
@@ -248,3 +352,4 @@ catch(error) {
   adb(['shell','wm','size','reset'],null,true);
   adb(['shell','wm','density','reset'],null,true);
 }
+

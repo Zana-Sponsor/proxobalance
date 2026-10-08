@@ -1,0 +1,51 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import sharp from 'sharp';
+import {DIAGNOSTIC_POINTS,CHOOSER_IDS,safeRenderDiagnostics,safeChooserResults,validateChooserResults,
+ diagnosticSample,diagnosePixelPair,validateDiagnosticRoles,safeSurface} from '../scripts/proxolink-native-diagnostics.mjs';
+function state(){return {dom:{dpr:1,scroll_x:0,scroll_y:0,elements:[{present:true,bounds:[0.5,20,393,800],style_hash:123}]},
+ native:{sdk:35,density:1,webview_version:'133.0.6943.137',barrier:{visual_state_seen:true,draw_seen:true,frame_commit_seen:false,post_animation_callbacks:2}},flutter_bounds:[403.5,200,393,1520]};}
+test('native diagnostic allowlist retains fractional geometry and strips capabilities and arbitrary text',()=>{
+ const input=state();input.token='secret';input.dom.url='https://example.invalid/?token=secret';input.native.headers={Authorization:'secret'};
+ const out=safeRenderDiagnostics(input);
+ assert.deepEqual(out.flutter_bounds,[403.5,200,393,1520]);assert.equal(out.dom.elements[0].bounds[0],0.5);
+ assert.equal(out.native.barrier.frame_commit_seen,false);assert.match(out.state_sha256,/^[a-f0-9]{64}$/);
+ assert.doesNotMatch(JSON.stringify(out),/secret|Authorization|token|example/);
+ const bad=state();bad.native.webview_version='https://example.invalid/token';assert.throws(()=>safeRenderDiagnostics(bad),/invalid/);
+ const wrong=state();wrong.dom.dpr=2;assert.throws(()=>safeRenderDiagnostics(wrong),/incomplete/);
+ const noDraw=state();noDraw.native.barrier.draw_seen=false;assert.throws(()=>safeRenderDiagnostics(noDraw),/incomplete/);
+ assert.deepEqual(safeSurface({status:0,width:1200,private_url:'secret'}),{status:0,width:1200});
+});
+test('diagnostics report a one-channel difference, exact screen coordinates and unmodified neighborhoods',async()=>{
+ const width=8,height=8,raw=Buffer.alloc(width*height*3,200);
+ const baseline=await sharp(raw,{raw:{width,height,channels:3}}).png().toBuffer();
+ raw[(3*width+4)*3+1]=199;
+ const candidate=await sharp(raw,{raw:{width,height,channels:3}}).png().toBuffer();
+ const viewport={left:100,top:200,width,height};
+ const out=await diagnosePixelPair(candidate,baseline,viewport,[4,3]);
+ assert.equal(out.changed_pixels,1);assert.deepEqual(out.changed_coordinates,[[4,3]]);
+ assert.deepEqual(out.differences[0].screen,[104,203]);assert.deepEqual(out.differences[0].candidate,[200,199,200]);
+ assert.deepEqual(out.differences[0].delta,[0,-1,0]);
+ assert.equal(out.differences[0].candidate_neighborhood.length,5);
+ assert.deepEqual(out.differences[0].candidate_neighborhood[2][2],{x:4,y:3,rgb:[200,199,200]});
+ const sample=await diagnosticSample(candidate,[4,3]);assert.deepEqual(sample.rgb,[200,199,200]);
+ const same=await diagnosePixelPair(candidate,candidate,viewport,[4,3]);assert.equal(same.changed_pixels,0);assert.deepEqual(same.historical_point.delta,[0,0,0]);
+ await assert.rejects(diagnosticSample(candidate,[8,3]),/invalid/);
+});
+test('native chooser requires 12 real input taps, 12 captures and every positive design assertion',()=>{
+ assert.equal(CHOOSER_IDS.length,12);
+ const good=Object.fromEntries(CHOOSER_IDS.map(id=>[id,{passed:true,builder_screen:true,thumbnail_decoded:true,selection_changed:true,selected_state:true,
+ live_theme_match:true,provider_type_match:true,fresh_controller:true,native_draw:true,width:393,private_token:'secret'}]));
+ const safe=safeChooserResults(good),taps=new Set(CHOOSER_IDS),captures=new Set(CHOOSER_IDS);
+ assert.doesNotMatch(JSON.stringify(safe),/secret|token/);validateChooserResults(safe,taps,captures);
+ assert.throws(()=>validateChooserResults(safe,new Set(),captures),/native_chooser_failed/);
+ assert.throws(()=>validateChooserResults(safe,taps,new Set()),/native_chooser_failed/);
+ safe[CHOOSER_IDS[0]].live_theme_match=false;assert.throws(()=>validateChooserResults(safe,taps,captures),/native_chooser_failed/);
+});
+test('all six diagnostic cases require both roles, exactly three samples and the same WebView version',()=>{
+ assert.equal(Object.keys(DIAGNOSTIC_POINTS).length,6);
+ const roles=Object.fromEntries(Object.keys(DIAGNOSTIC_POINTS).flatMap(id=>['candidate','baseline'].map(role=>[id+'-'+role,{state:state(),state_after:state(),surface:{status:0},surface_sample:{rgb:[1,2,3]},samples:[{},{},{}],capture_timing:[{},{},{}]}])));
+ validateDiagnosticRoles(roles);
+ const first=Object.keys(roles)[0];roles[first].samples.pop();assert.throws(()=>validateDiagnosticRoles(roles),/incomplete/);roles[first].samples.push({});
+ roles[first].state.native.webview_version='134.0.0.0';assert.throws(()=>validateDiagnosticRoles(roles),/environment_mismatch/);
+});
