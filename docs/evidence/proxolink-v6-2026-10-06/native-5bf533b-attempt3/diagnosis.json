@@ -1,0 +1,269 @@
+{
+  "status": "FAILED",
+  "collection_failure": {
+    "stage": "template_catalog",
+    "code": "verification_endpoint_unavailable",
+    "http_status": 401,
+    "timestamp": "2026-10-07T23:51:09.5417765Z",
+    "established": "A template catalog refresh returned HTTP 401 after 218 complete native case pairs; jsonRequest threw before remaining cases and final validation.",
+    "proven_harness_gap": "Pinned configure() signs in only when authorization is empty. It renews preview capabilities every three minutes but retains the initial app bearer for the entire long run, ignoring expires_in/expires_at.",
+    "inference": "The approximately one-hour timing is consistent with access-token expiry. JWT expiry and the backend auth error were not retained, so the underlying HTTP 401 is not directly proven to be expiry.",
+    "cause_limit": "The endpoint checks app authentication separately from deployment protection; its generic 401 can also hide other auth-service failures. No credential/configuration or customer-data diagnosis is claimed."
+  },
+  "minimal_correction": {
+    "files": [
+      "scripts/proxolink-verification-security.mjs",
+      "scripts/run-proxolink-native.mjs",
+      "test/proxolink-verification-security.test.js"
+    ],
+    "description": "At existing configure boundaries, renew the same ordinary app account before its returned expires_in/expires_at deadline with five-minute headroom. Retain only bearer and UUID in runner memory, reject changed users or invalid/expired metadata, fail closed on sign-in failure.",
+    "scope": "Harness authentication lifecycle only; no token lifetime/permissions, product widget/templates/thumbnails, acceptance, workflow or protected environment changes.",
+    "validation": "124 local Node tests passed, source privacy, JavaScript syntax and whitespace checks passed; no protected native execution of this correction.",
+    "native_status": "UNEXECUTED; no additional protected native run or retry created under the current constraints"
+  },
+  "independent_pixel_failure": {
+    "pairs_compared": 218,
+    "exact": 209,
+    "failed": 9,
+    "changed_pixels": 10,
+    "max_channel_error": 1,
+    "role_repeatability": "All 436 roles independently have three exact samples; first candidate and first baseline are still different in nine pairs.",
+    "cause": "UNKNOWN; neither draw timing nor a product CSS/font/template defect is proven. Authentication renewal is not a pixel-parity remedy.",
+    "acceptance": "ZERO changed pixels, all 240 pairs and all required evidence remain mandatory. No tolerance, matching frames, masking, adaptive retry or missing-case allowance.",
+    "failed_cases": [
+      {
+        "case": "pill-contact-ku-portrait-768",
+        "changed_pixels": 1,
+        "max_channel_error": 1,
+        "locations": [
+          {
+            "x": 380,
+            "y": 222,
+            "candidate_rgb": [
+              220,
+              227,
+              240
+            ],
+            "baseline_rgb": [
+              220,
+              226,
+              240
+            ]
+          }
+        ]
+      },
+      {
+        "case": "pill-contact-en-portrait-768",
+        "changed_pixels": 1,
+        "max_channel_error": 1,
+        "locations": [
+          {
+            "x": 380,
+            "y": 222,
+            "candidate_rgb": [
+              215,
+              221,
+              236
+            ],
+            "baseline_rgb": [
+              215,
+              222,
+              236
+            ]
+          }
+        ]
+      },
+      {
+        "case": "pill-order-ku-portrait-768",
+        "changed_pixels": 1,
+        "max_channel_error": 1,
+        "locations": [
+          {
+            "x": 380,
+            "y": 222,
+            "candidate_rgb": [
+              220,
+              227,
+              240
+            ],
+            "baseline_rgb": [
+              220,
+              226,
+              240
+            ]
+          }
+        ]
+      },
+      {
+        "case": "pill-order-en-portrait-768",
+        "changed_pixels": 1,
+        "max_channel_error": 1,
+        "locations": [
+          {
+            "x": 380,
+            "y": 222,
+            "candidate_rgb": [
+              215,
+              222,
+              236
+            ],
+            "baseline_rgb": [
+              215,
+              221,
+              236
+            ]
+          }
+        ]
+      },
+      {
+        "case": "pill-mint-contact-en-portrait-430",
+        "changed_pixels": 1,
+        "max_channel_error": 1,
+        "locations": [
+          {
+            "x": 282,
+            "y": 184,
+            "candidate_rgb": [
+              237,
+              247,
+              243
+            ],
+            "baseline_rgb": [
+              237,
+              247,
+              244
+            ]
+          }
+        ]
+      },
+      {
+        "case": "pill-mint-contact-en-portrait-768",
+        "changed_pixels": 1,
+        "max_channel_error": 1,
+        "locations": [
+          {
+            "x": 290,
+            "y": 228,
+            "candidate_rgb": [
+              234,
+              246,
+              241
+            ],
+            "baseline_rgb": [
+              234,
+              245,
+              241
+            ]
+          }
+        ]
+      },
+      {
+        "case": "pill-mint-order-ku-portrait-768",
+        "changed_pixels": 1,
+        "max_channel_error": 1,
+        "locations": [
+          {
+            "x": 290,
+            "y": 228,
+            "candidate_rgb": [
+              234,
+              245,
+              241
+            ],
+            "baseline_rgb": [
+              234,
+              246,
+              241
+            ]
+          }
+        ]
+      },
+      {
+        "case": "pill-mint-order-en-portrait-320",
+        "changed_pixels": 2,
+        "max_channel_error": 1,
+        "locations": [
+          {
+            "x": 101,
+            "y": 132,
+            "candidate_rgb": [
+              239,
+              248,
+              245
+            ],
+            "baseline_rgb": [
+              239,
+              248,
+              244
+            ]
+          },
+          {
+            "x": 275,
+            "y": 160,
+            "candidate_rgb": [
+              235,
+              247,
+              242
+            ],
+            "baseline_rgb": [
+              234,
+              247,
+              242
+            ]
+          }
+        ]
+      },
+      {
+        "case": "pill-mint-order-en-portrait-430",
+        "changed_pixels": 1,
+        "max_channel_error": 1,
+        "locations": [
+          {
+            "x": 282,
+            "y": 184,
+            "candidate_rgb": [
+              237,
+              247,
+              244
+            ],
+            "baseline_rgb": [
+              237,
+              247,
+              243
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "missing_case_ids": [
+    "pill-white-order-en-landscape-430",
+    "pill-white-order-en-landscape-768",
+    "pill-white-download-ku-portrait-320",
+    "pill-white-download-ku-portrait-375",
+    "pill-white-download-ku-portrait-393",
+    "pill-white-download-ku-portrait-430",
+    "pill-white-download-ku-portrait-768",
+    "pill-white-download-ku-landscape-320",
+    "pill-white-download-ku-landscape-375",
+    "pill-white-download-ku-landscape-393",
+    "pill-white-download-ku-landscape-430",
+    "pill-white-download-ku-landscape-768",
+    "pill-white-download-en-portrait-320",
+    "pill-white-download-en-portrait-375",
+    "pill-white-download-en-portrait-393",
+    "pill-white-download-en-portrait-430",
+    "pill-white-download-en-portrait-768",
+    "pill-white-download-en-landscape-320",
+    "pill-white-download-en-landscape-375",
+    "pill-white-download-en-landscape-393",
+    "pill-white-download-en-landscape-430",
+    "pill-white-download-en-landscape-768"
+  ],
+  "native_chooser_coverage": {
+    "executed": 0,
+    "status": "NOT VERIFIED"
+  },
+  "prior_infrastructure": "Attempt 2 failed before emulator at KVM; attempt 3 KVM succeeded and actual runtime executed. No current KVM/offline-device root cause claimed.",
+  "required_next_authorization": "Current instruction forbids a new native run. Executing the corrected authentication revision in the unchanged protected workflow requires a new authorized action; rerunning pinned 5bf533b cannot execute the fix."
+}

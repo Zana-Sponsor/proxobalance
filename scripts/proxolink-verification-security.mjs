@@ -42,6 +42,28 @@ export async function safeRequest(url,options={},fetcher=fetch) {
   return fetcher(parsed.href,{...options,redirect:'error',signal:AbortSignal.timeout(30000)});
 }
 
+// Preview capabilities are renewed during long native runs. Their app-auth
+// session must also stay valid; keep only its bearer and the same account ID
+// in runner memory, never the full sign-in response or a refresh token.
+export function createNativeVerificationSession(signIn,now=Date.now) {
+  let current=null,expiresAt=0;
+  return async()=>{
+    if(current&&now()<expiresAt-300000)return current;
+    const startedAt=now(),session=await signIn();
+    const ttl=Number(session?.expires_in),absolute=Number(session?.expires_at);
+    const deadline=Number.isFinite(absolute)&&absolute>0
+      ?Math.min(absolute*1000,startedAt+ttl*1000):startedAt+ttl*1000;
+    if(typeof session?.access_token!=='string'||!session.access_token
+      ||!Number.isFinite(ttl)||ttl<=0||!Number.isFinite(deadline)||deadline<=now()
+      ||!/^([0-9a-f]{8}-)([0-9a-f]{4}-){3}[0-9a-f]{12}$/i.test(session?.user?.id||''))
+      throw Error('verification_sign_in_failed');
+    if(current&&session.user.id!==current.userId)throw Error('verification_user_required');
+    current={authorization:'Bearer '+session.access_token,userId:session.user.id};
+    expiresAt=deadline;
+    return current;
+  };
+}
+
 export async function verifyReadOnlySecurity({authorization,key,userId,protection},fetcher=fetch) {
   const checks={};
   const request=async (url,headers,check)=>{

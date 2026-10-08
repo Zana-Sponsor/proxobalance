@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {PREVIEW_ORIGIN,SUPABASE_ORIGIN,STYLES,WIDTHS,NATIVE_CASE_IDS,validateRuntime,
-  safeRequest,verifyReadOnlySecurity,validateNativeResults} from '../scripts/proxolink-verification-security.mjs';
+  safeRequest,verifyReadOnlySecurity,validateNativeResults,createNativeVerificationSession} from '../scripts/proxolink-verification-security.mjs';
 const environment={GITHUB_REPOSITORY:'Zana-Sponsor/proxobalance',
  GITHUB_REF:'refs/heads/feat/proxolink-private-renderer-migration',
  GITHUB_WORKFLOW_REF:'Zana-Sponsor/proxobalance/.github/workflows/proxolink-native-build.yml@refs/heads/feat/proxolink-private-renderer-migration',
@@ -45,6 +45,43 @@ test('live checks require app authentication independently of the Vercel bypass 
  assert.equal(requests.filter(r=>r.headers?.['x-vercel-protection-bypass']).length,5);
  await assert.rejects(verifyReadOnlySecurity({authorization:'Bearer test-only',key:'test',
   userId:'11111111-1111-4111-8111-111111111111',protection:{}},async()=>new Response(null,{status:200})));
+});
+test('native capability refresh keeps app authentication valid beyond a one-hour run',async()=>{
+ let time=1000000,calls=0;const issued=new Map(),userId='11111111-1111-4111-8111-111111111111';
+ const session=createNativeVerificationSession(async()=>{
+  const token='test-only-'+(++calls);issued.set('Bearer '+token,time+3600000);
+  return {access_token:token,expires_in:3600,expires_at:(time+3600000)/1000,user:{id:userId},refresh_token:'never-retained'};
+ },()=>time);
+ for(let minute=0;minute<=90;minute+=3){
+  time=1000000+minute*60000;const active=await session();
+  assert.ok(issued.get(active.authorization)>time+300000,'configuration must not use a token nearing expiry');
+  assert.equal(active.userId,userId);
+  assert.deepEqual(Object.keys(active).sort(),['authorization','userId']);
+ }
+ assert.equal(calls,2,'renew before the original token expires, without signing in at every capability refresh');
+});
+test('native session renewal honors an earlier absolute expiry and rejects an account change',async()=>{
+ let time=1000000,calls=0;const userId='11111111-1111-4111-8111-111111111111';
+ const session=createNativeVerificationSession(async()=>({access_token:'test-only-'+(++calls),expires_in:3600,
+  expires_at:(1000000+600000)/1000,user:{id:calls===1?userId:'22222222-2222-4222-8222-222222222222'}}),()=>time);
+ await session();time+=299000;await session();assert.equal(calls,1);
+ time+=1000;await assert.rejects(session(),/verification_user_required/);
+});
+test('native session renewal fails closed on missing, expired or invalid sign-in metadata',async()=>{
+ const user={id:'11111111-1111-4111-8111-111111111111'};
+ for(const result of [{access_token:'test-only',user},
+  {access_token:'test-only',user,expires_in:0},
+  {access_token:'test-only',user,expires_in:3600,expires_at:500},
+  {access_token:'test-only',user:{id:'invalid'},expires_in:3600},
+  {access_token:'test-only',user:{id:'gggggggg-gggg-gggg-gggg-gggggggggggg'},expires_in:3600}])
+   await assert.rejects(createNativeVerificationSession(async()=>result,()=>1000000)(),/verification_sign_in_failed/);
+ let time=1000000,calls=0;
+ const session=createNativeVerificationSession(async()=>{
+  if(calls++)throw Error('verification_endpoint_unavailable');
+  return {access_token:'test-only',user,expires_in:3600};
+ },()=>time);
+ await session();time+=3600000;
+ await assert.rejects(session(),/verification_endpoint_unavailable/);
 });
 test('native evidence requires 240 captured cases plus exact same-device Android WebView pixel comparisons',()=>{
  const entries=NATIVE_CASE_IDS.map(id=>[id,{passed:true,width:Number(id.split('-').at(-1)),

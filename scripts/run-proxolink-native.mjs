@@ -6,7 +6,7 @@ import { mkdirSync, writeFileSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import sharp from 'sharp';
 import { STYLES, WIDTHS, PAGE_TYPES, LANGUAGES, NATIVE_CASE_IDS, validateRuntime, safeRequest, verifyReadOnlySecurity,
-  validateNativeResults } from './proxolink-verification-security.mjs';
+  validateNativeResults, createNativeVerificationSession } from './proxolink-verification-security.mjs';
 import {validateViewport, compareNativePixels, captureNativeFrames, createPreviewReferenceBrowser} from './proxolink-pixel-comparison.mjs';
 
 const styles=STYLES;
@@ -75,17 +75,15 @@ async function jsonRequest(url,{headers={},...options}={}) {
   if(!response.ok)throw Error('verification_endpoint_unavailable');
   return response.json();
 }
+const nativeSession=createNativeVerificationSession(async()=>{
+  stage='verification_sign_in';
+  return jsonRequest(supabase+'/auth/v1/token?grant_type=password',{
+    method:'POST',headers:{apikey:key,'Content-Type':'application/json'},
+    body:JSON.stringify({email,password})
+  });
+});
 async function configure() {
-  if(!authorization) {
-    stage='verification_sign_in';
-    const session=await jsonRequest(supabase+'/auth/v1/token?grant_type=password',{
-      method:'POST',headers:{apikey:key,'Content-Type':'application/json'},
-      body:JSON.stringify({email,password})
-    });
-    if(!session.access_token)throw Error('verification_sign_in_failed');
-    authorization='Bearer '+session.access_token;
-    userId=session.user?.id;
-  }
+  ({authorization,userId}=await nativeSession());
   // HTTP checks authenticate each request directly and reject redirects. The
   // optional cookie header deliberately redirects and is only for WebView.
   const protection=bypass?{'x-vercel-protection-bypass':bypass}:{};

@@ -1,0 +1,34 @@
+{
+  "base_revision": "634ad507135d742d5fc4b6e455fbde59f691a999",
+  "native_run_revision": "5bf533b11b7f638acc65395b65da1512e3275f5f",
+  "scope": "Harness authentication lifecycle only, after actual catalog HTTP 401 terminated native collection; no acceptance, workflow, protection or product changes",
+  "files": [
+    {
+      "path": "scripts/proxolink-verification-security.mjs",
+      "bytes": 7971,
+      "sha256": "76acc3048bc2b0152eaa8e77e110af9bc6b7a1fe12d4465d411952a60737f83c"
+    },
+    {
+      "path": "scripts/run-proxolink-native.mjs",
+      "bytes": 15556,
+      "sha256": "219b1dc880ae7c1dd883aaefa0270e412429c89c0dd53e97572984a360867705"
+    },
+    {
+      "path": "test/proxolink-verification-security.test.js",
+      "bytes": 7993,
+      "sha256": "3da138b390668c80eb968d53de571ddb623c2dfed8a2a908526e6fe1561617c0"
+    }
+  ],
+  "local_checks": {
+    "backend_executed": 124,
+    "backend_passed": 124,
+    "backend_failed": 0,
+    "source_privacy": "PASSED",
+    "javascript_syntax": "PASSED",
+    "diff_whitespace": "PASSED"
+  },
+  "native_verification": "NOT EXECUTED for this authentication correction",
+  "cause_limit": "Pinned runner demonstrably caches one app access token without expiry handling. Final catalog HTTP 401 is observed; token expiry is a timing/source inference, not directly proven by retained JWT/server diagnostics.",
+  "pixel_remedy_claimed": false,
+  "additional_protected_native_run_created": false
+}
