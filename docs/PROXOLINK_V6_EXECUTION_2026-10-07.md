@@ -1,10 +1,41 @@
-# ProxoLink V6 executed verification — 2026-10-07
+# ProxoLink V6 executed verification — current diagnostic continuation
 
-CURRENT Android runtime status is **FAILED**, audited 2026-10-08. Protected [run 37759310377](https://github.com/Zana-Sponsor/proxobalance/actions/runs/37759310377), **attempt 2**, revision `c06bd3dccf9b0ea124447a2fc2ff4a47a6e096f1`, runtime job `113255054733`, completed 2026-10-08 at **11:42:45 UTC**. Authorized `Zana-Sponsor` review cleared in the unchanged `proxolink-preview-verification` environment. KVM succeeded and the actual Android 35 production ProxoLinkPreview WebView ran. The final strict gate failed at `native_case_collection / native_pixel_parity_failed`; this is not incomplete evidence or an APK-only result.
+**CURRENT Android status: BLOCKED — authorized environment approval pending.** Checked 2026-10-08 UTC. Existing protected [run 37844040950](https://github.com/Zana-Sponsor/proxobalance/actions/runs/37844040950), **attempt 2**, revision `6c7e6c634cfe0bceb2c43ceb485aba12cd78417c`, runtime job `113568639222`, is waiting for `Zana-Sponsor` in unchanged `proxolink-preview-verification`. The successful APK is carried as job `113568637796`; it was not rebuilt. Approval has not been supplied or bypassed by the agent.
+
+Attempt 1 runtime job `113542037262` received authorized review but failed at **Enable KVM for the disposable emulator** at **2026-10-08 21:11:17 UTC**. Its shell returned code 1; the logs do not identify which command failed or establish an underlying udev/device/permissions cause. The real Android/WebView step was **SKIPPED**. Always-run upload found no evidence directory. Artifact inventory contains only APK/parts, not a runtime evidence artifact. This provides no evidence about the six pixel mismatches or the newly added chooser.
+
+| Attempt 1 actual execution | Result |
+|---|---|
+| Expected / executed behavior | 240 / 0 |
+| Behavior passed / failed | 0 / 0 (not executed) |
+| Candidate / baseline first captures | 0 / 0; all 480 absent because emulator never started |
+| Stable / unstable measured roles | 0 / 0; 480 unmeasured |
+| Pixel pairs evaluated / exact / failed | 0 / 0 / 0; all 240 unmeasured |
+| Authentication / changed pixels / maximum channel error | Not measured |
+| Expected / executed chooser | 12 / 0; no passes or failures measured |
+| Runtime evidence artifact | None |
+
+One bounded retry of **only the failed infrastructure job in the same native run** created attempt 2; no code, workflow, emulator setting, acceptance, protection or successful APK rebuild changed. Attempt 2 is unstarted at its approval gate: 240 matrix cases and 12 real builder chooser cases remain pending. Do not keep retrying blindly if KVM fails again; diagnose the runner readiness failure with safe observations before another execution.
+
+The instrumentation is **diagnostic-only**. Pixel root cause: **NOT PROVEN**; no production/pixel fix applied. See [diagnostic scope and exact eight changed files](PROXOLINK_NATIVE_DIAGNOSTICS_2026-10-08.md). The original templates, CSS, fonts, 12 PNG thumbnails and production builder/live WebView remain unchanged. Strict first-frame comparison still requires all 240 pairs exact, zero missing/unstable captures, and all 12 actual Android builder thumbnail cases passing.
+
+Source CI [37844040855](https://github.com/Zana-Sponsor/proxobalance/actions/runs/37844040855), **attempt 2**, completed **SUCCESS** at **2026-10-08 21:15:17 UTC**, all five jobs, at native revision `6c7e6c6`. Backend 128, Flutter 189, responsive 480, database/RLS, edge checks and release APK privacy pass. Its attempt 1 NDK non-ZIP download failure was recovered by the bounded failed-source-job retry. Earlier identical-tree source CI 37843257117 also passed. These source/APK results do not certify native runtime.
+
+The latest user authorization permits reasonably necessary evidence-driven diagnose/proven-fix/protected-rerun cycles, superseding old one-run limits. Every new environment review gate must remain intact and be reported with exact run/job/revision. PR #7 remains Draft/open/unmerged. No production publishing/customer mutation/migration/destructive cleanup.
+
+Safe infrastructure record: [native-6c7e6c6-attempt1-infrastructure.json](evidence/proxolink-v6-2026-10-06/native-6c7e6c6-attempt1-infrastructure.json).
+
+---
+
+## Historical completed native checkpoint — 37759310377
+
+The following audited result and its then-current authorization belong to the historical c06bd3d run, not the current diagnostic execution. Its 234/6 pixel result and zero chooser coverage must never be copied as new results.
+
+HISTORICAL Android runtime status is **FAILED**, audited 2026-10-08. Protected [run 37759310377](https://github.com/Zana-Sponsor/proxobalance/actions/runs/37759310377), **attempt 2**, revision `c06bd3dccf9b0ea124447a2fc2ff4a47a6e096f1`, runtime job `113255054733`, completed 2026-10-08 at **11:42:45 UTC**. Authorized `Zana-Sponsor` review cleared in the unchanged `proxolink-preview-verification` environment. KVM succeeded and the actual Android 35 production ProxoLinkPreview WebView ran. The final strict gate failed at `native_case_collection / native_pixel_parity_failed`; this is not incomplete evidence or an APK-only result.
 
 The user explicitly authorized this one fresh execution after authentication fix `edcaa048289c9b5a4ee5e1e97f71035ca0731a91`. Trigger revision c06bd3d changes zero files and retains tree `0114f0870256e18069ec4a6325463da95166b54f`, identical to passing parent ce561f6. Attempt 1 failed before emulator startup at KVM; its underlying runner readiness cause is unknown. One same-run infrastructure retry reused the successful APK (original job `113251558088`, carried job `113255053774`) without rebuilding. No replacement workflow, further native run, cancellation, environment approval or protection bypass was performed.
 
-| CURRENT native evidence | Expected | Actual result |
+| HISTORICAL native evidence | Expected | Actual result |
 |---|---:|---|
 | Behavior cases | 240 | 240 executed / 240 passed / 0 failed; 0 missing |
 | FIRST candidate full captures | 240 | 240 present; 0 missing |
@@ -24,7 +55,7 @@ Coverage is all four designs (60 each), contact/order/download (80 each), Kurdis
 
 [Artifact 11548551620](https://github.com/Zana-Sponsor/proxobalance/actions/runs/37759310377/artifacts/11548551620): 138,610,344 bytes, 2,165 files (2,160 PNGs + five allowlisted JSONs), SHA-256 **`97192f255e06ea104088f8f7220fd8f7690b983e6fdcf8cb35cb10bf32cf4b79`**, downloaded and verified. Expires 2026-10-15 at 11:42:37 UTC. Every FIRST RGB pair, complete diff image and saved repeat crop was independently recomputed. The byte-identical pinned validator replay also rejects exactly `native_pixel_parity_failed`. Absence of success-only results.json follows this rejection; it is not a missing required capture. [Complete inventory](evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/evidence-inventory.json) · [Independent audit](evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/independent-pixel-audit.json) · [Strict replay](evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/validator-replay.json).
 
-**CURRENT exact pixel failures**
+**HISTORICAL exact pixel failures**
 
 Coordinates are zero-based within the saved WebView crop. Every listed pair has one changed pixel and max channel delta 1. Channel deltas are candidate minus baseline.
 
@@ -53,7 +84,7 @@ VERIFIED means an executed check supports the stated scope. FAILED means an exec
 
 | Requirement | Status | Executed evidence and limits |
 |---|---|---|
-| Backend/API | VERIFIED | 124 passed, 0 failed in CURRENT native-revision source CI 37759310220 at c06bd3d. Pinned Android source 5bf533b had 121; earlier 1dca41a had 120. Source CI is not native certification. |
+| Backend/API | VERIFIED | 124 passed, 0 failed in HISTORICAL native-revision source CI 37759310220 at c06bd3d. Pinned Android source 5bf533b had 121; earlier 1dca41a had 120. Source CI is not native certification. |
 | Database/RLS | VERIFIED | Disposable PostgreSQL 17.11: migration rollback and rerun, direct RLS assertions and 7 database-backed API lifecycles. No production DDL. |
 | Database PAGE UUID differs from auth/owner/request UUID | VERIFIED | Actual database generation, multiple pages per owner, immutable IDs, cross-owner denial and edit/retry URL stability executed in the database/API tests. |
 | Contact create/edit/preview/public rendering | VERIFIED | Backend and database execution, Flutter flows and browser renderer matrix. Hosted isolated staging is separately BLOCKED. |
@@ -61,18 +92,18 @@ VERIFIED means an executed check supports the stated scope. FAILED means an exec
 | App Download create/edit/preview/public rendering | VERIFIED | Google Play-only, App Store-only and combined API lifecycles plus database/Flutter/browser checks. Hosted staging is BLOCKED. |
 | Wrong route/type rejection | VERIFIED | Typed public and avatar route guards, immutable page type and preview type/capability binding executed. |
 | Malformed provider/store URLs | VERIFIED | Canonical provider allowlists and malformed/scheme/host/query injection cases executed. Viber regression also executed. |
-| Flutter tests | VERIFIED | 189 passed in CURRENT native-revision source CI 37759310220 at c06bd3d; release APK privacy passed. The pinned native APK compiled in attempt 1 and was carried into protected attempt 2. Compilation is not Android runtime certification. |
+| Flutter tests | VERIFIED | 189 passed in HISTORICAL native-revision source CI 37759310220 at c06bd3d; release APK privacy passed. The pinned native APK compiled in attempt 1 and was carried into protected attempt 2. Compilation is not Android runtime certification. |
 | Flutter analysis | VERIFIED | Existing explicit 10-item analysis: 27 informational findings, 0 warnings/errors; corrected integration_test analysis: 4 informational findings, 0 warnings/errors. This is not a claim of full-repository analysis. |
 | RTL/LTR, long text, overflow and requested widths | VERIFIED | 480 actual renderer/Chromium cases covering widths 320, 375, 393, 430 and 768; all 3 types, 4 designs, Kurdish/English, both orientations, normal/long text and 1.6 text scale. |
 | Same prepared top layout across all types | VERIFIED | Actual browser matrix and same CSS blocks retained in all four prepared designs. Type labels/actions vary; design identity is preserved. |
 | Four original designs in all three page types | VERIFIED | The existing four keys only; same-environment Chromium baseline comparisons passed. Source CSS comparison was also executed at this revision. Android parity is separately FAILED. |
 | Flutter widget thumbnail selector and immediate full live preview updates | VERIFIED (widget scope) | 12 real rendered thumbnail assets decoded; 24 selector width/direction cases, all four card taps/semantics/equal heights, and 3 current-draft live-preview flows executed. Large preview still uses the server-rendered WebView. |
-| Live native Flutter WebView behavior matrix | VERIFIED (behavior scope) | CURRENT protected run 37759310377 attempt 2: all 240 executed/passed, 0 failed; 80 per type, 60 per design, RTL/LTR 120 each and all configured viewport shapes/widths. Provider/font/image/overflow/safe navigation assertions passed. Strict pixels are separately FAILED. |
-| Full Android acceptance | FAILED | CURRENT protected run 37759310377 attempt 2 completed all 240 cases, complete evidence and stable role captures; six strict FIRST-frame pixel pairs fail. APK success is not native certification. |
+| Live native Flutter WebView behavior matrix | VERIFIED (behavior scope) | HISTORICAL protected run 37759310377 attempt 2: all 240 executed/passed, 0 failed; 80 per type, 60 per design, RTL/LTR 120 each and all configured viewport shapes/widths. Provider/font/image/overflow/safe navigation assertions passed. Strict pixels are separately FAILED. |
+| Full Android acceptance | FAILED | HISTORICAL protected run 37759310377 attempt 2 completed all 240 cases, complete evidence and stable role captures; six strict FIRST-frame pixel pairs fail. APK success is not native certification. |
 | Native thumbnail → large WebView selection | NOT VERIFIED | 0 native chooser cases: the pinned probe directly renders ProxoLinkPreview and does not tap ProxoLinkDesignSelector. Widget taps are not native chooser evidence. |
-| Exact Android baseline/candidate pixels | FAILED | CURRENT 234 exact / 6 failed among all 240 FIRST-frame pairs; six changed pixels total, max channel error 1. All 480 roles have three exact samples; zero changed pixels remains mandatory. |
-| Live auth/RLS/private-template and response-header boundaries | VERIFIED (read-only probe scope) | CURRENT six security checks and 4/4 rendered-preview header checks passed; all 240 cases completed without the previous catalog HTTP 401. Last JSON response 200; exact renewal events are not retained. |
-| Client/release APK template-source privacy | VERIFIED | Source scan, release APK build and APK privacy scan passed in CURRENT native-revision source CI 37759310220 at c06bd3d. Catalog contains safe metadata, not reusable HTML/storage paths/checksums. |
+| Exact Android baseline/candidate pixels | FAILED | HISTORICAL 234 exact / 6 failed among all 240 FIRST-frame pairs; six changed pixels total, max channel error 1. All 480 roles have three exact samples; zero changed pixels remains mandatory. |
+| Live auth/RLS/private-template and response-header boundaries | VERIFIED (read-only probe scope) | HISTORICAL six security checks and 4/4 rendered-preview header checks passed; all 240 cases completed without the previous catalog HTTP 401. Last JSON response 200; exact renewal events are not retained. |
+| Client/release APK template-source privacy | VERIFIED | Source scan, release APK build and APK privacy scan passed in HISTORICAL native-revision source CI 37759310220 at c06bd3d. Catalog contains safe metadata, not reusable HTML/storage paths/checksums. |
 | Telegram as a normal Contact action; no new outbound tracking | VERIFIED | Registry/rendering/API tests and source scan passed. Typed ad links use stable page URLs and produce zero outbound events in the database lifecycles. No bot/notification credentials or workflows were introduced. |
 | Production customer cards and advertisement relationships preserved | VERIFIED | Executed read-only checkpoints retained 21 cards, 27 ads, matching full-card/relationship hashes and zero invalid relationships. Full advertisement-row immutability is not asserted. |
 | Hosted isolated staging end-to-end | BLOCKED | 0/12; no separate Supabase project/branch or matching staging deployment/configuration. No production fallback or fixtures. |
@@ -294,8 +325,8 @@ The evidence-only publication additionally adds this execution report, `docs/PRO
 
 **Files changed after current native testing and final state**
 
-After CURRENT run 37759310377 attempt 2, no product or harness source changed and no speculative pixel fix was made. Exactly seven existing documentation/index files changed: this report and evidence README.md, native-results.json, ci-results.json, execution-blockers.json, evidence-files.json and native-auth-correction-files.json. Thirty safe evidence files were added under native-c06bd3d-attempt2/: twelve JSON files (five artifact JSONs and seven derived audits) and eighteen failed crop/diff PNGs. [Exact 37 changed paths and hashes](evidence/proxolink-v6-2026-10-06/evidence-files.json). The prior authentication source correction and ten draw/capture changes remain historical manifests; this publication preserves their source bytes.
+After HISTORICAL run 37759310377 attempt 2, no product or harness source changed and no speculative pixel fix was made. Exactly seven existing documentation/index files changed: this report and evidence README.md, native-results.json, ci-results.json, execution-blockers.json, evidence-files.json and native-auth-correction-files.json. Thirty safe evidence files were added under native-c06bd3d-attempt2/: twelve JSON files (five artifact JSONs and seven derived audits) and eighteen failed crop/diff PNGs. [Exact 37 changed paths and hashes](evidence/proxolink-v6-2026-10-06/evidence-files.json). The prior authentication source correction and ten draw/capture changes remain historical manifests; this publication preserves their source bytes.
 
-CURRENT native-revision source CI [37759310220](https://github.com/Zana-Sponsor/proxobalance/actions/runs/37759310220) at c06bd3d is SUCCESS: backend 124, Flutter 189, responsive 480, database/RLS + seven API lifecycles, edge functions and release APK privacy; all five jobs. Completed pre-publication report CI [37762308917](https://github.com/Zana-Sponsor/proxobalance/actions/runs/37762308917) at 0ab03eb also passed all five jobs. Source checks for the terminal documentation publication are rechecked separately in Draft PR #7; they do not alter the pinned native failure.
+HISTORICAL native-revision source CI [37759310220](https://github.com/Zana-Sponsor/proxobalance/actions/runs/37759310220) at c06bd3d is SUCCESS: backend 124, Flutter 189, responsive 480, database/RLS + seven API lifecycles, edge functions and release APK privacy; all five jobs. Completed pre-publication report CI [37762308917](https://github.com/Zana-Sponsor/proxobalance/actions/runs/37762308917) at 0ab03eb also passed all five jobs. Source checks for the terminal documentation publication are rechecked separately in Draft PR #7; they do not alter the pinned native failure.
 
-PR #7 remains Draft/open/unmerged. The CURRENT native result is FAILED: 240 behavior passes, complete evidence, 480 stable roles, 234 exact and six failed FIRST-frame pixel pairs. The prior catalog HTTP 401 did not recur; exact renewal events are not retained. Remaining native blockers are six nonzero pairs with an unknown underlying cause and zero native chooser cases. Further protected native execution requires new authorization under the one-run scope. Separate isolated staging requirements remain outside this read-only probe. No merge, production publishing/activation, customer changes, migrations or destructive cleanup.
+PR #7 remains Draft/open/unmerged. The HISTORICAL native result is FAILED: 240 behavior passes, complete evidence, 480 stable roles, 234 exact and six failed FIRST-frame pixel pairs. The prior catalog HTTP 401 did not recur; exact renewal events are not retained. Remaining native blockers are six nonzero pairs with an unknown underlying cause and zero native chooser cases. Further protected native execution requires new authorization under the one-run scope. Separate isolated staging requirements remain outside this read-only probe. No merge, production publishing/activation, customer changes, migrations or destructive cleanup.
