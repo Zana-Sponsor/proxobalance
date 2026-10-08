@@ -4,12 +4,12 @@
 
 | Evidence | Status | Scope |
 |---|---|---|
-| [Source CI](ci-results.json) | SUCCESS at 5bf533b and 634ad50 | Code run 37694585981 and documentation-head run 37698544299: backend 121, Flutter 189, responsive 480, DB/RLS, 7 API lifecycles, edge functions and release APK privacy |
+| [Source CI](ci-results.json) | SUCCESS at edcaa048 | Run 37709592066: backend 124, Flutter 189, responsive 480, DB/RLS, 7 API lifecycles, edge functions and release APK privacy; prior 5bf533b/634ad50 CI stays historical |
 | [CURRENT Android runtime](native-results.json) | FAILED | Run 37694585964 attempt 3 at 5bf533b: expected 240; 218 behavior executed/passed, 0 failed, 22 not reached |
 | [Capture completeness](native-5bf533b-attempt3/evidence-inventory.json) | FAILED | 218 candidate + 218 baseline first captures; 22 missing per role (44 total); 1962/2160 required PNGs present; 198 PNGs missing |
 | [Strict same-emulator parity](native-5bf533b-attempt3/pixels.json) | FAILED | 209 exact / 9 failed among 218 pairs; 10 changed pixels total, max channel error 1; 22 pairs unexecuted |
 | [Fixed native capture repeatability](native-5bf533b-attempt3/capture-repeatability.json) | PASSED for captured roles | All 436/480 roles have exactly 3 samples and pixels.capture_stable=true; 1308 screenshots; all 872 saved repeat-crop comparisons independently recomputed exact |
-| [Authentication correction](native-auth-correction-files.json) | Local checks passed; native UNEXECUTED | Runner renews the same ordinary app session before returned expiry. 124 Node tests passed; source privacy/syntax/whitespace passed. No new protected native run created |
+| [Authentication correction](native-auth-correction-files.json) | Source CI SUCCESS; native UNEXECUTED | Runner renews the same ordinary app session before returned expiry. 124 Node tests and all five CI jobs passed; ordinary push native-runtime skipped. No new protected native execution created |
 | Native chooser → large WebView | NOT VERIFIED | 0 native chooser cases; pinned probe directly renders production ProxoLinkPreview |
 | [Prepared design preservation](prepared-design-preservation.json) | Preserved | Four original designs, 12 real renderer PNGs, formal Kurdish labels and large live preview unchanged |
 | [Isolated staging](staging-results.json) | Historical BLOCKED | Separate target required; no staging/customer/database work in this native-only continuation |

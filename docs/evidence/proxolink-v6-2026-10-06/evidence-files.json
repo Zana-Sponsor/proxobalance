@@ -319,8 +319,8 @@
     },
     {
       "path": "docs/evidence/proxolink-v6-2026-10-06/native-5bf533b-attempt3/diagnosis.json",
-      "bytes": 8308,
-      "sha256": "e59398fe4329eb9776a08cbb47ed9e38cf6fa79c4d6eafa61d9fa892243e6848",
+      "bytes": 8977,
+      "sha256": "0ed7040db7ae6d919ce6ff88534c2db525863cd5f5120fa64c644286ce0cb310",
       "origin": "Digest-verified safe Android artifact or exact allowlisted derived audit; no credentials/configuration/customer/raw-log content"
     },
     {
@@ -523,8 +523,8 @@
     },
     {
       "path": "docs/evidence/proxolink-v6-2026-10-06/native-auth-correction-files.json",
-      "bytes": 1446,
-      "sha256": "f1db19c1b4e9518cc2e6a5183a7488b508cb13160af5b11c59a3867b647b0240",
+      "bytes": 1985,
+      "sha256": "93175578a4bcd0aa3049e4e4efa8a38716166854b094e65b5a301d90eafeb02c",
       "origin": "Digest-verified safe Android artifact or exact allowlisted derived audit; no credentials/configuration/customer/raw-log content"
     }
   ],
@@ -534,5 +534,7 @@
   "current_native_run_id": 37694585964,
   "current_native_attempt": 3,
   "current_artifact_id": 11518923127,
-  "authentication_correction_manifest": "docs/evidence/proxolink-v6-2026-10-06/native-auth-correction-files.json"
+  "authentication_correction_manifest": "docs/evidence/proxolink-v6-2026-10-06/native-auth-correction-files.json",
+  "latest_verified_code_revision": "edcaa048289c9b5a4ee5e1e97f71035ca0731a91",
+  "latest_verified_code_ci_run": 37709592066
 }

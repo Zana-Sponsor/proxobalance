@@ -18,8 +18,22 @@
     ],
     "description": "At existing configure boundaries, renew the same ordinary app account before its returned expires_in/expires_at deadline with five-minute headroom. Retain only bearer and UUID in runner memory, reject changed users or invalid/expired metadata, fail closed on sign-in failure.",
     "scope": "Harness authentication lifecycle only; no token lifetime/permissions, product widget/templates/thumbnails, acceptance, workflow or protected environment changes.",
-    "validation": "124 local Node tests passed, source privacy, JavaScript syntax and whitespace checks passed; no protected native execution of this correction.",
-    "native_status": "UNEXECUTED; no additional protected native run or retry created under the current constraints"
+    "validation": "124 local and GitHub Node tests passed; Flutter 189, responsive 480, database/RLS and 7 API lifecycles, edge functions, release APK privacy, syntax and whitespace passed; protected native execution of this authentication fix remains UNEXECUTED.",
+    "native_status": "UNEXECUTED; no additional protected native run or retry created under the current constraints",
+    "source_ci": {
+      "revision": "edcaa048289c9b5a4ee5e1e97f71035ca0731a91",
+      "run_id": 37709592066,
+      "status": "SUCCESS",
+      "workflow_url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/37709592066",
+      "backend_passed": 124,
+      "flutter_passed": 189,
+      "responsive_passed": 480,
+      "database_api_lifecycles": 7,
+      "database_rls": "PASSED",
+      "edge_functions": "PASSED",
+      "release_apk_privacy": "PASSED",
+      "protected_native_runtime": "UNEXECUTED; the ordinary source push runtime job was skipped"
+    }
   },
   "independent_pixel_failure": {
     "pairs_compared": 218,

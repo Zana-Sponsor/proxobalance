@@ -37,7 +37,7 @@
     "remaining_blockers": [
       "22 required cases remain unexecuted (44 first full captures and 198 PNG evidence files missing)",
       "Nine same-device first-frame pairs differ (ten pixels total, max channel error 1), despite all 436 captured roles having three exact samples; pixel cause unknown",
-      "The authentication renewal fix has local tests only until source CI and an authorized protected native execution; current constraints prohibit creating another native run",
+      "Authentication renewal source CI passed at edcaa048 / run 37709592066; protected Android execution of the fix is UNEXECUTED and current instructions prohibit a new native run",
       "All 240 cases, 480 exact-repeatable roles and 240 zero-difference pairs must pass in the unchanged protected workflow",
       "Native thumbnail chooser taps remain unexecuted: 0 cases, NOT VERIFIED"
     ],
@@ -127,5 +127,19 @@
     "downloaded_and_digest_verified": true,
     "all_native_screenshots_committed": false,
     "retained": "All five allowlisted JSON files; nine failed candidate/baseline/diff triples; full 1967-file hash/dimension manifest; 436 sanitized capture acknowledgements; exact missing-case/file inventory; strict validator replay; summary/diagnosis. Complete artifact is linked."
+  },
+  "authentication_fix_source_ci": {
+    "revision": "edcaa048289c9b5a4ee5e1e97f71035ca0731a91",
+    "run_id": 37709592066,
+    "status": "SUCCESS",
+    "workflow_url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/37709592066",
+    "backend_passed": 124,
+    "flutter_passed": 189,
+    "responsive_passed": 480,
+    "database_api_lifecycles": 7,
+    "database_rls": "PASSED",
+    "edge_functions": "PASSED",
+    "release_apk_privacy": "PASSED",
+    "protected_native_runtime": "UNEXECUTED; the ordinary source push runtime job was skipped"
   }
 }

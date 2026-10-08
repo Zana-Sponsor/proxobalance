@@ -1054,6 +1054,20 @@
     "native_verification": "NOT EXECUTED for this authentication correction",
     "cause_limit": "Pinned runner demonstrably caches one app access token without expiry handling. Final catalog HTTP 401 is observed; token expiry is a timing/source inference, not directly proven by retained JWT/server diagnostics.",
     "pixel_remedy_claimed": false,
-    "additional_protected_native_run_created": false
+    "additional_protected_native_run_created": false,
+    "source_ci": {
+      "revision": "edcaa048289c9b5a4ee5e1e97f71035ca0731a91",
+      "run_id": 37709592066,
+      "status": "SUCCESS",
+      "workflow_url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/37709592066",
+      "backend_passed": 124,
+      "flutter_passed": 189,
+      "responsive_passed": 480,
+      "database_api_lifecycles": 7,
+      "database_rls": "PASSED",
+      "edge_functions": "PASSED",
+      "release_apk_privacy": "PASSED",
+      "protected_native_runtime": "UNEXECUTED; the ordinary source push runtime job was skipped"
+    }
   }
 }
