@@ -1,0 +1,109 @@
+{
+  "date": "2026-10-09",
+  "branch": "feat/proxolink-private-renderer-migration",
+  "starting_sha": "e61bc1a93f4acdc7ad75e9f44e79e6d73f110f11",
+  "preserved_concurrent_audit_sha": "52f7ba2cb9337130495e75a397a1a404b8bfa10e",
+  "tested_implementation_sha": "fb29a6adbc8120f04c1e80027416ec1278b5f4d4",
+  "acceptance": "Pending",
+  "complete": false,
+  "source": {
+    "run_id": 37974532861,
+    "status": "completed",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "id": 113969335762,
+        "name": "database",
+        "conclusion": "success"
+      },
+      {
+        "id": 113969336090,
+        "name": "responsive",
+        "conclusion": "success"
+      },
+      {
+        "id": 113969336107,
+        "name": "edge-functions",
+        "conclusion": "success"
+      },
+      {
+        "id": 113969336159,
+        "name": "backend",
+        "conclusion": "success"
+      },
+      {
+        "id": 113969336170,
+        "name": "flutter",
+        "conclusion": "success"
+      }
+    ],
+    "backend_tests": 144,
+    "flutter_tests": 222,
+    "renderer_browser_cases": 480,
+    "sql_contract_suites": 3,
+    "postgres_api_lifecycles": 7,
+    "migration_rollback_reapply_rerun": true,
+    "source_privacy": true,
+    "release_apk_privacy": true,
+    "edge_functions_checked": 2
+  },
+  "local": {
+    "backend_tests": 144,
+    "backend_build": true,
+    "native_runner_node_syntax": true,
+    "diff_whitespace": true,
+    "isolated_kvm_checks": 8,
+    "kvm_checks_included_in_node_test_count": true,
+    "flutter_sdk_available": false,
+    "android_adb_available": false
+  },
+  "native": {
+    "request_run_id": 37974532875,
+    "apk_job_id": 113969336110,
+    "apk_conclusion": "success",
+    "runtime_job_id": 113970861513,
+    "runtime_status": "waiting",
+    "environment": "proxolink-preview-verification",
+    "configured_reviewer": "Zana-Sponsor",
+    "protection_changed": false,
+    "approval_supplied_by_agent": false,
+    "current_runtime_evidence_available": false,
+    "current_create_chooser_cases_required": 12,
+    "legacy_chooser_cases_required": 12,
+    "external_browser_cycles_required": 3,
+    "browser_fixture_public_content_verified": false,
+    "last_actual_run_id": 37960639713,
+    "last_actual_sha": "e61bc1a93f4acdc7ad75e9f44e79e6d73f110f11",
+    "last_actual_conclusion": "failure",
+    "behavior_passed": 240,
+    "first_captures_candidate": 240,
+    "first_captures_baseline": 240,
+    "missing": 0,
+    "stable_acceptance_roles": 480,
+    "exact_pairs": 236,
+    "failed_pairs": 4,
+    "changed_pixels": 4,
+    "max_channel_delta": 1,
+    "legacy_chooser_passed": 0,
+    "legacy_chooser_failure": "chooser_builder_setup",
+    "root_cause": "NOT PROVEN",
+    "empty_cached_document_css_hash_is_not_source_parity_proof": true
+  },
+  "guardrails": {
+    "pr_number": 7,
+    "draft": true,
+    "state": "open",
+    "merged": false,
+    "production_migration_applied": false,
+    "production_publishing_activated": false,
+    "production_customer_writes": false,
+    "unrelated_project_used_as_staging": false
+  },
+  "blockers": [
+    "protected_native_environment_review",
+    "strict_native_pixel_parity_root_cause",
+    "isolated_hosted_project_deployment_and_two_ordinary_accounts",
+    "actual_home_screen_motion_comparison",
+    "full_native_error_screen_and_supported_device_browser_coverage"
+  ]
+}
