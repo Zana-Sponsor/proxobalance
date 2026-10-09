@@ -1,0 +1,177 @@
+[
+  {
+    "name": "acceptance-gates.json",
+    "bytes": 165,
+    "sha256": "5a1783a8ce1b1b3e614651b246d287bfa7791d2dca315730f5002261ebe5a8d8"
+  },
+  {
+    "name": "capture-repeatability.json",
+    "bytes": 72802,
+    "sha256": "f98ae943cd1723c3f73c478f169ee102c02a1393dd4c28a33dd36d883acfb204"
+  },
+  {
+    "name": "case-results.json",
+    "bytes": 113002,
+    "sha256": "add9886236c65ef9b685d7ae5dc0c59801051c1f94017941e5314db358b2e038"
+  },
+  {
+    "name": "chooser-input-evidence.json",
+    "bytes": 913,
+    "sha256": "7c4f396977e130f4ac760cfb5cddd8ee76477427965971910fff186772bc2cb3"
+  },
+  {
+    "name": "chooser-results.json",
+    "bytes": 4882,
+    "sha256": "a3e95466976c4f9d265587396a4744720ca78f4af7cda64391410f68cfce770f"
+  },
+  {
+    "name": "failure.json",
+    "bytes": 249,
+    "sha256": "9e648c1d9264c5d63442af4d4e749bbb525cc20980242c3296861dd9e408c202"
+  },
+  {
+    "name": "independent-audit.json",
+    "bytes": 718237,
+    "sha256": "294310adfc4495d7b8cbbf3889c51198b983af8ea7dd0d125637724ea181d5b6"
+  },
+  {
+    "name": "pill-contact-en-portrait-768-baseline-webview.png",
+    "bytes": 121130,
+    "sha256": "bf902bba07a12090fb5ec3d4a67ef95d7dca4132d2b9b789fc7e6046be3bdc59"
+  },
+  {
+    "name": "pill-contact-en-portrait-768-diff.png",
+    "bytes": 46616,
+    "sha256": "67c48ef832e6874ca63b131ab757870712928e033e1f9ea36478113bd39703ea"
+  },
+  {
+    "name": "pill-contact-en-portrait-768-webview.png",
+    "bytes": 121141,
+    "sha256": "8787726f110d1f9a3632d3058ec41142c74f21f2030e6e671a40ffc00023aec5"
+  },
+  {
+    "name": "pill-mint-contact-ku-portrait-768-baseline-webview.png",
+    "bytes": 126511,
+    "sha256": "b684624bc320688b57701deee6c75a15f1deba209cd348aaf3b62ef6bd1b0b8e"
+  },
+  {
+    "name": "pill-mint-contact-ku-portrait-768-diff.png",
+    "bytes": 48466,
+    "sha256": "fccbb810e589374515bae0214225758988360e5b7622009985b941cd221242df"
+  },
+  {
+    "name": "pill-mint-contact-ku-portrait-768-webview.png",
+    "bytes": 126514,
+    "sha256": "e53db73a9f8fbecd572d79593d719dead4f62d429c03c0fc73e385d003ea5dcb"
+  },
+  {
+    "name": "pill-mint-order-en-portrait-430-baseline-webview.png",
+    "bytes": 87421,
+    "sha256": "af4622d5c231fc075f789f956c81e06422f476404074569df171fcfb0406a3ae"
+  },
+  {
+    "name": "pill-mint-order-en-portrait-430-diff.png",
+    "bytes": 30305,
+    "sha256": "a153483dc724fb56887e628afc2e790f38c66898e1f10f2fc0a7befaec208664"
+  },
+  {
+    "name": "pill-mint-order-en-portrait-430-webview.png",
+    "bytes": 87422,
+    "sha256": "d305258ae0cabdd745e8a2328a8ef6a0c7756e53ea2ebe91970ebcb97a0eb850"
+  },
+  {
+    "name": "pill-mint-order-en-portrait-768-baseline-webview.png",
+    "bytes": 106931,
+    "sha256": "df2995369c6b75ca11fa65d7fc490863c33b493f1860d6c247a9880154bd3713"
+  },
+  {
+    "name": "pill-mint-order-en-portrait-768-diff.png",
+    "bytes": 40330,
+    "sha256": "cb0df8b7000d6a99593bd2e3601d4c236a48a2b3ed00caa7e46f7b17451dbf2f"
+  },
+  {
+    "name": "pill-mint-order-en-portrait-768-webview.png",
+    "bytes": 106928,
+    "sha256": "a6f053ded891b7306e82bef1b5f584ff7700de0fb7dca9a239b7b5062f360dd2"
+  },
+  {
+    "name": "pill-mint-order-ku-portrait-320-baseline-webview.png",
+    "bytes": 79641,
+    "sha256": "976db965a0e7ad66e0ce1fa9aa1df0ffa765718a760737464f3c28c875f3ee49"
+  },
+  {
+    "name": "pill-mint-order-ku-portrait-320-diff.png",
+    "bytes": 29475,
+    "sha256": "a8eda55ee3d0af1270c99a57e1ea9000107b13858d7cbdd9c6bdd5e8152f2368"
+  },
+  {
+    "name": "pill-mint-order-ku-portrait-320-webview.png",
+    "bytes": 79644,
+    "sha256": "7cf622fbf27cb43be948045ea8b1f7e9cbc641045c37cf53e3b1b9032963bc62"
+  },
+  {
+    "name": "pill-mint-order-ku-portrait-430-baseline-webview.png",
+    "bytes": 89520,
+    "sha256": "e42a4cb56a0fc6021801d7e39a9356b50e5ed10cc1cdcc84e82f6343d41d99bb"
+  },
+  {
+    "name": "pill-mint-order-ku-portrait-430-diff.png",
+    "bytes": 31082,
+    "sha256": "3c1c86b39eed19d16eb21161cec68614c9a2b800f22d3c994e16148382ae6d49"
+  },
+  {
+    "name": "pill-mint-order-ku-portrait-430-webview.png",
+    "bytes": 89524,
+    "sha256": "0ec0c0cabbfdbfe651d4f8b859f80a50f7ccbf555adbfa7a59bdaba11d751d64"
+  },
+  {
+    "name": "pill-mint-order-ku-portrait-768-baseline-webview.png",
+    "bytes": 108138,
+    "sha256": "6d0c6c015e5b1c333d4b9120252ef346a0037b8c200923c5d8169350b8f2409b"
+  },
+  {
+    "name": "pill-mint-order-ku-portrait-768-diff.png",
+    "bytes": 41451,
+    "sha256": "fafa1ff61a9d091e3c2b6d2c96a9c2c6da1870db35831b23c275cf998e72b9b3"
+  },
+  {
+    "name": "pill-mint-order-ku-portrait-768-webview.png",
+    "bytes": 108141,
+    "sha256": "bb0aa0d3219f71e41fb5ac82741dc2afdb17e5d0b9b301ccb9520d31ab928158"
+  },
+  {
+    "name": "pill-order-ku-portrait-768-baseline-webview.png",
+    "bytes": 103697,
+    "sha256": "b7404d776df753b1b21827a45f0d7aa0fa202acdeab9f73a6bfe048897730528"
+  },
+  {
+    "name": "pill-order-ku-portrait-768-diff.png",
+    "bytes": 40067,
+    "sha256": "5c03ec1a0dbbb7162d02845935dbcc0a76312cf56171319f6dea4a6d4de122cc"
+  },
+  {
+    "name": "pill-order-ku-portrait-768-webview.png",
+    "bytes": 103696,
+    "sha256": "5b9209692f1c898986957d72d561b273caa96d0f71e4511e6daa43d29494e2ab"
+  },
+  {
+    "name": "pixel-neighborhoods.json",
+    "bytes": 900231,
+    "sha256": "7f09763e92e85618b665a7981407d340dc5d0f08a8b3e3c6d7658c0c1c288b9d"
+  },
+  {
+    "name": "pixels.json",
+    "bytes": 79633,
+    "sha256": "9b69a7a7fc7037e3c5138fd8b280e23bf278726e6fc1c229dea58fbb84acebec"
+  },
+  {
+    "name": "security.json",
+    "bytes": 209,
+    "sha256": "fc9075a9bed59ce0355d1d0026fdac59dfbd7669a9b15fba428fa7c99671ae83"
+  },
+  {
+    "name": "surface-audit.json",
+    "bytes": 15093,
+    "sha256": "1fca4c410932a71fa586dad0f15a71abe9c0ee79f162b0d4a4474046d5bbd99c"
+  }
+]

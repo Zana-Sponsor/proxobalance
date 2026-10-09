@@ -1,3 +1,36 @@
+# ProxoLink V6 — current terminal native result
+
+**Android runtime status: FAILED.** Protected [run 37844040950](https://github.com/Zana-Sponsor/proxobalance/actions/runs/37844040950), attempt **2**, pinned revision `6c7e6c634cfe0bceb2c43ceb485aba12cd78417c`, runtime job `113568639222`, executed after authorized review in unchanged `proxolink-preview-verification`. KVM succeeded; final error `native_case_collection / native_pixel_parity_failed`. This was diagnostic instrumentation, not a proven pixel fix.
+
+| Terminal evidence, independently recomputed | Result |
+|---|---|
+| Expected / executed matrix | 240 / 240 |
+| Behavior passed / failed | 240 / 0 |
+| First candidate / same-device baseline | 240 / 240; missing cases/captures 0 / 0 |
+| Exact / failed first-frame pixel pairs | **232 / 8**; 1,750 changed pixels, maximum channel delta 1 |
+| Fixed three-frame repeatability | 480 stable / 0 unstable roles; all 960 saved repeats identical to first crops |
+| Native chooser | 12 expected / 12 executed / 12 passed / 0 failed, actual Android builder thumbnail taps |
+| Diagnostic completeness | 12 roles, PixelCopy success, WebView 124.0.6367.219, Android 35, DPR 1 |
+| Authentication | All 240 complete, previous HTTP 401 did not recur; exact renewal count not retained |
+| Artifact | 11586077978; 143,503,499 bytes; SHA-256 `4ae48def82e5a931ed79779ee75a272634d53202370376862734660e50b92ec8` |
+| Independent checks | 240 PNG pairs + 240 original crop correspondence + 240 full diff images + 960 repeat crops + 12 targeted surface PNGs + 12 chooser records/tap/capture acknowledgements |
+
+Exact failed IDs: `pill-contact-en-portrait-768` (1,743 pixels), `pill-order-ku-portrait-768`, `pill-mint-contact-ku-portrait-768`, `pill-mint-order-ku-portrait-320`, `pill-mint-order-ku-portrait-430`, `pill-mint-order-ku-portrait-768`, `pill-mint-order-en-portrait-430`, `pill-mint-order-en-portrait-768` (one pixel each).
+
+**Root cause: NOT PROVEN.** Targeted roles have matching CSS/font hashes and viewport bounds. All 12 fixed post-acceptance PixelCopy surface crops exactly match their own first screenshot crops, and failed surface pairs retain the acceptance differences. This provides evidence that the differing colors also occur in the copied surface; it does not isolate GPU/raster, lifecycle or composition as the causal variable. Draw/frame-commit acknowledgements observe submission, not presentation. No speculative product change, tolerance, masking, alternate-frame selection, averaging or pixel retry was applied.
+
+Safe audit files and failed crop/diff images are in `docs/evidence/proxolink-v6-2026-10-06/native-6c7e6c6-attempt2/`. All changed coordinates, RGB values, screen/crop origins and deltas are retained. Prepared templates/assets/CSS/fonts and native acceptance remain unchanged.
+
+## Separate current page-management implementation
+
+The subsequently requested rebuild was published at `dc15bbf84101044f5657d9320526f0c80152ac39`, after this pinned Android revision. Its dedicated list/details/editor flows are wired to the real owner API. [Exact implementation paths and migration safety](PROXOLINK_PAGE_MANAGEMENT_2026-10-08.md). The native 12 chooser passes above certify only the pinned pre-refactor builder binding, **not** the rebuilt management journey. Current source CI 37862457017: backend132, disposable DB/RLS + seven API lifecycles and edge checks passed; Flutter analysis/widget tests passed, final responsive/release APK checks pending at this checkpoint. PR #7 remains Draft/open/unmerged. No merge, production migration/customer writes or publishing.
+
+Remaining blockers: strict native pixel failure with unproven cause, complete final source CI, and hosted isolated/native verification of the new management journey. Implementation is not reported COMPLETE.
+
+---
+
+## Historical dated checkpoint (superseded)
+
 # ProxoLink V6 executed verification — current diagnostic continuation
 
 **CURRENT Android status: BLOCKED — authorized environment approval pending.** Checked 2026-10-08 UTC. Existing protected [run 37844040950](https://github.com/Zana-Sponsor/proxobalance/actions/runs/37844040950), **attempt 2**, revision `6c7e6c634cfe0bceb2c43ceb485aba12cd78417c`, runtime job `113568639222`, is waiting for `Zana-Sponsor` in unchanged `proxolink-preview-verification`. The successful APK is carried as job `113568637796`; it was not rebuilt. Approval has not been supplied or bypassed by the agent.

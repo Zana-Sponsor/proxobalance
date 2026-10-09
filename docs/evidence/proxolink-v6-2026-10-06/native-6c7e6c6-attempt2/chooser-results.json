@@ -1,0 +1,218 @@
+{
+  "chooser-contact-pill": {
+    "passed": true,
+    "builder_screen": true,
+    "thumbnail_decoded": true,
+    "selection_changed": true,
+    "selected_state": true,
+    "live_theme_match": true,
+    "provider_type_match": true,
+    "fresh_controller": true,
+    "native_draw": true,
+    "width": 358,
+    "tap_bounds": [
+      606,
+      745.2646310432569,
+      173,
+      465.470737913486
+    ]
+  },
+  "chooser-contact-pill-mint": {
+    "passed": true,
+    "builder_screen": true,
+    "thumbnail_decoded": true,
+    "selection_changed": true,
+    "selected_state": true,
+    "live_theme_match": true,
+    "provider_type_match": true,
+    "fresh_controller": true,
+    "native_draw": true,
+    "width": 358,
+    "tap_bounds": [
+      421,
+      745.2646310432569,
+      173,
+      465.470737913486
+    ]
+  },
+  "chooser-contact-pill-dark": {
+    "passed": true,
+    "builder_screen": true,
+    "thumbnail_decoded": true,
+    "selection_changed": true,
+    "selected_state": true,
+    "live_theme_match": true,
+    "provider_type_match": true,
+    "fresh_controller": true,
+    "native_draw": true,
+    "width": 358,
+    "tap_bounds": [
+      606,
+      745.2646310432568,
+      173,
+      465.470737913486
+    ]
+  },
+  "chooser-contact-pill-white": {
+    "passed": true,
+    "builder_screen": true,
+    "thumbnail_decoded": true,
+    "selection_changed": true,
+    "selected_state": true,
+    "live_theme_match": true,
+    "provider_type_match": true,
+    "fresh_controller": true,
+    "native_draw": true,
+    "width": 358,
+    "tap_bounds": [
+      421,
+      745.2646310432568,
+      173,
+      465.470737913486
+    ]
+  },
+  "chooser-order-pill": {
+    "passed": true,
+    "builder_screen": true,
+    "thumbnail_decoded": true,
+    "selection_changed": true,
+    "selected_state": true,
+    "live_theme_match": true,
+    "provider_type_match": true,
+    "fresh_controller": true,
+    "native_draw": true,
+    "width": 358,
+    "tap_bounds": [
+      606,
+      745.2646310432569,
+      173,
+      465.470737913486
+    ]
+  },
+  "chooser-order-pill-mint": {
+    "passed": true,
+    "builder_screen": true,
+    "thumbnail_decoded": true,
+    "selection_changed": true,
+    "selected_state": true,
+    "live_theme_match": true,
+    "provider_type_match": true,
+    "fresh_controller": true,
+    "native_draw": true,
+    "width": 358,
+    "tap_bounds": [
+      421,
+      745.2646310432569,
+      173,
+      465.470737913486
+    ]
+  },
+  "chooser-order-pill-dark": {
+    "passed": true,
+    "builder_screen": true,
+    "thumbnail_decoded": true,
+    "selection_changed": true,
+    "selected_state": true,
+    "live_theme_match": true,
+    "provider_type_match": true,
+    "fresh_controller": true,
+    "native_draw": true,
+    "width": 358,
+    "tap_bounds": [
+      606,
+      745.2646310432568,
+      173,
+      465.470737913486
+    ]
+  },
+  "chooser-order-pill-white": {
+    "passed": true,
+    "builder_screen": true,
+    "thumbnail_decoded": true,
+    "selection_changed": true,
+    "selected_state": true,
+    "live_theme_match": true,
+    "provider_type_match": true,
+    "fresh_controller": true,
+    "native_draw": true,
+    "width": 358,
+    "tap_bounds": [
+      421,
+      745.2646310432568,
+      173,
+      465.470737913486
+    ]
+  },
+  "chooser-download-pill": {
+    "passed": true,
+    "builder_screen": true,
+    "thumbnail_decoded": true,
+    "selection_changed": true,
+    "selected_state": true,
+    "live_theme_match": true,
+    "provider_type_match": true,
+    "fresh_controller": true,
+    "native_draw": true,
+    "width": 358,
+    "tap_bounds": [
+      606,
+      745.2646310432569,
+      173,
+      465.470737913486
+    ]
+  },
+  "chooser-download-pill-mint": {
+    "passed": true,
+    "builder_screen": true,
+    "thumbnail_decoded": true,
+    "selection_changed": true,
+    "selected_state": true,
+    "live_theme_match": true,
+    "provider_type_match": true,
+    "fresh_controller": true,
+    "native_draw": true,
+    "width": 358,
+    "tap_bounds": [
+      421,
+      745.2646310432569,
+      173,
+      465.470737913486
+    ]
+  },
+  "chooser-download-pill-dark": {
+    "passed": true,
+    "builder_screen": true,
+    "thumbnail_decoded": true,
+    "selection_changed": true,
+    "selected_state": true,
+    "live_theme_match": true,
+    "provider_type_match": true,
+    "fresh_controller": true,
+    "native_draw": true,
+    "width": 358,
+    "tap_bounds": [
+      606,
+      745.2646310432568,
+      173,
+      465.470737913486
+    ]
+  },
+  "chooser-download-pill-white": {
+    "passed": true,
+    "builder_screen": true,
+    "thumbnail_decoded": true,
+    "selection_changed": true,
+    "selected_state": true,
+    "live_theme_match": true,
+    "provider_type_match": true,
+    "fresh_controller": true,
+    "native_draw": true,
+    "width": 358,
+    "tap_bounds": [
+      421,
+      745.2646310432568,
+      173,
+      465.470737913486
+    ]
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "builder_type_taps": [
+    "chooser-setup-contact",
+    "chooser-setup-order",
+    "chooser-setup-download"
+  ],
+  "taps": [
+    "chooser-contact-pill-mint",
+    "chooser-contact-pill-dark",
+    "chooser-contact-pill-white",
+    "chooser-contact-pill",
+    "chooser-order-pill-mint",
+    "chooser-order-pill-dark",
+    "chooser-order-pill-white",
+    "chooser-order-pill",
+    "chooser-download-pill-mint",
+    "chooser-download-pill-dark",
+    "chooser-download-pill-white",
+    "chooser-download-pill"
+  ],
+  "captures": [
+    "chooser-contact-pill-mint",
+    "chooser-contact-pill-dark",
+    "chooser-contact-pill-white",
+    "chooser-contact-pill",
+    "chooser-order-pill-mint",
+    "chooser-order-pill-dark",
+    "chooser-order-pill-white",
+    "chooser-order-pill",
+    "chooser-download-pill-mint",
+    "chooser-download-pill-dark",
+    "chooser-download-pill-white",
+    "chooser-download-pill"
+  ]
+}

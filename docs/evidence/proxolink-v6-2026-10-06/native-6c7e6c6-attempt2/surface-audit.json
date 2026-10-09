@@ -1,0 +1,487 @@
+{
+  "root_cause": "NOT PROVEN",
+  "role_count": 12,
+  "findings": [
+    {
+      "id": "pill-contact-en-portrait-768",
+      "css_hash_equal": true,
+      "fonts_hash_equal": true,
+      "viewport_equal": true,
+      "native_webview_version": "124.0.6367.219",
+      "dpr": 1,
+      "scroll_equal": true,
+      "barrier_scope": "frame commit observes submission, not presentation",
+      "roles": {
+        "candidate": {
+          "surface_status": 0,
+          "surface_vs_first_changed_pixels": 0,
+          "surface_vs_first_max_channel_delta": 0,
+          "viewport": {
+            "left": 216,
+            "top": 218,
+            "width": 768,
+            "height": 1520,
+            "css_height": 1520
+          },
+          "scroll": [
+            0,
+            0
+          ],
+          "native_barrier": {
+            "animation_1_ms": 426850.794827,
+            "frame_commit_seen": true,
+            "visual_state_ms": 426814.987289,
+            "draw_ms": 426831.506912,
+            "draw_seen": true,
+            "visual_state_seen": true,
+            "requested_ms": 426797.415824,
+            "post_animation_callbacks": 2,
+            "animation_2_ms": 426865.877893,
+            "frame_commit_ms": 426848.072903
+          },
+          "geometry_before_after_equal": true
+        },
+        "baseline": {
+          "surface_status": 0,
+          "surface_vs_first_changed_pixels": 0,
+          "surface_vs_first_max_channel_delta": 0,
+          "viewport": {
+            "left": 216,
+            "top": 218,
+            "width": 768,
+            "height": 1520,
+            "css_height": 1520
+          },
+          "scroll": [
+            0,
+            0
+          ],
+          "native_barrier": {
+            "animation_1_ms": 435014.153489,
+            "frame_commit_seen": true,
+            "visual_state_ms": 434982.823781,
+            "draw_ms": 434997.910252,
+            "draw_seen": true,
+            "visual_state_seen": true,
+            "requested_ms": 434972.457419,
+            "post_animation_callbacks": 2,
+            "animation_2_ms": 435044.275441,
+            "frame_commit_ms": 435017.054307
+          },
+          "geometry_before_after_equal": true
+        }
+      },
+      "diagnostic_surface_pair": {
+        "width": 768,
+        "height": 1520,
+        "changed_pixels": 1743,
+        "total_pixels": 1167360,
+        "changed_fraction": 0.0014931126644736842,
+        "mean_channel_error": 0.0008152298062865497,
+        "max_channel_error": 1,
+        "exact_pixels_equal": false
+      }
+    },
+    {
+      "id": "pill-order-ku-portrait-768",
+      "css_hash_equal": true,
+      "fonts_hash_equal": true,
+      "viewport_equal": true,
+      "native_webview_version": "124.0.6367.219",
+      "dpr": 1,
+      "scroll_equal": true,
+      "barrier_scope": "frame commit observes submission, not presentation",
+      "roles": {
+        "candidate": {
+          "surface_status": 0,
+          "surface_vs_first_changed_pixels": 0,
+          "surface_vs_first_max_channel_delta": 0,
+          "viewport": {
+            "left": 216,
+            "top": 218,
+            "width": 768,
+            "height": 1520,
+            "css_height": 1520
+          },
+          "scroll": [
+            0,
+            0
+          ],
+          "native_barrier": {
+            "animation_1_ms": 632617.843187,
+            "frame_commit_seen": true,
+            "visual_state_ms": 632581.629226,
+            "draw_ms": 632597.991993,
+            "draw_seen": true,
+            "visual_state_seen": true,
+            "requested_ms": 632572.480172,
+            "post_animation_callbacks": 2,
+            "animation_2_ms": 632630.800631,
+            "frame_commit_ms": 632615.779736
+          },
+          "geometry_before_after_equal": true
+        },
+        "baseline": {
+          "surface_status": 0,
+          "surface_vs_first_changed_pixels": 0,
+          "surface_vs_first_max_channel_delta": 0,
+          "viewport": {
+            "left": 216,
+            "top": 218,
+            "width": 768,
+            "height": 1520,
+            "css_height": 1520
+          },
+          "scroll": [
+            0,
+            0
+          ],
+          "native_barrier": {
+            "animation_1_ms": 639630.986456,
+            "frame_commit_seen": true,
+            "visual_state_ms": 639598.388548,
+            "draw_ms": 639614.96061,
+            "draw_seen": true,
+            "visual_state_seen": true,
+            "requested_ms": 639582.907938,
+            "post_animation_callbacks": 2,
+            "animation_2_ms": 639647.597836,
+            "frame_commit_ms": 639636.739778
+          },
+          "geometry_before_after_equal": true
+        }
+      },
+      "diagnostic_surface_pair": {
+        "width": 768,
+        "height": 1520,
+        "changed_pixels": 1,
+        "total_pixels": 1167360,
+        "changed_fraction": 8.566337719298246e-7,
+        "mean_channel_error": 2.8554459064327486e-7,
+        "max_channel_error": 1,
+        "exact_pixels_equal": false
+      }
+    },
+    {
+      "id": "pill-order-en-portrait-768",
+      "css_hash_equal": true,
+      "fonts_hash_equal": true,
+      "viewport_equal": true,
+      "native_webview_version": "124.0.6367.219",
+      "dpr": 1,
+      "scroll_equal": true,
+      "barrier_scope": "frame commit observes submission, not presentation",
+      "roles": {
+        "candidate": {
+          "surface_status": 0,
+          "surface_vs_first_changed_pixels": 0,
+          "surface_vs_first_max_channel_delta": 0,
+          "viewport": {
+            "left": 216,
+            "top": 218,
+            "width": 768,
+            "height": 1520,
+            "css_height": 1520
+          },
+          "scroll": [
+            0,
+            0
+          ],
+          "native_barrier": {
+            "animation_1_ms": 810373.835978,
+            "frame_commit_seen": true,
+            "visual_state_ms": 810332.277033,
+            "draw_ms": 810349.296389,
+            "draw_seen": true,
+            "visual_state_seen": true,
+            "requested_ms": 810315.273678,
+            "post_animation_callbacks": 2,
+            "animation_2_ms": 810381.619718,
+            "frame_commit_ms": 810378.986348
+          },
+          "geometry_before_after_equal": true
+        },
+        "baseline": {
+          "surface_status": 0,
+          "surface_vs_first_changed_pixels": 0,
+          "surface_vs_first_max_channel_delta": 0,
+          "viewport": {
+            "left": 216,
+            "top": 218,
+            "width": 768,
+            "height": 1520,
+            "css_height": 1520
+          },
+          "scroll": [
+            0,
+            0
+          ],
+          "native_barrier": {
+            "animation_1_ms": 817814.177814,
+            "frame_commit_seen": true,
+            "visual_state_ms": 817781.895077,
+            "draw_ms": 817798.639469,
+            "draw_seen": true,
+            "visual_state_seen": true,
+            "requested_ms": 817767.469794,
+            "post_animation_callbacks": 2,
+            "animation_2_ms": 817833.158686,
+            "frame_commit_ms": 817819.68482
+          },
+          "geometry_before_after_equal": true
+        }
+      },
+      "diagnostic_surface_pair": {
+        "width": 768,
+        "height": 1520,
+        "changed_pixels": 0,
+        "total_pixels": 1167360,
+        "changed_fraction": 0,
+        "mean_channel_error": 0,
+        "max_channel_error": 0,
+        "exact_pixels_equal": true
+      }
+    },
+    {
+      "id": "pill-mint-contact-ku-portrait-430",
+      "css_hash_equal": true,
+      "fonts_hash_equal": true,
+      "viewport_equal": true,
+      "native_webview_version": "124.0.6367.219",
+      "dpr": 1,
+      "scroll_equal": true,
+      "barrier_scope": "frame commit observes submission, not presentation",
+      "roles": {
+        "candidate": {
+          "surface_status": 0,
+          "surface_vs_first_changed_pixels": 0,
+          "surface_vs_first_max_channel_delta": 0,
+          "viewport": {
+            "left": 385,
+            "top": 218,
+            "width": 430,
+            "height": 1520,
+            "css_height": 1520
+          },
+          "scroll": [
+            0,
+            0
+          ],
+          "native_barrier": {
+            "animation_1_ms": 1316285.766312,
+            "frame_commit_seen": true,
+            "visual_state_ms": 1316247.821083,
+            "draw_ms": 1316264.583891,
+            "draw_seen": true,
+            "visual_state_seen": true,
+            "requested_ms": 1316234.038857,
+            "post_animation_callbacks": 2,
+            "animation_2_ms": 1316297.426616,
+            "frame_commit_ms": 1316275.858776
+          },
+          "geometry_before_after_equal": true
+        },
+        "baseline": {
+          "surface_status": 0,
+          "surface_vs_first_changed_pixels": 0,
+          "surface_vs_first_max_channel_delta": 0,
+          "viewport": {
+            "left": 385,
+            "top": 218,
+            "width": 430,
+            "height": 1520,
+            "css_height": 1520
+          },
+          "scroll": [
+            0,
+            0
+          ],
+          "native_barrier": {
+            "animation_1_ms": 1324414.409968,
+            "frame_commit_seen": true,
+            "visual_state_ms": 1324381.232361,
+            "draw_ms": 1324397.668468,
+            "draw_seen": true,
+            "visual_state_seen": true,
+            "requested_ms": 1324375.002798,
+            "post_animation_callbacks": 2,
+            "animation_2_ms": 1324430.785867,
+            "frame_commit_ms": 1324409.06351
+          },
+          "geometry_before_after_equal": true
+        }
+      },
+      "diagnostic_surface_pair": {
+        "width": 430,
+        "height": 1520,
+        "changed_pixels": 0,
+        "total_pixels": 653600,
+        "changed_fraction": 0,
+        "mean_channel_error": 0,
+        "max_channel_error": 0,
+        "exact_pixels_equal": true
+      }
+    },
+    {
+      "id": "pill-mint-order-ku-portrait-430",
+      "css_hash_equal": true,
+      "fonts_hash_equal": true,
+      "viewport_equal": true,
+      "native_webview_version": "124.0.6367.219",
+      "dpr": 1,
+      "scroll_equal": true,
+      "barrier_scope": "frame commit observes submission, not presentation",
+      "roles": {
+        "candidate": {
+          "surface_status": 0,
+          "surface_vs_first_changed_pixels": 0,
+          "surface_vs_first_max_channel_delta": 0,
+          "viewport": {
+            "left": 385,
+            "top": 218,
+            "width": 430,
+            "height": 1520,
+            "css_height": 1520
+          },
+          "scroll": [
+            0,
+            0
+          ],
+          "native_barrier": {
+            "animation_1_ms": 1732536.217105,
+            "frame_commit_seen": true,
+            "visual_state_ms": 1732498.065014,
+            "draw_ms": 1732514.364057,
+            "draw_seen": true,
+            "visual_state_seen": true,
+            "requested_ms": 1732483.050576,
+            "post_animation_callbacks": 2,
+            "animation_2_ms": 1732547.455188,
+            "frame_commit_ms": 1732528.200602
+          },
+          "geometry_before_after_equal": true
+        },
+        "baseline": {
+          "surface_status": 0,
+          "surface_vs_first_changed_pixels": 0,
+          "surface_vs_first_max_channel_delta": 0,
+          "viewport": {
+            "left": 385,
+            "top": 218,
+            "width": 430,
+            "height": 1520,
+            "css_height": 1520
+          },
+          "scroll": [
+            0,
+            0
+          ],
+          "native_barrier": {
+            "animation_1_ms": 1739620.412453,
+            "frame_commit_seen": true,
+            "visual_state_ms": 1739581.216927,
+            "draw_ms": 1739598.01487,
+            "draw_seen": true,
+            "visual_state_seen": true,
+            "requested_ms": 1739572.18489,
+            "post_animation_callbacks": 2,
+            "animation_2_ms": 1739631.093852,
+            "frame_commit_ms": 1739612.431521
+          },
+          "geometry_before_after_equal": true
+        }
+      },
+      "diagnostic_surface_pair": {
+        "width": 430,
+        "height": 1520,
+        "changed_pixels": 1,
+        "total_pixels": 653600,
+        "changed_fraction": 0.0000015299877600979192,
+        "mean_channel_error": 5.099959200326398e-7,
+        "max_channel_error": 1,
+        "exact_pixels_equal": false
+      }
+    },
+    {
+      "id": "pill-mint-order-en-portrait-768",
+      "css_hash_equal": true,
+      "fonts_hash_equal": true,
+      "viewport_equal": true,
+      "native_webview_version": "124.0.6367.219",
+      "dpr": 1,
+      "scroll_equal": true,
+      "barrier_scope": "frame commit observes submission, not presentation",
+      "roles": {
+        "candidate": {
+          "surface_status": 0,
+          "surface_vs_first_changed_pixels": 0,
+          "surface_vs_first_max_channel_delta": 0,
+          "viewport": {
+            "left": 216,
+            "top": 218,
+            "width": 768,
+            "height": 1520,
+            "css_height": 1520
+          },
+          "scroll": [
+            0,
+            0
+          ],
+          "native_barrier": {
+            "animation_1_ms": 1922647.534876,
+            "frame_commit_seen": true,
+            "visual_state_ms": 1922615.031833,
+            "draw_ms": 1922631.382091,
+            "draw_seen": true,
+            "visual_state_seen": true,
+            "requested_ms": 1922599.292844,
+            "post_animation_callbacks": 2,
+            "animation_2_ms": 1922667.686818,
+            "frame_commit_ms": 1922648.653953
+          },
+          "geometry_before_after_equal": true
+        },
+        "baseline": {
+          "surface_status": 0,
+          "surface_vs_first_changed_pixels": 0,
+          "surface_vs_first_max_channel_delta": 0,
+          "viewport": {
+            "left": 216,
+            "top": 218,
+            "width": 768,
+            "height": 1520,
+            "css_height": 1520
+          },
+          "scroll": [
+            0,
+            0
+          ],
+          "native_barrier": {
+            "animation_1_ms": 1929650.59138,
+            "frame_commit_seen": true,
+            "visual_state_ms": 1929614.56836,
+            "draw_ms": 1929631.01834,
+            "draw_seen": true,
+            "visual_state_seen": true,
+            "requested_ms": 1929601.913931,
+            "post_animation_callbacks": 2,
+            "animation_2_ms": 1929664.167653,
+            "frame_commit_ms": 1929650.536527
+          },
+          "geometry_before_after_equal": true
+        }
+      },
+      "diagnostic_surface_pair": {
+        "width": 768,
+        "height": 1520,
+        "changed_pixels": 1,
+        "total_pixels": 1167360,
+        "changed_fraction": 8.566337719298246e-7,
+        "mean_channel_error": 2.8554459064327486e-7,
+        "max_channel_error": 1,
+        "exact_pixels_equal": false
+      }
+    }
+  ],
+  "interpretation": "Fixed post-acceptance PixelCopy is a different timing observation. Equality/differences cannot by themselves isolate raster versus composition versus lifecycle. No diagnostic frame replaced the first acceptance frame."
+}
