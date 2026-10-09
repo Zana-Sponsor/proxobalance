@@ -93,6 +93,11 @@ void main(){
      ),
     ),
    );
+   await tester.runAsync(() async {
+    for(final element in find.byType(Image).evaluate()){
+     await precacheImage((element.widget as Image).image,element);
+    }
+   });
    await tester.pumpAndSettle();expect(find.byType(Image),findsNWidgets(4));
    expect(find.byType(ProxoLinkPreview),findsNothing);
    final cardHeights=ProxoLinkDesign.labels.keys.map((key)=>tester.getSize(find.byKey(ValueKey('proxolink-design-$key'))).height).toSet();

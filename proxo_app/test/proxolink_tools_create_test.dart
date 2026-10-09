@@ -199,12 +199,26 @@ void main() {
    size(t,width);final key=GlobalKey();await t.pumpWidget(host(RepaintBoundary(key:key,
     child:ProxoLinkCreatePageScreen(repository:ToolsRepository([]))),scale:scale));await t.pumpAndSettle();
    await tap(t,find.byKey(ValueKey('create-type-${type.key}')));
+   await t.runAsync(() async {
+    for(final element in find.byType(Image).evaluate()){
+     await precacheImage((element.widget as Image).image,element);
+    }
+   });await t.pumpAndSettle();
    await t.ensureVisible(field(type.nameLabel));await t.enterText(field(type.nameLabel),'پڕۆکسۆ العربية English '+List.filled(8,'Long').join(' '));
    expect(t.takeException(),isNull);expect(find.byType(ProxoLinkPreview),findsNothing);
-   if(scale==1 && type==ProxoPageType.contact && [320.0,393.0,430.0,768.0].contains(width)) await png(t,key,'create-$width');
+   FocusManager.instance.primaryFocus?.unfocus();await t.pumpAndSettle();
+   if(scale==1 && type==ProxoPageType.contact && [320.0,393.0,430.0,768.0].contains(width)) {
+    t.widget<SingleChildScrollView>(find.byType(SingleChildScrollView).first).controller!.jumpTo(0);
+    await t.pumpAndSettle();await png(t,key,'create-$width');
+   }
    await t.ensureVisible(find.byType(ProxoLinkDesignSelector));await t.pumpAndSettle();expect(t.takeException(),isNull);
    expect(find.byType(Image),findsNWidgets(4));
-   if(scale==1 && [320.0,393.0,430.0,768.0].contains(width)) await png(t,key,'create-style-${type.key}-$width');
+   if(scale==1 && [320.0,393.0,430.0,768.0].contains(width)) {
+    await t.ensureVisible(find.byKey(const ValueKey('proxolink-design-pill')));await t.pumpAndSettle();
+    await png(t,key,'create-style-${type.key}-$width');
+    await t.ensureVisible(find.byKey(const ValueKey('proxolink-design-pill-white')));await t.pumpAndSettle();
+    await png(t,key,'create-style-bottom-${type.key}-$width');
+   }
   });
  }
  for(final width in [320.0,393.0,430.0,768.0]) for(final error in [false,true]) testWidgets('Tools ${error?'error':'empty'} $width evidence',(t) async {
