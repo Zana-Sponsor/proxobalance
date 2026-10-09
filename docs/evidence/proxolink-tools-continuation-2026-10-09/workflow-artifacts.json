@@ -1,0 +1,138 @@
+{
+  "final_executable_sha": "c830a683b6b70ee91f5aebc002b1b4b424d5ac4a",
+  "verified_source_run": {
+    "id": 37983088739,
+    "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/37983088739",
+    "conclusion": "success"
+  },
+  "source_artifacts": [
+    {
+      "id": 11642475496,
+      "name": "proxolink-footer-thumbnails",
+      "bytes": 6184774,
+      "digest": "sha256:48b6b575fd0d7874a10bfa875fcf7fb45c0bf78fb3443799e24213fb3afc5215",
+      "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/37983088739/artifacts/11642475496",
+      "source_sha": "c830a683b6b70ee91f5aebc002b1b4b424d5ac4a"
+    },
+    {
+      "id": 11642445622,
+      "name": "proxolink-ui-verification",
+      "bytes": 11122643,
+      "digest": "sha256:a6d862373503fa5f722c6f99669f38b85a52311401fd9d10e58288a0802344c2",
+      "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/37983088739/artifacts/11642445622",
+      "source_sha": "c830a683b6b70ee91f5aebc002b1b4b424d5ac4a"
+    },
+    {
+      "id": 11642281571,
+      "name": "proxolink-thumbnail-apk-size",
+      "bytes": 1082,
+      "digest": "sha256:d9a0ddaaec95df7728de646bfbb4e75996d11403ca41f40db9f6c38715f0e30c",
+      "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/37983088739/artifacts/11642281571",
+      "source_sha": "c830a683b6b70ee91f5aebc002b1b4b424d5ac4a"
+    },
+    {
+      "id": 11641467443,
+      "name": "proxolink-v6-responsive",
+      "bytes": 1604642,
+      "digest": "sha256:652d6bec3d0ffc329bd402c6500eed75ed6eeee3c73983a09239fa9188b48e54",
+      "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/37983088739/artifacts/11641467443",
+      "source_sha": "c830a683b6b70ee91f5aebc002b1b4b424d5ac4a"
+    }
+  ],
+  "protected_native_request": {
+    "id": 38004288157,
+    "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/38004288157",
+    "apk_conclusion": "success",
+    "runtime_job_id": 114070711797,
+    "runtime_status": "pending",
+    "executed_steps": 0,
+    "current_native_verified": false
+  },
+  "native_apk_artifacts": [
+    {
+      "id": 11650742294,
+      "name": "proxolink-native-part-00",
+      "bytes": 14091602,
+      "digest": "sha256:8a732575982a6da97a3de1c3cd94e7c1a97d7f03136c3f93508b1b3ff2cffcd0",
+      "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/38004288157/artifacts/11650742294",
+      "source_sha": "f223dcf81feb4c6d49744114bdbc57f8d2c57e90"
+    },
+    {
+      "id": 11650642582,
+      "name": "proxolink-native-part-02",
+      "bytes": 24616634,
+      "digest": "sha256:0a5a456e5b60e7aae74bf8470be16a56636031d139080a6e691f76793dbe4537",
+      "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/38004288157/artifacts/11650642582",
+      "source_sha": "f223dcf81feb4c6d49744114bdbc57f8d2c57e90"
+    },
+    {
+      "id": 11650587701,
+      "name": "proxolink-native-part-01",
+      "bytes": 10587186,
+      "digest": "sha256:486ba9ab891ebfcc21a5c11ac4fcd986c0d1d652028928d38c10dd0ac54d4caf",
+      "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/38004288157/artifacts/11650587701",
+      "source_sha": "f223dcf81feb4c6d49744114bdbc57f8d2c57e90"
+    },
+    {
+      "id": 11650507901,
+      "name": "proxolink-native-part-03",
+      "bytes": 24420293,
+      "digest": "sha256:d7f944861a6d85561f334dc2f7daa481fc521215c02fc81a593535d94d8ecd8d",
+      "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/38004288157/artifacts/11650507901",
+      "source_sha": "f223dcf81feb4c6d49744114bdbc57f8d2c57e90"
+    },
+    {
+      "id": 11650462874,
+      "name": "proxolink-native-verification-apk",
+      "bytes": 76403776,
+      "digest": "sha256:a587bb5cddfe09207b2afecaef87d09ae5a94dae3864c147e2c27b9eb68c4bfe",
+      "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/38004288157/artifacts/11650462874",
+      "source_sha": "f223dcf81feb4c6d49744114bdbc57f8d2c57e90"
+    },
+    {
+      "id": 11650398069,
+      "name": "proxolink-native-part-04",
+      "bytes": 2690674,
+      "digest": "sha256:1489a93b42abc8a3263e755eb3d5c29c88d1a653f8dcbf580dc59097734ec2aa",
+      "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/38004288157/artifacts/11650398069",
+      "source_sha": "f223dcf81feb4c6d49744114bdbc57f8d2c57e90"
+    }
+  ],
+  "publication_source_rerun": {
+    "id": 38004288253,
+    "executable_source_identical": true,
+    "jobs": [
+      {
+        "id": 114069385834,
+        "name": "database",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 114069385903,
+        "name": "responsive",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 114069385924,
+        "name": "flutter",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 114069385977,
+        "name": "backend",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 114069386251,
+        "name": "edge-functions",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "retention_note": "Original UI artifact retention is seven days; all 80 new actual-screen PNGs and the 58 original product images are retained in Git. Credential-free debug APK artifact retention is one day. No unexecuted native screenshots are manufactured."
+}

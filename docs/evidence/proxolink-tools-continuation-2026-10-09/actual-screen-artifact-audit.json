@@ -820,5 +820,18 @@
       "sha256": "2ebc9859c6dc7898cfb8ed5cb4f785ccb370e1a60458a4430425cde9ddfb45c5",
       "git_blob_sha": "8f257265d4852fc00a5641b9a51e26b583b47756"
     }
-  ]
+  ],
+  "visual_review": {
+    "reviewed_widths": [
+      320,
+      393,
+      430,
+      768
+    ],
+    "actual_ad_and_proxolink_notices_visible_at_400ms": true,
+    "proxolink_notice_exit_visible_at_5500ms": true,
+    "decoded_thumbnails_visible": true,
+    "actual_home_tools_refresh_and_settle_inspected": true,
+    "scope": "Production classes mounted in widget fixtures; no native pixel or hosted acceptance claimed"
+  }
 }

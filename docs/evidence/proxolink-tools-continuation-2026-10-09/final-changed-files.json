@@ -2,9 +2,10 @@
   "branch": "feat/proxolink-private-renderer-migration",
   "baseline_sha": "2f2b389a7acd187ea586839639e6010d02f7d226",
   "final_executable_sha": "c830a683b6b70ee91f5aebc002b1b4b424d5ac4a",
-  "self_hash_note": "Manifest self-hash is intentionally null to avoid a recursive hash; the Git commit tree supplies its exact blob identity.",
+  "protected_request_commit_sha": "f223dcf81feb4c6d49744114bdbc57f8d2c57e90",
+  "self_hash_note": "Manifest self-hash is intentionally null to avoid recursion; the Git commit tree supplies the exact blob identity.",
   "unrelated_exchange_working_changes_excluded": true,
-  "file_count": 106,
+  "file_count": 108,
   "files": [
     {
       "path": ".github/workflows/proxolink-verify.yml",
@@ -16,16 +17,16 @@
     {
       "path": "docs/PROXOLINK_A_AO_CHECKLIST_2026-10-09.md",
       "kind": "documentation/evidence",
-      "bytes": 17793,
-      "sha256": "54e23cc57aac3afdfc8cb505120196427a93eaa01df754619fc948b360b19f7c",
-      "git_blob_sha": "efa0bcb8876569da27a1bd59f299b94b62330b2c"
+      "bytes": 17874,
+      "sha256": "671d8f08f095869e8bc450a0d7b7bc20208cb99f3faa1320f8542d8c214f6283",
+      "git_blob_sha": "167c2f9ce215d5640c67e8f8d9469975abaa68c2"
     },
     {
       "path": "docs/PROXOLINK_TOOLS_CREATE_CONTINUATION_2026-10-09.md",
       "kind": "documentation/evidence",
-      "bytes": 32986,
-      "sha256": "4688b91e559a8d93aa38abce696c9e67a224c8944913af582cf372a4a28fded3",
-      "git_blob_sha": "01cb481401b6eb30c43846410fd2ec0b759a7e1d"
+      "bytes": 34860,
+      "sha256": "98c03f00e913671e58b8785334cf9424555247137abf775c989a16657fb5ce2e",
+      "git_blob_sha": "cf501777b1f70a7d6c4ab6d8cbe03cc12de96e71"
     },
     {
       "path": "docs/PROXOLINK_V6_ISOLATED_STAGING_SETUP.md",
@@ -37,9 +38,9 @@
     {
       "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screen-artifact-audit.json",
       "kind": "documentation/evidence",
-      "bytes": 29630,
-      "sha256": "d32877a73e43a34a9d16160cb7be9bfb5ab0e625dc9ffca9873576e5625a4f59",
-      "git_blob_sha": "21945baa0d0294efb6fdc0d2993deeddc112157b"
+      "bytes": 30053,
+      "sha256": "641eb6b2525554f7a6419a8a8b7a7f7a456ca9654fe98b9ba2f2cf3c985305c5",
+      "git_blob_sha": "8ee415cf26ea8ed18712cb462e3bd0a3ef227435"
     },
     {
       "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screen-reproduction-record.json",
@@ -625,9 +626,9 @@
     {
       "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/current-verification.json",
       "kind": "documentation/evidence",
-      "bytes": 4186,
-      "sha256": "667468bd507cdd7146ceb32961b111deea5a3310371ea9dd0e8c55c6f56a5168",
-      "git_blob_sha": "170c398b8dda0429f26ee7311dc2eb5c24aecf80"
+      "bytes": 5523,
+      "sha256": "e6557670aeffeb84b0845d26d0866ad31bcf1c2901ad78922afcc9054c80c39c",
+      "git_blob_sha": "09f75fda3ef9d5023f55649f0fb89c88acb48ed5"
     },
     {
       "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/current-visual-artifact-audit.json",
@@ -639,16 +640,23 @@
     {
       "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/final-changed-files.json",
       "kind": "documentation/evidence",
-      "bytes": null,
+      "bytes": 35897,
       "sha256": null,
       "git_blob_sha": null
     },
     {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/hosted-provisioning-blockers.json",
+      "kind": "documentation/evidence",
+      "bytes": 1488,
+      "sha256": "3d5e3257b41e8b2a9d04d90825bfc14a84cddb73b954e1d35c20ccaf7b116095",
+      "git_blob_sha": "187707eed8d9b72cafc18c2d2ef7eea9417afcec"
+    },
+    {
       "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/native-runtime-request.json",
       "kind": "documentation/evidence",
-      "bytes": 590,
-      "sha256": "58a7fb36b9efd7da04a34ace2a428040aec8b58206d5130fcdbeca1a331869d4",
-      "git_blob_sha": "e970e540eecdc1eb4608e0ea3a21fd60d7836b9d"
+      "bytes": 1988,
+      "sha256": "3c9f1950341bbfa086fbbaf320b977f8bde90dbb25ef4cc6f8e383d52c7bbf6d",
+      "git_blob_sha": "7bb6635ad3e4254245864598f50c1e111c15d19a"
     },
     {
       "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/refreshed-schema-metadata.json",
@@ -656,6 +664,13 @@
       "bytes": 10051,
       "sha256": "993f7b36a969658a2cd5e2d5a9b09c7cd43e5cca0c352a6d2d4bb0a0cf3a9960",
       "git_blob_sha": "56fa330ad69b3a3f1006a7f9ae6d267772bab215"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/workflow-artifacts.json",
+      "kind": "documentation/evidence",
+      "bytes": 5356,
+      "sha256": "2c64c37c1107e5a1c88722a1d3ed78addfc800f08b36a2b7abe3132753fa440b",
+      "git_blob_sha": "fe50f419e7cb2ffdd9b13c713eb1682cfde7604f"
     },
     {
       "path": "proxo_app/integration_test/proxolink_native_actual_screens.dart",

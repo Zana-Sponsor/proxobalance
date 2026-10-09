@@ -1,13 +1,39 @@
 {
-  "status": "Pending final-source protected workflow request",
+  "status": "APK succeeded; runtime pending with no deployment review exposed yet",
   "executable_sha": "c830a683b6b70ee91f5aebc002b1b4b424d5ac4a",
   "environment": "proxolink-preview-verification",
   "configured_reviewer": "Zana-Sponsor",
-  "required_action": "Review deployments \u2192 proxolink-preview-verification \u2192 Approve and deploy",
+  "required_action": "Resolve/cancel the obsolete run37974532875; then open run38004288157 and select Review deployments \u2192 proxolink-preview-verification \u2192 Approve and deploy when its review appears",
   "reviewer_approval_required": true,
   "agent_approval_supplied": false,
   "protection_changed": false,
   "current_native_runtime_verified": false,
   "previous_request_run_id": 37974532875,
-  "previous_request_sha": "fb29a6adbc8120f04c1e80027416ec1278b5f4d4"
+  "previous_request_sha": "fb29a6adbc8120f04c1e80027416ec1278b5f4d4",
+  "request_commit_sha": "f223dcf81feb4c6d49744114bdbc57f8d2c57e90",
+  "run_id": 38004288157,
+  "run_url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/38004288157",
+  "checked_at_utc": "2026-10-09T23:31:24.566601+00:00",
+  "runtime_job_created": true,
+  "source_identical_to_executable_sha": true,
+  "apk_job_id": 114069385604,
+  "apk_job_url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/38004288157/job/114069385604",
+  "apk_conclusion": "success",
+  "runtime_job_id": 114070711797,
+  "runtime_job_url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/38004288157/job/114070711797",
+  "runtime_status": "pending",
+  "runtime_step_count": 0,
+  "runtime_runner_assigned": false,
+  "new_run_pending_deployments": [],
+  "previous_request_runtime_job_id": 113970861513,
+  "previous_request_runtime_status": "waiting",
+  "previous_request_run_url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/37974532875",
+  "previous_request_environment_reviewers": [
+    "Zana-Sponsor"
+  ],
+  "concurrency": {
+    "group": "proxolink-preview-verification",
+    "cancel_in_progress": false,
+    "queue_cause": "inference: obsolete waiting run may be retaining the shared group; current job has no steps/runner or review prompt yet"
+  }
 }

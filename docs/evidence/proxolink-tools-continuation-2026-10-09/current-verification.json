@@ -95,7 +95,16 @@
     "previous_apk_job_id": 113969336110,
     "previous_apk_conclusion": "success",
     "previous_runtime_job_id": 113970861513,
-    "previous_runtime_status": "waiting"
+    "previous_runtime_status": "waiting",
+    "request_run_id": 38004288157,
+    "request_commit_sha": "f223dcf81feb4c6d49744114bdbc57f8d2c57e90",
+    "request_run_url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/38004288157",
+    "runtime_status": "pending; no deployment review exposed yet",
+    "request_apk_job_id": 114069385604,
+    "request_apk_conclusion": "success",
+    "runtime_job_id": 114070711797,
+    "runtime_steps_executed": 0,
+    "obsolete_request_still_waiting": true
   },
   "guardrails": {
     "pr_number": 7,
@@ -129,5 +138,39 @@
     "hosted_content": false,
     "same_refresh_offsets_verified": true,
     "actual_notice_visibility_and_lifecycle_verified": true
+  },
+  "publication_source_rerun": {
+    "run_id": 38004288253,
+    "run_url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/38004288253",
+    "source_sha": "f223dcf81feb4c6d49744114bdbc57f8d2c57e90",
+    "executable_source_identical_to": "c830a683b6b70ee91f5aebc002b1b4b424d5ac4a",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "id": 114069385834,
+        "name": "database",
+        "conclusion": "success"
+      },
+      {
+        "id": 114069385903,
+        "name": "responsive",
+        "conclusion": "success"
+      },
+      {
+        "id": 114069385924,
+        "name": "flutter",
+        "conclusion": "success"
+      },
+      {
+        "id": 114069385977,
+        "name": "backend",
+        "conclusion": "success"
+      },
+      {
+        "id": 114069386251,
+        "name": "edge-functions",
+        "conclusion": "success"
+      }
+    ]
   }
 }
