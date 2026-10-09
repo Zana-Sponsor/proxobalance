@@ -1,5 +1,17 @@
 # ProxoLink V6 — current terminal native result
 
+## Current native infrastructure checkpoint — 2026-10-09
+
+**Android runtime: BLOCKED before emulator execution.** Diagnostic protected run [37957991028](https://github.com/Zana-Sponsor/proxobalance/actions/runs/37957991028), attempt1, revision `4bff4381065de5b032b5ddd09a73fb8189d6bfe0`: APK113913287054 SUCCESS; authorized runtime113915151911 failed at **Enable KVM**, exit1 at2026-10-09T16:27:57Z. The real WebView action was SKIPPED. Expected240 / executed0, behavior0passed/0failed, candidate0/baseline0, absent first captures480, unmeasured stability roles480, evaluated pixel pairs0, chooser0/12 and runtime authentication unmeasured. No runtime evidence artifact exists; APK artifacts are separate.
+
+The always-run upload's missing-directory error is secondary to skipped collection. DEP0040/punycode is a warning. The exact failing KVM command and underlying runner-readiness cause are NOT PROVEN because original logs contain no per-command exit/device trace. This is not evidence of a product/pixel defect or a reason to waive missing evidence.
+
+[Safe attempt diagnosis](evidence/proxolink-v6-2026-10-06/native-4bff438-attempt1-infrastructure.json) and [fail-closed readiness instrumentation](PROXOLINK_NATIVE_READINESS_2026-10-09.md) preserve the original command sequence/readability gate. Command statuses and numeric device observations are written before upload; a later diagnostic settle never changes an original failure to success. Six isolated Python checks, invoked through one Node test, pass; Python compilation passes. No rendering remedy or native acceptance change. A controlled protected execution of the instrumented existing workflow will be pinned separately; these zero counts describe only this skipped attempt, not a subsequently running job.
+
+Source CI [37957991266](https://github.com/Zana-Sponsor/proxobalance/actions/runs/37957991266) at4bff completed SUCCESS, all five jobs. Original eight-pair native failure232exact/8failed (1,750 changed pixels) remains historical at6c7e6c6; no new parity result exists. PR#7 remains Draft/open/unmerged; no production publishing, customer writes or migrations.
+
+Earlier sections below are dated checkpoints and history; do not reuse their runtime counts as this attempt or the next protected execution.
+
 **Android runtime status: FAILED.** Protected [run 37844040950](https://github.com/Zana-Sponsor/proxobalance/actions/runs/37844040950), attempt **2**, pinned revision `6c7e6c634cfe0bceb2c43ceb485aba12cd78417c`, runtime job `113568639222`, executed after authorized review in unchanged `proxolink-preview-verification`. KVM succeeded; final error `native_case_collection / native_pixel_parity_failed`. This was diagnostic instrumentation, not a proven pixel fix.
 
 | Terminal evidence, independently recomputed | Result |
