@@ -36,7 +36,7 @@ class ActualScreenBackend {
      'spend':12.5,'prev_spend':8,'clicks':1246,'impressions':84320,'prev_impressions':60000,
      'conversions':10,'budget':10,'total_budget':30,'created_at':DateTime.now().subtract(const Duration(hours:1)).toIso8601String(),
     }]:[];
-    return http.Response(jsonEncode(data),200,headers:{'content-type':'application/json','content-range':'*/0'});
+    return http.Response(jsonEncode(data),200,request:request,headers:{'content-type':'application/json','content-range':'*/0'});
    });
  }
  Future<void> initialize()async{
@@ -49,8 +49,8 @@ class ActualScreenBackend {
   await client.auth.recoverSession(jsonEncode(Session(accessToken:token,tokenType:'bearer',
    user:const User(id:screenFixtureOwner,appMetadata:{},userMetadata:{},aud:'authenticated',createdAt:'2026-10-09T00:00:00Z')).toJson()));
   app.supabase=client;
-  // Resolve SDK JSON-isolate initialization outside WidgetTester's fake clock
-  // and prove the fixture can serve actual dashboard reads before mounting.
+  // Prove the fixture meets the actual PostgREST response/request contract
+  // before mounting any production screen.
   await client.from('pa_ads').select('id');
  }
  Future<void> dispose()async{if(refreshGate!=null&&!refreshGate!.isCompleted)refreshGate!.complete();await Supabase.instance.dispose();}

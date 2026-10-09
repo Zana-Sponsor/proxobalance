@@ -131,7 +131,7 @@ class _ActualScreensState extends State<NativeActualScreensJourney> {
   }
   String _error(Object e)=>e is StateError&&{'actual_screen_permission','actual_screen_phase_missed','actual_screen_surface','actual_screen_refresh',
     'actual_screen_reads','actual_screen_settle','actual_screen_notices','actual_screen_validation','actual_screen_lifecycle','actual_screen_appearance'}.contains(e.message)
-      ?e.message as String:'actual_screen_unclassified';
+      ?e.message:'actual_screen_unclassified';
   @override Widget build(BuildContext context)=>Center(child:SizedBox(width:width,height:1200,
     child:MediaQuery(data:MediaQuery.of(context).copyWith(size:Size(width,1200)),child:RepaintBoundary(key:viewport,child:screen))));
 }

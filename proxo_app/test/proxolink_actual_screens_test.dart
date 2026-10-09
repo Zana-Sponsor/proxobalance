@@ -24,6 +24,7 @@ void main() {
   final backend=ActualScreenBackend(),measurements=<String,Object>{};
   var permissionRequests=0;
   setUpAll(() async {
+    SharedPreferences.setMockInitialValues({});
     await (FontLoader(kAppFont)..addFont(rootBundle.load('assets/fonts/Rabar_021.ttf'))).load();
     await (FontLoader('MaterialIcons')..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf'))).load();
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(permissionChannel,(call)async {
