@@ -241,3 +241,12 @@ test('moderation comes from stored pending default; client approval/rejection is
  for(const tt of ['https://tiktok.com/@x','<script>evil</script>','a'.repeat(41),'evil\nname'])
    assert.equal((await call('cards',{method:'POST',body:pagePayload('contact',['telegram'],{tt})})).status,422);
 });
+test('delete dependency race returns safe conflict and never substitutes an archive',async()=>{
+ const made=await call('cards',{method:'POST',body:pagePayload('contact',['telegram'])});
+ const fetcher=fixture.fetcher;
+ global.fetch=async(raw,options={})=>new URL(raw).pathname==='/rest/v1/proxolink_cards'&&options.method==='DELETE'
+  ?Response.json({code:'23503'},{status:409}):fetcher(raw,options);
+ const result=await call('card-action',{method:'POST',body:{card_id:made.json().card.id,action:'delete'}});
+ assert.equal(result.status,409);assert.equal(result.json().error,'ad_dependency');
+ assert.equal(fixture.rows.length,1);assert.equal(fixture.rows[0].archived_at,undefined);
+});

@@ -158,6 +158,21 @@ void main() {
   expect(repo.submitted!.containsKey('id'),false);expect(repo.submitted!.containsKey('moderation_status'),false);
   repo.saveGate!.complete(moderated(1,'pending'));await t.pumpAndSettle();expect(find.text('چاوەڕوانی'),findsOneWidget);expect(repo.listReads,1);
  });
+ testWidgets('failed refresh keeps a populated collection and shared notice; later response replaces removed cards',(t) async {
+  size(t,393);final handle=ProxoRefreshController(),repo=ToolsRepository([moderated(1,'pending'),moderated(2,'pending')]);
+  await t.pumpWidget(host(ToolsScreen(repository:repo,refreshController:handle)));await t.pumpAndSettle();
+  repo.fail=true;unawaited(handle.refresh());await t.pumpAndSettle();
+  expect(find.byType(ProxoLinkPageSkeleton),findsNothing);expect(find.text('پڕۆکسۆ Proxo 1'),findsOneWidget);
+  expect(find.text(const ProxoLinkFailure('network_error').message),findsOneWidget);
+  repo.fail=false;repo.rows=[moderated(2,'approved')];unawaited(handle.refresh());await t.pumpAndSettle();
+  expect(find.text('پڕۆکسۆ Proxo 1'),findsNothing);expect(find.text('پەسەندکراوە'),findsOneWidget);handle.dispose();
+ });
+ testWidgets('large lazy collection uses one GET and no avatar/provider/preview requests',(t) async {
+  size(t,320);final repo=ToolsRepository(List.generate(500,(i)=>moderated(i+1,'pending')));
+  await t.pumpWidget(host(ToolsScreen(repository:repo)));await t.pumpAndSettle();
+  expect(repo.listReads,1);expect(repo.avatars,0);expect(repo.previewRequests,isEmpty);
+  expect(find.byType(ProxoLinkPageCard).evaluate().length,lessThan(20));expect(t.takeException(),isNull);
+ });
  final widths=[320.0,360.0,375.0,393.0,412.0,430.0,600.0,768.0,1024.0];
  for(final width in widths) for(final scale in [1.0,1.6]) {
   testWidgets('Tools $width scale$scale all statuses and mixed long names, restrained tablet width',(t) async {

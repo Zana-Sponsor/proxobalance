@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../controllers/proxolink_pages_controller.dart';
 import '../models/proxo_card.dart';
+import '../models/proxolink_page_type.dart';
 import '../services/proxolink_service.dart';
 import '../widgets/ad_form_components.dart';
 import '../widgets/ad_validation_notifications.dart';
@@ -119,7 +120,7 @@ class _ToolsScreenState extends State<ToolsScreen> {
                   ? ValueKey('tools-placeholder-$index') : ValueKey('tools-row-${_pages.pages[index-1].id}'),
                 alignment: Alignment.topCenter,
                 child: ConstrainedBox(constraints: const BoxConstraints(maxWidth: 600),
-                  child: Padding(padding: const EdgeInsets.only(bottom: 16), child: _item(context, index))))),
+                  child: Padding(padding: const EdgeInsets.only(bottom: 16), child: _item(context, index)))))),
           Positioned(top: 12, left: 16, right: 16, child: AdValidationNotifications(controller: _notices)),
         ])),
       ]),
