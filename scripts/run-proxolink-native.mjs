@@ -8,8 +8,9 @@ import sharp from 'sharp';
 import { STYLES, WIDTHS, PAGE_TYPES, LANGUAGES, NATIVE_CASE_IDS, validateRuntime, safeRequest, verifyReadOnlySecurity,
   validateNativeResults, createNativeVerificationSession } from './proxolink-verification-security.mjs';
 import {validateViewport, compareNativePixels, captureNativeFrames, createPreviewReferenceBrowser} from './proxolink-pixel-comparison.mjs';
-import {DIAGNOSTIC_POINTS,CHOOSER_IDS,safeRenderDiagnostics,safeChooserResults,validateChooserResults,
-  diagnosticSample,diagnosePixelPair,validateDiagnosticRoles,safeSurface} from './proxolink-native-diagnostics.mjs';
+import {DIAGNOSTIC_POINTS,REPRODUCTION_IDS,CHOOSER_IDS,safeRenderDiagnostics,safeChooserResults,validateChooserResults,
+  diagnosticSample,diagnosePixelPair,validateDiagnosticRoles,validateReproductions,safeSurface} from './proxolink-native-diagnostics.mjs';
+import {readNativePipeline,inputDifferences} from './proxolink-native-pipeline.mjs';
 
 const styles=STYLES;
 const packageId='com.proxo.proxoapp';
@@ -46,6 +47,7 @@ const safeErrorCodes=new Set([
   'invalid_preview_capability','rendered_preview_security_failed','preview_source_boundary_failed',
   'native_evidence_incomplete','native_screenshot_failed','native_verification_timeout',
   'native_capture_unstable','native_pixel_parity_failed',
+  'native_pipeline_invalid','native_pipeline_unavailable','native_pipeline_timeout','native_pipeline_protocol',
   'native_diagnostics_invalid','native_diagnostics_incomplete','native_diagnostics_environment_mismatch','native_chooser_failed',
   'native_viewport_invalid','native_crop_outside_screen','reference_viewport_mismatch',
   'reference_capability_required','reference_preview_unavailable','reference_assets_or_viewport_failed',
@@ -62,7 +64,7 @@ const safeTransportCodes=new Set(['ENOTFOUND','EAI_AGAIN','ETIMEDOUT','ECONNRESE
 const safeNativeChecks=new Set(['rendered_page_checks','animation_motion',
   'contact_confirmation','contact_cancel','contact_confirm','inert_tiktok',
   'preview_url','navigation_boundary','fresh_frame','pixel_density','preview_actions','public_actions','whatsapp_hint',
-  'screenshot_ack','capture_visibility','fresh_native_view','native_paint_barrier','public_navigation','unclassified_native_check']);
+  'screenshot_ack','capture_visibility','fresh_native_view','native_paint_barrier','native_animation_barrier','public_navigation','unclassified_native_check']);
 const safeDiagnosticBooleans=new Set(['valid','public_url_unchanged','legacy_viber_url_parser',
   ...['whatsapp','viber','instagram','telegram','korek','asiacell','talabat','toters','lezzoo','wade','google_play','app_store'].map(p=>p+'_destination_match')]);
 function safeCaseResults(data){
@@ -175,7 +177,7 @@ async function main() {
   const captured=new Set();
   const pixels={};
   const repeatability={};
-  const diagnosticRoles={},diagnosticPairs={};
+  const diagnosticRoles={},diagnosticPairs={},renderStates={},reproductionRoles={},reproductionPairs={};
   const chooserTaps=new Set(),chooserCaptures=new Set();
   const chooserSetups=new Set();
   let matrixFinished=false;
@@ -184,7 +186,9 @@ async function main() {
     clocks:'capture_timing: host monotonic milliseconds; native: Android elapsedRealtime milliseconds; DOM: performance time origin and now',
     frame_commit_scope:'Submitted for rendering; not proof of display presentation. Two postOnAnimation callbacks are not compositor presentation acknowledgements.',
     surface_scope:'One fixed PixelCopy of the existing Flutter SurfaceView after the three acceptance samples; diagnostic only, never a replacement frame',
-    historical_points:DIAGNOSTIC_POINTS,roles:diagnosticRoles,pairs:diagnosticPairs},null,2));
+    historical_points:DIAGNOSTIC_POINTS,roles:diagnosticRoles,pairs:diagnosticPairs,
+    reproduction_plan:'Exactly one additional fresh candidate and baseline per eight starting failures, each with three fixed frames. Original FIRST frames remain acceptance inputs. No selection or retry.',
+    reproduction_roles:reproductionRoles,reproduction_pairs:reproductionPairs},null,2));
   const reportedFailures=new Set();
   const deadline=Date.now()+90*60*1000;
   while(Date.now()<deadline) {
@@ -213,7 +217,8 @@ async function main() {
       // Retain all independent outcomes even when another gate fails first.
       const gates={};let firstError;
       for(const [name,check] of Object.entries({matrix:()=>validateNativeResults(data,captured,pixels),
-        diagnostics:()=>validateDiagnosticRoles(diagnosticRoles),chooser:()=>validateChooserResults(chooser,chooserTaps,chooserCaptures)})){
+        diagnostics:()=>{validateDiagnosticRoles(diagnosticRoles);validateReproductions(reproductionRoles);
+          if(Object.keys(renderStates).length!==480)throw Error('native_diagnostics_incomplete');},chooser:()=>validateChooserResults(chooser,chooserTaps,chooserCaptures)})){
         try{check();gates[name]={passed:true};}catch(error){gates[name]={passed:false,code:safeErrorCodes.has(error.message)?error.message:'unclassified_failure'};firstError??=error;}
       }
       writeFileSync(output+'/acceptance-gates.json',JSON.stringify(gates,null,2));
@@ -225,9 +230,11 @@ async function main() {
     }
     const current=appRead('proxolink-verification-case.json');
     if(current) {
-      const {id,capture_id,style,type,language,width,variant,viewport,diagnostics}=JSON.parse(current);
-      if(NATIVE_CASE_IDS.includes(id)&&capture_id===id+'-'+variant&&['candidate','baseline'].includes(variant)&&!captures.has(capture_id)) {
-        const crop=validateViewport(viewport,width);
+      const {id,capture_id,style,type,language,width,variant,viewport,diagnostics,purpose}=JSON.parse(current);
+      const reproduction=purpose==='reproduction'&&REPRODUCTION_IDS.includes(id);
+      if(NATIVE_CASE_IDS.includes(id)&&capture_id===(reproduction?'repro-':'')+id+'-'+variant&&['candidate','baseline'].includes(variant)&&!captures.has(capture_id)) {
+        const crop=validateViewport(viewport,width),state=safeRenderDiagnostics(diagnostics);
+        if(state.dom.animation_barrier?.callbacks!==2||state.dom.document_complete!==true||state.dom.fonts_ready!==true||state.dom.images_ready!==true)throw Error('native_diagnostics_incomplete');
         const timing=[];
         const clock=()=>Number(process.hrtime.bigint())/1e6;
         const anchor=()=>{
@@ -247,10 +254,13 @@ async function main() {
         writeFileSync(output+'/capture-repeatability.json',JSON.stringify(repeatability,null,2));
         if(!frame.repeatability.exact_pixels_equal)console.log('Native capture instability recorded for '+capture_id+'.');
         captures.set(capture_id,{png:frame.png,crop,repeatability:frame.repeatability});
+        if(!reproduction){renderStates[capture_id]={state,viewport:crop,capture_timing:timing,repeatability:frame.repeatability};
+          writeFileSync(output+'/render-state.json',JSON.stringify(renderStates,null,2));}
         if(DIAGNOSTIC_POINTS[id]){
-          const point=DIAGNOSTIC_POINTS[id],state=safeRenderDiagnostics(diagnostics);
+          const point=DIAGNOSTIC_POINTS[id];
+          const roleMap=reproduction?reproductionRoles:diagnosticRoles;
           const first=await sharp(frame.png).extract({left:crop.left,top:crop.top,width:crop.width,height:crop.height}).png().toBuffer();
-          diagnosticRoles[capture_id]={state,viewport:crop,crop_coordinate:point,
+          roleMap[capture_id]={state,viewport:crop,repeatability:frame.repeatability,crop_coordinate:point,
             case:{id,style:id.match(/^(pill(?:-(?:mint|dark|white))?)-/)[1],type:id.match(/-(contact|order|download)-/)[1],
               language:id.match(/-(ku|en)-/)[1],orientation:id.match(/-(portrait|landscape)-/)[1],width:crop.width},
             clock_anchor:clockAnchor,
@@ -263,22 +273,48 @@ async function main() {
           for(let poll=0;poll<60;poll++){
             const value=appRead('proxolink-diagnostic-surface.json');
             if(value){const response=JSON.parse(value);if(response.id===capture_id){
-              surface=safeSurface(response.surface);diagnosticRoles[capture_id].state_after=safeRenderDiagnostics(response.state_after);break;
+              surface=safeSurface(response.surface);roleMap[capture_id].state_after=safeRenderDiagnostics(response.state_after);break;
             }}
             await pause(250);
           }
           if(!surface)throw Error('native_diagnostics_incomplete');
-          diagnosticRoles[capture_id].surface=surface;
+          roleMap[capture_id].surface=surface;
           if(surface.status===0){
             const png=adb(['exec-out','run-as',packageId,'cat','files/proxolink-diagnostic-surface.png']);
             writeFileSync(output+'/'+capture_id+'-diagnostic-surface.png',png);
             const coordinate=[point[0]+crop.left-surface.screen_x,point[1]+crop.top-surface.screen_y];
-            diagnosticRoles[capture_id].surface_sample=await diagnosticSample(png,coordinate);
-            diagnosticRoles[capture_id].surface_coordinate=coordinate;
+            roleMap[capture_id].surface_sample=await diagnosticSample(png,coordinate);
+            roleMap[capture_id].surface_coordinate=coordinate;
+          }
+          const pipeline=await readNativePipeline(adb,packageId,capture_id);
+          roleMap[capture_id].pipeline=pipeline.metadata;
+          if(pipeline.png){
+            writeFileSync(output+'/'+capture_id+'-diagnostic-webcontents.png',pipeline.png);
+            const dimensions=await sharp(pipeline.png).metadata();
+            roleMap[capture_id].pipeline.dimensions=[dimensions.width,dimensions.height];
+            roleMap[capture_id].pipeline.dimensions_match=dimensions.width===crop.width&&dimensions.height===crop.height;
+            if(roleMap[capture_id].pipeline.dimensions_match){
+              roleMap[capture_id].pipeline_sample=await diagnosticSample(pipeline.png,point);
+              roleMap[capture_id].pipeline_vs_first=await diagnosePixelPair(pipeline.png,first,{left:0,top:0,width:crop.width,height:crop.height},point,{coordinateLimit:8192});
+            }
+          }
+          // Fixed readback after CDP, diagnostic only. It records whether the
+          // readback itself coincided with a changed composed surface.
+          const postStarted=clock(),post=adb(['exec-out','screencap','-p']);
+          const postTiming={started_ms:postStarted,completed_ms:clock()};
+          const postCrop=await sharp(post).extract({left:crop.left,top:crop.top,width:crop.width,height:crop.height}).png().toBuffer();
+          writeFileSync(output+'/'+capture_id+'-diagnostic-post-webcontents-webview.png',postCrop);
+          roleMap[capture_id].post_webcontents_timing=postTiming;
+          roleMap[capture_id].post_webcontents_vs_first=await diagnosePixelPair(postCrop,first,crop,point,{coordinateLimit:8192});
+          appWrite('proxolink-diagnostic-post-request',capture_id);
+          for(let poll=0;poll<20;poll++){
+            const value=appRead('proxolink-diagnostic-post-state.json');
+            if(value){const response=JSON.parse(value);if(response.id===capture_id){roleMap[capture_id].state_after_webcontents=safeRenderDiagnostics(response.state);break;}}
+            await pause(100);
           }
           diagnosticWrite();
         }
-        if(captures.has(id+'-candidate')&&captures.has(id+'-baseline')) {
+        if(!reproduction&&captures.has(id+'-candidate')&&captures.has(id+'-baseline')) {
           const candidate=captures.get(id+'-candidate'),baseline=captures.get(id+'-baseline');
           if(JSON.stringify(candidate.crop)!==JSON.stringify(baseline.crop))throw Error('reference_viewport_mismatch');
           const reference=await sharp(baseline.png).extract({left:baseline.crop.left,top:baseline.crop.top,width:baseline.crop.width,height:baseline.crop.height}).removeAlpha().png().toBuffer();
@@ -288,6 +324,32 @@ async function main() {
           writeFileSync(output+'/'+id+'-diff.png',comparison.diff);
           if(DIAGNOSTIC_POINTS[id]||!comparison.metrics.exact_pixels_equal){
             diagnosticPairs[id]=await diagnosePixelPair(comparison.native,reference,candidate.crop,DIAGNOSTIC_POINTS[id]);
+            const detail=diagnosticPairs[id],coordinates=detail.changed_coordinates;
+            if(coordinates.length){
+              const xs=coordinates.map(p=>p[0]),ys=coordinates.map(p=>p[1]);
+              const left=Math.max(0,xs.reduce((a,b)=>Math.min(a,b),Infinity)-4),top=Math.max(0,ys.reduce((a,b)=>Math.min(a,b),Infinity)-4);
+              const region={left,top,width:Math.min(candidate.crop.width,xs.reduce((a,b)=>Math.max(a,b),-Infinity)+5)-left,
+                height:Math.min(candidate.crop.height,ys.reduce((a,b)=>Math.max(a,b),-Infinity)+5)-top};
+              // Additional explanatory crops only. Full acceptance crops and all
+              // coordinates remain unchanged, retained and strictly compared.
+              for(const [role,png] of [['candidate',comparison.native],['baseline',reference],['diff',comparison.diff]])
+                writeFileSync(output+'/'+id+'-diagnostic-region-'+role+'.png',await sharp(png).extract(region).png().toBuffer());
+              detail.visual_region=region;
+            }
+            const aRole=diagnosticRoles[id+'-candidate'],bRole=diagnosticRoles[id+'-baseline'];
+            if(aRole?.pipeline?.dimensions_match&&bRole?.pipeline?.dimensions_match)
+              detail.webcontents_pair=await diagnosePixelPair(readFileSync(output+'/'+id+'-candidate-diagnostic-webcontents.png'),
+                readFileSync(output+'/'+id+'-baseline-diagnostic-webcontents.png'),{left:0,top:0,width:candidate.crop.width,height:candidate.crop.height},DIAGNOSTIC_POINTS[id],{coordinateLimit:8192});
+            if(aRole?.surface?.status===0&&bRole?.surface?.status===0){
+              const crops=await Promise.all([['candidate',aRole],['baseline',bRole]].map(async([role,observation])=>
+                sharp(readFileSync(output+'/'+id+'-'+role+'-diagnostic-surface.png')).extract({
+                  left:candidate.crop.left-observation.surface.screen_x,top:candidate.crop.top-observation.surface.screen_y,
+                  width:candidate.crop.width,height:candidate.crop.height}).png().toBuffer()));
+              detail.flutter_surface_pair=await diagnosePixelPair(crops[0],crops[1],candidate.crop,DIAGNOSTIC_POINTS[id],{coordinateLimit:8192});
+            }
+            const candidateInput=diagnosticRoles[id+'-candidate']?.pipeline?.inputs;
+            const baselineInput=diagnosticRoles[id+'-baseline']?.pipeline?.inputs;
+            if(candidateInput&&baselineInput)diagnosticPairs[id].input_differences=inputDifferences(candidateInput,baselineInput);
             diagnosticWrite();
           }
           pixels[id]={...comparison.metrics,capture_samples:3,
@@ -295,6 +357,23 @@ async function main() {
           writeFileSync(output+'/pixels.json',JSON.stringify({environment:'Same Android 35 emulator / WebView / DPR 1 baseline versus candidate',
             animation_state:'Behavior view retired; fresh production WebViews with identical load/reload/settle history; finite entrances completed; infinite animations paused at zero; hint/toast hidden; Android visual-state callback and native draw acknowledged; three fixed captures per role must be identical; first frames compared; original CSS/assets unchanged',cases:pixels},null,2));
           if(!comparison.metrics.exact_pixels_equal)console.log('Native pixel difference recorded for '+id+'.');
+        }
+        if(reproduction&&variant==='baseline'){
+          const observations={};
+          // Predetermined comparisons, no matching-frame search. No results enter
+          // the acceptance pixels map or captured-case set.
+          for(const [name,left,right] of [
+            ['candidate_aa',id+'-candidate','repro-'+id+'-candidate'],
+            ['baseline_aa',id+'-baseline','repro-'+id+'-baseline'],
+            ['fresh_candidate_baseline','repro-'+id+'-candidate','repro-'+id+'-baseline']]){
+            const a=captures.get(left),b=captures.get(right);
+            if(!a||!b)throw Error('native_diagnostics_incomplete');
+            if(JSON.stringify(a.crop)!==JSON.stringify(b.crop))throw Error('reference_viewport_mismatch');
+            const aa=await sharp(a.png).extract({left:a.crop.left,top:a.crop.top,width:a.crop.width,height:a.crop.height}).png().toBuffer();
+            const bb=await sharp(b.png).extract({left:b.crop.left,top:b.crop.top,width:b.crop.width,height:b.crop.height}).png().toBuffer();
+            observations[name]=await diagnosePixelPair(aa,bb,a.crop,DIAGNOSTIC_POINTS[id]);
+          }
+          reproductionPairs[id]=observations;diagnosticWrite();
         }
         appWrite('proxolink-verification-ack',capture_id);
         console.log('Native evidence captured for '+capture_id+'.');

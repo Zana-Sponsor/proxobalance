@@ -1,8 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import sharp from 'sharp';
-import {DIAGNOSTIC_POINTS,CHOOSER_IDS,safeRenderDiagnostics,safeChooserResults,validateChooserResults,
- diagnosticSample,diagnosePixelPair,validateDiagnosticRoles,safeSurface} from '../scripts/proxolink-native-diagnostics.mjs';
+import {DIAGNOSTIC_POINTS,REPRODUCTION_IDS,CHOOSER_IDS,safeRenderDiagnostics,safeChooserResults,validateChooserResults,
+ diagnosticSample,diagnosePixelPair,validateDiagnosticRoles,validateReproductions,safeSurface} from '../scripts/proxolink-native-diagnostics.mjs';
 function state(){return {dom:{dpr:1,scroll_x:0,scroll_y:0,elements:[{present:true,bounds:[0.5,20,393,800],style_hash:123}]},
  native:{sdk:35,density:1,webview_version:'133.0.6943.137',barrier:{visual_state_seen:true,draw_seen:true,frame_commit_seen:false,post_animation_callbacks:2}},flutter_bounds:[403.5,200,393,1520]};}
 test('native diagnostic allowlist retains fractional geometry and strips capabilities and arbitrary text',()=>{
@@ -42,10 +42,29 @@ test('native chooser requires 12 real input taps, 12 captures and every positive
  assert.throws(()=>validateChooserResults(safe,taps,new Set()),/native_chooser_failed/);
  safe[CHOOSER_IDS[0]].live_theme_match=false;assert.throws(()=>validateChooserResults(safe,taps,captures),/native_chooser_failed/);
 });
-test('all six diagnostic cases require both roles, exactly three samples and the same WebView version',()=>{
- assert.equal(Object.keys(DIAGNOSTIC_POINTS).length,6);
- const roles=Object.fromEntries(Object.keys(DIAGNOSTIC_POINTS).flatMap(id=>['candidate','baseline'].map(role=>[id+'-'+role,{state:state(),state_after:state(),surface:{status:0},surface_sample:{rgb:[1,2,3]},samples:[{},{},{}],capture_timing:[{},{},{}]}])));
+test('all eight failures and two controls require both roles, exactly three samples and the same WebView version',()=>{
+ assert.equal(Object.keys(DIAGNOSTIC_POINTS).length,10);
+ const roles=Object.fromEntries(Object.keys(DIAGNOSTIC_POINTS).flatMap(id=>['candidate','baseline'].map(role=>[id+'-'+role,{state:state(),state_after:state(),state_after_webcontents:state(),post_webcontents_timing:{started_ms:1,completed_ms:2},pipeline:{status:'captured',dimensions_match:true},surface:{status:0},surface_sample:{rgb:[1,2,3]},samples:[{},{},{}],capture_timing:[{},{},{}]}])));
  validateDiagnosticRoles(roles);
  const first=Object.keys(roles)[0];roles[first].samples.pop();assert.throws(()=>validateDiagnosticRoles(roles),/incomplete/);roles[first].samples.push({});
  roles[first].state.native.webview_version='134.0.0.0';assert.throws(()=>validateDiagnosticRoles(roles),/environment_mismatch/);
+});
+
+test('fresh-view reproduction is bounded to eight cases, requires three stable frames and cannot omit a role',()=>{
+ assert.equal(REPRODUCTION_IDS.length,8);
+ const roles=Object.fromEntries(REPRODUCTION_IDS.flatMap(id=>['candidate','baseline'].map(role=>['repro-'+id+'-'+role,{
+   state:{dom:{animation_barrier:{callbacks:2}}},repeatability:{samples:3,exact_pixels_equal:true},pipeline:{status:'captured',dimensions_match:true}}])));
+ validateReproductions(roles);const first=Object.keys(roles)[0];roles[first].repeatability.exact_pixels_equal=false;assert.throws(()=>validateReproductions(roles),/incomplete/);
+ roles[first].repeatability.exact_pixels_equal=true;delete roles[first];assert.throws(()=>validateReproductions(roles),/incomplete/);
+});
+test('shadow, containing-block, native density and two-frame measurements survive the safe allowlist',()=>{
+ const value=state();value.dom.animation_barrier={requested_ms:1,first_ms:2,second_ms:3,callbacks:2};
+ value.dom.elements=[{selector:'[data-provider="whatsapp"]',bounds:[217,325.1875,334,56],parent_bounds:[217,281.1875,334,464],containing_bounds:[0,0,768,1520],
+   client_width:334,offset_top:44,computed:{boxShadow:'rgba(17, 130, 73, 0.36) 0px 6px 14px -8px',borderRadius:'50px',fontFamily:'"Bahij"',href:'secret'}}];
+ value.dom.resources=[{identity_hash:123,response_status:200,decoded_size:100,url:'secret'}];
+ value.native.scaled_density=1;value.native.frames=[{layout_ms:0.1,draw_duration_ms:1.2,vsync_ms:25}];
+ const out=safeRenderDiagnostics(value);assert.equal(out.dom.elements[0].computed.borderRadius,'50px');
+ assert.equal(out.dom.elements[0].computed.fontFamily,'"Bahij"');assert.equal(out.dom.resources[0].response_status,200);
+ assert.equal(out.native.scaled_density,1);assert.equal(out.dom.animation_barrier.callbacks,2);assert.doesNotMatch(JSON.stringify(out),/secret|href/);
+ value.dom.elements[0].selector='[data-provider="secret"]';assert.throws(()=>safeRenderDiagnostics(value),/invalid/);
 });

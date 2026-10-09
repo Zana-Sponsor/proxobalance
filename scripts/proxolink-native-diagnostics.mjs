@@ -1,15 +1,18 @@
 import {createHash} from 'node:crypto';
 import sharp from 'sharp';
 export const DIAGNOSTIC_POINTS=Object.freeze({
- 'pill-contact-en-portrait-768':[380,222], 'pill-order-ku-portrait-768':[380,222],
+ 'pill-contact-en-portrait-768':[225,386], 'pill-order-ku-portrait-768':[380,222],
+ 'pill-mint-contact-ku-portrait-768':[290,228], 'pill-mint-order-ku-portrait-320':[257,88],
+ 'pill-mint-order-ku-portrait-430':[282,184], 'pill-mint-order-ku-portrait-768':[583,90],
+ 'pill-mint-order-en-portrait-430':[282,184], 'pill-mint-order-en-portrait-768':[290,228],
  'pill-order-en-portrait-768':[380,222], 'pill-mint-contact-ku-portrait-430':[282,184],
- 'pill-mint-order-ku-portrait-430':[282,184], 'pill-mint-order-en-portrait-768':[290,228],
 });
+export const REPRODUCTION_IDS=Object.keys(DIAGNOSTIC_POINTS).slice(0,8);
 export const CHOOSER_IDS=['contact','order','download'].flatMap(type=>['pill','pill-mint','pill-dark','pill-white'].map(style=>`chooser-${type}-${style}`));
-const numericKeys=new Set(('start_ms response_ms dom_complete_ms load_end_ms type_hash content_height page_scale window_width window_height display_width display_height xdpi ydpi window_color_mode document_bounds body_bounds screen_width screen_height screen_color_depth screen_pixel_depth class_hash id_hash initial_ready_ms reload_ready_ms barrier_return_ms time_origin now_ms dpr inner_width inner_height scroll_x scroll_y scroll_width scroll_height visual_viewport bounds style_hash text_hash opacity hit_bounds hit_style_hash fonts_hash css_hash time play_state_hash end flutter_bounds observed_ms requested_ms visual_state_ms draw_ms frame_commit_ms post_animation_callbacks animation_1_ms animation_2_ms width height screen_x screen_y window_x window_y x y alpha scale_x scale_y translation_x translation_y matrix layer_type density density_dpi sdk').split(' '));
-const booleanKeys=new Set(('present visibility document_complete visual_state_seen draw_seen frame_commit_seen hardware_accelerated attached').split(' '));
-const cssKeys=new Set(('fontFamily fontSize fontWeight lineHeight letterSpacing color backgroundColor backgroundImage opacity transform filter mixBlendMode isolation borderRadius boxShadow transformOrigin backgroundSize backgroundPosition fontStyle fontKerning textRendering transitionProperty transitionDuration transitionDelay animationName animationDuration animationDelay animationFillMode animationPlayState zoom').split(' '));
-const containerKeys=new Set(['lifecycle','dom','native','barrier','elements','animations','ancestry','covering','navigation']);
+const numericKeys=new Set(('measured_width measured_height scaled_density orientation insets config_hash html_hash config_source_hash client_width client_height offset_width offset_height offset_left offset_top parent_bounds containing_bounds value_hash identity_hash duration_ms response_end_ms transfer_size encoded_size decoded_size response_status initiator_hash natural_width natural_height family_hash weight_hash dropped_frames vsync_ms intended_vsync_ms layout_ms draw_duration_ms sync_ms command_ms swap_ms total_ms callbacks first_ms second_ms start_ms response_ms dom_complete_ms load_end_ms type_hash content_height page_scale window_width window_height display_width display_height xdpi ydpi window_color_mode document_bounds body_bounds screen_width screen_height screen_color_depth screen_pixel_depth class_hash id_hash initial_ready_ms reload_ready_ms barrier_return_ms time_origin now_ms dpr inner_width inner_height scroll_x scroll_y scroll_width scroll_height visual_viewport bounds style_hash text_hash opacity hit_bounds hit_style_hash href_hash fonts_hash css_hash time play_state_hash end flutter_bounds observed_ms requested_ms visual_state_ms draw_ms frame_commit_ms post_animation_callbacks animation_1_ms animation_2_ms width height screen_x screen_y window_x window_y x y alpha scale_x scale_y translation_x translation_y matrix layer_type density density_dpi sdk').split(' '));
+const booleanKeys=new Set(('layout_requested laid_out render_process_present fonts_ready images_ready complete loaded elements_truncated resources_truncated present visibility document_complete visual_state_seen draw_seen frame_commit_seen hardware_accelerated attached').split(' '));
+const cssKeys=new Set(('width height minWidth minHeight maxWidth maxHeight position display margin padding border borderTopWidth borderRightWidth borderBottomWidth borderLeftWidth borderColor borderStyle boxSizing backgroundClip overflow overflowX overflowY clipPath zIndex perspective willChange contain fontFeatureSettings fontVariationSettings textAlign direction unicodeBidi fontFamily fontSize fontWeight lineHeight letterSpacing color backgroundColor backgroundImage opacity transform filter mixBlendMode isolation borderRadius boxShadow transformOrigin backgroundSize backgroundPosition fontStyle fontKerning textRendering transitionProperty transitionDuration transitionDelay animationName animationDuration animationDelay animationFillMode animationPlayState zoom').split(' '));
+const containerKeys=new Set(['lifecycle','dom','native','barrier','elements','animations','ancestry','covering','navigation','animation_barrier','resources','images','fonts','inputs','buttons','parents','frames','text_rects']);
 // No page text, URLs, capabilities, headers, credentials, arbitrary keys or native dumps.
 export function safeRenderDiagnostics(value){
  const number=v=>typeof v==='number'&&Number.isFinite(v)&&Math.abs(v)<1e16;
@@ -23,13 +26,17 @@ export function safeRenderDiagnostics(value){
    }else if(booleanKeys.has(k)){
     if(typeof item!=='boolean')throw Error('native_diagnostics_invalid');out[k]=item;
    }else if(containerKeys.has(k)){
-    if(Array.isArray(item)){if(item.length>16)throw Error('native_diagnostics_invalid');out[k]=item.map(x=>clean(x,depth+1));}
+    if(Array.isArray(item)){if(item.length>32)throw Error('native_diagnostics_invalid');out[k]=item.map(x=>clean(x,depth+1));}
     else out[k]=clean(item,depth+1);
    }else if(['computed','before','after'].includes(k)){
     const css={};for(const [property,text] of Object.entries(item||{})){
-     if(cssKeys.has(property)&&typeof text==='string'&&text.length<2048&&/^[a-z0-9 ,.%#()+_\/\-]*$/i.test(text)&&(!/url\(/i.test(text)||text==='url(redacted)'))css[property]=text;
+     if(cssKeys.has(property)&&typeof text==='string'&&text.length<2048&&/^[a-z0-9 ,.%#()+_\/\-"']*$/i.test(text)&&(!/url\(/i.test(text)||text==='url(redacted)'))css[property]=text;
     }out[k]=css;
-   }else if(k==='tag'&&['HTML','BODY','DIV','H1','P','SPAN','A','IMG','BUTTON','SVG','OTHER'].includes(item)){out[k]=item;
+   }else if(k==='tag'&&['HTML','BODY','DIV','H1','H2','P','SPAN','A','IMG','BUTTON','SECTION','SVG','SMALL','OTHER'].includes(item)){out[k]=item;
+   }else if(k==='selector'){
+    if(typeof item!=='string'||item.length>300||! /^(?:\.(?:wrap|aura|av-wrap|av|profile|uname|ubio|btns|list|store-list|footer)|\[data-provider="(?:whatsapp|viber|instagram|telegram|korek|asiacell|talabat|toters|lezzoo|wade|app_store|google_play)"\]|(?:(?:html|body|div|h1|h2|p|span|a|img|button|section|svg|small):nth-of-type\([0-9]+\)>?){0,6})$/.test(item))throw Error('native_diagnostics_invalid');out[k]=item;
+   }else if(k==='field'&&['template','lang','direction','name','bio','avatarUrl','preview','videoUrl','buttons','intents'].includes(item)){out[k]=item;
+   }else if(k==='provider'&&['whatsapp','viber','instagram','telegram','korek','asiacell','talabat','toters','lezzoo','wade','app_store','google_play','other'].includes(item)){out[k]=item;
    }else if(k==='webview_version'){
     if(typeof item!=='string'||!/^\d+(?:\.\d+){1,5}$/.test(item))throw Error('native_diagnostics_invalid');out[k]=item;
    }
@@ -42,7 +49,8 @@ export function safeRenderDiagnostics(value){
   ||out.native.barrier?.post_animation_callbacks!==2||out.flutter_bounds?.length!==4)
   throw Error('native_diagnostics_incomplete');
  const {time_origin,now_ms,...layout}=out.dom;
- return {...out,dom_state_sha256:createHash('sha256').update(JSON.stringify(layout)).digest('hex'),state_sha256:createHash('sha256').update(JSON.stringify(out)).digest('hex')};
+ const geometry=Object.fromEntries(['dpr','document_bounds','body_bounds','client_width','client_height','inner_width','inner_height','scroll_x','scroll_y','visual_viewport','elements'].map(k=>[k,out.dom[k]]));
+ return {...out,geometry_sha256:createHash('sha256').update(JSON.stringify(geometry)).digest('hex'),dom_state_sha256:createHash('sha256').update(JSON.stringify(layout)).digest('hex'),state_sha256:createHash('sha256').update(JSON.stringify(out)).digest('hex')};
 }
 const chooserFlags=['passed','builder_screen','thumbnail_decoded','selection_changed','selected_state','live_theme_match','provider_type_match','fresh_controller','native_draw'];
 const chooserErrors=new Set(['chooser_builder_setup','chooser_element_missing','chooser_thumbnail_missing','chooser_thumbnail_image','chooser_tap_bounds','chooser_must_change_selection','chooser_selection_callback','chooser_live_preview_design','chooser_selected_state','chooser_native_draw','chooser_capture_ack','chooser_timeout','chooser_unclassified']);
@@ -76,7 +84,7 @@ export async function diagnosticSample(png,coordinate){
  if(info.channels!==3||x<0||y<0||x>=info.width||y>=info.height)throw Error('native_diagnostics_invalid');
  return {rgb:point(data,info,x,y),neighborhood:region(data,info,x,y),rgb_sha256:createHash('sha256').update(data).digest('hex')};
 }
-export async function diagnosePixelPair(candidate,baseline,viewport,knownPoint){
+export async function diagnosePixelPair(candidate,baseline,viewport,knownPoint,{coordinateLimit=Infinity}={}){
  const a=await rgb(candidate),b=await rgb(baseline);
  if(a.info.width!==b.info.width||a.info.height!==b.info.height||a.info.channels!==3||b.info.channels!==3)throw Error('native_diagnostics_invalid');
  const changed=[];
@@ -87,21 +95,31 @@ export async function diagnosePixelPair(candidate,baseline,viewport,knownPoint){
    candidate_neighborhood:region(a.data,a.info,x,y),baseline_neighborhood:region(b.data,b.info,x,y)};
  };
  // Full difference coordinates are retained. Neighborhoods only around the six
- // historical locations and actual differences, with no pixel acceptance change.
- return {viewport,changed_pixels:changed.length,changed_coordinates:changed,
+ // diagnostic locations and actual differences, with no pixel acceptance change.
+ return {viewport,changed_pixels:changed.length,changed_coordinates:changed.slice(0,coordinateLimit),coordinates_truncated:changed.length>coordinateLimit,
   differences:changed.slice(0,64).map(describe),neighborhoods_truncated:changed.length>64,
   historical_point:knownPoint?describe(knownPoint):null};
 }
 export function validateDiagnosticRoles(roles){
  const ids=Object.keys(DIAGNOSTIC_POINTS).flatMap(id=>[id+'-candidate',id+'-baseline']);
- if(Object.keys(roles).length!==12||!ids.every(id=>roles[id]?.samples?.length===3&&roles[id]?.capture_timing?.length===3
+ if(Object.keys(roles).length!==ids.length||!ids.every(id=>roles[id]?.samples?.length===3&&roles[id]?.capture_timing?.length===3
   &&roles[id]?.state?.native?.webview_version&&roles[id]?.state_after?.native?.webview_version
-  &&roles[id]?.surface?.status===0&&roles[id]?.surface_sample?.rgb?.length===3))throw Error('native_diagnostics_incomplete');
+  &&roles[id]?.surface?.status===0&&roles[id]?.surface_sample?.rgb?.length===3&&roles[id]?.pipeline?.status==='captured'&&roles[id]?.pipeline?.dimensions_match===true&&roles[id]?.state_after_webcontents?.native?.webview_version
+  &&roles[id]?.post_webcontents_timing?.completed_ms>=roles[id]?.post_webcontents_timing?.started_ms))throw Error('native_diagnostics_incomplete');
  if(new Set(ids.map(id=>roles[id].state.native.webview_version)).size!==1)throw Error('native_diagnostics_environment_mismatch');
- if(!ids.every(id=>roles[id].state.native.webview_version===roles[id].state_after.native.webview_version))throw Error('native_diagnostics_environment_mismatch');
+ if(!ids.every(id=>roles[id].state.native.webview_version===roles[id].state_after.native.webview_version
+  &&roles[id].state.native.webview_version===roles[id].state_after_webcontents.native.webview_version))throw Error('native_diagnostics_environment_mismatch');
 }
 
 export function safeSurface(value){
  const keys=['status','requested_ms','completed_ms','screen_x','screen_y','width','height'];
  return Object.fromEntries(keys.filter(k=>typeof value?.[k]==='number'&&Number.isFinite(value[k])).map(k=>[k,value[k]]));
+}
+
+// Observations do not turn fresh-view reproductions into acceptance frames.
+export function validateReproductions(roles){
+ const ids=REPRODUCTION_IDS.flatMap(id=>['candidate','baseline'].map(role=>'repro-'+id+'-'+role));
+ if(Object.keys(roles).length!==ids.length||!ids.every(id=>roles[id]?.repeatability?.samples===3
+  &&roles[id]?.repeatability?.exact_pixels_equal===true&&roles[id]?.state?.dom?.animation_barrier?.callbacks===2
+  &&roles[id]?.pipeline?.status==='captured'&&roles[id]?.pipeline?.dimensions_match===true))throw Error('native_diagnostics_incomplete');
 }

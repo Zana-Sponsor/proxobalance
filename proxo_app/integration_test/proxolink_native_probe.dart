@@ -51,10 +51,12 @@ class _Probe extends StatefulWidget {
 }
 class _ProbeState extends State<_Probe> {
  final _viewport=GlobalKey(),_results=<String,dynamic>{},_candidateChecks=<String,Map<String,dynamic>>{};
- int _index=0;bool _baseline=false,_behavior=true,_complete=false,_chooser=false;
+ int _index=0,_reproductionIndex=0;bool _baseline=false,_behavior=true,_complete=false,_chooser=false,_reproducing=false;
+ final _reproductionResults=<String,dynamic>{};
+ Map<String,Object> get _case=>_reproducing?_cases.firstWhere((c)=>'${c['style']}-${c['type']}-${c['language']}-${c['orientation']}-${c['width']}'==nativeReproductionIds[_reproductionIndex]):_cases[_index];
  WebViewController? _behaviorController,_candidateCaptureController;
  Map<String,String> _headers={};
- String get _id {final c=_cases[_index.clamp(0,_cases.length-1)];return '${c['style']}-${c['type']}-${c['language']}-${c['orientation']}-${c['width']}';}
+ String get _id {final c=_case;return '${c['style']}-${c['type']}-${c['language']}-${c['orientation']}-${c['width']}';}
  @override void initState(){super.initState();_configure();}
  Future<void> _configure() async {final config=await _configuration();if(mounted)setState(()=>_headers=Map<String,String>.from(config['headers'] as Map));}
  Future<void> _write(String file,Object value) async {
@@ -63,8 +65,10 @@ class _ProbeState extends State<_Probe> {
   await temporary.rename('${_files.path}/$file');
  }
  Future<void> _verify(WebViewController controller) async {
-  final id=_id,baseline=_baseline,behavior=_behavior,c=_cases[_index];Map<String,dynamic>? state;
-  final instrument=!behavior&&nativeDiagnosticPoints.containsKey(id);
+  final id=_id,baseline=_baseline,behavior=_behavior,reproduction=_reproducing,c=_case;
+  final captureId='${reproduction?'repro-':''}$id-${baseline?'baseline':'candidate'}';Map<String,dynamic>? state;
+  final instrument=!behavior;
+  final surfaceInstrument=instrument&&nativeDiagnosticPoints.containsKey(id);
   final lifecycle=Stopwatch()..start();
   final lifecycleTimes=<String,dynamic>{};
   final actionDiagnostics=<String,dynamic>{};
@@ -166,6 +170,17 @@ class _ProbeState extends State<_Probe> {
    await Future<void>.delayed(const Duration(seconds:2));
    final capture=await _read(controller,'JSON.stringify({visible:Array.from(document.querySelectorAll("[data-provider]")).every(e=>Number(getComputedStyle(e).opacity)===1&&e.getBoundingClientRect().width>0),hintHidden:Array.from(document.querySelectorAll(".wa-message-card")).every(e=>e.hidden),toastHidden:document.getElementById("toast").hidden})');
    if(capture['visible']!=true||capture['hintHidden']!=true||capture['toastHidden']!=true)throw StateError('capture_visibility');
+   await controller.runJavaScript(nativeAnimationBarrierScript);
+   var domFrames=false;
+   for(var i=0;i<100;i++){
+    final frame=await _read(controller,'JSON.stringify(window.__nativeAnimationBarrier)');
+    if(frame['callbacks']==2){domFrames=true;break;}
+    await Future<void>.delayed(const Duration(milliseconds:20));
+   }
+   if(!domFrames)throw StateError('native_animation_barrier');
+   // This nonvisual debug marker selects the exact live CDP target. It contains
+   // only the case/role ID, never an endpoint or capability.
+   await controller.runJavaScript('window.__nativeCaptureIdentity=${jsonEncode(captureId)};');
    // DOM readiness and a delay do not acknowledge Android's asynchronous
    // raster/draw. Wait for the real native view before publishing capture-ready.
    final platform=controller.platform;
@@ -179,44 +194,62 @@ class _ProbeState extends State<_Probe> {
    if(instrument){
     lifecycleTimes['barrier_return_ms']=lifecycle.elapsedMicroseconds/1000;
     diagnostic['lifecycle']=lifecycleTimes;
-    diagnostic['dom']=await _read(controller,nativeDiagnosticScript(nativeDiagnosticPoints[id]!));
+    diagnostic['dom']=await _read(controller,nativeDiagnosticScript(nativeDiagnosticPoints[id]??const [0,0]));
     diagnostic['native']=await _nativeCapture.invokeMapMethod<String,dynamic>('diagnostics',{'webViewIdentifier':platform.webViewIdentifier});
    }
    if(!mounted)return;
    final box=_viewport.currentContext!.findRenderObject()! as RenderBox,origin=box.localToGlobal(Offset.zero);
    if(MediaQuery.devicePixelRatioOf(context)!=1)throw StateError('pixel_density');
-   final captureId='$id-${baseline?'baseline':'candidate'}';
    await _write('proxolink-verification-case.json',{'id':id,'capture_id':captureId,'style':c['style'],'type':c['type'],'language':c['language'],'width':c['width'],
-    'variant':baseline?'baseline':'candidate','orientation':c['orientation'],
+    'variant':baseline?'baseline':'candidate','orientation':c['orientation'],'purpose':reproduction?'reproduction':'acceptance',
     if(instrument)'diagnostics':{...diagnostic,'flutter_bounds':[origin.dx,origin.dy,box.size.width,box.size.height]},
     'viewport':{'left':origin.dx.floor(),'top':origin.dy.floor(),'width':box.size.width.round(),'height':box.size.height.round(),'css_height':box.size.height.round()}});
    final ack=File('${_files.path}/proxolink-verification-ack');var seen=false;
-   var surfaceCaptured=false;
+   var surfaceCaptured=false,postObserved=false;
    for(var i=0;i<240;i++){
-    if(instrument&&!surfaceCaptured){
+    if(surfaceInstrument&&!surfaceCaptured){
      final request=File('${_files.path}/proxolink-diagnostic-request');
      if(await request.exists()&&(await request.readAsString()).trim()==captureId){
       surfaceCaptured=true;
       final surface=await _nativeCapture.invokeMapMethod<String,dynamic>('captureSurface');
-      final after={'dom':await _read(controller,nativeDiagnosticScript(nativeDiagnosticPoints[id]!)),
+      final after={'dom':await _read(controller,nativeDiagnosticScript(nativeDiagnosticPoints[id]??const [0,0])),
        'native':await _nativeCapture.invokeMapMethod<String,dynamic>('diagnostics',{'webViewIdentifier':platform.webViewIdentifier}),
        'flutter_bounds':[origin.dx,origin.dy,box.size.width,box.size.height]};
       await _write('proxolink-diagnostic-surface.json',{'id':captureId,'surface':surface,'state_after':after});
+     }
+    }
+    if(surfaceInstrument&&!postObserved){
+     final request=File('${_files.path}/proxolink-diagnostic-post-request');
+     if(await request.exists()&&(await request.readAsString()).trim()==captureId){
+      postObserved=true;
+      await _write('proxolink-diagnostic-post-state.json',{'id':captureId,'state':{
+       'dom':await _read(controller,nativeDiagnosticScript(nativeDiagnosticPoints[id]!)),
+       'native':await _nativeCapture.invokeMapMethod<String,dynamic>('diagnostics',{'webViewIdentifier':platform.webViewIdentifier}),
+       'flutter_bounds':[origin.dx,origin.dy,box.size.width,box.size.height]}});
      }
     }
     if(await ack.exists()&&(await ack.readAsString()).trim()==captureId){seen=true;await ack.delete();break;}
     await Future<void>.delayed(const Duration(milliseconds:250));
    }
    if(!seen)throw StateError('screenshot_ack');
-   if(baseline)_results[id]={'passed':true,..._candidateChecks[id]!,'fresh_native_views':true,'native_paint_barriers':true};
+   if(reproduction)_reproductionResults[captureId]={'passed':true};
+   if(baseline&&!reproduction)_results[id]={'passed':true,..._candidateChecks[id]!,'fresh_native_views':true,'native_paint_barriers':true};
   }catch(error){
-   _results[id]={'passed':false,'failed_check':error is StateError?error.message:'unclassified_native_check',
+   final results=reproduction?_reproductionResults:_results;
+   results[reproduction?captureId:id]={'passed':false,'failed_check':error is StateError?error.message:'unclassified_native_check',
     'width':state?['width'],'font_loaded':state?['fonts'],'font_applied':state?['fontApplied'],'images_loaded':state?['images'],'icons_loaded':state?['icons'],...actionDiagnostics};
   }
   if(!mounted)return;
+  if(reproduction){
+   await _write('proxolink-reproduction-progress.json',_reproductionResults);
+   if(!baseline){setState(()=>_baseline=true);return;}
+   if(_reproductionIndex+1==nativeReproductionIds.length){setState((){_reproducing=false;_chooser=true;});}
+   else setState((){_reproductionIndex++;_baseline=false;});
+   return;
+  }
   if(!baseline&&!_results.containsKey(id)){setState(()=>_baseline=true);return;}
   await _write('proxolink-verification-progress.json',_results);
-  if(_index+1==_cases.length){setState(()=>_chooser=true);}
+  if(_index+1==_cases.length){setState((){_reproducing=true;_baseline=false;_behavior=false;});}
   else setState((){_index++;_baseline=false;_behavior=true;_behaviorController=null;_candidateCaptureController=null;});
  }
  @override Widget build(BuildContext context){
@@ -224,11 +257,11 @@ class _ProbeState extends State<_Probe> {
    configuration:_configuration,write:_write,
    onComplete:()async {await _write('proxolink-verification-results.json',_results);if(mounted)setState((){_chooser=false;_complete=true;});},
   );
-  final c=_cases[_index];
+  final c=_case;
   return Scaffold(backgroundColor:AppColors.page,appBar:AppBar(title:const Text('ProxoLink')),body:SafeArea(child:Center(
    child:SizedBox(width:(c['width'] as int).toDouble(),height:c['orientation']=='landscape'?(c['width'] as int)*.6:MediaQuery.sizeOf(context).height*.80,
     child:SizedBox(key:_viewport,child:_complete?Text('${_cases.length} native cases completed'):_headers.isEmpty?const CircularProgressIndicator():ProxoLinkPreview(
-     key:ValueKey('$_id/$_baseline/$_behavior'),requestHeaders:_headers,
+     key:ValueKey('$_id/$_baseline/$_behavior/$_reproducing'),requestHeaders:_headers,
      loadUrl:()async {final r=await _configuration();return Uri.parse((r['previews'] as Map)['${c['style']}-${c['type']}-${c['language']}${_baseline?'-baseline':''}'] as String);},
      onControllerCreated:_verify,
     )),

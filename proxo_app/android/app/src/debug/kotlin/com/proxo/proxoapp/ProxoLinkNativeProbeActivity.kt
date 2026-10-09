@@ -11,6 +11,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.util.concurrent.ConcurrentHashMap
 import android.view.View
+import android.view.FrameMetrics
 import android.view.ViewTreeObserver
 import android.webkit.WebView
 import io.flutter.embedding.android.FlutterActivity
@@ -21,10 +22,28 @@ import io.flutter.plugins.webviewflutter.WebViewFlutterAndroidExternalApi
 // Debug verification entry point. Use the production WebView, renderer and GPU;
 // synchronize capture without changing its CSS, pixels or rendering settings.
 class ProxoLinkNativeProbeActivity : FlutterActivity() {
+    private val recentFrames = mutableListOf<Map<String, Any>>()
     private var barrier: MutableMap<String, Any> = ConcurrentHashMap()
     private fun clockMs() = SystemClock.elapsedRealtimeNanos() / 1_000_000.0
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
+        // Debug entry point only. This exposes read-only measurements to the local
+        // disposable-runner ADB socket; it changes no renderer/GPU/layer setting.
+        WebView.setWebContentsDebuggingEnabled(true)
+        window.addOnFrameMetricsAvailableListener({ _, frame, dropped ->
+            val sample = mapOf<String, Any>(
+                "observed_ms" to clockMs(), "dropped_frames" to dropped,
+                "vsync_ms" to frame.getMetric(FrameMetrics.VSYNC_TIMESTAMP) / 1_000_000.0,
+                "intended_vsync_ms" to frame.getMetric(FrameMetrics.INTENDED_VSYNC_TIMESTAMP) / 1_000_000.0,
+                "layout_ms" to frame.getMetric(FrameMetrics.LAYOUT_MEASURE_DURATION) / 1_000_000.0,
+                "draw_duration_ms" to frame.getMetric(FrameMetrics.DRAW_DURATION) / 1_000_000.0,
+                "sync_ms" to frame.getMetric(FrameMetrics.SYNC_DURATION) / 1_000_000.0,
+                "command_ms" to frame.getMetric(FrameMetrics.COMMAND_ISSUE_DURATION) / 1_000_000.0,
+                "swap_ms" to frame.getMetric(FrameMetrics.SWAP_BUFFERS_DURATION) / 1_000_000.0,
+                "total_ms" to frame.getMetric(FrameMetrics.TOTAL_DURATION) / 1_000_000.0)
+            recentFrames.add(sample)
+            if (recentFrames.size > 8) recentFrames.removeAt(0)
+        }, Handler(Looper.getMainLooper()))
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "proxo/native-capture")
             .setMethodCallHandler { call, result ->
                 if (call.method == "captureSurface") {
@@ -63,9 +82,31 @@ class ProxoLinkNativeProbeActivity : FlutterActivity() {
                     val screen = IntArray(2); view.getLocationOnScreen(screen)
                     val window = IntArray(2); view.getLocationInWindow(window)
                     val matrix = FloatArray(9); view.matrix.getValues(matrix)
+                    val parents = mutableListOf<Map<String, Any>>()
+                    var parent = view.parent
+                    while (parent is View && parents.size < 8) {
+                        val origin = IntArray(2); parent.getLocationOnScreen(origin)
+                        parents.add(mapOf("width" to parent.width, "height" to parent.height,
+                            "measured_width" to parent.measuredWidth, "measured_height" to parent.measuredHeight,
+                            "screen_x" to origin[0], "screen_y" to origin[1], "layer_type" to parent.layerType,
+                            "layout_requested" to parent.isLayoutRequested,
+                            "hardware_accelerated" to parent.isHardwareAccelerated))
+                        parent = parent.parent
+                    }
+                    @Suppress("DEPRECATION")
+                    val insets = this.window.decorView.rootWindowInsets?.let {
+                        listOf(it.systemWindowInsetLeft, it.systemWindowInsetTop,
+                            it.systemWindowInsetRight, it.systemWindowInsetBottom)
+                    } ?: emptyList()
                     result.success(mapOf(
                         "observed_ms" to clockMs(), "barrier" to barrier.toMap(),
                         "width" to view.width, "height" to view.height,
+                        "measured_width" to view.measuredWidth, "measured_height" to view.measuredHeight,
+                        "layout_requested" to view.isLayoutRequested, "laid_out" to view.isLaidOut,
+                        "render_process_present" to (view.webViewRenderProcess != null),
+                        "parents" to parents, "insets" to insets, "frames" to recentFrames.toList(),
+                        "scaled_density" to resources.displayMetrics.scaledDensity,
+                        "orientation" to resources.configuration.orientation,
                         "content_height" to view.contentHeight, "page_scale" to view.scale,
                         "window_width" to this.window.decorView.width, "window_height" to this.window.decorView.height,
                         "display_width" to resources.displayMetrics.widthPixels,
