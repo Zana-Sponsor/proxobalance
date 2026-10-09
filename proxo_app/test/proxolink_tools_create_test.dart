@@ -95,9 +95,11 @@ void main() {
   expect(find.byType(ProxoLinkPreview),findsNothing);expect(find.byType(Image),findsNothing);expect(repo.avatars,0);
   final row=find.byKey(ValueKey('proxolink-page-${page(5).id}'));
   await t.scrollUntilVisible(row,300,scrollable:find.byType(Scrollable).first);await t.pumpAndSettle();
+  final preview=find.descendant(of:row,matching:find.text('پێشبینین'));
+  await t.ensureVisible(preview);await t.pumpAndSettle();
   final before=t.getTopLeft(row);
   for(var i=0;i<3;i++) {
-   await tap(t,find.descendant(of:row,matching:find.text('پێشبینین')));
+   await t.tap(preview);await t.pumpAndSettle();
    t.binding.handleAppLifecycleStateChanged(AppLifecycleState.paused);t.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);await t.pumpAndSettle();
    expect(t.getTopLeft(row),before);
   }

@@ -121,4 +121,12 @@ void main(){
   });
  }
  test('page type maps independent UUID to typed URL, retains Telegram, and excludes owner UUID',(){
+  for(final type in ProxoPageType.values){
+   final page=ProxoCard.fromJson({'id':'22222222-2222-4222-8222-222222222222','user_id':'11111111-1111-4111-8111-111111111111',
+    'name':'Proxo','page_kind':type.key,'template_key':'pill-white','template_version':6,'created_at':'2026-10-06T00:00:00Z',
+    'platforms':{'tg':'https://t.me/proxo_iq'}});
+   expect(page.publicPath,'/${type.key}/${page.id}');expect(page.publicPath.contains(page.userId),false);
+   expect(page.platforms['tg'],'https://t.me/proxo_iq');
+  }
+ });
  }
