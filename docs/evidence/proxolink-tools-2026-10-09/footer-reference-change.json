@@ -1,0 +1,50 @@
+[
+  {
+    "path": "api/_lib/proxolink-templates/pill-dark.html",
+    "before_sha256": "834441d9f6d999b75716d9e839100851373ca24f5fb92930d990cdca72cbc5e4",
+    "after_sha256": "ccfaca1713a1b6ce768230c432d72b3fbd3a075cd5e4583906bacff503cb158f",
+    "scope": "Only explicitly requested footer text + logo dimensions; no pixel remedy"
+  },
+  {
+    "path": "api/_lib/proxolink-templates/pill-mint.html",
+    "before_sha256": "8161dcae1fb81bba3801b7bf1616a153c8c23099a75818e1c9c32fbcf6425d53",
+    "after_sha256": "bb87c662653e71c814be8837ca1b87584bf1cf62672c7689af40ea9069ec88ca",
+    "scope": "Only explicitly requested footer text + logo dimensions; no pixel remedy"
+  },
+  {
+    "path": "api/_lib/proxolink-templates/pill-white.html",
+    "before_sha256": "204e1cd7851c9614a21d3d9d4a74d540d080ffa0df79740f42de3f04570c6964",
+    "after_sha256": "6fc5b124cd3a6cd5fee9616796dc2c024feded6bec6cc71bc6155ff14a665b18",
+    "scope": "Only explicitly requested footer text + logo dimensions; no pixel remedy"
+  },
+  {
+    "path": "api/_lib/proxolink-templates/pill.html",
+    "before_sha256": "9e52b5c776e6401022b69feccdcceef8dc615dccd2e6c3818d772d51a36c6a08",
+    "after_sha256": "4c361c8f57d49e694c93d39d96c48bdb8148185373c47875628d1e97db469599",
+    "scope": "Only explicitly requested footer text + logo dimensions; no pixel remedy"
+  },
+  {
+    "path": "api/_lib/proxolink-native-baseline/pill-dark.html",
+    "before_sha256": "9765f1ef57ef9f10b201e107df7838a613be96575d58bde51282cb250444317a",
+    "after_sha256": "9543dbcca571d4ec5999310de13e643e3af5bb01f5818cf3ab2a3701fee6ee4c",
+    "scope": "Only explicitly requested footer text + logo dimensions; no pixel remedy"
+  },
+  {
+    "path": "api/_lib/proxolink-native-baseline/pill-mint.html",
+    "before_sha256": "dec4c19a83dab4d8d175335380b43ec2546f92ed398e97d02b946936373c3128",
+    "after_sha256": "58525dc8961d14991349900ce536e2cddc33d361a9bb94564d218132f210fd9c",
+    "scope": "Only explicitly requested footer text + logo dimensions; no pixel remedy"
+  },
+  {
+    "path": "api/_lib/proxolink-native-baseline/pill-white.html",
+    "before_sha256": "5659b8e2c9776819111289dad02fa33163d4047accf4a72fb27e764ce17ea771",
+    "after_sha256": "7c86ca85f7fc3b8728a387e18736e5cb1977861e5522557715efa673b36423eb",
+    "scope": "Only explicitly requested footer text + logo dimensions; no pixel remedy"
+  },
+  {
+    "path": "api/_lib/proxolink-native-baseline/pill.html",
+    "before_sha256": "16b6266605b91b6ab80561fd5ab519fd89670eabc7179e459348fc94e5cc2bf7",
+    "after_sha256": "24e06faf40515f89352815a1576d431e4017bdb8b245a0a1e7a40a808d006874",
+    "scope": "Only explicitly requested footer text + logo dimensions; no pixel remedy"
+  }
+]

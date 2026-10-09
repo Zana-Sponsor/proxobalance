@@ -1,5 +1,5 @@
 import { assertIsolatedWrites, publicPath } from '../proxolink-pages.js';
-import { archivePage } from './independent-pages.js';
+import { deletePage } from './independent-pages.js';
 import { publishAudit } from '../proxolink-audit.js';
 import { readJson, json, withSecurity } from '../security.js';
 import {
@@ -51,7 +51,7 @@ async function handler(req,res,{user}) {
       if(ads.length)
         return json(res,409,{ok:false,error:'ad_dependency'});
       if(action==='delete') {
-        if(card.page_kind)return archivePage(res,user.id,card);
+        if(card.page_kind)return await deletePage(res,user.id,card);
         await proxoWrite('proxolink_cards','DELETE',null,
           'id=eq.'+id+'&user_id=eq.'+user.id,'return=minimal');
         return json(res,200,{ok:true,deleted:id});
@@ -95,6 +95,8 @@ async function handler(req,res,{user}) {
       return json(res,422,{ok:false,error:'publish_failed',card_id:id});
     }
   } catch(error) {
+    // A dependency can be added after the preflight. The FK remains final authority.
+    if(error?.databaseCode==='23503')return json(res,409,{ok:false,error:'ad_dependency'});
     if(error?.code==='isolated_staging_required')return json(res,503,{ok:false,error:error.code});
     return json(res,503,{ok:false,error:'backend_unavailable'});
   }

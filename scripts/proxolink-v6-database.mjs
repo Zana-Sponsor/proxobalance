@@ -27,7 +27,8 @@ global.fetch=async(raw,options={})=>{
  const columns=url.searchParams.get('select')?.split(',').map(identifier).join(',')||'*';
  const conditions=[];
  for(const [key,value]of url.searchParams)if(!['select','order','limit'].includes(key)){
-  if(value.startsWith('eq.'))conditions.push(identifier(key)+'='+quoted(value.slice(3)));
+  if(value==='is.null')conditions.push(identifier(key)+' IS NULL');
+  else if(value.startsWith('eq.'))conditions.push(identifier(key)+'='+quoted(value.slice(3)));
   else if(key==='or'){
    const ids=[...value.matchAll(/(?:asset_id|card_id)\.eq\.([0-9a-f-]{36})/g)].map(m=>m[1]);
    conditions.push('('+ids.map(id=>'asset_id='+quoted(id)+' OR card_id='+quoted(id)).join(' OR ')+')');
@@ -37,8 +38,9 @@ global.fetch=async(raw,options={})=>{
  const where=conditions.length?' WHERE '+conditions.join(' AND '):'';
  try{
   if(method==='GET')return Response.json(jsonQuery('SELECT '+columns+' FROM public.'+identifier(table)+where));
-  const body=JSON.parse(options.body),entries=Object.entries(body),literal=v=>v===null?'NULL':quoted(typeof v==='object'?JSON.stringify(v):v);
+  const body=JSON.parse(options.body),entries=Object.entries(body||{}),literal=v=>v===null?'NULL':quoted(typeof v==='object'?JSON.stringify(v):v);
   const query=method==='POST'?'INSERT INTO public.'+identifier(table)+'('+entries.map(([k])=>identifier(k)).join(',')+') VALUES ('+entries.map(([,v])=>literal(v)).join(',')+')':
+    method==='DELETE'?'DELETE FROM public.'+identifier(table)+where:
     'UPDATE public.'+identifier(table)+' SET '+entries.map(([k,v])=>identifier(k)+'='+literal(v)).join(',')+where;
   if(options.headers.Prefer==='return=minimal'){sql(query);return new Response(null,{status:method==='POST'?201:204});}
   return Response.json(JSON.parse(sql('WITH changed AS ('+query+' RETURNING '+columns+") SELECT coalesce(jsonb_agg(changed),'[]'::jsonb) FROM changed")),{status:method==='POST'?201:200});
@@ -61,8 +63,8 @@ for(const [type,providers]of [['contact',['whatsapp','viber','instagram','telegr
  assert.equal(configFromHtml((await call(type,{query:{id,preview_token:token},auth:null})).body).preview,true);
  assert.equal((await call('card-action',{method:'POST',body:{card_id:id,action:'activate'}})).status,200);
  assert.equal((await call('card-action',{method:'POST',body:{card_id:id,action:'delete'}})).status,200);
- assert.ok(jsonQuery('SELECT archived_at FROM public.proxolink_cards WHERE id='+quoted(id))[0].archived_at);
+ assert.equal(jsonQuery('SELECT id FROM public.proxolink_cards WHERE id='+quoted(id)).length,0);
 }
 assert.equal(new Set(ids).size,7);assert.equal(events,0);
 assert.equal(sql("SELECT count(*) FROM public.pa_ads a JOIN public.v6_ad_snapshot s USING(id) WHERE to_jsonb(a)<>s.data"),'0');
-console.log('VERIFIED: 7 PostgreSQL-backed API lifecycles; generated UUIDs, ownership, edit stability, typed routes, preview, activate/deactivate, soft archive, zero outbound events; legacy advertisements preserved.');
+console.log('VERIFIED: 7 PostgreSQL-backed API lifecycles; generated UUIDs, ownership, edit stability, typed routes, preview, activate/deactivate, dependency-safe deletion, zero outbound events; legacy advertisements preserved.');

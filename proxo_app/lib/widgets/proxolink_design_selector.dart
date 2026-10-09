@@ -58,6 +58,7 @@ class ProxoLinkDesignSelector extends StatelessWidget {
                   pageType: pageType,
                   selected: selectedKey == template.key,
                   labelHeight: labelHeight,
+                  width: width,
                   onTap: () => onSelected(template),
                 ),
               ),
@@ -73,9 +74,10 @@ class _DesignCard extends StatelessWidget {
   final ProxoPageType pageType;
   final bool selected;
   final double labelHeight;
+  final double width;
   final VoidCallback onTap;
   const _DesignCard({required this.template, required this.pageType,
-    required this.selected, required this.labelHeight, required this.onTap});
+    required this.selected, required this.labelHeight, required this.width, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -114,8 +116,8 @@ class _DesignCard extends StatelessWidget {
                       child: Image.asset(
                         ProxoLinkDesign.thumbnail(template.key, pageType),
                         key: ValueKey('proxolink-thumbnail-${pageType.key}-${template.key}'),
-                        fit: BoxFit.cover,
-                        cacheWidth: 240,
+                        fit: BoxFit.contain,
+                        cacheWidth: math.min(1179, ((width - 16) * MediaQuery.devicePixelRatioOf(context)).ceil()),
                         excludeFromSemantics: true,
                         filterQuality: FilterQuality.medium,
                       ),

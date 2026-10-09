@@ -1,9 +1,10 @@
 {
   "commit": "ba03534e73fa18fffbe42d8efbeb2e2661009ce0",
   "sha256": {
-    "pill": "16b6266605b91b6ab80561fd5ab519fd89670eabc7179e459348fc94e5cc2bf7",
-    "pill-mint": "dec4c19a83dab4d8d175335380b43ec2546f92ed398e97d02b946936373c3128",
-    "pill-dark": "9765f1ef57ef9f10b201e107df7838a613be96575d58bde51282cb250444317a",
-    "pill-white": "5659b8e2c9776819111289dad02fa33163d4047accf4a72fb27e764ce17ea771"
-  }
+    "pill": "24e06faf40515f89352815a1576d431e4017bdb8b245a0a1e7a40a808d006874",
+    "pill-mint": "58525dc8961d14991349900ce536e2cddc33d361a9bb94564d218132f210fd9c",
+    "pill-dark": "9543dbcca571d4ec5999310de13e643e3af5bb01f5818cf3ab2a3701fee6ee4c",
+    "pill-white": "7c86ca85f7fc3b8728a387e18736e5cb1977861e5522557715efa673b36423eb"
+  },
+  "footer_revision": "Explicit user Tools/Create specification 2026-10-09: sponsored text and 84x24 logo; all other baseline bytes retained"
 }

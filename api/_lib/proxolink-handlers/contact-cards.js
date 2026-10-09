@@ -17,7 +17,7 @@ function failure(res,error) {
   const code=['unauthorized','invalid_request','invalid_card_name','invalid_bio',
     'invalid_platform_value','invalid_avatar','avatar_required',
     'template_not_found','template_invalid','forbidden','invalid_provider_destination',
-    'invalid_page_settings','invalid_page_type','provider_required','isolated_staging_required'].includes(error?.code)
+    'invalid_tiktok','invalid_page_settings','invalid_page_type','provider_required','isolated_staging_required'].includes(error?.code)
       ?error.code:'backend_unavailable';
   const status=code==='unauthorized'?401:
     code==='forbidden'?403:
@@ -186,14 +186,14 @@ async function handler(req,res,{user}) {
         const id=req.query.id;
         if(typeof id!=='string'||!validUuid(id))return json(res,422,{ok:false,error:'invalid_request'});
         const owned=await cardRows('&id=eq.'+id+'&user_id=eq.'+user.id+'&limit=1',
-          'id,user_id,name,bio,tt,platforms,template_key,template_version,style,color_theme,card_language,avatar_path,status,publish_status,card_number,created_at,updated_at');
+          'id,user_id,name,bio,tt,platforms,template_key,template_version,style,color_theme,card_language,avatar_path,status,publish_status,moderation_status,card_number,created_at,updated_at');
         if(!owned.length||owned[0].archived_at)return json(res,404,{ok:false,error:'not_found'});
         const card=owned[0];
         return json(res,200,{ok:true,card:{...card,platforms:Object.fromEntries(Object.entries(card.platforms||{})
           .filter(([key])=>card.page_kind||!['tg','telegram'].includes(key.toLowerCase())))}});
       }
-      const cards=await cardRows('&user_id=eq.'+user.id+'&order=created_at.desc',
-        'id,user_id,name,bio,tt,platforms,template_key,template_version,style,color_theme,card_language,avatar_path,status,publish_status,card_number,created_at,updated_at');
+      const cards=await cardRows('&user_id=eq.'+user.id+'&archived_at=is.null&order=created_at.desc',
+        'id,user_id,name,bio,tt,platforms,template_key,template_version,style,color_theme,card_language,avatar_path,status,publish_status,moderation_status,card_number,created_at,updated_at');
       return json(res,200,{ok:true,cards:cards.filter(card=>!card.archived_at).map(card=>({
         ...card,platforms:Object.fromEntries(Object.entries(card.platforms||{})
           .filter(([key])=>card.page_kind||!['tg','telegram'].includes(key.toLowerCase())))

@@ -12,6 +12,7 @@ import 'package:proxo_app/models/proxo_card.dart';
 import 'package:proxo_app/models/proxolink_page_type.dart';
 import 'package:proxo_app/models/proxolink_template_meta.dart';
 import 'package:proxo_app/screens/tools_screen.dart';
+import 'package:proxo_app/screens/proxolink_page_editor.dart';
 import 'package:proxo_app/services/proxolink_service.dart';
 import 'package:proxo_app/theme/app_theme.dart';
 import 'package:proxo_app/widgets/proxolink_preview.dart';
@@ -38,6 +39,7 @@ ProxoCard card({String status = 'active', String publish = 'ready'}) =>
       templateKey: 'classic',
       status: status,
       publishStatus: publish,
+      moderationStatus: 'pending',
       cardNumber: 22,
       createdAt: DateTime.utc(2026, 10, 3),
       updatedAt: DateTime.utc(2026, 10, 3),
@@ -66,7 +68,7 @@ class FakeProxoLink extends ProxoLinkRepository {
   @override
   Future<List<ProxoProvider>> providers() async => [
     for(final entry in {'contact':['whatsapp','viber','instagram','telegram','korek','asiacell'],
-      'order':['talabat','toters'],'download':['google_play','app_store']}.entries)
+      'order':['talabat','wade','toters','lezzoo'],'download':['google_play','app_store']}.entries)
       for(final key in entry.value) ProxoProvider(key:key,pageType:entry.key,label:key,icon:key,
         inputKind:entry.key=='contact' ? (['instagram','telegram'].contains(key)?'handle':'phone'):'url'),
   ];
@@ -160,7 +162,7 @@ void main() {
     final repo = FakeProxoLink([]);
     await tester.pumpWidget(MaterialApp(
       theme: buildAppTheme(),
-      home: ToolsScreen(initialCreate: true, repository: repo),
+      home: Scaffold(body: SingleChildScrollView(child: ProxoLinkPageEditor(repository: repo, onSaved: (_) async {}))),
     ));
     await tester.pumpAndSettle();
     await tester.tap(find.text('پەیوەندی').first);
@@ -251,31 +253,22 @@ void main() {
         );
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 100));
-        expect(find.text('چالاکە'), findsOneWidget);
-        expect(find.text('ڕیکلام'), findsOneWidget);
+        expect(find.text('چاوەڕوانی'), findsOneWidget);
+        expect(find.text('ڕیکلام'), findsNothing);
         expect(tester.takeException(), isNull);
         await captureUi(tester, screenshotKey, 'cards-$width');
       },
     );
   }
-  testWidgets(
-    'failed card offers retry using its existing UUID and hides ad action',
-    (tester) async {
-      final repo = FakeProxoLink([card(publish: 'failed')]);
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: buildAppTheme(),
-          home: ToolsScreen(repository: repo),
-        ),
-      );
-      await tester.pump();
-      expect(find.text('ڕیکلام'), findsNothing);
-      await tester.tap(find.text('دووبارە هەوڵبدەرەوە'));
-      await tester.pump();
-      expect(repo.actionId, card().id);
-      expect(repo.actionName, 'retry');
-    },
-  );
+  testWidgets('technical failure is still pending moderation, with only delete/preview actions', (tester) async {
+    await tester.pumpWidget(MaterialApp(theme: buildAppTheme(), home: ToolsScreen(repository: FakeProxoLink([card(publish: 'failed')]))));
+    await tester.pumpAndSettle();
+    expect(find.text('چاوەڕوانی'), findsOneWidget);
+    expect(find.text('ڕەتکراوە'), findsNothing);
+    expect(find.text('پێشبینین'), findsOneWidget);
+    expect(find.text('سڕینەوە'), findsOneWidget);
+    expect(find.text('ڕیکلام'), findsNothing);
+  });
   for (final width in [320.0, 393.0, 768.0]) {
     testWidgets('form and real-preview failure recovery fit width $width', (
       tester,
@@ -290,10 +283,7 @@ void main() {
           theme: buildAppTheme(),
           home: RepaintBoundary(
             key: screenshotKey,
-            child: ToolsScreen(
-              initialCreate: true,
-              repository: FakeProxoLink([]),
-            ),
+            child: Scaffold(body: SingleChildScrollView(child: ProxoLinkPageEditor(repository: FakeProxoLink([]), onSaved: (_) async {}))),
           ),
         ),
       );

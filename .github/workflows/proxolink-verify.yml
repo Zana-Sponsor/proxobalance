@@ -77,6 +77,21 @@ jobs:
           psql -v ON_ERROR_STOP=1 -f proxo_app/supabase/migrations/20261008234009_proxolink_page_management_contract.sql
           psql -v ON_ERROR_STOP=1 -f proxo_app/supabase/migrations/20261008234009_proxolink_page_management_contract.sql
           psql -v ON_ERROR_STOP=1 -f test/proxolink-page-management.sql
+      - name: Verify Tools moderation migration rollback, rerun and security
+        run: |
+          psql -v ON_ERROR_STOP=1 <<'SQL'
+          BEGIN;
+          \i proxo_app/supabase/migrations/20261009131901_proxolink_tools_moderation.sql
+          ROLLBACK;
+          DO $$ BEGIN
+            IF EXISTS(SELECT 1 FROM information_schema.columns WHERE table_schema='public' AND table_name='proxolink_cards' AND column_name='moderation_status') THEN
+              RAISE EXCEPTION 'moderation migration rollback failed';
+            END IF;
+          END $$;
+          SQL
+          psql -v ON_ERROR_STOP=1 -f proxo_app/supabase/migrations/20261009131901_proxolink_tools_moderation.sql
+          psql -v ON_ERROR_STOP=1 -f proxo_app/supabase/migrations/20261009131901_proxolink_tools_moderation.sql
+          psql -v ON_ERROR_STOP=1 -f test/proxolink-tools-moderation.sql
       - run: node scripts/proxolink-v6-database.mjs
   responsive:
     runs-on: ubuntu-latest
@@ -111,11 +126,31 @@ jobs:
           flutter-version: '3.47.2'
           channel: stable
           cache: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Render requested high-DPI footer thumbnails if source bundle is pending
+        working-directory: .
+        run: |
+          npm ci
+          if [ "$(node -p "require('./proxo_app/tool/proxolink-thumbnail-manifest.json').thumbnail.width")" -lt 1179 ]; then
+            npx playwright install --with-deps chromium
+            node proxo_app/tool/generate_proxolink_thumbnails.mjs
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: proxolink-footer-thumbnails
+          path: |
+            proxo_app/assets/proxolink_thumbnails/*.png
+            proxo_app/tool/proxolink-thumbnail-manifest.json
+          retention-days: 7
       - run: flutter pub get
       - name: Analyze changed ProxoLink code
-        run: flutter analyze --no-fatal-infos lib/screens/tools_screen.dart lib/screens/proxolink_page_editor.dart lib/screens/proxolink_page_editor_screen.dart lib/screens/proxolink_page_details_screen.dart lib/screens/card_webview_screen.dart lib/screens/proxo_cards_list_screen.dart lib/screens/ad_detail_screen.dart lib/widgets/proxolink_preview.dart lib/widgets/proxolink_page_card.dart lib/services/proxolink_service.dart lib/models/proxo_card.dart lib/models/proxolink_page_type.dart lib/models/proxolink_template_meta.dart lib/controllers/proxo_card_controller.dart lib/controllers/proxolink_pages_controller.dart
-      - run: flutter test test/proxolink_v6_flow_test.dart test/proxolink_flow_test.dart test/proxolink_page_management_test.dart test/ad_repository_test.dart test/ad_creation_flow_test.dart test/ad_submission_test.dart test/text_direction_test.dart
+        run: flutter analyze --no-fatal-infos lib/screens/tools_screen.dart lib/screens/proxolink_create_page_screen.dart lib/widgets/proxo_refresh.dart lib/widgets/proxolink_design_selector.dart lib/screens/proxolink_page_editor.dart lib/screens/proxolink_page_editor_screen.dart lib/screens/proxolink_page_details_screen.dart lib/screens/card_webview_screen.dart lib/screens/proxo_cards_list_screen.dart lib/screens/ad_detail_screen.dart lib/widgets/proxolink_preview.dart lib/widgets/proxolink_page_card.dart lib/services/proxolink_service.dart lib/models/proxo_card.dart lib/models/proxolink_page_type.dart lib/models/proxolink_template_meta.dart lib/controllers/proxo_card_controller.dart lib/controllers/proxolink_pages_controller.dart
+      - run: flutter test test/proxolink_v6_flow_test.dart test/proxolink_flow_test.dart test/proxolink_page_management_test.dart test/proxolink_tools_create_test.dart test/ad_repository_test.dart test/ad_creation_flow_test.dart test/ad_submission_test.dart test/text_direction_test.dart
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: proxolink-ui-verification
           path: proxo_app/build/ui-verification/*.png

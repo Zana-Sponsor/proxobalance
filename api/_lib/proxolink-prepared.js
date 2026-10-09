@@ -59,7 +59,7 @@ export function preparedConfig(card,{preview=false,publicAvatarUrl=null}={}) {
   const config={template:DESIGN_ALIASES[card.template_key||card.style]||card.template_key||card.style,
     preview:preview||card.demo===true,name:card.name,bio:card.bio||'',lang:card.card_language||'ku',
     direction:card.card_language==='en'?'ltr':'rtl',avatarUrl:publicAvatarUrl||'',
-    tiktokUrl:!card.page_kind&&/^[A-Za-z0-9._]{1,40}$/.test(tt)?'https://www.tiktok.com/@'+encodeURIComponent(tt):'',
+    tiktokUrl:/^[A-Za-z0-9._]{1,40}$/.test(tt)?'https://www.tiktok.com/@'+encodeURIComponent(tt):'',
     tiktokLabel:tt?'@'+tt:'',buttons:providers.filter(p=>p.enabled).map(p=>({type:p.provider_key,
       url:p.destination_url,...(labels[p.provider_key]?{label:labels[p.provider_key][index]}:{}),enabled:true}))};
   // Page UUIDs and owner/storage UUIDs are deliberately absent from the public config.

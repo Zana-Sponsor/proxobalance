@@ -10,7 +10,7 @@ extension ProxoPageTypeInfo on ProxoPageType {
       'korek',
       'asiacell',
     },
-    'order': {'talabat', 'toters'},
+    'order': {'talabat', 'wade', 'toters', 'lezzoo'},
     'download': {'google_play', 'app_store'},
   };
   String get key => name;

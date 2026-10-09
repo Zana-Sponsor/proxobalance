@@ -151,6 +151,7 @@ class ProxoRefresh extends StatefulWidget {
 
   final Widget child;
   final double dropExtent;
+  final bool pullToRefresh;
 
   const ProxoRefresh({
     super.key,
@@ -160,6 +161,7 @@ class ProxoRefresh extends StatefulWidget {
     this.controller,
     this.scrollController,
     this.dropExtent = _RM.dropExtent,
+    this.pullToRefresh = false,
   });
 
   @override
@@ -178,6 +180,22 @@ class _ProxoRefreshState extends State<ProxoRefresh>
       AnimationController(vsync: this, duration: _RM.spinPeriod);
 
   bool _busy = false;
+  double _pull = 0;
+  bool _onScroll(ScrollNotification notice) {
+    if (!widget.pullToRefresh || _busy || notice.depth != 0) return false;
+    if (notice is ScrollStartNotification) _pull = 0;
+    if (notice is OverscrollNotification && notice.metrics.pixels <= notice.metrics.minScrollExtent) {
+      _pull += math.max(0, -notice.overscroll);
+    }
+    if (notice is ScrollUpdateNotification && notice.dragDetails != null && notice.metrics.pixels < notice.metrics.minScrollExtent) {
+      _pull = math.max(_pull, notice.metrics.minScrollExtent - notice.metrics.pixels);
+    }
+    if (notice is ScrollEndNotification) {
+      final armed = _pull >= widget.dropExtent; _pull = 0;
+      if (armed) unawaited(_run());
+    }
+    return false;
+  }
 
   /// Bumped once per completed refresh. [ProxoArrival] watches this to know
   /// when to replay its entrance — see the note on that class for why it is a
@@ -289,10 +307,8 @@ class _ProxoRefreshState extends State<ProxoRefresh>
         builder: (context, child) {
           final double d = _drop.value;
 
-          // At rest the wrapper adds nothing to the tree — no ClipRect, no
-          // Stack, no Transform. This matters: it sits above four whole
-          // screens that are alive in an IndexedStack.
-          if (d <= 0.01 && !_busy) return child!;
+          // Keep the content at the same element path while the strip opens
+          // and settles. Conditional wrappers remount a loaded scrollable.
 
           final double strip = math.max(d, 0.0);
           final double reveal =
@@ -320,7 +336,7 @@ class _ProxoRefreshState extends State<ProxoRefresh>
             ),
           );
         },
-        child: widget.child,
+        child: NotificationListener<ScrollNotification>(onNotification: _onScroll, child: widget.child),
       ),
     );
   }
@@ -486,6 +502,7 @@ class ProxoArrival extends StatefulWidget {
   /// Vertical travel. Small on purpose — this should read as the row settling,
   /// not flying in.
   final double offset;
+  final bool animateOnRefresh;
 
   const ProxoArrival({
     super.key,
@@ -493,6 +510,7 @@ class ProxoArrival extends StatefulWidget {
     this.index = 0,
     this.duration = const Duration(milliseconds: 250),
     this.offset = 12,
+    this.animateOnRefresh = true,
   });
 
   @override
@@ -527,7 +545,7 @@ class _ProxoArrivalState extends State<ProxoArrival>
     }
     if (gen != _seen) {
       _seen = gen;
-      _play();
+      if (widget.animateOnRefresh) _play();
     }
   }
 

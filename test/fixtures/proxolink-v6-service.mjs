@@ -6,6 +6,7 @@ export function localService({onRequest}={}) {
     for(const [key,value] of url.searchParams){
       if(['select','order','limit','or'].includes(key))continue;
       if(value.startsWith('eq.')&&String(row[key])!==value.slice(3))return false;
+      if(value==='is.null'&&row[key]!=null)return false;
     }return true;
   }
   const selected=(row,url)=>{const cols=url.searchParams.get('select');return !cols||cols==='*'?{...row}:
@@ -20,13 +21,14 @@ export function localService({onRequest}={}) {
       const method=options.method||'GET',body=options.body?JSON.parse(options.body):null;
       if(method==='POST'){
         if(rows.some(r=>r.user_id===body.user_id&&r.client_request_id===body.client_request_id))return Response.json({code:'23505'},{status:409});
-        const row={id:randomUUID(),created_at:new Date().toISOString(),updated_at:new Date(Date.now()+ ++tick).toISOString(),card_number:rows.length+1,...body};
+        const row={moderation_status:'pending',id:randomUUID(),created_at:new Date().toISOString(),updated_at:new Date(Date.now()+ ++tick).toISOString(),card_number:rows.length+1,...body};
         rows.push(row);writes.push({method,body});return Response.json([selected(row,url)],{status:201});
       }
       const found=rows.filter(r=>matches(r,url));
       if(method==='PATCH'){
         writes.push({method,body});for(const r of found)Object.assign(r,body,{updated_at:new Date(Date.now()+ ++tick).toISOString()});
       }
+      if(method==='DELETE'){writes.push({method,body});for(const r of found)rows.splice(rows.indexOf(r),1);}
       return Response.json(found.map(r=>selected(r,url)));
     }
     if(url.pathname.startsWith('/storage/'))return new Response('missing',{status:404});

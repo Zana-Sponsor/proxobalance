@@ -31,26 +31,23 @@ test('owner details GET is scoped before reading; archive and unknown/other UUID
   await call('card-action',{method:'POST',body:{card_id:id,action:'delete'}});
   assert.equal((await call('cards',{query:{id}})).status,404);
 });
-test('authoring exposes exactly ten providers; unsupported legacy order links cannot be newly authored',async()=>{
-  assert.deepEqual(registryMetadata().map(p=>p.provider_key),
-    ['whatsapp','viber','instagram','telegram','korek','asiacell','talabat','toters','google_play','app_store']);
-  for(const key of ['lezzoo','wade']){
-    assert.equal((await call('cards',{method:'POST',body:pagePayload('order',[key])})).status,422);
-    assert.equal((await call('form-preview-token',{method:'POST',body:pagePayload('order',[key])})).status,422);
+test('all twelve providers are newly authorable; all four restaurant labels and hosts remain strict',async()=>{
+  const keys=registryMetadata().map(p=>p.provider_key);
+  assert.equal(keys.length,12);
+  for(const [key,label] of Object.entries({talabat:'تەلەبات',wade:'وادێ',toters:'تۆتەرز',lezzoo:'لەزوو'})) {
+    assert.equal(registryMetadata().find(p=>p.provider_key===key).label,label);
+    assert.equal((await call('cards',{method:'POST',body:pagePayload('order',[key])})).status,201);
+    assert.equal((await call('form-preview-token',{method:'POST',body:pagePayload('order',[key])})).status,200);
+    assert.throws(()=>providerDestination(key,'https://evil.example/restaurant/test'));
   }
-  assert.equal(fixture.writes.length,0);
 });
-test('stored legacy order providers remain unchanged and renderable, but cannot be injected or rewritten',async()=>{
-  const created=await call('cards',{method:'POST',body:pagePayload('order',['talabat'])});
-  const page=fixture.rows[0];
-  const historical=pagePayload('order',['lezzoo']).settings.providers[0];
-  historical.sort_order=4;page.settings.providers.push(historical);page.platforms.lezzoo=historical.destination_url;
-  const id=created.json().card.id,url=page.updated_at;
-  assert.equal((await call('order',{query:{id},auth:null})).status,200);
-  assert.equal((await call('cards',{method:'PATCH',query:{id},body:{name:'Preserved',expected_updated_at:url}})).status,200);
-  assert.deepEqual(page.settings.providers[1],historical);
-  const bad=structuredClone(page.settings);bad.providers[1].destination_url='https://lezzoo.com/changed';
-  assert.equal((await call('cards',{method:'PATCH',query:{id},body:{settings:bad,expected_updated_at:page.updated_at}})).status,422);
+test('stored order settings remain unchanged by unrelated edits; newly requested valid providers may be edited',async()=>{
+  const created=await call('cards',{method:'POST',body:pagePayload('order',['lezzoo','wade'])});
+  const page=fixture.rows[0],before=structuredClone(page.settings);
+  assert.equal((await call('cards',{method:'PATCH',query:{id:page.id},body:{name:'Preserved',expected_updated_at:page.updated_at}})).status,200);
+  assert.deepEqual(page.settings,before);
+  const bad=structuredClone(page.settings);bad.providers[0].destination_url='https://evil.example/changed';
+  assert.equal((await call('cards',{method:'PATCH',query:{id:created.json().card.id},body:{settings:bad,expected_updated_at:page.updated_at}})).status,422);
 });
 test('stale management action and concurrent deactivation fail closed instead of overwriting',async()=>{
   const created=await call('cards',{method:'POST',body:pagePayload('download',['app_store'])});
@@ -95,7 +92,7 @@ for(const [kind,sets] of Object.entries({contact:[['whatsapp','viber','instagram
    assert.equal((await call(kind,{query:{id,preview_token:uri.searchParams.get('preview_token')},auth:null})).status,200);
    assert.equal((await call('card-action',{method:'POST',body:{card_id:id,action:'activate'}})).status,200);
    assert.equal((await call('card-action',{method:'POST',body:{card_id:id,action:'delete'}})).status,200);
-   assert.equal(fixture.rows.length,1);assert.ok(fixture.rows[0].archived_at);
+   assert.equal(fixture.rows.length,0);
    assert.equal((await call(kind,{query:{id},auth:null})).status,404);
    assert.equal((await call('cards')).json().cards.length,0);
    assert.equal(fixture.events.length,0);
@@ -228,4 +225,19 @@ test('prepared Viber actions work with legacy WebView URL parsing and reject amb
    'viber://chat?number=+9647501234567','viber://chat?number=%00','viber://chat?number=%',
    'viber://chat?number=%2B123','viber://chat?number=%2B9647501234567%0A'])assert.equal(context.safeUrl('viber',value),null,value);
  }
+});
+
+test('moderation comes from stored pending default; client approval/rejection is rejected before mutation',async()=>{
+ const data=pagePayload('contact',['telegram'],{tt:' @proxo_iq '});
+ for(const value of ['pending','approved','rejected','failed']) {
+   assert.equal((await call('cards',{method:'POST',body:{...data,moderation_status:value}})).status,422);
+ }
+ assert.equal(fixture.rows.length,0);
+ const result=await call('cards',{method:'POST',body:data});assert.equal(result.status,201);
+ assert.equal(result.json().card.moderation_status,'pending');
+ assert.equal(configFromHtml((await call('contact',{query:{id:result.json().card.id},auth:null})).body).tiktokUrl,'https://www.tiktok.com/@proxo_iq');
+ fixture.rows[0].moderation_status='approved';
+ assert.equal((await call('cards')).json().cards[0].moderation_status,'approved');
+ for(const tt of ['https://tiktok.com/@x','<script>evil</script>','a'.repeat(41),'evil\nname'])
+   assert.equal((await call('cards',{method:'POST',body:pagePayload('contact',['telegram'],{tt})})).status,422);
 });

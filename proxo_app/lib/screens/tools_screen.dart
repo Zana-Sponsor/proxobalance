@@ -1,382 +1,149 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-
+import 'package:url_launcher/url_launcher.dart';
 import '../controllers/proxolink_pages_controller.dart';
 import '../models/proxo_card.dart';
-import '../models/proxolink_page_type.dart';
 import '../services/proxolink_service.dart';
-import '../theme/app_theme.dart';
 import '../widgets/ad_form_components.dart';
+import '../widgets/ad_validation_notifications.dart';
+import '../widgets/proxo_refresh.dart';
 import '../widgets/proxo_text.dart';
 import '../widgets/proxolink_page_card.dart';
 import '../widgets/receipt/receipt_kit.dart';
-import 'ad_create_screen.dart';
-import 'card_webview_screen.dart';
-import 'proxolink_page_details_screen.dart';
-import 'proxolink_page_editor.dart';
-import 'proxolink_page_editor_screen.dart';
+import 'proxolink_create_page_screen.dart';
 
-/// Canonical My Pages entry point, retaining the existing ad-picker/native API.
 class ToolsScreen extends StatefulWidget {
   final void Function(Map<String, dynamic>)? onUseForAd;
-  final bool initialCreate;
-  final bool isActive;
+  final bool initialCreate, isActive;
   final ProxoLinkRepository? repository;
-  const ToolsScreen({
-    super.key,
-    this.onUseForAd,
-    this.initialCreate = false,
-    this.isActive = true,
-    this.repository,
-  });
+  final ProxoRefreshController? refreshController;
+  final Future<bool> Function(Uri)? externalLauncher;
+  const ToolsScreen({super.key, this.onUseForAd, this.initialCreate = false,
+    this.isActive = true, this.repository, this.refreshController, this.externalLauncher});
   @override
   State<ToolsScreen> createState() => _ToolsScreenState();
 }
-
 class _ToolsScreenState extends State<ToolsScreen> {
   late final ProxoLinkRepository _repository;
   late final ProxoLinkPagesController _pages;
-  final _editor = GlobalKey<ProxoLinkPageEditorState>();
-  bool _initialForm = false;
-  ProxoCard? _created;
-  ProxoCard get _latestCreated =>
-      _pages.pages.firstWhere((p) => p.id == _created!.id);
+  final _notices = AdValidationController();
+  final _scroll = ScrollController();
+  final _localRefresh = ProxoRefreshController();
+  final _launching = <String>{};
+  ProxoLinkFailure? _announced;
   @override
   void initState() {
     super.initState();
-    _repository =
-        widget.repository ?? ProxoLinkService(Supabase.instance.client);
-    _pages = ProxoLinkPagesController(_repository);
-    _initialForm = widget.initialCreate;
+    _repository = widget.repository ?? ProxoLinkService(Supabase.instance.client);
+    _pages = ProxoLinkPagesController(_repository)..addListener(_changed);
     unawaited(_pages.refresh());
-  }
-
-  @override
-  void dispose() {
-    _pages.dispose();
-    super.dispose();
-  }
-
-  @override
-  void didUpdateWidget(covariant ToolsScreen oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (!oldWidget.isActive && widget.isActive) unawaited(_pages.refresh());
-  }
-
-  void _message(String text) {
-    if (mounted)
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: ProxoText(text)));
-  }
-
-  Future<void> _back() async {
-    if (_initialForm) {
-      if (!await (_editor.currentState?.requestClose() ?? Future.value(true)) ||
-          !mounted)
-        return;
-      setState(() => _initialForm = false);
-    } else if (Navigator.canPop(context)) {
-      Navigator.pop(context);
-    }
-  }
-
-  Future<void> _saved(ProxoCard? card) async {
-    if (!mounted) return;
-    if (card != null) {
-      _pages.upsert(card);
-      if (card.available && widget.initialCreate && widget.onUseForAd != null) {
-        widget.onUseForAd!(card.toJson());
-        return;
-      }
-    } else {
-      unawaited(_pages.refresh());
-    }
-    setState(() {
-      _initialForm = false;
-      _created = card;
+    if (widget.initialCreate) WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) unawaited(_create());
     });
   }
-
-  Future<void> _edit([ProxoCard? page]) async {
-    ScaffoldMessenger.of(context).clearSnackBars();
-    final saved = await Navigator.push<ProxoCard>(
-      context,
-      ProxoPageRoute<ProxoCard>(
-        settings: RouteSettings(
-          name: page == null ? 'proxolink_create' : 'proxolink_edit',
-        ),
-        builder: (_) =>
-            ProxoLinkPageEditorScreen(repository: _repository, existing: page),
-      ),
-    );
+  void _changed() {
     if (!mounted) return;
-    if (saved != null) {
-      await _saved(saved);
-    } else {
-      await _pages.refresh();
+    if (_pages.error != null && !identical(_announced, _pages.error)) {
+      _announced = _pages.error; _notices.show({'load': _pages.error!.message});
     }
+    setState(() {});
   }
-
-  Future<void> _open(ProxoCard page) async {
-    await Navigator.push<bool>(
-      context,
-      ProxoPageRoute<bool>(
-        settings: const RouteSettings(name: 'proxolink_details'),
-        builder: (_) => ProxoLinkPageDetailsScreen(
-          initialPage: page,
-          repository: _repository,
-          onChanged: _pages.upsert,
-        ),
-      ),
-    );
-    if (mounted) await _pages.refresh();
+  Future<void> _create() async {
+    final owner = _repository.ownerScope;
+    final saved = await Navigator.of(context).push<ProxoCard>(MaterialPageRoute(
+      builder: (_) => ProxoLinkCreatePageScreen(repository: _repository)));
+    if (!mounted || saved == null || owner != _repository.ownerScope) return;
+    _pages.upsert(saved);
+    if (saved.publishStatus == 'failed') _notices.show({'create': const ProxoLinkFailure('publish_failed').message});
+    if (widget.onUseForAd != null && saved.available) widget.onUseForAd!(saved.toJson());
   }
-
-  void _public(ProxoCard page) => Navigator.push(
-    context,
-    ProxoPageRoute<void>(
-      builder: (_) => CardWebViewScreen(
-        title: page.name,
-        loadUrl: () async =>
-            _repository.publicUrl(page.id, pageType: page.pageType.key),
-      ),
-    ),
-  );
-  void _use(ProxoCard page) {
-    if (!page.available) return;
-    if (widget.onUseForAd != null) {
-      widget.onUseForAd!(page.toJson());
-      return;
-    }
-    Navigator.push(
-      context,
-      ProxoPageRoute<void>(
-        builder: (_) => AdCreateScreen(proxoCard: page.toJson()),
-      ),
-    );
-  }
-
-  Future<void> _action(ProxoCard page, String action) async {
-    if (_pages.busy.contains(page.id)) return;
-    if (action == 'delete' || action == 'deactivate') {
-      final accepted = await showDialog<bool>(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: ProxoText(
-            action == 'delete' ? 'ئەرشیفکردنی پەڕە' : 'ناچالاککردنی پەڕە',
-          ),
-          content: const ProxoText(
-            'بەستەری گشتی بەردەست نابێت. پەڕەی بەکارهاتوو لە ڕیکلامدا پارێزراوە.',
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context, false),
-              child: const ProxoText('پاشگەزبوونەوە'),
-            ),
-            FilledButton(
-              onPressed: () => Navigator.pop(context, true),
-              child: const ProxoText('بەردەوامبوون'),
-            ),
-          ],
-        ),
-      );
-      if (accepted != true || !mounted) return;
-    }
+  Future<void> _preview(ProxoCard page) async {
+    if (!_launching.add(page.id)) return;
+    final owner = _repository.ownerScope;
     try {
-      await _pages.manage(page, action);
-    } on ProxoLinkFailure catch (e) {
-      _message(e.message);
-      if (e.code == 'edit_conflict') await _pages.refresh();
-    } catch (_) {
-      _message(const ProxoLinkFailure('network_error').message);
-    }
+      final uri = _repository.publicUrl(page.id, pageType: page.pageType.key);
+      if (uri.scheme != 'https' || uri.userInfo.isNotEmpty || uri.path != page.publicPath || uri.hasQuery || uri.hasFragment) {
+        throw const ProxoLinkFailure('invalid_request');
+      }
+      final opened = await (widget.externalLauncher?.call(uri) ?? launchUrl(uri, mode: LaunchMode.externalApplication));
+      if (!opened) throw const ProxoLinkFailure('browser_launch_failed');
+    } catch (e) {
+      if (mounted && owner == _repository.ownerScope) _notices.show({'browser':
+        (e is ProxoLinkFailure ? e : const ProxoLinkFailure('browser_launch_failed')).message});
+    } finally { _launching.remove(page.id); }
   }
-
-  Future<void> _more(ProxoCard page) async {
-    final choices = <String, String>{
-      'details': 'بەڕێوەبردن',
-      'edit': 'دەستکاریکردن',
-      'copy': 'کۆپی لینک',
-      if (page.available) 'share': 'هاوبەشکردن',
-      if (page.publishStatus == 'ready')
-        (page.available ? 'deactivate' : 'activate'): (page.available
-            ? 'ناچالاککردن'
-            : 'چالاککردن'),
-      'delete': page.pageKind == null ? 'سڕینەوە' : 'ئەرشیفکردن',
-    };
-    final choice = await showModalBottomSheet<String>(
-      context: context,
-      showDragHandle: true,
-      builder: (context) => SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              for (final item in choices.entries)
-                ListTile(
-                  title: ProxoText(item.value),
-                  onTap: () => Navigator.pop(context, item.key),
-                ),
-            ],
-          ),
-        ),
-      ),
-    );
-    if (!mounted || choice == null) return;
-    if (choice == 'details') {
-      await _open(page);
-      return;
-    }
-    if (choice == 'edit') {
-      await _edit(page);
-      return;
-    }
-    if (choice == 'copy') {
-      await Clipboard.setData(
-        ClipboardData(
-          text: _repository
-              .publicUrl(page.id, pageType: page.pageType.key)
-              .toString(),
-        ),
-      );
-      _message('بەستەرەکە کۆپی کرا');
-      return;
-    }
-    if (choice == 'share') {
-      final box = context.findRenderObject() as RenderBox?;
-      await Share.share(
-        '${page.name}\n${_repository.publicUrl(page.id, pageType: page.pageType.key)}',
-        sharePositionOrigin: box == null
-            ? null
-            : box.localToGlobal(Offset.zero) & box.size,
-      );
-      return;
-    }
-    await _action(page, choice);
+  Future<void> _delete(ProxoCard page) async {
+    if (_pages.busy.contains(page.id)) return;
+    final owner = _repository.ownerScope;
+    final confirmed = await showDialog<bool>(context: context, builder: (context) => Directionality(
+      textDirection: TextDirection.rtl, child: AlertDialog(
+        title: const ProxoText('سڕینەوەی پەڕە'),
+        content: ProxoText(page.name),
+        actions: [TextButton(onPressed: () => Navigator.pop(context, false), child: const ProxoText('پاشگەزبوونەوە')),
+          FilledButton(onPressed: () => Navigator.pop(context, true), child: const ProxoText('سڕینەوە'))])));
+    if (!mounted || confirmed != true || owner != _repository.ownerScope) return;
+    try { await _pages.manage(page, 'delete'); }
+    catch (e) { if (mounted && owner == _repository.ownerScope) _notices.show({'delete':
+      (e is ProxoLinkFailure ? e : const ProxoLinkFailure('network_error')).message}); }
   }
-
-  Widget _header() => Column(
-    crossAxisAlignment: CrossAxisAlignment.stretch,
-    children: [
-      FilledButton.icon(
-        onPressed: () => _edit(),
-        icon: const Icon(Icons.add),
-        label: const ProxoText('پەڕەی نوێ'),
-      ),
-      if (_created != null &&
-          _pages.pages.any((p) => p.id == _created!.id)) ...[
-        const SizedBox(height: 16),
-        AdFormSection(
-          title: 'پەڕەکە پاشەکەوت کرا',
-          child: Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              OutlinedButton(
-                onPressed: () => _open(_latestCreated),
-                child: const ProxoText('زانیاری پەڕە'),
-              ),
-              OutlinedButton(
-                onPressed: () => _edit(_latestCreated),
-                child: const ProxoText('دەستکاری پەڕە'),
-              ),
-            ],
-          ),
-        ),
-      ],
-      if (_pages.loading && _pages.pages.isNotEmpty)
-        const LinearProgressIndicator(),
-      if (_pages.error != null) ...[
-        const SizedBox(height: 16),
-        AdFormSection(
-          title: _pages.error!.message,
-          child: OutlinedButton(
-            onPressed: _pages.refresh,
-            child: const ProxoText('دووبارە هەوڵبدەرەوە'),
-          ),
-        ),
-      ] else if (!_pages.loading && _pages.pages.isEmpty) ...[
-        const SizedBox(height: 16),
-        const AdFormSection(
-          title: 'پەڕەیەکت نییە',
-          child: ProxoText(
-            'پەڕەی پەیوەندی، ڕێستۆرانت یان داگرتنی ئەپ دروست بکە.',
-          ),
-        ),
-      ],
-    ],
-  );
-  Widget _list() => ListenableBuilder(
-    listenable: _pages,
-    builder: (context, _) => RefreshIndicator(
-      onRefresh: _pages.refresh,
-      child: ListView.builder(
-        physics: const AlwaysScrollableScrollPhysics(),
-        padding: const EdgeInsets.fromLTRB(16, 20, 16, 24),
-        itemCount:
-            1 +
-            (_pages.loading && _pages.pages.isEmpty ? 3 : _pages.pages.length),
-        itemBuilder: (context, index) => Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 600),
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: AdUi.sectionGap),
-              child: index == 0
-                  ? _header()
-                  : _pages.loading && _pages.pages.isEmpty
-                  ? const ProxoLinkPageSkeleton()
-                  : _row(_pages.pages[index - 1]),
-            ),
-          ),
-        ),
-      ),
-    ),
-  );
-  Widget _row(ProxoCard page) => ProxoLinkPageCard(
-    key: ValueKey('proxolink-page-${page.id}'),
-    page: page,
-    repository: _repository,
-    busy: _pages.busy.contains(page.id),
-    onOpen: () => _open(page),
-    onMore: () => _more(page),
-    onPublic: () => _public(page),
-    onUse: () => _use(page),
-    onRetry: () => _action(page, 'retry'),
-  );
   @override
-  Widget build(BuildContext context) => Theme(
-    data: AdUi.theme(context),
-    child: PopScope<Object?>(
-      canPop: !_initialForm,
-      onPopInvokedWithResult: (popped, _) {
-        if (!popped) _back();
-      },
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        body: SafeArea(
-          child: Column(
-            children: [
-              ReceiptAppBar(
-                title: _initialForm ? 'دروستکردنی پەڕە' : 'پەڕەکانم',
-                onBack: _back,
-              ),
-              Expanded(
-                child: _initialForm
-                    ? ProxoLinkPageEditor(
-                        key: _editor,
-                        repository: _repository,
-                        onSaved: _saved,
-                      )
-                    : _list(),
-              ),
-            ],
-          ),
-        ),
-      ),
-    ),
-  );
+  void dispose() {
+    _pages.removeListener(_changed); _pages.dispose(); _scroll.dispose();
+    _notices.dispose(); _localRefresh.dispose(); super.dispose();
+  }
+  Widget _createButton() => FilledButton(onPressed: _create, child: const ProxoText('پەڕە دروستبکە'));
+  @override
+  Widget build(BuildContext context) => Theme(data: AdUi.theme(context), child: Directionality(
+    textDirection: TextDirection.rtl, child: Builder(builder: (context) => Scaffold(
+      backgroundColor: const Color(0xFFF8FAFD),
+      body: Column(children: [
+        ReceiptAppBar(title: 'ئامرازەکان', onBack: Navigator.of(context).canPop() ? () => Navigator.of(context).maybePop() : null),
+        Expanded(child: Stack(children: [
+          ProxoRefresh(controller: widget.refreshController ?? _localRefresh,
+            scrollController: _scroll, pullToRefresh: true, onRefresh: _pages.refresh,
+            child: ListView.builder(key: const PageStorageKey('tools-owner-pages'), controller: _scroll,
+              physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+              padding: const EdgeInsets.fromLTRB(16, 20, 16, 32),
+              itemCount: _pages.pages.isEmpty ? (_pages.loading ? 4 : 2) : _pages.pages.length + 1,
+              findChildIndexCallback: (key) {
+                if (key == const ValueKey('tools-primary')) return 0;
+                if (key is ValueKey<String>) {
+                  final index = _pages.pages.indexWhere((p) => 'tools-row-${p.id}' == key.value);
+                  if (index >= 0) return index + 1;
+                }
+                return null;
+              },
+              itemBuilder: (context, index) => Align(
+                key: index == 0 ? const ValueKey('tools-primary') : _pages.pages.isEmpty
+                  ? ValueKey('tools-placeholder-$index') : ValueKey('tools-row-${_pages.pages[index-1].id}'),
+                alignment: Alignment.topCenter,
+                child: ConstrainedBox(constraints: const BoxConstraints(maxWidth: 600),
+                  child: Padding(padding: const EdgeInsets.only(bottom: 16), child: _item(context, index))))),
+          Positioned(top: 12, left: 16, right: 16, child: AdValidationNotifications(controller: _notices)),
+        ])),
+      ]),
+    ))));
+  Widget _item(BuildContext context, int index) {
+    if (index == 0) return _createButton();
+    if (_pages.pages.isEmpty) {
+      if (_pages.loading) return const ProxoLinkPageSkeleton();
+      return Padding(padding: const EdgeInsets.symmetric(vertical: 56, horizontal: 12), child: Column(children: [
+        Icon(_pages.error == null ? Icons.article_outlined : Icons.cloud_off_outlined, size: 40, color: AdUi.secondary),
+        const SizedBox(height: 20),
+        ProxoText(_pages.error == null ? 'هێشتا هیچ پەڕەیەکت دروست نەکردووە' : 'نەتوانرا پەڕەکان بار بکرێن',
+          textAlign: TextAlign.center, style: AdUi.heading(context)),
+        const SizedBox(height: 10),
+        if (_pages.error == null) const ProxoText('پەڕەیەک دروستبکە و بەستەرەکەت بەکاربهێنە.', textAlign: TextAlign.center),
+        const SizedBox(height: 20),
+        if (_pages.error != null) OutlinedButton(onPressed: () => (widget.refreshController ?? _localRefresh).refresh(),
+          child: const ProxoText('دووبارە هەوڵ بدەرەوە')),
+      ]));
+    }
+    final page = _pages.pages[index - 1];
+    return ProxoArrival(key: ValueKey('proxolink-page-${page.id}'), index: index - 1,
+      animateOnRefresh: _pages.changedIds.contains(page.id),
+      child: ProxoLinkPageCard(page: page, busy: _pages.busy.contains(page.id),
+        onPreview: () => _preview(page), onDelete: () => _delete(page)));
+  }
 }

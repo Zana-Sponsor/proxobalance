@@ -26,6 +26,8 @@ class ProxoLinkFailure implements Exception {
     'forbidden' ||
     'not_found' ||
     'card_not_found' => 'پەڕەکە نەدۆزرایەوە یان دەسەڵاتی دەستکاری نییە.',
+    'invalid_tiktok' => 'تکایە ناوی تیک تۆک بێ بەستەر بنووسە.',
+    'browser_launch_failed' => 'نەتوانرا پەڕەکە لە وێبگەڕ بکەرێتەوە. تکایە وێبگەڕێک دابمەزرێنە.',
     'page_archived' => 'ئەم پەڕەیە ئەرشیف کراوە.',
     'invalid_page_type' => 'جۆری پەڕەکە گونجاو نییە.',
     'provider_required' => 'تکایە کەمترین یەک دووگمە زیاد بکە.',

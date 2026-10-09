@@ -5,6 +5,7 @@ class ProxoCard {
       'id,user_id,name,bio,tt,platforms,template_key,template_version,style,color_theme,card_language,avatar_path,status,publish_status,card_number,created_at,updated_at';
   final String id, userId, name, bio, tt, templateKey, colorTheme;
   final String language, status, publishStatus;
+  final String? moderationStatus;
   final String? avatarPath;
   final int templateVersion, cardNumber;
   final DateTime createdAt, updatedAt;
@@ -25,6 +26,7 @@ class ProxoCard {
     this.avatarPath,
     this.status = 'inactive',
     this.publishStatus = 'creating',
+    this.moderationStatus,
     required this.cardNumber,
     required this.createdAt,
     required this.updatedAt,
@@ -33,6 +35,12 @@ class ProxoCard {
     this.clientRequestId,
     this.settings = const {},
   });
+  String get moderationLabel => switch (moderationStatus) {
+    'approved' => 'پەسەندکراوە',
+    'rejected' => 'ڕەتکراوە',
+    'pending' => 'چاوەڕوانی',
+    _ => '', // Unmigrated data is not assigned a fabricated moderation decision.
+  };
   bool get available => status == 'active' && publishStatus == 'ready';
   bool get canPreview => publishStatus == 'ready';
   bool get canRetry =>
@@ -62,6 +70,9 @@ class ProxoCard {
     avatarPath: j['avatar_path'] as String?,
     status: j['status'] as String? ?? 'inactive',
     publishStatus: j['publish_status'] as String? ?? 'creating',
+    moderationStatus: switch (j['moderation_status']) {
+      'pending' => 'pending', 'approved' => 'approved', 'rejected' => 'rejected', _ => null,
+    },
     cardNumber: (j['card_number'] as num?)?.toInt() ?? 0,
     createdAt: DateTime.parse(j['created_at'] as String),
     updatedAt: DateTime.parse((j['updated_at'] ?? j['created_at']) as String),
@@ -88,6 +99,7 @@ class ProxoCard {
     'avatar_path': avatarPath,
     'status': status,
     'publish_status': publishStatus,
+    if (moderationStatus != null) 'moderation_status': moderationStatus,
     'card_number': cardNumber,
     'created_at': createdAt.toIso8601String(),
     'updated_at': updatedAt.toIso8601String(),

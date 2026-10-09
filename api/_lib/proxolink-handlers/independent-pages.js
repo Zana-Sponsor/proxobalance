@@ -3,7 +3,7 @@ import { json } from '../security.js';
 import { cardById, cardRows, proxoWrite, renderedPage, verifyPublicAvatar } from '../proxolink.js';
 import { validatePage, assertIsolatedWrites, publicPath } from '../proxolink-pages.js';
 import { publishAudit } from '../proxolink-audit.js';
-const managementColumns='id,user_id,name,bio,tt,page_kind,client_request_id,settings,platforms,template_key,template_version,color_theme,card_language,avatar_path,status,publish_status,card_number,created_at,updated_at';
+const managementColumns='id,user_id,name,bio,tt,page_kind,client_request_id,settings,platforms,template_key,template_version,color_theme,card_language,avatar_path,status,publish_status,moderation_status,card_number,created_at,updated_at';
 // Authenticated owner response only; never returned by a public renderer.
 const safeCard=card=>({...Object.fromEntries(managementColumns.split(',').map(key=>[key,card[key]])),
   public_path:!card.archived_at&&card.status==='active'&&card.publish_status==='ready'?publicPath(card):null});
@@ -28,7 +28,7 @@ export async function createPage(res,owner,body) {
     const {id,...fields}=data;
     inserted=(await proxoWrite('proxolink_cards','POST',{
       ...fields,page_type:data.page_kind==='order'?'food':data.page_kind,
-      style:data.template_key,tiktok:'',status:'inactive',publish_status:'creating',creation_request_hash:hash,
+      style:data.template_key,tiktok:data.tt,status:'inactive',publish_status:'creating',creation_request_hash:hash,
     },'select=id,user_id,name,page_kind,status,publish_status,updated_at'))[0];
     if(!inserted?.id||inserted.id===owner||inserted.id===data.client_request_id)throw Error('invalid_generated_id');
   } catch(error) {
@@ -75,11 +75,10 @@ export async function editPage(res,owner,body,current) {
   await publishAudit(data,'edit_publish','success');
   return json(res,200,{ok:true,card:safeCard(updated[0])});
 }
-export async function archivePage(res,owner,card) {
+export async function deletePage(res,owner,card) {
   assertIsolatedWrites();
-  const rows=await proxoWrite('proxolink_cards','PATCH',{
-    archived_at:new Date().toISOString(),status:'inactive',updated_at:new Date().toISOString(),
-  },'id=eq.'+card.id+'&user_id=eq.'+owner+'&updated_at=eq.'+encodeURIComponent(card.updated_at)+'&select=id');
+  const rows=await proxoWrite('proxolink_cards','DELETE',null,
+    'id=eq.'+card.id+'&user_id=eq.'+owner+'&updated_at=eq.'+encodeURIComponent(card.updated_at)+'&select=id');
   if(!rows.length)return json(res,409,{ok:false,error:'edit_conflict'});
-  return json(res,200,{ok:true,deleted:card.id,archived:true});
+  return json(res,200,{ok:true,deleted:card.id});
 }

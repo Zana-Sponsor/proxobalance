@@ -22,8 +22,8 @@ ALTER TABLE public.proxolink_cards ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "cards own all" ON public.proxolink_cards FOR ALL TO authenticated USING(auth.uid()=user_id) WITH CHECK(auth.uid()=user_id);
 -- Exercise restrictive V6 ownership even with a permissive privileged legacy policy.
 CREATE POLICY "fixture legacy admin" ON public.proxolink_cards FOR ALL TO authenticated USING(current_setting('request.test_admin',true)='true') WITH CHECK(current_setting('request.test_admin',true)='true');
-GRANT SELECT,INSERT,UPDATE,DELETE ON public.proxolink_cards TO authenticated;
-GRANT USAGE ON SEQUENCE proxolink_cards_card_number_seq TO authenticated;
+GRANT SELECT,INSERT,UPDATE,DELETE ON public.proxolink_cards TO authenticated,service_role;
+GRANT USAGE ON SEQUENCE proxolink_cards_card_number_seq TO authenticated,service_role;
 CREATE TABLE public.pa_ads(id uuid PRIMARY KEY DEFAULT gen_random_uuid(),user_id uuid REFERENCES auth.users(id),card_id uuid REFERENCES public.proxolink_cards(id),asset_id uuid,status text);
 CREATE TABLE public.proxolink_publish_attempts(id uuid PRIMARY KEY DEFAULT gen_random_uuid(),card_id uuid,user_id uuid,operation text,result text,error_code text);
 INSERT INTO public.proxolink_cards(id,user_id,name,status,publish_status,platforms) VALUES

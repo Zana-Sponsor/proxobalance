@@ -451,7 +451,7 @@ class MainShellState extends State<MainShell> {
       case 3:
         return RepaintBoundary(
           key: const ValueKey('tools'),
-          child: ToolsScreen(isActive: _tabIndex == 3),
+          child: ToolsScreen(isActive: _tabIndex == 3, refreshController: _refreshers[3]),
         );
       case 4:
         return RepaintBoundary(

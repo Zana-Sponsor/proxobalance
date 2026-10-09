@@ -6,7 +6,7 @@ export const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}
 export const pageError = code => Object.assign(new Error(code), {code, status:422});
 export const AUTHORING_PROVIDERS = Object.freeze({
   contact:['whatsapp','viber','instagram','telegram','korek','asiacell'],
-  order:['talabat','toters'], download:['google_play','app_store'],
+  order:['talabat','wade','toters','lezzoo'], download:['google_play','app_store'],
 });
 const provider = (pageType, label, icon, inputKind, hosts=[]) =>
   Object.freeze({page_type:pageType,label,icon,input_kind:inputKind,hosts,enabled:true});
@@ -17,12 +17,12 @@ export const PROVIDER_REGISTRY = Object.freeze({
   telegram:provider('contact','Telegram','telegram','handle',['t.me','telegram.me']),
   korek:provider('contact','Korek','korek','phone'),
   asiacell:provider('contact','Asiacell','asiacell','phone'),
-  talabat:provider('order','Talabat','talabat','url',['talabat.com']),
-  toters:provider('order','Toters','toters','url',['totersapp.com','toters.com']),
+  talabat:provider('order','تەلەبات','talabat','url',['talabat.com']),
+  toters:provider('order','تۆتەرز','toters','url',['totersapp.com','toters.com']),
   // Already supported in the four prepared designs; adding another provider
   // requires this registry, a reviewed asset and server validation together.
-  lezzoo:provider('order','Lezzoo','lezzoo','url',['lezzoo.com','lezzoodevs.com']),
-  wade:provider('order','WADE','wade','url',['wadedelivery.com','trytiptop.com']),
+  lezzoo:provider('order','لەزوو','lezzoo','url',['lezzoo.com','lezzoodevs.com']),
+  wade:provider('order','وادێ','wade','url',['wadedelivery.com','trytiptop.com']),
   google_play:provider('download','Google Play','google_play','url',['play.google.com']),
   app_store:provider('download','Apple App Store','app_store','url',['apps.apple.com']),
 });
@@ -128,12 +128,12 @@ export function assertAvatar(card) {
   }))throw pageError('invalid_avatar');
 }
 export function validatePage(body,owner,{old=null,allowEmpty=false}={}) {
-  if(!body||typeof body!=='object'||Array.isArray(body)||Object.keys(body).some(k=>!['client_request_id','page_kind','name','bio','template_key','template_version','color_theme','card_language','avatar_path','settings','expected_updated_at'].includes(k)))throw pageError('invalid_request');
+  if(!body||typeof body!=='object'||Array.isArray(body)||Object.keys(body).some(k=>!['client_request_id','page_kind','name','bio','tt','template_key','template_version','color_theme','card_language','avatar_path','settings','expected_updated_at'].includes(k)))throw pageError('invalid_request');
   const kind=body.page_kind??old?.page_kind;
   if(!PAGE_TYPES.includes(kind)||(old&&kind!==old.page_kind))throw pageError('invalid_page_type');
   const card={id:old?.id,user_id:owner,page_kind:kind,
     client_request_id:old?.client_request_id??body.client_request_id,
-    name:body.name??old?.name,bio:body.bio??old?.bio??'',tt:'',
+    name:body.name??old?.name,bio:body.bio??old?.bio??'',tt:body.tt??old?.tt??'',
     template_key:body.template_key??old?.template_key,template_version:body.template_version??old?.template_version??6,
     color_theme:body.color_theme??old?.color_theme??'purple',card_language:body.card_language??old?.card_language??'ku',
     avatar_path:body.avatar_path===undefined?old?.avatar_path??null:body.avatar_path,
@@ -142,6 +142,9 @@ export function validatePage(body,owner,{old=null,allowEmpty=false}={}) {
   if(!UUID.test(card.client_request_id||'')||card.client_request_id===owner)throw pageError('invalid_request');
   if(typeof card.name!=='string'||!card.name.trim()||card.name.length>160)throw pageError('invalid_card_name');
   if(typeof card.bio!=='string'||card.bio.length>2000)throw pageError('invalid_bio');
+  if(typeof card.tt!=='string')throw pageError('invalid_tiktok');
+  card.tt=card.tt.trim().replace(/^@/,'');
+  if(card.tt&&!/^[A-Za-z0-9._]{1,40}$/.test(card.tt))throw pageError('invalid_tiktok');
   if(!PREPARED_DESIGNS.includes(card.template_key)||card.template_version!==PREPARED_VERSION
     ||!['ku','ar','en'].includes(card.card_language)||!['purple','blue','green','red','yellow','cyan','pink','dark'].includes(card.color_theme))throw pageError('invalid_request');
   card.name=card.name.trim();card.bio=card.bio.trim();

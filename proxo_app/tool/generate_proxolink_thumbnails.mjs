@@ -36,7 +36,7 @@ const browser=await chromium.launch({...(process.env.PROXO_CHROMIUM_PATH?{execut
 const files=[];mkdirSync('proxo_app/assets/proxolink_thumbnails',{recursive:true});
 try {
  for(const type of PAGE_TYPES)for(const key of PREPARED_DESIGNS){
-  const page=await browser.newPage({viewport:{width:393,height:1040},deviceScaleFactor:1});
+  const page=await browser.newPage({viewport:{width:393,height:1040},deviceScaleFactor:3});
   const outbound=[];await page.route('**/*',route=>{
    if(route.request().url().startsWith(base+'/'))return route.continue();
    outbound.push(true);return route.abort();
@@ -54,11 +54,13 @@ try {
    document.querySelectorAll('.wa-message-card').forEach(e=>e.hidden=true);
   });
   await page.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));
-  const png=await sharp(await page.screenshot()).resize(240,635).png().toBuffer();
+  const png=await page.screenshot({fullPage:true});
+  const dimensions=await sharp(png).metadata();
+  assert.equal(dimensions.width,1179);assert.equal(dimensions.height,3120);
   const file=`${type}-${key}.png`;writeFileSync('proxo_app/assets/proxolink_thumbnails/'+file,png);
-  files.push({file,page_type:type,template_key:key,bytes:png.length,sha256:createHash('sha256').update(png).digest('hex'),preview_inert:inert,outbound_requests:outbound.length});
+  files.push({file,page_type:type,template_key:key,width:dimensions.width,height:dimensions.height,bytes:png.length,sha256:createHash('sha256').update(png).digest('hex'),preview_inert:inert,outbound_requests:outbound.length});
   await page.close();
  }
- writeFileSync('proxo_app/tool/proxolink-thumbnail-manifest.json',JSON.stringify({renderer:'Existing authenticated V6 server template-preview handler, fictional isolated fixtures',viewport:{width:393,height:1040},thumbnail:{width:240,height:635},files},null,2)+'\n');
+ writeFileSync('proxo_app/tool/proxolink-thumbnail-manifest.json',JSON.stringify({browser:browser.version(),renderer:'Existing authenticated V6 server template-preview handler, fictional isolated fixtures',viewport:{width:393,height:1040},device_scale_factor:3,thumbnail:{width:1179,height:3120},full_page:true,resized:false,files},null,2)+'\n');
  console.log('VERIFIED: 12 real server-rendered inert PNG thumbnails; zero fixture writes/events or outbound requests.');
 }finally{await browser.close();await new Promise(r=>server.close(r));}
