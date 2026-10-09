@@ -66,6 +66,7 @@ void main() {
         for(final phase in [100,300]) {
           await t.pump(Duration(milliseconds:phase==100?100:200));
           offsets[screen]!.add(t.getTopLeft(scroll).dy-initial.dy);
+          expect(offsets[screen]!.last,greaterThan(0));
           expect(handle.isRefreshing,true);expect(identical(element,t.element(scroll)),true);
           await _png(t,key,'actual-$screen-refresh-${phase}ms-${width.toInt()}');
         }
