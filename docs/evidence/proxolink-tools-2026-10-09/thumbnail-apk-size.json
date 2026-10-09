@@ -1,0 +1,36 @@
+{
+  "method": "same current code and release configuration; only twelve PNG assets replaced",
+  "reference_assets_revision": "3c4a92834ac5249858b299911bece93edb665fc2",
+  "current_revision": "05757a3c2089f7eca1ce196051743dfd2c51052b",
+  "before": {
+    "apk_bytes": 83702384,
+    "thumbnail_compressed_bytes": 868949,
+    "thumbnail_uncompressed_bytes": 868949
+  },
+  "after": {
+    "apk_bytes": 89319872,
+    "thumbnail_compressed_bytes": 6486434,
+    "thumbnail_uncompressed_bytes": 6486434
+  },
+  "delta": {
+    "apk_bytes": 5617488,
+    "thumbnail_compressed_bytes": 5617485,
+    "thumbnail_uncompressed_bytes": 5617485
+  },
+  "note": "APK byte delta includes any rebuild packaging variation; ZIP thumbnail byte deltas directly measure assets.",
+  "restored_current_assets_and_apk": true,
+  "asset_sha256": {
+    "download-pill-dark.png": "28577cd6a0c58bbb1e5379b631be76b2d9e9dee33f71763c4a77a8b23a11ac00",
+    "download-pill-mint.png": "59d6ccc7638934f49cf9d17c0ce85068b0c75ce813d3c4db559e8004513ce738",
+    "order-pill-mint.png": "24e775ed4f7bae46027f1c091dd81ce18e85be58dc6ed08da973e0ecd4c93d86",
+    "contact-pill-mint.png": "84c78806da105ef308a02cc8033262baddf2810f8fea09181e860cf965d518dc",
+    "contact-pill-dark.png": "58683f32d4be33d0fef7edbc84ac0943647a4caae4a320372de0e89d2013fd38",
+    "order-pill-dark.png": "28a257b9478e393d26e534500e9ea9202dc07854d0864ead88aa82473bd04906",
+    "order-pill-white.png": "ef56ab39cea1f61b590412882578486f5cfc092d190737b829c03f1756e5332d",
+    "order-pill.png": "3713b1593a42da01ef2745c9adfb92fc7bf47590746428933a831d0b4f28dfa6",
+    "contact-pill-white.png": "73653a7e2174f412d282ac840a3b9811598de4b41cdcdbf2622b3190b1da342f",
+    "download-pill-white.png": "0765d854615a1281338a7669a208584b53489a0815c98470b1f78412767a6c5c",
+    "download-pill.png": "54192b41d7e396d37c926bfe9df2f6ed260ac4ddfa92570a891986172d5729ea",
+    "contact-pill.png": "00c272d3a28794b2377ca3809e9bb3d5f8280451b5d1b9c2722d58574f3ac52a"
+  }
+}
