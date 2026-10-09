@@ -1,0 +1,11 @@
+{
+  "android_api": 35,
+  "requested_screen": [
+    1200,
+    1900
+  ],
+  "requested_density_dpi": 160,
+  "emulator_gpu_mode": "swiftshader_indirect",
+  "compositor_renderer": "GLES: Google (Google Inc.), Android Emulator OpenGL ES Translator (Google SwiftShader), OpenGL ES 3.0 (OpenGL ES 3.0 SwiftShader 4.0.0.1)",
+  "previous_run_webview_version": "Not retained in the historical artifact; no WebView installation/update or emulator-setting change requested"
+}

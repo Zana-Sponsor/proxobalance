@@ -1,0 +1,19 @@
+{
+  "root_cause": "PROVEN",
+  "scope": "Harness/current-UI contract mismatch, separate from the pixel root cause.",
+  "current_cases_reported": 12,
+  "passed": 0,
+  "failed_setup": 12,
+  "actual_thumbnail_taps": 0,
+  "preview_captures": 0,
+  "selection_to_large_webview": "NOT VERIFIED",
+  "evidence": [
+    "All twelve chooser results record chooser_builder_setup. No chooser-input-evidence.json or chooser screenshot is present.",
+    "Pinned chooser walks descendants of NativeProxoLinkChooser and waits for exactly three OutlinedButtons before the selector.",
+    "Pinned ToolsScreen(initialCreate:true) pushes ProxoLinkCreatePageScreen as a Navigator route outside that descendant subtree.",
+    "Pinned create screen renders type choices with AdChoice, has one image-picker OutlinedButton, and intentionally contains no ProxoLinkPreview/WebViewWidget or formPreview request.",
+    "Even after correcting route traversal/type-button lookup, the current create-screen contract does not provide the required live WebView. Changing product UI or marking thumbnail-only taps as preview verification would exceed this diagnostic scope."
+  ],
+  "production_changed": false,
+  "acceptance_weakened": false
+}

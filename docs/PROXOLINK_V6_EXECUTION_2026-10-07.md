@@ -1,6 +1,24 @@
 # ProxoLink V6 — current terminal native result
 
-## Current native infrastructure checkpoint — 2026-10-09
+## Current protected Android result — 2026-10-09 18:10 UTC
+
+**Android runtime: FAILED. Pixel root cause: NOT PROVEN.** [Run37960639713](https://github.com/Zana-Sponsor/proxobalance/actions/runs/37960639713), attempt1, revision `e61bc1a93f4acdc7ad75e9f44e79e6d73f110f11`, runtime job113924422975. Authorized review cleared; KVM and real Android WebView execution ran; upload succeeded.
+
+Expected/executed **240/240**; behavior **240passed/0failed**; FIRST candidate/baseline **240/240**; missing cases/captures **0/0**; acceptance roles **480stable/0unstable**, exactly3samples each. FIRST pixel parity **236exact/4failed**, **4changedpixels**, maximumRGBdelta1. Independent replay verified all240pairs,480crops,960repeats and240diffs. Diagnostic gate passed with20deepacceptance and16stablefresh-view roles. No previous catalogHTTP401 recurred; exact session-renewal diagnostics are not retained.
+
+All12chooser results fail setup; **0actual thumbnail taps,0preview screenshots**, chooser→largeWebView **NOT VERIFIED**. This is a **PROVEN harness/current-UI contract mismatch**: old descendant traversal/threeOutlinedButton assumptions versus a separate Create route with AdChoice and no liveWebView. Current production UI is preserved; the chooser gate remains failed.
+
+Artifact **11635652972**,SHA256 `aa87d63d5af0da2db638150f5bac432250f5841570a553d5f6fcfb8a4806c36f`,2339files/2328PNGs, digest verified. [Full analysis](PROXOLINK_NATIVE_E61_ANALYSIS_2026-10-09.md), [independent audit](evidence/proxolink-v6-2026-10-06/native-e61bc1a-attempt1/independent-audit.json), [exact failures](evidence/proxolink-v6-2026-10-06/native-e61bc1a-attempt1/pixel-failures.json) and [eight-case geometry/style/timing/neighborhood analysis](evidence/proxolink-v6-2026-10-06/native-e61bc1a-attempt1/per-case-root-cause-analysis.json) retain safe evidence.
+
+Four current failures: pill-order-ku-portrait-768 at380,222; pill-mint-contact-ku-portrait-768, pill-mint-order-ku-portrait-768 and pill-mint-order-en-portrait-768 at290,228. Each is one green-channel level. Matched retained geometry/styles/inputs plus later equal WebContents readbacks narrow the investigation; they do not prove a GPU, raster, color-interpolation, timing or lifecycle cause. All36SurfaceViewPixelCopy crops equal ownFIRST captures. Thirteen later diagnostic reads change one pixel with unchanged retained styles/geometry. Empty cached Document bodies are a proven diagnostic limitation; their empty hashes cannot certify source/font byte parity. No speculative rendering fix or blind rerun.
+
+SourceCI [37960639711](https://github.com/Zana-Sponsor/proxobalance/actions/runs/37960639711) **SUCCESS**, all5jobs including releaseprivacy; nativeAPK113922296033 **SUCCESS**. Files changed after this native test: this currentreport, the detailedanalysis and safeevidence only; exact publication paths are recorded in the evidence directory. PR7 **Draft/open/unmerged**. No production publishing/customer writes/migrations.
+
+### Historical checkpoints below
+
+All earlier counts and infrastructure states below describe their own pinned attempts; they are superseded by the current result above.
+
+## Historical native infrastructure checkpoint — 2026-10-09
 
 **Android runtime: BLOCKED before emulator execution.** Diagnostic protected run [37957991028](https://github.com/Zana-Sponsor/proxobalance/actions/runs/37957991028), attempt1, revision `4bff4381065de5b032b5ddd09a73fb8189d6bfe0`: APK113913287054 SUCCESS; authorized runtime113915151911 failed at **Enable KVM**, exit1 at2026-10-09T16:27:57Z. The real WebView action was SKIPPED. Expected240 / executed0, behavior0passed/0failed, candidate0/baseline0, absent first captures480, unmeasured stability roles480, evaluated pixel pairs0, chooser0/12 and runtime authentication unmeasured. No runtime evidence artifact exists; APK artifacts are separate.
 
@@ -398,3 +416,4 @@ Protected Android remains **FAILED**:37844040950 attempt2 at6c7e6c634cfe0bceb2c4
 [Additional pinned-source RCA](PROXOLINK_NATIVE_PIXEL_RCA_2026-10-09.md#completion-recheck-and-pinned-source-input-audit--2026-10-09) establishes differing source avatar/link-validation branches, but their pixel causality is **NOT PROVEN**. Native request/layer/raster evidence needed to distinguish that hypothesis was not retained. No speculative fix or new native run. Full completion still requires a proven rendering cause/correct fix, strict240/240exact native parity, and actual current-UI Android thumbnail/external-browser/return coverage; zero-difference acceptance is unchanged.
 
 This checkpoint changes documentation/evidence only, preserving passing product/thumbnail/template/native/workflow/protection source. PR#7 remains Draft/open/unmerged; production is untouched.
+

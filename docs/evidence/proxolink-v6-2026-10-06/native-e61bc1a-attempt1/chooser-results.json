@@ -1,0 +1,50 @@
+{
+  "chooser-contact-pill": {
+    "passed": false,
+    "failed_check": "chooser_builder_setup"
+  },
+  "chooser-contact-pill-mint": {
+    "passed": false,
+    "failed_check": "chooser_builder_setup"
+  },
+  "chooser-contact-pill-dark": {
+    "passed": false,
+    "failed_check": "chooser_builder_setup"
+  },
+  "chooser-contact-pill-white": {
+    "passed": false,
+    "failed_check": "chooser_builder_setup"
+  },
+  "chooser-order-pill": {
+    "passed": false,
+    "failed_check": "chooser_builder_setup"
+  },
+  "chooser-order-pill-mint": {
+    "passed": false,
+    "failed_check": "chooser_builder_setup"
+  },
+  "chooser-order-pill-dark": {
+    "passed": false,
+    "failed_check": "chooser_builder_setup"
+  },
+  "chooser-order-pill-white": {
+    "passed": false,
+    "failed_check": "chooser_builder_setup"
+  },
+  "chooser-download-pill": {
+    "passed": false,
+    "failed_check": "chooser_builder_setup"
+  },
+  "chooser-download-pill-mint": {
+    "passed": false,
+    "failed_check": "chooser_builder_setup"
+  },
+  "chooser-download-pill-dark": {
+    "passed": false,
+    "failed_check": "chooser_builder_setup"
+  },
+  "chooser-download-pill-white": {
+    "passed": false,
+    "failed_check": "chooser_builder_setup"
+  }
+}

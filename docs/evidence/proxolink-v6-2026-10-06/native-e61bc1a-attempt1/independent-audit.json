@@ -1,0 +1,511 @@
+{
+  "run": 37960639713,
+  "attempt": 1,
+  "revision": "e61bc1a93f4acdc7ad75e9f44e79e6d73f110f11",
+  "artifact": 11635652972,
+  "artifact_sha256": "aa87d63d5af0da2db638150f5bac432250f5841570a553d5f6fcfb8a4806c36f",
+  "expected": 240,
+  "executed": 240,
+  "behavior_passed": 240,
+  "behavior_failed": 0,
+  "candidate": 240,
+  "baseline": 240,
+  "missing": 0,
+  "exact": 236,
+  "failed": 4,
+  "total_changed_pixels": 4,
+  "max_channel_delta": 1,
+  "crops_checked": 480,
+  "diffs_checked": 240,
+  "repeat_roles": 480,
+  "repeats_checked": 960,
+  "stable_roles": 480,
+  "diagnostic_roles": 36,
+  "deep": {
+    "pill-contact-en-portrait-768-candidate": {
+      "surface_vs_first_changed": 0,
+      "post_cdp_vs_first_changed": 1,
+      "webcontents_dimensions": [
+        768,
+        1520
+      ],
+      "first_rgb_sha256": "ea9555371e1c50c5845f9cf4c77737740c6f151b3c75c0325dddfa3cbbb0f8db",
+      "surface_rgb_sha256": "ea9555371e1c50c5845f9cf4c77737740c6f151b3c75c0325dddfa3cbbb0f8db",
+      "webcontents_rgb_sha256": "d64901be8d1fd18065e4b804e8d551b363f6acb59da02b82784bd366a119b85f"
+    },
+    "pill-contact-en-portrait-768-baseline": {
+      "surface_vs_first_changed": 0,
+      "post_cdp_vs_first_changed": 1,
+      "webcontents_dimensions": [
+        768,
+        1520
+      ],
+      "first_rgb_sha256": "ea9555371e1c50c5845f9cf4c77737740c6f151b3c75c0325dddfa3cbbb0f8db",
+      "surface_rgb_sha256": "ea9555371e1c50c5845f9cf4c77737740c6f151b3c75c0325dddfa3cbbb0f8db",
+      "webcontents_rgb_sha256": "d64901be8d1fd18065e4b804e8d551b363f6acb59da02b82784bd366a119b85f"
+    },
+    "pill-order-ku-portrait-768-candidate": {
+      "surface_vs_first_changed": 0,
+      "post_cdp_vs_first_changed": 1,
+      "webcontents_dimensions": [
+        768,
+        1520
+      ],
+      "first_rgb_sha256": "6f55b27a9eb020331b6519507a9cb16090f1cefc8d2b4eaf208b523a5bc6c08a",
+      "surface_rgb_sha256": "6f55b27a9eb020331b6519507a9cb16090f1cefc8d2b4eaf208b523a5bc6c08a",
+      "webcontents_rgb_sha256": "8bbf69b80ed764da3458ee0898a767619a0fe40fa9836e5ba038a84600a30d8c"
+    },
+    "pill-order-ku-portrait-768-baseline": {
+      "surface_vs_first_changed": 0,
+      "post_cdp_vs_first_changed": 0,
+      "webcontents_dimensions": [
+        768,
+        1520
+      ],
+      "first_rgb_sha256": "494ea2aeccfd6e939146aba00d928e9c49725fb4cc3ee6f432123a3293b3b4da",
+      "surface_rgb_sha256": "494ea2aeccfd6e939146aba00d928e9c49725fb4cc3ee6f432123a3293b3b4da",
+      "webcontents_rgb_sha256": "8bbf69b80ed764da3458ee0898a767619a0fe40fa9836e5ba038a84600a30d8c"
+    },
+    "pill-order-en-portrait-768-candidate": {
+      "surface_vs_first_changed": 0,
+      "post_cdp_vs_first_changed": 0,
+      "webcontents_dimensions": [
+        768,
+        1520
+      ],
+      "first_rgb_sha256": "8255c6d80e5b87c589af78dede203a3c79902bdb0aed96d53752f3dffeacec71",
+      "surface_rgb_sha256": "8255c6d80e5b87c589af78dede203a3c79902bdb0aed96d53752f3dffeacec71",
+      "webcontents_rgb_sha256": "1091c81f3aa63cd626e18dc1298a4416968c6d332547c8907294e832dfd57aa4"
+    },
+    "pill-order-en-portrait-768-baseline": {
+      "surface_vs_first_changed": 0,
+      "post_cdp_vs_first_changed": 0,
+      "webcontents_dimensions": [
+        768,
+        1520
+      ],
+      "first_rgb_sha256": "8255c6d80e5b87c589af78dede203a3c79902bdb0aed96d53752f3dffeacec71",
+      "surface_rgb_sha256": "8255c6d80e5b87c589af78dede203a3c79902bdb0aed96d53752f3dffeacec71",
+      "webcontents_rgb_sha256": "1091c81f3aa63cd626e18dc1298a4416968c6d332547c8907294e832dfd57aa4"
+    },
+    "pill-mint-contact-ku-portrait-430-candidate": {
+      "surface_vs_first_changed": 0,
+      "post_cdp_vs_first_changed": 1,
+      "webcontents_dimensions": [
+        430,
+        1520
+      ],
+      "first_rgb_sha256": "0b0e3a8a84fbea253736a2ec96d687af813c2c6fdc9d430f3583fc5c468158a3",
+      "surface_rgb_sha256": "0b0e3a8a84fbea253736a2ec96d687af813c2c6fdc9d430f3583fc5c468158a3",
+      "webcontents_rgb_sha256": "e4515749efde8d619f3e1df2692f33a99cdcd4155dacdbbadd67f4b19a4bb93a"
+    },
+    "pill-mint-contact-ku-portrait-430-baseline": {
+      "surface_vs_first_changed": 0,
+      "post_cdp_vs_first_changed": 1,
+      "webcontents_dimensions": [
+        430,
+        1520
+      ],
+      "first_rgb_sha256": "0b0e3a8a84fbea253736a2ec96d687af813c2c6fdc9d430f3583fc5c468158a3",
+      "surface_rgb_sha256": "0b0e3a8a84fbea253736a2ec96d687af813c2c6fdc9d430f3583fc5c468158a3",
+      "webcontents_rgb_sha256": "e4515749efde8d619f3e1df2692f33a99cdcd4155dacdbbadd67f4b19a4bb93a"
+    },
+    "pill-mint-contact-ku-portrait-768-candidate": {
+      "surface_vs_first_changed": 0,
+      "post_cdp_vs_first_changed": 0,
+      "webcontents_dimensions": [
+        768,
+        1520
+      ],
+      "first_rgb_sha256": "eece3463d46cfee0a2c19c390103a101746f3db37662771fb9f9162e2bf423d2",
+      "surface_rgb_sha256": "eece3463d46cfee0a2c19c390103a101746f3db37662771fb9f9162e2bf423d2",
+      "webcontents_rgb_sha256": "9d447dd634ace5bfa9b52af6eb8ba246f7d91a0511da4902b02cbacbf8bb1f28"
+    },
+    "pill-mint-contact-ku-portrait-768-baseline": {
+      "surface_vs_first_changed": 0,
+      "post_cdp_vs_first_changed": 1,
+      "webcontents_dimensions": [
+        768,
+        1520
+      ],
+      "first_rgb_sha256": "2aef5aeab79056e9e9aba43a57c95ef9ef4eb9d708f6789c9e916ed7c8f90b0d",
+      "surface_rgb_sha256": "2aef5aeab79056e9e9aba43a57c95ef9ef4eb9d708f6789c9e916ed7c8f90b0d",
+      "webcontents_rgb_sha256": "9d447dd634ace5bfa9b52af6eb8ba246f7d91a0511da4902b02cbacbf8bb1f28"
+    },
+    "pill-mint-order-ku-portrait-320-candidate": {
+      "surface_vs_first_changed": 0,
+      "post_cdp_vs_first_changed": 0,
+      "webcontents_dimensions": [
+        320,
+        1520
+      ],
+      "first_rgb_sha256": "3494aa9f9bb9dde37fbc776f103f3eb5f59d190895960d583410f88d0e5bc170",
+      "surface_rgb_sha256": "3494aa9f9bb9dde37fbc776f103f3eb5f59d190895960d583410f88d0e5bc170",
+      "webcontents_rgb_sha256": "e8ea8150fb8e9cab27dd36c5a5be9b4c5706763ccc0da6873f907d6e4d356b0e"
+    },
+    "pill-mint-order-ku-portrait-320-baseline": {
+      "surface_vs_first_changed": 0,
+      "post_cdp_vs_first_changed": 0,
+      "webcontents_dimensions": [
+        320,
+        1520
+      ],
+      "first_rgb_sha256": "3494aa9f9bb9dde37fbc776f103f3eb5f59d190895960d583410f88d0e5bc170",
+      "surface_rgb_sha256": "3494aa9f9bb9dde37fbc776f103f3eb5f59d190895960d583410f88d0e5bc170",
+      "webcontents_rgb_sha256": "e8ea8150fb8e9cab27dd36c5a5be9b4c5706763ccc0da6873f907d6e4d356b0e"
+    },
+    "pill-mint-order-ku-portrait-430-candidate": {
+      "surface_vs_first_changed": 0,
+      "post_cdp_vs_first_changed": 0,
+      "webcontents_dimensions": [
+        430,
+        1520
+      ],
+      "first_rgb_sha256": "7862298796c2b90a427e403c2989e17cba8f8202c5d3eed71daf2c69f3466a67",
+      "surface_rgb_sha256": "7862298796c2b90a427e403c2989e17cba8f8202c5d3eed71daf2c69f3466a67",
+      "webcontents_rgb_sha256": "92d991c9a8a4669bc866696fdf50377b8ae107cbaf0e4590205541188ec826c7"
+    },
+    "pill-mint-order-ku-portrait-430-baseline": {
+      "surface_vs_first_changed": 0,
+      "post_cdp_vs_first_changed": 0,
+      "webcontents_dimensions": [
+        430,
+        1520
+      ],
+      "first_rgb_sha256": "7862298796c2b90a427e403c2989e17cba8f8202c5d3eed71daf2c69f3466a67",
+      "surface_rgb_sha256": "7862298796c2b90a427e403c2989e17cba8f8202c5d3eed71daf2c69f3466a67",
+      "webcontents_rgb_sha256": "92d991c9a8a4669bc866696fdf50377b8ae107cbaf0e4590205541188ec826c7"
+    },
+    "pill-mint-order-ku-portrait-768-candidate": {
+      "surface_vs_first_changed": 0,
+      "post_cdp_vs_first_changed": 1,
+      "webcontents_dimensions": [
+        768,
+        1520
+      ],
+      "first_rgb_sha256": "c28fb446327029702c8004ed6aba7c6fb3fd2e11ac3a22791a74d15d7cd1c35a",
+      "surface_rgb_sha256": "c28fb446327029702c8004ed6aba7c6fb3fd2e11ac3a22791a74d15d7cd1c35a",
+      "webcontents_rgb_sha256": "9d5a2e1708f7e507b5cb3b1d6ea6ff12aa667ed0a2a78947f0def8f769a0590e"
+    },
+    "pill-mint-order-ku-portrait-768-baseline": {
+      "surface_vs_first_changed": 0,
+      "post_cdp_vs_first_changed": 0,
+      "webcontents_dimensions": [
+        768,
+        1520
+      ],
+      "first_rgb_sha256": "8891ed5b196916fbfc977c43a3ec6892d1ef2d969d6705fcf41235a28bd719bd",
+      "surface_rgb_sha256": "8891ed5b196916fbfc977c43a3ec6892d1ef2d969d6705fcf41235a28bd719bd",
+      "webcontents_rgb_sha256": "9d5a2e1708f7e507b5cb3b1d6ea6ff12aa667ed0a2a78947f0def8f769a0590e"
+    },
+    "pill-mint-order-en-portrait-430-candidate": {
+      "surface_vs_first_changed": 0,
+      "post_cdp_vs_first_changed": 0,
+      "webcontents_dimensions": [
+        430,
+        1520
+      ],
+      "first_rgb_sha256": "805777bc7b3cb958df2e1473a443ba12ca728790fbd99c1129f67e1d2fa4034f",
+      "surface_rgb_sha256": "805777bc7b3cb958df2e1473a443ba12ca728790fbd99c1129f67e1d2fa4034f",
+      "webcontents_rgb_sha256": "3b050ae704b53b96a0e303d262a780d13333ca76f8121ce2aced834a534a8c1e"
+    },
+    "pill-mint-order-en-portrait-430-baseline": {
+      "surface_vs_first_changed": 0,
+      "post_cdp_vs_first_changed": 0,
+      "webcontents_dimensions": [
+        430,
+        1520
+      ],
+      "first_rgb_sha256": "805777bc7b3cb958df2e1473a443ba12ca728790fbd99c1129f67e1d2fa4034f",
+      "surface_rgb_sha256": "805777bc7b3cb958df2e1473a443ba12ca728790fbd99c1129f67e1d2fa4034f",
+      "webcontents_rgb_sha256": "3b050ae704b53b96a0e303d262a780d13333ca76f8121ce2aced834a534a8c1e"
+    },
+    "pill-mint-order-en-portrait-768-candidate": {
+      "surface_vs_first_changed": 0,
+      "post_cdp_vs_first_changed": 1,
+      "webcontents_dimensions": [
+        768,
+        1520
+      ],
+      "first_rgb_sha256": "cf09ce3eb069be1e2332eddf0d8a59fbf92fa3e7459c332858b887fae6041d13",
+      "surface_rgb_sha256": "cf09ce3eb069be1e2332eddf0d8a59fbf92fa3e7459c332858b887fae6041d13",
+      "webcontents_rgb_sha256": "d662b6e90d64a083ebb987a9592b0f7eaf9d8ac130be5a29299ab291100a3f73"
+    },
+    "pill-mint-order-en-portrait-768-baseline": {
+      "surface_vs_first_changed": 0,
+      "post_cdp_vs_first_changed": 0,
+      "webcontents_dimensions": [
+        768,
+        1520
+      ],
+      "first_rgb_sha256": "56d3f33e839db738b8be63abd19a4b4cf80b5a7e0410f0c46e9286b14b0c862d",
+      "surface_rgb_sha256": "56d3f33e839db738b8be63abd19a4b4cf80b5a7e0410f0c46e9286b14b0c862d",
+      "webcontents_rgb_sha256": "d662b6e90d64a083ebb987a9592b0f7eaf9d8ac130be5a29299ab291100a3f73"
+    },
+    "repro-pill-contact-en-portrait-768-candidate": {
+      "surface_vs_first_changed": 0,
+      "post_cdp_vs_first_changed": 0,
+      "webcontents_dimensions": [
+        768,
+        1520
+      ],
+      "first_rgb_sha256": "7e28e6a10b83daef3d65cd445c2acec62548df1e84560a9cd568171831af3f0b",
+      "surface_rgb_sha256": "7e28e6a10b83daef3d65cd445c2acec62548df1e84560a9cd568171831af3f0b",
+      "webcontents_rgb_sha256": "d64901be8d1fd18065e4b804e8d551b363f6acb59da02b82784bd366a119b85f"
+    },
+    "repro-pill-contact-en-portrait-768-baseline": {
+      "surface_vs_first_changed": 0,
+      "post_cdp_vs_first_changed": 1,
+      "webcontents_dimensions": [
+        768,
+        1520
+      ],
+      "first_rgb_sha256": "ea9555371e1c50c5845f9cf4c77737740c6f151b3c75c0325dddfa3cbbb0f8db",
+      "surface_rgb_sha256": "ea9555371e1c50c5845f9cf4c77737740c6f151b3c75c0325dddfa3cbbb0f8db",
+      "webcontents_rgb_sha256": "d64901be8d1fd18065e4b804e8d551b363f6acb59da02b82784bd366a119b85f"
+    },
+    "repro-pill-order-ku-portrait-768-candidate": {
+      "surface_vs_first_changed": 0,
+      "post_cdp_vs_first_changed": 0,
+      "webcontents_dimensions": [
+        768,
+        1520
+      ],
+      "first_rgb_sha256": "494ea2aeccfd6e939146aba00d928e9c49725fb4cc3ee6f432123a3293b3b4da",
+      "surface_rgb_sha256": "494ea2aeccfd6e939146aba00d928e9c49725fb4cc3ee6f432123a3293b3b4da",
+      "webcontents_rgb_sha256": "8bbf69b80ed764da3458ee0898a767619a0fe40fa9836e5ba038a84600a30d8c"
+    },
+    "repro-pill-order-ku-portrait-768-baseline": {
+      "surface_vs_first_changed": 0,
+      "post_cdp_vs_first_changed": 0,
+      "webcontents_dimensions": [
+        768,
+        1520
+      ],
+      "first_rgb_sha256": "494ea2aeccfd6e939146aba00d928e9c49725fb4cc3ee6f432123a3293b3b4da",
+      "surface_rgb_sha256": "494ea2aeccfd6e939146aba00d928e9c49725fb4cc3ee6f432123a3293b3b4da",
+      "webcontents_rgb_sha256": "8bbf69b80ed764da3458ee0898a767619a0fe40fa9836e5ba038a84600a30d8c"
+    },
+    "repro-pill-mint-contact-ku-portrait-768-candidate": {
+      "surface_vs_first_changed": 0,
+      "post_cdp_vs_first_changed": 0,
+      "webcontents_dimensions": [
+        768,
+        1520
+      ],
+      "first_rgb_sha256": "eece3463d46cfee0a2c19c390103a101746f3db37662771fb9f9162e2bf423d2",
+      "surface_rgb_sha256": "eece3463d46cfee0a2c19c390103a101746f3db37662771fb9f9162e2bf423d2",
+      "webcontents_rgb_sha256": "9d447dd634ace5bfa9b52af6eb8ba246f7d91a0511da4902b02cbacbf8bb1f28"
+    },
+    "repro-pill-mint-contact-ku-portrait-768-baseline": {
+      "surface_vs_first_changed": 0,
+      "post_cdp_vs_first_changed": 0,
+      "webcontents_dimensions": [
+        768,
+        1520
+      ],
+      "first_rgb_sha256": "eece3463d46cfee0a2c19c390103a101746f3db37662771fb9f9162e2bf423d2",
+      "surface_rgb_sha256": "eece3463d46cfee0a2c19c390103a101746f3db37662771fb9f9162e2bf423d2",
+      "webcontents_rgb_sha256": "9d447dd634ace5bfa9b52af6eb8ba246f7d91a0511da4902b02cbacbf8bb1f28"
+    },
+    "repro-pill-mint-order-ku-portrait-320-candidate": {
+      "surface_vs_first_changed": 0,
+      "post_cdp_vs_first_changed": 0,
+      "webcontents_dimensions": [
+        320,
+        1520
+      ],
+      "first_rgb_sha256": "3494aa9f9bb9dde37fbc776f103f3eb5f59d190895960d583410f88d0e5bc170",
+      "surface_rgb_sha256": "3494aa9f9bb9dde37fbc776f103f3eb5f59d190895960d583410f88d0e5bc170",
+      "webcontents_rgb_sha256": "e8ea8150fb8e9cab27dd36c5a5be9b4c5706763ccc0da6873f907d6e4d356b0e"
+    },
+    "repro-pill-mint-order-ku-portrait-320-baseline": {
+      "surface_vs_first_changed": 0,
+      "post_cdp_vs_first_changed": 0,
+      "webcontents_dimensions": [
+        320,
+        1520
+      ],
+      "first_rgb_sha256": "3494aa9f9bb9dde37fbc776f103f3eb5f59d190895960d583410f88d0e5bc170",
+      "surface_rgb_sha256": "3494aa9f9bb9dde37fbc776f103f3eb5f59d190895960d583410f88d0e5bc170",
+      "webcontents_rgb_sha256": "e8ea8150fb8e9cab27dd36c5a5be9b4c5706763ccc0da6873f907d6e4d356b0e"
+    },
+    "repro-pill-mint-order-ku-portrait-430-candidate": {
+      "surface_vs_first_changed": 0,
+      "post_cdp_vs_first_changed": 1,
+      "webcontents_dimensions": [
+        430,
+        1520
+      ],
+      "first_rgb_sha256": "bcab87074ed1b509269fc2d24fc47704c659ddc44abac02150ada16be8e94e8b",
+      "surface_rgb_sha256": "bcab87074ed1b509269fc2d24fc47704c659ddc44abac02150ada16be8e94e8b",
+      "webcontents_rgb_sha256": "92d991c9a8a4669bc866696fdf50377b8ae107cbaf0e4590205541188ec826c7"
+    },
+    "repro-pill-mint-order-ku-portrait-430-baseline": {
+      "surface_vs_first_changed": 0,
+      "post_cdp_vs_first_changed": 0,
+      "webcontents_dimensions": [
+        430,
+        1520
+      ],
+      "first_rgb_sha256": "7862298796c2b90a427e403c2989e17cba8f8202c5d3eed71daf2c69f3466a67",
+      "surface_rgb_sha256": "7862298796c2b90a427e403c2989e17cba8f8202c5d3eed71daf2c69f3466a67",
+      "webcontents_rgb_sha256": "92d991c9a8a4669bc866696fdf50377b8ae107cbaf0e4590205541188ec826c7"
+    },
+    "repro-pill-mint-order-ku-portrait-768-candidate": {
+      "surface_vs_first_changed": 0,
+      "post_cdp_vs_first_changed": 1,
+      "webcontents_dimensions": [
+        768,
+        1520
+      ],
+      "first_rgb_sha256": "c28fb446327029702c8004ed6aba7c6fb3fd2e11ac3a22791a74d15d7cd1c35a",
+      "surface_rgb_sha256": "c28fb446327029702c8004ed6aba7c6fb3fd2e11ac3a22791a74d15d7cd1c35a",
+      "webcontents_rgb_sha256": "9d5a2e1708f7e507b5cb3b1d6ea6ff12aa667ed0a2a78947f0def8f769a0590e"
+    },
+    "repro-pill-mint-order-ku-portrait-768-baseline": {
+      "surface_vs_first_changed": 0,
+      "post_cdp_vs_first_changed": 0,
+      "webcontents_dimensions": [
+        768,
+        1520
+      ],
+      "first_rgb_sha256": "8891ed5b196916fbfc977c43a3ec6892d1ef2d969d6705fcf41235a28bd719bd",
+      "surface_rgb_sha256": "8891ed5b196916fbfc977c43a3ec6892d1ef2d969d6705fcf41235a28bd719bd",
+      "webcontents_rgb_sha256": "9d5a2e1708f7e507b5cb3b1d6ea6ff12aa667ed0a2a78947f0def8f769a0590e"
+    },
+    "repro-pill-mint-order-en-portrait-430-candidate": {
+      "surface_vs_first_changed": 0,
+      "post_cdp_vs_first_changed": 1,
+      "webcontents_dimensions": [
+        430,
+        1520
+      ],
+      "first_rgb_sha256": "ddf6663cdacd9a481428aee4e98d7cbea09ab4d6b5ada5c6ddf18f4e3a25988c",
+      "surface_rgb_sha256": "ddf6663cdacd9a481428aee4e98d7cbea09ab4d6b5ada5c6ddf18f4e3a25988c",
+      "webcontents_rgb_sha256": "3b050ae704b53b96a0e303d262a780d13333ca76f8121ce2aced834a534a8c1e"
+    },
+    "repro-pill-mint-order-en-portrait-430-baseline": {
+      "surface_vs_first_changed": 0,
+      "post_cdp_vs_first_changed": 0,
+      "webcontents_dimensions": [
+        430,
+        1520
+      ],
+      "first_rgb_sha256": "805777bc7b3cb958df2e1473a443ba12ca728790fbd99c1129f67e1d2fa4034f",
+      "surface_rgb_sha256": "805777bc7b3cb958df2e1473a443ba12ca728790fbd99c1129f67e1d2fa4034f",
+      "webcontents_rgb_sha256": "3b050ae704b53b96a0e303d262a780d13333ca76f8121ce2aced834a534a8c1e"
+    },
+    "repro-pill-mint-order-en-portrait-768-candidate": {
+      "surface_vs_first_changed": 0,
+      "post_cdp_vs_first_changed": 1,
+      "webcontents_dimensions": [
+        768,
+        1520
+      ],
+      "first_rgb_sha256": "cf09ce3eb069be1e2332eddf0d8a59fbf92fa3e7459c332858b887fae6041d13",
+      "surface_rgb_sha256": "cf09ce3eb069be1e2332eddf0d8a59fbf92fa3e7459c332858b887fae6041d13",
+      "webcontents_rgb_sha256": "d662b6e90d64a083ebb987a9592b0f7eaf9d8ac130be5a29299ab291100a3f73"
+    },
+    "repro-pill-mint-order-en-portrait-768-baseline": {
+      "surface_vs_first_changed": 0,
+      "post_cdp_vs_first_changed": 0,
+      "webcontents_dimensions": [
+        768,
+        1520
+      ],
+      "first_rgb_sha256": "56d3f33e839db738b8be63abd19a4b4cf80b5a7e0410f0c46e9286b14b0c862d",
+      "surface_rgb_sha256": "56d3f33e839db738b8be63abd19a4b4cf80b5a7e0410f0c46e9286b14b0c862d",
+      "webcontents_rgb_sha256": "d662b6e90d64a083ebb987a9592b0f7eaf9d8ac130be5a29299ab291100a3f73"
+    }
+  },
+  "stagePairs": {
+    "pill-contact-en-portrait-768": {
+      "webcontents_pair_changed": 0
+    },
+    "pill-order-ku-portrait-768": {
+      "webcontents_pair_changed": 0
+    },
+    "pill-order-en-portrait-768": {
+      "webcontents_pair_changed": 0
+    },
+    "pill-mint-contact-ku-portrait-430": {
+      "webcontents_pair_changed": 0
+    },
+    "pill-mint-contact-ku-portrait-768": {
+      "webcontents_pair_changed": 0
+    },
+    "pill-mint-order-ku-portrait-320": {
+      "webcontents_pair_changed": 0
+    },
+    "pill-mint-order-ku-portrait-430": {
+      "webcontents_pair_changed": 0
+    },
+    "pill-mint-order-ku-portrait-768": {
+      "webcontents_pair_changed": 0
+    },
+    "pill-mint-order-en-portrait-430": {
+      "webcontents_pair_changed": 0
+    },
+    "pill-mint-order-en-portrait-768": {
+      "webcontents_pair_changed": 0
+    }
+  },
+  "failureDetails": {
+    "pill-order-ku-portrait-768": {
+      "width": 768,
+      "height": 1520,
+      "changed_pixels": 1,
+      "total_pixels": 1167360,
+      "changed_fraction": 8.566337719298246e-7,
+      "mean_channel_error": 2.8554459064327486e-7,
+      "max_channel_error": 1,
+      "exact_pixels_equal": false
+    },
+    "pill-mint-contact-ku-portrait-768": {
+      "width": 768,
+      "height": 1520,
+      "changed_pixels": 1,
+      "total_pixels": 1167360,
+      "changed_fraction": 8.566337719298246e-7,
+      "mean_channel_error": 2.8554459064327486e-7,
+      "max_channel_error": 1,
+      "exact_pixels_equal": false
+    },
+    "pill-mint-order-ku-portrait-768": {
+      "width": 768,
+      "height": 1520,
+      "changed_pixels": 1,
+      "total_pixels": 1167360,
+      "changed_fraction": 8.566337719298246e-7,
+      "mean_channel_error": 2.8554459064327486e-7,
+      "max_channel_error": 1,
+      "exact_pixels_equal": false
+    },
+    "pill-mint-order-en-portrait-768": {
+      "width": 768,
+      "height": 1520,
+      "changed_pixels": 1,
+      "total_pixels": 1167360,
+      "changed_fraction": 8.566337719298246e-7,
+      "mean_channel_error": 2.8554459064327486e-7,
+      "max_channel_error": 1,
+      "exact_pixels_equal": false
+    }
+  },
+  "validator_replay": "native_pixel_parity_failed",
+  "gates": {
+    "matrix": {
+      "passed": false,
+      "code": "native_pixel_parity_failed"
+    },
+    "diagnostics": {
+      "passed": true
+    },
+    "chooser": {
+      "passed": false,
+      "code": "native_chooser_failed"
+    }
+  },
+  "errors": []
+}

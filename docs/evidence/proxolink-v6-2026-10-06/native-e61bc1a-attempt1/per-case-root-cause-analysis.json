@@ -1,0 +1,62 @@
+{
+  "scope": "Eight historical failures investigated using the new protected artifact; first acceptance frames remain authoritative. No causal product fix or native rerun follows this audit.",
+  "root_cause": "NOT PROVEN",
+  "observed_limits": [
+    "CDP cached Document body is zero bytes on all targeted roles; empty SHA256 cannot prove source/CSS/font-byte parity. DOM CSS fingerprints and every retained computed style match.",
+    "DOM SHA256 differs while normalized input fields and retained geometry/style/text hashes match. The artifact cannot enumerate the differing markup; unrecorded structure cannot be ruled out.",
+    "Later WebContents readback pairs all match, but each differs from its own original ADB crop by hundreds of thousands of RGB pixels; it is a separate diagnostic path/time, not proof that the original rendering surface matched.",
+    "All 36 SurfaceView PixelCopy crops match their own original screenshot. This rules out a simple ADB PNG-only discrepancy at the observed times; it does not locate the cause before/inside Flutter composition.",
+    "13 of 36 roles change exactly one pixel after CDP observations with unchanged measured element geometry/styles. The bundled observation sequence has several operations; no single operation is causally isolated.",
+    "Fixed same-role fresh-view A/A observations differ on five of eight cases. They rule out a candidate-endpoint-only explanation for those observations, without proving GPU nondeterminism."
+  ],
+  "records": [
+    {
+      "case_id": "pill-contact-en-portrait-768",
+      "path": "case-pill-contact-en-portrait-768.json",
+      "root_cause": "NOT PROVEN",
+      "current_changed_pixels": 0
+    },
+    {
+      "case_id": "pill-order-ku-portrait-768",
+      "path": "case-pill-order-ku-portrait-768.json",
+      "root_cause": "NOT PROVEN",
+      "current_changed_pixels": 1
+    },
+    {
+      "case_id": "pill-mint-contact-ku-portrait-768",
+      "path": "case-pill-mint-contact-ku-portrait-768.json",
+      "root_cause": "NOT PROVEN",
+      "current_changed_pixels": 1
+    },
+    {
+      "case_id": "pill-mint-order-ku-portrait-320",
+      "path": "case-pill-mint-order-ku-portrait-320.json",
+      "root_cause": "NOT PROVEN",
+      "current_changed_pixels": 0
+    },
+    {
+      "case_id": "pill-mint-order-ku-portrait-430",
+      "path": "case-pill-mint-order-ku-portrait-430.json",
+      "root_cause": "NOT PROVEN",
+      "current_changed_pixels": 0
+    },
+    {
+      "case_id": "pill-mint-order-ku-portrait-768",
+      "path": "case-pill-mint-order-ku-portrait-768.json",
+      "root_cause": "NOT PROVEN",
+      "current_changed_pixels": 1
+    },
+    {
+      "case_id": "pill-mint-order-en-portrait-430",
+      "path": "case-pill-mint-order-en-portrait-430.json",
+      "root_cause": "NOT PROVEN",
+      "current_changed_pixels": 0
+    },
+    {
+      "case_id": "pill-mint-order-en-portrait-768",
+      "path": "case-pill-mint-order-en-portrait-768.json",
+      "root_cause": "NOT PROVEN",
+      "current_changed_pixels": 1
+    }
+  ]
+}
