@@ -22,7 +22,7 @@ Server service-role and preview signing secrets belong only in the isolated serv
 
 Run the existing `node scripts/run-proxolink-staging.mjs` against those settings. It verifies the 12 combinations of 3 page types and 4 prepared designs, including database-generated PAGE UUIDs, distinct owner/request UUIDs, create/edit/preview/public rendering, stable URLs, other-owner denial, typed routes, retry and activate/deactivate behavior. It retains fictional staging fixtures for review. Do not run it against production or delete legacy customer data.
 
-The previously executed missing-configuration invocation rejected before mutations with exit code 1. Current result is 0/12 BLOCKED. The disposable PostgreSQL/API checks and read-only native catalog previews are separate evidence and do not satisfy this hosted gate.
+The previously executed missing-configuration invocation rejected before mutations with exit code 1. Current hosted result is 0/12 compatibility and 0/12 current Tools cases, BLOCKED before credentials or mutations. Mocked orchestration is separate passing evidence. The disposable PostgreSQL/API checks and read-only native catalog previews are separate evidence and do not satisfy this hosted gate.
 
 See [executed report](PROXOLINK_V6_EXECUTION_2026-10-07.md) for the precise current results and blockers.
 

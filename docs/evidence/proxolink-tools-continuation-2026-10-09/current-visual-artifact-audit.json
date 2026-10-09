@@ -1,627 +1,1626 @@
 {
-  "source_revision": "fb29a6adbc8120f04c1e80027416ec1278b5f4d4",
-  "workflow_run": 37974532861,
+  "source_revision": "c830a683b6b70ee91f5aebc002b1b4b424d5ac4a",
+  "workflow_run": 37983088739,
+  "artifact_id": 11642445622,
   "fictional_fixture_only": true,
   "native_evidence": false,
-  "artifact_integrity": [
-    {
-      "id": 11638188918,
-      "sha256": "3dc3d444f0e64e23d15d06f96aa7bbed3738227f726114c573f9c037af7f35fe",
-      "bytes": 4535376,
-      "zip_crc_verified": true,
-      "entries": 66
-    },
-    {
-      "id": 11638209572,
-      "sha256": "2149fbdfe92d23694102d4db3bdd4ff0e2a234e14bd18bea9c4710de6dfdee46",
-      "bytes": 1083,
-      "zip_crc_verified": true,
-      "entries": 1
-    },
-    {
-      "id": 11638735262,
-      "sha256": "6ad1c63af83325e64b51d9f00f77876163869c4b63e2f471d1eb1996f0403646",
-      "bytes": 1604642,
-      "zip_crc_verified": true,
-      "entries": 25
-    }
-  ],
-  "ui_png_count": 66,
+  "hosted_content_evidence": false,
+  "artifact_integrity": {
+    "bytes": 11122643,
+    "sha256": "a6d862373503fa5f722c6f99669f38b85a52311401fd9d10e58288a0802344c2",
+    "matches_provider_digest": true,
+    "zip_crc_verified": true
+  },
+  "ui_png_count": 146,
   "identical_retained_count": 58,
+  "new_actual_screen_count": 80,
+  "new_actual_screen_audit": "actual-screen-artifact-audit.json",
   "images": [
     {
-      "name": "cards-320.0.png",
-      "width": 320,
-      "height": 1100,
-      "bytes": 33647,
+      "file": "actual-ad-error-100ms-320.png",
+      "dimensions": [
+        320,
+        1200
+      ],
+      "sha256": "22026b35d6a2b6bf5e03ab750852cb65951333c11d3d1229ee1ca0516824c14e",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-ad-error-100ms-393.png",
+      "dimensions": [
+        393,
+        1200
+      ],
+      "sha256": "ad4c8e367f671e4d3cc292c56ba723279d8ece48650b3e87818f278dc542b33b",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-ad-error-100ms-430.png",
+      "dimensions": [
+        430,
+        1200
+      ],
+      "sha256": "9d7d5b1cff8e4aab71dafab6a80846e28e617b2b49f1d864b1734bf6fad72dce",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-ad-error-100ms-768.png",
+      "dimensions": [
+        768,
+        1200
+      ],
+      "sha256": "e6d0e7360cf060418dafb1988cfc02a8f149d3b401464ab8be8d5330cf9b1a2a",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-ad-error-400ms-320.png",
+      "dimensions": [
+        320,
+        1200
+      ],
+      "sha256": "84677d7dfd82021fd5b888dc75f1faf5755b4d99c7e60d96dbefb305c84ddf40",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-ad-error-400ms-393.png",
+      "dimensions": [
+        393,
+        1200
+      ],
+      "sha256": "f0f01ac389fb23c20499ec757920ffe8cf0c29958d55f778fa00e94a6a1185d0",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-ad-error-400ms-430.png",
+      "dimensions": [
+        430,
+        1200
+      ],
+      "sha256": "e2f8381eaddebf94c8c3d70978636417d6ecb0e222e362614eebcbd87781ae7a",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-ad-error-400ms-768.png",
+      "dimensions": [
+        768,
+        1200
+      ],
+      "sha256": "9fff126f5c96b11c16594e3c14214d018428a8eff84cd737cb514f6d86aec908",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-ad-error-4900ms-320.png",
+      "dimensions": [
+        320,
+        1200
+      ],
+      "sha256": "147e6521df3a64cd46a1d72467259e634bf63ec65a585b92fc6cd9e793f2986b",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-ad-error-4900ms-393.png",
+      "dimensions": [
+        393,
+        1200
+      ],
+      "sha256": "a3319a269b9d815a866f36de967163dcb2a187ad35e219a0e4c260f723e7f69c",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-ad-error-4900ms-430.png",
+      "dimensions": [
+        430,
+        1200
+      ],
+      "sha256": "adcf40a2e5fc19daf63e2581b50d647e41b23b0e0e1f7e6da4e54544fd01a0cb",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-ad-error-4900ms-768.png",
+      "dimensions": [
+        768,
+        1200
+      ],
+      "sha256": "1a6ce2a56584ebd650781e3b229c8fee64f7ae037c05700fad07a9e6d5a114ef",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-ad-error-5100ms-320.png",
+      "dimensions": [
+        320,
+        1200
+      ],
+      "sha256": "dd38ee9a85166342b48f9280999eafab3a0839bcd380db5d49e5bfde2f2e4076",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-ad-error-5100ms-393.png",
+      "dimensions": [
+        393,
+        1200
+      ],
+      "sha256": "c56e7e65a041fcbdc660f04d82aa62c5823660cbe520191a623e75c7a10dd163",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-ad-error-5100ms-430.png",
+      "dimensions": [
+        430,
+        1200
+      ],
+      "sha256": "759ebe414f608ec7785f33d11ba48058d2aaf86ca271765131f5ea23080f0f6a",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-ad-error-5100ms-768.png",
+      "dimensions": [
+        768,
+        1200
+      ],
+      "sha256": "6d7cb1963add2327e96ca2fde9a268d6808949c9f73bced117c5e7f169bfe561",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-ad-error-5500ms-320.png",
+      "dimensions": [
+        320,
+        1200
+      ],
+      "sha256": "c5e7ef542225a3f34508dc820eae2bb1d07986dd2ffaff57d5a4709516d726da",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-ad-error-5500ms-393.png",
+      "dimensions": [
+        393,
+        1200
+      ],
+      "sha256": "c6b1c2adb2f62f7a884d59ad78b10e0ad9c7d24947ea969d61ad4d1407b4b0d1",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-ad-error-5500ms-430.png",
+      "dimensions": [
+        430,
+        1200
+      ],
+      "sha256": "18b8941b64d71fc472e40b2def9f7885f404a124d75cca42fc5ba448c789f7fa",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-ad-error-5500ms-768.png",
+      "dimensions": [
+        768,
+        1200
+      ],
+      "sha256": "7a2fa6a3b67732125da9c453229771a4270ce925263fa002bb5433f37c5e92fa",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-ad-error-initial-320.png",
+      "dimensions": [
+        320,
+        1200
+      ],
+      "sha256": "65914801e7939b83d118be5141156df3cbad38d8302cff67265da6452a933794",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-ad-error-initial-393.png",
+      "dimensions": [
+        393,
+        1200
+      ],
+      "sha256": "b72bf71a2184d7c4cb9da56f6ab91759782d4d7b78d8da404378606e4932c332",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-ad-error-initial-430.png",
+      "dimensions": [
+        430,
+        1200
+      ],
+      "sha256": "c7062eee2e19cae06b7bc89d1bd390f1f01027cdf0d0f38082e7e5a4c2aba736",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-ad-error-initial-768.png",
+      "dimensions": [
+        768,
+        1200
+      ],
+      "sha256": "b09b4fd38154cf8be6015730230b86b5fdf9e074226e4175bc48a6336f99ed8a",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-home-refresh-100ms-320.png",
+      "dimensions": [
+        320,
+        1200
+      ],
+      "sha256": "13b3b7a4a933abbb6396127903573aa3f56b31494b0206dabd744a051f89c8ea",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-home-refresh-100ms-393.png",
+      "dimensions": [
+        393,
+        1200
+      ],
+      "sha256": "0ae770071de7ba6466e50e99be94f1c730168695797406b54b65f9a8159cd03f",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-home-refresh-100ms-430.png",
+      "dimensions": [
+        430,
+        1200
+      ],
+      "sha256": "0880110fd702ea0d10a0ebc36c5b5f17b162999e5a2b69227fbd559b95ec12d7",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-home-refresh-100ms-768.png",
+      "dimensions": [
+        768,
+        1200
+      ],
+      "sha256": "c41b617df10dfd8950c74d27bec8e7f1160dcac33866c019bac76113b43ebc35",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-home-refresh-300ms-320.png",
+      "dimensions": [
+        320,
+        1200
+      ],
+      "sha256": "8f76688b08928c54b327ae3d710d8efea52b4b054e4b08e0a0e5aac3080c45da",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-home-refresh-300ms-393.png",
+      "dimensions": [
+        393,
+        1200
+      ],
+      "sha256": "f5062c4d67a1620f924a388ec246ecbe8998015c98fcdaaa5422594cf075e135",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-home-refresh-300ms-430.png",
+      "dimensions": [
+        430,
+        1200
+      ],
+      "sha256": "c8de9d6425d7834721fea412a27ac8ff24c160236c947b037ec577631af49a97",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-home-refresh-300ms-768.png",
+      "dimensions": [
+        768,
+        1200
+      ],
+      "sha256": "a6eb742f6cde372360c5da2b763c1589a89a5a526954627dc189dd147eb7a7ec",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-home-refresh-initial-320.png",
+      "dimensions": [
+        320,
+        1200
+      ],
+      "sha256": "8c10499e66ca51da10dabfe2ef16e974af25da2bcafd3bec3ff89ad16873f749",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-home-refresh-initial-393.png",
+      "dimensions": [
+        393,
+        1200
+      ],
+      "sha256": "44e92d5d9a34987e4c041eb205e525d286813f408679818bd4564a48a4c5b75a",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-home-refresh-initial-430.png",
+      "dimensions": [
+        430,
+        1200
+      ],
+      "sha256": "842a7f033bd817a04884ad1f9adc39ed4df6746f431f9a8723a3917b6fb2f7ed",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-home-refresh-initial-768.png",
+      "dimensions": [
+        768,
+        1200
+      ],
+      "sha256": "706a3c1dc2b575ef0568729c783ea05e213ad3132f955b4438e57d0cefabe8e6",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-home-refresh-settled-320.png",
+      "dimensions": [
+        320,
+        1200
+      ],
+      "sha256": "aa312ba64e50b8d18770c262a9f0f2ea7b917269281f6162c7c63066cbe22166",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-home-refresh-settled-393.png",
+      "dimensions": [
+        393,
+        1200
+      ],
+      "sha256": "44e92d5d9a34987e4c041eb205e525d286813f408679818bd4564a48a4c5b75a",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-home-refresh-settled-430.png",
+      "dimensions": [
+        430,
+        1200
+      ],
+      "sha256": "842a7f033bd817a04884ad1f9adc39ed4df6746f431f9a8723a3917b6fb2f7ed",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-home-refresh-settled-768.png",
+      "dimensions": [
+        768,
+        1200
+      ],
+      "sha256": "706a3c1dc2b575ef0568729c783ea05e213ad3132f955b4438e57d0cefabe8e6",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-proxolink-error-100ms-320.png",
+      "dimensions": [
+        320,
+        1200
+      ],
+      "sha256": "0944b043eee0304f65641493ddc555f334d29ad1cf7141e59f127f18eb39069d",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-proxolink-error-100ms-393.png",
+      "dimensions": [
+        393,
+        1200
+      ],
+      "sha256": "973e2d47ab4290b3c9f3f46203a0dddbe0ffb7df835cb3faf8a09b10f8e0bdda",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-proxolink-error-100ms-430.png",
+      "dimensions": [
+        430,
+        1200
+      ],
+      "sha256": "50496ed7993922518b5a00a01f922abd32064e519bd8294e886148271dcf5e98",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-proxolink-error-100ms-768.png",
+      "dimensions": [
+        768,
+        1200
+      ],
+      "sha256": "e193808f8c324e6aa1d54d38b85805e726953969c5dd170761c4c43b06b8d25e",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-proxolink-error-400ms-320.png",
+      "dimensions": [
+        320,
+        1200
+      ],
+      "sha256": "125a1c16e4f304db36e7af0367e033db966d0c463887c6c6cc51777fcd34a38d",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-proxolink-error-400ms-393.png",
+      "dimensions": [
+        393,
+        1200
+      ],
+      "sha256": "9381f1fd7005e49affe65335fec15a6f3bd227cf542ba58d202043c3a9a811dc",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-proxolink-error-400ms-430.png",
+      "dimensions": [
+        430,
+        1200
+      ],
+      "sha256": "1175f4644cca483a72ff83ddeb10c16607edffb89ceb159216d8f9087b9159f9",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-proxolink-error-400ms-768.png",
+      "dimensions": [
+        768,
+        1200
+      ],
+      "sha256": "25ab29a397edc339bb5530e98ed6284d94cc813dd0b0e019fb209e21244f1a1a",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-proxolink-error-4900ms-320.png",
+      "dimensions": [
+        320,
+        1200
+      ],
+      "sha256": "a230bf1aecd23e2ce9ddc33c5ea7af0cd04243963a91ac789f6fe80ec63ffc60",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-proxolink-error-4900ms-393.png",
+      "dimensions": [
+        393,
+        1200
+      ],
+      "sha256": "db8f622c4383fc6c8bcdf24cf9601e2e6987ab52a373d778ee49b56d347d5fbd",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-proxolink-error-4900ms-430.png",
+      "dimensions": [
+        430,
+        1200
+      ],
+      "sha256": "e9038ccca7d21cdb0365a27fcecd5de33c6fd42646e4e392f071d999e51a5cae",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-proxolink-error-4900ms-768.png",
+      "dimensions": [
+        768,
+        1200
+      ],
+      "sha256": "54f5497f7618d812df9fa65bad2c587d1f01eb896d2809e6be7c47594045de49",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-proxolink-error-5100ms-320.png",
+      "dimensions": [
+        320,
+        1200
+      ],
+      "sha256": "134051692e396a2a73fc27b67c71bb296e2f00aaea357408db12e63c566b0bad",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-proxolink-error-5100ms-393.png",
+      "dimensions": [
+        393,
+        1200
+      ],
+      "sha256": "6c0fea4e1f855dd9821f3e849414f7b214965f7b157f6ed1c090e8c5f7ae152b",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-proxolink-error-5100ms-430.png",
+      "dimensions": [
+        430,
+        1200
+      ],
+      "sha256": "a7b79cc80c7f30be281d97752a43ac203991844420485cd9336508eb2e5ef9ef",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-proxolink-error-5100ms-768.png",
+      "dimensions": [
+        768,
+        1200
+      ],
+      "sha256": "cf726566db115cdd5941724e93b6ab0effc7562deb58683913410ddc7a065c35",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-proxolink-error-5500ms-320.png",
+      "dimensions": [
+        320,
+        1200
+      ],
+      "sha256": "249d510798542198c3260bbe7c76d7f8683b479812ecaf0c945ceebff55cbce4",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-proxolink-error-5500ms-393.png",
+      "dimensions": [
+        393,
+        1200
+      ],
+      "sha256": "c826479c81cabe8dc0697190d06f2ed2a0fbdb6e997009130060e25f5efdfdfb",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-proxolink-error-5500ms-430.png",
+      "dimensions": [
+        430,
+        1200
+      ],
+      "sha256": "f203ab69fca02ee528eecbfb382c0dbf7c5cff27f1d0b0c2c7fec5e542c3314d",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-proxolink-error-5500ms-768.png",
+      "dimensions": [
+        768,
+        1200
+      ],
+      "sha256": "bea6c4993fbad2f32624c28c6acdf25d625551bd9864c2eb1be7b8e79c5cc871",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-proxolink-error-initial-320.png",
+      "dimensions": [
+        320,
+        1200
+      ],
+      "sha256": "249d510798542198c3260bbe7c76d7f8683b479812ecaf0c945ceebff55cbce4",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-proxolink-error-initial-393.png",
+      "dimensions": [
+        393,
+        1200
+      ],
+      "sha256": "c826479c81cabe8dc0697190d06f2ed2a0fbdb6e997009130060e25f5efdfdfb",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-proxolink-error-initial-430.png",
+      "dimensions": [
+        430,
+        1200
+      ],
+      "sha256": "f203ab69fca02ee528eecbfb382c0dbf7c5cff27f1d0b0c2c7fec5e542c3314d",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-proxolink-error-initial-768.png",
+      "dimensions": [
+        768,
+        1200
+      ],
+      "sha256": "bea6c4993fbad2f32624c28c6acdf25d625551bd9864c2eb1be7b8e79c5cc871",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-tools-refresh-100ms-320.png",
+      "dimensions": [
+        320,
+        1200
+      ],
+      "sha256": "7c3078f5f9f96be348dd0dda8da3e5a35ec2446ed342421b44aff317a6e69ddf",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-tools-refresh-100ms-393.png",
+      "dimensions": [
+        393,
+        1200
+      ],
+      "sha256": "43e7dbdf20105d0df408b6eb2fded4356aa35559ee9b814d16564335b66cc6bc",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-tools-refresh-100ms-430.png",
+      "dimensions": [
+        430,
+        1200
+      ],
+      "sha256": "dd2fb233b818f597dbe021eeafa2da4cec159edc4a39c31742994d588e3dc424",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-tools-refresh-100ms-768.png",
+      "dimensions": [
+        768,
+        1200
+      ],
+      "sha256": "d0b86e0d008ff3a303f8dea229ec0e16b6991c72cd22a6e842068d69774ac449",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-tools-refresh-300ms-320.png",
+      "dimensions": [
+        320,
+        1200
+      ],
+      "sha256": "798e0a5026361c6ead7981bac0330550b583ab6864a2cfb8523e9a81199247b4",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-tools-refresh-300ms-393.png",
+      "dimensions": [
+        393,
+        1200
+      ],
+      "sha256": "b9c11246585422c00d3c9c639e00f34b76f5029efb074b408836f6f3085b316d",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-tools-refresh-300ms-430.png",
+      "dimensions": [
+        430,
+        1200
+      ],
+      "sha256": "e1642165fb4c0cc1ff04a1d8285e2701548f4cd536db65c26797baf0983ef3f4",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-tools-refresh-300ms-768.png",
+      "dimensions": [
+        768,
+        1200
+      ],
+      "sha256": "02102ef7f472baf2f937a4e74b824134c850d2d79b8f47c786115817f5e97098",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-tools-refresh-initial-320.png",
+      "dimensions": [
+        320,
+        1200
+      ],
+      "sha256": "d0e62cec79d3c746614afaf5e2f8da6d4222b7dfb0765eea53d9dcc7e0044397",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-tools-refresh-initial-393.png",
+      "dimensions": [
+        393,
+        1200
+      ],
+      "sha256": "d2ccde5dcb5315ac2e3368d1a005b27827d66d6e67e54d8d8b1bfdb5aec87a92",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-tools-refresh-initial-430.png",
+      "dimensions": [
+        430,
+        1200
+      ],
+      "sha256": "2a45cc2c47e34e1dc9ee8f560778aaddc853505925a40317e6ba439a65820072",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-tools-refresh-initial-768.png",
+      "dimensions": [
+        768,
+        1200
+      ],
+      "sha256": "2ebc9859c6dc7898cfb8ed5cb4f785ccb370e1a60458a4430425cde9ddfb45c5",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-tools-refresh-settled-320.png",
+      "dimensions": [
+        320,
+        1200
+      ],
+      "sha256": "d0e62cec79d3c746614afaf5e2f8da6d4222b7dfb0765eea53d9dcc7e0044397",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-tools-refresh-settled-393.png",
+      "dimensions": [
+        393,
+        1200
+      ],
+      "sha256": "d2ccde5dcb5315ac2e3368d1a005b27827d66d6e67e54d8d8b1bfdb5aec87a92",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-tools-refresh-settled-430.png",
+      "dimensions": [
+        430,
+        1200
+      ],
+      "sha256": "2a45cc2c47e34e1dc9ee8f560778aaddc853505925a40317e6ba439a65820072",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "actual-tools-refresh-settled-768.png",
+      "dimensions": [
+        768,
+        1200
+      ],
+      "sha256": "2ebc9859c6dc7898cfb8ed5cb4f785ccb370e1a60458a4430425cde9ddfb45c5",
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "actual-production-screen widget fixture"
+    },
+    {
+      "file": "cards-320.0.png",
+      "dimensions": [
+        320,
+        1100
+      ],
       "sha256": "5a9274ab037a0cd0c9eea2e9553afd6c39aae2ff83015a3ea16b14d63af7543b",
-      "existing_path": null,
-      "same_as_retained": false
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "widget fixture"
     },
     {
-      "name": "cards-375.0.png",
-      "width": 375,
-      "height": 1100,
-      "bytes": 34034,
+      "file": "cards-375.0.png",
+      "dimensions": [
+        375,
+        1100
+      ],
       "sha256": "f3b46dd1e6a3b0b9882a82842bdb12335dc67f1909233deaa4ac3010e952f3a1",
-      "existing_path": null,
-      "same_as_retained": false
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "widget fixture"
     },
     {
-      "name": "cards-393.0.png",
-      "width": 393,
-      "height": 1100,
-      "bytes": 34266,
+      "file": "cards-393.0.png",
+      "dimensions": [
+        393,
+        1100
+      ],
       "sha256": "ed06f3f19a146951fe910294444dd0f0115fc87302821e1d9c364bffecde3db5",
-      "existing_path": null,
-      "same_as_retained": false
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "widget fixture"
     },
     {
-      "name": "cards-430.0.png",
-      "width": 430,
-      "height": 1100,
-      "bytes": 34909,
+      "file": "cards-430.0.png",
+      "dimensions": [
+        430,
+        1100
+      ],
       "sha256": "12dcc5f6ba26413cd1c09f4b3be6310b22290d2f94d8d6d3c99cfda75e53068a",
-      "existing_path": null,
-      "same_as_retained": false
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "widget fixture"
     },
     {
-      "name": "cards-768.0.png",
-      "width": 768,
-      "height": 1100,
-      "bytes": 35783,
+      "file": "cards-768.0.png",
+      "dimensions": [
+        768,
+        1100
+      ],
       "sha256": "289776511a038111c68dd61c37d1af866658bf60e65533a8fe6587ea5b465363",
-      "existing_path": null,
-      "same_as_retained": false
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "widget fixture"
     },
     {
-      "name": "create-320.0.png",
-      "width": 320,
-      "height": 1200,
-      "bytes": 40310,
+      "file": "create-320.0.png",
+      "dimensions": [
+        320,
+        1200
+      ],
       "sha256": "5756a386f782418a8634f251f69f5497cc94cde0c2d80a8a8c53b9dd313da4f3",
-      "existing_path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-320.0.png",
-      "same_as_retained": true
+      "retained_path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-320.0.png",
+      "retained_byte_identical": true,
+      "scope": "widget fixture"
     },
     {
-      "name": "create-393.0.png",
-      "width": 393,
-      "height": 1200,
-      "bytes": 42027,
+      "file": "create-393.0.png",
+      "dimensions": [
+        393,
+        1200
+      ],
       "sha256": "c8955d06bd8041ffcc83690f3c9c7db3b90e0f3f810f251d72680a708360f08d",
-      "existing_path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-393.0.png",
-      "same_as_retained": true
+      "retained_path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-393.0.png",
+      "retained_byte_identical": true,
+      "scope": "widget fixture"
     },
     {
-      "name": "create-430.0.png",
-      "width": 430,
-      "height": 1200,
-      "bytes": 42333,
+      "file": "create-430.0.png",
+      "dimensions": [
+        430,
+        1200
+      ],
       "sha256": "d903c19a7f21cd4462f46aa144644ad5da8d9d1838f094475606d72307afc248",
-      "existing_path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-430.0.png",
-      "same_as_retained": true
+      "retained_path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-430.0.png",
+      "retained_byte_identical": true,
+      "scope": "widget fixture"
     },
     {
-      "name": "create-768.0.png",
-      "width": 768,
-      "height": 1200,
-      "bytes": 47324,
+      "file": "create-768.0.png",
+      "dimensions": [
+        768,
+        1200
+      ],
       "sha256": "cd02f871f594a0728205cff28538ce188c636847966f35e7ced75b7eac46cac8",
-      "existing_path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-768.0.png",
-      "same_as_retained": true
+      "retained_path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-768.0.png",
+      "retained_byte_identical": true,
+      "scope": "widget fixture"
     },
     {
-      "name": "create-style-bottom-contact-320.0.png",
-      "width": 320,
-      "height": 1200,
-      "bytes": 78881,
+      "file": "create-style-bottom-contact-320.0.png",
+      "dimensions": [
+        320,
+        1200
+      ],
       "sha256": "23e3af1725dc2f6315b666b26577949f79dfada5bf8e2b1822737d480ccd6f70",
-      "existing_path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-bottom-contact-320.0.png",
-      "same_as_retained": true
+      "retained_path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-bottom-contact-320.0.png",
+      "retained_byte_identical": true,
+      "scope": "widget fixture"
     },
     {
-      "name": "create-style-bottom-contact-393.0.png",
-      "width": 393,
-      "height": 1200,
-      "bytes": 138317,
+      "file": "create-style-bottom-contact-393.0.png",
+      "dimensions": [
+        393,
+        1200
+      ],
       "sha256": "078dbc594e6b7abc387b1e726c56b433d9e786d0ae49c602172152633b3a0e55",
-      "existing_path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-bottom-contact-393.0.png",
-      "same_as_retained": true
+      "retained_path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-bottom-contact-393.0.png",
+      "retained_byte_identical": true,
+      "scope": "widget fixture"
     },
     {
-      "name": "create-style-bottom-contact-430.0.png",
-      "width": 430,
-      "height": 1200,
-      "bytes": 133829,
+      "file": "create-style-bottom-contact-430.0.png",
+      "dimensions": [
+        430,
+        1200
+      ],
       "sha256": "17867473b37bbdd403d702c910f3eafc54adcdfb1e8d9b7740c1ff3ead933152",
-      "existing_path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-bottom-contact-430.0.png",
-      "same_as_retained": true
+      "retained_path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-bottom-contact-430.0.png",
+      "retained_byte_identical": true,
+      "scope": "widget fixture"
     },
     {
-      "name": "create-style-bottom-contact-768.0.png",
-      "width": 768,
-      "height": 1200,
-      "bytes": 142279,
+      "file": "create-style-bottom-contact-768.0.png",
+      "dimensions": [
+        768,
+        1200
+      ],
       "sha256": "ddd8c33f8e4d7a0f07c4dc3498c1fc2b8696f9b0d92d1af1ee2622ddcf1022ea",
-      "existing_path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-bottom-contact-768.0.png",
-      "same_as_retained": true
+      "retained_path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-bottom-contact-768.0.png",
+      "retained_byte_identical": true,
+      "scope": "widget fixture"
     },
     {
-      "name": "create-style-bottom-download-320.0.png",
-      "width": 320,
-      "height": 1200,
-      "bytes": 48509,
+      "file": "create-style-bottom-download-320.0.png",
+      "dimensions": [
+        320,
+        1200
+      ],
       "sha256": "32fe5470710a3eac17d227216ec177fd94ba164b5ca303625327f2dca709f11b",
-      "existing_path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-bottom-download-320.0.png",
-      "same_as_retained": true
+      "retained_path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-bottom-download-320.0.png",
+      "retained_byte_identical": true,
+      "scope": "widget fixture"
     },
     {
-      "name": "create-style-bottom-download-393.0.png",
-      "width": 393,
-      "height": 1200,
-      "bytes": 108657,
+      "file": "create-style-bottom-download-393.0.png",
+      "dimensions": [
+        393,
+        1200
+      ],
       "sha256": "933f6f850aaddd5ff2857423572010574a857134bafba238c78142d3146ba285",
-      "existing_path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-bottom-download-393.0.png",
-      "same_as_retained": true
+      "retained_path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-bottom-download-393.0.png",
+      "retained_byte_identical": true,
+      "scope": "widget fixture"
     },
     {
-      "name": "create-style-bottom-download-768.0.png",
-      "width": 768,
-      "height": 1200,
-      "bytes": 110278,
+      "file": "create-style-bottom-download-430.0.png",
+      "dimensions": [
+        430,
+        1200
+      ],
+      "sha256": "4bd66b9219a64c67f1da6981ea44d8e72ec319943b5ec8928d624ef682070cbb",
+      "retained_path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-bottom-download-430.0.png",
+      "retained_byte_identical": true,
+      "scope": "widget fixture"
+    },
+    {
+      "file": "create-style-bottom-download-768.0.png",
+      "dimensions": [
+        768,
+        1200
+      ],
       "sha256": "2475e01ef54d8135f601c354efda697926eff9c3eacdcb9c084fa5b640db5eac",
-      "existing_path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-bottom-download-768.0.png",
-      "same_as_retained": true
+      "retained_path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-bottom-download-768.0.png",
+      "retained_byte_identical": true,
+      "scope": "widget fixture"
     },
     {
-      "name": "create-style-bottom-download-430.0.png",
-      "width": 430,
-      "height": 1200,
-      "bytes": 110189,
-      "sha256": "4bd66b9219a64c67f1da6981ea44d8e72ec319943b5ec8928d624ef682070cbb",
-      "existing_path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-bottom-download-430.0.png",
-      "same_as_retained": true
-    },
-    {
-      "name": "create-style-bottom-order-320.0.png",
-      "width": 320,
-      "height": 1200,
-      "bytes": 63737,
+      "file": "create-style-bottom-order-320.0.png",
+      "dimensions": [
+        320,
+        1200
+      ],
       "sha256": "9e9e0010cf08fdd3e7d3d632f5d35cd9dd6ab7b80865e8ff3e38962da50c7bcc",
-      "existing_path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-bottom-order-320.0.png",
-      "same_as_retained": true
+      "retained_path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-bottom-order-320.0.png",
+      "retained_byte_identical": true,
+      "scope": "widget fixture"
     },
     {
-      "name": "create-style-bottom-order-393.0.png",
-      "width": 393,
-      "height": 1200,
-      "bytes": 121745,
+      "file": "create-style-bottom-order-393.0.png",
+      "dimensions": [
+        393,
+        1200
+      ],
       "sha256": "82c7b5dce2d0e7fa3a506f008fe781930d9d9ff0e9fd95ca02013437fd90488f",
-      "existing_path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-bottom-order-393.0.png",
-      "same_as_retained": true
+      "retained_path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-bottom-order-393.0.png",
+      "retained_byte_identical": true,
+      "scope": "widget fixture"
     },
     {
-      "name": "create-style-bottom-order-768.0.png",
-      "width": 768,
-      "height": 1200,
-      "bytes": 127289,
+      "file": "create-style-bottom-order-430.0.png",
+      "dimensions": [
+        430,
+        1200
+      ],
+      "sha256": "ba1c502cc3d688a60cc807ca5c00555a11508aa8c9a65eca7720666cd2dbfa20",
+      "retained_path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-bottom-order-430.0.png",
+      "retained_byte_identical": true,
+      "scope": "widget fixture"
+    },
+    {
+      "file": "create-style-bottom-order-768.0.png",
+      "dimensions": [
+        768,
+        1200
+      ],
       "sha256": "00f29ad17600bd72aa6f2ee5116b16b9b1ad1dc312fb826fbb9870ae0bd98ff3",
-      "existing_path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-bottom-order-768.0.png",
-      "same_as_retained": true
+      "retained_path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-bottom-order-768.0.png",
+      "retained_byte_identical": true,
+      "scope": "widget fixture"
     },
     {
-      "name": "create-style-contact-320.0.png",
-      "width": 320,
-      "height": 1200,
-      "bytes": 111518,
+      "file": "create-style-contact-320.0.png",
+      "dimensions": [
+        320,
+        1200
+      ],
       "sha256": "281a6b438d08cebe093c850dae2c513d8d3e18631105e31bf298481abc058969",
-      "existing_path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-contact-320.0.png",
-      "same_as_retained": true
+      "retained_path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-contact-320.0.png",
+      "retained_byte_identical": true,
+      "scope": "widget fixture"
     },
     {
-      "name": "create-style-bottom-order-430.0.png",
-      "width": 430,
-      "height": 1200,
-      "bytes": 123021,
-      "sha256": "ba1c502cc3d688a60cc807ca5c00555a11508aa8c9a65eca7720666cd2dbfa20",
-      "existing_path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-bottom-order-430.0.png",
-      "same_as_retained": true
-    },
-    {
-      "name": "create-style-contact-393.0.png",
-      "width": 393,
-      "height": 1200,
-      "bytes": 138317,
+      "file": "create-style-contact-393.0.png",
+      "dimensions": [
+        393,
+        1200
+      ],
       "sha256": "078dbc594e6b7abc387b1e726c56b433d9e786d0ae49c602172152633b3a0e55",
-      "existing_path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-contact-393.0.png",
-      "same_as_retained": true
+      "retained_path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-contact-393.0.png",
+      "retained_byte_identical": true,
+      "scope": "widget fixture"
     },
     {
-      "name": "create-style-contact-430.0.png",
-      "width": 430,
-      "height": 1200,
-      "bytes": 133829,
+      "file": "create-style-contact-430.0.png",
+      "dimensions": [
+        430,
+        1200
+      ],
       "sha256": "17867473b37bbdd403d702c910f3eafc54adcdfb1e8d9b7740c1ff3ead933152",
-      "existing_path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-contact-430.0.png",
-      "same_as_retained": true
+      "retained_path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-contact-430.0.png",
+      "retained_byte_identical": true,
+      "scope": "widget fixture"
     },
     {
-      "name": "create-style-contact-768.0.png",
-      "width": 768,
-      "height": 1200,
-      "bytes": 169164,
+      "file": "create-style-contact-768.0.png",
+      "dimensions": [
+        768,
+        1200
+      ],
       "sha256": "116d584d7d5d265f1bebc1df8f7770970753a62436d2d52527b43595706d8154",
-      "existing_path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-contact-768.0.png",
-      "same_as_retained": true
+      "retained_path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-contact-768.0.png",
+      "retained_byte_identical": true,
+      "scope": "widget fixture"
     },
     {
-      "name": "create-style-download-320.0.png",
-      "width": 320,
-      "height": 1200,
-      "bytes": 84519,
+      "file": "create-style-download-320.0.png",
+      "dimensions": [
+        320,
+        1200
+      ],
       "sha256": "e71e0d9820e02beb35c90f82504f3da551e6fc920175624387a3637d0685abc4",
-      "existing_path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-download-320.0.png",
-      "same_as_retained": true
+      "retained_path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-download-320.0.png",
+      "retained_byte_identical": true,
+      "scope": "widget fixture"
     },
     {
-      "name": "create-style-download-393.0.png",
-      "width": 393,
-      "height": 1200,
-      "bytes": 108657,
+      "file": "create-style-download-393.0.png",
+      "dimensions": [
+        393,
+        1200
+      ],
       "sha256": "933f6f850aaddd5ff2857423572010574a857134bafba238c78142d3146ba285",
-      "existing_path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-download-393.0.png",
-      "same_as_retained": true
+      "retained_path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-download-393.0.png",
+      "retained_byte_identical": true,
+      "scope": "widget fixture"
     },
     {
-      "name": "create-style-download-430.0.png",
-      "width": 430,
-      "height": 1200,
-      "bytes": 110189,
+      "file": "create-style-download-430.0.png",
+      "dimensions": [
+        430,
+        1200
+      ],
       "sha256": "4bd66b9219a64c67f1da6981ea44d8e72ec319943b5ec8928d624ef682070cbb",
-      "existing_path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-download-430.0.png",
-      "same_as_retained": true
+      "retained_path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-download-430.0.png",
+      "retained_byte_identical": true,
+      "scope": "widget fixture"
     },
     {
-      "name": "create-style-order-320.0.png",
-      "width": 320,
-      "height": 1200,
-      "bytes": 98125,
-      "sha256": "619cb88681d89496adf78a947bedd671b2496b690f00980d634f27c2a370e273",
-      "existing_path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-order-320.0.png",
-      "same_as_retained": true
-    },
-    {
-      "name": "create-style-download-768.0.png",
-      "width": 768,
-      "height": 1200,
-      "bytes": 137062,
+      "file": "create-style-download-768.0.png",
+      "dimensions": [
+        768,
+        1200
+      ],
       "sha256": "6518b36b12a23df9ff107a0fb16489f03ee386418001366d67d0d173da369438",
-      "existing_path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-download-768.0.png",
-      "same_as_retained": true
+      "retained_path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-download-768.0.png",
+      "retained_byte_identical": true,
+      "scope": "widget fixture"
     },
     {
-      "name": "create-style-order-393.0.png",
-      "width": 393,
-      "height": 1200,
-      "bytes": 121745,
+      "file": "create-style-order-320.0.png",
+      "dimensions": [
+        320,
+        1200
+      ],
+      "sha256": "619cb88681d89496adf78a947bedd671b2496b690f00980d634f27c2a370e273",
+      "retained_path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-order-320.0.png",
+      "retained_byte_identical": true,
+      "scope": "widget fixture"
+    },
+    {
+      "file": "create-style-order-393.0.png",
+      "dimensions": [
+        393,
+        1200
+      ],
       "sha256": "82c7b5dce2d0e7fa3a506f008fe781930d9d9ff0e9fd95ca02013437fd90488f",
-      "existing_path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-order-393.0.png",
-      "same_as_retained": true
+      "retained_path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-order-393.0.png",
+      "retained_byte_identical": true,
+      "scope": "widget fixture"
     },
     {
-      "name": "create-style-order-430.0.png",
-      "width": 430,
-      "height": 1200,
-      "bytes": 123021,
+      "file": "create-style-order-430.0.png",
+      "dimensions": [
+        430,
+        1200
+      ],
       "sha256": "ba1c502cc3d688a60cc807ca5c00555a11508aa8c9a65eca7720666cd2dbfa20",
-      "existing_path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-order-430.0.png",
-      "same_as_retained": true
+      "retained_path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-order-430.0.png",
+      "retained_byte_identical": true,
+      "scope": "widget fixture"
     },
     {
-      "name": "create-style-order-768.0.png",
-      "width": 768,
-      "height": 1200,
-      "bytes": 154772,
+      "file": "create-style-order-768.0.png",
+      "dimensions": [
+        768,
+        1200
+      ],
       "sha256": "5080d37dcca453c6c58063841ed26a5356836328f3882f72ed7c02a972ae8d0d",
-      "existing_path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-order-768.0.png",
-      "same_as_retained": true
+      "retained_path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-order-768.0.png",
+      "retained_byte_identical": true,
+      "scope": "widget fixture"
     },
     {
-      "name": "form-320.0.png",
-      "width": 320,
-      "height": 1000,
-      "bytes": 30201,
+      "file": "form-320.0.png",
+      "dimensions": [
+        320,
+        1000
+      ],
       "sha256": "a952e27f838479d15c857144fffd246f02ba2ea1f765b0671323a16c47028902",
-      "existing_path": null,
-      "same_as_retained": false
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "widget fixture"
     },
     {
-      "name": "form-393.0.png",
-      "width": 393,
-      "height": 1000,
-      "bytes": 30908,
+      "file": "form-393.0.png",
+      "dimensions": [
+        393,
+        1000
+      ],
       "sha256": "aa57aec34d5b9128cd4e3a43cd255763389784ef76a6a2b3ead248898e98670a",
-      "existing_path": null,
-      "same_as_retained": false
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "widget fixture"
     },
     {
-      "name": "form-768.0.png",
-      "width": 768,
-      "height": 1000,
-      "bytes": 34537,
+      "file": "form-768.0.png",
+      "dimensions": [
+        768,
+        1000
+      ],
       "sha256": "8e574e9beddc1442b1a9186106600b3b2a6818a12d5b0afcabe17a05cd915a05",
-      "existing_path": null,
-      "same_as_retained": false
+      "retained_path": null,
+      "retained_byte_identical": false,
+      "scope": "widget fixture"
     },
     {
-      "name": "home-shared-refresh-100ms.png",
-      "width": 393,
-      "height": 1200,
-      "bytes": 5442,
+      "file": "home-shared-refresh-100ms.png",
+      "dimensions": [
+        393,
+        1200
+      ],
       "sha256": "c668cd42dbca3ccaf36514cfe6586ad106ba412f86a3d77e1cc699e1978e8145",
-      "existing_path": "docs/evidence/proxolink-tools-2026-10-09/ui/home-shared-refresh-100ms.png",
-      "same_as_retained": true
+      "retained_path": "docs/evidence/proxolink-tools-2026-10-09/ui/home-shared-refresh-100ms.png",
+      "retained_byte_identical": true,
+      "scope": "widget fixture"
     },
     {
-      "name": "home-shared-refresh-300ms.png",
-      "width": 393,
-      "height": 1200,
-      "bytes": 5503,
+      "file": "home-shared-refresh-300ms.png",
+      "dimensions": [
+        393,
+        1200
+      ],
       "sha256": "740ee1bcbd6ce3ce21e5e0668629c45bc0398036a07820f1aefd26369a0dfcca",
-      "existing_path": "docs/evidence/proxolink-tools-2026-10-09/ui/home-shared-refresh-300ms.png",
-      "same_as_retained": true
+      "retained_path": "docs/evidence/proxolink-tools-2026-10-09/ui/home-shared-refresh-300ms.png",
+      "retained_byte_identical": true,
+      "scope": "widget fixture"
     },
     {
-      "name": "shared-create-ad-tools-error.png",
-      "width": 361,
-      "height": 141,
-      "bytes": 8627,
-      "sha256": "bf1bb7aa9beecf96baeaac80966b462385e7f72e7a4fbe251f44d758260564bf",
-      "existing_path": "docs/evidence/proxolink-tools-2026-10-09/ui/shared-create-ad-tools-error.png",
-      "same_as_retained": true
-    },
-    {
-      "name": "home-shared-refresh-settled.png",
-      "width": 393,
-      "height": 1200,
-      "bytes": 4732,
+      "file": "home-shared-refresh-settled.png",
+      "dimensions": [
+        393,
+        1200
+      ],
       "sha256": "2158e9022a43fb00b97b55bf6ad9e095fecc2c11bbf9c7e343fde1a16204ef2f",
-      "existing_path": "docs/evidence/proxolink-tools-2026-10-09/ui/home-shared-refresh-settled.png",
-      "same_as_retained": true
+      "retained_path": "docs/evidence/proxolink-tools-2026-10-09/ui/home-shared-refresh-settled.png",
+      "retained_byte_identical": true,
+      "scope": "widget fixture"
     },
     {
-      "name": "thumbnails-contact.png",
-      "width": 321,
-      "height": 934,
-      "bytes": 129803,
+      "file": "shared-create-ad-tools-error.png",
+      "dimensions": [
+        361,
+        141
+      ],
+      "sha256": "bf1bb7aa9beecf96baeaac80966b462385e7f72e7a4fbe251f44d758260564bf",
+      "retained_path": "docs/evidence/proxolink-tools-2026-10-09/ui/shared-create-ad-tools-error.png",
+      "retained_byte_identical": true,
+      "scope": "widget fixture"
+    },
+    {
+      "file": "thumbnails-contact.png",
+      "dimensions": [
+        321,
+        934
+      ],
       "sha256": "b4c49075fc3bc2f60abafa8bc103d696fbf99c87abb65276318d9f45a96db726",
-      "existing_path": "docs/evidence/proxolink-tools-2026-10-09/ui/thumbnails-contact.png",
-      "same_as_retained": true
+      "retained_path": "docs/evidence/proxolink-tools-2026-10-09/ui/thumbnails-contact.png",
+      "retained_byte_identical": true,
+      "scope": "widget fixture"
     },
     {
-      "name": "thumbnails-download.png",
-      "width": 321,
-      "height": 934,
-      "bytes": 100196,
+      "file": "thumbnails-download.png",
+      "dimensions": [
+        321,
+        934
+      ],
       "sha256": "bd8026b60982f985acecb34c6f3398634706eaec66d5a5a6ae4ce28eb9d31889",
-      "existing_path": "docs/evidence/proxolink-tools-2026-10-09/ui/thumbnails-download.png",
-      "same_as_retained": true
+      "retained_path": "docs/evidence/proxolink-tools-2026-10-09/ui/thumbnails-download.png",
+      "retained_byte_identical": true,
+      "scope": "widget fixture"
     },
     {
-      "name": "thumbnails-order.png",
-      "width": 321,
-      "height": 934,
-      "bytes": 113931,
+      "file": "thumbnails-order.png",
+      "dimensions": [
+        321,
+        934
+      ],
       "sha256": "bf0b40961d16d649e56c54b353cbfc3b4b302c587f1723adab08cb85ddea43e0",
-      "existing_path": "docs/evidence/proxolink-tools-2026-10-09/ui/thumbnails-order.png",
-      "same_as_retained": true
+      "retained_path": "docs/evidence/proxolink-tools-2026-10-09/ui/thumbnails-order.png",
+      "retained_byte_identical": true,
+      "scope": "widget fixture"
     },
     {
-      "name": "tools-320.0-status-1.png",
-      "width": 320,
-      "height": 1200,
-      "bytes": 62386,
+      "file": "tools-320.0-status-1.png",
+      "dimensions": [
+        320,
+        1200
+      ],
       "sha256": "df5d5f74fcb96a328ef5ce040e573e4d3a60b4e4c2262d4e012385fc637dd5d4",
-      "existing_path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-320.0-status-1.png",
-      "same_as_retained": true
+      "retained_path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-320.0-status-1.png",
+      "retained_byte_identical": true,
+      "scope": "widget fixture"
     },
     {
-      "name": "tools-320.0-status-2.png",
-      "width": 320,
-      "height": 1200,
-      "bytes": 62386,
+      "file": "tools-320.0-status-2.png",
+      "dimensions": [
+        320,
+        1200
+      ],
       "sha256": "df5d5f74fcb96a328ef5ce040e573e4d3a60b4e4c2262d4e012385fc637dd5d4",
-      "existing_path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-320.0-status-2.png",
-      "same_as_retained": true
+      "retained_path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-320.0-status-2.png",
+      "retained_byte_identical": true,
+      "scope": "widget fixture"
     },
     {
-      "name": "tools-320.0-status-3.png",
-      "width": 320,
-      "height": 1200,
-      "bytes": 62386,
+      "file": "tools-320.0-status-3.png",
+      "dimensions": [
+        320,
+        1200
+      ],
       "sha256": "df5d5f74fcb96a328ef5ce040e573e4d3a60b4e4c2262d4e012385fc637dd5d4",
-      "existing_path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-320.0-status-3.png",
-      "same_as_retained": true
+      "retained_path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-320.0-status-3.png",
+      "retained_byte_identical": true,
+      "scope": "widget fixture"
     },
     {
-      "name": "tools-393.0-status-1.png",
-      "width": 393,
-      "height": 1200,
-      "bytes": 78534,
+      "file": "tools-393.0-status-1.png",
+      "dimensions": [
+        393,
+        1200
+      ],
       "sha256": "2939b7c39c60063a272b8feea1124387f8785570e9e8569fb6375c5548698ad1",
-      "existing_path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-393.0-status-1.png",
-      "same_as_retained": true
+      "retained_path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-393.0-status-1.png",
+      "retained_byte_identical": true,
+      "scope": "widget fixture"
     },
     {
-      "name": "tools-393.0-status-2.png",
-      "width": 393,
-      "height": 1200,
-      "bytes": 78534,
+      "file": "tools-393.0-status-2.png",
+      "dimensions": [
+        393,
+        1200
+      ],
       "sha256": "2939b7c39c60063a272b8feea1124387f8785570e9e8569fb6375c5548698ad1",
-      "existing_path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-393.0-status-2.png",
-      "same_as_retained": true
+      "retained_path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-393.0-status-2.png",
+      "retained_byte_identical": true,
+      "scope": "widget fixture"
     },
     {
-      "name": "tools-393.0-status-3.png",
-      "width": 393,
-      "height": 1200,
-      "bytes": 78534,
+      "file": "tools-393.0-status-3.png",
+      "dimensions": [
+        393,
+        1200
+      ],
       "sha256": "2939b7c39c60063a272b8feea1124387f8785570e9e8569fb6375c5548698ad1",
-      "existing_path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-393.0-status-3.png",
-      "same_as_retained": true
+      "retained_path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-393.0-status-3.png",
+      "retained_byte_identical": true,
+      "scope": "widget fixture"
     },
     {
-      "name": "tools-430.0-status-1.png",
-      "width": 430,
-      "height": 1200,
-      "bytes": 79661,
+      "file": "tools-430.0-status-1.png",
+      "dimensions": [
+        430,
+        1200
+      ],
       "sha256": "f43ddf4132721a80b25340e5d073f7f1eaad496dd975c593152ba9145929cb2f",
-      "existing_path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-430.0-status-1.png",
-      "same_as_retained": true
+      "retained_path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-430.0-status-1.png",
+      "retained_byte_identical": true,
+      "scope": "widget fixture"
     },
     {
-      "name": "tools-430.0-status-2.png",
-      "width": 430,
-      "height": 1200,
-      "bytes": 79661,
+      "file": "tools-430.0-status-2.png",
+      "dimensions": [
+        430,
+        1200
+      ],
       "sha256": "f43ddf4132721a80b25340e5d073f7f1eaad496dd975c593152ba9145929cb2f",
-      "existing_path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-430.0-status-2.png",
-      "same_as_retained": true
+      "retained_path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-430.0-status-2.png",
+      "retained_byte_identical": true,
+      "scope": "widget fixture"
     },
     {
-      "name": "tools-430.0-status-3.png",
-      "width": 430,
-      "height": 1200,
-      "bytes": 79661,
+      "file": "tools-430.0-status-3.png",
+      "dimensions": [
+        430,
+        1200
+      ],
       "sha256": "f43ddf4132721a80b25340e5d073f7f1eaad496dd975c593152ba9145929cb2f",
-      "existing_path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-430.0-status-3.png",
-      "same_as_retained": true
+      "retained_path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-430.0-status-3.png",
+      "retained_byte_identical": true,
+      "scope": "widget fixture"
     },
     {
-      "name": "tools-768.0-status-1.png",
-      "width": 768,
-      "height": 1200,
-      "bytes": 84678,
+      "file": "tools-768.0-status-1.png",
+      "dimensions": [
+        768,
+        1200
+      ],
       "sha256": "0b86e29c38fb28476ff0f18b2205b0996ce626444a91b61a5067f2e55acacfaa",
-      "existing_path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-768.0-status-1.png",
-      "same_as_retained": true
+      "retained_path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-768.0-status-1.png",
+      "retained_byte_identical": true,
+      "scope": "widget fixture"
     },
     {
-      "name": "tools-768.0-status-2.png",
-      "width": 768,
-      "height": 1200,
-      "bytes": 84678,
+      "file": "tools-768.0-status-2.png",
+      "dimensions": [
+        768,
+        1200
+      ],
       "sha256": "0b86e29c38fb28476ff0f18b2205b0996ce626444a91b61a5067f2e55acacfaa",
-      "existing_path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-768.0-status-2.png",
-      "same_as_retained": true
+      "retained_path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-768.0-status-2.png",
+      "retained_byte_identical": true,
+      "scope": "widget fixture"
     },
     {
-      "name": "tools-768.0-status-3.png",
-      "width": 768,
-      "height": 1200,
-      "bytes": 84678,
+      "file": "tools-768.0-status-3.png",
+      "dimensions": [
+        768,
+        1200
+      ],
       "sha256": "0b86e29c38fb28476ff0f18b2205b0996ce626444a91b61a5067f2e55acacfaa",
-      "existing_path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-768.0-status-3.png",
-      "same_as_retained": true
+      "retained_path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-768.0-status-3.png",
+      "retained_byte_identical": true,
+      "scope": "widget fixture"
     },
     {
-      "name": "tools-empty-320.0.png",
-      "width": 320,
-      "height": 1200,
-      "bytes": 15404,
+      "file": "tools-empty-320.0.png",
+      "dimensions": [
+        320,
+        1200
+      ],
       "sha256": "b4209f86c1eeb1f1615e22df0b58a5a96d3870e958664a4eb98fcc60134c9cd5",
-      "existing_path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-empty-320.0.png",
-      "same_as_retained": true
+      "retained_path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-empty-320.0.png",
+      "retained_byte_identical": true,
+      "scope": "widget fixture"
     },
     {
-      "name": "tools-empty-430.0.png",
-      "width": 430,
-      "height": 1200,
-      "bytes": 16084,
-      "sha256": "9137df9d5942502f3f0010856244cab775965dcf49fad96964aa7ebd80c7964a",
-      "existing_path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-empty-430.0.png",
-      "same_as_retained": true
-    },
-    {
-      "name": "tools-empty-393.0.png",
-      "width": 393,
-      "height": 1200,
-      "bytes": 15681,
+      "file": "tools-empty-393.0.png",
+      "dimensions": [
+        393,
+        1200
+      ],
       "sha256": "3322e9151be7d764ce5661aedc39d9f9ea40da16520a8583bef04c67b06fa47e",
-      "existing_path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-empty-393.0.png",
-      "same_as_retained": true
+      "retained_path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-empty-393.0.png",
+      "retained_byte_identical": true,
+      "scope": "widget fixture"
     },
     {
-      "name": "tools-empty-768.0.png",
-      "width": 768,
-      "height": 1200,
-      "bytes": 17653,
+      "file": "tools-empty-430.0.png",
+      "dimensions": [
+        430,
+        1200
+      ],
+      "sha256": "9137df9d5942502f3f0010856244cab775965dcf49fad96964aa7ebd80c7964a",
+      "retained_path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-empty-430.0.png",
+      "retained_byte_identical": true,
+      "scope": "widget fixture"
+    },
+    {
+      "file": "tools-empty-768.0.png",
+      "dimensions": [
+        768,
+        1200
+      ],
       "sha256": "fe9030bb043a01c9290c1d33123f3331ad7b3630923c5e742cd518319c9b7b95",
-      "existing_path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-empty-768.0.png",
-      "same_as_retained": true
+      "retained_path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-empty-768.0.png",
+      "retained_byte_identical": true,
+      "scope": "widget fixture"
     },
     {
-      "name": "tools-error-320.0.png",
-      "width": 320,
-      "height": 1200,
-      "bytes": 18014,
+      "file": "tools-error-320.0.png",
+      "dimensions": [
+        320,
+        1200
+      ],
       "sha256": "030e082f14c29949fb5a1fb40ba7fd7a515eef8011243877012a93bc61e9b94b",
-      "existing_path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-error-320.0.png",
-      "same_as_retained": true
+      "retained_path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-error-320.0.png",
+      "retained_byte_identical": true,
+      "scope": "widget fixture"
     },
     {
-      "name": "tools-error-393.0.png",
-      "width": 393,
-      "height": 1200,
-      "bytes": 18238,
+      "file": "tools-error-393.0.png",
+      "dimensions": [
+        393,
+        1200
+      ],
       "sha256": "f017544012c5ea520724006d34091b9e794d6cf2e8bdc2b0bdf6e239b674c78a",
-      "existing_path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-error-393.0.png",
-      "same_as_retained": true
+      "retained_path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-error-393.0.png",
+      "retained_byte_identical": true,
+      "scope": "widget fixture"
     },
     {
-      "name": "tools-error-430.0.png",
-      "width": 430,
-      "height": 1200,
-      "bytes": 18886,
+      "file": "tools-error-430.0.png",
+      "dimensions": [
+        430,
+        1200
+      ],
       "sha256": "f01c9b28c354d6494d8cb60c52863efb2a2888a34a6016761adfd792e5ccdde9",
-      "existing_path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-error-430.0.png",
-      "same_as_retained": true
+      "retained_path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-error-430.0.png",
+      "retained_byte_identical": true,
+      "scope": "widget fixture"
     },
     {
-      "name": "tools-error-768.0.png",
-      "width": 768,
-      "height": 1200,
-      "bytes": 20852,
+      "file": "tools-error-768.0.png",
+      "dimensions": [
+        768,
+        1200
+      ],
       "sha256": "78c354589c6b2f2ffa959a23588b11ad4209a3910454d52a4ebba6af63ab7ac7",
-      "existing_path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-error-768.0.png",
-      "same_as_retained": true
+      "retained_path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-error-768.0.png",
+      "retained_byte_identical": true,
+      "scope": "widget fixture"
     },
     {
-      "name": "tools-shared-refresh-100ms.png",
-      "width": 393,
-      "height": 1200,
-      "bytes": 20718,
+      "file": "tools-shared-refresh-100ms.png",
+      "dimensions": [
+        393,
+        1200
+      ],
       "sha256": "81f9e926a6851092da7c7f2618e731e7ff8ef071761ecf7fab5c76fced8cc53f",
-      "existing_path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-shared-refresh-100ms.png",
-      "same_as_retained": true
+      "retained_path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-shared-refresh-100ms.png",
+      "retained_byte_identical": true,
+      "scope": "widget fixture"
     },
     {
-      "name": "tools-shared-refresh-300ms.png",
-      "width": 393,
-      "height": 1200,
-      "bytes": 21879,
+      "file": "tools-shared-refresh-300ms.png",
+      "dimensions": [
+        393,
+        1200
+      ],
       "sha256": "26037c9ababdb7d3172239ae0db073d1c10ec154837afb50cc91eb8d0b3ff40b",
-      "existing_path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-shared-refresh-300ms.png",
-      "same_as_retained": true
+      "retained_path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-shared-refresh-300ms.png",
+      "retained_byte_identical": true,
+      "scope": "widget fixture"
     },
     {
-      "name": "tools-shared-refresh-settled.png",
-      "width": 393,
-      "height": 1200,
-      "bytes": 20718,
+      "file": "tools-shared-refresh-settled.png",
+      "dimensions": [
+        393,
+        1200
+      ],
       "sha256": "81f9e926a6851092da7c7f2618e731e7ff8ef071761ecf7fab5c76fced8cc53f",
-      "existing_path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-shared-refresh-settled.png",
-      "same_as_retained": true
+      "retained_path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-shared-refresh-settled.png",
+      "retained_byte_identical": true,
+      "scope": "widget fixture"
     }
   ]
 }

@@ -1,0 +1,13 @@
+{
+  "status": "Pending final-source protected workflow request",
+  "executable_sha": "c830a683b6b70ee91f5aebc002b1b4b424d5ac4a",
+  "environment": "proxolink-preview-verification",
+  "configured_reviewer": "Zana-Sponsor",
+  "required_action": "Review deployments \u2192 proxolink-preview-verification \u2192 Approve and deploy",
+  "reviewer_approval_required": true,
+  "agent_approval_supplied": false,
+  "protection_changed": false,
+  "current_native_runtime_verified": false,
+  "previous_request_run_id": 37974532875,
+  "previous_request_sha": "fb29a6adbc8120f04c1e80027416ec1278b5f4d4"
+}

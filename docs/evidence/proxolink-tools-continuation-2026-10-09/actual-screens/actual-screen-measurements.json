@@ -1,0 +1,609 @@
+{
+  "evidence_type": "Flutter widget test of actual production screen classes",
+  "fictional_backends": true,
+  "native_device": false,
+  "hosted_content": false,
+  "permission_requests": 0,
+  "cases": {
+    "home-refresh-320": {
+      "offsets_100_300": [
+        35.151148562365506,
+        62.837484165613716
+      ],
+      "settled_offset": 0.0,
+      "collection_reads_added": 1,
+      "same_scroll_element": true,
+      "spinner_closed": true,
+      "phase_clock": "fixed fake-clock milliseconds after initial widget ticker timestamp"
+    },
+    "tools-refresh-320": {
+      "offsets_100_300": [
+        35.151148562365506,
+        62.837484165613716
+      ],
+      "settled_offset": 0.0,
+      "collection_reads_added": 1,
+      "same_scroll_element": true,
+      "spinner_closed": true,
+      "phase_clock": "fixed fake-clock milliseconds after initial widget ticker timestamp"
+    },
+    "ad-error-320": {
+      "notice_counts": {
+        "100ms": 2,
+        "400ms": 2,
+        "4900ms": 2,
+        "5100ms": 2,
+        "5500ms": 0
+      },
+      "visual_state": {
+        "100ms": {
+          "opacity": [
+            0.35000000000000003,
+            0.016666666666666666
+          ],
+          "size_factor": [
+            0.35000000000000003,
+            0.016666666666666666
+          ]
+        },
+        "400ms": {
+          "opacity": [
+            1.0,
+            1.0
+          ],
+          "size_factor": [
+            1.0,
+            1.0
+          ]
+        },
+        "4900ms": {
+          "opacity": [
+            1.0,
+            1.0
+          ],
+          "size_factor": [
+            1.0,
+            1.0
+          ]
+        },
+        "5100ms": {
+          "opacity": [
+            0.6333333333333333,
+            0.9666666666666667
+          ],
+          "size_factor": [
+            0.6333333333333333,
+            0.9666666666666667
+          ]
+        },
+        "5500ms": {
+          "opacity": [],
+          "size_factor": []
+        }
+      },
+      "appearance": {
+        "decoration": "BoxDecoration(color: Color(alpha: 1.0000, red: 1.0000, green: 1.0000, blue: 1.0000, colorSpace: ColorSpace.sRGB), border: BorderDirectional(start: BorderSide(color: Color(alpha: 1.0000, red: 0.7176, green: 0.2863, blue: 0.3373, colorSpace: ColorSpace.sRGB), width: 3.0)),\n  boxShadow: [BoxShadow(Color(alpha: 0.0941, red: 0.0588, green:\n    0.0902, blue: 0.1647, colorSpace: ColorSpace.sRGB), Offset(0.0,\n    7.0), 14.0, 0.0, BlurStyle.normal), BoxShadow(Color(alpha:\n    0.0471, red: 0.0588, green: 0.0902, blue: 0.1647, colorSpace:\n    ColorSpace.sRGB), Offset(2.0, 3.0), 1.0, 1.0, BlurStyle.normal)]\n  )",
+        "text_style": "TextStyle(debugLabel: (((englishLike bodyMedium 2021).merge(((blackMountainView bodyMedium).apply).apply)).copyWith).copyWith, inherit: false, color: Color(alpha: 1.0000, red: 0.0667, green: 0.0667, blue: 0.0667, colorSpace: ColorSpace.sRGB), family: Rabar, size: 14.0, weight: 400, letterSpacing: 0.3, baseline: alphabetic, height: 1.4x, leadingDistribution: even, decoration: Color(alpha: 1.0000, red: 0.1137, green: 0.1059, blue: 0.1255, colorSpace: ColorSpace.sRGB) TextDecoration.none)",
+        "icon_size": 18.0,
+        "icon_color": 4290201942
+      },
+      "real_form_validation": true,
+      "submit_input": "WidgetTester.tap",
+      "automatic_exit": true
+    },
+    "proxolink-error-320": {
+      "notice_counts": {
+        "100ms": 2,
+        "400ms": 2,
+        "4900ms": 2,
+        "5100ms": 2,
+        "5500ms": 0
+      },
+      "visual_state": {
+        "100ms": {
+          "opacity": [
+            0.35000000000000003,
+            0.016666666666666666
+          ],
+          "size_factor": [
+            0.35000000000000003,
+            0.016666666666666666
+          ]
+        },
+        "400ms": {
+          "opacity": [
+            1.0,
+            1.0
+          ],
+          "size_factor": [
+            1.0,
+            1.0
+          ]
+        },
+        "4900ms": {
+          "opacity": [
+            1.0,
+            1.0
+          ],
+          "size_factor": [
+            1.0,
+            1.0
+          ]
+        },
+        "5100ms": {
+          "opacity": [
+            0.6333333333333333,
+            0.9666666666666667
+          ],
+          "size_factor": [
+            0.6333333333333333,
+            0.9666666666666667
+          ]
+        },
+        "5500ms": {
+          "opacity": [],
+          "size_factor": []
+        }
+      },
+      "appearance": {
+        "decoration": "BoxDecoration(color: Color(alpha: 1.0000, red: 1.0000, green: 1.0000, blue: 1.0000, colorSpace: ColorSpace.sRGB), border: BorderDirectional(start: BorderSide(color: Color(alpha: 1.0000, red: 0.7176, green: 0.2863, blue: 0.3373, colorSpace: ColorSpace.sRGB), width: 3.0)),\n  boxShadow: [BoxShadow(Color(alpha: 0.0941, red: 0.0588, green:\n    0.0902, blue: 0.1647, colorSpace: ColorSpace.sRGB), Offset(0.0,\n    7.0), 14.0, 0.0, BlurStyle.normal), BoxShadow(Color(alpha:\n    0.0471, red: 0.0588, green: 0.0902, blue: 0.1647, colorSpace:\n    ColorSpace.sRGB), Offset(2.0, 3.0), 1.0, 1.0, BlurStyle.normal)]\n  )",
+        "text_style": "TextStyle(debugLabel: (((englishLike bodyMedium 2021).merge(((blackMountainView bodyMedium).apply).apply)).copyWith).copyWith, inherit: false, color: Color(alpha: 1.0000, red: 0.0667, green: 0.0667, blue: 0.0667, colorSpace: ColorSpace.sRGB), family: Rabar, size: 14.0, weight: 400, letterSpacing: 0.3, baseline: alphabetic, height: 1.4x, leadingDistribution: even, decoration: Color(alpha: 1.0000, red: 0.1137, green: 0.1059, blue: 0.1255, colorSpace: ColorSpace.sRGB) TextDecoration.none)",
+        "icon_size": 18.0,
+        "icon_color": 4290201942
+      },
+      "real_form_validation": true,
+      "submit_input": "WidgetTester.tap",
+      "automatic_exit": true
+    },
+    "home-refresh-393": {
+      "offsets_100_300": [
+        35.151148562365506,
+        62.837484165613716
+      ],
+      "settled_offset": 0.0,
+      "collection_reads_added": 1,
+      "same_scroll_element": true,
+      "spinner_closed": true,
+      "phase_clock": "fixed fake-clock milliseconds after initial widget ticker timestamp"
+    },
+    "tools-refresh-393": {
+      "offsets_100_300": [
+        35.151148562365506,
+        62.837484165613716
+      ],
+      "settled_offset": 0.0,
+      "collection_reads_added": 1,
+      "same_scroll_element": true,
+      "spinner_closed": true,
+      "phase_clock": "fixed fake-clock milliseconds after initial widget ticker timestamp"
+    },
+    "ad-error-393": {
+      "notice_counts": {
+        "100ms": 2,
+        "400ms": 2,
+        "4900ms": 2,
+        "5100ms": 2,
+        "5500ms": 0
+      },
+      "visual_state": {
+        "100ms": {
+          "opacity": [
+            0.35000000000000003,
+            0.016666666666666666
+          ],
+          "size_factor": [
+            0.35000000000000003,
+            0.016666666666666666
+          ]
+        },
+        "400ms": {
+          "opacity": [
+            1.0,
+            1.0
+          ],
+          "size_factor": [
+            1.0,
+            1.0
+          ]
+        },
+        "4900ms": {
+          "opacity": [
+            1.0,
+            1.0
+          ],
+          "size_factor": [
+            1.0,
+            1.0
+          ]
+        },
+        "5100ms": {
+          "opacity": [
+            0.6333333333333333,
+            0.9666666666666667
+          ],
+          "size_factor": [
+            0.6333333333333333,
+            0.9666666666666667
+          ]
+        },
+        "5500ms": {
+          "opacity": [],
+          "size_factor": []
+        }
+      },
+      "appearance": {
+        "decoration": "BoxDecoration(color: Color(alpha: 1.0000, red: 1.0000, green: 1.0000, blue: 1.0000, colorSpace: ColorSpace.sRGB), border: BorderDirectional(start: BorderSide(color: Color(alpha: 1.0000, red: 0.7176, green: 0.2863, blue: 0.3373, colorSpace: ColorSpace.sRGB), width: 3.0)),\n  boxShadow: [BoxShadow(Color(alpha: 0.0941, red: 0.0588, green:\n    0.0902, blue: 0.1647, colorSpace: ColorSpace.sRGB), Offset(0.0,\n    7.0), 14.0, 0.0, BlurStyle.normal), BoxShadow(Color(alpha:\n    0.0471, red: 0.0588, green: 0.0902, blue: 0.1647, colorSpace:\n    ColorSpace.sRGB), Offset(2.0, 3.0), 1.0, 1.0, BlurStyle.normal)]\n  )",
+        "text_style": "TextStyle(debugLabel: (((englishLike bodyMedium 2021).merge(((blackMountainView bodyMedium).apply).apply)).copyWith).copyWith, inherit: false, color: Color(alpha: 1.0000, red: 0.0667, green: 0.0667, blue: 0.0667, colorSpace: ColorSpace.sRGB), family: Rabar, size: 14.0, weight: 400, letterSpacing: 0.3, baseline: alphabetic, height: 1.4x, leadingDistribution: even, decoration: Color(alpha: 1.0000, red: 0.1137, green: 0.1059, blue: 0.1255, colorSpace: ColorSpace.sRGB) TextDecoration.none)",
+        "icon_size": 18.0,
+        "icon_color": 4290201942
+      },
+      "real_form_validation": true,
+      "submit_input": "WidgetTester.tap",
+      "automatic_exit": true
+    },
+    "proxolink-error-393": {
+      "notice_counts": {
+        "100ms": 2,
+        "400ms": 2,
+        "4900ms": 2,
+        "5100ms": 2,
+        "5500ms": 0
+      },
+      "visual_state": {
+        "100ms": {
+          "opacity": [
+            0.35000000000000003,
+            0.016666666666666666
+          ],
+          "size_factor": [
+            0.35000000000000003,
+            0.016666666666666666
+          ]
+        },
+        "400ms": {
+          "opacity": [
+            1.0,
+            1.0
+          ],
+          "size_factor": [
+            1.0,
+            1.0
+          ]
+        },
+        "4900ms": {
+          "opacity": [
+            1.0,
+            1.0
+          ],
+          "size_factor": [
+            1.0,
+            1.0
+          ]
+        },
+        "5100ms": {
+          "opacity": [
+            0.6333333333333333,
+            0.9666666666666667
+          ],
+          "size_factor": [
+            0.6333333333333333,
+            0.9666666666666667
+          ]
+        },
+        "5500ms": {
+          "opacity": [],
+          "size_factor": []
+        }
+      },
+      "appearance": {
+        "decoration": "BoxDecoration(color: Color(alpha: 1.0000, red: 1.0000, green: 1.0000, blue: 1.0000, colorSpace: ColorSpace.sRGB), border: BorderDirectional(start: BorderSide(color: Color(alpha: 1.0000, red: 0.7176, green: 0.2863, blue: 0.3373, colorSpace: ColorSpace.sRGB), width: 3.0)),\n  boxShadow: [BoxShadow(Color(alpha: 0.0941, red: 0.0588, green:\n    0.0902, blue: 0.1647, colorSpace: ColorSpace.sRGB), Offset(0.0,\n    7.0), 14.0, 0.0, BlurStyle.normal), BoxShadow(Color(alpha:\n    0.0471, red: 0.0588, green: 0.0902, blue: 0.1647, colorSpace:\n    ColorSpace.sRGB), Offset(2.0, 3.0), 1.0, 1.0, BlurStyle.normal)]\n  )",
+        "text_style": "TextStyle(debugLabel: (((englishLike bodyMedium 2021).merge(((blackMountainView bodyMedium).apply).apply)).copyWith).copyWith, inherit: false, color: Color(alpha: 1.0000, red: 0.0667, green: 0.0667, blue: 0.0667, colorSpace: ColorSpace.sRGB), family: Rabar, size: 14.0, weight: 400, letterSpacing: 0.3, baseline: alphabetic, height: 1.4x, leadingDistribution: even, decoration: Color(alpha: 1.0000, red: 0.1137, green: 0.1059, blue: 0.1255, colorSpace: ColorSpace.sRGB) TextDecoration.none)",
+        "icon_size": 18.0,
+        "icon_color": 4290201942
+      },
+      "real_form_validation": true,
+      "submit_input": "WidgetTester.tap",
+      "automatic_exit": true
+    },
+    "home-refresh-430": {
+      "offsets_100_300": [
+        35.151148562365506,
+        62.837484165613716
+      ],
+      "settled_offset": 0.0,
+      "collection_reads_added": 1,
+      "same_scroll_element": true,
+      "spinner_closed": true,
+      "phase_clock": "fixed fake-clock milliseconds after initial widget ticker timestamp"
+    },
+    "tools-refresh-430": {
+      "offsets_100_300": [
+        35.151148562365506,
+        62.837484165613716
+      ],
+      "settled_offset": 0.0,
+      "collection_reads_added": 1,
+      "same_scroll_element": true,
+      "spinner_closed": true,
+      "phase_clock": "fixed fake-clock milliseconds after initial widget ticker timestamp"
+    },
+    "ad-error-430": {
+      "notice_counts": {
+        "100ms": 2,
+        "400ms": 2,
+        "4900ms": 2,
+        "5100ms": 2,
+        "5500ms": 0
+      },
+      "visual_state": {
+        "100ms": {
+          "opacity": [
+            0.35000000000000003,
+            0.016666666666666666
+          ],
+          "size_factor": [
+            0.35000000000000003,
+            0.016666666666666666
+          ]
+        },
+        "400ms": {
+          "opacity": [
+            1.0,
+            1.0
+          ],
+          "size_factor": [
+            1.0,
+            1.0
+          ]
+        },
+        "4900ms": {
+          "opacity": [
+            1.0,
+            1.0
+          ],
+          "size_factor": [
+            1.0,
+            1.0
+          ]
+        },
+        "5100ms": {
+          "opacity": [
+            0.6333333333333333,
+            0.9666666666666667
+          ],
+          "size_factor": [
+            0.6333333333333333,
+            0.9666666666666667
+          ]
+        },
+        "5500ms": {
+          "opacity": [],
+          "size_factor": []
+        }
+      },
+      "appearance": {
+        "decoration": "BoxDecoration(color: Color(alpha: 1.0000, red: 1.0000, green: 1.0000, blue: 1.0000, colorSpace: ColorSpace.sRGB), border: BorderDirectional(start: BorderSide(color: Color(alpha: 1.0000, red: 0.7176, green: 0.2863, blue: 0.3373, colorSpace: ColorSpace.sRGB), width: 3.0)),\n  boxShadow: [BoxShadow(Color(alpha: 0.0941, red: 0.0588, green:\n    0.0902, blue: 0.1647, colorSpace: ColorSpace.sRGB), Offset(0.0,\n    7.0), 14.0, 0.0, BlurStyle.normal), BoxShadow(Color(alpha:\n    0.0471, red: 0.0588, green: 0.0902, blue: 0.1647, colorSpace:\n    ColorSpace.sRGB), Offset(2.0, 3.0), 1.0, 1.0, BlurStyle.normal)]\n  )",
+        "text_style": "TextStyle(debugLabel: (((englishLike bodyMedium 2021).merge(((blackMountainView bodyMedium).apply).apply)).copyWith).copyWith, inherit: false, color: Color(alpha: 1.0000, red: 0.0667, green: 0.0667, blue: 0.0667, colorSpace: ColorSpace.sRGB), family: Rabar, size: 14.0, weight: 400, letterSpacing: 0.3, baseline: alphabetic, height: 1.4x, leadingDistribution: even, decoration: Color(alpha: 1.0000, red: 0.1137, green: 0.1059, blue: 0.1255, colorSpace: ColorSpace.sRGB) TextDecoration.none)",
+        "icon_size": 18.0,
+        "icon_color": 4290201942
+      },
+      "real_form_validation": true,
+      "submit_input": "WidgetTester.tap",
+      "automatic_exit": true
+    },
+    "proxolink-error-430": {
+      "notice_counts": {
+        "100ms": 2,
+        "400ms": 2,
+        "4900ms": 2,
+        "5100ms": 2,
+        "5500ms": 0
+      },
+      "visual_state": {
+        "100ms": {
+          "opacity": [
+            0.35000000000000003,
+            0.016666666666666666
+          ],
+          "size_factor": [
+            0.35000000000000003,
+            0.016666666666666666
+          ]
+        },
+        "400ms": {
+          "opacity": [
+            1.0,
+            1.0
+          ],
+          "size_factor": [
+            1.0,
+            1.0
+          ]
+        },
+        "4900ms": {
+          "opacity": [
+            1.0,
+            1.0
+          ],
+          "size_factor": [
+            1.0,
+            1.0
+          ]
+        },
+        "5100ms": {
+          "opacity": [
+            0.6333333333333333,
+            0.9666666666666667
+          ],
+          "size_factor": [
+            0.6333333333333333,
+            0.9666666666666667
+          ]
+        },
+        "5500ms": {
+          "opacity": [],
+          "size_factor": []
+        }
+      },
+      "appearance": {
+        "decoration": "BoxDecoration(color: Color(alpha: 1.0000, red: 1.0000, green: 1.0000, blue: 1.0000, colorSpace: ColorSpace.sRGB), border: BorderDirectional(start: BorderSide(color: Color(alpha: 1.0000, red: 0.7176, green: 0.2863, blue: 0.3373, colorSpace: ColorSpace.sRGB), width: 3.0)),\n  boxShadow: [BoxShadow(Color(alpha: 0.0941, red: 0.0588, green:\n    0.0902, blue: 0.1647, colorSpace: ColorSpace.sRGB), Offset(0.0,\n    7.0), 14.0, 0.0, BlurStyle.normal), BoxShadow(Color(alpha:\n    0.0471, red: 0.0588, green: 0.0902, blue: 0.1647, colorSpace:\n    ColorSpace.sRGB), Offset(2.0, 3.0), 1.0, 1.0, BlurStyle.normal)]\n  )",
+        "text_style": "TextStyle(debugLabel: (((englishLike bodyMedium 2021).merge(((blackMountainView bodyMedium).apply).apply)).copyWith).copyWith, inherit: false, color: Color(alpha: 1.0000, red: 0.0667, green: 0.0667, blue: 0.0667, colorSpace: ColorSpace.sRGB), family: Rabar, size: 14.0, weight: 400, letterSpacing: 0.3, baseline: alphabetic, height: 1.4x, leadingDistribution: even, decoration: Color(alpha: 1.0000, red: 0.1137, green: 0.1059, blue: 0.1255, colorSpace: ColorSpace.sRGB) TextDecoration.none)",
+        "icon_size": 18.0,
+        "icon_color": 4290201942
+      },
+      "real_form_validation": true,
+      "submit_input": "WidgetTester.tap",
+      "automatic_exit": true
+    },
+    "home-refresh-768": {
+      "offsets_100_300": [
+        35.151148562365506,
+        62.837484165613716
+      ],
+      "settled_offset": 0.0,
+      "collection_reads_added": 1,
+      "same_scroll_element": true,
+      "spinner_closed": true,
+      "phase_clock": "fixed fake-clock milliseconds after initial widget ticker timestamp"
+    },
+    "tools-refresh-768": {
+      "offsets_100_300": [
+        35.151148562365506,
+        62.837484165613716
+      ],
+      "settled_offset": 0.0,
+      "collection_reads_added": 1,
+      "same_scroll_element": true,
+      "spinner_closed": true,
+      "phase_clock": "fixed fake-clock milliseconds after initial widget ticker timestamp"
+    },
+    "ad-error-768": {
+      "notice_counts": {
+        "100ms": 2,
+        "400ms": 2,
+        "4900ms": 2,
+        "5100ms": 2,
+        "5500ms": 0
+      },
+      "visual_state": {
+        "100ms": {
+          "opacity": [
+            0.35000000000000003,
+            0.016666666666666666
+          ],
+          "size_factor": [
+            0.35000000000000003,
+            0.016666666666666666
+          ]
+        },
+        "400ms": {
+          "opacity": [
+            1.0,
+            1.0
+          ],
+          "size_factor": [
+            1.0,
+            1.0
+          ]
+        },
+        "4900ms": {
+          "opacity": [
+            1.0,
+            1.0
+          ],
+          "size_factor": [
+            1.0,
+            1.0
+          ]
+        },
+        "5100ms": {
+          "opacity": [
+            0.6333333333333333,
+            0.9666666666666667
+          ],
+          "size_factor": [
+            0.6333333333333333,
+            0.9666666666666667
+          ]
+        },
+        "5500ms": {
+          "opacity": [],
+          "size_factor": []
+        }
+      },
+      "appearance": {
+        "decoration": "BoxDecoration(color: Color(alpha: 1.0000, red: 1.0000, green: 1.0000, blue: 1.0000, colorSpace: ColorSpace.sRGB), border: BorderDirectional(start: BorderSide(color: Color(alpha: 1.0000, red: 0.7176, green: 0.2863, blue: 0.3373, colorSpace: ColorSpace.sRGB), width: 3.0)),\n  boxShadow: [BoxShadow(Color(alpha: 0.0941, red: 0.0588, green:\n    0.0902, blue: 0.1647, colorSpace: ColorSpace.sRGB), Offset(0.0,\n    7.0), 14.0, 0.0, BlurStyle.normal), BoxShadow(Color(alpha:\n    0.0471, red: 0.0588, green: 0.0902, blue: 0.1647, colorSpace:\n    ColorSpace.sRGB), Offset(2.0, 3.0), 1.0, 1.0, BlurStyle.normal)]\n  )",
+        "text_style": "TextStyle(debugLabel: (((englishLike bodyMedium 2021).merge(((blackMountainView bodyMedium).apply).apply)).copyWith).copyWith, inherit: false, color: Color(alpha: 1.0000, red: 0.0667, green: 0.0667, blue: 0.0667, colorSpace: ColorSpace.sRGB), family: Rabar, size: 14.0, weight: 400, letterSpacing: 0.3, baseline: alphabetic, height: 1.4x, leadingDistribution: even, decoration: Color(alpha: 1.0000, red: 0.1137, green: 0.1059, blue: 0.1255, colorSpace: ColorSpace.sRGB) TextDecoration.none)",
+        "icon_size": 18.0,
+        "icon_color": 4290201942
+      },
+      "real_form_validation": true,
+      "submit_input": "WidgetTester.tap",
+      "automatic_exit": true
+    },
+    "proxolink-error-768": {
+      "notice_counts": {
+        "100ms": 2,
+        "400ms": 2,
+        "4900ms": 2,
+        "5100ms": 2,
+        "5500ms": 0
+      },
+      "visual_state": {
+        "100ms": {
+          "opacity": [
+            0.35000000000000003,
+            0.016666666666666666
+          ],
+          "size_factor": [
+            0.35000000000000003,
+            0.016666666666666666
+          ]
+        },
+        "400ms": {
+          "opacity": [
+            1.0,
+            1.0
+          ],
+          "size_factor": [
+            1.0,
+            1.0
+          ]
+        },
+        "4900ms": {
+          "opacity": [
+            1.0,
+            1.0
+          ],
+          "size_factor": [
+            1.0,
+            1.0
+          ]
+        },
+        "5100ms": {
+          "opacity": [
+            0.6333333333333333,
+            0.9666666666666667
+          ],
+          "size_factor": [
+            0.6333333333333333,
+            0.9666666666666667
+          ]
+        },
+        "5500ms": {
+          "opacity": [],
+          "size_factor": []
+        }
+      },
+      "appearance": {
+        "decoration": "BoxDecoration(color: Color(alpha: 1.0000, red: 1.0000, green: 1.0000, blue: 1.0000, colorSpace: ColorSpace.sRGB), border: BorderDirectional(start: BorderSide(color: Color(alpha: 1.0000, red: 0.7176, green: 0.2863, blue: 0.3373, colorSpace: ColorSpace.sRGB), width: 3.0)),\n  boxShadow: [BoxShadow(Color(alpha: 0.0941, red: 0.0588, green:\n    0.0902, blue: 0.1647, colorSpace: ColorSpace.sRGB), Offset(0.0,\n    7.0), 14.0, 0.0, BlurStyle.normal), BoxShadow(Color(alpha:\n    0.0471, red: 0.0588, green: 0.0902, blue: 0.1647, colorSpace:\n    ColorSpace.sRGB), Offset(2.0, 3.0), 1.0, 1.0, BlurStyle.normal)]\n  )",
+        "text_style": "TextStyle(debugLabel: (((englishLike bodyMedium 2021).merge(((blackMountainView bodyMedium).apply).apply)).copyWith).copyWith, inherit: false, color: Color(alpha: 1.0000, red: 0.0667, green: 0.0667, blue: 0.0667, colorSpace: ColorSpace.sRGB), family: Rabar, size: 14.0, weight: 400, letterSpacing: 0.3, baseline: alphabetic, height: 1.4x, leadingDistribution: even, decoration: Color(alpha: 1.0000, red: 0.1137, green: 0.1059, blue: 0.1255, colorSpace: ColorSpace.sRGB) TextDecoration.none)",
+        "icon_size": 18.0,
+        "icon_color": 4290201942
+      },
+      "real_form_validation": true,
+      "submit_input": "WidgetTester.tap",
+      "automatic_exit": true
+    }
+  }
+}

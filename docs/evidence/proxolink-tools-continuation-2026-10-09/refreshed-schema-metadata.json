@@ -1,0 +1,409 @@
+{
+  "checked_at_utc": "2026-10-09T19:47:07.578Z",
+  "scope": "Read-only production metadata; no customer row reads or mutations",
+  "schema": {
+    "rls": {
+      "forced": false,
+      "enabled": true
+    },
+    "grants": [
+      {
+        "role": "postgres",
+        "privilege": "INSERT"
+      },
+      {
+        "role": "postgres",
+        "privilege": "SELECT"
+      },
+      {
+        "role": "postgres",
+        "privilege": "UPDATE"
+      },
+      {
+        "role": "postgres",
+        "privilege": "DELETE"
+      },
+      {
+        "role": "postgres",
+        "privilege": "TRUNCATE"
+      },
+      {
+        "role": "postgres",
+        "privilege": "REFERENCES"
+      },
+      {
+        "role": "postgres",
+        "privilege": "TRIGGER"
+      },
+      {
+        "role": "service_role",
+        "privilege": "INSERT"
+      },
+      {
+        "role": "service_role",
+        "privilege": "SELECT"
+      },
+      {
+        "role": "service_role",
+        "privilege": "UPDATE"
+      },
+      {
+        "role": "service_role",
+        "privilege": "DELETE"
+      },
+      {
+        "role": "service_role",
+        "privilege": "TRUNCATE"
+      },
+      {
+        "role": "service_role",
+        "privilege": "REFERENCES"
+      },
+      {
+        "role": "service_role",
+        "privilege": "TRIGGER"
+      },
+      {
+        "role": "authenticated",
+        "privilege": "INSERT"
+      },
+      {
+        "role": "authenticated",
+        "privilege": "SELECT"
+      },
+      {
+        "role": "authenticated",
+        "privilege": "UPDATE"
+      },
+      {
+        "role": "authenticated",
+        "privilege": "DELETE"
+      }
+    ],
+    "columns": [
+      {
+        "name": "id",
+        "type": "uuid",
+        "default": "gen_random_uuid()",
+        "nullable": "NO"
+      },
+      {
+        "name": "user_id",
+        "type": "uuid",
+        "default": null,
+        "nullable": "NO"
+      },
+      {
+        "name": "name",
+        "type": "text",
+        "default": null,
+        "nullable": "NO"
+      },
+      {
+        "name": "description",
+        "type": "text",
+        "default": null,
+        "nullable": "YES"
+      },
+      {
+        "name": "avatar_b64",
+        "type": "text",
+        "default": null,
+        "nullable": "YES"
+      },
+      {
+        "name": "style",
+        "type": "text",
+        "default": "'classic'::text",
+        "nullable": "YES"
+      },
+      {
+        "name": "color_theme",
+        "type": "text",
+        "default": "'#1c2333'::text",
+        "nullable": "YES"
+      },
+      {
+        "name": "platforms",
+        "type": "jsonb",
+        "default": "'{}'::jsonb",
+        "nullable": "YES"
+      },
+      {
+        "name": "status",
+        "type": "text",
+        "default": "'active'::text",
+        "nullable": "YES"
+      },
+      {
+        "name": "card_number",
+        "type": "integer",
+        "default": "nextval('proxolink_cards_card_number_seq'::regclass)",
+        "nullable": "NO"
+      },
+      {
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "default": "now()",
+        "nullable": "YES"
+      },
+      {
+        "name": "bio",
+        "type": "text",
+        "default": null,
+        "nullable": "YES"
+      },
+      {
+        "name": "html_content",
+        "type": "text",
+        "default": null,
+        "nullable": "YES"
+      },
+      {
+        "name": "checked_btns",
+        "type": "jsonb",
+        "default": null,
+        "nullable": "YES"
+      },
+      {
+        "name": "tiktok",
+        "type": "text",
+        "default": null,
+        "nullable": "YES"
+      },
+      {
+        "name": "logo_b64",
+        "type": "text",
+        "default": null,
+        "nullable": "YES"
+      },
+      {
+        "name": "video_url",
+        "type": "text",
+        "default": null,
+        "nullable": "YES"
+      },
+      {
+        "name": "tt",
+        "type": "text",
+        "default": null,
+        "nullable": "YES"
+      },
+      {
+        "name": "template_key",
+        "type": "text",
+        "default": null,
+        "nullable": "YES"
+      },
+      {
+        "name": "template_version",
+        "type": "integer",
+        "default": "1",
+        "nullable": "NO"
+      },
+      {
+        "name": "avatar_path",
+        "type": "text",
+        "default": null,
+        "nullable": "YES"
+      },
+      {
+        "name": "card_language",
+        "type": "text",
+        "default": "'ku'::text",
+        "nullable": "NO"
+      },
+      {
+        "name": "publish_status",
+        "type": "text",
+        "default": "'creating'::text",
+        "nullable": "NO"
+      },
+      {
+        "name": "last_publish_error_code",
+        "type": "text",
+        "default": null,
+        "nullable": "YES"
+      },
+      {
+        "name": "last_publish_error_at",
+        "type": "timestamp with time zone",
+        "default": null,
+        "nullable": "YES"
+      },
+      {
+        "name": "published_at",
+        "type": "timestamp with time zone",
+        "default": null,
+        "nullable": "YES"
+      },
+      {
+        "name": "updated_at",
+        "type": "timestamp with time zone",
+        "default": "now()",
+        "nullable": "NO"
+      },
+      {
+        "name": "client_request_id",
+        "type": "uuid",
+        "default": null,
+        "nullable": "YES"
+      },
+      {
+        "name": "creation_request_hash",
+        "type": "text",
+        "default": null,
+        "nullable": "YES"
+      },
+      {
+        "name": "page_type",
+        "type": "text",
+        "default": "'contact'::text",
+        "nullable": "NO"
+      }
+    ],
+    "indexes": [
+      {
+        "name": "proxolink_cards_pkey",
+        "definition": "CREATE UNIQUE INDEX proxolink_cards_pkey ON public.proxolink_cards USING btree (id)"
+      },
+      {
+        "name": "proxolink_cards_owner_request_unique",
+        "definition": "CREATE UNIQUE INDEX proxolink_cards_owner_request_unique ON public.proxolink_cards USING btree (user_id, client_request_id) WHERE (client_request_id IS NOT NULL)"
+      },
+      {
+        "name": "proxolink_cards_owner_created_idx",
+        "definition": "CREATE INDEX proxolink_cards_owner_created_idx ON public.proxolink_cards USING btree (user_id, created_at DESC)"
+      },
+      {
+        "name": "proxolink_cards_owner_ready_idx",
+        "definition": "CREATE INDEX proxolink_cards_owner_ready_idx ON public.proxolink_cards USING btree (user_id, status, publish_status)"
+      },
+      {
+        "name": "proxolink_cards_user_idx",
+        "definition": "CREATE INDEX proxolink_cards_user_idx ON public.proxolink_cards USING btree (user_id)"
+      }
+    ],
+    "storage": [
+      {
+        "id": "proxolink-templates",
+        "mime": null,
+        "limit": null,
+        "public": false
+      },
+      {
+        "id": "proxolink-assets",
+        "mime": [
+          "image/jpeg",
+          "image/png",
+          "image/webp"
+        ],
+        "limit": 10485760,
+        "public": true
+      }
+    ],
+    "policies": [
+      {
+        "name": "cards admin all",
+        "check": "( SELECT pa_is_admin() AS pa_is_admin)",
+        "roles": [
+          "authenticated"
+        ],
+        "using": "( SELECT pa_is_admin() AS pa_is_admin)",
+        "command": "ALL"
+      },
+      {
+        "name": "cards own all",
+        "check": "(( SELECT auth.uid() AS uid) = user_id)",
+        "roles": [
+          "authenticated"
+        ],
+        "using": "(( SELECT auth.uid() AS uid) = user_id)",
+        "command": "ALL"
+      }
+    ],
+    "triggers": [
+      {
+        "name": "proxolink_cards_updated",
+        "config": [
+          "search_path=\"\""
+        ],
+        "definer": false,
+        "body_md5": "d4f071b39c8481375c3f5cb91d2573a7",
+        "function": "touch_updated_at"
+      },
+      {
+        "name": "proxolink_protect_live_card",
+        "config": [
+          "search_path=\"\""
+        ],
+        "definer": true,
+        "body_md5": "3dd6fa44c5361a2eb821e68c61c721d5",
+        "function": "protect_live_card"
+      }
+    ],
+    "constraints": [
+      {
+        "name": "proxolink_cards_pkey",
+        "type": "p",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "name": "proxolink_cards_user_id_fkey",
+        "type": "f",
+        "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+      },
+      {
+        "name": "proxolink_publish_status_check",
+        "type": "c",
+        "definition": "CHECK ((publish_status = ANY (ARRAY['creating'::text, 'ready'::text, 'failed'::text])))"
+      },
+      {
+        "name": "proxolink_publish_attempts_card_id_fkey",
+        "type": "f",
+        "definition": "FOREIGN KEY (card_id) REFERENCES proxolink_cards(id) ON DELETE CASCADE"
+      },
+      {
+        "name": "pa_ad_contact_links_card_id_fkey",
+        "type": "f",
+        "definition": "FOREIGN KEY (card_id) REFERENCES proxolink_cards(id) ON DELETE RESTRICT"
+      },
+      {
+        "name": "proxolink_card_language_check",
+        "type": "c",
+        "definition": "CHECK ((card_language = ANY (ARRAY['ku'::text, 'ar'::text, 'en'::text])))"
+      },
+      {
+        "name": "proxolink_template_version_check",
+        "type": "c",
+        "definition": "CHECK ((template_version > 0))"
+      },
+      {
+        "name": "proxolink_platforms_object_check",
+        "type": "c",
+        "definition": "CHECK ((jsonb_typeof(platforms) = 'object'::text))"
+      },
+      {
+        "name": "pa_ads_proxolink_asset_fk",
+        "type": "f",
+        "definition": "FOREIGN KEY (asset_id) REFERENCES proxolink_cards(id) ON DELETE RESTRICT"
+      },
+      {
+        "name": "pa_ads_proxolink_card_fk",
+        "type": "f",
+        "definition": "FOREIGN KEY (card_id) REFERENCES proxolink_cards(id) ON DELETE RESTRICT"
+      },
+      {
+        "name": "proxolink_page_type_check",
+        "type": "c",
+        "definition": "CHECK ((page_type = ANY (ARRAY['contact'::text, 'food'::text, 'download'::text])))"
+      }
+    ]
+  },
+  "confirmed_missing_columns": [
+    "page_kind",
+    "settings",
+    "archived_at",
+    "moderation_status"
+  ]
+}

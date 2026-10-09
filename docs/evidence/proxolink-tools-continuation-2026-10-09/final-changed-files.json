@@ -1,0 +1,752 @@
+{
+  "branch": "feat/proxolink-private-renderer-migration",
+  "baseline_sha": "2f2b389a7acd187ea586839639e6010d02f7d226",
+  "final_executable_sha": "c830a683b6b70ee91f5aebc002b1b4b424d5ac4a",
+  "self_hash_note": "Manifest self-hash is intentionally null to avoid a recursive hash; the Git commit tree supplies its exact blob identity.",
+  "unrelated_exchange_working_changes_excluded": true,
+  "file_count": 106,
+  "files": [
+    {
+      "path": ".github/workflows/proxolink-verify.yml",
+      "kind": "executable or verification source",
+      "bytes": 9042,
+      "sha256": "0096e72e8c899026402be66fb0baa67272d86bc7aac92d179d6d7261def249b7",
+      "git_blob_sha": "c2bf875d35ea8d74624cd24c10dc10a2766394cd"
+    },
+    {
+      "path": "docs/PROXOLINK_A_AO_CHECKLIST_2026-10-09.md",
+      "kind": "documentation/evidence",
+      "bytes": 17793,
+      "sha256": "54e23cc57aac3afdfc8cb505120196427a93eaa01df754619fc948b360b19f7c",
+      "git_blob_sha": "efa0bcb8876569da27a1bd59f299b94b62330b2c"
+    },
+    {
+      "path": "docs/PROXOLINK_TOOLS_CREATE_CONTINUATION_2026-10-09.md",
+      "kind": "documentation/evidence",
+      "bytes": 32986,
+      "sha256": "4688b91e559a8d93aa38abce696c9e67a224c8944913af582cf372a4a28fded3",
+      "git_blob_sha": "01cb481401b6eb30c43846410fd2ec0b759a7e1d"
+    },
+    {
+      "path": "docs/PROXOLINK_V6_ISOLATED_STAGING_SETUP.md",
+      "kind": "documentation/evidence",
+      "bytes": 5613,
+      "sha256": "0ebdc79ee0678bbe866202fbc84a4bdfe50b56f2eb68c846789d56c56a3f7f35",
+      "git_blob_sha": "3fe51de6fe8174d6167882e096636f7d09783db4"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screen-artifact-audit.json",
+      "kind": "documentation/evidence",
+      "bytes": 29630,
+      "sha256": "d32877a73e43a34a9d16160cb7be9bfb5ab0e625dc9ffca9873576e5625a4f59",
+      "git_blob_sha": "21945baa0d0294efb6fdc0d2993deeddc112157b"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screen-reproduction-record.json",
+      "kind": "documentation/evidence",
+      "bytes": 2737,
+      "sha256": "448fe4c8cf5f4fe156554a41d2b1a5918a803ad3dc8896acf52f8b8ccf77e7b8",
+      "git_blob_sha": "66a0e02e33dd4ea1f1194716a6c9f3fb951ebe8f"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-ad-error-100ms-320.png",
+      "kind": "documentation/evidence",
+      "bytes": 74609,
+      "sha256": "22026b35d6a2b6bf5e03ab750852cb65951333c11d3d1229ee1ca0516824c14e",
+      "git_blob_sha": "4df71353c8ee40990cfec7185c458cd6d9dc94bf"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-ad-error-100ms-393.png",
+      "kind": "documentation/evidence",
+      "bytes": 76793,
+      "sha256": "ad4c8e367f671e4d3cc292c56ba723279d8ece48650b3e87818f278dc542b33b",
+      "git_blob_sha": "9d44e4a321bf8a2183ed631712f5000c284c3372"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-ad-error-100ms-430.png",
+      "kind": "documentation/evidence",
+      "bytes": 79028,
+      "sha256": "9d7d5b1cff8e4aab71dafab6a80846e28e617b2b49f1d864b1734bf6fad72dce",
+      "git_blob_sha": "39b26d9295413935889e2dbb2fa0cba2e55a984c"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-ad-error-100ms-768.png",
+      "kind": "documentation/evidence",
+      "bytes": 87810,
+      "sha256": "e6d0e7360cf060418dafb1988cfc02a8f149d3b401464ab8be8d5330cf9b1a2a",
+      "git_blob_sha": "f7bf30d3940d0ea6e4728425d7153eb059299155"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-ad-error-400ms-320.png",
+      "kind": "documentation/evidence",
+      "bytes": 72883,
+      "sha256": "84677d7dfd82021fd5b888dc75f1faf5755b4d99c7e60d96dbefb305c84ddf40",
+      "git_blob_sha": "a1d36de9ccf0ce7bd3c7ac2559d1a342947f0dd0"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-ad-error-400ms-393.png",
+      "kind": "documentation/evidence",
+      "bytes": 74192,
+      "sha256": "f0f01ac389fb23c20499ec757920ffe8cf0c29958d55f778fa00e94a6a1185d0",
+      "git_blob_sha": "fafe495d6806ac5eee25260cf73decf5b143c2fa"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-ad-error-400ms-430.png",
+      "kind": "documentation/evidence",
+      "bytes": 76073,
+      "sha256": "e2f8381eaddebf94c8c3d70978636417d6ecb0e222e362614eebcbd87781ae7a",
+      "git_blob_sha": "6d99d04b7b991db4abcacbaeb23b78aebb0a9ed9"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-ad-error-400ms-768.png",
+      "kind": "documentation/evidence",
+      "bytes": 81062,
+      "sha256": "9fff126f5c96b11c16594e3c14214d018428a8eff84cd737cb514f6d86aec908",
+      "git_blob_sha": "2e9208f7b0315ff5e8ba7763e9a98b9bd0f32e9a"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-ad-error-4900ms-320.png",
+      "kind": "documentation/evidence",
+      "bytes": 72902,
+      "sha256": "147e6521df3a64cd46a1d72467259e634bf63ec65a585b92fc6cd9e793f2986b",
+      "git_blob_sha": "f11e0b72954cddbbcdb55e1fad393dd698b22576"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-ad-error-4900ms-393.png",
+      "kind": "documentation/evidence",
+      "bytes": 74175,
+      "sha256": "a3319a269b9d815a866f36de967163dcb2a187ad35e219a0e4c260f723e7f69c",
+      "git_blob_sha": "db0ffb34606fbe5f799609f54efecc1de9acd4e0"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-ad-error-4900ms-430.png",
+      "kind": "documentation/evidence",
+      "bytes": 76087,
+      "sha256": "adcf40a2e5fc19daf63e2581b50d647e41b23b0e0e1f7e6da4e54544fd01a0cb",
+      "git_blob_sha": "e9efa76f6f6387739c9920ffe0e53367e971722a"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-ad-error-4900ms-768.png",
+      "kind": "documentation/evidence",
+      "bytes": 81071,
+      "sha256": "1a6ce2a56584ebd650781e3b229c8fee64f7ae037c05700fad07a9e6d5a114ef",
+      "git_blob_sha": "c09c50bb7b88ecc8d9ceaf9da64ff76e230c7bfb"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-ad-error-5100ms-320.png",
+      "kind": "documentation/evidence",
+      "bytes": 75619,
+      "sha256": "dd38ee9a85166342b48f9280999eafab3a0839bcd380db5d49e5bfde2f2e4076",
+      "git_blob_sha": "5297c850f35d0383747d6b21ee66367f60146eee"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-ad-error-5100ms-393.png",
+      "kind": "documentation/evidence",
+      "bytes": 77010,
+      "sha256": "c56e7e65a041fcbdc660f04d82aa62c5823660cbe520191a623e75c7a10dd163",
+      "git_blob_sha": "359b4659e7923c23c27d1a7c2916e5643d253169"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-ad-error-5100ms-430.png",
+      "kind": "documentation/evidence",
+      "bytes": 79128,
+      "sha256": "759ebe414f608ec7785f33d11ba48058d2aaf86ca271765131f5ea23080f0f6a",
+      "git_blob_sha": "3f9fdaa9bea0d0838a569e112335e0e2a678cae7"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-ad-error-5100ms-768.png",
+      "kind": "documentation/evidence",
+      "bytes": 83925,
+      "sha256": "6d7cb1963add2327e96ca2fde9a268d6808949c9f73bced117c5e7f169bfe561",
+      "git_blob_sha": "82352de092b55bf43013ea6333d877bb0646f298"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-ad-error-5500ms-320.png",
+      "kind": "documentation/evidence",
+      "bytes": 67518,
+      "sha256": "c5e7ef542225a3f34508dc820eae2bb1d07986dd2ffaff57d5a4709516d726da",
+      "git_blob_sha": "4411c41bbd30bd1e685471c94f4e0dbd4e784ae3"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-ad-error-5500ms-393.png",
+      "kind": "documentation/evidence",
+      "bytes": 68618,
+      "sha256": "c6b1c2adb2f62f7a884d59ad78b10e0ad9c7d24947ea969d61ad4d1407b4b0d1",
+      "git_blob_sha": "e1c551fc1fad0ffc9e36a6232a1e45fdd9a956ab"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-ad-error-5500ms-430.png",
+      "kind": "documentation/evidence",
+      "bytes": 70334,
+      "sha256": "18b8941b64d71fc472e40b2def9f7885f404a124d75cca42fc5ba448c789f7fa",
+      "git_blob_sha": "d9412daebf42ece734c9261b880452aacc5684f6"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-ad-error-5500ms-768.png",
+      "kind": "documentation/evidence",
+      "bytes": 75215,
+      "sha256": "7a2fa6a3b67732125da9c453229771a4270ce925263fa002bb5433f37c5e92fa",
+      "git_blob_sha": "bd0090d0d6e307dd751d9cc16bc1e926c009fe3a"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-ad-error-initial-320.png",
+      "kind": "documentation/evidence",
+      "bytes": 66045,
+      "sha256": "65914801e7939b83d118be5141156df3cbad38d8302cff67265da6452a933794",
+      "git_blob_sha": "0ad001e60379fe6891493ab636eab8b31e21e184"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-ad-error-initial-393.png",
+      "kind": "documentation/evidence",
+      "bytes": 66994,
+      "sha256": "b72bf71a2184d7c4cb9da56f6ab91759782d4d7b78d8da404378606e4932c332",
+      "git_blob_sha": "bd4ad8da7aedc0e140aab1bdc7223f48b00961a5"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-ad-error-initial-430.png",
+      "kind": "documentation/evidence",
+      "bytes": 68656,
+      "sha256": "c7062eee2e19cae06b7bc89d1bd390f1f01027cdf0d0f38082e7e5a4c2aba736",
+      "git_blob_sha": "3a8d19f920fb4498064fc1977c8b61a6924dd048"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-ad-error-initial-768.png",
+      "kind": "documentation/evidence",
+      "bytes": 73638,
+      "sha256": "b09b4fd38154cf8be6015730230b86b5fdf9e074226e4175bc48a6336f99ed8a",
+      "git_blob_sha": "04ea813e0038084c1cb21bb78fcbc06d73db68ff"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-home-refresh-100ms-320.png",
+      "kind": "documentation/evidence",
+      "bytes": 53575,
+      "sha256": "13b3b7a4a933abbb6396127903573aa3f56b31494b0206dabd744a051f89c8ea",
+      "git_blob_sha": "489ce7935dd5c23a6cb737a20d164316e7c446af"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-home-refresh-100ms-393.png",
+      "kind": "documentation/evidence",
+      "bytes": 54609,
+      "sha256": "0ae770071de7ba6466e50e99be94f1c730168695797406b54b65f9a8159cd03f",
+      "git_blob_sha": "333e6decc5f90972735f67541b535dc36e6fc8e6"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-home-refresh-100ms-430.png",
+      "kind": "documentation/evidence",
+      "bytes": 57123,
+      "sha256": "0880110fd702ea0d10a0ebc36c5b5f17b162999e5a2b69227fbd559b95ec12d7",
+      "git_blob_sha": "66c4d85ebf7f238ead05eb4d5bef4acec35c0f79"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-home-refresh-100ms-768.png",
+      "kind": "documentation/evidence",
+      "bytes": 61554,
+      "sha256": "c41b617df10dfd8950c74d27bec8e7f1160dcac33866c019bac76113b43ebc35",
+      "git_blob_sha": "a482f1a6aaac66b41f7218cfb0bddbc0a2df8d99"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-home-refresh-300ms-320.png",
+      "kind": "documentation/evidence",
+      "bytes": 51554,
+      "sha256": "8f76688b08928c54b327ae3d710d8efea52b4b054e4b08e0a0e5aac3080c45da",
+      "git_blob_sha": "19a683854dbf95b33492d8a06d68310df7aca508"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-home-refresh-300ms-393.png",
+      "kind": "documentation/evidence",
+      "bytes": 52971,
+      "sha256": "f5062c4d67a1620f924a388ec246ecbe8998015c98fcdaaa5422594cf075e135",
+      "git_blob_sha": "45898a6488390599a32866851296b0d7bbc3808e"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-home-refresh-300ms-430.png",
+      "kind": "documentation/evidence",
+      "bytes": 55264,
+      "sha256": "c8de9d6425d7834721fea412a27ac8ff24c160236c947b037ec577631af49a97",
+      "git_blob_sha": "230a5b420ee76df85b98443b81c093c1b338a05e"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-home-refresh-300ms-768.png",
+      "kind": "documentation/evidence",
+      "bytes": 60113,
+      "sha256": "a6eb742f6cde372360c5da2b763c1589a89a5a526954627dc189dd147eb7a7ec",
+      "git_blob_sha": "f050412dfe3e29069415692fce09cbbd59a25cc6"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-home-refresh-initial-320.png",
+      "kind": "documentation/evidence",
+      "bytes": 52561,
+      "sha256": "8c10499e66ca51da10dabfe2ef16e974af25da2bcafd3bec3ff89ad16873f749",
+      "git_blob_sha": "0950a16e0162fe31e687c1ddf09508ddb863e4af"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-home-refresh-initial-393.png",
+      "kind": "documentation/evidence",
+      "bytes": 55479,
+      "sha256": "44e92d5d9a34987e4c041eb205e525d286813f408679818bd4564a48a4c5b75a",
+      "git_blob_sha": "58ed8313df89e5081e7cc010ae211b7fdc3075fe"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-home-refresh-initial-430.png",
+      "kind": "documentation/evidence",
+      "bytes": 57837,
+      "sha256": "842a7f033bd817a04884ad1f9adc39ed4df6746f431f9a8723a3917b6fb2f7ed",
+      "git_blob_sha": "d0d6b44ba0302483804a9cc7e4891656b0d55cfb"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-home-refresh-initial-768.png",
+      "kind": "documentation/evidence",
+      "bytes": 62428,
+      "sha256": "706a3c1dc2b575ef0568729c783ea05e213ad3132f955b4438e57d0cefabe8e6",
+      "git_blob_sha": "f4bfd687e6857b1af88f7d1bc64e82a6f5feebfe"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-home-refresh-settled-320.png",
+      "kind": "documentation/evidence",
+      "bytes": 54699,
+      "sha256": "aa312ba64e50b8d18770c262a9f0f2ea7b917269281f6162c7c63066cbe22166",
+      "git_blob_sha": "9bde56a14561416d786f0b034bb42dc5530010a8"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-home-refresh-settled-393.png",
+      "kind": "documentation/evidence",
+      "bytes": 55479,
+      "sha256": "44e92d5d9a34987e4c041eb205e525d286813f408679818bd4564a48a4c5b75a",
+      "git_blob_sha": "58ed8313df89e5081e7cc010ae211b7fdc3075fe"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-home-refresh-settled-430.png",
+      "kind": "documentation/evidence",
+      "bytes": 57837,
+      "sha256": "842a7f033bd817a04884ad1f9adc39ed4df6746f431f9a8723a3917b6fb2f7ed",
+      "git_blob_sha": "d0d6b44ba0302483804a9cc7e4891656b0d55cfb"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-home-refresh-settled-768.png",
+      "kind": "documentation/evidence",
+      "bytes": 62428,
+      "sha256": "706a3c1dc2b575ef0568729c783ea05e213ad3132f955b4438e57d0cefabe8e6",
+      "git_blob_sha": "f4bfd687e6857b1af88f7d1bc64e82a6f5feebfe"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-proxolink-error-100ms-320.png",
+      "kind": "documentation/evidence",
+      "bytes": 91088,
+      "sha256": "0944b043eee0304f65641493ddc555f334d29ad1cf7141e59f127f18eb39069d",
+      "git_blob_sha": "65b9a64a4a6c162c5c6d8d2edbd8bef7513e2d14"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-proxolink-error-100ms-393.png",
+      "kind": "documentation/evidence",
+      "bytes": 154952,
+      "sha256": "973e2d47ab4290b3c9f3f46203a0dddbe0ffb7df835cb3faf8a09b10f8e0bdda",
+      "git_blob_sha": "c35fff459d0880ddedd9dd65cb7f729b3c4ed64a"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-proxolink-error-100ms-430.png",
+      "kind": "documentation/evidence",
+      "bytes": 151082,
+      "sha256": "50496ed7993922518b5a00a01f922abd32064e519bd8294e886148271dcf5e98",
+      "git_blob_sha": "622a285c59859b17c0c1b796bb11ce76417fb2b5"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-proxolink-error-100ms-768.png",
+      "kind": "documentation/evidence",
+      "bytes": 161366,
+      "sha256": "e193808f8c324e6aa1d54d38b85805e726953969c5dd170761c4c43b06b8d25e",
+      "git_blob_sha": "d6d746e434626306bc392f37f7deb4a38160d44e"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-proxolink-error-400ms-320.png",
+      "kind": "documentation/evidence",
+      "bytes": 86493,
+      "sha256": "125a1c16e4f304db36e7af0367e033db966d0c463887c6c6cc51777fcd34a38d",
+      "git_blob_sha": "0d8e4b5f047c4db95f0783de153c8b90d2c60324"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-proxolink-error-400ms-393.png",
+      "kind": "documentation/evidence",
+      "bytes": 151584,
+      "sha256": "9381f1fd7005e49affe65335fec15a6f3bd227cf542ba58d202043c3a9a811dc",
+      "git_blob_sha": "2d90422403446a4abe7209deceb1b461b8eda56e"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-proxolink-error-400ms-430.png",
+      "kind": "documentation/evidence",
+      "bytes": 144380,
+      "sha256": "1175f4644cca483a72ff83ddeb10c16607edffb89ceb159216d8f9087b9159f9",
+      "git_blob_sha": "8a42c9511183d297ba97119d83ff348ef308e596"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-proxolink-error-400ms-768.png",
+      "kind": "documentation/evidence",
+      "bytes": 150432,
+      "sha256": "25ab29a397edc339bb5530e98ed6284d94cc813dd0b0e019fb209e21244f1a1a",
+      "git_blob_sha": "dd449d8ca286d8c652dd43e99092345dde0ac8b0"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-proxolink-error-4900ms-320.png",
+      "kind": "documentation/evidence",
+      "bytes": 86507,
+      "sha256": "a230bf1aecd23e2ce9ddc33c5ea7af0cd04243963a91ac789f6fe80ec63ffc60",
+      "git_blob_sha": "4ac11a5f238200890f8cc1847bd0a2a9b491161d"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-proxolink-error-4900ms-393.png",
+      "kind": "documentation/evidence",
+      "bytes": 151577,
+      "sha256": "db8f622c4383fc6c8bcdf24cf9601e2e6987ab52a373d778ee49b56d347d5fbd",
+      "git_blob_sha": "c6fb7aefcd23e2a2ef22af4b06e07544600e119a"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-proxolink-error-4900ms-430.png",
+      "kind": "documentation/evidence",
+      "bytes": 144403,
+      "sha256": "e9038ccca7d21cdb0365a27fcecd5de33c6fd42646e4e392f071d999e51a5cae",
+      "git_blob_sha": "444ee3c39cc60a634747a4a4a5bde00e12fc25f5"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-proxolink-error-4900ms-768.png",
+      "kind": "documentation/evidence",
+      "bytes": 150450,
+      "sha256": "54f5497f7618d812df9fa65bad2c587d1f01eb896d2809e6be7c47594045de49",
+      "git_blob_sha": "0afac58c34b70ff7f15b5061112f1c06dce1ee69"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-proxolink-error-5100ms-320.png",
+      "kind": "documentation/evidence",
+      "bytes": 88534,
+      "sha256": "134051692e396a2a73fc27b67c71bb296e2f00aaea357408db12e63c566b0bad",
+      "git_blob_sha": "928e31e47c511e71118a1e455263158cf47faf28"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-proxolink-error-5100ms-393.png",
+      "kind": "documentation/evidence",
+      "bytes": 153190,
+      "sha256": "6c0fea4e1f855dd9821f3e849414f7b214965f7b157f6ed1c090e8c5f7ae152b",
+      "git_blob_sha": "34ef745db474b48b5be49dc06cc0741b55676734"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-proxolink-error-5100ms-430.png",
+      "kind": "documentation/evidence",
+      "bytes": 148681,
+      "sha256": "a7b79cc80c7f30be281d97752a43ac203991844420485cd9336508eb2e5ef9ef",
+      "git_blob_sha": "02ef519565a4f2401facea176d32f906d047fe62"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-proxolink-error-5100ms-768.png",
+      "kind": "documentation/evidence",
+      "bytes": 153549,
+      "sha256": "cf726566db115cdd5941724e93b6ab0effc7562deb58683913410ddc7a065c35",
+      "git_blob_sha": "88c79d5765923afd6c6bc04c54fb9806005aa06a"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-proxolink-error-5500ms-320.png",
+      "kind": "documentation/evidence",
+      "bytes": 83586,
+      "sha256": "249d510798542198c3260bbe7c76d7f8683b479812ecaf0c945ceebff55cbce4",
+      "git_blob_sha": "426788864b3ec2ad0274a0dd4f0aea2c2b42c07d"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-proxolink-error-5500ms-393.png",
+      "kind": "documentation/evidence",
+      "bytes": 146384,
+      "sha256": "c826479c81cabe8dc0697190d06f2ed2a0fbdb6e997009130060e25f5efdfdfb",
+      "git_blob_sha": "200698f54b6025c819ea2c6deb6b8d1f0c7a5a43"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-proxolink-error-5500ms-430.png",
+      "kind": "documentation/evidence",
+      "bytes": 141812,
+      "sha256": "f203ab69fca02ee528eecbfb382c0dbf7c5cff27f1d0b0c2c7fec5e542c3314d",
+      "git_blob_sha": "9f457bbc99c8d6c98adf0e1adf788aad6c546993"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-proxolink-error-5500ms-768.png",
+      "kind": "documentation/evidence",
+      "bytes": 148685,
+      "sha256": "bea6c4993fbad2f32624c28c6acdf25d625551bd9864c2eb1be7b8e79c5cc871",
+      "git_blob_sha": "557c4bea9523ae3803255ae948769750b3b39952"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-proxolink-error-initial-320.png",
+      "kind": "documentation/evidence",
+      "bytes": 83586,
+      "sha256": "249d510798542198c3260bbe7c76d7f8683b479812ecaf0c945ceebff55cbce4",
+      "git_blob_sha": "426788864b3ec2ad0274a0dd4f0aea2c2b42c07d"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-proxolink-error-initial-393.png",
+      "kind": "documentation/evidence",
+      "bytes": 146384,
+      "sha256": "c826479c81cabe8dc0697190d06f2ed2a0fbdb6e997009130060e25f5efdfdfb",
+      "git_blob_sha": "200698f54b6025c819ea2c6deb6b8d1f0c7a5a43"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-proxolink-error-initial-430.png",
+      "kind": "documentation/evidence",
+      "bytes": 141812,
+      "sha256": "f203ab69fca02ee528eecbfb382c0dbf7c5cff27f1d0b0c2c7fec5e542c3314d",
+      "git_blob_sha": "9f457bbc99c8d6c98adf0e1adf788aad6c546993"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-proxolink-error-initial-768.png",
+      "kind": "documentation/evidence",
+      "bytes": 148685,
+      "sha256": "bea6c4993fbad2f32624c28c6acdf25d625551bd9864c2eb1be7b8e79c5cc871",
+      "git_blob_sha": "557c4bea9523ae3803255ae948769750b3b39952"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-screen-measurements.json",
+      "kind": "documentation/evidence",
+      "bytes": 22552,
+      "sha256": "f57b16fbc209b0b808dd50735484f2ad89ae46d84dfb623a0437ed748cefe815",
+      "git_blob_sha": "c276a29c5b2948605609b9bc78aad58de15edc71"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-tools-refresh-100ms-320.png",
+      "kind": "documentation/evidence",
+      "bytes": 52255,
+      "sha256": "7c3078f5f9f96be348dd0dda8da3e5a35ec2446ed342421b44aff317a6e69ddf",
+      "git_blob_sha": "77d026b4bbcee19f9c31a58c8b72d93c777e3444"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-tools-refresh-100ms-393.png",
+      "kind": "documentation/evidence",
+      "bytes": 53654,
+      "sha256": "43e7dbdf20105d0df408b6eb2fded4356aa35559ee9b814d16564335b66cc6bc",
+      "git_blob_sha": "b37a4d0df33ddce30a6bdf2116a140b8f0a29792"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-tools-refresh-100ms-430.png",
+      "kind": "documentation/evidence",
+      "bytes": 53749,
+      "sha256": "dd2fb233b818f597dbe021eeafa2da4cec159edc4a39c31742994d588e3dc424",
+      "git_blob_sha": "faaafac430049c85ded31113e8d15baf7ff17b36"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-tools-refresh-100ms-768.png",
+      "kind": "documentation/evidence",
+      "bytes": 57762,
+      "sha256": "d0b86e0d008ff3a303f8dea229ec0e16b6991c72cd22a6e842068d69774ac449",
+      "git_blob_sha": "bb3a712082fd94dbbf98baede8b13630620fed76"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-tools-refresh-300ms-320.png",
+      "kind": "documentation/evidence",
+      "bytes": 52112,
+      "sha256": "798e0a5026361c6ead7981bac0330550b583ab6864a2cfb8523e9a81199247b4",
+      "git_blob_sha": "211ffbf59c0631329e6764f4a1cc3025221ebddb"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-tools-refresh-300ms-393.png",
+      "kind": "documentation/evidence",
+      "bytes": 53566,
+      "sha256": "b9c11246585422c00d3c9c639e00f34b76f5029efb074b408836f6f3085b316d",
+      "git_blob_sha": "c0f6f3c3ee94ec010b5a0c43e2486c56c194d71b"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-tools-refresh-300ms-430.png",
+      "kind": "documentation/evidence",
+      "bytes": 53581,
+      "sha256": "e1642165fb4c0cc1ff04a1d8285e2701548f4cd536db65c26797baf0983ef3f4",
+      "git_blob_sha": "8be4c8a559aba291ec16095cc546a44d47072c28"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-tools-refresh-300ms-768.png",
+      "kind": "documentation/evidence",
+      "bytes": 57788,
+      "sha256": "02102ef7f472baf2f937a4e74b824134c850d2d79b8f47c786115817f5e97098",
+      "git_blob_sha": "b75e4a16c3e426497a310b70129a7cb5a944f8c1"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-tools-refresh-initial-320.png",
+      "kind": "documentation/evidence",
+      "bytes": 51450,
+      "sha256": "d0e62cec79d3c746614afaf5e2f8da6d4222b7dfb0765eea53d9dcc7e0044397",
+      "git_blob_sha": "2cfa687fd98779855fec660685486b8145d6a056"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-tools-refresh-initial-393.png",
+      "kind": "documentation/evidence",
+      "bytes": 52891,
+      "sha256": "d2ccde5dcb5315ac2e3368d1a005b27827d66d6e67e54d8d8b1bfdb5aec87a92",
+      "git_blob_sha": "c7d9803756711bb1eca36594b4fe13ce8cb3a784"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-tools-refresh-initial-430.png",
+      "kind": "documentation/evidence",
+      "bytes": 53026,
+      "sha256": "2a45cc2c47e34e1dc9ee8f560778aaddc853505925a40317e6ba439a65820072",
+      "git_blob_sha": "65d7a5d7cc0d2e647b3c23c8aca5c0644725ed98"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-tools-refresh-initial-768.png",
+      "kind": "documentation/evidence",
+      "bytes": 56721,
+      "sha256": "2ebc9859c6dc7898cfb8ed5cb4f785ccb370e1a60458a4430425cde9ddfb45c5",
+      "git_blob_sha": "8f257265d4852fc00a5641b9a51e26b583b47756"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-tools-refresh-settled-320.png",
+      "kind": "documentation/evidence",
+      "bytes": 51450,
+      "sha256": "d0e62cec79d3c746614afaf5e2f8da6d4222b7dfb0765eea53d9dcc7e0044397",
+      "git_blob_sha": "2cfa687fd98779855fec660685486b8145d6a056"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-tools-refresh-settled-393.png",
+      "kind": "documentation/evidence",
+      "bytes": 52891,
+      "sha256": "d2ccde5dcb5315ac2e3368d1a005b27827d66d6e67e54d8d8b1bfdb5aec87a92",
+      "git_blob_sha": "c7d9803756711bb1eca36594b4fe13ce8cb3a784"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-tools-refresh-settled-430.png",
+      "kind": "documentation/evidence",
+      "bytes": 53026,
+      "sha256": "2a45cc2c47e34e1dc9ee8f560778aaddc853505925a40317e6ba439a65820072",
+      "git_blob_sha": "65d7a5d7cc0d2e647b3c23c8aca5c0644725ed98"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens/actual-tools-refresh-settled-768.png",
+      "kind": "documentation/evidence",
+      "bytes": 56721,
+      "sha256": "2ebc9859c6dc7898cfb8ed5cb4f785ccb370e1a60458a4430425cde9ddfb45c5",
+      "git_blob_sha": "8f257265d4852fc00a5641b9a51e26b583b47756"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/current-thumbnail-apk-size.json",
+      "kind": "documentation/evidence",
+      "bytes": 1966,
+      "sha256": "58ddbb6905c558c6f2e15fe3f13e4ce0edf6120ab9450e552f76a6aec93e136d",
+      "git_blob_sha": "9a5f7367b4a9cfc887f9953852c8e37224ecc94f"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/current-verification.json",
+      "kind": "documentation/evidence",
+      "bytes": 4186,
+      "sha256": "667468bd507cdd7146ceb32961b111deea5a3310371ea9dd0e8c55c6f56a5168",
+      "git_blob_sha": "170c398b8dda0429f26ee7311dc2eb5c24aecf80"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/current-visual-artifact-audit.json",
+      "kind": "documentation/evidence",
+      "bytes": 50844,
+      "sha256": "4a9aa2c0cf59f8feca14abd336be3b9dfe7b6853cb3bf57c5cdda8e12f009072",
+      "git_blob_sha": "fb1c927660f74c527c6c26a5848909cfb82f8fd1"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/final-changed-files.json",
+      "kind": "documentation/evidence",
+      "bytes": null,
+      "sha256": null,
+      "git_blob_sha": null
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/native-runtime-request.json",
+      "kind": "documentation/evidence",
+      "bytes": 590,
+      "sha256": "58a7fb36b9efd7da04a34ace2a428040aec8b58206d5130fcdbeca1a331869d4",
+      "git_blob_sha": "e970e540eecdc1eb4608e0ea3a21fd60d7836b9d"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/refreshed-schema-metadata.json",
+      "kind": "documentation/evidence",
+      "bytes": 10051,
+      "sha256": "993f7b36a969658a2cd5e2d5a9b09c7cd43e5cca0c352a6d2d4bb0a0cf3a9960",
+      "git_blob_sha": "56fa330ad69b3a3f1006a7f9ae6d267772bab215"
+    },
+    {
+      "path": "proxo_app/integration_test/proxolink_native_actual_screens.dart",
+      "kind": "executable or verification source",
+      "bytes": 9915,
+      "sha256": "e7062e28d3ffb80a170042ceff8824910292c8da64fb328fa029727f39fdb1fa",
+      "git_blob_sha": "3540f5a9ae766aa4450f1cd8117d68530bebbb72"
+    },
+    {
+      "path": "proxo_app/integration_test/proxolink_native_create_chooser.dart",
+      "kind": "executable or verification source",
+      "bytes": 7594,
+      "sha256": "86c9d326a87e5f17a5e998fc33a6406c275b95bb00a68245485f223b79afdff3",
+      "git_blob_sha": "4b73f1f0ad7bcde1f3fd74a0c36aea6afc547cb4"
+    },
+    {
+      "path": "proxo_app/integration_test/support/actual_screen_fixtures.dart",
+      "kind": "executable or verification source",
+      "bytes": 9789,
+      "sha256": "16684df1cdc196eb866fa9adef246e89b111d3ccd39dcdfd83db766e0854831d",
+      "git_blob_sha": "83afee451a0b266a74614fba33fbd97b30e6ddba"
+    },
+    {
+      "path": "proxo_app/test/proxolink_actual_screens_test.dart",
+      "kind": "executable or verification source",
+      "bytes": 8857,
+      "sha256": "08dff6d57f81226d3323a1acea1ffd895f8b000582f0be9f7347b0156bddc12a",
+      "git_blob_sha": "11545a091420f6ab84656d305580d9246630a80a"
+    },
+    {
+      "path": "scripts/proxolink-native-actual-screens.mjs",
+      "kind": "executable or verification source",
+      "bytes": 5535,
+      "sha256": "50ef733a0e390f34521ce24d820fa836083b8dacf35c4bb2140115b37636a2b5",
+      "git_blob_sha": "69cf89ef7c94fc5fac5eb0567830f654d9e9a313"
+    },
+    {
+      "path": "scripts/proxolink-native-pipeline.mjs",
+      "kind": "executable or verification source",
+      "bytes": 10746,
+      "sha256": "ec50f2a50b72951787431b307c67f8a515c2c2a43ab3740a4edbece70e27c070",
+      "git_blob_sha": "2332b694107ef9864210de361f915184aacb11a9"
+    },
+    {
+      "path": "scripts/proxolink-staging-tools.mjs",
+      "kind": "executable or verification source",
+      "bytes": 9930,
+      "sha256": "fc769efcd0336bcaf84ab485e3dbf2061a8451a77b9bc3b10b178703d0355618",
+      "git_blob_sha": "dcde2bb0e20889b9fff44bbc1e4fd6522fccb057"
+    },
+    {
+      "path": "scripts/proxolink-staging-verification.mjs",
+      "kind": "executable or verification source",
+      "bytes": 13821,
+      "sha256": "c63dcb5f25fcafb1f4ee6fd7aa0625bb9963f4e969d84ca12d272eda60c7d8c8",
+      "git_blob_sha": "1dd5fef0280ceadb8f09847ab2c7e84751b1a55e"
+    },
+    {
+      "path": "scripts/run-proxolink-native.mjs",
+      "kind": "executable or verification source",
+      "bytes": 36360,
+      "sha256": "0ba04f2e81c61b986c329a1798ac22c776b5f0eda69e48360ef50d739ee6356d",
+      "git_blob_sha": "13f24e889fc0f9883d0a66fc788a1e38fb819c53"
+    },
+    {
+      "path": "scripts/run-proxolink-staging.mjs",
+      "kind": "executable or verification source",
+      "bytes": 1880,
+      "sha256": "29f4e0f74f122ef3506691566cf362f8e611852574db97873977f9338dbc199c",
+      "git_blob_sha": "737dde6ebb646e1154b6d9c2bc7ea14d7678e4a6"
+    },
+    {
+      "path": "test/proxolink-native-actual-screens.test.js",
+      "kind": "executable or verification source",
+      "bytes": 2370,
+      "sha256": "3a00ede4f4808b82bc09a80322dfd6fab5b88b99c829159a962dd1da8452d2cd",
+      "git_blob_sha": "d605cf14a73fb4bff9095d77c4484097beabf223"
+    },
+    {
+      "path": "test/proxolink-native-pipeline.test.js",
+      "kind": "executable or verification source",
+      "bytes": 7706,
+      "sha256": "6718ca149a6b5b987f6580d7a96068ff600985b485ccb0070fff0b70099110fe",
+      "git_blob_sha": "4aea0f9aa0d18856da9e33e4eabbc53055db6423"
+    },
+    {
+      "path": "test/proxolink-staging-verification.test.js",
+      "kind": "executable or verification source",
+      "bytes": 10262,
+      "sha256": "4fd93518394089b37abc7c1ba4b64521ff6939990dec2cdc575ebf9f5515e32d",
+      "git_blob_sha": "7b7c71c692d998d8b5a549428b21bd1483852e0c"
+    }
+  ]
+}

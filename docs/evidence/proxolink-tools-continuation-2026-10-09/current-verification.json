@@ -1,44 +1,44 @@
 {
   "date": "2026-10-09",
   "branch": "feat/proxolink-private-renderer-migration",
-  "starting_sha": "e61bc1a93f4acdc7ad75e9f44e79e6d73f110f11",
+  "starting_sha": "2f2b389a7acd187ea586839639e6010d02f7d226",
   "preserved_concurrent_audit_sha": "52f7ba2cb9337130495e75a397a1a404b8bfa10e",
-  "tested_implementation_sha": "fb29a6adbc8120f04c1e80027416ec1278b5f4d4",
+  "tested_implementation_sha": "c830a683b6b70ee91f5aebc002b1b4b424d5ac4a",
   "acceptance": "Pending",
   "complete": false,
   "source": {
-    "run_id": 37974532861,
+    "run_id": 37983088739,
     "status": "completed",
     "conclusion": "success",
     "jobs": [
       {
-        "id": 113969335762,
+        "id": 113998218382,
         "name": "database",
         "conclusion": "success"
       },
       {
-        "id": 113969336090,
-        "name": "responsive",
+        "id": 113998218555,
+        "name": "flutter",
         "conclusion": "success"
       },
       {
-        "id": 113969336107,
-        "name": "edge-functions",
-        "conclusion": "success"
-      },
-      {
-        "id": 113969336159,
+        "id": 113998218562,
         "name": "backend",
         "conclusion": "success"
       },
       {
-        "id": 113969336170,
-        "name": "flutter",
+        "id": 113998218726,
+        "name": "edge-functions",
+        "conclusion": "success"
+      },
+      {
+        "id": 113998218945,
+        "name": "responsive",
         "conclusion": "success"
       }
     ],
-    "backend_tests": 144,
-    "flutter_tests": 222,
+    "backend_tests": 146,
+    "flutter_tests": 230,
     "renderer_browser_cases": 480,
     "sql_contract_suites": 3,
     "postgres_api_lifecycles": 7,
@@ -48,7 +48,7 @@
     "edge_functions_checked": 2
   },
   "local": {
-    "backend_tests": 144,
+    "backend_tests": 146,
     "backend_build": true,
     "native_runner_node_syntax": true,
     "diff_whitespace": true,
@@ -58,11 +58,6 @@
     "android_adb_available": false
   },
   "native": {
-    "request_run_id": 37974532875,
-    "apk_job_id": 113969336110,
-    "apk_conclusion": "success",
-    "runtime_job_id": 113970861513,
-    "runtime_status": "waiting",
     "environment": "proxolink-preview-verification",
     "configured_reviewer": "Zana-Sponsor",
     "protection_changed": false,
@@ -87,7 +82,20 @@
     "legacy_chooser_passed": 0,
     "legacy_chooser_failure": "chooser_builder_setup",
     "root_cause": "NOT PROVEN",
-    "empty_cached_document_css_hash_is_not_source_parity_proof": true
+    "empty_cached_document_css_hash_is_not_source_parity_proof": true,
+    "compiled_source_sha": "c830a683b6b70ee91f5aebc002b1b4b424d5ac4a",
+    "compiled_run_id": 37983088701,
+    "compiled_apk_job_id": 113998217758,
+    "compiled_runtime_skipped": true,
+    "final_request_metadata": "native-runtime-request.json",
+    "actual_screen_flows_required": 16,
+    "actual_screen_whole_surface_captures_required": 64,
+    "live_source_identity_is_post_acceptance_observation": true,
+    "previous_request_run_id": 37974532875,
+    "previous_apk_job_id": 113969336110,
+    "previous_apk_conclusion": "success",
+    "previous_runtime_job_id": 113970861513,
+    "previous_runtime_status": "waiting"
   },
   "guardrails": {
     "pr_number": 7,
@@ -102,8 +110,24 @@
   "blockers": [
     "protected_native_environment_review",
     "strict_native_pixel_parity_root_cause",
-    "isolated_hosted_project_deployment_and_two_ordinary_accounts",
-    "actual_home_screen_motion_comparison",
-    "full_native_error_screen_and_supported_device_browser_coverage"
-  ]
+    "isolated_supabase_project_cost_api_unavailable",
+    "isolated_vercel_deployment_permissions_403",
+    "actual_native_screen_motion_notices_and_browser_cycles",
+    "unavailable_supported_browser_device_coverage"
+  ],
+  "widget_actual_screens": {
+    "source_sha": "c830a683b6b70ee91f5aebc002b1b4b424d5ac4a",
+    "cases": 16,
+    "pngs": 80,
+    "widths": [
+      320,
+      393,
+      430,
+      768
+    ],
+    "native_device": false,
+    "hosted_content": false,
+    "same_refresh_offsets_verified": true,
+    "actual_notice_visibility_and_lifecycle_verified": true
+  }
 }

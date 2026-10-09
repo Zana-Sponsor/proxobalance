@@ -1,7 +1,7 @@
 {
   "method": "same current code and release configuration; only twelve PNG assets replaced",
   "reference_assets_revision": "3c4a92834ac5249858b299911bece93edb665fc2",
-  "current_revision": "fb29a6adbc8120f04c1e80027416ec1278b5f4d4",
+  "current_revision": "c830a683b6b70ee91f5aebc002b1b4b424d5ac4a",
   "before": {
     "apk_bytes": 83702384,
     "thumbnail_compressed_bytes": 868949,
