@@ -40,8 +40,11 @@ export function stagingTransport(config,fetcher=fetch) {
         ||/^\/(?:contact|order|download)\/[0-9a-f-]{36}(?:\/avatar)?$/.test(url.pathname);
     const livePreview=!supabase&&['/page-preview','/page-preview-avatar'].includes(url.pathname)&&method==='GET';
     if((!allowed&&!livePreview)||!['GET','POST','PATCH'].includes(method))throw Error('staging_request_scope');
+    const deniedModeration=supabase&&url.pathname==='/rest/v1/proxolink_cards'&&method==='PATCH'
+      &&/^eq\.[0-9a-f-]{36}$/.test(url.searchParams.get('id')||'')&&[...url.searchParams.keys()].every(k=>k==='id'||k==='select')
+      &&['{"moderation_status":"approved"}','{"moderation_status":"rejected"}'].includes(body);
     if(supabase && ((url.pathname==='/auth/v1/token'&&method!=='POST')
-      ||(url.pathname==='/rest/v1/proxolink_cards'&&method!=='GET')
+      ||(url.pathname==='/rest/v1/proxolink_cards'&&method!=='GET'&&!deniedModeration)
       ||(url.pathname.startsWith('/storage/')&&method!=='POST')))
       throw Error('staging_request_scope');
     const headers={};

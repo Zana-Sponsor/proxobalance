@@ -84,7 +84,7 @@ class _ActualScreensState extends State<NativeActualScreensJourney> {
               if(!handle.isRefreshing||offsets.last<=0)throw StateError('actual_screen_refresh');
               shots.add(await _png(id,'${phase}ms',clock:clock));
             }
-            // The fetch follows the original spring; keep its existing sequence.
+            // The original concurrent fetch/drop remains pending through both captures.
             await Future<void>.delayed(const Duration(milliseconds:600));
             if((kind=='home'?backend.reads['pa_ads']!:repo.reads)!=reads+1)throw StateError('actual_screen_reads');
             gate.complete();await refreshing;

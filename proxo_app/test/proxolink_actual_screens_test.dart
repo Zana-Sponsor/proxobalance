@@ -59,14 +59,17 @@ void main() {
         offsets[screen]=[];
         await _png(t,key,'actual-$screen-refresh-initial-${width.toInt()}');
         final refreshing=handle.refresh();unawaited(handle.refresh()); // Same-screen reentry must remain gated.
-        await t.pump();
+        // Flush _scrollToTop's async continuation, then establish the first
+        // ticker timestamp without advancing time. Both actual screens use
+        // the same deterministic widget-animation clock for the fixed phases.
+        await t.pump();await t.pump();
         for(final phase in [100,300]) {
           await t.pump(Duration(milliseconds:phase==100?100:200));
           offsets[screen]!.add(t.getTopLeft(scroll).dy-initial.dy);
           expect(handle.isRefreshing,true);expect(identical(element,t.element(scroll)),true);
           await _png(t,key,'actual-$screen-refresh-${phase}ms-${width.toInt()}');
         }
-        // The original opening spring completes before issuing the fetch.
+        // Keep the actual concurrent fetch/drop pending through both captures.
         await t.pump(const Duration(milliseconds:500));
         expect(screen=='home'?backend.reads['pa_ads']!:repo.reads,reads+1);
         gate.complete();await t.pumpAndSettle();await refreshing;
@@ -74,7 +77,8 @@ void main() {
         expect(t.takeException(),isNull);expect(permissionRequests,0);
         await _png(t,key,'actual-$screen-refresh-settled-${width.toInt()}');
         measurements['$screen-refresh-${width.toInt()}']={'offsets_100_300':offsets[screen]!,'settled_offset':t.getTopLeft(scroll).dy-initial.dy,
-          'collection_reads_added':(screen=='home'?backend.reads['pa_ads']!:repo.reads)-reads,'same_scroll_element':true,'spinner_closed':true};
+          'collection_reads_added':(screen=='home'?backend.reads['pa_ads']!:repo.reads)-reads,'same_scroll_element':true,'spinner_closed':true,
+          'phase_clock':'fixed fake-clock milliseconds after initial widget ticker timestamp'};
         backend.refreshGate=null;handle.dispose();
         await t.pumpWidget(const SizedBox.shrink());await t.pumpAndSettle();
       }
