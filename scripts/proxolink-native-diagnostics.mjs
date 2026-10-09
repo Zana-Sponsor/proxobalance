@@ -9,6 +9,7 @@ export const DIAGNOSTIC_POINTS=Object.freeze({
 });
 export const REPRODUCTION_IDS=Object.keys(DIAGNOSTIC_POINTS).slice(0,8);
 export const CHOOSER_IDS=['contact','order','download'].flatMap(type=>['pill','pill-mint','pill-dark','pill-white'].map(style=>`chooser-${type}-${style}`));
+export const CREATE_CHOOSER_IDS=CHOOSER_IDS.map(id=>'create-'+id);
 const numericKeys=new Set(('measured_width measured_height scaled_density orientation insets config_hash html_hash config_source_hash client_width client_height offset_width offset_height offset_left offset_top parent_bounds containing_bounds value_hash identity_hash duration_ms response_end_ms transfer_size encoded_size decoded_size response_status initiator_hash natural_width natural_height family_hash weight_hash dropped_frames vsync_ms intended_vsync_ms layout_ms draw_duration_ms sync_ms command_ms swap_ms total_ms callbacks first_ms second_ms start_ms response_ms dom_complete_ms load_end_ms type_hash content_height page_scale window_width window_height display_width display_height xdpi ydpi window_color_mode document_bounds body_bounds screen_width screen_height screen_color_depth screen_pixel_depth class_hash id_hash initial_ready_ms reload_ready_ms barrier_return_ms time_origin now_ms dpr inner_width inner_height scroll_x scroll_y scroll_width scroll_height visual_viewport bounds style_hash text_hash opacity hit_bounds hit_style_hash href_hash fonts_hash css_hash time play_state_hash end flutter_bounds observed_ms requested_ms visual_state_ms draw_ms frame_commit_ms post_animation_callbacks animation_1_ms animation_2_ms width height screen_x screen_y window_x window_y x y alpha scale_x scale_y translation_x translation_y matrix layer_type density density_dpi sdk').split(' '));
 const booleanKeys=new Set(('layout_requested laid_out render_process_present fonts_ready images_ready complete loaded elements_truncated resources_truncated present visibility document_complete visual_state_seen draw_seen frame_commit_seen hardware_accelerated attached').split(' '));
 const cssKeys=new Set(('width height minWidth minHeight maxWidth maxHeight position display margin padding border borderTopWidth borderRightWidth borderBottomWidth borderLeftWidth borderColor borderStyle boxSizing backgroundClip overflow overflowX overflowY clipPath zIndex perspective willChange contain fontFeatureSettings fontVariationSettings textAlign direction unicodeBidi fontFamily fontSize fontWeight lineHeight letterSpacing color backgroundColor backgroundImage opacity transform filter mixBlendMode isolation borderRadius boxShadow transformOrigin backgroundSize backgroundPosition fontStyle fontKerning textRendering transitionProperty transitionDuration transitionDelay animationName animationDuration animationDelay animationFillMode animationPlayState zoom').split(' '));
@@ -67,6 +68,27 @@ export function validateChooserResults(data,taps,captures){
  if(Object.keys(data).length!==12||taps.size!==12||captures.size!==12||!CHOOSER_IDS.every(id=>
   taps.has(id)&&captures.has(id)&&chooserFlags.every(k=>data[id]?.[k]===true)&&Number.isInteger(data[id]?.width)&&data[id].width>=100&&data[id].width<=430))
   throw Error('native_chooser_failed');
+ return data;
+}
+const createChooserFlags=['passed','form_screen','type_match','thumbnail_decoded','selection_changed','selected_state',
+ 'provider_type_match','no_webview','no_preview_request','native_input','captured'];
+const createChooserErrors=new Set(['create_chooser_setup','create_chooser_element_missing','create_chooser_ack',
+ 'create_chooser_tap_bounds','create_chooser_selection','create_chooser_thumbnail','create_chooser_providers',
+ 'create_chooser_preview','create_chooser_unclassified']);
+export function safeCreateChooserResults(data){
+ return Object.fromEntries(CREATE_CHOOSER_IDS.filter(id=>data?.[id]).map(id=>{
+  const item=data[id],out=Object.fromEntries(createChooserFlags.filter(k=>typeof item[k]==='boolean').map(k=>[k,item[k]]));
+  if(createChooserErrors.has(item.failed_check))out.failed_check=item.failed_check;
+  if(Number.isInteger(item.width)&&item.width>=48&&item.width<=430)out.width=item.width;
+  if(Array.isArray(item.tap_bounds)&&item.tap_bounds.length===4&&item.tap_bounds.every(v=>typeof v==='number'&&Number.isFinite(v)&&v>=0&&v<1900))out.tap_bounds=item.tap_bounds;
+  return[id,out];
+ }));
+}
+export function validateCreateChooserResults(data,taps,captures,setups){
+ if(Object.keys(data).length!==12||taps.size!==12||captures.size!==12||setups.size!==3||
+  !['contact','order','download'].every(type=>setups.has('create-chooser-setup-'+type))||
+  !CREATE_CHOOSER_IDS.every(id=>taps.has(id)&&captures.has(id)&&createChooserFlags.every(k=>data[id]?.[k]===true)&&
+   Number.isInteger(data[id]?.width)&&data[id].width>=48&&data[id].width<=430))throw Error('native_create_chooser_failed');
  return data;
 }
 async function rgb(png){return sharp(png).removeAlpha().raw().toBuffer({resolveWithObject:true});}

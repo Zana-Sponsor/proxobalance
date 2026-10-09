@@ -1,0 +1,494 @@
+{
+  "scope": "Read-only metadata, no customer rows or production mutations",
+  "schema": {
+    "rls": {
+      "forced": false,
+      "enabled": true
+    },
+    "grants": [
+      {
+        "role": "postgres",
+        "privilege": "INSERT"
+      },
+      {
+        "role": "postgres",
+        "privilege": "SELECT"
+      },
+      {
+        "role": "postgres",
+        "privilege": "UPDATE"
+      },
+      {
+        "role": "postgres",
+        "privilege": "DELETE"
+      },
+      {
+        "role": "postgres",
+        "privilege": "TRUNCATE"
+      },
+      {
+        "role": "postgres",
+        "privilege": "REFERENCES"
+      },
+      {
+        "role": "postgres",
+        "privilege": "TRIGGER"
+      },
+      {
+        "role": "service_role",
+        "privilege": "INSERT"
+      },
+      {
+        "role": "service_role",
+        "privilege": "SELECT"
+      },
+      {
+        "role": "service_role",
+        "privilege": "UPDATE"
+      },
+      {
+        "role": "service_role",
+        "privilege": "DELETE"
+      },
+      {
+        "role": "service_role",
+        "privilege": "TRUNCATE"
+      },
+      {
+        "role": "service_role",
+        "privilege": "REFERENCES"
+      },
+      {
+        "role": "service_role",
+        "privilege": "TRIGGER"
+      },
+      {
+        "role": "authenticated",
+        "privilege": "INSERT"
+      },
+      {
+        "role": "authenticated",
+        "privilege": "SELECT"
+      },
+      {
+        "role": "authenticated",
+        "privilege": "UPDATE"
+      },
+      {
+        "role": "authenticated",
+        "privilege": "DELETE"
+      }
+    ],
+    "columns": [
+      {
+        "type": "uuid",
+        "column": "id",
+        "default": "gen_random_uuid()",
+        "nullable": "NO"
+      },
+      {
+        "type": "uuid",
+        "column": "user_id",
+        "default": null,
+        "nullable": "NO"
+      },
+      {
+        "type": "text",
+        "column": "name",
+        "default": null,
+        "nullable": "NO"
+      },
+      {
+        "type": "text",
+        "column": "description",
+        "default": null,
+        "nullable": "YES"
+      },
+      {
+        "type": "text",
+        "column": "avatar_b64",
+        "default": null,
+        "nullable": "YES"
+      },
+      {
+        "type": "text",
+        "column": "style",
+        "default": "'classic'::text",
+        "nullable": "YES"
+      },
+      {
+        "type": "text",
+        "column": "color_theme",
+        "default": "'#1c2333'::text",
+        "nullable": "YES"
+      },
+      {
+        "type": "jsonb",
+        "column": "platforms",
+        "default": "'{}'::jsonb",
+        "nullable": "YES"
+      },
+      {
+        "type": "text",
+        "column": "status",
+        "default": "'active'::text",
+        "nullable": "YES"
+      },
+      {
+        "type": "integer",
+        "column": "card_number",
+        "default": "nextval('proxolink_cards_card_number_seq'::regclass)",
+        "nullable": "NO"
+      },
+      {
+        "type": "timestamp with time zone",
+        "column": "created_at",
+        "default": "now()",
+        "nullable": "YES"
+      },
+      {
+        "type": "text",
+        "column": "bio",
+        "default": null,
+        "nullable": "YES"
+      },
+      {
+        "type": "text",
+        "column": "html_content",
+        "default": null,
+        "nullable": "YES"
+      },
+      {
+        "type": "jsonb",
+        "column": "checked_btns",
+        "default": null,
+        "nullable": "YES"
+      },
+      {
+        "type": "text",
+        "column": "tiktok",
+        "default": null,
+        "nullable": "YES"
+      },
+      {
+        "type": "text",
+        "column": "logo_b64",
+        "default": null,
+        "nullable": "YES"
+      },
+      {
+        "type": "text",
+        "column": "video_url",
+        "default": null,
+        "nullable": "YES"
+      },
+      {
+        "type": "text",
+        "column": "tt",
+        "default": null,
+        "nullable": "YES"
+      },
+      {
+        "type": "text",
+        "column": "template_key",
+        "default": null,
+        "nullable": "YES"
+      },
+      {
+        "type": "integer",
+        "column": "template_version",
+        "default": "1",
+        "nullable": "NO"
+      },
+      {
+        "type": "text",
+        "column": "avatar_path",
+        "default": null,
+        "nullable": "YES"
+      },
+      {
+        "type": "text",
+        "column": "card_language",
+        "default": "'ku'::text",
+        "nullable": "NO"
+      },
+      {
+        "type": "text",
+        "column": "publish_status",
+        "default": "'creating'::text",
+        "nullable": "NO"
+      },
+      {
+        "type": "text",
+        "column": "last_publish_error_code",
+        "default": null,
+        "nullable": "YES"
+      },
+      {
+        "type": "timestamp with time zone",
+        "column": "last_publish_error_at",
+        "default": null,
+        "nullable": "YES"
+      },
+      {
+        "type": "timestamp with time zone",
+        "column": "published_at",
+        "default": null,
+        "nullable": "YES"
+      },
+      {
+        "type": "timestamp with time zone",
+        "column": "updated_at",
+        "default": "now()",
+        "nullable": "NO"
+      },
+      {
+        "type": "uuid",
+        "column": "client_request_id",
+        "default": null,
+        "nullable": "YES"
+      },
+      {
+        "type": "text",
+        "column": "creation_request_hash",
+        "default": null,
+        "nullable": "YES"
+      },
+      {
+        "type": "text",
+        "column": "page_type",
+        "default": "'contact'::text",
+        "nullable": "NO"
+      }
+    ],
+    "indexes": [
+      {
+        "indexdef": "CREATE UNIQUE INDEX proxolink_cards_pkey ON public.proxolink_cards USING btree (id)",
+        "indexname": "proxolink_cards_pkey",
+        "tablename": "proxolink_cards",
+        "schemaname": "public",
+        "tablespace": null
+      },
+      {
+        "indexdef": "CREATE UNIQUE INDEX proxolink_cards_owner_request_unique ON public.proxolink_cards USING btree (user_id, client_request_id) WHERE (client_request_id IS NOT NULL)",
+        "indexname": "proxolink_cards_owner_request_unique",
+        "tablename": "proxolink_cards",
+        "schemaname": "public",
+        "tablespace": null
+      },
+      {
+        "indexdef": "CREATE INDEX proxolink_cards_owner_created_idx ON public.proxolink_cards USING btree (user_id, created_at DESC)",
+        "indexname": "proxolink_cards_owner_created_idx",
+        "tablename": "proxolink_cards",
+        "schemaname": "public",
+        "tablespace": null
+      },
+      {
+        "indexdef": "CREATE INDEX proxolink_cards_owner_ready_idx ON public.proxolink_cards USING btree (user_id, status, publish_status)",
+        "indexname": "proxolink_cards_owner_ready_idx",
+        "tablename": "proxolink_cards",
+        "schemaname": "public",
+        "tablespace": null
+      },
+      {
+        "indexdef": "CREATE INDEX proxolink_cards_user_idx ON public.proxolink_cards USING btree (user_id)",
+        "indexname": "proxolink_cards_user_idx",
+        "tablename": "proxolink_cards",
+        "schemaname": "public",
+        "tablespace": null
+      }
+    ],
+    "policies": [
+      {
+        "cmd": "ALL",
+        "qual": "( SELECT pa_is_admin() AS pa_is_admin)",
+        "roles": [
+          "authenticated"
+        ],
+        "tablename": "proxolink_cards",
+        "permissive": "PERMISSIVE",
+        "policyname": "cards admin all",
+        "schemaname": "public",
+        "with_check": "( SELECT pa_is_admin() AS pa_is_admin)"
+      },
+      {
+        "cmd": "ALL",
+        "qual": "(( SELECT auth.uid() AS uid) = user_id)",
+        "roles": [
+          "authenticated"
+        ],
+        "tablename": "proxolink_cards",
+        "permissive": "PERMISSIVE",
+        "policyname": "cards own all",
+        "schemaname": "public",
+        "with_check": "(( SELECT auth.uid() AS uid) = user_id)"
+      }
+    ],
+    "triggers": [
+      {
+        "name": "proxolink_cards_updated",
+        "definer": false,
+        "function": "touch_updated_at",
+        "settings": [
+          "search_path=\"\""
+        ]
+      },
+      {
+        "name": "proxolink_protect_live_card",
+        "definer": true,
+        "function": "protect_live_card",
+        "settings": [
+          "search_path=\"\""
+        ]
+      }
+    ],
+    "constraints": [
+      {
+        "name": "proxolink_cards_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "name": "proxolink_cards_user_id_fkey",
+        "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+      },
+      {
+        "name": "proxolink_publish_status_check",
+        "definition": "CHECK ((publish_status = ANY (ARRAY['creating'::text, 'ready'::text, 'failed'::text])))"
+      },
+      {
+        "name": "proxolink_publish_attempts_card_id_fkey",
+        "definition": "FOREIGN KEY (card_id) REFERENCES proxolink_cards(id) ON DELETE CASCADE"
+      },
+      {
+        "name": "pa_ad_contact_links_card_id_fkey",
+        "definition": "FOREIGN KEY (card_id) REFERENCES proxolink_cards(id) ON DELETE RESTRICT"
+      },
+      {
+        "name": "proxolink_card_language_check",
+        "definition": "CHECK ((card_language = ANY (ARRAY['ku'::text, 'ar'::text, 'en'::text])))"
+      },
+      {
+        "name": "proxolink_template_version_check",
+        "definition": "CHECK ((template_version > 0))"
+      },
+      {
+        "name": "proxolink_platforms_object_check",
+        "definition": "CHECK ((jsonb_typeof(platforms) = 'object'::text))"
+      },
+      {
+        "name": "pa_ads_proxolink_asset_fk",
+        "definition": "FOREIGN KEY (asset_id) REFERENCES proxolink_cards(id) ON DELETE RESTRICT"
+      },
+      {
+        "name": "pa_ads_proxolink_card_fk",
+        "definition": "FOREIGN KEY (card_id) REFERENCES proxolink_cards(id) ON DELETE RESTRICT"
+      },
+      {
+        "name": "proxolink_page_type_check",
+        "definition": "CHECK ((page_type = ANY (ARRAY['contact'::text, 'food'::text, 'download'::text])))"
+      }
+    ]
+  },
+  "related": {
+    "storage_policies": [
+      {
+        "cmd": "INSERT",
+        "qual": null,
+        "roles": [
+          "authenticated"
+        ],
+        "tablename": "objects",
+        "permissive": "PERMISSIVE",
+        "policyname": "ProxoLink asset owner insert",
+        "schemaname": "storage",
+        "with_check": "((bucket_id = 'proxolink-assets'::text) AND ((storage.foldername(name))[1] = (( SELECT auth.uid() AS uid))::text) AND (name ~ (('^'::text || (( SELECT auth.uid() AS uid))::text) || '/[0-9a-f-]{36}/[A-Za-z0-9_-]+[.](jpg|jpeg|png|webp)$'::text)))"
+      },
+      {
+        "cmd": "SELECT",
+        "qual": "((bucket_id = 'proxolink-assets'::text) AND ((storage.foldername(name))[1] = (auth.uid())::text))",
+        "roles": [
+          "authenticated"
+        ],
+        "tablename": "objects",
+        "permissive": "PERMISSIVE",
+        "policyname": "ProxoLink asset owner read",
+        "schemaname": "storage",
+        "with_check": null
+      },
+      {
+        "cmd": "DELETE",
+        "qual": "((bucket_id = 'proxolink-assets'::text) AND ((storage.foldername(name))[1] = (( SELECT auth.uid() AS uid))::text) AND (NOT (EXISTS ( SELECT 1\n   FROM proxolink_cards\n  WHERE (proxolink_cards.avatar_path = objects.name)))))",
+        "roles": [
+          "authenticated"
+        ],
+        "tablename": "objects",
+        "permissive": "PERMISSIVE",
+        "policyname": "ProxoLink unreferenced asset owner delete",
+        "schemaname": "storage",
+        "with_check": null
+      }
+    ],
+    "profile_admin_policies": [
+      {
+        "cmd": "ALL",
+        "qual": "( SELECT pa_is_admin() AS pa_is_admin)",
+        "roles": [
+          "authenticated"
+        ],
+        "tablename": "profiles",
+        "permissive": "PERMISSIVE",
+        "policyname": "profiles admin all",
+        "schemaname": "public",
+        "with_check": "( SELECT pa_is_admin() AS pa_is_admin)"
+      },
+      {
+        "cmd": "INSERT",
+        "qual": null,
+        "roles": [
+          "authenticated"
+        ],
+        "tablename": "profiles",
+        "permissive": "PERMISSIVE",
+        "policyname": "profiles insert own",
+        "schemaname": "public",
+        "with_check": "(( SELECT auth.uid() AS uid) = id)"
+      },
+      {
+        "cmd": "SELECT",
+        "qual": "(( SELECT auth.uid() AS uid) = id)",
+        "roles": [
+          "authenticated"
+        ],
+        "tablename": "profiles",
+        "permissive": "PERMISSIVE",
+        "policyname": "profiles select own",
+        "schemaname": "public",
+        "with_check": null
+      },
+      {
+        "cmd": "UPDATE",
+        "qual": "(( SELECT auth.uid() AS uid) = id)",
+        "roles": [
+          "authenticated"
+        ],
+        "tablename": "profiles",
+        "permissive": "PERMISSIVE",
+        "policyname": "profiles update own",
+        "schemaname": "public",
+        "with_check": "(( SELECT auth.uid() AS uid) = id)"
+      }
+    ],
+    "admin_and_related_functions": [
+      {
+        "name": "pa_is_admin",
+        "settings": [
+          "search_path=public, extensions"
+        ],
+        "source_md5": "4943184699df54755ac20a7f60ae5e3b",
+        "anon_execute": false,
+        "security_definer": true,
+        "authenticated_execute": true
+      }
+    ]
+  }
+}

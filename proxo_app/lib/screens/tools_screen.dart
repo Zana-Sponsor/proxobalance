@@ -32,6 +32,8 @@ class _ToolsScreenState extends State<ToolsScreen> {
   final _scroll = ScrollController();
   final _localRefresh = ProxoRefreshController();
   final _launching = <String>{};
+  final _confirming = <String>{};
+  bool _creating = false;
   ProxoLinkFailure? _announced;
   @override
   void initState() {
@@ -51,9 +53,14 @@ class _ToolsScreenState extends State<ToolsScreen> {
     setState(() {});
   }
   Future<void> _create() async {
+    if (_creating) return;
+    _creating = true;
     final owner = _repository.ownerScope;
-    final saved = await Navigator.of(context).push<ProxoCard>(MaterialPageRoute(
-      builder: (_) => ProxoLinkCreatePageScreen(repository: _repository)));
+    ProxoCard? saved;
+    try {
+      saved = await Navigator.of(context).push<ProxoCard>(MaterialPageRoute(
+        builder: (_) => ProxoLinkCreatePageScreen(repository: _repository)));
+    } finally { _creating = false; }
     if (!mounted || saved == null || owner != _repository.ownerScope) return;
     _pages.upsert(saved);
     if (saved.publishStatus == 'failed') _notices.show({'create': const ProxoLinkFailure('publish_failed').message});
@@ -75,14 +82,17 @@ class _ToolsScreenState extends State<ToolsScreen> {
     } finally { _launching.remove(page.id); }
   }
   Future<void> _delete(ProxoCard page) async {
-    if (_pages.busy.contains(page.id)) return;
+    if (_pages.busy.contains(page.id) || !_confirming.add(page.id)) return;
     final owner = _repository.ownerScope;
-    final confirmed = await showDialog<bool>(context: context, builder: (context) => Directionality(
+    bool? confirmed;
+    try {
+      confirmed = await showDialog<bool>(context: context, builder: (context) => Directionality(
       textDirection: TextDirection.rtl, child: AlertDialog(
         title: const ProxoText('سڕینەوەی پەڕە'),
         content: ProxoText(page.name),
         actions: [TextButton(onPressed: () => Navigator.pop(context, false), child: const ProxoText('پاشگەزبوونەوە')),
           FilledButton(onPressed: () => Navigator.pop(context, true), child: const ProxoText('سڕینەوە'))])));
+    } finally { _confirming.remove(page.id); }
     if (!mounted || confirmed != true || owner != _repository.ownerScope) return;
     try { await _pages.manage(page, 'delete'); }
     catch (e) { if (mounted && owner == _repository.ownerScope) _notices.show({'delete':

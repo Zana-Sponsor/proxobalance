@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import sharp from 'sharp';
 import {DIAGNOSTIC_POINTS,REPRODUCTION_IDS,CHOOSER_IDS,safeRenderDiagnostics,safeChooserResults,validateChooserResults,
  diagnosticSample,diagnosePixelPair,validateDiagnosticRoles,validateReproductions,safeSurface} from '../scripts/proxolink-native-diagnostics.mjs';
+import {CREATE_CHOOSER_IDS,safeCreateChooserResults,validateCreateChooserResults} from '../scripts/proxolink-native-diagnostics.mjs';
 function state(){return {dom:{dpr:1,scroll_x:0,scroll_y:0,elements:[{present:true,bounds:[0.5,20,393,800],style_hash:123}]},
  native:{sdk:35,density:1,webview_version:'133.0.6943.137',barrier:{visual_state_seen:true,draw_seen:true,frame_commit_seen:false,post_animation_callbacks:2}},flutter_bounds:[403.5,200,393,1520]};}
 test('native diagnostic allowlist retains fractional geometry and strips capabilities and arbitrary text',()=>{
@@ -41,6 +42,26 @@ test('native chooser requires 12 real input taps, 12 captures and every positive
  assert.throws(()=>validateChooserResults(safe,new Set(),captures),/native_chooser_failed/);
  assert.throws(()=>validateChooserResults(safe,taps,new Set()),/native_chooser_failed/);
  safe[CHOOSER_IDS[0]].live_theme_match=false;assert.throws(()=>validateChooserResults(safe,taps,captures),/native_chooser_failed/);
+});
+test('current native Create Page supplements legacy chooser, requires every type/style input and rejects any live preview',()=>{
+ const flags=['passed','form_screen','type_match','thumbnail_decoded','selection_changed','selected_state',
+  'provider_type_match','no_webview','no_preview_request','native_input','captured'];
+ const good=Object.fromEntries(CREATE_CHOOSER_IDS.map(id=>[id,{...Object.fromEntries(flags.map(k=>[k,true])),width:190,token:'secret'}]));
+ const safe=safeCreateChooserResults(good),taps=new Set(CREATE_CHOOSER_IDS),captures=new Set(CREATE_CHOOSER_IDS),
+  setups=new Set(['contact','order','download'].map(type=>'create-chooser-setup-'+type));
+ assert.equal(CHOOSER_IDS.length,12);assert.equal(CREATE_CHOOSER_IDS.length,12);
+ assert.doesNotMatch(JSON.stringify(safe),/secret|token/);
+ validateCreateChooserResults(safe,taps,captures,setups);
+ assert.throws(()=>validateCreateChooserResults(safe,new Set(),captures,setups),/native_create_chooser_failed/);
+ assert.throws(()=>validateCreateChooserResults(safe,taps,new Set(),setups),/native_create_chooser_failed/);
+ assert.throws(()=>validateCreateChooserResults(safe,taps,captures,new Set()),/native_create_chooser_failed/);
+ for(const flag of flags){
+  safe[CREATE_CHOOSER_IDS[0]][flag]=false;
+  assert.throws(()=>validateCreateChooserResults(safe,taps,captures,setups),/native_create_chooser_failed/);
+  safe[CREATE_CHOOSER_IDS[0]][flag]=true;
+ }
+ delete safe[CREATE_CHOOSER_IDS[0]];
+ assert.throws(()=>validateCreateChooserResults(safe,taps,captures,setups),/native_create_chooser_failed/);
 });
 test('all eight failures and two controls require both roles, exactly three samples and the same WebView version',()=>{
  assert.equal(Object.keys(DIAGNOSTIC_POINTS).length,10);

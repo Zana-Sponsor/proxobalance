@@ -150,6 +150,19 @@ void main() {
   expect(repo.previewRequests,isEmpty);
   await t.binding.handlePopRoute();await t.pumpAndSettle();expect(find.text('ئامرازەکان'),findsOneWidget);expect(repo.listReads,1);
  });
+ testWidgets('rapid create taps open one route and rapid delete taps open one confirmation',(t) async {
+  size(t,393);final repo=ToolsRepository([moderated(1,'pending')]);
+  await t.pumpWidget(host(ToolsScreen(repository:repo)));await t.pumpAndSettle();
+  final create=t.widget<FilledButton>(find.widgetWithText(FilledButton,'پەڕە دروستبکە'));
+  create.onPressed!();create.onPressed!();await t.pumpAndSettle();
+  expect(find.byType(ProxoLinkCreatePageScreen),findsOneWidget);
+  Navigator.of(t.element(find.byType(ProxoLinkCreatePageScreen))).pop();await t.pumpAndSettle();
+  expect(find.byType(ProxoLinkCreatePageScreen),findsNothing);
+  final delete=t.widget<OutlinedButton>(find.widgetWithText(OutlinedButton,'سڕینەوە'));
+  delete.onPressed!();delete.onPressed!();await t.pumpAndSettle();
+  expect(find.byType(AlertDialog),findsOneWidget);
+  await tap(t,find.text('پاشگەزبوونەوە'));expect(repo.listReads,1);
+ });
  testWidgets('single submit returns stored pending UUID and locally upserts without GET',(t) async {
   size(t,393);final repo=ToolsRepository([])..saveGate=Completer<ProxoCard>();
   await t.pumpWidget(host(ToolsScreen(repository:repo)));await t.pumpAndSettle();await tap(t,find.text('پەڕە دروستبکە'));

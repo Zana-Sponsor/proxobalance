@@ -11,6 +11,8 @@ import {validateViewport, compareNativePixels, captureNativeFrames, createPrevie
 import {DIAGNOSTIC_POINTS,REPRODUCTION_IDS,CHOOSER_IDS,safeRenderDiagnostics,safeChooserResults,validateChooserResults,
   diagnosticSample,diagnosePixelPair,validateDiagnosticRoles,validateReproductions,safeSurface} from './proxolink-native-diagnostics.mjs';
 import {readNativePipeline,inputDifferences} from './proxolink-native-pipeline.mjs';
+import {CREATE_CHOOSER_IDS,safeCreateChooserResults,validateCreateChooserResults} from './proxolink-native-diagnostics.mjs';
+import {BROWSER_CASE_IDS,foregroundBrowser,safeBrowserResults,validateBrowserResults} from './proxolink-native-browser.mjs';
 
 const styles=STYLES;
 const packageId='com.proxo.proxoapp';
@@ -49,6 +51,8 @@ const safeErrorCodes=new Set([
   'native_capture_unstable','native_pixel_parity_failed',
   'native_pipeline_invalid','native_pipeline_unavailable','native_pipeline_timeout','native_pipeline_protocol',
   'native_diagnostics_invalid','native_diagnostics_incomplete','native_diagnostics_environment_mismatch','native_chooser_failed',
+  'native_create_chooser_failed',
+  'native_browser_journey_failed',
   'native_viewport_invalid','native_crop_outside_screen','reference_viewport_mismatch',
   'reference_capability_required','reference_preview_unavailable','reference_assets_or_viewport_failed',
 ]);
@@ -181,6 +185,8 @@ async function main() {
   const chooserTaps=new Set(),chooserCaptures=new Set();
   const chooserSetups=new Set();
   let matrixFinished=false;
+  const createChooserTaps=new Set(),createChooserCaptures=new Set(),createChooserSetups=new Set();
+  const browserTaps=new Map(),browserReceipts=new Map(),browserCaptures=new Set();
   const diagnosticWrite=()=>writeFileSync(output+'/render-diagnostics.json',JSON.stringify({
     purpose:'Observational only; FIRST of three predetermined ADB frames remains acceptance input',
     clocks:'capture_timing: host monotonic milliseconds; native: Android elapsedRealtime milliseconds; DOM: performance time origin and now',
@@ -214,18 +220,24 @@ async function main() {
       writeFileSync(output+'/case-results.json',JSON.stringify(observed,null,2));
       const chooser=safeChooserResults(JSON.parse(appRead('proxolink-chooser-results.json')||'{}'));
       writeFileSync(output+'/chooser-results.json',JSON.stringify(chooser,null,2));
+      const createChooser=safeCreateChooserResults(JSON.parse(appRead('proxolink-create-chooser-results.json')||'{}'));
+      writeFileSync(output+'/create-chooser-results.json',JSON.stringify(createChooser,null,2));
+      const browserResults=safeBrowserResults(JSON.parse(appRead('proxolink-tools-browser-results.json')||'{}'));
+      writeFileSync(output+'/tools-browser-results.json',JSON.stringify(browserResults,null,2));
       // Retain all independent outcomes even when another gate fails first.
       const gates={};let firstError;
       for(const [name,check] of Object.entries({matrix:()=>validateNativeResults(data,captured,pixels),
         diagnostics:()=>{validateDiagnosticRoles(diagnosticRoles);validateReproductions(reproductionRoles);
-          if(Object.keys(renderStates).length!==480)throw Error('native_diagnostics_incomplete');},chooser:()=>validateChooserResults(chooser,chooserTaps,chooserCaptures)})){
+          if(Object.keys(renderStates).length!==480)throw Error('native_diagnostics_incomplete');},chooser:()=>validateChooserResults(chooser,chooserTaps,chooserCaptures),
+        create_chooser:()=>validateCreateChooserResults(createChooser,createChooserTaps,createChooserCaptures,createChooserSetups),
+        tools_browser:()=>validateBrowserResults(browserResults,browserReceipts,browserCaptures)})){
         try{check();gates[name]={passed:true};}catch(error){gates[name]={passed:false,code:safeErrorCodes.has(error.message)?error.message:'unclassified_failure'};firstError??=error;}
       }
       writeFileSync(output+'/acceptance-gates.json',JSON.stringify(gates,null,2));
       if(firstError)throw firstError;
       const safe=validateNativeResults(data,captured,pixels);
       writeFileSync(output+'/results.json',JSON.stringify(safe,null,2));
-      console.log('All 240 live native cases, exact same-device pixels and 12 native thumbnail chooser cases passed.');
+      console.log('All 240 live native cases, exact same-device pixels, 12 legacy WebView chooser and 12 current Create Page chooser cases passed.');
       return;
     }
     const current=appRead('proxolink-verification-case.json');
@@ -380,6 +392,53 @@ async function main() {
       }
     }
     if(matrixFinished){
+    const browserProgress=appRead('proxolink-tools-browser-results.json');
+    if(browserProgress)writeFileSync(output+'/tools-browser-results.json',JSON.stringify(safeBrowserResults(JSON.parse(browserProgress)),null,2));
+    const browserRequest=appRead('proxolink-tools-browser-request.json');
+    if(browserRequest){
+      const {id,phase,x,y}=JSON.parse(browserRequest);
+      if(BROWSER_CASE_IDS.includes(id)){
+        if(phase==='tap'&&!browserTaps.has(id)){
+          if(!Number.isInteger(x)||!Number.isInteger(y)||x<0||x>=1200||y<0||y>=1900)throw Error('native_browser_journey_failed');
+          adb(['shell','input','tap',String(x),String(y)]);browserTaps.set(id,Date.now());
+        }
+        if(phase==='tap'&&browserTaps.has(id)&&!browserReceipts.has(id)){
+          const browser=foregroundBrowser(adb(['shell','dumpsys','activity','activities'],null,true)?.toString());
+          if(browser){
+            // REORDER_TO_FRONT resumes the existing task/activity. It does not
+            // create a fresh Tools route, clear app state or dismiss a gate.
+            adb(['shell','am','start','-f','0x00020000','-n',packageId+'/.ProxoLinkNativeProbeActivity']);
+            browserReceipts.set(id,{browser_package:browser,existing_activity_resumed:true});
+            appWrite('proxolink-tools-browser-ack',id);
+          }else if(Date.now()-browserTaps.get(id)>20000)throw Error('native_browser_journey_failed');
+        }
+        if(phase==='capture'&&!browserCaptures.has(id)){
+          if(!browserReceipts.has(id))throw Error('native_browser_journey_failed');
+          writeFileSync(output+'/'+id+'.png',adb(['exec-out','screencap','-p']));browserCaptures.add(id);
+          appWrite('proxolink-tools-browser-ack',id);
+        }
+        writeFileSync(output+'/tools-browser-input-evidence.json',JSON.stringify({taps:[...browserTaps.keys()],receipts:Object.fromEntries(browserReceipts),captures:[...browserCaptures]},null,2));
+      }
+    }
+    const createProgress=appRead('proxolink-create-chooser-results.json');
+    if(createProgress)writeFileSync(output+'/create-chooser-results.json',JSON.stringify(safeCreateChooserResults(JSON.parse(createProgress)),null,2));
+    const createRequest=appRead('proxolink-create-chooser-request.json');
+    if(createRequest){
+      const {id,phase,x,y}=JSON.parse(createRequest);
+      const setup=PAGE_TYPES.map(type=>'create-chooser-setup-'+type).includes(id)&&phase==='setup';
+      const tap=CREATE_CHOOSER_IDS.includes(id)&&phase==='tap';
+      const seen=setup?createChooserSetups:createChooserTaps;
+      if((setup||tap)&&!seen.has(id)){
+        if(!Number.isInteger(x)||!Number.isInteger(y)||x<0||x>=1200||y<0||y>=1900)throw Error('native_create_chooser_failed');
+        adb(['shell','input','tap',String(x),String(y)]);seen.add(id);
+        appWrite('proxolink-create-chooser-ack',id);
+      }else if(CREATE_CHOOSER_IDS.includes(id)&&phase==='capture'&&!createChooserCaptures.has(id)){
+        if(!createChooserTaps.has(id))throw Error('native_create_chooser_failed');
+        writeFileSync(output+'/'+id+'.png',adb(['exec-out','screencap','-p']));createChooserCaptures.add(id);
+        appWrite('proxolink-create-chooser-ack',id);
+      }
+      writeFileSync(output+'/create-chooser-input-evidence.json',JSON.stringify({type_taps:[...createChooserSetups],taps:[...createChooserTaps],captures:[...createChooserCaptures]},null,2));
+    }
     const chooserProgress=appRead('proxolink-chooser-results.json');
     if(chooserProgress)writeFileSync(output+'/chooser-results.json',JSON.stringify(safeChooserResults(JSON.parse(chooserProgress)),null,2));
     const chooserRequest=appRead('proxolink-chooser-request.json');

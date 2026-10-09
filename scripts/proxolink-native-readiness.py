@@ -85,25 +85,51 @@ def run_readiness(output, run=execute, observe=snapshot):
     report = {
         "scope": "Disposable-runner readiness only; no Android/WebView cases executed by this step",
         "root_cause": "NOT PROVEN",
-        "commands": [], "before": observe(False),
+        "commands": [], "status": "SETUP_RUNNING",
         "acceptance_or_protection_changed": False,
         "native_verification_claimed": False,
     }
+    def persist():
+        temporary = directory / "runner-readiness.json.next"
+        temporary.write_text(json.dumps(report, indent=2) + "\n")
+        temporary.replace(directory / "runner-readiness.json")
+
+    def observation(probe):
+        try:
+            return observe(probe)
+        except Exception:
+            # Diagnostic failure must not erase an original command failure or
+            # serialize exception text from a runner. The setup gate is intact.
+            return {"diagnostic": "observation_unavailable"}
+
+    # Commit a safe checkpoint before observations and every original command.
+    # Cancellation/termination can leave SETUP_RUNNING, never a native pass.
+    persist()
+    report["before"] = observation(False)
+    persist()
     original_code = 0
     for command in COMMANDS:
         started = time.monotonic_ns() / 1000000
+        report["active_step"] = command[0]
+        persist()
         code, diagnostic = run(command)
         entry = {"step": command[0], "exit_code": code, "started_monotonic_ms": started,
                  "completed_monotonic_ms": time.monotonic_ns() / 1000000}
         if diagnostic:
             entry["diagnostic"] = diagnostic
         report["commands"].append(entry)
+        report.pop("active_step", None)
         print("KVM setup: " + command[0] + " exit=" + str(code), flush=True)
         if code != 0:
             original_code = code
             report["failed_step"] = command[0]
+            report["status"] = "FAILED"
+            report["original_exit_code"] = code
+            persist()
             break
-    report["after_original_gate"] = observe(True)
+        persist()
+    report["after_original_gate"] = observation(True)
+    persist()
     if original_code:
         # Observe readiness after the ORIGINAL failure. Never rerun its test,
         # turn a later readable device into success, or launch the emulator.
@@ -111,15 +137,13 @@ def run_readiness(output, run=execute, observe=snapshot):
         report["diagnostic_settle"] = {"exit_code": code}
         if diagnostic:
             report["diagnostic_settle"]["diagnostic"] = diagnostic
-        report["after_diagnostic_settle"] = observe(True)
+        report["after_diagnostic_settle"] = observation(True)
         report["readability_changed_after_failure"] = (
-            report["after_original_gate"]["readable"] != report["after_diagnostic_settle"]["readable"]
+            report["after_original_gate"].get("readable") != report["after_diagnostic_settle"].get("readable")
         )
     report["status"] = "FAILED" if original_code else "SETUP_PASSED"
     report["original_exit_code"] = original_code
-    temporary = directory / "runner-readiness.json.next"
-    temporary.write_text(json.dumps(report, indent=2) + "\n")
-    temporary.replace(directory / "runner-readiness.json")
+    persist()
     return original_code if original_code > 0 else (1 if original_code else 0)
 
 if __name__ == "__main__":

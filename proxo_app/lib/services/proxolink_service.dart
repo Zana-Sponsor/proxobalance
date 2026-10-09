@@ -292,6 +292,8 @@ class ProxoLinkService implements ProxoLinkRepository {
 
   @override
   Future<String> uploadAvatar(String id, Uint8List bytes) async {
+    final owner = ownerScope;
+    if (owner == null) throw const ProxoLinkFailure('unauthorized');
     if (bytes.length < 12 || bytes.length > 10 * 1024 * 1024)
       throw const ProxoLinkFailure('invalid_avatar');
     final String extension, mime;
@@ -316,7 +318,7 @@ class ProxoLinkService implements ProxoLinkRepository {
       throw const ProxoLinkFailure('isolated_staging_required');
     }
     final user = db.auth.currentUser?.id;
-    if (user == null) throw const ProxoLinkFailure('unauthorized');
+    if (user != owner) throw const ProxoLinkFailure('unauthorized');
     final path = '$user/$id/avatar-${newProxoRequestId()}.$extension';
     await db.storage
         .from('proxolink-assets')
@@ -325,6 +327,7 @@ class ProxoLinkService implements ProxoLinkRepository {
           bytes,
           fileOptions: FileOptions(contentType: mime, upsert: false),
         );
+    if (ownerScope != owner) throw const ProxoLinkFailure('unauthorized');
     return path;
   }
 }

@@ -9,12 +9,13 @@ import 'package:webview_flutter_android/webview_flutter_android.dart';
 import 'package:proxo_app/models/proxo_card.dart';
 import 'package:proxo_app/models/proxolink_design.dart';
 import 'package:proxo_app/models/proxolink_page_type.dart';
-import 'package:proxo_app/screens/tools_screen.dart';
+import 'package:proxo_app/screens/proxolink_page_editor_screen.dart';
 import 'package:proxo_app/services/proxolink_service.dart';
 import 'package:proxo_app/widgets/proxolink_design_selector.dart';
+import 'proxolink_native_create_chooser.dart';
 
-// Only the repository boundary is read-only. The real ToolsScreen builder,
-// thumbnail onSelected binding and large production WebView are unchanged.
+// Preserve the historical legacy-editor/live-WebView gate independently of
+// the new thumbnail-only Create Page journey. Neither is a product route change.
 // Capabilities come from the authenticated host catalog, never an HTML asset.
 class _ReadOnlyChooserRepository extends ProxoLinkRepository {
  final Future<Map<String,dynamic>> Function() configuration;
@@ -52,6 +53,7 @@ class _NativeProxoLinkChooserState extends State<NativeProxoLinkChooser> {
  final _results=<String,dynamic>{};
  late final _ReadOnlyChooserRepository _repository;
  ProxoPageType _type=ProxoPageType.contact;
+ bool _legacyDone=false;
  static const _capture=MethodChannel('proxo/native-capture');
  @override void initState(){super.initState();_repository=_ReadOnlyChooserRepository(widget.configuration);WidgetsBinding.instance.addPostFrameCallback((_){_run();});}
  List<Element> _elements(bool Function(Widget) predicate){
@@ -154,8 +156,11 @@ class _NativeProxoLinkChooserState extends State<NativeProxoLinkChooser> {
     await widget.write('proxolink-chooser-results.json',_results);
    }
   }
-  await widget.onComplete();
+  if(mounted)setState(()=>_legacyDone=true);
  }
- @override Widget build(BuildContext context)=>Center(child:SizedBox(width:430,child:ToolsScreen(
-  key:ValueKey('native-real-builder-${_type.key}'),initialCreate:true,repository:_repository)));
+ @override Widget build(BuildContext context)=>_legacyDone
+  ? NativeProxoLinkCreateChooser(repository:_repository,write:widget.write,onComplete:widget.onComplete,
+      previewRequests:()=>_repository.requests)
+  : Center(child:SizedBox(width:430,child:ProxoLinkPageEditorScreen(
+      key:ValueKey('native-legacy-builder-${_type.key}'),repository:_repository)));
 }

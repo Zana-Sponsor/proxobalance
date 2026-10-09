@@ -82,7 +82,7 @@ class _CreatePageState extends State<ProxoLinkCreatePageScreen> {
         _request = prefs.getString(_pendingKey) ?? _request; _loading = false;
       });
     } catch (e) {
-      if (!mounted) return;
+      if (!mounted || !_sameOwner) return;
       setState(() => _loading = false);
       _notice('load', _failure(e));
     }
@@ -127,7 +127,12 @@ class _CreatePageState extends State<ProxoLinkCreatePageScreen> {
     setState(() => _busy = true);
     try {
       final prefs = await SharedPreferences.getInstance();
+      if (!mounted || !_sameOwner) return;
       await prefs.setString(_pendingKey, _request);
+      if (!mounted || !_sameOwner) {
+        await prefs.remove(_pendingKey);
+        return;
+      }
       if (_image != null && _avatar == null) {
         _avatar = await widget.repository.uploadAvatar(_request, _image!);
       }

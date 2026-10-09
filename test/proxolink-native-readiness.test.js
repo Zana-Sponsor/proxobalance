@@ -53,9 +53,29 @@ class Checks(unittest.TestCase):
   self.assertEqual(code,1);self.assertFalse(report["acceptance_or_protection_changed"])
   self.assertEqual(report["commands"][0]["diagnostic"],"command_unavailable")
   self.assertEqual(report["native_verification_claimed"],False)
+ def test_interruption_keeps_completed_commands_and_active_step(self):
+  with tempfile.TemporaryDirectory() as directory:
+   def execute(command):
+    if command[0]=="reload_udev_rules":raise SystemExit(137)
+    return (0,None)
+   with self.assertRaises(SystemExit):m.run_readiness(directory,execute,lambda probe:self.observe())
+   report=json.loads((Path(directory)/"runner-readiness.json").read_text())
+   self.assertEqual(report["status"],"SETUP_RUNNING")
+   self.assertEqual(report["active_step"],"reload_udev_rules")
+   self.assertEqual([x["step"] for x in report["commands"]],["write_kvm_rule"])
+   self.assertFalse(report["native_verification_claimed"])
+   self.assertFalse((Path(directory)/"runner-readiness.json.next").exists())
+ def test_failed_observation_cannot_erase_original_failure_or_leak_text(self):
+  with tempfile.TemporaryDirectory() as directory:
+   def observe(probe):raise RuntimeError("private token value")
+   code=m.run_readiness(directory,lambda command:(1,None),observe)
+   raw=(Path(directory)/"runner-readiness.json").read_text();report=json.loads(raw)
+   self.assertEqual(code,1);self.assertEqual(report["failed_step"],"write_kvm_rule")
+   self.assertEqual(report["before"],{"diagnostic":"observation_unavailable"})
+   self.assertNotIn("private",raw)
 unittest.main()
 `;
  const result=spawnSync('python3',['-c',program],{encoding:'utf8',timeout:15000});
  assert.equal(result.status,0,result.stderr);
- assert.match(result.stderr,/Ran 6 tests/);
+ assert.match(result.stderr,/Ran 8 tests/);
 });
