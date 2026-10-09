@@ -2,6 +2,24 @@
 // against the existing Android WebView, never Chromium or an alternative render.
 import {createHash} from 'node:crypto';
 export const digest=value=>createHash('sha256').update(value).digest('hex');
+// Only hashes/lengths leave this function. Empty cached CDP bodies are not
+// source-identity evidence; the live DOM is observed separately after captures.
+export function sourceIdentity(html){
+ if(typeof html!=='string'||Buffer.byteLength(html)>16*1024*1024)throw Error('native_pipeline_invalid');
+ if(!html.length)return {status:'unavailable',reason:'empty_document'};
+ const styles=[...html.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/gi)].map(x=>x[1]);
+ if(styles.length>64)throw Error('native_pipeline_invalid');
+ const css=styles.join('\n'),embedded=[...css.matchAll(/url\(["']?(data:[^)'"\s]+)["']?\)/gi)];
+ if(embedded.length>64)throw Error('native_pipeline_invalid');
+ return {status:'captured',html_sha256:digest(html),html_bytes:Buffer.byteLength(html),
+  style_count:styles.length,css_sha256:styles.length?digest(css):null,css_bytes:Buffer.byteLength(css),
+  embedded:embedded.map(([_,value])=>{
+   const split=value.indexOf(','),header=value.slice(0,split),payload=value.slice(split+1);
+   const bytes=/;base64$/i.test(header)?Buffer.from(payload,'base64'):Buffer.from(decodeURIComponent(payload));
+   return {kind:/^data:(?:font\/|application\/(?:font|x-font|vnd.ms-fontobject))/i.test(header)?'font':'other',
+    identity_sha256:digest(value),body_sha256:digest(bytes),body_bytes:bytes.length};
+  })};
+}
 const providers=['whatsapp','viber','instagram','telegram','korek','asiacell','talabat','toters','lezzoo','wade','app_store','google_play'];
 const fields=['template','lang','direction','name','bio','avatarUrl','preview','videoUrl','buttons','intents'];
 export function inputHashes(config){
@@ -98,9 +116,7 @@ export async function readNativePipeline(adb,packageId,captureId){
     entry.body_sha256=digest(body);entry.body_bytes=body.length;
     if(item.type==='Document'){
      const html=body.toString('utf8'),payload=html.match(/<script[^>]*id=["']proxo-config["'][^>]*>([\s\S]*?)<\/script>/i)?.[1];
-     const css=[...html.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/gi)].map(x=>x[1]).join('\n');
-     const embedded=[...css.matchAll(/url\(["']?(data:[^)'"\s]+)["']?\)/gi)].map(x=>({identity_sha256:digest(x[1]),body_sha256:digest(x[1].includes(';base64,')?Buffer.from(x[1].split(';base64,')[1],'base64'):x[1])}));
-     source={html_sha256:entry.body_sha256,css_sha256:digest(css),embedded,inputs:payload?inputHashes(JSON.parse(payload)):null};
+     source={...sourceIdentity(html),inputs:payload?inputHashes(JSON.parse(payload)):null};
     }
    }catch{entry.body_unavailable=true;}
    resources.push(entry);
@@ -112,6 +128,7 @@ export async function readNativePipeline(adb,packageId,captureId){
    scope:'Android WebView WebContents compositor surface after acceptance; no raw GPU/Skia tile or presentation fence',
    layout:{css_layout_viewport:bounds(metrics.cssLayoutViewport),css_visual_viewport:bounds(metrics.cssVisualViewport),css_content_size:bounds(metrics.cssContentSize)},
    layers:safeLayers(session.layers),layers_received:session.layers.length>0,layer_error:layer_error||(!session.layers.length?'not_observed':null),resources,resources_truncated,source,
+   live_source:{...sourceIdentity(state.html),scope:'Live DOM after acceptance frames; not a capture-time source or causal rendering proof'},
    dom_sha256:digest(state.html),inputs:inputHashes(state.config),buttons};
   return {png,metadata};
  }catch(error){

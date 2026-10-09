@@ -148,12 +148,14 @@ jobs:
       - run: flutter pub get
       - name: Analyze changed ProxoLink code
         run: flutter analyze --no-fatal-infos lib/screens/tools_screen.dart lib/screens/proxolink_create_page_screen.dart lib/widgets/proxo_refresh.dart lib/widgets/proxolink_design_selector.dart lib/screens/proxolink_page_editor.dart lib/screens/proxolink_page_editor_screen.dart lib/screens/proxolink_page_details_screen.dart lib/screens/card_webview_screen.dart lib/screens/proxo_cards_list_screen.dart lib/screens/ad_detail_screen.dart lib/widgets/proxolink_preview.dart lib/widgets/proxolink_page_card.dart lib/services/proxolink_service.dart lib/models/proxo_card.dart lib/models/proxolink_page_type.dart lib/models/proxolink_template_meta.dart lib/controllers/proxo_card_controller.dart lib/controllers/proxolink_pages_controller.dart
-      - run: flutter test test/proxolink_v6_flow_test.dart test/proxolink_flow_test.dart test/proxolink_page_management_test.dart test/proxolink_tools_create_test.dart test/ad_repository_test.dart test/ad_creation_flow_test.dart test/ad_submission_test.dart test/text_direction_test.dart
+      - run: flutter test test/proxolink_v6_flow_test.dart test/proxolink_flow_test.dart test/proxolink_page_management_test.dart test/proxolink_tools_create_test.dart test/proxolink_actual_screens_test.dart test/ad_repository_test.dart test/ad_creation_flow_test.dart test/ad_submission_test.dart test/text_direction_test.dart
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: proxolink-ui-verification
-          path: proxo_app/build/ui-verification/*.png
+          path: |
+            proxo_app/build/ui-verification/*.png
+            proxo_app/build/ui-verification/actual-screen-measurements.json
           retention-days: 7
       - uses: gradle/actions/setup-gradle@v4
         with:
