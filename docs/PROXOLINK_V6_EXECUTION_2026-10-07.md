@@ -1,3 +1,9 @@
+<!-- proxolink-pixel-rca-current:start -->
+## Existing-artifact root-cause analysis — 2026-10-09
+
+Android remains **FAILED**; root cause **NOT PROVEN** after per-case analysis of protected run37844040950 attempt2. [Detailed eight-case analysis](PROXOLINK_NATIVE_PIXEL_RCA_2026-10-09.md) identifies a 1,743-pixel shadow/background band, one glyph edge and six smooth background samples. Recorded candidate/baseline geometry, computed styles, transforms, DPR, scroll and crop match; fixed repeats and own-surface PixelCopy preserve the differences. Only three current failed coordinates have direct hit-test observations; four failed cases lack per-role DOM/native diagnostics and the large band lacks button-specific layer observations. Timing differs in passing controls too. No specific raster/interpolation/compositor/lifecycle cause is proven, so **no fix, instrumentation execution or rerun was made**. The zero-difference gate is unchanged. Current management source is preserved and PR#7 remains Draft/open/unmerged. This section supersedes any suggestion that a new diagnostic run should be started before causation is established.
+<!-- proxolink-pixel-rca-current:end -->
+
 # ProxoLink V6 — current terminal native result
 
 **Android runtime status: FAILED.** Protected [run 37844040950](https://github.com/Zana-Sponsor/proxobalance/actions/runs/37844040950), attempt **2**, pinned revision `6c7e6c634cfe0bceb2c43ceb485aba12cd78417c`, runtime job `113568639222`, executed after authorized review in unchanged `proxolink-preview-verification`. KVM succeeded; final error `native_case_collection / native_pixel_parity_failed`. This was diagnostic instrumentation, not a proven pixel fix.
