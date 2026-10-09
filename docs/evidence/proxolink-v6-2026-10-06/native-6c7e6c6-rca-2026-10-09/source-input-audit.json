@@ -1,0 +1,744 @@
+{
+  "scope": "Offline pinned-source function audit, not a DOM/browser/Android execution or pixel acceptance result. No outbound requests or customer data.",
+  "native_root_cause": "NOT PROVEN",
+  "cases": {
+    "pill-contact-en-portrait-768": {
+      "config_sha256": "c843db40ad088b4ecb0b5021df9a584c22aac04c735145d06bfb54143e86bf96",
+      "rendered_payload_byte_equal": true,
+      "css_byte_equal": true,
+      "css_sha256": "2ede7600af7b12b67414879d07eb7db272f65cdaaa8f352221a9738b3626f424",
+      "candidate": {
+        "template_sha256": "9e52b5c776e6401022b69feccdcceef8dc615dccd2e6c3818d772d51a36c6a08",
+        "css_sha256": "2ede7600af7b12b67414879d07eb7db272f65cdaaa8f352221a9738b3626f424",
+        "payload_sha256": "c843db40ad088b4ecb0b5021df9a584c22aac04c735145d06bfb54143e86bf96",
+        "avatar_path_admitted": true,
+        "avatar_fetch_source_sha256": "8ff2604eaddd6ea4091c666b35ae2a3ecb6dacb5532cc33479661b2d783891de",
+        "preview_providers_retained": [
+          "whatsapp",
+          "viber",
+          "instagram",
+          "telegram",
+          "korek",
+          "asiacell"
+        ],
+        "valid_urls": [
+          {
+            "provider": "whatsapp",
+            "valid": true
+          },
+          {
+            "provider": "viber",
+            "valid": true
+          },
+          {
+            "provider": "instagram",
+            "valid": true
+          },
+          {
+            "provider": "telegram",
+            "valid": true
+          },
+          {
+            "provider": "korek",
+            "valid": true
+          },
+          {
+            "provider": "asiacell",
+            "valid": true
+          }
+        ]
+      },
+      "baseline": {
+        "template_sha256": "16b6266605b91b6ab80561fd5ab519fd89670eabc7179e459348fc94e5cc2bf7",
+        "css_sha256": "2ede7600af7b12b67414879d07eb7db272f65cdaaa8f352221a9738b3626f424",
+        "payload_sha256": "c843db40ad088b4ecb0b5021df9a584c22aac04c735145d06bfb54143e86bf96",
+        "avatar_path_admitted": true,
+        "avatar_fetch_source_sha256": "8ff2604eaddd6ea4091c666b35ae2a3ecb6dacb5532cc33479661b2d783891de",
+        "preview_providers_retained": [
+          "whatsapp",
+          "viber",
+          "instagram",
+          "telegram",
+          "korek",
+          "asiacell"
+        ],
+        "valid_urls": [
+          {
+            "provider": "whatsapp",
+            "valid": true
+          },
+          {
+            "provider": "viber",
+            "valid": false
+          },
+          {
+            "provider": "instagram",
+            "valid": true
+          },
+          {
+            "provider": "telegram",
+            "valid": true
+          },
+          {
+            "provider": "korek",
+            "valid": true
+          },
+          {
+            "provider": "asiacell",
+            "valid": true
+          }
+        ]
+      },
+      "input_differences": {
+        "avatar_admission": false,
+        "url_validation": true
+      },
+      "causal_limit": "Source branches establish possible resource/URL differences only; artifact contains no request ledger, full post-script DOM, raster-stage pixels or causal A/A intervention. Does not establish cause of failed pixels."
+    },
+    "pill-order-ku-portrait-768": {
+      "config_sha256": "4e8b1ac73b1bf268e424d3feb7af3b7662459a872e65ff390671795611587a40",
+      "rendered_payload_byte_equal": true,
+      "css_byte_equal": true,
+      "css_sha256": "2ede7600af7b12b67414879d07eb7db272f65cdaaa8f352221a9738b3626f424",
+      "candidate": {
+        "template_sha256": "9e52b5c776e6401022b69feccdcceef8dc615dccd2e6c3818d772d51a36c6a08",
+        "css_sha256": "2ede7600af7b12b67414879d07eb7db272f65cdaaa8f352221a9738b3626f424",
+        "payload_sha256": "4e8b1ac73b1bf268e424d3feb7af3b7662459a872e65ff390671795611587a40",
+        "avatar_path_admitted": true,
+        "avatar_fetch_source_sha256": "8a998cd381fab29c4721b8c2b905c317b4e59ceecc7b53e3d46d5dbc70265cf4",
+        "preview_providers_retained": [
+          "talabat",
+          "toters",
+          "lezzoo",
+          "wade"
+        ],
+        "valid_urls": [
+          {
+            "provider": "talabat",
+            "valid": true
+          },
+          {
+            "provider": "toters",
+            "valid": true
+          },
+          {
+            "provider": "lezzoo",
+            "valid": true
+          },
+          {
+            "provider": "wade",
+            "valid": true
+          }
+        ]
+      },
+      "baseline": {
+        "template_sha256": "16b6266605b91b6ab80561fd5ab519fd89670eabc7179e459348fc94e5cc2bf7",
+        "css_sha256": "2ede7600af7b12b67414879d07eb7db272f65cdaaa8f352221a9738b3626f424",
+        "payload_sha256": "4e8b1ac73b1bf268e424d3feb7af3b7662459a872e65ff390671795611587a40",
+        "avatar_path_admitted": false,
+        "avatar_fetch_source_sha256": null,
+        "preview_providers_retained": [
+          "talabat",
+          "toters",
+          "lezzoo",
+          "wade"
+        ],
+        "valid_urls": [
+          {
+            "provider": "talabat",
+            "valid": true
+          },
+          {
+            "provider": "toters",
+            "valid": true
+          },
+          {
+            "provider": "lezzoo",
+            "valid": true
+          },
+          {
+            "provider": "wade",
+            "valid": true
+          }
+        ]
+      },
+      "input_differences": {
+        "avatar_admission": true,
+        "url_validation": false
+      },
+      "causal_limit": "Source branches establish possible resource/URL differences only; artifact contains no request ledger, full post-script DOM, raster-stage pixels or causal A/A intervention. Does not establish cause of failed pixels."
+    },
+    "pill-mint-contact-ku-portrait-768": {
+      "config_sha256": "4e723ea02d58677da0416050d204f56b844db7dce6cab0ba436cd21ef8072483",
+      "rendered_payload_byte_equal": true,
+      "css_byte_equal": true,
+      "css_sha256": "2ede7600af7b12b67414879d07eb7db272f65cdaaa8f352221a9738b3626f424",
+      "candidate": {
+        "template_sha256": "8161dcae1fb81bba3801b7bf1616a153c8c23099a75818e1c9c32fbcf6425d53",
+        "css_sha256": "2ede7600af7b12b67414879d07eb7db272f65cdaaa8f352221a9738b3626f424",
+        "payload_sha256": "4e723ea02d58677da0416050d204f56b844db7dce6cab0ba436cd21ef8072483",
+        "avatar_path_admitted": true,
+        "avatar_fetch_source_sha256": "8ff2604eaddd6ea4091c666b35ae2a3ecb6dacb5532cc33479661b2d783891de",
+        "preview_providers_retained": [
+          "whatsapp",
+          "viber",
+          "instagram",
+          "telegram",
+          "korek",
+          "asiacell"
+        ],
+        "valid_urls": [
+          {
+            "provider": "whatsapp",
+            "valid": true
+          },
+          {
+            "provider": "viber",
+            "valid": true
+          },
+          {
+            "provider": "instagram",
+            "valid": true
+          },
+          {
+            "provider": "telegram",
+            "valid": true
+          },
+          {
+            "provider": "korek",
+            "valid": true
+          },
+          {
+            "provider": "asiacell",
+            "valid": true
+          }
+        ]
+      },
+      "baseline": {
+        "template_sha256": "dec4c19a83dab4d8d175335380b43ec2546f92ed398e97d02b946936373c3128",
+        "css_sha256": "2ede7600af7b12b67414879d07eb7db272f65cdaaa8f352221a9738b3626f424",
+        "payload_sha256": "4e723ea02d58677da0416050d204f56b844db7dce6cab0ba436cd21ef8072483",
+        "avatar_path_admitted": true,
+        "avatar_fetch_source_sha256": "8ff2604eaddd6ea4091c666b35ae2a3ecb6dacb5532cc33479661b2d783891de",
+        "preview_providers_retained": [
+          "whatsapp",
+          "viber",
+          "instagram",
+          "telegram",
+          "korek",
+          "asiacell"
+        ],
+        "valid_urls": [
+          {
+            "provider": "whatsapp",
+            "valid": true
+          },
+          {
+            "provider": "viber",
+            "valid": false
+          },
+          {
+            "provider": "instagram",
+            "valid": true
+          },
+          {
+            "provider": "telegram",
+            "valid": true
+          },
+          {
+            "provider": "korek",
+            "valid": true
+          },
+          {
+            "provider": "asiacell",
+            "valid": true
+          }
+        ]
+      },
+      "input_differences": {
+        "avatar_admission": false,
+        "url_validation": true
+      },
+      "causal_limit": "Source branches establish possible resource/URL differences only; artifact contains no request ledger, full post-script DOM, raster-stage pixels or causal A/A intervention. Does not establish cause of failed pixels."
+    },
+    "pill-mint-order-ku-portrait-320": {
+      "config_sha256": "1fb07d02195e8c06d47048369294f814120fc6635ac6aa7657a0502b4b2dbd82",
+      "rendered_payload_byte_equal": true,
+      "css_byte_equal": true,
+      "css_sha256": "2ede7600af7b12b67414879d07eb7db272f65cdaaa8f352221a9738b3626f424",
+      "candidate": {
+        "template_sha256": "8161dcae1fb81bba3801b7bf1616a153c8c23099a75818e1c9c32fbcf6425d53",
+        "css_sha256": "2ede7600af7b12b67414879d07eb7db272f65cdaaa8f352221a9738b3626f424",
+        "payload_sha256": "1fb07d02195e8c06d47048369294f814120fc6635ac6aa7657a0502b4b2dbd82",
+        "avatar_path_admitted": true,
+        "avatar_fetch_source_sha256": "8a998cd381fab29c4721b8c2b905c317b4e59ceecc7b53e3d46d5dbc70265cf4",
+        "preview_providers_retained": [
+          "talabat",
+          "toters",
+          "lezzoo",
+          "wade"
+        ],
+        "valid_urls": [
+          {
+            "provider": "talabat",
+            "valid": true
+          },
+          {
+            "provider": "toters",
+            "valid": true
+          },
+          {
+            "provider": "lezzoo",
+            "valid": true
+          },
+          {
+            "provider": "wade",
+            "valid": true
+          }
+        ]
+      },
+      "baseline": {
+        "template_sha256": "dec4c19a83dab4d8d175335380b43ec2546f92ed398e97d02b946936373c3128",
+        "css_sha256": "2ede7600af7b12b67414879d07eb7db272f65cdaaa8f352221a9738b3626f424",
+        "payload_sha256": "1fb07d02195e8c06d47048369294f814120fc6635ac6aa7657a0502b4b2dbd82",
+        "avatar_path_admitted": false,
+        "avatar_fetch_source_sha256": null,
+        "preview_providers_retained": [
+          "talabat",
+          "toters",
+          "lezzoo",
+          "wade"
+        ],
+        "valid_urls": [
+          {
+            "provider": "talabat",
+            "valid": true
+          },
+          {
+            "provider": "toters",
+            "valid": true
+          },
+          {
+            "provider": "lezzoo",
+            "valid": true
+          },
+          {
+            "provider": "wade",
+            "valid": true
+          }
+        ]
+      },
+      "input_differences": {
+        "avatar_admission": true,
+        "url_validation": false
+      },
+      "causal_limit": "Source branches establish possible resource/URL differences only; artifact contains no request ledger, full post-script DOM, raster-stage pixels or causal A/A intervention. Does not establish cause of failed pixels."
+    },
+    "pill-mint-order-ku-portrait-430": {
+      "config_sha256": "1fb07d02195e8c06d47048369294f814120fc6635ac6aa7657a0502b4b2dbd82",
+      "rendered_payload_byte_equal": true,
+      "css_byte_equal": true,
+      "css_sha256": "2ede7600af7b12b67414879d07eb7db272f65cdaaa8f352221a9738b3626f424",
+      "candidate": {
+        "template_sha256": "8161dcae1fb81bba3801b7bf1616a153c8c23099a75818e1c9c32fbcf6425d53",
+        "css_sha256": "2ede7600af7b12b67414879d07eb7db272f65cdaaa8f352221a9738b3626f424",
+        "payload_sha256": "1fb07d02195e8c06d47048369294f814120fc6635ac6aa7657a0502b4b2dbd82",
+        "avatar_path_admitted": true,
+        "avatar_fetch_source_sha256": "8a998cd381fab29c4721b8c2b905c317b4e59ceecc7b53e3d46d5dbc70265cf4",
+        "preview_providers_retained": [
+          "talabat",
+          "toters",
+          "lezzoo",
+          "wade"
+        ],
+        "valid_urls": [
+          {
+            "provider": "talabat",
+            "valid": true
+          },
+          {
+            "provider": "toters",
+            "valid": true
+          },
+          {
+            "provider": "lezzoo",
+            "valid": true
+          },
+          {
+            "provider": "wade",
+            "valid": true
+          }
+        ]
+      },
+      "baseline": {
+        "template_sha256": "dec4c19a83dab4d8d175335380b43ec2546f92ed398e97d02b946936373c3128",
+        "css_sha256": "2ede7600af7b12b67414879d07eb7db272f65cdaaa8f352221a9738b3626f424",
+        "payload_sha256": "1fb07d02195e8c06d47048369294f814120fc6635ac6aa7657a0502b4b2dbd82",
+        "avatar_path_admitted": false,
+        "avatar_fetch_source_sha256": null,
+        "preview_providers_retained": [
+          "talabat",
+          "toters",
+          "lezzoo",
+          "wade"
+        ],
+        "valid_urls": [
+          {
+            "provider": "talabat",
+            "valid": true
+          },
+          {
+            "provider": "toters",
+            "valid": true
+          },
+          {
+            "provider": "lezzoo",
+            "valid": true
+          },
+          {
+            "provider": "wade",
+            "valid": true
+          }
+        ]
+      },
+      "input_differences": {
+        "avatar_admission": true,
+        "url_validation": false
+      },
+      "causal_limit": "Source branches establish possible resource/URL differences only; artifact contains no request ledger, full post-script DOM, raster-stage pixels or causal A/A intervention. Does not establish cause of failed pixels."
+    },
+    "pill-mint-order-ku-portrait-768": {
+      "config_sha256": "1fb07d02195e8c06d47048369294f814120fc6635ac6aa7657a0502b4b2dbd82",
+      "rendered_payload_byte_equal": true,
+      "css_byte_equal": true,
+      "css_sha256": "2ede7600af7b12b67414879d07eb7db272f65cdaaa8f352221a9738b3626f424",
+      "candidate": {
+        "template_sha256": "8161dcae1fb81bba3801b7bf1616a153c8c23099a75818e1c9c32fbcf6425d53",
+        "css_sha256": "2ede7600af7b12b67414879d07eb7db272f65cdaaa8f352221a9738b3626f424",
+        "payload_sha256": "1fb07d02195e8c06d47048369294f814120fc6635ac6aa7657a0502b4b2dbd82",
+        "avatar_path_admitted": true,
+        "avatar_fetch_source_sha256": "8a998cd381fab29c4721b8c2b905c317b4e59ceecc7b53e3d46d5dbc70265cf4",
+        "preview_providers_retained": [
+          "talabat",
+          "toters",
+          "lezzoo",
+          "wade"
+        ],
+        "valid_urls": [
+          {
+            "provider": "talabat",
+            "valid": true
+          },
+          {
+            "provider": "toters",
+            "valid": true
+          },
+          {
+            "provider": "lezzoo",
+            "valid": true
+          },
+          {
+            "provider": "wade",
+            "valid": true
+          }
+        ]
+      },
+      "baseline": {
+        "template_sha256": "dec4c19a83dab4d8d175335380b43ec2546f92ed398e97d02b946936373c3128",
+        "css_sha256": "2ede7600af7b12b67414879d07eb7db272f65cdaaa8f352221a9738b3626f424",
+        "payload_sha256": "1fb07d02195e8c06d47048369294f814120fc6635ac6aa7657a0502b4b2dbd82",
+        "avatar_path_admitted": false,
+        "avatar_fetch_source_sha256": null,
+        "preview_providers_retained": [
+          "talabat",
+          "toters",
+          "lezzoo",
+          "wade"
+        ],
+        "valid_urls": [
+          {
+            "provider": "talabat",
+            "valid": true
+          },
+          {
+            "provider": "toters",
+            "valid": true
+          },
+          {
+            "provider": "lezzoo",
+            "valid": true
+          },
+          {
+            "provider": "wade",
+            "valid": true
+          }
+        ]
+      },
+      "input_differences": {
+        "avatar_admission": true,
+        "url_validation": false
+      },
+      "causal_limit": "Source branches establish possible resource/URL differences only; artifact contains no request ledger, full post-script DOM, raster-stage pixels or causal A/A intervention. Does not establish cause of failed pixels."
+    },
+    "pill-mint-order-en-portrait-430": {
+      "config_sha256": "316a731929a09ddd28ab60cab999d470dcd57be3b8d6774cb84df1738adf267f",
+      "rendered_payload_byte_equal": true,
+      "css_byte_equal": true,
+      "css_sha256": "2ede7600af7b12b67414879d07eb7db272f65cdaaa8f352221a9738b3626f424",
+      "candidate": {
+        "template_sha256": "8161dcae1fb81bba3801b7bf1616a153c8c23099a75818e1c9c32fbcf6425d53",
+        "css_sha256": "2ede7600af7b12b67414879d07eb7db272f65cdaaa8f352221a9738b3626f424",
+        "payload_sha256": "316a731929a09ddd28ab60cab999d470dcd57be3b8d6774cb84df1738adf267f",
+        "avatar_path_admitted": true,
+        "avatar_fetch_source_sha256": "8a998cd381fab29c4721b8c2b905c317b4e59ceecc7b53e3d46d5dbc70265cf4",
+        "preview_providers_retained": [
+          "talabat",
+          "toters",
+          "lezzoo",
+          "wade"
+        ],
+        "valid_urls": [
+          {
+            "provider": "talabat",
+            "valid": true
+          },
+          {
+            "provider": "toters",
+            "valid": true
+          },
+          {
+            "provider": "lezzoo",
+            "valid": true
+          },
+          {
+            "provider": "wade",
+            "valid": true
+          }
+        ]
+      },
+      "baseline": {
+        "template_sha256": "dec4c19a83dab4d8d175335380b43ec2546f92ed398e97d02b946936373c3128",
+        "css_sha256": "2ede7600af7b12b67414879d07eb7db272f65cdaaa8f352221a9738b3626f424",
+        "payload_sha256": "316a731929a09ddd28ab60cab999d470dcd57be3b8d6774cb84df1738adf267f",
+        "avatar_path_admitted": false,
+        "avatar_fetch_source_sha256": null,
+        "preview_providers_retained": [
+          "talabat",
+          "toters",
+          "lezzoo",
+          "wade"
+        ],
+        "valid_urls": [
+          {
+            "provider": "talabat",
+            "valid": true
+          },
+          {
+            "provider": "toters",
+            "valid": true
+          },
+          {
+            "provider": "lezzoo",
+            "valid": true
+          },
+          {
+            "provider": "wade",
+            "valid": true
+          }
+        ]
+      },
+      "input_differences": {
+        "avatar_admission": true,
+        "url_validation": false
+      },
+      "causal_limit": "Source branches establish possible resource/URL differences only; artifact contains no request ledger, full post-script DOM, raster-stage pixels or causal A/A intervention. Does not establish cause of failed pixels."
+    },
+    "pill-mint-order-en-portrait-768": {
+      "config_sha256": "316a731929a09ddd28ab60cab999d470dcd57be3b8d6774cb84df1738adf267f",
+      "rendered_payload_byte_equal": true,
+      "css_byte_equal": true,
+      "css_sha256": "2ede7600af7b12b67414879d07eb7db272f65cdaaa8f352221a9738b3626f424",
+      "candidate": {
+        "template_sha256": "8161dcae1fb81bba3801b7bf1616a153c8c23099a75818e1c9c32fbcf6425d53",
+        "css_sha256": "2ede7600af7b12b67414879d07eb7db272f65cdaaa8f352221a9738b3626f424",
+        "payload_sha256": "316a731929a09ddd28ab60cab999d470dcd57be3b8d6774cb84df1738adf267f",
+        "avatar_path_admitted": true,
+        "avatar_fetch_source_sha256": "8a998cd381fab29c4721b8c2b905c317b4e59ceecc7b53e3d46d5dbc70265cf4",
+        "preview_providers_retained": [
+          "talabat",
+          "toters",
+          "lezzoo",
+          "wade"
+        ],
+        "valid_urls": [
+          {
+            "provider": "talabat",
+            "valid": true
+          },
+          {
+            "provider": "toters",
+            "valid": true
+          },
+          {
+            "provider": "lezzoo",
+            "valid": true
+          },
+          {
+            "provider": "wade",
+            "valid": true
+          }
+        ]
+      },
+      "baseline": {
+        "template_sha256": "dec4c19a83dab4d8d175335380b43ec2546f92ed398e97d02b946936373c3128",
+        "css_sha256": "2ede7600af7b12b67414879d07eb7db272f65cdaaa8f352221a9738b3626f424",
+        "payload_sha256": "316a731929a09ddd28ab60cab999d470dcd57be3b8d6774cb84df1738adf267f",
+        "avatar_path_admitted": false,
+        "avatar_fetch_source_sha256": null,
+        "preview_providers_retained": [
+          "talabat",
+          "toters",
+          "lezzoo",
+          "wade"
+        ],
+        "valid_urls": [
+          {
+            "provider": "talabat",
+            "valid": true
+          },
+          {
+            "provider": "toters",
+            "valid": true
+          },
+          {
+            "provider": "lezzoo",
+            "valid": true
+          },
+          {
+            "provider": "wade",
+            "valid": true
+          }
+        ]
+      },
+      "input_differences": {
+        "avatar_admission": true,
+        "url_validation": false
+      },
+      "causal_limit": "Source branches establish possible resource/URL differences only; artifact contains no request ledger, full post-script DOM, raster-stage pixels or causal A/A intervention. Does not establish cause of failed pixels."
+    }
+  },
+  "protected_artifact": {
+    "id": 11586077978,
+    "sha256": "4ae48def82e5a931ed79779ee75a272634d53202370376862734660e50b92ec8",
+    "run": 37844040950,
+    "attempt": 2,
+    "revision": "6c7e6c634cfe0bceb2c43ceb485aba12cd78417c"
+  },
+  "recomputed_failure_counts": [
+    {
+      "id": "pill-contact-en-portrait-768",
+      "changed_pixels": 1743,
+      "max_delta": 1
+    },
+    {
+      "id": "pill-order-ku-portrait-768",
+      "changed_pixels": 1,
+      "max_delta": 1
+    },
+    {
+      "id": "pill-mint-contact-ku-portrait-768",
+      "changed_pixels": 1,
+      "max_delta": 1
+    },
+    {
+      "id": "pill-mint-order-ku-portrait-320",
+      "changed_pixels": 1,
+      "max_delta": 1
+    },
+    {
+      "id": "pill-mint-order-ku-portrait-430",
+      "changed_pixels": 1,
+      "max_delta": 1
+    },
+    {
+      "id": "pill-mint-order-ku-portrait-768",
+      "changed_pixels": 1,
+      "max_delta": 1
+    },
+    {
+      "id": "pill-mint-order-en-portrait-430",
+      "changed_pixels": 1,
+      "max_delta": 1
+    },
+    {
+      "id": "pill-mint-order-en-portrait-768",
+      "changed_pixels": 1,
+      "max_delta": 1
+    }
+  ],
+  "existing_artifact_passing_controls": [
+    {
+      "style": "pill",
+      "type": "contact",
+      "exact": 19,
+      "failed": 1,
+      "limit": "Different viewport/type fixtures are not same-input A/A tests"
+    },
+    {
+      "style": "pill",
+      "type": "order",
+      "exact": 19,
+      "failed": 1,
+      "limit": "Different viewport/type fixtures are not same-input A/A tests"
+    },
+    {
+      "style": "pill",
+      "type": "download",
+      "exact": 20,
+      "failed": 0,
+      "limit": "Different viewport/type fixtures are not same-input A/A tests"
+    },
+    {
+      "style": "pill-mint",
+      "type": "contact",
+      "exact": 19,
+      "failed": 1,
+      "limit": "Different viewport/type fixtures are not same-input A/A tests"
+    },
+    {
+      "style": "pill-mint",
+      "type": "order",
+      "exact": 15,
+      "failed": 5,
+      "limit": "Different viewport/type fixtures are not same-input A/A tests"
+    },
+    {
+      "style": "pill-mint",
+      "type": "download",
+      "exact": 20,
+      "failed": 0,
+      "limit": "Different viewport/type fixtures are not same-input A/A tests"
+    }
+  ],
+  "pinned_source_blob_shas": {
+    "api/_lib/proxolink-prepared.js": "671fe3f40c015dcd53a5c9af08572942c78d2e36",
+    "api/_lib/proxolink-pages.js": "083c953c734a6c101289102d9f4719481fe01379",
+    "api/_lib/proxolink-handlers/contact-templates.js": "de495c2ddfd2363dc8fb32bd2d6cebe189d6b61f",
+    "api/_lib/proxolink-templates/pill.html": "b44303cbb0356927f38354e65730a10d91560bca",
+    "api/_lib/proxolink-native-baseline/pill.html": "27a93ea6240286aec39928d300b53e079da9a951",
+    "api/_lib/proxolink-templates/pill-mint.html": "29b73d4ecf61e9d887c5da3a8d9d25d298b54484",
+    "api/_lib/proxolink-native-baseline/pill-mint.html": "9aa593b0efa033a36afa06283d16a6df35cb42b5"
+  },
+  "method": {
+    "config": "Pinned preparedConfig/renderPrepared invoked on the pinned template-preview's fictional card fixture",
+    "functions": "Unmodified safeImage/safeUrl/digits source executed in Node VM",
+    "legacy_parser": "Explicit modeled viber hostname empty, consistent with case-results.json legacy_viber_url_parser=true; does not observe baseline href or resource requests",
+    "missing_evidence": [
+      "Per-role resource request/result ledger",
+      "Full post-script DOM/provider styles and actual changed-point ancestry for four cases",
+      "Button-shadow layer/raster observations for the 1743-pixel band",
+      "WebView raster surface before Flutter composition",
+      "Controlled same-input A/A intervention"
+    ]
+  }
+}
