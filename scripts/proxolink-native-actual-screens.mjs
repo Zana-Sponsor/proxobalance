@@ -23,6 +23,9 @@ export function safeActualScreens(data){
   Object.assign(safe,numeric(item,['settled_offset','collection_reads_added']));
   if(Array.isArray(item.offsets_100_300)&&item.offsets_100_300.length===2&&item.offsets_100_300.every(number))safe.offsets_100_300=item.offsets_100_300;
   if(item.notice_counts)safe.notice_counts=numeric(item.notice_counts,['400ms','4900ms','5500ms']);
+  if(item.visual_state)safe.visual_state=Object.fromEntries(['400ms','4900ms','5500ms'].map(phase=>[phase,Object.fromEntries(
+    ['opacity','size_factor'].filter(k=>Array.isArray(item.visual_state[phase]?.[k])&&item.visual_state[phase][k].length<=3&&
+      item.visual_state[phase][k].every(v=>number(v)&&v>=0&&v<=1)).map(k=>[k,item.visual_state[phase][k]]))]));
   if(item.appearance&&Object.keys(item.appearance).sort().join(',')==='decoration,icon_color,icon_size,text_style')
    safe.appearance_sha256=createHash('sha256').update(JSON.stringify(Object.entries(item.appearance).sort())).digest('hex');
   if(errors.includes(item.failed_check))safe.failed_check=item.failed_check;
@@ -42,6 +45,9 @@ export function validateActualScreens(data,copied){
   }else{
    if(item.real_form_validation!==true||item.automatic_exit!==true||item.native_input!==false||!item.appearance_sha256||
       item.notice_counts?.['400ms']!==2||item.notice_counts?.['4900ms']!==2||item.notice_counts?.['5500ms']!==0)fail();
+   for(const phase of ['400ms','4900ms'])for(const key of ['opacity','size_factor'])
+    if(item.visual_state?.[phase]?.[key]?.length!==2||!item.visual_state[phase][key].every(v=>v===1))fail();
+   for(const key of ['opacity','size_factor'])if(item.visual_state?.['5500ms']?.[key]?.length!==0)fail();
   }
   for(const phase of screenPhases(id)){
    const file=id+'-'+phase+'.png',shot=data.captures[file],width=Number(id.split('-').at(-1));

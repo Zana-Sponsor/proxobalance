@@ -107,7 +107,7 @@ class _ActualScreensState extends State<NativeActualScreensJourney> {
             await Scrollable.ensureVisible(button,alignment:.5,duration:const Duration(milliseconds:260));
             await Future<void>.delayed(const Duration(milliseconds:400));
             if(screenNoticeCount(root)!=0)throw StateError('actual_screen_notices');
-            final shots=<Object>[await _png(id,'initial')],counts=<String,int>{};
+            final shots=<Object>[await _png(id,'initial')],counts=<String,int>{},visual=<String,Object>{};
             final pressed=(button.widget as FilledButton).onPressed;
             if(pressed==null)throw StateError('actual_screen_validation');
             // Calls the ACTUAL form submit callback and its actual controller;
@@ -115,11 +115,14 @@ class _ActualScreensState extends State<NativeActualScreensJourney> {
             final clock=Stopwatch()..start();pressed();
             for(final phase in [400,4900,5500]) {
               await _at(clock,phase);counts['${phase}ms']=screenNoticeCount(root);
+              visual['${phase}ms']=screenNoticeVisualState(root);
+              if(phase<5000){final v=visual['${phase}ms'] as Map<String,Object>;
+                if((v['opacity'] as List).any((a)=>a!=1)||(v['size_factor'] as List).any((a)=>a!=1))throw StateError('actual_screen_lifecycle');}
               if((phase<5000&&counts['${phase}ms']!=2)||(phase==5500&&counts['${phase}ms']!=0))throw StateError('actual_screen_lifecycle');
               if(phase==400){final a=screenNoticeAppearance(root);if(appearance!=null&&a.toString()!=appearance.toString())throw StateError('actual_screen_appearance');appearance=a;}
               shots.add(await _png(id,'${phase}ms',clock:clock));
             }
-            results[id]={'passed':true,'notice_counts':counts,'appearance':appearance!,'automatic_exit':true,'real_form_validation':true,
+            results[id]={'passed':true,'notice_counts':counts,'visual_state':visual,'appearance':appearance!,'automatic_exit':true,'real_form_validation':true,
               'trigger':'actual production FilledButton.onPressed callback','native_input':false,'screenshots':shots};
           }catch(e){results[id]={'passed':false,'failed_check':_error(e)};}
           await _save();await _mount(const SizedBox.shrink(),w);

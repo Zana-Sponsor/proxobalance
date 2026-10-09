@@ -127,6 +127,11 @@ int screenNoticeCount(Element root){
  if(notices.length!=1)throw StateError('screen_notice_component');
  return screenElements(notices.single,(w)=>w is Icon&&w.icon==Icons.error_outline).length;
 }
+Map<String,Object> screenNoticeVisualState(Element root){
+ final notice=screenElements(root,(w)=>w is AdValidationNotifications).single;
+ return {'opacity':[for(final e in screenElements(notice,(w)=>w is FadeTransition))(e.widget as FadeTransition).opacity.value],
+  'size_factor':[for(final e in screenElements(notice,(w)=>w is SizeTransition))(e.widget as SizeTransition).sizeFactor.value]};
+}
 // Compare actual shared-card properties, independent of different error words
 // and each screen's legitimate outer placement. No fixed expected mock layout.
 Map<String,Object> screenNoticeAppearance(Element root){

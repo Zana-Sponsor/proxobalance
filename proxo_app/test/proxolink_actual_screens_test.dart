@@ -95,25 +95,34 @@ void main() {
           ?AdCreateScreen(repository:ActualAdRepository(),proxoCard:actualInvalidAdDraft())
           :ProxoLinkCreatePageScreen(repository:ActualToolsRepository()))));
         await t.pumpAndSettle();
+        if(screen=='proxolink'){
+          await t.runAsync(()async{for(final e in find.byType(Image).evaluate()){await precacheImage((e.widget as Image).image,e);}});
+          await t.pumpAndSettle();
+        }
         final button=find.byKey(ValueKey(screen=='ad'?'review-ad':'create-page-submit'));
         await t.ensureVisible(button);await t.pumpAndSettle();expect(screenNoticeCount(key.currentContext! as Element),0);
         await _png(t,key,'actual-$screen-error-initial-${width.toInt()}');
         await t.tap(button);await t.pump();
-        final counts=<String,int>{};var previous=0;
+        final counts=<String,int>{},visual=<String,Object>{};var previous=0;
         for(final phase in [100,400,4900,5100,5500]) {
-          await t.pump(Duration(milliseconds:phase-previous));previous=phase;
+          // Actual stagger/entry/exit needs frames between Timer callbacks.
+          // A single large fake-clock leap can mount a zero-opacity card at
+          // the observation time even though its lifetime timer has elapsed.
+          while(previous<phase){final step=(phase-previous).clamp(1,16);await t.pump(Duration(milliseconds:step));previous+=step;}
           final root=key.currentContext! as Element;
           counts['${phase}ms']=screenNoticeCount(root);
+          visual['${phase}ms']=screenNoticeVisualState(root);
           if(phase==400) {
             final actual=screenNoticeAppearance(root);
             if(appearance==null){appearance=actual;}else{expect(actual,appearance);}
           }
           if(phase<=4900)expect(counts['${phase}ms'],2);
+          if(phase==400||phase==4900)expect(visual['${phase}ms'],{'opacity':[1.0,1.0],'size_factor':[1.0,1.0]});
           if(phase==5500)expect(counts['${phase}ms'],0);
           await _png(t,key,'actual-$screen-error-${phase}ms-${width.toInt()}');
           expect(t.takeException(),isNull);
         }
-        measurements['$screen-error-${width.toInt()}']={'notice_counts':counts,'appearance':appearance!,'real_form_validation':true,
+        measurements['$screen-error-${width.toInt()}']={'notice_counts':counts,'visual_state':visual,'appearance':appearance!,'real_form_validation':true,
           'submit_input':'WidgetTester.tap','automatic_exit':true};
         await t.pumpWidget(const SizedBox.shrink());await t.pumpAndSettle();
       }
