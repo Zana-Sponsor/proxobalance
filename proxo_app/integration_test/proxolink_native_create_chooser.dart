@@ -8,6 +8,7 @@ import 'package:proxo_app/screens/proxolink_create_page_screen.dart';
 import 'package:proxo_app/services/proxolink_service.dart';
 import 'package:proxo_app/widgets/proxolink_design_selector.dart';
 import 'proxolink_native_tools_journey.dart';
+import 'proxolink_native_actual_screens.dart';
 
 /// Real Android input and real production form. Repository writes are rejected
 /// by the read-only fixture. This supplements the unchanged legacy WebView gate.
@@ -25,7 +26,7 @@ class NativeProxoLinkCreateChooser extends StatefulWidget {
 class _CreateChooserState extends State<NativeProxoLinkCreateChooser> {
   final _results = <String, Object>{};
   ProxoPageType _type = ProxoPageType.contact;
-  bool _chooserDone = false;
+  bool _chooserDone = false, _browserDone = false;
   @override
   void initState() {
     super.initState();
@@ -128,6 +129,7 @@ class _CreateChooserState extends State<NativeProxoLinkCreateChooser> {
     if(mounted)setState(()=>_chooserDone=true);
   }
   @override
-  Widget build(BuildContext context) => _chooserDone ? NativeToolsBrowserJourney(write:widget.write,onComplete:widget.onComplete) : Center(child: SizedBox(width: 430,
+  Widget build(BuildContext context) => _browserDone ? NativeActualScreensJourney(write:widget.write,onComplete:widget.onComplete)
+    : _chooserDone ? NativeToolsBrowserJourney(write:widget.write,onComplete:()async{if(mounted)setState(()=>_browserDone=true);}) : Center(child: SizedBox(width: 430,
     child: ProxoLinkCreatePageScreen(key: ValueKey('native-create-form-${_type.key}'), repository: widget.repository)));
 }

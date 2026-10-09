@@ -13,6 +13,7 @@ import {DIAGNOSTIC_POINTS,REPRODUCTION_IDS,CHOOSER_IDS,safeRenderDiagnostics,saf
 import {readNativePipeline,inputDifferences} from './proxolink-native-pipeline.mjs';
 import {CREATE_CHOOSER_IDS,safeCreateChooserResults,validateCreateChooserResults} from './proxolink-native-diagnostics.mjs';
 import {BROWSER_CASE_IDS,foregroundBrowser,safeBrowserResults,validateBrowserResults} from './proxolink-native-browser.mjs';
+import {SCREEN_FILES,safeActualScreens,validateActualScreens} from './proxolink-native-actual-screens.mjs';
 
 const styles=STYLES;
 const packageId='com.proxo.proxoapp';
@@ -53,6 +54,7 @@ const safeErrorCodes=new Set([
   'native_diagnostics_invalid','native_diagnostics_incomplete','native_diagnostics_environment_mismatch','native_chooser_failed',
   'native_create_chooser_failed',
   'native_browser_journey_failed',
+  'native_actual_screens_failed',
   'native_viewport_invalid','native_crop_outside_screen','reference_viewport_mismatch',
   'reference_capability_required','reference_preview_unavailable','reference_assets_or_viewport_failed',
 ]);
@@ -187,6 +189,20 @@ async function main() {
   let matrixFinished=false;
   const createChooserTaps=new Set(),createChooserCaptures=new Set(),createChooserSetups=new Set();
   const browserTaps=new Map(),browserReceipts=new Map(),browserCaptures=new Set();
+  const actualScreenCaptures=new Set();let notificationPermissionGranted=false;
+  const collectActualScreens=async()=>{
+    const raw=appRead('proxolink-actual-screens-results.json');
+    const data=safeActualScreens(raw?JSON.parse(raw):{});
+    writeFileSync(output+'/actual-screens-results.json',JSON.stringify(data,null,2));
+    for(const file of SCREEN_FILES)if(data.captures[file]&&!actualScreenCaptures.has(file)){
+      const bytes=adb(['exec-out','run-as',packageId,'cat','files/'+file],null,true);
+      if(!bytes)continue;
+      const meta=await sharp(bytes).metadata(),surface=data.captures[file].surface;
+      if(meta.format!=='png'||meta.width!==surface.width||meta.height!==surface.height)throw Error('native_actual_screens_failed');
+      writeFileSync(output+'/'+file,bytes);actualScreenCaptures.add(file);
+    }
+    return data;
+  };
   const diagnosticWrite=()=>writeFileSync(output+'/render-diagnostics.json',JSON.stringify({
     purpose:'Observational only; FIRST of three predetermined ADB frames remains acceptance input',
     clocks:'capture_timing: host monotonic milliseconds; native: Android elapsedRealtime milliseconds; DOM: performance time origin and now',
@@ -224,13 +240,15 @@ async function main() {
       writeFileSync(output+'/create-chooser-results.json',JSON.stringify(createChooser,null,2));
       const browserResults=safeBrowserResults(JSON.parse(appRead('proxolink-tools-browser-results.json')||'{}'));
       writeFileSync(output+'/tools-browser-results.json',JSON.stringify(browserResults,null,2));
+      const actualScreens=await collectActualScreens();
       // Retain all independent outcomes even when another gate fails first.
       const gates={};let firstError;
       for(const [name,check] of Object.entries({matrix:()=>validateNativeResults(data,captured,pixels),
         diagnostics:()=>{validateDiagnosticRoles(diagnosticRoles);validateReproductions(reproductionRoles);
           if(Object.keys(renderStates).length!==480)throw Error('native_diagnostics_incomplete');},chooser:()=>validateChooserResults(chooser,chooserTaps,chooserCaptures),
         create_chooser:()=>validateCreateChooserResults(createChooser,createChooserTaps,createChooserCaptures,createChooserSetups),
-        tools_browser:()=>validateBrowserResults(browserResults,browserReceipts,browserCaptures)})){
+        tools_browser:()=>validateBrowserResults(browserResults,browserReceipts,browserCaptures),
+        actual_screens:()=>validateActualScreens(actualScreens,actualScreenCaptures)})){
         try{check();gates[name]={passed:true};}catch(error){gates[name]={passed:false,code:safeErrorCodes.has(error.message)?error.message:'unclassified_failure'};firstError??=error;}
       }
       writeFileSync(output+'/acceptance-gates.json',JSON.stringify(gates,null,2));
@@ -392,6 +410,14 @@ async function main() {
       }
     }
     if(matrixFinished){
+    const screenRequest=appRead('proxolink-actual-screens-request.json');
+    if(screenRequest){const request=JSON.parse(screenRequest);
+      if(request.id==='actual-notification-permission'&&request.phase==='permission'&&!notificationPermissionGranted){
+        adb(['shell','pm','grant',packageId,'android.permission.POST_NOTIFICATIONS']);notificationPermissionGranted=true;
+        appWrite('proxolink-actual-screens-ack',request.id);
+      }
+    }
+    await collectActualScreens();
     const browserProgress=appRead('proxolink-tools-browser-results.json');
     if(browserProgress)writeFileSync(output+'/tools-browser-results.json',JSON.stringify(safeBrowserResults(JSON.parse(browserProgress)),null,2));
     const browserRequest=appRead('proxolink-tools-browser-request.json');

@@ -21,14 +21,14 @@ import 'package:proxo_app/widgets/proxo_text.dart';
 const screenFixtureOwner='00000000-0000-4000-8000-000000000099';
 class ActualScreenBackend {
  late final SupabaseClient client;
+ late final http.Client transport;
  final reads=<String,int>{};
  Completer<void>? refreshGate;
  ActualScreenBackend(){
-  client=SupabaseClient('https://screen-fixtures.invalid','fictional-publishable-key',
-   httpClient:MockClient((request)async{
+  transport=MockClient((request)async{
     if(request.method!='GET'||request.url.host!='screen-fixtures.invalid')throw StateError('screen_fixture_network_boundary');
     final table=request.url.path.split('/').last;
-    if(!{'profiles','pa_ads','pa_featured_ads_public','pa_popups'}.contains(table))throw StateError('screen_fixture_network_boundary');
+    if(!{'profiles','pa_ads','pa_featured_ads_public','pa_popups','pa_notifications'}.contains(table))throw StateError('screen_fixture_network_boundary');
     reads.update(table,(v)=>v+1,ifAbsent:()=>1);
     if(table=='pa_ads'||table=='pa_featured_ads_public')await refreshGate?.future;
     final Object data=table=='profiles'?{'full_name':'تاقیکردنەوە Proxo'}:table=='pa_ads'?[{
@@ -36,18 +36,24 @@ class ActualScreenBackend {
      'spend':12.5,'prev_spend':8,'clicks':1246,'impressions':84320,'prev_impressions':60000,
      'conversions':10,'budget':10,'total_budget':30,'created_at':DateTime.now().subtract(const Duration(hours:1)).toIso8601String(),
     }]:[];
-    return http.Response(jsonEncode(data),200,headers:{'content-type':'application/json'});
-   }),authOptions:const AuthClientOptions(autoRefreshToken:false),
-   realtimeClientOptions:RealtimeClientOptions(transport:(url,headers)=>_ScreenSocket(),disconnectOnEmptyChannelsAfter:Duration.zero));
+    return http.Response(jsonEncode(data),200,headers:{'content-type':'application/json','content-range':'*/0'});
+   });
  }
  Future<void> initialize()async{
+  final instance=await Supabase.initialize(url:'https://screen-fixtures.invalid',anonKey:'fictional-publishable-key',debug:false,
+   httpClient:transport,authOptions:const FlutterAuthClientOptions(autoRefreshToken:false,localStorage:EmptyLocalStorage(),detectSessionInUri:false),
+   realtimeClientOptions:RealtimeClientOptions(transport:(url,headers)=>_ScreenSocket(),disconnectOnEmptyChannelsAfter:Duration.zero));
+  client=instance.client;
   String part(Object value)=>base64Url.encode(utf8.encode(jsonEncode(value))).replaceAll('=','');
   final token='${part({'alg':'HS256','typ':'JWT'})}.${part({'sub':screenFixtureOwner,'exp':DateTime.now().millisecondsSinceEpoch~/1000+86400})}.fictional-signature';
   await client.auth.recoverSession(jsonEncode(Session(accessToken:token,tokenType:'bearer',
    user:const User(id:screenFixtureOwner,appMetadata:{},userMetadata:{},aud:'authenticated',createdAt:'2026-10-09T00:00:00Z')).toJson()));
   app.supabase=client;
+  // Resolve SDK JSON-isolate initialization outside WidgetTester's fake clock
+  // and prove the fixture can serve actual dashboard reads before mounting.
+  await client.from('pa_ads').select('id');
  }
- Future<void> dispose()async{if(refreshGate!=null&&!refreshGate!.isCompleted)refreshGate!.complete();await client.dispose();}
+ Future<void> dispose()async{if(refreshGate!=null&&!refreshGate!.isCompleted)refreshGate!.complete();await Supabase.instance.dispose();}
 }
 class _ScreenSocket extends StreamChannelMixin<dynamic> implements WebSocketChannel {
  final incoming=StreamController<dynamic>();
