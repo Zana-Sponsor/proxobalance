@@ -22,9 +22,9 @@ Existing isolated-write guard intentionally remains: hosted create/edit/archive 
 
 ## Verification
 
-Local backend: 132 passed / 0 failed. Source privacy scan passed. Dart formatting parsed changed files; full Flutter analysis/widget tests, responsive browser checks, disposable PostgreSQL/RLS and release APK privacy are delegated to the existing source CI. Local Flutter setup encountered a security-sensitive incidental metadata request; that path was stopped, not bypassed. No local Flutter/DB success is claimed.
+Source CI **37862457017 SUCCESS** at implementation revision **dc15bbf84101044f5657d9320526f0c80152ac39**, all five jobs, completed 2026-10-09 00:05:30 UTC: backend **132 passed/0 failed**, Flutter **210 passed/0 failed**, renderer/browser responsive **480 cases passed**, disposable PostgreSQL/RLS migration transaction rollback/reapply and **seven actual database-backed API lifecycles** passed, edge functions and release APK privacy passed. Source scan passed locally and in CI. Flutter analysis passed with informational lints; no fatal errors/warnings. These are source/widget/browser/database checks, not native runtime certification. Local Flutter setup encountered a security-sensitive incidental metadata request; that path was stopped, not bypassed. No local Flutter/DB success is claimed.
 
-The separate protected Android diagnostic run 37844040950 attempt 2 is pinned to 6c7e6c634cfe0bceb2c43ceb485aba12cd78417c, before this rebuild. It failed strict pixel parity; it cannot certify the new management UI. Its terminal evidence is being independently audited. No new native run, workflow/protection change, acceptance weakening or speculative pixel fix was included here.
+The separate protected Android diagnostic run **37844040950 attempt 2** is pinned to **6c7e6c634cfe0bceb2c43ceb485aba12cd78417c**, before this rebuild. Independently audited result: **FAILED**, behavior 240/240 passed, candidate/baseline 240/240, zero missing, 480 stable roles, **232 exact/8 failed** pixel pairs (1,750 changed pixels, max channel delta 1), chooser 12/12 passed on that pinned builder. It cannot certify the rebuilt management UI. Root cause remains NOT PROVEN; exact evidence is in native-6c7e6c6-attempt2. No new protected native run, protection/acceptance change or speculative pixel fix was included here.
 
 ## Exact implementation paths
 
@@ -52,4 +52,4 @@ The separate protected Android diagnostic run 37844040950 attempt 2 is pinned to
 - proxo_app/test/proxolink_page_management_test.dart
 - api/_lib/proxolink-handlers/independent-pages.js
 
-This report is an additional documentation file. No template CSS/fonts/assets/thumbnails, production customers, migrations on production, publishing or merge were performed. Source-CI run/revision and final results must be recorded after actual execution; pending checks and new-UI Android coverage remain blockers.
+This report is an additional documentation file. Terminal native publication adds 36 safe evidence files and updates the current execution report; those are separate from the 23 implementation paths above. No template CSS/fonts/assets/thumbnails, production customers, migrations on production, publishing or merge were performed. All implementation source checks passed; latest documentation-head CI is recorded in Draft PR #7 separately. Hosted isolated create/list/open/edit journeys and Android coverage of the rebuilt management screens remain unexecuted, and strict native pixel failures remain unresolved. This is not COMPLETE.
