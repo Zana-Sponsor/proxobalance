@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import java.io.File
 import java.io.FileOutputStream
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.Executors
 import android.view.View
 import android.view.FrameMetrics
 import android.view.ViewTreeObserver
@@ -72,6 +73,57 @@ class ProxoLinkNativeProbeActivity : FlutterActivity() {
                             "completed_ms" to clockMs(), "screen_x" to origin[0], "screen_y" to origin[1],
                             "width" to view.width, "height" to view.height))
                     }, Handler(Looper.getMainLooper()))
+                    return@setMethodCallHandler
+                }
+                if (call.method == "captureActualSurface") {
+                    // Only the additive actual-screen journey uses this path.
+                    // The original matrix/diagnostic captureSurface stays unchanged.
+                    val fileName = call.argument<String>("file")
+                    val allowed = Regex("actual-(?:(?:home|tools)-refresh|(?:ad|proxolink)-error)-(?:320|393|430|768)-(?:initial|100ms|300ms|settled|400ms|4900ms|5500ms)\\.png")
+                    if (fileName == null || !allowed.matches(fileName)) {
+                        result.success(mapOf("status" to -1)); return@setMethodCallHandler
+                    }
+                    fun surface(view: View): SurfaceView? {
+                        if (view is SurfaceView) return view
+                        if (view is ViewGroup) for (i in 0 until view.childCount) {
+                            surface(view.getChildAt(i))?.let { return it }
+                        }
+                        return null
+                    }
+                    val view = surface(window.decorView)
+                    if (view == null || !view.holder.surface.isValid || view.width <= 0 || view.height <= 0) {
+                        result.success(mapOf("status" to -1)); return@setMethodCallHandler
+                    }
+                    val origin = IntArray(2); view.getLocationOnScreen(origin)
+                    val width = view.width; val height = view.height
+                    val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+                    val requested = clockMs()
+                    val handler = Handler(Looper.getMainLooper())
+                    // Exactly one copy at the predetermined request. Encoding its
+                    // immutable bitmap off the main thread cannot delay the next phase.
+                    PixelCopy.request(view, bitmap, { status ->
+                        val copied = clockMs()
+                        val worker = Executors.newSingleThreadExecutor()
+                        worker.execute {
+                            var saved = status == PixelCopy.SUCCESS
+                            try {
+                                if (saved) {
+                                    val temporary = File(filesDir, "$fileName.next")
+                                    FileOutputStream(temporary).use {
+                                        saved = bitmap.compress(Bitmap.CompressFormat.PNG, 100, it)
+                                    }
+                                    saved = saved && temporary.renameTo(File(filesDir, fileName))
+                                }
+                            } catch (_: Exception) { saved = false }
+                            finally { bitmap.recycle(); worker.shutdown() }
+                            val completed = clockMs()
+                            handler.post {
+                                result.success(mapOf("status" to (if (saved) status else -2),
+                                    "requested_ms" to requested, "copied_ms" to copied, "completed_ms" to completed,
+                                    "screen_x" to origin[0], "screen_y" to origin[1], "width" to width, "height" to height))
+                            }
+                        }
+                    }, handler)
                     return@setMethodCallHandler
                 }
                 if (call.method == "diagnostics") {

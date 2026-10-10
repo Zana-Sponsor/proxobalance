@@ -73,7 +73,7 @@ class _BrowserJourneyState extends State<NativeToolsBrowserJourney> with Widgets
       await _wait((w)=>w.key==ValueKey('proxolink-page-${_ToolsFixture.id(1)}'));
       await scroll.animateTo(800,duration:const Duration(milliseconds:260),curve:Curves.easeOutCubic);
       for(var cycle=1;cycle<=3;cycle++){
-        final id='tools-browser-$cycle';
+        final id='tools-browser-$cycle',observed=<String,Object>{};
         try{
           final row=await _wait((w)=>w.key==ValueKey('proxolink-page-${_ToolsFixture.id(5)}'));
           final previews=_find((w)=>w is FilledButton,root:row);
@@ -90,15 +90,22 @@ class _BrowserJourneyState extends State<NativeToolsBrowserJourney> with Widgets
           for(var i=0;i<100&&_resumed==resumed;i++)await Future<void>.delayed(const Duration(milliseconds:100));
           await WidgetsBinding.instance.endOfFrame;
           final after=await _wait((w)=>w.key==ValueKey('proxolink-page-${_ToolsFixture.id(5)}'));
-          if(_paused<=paused||_resumed<=resumed||!identical(row,after)||scroll.offset!=offset||
-              (after.findRenderObject()! as RenderBox).localToGlobal(Offset.zero)!=position||_repository.reads!=1)
-            throw StateError('browser_journey_state');
+          final afterPosition=(after.findRenderObject()! as RenderBox).localToGlobal(Offset.zero);
+          observed.addAll({'pause_observed':_paused>paused,'resume_observed':_resumed>resumed,'same_row_element':identical(row,after),
+            'same_scroll_offset':scroll.offset==offset,'same_row_position':afterPosition==position,
+            'collection_reads':_repository.reads,'scroll_offset':offset,'scroll_offset_after':scroll.offset,
+            'pause_count_before':paused,'pause_count_after':_paused,'resume_count_before':resumed,'resume_count_after':_resumed,
+            'row_x_before':position.dx,'row_y_before':position.dy,'row_x_after':afterPosition.dx,'row_y_after':afterPosition.dy,
+            'fictional_repository':true,'public_content_verified':false});
+          // Retain the actual return screen and every predicate even on failure.
           await widget.write('proxolink-tools-browser-request.json',{'id':id,'phase':'capture'});await _ack(id);
-          results[id]={'passed':true,'pause_observed':true,'resume_observed':true,'same_row_element':true,
+          if(_paused<=paused||_resumed<=resumed||!identical(row,after)||scroll.offset!=offset||
+              afterPosition!=position||_repository.reads!=1)throw StateError('browser_journey_state');
+          results[id]={...observed,'passed':true,'pause_observed':true,'resume_observed':true,'same_row_element':true,
             'same_scroll_offset':true,'same_row_position':true,'collection_reads':_repository.reads,'scroll_offset':offset,
             'public_content_verified':false,'fictional_repository':true};
         }catch(error){
-          results[id]={'passed':false,'failed_check':error is StateError&&
+          results[id]={...observed,'passed':false,'failed_check':error is StateError&&
             {'browser_journey_ack','browser_journey_element','browser_journey_state'}.contains(error.message)?error.message:'browser_journey_unclassified'};
         }
         await widget.write('proxolink-tools-browser-results.json',results);

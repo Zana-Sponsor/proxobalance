@@ -11,7 +11,7 @@ function safeCapture(item,file){
  if(item?.file!==file||!SCREEN_FILES.includes(file))return null;
  return {file,phase:screenPhases(SCREEN_IDS.find(id=>file.startsWith(id+'-'))).find(p=>file.endsWith('-'+p+'.png')),
   ...numeric(item,['requested_elapsed_ms','completed_elapsed_ms']),
-  surface:numeric(item.surface,['screen_x','screen_y','width','height','requested_ms','completed_ms']),
+  surface:numeric(item.surface,['screen_x','screen_y','width','height','requested_ms','copied_ms','completed_ms']),
   viewport:numeric(item.viewport,['x','y','width','height']),capture:'Android Flutter SurfaceView PixelCopy'};
 }
 export function safeActualScreens(data){
@@ -21,6 +21,12 @@ export function safeActualScreens(data){
   const item=data.cases[id],safe={passed:item.passed===true};
   for(const key of ['same_scroll_element','spinner_closed','automatic_exit','real_form_validation','native_input'])if(typeof item[key]==='boolean')safe[key]=item[key];
   Object.assign(safe,numeric(item,['settled_offset','collection_reads_added']));
+  if(item.phase_observations)safe.phase_observations=Object.fromEntries(screenPhases(id).filter(p=>item.phase_observations[p]).map(p=>{
+   const state=item.phase_observations[p],out=numeric(state,['observed_elapsed_ms','notice_count','offset']);
+   if(typeof state.is_refreshing==='boolean')out.is_refreshing=state.is_refreshing;
+   for(const key of ['opacity','size_factor'])if(Array.isArray(state[key])&&state[key].length<=3&&state[key].every(v=>number(v)&&v>=0&&v<=1))out[key]=state[key];
+   return[p,out];
+  }));
   if(Array.isArray(item.offsets_100_300)&&item.offsets_100_300.length===2&&item.offsets_100_300.every(number))safe.offsets_100_300=item.offsets_100_300;
   if(item.notice_counts)safe.notice_counts=numeric(item.notice_counts,['400ms','4900ms','5500ms']);
   if(item.visual_state)safe.visual_state=Object.fromEntries(['400ms','4900ms','5500ms'].map(phase=>[phase,Object.fromEntries(
@@ -52,10 +58,10 @@ export function validateActualScreens(data,copied){
   for(const phase of screenPhases(id)){
    const file=id+'-'+phase+'.png',shot=data.captures[file],width=Number(id.split('-').at(-1));
    if(!copied.has(file)||!shot||!['requested_elapsed_ms','completed_elapsed_ms'].every(k=>number(shot[k]))||
-      !['screen_x','screen_y','width','height','requested_ms','completed_ms'].every(k=>number(shot.surface[k]))||
+      !['screen_x','screen_y','width','height','requested_ms','copied_ms','completed_ms'].every(k=>number(shot.surface[k]))||
       !['x','y','width','height'].every(k=>number(shot.viewport[k]))||shot.viewport.width!==width||shot.viewport.height!==1200||shot.requested_elapsed_ms<0||
       shot.completed_elapsed_ms<shot.requested_elapsed_ms||shot.surface.width<=0||shot.surface.height<=0||
-      shot.surface.completed_ms<shot.surface.requested_ms||
+      shot.surface.copied_ms<shot.surface.requested_ms||shot.surface.completed_ms<shot.surface.copied_ms||
       shot.viewport.x<shot.surface.screen_x||shot.viewport.y<shot.surface.screen_y||
       shot.viewport.x+width>shot.surface.screen_x+shot.surface.width||shot.viewport.y+1200>shot.surface.screen_y+shot.surface.height)fail();
    // Fixed timer phase, one surface request; no retry or later-frame selection.

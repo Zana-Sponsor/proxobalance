@@ -8,7 +8,7 @@ test('actual native screen gate requires all widths, fixed surface captures, rea
    {passed:true,real_form_validation:true,automatic_exit:true,native_input:false,appearance:{decoration:'BoxDecoration',text_style:'Rabar',icon_size:18,icon_color:0xffb74956},notice_counts:{'400ms':2,'4900ms':2,'5500ms':0},
     visual_state:{'400ms':{opacity:[1,1],size_factor:[1,1]},'4900ms':{opacity:[1,1],size_factor:[1,1]},'5500ms':{opacity:[],size_factor:[]}}};
   for(const phase of screenPhases(id)){const file=id+'-'+phase+'.png',ms=parseInt(phase)||0;data.captures[file]={file,phase,
-   requested_elapsed_ms:ms,completed_elapsed_ms:ms+40,surface:{screen_x:0,screen_y:0,width:1200,height:1900,requested_ms:100,completed_ms:140},
+   requested_elapsed_ms:ms,completed_elapsed_ms:ms+40,surface:{screen_x:0,screen_y:0,width:1200,height:1900,requested_ms:100,copied_ms:110,completed_ms:140},
    viewport:{x:0,y:0,width:Number(id.split('-').at(-1)),height:1200},url:'https://private.example/token'};}
  }
  const safe=safeActualScreens(data),copies=new Set(SCREEN_FILES);assert.doesNotMatch(JSON.stringify(safe),/private|https|token|BoxDecoration|Rabar/);
@@ -20,4 +20,16 @@ test('actual native screen gate requires all widths, fixed surface captures, rea
  mutate(d=>d.cases['actual-ad-error-393'].visual_state['400ms'].opacity[0]=0);
  mutate(d=>d.captures['actual-home-refresh-393-100ms.png'].requested_elapsed_ms=99);
  mutate(d=>d.captures[SCREEN_FILES[0]].viewport.x=1200);
+ mutate(d=>d.captures[SCREEN_FILES[0]].surface.copied_ms=99);
+ mutate(d=>d.captures[SCREEN_FILES[0]].surface.copied_ms=141);
+});
+test('failed native phases preserve bounded lifecycle observations without raw details',()=>{
+ const id='actual-ad-error-320';
+ const safe=safeActualScreens({cases:{[id]:{passed:false,failed_check:'actual_screen_lifecycle',phase_observations:{
+  '400ms':{observed_elapsed_ms:414,notice_count:2,opacity:[.8,1],size_factor:[.8,1],token:'secret'},
+  '5500ms':{observed_elapsed_ms:5501,notice_count:0,opacity:[],size_factor:[]},arbitrary:{token:'secret'}}}}});
+ assert.equal(safe.cases[id].passed,false);assert.equal(safe.cases[id].phase_observations['400ms'].opacity[0],.8);
+ assert.equal(safe.cases[id].phase_observations['5500ms'].notice_count,0);
+ assert.doesNotMatch(JSON.stringify(safe),/secret|token|arbitrary/);
+ assert.throws(()=>validateActualScreens(safe,new Set()),/native_actual_screens_failed/);
 });

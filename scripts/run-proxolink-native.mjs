@@ -10,7 +10,7 @@ import { STYLES, WIDTHS, PAGE_TYPES, LANGUAGES, NATIVE_CASE_IDS, validateRuntime
 import {validateViewport, compareNativePixels, captureNativeFrames, createPreviewReferenceBrowser} from './proxolink-pixel-comparison.mjs';
 import {DIAGNOSTIC_POINTS,REPRODUCTION_IDS,CHOOSER_IDS,safeRenderDiagnostics,safeChooserResults,validateChooserResults,
   diagnosticSample,diagnosePixelPair,validateDiagnosticRoles,validateReproductions,safeSurface} from './proxolink-native-diagnostics.mjs';
-import {readNativePipeline,inputDifferences} from './proxolink-native-pipeline.mjs';
+import {readNativePipeline,inputDifferences,markupDifferences} from './proxolink-native-pipeline.mjs';
 import {CREATE_CHOOSER_IDS,safeCreateChooserResults,validateCreateChooserResults} from './proxolink-native-diagnostics.mjs';
 import {BROWSER_CASE_IDS,foregroundBrowser,safeBrowserResults,validateBrowserResults} from './proxolink-native-browser.mjs';
 import {SCREEN_FILES,safeActualScreens,validateActualScreens} from './proxolink-native-actual-screens.mjs';
@@ -380,6 +380,9 @@ async function main() {
             const candidateInput=diagnosticRoles[id+'-candidate']?.pipeline?.inputs;
             const baselineInput=diagnosticRoles[id+'-baseline']?.pipeline?.inputs;
             if(candidateInput&&baselineInput)diagnosticPairs[id].input_differences=inputDifferences(candidateInput,baselineInput);
+            if(aRole?.pipeline?.live_markup?.length&&bRole?.pipeline?.live_markup?.length&&
+              !aRole.pipeline.markup_truncated&&!bRole.pipeline.markup_truncated)
+              diagnosticPairs[id].live_markup_differences=markupDifferences(aRole.pipeline.live_markup,bRole.pipeline.live_markup);
             diagnosticWrite();
           }
           pixels[id]={...comparison.metrics,capture_samples:3,

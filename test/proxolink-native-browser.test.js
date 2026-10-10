@@ -17,3 +17,13 @@ test('browser evidence requires actual foreground handoff, three resume cycles a
  assert.throws(()=>validateBrowserResults(safe,receipts,new Set()),/native_browser_journey_failed/);
  safe[BROWSER_CASE_IDS[0]].public_content_verified=true;assert.throws(()=>validateBrowserResults(safe,receipts,captures),/native_browser_journey_failed/);
 });
+test('failed browser state retains individual predicates and bounded counts without weakening the gate',()=>{
+ const safe=safeBrowserResults({'tools-browser-1':{passed:false,failed_check:'browser_journey_state',pause_observed:false,
+  resume_observed:true,same_row_element:true,same_scroll_offset:false,same_row_position:false,collection_reads:2,
+  pause_count_before:0,pause_count_after:0,resume_count_before:0,resume_count_after:1,
+  scroll_offset:356,scroll_offset_after:400,row_y_before:-24,row_y_after:-68,token:'secret',email:'secret'}});
+ assert.equal(safe['tools-browser-1'].pause_observed,false);assert.equal(safe['tools-browser-1'].collection_reads,2);
+ assert.equal(safe['tools-browser-1'].scroll_offset_after,400);assert.equal(safe['tools-browser-1'].row_y_before,-24);
+ assert.doesNotMatch(JSON.stringify(safe),/secret|token|email/);
+ assert.throws(()=>validateBrowserResults(safe,new Map(),new Set()),/native_browser_journey_failed/);
+});

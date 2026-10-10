@@ -2,6 +2,32 @@
 // against the existing Android WebView, never Chromium or an alternative render.
 import {createHash} from 'node:crypto';
 export const digest=value=>createHash('sha256').update(value).digest('hex');
+// Live node order/attribute/text identities, after acceptance only. Attribute
+// values, text, scripts, private URLs and markup never leave this hash boundary.
+export function markupIdentity(nodes){
+ if(!Array.isArray(nodes)||nodes.length>2048)throw Error('native_pipeline_invalid');
+ const text=value=>{if(typeof value!=='string'||Buffer.byteLength(value)>16*1024*1024)throw Error('native_pipeline_invalid');return value;};
+ const tags=new Set(['HTML','HEAD','BODY','STYLE','SCRIPT','DIV','H1','H2','P','SPAN','A','IMG','BUTTON','SECTION','SVG','SMALL','LINK','META']);
+ return nodes.map((node,index)=>{
+  if(!Number.isInteger(node.parent)||node.parent<-1||node.parent>=index||!Array.isArray(node.attributes)||node.attributes.length>64)
+   throw Error('native_pipeline_invalid');
+  const tag=text(node.tag),content=text(node.text);
+  const attributes=node.attributes.map(a=>({name_sha256:digest(text(a.name)),value_sha256:digest(text(a.value)),value_bytes:Buffer.byteLength(a.value)}))
+   .sort((a,b)=>a.name_sha256.localeCompare(b.name_sha256));
+  return {index,parent_index:node.parent,tag:tags.has(tag)?tag:'OTHER',tag_sha256:digest(tag),attributes,
+   text_sha256:digest(content),text_bytes:Buffer.byteLength(content)};
+ });
+}
+export function markupDifferences(a,b){
+ const changes=[];
+ for(let index=0;index<Math.max(a.length,b.length);index++)if(JSON.stringify(a[index])!==JSON.stringify(b[index])){
+  const left=a[index],right=b[index];changes.push({index,presence_changed:!left||!right,
+   parent_changed:left?.parent_index!==right?.parent_index,tag_changed:left?.tag_sha256!==right?.tag_sha256,
+   text_changed:left?.text_sha256!==right?.text_sha256,attributes_changed:JSON.stringify(left?.attributes)!==JSON.stringify(right?.attributes),
+   causal_effect_proven:false});
+ }
+ return changes;
+}
 // Only hashes/lengths leave this function. Empty cached CDP bodies are not
 // source-identity evidence; the live DOM is observed separately after captures.
 export function sourceIdentity(html){
@@ -121,7 +147,7 @@ export async function readNativePipeline(adb,packageId,captureId){
    }catch{entry.body_unavailable=true;}
    resources.push(entry);
   }
-  const dom=await session.send('Runtime.evaluate',{expression:'JSON.stringify({html:document.documentElement.outerHTML,config:window.ProxoLink.getConfig(),buttons:[...document.querySelectorAll("[data-provider]")].map(e=>({provider:e.dataset.provider,href:e.getAttribute("href")}))})',returnByValue:true});
+  const dom=await session.send('Runtime.evaluate',{expression:'(()=>{const nodes=[...document.querySelectorAll("*")];return JSON.stringify({html:document.documentElement.outerHTML,config:window.ProxoLink.getConfig(),buttons:[...document.querySelectorAll("[data-provider]")].map(e=>({provider:e.dataset.provider,href:e.getAttribute("href")})),markup:nodes.slice(0,2048).map(e=>({tag:e.tagName,parent:nodes.indexOf(e.parentElement),attributes:[...e.attributes].map(a=>({name:a.name,value:a.value})),text:[...e.childNodes].filter(n=>n.nodeType===3).map(n=>n.nodeValue).join("")})),markup_truncated:nodes.length>2048})})()',returnByValue:true});
   const state=JSON.parse(dom.result.value);
   const buttons=state.buttons.filter(x=>providers.includes(x.provider)).map(x=>({provider:x.provider,href_sha256:digest(x.href||'')}));
   const metadata={status:'captured',started_ms,completed_ms:Number(process.hrtime.bigint())/1e6,
@@ -129,6 +155,7 @@ export async function readNativePipeline(adb,packageId,captureId){
    layout:{css_layout_viewport:bounds(metrics.cssLayoutViewport),css_visual_viewport:bounds(metrics.cssVisualViewport),css_content_size:bounds(metrics.cssContentSize)},
    layers:safeLayers(session.layers),layers_received:session.layers.length>0,layer_error:layer_error||(!session.layers.length?'not_observed':null),resources,resources_truncated,source,
    live_source:{...sourceIdentity(state.html),scope:'Live DOM after acceptance frames; not a capture-time source or causal rendering proof'},
+   live_markup:markupIdentity(state.markup||[]),markup_truncated:state.markup_truncated!==false,
    dom_sha256:digest(state.html),inputs:inputHashes(state.config),buttons};
   return {png,metadata};
  }catch(error){

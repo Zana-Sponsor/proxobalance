@@ -11,6 +11,7 @@ const nativeDiagnosticPoints = <String,List<int>>{
  // Passing controls retained from the first instrumentation.
  'pill-order-en-portrait-768':[380,222],
  'pill-mint-contact-ku-portrait-430':[282,184],
+ 'pill-download-ku-portrait-768':[583,90],
 };
 const nativeReproductionIds = <String>[
  'pill-contact-en-portrait-768','pill-order-ku-portrait-768',

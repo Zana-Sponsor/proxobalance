@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
 import sharp from 'sharp';
-import {digest,inputHashes,inputDifferences,resourceIdentity,safeLayers,readNativePipeline,sourceIdentity} from '../scripts/proxolink-native-pipeline.mjs';
+import {digest,inputHashes,inputDifferences,resourceIdentity,safeLayers,readNativePipeline,sourceIdentity,markupIdentity,markupDifferences} from '../scripts/proxolink-native-pipeline.mjs';
 import {DIAGNOSTIC_POINTS,REPRODUCTION_IDS,diagnosePixelPair} from '../scripts/proxolink-native-diagnostics.mjs';
 import {compareNativePixels,captureNativeFrames} from '../scripts/proxolink-pixel-comparison.mjs';
 test('input and resource evidence hashes private content without treating a field difference as causal',()=>{
@@ -18,6 +18,19 @@ test('layer evidence retains subpixel geometry, hierarchy and matrix without URL
  {layerId:'child',parentLayerId:'private',width:334,height:56,transform:[1,0,0,0,0,1,0,0,0,0,1,0,217,325.1875,0,1]}]);
  assert.equal(layers[0].offsetX,.5);assert.equal(layers[1].parent_index,0);assert.equal(layers[1].transform[13],325.1875);
  assert.doesNotMatch(JSON.stringify(layers),/secret|private|url/);assert.throws(()=>safeLayers([{transform:[1,2]}]),/invalid/);
+});
+test('live markup differences locate structural inputs while retaining only bounded hashes',()=>{
+ const nodes=[{tag:'HTML',parent:-1,attributes:[],text:''},{tag:'P',parent:0,
+  attributes:[{name:'id',value:'private'},{name:'href',value:'https://secret.invalid?token=secret'}],text:'private customer'}];
+ const a=markupIdentity(nodes),reverse=structuredClone(nodes);reverse[1].attributes.reverse();
+ assert.deepEqual(a,markupIdentity(reverse));
+ const changed=structuredClone(nodes);changed[1].text+='!';
+ const differences=markupDifferences(a,markupIdentity(changed));
+ assert.deepEqual(differences,[{index:1,presence_changed:false,parent_changed:false,tag_changed:false,
+  text_changed:true,attributes_changed:false,causal_effect_proven:false}]);
+ assert.doesNotMatch(JSON.stringify({a,differences}),/private|customer|secret|https|token/);
+ assert.throws(()=>markupIdentity([{tag:'HTML',parent:0,attributes:[],text:''}]),/native_pipeline_invalid/);
+ assert.throws(()=>markupIdentity(Array(2049).fill(nodes[0])),/native_pipeline_invalid/);
 });
 test('live source identity hashes actual styles/font bytes and rejects empty cached evidence',()=>{
  const css='@font-face{font-family:private;src:url(data:font/woff2;base64,c2VjcmV0)}body{color:red}';
