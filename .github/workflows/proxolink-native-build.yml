@@ -170,3 +170,66 @@ jobs:
           path: proxo_app/build/native-verification
           if-no-files-found: error
           retention-days: 7
+
+  isolated-hosted-verification:
+    # A separate explicit request releases the same environment gate. Existing
+    # native runs keep their pinned workflow/source and continue independently.
+    if: github.repository == 'Zana-Sponsor/proxobalance' && github.ref == 'refs/heads/feat/proxolink-private-renderer-migration' && contains(github.event.head_commit.message, '[proxolink-hosted-verification]')
+    environment: proxolink-preview-verification
+    concurrency:
+      group: proxolink-isolated-hosted-verification
+      cancel-in-progress: false
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+      - name: Install locked dependencies without account credentials
+        run: npm ci
+      - name: Inspect protected setting presence and isolated-target validation
+        id: configuration
+        env:
+          PROXO_NATIVE_ANON_KEY: ${{ secrets.PROXO_NATIVE_ANON_KEY }}
+          PROXO_NATIVE_TEST_EMAIL: ${{ secrets.PROXO_NATIVE_TEST_EMAIL }}
+          PROXO_NATIVE_TEST_PASSWORD: ${{ secrets.PROXO_NATIVE_TEST_PASSWORD }}
+          PROXO_NATIVE_VERCEL_BYPASS: ${{ secrets.PROXO_NATIVE_VERCEL_BYPASS }}
+          PROXO_STAGING_PROJECT_REF: ${{ secrets.PROXO_STAGING_PROJECT_REF || vars.PROXO_STAGING_PROJECT_REF }}
+          PROXO_STAGING_SUPABASE_URL: ${{ secrets.PROXO_STAGING_SUPABASE_URL || vars.PROXO_STAGING_SUPABASE_URL }}
+          PROXO_STAGING_BASE_URL: ${{ secrets.PROXO_STAGING_BASE_URL || vars.PROXO_STAGING_BASE_URL }}
+          PROXO_STAGING_ANON_KEY: ${{ secrets.PROXO_STAGING_ANON_KEY }}
+          PROXO_STAGING_TEST_EMAIL: ${{ secrets.PROXO_STAGING_TEST_EMAIL }}
+          PROXO_STAGING_TEST_PASSWORD: ${{ secrets.PROXO_STAGING_TEST_PASSWORD }}
+          PROXO_STAGING_OTHER_EMAIL: ${{ secrets.PROXO_STAGING_OTHER_EMAIL }}
+          PROXO_STAGING_OTHER_PASSWORD: ${{ secrets.PROXO_STAGING_OTHER_PASSWORD }}
+          PROXO_STAGING_VERCEL_BYPASS: ${{ secrets.PROXO_STAGING_VERCEL_BYPASS }}
+        run: node scripts/proxolink-protected-configuration.mjs
+      - name: Run ordinary-account isolated hosted lifecycles
+        if: steps.configuration.outputs.staging_ready == 'true'
+        env:
+          PROXO_STAGING_PROJECT_REF: ${{ secrets.PROXO_STAGING_PROJECT_REF || vars.PROXO_STAGING_PROJECT_REF }}
+          PROXO_STAGING_SUPABASE_URL: ${{ secrets.PROXO_STAGING_SUPABASE_URL || vars.PROXO_STAGING_SUPABASE_URL }}
+          PROXO_STAGING_BASE_URL: ${{ secrets.PROXO_STAGING_BASE_URL || vars.PROXO_STAGING_BASE_URL }}
+          PROXO_STAGING_ANON_KEY: ${{ secrets.PROXO_STAGING_ANON_KEY }}
+          PROXO_STAGING_TEST_EMAIL: ${{ secrets.PROXO_STAGING_TEST_EMAIL }}
+          PROXO_STAGING_TEST_PASSWORD: ${{ secrets.PROXO_STAGING_TEST_PASSWORD }}
+          PROXO_STAGING_OTHER_EMAIL: ${{ secrets.PROXO_STAGING_OTHER_EMAIL }}
+          PROXO_STAGING_OTHER_PASSWORD: ${{ secrets.PROXO_STAGING_OTHER_PASSWORD }}
+          PROXO_STAGING_VERCEL_BYPASS: ${{ secrets.PROXO_STAGING_VERCEL_BYPASS }}
+        run: node scripts/run-proxolink-staging.mjs
+      - name: Preserve bounded hosted/configuration evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: proxolink-isolated-hosted-verification
+          path: build/proxolink-staging-verification
+          if-no-files-found: error
+          retention-days: 7
+      - name: Report missing isolated settings as unfinished acceptance
+        if: steps.configuration.outputs.staging_ready != 'true'
+        run: |
+          echo 'Hosted verification is BLOCKED. See protected-configuration.json for missing setting names or safe validation code. Account existence is not inferred from unavailable configuration.' >> "$GITHUB_STEP_SUMMARY"
+          exit 1
