@@ -107,6 +107,12 @@ class _CreateChooserState extends State<NativeProxoLinkCreateChooser> {
           if (raw.length != 1 || (raw.single.findRenderObject() as RenderImage).image == null) throw StateError('create_chooser_thumbnail');
           final providers = await widget.repository.providers();
           final labels = _elements((w) => w is TextField).map((e) => (e.widget as TextField).decoration?.labelText).toSet();
+          // Check the requested customer labels independently of the fixture;
+          // comparing a fixture's raw keys against itself cannot prove W/AJ.
+          if(type==ProxoPageType.order&&
+              (!labels.containsAll({'تەلەبات','وادێ','تۆتەرز','لەزوو'})||
+               labels.intersection({'talabat','wade','toters','lezzoo'}).isNotEmpty))
+            throw StateError('create_chooser_providers');
           if (!providers.where((p) => p.pageType == type.key).every((p) => labels.contains(p.label)) ||
               providers.where((p) => p.pageType != type.key).any((p) => labels.contains(p.label))) throw StateError('create_chooser_providers');
           if (_elements((w) => w is WebViewWidget).isNotEmpty || widget.previewRequests() != before) throw StateError('create_chooser_preview');

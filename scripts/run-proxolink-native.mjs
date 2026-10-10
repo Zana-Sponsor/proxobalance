@@ -12,7 +12,7 @@ import {DIAGNOSTIC_POINTS,REPRODUCTION_IDS,CHOOSER_IDS,safeRenderDiagnostics,saf
   diagnosticSample,diagnosePixelPair,validateDiagnosticRoles,validateReproductions,safeSurface} from './proxolink-native-diagnostics.mjs';
 import {readNativePipeline,inputDifferences,markupDifferences} from './proxolink-native-pipeline.mjs';
 import {CREATE_CHOOSER_IDS,safeCreateChooserResults,validateCreateChooserResults} from './proxolink-native-diagnostics.mjs';
-import {BROWSER_CASE_IDS,foregroundBrowser,safeBrowserResults,validateBrowserResults} from './proxolink-native-browser.mjs';
+import {BROWSER_CASE_IDS,foregroundBrowser,browserPauseObserved,safeBrowserResults,validateBrowserResults} from './proxolink-native-browser.mjs';
 import {SCREEN_FILES,safeActualScreens,validateActualScreens} from './proxolink-native-actual-screens.mjs';
 
 const styles=STYLES;
@@ -433,11 +433,13 @@ async function main() {
         }
         if(phase==='tap'&&browserTaps.has(id)&&!browserReceipts.has(id)){
           const browser=foregroundBrowser(adb(['shell','dumpsys','activity','activities'],null,true)?.toString());
-          if(browser){
+          const pauseReceipt=appRead('proxolink-tools-browser-paused.json');
+          const paused=browserPauseObserved(pauseReceipt?JSON.parse(pauseReceipt):null,id);
+          if(browser&&paused){
             // REORDER_TO_FRONT resumes the existing task/activity. It does not
             // create a fresh Tools route, clear app state or dismiss a gate.
             adb(['shell','am','start','-f','0x00020000','-n',packageId+'/.ProxoLinkNativeProbeActivity']);
-            browserReceipts.set(id,{browser_package:browser,existing_activity_resumed:true});
+            browserReceipts.set(id,{browser_package:browser,existing_activity_resumed:true,pause_before_return:true});
             appWrite('proxolink-tools-browser-ack',id);
           }else if(Date.now()-browserTaps.get(id)>20000)throw Error('native_browser_journey_failed');
         }

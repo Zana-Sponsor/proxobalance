@@ -47,6 +47,9 @@ class _ToolsScreenState extends State<ToolsScreen> {
   }
   void _changed() {
     if (!mounted) return;
+    // A new request clears error. Allow its failure to be announced even when
+    // the repository reuses the same const failure object as the last request.
+    if (_pages.error == null) _announced = null;
     if (_pages.error != null && !identical(_announced, _pages.error)) {
       _announced = _pages.error; _notices.show({'load': _pages.error!.message});
     }

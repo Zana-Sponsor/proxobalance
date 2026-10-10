@@ -26,7 +26,9 @@ class _ReadOnlyChooserRepository extends ProxoLinkRepository {
  @override Future<List<ProxoTemplate>> templates()async=>[for(final key in ProxoLinkDesign.labels.keys)
   ProxoTemplate(key:key,label:ProxoLinkDesign.label(key),previewPath:'',version:6,requiresAvatar:false)];
  @override Future<List<ProxoProvider>> providers()async=>[for(final type in ProxoPageType.values)
-  for(final key in _providers(type))ProxoProvider(key:key,pageType:type.key,label:key,icon:key,inputKind:'url')];
+  for(final key in _providers(type))ProxoProvider(key:key,pageType:type.key,
+    label:const {'talabat':'تەلەبات','wade':'وادێ','toters':'تۆتەرز','lezzoo':'لەزوو'}[key]??key,
+    icon:key,inputKind:'url')];
  @override Future<Uri> formPreview(Map<String,dynamic> data,{ProxoCard? existing})async{
   requests++;lastStyle=data['template_key'] as String;lastType=data['page_kind'] as String;
   final config=await configuration();

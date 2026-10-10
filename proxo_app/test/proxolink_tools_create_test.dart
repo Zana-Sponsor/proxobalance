@@ -188,6 +188,21 @@ void main() {
   expect(repo.listReads,1);expect(repo.avatars,0);expect(repo.previewRequests,isEmpty);
   expect(find.byType(ProxoLinkPageCard).evaluate().length,lessThan(20));expect(t.takeException(),isNull);
  });
+ testWidgets('retry announces a repeated failure after its previous notice expires',(t) async {
+  size(t,393);final handle=ProxoRefreshController(),repo=ToolsRepository([moderated(1,'pending')]);
+  await t.pumpWidget(host(ToolsScreen(repository:repo,refreshController:handle)));await t.pumpAndSettle();
+  repo.fail=true;
+  for(var attempt=0;attempt<2;attempt++) {
+   unawaited(handle.refresh());await t.pumpAndSettle();
+   expect(find.text(const ProxoLinkFailure('network_error').message),findsOneWidget);
+   expect(find.text('پڕۆکسۆ Proxo 1'),findsOneWidget);
+   expect(find.byType(ProxoLinkPageSkeleton),findsNothing);
+   expect(handle.isRefreshing,false);
+   await t.pump(const Duration(seconds:6));await t.pumpAndSettle();
+   expect(find.text(const ProxoLinkFailure('network_error').message),findsNothing);
+  }
+  expect(repo.listReads,3);handle.dispose();
+ });
  final widths=[320.0,360.0,375.0,393.0,412.0,430.0,600.0,768.0,1024.0];
  for(final width in widths) for(final scale in [1.0,1.6]) {
   testWidgets('Tools $width scale$scale all statuses and mixed long names, restrained tablet width',(t) async {

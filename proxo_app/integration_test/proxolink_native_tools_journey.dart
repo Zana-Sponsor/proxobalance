@@ -41,11 +41,17 @@ class NativeToolsBrowserJourney extends StatefulWidget {
 class _BrowserJourneyState extends State<NativeToolsBrowserJourney> with WidgetsBindingObserver {
   final _repository=_ToolsFixture();
   int _paused=0,_resumed=0;
+  String? _activeBrowserCase;
   @override void initState(){super.initState();WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_)=>unawaited(_run()));}
   @override void dispose(){WidgetsBinding.instance.removeObserver(this);super.dispose();}
   @override void didChangeAppLifecycleState(AppLifecycleState state){
-    if(state==AppLifecycleState.paused)_paused++;
+    if(state==AppLifecycleState.paused){
+      _paused++;
+      final id=_activeBrowserCase;
+      if(id!=null)unawaited(widget.write('proxolink-tools-browser-paused.json',
+        {'id':id,'paused':true,'pause_count':_paused}));
+    }
     if(state==AppLifecycleState.resumed)_resumed++;
   }
   List<Element> _find(bool Function(Widget) predicate,{Element? root}){
@@ -83,6 +89,7 @@ class _BrowserJourneyState extends State<NativeToolsBrowserJourney> with Widgets
           final center=box.localToGlobal(box.size.center(Offset.zero));
           final offset=scroll.offset,position=(row.findRenderObject()! as RenderBox).localToGlobal(Offset.zero);
           final paused=_paused,resumed=_resumed;
+          _activeBrowserCase=id;
           await widget.write('proxolink-tools-browser-request.json',{'id':id,'phase':'tap','x':center.dx.round(),'y':center.dy.round()});
           await _ack(id);
           // Host acknowledges only after observing an external browser and
@@ -108,6 +115,7 @@ class _BrowserJourneyState extends State<NativeToolsBrowserJourney> with Widgets
           results[id]={...observed,'passed':false,'failed_check':error is StateError&&
             {'browser_journey_ack','browser_journey_element','browser_journey_state'}.contains(error.message)?error.message:'browser_journey_unclassified'};
         }
+        _activeBrowserCase=null;
         await widget.write('proxolink-tools-browser-results.json',results);
       }
     }catch(_){await widget.write('proxolink-tools-browser-results.json',{'setup_failed':true});}

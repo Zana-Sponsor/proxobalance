@@ -1,5 +1,12 @@
 export const BROWSER_CASE_IDS=['tools-browser-1','tools-browser-2','tools-browser-3'];
 const packages=['com.android.chrome','org.mozilla.firefox','com.android.browser'];
+// Foreground browser activity can precede Flutter's paused event. Returning at
+// that point interrupts the lifecycle being tested. Require the current cycle's
+// app-side receipt, rather than sleeping or accepting inactive as paused.
+export function browserPauseObserved(data,id){
+ return BROWSER_CASE_IDS.includes(id)&&data?.id===id&&data.paused===true&&
+  Number.isInteger(data.pause_count)&&data.pause_count>0&&data.pause_count<=100000;
+}
 // Observe only the foreground component. Never retain the native dump, URL,
 // account/session fields or arbitrary package strings.
 export function foregroundBrowser(dump){
@@ -27,7 +34,7 @@ export function validateBrowserResults(data,receipts,captures){
   const item=data[id],receipt=receipts.get(id);
   return ['passed','pause_observed','resume_observed','same_row_element','same_scroll_offset','same_row_position','fictional_repository'].every(k=>item?.[k]===true)
    &&item.public_content_verified===false&&item.collection_reads===1&&item.scroll_offset>0&&captures.has(id)
-   &&packages.includes(receipt?.browser_package)&&receipt?.existing_activity_resumed===true;
+   &&packages.includes(receipt?.browser_package)&&receipt?.existing_activity_resumed===true&&receipt?.pause_before_return===true;
  }))throw Error('native_browser_journey_failed');
  return data;
 }
