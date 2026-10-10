@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "count": 30,
+  "source_revision": "f223dcf81feb4c6d49744114bdbc57f8d2c57e90",
+  "protected_run": 38004288157,
+  "artifact": {
+    "id": 11658690426,
+    "sha256": "10b3dc0a84e39e4ac190b1ab6098a441cac5f3c23af42705865f2661420df23e"
+  },
+  "paths": [
+    "docs/PROXOLINK_NATIVE_F223_ANALYSIS_2026-10-10.md",
+    "docs/PROXOLINK_V6_EXECUTION_2026-10-07.md",
+    "docs/evidence/proxolink-v6-2026-10-06/native-f223dcf-attempt1/summary.json",
+    "docs/evidence/proxolink-v6-2026-10-06/native-f223dcf-attempt1/pixel-failures.json",
+    "docs/evidence/proxolink-v6-2026-10-06/native-f223dcf-attempt1/gate-results.json",
+    "docs/evidence/proxolink-v6-2026-10-06/native-f223dcf-attempt1/publication-files.json",
+    "docs/evidence/proxolink-v6-2026-10-06/native-f223dcf-attempt1/pill-order-ku-portrait-768-diagnostic-region-candidate.png",
+    "docs/evidence/proxolink-v6-2026-10-06/native-f223dcf-attempt1/pill-order-ku-portrait-768-diagnostic-region-baseline.png",
+    "docs/evidence/proxolink-v6-2026-10-06/native-f223dcf-attempt1/pill-order-ku-portrait-768-diagnostic-region-diff.png",
+    "docs/evidence/proxolink-v6-2026-10-06/native-f223dcf-attempt1/pill-order-en-portrait-768-diagnostic-region-candidate.png",
+    "docs/evidence/proxolink-v6-2026-10-06/native-f223dcf-attempt1/pill-order-en-portrait-768-diagnostic-region-baseline.png",
+    "docs/evidence/proxolink-v6-2026-10-06/native-f223dcf-attempt1/pill-order-en-portrait-768-diagnostic-region-diff.png",
+    "docs/evidence/proxolink-v6-2026-10-06/native-f223dcf-attempt1/pill-download-ku-portrait-768-diagnostic-region-candidate.png",
+    "docs/evidence/proxolink-v6-2026-10-06/native-f223dcf-attempt1/pill-download-ku-portrait-768-diagnostic-region-baseline.png",
+    "docs/evidence/proxolink-v6-2026-10-06/native-f223dcf-attempt1/pill-download-ku-portrait-768-diagnostic-region-diff.png",
+    "docs/evidence/proxolink-v6-2026-10-06/native-f223dcf-attempt1/pill-mint-order-ku-portrait-320-diagnostic-region-candidate.png",
+    "docs/evidence/proxolink-v6-2026-10-06/native-f223dcf-attempt1/pill-mint-order-ku-portrait-320-diagnostic-region-baseline.png",
+    "docs/evidence/proxolink-v6-2026-10-06/native-f223dcf-attempt1/pill-mint-order-ku-portrait-320-diagnostic-region-diff.png",
+    "docs/evidence/proxolink-v6-2026-10-06/native-f223dcf-attempt1/pill-mint-order-ku-portrait-430-diagnostic-region-candidate.png",
+    "docs/evidence/proxolink-v6-2026-10-06/native-f223dcf-attempt1/pill-mint-order-ku-portrait-430-diagnostic-region-baseline.png",
+    "docs/evidence/proxolink-v6-2026-10-06/native-f223dcf-attempt1/pill-mint-order-ku-portrait-430-diagnostic-region-diff.png",
+    "docs/evidence/proxolink-v6-2026-10-06/native-f223dcf-attempt1/pill-mint-order-ku-portrait-768-diagnostic-region-candidate.png",
+    "docs/evidence/proxolink-v6-2026-10-06/native-f223dcf-attempt1/pill-mint-order-ku-portrait-768-diagnostic-region-baseline.png",
+    "docs/evidence/proxolink-v6-2026-10-06/native-f223dcf-attempt1/pill-mint-order-ku-portrait-768-diagnostic-region-diff.png",
+    "docs/evidence/proxolink-v6-2026-10-06/native-f223dcf-attempt1/pill-mint-order-en-portrait-430-diagnostic-region-candidate.png",
+    "docs/evidence/proxolink-v6-2026-10-06/native-f223dcf-attempt1/pill-mint-order-en-portrait-430-diagnostic-region-baseline.png",
+    "docs/evidence/proxolink-v6-2026-10-06/native-f223dcf-attempt1/pill-mint-order-en-portrait-430-diagnostic-region-diff.png",
+    "docs/evidence/proxolink-v6-2026-10-06/native-f223dcf-attempt1/pill-mint-order-en-portrait-768-diagnostic-region-candidate.png",
+    "docs/evidence/proxolink-v6-2026-10-06/native-f223dcf-attempt1/pill-mint-order-en-portrait-768-diagnostic-region-baseline.png",
+    "docs/evidence/proxolink-v6-2026-10-06/native-f223dcf-attempt1/pill-mint-order-en-portrait-768-diagnostic-region-diff.png"
+  ]
+}

@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "status": "FAILED",
+  "pixel_root_cause": "NOT_PROVEN",
+  "run": {
+    "id": 38004288157,
+    "attempt": 1,
+    "revision": "f223dcf81feb4c6d49744114bdbc57f8d2c57e90",
+    "runtime_job": 114070711797,
+    "apk_job": 114069385604
+  },
+  "artifact": {
+    "id": 11658690426,
+    "sha256": "10b3dc0a84e39e4ac190b1ab6098a441cac5f3c23af42705865f2661420df23e",
+    "digest_verified": true,
+    "files": 2428
+  },
+  "matrix": {
+    "expected": 240,
+    "executed": 240,
+    "behavior_passed": 240,
+    "behavior_failed": 0,
+    "candidate_first": 240,
+    "baseline_first": 240,
+    "missing_cases": 0,
+    "missing_captures": 0
+  },
+  "repeatability": {
+    "acceptance_roles_stable": 480,
+    "acceptance_roles_unstable": 0,
+    "samples_per_role": 3,
+    "diagnostic_roles_stable": 16
+  },
+  "pixels": {
+    "exact_pairs": 232,
+    "failed_pairs": 8,
+    "changed_pixels": 9,
+    "max_channel_delta": 1
+  },
+  "authentication": {
+    "completed_cases": 240,
+    "historical_catalog_401_recurred": false
+  },
+  "chooser": {
+    "legacy": {
+      "expected": 12,
+      "executed": 12,
+      "passed": 12,
+      "failed": 0
+    },
+    "create": {
+      "expected": 12,
+      "executed": 12,
+      "passed": 12,
+      "failed": 0
+    }
+  },
+  "tools_browser": {
+    "expected": 3,
+    "executed": 3,
+    "passed": 1,
+    "failed": 2,
+    "root_cause": "NOT_PROVEN"
+  },
+  "actual_screens": {
+    "expected": 16,
+    "executed": 16,
+    "passed": 8,
+    "failed": 8,
+    "captures": 46,
+    "phase_missed_harness_cause": "PROVEN",
+    "lifecycle_failure_cause": "NOT_PROVEN"
+  },
+  "environment": {
+    "android_api": 35,
+    "display": "1200x1900",
+    "density": 160,
+    "dpr": 1,
+    "webview": "124.0.6367.219",
+    "renderer": "SwiftShader"
+  },
+  "source_ci": {
+    "run_id": 38004288253,
+    "status": "SUCCESS",
+    "jobs_passed": 5
+  },
+  "pr": {
+    "number": 7,
+    "draft": true,
+    "state": "open",
+    "merged": false
+  }
+}
