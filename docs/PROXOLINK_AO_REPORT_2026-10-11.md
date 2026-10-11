@@ -1,3 +1,5 @@
+> Current terminal native evidence: [run38070780315 audit](PROXOLINK_NATIVE_RUN_38070780315.md). Approval/workspace blockers below are superseded; browser3/3 and both choosers12/12 passed; strict pixels8failed and notice4failed remain. Hosted skipped by marker condition.
+
 # ProxoLink A–AO report — 2026-10-11
 
 **Pending / Blocked. Not COMPLETE.** [Requirement checklist](PROXOLINK_A_AO_CHECKLIST_2026-10-11.md). The complete [A–AO specification](PROXOLINK_TOOLS_CREATE_SPEC_v4.md) remains controlling.

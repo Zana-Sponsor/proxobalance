@@ -1,0 +1,1774 @@
+{
+  "purpose": "Observational only; FIRST of three predetermined ADB frames remains acceptance input",
+  "clocks": "capture_timing: host monotonic milliseconds; native: Android elapsedRealtime milliseconds; DOM: performance time origin and now",
+  "frame_commit_scope": "Submitted for rendering; not proof of display presentation. Two postOnAnimation callbacks are not compositor presentation acknowledgements.",
+  "surface_scope": "One fixed PixelCopy of the existing Flutter SurfaceView after the three acceptance samples; diagnostic only, never a replacement frame",
+  "reproduction_plan": "Exactly one additional fresh candidate and baseline per eight starting failures, each with three fixed frames. Original FIRST frames remain acceptance inputs. No selection or retry.",
+  "pairs": {
+    "pill-contact-en-portrait-768": {
+      "viewport": {
+        "left": 216,
+        "top": 218,
+        "width": 768,
+        "height": 1520,
+        "css_height": 1520
+      },
+      "changed_pixels": 0,
+      "changed_coordinates": [],
+      "coordinates_truncated": false,
+      "differences": [],
+      "neighborhoods_truncated": false,
+      "webcontents_pair": {
+        "viewport": {
+          "left": 0,
+          "top": 0,
+          "width": 768,
+          "height": 1520
+        },
+        "changed_pixels": 0,
+        "changed_coordinates": [],
+        "coordinates_truncated": false,
+        "differences": [],
+        "neighborhoods_truncated": false
+      },
+      "flutter_surface_pair": {
+        "viewport": {
+          "left": 216,
+          "top": 218,
+          "width": 768,
+          "height": 1520,
+          "css_height": 1520
+        },
+        "changed_pixels": 0,
+        "changed_coordinates": [],
+        "coordinates_truncated": false,
+        "differences": [],
+        "neighborhoods_truncated": false
+      },
+      "input_differences": [],
+      "live_markup_differences": [
+        {
+          "index": 25,
+          "presence_changed": false,
+          "parent_changed": false,
+          "tag_changed": false,
+          "text_changed": false,
+          "attributes_changed": true,
+          "causal_effect_proven": false
+        },
+        {
+          "index": 71,
+          "presence_changed": false,
+          "parent_changed": false,
+          "tag_changed": false,
+          "text_changed": true,
+          "attributes_changed": false,
+          "causal_effect_proven": false
+        }
+      ]
+    },
+    "pill-order-ku-portrait-768": {
+      "viewport": {
+        "left": 216,
+        "top": 218,
+        "width": 768,
+        "height": 1520,
+        "css_height": 1520
+      },
+      "changed_pixels": 1,
+      "changed_coordinates": [
+        [
+          380,
+          222
+        ]
+      ],
+      "coordinates_truncated": false,
+      "differences": [
+        {
+          "crop": [
+            380,
+            222
+          ],
+          "screen": [
+            596,
+            440
+          ],
+          "candidate": [
+            220,
+            227,
+            240
+          ],
+          "baseline": [
+            220,
+            226,
+            240
+          ],
+          "delta": [
+            0,
+            1,
+            0
+          ]
+        }
+      ],
+      "neighborhoods_truncated": false,
+      "webcontents_pair": {
+        "viewport": {
+          "left": 0,
+          "top": 0,
+          "width": 768,
+          "height": 1520
+        },
+        "changed_pixels": 0,
+        "changed_coordinates": [],
+        "coordinates_truncated": false,
+        "differences": [],
+        "neighborhoods_truncated": false
+      },
+      "flutter_surface_pair": {
+        "viewport": {
+          "left": 216,
+          "top": 218,
+          "width": 768,
+          "height": 1520,
+          "css_height": 1520
+        },
+        "changed_pixels": 1,
+        "changed_coordinates": [
+          [
+            380,
+            222
+          ]
+        ],
+        "coordinates_truncated": false,
+        "differences": [
+          {
+            "crop": [
+              380,
+              222
+            ],
+            "screen": [
+              596,
+              440
+            ],
+            "candidate": [
+              220,
+              227,
+              240
+            ],
+            "baseline": [
+              220,
+              226,
+              240
+            ],
+            "delta": [
+              0,
+              1,
+              0
+            ]
+          }
+        ],
+        "neighborhoods_truncated": false
+      },
+      "input_differences": [],
+      "live_markup_differences": [
+        {
+          "index": 72,
+          "presence_changed": false,
+          "parent_changed": false,
+          "tag_changed": false,
+          "text_changed": true,
+          "attributes_changed": false,
+          "causal_effect_proven": false
+        }
+      ]
+    },
+    "pill-order-en-portrait-768": {
+      "viewport": {
+        "left": 216,
+        "top": 218,
+        "width": 768,
+        "height": 1520,
+        "css_height": 1520
+      },
+      "changed_pixels": 1,
+      "changed_coordinates": [
+        [
+          380,
+          222
+        ]
+      ],
+      "coordinates_truncated": false,
+      "differences": [
+        {
+          "crop": [
+            380,
+            222
+          ],
+          "screen": [
+            596,
+            440
+          ],
+          "candidate": [
+            215,
+            222,
+            236
+          ],
+          "baseline": [
+            215,
+            221,
+            236
+          ],
+          "delta": [
+            0,
+            1,
+            0
+          ]
+        }
+      ],
+      "neighborhoods_truncated": false,
+      "webcontents_pair": {
+        "viewport": {
+          "left": 0,
+          "top": 0,
+          "width": 768,
+          "height": 1520
+        },
+        "changed_pixels": 0,
+        "changed_coordinates": [],
+        "coordinates_truncated": false,
+        "differences": [],
+        "neighborhoods_truncated": false
+      },
+      "flutter_surface_pair": {
+        "viewport": {
+          "left": 216,
+          "top": 218,
+          "width": 768,
+          "height": 1520,
+          "css_height": 1520
+        },
+        "changed_pixels": 1,
+        "changed_coordinates": [
+          [
+            380,
+            222
+          ]
+        ],
+        "coordinates_truncated": false,
+        "differences": [
+          {
+            "crop": [
+              380,
+              222
+            ],
+            "screen": [
+              596,
+              440
+            ],
+            "candidate": [
+              215,
+              222,
+              236
+            ],
+            "baseline": [
+              215,
+              221,
+              236
+            ],
+            "delta": [
+              0,
+              1,
+              0
+            ]
+          }
+        ],
+        "neighborhoods_truncated": false
+      },
+      "input_differences": [],
+      "live_markup_differences": [
+        {
+          "index": 72,
+          "presence_changed": false,
+          "parent_changed": false,
+          "tag_changed": false,
+          "text_changed": true,
+          "attributes_changed": false,
+          "causal_effect_proven": false
+        }
+      ]
+    },
+    "pill-download-ku-portrait-768": {
+      "viewport": {
+        "left": 216,
+        "top": 218,
+        "width": 768,
+        "height": 1520,
+        "css_height": 1520
+      },
+      "changed_pixels": 0,
+      "changed_coordinates": [],
+      "coordinates_truncated": false,
+      "differences": [],
+      "neighborhoods_truncated": false,
+      "webcontents_pair": {
+        "viewport": {
+          "left": 0,
+          "top": 0,
+          "width": 768,
+          "height": 1520
+        },
+        "changed_pixels": 0,
+        "changed_coordinates": [],
+        "coordinates_truncated": false,
+        "differences": [],
+        "neighborhoods_truncated": false
+      },
+      "flutter_surface_pair": {
+        "viewport": {
+          "left": 216,
+          "top": 218,
+          "width": 768,
+          "height": 1520,
+          "css_height": 1520
+        },
+        "changed_pixels": 0,
+        "changed_coordinates": [],
+        "coordinates_truncated": false,
+        "differences": [],
+        "neighborhoods_truncated": false
+      },
+      "input_differences": [],
+      "live_markup_differences": [
+        {
+          "index": 42,
+          "presence_changed": false,
+          "parent_changed": false,
+          "tag_changed": false,
+          "text_changed": true,
+          "attributes_changed": false,
+          "causal_effect_proven": false
+        }
+      ]
+    },
+    "pill-mint-contact-ku-portrait-430": {
+      "viewport": {
+        "left": 385,
+        "top": 218,
+        "width": 430,
+        "height": 1520,
+        "css_height": 1520
+      },
+      "changed_pixels": 0,
+      "changed_coordinates": [],
+      "coordinates_truncated": false,
+      "differences": [],
+      "neighborhoods_truncated": false,
+      "webcontents_pair": {
+        "viewport": {
+          "left": 0,
+          "top": 0,
+          "width": 430,
+          "height": 1520
+        },
+        "changed_pixels": 0,
+        "changed_coordinates": [],
+        "coordinates_truncated": false,
+        "differences": [],
+        "neighborhoods_truncated": false
+      },
+      "flutter_surface_pair": {
+        "viewport": {
+          "left": 385,
+          "top": 218,
+          "width": 430,
+          "height": 1520,
+          "css_height": 1520
+        },
+        "changed_pixels": 0,
+        "changed_coordinates": [],
+        "coordinates_truncated": false,
+        "differences": [],
+        "neighborhoods_truncated": false
+      },
+      "input_differences": [],
+      "live_markup_differences": [
+        {
+          "index": 25,
+          "presence_changed": false,
+          "parent_changed": false,
+          "tag_changed": false,
+          "text_changed": false,
+          "attributes_changed": true,
+          "causal_effect_proven": false
+        },
+        {
+          "index": 71,
+          "presence_changed": false,
+          "parent_changed": false,
+          "tag_changed": false,
+          "text_changed": true,
+          "attributes_changed": false,
+          "causal_effect_proven": false
+        }
+      ]
+    },
+    "pill-mint-contact-ku-portrait-768": {
+      "viewport": {
+        "left": 216,
+        "top": 218,
+        "width": 768,
+        "height": 1520,
+        "css_height": 1520
+      },
+      "changed_pixels": 0,
+      "changed_coordinates": [],
+      "coordinates_truncated": false,
+      "differences": [],
+      "neighborhoods_truncated": false,
+      "webcontents_pair": {
+        "viewport": {
+          "left": 0,
+          "top": 0,
+          "width": 768,
+          "height": 1520
+        },
+        "changed_pixels": 0,
+        "changed_coordinates": [],
+        "coordinates_truncated": false,
+        "differences": [],
+        "neighborhoods_truncated": false
+      },
+      "flutter_surface_pair": {
+        "viewport": {
+          "left": 216,
+          "top": 218,
+          "width": 768,
+          "height": 1520,
+          "css_height": 1520
+        },
+        "changed_pixels": 0,
+        "changed_coordinates": [],
+        "coordinates_truncated": false,
+        "differences": [],
+        "neighborhoods_truncated": false
+      },
+      "input_differences": [],
+      "live_markup_differences": [
+        {
+          "index": 25,
+          "presence_changed": false,
+          "parent_changed": false,
+          "tag_changed": false,
+          "text_changed": false,
+          "attributes_changed": true,
+          "causal_effect_proven": false
+        },
+        {
+          "index": 71,
+          "presence_changed": false,
+          "parent_changed": false,
+          "tag_changed": false,
+          "text_changed": true,
+          "attributes_changed": false,
+          "causal_effect_proven": false
+        }
+      ]
+    },
+    "pill-mint-contact-en-portrait-768": {
+      "viewport": {
+        "left": 216,
+        "top": 218,
+        "width": 768,
+        "height": 1520,
+        "css_height": 1520
+      },
+      "changed_pixels": 1,
+      "changed_coordinates": [
+        [
+          290,
+          228
+        ]
+      ],
+      "coordinates_truncated": false,
+      "differences": [
+        {
+          "crop": [
+            290,
+            228
+          ],
+          "screen": [
+            506,
+            446
+          ],
+          "candidate": [
+            234,
+            246,
+            241
+          ],
+          "baseline": [
+            234,
+            245,
+            241
+          ],
+          "delta": [
+            0,
+            1,
+            0
+          ]
+        }
+      ],
+      "neighborhoods_truncated": false
+    },
+    "pill-mint-order-ku-portrait-320": {
+      "viewport": {
+        "left": 440,
+        "top": 218,
+        "width": 320,
+        "height": 1520,
+        "css_height": 1520
+      },
+      "changed_pixels": 0,
+      "changed_coordinates": [],
+      "coordinates_truncated": false,
+      "differences": [],
+      "neighborhoods_truncated": false,
+      "webcontents_pair": {
+        "viewport": {
+          "left": 0,
+          "top": 0,
+          "width": 320,
+          "height": 1520
+        },
+        "changed_pixels": 0,
+        "changed_coordinates": [],
+        "coordinates_truncated": false,
+        "differences": [],
+        "neighborhoods_truncated": false
+      },
+      "flutter_surface_pair": {
+        "viewport": {
+          "left": 440,
+          "top": 218,
+          "width": 320,
+          "height": 1520,
+          "css_height": 1520
+        },
+        "changed_pixels": 0,
+        "changed_coordinates": [],
+        "coordinates_truncated": false,
+        "differences": [],
+        "neighborhoods_truncated": false
+      },
+      "input_differences": [],
+      "live_markup_differences": [
+        {
+          "index": 72,
+          "presence_changed": false,
+          "parent_changed": false,
+          "tag_changed": false,
+          "text_changed": true,
+          "attributes_changed": false,
+          "causal_effect_proven": false
+        }
+      ]
+    },
+    "pill-mint-order-ku-portrait-430": {
+      "viewport": {
+        "left": 385,
+        "top": 218,
+        "width": 430,
+        "height": 1520,
+        "css_height": 1520
+      },
+      "changed_pixels": 1,
+      "changed_coordinates": [
+        [
+          282,
+          184
+        ]
+      ],
+      "coordinates_truncated": false,
+      "differences": [
+        {
+          "crop": [
+            282,
+            184
+          ],
+          "screen": [
+            667,
+            402
+          ],
+          "candidate": [
+            237,
+            247,
+            244
+          ],
+          "baseline": [
+            237,
+            247,
+            243
+          ],
+          "delta": [
+            0,
+            0,
+            1
+          ]
+        }
+      ],
+      "neighborhoods_truncated": false,
+      "webcontents_pair": {
+        "viewport": {
+          "left": 0,
+          "top": 0,
+          "width": 430,
+          "height": 1520
+        },
+        "changed_pixels": 0,
+        "changed_coordinates": [],
+        "coordinates_truncated": false,
+        "differences": [],
+        "neighborhoods_truncated": false
+      },
+      "flutter_surface_pair": {
+        "viewport": {
+          "left": 385,
+          "top": 218,
+          "width": 430,
+          "height": 1520,
+          "css_height": 1520
+        },
+        "changed_pixels": 1,
+        "changed_coordinates": [
+          [
+            282,
+            184
+          ]
+        ],
+        "coordinates_truncated": false,
+        "differences": [
+          {
+            "crop": [
+              282,
+              184
+            ],
+            "screen": [
+              667,
+              402
+            ],
+            "candidate": [
+              237,
+              247,
+              244
+            ],
+            "baseline": [
+              237,
+              247,
+              243
+            ],
+            "delta": [
+              0,
+              0,
+              1
+            ]
+          }
+        ],
+        "neighborhoods_truncated": false
+      },
+      "input_differences": [],
+      "live_markup_differences": [
+        {
+          "index": 72,
+          "presence_changed": false,
+          "parent_changed": false,
+          "tag_changed": false,
+          "text_changed": true,
+          "attributes_changed": false,
+          "causal_effect_proven": false
+        }
+      ]
+    },
+    "pill-mint-order-ku-portrait-768": {
+      "viewport": {
+        "left": 216,
+        "top": 218,
+        "width": 768,
+        "height": 1520,
+        "css_height": 1520
+      },
+      "changed_pixels": 1,
+      "changed_coordinates": [
+        [
+          290,
+          228
+        ]
+      ],
+      "coordinates_truncated": false,
+      "differences": [
+        {
+          "crop": [
+            290,
+            228
+          ],
+          "screen": [
+            506,
+            446
+          ],
+          "candidate": [
+            234,
+            245,
+            241
+          ],
+          "baseline": [
+            234,
+            246,
+            241
+          ],
+          "delta": [
+            0,
+            -1,
+            0
+          ]
+        }
+      ],
+      "neighborhoods_truncated": false,
+      "webcontents_pair": {
+        "viewport": {
+          "left": 0,
+          "top": 0,
+          "width": 768,
+          "height": 1520
+        },
+        "changed_pixels": 0,
+        "changed_coordinates": [],
+        "coordinates_truncated": false,
+        "differences": [],
+        "neighborhoods_truncated": false
+      },
+      "flutter_surface_pair": {
+        "viewport": {
+          "left": 216,
+          "top": 218,
+          "width": 768,
+          "height": 1520,
+          "css_height": 1520
+        },
+        "changed_pixels": 1,
+        "changed_coordinates": [
+          [
+            290,
+            228
+          ]
+        ],
+        "coordinates_truncated": false,
+        "differences": [
+          {
+            "crop": [
+              290,
+              228
+            ],
+            "screen": [
+              506,
+              446
+            ],
+            "candidate": [
+              234,
+              245,
+              241
+            ],
+            "baseline": [
+              234,
+              246,
+              241
+            ],
+            "delta": [
+              0,
+              -1,
+              0
+            ]
+          }
+        ],
+        "neighborhoods_truncated": false
+      },
+      "input_differences": [],
+      "live_markup_differences": [
+        {
+          "index": 72,
+          "presence_changed": false,
+          "parent_changed": false,
+          "tag_changed": false,
+          "text_changed": true,
+          "attributes_changed": false,
+          "causal_effect_proven": false
+        }
+      ]
+    },
+    "pill-mint-order-en-portrait-430": {
+      "viewport": {
+        "left": 385,
+        "top": 218,
+        "width": 430,
+        "height": 1520,
+        "css_height": 1520
+      },
+      "changed_pixels": 1,
+      "changed_coordinates": [
+        [
+          282,
+          184
+        ]
+      ],
+      "coordinates_truncated": false,
+      "differences": [
+        {
+          "crop": [
+            282,
+            184
+          ],
+          "screen": [
+            667,
+            402
+          ],
+          "candidate": [
+            237,
+            247,
+            244
+          ],
+          "baseline": [
+            237,
+            247,
+            243
+          ],
+          "delta": [
+            0,
+            0,
+            1
+          ]
+        }
+      ],
+      "neighborhoods_truncated": false,
+      "webcontents_pair": {
+        "viewport": {
+          "left": 0,
+          "top": 0,
+          "width": 430,
+          "height": 1520
+        },
+        "changed_pixels": 0,
+        "changed_coordinates": [],
+        "coordinates_truncated": false,
+        "differences": [],
+        "neighborhoods_truncated": false
+      },
+      "flutter_surface_pair": {
+        "viewport": {
+          "left": 385,
+          "top": 218,
+          "width": 430,
+          "height": 1520,
+          "css_height": 1520
+        },
+        "changed_pixels": 1,
+        "changed_coordinates": [
+          [
+            282,
+            184
+          ]
+        ],
+        "coordinates_truncated": false,
+        "differences": [
+          {
+            "crop": [
+              282,
+              184
+            ],
+            "screen": [
+              667,
+              402
+            ],
+            "candidate": [
+              237,
+              247,
+              244
+            ],
+            "baseline": [
+              237,
+              247,
+              243
+            ],
+            "delta": [
+              0,
+              0,
+              1
+            ]
+          }
+        ],
+        "neighborhoods_truncated": false
+      },
+      "input_differences": [],
+      "live_markup_differences": [
+        {
+          "index": 72,
+          "presence_changed": false,
+          "parent_changed": false,
+          "tag_changed": false,
+          "text_changed": true,
+          "attributes_changed": false,
+          "causal_effect_proven": false
+        }
+      ]
+    },
+    "pill-mint-order-en-portrait-768": {
+      "viewport": {
+        "left": 216,
+        "top": 218,
+        "width": 768,
+        "height": 1520,
+        "css_height": 1520
+      },
+      "changed_pixels": 1,
+      "changed_coordinates": [
+        [
+          290,
+          228
+        ]
+      ],
+      "coordinates_truncated": false,
+      "differences": [
+        {
+          "crop": [
+            290,
+            228
+          ],
+          "screen": [
+            506,
+            446
+          ],
+          "candidate": [
+            234,
+            245,
+            241
+          ],
+          "baseline": [
+            234,
+            246,
+            241
+          ],
+          "delta": [
+            0,
+            -1,
+            0
+          ]
+        }
+      ],
+      "neighborhoods_truncated": false,
+      "webcontents_pair": {
+        "viewport": {
+          "left": 0,
+          "top": 0,
+          "width": 768,
+          "height": 1520
+        },
+        "changed_pixels": 0,
+        "changed_coordinates": [],
+        "coordinates_truncated": false,
+        "differences": [],
+        "neighborhoods_truncated": false
+      },
+      "flutter_surface_pair": {
+        "viewport": {
+          "left": 216,
+          "top": 218,
+          "width": 768,
+          "height": 1520,
+          "css_height": 1520
+        },
+        "changed_pixels": 1,
+        "changed_coordinates": [
+          [
+            290,
+            228
+          ]
+        ],
+        "coordinates_truncated": false,
+        "differences": [
+          {
+            "crop": [
+              290,
+              228
+            ],
+            "screen": [
+              506,
+              446
+            ],
+            "candidate": [
+              234,
+              245,
+              241
+            ],
+            "baseline": [
+              234,
+              246,
+              241
+            ],
+            "delta": [
+              0,
+              -1,
+              0
+            ]
+          }
+        ],
+        "neighborhoods_truncated": false
+      },
+      "input_differences": [],
+      "live_markup_differences": [
+        {
+          "index": 72,
+          "presence_changed": false,
+          "parent_changed": false,
+          "tag_changed": false,
+          "text_changed": true,
+          "attributes_changed": false,
+          "causal_effect_proven": false
+        }
+      ]
+    },
+    "pill-mint-download-ku-portrait-320": {
+      "viewport": {
+        "left": 440,
+        "top": 218,
+        "width": 320,
+        "height": 1520,
+        "css_height": 1520
+      },
+      "changed_pixels": 1,
+      "changed_coordinates": [
+        [
+          257,
+          88
+        ]
+      ],
+      "coordinates_truncated": false,
+      "differences": [
+        {
+          "crop": [
+            257,
+            88
+          ],
+          "screen": [
+            697,
+            306
+          ],
+          "candidate": [
+            239,
+            248,
+            245
+          ],
+          "baseline": [
+            239,
+            249,
+            245
+          ],
+          "delta": [
+            0,
+            -1,
+            0
+          ]
+        }
+      ],
+      "neighborhoods_truncated": false
+    }
+  },
+  "reproduction_pairs": {
+    "pill-contact-en-portrait-768": {
+      "candidate_aa": {
+        "viewport": {
+          "left": 216,
+          "top": 218,
+          "width": 768,
+          "height": 1520,
+          "css_height": 1520
+        },
+        "changed_pixels": 1,
+        "changed_coordinates": [
+          [
+            380,
+            222
+          ]
+        ],
+        "coordinates_truncated": false,
+        "differences": [
+          {
+            "crop": [
+              380,
+              222
+            ],
+            "screen": [
+              596,
+              440
+            ],
+            "candidate": [
+              215,
+              222,
+              236
+            ],
+            "baseline": [
+              215,
+              221,
+              236
+            ],
+            "delta": [
+              0,
+              1,
+              0
+            ]
+          }
+        ],
+        "neighborhoods_truncated": false
+      },
+      "baseline_aa": {
+        "viewport": {
+          "left": 216,
+          "top": 218,
+          "width": 768,
+          "height": 1520,
+          "css_height": 1520
+        },
+        "changed_pixels": 0,
+        "changed_coordinates": [],
+        "coordinates_truncated": false,
+        "differences": [],
+        "neighborhoods_truncated": false
+      },
+      "fresh_candidate_baseline": {
+        "viewport": {
+          "left": 216,
+          "top": 218,
+          "width": 768,
+          "height": 1520,
+          "css_height": 1520
+        },
+        "changed_pixels": 1,
+        "changed_coordinates": [
+          [
+            380,
+            222
+          ]
+        ],
+        "coordinates_truncated": false,
+        "differences": [
+          {
+            "crop": [
+              380,
+              222
+            ],
+            "screen": [
+              596,
+              440
+            ],
+            "candidate": [
+              215,
+              221,
+              236
+            ],
+            "baseline": [
+              215,
+              222,
+              236
+            ],
+            "delta": [
+              0,
+              -1,
+              0
+            ]
+          }
+        ],
+        "neighborhoods_truncated": false
+      }
+    },
+    "pill-order-ku-portrait-768": {
+      "candidate_aa": {
+        "viewport": {
+          "left": 216,
+          "top": 218,
+          "width": 768,
+          "height": 1520,
+          "css_height": 1520
+        },
+        "changed_pixels": 0,
+        "changed_coordinates": [],
+        "coordinates_truncated": false,
+        "differences": [],
+        "neighborhoods_truncated": false
+      },
+      "baseline_aa": {
+        "viewport": {
+          "left": 216,
+          "top": 218,
+          "width": 768,
+          "height": 1520,
+          "css_height": 1520
+        },
+        "changed_pixels": 2,
+        "changed_coordinates": [
+          [
+            583,
+            90
+          ],
+          [
+            380,
+            222
+          ]
+        ],
+        "coordinates_truncated": false,
+        "differences": [
+          {
+            "crop": [
+              583,
+              90
+            ],
+            "screen": [
+              799,
+              308
+            ],
+            "candidate": [
+              235,
+              241,
+              254
+            ],
+            "baseline": [
+              236,
+              241,
+              254
+            ],
+            "delta": [
+              -1,
+              0,
+              0
+            ]
+          },
+          {
+            "crop": [
+              380,
+              222
+            ],
+            "screen": [
+              596,
+              440
+            ],
+            "candidate": [
+              220,
+              226,
+              240
+            ],
+            "baseline": [
+              220,
+              227,
+              240
+            ],
+            "delta": [
+              0,
+              -1,
+              0
+            ]
+          }
+        ],
+        "neighborhoods_truncated": false
+      },
+      "fresh_candidate_baseline": {
+        "viewport": {
+          "left": 216,
+          "top": 218,
+          "width": 768,
+          "height": 1520,
+          "css_height": 1520
+        },
+        "changed_pixels": 1,
+        "changed_coordinates": [
+          [
+            583,
+            90
+          ]
+        ],
+        "coordinates_truncated": false,
+        "differences": [
+          {
+            "crop": [
+              583,
+              90
+            ],
+            "screen": [
+              799,
+              308
+            ],
+            "candidate": [
+              235,
+              241,
+              254
+            ],
+            "baseline": [
+              236,
+              241,
+              254
+            ],
+            "delta": [
+              -1,
+              0,
+              0
+            ]
+          }
+        ],
+        "neighborhoods_truncated": false
+      }
+    },
+    "pill-mint-contact-ku-portrait-768": {
+      "candidate_aa": {
+        "viewport": {
+          "left": 216,
+          "top": 218,
+          "width": 768,
+          "height": 1520,
+          "css_height": 1520
+        },
+        "changed_pixels": 0,
+        "changed_coordinates": [],
+        "coordinates_truncated": false,
+        "differences": [],
+        "neighborhoods_truncated": false
+      },
+      "baseline_aa": {
+        "viewport": {
+          "left": 216,
+          "top": 218,
+          "width": 768,
+          "height": 1520,
+          "css_height": 1520
+        },
+        "changed_pixels": 1,
+        "changed_coordinates": [
+          [
+            290,
+            228
+          ]
+        ],
+        "coordinates_truncated": false,
+        "differences": [
+          {
+            "crop": [
+              290,
+              228
+            ],
+            "screen": [
+              506,
+              446
+            ],
+            "candidate": [
+              234,
+              245,
+              241
+            ],
+            "baseline": [
+              234,
+              246,
+              241
+            ],
+            "delta": [
+              0,
+              -1,
+              0
+            ]
+          }
+        ],
+        "neighborhoods_truncated": false
+      },
+      "fresh_candidate_baseline": {
+        "viewport": {
+          "left": 216,
+          "top": 218,
+          "width": 768,
+          "height": 1520,
+          "css_height": 1520
+        },
+        "changed_pixels": 1,
+        "changed_coordinates": [
+          [
+            290,
+            228
+          ]
+        ],
+        "coordinates_truncated": false,
+        "differences": [
+          {
+            "crop": [
+              290,
+              228
+            ],
+            "screen": [
+              506,
+              446
+            ],
+            "candidate": [
+              234,
+              245,
+              241
+            ],
+            "baseline": [
+              234,
+              246,
+              241
+            ],
+            "delta": [
+              0,
+              -1,
+              0
+            ]
+          }
+        ],
+        "neighborhoods_truncated": false
+      }
+    },
+    "pill-mint-order-ku-portrait-320": {
+      "candidate_aa": {
+        "viewport": {
+          "left": 440,
+          "top": 218,
+          "width": 320,
+          "height": 1520,
+          "css_height": 1520
+        },
+        "changed_pixels": 0,
+        "changed_coordinates": [],
+        "coordinates_truncated": false,
+        "differences": [],
+        "neighborhoods_truncated": false
+      },
+      "baseline_aa": {
+        "viewport": {
+          "left": 440,
+          "top": 218,
+          "width": 320,
+          "height": 1520,
+          "css_height": 1520
+        },
+        "changed_pixels": 0,
+        "changed_coordinates": [],
+        "coordinates_truncated": false,
+        "differences": [],
+        "neighborhoods_truncated": false
+      },
+      "fresh_candidate_baseline": {
+        "viewport": {
+          "left": 440,
+          "top": 218,
+          "width": 320,
+          "height": 1520,
+          "css_height": 1520
+        },
+        "changed_pixels": 0,
+        "changed_coordinates": [],
+        "coordinates_truncated": false,
+        "differences": [],
+        "neighborhoods_truncated": false
+      }
+    },
+    "pill-mint-order-ku-portrait-430": {
+      "candidate_aa": {
+        "viewport": {
+          "left": 385,
+          "top": 218,
+          "width": 430,
+          "height": 1520,
+          "css_height": 1520
+        },
+        "changed_pixels": 0,
+        "changed_coordinates": [],
+        "coordinates_truncated": false,
+        "differences": [],
+        "neighborhoods_truncated": false
+      },
+      "baseline_aa": {
+        "viewport": {
+          "left": 385,
+          "top": 218,
+          "width": 430,
+          "height": 1520,
+          "css_height": 1520
+        },
+        "changed_pixels": 0,
+        "changed_coordinates": [],
+        "coordinates_truncated": false,
+        "differences": [],
+        "neighborhoods_truncated": false
+      },
+      "fresh_candidate_baseline": {
+        "viewport": {
+          "left": 385,
+          "top": 218,
+          "width": 430,
+          "height": 1520,
+          "css_height": 1520
+        },
+        "changed_pixels": 1,
+        "changed_coordinates": [
+          [
+            282,
+            184
+          ]
+        ],
+        "coordinates_truncated": false,
+        "differences": [
+          {
+            "crop": [
+              282,
+              184
+            ],
+            "screen": [
+              667,
+              402
+            ],
+            "candidate": [
+              237,
+              247,
+              244
+            ],
+            "baseline": [
+              237,
+              247,
+              243
+            ],
+            "delta": [
+              0,
+              0,
+              1
+            ]
+          }
+        ],
+        "neighborhoods_truncated": false
+      }
+    },
+    "pill-mint-order-ku-portrait-768": {
+      "candidate_aa": {
+        "viewport": {
+          "left": 216,
+          "top": 218,
+          "width": 768,
+          "height": 1520,
+          "css_height": 1520
+        },
+        "changed_pixels": 0,
+        "changed_coordinates": [],
+        "coordinates_truncated": false,
+        "differences": [],
+        "neighborhoods_truncated": false
+      },
+      "baseline_aa": {
+        "viewport": {
+          "left": 216,
+          "top": 218,
+          "width": 768,
+          "height": 1520,
+          "css_height": 1520
+        },
+        "changed_pixels": 0,
+        "changed_coordinates": [],
+        "coordinates_truncated": false,
+        "differences": [],
+        "neighborhoods_truncated": false
+      },
+      "fresh_candidate_baseline": {
+        "viewport": {
+          "left": 216,
+          "top": 218,
+          "width": 768,
+          "height": 1520,
+          "css_height": 1520
+        },
+        "changed_pixels": 1,
+        "changed_coordinates": [
+          [
+            290,
+            228
+          ]
+        ],
+        "coordinates_truncated": false,
+        "differences": [
+          {
+            "crop": [
+              290,
+              228
+            ],
+            "screen": [
+              506,
+              446
+            ],
+            "candidate": [
+              234,
+              245,
+              241
+            ],
+            "baseline": [
+              234,
+              246,
+              241
+            ],
+            "delta": [
+              0,
+              -1,
+              0
+            ]
+          }
+        ],
+        "neighborhoods_truncated": false
+      }
+    },
+    "pill-mint-order-en-portrait-430": {
+      "candidate_aa": {
+        "viewport": {
+          "left": 385,
+          "top": 218,
+          "width": 430,
+          "height": 1520,
+          "css_height": 1520
+        },
+        "changed_pixels": 0,
+        "changed_coordinates": [],
+        "coordinates_truncated": false,
+        "differences": [],
+        "neighborhoods_truncated": false
+      },
+      "baseline_aa": {
+        "viewport": {
+          "left": 385,
+          "top": 218,
+          "width": 430,
+          "height": 1520,
+          "css_height": 1520
+        },
+        "changed_pixels": 0,
+        "changed_coordinates": [],
+        "coordinates_truncated": false,
+        "differences": [],
+        "neighborhoods_truncated": false
+      },
+      "fresh_candidate_baseline": {
+        "viewport": {
+          "left": 385,
+          "top": 218,
+          "width": 430,
+          "height": 1520,
+          "css_height": 1520
+        },
+        "changed_pixels": 1,
+        "changed_coordinates": [
+          [
+            282,
+            184
+          ]
+        ],
+        "coordinates_truncated": false,
+        "differences": [
+          {
+            "crop": [
+              282,
+              184
+            ],
+            "screen": [
+              667,
+              402
+            ],
+            "candidate": [
+              237,
+              247,
+              244
+            ],
+            "baseline": [
+              237,
+              247,
+              243
+            ],
+            "delta": [
+              0,
+              0,
+              1
+            ]
+          }
+        ],
+        "neighborhoods_truncated": false
+      }
+    },
+    "pill-mint-order-en-portrait-768": {
+      "candidate_aa": {
+        "viewport": {
+          "left": 216,
+          "top": 218,
+          "width": 768,
+          "height": 1520,
+          "css_height": 1520
+        },
+        "changed_pixels": 0,
+        "changed_coordinates": [],
+        "coordinates_truncated": false,
+        "differences": [],
+        "neighborhoods_truncated": false
+      },
+      "baseline_aa": {
+        "viewport": {
+          "left": 216,
+          "top": 218,
+          "width": 768,
+          "height": 1520,
+          "css_height": 1520
+        },
+        "changed_pixels": 0,
+        "changed_coordinates": [],
+        "coordinates_truncated": false,
+        "differences": [],
+        "neighborhoods_truncated": false
+      },
+      "fresh_candidate_baseline": {
+        "viewport": {
+          "left": 216,
+          "top": 218,
+          "width": 768,
+          "height": 1520,
+          "css_height": 1520
+        },
+        "changed_pixels": 1,
+        "changed_coordinates": [
+          [
+            290,
+            228
+          ]
+        ],
+        "coordinates_truncated": false,
+        "differences": [
+          {
+            "crop": [
+              290,
+              228
+            ],
+            "screen": [
+              506,
+              446
+            ],
+            "candidate": [
+              234,
+              245,
+              241
+            ],
+            "baseline": [
+              234,
+              246,
+              241
+            ],
+            "delta": [
+              0,
+              -1,
+              0
+            ]
+          }
+        ],
+        "neighborhoods_truncated": false
+      }
+    }
+  }
+}

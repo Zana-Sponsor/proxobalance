@@ -1,0 +1,227 @@
+{
+  "run": 38070780315,
+  "tested_commit": "cc52ca4c26a291677f935ff50cf13dd43cfcd5d5",
+  "artifact": 11707438523,
+  "artifact_sha256": "9c3d3fc79277834b02af99e6c5da992eef4f00734d0839b6365ef527ab9d769d",
+  "pairs": 240,
+  "exact_pairs": 232,
+  "failed_pairs": [
+    {
+      "id": "pill-order-ku-portrait-768",
+      "changed_pixels": 1,
+      "max_channel_delta": 1,
+      "locations": [
+        {
+          "crop": [
+            380,
+            222
+          ],
+          "screen": [
+            596,
+            440
+          ],
+          "candidate": [
+            220,
+            227,
+            240
+          ],
+          "baseline": [
+            220,
+            226,
+            240
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pill-order-en-portrait-768",
+      "changed_pixels": 1,
+      "max_channel_delta": 1,
+      "locations": [
+        {
+          "crop": [
+            380,
+            222
+          ],
+          "screen": [
+            596,
+            440
+          ],
+          "candidate": [
+            215,
+            222,
+            236
+          ],
+          "baseline": [
+            215,
+            221,
+            236
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pill-mint-contact-en-portrait-768",
+      "changed_pixels": 1,
+      "max_channel_delta": 1,
+      "locations": [
+        {
+          "crop": [
+            290,
+            228
+          ],
+          "screen": [
+            506,
+            446
+          ],
+          "candidate": [
+            234,
+            246,
+            241
+          ],
+          "baseline": [
+            234,
+            245,
+            241
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pill-mint-order-ku-portrait-430",
+      "changed_pixels": 1,
+      "max_channel_delta": 1,
+      "locations": [
+        {
+          "crop": [
+            282,
+            184
+          ],
+          "screen": [
+            667,
+            402
+          ],
+          "candidate": [
+            237,
+            247,
+            244
+          ],
+          "baseline": [
+            237,
+            247,
+            243
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pill-mint-order-ku-portrait-768",
+      "changed_pixels": 1,
+      "max_channel_delta": 1,
+      "locations": [
+        {
+          "crop": [
+            290,
+            228
+          ],
+          "screen": [
+            506,
+            446
+          ],
+          "candidate": [
+            234,
+            245,
+            241
+          ],
+          "baseline": [
+            234,
+            246,
+            241
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pill-mint-order-en-portrait-430",
+      "changed_pixels": 1,
+      "max_channel_delta": 1,
+      "locations": [
+        {
+          "crop": [
+            282,
+            184
+          ],
+          "screen": [
+            667,
+            402
+          ],
+          "candidate": [
+            237,
+            247,
+            244
+          ],
+          "baseline": [
+            237,
+            247,
+            243
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pill-mint-order-en-portrait-768",
+      "changed_pixels": 1,
+      "max_channel_delta": 1,
+      "locations": [
+        {
+          "crop": [
+            290,
+            228
+          ],
+          "screen": [
+            506,
+            446
+          ],
+          "candidate": [
+            234,
+            245,
+            241
+          ],
+          "baseline": [
+            234,
+            246,
+            241
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pill-mint-download-ku-portrait-320",
+      "changed_pixels": 1,
+      "max_channel_delta": 1,
+      "locations": [
+        {
+          "crop": [
+            257,
+            88
+          ],
+          "screen": [
+            697,
+            306
+          ],
+          "candidate": [
+            239,
+            248,
+            245
+          ],
+          "baseline": [
+            239,
+            249,
+            245
+          ]
+        }
+      ]
+    }
+  ],
+  "repeat_comparisons_passed": 960
+}

@@ -1,3 +1,5 @@
+> Current terminal native evidence: [run38070780315 audit](PROXOLINK_NATIVE_RUN_38070780315.md). Approval/workspace blockers below are superseded; browser3/3 and both choosers12/12 passed; strict pixels8failed and notice4failed remain. Hosted skipped by marker condition.
+
 # A–AO acceptance checklist — 2026-10-11
 
 Overall: **Pending / Blocked — not COMPLETE**.
@@ -34,7 +36,7 @@ Current source CI38070780277 passed all five jobs:234 Flutter,153 backend,480 br
 | L: duplicate dialog/submission prevention | Complete | Existing busy gate plus per-page confirmation re-entry guard; rapid callbacks prove one dialog; current Flutter CI passed. |
 | M: actual typed HTTPS UUID route and externalApplication only | Complete | Production `launchUrl` call, URL contract tests, no WebView/custom-tab preview. |
 | N: list/route/scroll preserved across three returns; no lifecycle GET | Complete | Existing injected launcher fixture with exact row position and one GET. |
-| N: real Android browser lifecycle and preserved state | Blocked | Historical run38060488156:0/3, missing paused event. cc52 waits for matching observed pause before return; current native run38070780315 attempt2 awaits protected review. No current pass claimed. |
+| N: real Android browser lifecycle and preserved state | Complete | Current cc52 run38070780315:3/3 actual pause/resume and stable row/scroll/one read. Fictional public page; hosted-content coverage remains blocked separately. |
 | N: supported browser families/iOS/device lifecycle | Blocked | Android runner evidence cannot certify Safari/iOS or unavailable browsers/devices. |
 | N/P: browser failure keeps stable UI with exact shared notice | Complete | Existing shared component and five-second expiry test. |
 | O: balanced dedicated empty state and primary create action | Complete | Exact title/support plus create action; four-width images. |
@@ -52,7 +54,7 @@ Current source CI38070780277 passed all five jobs:234 Flutter,153 backend,480 br
 | W: تەلەبات→talabat, وادێ→wade, تۆتەرز→toters, لەزوو→lezzoo | Complete | Exact labels/keys; all four available for new isolated authoring. |
 | W: strict hosts/types/malicious URL denial | Complete | API/SQL validation tests; no relaxed host checks. |
 | X: exactly four existing Kurdish designs and thumbnails | Complete | Existing selector and twelve high-DPI assets; selected-state widget coverage. |
-| X: current native selector twelve type/style cases | Blocked | Historical12/12 did not independently prove exact restaurant labels. Fixture and independent assertions corrected in cc52; current runtime awaits review. |
+| X: current native selector twelve type/style cases | Complete | Current cc52 run:12/12, exact Kurdish labels independently asserted, decoded selection/native input/no WebView gate passed. |
 | Y: no live/internal WebView in Create | Complete | Current form source, negative widget tests; native assertion added. |
 | Z: DB-generated UUID, random request key, idempotent single submit | Complete | Backend/SQL identity and widget submit tests; local authoritative upsert. |
 | Z: prevent duplicate create routes | Complete | Route re-entry guard and rapid callbacks prove one Create route; current Flutter CI passed. |
@@ -87,16 +89,16 @@ Current source CI38070780277 passed all five jobs:234 Flutter,153 backend,480 br
 | AK: isolated current Tools hosted runner implementation | Complete | Adds12 current type×style upload/create/read/real HTML+avatar/owner/session/delete lifecycles; trusted-transition/dependency observation requires separate authorized setup. Provider-fixture orchestration/security checks pass146Node suite. |
 | AK: real hosted authenticated UI/API/DB journey | Blocked | Separate project+preview+two ordinary accounts and eight staging settings absent at last presence audit. No hosted execution or UI account-switch claim; no production writes. |
 | AL: actual Create Ad vs ProxoLink widget screen notices | Complete | Actual submit taps; decoded thumbnails; same appearance; fully visible400/4900ms,exit5100ms,removed5500ms atfour widths. |
-| AL: native full-screen notice comparison | Pending | Historical run38060488156:two400ms entry-opacity failures (Create Ad320 and ProxoLink430); all eight visible4900ms and removed5500ms. Root cause unresolved; strict assertions retained. |
+| AL: native full-screen notice comparison | Pending | Current run:4/8 pass; Ad320 and ProxoLink393/430/768 fail400ms full-visibility check. All eight visible4900ms/removed5500ms. Exact evidence in terminal audit. |
 | AM: images320/393/430/768, Tools/multilingual/status/empty/error/Create/styles | Complete |58 original plus80 actual-screen fictional widget PNGs retained with dimensions/hashes; final CI matches. Browser renderer images and native artifacts are labeled separately. |
 | AM: actual placement/padding/gaps/type/action stacking/rationale documented | Complete | Existing forty-item report, card/source measurements. |
 | AN: no extra edit/archive/activate/menu/analytics/share/internal preview/types/templates/admin/table | Complete | Current reachable customer routes and negative tests; legacy compatibility editor appears only in debug verification, not Tools navigation. |
 | KVM: original commands/gate/failure retained, safe interrupted-step evidence | Complete | Atomic checkpoints and8isolated checks pass locally/current CI, including simulated termination and observation failure. Baseline native KVM passed. Current protected runner execution remains pending below. |
-| KVM: current protected runner execution | Blocked | Historical run38060488156 readiness/security passed. Current job114307708767 awaits environment review. |
+| KVM: current protected runner execution | Complete | cc52 current run secure setup/KVM passed; native gate executed and failed pixels/notices, not readiness. |
 | AO: all40 report items | Complete | Current AO report records cc52 tested source, exact continuation paths, measurements, evidence and limitations. Publication commit is documentation-only and is recorded in PR metadata. |
 | AO/guardrails: PR7Draft/Open/Unmerged; production publishing/migrations/customer data untouched | Complete | Current PR metadata and read-only operations; no activation or production migration. |
-| Native: strict FIRST-frame zero-pixel parity | Pending | Historical run38060488156:232/240 exact;8 failed pairs,8 pixels,max channel delta1. Cause unproven; no mask/tolerance/selected-frame workaround. Current runtime blocked on review. |
-| Workspace: additional local inspection and native artifact extraction | Blocked | exec-server handshake failed; this turn exposes no shell/filesystem tool. GitHub inspection/publication remains available. Restore workspace connection for local debugging/artifact preservation. |
+| Native: strict FIRST-frame zero-pixel parity | Pending | Current run232/240 exact;8failed pairs/8pixels/maxdelta1. New case IDs and full coordinates independently audited. Root cause/fix unresolved. |
+| Workspace: local inspection and artifact extraction | Complete | Connection restored; repository/current artifact recovered; digest/CRC and independent PNG audit complete. Local Android adb/KVM unavailable; GitHub runner executed. |
 
 
 Latest product fix: repeated refresh failures re-arm the shared error notice even when the service reuses the same error instance. Regression proves two notices after expiry, cards retained, settled refresh and three reads.
