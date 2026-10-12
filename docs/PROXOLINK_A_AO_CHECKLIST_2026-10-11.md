@@ -6,11 +6,11 @@
 
 Overall: **Pending / Blocked — not COMPLETE**.
 Specification: [complete A–AO specification](PROXOLINK_TOOLS_CREATE_SPEC_v4.md).
-Current executable: `cc52ca4c26a291677f935ff50cf13dd43cfcd5d5`.
+Current executable: `4b816fb4e62b55d09ea8951d82cd30536bd612cd`. Last completed native executable: `cc52ca4c26a291677f935ff50cf13dd43cfcd5d5`.
 [Forty-item AO report](PROXOLINK_AO_REPORT_2026-10-11.md) provides current run links, exact blockers and measurements.
 Complete rows below certify the stated source/disposable-fixture criterion only. Separate native/hosted rows remain required. Historical results are never substituted for current runtime acceptance.
 
-Current source CI38070780277 passed all five jobs:234 Flutter,153 backend,480 browser cases,three SQL suites/seven real PostgreSQL API lifecycles,release/privacy and two Deno checks. Native APK attempt2 passed; runtime awaits the unchanged protected environment reviewer.
+Source CI38265055650: Flutter analysis, old/new notice reproduction and full test-suite steps passed; backend, responsive480, database three SQL/seven API lifecycles and edge jobs passed. Release build/privacy/size checks passed;235 Flutter tests passed. New native run38265055827 APK passed; runtime114866813387 is waiting review. Completed native38070780315 is audited separately and is not waiting.
 
 | Requirement | Status | Evidence / remaining work |
 |---|---|---|
@@ -30,7 +30,7 @@ Current source CI38070780277 passed all five jobs:234 Flutter,153 backend,480 br
 | I: exact compact textual moderation badges | Complete | pending/approved/rejected labels and restrained colors; all status images. |
 | J: server-stored NOT NULL pending default/CHECK, no client decisions | Complete | Additive migration, request denial, direct-role tests; technical failure remains distinct. |
 | J: trusted pending→approved/rejected mechanism | Complete | Existing service-role authority and invoker trigger; disposable tests. |
-| J: actual hosted moderation contract in isolated environment | Blocked | Separate isolated environment and required configuration unavailable. Production lacks V6/moderation columns and remains unchanged. |
+| J: actual hosted moderation contract in isolated environment | Blocked | New hosted run38264179020 waits at configured environment review; its configuration step has not executed. Current missing settings are unknown. Production unchanged. |
 | K: owner SELECT/INSERT/UPDATE/DELETE, immutable identity/owner | Complete | Existing RLS plus guard migrations, three disposable SQL suites and seven API lifecycles. |
 | K: no anonymous management reads, no client owner trust | Complete | Current grants/owner policies, request tests and native security preflight. |
 | K: immediate logout/account-switch isolation, stale-result denial | Complete | Controller/form tests and upload owner checks pass current source CI; late old-owner results are rejected. Hosted two-account/device journey remains blocked separately. |
@@ -89,15 +89,15 @@ Current source CI38070780277 passed all five jobs:234 Flutter,153 backend,480 br
 | AK: generated distinct UUID/multiple pages/owner and immutable boundaries | Complete | Existing disposable PostgreSQL suites and API lifecycle evidence. |
 | AK: stored moderation/trusted transitions/invalid values/provider/FK/grants | Complete | Tools moderation SQL suite, RLS suites and native read-only security preflight. |
 | AK: isolated current Tools hosted runner implementation | Complete | Adds12 current type×style upload/create/read/real HTML+avatar/owner/session/delete lifecycles; trusted-transition/dependency observation requires separate authorized setup. Provider-fixture orchestration/security checks pass146Node suite. |
-| AK: real hosted authenticated UI/API/DB journey | Blocked | Separate project+preview+two ordinary accounts and eight staging settings absent at last presence audit. No hosted execution or UI account-switch claim; no production writes. |
+| AK: real hosted authenticated UI/API/DB journey | Blocked | Hosted run38264179020 requested via existing marker; waiting review, not skipped. Historical absent-setting list is not a current diagnosis. No new hosted/UI account-switch result; no production writes. |
 | AL: actual Create Ad vs ProxoLink widget screen notices | Complete | Actual submit taps; decoded thumbnails; same appearance; fully visible400/4900ms,exit5100ms,removed5500ms atfour widths. |
-| AL: native full-screen notice comparison | Pending | Current run:4/8 pass; Ad320 and ProxoLink393/430/768 fail400ms full-visibility check. All eight visible4900ms/removed5500ms. Exact evidence in terminal audit. |
+| AL: native full-screen notice comparison | Pending | Completed cc52 run:4/8 pass; Ad320 and ProxoLink393/430/768 fail400ms. Product timeline fix4b816 passes controlled old/new regression and full Flutter suite; native400/4900/5500 acceptance remains Pending on run38265055827. |
 | AM: images320/393/430/768, Tools/multilingual/status/empty/error/Create/styles | Complete |58 original plus80 actual-screen fictional widget PNGs retained with dimensions/hashes; final CI matches. Browser renderer images and native artifacts are labeled separately. |
 | AM: actual placement/padding/gaps/type/action stacking/rationale documented | Complete | Existing forty-item report, card/source measurements. |
 | AN: no extra edit/archive/activate/menu/analytics/share/internal preview/types/templates/admin/table | Complete | Current reachable customer routes and negative tests; legacy compatibility editor appears only in debug verification, not Tools navigation. |
 | KVM: original commands/gate/failure retained, safe interrupted-step evidence | Complete | Atomic checkpoints and8isolated checks pass locally/current CI, including simulated termination and observation failure. Baseline native KVM passed. Current protected runner execution remains pending below. |
 | KVM: current protected runner execution | Complete | cc52 current run secure setup/KVM passed; native gate executed and failed pixels/notices, not readiness. |
-| AO: all40 report items | Complete | Current AO report records cc52 tested source, exact continuation paths, measurements, evidence and limitations. Publication commit is documentation-only and is recorded in PR metadata. |
+| AO: all40 report items | Complete | AO report and October12 supplement identify4b816 executable, exact fix/diagnostic paths, actual source results and pending native/hosted gates; no completion claim. |
 | AO/guardrails: PR7Draft/Open/Unmerged; production publishing/migrations/customer data untouched | Complete | Current PR metadata and read-only operations; no activation or production migration. |
 | Native: strict FIRST-frame zero-pixel parity | Pending | Current run232/240 exact;8failed pairs/8pixels/maxdelta1. New case IDs and full coordinates independently audited. Root cause/fix unresolved. |
 | Workspace: local inspection and artifact extraction | Complete | Connection restored; repository/current artifact recovered; digest/CRC and independent PNG audit complete. Local Android adb/KVM unavailable; GitHub runner executed. |
