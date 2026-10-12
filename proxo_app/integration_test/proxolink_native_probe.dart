@@ -205,7 +205,7 @@ class _ProbeState extends State<_Probe> {
     if(instrument)'diagnostics':{...diagnostic,'flutter_bounds':[origin.dx,origin.dy,box.size.width,box.size.height]},
     'viewport':{'left':origin.dx.floor(),'top':origin.dy.floor(),'width':box.size.width.round(),'height':box.size.height.round(),'css_height':box.size.height.round()}});
    final ack=File('${_files.path}/proxolink-verification-ack');var seen=false;
-   var surfaceCaptured=false,postObserved=false;
+   var surfaceCaptured=false,postObserved=false,redrawObserved=false;
    for(var i=0;i<240;i++){
     if(surfaceInstrument&&!surfaceCaptured){
      final request=File('${_files.path}/proxolink-diagnostic-request');
@@ -216,6 +216,20 @@ class _ProbeState extends State<_Probe> {
        'native':await _nativeCapture.invokeMapMethod<String,dynamic>('diagnostics',{'webViewIdentifier':platform.webViewIdentifier}),
        'flutter_bounds':[origin.dx,origin.dy,box.size.width,box.size.height]};
       await _write('proxolink-diagnostic-surface.json',{'id':captureId,'surface':surface,'state_after':after});
+     }
+    }
+    if(surfaceInstrument&&!redrawObserved){
+     final request=File('${_files.path}/proxolink-redraw-request');
+     if(await request.exists()&&(await request.readAsString()).trim()==captureId){
+      redrawObserved=true;
+      // One predeclared same-document redraw AFTER all original captures.
+      // Isolates redraw history from the later CDP screenshot intervention.
+      final redrawn=await _nativeCapture.invokeMethod<bool>('awaitDraw',
+        {'webViewIdentifier':platform.webViewIdentifier,'diagnostics':true});
+      await _write('proxolink-redraw-state.json',{'id':captureId,'redrawn':redrawn==true,
+       'state':{'dom':await _read(controller,nativeDiagnosticScript(nativeDiagnosticPoints[id]!)),
+        'native':await _nativeCapture.invokeMapMethod<String,dynamic>('diagnostics',{'webViewIdentifier':platform.webViewIdentifier}),
+        'flutter_bounds':[origin.dx,origin.dy,box.size.width,box.size.height]}});
      }
     }
     if(surfaceInstrument&&!postObserved){

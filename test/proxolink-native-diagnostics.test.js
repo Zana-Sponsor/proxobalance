@@ -63,8 +63,10 @@ test('current native Create Page supplements legacy chooser, requires every type
  delete safe[CREATE_CHOOSER_IDS[0]];
  assert.throws(()=>validateCreateChooserResults(safe,taps,captures,setups),/native_create_chooser_failed/);
 });
-test('original ten deep targets plus the new download failure require both roles, exactly three samples and the same WebView version',()=>{
- assert.equal(Object.keys(DIAGNOSTIC_POINTS).length,11);
+test('all thirteen deep targets including the current new failures require both roles, exactly three samples and the same WebView version',()=>{
+ assert.equal(Object.keys(DIAGNOSTIC_POINTS).length,13);
+ assert.deepEqual(DIAGNOSTIC_POINTS['pill-mint-contact-en-portrait-768'],[290,228]);
+ assert.deepEqual(DIAGNOSTIC_POINTS['pill-mint-download-ku-portrait-320'],[257,88]);
  const roles=Object.fromEntries(Object.keys(DIAGNOSTIC_POINTS).flatMap(id=>['candidate','baseline'].map(role=>[id+'-'+role,{state:state(),state_after:state(),state_after_webcontents:state(),post_webcontents_timing:{started_ms:1,completed_ms:2},pipeline:{status:'captured',dimensions_match:true},surface:{status:0},surface_sample:{rgb:[1,2,3]},samples:[{},{},{}],capture_timing:[{},{},{}]}])));
  validateDiagnosticRoles(roles);
  const first=Object.keys(roles)[0];roles[first].samples.pop();assert.throws(()=>validateDiagnosticRoles(roles),/incomplete/);roles[first].samples.push({});

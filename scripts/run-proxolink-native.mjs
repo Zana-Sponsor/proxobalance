@@ -316,6 +316,22 @@ async function main() {
             roleMap[capture_id].surface_sample=await diagnosticSample(png,coordinate);
             roleMap[capture_id].surface_coordinate=coordinate;
           }
+          // Controlled intervention: same document/source/geometry, one native
+          // redraw; no CDP screenshot yet. Never replace an acceptance frame.
+          appWrite('proxolink-redraw-request',capture_id);
+          let redrawState;
+          for(let poll=0;poll<120;poll++){
+            const value=appRead('proxolink-redraw-state.json');
+            if(value){const response=JSON.parse(value);if(response.id===capture_id&&response.redrawn===true){redrawState=safeRenderDiagnostics(response.state);break;}}
+            await pause(100);
+          }
+          if(!redrawState)throw Error('native_diagnostics_incomplete');
+          const redrawPng=adb(['exec-out','screencap','-p']);
+          const redrawCrop=await sharp(redrawPng).extract({left:crop.left,top:crop.top,width:crop.width,height:crop.height}).png().toBuffer();
+          writeFileSync(output+'/'+capture_id+'-diagnostic-redraw-webview.png',redrawCrop);
+          roleMap[capture_id].state_after_redraw=redrawState;
+          roleMap[capture_id].redraw_vs_first=await diagnosePixelPair(redrawCrop,first,crop,point,{coordinateLimit:8192});
+          diagnosticWrite();
           const pipeline=await readNativePipeline(adb,packageId,capture_id);
           roleMap[capture_id].pipeline=pipeline.metadata;
           if(pipeline.png){

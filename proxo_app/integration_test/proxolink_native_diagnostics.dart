@@ -12,6 +12,8 @@ const nativeDiagnosticPoints = <String,List<int>>{
  'pill-order-en-portrait-768':[380,222],
  'pill-mint-contact-ku-portrait-430':[282,184],
  'pill-download-ku-portrait-768':[583,90],
+ 'pill-mint-contact-en-portrait-768':[290,228],
+ 'pill-mint-download-ku-portrait-320':[257,88],
 };
 const nativeReproductionIds = <String>[
  'pill-contact-en-portrait-768','pill-order-ku-portrait-768',
