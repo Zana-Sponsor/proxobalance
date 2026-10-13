@@ -397,7 +397,10 @@ class _ProxoBannerState extends State<ProxoBanner> {
         });
       }
 
-      _supaSub = supabase
+      // A refresh updates data; it must not create another subscription.
+      // Requests can finish after dispose, when there is no owner to clean up.
+      if (!mounted) return;
+      _supaSub ??= supabase
           .channel('banner_rt')
           .onPostgresChanges(
             event: PostgresChangeEvent.all,

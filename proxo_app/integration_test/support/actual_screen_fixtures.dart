@@ -24,12 +24,16 @@ class ActualScreenBackend {
  late final http.Client transport;
  final reads=<String,int>{};
  Completer<void>? refreshGate;
+ Completer<void>? bannerGate;
+ int bannerJoins=0;
+ final _sockets=<_ScreenSocket>[];
  ActualScreenBackend(){
   transport=MockClient((request)async{
     if(request.method!='GET'||request.url.host!='screen-fixtures.invalid')throw StateError('screen_fixture_network_boundary');
     final table=request.url.path.split('/').last;
-    if(!{'profiles','pa_ads','pa_featured_ads_public','pa_popups','pa_notifications'}.contains(table))throw StateError('screen_fixture_network_boundary');
+    if(!{'profiles','pa_ads','pa_featured_ads_public','pa_popups','pa_notifications','pa_banners'}.contains(table))throw StateError('screen_fixture_network_boundary');
     reads.update(table,(v)=>v+1,ifAbsent:()=>1);
+    if(table=='pa_banners')await bannerGate?.future;
     if(table=='pa_ads'||table=='pa_featured_ads_public')await refreshGate?.future;
     final Object data=table=='profiles'?{'full_name':'تاقیکردنەوە Proxo'}:table=='pa_ads'?[{
      'id':'00000000-0000-4000-8000-000000000001','title':'Fictional screen fixture','status':'active',
@@ -42,7 +46,7 @@ class ActualScreenBackend {
  Future<void> initialize()async{
   final instance=await Supabase.initialize(url:'https://screen-fixtures.invalid',anonKey:'fictional-publishable-key',debug:false,
    httpClient:transport,authOptions:const FlutterAuthClientOptions(autoRefreshToken:false,localStorage:EmptyLocalStorage(),detectSessionInUri:false),
-   realtimeClientOptions:RealtimeClientOptions(transport:(url,headers)=>_ScreenSocket(),disconnectOnEmptyChannelsAfter:Duration.zero));
+   realtimeClientOptions:RealtimeClientOptions(transport:(url,headers){final socket=_ScreenSocket(onJoin:(topic){if(topic=='realtime:banner_rt')bannerJoins++;});_sockets.add(socket);return socket;},disconnectOnEmptyChannelsAfter:Duration.zero));
   client=instance.client;
   String part(Object value)=>base64Url.encode(utf8.encode(jsonEncode(value))).replaceAll('=','');
   final token='${part({'alg':'HS256','typ':'JWT'})}.${part({'sub':screenFixtureOwner,'exp':DateTime.now().millisecondsSinceEpoch~/1000+86400})}.fictional-signature';
@@ -53,10 +57,24 @@ class ActualScreenBackend {
   // before mounting any production screen.
   await client.from('pa_ads').select('id');
  }
+ void emitBannerChange(){
+  for(final socket in _sockets){
+   socket.emit('realtime:banner_rt','postgres_changes',{'ids':[0],'data':{
+    'schema':'public','table':'pa_banners','type':'UPDATE','commit_timestamp':'2026-10-13T00:00:00Z',
+    'columns':[],'record':{'id':'fixture-banner'},'old_record':{}}});
+  }
+ }
  Future<void> dispose()async{if(refreshGate!=null&&!refreshGate!.isCompleted)refreshGate!.complete();await Supabase.instance.dispose();}
 }
 class _ScreenSocket extends StreamChannelMixin<dynamic> implements WebSocketChannel {
  final incoming=StreamController<dynamic>();
+ final void Function(String)? onJoin;
+ bool positional=false;
+ _ScreenSocket({this.onJoin});
+ void emit(String topic,String event,Map<String,dynamic> payload){
+  if(!incoming.isClosed)incoming.add(jsonEncode(positional?[null,null,topic,event,payload]:
+   {'join_ref':null,'ref':null,'topic':topic,'event':event,'payload':payload}));
+ }
  late final _ScreenSink output=_ScreenSink(this);
  @override Stream<dynamic> get stream=>incoming.stream;
  @override WebSocketSink get sink=>output;
@@ -73,9 +91,11 @@ class _ScreenSink implements WebSocketSink {
  @override void add(dynamic event){
   final frame=jsonDecode(event as String);
   final positional=frame is List;
+  socket.positional=positional;
   final topic=positional?frame[2]:frame['topic'],ref=positional?frame[1]:frame['ref'];
   final join=positional?frame[0]:frame['join_ref'],kind=positional?frame[3]:frame['event'];
   final payload=positional?frame[4]:frame['payload'];
+  if(kind=='phx_join')socket.onJoin?.call(topic as String);
   if(!{'phx_join','phx_leave','heartbeat'}.contains(kind))return;
   final bindings=(payload?['config']?['postgres_changes'] as List?)??[];
   final reply={'status':'ok','response':{'postgres_changes':[for(var i=0;i<bindings.length;i++){...Map<String,dynamic>.from(bindings[i] as Map),'id':i}]}};

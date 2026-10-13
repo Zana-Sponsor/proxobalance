@@ -56,6 +56,7 @@ void main() {
       for (var i = 0; i < 10; i++) {
         await t.pump(const Duration(milliseconds: 16));
       }
+      print('TAB_TICKS optimized=$optimized hidden=${retained.ticks-hiddenBefore} active=${second.currentState!.ticks-activeBefore} pumps=10');
       expect(second.currentState!.ticks, greaterThan(activeBefore));
       if (optimized) {
         expect(retained.ticks, hiddenBefore);
