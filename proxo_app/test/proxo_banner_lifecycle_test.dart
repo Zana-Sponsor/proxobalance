@@ -20,6 +20,18 @@ void main() {
     for (var i=0;i<20;i++) { await t.pump(const Duration(milliseconds: 10)); }
   }
 
+  Future<void> cleanup(WidgetTester t) async {
+    var completed=false;
+    final done=backend.client.removeAllChannels().then((_)=>completed=true);
+    // Cleanup only: the pinned SDK has a10s leave timeout followed by a6s
+    // socket-close timeout. Advance fake time until completed, bounded at20s.
+    for(var i=0;i<100&&!completed;i++) {
+      await t.pump(const Duration(milliseconds:200));
+    }
+    expect(completed,isTrue,reason:'bounded fixture channel cleanup');
+    await done;
+  }
+
   testWidgets('banner does not subscribe after pending load is disposed', (t) async {
     final gate=Completer<void>();backend.bannerGate=gate;
     await t.pumpWidget(MaterialApp(home:ProxoBanner(onStart:() {})));
@@ -30,10 +42,7 @@ void main() {
     expect(backend.bannerJoins,old?1:0);
     expect(backend.client.getChannels().length,old?1:0);
     print('BANNER_DISPOSE old=$old joins=${backend.bannerJoins} channels=${backend.client.getChannels().length}');
-    final cleanup=backend.client.removeAllChannels();await flush(t);
-    // The SDK's socket-close timeout runs on the test's fake clock. Drain it
-    // only after all lifecycle assertions; never extend a product deadline.
-    await t.pump(const Duration(seconds:7));await cleanup;
+    await cleanup(t);
     backend.bannerGate=null;
     expect(t.takeException(),isNull);
   }, timeout: const Timeout(Duration(seconds:45)));
@@ -49,10 +58,7 @@ void main() {
     expect(backend.bannerJoins-joinsBefore,old?2:1);
     print('BANNER_RELOAD old=$old joins=${backend.bannerJoins-joinsBefore} reads=${backend.reads['pa_banners']!-readsBefore}');
     await t.pumpWidget(const SizedBox.shrink());await flush(t);
-    final cleanup=backend.client.removeAllChannels();await flush(t);
-    // The SDK's socket-close timeout runs on the test's fake clock. Drain it
-    // only after all lifecycle assertions; never extend a product deadline.
-    await t.pump(const Duration(seconds:7));await cleanup;
+    await cleanup(t);
     expect(t.takeException(),isNull);
   }, timeout: const Timeout(Duration(seconds:45)));
 }
