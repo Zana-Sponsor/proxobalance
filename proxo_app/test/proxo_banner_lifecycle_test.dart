@@ -21,14 +21,16 @@ void main() {
   }
 
   Future<void> cleanup(WidgetTester t) async {
-    var completed=false;
-    final done=backend.client.removeAllChannels().then((_)=>completed=true);
-    // Cleanup only: the pinned SDK has a10s leave timeout followed by a6s
-    // socket-close timeout. Advance fake time until completed, bounded at20s.
-    for(var i=0;i<100&&!completed;i++) {
-      await t.pump(const Duration(milliseconds:200));
-    }
-    expect(completed,isTrue,reason:'bounded fixture channel cleanup');
+    // The fixture disconnects automatically when its last channel leaves.
+    // removeAllChannels also disconnects, racing that close and cancelling the
+    // single-subscription stream before its done event can finish sink.close.
+    final channels = [...backend.client.getChannels()];
+    var completed = false;
+    final done = Future.wait(channels.map(backend.client.removeChannel))
+        .then((_) => completed = true);
+    await flush(t);
+    expect(completed, isTrue, reason: 'fixture leave acknowledgements');
+    expect(backend.client.getChannels(), isEmpty);
     await done;
   }
 
