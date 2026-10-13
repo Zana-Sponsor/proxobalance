@@ -1,0 +1,9 @@
+{
+  "status": "FAILED",
+  "stage": "native_case_collection",
+  "code": "native_evidence_incomplete",
+  "preflight_check": null,
+  "transport_code": "unclassified_transport",
+  "last_json_response_status": 200,
+  "credential_values_included": false
+}

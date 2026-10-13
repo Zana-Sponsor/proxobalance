@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "status": "FAILED",
+  "gates": {
+    "matrix": {
+      "passed": false,
+      "code": "native_pixel_parity_failed"
+    },
+    "behavior": {
+      "passed": true,
+      "passed_cases": 240,
+      "failed_cases": 0
+    },
+    "capture_completeness": {
+      "passed": true,
+      "candidate": 240,
+      "baseline": 240,
+      "missing": 0
+    },
+    "repeatability": {
+      "passed": true,
+      "stable_roles": 480,
+      "unstable_roles": 0,
+      "samples_per_role": 3
+    },
+    "pixel_parity": {
+      "passed": false,
+      "exact_pairs": 232,
+      "failed_pairs": 8,
+      "changed_pixels": 9,
+      "max_channel_delta": 1
+    },
+    "diagnostics": {
+      "passed": true,
+      "basic_states": 480,
+      "deep_acceptance_roles": 20,
+      "fresh_repro_roles": 16
+    },
+    "legacy_chooser": {
+      "passed": true,
+      "expected": 12,
+      "executed": 12,
+      "passed_cases": 12,
+      "failed_cases": 0
+    },
+    "create_chooser": {
+      "passed": true,
+      "expected": 12,
+      "executed": 12,
+      "passed_cases": 12,
+      "failed_cases": 0
+    },
+    "tools_browser": {
+      "passed": false,
+      "expected": 3,
+      "executed": 3,
+      "passed_cases": 1,
+      "failed_cases": 2
+    },
+    "actual_screens": {
+      "passed": false,
+      "expected": 16,
+      "executed": 16,
+      "passed_cases": 8,
+      "failed_cases": 8,
+      "captures": 46
+    }
+  }
+}

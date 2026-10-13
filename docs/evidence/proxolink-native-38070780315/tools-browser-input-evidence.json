@@ -1,0 +1,29 @@
+{
+  "taps": [
+    "tools-browser-1",
+    "tools-browser-2",
+    "tools-browser-3"
+  ],
+  "receipts": {
+    "tools-browser-1": {
+      "browser_package": "com.android.chrome",
+      "existing_activity_resumed": true,
+      "pause_before_return": true
+    },
+    "tools-browser-2": {
+      "browser_package": "com.android.chrome",
+      "existing_activity_resumed": true,
+      "pause_before_return": true
+    },
+    "tools-browser-3": {
+      "browser_package": "com.android.chrome",
+      "existing_activity_resumed": true,
+      "pause_before_return": true
+    }
+  },
+  "captures": [
+    "tools-browser-1",
+    "tools-browser-2",
+    "tools-browser-3"
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "observed_on": "2026-10-07",
+  "status": "VERIFIED",
+  "scope": "Earlier executed read-only task checkpoints, including after thumbnail changes; no new production DDL or fixture writes in this continuation",
+  "initial_and_latest_matching": {
+    "cards": 21,
+    "full_card_hash": "8b2c813b7a2e431a84b86b77943268a1",
+    "ads": 27,
+    "advertisement_relationship_hash": "181d934300a1fe30282e58a87af4a936",
+    "invalid_relationships": 0
+  },
+  "full_advertisement_rows_immutable": "BLOCKED",
+  "limitation": "A historical full advertisement-row hash changed concurrently during V5 verification. Its cause was not established; only stable relationships and customer cards are asserted.",
+  "actions": {
+    "production_deploy": false,
+    "production_migration": false,
+    "customer_migration": false,
+    "production_fixture_create": false,
+    "legacy_delete": false,
+    "v2_activation": false,
+    "merge": false
+  }
+}

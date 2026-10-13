@@ -1,0 +1,138 @@
+{
+  "scope": "Observations only, no causal GPU/renderer claim and no acceptance replacement",
+  "pairs": {
+    "pill-contact-en-portrait-768": {
+      "screen_changed_pixels": 0,
+      "webcontents_changed_pixels": 0,
+      "flutter_surface_changed_pixels": 0,
+      "geometry_equal": true,
+      "css_equal": true,
+      "inputs_equal": true,
+      "layers_equal": false
+    },
+    "pill-order-ku-portrait-768": {
+      "screen_changed_pixels": 1,
+      "webcontents_changed_pixels": 0,
+      "flutter_surface_changed_pixels": 1,
+      "geometry_equal": true,
+      "css_equal": true,
+      "inputs_equal": true,
+      "layers_equal": true
+    },
+    "pill-order-en-portrait-768": {
+      "screen_changed_pixels": 0,
+      "webcontents_changed_pixels": 0,
+      "flutter_surface_changed_pixels": 0,
+      "geometry_equal": true,
+      "css_equal": true,
+      "inputs_equal": true,
+      "layers_equal": true
+    },
+    "pill-mint-contact-ku-portrait-430": {
+      "screen_changed_pixels": 0,
+      "webcontents_changed_pixels": 0,
+      "flutter_surface_changed_pixels": 0,
+      "geometry_equal": true,
+      "css_equal": true,
+      "inputs_equal": true,
+      "layers_equal": false
+    },
+    "pill-mint-contact-ku-portrait-768": {
+      "screen_changed_pixels": 1,
+      "webcontents_changed_pixels": 0,
+      "flutter_surface_changed_pixels": 1,
+      "geometry_equal": true,
+      "css_equal": true,
+      "inputs_equal": true,
+      "layers_equal": true
+    },
+    "pill-mint-order-ku-portrait-320": {
+      "screen_changed_pixels": 0,
+      "webcontents_changed_pixels": 0,
+      "flutter_surface_changed_pixels": 0,
+      "geometry_equal": true,
+      "css_equal": true,
+      "inputs_equal": true,
+      "layers_equal": false
+    },
+    "pill-mint-order-ku-portrait-430": {
+      "screen_changed_pixels": 0,
+      "webcontents_changed_pixels": 0,
+      "flutter_surface_changed_pixels": 0,
+      "geometry_equal": true,
+      "css_equal": true,
+      "inputs_equal": true,
+      "layers_equal": false
+    },
+    "pill-mint-order-ku-portrait-768": {
+      "screen_changed_pixels": 1,
+      "webcontents_changed_pixels": 0,
+      "flutter_surface_changed_pixels": 1,
+      "geometry_equal": true,
+      "css_equal": true,
+      "inputs_equal": true,
+      "layers_equal": true
+    },
+    "pill-mint-order-en-portrait-430": {
+      "screen_changed_pixels": 0,
+      "webcontents_changed_pixels": 0,
+      "flutter_surface_changed_pixels": 0,
+      "geometry_equal": true,
+      "css_equal": true,
+      "inputs_equal": true,
+      "layers_equal": false
+    },
+    "pill-mint-order-en-portrait-768": {
+      "screen_changed_pixels": 1,
+      "webcontents_changed_pixels": 0,
+      "flutter_surface_changed_pixels": 1,
+      "geometry_equal": true,
+      "css_equal": true,
+      "inputs_equal": true,
+      "layers_equal": false
+    }
+  },
+  "reproductions": {
+    "pill-contact-en-portrait-768": {
+      "candidate_aa": 1,
+      "baseline_aa": 0,
+      "fresh_candidate_baseline": 1
+    },
+    "pill-order-ku-portrait-768": {
+      "candidate_aa": 1,
+      "baseline_aa": 0,
+      "fresh_candidate_baseline": 0
+    },
+    "pill-mint-contact-ku-portrait-768": {
+      "candidate_aa": 0,
+      "baseline_aa": 1,
+      "fresh_candidate_baseline": 0
+    },
+    "pill-mint-order-ku-portrait-320": {
+      "candidate_aa": 0,
+      "baseline_aa": 0,
+      "fresh_candidate_baseline": 0
+    },
+    "pill-mint-order-ku-portrait-430": {
+      "candidate_aa": 1,
+      "baseline_aa": 0,
+      "fresh_candidate_baseline": 1
+    },
+    "pill-mint-order-ku-portrait-768": {
+      "candidate_aa": 0,
+      "baseline_aa": 0,
+      "fresh_candidate_baseline": 1
+    },
+    "pill-mint-order-en-portrait-430": {
+      "candidate_aa": 1,
+      "baseline_aa": 0,
+      "fresh_candidate_baseline": 1
+    },
+    "pill-mint-order-en-portrait-768": {
+      "candidate_aa": 0,
+      "baseline_aa": 0,
+      "fresh_candidate_baseline": 1
+    }
+  },
+  "root_cause": "NOT PROVEN"
+}

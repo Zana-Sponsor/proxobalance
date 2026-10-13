@@ -1,0 +1,26 @@
+{
+  "environment": "Android 35 WebView versus Chromium 151.0.7922.34",
+  "animation_state": "fresh page; scroll zero; CSS animations paused at zero",
+  "cases": {
+    "dark-320": {
+      "width": 320,
+      "height": 1292,
+      "changed_pixels": 98402,
+      "total_pixels": 413440,
+      "changed_fraction": 0.2380079334365325,
+      "mean_channel_error": 1.5932775412796698,
+      "max_channel_error": 235,
+      "exact_pixels_equal": false
+    },
+    "dark-375": {
+      "width": 375,
+      "height": 1292,
+      "changed_pixels": 130364,
+      "total_pixels": 484500,
+      "changed_fraction": 0.2690691434468524,
+      "mean_channel_error": 2.085892672858617,
+      "max_channel_error": 242,
+      "exact_pixels_equal": false
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "name": "Proxo Balance",
+  "description": "Proxo Balance — Currency exchange platform for Kurdistan and Iraq supporting FastPay, FIB, Qi Card, NassWallet, Korek, and Asiacell.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

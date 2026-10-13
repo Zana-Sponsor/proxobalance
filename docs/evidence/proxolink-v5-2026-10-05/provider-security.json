@@ -1,0 +1,102 @@
+{
+  "private_bucket_public": false,
+  "internal_table_access": [
+    {
+      "name": "pa_ad_contact_links",
+      "rls": true,
+      "anon_select": false,
+      "anon_insert": false,
+      "anon_update": false,
+      "anon_delete": false,
+      "authenticated_select": false,
+      "authenticated_insert": false,
+      "authenticated_update": false,
+      "authenticated_delete": false
+    },
+    {
+      "name": "pa_contact_events",
+      "rls": true,
+      "anon_select": false,
+      "anon_insert": false,
+      "anon_update": false,
+      "anon_delete": false,
+      "authenticated_select": false,
+      "authenticated_insert": false,
+      "authenticated_update": false,
+      "authenticated_delete": false
+    },
+    {
+      "name": "proxolink_publish_attempts",
+      "rls": true,
+      "anon_select": false,
+      "anon_insert": false,
+      "anon_update": false,
+      "anon_delete": false,
+      "authenticated_select": false,
+      "authenticated_insert": false,
+      "authenticated_update": false,
+      "authenticated_delete": false
+    },
+    {
+      "name": "proxolink_templates",
+      "rls": true,
+      "anon_select": false,
+      "anon_insert": false,
+      "anon_update": false,
+      "anon_delete": false,
+      "authenticated_select": false,
+      "authenticated_insert": false,
+      "authenticated_update": false,
+      "authenticated_delete": false
+    }
+  ],
+  "legacy_html_authenticated_select": true,
+  "card_rls_enabled": true,
+  "atomic_issuance_rpc": [
+    {
+      "proname": "proxolink_issue_ad_link",
+      "anon_execute": false,
+      "authenticated_execute": false,
+      "service_execute": true
+    },
+    {
+      "proname": "proxolink_ad_summary",
+      "anon_execute": false,
+      "authenticated_execute": false,
+      "service_execute": true
+    }
+  ],
+  "advisor_categories": [
+    {
+      "name": "rls_enabled_no_policy",
+      "level": "INFO",
+      "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy"
+    },
+    {
+      "name": "function_search_path_mutable",
+      "level": "WARN",
+      "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0011_function_search_path_mutable"
+    },
+    {
+      "name": "extension_in_public",
+      "level": "WARN",
+      "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0014_extension_in_public"
+    },
+    {
+      "name": "anon_security_definer_function_executable",
+      "level": "WARN",
+      "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0028_anon_security_definer_function_executable"
+    },
+    {
+      "name": "authenticated_security_definer_function_executable",
+      "level": "WARN",
+      "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0029_authenticated_security_definer_function_executable"
+    },
+    {
+      "name": "auth_leaked_password_protection",
+      "level": "WARN",
+      "remediation": "https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection"
+    }
+  ],
+  "provider_configuration_modified": false
+}

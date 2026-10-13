@@ -1,0 +1,200 @@
+{
+  "status": "FAILED",
+  "established_failure": {
+    "stage": "native_case_collection",
+    "code": "native_pixel_parity_failed",
+    "timestamp": "2026-10-08T11:42:31.2475472Z",
+    "cause": "All required evidence and repeatability checks pass, but six FIRST candidate/baseline RGB comparisons have one changed pixel each, max channel delta 1."
+  },
+  "authentication_correction": {
+    "included_commit": "edcaa048289c9b5a4ee5e1e97f71035ca0731a91",
+    "observed": "All 240 cases completed; the former template_catalog HTTP 401 did not recur. Last JSON response was 200.",
+    "inference_limit": "The pinned renewal code is included. Exact expiry and renewal count are not retained, so no claim of specific renewal events is made."
+  },
+  "pixel_failure": {
+    "pairs_compared": 240,
+    "exact": 234,
+    "failed": 6,
+    "changed_pixels": 6,
+    "max_channel_error": 1,
+    "role_repeatability": "All 480 roles have exactly three identical predetermined samples; FIRST frames remain the comparison inputs.",
+    "underlying_cause": "UNKNOWN; no CSS/template/font/provider/product defect or compositor cause established by this evidence.",
+    "acceptance": "ZERO changed pixels for all 240 pairs; no tolerance, masking, frame search, averaging, adaptive pixel retry or missing-case allowance.",
+    "failed_cases": [
+      {
+        "case": "pill-contact-en-portrait-768",
+        "changed_pixels": 1,
+        "max_channel_error": 1,
+        "coordinate_space": "zero-based WebView crop",
+        "locations": [
+          {
+            "x": 380,
+            "y": 222,
+            "candidate_rgb": [
+              215,
+              221,
+              236
+            ],
+            "baseline_rgb": [
+              215,
+              222,
+              236
+            ],
+            "candidate_minus_baseline_rgb": [
+              0,
+              -1,
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "case": "pill-order-ku-portrait-768",
+        "changed_pixels": 1,
+        "max_channel_error": 1,
+        "coordinate_space": "zero-based WebView crop",
+        "locations": [
+          {
+            "x": 380,
+            "y": 222,
+            "candidate_rgb": [
+              220,
+              227,
+              240
+            ],
+            "baseline_rgb": [
+              220,
+              226,
+              240
+            ],
+            "candidate_minus_baseline_rgb": [
+              0,
+              1,
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "case": "pill-order-en-portrait-768",
+        "changed_pixels": 1,
+        "max_channel_error": 1,
+        "coordinate_space": "zero-based WebView crop",
+        "locations": [
+          {
+            "x": 380,
+            "y": 222,
+            "candidate_rgb": [
+              215,
+              222,
+              236
+            ],
+            "baseline_rgb": [
+              215,
+              221,
+              236
+            ],
+            "candidate_minus_baseline_rgb": [
+              0,
+              1,
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "case": "pill-mint-contact-ku-portrait-430",
+        "changed_pixels": 1,
+        "max_channel_error": 1,
+        "coordinate_space": "zero-based WebView crop",
+        "locations": [
+          {
+            "x": 282,
+            "y": 184,
+            "candidate_rgb": [
+              237,
+              247,
+              244
+            ],
+            "baseline_rgb": [
+              237,
+              247,
+              243
+            ],
+            "candidate_minus_baseline_rgb": [
+              0,
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "case": "pill-mint-order-ku-portrait-430",
+        "changed_pixels": 1,
+        "max_channel_error": 1,
+        "coordinate_space": "zero-based WebView crop",
+        "locations": [
+          {
+            "x": 282,
+            "y": 184,
+            "candidate_rgb": [
+              237,
+              247,
+              244
+            ],
+            "baseline_rgb": [
+              237,
+              247,
+              243
+            ],
+            "candidate_minus_baseline_rgb": [
+              0,
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "case": "pill-mint-order-en-portrait-768",
+        "changed_pixels": 1,
+        "max_channel_error": 1,
+        "coordinate_space": "zero-based WebView crop",
+        "locations": [
+          {
+            "x": 290,
+            "y": 228,
+            "candidate_rgb": [
+              234,
+              245,
+              241
+            ],
+            "baseline_rgb": [
+              234,
+              246,
+              241
+            ],
+            "candidate_minus_baseline_rgb": [
+              0,
+              -1,
+              0
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "collection": "Complete: 2160 valid PNG files, 240 metadata and pixel entries, 480 role acknowledgements; no required evidence missing.",
+  "product_or_harness_changes_after_native_testing": [],
+  "new_fixes_made": "None; an exact underlying pixel cause is not proven. Only safe evidence/report updates are justified.",
+  "native_chooser_coverage": {
+    "executed": 0,
+    "status": "NOT VERIFIED"
+  },
+  "remaining_blockers": [
+    "Six strict pixel pairs fail; their underlying cause is unknown.",
+    "Native thumbnail-to-large-WebView selection was not executed.",
+    "No further protected native execution is authorized by the one-run instruction."
+  ]
+}

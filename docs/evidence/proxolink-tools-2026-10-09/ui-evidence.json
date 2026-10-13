@@ -1,0 +1,417 @@
+{
+  "source_revision": "05757a3c2089f7eca1ce196051743dfd2c51052b",
+  "workflow_run": 37940785293,
+  "artifact_id": 11621113301,
+  "artifact_sha256": "e82b64ced0ff73f77974f4b5f11e2183bce73c430220ebd2e65bcc1ed8db1cee",
+  "fictional_fixture_only": true,
+  "native_evidence": false,
+  "home_note": "Actual shared ProxoRefresh integration-pattern fixture, not a complete HomeScreen runtime screenshot.",
+  "files": [
+    {
+      "path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-320.0.png",
+      "width": 320,
+      "height": 1200,
+      "bytes": 40310,
+      "sha256": "5756a386f782418a8634f251f69f5497cc94cde0c2d80a8a8c53b9dd313da4f3"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-393.0.png",
+      "width": 393,
+      "height": 1200,
+      "bytes": 42027,
+      "sha256": "c8955d06bd8041ffcc83690f3c9c7db3b90e0f3f810f251d72680a708360f08d"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-430.0.png",
+      "width": 430,
+      "height": 1200,
+      "bytes": 42333,
+      "sha256": "d903c19a7f21cd4462f46aa144644ad5da8d9d1838f094475606d72307afc248"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-768.0.png",
+      "width": 768,
+      "height": 1200,
+      "bytes": 47324,
+      "sha256": "cd02f871f594a0728205cff28538ce188c636847966f35e7ced75b7eac46cac8"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-bottom-contact-320.0.png",
+      "width": 320,
+      "height": 1200,
+      "bytes": 78881,
+      "sha256": "23e3af1725dc2f6315b666b26577949f79dfada5bf8e2b1822737d480ccd6f70"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-bottom-contact-393.0.png",
+      "width": 393,
+      "height": 1200,
+      "bytes": 138317,
+      "sha256": "078dbc594e6b7abc387b1e726c56b433d9e786d0ae49c602172152633b3a0e55"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-bottom-contact-430.0.png",
+      "width": 430,
+      "height": 1200,
+      "bytes": 133829,
+      "sha256": "17867473b37bbdd403d702c910f3eafc54adcdfb1e8d9b7740c1ff3ead933152"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-bottom-contact-768.0.png",
+      "width": 768,
+      "height": 1200,
+      "bytes": 142279,
+      "sha256": "ddd8c33f8e4d7a0f07c4dc3498c1fc2b8696f9b0d92d1af1ee2622ddcf1022ea"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-bottom-download-320.0.png",
+      "width": 320,
+      "height": 1200,
+      "bytes": 48509,
+      "sha256": "32fe5470710a3eac17d227216ec177fd94ba164b5ca303625327f2dca709f11b"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-bottom-download-393.0.png",
+      "width": 393,
+      "height": 1200,
+      "bytes": 108657,
+      "sha256": "933f6f850aaddd5ff2857423572010574a857134bafba238c78142d3146ba285"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-bottom-download-430.0.png",
+      "width": 430,
+      "height": 1200,
+      "bytes": 110189,
+      "sha256": "4bd66b9219a64c67f1da6981ea44d8e72ec319943b5ec8928d624ef682070cbb"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-bottom-download-768.0.png",
+      "width": 768,
+      "height": 1200,
+      "bytes": 110278,
+      "sha256": "2475e01ef54d8135f601c354efda697926eff9c3eacdcb9c084fa5b640db5eac"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-bottom-order-320.0.png",
+      "width": 320,
+      "height": 1200,
+      "bytes": 63737,
+      "sha256": "9e9e0010cf08fdd3e7d3d632f5d35cd9dd6ab7b80865e8ff3e38962da50c7bcc"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-bottom-order-393.0.png",
+      "width": 393,
+      "height": 1200,
+      "bytes": 121745,
+      "sha256": "82c7b5dce2d0e7fa3a506f008fe781930d9d9ff0e9fd95ca02013437fd90488f"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-bottom-order-430.0.png",
+      "width": 430,
+      "height": 1200,
+      "bytes": 123021,
+      "sha256": "ba1c502cc3d688a60cc807ca5c00555a11508aa8c9a65eca7720666cd2dbfa20"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-bottom-order-768.0.png",
+      "width": 768,
+      "height": 1200,
+      "bytes": 127289,
+      "sha256": "00f29ad17600bd72aa6f2ee5116b16b9b1ad1dc312fb826fbb9870ae0bd98ff3"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-contact-320.0.png",
+      "width": 320,
+      "height": 1200,
+      "bytes": 111518,
+      "sha256": "281a6b438d08cebe093c850dae2c513d8d3e18631105e31bf298481abc058969"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-contact-393.0.png",
+      "width": 393,
+      "height": 1200,
+      "bytes": 138317,
+      "sha256": "078dbc594e6b7abc387b1e726c56b433d9e786d0ae49c602172152633b3a0e55"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-contact-430.0.png",
+      "width": 430,
+      "height": 1200,
+      "bytes": 133829,
+      "sha256": "17867473b37bbdd403d702c910f3eafc54adcdfb1e8d9b7740c1ff3ead933152"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-contact-768.0.png",
+      "width": 768,
+      "height": 1200,
+      "bytes": 169164,
+      "sha256": "116d584d7d5d265f1bebc1df8f7770970753a62436d2d52527b43595706d8154"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-download-320.0.png",
+      "width": 320,
+      "height": 1200,
+      "bytes": 84519,
+      "sha256": "e71e0d9820e02beb35c90f82504f3da551e6fc920175624387a3637d0685abc4"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-download-393.0.png",
+      "width": 393,
+      "height": 1200,
+      "bytes": 108657,
+      "sha256": "933f6f850aaddd5ff2857423572010574a857134bafba238c78142d3146ba285"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-download-430.0.png",
+      "width": 430,
+      "height": 1200,
+      "bytes": 110189,
+      "sha256": "4bd66b9219a64c67f1da6981ea44d8e72ec319943b5ec8928d624ef682070cbb"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-download-768.0.png",
+      "width": 768,
+      "height": 1200,
+      "bytes": 137062,
+      "sha256": "6518b36b12a23df9ff107a0fb16489f03ee386418001366d67d0d173da369438"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-order-320.0.png",
+      "width": 320,
+      "height": 1200,
+      "bytes": 98125,
+      "sha256": "619cb88681d89496adf78a947bedd671b2496b690f00980d634f27c2a370e273"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-order-393.0.png",
+      "width": 393,
+      "height": 1200,
+      "bytes": 121745,
+      "sha256": "82c7b5dce2d0e7fa3a506f008fe781930d9d9ff0e9fd95ca02013437fd90488f"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-order-430.0.png",
+      "width": 430,
+      "height": 1200,
+      "bytes": 123021,
+      "sha256": "ba1c502cc3d688a60cc807ca5c00555a11508aa8c9a65eca7720666cd2dbfa20"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-2026-10-09/ui/create-style-order-768.0.png",
+      "width": 768,
+      "height": 1200,
+      "bytes": 154772,
+      "sha256": "5080d37dcca453c6c58063841ed26a5356836328f3882f72ed7c02a972ae8d0d"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-2026-10-09/ui/home-shared-refresh-100ms.png",
+      "width": 393,
+      "height": 1200,
+      "bytes": 5442,
+      "sha256": "c668cd42dbca3ccaf36514cfe6586ad106ba412f86a3d77e1cc699e1978e8145"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-2026-10-09/ui/home-shared-refresh-300ms.png",
+      "width": 393,
+      "height": 1200,
+      "bytes": 5503,
+      "sha256": "740ee1bcbd6ce3ce21e5e0668629c45bc0398036a07820f1aefd26369a0dfcca"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-2026-10-09/ui/home-shared-refresh-settled.png",
+      "width": 393,
+      "height": 1200,
+      "bytes": 4732,
+      "sha256": "2158e9022a43fb00b97b55bf6ad9e095fecc2c11bbf9c7e343fde1a16204ef2f"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-2026-10-09/ui/shared-create-ad-tools-error.png",
+      "width": 361,
+      "height": 141,
+      "bytes": 8627,
+      "sha256": "bf1bb7aa9beecf96baeaac80966b462385e7f72e7a4fbe251f44d758260564bf"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-2026-10-09/ui/thumbnails-contact.png",
+      "width": 321,
+      "height": 934,
+      "bytes": 129803,
+      "sha256": "b4c49075fc3bc2f60abafa8bc103d696fbf99c87abb65276318d9f45a96db726"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-2026-10-09/ui/thumbnails-download.png",
+      "width": 321,
+      "height": 934,
+      "bytes": 100196,
+      "sha256": "bd8026b60982f985acecb34c6f3398634706eaec66d5a5a6ae4ce28eb9d31889"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-2026-10-09/ui/thumbnails-order.png",
+      "width": 321,
+      "height": 934,
+      "bytes": 113931,
+      "sha256": "bf0b40961d16d649e56c54b353cbfc3b4b302c587f1723adab08cb85ddea43e0"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-320.0-status-1.png",
+      "width": 320,
+      "height": 1200,
+      "bytes": 62386,
+      "sha256": "df5d5f74fcb96a328ef5ce040e573e4d3a60b4e4c2262d4e012385fc637dd5d4"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-320.0-status-2.png",
+      "width": 320,
+      "height": 1200,
+      "bytes": 62386,
+      "sha256": "df5d5f74fcb96a328ef5ce040e573e4d3a60b4e4c2262d4e012385fc637dd5d4"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-320.0-status-3.png",
+      "width": 320,
+      "height": 1200,
+      "bytes": 62386,
+      "sha256": "df5d5f74fcb96a328ef5ce040e573e4d3a60b4e4c2262d4e012385fc637dd5d4"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-393.0-status-1.png",
+      "width": 393,
+      "height": 1200,
+      "bytes": 78534,
+      "sha256": "2939b7c39c60063a272b8feea1124387f8785570e9e8569fb6375c5548698ad1"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-393.0-status-2.png",
+      "width": 393,
+      "height": 1200,
+      "bytes": 78534,
+      "sha256": "2939b7c39c60063a272b8feea1124387f8785570e9e8569fb6375c5548698ad1"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-393.0-status-3.png",
+      "width": 393,
+      "height": 1200,
+      "bytes": 78534,
+      "sha256": "2939b7c39c60063a272b8feea1124387f8785570e9e8569fb6375c5548698ad1"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-430.0-status-1.png",
+      "width": 430,
+      "height": 1200,
+      "bytes": 79661,
+      "sha256": "f43ddf4132721a80b25340e5d073f7f1eaad496dd975c593152ba9145929cb2f"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-430.0-status-2.png",
+      "width": 430,
+      "height": 1200,
+      "bytes": 79661,
+      "sha256": "f43ddf4132721a80b25340e5d073f7f1eaad496dd975c593152ba9145929cb2f"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-430.0-status-3.png",
+      "width": 430,
+      "height": 1200,
+      "bytes": 79661,
+      "sha256": "f43ddf4132721a80b25340e5d073f7f1eaad496dd975c593152ba9145929cb2f"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-768.0-status-1.png",
+      "width": 768,
+      "height": 1200,
+      "bytes": 84678,
+      "sha256": "0b86e29c38fb28476ff0f18b2205b0996ce626444a91b61a5067f2e55acacfaa"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-768.0-status-2.png",
+      "width": 768,
+      "height": 1200,
+      "bytes": 84678,
+      "sha256": "0b86e29c38fb28476ff0f18b2205b0996ce626444a91b61a5067f2e55acacfaa"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-768.0-status-3.png",
+      "width": 768,
+      "height": 1200,
+      "bytes": 84678,
+      "sha256": "0b86e29c38fb28476ff0f18b2205b0996ce626444a91b61a5067f2e55acacfaa"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-empty-320.0.png",
+      "width": 320,
+      "height": 1200,
+      "bytes": 15404,
+      "sha256": "b4209f86c1eeb1f1615e22df0b58a5a96d3870e958664a4eb98fcc60134c9cd5"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-empty-393.0.png",
+      "width": 393,
+      "height": 1200,
+      "bytes": 15681,
+      "sha256": "3322e9151be7d764ce5661aedc39d9f9ea40da16520a8583bef04c67b06fa47e"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-empty-430.0.png",
+      "width": 430,
+      "height": 1200,
+      "bytes": 16084,
+      "sha256": "9137df9d5942502f3f0010856244cab775965dcf49fad96964aa7ebd80c7964a"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-empty-768.0.png",
+      "width": 768,
+      "height": 1200,
+      "bytes": 17653,
+      "sha256": "fe9030bb043a01c9290c1d33123f3331ad7b3630923c5e742cd518319c9b7b95"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-error-320.0.png",
+      "width": 320,
+      "height": 1200,
+      "bytes": 18014,
+      "sha256": "030e082f14c29949fb5a1fb40ba7fd7a515eef8011243877012a93bc61e9b94b"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-error-393.0.png",
+      "width": 393,
+      "height": 1200,
+      "bytes": 18238,
+      "sha256": "f017544012c5ea520724006d34091b9e794d6cf2e8bdc2b0bdf6e239b674c78a"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-error-430.0.png",
+      "width": 430,
+      "height": 1200,
+      "bytes": 18886,
+      "sha256": "f01c9b28c354d6494d8cb60c52863efb2a2888a34a6016761adfd792e5ccdde9"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-error-768.0.png",
+      "width": 768,
+      "height": 1200,
+      "bytes": 20852,
+      "sha256": "78c354589c6b2f2ffa959a23588b11ad4209a3910454d52a4ebba6af63ab7ac7"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-shared-refresh-100ms.png",
+      "width": 393,
+      "height": 1200,
+      "bytes": 20718,
+      "sha256": "81f9e926a6851092da7c7f2618e731e7ff8ef071761ecf7fab5c76fced8cc53f"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-shared-refresh-300ms.png",
+      "width": 393,
+      "height": 1200,
+      "bytes": 21879,
+      "sha256": "26037c9ababdb7d3172239ae0db073d1c10ec154837afb50cc91eb8d0b3ff40b"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-2026-10-09/ui/tools-shared-refresh-settled.png",
+      "width": 393,
+      "height": 1200,
+      "bytes": 20718,
+      "sha256": "81f9e926a6851092da7c7f2618e731e7ff8ef071761ecf7fab5c76fced8cc53f"
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "evidence_scope": "Widget fixture failures only; no causal finding about the four native pixel failures",
+  "historical_runs": [
+    {
+      "run_id": 37980595834,
+      "source": "78191074d99f3bdc91d4cc05cf3e441973ec1bf8",
+      "flutter_passed": 226,
+      "flutter_failed": 4,
+      "cause": "Actual Home notification bell also requires initialized Supabase singleton"
+    },
+    {
+      "run_id": 37981294709,
+      "source": "a280808e6fc88cbf71c032d9e54e67065899eb1b",
+      "flutter_passed": 222,
+      "flutter_failed": 1,
+      "cause": "PostgREST 2.9.1 response.request was absent; fixture initialization also needed SharedPreferences mock"
+    },
+    {
+      "run_id": 37981644723,
+      "source": "9a7b1c664acb4de928cf46a866a26a60f863d8ec",
+      "flutter_passed": 229,
+      "flutter_failed": 1,
+      "artifact_id": 11641520115,
+      "artifact_sha256": "715437db19180186c24f339c0be8c09b9364fb0205252a1180242d6598a2f1f0",
+      "cause": "First widget ticker timestamp was not established consistently before fixed phase clock advances"
+    },
+    {
+      "run_id": 37982356236,
+      "source": "0ff2a70676759b07942770c5641ae315fb286c69",
+      "flutter_passed": 230,
+      "artifact_id": 11642145900,
+      "artifact_sha256": "e4765266995a50974d09b72220df195287950780fcf2f8b6ad0b1a11d6a411c8",
+      "visual_review": "ProxoLink 400ms still showed zero-opacity entry despite two notice widgets; 4900ms showed both. Counts alone did not prove visible appearance."
+    }
+  ],
+  "controlled_fixture_changes": [
+    "Initialize fictional Supabase singleton and bound all HTTP/realtime requests to fixture transports",
+    "Attach original request to MockClient responses as required by actual SDK",
+    "Establish ticker timestamp with zero-time widget pumps",
+    "Await actual thumbnail image decoding before form-trigger captures",
+    "Advance notification timer/animation through deterministic 16ms widget frame intervals",
+    "Require actual opacity and size factors equal one at 400ms/4900ms and automatic removal by 5500ms"
+  ],
+  "product_renderer_changes": false,
+  "original_native_frames_comparator_tolerance_and_repeats_changed": false,
+  "native_four_pixel_cause_proven": false,
+  "final_verification": {
+    "run_id": 37983088739,
+    "source": "c830a683b6b70ee91f5aebc002b1b4b424d5ac4a",
+    "flutter_passed": 230,
+    "flutter_failed": 0,
+    "artifact_id": 11642445622,
+    "artifact_sha256": "a6d862373503fa5f722c6f99669f38b85a52311401fd9d10e58288a0802344c2",
+    "whole_artifact_pngs": 146,
+    "new_actual_screen_pngs": 80,
+    "notice_opacity_and_size_one_at_400_and_4900": true,
+    "notice_exit_at_5500": true,
+    "actual_home_tools_motion_matches": true,
+    "native_runtime_executed": false
+  }
+}

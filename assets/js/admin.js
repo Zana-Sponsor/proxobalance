@@ -1,0 +1,3339 @@
+// ── Original admin module 1 ──
+// ══════════════════════════════════════════════════════════════
+// ═══ CONFIG (same Exchange Supabase project + Firebase as exchange.html) ═
+// ══════════════════════════════════════════════════════════════
+const SB_URL='https://pycxuugoblkslvwebxuu.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB5Y3h1dWdvYmxrc2x2d2VieHV1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYyMTk3OTksImV4cCI6MjEwMTc5NTc5OX0.VRRwxnnuLs_WORuVUO3oX3CLxrPtgG_uewIJaGrzn_s';
+const firebaseConfig = { apiKey: "AIzaSyB056_g2Y3AJjtjG9715FgtXIhtjFcMPPU", authDomain: "zana-exchange.firebaseapp.com", databaseURL: "https://zana-exchange-default-rtdb.firebaseio.com", projectId: "zana-exchange" };
+firebase.initializeApp(firebaseConfig);
+const fbdb = firebase.database();
+
+const METHOD_META = {
+  FastPay:  { label:'FastPay',  color:'#7c3aed' },
+  FIB:      { label:'FIB Bank', color:'#0ea5a4' },
+  QiCard:   { label:'Qi Card',  color:'#2563eb' },
+  Asiacell: { label:'Asiacell', color:'#e11d48' },
+  Korek:    { label:'Korek',    color:'#f59e0b' },
+  USDT:     { label:'USDT ($)', color:'#26a17b' }
+};
+const ALL_METHODS = ['FastPay','FIB','QiCard','Asiacell','Korek','USDT'];
+const RECEIVE_METHODS = ['FastPay','FIB','QiCard'];
+const STATUS_PENDING='چاوەڕوانە', STATUS_APPROVED='پەسەندکرا', STATUS_REJECTED='ڕەتکرا';
+const STATUS_NEEDS_CORRECTION='پێویستی بە ڕاستکردنەوەیە', STATUS_CORRECTED='ڕاستکراوەتەوە';
+const REVIEWABLE_ORDER_STATUSES=new Set([STATUS_PENDING,STATUS_CORRECTED]);
+const CORRECTABLE_ORDER_STATUSES=new Set([STATUS_PENDING,STATUS_CORRECTED,STATUS_NEEDS_CORRECTION]);
+
+let sb, adminUser=null, adminName='ئادمین', adminRole='admin';
+let allOrders=[], allAccounts=[], allRates=[], allNotifs=[];
+let orderFilter='all', accFilter='all';
+let _notifTarget='all', _notifSelectedUser=null;
+let _profMap={};
+
+// Routes every security call straight to the is_ex_admin()-guarded RPCs that
+// actually exist in the database (ex_admin_*), instead of the /api/security-admin
+// endpoint, which was written against an older schema (security_check_request,
+// security_alerts, security_admins — none of which exist here).
+// The response shape is kept identical so no call site had to change.
+async function securityRequest(view, options={}){
+  const {data:{session}}=await sb.auth.getSession();
+  if(!session) throw new Error('تکایە دووبارە بچۆ ژوورەوە');
+
+  const q   = new URLSearchParams(options.query||'');
+  const num = (k,d)=>{ const v=parseInt(q.get(k),10); return Number.isFinite(v)?v:d; };
+  const call= async (fn,args)=>{
+    const {data,error}=await sb.rpc(fn,args);
+    if(error) throw new Error(error.message||'هەڵەی پەیوەندی بە سیستەمی ئاسایش');
+    return data;
+  };
+
+  if((options.method||'GET')==='GET'){
+    switch(view){
+      case 'dashboard': {
+        const limit=num('limit',200);
+        const [stats,bans,logs]=await Promise.all([
+          call('ex_admin_ip_stats',{}),
+          call('ex_admin_list_bans',{p_active_only:false,p_limit:limit}),
+          call('ex_admin_list_events',{p_limit:limit,p_ip:null,p_user_id:null,p_type:null})
+        ]);
+        return { stats:stats||{}, bans:bans||[], logs:logs||[] };
+      }
+      case 'alerts':
+        return { alerts: (await call('ex_admin_pending_alerts',{p_limit:num('limit',20)}))||[] };
+      case 'bans':
+        return { bans: (await call('ex_admin_list_bans',{p_active_only:false,p_limit:num('limit',200)}))||[] };
+      case 'account-ip-summary':
+        return { accounts: (await call('ex_admin_accounts_ip_summary',{}))||[] };
+      case 'user-ips':
+        return { ips: (await call('ex_admin_user_ips',{p_user_id:q.get('user_id'),p_limit:num('limit',50)}))||[] };
+      case 'ip-accounts':
+        return { accounts: (await call('ex_admin_ip_accounts',{p_ip:q.get('ip')}))||[] };
+      default:
+        throw new Error('داواکاری نەناسراو: '+view);
+    }
+  }
+
+  const b=options.body||{};
+  switch(b.action){
+    case 'ban':
+      return { id: await call('ex_admin_ban_ip',{
+        p_ip:b.ip, p_reason:b.reason||null,
+        p_hours:(b.hours===undefined?null:b.hours),
+        p_user_id:b.user_id||null, p_notes:b.notes||null }) };
+    case 'unban':
+      return { ok: await call('ex_admin_unban_ip',{p_id:b.id}) };
+    case 'extend':
+      return { ok: await call('ex_admin_extend_ban',{p_id:b.id,p_hours:(b.hours===undefined?null:b.hours)}) };
+    case 'resolve':
+      return { count: await call('ex_admin_resolve_alert',{
+        p_id:b.id, p_status:b.status||'dismissed', p_all_for_ip:!!b.all_for_ip }) };
+    case 'ban_from_alert':
+      return { id: await call('ex_admin_ban_from_alert',{
+        p_id:b.alert_id, p_hours:(b.hours===undefined?null:b.hours) }) };
+    default:
+      throw new Error('کرداری نەناسراو: '+(b.action||''));
+  }
+}
+
+async function adminApiRequest(action, payload={}){
+  const {data:{session}}=await sb.auth.getSession();
+  if(!session) throw new Error('تکایە دووبارە بچۆ ژوورەوە');
+  const response=await fetch('/api/admin',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','Authorization':'Bearer '+session.access_token},
+    body:JSON.stringify({action,payload})
+  });
+  let body={};
+  try{ body=await response.json(); }catch(_){}
+  if(!response.ok || !body.ok) throw new Error(body.error||'هەڵەی پەیوەندی بە سێرڤەر');
+  return body.data;
+}
+
+// ══════════════════════════════════════════════════════════════
+// ═══ SIDEBAR ═════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════
+function openSidebar(){ document.getElementById('sidebar').classList.add('show'); document.getElementById('sidebarOverlay').classList.add('show'); }
+function closeSidebar(){ document.getElementById('sidebar').classList.remove('show'); document.getElementById('sidebarOverlay').classList.remove('show'); }
+
+// ══════════════════════════════════════════════════════════════
+// ═══ INIT ════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', ()=>{
+  sb = window.supabase.createClient(SB_URL, SB_KEY, { auth:{ persistSession:true, autoRefreshToken:true, storageKey:'zex_admin_sb_session' } });
+  updateClock(); setInterval(updateClock, 60000);
+  sb.auth.getSession().then(async ({data:{session}})=>{
+    if(session?.user){
+      adminUser = session.user;
+      const ok = await verifyAdmin(adminUser.id, adminUser.email);
+      if(ok) showApp(); else { await sb.auth.signOut(); }
+    }
+  });
+  document.querySelectorAll('.overlay').forEach(o=>{
+    o.addEventListener('click', e=>{ if(e.target===o) closeMo(o.id); });
+  });
+});
+
+function updateClock(){ document.getElementById('currentTime').textContent = new Date().toLocaleTimeString('ku',{hour:'2-digit',minute:'2-digit'}); }
+
+// ══════════════════════════════════════════════════════════════
+// ═══ AUTH ════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════
+async function verifyAdmin(uid, email){
+  // Admin rights live in ex_profiles.is_admin — the same column the panel's
+  // "کردن بە ئادمین" button writes and the database's is_ex_admin() RLS
+  // helper reads. (The old security_admins table does not exist.)
+  try{
+    const {data:prof, error} = await sb
+      .from('ex_profiles')
+      .select('full_name,email,is_admin,is_banned,role,username')
+      .eq('id', uid)
+      .maybeSingle();
+    if(error || !prof || !prof.is_admin || prof.is_banned) return false;
+    adminName = prof.full_name || email.split('@')[0];
+    adminRole = prof.role || 'admin';
+    return true;
+  }catch(e){ return false; }
+}
+
+async function doLogin(){
+  const email=document.getElementById('loginEmail').value.trim();
+  const pass=document.getElementById('loginPass').value;
+  const btn=document.getElementById('loginBtn');
+  if(!email||!pass){ showAuthErr('ئیمەیل و پاسۆرد پڕ بکەرەوە'); return; }
+  btn.disabled=true; btn.innerHTML='<i class="fas fa-circle-notch fa-spin"></i>';
+  try{
+    const {data,error} = await sb.auth.signInWithPassword({email,password:pass});
+    if(error){ showAuthErr('ئیمەیل یان پاسۆرد هەڵەیە'); return; }
+    adminUser = data.user;
+    const ok = await verifyAdmin(adminUser.id, adminUser.email);
+    if(!ok){
+      await sb.auth.signOut();
+      showAuthErr('تۆ مافی دەستگەیشتن بە پانێڵی ئادمین نییەت');
+      return;
+    }
+    document.getElementById('authErr').style.display='none';
+    showApp();
+  }catch(e){
+    showAuthErr('هەڵەی پەیوەندی: '+e.message);
+  }finally{
+    btn.disabled=false; btn.innerHTML='<i class="fas fa-arrow-left"></i> چوونەژوورەوە';
+  }
+}
+function showAuthErr(msg){
+  const el=document.getElementById('authErr');
+  el.textContent=msg; el.style.display='block';
+}
+async function doLogout(){
+  try{ await sb.auth.signOut(); }catch(_){}
+  location.reload();
+}
+function showApp(){
+  document.getElementById('authWrap').style.display='none';
+  document.getElementById('main').classList.add('show');
+  document.getElementById('sbAv').textContent = (adminName||'A')[0].toUpperCase();
+  document.getElementById('sbAdminName').textContent = adminName;
+  const roleEl=document.getElementById('sbAdminRole');
+  if(roleEl) roleEl.textContent = isSuperAdmin() ? 'Super Admin' : 'Admin';
+  recordAdminVisit();
+  goPage('dashboard');
+  subscribeOrdersAdmin();
+  subscribeAlerts();
+  startErrorLogMonitor();
+  startSupportCaseMonitor();
+  startKycMonitor();
+}
+function isSuperAdmin(){ return adminRole==='super_admin'; }
+
+// The admin page does not load the public assets/js/track.js file. Record its
+// authenticated visit here so administrator accounts also get an IP history.
+async function recordAdminVisit(){
+  try{
+    const {data:{session}}=await sb.auth.getSession();
+    if(!session) return;
+    await fetch('/api/track', {
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'Authorization':'Bearer '+session.access_token
+      },
+      body:JSON.stringify({type:'admin_login',detail:location.pathname}),
+      keepalive:true
+    });
+  }catch(_){ /* telemetry must never break the admin panel */ }
+}
+
+// ══════════════════════════════════════════════════════════════
+// ═══ PAGE ROUTING ════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════
+const pageConfig = {
+  dashboard:{ title:'داشبۆرد', sub:'دیمەنی گشتی سیستەم', load: ()=>loadDashboard() },
+  orders:{ title:'ئۆردەرەکان', sub:'پەسەندکردن و ڕەتکردنەوەی داواکارییە گۆڕینەوەکان', load: ()=>loadOrders() },
+  accounts:{ title:'هەژمارەکان', sub:'بەڕێوەبردنی هەژمارەکانی بەکارهێنەران', load: ()=>loadAccounts() },
+  kyc:{ title:'پشتڕاستکردنەوەی ناسنامە', sub:'داواکردن، پشکنین و پەسەندکردنی بەڵگەنامەی ناسنامە', load: ()=>loadKycAdmin() },
+  wallets:{ title:'واڵێتەکان', sub:'زیادکردن، قوفڵکردن و دەستکاریکردنی واڵێتەکانی وەرگرتنی پارە', load: ()=>loadWalletsAdmin() },
+  rewards:{ title:'پاداشت و داشکاندن', sub:'داشکاندنی لێبڕین و مامەڵەی بێ لێبڕین بۆ بەکارهێنەری دیاریکراو', load: ()=>loadRewardsPanel() },
+  balance:{title:'ڕیفاوند و باڵانس',sub:'گەڕاندنەوەی پارە، داواکاری ناردن و چاودێریی دارایی',load:()=>loadBalanceAdmin()},
+  rates:{ title:'نرخ و کرێ', sub:'ڕێکخستنی نرخی گۆڕینەوە و کرێی هەر ڕێگایەک', load: ()=>loadRates() },
+  notifications:{ title:'ئاگادارییەکان', sub:'ناردنی ئاگاداری و بینینی مێژوو', load: ()=>loadNotifPage() },
+  cases:{ title:'کەیسەکانی کڕیار', sub:'وێنە، وردەکاری و چارەسەرکردنی کێشەکانی کڕیار', load: ()=>loadSupportCasesAdmin() },
+  announcement:{ title:'بانەری ئاگاداری', sub:'ئاگاداری گشتی سەرەوەی ئەپەکە', load: ()=>loadAnnouncement() },
+  otp:{ title:'کۆدەکانی OTP', sub:'بینین و بەڕێوەبردنی کۆدەکانی دڵنیاکردنەوە', load: ()=>loadOtp() },
+  security:{ title:'ئاسایش و IP', sub:'ڕووداوە گومانلێکراوەکان و بلۆککردنی نهێنی (404)', load: ()=>loadSecurity() },
+  errors:{ title:'لۆگی هەڵەکان', sub:'هەڵەکانی ماڵپەڕی بەکارهێنەر و سێرڤەر', load: ()=>loadErrorLogs() },
+};
+let _curPage='dashboard';
+function goPage(p){
+  _curPage=p;
+  document.querySelectorAll('.pg').forEach(x=>x.classList.remove('on'));
+  document.querySelectorAll('.sb-item').forEach(x=>x.classList.remove('active'));
+  const pg=document.getElementById('pg'+p.charAt(0).toUpperCase()+p.slice(1));
+  if(pg) pg.classList.add('on');
+  const sbItem=document.querySelector(`.sb-item[onclick="goPage('${p}')"]`);
+  if(sbItem) sbItem.classList.add('active');
+  const cfg=pageConfig[p];
+  if(cfg){
+    document.getElementById('pageTitle').textContent=cfg.title;
+    document.getElementById('pageSubtitle').textContent=cfg.sub;
+    if(cfg.load) cfg.load();
+  }
+  closeSidebar();
+}
+
+// ══════════════════════════════════════════════════════════════
+// ═══ CUSTOMER SUPPORT CASES ═══════════════════════════════════
+// Cases and private image URLs are served through /api/admin. The browser
+// never receives the service-role key and signed image URLs expire quickly.
+// ══════════════════════════════════════════════════════════════
+let _supportCasesAdmin=[];
+let _supportCaseFilter='unresolved';
+let _supportCasePoll=null;
+let _lastSupportCaseCount=null;
+
+function supportCaseNumber(row){
+  const value=Number(row?.case_number);
+  return Number.isInteger(value) ? String(value).padStart(6,'0') : '—';
+}
+function supportCaseStatusLabel(status){
+  return status==='open'?'نوێ':status==='in_progress'?'لەژێر پشکنینە':status==='resolved'?'چارەسەرکرا':'داخراوە';
+}
+function supportCaseStatusClass(status){
+  return status==='resolved'?'approved':status==='closed'?'rejected':status==='in_progress'?'pending':'order_status';
+}
+function supportCaseCategoryLabel(category){
+  return category==='order'?'کێشەی داواکاری':category==='payment'?'کێشەی پارەدان':category==='account'?'کێشەی هەژمار':category==='technical'?'کێشەی تەکنیکی':'کێشەی تر';
+}
+
+async function loadSupportCaseSummary(notify=true){
+  try{
+    const stats=await adminApiRequest('support_case_summary');
+    const unresolved=Number(stats?.unresolved||0);
+    const badge=document.getElementById('sbCaseCount');
+    if(badge){
+      badge.textContent=unresolved>99?'99+':String(unresolved);
+      badge.style.display=unresolved?'inline-flex':'none';
+    }
+    const set=(id,value)=>{ const el=document.getElementById(id); if(el) el.textContent=formatNum(value||0); };
+    set('caseOpenCount',stats?.open);
+    set('caseProgressCount',stats?.in_progress);
+    set('caseResolvedCount',stats?.resolved);
+    set('caseTodayCount',stats?.today);
+    if(notify && unresolved>0 && (_lastSupportCaseCount===null || unresolved>_lastSupportCaseCount)){
+      const added=_lastSupportCaseCount===null?unresolved:unresolved-_lastSupportCaseCount;
+      showToast(added+' کەیسی نوێی کڕیار هەیە','bl');
+    }
+    _lastSupportCaseCount=unresolved;
+    return stats;
+  }catch(_){ return null; }
+}
+
+function startSupportCaseMonitor(){
+  loadSupportCaseSummary(true);
+  clearInterval(_supportCasePoll);
+  _supportCasePoll=setInterval(()=>{
+    if(document.visibilityState==='visible') loadSupportCaseSummary(true);
+  },30000);
+}
+
+async function loadSupportCasesAdmin(){
+  const wrap=document.getElementById('supportCasesAdminWrap');
+  if(wrap) wrap.innerHTML='<div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>';
+  try{
+    const [rows]=await Promise.all([
+      adminApiRequest('list_support_cases',{status:_supportCaseFilter,limit:300}),
+      loadSupportCaseSummary(false)
+    ]);
+    _supportCasesAdmin=Array.isArray(rows)?rows:[];
+    renderSupportCasesAdmin();
+  }catch(e){
+    if(wrap) wrap.innerHTML='<div class="empty"><i class="fas fa-triangle-exclamation"></i><p>هەڵە: '+esc(e.message)+'</p></div>';
+  }
+}
+
+function setSupportCaseFilter(filter,el){
+  _supportCaseFilter=filter;
+  document.querySelectorAll('[data-casef]').forEach(x=>x.classList.remove('on'));
+  if(el) el.classList.add('on');
+  loadSupportCasesAdmin();
+}
+
+function renderSupportCasesAdmin(){
+  const wrap=document.getElementById('supportCasesAdminWrap');
+  if(!wrap) return;
+  const search=(document.getElementById('caseAdminSearch')?.value||'').trim().toLowerCase();
+  const rows=_supportCasesAdmin.filter(row=>{
+    if(!search) return true;
+    return [supportCaseNumber(row),row.profile?.full_name,row.profile?.email,row.profile?.phone,row.order_code,row.description,row.admin_note]
+      .some(value=>String(value||'').toLowerCase().includes(search));
+  });
+  if(!rows.length){
+    wrap.innerHTML='<div class="empty"><i class="fas fa-headset"></i><p>هیچ کەیسێک نییە</p></div>';
+    return;
+  }
+
+  wrap.innerHTML='<div class="support-admin-list">'+rows.map(row=>{
+    const id=String(row.id||'');
+    const profile=row.profile||{};
+    return `<article class="support-admin-card ${esc(row.status)}">
+      <div class="support-admin-head">
+        <div><b class="support-case-number">${esc(supportCaseNumber(row))}</b><small>${esc(fmtDateTime(row.created_at))}</small></div>
+        <span class="badge ${supportCaseStatusClass(row.status)}">${esc(supportCaseStatusLabel(row.status))}</span>
+      </div>
+      <div class="support-admin-facts">
+        <span><i class="fas fa-user"></i><b>${esc(profile.full_name||'بێ ناو')}</b><small>${esc(profile.email||'—')}</small></span>
+        <span><i class="fas fa-phone"></i><b dir="ltr">${esc(profile.phone||'—')}</b><small>${esc(supportCaseCategoryLabel(row.category))}</small></span>
+        ${row.order_code?`<span><i class="fas fa-receipt"></i><b dir="ltr">${esc(row.order_code)}</b><small>ئایدی مامەڵە</small></span>`:''}
+      </div>
+      <div class="support-admin-description">${esc(row.description)}</div>
+      ${row.image_url?`<button type="button" class="support-image-btn" onclick='showImg(${safeAttr(row.image_url)})'><i class="fas fa-image"></i> بینینی وێنەی کێشە</button>`:''}
+      <div class="support-admin-controls">
+        <label><span>دۆخی کەیس</span><select class="minp" id="caseStatus-${esc(id)}">
+          <option value="open" ${row.status==='open'?'selected':''}>نوێ</option>
+          <option value="in_progress" ${row.status==='in_progress'?'selected':''}>لەژێر پشکنینە</option>
+          <option value="resolved" ${row.status==='resolved'?'selected':''}>چارەسەرکرا</option>
+          <option value="closed" ${row.status==='closed'?'selected':''}>داخراوە</option>
+        </select></label>
+        <label class="support-note-field"><span>وەڵام/تێبینی بۆ کڕیار</span><textarea class="minp mta" id="caseNote-${esc(id)}" maxlength="2000" placeholder="چارەسەر یان زانیاری پێویست بۆ کڕیار بنووسە...">${esc(row.admin_note||'')}</textarea></label>
+        <div class="support-admin-actions">
+          <button type="button" class="modal-btn cy support-save-btn" id="caseSave-${esc(id)}" onclick="saveSupportCaseAdmin('${esc(id)}')"><i class="fas fa-check"></i> پاشەکەوت و ئاگادارکردنەوەی کڕیار</button>
+        </div>
+      </div>
+    </article>`;
+  }).join('')+'</div>';
+}
+
+async function saveSupportCaseAdmin(id){
+  const statusEl=document.getElementById('caseStatus-'+id);
+  const status=statusEl?.value;
+  const adminNote=document.getElementById('caseNote-'+id)?.value||'';
+  const btn=document.getElementById('caseSave-'+id);
+  if(btn){ btn.disabled=true; btn.innerHTML='<i class="fas fa-circle-notch fa-spin"></i> پاشەکەوتکردن...'; }
+  try{
+    const updated=await adminApiRequest('update_support_case',{id,status,admin_note:adminNote});
+    showToast(updated?.notification_sent
+        ? 'کەیسەکە نوێکرایەوە و کڕیار ئاگادارکرایەوە'
+      : 'کەیسەکە نوێکرایەوە','gr');
+    await loadSupportCasesAdmin();
+  }catch(e){
+    showToast(e.message||'نەتوانرا کەیسەکە نوێ بکرێتەوە','rd');
+    if(btn){ btn.disabled=false; btn.innerHTML='<i class="fas fa-check"></i> پاشەکەوت و ئاگادارکردنەوەی کڕیار'; }
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+// ═══ APPLICATION ERROR LOGS ═══════════════════════════════════
+// Data is read through /api/admin; the service-role-only table is never
+// exposed directly to the browser.
+// ══════════════════════════════════════════════════════════════
+let _errorLogs=[];
+let _errorFilter='unresolved';
+let _errorPoll=null;
+let _lastErrorCount=null;
+
+function errorSourceLabel(source){ return source==='server'?'سێرڤەر':'ماڵپەڕی بەکارهێنەر'; }
+function errorSeverityLabel(severity){ return severity==='critical'?'گرنگ':severity==='warning'?'ئاگاداری':'هەڵە'; }
+function errorWhen(value){ return value?new Date(value).toLocaleString('ku-IQ'):'—'; }
+function errorMetaText(meta){
+  if(!meta || typeof meta!=='object') return '—';
+  const parts=[];
+  if(meta.stage) parts.push('قۆناغ: '+meta.stage);
+  if(meta.from_method || meta.to_method) parts.push((meta.from_method||'—')+' ← '+(meta.to_method||'—'));
+  if(meta.online===false) parts.push('ئۆفلاین');
+  return parts.length?parts.join(' · '):'—';
+}
+
+async function loadErrorLogSummary(notify=true){
+  try{
+    const stats=await adminApiRequest('error_log_summary');
+    const unresolved=Number(stats?.unresolved||0);
+    const badge=document.getElementById('sbErrorCount');
+    if(badge){
+      badge.textContent=unresolved>99?'99+':unresolved;
+      badge.style.display=unresolved?'inline-flex':'none';
+    }
+    const set=(id,value)=>{ const el=document.getElementById(id); if(el) el.textContent=formatNum(value||0); };
+    set('errUnresolved',unresolved); set('errLast24h',stats?.last_24h); set('errCritical',stats?.critical);
+    if(notify && unresolved>0 && (_lastErrorCount===null || unresolved>_lastErrorCount)){
+      const added=_lastErrorCount===null?unresolved:unresolved-_lastErrorCount;
+      showToast(added+' لۆگی هەڵەی نوێ هەیە','rd');
+    }
+    _lastErrorCount=unresolved;
+    return stats;
+  }catch(_){ return null; }
+}
+
+function startErrorLogMonitor(){
+  loadErrorLogSummary(true);
+  clearInterval(_errorPoll);
+  _errorPoll=setInterval(()=>{
+    if(document.visibilityState==='visible') loadErrorLogSummary(true);
+  },30000);
+}
+
+async function loadErrorLogs(){
+  const wrap=document.getElementById('errorLogsWrap');
+  if(wrap) wrap.innerHTML='<div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>';
+  try{
+    const [logs]=await Promise.all([
+      adminApiRequest('list_error_logs',{status:_errorFilter,limit:300}),
+      loadErrorLogSummary(false)
+    ]);
+    _errorLogs=Array.isArray(logs)?logs:[];
+    renderErrorLogs();
+  }catch(e){
+    if(wrap) wrap.innerHTML='<div class="empty"><i class="fas fa-triangle-exclamation"></i><p>هەڵە: '+esc(e.message)+'</p></div>';
+  }
+}
+
+function setErrorLogFilter(filter,el){
+  _errorFilter=filter;
+  document.querySelectorAll('[data-errf]').forEach(x=>x.classList.remove('on'));
+  if(el) el.classList.add('on');
+  loadErrorLogs();
+}
+
+function renderErrorLogs(){
+  const wrap=document.getElementById('errorLogsWrap');
+  if(!wrap) return;
+  const search=(document.getElementById('errorSearch')?.value||'').trim().toLowerCase();
+  const rows=_errorLogs.filter(row=>{
+    if(!search) return true;
+    return [row.message,row.error_code,row.operation,row.user_email,row.ip_address,row.path,row.browser,row.os]
+      .some(value=>String(value||'').toLowerCase().includes(search));
+  });
+  if(!rows.length){
+    wrap.innerHTML='<div class="empty"><i class="fas fa-circle-check"></i><p>هیچ لۆگێک نییە</p></div>';
+    return;
+  }
+
+  const table=`<table class="data-table error-log-table"><thead><tr>
+    <th>کات / سەرچاوە</th><th>هەڵە</th><th>بەکارهێنەر / IP</th><th>ئامێر</th><th>دۆخ</th><th></th>
+  </tr></thead><tbody>${rows.map(row=>`<tr>
+    <td><b>${esc(errorWhen(row.last_seen))}</b><small>${esc(errorSourceLabel(row.source))}</small></td>
+    <td class="error-message-cell"><b>${esc(row.message)}</b><small>${esc(row.operation)}${row.error_code?' · '+esc(row.error_code):''}${row.http_status?' · HTTP '+esc(row.http_status):''}</small><small>${esc(errorMetaText(row.metadata))}</small></td>
+    <td><b>${esc(row.user_email||'بێ هەژمار')}</b><small class="mono-ltr">${esc(row.ip_address||'—')}</small></td>
+    <td><b>${esc(row.browser||'—')}</b><small>${esc(row.os||'—')} · ${esc(row.device||'—')}</small></td>
+    <td><span class="badge ${row.resolved_at?'approved':row.severity==='critical'?'banned':'rejected'}">${row.resolved_at?'چارەسەرکرا':esc(errorSeverityLabel(row.severity))}</span><small>${formatNum(row.occurrences||1)} جار</small></td>
+    <td>${row.resolved_at?'':`<button class="mini-action success" onclick="resolveErrorLog('${esc(row.id)}')"><i class="fas fa-check"></i> چارەسەرکرا</button>`}</td>
+  </tr>`).join('')}</tbody></table>`;
+
+  const cards=`<div class="error-log-cards">${rows.map(row=>`<article class="error-log-card ${row.resolved_at?'resolved':row.severity==='critical'?'critical':''}">
+    <div class="error-log-card-head"><span class="badge ${row.resolved_at?'approved':row.severity==='critical'?'banned':'rejected'}">${row.resolved_at?'چارەسەرکرا':esc(errorSeverityLabel(row.severity))}</span><time>${esc(errorWhen(row.last_seen))}</time></div>
+    <h4>${esc(row.message)}</h4>
+    <div class="error-log-code">${esc(row.operation)}${row.error_code?' · '+esc(row.error_code):''}${row.http_status?' · HTTP '+esc(row.http_status):''}</div>
+    <div class="error-log-facts">
+      <span><i class="fas fa-globe"></i>${esc(errorSourceLabel(row.source))}</span>
+      <span><i class="fas fa-user"></i>${esc(row.user_email||'بێ هەژمار')}</span>
+      <span class="mono-ltr"><i class="fas fa-network-wired"></i>${esc(row.ip_address||'—')}</span>
+      <span><i class="fas fa-display"></i>${esc(row.browser||'—')} · ${esc(row.os||'—')}</span>
+      <span><i class="fas fa-layer-group"></i>${esc(errorMetaText(row.metadata))}</span>
+      <span><i class="fas fa-rotate"></i>${formatNum(row.occurrences||1)} جار</span>
+    </div>
+    ${row.resolved_at?'':`<button class="alert-btn safe" onclick="resolveErrorLog('${esc(row.id)}')"><i class="fas fa-check"></i> دیاریکردن وەک چارەسەرکراو</button>`}
+  </article>`).join('')}</div>`;
+  wrap.innerHTML=table+cards;
+}
+
+async function resolveErrorLog(id){
+  try{
+    await adminApiRequest('resolve_error_log',{id});
+    showToast('لۆگەکە وەک چارەسەرکراو دیاری کرا','gr');
+    await loadErrorLogs();
+  }catch(e){ showToast(e.message||'هەڵە','rd'); }
+}
+
+function resolveAllErrorLogs(){
+  if(!_lastErrorCount) return showToast('هیچ لۆگێکی چارەسەرنەکراو نییە','gr');
+  confirm2('هەموو لۆگەکان چارەسەر کراون؟','هەموو لۆگە چارەسەرنەکراوەکان دەخرێنە دۆخی چارەسەرکراو.','fas fa-check-double','#16a34a',async()=>{
+    try{
+      const result=await adminApiRequest('resolve_all_error_logs');
+      showToast(formatNum(result?.resolved||0)+' لۆگ چارەسەرکرا','gr');
+      await loadErrorLogs();
+    }catch(e){ showToast(e.message||'هەڵە','rd'); }
+  });
+}
+
+
+
+// ══════════════════════════════════════════════════════════════
+// ═══ SPAM & SUSPICIOUS ACTIVITY ALERTS ════════════════════════
+// Rows arrive two ways: a Realtime stream from suspicious_events (protected
+// by the security-admin RLS policy) and a 30s API poll as a socket fallback.
+// All mutations stay on the server and use the service role there only.
+// ══════════════════════════════════════════════════════════════
+let _alerts = [], _alertChannel = null, _alertPoll = null;
+
+const ALERT_TITLE = {
+  suspicious_flooding:'ناردنی زۆری داواکاری لە کاتێکی کورتدا',
+  order_flood:   'ناردنی زۆری داواکاری لە کاتێکی کورتدا',
+  number_spray:  'پەخشکردنی ژمارەی جیاواز',
+  honeypot:      'داوی Honeypot — بۆتێک دۆزرایەوە',
+  receipt_probe: 'بەکارهێنانی دووبارەی پسووڵە',
+  rapid_submit:  'ناردنی خێراتر لە تواناى مرۆڤ',
+  otp_bruteforce:'هەوڵی دووبارەی کۆدی OTP',
+  devtools_tamper:'دەستکاریکردنی کلاینت'
+};
+const ALERT_ICON = {
+  suspicious_flooding:'fa-gauge-high',
+  order_flood:'fa-gauge-high', number_spray:'fa-shuffle', honeypot:'fa-robot',
+  receipt_probe:'fa-clone', rapid_submit:'fa-bolt', otp_bruteforce:'fa-key',
+  devtools_tamper:'fa-screwdriver-wrench'
+};
+
+function alertAgo(t){
+  const s=Math.max(1,Math.floor((Date.now()-new Date(t))/1000));
+  if(s<60) return s+' چرکە لەمەوپێش';
+  const m=Math.floor(s/60); if(m<60) return m+' خولەک لەمەوپێش';
+  const h=Math.floor(m/60); if(h<24) return h+' کاتژمێر لەمەوپێش';
+  return new Date(t).toLocaleString('ku-IQ');
+}
+
+async function loadAlerts(){
+  try{
+    const payload=await securityRequest('alerts',{query:'&limit=20'});
+    _alerts=payload.alerts||[];
+    renderAlerts();
+  }catch(e){ /* the dashboard must still render without alerts */ }
+}
+
+function renderAlerts(){
+  const zone=document.getElementById('alertZone');
+  const list=document.getElementById('alertList');
+  if(!zone||!list) return;
+
+  if(!_alerts.length){ zone.classList.remove('show'); return; }
+  zone.classList.add('show');
+  document.getElementById('alertCount').textContent=_alerts.length;
+
+  const sbBadge=document.getElementById('sbAlertCount');
+  if(sbBadge){ sbBadge.style.display='inline-block'; sbBadge.textContent=_alerts.length; }
+
+  list.innerHTML=_alerts.map(a=>{
+    const sev = a.risk_score>=60 ? 'sev-high' : (a.risk_score>=40 ? '' : 'sev-med');
+    const m   = a.meta||{};
+    // "Submitted 4 orders in 75 seconds" — the metric that justifies the alert
+    const metric = ['order_flood','suspicious_flooding'].includes(a.event_type) && m.orders
+        ? `${m.orders} داواکاری لە ${m.seconds} چرکەدا`
+        : (a.event_type==='number_spray' && m.distinct_phones
+            ? `${m.distinct_phones} ژمارەی جیاواز لە ${m.orders_30m} داواکاریدا`
+            : (a.detail||''));
+
+    return `<div class="alert-card ${sev}" id="alert_${a.id}">
+      <div class="alert-top">
+        <div class="alert-ico"><i class="fas ${ALERT_ICON[a.event_type]||'fa-triangle-exclamation'}"></i></div>
+        <div style="flex:1;min-width:0">
+          <div class="alert-title">${esc(ALERT_TITLE[a.event_type]||a.event_type)}</div>
+          ${metric?`<div class="alert-metric"><i class="fas fa-chart-line" style="margin-left:5px"></i>${esc(metric)}</div>`:''}
+        </div>
+        <div class="alert-time">${alertAgo(a.created_at)}</div>
+      </div>
+
+      <div class="alert-grid">
+        <div class="alert-fact">
+          <div class="k"><i class="fas fa-user"></i> هەژمار</div>
+          <div class="v">${a.account_name?esc(a.account_name):'<span style="color:#6b7280">مێوان (نەچووەتە ژوورەوە)</span>'}</div>
+          ${a.account_email?`<div class="sub">${esc(a.account_email)}</div>`:''}
+        </div>
+        <div class="alert-fact">
+          <div class="k"><i class="fas fa-network-wired"></i> IP</div>
+          <div class="v mono">${esc(a.ip_address||'—')}</div>
+          ${a.ip_is_banned?'<div class="sub" style="color:#dc2626">بلۆککراوە</div>':''}
+        </div>
+        <div class="alert-fact">
+          <div class="k"><i class="fas fa-desktop"></i> وێبگەڕ و ئامێر</div>
+          <div class="v">${esc(a.browser||'—')}</div>
+          <div class="sub">${esc(a.os||'—')} · ${esc(a.device||'—')}</div>
+        </div>
+        <div class="alert-fact">
+          <div class="k"><i class="fas fa-gauge"></i> خاڵی مەترسی</div>
+          <div class="v">${a.risk_score||0}</div>
+          <div class="sub">${esc(a.detail||'')}</div>
+        </div>
+      </div>
+
+      <div class="alert-statement">${esc(a.message||a.detail||`User ${a.account_name||a.account_email||'Guest'} on IP ${a.ip_address||'unknown'} using Browser ${a.browser||'unknown'} is suspected of spamming/flooding orders.`)}</div>
+
+      <div class="alert-acts">
+        ${a.ip_is_banned || !a.ip_address
+          ? `<span class="alert-banned-tag"><i class="fas fa-ban"></i> ${a.ip_address?'ئەم IPـیە بلۆککراوە':'بێ IP'}</span>`
+          : `<button class="alert-btn ban" onclick="banFromAlert('${a.id}')">
+               <i class="fas fa-user-secret"></i> بلۆککردنی نهێنی (404)
+             </button>`}
+        <button class="alert-btn safe" onclick="dismissAlert('${a.id}')">
+          <i class="fas fa-check"></i> سەلامەتە — لابردن
+        </button>
+        ${a.ip_address?`<button class="alert-btn view" onclick="goPage('security');setTimeout(()=>{const s=document.getElementById('evtSearch');if(s){s.value='${esc(a.ip_address)}';renderEvents();}},250)">
+          <i class="fas fa-list"></i> هەموو ڕووداوەکان
+        </button>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function banFromAlert(id){
+  const hrs=prompt('چەند کاتژمێر بلۆک بکرێت؟ (بەتاڵ = هەمیشەیی):','24');
+  if(hrs===null) return;
+  try{
+    await securityRequest('action',{method:'POST',body:{action:'ban_from_alert',alert_id:id,hours:hrs.trim()===''?null:parseInt(hrs,10)}});
+    showToast('IP بلۆککرا — ئێستا 404 وەردەگرێت','gr');
+    _alerts=_alerts.filter(a=>a.id!==id);
+    renderAlerts(); loadAlerts();
+  }catch(e){ showToast(e.message||'نەتوانرا بلۆک بکرێت','rd'); }
+}
+
+async function dismissAlert(id){
+  try{
+    await securityRequest('action',{method:'POST',body:{action:'resolve',id,status:'dismissed'}});
+    _alerts=_alerts.filter(a=>a.id!==id);
+    renderAlerts();
+  }catch(e){ showToast(e.message||'هەڵە','rd'); }
+}
+
+async function dismissAllAlerts(){
+  confirm2('لابردنی هەموو ئاگادارییەکان','هەموو ئاگادارییە چاوەڕوانەکان وەک سەلامەت دەنێردرێن. دڵنیایت؟','fa-check','#16a34a', async ()=>{
+    for(const a of [..._alerts]){
+      try{ await securityRequest('action',{method:'POST',body:{action:'resolve',id:a.id,status:'dismissed'}}); }catch(_){}
+    }
+    _alerts=[]; renderAlerts(); showToast('هەموو ئاگادارییەکان لابران','gr');
+  });
+}
+
+// Realtime: a new high-risk row lands on the dashboard without a refresh.
+function subscribeAlerts(){
+  if(_alertChannel){ try{ sb.removeChannel(_alertChannel); }catch(_){} }
+  _alertChannel = sb.channel('admin_alerts')
+    .on('postgres_changes',
+        { event:'*', schema:'public', table:'suspicious_events' },
+        payload => {
+          const row=payload.new||payload.old;
+          if(!row) return;
+          loadAlerts();   // re-fetch through the RPC so joins/flags stay correct
+          try{ showToast('⚠️ چالاکی گومانلێکراو دۆزرایەوە', 'rd'); }catch(_){}
+        })
+    .subscribe();
+
+  clearInterval(_alertPoll);
+  _alertPoll = setInterval(()=>{ if(document.visibilityState==='visible') loadAlerts(); }, 30000);
+}
+
+// ══════════════════════════════════════════════════════════════
+// ═══ USER ↔ IP HISTORY (users table) ══════════════════════════
+// ══════════════════════════════════════════════════════════════
+let _accIps = {};   // user_id → { last_ip, ip_count, browser, os, device, last_ip_banned }
+
+async function loadAccountIps(){
+  try{
+    const {accounts:data}=await securityRequest('account-ip-summary');
+    _accIps={};
+    (data||[]).forEach(r=>{ _accIps[r.user_id]=r; });
+  }catch(_){ _accIps={}; }
+}
+
+function accIpCell(userId){
+  const r=_accIps[userId];
+  if(!r || !r.last_ip) return '<span style="color:var(--mt);font-size:11px">—</span>';
+  return `<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+      <span class="ip-chip ${r.last_ip_banned?'banned':''}">${esc(r.last_ip)}</span>
+      ${r.last_ip_banned
+        ? `<button class="ip-ban-btn undo" title="کردنەوە" onclick="unbanIpByAddress('${esc(r.last_ip)}')"><i class="fas fa-lock-open"></i></button>`
+        : `<button class="ip-ban-btn" title="بلۆککردنی ئەم IP (404)" onclick="banIpInline('${esc(r.last_ip)}','${esc(userId)}')"><i class="fas fa-ban"></i></button>`}
+      ${r.ip_count>1?`<span class="ip-more" onclick="showUserIps('${esc(userId)}')">+${r.ip_count-1} تر</span>`:''}
+    </div>
+    <div style="font-size:10px;color:var(--mt);margin-top:3px">${esc(r.browser||'')} · ${esc(r.device||'')}</div>`;
+}
+
+async function banIpInline(ip, userId){
+  const hrs=prompt('بلۆککردنی '+ip+' بۆ چەند کاتژمێر؟ (بەتاڵ = هەمیشەیی):','24');
+  if(hrs===null) return;
+  try{
+    await securityRequest('action',{method:'POST',body:{
+      action:'ban',ip,reason:'بلۆککردنی دەستی لە لیستی بەکارهێنەران',
+      hours:hrs.trim()===''?null:parseInt(hrs,10),user_id:userId||null
+    }});
+    showToast('IP بلۆککرا — 404 وەردەگرێت','gr');
+    await loadAccountIps(); renderAccounts((document.getElementById('accSearch')?.value||'').toLowerCase());
+  }catch(e){ showToast(e.message||'هەڵە','rd'); }
+}
+
+async function unbanIpByAddress(ip){
+  try{
+    const {bans:data}=await securityRequest('bans');
+    const row=(data||[]).find(b=>b.ip_address===ip);
+    if(!row){ showToast('بلۆکەکە نەدۆزرایەوە','rd'); return; }
+    await securityRequest('action',{method:'POST',body:{action:'unban',id:row.id}});
+    showToast('IP کرایەوە','gr');
+    await loadAccountIps(); renderAccounts((document.getElementById('accSearch')?.value||'').toLowerCase());
+  }catch(e){ showToast(e.message||'هەڵە','rd'); }
+}
+
+async function showUserIps(userId){
+  try{
+    const {ips:data}=await securityRequest('user-ips',{query:'&user_id='+encodeURIComponent(userId)});
+    if(!data||!data.length){ showToast('هیچ IPـیەک تۆمار نەکراوە','bl'); return; }
+    document.getElementById('userIpsBody').innerHTML=`<table><thead><tr>
+        <th>IP</th><th>وێبگەڕ / ئامێر</th><th>ڕووداو</th><th>دوایین</th><th>کردار</th>
+      </tr></thead><tbody>
+      ${data.map(r=>`<tr>
+        <td><span class="ip-chip ${r.is_banned?'banned':''}">${esc(r.ip_address)}</span></td>
+        <td><div style="font-size:12px">${esc(r.browser||'—')}</div>
+            <div style="font-size:10px;color:var(--mt)">${esc(r.os||'')} · ${esc(r.device||'')}</div></td>
+        <td>${r.events}</td>
+        <td style="font-size:11px;color:var(--mt)">${new Date(r.last_seen).toLocaleString('ku-IQ')}</td>
+        <td>${r.is_banned
+              ? `<div class="act-btn gr" onclick="unbanIpByAddress('${esc(r.ip_address)}')"><i class="fas fa-lock-open"></i> کردنەوە</div>`
+              : `<div class="act-btn rd" onclick="banIpInline('${esc(r.ip_address)}','${esc(userId)}')"><i class="fas fa-ban"></i> بلۆک (404)</div>`}</td>
+      </tr>`).join('')}
+    </tbody></table>`;
+    openMo('moUserIps');
+  }catch(e){ showToast(e.message||'هەڵە','rd'); }
+}
+
+// ══════════════════════════════════════════════════════════════
+// ═══ SECURITY / IP INTELLIGENCE ═══════════════════════════════
+// Every call goes through an is_ex_admin()-guarded RPC; the tables
+// themselves are unreachable from any browser role.
+// ══════════════════════════════════════════════════════════════
+let _bans=[], _events=[], _banFilter='all', _evtFilter='all';
+
+const EVT_LABEL = {
+  suspicious_flooding:'گومانی Flood/Spam', duplicate_transaction_reference:'پسووڵە/ژمارەی دووبارە',
+  account_scanning:'پشکنینی هەژمار', blocked_request:'داواکاری بلۆککراو',
+  honeypot:'داوی Honeypot', receipt_probe:'پسووڵەی دووبارە', number_spray:'پەخشکردنی ژمارە',
+  rapid_submit:'ناردنی خێرا', otp_bruteforce:'هەوڵی OTP', devtools_tamper:'دەستکاری کلاینت',
+  order_submitted:'ناردنی داواکاری', login_failed:'چوونەژوورەوەی هەڵە', page_view:'سەردان',
+  login:'چوونەژوورەوە', signup:'خۆتۆمارکردن', logout:'دەرچوون',
+  otp_failed:'کۆدی OTPـی هەڵە', api_access:'داواکاری API',
+  unauthorized_request:'داواکاری بێ مۆڵەت', order_flood:'زۆری داواکاری لە کاتێکی کورتدا'
+};
+const evtLabel = t => EVT_LABEL[t] || t;
+
+function riskClass(n){ return n>=60?'rd':(n>=25?'yw':'gr'); }
+function fmtWhen(t){ return t ? new Date(t).toLocaleString('ku-IQ') : '—'; }
+// Registration timestamps: fixed Gregorian format so it renders the same on
+// every device — some browsers have no data for the 'ku' locale and fall back
+// to something unreadable.
+function fmtDate(t){
+  if(!t) return '—';
+  const d=new Date(t); if(isNaN(d)) return '—';
+  const p=n=>String(n).padStart(2,'0');
+  return `${d.getFullYear()}/${p(d.getMonth()+1)}/${p(d.getDate())}`;
+}
+function fmtTime(t){
+  if(!t) return '';
+  const d=new Date(t); if(isNaN(d)) return '';
+  const p=n=>String(n).padStart(2,'0');
+  return `${p(d.getHours())}:${p(d.getMinutes())}`;
+}
+function fmtDateTime(t){ return t ? fmtDate(t)+' — '+fmtTime(t) : '—'; }
+function fmtAgo(t){
+  if(!t) return '';
+  const s=Math.floor((Date.now()-new Date(t))/1000);
+  if(s<0 || isNaN(s)) return '';
+  if(s<3600) return Math.max(1,Math.floor(s/60))+' خولەک لەمەوپێش';
+  const h=Math.floor(s/3600); if(h<24) return h+' کاتژمێر لەمەوپێش';
+  const d=Math.floor(h/24);   if(d<30) return d+' ڕۆژ لەمەوپێش';
+  const mo=Math.floor(d/30);  if(mo<12) return mo+' مانگ لەمەوپێش';
+  return Math.floor(mo/12)+' ساڵ لەمەوپێش';
+}
+function fmtLeft(exp){
+  if(!exp) return 'هەمیشەیی';
+  const ms=new Date(exp)-Date.now();
+  if(ms<=0) return 'بەسەرچووە';
+  const h=Math.floor(ms/3600000), m=Math.floor(ms%3600000/60000);
+  return h>0 ? (h+' کاتژمێر') : (m+' خولەک');
+}
+
+async function loadSecurity(){
+  document.getElementById('bansTableWrap').innerHTML='<div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>';
+  try{
+    const payload=await securityRequest('dashboard',{query:'&limit=200'});
+    const s=payload.stats||{};
+    document.getElementById('secActiveBans').textContent  = formatNum(s.active_bans||0);
+    document.getElementById('secEvents24').textContent    = formatNum(s.events_24h||0);
+    document.getElementById('secBlockedHits').textContent = formatNum(s.blocked_hits||0);
+    document.getElementById('secTopType').textContent     = s.top_type ? evtLabel(s.top_type) : '—';
+
+    _bans   = payload.bans || [];
+    _events = payload.logs || [];
+    renderBans(); renderEvents();
+  }catch(e){
+    document.getElementById('bansTableWrap').innerHTML='<div class="empty">نەتوانرا باربکرێت: '+esc(e.message||'')+'</div>';
+  }
+}
+
+function setBanFilter(f,el){ _banFilter=f; document.querySelectorAll('[data-banf]').forEach(c=>c.classList.remove('on')); if(el) el.classList.add('on'); renderBans(); }
+function setEvtFilter(f,el){ _evtFilter=f; document.querySelectorAll('[data-evtf]').forEach(c=>c.classList.remove('on')); if(el) el.classList.add('on'); renderEvents(); }
+
+function renderBans(){
+  const q=(document.getElementById('banSearch')?.value||'').toLowerCase();
+  let list=_bans.filter(b=>{
+    if(_banFilter==='active' && !b.effective_active) return false;
+    if(_banFilter==='auto'   && !b.auto_banned) return false;
+    if(_banFilter==='manual' &&  b.auto_banned) return false;
+    if(!q) return true;
+    return [b.ip_address,b.account_name,b.account_email,b.reason,b.browser,b.os]
+      .some(v=>String(v||'').toLowerCase().includes(q));
+  });
+
+  const wrap=document.getElementById('bansTableWrap');
+  if(!list.length){ wrap.innerHTML='<div class="empty">هیچ IPـیەکی بلۆککراو نییە</div>'; return; }
+
+  wrap.innerHTML=`<table><thead><tr>
+      <th>IP</th><th>هەژمار</th><th>وێبگەڕ / ئامێر</th><th>هۆکار</th>
+      <th>مەترسی</th><th>بەروار</th><th>ماوە</th><th>کردار</th>
+    </tr></thead><tbody>
+    ${list.map(b=>`<tr${b.effective_active?'':' style="opacity:.5"'}>
+      <td><span class="order-code-chip" onclick="copyOrderCode('${esc(b.ip_address)}', event)">${esc(b.ip_address)}</span>
+          ${b.hit_count>0?`<div style="font-size:10px;color:var(--mt);margin-top:3px">${formatNum(b.hit_count)} داواکاری ڕێگری‌لێکراو</div>`:''}</td>
+      <td>${b.account_name?`<div class="user-cell"><div class="user-nm">${esc(b.account_name)}</div><div class="user-em">${esc(b.account_email||'')}</div></div>`:'<span style="color:var(--mt)">نەناسراو</span>'}</td>
+      <td><div style="font-size:12px">${esc(b.browser||'—')}</div>
+          <div style="font-size:10px;color:var(--mt)">${esc(b.os||'')} · ${esc(b.device||'')}</div></td>
+      <td style="max-width:220px"><div style="font-size:12px;line-height:1.6">${esc(b.reason||'')}</div>
+          <span class="chip ${b.auto_banned?'yw':'bl'}" style="font-size:10px;padding:2px 8px;margin-top:4px;display:inline-block">${b.auto_banned?'خۆکار':'دەستی'}</span></td>
+      <td><span class="chip ${riskClass(b.risk_score)}" style="font-size:11px">${b.risk_score||0}</span></td>
+      <td style="font-size:11px;color:var(--mt)">${fmtWhen(b.banned_at)}</td>
+      <td style="font-size:11px">${b.effective_active?fmtLeft(b.expires_at):'کراوەتەوە'}</td>
+      <td><div style="display:flex;gap:6px">
+        ${b.effective_active
+          ? `<div class="act-btn gr" onclick="unbanIp('${b.id}')" title="کردنەوە"><i class="fas fa-lock-open"></i></div>
+             <div class="act-btn dark" onclick="extendBan('${b.id}')" title="درێژکردنەوە"><i class="fas fa-clock"></i></div>`
+          : `<div class="act-btn rd" onclick="extendBan('${b.id}')" title="دووبارە بلۆک"><i class="fas fa-ban"></i></div>`}
+        <div class="act-btn dark" onclick="showIpAccounts('${esc(b.ip_address)}')" title="هەژمارەکانی ئەم IP"><i class="fas fa-users"></i></div>
+      </div></td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+
+function renderEvents(){
+  const q=(document.getElementById('evtSearch')?.value||'').toLowerCase();
+  let list=_events.filter(e=>{
+    if(_evtFilter==='risk' && (e.risk_score||0)<=0) return false;
+    if(_evtFilter!=='all' && _evtFilter!=='risk' && e.event_type!==_evtFilter) return false;
+    if(!q) return true;
+    return [e.ip_address,e.account_name,e.account_email,e.event_type,e.detail,e.browser]
+      .some(v=>String(v||'').toLowerCase().includes(q));
+  });
+
+  const wrap=document.getElementById('eventsTableWrap');
+  if(!list.length){ wrap.innerHTML='<div class="empty">هیچ ڕووداوێک نییە</div>'; return; }
+
+  wrap.innerHTML=`<table><thead><tr>
+      <th>کات</th><th>جۆر</th><th>IP</th><th>هەژمار</th><th>وێبگەڕ / ئامێر</th><th>وردەکاری</th><th>مەترسی</th><th></th>
+    </tr></thead><tbody>
+    ${list.map(e=>`<tr>
+      <td style="font-size:11px;color:var(--mt);white-space:nowrap">${fmtWhen(e.created_at)}</td>
+      <td><span class="chip ${riskClass(e.risk_score)}" style="font-size:11px">${esc(evtLabel(e.event_type))}</span></td>
+      <td><span style="font-family:monospace;font-size:12px;direction:ltr">${esc(e.ip_address||'—')}</span>
+          ${e.ip_is_banned?'<i class="fas fa-ban" style="color:#dc2626;margin-right:5px" title="بلۆککراوە"></i>':''}</td>
+      <td>${e.account_name?`<div class="user-cell"><div class="user-nm">${esc(e.account_name)}</div><div class="user-em">${esc(e.account_email||'')}</div></div>`:'<span style="color:var(--mt)">مێوان</span>'}</td>
+      <td><div style="font-size:12px">${esc(e.browser||'—')}</div>
+          <div style="font-size:10px;color:var(--mt)">${esc(e.os||'')} · ${esc(e.device||'')}</div></td>
+      <td style="font-size:11px;max-width:200px">${esc(e.detail||'—')}</td>
+      <td><b style="font-size:12px">${e.risk_score||0}</b></td>
+      <td>${e.ip_address && !e.ip_is_banned
+            ? `<div class="act-btn rd" onclick="quickBan('${esc(e.ip_address)}','${esc(evtLabel(e.event_type))}')" title="بلۆککردن"><i class="fas fa-ban"></i></div>`
+            : ''}</td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+
+// ── actions ──────────────────────────────────────────────────
+function openBanModal(ip='', reason=''){
+  const v=prompt('IP بۆ بلۆککردن (١.٢.٣.٤ یان ١.٢.٣.٠/٢٤):', ip);
+  if(!v) return;
+  const why=prompt('هۆکاری بلۆککردن:', reason||'دەستی لەلایەن ئادمین');
+  if(why===null) return;
+  const hrs=prompt('چەند کاتژمێر؟ (بەتاڵ = هەمیشەیی):', '24');
+  if(hrs===null) return;
+  doBan(v.trim(), why, hrs.trim()===''?null:parseInt(hrs,10));
+}
+function quickBan(ip, reason){ openBanModal(ip, 'ڕووداو: '+reason); }
+
+async function doBan(ip, reason, hours){
+  try{
+    await securityRequest('action',{method:'POST',body:{action:'ban',ip,reason,hours,user_id:null}});
+    showToast('IP بلۆککرا — ئێستا 404 وەردەگرێت','gr');
+    loadSecurity();
+  }catch(e){ showToast(e.message||'نەتوانرا بلۆک بکرێت','rd'); }
+}
+
+function unbanIp(id){
+  confirm2('کردنەوەی IP','دڵنیایت لە کردنەوەی ئەم IPـیە؟','fa-lock-open','#16a34a', async ()=>{
+    try{
+      await securityRequest('action',{method:'POST',body:{action:'unban',id}});
+      showToast('IP کرایەوە','gr'); loadSecurity();
+    }catch(e){ showToast(e.message||'هەڵە','rd'); }
+  });
+}
+
+async function extendBan(id){
+  const hrs=prompt('درێژکردنەوە بە چەند کاتژمێر؟ (بەتاڵ = هەمیشەیی):','24');
+  if(hrs===null) return;
+  try{
+    await securityRequest('action',{method:'POST',body:{action:'extend',id,hours:hrs.trim()===''?null:parseInt(hrs,10)}});
+    showToast('ماوەی بلۆک نوێکرایەوە','gr'); loadSecurity();
+  }catch(e){ showToast(e.message||'هەڵە','rd'); }
+}
+
+// Which accounts have been seen behind this address — the multi-accounting view
+async function showIpAccounts(ip){
+  try{
+    const {accounts:data}=await securityRequest('ip-accounts',{query:'&ip='+encodeURIComponent(ip)});
+    if(!data || !data.length){ showToast('هیچ هەژمارێک بەم IPـیەوە نەبەستراوە','bl'); return; }
+    alert('هەژمارەکانی ئەم IP ('+ip+'):\n\n' +
+      data.map(a=>'• '+(a.account_name||'—')+'  ('+(a.account_email||'—')+')  — '+a.events+' ڕووداو').join('\n'));
+  }catch(e){ showToast(e.message||'هەڵە','rd'); }
+}
+
+// ══════════════════════════════════════════════════════════════
+// ═══ HELPERS ═════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════
+function formatNum(n){ n=Math.round(parseFloat(n)||0); return n.toLocaleString(); }
+function fmtOrderNo(n){ return '\u2068P'+String(n).padStart(11,'0')+'\u2069'; }
+// Public transaction ID: 12 uppercase characters, always starting with "P".
+// Generated by the database (ex_gen_order_code) and never editable afterwards.
+function orderCodeOf(o){ return (o && o.order_code) ? o.order_code : ('P'+String((o&&o.order_number)||0).padStart(11,'0')); }
+function fmtCode(c){ return '\u2068'+c+'\u2069'; }
+function copyOrderCode(code, ev){
+  if(ev) ev.stopPropagation();
+  try{ navigator.clipboard.writeText(code); showToast('ئایدی مامەڵە کۆپی کرا','gr'); }catch(_){ }
+}
+function orderCodeChip(o){
+  const c=orderCodeOf(o);
+  return '<span class="order-code-chip" onclick="copyOrderCode(\''+c+'\', event)" title="کۆپیکردنی ئایدی">'+fmtCode(c)+'</span>';
+}
+function methodPill(key){
+  const m=METHOD_META[key];
+  const w=!m && typeof allWallets!=='undefined' ? allWallets.find(x=>x.key===key) : null;
+  const label = m ? m.label : (w ? (w.name||key) : (key||'—'));
+  const color = m ? m.color : 'var(--mt2)';
+  if(!key) return '—';
+  return `<span class="method-pill"><span class="method-dot" style="background:${color}"></span>${esc(label)}</span>`;
+}
+function statusBadgeClass(s){
+  return s===STATUS_APPROVED?'approved':s===STATUS_REJECTED?'rejected':s===STATUS_NEEDS_CORRECTION?'needs-correction':s===STATUS_CORRECTED?'corrected':'pending';
+}
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function safeAttr(obj){ return JSON.stringify(obj).replace(/'/g,'&#39;'); }
+
+function isAuthDbError(error){
+  return !!error && (error.code==='42501' || /row-level security/i.test(error.message||''));
+}
+async function handleDbWriteError(error){
+  if(isAuthDbError(error)){
+    showToast('دەستگەیشتنی ئادمینت نەماوە یان چوونەژوورەوەکەت بەسەرچووە — دووبارە بچۆرەوە ژوورەوە','rd');
+    setTimeout(async ()=>{ try{ await sb.auth.signOut(); }catch(_){ } location.reload(); }, 1800);
+    return;
+  }
+  showToast('هەڵە: '+(error.code==='23505'?'ئەم کلیلە پێشتر بەکارهاتووە':error.message),'rd');
+}
+
+function openMo(id){ document.getElementById(id).classList.add('on'); }
+function closeMo(id){ document.getElementById(id).classList.remove('on'); }
+function showImg(src){ if(!src) return; document.getElementById('imgViewSrc').src=src; openMo('moImgView'); }
+
+function showToast(msg,cls=''){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className='show'+(cls?' '+cls:'');
+  clearTimeout(t._t); t._t=setTimeout(()=>{ t.classList.remove('show'); },3000);
+}
+function confirm2(title,msg,icoClass,icoColor,onOk){
+  document.getElementById('confirmTitle').textContent=title;
+  document.getElementById('confirmMsg').textContent=msg;
+  const ico=document.getElementById('confirmIco');
+  ico.innerHTML=`<i class="${icoClass}"></i>`;
+  ico.style.background=icoColor+'22'; ico.style.color=icoColor;
+  const btn=document.getElementById('confirmOkBtn');
+  btn.style.background=icoColor;
+  btn.onclick=async()=>{ closeMo('moConfirm'); await onOk(); };
+  openMo('moConfirm');
+}
+
+async function loadProfilesFor(userIds){
+  const uids=[...new Set(userIds.filter(Boolean))];
+  if(!uids.length) return {};
+  const {data} = await sb.from('ex_profiles').select('id,full_name,email,phone,is_admin,is_banned,username,role').in('id',uids);
+  const map={}; (data||[]).forEach(p=>{ map[p.id]=p; });
+  return map;
+}
+
+// ── Original admin module 2 ──
+// ══════════════════════════════════════════════════════════════
+// ═══ DASHBOARD ═══════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════
+async function loadDashboard(){
+  loadDashboardStats();
+  loadDashOrders();
+  loadAlerts();
+}
+async function loadDashboardStats(){
+  try{
+    const [{count:usersCount}, {count:bannedCount}, {count:pendingCount}, {data:approvedRows}, {count:rejectedCount}] = await Promise.all([
+      sb.from('ex_profiles').select('*',{count:'exact',head:true}),
+      sb.from('ex_profiles').select('*',{count:'exact',head:true}).eq('is_banned',true),
+      sb.from('ex_orders').select('*',{count:'exact',head:true}).in('status',[STATUS_PENDING,STATUS_CORRECTED]).is('balance_refunded_at',null),
+      sb.from('ex_orders').select('total').eq('status',STATUS_APPROVED),
+      sb.from('ex_orders').select('*',{count:'exact',head:true}).eq('status',STATUS_REJECTED),
+    ]);
+    document.getElementById('stUsers').textContent = usersCount ?? '—';
+    document.getElementById('stBanned').textContent = bannedCount ?? '—';
+    document.getElementById('stPending').textContent = pendingCount ?? '—';
+    document.getElementById('stRejected').textContent = rejectedCount ?? '—';
+    const approvedCount = (approvedRows||[]).length;
+    const volume = (approvedRows||[]).reduce((s,r)=>s+(parseFloat(r.total)||0),0);
+    document.getElementById('stApproved').textContent = approvedCount;
+    document.getElementById('stVolume').textContent = formatNum(volume);
+    const badge=document.getElementById('sbOrdersCount');
+    if(pendingCount>0){ badge.style.display='inline-flex'; badge.textContent=pendingCount; }
+    else badge.style.display='none';
+  }catch(e){ showToast('هەڵەی بارکردنی ئامار: '+e.message,'rd'); }
+}
+async function loadDashOrders(){
+  try{
+    const {data:orders} = await sb.from('ex_orders').select('*').order('created_at',{ascending:false}).limit(8);
+    const profMap = await loadProfilesFor((orders||[]).map(o=>o.user_id));
+    const list=(orders||[]).map(o=>({...o, profile:profMap[o.user_id]||null}));
+    // merge into the shared cache so showOrderDetail/approve/reject work even before the Orders page has loaded
+    list.forEach(o=>{
+      const idx=allOrders.findIndex(x=>x.id===o.id);
+      if(idx>-1) allOrders[idx]=o; else allOrders.push(o);
+    });
+    document.getElementById('dashOrdersWrap').innerHTML = renderOrdersTable(list);
+  }catch(e){ document.getElementById('dashOrdersWrap').innerHTML='<div class="empty"><i class="fas fa-triangle-exclamation"></i><p>هەڵەی بارکردن</p></div>'; }
+}
+
+// ══════════════════════════════════════════════════════════════
+// ═══ ORDERS ══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════
+let _ordersAdminChannel=null;
+function subscribeOrdersAdmin(){
+  if(_ordersAdminChannel) return;
+  _ordersAdminChannel = sb.channel('ex_orders_admin')
+    .on('postgres_changes', {event:'INSERT', schema:'public', table:'ex_orders'}, (payload)=>{
+      showToast('📥 داواکاریەکی نوێ هات '+fmtCode(orderCodeOf(payload.new)), 'bl');
+      refreshOrdersEverywhere();
+    })
+    .on('postgres_changes', {event:'UPDATE', schema:'public', table:'ex_orders'}, payload=>{
+      if(payload.new?.status===STATUS_CORRECTED && payload.old?.status!==STATUS_CORRECTED){
+        showToast('کڕیار مامەڵەی '+fmtCode(orderCodeOf(payload.new))+' ڕاست کردەوە','cy');
+      }
+      refreshOrdersEverywhere();
+    })
+    .subscribe();
+}
+async function loadOrders(){
+  document.getElementById('ordersTableWrap').innerHTML='<div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>';
+  try{
+    const {data:orders,error} = await sb.from('ex_orders').select('*').order('created_at',{ascending:false}).limit(300);
+    if(error) throw error;
+    const profMap = await loadProfilesFor((orders||[]).map(o=>o.user_id));
+    _profMap = profMap;
+    allOrders = (orders||[]).map(o=>({...o, profile:profMap[o.user_id]||null}));
+    renderOrders();
+  }catch(e){
+    document.getElementById('ordersTableWrap').innerHTML=`<div class="empty"><i class="fas fa-triangle-exclamation"></i><p>هەڵە: ${esc(e.message)}</p></div>`;
+  }
+}
+function filterOrders(el){
+  if(el){ document.querySelectorAll('[data-of]').forEach(x=>x.classList.remove('on')); el.classList.add('on'); orderFilter=el.dataset.of; }
+  renderOrders((document.getElementById('orderSearch')?.value||'').toLowerCase());
+}
+function renderOrders(q=''){
+  let list=allOrders;
+  if(orderFilter!=='all') list=list.filter(o=>orderFilter==='refunded'?!!o.balance_refunded_at:(!o.balance_refunded_at&&o.status===orderFilter));
+  if(q){
+    const qq=q.replace(/[\s#-]/g,'');
+    list=list.filter(o=>(o.profile?.full_name||'').toLowerCase().includes(q)
+      ||(o.profile?.email||'').toLowerCase().includes(q)
+      ||orderCodeOf(o).toLowerCase().includes(qq)
+      ||String(o.order_number||'').includes(qq)
+      ||(o.phone||'').includes(qq));
+  }
+  document.getElementById('ordersTableWrap').innerHTML = renderOrdersTable(list) + renderOrdersCards(list);
+}
+function renderOrdersTable(list){
+  if(!list.length) return '<div class="empty"><i class="fas fa-inbox"></i><p>هیچ ئۆردەرێک نییە</p></div>';
+  return `<table><thead><tr><th>ئایدی</th><th>بەکارهێنەر</th><th>ڕێگا</th><th>بڕ</th><th>وەرگیراو</th><th>باری</th><th>بەروار</th><th>کردار</th></tr></thead><tbody>
+    ${list.map(o=>`<tr style="cursor:pointer" onclick='showOrderDetail(${safeAttr(o.id)})'>
+      <td onclick="event.stopPropagation()">${orderCodeChip(o)}</td>
+      <td><div class="user-cell"><div class="mini-av">${(o.profile?.full_name||o.profile?.email||'?')[0].toUpperCase()}</div><div><div class="user-cell-name">${esc(o.profile?.full_name||'—')}</div><div class="user-cell-email">${esc(o.profile?.email||'—')}</div></div></div></td>
+      <td>${methodPill(o.from_method)} <i class="fas fa-arrow-left" style="font-size:10px;color:var(--mt);margin:0 4px"></i> ${methodPill(o.to_method)}</td>
+      <td style="font-family:'Inter';font-weight:700">${formatNum(o.amount)}${o.from_method==='USDT'?'$':''}</td>
+      <td style="font-family:'Inter';font-weight:800;color:var(--gr)">${formatNum(o.total)} IQD</td>
+      <td><span class="badge ${statusBadgeClass(o.balance_refunded_at?'پەسەندکرا':o.status)}">${esc(o.balance_refunded_at?'ڕیفاوندکرا':o.status)}</span></td>
+      <td style="font-size:11px;color:var(--mt)">${fmtDateTime(o.created_at)}</td>
+      <td onclick="event.stopPropagation()"><div class="act-grp">
+        <div class="act-btn dark" onclick='showOrderDetail(${safeAttr(o.id)})'><i class="fas fa-eye"></i></div>
+        ${!o.balance_refunded_at && CORRECTABLE_ORDER_STATUSES.has(o.status)?`<div class="act-btn yw" title="داوای ڕاستکردنەوە" onclick="openOrderCorrectionRequest('${o.id}')"><i class="fas fa-pen-to-square"></i></div>`:''}
+        ${!o.balance_refunded_at && REVIEWABLE_ORDER_STATUSES.has(o.status)?`<div class="act-btn gr" onclick="approveOrder('${o.id}')"><i class="fas fa-check"></i></div><div class="act-btn rd" onclick="showRejectReason('${o.id}')"><i class="fas fa-times"></i></div>`:''}
+      </div></td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+function renderOrdersCards(list){
+  if(!list.length) return '';
+  return `<div class="rec-cards">${list.map(o=>`
+    <div class="rec-card" onclick='showOrderDetail(${safeAttr(o.id)})'>
+      <div class="rec-card-top">
+        <div class="mini-av">${(o.profile?.full_name||o.profile?.email||'?')[0].toUpperCase()}</div>
+        <div class="rec-card-info"><div class="rec-card-name">${esc(o.profile?.full_name||'بێ ناو')}</div><div class="rec-card-sub">${esc(o.profile?.email||'—')}</div></div>
+        <span class="badge ${statusBadgeClass(o.balance_refunded_at?'پەسەندکرا':o.status)}">${esc(o.balance_refunded_at?'ڕیفاوندکرا':o.status)}</span>
+      </div>
+      <div class="rec-card-meta">
+        <span style="font-size:12px">${methodPill(o.from_method)} <i class="fas fa-arrow-left" style="font-size:9px;color:var(--mt);margin:0 3px"></i> ${methodPill(o.to_method)}</span>
+      </div>
+      <div class="rec-card-meta">
+        <div class="rec-card-stat gr">${orderCodeChip(o)} • ${formatNum(o.total)} IQD</div>
+        <div class="rec-card-date">${fmtDateTime(o.created_at)}</div>
+      </div>
+      <div class="rec-card-actions" onclick="event.stopPropagation()">
+        <div class="act-btn dark" onclick="showOrderDetail('${o.id}')"><i class="fas fa-eye"></i> وردەکاری</div>
+        ${!o.balance_refunded_at && CORRECTABLE_ORDER_STATUSES.has(o.status)?`<div class="act-btn yw" onclick="openOrderCorrectionRequest('${o.id}')"><i class="fas fa-pen-to-square"></i> داوای ڕاستکردنەوە</div>`:''}
+        ${!o.balance_refunded_at && REVIEWABLE_ORDER_STATUSES.has(o.status)?`<div class="act-btn gr" onclick="approveOrder('${o.id}')"><i class="fas fa-check"></i> پەسەندکردن</div>
+        <div class="act-btn rd" onclick="showRejectReason('${o.id}')"><i class="fas fa-times"></i> ڕەتکردنەوە</div>`:''}
+      </div>
+    </div>`).join('')}</div>`;
+}
+
+function showOrderDetail(id){
+  const order = allOrders.find(x=>String(x.id)===String(id));
+  if(!order){ showToast('نەدۆزرایەوە','rd'); return; }
+  const displayAmt = formatNum(order.amount)+(order.from_method==='USDT'?' $':' IQD');
+  document.getElementById('odTitle').textContent = 'ئۆردەر '+fmtCode(orderCodeOf(order));
+  document.getElementById('odContent').innerHTML = `
+    <div class="detail-row"><span class="lbl">ئایدی مامەڵە</span><span class="val">${orderCodeChip(order)}</span></div>
+    <div class="detail-row"><span class="lbl">بەکارهێنەر</span><span class="val">${esc(order.profile?.full_name||'—')}</span></div>
+    <div class="detail-row"><span class="lbl">ئیمەیل</span><span class="val">${esc(order.profile?.email||'—')}</span></div>
+    ${['Korek','Asiacell'].includes(order.from_method)
+      ? `<div class="detail-row"><span class="lbl">ژمارەی نێرەر</span><span class="val">${esc(order.sender_phone||'—')}</span></div>`
+      : `<div class="detail-row"><span class="lbl">ناوی هەژماری نێرەر</span><span class="val">${esc(order.sender_name||order.profile?.full_name||'—')}</span></div>`}
+    <div class="detail-row"><span class="lbl">لە</span><span class="val">${methodPill(order.from_method)}</span></div>
+    <div class="detail-row"><span class="lbl">بۆ</span><span class="val">${methodPill(order.to_method)}</span></div>
+    <div class="detail-row"><span class="lbl">بڕی نێردراو</span><span class="val">${displayAmt}</span></div>
+    <div class="detail-row"><span class="lbl">بڕی وەرگیراو</span><span class="val" style="color:var(--gr)">${formatNum(order.total)} IQD</span></div>
+    <div class="detail-row"><span class="lbl">ژمارەی وەرگر</span><span class="val">${esc(order.phone||'—')}</span></div>
+    ${order.extra_info?`<div class="detail-row"><span class="lbl">زانیاری زیاتر</span><span class="val">${esc(order.extra_info)}</span></div>`:''}
+    <div class="detail-row"><span class="lbl">باری</span><span class="val"><span class="badge ${statusBadgeClass(order.balance_refunded_at?'پەسەندکرا':order.status)}">${esc(order.balance_refunded_at?'ڕیفاوندکرا':order.status)}</span></span></div>
+    <div class="detail-row"><span class="lbl">بەروار</span><span class="val">${new Date(order.created_at).toLocaleString('ku')}</span></div>
+    ${order.receipt_url?`<div style="margin-top:10px"><div style="font-size:11px;color:var(--mt);margin-bottom:8px">وێنەی پسووڵە (لەلایەن کڕیارەوە)</div><img src="${order.receipt_url}" class="rcpt-img" onclick="showImg('${order.receipt_url}')"></div>`:`<div class="fee-toggle-note" style="margin-top:10px"><i class="fas fa-paper-plane" style="margin-left:4px"></i>وێنەی پسووڵە بۆ تیلیگرامی ئەدمین نێردراوە لەکاتی ناردنی داواکارییەکە.</div>`}
+    ${order.correction_request?`<div class="order-admin-correction request"><b><i class="fas fa-pen-to-square"></i> داوای ڕاستکردنەوەی ئادمین</b><p>${esc(order.correction_request)}</p><small>${order.correction_requested_at?esc(fmtDateTime(order.correction_requested_at)):''}</small></div>`:''}
+    ${order.correction_response?`<div class="order-admin-correction response"><b><i class="fas fa-reply"></i> وەڵامی کڕیار</b><p>${esc(order.correction_response)}</p><small>${order.correction_responded_at?esc(fmtDateTime(order.correction_responded_at)):''}</small></div>`:''}
+    <div id="odCorrectionHistory" class="order-correction-history-loading"><i class="fas fa-circle-notch fa-spin"></i> مێژووی ڕاستکردنەوە بار دەکرێت...</div>
+    ${order.status===STATUS_APPROVED?`<div style="margin-top:10px">
+      <div style="font-size:11px;color:var(--mt);margin-bottom:8px">وێنەی پسووڵەی پارەدان (بۆ کڕیار)</div>
+      ${order.payout_receipt_url?`<img src="${order.payout_receipt_url}" class="rcpt-img" onclick="showImg('${order.payout_receipt_url}')">`:''}
+      <label class="act-btn cy" style="cursor:pointer;display:inline-flex;margin-top:8px" id="podUploadLbl">
+        <i class="fas fa-upload"></i> ${order.payout_receipt_url?'گۆڕینی وێنە':'ناردنی وێنەی پسووڵە بۆ کڕیار'}
+        <input type="file" accept="image/*" style="display:none" onchange="uploadPayoutReceiptDirect(this,'${order.id}')">
+      </label>
+    </div>`:''}
+    <label class="modal-lbl">تێبینی ئەدمین</label>
+    <textarea class="minp mta" id="odNote">${esc(order.admin_note||'')}</textarea>
+    <div class="act-grp" style="margin-top:12px">
+      <div class="act-btn dark" onclick="saveOrderNote('${order.id}')"><i class="fas fa-floppy-disk"></i> پاشەکەوتی تێبینی</div>
+      ${!order.balance_refunded_at && CORRECTABLE_ORDER_STATUSES.has(order.status)?`<div class="act-btn yw" onclick="openOrderCorrectionRequest('${order.id}')"><i class="fas fa-pen-to-square"></i> داوای ڕاستکردنەوە</div>`:''}
+    </div>
+    ${!order.balance_refunded_at && order.status!==STATUS_APPROVED && !order.payout_receipt_url && order.from_method!=='USDT' && order.to_method!=='USDT'?`<div class="act-grp" style="margin-top:12px">
+      <button type="button" class="act-btn rd" onclick="openOrderRefund('${order.id}')"><i class="fas fa-wallet"></i> ڕەتکردنەوە و گەڕاندنەوە بۆ باڵانس</button>
+    </div>`:''}
+    ${!order.balance_refunded_at && REVIEWABLE_ORDER_STATUSES.has(order.status)?`<div class="act-grp" style="margin-top:12px">
+      <div class="act-btn gr" style="flex:1;justify-content:center" onclick="approveOrder('${order.id}');closeMo('moOrderDetail')"><i class="fas fa-check"></i> پەسەندکردن</div>
+      <div class="act-btn rd" style="flex:1;justify-content:center" onclick="showRejectReason('${order.id}');closeMo('moOrderDetail')"><i class="fas fa-times"></i> ڕەتکردنەوە</div>
+    </div>`:''}
+  `;
+  openMo('moOrderDetail');
+  loadOrderCorrectionHistory(order.id);
+}
+
+function correctionHistoryValue(value){
+  return value===null || value===undefined || value==='' ? '—' : String(value);
+}
+function correctionHistoryField(label, oldValue, newValue, isReceipt=false){
+  const oldText=correctionHistoryValue(oldValue), newText=correctionHistoryValue(newValue);
+  const changed=oldText!==newText;
+  const renderValue=(value)=>isReceipt && value!=='—'
+    ? `<button type="button" class="correction-history-image" data-url="${esc(value)}" onclick="showImg(this.dataset.url)"><i class="fas fa-image"></i> بینینی وێنە</button>`
+    : `<span dir="ltr">${esc(value)}</span>`;
+  return `<div class="correction-history-field ${changed?'changed':'same'}">
+    <b>${esc(label)}</b>
+    <div><small>کۆن</small>${renderValue(oldText)}</div>
+    <i class="fas fa-arrow-left"></i>
+    <div><small>نوێ</small>${renderValue(newText)}</div>
+  </div>`;
+}
+function renderOrderCorrectionHistory(rows){
+  if(!rows.length) return '';
+  return `<section class="order-correction-history">
+    <h4><i class="fas fa-clock-rotate-left"></i> مێژووی ڕاستکردنەوە</h4>
+    ${rows.map(row=>{
+      const before=row.old_data||{}, after=row.new_data||null;
+      return `<article class="correction-history-entry ${after?'done':'waiting'}">
+        <div class="correction-history-head"><b>ڕاستکردنەوەی ژمارە ${formatNum(row.correction_number)}</b><span>${after?'کڕیار نوێی کردەوە':'چاوەڕوانی کڕیار'}</span></div>
+        <p class="correction-history-request"><b>داواکاری ئادمین:</b> ${esc(row.request||'—')}</p>
+        ${after?`
+          ${correctionHistoryField('ژمارەی وەرگر',before.phone,after.phone)}
+          ${correctionHistoryField('ژمارەی نێرەر',before.sender_phone,after.sender_phone)}
+          ${correctionHistoryField('پسووڵە',before.receipt_url,after.receipt_url,true)}
+          ${row.customer_response?`<p class="correction-history-response"><b>وەڵامی کڕیار:</b> ${esc(row.customer_response)}</p>`:''}
+        `:`<div class="correction-history-pending"><i class="fas fa-hourglass-half"></i> زانیارییە کۆنەکان پارێزراون؛ هێشتا وەڵامی کڕیار نەهاتووە.</div>`}
+        <time>${esc(fmtDateTime(after?(row.responded_at||row.requested_at):row.requested_at))}</time>
+      </article>`;
+    }).join('')}
+  </section>`;
+}
+async function loadOrderCorrectionHistory(orderId){
+  const target=document.getElementById('odCorrectionHistory');
+  if(!target) return;
+  try{
+    const rows=await adminApiRequest('list_order_correction_history',{order_id:orderId});
+    if(!document.getElementById('odCorrectionHistory')) return;
+    target.className='';
+    target.innerHTML=renderOrderCorrectionHistory(Array.isArray(rows)?rows:[]);
+    if(!target.innerHTML) target.style.display='none';
+  }catch(e){
+    target.className='order-correction-history-error';
+    target.textContent='مێژووی ڕاستکردنەوە بار نەکرا: '+e.message;
+  }
+}
+
+let _apFile=null;
+function approveOrder(id){
+  const order = allOrders.find(x=>String(x.id)===String(id));
+  document.getElementById('apOrderId').value = id;
+  document.getElementById('apOrderTitle').textContent = 'پەسەندکردنی ئۆردەر' + (order?' '+fmtCode(orderCodeOf(order)):'');
+  document.getElementById('apReceiptFile').value = '';
+  document.getElementById('apReceiptPreview').innerHTML = '<i class="fas fa-receipt"></i>';
+  document.getElementById('apReceiptNote').textContent = 'هیچ وێنەیەک هەڵنەبژێردراوە';
+  _apFile = null;
+  openMo('moApproveOrder');
+}
+function onApReceiptFile(input){
+  const file = input.files[0]; if(!file) return;
+  if(file.size > 5*1024*1024){ showToast('وێنەکە زۆر گەورەیە (زۆرترین 5MB)','rd'); input.value=''; return; }
+  _apFile = file;
+  const reader = new FileReader();
+  reader.onload = () => { document.getElementById('apReceiptPreview').innerHTML = `<img src="${reader.result}" style="width:100%;height:100%;object-fit:cover">`; };
+  reader.readAsDataURL(file);
+  document.getElementById('apReceiptNote').textContent = file.name;
+}
+async function uploadReceiptFile(file, userId, tag){
+  const ext = ((file.name||'').split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9]/g,'') || 'jpg';
+  const path = `${userId}/${tag}_${Date.now()}_${Math.random().toString(36).slice(2,8)}.${ext}`;
+  const {error:upErr} = await sb.storage.from('receipts').upload(path, file, { cacheControl:'3600', upsert:false, contentType:file.type||'image/jpeg' });
+  if(upErr) throw upErr;
+  const {data:pub} = sb.storage.from('receipts').getPublicUrl(path);
+  return pub.publicUrl;
+}
+async function confirmApproveOrder(){
+  const id = document.getElementById('apOrderId').value;
+  const order = allOrders.find(x=>String(x.id)===String(id));
+  const btn = document.getElementById('apConfirmBtn');
+  btn.style.pointerEvents='none'; btn.innerHTML='<i class="fas fa-circle-notch fa-spin"></i>';
+  try{
+    let payout_receipt_url = order?.payout_receipt_url || null;
+    if(_apFile){
+      payout_receipt_url = await uploadReceiptFile(_apFile, order.user_id, 'payout');
+    }
+    await adminApiRequest('approve_order',{order_id:id,payout_receipt_url,admin_note:order?.admin_note||null});
+    closeMo('moApproveOrder'); closeMo('moOrderDetail');
+    showToast('✅ ئۆردەرەکە پەسەندکرا','gr');
+    refreshOrdersEverywhere();
+  }catch(e){
+    showToast('هەڵە: '+e.message,'rd');
+  }finally{
+    btn.style.pointerEvents='auto'; btn.innerHTML='<i class="fas fa-check"></i> پەسەندکردن';
+  }
+}
+async function uploadPayoutReceiptDirect(input, id){
+  const file = input.files[0]; if(!file) return;
+  if(file.size > 5*1024*1024){ showToast('وێنەکە زۆر گەورەیە (زۆرترین 5MB)','rd'); input.value=''; return; }
+  const order = allOrders.find(x=>String(x.id)===String(id));
+  const lbl = document.getElementById('podUploadLbl');
+  if(lbl) lbl.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> بارکردن...';
+  try{
+    const url = await uploadReceiptFile(file, order.user_id, 'payout');
+    const {error} = await sb.from('ex_orders').update({payout_receipt_url:url}).eq('id',id);
+    if(error) throw error;
+    showToast('وێنەی پسووڵە نێردرا بۆ کڕیار','gr');
+    refreshOrdersEverywhere();
+    showOrderDetail(id);
+  }catch(e){
+    showToast('هەڵە: '+e.message,'rd');
+    if(lbl) lbl.innerHTML = '<i class="fas fa-upload"></i> ناردنی وێنەی پسووڵە بۆ کڕیار';
+  }
+}
+function showRejectReason(id){
+  document.getElementById('rejectTargetId').value=id;
+  document.getElementById('rejectReasonTxt').value='';
+  openMo('moRejectReason');
+}
+async function confirmRejectOrder(){
+  const id=document.getElementById('rejectTargetId').value;
+  const reason=document.getElementById('rejectReasonTxt').value.trim();
+  const btn=document.getElementById('rejectSubmitBtn'); btn.disabled=true;
+  try{
+    await adminApiRequest('reject_order',{order_id:id,reason:reason||null});
+    showToast('ئۆردەرەکە ڕەتکرایەوە','rd');
+    closeMo('moRejectReason'); closeMo('moOrderDetail');
+    refreshOrdersEverywhere();
+  }catch(error){ showToast('هەڵە: '+error.message,'rd'); }
+  finally{ btn.disabled=false; }
+}
+
+function openOrderCorrectionRequest(id){
+  const order=allOrders.find(row=>String(row.id)===String(id));
+  if(!order){ showToast('مامەڵەکە نەدۆزرایەوە','rd'); return; }
+  document.getElementById('orderCorrectionTargetId').value=order.id;
+  document.getElementById('orderCorrectionAdminTitle').textContent='داوای ڕاستکردنەوەی '+fmtCode(orderCodeOf(order));
+  document.getElementById('orderCorrectionAdminReason').value=order.correction_request||'';
+  openMo('moOrderCorrectionRequest');
+  setTimeout(()=>document.getElementById('orderCorrectionAdminReason')?.focus(),80);
+}
+
+async function confirmOrderCorrectionRequest(){
+  const id=document.getElementById('orderCorrectionTargetId').value;
+  const reason=document.getElementById('orderCorrectionAdminReason').value.trim();
+  if(reason.length<5){ showToast('تکایە بە ڕوونی بنووسە کڕیار چی ڕاست بکاتەوە','rd'); return; }
+  const btn=document.getElementById('orderCorrectionAdminSubmit');
+  btn.disabled=true; btn.innerHTML='<i class="fas fa-circle-notch fa-spin"></i> ناردن...';
+  try{
+    const updated=await adminApiRequest('request_order_correction',{order_id:id,reason});
+    showToast(updated?.notification_sent?'داواکاری ڕاستکردنەوە نێردرا و کڕیار ئاگادارکرایەوە':'داواکاری ڕاستکردنەوە نێردرا','gr');
+    closeMo('moOrderCorrectionRequest'); closeMo('moOrderDetail');
+    refreshOrdersEverywhere();
+  }catch(error){ showToast('هەڵە: '+error.message,'rd'); }
+  finally{ btn.disabled=false; btn.innerHTML='<i class="fas fa-paper-plane"></i> ناردن بۆ کڕیار'; }
+}
+async function saveOrderNote(id){
+  const note=document.getElementById('odNote').value.trim();
+  const {error} = await sb.from('ex_orders').update({admin_note: note || null}).eq('id',id);
+  if(error){ showToast('هەڵە: '+error.message,'rd'); return; }
+  showToast('تێبینی پاشەکەوتکرا','gr');
+  refreshOrdersEverywhere();
+}
+function refreshOrdersEverywhere(){
+  loadDashboardStats();
+  if(_curPage==='orders') loadOrders(); else loadDashOrders();
+}
+
+// ── Original admin module 3 ──
+// ══════════════════════════════════════════════════════════════
+// ═══ ACCOUNTS ════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════
+let _accountBalances = Object.create(null);
+async function loadAccountBalances(userIds){
+  const balances=Object.create(null);
+  for(let from=0;from<userIds.length;from+=200){
+    const rows=await adminApiRequest('account_balances',{user_ids:userIds.slice(from,from+200)});
+    rows.forEach(row=>{balances[row.user_id]=row;});
+  }
+  _accountBalances=balances;
+}
+function accountBalanceValue(row){
+  return row ? formatNum(row.available_iqd)+' دینار' : '—';
+}
+function accountBalanceCell(id){
+  const row=_accountBalances[id];
+  return '<div>'+accountBalanceValue(row)+'</div>'+
+    (row&&Number(row.held_iqd)>0?'<div class="rec-card-sub">پارەی گیراو: '+formatNum(row.held_iqd)+' دینار</div>':'');
+}
+function accountBalanceDetails(row){
+  return '<div class="ai-sec">باڵانسی هەژمار</div>'+
+    '<div class="detail-row"><div class="lbl">باڵانسی بەردەست</div><div class="val">'+accountBalanceValue(row)+'</div></div>'+
+    '<div class="detail-row"><div class="lbl">پارەی گیراو</div><div class="val">'+(row?formatNum(row.held_iqd)+' دینار':'—')+'</div></div>'+
+    '<div class="detail-row"><div class="lbl">دوایین نوێکردنەوە</div><div class="val">'+(row?.updated_at?fmtDateTime(row.updated_at):'—')+'</div></div>';
+}
+async function loadAccounts(){
+  document.getElementById('accountsTableWrap').innerHTML='<div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>';
+  try{
+    allAccounts = await fetchAllProfiles();
+    await Promise.all([loadAccountIps(),loadAccountBalances(allAccounts.map(a=>a.id))]);
+    filterAccounts();
+  }catch(e){
+    document.getElementById('accountsTableWrap').innerHTML=`<div class="empty"><i class="fas fa-triangle-exclamation"></i><p>هەڵە: ${esc(e.message)}</p></div>`;
+  }
+}
+// Loads EVERY account. A single request is capped by the API (at most 1000
+// rows, and the old .limit(300) hid the oldest accounts), so read page by
+// page until an empty page comes back — this works whatever the server cap is.
+async function fetchAllProfiles(){
+  const PAGE=1000, rows=[], seen=new Set();
+  for(let from=0, guard=0; guard<200; guard++){
+    const {data,error}=await sb.from('ex_profiles').select('*')
+      .order('created_at',{ascending:false}).order('id',{ascending:true})
+      .range(from, from+PAGE-1);
+    if(error) throw error;
+    if(!data || !data.length) break;
+    for(const r of data){ if(!seen.has(r.id)){ seen.add(r.id); rows.push(r); } }
+    from+=data.length;
+  }
+  return rows;
+}
+function filterAccounts(el){
+  if(el){ document.querySelectorAll('[data-af]').forEach(x=>x.classList.remove('on')); el.classList.add('on'); accFilter=el.dataset.af; }
+  renderAccounts((document.getElementById('accSearch')?.value||'').toLowerCase());
+}
+function renderAccounts(q=''){
+  let list=allAccounts;
+  if(accFilter==='banned') list=list.filter(a=>a.is_banned);
+  if(accFilter==='admin') list=list.filter(a=>a.is_admin);
+  if(q){
+    const h=q.replace(/^@/,'');
+    list=list.filter(a=>(a.full_name||'').toLowerCase().includes(q)||(a.email||'').toLowerCase().includes(q)
+      ||(a.username||'').toLowerCase().includes(h)||String(a.id||'')===q);
+  }
+  const countEl=document.getElementById('accCount');
+  if(countEl){
+    const total=formatNum(allAccounts.length);
+    countEl.textContent = list.length===allAccounts.length ? '('+total+')' : '('+formatNum(list.length)+' لە '+total+')';
+  }
+  document.getElementById('accountsTableWrap').innerHTML = renderAccTable(list) + renderAccCards(list);
+}
+function accBadges(a){
+  let b='';
+  b += a.is_banned ? '<span class="badge banned">بۆیکۆتکراو</span>' : '<span class="badge active">چالاک</span>';
+  if(a.role==='super_admin') b += ' <span class="badge super">سوپەر ئادمین</span>';
+  else if(a.is_admin) b += ' <span class="badge admin">ئادمین</span>';
+  return b;
+}
+function renderAccTable(list){
+  if(!list.length) return '<div class="empty"><i class="fas fa-user-slash"></i><p>هیچ هەژمارێک نییە</p></div>';
+  return `<table><thead><tr><th>بەکارهێنەر</th><th>باڵانسی بەردەست</th><th>مۆبایل</th><th>IP و ئامێر</th><th>باری</th><th>بەرواری تۆمارکردن</th><th>کردار</th></tr></thead><tbody>
+    ${list.map(a=>`<tr>
+      <td><div class="user-cell"><div class="mini-av">${(a.full_name||a.email||'?')[0].toUpperCase()}</div><div><div class="user-cell-name">${esc(a.full_name||'—')}</div><div class="user-cell-email">${esc(a.email||'—')}</div>${a.username?`<div class="user-cell-handle" dir="ltr">@${esc(a.username)}</div>`:''}</div></div></td>
+      <td>${accountBalanceCell(a.id)}</td>
+      <td style="direction:ltr;font-size:12px">${esc(a.phone||'—')}</td>
+      <td>${accIpCell(a.id)}</td>
+      <td>${accBadges(a)}</td>
+      <td class="ai-when"><b dir="ltr">${fmtDate(a.created_at)}</b><span dir="ltr">${fmtTime(a.created_at)}</span><div>${fmtAgo(a.created_at)}</div></td>
+      <td><div class="act-grp">
+        <div class="act-btn bl" onclick="openAccountInfo('${a.id}')"><i class="fas fa-circle-info"></i> زانیاری</div>
+        <div class="act-btn dark" onclick="openSetPasswordModal('${a.id}','${esc(a.email||'').replace(/'/g,"\\'")}')"><i class="fas fa-key"></i> گۆڕینی وشەی نهێنی</div>
+        <div class="act-btn ${a.is_banned?'gr':'rd'}" onclick="toggleBan('${a.id}',${a.is_banned})"><i class="fas fa-${a.is_banned?'user-check':'user-slash'}"></i> ${a.is_banned?'لابردنی بۆیکۆت':'بۆیکۆتکردن'}</div>
+        <div class="act-btn cy" onclick="openKycRequestById('${a.id}')"><i class="fas fa-id-card"></i> پشتڕاستکردنەوە</div>
+        ${roleButtonHTML(a)}
+      </div></td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+function renderAccCards(list){
+  if(!list.length) return '';
+  return `<div class="rec-cards">${list.map(a=>`
+    <div class="rec-card" style="cursor:default">
+      <div class="rec-card-top">
+        <div class="mini-av">${(a.full_name||a.email||'?')[0].toUpperCase()}</div>
+        <div class="rec-card-info"><div class="rec-card-name">${esc(a.full_name||'بێ ناو')}</div><div class="rec-card-sub">${esc(a.email||'—')}</div>${a.username?`<div class="rec-card-sub" style="color:var(--cy)">@${esc(a.username)}</div>`:''}</div>
+      </div>
+      <div class="rec-card-meta">${accBadges(a)}<div class="rec-card-date" dir="ltr">${fmtDateTime(a.created_at)}</div></div>
+      <div class="detail-row"><div class="lbl">باڵانسی بەردەست</div><div class="val">${accountBalanceCell(a.id)}</div></div>
+      <div class="rec-card-actions g3">
+        <div class="act-btn bl" onclick="openAccountInfo('${a.id}')"><i class="fas fa-circle-info"></i> زانیاری</div>
+        <div class="act-btn dark" onclick="openSetPasswordModal('${a.id}','${esc(a.email||'').replace(/'/g,"\\'")}')"><i class="fas fa-key"></i> وشەی نهێنی</div>
+        <div class="act-btn ${a.is_banned?'gr':'rd'}" onclick="toggleBan('${a.id}',${a.is_banned})"><i class="fas fa-${a.is_banned?'user-check':'user-slash'}"></i> ${a.is_banned?'لابردنی بۆیکۆت':'بۆیکۆت'}</div>
+        <div class="act-btn cy" onclick="openKycRequestById('${a.id}')"><i class="fas fa-id-card"></i> پشتڕاستکردنەوە</div>
+        ${roleButtonHTML(a)}
+      </div>
+    </div>`).join('')}</div>`;
+}
+
+// ══════════════════════════════════════════════════════════════
+// ═══ ACCOUNT INFO ════════════════════════════════════════════════
+// Injected from JS so no change to exchange-admin.html is needed.
+// ══════════════════════════════════════════════════════════════
+let _accountInfoLoad=0;
+function ensureAccountInfoModal(){
+  if(document.getElementById('moAccountInfo')) return;
+  const o=document.createElement('div');
+  o.className='overlay'; o.id='moAccountInfo';
+  o.innerHTML=`<div class="modal" style="max-width:560px">
+      <div class="modal-hdr">
+        <h3 id="aiTitle">زانیاری هەژمار</h3>
+        <div class="modal-close" onclick="closeMo('moAccountInfo')"><i class="fas fa-xmark"></i></div>
+      </div>
+      <div id="aiBody"></div>
+    </div>`;
+  document.body.appendChild(o);
+  o.addEventListener('click', e=>{ if(e.target===o) closeMo('moAccountInfo'); });
+}
+
+async function openAccountInfo(id){
+  const a=allAccounts.find(x=>x.id===id);
+  if(!a){ showToast('هەژمارەکە نەدۆزرایەوە','rd'); return; }
+  ensureAccountInfoModal();
+  const loadId=++_accountInfoLoad;
+  document.getElementById('aiTitle').textContent=a.full_name||a.email||'زانیاری هەژمار';
+
+  const base=`
+    <div class="ai-sec">زانیاری بنەڕەتی</div>
+    <div class="detail-row"><div class="lbl">ناوی تەواو</div><div class="val" dir="rtl">${esc(a.full_name||'—')}</div></div>
+    <div class="detail-row"><div class="lbl">ناوی بەکارهێنەر</div><div class="val">${a.username?'@'+esc(a.username):'—'}</div></div>
+    <div class="detail-row"><div class="lbl">ئیمەیل</div><div class="val">${esc(a.email||'—')}</div></div>
+    <div class="detail-row"><div class="lbl">ڕۆڵ</div><div class="val" dir="rtl">${a.role==='super_admin'?'سوپەر ئادمین':a.role==='admin'?'ئادمین':'بەکارهێنەر'}</div></div>
+    <div class="detail-row"><div class="lbl">ژمارەی مۆبایل</div><div class="val">${esc(a.phone||'—')}</div></div>
+    <div class="detail-row"><div class="lbl">باری هەژمار</div><div class="val" dir="rtl">${accBadges(a)}</div></div>
+    <div class="detail-row"><div class="lbl">بەرواری تۆمارکردن</div><div class="val">${fmtDate(a.created_at)}</div></div>
+    <div class="detail-row"><div class="lbl">کاتی تۆمارکردن</div><div class="val">${fmtTime(a.created_at)||'—'}</div></div>
+    <div class="detail-row"><div class="lbl">تەمەنی هەژمار</div><div class="val" dir="rtl">${fmtAgo(a.created_at)||'—'}</div></div>
+    <div class="detail-row"><div class="lbl">ئایدی بەکارهێنەر</div><div class="val" style="font-size:11px">${esc(a.id)}</div></div>`;
+
+  document.getElementById('aiBody').innerHTML = base + accountBalanceDetails(null) +
+    `<div class="ai-sec">چالاکی</div><div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>`;
+  openMo('moAccountInfo');
+
+  const [ordersRes, ipsRes, balanceRes] = await Promise.all([
+    sb.from('ex_orders').select('status,total,created_at').eq('user_id',id).order('created_at',{ascending:false}),
+    securityRequest('user-ips',{query:'&user_id='+encodeURIComponent(id)+'&limit=5'}).catch(()=>({ips:[]})),
+    adminApiRequest('account_balances',{user_ids:[id]}).then(data=>({data})).catch(error=>({error}))
+  ]);
+
+  if(loadId!==_accountInfoLoad)return;
+  if(!balanceRes.error){
+    _accountBalances[id]=balanceRes.data[0];
+    if(_curPage==='accounts')filterAccounts();
+  }
+  const balanceHtml=balanceRes.error
+    ? '<div class="ai-sec">باڵانسی هەژمار</div><div class="fee-toggle-note">نەتوانرا باڵانس بخوێندرێتەوە: '+esc(balanceRes.error.message)+'</div>'
+    : accountBalanceDetails(balanceRes.data[0]);
+
+  const orders = ordersRes.data||[];
+  const n  = s => orders.filter(o=>o.status===s).length;
+  const volume = orders.filter(o=>o.status===STATUS_APPROVED)
+                       .reduce((s,o)=>s+(parseFloat(o.total)||0),0);
+  const last = orders[0];
+
+  let html = base + balanceHtml + `
+    <div class="ai-sec">چالاکی داواکارییەکان</div>
+    <div class="ai-stats">
+      <div class="ai-stat"><b>${formatNum(orders.length)}</b><span>کۆی داواکاری</span></div>
+      <div class="ai-stat yw"><b>${formatNum(n(STATUS_PENDING))}</b><span>چاوەڕوان</span></div>
+      <div class="ai-stat gr"><b>${formatNum(n(STATUS_APPROVED))}</b><span>پەسەندکراو</span></div>
+      <div class="ai-stat rd"><b>${formatNum(n(STATUS_REJECTED))}</b><span>ڕەتکراو</span></div>
+    </div>
+    <div class="detail-row" style="margin-top:10px"><div class="lbl">کۆی گۆڕینەوەی پەسەندکراو</div><div class="val">${formatNum(volume)} IQD</div></div>
+    <div class="detail-row"><div class="lbl">دوایین داواکاری</div><div class="val">${last?fmtDateTime(last.created_at):'—'}</div></div>`;
+
+  const ips = ipsRes.ips||[];
+  html += `<div class="ai-sec">پشتڕاستکردنەوەی ناسنامە</div>
+    <div class="detail-row"><div class="lbl">دۆخ</div><div class="val" dir="rtl" id="aiKycStatus"><i class="fas fa-circle-notch fa-spin"></i></div></div>
+    <div class="act-grp" style="margin:8px 0 4px">
+      <div class="act-btn cy" onclick="openKycRequestById('${esc(a.id)}')"><i class="fas fa-id-card"></i> داواکردنی پشتڕاستکردنەوە</div>
+      <div class="act-btn dark" onclick="closeMo('moAccountInfo');goPage('kyc');setTimeout(()=>{const s=document.getElementById('kycListSearch'); if(s){ s.value='${esc(a.username||'')}'; setKycFilter('all'); }},50)"><i class="fas fa-clock-rotate-left"></i> مێژووی پشتڕاستکردنەوە</div>
+    </div>`;
+  html += `<div class="ai-sec">IP و ئامێر</div>`;
+  if(!ips.length){
+    html += `<div class="fee-toggle-note">هیچ IPـیەک بۆ ئەم هەژمارە تۆمار نەکراوە.</div>`;
+  }else{
+    html += ips.map(r=>`
+      <div class="detail-row">
+        <div class="lbl" style="flex:1;min-width:0">
+          <span class="ip-chip ${r.is_banned?'banned':''}">${esc(r.ip_address)}</span>
+          <div style="font-size:10.5px;margin-top:4px">${esc(r.browser||'—')} · ${esc(r.os||'')} · ${esc(r.device||'')}</div>
+        </div>
+        <div class="val" style="font-size:11px">${r.events} ڕووداو<br>${fmtDateTime(r.last_seen)}</div>
+      </div>`).join('');
+  }
+
+  document.getElementById('aiBody').innerHTML = html;
+  try{
+    const rows=await sb.rpc('ex_admin_kyc_search_users',{p_query:id,p_limit:1});
+    if(loadId!==_accountInfoLoad)return;
+    const st=rows.data?.[0]?.kyc_status||'none';
+    const el=document.getElementById('aiKycStatus');
+    if(el) el.innerHTML=kycBadgeHTML(st);
+  }catch(_){}
+}
+function toggleBan(id, current){
+  const next=!current;
+  confirm2(next?'بۆیکۆتکردنی هەژمار':'لابردنی بۆیکۆت', next?'ئایا دڵنیایت لە بۆیکۆتکردنی ئەم هەژمارە؟ ناتوانێت بچێتە ژوورەوە.':'ئایا دڵنیایت لە لابردنی بۆیکۆت؟',
+    'fas fa-user-slash','var(--rd)', async()=>{
+    const {error} = await sb.from('ex_profiles').update({is_banned:next}).eq('id',id);
+    if(error){ showToast(adminDbMessage(error),'rd'); return; }
+    showToast(next?'هەژمار بۆیکۆتکرا':'بۆیکۆت لابرا', next?'rd':'gr');
+    loadAccounts(); loadDashboardStats();
+  });
+}
+// Role changes are super-admin only and go through ex_admin_set_role; the
+// database rejects them for everyone else, this only hides the button.
+function roleButtonHTML(a){
+  if(!isSuperAdmin() || (adminUser && a.id===adminUser.id) || a.role==='super_admin') return '';
+  return `<div class="act-btn ${a.is_admin?'yw':'pu'}" onclick="toggleAdmin('${a.id}',${!!a.is_admin})"><i class="fas fa-shield"></i> ${a.is_admin?'لابردنی ئادمین':'کردن بە ئادمین'}</div>`;
+}
+function toggleAdmin(id, current){
+  if(!isSuperAdmin()){ showToast('تەنها سوپەر ئادمین دەتوانێت ڕۆڵ بگۆڕێت','rd'); return; }
+  const next=!current;
+  confirm2(next?'کردن بە ئادمین':'لابردنی ئادمین', next?'ئایا دەتەوێت مافی ئادمین بدەیت بەم هەژمارە؟':'ئایا دەتەوێت مافی ئادمین لاببەیت؟',
+    'fas fa-shield-halved','var(--cy)', async()=>{
+    const {error} = await sb.rpc('ex_admin_set_role',{p_user_id:id, p_role: next?'admin':'user'});
+    if(error){ showToast(adminDbMessage(error),'rd'); return; }
+    showToast(next?'کرا بە ئادمین':'مافی ئادمین لابرا','gr');
+    loadAccounts();
+  });
+}
+
+// ══════════════════════════════════════════════════════════════
+// ═══ ADMIN: SET USER PASSWORD (via secure Edge Function) ════════
+// The actual password write happens server-side in the
+// "admin-set-password" Edge Function using the service-role key.
+// That key is never present in this admin panel's code — only a
+// server-side function may hold it. This client just calls that
+// function with the admin's own session token.
+// ══════════════════════════════════════════════════════════════
+
+// Shared caller for the admin Edge Functions.
+// The old code did `await res.json()` straight away — when the function
+// returned a non-JSON body (platform 404/401/5xx, cold-start timeout, CORS
+// block) that threw "Unexpected token" or "Failed to fetch" and the panel
+// showed a meaningless error. This reads the body as text first, parses it
+// only if it IS JSON, and always ends up with a message that says which
+// step actually failed.
+const ADMIN_FN_ERRORS = {
+  missing_authorization: 'تۆکنی چوونەژوورەوە نەنێردرا — دووبارە بچۆرەوە ژوورەوە',
+  invalid_session:       'چوونەژوورەوەت بەسەرچووە — دووبارە بچۆرەوە ژوورەوە',
+  forbidden:             'ئەم هەژمارە مافی ئادمینی نییە',
+  profile_lookup_failed: 'نەتوانرا پرۆفایلی ئادمین بخوێندرێتەوە',
+  user_not_found:        'ئەم بەکارهێنەرە لە سیستەمدا نەدۆزرایەوە',
+  password_too_short:    'وشەی نهێنی دەبێت لانیکەم ٨ پیت/ژمارە بێت',
+  update_failed:         'سێرڤەر نەیتوانی وشەی نهێنی نوێ بکاتەوە',
+  create_failed:         'دروستکردنی هەژمار سەرکەوتوو نەبوو',
+  missing_env:           'کلیلی service-role لە سێرڤەردا دانەنراوە',
+  unhandled_exception:   'هەڵەیەکی چاوەڕوان‌نەکراو لە سێرڤەر',
+};
+
+async function callAdminFn(fnName, payload){
+  const {data:{session}, error:sessErr} = await sb.auth.getSession();
+  if(sessErr || !session?.access_token){
+    throw new Error('چوونەژوورەوەت بەسەرچووە — دووبارە بچۆرەوە ژوورەوە');
+  }
+
+  const ctrl = new AbortController();
+  const timer = setTimeout(()=>ctrl.abort(), 25000);
+  let res;
+  try{
+    res = await fetch(SB_URL + '/functions/v1/' + fnName, {
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'Authorization':'Bearer '+session.access_token,
+        'apikey': SB_KEY
+      },
+      body: JSON.stringify(payload),
+      signal: ctrl.signal
+    });
+  }catch(e){
+    if(e.name === 'AbortError') throw new Error('سێرڤەر وەڵامی نەدایەوە (٢٥ چرکە) — دووبارە هەوڵبدەوە');
+    throw new Error('نەگەیشتە سێرڤەر — ئینتەرنێت یان CORS بلۆکی کردووە ['+fnName+']');
+  }finally{ clearTimeout(timer); }
+
+  const raw = await res.text();
+  let data = null;
+  try{ data = raw ? JSON.parse(raw) : null; }catch(_){ /* not JSON */ }
+
+  if(!res.ok || !data || data.success !== true){
+    if(res.status === 404 && !data?.error){
+      throw new Error('فەنکشنی «'+fnName+'» لە Supabase دانەمەزراوە (404)');
+    }
+    const code = data?.error || '';
+    const base = data?.message || ADMIN_FN_ERRORS[code] || (raw ? raw.slice(0,160) : '') || 'هەڵەی سێرڤەر';
+    const tag  = [code || ('HTTP '+res.status), data?.stage].filter(Boolean).join('/');
+    const err  = new Error(base + ' [' + tag + ']');
+    err.code = code; err.httpStatus = res.status;
+    throw err;
+  }
+  return data;
+}
+
+function openSetPasswordModal(userId, email){
+  document.getElementById('spUserId').value = userId;
+  document.getElementById('spUserLabel').textContent = email || '—';
+  document.getElementById('spNewPass').value = '';
+  document.getElementById('spNewPass2').value = '';
+  document.getElementById('spErr').style.display='none';
+  setSpVisibility(false);
+  openMo('moSetPassword');
+}
+function setSpVisibility(show){
+  ['spNewPass','spNewPass2'].forEach(id=>{ document.getElementById(id).type = show ? 'text' : 'password'; });
+  document.getElementById('spEyeIco').className = show ? 'fas fa-eye-slash' : 'fas fa-eye';
+  document.getElementById('spEyeTxt').textContent = show ? 'شاردنەوەی وشەی نهێنی' : 'پیشاندانی وشەی نهێنی';
+}
+function toggleSpVisibility(){
+  setSpVisibility(document.getElementById('spNewPass').type === 'password');
+}
+async function submitSetPassword(){
+  const errEl = document.getElementById('spErr');
+  errEl.style.display='none';
+  const userId = document.getElementById('spUserId').value;
+  const pass = document.getElementById('spNewPass').value;
+  const pass2 = document.getElementById('spNewPass2').value;
+  if(!userId){ errEl.textContent='بەکارهێنەر دیاری نەکراوە — پەنجەرەکە دابخە و دووبارە هەوڵبدەوە'; errEl.style.display='block'; return; }
+  if(pass.length < 8){ errEl.textContent='وشەی نهێنی دەبێت لانیکەم ٨ پیت/ژمارە بێت'; errEl.style.display='block'; return; }
+  if(pass !== pass2){ errEl.textContent='وشەکانی نهێنی وەک یەک نین'; errEl.style.display='block'; return; }
+  const btn = document.getElementById('spSaveBtn');
+  btn.disabled = true; btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
+  try{
+    const data = await callAdminFn('admin-set-password', { target_user_id:userId, new_password:pass });
+    closeMo('moSetPassword');
+    let msg = '✅ وشەی نهێنی گۆڕدرا';
+    if(data.sessions_revoked > 0) msg += ' — '+data.sessions_revoked+' ئامێری چوونەژوورەوە بڕدرایەوە';
+    showToast(msg,'gr');
+    if(data.warning) console.warn('admin-set-password warning:', data.warning);
+  }catch(e){
+    errEl.textContent = e.message; errEl.style.display='block';
+    console.error('admin-set-password failed:', e);
+  }finally{
+    btn.disabled=false; btn.innerHTML='<i class="fas fa-check"></i> پاشەکەوتکردن';
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+// ═══ ADMIN: CREATE USER (via secure Edge Function) ══════════════
+// ══════════════════════════════════════════════════════════════
+function openCreateUserModal(){
+  document.getElementById('cuName').value = '';
+  document.getElementById('cuEmail').value = '';
+  document.getElementById('cuPhone').value = '';
+  document.getElementById('cuPass').value = '';
+  document.getElementById('cuIsAdmin').checked = false;
+  document.getElementById('cuErr').style.display='none';
+  openMo('moCreateUser');
+}
+async function submitCreateUser(){
+  const errEl = document.getElementById('cuErr');
+  errEl.style.display='none';
+  const full_name = document.getElementById('cuName').value.trim();
+  const email = document.getElementById('cuEmail').value.trim();
+  const phone = document.getElementById('cuPhone').value.trim();
+  const password = document.getElementById('cuPass').value;
+  const is_admin = document.getElementById('cuIsAdmin').checked;
+  if(!email || !email.includes('@')){ errEl.textContent='ئیمەیلێکی دروست بنووسە'; errEl.style.display='block'; return; }
+  if(password.length < 8){ errEl.textContent='وشەی نهێنی دەبێت لانیکەم ٨ پیت/ژمارە بێت'; errEl.style.display='block'; return; }
+  const btn = document.getElementById('cuSaveBtn');
+  btn.disabled = true; btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
+  try{
+    await callAdminFn('admin-create-user', { email, password, full_name, phone, is_admin });
+    closeMo('moCreateUser');
+    showToast('✅ هەژمار دروستکرا','gr');
+    loadAccounts(); loadDashboardStats();
+  }catch(e){
+    errEl.textContent = e.message; errEl.style.display='block';
+    console.error('admin-create-user failed:', e);
+  }finally{
+    btn.disabled=false; btn.innerHTML='<i class="fas fa-check"></i> دروستکردن';
+  }
+}
+
+// ═══ PER-CUSTOMER FEE REWARDS (server-only admin writes) ════════════
+let rewardSelectedUserId = null;
+let rewardAdminRows = [];
+async function loadRewardsPanel(){
+  const wrap=document.getElementById('rewardsTableWrap');
+  if(wrap) wrap.textContent='بارکردنی پاداشتەکان...';
+  try{
+    const [users, rewards] = await Promise.all([
+      allAccounts.length ? Promise.resolve(allAccounts) : fetchAllProfiles(),
+      adminApiRequest('list_rewards',{ limit:200 })
+    ]);
+    allAccounts=users;
+    rewardAdminRows=Array.isArray(rewards)?rewards:[];
+    renderRewardsList();
+    searchRewardUsers();
+  }catch(e){
+    if(wrap) wrap.textContent='هەڵە لە بارکردن: '+e.message;
+  }
+}
+function updateRewardKind(){
+  const free=document.getElementById('rewardKind').value==='free_transactions';
+  const percent=document.getElementById('rewardPercent');
+  percent.disabled=free;
+  if(free)percent.value=100;
+  const uses=document.getElementById('rewardUses');
+  if(free && !uses.value)uses.value=2;
+}
+function searchRewardUsers(){
+  rewardSelectedUserId=null;
+  const selected=document.getElementById('rewardSelectedUser');
+  if(selected)selected.textContent='';
+  const el=document.getElementById('rewardUserSearch');
+  const out=document.getElementById('rewardUserResults');
+  if(!el || !out)return;
+  const q=el.value.trim().toLowerCase().replace(/^@/,'');
+  if(!q){out.innerHTML='';return;}
+  const found=allAccounts.filter(a=>!a.is_banned && (
+    String(a.id||'').toLowerCase()===q ||
+    String(a.full_name||'').toLowerCase().includes(q) ||
+    String(a.email||'').toLowerCase().includes(q) ||
+    String(a.username||'').toLowerCase().includes(q))).slice(0,12);
+  out.innerHTML=found.map(a=>'<button type="button" class="act-btn dark" style="text-align:right;display:block;width:100%" onclick="pickRewardUser(\''+a.id+'\')">'+
+    esc(a.full_name||a.username||a.email||a.id)+' — '+esc(a.username?'@'+a.username:(a.email||''))+'</button>').join('') ||
+    '<div class="ex-note">هیچ بەکارهێنەرێک نەدۆزرایەوە</div>';
+}
+function pickRewardUser(id){
+  const user=allAccounts.find(a=>a.id===id && !a.is_banned);
+  if(!user)return;
+  rewardSelectedUserId=id;
+  document.getElementById('rewardUserSearch').value=user.username?'@'+user.username:(user.email||user.full_name||id);
+  document.getElementById('rewardSelectedUser').textContent='بەکارهێنەری هەڵبژێردراو: '+(user.full_name||user.email||id);
+  document.getElementById('rewardUserResults').innerHTML='';
+}
+async function saveUserReward(){
+  const err=document.getElementById('rewardError');
+  err.textContent='';
+  if(!rewardSelectedUserId){err.textContent='سەرەتا بەکارهێنەرێک هەڵبژێرە';return;}
+  const kind=document.getElementById('rewardKind').value;
+  const reward_scope=document.getElementById('rewardScope').value;
+  const discount_percent=kind==='free_transactions'?100:Number(document.getElementById('rewardPercent').value);
+  const rawUses=document.getElementById('rewardUses').value.trim();
+  const max_uses=rawUses===''?null:Number(rawUses);
+  const rawCap=document.getElementById('rewardAmountCap').value.trim();
+  const max_amount_iqd=rawCap===''?null:Number(rawCap);
+  const dateValue=document.getElementById('rewardUntil').value;
+  const valid_until=dateValue?new Date(dateValue).toISOString():null;
+  if(!(discount_percent>0 && discount_percent<=100) ||
+     (max_uses===null && kind==='free_transactions') ||
+     (max_uses!==null && (!Number.isInteger(max_uses)||max_uses<1||max_uses>1000))){
+    err.textContent='ڕێژە و ژمارەی مامەڵەکان بە دروستی دیاری بکە';return;
+  }
+  if(max_amount_iqd!==null&&(!Number.isSafeInteger(max_amount_iqd)||max_amount_iqd<1||max_amount_iqd>1000000000)){
+    err.textContent='سنووری بڕی پاداشت دەبێت ژمارەیەکی تەواو بێت لە 1 تا 1,000,000,000 دینار';return;
+  }
+  if(valid_until && new Date(valid_until)<=new Date()){
+    err.textContent='بەرواری بەسەرچوون دەبێت لە داهاتوودا بێت';return;
+  }
+  if(!confirm('پاداشت بۆ ئەم بەکارهێنەرە بنێردرێت؟'))return;
+  const button=document.getElementById('rewardSendBtn');
+  button.disabled=true;
+  try{
+    await adminApiRequest('grant_reward',{
+      user_id:rewardSelectedUserId, kind, discount_percent,max_uses,max_amount_iqd,reward_scope,valid_until,
+      note:document.getElementById('rewardNote').value
+    });
+    showToast('پاداشتەکە بە سەرکەوتوویی نێردرا','gr');
+    document.getElementById('rewardNote').value='';
+    await loadRewardsPanel();
+  }catch(e){err.textContent=e.message;}
+  finally{button.disabled=false;}
+}
+function renderRewardsList(){
+  const wrap=document.getElementById('rewardsTableWrap');
+  if(!wrap)return;
+  if(!rewardAdminRows.length){wrap.innerHTML='<div class="empty">هیچ پاداشتێک تۆمار نەکراوە</div>';return;}
+  wrap.innerHTML='<table><thead><tr><th>بەکارهێنەر</th><th>پاداشت</th><th>تایبەت بە</th><th>سنووری بڕ / مامەڵە</th><th>بەکارهاتوو / کۆی</th><th>بەسەرچوون</th><th>دۆخ</th><th>کردار</th></tr></thead><tbody>'+
+    rewardAdminRows.map(r=>{
+      const p=r.profile||{};
+      const expired=r.valid_until && Date.parse(r.valid_until)<=Date.now();
+      const exhausted=r.max_uses!==null && r.used_count>=r.max_uses;
+      const status=!r.active?'هەڵوەشاوە':expired?'بەسەرچووە':exhausted?'تەواوبووە':'چالاک';
+      return '<tr><td>'+esc(p.full_name||p.username||p.email||r.user_id)+'</td>'+
+        '<td>'+esc(r.kind==='free_transactions'?'بێ لێبڕین':'داشکاندنی '+r.discount_percent+'%')+'</td>'+
+        '<td>'+esc(({wallets:'جزدانەکان',korek:'کۆڕەک',asiacell:'ئاسیاسێڵ'})[r.reward_scope||'wallets'])+'</td>'+
+        '<td>'+esc(r.max_amount_iqd==null?'بێ سنوور':formatNum(r.max_amount_iqd)+' دینار')+'</td>'+
+        '<td dir="ltr">'+esc(r.used_count)+' / '+esc(r.max_uses===null?'∞':r.max_uses)+'</td>'+
+        '<td>'+esc(r.valid_until?fmtDate(r.valid_until):'بێ کۆتایی')+'</td>'+
+        '<td>'+esc(status)+'</td>'+
+        '<td>'+(r.active?'<button type="button" class="act-btn rd" onclick="revokeUserReward(\''+r.id+'\')">هەڵوەشاندنەوە</button>':'—')+'</td></tr>';
+    }).join('')+'</tbody></table>';
+}
+async function revokeUserReward(id){
+  if(!confirm('ئەم پاداشتە هەڵبوەشێتەوە؟ مامەڵەکانی پێشوو ناگۆڕدرێن.'))return;
+  try{await adminApiRequest('revoke_reward',{id});showToast('پاداشت هەڵوەشێندرایەوە','gr');await loadRewardsPanel();}
+  catch(e){document.getElementById('rewardError').textContent=e.message;}
+}
+
+// ══════════════════════════════════════════════════════════════
+// ═══ RATES & FEES ════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════
+let _ratesAdminChannel=null;
+async function loadRates(){
+  document.getElementById('ratesTableWrap').innerHTML='<div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>';
+  try{
+    const {data,error} = await sb.from('ex_rates').select('*').order('from_method').order('to_method');
+    if(error) throw error;
+    allRates = data||[];
+    renderRates();
+  }catch(e){
+    document.getElementById('ratesTableWrap').innerHTML=`<div class="empty"><i class="fas fa-triangle-exclamation"></i><p>هەڵە: ${esc(e.message)}</p></div>`;
+  }
+  subscribeRatesAdmin();
+}
+function subscribeRatesAdmin(){
+  if(_ratesAdminChannel) return;
+  _ratesAdminChannel = sb.channel('ex_rates_admin')
+    .on('postgres_changes', {event:'*',schema:'public',table:'ex_rates'}, ()=>{ if(_curPage==='rates') loadRates(); })
+    .subscribe();
+}
+// Method options for the rate From/To selects: the original fixed methods (kept so
+// existing rates like Korek/USDT — which have no ex_wallets row — still edit correctly)
+// merged live with whatever wallets exist in ex_wallets, so a newly-added wallet shows
+// up here automatically without any code change.
+function buildMethodLabelMap(){
+  const map=new Map();
+  ALL_METHODS.forEach(k=>map.set(k, (METHOD_META[k]&&METHOD_META[k].label)||k));
+  allWallets.forEach(w=>{ if(w.key) map.set(w.key, w.name||w.key); });
+  return map;
+}
+function buildFromMethodKeys(){
+  const set=new Set(ALL_METHODS);
+  allWallets.forEach(w=>{ if(w.key && w.allow_from!==false) set.add(w.key); });
+  return [...set];
+}
+function buildToMethodKeys(){
+  const set=new Set(RECEIVE_METHODS);
+  allWallets.forEach(w=>{ if(w.key && w.allow_receive===true) set.add(w.key); });
+  return [...set];
+}
+function rateTypeLabel(t){ return t==='fee_percent' ? 'حمولە %' : t==='fee_fixed' ? 'حمولەی جێگیر' : 'مەزراپ'; }
+function renderRates(){
+  if(!allRates.length){ document.getElementById('ratesTableWrap').innerHTML='<div class="empty"><i class="fas fa-percent"></i><p>هیچ ڕێگایەک زیاد نەکراوە</p></div>'; return; }
+  document.getElementById('ratesTableWrap').innerHTML = `<table><thead><tr><th>لە</th><th>بۆ</th><th>جۆر</th><th>بەها</th><th>چالاک</th><th>کردار</th></tr></thead><tbody>
+    ${allRates.map(r=>`<tr>
+      <td>${methodPill(r.from_method)}</td>
+      <td>${methodPill(r.to_method)}</td>
+      <td style="font-size:12px">${rateTypeLabel(r.rate_type)}</td>
+      <td style="font-family:'Inter';font-weight:800;direction:ltr;text-align:right">${r.rate_type==='multiplier' && Number(r.rate_value)<1
+        ? `×${esc(r.rate_value)} <span style="font-family:'R';font-size:10.5px;font-weight:700;color:var(--mt2)">(${esc(fmtPairValue(r.rate_type,r.rate_value))})</span>`
+        : esc(fmtPairValue(r.rate_type,r.rate_value))}</td>
+      <td><label class="mswitch"><input type="checkbox" ${r.is_active?'checked':''} onchange="toggleRateActive('${r.id}',this.checked)"><span class="track"></span></label></td>
+      <td><div class="act-grp">
+        <div class="act-btn dark" onclick='openRateModal(${safeAttr(r)})'><i class="fas fa-pen"></i></div>
+        <div class="act-btn rd" onclick="deleteRate('${r.id}')"><i class="fas fa-trash"></i></div>
+      </div></td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+async function toggleRateActive(id, val){
+  const {error} = await sb.from('ex_rates').update({is_active:val}).eq('id',id);
+  if(error){ await handleDbWriteError(error); loadRates(); return; }
+  showToast(val?'چالاککرا':'ناچالاککرا','gr');
+  const r=allRates.find(x=>x.id===id); if(r) r.is_active=val;
+}
+function deleteRate(id){
+  confirm2('سڕینەوەی ڕێگا','ئایا دڵنیایت لە سڕینەوەی ئەم ڕێگا گۆڕینەوەیە؟','fas fa-trash','var(--rd)', async()=>{
+    const {error} = await sb.from('ex_rates').delete().eq('id',id);
+    if(error){ await handleDbWriteError(error); return; }
+    showToast('ڕێگاکە سڕایەوە','gr');
+    loadRates();
+  });
+}
+async function openRateModal(rate){
+  if(!allWallets.length) await loadWalletsAdmin();
+  const labelMap = buildMethodLabelMap();
+  const fromKeys = buildFromMethodKeys(), toKeys = buildToMethodKeys();
+  const fromSel=document.getElementById('rateFrom'), toSel=document.getElementById('rateTo');
+  fromSel.innerHTML = fromKeys.map(k=>`<option value="${esc(k)}">${esc(labelMap.get(k)||k)}</option>`).join('');
+  toSel.innerHTML = toKeys.map(k=>`<option value="${esc(k)}">${esc(labelMap.get(k)||k)}</option>`).join('');
+  if(rate){
+    document.getElementById('rateModalTitle').textContent='دەستکاریکردنی ڕێگا';
+    document.getElementById('rateId').value=rate.id;
+    fromSel.value=rate.from_method; toSel.value=rate.to_method;
+    document.getElementById('rateType').value=rate.rate_type;
+    document.getElementById('rateValue').value=rate.rate_value;
+    document.getElementById('rateActive').checked=rate.is_active;
+  }else{
+    document.getElementById('rateModalTitle').textContent='زیادکردنی ڕێگای نوێ';
+    document.getElementById('rateId').value='';
+    fromSel.selectedIndex=0; toSel.selectedIndex=0;
+    document.getElementById('rateType').value='multiplier';
+    document.getElementById('rateValue').value='';
+    document.getElementById('rateActive').checked=true;
+  }
+  updateRateValueHint();
+  openMo('moRate');
+}
+function updateRateValueHint(){
+  const t=document.getElementById('rateType').value;
+  document.getElementById('rateValueHint').textContent = t==='fee_percent'
+    ? 'بڕی وەرگیراو = بڕی نێردراو − (بڕی نێردراو × ڕێژە ÷ 100)'
+    : t==='fee_fixed'
+    ? 'بڕی وەرگیراو = بڕی نێردراو − حمولەی جێگیر'
+    : 'بڕی وەرگیراو = بڕی نێردراو × ژمارەی مەزراپ';
+}
+async function saveRate(){
+  const id=document.getElementById('rateId').value;
+  const from=document.getElementById('rateFrom').value, to=document.getElementById('rateTo').value;
+  const rate_type=document.getElementById('rateType').value;
+  const rate_value=parseFloat(document.getElementById('rateValue').value);
+  const is_active=document.getElementById('rateActive').checked;
+  if(from===to){ showToast('نابێت لە و بۆ یەکسان بن','rd'); return; }
+  if(isNaN(rate_value)){ showToast('بەهای دروست بنووسە','rd'); return; }
+  const btn=document.getElementById('rateSaveBtn'); btn.disabled=true;
+  let error;
+  if(id){
+    ({error} = await sb.from('ex_rates').update({from_method:from,to_method:to,rate_type,rate_value,is_active}).eq('id',id));
+  }else{
+    ({error} = await sb.from('ex_rates').insert({from_method:from,to_method:to,rate_type,rate_value,is_active}));
+  }
+  btn.disabled=false;
+  if(error){ await handleDbWriteError(error); return; }
+  showToast('پاشەکەوتکرا','gr');
+  closeMo('moRate');
+  loadRates();
+}
+
+// ── Original admin module 4 ──
+// ══════════════════════════════════════════════════════════════
+// ═══ WALLETS ═════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════
+let allWallets=[];
+let _walletsAdminChannel=null;
+
+async function loadWalletsAdmin(){
+  document.getElementById('walletsGridWrap').innerHTML='<div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>';
+  try{
+    const {data,error} = await sb.from('ex_wallets').select('*').order('sort_order',{ascending:true});
+    if(error) throw error;
+    allWallets = data||[];
+    await loadPairs();
+    renderWalletsGrid();
+  }catch(e){
+    document.getElementById('walletsGridWrap').innerHTML=`<div class="empty"><i class="fas fa-triangle-exclamation"></i><p>هەڵە: ${esc(e.message)}</p><p style="font-size:11px;margin-top:6px">دڵنیابەرەوە خشتەی ex_wallets دروستکراوە (بڕوانە SQL پێشکەشکراو)</p></div>`;
+  }
+  subscribeWalletsAdmin();
+}
+function subscribeWalletsAdmin(){
+  if(_walletsAdminChannel) return;
+  const refreshWalletsPage = ()=>{
+    if(_curPage!=='wallets') return;
+    // don't yank data out from under an admin who is mid-edit
+    if(document.getElementById('moWallet').classList.contains('on')) return;
+    loadWalletsAdmin();
+  };
+  _walletsAdminChannel = sb.channel('ex_wallets_admin')
+    .on('postgres_changes', {event:'*',schema:'public',table:'ex_wallets'}, refreshWalletsPage)
+    .on('postgres_changes', {event:'*',schema:'public',table:'ex_rates'}, refreshWalletsPage)
+    .subscribe();
+}
+function renderWalletsGrid(){
+  const wrap=document.getElementById('walletsGridWrap');
+  if(!allWallets.length){ wrap.innerHTML='<div class="empty"><i class="fas fa-wallet"></i><p>هیچ واڵێتێک زیاد نەکراوە</p></div>'; return; }
+  wrap.innerHTML = allWallets.map(w=>{
+    const avatarInner = w.image_url ? `<img src="${esc(w.image_url)}" alt="">` : `<i class="fas fa-wallet"></i>`;
+    const avatarBg = w.image_url ? '' : `background:${esc(w.color||'#1c2333')}`;
+    return `<div class="wallet-card ${w.is_locked?'locked':''}">
+      <div class="wallet-card-top">
+        <div class="wallet-avatar" style="${avatarBg}">${avatarInner}</div>
+        <div class="wallet-card-info">
+          <div class="wallet-card-name">${esc(w.name)}</div>
+          <div class="wallet-card-key">${esc(w.key)}</div>
+        </div>
+      </div>
+      <div class="wallet-card-num">${esc(w.wallet_number||'—')}</div>
+      <div class="wallet-card-meta">
+        ${w.allow_from!==false?'<span class="wallet-card-badge"><i class="fas fa-arrow-up"></i> ناردن چالاکە</span>':''}
+        ${w.allow_receive?'<span class="wallet-card-badge gr"><i class="fas fa-arrow-down"></i> وەرگرتن چالاکە</span>':''}
+        ${w.price!=null?`<span class="wallet-card-badge">نرخ: ${esc(w.price)}</span>`:''}
+        ${w.fee!=null?`<span class="wallet-card-badge">کرێ: ${esc(w.fee)}${w.fee_type==='percent'?'%':' د.ع'}</span>`:''}
+      </div>
+      ${walletPairsHTML(w)}
+      <div class="act-grp">
+        <div class="act-btn dark" onclick='openWalletModal(${safeAttr(w)})'><i class="fas fa-pen"></i> دەستکاری</div>
+        <div class="act-btn rd" onclick="deleteWallet('${w.id}','${esc(w.key)}')"><i class="fas fa-trash"></i></div>
+      </div>
+      <div class="wallet-lock-row">
+        <span><i class="fas ${w.is_locked?'fa-lock':'fa-lock-open'}" style="color:${w.is_locked?'var(--rd)':'var(--gr)'}"></i> ${w.is_locked?'قوفڵکراوە':'کراوەیە'}</span>
+        <label class="mswitch"><input type="checkbox" ${w.is_locked?'checked':''} onchange="toggleWalletLock('${w.id}',this.checked)"><span class="track"></span></label>
+      </div>
+    </div>`;
+  }).join('');
+}
+async function toggleWalletLock(id, locked){
+  const {error} = await sb.from('ex_wallets').update({is_locked:locked}).eq('id',id);
+  if(error){ await handleDbWriteError(error); loadWalletsAdmin(); return; }
+  showToast(locked?'واڵێت قوفڵکرا':'واڵێت کرایەوە','gr');
+  const w=allWallets.find(x=>x.id===id); if(w) w.is_locked=locked;
+  renderWalletsGrid();
+}
+function deleteWallet(id, key){
+  confirm2('سڕینەوەی واڵێت','ئایا دڵنیایت لە سڕینەوەی ئەم واڵێتە؟ هەموو ڕێگا و حمولەکانیشی دەسڕێنەوە. ئۆردەرە کۆنەکان کاریگەر نابن.','fas fa-trash','var(--rd)', async()=>{
+    const {error} = await sb.from('ex_wallets').delete().eq('id',id);
+    if(error){ await handleDbWriteError(error); return; }
+    if(key){ await sb.from('ex_rates').delete().or(`from_method.eq.${key},to_method.eq.${key}`); }
+    showToast('واڵێتەکە سڕایەوە','gr');
+    loadWalletsAdmin();
+  });
+}
+function autoFillWalletKey(){
+  const keyInp=document.getElementById('walletKey');
+  if(keyInp.dataset.touched==='1') return; // don't overwrite once the admin edited it manually
+  const name=document.getElementById('walletName').value.trim();
+  keyInp.value = name.replace(/[^a-zA-Z0-9]+/g,'');
+}
+function onWalletImgFile(input){
+  const file=input.files[0]; if(!file) return;
+  if(file.size > 900*1024){ showToast('وێنەکە زۆر گەورەیە (زۆرترین 900KB)','rd'); input.value=''; return; }
+  const reader=new FileReader();
+  reader.onload=()=>{
+    document.getElementById('walletImageUrl').value = reader.result;
+    document.getElementById('walletImgPreview').innerHTML = `<img src="${reader.result}" style="width:100%;height:100%;object-fit:cover">`;
+  };
+  reader.readAsDataURL(file);
+}
+function openWalletModal(w){
+  document.getElementById('walletKey').dataset.touched='0';
+  _walletOldKey = w ? (w.key||'') : '';
+  if(w){
+    document.getElementById('walletModalTitle').textContent='دەستکاریکردنی واڵێت';
+    document.getElementById('walletId').value=w.id;
+    document.getElementById('walletName').value=w.name||'';
+    document.getElementById('walletKey').value=w.key||'';
+    document.getElementById('walletKey').dataset.touched='1';
+    document.getElementById('walletNumber').value=w.wallet_number||'';
+    document.getElementById('walletImageUrl').value=w.image_url||'';
+    document.getElementById('walletImgPreview').innerHTML = w.image_url ? `<img src="${esc(w.image_url)}" style="width:100%;height:100%;object-fit:cover">` : '<i class="fas fa-image"></i>';
+    document.getElementById('walletPrice').value=w.price??'';
+    document.getElementById('walletFee').value=w.fee??'';
+    document.getElementById('walletFeeType').value=w.fee_type||'percent';
+    document.getElementById('walletCanSend').checked=w.allow_from!==false;
+    document.getElementById('walletCanReceive').checked=!!w.allow_receive;
+    document.getElementById('walletLocked').checked=!!w.is_locked;
+  }else{
+    document.getElementById('walletModalTitle').textContent='زیادکردنی واڵێتی نوێ';
+    document.getElementById('walletId').value='';
+    document.getElementById('walletName').value='';
+    document.getElementById('walletKey').value='';
+    document.getElementById('walletNumber').value='';
+    document.getElementById('walletImageUrl').value='';
+    document.getElementById('walletImgPreview').innerHTML='<i class="fas fa-image"></i>';
+    document.getElementById('walletPrice').value='';
+    document.getElementById('walletFee').value='';
+    document.getElementById('walletFeeType').value='percent';
+    document.getElementById('walletCanSend').checked=true;
+    document.getElementById('walletCanReceive').checked=false;
+    document.getElementById('walletLocked').checked=false;
+  }
+  document.getElementById('walletImgFile').value='';
+  document.getElementById('pairBulkValue').value='';
+  buildPairDraft(w);
+  openMo('moWallet');
+}
+async function saveWallet(){
+  const id=document.getElementById('walletId').value;
+  const name=document.getElementById('walletName').value.trim();
+  const key=document.getElementById('walletKey').value.trim();
+  const wallet_number=document.getElementById('walletNumber').value.trim();
+  const image_url=document.getElementById('walletImageUrl').value.trim()||null;
+  const priceRaw=document.getElementById('walletPrice').value;
+  const feeRaw=document.getElementById('walletFee').value;
+  const price = priceRaw===''?null:parseFloat(priceRaw);
+  const fee = feeRaw===''?null:parseFloat(feeRaw);
+  const fee_type=document.getElementById('walletFeeType').value;
+  const allow_from=document.getElementById('walletCanSend').checked;
+  const allow_receive=document.getElementById('walletCanReceive').checked;
+  const is_locked=document.getElementById('walletLocked').checked;
+  if(!name){ showToast('ناوی واڵێت بنووسە','rd'); return; }
+  if(!key){ showToast('کلیلی واڵێت بنووسە','rd'); return; }
+  if(!allow_from && !allow_receive){ showToast('پێویستە لانیکەم یەکێک لە «ناردن» یان «وەرگرتن» چالاک بێت','rd'); return; }
+  const btn=document.getElementById('walletSaveBtn'); btn.disabled=true;
+  const payload={ name, key, wallet_number: wallet_number||null, image_url, price, fee, fee_type, allow_from, allow_receive, is_locked };
+  let error;
+  if(id){
+    ({error} = await sb.from('ex_wallets').update(payload).eq('id',id));
+  }else{
+    payload.sort_order = allWallets.length ? Math.max(...allWallets.map(w=>w.sort_order||0))+1 : 1;
+    ({error} = await sb.from('ex_wallets').insert(payload));
+  }
+  if(error){ btn.disabled=false; await handleDbWriteError(error); return; }
+  await syncWalletPairs(key, id ? _walletOldKey : '');
+  btn.disabled=false;
+  showToast('پاشەکەوتکرا','gr');
+  closeMo('moWallet');
+  loadWalletsAdmin();
+}
+
+// ══════════════════════════════════════════════════════════════
+// ═══ PER-PAIR ROUTES & FEES ══════════════════════════════════════
+// Every wallet-to-wallet direction is one ex_rates row: is_active is the
+// open/closed switch, rate_type + rate_value is that direction's fee.
+// A→B and B→A are separate rows, so they open, close and price independently.
+// ══════════════════════════════════════════════════════════════
+let allPairs=[];                       // every ex_rates row, active and inactive
+let _pairDraft={out:{},in:{}};         // unsaved state of the matrix in the modal
+let _pairTab='out';
+let _pairSelfKey='';
+let _walletOldKey='';
+const PAIR_TYPES=[['fee_percent','حمولە بە ڕێژە (%)'],['fee_fixed','حمولەی جێگیر (د.ع)'],['multiplier','مەزراپ (×)']];
+// 0.85 → "15" (no trailing zeros)
+function fmtPct(n){ return String(Math.round(n*100)/100); }
+// A multiplier under 1 is a straight cut off the amount, so it's shown to both
+// admin and user as a rate — "کرێ 15%" — rather than a raw ×0.85.
+function fmtPairValue(t,v){
+  const n=Number(v);
+  if(t==='fee_percent') return v+'%';
+  if(t==='fee_fixed') return v+' د.ع';
+  return n<1 ? 'کرێ '+fmtPct(100-n*100)+'%' : '×'+v;
+}
+function walletLabelFor(key){
+  const w=allWallets.find(x=>x.key===key);
+  return w ? (w.name||key) : ((METHOD_META[key]&&METHOD_META[key].label)||key);
+}
+async function loadPairs(){
+  try{
+    const {data,error} = await sb.from('ex_rates').select('*');
+    allPairs = (!error && data) ? data : [];
+  }catch(e){ allPairs=[]; }
+}
+function walletPairsHTML(w){
+  const outs=allPairs.filter(r=>r.from_method===w.key && r.is_active);
+  const ins =allPairs.filter(r=>r.to_method===w.key && r.is_active);
+  const chips=(arr,pick)=> arr.length
+    ? arr.map(r=>`<span class="pair-chip">${esc(walletLabelFor(pick(r)))} · <b>${esc(fmtPairValue(r.rate_type,r.rate_value))}</b></span>`).join('')
+    : '<span class="pair-chip mut">هیچ ڕێگایەک کراوە نییە</span>';
+  return `<div class="wallet-pairs">
+    <div class="wallet-pairs-row"><span class="wallet-pairs-lbl"><i class="fas fa-arrow-left"></i> ناردن بۆ</span>${chips(outs,r=>r.to_method)}</div>
+    <div class="wallet-pairs-row"><span class="wallet-pairs-lbl"><i class="fas fa-arrow-right"></i> وەرگرتن لە</span>${chips(ins,r=>r.from_method)}</div>
+  </div>`;
+}
+function pairOtherWallets(){
+  const selfId=document.getElementById('walletId').value;
+  return allWallets.filter(x=> selfId ? x.id!==selfId : (_pairSelfKey ? x.key!==_pairSelfKey : true));
+}
+function buildPairDraft(w){
+  _pairSelfKey = w ? (w.key||'') : '';
+  _pairDraft={out:{},in:{}};
+  allWallets.forEach(o=>{
+    if(w && o.id===w.id) return;
+    const ro = allPairs.find(r=>r.from_method===_pairSelfKey && r.to_method===o.key);
+    const ri = allPairs.find(r=>r.from_method===o.key && r.to_method===_pairSelfKey);
+    _pairDraft.out[o.key] = ro ? {on:!!ro.is_active, type:ro.rate_type, value:String(ro.rate_value)} : {on:false,type:'fee_percent',value:''};
+    _pairDraft.in[o.key]  = ri ? {on:!!ri.is_active, type:ri.rate_type, value:String(ri.rate_value)} : {on:false,type:'fee_percent',value:''};
+  });
+  switchPairTab('out');
+}
+function switchPairTab(tab){
+  _pairTab=tab;
+  document.querySelectorAll('[data-ptab]').forEach(t=>t.classList.toggle('on', t.dataset.ptab===tab));
+  renderPairList();
+}
+function renderPairCounts(){
+  const cnt=d=>Object.values(_pairDraft[d]).filter(s=>s.on).length;
+  document.getElementById('pairCntOut').textContent=cnt('out');
+  document.getElementById('pairCntIn').textContent=cnt('in');
+}
+function renderPairList(){
+  const wrap=document.getElementById('pairListWrap');
+  renderPairCounts();
+  const others=pairOtherWallets();
+  if(!others.length){
+    wrap.innerHTML='<div class="pair-empty">هێشتا واڵێتێکی تر نییە.<br>دوای زیادکردنی واڵێتی دووەم، ڕێگا و حمولەکان لێرە دەردەکەون.</div>';
+    return;
+  }
+  const outMode=_pairTab==='out';
+  const canSend=document.getElementById('walletCanSend').checked;
+  const canRecv=document.getElementById('walletCanReceive').checked;
+  let note='';
+  if(outMode && !canSend) note='<div class="pair-note"><i class="fas fa-triangle-exclamation"></i> «ناردن» بۆ ئەم واڵێتە ناچالاکە، بۆیە ئەم ڕێگایانە کار ناکەن تا چالاکی نەکەیت.</div>';
+  if(!outMode && !canRecv) note='<div class="pair-note"><i class="fas fa-triangle-exclamation"></i> «وەرگرتن» بۆ ئەم واڵێتە ناچالاکە، بۆیە ئەم ڕێگایانە کار ناکەن تا چالاکی نەکەیت.</div>';
+  wrap.innerHTML = note + others.map(o=>{
+    const st=_pairDraft[_pairTab][o.key] || (_pairDraft[_pairTab][o.key]={on:false,type:'fee_percent',value:''});
+    const av = o.image_url ? `<img src="${esc(o.image_url)}" alt="">` : '<i class="fas fa-wallet"></i>';
+    const bg = o.image_url ? '' : `background:${esc(o.color||'#1c2333')}`;
+    const dead = outMode ? (o.allow_receive!==true) : (o.allow_from===false);
+    const deadTxt = outMode ? 'ئەم واڵێتە وەرگرتنی ناچالاکە' : 'ئەم واڵێتە ناردنی ناچالاکە';
+    const dir = outMode ? `لەم واڵێتەوە ← ${esc(o.name||o.key)}` : `${esc(o.name||o.key)} ← بۆ ئەم واڵێتە`;
+    return `<div class="pair-item ${st.on?'on':''}">
+      <div class="pair-item-top">
+        <div class="pair-av" style="${bg}">${av}</div>
+        <div class="pair-nm">
+          <b>${esc(o.name||o.key)}</b>
+          <small class="${dead?'warn':''}">${dir}${dead?' — '+deadTxt:''}</small>
+        </div>
+        <span class="pair-state ${st.on?'op':'cl'}">${st.on?'کراوە':'داخراوە'}</span>
+        <label class="mswitch"><input type="checkbox" ${st.on?'checked':''} onchange="togglePair('${esc(o.key)}',this.checked)"><span class="track"></span></label>
+      </div>
+      ${st.on?`<div class="pair-ctl">
+        <select class="msel" onchange="setPairType('${esc(o.key)}',this.value)">${PAIR_TYPES.map(t=>`<option value="${t[0]}" ${st.type===t[0]?'selected':''}>${t[1]}</option>`).join('')}</select>
+        <input class="minp" type="number" step="0.0001" dir="ltr" placeholder="بەهای حمولە" value="${esc(st.value)}" oninput="setPairValue('${esc(o.key)}',this.value)">
+      </div><small class="pair-hint" id="pairHint-${esc(o.key)}" style="display:block;font-size:10.5px;color:var(--mt);margin-top:5px">${pairHintText(st)}</small>`:''}
+    </div>`;
+  }).join('');
+}
+function pairHintText(st){
+  if(st.type==='multiplier' && st.value!=='' && !isNaN(Number(st.value)) && Number(st.value)<1)
+    return 'یەکسانە بە کرێی '+fmtPct(100-Number(st.value)*100)+'% — بەکارهێنەر بەم شێوەیە دەیبینێت';
+  return '';
+}
+function togglePair(key,on){
+  const st=_pairDraft[_pairTab][key] || (_pairDraft[_pairTab][key]={type:'fee_percent',value:''});
+  st.on=on;
+  renderPairList();
+}
+function setPairType(key,t){ if(_pairDraft[_pairTab][key]){ _pairDraft[_pairTab][key].type=t; refreshPairHint(key); } }
+function setPairValue(key,v){ if(_pairDraft[_pairTab][key]){ _pairDraft[_pairTab][key].value=v; refreshPairHint(key); } renderPairCounts(); }
+function refreshPairHint(key){
+  const el=document.getElementById('pairHint-'+key);
+  if(el) el.textContent = pairHintText(_pairDraft[_pairTab][key]);
+}
+function applyPairBulk(){
+  const t=document.getElementById('pairBulkType').value;
+  const v=document.getElementById('pairBulkValue').value;
+  if(v===''){ showToast('سەرەتا بەهای حمولە بنووسە','rd'); return; }
+  const keys=Object.keys(_pairDraft[_pairTab]);
+  if(!keys.length){ showToast('واڵێتی تر نییە','rd'); return; }
+  keys.forEach(k=>{ _pairDraft[_pairTab][k]={on:true,type:t,value:v}; });
+  renderPairList();
+  showToast('بۆ هەموو واڵێتەکانی ئەم ئاراستەیە دانرا','gr');
+}
+// Writes the matrix back to ex_rates. Closed directions keep their row with
+// is_active=false so the fee is still there when they're re-opened later.
+async function syncWalletPairs(newKey, oldKey){
+  if(oldKey && oldKey!==newKey){
+    await sb.from('ex_rates').update({from_method:newKey}).eq('from_method',oldKey);
+    await sb.from('ex_rates').update({to_method:newKey}).eq('to_method',oldKey);
+  }
+  const known = allPairs.map(r=>({
+    from_method: (oldKey && r.from_method===oldKey) ? newKey : r.from_method,
+    to_method:   (oldKey && r.to_method===oldKey)   ? newKey : r.to_method,
+    rate_type:r.rate_type, rate_value:r.rate_value
+  }));
+  const rows=[]; let skipped=0;
+  const push=(f,t,st)=>{
+    if(!f||!t||f===t) return;
+    const prev=known.find(r=>r.from_method===f && r.to_method===t);
+    if(st.on){
+      const val=parseFloat(st.value);
+      if(isNaN(val)){ skipped++; return; }
+      rows.push({from_method:f,to_method:t,rate_type:st.type,rate_value:val,is_active:true});
+    }else if(prev){
+      rows.push({from_method:f,to_method:t,rate_type:prev.rate_type,rate_value:prev.rate_value,is_active:false});
+    }
+  };
+  Object.keys(_pairDraft.out).forEach(k=>push(newKey,k,_pairDraft.out[k]));
+  Object.keys(_pairDraft.in).forEach(k=>push(k,newKey,_pairDraft.in[k]));
+  if(rows.length){
+    const {error} = await sb.from('ex_rates').upsert(rows,{onConflict:'from_method,to_method'});
+    if(error){ await handleDbWriteError(error); return false; }
+  }
+  if(skipped) showToast(skipped+' ڕێگا پاشەکەوت نەکرا — بەهای حمولەی بۆ نەنووسرابوو','rd');
+  return true;
+}
+
+// ── Original admin module 5 ──
+// ══════════════════════════════════════════════════════════════
+// ═══ NOTIFICATIONS ═══════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════
+async function loadNotifPage(){
+  loadNotifLog();
+  loadBroadcasts();
+}
+function setNotifTarget(el){
+  document.querySelectorAll('[data-nt]').forEach(x=>x.classList.remove('on'));
+  el.classList.add('on');
+  _notifTarget = el.dataset.nt;
+  document.getElementById('notifUserPickWrap').style.display = _notifTarget==='one' ? 'block' : 'none';
+  // "keep for future users" only makes sense for a broadcast
+  const show = _notifTarget==='all' ? '' : 'none';
+  document.getElementById('notifKeepRow').style.display = show;
+  document.getElementById('notifKeepNote').style.display = show;
+}
+let _notifSearchTimer=null;
+function searchNotifUser(){
+  clearTimeout(_notifSearchTimer);
+  const q=document.getElementById('notifUserSearch').value.trim();
+  if(!q){ document.getElementById('notifUserResults').innerHTML=''; return; }
+  _notifSearchTimer=setTimeout(async()=>{
+    const cleanQ=q.replace(/[,()*]/g,' ').trim();
+    const handle=cleanQ.replace(/^@/,'');
+    const {data} = await sb.from('ex_profiles').select('id,full_name,email,username').or(`full_name.ilike.%${cleanQ}%,email.ilike.%${cleanQ}%,username.ilike.%${handle}%`).limit(6);
+    const box=document.getElementById('notifUserResults');
+    if(!data || !data.length){ box.innerHTML='<div style="font-size:12px;color:var(--mt);padding:6px 2px">هیچ نەدۆزرایەوە</div>'; return; }
+    box.innerHTML = data.map(u=>`<div onclick='pickNotifUser(${safeAttr(u)})' style="cursor:pointer;display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--b1);border-radius:10px">
+      <div class="mini-av" style="width:28px;height:28px;font-size:11px">${(u.full_name||u.email||'?')[0].toUpperCase()}</div>
+      <div style="min-width:0"><div style="font-size:12.5px;font-weight:700;color:var(--dark);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(u.full_name||'—')}</div><div style="font-size:10.5px;color:var(--mt);direction:ltr">${esc(u.email||'')}</div></div>
+    </div>`).join('');
+  }, 300);
+}
+function pickNotifUser(u){
+  _notifSelectedUser=u;
+  document.getElementById('notifUserResults').innerHTML='';
+  document.getElementById('notifUserSearch').value='';
+  const sel=document.getElementById('notifUserSelected');
+  sel.style.display='flex';
+  sel.innerHTML=`<div class="mini-av" style="width:28px;height:28px;font-size:11px">${(u.full_name||u.email||'?')[0].toUpperCase()}</div>
+    <div style="flex:1;min-width:0"><div style="font-size:12.5px;font-weight:700;color:var(--dark)">${esc(u.full_name||'—')}</div><div style="font-size:10.5px;color:var(--mt);direction:ltr">${esc(u.email||'')}</div></div>
+    <div style="cursor:pointer;color:var(--rd);font-size:13px" onclick="clearNotifUser()"><i class="fas fa-xmark"></i></div>`;
+}
+function clearNotifUser(){ _notifSelectedUser=null; document.getElementById('notifUserSelected').style.display='none'; }
+
+async function sendAdminNotification(){
+  const title=document.getElementById('notifTitle').value.trim();
+  const body=document.getElementById('notifBody').value.trim();
+  if(!title||!body){ showToast('ناونیشان و پەیام پڕ بکەرەوە','rd'); return; }
+  if(_notifTarget==='one' && !_notifSelectedUser){ showToast('بەکارهێنەرێک هەڵبژێرە','rd'); return; }
+  const btn=document.getElementById('notifSendBtn'); btn.disabled=true; btn.innerHTML='<i class="fas fa-circle-notch fa-spin"></i>';
+  try{
+    let error;
+    if(_notifTarget==='all'){
+      const keep = document.getElementById('notifDeliverNew').checked;
+      ({error} = await sb.rpc('ex_notify_all', {p_title:title, p_message:body, p_deliver_to_new:keep}));
+    }else{
+      ({error} = await sb.rpc('ex_notify_user', {p_user_id:_notifSelectedUser.id, p_title:title, p_message:body}));
+    }
+    if(error) throw error;
+    showToast('✅ ئاگادارییەکە نێردرا','gr');
+    document.getElementById('notifTitle').value='';
+    document.getElementById('notifBody').value='';
+    clearNotifUser();
+    loadNotifLog();
+    loadBroadcasts();
+  }catch(e){
+    showToast('هەڵە: '+e.message,'rd');
+  }finally{
+    btn.disabled=false; btn.innerHTML='<i class="fas fa-paper-plane"></i> ناردن';
+  }
+}
+async function loadNotifLog(){
+  const wrap=document.getElementById('notifLogWrap');
+  wrap.innerHTML='<div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>';
+  try{
+    const {data,error} = await sb.from('ex_notifications').select('*').order('created_at',{ascending:false}).limit(100);
+    if(error) throw error;
+    const profMap = await loadProfilesFor((data||[]).map(n=>n.user_id));
+    allNotifs = (data||[]).map(n=>({...n, profile:profMap[n.user_id]||null}));
+    renderNotifLog();
+  }catch(e){
+    wrap.innerHTML=`<div class="empty"><i class="fas fa-triangle-exclamation"></i><p>هەڵە: ${esc(e.message)}</p></div>`;
+  }
+}
+function renderNotifLog(){
+  if(!allNotifs.length){ document.getElementById('notifLogWrap').innerHTML='<div class="empty"><i class="fas fa-bell-slash"></i><p>هیچ ئاگادارییەک نەنێردراوە</p></div>'; return; }
+  document.getElementById('notifLogWrap').innerHTML = `<table><thead><tr><th>بەکارهێنەر</th><th>جۆر</th><th>ناونیشان</th><th>پەیام</th><th>خوێندراوە</th><th>بەروار</th></tr></thead><tbody>
+    ${allNotifs.map(n=>`<tr>
+      <td><div class="user-cell"><div class="mini-av">${(n.profile?.full_name||n.profile?.email||'?')[0].toUpperCase()}</div><div><div class="user-cell-name">${esc(n.profile?.full_name||'—')}</div><div class="user-cell-email">${esc(n.profile?.email||'—')}</div></div></div></td>
+      <td><span class="badge ${n.type==='order_approved'?'approved':n.type==='order_rejected'?'rejected':n.type==='order_status'?'order_status':'adminmsg'}">${n.type==='order_approved'?'پەسەندکرا':n.type==='order_rejected'?'ڕەتکرایەوە':n.type==='order_status'?'دۆخی ئۆردەر':'ئادمین'}</span>${n.broadcast_id?' <span class="badge admin">گشتی</span>':''}</td>
+      <td style="font-size:12.5px;font-weight:700">${esc(n.title)}</td>
+      <td style="font-size:12px;color:var(--mt2);max-width:260px">${esc(n.message)}</td>
+      <td>${n.is_read?'<i class="fas fa-check-double" style="color:var(--gr)"></i>':'<i class="fas fa-circle" style="color:var(--yw);font-size:8px"></i>'}</td>
+      <td style="font-size:11px;color:var(--mt)">${new Date(n.created_at).toLocaleString('ku')}</td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+
+// ══════════════════════════════════════════════════════════════
+// ═══ STORED BROADCASTS ═══════════════════════════════════════════
+// A broadcast is kept as a template in ex_broadcasts. Existing users
+// get their copy the moment it's sent; anyone who signs up later gets
+// it automatically from the trg_ex_profiles_broadcasts trigger — so a
+// message sent yesterday still reaches a user who registers today.
+// ══════════════════════════════════════════════════════════════
+let allBroadcasts=[];
+async function loadBroadcasts(){
+  const wrap=document.getElementById('broadcastWrap');
+  wrap.innerHTML='<div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>';
+  try{
+    const {data,error} = await sb.rpc('ex_admin_list_broadcasts');
+    if(error) throw error;
+    allBroadcasts = data||[];
+    renderBroadcasts();
+  }catch(e){
+    wrap.innerHTML=`<div class="empty"><i class="fas fa-triangle-exclamation"></i><p>هەڵە: ${esc(e.message)}</p></div>`;
+  }
+}
+function renderBroadcasts(){
+  const wrap=document.getElementById('broadcastWrap');
+  if(!allBroadcasts.length){
+    wrap.innerHTML='<div class="empty"><i class="fas fa-bullhorn"></i><p>هیچ ئاگادارییەکی گشتی خەزن نەکراوە</p></div>';
+    return;
+  }
+  wrap.innerHTML = `<table><thead><tr><th>ناونیشان</th><th>پەیام</th><th>نێردراو</th><th>خوێندراوە</th><th>چاوەڕوان</th><th>بۆ نوێکان</th><th>بەروار</th><th>کردار</th></tr></thead><tbody>
+    ${allBroadcasts.map(b=>`<tr>
+      <td style="font-size:12.5px;font-weight:700">${esc(b.title)}</td>
+      <td style="font-size:12px;color:var(--mt2);max-width:240px">${esc(b.message)}</td>
+      <td style="font-size:12px">${b.delivered_count}</td>
+      <td style="font-size:12px">${b.read_count}</td>
+      <td>${b.pending_count>0?`<span class="badge banned">${b.pending_count}</span>`:'<span class="badge active">٠</span>'}</td>
+      <td><label class="mswitch"><input type="checkbox" ${b.deliver_to_new?'checked':''} onchange="toggleBroadcastNew('${b.id}',this.checked)"><span class="track"></span></label></td>
+      <td style="font-size:11px;color:var(--mt)">${new Date(b.created_at).toLocaleString('ku')}</td>
+      <td><div class="act-grp">
+        <div class="act-btn cy" ${b.pending_count>0?'':'style="opacity:.4;pointer-events:none"'} onclick="syncBroadcast('${b.id}')"><i class="fas fa-paper-plane"></i> ناردن بۆ چاوەڕوانەکان</div>
+        <div class="act-btn rd" onclick="deleteBroadcast('${b.id}')"><i class="fas fa-trash"></i> سڕینەوە</div>
+      </div></td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+async function toggleBroadcastNew(id, on){
+  const {error} = await sb.rpc('ex_admin_set_broadcast_new',{p_id:id, p_deliver:on});
+  if(error){ showToast('هەڵە: '+error.message,'rd'); loadBroadcasts(); return; }
+  showToast(on?'بۆ بەکارهێنەرانی نوێ دەنێردرێت':'چیتر بۆ بەکارهێنەرانی نوێ نانێردرێت','gr');
+  loadBroadcasts();
+}
+function syncBroadcast(id){
+  confirm2('ناردن بۆ چاوەڕوانەکان','ئەم ئاگادارییە دەنێردرێت بۆ هەموو ئەو بەکارهێنەرانەی هێشتا وەریان نەگرتووە. ئایا دڵنیایت؟',
+    'fas fa-paper-plane','var(--cy)', async()=>{
+    const {data,error} = await sb.rpc('ex_admin_sync_broadcast',{p_id:id});
+    if(error){ showToast('هەڵە: '+error.message,'rd'); return; }
+    showToast('نێردرا بۆ '+(data||0)+' بەکارهێنەر','gr');
+    loadBroadcasts(); loadNotifLog();
+  });
+}
+function deleteBroadcast(id){
+  confirm2('سڕینەوەی ئاگاداری گشتی','ئەم ئاگادارییە لە لیستی هەموو بەکارهێنەرەکان دەسڕدرێتەوە و چیتر بۆ بەکارهێنەری نوێش نانێردرێت. ئایا دڵنیایت؟',
+    'fas fa-trash','var(--rd)', async()=>{
+    const {error} = await sb.rpc('ex_admin_delete_broadcast',{p_id:id, p_purge:true});
+    if(error){ showToast('هەڵە: '+error.message,'rd'); return; }
+    showToast('سڕدرایەوە','gr');
+    loadBroadcasts(); loadNotifLog();
+  });
+}
+
+// ══════════════════════════════════════════════════════════════
+// ═══ ANNOUNCEMENT BANNER (Firebase) ═════════════════════════════
+// ══════════════════════════════════════════════════════════════
+function renderAnnItemRow(item){
+  item = item || {};
+  const action = item.action || {type:'none'};
+  const wrap=document.getElementById('annItemsWrap');
+  const labelMap = buildMethodLabelMap();
+  const fromKeys = buildFromMethodKeys(), toKeys = buildToMethodKeys();
+  const fromOpts = fromKeys.map(k=>`<option value="${esc(k)}" ${action.from===k?'selected':''}>${esc(labelMap.get(k)||k)}</option>`).join('');
+  const toOpts = `<option value="">— دیاری مەکە —</option>` + toKeys.map(k=>`<option value="${esc(k)}" ${action.to===k?'selected':''}>${esc(labelMap.get(k)||k)}</option>`).join('');
+  const row=document.createElement('div');
+  row.className='ann-item-row';
+  row.style.cssText='border:1px solid var(--b1);border-radius:12px;padding:12px;margin-bottom:12px';
+  row.innerHTML = `
+    <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:10px">
+      <textarea class="minp mta ann-item-text" style="flex:1" placeholder="دەقی ئاگادارییەک بنووسە...">${esc(item.text||'')}</textarea>
+      <div class="act-btn rd" onclick="this.closest('.ann-item-row').remove()"><i class="fas fa-trash"></i></div>
+    </div>
+    <label class="modal-lbl" style="margin-top:0">کردار کاتێک بەکارهێنەر کلیکی لێدەکات</label>
+    <select class="msel ann-item-action-type" onchange="updateAnnItemActionUI(this)">
+      <option value="none" ${action.type==='none'?'selected':''}>هیچ (کلیک ناکات)</option>
+      <option value="url" ${action.type==='url'?'selected':''}>کردنەوەی لینک</option>
+      <option value="wallet" ${action.type==='wallet'?'selected':''}>دیاریکردنی ناردن/وەرگرتن لە فۆرمی گۆڕینەوە</option>
+    </select>
+    <div class="ann-item-url-wrap" style="display:${action.type==='url'?'':'none'};margin-top:8px">
+      <input class="minp ann-item-url" dir="ltr" placeholder="https://..." value="${esc(action.url||'')}">
+    </div>
+    <div class="ann-item-wallet-wrap" style="display:${action.type==='wallet'?'':'none'};margin-top:8px">
+      <div class="modal-row">
+        <div>
+          <label class="modal-lbl">ناردن لە (پێویستە)</label>
+          <select class="msel ann-item-from">${fromOpts}</select>
+        </div>
+        <div>
+          <label class="modal-lbl">وەرگرتن لە (ئارەزوومەندانە)</label>
+          <select class="msel ann-item-to">${toOpts}</select>
+        </div>
+      </div>
+    </div>`;
+  wrap.appendChild(row);
+}
+function updateAnnItemActionUI(sel){
+  const row = sel.closest('.ann-item-row');
+  row.querySelector('.ann-item-url-wrap').style.display = sel.value==='url' ? '' : 'none';
+  row.querySelector('.ann-item-wallet-wrap').style.display = sel.value==='wallet' ? '' : 'none';
+}
+function addAnnItem(){ renderAnnItemRow({}); }
+async function loadAnnouncement(){
+  try{
+    if(!allWallets.length) await loadWalletsAdmin();
+    const snap = await fbdb.ref('announcement').once('value');
+    const val = snap.val() || {};
+    document.getElementById('annShow').checked = !!val.show;
+    document.getElementById('annInterval').value = val.interval || 5;
+    const wrap=document.getElementById('annItemsWrap'); wrap.innerHTML='';
+    // supports both the new {items:[{text,action}]} shape and the old single {text} shape
+    let items = Array.isArray(val.items)
+      ? val.items.map(x=> (typeof x==='string') ? {text:x} : {text:(x&&x.text)||'', action:(x&&x.action)||{type:'none'}})
+      : (val.text ? [{text:val.text}] : []);
+    if(!items.length) items=[{}];
+    items.forEach(it=>renderAnnItemRow(it));
+  }catch(e){ showToast('هەڵەی بارکردنی بانەر: '+e.message,'rd'); }
+}
+async function saveAnnouncement(){
+  const show=document.getElementById('annShow').checked;
+  let interval=parseInt(document.getElementById('annInterval').value,10);
+  if(isNaN(interval)||interval<2) interval=5;
+  const items=[];
+  document.querySelectorAll('.ann-item-row').forEach(row=>{
+    const text=row.querySelector('.ann-item-text').value.trim();
+    if(!text) return;
+    const type=row.querySelector('.ann-item-action-type').value;
+    let action={type:'none'};
+    if(type==='url'){
+      const url=row.querySelector('.ann-item-url').value.trim();
+      if(url) action={type:'url', url};
+    }else if(type==='wallet'){
+      const from=row.querySelector('.ann-item-from').value;
+      const to=row.querySelector('.ann-item-to').value;
+      if(from){ action={type:'wallet', from}; if(to) action.to=to; }
+    }
+    items.push({text, action});
+  });
+  const btn=document.getElementById('annSaveBtn'); btn.disabled=true;
+  try{
+    await fbdb.ref('announcement').set({show, interval, items});
+    showToast('✅ بانەر پاشەکەوتکرا','gr');
+  }catch(e){
+    showToast('هەڵە: '+e.message,'rd');
+  }finally{ btn.disabled=false; }
+}
+
+// ── Original admin module 6 ──
+// ══════════════════════════════════════════════════════════════
+// ═══ OTP CODES (full admin read + edit) ════════════════════════
+// All calls go through SECURITY DEFINER RPCs gated by is_ex_admin():
+// ex_admin_list_otp / ex_admin_update_otp / ex_admin_create_otp /
+// ex_admin_expire_otp / ex_admin_delete_otp. Every write is recorded
+// in ex_admin_audit_log.
+// ══════════════════════════════════════════════════════════════
+let allOtp=[], otpFilter='all';
+async function loadOtp(){
+  const wrap=document.getElementById('otpTableWrap');
+  wrap.innerHTML='<div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>';
+  try{
+    const {data,error} = await sb.rpc('ex_admin_list_otp',{p_limit:300});
+    if(error) throw error;
+    allOtp = data||[];
+    renderOtpTable();
+  }catch(e){
+    wrap.innerHTML=`<div class="empty"><i class="fas fa-triangle-exclamation"></i><p>هەڵە: ${esc(e.message)}</p></div>`;
+  }
+}
+function filterOtp(el){
+  if(el){ document.querySelectorAll('[data-otpf]').forEach(x=>x.classList.remove('on')); el.classList.add('on'); otpFilter=el.dataset.otpf; }
+  renderOtpTable();
+}
+function otpStatusBadge(status){
+  if(status==='active') return '<span class="badge active">چالاک</span>';
+  if(status==='used') return '<span class="badge approved">بەکارهاتووە</span>';
+  return '<span class="badge rejected">بەسەرچووە</span>';
+}
+function otpPurposeLbl(p){
+  return { login:'چوونەژوورەوە', signup:'خۆتۆمارکردن', reset_password:'گۆڕینی وشەی نهێنی' }[p] || (p||'—');
+}
+function copyOtpCode(code){
+  const done=()=>showToast('کۆد کۆپی کرا: '+code,'gr');
+  if(navigator.clipboard?.writeText){ navigator.clipboard.writeText(code).then(done).catch(()=>done()); }
+  else{
+    const t=document.createElement('textarea'); t.value=code; document.body.appendChild(t);
+    t.select(); try{ document.execCommand('copy'); }catch(_){}
+    document.body.removeChild(t); done();
+  }
+}
+function renderOtpTable(){
+  const q=(document.getElementById('otpSearch')?.value||'').toLowerCase().trim();
+  let list=allOtp;
+  if(otpFilter!=='all') list=list.filter(o=>o.status===otpFilter);
+  if(q) list=list.filter(o=>(o.email||'').toLowerCase().includes(q)||(o.code||'').includes(q));
+  const wrap=document.getElementById('otpTableWrap');
+  if(!list.length){ wrap.innerHTML='<div class="empty"><i class="fas fa-key"></i><p>هیچ کۆدێکی OTP نییە</p></div>'; return; }
+  wrap.innerHTML = `<table><thead><tr><th>ئیمەیل</th><th>کۆد</th><th>مەبەست</th><th>باری</th><th>دروستکرا</th><th>بەسەردەچێت</th><th>کردار</th></tr></thead><tbody>
+    ${list.map(o=>`<tr>
+      <td style="direction:ltr;font-size:12px">${esc(o.email||'—')}</td>
+      <td><span onclick="copyOtpCode('${esc(o.code||'')}')" title="کلیک بۆ کۆپیکردن" style="direction:ltr;display:inline-block;font-family:monospace;font-size:14px;font-weight:800;letter-spacing:2px;color:var(--dark);background:var(--bg);border:1.5px solid var(--b1);border-radius:8px;padding:4px 10px;cursor:pointer">${esc(o.code||'—')}</span></td>
+      <td style="font-size:12px">${otpPurposeLbl(o.purpose)}</td>
+      <td>${otpStatusBadge(o.status)}</td>
+      <td style="font-size:11px;color:var(--mt)">${new Date(o.created_at).toLocaleString('ku')}</td>
+      <td style="font-size:11px;color:var(--mt)">${new Date(o.expires_at).toLocaleString('ku')}</td>
+      <td><div class="act-grp">
+        <div class="act-btn cy" onclick='openOtpEditModal(${safeAttr(o)})'><i class="fas fa-pen"></i> دەستکاری</div>
+        <div class="act-btn yw" ${o.status!=='active'?'style="opacity:.4;pointer-events:none"':''} onclick="otpForceExpire('${o.id}')"><i class="fas fa-hourglass-end"></i> بەسەرببە</div>
+        <div class="act-btn rd" onclick="otpDelete('${o.id}')"><i class="fas fa-trash"></i> سڕینەوە</div>
+      </div></td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+
+// ─── datetime-local <-> ISO helpers (input works in local time) ───
+function toLocalInput(iso){
+  const d=new Date(iso); if(isNaN(d)) return '';
+  const p=n=>String(n).padStart(2,'0');
+  return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;
+}
+function fromLocalInput(v){ if(!v) return null; const d=new Date(v); return isNaN(d)?null:d.toISOString(); }
+
+function openOtpEditModal(o){
+  document.getElementById('oeId').value = o.id;
+  document.getElementById('oeEmail').textContent = o.email || '—';
+  document.getElementById('oeCode').value = o.code || '';
+  const purposeSel=document.getElementById('oePurpose');
+  if(o.purpose && !Array.from(purposeSel.options).some(x=>x.value===o.purpose)){
+    purposeSel.add(new Option(o.purpose, o.purpose));
+  }
+  purposeSel.value = o.purpose || 'login';
+  document.getElementById('oeExpires').value = toLocalInput(o.expires_at);
+  document.getElementById('oeIsUsed').checked = !!o.is_used;
+  document.getElementById('oeErr').style.display='none';
+  openMo('moOtpEdit');
+}
+function bumpOtpExpiry(mins){
+  const d=new Date(Date.now()+mins*60000);
+  document.getElementById('oeExpires').value = toLocalInput(d.toISOString());
+  document.getElementById('oeIsUsed').checked = false;
+}
+async function submitOtpEdit(){
+  const errEl=document.getElementById('oeErr'); errEl.style.display='none';
+  const id=document.getElementById('oeId').value;
+  const code=document.getElementById('oeCode').value.trim();
+  const purpose=document.getElementById('oePurpose').value;
+  const expires=fromLocalInput(document.getElementById('oeExpires').value);
+  const isUsed=document.getElementById('oeIsUsed').checked;
+  if(!code){ errEl.textContent='کۆد نابێت بەتاڵ بێت'; errEl.style.display='block'; return; }
+  if(!expires){ errEl.textContent='کاتی بەسەرچوون دروست نییە'; errEl.style.display='block'; return; }
+  const btn=document.getElementById('oeSaveBtn');
+  btn.disabled=true; btn.innerHTML='<i class="fas fa-circle-notch fa-spin"></i>';
+  try{
+    const {error} = await sb.rpc('ex_admin_update_otp',{
+      p_id:id, p_code:code, p_purpose:purpose, p_expires_at:expires, p_is_used:isUsed
+    });
+    if(error) throw error;
+    closeMo('moOtpEdit');
+    showToast('کۆدەکە نوێکرایەوە','gr');
+    loadOtp();
+  }catch(e){
+    errEl.textContent='هەڵە: '+e.message; errEl.style.display='block';
+  }finally{
+    btn.disabled=false; btn.innerHTML='<i class="fas fa-check"></i> پاشەکەوتکردن';
+  }
+}
+
+function openOtpCreateModal(){
+  document.getElementById('ocEmail').value='';
+  document.getElementById('ocCode').value='';
+  document.getElementById('ocPurpose').value='login';
+  document.getElementById('ocMinutes').value=10;
+  document.getElementById('ocErr').style.display='none';
+  openMo('moOtpCreate');
+}
+function genOtpCode(){
+  document.getElementById('ocCode').value = String(Math.floor(100000+Math.random()*900000));
+}
+async function submitOtpCreate(){
+  const errEl=document.getElementById('ocErr'); errEl.style.display='none';
+  const email=document.getElementById('ocEmail').value.trim();
+  const code=document.getElementById('ocCode').value.trim();
+  const purpose=document.getElementById('ocPurpose').value;
+  const mins=parseInt(document.getElementById('ocMinutes').value,10)||10;
+  if(!email||!email.includes('@')){ errEl.textContent='ئیمەیلێکی دروست بنووسە'; errEl.style.display='block'; return; }
+  if(!code){ errEl.textContent='کۆد بنووسە یان کۆدێکی هەڕەمەکی دروست بکە'; errEl.style.display='block'; return; }
+  const btn=document.getElementById('ocSaveBtn');
+  btn.disabled=true; btn.innerHTML='<i class="fas fa-circle-notch fa-spin"></i>';
+  try{
+    const {error} = await sb.rpc('ex_admin_create_otp',{
+      p_email:email, p_code:code, p_purpose:purpose, p_minutes:mins
+    });
+    if(error) throw error;
+    closeMo('moOtpCreate');
+    showToast('کۆد دروستکرا: '+code,'gr');
+    loadOtp();
+  }catch(e){
+    errEl.textContent='هەڵە: '+e.message; errEl.style.display='block';
+  }finally{
+    btn.disabled=false; btn.innerHTML='<i class="fas fa-check"></i> دروستکردن';
+  }
+}
+
+function otpForceExpire(id){
+  confirm2('بەسەرخستنی کۆد', 'ئەم کۆدە OTP یە دەبێتە نەچالاک و بەکارهێنەر ناتوانێت بەکاری بهێنێت — دەبێت داوای کۆدێکی نوێ بکات. ئایا دڵنیایت؟',
+    'fas fa-hourglass-end','var(--yw)', async()=>{
+    const {error} = await sb.rpc('ex_admin_expire_otp',{p_id:id});
+    if(error){ showToast('هەڵە: '+error.message,'rd'); return; }
+    showToast('کۆدەکە بەسەرخرا','gr');
+    loadOtp();
+  });
+}
+function otpDelete(id){
+  confirm2('سڕینەوەی کۆد', 'ئەم تۆمارە OTP یە بە تەواوی دەسڕدرێتەوە. ئایا دڵنیایت؟',
+    'fas fa-trash','var(--rd)', async()=>{
+    const {error} = await sb.rpc('ex_admin_delete_otp',{p_id:id});
+    if(error){ showToast('هەڵە: '+error.message,'rd'); return; }
+    showToast('تۆمارەکە سڕدرایەوە','gr');
+    loadOtp();
+  });
+}
+
+// ══════════════════════════════════════════════════════════════
+// ═══ IDENTITY VERIFICATION (KYC) MANAGEMENT ═══════════════════
+// Every read and write goes through ex_admin_kyc_* RPCs, which check
+// the caller's role inside PostgreSQL. Document images are fetched with
+// storage.download() (allowed only for admins by Storage RLS) and shown
+// as in-memory blob URLs — no shareable link is ever created.
+// ══════════════════════════════════════════════════════════════
+const KYC_ADMIN_DOC = { national_id:'کارتی نیشتیمانی', driving_license:'مۆڵەتی شوفێری' };
+const KYC_ADMIN_STATUS = {
+  none:     { label:'پشتڕاست نەکراوەتەوە', cls:'kyc-none' },
+  required: { label:'پشتڕاستکردنەوە پێویستە', cls:'pending' },
+  pending:  { label:'لە ژێر پشکنینە', cls:'order_status' },
+  approved: { label:'پشتڕاستکراوەتەوە ✓', cls:'approved' },
+  rejected: { label:'ڕەتکراوەتەوە', cls:'rejected' }
+};
+const KYC_ADMIN_EVENTS = {
+  requested:'ئادمین داوای پشتڕاستکردنەوەی کرد',
+  request_cancelled:'داواکاری هەڵوەشێنرایەوە',
+  submitted:'بەکارهێنەر بەڵگەنامەی نارد',
+  resubmitted:'بەکارهێنەر دووبارە بەڵگەنامەی نارد',
+  approved:'پەسەندکرا',
+  rejected:'ڕەتکرایەوە',
+  name_synced:'ناوی هەژمار بە ناوی ناسنامە نوێکرایەوە'
+};
+const KYC_ADMIN_ERRORS = {
+  ADMIN_REQUIRED:'دەستگەیشتنی ئادمینت نییە',
+  SUPER_ADMIN_REQUIRED:'تەنها سوپەر ئادمین دەتوانێت ئەم کارە بکات',
+  ROLE_CHANGE_FORBIDDEN:'تەنها سوپەر ئادمین دەتوانێت ڕۆڵ بگۆڕێت',
+  ROLE_SELF_CHANGE_FORBIDDEN:'ناتوانیت ڕۆڵی خۆت بگۆڕیت',
+  LAST_SUPER_ADMIN:'دوایین سوپەر ئادمین ناتوانرێت لاببرێت',
+  ADMIN_BAN_FORBIDDEN:'تەنها سوپەر ئادمین دەتوانێت ئادمینێک بۆیکۆت بکات',
+  SELF_BAN_FORBIDDEN:'ناتوانیت هەژماری خۆت بۆیکۆت بکەیت',
+  USER_NOT_FOUND:'بەکارهێنەرەکە نەدۆزرایەوە',
+  KYC_REQUEST_EXISTS:'ئەم بەکارهێنەرە پێشتر داواکارییەکی چالاکی هەیە',
+  KYC_REQUEST_NOT_FOUND:'داواکارییەکە نەدۆزرایەوە',
+  KYC_REQUEST_NOT_ACTIVE:'ئەم داواکارییە چیتر چالاک نییە',
+  KYC_REASON_TOO_LONG:'دەق نابێت لە ٥٠٠ پیت زیاتر بێت',
+  KYC_REASON_REQUIRED:'بۆ ڕەتکردنەوە هۆکار پێویستە (لانیکەم ٣ پیت)',
+  KYC_NOT_FOUND:'داواکارییەکە نەدۆزرایەوە',
+  KYC_ALREADY_REVIEWED:'ئەم داواکارییە پێشتر لەلایەن ئادمینێکی ترەوە بڕیاری لەسەر دراوە',
+  KYC_SELF_REVIEW_FORBIDDEN:'ناتوانیت پشتڕاستکردنەوەی ناسنامەی خۆت پەسەند یان ڕەت بکەیتەوە',
+  KYC_DECISION_INVALID:'بڕیارەکە دروست نییە',
+  KYC_FILTER_INVALID:'فلتەرەکە دروست نییە',
+  KYC_NAME_MISMATCH_CONFIRM_REQUIRED:'ناوی هەژمار گۆڕاوە؛ لیستەکە نوێکرایەوە، تکایە دووبارە بیپشکنە و گۆڕینی ناو پشتڕاست بکەرەوە',
+  KYC_NOT_LATEST_APPROVED:'ئەمە دوایین ناسنامەی پەسەندکراوی ئەم بەکارهێنەرە نییە',
+  PROFILE_NAME_LOCKED_BY_KYC:'ناوی ئەم هەژمارە بە ناسنامە پشتڕاستکراوەتەوە و تەنها بە ناوی سەر ناسنامە دەگۆڕدرێت'
+};
+function adminDbMessage(error){
+  const raw=String(error?.message||error||'');
+  const key=Object.keys(KYC_ADMIN_ERRORS).find(k=>raw.includes(k));
+  if(key) return KYC_ADMIN_ERRORS[key];
+  if(error?.code==='42501' || /permission denied|row-level security/i.test(raw)) return 'مۆڵەتی ئەم کارەت نییە';
+  return 'هەڵە: '+raw;
+}
+function kycBadgeHTML(status){
+  const m=KYC_ADMIN_STATUS[status]||KYC_ADMIN_STATUS.none;
+  return `<span class="badge ${m.cls}">${esc(m.label)}</span>`;
+}
+// ── Cross-script name recognition ────────────────────────────────────────
+// An account name written in English and a legal name written in Kurdish are
+// compared through a deterministic consonant skeleton: each script is mapped
+// to the same small alphabet, vowels (which carry no information across
+// scripts) are dropped, and the result must match token for token.
+// No fuzzy distance, no OCR, no external service — the same input always
+// gives the same answer, and genuinely different names stay different.
+function kycNormName(s){
+  const v=String(s??'').normalize('NFC')
+    .replace(/[\u200B-\u200F\u202A-\u202E\u2066-\u2069\u0640\uFEFF]/g,'')
+    .replace(/[\u00A0\u2000-\u200A\u202F\u205F\u3000]/g,' ')
+    .replace(/[\u064A\u0649]/g,'\u06CC').replace(/\u0643/g,'\u06A9').replace(/\u06BE/g,'\u0647')
+    .replace(/\s+/g,' ').trim().toLowerCase();
+  return v || null;
+}
+const KYC_AR2LAT = {
+  'ا':'a','آ':'a','أ':'a','إ':'a','ء':'','ئ':'','ؤ':'w','ة':'h',
+  'ب':'b','پ':'p','ت':'t','ث':'s','ج':'j','چ':'C','ح':'h','خ':'x','د':'d','ذ':'z',
+  'ر':'r','ڕ':'r','ز':'z','ژ':'j','س':'s','ش':'S','ص':'s','ض':'z','ط':'t','ظ':'z',
+  'ع':'','غ':'g','ف':'f','ڤ':'v','ق':'q','ك':'k','ک':'k','گ':'g','ل':'l','ڵ':'l',
+  'م':'m','ن':'n','ه':'h','ھ':'h','ە':'e','و':'w','ۆ':'o','ی':'i','ي':'i','ى':'i','ێ':'e'
+};
+function kycScriptOf(s){
+  const t=String(s||'');
+  const ar=/[\u0600-\u06FF\u0750-\u077F\uFB50-\uFDFF\uFE70-\uFEFF]/.test(t);
+  const la=/[A-Za-z]/.test(t);
+  return (ar&&la) ? 'mixed' : ar ? 'arabic' : la ? 'latin' : 'other';
+}
+function kycSkeleton(token){
+  let s=String(token||'').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+  s=s.replace(/[\u0600-\u06FF]/g, ch => (KYC_AR2LAT[ch] !== undefined ? KYC_AR2LAT[ch] : ' '));
+  // Latin digraphs collapse to the single letters the Kurdish map produces
+  s=s.replace(/tch|ch/g,'C').replace(/sh/g,'S').replace(/kh/g,'x').replace(/zh/g,'j')
+     .replace(/gh/g,'g').replace(/th/g,'s').replace(/ph/g,'f').replace(/ck/g,'k');
+  s=s.replace(/[^bptsjChxdrzSgfvqklmn]/g,'');   // drop vowels, hamza, punctuation
+  return s.replace(/(.)\1+/g,'$1');             // doubled consonants are spelling noise
+}
+// 'same' | 'same_translit' | 'similar' | 'different_script' | 'different' | 'unknown'
+function kycNameRelation(accountName, legalName){
+  const a=kycNormName(accountName), b=kycNormName(legalName);
+  if(!a || !b) return 'unknown';
+  if(a===b) return 'same';
+  const sa=kycScriptOf(a), sb=kycScriptOf(b);
+  const ta=a.split(' ').map(kycSkeleton), tb=b.split(' ').map(kycSkeleton);
+  const enough=ta.join('').length>=4 && tb.join('').length>=4;
+  const equal=ta.length===tb.length && ta.every((t,i)=>t && t===tb[i]);
+  if(equal && enough) return (sa!==sb) ? 'same_translit' : 'similar';
+  return (sa!==sb && sa!=='other' && sb!=='other') ? 'different_script' : 'different';
+}
+
+const KYC_EXCHANGE_BLOCKED_BADGE='<span class="badge banned" title="تا پەسەندکردنی ناسنامە ناتوانێت ئاڵوگۆڕی نوێ بکات">ئاڵوگۆڕ ڕاگیراوە</span>';
+function kycNameCompareHTML(it){
+  const account=it.account_name ?? it.user?.full_name ?? '';
+  const legal=it.full_legal_name||'';
+  const rel=kycNameRelation(account, legal);
+  const same=(rel==='same' || rel==='same_translit');
+  let note;
+  if(rel==='same'){
+    note='<p class="kyc-nc-note ok"><i class="fas fa-circle-check"></i> ناوی هەژمار و ناوی سەر ناسنامە یەکن.</p>';
+  }else if(rel==='same_translit'){
+    // e.g. account "Zana Ahmed" + document "زانا ئەحمەد"
+    note='<p class="kyc-nc-note ok"><i class="fas fa-circle-check"></i> هەمان ناوە، بەڵام بە دوو ئەلفوبێی جیاواز (ئینگلیزی/کوردی) نووسراوە.'
+      +(it.status==='pending'?' دوای پەسەندکردن ناوی هەژمار وەک سەر ناسنامە دەنووسرێتەوە.':'')+'</p>';
+  }else if(rel==='similar'){
+    note='<p class="kyc-nc-note warn"><i class="fas fa-circle-info"></i> ناوەکان نزیکن بەڵام بە هەمان شێوە نەنووسراون؛ تکایە لەگەڵ بەڵگەنامەکە بەراوردی بکە.</p>';
+  }else if(rel==='different_script'){
+    note='<p class="kyc-nc-note warn"><i class="fas fa-triangle-exclamation"></i> ناوەکان بە دوو ئەلفوبێی جیاوازن و وەک یەک ناخوێندرێنەوە؛ تکایە خۆت لە بەڵگەنامەکە دڵنیا بکەرەوە.</p>';
+  }else if(it.status==='pending'){
+    note='<p class="kyc-nc-note bad"><i class="fas fa-triangle-exclamation"></i> ناوەکان جیاوازن. پێش پەسەندکردن دڵنیابە کە هەمان کەسە؛ دوای پەسەندکردن ناوی هەژمار دەگۆڕدرێت بۆ ناوی سەر ناسنامە.</p>';
+  }else{
+    note='<p class="kyc-nc-note bad"><i class="fas fa-triangle-exclamation"></i> ناوی ئێستای هەژمار جیاوازە لەم داواکارییە.</p>';
+  }
+  if(!same && it.status==='approved' && it.is_latest_approved){
+    note+='<button class="modal-btn cy" id="kycSyncNameBtn" onclick="syncKycProfileName()"><i class="fas fa-arrows-rotate"></i> نوێکردنەوەی ناوی هەژمار بە ناوی سەر ناسنامە</button>';
+  }
+  return `<div class="kyc-name-compare ${same?'ok':'bad'}">
+    <div class="kyc-nc-grid">
+      <div><small>ناوی هەژمار</small><b dir="auto">${esc(account||'—')}</b></div>
+      <div><small>ناوی سەر ناسنامە (یاسایی)</small><b dir="auto">${esc(legal||'—')}</b></div>
+    </div>${note}</div>`;
+}
+async function syncKycProfileName(){
+  const it=_kycReviewItem;
+  if(_kycBusy || !it) return;
+  confirm2('نوێکردنەوەی ناوی هەژمار',
+    `ناوی هەژمار دەگۆڕدرێت لە «${it.account_name||'—'}» بۆ «${it.full_legal_name}». بەردەوام دەبیت؟`,
+    'fas fa-arrows-rotate','var(--cy)', async()=>{
+      _kycBusy=true;
+      const btn=document.getElementById('kycSyncNameBtn'); if(btn) btn.disabled=true;
+      try{
+        const {error}=await sb.rpc('ex_admin_kyc_sync_profile_name',{p_verification_id:it.id});
+        if(error) throw error;
+        showToast('ناوی هەژمار نوێکرایەوە','gr');
+        closeKycReview(); loadKycAdmin();
+      }catch(e){
+        showToast(adminDbMessage(e),'rd');
+        if(btn) btn.disabled=false;
+      }finally{ _kycBusy=false; }
+    });
+}
+function kycFillReason(id, el){
+  const t=document.getElementById(id);
+  if(t){ t.value=el.textContent.trim(); t.focus(); }
+}
+
+let _kycFilter='pending';
+let _kycItems=[];
+let _kycPoll=null;
+let _kycLastPending=null;
+let _kycListTimer=null;
+let _kycSearchTimer=null;
+let _kycSearchResults=[];
+let _kycReqTarget=null;
+let _kycReviewItem=null;
+let _kycBlobUrls=[];
+let _kycBusy=false;
+
+async function loadKycSummary(notify){
+  try{
+    const {data,error}=await sb.rpc('ex_admin_kyc_summary');
+    if(error) throw error;
+    const set=(id,v)=>{ const el=document.getElementById(id); if(el) el.textContent=formatNum(v||0); };
+    set('kycRequiredCount',data.required); set('kycPendingCount',data.pending);
+    set('kycApprovedCount',data.approved); set('kycRejectedCount',data.rejected);
+    const pending=Number(data.pending||0);
+    const badge=document.getElementById('sbKycCount');
+    if(badge){ badge.textContent=pending>99?'99+':String(pending); badge.style.display=pending?'inline-flex':'none'; }
+    if(notify && pending>0 && _kycLastPending!==null && pending>_kycLastPending){
+      showToast((pending-_kycLastPending)+' داواکاری نوێی پشتڕاستکردنەوەی ناسنامە هەیە','bl');
+    }
+    _kycLastPending=pending;
+    return data;
+  }catch(_){ return null; }
+}
+function startKycMonitor(){
+  loadKycSummary(false);
+  clearInterval(_kycPoll);
+  _kycPoll=setInterval(()=>{ if(document.visibilityState==='visible') loadKycSummary(true); },30000);
+}
+
+async function loadKycAdmin(){
+  const wrap=document.getElementById('kycListWrap');
+  if(wrap) wrap.innerHTML='<div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>';
+  document.querySelectorAll('[data-kycf]').forEach(c=>c.classList.toggle('on', c.dataset.kycf===_kycFilter));
+  loadKycSummary(false);
+  try{
+    const q=(document.getElementById('kycListSearch')?.value||'').trim();
+    const {data,error}=await sb.rpc('ex_admin_kyc_list',{p_filter:_kycFilter,p_query:q||null,p_limit:200});
+    if(error) throw error;
+    _kycItems=(Array.isArray(data)?data:[]).sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
+    renderKycList();
+  }catch(e){
+    if(wrap) wrap.innerHTML=`<div class="empty"><i class="fas fa-triangle-exclamation"></i><p>${esc(adminDbMessage(e))}</p></div>`;
+  }
+}
+function setKycFilter(f){
+  _kycFilter=f;
+  if(_curPage!=='kyc'){ goPage('kyc'); return; }
+  loadKycAdmin();
+}
+function onKycListSearch(){
+  clearTimeout(_kycListTimer);
+  _kycListTimer=setTimeout(loadKycAdmin,350);
+}
+
+function kycUserLine(u){
+  u=u||{};
+  return `<div class="user-cell"><div class="mini-av">${esc((u.full_name||u.email||'?')[0].toUpperCase())}</div>
+    <div style="min-width:0"><div class="user-cell-name">${esc(u.full_name||'بێ ناو')}</div>
+    <div class="user-cell-handle" dir="ltr">${u.username?'@'+esc(u.username):'—'}</div>
+    <div class="user-cell-email">${esc(u.email||'—')}</div></div></div>`;
+}
+
+function renderKycList(){
+  const wrap=document.getElementById('kycListWrap');
+  if(!wrap) return;
+  if(!_kycItems.length){
+    wrap.innerHTML='<div class="empty"><i class="fas fa-id-card"></i><p>هیچ داواکارییەک لەم بەشەدا نییە</p></div>';
+    return;
+  }
+  wrap.innerHTML='<div class="kyc-admin-list">'+_kycItems.map((it,i)=>{
+    if(it.kind==='request'){
+      const r=it.request||{};
+      return `<article class="kyc-admin-card required">
+        <div class="kyc-admin-head">${kycUserLine(it.user)}<div class="kyc-badges">${kycBadgeHTML('required')}${KYC_EXCHANGE_BLOCKED_BADGE}</div></div>
+        <div class="kyc-admin-facts">
+          <span><small>داواکراوە لەلایەن</small><b>${esc(r.requested_by||'—')}</b></span>
+          <span><small>کاتی داواکاری</small><b dir="ltr">${esc(fmtDateTime(r.created_at))}</b></span>
+        </div>
+        ${r.reason?`<div class="kyc-admin-note"><b>هۆکار</b><p>${esc(r.reason)}</p></div>`:''}
+        <div class="kyc-admin-foot"><small>چاوەڕوانی ناردنی بەڵگەنامە لەلایەن بەکارهێنەر</small>
+          <div class="act-btn rd" onclick="cancelKycRequest('${esc(r.id)}')"><i class="fas fa-ban"></i> هەڵوەشاندنەوە</div></div>
+      </article>`;
+    }
+    const st=it.status;
+    return `<article class="kyc-admin-card ${esc(st)}">
+      <div class="kyc-admin-head">${kycUserLine(it.user)}<div class="kyc-badges">${kycBadgeHTML(st)}${it.exchange_blocked?KYC_EXCHANGE_BLOCKED_BADGE:''}${(kycNameRelation(it.account_name ?? it.user?.full_name, it.full_legal_name)==='same_translit')?'<span class="badge active" title="هەمان ناوە بە ئەلفوبێیەکی جیاواز">ناو: کوردی/ئینگلیزی</span>':''}${(!['same','same_translit','unknown'].includes(kycNameRelation(it.account_name ?? it.user?.full_name, it.full_legal_name)) && (st==='pending' || it.is_latest_approved))?'<span class="badge pending">⚠ ناو جیاوازە</span>':''}</div></div>
+      <div class="kyc-admin-facts">
+        <span><small>جۆری بەڵگەنامە</small><b>${esc(KYC_ADMIN_DOC[it.document_type]||it.document_type)}</b></span>
+        <span class="${!['same','same_translit','unknown'].includes(kycNameRelation(it.account_name ?? it.user?.full_name, it.full_legal_name))?'kyc-fact-bad':''}"><small>ناوی یاسایی</small><b>${esc(it.full_legal_name)}</b></span>
+        <span class="${!['same','same_translit','unknown'].includes(kycNameRelation(it.account_name ?? it.user?.full_name, it.full_legal_name))?'kyc-fact-bad':''}"><small>ناوی هەژمار</small><b>${esc(it.account_name ?? it.user?.full_name ?? '—')}</b></span>
+        <span><small>بەرواری لەدایکبوون</small><b dir="ltr">${esc(it.date_of_birth||'—')}</b></span>
+        <span><small>ژمارەی بەڵگەنامە</small><b dir="ltr">${esc(it.document_number)}</b></span>
+        <span><small>کاتی ناردن</small><b dir="ltr">${esc(fmtDateTime(it.submitted_at))}</b></span>
+        <span><small>${st==='pending'?'داواکاری ئادمین':'پشکنەر'}</small><b>${esc(st==='pending'?(it.request?'بەڵێ':'نەخێر — خۆی دەستی پێکرد'):(it.reviewer?.full_name||'—'))}</b></span>
+      </div>
+      ${it.rejection_reason?`<div class="kyc-admin-note danger"><b>هۆکاری ڕەتکردنەوە</b><p>${esc(it.rejection_reason)}</p></div>`:''}
+      <div class="kyc-admin-foot">
+        <small>${it.reviewed_at?'بڕیار: <span dir="ltr">'+esc(fmtDateTime(it.reviewed_at))+'</span>':'وێنەی پێشەوە و دواوە هەیە'}</small>
+        <div class="act-btn ${st==='pending'?'cy':'dark'}" onclick="openKycReview(${i})"><i class="fas fa-${st==='pending'?'magnifying-glass':'eye'}"></i> ${st==='pending'?'پشکنین':'بینین'}</div>
+      </div>
+    </article>`;
+  }).join('')+'</div>';
+}
+
+// ── user search + "request verification" ────────────────────────
+function searchKycUsers(){
+  clearTimeout(_kycSearchTimer);
+  const q=(document.getElementById('kycUserSearch')?.value||'').trim();
+  const box=document.getElementById('kycUserResults');
+  if(q.length<2){ _kycSearchResults=[]; if(box) box.innerHTML=''; return; }
+  _kycSearchTimer=setTimeout(async()=>{
+    if(box) box.innerHTML='<div class="loading" style="padding:14px"><i class="fas fa-circle-notch fa-spin"></i></div>';
+    const {data,error}=await sb.rpc('ex_admin_kyc_search_users',{p_query:q,p_limit:12});
+    if(error){ if(box) box.innerHTML=`<div class="kyc-empty-line">${esc(adminDbMessage(error))}</div>`; return; }
+    _kycSearchResults=Array.isArray(data)?data:[];
+    renderKycUserResults();
+  },300);
+}
+function renderKycUserResults(){
+  const box=document.getElementById('kycUserResults');
+  if(!box) return;
+  if(!_kycSearchResults.length){ box.innerHTML='<div class="kyc-empty-line">هیچ بەکارهێنەرێک نەدۆزرایەوە</div>'; return; }
+  box.innerHTML=_kycSearchResults.map((u,i)=>{
+    const active=u.request_status==='open'||u.request_status==='submitted';
+    let action;
+    if(active){
+      action=`<div class="act-btn rd" onclick="cancelKycRequest('${esc(u.request_id)}')"><i class="fas fa-ban"></i> هەڵوەشاندنەوەی داواکاری</div>`;
+    }else if(u.kyc_status==='pending'){
+      action=`<div class="act-btn dark" onclick="openKycFromUser('${esc(u.username||'')}')"><i class="fas fa-magnifying-glass"></i> پشکنینی بەڵگەنامە</div>`;
+    }else{
+      action=`<div class="act-btn cy" onclick="openKycRequest(${i})"><i class="fas fa-id-card"></i> داواکردنی پشتڕاستکردنەوە</div>`;
+    }
+    return `<div class="kyc-user-row">
+      ${kycUserLine(u)}
+      <div class="kyc-user-side">${kycBadgeHTML(u.kyc_status)}${active?KYC_EXCHANGE_BLOCKED_BADGE:''}${u.is_banned?' <span class="badge banned">بۆیکۆتکراو</span>':''}${action}</div>
+    </div>`;
+  }).join('');
+}
+function openKycFromUser(username){
+  const s=document.getElementById('kycListSearch');
+  if(s) s.value=username;
+  _kycFilter='pending';
+  loadKycAdmin();
+  document.getElementById('kycListWrap')?.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function openKycRequest(i){
+  const u=_kycSearchResults[i];
+  if(!u) return;
+  showKycRequestModal(u);
+}
+async function openKycRequestById(userId){
+  const {data,error}=await sb.rpc('ex_admin_kyc_search_users',{p_query:userId,p_limit:1});
+  if(error){ showToast(adminDbMessage(error),'rd'); return; }
+  const u=Array.isArray(data)?data[0]:null;
+  if(!u){ showToast('بەکارهێنەرەکە نەدۆزرایەوە','rd'); return; }
+  if(u.request_status==='open'||u.request_status==='submitted'){
+    showToast('ئەم بەکارهێنەرە پێشتر داواکارییەکی چالاکی هەیە','bl'); return;
+  }
+  showKycRequestModal(u);
+}
+function showKycRequestModal(u){
+  _kycReqTarget=u;
+  document.getElementById('kycReqUser').innerHTML=kycUserLine(u)+`<div style="margin-top:8px">${kycBadgeHTML(u.kyc_status)}</div>`;
+  document.getElementById('kycReqReason').value='';
+  const btn=document.getElementById('kycReqSendBtn');
+  btn.disabled=false;
+  btn.innerHTML='<i class="fas fa-paper-plane"></i> ناردنی داواکاری';
+  openMo('moKycRequest');
+}
+async function confirmKycRequest(){
+  if(_kycBusy || !_kycReqTarget) return;
+  const reason=(document.getElementById('kycReqReason').value||'').trim();
+  if(reason.length>500){ showToast(KYC_ADMIN_ERRORS.KYC_REASON_TOO_LONG,'rd'); return; }
+  const btn=document.getElementById('kycReqSendBtn');
+  _kycBusy=true;
+  btn.disabled=true; btn.innerHTML='<i class="fas fa-circle-notch fa-spin"></i> ناردن...';
+  try{
+    const {error}=await sb.rpc('ex_admin_kyc_request',{p_user_id:_kycReqTarget.id,p_reason:reason||null});
+    if(error) throw error;
+    closeMo('moKycRequest');
+    showToast('داواکاری پشتڕاستکردنەوە بۆ '+(_kycReqTarget.username?'@'+_kycReqTarget.username:'بەکارهێنەر')+' نێردرا','gr');
+    _kycReqTarget=null;
+    if(document.getElementById('kycUserSearch')?.value) searchKycUsers();
+    if(_curPage==='kyc') loadKycAdmin(); else loadKycSummary(false);
+  }catch(e){
+    showToast(adminDbMessage(e),'rd');
+    btn.disabled=false; btn.innerHTML='<i class="fas fa-paper-plane"></i> ناردنی داواکاری';
+  }finally{ _kycBusy=false; }
+}
+function cancelKycRequest(requestId){
+  if(!requestId) return;
+  confirm2('هەڵوەشاندنەوەی داواکاری','ئایا دەتەوێت داواکاری پشتڕاستکردنەوەی ئەم بەکارهێنەرە هەڵبوەشێنیتەوە؟ بەکارهێنەر ئاگادار دەکرێتەوە.',
+    'fas fa-ban','var(--rd)', async()=>{
+      const {error}=await sb.rpc('ex_admin_kyc_cancel_request',{p_request_id:requestId,p_note:null});
+      if(error){ showToast(adminDbMessage(error),'rd'); return; }
+      showToast('داواکارییەکە هەڵوەشێنرایەوە','gr');
+      if(document.getElementById('kycUserSearch')?.value) searchKycUsers();
+      loadKycAdmin();
+    });
+}
+
+// ── review modal ──────────────────────────────────────────────────
+function revokeKycBlobs(){
+  _kycBlobUrls.forEach(u=>{ try{ URL.revokeObjectURL(u); }catch(_){} });
+  _kycBlobUrls=[];
+}
+function closeKycReview(){
+  closeMo('moKycReview');
+  revokeKycBlobs();
+  _kycReviewItem=null;
+}
+async function loadKycImage(path, slotId){
+  const slot=document.getElementById(slotId);
+  if(!slot) return;
+  if(!path){ slot.innerHTML='<div class="kyc-img-empty">وێنە نییە</div>'; return; }
+  try{
+    const {data,error}=await sb.storage.from('identity-documents').download(path);
+    if(error) throw error;
+    const url=URL.createObjectURL(data);
+    _kycBlobUrls.push(url);
+    if(!document.getElementById(slotId)) { URL.revokeObjectURL(url); return; }
+    slot.innerHTML=`<img src="${url}" alt="" onclick="showImg('${url}')"><span class="kyc-img-zoom"><i class="fas fa-eye"></i> گەورەکردن</span>`;
+  }catch(e){
+    slot.innerHTML=`<div class="kyc-img-empty"><i class="fas fa-triangle-exclamation"></i> نەتوانرا وێنەکە باربکرێت</div>`;
+  }
+}
+async function openKycReview(i){
+  const it=_kycItems[i];
+  if(!it || it.kind!=='verification') return;
+  revokeKycBlobs();
+  _kycReviewItem=it;
+  const u=it.user||{};
+  const pending=it.status==='pending';
+  const isSelf=adminUser && u.id===adminUser.id;
+  document.getElementById('kycRvTitle').textContent=(pending?'پشکنینی بەڵگەنامە — ':'بەڵگەنامە — ')+(u.full_name||u.username||'');
+  const r=it.request;
+  document.getElementById('kycRvBody').innerHTML=`
+    <div class="kyc-rv-top">${kycUserLine(u)}${kycBadgeHTML(it.status)}</div>
+    <div class="kyc-rv-images">
+      <figure><figcaption>ڕووی پێشەوە</figcaption><div class="kyc-img-slot" id="kycRvFront"><i class="fas fa-circle-notch fa-spin"></i></div></figure>
+      <figure><figcaption>ڕووی دواوە</figcaption><div class="kyc-img-slot" id="kycRvBack"><i class="fas fa-circle-notch fa-spin"></i></div></figure>
+    </div>
+    ${it.exchange_blocked?'<div class="kyc-admin-note danger"><b>ئاڵوگۆڕ ڕاگیراوە</b><p>ئەم بەکارهێنەرە تا پەسەندکردنی ناسنامەکەی ناتوانێت ئاڵوگۆڕی نوێ بکات.</p></div>':''}
+    <div class="ai-sec">ناو</div>
+    ${kycNameCompareHTML(it)}
+    <div class="ai-sec">زانیارییەکانی بەڵگەنامە</div>
+    <div class="detail-row"><div class="lbl">جۆری بەڵگەنامە</div><div class="val" dir="rtl">${esc(KYC_ADMIN_DOC[it.document_type]||it.document_type)}</div></div>
+    <div class="detail-row"><div class="lbl">ناوی تەواوی یاسایی</div><div class="val" dir="rtl">${esc(it.full_legal_name)}</div></div>
+    <div class="detail-row"><div class="lbl">بەرواری لەدایکبوون</div><div class="val">${esc(it.date_of_birth||'—')}</div></div>
+    <div class="detail-row"><div class="lbl">ژمارەی بەڵگەنامە</div><div class="val">${esc(it.document_number)}</div></div>
+    <div class="detail-row"><div class="lbl">ناوی هەژمار</div><div class="val" dir="rtl">${esc(u.full_name||'—')}</div></div>
+    <div class="detail-row"><div class="lbl">ئیمەیل</div><div class="val">${esc(u.email||'—')}</div></div>
+    <div class="detail-row"><div class="lbl">کاتی ناردن</div><div class="val">${esc(fmtDateTime(it.submitted_at))}</div></div>
+    ${it.reviewed_at?`<div class="detail-row"><div class="lbl">کاتی بڕیار</div><div class="val">${esc(fmtDateTime(it.reviewed_at))}</div></div>
+    <div class="detail-row"><div class="lbl">بڕیاردەر</div><div class="val" dir="rtl">${esc(it.reviewer?.full_name||'—')}${it.reviewer?.username?' <span dir="ltr">@'+esc(it.reviewer.username)+'</span>':''}</div></div>`:''}
+    ${it.rejection_reason?`<div class="kyc-admin-note danger"><b>هۆکاری ڕەتکردنەوە</b><p>${esc(it.rejection_reason)}</p></div>`:''}
+    ${r?`<div class="kyc-admin-note"><b>داواکاری ئادمین — ${esc(r.requested_by||'')} (${esc(fmtDateTime(r.created_at))})</b><p>${esc(r.reason||'بێ هۆکار')}</p></div>`:''}
+    ${pending ? (isSelf ? `<div class="kyc-admin-note danger"><b>ئاگاداری</b><p>ناتوانیت بەڵگەنامەی خۆت پەسەند یان ڕەت بکەیتەوە.</p></div>` : `
+    <div class="ai-sec">بڕیار</div>
+    <label class="modal-lbl" for="kycRvReason">هۆکاری ڕەتکردنەوە <span style="font-weight:400">(تەنها بۆ ڕەتکردنەوە پێویستە)</span></label>
+    <textarea class="minp mta" id="kycRvReason" maxlength="500" placeholder="بۆ نموونە: وێنەی بەڵگەنامەکە ڕوون نییە."></textarea>
+    <div class="kyc-quick">
+      <span onclick="kycFillReason('kycRvReason',this)">وێنەی بەڵگەنامەکە ڕوون نییە.</span>
+      <span onclick="kycFillReason('kycRvReason',this)">هەموو گۆشەکانی بەڵگەنامەکە دیار نین.</span>
+      <span onclick="kycFillReason('kycRvReason',this)">زانیارییەکان لەگەڵ بەڵگەنامەکە ناگونجێن.</span>
+      <span onclick="kycFillReason('kycRvReason',this)">بەڵگەنامەکە بەسەرچووە.</span>
+      <span onclick="kycFillReason('kycRvReason',this)">The document image is not clear.</span>
+    </div>
+    <div class="kyc-rv-actions">
+      <button class="modal-btn rd" id="kycRvRejectBtn" onclick="reviewKyc('reject')"><i class="fas fa-circle-xmark"></i> ڕەتکردنەوە</button>
+      <button class="modal-btn gr" id="kycRvApproveBtn" onclick="reviewKyc('approve')"><i class="fas fa-circle-check"></i> پەسەندکردن</button>
+    </div>`) : ''}
+    <div class="ai-sec">مێژوو</div>
+    <div id="kycRvHistory" class="kyc-timeline"><div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div></div>`;
+  openMo('moKycReview');
+  loadKycImage(it.front_image_path,'kycRvFront');
+  loadKycImage(it.back_image_path,'kycRvBack');
+  loadKycHistory(u.id);
+}
+async function loadKycHistory(userId){
+  const box=document.getElementById('kycRvHistory');
+  if(!box) return;
+  const {data,error}=await sb.rpc('ex_admin_kyc_history',{p_user_id:userId,p_limit:50});
+  if(error){ box.innerHTML=`<div class="kyc-empty-line">${esc(adminDbMessage(error))}</div>`; return; }
+  const rows=Array.isArray(data)?data:[];
+  if(!rows.length){ box.innerHTML='<div class="kyc-empty-line">هیچ تۆمارێک نییە</div>'; return; }
+  box.innerHTML=rows.map(e=>`<div class="kyc-tl-item ${esc(e.event)}">
+    <span class="kyc-tl-dot"></span>
+    <div><b>${esc(KYC_ADMIN_EVENTS[e.event]||e.event)}</b>
+      <small>${esc(e.actor_name||'—')}${e.actor_username?' <span dir="ltr">@'+esc(e.actor_username)+'</span>':''} · ${esc(e.actor_role==='user'?'بەکارهێنەر':e.actor_role==='super_admin'?'سوپەر ئادمین':e.actor_role==='admin'?'ئادمین':'سیستەم')} · <span dir="ltr">${esc(fmtDateTime(e.created_at))}</span></small>
+      ${e.note?`<p>${esc(e.note)}</p>`:''}
+    </div></div>`).join('');
+}
+async function reviewKyc(decision){
+  const it=_kycReviewItem;
+  if(_kycBusy || !it) return;
+  const reasonEl=document.getElementById('kycRvReason');
+  const reason=(reasonEl?.value||'').trim();
+  if(decision==='reject' && reason.length<3){
+    showToast(KYC_ADMIN_ERRORS.KYC_REASON_REQUIRED,'rd');
+    reasonEl?.focus();
+    return;
+  }
+  const run=async()=>{
+    const aBtn=document.getElementById('kycRvApproveBtn');
+    const rBtn=document.getElementById('kycRvRejectBtn');
+    const btn=decision==='approve'?aBtn:rBtn;
+    const html=btn?.innerHTML;
+    _kycBusy=true;
+    if(aBtn) aBtn.disabled=true;
+    if(rBtn) rBtn.disabled=true;
+    if(btn) btn.innerHTML='<i class="fas fa-circle-notch fa-spin"></i> ...';
+    try{
+      const {error}=await sb.rpc('ex_admin_kyc_review',{
+        p_verification_id:it.id, p_decision:decision,
+        p_reason:decision==='reject'?reason:null,
+        p_confirm_name_change: decision==='approve'
+          && kycNormName(it.account_name ?? it.user?.full_name) !== kycNormName(it.full_legal_name)
+      });
+      if(error) throw error;
+      showToast(decision==='approve'?'ناسنامەکە پەسەندکرا ✓':'پشتڕاستکردنەوەکە ڕەتکرایەوە و بەکارهێنەر ئاگادارکرایەوە', decision==='approve'?'gr':'rd');
+      closeKycReview();
+      loadKycAdmin();
+    }catch(e){
+      const msg=adminDbMessage(e);
+      showToast(msg,'rd');
+      if(/KYC_ALREADY_REVIEWED|KYC_NAME_MISMATCH_CONFIRM_REQUIRED/.test(String(e?.message||''))){ closeKycReview(); loadKycAdmin(); return; }
+      if(aBtn) aBtn.disabled=false;
+      if(rBtn) rBtn.disabled=false;
+      if(btn) btn.innerHTML=html;
+    }finally{ _kycBusy=false; }
+  };
+  if(decision==='approve'){
+    const account=it.account_name ?? it.user?.full_name ?? '';
+    const rel=kycNameRelation(account, it.full_legal_name);
+    const willRename=kycNormName(account)!==kycNormName(it.full_legal_name);
+    let title='پەسەندکردنی ناسنامە', tone='var(--gr)';
+    let msg='دڵنیایت کە وێنە و زانیارییەکان دروستن و هی هەمان کەسن؟';
+    if(rel==='same_translit'){
+      msg=`هەمان ناوە بە ئەلفوبێیەکی جیاواز. دوای پەسەندکردن ناوی هەژمار دەبێت بە «${it.full_legal_name}». بەردەوام دەبیت؟`;
+    }else if(willRename){
+      title='پەسەندکردن و گۆڕینی ناوی هەژمار'; tone='var(--yw)';
+      msg=`⚠ ناوەکان جیاوازن. دوای پەسەندکردن ناوی هەژمار دەگۆڕدرێت لە «${account||'—'}» بۆ «${it.full_legal_name}». دڵنیایت کە هەمان کەسە؟`;
+    }
+    confirm2(title, msg,'fas fa-circle-check', tone, run);
+  }else{
+    await run();
+  }
+}

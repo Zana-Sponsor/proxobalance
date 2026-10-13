@@ -1,0 +1,46 @@
+{
+  "base_revision": "1dca41a315b6988d98006f40ae4bee810be137f6",
+  "scope": "Native verification correction after actual current Android failure; product sources unchanged",
+  "files": [
+    {
+      "path": "proxo_app/integration_test/proxolink_native_probe.dart",
+      "sha256": "c5444628a1e2eab7543338e5ea3ac268d56a754ee3f53290c0fbe2cb94b7bace"
+    },
+    {
+      "path": "proxo_app/android/app/src/debug/AndroidManifest.xml",
+      "sha256": "3a2554b5609cdc8e89344d055d20e8e73e641dc8755c8c014f548b7e9cdd1354"
+    },
+    {
+      "path": "proxo_app/android/app/src/debug/kotlin/com/proxo/proxoapp/ProxoLinkNativeProbeActivity.kt",
+      "sha256": "97371609f7ec46a85bc0e85284f9f2da0185a71f9b777f23ec0a778d2c879322"
+    },
+    {
+      "path": "proxo_app/pubspec.yaml",
+      "sha256": "e7834a5c337b11f34ab2e808470cb4b58875c84ca03a6a04011a8f026be149fd"
+    },
+    {
+      "path": "proxo_app/pubspec.lock",
+      "sha256": "41123fe6ec1d3e632f053bf5e5b97824fa168b204821151fe5fa61e18e494ab1"
+    },
+    {
+      "path": "scripts/run-proxolink-native.mjs",
+      "sha256": "b375aca42c8ce0ef80f380d61871979b2fcc6ee4f6cbb588594c769de95336bc"
+    },
+    {
+      "path": "scripts/proxolink-pixel-comparison.mjs",
+      "sha256": "116113c9c6c47daa5ee65d8aed5d026cfca00344837152b74f413acb71e70c34"
+    },
+    {
+      "path": "scripts/proxolink-verification-security.mjs",
+      "sha256": "f238e2ed4ea38c708200c31ceab644292071b5d2500925ff1f2b79ae0ad9504f"
+    },
+    {
+      "path": "test/proxolink-pixel-comparison.test.js",
+      "sha256": "10f296369f4bc7dbf8aab550f7891c38d843cdee9697a792e515f13efdc960c2"
+    },
+    {
+      "path": "test/proxolink-verification-security.test.js",
+      "sha256": "44092341faf539408419e919930be6945683f03c6625653ad4d758b5cdcaa9ef"
+    }
+  ]
+}

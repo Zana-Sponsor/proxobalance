@@ -1,0 +1,21 @@
+{
+  "status": "BLOCKED",
+  "expected_styles": 8,
+  "executed_styles": 0,
+  "production_fixture_writes": 0,
+  "reason": "No accessible configured isolated staging target; no development branches; no staging settings in execution environment",
+  "required_settings": [
+    "PROXO_STAGING_PROJECT_REF",
+    "PROXO_STAGING_SUPABASE_URL",
+    "PROXO_STAGING_BASE_URL",
+    "PROXO_STAGING_ANON_KEY",
+    "PROXO_STAGING_TEST_EMAIL",
+    "PROXO_STAGING_TEST_PASSWORD"
+  ],
+  "optional_setting": "PROXO_STAGING_VERCEL_BYPASS",
+  "controlled_provider_fixture_test": "Passed in existing backend suite; does not establish live staging",
+  "exact_ad_live_isolation": "BLOCKED",
+  "OS_copy_share": "BLOCKED",
+  "external_contact_launches": "BLOCKED",
+  "iOS": "BLOCKED"
+}

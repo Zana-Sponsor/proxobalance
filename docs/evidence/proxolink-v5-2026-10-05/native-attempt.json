@@ -1,0 +1,65 @@
+{
+  "status": "VERIFIED: saved controls",
+  "environment": "proxolink-preview-verification",
+  "required_reviewers_enabled": true,
+  "required_reviewers": [
+    "Zana-Sponsor"
+  ],
+  "administrator_bypass_allowed": false,
+  "branch": "feat/proxolink-private-renderer-migration",
+  "exact_branch_rule_preserved": true,
+  "setting_names_present": [
+    "PROXO_NATIVE_ANON_KEY",
+    "PROXO_NATIVE_TEST_EMAIL",
+    "PROXO_NATIVE_TEST_PASSWORD",
+    "PROXO_NATIVE_VERCEL_BYPASS"
+  ],
+  "credential_values_opened_printed_rotated_replaced_copied_by_agent": false,
+  "persistence_verification": "Controls re-read after save and fresh page reload",
+  "owner_authorization": "Explicit 5 October approval of these exact controls and this native workflow",
+  "screenshot": "protection-saved.jpg",
+  "native_trigger": {
+    "sha": "549ef0621bdca3d7e9f9191118c59317a6845fc6",
+    "parent": "11e10e19dd9d91b85d0058f7c23404bb2d1e3af9",
+    "tree": "a78523c32730cd73a73ce8bc7c3adef21e0d4fa5",
+    "branch": "feat/proxolink-private-renderer-migration",
+    "no_source_changes": true,
+    "environment": "proxolink-preview-verification"
+  },
+  "run_id": 37337348399,
+  "run_url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/37337348399",
+  "scope": "No change to other environments, secrets/variables, production feature release or retired Telegram function",
+  "deployment_approval": {
+    "run_id": 37337348399,
+    "job_id": 111857313809,
+    "sha": "549ef0621bdca3d7e9f9191118c59317a6845fc6",
+    "ref": "refs/heads/feat/proxolink-private-renderer-migration",
+    "environment": "proxolink-preview-verification",
+    "approver": "Zana-Sponsor",
+    "approved_by_user_explicit_instruction": true
+  },
+  "runtime_result": {
+    "status": "FAILED",
+    "android_booted": true,
+    "cases_executed": 0,
+    "cases_passed": 0,
+    "cases_failed": 0,
+    "cases_blocked": 40,
+    "exact_preflight_failure": "Unresolved; original runner catch only reported generic failure",
+    "native_runtime_artifact_produced": false
+  },
+  "privacy_check": {
+    "public_anon_variable_printed_by_CI_setup": true,
+    "three_existing_secrets_masked": true,
+    "values_retained_in_this_evidence": false
+  },
+  "current_correction": {
+    "workflow_uses_protected_secret_named": "PROXO_NATIVE_ANON_KEY",
+    "additional_secret_present": false,
+    "original_variable_and_three_secrets_preserved": true,
+    "owner_private_entry_required": true,
+    "runner_allowlisted_diagnostic_added": true,
+    "new_harness_added": false
+  },
+  "post_verification_checkpoint": "production-checkpoints.json"
+}

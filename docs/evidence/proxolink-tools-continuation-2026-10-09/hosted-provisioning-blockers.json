@@ -1,0 +1,33 @@
+{
+  "acceptance": "Blocked",
+  "separate_isolated_project_connected": false,
+  "separate_preview_deployment_configured": false,
+  "ordinary_hosted_test_accounts_available": false,
+  "supabase": {
+    "connected_project_scopes": [
+      "Zana production",
+      "unrelated Exchange"
+    ],
+    "get_cost_result": "UNAVAILABLE: advertised tool not returned by server tools/list",
+    "create_project_requires_confirmed_cost_id": true,
+    "cost_confirmation_or_project_creation_bypassed": false
+  },
+  "vercel": {
+    "project_inventory_available": true,
+    "existing_project_name": "proxobalance",
+    "deployment_inventory_http_status": 403,
+    "result": "forbidden: insufficient permission to list deployment",
+    "authenticated_cli_available": false,
+    "unchanged_403_request_retried": false
+  },
+  "needed": [
+    "Restore authorized isolated-project cost/provisioning capability or provide an already provisioned separate project",
+    "Authorize separate preview deployment settings/deployment access or provide an already configured isolated preview",
+    "Provide two ordinary fictional accounts and staging-scoped protected settings",
+    "Perform authorized isolated trusted moderation transitions and actual advertisement FK fixture setup; retain ordinary account roles"
+  ],
+  "production_migrations_or_customer_writes": false,
+  "production_publishing_activated": false,
+  "existing_unrelated_project_used_as_staging": false,
+  "actual_hosted_journeys_executed": false
+}

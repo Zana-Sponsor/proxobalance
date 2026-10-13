@@ -1,0 +1,119 @@
+{
+  "artifact_id": 11635652972,
+  "artifact_sha256": "aa87d63d5af0da2db638150f5bac432250f5841570a553d5f6fcfb8a4806c36f",
+  "run_id": 37960639713,
+  "revision": "e61bc1a93f4acdc7ad75e9f44e79e6d73f110f11",
+  "status": "FAILED",
+  "behavior_passed": 240,
+  "required_cases": 240,
+  "independently_compared_pairs": 240,
+  "exact_pairs": 236,
+  "failed_pairs": 4,
+  "changed_pixels": 4,
+  "failed_details": {
+    "pill-order-ku-portrait-768": {
+      "changed_pixels": 1,
+      "max_channel_delta": 1,
+      "coordinates": [
+        [
+          380,
+          222
+        ]
+      ],
+      "candidate_rgb": [
+        [
+          220,
+          227,
+          240
+        ]
+      ],
+      "baseline_rgb": [
+        [
+          220,
+          226,
+          240
+        ]
+      ]
+    },
+    "pill-mint-contact-ku-portrait-768": {
+      "changed_pixels": 1,
+      "max_channel_delta": 1,
+      "coordinates": [
+        [
+          290,
+          228
+        ]
+      ],
+      "candidate_rgb": [
+        [
+          234,
+          246,
+          241
+        ]
+      ],
+      "baseline_rgb": [
+        [
+          234,
+          245,
+          241
+        ]
+      ]
+    },
+    "pill-mint-order-ku-portrait-768": {
+      "changed_pixels": 1,
+      "max_channel_delta": 1,
+      "coordinates": [
+        [
+          290,
+          228
+        ]
+      ],
+      "candidate_rgb": [
+        [
+          234,
+          245,
+          241
+        ]
+      ],
+      "baseline_rgb": [
+        [
+          234,
+          246,
+          241
+        ]
+      ]
+    },
+    "pill-mint-order-en-portrait-768": {
+      "changed_pixels": 1,
+      "max_channel_delta": 1,
+      "coordinates": [
+        [
+          290,
+          228
+        ]
+      ],
+      "candidate_rgb": [
+        [
+          234,
+          245,
+          241
+        ]
+      ],
+      "baseline_rgb": [
+        [
+          234,
+          246,
+          241
+        ]
+      ]
+    }
+  },
+  "stable_roles_including_16_reproduction_roles": 496,
+  "acceptance_stable_roles": 480,
+  "missing_first_captures": 0,
+  "fixed_repeat_captures_compared": 992,
+  "chooser_passed": 0,
+  "chooser_failed": 12,
+  "root_cause": "NOT PROVEN",
+  "native_acceptance_changed": false
+}

@@ -1,0 +1,3656 @@
+{
+  "name": "FastPay Checkout + Supabase v12",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "### Supabase ledger\n\n**pa_transactions** stores every FastPay order and its current state.\n**pa_transaction_events** stores the immutable status/event history.\n**pa_wallets** receives a verified FastPay amount atomically. An ad checkout then consumes the exact credited amount atomically when pa_create_ad links the payment.\n\n### Server RPCs used here\n- pa_quote_ad_checkout — computes the exact ad price; service-role only\n- fastpay_create_order — creates the pending ledger row\n- fastpay_mark_paid — verifies/idempotently settles the paid row\n- fastpay_mark_declined — stores a terminal failure\n- fastpay_apply_refund — atomically refunds an eligible payment\n- fastpay_expire_stale_orders — closes expired pending rows",
+        "height": 500,
+        "width": 900,
+        "color": 7
+      },
+      "id": "a71c8520-f62d-4beb-afd5-a6367c45cc45",
+      "name": "ARCHITECTURE — Supabase Ledger",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        940,
+        -1250
+      ]
+    },
+    {
+      "parameters": {
+        "content": "### FLOW 3 — authenticated app status check\nPOST /webhook/fastpay/order-status\nAuthorization: Bearer <Supabase access token>\n\nReturns a stored terminal state immediately; otherwise verifies the order with FastPay and persists the result before responding.",
+        "height": 230,
+        "width": 1500,
+        "color": 5
+      },
+      "id": "64980a76-2412-4f38-9cbc-ddc7823559b4",
+      "name": "FLOW 3 NOTE — App Status Check",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        1450
+      ]
+    },
+    {
+      "parameters": {
+        "content": "### FLOW 1 — authenticated checkout\nPOST /webhook/fastpay/order-create\nAuthorization: Bearer <Supabase access token>\n\nAd: { purpose: \"ad_checkout\", orderId, currency: \"IQD\", ad: { daily_budget, days }, promoId?, promoCode?, note? }\nWallet: { purpose: \"wallet_deposit\", orderId, currency: \"IQD\", billAmount, note? }\n\nThe user id always comes from Supabase Auth. Ad prices always come from pa_quote_ad_checkout; the phone can choose an amount only for a wallet deposit.",
+        "height": 260,
+        "width": 1800,
+        "color": 4
+      },
+      "id": "23422992-98b1-41eb-933e-a13a5421a0a2",
+      "name": "FLOW 1 NOTE — Authenticated Checkout",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -600
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "fastpay/order-create",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "ab0142b0-849b-4be4-90a4-4a3219238f6b",
+      "name": "Order Create Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "bb52f075-5cc7-45b4-872b-b6b2403c6969"
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = $input.item.json;\nlet body = raw.body !== undefined ? raw.body : raw;\nif (typeof body === 'string') {\n  try { body = JSON.parse(body); } catch (_) { body = {}; }\n}\nif (!body || typeof body !== 'object') body = {};\nconst q = raw.query || {};\nconst headers = raw.headers || {};\nconst pick = (a, b) => body[a] !== undefined ? body[a]\n  : body[b] !== undefined ? body[b]\n  : q[a] !== undefined ? q[a] : q[b];\n\nconst orderId = pick('orderId', 'order_id');\nconst currency = pick('currency', 'currency') || 'IQD';\nconst inferredPurpose = body.ad && typeof body.ad === 'object'\n  ? 'ad_checkout' : 'wallet_deposit';\nconst purpose = String(body.purpose || inferredPurpose).trim().toLowerCase();\nconst noteDefault = purpose === 'ad_checkout'\n  ? 'Proxo ad payment' : 'Proxo wallet deposit';\nconst note = pick('note', 'note') || noteDefault;\nconst billAmount = Number(pick('billAmount', 'bill_amount'));\nconst ad = body.ad && typeof body.ad === 'object' && !Array.isArray(body.ad)\n  ? body.ad : {};\nconst dailyBudget = Number(ad.daily_budget);\nconst days = Number(ad.days);\nconst promoId = body.promoId || body.promo_id || null;\nconst promoCode = body.promoCode || body.promo_code || null;\nconst authorization = String(headers.authorization || headers.Authorization || '').trim();\nconst fail = (error) => [{ json: { valid: false, error } }];\n\nif (!/^Bearer\\s+\\S+$/i.test(authorization)) return fail('A valid Supabase bearer token is required');\nif (!orderId || !/^[A-Za-z0-9_-]{8,32}$/.test(String(orderId))) {\n  return fail('orderId must be 8-32 safe characters');\n}\nif (!['ad_checkout', 'wallet_deposit'].includes(purpose)) return fail('Invalid checkout purpose');\nif (String(currency).toUpperCase() !== 'IQD') return fail('Only IQD is supported');\nif (purpose === 'ad_checkout') {\n  if (![10,20,50,100,200,500,1000].includes(dailyBudget)) return fail('Invalid daily budget');\n  if (!Number.isInteger(days) || days < 1 || days > 7) return fail('Invalid ad duration');\n} else if (!Number.isInteger(billAmount) || billAmount < 5000 || billAmount > 100000000) {\n  return fail('Wallet deposit amount must be 5,000-100,000,000 IQD');\n}\n\nreturn [{ json: {\n  valid: true,\n  purpose,\n  orderId: String(orderId),\n  currency: 'IQD',\n  note: String(note).slice(0, 300),\n  billAmount: purpose === 'wallet_deposit' ? billAmount : null,\n  ad: purpose === 'ad_checkout' ? { daily_budget: dailyBudget, days } : null,\n  promoId: purpose === 'ad_checkout' && promoId ? String(promoId) : null,\n  promoCode: purpose === 'ad_checkout' && promoCode\n    ? String(promoCode).trim().slice(0, 80) : null,\n  authorization,\n} }];"
+      },
+      "id": "71ae780e-7ffc-42fd-a098-7cacbf7f43f7",
+      "name": "Validate & Prepare",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "909e71a4-41f7-4451-8616-c13c9eb0d4af",
+              "leftValue": "={{ $json.valid }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "7041e151-6c41-4e6d-9827-d412579c2345",
+      "name": "Input Valid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        520,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"success\": false, \"message\": $json.error } }}",
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "id": "21699a55-949b-428f-859d-36626cb63fcb",
+      "name": "Respond Invalid Input",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        520,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f9eb42f8-f51a-42c9-a911-b4c6ac0306fc",
+              "name": "baseUrl",
+              "type": "string",
+              "value": "=https://qr.fast-pay.iq"
+            },
+            {
+              "id": "87abc99b-19b9-44e4-885c-1ec5ae8c790c",
+              "name": "successUrl",
+              "type": "string",
+              "value": "=https://www.proxobalance.app/payment/fastpay/success"
+            },
+            {
+              "id": "9a5ded3e-5b00-43b1-ac20-43f3ec36cc53",
+              "name": "cancelUrl",
+              "type": "string",
+              "value": "=https://www.proxobalance.app/payment/fastpay/cancel"
+            },
+            {
+              "id": "eaa2ab44-c91d-4f22-b6b5-d8a796cfdb4f",
+              "name": "callbackUrl",
+              "type": "string",
+              "value": "=https://email.proxopages.com/webhook/fastpay/ipn"
+            },
+            {
+              "id": "995c52aa-349c-41d0-be08-816517514d8c",
+              "name": "expiresIn",
+              "type": "number",
+              "value": "=10"
+            },
+            {
+              "id": "47941022-0fc7-4c48-820e-5caafbd03ba4",
+              "name": "orderId",
+              "type": "string",
+              "value": "={{ $('Resolve Checkout Amount').item.json.orderId }}"
+            },
+            {
+              "id": "f303c608-3a00-47ae-9fe9-d5f7c0e15afe",
+              "name": "billAmount",
+              "type": "number",
+              "value": "={{ $('Resolve Checkout Amount').item.json.billAmount }}"
+            },
+            {
+              "id": "80afd004-d7ce-49ed-9a88-10a59a70e29b",
+              "name": "currency",
+              "type": "string",
+              "value": "={{ $('Resolve Checkout Amount').item.json.currency }}"
+            },
+            {
+              "id": "ad03283d-ce63-4a9b-b0c3-3af60bc4b31c",
+              "name": "userId",
+              "type": "string",
+              "value": "={{ $('Resolve Checkout Amount').item.json.userId }}"
+            },
+            {
+              "id": "634dadf5-f11b-4ff4-9cfc-ffba22309a8d",
+              "name": "note",
+              "type": "string",
+              "value": "={{ $('Resolve Checkout Amount').item.json.note }}"
+            },
+            {
+              "id": "e1730643-29fb-42cc-b494-c75842ce81d1",
+              "name": "purpose",
+              "type": "string",
+              "value": "={{ $('Resolve Checkout Amount').item.json.purpose }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "cb9641a6-14be-4b77-bc74-c8b938d56e15",
+      "name": "FastPay Config",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2340,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $json.baseUrl }}/api/v1/public/vending/qr",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (compatible; ProxoApp/1.0)"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ {\n    \"orderID\": $json.orderId,\n    \"orderId\": $json.orderId,\n    \"billAmount\": $json.billAmount,\n    \"currency\": $json.currency,\n    \"successUrl\": $json.successUrl,\n    \"cancelUrl\": $json.cancelUrl,\n    \"callbackUrl\": $json.callbackUrl,\n    \"expiresIn\": $json.expiresIn\n  } }}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "text"
+            }
+          }
+        },
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpCustomAuth"
+      },
+      "id": "07395c23-a926-4d1b-ae9d-e4bf08babf04",
+      "name": "Generate QR",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2600,
+        0
+      ],
+      "credentials": {
+        "httpCustomAuth": {
+          "id": "RESELECT_FASTPAY_STORE_CREDENTIALS",
+          "name": "FastPay Store Credentials (Custom Auth)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "37215535-cdd5-468b-b663-e4859a18fb59",
+              "leftValue": "={{ $json.code }}",
+              "rightValue": 200,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "731b92a3-5346-42ae-85b6-1879bf34f1ba",
+              "leftValue": "={{ ($json.errors || []).length }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "266ae886-e830-49f3-ad64-34ce281167c8",
+      "name": "QR Success?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3120,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ {\n  \"success\": true,\n  \"purpose\": $('Resolve Checkout Amount').item.json.purpose,\n  \"qrUrl\": $('Parse QR Response').item.json.data.qrUrl,\n  \"qrText\": $('Parse QR Response').item.json.data.qrText,\n  \"orderId\": $('FastPay Config').item.json.orderId,\n  \"transactionId\": $('Create Pending Transaction (Supabase)').item.json.transaction_id,\n  \"amountIqd\": $('Resolve Checkout Amount').item.json.billAmount,\n  \"costUsd\": $('Resolve Checkout Amount').item.json.costUsd,\n  \"rate\": $('Resolve Checkout Amount').item.json.rate\n} }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "436e9057-b10e-437d-aa6f-73a86a43fe4c",
+      "name": "Respond QR Success",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        3900,
+        -100
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"success\": false, \"message\": \"QR generation failed\", \"httpStatus\": $json.httpStatus, \"errors\": $json.errors } }}",
+        "options": {
+          "responseCode": 502
+        }
+      },
+      "id": "06de8ccc-97da-49a0-a9cf-68afeab4b0d8",
+      "name": "Respond QR Error",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        3120,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "content": "### FLOW 2 — IPN (Payment Notification)\nSet this webhook URL as the store's ipn_url in the FastPay merchant panel.\nAlways responds 200 OK to acknowledge receipt, whether matched or not.",
+        "height": 230,
+        "width": 1400,
+        "color": 4
+      },
+      "id": "2a4d786d-4382-4347-962c-c277770f93c2",
+      "name": "FLOW 2 NOTE — FastPay IPN",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        550
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "fastpay/ipn",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "498dc7c1-3ef7-46a5-9093-300f3cb7dedb",
+      "name": "IPN Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        1000
+      ],
+      "webhookId": "ec20f85a-9bc5-476b-9e52-05ea93ca754e"
+    },
+    {
+      "parameters": {
+        "jsCode": "const b = $input.item.json.body || $input.item.json;\nreturn [{ json: {\n  gw_transaction_id: b.gw_transaction_id,\n  merchant_order_id: b.merchant_order_id,\n  received_amount: Number(b.received_amount),\n  currency: b.currency,\n  status: (b.status || '').toLowerCase(),\n  customer_name: b.customer_name,\n  customer_mobile_number: b.customer_mobile_number,\n  at: b.at\n} }];"
+      },
+      "id": "0c0b90fa-258f-4968-944e-cce629e11873",
+      "name": "Extract IPN Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        1000
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8cc442df-cc10-4816-857b-c1bd11f5ecab",
+              "name": "baseUrl",
+              "type": "string",
+              "value": "=https://qr.fast-pay.iq"
+            },
+            {
+              "id": "428acd6c-1336-4ebe-be97-d64181a60511",
+              "name": "orderId",
+              "type": "string",
+              "value": "={{ $('Extract IPN Data').item.json.merchant_order_id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "9a71c323-6b44-47e5-9876-db71d1609afc",
+      "name": "FastPay Config2",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        520,
+        1000
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $json.baseUrl }}/api/v1/public/vending/validate",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ {\n    \"orderId\": $json.orderId\n  } }}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "text"
+            }
+          }
+        },
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpCustomAuth"
+      },
+      "id": "f45064d5-19c1-4ac9-948e-3cad290d0776",
+      "name": "Validate Payment",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        780,
+        1000
+      ],
+      "retryOnFail": true,
+      "credentials": {
+        "httpCustomAuth": {
+          "id": "RESELECT_FASTPAY_STORE_CREDENTIALS",
+          "name": "FastPay Store Credentials (Custom Auth)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// ---- parse the validate response (same quirks as the QR endpoint) ----\nconst vRes    = $('Validate Payment').item.json;\nconst vStatus = vRes.statusCode !== undefined ? vRes.statusCode : 200;\nconst vRawSrc = vRes.body !== undefined ? vRes.body : (vRes.data !== undefined ? vRes.data : vRes.text);\nconst vRaw    = (typeof vRawSrc === 'string' ? vRawSrc : JSON.stringify(vRawSrc || {})).trim();\n\nlet validateResp = null;\nlet parseError   = null;\nif (!vRaw || vRaw.startsWith('<')) {\n  parseError = 'FastPay validate returned a non-JSON body (HTTP ' + vStatus + ')';\n} else {\n  try {\n    validateResp = JSON.parse(vRaw);\n  } catch (e) {\n    // repair the documented missing comma after \"errors\": []\n    try { validateResp = JSON.parse(vRaw.replace(/(\"errors\"\\s*:\\s*\\[[^\\]]*\\])\\s*(?=\")/, '$1,')); }\n    catch (e2) { parseError = 'Invalid JSON from FastPay validate: ' + e.message; }\n  }\n}\n\nconst ipn   = $('Extract IPN Data').item.json;\nconst rows  = $input.all().map(i => i.json).filter(r => r && r.id);\nconst order = rows[0];\n\nlet match = false, duplicate = false, retryable = false, reason = '';\n\nif (!order) {\n  // an unknown order id is almost always a forged / replayed IPN, but it is\n  // never a reason to brand a real order as fraud - nothing to update anyway\n  reason = 'Order not found in pa_transactions';\n  retryable = true;\n} else if (order.wallet_credited === true) {\n  duplicate = true;\n  reason = 'Wallet already credited for this order';\n} else if (['REFUNDED', 'REFUND_FAILED'].includes(order.gateway_status)) {\n  duplicate = true;\n  reason = 'Order already refunded';\n} else if (parseError) {\n  reason = parseError;\n  retryable = true;                       // our problem, not the customer's\n} else if (Number(validateResp.code) !== 200) {\n  reason = 'Validation API returned code ' + validateResp.code;\n  retryable = true;                       // transient gateway/API failure\n} else {\n  const data = validateResp.data || {};\n  const amountMatches   = Number(data.received_amount) === Number(order.gateway_amount != null ? order.gateway_amount : order.amount);\n  const currencyMatches = String(data.currency || '').toUpperCase() === String(order.currency || 'IQD').toUpperCase();\n  const SUCCESS = ['success', 'paid', 'completed', 'approved'];\n  // only the server-to-server response counts - the IPN body is attacker-controlled\n  const statusOk = SUCCESS.includes(String(data.status || data.payment_status || '').toLowerCase());\n\n  if (amountMatches && currencyMatches && statusOk) {\n    match = true;\n  } else if (!statusOk) {\n    // gateway says it is not paid: not fraud, just not settled yet\n    reason = 'Gateway does not report this order as paid (status=' + (data.status || data.payment_status || 'unknown') + ')';\n    retryable = true;\n  } else {\n    // paid, but for the wrong amount or currency - this one IS suspicious\n    reason = 'Mismatch amount=' + amountMatches + ' currency=' + currencyMatches;\n    retryable = false;\n  }\n}\n\nreturn [{ json: {\n  match,\n  duplicate,\n  retryable,\n  reason,\n  orderId:         ipn.merchant_order_id,\n  transactionId:   order ? order.id : null,\n  userId:          order ? order.user_id : null,\n  gwTransactionId: ipn.gw_transaction_id,\n  receivedAmount:  ipn.received_amount,\n  currency:        ipn.currency,\n  validateData:    validateResp ? (validateResp.data || null) : null,\n  ipn,\n} }];"
+      },
+      "id": "5210e32c-3b55-4c91-b2d2-14f5792487ea",
+      "name": "Compare & Decide",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1300,
+        1000
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "e619eb62-5b92-4b73-94c5-08273cbb665e",
+              "leftValue": "={{ $json.match }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "7ab7a361-cf92-499d-8390-6c81560532a3",
+      "name": "Match & Success?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1820,
+        1000
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "c73f471b-355a-4bd9-a0ac-0cd18033fa75",
+      "name": "Trigger Fulfillment (dispense / confirm)",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        2340,
+        900
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"received\": true, \"matched\": true, \"duplicate\": $('Mark PAID + Credit Wallet + Notify (Supabase)').item.json.duplicate, \"balanceAfter\": $('Mark PAID + Credit Wallet + Notify (Supabase)').item.json.balance_after } }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "2fbc210e-7135-472d-9bae-50880b4cb3e0",
+      "name": "Ack IPN (Matched)",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        2600,
+        900
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "6259019006",
+        "text": "={{ ($('Compare & Decide').item.json.retryable ? 'ℹ️ FastPay check deferred for order ' : '⚠️ FastPay IPN MISMATCH for order ') + $('Compare & Decide').item.json.orderId + ': ' + $('Compare & Decide').item.json.reason }}",
+        "additionalFields": {}
+      },
+      "id": "25f400a8-f112-4d6b-8117-809b9d2a18d8",
+      "name": "Notify Security Team (Telegram)",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2340,
+        1140
+      ],
+      "webhookId": "46d8cce1-5fbe-455e-8a38-1206cb6ce2a5",
+      "credentials": {
+        "telegramApi": {
+          "id": "RESELECT_TELEGRAM_SECURITY_ALERTS",
+          "name": "Telegram Security Alerts"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"received\": true, \"matched\": false, \"message\": $('Compare & Decide').item.json.reason } }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "c4527d63-a2b2-479d-acfe-ff788ff18f6e",
+      "name": "Ack IPN (Not Matched)",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        2600,
+        1140
+      ]
+    },
+    {
+      "parameters": {
+        "content": "### FLOW 4 — Status Polling (fallback)\nRuns every minute. Expires stale orders, then polls every order still CREATED against the Status API.\nStops per-order once PAID / DECLINED / EXPIRED.",
+        "height": 230,
+        "width": 1400,
+        "color": 4
+      },
+      "id": "cb3edde5-1250-4d74-af68-a422127a3ac0",
+      "name": "FLOW 4 NOTE — Status Polling",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        2350
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "seconds"
+            }
+          ]
+        }
+      },
+      "id": "ecf0fe81-ecb1-4764-b4ff-6d6678116aa3",
+      "name": "Every Minute",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        2800
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "d455cd9c-c555-4772-ac55-1a1de4a54edc",
+      "name": "Loop Orders",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        520,
+        2800
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "fc48b60c-b48a-4152-b324-ecdfaad5383e",
+      "name": "Polling Cycle Complete",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        780,
+        2620
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "227de843-01f9-418f-a93a-4f9c91df0a6a",
+              "name": "baseUrl",
+              "type": "string",
+              "value": "=https://qr.fast-pay.iq"
+            },
+            {
+              "id": "87fefde5-47aa-4fd1-b3e3-bbf72e3079f9",
+              "name": "orderId",
+              "type": "string",
+              "value": "={{ $json.fastpay_order_id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "62a86dd1-0fb2-40d4-b33f-bd82a54df184",
+      "name": "FastPay Config3",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        780,
+        2840
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $json.baseUrl }}/api/v1/public/vending/status",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ {\n    \"orderId\": $json.orderId\n  } }}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "text"
+            }
+          }
+        },
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpCustomAuth"
+      },
+      "id": "ed51d624-e52d-4b12-8db0-a7e329c03b70",
+      "name": "Get Status",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1040,
+        2840
+      ],
+      "credentials": {
+        "httpCustomAuth": {
+          "id": "RESELECT_FASTPAY_STORE_CREDENTIALS",
+          "name": "FastPay Store Credentials (Custom Auth)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "ok-check-0001",
+              "leftValue": "={{ $json.ok }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "69ab6f89-42ec-4813-b8ff-4ae6ad886a1f",
+      "name": "Status Call OK?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1560,
+        2840
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "paid-check-0001",
+              "leftValue": "={{ $json.paymentStatus }}",
+              "rightValue": "^(PAID|SUCCESS|COMPLETED|APPROVED)$",
+              "operator": {
+                "type": "string",
+                "operation": "regex"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "0222c5db-9957-439d-8c8f-665d6875e5de",
+      "name": "Is PAID?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1820,
+        2840
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "decl-check-0001",
+              "leftValue": "={{ $json.paymentStatus }}",
+              "rightValue": "^(DECLINED|FAILED|CANCEL|CANCELLED|REJECTED)$",
+              "operator": {
+                "type": "string",
+                "operation": "regex"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "8137f8c0-ee79-408b-be98-433ae3de9420",
+      "name": "Is DECLINED?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2080,
+        2920
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "8db2989e-f104-4db4-84c9-8cfe6b71112b",
+      "name": "Still UNPAID (no-op, poll again next cycle)",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        2340,
+        3040
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "e279bb76-090f-40a0-9cd3-c82ecd1e88c6",
+      "name": "Log Status Check Error",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1820,
+        3060
+      ]
+    },
+    {
+      "parameters": {
+        "content": "### FLOW 5 - Refund\nPOST /webhook/fastpay/refund\nBody: { orderId, msisdn, amount, deductWallet? }\ndeductWallet defaults to true",
+        "height": 230,
+        "width": 1400,
+        "color": 4
+      },
+      "id": "775a19a4-41d4-4688-8d2f-700e919b3217",
+      "name": "FLOW 5 NOTE — Refund",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        3350
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "fastpay/refund",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        },
+        "authentication": "headerAuth"
+      },
+      "id": "af0b33ef-d937-4fea-96cd-4a5126cbd452",
+      "name": "Refund Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        3800
+      ],
+      "webhookId": "ff7752c9-854c-4407-a357-86cddab22476",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "RESELECT_FASTPAY_REFUND_WEBHOOK_AUTH",
+          "name": "FastPay Refund Webhook Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw     = $input.item.json;\nconst b       = raw.body || raw;\n\n// Header authentication is enforced by the Refund Webhook node.\nconst orderId = b.orderId;\nconst msisdn  = b.msisdn;\nconst amount  = b.amount;\nconst deductWallet = b.deductWallet === undefined ? true : Boolean(b.deductWallet);\n\nif (!orderId || !msisdn || amount === undefined || amount === null) {\n  return [{ json: { valid: false, error: 'orderId, msisdn and amount are required' } }];\n}\nif (!(Number(amount) > 0)) {\n  return [{ json: { valid: false, error: 'amount must be a positive number' } }];\n}\n\nreturn [{ json: {\n  valid: true,\n  orderId: String(orderId),\n  msisdn: String(msisdn),\n  amount: Number(amount),\n  deductWallet,\n} }];"
+      },
+      "id": "9b945a81-8de6-4055-97d7-9aff101e42e7",
+      "name": "Validate Refund Input",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        3800
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "ed1eba0c-3f8e-4e3e-8f39-92c700cb1b01",
+              "leftValue": "={{ $json.valid }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "06c1701c-1c34-4b7a-81e7-07d84755c1cf",
+      "name": "Refund Input Valid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        520,
+        3800
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"success\": false, \"message\": $json.error } }}",
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "id": "f8ae5c36-b565-4eb1-bbd2-a09030706766",
+      "name": "Respond Invalid Refund Input",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        520,
+        4000
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3a5905fa-b1ad-4297-a202-4d3d3e11641e",
+              "name": "baseUrl",
+              "type": "string",
+              "value": "=https://qr.fast-pay.iq"
+            },
+            {
+              "id": "27024fb2-43de-4b6d-a230-6ed5fda9615d",
+              "name": "orderId",
+              "type": "string",
+              "value": "={{ $('Validate Refund Input').item.json.orderId }}"
+            },
+            {
+              "id": "b756ef1f-8efc-4558-953e-b34a7bbb4249",
+              "name": "msisdn",
+              "type": "string",
+              "value": "={{ $('Validate Refund Input').item.json.msisdn }}"
+            },
+            {
+              "id": "6400b3bc-661d-42b4-8fce-05b5a3703ddf",
+              "name": "amount",
+              "type": "number",
+              "value": "={{ $('Validate Refund Input').item.json.amount }}"
+            },
+            {
+              "id": "cbc4b853-2b41-41c7-a0ce-b7d26e9e5287",
+              "name": "deductWallet",
+              "type": "boolean",
+              "value": "={{ $('Validate Refund Input').item.json.deductWallet }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "0bbd28c6-683e-4299-8eb5-93631417c012",
+      "name": "FastPay Config4",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1560,
+        3800
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $json.baseUrl }}/api/v1/public/payment/refund",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ {\n    \"orderId\": $json.orderId,\n    \"msisdn\": $json.msisdn,\n    \"amount\": $json.amount\n  } }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        },
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpCustomAuth"
+      },
+      "id": "72b585ec-5aef-48b1-8ffd-13f381686367",
+      "name": "Refund Payment",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1820,
+        3800
+      ],
+      "credentials": {
+        "httpCustomAuth": {
+          "id": "RESELECT_FASTPAY_STORE_CREDENTIALS",
+          "name": "FastPay Store Credentials (Custom Auth)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "e1d42564-7919-4f34-86de-416d2bfc460b",
+              "leftValue": "={{ $json.code }}",
+              "rightValue": 200,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "e23353cd-a51b-4afe-a1e7-09ca3369b50c",
+              "leftValue": "={{ ($json.errors || []).length }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "04186f8b-e4b2-476b-9c70-ad048427e2bb",
+      "name": "Refund Success?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2080,
+        3800
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "6259019006",
+        "text": "={{ '✅ Refund successful for order ' + $('FastPay Config4').item.json.orderId + ' amount ' + $('FastPay Config4').item.json.amount + ' | wallet deducted: ' + $('Apply Refund (Supabase)').item.json.wallet_deducted + ' | new balance: ' + $('Apply Refund (Supabase)').item.json.balance_after }}",
+        "additionalFields": {}
+      },
+      "id": "da99b909-79bb-41b8-9492-fc9d91e81660",
+      "name": "Notify Refund Success (Telegram)",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2600,
+        3680
+      ],
+      "webhookId": "cf3f0053-e44f-434f-84ef-96c88289497f",
+      "credentials": {
+        "telegramApi": {
+          "id": "RESELECT_TELEGRAM_SECURITY_ALERTS",
+          "name": "Telegram Security Alerts"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"success\": true, \"message\": \"Refund processed\", \"data\": $('Refund Payment').item.json.data, \"wallet\": { \"deducted\": $('Apply Refund (Supabase)').item.json.wallet_deducted, \"balanceAfter\": $('Apply Refund (Supabase)').item.json.balance_after } } }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "46c24356-0f8b-4b5f-939e-4aaf2c4d15a1",
+      "name": "Respond Refund Success",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        2860,
+        3680
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "6259019006",
+        "text": "={{ '❌ Refund FAILED for order ' + $('FastPay Config4').item.json.orderId + ': ' + JSON.stringify($json.errors || $json.message) }}",
+        "additionalFields": {}
+      },
+      "id": "44ec43b8-24b9-44a2-ac15-23b657fcd902",
+      "name": "Notify Refund Failure (Telegram)",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2600,
+        3920
+      ],
+      "webhookId": "bd10fa6c-68b2-418e-8a09-562e4a27a08e",
+      "credentials": {
+        "telegramApi": {
+          "id": "RESELECT_TELEGRAM_SECURITY_ALERTS",
+          "name": "Telegram Security Alerts"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"success\": false, \"message\": \"Refund failed at gateway\" } }}",
+        "options": {
+          "responseCode": 502
+        }
+      },
+      "id": "0a73e50a-4b93-4de2-9521-0a97626bf1d3",
+      "name": "Respond Refund Error",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        2860,
+        3920
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://cojchkwssmasiejcgvbk.supabase.co/rest/v1/rpc/fastpay_create_order",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpCustomAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ {\n  \"p_user_id\":    $('FastPay Config').item.json.userId,\n  \"p_order_id\":   $('FastPay Config').item.json.orderId,\n  \"p_amount\":     $('FastPay Config').item.json.billAmount,\n  \"p_currency\":   $('FastPay Config').item.json.currency,\n  \"p_qr_url\":     $json.data.qrUrl,\n  \"p_qr_text\":    $json.data.qrText,\n  \"p_expires_in\": $('FastPay Config').item.json.expiresIn,\n  \"p_note\":       $('FastPay Config').item.json.note\n} }}",
+        "options": {}
+      },
+      "id": "b6ea97dc-a51c-46b2-9d08-60febfa0cbc4",
+      "name": "Create Pending Transaction (Supabase)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3380,
+        0
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "notesInFlow": false,
+      "credentials": {
+        "httpCustomAuth": {
+          "id": "RESELECT_SUPABASE_SERVICE_ROLE",
+          "name": "Supabase Service Role (Custom Auth)"
+        }
+      },
+      "notes": "Inserts the pending row into pa_transactions (status=pending, gateway_status=CREATED). Idempotent on fastpay_order_id."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "4a19833a-39ae-474d-86ec-2a97aa7f3f5a",
+              "leftValue": "={{ $json.ok }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "4590a348-440f-4d6b-b6ba-eb208176b1ae",
+      "name": "Transaction Saved?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3640,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"success\": false, \"message\": \"Could not save the transaction\", \"code\": $json.code } }}",
+        "options": {
+          "responseCode": 409
+        }
+      },
+      "id": "49446abc-59bd-4948-b5ec-abd714926736",
+      "name": "Respond Order Save Error",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        3900,
+        120
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://cojchkwssmasiejcgvbk.supabase.co/rest/v1/pa_transactions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpCustomAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "select",
+              "value": "id,user_id,amount,gateway_amount,currency,status,gateway_status,wallet_credited,wallet_debited,fastpay_order_id,gw_transaction_id,expires_at"
+            },
+            {
+              "name": "fastpay_order_id",
+              "value": "=eq.{{ $('Extract IPN Data').item.json.merchant_order_id }}"
+            },
+            {
+              "name": "limit",
+              "value": "1"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a2817204-c37a-425d-9ade-ddc5637aa1c1",
+      "name": "Get Transaction (Supabase)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1040,
+        1000
+      ],
+      "alwaysOutputData": true,
+      "notesInFlow": false,
+      "credentials": {
+        "httpCustomAuth": {
+          "id": "RESELECT_SUPABASE_SERVICE_ROLE",
+          "name": "Supabase Service Role (Custom Auth)"
+        }
+      },
+      "notes": "alwaysOutputData=true so an unknown order still produces one (empty) item and the IPN gets acknowledged instead of hanging."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "ddef8b2e-b247-4190-b211-27c11b762cd9",
+              "leftValue": "={{ $json.duplicate }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "d21ff78d-a8d3-401f-86f8-1c92a0107fae",
+      "name": "Already Processed?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1560,
+        1000
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"received\": true, \"duplicate\": true, \"message\": $json.reason } }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "c4bedbf7-da41-4614-aee2-d66061855ecf",
+      "name": "Ack IPN (Duplicate)",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1820,
+        800
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://cojchkwssmasiejcgvbk.supabase.co/rest/v1/rpc/fastpay_mark_paid",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpCustomAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ {\n  \"p_order_id\":          $json.orderId,\n  \"p_gw_transaction_id\": $json.gwTransactionId,\n  \"p_received_amount\":   $json.receivedAmount,\n  \"p_currency\":          $json.currency,\n  \"p_source\":            \"ipn\",\n  \"p_payload\":           $json.ipn\n} }}",
+        "options": {}
+      },
+      "id": "6786ee84-40e5-45a5-828f-673d26aca910",
+      "name": "Mark PAID + Credit Wallet + Notify (Supabase)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2080,
+        900
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "notesInFlow": false,
+      "credentials": {
+        "httpCustomAuth": {
+          "id": "RESELECT_SUPABASE_SERVICE_ROLE",
+          "name": "Supabase Service Role (Custom Auth)"
+        }
+      },
+      "notes": "One atomic call: pa_transactions -> approved/PAID, pa_wallets balance += amount, pa_notifications row. Returns duplicate=true if it was already applied. Retry-safe: the wallet_credited latch makes a repeat call a no-op."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://cojchkwssmasiejcgvbk.supabase.co/rest/v1/rpc/fastpay_mark_check_failed",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpCustomAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ {\n  \"p_order_id\":  $json.orderId,\n  \"p_reason\":    $json.reason,\n  \"p_retryable\": $json.retryable,\n  \"p_payload\":   $json.ipn\n} }}",
+        "options": {}
+      },
+      "id": "28bc6049-8165-4c98-a5fa-8b67a8f50fd5",
+      "name": "Mark FRAUD/FAILED (Supabase)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2080,
+        1140
+      ],
+      "notesInFlow": false,
+      "retryOnFail": true,
+      "credentials": {
+        "httpCustomAuth": {
+          "id": "RESELECT_SUPABASE_SERVICE_ROLE",
+          "name": "Supabase Service Role (Custom Auth)"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "notes": "Plain PostgREST PATCH — no money moves on this branch, so no RPC needed."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://cojchkwssmasiejcgvbk.supabase.co/rest/v1/rpc/fastpay_expire_stale_orders",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpCustomAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ {} }}",
+        "options": {}
+      },
+      "id": "be127c29-c95d-4747-b62a-6ef2df6104ef",
+      "name": "Expire Stale Transactions (Supabase)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1040,
+        2620
+      ],
+      "notesInFlow": false,
+      "credentials": {
+        "httpCustomAuth": {
+          "id": "RESELECT_SUPABASE_SERVICE_ROLE",
+          "name": "Supabase Service Role (Custom Auth)"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "notes": "Replaces the old 'Expire Old Orders' Postgres node. Marks CREATED rows past expires_in as EXPIRED/rejected."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://cojchkwssmasiejcgvbk.supabase.co/rest/v1/rpc/fastpay_orders_to_poll",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpCustomAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { \"p_limit\": 50, \"p_grace_minutes\": 2 } }}",
+        "options": {}
+      },
+      "id": "c37364b2-bd02-43e8-af32-a7a6a3caa4a0",
+      "name": "Get Pending Transactions (Supabase)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        260,
+        2800
+      ],
+      "notesInFlow": false,
+      "retryOnFail": true,
+      "credentials": {
+        "httpCustomAuth": {
+          "id": "RESELECT_SUPABASE_SERVICE_ROLE",
+          "name": "Supabase Service Role (Custom Auth)"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "notes": "No alwaysOutputData here on purpose: an empty result should end the cycle, not push an empty item into the loop."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://cojchkwssmasiejcgvbk.supabase.co/rest/v1/rpc/fastpay_mark_paid",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpCustomAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ {\n  \"p_order_id\":          $('FastPay Config3').item.json.orderId,\n  \"p_gw_transaction_id\": $json.gwTransactionId,\n  \"p_received_amount\":   $json.receivedAmount,\n  \"p_currency\":          $json.currency,\n  \"p_source\":            \"poll\",\n  \"p_payload\":           $json.data\n} }}",
+        "options": {}
+      },
+      "id": "1bb02dde-56f9-4575-aace-a157ecafa3e9",
+      "name": "Mark PAID from Poll (Supabase)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2080,
+        2700
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "notesInFlow": false,
+      "credentials": {
+        "httpCustomAuth": {
+          "id": "RESELECT_SUPABASE_SERVICE_ROLE",
+          "name": "Supabase Service Role (Custom Auth)"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "notes": "Same RPC as the IPN branch. If the IPN already landed, this returns duplicate=true and moves no money. onError=continue so one bad order cannot abort the polling cycle."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://cojchkwssmasiejcgvbk.supabase.co/rest/v1/rpc/fastpay_mark_declined",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpCustomAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ {\n  \"p_order_id\":       $('FastPay Config3').item.json.orderId,\n  \"p_gateway_status\": $json.paymentStatus,\n  \"p_payload\":        $json.data\n} }}",
+        "options": {}
+      },
+      "id": "22401736-d898-4a11-8b25-48e0f1866615",
+      "name": "Mark Declined / Expired (Supabase)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2340,
+        2820
+      ],
+      "retryOnFail": true,
+      "credentials": {
+        "httpCustomAuth": {
+          "id": "RESELECT_SUPABASE_SERVICE_ROLE",
+          "name": "Supabase Service Role (Custom Auth)"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://cojchkwssmasiejcgvbk.supabase.co/rest/v1/rpc/fastpay_apply_refund",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpCustomAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ {\n  \"p_order_id\":      $('FastPay Config4').item.json.orderId,\n  \"p_amount\":        $('FastPay Config4').item.json.amount,\n  \"p_msisdn\":        $('FastPay Config4').item.json.msisdn,\n  \"p_deduct_wallet\": $('FastPay Config4').item.json.deductWallet,\n  \"p_payload\":       $json.data\n} }}",
+        "options": {}
+      },
+      "id": "d6cb0d0a-4607-449c-9b52-e33962a36fb9",
+      "name": "Apply Refund (Supabase)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2340,
+        3680
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "notesInFlow": false,
+      "credentials": {
+        "httpCustomAuth": {
+          "id": "RESELECT_SUPABASE_SERVICE_ROLE",
+          "name": "Supabase Service Role (Custom Auth)"
+        }
+      },
+      "notes": "One atomic call: pa_transactions -> refunded/REFUNDED, wallet debit (only if it was credited and not already debited), pa_notifications row."
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "https://cojchkwssmasiejcgvbk.supabase.co/rest/v1/pa_transactions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpCustomAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "fastpay_order_id",
+              "value": "=eq.{{ $('FastPay Config4').item.json.orderId }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "return=representation"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ {\n  \"gateway_status\": \"REFUND_FAILED\",\n  \"fail_reason\":    JSON.stringify($json.errors || $json.message || $json.messages || 'unknown refund error')\n} }}",
+        "options": {}
+      },
+      "id": "ff914285-f84e-4553-8e56-39e7243d5319",
+      "name": "Log Refund Failure (Supabase)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2340,
+        3920
+      ],
+      "credentials": {
+        "httpCustomAuth": {
+          "id": "RESELECT_SUPABASE_SERVICE_ROLE",
+          "name": "Supabase Service Role (Custom Auth)"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// FastPay's QR endpoint returned a body n8n could not parse.\n// Handle: HTML/gateway errors, non-200s, and the missing comma after\n// \"errors\": [] that appears in FastPay's own documented sample.\nconst res    = $input.item.json;\nconst status = res.statusCode !== undefined ? res.statusCode : 200;\nconst rawSrc = res.data !== undefined ? res.data\n            : (res.body !== undefined ? res.body : res.text);\nconst raw    = typeof rawSrc === 'string' ? rawSrc : JSON.stringify(rawSrc || {});\nconst trimmed = raw.trim();\n\nconst bail = (msg) => [{ json: {\n  code: status,\n  messages: msg,\n  errors: [msg],\n  data: null,\n  rawBody: trimmed.slice(0, 500),\n} }];\n\nif (!trimmed) return bail('Empty response from FastPay (HTTP ' + status + ')');\n\nif (trimmed.startsWith('<')) {\n  return bail('FastPay returned HTML, not JSON (HTTP ' + status + ') - check the URL and that the host is reachable');\n}\n\nlet parsed = null;\ntry {\n  parsed = JSON.parse(trimmed);\n} catch (e) {\n  // repair the documented missing comma:  \"errors\": []  \"data\": {...}\n  const repaired = trimmed.replace(/(\"errors\"\\s*:\\s*\\[[^\\]]*\\])\\s*(?=\")/, '$1,');\n  try {\n    parsed = JSON.parse(repaired);\n  } catch (e2) {\n    return bail('FastPay response is not valid JSON (HTTP ' + status + '): ' + e.message);\n  }\n}\n\nif (parsed.code === undefined) parsed.code = status;\nparsed.httpStatus = status;\nparsed.rawBody = trimmed.slice(0, 500);\nparsed.responseHeaders = res.headers || {};\nif (!Array.isArray(parsed.errors)) parsed.errors = parsed.errors ? [parsed.errors] : [];\n\nreturn [{ json: parsed }];"
+      },
+      "id": "910d78eb-b92e-485f-a03c-68038976aca8",
+      "name": "Parse QR Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2860,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// FastPay's status endpoint has the same JSON quirks as the QR endpoint.\n// Normalise everything here so the IF nodes downstream stay simple.\nconst res    = $input.item.json;\nconst status = res.statusCode !== undefined ? res.statusCode : 200;\nconst rawSrc = res.data !== undefined ? res.data : (res.body !== undefined ? res.body : res.text);\nconst raw    = typeof rawSrc === 'string' ? rawSrc : JSON.stringify(rawSrc || {});\nconst trimmed = raw.trim();\nconst out = (o) => [{ json: o }];\n\nif (!trimmed || trimmed.startsWith('<')) {\n  return out({ ok:false, reason:'FastPay returned a non-JSON body (HTTP ' + status + ')', httpStatus:status, paymentStatus:'', raw:trimmed.slice(0,300) });\n}\n\nlet parsed = null;\ntry {\n  parsed = JSON.parse(trimmed);\n} catch (e) {\n  const repaired = trimmed.replace(/(\"errors\"\\s*:\\s*\\[[^\\]]*\\])\\s*(?=\")/, '$1,');\n  try { parsed = JSON.parse(repaired); }\n  catch (e2) { return out({ ok:false, reason:'Invalid JSON from FastPay: ' + e.message, httpStatus:status, paymentStatus:'', raw:trimmed.slice(0,300) }); }\n}\n\nconst code = parsed.code !== undefined ? Number(parsed.code) : status;\nconst data = (parsed.data && typeof parsed.data === 'object') ? parsed.data : {};\nconst pick = (...keys) => {\n  for (const k of keys) {\n    if (data[k] !== undefined && data[k] !== null && data[k] !== '') return data[k];\n    if (parsed[k] !== undefined && parsed[k] !== null && parsed[k] !== '') return parsed[k];\n  }\n  return null;\n};\n\nconst paymentStatus = String(pick('payment_status','paymentStatus','status','transaction_status','transactionStatus') || '').trim().toUpperCase();\n\nreturn out({\n  ok: code === 200,\n  code,\n  httpStatus: status,\n  paymentStatus,\n  gwTransactionId: pick('gw_transaction_id','gwTransactionId','transaction_id','transactionId'),\n  receivedAmount: pick('received_amount','receivedAmount','amount'),\n  currency: pick('currency') || 'IQD',\n  messages: parsed.messages || null,\n  data,\n  raw: trimmed.slice(0,300),\n});"
+      },
+      "id": "7844bff1-436c-455d-a94f-737409ae7aed",
+      "name": "Parse Status Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1300,
+        2840
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://cojchkwssmasiejcgvbk.supabase.co/rest/v1/pa_transactions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpCustomAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "select",
+              "value": "id,user_id,amount,gateway_amount,received_amount,currency,status,gateway_status,wallet_credited,wallet_debited"
+            },
+            {
+              "name": "fastpay_order_id",
+              "value": "=eq.{{ $('Validate Refund Input').item.json.orderId }}"
+            },
+            {
+              "name": "limit",
+              "value": "1"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        780,
+        3800
+      ],
+      "id": "dae91330-95cc-466e-a492-cf3cee65531b",
+      "name": "Get Refund Target (Supabase)",
+      "alwaysOutputData": true,
+      "retryOnFail": true,
+      "credentials": {
+        "httpCustomAuth": {
+          "id": "RESELECT_SUPABASE_SERVICE_ROLE",
+          "name": "Supabase Service Role (Custom Auth)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const req  = $('Validate Refund Input').item.json;\nconst rows = $input.all().map(i => i.json).filter(r => r && r.id);\nconst tx   = rows[0];\n\nconst deny = (code, msg) => [{ json: { allowed: false, code, message: msg, orderId: req.orderId } }];\n\nif (!tx) return deny('ORDER_NOT_FOUND', 'No such order');\nif (tx.gateway_status === 'REFUNDED') return deny('ALREADY_REFUNDED', 'This order was already refunded');\n// the guard that was missing: never ask FastPay to refund money that never arrived\nif (!(tx.wallet_credited === true || tx.gateway_status === 'PAID')) {\n  return deny('ORDER_NOT_PAID', 'Order was never paid (gateway_status=' + tx.gateway_status + ')');\n}\n\nconst paidIqd = Number(tx.received_amount != null ? tx.received_amount : tx.gateway_amount);\nif (Number(req.amount) > paidIqd) {\n  return deny('REFUND_EXCEEDS_PAYMENT', 'Requested ' + req.amount + ' IQD but only ' + paidIqd + ' IQD was paid');\n}\n\nreturn [{ json: { allowed: true, orderId: req.orderId, paidIqd, transactionId: tx.id } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1040,
+        3800
+      ],
+      "id": "2ffee65f-6a6b-4f28-9505-374ac3f0dfc9",
+      "name": "Check Refund Eligibility"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "a1b2c3d4-0000-4000-8000-000000000012",
+              "leftValue": "={{ $json.allowed }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1300,
+        3800
+      ],
+      "id": "bb43312b-f215-4c33-a7e7-63f24c467eb4",
+      "name": "Refund Eligible?"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"success\": false, \"code\": $json.code, \"message\": $json.message } }}",
+        "options": {
+          "responseCode": 409
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        1300,
+        4000
+      ],
+      "id": "a9071ced-a189-4953-aa2e-753551b1d71d",
+      "name": "Respond Refund Not Allowed"
+    },
+    {
+      "parameters": {
+        "content": "## Secure FastPay app checkout setup\n\n1. Run the supplied Supabase migration before activating this workflow. It adds the server-only `pa_quote_ad_checkout` RPC.\n2. Attach **Supabase Service Role (Custom Auth)** to every Supabase server node.\n3. Attach **Supabase Publishable Key (Header Auth)** to **Verify App User** and **Verify Status User**. The credential must add only the `apikey` header.\n4. Attach **FastPay Store Credentials (Custom Auth)** to every FastPay request. The credential injects `storeId` and `storePassword` into the JSON body.\n5. Set the FastPay merchant IPN URL to `/webhook/fastpay/ipn`.\n6. Flutter calls `/webhook/fastpay/order-create` and `/webhook/fastpay/order-status` with `Authorization: Bearer <Supabase access token>`. For `ad_checkout`, n8n ignores phone-supplied prices and quotes the exact amount in Supabase. Only `wallet_deposit` accepts the authenticated customer's explicit top-up amount.\n7. Register the `appfpclientProxo` callback and `appFpp` launch schemes on Android/iOS. App-resume status verification remains the fallback.\n\nMerchant credentials and refund secrets are intentionally not exported in this JSON. Rotate the previously exposed FastPay credentials before production use.",
+        "height": 500,
+        "width": 900,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -1250
+      ],
+      "id": "b878ca1b-c719-4ede-9fe4-64eb52c3c890",
+      "name": "SETUP — Credentials & Security"
+    },
+    {
+      "parameters": {
+        "url": "https://cojchkwssmasiejcgvbk.supabase.co/auth/v1/user",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "={{ $('Validate & Prepare').item.json.authorization }}"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "id": "a3101f5f-8b97-49d4-9da5-86c39c28b101",
+      "name": "Verify App User",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        780,
+        0
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "RESELECT_SUPABASE_PUBLISHABLE_KEY",
+          "name": "Supabase Publishable Key (Header Auth)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "a3101f5f-8b97-49d4-9da5-86c39c28b102-condition",
+              "leftValue": "={{ !!$json.id }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a3101f5f-8b97-49d4-9da5-86c39c28b102",
+      "name": "App User Valid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1040,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"success\": false, \"message\": \"Unauthorized\" } }}",
+        "options": {
+          "responseCode": 401
+        }
+      },
+      "id": "a3101f5f-8b97-49d4-9da5-86c39c28b103",
+      "name": "Respond Unauthorized",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1040,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "fastpay/order-status",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "a3101f5f-8b97-49d4-9da5-86c39c28b104",
+      "name": "Payment Status Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        1850
+      ],
+      "webhookId": "e78f897e-b7a7-4f2f-93fa-9932b87d3104"
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = $input.item.json;\nlet body = raw.body !== undefined ? raw.body : raw;\nif (typeof body === 'string') {\n  try { body = JSON.parse(body); } catch (_) { body = {}; }\n}\nif (!body || typeof body !== 'object') body = {};\nconst headers = raw.headers || {};\nconst orderId = body.orderId || body.order_id;\nconst authorization = String(headers.authorization || headers.Authorization || '').trim();\nconst valid = /^[A-Za-z0-9_-]{8,32}$/.test(String(orderId || ''))\n  && /^Bearer\\s+\\S+$/i.test(authorization);\nreturn [{ json: {\n  valid,\n  orderId: orderId ? String(orderId) : '',\n  authorization,\n  error: valid ? null : 'orderId and a valid Supabase bearer token are required',\n} }];"
+      },
+      "id": "a3101f5f-8b97-49d4-9da5-86c39c28b105",
+      "name": "Validate Status Request",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        1850
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "a3101f5f-8b97-49d4-9da5-86c39c28b106-condition",
+              "leftValue": "={{ $json.valid }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a3101f5f-8b97-49d4-9da5-86c39c28b106",
+      "name": "Status Input Valid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        520,
+        1850
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"success\": false, \"message\": $json.error } }}",
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "id": "a3101f5f-8b97-49d4-9da5-86c39c28b107",
+      "name": "Respond Invalid Status Input",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        520,
+        2050
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://cojchkwssmasiejcgvbk.supabase.co/auth/v1/user",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "={{ $('Validate Status Request').item.json.authorization }}"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "id": "a3101f5f-8b97-49d4-9da5-86c39c28b108",
+      "name": "Verify Status User",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        780,
+        1850
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "RESELECT_SUPABASE_PUBLISHABLE_KEY",
+          "name": "Supabase Publishable Key (Header Auth)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "a3101f5f-8b97-49d4-9da5-86c39c28b109-condition",
+              "leftValue": "={{ !!$json.id }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a3101f5f-8b97-49d4-9da5-86c39c28b109",
+      "name": "Status User Valid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1040,
+        1850
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"success\": false, \"message\": \"Unauthorized\" } }}",
+        "options": {
+          "responseCode": 401
+        }
+      },
+      "id": "a3101f5f-8b97-49d4-9da5-86c39c28b110",
+      "name": "Respond Status Unauthorized",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1040,
+        2050
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://cojchkwssmasiejcgvbk.supabase.co/rest/v1/pa_transactions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpCustomAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "select",
+              "value": "id,user_id,amount,gateway_amount,currency,status,gateway_status,wallet_credited,fastpay_order_id,gw_transaction_id,expires_at,ad_id"
+            },
+            {
+              "name": "fastpay_order_id",
+              "value": "=eq.{{ $('Validate Status Request').item.json.orderId }}"
+            },
+            {
+              "name": "user_id",
+              "value": "=eq.{{ $('Verify Status User').item.json.id }}"
+            },
+            {
+              "name": "limit",
+              "value": "1"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a3101f5f-8b97-49d4-9da5-86c39c28b111",
+      "name": "Get App Payment (Supabase)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1300,
+        1850
+      ],
+      "credentials": {
+        "httpCustomAuth": {
+          "id": "RESELECT_SUPABASE_SERVICE_ROLE",
+          "name": "Supabase Service Role (Custom Auth)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const rows = $input.all().map(i => i.json).filter(r => r && r.id);\nconst tx = rows[0] || null;\nreturn [{ json: {\n  found: !!tx,\n  orderId: $('Validate Status Request').item.json.orderId,\n  tx,\n} }];"
+      },
+      "id": "a3101f5f-8b97-49d4-9da5-86c39c28b112",
+      "name": "Normalize App Payment",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1560,
+        1850
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "a3101f5f-8b97-49d4-9da5-86c39c28b113-condition",
+              "leftValue": "={{ $json.found }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a3101f5f-8b97-49d4-9da5-86c39c28b113",
+      "name": "App Payment Found?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1820,
+        1850
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"success\": false, \"message\": \"Payment not found\" } }}",
+        "options": {
+          "responseCode": 404
+        }
+      },
+      "id": "a3101f5f-8b97-49d4-9da5-86c39c28b114",
+      "name": "Respond App Payment Not Found",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1820,
+        2050
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "a3101f5f-8b97-49d4-9da5-86c39c28b115-condition",
+              "leftValue": "={{ $json.tx.gateway_status || \"\" }}",
+              "rightValue": "^(PAID|DECLINED|FAILED|FRAUD_SUSPECT|EXPIRED|REFUNDED|REFUND_FAILED)$",
+              "operator": {
+                "type": "string",
+                "operation": "regex"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a3101f5f-8b97-49d4-9da5-86c39c28b115",
+      "name": "App Payment Final?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2080,
+        1850
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ {\n    \"success\": true,\n    \"orderId\": $json.orderId,\n    \"transactionId\": $json.tx.id,\n    \"status\": $json.tx.status,\n    \"gatewayStatus\": $json.tx.gateway_status,\n    \"paid\": $json.tx.status === \"approved\" && $json.tx.gateway_status === \"PAID\",\n    \"terminal\": true,\n    \"adId\": $json.tx.ad_id\n  } }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "a3101f5f-8b97-49d4-9da5-86c39c28b116",
+      "name": "Respond Stored Payment Status",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        2340,
+        1690
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "app-status-base",
+              "name": "baseUrl",
+              "type": "string",
+              "value": "=https://qr.fast-pay.iq"
+            },
+            {
+              "id": "app-status-order",
+              "name": "orderId",
+              "type": "string",
+              "value": "={{ $('Normalize App Payment').item.json.orderId }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a3101f5f-8b97-49d4-9da5-86c39c28b117",
+      "name": "FastPay App Status Config",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2340,
+        1890
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $json.baseUrl }}/api/v1/public/vending/status",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpCustomAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { \"orderId\": $json.orderId } }}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "text"
+            }
+          }
+        }
+      },
+      "id": "a3101f5f-8b97-49d4-9da5-86c39c28b118",
+      "name": "Check FastPay From App",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2600,
+        1890
+      ],
+      "credentials": {
+        "httpCustomAuth": {
+          "id": "RESELECT_FASTPAY_STORE_CREDENTIALS",
+          "name": "FastPay Store Credentials (Custom Auth)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const res = $input.item.json;\nconst httpStatus = res.statusCode !== undefined ? res.statusCode : 200;\nconst src = res.data !== undefined ? res.data : (res.body !== undefined ? res.body : res.text);\nconst raw = typeof src === 'string' ? src.trim() : JSON.stringify(src || {});\nlet parsed = {};\ntry { parsed = raw && !raw.startsWith('<') ? JSON.parse(raw) : {}; }\ncatch (_) {\n  try { parsed = JSON.parse(raw.replace(/(\"errors\"\\s*:\\s*\\[[^\\]]*\\])\\s*(?=\")/, '$1,')); }\n  catch (_) { parsed = {}; }\n}\nconst data = parsed.data && typeof parsed.data === 'object' ? parsed.data : {};\nconst pick = (...keys) => {\n  for (const key of keys) {\n    if (data[key] !== undefined && data[key] !== null && data[key] !== '') return data[key];\n    if (parsed[key] !== undefined && parsed[key] !== null && parsed[key] !== '') return parsed[key];\n  }\n  return null;\n};\nreturn [{ json: {\n  ok: Number(parsed.code ?? httpStatus) === 200,\n  orderId: $('Normalize App Payment').item.json.orderId,\n  transactionId: $('Normalize App Payment').item.json.tx.id,\n  paymentStatus: String(pick('payment_status','paymentStatus','status','transaction_status','transactionStatus') || '').trim().toUpperCase(),\n  gwTransactionId: pick('gw_transaction_id','gwTransactionId','transaction_id','transactionId'),\n  receivedAmount: pick('received_amount','receivedAmount','amount'),\n  currency: pick('currency') || 'IQD',\n  data,\n} }];"
+      },
+      "id": "a3101f5f-8b97-49d4-9da5-86c39c28b119",
+      "name": "Parse FastPay App Status",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2860,
+        1890
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "a3101f5f-8b97-49d4-9da5-86c39c28b120-condition",
+              "leftValue": "={{ $json.paymentStatus }}",
+              "rightValue": "^(PAID|SUCCESS|COMPLETED|APPROVED)$",
+              "operator": {
+                "type": "string",
+                "operation": "regex"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a3101f5f-8b97-49d4-9da5-86c39c28b120",
+      "name": "FastPay App Paid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3120,
+        1890
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://cojchkwssmasiejcgvbk.supabase.co/rest/v1/rpc/fastpay_mark_paid",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpCustomAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ {\n      \"p_order_id\": $json.orderId,\n      \"p_gw_transaction_id\": $json.gwTransactionId,\n      \"p_received_amount\": $json.receivedAmount,\n      \"p_currency\": $json.currency,\n      \"p_source\": \"app_resume\",\n      \"p_payload\": $json.data\n    } }}",
+        "options": {}
+      },
+      "id": "a3101f5f-8b97-49d4-9da5-86c39c28b121",
+      "name": "Mark PAID From App (Supabase)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3380,
+        1750
+      ],
+      "credentials": {
+        "httpCustomAuth": {
+          "id": "RESELECT_SUPABASE_SERVICE_ROLE",
+          "name": "Supabase Service Role (Custom Auth)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ {\n    \"success\": $json.ok === true,\n    \"orderId\": $('Parse FastPay App Status').item.json.orderId,\n    \"transactionId\": $json.transaction_id || $('Parse FastPay App Status').item.json.transactionId,\n    \"status\": $json.status || \"approved\",\n    \"gatewayStatus\": $json.gateway_status || \"PAID\",\n    \"paid\": $json.ok === true,\n    \"terminal\": true\n  } }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "a3101f5f-8b97-49d4-9da5-86c39c28b122",
+      "name": "Respond App Payment Paid",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        3640,
+        1750
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "a3101f5f-8b97-49d4-9da5-86c39c28b123-condition",
+              "leftValue": "={{ $json.paymentStatus }}",
+              "rightValue": "^(DECLINED|FAILED|CANCEL|CANCELLED|REJECTED|EXPIRED)$",
+              "operator": {
+                "type": "string",
+                "operation": "regex"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a3101f5f-8b97-49d4-9da5-86c39c28b123",
+      "name": "FastPay App Declined?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3380,
+        1990
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://cojchkwssmasiejcgvbk.supabase.co/rest/v1/rpc/fastpay_mark_declined",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpCustomAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ {\n      \"p_order_id\": $json.orderId,\n      \"p_gateway_status\": $json.paymentStatus,\n      \"p_payload\": $json.data\n    } }}",
+        "options": {}
+      },
+      "id": "a3101f5f-8b97-49d4-9da5-86c39c28b124",
+      "name": "Mark Declined From App (Supabase)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3640,
+        1950
+      ],
+      "credentials": {
+        "httpCustomAuth": {
+          "id": "RESELECT_SUPABASE_SERVICE_ROLE",
+          "name": "Supabase Service Role (Custom Auth)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ {\n    \"success\": true,\n    \"orderId\": $('Parse FastPay App Status').item.json.orderId,\n    \"transactionId\": $json.transaction_id || $('Parse FastPay App Status').item.json.transactionId,\n    \"status\": \"rejected\",\n    \"gatewayStatus\": $json.gateway_status || $('Parse FastPay App Status').item.json.paymentStatus,\n    \"paid\": false,\n    \"terminal\": true\n  } }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "a3101f5f-8b97-49d4-9da5-86c39c28b125",
+      "name": "Respond App Payment Declined",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        3900,
+        1950
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ {\n    \"success\": true,\n    \"orderId\": $json.orderId,\n    \"transactionId\": $json.transactionId,\n    \"status\": \"pending\",\n    \"gatewayStatus\": $json.paymentStatus || \"CREATED\",\n    \"paid\": false,\n    \"terminal\": false\n  } }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "a3101f5f-8b97-49d4-9da5-86c39c28b126",
+      "name": "Respond App Payment Pending",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        3640,
+        2150
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://cojchkwssmasiejcgvbk.supabase.co/rest/v1/rpc/pa_quote_ad_checkout",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpCustomAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ {\n      \"p_user_id\": $('Verify App User').item.json.id,\n      \"p_ad\": $('Validate & Prepare').item.json.ad,\n      \"p_promo_id\": $('Validate & Prepare').item.json.promoId,\n      \"p_promo_code\": $('Validate & Prepare').item.json.promoCode\n    } }}",
+        "options": {}
+      },
+      "id": "a3101f5f-8b97-49d4-9da5-86c39c28b127",
+      "name": "Quote Ad Checkout (Supabase)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1560,
+        -160
+      ],
+      "credentials": {
+        "httpCustomAuth": {
+          "id": "RESELECT_SUPABASE_SERVICE_ROLE",
+          "name": "Supabase Service Role (Custom Auth)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "a3101f5f-8b97-49d4-9da5-86c39c28b128-condition",
+              "leftValue": "={{ $json.ok === true }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a3101f5f-8b97-49d4-9da5-86c39c28b128",
+      "name": "Server Quote Valid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1820,
+        -160
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"success\": false, \"message\": \"Server price quote failed\", \"code\": $json.code || \"QUOTE_FAILED\" } }}",
+        "options": {
+          "responseCode": 409
+        }
+      },
+      "id": "a3101f5f-8b97-49d4-9da5-86c39c28b129",
+      "name": "Respond Quote Error",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1820,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "02ed4721-d523-43af-aeee-c5c61779a7ed",
+              "leftValue": "={{ $(\"Validate & Prepare\").item.json.purpose }}",
+              "rightValue": "ad_checkout",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "b425c3b3-8315-4724-8f43-f906c780a03f",
+      "name": "Ad Checkout?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1300,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const req = $('Validate & Prepare').item.json;\nconst user = $('Verify App User').item.json;\nconst isAd = req.purpose === 'ad_checkout';\nconst quote = isAd ? $input.item.json : {};\nconst billAmount = Number(isAd ? quote.amount_iqd : req.billAmount);\nif (!Number.isInteger(billAmount) || billAmount <= 0) {\n  throw new Error('Resolved checkout amount is invalid');\n}\nreturn [{ json: {\n  purpose: req.purpose,\n  orderId: req.orderId,\n  currency: req.currency,\n  note: req.note,\n  userId: user.id,\n  billAmount,\n  costUsd: isAd ? quote.cost_usd : null,\n  rate: isAd ? quote.rate : null,\n} }];"
+      },
+      "id": "489d46aa-ff3a-49a0-ae57-6f4881847f4f",
+      "name": "Resolve Checkout Amount",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2080,
+        0
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Order Create Webhook": {
+      "main": [
+        [
+          {
+            "node": "Validate & Prepare",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate & Prepare": {
+      "main": [
+        [
+          {
+            "node": "Input Valid?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Input Valid?": {
+      "main": [
+        [
+          {
+            "node": "Verify App User",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond Invalid Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "FastPay Config": {
+      "main": [
+        [
+          {
+            "node": "Generate QR",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate QR": {
+      "main": [
+        [
+          {
+            "node": "Parse QR Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "QR Success?": {
+      "main": [
+        [
+          {
+            "node": "Create Pending Transaction (Supabase)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond QR Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Pending Transaction (Supabase)": {
+      "main": [
+        [
+          {
+            "node": "Transaction Saved?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transaction Saved?": {
+      "main": [
+        [
+          {
+            "node": "Respond QR Success",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond Order Save Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IPN Webhook": {
+      "main": [
+        [
+          {
+            "node": "Extract IPN Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract IPN Data": {
+      "main": [
+        [
+          {
+            "node": "FastPay Config2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "FastPay Config2": {
+      "main": [
+        [
+          {
+            "node": "Validate Payment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Payment": {
+      "main": [
+        [
+          {
+            "node": "Get Transaction (Supabase)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Transaction (Supabase)": {
+      "main": [
+        [
+          {
+            "node": "Compare & Decide",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compare & Decide": {
+      "main": [
+        [
+          {
+            "node": "Already Processed?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Already Processed?": {
+      "main": [
+        [
+          {
+            "node": "Ack IPN (Duplicate)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Match & Success?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Match & Success?": {
+      "main": [
+        [
+          {
+            "node": "Mark PAID + Credit Wallet + Notify (Supabase)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mark FRAUD/FAILED (Supabase)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark PAID + Credit Wallet + Notify (Supabase)": {
+      "main": [
+        [
+          {
+            "node": "Trigger Fulfillment (dispense / confirm)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trigger Fulfillment (dispense / confirm)": {
+      "main": [
+        [
+          {
+            "node": "Ack IPN (Matched)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark FRAUD/FAILED (Supabase)": {
+      "main": [
+        [
+          {
+            "node": "Notify Security Team (Telegram)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notify Security Team (Telegram)": {
+      "main": [
+        [
+          {
+            "node": "Ack IPN (Not Matched)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Every Minute": {
+      "main": [
+        [
+          {
+            "node": "Get Pending Transactions (Supabase)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Pending Transactions (Supabase)": {
+      "main": [
+        [
+          {
+            "node": "Loop Orders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Orders": {
+      "main": [
+        [
+          {
+            "node": "Polling Cycle Complete",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "FastPay Config3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "FastPay Config3": {
+      "main": [
+        [
+          {
+            "node": "Get Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Status": {
+      "main": [
+        [
+          {
+            "node": "Parse Status Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Status Call OK?": {
+      "main": [
+        [
+          {
+            "node": "Is PAID?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log Status Check Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is PAID?": {
+      "main": [
+        [
+          {
+            "node": "Mark PAID from Poll (Supabase)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Is DECLINED?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark PAID from Poll (Supabase)": {
+      "main": [
+        [
+          {
+            "node": "Loop Orders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is DECLINED?": {
+      "main": [
+        [
+          {
+            "node": "Mark Declined / Expired (Supabase)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Still UNPAID (no-op, poll again next cycle)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Still UNPAID (no-op, poll again next cycle)": {
+      "main": [
+        [
+          {
+            "node": "Loop Orders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Status Check Error": {
+      "main": [
+        [
+          {
+            "node": "Loop Orders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Refund Webhook": {
+      "main": [
+        [
+          {
+            "node": "Validate Refund Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Refund Input": {
+      "main": [
+        [
+          {
+            "node": "Refund Input Valid?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Refund Input Valid?": {
+      "main": [
+        [
+          {
+            "node": "Get Refund Target (Supabase)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond Invalid Refund Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "FastPay Config4": {
+      "main": [
+        [
+          {
+            "node": "Refund Payment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Refund Payment": {
+      "main": [
+        [
+          {
+            "node": "Refund Success?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Refund Success?": {
+      "main": [
+        [
+          {
+            "node": "Apply Refund (Supabase)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log Refund Failure (Supabase)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Apply Refund (Supabase)": {
+      "main": [
+        [
+          {
+            "node": "Notify Refund Success (Telegram)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notify Refund Success (Telegram)": {
+      "main": [
+        [
+          {
+            "node": "Respond Refund Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Refund Failure (Supabase)": {
+      "main": [
+        [
+          {
+            "node": "Notify Refund Failure (Telegram)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notify Refund Failure (Telegram)": {
+      "main": [
+        [
+          {
+            "node": "Respond Refund Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse QR Response": {
+      "main": [
+        [
+          {
+            "node": "QR Success?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Status Response": {
+      "main": [
+        [
+          {
+            "node": "Status Call OK?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Polling Cycle Complete": {
+      "main": [
+        [
+          {
+            "node": "Expire Stale Transactions (Supabase)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark Declined / Expired (Supabase)": {
+      "main": [
+        [
+          {
+            "node": "Loop Orders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Refund Target (Supabase)": {
+      "main": [
+        [
+          {
+            "node": "Check Refund Eligibility",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Refund Eligibility": {
+      "main": [
+        [
+          {
+            "node": "Refund Eligible?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Refund Eligible?": {
+      "main": [
+        [
+          {
+            "node": "FastPay Config4",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond Refund Not Allowed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verify App User": {
+      "main": [
+        [
+          {
+            "node": "App User Valid?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "App User Valid?": {
+      "main": [
+        [
+          {
+            "node": "Ad Checkout?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond Unauthorized",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Payment Status Webhook": {
+      "main": [
+        [
+          {
+            "node": "Validate Status Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Status Request": {
+      "main": [
+        [
+          {
+            "node": "Status Input Valid?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Status Input Valid?": {
+      "main": [
+        [
+          {
+            "node": "Verify Status User",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond Invalid Status Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verify Status User": {
+      "main": [
+        [
+          {
+            "node": "Status User Valid?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Status User Valid?": {
+      "main": [
+        [
+          {
+            "node": "Get App Payment (Supabase)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond Status Unauthorized",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get App Payment (Supabase)": {
+      "main": [
+        [
+          {
+            "node": "Normalize App Payment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize App Payment": {
+      "main": [
+        [
+          {
+            "node": "App Payment Found?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "App Payment Found?": {
+      "main": [
+        [
+          {
+            "node": "App Payment Final?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond App Payment Not Found",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "App Payment Final?": {
+      "main": [
+        [
+          {
+            "node": "Respond Stored Payment Status",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "FastPay App Status Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "FastPay App Status Config": {
+      "main": [
+        [
+          {
+            "node": "Check FastPay From App",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check FastPay From App": {
+      "main": [
+        [
+          {
+            "node": "Parse FastPay App Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse FastPay App Status": {
+      "main": [
+        [
+          {
+            "node": "FastPay App Paid?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "FastPay App Paid?": {
+      "main": [
+        [
+          {
+            "node": "Mark PAID From App (Supabase)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "FastPay App Declined?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark PAID From App (Supabase)": {
+      "main": [
+        [
+          {
+            "node": "Respond App Payment Paid",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "FastPay App Declined?": {
+      "main": [
+        [
+          {
+            "node": "Mark Declined From App (Supabase)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond App Payment Pending",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark Declined From App (Supabase)": {
+      "main": [
+        [
+          {
+            "node": "Respond App Payment Declined",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Quote Ad Checkout (Supabase)": {
+      "main": [
+        [
+          {
+            "node": "Server Quote Valid?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Server Quote Valid?": {
+      "main": [
+        [
+          {
+            "node": "Resolve Checkout Amount",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond Quote Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ad Checkout?": {
+      "main": [
+        [
+          {
+            "node": "Quote Ad Checkout (Supabase)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Resolve Checkout Amount",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Resolve Checkout Amount": {
+      "main": [
+        [
+          {
+            "node": "FastPay Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "79fe0c6c-8e78-4176-9a19-d7654ea31f14",
+  "nodeGroups": [],
+  "id": "uQsi1yXyrt7uLcAM",
+  "tags": []
+}

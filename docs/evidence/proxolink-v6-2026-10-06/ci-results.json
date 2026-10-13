@@ -1,0 +1,1257 @@
+{
+  "revision": "c06bd3dccf9b0ea124447a2fc2ff4a47a6e096f1",
+  "workflow_run": 37759310220,
+  "status": "VERIFIED",
+  "conclusion": "success",
+  "workflow_url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/37759310220",
+  "completed_at": "2026-10-08T09:54:09Z",
+  "jobs": [
+    {
+      "id": 113251555425,
+      "name": "database",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113251555731,
+      "name": "backend",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113251555794,
+      "name": "edge-functions",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113251555832,
+      "name": "flutter",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 113251555898,
+      "name": "responsive",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ],
+  "backend": {
+    "passed": 124,
+    "failed": 0,
+    "skipped": 0,
+    "evidence": [
+      "2026-10-08T09:49:37.3893978Z ℹ tests 124",
+      "2026-10-08T09:49:37.3894416Z ℹ pass 124",
+      "2026-10-08T09:49:37.3894621Z ℹ fail 0",
+      "2026-10-08T09:49:37.3895057Z ℹ skipped 0",
+      "2026-10-08T09:49:37.6470509Z Flutter and public output contain no reusable template source or HTML delivery."
+    ]
+  },
+  "flutter": {
+    "passed": 189,
+    "failed": 0,
+    "analysis_infos": 27,
+    "analysis_warnings": 0,
+    "analysis_errors": 0,
+    "release_apk_source_privacy": "PASSED",
+    "evidence": [
+      "2026-10-08T09:50:15.6384066Z 27 issues found. (ran in 10.9s)",
+      "2026-10-08T09:50:49.8780342Z 🎉 189 tests passed.",
+      "2026-10-08T09:54:03.2838544Z Release APK source-privacy scan passed"
+    ]
+  },
+  "responsive": {
+    "executed": 480,
+    "passed": 480,
+    "failed": 0,
+    "evidence": [
+      "2026-10-08T09:53:25.0585509Z VERIFIED: 480 actual renderer/browser cases, five widths, all page types/designs, RTL/LTR, long text, 1.6 text scale, inert previews, and exact prepared-design baseline pixels."
+    ]
+  },
+  "database": {
+    "migration_rollback_rerun": "PASSED",
+    "rls": "PASSED",
+    "api_lifecycles": 7,
+    "evidence": [
+      "2026-10-08T09:49:47.9847740Z  VERIFIED: additive migration, legacy/ad preservation, database UUIDs, immutable identities, owner RLS, safe providers, archive boundary",
+      "2026-10-08T09:49:56.1121072Z VERIFIED: 7 PostgreSQL-backed API lifecycles; generated UUIDs, ownership, edit stability, typed routes, preview, activate/deactivate, soft archive, zero outbound events; legacy advertisements preserved."
+    ]
+  },
+  "edge_functions": "PASSED",
+  "ordinary_apk_workflow": {
+    "run_id": 37759310377,
+    "revision": "c06bd3dccf9b0ea124447a2fc2ff4a47a6e096f1",
+    "apk_job_id": 113251558088,
+    "apk_build": "SUCCESS",
+    "protected_runtime": "Current protected attempt 2 completed actual Android WebView execution and FAILED strict pixel gate; APK success is not runtime certification."
+  },
+  "native_draw_correction_source_ci": {
+    "revision": "5bf533b11b7f638acc65395b65da1512e3275f5f",
+    "workflow_run": 37694585981,
+    "status": "VERIFIED",
+    "conclusion": "success",
+    "workflow_url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/37694585981",
+    "jobs": [
+      {
+        "id": 113043028085,
+        "name": "flutter",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 113043028330,
+        "name": "backend",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 113043028378,
+        "name": "responsive",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 113043028455,
+        "name": "database",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 113043028461,
+        "name": "edge-functions",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ],
+    "backend": {
+      "passed": 121,
+      "failed": 0,
+      "evidence": [
+        "2026-10-07T22:11:59.4064587Z ℹ tests 121",
+        "2026-10-07T22:11:59.4064951Z ℹ pass 121",
+        "2026-10-07T22:11:59.4065148Z ℹ fail 0",
+        "2026-10-07T22:11:59.6064087Z Flutter and public output contain no reusable template source or HTML delivery."
+      ]
+    },
+    "flutter": {
+      "passed": 189,
+      "failed": 0,
+      "analysis_infos": 27,
+      "analysis_warnings": 0,
+      "analysis_errors": 0,
+      "release_apk_source_privacy": "PASSED",
+      "evidence": [
+        "2026-10-07T22:12:43.3721156Z 27 issues found. (ran in 11.3s)",
+        "2026-10-07T22:13:13.7048801Z 🎉 189 tests passed.",
+        "2026-10-07T22:16:31.8923216Z Release APK source-privacy scan passed"
+      ]
+    },
+    "responsive": {
+      "executed": 480,
+      "passed": 480,
+      "failed": 0,
+      "evidence": [
+        "2026-10-07T22:15:23.5574036Z VERIFIED: 480 actual renderer/browser cases, five widths, all page types/designs, RTL/LTR, long text, 1.6 text scale, inert previews, and exact prepared-design baseline pixels."
+      ]
+    },
+    "database": {
+      "migration_rollback_rerun": "PASSED",
+      "rls": "PASSED",
+      "api_lifecycles": 7,
+      "evidence": [
+        "2026-10-07T22:12:13.6736233Z  VERIFIED: additive migration, legacy/ad preservation, database UUIDs, immutable identities, owner RLS, safe providers, archive boundary",
+        "2026-10-07T22:12:22.9366261Z VERIFIED: 7 PostgreSQL-backed API lifecycles; generated UUIDs, ownership, edit stability, typed routes, preview, activate/deactivate, soft archive, zero outbound events; legacy advertisements preserved."
+      ]
+    }
+  },
+  "previous_source_ci": {
+    "observed_on": "2026-10-07",
+    "revision": "1dca41a315b6988d98006f40ae4bee810be137f6",
+    "workflow_run": 37669328976,
+    "status": "VERIFIED",
+    "workflow_url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/37669328976",
+    "jobs": [
+      {
+        "id": 112956673537,
+        "name": "edge-functions",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 112956673936,
+        "name": "responsive",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 112956673941,
+        "name": "backend",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 112956673965,
+        "name": "database",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 112956674014,
+        "name": "flutter",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ],
+    "backend": {
+      "passed": 120,
+      "failed": 0,
+      "skipped": 0,
+      "evidence": [
+        "2026-10-07T18:46:15.0810045Z ℹ tests 120",
+        "2026-10-07T18:46:15.0810836Z ℹ pass 120",
+        "2026-10-07T18:46:15.0811218Z ℹ fail 0",
+        "2026-10-07T18:46:15.0812023Z ℹ skipped 0",
+        "2026-10-07T18:46:15.3314194Z Flutter and public output contain no reusable template source or HTML delivery."
+      ]
+    },
+    "database": {
+      "migration_rollback_rerun": "PASSED",
+      "rls": "PASSED",
+      "api_lifecycles": 7,
+      "evidence": [
+        "2026-10-07T18:46:26.8210130Z  VERIFIED: additive migration, legacy/ad preservation, database UUIDs, immutable identities, owner RLS, safe providers, archive boundary",
+        "2026-10-07T18:46:36.0437522Z VERIFIED: 7 PostgreSQL-backed API lifecycles; generated UUIDs, ownership, edit stability, typed routes, preview, activate/deactivate, soft archive, zero outbound events; legacy advertisements preserved."
+      ]
+    },
+    "flutter": {
+      "passed": 189,
+      "failed": 0,
+      "analysis_infos": 27,
+      "analysis_warnings": 0,
+      "analysis_errors": 0,
+      "release_apk_source_privacy": "PASSED",
+      "evidence": [
+        "2026-10-07T18:46:51.5517945Z 27 issues found. (ran in 16.8s)",
+        "2026-10-07T18:51:41.4104623Z Release APK source-privacy scan passed",
+        "2026-10-07T18:47:36.3556472Z 🎉 189 tests passed."
+      ]
+    },
+    "responsive": {
+      "executed": 480,
+      "passed": 480,
+      "failed": 0,
+      "evidence": [
+        "2026-10-07T18:51:55.4699563Z VERIFIED: 480 actual renderer/browser cases, five widths, all page types/designs, RTL/LTR, long text, 1.6 text scale, inert previews, and exact prepared-design baseline pixels."
+      ]
+    },
+    "previous_source_ci": {
+      "revision": "9ec6264940628c75fa0fc114edc88013a61cbab5",
+      "workflow_run": 37650583921,
+      "status": "VERIFIED",
+      "jobs": [
+        {
+          "id": 112892553471,
+          "name": "responsive",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 112892553670,
+          "name": "flutter",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 112892553692,
+          "name": "database",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 112892553709,
+          "name": "edge-functions",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 112892553726,
+          "name": "backend",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "backend": {
+        "passed": 120,
+        "failed": 0,
+        "skipped": 0,
+        "evidence": [
+          "2026-10-07T16:15:36.3249593Z ✔ contact whatsapp+viber+instagram+telegram+korek+asiacell: create/database UUID/edit/stable typed URL/public/owner preview (167.707431ms)",
+          "2026-10-07T16:15:36.3251353Z ✔ order talabat: create/database UUID/edit/stable typed URL/public/owner preview (47.3756ms)",
+          "2026-10-07T16:15:36.3252563Z ✔ order toters: create/database UUID/edit/stable typed URL/public/owner preview (44.632847ms)",
+          "2026-10-07T16:15:36.3253851Z ✔ order talabat+toters: create/database UUID/edit/stable typed URL/public/owner preview (51.088585ms)",
+          "2026-10-07T16:15:36.3255404Z ✔ download google_play: create/database UUID/edit/stable typed URL/public/owner preview (50.345641ms)",
+          "2026-10-07T16:15:36.3257339Z ✔ download app_store: create/database UUID/edit/stable typed URL/public/owner preview (47.004394ms)",
+          "2026-10-07T16:15:36.3258575Z ✔ download google_play+app_store: create/database UUID/edit/stable typed URL/public/owner preview (58.476168ms)",
+          "2026-10-07T16:15:36.3259592Z ✔ one owner has multiple independent pages of each kind and request keys are owner-scoped (36.549518ms)",
+          "2026-10-07T16:15:36.3261176Z ✔ auth/provider/type/owner spoofing/disabled-only settings fail before mutation (3.293277ms)",
+          "2026-10-07T16:15:36.3262291Z ✔ malformed provider/store URLs rejected and canonical destinations revalidate (2.781963ms)",
+          "2026-10-07T16:15:36.3263171Z ✔ all four prepared designs support all three typed signed demos, no secrets/private metadata (114.359568ms)",
+          "2026-10-07T16:15:36.3264457Z ✔ unsaved live form preview is encrypted/type-bound/inert, preserves draft values without writes (20.550242ms)",
+          "2026-10-07T16:15:36.3265313Z ✔ preview capability expiration, tampering and route-type binding reject safely (1.160607ms)",
+          "2026-10-07T16:15:36.3266215Z ✔ typed advertisement links use the stable page URL without tokens, RPCs or events and verify ownership (23.381267ms)",
+          "2026-10-07T16:15:36.3267506Z ✔ typed avatar routes cannot be changed by a page_type query or attribution token (31.100035ms)",
+          "2026-10-07T16:15:36.3268413Z ✔ V6 cannot create through the legacy UUID protocol or rewrite legacy customers outside isolated staging (1.2695ms)",
+          "2026-10-07T16:15:36.3269346Z ✔ prepared Viber actions work with legacy WebView URL parsing and reject ambiguous destinations (8.780391ms)",
+          "2026-10-07T16:15:36.3270887Z ✔ runtime verification refuses production, other repositories/branches and service keys (3.925909ms)",
+          "2026-10-07T16:15:36.3272901Z ✔ requests never send protection headers to Supabase, follow redirects or mutate card data (39.447999ms)",
+          "2026-10-07T16:15:36.3274717Z ✔ live checks require app authentication independently of the Vercel bypass and retain only booleans (5.829672ms)",
+          "2026-10-07T16:15:36.3276835Z ✔ native evidence requires 240 captured cases plus exact same-device Android WebView pixel comparisons (5.955016ms)",
+          "2026-10-07T16:15:36.3281664Z ℹ tests 120",
+          "2026-10-07T16:15:36.3282115Z ℹ pass 120",
+          "2026-10-07T16:15:36.3282639Z ℹ fail 0",
+          "2026-10-07T16:15:36.3283107Z ℹ cancelled 0",
+          "2026-10-07T16:15:36.3283648Z ℹ skipped 0",
+          "2026-10-07T16:15:36.3284109Z ℹ todo 0"
+        ]
+      },
+      "flutter": {
+        "passed": 189,
+        "failed": 0,
+        "analyze": {
+          "scope": "Existing explicit ten-item ProxoLink analysis command",
+          "infos": 27,
+          "warnings": 0,
+          "errors": 0,
+          "all_repository_files_analyzed": false
+        },
+        "release_apk_built": true,
+        "release_apk_privacy_scan": "VERIFIED",
+        "evidence": [
+          "2026-10-07T16:16:13.1617891Z Analyzing 10 items...                                           ",
+          "2026-10-07T16:16:13.1732519Z 27 issues found. (ran in 12.3s)",
+          "2026-10-07T16:16:48.0004202Z 🎉 189 tests passed.",
+          "2026-10-07T16:20:13.0145459Z ✓ Built build/app/outputs/flutter-apk/app-release.apk (84.1MB)",
+          "2026-10-07T16:20:13.6167901Z Release APK source-privacy scan passed"
+        ]
+      },
+      "database": {
+        "status": "VERIFIED",
+        "postgres": "17.11",
+        "api_lifecycles": 7,
+        "migration_rollback": "VERIFIED",
+        "migration_rerun": "VERIFIED",
+        "direct_rls": "VERIFIED",
+        "evidence": [
+          "2026-10-07T16:15:48.1443819Z  VERIFIED: additive migration, legacy/ad preservation, database UUIDs, immutable identities, owner RLS, safe providers, archive boundary",
+          "2026-10-07T16:15:54.5533708Z VERIFIED: 7 PostgreSQL-backed API lifecycles; generated UUIDs, ownership, edit stability, typed routes, preview, activate/deactivate, soft archive, zero outbound events; legacy advertisements preserved."
+        ]
+      },
+      "responsive": {
+        "status": "VERIFIED",
+        "cases_passed": 480,
+        "cases_failed": 0,
+        "widths": [
+          320,
+          375,
+          393,
+          430,
+          768
+        ],
+        "page_types": [
+          "contact",
+          "order",
+          "download"
+        ],
+        "designs": [
+          "pill",
+          "pill-mint",
+          "pill-dark",
+          "pill-white"
+        ],
+        "languages": [
+          "ku",
+          "en"
+        ],
+        "orientations": [
+          "portrait",
+          "landscape"
+        ],
+        "text_states": [
+          "normal",
+          "long text with 1.6 text scale"
+        ],
+        "baseline": "Same Chromium environment; original prepared design compared with candidate",
+        "native_certification": false,
+        "evidence": [
+          "2026-10-07T16:19:21.8510765Z VERIFIED: 480 actual renderer/browser cases, five widths, all page types/designs, RTL/LTR, long text, 1.6 text scale, inert previews, and exact prepared-design baseline pixels."
+        ]
+      },
+      "artifacts": [
+        {
+          "id": 11496552525,
+          "name": "proxolink-ui-verification",
+          "bytes": 634395,
+          "digest": "sha256:8a765fe67519b1249e767c558daa1f59b59093db4fe49a23e41c803e1c3da3cd",
+          "expires_at": "2026-10-14T16:16:48Z",
+          "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/37650583921/artifacts/11496552525"
+        },
+        {
+          "id": 11495494600,
+          "name": "proxolink-v6-responsive",
+          "bytes": 1591811,
+          "digest": "sha256:9016e9ca0c752d99e7626288b2a2839892b9f2ccf5b0779ddef4c03273e78506",
+          "expires_at": "2026-10-14T16:19:22Z",
+          "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/37650583921/artifacts/11495494600"
+        }
+      ],
+      "source_privacy_scan": "VERIFIED",
+      "edge_functions": "VERIFIED",
+      "source_build": "VERIFIED",
+      "additional_retry_regression": {
+        "revision": "9ec6264940628c75fa0fc114edc88013a61cbab5",
+        "run_id": 37650583921,
+        "backend_job_id": 112892553726,
+        "backend_passed": 120,
+        "backend_failed": 0,
+        "new_assertions": "All seven existing type/provider lifecycle cases now assert the stored page_kind and exact typed stable public_path on a repeated create request",
+        "real_product_defect_reproduced": false,
+        "production_api_changed": false,
+        "explanation": "cardRows already appends the typed fields; the suspicion was rejected by actual execution",
+        "other_ci_jobs_status": "completed_success"
+      },
+      "prior_same_product_source_ci": {
+        "revision": "de501a9557cbd83520c5916e0c0085ec5c5a470e",
+        "run_id": 37647222338
+      }
+    }
+  },
+  "prior_documentation_head_source_ci": {
+    "revision": "634ad507135d742d5fc4b6e455fbde59f691a999",
+    "run_id": 37698544299,
+    "status": "success",
+    "completed_at": "2026-10-07T22:54:53Z",
+    "jobs": [
+      {
+        "id": 113056156519,
+        "name": "backend",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 113056156662,
+        "name": "responsive",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 113056156702,
+        "name": "database",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 113056156726,
+        "name": "edge-functions",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 113056157010,
+        "name": "flutter",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ],
+    "verification_source_unchanged_from": "5bf533b11b7f638acc65395b65da1512e3275f5f"
+  },
+  "earlier_documentation_source_ci": {
+    "revision": "4b9e6faf31bc2d4c895f2e6a4ac92b9e8f1dfcc8",
+    "run_id": 37696341020,
+    "status": "SUCCESS",
+    "jobs": [
+      {
+        "id": 113048900471,
+        "name": "flutter",
+        "conclusion": "success"
+      },
+      {
+        "id": 113048900636,
+        "name": "database",
+        "conclusion": "success"
+      },
+      {
+        "id": 113048900646,
+        "name": "edge-functions",
+        "conclusion": "success"
+      },
+      {
+        "id": 113048900675,
+        "name": "backend",
+        "conclusion": "success"
+      },
+      {
+        "id": 113048900941,
+        "name": "responsive",
+        "conclusion": "success"
+      }
+    ],
+    "verification_source_unchanged_from": "5bf533b11b7f638acc65395b65da1512e3275f5f"
+  },
+  "native_correction": {
+    "observed_on": "2026-10-08",
+    "status": "FAILED",
+    "run_id": 37759310377,
+    "attempt": 2,
+    "revision": "c06bd3dccf9b0ea124447a2fc2ff4a47a6e096f1",
+    "runtime_job_id": 113255054733,
+    "workflow_url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/37759310377",
+    "workflow_path": ".github/workflows/proxolink-native-build.yml",
+    "workflow_state": "completed",
+    "workflow_conclusion": "failure",
+    "environment": "proxolink-preview-verification",
+    "required_reviewer": "Zana-Sponsor",
+    "authorized_gate_completed": true,
+    "approval_bypassed": false,
+    "completed_at": "2026-10-08T11:42:45Z",
+    "apk_job_id": 113255053774,
+    "apk_build": "SUCCESS",
+    "apk_reused_from_successful_attempt_1": true,
+    "kvm_setup": "SUCCESS",
+    "production_android_webview_executed": true,
+    "expected_cases": 240,
+    "executed_cases": 240,
+    "passed_cases": 240,
+    "failed_cases": 0,
+    "unexecuted_cases": 0,
+    "candidate_captures": 240,
+    "baseline_captures": 240,
+    "missing_candidate_captures": 0,
+    "missing_baseline_captures": 0,
+    "missing_captures": 0,
+    "pixel_pairs": 240,
+    "pixel_exact": 234,
+    "pixel_failed": 6,
+    "total_changed_pixels": 6,
+    "max_channel_error": 1,
+    "changed_pixel_threshold": 0,
+    "expected_pixel_pairs": 240,
+    "unexecuted_pixel_pairs": 0,
+    "repeatability_expected_roles": 480,
+    "repeatability_executed_roles": 480,
+    "repeatability_stable_roles": 480,
+    "repeatability_unstable_roles": 0,
+    "samples_per_role": 3,
+    "fixed_screenshot_samples": 1440,
+    "native_paint_barriers": "PASSED for all 240 cases",
+    "counts_by_type": {
+      "contact": 80,
+      "order": 80,
+      "download": 80
+    },
+    "counts_by_design": {
+      "pill": 60,
+      "pill-mint": 60,
+      "pill-dark": 60,
+      "pill-white": 60
+    },
+    "rtl_cases": 120,
+    "ltr_cases": 120,
+    "counts_by_orientation": {
+      "portrait": 120,
+      "landscape": 120
+    },
+    "counts_by_width": {
+      "320": 48,
+      "375": 48,
+      "393": 48,
+      "430": 48,
+      "768": 48
+    },
+    "provider_assertions": "PASSED for all 240 cases",
+    "overflow_assertions": "PASSED for all 240 cases under pinned probe checks",
+    "safe_inert_navigation_assertions": "PASSED for all 240 cases",
+    "read_only_security": "PASSED (6 checks)",
+    "native_thumbnail_chooser_cases": 0,
+    "native_thumbnail_to_webview_selection": "NOT VERIFIED; production ProxoLinkPreview is rendered directly",
+    "authentication_outcome": {
+      "matrix_completed": true,
+      "previous_template_catalog_401_recurred": false,
+      "last_json_response_status": 200,
+      "renewal_count": "NOT RETAINED",
+      "limit": "All 240 cases reached final validation without the prior catalog 401; exact session expiry/renewal diagnostics are not retained."
+    },
+    "terminal_failure": {
+      "status": "FAILED",
+      "stage": "native_case_collection",
+      "code": "native_pixel_parity_failed",
+      "preflight_check": null,
+      "transport_code": "unclassified_transport",
+      "last_json_response_status": 200,
+      "credential_values_included": false
+    },
+    "missing_case_ids": [],
+    "failed_pixel_cases": [
+      {
+        "case": "pill-contact-en-portrait-768",
+        "changed_pixels": 1,
+        "max_channel_error": 1,
+        "coordinate_space": "zero-based WebView crop",
+        "locations": [
+          {
+            "x": 380,
+            "y": 222,
+            "candidate_rgb": [
+              215,
+              221,
+              236
+            ],
+            "baseline_rgb": [
+              215,
+              222,
+              236
+            ],
+            "candidate_minus_baseline_rgb": [
+              0,
+              -1,
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "case": "pill-order-ku-portrait-768",
+        "changed_pixels": 1,
+        "max_channel_error": 1,
+        "coordinate_space": "zero-based WebView crop",
+        "locations": [
+          {
+            "x": 380,
+            "y": 222,
+            "candidate_rgb": [
+              220,
+              227,
+              240
+            ],
+            "baseline_rgb": [
+              220,
+              226,
+              240
+            ],
+            "candidate_minus_baseline_rgb": [
+              0,
+              1,
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "case": "pill-order-en-portrait-768",
+        "changed_pixels": 1,
+        "max_channel_error": 1,
+        "coordinate_space": "zero-based WebView crop",
+        "locations": [
+          {
+            "x": 380,
+            "y": 222,
+            "candidate_rgb": [
+              215,
+              222,
+              236
+            ],
+            "baseline_rgb": [
+              215,
+              221,
+              236
+            ],
+            "candidate_minus_baseline_rgb": [
+              0,
+              1,
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "case": "pill-mint-contact-ku-portrait-430",
+        "changed_pixels": 1,
+        "max_channel_error": 1,
+        "coordinate_space": "zero-based WebView crop",
+        "locations": [
+          {
+            "x": 282,
+            "y": 184,
+            "candidate_rgb": [
+              237,
+              247,
+              244
+            ],
+            "baseline_rgb": [
+              237,
+              247,
+              243
+            ],
+            "candidate_minus_baseline_rgb": [
+              0,
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "case": "pill-mint-order-ku-portrait-430",
+        "changed_pixels": 1,
+        "max_channel_error": 1,
+        "coordinate_space": "zero-based WebView crop",
+        "locations": [
+          {
+            "x": 282,
+            "y": 184,
+            "candidate_rgb": [
+              237,
+              247,
+              244
+            ],
+            "baseline_rgb": [
+              237,
+              247,
+              243
+            ],
+            "candidate_minus_baseline_rgb": [
+              0,
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "case": "pill-mint-order-en-portrait-768",
+        "changed_pixels": 1,
+        "max_channel_error": 1,
+        "coordinate_space": "zero-based WebView crop",
+        "locations": [
+          {
+            "x": 290,
+            "y": 228,
+            "candidate_rgb": [
+              234,
+              245,
+              241
+            ],
+            "baseline_rgb": [
+              234,
+              246,
+              241
+            ],
+            "candidate_minus_baseline_rgb": [
+              0,
+              -1,
+              0
+            ]
+          }
+        ]
+      }
+    ],
+    "artifact": {
+      "id": 11548551620,
+      "bytes": 138610344,
+      "files": 2165,
+      "png_files": 2160,
+      "json_files": 5,
+      "sha256": "97192f255e06ea104088f8f7220fd8f7690b983e6fdcf8cb35cb10bf32cf4b79",
+      "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/37759310377/artifacts/11548551620",
+      "created_at": "2026-10-08T11:42:42Z",
+      "expires_at": "2026-10-15T11:42:37Z",
+      "downloaded_and_digest_verified": true
+    },
+    "evidence_allowlist": [
+      "case-results.json",
+      "pixels.json",
+      "security.json",
+      "failure.json",
+      "capture-repeatability.json",
+      "*-webview.png (failed pairs only)",
+      "*-baseline-webview.png (failed pairs only)",
+      "*-diff.png (failed pairs only)",
+      "safe inventories and sanitized capture acknowledgement index"
+    ],
+    "behavior_passed_cases": 240,
+    "behavior_failed_cases": 0,
+    "native_acceptance_passed_cases": 234,
+    "native_acceptance_failed_cases": 6,
+    "native_acceptance_unexecuted_cases": 0,
+    "rendered_response_security_checks": 4,
+    "original_successful_apk_job_id": 113251558088,
+    "new_execution_explicitly_authorized_by_user": true,
+    "product_or_harness_files_changed_after_native_testing": [],
+    "documentation_files_changed_after_native_testing": [
+      "docs/PROXOLINK_V6_EXECUTION_2026-10-07.md",
+      "docs/evidence/proxolink-v6-2026-10-06/README.md",
+      "docs/evidence/proxolink-v6-2026-10-06/ci-results.json",
+      "docs/evidence/proxolink-v6-2026-10-06/evidence-files.json",
+      "docs/evidence/proxolink-v6-2026-10-06/execution-blockers.json",
+      "docs/evidence/proxolink-v6-2026-10-06/native-auth-correction-files.json",
+      "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/capture-file-manifest.json",
+      "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/capture-log-index.json",
+      "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/capture-repeatability.json",
+      "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/case-results.json",
+      "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/diagnosis.json",
+      "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/evidence-inventory.json",
+      "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/failure.json",
+      "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/independent-pixel-audit.json",
+      "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-contact-en-portrait-768-baseline-webview.png",
+      "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-contact-en-portrait-768-diff.png",
+      "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-contact-en-portrait-768-webview.png",
+      "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-mint-contact-ku-portrait-430-baseline-webview.png",
+      "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-mint-contact-ku-portrait-430-diff.png",
+      "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-mint-contact-ku-portrait-430-webview.png",
+      "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-mint-order-en-portrait-768-baseline-webview.png",
+      "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-mint-order-en-portrait-768-diff.png",
+      "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-mint-order-en-portrait-768-webview.png",
+      "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-mint-order-ku-portrait-430-baseline-webview.png",
+      "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-mint-order-ku-portrait-430-diff.png",
+      "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-mint-order-ku-portrait-430-webview.png",
+      "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-order-en-portrait-768-baseline-webview.png",
+      "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-order-en-portrait-768-diff.png",
+      "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-order-en-portrait-768-webview.png",
+      "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-order-ku-portrait-768-baseline-webview.png",
+      "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-order-ku-portrait-768-diff.png",
+      "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pill-order-ku-portrait-768-webview.png",
+      "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/pixels.json",
+      "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/security.json",
+      "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/summary.json",
+      "docs/evidence/proxolink-v6-2026-10-06/native-c06bd3d-attempt2/validator-replay.json",
+      "docs/evidence/proxolink-v6-2026-10-06/native-results.json"
+    ],
+    "prior_attempt_infrastructure_diagnosis": "native-c06bd3d-attempt1-infrastructure.json",
+    "source_identity": {
+      "passing_parent_revision": "ce561f6bbc688680e37c1bc03b92e202478d068b",
+      "tree_sha": "0114f0870256e18069ec4a6325463da95166b54f",
+      "trigger_commit_changed_files": 0,
+      "authentication_fix_revision": "edcaa048289c9b5a4ee5e1e97f71035ca0731a91"
+    },
+    "acceptance": {
+      "required_cases": 240,
+      "required_candidate_first_captures": 240,
+      "required_baseline_first_captures": 240,
+      "required_roles": 480,
+      "fixed_samples_per_role": 3,
+      "required_native_paint_barriers": true,
+      "first_candidate_and_first_baseline_only": true,
+      "allowed_missing_cases": 0,
+      "allowed_missing_captures": 0,
+      "allowed_unstable_captures": 0,
+      "allowed_changed_pixels": 0,
+      "masking_tolerance_averaging_frame_search_or_adaptive_pixel_retry": false
+    }
+  },
+  "authentication_correction": {
+    "status": "Source CI SUCCESS; native 240-case completion without prior HTTP 401; strict pixel parity FAILED",
+    "revision": "edcaa048289c9b5a4ee5e1e97f71035ca0731a91",
+    "run_id": 37709592066,
+    "manifest": "native-auth-correction-files.json",
+    "backend_passed": 124,
+    "backend_failed": 0,
+    "protected_android_runtime": "FAILED: 234 exact / 6 failed pairs; 240 behavior passes; no missing/unstable captures",
+    "authentication_outcome": {
+      "matrix_completed": true,
+      "previous_template_catalog_401_recurred": false,
+      "last_json_response_status": 200,
+      "renewal_count": "NOT RETAINED",
+      "limit": "All 240 cases reached final validation without the prior catalog 401; exact session expiry/renewal diagnostics are not retained."
+    }
+  },
+  "prior_authentication_fix_source_ci": {
+    "revision": "edcaa048289c9b5a4ee5e1e97f71035ca0731a91",
+    "workflow_run": 37709592066,
+    "status": "VERIFIED",
+    "conclusion": "success",
+    "workflow_url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/37709592066"
+  },
+  "latest_completed_documentation_head_source_ci": {
+    "revision": "0ab03eb11dd9915f0efe0bc538a60f6d4ea34b3e",
+    "run_id": 37762308917,
+    "status": "SUCCESS",
+    "workflow_url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/37762308917",
+    "completed_at": "2026-10-08T10:21:08Z",
+    "jobs": [
+      {
+        "id": 113261444986,
+        "name": "responsive",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 113261445018,
+        "name": "edge-functions",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 113261445047,
+        "name": "database",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 113261445063,
+        "name": "backend",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 113261445174,
+        "name": "flutter",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "historical_native_draw_correction_result": {
+    "observed_on": "2026-10-08",
+    "status": "FAILED",
+    "run_id": 37694585964,
+    "attempt": 3,
+    "revision": "5bf533b11b7f638acc65395b65da1512e3275f5f",
+    "runtime_job_id": 113055174154,
+    "workflow_url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/37694585964",
+    "workflow_path": ".github/workflows/proxolink-native-build.yml",
+    "workflow_state": "completed",
+    "workflow_conclusion": "failure",
+    "environment": "proxolink-preview-verification",
+    "required_reviewer": "Zana-Sponsor",
+    "authorized_gate_completed": true,
+    "approval_bypassed": false,
+    "completed_at": "2026-10-07T23:51:24Z",
+    "apk_job_id": 113055173167,
+    "apk_build": "SUCCESS",
+    "apk_reused_from_successful_attempt_2": true,
+    "kvm_setup": "SUCCESS",
+    "production_android_webview_executed": true,
+    "expected_cases": 240,
+    "executed_cases": 218,
+    "passed_cases": 218,
+    "failed_cases": 0,
+    "unexecuted_cases": 22,
+    "candidate_captures": 218,
+    "baseline_captures": 218,
+    "missing_candidate_captures": 22,
+    "missing_baseline_captures": 22,
+    "missing_captures": 44,
+    "pixel_pairs": 218,
+    "pixel_exact": 209,
+    "pixel_failed": 9,
+    "total_changed_pixels": 10,
+    "max_channel_error": 1,
+    "changed_pixel_threshold": 0,
+    "expected_pixel_pairs": 240,
+    "unexecuted_pixel_pairs": 22,
+    "repeatability_expected_roles": 480,
+    "repeatability_executed_roles": 436,
+    "repeatability_stable_roles": 436,
+    "repeatability_unstable_roles": 0,
+    "samples_per_role": 3,
+    "fixed_screenshot_samples": 1308,
+    "native_paint_barriers": "PASSED for all 218 executed cases; 22 not executed",
+    "counts_by_type": {
+      "contact": 80,
+      "order": 78,
+      "download": 60
+    },
+    "counts_by_design": {
+      "pill": 60,
+      "pill-mint": 60,
+      "pill-dark": 60,
+      "pill-white": 38
+    },
+    "rtl_cases": 110,
+    "ltr_cases": 108,
+    "counts_by_orientation": {
+      "portrait": 110,
+      "landscape": 108
+    },
+    "counts_by_width": {
+      "320": 44,
+      "375": 44,
+      "393": 44,
+      "430": 43,
+      "768": 43
+    },
+    "provider_assertions": "PASSED for 218 executed cases only",
+    "overflow_assertions": "PASSED for 218 executed cases only",
+    "safe_inert_navigation_assertions": "PASSED for 218 executed cases only",
+    "read_only_security": "PASSED (6 checks)",
+    "rendered_response_security_checks": 4,
+    "native_thumbnail_chooser_cases": 0,
+    "native_thumbnail_to_webview_selection": "NOT VERIFIED; production ProxoLinkPreview is rendered directly",
+    "terminal_failure": {
+      "status": "FAILED",
+      "stage": "template_catalog",
+      "code": "verification_endpoint_unavailable",
+      "preflight_check": null,
+      "transport_code": "unclassified_transport",
+      "last_json_response_status": 401,
+      "credential_values_included": false
+    },
+    "missing_case_ids": [
+      "pill-white-order-en-landscape-430",
+      "pill-white-order-en-landscape-768",
+      "pill-white-download-ku-portrait-320",
+      "pill-white-download-ku-portrait-375",
+      "pill-white-download-ku-portrait-393",
+      "pill-white-download-ku-portrait-430",
+      "pill-white-download-ku-portrait-768",
+      "pill-white-download-ku-landscape-320",
+      "pill-white-download-ku-landscape-375",
+      "pill-white-download-ku-landscape-393",
+      "pill-white-download-ku-landscape-430",
+      "pill-white-download-ku-landscape-768",
+      "pill-white-download-en-portrait-320",
+      "pill-white-download-en-portrait-375",
+      "pill-white-download-en-portrait-393",
+      "pill-white-download-en-portrait-430",
+      "pill-white-download-en-portrait-768",
+      "pill-white-download-en-landscape-320",
+      "pill-white-download-en-landscape-375",
+      "pill-white-download-en-landscape-393",
+      "pill-white-download-en-landscape-430",
+      "pill-white-download-en-landscape-768"
+    ],
+    "failed_pixel_cases": [
+      {
+        "case": "pill-contact-ku-portrait-768",
+        "changed_pixels": 1,
+        "max_channel_error": 1,
+        "locations": [
+          {
+            "x": 380,
+            "y": 222,
+            "candidate_rgb": [
+              220,
+              227,
+              240
+            ],
+            "baseline_rgb": [
+              220,
+              226,
+              240
+            ]
+          }
+        ]
+      },
+      {
+        "case": "pill-contact-en-portrait-768",
+        "changed_pixels": 1,
+        "max_channel_error": 1,
+        "locations": [
+          {
+            "x": 380,
+            "y": 222,
+            "candidate_rgb": [
+              215,
+              221,
+              236
+            ],
+            "baseline_rgb": [
+              215,
+              222,
+              236
+            ]
+          }
+        ]
+      },
+      {
+        "case": "pill-order-ku-portrait-768",
+        "changed_pixels": 1,
+        "max_channel_error": 1,
+        "locations": [
+          {
+            "x": 380,
+            "y": 222,
+            "candidate_rgb": [
+              220,
+              227,
+              240
+            ],
+            "baseline_rgb": [
+              220,
+              226,
+              240
+            ]
+          }
+        ]
+      },
+      {
+        "case": "pill-order-en-portrait-768",
+        "changed_pixels": 1,
+        "max_channel_error": 1,
+        "locations": [
+          {
+            "x": 380,
+            "y": 222,
+            "candidate_rgb": [
+              215,
+              222,
+              236
+            ],
+            "baseline_rgb": [
+              215,
+              221,
+              236
+            ]
+          }
+        ]
+      },
+      {
+        "case": "pill-mint-contact-en-portrait-430",
+        "changed_pixels": 1,
+        "max_channel_error": 1,
+        "locations": [
+          {
+            "x": 282,
+            "y": 184,
+            "candidate_rgb": [
+              237,
+              247,
+              243
+            ],
+            "baseline_rgb": [
+              237,
+              247,
+              244
+            ]
+          }
+        ]
+      },
+      {
+        "case": "pill-mint-contact-en-portrait-768",
+        "changed_pixels": 1,
+        "max_channel_error": 1,
+        "locations": [
+          {
+            "x": 290,
+            "y": 228,
+            "candidate_rgb": [
+              234,
+              246,
+              241
+            ],
+            "baseline_rgb": [
+              234,
+              245,
+              241
+            ]
+          }
+        ]
+      },
+      {
+        "case": "pill-mint-order-ku-portrait-768",
+        "changed_pixels": 1,
+        "max_channel_error": 1,
+        "locations": [
+          {
+            "x": 290,
+            "y": 228,
+            "candidate_rgb": [
+              234,
+              245,
+              241
+            ],
+            "baseline_rgb": [
+              234,
+              246,
+              241
+            ]
+          }
+        ]
+      },
+      {
+        "case": "pill-mint-order-en-portrait-320",
+        "changed_pixels": 2,
+        "max_channel_error": 1,
+        "locations": [
+          {
+            "x": 101,
+            "y": 132,
+            "candidate_rgb": [
+              239,
+              248,
+              245
+            ],
+            "baseline_rgb": [
+              239,
+              248,
+              244
+            ]
+          },
+          {
+            "x": 275,
+            "y": 160,
+            "candidate_rgb": [
+              235,
+              247,
+              242
+            ],
+            "baseline_rgb": [
+              234,
+              247,
+              242
+            ]
+          }
+        ]
+      },
+      {
+        "case": "pill-mint-order-en-portrait-430",
+        "changed_pixels": 1,
+        "max_channel_error": 1,
+        "locations": [
+          {
+            "x": 282,
+            "y": 184,
+            "candidate_rgb": [
+              237,
+              247,
+              244
+            ],
+            "baseline_rgb": [
+              237,
+              247,
+              243
+            ]
+          }
+        ]
+      }
+    ],
+    "artifact": {
+      "id": 11518923127,
+      "bytes": 133234352,
+      "files": 1967,
+      "png_files": 1962,
+      "json_files": 5,
+      "sha256": "a487b5c46c245b24a64220bb5374bb35da135d143f8d46d06f9994fffdbcafbd",
+      "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/37694585964/artifacts/11518923127",
+      "downloaded_and_digest_verified": true,
+      "expires_at": "2026-10-14T23:51:16Z"
+    },
+    "evidence_allowlist": [
+      "case-results.json",
+      "pixels.json",
+      "security.json",
+      "failure.json",
+      "capture-repeatability.json",
+      "*-webview.png (failed pairs only)",
+      "*-baseline-webview.png (failed pairs only)",
+      "*-diff.png (failed pairs only)",
+      "safe inventories and sanitized capture acknowledgement index"
+    ],
+    "behavior_passed_cases": 218,
+    "behavior_failed_cases": 0,
+    "native_acceptance_passed_cases": 209,
+    "native_acceptance_failed_cases": 9,
+    "native_acceptance_unexecuted_cases": 22
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "status": "FAILED",
+  "stage": "template_catalog",
+  "code": "verification_endpoint_unavailable",
+  "preflight_check": null,
+  "transport_code": "unclassified_transport",
+  "last_json_response_status": 401,
+  "credential_values_included": false
+}

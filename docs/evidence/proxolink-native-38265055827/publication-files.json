@@ -1,0 +1,42 @@
+{
+  "run_id": 38265055827,
+  "tested_sha": "4b816fb4e62b55d09ea8951d82cd30536bd612cd",
+  "parent_commit": "df2cfffff83647e317f0742b1659bfec3b88964f",
+  "runtime_artifact": {
+    "id": 11761854434,
+    "sha256": "96194a6c06e5d7f963eae87a9f581e2b684efa83d29aadddc08749eeeca2cdc0"
+  },
+  "hosted_artifact": {
+    "id": 11756526797,
+    "sha256": "a07400dc4bd84687b53717cd3759fe0a67a7261cfb5fafe94408281ed19164bb"
+  },
+  "files": [
+    "docs/PROXOLINK_V6_EXECUTION_2026-10-07.md",
+    "docs/PROXOLINK_FIX_PROGRESS_2026-10-12.md",
+    "docs/PROXOLINK_NATIVE_RUN_38265055827.md",
+    "docs/evidence/proxolink-native-38265055827/summary.json",
+    "docs/evidence/proxolink-native-38265055827/acceptance-gates.json",
+    "docs/evidence/proxolink-native-38265055827/actual-screens-results.json",
+    "docs/evidence/proxolink-native-38265055827/protected-configuration.json",
+    "docs/evidence/proxolink-native-38265055827/failed/pill-order-ku-portrait-768-candidate.png",
+    "docs/evidence/proxolink-native-38265055827/failed/pill-order-ku-portrait-768-baseline.png",
+    "docs/evidence/proxolink-native-38265055827/failed/pill-order-ku-portrait-768-diff.png",
+    "docs/evidence/proxolink-native-38265055827/failed/pill-order-en-portrait-768-candidate.png",
+    "docs/evidence/proxolink-native-38265055827/failed/pill-order-en-portrait-768-baseline.png",
+    "docs/evidence/proxolink-native-38265055827/failed/pill-order-en-portrait-768-diff.png",
+    "docs/evidence/proxolink-native-38265055827/failed/pill-mint-order-ku-portrait-430-candidate.png",
+    "docs/evidence/proxolink-native-38265055827/failed/pill-mint-order-ku-portrait-430-baseline.png",
+    "docs/evidence/proxolink-native-38265055827/failed/pill-mint-order-ku-portrait-430-diff.png",
+    "docs/evidence/proxolink-native-38265055827/failed/pill-mint-order-ku-portrait-768-candidate.png",
+    "docs/evidence/proxolink-native-38265055827/failed/pill-mint-order-ku-portrait-768-baseline.png",
+    "docs/evidence/proxolink-native-38265055827/failed/pill-mint-order-ku-portrait-768-diff.png",
+    "docs/evidence/proxolink-native-38265055827/failed/pill-mint-order-en-portrait-430-candidate.png",
+    "docs/evidence/proxolink-native-38265055827/failed/pill-mint-order-en-portrait-430-baseline.png",
+    "docs/evidence/proxolink-native-38265055827/failed/pill-mint-order-en-portrait-430-diff.png",
+    "docs/evidence/proxolink-native-38265055827/failed/pill-white-contact-ku-portrait-393-candidate.png",
+    "docs/evidence/proxolink-native-38265055827/failed/pill-white-contact-ku-portrait-393-baseline.png",
+    "docs/evidence/proxolink-native-38265055827/failed/pill-white-contact-ku-portrait-393-diff.png",
+    "docs/evidence/proxolink-native-38265055827/publication-files.json"
+  ],
+  "secrets_or_credential_values_included": false
+}

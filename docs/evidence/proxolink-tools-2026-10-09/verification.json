@@ -1,0 +1,118 @@
+{
+  "implementation_revision": "05757a3c2089f7eca1ce196051743dfd2c51052b",
+  "source_ci": {
+    "run_id": 37940785293,
+    "attempt": 1,
+    "status": "completed",
+    "conclusion": "success",
+    "completed_by": "2026-10-09T14:05:21Z",
+    "jobs": [
+      {
+        "id": 113854318218,
+        "name": "backend",
+        "conclusion": "success",
+        "completed_at": "2026-10-09T13:59:18Z"
+      },
+      {
+        "id": 113854318394,
+        "name": "responsive",
+        "conclusion": "success",
+        "completed_at": "2026-10-09T14:02:56Z"
+      },
+      {
+        "id": 113854318439,
+        "name": "database",
+        "conclusion": "success",
+        "completed_at": "2026-10-09T13:59:34Z"
+      },
+      {
+        "id": 113854318454,
+        "name": "flutter",
+        "conclusion": "success",
+        "completed_at": "2026-10-09T14:05:20Z"
+      },
+      {
+        "id": 113854318697,
+        "name": "edge-functions",
+        "conclusion": "success",
+        "completed_at": "2026-10-09T13:59:17Z"
+      }
+    ],
+    "backend_passed": 134,
+    "flutter_passed": 221,
+    "responsive_passed": 480,
+    "database_sql_suites": 3,
+    "postgresql_backed_api_lifecycles": 7,
+    "release_apk_privacy": "PASS"
+  },
+  "ordinary_apk": {
+    "run_id": 37940785519,
+    "conclusion": "success",
+    "native_runtime": "skipped",
+    "is_protected_runtime_evidence": false
+  },
+  "artifacts": [
+    {
+      "id": 11621113301,
+      "name": "proxolink-ui-verification",
+      "sha256": "sha256:e82b64ced0ff73f77974f4b5f11e2183bce73c430220ebd2e65bcc1ed8db1cee",
+      "size_bytes": 4535376
+    },
+    {
+      "id": 11620893473,
+      "name": "proxolink-v6-responsive",
+      "sha256": "sha256:136c56fcf3a3c0e9420c7cb8bd9566d39a40cc3ef903b003238a91bce06c8030",
+      "size_bytes": 1604642
+    },
+    {
+      "id": 11620553621,
+      "name": "proxolink-footer-thumbnails",
+      "sha256": "sha256:589e0d72247388ed63cc36f6d88226530f16f093ddd0346069d55ee8c0bd0a78",
+      "size_bytes": 6184774
+    },
+    {
+      "id": 11620224847,
+      "name": "proxolink-thumbnail-apk-size",
+      "sha256": "sha256:1e0e2e0a891052b2a3fd0836cf802e75e645f3d37a2b9dc0d0ce2e3545cab86b",
+      "size_bytes": 1082
+    }
+  ],
+  "native": {
+    "historical": true,
+    "status": "FAILED",
+    "run": 37844040950,
+    "attempt": 2,
+    "revision": "6c7e6c634cfe0bceb2c43ceb485aba12cd78417c",
+    "expected": 240,
+    "executed": 240,
+    "behavior_passed": 240,
+    "behavior_failed": 0,
+    "candidate": 240,
+    "baseline": 240,
+    "missing": 0,
+    "stable_roles": 480,
+    "unstable_roles": 0,
+    "exact_pairs": 232,
+    "failed_pairs": 8,
+    "changed_pixels": 1750,
+    "max_channel_delta": 1,
+    "old_builder_chooser_passed": 12,
+    "new_ui_chooser_executed": 0,
+    "new_external_browser_executed": 0,
+    "root_cause": "NOT PROVEN",
+    "new_protected_run_started": false,
+    "acceptance_unchanged": true
+  },
+  "production": {
+    "migration_applied": false,
+    "publishing_activated": false,
+    "customer_data_changed": false
+  },
+  "pr": {
+    "number": 7,
+    "draft": true,
+    "state": "open",
+    "merged": false
+  },
+  "completion": "NOT COMPLETE"
+}

@@ -1,0 +1,44 @@
+{
+  "revision": "de501a9557cbd83520c5916e0c0085ec5c5a470e",
+  "baseline_original_revision": "ba03534e73fa18fffbe42d8efbeb2e2661009ce0",
+  "designs": [
+    {
+      "style": "pill",
+      "status": "VERIFIED",
+      "css_blocks": 1,
+      "css_byte_identical": true,
+      "baseline_blob": "27a93ea6240286aec39928d300b53e079da9a951",
+      "candidate_blob": "b44303cbb0356927f38354e65730a10d91560bca"
+    },
+    {
+      "style": "pill-mint",
+      "status": "VERIFIED",
+      "css_blocks": 1,
+      "css_byte_identical": true,
+      "baseline_blob": "9aa593b0efa033a36afa06283d16a6df35cb42b5",
+      "candidate_blob": "29b73d4ecf61e9d887c5da3a8d9d25d298b54484"
+    },
+    {
+      "style": "pill-dark",
+      "status": "VERIFIED",
+      "css_blocks": 1,
+      "css_byte_identical": true,
+      "baseline_blob": "bc0c1241fd6ced489fd5843f14b87af63ed58919",
+      "candidate_blob": "4366bc2d0e477e53aa2dc8e850d0966c7fc29f5b"
+    },
+    {
+      "style": "pill-white",
+      "status": "VERIFIED",
+      "css_blocks": 1,
+      "css_byte_identical": true,
+      "baseline_blob": "3b553bd6c5ed451dc26dd913e30defe74e59a3dc",
+      "candidate_blob": "0722f5bb8b27853887402d05d5089509d23e430c"
+    }
+  ],
+  "all_designs_all_types_browser": "VERIFIED",
+  "browser_cases_passed": 480,
+  "native_all_designs_all_types": "BLOCKED",
+  "native_zero_difference_gate": "FAILED",
+  "thumbnail_keys_unchanged": true,
+  "live_large_preview_preserved": true
+}

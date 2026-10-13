@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "335931379874",
+    "firebase_url": "https://mylivechat-462d3-default-rtdb.firebaseio.com",
+    "project_id": "mylivechat-462d3",
+    "storage_bucket": "mylivechat-462d3.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:335931379874:android:00de767dc9cea1cc9cc7fb",
+        "android_client_info": {
+          "package_name": "com.proxo.proxoapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCCKmqy9S5KmK1CfwL7jQ5yL0NoCgt9nYU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

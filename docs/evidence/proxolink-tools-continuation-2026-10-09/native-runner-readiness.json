@@ -1,0 +1,92 @@
+{
+  "scope": "Disposable-runner readiness only; no Android/WebView cases executed by this step",
+  "root_cause": "NOT PROVEN",
+  "commands": [
+    {
+      "step": "write_kvm_rule",
+      "exit_code": 0,
+      "started_monotonic_ms": 64463.522995,
+      "completed_monotonic_ms": 64471.266494
+    },
+    {
+      "step": "reload_udev_rules",
+      "exit_code": 0,
+      "started_monotonic_ms": 64471.2871,
+      "completed_monotonic_ms": 64503.092936
+    },
+    {
+      "step": "trigger_kvm_udev",
+      "exit_code": 0,
+      "started_monotonic_ms": 64503.121205,
+      "completed_monotonic_ms": 64510.860104
+    },
+    {
+      "step": "original_readability_check",
+      "exit_code": 0,
+      "started_monotonic_ms": 64510.886107,
+      "completed_monotonic_ms": 64512.418761
+    }
+  ],
+  "before": {
+    "observed_monotonic_ms": 64463.269984,
+    "uid": 1001,
+    "euid": 1001,
+    "groups": [
+      4,
+      100,
+      118,
+      999,
+      1001
+    ],
+    "exists": true,
+    "readable": false,
+    "writable": false,
+    "module_kvm": true,
+    "module_kvm_intel": true,
+    "module_kvm_amd": false,
+    "architecture": "x86_64",
+    "character_device": true,
+    "mode": 432,
+    "owner_uid": 0,
+    "owner_gid": 993,
+    "inode": 442,
+    "device_major": 10,
+    "device_minor": 232,
+    "cpu_vmx": true,
+    "cpu_svm": false
+  },
+  "acceptance_or_protection_changed": false,
+  "native_verification_claimed": false,
+  "after_original_gate": {
+    "observed_monotonic_ms": 64512.440654,
+    "uid": 1001,
+    "euid": 1001,
+    "groups": [
+      4,
+      100,
+      118,
+      999,
+      1001
+    ],
+    "exists": true,
+    "readable": true,
+    "writable": true,
+    "module_kvm": true,
+    "module_kvm_intel": true,
+    "module_kvm_amd": false,
+    "architecture": "x86_64",
+    "character_device": true,
+    "mode": 438,
+    "owner_uid": 0,
+    "owner_gid": 993,
+    "inode": 442,
+    "device_major": 10,
+    "device_minor": 232,
+    "cpu_vmx": true,
+    "cpu_svm": false,
+    "kvm_api_version": 12,
+    "open_read_write": true
+  },
+  "status": "SETUP_PASSED",
+  "original_exit_code": 0
+}

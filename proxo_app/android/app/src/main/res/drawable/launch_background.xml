@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Same color as SplashScreen's background (_kBg) so there is no
+         white flash between the native window and the Flutter splash. -->
+    <item>
+        <color android:color="#F7F8FA"/>
+    </item>
+
+    <!-- Optional: drop a logo PNG at res/drawable/splash_logo.png and
+         uncomment this block so the native window already shows the mark.
+    <item>
+        <bitmap
+            android:gravity="center"
+            android:src="@drawable/splash_logo"/>
+    </item>
+    -->
+</layer-list>

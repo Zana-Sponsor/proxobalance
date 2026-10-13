@@ -1,0 +1,45 @@
+{
+  "run_id": 37759310377,
+  "attempt": 2,
+  "revision": "c06bd3dccf9b0ea124447a2fc2ff4a47a6e096f1",
+  "validator": "Byte-identical pinned c06bd3d validateNativeResults",
+  "replay": "FAILED",
+  "code": "native_pixel_parity_failed",
+  "expected_cases": 240,
+  "metadata_entries": 240,
+  "pixel_entries": 240,
+  "missing_cases": [],
+  "independent_pixel_failures": [
+    "pill-contact-en-portrait-768",
+    "pill-order-ku-portrait-768",
+    "pill-order-en-portrait-768",
+    "pill-mint-contact-ku-portrait-430",
+    "pill-mint-order-ku-portrait-430",
+    "pill-mint-order-en-portrait-768"
+  ],
+  "actual_workflow_failure": "native_case_collection / native_pixel_parity_failed",
+  "final_gate_executed_in_runtime": true,
+  "distinction": "The complete stable evidence passes completeness and repeatability gates, then the unchanged zero-pixel gate rejects six comparisons.",
+  "inspected_pinned_sources": [
+    {
+      "path": "proxo_app/integration_test/proxolink_native_probe.dart",
+      "bytes": 15288,
+      "sha256": "c5444628a1e2eab7543338e5ea3ac268d56a754ee3f53290c0fbe2cb94b7bace"
+    },
+    {
+      "path": "scripts/run-proxolink-native.mjs",
+      "bytes": 15556,
+      "sha256": "219b1dc880ae7c1dd883aaefa0270e412429c89c0dd53e97572984a360867705"
+    },
+    {
+      "path": "scripts/proxolink-verification-security.mjs",
+      "bytes": 7971,
+      "sha256": "76acc3048bc2b0152eaa8e77e110af9bc6b7a1fe12d4465d411952a60737f83c"
+    },
+    {
+      "path": "scripts/proxolink-pixel-comparison.mjs",
+      "bytes": 7245,
+      "sha256": "116113c9c6c47daa5ee65d8aed5d026cfca00344837152b74f413acb71e70c34"
+    }
+  ]
+}

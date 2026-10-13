@@ -1,0 +1,86 @@
+{
+  "name": "Proxo — Backfill pa_ads.thumbnail_url (Storage mode) v3",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "c16a4cbf-651b-47a6-90c8-8dd57ecd00fa",
+      "name": "Run manually",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        64,
+        -576
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 6
+            }
+          ]
+        }
+      },
+      "id": "72254c91-87b0-4fee-819e-d4dfccc07447",
+      "name": "Every 6 hours",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        64,
+        -384
+      ],
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Retired: generate-ad-thumbnail is the only thumbnail implementation.\n// This workflow deliberately performs no HTTP, Storage, or database writes.\nreturn [{json: {ok: true, retired: true, reason: 'Use the authenticated Proxo app and generate-ad-thumbnail'}}];"
+      },
+      "id": "7e3e77f7-f5e5-424e-814c-495f84db791a",
+      "name": "Backfill thumbnails",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        368,
+        -480
+      ]
+    }
+  ],
+  "connections": {
+    "Run manually": {
+      "main": [
+        [
+          {
+            "node": "Backfill thumbnails",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Every 6 hours": {
+      "main": [
+        [
+          {
+            "node": "Backfill thumbnails",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "150ecebe-4720-42cb-ad61-fd8e009e7f51",
+  "meta": {
+    "instanceId": "dcfff28ab6d4459a2abcdb14344f9b96e930803a0df4f49c03da16a36658f536"
+  },
+  "nodeGroups": [],
+  "id": "lzkAEAOYRZaoAr9M",
+  "tags": []
+}

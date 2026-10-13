@@ -1,0 +1,8 @@
+{
+  "bypass_without_app_auth": true,
+  "forged_app_auth": true,
+  "invalid_capabilities": true,
+  "internal_client_access_denied": true,
+  "other_owner_cards_hidden": true,
+  "private_templates_denied": true
+}

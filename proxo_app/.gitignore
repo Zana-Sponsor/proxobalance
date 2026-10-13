@@ -1,0 +1,23 @@
+# Flutter / Dart
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+build/
+coverage/
+
+# IDE / local settings
+.idea/
+.vscode/
+*.iml
+
+# Android signing and local SDK paths
+android/local.properties
+android/key.properties
+android/app/*.jks
+android/app/*.keystore
+
+# Apple generated / dependency state
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/ephemeral/

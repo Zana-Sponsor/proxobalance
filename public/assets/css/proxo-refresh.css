@@ -1,0 +1,23 @@
+/* Proxo 2026 website and admin visual refresh: non-destructive overrides */
+:root{--proxo-blue:#1685fa;--proxo-ink:#152237;--proxo-canvas:#f7f9fd;--proxo-ease:cubic-bezier(.22,1,.36,1)}
+html{scroll-behavior:smooth}
+body{font-synthesis:none;-webkit-font-smoothing:antialiased}
+button,a,input,select,textarea{font:inherit}
+button,a{-webkit-tap-highlight-color:transparent}
+button{transition:background-color .22s var(--proxo-ease),border-color .22s var(--proxo-ease),box-shadow .22s var(--proxo-ease),transform .22s var(--proxo-ease)}
+button:not(:disabled):active{transform:scale(.985)}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid rgba(22,133,250,.44);outline-offset:3px}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+/* Customer interface: preserve routing, functionality and both existing theme modes */
+body:has(#bottomNav) .modal-card,body:has(#bottomNav) .page-card,body:has(#bottomNav) .tx-card,body:has(#bottomNav) .profile-card{border-radius:22px;box-shadow:0 8px 34px rgba(16,37,70,.045)}
+body:has(#bottomNav) .btn-primary{border-radius:14px}
+body:has(#bottomNav) .bottom-nav{backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+/* Admin interface: light, consistent surfaces; keep its existing page structure */
+body:has(#sidebar){--bg:#f7f9fc;--w:#fff;--b1:#e9eef5;--b2:#d9e3ef;--dark:#172b49;--dark2:#28405e;--pri:#1685fa;--bl:#1685fa;--mt:#8693a6;--mt2:#66758a;--tx:#172b49}
+body:has(#sidebar) #sidebar{box-shadow:-8px 0 36px rgba(18,41,75,.1)}
+body:has(#sidebar) .sb-item{border-radius:13px}
+body:has(#sidebar) .sb-item.active{background:rgba(22,133,250,.18);color:#fff}
+body:has(#sidebar) .auth-box{box-shadow:0 24px 72px rgba(10,34,68,.15)}
+body:has(#sidebar) .abtn{background:#1685fa}
+body:has(#sidebar) .ainp:focus{border-color:#1685fa;box-shadow:0 0 0 3px rgba(22,133,250,.1)}
+@media(min-width:901px){body:has(#sidebar) #main{min-width:0}}

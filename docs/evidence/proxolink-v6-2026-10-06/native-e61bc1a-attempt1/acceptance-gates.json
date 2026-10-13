@@ -1,0 +1,13 @@
+{
+  "matrix": {
+    "passed": false,
+    "code": "native_pixel_parity_failed"
+  },
+  "diagnostics": {
+    "passed": true
+  },
+  "chooser": {
+    "passed": false,
+    "code": "native_chooser_failed"
+  }
+}

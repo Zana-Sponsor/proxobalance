@@ -1,0 +1,349 @@
+{
+  "base_revision": "7d95421da4ebf2101b86793b3c4d6e92a8b9a06b",
+  "implementation_revision": "9ec6264940628c75fa0fc114edc88013a61cbab5",
+  "file_count": 68,
+  "scope": "Net V6 implementation delta from the task starting revision; excludes this evidence-only commit and older V5 files already present",
+  "files": [
+    {
+      "path": ".github/workflows/proxolink-native-build.yml",
+      "status": "modified",
+      "git_blob_sha": "77c6acd1186cbaf5d791c4e93bf68fbe66da0db8"
+    },
+    {
+      "path": ".github/workflows/proxolink-verify.yml",
+      "status": "modified",
+      "git_blob_sha": "99af705a0f2fbfb7b88c9e0325b134550c0c203b"
+    },
+    {
+      "path": "api/_lib/proxolink-handlers/contact-ad-links.js",
+      "status": "modified",
+      "git_blob_sha": "40d98978870d1bd49bc1365689334c38efb0c761"
+    },
+    {
+      "path": "api/_lib/proxolink-handlers/contact-ad.js",
+      "status": "modified",
+      "git_blob_sha": "0eab0b0c3a170c8e4a2e22a045a4dbc052fe4e8b"
+    },
+    {
+      "path": "api/_lib/proxolink-handlers/contact-avatar.js",
+      "status": "modified",
+      "git_blob_sha": "45342c7a5fd9072c7b1ea936dc29ad2d2d1e6de9"
+    },
+    {
+      "path": "api/_lib/proxolink-handlers/contact-card-action.js",
+      "status": "modified",
+      "git_blob_sha": "bd8cbbd2735aea339286a1defb043ec0f3772069"
+    },
+    {
+      "path": "api/_lib/proxolink-handlers/contact-cards.js",
+      "status": "modified",
+      "git_blob_sha": "c452815bac767e5f74f9d22c8f08986ad1844266"
+    },
+    {
+      "path": "api/_lib/proxolink-handlers/contact-preview-token.js",
+      "status": "modified",
+      "git_blob_sha": "8a9cd71c886ebfaf7c0717bb4927e2448e2224f6"
+    },
+    {
+      "path": "api/_lib/proxolink-handlers/contact-templates.js",
+      "status": "modified",
+      "git_blob_sha": "de495c2ddfd2363dc8fb32bd2d6cebe189d6b61f"
+    },
+    {
+      "path": "api/_lib/proxolink-handlers/contact.js",
+      "status": "modified",
+      "git_blob_sha": "8ff704ec6ca080c2f5cec827f4ff1ab8a8366927"
+    },
+    {
+      "path": "api/_lib/proxolink-handlers/independent-pages.js",
+      "status": "added",
+      "git_blob_sha": "01a2790013a3bd286ba4dba4fabd0d81f54be86c"
+    },
+    {
+      "path": "api/_lib/proxolink-handlers/page-preview.js",
+      "status": "added",
+      "git_blob_sha": "84d713f521c1782d641224140e0b1222e8e91808"
+    },
+    {
+      "path": "api/_lib/proxolink-native-baseline/manifest.json",
+      "status": "added",
+      "git_blob_sha": "cea7d6300c47eff70a53668ef352fef19cbbbacb"
+    },
+    {
+      "path": "api/_lib/proxolink-native-baseline/pill-dark.html",
+      "status": "added",
+      "git_blob_sha": "bc0c1241fd6ced489fd5843f14b87af63ed58919"
+    },
+    {
+      "path": "api/_lib/proxolink-native-baseline/pill-mint.html",
+      "status": "added",
+      "git_blob_sha": "9aa593b0efa033a36afa06283d16a6df35cb42b5"
+    },
+    {
+      "path": "api/_lib/proxolink-native-baseline/pill-white.html",
+      "status": "added",
+      "git_blob_sha": "3b553bd6c5ed451dc26dd913e30defe74e59a3dc"
+    },
+    {
+      "path": "api/_lib/proxolink-native-baseline/pill.html",
+      "status": "added",
+      "git_blob_sha": "27a93ea6240286aec39928d300b53e079da9a951"
+    },
+    {
+      "path": "api/_lib/proxolink-pages.js",
+      "status": "added",
+      "git_blob_sha": "083c953c734a6c101289102d9f4719481fe01379"
+    },
+    {
+      "path": "api/_lib/proxolink-prepared.js",
+      "status": "added",
+      "git_blob_sha": "671fe3f40c015dcd53a5c9af08572942c78d2e36"
+    },
+    {
+      "path": "api/_lib/proxolink-preview.js",
+      "status": "modified",
+      "git_blob_sha": "4b3f4ca26223f566d2e16fa6994370def656e649"
+    },
+    {
+      "path": "api/_lib/proxolink-templates/pill-dark.html",
+      "status": "added",
+      "git_blob_sha": "4366bc2d0e477e53aa2dc8e850d0966c7fc29f5b"
+    },
+    {
+      "path": "api/_lib/proxolink-templates/pill-mint.html",
+      "status": "added",
+      "git_blob_sha": "29b73d4ecf61e9d887c5da3a8d9d25d298b54484"
+    },
+    {
+      "path": "api/_lib/proxolink-templates/pill-white.html",
+      "status": "added",
+      "git_blob_sha": "0722f5bb8b27853887402d05d5089509d23e430c"
+    },
+    {
+      "path": "api/_lib/proxolink-templates/pill.html",
+      "status": "added",
+      "git_blob_sha": "b44303cbb0356927f38354e65730a10d91560bca"
+    },
+    {
+      "path": "api/_lib/proxolink.js",
+      "status": "modified",
+      "git_blob_sha": "22033d0d1e6ce8bb714f503bc82fa8d57687a48c"
+    },
+    {
+      "path": "api/proxolink.js",
+      "status": "modified",
+      "git_blob_sha": "5dfe93b28ab48e20e69d466964c79076b63f0694"
+    },
+    {
+      "path": "proxo_app/assets/proxolink_thumbnails/contact-pill-dark.png",
+      "status": "added",
+      "git_blob_sha": "6d53b0bd3403e793430b15cf37667b0b524b2c74"
+    },
+    {
+      "path": "proxo_app/assets/proxolink_thumbnails/contact-pill-mint.png",
+      "status": "added",
+      "git_blob_sha": "3c908deeb8e32c2f40182f3260faf3c82ecd6594"
+    },
+    {
+      "path": "proxo_app/assets/proxolink_thumbnails/contact-pill-white.png",
+      "status": "added",
+      "git_blob_sha": "2c6ebcbfabb4bd880b75cab33f8f10fec7d6aad4"
+    },
+    {
+      "path": "proxo_app/assets/proxolink_thumbnails/contact-pill.png",
+      "status": "added",
+      "git_blob_sha": "6f0887002430b8ec87de511bf1a29f663bdf045b"
+    },
+    {
+      "path": "proxo_app/assets/proxolink_thumbnails/download-pill-dark.png",
+      "status": "added",
+      "git_blob_sha": "5e5f012a6c5a00a2e7cbb486468fae28602d7292"
+    },
+    {
+      "path": "proxo_app/assets/proxolink_thumbnails/download-pill-mint.png",
+      "status": "added",
+      "git_blob_sha": "a8c608c028ff6083729776c8f99e60b405e3fbeb"
+    },
+    {
+      "path": "proxo_app/assets/proxolink_thumbnails/download-pill-white.png",
+      "status": "added",
+      "git_blob_sha": "2566ea6df3d9ed18e70cb37cb3f339e59e7259e5"
+    },
+    {
+      "path": "proxo_app/assets/proxolink_thumbnails/download-pill.png",
+      "status": "added",
+      "git_blob_sha": "5f03dd1b0e4270ddbd7ff3a8dffcfe03b8795cea"
+    },
+    {
+      "path": "proxo_app/assets/proxolink_thumbnails/order-pill-dark.png",
+      "status": "added",
+      "git_blob_sha": "a516508c11e19d093774c848d8461d8872e87190"
+    },
+    {
+      "path": "proxo_app/assets/proxolink_thumbnails/order-pill-mint.png",
+      "status": "added",
+      "git_blob_sha": "78d7c19e3580d9b924c9e847965268f04a2535b2"
+    },
+    {
+      "path": "proxo_app/assets/proxolink_thumbnails/order-pill-white.png",
+      "status": "added",
+      "git_blob_sha": "33f0bbd57088cd827256a48c2c0d4230c37bd0f9"
+    },
+    {
+      "path": "proxo_app/assets/proxolink_thumbnails/order-pill.png",
+      "status": "added",
+      "git_blob_sha": "af084948005d7935ccd7c573a490b9fe41569039"
+    },
+    {
+      "path": "proxo_app/integration_test/proxolink_native_probe.dart",
+      "status": "modified",
+      "git_blob_sha": "925151025db4e35361028dc2828a830fdc377440"
+    },
+    {
+      "path": "proxo_app/lib/models/proxo_card.dart",
+      "status": "modified",
+      "git_blob_sha": "51c6f6a39217f90cbb80532a128b39a1610382be"
+    },
+    {
+      "path": "proxo_app/lib/models/proxolink_design.dart",
+      "status": "added",
+      "git_blob_sha": "c7849dbb96c458e829ec4811ef9ed244a9fda538"
+    },
+    {
+      "path": "proxo_app/lib/models/proxolink_page_type.dart",
+      "status": "added",
+      "git_blob_sha": "cd12d34acb7462ba1c3fb4fe0367a2051bd681c4"
+    },
+    {
+      "path": "proxo_app/lib/screens/tools_screen.dart",
+      "status": "modified",
+      "git_blob_sha": "ee59d4fffd8347ee70751acfadaab27bafe27995"
+    },
+    {
+      "path": "proxo_app/lib/services/proxolink_service.dart",
+      "status": "modified",
+      "git_blob_sha": "93a0ab2f73fa6fc00b699b627ff2f5ec182fda4a"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxolink_design_selector.dart",
+      "status": "added",
+      "git_blob_sha": "c0279a233f8b6918d5ce00d2e5b9e70bbd0eb24e"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxolink_preview.dart",
+      "status": "modified",
+      "git_blob_sha": "e7095da6e65639e712dca92c37e38e7ea95d2f58"
+    },
+    {
+      "path": "proxo_app/pubspec.yaml",
+      "status": "modified",
+      "git_blob_sha": "1fc6a963c8aa64ff1656463019a1f860415bd9a6"
+    },
+    {
+      "path": "proxo_app/supabase/migrations/20261006220119_proxolink_v6_independent_pages.sql",
+      "status": "added",
+      "git_blob_sha": "f8c6b3ff4c1f5f4a2476c94da8bec195fc638361"
+    },
+    {
+      "path": "proxo_app/test/proxolink_flow_test.dart",
+      "status": "modified",
+      "git_blob_sha": "91bf08691ea227c9bb71b33c2a0a3f0af4178ba0"
+    },
+    {
+      "path": "proxo_app/test/proxolink_v6_flow_test.dart",
+      "status": "added",
+      "git_blob_sha": "213486a29488d0348c465fd6b63d7a60a4e342f7"
+    },
+    {
+      "path": "proxo_app/tool/generate_proxolink_thumbnails.mjs",
+      "status": "added",
+      "git_blob_sha": "39d3ea374433961ad7ac880ab0b50f29967bf700"
+    },
+    {
+      "path": "proxo_app/tool/proxolink-thumbnail-manifest.json",
+      "status": "added",
+      "git_blob_sha": "6729c7691b50ebbc5159372514d828f004ba122a"
+    },
+    {
+      "path": "scripts/proxolink-staging-verification.mjs",
+      "status": "modified",
+      "git_blob_sha": "748b9482bd9ca1882bcaff73107059b9b2490e7e"
+    },
+    {
+      "path": "scripts/proxolink-v6-database.mjs",
+      "status": "added",
+      "git_blob_sha": "8db6e87e5b04cbb9b95b4b21e8bd8e894dbd3702"
+    },
+    {
+      "path": "scripts/proxolink-v6-responsive.mjs",
+      "status": "added",
+      "git_blob_sha": "6e1c2d00695a730b9b35e5bc8ab5291973e7c65a"
+    },
+    {
+      "path": "scripts/proxolink-verification-security.mjs",
+      "status": "modified",
+      "git_blob_sha": "8cd597409e152bf85b454a1779742d85b29563f2"
+    },
+    {
+      "path": "scripts/run-proxolink-native.mjs",
+      "status": "modified",
+      "git_blob_sha": "d779e59a00ad1e1a48a0dbd0b2ad6b233fc904be"
+    },
+    {
+      "path": "scripts/run-proxolink-staging.mjs",
+      "status": "modified",
+      "git_blob_sha": "1ea1ebf801f95ac2e80f55d6d5473247f185f587"
+    },
+    {
+      "path": "scripts/scan-proxolink-source.mjs",
+      "status": "modified",
+      "git_blob_sha": "2d645b77b8d054cf7bd28f7f30f0164e030d1de6"
+    },
+    {
+      "path": "server.js",
+      "status": "modified",
+      "git_blob_sha": "05ca0ad5d99f0cfb5878020a2900b2a7e5f87fc1"
+    },
+    {
+      "path": "test/fixtures/proxolink-v5-database.sql",
+      "status": "added",
+      "git_blob_sha": "2e4a5e4079cc156db19a376d20441fd1dc3f274d"
+    },
+    {
+      "path": "test/fixtures/proxolink-v6-service.mjs",
+      "status": "added",
+      "git_blob_sha": "5912a73ecfe192e8e0ed21516a00fed223cc63db"
+    },
+    {
+      "path": "test/proxolink-api.test.js",
+      "status": "modified",
+      "git_blob_sha": "5cd78b7beb6d0d571a1130e405c7d863b73dbccb"
+    },
+    {
+      "path": "test/proxolink-staging-verification.test.js",
+      "status": "modified",
+      "git_blob_sha": "cde31a918916cf8f259653b406a69d1a92bc37b8"
+    },
+    {
+      "path": "test/proxolink-v6-api.test.js",
+      "status": "added",
+      "git_blob_sha": "1c22aae2d461d7b961c9beb2613bbcd8cd8f2a50"
+    },
+    {
+      "path": "test/proxolink-v6-database.sql",
+      "status": "added",
+      "git_blob_sha": "05e1c0b50772fb4be0cd1c1593851449cd28e8ad"
+    },
+    {
+      "path": "test/proxolink-verification-security.test.js",
+      "status": "modified",
+      "git_blob_sha": "382e6513dfeebcbe06c5f391d64f91ab6e004ddc"
+    },
+    {
+      "path": "vercel.json",
+      "status": "modified",
+      "git_blob_sha": "57eeaed11102edd0494b26df3e18a908e08b0eb0"
+    }
+  ],
+  "production_sources_same_as": "de501a9557cbd83520c5916e0c0085ec5c5a470e"
+}

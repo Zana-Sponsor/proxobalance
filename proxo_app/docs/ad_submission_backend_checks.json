@@ -1,0 +1,28 @@
+{
+  "executed_on": "2026-10-03",
+  "fixture_mode": "rolled_back",
+  "passed_checks": [
+    "server_quote_fixed_coupon",
+    "atomic_ad_wallet_ledger",
+    "stored_targeting_schedule_and_contact",
+    "charged_price_snapshot",
+    "same_key_replay_exactly_once",
+    "coupon_consumed_once",
+    "interrupted_response_recovery",
+    "changed_payload_same_key_rejected",
+    "tampered_or_stale_confirmation_price_rejected",
+    "insufficient_funds_no_partial_operation",
+    "null_budget_rejected",
+    "empty_ages_rejected",
+    "messages_requires_contact",
+    "past_schedule_rejected",
+    "used_coupon_rejected",
+    "expired_coupon_rejected",
+    "own_submission_only",
+    "foreign_contact_rejected",
+    "views_without_contact",
+    "immediate_start_uses_server_clock",
+    "authentication_required",
+    "all_test_users_ads_wallets_transactions_and_retry_receipts_rolled_back"
+  ]
+}

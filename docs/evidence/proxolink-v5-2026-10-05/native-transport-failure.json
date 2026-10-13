@@ -1,0 +1,9 @@
+{
+  "status": "FAILED",
+  "stage": "read_only_security",
+  "code": "unclassified_failure",
+  "preflight_check": "bypass_without_app_auth",
+  "transport_code": "redirect_blocked",
+  "last_json_response_status": 200,
+  "credential_values_included": false
+}

@@ -1,0 +1,415 @@
+{
+  "baseline_sha": "e61bc1a93f4acdc7ad75e9f44e79e6d73f110f11",
+  "preserved_concurrent_audit_sha": "52f7ba2cb9337130495e75a397a1a404b8bfa10e",
+  "tested_implementation_sha": "fb29a6adbc8120f04c1e80027416ec1278b5f4d4",
+  "scope": "Exact net continuation paths, including preserved concurrent documentation and final report/evidence. Prior UI/migration/assets manifest is linked from the report.",
+  "files": [
+    {
+      "path": "docs/PROXOLINK_A_AO_CHECKLIST_2026-10-09.md",
+      "origin": "implementation",
+      "bytes": 16039,
+      "sha256": "83caeacb0099f44b0b1e6261ac6939c7cc2f8d8de1c6ca18dcfd48dafea5b968"
+    },
+    {
+      "path": "docs/PROXOLINK_NATIVE_E61_ANALYSIS_2026-10-09.md",
+      "origin": "preserved_concurrent_audit",
+      "bytes": 12254,
+      "sha256": "a1344b6c64319c274cba426312d0e80052194d497df3c8665e526862d5372339"
+    },
+    {
+      "path": "docs/PROXOLINK_TOOLS_CREATE_CONTINUATION_2026-10-09.md",
+      "origin": "report_evidence",
+      "bytes": 24060,
+      "sha256": "d095f60134782f29168941243147fea9e569e8ea94ae149e75df5890003a874b"
+    },
+    {
+      "path": "docs/PROXOLINK_TOOLS_CREATE_SPEC_v4.md",
+      "origin": "implementation",
+      "bytes": 40754,
+      "sha256": "bade95c61210e666820d3be3aa1582214766770717c1c664358d9139f1f973c8"
+    },
+    {
+      "path": "docs/PROXOLINK_V6_EXECUTION_2026-10-07.md",
+      "origin": "preserved_concurrent_audit",
+      "bytes": 62194,
+      "sha256": "ab67701426b0a9287c60054a983c3e50b22e27809cfda4b53877b38de2a3d321"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/changed-files.json",
+      "origin": "report_evidence",
+      "self_reference": "This file is included by path; a self-content hash is intentionally omitted."
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/current-schema-audit.json",
+      "origin": "implementation",
+      "bytes": 13263,
+      "sha256": "0d7ece41315aeca209aebb7bb903a7524f20d30e02fc597c5cbaee0d6426473e"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/current-thumbnail-apk-size.json",
+      "origin": "report_evidence",
+      "bytes": 1966,
+      "sha256": "4ee6f090eb6cbb7f1938221ddde9ebbff93ae0a9b2e7eb5cb35c1da0143fc3a6"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/current-verification.json",
+      "origin": "report_evidence",
+      "bytes": 3340,
+      "sha256": "60afe24fd91310858a9ff51f4c8ca9bf03e7aee41db2e306afb6a8556e661ea6"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/current-visual-artifact-audit.json",
+      "origin": "report_evidence",
+      "bytes": 22392,
+      "sha256": "82a12bcfd32d557971d1f1ee571a2a023b1da2c3c8a47cd900234a8b631bf1b6"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/native-acceptance-gates.json",
+      "origin": "implementation",
+      "bytes": 203,
+      "sha256": "0b2c6d0dc8bb2bec5b900a0138e8257217d80a4768d01f8373497e14809d3faf"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/native-chooser-results.json",
+      "origin": "implementation",
+      "bytes": 1222,
+      "sha256": "9dd13f4256564a9d4ba58383d044187e1239543015b789908d18ad6996f18be5"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/native-failure.json",
+      "origin": "implementation",
+      "bytes": 249,
+      "sha256": "9e648c1d9264c5d63442af4d4e749bbb525cc20980242c3296861dd9e408c202"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/native-independent-audit.json",
+      "origin": "implementation",
+      "bytes": 2202,
+      "sha256": "dbaa1b4377d33017bf2cec4a61736b635edfe4531e4ceeec447888f9e091beb4"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/native-pipeline-observations.json",
+      "origin": "implementation",
+      "bytes": 3962,
+      "sha256": "0bfefc8b85bf9c75eb853d80e8fbf9d05cb22c244d5fcdf9f21bf51a0f8dcbe1"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/native-runner-readiness.json",
+      "origin": "implementation",
+      "bytes": 2094,
+      "sha256": "52268a6cc2524130b40a16f0b7a07656a10151fd57a8db2dc346bad23c58c120"
+    },
+    {
+      "path": "docs/evidence/proxolink-tools-continuation-2026-10-09/native-security.json",
+      "origin": "implementation",
+      "bytes": 209,
+      "sha256": "fc9075a9bed59ce0355d1d0026fdac59dfbd7669a9b15fba428fa7c99671ae83"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-e61bc1a-attempt1/acceptance-gates.json",
+      "origin": "preserved_concurrent_audit",
+      "bytes": 203,
+      "sha256": "0b2c6d0dc8bb2bec5b900a0138e8257217d80a4768d01f8373497e14809d3faf"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-e61bc1a-attempt1/capture-acknowledgements.json",
+      "origin": "preserved_concurrent_audit",
+      "bytes": 22333,
+      "sha256": "03883fd0de65b268ecb27b87c7916f8242c58ed0e9af4b859a61ba9048cba722"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-e61bc1a-attempt1/capture-repeatability.json",
+      "origin": "preserved_concurrent_audit",
+      "bytes": 53470,
+      "sha256": "d55df1493290a420e81ed931bb2f15019d3ba51eade803dce5107842f923a279"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-e61bc1a-attempt1/case-pill-contact-en-portrait-768.json",
+      "origin": "preserved_concurrent_audit",
+      "bytes": 94432,
+      "sha256": "f2d69e0315c02c3f07e1ab3f49706d2f6c759e52f6663654f7b5d914430a6d84"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-e61bc1a-attempt1/case-pill-mint-contact-ku-portrait-768.json",
+      "origin": "preserved_concurrent_audit",
+      "bytes": 82264,
+      "sha256": "4e3f32b2179230cf4dfb5b933a7491ad68fb1f3a7a12ca7f6984542ac5527bac"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-e61bc1a-attempt1/case-pill-mint-order-en-portrait-430.json",
+      "origin": "preserved_concurrent_audit",
+      "bytes": 79739,
+      "sha256": "318514dba197b82651e66e83cc5eade5183827bf29cb55ef5f87142a9c2fec1f"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-e61bc1a-attempt1/case-pill-mint-order-en-portrait-768.json",
+      "origin": "preserved_concurrent_audit",
+      "bytes": 81806,
+      "sha256": "49d7bd74e343a07240635b9e63ef3842bf711086c381b8a231bdf84feb835934"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-e61bc1a-attempt1/case-pill-mint-order-ku-portrait-320.json",
+      "origin": "preserved_concurrent_audit",
+      "bytes": 75942,
+      "sha256": "4ce0621f3f0fbfaaa8a205bbac9eef6d24daf2e9e78e14229a248ed0d440bbed"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-e61bc1a-attempt1/case-pill-mint-order-ku-portrait-430.json",
+      "origin": "preserved_concurrent_audit",
+      "bytes": 80690,
+      "sha256": "e92f0a892182e64a606489b5f5667cc94c6489b21a8d4203269a12d07dab01e6"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-e61bc1a-attempt1/case-pill-mint-order-ku-portrait-768.json",
+      "origin": "preserved_concurrent_audit",
+      "bytes": 82361,
+      "sha256": "3fc393effe9d9cee578d9126d46e6406414fe896e18d0b4f1cb27c0f7b2a2b1e"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-e61bc1a-attempt1/case-pill-order-ku-portrait-768.json",
+      "origin": "preserved_concurrent_audit",
+      "bytes": 82396,
+      "sha256": "6fb35f772bd9959c676cbdbc5505cf5c07695907670d5ad893afe51904567ee0"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-e61bc1a-attempt1/case-results.json",
+      "origin": "preserved_concurrent_audit",
+      "bytes": 89722,
+      "sha256": "4ada3ef27f256518066d9fb1096fedc33e0604e9553af4b22faee2a8fd82329b"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-e61bc1a-attempt1/chooser-contract-diagnosis.json",
+      "origin": "preserved_concurrent_audit",
+      "bytes": 1205,
+      "sha256": "82b306539eb72324c1d2a78d61dd205ca02719edf9a50d34e7caadcb960a660b"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-e61bc1a-attempt1/chooser-results.json",
+      "origin": "preserved_concurrent_audit",
+      "bytes": 1222,
+      "sha256": "9dd13f4256564a9d4ba58383d044187e1239543015b789908d18ad6996f18be5"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-e61bc1a-attempt1/diagnostic-environment.json",
+      "origin": "preserved_concurrent_audit",
+      "bytes": 462,
+      "sha256": "33c5b7a530f5a8ecfdca0d71531f736bfa986dcbfec540a66ed93687cadc8667"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-e61bc1a-attempt1/failure.json",
+      "origin": "preserved_concurrent_audit",
+      "bytes": 249,
+      "sha256": "9e648c1d9264c5d63442af4d4e749bbb525cc20980242c3296861dd9e408c202"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-e61bc1a-attempt1/independent-audit.json",
+      "origin": "preserved_concurrent_audit",
+      "bytes": 20757,
+      "sha256": "43e02cb90abeb18cd9cd3516380cba0521061ce6aa3afc95f4a093be62fd268b"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-e61bc1a-attempt1/per-case-root-cause-analysis.json",
+      "origin": "preserved_concurrent_audit",
+      "bytes": 3037,
+      "sha256": "a9339a92fadb90f7bc8dc122986bb46de5a5241fe8ff2896ee76a95079c75cd6"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-e61bc1a-attempt1/pill-mint-contact-ku-portrait-768-baseline-webview.png",
+      "origin": "preserved_concurrent_audit",
+      "bytes": 127231,
+      "sha256": "ee76c7624c6f366661a9c37e86a90dc1757a3e98db1c78870ce119eb924eeaa0"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-e61bc1a-attempt1/pill-mint-contact-ku-portrait-768-diff.png",
+      "origin": "preserved_concurrent_audit",
+      "bytes": 48891,
+      "sha256": "5c21fd30930d3a6695b1e0bd4a6f1fd023f49730b9ac03e05d259f52a285e01b"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-e61bc1a-attempt1/pill-mint-contact-ku-portrait-768-webview.png",
+      "origin": "preserved_concurrent_audit",
+      "bytes": 127227,
+      "sha256": "3c22fb9aaa9c841e02efc3f2dbaf95b4e9c3a1b734732616b0ab7d8639773ed7"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-e61bc1a-attempt1/pill-mint-order-en-portrait-768-baseline-webview.png",
+      "origin": "preserved_concurrent_audit",
+      "bytes": 107700,
+      "sha256": "42a79b37c4e0f02e6db9d02fa7512f0a2ea3b55e38782e3e66f3de40cf9ae774"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-e61bc1a-attempt1/pill-mint-order-en-portrait-768-diff.png",
+      "origin": "preserved_concurrent_audit",
+      "bytes": 40788,
+      "sha256": "a4beaa7a04def2acc8b17d474a83c5d1b72994c395b1be09baa28148494dfe04"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-e61bc1a-attempt1/pill-mint-order-en-portrait-768-webview.png",
+      "origin": "preserved_concurrent_audit",
+      "bytes": 107698,
+      "sha256": "04c28dc251edf7134d1675040a8cb9d14e3b4c571657a5c7db1fc90698b63c83"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-e61bc1a-attempt1/pill-mint-order-ku-portrait-768-baseline-webview.png",
+      "origin": "preserved_concurrent_audit",
+      "bytes": 108912,
+      "sha256": "1fd97b0c486003fcb32cb3eecd26c1a4aaa3a1961de13ea527da665a02a9c3ca"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-e61bc1a-attempt1/pill-mint-order-ku-portrait-768-diff.png",
+      "origin": "preserved_concurrent_audit",
+      "bytes": 41925,
+      "sha256": "ebf0d034ad8289c57270496a97329783bd75335478927f45be36ed5a5c9ebb3e"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-e61bc1a-attempt1/pill-mint-order-ku-portrait-768-webview.png",
+      "origin": "preserved_concurrent_audit",
+      "bytes": 108912,
+      "sha256": "51dcb5bdad53c1a12ca26f7980874eff6d37d92d22e7e595e2190a48b454ad46"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-e61bc1a-attempt1/pill-order-ku-portrait-768-baseline-webview.png",
+      "origin": "preserved_concurrent_audit",
+      "bytes": 104407,
+      "sha256": "ad92ef1f153971604e27b544eed5e5a3e6821dd7c8c0e14d8e7d217f71fdc407"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-e61bc1a-attempt1/pill-order-ku-portrait-768-diff.png",
+      "origin": "preserved_concurrent_audit",
+      "bytes": 40602,
+      "sha256": "7771ef95661b68bf6d5c013c3b08a2013c60000843e8740f83a56854fa1c59c2"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-e61bc1a-attempt1/pill-order-ku-portrait-768-webview.png",
+      "origin": "preserved_concurrent_audit",
+      "bytes": 104405,
+      "sha256": "d92649db0cb63188f5e082cd34ecbc159b08408e77d87f760810690bc82841ca"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-e61bc1a-attempt1/pixel-failures.json",
+      "origin": "preserved_concurrent_audit",
+      "bytes": 40325,
+      "sha256": "b1830a957e5b036284314301632236511384b970db26dc648e4d06471269f1dd"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-e61bc1a-attempt1/pixels.json",
+      "origin": "preserved_concurrent_audit",
+      "bytes": 57614,
+      "sha256": "a79daaecc43be21b8d2754c47a24b1c13e412a52c4639fbad6f1cfb521c81b3f"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-e61bc1a-attempt1/publication-files.json",
+      "origin": "preserved_concurrent_audit",
+      "bytes": 4055,
+      "sha256": "8475fb1fcba7187f4a3f1e91c6d7e402b045f90499cd13a8718de3562edc6e6f"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-e61bc1a-attempt1/recomputed-repeatability.json",
+      "origin": "preserved_concurrent_audit",
+      "bytes": 47518,
+      "sha256": "a60ee73f0ac78526848f9c5ed4e1b94185a2e00b0c123d4cefc48f5fe84fc6af"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-e61bc1a-attempt1/runner-readiness.json",
+      "origin": "preserved_concurrent_audit",
+      "bytes": 2094,
+      "sha256": "52268a6cc2524130b40a16f0b7a07656a10151fd57a8db2dc346bad23c58c120"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-e61bc1a-attempt1/safe-file-manifest.json",
+      "origin": "preserved_concurrent_audit",
+      "bytes": 349718,
+      "sha256": "3d4ddeaf9933ef13295cca20bc71cf018049a4e95512773ff33773978e3507ac"
+    },
+    {
+      "path": "docs/evidence/proxolink-v6-2026-10-06/native-e61bc1a-attempt1/security.json",
+      "origin": "preserved_concurrent_audit",
+      "bytes": 209,
+      "sha256": "fc9075a9bed59ce0355d1d0026fdac59dfbd7669a9b15fba428fa7c99671ae83"
+    },
+    {
+      "path": "proxo_app/integration_test/proxolink_native_chooser.dart",
+      "origin": "implementation",
+      "bytes": 10976,
+      "sha256": "ad82d9927a54b1bb8e9dec50a2cbe6c010d738c851d225e972bfc41e890c0e64"
+    },
+    {
+      "path": "proxo_app/integration_test/proxolink_native_create_chooser.dart",
+      "origin": "implementation",
+      "bytes": 7393,
+      "sha256": "3d09cec99c34b9dd390bf94b46bf90df36271106a6a15e1db2abb4db47c49d18"
+    },
+    {
+      "path": "proxo_app/integration_test/proxolink_native_tools_journey.dart",
+      "origin": "implementation",
+      "bytes": 7308,
+      "sha256": "463aa3fc2709486fc4e4bc206f902962d9dbbbdd1502ee22ff516e6300f778b1"
+    },
+    {
+      "path": "proxo_app/lib/screens/proxolink_create_page_screen.dart",
+      "origin": "implementation",
+      "bytes": 12940,
+      "sha256": "4b3e48def9c151430499d95f6187fa2bb09b04e5f5ecf9dabe39967f0ed750bc"
+    },
+    {
+      "path": "proxo_app/lib/screens/tools_screen.dart",
+      "origin": "implementation",
+      "bytes": 8566,
+      "sha256": "b2d6379f2a6adf8f2198c1818cd71f6dd4a672d30aadccca15771840cd1a4e99"
+    },
+    {
+      "path": "proxo_app/lib/services/proxolink_service.dart",
+      "origin": "implementation",
+      "bytes": 12146,
+      "sha256": "00a2a1e8ea35aabf9eee5151782ec330e4c0497a9f2e45e0f6df97c5c8858fc3"
+    },
+    {
+      "path": "proxo_app/test/proxolink_tools_create_test.dart",
+      "origin": "implementation",
+      "bytes": 20689,
+      "sha256": "97b4e98223fd3907477809c35ecd23cb7f5e3dfe6968a7b94a15bfb11e90a101"
+    },
+    {
+      "path": "scripts/proxolink-native-browser.mjs",
+      "origin": "implementation",
+      "bytes": 1998,
+      "sha256": "aa9136f220b050699dcbce282b54c3d10f67947893ccb3756457910d821fca25"
+    },
+    {
+      "path": "scripts/proxolink-native-diagnostics.mjs",
+      "origin": "implementation",
+      "bytes": 14047,
+      "sha256": "c60acd6ab0d475893ad0e7129e8c35b5c41a19ea7575b14dcc2eb61bd5c52b23"
+    },
+    {
+      "path": "scripts/proxolink-native-readiness.py",
+      "origin": "implementation",
+      "bytes": 6435,
+      "sha256": "cb5a980d5f0470631714b138f63b675cbddda43268cf0135da1b4a17b89f2157"
+    },
+    {
+      "path": "scripts/run-proxolink-native.mjs",
+      "origin": "implementation",
+      "bytes": 34737,
+      "sha256": "f29d8e23646719e7cceeacfad6b56b31d921828ac79d3a8e89e4f477cfee10ab"
+    },
+    {
+      "path": "test/proxolink-native-browser.test.js",
+      "origin": "implementation",
+      "bytes": 2059,
+      "sha256": "e941727fa498c4fbdcacb17b9ceac2033381fca0734f55ff5219068e775480aa"
+    },
+    {
+      "path": "test/proxolink-native-diagnostics.test.js",
+      "origin": "implementation",
+      "bytes": 8492,
+      "sha256": "592f909ac7f6508ee12ee2b4423febdb663ecf7a6cd9bb2b553e722651ceb78d"
+    },
+    {
+      "path": "test/proxolink-native-readiness.test.js",
+      "origin": "implementation",
+      "bytes": 4891,
+      "sha256": "9e74170449dbdfa5307109f467dc15e02186973caa07793fcbc3a3a1a6580ed2"
+    }
+  ]
+}

@@ -1,0 +1,78 @@
+name: Exchange Production Smoke
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+jobs:
+  verify-live-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Wait for the current admin bundle to finish deploying
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 24); do
+            if curl -fLsS --max-time 15 'https://www.proxobalance.app/exchange-admin' -o current-admin.html &&
+               grep -q 'assets/js/admin.js?v=17' current-admin.html &&
+               curl -fLsS --max-time 15 'https://www.proxobalance.app/assets/js/app.js?v=40' -o current-app.js &&
+               grep -q 'accountBalanceSourceOption' current-app.js &&
+               curl -fLsS --max-time 15 'https://www.proxobalance.app/assets/js/exchange-balance.js?v=3' -o current-balance.js &&
+               grep -q 'openAccountBalanceSend' current-balance.js; then
+              exit 0
+            fi
+            sleep 5
+          done
+          echo 'FAIL: current admin bundle was not published within the deployment window.'
+          exit 1
+      - name: Verify the live customer page, admin panel and bundled assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="https://www.proxobalance.app"
+          curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/" -o index.html
+          grep -q 'id="balanceSendSection"' index.html
+          grep -q 'id="rewardBanner"' index.html
+          grep -q '/assets/js/exchange-balance.js' index.html
+          grep -q '/assets/js/exchange-reward-pricing.js?v=2' index.html
+          curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/exchange-admin" -o exchange-admin.html
+          grep -q 'id="pgBalance"' exchange-admin.html
+          grep -q 'id="pgRewards"' exchange-admin.html
+          grep -q 'id="rewardAmountCap"' exchange-admin.html
+          grep -q 'id="rewardScope"' exchange-admin.html
+          grep -q 'ڕەتکردنەوە و گەڕاندنەوە بۆ باڵانس' exchange-admin.html
+          grep -q 'exchange-balance-admin.js?v=3' exchange-admin.html
+          grep -q 'admin.js?v=17' exchange-admin.html
+          curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/assets/js/admin.js?v=17" -o admin.js
+          grep -q 'accountBalanceCell' admin.js
+          grep -q 'accountBalanceDetails' admin.js
+          grep -q "'account_balances'" admin.js
+          curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/assets/js/exchange-balance.js?v=3" -o exchange-balance.js
+          grep -q 'requestBalancePayout' exchange-balance.js
+          grep -q 'refreshVisibleBalance' exchange-balance.js
+          curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/assets/js/exchange-balance-admin.js?v=3" -o exchange-balance-admin.js
+          grep -q 'creditVerifiedRefund' exchange-balance-admin.js
+          grep -q 'startBalancePayout' exchange-balance-admin.js
+          grep -q 'abortProcessingPayout' exchange-balance-admin.js
+          curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/assets/js/exchange-reward-pricing.js?v=2" -o exchange-reward-pricing.js
+          grep -q 'ProxoRewardPricing' exchange-reward-pricing.js
+          grep -q 'routeScope' exchange-reward-pricing.js
+          echo "PASS: customer balance and reward UI, admin refund and reward UI, and both balance modules are live."
+      - name: Verify unauthorized clients cannot read balances
+        shell: bash
+        run: |
+          set -euo pipefail
+          http="$(curl -sS -L --max-time 25 -o balance-response.json -w '%{http_code}' 'https://www.proxobalance.app/api/balance')"
+          if [ "$http" != "401" ]; then
+            echo "FAIL: unauthenticated balance API returned HTTP $http; expected 401"
+            exit 1
+          fi
+          grep -q 'Unauthorized' balance-response.json
+          echo "PASS: balance API requires authentication (HTTP 401)."
+          http="$(curl -sS -L --max-time 25 -o account-response.json -w '%{http_code}' -H 'Content-Type: application/json' --data '{"action":"account_balances","payload":{"user_ids":[]}}' 'https://www.proxobalance.app/api/admin')"
+          if [ "$http" != "401" ]; then
+            echo "FAIL: unauthenticated per-user balance lookup returned HTTP $http; expected 401"
+            exit 1
+          fi
+          echo "PASS: per-user admin balance lookup requires authentication (HTTP 401)."

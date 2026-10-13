@@ -1,0 +1,54 @@
+{
+  "observed_on": "2026-10-07",
+  "status": "BLOCKED",
+  "expected_hosted_lifecycles": 12,
+  "executed_hosted_lifecycles": 0,
+  "production_fallback": false,
+  "inventory": {
+    "supabase_projects": [
+      {
+        "name": "Zana",
+        "ref": "cojchkwssmasiejcgvbk",
+        "purpose": "production"
+      },
+      {
+        "name": "Exchange",
+        "ref": "pycxuugoblkslvwebxuu",
+        "purpose": "unrelated application"
+      }
+    ],
+    "zana_development_branches": [],
+    "vercel_search": "proxolink-staging",
+    "matching_vercel_projects": []
+  },
+  "required_missing_settings": [
+    "PROXO_STAGING_PROJECT_REF",
+    "PROXO_STAGING_SUPABASE_URL",
+    "PROXO_STAGING_BASE_URL",
+    "PROXO_STAGING_ANON_KEY",
+    "PROXO_STAGING_TEST_EMAIL",
+    "PROXO_STAGING_TEST_PASSWORD",
+    "PROXO_STAGING_OTHER_EMAIL",
+    "PROXO_STAGING_OTHER_PASSWORD"
+  ],
+  "optional_setting": "PROXO_STAGING_VERCEL_BYPASS",
+  "server_requirements": [
+    "separate staging project and deployment",
+    "existing V5 prerequisites and additive V6 migration applied only there",
+    "server service/signing secrets scoped to isolated staging",
+    "PROXO_V6_WRITE_MODE=isolated",
+    "two ordinary fictional staging accounts"
+  ],
+  "prior_guard_execution": {
+    "command": "node scripts/run-proxolink-staging.mjs",
+    "exit_code": 1,
+    "boundary": "Missing isolated configuration rejected before fixtures or network mutations",
+    "executed_before_workspace_disconnection": true
+  },
+  "cases_blocked": [
+    "Contact create/edit/unsaved live preview/public rendering/stable UUID URL/ownership/retry/activation/deactivation",
+    "Restaurant create/edit/unsaved live preview/public rendering/stable UUID URL/ownership/retry/activation/deactivation",
+    "App Download create/edit/unsaved live preview/public rendering/stable UUID URL/ownership/retry/activation/deactivation",
+    "real Flutter native management journey against hosted isolated staging"
+  ]
+}

@@ -1,0 +1,40 @@
+/* Proxo Balance 2026: receipt-inspired admin statistics and rate cards */
+:root{--ex-blue:#1685fa;--ex-line:#e8edf3;--ex-text:#182a40}
+body{background:#f7f9fc}
+#pgStatistics .ex-sheet,#pgRates .ex-sheet{background:#fff;border:1px solid #edf1f5;border-radius:29px;padding:28px;box-shadow:0 12px 42px rgba(24,42,70,.045);margin-bottom:18px}
+.ex-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:15px;border-bottom:1px solid var(--ex-line);padding-bottom:18px}
+.ex-head h3{font-size:19px;color:var(--ex-text);font-weight:600;line-height:1.6}.ex-head p{color:#7a889a;font-size:12px;font-weight:400;line-height:1.85;margin-top:3px}
+.ex-logo{font-family:Inter,Arial,sans-serif;font-weight:800;font-size:31px;letter-spacing:-1.4px;color:var(--ex-blue);direction:ltr}
+.ex-title{color:var(--ex-blue);font-size:17px;font-weight:600;margin:23px 0 14px}
+.ex-actions{display:flex;gap:9px;flex-wrap:wrap;align-items:center}
+.ex-btn{border:1px solid #dfe6ef;background:#fff;color:#243a50;border-radius:12px;min-height:41px;padding:10px 14px;font:400 12px R,Arial,sans-serif;display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;transition:background .2s,border-color .2s,transform .2s}
+.ex-btn.primary{background:var(--ex-blue);color:#fff;border-color:var(--ex-blue)}.ex-btn:hover{border-color:var(--ex-blue)}.ex-btn:active{transform:scale(.985)}.ex-btn:focus-visible,.ex-input:focus-visible{outline:3px solid rgba(22,133,250,.35);outline-offset:2px}
+.ex-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.ex-card{border:1px solid #e8edf5;background:#fff;border-radius:17px;padding:16px;min-width:0}.ex-label{font-size:12px;color:#7d8b9d;font-weight:400;line-height:1.65}
+.ex-value{font:600 23px/1.55 Inter,R,Arial,sans-serif;color:#192c43;direction:ltr;text-align:right;overflow-wrap:anywhere;margin-top:6px}
+.ex-controls{display:flex;align-items:center;gap:9px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--ex-line)}
+.ex-input{min-height:43px;background:#fff;color:#24354c;border:1px solid #e0e8f0;border-radius:11px;padding:10px 12px;font:400 13px R,Arial,sans-serif;outline:none}
+.ex-input[type=search]{flex:1 1 230px;min-width:0}.ex-input:focus{border-color:var(--ex-blue)}
+.ex-count{font-size:12px;color:#7a8b9f}.ex-list{display:grid;gap:10px;margin-top:17px}
+.ex-order{border:1px solid #e8edf3;border-radius:17px;background:#fff;padding:16px;min-width:0}
+.ex-order-header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.ex-order-title{font-size:14px;font-weight:500;color:#24354b;line-height:1.7}.ex-order-code{direction:ltr;text-align:right;font:400 12px Inter,Arial,sans-serif;color:#74869c;margin-top:4px;overflow-wrap:anywhere}
+.ex-order-details{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:13px;padding:14px 0;border-top:1px solid var(--ex-line);border-bottom:1px solid var(--ex-line)}
+.ex-order-details .ex-value{font-size:15px;font-weight:500}.ex-order-footer{display:flex;justify-content:space-between;align-items:center;gap:9px;flex-wrap:wrap;margin-top:12px;color:#8591a1;font-size:11px}
+.ex-note{border:1px solid #e7edf6;background:#f9fbfe;border-radius:13px;color:#64768b;font-size:12px;line-height:1.95;padding:12px 15px;margin-top:16px}
+.ex-rates{display:grid;grid-template-columns:repeat(auto-fit,minmax(225px,1fr));gap:11px;margin-top:13px}
+.ex-rate{border:1px solid #e7edf5;border-radius:16px;background:#fff;padding:15px;min-width:0}.ex-rate-top{display:flex;align-items:flex-start;justify-content:space-between;gap:9px}
+.ex-rate h4{font-size:14px;font-weight:500;color:#24344c}.ex-rate .ex-value{font-size:19px}.ex-rate small{color:#8594a5;font-size:11px;line-height:1.85}
+#pgRates>.sec-hdr{background:#fff;border:1px solid #edf1f5;border-radius:18px;padding:17px 19px;margin-bottom:15px}
+#pgRates>.tbl-wrap{background:#fff;border:1px solid #edf1f5;border-radius:18px;overflow:hidden}
+#pgRates th{background:#f7faff;font-weight:500}#pgRates td{padding-top:12px;padding-bottom:12px}
+#pgDashboard .ex-dash-shortcut{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;padding:17px 19px;margin-bottom:17px;background:#fff;border:1px solid #e8edf4;border-radius:19px}
+#pgDashboard .ex-dash-shortcut h3{color:var(--ex-blue);font-size:15px;font-weight:600}#pgDashboard .ex-dash-shortcut p{font-size:12px;color:#7b899b;line-height:1.8;margin-top:4px}
+#pgDashboard .stat-card{border-radius:18px;border:1px solid #e9eef5;box-shadow:0 6px 24px rgba(20,42,70,.035)}
+.ex-pdf-source{position:fixed;left:-10000px;top:0;width:790px;background:#fff;padding:29px;color:#13253e;font-family:R,Arial,sans-serif}
+.ex-pdf-source .ex-title{margin-top:16px}.ex-pdf-source table{width:100%;border-collapse:collapse;table-layout:fixed}.ex-pdf-source th,.ex-pdf-source td{padding:9px 6px;border-bottom:1px solid #e5ebf3;text-align:right;overflow-wrap:anywhere;font-size:11px;font-weight:400}
+.ex-pdf-source th{color:#1685fa}.ex-pdf-source .ex-value{font-size:18px}
+@media(max-width:1070px){.ex-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.ex-order-details{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:540px){#pgStatistics .ex-sheet,#pgRates .ex-sheet{padding:17px 13px;border-radius:21px}.ex-logo{font-size:25px}.ex-head h3{font-size:16px}.ex-value{font-size:19px}.ex-card{padding:12px}.ex-order{padding:13px}.ex-btn{padding:9px 11px}.ex-input[type=date]{flex:1 1 115px;min-width:0}}
+@media(prefers-reduced-motion:reduce){.ex-btn{transition:none}}
+@media print{.ex-actions{display:none!important}}

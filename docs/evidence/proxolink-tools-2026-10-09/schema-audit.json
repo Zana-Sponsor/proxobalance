@@ -1,0 +1,55 @@
+{
+  "mode": "metadata-only; no customer row reads or writes",
+  "authoritative_table": "public.proxolink_cards",
+  "hosted_before_change": {
+    "id": "uuid; gen_random_uuid()",
+    "user_id": "uuid; existing authenticated ownership",
+    "operational_status": [
+      "active",
+      "inactive"
+    ],
+    "technical_publish_status": [
+      "creating",
+      "ready",
+      "failed"
+    ],
+    "missing_isolated_columns": [
+      "page_kind",
+      "settings",
+      "archived_at",
+      "moderation_status"
+    ],
+    "rls_enabled": true,
+    "policies": [
+      "authenticated owner ALL: auth.uid() = user_id",
+      "existing admin ALL: pa_is_admin()"
+    ],
+    "grants": {
+      "authenticated": "existing CRUD",
+      "anon": "no private management SELECT"
+    },
+    "admin_mechanism": "existing protected profiles.is_admin lookup via STABLE SECURITY DEFINER pa_is_admin(); no duplicate admin system",
+    "advertisement_dependencies": [
+      "pa_ads asset/card RESTRICT",
+      "pa_ad_contact_links card RESTRICT"
+    ],
+    "storage": "existing owner folder SELECT/INSERT, unreferenced DELETE, no UPDATE; unique filenames; no upsert",
+    "existing_index": "proxolink_cards_owner_created_idx",
+    "metadata_only_explain": {
+      "scan": "Index Scan",
+      "estimated_rows": 1,
+      "estimated_width": 40,
+      "cost": "0.14..2.36",
+      "analyze": false
+    }
+  },
+  "migration": "proxo_app/supabase/migrations/20261009131901_proxolink_tools_moderation.sql",
+  "moderation": "NOT NULL pending default; CHECK pending/approved/rejected; invoker trigger, only existing trusted service_role/postgres decision transition",
+  "new_tables": 0,
+  "new_roles": 0,
+  "new_indexes": 0,
+  "production_migration_applied": false,
+  "production_publishing_activated": false,
+  "private_function_sources_retained": false,
+  "isolated_testing": "PostgreSQL17 disposable GitHub source CI; migration rollback/reapply + security/provider/FK contracts and seven API lifecycles"
+}

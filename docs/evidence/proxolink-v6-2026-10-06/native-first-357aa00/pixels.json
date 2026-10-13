@@ -1,0 +1,806 @@
+{
+  "environment": "Same Android 35 emulator / WebView / DPR 1 baseline versus candidate",
+  "animation_state": "CSS animations paused at zero; hint/toast hidden; original CSS/assets unchanged",
+  "cases": {
+    "pill-order-ku-portrait-320": {
+      "width": 320,
+      "height": 1520,
+      "changed_pixels": 69933,
+      "total_pixels": 486400,
+      "changed_fraction": 0.1437767269736842,
+      "mean_channel_error": 18.24844366776316,
+      "max_channel_error": 255,
+      "exact_pixels_equal": false
+    },
+    "pill-order-ku-portrait-375": {
+      "width": 375,
+      "height": 1520,
+      "changed_pixels": 82259,
+      "total_pixels": 570000,
+      "changed_fraction": 0.1443140350877193,
+      "mean_channel_error": 18.444533918128656,
+      "max_channel_error": 255,
+      "exact_pixels_equal": false
+    },
+    "pill-order-ku-portrait-393": {
+      "width": 393,
+      "height": 1520,
+      "changed_pixels": 86156,
+      "total_pixels": 597360,
+      "changed_fraction": 0.14422793625284586,
+      "mean_channel_error": 18.49380998616133,
+      "max_channel_error": 255,
+      "exact_pixels_equal": false
+    },
+    "pill-order-ku-portrait-430": {
+      "width": 430,
+      "height": 1520,
+      "changed_pixels": 93872,
+      "total_pixels": 653600,
+      "changed_fraction": 0.14362301101591188,
+      "mean_channel_error": 18.60297633618931,
+      "max_channel_error": 255,
+      "exact_pixels_equal": false
+    },
+    "pill-order-ku-portrait-768": {
+      "width": 768,
+      "height": 1520,
+      "changed_pixels": 93222,
+      "total_pixels": 1167360,
+      "changed_fraction": 0.0798571134868421,
+      "mean_channel_error": 10.350249565972222,
+      "max_channel_error": 255,
+      "exact_pixels_equal": false
+    },
+    "pill-order-ku-landscape-320": {
+      "width": 320,
+      "height": 192,
+      "changed_pixels": 432,
+      "total_pixels": 61440,
+      "changed_fraction": 0.00703125,
+      "mean_channel_error": 0.6413248697916667,
+      "max_channel_error": 191,
+      "exact_pixels_equal": false
+    },
+    "pill-order-ku-landscape-375": {
+      "width": 375,
+      "height": 225,
+      "changed_pixels": 619,
+      "total_pixels": 84375,
+      "changed_fraction": 0.0073362962962962965,
+      "mean_channel_error": 0.5394962962962963,
+      "max_channel_error": 188,
+      "exact_pixels_equal": false
+    },
+    "pill-order-ku-landscape-393": {
+      "width": 393,
+      "height": 236,
+      "changed_pixels": 666,
+      "total_pixels": 92748,
+      "changed_fraction": 0.007180747832837365,
+      "mean_channel_error": 0.5285540748407872,
+      "max_channel_error": 189,
+      "exact_pixels_equal": false
+    },
+    "pill-order-ku-landscape-430": {
+      "width": 430,
+      "height": 258,
+      "changed_pixels": 827,
+      "total_pixels": 110940,
+      "changed_fraction": 0.007454479899044529,
+      "mean_channel_error": 0.451168799951926,
+      "max_channel_error": 165,
+      "exact_pixels_equal": false
+    },
+    "pill-order-ku-landscape-768": {
+      "width": 768,
+      "height": 461,
+      "changed_pixels": 65983,
+      "total_pixels": 354048,
+      "changed_fraction": 0.1863673852133044,
+      "mean_channel_error": 25.134075982164376,
+      "max_channel_error": 255,
+      "exact_pixels_equal": false
+    },
+    "pill-order-en-portrait-320": {
+      "width": 320,
+      "height": 1520,
+      "changed_pixels": 69908,
+      "total_pixels": 486400,
+      "changed_fraction": 0.14372532894736842,
+      "mean_channel_error": 18.22151521381579,
+      "max_channel_error": 255,
+      "exact_pixels_equal": false
+    },
+    "pill-order-en-portrait-375": {
+      "width": 375,
+      "height": 1520,
+      "changed_pixels": 82284,
+      "total_pixels": 570000,
+      "changed_fraction": 0.1443578947368421,
+      "mean_channel_error": 18.420247953216375,
+      "max_channel_error": 255,
+      "exact_pixels_equal": false
+    },
+    "pill-order-en-portrait-393": {
+      "width": 393,
+      "height": 1520,
+      "changed_pixels": 86176,
+      "total_pixels": 597360,
+      "changed_fraction": 0.1442614169010312,
+      "mean_channel_error": 18.470398084906925,
+      "max_channel_error": 255,
+      "exact_pixels_equal": false
+    },
+    "pill-order-en-portrait-430": {
+      "width": 430,
+      "height": 1520,
+      "changed_pixels": 93866,
+      "total_pixels": 653600,
+      "changed_fraction": 0.14361383108935127,
+      "mean_channel_error": 18.58144124847001,
+      "max_channel_error": 255,
+      "exact_pixels_equal": false
+    },
+    "pill-order-en-portrait-768": {
+      "width": 768,
+      "height": 1520,
+      "changed_pixels": 93226,
+      "total_pixels": 1167360,
+      "changed_fraction": 0.07986054002192983,
+      "mean_channel_error": 10.33819672880117,
+      "max_channel_error": 255,
+      "exact_pixels_equal": false
+    },
+    "pill-order-en-landscape-320": {
+      "width": 320,
+      "height": 192,
+      "changed_pixels": 288,
+      "total_pixels": 61440,
+      "changed_fraction": 0.0046875,
+      "mean_channel_error": 0.4464138454861111,
+      "max_channel_error": 165,
+      "exact_pixels_equal": false
+    },
+    "pill-order-en-landscape-375": {
+      "width": 375,
+      "height": 225,
+      "changed_pixels": 0,
+      "total_pixels": 84375,
+      "changed_fraction": 0,
+      "mean_channel_error": 0,
+      "max_channel_error": 0,
+      "exact_pixels_equal": true
+    },
+    "pill-order-en-landscape-393": {
+      "width": 393,
+      "height": 236,
+      "changed_pixels": 492,
+      "total_pixels": 92748,
+      "changed_fraction": 0.0053046965972312074,
+      "mean_channel_error": 0.3907074366383462,
+      "max_channel_error": 137,
+      "exact_pixels_equal": false
+    },
+    "pill-order-en-landscape-430": {
+      "width": 430,
+      "height": 258,
+      "changed_pixels": 765,
+      "total_pixels": 110940,
+      "changed_fraction": 0.006895619253650622,
+      "mean_channel_error": 0.45077819842557537,
+      "max_channel_error": 165,
+      "exact_pixels_equal": false
+    },
+    "pill-order-en-landscape-768": {
+      "width": 768,
+      "height": 461,
+      "changed_pixels": 63685,
+      "total_pixels": 354048,
+      "changed_fraction": 0.1798767398770788,
+      "mean_channel_error": 24.68301567395758,
+      "max_channel_error": 255,
+      "exact_pixels_equal": false
+    },
+    "pill-mint-order-ku-portrait-320": {
+      "width": 320,
+      "height": 1520,
+      "changed_pixels": 69933,
+      "total_pixels": 486400,
+      "changed_fraction": 0.1437767269736842,
+      "mean_channel_error": 18.24844366776316,
+      "max_channel_error": 255,
+      "exact_pixels_equal": false
+    },
+    "pill-mint-order-ku-portrait-375": {
+      "width": 375,
+      "height": 1520,
+      "changed_pixels": 82259,
+      "total_pixels": 570000,
+      "changed_fraction": 0.1443140350877193,
+      "mean_channel_error": 18.444533918128656,
+      "max_channel_error": 255,
+      "exact_pixels_equal": false
+    },
+    "pill-mint-order-ku-portrait-393": {
+      "width": 393,
+      "height": 1520,
+      "changed_pixels": 86156,
+      "total_pixels": 597360,
+      "changed_fraction": 0.14422793625284586,
+      "mean_channel_error": 18.49380998616133,
+      "max_channel_error": 255,
+      "exact_pixels_equal": false
+    },
+    "pill-mint-order-ku-portrait-430": {
+      "width": 430,
+      "height": 1520,
+      "changed_pixels": 93873,
+      "total_pixels": 653600,
+      "changed_fraction": 0.14362454100367197,
+      "mean_channel_error": 18.602976846185232,
+      "max_channel_error": 255,
+      "exact_pixels_equal": false
+    },
+    "pill-mint-order-ku-portrait-768": {
+      "width": 768,
+      "height": 1520,
+      "changed_pixels": 93222,
+      "total_pixels": 1167360,
+      "changed_fraction": 0.0798571134868421,
+      "mean_channel_error": 10.350249565972222,
+      "max_channel_error": 255,
+      "exact_pixels_equal": false
+    },
+    "pill-mint-order-ku-landscape-320": {
+      "width": 320,
+      "height": 192,
+      "changed_pixels": 432,
+      "total_pixels": 61440,
+      "changed_fraction": 0.00703125,
+      "mean_channel_error": 0.6360460069444445,
+      "max_channel_error": 191,
+      "exact_pixels_equal": false
+    },
+    "pill-mint-order-ku-landscape-375": {
+      "width": 375,
+      "height": 225,
+      "changed_pixels": 615,
+      "total_pixels": 84375,
+      "changed_fraction": 0.007288888888888889,
+      "mean_channel_error": 0.5340325925925926,
+      "max_channel_error": 188,
+      "exact_pixels_equal": false
+    },
+    "pill-mint-order-ku-landscape-393": {
+      "width": 393,
+      "height": 236,
+      "changed_pixels": 658,
+      "total_pixels": 92748,
+      "changed_fraction": 0.0070944926036140945,
+      "mean_channel_error": 0.5229618608128118,
+      "max_channel_error": 189,
+      "exact_pixels_equal": false
+    },
+    "pill-mint-order-ku-landscape-430": {
+      "width": 430,
+      "height": 258,
+      "changed_pixels": 870,
+      "total_pixels": 110940,
+      "changed_fraction": 0.007842076798269334,
+      "mean_channel_error": 0.4453548464635539,
+      "max_channel_error": 161,
+      "exact_pixels_equal": false
+    },
+    "pill-mint-order-ku-landscape-768": {
+      "width": 768,
+      "height": 461,
+      "changed_pixels": 63668,
+      "total_pixels": 354048,
+      "changed_fraction": 0.17982872378886477,
+      "mean_channel_error": 24.69024821493131,
+      "max_channel_error": 255,
+      "exact_pixels_equal": false
+    },
+    "pill-mint-order-en-portrait-320": {
+      "width": 320,
+      "height": 1520,
+      "changed_pixels": 69908,
+      "total_pixels": 486400,
+      "changed_fraction": 0.14372532894736842,
+      "mean_channel_error": 18.22151521381579,
+      "max_channel_error": 255,
+      "exact_pixels_equal": false
+    },
+    "pill-mint-order-en-portrait-375": {
+      "width": 375,
+      "height": 1520,
+      "changed_pixels": 82284,
+      "total_pixels": 570000,
+      "changed_fraction": 0.1443578947368421,
+      "mean_channel_error": 18.420247953216375,
+      "max_channel_error": 255,
+      "exact_pixels_equal": false
+    },
+    "pill-mint-order-en-portrait-393": {
+      "width": 393,
+      "height": 1520,
+      "changed_pixels": 86176,
+      "total_pixels": 597360,
+      "changed_fraction": 0.1442614169010312,
+      "mean_channel_error": 18.470398084906925,
+      "max_channel_error": 255,
+      "exact_pixels_equal": false
+    },
+    "pill-mint-order-en-portrait-430": {
+      "width": 430,
+      "height": 1520,
+      "changed_pixels": 93867,
+      "total_pixels": 653600,
+      "changed_fraction": 0.14361536107711137,
+      "mean_channel_error": 18.58144175846593,
+      "max_channel_error": 255,
+      "exact_pixels_equal": false
+    },
+    "pill-mint-order-en-portrait-768": {
+      "width": 768,
+      "height": 1520,
+      "changed_pixels": 93226,
+      "total_pixels": 1167360,
+      "changed_fraction": 0.07986054002192983,
+      "mean_channel_error": 10.33819672880117,
+      "max_channel_error": 255,
+      "exact_pixels_equal": false
+    },
+    "pill-mint-order-en-landscape-320": {
+      "width": 320,
+      "height": 192,
+      "changed_pixels": 288,
+      "total_pixels": 61440,
+      "changed_fraction": 0.0046875,
+      "mean_channel_error": 0.4408420138888889,
+      "max_channel_error": 161,
+      "exact_pixels_equal": false
+    },
+    "pill-mint-order-en-landscape-375": {
+      "width": 375,
+      "height": 225,
+      "changed_pixels": 182,
+      "total_pixels": 84375,
+      "changed_fraction": 0.002157037037037037,
+      "mean_channel_error": 0.15124938271604937,
+      "max_channel_error": 188,
+      "exact_pixels_equal": false
+    },
+    "pill-mint-order-en-landscape-393": {
+      "width": 393,
+      "height": 236,
+      "changed_pixels": 484,
+      "total_pixels": 92748,
+      "changed_fraction": 0.005218441368007936,
+      "mean_channel_error": 0.38511162864248644,
+      "max_channel_error": 132,
+      "exact_pixels_equal": false
+    },
+    "pill-mint-order-en-landscape-430": {
+      "width": 430,
+      "height": 258,
+      "changed_pixels": 921,
+      "total_pixels": 110940,
+      "changed_fraction": 0.00830178474851271,
+      "mean_channel_error": 0.5631242112853795,
+      "max_channel_error": 190,
+      "exact_pixels_equal": false
+    },
+    "pill-mint-order-en-landscape-768": {
+      "width": 768,
+      "height": 461,
+      "changed_pixels": 63685,
+      "total_pixels": 354048,
+      "changed_fraction": 0.1798767398770788,
+      "mean_channel_error": 24.68301567395758,
+      "max_channel_error": 255,
+      "exact_pixels_equal": false
+    },
+    "pill-dark-order-ku-portrait-320": {
+      "width": 320,
+      "height": 1520,
+      "changed_pixels": 67667,
+      "total_pixels": 486400,
+      "changed_fraction": 0.13911800986842104,
+      "mean_channel_error": 6.941605674342105,
+      "max_channel_error": 211,
+      "exact_pixels_equal": false
+    },
+    "pill-dark-order-ku-portrait-375": {
+      "width": 375,
+      "height": 1520,
+      "changed_pixels": 79680,
+      "total_pixels": 570000,
+      "changed_fraction": 0.13978947368421052,
+      "mean_channel_error": 6.929866666666666,
+      "max_channel_error": 211,
+      "exact_pixels_equal": false
+    },
+    "pill-dark-order-ku-portrait-393": {
+      "width": 393,
+      "height": 1520,
+      "changed_pixels": 83502,
+      "total_pixels": 597360,
+      "changed_fraction": 0.13978505423865006,
+      "mean_channel_error": 6.92924311414669,
+      "max_channel_error": 211,
+      "exact_pixels_equal": false
+    },
+    "pill-dark-order-ku-portrait-430": {
+      "width": 430,
+      "height": 1520,
+      "changed_pixels": 91146,
+      "total_pixels": 653600,
+      "changed_fraction": 0.13945226438188493,
+      "mean_channel_error": 6.945170848633211,
+      "max_channel_error": 211,
+      "exact_pixels_equal": false
+    },
+    "pill-dark-order-ku-portrait-768": {
+      "width": 768,
+      "height": 1520,
+      "changed_pixels": 90597,
+      "total_pixels": 1167360,
+      "changed_fraction": 0.07760844983552631,
+      "mean_channel_error": 3.8655102110745614,
+      "max_channel_error": 211,
+      "exact_pixels_equal": false
+    },
+    "pill-dark-order-ku-landscape-320": {
+      "width": 320,
+      "height": 192,
+      "changed_pixels": 443,
+      "total_pixels": 61440,
+      "changed_fraction": 0.007210286458333334,
+      "mean_channel_error": 0.49391276041666665,
+      "max_channel_error": 191,
+      "exact_pixels_equal": false
+    },
+    "pill-dark-order-ku-landscape-375": {
+      "width": 375,
+      "height": 225,
+      "changed_pixels": 427,
+      "total_pixels": 84375,
+      "changed_fraction": 0.005060740740740741,
+      "mean_channel_error": 0.2229530864197531,
+      "max_channel_error": 129,
+      "exact_pixels_equal": false
+    },
+    "pill-dark-order-ku-landscape-393": {
+      "width": 393,
+      "height": 236,
+      "changed_pixels": 472,
+      "total_pixels": 92748,
+      "changed_fraction": 0.005089058524173028,
+      "mean_channel_error": 0.22649185606877417,
+      "max_channel_error": 129,
+      "exact_pixels_equal": false
+    },
+    "pill-dark-order-ku-landscape-430": {
+      "width": 430,
+      "height": 258,
+      "changed_pixels": 742,
+      "total_pixels": 110940,
+      "changed_fraction": 0.006688299981972237,
+      "mean_channel_error": 0.3023075536325942,
+      "max_channel_error": 142,
+      "exact_pixels_equal": false
+    },
+    "pill-dark-order-ku-landscape-768": {
+      "width": 768,
+      "height": 461,
+      "changed_pixels": 62726,
+      "total_pixels": 354048,
+      "changed_fraction": 0.1771680676066522,
+      "mean_channel_error": 9.529514830380815,
+      "max_channel_error": 211,
+      "exact_pixels_equal": false
+    },
+    "pill-dark-order-en-portrait-320": {
+      "width": 320,
+      "height": 1520,
+      "changed_pixels": 67667,
+      "total_pixels": 486400,
+      "changed_fraction": 0.13911800986842104,
+      "mean_channel_error": 6.961306195175439,
+      "max_channel_error": 211,
+      "exact_pixels_equal": false
+    },
+    "pill-dark-order-en-portrait-375": {
+      "width": 375,
+      "height": 1520,
+      "changed_pixels": 79680,
+      "total_pixels": 570000,
+      "changed_fraction": 0.13978947368421052,
+      "mean_channel_error": 6.946073099415205,
+      "max_channel_error": 211,
+      "exact_pixels_equal": false
+    },
+    "pill-dark-order-en-portrait-393": {
+      "width": 393,
+      "height": 1520,
+      "changed_pixels": 83502,
+      "total_pixels": 597360,
+      "changed_fraction": 0.13978505423865006,
+      "mean_channel_error": 6.944818311682514,
+      "max_channel_error": 211,
+      "exact_pixels_equal": false
+    },
+    "pill-dark-order-en-portrait-430": {
+      "width": 430,
+      "height": 1520,
+      "changed_pixels": 91146,
+      "total_pixels": 653600,
+      "changed_fraction": 0.13945226438188493,
+      "mean_channel_error": 6.960766523867809,
+      "max_channel_error": 211,
+      "exact_pixels_equal": false
+    },
+    "pill-dark-order-en-portrait-768": {
+      "width": 768,
+      "height": 1520,
+      "changed_pixels": 0,
+      "total_pixels": 1167360,
+      "changed_fraction": 0,
+      "mean_channel_error": 0,
+      "max_channel_error": 0,
+      "exact_pixels_equal": true
+    },
+    "pill-dark-order-en-landscape-320": {
+      "width": 320,
+      "height": 192,
+      "changed_pixels": 156,
+      "total_pixels": 61440,
+      "changed_fraction": 0.0025390625,
+      "mean_channel_error": 0.21365559895833333,
+      "max_channel_error": 191,
+      "exact_pixels_equal": false
+    },
+    "pill-dark-order-en-landscape-375": {
+      "width": 375,
+      "height": 225,
+      "changed_pixels": 427,
+      "total_pixels": 84375,
+      "changed_fraction": 0.005060740740740741,
+      "mean_channel_error": 0.2229530864197531,
+      "max_channel_error": 129,
+      "exact_pixels_equal": false
+    },
+    "pill-dark-order-en-landscape-393": {
+      "width": 393,
+      "height": 236,
+      "changed_pixels": 472,
+      "total_pixels": 92748,
+      "changed_fraction": 0.005089058524173028,
+      "mean_channel_error": 0.22649185606877417,
+      "max_channel_error": 129,
+      "exact_pixels_equal": false
+    },
+    "pill-dark-order-en-landscape-430": {
+      "width": 430,
+      "height": 258,
+      "changed_pixels": 700,
+      "total_pixels": 110940,
+      "changed_fraction": 0.006309716964124752,
+      "mean_channel_error": 0.3019409891232498,
+      "max_channel_error": 142,
+      "exact_pixels_equal": false
+    },
+    "pill-dark-order-en-landscape-768": {
+      "width": 768,
+      "height": 461,
+      "changed_pixels": 62726,
+      "total_pixels": 354048,
+      "changed_fraction": 0.1771680676066522,
+      "mean_channel_error": 9.530290619727646,
+      "max_channel_error": 211,
+      "exact_pixels_equal": false
+    },
+    "pill-white-order-ku-portrait-320": {
+      "width": 320,
+      "height": 1520,
+      "changed_pixels": 69933,
+      "total_pixels": 486400,
+      "changed_fraction": 0.1437767269736842,
+      "mean_channel_error": 18.24844366776316,
+      "max_channel_error": 255,
+      "exact_pixels_equal": false
+    },
+    "pill-white-order-ku-portrait-375": {
+      "width": 375,
+      "height": 1520,
+      "changed_pixels": 82259,
+      "total_pixels": 570000,
+      "changed_fraction": 0.1443140350877193,
+      "mean_channel_error": 18.444533918128656,
+      "max_channel_error": 255,
+      "exact_pixels_equal": false
+    },
+    "pill-white-order-ku-portrait-393": {
+      "width": 393,
+      "height": 1520,
+      "changed_pixels": 86156,
+      "total_pixels": 597360,
+      "changed_fraction": 0.14422793625284586,
+      "mean_channel_error": 18.49380998616133,
+      "max_channel_error": 255,
+      "exact_pixels_equal": false
+    },
+    "pill-white-order-ku-portrait-430": {
+      "width": 430,
+      "height": 1520,
+      "changed_pixels": 93872,
+      "total_pixels": 653600,
+      "changed_fraction": 0.14362301101591188,
+      "mean_channel_error": 18.60297633618931,
+      "max_channel_error": 255,
+      "exact_pixels_equal": false
+    },
+    "pill-white-order-ku-portrait-768": {
+      "width": 768,
+      "height": 1520,
+      "changed_pixels": 93221,
+      "total_pixels": 1167360,
+      "changed_fraction": 0.07985625685307017,
+      "mean_channel_error": 10.350249280427631,
+      "max_channel_error": 255,
+      "exact_pixels_equal": false
+    },
+    "pill-white-order-ku-landscape-320": {
+      "width": 320,
+      "height": 192,
+      "changed_pixels": 432,
+      "total_pixels": 61440,
+      "changed_fraction": 0.00703125,
+      "mean_channel_error": 0.676708984375,
+      "max_channel_error": 191,
+      "exact_pixels_equal": false
+    },
+    "pill-white-order-ku-landscape-375": {
+      "width": 375,
+      "height": 225,
+      "changed_pixels": 0,
+      "total_pixels": 84375,
+      "changed_fraction": 0,
+      "mean_channel_error": 0,
+      "max_channel_error": 0,
+      "exact_pixels_equal": true
+    },
+    "pill-white-order-ku-landscape-393": {
+      "width": 393,
+      "height": 236,
+      "changed_pixels": 479,
+      "total_pixels": 92748,
+      "changed_fraction": 0.005164531849743391,
+      "mean_channel_error": 0.42666508532079755,
+      "max_channel_error": 138,
+      "exact_pixels_equal": false
+    },
+    "pill-white-order-ku-landscape-430": {
+      "width": 430,
+      "height": 258,
+      "changed_pixels": 869,
+      "total_pixels": 110940,
+      "changed_fraction": 0.007833062916892014,
+      "mean_channel_error": 0.49114235923321914,
+      "max_channel_error": 166,
+      "exact_pixels_equal": false
+    },
+    "pill-white-order-ku-landscape-768": {
+      "width": 768,
+      "height": 461,
+      "changed_pixels": 63668,
+      "total_pixels": 354048,
+      "changed_fraction": 0.17982872378886477,
+      "mean_channel_error": 24.69024821493131,
+      "max_channel_error": 255,
+      "exact_pixels_equal": false
+    },
+    "pill-white-order-en-portrait-320": {
+      "width": 320,
+      "height": 1520,
+      "changed_pixels": 70075,
+      "total_pixels": 486400,
+      "changed_fraction": 0.14406866776315788,
+      "mean_channel_error": 18.248525904605263,
+      "max_channel_error": 255,
+      "exact_pixels_equal": false
+    },
+    "pill-white-order-en-portrait-375": {
+      "width": 375,
+      "height": 1520,
+      "changed_pixels": 82284,
+      "total_pixels": 570000,
+      "changed_fraction": 0.1443578947368421,
+      "mean_channel_error": 18.420247953216375,
+      "max_channel_error": 255,
+      "exact_pixels_equal": false
+    },
+    "pill-white-order-en-portrait-393": {
+      "width": 393,
+      "height": 1520,
+      "changed_pixels": 86176,
+      "total_pixels": 597360,
+      "changed_fraction": 0.1442614169010312,
+      "mean_channel_error": 18.470398084906925,
+      "max_channel_error": 255,
+      "exact_pixels_equal": false
+    },
+    "pill-white-order-en-portrait-430": {
+      "width": 430,
+      "height": 1520,
+      "changed_pixels": 94033,
+      "total_pixels": 653600,
+      "changed_fraction": 0.14386933904528765,
+      "mean_channel_error": 18.601548347613218,
+      "max_channel_error": 255,
+      "exact_pixels_equal": false
+    },
+    "pill-white-order-en-portrait-768": {
+      "width": 768,
+      "height": 1520,
+      "changed_pixels": 93225,
+      "total_pixels": 1167360,
+      "changed_fraction": 0.0798596833881579,
+      "mean_channel_error": 10.33819644325658,
+      "max_channel_error": 255,
+      "exact_pixels_equal": false
+    },
+    "pill-white-order-en-landscape-320": {
+      "width": 320,
+      "height": 192,
+      "changed_pixels": 288,
+      "total_pixels": 61440,
+      "changed_fraction": 0.0046875,
+      "mean_channel_error": 0.4835286458333333,
+      "max_channel_error": 166,
+      "exact_pixels_equal": false
+    },
+    "pill-white-order-en-landscape-375": {
+      "width": 375,
+      "height": 225,
+      "changed_pixels": 443,
+      "total_pixels": 84375,
+      "changed_fraction": 0.0052503703703703705,
+      "mean_channel_error": 0.42370765432098767,
+      "max_channel_error": 138,
+      "exact_pixels_equal": false
+    },
+    "pill-white-order-en-landscape-393": {
+      "width": 393,
+      "height": 236,
+      "changed_pixels": 488,
+      "total_pixels": 92748,
+      "changed_fraction": 0.005261568982619571,
+      "mean_channel_error": 0.4267225888069464,
+      "max_channel_error": 138,
+      "exact_pixels_equal": false
+    },
+    "pill-white-order-en-landscape-430": {
+      "width": 430,
+      "height": 258,
+      "changed_pixels": 789,
+      "total_pixels": 110940,
+      "changed_fraction": 0.007111952406706328,
+      "mean_channel_error": 0.4906886605372273,
+      "max_channel_error": 166,
+      "exact_pixels_equal": false
+    },
+    "pill-white-order-en-landscape-768": {
+      "width": 768,
+      "height": 461,
+      "changed_pixels": 63685,
+      "total_pixels": 354048,
+      "changed_fraction": 0.1798767398770788,
+      "mean_channel_error": 24.68301567395758,
+      "max_channel_error": 255,
+      "exact_pixels_equal": false
+    }
+  }
+}
