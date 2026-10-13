@@ -1,3 +1,5 @@
+> Terminal update: [run38265055827 and hosted38264179020](PROXOLINK_NATIVE_RUN_38265055827.md). Notice8/8, refresh8/8, browser3/3 and both selectors12/12 PASS at4b816. Pixels234/240, six failed pairs/1134pixels/maxdelta1. Hosted ran and observed eight absent staging settings. Prior waiting statuses below are historical. New repaint code is diagnostic only.
+
 > October12 executable work: [candidate notice fix and controlled native experiment](PROXOLINK_FIX_PROGRESS_2026-10-12.md). Native outcomes pending; hosted request38264179020 has been triggered.
 
 > Current terminal native evidence: [run38070780315 audit](PROXOLINK_NATIVE_RUN_38070780315.md). Approval/workspace blockers below are superseded; browser3/3 and both choosers12/12 passed; strict pixels8failed and notice4failed remain. Hosted skipped by marker condition.
@@ -30,7 +32,7 @@ Source CI38265055650: Flutter analysis, old/new notice reproduction and full tes
 | I: exact compact textual moderation badges | Complete | pending/approved/rejected labels and restrained colors; all status images. |
 | J: server-stored NOT NULL pending default/CHECK, no client decisions | Complete | Additive migration, request denial, direct-role tests; technical failure remains distinct. |
 | J: trusted pending→approved/rejected mechanism | Complete | Existing service-role authority and invoker trigger; disposable tests. |
-| J: actual hosted moderation contract in isolated environment | Blocked | New hosted run38264179020 waits at configured environment review; its configuration step has not executed. Current missing settings are unknown. Production unchanged. |
+| J: actual hosted moderation contract in isolated environment | Blocked |Hosted38264179020 executed; presence-only artifact confirms eight absent PROXO_STAGING settings listed in terminal report. Native settings present. Isolated configuration needed; no production writes.|
 | K: owner SELECT/INSERT/UPDATE/DELETE, immutable identity/owner | Complete | Existing RLS plus guard migrations, three disposable SQL suites and seven API lifecycles. |
 | K: no anonymous management reads, no client owner trust | Complete | Current grants/owner policies, request tests and native security preflight. |
 | K: immediate logout/account-switch isolation, stale-result denial | Complete | Controller/form tests and upload owner checks pass current source CI; late old-owner results are rejected. Hosted two-account/device journey remains blocked separately. |
@@ -89,9 +91,9 @@ Source CI38265055650: Flutter analysis, old/new notice reproduction and full tes
 | AK: generated distinct UUID/multiple pages/owner and immutable boundaries | Complete | Existing disposable PostgreSQL suites and API lifecycle evidence. |
 | AK: stored moderation/trusted transitions/invalid values/provider/FK/grants | Complete | Tools moderation SQL suite, RLS suites and native read-only security preflight. |
 | AK: isolated current Tools hosted runner implementation | Complete | Adds12 current type×style upload/create/read/real HTML+avatar/owner/session/delete lifecycles; trusted-transition/dependency observation requires separate authorized setup. Provider-fixture orchestration/security checks pass146Node suite. |
-| AK: real hosted authenticated UI/API/DB journey | Blocked | Hosted run38264179020 requested via existing marker; waiting review, not skipped. Historical absent-setting list is not a current diagnosis. No new hosted/UI account-switch result; no production writes. |
+| AK: real hosted authenticated UI/API/DB journey | Blocked |Hosted38264179020 executed; presence-only artifact confirms eight absent PROXO_STAGING settings listed in terminal report. Native settings present. Isolated configuration needed; no production writes.|
 | AL: actual Create Ad vs ProxoLink widget screen notices | Complete | Actual submit taps; decoded thumbnails; same appearance; fully visible400/4900ms,exit5100ms,removed5500ms atfour widths. |
-| AL: native full-screen notice comparison | Pending | Completed cc52 run:4/8 pass; Ad320 and ProxoLink393/430/768 fail400ms. Product timeline fix4b816 passes controlled old/new regression and full Flutter suite; native400/4900/5500 acceptance remains Pending on run38265055827. |
+| AL: native full-screen notice comparison | Complete |4b816 native38265055827:8/8 pass including all four former failures. Fixed scheduled-entry timeline; unchanged400/4900/5500ms assertions. Raw evidence linked in terminal report. |
 | AM: images320/393/430/768, Tools/multilingual/status/empty/error/Create/styles | Complete |58 original plus80 actual-screen fictional widget PNGs retained with dimensions/hashes; final CI matches. Browser renderer images and native artifacts are labeled separately. |
 | AM: actual placement/padding/gaps/type/action stacking/rationale documented | Complete | Existing forty-item report, card/source measurements. |
 | AN: no extra edit/archive/activate/menu/analytics/share/internal preview/types/templates/admin/table | Complete | Current reachable customer routes and negative tests; legacy compatibility editor appears only in debug verification, not Tools navigation. |
@@ -99,7 +101,7 @@ Source CI38265055650: Flutter analysis, old/new notice reproduction and full tes
 | KVM: current protected runner execution | Complete | cc52 current run secure setup/KVM passed; native gate executed and failed pixels/notices, not readiness. |
 | AO: all40 report items | Complete | AO report and October12 supplement identify4b816 executable, exact fix/diagnostic paths, actual source results and pending native/hosted gates; no completion claim. |
 | AO/guardrails: PR7Draft/Open/Unmerged; production publishing/migrations/customer data untouched | Complete | Current PR metadata and read-only operations; no activation or production migration. |
-| Native: strict FIRST-frame zero-pixel parity | Pending | Current run232/240 exact;8failed pairs/8pixels/maxdelta1. New case IDs and full coordinates independently audited. Root cause/fix unresolved. |
+| Native: strict FIRST-frame zero-pixel parity | Pending |4b816:234/240 exact;6failed pairs/1134pixels/maxdelta1. Native redraw26/26 unchanged; WebContents readback changed11. Root cause/remedy unresolved; next repaint diagnostic queued. |
 | Workspace: local inspection and artifact extraction | Complete | Connection restored; repository/current artifact recovered; digest/CRC and independent PNG audit complete. Local Android adb/KVM unavailable; GitHub runner executed. |
 
 

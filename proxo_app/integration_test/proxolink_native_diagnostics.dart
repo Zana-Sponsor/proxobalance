@@ -1,4 +1,4 @@
-// Debug-only read-only observations. No template, resource, CSS or GPU setting changes.
+// Debug-only diagnostics. Acceptance captures precede all controlled interventions.
 const nativeDiagnosticPoints = <String,List<int>>{
  'pill-contact-en-portrait-768':[225,386],
  'pill-order-ku-portrait-768':[380,222],
@@ -14,6 +14,7 @@ const nativeDiagnosticPoints = <String,List<int>>{
  'pill-download-ku-portrait-768':[583,90],
  'pill-mint-contact-en-portrait-768':[290,228],
  'pill-mint-download-ku-portrait-320':[257,88],
+ 'pill-white-contact-ku-portrait-393':[196,387],
 };
 const nativeReproductionIds = <String>[
  'pill-contact-en-portrait-768','pill-order-ku-portrait-768',
@@ -80,3 +81,19 @@ String nativeDiagnosticScript(List<int> point) => r'''
   visibility:document.visibilityState==='visible',document_complete:document.readyState==='complete'});
 })()
 '''.replaceAll('POINT_X','${point[0]}').replaceAll('POINT_Y','${point[1]}');
+
+// Diagnostic only, after FIRST and both repeat frames. Force a WebContents
+// repaint independently of CDP readback, restoring the exact inline attribute.
+const nativeRepaintScript = r'''
+(()=>{
+ const root=document.documentElement,original=root.getAttribute('style');
+ window.__nativeRepaint={done:false,restored:false};
+ root.style.setProperty('visibility','hidden','important');
+ requestAnimationFrame(()=>requestAnimationFrame(()=>{
+  if(original===null)root.removeAttribute('style');else root.setAttribute('style',original);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+   window.__nativeRepaint={done:true,restored:root.getAttribute('style')===original};
+  }));
+ }));
+})();
+''';

@@ -103,6 +103,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npx playwright install --with-deps chromium
+      - run: node scripts/proxolink-repaint-contract.mjs
       - run: node scripts/proxolink-v6-responsive.mjs
       - uses: actions/upload-artifact@v4
         if: always()

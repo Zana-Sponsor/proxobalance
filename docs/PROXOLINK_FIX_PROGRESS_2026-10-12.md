@@ -1,3 +1,5 @@
+> Terminal update: [run38265055827 and hosted38264179020](PROXOLINK_NATIVE_RUN_38265055827.md). Notice8/8, refresh8/8, browser3/3 and both selectors12/12 PASS at4b816. Pixels234/240, six failed pairs/1134pixels/maxdelta1. Hosted ran and observed eight absent staging settings. Prior waiting statuses below are historical. New repaint code is diagnostic only.
+
 # Executable fixes and controlled experiments — October12
 
 Not COMPLETE. Continues faf9a960 without redesign or production changes.

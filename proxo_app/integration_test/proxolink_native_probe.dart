@@ -205,7 +205,7 @@ class _ProbeState extends State<_Probe> {
     if(instrument)'diagnostics':{...diagnostic,'flutter_bounds':[origin.dx,origin.dy,box.size.width,box.size.height]},
     'viewport':{'left':origin.dx.floor(),'top':origin.dy.floor(),'width':box.size.width.round(),'height':box.size.height.round(),'css_height':box.size.height.round()}});
    final ack=File('${_files.path}/proxolink-verification-ack');var seen=false;
-   var surfaceCaptured=false,postObserved=false,redrawObserved=false;
+   var surfaceCaptured=false,postObserved=false,redrawObserved=false,repaintObserved=false;
    for(var i=0;i<240;i++){
     if(surfaceInstrument&&!surfaceCaptured){
      final request=File('${_files.path}/proxolink-diagnostic-request');
@@ -227,6 +227,25 @@ class _ProbeState extends State<_Probe> {
       final redrawn=await _nativeCapture.invokeMethod<bool>('awaitDraw',
         {'webViewIdentifier':platform.webViewIdentifier,'diagnostics':true});
       await _write('proxolink-redraw-state.json',{'id':captureId,'redrawn':redrawn==true,
+       'state':{'dom':await _read(controller,nativeDiagnosticScript(nativeDiagnosticPoints[id]!)),
+        'native':await _nativeCapture.invokeMapMethod<String,dynamic>('diagnostics',{'webViewIdentifier':platform.webViewIdentifier}),
+        'flutter_bounds':[origin.dx,origin.dy,box.size.width,box.size.height]}});
+     }
+    }
+    if(surfaceInstrument&&!repaintObserved){
+     final request=File('${_files.path}/proxolink-repaint-request');
+     if(await request.exists()&&(await request.readAsString()).trim()==captureId){
+      repaintObserved=true;
+      await controller.runJavaScript(nativeRepaintScript);
+      var restored=false;
+      for(var poll=0;poll<120;poll++){
+       final state=await _read(controller,'JSON.stringify(window.__nativeRepaint)');
+       if(state['done']==true&&state['restored']==true){restored=true;break;}
+       await Future<void>.delayed(const Duration(milliseconds:50));
+      }
+      final drawn=restored&&(await _nativeCapture.invokeMethod<bool>('awaitDraw',
+       {'webViewIdentifier':platform.webViewIdentifier,'diagnostics':true})==true);
+      await _write('proxolink-repaint-state.json',{'id':captureId,'restored':restored,'drawn':drawn,
        'state':{'dom':await _read(controller,nativeDiagnosticScript(nativeDiagnosticPoints[id]!)),
         'native':await _nativeCapture.invokeMapMethod<String,dynamic>('diagnostics',{'webViewIdentifier':platform.webViewIdentifier}),
         'flutter_bounds':[origin.dx,origin.dy,box.size.width,box.size.height]}});

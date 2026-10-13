@@ -1,0 +1,150 @@
+{
+  "roles": {
+    "pill-contact-en-portrait-768-candidate": {
+      "redraw_changed_pixels": 0,
+      "post_webcontents_changed_pixels": 1
+    },
+    "pill-contact-en-portrait-768-baseline": {
+      "redraw_changed_pixels": 0,
+      "post_webcontents_changed_pixels": 0
+    },
+    "pill-order-ku-portrait-768-candidate": {
+      "redraw_changed_pixels": 0,
+      "post_webcontents_changed_pixels": 1
+    },
+    "pill-order-ku-portrait-768-baseline": {
+      "redraw_changed_pixels": 0,
+      "post_webcontents_changed_pixels": 0
+    },
+    "pill-order-en-portrait-768-candidate": {
+      "redraw_changed_pixels": 0,
+      "post_webcontents_changed_pixels": 1
+    },
+    "pill-order-en-portrait-768-baseline": {
+      "redraw_changed_pixels": 0,
+      "post_webcontents_changed_pixels": 0
+    },
+    "pill-download-ku-portrait-768-candidate": {
+      "redraw_changed_pixels": 0,
+      "post_webcontents_changed_pixels": 0
+    },
+    "pill-download-ku-portrait-768-baseline": {
+      "redraw_changed_pixels": 0,
+      "post_webcontents_changed_pixels": 0
+    },
+    "pill-mint-contact-ku-portrait-430-candidate": {
+      "redraw_changed_pixels": 0,
+      "post_webcontents_changed_pixels": 1
+    },
+    "pill-mint-contact-ku-portrait-430-baseline": {
+      "redraw_changed_pixels": 0,
+      "post_webcontents_changed_pixels": 1
+    },
+    "pill-mint-contact-ku-portrait-768-candidate": {
+      "redraw_changed_pixels": 0,
+      "post_webcontents_changed_pixels": 1
+    },
+    "pill-mint-contact-ku-portrait-768-baseline": {
+      "redraw_changed_pixels": 0,
+      "post_webcontents_changed_pixels": 1
+    },
+    "pill-mint-contact-en-portrait-768-candidate": {
+      "redraw_changed_pixels": 0,
+      "post_webcontents_changed_pixels": 1
+    },
+    "pill-mint-contact-en-portrait-768-baseline": {
+      "redraw_changed_pixels": 0,
+      "post_webcontents_changed_pixels": 1
+    },
+    "pill-mint-order-ku-portrait-320-candidate": {
+      "redraw_changed_pixels": 0,
+      "post_webcontents_changed_pixels": 0
+    },
+    "pill-mint-order-ku-portrait-320-baseline": {
+      "redraw_changed_pixels": 0,
+      "post_webcontents_changed_pixels": 0
+    },
+    "pill-mint-order-ku-portrait-430-candidate": {
+      "redraw_changed_pixels": 0,
+      "post_webcontents_changed_pixels": 0
+    },
+    "pill-mint-order-ku-portrait-430-baseline": {
+      "redraw_changed_pixels": 0,
+      "post_webcontents_changed_pixels": 0
+    },
+    "pill-mint-order-ku-portrait-768-candidate": {
+      "redraw_changed_pixels": 0,
+      "post_webcontents_changed_pixels": 1
+    },
+    "pill-mint-order-ku-portrait-768-baseline": {
+      "redraw_changed_pixels": 0,
+      "post_webcontents_changed_pixels": 0
+    },
+    "pill-mint-order-en-portrait-430-candidate": {
+      "redraw_changed_pixels": 0,
+      "post_webcontents_changed_pixels": 1
+    },
+    "pill-mint-order-en-portrait-430-baseline": {
+      "redraw_changed_pixels": 0,
+      "post_webcontents_changed_pixels": 0
+    },
+    "pill-mint-order-en-portrait-768-candidate": {
+      "redraw_changed_pixels": 0,
+      "post_webcontents_changed_pixels": 0
+    },
+    "pill-mint-order-en-portrait-768-baseline": {
+      "redraw_changed_pixels": 0,
+      "post_webcontents_changed_pixels": 0
+    },
+    "pill-mint-download-ku-portrait-320-candidate": {
+      "redraw_changed_pixels": 0,
+      "post_webcontents_changed_pixels": 0
+    },
+    "pill-mint-download-ku-portrait-320-baseline": {
+      "redraw_changed_pixels": 0,
+      "post_webcontents_changed_pixels": 0
+    }
+  },
+  "reproductions": {
+    "pill-contact-en-portrait-768": {
+      "candidate_aa": 0,
+      "baseline_aa": 0,
+      "fresh_candidate_baseline": 0
+    },
+    "pill-order-ku-portrait-768": {
+      "candidate_aa": 0,
+      "baseline_aa": 0,
+      "fresh_candidate_baseline": 1
+    },
+    "pill-mint-contact-ku-portrait-768": {
+      "candidate_aa": 0,
+      "baseline_aa": 0,
+      "fresh_candidate_baseline": 0
+    },
+    "pill-mint-order-ku-portrait-320": {
+      "candidate_aa": 0,
+      "baseline_aa": 0,
+      "fresh_candidate_baseline": 0
+    },
+    "pill-mint-order-ku-portrait-430": {
+      "candidate_aa": 0,
+      "baseline_aa": 0,
+      "fresh_candidate_baseline": 1
+    },
+    "pill-mint-order-ku-portrait-768": {
+      "candidate_aa": 0,
+      "baseline_aa": 0,
+      "fresh_candidate_baseline": 1
+    },
+    "pill-mint-order-en-portrait-430": {
+      "candidate_aa": 0,
+      "baseline_aa": 0,
+      "fresh_candidate_baseline": 1
+    },
+    "pill-mint-order-en-portrait-768": {
+      "candidate_aa": 1,
+      "baseline_aa": 0,
+      "fresh_candidate_baseline": 1
+    }
+  }
+}

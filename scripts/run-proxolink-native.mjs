@@ -332,6 +332,22 @@ async function main() {
           roleMap[capture_id].state_after_redraw=redrawState;
           roleMap[capture_id].redraw_vs_first=await diagnosePixelPair(redrawCrop,first,crop,point,{coordinateLimit:8192});
           diagnosticWrite();
+          // Fixed WebContents repaint after original acceptance and native redraw.
+          // This is a causal experiment, not a replacement acceptance sample.
+          appWrite('proxolink-repaint-request',capture_id);
+          let repaintState;
+          for(let poll=0;poll<120;poll++){
+            const value=appRead('proxolink-repaint-state.json');
+            if(value){const response=JSON.parse(value);if(response.id===capture_id&&response.restored===true&&response.drawn===true){repaintState=safeRenderDiagnostics(response.state);break;}}
+            await pause(100);
+          }
+          if(!repaintState||repaintState.geometry_sha256!==redrawState.geometry_sha256)throw Error('native_diagnostics_incomplete');
+          const repaintPng=adb(['exec-out','screencap','-p']);
+          const repaintCrop=await sharp(repaintPng).extract({left:crop.left,top:crop.top,width:crop.width,height:crop.height}).png().toBuffer();
+          writeFileSync(output+'/'+capture_id+'-diagnostic-repaint-webview.png',repaintCrop);
+          roleMap[capture_id].state_after_repaint=repaintState;
+          roleMap[capture_id].repaint_vs_first=await diagnosePixelPair(repaintCrop,first,crop,point,{coordinateLimit:8192});
+          diagnosticWrite();
           const pipeline=await readNativePipeline(adb,packageId,capture_id);
           roleMap[capture_id].pipeline=pipeline.metadata;
           if(pipeline.png){

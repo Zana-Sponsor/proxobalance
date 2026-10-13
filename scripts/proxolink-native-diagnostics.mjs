@@ -9,6 +9,7 @@ export const DIAGNOSTIC_POINTS=Object.freeze({
  'pill-download-ku-portrait-768':[583,90],
  'pill-mint-contact-en-portrait-768':[290,228],
  'pill-mint-download-ku-portrait-320':[257,88],
+ 'pill-white-contact-ku-portrait-393':[196,387],
 });
 export const REPRODUCTION_IDS=Object.keys(DIAGNOSTIC_POINTS).slice(0,8);
 export const CHOOSER_IDS=['contact','order','download'].flatMap(type=>['pill','pill-mint','pill-dark','pill-white'].map(style=>`chooser-${type}-${style}`));
