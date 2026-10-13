@@ -1,0 +1,242 @@
+{
+  "create-chooser-contact-pill": {
+    "passed": true,
+    "form_screen": true,
+    "type_match": true,
+    "thumbnail_decoded": true,
+    "selection_changed": true,
+    "selected_state": true,
+    "provider_type_match": true,
+    "no_webview": true,
+    "no_preview_request": true,
+    "native_input": true,
+    "captured": true,
+    "width": 173,
+    "tap_bounds": [
+      606,
+      829.0585241730278,
+      173,
+      465.470737913486
+    ]
+  },
+  "create-chooser-contact-pill-mint": {
+    "passed": true,
+    "form_screen": true,
+    "type_match": true,
+    "thumbnail_decoded": true,
+    "selection_changed": true,
+    "selected_state": true,
+    "provider_type_match": true,
+    "no_webview": true,
+    "no_preview_request": true,
+    "native_input": true,
+    "captured": true,
+    "width": 173,
+    "tap_bounds": [
+      421,
+      829.0585241730278,
+      173,
+      465.470737913486
+    ]
+  },
+  "create-chooser-contact-pill-dark": {
+    "passed": true,
+    "form_screen": true,
+    "type_match": true,
+    "thumbnail_decoded": true,
+    "selection_changed": true,
+    "selected_state": true,
+    "provider_type_match": true,
+    "no_webview": true,
+    "no_preview_request": true,
+    "native_input": true,
+    "captured": true,
+    "width": 173,
+    "tap_bounds": [
+      606,
+      1306.5292620865139,
+      173,
+      465.470737913486
+    ]
+  },
+  "create-chooser-contact-pill-white": {
+    "passed": true,
+    "form_screen": true,
+    "type_match": true,
+    "thumbnail_decoded": true,
+    "selection_changed": true,
+    "selected_state": true,
+    "provider_type_match": true,
+    "no_webview": true,
+    "no_preview_request": true,
+    "native_input": true,
+    "captured": true,
+    "width": 173,
+    "tap_bounds": [
+      421,
+      1306.5292620865139,
+      173,
+      465.470737913486
+    ]
+  },
+  "create-chooser-order-pill": {
+    "passed": true,
+    "form_screen": true,
+    "type_match": true,
+    "thumbnail_decoded": true,
+    "selection_changed": true,
+    "selected_state": true,
+    "provider_type_match": true,
+    "no_webview": true,
+    "no_preview_request": true,
+    "native_input": true,
+    "captured": true,
+    "width": 173,
+    "tap_bounds": [
+      606,
+      829.0585241730278,
+      173,
+      465.470737913486
+    ]
+  },
+  "create-chooser-order-pill-mint": {
+    "passed": true,
+    "form_screen": true,
+    "type_match": true,
+    "thumbnail_decoded": true,
+    "selection_changed": true,
+    "selected_state": true,
+    "provider_type_match": true,
+    "no_webview": true,
+    "no_preview_request": true,
+    "native_input": true,
+    "captured": true,
+    "width": 173,
+    "tap_bounds": [
+      421,
+      829.0585241730278,
+      173,
+      465.470737913486
+    ]
+  },
+  "create-chooser-order-pill-dark": {
+    "passed": true,
+    "form_screen": true,
+    "type_match": true,
+    "thumbnail_decoded": true,
+    "selection_changed": true,
+    "selected_state": true,
+    "provider_type_match": true,
+    "no_webview": true,
+    "no_preview_request": true,
+    "native_input": true,
+    "captured": true,
+    "width": 173,
+    "tap_bounds": [
+      606,
+      1306.5292620865139,
+      173,
+      465.470737913486
+    ]
+  },
+  "create-chooser-order-pill-white": {
+    "passed": true,
+    "form_screen": true,
+    "type_match": true,
+    "thumbnail_decoded": true,
+    "selection_changed": true,
+    "selected_state": true,
+    "provider_type_match": true,
+    "no_webview": true,
+    "no_preview_request": true,
+    "native_input": true,
+    "captured": true,
+    "width": 173,
+    "tap_bounds": [
+      421,
+      1306.5292620865139,
+      173,
+      465.470737913486
+    ]
+  },
+  "create-chooser-download-pill": {
+    "passed": true,
+    "form_screen": true,
+    "type_match": true,
+    "thumbnail_decoded": true,
+    "selection_changed": true,
+    "selected_state": true,
+    "provider_type_match": true,
+    "no_webview": true,
+    "no_preview_request": true,
+    "native_input": true,
+    "captured": true,
+    "width": 173,
+    "tap_bounds": [
+      606,
+      829.0585241730278,
+      173,
+      465.470737913486
+    ]
+  },
+  "create-chooser-download-pill-mint": {
+    "passed": true,
+    "form_screen": true,
+    "type_match": true,
+    "thumbnail_decoded": true,
+    "selection_changed": true,
+    "selected_state": true,
+    "provider_type_match": true,
+    "no_webview": true,
+    "no_preview_request": true,
+    "native_input": true,
+    "captured": true,
+    "width": 173,
+    "tap_bounds": [
+      421,
+      829.0585241730278,
+      173,
+      465.470737913486
+    ]
+  },
+  "create-chooser-download-pill-dark": {
+    "passed": true,
+    "form_screen": true,
+    "type_match": true,
+    "thumbnail_decoded": true,
+    "selection_changed": true,
+    "selected_state": true,
+    "provider_type_match": true,
+    "no_webview": true,
+    "no_preview_request": true,
+    "native_input": true,
+    "captured": true,
+    "width": 173,
+    "tap_bounds": [
+      606,
+      1306.5292620865139,
+      173,
+      465.470737913486
+    ]
+  },
+  "create-chooser-download-pill-white": {
+    "passed": true,
+    "form_screen": true,
+    "type_match": true,
+    "thumbnail_decoded": true,
+    "selection_changed": true,
+    "selected_state": true,
+    "provider_type_match": true,
+    "no_webview": true,
+    "no_preview_request": true,
+    "native_input": true,
+    "captured": true,
+    "width": 173,
+    "tap_bounds": [
+      421,
+      1306.5292620865139,
+      173,
+      465.470737913486
+    ]
+  }
+}

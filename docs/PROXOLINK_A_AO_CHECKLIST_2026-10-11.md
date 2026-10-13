@@ -2,9 +2,9 @@
 
 Overall: **Pending / Blocked — not COMPLETE**.
 Specification: [complete A–AO specification](PROXOLINK_TOOLS_CREATE_SPEC_v4.md).
-Current executable: `f7112a8f069e1b8edad036254f6dbaa6aec7d671`. [Updated forty-item AO report](PROXOLINK_AO_REPORT_2026-10-11.md) records exact current source results and independently verified artifacts. Source CI38388402541: all five jobs passed,237 Flutter tests,153 backend tests,480 browser cases, database/RLS, edge and release/privacy/size checks. The controlled repaint restoration fix passes without changing native FIRST captures or zero-pixel acceptance.
+Last previously source-verified executable: `f7112a8f069e1b8edad036254f6dbaa6aec7d671`. Subsequent performance changes and their own verification are tracked in [performance report](FLUTTER_PERFORMANCE_2026-10-13.md). [Updated forty-item AO report](PROXOLINK_AO_REPORT_2026-10-11.md) records exact current source results and independently verified artifacts. Source CI38388402541: all five jobs passed,237 Flutter tests,153 backend tests,480 browser cases, database/RLS, edge and release/privacy/size checks. The controlled repaint restoration fix passes without changing native FIRST captures or zero-pixel acceptance.
 
-Last completed native executable4b816/run38265055827: notices8/8, refresh8/8, browser3/3 and both selectors12/12 pass; pixels234/240, six failed pairs/1134pixels/maxdelta1. New native38388402520 atf7112a8: APK passed, runtime115267707400 **not executed**, waiting at the configured environment review. Hosted38264179020 **executed**, observed eight absent staging settings; hosted journeys remain Blocked. These are distinct execution scopes. Complete rows below certify only their stated source/disposable-fixture or explicitly dated runtime criterion.
+Last completed native executable4b816/run38265055827: notices8/8, refresh8/8, browser3/3 and both selectors12/12 pass; pixels234/240, six failed pairs/1134pixels/maxdelta1. New native38388402520 atf7112a8: APK passed; runtime115267707400 **executed and failed**. Independently verified artifact:233/240 exact pairs,7failed pairs/8pixels/maxdelta1; notices8/8,refresh7/8,browser3/3,bothselectors12/12. See [current native result](PROXOLINK_NATIVE_38388402520.md). Approval is no longer blocking. Hosted38264179020 **executed**, observed eight absent staging settings; hosted journeys remain Blocked. These are distinct execution scopes. Complete rows below certify only their stated source/disposable-fixture or explicitly dated runtime criterion.
 
 | Requirement | Status | Evidence / remaining work |
 |---|---|---|
@@ -93,10 +93,25 @@ Last completed native executable4b816/run38265055827: notices8/8, refresh8/8, br
 | KVM: current protected runner execution | Complete | cc52 current run secure setup/KVM passed; native gate executed and failed pixels/notices, not readiness. |
 | AO: all40 report items | Complete | AO report and October12 supplement identify4b816 executable, exact fix/diagnostic paths, actual source results and pending native/hosted gates; no completion claim. |
 | AO/guardrails: PR7Draft/Open/Unmerged; production publishing/migrations/customer data untouched | Complete | Current PR metadata and read-only operations; no activation or production migration. |
-| Native: strict FIRST-frame zero-pixel parity | Pending |4b816:234/240 exact;6failed pairs/1134pixels/maxdelta1. Native redraw26/26 unchanged; WebContents readback changed11. Root cause/remedy unresolved; next repaint diagnostic queued. |
+| Native: strict FIRST-frame zero-pixel parity | Pending | f711/run38388402520:233/240 exact;7failed pairs/8pixels/maxdelta1. Independent digest/CRC/PNG audit and controlled repaint observations in current native report. Root cause/remedy unresolved; final performance-source native gate unexecuted. |
 | Workspace: local inspection and artifact extraction | Complete | Connection restored; repository/current artifact recovered; digest/CRC and independent PNG audit complete. Local Android adb/KVM unavailable; GitHub runner executed. |
 
 
 Latest product fix: repeated refresh failures re-arm the shared error notice even when the service reuses the same error instance. Regression proves two notices after expiry, cards retained, settled refresh and three reads.
 
 No production migration/publishing, security weakening, pixel tolerance changes or merge. Full task completion remains withheld.
+
+## Performance continuation — tested executable8c1a353
+
+Current tested executable `8c1a353d527b4b9f45f7591515452ae3f0e025c4`: source run38473249284 passed all five jobs,240 Flutter tests,153 backend tests,480 responsive cases, disposable database/RLS/edge checks and release/privacy/paired size checks. All146 widget PNGs independently match the immediate pre-performance artifact. [Full performance table, exact files, operation counts and profiling limits](FLUTTER_PERFORMANCE_2026-10-13.md).
+
+| Continuation requirement | Status | Evidence / blocker |
+|---|---|---|
+| Inspect navigation, initialization, rebuilds, caches, images, subscriptions and cleanup | Complete | Twelve-category report maps source findings and retained mechanisms |
+| Implement minimal demonstrated resource/request fixes | Complete | Hidden callbacks10→0 with active10 unchanged; banner reload joins2→1; disposed joins/channels1→0; unused Home request1→0; original/fixed assertions pass |
+| Preserve tested UI and behavior | Complete for source fixtures | 240 tests and146 exact widget images; physical/native coverage remains separately pending |
+| Reliable tap-to-first-frame and interactive readiness measurements | Blocked | No local profile SDK/device or representative before/after traces; operation counts are not latency measurements |
+| Full native gate at final executable | Pending | Run38473249236 explicitly requested; APK passed, runtime115559375465 waiting at configured Environment review |
+| Hosted check using existing mechanism | Pending | Same run includes hosted marker; hosted115557447546 waiting, presence check not re-executed; prior missing settings remain dated evidence |
+| Strict native zero-pixel and actual-screen refresh acceptance | Pending | Most recent completed f711 native:7failed pairs/8pixels/maxdelta1 and actual-home-refresh-320 failure; root cause/remedy not yet proven |
+| PR/production guardrails | Complete | PR7 Draft/Open/Unmerged; no production publishing or migrations |

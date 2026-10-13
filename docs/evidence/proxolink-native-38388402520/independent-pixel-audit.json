@@ -1,0 +1,93 @@
+{
+  "commit": "f7112a8f069e1b8edad036254f6dbaa6aec7d671",
+  "run": 38388402520,
+  "artifact": 11813922930,
+  "digest": "80cf2466e601cf2bd29a5071331fd57898ec89f95cb611bbbdd2ec81337aac8f",
+  "zip_crc_passed": true,
+  "total_pairs": 240,
+  "failed_pairs": 7,
+  "changed_pixels": 8,
+  "failures": [
+    {
+      "case": "pill-contact-en-portrait-768",
+      "changed_pixels": 1,
+      "max_channel_delta": 1,
+      "coordinates": [
+        [
+          380,
+          222
+        ]
+      ]
+    },
+    {
+      "case": "pill-order-ku-portrait-768",
+      "changed_pixels": 1,
+      "max_channel_delta": 1,
+      "coordinates": [
+        [
+          380,
+          222
+        ]
+      ]
+    },
+    {
+      "case": "pill-mint-contact-ku-portrait-430",
+      "changed_pixels": 1,
+      "max_channel_delta": 1,
+      "coordinates": [
+        [
+          282,
+          184
+        ]
+      ]
+    },
+    {
+      "case": "pill-mint-contact-en-portrait-430",
+      "changed_pixels": 1,
+      "max_channel_delta": 1,
+      "coordinates": [
+        [
+          282,
+          184
+        ]
+      ]
+    },
+    {
+      "case": "pill-mint-order-ku-portrait-768",
+      "changed_pixels": 1,
+      "max_channel_delta": 1,
+      "coordinates": [
+        [
+          290,
+          228
+        ]
+      ]
+    },
+    {
+      "case": "pill-mint-order-en-portrait-768",
+      "changed_pixels": 1,
+      "max_channel_delta": 1,
+      "coordinates": [
+        [
+          290,
+          228
+        ]
+      ]
+    },
+    {
+      "case": "pill-mint-download-ku-portrait-768",
+      "changed_pixels": 2,
+      "max_channel_delta": 1,
+      "coordinates": [
+        [
+          583,
+          90
+        ],
+        [
+          290,
+          228
+        ]
+      ]
+    }
+  ]
+}

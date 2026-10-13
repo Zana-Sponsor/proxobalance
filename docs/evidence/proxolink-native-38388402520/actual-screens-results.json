@@ -1,0 +1,2132 @@
+{
+  "fictional_backends": true,
+  "production_screen_classes": true,
+  "hosted_content_verified": false,
+  "cases": {
+    "actual-home-refresh-320": {
+      "passed": false,
+      "phase_observations": {
+        "100ms": {
+          "observed_elapsed_ms": 104,
+          "offset": 0,
+          "is_refreshing": true
+        },
+        "300ms": {
+          "observed_elapsed_ms": 302,
+          "offset": 51.72136085594889,
+          "is_refreshing": true
+        }
+      },
+      "failed_check": "actual_screen_refresh"
+    },
+    "actual-tools-refresh-320": {
+      "passed": true,
+      "same_scroll_element": true,
+      "spinner_closed": true,
+      "settled_offset": 0,
+      "collection_reads_added": 1,
+      "phase_observations": {
+        "100ms": {
+          "observed_elapsed_ms": 135,
+          "offset": 20.610847937594315,
+          "is_refreshing": true
+        },
+        "300ms": {
+          "observed_elapsed_ms": 301,
+          "offset": 63.0958435310377,
+          "is_refreshing": true
+        }
+      },
+      "offsets_100_300": [
+        20.610847937594315,
+        63.0958435310377
+      ]
+    },
+    "actual-ad-error-320": {
+      "passed": true,
+      "automatic_exit": true,
+      "real_form_validation": true,
+      "native_input": false,
+      "phase_observations": {
+        "400ms": {
+          "observed_elapsed_ms": 412,
+          "notice_count": 2,
+          "opacity": [
+            1,
+            1
+          ],
+          "size_factor": [
+            1,
+            1
+          ]
+        },
+        "4900ms": {
+          "observed_elapsed_ms": 4902,
+          "notice_count": 2,
+          "opacity": [
+            1,
+            1
+          ],
+          "size_factor": [
+            1,
+            1
+          ]
+        },
+        "5500ms": {
+          "observed_elapsed_ms": 5503,
+          "notice_count": 0,
+          "opacity": [],
+          "size_factor": []
+        }
+      },
+      "notice_counts": {
+        "400ms": 2,
+        "4900ms": 2,
+        "5500ms": 0
+      },
+      "visual_state": {
+        "400ms": {
+          "opacity": [
+            1,
+            1
+          ],
+          "size_factor": [
+            1,
+            1
+          ]
+        },
+        "4900ms": {
+          "opacity": [
+            1,
+            1
+          ],
+          "size_factor": [
+            1,
+            1
+          ]
+        },
+        "5500ms": {
+          "opacity": [],
+          "size_factor": []
+        }
+      },
+      "appearance_sha256": "73f949f3490e98ad8f7f999d712a81a350c61df33a1d3c6bf3a197707ec0c37e"
+    },
+    "actual-proxolink-error-320": {
+      "passed": true,
+      "automatic_exit": true,
+      "real_form_validation": true,
+      "native_input": false,
+      "phase_observations": {
+        "400ms": {
+          "observed_elapsed_ms": 428,
+          "notice_count": 2,
+          "opacity": [
+            1,
+            1
+          ],
+          "size_factor": [
+            1,
+            1
+          ]
+        },
+        "4900ms": {
+          "observed_elapsed_ms": 4901,
+          "notice_count": 2,
+          "opacity": [
+            1,
+            1
+          ],
+          "size_factor": [
+            1,
+            1
+          ]
+        },
+        "5500ms": {
+          "observed_elapsed_ms": 5504,
+          "notice_count": 0,
+          "opacity": [],
+          "size_factor": []
+        }
+      },
+      "notice_counts": {
+        "400ms": 2,
+        "4900ms": 2,
+        "5500ms": 0
+      },
+      "visual_state": {
+        "400ms": {
+          "opacity": [
+            1,
+            1
+          ],
+          "size_factor": [
+            1,
+            1
+          ]
+        },
+        "4900ms": {
+          "opacity": [
+            1,
+            1
+          ],
+          "size_factor": [
+            1,
+            1
+          ]
+        },
+        "5500ms": {
+          "opacity": [],
+          "size_factor": []
+        }
+      },
+      "appearance_sha256": "73f949f3490e98ad8f7f999d712a81a350c61df33a1d3c6bf3a197707ec0c37e"
+    },
+    "actual-home-refresh-393": {
+      "passed": true,
+      "same_scroll_element": true,
+      "spinner_closed": true,
+      "settled_offset": 0,
+      "collection_reads_added": 1,
+      "phase_observations": {
+        "100ms": {
+          "observed_elapsed_ms": 108,
+          "offset": 20.610847937594315,
+          "is_refreshing": true
+        },
+        "300ms": {
+          "observed_elapsed_ms": 306,
+          "offset": 63.200185631141096,
+          "is_refreshing": true
+        }
+      },
+      "offsets_100_300": [
+        20.610847937594315,
+        63.200185631141096
+      ]
+    },
+    "actual-tools-refresh-393": {
+      "passed": true,
+      "same_scroll_element": true,
+      "spinner_closed": true,
+      "settled_offset": 0,
+      "collection_reads_added": 1,
+      "phase_observations": {
+        "100ms": {
+          "observed_elapsed_ms": 101,
+          "offset": 28.065304791041683,
+          "is_refreshing": true
+        },
+        "300ms": {
+          "observed_elapsed_ms": 301,
+          "offset": 63.09585511205296,
+          "is_refreshing": true
+        }
+      },
+      "offsets_100_300": [
+        28.065304791041683,
+        63.09585511205296
+      ]
+    },
+    "actual-ad-error-393": {
+      "passed": true,
+      "automatic_exit": true,
+      "real_form_validation": true,
+      "native_input": false,
+      "phase_observations": {
+        "400ms": {
+          "observed_elapsed_ms": 416,
+          "notice_count": 2,
+          "opacity": [
+            1,
+            1
+          ],
+          "size_factor": [
+            1,
+            1
+          ]
+        },
+        "4900ms": {
+          "observed_elapsed_ms": 4901,
+          "notice_count": 2,
+          "opacity": [
+            1,
+            1
+          ],
+          "size_factor": [
+            1,
+            1
+          ]
+        },
+        "5500ms": {
+          "observed_elapsed_ms": 5502,
+          "notice_count": 0,
+          "opacity": [],
+          "size_factor": []
+        }
+      },
+      "notice_counts": {
+        "400ms": 2,
+        "4900ms": 2,
+        "5500ms": 0
+      },
+      "visual_state": {
+        "400ms": {
+          "opacity": [
+            1,
+            1
+          ],
+          "size_factor": [
+            1,
+            1
+          ]
+        },
+        "4900ms": {
+          "opacity": [
+            1,
+            1
+          ],
+          "size_factor": [
+            1,
+            1
+          ]
+        },
+        "5500ms": {
+          "opacity": [],
+          "size_factor": []
+        }
+      },
+      "appearance_sha256": "73f949f3490e98ad8f7f999d712a81a350c61df33a1d3c6bf3a197707ec0c37e"
+    },
+    "actual-proxolink-error-393": {
+      "passed": true,
+      "automatic_exit": true,
+      "real_form_validation": true,
+      "native_input": false,
+      "phase_observations": {
+        "400ms": {
+          "observed_elapsed_ms": 403,
+          "notice_count": 2,
+          "opacity": [
+            1,
+            1
+          ],
+          "size_factor": [
+            1,
+            1
+          ]
+        },
+        "4900ms": {
+          "observed_elapsed_ms": 4901,
+          "notice_count": 2,
+          "opacity": [
+            1,
+            1
+          ],
+          "size_factor": [
+            1,
+            1
+          ]
+        },
+        "5500ms": {
+          "observed_elapsed_ms": 5502,
+          "notice_count": 0,
+          "opacity": [],
+          "size_factor": []
+        }
+      },
+      "notice_counts": {
+        "400ms": 2,
+        "4900ms": 2,
+        "5500ms": 0
+      },
+      "visual_state": {
+        "400ms": {
+          "opacity": [
+            1,
+            1
+          ],
+          "size_factor": [
+            1,
+            1
+          ]
+        },
+        "4900ms": {
+          "opacity": [
+            1,
+            1
+          ],
+          "size_factor": [
+            1,
+            1
+          ]
+        },
+        "5500ms": {
+          "opacity": [],
+          "size_factor": []
+        }
+      },
+      "appearance_sha256": "73f949f3490e98ad8f7f999d712a81a350c61df33a1d3c6bf3a197707ec0c37e"
+    },
+    "actual-home-refresh-430": {
+      "passed": true,
+      "same_scroll_element": true,
+      "spinner_closed": true,
+      "settled_offset": 0,
+      "collection_reads_added": 1,
+      "phase_observations": {
+        "100ms": {
+          "observed_elapsed_ms": 101,
+          "offset": 28.065304791041683,
+          "is_refreshing": true
+        },
+        "300ms": {
+          "observed_elapsed_ms": 301,
+          "offset": 63.200185631141096,
+          "is_refreshing": true
+        }
+      },
+      "offsets_100_300": [
+        28.065304791041683,
+        63.200185631141096
+      ]
+    },
+    "actual-tools-refresh-430": {
+      "passed": true,
+      "same_scroll_element": true,
+      "spinner_closed": true,
+      "settled_offset": 0,
+      "collection_reads_added": 1,
+      "phase_observations": {
+        "100ms": {
+          "observed_elapsed_ms": 104,
+          "offset": 20.610847937594315,
+          "is_refreshing": true
+        },
+        "300ms": {
+          "observed_elapsed_ms": 326,
+          "offset": 63.0958435310377,
+          "is_refreshing": true
+        }
+      },
+      "offsets_100_300": [
+        20.610847937594315,
+        63.0958435310377
+      ]
+    },
+    "actual-ad-error-430": {
+      "passed": true,
+      "automatic_exit": true,
+      "real_form_validation": true,
+      "native_input": false,
+      "phase_observations": {
+        "400ms": {
+          "observed_elapsed_ms": 427,
+          "notice_count": 2,
+          "opacity": [
+            1,
+            1
+          ],
+          "size_factor": [
+            1,
+            1
+          ]
+        },
+        "4900ms": {
+          "observed_elapsed_ms": 4901,
+          "notice_count": 2,
+          "opacity": [
+            1,
+            1
+          ],
+          "size_factor": [
+            1,
+            1
+          ]
+        },
+        "5500ms": {
+          "observed_elapsed_ms": 5501,
+          "notice_count": 0,
+          "opacity": [],
+          "size_factor": []
+        }
+      },
+      "notice_counts": {
+        "400ms": 2,
+        "4900ms": 2,
+        "5500ms": 0
+      },
+      "visual_state": {
+        "400ms": {
+          "opacity": [
+            1,
+            1
+          ],
+          "size_factor": [
+            1,
+            1
+          ]
+        },
+        "4900ms": {
+          "opacity": [
+            1,
+            1
+          ],
+          "size_factor": [
+            1,
+            1
+          ]
+        },
+        "5500ms": {
+          "opacity": [],
+          "size_factor": []
+        }
+      },
+      "appearance_sha256": "73f949f3490e98ad8f7f999d712a81a350c61df33a1d3c6bf3a197707ec0c37e"
+    },
+    "actual-proxolink-error-430": {
+      "passed": true,
+      "automatic_exit": true,
+      "real_form_validation": true,
+      "native_input": false,
+      "phase_observations": {
+        "400ms": {
+          "observed_elapsed_ms": 402,
+          "notice_count": 2,
+          "opacity": [
+            1,
+            1
+          ],
+          "size_factor": [
+            1,
+            1
+          ]
+        },
+        "4900ms": {
+          "observed_elapsed_ms": 4901,
+          "notice_count": 2,
+          "opacity": [
+            1,
+            1
+          ],
+          "size_factor": [
+            1,
+            1
+          ]
+        },
+        "5500ms": {
+          "observed_elapsed_ms": 5513,
+          "notice_count": 0,
+          "opacity": [],
+          "size_factor": []
+        }
+      },
+      "notice_counts": {
+        "400ms": 2,
+        "4900ms": 2,
+        "5500ms": 0
+      },
+      "visual_state": {
+        "400ms": {
+          "opacity": [
+            1,
+            1
+          ],
+          "size_factor": [
+            1,
+            1
+          ]
+        },
+        "4900ms": {
+          "opacity": [
+            1,
+            1
+          ],
+          "size_factor": [
+            1,
+            1
+          ]
+        },
+        "5500ms": {
+          "opacity": [],
+          "size_factor": []
+        }
+      },
+      "appearance_sha256": "73f949f3490e98ad8f7f999d712a81a350c61df33a1d3c6bf3a197707ec0c37e"
+    },
+    "actual-home-refresh-768": {
+      "passed": true,
+      "same_scroll_element": true,
+      "spinner_closed": true,
+      "settled_offset": 0,
+      "collection_reads_added": 1,
+      "phase_observations": {
+        "100ms": {
+          "observed_elapsed_ms": 103,
+          "offset": 28.065744913984588,
+          "is_refreshing": true
+        },
+        "300ms": {
+          "observed_elapsed_ms": 300,
+          "offset": 63.073216077888105,
+          "is_refreshing": true
+        }
+      },
+      "offsets_100_300": [
+        28.065744913984588,
+        63.073216077888105
+      ]
+    },
+    "actual-tools-refresh-768": {
+      "passed": true,
+      "same_scroll_element": true,
+      "spinner_closed": true,
+      "settled_offset": 0,
+      "collection_reads_added": 1,
+      "phase_observations": {
+        "100ms": {
+          "observed_elapsed_ms": 104,
+          "offset": 28.065304791041683,
+          "is_refreshing": true
+        },
+        "300ms": {
+          "observed_elapsed_ms": 300,
+          "offset": 63.20018579725945,
+          "is_refreshing": true
+        }
+      },
+      "offsets_100_300": [
+        28.065304791041683,
+        63.20018579725945
+      ]
+    },
+    "actual-ad-error-768": {
+      "passed": true,
+      "automatic_exit": true,
+      "real_form_validation": true,
+      "native_input": false,
+      "phase_observations": {
+        "400ms": {
+          "observed_elapsed_ms": 412,
+          "notice_count": 2,
+          "opacity": [
+            1,
+            1
+          ],
+          "size_factor": [
+            1,
+            1
+          ]
+        },
+        "4900ms": {
+          "observed_elapsed_ms": 4902,
+          "notice_count": 2,
+          "opacity": [
+            1,
+            1
+          ],
+          "size_factor": [
+            1,
+            1
+          ]
+        },
+        "5500ms": {
+          "observed_elapsed_ms": 5512,
+          "notice_count": 0,
+          "opacity": [],
+          "size_factor": []
+        }
+      },
+      "notice_counts": {
+        "400ms": 2,
+        "4900ms": 2,
+        "5500ms": 0
+      },
+      "visual_state": {
+        "400ms": {
+          "opacity": [
+            1,
+            1
+          ],
+          "size_factor": [
+            1,
+            1
+          ]
+        },
+        "4900ms": {
+          "opacity": [
+            1,
+            1
+          ],
+          "size_factor": [
+            1,
+            1
+          ]
+        },
+        "5500ms": {
+          "opacity": [],
+          "size_factor": []
+        }
+      },
+      "appearance_sha256": "73f949f3490e98ad8f7f999d712a81a350c61df33a1d3c6bf3a197707ec0c37e"
+    },
+    "actual-proxolink-error-768": {
+      "passed": true,
+      "automatic_exit": true,
+      "real_form_validation": true,
+      "native_input": false,
+      "phase_observations": {
+        "400ms": {
+          "observed_elapsed_ms": 407,
+          "notice_count": 2,
+          "opacity": [
+            1,
+            1
+          ],
+          "size_factor": [
+            1,
+            1
+          ]
+        },
+        "4900ms": {
+          "observed_elapsed_ms": 4901,
+          "notice_count": 2,
+          "opacity": [
+            1,
+            1
+          ],
+          "size_factor": [
+            1,
+            1
+          ]
+        },
+        "5500ms": {
+          "observed_elapsed_ms": 5554,
+          "notice_count": 0,
+          "opacity": [],
+          "size_factor": []
+        }
+      },
+      "notice_counts": {
+        "400ms": 2,
+        "4900ms": 2,
+        "5500ms": 0
+      },
+      "visual_state": {
+        "400ms": {
+          "opacity": [
+            1,
+            1
+          ],
+          "size_factor": [
+            1,
+            1
+          ]
+        },
+        "4900ms": {
+          "opacity": [
+            1,
+            1
+          ],
+          "size_factor": [
+            1,
+            1
+          ]
+        },
+        "5500ms": {
+          "opacity": [],
+          "size_factor": []
+        }
+      },
+      "appearance_sha256": "73f949f3490e98ad8f7f999d712a81a350c61df33a1d3c6bf3a197707ec0c37e"
+    }
+  },
+  "captures": {
+    "actual-home-refresh-320-initial.png": {
+      "file": "actual-home-refresh-320-initial.png",
+      "phase": "initial",
+      "requested_elapsed_ms": 0,
+      "completed_elapsed_ms": 0,
+      "surface": {
+        "screen_x": 0,
+        "screen_y": 0,
+        "width": 1200,
+        "height": 1900,
+        "requested_ms": 4594999.161652,
+        "copied_ms": 4595079.296016,
+        "completed_ms": 4595305.323082
+      },
+      "viewport": {
+        "x": 440,
+        "y": 350,
+        "width": 320,
+        "height": 1200
+      },
+      "capture": "Android Flutter SurfaceView PixelCopy"
+    },
+    "actual-home-refresh-320-100ms.png": {
+      "file": "actual-home-refresh-320-100ms.png",
+      "phase": "100ms",
+      "requested_elapsed_ms": 105,
+      "completed_elapsed_ms": 402,
+      "surface": {
+        "screen_x": 0,
+        "screen_y": 0,
+        "width": 1200,
+        "height": 1900,
+        "requested_ms": 4595421.068868,
+        "copied_ms": 4595495.194507,
+        "completed_ms": 4595717.154226
+      },
+      "viewport": {
+        "x": 440,
+        "y": 350,
+        "width": 320,
+        "height": 1200
+      },
+      "capture": "Android Flutter SurfaceView PixelCopy"
+    },
+    "actual-home-refresh-320-300ms.png": {
+      "file": "actual-home-refresh-320-300ms.png",
+      "phase": "300ms",
+      "requested_elapsed_ms": 302,
+      "completed_elapsed_ms": 736,
+      "surface": {
+        "screen_x": 0,
+        "screen_y": 0,
+        "width": 1200,
+        "height": 1900,
+        "requested_ms": 4595618.223423,
+        "copied_ms": 4595710.539852,
+        "completed_ms": 4596040.598121
+      },
+      "viewport": {
+        "x": 440,
+        "y": 350,
+        "width": 320,
+        "height": 1200
+      },
+      "capture": "Android Flutter SurfaceView PixelCopy"
+    },
+    "actual-tools-refresh-320-initial.png": {
+      "file": "actual-tools-refresh-320-initial.png",
+      "phase": "initial",
+      "requested_elapsed_ms": 0,
+      "completed_elapsed_ms": 0,
+      "surface": {
+        "screen_x": 0,
+        "screen_y": 0,
+        "width": 1200,
+        "height": 1900,
+        "requested_ms": 4598003.454078,
+        "copied_ms": 4598053.281974,
+        "completed_ms": 4598168.981421
+      },
+      "viewport": {
+        "x": 440,
+        "y": 350,
+        "width": 320,
+        "height": 1200
+      },
+      "capture": "Android Flutter SurfaceView PixelCopy"
+    },
+    "actual-tools-refresh-320-100ms.png": {
+      "file": "actual-tools-refresh-320-100ms.png",
+      "phase": "100ms",
+      "requested_elapsed_ms": 135,
+      "completed_elapsed_ms": 621,
+      "surface": {
+        "screen_x": 0,
+        "screen_y": 0,
+        "width": 1200,
+        "height": 1900,
+        "requested_ms": 4598309.607112,
+        "copied_ms": 4598338.670418,
+        "completed_ms": 4598794.362745
+      },
+      "viewport": {
+        "x": 440,
+        "y": 350,
+        "width": 320,
+        "height": 1200
+      },
+      "capture": "Android Flutter SurfaceView PixelCopy"
+    },
+    "actual-tools-refresh-320-300ms.png": {
+      "file": "actual-tools-refresh-320-300ms.png",
+      "phase": "300ms",
+      "requested_elapsed_ms": 301,
+      "completed_elapsed_ms": 831,
+      "surface": {
+        "screen_x": 0,
+        "screen_y": 0,
+        "width": 1200,
+        "height": 1900,
+        "requested_ms": 4598475.981665,
+        "copied_ms": 4598512.454513,
+        "completed_ms": 4599004.569769
+      },
+      "viewport": {
+        "x": 440,
+        "y": 350,
+        "width": 320,
+        "height": 1200
+      },
+      "capture": "Android Flutter SurfaceView PixelCopy"
+    },
+    "actual-tools-refresh-320-settled.png": {
+      "file": "actual-tools-refresh-320-settled.png",
+      "phase": "settled",
+      "requested_elapsed_ms": 2661,
+      "completed_elapsed_ms": 2796,
+      "surface": {
+        "screen_x": 0,
+        "screen_y": 0,
+        "width": 1200,
+        "height": 1900,
+        "requested_ms": 4600836.152426,
+        "copied_ms": 4600856.451677,
+        "completed_ms": 4600970.275504
+      },
+      "viewport": {
+        "x": 440,
+        "y": 350,
+        "width": 320,
+        "height": 1200
+      },
+      "capture": "Android Flutter SurfaceView PixelCopy"
+    },
+    "actual-ad-error-320-initial.png": {
+      "file": "actual-ad-error-320-initial.png",
+      "phase": "initial",
+      "requested_elapsed_ms": 0,
+      "completed_elapsed_ms": 0,
+      "surface": {
+        "screen_x": 0,
+        "screen_y": 0,
+        "width": 1200,
+        "height": 1900,
+        "requested_ms": 4603728.890235,
+        "copied_ms": 4603747.450593,
+        "completed_ms": 4603852.472033
+      },
+      "viewport": {
+        "x": 440,
+        "y": 350,
+        "width": 320,
+        "height": 1200
+      },
+      "capture": "Android Flutter SurfaceView PixelCopy"
+    },
+    "actual-ad-error-320-400ms.png": {
+      "file": "actual-ad-error-320-400ms.png",
+      "phase": "400ms",
+      "requested_elapsed_ms": 412,
+      "completed_elapsed_ms": 717,
+      "surface": {
+        "screen_x": 0,
+        "screen_y": 0,
+        "width": 1200,
+        "height": 1900,
+        "requested_ms": 4604269.267062,
+        "copied_ms": 4604325.503501,
+        "completed_ms": 4604572.681376
+      },
+      "viewport": {
+        "x": 440,
+        "y": 350,
+        "width": 320,
+        "height": 1200
+      },
+      "capture": "Android Flutter SurfaceView PixelCopy"
+    },
+    "actual-ad-error-320-4900ms.png": {
+      "file": "actual-ad-error-320-4900ms.png",
+      "phase": "4900ms",
+      "requested_elapsed_ms": 4902,
+      "completed_elapsed_ms": 5098,
+      "surface": {
+        "screen_x": 0,
+        "screen_y": 0,
+        "width": 1200,
+        "height": 1900,
+        "requested_ms": 4608759.128482,
+        "copied_ms": 4608775.280594,
+        "completed_ms": 4608932.503888
+      },
+      "viewport": {
+        "x": 440,
+        "y": 350,
+        "width": 320,
+        "height": 1200
+      },
+      "capture": "Android Flutter SurfaceView PixelCopy"
+    },
+    "actual-ad-error-320-5500ms.png": {
+      "file": "actual-ad-error-320-5500ms.png",
+      "phase": "5500ms",
+      "requested_elapsed_ms": 5503,
+      "completed_elapsed_ms": 5636,
+      "surface": {
+        "screen_x": 0,
+        "screen_y": 0,
+        "width": 1200,
+        "height": 1900,
+        "requested_ms": 4609359.909925,
+        "copied_ms": 4609381.220079,
+        "completed_ms": 4609492.191875
+      },
+      "viewport": {
+        "x": 440,
+        "y": 350,
+        "width": 320,
+        "height": 1200
+      },
+      "capture": "Android Flutter SurfaceView PixelCopy"
+    },
+    "actual-proxolink-error-320-initial.png": {
+      "file": "actual-proxolink-error-320-initial.png",
+      "phase": "initial",
+      "requested_elapsed_ms": 0,
+      "completed_elapsed_ms": 0,
+      "surface": {
+        "screen_x": 0,
+        "screen_y": 0,
+        "width": 1200,
+        "height": 1900,
+        "requested_ms": 4612121.150285,
+        "copied_ms": 4612140.684849,
+        "completed_ms": 4612264.491778
+      },
+      "viewport": {
+        "x": 440,
+        "y": 350,
+        "width": 320,
+        "height": 1200
+      },
+      "capture": "Android Flutter SurfaceView PixelCopy"
+    },
+    "actual-proxolink-error-320-400ms.png": {
+      "file": "actual-proxolink-error-320-400ms.png",
+      "phase": "400ms",
+      "requested_elapsed_ms": 428,
+      "completed_elapsed_ms": 624,
+      "surface": {
+        "screen_x": 0,
+        "screen_y": 0,
+        "width": 1200,
+        "height": 1900,
+        "requested_ms": 4612697.395973,
+        "copied_ms": 4612731.438775,
+        "completed_ms": 4612891.924354
+      },
+      "viewport": {
+        "x": 440,
+        "y": 350,
+        "width": 320,
+        "height": 1200
+      },
+      "capture": "Android Flutter SurfaceView PixelCopy"
+    },
+    "actual-proxolink-error-320-4900ms.png": {
+      "file": "actual-proxolink-error-320-4900ms.png",
+      "phase": "4900ms",
+      "requested_elapsed_ms": 4901,
+      "completed_elapsed_ms": 5092,
+      "surface": {
+        "screen_x": 0,
+        "screen_y": 0,
+        "width": 1200,
+        "height": 1900,
+        "requested_ms": 4617170.300671,
+        "copied_ms": 4617187.5357,
+        "completed_ms": 4617359.890874
+      },
+      "viewport": {
+        "x": 440,
+        "y": 350,
+        "width": 320,
+        "height": 1200
+      },
+      "capture": "Android Flutter SurfaceView PixelCopy"
+    },
+    "actual-proxolink-error-320-5500ms.png": {
+      "file": "actual-proxolink-error-320-5500ms.png",
+      "phase": "5500ms",
+      "requested_elapsed_ms": 5504,
+      "completed_elapsed_ms": 5667,
+      "surface": {
+        "screen_x": 0,
+        "screen_y": 0,
+        "width": 1200,
+        "height": 1900,
+        "requested_ms": 4617773.276529,
+        "copied_ms": 4617802.36949,
+        "completed_ms": 4617935.005372
+      },
+      "viewport": {
+        "x": 440,
+        "y": 350,
+        "width": 320,
+        "height": 1200
+      },
+      "capture": "Android Flutter SurfaceView PixelCopy"
+    },
+    "actual-home-refresh-393-initial.png": {
+      "file": "actual-home-refresh-393-initial.png",
+      "phase": "initial",
+      "requested_elapsed_ms": 0,
+      "completed_elapsed_ms": 0,
+      "surface": {
+        "screen_x": 0,
+        "screen_y": 0,
+        "width": 1200,
+        "height": 1900,
+        "requested_ms": 4619836.157495,
+        "copied_ms": 4619883.618848,
+        "completed_ms": 4619990.486737
+      },
+      "viewport": {
+        "x": 403.5,
+        "y": 350,
+        "width": 393,
+        "height": 1200
+      },
+      "capture": "Android Flutter SurfaceView PixelCopy"
+    },
+    "actual-home-refresh-393-100ms.png": {
+      "file": "actual-home-refresh-393-100ms.png",
+      "phase": "100ms",
+      "requested_elapsed_ms": 108,
+      "completed_elapsed_ms": 602,
+      "surface": {
+        "screen_x": 0,
+        "screen_y": 0,
+        "width": 1200,
+        "height": 1900,
+        "requested_ms": 4620103.458667,
+        "copied_ms": 4620130.713704,
+        "completed_ms": 4620592.233804
+      },
+      "viewport": {
+        "x": 403.5,
+        "y": 350,
+        "width": 393,
+        "height": 1200
+      },
+      "capture": "Android Flutter SurfaceView PixelCopy"
+    },
+    "actual-home-refresh-393-300ms.png": {
+      "file": "actual-home-refresh-393-300ms.png",
+      "phase": "300ms",
+      "requested_elapsed_ms": 306,
+      "completed_elapsed_ms": 822,
+      "surface": {
+        "screen_x": 0,
+        "screen_y": 0,
+        "width": 1200,
+        "height": 1900,
+        "requested_ms": 4620301.156911,
+        "copied_ms": 4620352.937044,
+        "completed_ms": 4620815.107179
+      },
+      "viewport": {
+        "x": 403.5,
+        "y": 350,
+        "width": 393,
+        "height": 1200
+      },
+      "capture": "Android Flutter SurfaceView PixelCopy"
+    },
+    "actual-home-refresh-393-settled.png": {
+      "file": "actual-home-refresh-393-settled.png",
+      "phase": "settled",
+      "requested_elapsed_ms": 2674,
+      "completed_elapsed_ms": 2825,
+      "surface": {
+        "screen_x": 0,
+        "screen_y": 0,
+        "width": 1200,
+        "height": 1900,
+        "requested_ms": 4622669.412886,
+        "copied_ms": 4622712.090471,
+        "completed_ms": 4622818.927593
+      },
+      "viewport": {
+        "x": 403.5,
+        "y": 350,
+        "width": 393,
+        "height": 1200
+      },
+      "capture": "Android Flutter SurfaceView PixelCopy"
+    },
+    "actual-tools-refresh-393-initial.png": {
+      "file": "actual-tools-refresh-393-initial.png",
+      "phase": "initial",
+      "requested_elapsed_ms": 0,
+      "completed_elapsed_ms": 0,
+      "surface": {
+        "screen_x": 0,
+        "screen_y": 0,
+        "width": 1200,
+        "height": 1900,
+        "requested_ms": 4624703.064549,
+        "copied_ms": 4624742.395896,
+        "completed_ms": 4624846.148749
+      },
+      "viewport": {
+        "x": 403.5,
+        "y": 350,
+        "width": 393,
+        "height": 1200
+      },
+      "capture": "Android Flutter SurfaceView PixelCopy"
+    },
+    "actual-tools-refresh-393-100ms.png": {
+      "file": "actual-tools-refresh-393-100ms.png",
+      "phase": "100ms",
+      "requested_elapsed_ms": 101,
+      "completed_elapsed_ms": 747,
+      "surface": {
+        "screen_x": 0,
+        "screen_y": 0,
+        "width": 1200,
+        "height": 1900,
+        "requested_ms": 4624952.746243,
+        "copied_ms": 4625007.000971,
+        "completed_ms": 4625597.257858
+      },
+      "viewport": {
+        "x": 403.5,
+        "y": 350,
+        "width": 393,
+        "height": 1200
+      },
+      "capture": "Android Flutter SurfaceView PixelCopy"
+    },
+    "actual-tools-refresh-393-300ms.png": {
+      "file": "actual-tools-refresh-393-300ms.png",
+      "phase": "300ms",
+      "requested_elapsed_ms": 301,
+      "completed_elapsed_ms": 793,
+      "surface": {
+        "screen_x": 0,
+        "screen_y": 0,
+        "width": 1200,
+        "height": 1900,
+        "requested_ms": 4625151.919151,
+        "copied_ms": 4625192.338675,
+        "completed_ms": 4625643.669944
+      },
+      "viewport": {
+        "x": 403.5,
+        "y": 350,
+        "width": 393,
+        "height": 1200
+      },
+      "capture": "Android Flutter SurfaceView PixelCopy"
+    },
+    "actual-tools-refresh-393-settled.png": {
+      "file": "actual-tools-refresh-393-settled.png",
+      "phase": "settled",
+      "requested_elapsed_ms": 2668,
+      "completed_elapsed_ms": 2826,
+      "surface": {
+        "screen_x": 0,
+        "screen_y": 0,
+        "width": 1200,
+        "height": 1900,
+        "requested_ms": 4627519.189653,
+        "copied_ms": 4627565.203176,
+        "completed_ms": 4627676.007074
+      },
+      "viewport": {
+        "x": 403.5,
+        "y": 350,
+        "width": 393,
+        "height": 1200
+      },
+      "capture": "Android Flutter SurfaceView PixelCopy"
+    },
+    "actual-ad-error-393-initial.png": {
+      "file": "actual-ad-error-393-initial.png",
+      "phase": "initial",
+      "requested_elapsed_ms": 0,
+      "completed_elapsed_ms": 0,
+      "surface": {
+        "screen_x": 0,
+        "screen_y": 0,
+        "width": 1200,
+        "height": 1900,
+        "requested_ms": 4630341.112508,
+        "copied_ms": 4630363.782469,
+        "completed_ms": 4630475.889515
+      },
+      "viewport": {
+        "x": 403.5,
+        "y": 350,
+        "width": 393,
+        "height": 1200
+      },
+      "capture": "Android Flutter SurfaceView PixelCopy"
+    },
+    "actual-ad-error-393-400ms.png": {
+      "file": "actual-ad-error-393-400ms.png",
+      "phase": "400ms",
+      "requested_elapsed_ms": 416,
+      "completed_elapsed_ms": 659,
+      "surface": {
+        "screen_x": 0,
+        "screen_y": 0,
+        "width": 1200,
+        "height": 1900,
+        "requested_ms": 4630900.854394,
+        "copied_ms": 4630931.323992,
+        "completed_ms": 4631138.017543
+      },
+      "viewport": {
+        "x": 403.5,
+        "y": 350,
+        "width": 393,
+        "height": 1200
+      },
+      "capture": "Android Flutter SurfaceView PixelCopy"
+    },
+    "actual-ad-error-393-4900ms.png": {
+      "file": "actual-ad-error-393-4900ms.png",
+      "phase": "4900ms",
+      "requested_elapsed_ms": 4901,
+      "completed_elapsed_ms": 5133,
+      "surface": {
+        "screen_x": 0,
+        "screen_y": 0,
+        "width": 1200,
+        "height": 1900,
+        "requested_ms": 4635381.691225,
+        "copied_ms": 4635401.633219,
+        "completed_ms": 4635612.487971
+      },
+      "viewport": {
+        "x": 403.5,
+        "y": 350,
+        "width": 393,
+        "height": 1200
+      },
+      "capture": "Android Flutter SurfaceView PixelCopy"
+    },
+    "actual-ad-error-393-5500ms.png": {
+      "file": "actual-ad-error-393-5500ms.png",
+      "phase": "5500ms",
+      "requested_elapsed_ms": 5502,
+      "completed_elapsed_ms": 5636,
+      "surface": {
+        "screen_x": 0,
+        "screen_y": 0,
+        "width": 1200,
+        "height": 1900,
+        "requested_ms": 4635982.052061,
+        "copied_ms": 4636008.206215,
+        "completed_ms": 4636115.090413
+      },
+      "viewport": {
+        "x": 403.5,
+        "y": 350,
+        "width": 393,
+        "height": 1200
+      },
+      "capture": "Android Flutter SurfaceView PixelCopy"
+    },
+    "actual-proxolink-error-393-initial.png": {
+      "file": "actual-proxolink-error-393-initial.png",
+      "phase": "initial",
+      "requested_elapsed_ms": 0,
+      "completed_elapsed_ms": 0,
+      "surface": {
+        "screen_x": 0,
+        "screen_y": 0,
+        "width": 1200,
+        "height": 1900,
+        "requested_ms": 4638743.942188,
+        "copied_ms": 4638764.950098,
+        "completed_ms": 4638912.60412
+      },
+      "viewport": {
+        "x": 403.5,
+        "y": 350,
+        "width": 393,
+        "height": 1200
+      },
+      "capture": "Android Flutter SurfaceView PixelCopy"
+    },
+    "actual-proxolink-error-393-400ms.png": {
+      "file": "actual-proxolink-error-393-400ms.png",
+      "phase": "400ms",
+      "requested_elapsed_ms": 403,
+      "completed_elapsed_ms": 645,
+      "surface": {
+        "screen_x": 0,
+        "screen_y": 0,
+        "width": 1200,
+        "height": 1900,
+        "requested_ms": 4639322.54514,
+        "copied_ms": 4639350.075471,
+        "completed_ms": 4639563.824507
+      },
+      "viewport": {
+        "x": 403.5,
+        "y": 350,
+        "width": 393,
+        "height": 1200
+      },
+      "capture": "Android Flutter SurfaceView PixelCopy"
+    },
+    "actual-proxolink-error-393-4900ms.png": {
+      "file": "actual-proxolink-error-393-4900ms.png",
+      "phase": "4900ms",
+      "requested_elapsed_ms": 4901,
+      "completed_elapsed_ms": 5114,
+      "surface": {
+        "screen_x": 0,
+        "screen_y": 0,
+        "width": 1200,
+        "height": 1900,
+        "requested_ms": 4643820.311616,
+        "copied_ms": 4643841.14933,
+        "completed_ms": 4643993.855664
+      },
+      "viewport": {
+        "x": 403.5,
+        "y": 350,
+        "width": 393,
+        "height": 1200
+      },
+      "capture": "Android Flutter SurfaceView PixelCopy"
+    },
+    "actual-proxolink-error-393-5500ms.png": {
+      "file": "actual-proxolink-error-393-5500ms.png",
+      "phase": "5500ms",
+      "requested_elapsed_ms": 5502,
+      "completed_elapsed_ms": 5738,
+      "surface": {
+        "screen_x": 0,
+        "screen_y": 0,
+        "width": 1200,
+        "height": 1900,
+        "requested_ms": 4644422.182788,
+        "copied_ms": 4644456.179872,
+        "completed_ms": 4644656.31946
+      },
+      "viewport": {
+        "x": 403.5,
+        "y": 350,
+        "width": 393,
+        "height": 1200
+      },
+      "capture": "Android Flutter SurfaceView PixelCopy"
+    },
+    "actual-home-refresh-430-initial.png": {
+      "file": "actual-home-refresh-430-initial.png",
+      "phase": "initial",
+      "requested_elapsed_ms": 0,
+      "completed_elapsed_ms": 0,
+      "surface": {
+        "screen_x": 0,
+        "screen_y": 0,
+        "width": 1200,
+        "height": 1900,
+        "requested_ms": 4646552.73276,
+        "copied_ms": 4646595.692202,
+        "completed_ms": 4646701.975951
+      },
+      "viewport": {
+        "x": 385,
+        "y": 350,
+        "width": 430,
+        "height": 1200
+      },
+      "capture": "Android Flutter SurfaceView PixelCopy"
+    },
+    "actual-home-refresh-430-100ms.png": {
+      "file": "actual-home-refresh-430-100ms.png",
+      "phase": "100ms",
+      "requested_elapsed_ms": 101,
+      "completed_elapsed_ms": 637,
+      "surface": {
+        "screen_x": 0,
+        "screen_y": 0,
+        "width": 1200,
+        "height": 1900,
+        "requested_ms": 4646808.25268,
+        "copied_ms": 4646851.890694,
+        "completed_ms": 4647343.147376
+      },
+      "viewport": {
+        "x": 385,
+        "y": 350,
+        "width": 430,
+        "height": 1200
+      },
+      "capture": "Android Flutter SurfaceView PixelCopy"
+    },
+    "actual-home-refresh-430-300ms.png": {
+      "file": "actual-home-refresh-430-300ms.png",
+      "phase": "300ms",
+      "requested_elapsed_ms": 301,
+      "completed_elapsed_ms": 846,
+      "surface": {
+        "screen_x": 0,
+        "screen_y": 0,
+        "width": 1200,
+        "height": 1900,
+        "requested_ms": 4647008.118856,
+        "copied_ms": 4647089.960025,
+        "completed_ms": 4647552.134606
+      },
+      "viewport": {
+        "x": 385,
+        "y": 350,
+        "width": 430,
+        "height": 1200
+      },
+      "capture": "Android Flutter SurfaceView PixelCopy"
+    },
+    "actual-home-refresh-430-settled.png": {
+      "file": "actual-home-refresh-430-settled.png",
+      "phase": "settled",
+      "requested_elapsed_ms": 2646,
+      "completed_elapsed_ms": 2803,
+      "surface": {
+        "screen_x": 0,
+        "screen_y": 0,
+        "width": 1200,
+        "height": 1900,
+        "requested_ms": 4649352.982624,
+        "copied_ms": 4649377.701434,
+        "completed_ms": 4649509.597259
+      },
+      "viewport": {
+        "x": 385,
+        "y": 350,
+        "width": 430,
+        "height": 1200
+      },
+      "capture": "Android Flutter SurfaceView PixelCopy"
+    },
+    "actual-tools-refresh-430-initial.png": {
+      "file": "actual-tools-refresh-430-initial.png",
+      "phase": "initial",
+      "requested_elapsed_ms": 0,
+      "completed_elapsed_ms": 0,
+      "surface": {
+        "screen_x": 0,
+        "screen_y": 0,
+        "width": 1200,
+        "height": 1900,
+        "requested_ms": 4651369.4316,
+        "copied_ms": 4651414.221151,
+        "completed_ms": 4651518.157133
+      },
+      "viewport": {
+        "x": 385,
+        "y": 350,
+        "width": 430,
+        "height": 1200
+      },
+      "capture": "Android Flutter SurfaceView PixelCopy"
+    },
+    "actual-tools-refresh-430-100ms.png": {
+      "file": "actual-tools-refresh-430-100ms.png",
+      "phase": "100ms",
+      "requested_elapsed_ms": 104,
+      "completed_elapsed_ms": 389,
+      "surface": {
+        "screen_x": 0,
+        "screen_y": 0,
+        "width": 1200,
+        "height": 1900,
+        "requested_ms": 4651626.911944,
+        "copied_ms": 4651694.308527,
+        "completed_ms": 4651911.002221
+      },
+      "viewport": {
+        "x": 385,
+        "y": 350,
+        "width": 430,
+        "height": 1200
+      },
+      "capture": "Android Flutter SurfaceView PixelCopy"
+    },
+    "actual-tools-refresh-430-300ms.png": {
+      "file": "actual-tools-refresh-430-300ms.png",
+      "phase": "300ms",
+      "requested_elapsed_ms": 326,
+      "completed_elapsed_ms": 691,
+      "surface": {
+        "screen_x": 0,
+        "screen_y": 0,
+        "width": 1200,
+        "height": 1900,
+        "requested_ms": 4651849.211168,
+        "copied_ms": 4651877.194671,
+        "completed_ms": 4652212.463109
+      },
+      "viewport": {
+        "x": 385,
+        "y": 350,
+        "width": 430,
+        "height": 1200
+      },
+      "capture": "Android Flutter SurfaceView PixelCopy"
+    },
+    "actual-tools-refresh-430-settled.png": {
+      "file": "actual-tools-refresh-430-settled.png",
+      "phase": "settled",
+      "requested_elapsed_ms": 2563,
+      "completed_elapsed_ms": 2713,
+      "surface": {
+        "screen_x": 0,
+        "screen_y": 0,
+        "width": 1200,
+        "height": 1900,
+        "requested_ms": 4654085.849805,
+        "copied_ms": 4654131.248894,
+        "completed_ms": 4654234.839053
+      },
+      "viewport": {
+        "x": 385,
+        "y": 350,
+        "width": 430,
+        "height": 1200
+      },
+      "capture": "Android Flutter SurfaceView PixelCopy"
+    },
+    "actual-ad-error-430-initial.png": {
+      "file": "actual-ad-error-430-initial.png",
+      "phase": "initial",
+      "requested_elapsed_ms": 0,
+      "completed_elapsed_ms": 0,
+      "surface": {
+        "screen_x": 0,
+        "screen_y": 0,
+        "width": 1200,
+        "height": 1900,
+        "requested_ms": 4656870.003977,
+        "copied_ms": 4656888.514592,
+        "completed_ms": 4657001.595272
+      },
+      "viewport": {
+        "x": 385,
+        "y": 350,
+        "width": 430,
+        "height": 1200
+      },
+      "capture": "Android Flutter SurfaceView PixelCopy"
+    },
+    "actual-ad-error-430-400ms.png": {
+      "file": "actual-ad-error-430-400ms.png",
+      "phase": "400ms",
+      "requested_elapsed_ms": 427,
+      "completed_elapsed_ms": 607,
+      "surface": {
+        "screen_x": 0,
+        "screen_y": 0,
+        "width": 1200,
+        "height": 1900,
+        "requested_ms": 4657435.041962,
+        "copied_ms": 4657467.69651,
+        "completed_ms": 4657613.556224
+      },
+      "viewport": {
+        "x": 385,
+        "y": 350,
+        "width": 430,
+        "height": 1200
+      },
+      "capture": "Android Flutter SurfaceView PixelCopy"
+    },
+    "actual-ad-error-430-4900ms.png": {
+      "file": "actual-ad-error-430-4900ms.png",
+      "phase": "4900ms",
+      "requested_elapsed_ms": 4901,
+      "completed_elapsed_ms": 5031,
+      "surface": {
+        "screen_x": 0,
+        "screen_y": 0,
+        "width": 1200,
+        "height": 1900,
+        "requested_ms": 4661908.499859,
+        "copied_ms": 4661926.076128,
+        "completed_ms": 4662036.948408
+      },
+      "viewport": {
+        "x": 385,
+        "y": 350,
+        "width": 430,
+        "height": 1200
+      },
+      "capture": "Android Flutter SurfaceView PixelCopy"
+    },
+    "actual-ad-error-430-5500ms.png": {
+      "file": "actual-ad-error-430-5500ms.png",
+      "phase": "5500ms",
+      "requested_elapsed_ms": 5501,
+      "completed_elapsed_ms": 5655,
+      "surface": {
+        "screen_x": 0,
+        "screen_y": 0,
+        "width": 1200,
+        "height": 1900,
+        "requested_ms": 4662508.518268,
+        "copied_ms": 4662530.996599,
+        "completed_ms": 4662660.986128
+      },
+      "viewport": {
+        "x": 385,
+        "y": 350,
+        "width": 430,
+        "height": 1200
+      },
+      "capture": "Android Flutter SurfaceView PixelCopy"
+    },
+    "actual-proxolink-error-430-initial.png": {
+      "file": "actual-proxolink-error-430-initial.png",
+      "phase": "initial",
+      "requested_elapsed_ms": 0,
+      "completed_elapsed_ms": 0,
+      "surface": {
+        "screen_x": 0,
+        "screen_y": 0,
+        "width": 1200,
+        "height": 1900,
+        "requested_ms": 4665258.123634,
+        "copied_ms": 4665273.792362,
+        "completed_ms": 4665421.260056
+      },
+      "viewport": {
+        "x": 385,
+        "y": 350,
+        "width": 430,
+        "height": 1200
+      },
+      "capture": "Android Flutter SurfaceView PixelCopy"
+    },
+    "actual-proxolink-error-430-400ms.png": {
+      "file": "actual-proxolink-error-430-400ms.png",
+      "phase": "400ms",
+      "requested_elapsed_ms": 402,
+      "completed_elapsed_ms": 717,
+      "surface": {
+        "screen_x": 0,
+        "screen_y": 0,
+        "width": 1200,
+        "height": 1900,
+        "requested_ms": 4665828.039706,
+        "copied_ms": 4665857.304654,
+        "completed_ms": 4666141.796475
+      },
+      "viewport": {
+        "x": 385,
+        "y": 350,
+        "width": 430,
+        "height": 1200
+      },
+      "capture": "Android Flutter SurfaceView PixelCopy"
+    },
+    "actual-proxolink-error-430-4900ms.png": {
+      "file": "actual-proxolink-error-430-4900ms.png",
+      "phase": "4900ms",
+      "requested_elapsed_ms": 4901,
+      "completed_elapsed_ms": 5083,
+      "surface": {
+        "screen_x": 0,
+        "screen_y": 0,
+        "width": 1200,
+        "height": 1900,
+        "requested_ms": 4670327.216729,
+        "copied_ms": 4670342.883143,
+        "completed_ms": 4670508.297757
+      },
+      "viewport": {
+        "x": 385,
+        "y": 350,
+        "width": 430,
+        "height": 1200
+      },
+      "capture": "Android Flutter SurfaceView PixelCopy"
+    },
+    "actual-proxolink-error-430-5500ms.png": {
+      "file": "actual-proxolink-error-430-5500ms.png",
+      "phase": "5500ms",
+      "requested_elapsed_ms": 5513,
+      "completed_elapsed_ms": 5753,
+      "surface": {
+        "screen_x": 0,
+        "screen_y": 0,
+        "width": 1200,
+        "height": 1900,
+        "requested_ms": 4670939.615761,
+        "copied_ms": 4671013.514799,
+        "completed_ms": 4671178.287002
+      },
+      "viewport": {
+        "x": 385,
+        "y": 350,
+        "width": 430,
+        "height": 1200
+      },
+      "capture": "Android Flutter SurfaceView PixelCopy"
+    },
+    "actual-home-refresh-768-initial.png": {
+      "file": "actual-home-refresh-768-initial.png",
+      "phase": "initial",
+      "requested_elapsed_ms": 0,
+      "completed_elapsed_ms": 0,
+      "surface": {
+        "screen_x": 0,
+        "screen_y": 0,
+        "width": 1200,
+        "height": 1900,
+        "requested_ms": 4673069.287607,
+        "copied_ms": 4673118.260813,
+        "completed_ms": 4673224.274772
+      },
+      "viewport": {
+        "x": 216,
+        "y": 350,
+        "width": 768,
+        "height": 1200
+      },
+      "capture": "Android Flutter SurfaceView PixelCopy"
+    },
+    "actual-home-refresh-768-100ms.png": {
+      "file": "actual-home-refresh-768-100ms.png",
+      "phase": "100ms",
+      "requested_elapsed_ms": 103,
+      "completed_elapsed_ms": 530,
+      "surface": {
+        "screen_x": 0,
+        "screen_y": 0,
+        "width": 1200,
+        "height": 1900,
+        "requested_ms": 4673333.07006,
+        "copied_ms": 4673387.151938,
+        "completed_ms": 4673758.304535
+      },
+      "viewport": {
+        "x": 216,
+        "y": 350,
+        "width": 768,
+        "height": 1200
+      },
+      "capture": "Android Flutter SurfaceView PixelCopy"
+    },
+    "actual-home-refresh-768-300ms.png": {
+      "file": "actual-home-refresh-768-300ms.png",
+      "phase": "300ms",
+      "requested_elapsed_ms": 300,
+      "completed_elapsed_ms": 842,
+      "surface": {
+        "screen_x": 0,
+        "screen_y": 0,
+        "width": 1200,
+        "height": 1900,
+        "requested_ms": 4673529.832143,
+        "copied_ms": 4673559.377288,
+        "completed_ms": 4674066.989571
+      },
+      "viewport": {
+        "x": 216,
+        "y": 350,
+        "width": 768,
+        "height": 1200
+      },
+      "capture": "Android Flutter SurfaceView PixelCopy"
+    },
+    "actual-home-refresh-768-settled.png": {
+      "file": "actual-home-refresh-768-settled.png",
+      "phase": "settled",
+      "requested_elapsed_ms": 2706,
+      "completed_elapsed_ms": 2865,
+      "surface": {
+        "screen_x": 0,
+        "screen_y": 0,
+        "width": 1200,
+        "height": 1900,
+        "requested_ms": 4675935.9859,
+        "copied_ms": 4675988.404365,
+        "completed_ms": 4676093.434828
+      },
+      "viewport": {
+        "x": 216,
+        "y": 350,
+        "width": 768,
+        "height": 1200
+      },
+      "capture": "Android Flutter SurfaceView PixelCopy"
+    },
+    "actual-tools-refresh-768-initial.png": {
+      "file": "actual-tools-refresh-768-initial.png",
+      "phase": "initial",
+      "requested_elapsed_ms": 0,
+      "completed_elapsed_ms": 0,
+      "surface": {
+        "screen_x": 0,
+        "screen_y": 0,
+        "width": 1200,
+        "height": 1900,
+        "requested_ms": 4677952.615529,
+        "copied_ms": 4678002.976541,
+        "completed_ms": 4678107.344216
+      },
+      "viewport": {
+        "x": 216,
+        "y": 350,
+        "width": 768,
+        "height": 1200
+      },
+      "capture": "Android Flutter SurfaceView PixelCopy"
+    },
+    "actual-tools-refresh-768-100ms.png": {
+      "file": "actual-tools-refresh-768-100ms.png",
+      "phase": "100ms",
+      "requested_elapsed_ms": 104,
+      "completed_elapsed_ms": 794,
+      "surface": {
+        "screen_x": 0,
+        "screen_y": 0,
+        "width": 1200,
+        "height": 1900,
+        "requested_ms": 4678217.12699,
+        "copied_ms": 4678245.745401,
+        "completed_ms": 4678903.210439
+      },
+      "viewport": {
+        "x": 216,
+        "y": 350,
+        "width": 768,
+        "height": 1200
+      },
+      "capture": "Android Flutter SurfaceView PixelCopy"
+    },
+    "actual-tools-refresh-768-300ms.png": {
+      "file": "actual-tools-refresh-768-300ms.png",
+      "phase": "300ms",
+      "requested_elapsed_ms": 300,
+      "completed_elapsed_ms": 839,
+      "surface": {
+        "screen_x": 0,
+        "screen_y": 0,
+        "width": 1200,
+        "height": 1900,
+        "requested_ms": 4678412.991972,
+        "copied_ms": 4678475.317902,
+        "completed_ms": 4678947.166567
+      },
+      "viewport": {
+        "x": 216,
+        "y": 350,
+        "width": 768,
+        "height": 1200
+      },
+      "capture": "Android Flutter SurfaceView PixelCopy"
+    },
+    "actual-tools-refresh-768-settled.png": {
+      "file": "actual-tools-refresh-768-settled.png",
+      "phase": "settled",
+      "requested_elapsed_ms": 2773,
+      "completed_elapsed_ms": 2950,
+      "surface": {
+        "screen_x": 0,
+        "screen_y": 0,
+        "width": 1200,
+        "height": 1900,
+        "requested_ms": 4680885.849066,
+        "copied_ms": 4680942.661399,
+        "completed_ms": 4681061.520908
+      },
+      "viewport": {
+        "x": 216,
+        "y": 350,
+        "width": 768,
+        "height": 1200
+      },
+      "capture": "Android Flutter SurfaceView PixelCopy"
+    },
+    "actual-ad-error-768-initial.png": {
+      "file": "actual-ad-error-768-initial.png",
+      "phase": "initial",
+      "requested_elapsed_ms": 0,
+      "completed_elapsed_ms": 0,
+      "surface": {
+        "screen_x": 0,
+        "screen_y": 0,
+        "width": 1200,
+        "height": 1900,
+        "requested_ms": 4683710.181205,
+        "copied_ms": 4683729.266077,
+        "completed_ms": 4683843.08762
+      },
+      "viewport": {
+        "x": 216,
+        "y": 350,
+        "width": 768,
+        "height": 1200
+      },
+      "capture": "Android Flutter SurfaceView PixelCopy"
+    },
+    "actual-ad-error-768-400ms.png": {
+      "file": "actual-ad-error-768-400ms.png",
+      "phase": "400ms",
+      "requested_elapsed_ms": 412,
+      "completed_elapsed_ms": 605,
+      "surface": {
+        "screen_x": 0,
+        "screen_y": 0,
+        "width": 1200,
+        "height": 1900,
+        "requested_ms": 4684260.883821,
+        "copied_ms": 4684310.139646,
+        "completed_ms": 4684452.490411
+      },
+      "viewport": {
+        "x": 216,
+        "y": 350,
+        "width": 768,
+        "height": 1200
+      },
+      "capture": "Android Flutter SurfaceView PixelCopy"
+    },
+    "actual-ad-error-768-4900ms.png": {
+      "file": "actual-ad-error-768-4900ms.png",
+      "phase": "4900ms",
+      "requested_elapsed_ms": 4902,
+      "completed_elapsed_ms": 5039,
+      "surface": {
+        "screen_x": 0,
+        "screen_y": 0,
+        "width": 1200,
+        "height": 1900,
+        "requested_ms": 4688750.406107,
+        "copied_ms": 4688767.453454,
+        "completed_ms": 4688887.006509
+      },
+      "viewport": {
+        "x": 216,
+        "y": 350,
+        "width": 768,
+        "height": 1200
+      },
+      "capture": "Android Flutter SurfaceView PixelCopy"
+    },
+    "actual-ad-error-768-5500ms.png": {
+      "file": "actual-ad-error-768-5500ms.png",
+      "phase": "5500ms",
+      "requested_elapsed_ms": 5512,
+      "completed_elapsed_ms": 5726,
+      "surface": {
+        "screen_x": 0,
+        "screen_y": 0,
+        "width": 1200,
+        "height": 1900,
+        "requested_ms": 4689360.685595,
+        "copied_ms": 4689441.242743,
+        "completed_ms": 4689573.852937
+      },
+      "viewport": {
+        "x": 216,
+        "y": 350,
+        "width": 768,
+        "height": 1200
+      },
+      "capture": "Android Flutter SurfaceView PixelCopy"
+    },
+    "actual-proxolink-error-768-initial.png": {
+      "file": "actual-proxolink-error-768-initial.png",
+      "phase": "initial",
+      "requested_elapsed_ms": 0,
+      "completed_elapsed_ms": 0,
+      "surface": {
+        "screen_x": 0,
+        "screen_y": 0,
+        "width": 1200,
+        "height": 1900,
+        "requested_ms": 4692204.290446,
+        "copied_ms": 4692225.508729,
+        "completed_ms": 4692363.836962
+      },
+      "viewport": {
+        "x": 216,
+        "y": 350,
+        "width": 768,
+        "height": 1200
+      },
+      "capture": "Android Flutter SurfaceView PixelCopy"
+    },
+    "actual-proxolink-error-768-400ms.png": {
+      "file": "actual-proxolink-error-768-400ms.png",
+      "phase": "400ms",
+      "requested_elapsed_ms": 407,
+      "completed_elapsed_ms": 661,
+      "surface": {
+        "screen_x": 0,
+        "screen_y": 0,
+        "width": 1200,
+        "height": 1900,
+        "requested_ms": 4692777.513924,
+        "copied_ms": 4692857.765477,
+        "completed_ms": 4693030.567643
+      },
+      "viewport": {
+        "x": 216,
+        "y": 350,
+        "width": 768,
+        "height": 1200
+      },
+      "capture": "Android Flutter SurfaceView PixelCopy"
+    },
+    "actual-proxolink-error-768-4900ms.png": {
+      "file": "actual-proxolink-error-768-4900ms.png",
+      "phase": "4900ms",
+      "requested_elapsed_ms": 4901,
+      "completed_elapsed_ms": 5063,
+      "surface": {
+        "screen_x": 0,
+        "screen_y": 0,
+        "width": 1200,
+        "height": 1900,
+        "requested_ms": 4697271.284983,
+        "copied_ms": 4697288.428487,
+        "completed_ms": 4697432.775399
+      },
+      "viewport": {
+        "x": 216,
+        "y": 350,
+        "width": 768,
+        "height": 1200
+      },
+      "capture": "Android Flutter SurfaceView PixelCopy"
+    },
+    "actual-proxolink-error-768-5500ms.png": {
+      "file": "actual-proxolink-error-768-5500ms.png",
+      "phase": "5500ms",
+      "requested_elapsed_ms": 5554,
+      "completed_elapsed_ms": 5800,
+      "surface": {
+        "screen_x": 0,
+        "screen_y": 0,
+        "width": 1200,
+        "height": 1900,
+        "requested_ms": 4697927.256234,
+        "copied_ms": 4698014.929084,
+        "completed_ms": 4698169.747024
+      },
+      "viewport": {
+        "x": 216,
+        "y": 350,
+        "width": 768,
+        "height": 1200
+      },
+      "capture": "Android Flutter SurfaceView PixelCopy"
+    }
+  }
+}

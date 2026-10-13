@@ -1,0 +1,1117 @@
+{
+  "commit": "604469df6f5dfa804e47be2fdb5cdf7a3ccb5895",
+  "run": 38472486063,
+  "artifact": 11852137298,
+  "sha256": "06663b7906562059deb60a8f8ccbb0a2ed152757304b44d518fffa997a2f8467",
+  "crc_passed": true,
+  "comparisons": {
+    "docs/evidence/proxolink-tools-2026-10-09/ui": [
+      {
+        "file": "create-320.0.png",
+        "size": [
+          320,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "tools-320.0-status-2.png",
+        "size": [
+          320,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "create-style-download-768.0.png",
+        "size": [
+          768,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "tools-shared-refresh-300ms.png",
+        "size": [
+          393,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "create-style-download-430.0.png",
+        "size": [
+          430,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "tools-error-768.0.png",
+        "size": [
+          768,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "create-style-order-393.0.png",
+        "size": [
+          393,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "tools-430.0-status-2.png",
+        "size": [
+          430,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "thumbnails-order.png",
+        "size": [
+          321,
+          934
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "create-style-bottom-contact-320.0.png",
+        "size": [
+          320,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "tools-430.0-status-1.png",
+        "size": [
+          430,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "create-style-download-320.0.png",
+        "size": [
+          320,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "create-style-bottom-contact-393.0.png",
+        "size": [
+          393,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "tools-error-393.0.png",
+        "size": [
+          393,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "shared-create-ad-tools-error.png",
+        "size": [
+          361,
+          141
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "tools-empty-768.0.png",
+        "size": [
+          768,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "create-style-order-430.0.png",
+        "size": [
+          430,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "create-style-contact-393.0.png",
+        "size": [
+          393,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "home-shared-refresh-300ms.png",
+        "size": [
+          393,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "tools-768.0-status-3.png",
+        "size": [
+          768,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "home-shared-refresh-settled.png",
+        "size": [
+          393,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "tools-shared-refresh-100ms.png",
+        "size": [
+          393,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "tools-error-320.0.png",
+        "size": [
+          320,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "tools-768.0-status-1.png",
+        "size": [
+          768,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "create-style-bottom-download-393.0.png",
+        "size": [
+          393,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "tools-393.0-status-3.png",
+        "size": [
+          393,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "create-style-download-393.0.png",
+        "size": [
+          393,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "create-style-contact-320.0.png",
+        "size": [
+          320,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "tools-error-430.0.png",
+        "size": [
+          430,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "thumbnails-contact.png",
+        "size": [
+          321,
+          934
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "create-style-bottom-order-393.0.png",
+        "size": [
+          393,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "home-shared-refresh-100ms.png",
+        "size": [
+          393,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "tools-shared-refresh-settled.png",
+        "size": [
+          393,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "create-style-bottom-contact-768.0.png",
+        "size": [
+          768,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "create-style-bottom-order-430.0.png",
+        "size": [
+          430,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "create-style-bottom-order-768.0.png",
+        "size": [
+          768,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "create-style-bottom-contact-430.0.png",
+        "size": [
+          430,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "create-style-order-320.0.png",
+        "size": [
+          320,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "create-style-contact-768.0.png",
+        "size": [
+          768,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "tools-320.0-status-1.png",
+        "size": [
+          320,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "tools-393.0-status-1.png",
+        "size": [
+          393,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "create-style-bottom-download-768.0.png",
+        "size": [
+          768,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "create-430.0.png",
+        "size": [
+          430,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "create-style-bottom-download-320.0.png",
+        "size": [
+          320,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "tools-768.0-status-2.png",
+        "size": [
+          768,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "tools-430.0-status-3.png",
+        "size": [
+          430,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "create-style-order-768.0.png",
+        "size": [
+          768,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "tools-320.0-status-3.png",
+        "size": [
+          320,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "create-style-bottom-download-430.0.png",
+        "size": [
+          430,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "create-768.0.png",
+        "size": [
+          768,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "tools-empty-320.0.png",
+        "size": [
+          320,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "thumbnails-download.png",
+        "size": [
+          321,
+          934
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "tools-393.0-status-2.png",
+        "size": [
+          393,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "create-393.0.png",
+        "size": [
+          393,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "tools-empty-393.0.png",
+        "size": [
+          393,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "tools-empty-430.0.png",
+        "size": [
+          430,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "create-style-contact-430.0.png",
+        "size": [
+          430,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "create-style-bottom-order-320.0.png",
+        "size": [
+          320,
+          1200
+        ],
+        "changed_pixels": 0
+      }
+    ],
+    "docs/evidence/proxolink-tools-continuation-2026-10-09/actual-screens": [
+      {
+        "file": "actual-tools-refresh-initial-393.png",
+        "size": [
+          393,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-home-refresh-settled-393.png",
+        "size": [
+          393,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-proxolink-error-5500ms-393.png",
+        "size": [
+          393,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-proxolink-error-100ms-430.png",
+        "size": [
+          430,
+          1200
+        ],
+        "changed_pixels": 530
+      },
+      {
+        "file": "actual-tools-refresh-100ms-393.png",
+        "size": [
+          393,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-home-refresh-300ms-430.png",
+        "size": [
+          430,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-ad-error-100ms-768.png",
+        "size": [
+          768,
+          1200
+        ],
+        "changed_pixels": 849
+      },
+      {
+        "file": "actual-proxolink-error-100ms-320.png",
+        "size": [
+          320,
+          1200
+        ],
+        "changed_pixels": 4686
+      },
+      {
+        "file": "actual-tools-refresh-300ms-768.png",
+        "size": [
+          768,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-ad-error-4900ms-393.png",
+        "size": [
+          393,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-tools-refresh-settled-430.png",
+        "size": [
+          430,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-home-refresh-settled-320.png",
+        "size": [
+          320,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-ad-error-5500ms-768.png",
+        "size": [
+          768,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-tools-refresh-initial-768.png",
+        "size": [
+          768,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-home-refresh-initial-320.png",
+        "size": [
+          320,
+          1200
+        ],
+        "changed_pixels": 961
+      },
+      {
+        "file": "actual-proxolink-error-initial-320.png",
+        "size": [
+          320,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-ad-error-100ms-393.png",
+        "size": [
+          393,
+          1200
+        ],
+        "changed_pixels": 1362
+      },
+      {
+        "file": "actual-proxolink-error-5500ms-430.png",
+        "size": [
+          430,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-home-refresh-300ms-393.png",
+        "size": [
+          393,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-tools-refresh-300ms-393.png",
+        "size": [
+          393,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-home-refresh-settled-430.png",
+        "size": [
+          430,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-proxolink-error-5100ms-768.png",
+        "size": [
+          768,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-home-refresh-100ms-768.png",
+        "size": [
+          768,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-proxolink-error-400ms-320.png",
+        "size": [
+          320,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-ad-error-4900ms-768.png",
+        "size": [
+          768,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-ad-error-5100ms-320.png",
+        "size": [
+          320,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-home-refresh-100ms-320.png",
+        "size": [
+          320,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-proxolink-error-400ms-768.png",
+        "size": [
+          768,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-proxolink-error-4900ms-430.png",
+        "size": [
+          430,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-proxolink-error-5100ms-320.png",
+        "size": [
+          320,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-ad-error-5500ms-320.png",
+        "size": [
+          320,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-proxolink-error-400ms-430.png",
+        "size": [
+          430,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-ad-error-5100ms-768.png",
+        "size": [
+          768,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-home-refresh-initial-430.png",
+        "size": [
+          430,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-ad-error-400ms-430.png",
+        "size": [
+          430,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-proxolink-error-initial-430.png",
+        "size": [
+          430,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-home-refresh-initial-393.png",
+        "size": [
+          393,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-tools-refresh-100ms-768.png",
+        "size": [
+          768,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-tools-refresh-300ms-430.png",
+        "size": [
+          430,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-proxolink-error-100ms-768.png",
+        "size": [
+          768,
+          1200
+        ],
+        "changed_pixels": 5132
+      },
+      {
+        "file": "actual-tools-refresh-100ms-320.png",
+        "size": [
+          320,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-proxolink-error-4900ms-768.png",
+        "size": [
+          768,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-ad-error-400ms-393.png",
+        "size": [
+          393,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-ad-error-5100ms-393.png",
+        "size": [
+          393,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-proxolink-error-400ms-393.png",
+        "size": [
+          393,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-home-refresh-100ms-430.png",
+        "size": [
+          430,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-ad-error-5500ms-430.png",
+        "size": [
+          430,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-ad-error-initial-768.png",
+        "size": [
+          768,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-tools-refresh-settled-393.png",
+        "size": [
+          393,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-ad-error-5500ms-393.png",
+        "size": [
+          393,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-home-refresh-settled-768.png",
+        "size": [
+          768,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-ad-error-5100ms-430.png",
+        "size": [
+          430,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-proxolink-error-5100ms-393.png",
+        "size": [
+          393,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-proxolink-error-initial-768.png",
+        "size": [
+          768,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-ad-error-100ms-430.png",
+        "size": [
+          430,
+          1200
+        ],
+        "changed_pixels": 849
+      },
+      {
+        "file": "actual-ad-error-initial-320.png",
+        "size": [
+          320,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-tools-refresh-100ms-430.png",
+        "size": [
+          430,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-tools-refresh-300ms-320.png",
+        "size": [
+          320,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-ad-error-100ms-320.png",
+        "size": [
+          320,
+          1200
+        ],
+        "changed_pixels": 1358
+      },
+      {
+        "file": "actual-tools-refresh-settled-320.png",
+        "size": [
+          320,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-proxolink-error-100ms-393.png",
+        "size": [
+          393,
+          1200
+        ],
+        "changed_pixels": 1916
+      },
+      {
+        "file": "actual-proxolink-error-4900ms-393.png",
+        "size": [
+          393,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-ad-error-4900ms-320.png",
+        "size": [
+          320,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-ad-error-400ms-768.png",
+        "size": [
+          768,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-tools-refresh-initial-320.png",
+        "size": [
+          320,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-ad-error-400ms-320.png",
+        "size": [
+          320,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-proxolink-error-initial-393.png",
+        "size": [
+          393,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-proxolink-error-5500ms-768.png",
+        "size": [
+          768,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-home-refresh-300ms-320.png",
+        "size": [
+          320,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-proxolink-error-4900ms-320.png",
+        "size": [
+          320,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-ad-error-initial-430.png",
+        "size": [
+          430,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-home-refresh-100ms-393.png",
+        "size": [
+          393,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-home-refresh-initial-768.png",
+        "size": [
+          768,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-proxolink-error-5500ms-320.png",
+        "size": [
+          320,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-tools-refresh-settled-768.png",
+        "size": [
+          768,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-ad-error-initial-393.png",
+        "size": [
+          393,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-proxolink-error-5100ms-430.png",
+        "size": [
+          430,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-home-refresh-300ms-768.png",
+        "size": [
+          768,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-ad-error-4900ms-430.png",
+        "size": [
+          430,
+          1200
+        ],
+        "changed_pixels": 0
+      },
+      {
+        "file": "actual-tools-refresh-initial-430.png",
+        "size": [
+          430,
+          1200
+        ],
+        "changed_pixels": 0
+      }
+    ]
+  }
+}

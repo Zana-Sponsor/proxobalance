@@ -1,6 +1,6 @@
 # Flutter performance — implementation and evidence
 
-Status: targeted implementation in progress; physical runtime performance **Not Verified**. This report addresses the full18-section performance specification independently of ProxoLink pixel acceptance. Branch `feat/proxolink-private-renderer-migration`; PR7 stays Draft/Open/Unmerged and production stays unchanged.
+Status: three targeted changes implemented; functional verification passed at final executable8c1a353; physical runtime performance **Not Verified**. This report addresses the full18-section performance specification independently of ProxoLink pixel acceptance. Branch `feat/proxolink-private-renderer-migration`; PR7 stays Draft/Open/Unmerged and production stays unchanged.
 
 ## Scope inspected
 
@@ -66,10 +66,10 @@ Banner Firebase subscription is intentionally process-wide. It captures methods 
 | UI/raster time, missed frames | Not measured in profile mode | Not measured | Build/widget/pixel gates are not frame benchmarks |
 | CPU, heap, retained memory, battery | Not measured | Not measured | No quantified resource saving claimed |
 | Startup time | Not measured | Not measured | Existing initialization order preserved |
-| Hidden callback count over10 controlled16ms pumps | Awaiting recorded result | Awaiting recorded result | Automated operation count only; not160ms of physical workload |
-| Banner joins after one realtime reload | Awaiting recorded result | Awaiting recorded result | Fictional transport operation count, not network latency |
-| Banner subscription after disposing pending load | Awaiting recorded result | Awaiting recorded result | Resource-lifecycle assertion, not heap measurement |
-| Actual Home unused profiles request on first mount | Awaiting recorded result | Awaiting recorded result | Eliminated request count, not measured screen speed |
+| Hidden callback count over10 controlled16ms pumps | 10 (active10) | 0 (active10) | Automated operation count only; not160ms of physical workload |
+| Banner joins after one realtime reload | 2 | 1 | Fictional transport operation count, not network latency |
+| Banner subscription after disposing pending load | 1 join /1 channel | 0 joins /0 channels | Resource-lifecycle assertion, not heap measurement |
+| Actual Home unused profiles request on first mount | 1 | 0 | Eliminated request count, not measured screen speed |
 
 ## Profiling availability and readiness definitions
 
@@ -88,8 +88,24 @@ Measure tap input event to actual destination presentation, and separately to an
 
 ## Verification status and independent remaining work
 
-Baseline f7112a8 source CI38388402541 passed237 Flutter tests,153 backend tests,480 browser cases, database/RLS, edge and release/privacy checks. It verifies the earlier ticker implementation functionally, not runtime speed. New banner/Home changes require their own final-source results below.
+Baseline f7112a8 source CI38388402541 passed237 Flutter tests,153 backend tests,480 browser cases, database/RLS, edge and release/privacy checks. It verifies the earlier ticker implementation functionally, not runtime speed. New banner/Home changes have their own final-source results below.
 
 No performance improvement is runtime-profile verified. Expected benefits are fewer hidden tick callbacks, no unnecessary banner re-subscription/orphan channel, and no unused Home profile fetch/rebuild. Functional fixture evidence must be reported separately from device performance.
 
-ProxoLink pixel cause/remedy and final native acceptance remain tracked in the A–AO checklist. Last completed native4b816 has234/240 exact pairs; notices/refresh/browser/selectors pass. New f7112a8 run38388402520 was requested separately; its status must not substitute for final performance-source runtime testing. Hosted configuration was observed missing eight staging settings in38264179020. Neither blocker prevents source inspection and functional performance regressions here. Production and PR state remain protected.
+ProxoLink pixel cause/remedy and final native acceptance remain tracked in the A–AO checklist and [current native report](PROXOLINK_NATIVE_38388402520.md). Run38388402520 atf7112a8 executed:233/240 exact pairs,7failed pairs/8pixels/maxdelta1; notices8/8,refresh7/8,browser3/3,bothselectors12/12. Its artifact digest/CRC and all240 pixel pairs were independently verified. Approval is no longer blocking that completed run. Its result does not verify subsequent performance changes. Hosted configuration was observed missing eight staging settings in38264179020. Neither blocker prevents source inspection and functional performance regressions here. Production and PR state remain protected.
+
+## Recorded continuation results
+
+[Source run38472486063](https://github.com/Zana-Sponsor/proxobalance/actions/runs/38472486063) at `604469df6f5dfa804e47be2fdb5cdf7a3ccb5895` passed all five jobs:240 Flutter tests, controlled original/fixed banner and Home comparisons,153 backend tests,480 responsive renderer cases, isolated database/RLS, edge checks, release source-privacy scan and paired thumbnail APK measurement. The operation counts above were recorded in both that run and final8c1a353's Flutter log. Banner realtime refresh still performs exactly one data read; visible ticker callbacks remain10. State/400px scroll and reactivation/disposal assertions passed.
+
+The first cleanup attempts failed after reproducing the old orphan subscription. Advancing fake time did not solve the teardown failure. The fixture's zero-delay automatic disconnect and removeAllChannels' additional disconnect raced the single-subscription stream closure. Cleanup now removes each channel once and checks leave acknowledgements plus an empty channel list. The original/new tests both pass. This is a test teardown correction, not a product timing optimization or delayed assertion.
+
+Adding the Home request test ahead of visual cases warmed the logo cache and changed961 logo pixels in the first320px Home screenshot; the other145 images matched the immediate pre-performance artifact. Moving that same regression after the visual cases preserved their original cache history. At `8c1a353d527b4b9f45f7591515452ae3f0e025c4`, all146 PNGs are now independently decoded-pixel identical to f7112a8's immediately preceding artifact, including58 Tools/Create images,80 actual-screen images and8 additional notice images. This proves preservation in those widget fixtures, not runtime performance or native acceptance.
+
+Final executable source run: [38473249284](https://github.com/Zana-Sponsor/proxobalance/actions/runs/38473249284). [UI artifact11852307783](https://github.com/Zana-Sponsor/proxobalance/actions/runs/38473249284/artifacts/11852307783), SHA-256 `dfe60f0625475c833ff267390a943968c3c1f9eb4b72ae2325d98e368f2d315c`, digest and ZIP CRC independently verified. Baseline artifact11807339165 SHA-256 `774f989fe3366b3c4b7c047ac22324f116379d5f94309b71e089ba9d4d0a171a`. File-by-file dimensions/differences are in `docs/evidence/flutter-performance-8c1a353/visual-comparison.json`; historical comparison and the intermediate warm-cache result are retained separately.
+
+Both existing verification markers requested [native/hosted run38473249236](https://github.com/Zana-Sponsor/proxobalance/actions/runs/38473249236) against that final executable. Its result remains separate from source CI and from older native f711 results. Production publishing and migrations remain untouched.
+
+Remaining blockers: profile-mode before/after traces on a representative device are unavailable; no tap-to-first-frame, readiness, frame-budget, CPU or memory improvement is certified. The new native/hosted run is waiting at its observed Environment review; no approval-write tool is available and no gate was bypassed. Once released, inspect the actual hosted presence/journey result and complete the native pixel/refresh investigation. These pending checks keep overall acceptance **Pending / Blocked**, despite passing targeted functional evidence.
+
+Final source verification completed: run38473249284 at `8c1a353d527b4b9f45f7591515452ae3f0e025c4` passed all five jobs. Flutter240/240, original/fixed banner2/2 each, Home1/1 each, retained original/fixed notice regressions,153 backend tests,480 responsive cases, disposable database/RLS and edge checks all passed. Release build, source-privacy scan and paired asset-only size measurement passed. Original/current hidden callbacks10→0 with active10→10, banner reload joins2→1 with one reload read on both, disposed joins/channels1→0 and Home profiles reads1→0 are recorded in `docs/evidence/flutter-performance-8c1a353/operation-counts.json`. No runtime speed claim follows from these results.

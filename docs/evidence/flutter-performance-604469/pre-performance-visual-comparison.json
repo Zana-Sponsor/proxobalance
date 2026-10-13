@@ -1,0 +1,743 @@
+{
+  "baseline_commit": "f7112a8f069e1b8edad036254f6dbaa6aec7d671",
+  "baseline_artifact": 11807339165,
+  "baseline_sha256": "774f989fe3366b3c4b7c047ac22324f116379d5f94309b71e089ba9d4d0a171a",
+  "candidate_commit": "604469df6f5dfa804e47be2fdb5cdf7a3ccb5895",
+  "results": [
+    {
+      "file": "cards-375.0.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "create-320.0.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-tools-refresh-initial-393.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-home-refresh-settled-393.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "tools-320.0-status-2.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-proxolink-error-5500ms-393.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "create-style-download-768.0.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-proxolink-error-100ms-430.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-tools-refresh-100ms-393.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-home-refresh-300ms-430.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-ad-error-100ms-768.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "tools-shared-refresh-300ms.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-proxolink-error-100ms-320.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "create-style-download-430.0.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "tools-error-768.0.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-tools-refresh-300ms-768.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "cards-393.0.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "create-style-order-393.0.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "tools-430.0-status-2.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-ad-error-4900ms-393.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-tools-refresh-settled-430.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "thumbnails-order.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-home-refresh-settled-320.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "create-style-bottom-contact-320.0.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-ad-error-5500ms-768.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-tools-refresh-initial-768.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "tools-430.0-status-1.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-home-refresh-initial-320.png",
+      "changed_pixels": 961,
+      "bounds": [
+        16,
+        17,
+        85,
+        36
+      ]
+    },
+    {
+      "file": "create-style-download-320.0.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "create-style-bottom-contact-393.0.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "tools-error-393.0.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-proxolink-error-initial-320.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "cards-320.0.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-ad-error-100ms-393.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "shared-create-ad-tools-error.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "tools-empty-768.0.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-proxolink-error-5500ms-430.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-home-refresh-300ms-393.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-tools-refresh-300ms-393.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "create-style-order-430.0.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "create-style-contact-393.0.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-home-refresh-settled-430.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-proxolink-error-5100ms-768.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-home-refresh-100ms-768.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-proxolink-error-400ms-320.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "home-shared-refresh-300ms.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-ad-error-4900ms-768.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-ad-error-5100ms-320.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "tools-768.0-status-3.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-home-refresh-100ms-320.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "home-shared-refresh-settled.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "tools-shared-refresh-100ms.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-proxolink-error-400ms-768.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-proxolink-error-4900ms-430.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "form-393.0.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "tools-error-320.0.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-proxolink-error-5100ms-320.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-ad-error-5500ms-320.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "tools-768.0-status-1.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-proxolink-error-400ms-430.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "create-style-bottom-download-393.0.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-ad-error-5100ms-768.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "form-320.0.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-home-refresh-initial-430.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "tools-393.0-status-3.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-ad-error-400ms-430.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "create-style-download-393.0.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "create-style-contact-320.0.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "tools-error-430.0.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "thumbnails-contact.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-proxolink-error-initial-430.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-home-refresh-initial-393.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-tools-refresh-100ms-768.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-tools-refresh-300ms-430.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "create-style-bottom-order-393.0.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "home-shared-refresh-100ms.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-proxolink-error-100ms-768.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-tools-refresh-100ms-320.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-proxolink-error-4900ms-768.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "tools-shared-refresh-settled.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-ad-error-400ms-393.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "create-style-bottom-contact-768.0.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "form-768.0.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "create-style-bottom-order-430.0.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-ad-error-5100ms-393.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "create-style-bottom-order-768.0.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-proxolink-error-400ms-393.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-home-refresh-100ms-430.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-ad-error-5500ms-430.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-ad-error-initial-768.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "cards-768.0.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-tools-refresh-settled-393.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-ad-error-5500ms-393.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "cards-430.0.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-home-refresh-settled-768.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "create-style-bottom-contact-430.0.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-ad-error-5100ms-430.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-proxolink-error-5100ms-393.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "create-style-order-320.0.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-proxolink-error-initial-768.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-ad-error-100ms-430.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "create-style-contact-768.0.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-ad-error-initial-320.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "tools-320.0-status-1.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "tools-393.0-status-1.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-tools-refresh-100ms-430.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "create-style-bottom-download-768.0.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-tools-refresh-300ms-320.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-ad-error-100ms-320.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-tools-refresh-settled-320.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-proxolink-error-100ms-393.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "create-430.0.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "create-style-bottom-download-320.0.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-proxolink-error-4900ms-393.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-ad-error-4900ms-320.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-ad-error-400ms-768.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "tools-768.0-status-2.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "tools-430.0-status-3.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "create-style-order-768.0.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "tools-320.0-status-3.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-tools-refresh-initial-320.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "create-style-bottom-download-430.0.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-ad-error-400ms-320.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "create-768.0.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-proxolink-error-initial-393.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-proxolink-error-5500ms-768.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-home-refresh-300ms-320.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-proxolink-error-4900ms-320.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "tools-empty-320.0.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "thumbnails-download.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-ad-error-initial-430.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "tools-393.0-status-2.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "create-393.0.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-home-refresh-100ms-393.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-home-refresh-initial-768.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "tools-empty-393.0.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "tools-empty-430.0.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-proxolink-error-5500ms-320.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-tools-refresh-settled-768.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-ad-error-initial-393.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "create-style-contact-430.0.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-proxolink-error-5100ms-430.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "create-style-bottom-order-320.0.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-home-refresh-300ms-768.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-ad-error-4900ms-430.png",
+      "changed_pixels": 0,
+      "bounds": null
+    },
+    {
+      "file": "actual-tools-refresh-initial-430.png",
+      "changed_pixels": 0,
+      "bounds": null
+    }
+  ]
+}
