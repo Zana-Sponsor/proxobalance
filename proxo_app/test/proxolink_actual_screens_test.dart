@@ -42,18 +42,6 @@ void main() {
     file.writeAsStringSync(const JsonEncoder.withIndent('  ').convert({'evidence_type':'Flutter widget test of actual production screen classes',
       'fictional_backends':true,'native_device':false,'hosted_content':false,'permission_requests':permissionRequests,'cases':measurements}));
   });
-  testWidgets('Home initialization does not fetch an unused profile name',(t)async {
-    const old=bool.fromEnvironment('PROXO_REPRODUCE_OLD_HOME');
-    final reads=backend.reads['profiles']??0;
-    await t.pumpWidget(MaterialApp(theme:buildAppTheme(),home:const HomeScreen()));
-    await t.pumpAndSettle();
-    expect(find.byType(HomeScreen),findsOneWidget);
-    final requests=(backend.reads['profiles']??0)-reads;
-    expect(requests,old?1:0);
-    print('HOME_UNUSED_PROFILE old=$old requests=$requests');
-    expect(t.takeException(),isNull);
-    await t.pumpWidget(const SizedBox.shrink());await t.pumpAndSettle();
-  });
   for(final width in [320.0,393.0,430.0,768.0]) {
     testWidgets('actual Home and Tools corresponding refresh phases at $width',(t)async {
       t.view.physicalSize=Size(width,1200);t.view.devicePixelRatio=1;
@@ -140,6 +128,19 @@ void main() {
       }
     });
   }
+  // Keep the original visual-case image-cache history unchanged.
+  testWidgets('Home initialization does not fetch an unused profile name',(t)async {
+    const old=bool.fromEnvironment('PROXO_REPRODUCE_OLD_HOME');
+    final reads=backend.reads['profiles']??0;
+    await t.pumpWidget(MaterialApp(theme:buildAppTheme(),home:const HomeScreen()));
+    await t.pumpAndSettle();
+    expect(find.byType(HomeScreen),findsOneWidget);
+    final requests=(backend.reads['profiles']??0)-reads;
+    expect(requests,old?1:0);
+    print('HOME_UNUSED_PROFILE old=$old requests=$requests');
+    expect(t.takeException(),isNull);
+    await t.pumpWidget(const SizedBox.shrink());await t.pumpAndSettle();
+  });
 }
 Future<void> _png(WidgetTester t,GlobalKey key,String name)async {
   await t.runAsync(()async {
