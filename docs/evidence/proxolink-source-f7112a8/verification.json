@@ -1,0 +1,25 @@
+{
+  "tested_commit": "f7112a8f069e1b8edad036254f6dbaa6aec7d671",
+  "source_run": 38388402541,
+  "flutter_tests": 237,
+  "backend_tests": 153,
+  "browser_cases": 480,
+  "all_source_jobs": "success",
+  "native_run": 38388402520,
+  "native_runtime_job": 115267707400,
+  "native_runtime": "not_executed_waiting_environment_review",
+  "artifacts": [
+    {
+      "id": 11807339165,
+      "sha256": "774f989fe3366b3c4b7c047ac22324f116379d5f94309b71e089ba9d4d0a171a",
+      "crc_passed": true,
+      "files": 147
+    },
+    {
+      "id": 11807069634,
+      "sha256": "8e050e1712af0e2f7dcd0be19b1f4ddbf0089a1fb6ed700807bceadcfacf540a",
+      "crc_passed": true,
+      "files": 1
+    }
+  ]
+}

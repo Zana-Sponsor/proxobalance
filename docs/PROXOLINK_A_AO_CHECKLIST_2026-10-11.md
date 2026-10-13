@@ -1,20 +1,10 @@
-> Latest continuation: [repaint restoration fix and exact source results](PROXOLINK_REPAINT_EXPERIMENT_2026-10-13.md#continuation-restoration-defect-reproduced-and-corrected). At7524487,237 Flutter tests passed; backend/database/edge passed. Responsive matrix and release checks were not executed following separate diagnostic/NDK failures. Native pixels remain Pending; hosted remains Blocked by observed missing staging settings. No final completion claim.
-
-> Terminal update: [run38265055827 and hosted38264179020](PROXOLINK_NATIVE_RUN_38265055827.md). Notice8/8, refresh8/8, browser3/3 and both selectors12/12 PASS at4b816. Pixels234/240, six failed pairs/1134pixels/maxdelta1. Hosted ran and observed eight absent staging settings. Prior waiting statuses below are historical. New repaint code is diagnostic only.
-
-> October12 executable work: [candidate notice fix and controlled native experiment](PROXOLINK_FIX_PROGRESS_2026-10-12.md). Native outcomes pending; hosted request38264179020 has been triggered.
-
-> Current terminal native evidence: [run38070780315 audit](PROXOLINK_NATIVE_RUN_38070780315.md). Approval/workspace blockers below are superseded; browser3/3 and both choosers12/12 passed; strict pixels8failed and notice4failed remain. Hosted skipped by marker condition.
-
 # A–AO acceptance checklist — 2026-10-11
 
 Overall: **Pending / Blocked — not COMPLETE**.
 Specification: [complete A–AO specification](PROXOLINK_TOOLS_CREATE_SPEC_v4.md).
-Current executable: `4b816fb4e62b55d09ea8951d82cd30536bd612cd`. Last completed native executable: `cc52ca4c26a291677f935ff50cf13dd43cfcd5d5`.
-[Forty-item AO report](PROXOLINK_AO_REPORT_2026-10-11.md) provides current run links, exact blockers and measurements.
-Complete rows below certify the stated source/disposable-fixture criterion only. Separate native/hosted rows remain required. Historical results are never substituted for current runtime acceptance.
+Current executable: `f7112a8f069e1b8edad036254f6dbaa6aec7d671`. [Updated forty-item AO report](PROXOLINK_AO_REPORT_2026-10-11.md) records exact current source results and independently verified artifacts. Source CI38388402541: all five jobs passed,237 Flutter tests,153 backend tests,480 browser cases, database/RLS, edge and release/privacy/size checks. The controlled repaint restoration fix passes without changing native FIRST captures or zero-pixel acceptance.
 
-Source CI38265055650: Flutter analysis, old/new notice reproduction and full test-suite steps passed; backend, responsive480, database three SQL/seven API lifecycles and edge jobs passed. Release build/privacy/size checks passed;235 Flutter tests passed. New native run38265055827 APK passed; runtime114866813387 is waiting review. Completed native38070780315 is audited separately and is not waiting.
+Last completed native executable4b816/run38265055827: notices8/8, refresh8/8, browser3/3 and both selectors12/12 pass; pixels234/240, six failed pairs/1134pixels/maxdelta1. New native38388402520 atf7112a8: APK passed, runtime115267707400 **not executed**, waiting at the configured environment review. Hosted38264179020 **executed**, observed eight absent staging settings; hosted journeys remain Blocked. These are distinct execution scopes. Complete rows below certify only their stated source/disposable-fixture or explicitly dated runtime criterion.
 
 | Requirement | Status | Evidence / remaining work |
 |---|---|---|
@@ -42,7 +32,7 @@ Source CI38265055650: Flutter analysis, old/new notice reproduction and full tes
 | L: duplicate dialog/submission prevention | Complete | Existing busy gate plus per-page confirmation re-entry guard; rapid callbacks prove one dialog; current Flutter CI passed. |
 | M: actual typed HTTPS UUID route and externalApplication only | Complete | Production `launchUrl` call, URL contract tests, no WebView/custom-tab preview. |
 | N: list/route/scroll preserved across three returns; no lifecycle GET | Complete | Existing injected launcher fixture with exact row position and one GET. |
-| N: real Android browser lifecycle and preserved state | Complete | Current cc52 run38070780315:3/3 actual pause/resume and stable row/scroll/one read. Fictional public page; hosted-content coverage remains blocked separately. |
+| N: real Android browser lifecycle and preserved state | Complete | Completed4b816 run38265055827:3/3 actual pause/resume and stable row/scroll/one read. Fictional public page; hosted-content coverage remains blocked separately. |
 | N: supported browser families/iOS/device lifecycle | Blocked | Android runner evidence cannot certify Safari/iOS or unavailable browsers/devices. |
 | N/P: browser failure keeps stable UI with exact shared notice | Complete | Existing shared component and five-second expiry test. |
 | O: balanced dedicated empty state and primary create action | Complete | Exact title/support plus create action; four-width images. |
@@ -60,7 +50,7 @@ Source CI38265055650: Flutter analysis, old/new notice reproduction and full tes
 | W: تەلەبات→talabat, وادێ→wade, تۆتەرز→toters, لەزوو→lezzoo | Complete | Exact labels/keys; all four available for new isolated authoring. |
 | W: strict hosts/types/malicious URL denial | Complete | API/SQL validation tests; no relaxed host checks. |
 | X: exactly four existing Kurdish designs and thumbnails | Complete | Existing selector and twelve high-DPI assets; selected-state widget coverage. |
-| X: current native selector twelve type/style cases | Complete | Current cc52 run:12/12, exact Kurdish labels independently asserted, decoded selection/native input/no WebView gate passed. |
+| X: current native selector twelve type/style cases | Complete | Completed4b816 run38265055827:12/12, exact Kurdish labels independently asserted, decoded selection/native input/no WebView gate passed. |
 | Y: no live/internal WebView in Create | Complete | Current form source, negative widget tests; native assertion added. |
 | Z: DB-generated UUID, random request key, idempotent single submit | Complete | Backend/SQL identity and widget submit tests; local authoritative upsert. |
 | Z: prevent duplicate create routes | Complete | Route re-entry guard and rapid callbacks prove one Create route; current Flutter CI passed. |
@@ -71,12 +61,12 @@ Source CI38265055650: Flutter analysis, old/new notice reproduction and full tes
 | AA.4: subtle changed-row arrival, stable unchanged rows | Complete | Existing shared arrival and changed UUID set; no duplicate ListView/crossfade. |
 | AA.6: failed refresh retains useful data, settles/retries/shared notice | Complete | Populated failure→successful replacement tests. |
 | AA.7: create/delete authoritative local update without collection reload | Complete | Owner-scoped upsert/delete tests and one GET assertions. |
-| AA.8: browser return does not trigger disruptive refresh | Complete | Tools has no resume observer; three-cycle widget fixture. Native pending above. |
+| AA.8: browser return does not trigger disruptive refresh | Complete | Tools has no resume observer; three-cycle widget fixture. Final-source native rerun pending above. |
 | AA.9: shared programmatic controller, re-entry/scroll behavior | Complete | MainShell integration and rapid refresh/settled-geometry tests. |
 | AA.10: one owner request/no N+1/images/WebViews/realtime/reset | Complete | Large lazy list and request-count tests; controller lifetime inspected. |
 | AA.11: all fifteen refresh scenarios including empty/failure/account/list/scale | Complete | Existing controller/widget suites; same list element and exact settled geometry. |
 | AA.11/AO37: actual HomeScreen vs Tools widget phase evidence | Complete | Production screen classes,80 new PNGs/four widths; exact100/300ms offsets,one read,same element,zero settle; fictional transports,not hosted/native. |
-| AA.11/AO37: actual native refresh comparison | Pending | Historical run38060488156:8/8 Home/Tools refresh cases pass, one read/same list/zero settled offset. Final-source runtime and real authenticated pull/session coverage remain unverified. |
+| AA.11/AO37: actual native refresh comparison | Pending | Completed4b816 run38265055827:8/8 Home/Tools refresh cases pass, one read/same list/zero settled offset. Final-source runtime and real authenticated pull/session coverage remain unverified. |
 | AB: existing indexes inspected, measured query, no duplicates | Complete | Owner/date index, metadata-only EXPLAIN0.14..2.36; no new index. |
 | AC: UI→controller→repository→auth API→DB/RLS layers, typed/safe errors | Complete | Existing architecture and boundary/error tests; new changes passed current CI. |
 | AC: timeout/malformed/auth/idempotency/stale/delete/browser behavior | Complete | Service30s timeout and existing API/model/controller fixtures. |

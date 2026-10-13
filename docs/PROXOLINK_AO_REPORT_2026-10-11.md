@@ -1,20 +1,14 @@
-> Terminal update: [run38265055827 and hosted38264179020](PROXOLINK_NATIVE_RUN_38265055827.md). Notice8/8, refresh8/8, browser3/3 and both selectors12/12 PASS at4b816. Pixels234/240, six failed pairs/1134pixels/maxdelta1. Hosted ran and observed eight absent staging settings. Prior waiting statuses below are historical. New repaint code is diagnostic only.
+# ProxoLink A–AO report — updated 2026-10-13
 
-> October12 executable work: [candidate notice fix and controlled native experiment](PROXOLINK_FIX_PROGRESS_2026-10-12.md). Native outcomes pending; hosted request38264179020 has been triggered.
+**Pending / Blocked — not COMPLETE.** [Requirement checklist](PROXOLINK_A_AO_CHECKLIST_2026-10-11.md). The complete [A–AO specification](PROXOLINK_TOOLS_CREATE_SPEC_v4.md) remains controlling.
 
-> Current terminal native evidence: [run38070780315 audit](PROXOLINK_NATIVE_RUN_38070780315.md). Approval/workspace blockers below are superseded; browser3/3 and both choosers12/12 passed; strict pixels8failed and notice4failed remain. Hosted skipped by marker condition.
-
-# ProxoLink A–AO report — 2026-10-11
-
-**Pending / Blocked. Not COMPLETE.** [Requirement checklist](PROXOLINK_A_AO_CHECKLIST_2026-10-11.md). The complete [A–AO specification](PROXOLINK_TOOLS_CREATE_SPEC_v4.md) remains controlling.
-
-Current executable: `4b816fb4e62b55d09ea8951d82cd30536bd612cd`. [October12 fix/results supplement](PROXOLINK_FIX_PROGRESS_2026-10-12.md) records the actual notification product change, controlled regression and pixel diagnostic experiment. All five jobs of source CI38265055650 passed, including235 Flutter tests and release/privacy checks. New native38265055827 APK passed; runtime is waiting review. Hosted38264179020 was triggered and is waiting review before its configuration check. Completed run38070780315 remains failed strict acceptance, with verified evidence; its approval is not a blocker. Workspace is available.
+Branch `feat/proxolink-private-renderer-migration`; executable `f7112a8f069e1b8edad036254f6dbaa6aec7d671`. [Source CI38388402541](https://github.com/Zana-Sponsor/proxobalance/actions/runs/38388402541); [native38388402520](https://github.com/Zana-Sponsor/proxobalance/actions/runs/38388402520). All five source jobs passed. The new native APK passed; runtime is waiting for its required environment review. These are distinct from completed historical native/hosted results below. Repaint attribute restoration has a controlled old/new browser reproduction and a passing current CI contract; Android pixel causality remains unproven. [Exact change and evidence](PROXOLINK_REPAINT_EXPERIMENT_2026-10-13.md).
 
 | AO item | Evidence / limitation |
 |---|---|
 | 1. Branch | `feat/proxolink-private-renderer-migration` |
-| 2. Final commit SHA | Executable `4b816fb4e62b55d09ea8951d82cd30536bd612cd`; last completed native source `cc52ca4c26a291677f935ff50cf13dd43cfcd5d5`. No fully accepted final executable yet. |
-| 3. Exact changed files | Ten executable/workflow/test paths and three documentation paths in4b816; exact list in October12 supplement. Earlier cc52 paths below remain historical. |
+| 2. Final commit SHA | Current executable `f7112a8f069e1b8edad036254f6dbaa6aec7d671`. Last completed native executable `4b816fb4e62b55d09ea8951d82cd30536bd612cd`. No fully accepted final executable yet. |
+| 3. Exact changed files | This continuation changes `proxo_app/integration_test/proxolink_native_diagnostics.dart`, `scripts/proxolink-repaint-contract.mjs`, and three report/checklist files. Full exact [commit diff](https://github.com/Zana-Sponsor/proxobalance/commit/f7112a8f069e1b8edad036254f6dbaa6aec7d671); [cumulative PR files](https://github.com/Zana-Sponsor/proxobalance/pull/7/files). No template/product design change in this commit. |
 | 4. Replaced screens | Existing customer Tools/card/Create presentation replaced by the new ToolsScreen and ProxoLinkCreatePageScreen flow. Legacy compatibility editor remains debug verification only. |
 | 5. New components | New Tools value-only cards, skeleton/empty states and sectioned Create presentation; existing controller/repository layers retained. |
 | 6. Shared AppBar | ReceiptAppBar on both customer screens. |
@@ -23,10 +17,10 @@ Current executable: `4b816fb4e62b55d09ea8951d82cd30536bd612cd`. [October12 fix/r
 | 9. Layout reason | Name first supports scanning, textual type/status distinguishes meaning without color, UUID remains authoritative but subordinate, fixed large actions avoid ambiguous tap targets;600px cap prevents tablet stretching. |
 | 10. Empty state | Dedicated centered article icon40, padding56 vertical/12 horizontal, gaps20/10/20; primary create action above; shared text styles. |
 | 11. External launch | Production launchUrl(uri, mode: LaunchMode.externalApplication); validated typed HTTPS UUID route, no credentials/query/fragment. No internal WebView preview. |
-| 12. Browser return proof | Widget three-cycle state/scroll/one-read checks pass. Historical real Android three cycles failed missing pause despite resume/same element/scroll. cc52 host requires matching observed pause before return. Current native execution BLOCKED on review; hosted content remains unverified. |
+| 12. Browser return proof | Last completed native run38265055827 passed3/3 actual external-browser pause/resume cycles, preserved row/scroll and one collection read. Fictional public page; hosted authenticated content remains unverified. Final executable native rerun requested. |
 | 13. Create sections | Single scroll: type, basics, providers, prepared style. Four sections,22px section gap,20px padding,16px fields,24px submit gap; no live WebView. |
-| 14. Restaurant labels/keys | تەلەبات→talabat; وادێ→wade; تۆتەرز→toters; لەزوو→lezzoo. Native fixture fixed and exact customer labels independently asserted; current native pass pending. |
-| 15. Schema before changes | Read-only audit before cc52: live V5 schema lacks page_kind/settings/archived_at/moderation_status. RLS/grants/FKs/indexes/storage and trigger definitions inspected; production unchanged. Earlier detailed audit retained in prior evidence. |
+| 14. Restaurant labels/keys | تەلەبات→talabat; وادێ→wade; تۆتەرز→toters; لەزوو→lezzoo. Both native selectors12/12 passed at4b816, including exact customer labels. Current source assertions retained. |
+| 15. Schema before changes | Historical read-only pre-change audit found V5 schema without page_kind/settings/archived_at/moderation_status. Existing RLS/grants/FKs/indexes/storage/functions were inspected; no production migration was applied. This continuation does not claim a fresh production audit. |
 | 16. Reused table | Existing ProxoLink cards table and existing profiles.is_admin/pa_is_admin authority; no duplicate page/admin tables. |
 | 17. Migrations | No migration change in this continuation. Existing three additive migrations listed below tested rollback/reapply/rerun on disposable PostgreSQL17 only. |
 | 18. Moderation storage | Server-stored NOT NULL moderation_status default pending with allowed-value CHECK and trusted transition guard; operational/publishing status stays separate. |
@@ -37,21 +31,21 @@ Current executable: `4b816fb4e62b55d09ea8951d82cd30536bd612cd`. [October12 fix/r
 | 23. Query/index | Existing owner_created(user_id,created_at DESC), owner_ready and owner_request_unique retained. One owner-scoped collection request; no per-card fetch or new duplicate index. |
 | 24. Cache/state | Atomic authoritative replacement keyed by PAGE_UUID, stable unchanged models, latest-request generation; local authoritative create/delete updates, no automatic browser-resume reload. |
 | 25. Account isolation | Source/controller/upload tests reject late old-owner completions and clear private state on switch/logout. Hosted two-account authenticated UI/device journey remains BLOCKED. |
-| 26. Responsive | Flutter nine widths320/360/375/393/412/430/600/768/1024 at scales1/1.6 pass;480 renderer/browser cases pass separately. Neither substitutes for native. |
-| 27. Error comparison | Completed cc52 native: four entry failures (Ad320, ProxoLink393/430/768), all eight visible4900ms and removed5500ms.4b816 synchronizes entry to scheduled insertion; old/new source reproduction and full Flutter suite passed without moving observation deadlines. Native retest pending. |
-| 28. Flutter count | 235 Flutter tests and analyzer passed at4b816 (CI38265055650 job114865008416); both one-test old/new controlled runs also passed separately. |
-| 29. Backend/API count | 153 tests passed locally; backend job114865008604 passed at4b816, including build/source scan. |
-| 30. DB/RLS count | Three SQL contract suites plus seven real PostgreSQL-backed API lifecycles; rollback/reapply/rerun three migrations. No invented aggregate SQL assertion count. |
-| 31. Security/privacy | Current backend source scan, disposable RLS/security and two Deno jobs pass.4b816 release privacy scan passed; completed cc52 native security passed. New runtime has not executed. |
-| 32. APK impact | Same-code paired measurement83,702,384→89,319,872 bytes; +5,617,488. Twelve thumbnail entries compressed868,949→6,486,434 (+5,617,485), remaining3bytes packaging. Genuine1179×3120 renderer PNGs, no crop/stretch. |
-| 33. Native status | Completed38070780315:240 behavior,232/240 pixel pairs,8 one-pixel failures/maxdelta1; browser3/3, legacy12/12, current chooser12/12, refresh8/8 pass; notices4/8 pass. New4b816 run38265055827 APK passed; runtime114866813387 waiting review. |
-| 34. Blockers | New native and hosted jobs wait at protected environment review; device verification of notice fix and causal pixel experiment unexecuted. Current hosted settings unknown until presence check runs. Local adb/KVM unavailable. |
-| 35. PR state | PR7 freshly confirmed Draft/Open/Unmerged. Production publishing and migrations unchanged. |
+| 26. Responsive | Atf7112a8, all480 browser cases and retained Flutter width/scale tests passed. Neither result substitutes for Android pixel acceptance. |
+| 27. Error comparison | Notification cause proven: entry animation began at mount after the insertion clock. Product fix uses scheduled elapsed entry time. Old/new source reproduction passes; native4b816 actual Ad/ProxoLink notices8/8 pass at unchanged400/4900/5500ms checkpoints. No deadline delay. |
+| 28. Flutter count | Atf7112a8,237 Flutter tests, analyzer and both old/new notice regression runs passed. Release APK, privacy scan and paired size checks passed. |
+| 29. Backend/API count | 153/153 backend tests passed locally; f7112a8 backend CI passed including build/source scan. |
+| 30. DB/RLS count | f7112a8 disposable database job passed: three SQL contract suites, seven PostgreSQL-backed API lifecycles and migration rollback/reapply/rerun checks. No invented aggregate SQL assertion count. |
+| 31. Security/privacy | f7112a8 backend source scan, database/RLS/security and both Deno checks passed. Current release APK/privacy scan passed. Last completed native security result belongs to4b816. |
+| 32. APK impact | Current f7112a8 paired measurement83,702,384→89,319,872bytes (+5,617,488); thumbnail compressed increase5,617,485bytes plus3bytes packaging. Artifact11807069634 independently digest/CRC verified. Assets remain genuine1179×3120 renderer PNGs. |
+| 33. Native status | Native38265055827 at4b816:240 behavior pass;234/240 exact pixel pairs;6failed/1134pixels/maxdelta1. Browser3/3, legacy12/12, current Create12/12, refresh8/8, notices8/8 pass. New native38388402520 atf7112a8 built successfully; runtime115267707400 has not executed and waits for the configured environment review. |
+| 34. Blockers | Pending: native pixel cause/remedy and full final native pass. Blocked: hosted38264179020 observed eight missing required staging settings (listed below). Physical performance profiling and unsupported device/browser coverage remain unverified. GitHub pending_deployments confirms the newly requested run38388402520 requires reviewer Zana-Sponsor in proxolink-preview-verification (environment23442858482). No approval blocker is attributed to either completed historical run. |
+| 35. PR state | PR7 confirmed Draft/Open/Unmerged. This continuation leaves production publishing, migrations and security gates unchanged. |
 | 36. Shared Home refresh | Tools reuses ProxoRefresh/controller/scope/arrival;60px reveal,22px spinner/2px stroke, opening spring260/22, closing300/30, minimum450ms. |
-| 37. Motion evidence | Historical actual native8/8 Home/Tools refresh flows pass with same list,one read,zero settled offset; current widget comparisons at100/300ms and settled pass. Current runtime and authenticated pull journey unverified. |
+| 37. Motion evidence | Native4b816 Home/Tools8/8 pass with same list,one read,zero settled offset. Actual-screen widget comparisons at100/300ms and settled are retained in current passing suite. Hosted authenticated pull journey remains unverified. |
 | 38. Deleted-row reconciliation | Controller tests verify complete authoritative replacement removes server-deleted rows and updates values/status while preserving UUID identity; no stale merge. |
 | 39. Latest-request-wins | Deferred old/new request tests plus owner/disposal generations reject older completion; source suite passes. |
-| 40. No permanent shift | Widget exact settled geometry and historical native all8 refresh cases report zero offset and stopped refresh. New current native result pending. |
+| 40. No permanent shift | Widget exact settled geometry assertions pass; completed native4b816 all8 refresh cases report zero offset and stopped refresh. Final-source native result pending. |
 
 Exact eight paths changed by cc52 relative to47d0c609c344a7e9c2ffae11bb4f4c29147dfd13:
 
@@ -81,7 +75,7 @@ Existing disposable-tested migrations:
 
 Measurements are logical pixels. Screen insets16 horizontal/20top/32bottom. Name uses shared Rabar titleMedium regular, maximum3 lines; metadata/status bodyMedium, UUID bodySmall single-line ellipsis. Type/status wraps with12px horizontal/8px vertical spacing; status padding10×4/radius8. Date/time wrap gap14/run4. Filled action minimum52px, outline48px;12px horizontal gap; stack when inner width is below240×scaled-font-factor with10px vertical gap. Selector max432px,12px gap, one column below260 otherwise two, tile max210px. Full1179×3120 PNG uses contain, physical decode ceil((tileWidth−16)×DPR) capped1179.
 
-Visual evidence below is **widget/fictional-transport evidence**, not native or hosted screenshots. Prior audit compared138 retained product/actual-screen images byte-identically to current cc52 CI artifact. Full current artifact includes146PNGs plus measurements; eight compatibility images are not the new customer flow.
+Visual evidence below is **widget/fictional-transport evidence**, not native or hosted screenshots. Prior audit compared138 retained product/actual-screen images byte-identically to historical cc52 CI artifact. Current UI artifact11807339165 contains146PNGs plus measurements; all58 retained Tools/Create images match it byte-for-byte; eight compatibility images are not the new customer flow.
 
 | Width | Cards/long name/all statuses | Empty | Error | Create | Styles |
 |---|---|---|---|---|---|
@@ -96,17 +90,35 @@ Artifact provenance from preceding independent download/audit:
 
 | Artifact | Run / ID | ZIP SHA256 |
 |---|---|---|
-|Current UI|38070780277 /11676796495|`01e05a0f2772aef7c4dbe322686625ef37a4a275a6497b83478e8a30e0942a3c`|
-|Current paired APK size|38070780277 /11677176607|`d364a1ccbaba68092ac870c2ac2cba22c2f83c1a616bab3c6d16cb89afe798f2`|
+|Historical UI|38070780277 /11676796495|`01e05a0f2772aef7c4dbe322686625ef37a4a275a6497b83478e8a30e0942a3c`|
+|Historical paired APK size|38070780277 /11677176607|`d364a1ccbaba68092ac870c2ac2cba22c2f83c1a616bab3c6d16cb89afe798f2`|
 |Historical native82|38060488156 /11675279231|`f38b5ee865c94a0c4c86803624b2437eba0e57e80640600b1f9fc10710ee8545`|
 
-[Current artifacts](https://github.com/Zana-Sponsor/proxobalance/actions/runs/38070780277#artifacts), [historical native artifacts](https://github.com/Zana-Sponsor/proxobalance/actions/runs/38060488156#artifacts). Completed run38070780315 ZIP digest and all failed pairs were independently audited and published in docs/evidence/proxolink-native-38070780315. See the terminal audit for the64 actual-screen captures; new4b816 native screenshots do not yet exist.
+[Historical UI artifacts](https://github.com/Zana-Sponsor/proxobalance/actions/runs/38070780277#artifacts). Last completed [native artifact11761854434](https://github.com/Zana-Sponsor/proxobalance/actions/runs/38265055827/artifacts/11761854434) independently verified SHA256 `96194a6c06e5d7f963eae87a9f581e2b684efa83d29aadddc08749eeeca2cdc0`; ZIP CRCs passed. It includes all64 actual-screen phase screenshots. [Exact failed pairs, raw results and coordinate audit](evidence/proxolink-native-38265055827). The six retained candidate/baseline pairs were independently recomputed again on October13: five single pixels plus1129 shadow-band pixels, maxdelta1.
 
-Exact remaining actions:
+Hosted [run38264179020](https://github.com/Zana-Sponsor/proxobalance/actions/runs/38264179020) executed in `proxolink-preview-verification` and failed `staging_setting_required`. [Artifact11756526797](https://github.com/Zana-Sponsor/proxobalance/actions/runs/38264179020/artifacts/11756526797) independently verified SHA256 `a07400dc4bd84687b53717cd3759fe0a67a7261cfb5fafe94408281ed19164bb`. Required absent names observed in that run:
 
-1. New native run38265055827 and hosted run38264179020 require their configured GitHub Environment review (`proxolink-preview-verification`, environment23442858482, reviewer `Zana-Sponsor`). Both were actually triggered. The connector exposes no review-submission operation. Keep protection intact. This does not undo or repeat the approval of completed38070780315.
-2. Execute4b816 native gate to verify all four notification failures at unchanged deadlines and collect controlled same-document redraw evidence for the eight pixel cases. Root cause/remedy for pixels remains unproven. No tolerance, mask, later-frame replacement or speculative template change.
-3. Inspect the new hosted presence/result after review; report missing names only if that run observes them. Historical eight-setting absence is not treated as current. Preserve isolated-only writes and production unchanged.
-4. Full final native acceptance and remaining real authenticated UI/device/browser coverage must pass before completion. Source fixtures and APK builds do not substitute for those results.
+- PROXO_STAGING_PROJECT_REF
+- PROXO_STAGING_SUPABASE_URL
+- PROXO_STAGING_BASE_URL
+- PROXO_STAGING_ANON_KEY
+- PROXO_STAGING_TEST_EMAIL
+- PROXO_STAGING_TEST_PASSWORD
+- PROXO_STAGING_OTHER_EMAIL
+- PROXO_STAGING_OTHER_PASSWORD
 
-No full acceptance or pixel-perfect completion is claimed. PR7 remains Draft/Open/Unmerged; production publishing and migrations stay untouched.
+The first three accept variables or secrets; the remaining values are secrets. An isolated project/preview and two ordinary accounts are needed. Account existence is not inferred. The current native-only marker intentionally skips the hosted job; it does not overturn the prior executed presence check or certify the settings as fixed.
+
+Remaining: obtain current native diagnostic results, establish the pixel cause, implement an evidence-supported remedy and pass all240 zero-pixel comparisons plus every behavioral gate at the final executable. Configure the observed missing isolated settings and pass hosted journeys. No threshold, mask, later-frame substitution, template speculation, production migration or publishing change is allowed. PR7 remains Draft/Open/Unmerged.
+
+## Current source artifact verification
+
+All ZIP CRCs passed and independently computed SHA256 matched GitHub metadata:
+
+| Artifact | ID / SHA256 |
+|---|---|
+| [Responsive](https://github.com/Zana-Sponsor/proxobalance/actions/runs/38388402541/artifacts/11808085090) |11808085090 / `fae82e53f381c890aeeab9fc35835109435cfc8577d48026bfe4428113e2e05a`|
+| [UI screenshots](https://github.com/Zana-Sponsor/proxobalance/actions/runs/38388402541/artifacts/11807339165) |11807339165 / `774f989fe3366b3c4b7c047ac22324f116379d5f94309b71e089ba9d4d0a171a`|
+| [Paired APK size](https://github.com/Zana-Sponsor/proxobalance/actions/runs/38388402541/artifacts/11807069634) |11807069634 / `8e050e1712af0e2f7dcd0be19b1f4ddbf0089a1fb6ed700807bceadcfacf540a`|
+
+These certify source/widget/browser verification atf7112a8, not unexecuted Android runtime acceptance. No native artifact exists for that runtime yet.

@@ -54,3 +54,5 @@ Expected benefit: hidden animations stop requesting their own frames; no quantif
 ## Observed source verification update
 
 At `7524487a3807c4467dd8227ee08054f1e0a20534`, source run38332774448 passed analysis, the old/new notice regression and all237 Flutter tests, including both original IndexedStack and ProxoTabStack callback/state/scroll tests. The controlled widget benefit is verified; physical CPU, memory, frame and latency metrics remain unmeasured. Release checks were not executed after the NDK download failed with an invalid ZIP. Responsive stopped in the repaint diagnostic restoration contract; no full final-source native pass is claimed. No Home cache change was retained because the name field is not rendered; authenticated cache runtime coverage remains Not Verified.
+
+At final executable f7112a8, source CI38388402541 passed all five jobs, including237 Flutter tests,480 browser cases and release/privacy/paired APK checks. Both ticker regressions pass. Native APK also passed; protected runtime is waiting, and no physical profiling metrics are available. The NDK download failure belongs to the earlier run only.
