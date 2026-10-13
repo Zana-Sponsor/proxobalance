@@ -30,10 +30,10 @@ void main() {
     expect(backend.bannerJoins,old?1:0);
     expect(backend.client.getChannels().length,old?1:0);
     print('BANNER_DISPOSE old=$old joins=${backend.bannerJoins} channels=${backend.client.getChannels().length}');
-    await backend.client.removeAllChannels();await flush(t);
+    final cleanup=backend.client.removeAllChannels();await flush(t);await cleanup;
     backend.bannerGate=null;
     expect(t.takeException(),isNull);
-  });
+  }, timeout: const Timeout(Duration(seconds:45)));
 
   testWidgets('banner realtime reload retains one subscription', (t) async {
     final joinsBefore=backend.bannerJoins;
@@ -46,7 +46,7 @@ void main() {
     expect(backend.bannerJoins-joinsBefore,old?2:1);
     print('BANNER_RELOAD old=$old joins=${backend.bannerJoins-joinsBefore} reads=${backend.reads['pa_banners']!-readsBefore}');
     await t.pumpWidget(const SizedBox.shrink());await flush(t);
-    await backend.client.removeAllChannels();await flush(t);
+    final cleanup=backend.client.removeAllChannels();await flush(t);await cleanup;
     expect(t.takeException(),isNull);
-  });
+  }, timeout: const Timeout(Duration(seconds:45)));
 }

@@ -16,7 +16,6 @@ import '../widgets/ad_form_components.dart';
 import '../main.dart' show supabase, navigatorKey;
 import 'package:proxo_app/widgets/proxo_text.dart';
 
-String? _sCachedUserName;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Design tokens
@@ -119,7 +118,6 @@ class _HomeScreenState extends State<HomeScreen>
     'All time',
   ];
 
-  String _userName = '—';
   String _range = 'Last 7 days';
 
   List<Map<String, dynamic>> _ads = const [];
@@ -166,7 +164,6 @@ class _HomeScreenState extends State<HomeScreen>
         curve: const Interval(0.34, 1.00, curve: Curves.easeOutCubic));
     _intro.forward();
 
-    _loadUser();
     _loadAds();
     _startFeedbackRealtime();
     _startPopupRealtime();
@@ -349,26 +346,6 @@ class _HomeScreenState extends State<HomeScreen>
     }
   }
 
-  Future<void> _loadUser() async {
-    if (_sCachedUserName != null) {
-      if (mounted) setState(() => _userName = _sCachedUserName!);
-      return;
-    }
-    try {
-      final user = supabase.auth.currentUser;
-      if (user == null) return;
-      final profile = await supabase
-          .from('profiles')
-          .select('full_name')
-          .eq('id', user.id)
-          .maybeSingle();
-      final name = profile?['full_name']?.toString() ??
-          user.email?.split('@').first ?? '—';
-      _sCachedUserName = name;
-      if (mounted) setState(() => _userName = name);
-    } catch (_) {}
-  }
-
   Future<void> _loadAds() async {
     try {
       final user = supabase.auth.currentUser;
@@ -495,7 +472,6 @@ class _HomeScreenState extends State<HomeScreen>
 
   Future<void> _refresh() async {
     await Future.wait(<Future<void>>[
-      _loadUser(),
       _loadAds(),
       _bestMetricsKey.currentState?.refresh() ?? Future<void>.value(),
     ]);
