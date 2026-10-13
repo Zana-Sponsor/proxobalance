@@ -9,9 +9,16 @@ assert.ok(script);
 const browser=await chromium.launch({headless:true});
 try {
   const page=await browser.newPage({viewport:{width:393,height:800}});
+  const previous=script.replace("root.setAttribute('style',(original||'')+';visibility:hidden!important;');","root.style.setProperty('visibility','hidden','important');");
   for(const original of [null,'','color: rgb(21, 32, 43); visibility: visible !important;']){
     await page.setContent('<html><body><div style="height:1400px;background:linear-gradient(#eff8f5,#fff)">Repaint contract</div></body></html>');
     await page.evaluate(value=>{if(value!==null)document.documentElement.setAttribute('style',value);window.scrollTo(0,80);},original);
+    // Compare the previous CSSOM mutation and attribute mutation on identical
+    // inputs. Record the old result; require exact restoration from the new one.
+    await page.evaluate(previous);
+    await page.waitForFunction(()=>window.__nativeRepaint?.done===true);
+    console.log(JSON.stringify({operation:'previous-cssom',original,result:await page.evaluate(()=>window.__nativeRepaint),actual:await page.evaluate(()=>document.documentElement.getAttribute('style'))}));
+    await page.evaluate(value=>{if(value===null)document.documentElement.removeAttribute('style');else document.documentElement.setAttribute('style',value);},original);
     const before=await page.screenshot();
     const scroll=await page.evaluate(()=>scrollY);
     await page.evaluate(script);

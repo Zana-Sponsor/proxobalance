@@ -88,7 +88,7 @@ const nativeRepaintScript = r'''
 (()=>{
  const root=document.documentElement,original=root.getAttribute('style');
  window.__nativeRepaint={done:false,restored:false};
- root.style.setProperty('visibility','hidden','important');
+ root.setAttribute('style',(original||'')+';visibility:hidden!important;');
  requestAnimationFrame(()=>requestAnimationFrame(()=>{
   if(original===null)root.removeAttribute('style');else root.setAttribute('style',original);
   requestAnimationFrame(()=>requestAnimationFrame(()=>{

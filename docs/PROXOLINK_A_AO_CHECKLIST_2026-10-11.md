@@ -1,3 +1,5 @@
+> Latest continuation: [repaint restoration fix and exact source results](PROXOLINK_REPAINT_EXPERIMENT_2026-10-13.md#continuation-restoration-defect-reproduced-and-corrected). At7524487,237 Flutter tests passed; backend/database/edge passed. Responsive matrix and release checks were not executed following separate diagnostic/NDK failures. Native pixels remain Pending; hosted remains Blocked by observed missing staging settings. No final completion claim.
+
 > Terminal update: [run38265055827 and hosted38264179020](PROXOLINK_NATIVE_RUN_38265055827.md). Notice8/8, refresh8/8, browser3/3 and both selectors12/12 PASS at4b816. Pixels234/240, six failed pairs/1134pixels/maxdelta1. Hosted ran and observed eight absent staging settings. Prior waiting statuses below are historical. New repaint code is diagnostic only.
 
 > October12 executable work: [candidate notice fix and controlled native experiment](PROXOLINK_FIX_PROGRESS_2026-10-12.md). Native outcomes pending; hosted request38264179020 has been triggered.

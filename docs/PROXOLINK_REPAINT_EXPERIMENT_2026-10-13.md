@@ -54,3 +54,13 @@ Required absent names: `PROXO_STAGING_PROJECT_REF`, `PROXO_STAGING_SUPABASE_URL`
 ## Remaining acceptance
 
 Pending: native pixel cause, evidence-supported remedy, affected checks and full final native pass. Blocked: isolated hosted journeys until the observed eight settings are supplied. Notification lifecycle is now verified at4b816. Keep production, zero-pixel acceptance and PR state unchanged. This report supplements the40-item AO report; historical waiting statuses are superseded by these terminal results.
+
+## Continuation: restoration defect reproduced and corrected
+
+Source run [38332774448](https://github.com/Zana-Sponsor/proxobalance/actions/runs/38332774448), executable `7524487a3807c4467dd8227ee08054f1e0a20534`: backend, isolated database and edge jobs passed; Flutter analysis, original/new notice regression and all **237 Flutter tests passed**. Responsive failed in the new repaint contract, before the 480-case matrix. Release build/privacy/size checks did not execute: wrapper initialization failed while installing NDK28.2.13676358, `ZipException: Archive is not a ZIP archive`. These are not native pixel results.
+
+Controlled local Chromium141.0.7390.37 comparison executes the exact embedded Dart script. Previous CSSOM `root.style.setProperty` reproduces `original:null, actual:"", restored:false`; empty and populated attributes restore. Switching only the temporary visibility assignment to `root.setAttribute` restores all three original states, preserves scroll80, and produces byte-identical before/after screenshots. `scripts/proxolink-repaint-contract.mjs` records the old operation on identical inputs before asserting exact restoration and pixels for the new operation. No assertion is delayed or weakened. This is a proven **diagnostic restoration fix**, not proof of Android pixel causality. CI must also verify its pinned Chromium version.
+
+Changed executable files: `proxo_app/integration_test/proxolink_native_diagnostics.dart`, `scripts/proxolink-repaint-contract.mjs`. Local `npm test`:153/153 passed; diagnostic tests7/7 passed; diff whitespace check passed. The 240 FIRST pairs, comparison threshold, native lifecycles and templates are unchanged. Full final native execution remains Pending.
+
+The proposed Home name-cache patch was not retained: closer inspection found its cached name is not used in Home's rendered tree, so the proposed visible-name test would not test actual behavior. No account-cache or Supabase change is included in this continuation.
