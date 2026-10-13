@@ -16,7 +16,7 @@ try {
     const scroll=await page.evaluate(()=>scrollY);
     await page.evaluate(script);
     await page.waitForFunction(()=>window.__nativeRepaint?.done===true);
-    assert.deepEqual(await page.evaluate(()=>window.__nativeRepaint),{done:true,restored:true});
+    assert.deepEqual(await page.evaluate(()=>window.__nativeRepaint),{done:true,restored:true}, JSON.stringify({original,actual:await page.evaluate(()=>document.documentElement.getAttribute('style'))}));
     assert.equal(await page.evaluate(()=>document.documentElement.getAttribute('style')),original);
     assert.equal(await page.evaluate(()=>scrollY),scroll);
     assert.deepEqual(await page.screenshot(),before);
