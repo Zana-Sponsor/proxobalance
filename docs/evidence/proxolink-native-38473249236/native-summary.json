@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "protected_run": {
+    "id": 38473249236,
+    "attempt": 1,
+    "tested_sha": "8c1a353d527b4b9f45f7591515452ae3f0e025c4",
+    "terminal_at": "2026-10-13T23:57:36Z",
+    "conclusion": "failure",
+    "apk_job": 115557446812,
+    "native_job": 115559375465,
+    "hosted_job": 115557447546
+  },
+  "source_ci": {
+    "run_id": 38473249284,
+    "conclusion": "success",
+    "jobs_passed": 5
+  },
+  "artifact": {
+    "id": 11859323347,
+    "size_bytes": 187789933,
+    "sha256": "1e67bc0f7bcc566ece62933c84d210cf21e6aa0ffb32521ca0d985762076fd67",
+    "zip_crc_verified": true,
+    "file_count": 2560,
+    "png_count": 2543
+  },
+  "matrix": {
+    "expected": 240,
+    "executed": 240,
+    "behavior_passed": 240,
+    "behavior_failed": 0,
+    "first_candidate": 240,
+    "first_baseline": 240,
+    "missing_cases": 0,
+    "missing_captures": 0,
+    "exact_pairs": 232,
+    "failed_pairs": 8,
+    "changed_pixels": 10,
+    "max_channel_delta": 1
+  },
+  "repeatability": {
+    "stable_roles": 496,
+    "unstable_roles": 0,
+    "samples_per_role": 3,
+    "acceptance_roles": 480,
+    "reproduction_roles": 16
+  },
+  "diagnostics": {
+    "passed": true,
+    "deep_roles": 28,
+    "deep_pairs": 15,
+    "reproduction_roles": 16,
+    "reproduction_pairs": 8
+  },
+  "other_gates": {
+    "legacy_chooser": {
+      "passed": 12,
+      "failed": 0
+    },
+    "create_selector": {
+      "passed": 12,
+      "failed": 0
+    },
+    "tools_browser": {
+      "passed": 3,
+      "failed": 0
+    },
+    "actual_screens": {
+      "passed": 16,
+      "failed": 0
+    },
+    "security": {
+      "passed": 6,
+      "failed": 0
+    },
+    "authentication_cases_complete": 240,
+    "catalog_401_observed": false,
+    "exact_renewal_count_retained": false
+  },
+  "pixel_root_cause": "NOT_PROVEN",
+  "final_verified": false
+}

@@ -1,0 +1,27 @@
+{
+  "environment": "proxolink-preview-verification",
+  "artifact": {
+    "id": 11855625624,
+    "sha256": "adbf51e12affc686a1f6990dc56b505293a3211632f6aefb6a96e01d0e5dfc04",
+    "zip_crc_verified": true
+  },
+  "credential_values_retained": false,
+  "native_primary_settings_present": true,
+  "staging": {
+    "configured": false,
+    "missing_setting_names": [
+      "PROXO_STAGING_PROJECT_REF",
+      "PROXO_STAGING_SUPABASE_URL",
+      "PROXO_STAGING_BASE_URL",
+      "PROXO_STAGING_ANON_KEY",
+      "PROXO_STAGING_TEST_EMAIL",
+      "PROXO_STAGING_TEST_PASSWORD",
+      "PROXO_STAGING_OTHER_EMAIL",
+      "PROXO_STAGING_OTHER_PASSWORD"
+    ],
+    "validation_code": "staging_setting_required",
+    "second_account_settings_present": false,
+    "account_existence_or_authentication_verified": false,
+    "isolated_hosted_execution_verified": false
+  }
+}

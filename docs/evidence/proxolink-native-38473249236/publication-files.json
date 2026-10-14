@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "tested_sha": "8c1a353d527b4b9f45f7591515452ae3f0e025c4",
+  "parent_docs_head": "a7ca1d660380a5b9a99952e0bd9b5f8451728d9f",
+  "files": [
+    "docs/PROXOLINK_NATIVE_38473249236.md",
+    "docs/PROXOLINK_V6_EXECUTION_2026-10-07.md",
+    "docs/evidence/proxolink-native-38473249236/acceptance-gates.json",
+    "docs/evidence/proxolink-native-38473249236/failure.json",
+    "docs/evidence/proxolink-native-38473249236/native-summary.json",
+    "docs/evidence/proxolink-native-38473249236/pixel-failures.json",
+    "docs/evidence/proxolink-native-38473249236/diagnostic-summary.json",
+    "docs/evidence/proxolink-native-38473249236/independent-audit.json",
+    "docs/evidence/proxolink-native-38473249236/hosted-configuration.json",
+    "docs/evidence/proxolink-native-38473249236/publication-files.json"
+  ],
+  "source_ui_workflow_modified": false,
+  "private_payloads_retained": false
+}

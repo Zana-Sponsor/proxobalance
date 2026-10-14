@@ -1,0 +1,188 @@
+{
+  "schema_version": 1,
+  "conclusion": "NOT_PROVEN",
+  "css": {
+    "bytes": 423878,
+    "sha256": "20e445a66dcbe0edde7c4ab0cfada203ed1036896361143a8206536aaa88168c",
+    "paired_equal": true
+  },
+  "embedded_fonts": {
+    "count": 3,
+    "paired_identity_and_body_equal": true
+  },
+  "deep_current_failures": [
+    {
+      "case": "pill-order-ku-portrait-768",
+      "first": 1,
+      "surface": 1,
+      "webcontents": 0,
+      "repaint_pair": 0,
+      "post_pair": 0,
+      "candidate_repaint_vs_first": 1,
+      "baseline_repaint_vs_first": 0,
+      "candidate_pipeline_vs_first": 335993,
+      "baseline_pipeline_vs_first": 335993,
+      "input_equal": true,
+      "css_equal": true,
+      "embedded_fonts_equal": true,
+      "html_equal": false,
+      "markup_diff_count": 1
+    },
+    {
+      "case": "pill-download-ku-portrait-768",
+      "first": 2,
+      "surface": 2,
+      "webcontents": 0,
+      "repaint_pair": 0,
+      "post_pair": 0,
+      "candidate_repaint_vs_first": 2,
+      "baseline_repaint_vs_first": 0,
+      "candidate_pipeline_vs_first": 309508,
+      "baseline_pipeline_vs_first": 309508,
+      "input_equal": true,
+      "css_equal": true,
+      "embedded_fonts_equal": true,
+      "html_equal": false,
+      "markup_diff_count": 1
+    },
+    {
+      "case": "pill-mint-contact-ku-portrait-430",
+      "first": 1,
+      "surface": 1,
+      "webcontents": 0,
+      "repaint_pair": 0,
+      "post_pair": 0,
+      "candidate_repaint_vs_first": 1,
+      "baseline_repaint_vs_first": 0,
+      "candidate_pipeline_vs_first": 343527,
+      "baseline_pipeline_vs_first": 343528,
+      "input_equal": true,
+      "css_equal": true,
+      "embedded_fonts_equal": true,
+      "html_equal": false,
+      "markup_diff_count": 2
+    },
+    {
+      "case": "pill-mint-order-ku-portrait-430",
+      "first": 1,
+      "surface": 1,
+      "webcontents": 0,
+      "repaint_pair": 0,
+      "post_pair": 0,
+      "candidate_repaint_vs_first": 1,
+      "baseline_repaint_vs_first": 0,
+      "candidate_pipeline_vs_first": 342201,
+      "baseline_pipeline_vs_first": 342202,
+      "input_equal": true,
+      "css_equal": true,
+      "embedded_fonts_equal": true,
+      "html_equal": false,
+      "markup_diff_count": 1
+    },
+    {
+      "case": "pill-mint-order-ku-portrait-768",
+      "first": 1,
+      "surface": 1,
+      "webcontents": 0,
+      "repaint_pair": 0,
+      "post_pair": 0,
+      "candidate_repaint_vs_first": 1,
+      "baseline_repaint_vs_first": 0,
+      "candidate_pipeline_vs_first": 340980,
+      "baseline_pipeline_vs_first": 340979,
+      "input_equal": true,
+      "css_equal": true,
+      "embedded_fonts_equal": true,
+      "html_equal": false,
+      "markup_diff_count": 1
+    },
+    {
+      "case": "pill-mint-order-en-portrait-430",
+      "first": 1,
+      "surface": 1,
+      "webcontents": 0,
+      "repaint_pair": 0,
+      "post_pair": 0,
+      "candidate_repaint_vs_first": 1,
+      "baseline_repaint_vs_first": 0,
+      "candidate_pipeline_vs_first": 342033,
+      "baseline_pipeline_vs_first": 342034,
+      "input_equal": true,
+      "css_equal": true,
+      "embedded_fonts_equal": true,
+      "html_equal": false,
+      "markup_diff_count": 1
+    },
+    {
+      "case": "pill-mint-order-en-portrait-768",
+      "first": 1,
+      "surface": 1,
+      "webcontents": 0,
+      "repaint_pair": 0,
+      "post_pair": 0,
+      "candidate_repaint_vs_first": 1,
+      "baseline_repaint_vs_first": 0,
+      "candidate_pipeline_vs_first": 340877,
+      "baseline_pipeline_vs_first": 340876,
+      "input_equal": true,
+      "css_equal": true,
+      "embedded_fonts_equal": true,
+      "html_equal": false,
+      "markup_diff_count": 1
+    }
+  ],
+  "newly_failed_without_predeclared_deep_pair": [
+    "pill-mint-download-ku-portrait-768"
+  ],
+  "fresh_reproduction": [
+    {
+      "case": "pill-contact-en-portrait-768",
+      "fresh_pair_changed_pixels": 0,
+      "candidate_aa_changed_pixels": 0,
+      "baseline_aa_changed_pixels": 0
+    },
+    {
+      "case": "pill-order-ku-portrait-768",
+      "fresh_pair_changed_pixels": 1,
+      "candidate_aa_changed_pixels": 0,
+      "baseline_aa_changed_pixels": 0
+    },
+    {
+      "case": "pill-mint-contact-ku-portrait-768",
+      "fresh_pair_changed_pixels": 0,
+      "candidate_aa_changed_pixels": 0,
+      "baseline_aa_changed_pixels": 0
+    },
+    {
+      "case": "pill-mint-order-ku-portrait-320",
+      "fresh_pair_changed_pixels": 0,
+      "candidate_aa_changed_pixels": 0,
+      "baseline_aa_changed_pixels": 0
+    },
+    {
+      "case": "pill-mint-order-ku-portrait-430",
+      "fresh_pair_changed_pixels": 1,
+      "candidate_aa_changed_pixels": 0,
+      "baseline_aa_changed_pixels": 0
+    },
+    {
+      "case": "pill-mint-order-ku-portrait-768",
+      "fresh_pair_changed_pixels": 1,
+      "candidate_aa_changed_pixels": 0,
+      "baseline_aa_changed_pixels": 0
+    },
+    {
+      "case": "pill-mint-order-en-portrait-430",
+      "fresh_pair_changed_pixels": 1,
+      "candidate_aa_changed_pixels": 0,
+      "baseline_aa_changed_pixels": 0
+    },
+    {
+      "case": "pill-mint-order-en-portrait-768",
+      "fresh_pair_changed_pixels": 1,
+      "candidate_aa_changed_pixels": 0,
+      "baseline_aa_changed_pixels": 0
+    }
+  ],
+  "interpretation": "SurfaceView reproduces FIRST differences; controlled repaint, post-observation native and WebContents candidate/baseline pairs are exact for all seven deeply instrumented current failures, with stable geometry and matching normalized input/CSS/font identities. This does not isolate a safe causal paint/raster/composition variable."
+}

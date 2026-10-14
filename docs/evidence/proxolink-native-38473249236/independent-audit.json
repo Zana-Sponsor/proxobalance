@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "artifact_sha256_verified": true,
+  "zip_crc_verified": true,
+  "checks": {
+    "first_pairs": 240,
+    "exact_pairs": 232,
+    "failed_pairs": 8,
+    "changed_pixels": 10,
+    "screen_crop_correspondences": 480,
+    "acceptance_repeat_comparisons": 960,
+    "diff_pngs": 240,
+    "reproduction_repeat_comparisons": 32
+  },
+  "audit_errors": 0,
+  "method": "Independent PNG decode and ImageMagick absolute-error replay against saved FIRST, repeat, full-screen crop and diff files."
+}
