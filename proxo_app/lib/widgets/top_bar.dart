@@ -60,7 +60,7 @@ class ProxoTopBar extends StatelessWidget implements PreferredSizeWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         if (onMenuTap != null)
-          _BarIconButton(onTap: onMenuTap, label: 'مێنیو', child: const Icon(SolarIconsOutline.list, size: _iconSize, color: _ink)),
+          _BarIconButton(onTap: onMenuTap, label: 'مێنیو', child: const Icon(SolarIconsOutline.hamburgerMenu, size: _iconSize, color: _ink)),
 
         NotificationBell(
           onTap: onNotificationTap ?? () {},

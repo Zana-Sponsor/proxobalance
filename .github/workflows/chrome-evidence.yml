@@ -42,6 +42,10 @@ jobs:
         working-directory: ${{ matrix.source }}/proxo_app
         timeout-minutes: 8
         run: flutter test test/chrome_capture_test.dart --reporter expanded --dart-define=CHROME_BASELINE=${{ matrix.source == 'before' }}
+      - name: Sidebar routing and loading regressions
+        if: matrix.source == 'after'
+        working-directory: after/proxo_app
+        run: flutter test test/chrome_behavior_test.dart --reporter expanded
       - uses: actions/upload-artifact@v4
         if: always()
         with:

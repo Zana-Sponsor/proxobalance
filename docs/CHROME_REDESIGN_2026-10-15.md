@@ -13,7 +13,7 @@ Requested follow-up: use external icons, harmonize typography/size, correct obse
 | Profile labels | Tools named “materials”; single-line truncation | “ئامرازەکان” matches navigation; wrapping names/menu labels; consistent blue and rounded surfaces |
 | Bottom navigation | PNG pairs, custom plus, 11.5sp shrunk labels | Solar Outline home2/clapperboardPlay/widget_2/userRounded; Solar Bold addCircle; 24dp tab icons, 12sp labels; active blue capsule; 48dp minimum targets |
 | Large-text navigation | Labels shrunk with FittedBox | Measured labels retain system size; horizontal scrolling only when five readable tabs cannot fit; selected tab brought into view |
-| App bar | Mixed hand-drawn/Material icons, 36dp buttons, bell target only21dp | Solar list/bell/magnifier/altArrowRight; 24dp glyphs; 48dp actions; 56dp bar; 24dp logo; descriptive semantics/tooltips |
+| App bar | Mixed hand-drawn/Material icons, 36dp buttons, bell target only21dp | Solar hamburgerMenu/bell/magnifier/altArrowRight; 24dp glyphs; 48dp actions; 56dp bar; 24dp logo; descriptive semantics/tooltips |
 | Notification motion | Infinite unread pulse | One pulse on count update; respects reduced motion |
 
 No package/version change, icon download, runtime icon website, or new image asset. Uses the existing bundled `solar_icons: 0.1.0` font. Existing home quick actions remain icons and Sorani labels without images. Original raster assets remain available for untouched consumers; no unrelated template/payment/backend redesign.
@@ -21,7 +21,7 @@ No package/version change, icon download, runtime icon website, or new image ass
 ## Icon source and licenses
 
 - Package: https://pub.dev/packages/solar_icons — BSD-3-Clause, © 2023 Sebastine Odeh; license retained in the dependency and `docs/SOLAR_ICON_LICENSE.txt`.
-- Original artwork: Solar Icons by 480 Design, https://www.figma.com/community/file/1166831539721848736 . Original artwork attribution under CC BY 4.0: https://creativecommons.org/licenses/by/4.0/ . Attribution visible in Profile/About. Icons resized/recolored; paths not modified.
+- Original artwork: Solar Icons by 480 Design, https://www.figma.com/community/file/1166831539721848736 . Original artwork attribution under CC BY 4.0: https://creativecommons.org/licenses/by/4.0/ . Attribution visible in Profile → About. Icons resized/recolored; paths not modified.
 - Collection third-party notice checked: https://github.com/saoudi-h/solar-icons/blob/main/LICENSE-THIRD-PARTY . The separate solar_iconkit wrapper reports MIT; this change uses solar_icons, and does not assume that a wrapper's license replaces artwork attribution.
 
 ## Verification

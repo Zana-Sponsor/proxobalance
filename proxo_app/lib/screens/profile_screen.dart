@@ -464,7 +464,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   ),
                                   const SizedBox(height: 20),
                                   const ProxoText(
-                                    'Solar icons © 480 Design · CC BY 4.0\nوەشانی ١.٠.٠',
+                                    'وەشانی ١.٠.٠',
                                     textAlign: TextAlign.center,
                                     style: _ProfileText.version,
                                   ),
@@ -964,7 +964,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             child: Column(
               children: <Widget>[
                 _SimpleTopBar(
-                  title: 'دەستکاریکردنی پرۆفایل',
+                  title: 'دەستکاری پڕۆفایل',
                   onBack: () => Navigator.of(context).maybePop(),
                 ),
                 Expanded(
@@ -1307,7 +1307,7 @@ class _ProfileTopBar extends StatelessWidget {
                       onTap: onBack,
                     )
                   : _CircleActionButton(
-                      semanticLabel: 'دەستکاریکردنی پرۆفایل',
+                      semanticLabel: 'دەستکاری پڕۆفایل',
                       icon: SolarIconsOutline.penNewSquare,
                       onTap: onEdit,
                     ),
@@ -1321,7 +1321,7 @@ class _ProfileTopBar extends StatelessWidget {
               ),
               showBack
                   ? _CircleActionButton(
-                      semanticLabel: 'دەستکاریکردنی پرۆفایل',
+                      semanticLabel: 'دەستکاری پڕۆفایل',
                       icon: SolarIconsOutline.penNewSquare,
                       onTap: onEdit,
                     )
@@ -1600,9 +1600,12 @@ class _BalanceCard extends StatelessWidget {
         const SizedBox(height: 8),
         ValueListenableBuilder<bool>(valueListenable: showBalance,
           builder: (_, visible, __) => ValueListenableBuilder<double?>(
-            valueListenable: balanceIqd, builder: (_, value, __) => ProxoText(
-              visible ? _formatIqd(value) : '•••••• د.ع', textDirection: TextDirection.ltr,
-              style: _ProfileText.balanceAmount))),
+            valueListenable: balanceIqd, builder: (_, value, __) => Directionality(
+              textDirection: TextDirection.ltr, child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: ProxoText(visible ? _formatIqd(value) : '•••••• د.ع',
+                textDirection: TextDirection.ltr, maxLines: 1,
+                style: _ProfileText.balanceAmount))))),
         const SizedBox(height: 12),
         TextButton.icon(onPressed: onTap,
           style: TextButton.styleFrom(foregroundColor: Colors.white,
@@ -2097,17 +2100,6 @@ class _AboutAppSheet extends StatelessWidget {
                       constraints: BoxConstraints(maxWidth: 520),
                       child: Column(
                         children: <Widget>[
-                          const _PolicySection(
-                            icon: SolarIconsOutline.infoCircle,
-                            title: 'سەرچاوەی ئایکۆنەکان',
-                            body: 'Solar Icons © 480 Design — CC BY 4.0. '
-                                'Icons are resized and recolored for Proxo.\n'
-                                'https://www.figma.com/community/file/1166831539721848736\n'
-                                'https://creativecommons.org/licenses/by/4.0/\n'
-                                'Flutter package: solar_icons, BSD-3-Clause; '
-                                '© 2023 Sebastine Odeh.',
-                          ),
-                          const SizedBox(height: 12),
                           _PolicySection(
                             icon: SolarIconsOutline.sledgehammer,
                             title: 'مەرج و ڕێساکان',
@@ -2134,7 +2126,7 @@ class _AboutAppSheet extends StatelessWidget {
                                 'چوونەژوورەوە و مۆڵەتی هەژمار سنووردارە و '
                                 'زانیاریی هەستیار بە شێوەی پارێزراو '
                                 'مامەڵەی لەگەڵ دەکرێت. بەکارهێنەر دەتوانێت '
-                                'لە بەشی دەستکاریکردنی پرۆفایل داوای '
+                                'لە بەشی دەستکاری پڕۆفایل داوای '
                                 'سڕینەوەی هەژمار و داتاکانی بکات.',
                           ),
                           SizedBox(height: 12),
@@ -2147,6 +2139,17 @@ class _AboutAppSheet extends StatelessWidget {
                                 'ئامانجمان ئەوەیە بە شێوەیەکی ڕوون و سادە '
                                 'باڵانس زیاد بکەیت، کەمپەین بنێریت، ئامارەکان '
                                 'ببینیت و مێژووی مامەڵەکانت بەدواداچوون بکەیت.',
+                          ),
+                          const SizedBox(height: 12),
+                          const _PolicySection(
+                            icon: SolarIconsOutline.infoCircle,
+                            title: 'سەرچاوەی ئایکۆنەکان',
+                            body: 'Solar Icons © 480 Design — CC BY 4.0. '
+                                'Icons are resized and recolored for Proxo.\n'
+                                'https://www.figma.com/community/file/1166831539721848736\n'
+                                'https://creativecommons.org/licenses/by/4.0/\n'
+                                'Flutter package: solar_icons, BSD-3-Clause; '
+                                '© 2023 Sebastine Odeh.',
                           ),
                         ],
                       ),
