@@ -33,6 +33,7 @@ void main() {
     binding.reportData = {'observations': observations};
     Future<void> mount(Widget child, {double scale = 1}) async {
       await t.pumpWidget(MaterialApp(
+        key: UniqueKey(),
         locale: const Locale('ar'),
         supportedLocales: const [Locale('ar'), Locale('en')],
         localizationsDelegates: const [
@@ -112,7 +113,10 @@ void main() {
         adName: null, voucherCode: null,
       )), scale: scale);
       await shot('receipt-scale-$scale');
-      await t.ensureVisible(find.byType(ReceiptPdfButton));
+      // Native safe-area/large text can put this lazy ListView child beyond
+      // the cache extent. Scroll it into the tree before asking for its box.
+      await t.scrollUntilVisible(find.byType(ReceiptPdfButton), 400,
+        scrollable: find.byType(Scrollable).first);
       await t.pumpAndSettle();
       expect(t.getSize(find.byType(ReceiptPdfButton)).height, greaterThanOrEqualTo(48));
       await shot('receipt-bottom-scale-$scale');
