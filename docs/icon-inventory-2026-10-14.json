@@ -1401,13 +1401,13 @@
     },
     {
       "path": "proxo_app/lib/widgets/receipt/receipt_kit.dart",
-      "line": 222,
+      "line": 230,
       "family": "Icons",
       "glyph": "arrow_back_ios_rounded"
     },
     {
       "path": "proxo_app/lib/widgets/receipt/receipt_kit.dart",
-      "line": 223,
+      "line": 231,
       "family": "Icons",
       "glyph": "arrow_forward_ios_rounded"
     },
