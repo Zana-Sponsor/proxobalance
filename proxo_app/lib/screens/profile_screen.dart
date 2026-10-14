@@ -13,6 +13,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../main.dart' show kIqdRate;
 import '../theme/app_theme.dart';
+import '../theme/proxo_chrome.dart';
 import '../widgets/auth/auth_design.dart'
     show kSupportWhatsAppNumber;
 import '../widgets/proxo_refresh.dart';
@@ -344,11 +345,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final MediaQueryData media = MediaQuery.of(context);
-    final double textScale =
-        media.textScaler.scale(1).clamp(0.9, 1.05).toDouble();
 
     return MediaQuery(
-      data: media.copyWith(textScaler: TextScaler.linear(textScale)),
+      data: media,
       child: Directionality(
         textDirection: TextDirection.rtl,
         child: Scaffold(
@@ -465,7 +464,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   ),
                                   const SizedBox(height: 20),
                                   const ProxoText(
-                                    'وەشانی ١.٠.٠',
+                                    'Solar icons © 480 Design · CC BY 4.0\nوەشانی ١.٠.٠',
                                     textAlign: TextAlign.center,
                                     style: _ProfileText.version,
                                   ),
@@ -947,8 +946,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final MediaQueryData media = MediaQuery.of(context);
-    final double textScale =
-        media.textScaler.scale(1).clamp(0.9, 1.05).toDouble();
     final _ProfileData preview = _ProfileData(
       fullName: widget.initialFullName,
       email: _emailController.text.trim(),
@@ -957,7 +954,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
 
     return MediaQuery(
-      data: media.copyWith(textScaler: TextScaler.linear(textScale)),
+      data: media,
       child: Directionality(
         textDirection: TextDirection.rtl,
         child: Scaffold(
@@ -1117,7 +1114,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 color: _ProfileColors.dangerSoft,
                                 shape: const RoundedRectangleBorder(
                                   borderRadius:
-                                      BorderRadius.all(Radius.circular(20)),
+                                      BorderRadius.all(Radius.circular(ProxoChrome.radius)),
                                   side: BorderSide(
                                     color: _ProfileColors.dangerBorder,
                                   ),
@@ -1297,8 +1294,8 @@ class _ProfileTopBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return ColoredBox(
       color: _ProfileColors.page,
-      child: SizedBox(
-        height: 56,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: 56),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8),
           child: Row(
@@ -1315,15 +1312,12 @@ class _ProfileTopBar extends StatelessWidget {
                       onTap: onEdit,
                     ),
               Expanded(
-                child: showBack
-                    ? const ProxoText(
+                child: const ProxoText(
                         'پرۆفایل',
                         textAlign: TextAlign.center,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+                        softWrap: true,
                         style: _ProfileText.screenTitle,
-                      )
-                    : const SizedBox.shrink(),
+                      ),
               ),
               showBack
                   ? _CircleActionButton(
@@ -1331,7 +1325,7 @@ class _ProfileTopBar extends StatelessWidget {
                       icon: SolarIconsOutline.penNewSquare,
                       onTap: onEdit,
                     )
-                  : const SizedBox(width: 44, height: 44),
+                  : const SizedBox(width: 48, height: 48),
             ],
           ),
         ),
@@ -1355,8 +1349,8 @@ class _SimpleTopBar extends StatelessWidget {
           bottom: BorderSide(color: _ProfileColors.topBarHairline),
         ),
       ),
-      child: SizedBox(
-        height: 56,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: 56),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8),
           child: Row(
@@ -1370,12 +1364,11 @@ class _SimpleTopBar extends StatelessWidget {
                 child: ProxoText(
                   title,
                   textAlign: TextAlign.center,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                  softWrap: true,
                   style: _ProfileText.screenTitle,
                 ),
               ),
-              const SizedBox(width: 44, height: 44),
+              const SizedBox(width: 48, height: 48),
             ],
           ),
         ),
@@ -1385,41 +1378,16 @@ class _SimpleTopBar extends StatelessWidget {
 }
 
 class _CircleActionButton extends StatelessWidget {
-  const _CircleActionButton({
-    required this.semanticLabel,
-    required this.icon,
-    required this.onTap,
-  });
-
+  const _CircleActionButton({required this.semanticLabel, required this.icon, required this.onTap});
   final String semanticLabel;
   final IconData icon;
   final VoidCallback onTap;
-
   @override
-  Widget build(BuildContext context) {
-    return Semantics(
-      button: true,
-      label: semanticLabel,
-      excludeSemantics: true,
-      child: SizedBox.square(
-        dimension: 44,
-        child: Center(
-          child: Material(
-            color: _ProfileColors.iconSurface,
-            shape: const CircleBorder(),
-            child: InkWell(
-              customBorder: const CircleBorder(),
-              onTap: onTap,
-              child: SizedBox.square(
-                dimension: 40,
-                child: Icon(icon, size: 20, color: _ProfileColors.iconInk),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => IconButton(
+    tooltip: semanticLabel, onPressed: onTap,
+    constraints: const BoxConstraints.tightFor(width: 48, height: 48),
+    icon: Icon(icon, size: ProxoChrome.iconSize, color: AppColors.ink),
+  );
 }
 
 class _ProfileIdentity extends StatelessWidget {
@@ -1436,8 +1404,7 @@ class _ProfileIdentity extends StatelessWidget {
         ProxoText(
           data.displayName,
           textAlign: TextAlign.center,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
+          softWrap: true,
           style: _ProfileText.userName,
         ),
         const SizedBox(height: 3),
@@ -1448,8 +1415,7 @@ class _ProfileIdentity extends StatelessWidget {
           child: ProxoText(
             data.contact,
             textAlign: TextAlign.center,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
+            softWrap: true,
             style: _ProfileText.userContact,
           ),
         ),
@@ -1608,232 +1574,46 @@ class _AvatarFallback extends StatelessWidget {
   }
 }
 
-class _BalanceCard extends StatefulWidget {
-  const _BalanceCard({
-    required this.balanceIqd,
-    required this.showBalance,
-    required this.onTap,
-  });
-
+class _BalanceCard extends StatelessWidget {
+  const _BalanceCard({required this.balanceIqd, required this.showBalance, required this.onTap});
   final ValueListenable<double?> balanceIqd;
   final ValueNotifier<bool> showBalance;
   final VoidCallback onTap;
-
   @override
-  State<_BalanceCard> createState() => _BalanceCardState();
-}
-
-class _BalanceCardState extends State<_BalanceCard>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _shineController;
-
-  @override
-  void initState() {
-    super.initState();
-    _shineController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 4400),
-    );
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final bool reduceMotion = MediaQuery.of(context).disableAnimations;
-    if (reduceMotion) {
-      _shineController
-        ..stop()
-        ..value = 0;
-    } else if (!_shineController.isAnimating) {
-      _shineController.repeat();
-    }
-  }
-
-  @override
-  void dispose() {
-    _shineController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Semantics(
-      button: true,
-      label: 'باڵانسی ڕیکلام؛ دەستلێبدە بۆ زیادکردنی باڵانس',
-      child: DecoratedBox(
-        decoration: const BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(22)),
-          boxShadow: <BoxShadow>[
-            BoxShadow(
-              color: Color(0x3D0057FF),
-              blurRadius: 22,
-              spreadRadius: -7,
-              offset: Offset(0, 10),
-            ),
-          ],
-        ),
-        child: Material(
-          color: Colors.transparent,
-          borderRadius: const BorderRadius.all(Radius.circular(22)),
-          clipBehavior: Clip.antiAlias,
-          child: Ink(
-            height: 120,
-            decoration: const BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(22)),
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: <Color>[
-                  Color(0xFF003FCC),
-                  Color(0xFF0057FF),
-                  Color(0xFF3D7BFF),
-                ],
-              ),
-            ),
-            child: Stack(
-              fit: StackFit.expand,
-              children: <Widget>[
-                Positioned.fill(
-                  child: IgnorePointer(
-                    child: RepaintBoundary(
-                      child: AnimatedBuilder(
-                        animation: _shineController,
-                        child: Transform.rotate(
-                          angle: -0.28,
-                          child: const SizedBox(
-                            width: 56,
-                            height: 180,
-                            child: DecoratedBox(
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  begin: Alignment.centerLeft,
-                                  end: Alignment.centerRight,
-                                  colors: <Color>[
-                                    Color(0x00FFFFFF),
-                                    Color(0x1FFFFFFF),
-                                    Color(0x00FFFFFF),
-                                  ],
-                                  stops: <double>[0, 0.5, 1],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        builder: (_, child) {
-                          final double progress = const Interval(
-                            0,
-                            0.52,
-                            curve: Curves.easeInOutCubic,
-                          ).transform(_shineController.value);
-                          return Align(
-                            alignment: Alignment(-1.55 + (3.1 * progress), 0),
-                            child: child,
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                ),
-                InkWell(
-                  onTap: widget.onTap,
-                  child: Padding(
-                padding: const EdgeInsets.all(18),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    const Row(
-                      children: <Widget>[
-                        SizedBox.square(
-                          dimension: 36,
-                          child: DecoratedBox(
-                            decoration: BoxDecoration(
-                              color: Color(0x2EFFFFFF),
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(
-                              SolarIconsOutline.wallet2,
-                              size: 18,
-                              color: Color(0xE6FFFFFF),
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 8),
-                        ProxoText(
-                          'باڵانسی ڕیکلام',
-                          style: _ProfileText.balanceLabel,
-                        ),
-                      ],
-                    ),
-                    const Spacer(),
-                    ValueListenableBuilder<bool>(
-                      valueListenable: widget.showBalance,
-                      builder: (_, visible, __) => Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Expanded(
-                            child: Directionality(
-                              textDirection: TextDirection.ltr,
-                              child: ValueListenableBuilder<double?>(
-                                valueListenable: widget.balanceIqd,
-                                builder: (_, value, __) => ProxoText(
-                                  visible
-                                      ? _formatIqd(value)
-                                      : '•••••• د.ع',
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: _ProfileText.balanceAmount,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Semantics(
-                            button: true,
-                            label: visible
-                                ? 'شاردنەوەی باڵانس'
-                                : 'پیشاندانی باڵانس',
-                            excludeSemantics: true,
-                            child: Material(
-                              color: const Color(0x24FFFFFF),
-                              shape: const CircleBorder(),
-                              child: InkWell(
-                                customBorder: const CircleBorder(),
-                                onTap: () =>
-                                    widget.showBalance.value = !visible,
-                                child: SizedBox.square(
-                                  dimension: 38,
-                                  child: Icon(
-                                    visible
-                                        ? SolarIconsOutline.eye
-                                        : SolarIconsOutline.eyeClosed,
-                                    size: 19,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
+  Widget build(BuildContext context) => Material(
+    color: AppColors.accent, borderRadius: BorderRadius.circular(ProxoChrome.radius),
+    clipBehavior: Clip.antiAlias,
+    child: Padding(padding: const EdgeInsets.all(16), child: Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+        Row(children: [
+          const Icon(SolarIconsOutline.wallet2, size: ProxoChrome.iconSize, color: Colors.white),
+          const SizedBox(width: 12),
+          const Expanded(child: ProxoText('باڵانسی ڕیکلام', style: _ProfileText.balanceLabel)),
+          ValueListenableBuilder<bool>(valueListenable: showBalance,
+            builder: (_, visible, __) => IconButton(
+              tooltip: visible ? 'شاردنەوەی باڵانس' : 'پیشاندانی باڵانس',
+              constraints: const BoxConstraints.tightFor(width: 48, height: 48),
+              onPressed: () => showBalance.value = !visible,
+              icon: Icon(visible ? SolarIconsOutline.eye : SolarIconsOutline.eyeClosed,
+                size: ProxoChrome.iconSize, color: Colors.white))),
+        ]),
+        const SizedBox(height: 8),
+        ValueListenableBuilder<bool>(valueListenable: showBalance,
+          builder: (_, visible, __) => ValueListenableBuilder<double?>(
+            valueListenable: balanceIqd, builder: (_, value, __) => ProxoText(
+              visible ? _formatIqd(value) : '•••••• د.ع', textDirection: TextDirection.ltr,
+              style: _ProfileText.balanceAmount))),
+        const SizedBox(height: 12),
+        TextButton.icon(onPressed: onTap,
+          style: TextButton.styleFrom(foregroundColor: Colors.white,
+            minimumSize: const Size(48, 48), alignment: AlignmentDirectional.centerStart),
+          icon: const Icon(SolarIconsOutline.addCircle, size: ProxoChrome.iconSize),
+          label: const ProxoText('زیادکردنی باڵانس', style: TextStyle(fontFamily: kAppFont, fontSize: 14, height: 1.5))),
+      ])),
+  );
   static String _formatIqd(double? value) {
     if (value == null) return '— د.ع';
-    final String latin = value.round().toString().replaceAllMapped(
-          RegExp(r'\B(?=(\d{3})+(?!\d))'),
-          (_) => ',',
-        );
+    final latin = value.round().toString().replaceAllMapped(RegExp(r'\B(?=(\d{3})+(?!\d))'), (_) => ',');
     return '$latin د.ع';
   }
 }
@@ -1851,33 +1631,21 @@ class _QuickActions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: <Widget>[
-        Expanded(
-          child: _QuickActionCard(
-            icon: SolarIconsOutline.clapperboardPlay,
-            label: 'ڕیکلامەکانم',
-            onTap: onAds,
-          ),
-        ),
-        const SizedBox(width: 8),
-        Expanded(
-          child: _QuickActionCard(
-            icon: SolarIconsOutline.widget_2,
-            label: 'کەرەستەکان',
-            onTap: onAssets,
-          ),
-        ),
-        const SizedBox(width: 8),
-        Expanded(
-          child: _QuickActionCard(
-            icon: SolarIconsOutline.tagPrice,
-            label: 'کۆپۆن',
-            onTap: onCoupons,
-          ),
-        ),
-      ],
-    );
+    final cards = <Widget>[
+      _QuickActionCard(icon: SolarIconsOutline.clapperboardPlay, label: 'ڕیکلامەکانم', onTap: onAds),
+      _QuickActionCard(icon: SolarIconsOutline.widget_2, label: 'ئامرازەکان', onTap: onAssets),
+      _QuickActionCard(icon: SolarIconsOutline.tagPrice, label: 'کۆپۆن', onTap: onCoupons),
+    ];
+    return LayoutBuilder(builder: (context, constraints) {
+      final painter = TextPainter(text: const TextSpan(text: 'ڕیکلامەکانم', style: _ProfileText.quickAction),
+        textDirection: TextDirection.rtl, textScaler: MediaQuery.textScalerOf(context))..layout();
+      final stack = (constraints.maxWidth - 16) / 3 < painter.width + 24;
+      painter.dispose();
+      return stack
+        ? Column(crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [for (var i = 0; i < cards.length; i++) ...[if (i > 0) const SizedBox(height: 8), cards[i]]])
+        : Row(children: [for (var i = 0; i < cards.length; i++) ...[if (i > 0) const SizedBox(width: 8), Expanded(child: cards[i])]]);
+    });
   }
 }
 
@@ -1897,26 +1665,25 @@ class _QuickActionCard extends StatelessWidget {
     return Material(
       color: _ProfileColors.quickSurface,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(18)),
+        borderRadius: BorderRadius.all(Radius.circular(ProxoChrome.radius)),
         side: BorderSide(color: _ProfileColors.cardBorder),
       ),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,
-        child: SizedBox(
-          height: 76,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 88),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 9),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Icon(icon, size: 23, color: _ProfileColors.iconInk),
+                Icon(icon, size: ProxoChrome.iconSize, color: _ProfileColors.iconInk),
                 const SizedBox(height: 6),
                 ProxoText(
                   label,
                   textAlign: TextAlign.center,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                  softWrap: true,
                   style: _ProfileText.quickAction,
                 ),
               ],
@@ -1963,7 +1730,7 @@ class _SettingsGroup extends StatelessWidget {
     return Material(
       color: _ProfileColors.groupSurface,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(20)),
+        borderRadius: BorderRadius.all(Radius.circular(ProxoChrome.radius)),
         side: BorderSide(color: _ProfileColors.cardBorder),
       ),
       clipBehavior: Clip.antiAlias,
@@ -2003,16 +1770,16 @@ class _SettingsTile extends StatelessWidget {
           child: Row(
             children: <Widget>[
               Container(
-                width: 38,
-                height: 38,
+                width: 40,
+                height: 40,
                 alignment: Alignment.center,
                 decoration: const BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
+                  color: ProxoChrome.surface,
+                  borderRadius: BorderRadius.all(Radius.circular(12)),
                 ),
                 child: Icon(
                   entry.icon,
-                  size: 20,
+                  size: ProxoChrome.iconSize,
                   color: _ProfileColors.iconInk,
                 ),
               ),
@@ -2024,16 +1791,14 @@ class _SettingsTile extends StatelessWidget {
                   children: <Widget>[
                     ProxoText(
                       entry.title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                      softWrap: true,
                       style: _ProfileText.menuTitle,
                     ),
                     if (entry.subtitle != null) ...<Widget>[
                       const SizedBox(height: 2),
                       ProxoText(
                         entry.subtitle!,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+                        softWrap: true,
                         style: _ProfileText.menuSubtitle,
                       ),
                     ],
@@ -2065,16 +1830,16 @@ class _SignOutTile extends StatelessWidget {
     return Material(
       color: _ProfileColors.groupSurface,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(20)),
+        borderRadius: BorderRadius.all(Radius.circular(ProxoChrome.radius)),
         side: BorderSide(color: _ProfileColors.cardBorder),
       ),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: busy ? null : onTap,
-        child: SizedBox(
-          height: 58,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 60),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 14),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
             child: Row(
               children: <Widget>[
                 const SizedBox.square(
@@ -2086,7 +1851,7 @@ class _SignOutTile extends StatelessWidget {
                     ),
                     child: Icon(
                       SolarIconsOutline.logout,
-                      size: 20,
+                      size: ProxoChrome.iconSize,
                       color: _ProfileColors.iconInk,
                     ),
                   ),
@@ -2242,8 +2007,8 @@ class _SupportChannelButton extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Container(
-                width: 38,
-                height: 38,
+                width: 40,
+                height: 40,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   color: filled
@@ -2273,10 +2038,8 @@ class _AboutAppSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final MediaQueryData media = MediaQuery.of(context);
-    final double textScale =
-        media.textScaler.scale(1).clamp(0.9, 1.05).toDouble();
     return MediaQuery(
-      data: media.copyWith(textScaler: TextScaler.linear(textScale)),
+      data: media,
       child: FractionallySizedBox(
         heightFactor: .88,
         child: Material(
@@ -2335,6 +2098,17 @@ class _AboutAppSheet extends StatelessWidget {
                       constraints: BoxConstraints(maxWidth: 520),
                       child: Column(
                         children: <Widget>[
+                          const _PolicySection(
+                            icon: SolarIconsOutline.infoCircle,
+                            title: 'سەرچاوەی ئایکۆنەکان',
+                            body: 'Solar Icons © 480 Design — CC BY 4.0. '
+                                'Icons are resized and recolored for Proxo.\n'
+                                'https://www.figma.com/community/file/1166831539721848736\n'
+                                'https://creativecommons.org/licenses/by/4.0/\n'
+                                'Flutter package: solar_icons, BSD-3-Clause; '
+                                '© 2023 Sebastine Odeh.',
+                          ),
+                          const SizedBox(height: 12),
                           _PolicySection(
                             icon: SolarIconsOutline.sledgehammer,
                             title: 'مەرج و ڕێساکان',
@@ -2408,7 +2182,7 @@ class _PolicySection extends StatelessWidget {
       padding: const EdgeInsets.all(15),
       decoration: const BoxDecoration(
         color: _ProfileColors.groupSurface,
-        borderRadius: BorderRadius.all(Radius.circular(20)),
+        borderRadius: BorderRadius.all(Radius.circular(ProxoChrome.radius)),
         border: Border.fromBorderSide(
           BorderSide(color: _ProfileColors.cardBorder),
         ),
@@ -2437,10 +2211,8 @@ class _ProfileFaqScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final MediaQueryData media = MediaQuery.of(context);
-    final double textScale =
-        media.textScaler.scale(1).clamp(0.9, 1.05).toDouble();
     return MediaQuery(
-      data: media.copyWith(textScaler: TextScaler.linear(textScale)),
+      data: media,
       child: Directionality(
         textDirection: TextDirection.rtl,
         child: Scaffold(
@@ -2487,7 +2259,7 @@ class _FaqExpansionCard extends StatelessWidget {
     return Material(
       color: _ProfileColors.groupSurface,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(20)),
+        borderRadius: BorderRadius.all(Radius.circular(ProxoChrome.radius)),
         side: BorderSide(color: _ProfileColors.cardBorder),
       ),
       clipBehavior: Clip.antiAlias,
@@ -2537,7 +2309,7 @@ InputDecoration _profileInputDecoration({
   bool readOnly = false,
   IconData? suffixIcon,
 }) {
-  const BorderRadius radius = BorderRadius.all(Radius.circular(18));
+  const BorderRadius radius = BorderRadius.all(Radius.circular(ProxoChrome.radius));
   final Color fill =
       readOnly ? _ProfileColors.readOnlySurface : _ProfileColors.groupSurface;
   const OutlineInputBorder normal = OutlineInputBorder(
@@ -2589,7 +2361,7 @@ Future<bool?> _showConfirmationDialog(
         backgroundColor: Colors.white,
         surfaceTintColor: Colors.transparent,
         shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(20)),
+          borderRadius: BorderRadius.all(Radius.circular(ProxoChrome.radius)),
         ),
         title: ProxoText(title, style: _ProfileText.dialogTitle),
         content: ProxoText(message, style: _ProfileText.dialogBody),
@@ -2627,7 +2399,7 @@ Future<void> _showInformationDialog(
         backgroundColor: Colors.white,
         surfaceTintColor: Colors.transparent,
         shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(20)),
+          borderRadius: BorderRadius.all(Radius.circular(ProxoChrome.radius)),
         ),
         title: ProxoText(title, style: _ProfileText.dialogTitle),
         content: ProxoText(message, style: _ProfileText.dialogBody),
@@ -2741,7 +2513,7 @@ class _EmailChangeVerificationDialogState
           backgroundColor: Colors.white,
           surfaceTintColor: Colors.transparent,
           shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(20)),
+            borderRadius: BorderRadius.all(Radius.circular(ProxoChrome.radius)),
           ),
           title: const ProxoText(
             'پشتڕاستکردنەوەی ئیمەیڵ',
@@ -2980,21 +2752,21 @@ abstract final class _ProfileColors {
   // ڕەنگەکان لە فریمە پڕقەبارەکانی ڤیدیۆکەوە هێمن کراون: پەڕە سپییە،
   // کارت و گرووپەکان تەنها یەک هەنگاو لێی جیاوازن و ڕەشەکە navy نییە.
   static const Color page = Color(0xFFFFFFFF);
-  static const Color groupSurface = Color(0xFFFBFBFB);
-  static const Color quickSurface = Color(0xFFF7FCFB);
+  static const Color groupSurface = Colors.white;
+  static const Color quickSurface = ProxoChrome.surface;
   static const Color readOnlySurface = Color(0xFFF6F7F8);
   static const Color ink = Color(0xFF222428);
-  static const Color iconInk = Color(0xFF2D3035);
+  static const Color iconInk = AppColors.ink;
   static const Color section = Color(0xFF3A3C42);
   static const Color muted = Color(0xFF636365);
   static const Color quiet = Color(0xFF8A8D92);
   static const Color border = Color(0xFFE6EAEC);
-  static const Color cardBorder = Color(0xFFE6ECEE);
+  static const Color cardBorder = ProxoChrome.border;
   static const Color hairline = Color(0xFFE4E6E8);
   static const Color topBarHairline = Color(0xFFF3F4F5);
   static const Color iconSurface = Color(0xFFF4F8FA);
   static const Color chevron = Color(0xFF74777B);
-  static const Color primary = Color(0xFF2A8FE2);
+  static const Color primary = AppColors.accent;
   static const Color danger = Color(0xFFB74956);
   static const Color dangerSoft = Color(0xFFFFF7F7);
   static const Color dangerBorder = Color(0xFFF2DADD);
@@ -3011,14 +2783,14 @@ abstract final class _ProfileText {
     fontSize: 17,
     fontWeight: FontWeight.w500,
     color: _ProfileColors.ink,
-    height: 1.2,
+    height: 1.5,
   );
   static const TextStyle userName = TextStyle(
     fontFamily: kAppFont,
     fontSize: 16,
     fontWeight: FontWeight.w500,
     color: _ProfileColors.ink,
-    height: 1.25,
+    height: 1.5,
   );
   static const TextStyle userContact = TextStyle(
     fontFamily: kAppFont,
@@ -3032,7 +2804,7 @@ abstract final class _ProfileText {
     fontSize: 13,
     fontWeight: FontWeight.w400,
     color: Color(0xE6FFFFFF),
-    height: 1.25,
+    height: 1.5,
   );
   static const TextStyle balanceAmount = TextStyle(
     fontFamily: kAppFont,
@@ -3044,24 +2816,24 @@ abstract final class _ProfileText {
   );
   static const TextStyle quickAction = TextStyle(
     fontFamily: kAppFont,
-    fontSize: 12.5,
+    fontSize: 14,
     fontWeight: FontWeight.w400,
     color: _ProfileColors.ink,
-    height: 1.2,
+    height: 1.5,
   );
   static const TextStyle sectionTitle = TextStyle(
     fontFamily: kAppFont,
     fontSize: 14,
     fontWeight: FontWeight.w500,
     color: _ProfileColors.section,
-    height: 1.25,
+    height: 1.5,
   );
   static const TextStyle menuTitle = TextStyle(
     fontFamily: kAppFont,
     fontSize: 14,
     fontWeight: FontWeight.w400,
     color: _ProfileColors.ink,
-    height: 1.25,
+    height: 1.5,
   );
   static const TextStyle menuSubtitle = TextStyle(
     fontFamily: kAppFont,
@@ -3075,42 +2847,42 @@ abstract final class _ProfileText {
     fontSize: 14,
     fontWeight: FontWeight.w400,
     color: _ProfileColors.ink,
-    height: 1.2,
+    height: 1.5,
   );
   static const TextStyle version = TextStyle(
     fontFamily: kAppFont,
     fontSize: 11,
     fontWeight: FontWeight.w400,
     color: _ProfileColors.quiet,
-    height: 1.2,
+    height: 1.5,
   );
   static const TextStyle fieldLabel = TextStyle(
     fontFamily: kAppFont,
-    fontSize: 12.5,
+    fontSize: 14,
     fontWeight: FontWeight.w500,
     color: _ProfileColors.section,
-    height: 1.2,
+    height: 1.5,
   );
   static const TextStyle field = TextStyle(
     fontFamily: kAppFont,
     fontSize: 14,
     fontWeight: FontWeight.w400,
     color: _ProfileColors.ink,
-    height: 1.25,
+    height: 1.5,
   );
   static const TextStyle hint = TextStyle(
     fontFamily: kAppFont,
     fontSize: 13,
     fontWeight: FontWeight.w400,
     color: _ProfileColors.quiet,
-    height: 1.25,
+    height: 1.5,
   );
   static const TextStyle error = TextStyle(
     fontFamily: kAppFont,
     fontSize: 11,
     fontWeight: FontWeight.w400,
     color: _ProfileColors.danger,
-    height: 1.25,
+    height: 1.5,
   );
   static const TextStyle button = TextStyle(
     fontFamily: kAppFont,
@@ -3122,7 +2894,7 @@ abstract final class _ProfileText {
     fontSize: 13.5,
     fontWeight: FontWeight.w500,
     color: _ProfileColors.danger,
-    height: 1.25,
+    height: 1.5,
   );
   static const TextStyle dangerSub = TextStyle(
     fontFamily: kAppFont,
@@ -3136,7 +2908,7 @@ abstract final class _ProfileText {
     fontSize: 14,
     fontWeight: FontWeight.w500,
     color: _ProfileColors.ink,
-    height: 1.25,
+    height: 1.5,
   );
   static const TextStyle policyBody = TextStyle(
     fontFamily: kAppFont,
@@ -3190,6 +2962,6 @@ abstract final class _ProfileText {
     fontFamily: kAppFont,
     fontSize: 14,
     fontWeight: FontWeight.w500,
-    height: 1.2,
+    height: 1.5,
   );
 }

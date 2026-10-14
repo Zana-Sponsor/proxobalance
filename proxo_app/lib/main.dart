@@ -527,9 +527,11 @@ class MainShellState extends State<MainShell> {
             endDrawer: Directionality(
               textDirection: TextDirection.rtl,
               child: ProxoSidebar(
+                currentIndex: _tabIndex,
                 onClose: _closeSidebar,
                 onNavigate: (page) {
                   _closeSidebar();
+                  if (page == 'home')      _switchTab(0);
                   if (page == 'ads')       _switchTab(1);
                   if (page == 'tools')     _switchTab(3);
                   if (page == 'tutorials') _switchTab(4);

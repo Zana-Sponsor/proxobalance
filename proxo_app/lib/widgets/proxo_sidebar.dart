@@ -11,7 +11,9 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
-import 'package:solar_iconkit/solar_iconkit.dart';
+import 'package:solar_icons/solar_icons.dart';
+import '../theme/proxo_chrome.dart';
+import '../screens/faq_screen.dart' show FaqScreen;
 import '../theme/app_theme.dart';
 import '../main.dart'
     show supabase, kIqdRate, navigatorKey;
@@ -214,38 +216,25 @@ FaIconData _levelIconFor(String key) {
   }
 }
 
-// ═════════════════════════════════════════════════════════════════════════════
-// ئایکۆنەکان — Solar Linear (`solar_iconkit`)
-// ═════════════════════════════════════════════════════════════════════════════
-//
-// پێشتر `Icons.*`ـی مێتریاڵ بوون. ئەوانە لە ٦١ dpـی ئەم دراوەرەدا ئەستوور
-// و قەڵەو دەردەکەوتن و لەگەڵ شێوازی ئەپەکە نەدەگونجان. ئێستا هەموویان
-// Solar Linearن — هەمان کۆمەڵەی `ad_detail_screen.dart`.
-//
-// ⚠ ناوی ئایکۆنەکان تەنها لێرەن. ئەگەر ئەنالایزەر یەکێکیانی نەناسییەوە
-//   یان ئایکۆنێک بە دڵت نەبوو، هەر ئەم یەک ڕیزە بگۆڕە.
-//   لیستی تەواو: solar-icons-web.vercel.app
+// Use the same bundled Solar Outline font as profile, navigation and app bar.
 class _Ico {
-  const _Ico._();
-
-  static const String home = SolarIcons.home2;
-  // ⚠ `megaphone` لە solar_iconkit ـی ئێستادا نییە.
-  static const String ads = SolarIcons.target;
-  static const String history = SolarIcons.history;
-  static const String discount = SolarIcons.tag;
-  static const String balance = SolarIcons.wallet;
-  static const String notifications = SolarIcons.bell;
-  static const String settings = SolarIcons.settings;
-  static const String help = SolarIcons.questionCircle;
-
-  static const String avatar = SolarIcons.user;
-  static const String logout = SolarIcons.logout;
+  static const home = SolarIconsOutline.home2;
+  static const ads = SolarIconsOutline.clapperboardPlay;
+  static const history = SolarIconsOutline.history;
+  static const discount = SolarIconsOutline.tagPrice;
+  static const balance = SolarIconsOutline.wallet2;
+  static const notifications = SolarIconsOutline.bell;
+  static const settings = SolarIconsOutline.settings;
+  static const help = SolarIconsOutline.questionCircle;
+  static const avatar = SolarIconsOutline.userRounded;
+  static const logout = SolarIconsOutline.logout;
 }
 
 class ProxoSidebar extends StatefulWidget {
-  const ProxoSidebar({super.key, this.onClose, this.onNavigate});
+  const ProxoSidebar({super.key, this.onClose, this.onNavigate, this.currentIndex = 0});
 
   final VoidCallback? onClose;
+  final int currentIndex;
   /// ⚠ بوو `void Function(Widget page)?`. `MainShell` بەرامبەری
   /// دەکردەوە لەگەڵ `'ads'`, `'tools'`, `'tutorials'` — واتە بەراوردی
   /// `Widget == String`، کە **هەمیشە** `false`ە. بۆیە هیچ کامێک لەو
@@ -261,7 +250,6 @@ class _ProxoSidebarState extends State<ProxoSidebar>
   String? _avatarUrl;
   String _userName  = '';
   String _userEmail = '';
-  String _initial   = '';
   bool   _loading   = true;
 
   late final AnimationController _intro;
@@ -269,10 +257,6 @@ class _ProxoSidebarState extends State<ProxoSidebar>
   late final List<Animation<Offset>> _revealSlide;
   final ScrollController _menuScroll = ScrollController();
 
-  double _points = 0;
-  List<_LevelTier> _levels = [];
-  _LevelTier? _currentTier;
-  _LevelTier? _nextTier;
   int _unreadNotifs = 0;
 
   @override
@@ -298,7 +282,10 @@ class _ProxoSidebarState extends State<ProxoSidebar>
     if (!mounted) return;
     try {
       final user = supabase.auth.currentUser;
-      if (user == null) return;
+      if (user == null) {
+        setState(() => _loading = false);
+        return;
+      }
 
       final profile = await supabase
           .from('profiles')
@@ -310,31 +297,14 @@ class _ProxoSidebarState extends State<ProxoSidebar>
       final email  = (profile?['email'] ?? user.email ?? '').toString();
       final avatar = (profile?['avatar_url'] ?? '').toString();
 
-      final pointsRow = await supabase
-          .from('pa_user_points')
-          .select('points')
-          .eq('user_id', user.id)
-          .maybeSingle();
-      final points = (pointsRow?['points'] as num?)?.toDouble() ?? 0;
-
-      final levelRows = await supabase
-          .from('pa_levels')
-          .select('level_number, name_en, min_points, discount_percent, discount_iqd, icon, color')
-          .order('level_number', ascending: true);
-      final levels = (levelRows as List)
-          .map((m) => _LevelTier.fromMap(m as Map<String, dynamic>))
-          .toList();
-
-      _LevelTier? current;
-      _LevelTier? next;
-      for (var i = 0; i < levels.length; i++) {
-        if (points >= levels[i].minPoints) {
-          current = levels[i];
-          next = (i + 1 < levels.length) ? levels[i + 1] : null;
-        }
+      if (mounted) {
+        setState(() {
+          _userName     = name.isNotEmpty ? name : (email.isNotEmpty ? email.split('@').first : '—');
+          _userEmail    = email;
+          _avatarUrl    = avatar.isNotEmpty ? avatar : null;
+          _loading      = false;
+        });
       }
-      current ??= levels.isNotEmpty ? levels.first : null;
-
       final unreadRows = await supabase
           .from('pa_notifications')
           .select('id')
@@ -342,20 +312,7 @@ class _ProxoSidebarState extends State<ProxoSidebar>
           .eq('is_read', false);
       final unread = (unreadRows as List).length;
 
-      if (mounted) {
-        setState(() {
-          _userName     = name.isNotEmpty ? name : (email.isNotEmpty ? email.split('@').first : '—');
-          _userEmail    = email;
-          _initial      = name.isNotEmpty ? name[0].toUpperCase() : (email.isNotEmpty ? email[0].toUpperCase() : '?');
-          _avatarUrl    = avatar.isNotEmpty ? avatar : null;
-          _points       = points;
-          _levels       = levels;
-          _currentTier  = current;
-          _nextTier     = next;
-          _unreadNotifs = unread;
-          _loading      = false;
-        });
-      }
+      if (mounted) setState(() => _unreadNotifs = unread);
     } catch (_) {
       if (mounted) setState(() => _loading = false);
     }
@@ -455,7 +412,7 @@ class _ProxoSidebarState extends State<ProxoSidebar>
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
-    final double panelWidth = math.min(screenWidth * 0.78, _navMaxWidth);
+    final double panelWidth = math.min(screenWidth - 24, 336.0);
 
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -480,7 +437,7 @@ class _ProxoSidebarState extends State<ProxoSidebar>
                 return RepaintBoundary(
                   child: ScrollConfiguration(
                     behavior: const _NavScrollBehavior(),
-                    child: m.scrolls ? _buildCompact(m) : _buildRelaxed(m),
+                    child: _buildRelaxed(m),
                   ),
                 );
               },
@@ -558,12 +515,13 @@ class _ProxoSidebarState extends State<ProxoSidebar>
         _reveal(1, _navItem(m,
           icon: _Ico.home,
           label: 'سەرەکی',
-          onTap: _close,
-          selected: true)),
+          onTap: () { widget.onNavigate?.call('home'); _close(); },
+          selected: widget.currentIndex == 0)),
         _reveal(2, _navItem(m,
           icon: _Ico.ads,
           // ⚠ بوو `_close` — تەنها دراوەرەکەی دادەخست و هیچی تر.
           label: 'ڕیکلامەکان',
+          selected: widget.currentIndex == 1,
           onTap: () {
             widget.onNavigate?.call('ads');
             _close();
@@ -593,12 +551,13 @@ class _ProxoSidebarState extends State<ProxoSidebar>
           badge: _unreadNotifs)),
         _reveal(7, _navItem(m,
           icon: _Ico.settings,
-          label: 'ڕێکخستنەکان',
+          label: 'پڕۆفایل و ڕێکخستنەکان',
+          selected: widget.currentIndex == 4,
           onTap: _openProfile)),
         _reveal(8, _navItem(m,
           icon: _Ico.help,
           label: 'یارمەتی و پشتگیری',
-          onTap: _close)),
+          onTap: () => _go(() => const FaqScreen()))),
       ];
 
   static const int _revealCount = 11;  // ⚠ بوو ١٢ — ڕیزێک کەم بووەوە.
@@ -666,9 +625,8 @@ class _ProxoSidebarState extends State<ProxoSidebar>
                         : null,
                   ),
                   child: _avatarUrl == null
-                      ? SolarIcon(
+                      ? Icon(
                           _Ico.avatar,
-                          style: SolarIconStyle.linear,
                           size: m.avatarGlyph,
                           color: _navPrimary,
                         )
@@ -687,7 +645,7 @@ class _ProxoSidebarState extends State<ProxoSidebar>
                           color: _navText,
                           height: 1.25,
                           letterSpacing: -0.1),
-                        maxLines: 1, overflow: TextOverflow.ellipsis),
+                        softWrap: true),
                       SizedBox(height: m.nameToEmail),
                       ProxoText(_userEmail,
                         style: _kBase.copyWith(
@@ -695,7 +653,7 @@ class _ProxoSidebarState extends State<ProxoSidebar>
                           fontWeight: FontWeight.w400,
                           color: _navMuted,
                           height: 1.3),
-                        maxLines: 1, overflow: TextOverflow.ellipsis),
+                        softWrap: true),
                     ],
                   ),
                 ),
@@ -708,7 +666,7 @@ class _ProxoSidebarState extends State<ProxoSidebar>
   Widget _navItem(
     _NavMetrics m, {
     /// ناوی ئایکۆنی Solar — بڕوانە `_Ico`.
-    required String icon,
+    required IconData icon,
     required String label,
     required VoidCallback onTap,
     bool selected = false,
@@ -747,9 +705,8 @@ class _ProxoSidebarState extends State<ProxoSidebar>
                         width: _navIconTileLineW,
                       ),
                     ),
-                    child: SolarIcon(
+                    child: Icon(
                       icon,
-                      style: SolarIconStyle.linear,
                       size: m.glyph,
                       color: selected ? _navPrimary : _navIconInk,
                     ),
@@ -761,9 +718,9 @@ class _ProxoSidebarState extends State<ProxoSidebar>
                         fontSize: m.labelSize,
                         fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
                         color: selected ? _navPrimary : _navText,
-                        height: 1.2,
-                        letterSpacing: -0.05),
-                      maxLines: 2, overflow: TextOverflow.ellipsis),
+                        height: 1.5,
+                        letterSpacing: 0),
+                      softWrap: true),
                   ),
                   if (badge > 0) ...[
                     SizedBox(width: m.chevronGap),
@@ -828,9 +785,8 @@ class _ProxoSidebarState extends State<ProxoSidebar>
                       width: _navIconTileLineW,
                     ),
                   ),
-                  child: SolarIcon(
+                  child: Icon(
                     _Ico.logout,
-                    style: SolarIconStyle.linear,
                     size: m.glyph,
                     color: _navLogoutInk,
                   ),
@@ -842,9 +798,9 @@ class _ProxoSidebarState extends State<ProxoSidebar>
                       fontSize: m.labelSize,
                       fontWeight: FontWeight.w600,
                       color: _navLogoutInk,
-                      height: 1.2,
-                      letterSpacing: -0.05),
-                    maxLines: 2, overflow: TextOverflow.ellipsis),
+                      height: 1.5,
+                      letterSpacing: 0),
+                    softWrap: true),
                 ),
               ]),
             ),
@@ -954,21 +910,21 @@ class _NavMetrics {
         bottomGap;
 
     return _NavMetrics._(
-      gutter:          _navGutter * sw,
+      gutter:          16,
       topGap:          topGap,
       bottomGap:       bottomGap,
       cardToMenu:      cardToMenu,
       menuToDivider:   menuToDivider,
       dividerToLogout: dividerToLogout,
-      radius:          _navRadius * sw,
+      radius:          ProxoChrome.radius,
       cardHeight:      cardHeight,
       cardPadding:     _navCardPadding * sw,
       cardPadV:        padFor(cardHeight).clamp(2.0, _navCardPadding * sw),
       avatar:          _navAvatar * sw,
       avatarGlyph:     _navAvatarGlyph * sw,
       avatarGap:       _navAvatarGap * sw,
-      nameSize:        _navNameSize * sw,
-      emailSize:       _navEmailSize * sw,
+      nameSize:        16,
+      emailSize:       13,
       nameToEmail:     _navNameToEmail * sw,
       chevron:         _navChevron * sw,
       chevronGap:      _navChevronGap * sw,
@@ -977,11 +933,11 @@ class _NavMetrics {
       rowInset:        _navRowInset * sw,
       rowPadV:         padFor(rowHeight),
       logoutPadV:      padFor(logoutHeight),
-      iconTile:        tile,
+      iconTile:        40,
       iconTileRadius:  _navIconTileRadius * sw,
-      glyph:           _navGlyph * sw,
-      tileGap:         _navTileGap * sw,
-      labelSize:       _navLabelSize * sw,
+      glyph:           ProxoChrome.iconSize,
+      tileGap:         12,
+      labelSize:       ProxoChrome.labelSize,
       badgeSize:       _navBadgeSize * sw,
       badgeTextSize:   _navBadgeTextSize * sw,
       logoutHeight:    logoutHeight,

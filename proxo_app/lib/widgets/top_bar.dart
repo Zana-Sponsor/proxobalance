@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
+import '../theme/proxo_chrome.dart';
+import 'package:solar_icons/solar_icons.dart';
 import 'notification_bell.dart';
 
 class ProxoTopBar extends StatelessWidget implements PreferredSizeWidget {
@@ -14,13 +16,13 @@ class ProxoTopBar extends StatelessWidget implements PreferredSizeWidget {
   final String balance;
   final VoidCallback? onBalanceTap;
 
-  static const double _contentHeight = 54.0;
-  static const double _sidePadding = 16.0;
+  static const double _contentHeight = 56.0;
+  static const double _sidePadding = 12.0;
   static const Color _ink = AppColors.ink;
   static const Color _hairline = Color(0xFFF2F3F5);
 
-  static const double _iconSize = 21.0;
-  static const double _logoHeight = 20.0;
+  static const double _iconSize = ProxoChrome.iconSize;
+  static const double _logoHeight = 24.0;
   static const String _logoAsset = 'assets/images/proxo_logo.png';
 
   const ProxoTopBar({
@@ -43,14 +45,14 @@ class ProxoTopBar extends StatelessWidget implements PreferredSizeWidget {
   Widget _buildRightCluster(BuildContext context) {
     if (onBackTap != null) {
       return _BarIconButton(
-        onTap: onBackTap,
-        child: const Icon(Icons.arrow_forward_rounded, size: _iconSize, color: _ink),
+        onTap: onBackTap, label: 'گەڕانەوە',
+        child: const Icon(SolarIconsOutline.altArrowRight, size: _iconSize, color: _ink),
       );
     }
     if (automaticallyImplyLeading && Navigator.canPop(context)) {
       return _BarIconButton(
-        onTap: () => Navigator.maybePop(context),
-        child: const Icon(Icons.arrow_forward_rounded, size: _iconSize, color: _ink),
+        onTap: () => Navigator.maybePop(context), label: 'گەڕانەوە',
+        child: const Icon(SolarIconsOutline.altArrowRight, size: _iconSize, color: _ink),
       );
     }
 
@@ -58,17 +60,17 @@ class ProxoTopBar extends StatelessWidget implements PreferredSizeWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         if (onMenuTap != null)
-          _MenuIcon(color: _ink, onTap: onMenuTap),
-        const SizedBox(width: 8),
+          _BarIconButton(onTap: onMenuTap, label: 'مێنیو', child: const Icon(SolarIconsOutline.list, size: _iconSize, color: _ink)),
+
         NotificationBell(
           onTap: onNotificationTap ?? () {},
           iconSize: _iconSize,
         ),
         if (onSearchTap != null) ...[
-          const SizedBox(width: 6),
+
           _BarIconButton(
-            onTap: onSearchTap,
-            child: const Icon(Icons.search_rounded, size: _iconSize, color: _ink),
+            onTap: onSearchTap, label: 'گەڕان',
+            child: const Icon(SolarIconsOutline.magnifier, size: _iconSize, color: _ink),
           ),
         ],
         ...actions,
@@ -99,7 +101,7 @@ class ProxoTopBar extends StatelessWidget implements PreferredSizeWidget {
             _buildRightCluster(context),
 
             // بەشی لای چەپ: لۆگۆ
-            Semantics(
+            Flexible(child: Semantics(
               label: 'Proxo',
               image: true,
               child: Image.asset(
@@ -108,7 +110,7 @@ class ProxoTopBar extends StatelessWidget implements PreferredSizeWidget {
                 fit: BoxFit.contain,
                 excludeFromSemantics: true,
               ),
-            ),
+            )),
           ],
         ),
       ),
@@ -119,58 +121,12 @@ class ProxoTopBar extends StatelessWidget implements PreferredSizeWidget {
 class _BarIconButton extends StatelessWidget {
   final VoidCallback? onTap;
   final Widget child;
-
-  const _BarIconButton({required this.onTap, required this.child});
-
+  final String label;
+  const _BarIconButton({required this.onTap, required this.child, required this.label});
   @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      behavior: HitTestBehavior.opaque,
-      child: SizedBox(
-        width: 36,
-        height: 36,
-        child: Center(child: child),
-      ),
-    );
-  }
-}
-
-class _MenuIcon extends StatelessWidget {
-  final Color color;
-  final VoidCallback? onTap;
-
-  const _MenuIcon({required this.color, this.onTap});
-
-  Widget _bar() => Container(
-        width: 17,
-        height: 1.8,
-        decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.circular(2),
-        ),
-      );
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      behavior: HitTestBehavior.opaque,
-      child: SizedBox(
-        width: 36,
-        height: 36,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            _bar(),
-            const SizedBox(height: 3.5),
-            _bar(),
-            const SizedBox(height: 3.5),
-            _bar(),
-          ],
-        ),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => IconButton(
+    onPressed: onTap, tooltip: label,
+    constraints: const BoxConstraints.tightFor(width: 48, height: 48),
+    padding: const EdgeInsets.all(12), icon: child,
+  );
 }

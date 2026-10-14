@@ -7,6 +7,9 @@ import 'package:integration_test/integration_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:proxo_app/screens/ad_create_screen.dart';
 import 'package:proxo_app/screens/tools_screen.dart';
+import 'package:proxo_app/screens/profile_screen.dart';
+import 'package:proxo_app/widgets/proxo_sidebar.dart';
+import 'package:proxo_app/widgets/top_bar.dart';
 import 'package:proxo_app/screens/transaction_detail_screen.dart';
 import 'package:proxo_app/theme/app_locale.dart';
 import 'package:proxo_app/theme/app_theme.dart';
@@ -103,6 +106,22 @@ void main() {
           currentIndex: index, onTap: (_) {},
         )));
         await shot('navigation-$index');
+      }
+      for (final scale in [1.0, 2.0]) {
+        await mount(ProfileScreen(onBottomNavTap: (_) {}), scale: scale);
+        await shot('profile-scale-$scale');
+        await t.drag(find.byType(Scrollable).first, const Offset(0, -650));
+        await t.pumpAndSettle();
+        await shot('profile-bottom-scale-$scale');
+        await mount(Scaffold(body: Align(alignment: Alignment.centerRight,
+          child: ProxoSidebar(onClose: () {}, onNavigate: (_) {}))), scale: scale);
+        await shot('sidebar-scale-$scale');
+        await t.drag(find.byType(Scrollable).first, const Offset(0, -650));
+        await t.pumpAndSettle();
+        await shot('sidebar-bottom-scale-$scale');
+        await mount(Scaffold(appBar: ProxoTopBar(onMenuTap: () {}, onNotificationTap: () {}, onSearchTap: () {}),
+          bottomNavigationBar: ProxoBottomNav(currentIndex: 4, onTap: (_) {})), scale: scale);
+        await shot('chrome-scale-$scale');
       }
       for (final scale in [1.0, 2.0]) {
         await mount(TransactionDetailScreen(data: TxReceiptData(

@@ -35,6 +35,7 @@
 
 import 'dart:async';
 import '../theme/app_theme.dart';
+import 'package:solar_icons/solar_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:proxo_app/widgets/proxo_text.dart';
@@ -164,9 +165,9 @@ class _NotificationBellState extends State<NotificationBell>
     if (!mounted) return;
     setState(() => _unread = count);
 
-    if (count > 0) {
+    if (count > 0 && !MediaQuery.disableAnimationsOf(context)) {
       // pulse بەردەوام
-      if (!_pulse.isAnimating) _pulse.repeat();
+      if (!_pulse.isAnimating) _pulse.forward(from: 0);
     } else {
       _pulse.stop();
       _pulse.reset();
@@ -185,12 +186,15 @@ class _NotificationBellState extends State<NotificationBell>
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return Semantics(
+      button: true, label: 'ئاگادارییەکان؛ $_unread نەخوێندراوە',
+      onTap: widget.onTap, excludeSemantics: true,
+      child: GestureDetector(
       onTap: widget.onTap,
       behavior: HitTestBehavior.opaque,
       child: SizedBox(
-        width:  widget.iconSize,
-        height: widget.iconSize,
+        width: 48,
+        height: 48,
         child: Stack(
           clipBehavior: Clip.none,
           alignment: Alignment.center,
@@ -198,7 +202,7 @@ class _NotificationBellState extends State<NotificationBell>
 
             // ── زەنگی ساکار (بێ بۆکس) ─────────────────────────────────────
             Icon(
-              Icons.notifications_none_rounded,
+              SolarIconsOutline.bell,
               size:  widget.iconSize,
               color: _ink,
             ),
@@ -210,8 +214,8 @@ class _NotificationBellState extends State<NotificationBell>
               // bell's inner side pointing at the screen centre. `end` puts it
               // on the outer corner in both directions.
               PositionedDirectional(
-                top: -6,
-                end: -6,
+                top: 3,
+                end: 1,
                 child: AnimatedBuilder(
                   animation: _pulse,
                   builder: (_, child) => Transform.scale(
@@ -255,7 +259,7 @@ class _NotificationBellState extends State<NotificationBell>
           ],
         ),
       ),
-    );
+    ));
   }
 }
 

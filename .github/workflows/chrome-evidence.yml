@@ -1,0 +1,50 @@
+name: Sidebar profile navigation evidence
+on:
+  push:
+    branches: [feat/proxolink-private-renderer-migration]
+    paths: ['proxo_app/**', '.github/workflows/chrome-evidence.yml']
+permissions:
+  contents: read
+concurrency:
+  group: chrome-evidence-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        source: [before, after]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: after
+      - uses: actions/checkout@v4
+        with:
+          ref: e61144904f5f9986b8d3a2f486ca7756a3ba267a
+          path: before
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.47.2'
+          channel: stable
+          cache: true
+      - name: Identical read-only fixture and capture harness
+        run: |
+          cp after/proxo_app/test/chrome_capture_test.dart before/proxo_app/test/
+          cp after/proxo_app/integration_test/support/actual_screen_fixtures.dart before/proxo_app/integration_test/support/
+      - run: flutter pub get
+        working-directory: ${{ matrix.source }}/proxo_app
+      - name: Analyze modified surfaces
+        if: matrix.source == 'after'
+        working-directory: after/proxo_app
+        run: flutter analyze --no-fatal-infos --no-fatal-warnings lib/widgets/bottom_nav.dart lib/widgets/top_bar.dart lib/widgets/notification_bell.dart lib/widgets/proxo_sidebar.dart lib/screens/profile_screen.dart lib/theme/proxo_chrome.dart test/chrome_capture_test.dart
+      - name: Render real surfaces and verify interactions
+        working-directory: ${{ matrix.source }}/proxo_app
+        timeout-minutes: 8
+        run: flutter test test/chrome_capture_test.dart --reporter expanded --dart-define=CHROME_BASELINE=${{ matrix.source == 'before' }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: chrome-${{ matrix.source }}
+          path: ${{ matrix.source }}/proxo_app/build/chrome-evidence
+          if-no-files-found: warn
