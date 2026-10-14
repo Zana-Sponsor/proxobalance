@@ -513,6 +513,27 @@ void main() {
     expect(repo.submissions, 2);
     expect(repo.saved!.id, r.id);
   });
+  testWidgets('leaving an uncertain result restores the frozen request and resumes the same ID', (tester) async {
+    final repo = TestAdRepository()..failure = const AdSubmissionFailure('NETWORK', uncertain: true);
+    await tester.pumpWidget(host(AdCreateScreen(repository: repo, proxoCard: validDraft().toJson())));
+    await tester.pumpAndSettle();
+    await tapVisible(tester, find.byKey(const ValueKey('review-ad')));
+    await tester.pump(const Duration(seconds: 11)); await tester.pump();
+    final original = repo.saved!;
+    await tester.tap(find.byKey(const ValueKey('cancel-submission')));
+    await tester.pumpAndSettle();
+    expect(find.byType(AdConfirmationScreen), findsNothing);
+    expect(repo.saved!.id, original.id);
+    expect(repo.saved!.draft.toJson(), original.draft.toJson());
+    expect(find.byWidgetPredicate((w) => w is IgnorePointer && w.ignoring), findsWidgets);
+    await tapVisible(tester, find.byKey(const ValueKey('review-ad')));
+    await tester.pump();
+    expect(repo.submissions, 2);
+    expect(repo.saved!.id, original.id);
+    expect(tester.widget<AdConfirmationScreen>(find.byType(AdConfirmationScreen)).resume, true);
+    await tester.tap(find.byKey(const ValueKey('cancel-submission')));
+    await tester.pumpAndSettle();
+  });
   testWidgets('editing after a paid FastPay failure switches to account credit',
       (tester) async {
     final repo = TestAdRepository()

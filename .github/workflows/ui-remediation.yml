@@ -5,6 +5,9 @@ on:
     paths: ['proxo_app/**', '.github/workflows/ui-remediation.yml']
   pull_request:
     paths: ['proxo_app/**', '.github/workflows/ui-remediation.yml']
+concurrency:
+  group: ui-remediation-${{ github.ref }}
+  cancel-in-progress: true
 permissions:
   contents: read
 jobs:
@@ -34,6 +37,7 @@ jobs:
       - run: flutter pub get
         working-directory: ${{ matrix.source }}/proxo_app
       - name: Capture actual widgets, geometry and exported PDF
+        timeout-minutes: 8
         run: flutter test test/ui_remediation_capture_test.dart --reporter expanded
         working-directory: ${{ matrix.source }}/proxo_app
       - name: Verify changed behavior and responsive consumers

@@ -802,6 +802,7 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
             OutlinedButton(
                 key: const ValueKey('ad-date'),
                 onPressed: () async {
+                  FocusManager.instance.primaryFocus?.unfocus();
                   final now = adScheduleNow(),
                       today = DateTime(adScheduleNow().year,
                           adScheduleNow().month, adScheduleNow().day);
@@ -831,6 +832,7 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
             OutlinedButton(
                 key: const ValueKey('ad-time'),
                 onPressed: () async {
+                  FocusManager.instance.primaryFocus?.unfocus();
                   final now = adScheduleNow();
                   final time = await showTimePicker(
                       context: context,

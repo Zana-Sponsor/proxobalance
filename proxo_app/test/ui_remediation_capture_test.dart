@@ -46,6 +46,7 @@ void main() {
   for (final config in [(280.0,1.0,1.0),(393.0,1.0,3.0),(393.0,2.0,1.0),(768.0,1.0,2.0)]) {
     for (final screen in ['home','actions','history','receipt','ad-receipt','create','confirmation','tools','navigation']) {
       testWidgets('render $screen $config', (t) async {
+        print('EVIDENCE start $screen $config');
         final (width, scale, dpr) = config;
         t.view.devicePixelRatio = dpr;
         t.view.physicalSize = Size(width*dpr, 852*dpr);
@@ -67,7 +68,9 @@ void main() {
         await t.pumpWidget(MaterialApp(theme:buildAppTheme(),home:Builder(builder:(context)=>MediaQuery(data:MediaQuery.of(context).copyWith(textScaler:TextScaler.linear(scale)),child:RepaintBoundary(key:key,child:child)))));
         await t.pump(); await t.pump(const Duration(milliseconds:500)); await t.pump(const Duration(milliseconds:500));
         final name='$screen-${width.toInt()}-s$scale-d$dpr';
+        print('EVIDENCE painted $name');
         await snapshot(t,key,name,config);
+        print('EVIDENCE screenshot $name');
         if(screen=='receipt'||screen=='ad-receipt') {
           final surface=find.byType(ReceiptSurface);
           final boundaryFinder=find.ancestor(of:surface,matching:find.byType(RepaintBoundary)).first;
@@ -87,7 +90,9 @@ void main() {
           for(var frame=0;frame<500&&!done;frame++) {
             await t.pump(); await t.runAsync(()=>Future<void>.delayed(const Duration(milliseconds:10)));
           }
-          expect(done,true);expect(await future,true);
+          print('EVIDENCE PDF $name done=$done');
+          expect(done,true);
+          await t.runAsync(() async { expect(await future,true); });
           t.binding.defaultBinaryMessenger.setMockMethodCallHandler(channel,null);
         }
         final scrolls=find.byType(Scrollable);
@@ -100,7 +105,7 @@ void main() {
         }
         expect(t.takeException(),isNull);
         await t.pumpWidget(const SizedBox());await t.pump();
-      });
+      }, timeout: const Timeout(Duration(seconds: 60)));
     }
   }
 }
