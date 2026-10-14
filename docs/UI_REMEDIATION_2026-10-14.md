@@ -1,5 +1,8 @@
 # Proxo UI remediation and icon audit — implementation and evidence
 
+> Follow-up (15 October, Baghdad): Sidebar, Profile, bottom navigation and app bar now use a coordinated Solar icon system. See [the subsequent implementation and screenshots](CHROME_REDESIGN_2026-10-15.md). Navigation preservation and zero-diff statements below describe the earlier source snapshots, not this later redesign.
+
+
 **Acceptance: pending.** This is an implemented change with reproducible verification evidence, not a claim of approved pixel-perfect completion. PR #7 remains Draft/Open/Unmerged. No production deployment, database change, financial record edit, real charge, or authorization change was performed.
 
 The latest direct user instruction, “not use image for quick actions”, overrides the image-card clauses of the attached specification. Exactly three primary actions use native icons and Sorani labels: Create Advertisement, Add Balance, Create Page. Other banner requirements remain applicable.

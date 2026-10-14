@@ -1,0 +1,1021 @@
+{
+  "source_commit": "22db3425ec15e218053c2fa5844e1fb1c08fa885",
+  "baseline_commit": "e61144904f5f9986b8d3a2f486ca7756a3ba267a",
+  "workflow": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/38644003380",
+  "before": {
+    "job": 116126253332,
+    "artifact": 11931836184,
+    "sha256": "1721813f999031f42b483ca035bca2a6c26241c11e40f58f2298248e15a14068",
+    "capture_cases_passed": 20,
+    "PNGs": 35
+  },
+  "after": {
+    "job": 116126252936,
+    "artifact": 11931806623,
+    "sha256": "78fc0d4a3fef49a4e46ec6ac4128d2d5d23776d0da5b252861580a028b16abc0",
+    "capture_cases_passed": 20,
+    "PNGs": 35,
+    "behavior_cases_passed": 3
+  },
+  "zip_digest_and_crc_verified": true,
+  "runtime": "Flutter 3.47.2 Linux widget test; real production widgets; local actual fonts; read-only fictional backend",
+  "viewport_height_dp": 852,
+  "configurations": [
+    {
+      "width_dp": 280,
+      "text_scale": 1,
+      "dpr": 1
+    },
+    {
+      "width_dp": 393,
+      "text_scale": 1,
+      "dpr": 3
+    },
+    {
+      "width_dp": 393,
+      "text_scale": 2,
+      "dpr": 2
+    },
+    {
+      "width_dp": 280,
+      "text_scale": 2,
+      "dpr": 2
+    },
+    {
+      "width_dp": 768,
+      "text_scale": 1,
+      "dpr": 2
+    }
+  ],
+  "asserted_behaviors": [
+    "no framework exception/layout overflow",
+    "menu/search callbacks and >=48dp targets",
+    "all 5 nav callbacks and >=48dp targets after scrolling as needed",
+    "no FittedBox in chrome",
+    "profile inherits full text scale",
+    "balance visibility toggle",
+    "home route callback",
+    "no points/levels reads",
+    "identity shown while unread response pending",
+    "sidebar selection matches current tab",
+    "FAQ pushes after drawer widget removed, underlying route survives return",
+    "profile edit opens actual EditProfileScreen"
+  ],
+  "rendered_icon_policy": {
+    "normal_glyph_dp": 24,
+    "bottom_nav_label_sp": 12,
+    "sidebar_label_sp": 14,
+    "minimum_action_dp": 48,
+    "rounded_card_radius_dp": 16,
+    "top_bar_min_height_dp": 56
+  },
+  "limitations": [
+    "Narrow large-text bottom navigation scrolls horizontally; five full labels cannot all fit at once.",
+    "Long balances scroll horizontally; read-only TextFields retain native horizontal scrolling.",
+    "Screenshots are unapproved review evidence, not golden approval.",
+    "Analyzer has no errors; existing/retired sidebar unused declarations remain warnings.",
+    "No physical-device profile performance or TalkBack claim."
+  ],
+  "files": [
+    {
+      "side": "before-repeat",
+      "name": "chrome-280-s1.0-d1.0.json",
+      "sha256": "582a8af8cf3952cf136c095a66e6389f08d62f439ccfc03028a6328de500526b",
+      "bytes": 211
+    },
+    {
+      "side": "before-repeat",
+      "name": "chrome-280-s1.0-d1.0.png",
+      "sha256": "d609d33cbbffda10e5384f13759fd760aaec0f9719356369d589bd7e34691f8e",
+      "bytes": 12630,
+      "physical_dimensions": [
+        280,
+        852
+      ]
+    },
+    {
+      "side": "before-repeat",
+      "name": "chrome-280-s2.0-d2.0.json",
+      "sha256": "6e4f88328169d22c9f8e377e0b8b5172a222372b9614f62da3a093cc988c756a",
+      "bytes": 212
+    },
+    {
+      "side": "before-repeat",
+      "name": "chrome-280-s2.0-d2.0.png",
+      "sha256": "11458b135fd07c496abc772c717e27670ba8f58e1a2d9b27ebba2e4cf3b84f81",
+      "bytes": 30274,
+      "physical_dimensions": [
+        560,
+        1704
+      ]
+    },
+    {
+      "side": "before-repeat",
+      "name": "chrome-393-s1.0-d3.0.json",
+      "sha256": "7c8e76c72739a2ddb45d755b9506cb3c76a195cfce65cebaf26ed130d7f727d4",
+      "bytes": 211
+    },
+    {
+      "side": "before-repeat",
+      "name": "chrome-393-s1.0-d3.0.png",
+      "sha256": "4f758c8c61f5dada4c5d3a1ec09f4ccfda5f01d0ceb26f4c6111189c874a0716",
+      "bytes": 53370,
+      "physical_dimensions": [
+        1179,
+        2556
+      ]
+    },
+    {
+      "side": "before-repeat",
+      "name": "chrome-393-s2.0-d2.0.json",
+      "sha256": "96e7a60b24267295edac8d53761daedd7afed03082777a207e3d6734ff45057e",
+      "bytes": 211
+    },
+    {
+      "side": "before-repeat",
+      "name": "chrome-393-s2.0-d2.0.png",
+      "sha256": "db3616396ac62db75e9e259628ce99b33b5c63ed75aa4f86b6fa96307dbb195e",
+      "bytes": 31551,
+      "physical_dimensions": [
+        786,
+        1704
+      ]
+    },
+    {
+      "side": "before-repeat",
+      "name": "chrome-768-s1.0-d2.0.json",
+      "sha256": "fbc6985767d321122e16a2d55e3791d64e3c1f09bb73db13f545a142a4291728",
+      "bytes": 213
+    },
+    {
+      "side": "before-repeat",
+      "name": "chrome-768-s1.0-d2.0.png",
+      "sha256": "36a31be05a6ae3e7e7af31617e42b414ce6f2d00c07cfacb934f5df3402a87eb",
+      "bytes": 37216,
+      "physical_dimensions": [
+        1536,
+        1704
+      ]
+    },
+    {
+      "side": "before-repeat",
+      "name": "edit-280-s1.0-d1.0-bottom.png",
+      "sha256": "8a6c79f2128fd5cb3be74f6b8585f18bcca23ab09e0e7f24ab3b73c015b19f63",
+      "bytes": 37658,
+      "physical_dimensions": [
+        280,
+        852
+      ]
+    },
+    {
+      "side": "before-repeat",
+      "name": "edit-280-s1.0-d1.0.json",
+      "sha256": "677b0b876a4ffea600b16615f7c026caa7601fc518955031fbb5f6f05c692ec2",
+      "bytes": 209
+    },
+    {
+      "side": "before-repeat",
+      "name": "edit-280-s1.0-d1.0.png",
+      "sha256": "8a6c79f2128fd5cb3be74f6b8585f18bcca23ab09e0e7f24ab3b73c015b19f63",
+      "bytes": 37658,
+      "physical_dimensions": [
+        280,
+        852
+      ]
+    },
+    {
+      "side": "before-repeat",
+      "name": "edit-280-s2.0-d2.0-bottom.png",
+      "sha256": "5ea5182de57c0b7d9ce7303931d7b69d14d58f25ac1e3df409602deaf37dcfdc",
+      "bytes": 88555,
+      "physical_dimensions": [
+        560,
+        1704
+      ]
+    },
+    {
+      "side": "before-repeat",
+      "name": "edit-280-s2.0-d2.0.json",
+      "sha256": "e7506b98e65fa1b2759d7bca86eb194020e62ae45f5b41086ac16093f861d018",
+      "bytes": 210
+    },
+    {
+      "side": "before-repeat",
+      "name": "edit-280-s2.0-d2.0.png",
+      "sha256": "5ea5182de57c0b7d9ce7303931d7b69d14d58f25ac1e3df409602deaf37dcfdc",
+      "bytes": 88555,
+      "physical_dimensions": [
+        560,
+        1704
+      ]
+    },
+    {
+      "side": "before-repeat",
+      "name": "edit-393-s1.0-d3.0-bottom.png",
+      "sha256": "5cc867d9421bf81fe7bd7797e61aec0d72c357665b004f7ede9066256fd3c5e9",
+      "bytes": 142035,
+      "physical_dimensions": [
+        1179,
+        2556
+      ]
+    },
+    {
+      "side": "before-repeat",
+      "name": "edit-393-s1.0-d3.0.json",
+      "sha256": "ce78228f04c0e6385ba79c994a350be9208abe0f24333695d5149cd997760519",
+      "bytes": 209
+    },
+    {
+      "side": "before-repeat",
+      "name": "edit-393-s1.0-d3.0.png",
+      "sha256": "5cc867d9421bf81fe7bd7797e61aec0d72c357665b004f7ede9066256fd3c5e9",
+      "bytes": 142035,
+      "physical_dimensions": [
+        1179,
+        2556
+      ]
+    },
+    {
+      "side": "before-repeat",
+      "name": "edit-393-s2.0-d2.0-bottom.png",
+      "sha256": "ca8eda83e6a3718b996b2d8be3748bbf1c2d3e4c3b67730af5d2df40b2dd8d21",
+      "bytes": 90930,
+      "physical_dimensions": [
+        786,
+        1704
+      ]
+    },
+    {
+      "side": "before-repeat",
+      "name": "edit-393-s2.0-d2.0.json",
+      "sha256": "9b13366e960009ec74684a4e2636d832e9d79a474d0e245e8dd2b04c7fbd4ed1",
+      "bytes": 209
+    },
+    {
+      "side": "before-repeat",
+      "name": "edit-393-s2.0-d2.0.png",
+      "sha256": "ca8eda83e6a3718b996b2d8be3748bbf1c2d3e4c3b67730af5d2df40b2dd8d21",
+      "bytes": 90930,
+      "physical_dimensions": [
+        786,
+        1704
+      ]
+    },
+    {
+      "side": "before-repeat",
+      "name": "edit-768-s1.0-d2.0-bottom.png",
+      "sha256": "145fa1062b64a2e9cecd417e7f5618946ec4d39729d5eb004db82efc9c8fcdb0",
+      "bytes": 99440,
+      "physical_dimensions": [
+        1536,
+        1704
+      ]
+    },
+    {
+      "side": "before-repeat",
+      "name": "edit-768-s1.0-d2.0.json",
+      "sha256": "f00a9e3aa67f9d04414f59182e8c0e9dfcc77453f025c751ed408c8417eb9f44",
+      "bytes": 210
+    },
+    {
+      "side": "before-repeat",
+      "name": "edit-768-s1.0-d2.0.png",
+      "sha256": "145fa1062b64a2e9cecd417e7f5618946ec4d39729d5eb004db82efc9c8fcdb0",
+      "bytes": 99440,
+      "physical_dimensions": [
+        1536,
+        1704
+      ]
+    },
+    {
+      "side": "before-repeat",
+      "name": "profile-280-s1.0-d1.0-bottom.png",
+      "sha256": "e41248ec54c8d321dd5104b3af973df222be5ecc9dffc65634fb56aed09097a4",
+      "bytes": 57397,
+      "physical_dimensions": [
+        280,
+        852
+      ]
+    },
+    {
+      "side": "before-repeat",
+      "name": "profile-280-s1.0-d1.0.json",
+      "sha256": "22221035d3138379ed509e20f82bd2adc5abbf39f86fe70fdc148d6a92db0923",
+      "bytes": 212
+    },
+    {
+      "side": "before-repeat",
+      "name": "profile-280-s1.0-d1.0.png",
+      "sha256": "512c6b567f9af3f56073c6e411d368809a6136b67f8f035b97d8aef64d090101",
+      "bytes": 61791,
+      "physical_dimensions": [
+        280,
+        852
+      ]
+    },
+    {
+      "side": "before-repeat",
+      "name": "profile-280-s2.0-d2.0-bottom.png",
+      "sha256": "8fde83e88c67df655448beecf7526d17a99e621cb5663c313ab308bfa4a27be3",
+      "bytes": 148968,
+      "physical_dimensions": [
+        560,
+        1704
+      ]
+    },
+    {
+      "side": "before-repeat",
+      "name": "profile-280-s2.0-d2.0.json",
+      "sha256": "63fe3627d6a6e93fc070905880684245034bec00b9c549c7712a0e859ff94d34",
+      "bytes": 213
+    },
+    {
+      "side": "before-repeat",
+      "name": "profile-280-s2.0-d2.0.png",
+      "sha256": "e0df0c0dd00af6dd47f5e431dba9a34754524e195e8eb41ba2e5b7f487493374",
+      "bytes": 157594,
+      "physical_dimensions": [
+        560,
+        1704
+      ]
+    },
+    {
+      "side": "before-repeat",
+      "name": "profile-393-s1.0-d3.0-bottom.png",
+      "sha256": "b178ccae7582a91383082434b2c6e3303fb7b84dbe8ff4fd7a97bb7d8e679127",
+      "bytes": 272172,
+      "physical_dimensions": [
+        1179,
+        2556
+      ]
+    },
+    {
+      "side": "before-repeat",
+      "name": "profile-393-s1.0-d3.0.json",
+      "sha256": "e4a2387250c614da2e05a4c2e58008115b2e4eab7167851cbe81bb577b4a8db0",
+      "bytes": 212
+    },
+    {
+      "side": "before-repeat",
+      "name": "profile-393-s1.0-d3.0.png",
+      "sha256": "d72479262638a9929818052ef57211f19f012fe56e8c08d3637eab1ce1165ba4",
+      "bytes": 286282,
+      "physical_dimensions": [
+        1179,
+        2556
+      ]
+    },
+    {
+      "side": "before-repeat",
+      "name": "profile-393-s2.0-d2.0-bottom.png",
+      "sha256": "23556f7d52479a8397a12cb50f04d4cdc5cf46188e07070e44c9bd224b7d7c8a",
+      "bytes": 164185,
+      "physical_dimensions": [
+        786,
+        1704
+      ]
+    },
+    {
+      "side": "before-repeat",
+      "name": "profile-393-s2.0-d2.0.json",
+      "sha256": "8442ad83dfd36a19a63f43be57442edeb6826913238ba6d909b18d6c250cc17f",
+      "bytes": 212
+    },
+    {
+      "side": "before-repeat",
+      "name": "profile-393-s2.0-d2.0.png",
+      "sha256": "1e3380bfad7f9860ed19c187b0a732186d976bc6219193ec84f06cf436c37575",
+      "bytes": 173531,
+      "physical_dimensions": [
+        786,
+        1704
+      ]
+    },
+    {
+      "side": "before-repeat",
+      "name": "profile-768-s1.0-d2.0-bottom.png",
+      "sha256": "dde0041b93e5c42b91b2443d5a467dd8e6749deb2f3a10d15bd16008ba68e79d",
+      "bytes": 187952,
+      "physical_dimensions": [
+        1536,
+        1704
+      ]
+    },
+    {
+      "side": "before-repeat",
+      "name": "profile-768-s1.0-d2.0.json",
+      "sha256": "3541d3bf1b367f8e11aa8ea405f47d09881307399b8ad9b9e3f01aa091abf608",
+      "bytes": 213
+    },
+    {
+      "side": "before-repeat",
+      "name": "profile-768-s1.0-d2.0.png",
+      "sha256": "454a1cc6f4187c11d23ed3bec0c50a5653c66c2942465f3d638b4044e553198c",
+      "bytes": 195360,
+      "physical_dimensions": [
+        1536,
+        1704
+      ]
+    },
+    {
+      "side": "before-repeat",
+      "name": "sidebar-280-s1.0-d1.0-bottom.png",
+      "sha256": "21c352a7205367918a65851bb04175e92c4257ea5aecd99a748768ed3ce02767",
+      "bytes": 33263,
+      "physical_dimensions": [
+        280,
+        852
+      ]
+    },
+    {
+      "side": "before-repeat",
+      "name": "sidebar-280-s1.0-d1.0.json",
+      "sha256": "d9779d7848256215810cfbdbe6d80ea238b396b76f40dfe184969c4d5d4fdcad",
+      "bytes": 197
+    },
+    {
+      "side": "before-repeat",
+      "name": "sidebar-280-s1.0-d1.0.png",
+      "sha256": "21c352a7205367918a65851bb04175e92c4257ea5aecd99a748768ed3ce02767",
+      "bytes": 33263,
+      "physical_dimensions": [
+        280,
+        852
+      ]
+    },
+    {
+      "side": "before-repeat",
+      "name": "sidebar-280-s2.0-d2.0-bottom.png",
+      "sha256": "b792a5c0e2585827356298d4d61abbc418b5c3e5aac0813d8bdac9f1fcb15cc7",
+      "bytes": 99332,
+      "physical_dimensions": [
+        560,
+        1704
+      ]
+    },
+    {
+      "side": "before-repeat",
+      "name": "sidebar-280-s2.0-d2.0.json",
+      "sha256": "8e40519b813b540d9270102b7f592c645dc9d1b3beffda3ed67db4420216879c",
+      "bytes": 213
+    },
+    {
+      "side": "before-repeat",
+      "name": "sidebar-280-s2.0-d2.0.png",
+      "sha256": "b792a5c0e2585827356298d4d61abbc418b5c3e5aac0813d8bdac9f1fcb15cc7",
+      "bytes": 99332,
+      "physical_dimensions": [
+        560,
+        1704
+      ]
+    },
+    {
+      "side": "before-repeat",
+      "name": "sidebar-393-s1.0-d3.0-bottom.png",
+      "sha256": "286df69ead43de05ac30b7daaaedac5fc47aa0763676f0e1245365150b284ea0",
+      "bytes": 145778,
+      "physical_dimensions": [
+        1179,
+        2556
+      ]
+    },
+    {
+      "side": "before-repeat",
+      "name": "sidebar-393-s1.0-d3.0.json",
+      "sha256": "1429d94f9b8a008d22a846c4aa9d659c92ddb112b7c2ad1be628278efcef635b",
+      "bytes": 212
+    },
+    {
+      "side": "before-repeat",
+      "name": "sidebar-393-s1.0-d3.0.png",
+      "sha256": "286df69ead43de05ac30b7daaaedac5fc47aa0763676f0e1245365150b284ea0",
+      "bytes": 145778,
+      "physical_dimensions": [
+        1179,
+        2556
+      ]
+    },
+    {
+      "side": "before-repeat",
+      "name": "sidebar-393-s2.0-d2.0-bottom.png",
+      "sha256": "488996f452eb421fef7f8bf13331da3d5fda1f7301be5cb65b5f73395988131d",
+      "bytes": 121151,
+      "physical_dimensions": [
+        786,
+        1704
+      ]
+    },
+    {
+      "side": "before-repeat",
+      "name": "sidebar-393-s2.0-d2.0.json",
+      "sha256": "28d270c4c9bbb8ee28efe8bd218019d22898cb3795d12381e5be85347bda4859",
+      "bytes": 212
+    },
+    {
+      "side": "before-repeat",
+      "name": "sidebar-393-s2.0-d2.0.png",
+      "sha256": "488996f452eb421fef7f8bf13331da3d5fda1f7301be5cb65b5f73395988131d",
+      "bytes": 121151,
+      "physical_dimensions": [
+        786,
+        1704
+      ]
+    },
+    {
+      "side": "before-repeat",
+      "name": "sidebar-768-s1.0-d2.0-bottom.png",
+      "sha256": "7537235b911578e890e1e283042cc767ac4ae9c28ca34ccadb540b433e92c0f1",
+      "bytes": 100262,
+      "physical_dimensions": [
+        1536,
+        1704
+      ]
+    },
+    {
+      "side": "before-repeat",
+      "name": "sidebar-768-s1.0-d2.0.json",
+      "sha256": "d7ed4590128bb8d075ebd263e5fe8793c1d4c4d1d83a8dcbf5f9943cdabf8a97",
+      "bytes": 213
+    },
+    {
+      "side": "before-repeat",
+      "name": "sidebar-768-s1.0-d2.0.png",
+      "sha256": "7537235b911578e890e1e283042cc767ac4ae9c28ca34ccadb540b433e92c0f1",
+      "bytes": 100262,
+      "physical_dimensions": [
+        1536,
+        1704
+      ]
+    },
+    {
+      "side": "after-final",
+      "name": "chrome-280-s1.0-d1.0.json",
+      "sha256": "26aa804145fb58bdcb2f6418a04a5451d1798077c3a42cc80973d67f50c55e93",
+      "bytes": 234
+    },
+    {
+      "side": "after-final",
+      "name": "chrome-280-s1.0-d1.0.png",
+      "sha256": "f3a3789eb00e24197b737bd1459af47d16904cc9b84e835298b6998e24819e37",
+      "bytes": 14818,
+      "physical_dimensions": [
+        280,
+        852
+      ]
+    },
+    {
+      "side": "after-final",
+      "name": "chrome-280-s2.0-d2.0.json",
+      "sha256": "a72e5005fab34476563c76c10f272b32a424e704959a9171ecf2b479778e53bd",
+      "bytes": 235
+    },
+    {
+      "side": "after-final",
+      "name": "chrome-280-s2.0-d2.0.png",
+      "sha256": "efb976aac0b3c194ca911b7d25fe97a6e0273ac3fbff6c010826e24fde79db8f",
+      "bytes": 32385,
+      "physical_dimensions": [
+        560,
+        1704
+      ]
+    },
+    {
+      "side": "after-final",
+      "name": "chrome-393-s1.0-d3.0.json",
+      "sha256": "af29743c8001fef7f6cf81436eb4e4b9c6ff15da43ec8599e6a78dd5e2cb07de",
+      "bytes": 234
+    },
+    {
+      "side": "after-final",
+      "name": "chrome-393-s1.0-d3.0.png",
+      "sha256": "d61e0e14a88f971590ad2154fdc4e8635c26700511c6b91ee70ae406207d1bb1",
+      "bytes": 62226,
+      "physical_dimensions": [
+        1179,
+        2556
+      ]
+    },
+    {
+      "side": "after-final",
+      "name": "chrome-393-s2.0-d2.0.json",
+      "sha256": "3eb1c386535db7647ec085df01c8e58f49be8e3fb183c3687809976602b3667b",
+      "bytes": 234
+    },
+    {
+      "side": "after-final",
+      "name": "chrome-393-s2.0-d2.0.png",
+      "sha256": "085b21e39218577be8aa48ab6d8ea73209c74cccfafcc79f07cd0bbd930195bb",
+      "bytes": 38068,
+      "physical_dimensions": [
+        786,
+        1704
+      ]
+    },
+    {
+      "side": "after-final",
+      "name": "chrome-768-s1.0-d2.0.json",
+      "sha256": "c2e765b4725d4fbd49f3fe6729b4f4bce5fd7ed0c6864d851c8275b55bd810f0",
+      "bytes": 236
+    },
+    {
+      "side": "after-final",
+      "name": "chrome-768-s1.0-d2.0.png",
+      "sha256": "1d2f006d56e94ecfb0d4c68915dbf1253f3e5b645d2dc19ca2807d91ef7a3d0c",
+      "bytes": 43662,
+      "physical_dimensions": [
+        1536,
+        1704
+      ]
+    },
+    {
+      "side": "after-final",
+      "name": "edit-280-s1.0-d1.0-bottom.png",
+      "sha256": "ea5fc2ee0486933c53b44ca33b00b00c5e0a81aa78bc90d6d738173bad19d901",
+      "bytes": 36339,
+      "physical_dimensions": [
+        280,
+        852
+      ]
+    },
+    {
+      "side": "after-final",
+      "name": "edit-280-s1.0-d1.0.json",
+      "sha256": "673f4731c2b347d90e787008ce394776ea10e4103dbbac613dca1377ccf56936",
+      "bytes": 177
+    },
+    {
+      "side": "after-final",
+      "name": "edit-280-s1.0-d1.0.png",
+      "sha256": "ea5fc2ee0486933c53b44ca33b00b00c5e0a81aa78bc90d6d738173bad19d901",
+      "bytes": 36339,
+      "physical_dimensions": [
+        280,
+        852
+      ]
+    },
+    {
+      "side": "after-final",
+      "name": "edit-280-s2.0-d2.0-bottom.png",
+      "sha256": "386e1bd9f4d3751c6c2ed3b2e7de8d066ef5ccfca4fc7aa294d9cf2f8e726227",
+      "bytes": 99072,
+      "physical_dimensions": [
+        560,
+        1704
+      ]
+    },
+    {
+      "side": "after-final",
+      "name": "edit-280-s2.0-d2.0.json",
+      "sha256": "2149f702e007371a712235c52ca0f7d2c319cfada3e774a105e9f5303a1e7a93",
+      "bytes": 178
+    },
+    {
+      "side": "after-final",
+      "name": "edit-280-s2.0-d2.0.png",
+      "sha256": "965ed31862d7437155333b54ce9f11792d491a915c4a24873ab5a12c402d831c",
+      "bytes": 99100,
+      "physical_dimensions": [
+        560,
+        1704
+      ]
+    },
+    {
+      "side": "after-final",
+      "name": "edit-393-s1.0-d3.0-bottom.png",
+      "sha256": "6a26a099a067fcba95881bd8f3cdce25a93c716a6f9b80251a5a1f5ffc467ec9",
+      "bytes": 138324,
+      "physical_dimensions": [
+        1179,
+        2556
+      ]
+    },
+    {
+      "side": "after-final",
+      "name": "edit-393-s1.0-d3.0.json",
+      "sha256": "1845f3cdeb0c2d54929a2b4c0b584ba525a1975e340a1fe644d514d7ed6d4cd9",
+      "bytes": 177
+    },
+    {
+      "side": "after-final",
+      "name": "edit-393-s1.0-d3.0.png",
+      "sha256": "6a26a099a067fcba95881bd8f3cdce25a93c716a6f9b80251a5a1f5ffc467ec9",
+      "bytes": 138324,
+      "physical_dimensions": [
+        1179,
+        2556
+      ]
+    },
+    {
+      "side": "after-final",
+      "name": "edit-393-s2.0-d2.0-bottom.png",
+      "sha256": "9ba0a492e32eb9037e29481485840e2a1f0eba8916286d1dc9f31cebbf3bd567",
+      "bytes": 126034,
+      "physical_dimensions": [
+        786,
+        1704
+      ]
+    },
+    {
+      "side": "after-final",
+      "name": "edit-393-s2.0-d2.0.json",
+      "sha256": "6596fd19e1e9b0c17779c84d5b343ff9dc876fcbb689e20c90c624b924ae972a",
+      "bytes": 177
+    },
+    {
+      "side": "after-final",
+      "name": "edit-393-s2.0-d2.0.png",
+      "sha256": "f7a9dbba56b9b63a1c6d2a6156a540b67ef28ece055df97a5a965e8f4a0037a1",
+      "bytes": 120129,
+      "physical_dimensions": [
+        786,
+        1704
+      ]
+    },
+    {
+      "side": "after-final",
+      "name": "edit-768-s1.0-d2.0-bottom.png",
+      "sha256": "e85e0e0cef7bb08762c3ae31d12990df70e0b49ea94ab0537d7cee2f0b5693b3",
+      "bytes": 96553,
+      "physical_dimensions": [
+        1536,
+        1704
+      ]
+    },
+    {
+      "side": "after-final",
+      "name": "edit-768-s1.0-d2.0.json",
+      "sha256": "94b79910790617dce936bd2578b2ef7285c5824adcddda241d144db2ad689096",
+      "bytes": 178
+    },
+    {
+      "side": "after-final",
+      "name": "edit-768-s1.0-d2.0.png",
+      "sha256": "e85e0e0cef7bb08762c3ae31d12990df70e0b49ea94ab0537d7cee2f0b5693b3",
+      "bytes": 96553,
+      "physical_dimensions": [
+        1536,
+        1704
+      ]
+    },
+    {
+      "side": "after-final",
+      "name": "profile-280-s1.0-d1.0-bottom.png",
+      "sha256": "e0fbe476f4b5ec25f4108f450334bc8fc63d82ae1b84ba1b2a177bde34f2cf2c",
+      "bytes": 37694,
+      "physical_dimensions": [
+        280,
+        852
+      ]
+    },
+    {
+      "side": "after-final",
+      "name": "profile-280-s1.0-d1.0.json",
+      "sha256": "3a3e4f737370c3c9dc26cdb8d6c5c85175ba324ff76be88038c8cc594349112c",
+      "bytes": 180
+    },
+    {
+      "side": "after-final",
+      "name": "profile-280-s1.0-d1.0.png",
+      "sha256": "911d531e1a4f6b2b2032731755f8c44da946d13cc377751876710af4575dec90",
+      "bytes": 32441,
+      "physical_dimensions": [
+        280,
+        852
+      ]
+    },
+    {
+      "side": "after-final",
+      "name": "profile-280-s2.0-d2.0-bottom.png",
+      "sha256": "5c86cafc40089f934428ee6cce46557f3418399bfc12ea2580d6c68201bebc40",
+      "bytes": 102135,
+      "physical_dimensions": [
+        560,
+        1704
+      ]
+    },
+    {
+      "side": "after-final",
+      "name": "profile-280-s2.0-d2.0.json",
+      "sha256": "cf70853b4029d56f98fa61421b3fe4905c57ed22dff50f62867585caad1d20d5",
+      "bytes": 181
+    },
+    {
+      "side": "after-final",
+      "name": "profile-280-s2.0-d2.0.png",
+      "sha256": "8ff8af8ecf0607139c57c92aee3e875aec934434341b4d101e645859c416f855",
+      "bytes": 89818,
+      "physical_dimensions": [
+        560,
+        1704
+      ]
+    },
+    {
+      "side": "after-final",
+      "name": "profile-393-s1.0-d3.0-bottom.png",
+      "sha256": "cf3d97653accac3ddf9e98eff5f905a9f5184491ceb86d8422ca5db62c21ff32",
+      "bytes": 151564,
+      "physical_dimensions": [
+        1179,
+        2556
+      ]
+    },
+    {
+      "side": "after-final",
+      "name": "profile-393-s1.0-d3.0.json",
+      "sha256": "bd1daab455265ced64659a1ba73cea65c87ef025247dbd95b42b31ecd51e8447",
+      "bytes": 180
+    },
+    {
+      "side": "after-final",
+      "name": "profile-393-s1.0-d3.0.png",
+      "sha256": "49db6ad4a8e3b230a022f7efd605cb48f5f13b53f461ece604ecae4ca5659f78",
+      "bytes": 164553,
+      "physical_dimensions": [
+        1179,
+        2556
+      ]
+    },
+    {
+      "side": "after-final",
+      "name": "profile-393-s2.0-d2.0-bottom.png",
+      "sha256": "680bc21034f93e5f0660bf37c4cd33798df2589ee6dc2e76830f581e5f6d134b",
+      "bytes": 114294,
+      "physical_dimensions": [
+        786,
+        1704
+      ]
+    },
+    {
+      "side": "after-final",
+      "name": "profile-393-s2.0-d2.0.json",
+      "sha256": "1a8e450d61053db20fa620f4637b5c4d8a905b0f5c0cd16a2db887c632e28f9f",
+      "bytes": 180
+    },
+    {
+      "side": "after-final",
+      "name": "profile-393-s2.0-d2.0.png",
+      "sha256": "68db594d351c5d5976ee4dde785cfa964fd1789b3c18c4f1ffefb7a4a7812b7a",
+      "bytes": 96495,
+      "physical_dimensions": [
+        786,
+        1704
+      ]
+    },
+    {
+      "side": "after-final",
+      "name": "profile-768-s1.0-d2.0-bottom.png",
+      "sha256": "223e1246547b193bb9e2ff984d3d57ac3278123aea7664923fce571ad857385f",
+      "bytes": 106601,
+      "physical_dimensions": [
+        1536,
+        1704
+      ]
+    },
+    {
+      "side": "after-final",
+      "name": "profile-768-s1.0-d2.0.json",
+      "sha256": "16581499a29309a1189f5fe46c9760ce7012d541f8f4932df5b8f45640550000",
+      "bytes": 181
+    },
+    {
+      "side": "after-final",
+      "name": "profile-768-s1.0-d2.0.png",
+      "sha256": "51fc2c3a0f6311728a78062b746bfa5467b4c24ee252d8da2493662653844b08",
+      "bytes": 114763,
+      "physical_dimensions": [
+        1536,
+        1704
+      ]
+    },
+    {
+      "side": "after-final",
+      "name": "sidebar-280-s1.0-d1.0-bottom.png",
+      "sha256": "b82a25744d0abd4ebd69a137141c5219ccec4c4bc40c265a1b41d32217a5d44e",
+      "bytes": 39473,
+      "physical_dimensions": [
+        280,
+        852
+      ]
+    },
+    {
+      "side": "after-final",
+      "name": "sidebar-280-s1.0-d1.0.json",
+      "sha256": "81c5d81897349f0dcc7f4a14f9866c0f4c3453d7c69b28cf02b7e906300d1bd5",
+      "bytes": 179
+    },
+    {
+      "side": "after-final",
+      "name": "sidebar-280-s1.0-d1.0.png",
+      "sha256": "b82a25744d0abd4ebd69a137141c5219ccec4c4bc40c265a1b41d32217a5d44e",
+      "bytes": 39473,
+      "physical_dimensions": [
+        280,
+        852
+      ]
+    },
+    {
+      "side": "after-final",
+      "name": "sidebar-280-s2.0-d2.0-bottom.png",
+      "sha256": "64ebccd34a2f8dc85bb6828e4a21404f249c8d8e00515ff1ef7a725c04031d38",
+      "bytes": 105804,
+      "physical_dimensions": [
+        560,
+        1704
+      ]
+    },
+    {
+      "side": "after-final",
+      "name": "sidebar-280-s2.0-d2.0.json",
+      "sha256": "d558a40baf4e12cfe6fa5c82379c830456ba6403293cb2d4ed244ebc217af8ae",
+      "bytes": 195
+    },
+    {
+      "side": "after-final",
+      "name": "sidebar-280-s2.0-d2.0.png",
+      "sha256": "7349f64f5bfcffe67f628075e8f0a4dc9e510a97a77e1c996eeacac1c1cd0390",
+      "bytes": 109590,
+      "physical_dimensions": [
+        560,
+        1704
+      ]
+    },
+    {
+      "side": "after-final",
+      "name": "sidebar-393-s1.0-d3.0-bottom.png",
+      "sha256": "882e78ff5ec66eddd3316738ff111e3aaa84704f099e83457059fc3f1a17be00",
+      "bytes": 152183,
+      "physical_dimensions": [
+        1179,
+        2556
+      ]
+    },
+    {
+      "side": "after-final",
+      "name": "sidebar-393-s1.0-d3.0.json",
+      "sha256": "82fe91e4008045529ae1669eca865df686fee65a7fd9d69e92af28c6ed32b224",
+      "bytes": 194
+    },
+    {
+      "side": "after-final",
+      "name": "sidebar-393-s1.0-d3.0.png",
+      "sha256": "882e78ff5ec66eddd3316738ff111e3aaa84704f099e83457059fc3f1a17be00",
+      "bytes": 152183,
+      "physical_dimensions": [
+        1179,
+        2556
+      ]
+    },
+    {
+      "side": "after-final",
+      "name": "sidebar-393-s2.0-d2.0-bottom.png",
+      "sha256": "f6207722b7417503d8f5ed7dface37791713587e2094a623a7b66b87c908aee6",
+      "bytes": 130226,
+      "physical_dimensions": [
+        786,
+        1704
+      ]
+    },
+    {
+      "side": "after-final",
+      "name": "sidebar-393-s2.0-d2.0.json",
+      "sha256": "9f80089508197bc6779ed7c1db6e830e5ab932369f295ccd0860218810ab6db5",
+      "bytes": 194
+    },
+    {
+      "side": "after-final",
+      "name": "sidebar-393-s2.0-d2.0.png",
+      "sha256": "4ba228042beff107f8b6072a8bf1dab2291a63c6ff8257af641f3ee5bd382858",
+      "bytes": 130415,
+      "physical_dimensions": [
+        786,
+        1704
+      ]
+    },
+    {
+      "side": "after-final",
+      "name": "sidebar-768-s1.0-d2.0-bottom.png",
+      "sha256": "03d2636924bc1da4e97a4522d7c6dccfd8dafea4252cb70774758ce906bf6435",
+      "bytes": 104287,
+      "physical_dimensions": [
+        1536,
+        1704
+      ]
+    },
+    {
+      "side": "after-final",
+      "name": "sidebar-768-s1.0-d2.0.json",
+      "sha256": "533eb76d083a4f1a63f20b793906ad673a7f8142f142ae530ab7c61873ca6319",
+      "bytes": 195
+    },
+    {
+      "side": "after-final",
+      "name": "sidebar-768-s1.0-d2.0.png",
+      "sha256": "03d2636924bc1da4e97a4522d7c6dccfd8dafea4252cb70774758ce906bf6435",
+      "bytes": 104287,
+      "physical_dimensions": [
+        1536,
+        1704
+      ]
+    }
+  ]
+}
