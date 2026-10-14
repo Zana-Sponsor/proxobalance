@@ -77,11 +77,18 @@ void main() {
       await t.pump(const Duration(milliseconds: 100));
       expect(t.takeException(), isNull);
     }
+    Widget chrome() => Builder(builder: (context) => Scaffold(
+      appBar: ProxoTopBar(
+        // Match HomeScreen's real status-bar inset contract.
+        topPadding: MediaQuery.paddingOf(context).top,
+        onMenuTap: () {}, onNotificationTap: () {}, onSearchTap: () {},
+      ),
+      bottomNavigationBar: ProxoBottomNav(currentIndex: 4, onTap: (_) {}),
+    ));
     // A converted FlutterImageView can still display the preceding captured
     // frame to Android. Capture the ordinary surface before any conversion.
     for (final scale in [1.0, 2.0]) {
-      await mount(Scaffold(appBar: ProxoTopBar(onMenuTap: () {}, onNotificationTap: () {}, onSearchTap: () {}),
-        bottomNavigationBar: ProxoBottomNav(currentIndex: 4, onTap: (_) {})), scale: scale);
+      await mount(chrome(), scale: scale);
       await prepareImages('chrome-native-scale-$scale');
       await Future<void>.delayed(const Duration(milliseconds: 250));
       print('PROXO_UI_NATIVE_SCREENSHOT:$config-chrome-native-scale-$scale');
@@ -146,8 +153,7 @@ void main() {
         await t.drag(find.byType(Scrollable).first, const Offset(0, -650));
         await t.pumpAndSettle();
         await shot('sidebar-bottom-scale-$scale');
-        await mount(Scaffold(appBar: ProxoTopBar(onMenuTap: () {}, onNotificationTap: () {}, onSearchTap: () {}),
-          bottomNavigationBar: ProxoBottomNav(currentIndex: 4, onTap: (_) {})), scale: scale);
+        await mount(chrome(), scale: scale);
         await shot('chrome-scale-$scale');
       }
       for (final scale in [1.0, 2.0]) {
