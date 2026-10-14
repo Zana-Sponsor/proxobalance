@@ -329,7 +329,8 @@ void main() {
             tester,
             find.byType(ReceiptPdfButton),
           );
-          final margin = ReceiptTokens.pageGutter(width);
+          final columnWidth = width.clamp(0.0, ReceiptTokens.receiptMaxWidth);
+          final margin = (width - columnWidth) / 2 + ReceiptTokens.gutter;
           expect(card.left, closeTo(margin, 0.01));
           expect(card.width, closeTo(width - margin * 2, 0.01));
           expect(button.left, closeTo(card.left, 0.01));

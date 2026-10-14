@@ -158,7 +158,7 @@ void main() {
             ),
           ),
           'ad-receipt' => AdDetailScreen(
-            adId: 'fixture',
+            adId: receiptFixture()['id'] as String,
             initialAd: receiptFixture(),
             loadAd: (_) async => receiptFixture(),
           ),

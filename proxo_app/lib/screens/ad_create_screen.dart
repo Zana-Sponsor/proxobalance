@@ -861,6 +861,7 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
             forceLtr: true,
             builder: (_, dir) => TextField(
                 key: const ValueKey('ad-coupon'),
+                onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
                 controller: _coupon,
                 textDirection: dir,
                 style: AdUi.text(context),

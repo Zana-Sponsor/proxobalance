@@ -169,6 +169,31 @@ void main() {
       expect(tester.takeException(), isNull);
     },
   );
+  testWidgets(
+    'touch outside title and coupon dismisses input without losing values',
+    (tester) async {
+      await tester.pumpWidget(
+        host(AdCreateScreen(repository: TestAdRepository())),
+      );
+      await tester.pumpAndSettle();
+      for (final id in ['title', 'coupon']) {
+        final field = find.byKey(ValueKey('ad-$id'));
+        await tester.ensureVisible(field);
+        await tester.pumpAndSettle();
+        await tester.enterText(field, 'PRESERVED');
+        final editable = tester.widget<EditableText>(
+          find.descendant(of: field, matching: find.byType(EditableText)),
+        );
+        expect(editable.focusNode.hasFocus, isTrue);
+        // A real touch outside the text-field group, not a direct callback call.
+        await tester.tapAt(const Offset(4, 70));
+        await tester.pump();
+        expect(editable.focusNode.hasFocus, isFalse);
+        expect(editable.controller.text, 'PRESERVED');
+      }
+      expect(tester.takeException(), isNull);
+    },
+  );
   testWidgets('targeting natural widths, RTL order and supported values', (
     tester,
   ) async {
