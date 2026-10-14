@@ -79,6 +79,12 @@ void main() {
       }
       await t.pump(const Duration(milliseconds: 100));
       expect(t.takeException(), isNull);
+      if (name.startsWith('chrome-')) {
+        // Independently capture Android's composed display, not only Flutter's
+        // converted surface, to distinguish raster capture from widget layout.
+        print('PROXO_UI_NATIVE_SCREENSHOT:$config-$name');
+        await Future<void>.delayed(const Duration(milliseconds: 750));
+      }
       await binding.takeScreenshot('$config-$name');
     }
     final taps = <String>[];
