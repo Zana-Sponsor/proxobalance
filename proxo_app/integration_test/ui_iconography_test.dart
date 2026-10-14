@@ -127,6 +127,7 @@ void main() {
     await shot('create');
     final title = find.byKey(const ValueKey('ad-title'));
     await t.ensureVisible(title);
+    await t.pumpAndSettle();
     await t.tap(title);
     Future<void> waitInsets(bool visible) async {
       for (var i = 0; i < 100; i++) {
@@ -148,6 +149,7 @@ void main() {
     await waitInsets(true);
     final goal = find.byKey(const ValueKey('goal-views'));
     await t.ensureVisible(goal);
+    await t.pumpAndSettle();
     await t.tap(goal);
     await waitInsets(false);
     observations['choice_dismissed_keyboard'] = true;
