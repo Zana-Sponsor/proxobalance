@@ -1,0 +1,128 @@
+// Same harness is run against the immutable baseline and candidate sources.
+// Captures are review evidence, never automatically approved golden files.
+import 'dart:convert';
+import 'dart:io';
+import 'dart:ui' as ui;
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:proxo_app/screens/home_screen.dart';
+import 'package:proxo_app/screens/tools_screen.dart';
+import 'package:proxo_app/screens/ad_create_screen.dart';
+import 'package:proxo_app/screens/ad_confirmation_screen.dart';
+import 'package:proxo_app/screens/transaction_detail_screen.dart';
+import 'package:proxo_app/services/ad_submission.dart';
+import 'package:proxo_app/theme/app_theme.dart';
+import 'package:proxo_app/widgets/home_quick_actions.dart';
+import 'package:proxo_app/widgets/bottom_nav.dart';
+import 'package:proxo_app/widgets/receipt/receipt_kit.dart';
+import 'package:proxo_app/widgets/receipt/tx_history_layout.dart';
+import 'package:proxo_app/widgets/receipt/ad_receipt_card.dart';
+import 'package:proxo_app/models/ad_receipt_data.dart';
+import 'package:proxo_app/l10n/ad_detail_strings.dart';
+import 'ad_creation_flow_test.dart' show TestAdRepository;
+import 'ad_submission_test.dart' show validDraft;
+import 'ad_receipt_data_test.dart' show receiptFixture;
+import '../integration_test/support/actual_screen_fixtures.dart';
+
+class EvidenceBinding extends AutomatedTestWidgetsFlutterBinding {
+  @override bool get disableShadows => false;
+}
+const output = 'build/ui-remediation';
+const permissions = MethodChannel('flutter.baseflow.com/permissions/methods');
+void main() {
+  EvidenceBinding();
+  final backend = ActualScreenBackend();
+  setUpAll(() async {
+    SharedPreferences.setMockInitialValues({});
+    await (FontLoader('Rabar')..addFont(rootBundle.load('assets/fonts/Rabar_021.ttf'))).load();
+    await (FontLoader('MaterialIcons')..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf'))).load();
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(permissions, (_) async => 1);
+    await backend.initialize();
+  });
+  tearDownAll(() async { await backend.dispose(); });
+  for (final config in [(280.0,1.0,1.0),(393.0,1.0,3.0),(393.0,2.0,1.0),(768.0,1.0,2.0)]) {
+    for (final screen in ['home','actions','history','receipt','ad-receipt','create','confirmation','tools','navigation']) {
+      testWidgets('render $screen $config', (t) async {
+        final (width, scale, dpr) = config;
+        t.view.devicePixelRatio = dpr;
+        t.view.physicalSize = Size(width*dpr, 852*dpr);
+        addTearDown(t.view.resetPhysicalSize); addTearDown(t.view.resetDevicePixelRatio);
+        final key = GlobalKey();
+        final request = AdPendingSubmission.create(validDraft(), const AdQuote(grossUsd:10,costUsd:10,rate:1800));
+        final l = AdDetailStrings.of(const Locale('ckb'));
+        final child = switch (screen) {
+          'home' => HomeScreen(onCreateTap:(){},onToolsTap:(){},onCreatePageTap:(){},onFaqTap:(){}),
+          'actions' => Scaffold(body: SingleChildScrollView(child: Padding(padding:const EdgeInsets.all(16),child:HomeQuickActions(onCreateTap:(){},onToolsTap:(){},onCreatePageTap:(){},onFaqTap:(){})))),
+          'history' => TxHistoryLayout(title:'مێژووی مامەڵەکان',backLabel:'گەڕانەوە',refreshLabel:'نوێکردنەوە',onBack:(){},onRefresh:(){},refreshing:false,body:ListView(padding:const EdgeInsets.all(16),children:[TxHistoryCard(date:'14/10/2026',time:'01:58 AM',amount:'+18,000 د.ع',amountColor:ReceiptTokens.positive,onTap:(){})])),
+          'receipt' => TransactionDetailScreen(data:TxReceiptData(kind:TxReceiptKind.topUp,status:'approved',txId:'TX4UFQVLZ4J6',uid:'83062db4-47d0-4ce1-a3b4-33a766783553',date:DateTime.utc(2026,10,13,22,58),usd:10,amountIqd:18000,balanceBefore:null,balanceAfter:null,method:'fastpay',gateway:'fastpay',type:'deposit',adName:null,voucherCode:null)),
+          'ad-receipt' => Scaffold(body:ReceiptBody(children:[RepaintBoundary(key:GlobalKey(),child:ReceiptSurface(child:AdReceiptCard(r:AdReceiptData.from(receiptFixture(),l),l:l,onCopy:(_){})))])),
+          'create' => AdCreateScreen(repository:TestAdRepository(),proxoCard:validDraft().toJson()),
+          'confirmation' => AdConfirmationScreen(request:request,repository:TestAdRepository(),countdown:const Duration(hours:1)),
+          'tools' => ToolsScreen(repository:ActualToolsRepository()),
+          _ => Scaffold(bottomNavigationBar:ProxoBottomNav(currentIndex:0,onTap:(_){})),
+        };
+        await t.pumpWidget(MaterialApp(theme:buildAppTheme(),home:Builder(builder:(context)=>MediaQuery(data:MediaQuery.of(context).copyWith(textScaler:TextScaler.linear(scale)),child:RepaintBoundary(key:key,child:child)))));
+        await t.pump(); await t.pump(const Duration(milliseconds:500)); await t.pump(const Duration(milliseconds:500));
+        final name='$screen-${width.toInt()}-s$scale-d$dpr';
+        await snapshot(t,key,name,config);
+        if(screen=='receipt'||screen=='ad-receipt') {
+          final surface=find.byType(ReceiptSurface);
+          final boundaryFinder=find.ancestor(of:surface,matching:find.byType(RepaintBoundary)).first;
+          final boundaryKey=t.widget<RepaintBoundary>(boundaryFinder).key! as GlobalKey;
+          const channel=MethodChannel('net.nfet.printing');
+          t.binding.defaultBinaryMessenger.setMockMethodCallHandler(channel,(call)async {
+            if(call.method=='sharePdf') {
+              final args=call.arguments as Map;
+              File('$output/$name.pdf').writeAsBytesSync(args['doc'] as List<int>);
+              return 1;
+            }
+            return null;
+          });
+          late Future<bool> future;
+          await t.runAsync(()async{future=exportReceiptPdf(boundaryKey:boundaryKey,title:'Proxo',fileStem:name);});
+          var done=false;future.then((_)=>done=true);
+          for(var frame=0;frame<500&&!done;frame++) {
+            await t.pump(); await t.runAsync(()=>Future<void>.delayed(const Duration(milliseconds:10)));
+          }
+          expect(done,true);expect(await future,true);
+          t.binding.defaultBinaryMessenger.setMockMethodCallHandler(channel,null);
+        }
+        final scrolls=find.byType(Scrollable);
+        if(scrolls.evaluate().isNotEmpty) {
+          final state=t.state<ScrollableState>(scrolls.first);
+          if(state.position.maxScrollExtent>0) {
+            state.position.jumpTo(state.position.maxScrollExtent);
+            await t.pump();await snapshot(t,key,'$name-bottom',config);
+          }
+        }
+        expect(t.takeException(),isNull);
+        await t.pumpWidget(const SizedBox());await t.pump();
+      });
+    }
+  }
+}
+Future<void> snapshot(WidgetTester t,GlobalKey key,String name,(double,double,double) config) async {
+  final boundary=key.currentContext!.findRenderObject() as RenderRepaintBoundary;
+  final nodes=<Map<String,Object?>>[];
+  void visit(Element e) {
+    final ro=e.findRenderObject();
+    if(ro is RenderBox && ro.hasSize && ro.attached) {
+      final origin=ro.localToGlobal(Offset.zero,ancestor:boundary);
+      final record=<String,Object?>{'widget':e.widget.runtimeType.toString(),'key':e.widget.key?.toString(),'bounds_dp':[origin.dx,origin.dy,ro.size.width,ro.size.height]};
+      if(ro is RenderParagraph){record['text']=ro.text.toPlainText();record['font_size']=ro.text.style?.fontSize;record['font_family']=ro.text.style?.fontFamily;record['exceeded_max_lines']=ro.didExceedMaxLines;}
+      nodes.add(record);
+    }
+    e.visitChildren(visit);
+  }
+  (key.currentContext! as Element).visitChildren(visit);
+  await t.runAsync(()async {
+    Directory(output).createSync(recursive:true);
+    final shot=await boundary.toImage(pixelRatio:config.$3);
+    final bytes=await shot.toByteData(format:ui.ImageByteFormat.png);
+    File('$output/$name.png').writeAsBytesSync(bytes!.buffer.asUint8List());shot.dispose();
+    File('$output/$name.json').writeAsStringSync(jsonEncode({'fixture':'fictional deterministic records; actual production widgets','runtime':'Flutter widget test, Linux, not Android profile','viewport_dp':[config.$1,852],'dpr':config.$3,'text_scale':config.$2,'nodes':nodes}));
+  });
+}

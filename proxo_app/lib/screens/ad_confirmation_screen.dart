@@ -45,7 +45,6 @@ class _AdConfirmationScreenState extends State<AdConfirmationScreen>
   bool get _canCancel =>
       !_processing &&
       !_success &&
-      (_failure?.uncertain != true) &&
       (!widget.resume || _failure != null);
 
   @override
@@ -189,12 +188,16 @@ class _AdConfirmationScreenState extends State<AdConfirmationScreen>
                                                               .check_circle_outline,
                                                           size: 88,
                                                           color: AdUi.blue)))
-                                              : _timer(context))),
+                                              : _failure != null
+                                                  ? const Icon(Icons.info_outline, size: 64, color: AdUi.blue)
+                                                  : _timer(context))),
                                   const SizedBox(height: 20),
                                   ProxoText(
                                       _success
                                           ? 'ڕیکلامەکەت بە سەرکەوتوویی تۆمارکرا'
-                                          : _processing || widget.resume
+                                          : _failure != null
+                                              ? (_failure!.uncertain ? 'ئەنجامی داواکاری هێشتا دیار نییە' : 'داواکاریەکە تەواو نەکرا')
+                                              : _processing || widget.resume
                                               ? 'داواکاریەکە تەواو دەکرێت'
                                               : 'ڕیکلامەکەت ئامادەیە',
                                       textAlign: TextAlign.center,
@@ -306,7 +309,9 @@ class _AdConfirmationScreenState extends State<AdConfirmationScreen>
                                 key: const ValueKey('cancel-submission'),
                                 onPressed: _canCancel ? _cancel : null,
                                 child: ProxoText(
-                                    _failure != null && !_failure!.uncertain
+                                    _failure?.uncertain == true
+                                        ? 'گەڕانەوە — داواکاریەکە پارێزراوە'
+                                        : _failure != null
                                         ? 'گەڕانەوە بۆ دەستکاری'
                                         : 'پاشگەزبوونەوە')),
                           ])))),

@@ -356,7 +356,7 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
       });
       if (draft.paymentMethod == 'app_balance' &&
           quote.balanceUsd + 0.000001 < quote.costUsd) {
-        setState(() => _quoteError = 'باڵانسی پێویستت بەردەست نییە');
+        setState(() => _quoteError = 'باڵانسی پێویستت بەردەست نییە\nبەردەست: ${quote.balanceUsd.toStringAsFixed(2)} USD — پێویست: ${quote.costUsd.toStringAsFixed(2)} USD');
         return;
       }
       if (draft.paymentMethod == 'fastpay' && quote.totalIqd < 1000) {
@@ -522,6 +522,7 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
             builder: (_, direction) => TextField(
                 key: ValueKey('ad-$id'),
                 controller: controller,
+                onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
                 textDirection: direction,
                 textAlign: TextAlign.start,
                 keyboardType: keyboard,
@@ -571,6 +572,7 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
                   label: o.$2,
                   selected: value == o.$1,
                   onTap: () {
+                    FocusManager.instance.primaryFocus?.unfocus();
                     onChanged(o.$1);
                     setState(() => _fieldErrors.remove(field));
                   })
@@ -611,6 +613,7 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
                                     AdUi.text(context, color: AdUi.secondary))
                           else
                             DropdownButtonFormField<String>(
+            onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
                                 key: ValueKey(
                                     'asset-$_assetId-${_assets.length}'),
                                 initialValue: _assetId,
@@ -671,6 +674,7 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
                 label: age == 'all' ? 'هەموو' : age,
                 selected: _ages.contains(age),
                 onTap: () => setState(() {
+                      FocusManager.instance.primaryFocus?.unfocus();
                       if (age == 'all') {
                         _ages
                           ..clear()
@@ -693,6 +697,7 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
         const SizedBox(height: 24),
         _label(context, 'پۆل'),
         DropdownButtonFormField<String>(
+            onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
             key: ValueKey('category-$_category'),
             initialValue: _category,
             isExpanded: true,

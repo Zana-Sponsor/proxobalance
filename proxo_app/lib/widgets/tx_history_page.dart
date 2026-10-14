@@ -14,7 +14,7 @@ class _TxItem {
   final String label;
   final String sub;
   final String status; // pending|approved|rejected|spent
-  final double amtIqd;
+  final double? amtIqd;
   final DateTime date;
   final bool coinsRow;
   final int coinsAmt;
@@ -33,8 +33,8 @@ class _TxItem {
   final String type;
   final String? adName;
   final String? voucherCode;
-  final int? rawBalanceBefore;
-  final int? rawBalanceAfter;
+  final double? rawBalanceBefore;
+  final double? rawBalanceAfter;
 
   const _TxItem({
     required this.kind,
@@ -98,7 +98,7 @@ class _TxItem {
 
   /// هەمان یاسای باڵانسی ڕۆیشتوو: پارەی زیادکراو تەنها کاتێک `approved`
   /// بێت، پارەی بڕدراو هەمیشە جگە لە `rejected`.
-  bool get isSettled => isIn ? status == 'approved' : status != 'rejected';
+  bool get isSettled => status == 'approved' || status == 'spent';
 
   TxReceiptData toReceipt() {
     final TxReceiptKind k = switch (kind) {
@@ -108,8 +108,6 @@ class _TxItem {
       _ => TxReceiptKind.topUp,
     };
     final int? amt = receiptAmountIqd;
-    final int? after = rawBalanceAfter;
-    final int? before = rawBalanceBefore;
     return TxReceiptData(
       kind: k,
       status: receiptStatus ?? status,
@@ -118,8 +116,10 @@ class _TxItem {
       date: date,
       usd: usd,
       amountIqd: amt,
-      balanceBefore: (before != null && before >= 0) ? before : null,
-      balanceAfter: after,
+      balanceBefore: null,
+      balanceAfter: null,
+      balanceBeforeUsd: rawBalanceBefore,
+      balanceAfterUsd: rawBalanceAfter,
       method: method,
       gateway: gateway,
       type: type,
@@ -193,22 +193,8 @@ class TxHistorySheetState extends State<TxHistoryPage> {
     if (mounted) setState(() {});
   }
 
-  // amounts >500 stored as IQD; ≤500 stored as USD (×1800)
-  static double _toIqd(Map<String, dynamic> t) {
-    final double amt = receiptNum(t['amount'])?.toDouble() ?? 0;
-    return amt > 500 ? amt : amt * kIqdRate;
-  }
-
-  /// بڕەکە بە دۆلار — تەنها لە بەهای تۆمارکراو.
-  static double? _toUsd(Map<String, dynamic> t) {
-    final double? amt = receiptNum(t['amount'])?.toDouble();
-    if (amt == null || amt <= 0) return null;
-    if (amt <= 500) return amt;
-    final double? fx = receiptNum(t['fx_rate'])?.toDouble();
-    return (fx != null && fx > 0) ? amt / fx : null;
-  }
-
-  static int? _int(dynamic v) => receiptNum(v)?.round();
+  static double? _toIqd(Map<String, dynamic> t) => storedTransactionIqd(t)?.toDouble();
+  static double? _toUsd(Map<String, dynamic> t) => storedTransactionUsd(t);
 
   static String _s(dynamic v) => (v ?? '').toString().trim();
 
@@ -273,32 +259,13 @@ class TxHistorySheetState extends State<TxHistoryPage> {
             .select('*')
             .eq('user_id', user.id)
             .order('created_at', ascending: false),
-        supabase
-            .from('pa_wallets')
-            .select('balance')
-            .eq('user_id', user.id)
-            .limit(1),
       ]);
 
       final txRes = results[0] as List<dynamic>;
       final adRes = results[1] as List<dynamic>;
       final coinRes = results[2] as List<dynamic>;
-      final wallets = results[3] as List<dynamic>;
-      final walletBal =
-          (wallets.isNotEmpty ? receiptNum(wallets.first['balance']) : null)
-                  ?.toDouble() ??
-              0.0;
-      int runBal = (walletBal * kIqdRate).round();
-
       final items = <_TxItem>[];
       final adNumsWithPaymentTx = <String>{};
-      final adBudgetByNum = <String, double>{
-        for (final a in adRes)
-          if (a['ad_number'] != null)
-            a['ad_number'].toString():
-                (receiptNum(a['budget'])?.toDouble() ?? 0) * kIqdRate,
-      };
-
       final adIdByNumber = <String, String>{
         for (final a in adRes)
           if (a['ad_number'] != null && receiptText(a['id']).isNotEmpty)
@@ -326,18 +293,13 @@ class TxHistorySheetState extends State<TxHistoryPage> {
         final String? adTitle = _s(t['ad_title']).isNotEmpty
             ? _s(t['ad_title'])
             : _extractAdName(note);
-        final int? rawBefore = _int(t['balance_before']);
-        final int? rawAfter = _int(t['balance_after']);
+        final rawBefore = storedWalletBalanceUsd(t, 'balance_before');
+        final rawAfter = storedWalletBalanceUsd(t, 'balance_after');
 
         if (type == 'ad_payment') {
-          final payStatus = t['status'] == null ? 'approved' : _s(t['status']);
           final adNumInNote = _extractAdNum(note);
           final effectiveAdNum = adNum ?? adNumInNote;
           if (effectiveAdNum != null) adNumsWithPaymentTx.add(effectiveAdNum);
-          var amt = _toIqd(t);
-          if (amt <= 0 && effectiveAdNum != null) {
-            amt = adBudgetByNum[effectiveAdNum] ?? 0;
-          }
           items.add(
             _TxItem(
               kind: 'spend',
@@ -349,8 +311,8 @@ class TxHistorySheetState extends State<TxHistoryPage> {
               label:
                   'ڕیکلام${effectiveAdNum != null ? " #$effectiveAdNum" : ""}',
               sub: note,
-              status: payStatus == 'pending' ? 'approved' : payStatus,
-              amtIqd: amt,
+              status: status,
+              amtIqd: _toIqd(t),
               date: date,
               depositNum: effectiveAdNum,
               uid: uid,
@@ -381,13 +343,9 @@ class TxHistorySheetState extends State<TxHistoryPage> {
           final effectiveAdNum = adNum ?? _extractAdNum(note);
           label =
               'گەڕانەوەی پارە${effectiveAdNum != null ? " — ڕیکلام #$effectiveAdNum" : ""}';
-          if (t['status'] == null || status == 'pending') {
-            effectiveStatus = 'approved';
-          }
         } else if (type == 'balance_added') {
           kind = 'deposit';
           label = 'زیادکردنی باڵانس لەلایەن ئادمینەوە';
-          if (status == 'pending') effectiveStatus = 'approved';
         } else if (type == 'balance_deducted' ||
             type == 'admin_debit' ||
             ((type == 'withdrawal' || type == 'admin_adjustment') &&
@@ -410,12 +368,6 @@ class TxHistorySheetState extends State<TxHistoryPage> {
           }
         }
 
-        var refundAmt = _toIqd(t);
-        if (kind == 'refund' && refundAmt <= 0) {
-          final fallbackNum = adNum ?? _extractAdNum(label);
-          if (fallbackNum != null) refundAmt = adBudgetByNum[fallbackNum] ?? 0;
-        }
-
         items.add(
           _TxItem(
             kind: kind,
@@ -424,7 +376,7 @@ class TxHistorySheetState extends State<TxHistoryPage> {
             label: label,
             sub: '',
             status: effectiveStatus,
-            amtIqd: refundAmt,
+            amtIqd: _toIqd(t),
             date: date,
             depositNum: depNum,
             uid: uid,
@@ -455,8 +407,8 @@ class TxHistorySheetState extends State<TxHistoryPage> {
             receiptAdId: receiptText(a['id']),
             label: 'ڕیکلام #$adNum',
             sub: '',
-            status: adStatus == 'pending' ? 'approved' : adStatus,
-            amtIqd: budget * kIqdRate,
+            status: adStatus,
+            amtIqd: null,
             date: date,
             depositNum: adNum,
             // ⚠ ئەم ڕیزە لە pa_adsـەوە دێت و هیچ تۆمارێکی مامەڵەی نییە، بۆیە
@@ -497,26 +449,8 @@ class TxHistorySheetState extends State<TxHistoryPage> {
 
       items.sort((a, b) => b.date.compareTo(a.date));
 
-      // ── Running balance — newest→oldest (وەک پێشوو) ─────────────────────
-      final itemsWithBal = items.map((t) {
-        final bal = runBal;
-        final iqd = t.amtIqd.round();
-        if ((t.kind == 'spend' || t.kind == 'admin_deduct') &&
-            t.status != 'rejected') {
-          runBal += iqd;
-        } else if ((t.kind == 'deposit' ||
-                t.kind == 'refund' ||
-                t.kind == 'reward' ||
-                t.kind == 'coin_exchange' ||
-                t.kind == 'voucher') &&
-            t.status == 'approved') {
-          runBal -= iqd;
-        }
-        return t.withBalanceAfter(bal.clamp(0, 9999999999).toInt());
-      }).toList();
-
       if (!mounted) return;
-      _state.value = _TxListState(items: itemsWithBal, loading: false);
+      _state.value = _TxListState(items: items, loading: false);
     } catch (e) {
       debugPrint('TxHistory: load failed: $e');
       if (!mounted) return;
@@ -625,20 +559,17 @@ class _TxCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final _TxItem t = item;
     final DateTime b = receiptBaghdad(t.date) ?? t.date;
-    final int iqd = t.amtIqd.round();
-    final String amount;
-    final Color amountColor;
-    if (!t.isSettled) {
-      amount = receiptIqd(iqd);
-      amountColor = const Color(0xFF6B7280);
-    } else if (t.isIn) {
-      amount = receiptIqd(iqd, sign: '+');
-      amountColor = ReceiptTokens.positive;
-    } else {
-      amount = receiptIqd(iqd, sign: '-');
-      amountColor = ReceiptTokens.negative;
-    }
+    final sign = t.isSettled ? (t.isIn ? '+' : '-') : '';
+    final String amount = t.amtIqd != null
+        ? receiptIqd(t.amtIqd!.round(), sign: sign)
+        : t.usd != null ? '$sign${t.usd!.toStringAsFixed(2)} USD'
+        : TxStrings.current.amountUnavailable;
+    final Color amountColor = !t.isSettled || (t.amtIqd == null && t.usd == null)
+        ? const Color(0xFF6B7280)
+        : t.isIn ? ReceiptTokens.positive : ReceiptTokens.negative;
     return TxHistoryCard(
+      label: t.label,
+      status: t.isSettled ? null : t.status == 'rejected' ? TxStrings.current.statusRejected : TxStrings.current.statusPending,
       date: receiptDay(b),
       time: receiptTime(b, spaced: true),
       amount: amount,

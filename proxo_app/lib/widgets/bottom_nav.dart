@@ -729,7 +729,7 @@ class _AddFabState extends State<_AddFab> with SingleTickerProviderStateMixin {
             onTap: widget.onTap, // ← هەمان onTap(2)ی پێشوو — هیچ نەگۆڕاوە
             // CustomPaint تەواوی بازنەکە پڕدەکاتەوە، بۆیە ناوەندی «+»
             // دەقاودەق ناوەندی بازنەکەیە.
-            child: const CustomPaint(painter: _PlusPainter()),
+            child: Semantics(button: true, label: ProxoLocale.isArabic ? 'إنشاء إعلان' : 'دروستکردنی ڕیکلام', child: const CustomPaint(painter: _PlusPainter())),
           ),
         ),
       ),

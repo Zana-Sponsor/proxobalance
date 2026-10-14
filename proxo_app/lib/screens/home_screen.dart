@@ -1,3 +1,5 @@
+import 'package:url_launcher/url_launcher.dart';
+import '../widgets/proxo_banner.dart';
 // home_screen.dart
 import 'dart:async';
 
@@ -73,6 +75,7 @@ class HomeScreen extends StatefulWidget {
   final bool isActive;
   final VoidCallback? onMenuTap;
   final VoidCallback? onCreateTap;
+  final VoidCallback? onAddBalanceTap;
   final VoidCallback? onGoToAds;
   final VoidCallback? onToolsTap;
   final VoidCallback? onCreatePageTap;
@@ -87,6 +90,7 @@ class HomeScreen extends StatefulWidget {
     this.refreshController,
     this.onMenuTap,
     this.onCreateTap,
+    this.onAddBalanceTap,
     this.onGoToAds,
     this.onToolsTap,
     this.onCreatePageTap,
@@ -477,6 +481,28 @@ class _HomeScreenState extends State<HomeScreen>
     ]);
   }
 
+  Future<void> _openBannerTarget(String target) async {
+    final route = target.trim();
+    switch (route) {
+      case 'create': case '/create': widget.onCreateTap?.call(); return;
+      case 'deposit': case '/deposit': case 'wallet': case '/wallet':
+        widget.onAddBalanceTap?.call(); return;
+      case 'tools': case '/tools': case 'assets': case '/assets':
+        widget.onToolsTap?.call(); return;
+      case 'create-page': widget.onCreatePageTap?.call(); return;
+      case 'faq': case '/faq': widget.onFaqTap?.call(); return;
+      case '/my-ads': case '/notifications': case '/profile':
+      case '/transactions': case '/coupons':
+        await Navigator.of(context).pushNamed(route); return;
+    }
+    final uri = Uri.tryParse(route);
+    if (uri != null && uri.scheme == 'https' && uri.host.isNotEmpty) {
+      try { if (await launchUrl(uri, mode: LaunchMode.externalApplication)) return; } catch (_) {}
+    }
+    if (mounted) ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('ئەم بەستەرە بەردەست نییە')));
+  }
+
   void _onRangeChanged(String r) {
     if (r == _range) return;
     setState(() => _range = r);
@@ -523,6 +549,33 @@ class _HomeScreenState extends State<HomeScreen>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
+                    _Reveal(animation: _aBanner,
+                      child: RepaintBoundary(child: ProxoBanner(
+                        onStart: widget.onCreateTap, onNavigate: _openBannerTarget))),
+                    const SizedBox(height: AdUi.sectionGap),
+                    _Reveal(
+                      animation: _aActions,
+                      child: RepaintBoundary(
+                        child: HomeQuickActions(
+                          onCreateTap: widget.onCreateTap,
+                          onAddBalanceTap: widget.onAddBalanceTap,
+                          onToolsTap: widget.onToolsTap,
+                          onCreatePageTap: widget.onCreatePageTap,
+                          onFaqTap: widget.onFaqTap,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: AdUi.sectionGap),
+                    _Reveal(
+                      animation: _aWeekly,
+                      child: RepaintBoundary(
+                        child: BestMetricsHomeSection(key: _bestMetricsKey),
+                      ),
+                    ),
+                    const SizedBox(height: AdUi.sectionGap),
+                    ExpansionTile(
+                      title: ProxoText('پوختەی ڕیکلامەکان', style: AdUi.heading(context)),
+                      children: [
                     _Reveal(
                       animation: _aBanner,
                       child: RepaintBoundary(
@@ -545,24 +598,7 @@ class _HomeScreenState extends State<HomeScreen>
                         ),
                       ),
                     ),
-                    const SizedBox(height: AdUi.sectionGap),
-                    _Reveal(
-                      animation: _aActions,
-                      child: RepaintBoundary(
-                        child: HomeQuickActions(
-                          onCreateTap: widget.onCreateTap,
-                          onToolsTap: widget.onToolsTap,
-                          onCreatePageTap: widget.onCreatePageTap,
-                          onFaqTap: widget.onFaqTap,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: AdUi.sectionGap),
-                    _Reveal(
-                      animation: _aWeekly,
-                      child: RepaintBoundary(
-                        child: BestMetricsHomeSection(key: _bestMetricsKey),
-                      ),
+                      ],
                     ),
                   ],
                 ),

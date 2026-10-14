@@ -47,6 +47,8 @@ class TxReceiptData {
   final int? amountIqd;
   final int? balanceBefore;
   final int? balanceAfter;
+  final double? balanceBeforeUsd;
+  final double? balanceAfterUsd;
 
   /// بەهای خاوی داتابەیس.
   final String method;
@@ -66,6 +68,8 @@ class TxReceiptData {
     required this.amountIqd,
     required this.balanceBefore,
     required this.balanceAfter,
+    this.balanceBeforeUsd,
+    this.balanceAfterUsd,
     required this.method,
     required this.gateway,
     required this.type,
@@ -197,7 +201,8 @@ class _TxReceiptCard extends StatelessWidget {
 
   static const TextDirection _ltr = TextDirection.ltr;
 
-  String _money(int? v) => v == null ? '—' : formatIqd(v);
+  String _money(int? v) => v == null ? l.notRecorded : formatIqd(v);
+  String _balance(int? iqd, double? usd) => usd != null ? '${usd.toStringAsFixed(2)} USD' : _money(iqd);
 
   bool get _free => d.kind == TxReceiptKind.adPayment && d.amountIqd == 0;
 
@@ -224,7 +229,7 @@ class _TxReceiptCard extends StatelessWidget {
       return l.methodAdmin;
     }
     if (ml == 'admin_panel') return l.methodAdmin;
-    return m.isEmpty ? '—' : m;
+    return m.isEmpty ? l.notRecorded : m;
   }
 
   /// سەرچاوەی زیادکردنی پارە.
@@ -241,7 +246,7 @@ class _TxReceiptCard extends StatelessWidget {
       return l.sourceAdmin;
     }
     if (ml.isNotEmpty) return l.sourceManual;
-    return '—';
+    return l.notRecorded;
   }
 
   @override
@@ -274,30 +279,30 @@ class _TxReceiptCard extends StatelessWidget {
 
     // مامەڵەی ڕەتکراو/چاوەڕوان هیچ پارەیەکی نەجوڵاندووە — بۆیە بێ نیشانە و
     // بێ ڕەنگ.
-    final String signedValue =
-        settled && d.amountIqd != null && d.amountIqd != 0
-            ? formatIqd(d.amountIqd!, sign: sign)
-            : _money(d.amountIqd);
+    final moneySign = settled ? sign : '';
+    final String signedValue = d.amountIqd != null
+        ? formatIqd(d.amountIqd!, sign: d.amountIqd == 0 ? '' : moneySign)
+        : d.usd != null ? '$moneySign${d.usd!.toStringAsFixed(2)} USD' : l.amountUnavailable;
 
     final List<Widget?> summaryRows = <Widget?>[
       if (d.kind == TxReceiptKind.adPayment) ...<Widget?>[
-        if (d.balanceAfter != null)
+        if (d.balanceAfter != null || d.balanceAfterUsd != null)
           ReceiptRow(
             label: l.accountBalance,
-            value: _money(d.balanceAfter!),
+            value: _balance(d.balanceAfter, d.balanceAfterUsd),
             valueDirection: _ltr,
           ),
       ] else ...<Widget?>[
-        if (d.balanceBefore != null)
+        if (d.balanceBefore != null || d.balanceBeforeUsd != null)
           ReceiptRow(
             label: l.balanceBefore,
-            value: _money(d.balanceBefore!),
+            value: _balance(d.balanceBefore, d.balanceBeforeUsd),
             valueDirection: _ltr,
           ),
-        if (d.balanceAfter != null)
+        if (d.balanceAfter != null || d.balanceAfterUsd != null)
           ReceiptRow(
             label: l.balanceAfter,
-            value: _money(d.balanceAfter!),
+            value: _balance(d.balanceAfter, d.balanceAfterUsd),
             valueDirection: _ltr,
           ),
       ],
@@ -313,7 +318,7 @@ class _TxReceiptCard extends StatelessWidget {
     final Widget? finalRow = switch (d.kind) {
       TxReceiptKind.adPayment => ReceiptRow(
           label: l.adName,
-          value: receiptText(d.adName).isEmpty ? '—' : receiptText(d.adName),
+          value: receiptText(d.adName).isEmpty ? l.notRecorded : receiptText(d.adName),
           valueDirection: receiptDirOf(d.adName ?? ''),
         ),
       TxReceiptKind.refund when receiptText(d.adName).isNotEmpty => ReceiptRow(

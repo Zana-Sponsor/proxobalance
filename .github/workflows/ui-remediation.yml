@@ -1,0 +1,42 @@
+name: UI remediation evidence
+on:
+  pull_request:
+    paths: ['proxo_app/**', '.github/workflows/ui-remediation.yml']
+permissions:
+  contents: read
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        source: [baseline, candidate]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          path: candidate
+      - uses: actions/checkout@v4
+        with:
+          ref: b77ec5202ed37c179fa52c4c447a4c3719a4c9d8
+          path: baseline
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.47.2'
+          channel: stable
+          cache: true
+      - name: Use identical capture harness on both sources
+        if: matrix.source == 'baseline'
+        run: cp candidate/proxo_app/test/ui_remediation_capture_test.dart baseline/proxo_app/test/
+      - run: flutter pub get
+        working-directory: ${{ matrix.source }}/proxo_app
+      - name: Capture actual widgets, geometry and exported PDF
+        run: flutter test test/ui_remediation_capture_test.dart --reporter expanded
+        working-directory: ${{ matrix.source }}/proxo_app
+      - name: Upload unapproved before and after evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-remediation-${{ matrix.source }}
+          path: ${{ matrix.source }}/proxo_app/build/ui-remediation
+          if-no-files-found: error

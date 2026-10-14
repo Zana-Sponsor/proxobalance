@@ -114,6 +114,16 @@ class BestMetricsHomeSectionState extends State<BestMetricsHomeSection> {
                 children: [
                   _SectionHeader(canOpen: _ads.isNotEmpty, onOpen: _openAll),
                   const SizedBox(height: 20),
+                  if (_ads.isNotEmpty && (_ads.first.thumbnailUrl ?? '').isNotEmpty) ...[
+                    ClipRRect(borderRadius: AdUi.radius,
+                      child: AspectRatio(aspectRatio: 16 / 9,
+                        child: Image.network(_ads.first.thumbnailUrl!, fit: BoxFit.cover,
+                          semanticLabel: 'ئەنجامی ڕیکلامی هەڵبژێردراو',
+                          errorBuilder: (_, __, ___) => const ColoredBox(color: Color(0xFFEFF4FE)),
+                          loadingBuilder: (_, child, progress) => progress == null ? child
+                            : const ColoredBox(color: Color(0xFFEFF4FE))))),
+                    const SizedBox(height: 20),
+                  ],
                   AnimatedSwitcher(
                     duration: const Duration(milliseconds: 220),
                     child: _loading && _ads.isEmpty

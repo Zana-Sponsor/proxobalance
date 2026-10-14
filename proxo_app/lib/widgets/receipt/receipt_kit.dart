@@ -54,10 +54,10 @@ abstract final class ReceiptTokens {
   ];
 
   // ── AppBar ───────────────────────────────────────────────────────────────
-  static const double iconSize = 16;
+  static const double iconSize = 20;
   static const double iconBox = 20;
   static const double barHeight = 56;
-  static const double barTap = 44;
+  static const double barTap = 48;
   static const double barSidePad = 6;
 
   // ── پەڕە و کارت ──────────────────────────────────────────────────────────
@@ -72,7 +72,7 @@ abstract final class ReceiptTokens {
   /// Measured reference canvas. One proportional transform preserves every
   /// fractional coordinate; rounding individual gaps would accumulate drift.
   static const double referenceWidth = 393;
-  static double pageGutter(double width) => width * gutter / referenceWidth;
+  static double pageGutter(double width) => gutter;
   static double cardInset(double width) => 16;
 
   // ── جیاکەرەوە ─────────────────────────────────────────────────────────────
@@ -115,16 +115,16 @@ abstract final class ReceiptTokens {
         letterSpacing: 0,
       );
 
-  // Compact scale requested after the V2 review. This supersedes the original
-  // spec's larger type table and is shared by both receipt detail screens.
-  static const double appBarTitleSize = 13;
-  static const double receiptTitleSize = 13;
-  static const double sectionTitleSize = 13;
-  static const double labelSize = 11;
-  static const double valueSize = 11;
-  static const double totalSize = 12;
+  // 2026-10-14: match the existing AppTypography roles (bar 16, section 15,
+  // card 14, body 13); preserve the bundled Rabar weight.
+  static const double appBarTitleSize = 16;
+  static const double receiptTitleSize = 14;
+  static const double sectionTitleSize = 15;
+  static const double labelSize = 13;
+  static const double valueSize = 13;
+  static const double totalSize = 14;
   static const double uidSize = valueSize;
-  static const double pdfButtonSize = 12;
+  static const double pdfButtonSize = 13.5;
 
   static final TextStyle barTitle = _s(appBarTitleSize, title, height: 1.25);
   static final TextStyle receiptTitle = _s(receiptTitleSize, title);
@@ -216,11 +216,12 @@ class ReceiptAppBar extends StatelessWidget {
                 height: ReceiptTokens.barTap,
                 child: IconButton(
                   onPressed: onBack,
-                  tooltip: backTooltip,
+                  tooltip: backTooltip ?? 'گەڕانەوە',
                   icon: ReceiptIcon(
                     Directionality.of(context) == TextDirection.ltr
                         ? Icons.arrow_back_ios_rounded
                         : Icons.arrow_forward_ios_rounded,
+                    color: onBack == null ? ReceiptTokens.divider : ReceiptTokens.ink,
                   ),
                 ),
               ),
@@ -282,30 +283,14 @@ class ReceiptSurface extends StatelessWidget {
   final Widget child;
   const ReceiptSurface({super.key, required this.child});
   @override
-  Widget build(BuildContext context) => LayoutBuilder(
-        builder: (context, constraints) => SizedBox(
-          width: constraints.maxWidth,
-          child: FittedBox(
-            fit: BoxFit.fitWidth,
-            alignment: Alignment.topCenter,
-            child: SizedBox(
-              width: ReceiptTokens.referenceWidth,
-              child: ColoredBox(
-                color: ReceiptTokens.page,
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(
-                    ReceiptTokens.gutter,
-                    ReceiptTokens.pageTop,
-                    ReceiptTokens.gutter,
-                    ReceiptTokens.cardToButton,
-                  ),
-                  child: SizedBox(width: double.infinity, child: child),
-                ),
-              ),
-            ),
-          ),
-        ),
-      );
+  Widget build(BuildContext context) => ColoredBox(
+    color: ReceiptTokens.page,
+    child: Padding(
+      padding: const EdgeInsets.fromLTRB(ReceiptTokens.gutter,
+        ReceiptTokens.pageTop, ReceiptTokens.gutter, ReceiptTokens.cardToButton),
+      child: SizedBox(width: double.infinity, child: child),
+    ),
+  );
 }
 
 /// Full-width viewport: the capture surface owns its exact white page insets.
@@ -452,143 +437,36 @@ class ReceiptRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TextScaler scaler = MediaQuery.textScalerOf(context);
-    // A common line box keeps every row (including fitted IDs and totals) at
-    // the same height and alphabetic baseline. Shrinking a value never moves
-    // its label or changes the spacing of the next row.
-    final StrutStyle strut = StrutStyle(
-      fontFamily: ReceiptTokens.fontFamily,
-      fontWeight: ReceiptTokens.weight,
-      fontSize: scaler.scale(ReceiptTokens.totalSize),
-      height: 1.25,
-      leading: 0,
-      forceStrutHeight: true,
-    );
-    final linePainter = TextPainter(
-      text: TextSpan(text: ' ', style: ReceiptTokens.totalValue),
-      textDirection: TextDirection.rtl,
-      textScaler: TextScaler.noScaling,
-      strutStyle: strut,
-      maxLines: 1,
-    )..layout();
-    final double rowHeight =
-        (linePainter.height + ReceiptTokens.rowVerticalPadding * 2)
-            .clamp(ReceiptTokens.rowMinHeight, double.infinity)
-            .toDouble();
-    linePainter.dispose();
-    final Widget row = LayoutBuilder(
-      builder: (context, constraints) {
-        final painter = TextPainter(
-          text: TextSpan(
-              text: receiptSingleLine(label), style: ReceiptTokens.rowLabel),
-          textDirection: receiptDirOf(label),
-          textScaler: scaler,
-          maxLines: 1,
-        )..layout();
-        // Labels use their natural width up to 40%. Short labels therefore
-        // leave more room for complete UUIDs; long labels fit down as well.
-        final double labelWidth = (painter.width + 0.5)
-            .clamp(0.0, constraints.maxWidth * ReceiptTokens.labelMaxFraction)
-            .toDouble();
-        painter.dispose();
-        return SizedBox(
-          height: rowHeight,
-          child: Row(
-            textDirection: TextDirection.rtl,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              SizedBox(
-                width: labelWidth,
-                child: _ReceiptFittedLine(
-                  text: label,
-                  direction: receiptDirOf(label),
-                  alignment: TextAlign.right,
-                  style: ReceiptTokens.rowLabel,
-                  strut: strut,
-                ),
-              ),
-              const SizedBox(width: ReceiptTokens.labelToValue),
-              Expanded(
-                child: _ReceiptFittedLine(
-                  text: value,
-                  direction: valueDirection,
-                  alignment: TextAlign.left,
-                  style: valueStyle ?? ReceiptTokens.rowValue,
-                  strut: strut,
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-
+    final effectiveStyle = valueStyle ?? ReceiptTokens.rowValue;
+    final row = LayoutBuilder(builder: (context, constraints) {
+      double naturalWidth(String text, TextStyle style, TextDirection dir) {
+        final p = TextPainter(text: TextSpan(text: ProxoTextDirection.display(text), style: style),
+          textDirection: dir, textScaler: MediaQuery.textScalerOf(context))..layout();
+        final result = p.width;
+        p.dispose();
+        return result;
+      }
+      final labelWidget = ProxoText(label, textAlign: TextAlign.right,
+        textDirection: receiptDirOf(label), style: ReceiptTokens.rowLabel);
+      final valueWidget = ProxoText(value, textAlign: TextAlign.left,
+        textDirection: valueDirection, style: effectiveStyle);
+      final labelWidth = naturalWidth(label, ReceiptTokens.rowLabel, receiptDirOf(label));
+      final valueWidth = naturalWidth(value, effectiveStyle, valueDirection);
+      final fits = labelWidth + ReceiptTokens.labelToValue + valueWidth <= constraints.maxWidth;
+      return Padding(padding: const EdgeInsets.symmetric(vertical: ReceiptTokens.rowVerticalPadding),
+        child: fits ? Row(textDirection: TextDirection.rtl,
+          crossAxisAlignment: CrossAxisAlignment.baseline, textBaseline: TextBaseline.alphabetic,
+          children: [labelWidget, const SizedBox(width: ReceiptTokens.labelToValue),
+            Expanded(child: valueWidget)])
+          : Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+              labelWidget, const SizedBox(height: ReceiptTokens.rowToRow), valueWidget,
+            ]));
+    });
     if (onLongPress == null) return row;
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onLongPress: onLongPress,
-      child: row,
-    );
+    return Semantics(onLongPress: onLongPress,
+      child: GestureDetector(behavior: HitTestBehavior.opaque,
+        onLongPress: onLongPress, child: row));
   }
-}
-
-/// Fit the complete string at layout time, never truncate or introduce breaks.
-/// Measuring the actual font also preserves the shared strut/baseline, unlike
-/// scaling the entire text box, which would scale its baseline and height too.
-class _ReceiptFittedLine extends StatelessWidget {
-  final String text;
-  final TextDirection direction;
-  final TextAlign alignment;
-  final TextStyle style;
-  final StrutStyle strut;
-
-  const _ReceiptFittedLine({
-    required this.text,
-    required this.direction,
-    required this.alignment,
-    required this.style,
-    required this.strut,
-  });
-
-  @override
-  Widget build(BuildContext context) => LayoutBuilder(
-        builder: (context, constraints) {
-          final String line = receiptSingleLine(text);
-          final valueDirection =
-              ProxoTextDirection.of(line, fallback: direction);
-          final double naturalSize =
-              MediaQuery.textScalerOf(context).scale(style.fontSize!);
-          final naturalStyle = style.copyWith(fontSize: naturalSize);
-          final painter = TextPainter(
-            text: TextSpan(
-                text: ProxoTextDirection.display(line), style: naturalStyle),
-            textDirection: valueDirection,
-            textScaler: TextScaler.noScaling,
-            maxLines: 1,
-          )..layout();
-          // A tiny inset absorbs floating-point glyph measurement rounding.
-          // No minimum font-size floor: even very long references stay whole.
-          final double fit = painter.width == 0
-              ? 1
-              : ((constraints.maxWidth - 0.25).clamp(0.0, double.infinity) /
-                      painter.width)
-                  .clamp(0.0, 1.0)
-                  .toDouble();
-          painter.dispose();
-          return ProxoText(
-            line,
-            semanticsLabel: text,
-            textDirection: valueDirection,
-            textAlign: alignment,
-            maxLines: 1,
-            softWrap: false,
-            overflow: TextOverflow.visible,
-            textScaler: TextScaler.noScaling,
-            strutStyle: strut,
-            style: naturalStyle.copyWith(fontSize: naturalSize * fit),
-          );
-        },
-      );
 }
 
 class ReceiptIcon extends StatelessWidget {
@@ -626,7 +504,7 @@ class ReceiptMoneyRow extends StatelessWidget {
 }
 
 /// Identifiers use the exact same opposite-edge row as every other field.
-/// Their full LTR value fits down on one line; copying keeps the original ID.
+/// Long LTR values wrap at native text size; copying keeps the original ID.
 class ReceiptIdRow extends StatelessWidget {
   final String label;
   final String value;
@@ -862,11 +740,11 @@ void showReceiptMessage(BuildContext context, String message) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// exportReceiptPdf — PDF = هەمان کارت، pixel for pixel
+// exportReceiptPdf — shaped receipt content on printable A4 pages
 // ─────────────────────────────────────────────────────────────────────────────
 //
 // وێنەی `RepaintBoundary`ـی کارتەکە بە ٤× دەگیرێت و دەخرێتە سەر پەڕەیەک کە
-// ڕێک بە قەبارەی ReceiptSurfaceـە (1 dp = 1 pt)، لەگەڵ سێبەر و لێوار. پیتە
+// A4 with print margins; source typography is preserved. پیتە
 // کوردییەکان (ڕ ڵ ێ ۆ ە) بە هەمان shaping ـی Flutter دەردەچن.
 //
 // `false` دەگەڕێنێتەوە ئەگەر کارتەکە ئامادە نەبێت یان هەڵەیەک ڕووبدات.
@@ -889,29 +767,71 @@ Future<bool> exportReceiptPdf({
     final RenderObject? ro = boundaryKey.currentContext?.findRenderObject();
     if (ro is! RenderRepaintBoundary) return false;
 
-    final ui.Image image = await ro.toImage(pixelRatio: 4.0);
-    final ByteData? png = await image.toByteData(
-      format: ui.ImageByteFormat.png,
-    );
-    image.dispose();
-    if (png == null) return false;
-
-    final pw.MemoryImage shot = pw.MemoryImage(png.buffer.asUint8List());
-    final pw.Document doc = pw.Document(
-      title: title,
-      author: 'Proxo',
-      creator: 'Proxo',
-    );
-    final double w = ro.size.width;
-    final double h = ro.size.height;
-    doc.addPage(
-      pw.Page(
-        pageFormat: PdfPageFormat(w, h, marginAll: 0),
-        margin: pw.EdgeInsets.zero,
-        build: (pw.Context _) =>
-            pw.Image(shot, width: w, height: h, fit: pw.BoxFit.fill),
-      ),
-    );
+    // Keep Flutter's proven Kurdish shaping at 4x resolution. A4 pages use
+    // half-inch print margins and never enlarge phone typography. Split only
+    // between rendered rows; section headings stay with their first row.
+    final rows = <Rect>[];
+    final headings = <Rect>[];
+    void collect(Element element) {
+      final widget = element.widget;
+      if (widget is ReceiptRow || widget is ReceiptHeader || widget is ReceiptSectionHeading) {
+        final box = element.findRenderObject();
+        if (box is RenderBox && box.hasSize) {
+          final rect = box.localToGlobal(Offset.zero, ancestor: ro) & box.size;
+          (widget is ReceiptSectionHeading ? headings : rows).add(rect);
+        }
+      }
+      element.visitChildren(collect);
+    }
+    (context as Element).visitChildren(collect);
+    rows.sort((a, b) => a.top.compareTo(b.top));
+    final protected = <Rect>[...rows];
+    for (final heading in headings) {
+      final following = rows.where((row) => row.top >= heading.bottom - 0.1);
+      if (following.isNotEmpty) protected.add(heading.expandToInclude(following.first));
+    }
+    final cuts = <double>[0, ro.size.height];
+    for (final rect in [...rows, ...headings]) {
+      final y = rect.top;
+      if (!protected.any((block) => y > block.top + 0.1 && y < block.bottom - 0.1)) cuts.add(y);
+    }
+    cuts.sort();
+    const margin = 36.0; // Standard half-inch printable inset, in PDF points.
+    final availableW = PdfPageFormat.a4.width - margin * 2;
+    final availableH = PdfPageFormat.a4.height - margin * 2;
+    final scale = (availableW / ro.size.width).clamp(0.0, 1.0);
+    final source = await ro.toImage(pixelRatio: 4.0);
+    final doc = pw.Document(title: title, author: 'Proxo', creator: 'Proxo');
+    try {
+      double start = 0;
+      while (start < ro.size.height - 0.1) {
+        final limit = start + availableH / scale;
+        final eligible = cuts.where((cut) => cut > start + 0.1 && cut <= limit);
+        final end = eligible.isNotEmpty ? eligible.last
+            : cuts.firstWhere((cut) => cut > start + 0.1);
+        final height = end - start;
+        final recorder = ui.PictureRecorder();
+        final canvas = Canvas(recorder);
+        canvas.drawImageRect(source,
+          Rect.fromLTWH(0, start * 4, source.width.toDouble(), height * 4),
+          Rect.fromLTWH(0, 0, source.width.toDouble(), height * 4), Paint());
+        final picture = recorder.endRecording();
+        final slice = await picture.toImage(source.width, (height * 4).ceil());
+        picture.dispose();
+        final bytes = await slice.toByteData(format: ui.ImageByteFormat.png);
+        slice.dispose();
+        if (bytes == null) return false;
+        // An exceptionally tall atomic row gets its own page, never clipped.
+        final pageScale = (availableH / height).clamp(0.0, scale);
+        final shot = pw.MemoryImage(bytes.buffer.asUint8List());
+        doc.addPage(pw.Page(pageFormat: PdfPageFormat.a4,
+          margin: const pw.EdgeInsets.all(margin),
+          build: (_) => pw.Align(alignment: pw.Alignment.topCenter,
+            child: pw.Image(shot, width: ro.size.width * pageScale,
+              height: height * pageScale, fit: pw.BoxFit.fill))));
+        start = end;
+      }
+    } finally { source.dispose(); }
 
     final String stem = fileStem.replaceAll(RegExp(r'[^A-Za-z0-9_-]'), '');
     await Printing.sharePdf(

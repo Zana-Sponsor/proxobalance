@@ -44,6 +44,8 @@ class TxStrings {
   String get txId => _t('ئایدی مامەڵە', 'معرّف المعاملة');
   String get date => _t('ڕێکەوت', 'التاريخ');
   String get status => _t('دۆخ', 'الحالة');
+  String get notRecorded => _t('تۆمار نەکراوە', 'غير مسجل');
+  String get amountUnavailable => _t('بڕ یان دراو تۆمار نەکراوە', 'المبلغ أو العملة غير مسجلين');
   String get statusPending => _t('چاوەڕوانی', 'قيد الانتظار');
   String get statusRejected => _t('ڕەتکراوە', 'مرفوضة');
 

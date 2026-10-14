@@ -1,6 +1,7 @@
 // main.dart — Proxo App entry point
 
 import 'dart:async';
+import 'screens/deposit_screen.dart';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -422,6 +423,8 @@ class MainShellState extends State<MainShell> {
           refreshController: _refreshers[0],
           onMenuTap:   _openSidebar,
           onCreateTap: () => _onTabTap(2),
+          onAddBalanceTap: () => Navigator.of(context).push(
+            ProxoPageRoute<void>(builder: (_) => const DepositScreen())),
           onGoToAds:   () => _onTabTap(1),
           // کوێک ئاکشنەکانی پەڕەی سەرەکی:
           //   ئامرازی پەیوەندی → تابی Tools ی ئێستا (3)
@@ -468,6 +471,8 @@ class MainShellState extends State<MainShell> {
           isActive: _tabIndex == 0,
           onMenuTap:   _openSidebar,
           onCreateTap: () => _onTabTap(2),
+          onAddBalanceTap: () => Navigator.of(context).push(
+            ProxoPageRoute<void>(builder: (_) => const DepositScreen())),
           onGoToAds:   () => _onTabTap(1),
           onToolsTap:  () => _onTabTap(3),
           onCreatePageTap: () => Navigator.of(context).push(

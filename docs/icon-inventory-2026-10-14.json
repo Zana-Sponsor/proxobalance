@@ -1,0 +1,1312 @@
+[
+  {
+    "file": "lib/models/proxolink_template_meta.dart",
+    "line": 73,
+    "icon": "Icons.dark_mode_rounded"
+  },
+  {
+    "file": "lib/models/proxolink_template_meta.dart",
+    "line": 75,
+    "icon": "Icons.light_mode_rounded"
+  },
+  {
+    "file": "lib/models/proxolink_template_meta.dart",
+    "line": 77,
+    "icon": "Icons.layers_rounded"
+  },
+  {
+    "file": "lib/models/proxolink_template_meta.dart",
+    "line": 79,
+    "icon": "Icons.healing_rounded"
+  },
+  {
+    "file": "lib/models/proxolink_template_meta.dart",
+    "line": 81,
+    "icon": "Icons.credit_card_rounded"
+  },
+  {
+    "file": "lib/models/proxolink_template_meta.dart",
+    "line": 83,
+    "icon": "Icons.bolt_rounded"
+  },
+  {
+    "file": "lib/models/proxolink_template_meta.dart",
+    "line": 85,
+    "icon": "Icons.zoom_in_rounded"
+  },
+  {
+    "file": "lib/models/proxolink_template_meta.dart",
+    "line": 87,
+    "icon": "Icons.view_stream_rounded"
+  },
+  {
+    "file": "lib/models/proxolink_template_meta.dart",
+    "line": 170,
+    "icon": "FontAwesomeIcons.whatsapp"
+  },
+  {
+    "file": "lib/models/proxolink_template_meta.dart",
+    "line": 184,
+    "icon": "FontAwesomeIcons.viber"
+  },
+  {
+    "file": "lib/models/proxolink_template_meta.dart",
+    "line": 198,
+    "icon": "FontAwesomeIcons.instagram"
+  },
+  {
+    "file": "lib/models/proxolink_template_meta.dart",
+    "line": 212,
+    "icon": "FontAwesomeIcons.phone"
+  },
+  {
+    "file": "lib/models/proxolink_template_meta.dart",
+    "line": 226,
+    "icon": "FontAwesomeIcons.mobileScreenButton"
+  },
+  {
+    "file": "lib/screens/ad_screen.dart",
+    "line": 4252,
+    "icon": "Icons.refresh_rounded"
+  },
+  {
+    "file": "lib/screens/ad_screen.dart",
+    "line": 4252,
+    "icon": "Icons.play_arrow_rounded"
+  },
+  {
+    "file": "lib/screens/auth/auth_shell.dart",
+    "line": 1350,
+    "icon": "Icons.info_outline_rounded"
+  },
+  {
+    "file": "lib/screens/auth/auth_shell.dart",
+    "line": 1529,
+    "icon": "Icons.mail_outline_rounded"
+  },
+  {
+    "file": "lib/screens/auth/auth_shell.dart",
+    "line": 1563,
+    "icon": "Icons.lock_outline_rounded"
+  },
+  {
+    "file": "lib/screens/auth/auth_shell.dart",
+    "line": 1628,
+    "icon": "Icons.phone_iphone_rounded"
+  },
+  {
+    "file": "lib/screens/auth/auth_shell.dart",
+    "line": 1687,
+    "icon": "Icons.person_outline_rounded"
+  },
+  {
+    "file": "lib/screens/auth/auth_shell.dart",
+    "line": 1711,
+    "icon": "Icons.phone_iphone_rounded"
+  },
+  {
+    "file": "lib/screens/auth/auth_shell.dart",
+    "line": 1754,
+    "icon": "Icons.lock_outline_rounded"
+  },
+  {
+    "file": "lib/screens/auth/auth_shell.dart",
+    "line": 1788,
+    "icon": "Icons.lock_reset_rounded"
+  },
+  {
+    "file": "lib/screens/auth/auth_shell.dart",
+    "line": 1973,
+    "icon": "Icons.mail_outline_rounded"
+  },
+  {
+    "file": "lib/screens/auth/auth_shell.dart",
+    "line": 2029,
+    "icon": "Icons.lock_outline_rounded"
+  },
+  {
+    "file": "lib/screens/auth/auth_shell.dart",
+    "line": 2062,
+    "icon": "Icons.lock_reset_rounded"
+  },
+  {
+    "file": "lib/screens/auth/auth_shell.dart",
+    "line": 2106,
+    "icon": "Icons.visibility_off_outlined"
+  },
+  {
+    "file": "lib/screens/auth/auth_shell.dart",
+    "line": 2106,
+    "icon": "Icons.visibility_outlined"
+  },
+  {
+    "file": "lib/screens/best_metrics_screen.dart",
+    "line": 197,
+    "icon": "SolarIcons.altArrowRight"
+  },
+  {
+    "file": "lib/screens/best_metrics_screen.dart",
+    "line": 206,
+    "icon": "SolarIcons.medalStar"
+  },
+  {
+    "file": "lib/screens/best_metrics_screen.dart",
+    "line": 325,
+    "icon": "SolarIcons.dangerTriangle"
+  },
+  {
+    "file": "lib/screens/deposit_screen.dart",
+    "line": 115,
+    "icon": "Icons.account_balance_rounded"
+  },
+  {
+    "file": "lib/screens/deposit_screen.dart",
+    "line": 123,
+    "icon": "Icons.flash_on_rounded"
+  },
+  {
+    "file": "lib/screens/deposit_screen.dart",
+    "line": 131,
+    "icon": "Icons.credit_card_rounded"
+  },
+  {
+    "file": "lib/screens/deposit_screen.dart",
+    "line": 139,
+    "icon": "Icons.account_balance_wallet_rounded"
+  },
+  {
+    "file": "lib/screens/deposit_screen.dart",
+    "line": 147,
+    "icon": "Icons.apps_rounded"
+  },
+  {
+    "file": "lib/screens/deposit_screen.dart",
+    "line": 155,
+    "icon": "Icons.sim_card_rounded"
+  },
+  {
+    "file": "lib/screens/deposit_screen.dart",
+    "line": 164,
+    "icon": "Icons.signal_cellular_alt_rounded"
+  },
+  {
+    "file": "lib/screens/deposit_screen.dart",
+    "line": 266,
+    "icon": "Icons.photo_camera_rounded"
+  },
+  {
+    "file": "lib/screens/deposit_screen.dart",
+    "line": 272,
+    "icon": "Icons.photo_library_rounded"
+  },
+  {
+    "file": "lib/screens/deposit_screen.dart",
+    "line": 708,
+    "icon": "Icons.cloud_upload_rounded"
+  },
+  {
+    "file": "lib/screens/deposit_screen.dart",
+    "line": 844,
+    "icon": "Icons.chevron_right_rounded"
+  },
+  {
+    "file": "lib/screens/deposit_screen.dart",
+    "line": 999,
+    "icon": "Icons.copy_rounded"
+  },
+  {
+    "file": "lib/screens/faq_screen.dart",
+    "line": 300,
+    "icon": "Icons.chevron_right_rounded"
+  },
+  {
+    "file": "lib/screens/faq_screen.dart",
+    "line": 452,
+    "icon": "Icons.keyboard_arrow_down_rounded"
+  },
+  {
+    "file": "lib/screens/home_screen.dart",
+    "line": 716,
+    "icon": "Icons.monetization_on_outlined"
+  },
+  {
+    "file": "lib/screens/home_screen.dart",
+    "line": 736,
+    "icon": "Icons.task_alt"
+  },
+  {
+    "file": "lib/screens/home_screen.dart",
+    "line": 746,
+    "icon": "Icons.percent"
+  },
+  {
+    "file": "lib/screens/home_screen.dart",
+    "line": 847,
+    "icon": "Icons.trending_flat_rounded"
+  },
+  {
+    "file": "lib/screens/home_screen.dart",
+    "line": 849,
+    "icon": "Icons.arrow_upward_rounded"
+  },
+  {
+    "file": "lib/screens/home_screen.dart",
+    "line": 850,
+    "icon": "Icons.arrow_downward_rounded"
+  },
+  {
+    "file": "lib/screens/home_screen.dart",
+    "line": 933,
+    "icon": "Icons.check_rounded"
+  },
+  {
+    "file": "lib/screens/home_screen.dart",
+    "line": 959,
+    "icon": "Icons.calendar_today_outlined"
+  },
+  {
+    "file": "lib/screens/home_screen.dart",
+    "line": 973,
+    "icon": "Icons.keyboard_arrow_down_rounded"
+  },
+  {
+    "file": "lib/screens/notifications_screen.dart",
+    "line": 193,
+    "icon": "Icons.task_alt_rounded"
+  },
+  {
+    "file": "lib/screens/notifications_screen.dart",
+    "line": 195,
+    "icon": "Icons.cancel_rounded"
+  },
+  {
+    "file": "lib/screens/notifications_screen.dart",
+    "line": 197,
+    "icon": "Icons.campaign_rounded"
+  },
+  {
+    "file": "lib/screens/notifications_screen.dart",
+    "line": 199,
+    "icon": "Icons.emoji_events_rounded"
+  },
+  {
+    "file": "lib/screens/notifications_screen.dart",
+    "line": 201,
+    "icon": "Icons.pause_circle_rounded"
+  },
+  {
+    "file": "lib/screens/notifications_screen.dart",
+    "line": 203,
+    "icon": "Icons.rocket_launch_rounded"
+  },
+  {
+    "file": "lib/screens/notifications_screen.dart",
+    "line": 205,
+    "icon": "Icons.verified_rounded"
+  },
+  {
+    "file": "lib/screens/notifications_screen.dart",
+    "line": 207,
+    "icon": "Icons.highlight_off_rounded"
+  },
+  {
+    "file": "lib/screens/notifications_screen.dart",
+    "line": 209,
+    "icon": "Icons.account_balance_wallet_rounded"
+  },
+  {
+    "file": "lib/screens/notifications_screen.dart",
+    "line": 211,
+    "icon": "Icons.currency_exchange_rounded"
+  },
+  {
+    "file": "lib/screens/notifications_screen.dart",
+    "line": 213,
+    "icon": "Icons.currency_exchange_rounded"
+  },
+  {
+    "file": "lib/screens/notifications_screen.dart",
+    "line": 216,
+    "icon": "Icons.card_giftcard_rounded"
+  },
+  {
+    "file": "lib/screens/notifications_screen.dart",
+    "line": 218,
+    "icon": "Icons.forum_rounded"
+  },
+  {
+    "file": "lib/screens/notifications_screen.dart",
+    "line": 220,
+    "icon": "Icons.system_update_rounded"
+  },
+  {
+    "file": "lib/screens/notifications_screen.dart",
+    "line": 222,
+    "icon": "Icons.notifications_rounded"
+  },
+  {
+    "file": "lib/screens/notifications_screen.dart",
+    "line": 224,
+    "icon": "Icons.warning_amber_rounded"
+  },
+  {
+    "file": "lib/screens/notifications_screen.dart",
+    "line": 226,
+    "icon": "Icons.gpp_bad_rounded"
+  },
+  {
+    "file": "lib/screens/notifications_screen.dart",
+    "line": 228,
+    "icon": "Icons.shield_rounded"
+  },
+  {
+    "file": "lib/screens/notifications_screen.dart",
+    "line": 570,
+    "icon": "Icons.mark_email_read_rounded"
+  },
+  {
+    "file": "lib/screens/notifications_screen.dart",
+    "line": 580,
+    "icon": "Icons.push_pin_rounded"
+  },
+  {
+    "file": "lib/screens/notifications_screen.dart",
+    "line": 581,
+    "icon": "Icons.push_pin_outlined"
+  },
+  {
+    "file": "lib/screens/notifications_screen.dart",
+    "line": 591,
+    "icon": "Icons.notifications_off_rounded"
+  },
+  {
+    "file": "lib/screens/notifications_screen.dart",
+    "line": 592,
+    "icon": "Icons.notifications_off_outlined"
+  },
+  {
+    "file": "lib/screens/notifications_screen.dart",
+    "line": 601,
+    "icon": "Icons.archive_outlined"
+  },
+  {
+    "file": "lib/screens/notifications_screen.dart",
+    "line": 610,
+    "icon": "Icons.delete_outline_rounded"
+  },
+  {
+    "file": "lib/screens/notifications_screen.dart",
+    "line": 739,
+    "icon": "Icons.tune_rounded"
+  },
+  {
+    "file": "lib/screens/notifications_screen.dart",
+    "line": 764,
+    "icon": "Icons.done_all_rounded"
+  },
+  {
+    "file": "lib/screens/notifications_screen.dart",
+    "line": 776,
+    "icon": "Icons.arrow_forward_rounded"
+  },
+  {
+    "file": "lib/screens/notifications_screen.dart",
+    "line": 833,
+    "icon": "Icons.notifications_off_outlined"
+  },
+  {
+    "file": "lib/screens/notifications_screen.dart",
+    "line": 986,
+    "icon": "Icons.archive_rounded"
+  },
+  {
+    "file": "lib/screens/notifications_screen.dart",
+    "line": 992,
+    "icon": "Icons.delete_rounded"
+  },
+  {
+    "file": "lib/screens/notifications_screen.dart",
+    "line": 1060,
+    "icon": "Icons.push_pin_rounded"
+  },
+  {
+    "file": "lib/screens/notifications_screen.dart",
+    "line": 1066,
+    "icon": "Icons.notifications_off_rounded"
+  },
+  {
+    "file": "lib/screens/profile_screen.dart",
+    "line": 420,
+    "icon": "SolarIconsOutline.bell"
+  },
+  {
+    "file": "lib/screens/profile_screen.dart",
+    "line": 426,
+    "icon": "SolarIconsOutline.history"
+  },
+  {
+    "file": "lib/screens/profile_screen.dart",
+    "line": 439,
+    "icon": "SolarIconsOutline.chatRoundCall"
+  },
+  {
+    "file": "lib/screens/profile_screen.dart",
+    "line": 445,
+    "icon": "SolarIconsOutline.documentText"
+  },
+  {
+    "file": "lib/screens/profile_screen.dart",
+    "line": 450,
+    "icon": "SolarIconsOutline.questionCircle"
+  },
+  {
+    "file": "lib/screens/profile_screen.dart",
+    "line": 1023,
+    "icon": "SolarIconsOutline.userRounded"
+  },
+  {
+    "file": "lib/screens/profile_screen.dart",
+    "line": 1025,
+    "icon": "SolarIconsOutline.lock"
+  },
+  {
+    "file": "lib/screens/profile_screen.dart",
+    "line": 1056,
+    "icon": "SolarIconsOutline.letter"
+  },
+  {
+    "file": "lib/screens/profile_screen.dart",
+    "line": 1078,
+    "icon": "SolarIconsOutline.smartphone"
+  },
+  {
+    "file": "lib/screens/profile_screen.dart",
+    "line": 1080,
+    "icon": "SolarIconsOutline.lock"
+  },
+  {
+    "file": "lib/screens/profile_screen.dart",
+    "line": 1138,
+    "icon": "SolarIconsOutline.userCrossRounded"
+  },
+  {
+    "file": "lib/screens/profile_screen.dart",
+    "line": 1170,
+    "icon": "SolarIconsOutline.altArrowLeft"
+  },
+  {
+    "file": "lib/screens/profile_screen.dart",
+    "line": 1309,
+    "icon": "SolarIconsOutline.altArrowRight"
+  },
+  {
+    "file": "lib/screens/profile_screen.dart",
+    "line": 1314,
+    "icon": "SolarIconsOutline.penNewSquare"
+  },
+  {
+    "file": "lib/screens/profile_screen.dart",
+    "line": 1331,
+    "icon": "SolarIconsOutline.penNewSquare"
+  },
+  {
+    "file": "lib/screens/profile_screen.dart",
+    "line": 1366,
+    "icon": "SolarIconsOutline.altArrowRight"
+  },
+  {
+    "file": "lib/screens/profile_screen.dart",
+    "line": 1576,
+    "icon": "Icons.photo_camera_outlined"
+  },
+  {
+    "file": "lib/screens/profile_screen.dart",
+    "line": 1602,
+    "icon": "SolarIconsOutline.userRounded"
+  },
+  {
+    "file": "lib/screens/profile_screen.dart",
+    "line": 1754,
+    "icon": "SolarIconsOutline.wallet2"
+  },
+  {
+    "file": "lib/screens/profile_screen.dart",
+    "line": 1807,
+    "icon": "SolarIconsOutline.eye"
+  },
+  {
+    "file": "lib/screens/profile_screen.dart",
+    "line": 1808,
+    "icon": "SolarIconsOutline.eyeClosed"
+  },
+  {
+    "file": "lib/screens/profile_screen.dart",
+    "line": 1858,
+    "icon": "SolarIconsOutline.clapperboardPlay"
+  },
+  {
+    "file": "lib/screens/profile_screen.dart",
+    "line": 1866,
+    "icon": "SolarIconsOutline.widget_2"
+  },
+  {
+    "file": "lib/screens/profile_screen.dart",
+    "line": 1874,
+    "icon": "SolarIconsOutline.tagPrice"
+  },
+  {
+    "file": "lib/screens/profile_screen.dart",
+    "line": 2045,
+    "icon": "SolarIconsOutline.altArrowLeft"
+  },
+  {
+    "file": "lib/screens/profile_screen.dart",
+    "line": 2088,
+    "icon": "SolarIconsOutline.logout"
+  },
+  {
+    "file": "lib/screens/profile_screen.dart",
+    "line": 2108,
+    "icon": "SolarIconsOutline.altArrowLeft"
+  },
+  {
+    "file": "lib/screens/profile_screen.dart",
+    "line": 2167,
+    "icon": "SolarIconsOutline.chatRoundCall"
+  },
+  {
+    "file": "lib/screens/profile_screen.dart",
+    "line": 2185,
+    "icon": "SolarIconsOutline.chatRoundDots"
+  },
+  {
+    "file": "lib/screens/profile_screen.dart",
+    "line": 2196,
+    "icon": "SolarIconsOutline.phoneRounded"
+  },
+  {
+    "file": "lib/screens/profile_screen.dart",
+    "line": 2317,
+    "icon": "SolarIconsOutline.closeCircle"
+  },
+  {
+    "file": "lib/screens/profile_screen.dart",
+    "line": 2339,
+    "icon": "SolarIconsOutline.sledgehammer"
+  },
+  {
+    "file": "lib/screens/profile_screen.dart",
+    "line": 2355,
+    "icon": "SolarIconsOutline.shieldCheck"
+  },
+  {
+    "file": "lib/screens/profile_screen.dart",
+    "line": 2369,
+    "icon": "SolarIconsOutline.usersGroupRounded"
+  },
+  {
+    "file": "lib/screens/profile_screen.dart",
+    "line": 2808,
+    "icon": "SolarIconsOutline.shieldCheck"
+  },
+  {
+    "file": "lib/screens/proxolink_create_page_screen.dart",
+    "line": 200,
+    "icon": "Icons.add_photo_alternate_outlined"
+  },
+  {
+    "file": "lib/screens/proxolink_create_page_screen.dart",
+    "line": 200,
+    "icon": "Icons.check_circle_outline"
+  },
+  {
+    "file": "lib/screens/proxolink_page_details_screen.dart",
+    "line": 290,
+    "icon": "Icons.edit_outlined"
+  },
+  {
+    "file": "lib/screens/proxolink_page_editor.dart",
+    "line": 585,
+    "icon": "Icons.person_outline"
+  },
+  {
+    "file": "lib/screens/proxolink_page_editor.dart",
+    "line": 591,
+    "icon": "Icons.photo_outlined"
+  },
+  {
+    "file": "lib/screens/proxolink_page_editor.dart",
+    "line": 659,
+    "icon": "Icons.check"
+  },
+  {
+    "file": "lib/screens/proxolink_page_editor.dart",
+    "line": 697,
+    "icon": "Icons.arrow_upward"
+  },
+  {
+    "file": "lib/screens/proxolink_page_editor.dart",
+    "line": 704,
+    "icon": "Icons.arrow_downward"
+  },
+  {
+    "file": "lib/screens/proxolink_page_editor.dart",
+    "line": 772,
+    "icon": "Icons.open_in_full"
+  },
+  {
+    "file": "lib/screens/tools_screen.dart",
+    "line": 146,
+    "icon": "Icons.article_outlined"
+  },
+  {
+    "file": "lib/screens/tools_screen.dart",
+    "line": 146,
+    "icon": "Icons.cloud_off_outlined"
+  },
+  {
+    "file": "lib/screens/tutorial_screen.dart",
+    "line": 225,
+    "icon": "Icons.play_circle_fill_rounded"
+  },
+  {
+    "file": "lib/screens/tutorial_screen.dart",
+    "line": 248,
+    "icon": "Icons.play_circle_outline_rounded"
+  },
+  {
+    "file": "lib/screens/tutorial_screen.dart",
+    "line": 345,
+    "icon": "Icons.play_circle_fill_rounded"
+  },
+  {
+    "file": "lib/theme/proxo_icons.dart",
+    "line": 9,
+    "icon": "Icons.block_rounded"
+  },
+  {
+    "file": "lib/theme/proxo_icons.dart",
+    "line": 10,
+    "icon": "Icons.calendar_month_outlined"
+  },
+  {
+    "file": "lib/theme/proxo_icons.dart",
+    "line": 11,
+    "icon": "Icons.schedule_rounded"
+  },
+  {
+    "file": "lib/theme/proxo_icons.dart",
+    "line": 12,
+    "icon": "Icons.edit_outlined"
+  },
+  {
+    "file": "lib/theme/proxo_icons.dart",
+    "line": 13,
+    "icon": "Icons.cloud_off_outlined"
+  },
+  {
+    "file": "lib/theme/proxo_icons.dart",
+    "line": 14,
+    "icon": "Icons.add_rounded"
+  },
+  {
+    "file": "lib/theme/proxo_icons.dart",
+    "line": 15,
+    "icon": "Icons.check_circle_outline_rounded"
+  },
+  {
+    "file": "lib/theme/proxo_icons.dart",
+    "line": 16,
+    "icon": "Icons.warning_amber_rounded"
+  },
+  {
+    "file": "lib/widgets/ad_feedback.dart",
+    "line": 179,
+    "icon": "Icons.close_rounded"
+  },
+  {
+    "file": "lib/widgets/ad_feedback.dart",
+    "line": 357,
+    "icon": "Icons.star_rounded"
+  },
+  {
+    "file": "lib/widgets/ad_feedback.dart",
+    "line": 357,
+    "icon": "Icons.star_outline_rounded"
+  },
+  {
+    "file": "lib/widgets/ad_feedback.dart",
+    "line": 488,
+    "icon": "Icons.star_rounded"
+  },
+  {
+    "file": "lib/widgets/ad_feedback.dart",
+    "line": 488,
+    "icon": "Icons.star_outline_rounded"
+  },
+  {
+    "file": "lib/widgets/ad_feedback.dart",
+    "line": 534,
+    "icon": "Icons.chevron_left_rounded"
+  },
+  {
+    "file": "lib/widgets/ad_feedback.dart",
+    "line": 560,
+    "icon": "Icons.star_rounded"
+  },
+  {
+    "file": "lib/widgets/ad_feedback.dart",
+    "line": 560,
+    "icon": "Icons.star_outline_rounded"
+  },
+  {
+    "file": "lib/widgets/ad_validation_notifications.dart",
+    "line": 179,
+    "icon": "Icons.error_outline"
+  },
+  {
+    "file": "lib/widgets/auth/auth_header.dart",
+    "line": 90,
+    "icon": "Icons.language_rounded"
+  },
+  {
+    "file": "lib/widgets/auth/auth_widgets.dart",
+    "line": 286,
+    "icon": "Icons.arrow_forward_rounded"
+  },
+  {
+    "file": "lib/widgets/auth/auth_widgets.dart",
+    "line": 287,
+    "icon": "Icons.arrow_back_rounded"
+  },
+  {
+    "file": "lib/widgets/auth/auth_widgets.dart",
+    "line": 331,
+    "icon": "Icons.check_circle_outline_rounded"
+  },
+  {
+    "file": "lib/widgets/auth/auth_widgets.dart",
+    "line": 332,
+    "icon": "Icons.info_outline_rounded"
+  },
+  {
+    "file": "lib/widgets/auth/auth_widgets.dart",
+    "line": 443,
+    "icon": "Icons.check_circle_rounded"
+  },
+  {
+    "file": "lib/widgets/auth/auth_widgets.dart",
+    "line": 443,
+    "icon": "Icons.radio_button_unchecked_rounded"
+  },
+  {
+    "file": "lib/widgets/auth/auth_widgets.dart",
+    "line": 542,
+    "icon": "Icons.cancel_rounded"
+  },
+  {
+    "file": "lib/widgets/auth/auth_widgets.dart",
+    "line": 704,
+    "icon": "Icons.lock_clock_rounded"
+  },
+  {
+    "file": "lib/widgets/auth/auth_widgets.dart",
+    "line": 787,
+    "icon": "Icons.person_rounded"
+  },
+  {
+    "file": "lib/widgets/auth/auth_widgets.dart",
+    "line": 819,
+    "icon": "Icons.chevron_left_rounded"
+  },
+  {
+    "file": "lib/widgets/best_metric_card.dart",
+    "line": 95,
+    "icon": "SolarIcons.eye"
+  },
+  {
+    "file": "lib/widgets/best_metric_card.dart",
+    "line": 103,
+    "icon": "SolarIcons.cursorSquare"
+  },
+  {
+    "file": "lib/widgets/best_metric_card.dart",
+    "line": 111,
+    "icon": "SolarIcons.dollarMinimalistic"
+  },
+  {
+    "file": "lib/widgets/best_metric_card.dart",
+    "line": 139,
+    "icon": "SolarIcons.arrowRightUp"
+  },
+  {
+    "file": "lib/widgets/best_metric_card.dart",
+    "line": 186,
+    "icon": "SolarIcons.altArrowDown"
+  },
+  {
+    "file": "lib/widgets/best_metric_card.dart",
+    "line": 212,
+    "icon": "SolarIcons.target"
+  },
+  {
+    "file": "lib/widgets/best_metric_card.dart",
+    "line": 220,
+    "icon": "SolarIcons.wallet"
+  },
+  {
+    "file": "lib/widgets/best_metric_card.dart",
+    "line": 311,
+    "icon": "SolarIcons.gallery"
+  },
+  {
+    "file": "lib/widgets/best_metric_card.dart",
+    "line": 413,
+    "icon": "SolarIcons.cupStar"
+  },
+  {
+    "file": "lib/widgets/best_metric_card.dart",
+    "line": 449,
+    "icon": "SolarIcons.fire"
+  },
+  {
+    "file": "lib/widgets/bottom_nav.dart",
+    "line": 212,
+    "icon": "Icons.grid_view_rounded"
+  },
+  {
+    "file": "lib/widgets/bottom_nav.dart",
+    "line": 213,
+    "icon": "Icons.person_rounded"
+  },
+  {
+    "file": "lib/widgets/fastpay_checkout_sheet.dart",
+    "line": 545,
+    "icon": "Icons.close"
+  },
+  {
+    "file": "lib/widgets/fastpay_checkout_sheet.dart",
+    "line": 563,
+    "icon": "Icons.check_circle_rounded"
+  },
+  {
+    "file": "lib/widgets/fastpay_checkout_sheet.dart",
+    "line": 576,
+    "icon": "Icons.cancel_rounded"
+  },
+  {
+    "file": "lib/widgets/fastpay_checkout_sheet.dart",
+    "line": 589,
+    "icon": "Icons.schedule_rounded"
+  },
+  {
+    "file": "lib/widgets/fastpay_checkout_sheet.dart",
+    "line": 943,
+    "icon": "Icons.copy_rounded"
+  },
+  {
+    "file": "lib/widgets/fastpay_checkout_sheet.dart",
+    "line": 1034,
+    "icon": "Icons.close"
+  },
+  {
+    "file": "lib/widgets/home_quick_actions.dart",
+    "line": 36,
+    "icon": "Icons.add_rounded"
+  },
+  {
+    "file": "lib/widgets/home_quick_actions.dart",
+    "line": 44,
+    "icon": "Icons.link_rounded"
+  },
+  {
+    "file": "lib/widgets/home_quick_actions.dart",
+    "line": 53,
+    "icon": "Icons.add_link"
+  },
+  {
+    "file": "lib/widgets/home_quick_actions.dart",
+    "line": 62,
+    "icon": "Icons.question_mark_rounded"
+  },
+  {
+    "file": "lib/widgets/home_quick_actions.dart",
+    "line": 128,
+    "icon": "Icons.chevron_left_rounded"
+  },
+  {
+    "file": "lib/widgets/levels_page.dart",
+    "line": 247,
+    "icon": "FontAwesomeIcons.medal"
+  },
+  {
+    "file": "lib/widgets/levels_page.dart",
+    "line": 248,
+    "icon": "FontAwesomeIcons.award"
+  },
+  {
+    "file": "lib/widgets/levels_page.dart",
+    "line": 249,
+    "icon": "FontAwesomeIcons.crown"
+  },
+  {
+    "file": "lib/widgets/levels_page.dart",
+    "line": 250,
+    "icon": "FontAwesomeIcons.gem"
+  },
+  {
+    "file": "lib/widgets/levels_page.dart",
+    "line": 251,
+    "icon": "FontAwesomeIcons.gem"
+  },
+  {
+    "file": "lib/widgets/levels_page.dart",
+    "line": 252,
+    "icon": "FontAwesomeIcons.star"
+  },
+  {
+    "file": "lib/widgets/levels_page.dart",
+    "line": 310,
+    "icon": "FontAwesomeIcons.chevronRight"
+  },
+  {
+    "file": "lib/widgets/levels_page.dart",
+    "line": 345,
+    "icon": "FontAwesomeIcons.layerGroup"
+  },
+  {
+    "file": "lib/widgets/levels_page.dart",
+    "line": 607,
+    "icon": "FontAwesomeIcons.solidCircleCheck"
+  },
+  {
+    "file": "lib/widgets/levels_page.dart",
+    "line": 608,
+    "icon": "FontAwesomeIcons.circleCheck"
+  },
+  {
+    "file": "lib/widgets/levels_page.dart",
+    "line": 612,
+    "icon": "FontAwesomeIcons.lock"
+  },
+  {
+    "file": "lib/widgets/no_internet_widget.dart",
+    "line": 128,
+    "icon": "Icons.wifi_off_rounded"
+  },
+  {
+    "file": "lib/widgets/no_internet_widget.dart",
+    "line": 128,
+    "icon": "Icons.wifi_rounded"
+  },
+  {
+    "file": "lib/widgets/notification_bell.dart",
+    "line": 201,
+    "icon": "Icons.notifications_none_rounded"
+  },
+  {
+    "file": "lib/widgets/proxo_banner.dart",
+    "line": 606,
+    "icon": "Icons.wifi_off_rounded"
+  },
+  {
+    "file": "lib/widgets/proxo_banner.dart",
+    "line": 986,
+    "icon": "Icons.broken_image_outlined"
+  },
+  {
+    "file": "lib/widgets/proxo_banner.dart",
+    "line": 1100,
+    "icon": "Icons.image_outlined"
+  },
+  {
+    "file": "lib/widgets/proxo_banner.dart",
+    "line": 1209,
+    "icon": "Icons.play_arrow_rounded"
+  },
+  {
+    "file": "lib/widgets/proxo_banner.dart",
+    "line": 1311,
+    "icon": "Icons.play_arrow_rounded"
+  },
+  {
+    "file": "lib/widgets/proxo_error_ui.dart",
+    "line": 170,
+    "icon": "Icons.error_outline_rounded"
+  },
+  {
+    "file": "lib/widgets/proxo_error_ui.dart",
+    "line": 180,
+    "icon": "Icons.warning_amber_rounded"
+  },
+  {
+    "file": "lib/widgets/proxo_error_ui.dart",
+    "line": 190,
+    "icon": "Icons.wifi_off_rounded"
+  },
+  {
+    "file": "lib/widgets/proxo_error_ui.dart",
+    "line": 200,
+    "icon": "Icons.info_outline_rounded"
+  },
+  {
+    "file": "lib/widgets/proxo_error_ui.dart",
+    "line": 210,
+    "icon": "Icons.check_circle_outline_rounded"
+  },
+  {
+    "file": "lib/widgets/proxo_error_ui.dart",
+    "line": 1017,
+    "icon": "Icons.refresh_rounded"
+  },
+  {
+    "file": "lib/widgets/proxo_error_ui.dart",
+    "line": 1173,
+    "icon": "Icons.refresh_rounded"
+  },
+  {
+    "file": "lib/widgets/proxo_popup.dart",
+    "line": 351,
+    "icon": "Icons.close_rounded"
+  },
+  {
+    "file": "lib/widgets/proxo_sidebar.dart",
+    "line": 204,
+    "icon": "SolarIcons.crown"
+  },
+  {
+    "file": "lib/widgets/proxo_sidebar.dart",
+    "line": 204,
+    "icon": "SolarIcons.diamond"
+  },
+  {
+    "file": "lib/widgets/proxo_sidebar.dart",
+    "line": 205,
+    "icon": "SolarIcons.medalStar"
+  },
+  {
+    "file": "lib/widgets/proxo_sidebar.dart",
+    "line": 208,
+    "icon": "FontAwesomeIcons.award"
+  },
+  {
+    "file": "lib/widgets/proxo_sidebar.dart",
+    "line": 209,
+    "icon": "FontAwesomeIcons.crown"
+  },
+  {
+    "file": "lib/widgets/proxo_sidebar.dart",
+    "line": 210,
+    "icon": "FontAwesomeIcons.gem"
+  },
+  {
+    "file": "lib/widgets/proxo_sidebar.dart",
+    "line": 211,
+    "icon": "FontAwesomeIcons.gem"
+  },
+  {
+    "file": "lib/widgets/proxo_sidebar.dart",
+    "line": 213,
+    "icon": "FontAwesomeIcons.medal"
+  },
+  {
+    "file": "lib/widgets/proxo_sidebar.dart",
+    "line": 231,
+    "icon": "SolarIcons.home2"
+  },
+  {
+    "file": "lib/widgets/proxo_sidebar.dart",
+    "line": 233,
+    "icon": "SolarIcons.target"
+  },
+  {
+    "file": "lib/widgets/proxo_sidebar.dart",
+    "line": 234,
+    "icon": "SolarIcons.history"
+  },
+  {
+    "file": "lib/widgets/proxo_sidebar.dart",
+    "line": 235,
+    "icon": "SolarIcons.tag"
+  },
+  {
+    "file": "lib/widgets/proxo_sidebar.dart",
+    "line": 236,
+    "icon": "SolarIcons.wallet"
+  },
+  {
+    "file": "lib/widgets/proxo_sidebar.dart",
+    "line": 237,
+    "icon": "SolarIcons.bell"
+  },
+  {
+    "file": "lib/widgets/proxo_sidebar.dart",
+    "line": 238,
+    "icon": "SolarIcons.settings"
+  },
+  {
+    "file": "lib/widgets/proxo_sidebar.dart",
+    "line": 239,
+    "icon": "SolarIcons.questionCircle"
+  },
+  {
+    "file": "lib/widgets/proxo_sidebar.dart",
+    "line": 241,
+    "icon": "SolarIcons.user"
+  },
+  {
+    "file": "lib/widgets/proxo_sidebar.dart",
+    "line": 242,
+    "icon": "SolarIcons.logout"
+  },
+  {
+    "file": "lib/widgets/proxolink_design_selector.dart",
+    "line": 132,
+    "icon": "Icons.check_rounded"
+  },
+  {
+    "file": "lib/widgets/proxolink_page_card.dart",
+    "line": 49,
+    "icon": "Icons.person_outline"
+  },
+  {
+    "file": "lib/widgets/proxolink_page_card.dart",
+    "line": 50,
+    "icon": "Icons.restaurant_outlined"
+  },
+  {
+    "file": "lib/widgets/proxolink_page_card.dart",
+    "line": 51,
+    "icon": "Icons.apps_outlined"
+  },
+  {
+    "file": "lib/widgets/receipt/receipt_kit.dart",
+    "line": 222,
+    "icon": "Icons.arrow_back_ios_rounded"
+  },
+  {
+    "file": "lib/widgets/receipt/receipt_kit.dart",
+    "line": 223,
+    "icon": "Icons.arrow_forward_ios_rounded"
+  },
+  {
+    "file": "lib/widgets/receipt/tx_history_layout.dart",
+    "line": 59,
+    "icon": "Icons.refresh_rounded"
+  },
+  {
+    "file": "lib/widgets/tasks_page.dart",
+    "line": 146,
+    "icon": "FontAwesomeIcons.chevronRight"
+  },
+  {
+    "file": "lib/widgets/tasks_page.dart",
+    "line": 162,
+    "icon": "FontAwesomeIcons.listCheck"
+  },
+  {
+    "file": "lib/widgets/tasks_page.dart",
+    "line": 186,
+    "icon": "FontAwesomeIcons.listCheck"
+  },
+  {
+    "file": "lib/widgets/tasks_page.dart",
+    "line": 343,
+    "icon": "FontAwesomeIcons.circleCheck"
+  },
+  {
+    "file": "lib/widgets/top_bar.dart",
+    "line": 47,
+    "icon": "Icons.arrow_forward_rounded"
+  },
+  {
+    "file": "lib/widgets/top_bar.dart",
+    "line": 53,
+    "icon": "Icons.arrow_forward_rounded"
+  },
+  {
+    "file": "lib/widgets/top_bar.dart",
+    "line": 71,
+    "icon": "Icons.search_rounded"
+  },
+  {
+    "file": "lib/widgets/voucher_page.dart",
+    "line": 151,
+    "icon": "FontAwesomeIcons.handHoldingHeart"
+  },
+  {
+    "file": "lib/widgets/voucher_page.dart",
+    "line": 156,
+    "icon": "FontAwesomeIcons.rotateLeft"
+  },
+  {
+    "file": "lib/widgets/voucher_page.dart",
+    "line": 160,
+    "icon": "FontAwesomeIcons.handshake"
+  },
+  {
+    "file": "lib/widgets/voucher_page.dart",
+    "line": 164,
+    "icon": "FontAwesomeIcons.gift"
+  },
+  {
+    "file": "lib/widgets/voucher_page.dart",
+    "line": 167,
+    "icon": "FontAwesomeIcons.ticket"
+  },
+  {
+    "file": "lib/widgets/voucher_page.dart",
+    "line": 203,
+    "icon": "FontAwesomeIcons.arrowRight"
+  },
+  {
+    "file": "lib/widgets/voucher_page.dart",
+    "line": 229,
+    "icon": "FontAwesomeIcons.ticket"
+  },
+  {
+    "file": "lib/widgets/voucher_page.dart",
+    "line": 318,
+    "icon": "FontAwesomeIcons.paste"
+  },
+  {
+    "file": "lib/widgets/voucher_page.dart",
+    "line": 367,
+    "icon": "FontAwesomeIcons.ticket"
+  },
+  {
+    "file": "lib/widgets/voucher_page.dart",
+    "line": 387,
+    "icon": "FontAwesomeIcons.gifts"
+  },
+  {
+    "file": "lib/widgets/voucher_page.dart",
+    "line": 405,
+    "icon": "FontAwesomeIcons.clockRotateLeft"
+  },
+  {
+    "file": "lib/widgets/voucher_page.dart",
+    "line": 553,
+    "icon": "FontAwesomeIcons.ticket"
+  },
+  {
+    "file": "lib/widgets/voucher_page.dart",
+    "line": 576,
+    "icon": "FontAwesomeIcons.clock"
+  },
+  {
+    "file": "lib/widgets/voucher_page.dart",
+    "line": 605,
+    "icon": "FontAwesomeIcons.check"
+  },
+  {
+    "file": "lib/widgets/voucher_page.dart",
+    "line": 650,
+    "icon": "FontAwesomeIcons.check"
+  },
+  {
+    "file": "lib/widgets/voucher_page.dart",
+    "line": 703,
+    "icon": "FontAwesomeIcons.gift"
+  }
+]

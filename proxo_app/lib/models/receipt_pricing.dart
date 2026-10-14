@@ -75,3 +75,27 @@ int? storedTransactionIqd(Map<String, dynamic> transaction) {
   }
   return null;
 }
+
+/// Historical conversion requires an explicit unit and a stored rate.
+/// Large USD and small IQD values are deliberately treated identically.
+double? storedTransactionUsd(Map<String, dynamic> transaction) {
+  final amount = storedNumber(transaction['amount']);
+  if (amount == null) return null;
+  final currency = receiptText(transaction['currency']).toUpperCase();
+  if (currency == 'USD') return amount.abs().toDouble();
+  final rate = storedNumber(transaction['fx_rate']);
+  if (currency == 'IQD' && rate != null && rate > 0) return amount.abs() / rate;
+  return null;
+}
+
+/// pa_submit_ad/pa_refund_ad snapshots are copied from the USD wallet.
+/// Other legacy writers lack a proven balance-unit contract: show no invented
+/// unit. Explicit balance_currency takes precedence over the RPC fallback.
+double? storedWalletBalanceUsd(Map<String, dynamic> row, String field) {
+  final unit = receiptText(row['balance_currency']).toUpperCase();
+  final type = receiptText(row['type']);
+  final verifiedWalletWriter = (type == 'ad_payment' || type == 'refund') &&
+      receiptText(row['ad_id']).isNotEmpty;
+  if (unit != 'USD' && !(unit.isEmpty && verifiedWalletWriter)) return null;
+  return storedNumber(row[field])?.toDouble();
+}

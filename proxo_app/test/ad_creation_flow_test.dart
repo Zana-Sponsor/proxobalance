@@ -305,7 +305,7 @@ void main() {
     await tapVisible(tester, find.byKey(const ValueKey('review-ad')));
     expect(find.byType(AdConfirmationScreen), findsNothing);
     expect(repo.submissions, 0);
-    expect(find.text('باڵانسی پێویستت بەردەست نییە'), findsWidgets);
+    expect(find.textContaining('باڵانسی پێویستت بەردەست نییە'), findsWidgets);
   });
   testWidgets('unreadable pending submission blocks a fresh checkout',
       (tester) async {
@@ -489,7 +489,7 @@ void main() {
     expect(find.byKey(const ValueKey('ad-success')), findsOneWidget);
     await tester.pump(const Duration(seconds: 1));
   });
-  testWidgets('uncertain failures retry same key and cannot cancel',
+  testWidgets('uncertain failures retry same key and allow safe navigation away',
       (tester) async {
     final repo = TestAdRepository()
       ..failure = const AdSubmissionFailure('NETWORK', uncertain: true);
@@ -507,7 +507,7 @@ void main() {
             .widget<OutlinedButton>(
                 find.byKey(const ValueKey('cancel-submission')))
             .onPressed,
-        isNull);
+        isNotNull);
     await tester.tap(find.byKey(const ValueKey('retry-submission')));
     await tester.pump();
     expect(repo.submissions, 2);

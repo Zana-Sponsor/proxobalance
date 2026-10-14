@@ -74,6 +74,7 @@ class TxHistoryLayout extends StatelessWidget {
 
 /// Preserves the reference's physical order: amount, time, date.
 class TxHistoryCard extends StatelessWidget {
+  final String? label, status;
   final String date;
   final String time;
   final String amount;
@@ -82,6 +83,7 @@ class TxHistoryCard extends StatelessWidget {
 
   const TxHistoryCard({
     super.key,
+    this.label, this.status,
     required this.date,
     required this.time,
     required this.amount,
@@ -93,22 +95,6 @@ class TxHistoryCard extends StatelessWidget {
   static const EdgeInsets padding = EdgeInsets.all(ReceiptTokens.gutter);
   static const BorderRadius radius =
       BorderRadius.all(Radius.circular(ReceiptTokens.cardRadius));
-
-  Widget _value(String text, Alignment alignment, TextStyle style) => Expanded(
-        child: Align(
-          alignment: alignment,
-          child: FittedBox(
-            fit: BoxFit.scaleDown,
-            child: ProxoText(
-              text,
-              textDirection: TextDirection.ltr,
-              maxLines: 1,
-              softWrap: false,
-              style: style,
-            ),
-          ),
-        ),
-      );
 
   @override
   Widget build(BuildContext context) => DecoratedBox(
@@ -132,38 +118,27 @@ class TxHistoryCard extends StatelessWidget {
                 constraints: const BoxConstraints(
                   minHeight: ReceiptTokens.rowMinHeight,
                 ),
-                child: MediaQuery.textScalerOf(context).scale(1) >
-                        ReceiptTokens.maxTextScale
-                    ? Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          ProxoText(amount,
-                              textAlign: TextAlign.left,
-                              style: ReceiptTokens.rowValue
-                                  .copyWith(color: amountColor)),
-                          const SizedBox(height: ReceiptTokens.rowToRow),
-                          Wrap(
-                              alignment: WrapAlignment.spaceBetween,
-                              spacing: ReceiptTokens.labelToValue,
-                              runSpacing: ReceiptTokens.rowToRow,
-                              children: [
-                                ProxoText(time,
-                                    style: ReceiptTokens.rowLabel.copyWith(
-                                        color: const Color(0xFF6B7280))),
-                                ProxoText(date, style: ReceiptTokens.rowValue),
-                              ]),
-                        ])
-                    : Row(
-                  textDirection: TextDirection.ltr,
-                  children: <Widget>[
-                    _value(amount, Alignment.centerLeft,
-                        ReceiptTokens.rowValue.copyWith(color: amountColor)),
-                    _value(
-                        time,
-                        Alignment.center,
-                        ReceiptTokens.rowLabel
-                            .copyWith(color: const Color(0xFF6B7280))),
-                    _value(date, Alignment.centerRight, ReceiptTokens.rowValue),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    if (label != null) ...[
+                      ProxoText(label!, textAlign: TextAlign.right, style: ReceiptTokens.rowLabel),
+                      const SizedBox(height: ReceiptTokens.rowToRow),
+                    ],
+                    ProxoText(amount, textAlign: TextAlign.left,
+                      style: ReceiptTokens.totalValue.copyWith(color: amountColor)),
+                    if (status != null) ...[
+                      const SizedBox(height: ReceiptTokens.rowToRow),
+                      ProxoText(status!, textAlign: TextAlign.right, style: ReceiptTokens.rowLabel),
+                    ],
+                    const SizedBox(height: ReceiptTokens.headingToRow),
+                    Wrap(alignment: WrapAlignment.spaceBetween,
+                      spacing: ReceiptTokens.labelToValue, runSpacing: ReceiptTokens.rowToRow,
+                      children: [
+                        ProxoText(time, textDirection: TextDirection.ltr,
+                          style: ReceiptTokens.rowLabel.copyWith(color: const Color(0xFF6B7280))),
+                        ProxoText(date, textDirection: TextDirection.ltr, style: ReceiptTokens.rowValue),
+                      ]),
                   ],
                 ),
               ),
@@ -173,7 +148,7 @@ class TxHistoryCard extends StatelessWidget {
       );
 }
 
-/// The loading rows occupy the same bounds as the finished cards.
+/// A two-line amount/metadata placeholder; loaded labels can expand naturally.
 class TxHistorySkeletonList extends StatelessWidget {
   const TxHistorySkeletonList({super.key});
 
@@ -218,7 +193,7 @@ class TxHistorySkeletonList extends StatelessWidget {
               child: Padding(
                 padding: TxHistoryCard.padding,
                 child: SizedBox(
-                  height: ReceiptTokens.rowMinHeight,
+                  height: ReceiptTokens.rowMinHeight * 2 + ReceiptTokens.headingToRow,
                   child: Row(
                     children: <Widget>[
                       _bar(0.7, Alignment.centerLeft),

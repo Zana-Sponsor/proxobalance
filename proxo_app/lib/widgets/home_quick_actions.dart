@@ -1,172 +1,104 @@
 import 'package:flutter/material.dart';
 
 import '../theme/app_theme.dart';
+import '../theme/proxo_icons.dart';
 import 'ad_form_components.dart';
 import 'proxo_text.dart';
 
-/// The existing Home destinations, styled with the Create Ad card system.
+/// Three primary destinations. Native icons and scalable Sorani labels follow
+/// the user's latest instruction; tools/help remain secondary destinations.
 class HomeQuickActions extends StatelessWidget {
-  final VoidCallback? onCreateTap;
-  final VoidCallback? onToolsTap;
-  final VoidCallback? onCreatePageTap;
-  final VoidCallback? onFaqTap;
-
-  const HomeQuickActions({
-    super.key,
-    this.onCreateTap,
-    this.onToolsTap,
-    this.onCreatePageTap,
-    this.onFaqTap,
-  });
+  final VoidCallback? onCreateTap, onAddBalanceTap, onToolsTap,
+      onCreatePageTap, onFaqTap;
+  const HomeQuickActions({super.key, this.onCreateTap, this.onAddBalanceTap,
+    this.onToolsTap, this.onCreatePageTap, this.onFaqTap});
 
   @override
   Widget build(BuildContext context) => Align(
-        alignment: Alignment.topCenter,
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 600),
-          child: Directionality(
-            textDirection: TextDirection.rtl,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                ProxoText('کردارە خێراکان', style: AdUi.heading(context)),
-                const SizedBox(height: 20),
-                _QuickActionCard(
-                  key: const ValueKey('home-create-ad'),
-                  icon: Icons.add_rounded,
-                  title: 'کەمپەینی نوێ',
-                  subtitle: 'کەمپەینێکی نوێ دروست بکە!',
-                  onTap: onCreateTap,
-                ),
-                const SizedBox(height: 16),
-                _QuickActionCard(
-                  key: const ValueKey('home-contact-tools'),
-                  icon: Icons.link_rounded,
-                  title: 'ProxoLink — پەڕەکانم',
-                  subtitle: 'پەڕەکانت ببینە و بەڕێوەیان ببە.',
-                  onTap: onToolsTap,
-                ),
-                const SizedBox(height: 16),
-                if (onCreatePageTap != null) ...[
-                  _QuickActionCard(
-                    key: const ValueKey('home-create-page'),
-                    icon: Icons.add_link,
-                    title: 'دروستکردنی پەڕە',
-                    subtitle: 'پەیوەندی، ڕێستۆرانت یان داگرتنی ئەپ.',
-                    onTap: onCreatePageTap,
-                  ),
-                  const SizedBox(height: 16),
-                ],
-                _QuickActionCard(
-                  key: const ValueKey('home-faq'),
-                  icon: Icons.question_mark_rounded,
-                  title: 'پرسیارە دووبارەکان',
-                  subtitle: 'وەڵامی پرسیارە باوەکان ببینە!',
-                  onTap: onFaqTap,
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
+    alignment: Alignment.topCenter,
+    child: ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 600),
+      child: Directionality(textDirection: TextDirection.rtl,
+        child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+          ProxoText('کردارە خێراکان', style: AdUi.heading(context)),
+          const SizedBox(height: 20),
+          LayoutBuilder(builder: (context, constraints) {
+            final cards = [
+              _QuickActionCard(key: const ValueKey('home-create-ad'),
+                icon: ProxoIcons.createAd, title: 'دروستکردنی ڕیکلام', onTap: onCreateTap),
+              _QuickActionCard(key: const ValueKey('home-add-balance'),
+                icon: ProxoIcons.wallet, title: 'زیادکردنی باڵانس', onTap: onAddBalanceTap),
+              _QuickActionCard(key: const ValueKey('home-create-page'),
+                icon: ProxoIcons.createPage, title: 'دروستکردنی پەڕە', onTap: onCreatePageTap),
+            ];
+            // Fit complete words using the real font and system text scale.
+            // Narrow devices/large text reflow instead of shrinking the labels.
+            double widestWord = 0;
+            for (final card in cards) {
+              final painter = TextPainter(text: TextSpan(text: card.title,
+                style: AdUi.text(context)), textDirection: TextDirection.rtl,
+                textScaler: MediaQuery.textScalerOf(context))..layout();
+              if (painter.minIntrinsicWidth > widestWord) widestWord = painter.minIntrinsicWidth;
+              painter.dispose();
+            }
+            const gap = 12.0; // Existing control spacing.
+            final tileWidth = (constraints.maxWidth - gap * 2) / 3;
+            if (tileWidth - AdUi.cardPadding.horizontal < widestWord) {
+              return Column(crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [for (var i = 0; i < cards.length; i++) ...[
+                  if (i > 0) const SizedBox(height: gap), cards[i],
+                ]]);
+            }
+            return IntrinsicHeight(child: Row(crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [for (var i = 0; i < cards.length; i++) ...[
+                if (i > 0) const SizedBox(width: gap), Expanded(child: cards[i]),
+              ]]));
+          }),
+          const SizedBox(height: 12),
+          Wrap(alignment: WrapAlignment.spaceBetween, spacing: 8, children: [
+            TextButton.icon(key: const ValueKey('home-contact-tools'),
+              onPressed: onToolsTap, icon: const Icon(ProxoIcons.pages),
+              label: ProxoText('ProxoLink — پەڕەکانم', style: AdUi.text(context))),
+            TextButton.icon(key: const ValueKey('home-faq'),
+              onPressed: onFaqTap, icon: const Icon(ProxoIcons.help),
+              label: ProxoText('پرسیارە دووبارەکان', style: AdUi.text(context))),
+          ]),
+        ]),
+      ),
+    ),
+  );
 }
 
 class _QuickActionCard extends StatelessWidget {
   final IconData icon;
-  final String title, subtitle;
+  final String title;
   final VoidCallback? onTap;
-
-  const _QuickActionCard({
-    super.key,
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-    required this.onTap,
-  });
+  const _QuickActionCard({super.key, required this.icon,
+    required this.title, required this.onTap});
 
   @override
-  Widget build(BuildContext context) => Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: AdUi.radius,
-          boxShadow: AdUi.cardShadow,
-        ),
-        child: Material(
-          color: Colors.transparent,
-          borderRadius: AdUi.radius,
-          child: InkWell(
-            onTap: onTap,
-            borderRadius: AdUi.radius,
-            child: Padding(
-              padding: AdUi.cardPadding,
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  final iconWell = Container(
-                    width: 48,
-                    height: 48,
-                    alignment: Alignment.center,
-                    decoration: const BoxDecoration(
-                      color: AppColors.accentSoft,
-                      borderRadius: AdUi.controlRadius,
-                    ),
-                    child: Icon(icon, color: AdUi.blue),
-                  );
-                  final copy = Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      ProxoText(title, style: AdUi.text(context)),
-                      const SizedBox(height: 6),
-                      ProxoText(
-                        subtitle,
-                        style: AdUi.text(context, color: AdUi.secondary),
-                      ),
-                    ],
-                  );
-                  const chevron = Directionality(
-                    textDirection: TextDirection.ltr,
-                    child:
-                        Icon(Icons.chevron_left_rounded, color: AdUi.secondary),
-                  );
-                  double minimumWidth(String text) {
-                    final painter = TextPainter(
-                      text: TextSpan(text: text, style: AdUi.text(context)),
-                      textDirection: ProxoTextDirection.of(text),
-                      textScaler: MediaQuery.textScalerOf(context),
-                    )..layout();
-                    final width = painter.minIntrinsicWidth;
-                    painter.dispose();
-                    return width;
-                  }
-
-                  final textWidth = constraints.maxWidth -
-                      48 -
-                      16 -
-                      8 -
-                      (IconTheme.of(context).size ?? 24);
-                  if (textWidth < minimumWidth(title) ||
-                      textWidth < minimumWidth(subtitle)) {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Row(children: [iconWell, const Spacer(), chevron]),
-                        const SizedBox(height: 16),
-                        copy,
-                      ],
-                    );
-                  }
-                  return Row(
-                    children: [
-                      iconWell,
-                      const SizedBox(width: 16),
-                      Expanded(child: copy),
-                      const SizedBox(width: 8),
-                      chevron,
-                    ],
-                  );
-                },
-              ),
+  Widget build(BuildContext context) {
+    final color = onTap == null ? AdUi.secondary : AdUi.blue;
+    return Semantics(button: true, enabled: onTap != null, label: title, onTap: onTap,
+      child: ExcludeSemantics(child: Container(
+        decoration: const BoxDecoration(color: Colors.white,
+          borderRadius: AdUi.radius, boxShadow: AdUi.cardShadow),
+        child: Material(color: Colors.transparent, borderRadius: AdUi.radius,
+          child: InkWell(onTap: onTap, borderRadius: AdUi.radius,
+            child: Padding(padding: AdUi.cardPadding,
+              child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                Container(width: 48, height: 48, alignment: Alignment.center,
+                  decoration: const BoxDecoration(color: AppColors.accentSoft,
+                    borderRadius: AdUi.controlRadius),
+                  child: Icon(icon, size: 24, color: color)),
+                const SizedBox(height: 12),
+                ProxoText(title, textAlign: TextAlign.center,
+                  style: AdUi.text(context, color: onTap == null ? AdUi.secondary : AdUi.ink)),
+              ]),
             ),
           ),
         ),
-      );
+      )),
+    );
+  }
 }
