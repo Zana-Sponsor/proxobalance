@@ -56,10 +56,7 @@ void main() {
       await t.pumpAndSettle();
       expect(t.takeException(), isNull);
     }
-    await mount(const Scaffold());
-    await binding.convertFlutterSurfaceToImage();
-    await t.pump();
-    Future<void> shot(String name) async {
+    Future<void> prepareImages(String name) async {
       for (final element in find.byType(Image).evaluate().toList()) {
         await precacheImage((element.widget as Image).image, element);
       }
@@ -79,12 +76,22 @@ void main() {
       }
       await t.pump(const Duration(milliseconds: 100));
       expect(t.takeException(), isNull);
-      if (name.startsWith('chrome-')) {
-        // Independently capture Android's composed display, not only Flutter's
-        // converted surface, to distinguish raster capture from widget layout.
-        print('PROXO_UI_NATIVE_SCREENSHOT:$config-$name');
-        await Future<void>.delayed(const Duration(milliseconds: 750));
-      }
+    }
+    // A converted FlutterImageView can still display the preceding captured
+    // frame to Android. Capture the ordinary surface before any conversion.
+    for (final scale in [1.0, 2.0]) {
+      await mount(Scaffold(appBar: ProxoTopBar(onMenuTap: () {}, onNotificationTap: () {}, onSearchTap: () {}),
+        bottomNavigationBar: ProxoBottomNav(currentIndex: 4, onTap: (_) {})), scale: scale);
+      await prepareImages('chrome-native-scale-$scale');
+      await Future<void>.delayed(const Duration(milliseconds: 250));
+      print('PROXO_UI_NATIVE_SCREENSHOT:$config-chrome-native-scale-$scale');
+      await Future<void>.delayed(const Duration(milliseconds: 750));
+    }
+    await mount(const Scaffold());
+    await binding.convertFlutterSurfaceToImage();
+    await t.pump();
+    Future<void> shot(String name) async {
+      await prepareImages(name);
       await binding.takeScreenshot('$config-$name');
     }
     final taps = <String>[];
