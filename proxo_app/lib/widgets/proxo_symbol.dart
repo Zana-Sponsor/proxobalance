@@ -49,7 +49,7 @@ class ProxoSolarIcon extends StatelessWidget {
   final IconData icon;
   final double size;
   final Color? color;
-  static const symbols = <IconData, ProxoSymbolName>{
+  static final symbols = <IconData, ProxoSymbolName>{
     SolarIconsOutline.home2: ProxoSymbolName.home,
     SolarIconsOutline.clapperboardPlay: ProxoSymbolName.ads,
     SolarIconsOutline.widget_2: ProxoSymbolName.tools,
