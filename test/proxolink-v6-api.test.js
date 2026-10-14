@@ -151,7 +151,12 @@ test('unsaved live form preview is encrypted/type-bound/inert, preserves draft v
    const rendered=await call('form-preview',{query:{token},auth:null});assert.equal(rendered.status,200);
    assert.equal(configFromHtml(rendered.body).name,body.name);assert.equal(configFromHtml(rendered.body).preview,true);
    assert.doesNotMatch(rendered.body,/<script>globalThis.injected|html_content|proxolink-templates\//);
-   assert.equal((await call('form-preview',{query:{token:token.slice(0,-2)+'aa'},auth:null})).status,404);
+   // Replacing a base64url suffix can leave decoded ciphertext unchanged
+   // (unused pad bits, or a randomly matching suffix). Flip an actual byte.
+   const corrupted=Buffer.from(token,'base64url');
+   corrupted[corrupted.length-1]^=1;
+   assert.notDeepEqual(corrupted,Buffer.from(token,'base64url'));
+   assert.equal((await call('form-preview',{query:{token:corrupted.toString('base64url')},auth:null})).status,404);
  }
  assert.equal(fixture.writes.length,0);assert.equal(fixture.events.length,0);
 });
