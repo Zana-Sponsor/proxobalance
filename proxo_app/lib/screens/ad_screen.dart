@@ -821,7 +821,7 @@ class _DsPrimaryButton extends StatelessWidget {
                     SizedBox(width: (leadingGap ?? 8) * s),
                   ],
                   Flexible(
-                    child: ProxoText(label,
+                    child: ProxoText(label, translate: true,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         textAlign: TextAlign.center,
@@ -1911,7 +1911,7 @@ class _AdScreenState extends State<AdScreen>
                           ) : null,
                         ),
                         const SizedBox(width: 10),
-                        Expanded(child: ProxoText(_cancelReasons[i],
+                        Expanded(child: ProxoText(_cancelReasons[i], translate: true,
                           textAlign: TextAlign.right,
                           style: TextStyle(
                             fontFamily: kAppFont, fontSize: 12.5,
@@ -2070,21 +2070,15 @@ class _AdScreenState extends State<AdScreen>
               final user = supabase.auth.currentUser;
               if (user == null) throw Exception('تکایە دووبارە بچۆ ژوورەوە');
 
-              // ⚠ `needs_update` لێرەدا **پاک ناکرێتەوە** — بڕوانە
-              // کۆنتراتەکەی سەرەوە. تەنها `update_submitted_at` دۆخەکە
-              // دەگۆڕێت بۆ «جێبەجێ کرا» لای ئادمین.
-              final String now = DateTime.now().toIso8601String();
-              final Map<String, dynamic> patch = <String, dynamic>{
-                field: value.trim(),
-                _kAdcColSubmittedAt: now,
-                'status': _kAdcStatusReview,
-                'updated_at': now,
-              };
-              await supabase
-                  .from('pa_ads')
-                  .update(patch)
-                  .eq('id', ad['id'])
-                  .eq('user_id', user.id);
+              // The server checks ownership, the requested field and replay,
+              // then supplies the authoritative timestamp and status.
+              final response = await supabase.rpc('submit_ad_update', params: {
+                'p_ad_id': ad['id'], 'p_field': field, 'p_value': value.trim(),
+              });
+              if (response is! Map || response['ok'] != true || response['patch'] is! Map) {
+                throw const FormatException('Invalid correction response');
+              }
+              final patch = Map<String,dynamic>.from(response['patch'] as Map);
 
               if (!ctx.mounted) return;
               Navigator.pop(ctx, patch);

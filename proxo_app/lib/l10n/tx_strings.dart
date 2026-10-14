@@ -12,17 +12,19 @@ import '../theme/app_locale.dart';
 
 class TxStrings {
   final bool ar;
-  const TxStrings._(this.ar);
+  final bool badini;
+  const TxStrings._(this.ar, [this.badini = false]);
 
   static const TxStrings _ckb = TxStrings._(false);
   static const TxStrings _ar = TxStrings._(true);
+  static const TxStrings _kmr = TxStrings._(false, true);
 
   static TxStrings of(Locale locale) =>
-      locale.languageCode == 'ar' ? _ar : _ckb;
+      locale.languageCode == 'ar' ? _ar : locale.languageCode == 'kmr' ? _kmr : _ckb;
 
   static TxStrings get current => of(ProxoLocale.current.value);
 
-  String _t(String ku, String arabic) => ar ? arabic : ProxoStrings.text(ku);
+  String _t(String ku, String arabic) => ar ? arabic : badini ? ProxoStrings.text(ku, language: 'kmr') : ku;
 
   // ── مێژوو ───────────────────────────────────────────────────────────────
   String get historyTitle => _t('مێژووی مامەڵەکان', 'سجل المعاملات');

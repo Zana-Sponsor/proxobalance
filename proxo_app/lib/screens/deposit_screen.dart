@@ -1,3 +1,4 @@
+import 'package:proxo_app/l10n/proxo_strings.dart';
 import '../widgets/proxo_app_bar.dart';
 import '../widgets/proxo_symbol.dart';
 import 'package:proxo_app/theme/app_locale.dart';
@@ -893,6 +894,7 @@ class _WalletCard extends StatelessWidget {
                 const SizedBox(height: 2),
                 ProxoText(
                   wallet.numberIsPlaceholder ? 'ژمارە دانەنراوە' : wallet.number,
+                  translate: wallet.numberIsPlaceholder,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   textDirection: wallet.numberIsPlaceholder
@@ -933,7 +935,7 @@ class _InstructionCard extends StatelessWidget {
         ],
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        ProxoText('ژمارەی وەرگر — ${wallet.name}',
+        ProxoText(ProxoStrings.format('ژمارەی وەرگر — {provider}', {'provider': wallet.name}),
             style: const TextStyle(
               fontFamily: kAppFont,
               fontSize: 12.5,
@@ -999,7 +1001,7 @@ class _InstructionCard extends StatelessWidget {
                 ),
                 const SizedBox(width: 9),
                 Expanded(
-                  child: ProxoText(s,
+                  child: ProxoText(s, translate: true,
                       style: const TextStyle(
                         fontFamily: kAppFont,
                         fontSize: 12.5,
@@ -1038,7 +1040,7 @@ class _MiniAction extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           border: Border.all(color: _cLine),
         ),
-        child: ProxoText(label,
+        child: ProxoText(label, translate: true,
             style: TextStyle(
               fontFamily: kAppFont,
               fontSize: 12,

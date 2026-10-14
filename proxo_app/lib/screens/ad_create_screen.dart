@@ -502,13 +502,13 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
       ));
   Widget _label(BuildContext context, String label) => Padding(
       padding: const EdgeInsets.only(bottom: 10),
-      child: ProxoText(label,
+      child: ProxoText(label, translate: true,
           style: AdUi.text(context), textAlign: TextAlign.right));
   Widget _error(BuildContext context, String key) => _fieldErrors[key] == null
       ? const SizedBox.shrink()
       : Padding(
           padding: const EdgeInsets.only(top: 6),
-          child: ProxoText(_fieldErrors[key]!,
+          child: ProxoText(_fieldErrors[key]!, translate: true,
               style: AdUi.text(context, color: const Color(0xFFB74956))));
   Widget _field(BuildContext context, String id,
           TextEditingController controller, String label,
@@ -708,7 +708,7 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
             hint: const ProxoText('پۆلی ڕیکلام هەڵبژێرە', translate: true),
             items: [
               for (final c in kAdCategories)
-                DropdownMenuItem(value: c.slug, child: ProxoText(c.label))
+                DropdownMenuItem(value: c.slug, child: ProxoText(c.label, translate: true))
             ],
             onChanged: (v) => setState(() {
                   _category = v;
@@ -826,7 +826,7 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
                     });
                   }
                 },
-                child: ProxoText(_date == null
+                child: ProxoText(translate: true, _date == null
                     ? 'بەروار هەڵبژێرە'
                     : '${_date!.day}/${_date!.month}/${_date!.year}')),
             OutlinedButton(
@@ -847,7 +847,7 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
                     });
                   }
                 },
-                child: ProxoText(_time == null
+                child: ProxoText(translate: true, _time == null
                     ? 'کات هەڵبژێرە'
                     : '${_time!.hour.toString().padLeft(2, '0')}:${_time!.minute.toString().padLeft(2, '0')}')),
           ]))),
@@ -882,10 +882,10 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
             alignment: Alignment.centerRight,
             child: OutlinedButton(
                 onPressed: _couponBusy ? null : _applyCoupon,
-                child: ProxoText(_couponBusy ? 'پشکنین…' : 'بەکارهێنانی کۆد'))),
+                child: ProxoText(_couponBusy ? 'پشکنین…' : 'بەکارهێنانی کۆد', translate: true))),
         if (_couponMessage != null) ...[
           const SizedBox(height: 8),
-          ProxoText(_couponMessage!,
+          ProxoText(_couponMessage!, translate: true,
               style: AdUi.text(context,
                   color: _couponValid ? AdUi.green : const Color(0xFFB74956)))
         ],
@@ -939,7 +939,7 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
             ],
           ],
           const SizedBox(height: 18),
-          ProxoText(adForecastDisclaimer,
+          ProxoText(adForecastDisclaimer, translate: true,
               style: AdUi.text(context, color: AdUi.secondary)),
         ]));
   }
@@ -972,7 +972,7 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
         ],
         if (_quoteError != null) ...[
           const SizedBox(height: 12),
-          ProxoText(_quoteError!,
+          ProxoText(_quoteError!, translate: true,
               style: AdUi.text(context, color: const Color(0xFFB74956))),
           Align(
               alignment: Alignment.centerRight,

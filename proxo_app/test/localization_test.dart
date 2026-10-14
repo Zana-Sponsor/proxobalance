@@ -3,6 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:proxo_app/theme/app_locale.dart';
 import 'package:proxo_app/l10n/proxo_strings.dart';
+import 'package:proxo_app/l10n/tx_strings.dart';
+import 'package:proxo_app/l10n/ad_detail_strings.dart';
 import 'package:proxo_app/widgets/proxo_text.dart';
 
 void main() {
@@ -15,6 +17,12 @@ void main() {
     expect(ProxoLocale.current.value, ProxoLocale.kurdishBadini);
     expect(ProxoLocale.directionOf(ProxoLocale.current.value), TextDirection.rtl);
     expect(ProxoStrings.text('دروستکردنی ڕیکلام'), 'چێکرنا ریکلامێ');
+  });
+  test('explicit receipt locale is independent of global locale', () {
+    ProxoLocale.current.value = ProxoLocale.arabic;
+    expect(TxStrings.of(ProxoLocale.kurdishSorani).detailTitle, 'وردەکاری مامەڵە');
+    expect(TxStrings.of(ProxoLocale.kurdishBadini).detailTitle, 'هویرکاریێن مامەلێ');
+    expect(AdDetailStrings.of(ProxoLocale.kurdishBadini).appBarTitle, 'هویرکاریێن ریکلامێ');
   });
   testWidgets('language changes constant labels without translating user data', (t) async {
     await t.pumpWidget(MaterialApp(home: ProxoLocaleScope(child: const Column(children: [

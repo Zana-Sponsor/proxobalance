@@ -586,12 +586,12 @@ class ProxoInlineError extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   if (title != null) ...[
-                    ProxoText(title!,
+                    ProxoText(title!, translate: true,
                         textAlign: textAlign,
                         style: ProxoErrorType.label(p.accent, fontFamily)),
                     const SizedBox(height: ProxoErrorStyle.s4),
                   ],
-                  ProxoText(message,
+                  ProxoText(message, translate: true,
                       textAlign: textAlign,
                       style: ProxoErrorType.body(p.ink, fontFamily)),
                   if (actionLabel != null && onAction != null) ...[
@@ -709,7 +709,7 @@ class _ProxoSnackBody extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 if (label.isNotEmpty) ...[
-                  ProxoText(label, style: ProxoErrorType.label(p.accent, fontFamily)),
+                  ProxoText(label, translate: true, style: ProxoErrorType.label(p.accent, fontFamily)),
                   const SizedBox(height: ProxoErrorStyle.s2),
                 ],
                 ProxoText(
@@ -735,7 +735,7 @@ class _ProxoSnackBody extends StatelessWidget {
                   borderRadius: BorderRadius.circular(ProxoErrorStyle.rField),
                   border: Border.all(color: p.border),
                 ),
-                child: ProxoText(actionLabel!,
+                child: ProxoText(actionLabel!, translate: true,
                     style: ProxoErrorType.button(p.accent, fontFamily)),
               ),
             ),
@@ -833,12 +833,12 @@ Future<T?> showProxoErrorSheet<T>(
                           ),
                         ),
                         const SizedBox(height: ProxoErrorStyle.s16),
-                        ProxoText(title,
+                        ProxoText(title, translate: true,
                             textAlign: TextAlign.center,
                             style: ProxoErrorType.titleLarge(
                                 AppColors.dark, fontFamily)),
                         const SizedBox(height: ProxoErrorStyle.s8),
-                        ProxoText(message,
+                        ProxoText(message, translate: true,
                             textAlign: TextAlign.center,
                             style: ProxoErrorType.bodyQuiet(
                                 AppColors.muted2, fontFamily)),
@@ -935,11 +935,11 @@ Future<T?> showProxoErrorDialog<T>(
                 ),
               ),
               const SizedBox(height: ProxoErrorStyle.s16),
-              ProxoText(title,
+              ProxoText(title, translate: true,
                   textAlign: TextAlign.center,
                   style: ProxoErrorType.title(AppColors.dark, fontFamily)),
               const SizedBox(height: ProxoErrorStyle.s8),
-              ProxoText(message,
+              ProxoText(message, translate: true,
                   textAlign: TextAlign.center,
                   style:
                       ProxoErrorType.bodyQuiet(AppColors.muted2, fontFamily)),
@@ -1056,12 +1056,12 @@ class ProxoErrorView extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: ProxoErrorStyle.s20),
-                    ProxoText(title,
+                    ProxoText(title, translate: true,
                         textAlign: TextAlign.center,
                         style: ProxoErrorType.titleLarge(
                             AppColors.dark, fontFamily)),
                     const SizedBox(height: ProxoErrorStyle.s8),
-                    ProxoText(message,
+                    ProxoText(message, translate: true,
                         textAlign: TextAlign.center,
                         style: ProxoErrorType.bodyQuiet(
                             AppColors.muted, fontFamily)),
@@ -1158,11 +1158,11 @@ class ProxoErrorCard extends StatelessWidget {
                   // This is a card title (14 / SemiBold), not a dialog
                   // headline, so it goes through `cardTitle` directly
                   // rather than downsizing `title`'s Bold dialog weight.
-                  ProxoText(title,
+                  ProxoText(title, translate: true,
                       style: AppTypography.cardTitle(color: AppColors.dark)
                           .copyWith(fontFamily: fontFamily)),
                   const SizedBox(height: ProxoErrorStyle.s4),
-                  ProxoText(message,
+                  ProxoText(message, translate: true,
                       style: ProxoErrorType.bodyQuiet(AppColors.muted2, fontFamily)
                           .copyWith(fontSize: 12.5)),
                   if (actionLabel != null && onAction != null) ...[

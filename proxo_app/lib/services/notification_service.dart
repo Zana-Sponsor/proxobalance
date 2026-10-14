@@ -1,3 +1,4 @@
+import 'ad_activation_bridge.dart';
 // notification_service.dart  (نسخەی نوێ — توکێن پاشەکەوت دەکات)
 // بیخەرە ناو:  lib/services/notification_service.dart
 //
@@ -172,15 +173,17 @@ class NotificationService {
     await _initLocalPlugin(navigatorKey: navigatorKey);
 
     await _messaging.setForegroundNotificationPresentationOptions(
-      alert: true,
+      alert: false, // Foreground presentation is handled once below.
       badge: true,
-      sound: true,
+      sound: false,
     );
 
     // Foreground
-    FirebaseMessaging.onMessage.listen((message) {
+    FirebaseMessaging.onMessage.listen((message) async {
       onForegroundMessage?.call(message);
-      _showLocalNotification(message);
+      var handled = false;
+      try { handled = await AdActivationBridge.onForeground?.call(message.data) ?? false; } catch (_) {}
+      if (!handled) await _showLocalNotification(message);
     });
 
     // Background tap

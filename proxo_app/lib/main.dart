@@ -1,3 +1,4 @@
+import 'widgets/ad_activation_notice.dart';
 // main.dart — Proxo App entry point
 
 import 'dart:async';
@@ -162,7 +163,12 @@ class ProxoApp extends StatelessWidget {
       // framework-owned labels/date pickers while ProxoLocaleScope keeps the
       // app's actual ckb/ar choice and correct RTL direction.
       builder: (context, child) => ProxoLocaleScope(
-        child: child ?? const SizedBox.shrink(),
+        child: AdActivationNoticeHost(
+          client: Supabase.instance.client,
+          onOpen: (id) => navigatorKey.currentState?.push(
+            ProxoPageRoute<void>(builder: (_) => AdScreen(initialAdId: id))),
+          child: child ?? const SizedBox.shrink(),
+        ),
       ),
       theme: ThemeData(
         fontFamily: kAppFont,

@@ -1,3 +1,4 @@
+import '../l10n/proxo_strings.dart';
 import 'package:flutter/material.dart';
 
 import '../services/ad_submission.dart';
@@ -264,7 +265,7 @@ class AdValueRow extends StatelessWidget {
         textAlign: TextAlign.right,
       );
       final cellWidth = (constraints.maxWidth - 16) / 2;
-      if (minimumWidth(value) > cellWidth || minimumWidth(label) > cellWidth) {
+      if (minimumWidth(value) > cellWidth || minimumWidth(ProxoStrings.text(label)) > cellWidth) {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [labelText, const SizedBox(height: 6), valueText],

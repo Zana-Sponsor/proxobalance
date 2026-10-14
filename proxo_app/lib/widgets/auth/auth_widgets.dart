@@ -443,11 +443,8 @@ class _RuleRow extends StatelessWidget {
             width: 16,
             height: 16,
             child: Center(
-              child: Icon(
-                satisfied ? Icons.check_circle_rounded : Icons.radio_button_unchecked_rounded,
-                size: 13,
-                color: tone,
-              ),
+              child: satisfied ? ProxoSymbol(ProxoSymbolName.check, size: 16, color: tone)
+                : Container(width: 13, height: 13, decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: tone))),
             ),
           ),
           const SizedBox(width: 6),
@@ -543,8 +540,8 @@ class _AuthClearButtonState extends State<AuthClearButton> {
             onPressed: _clear,
             splashRadius: 16,
             padding: EdgeInsets.zero,
-            icon: Icon(
-              Icons.cancel_rounded,
+            icon: ProxoSymbol(
+              ProxoSymbolName.close,
               size: AuthTokens.clearIconSize,
               color: AuthTokens.placeholder,
             ),
@@ -709,7 +706,7 @@ class AuthLockoutNotice extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(Icons.lock_clock_rounded, size: 18, color: AuthTokens.danger),
+          ProxoSymbol(ProxoSymbolName.lock, size: 22, color: AuthTokens.danger),
           const SizedBox(width: 8),
           Expanded(
             child: Column(
@@ -793,7 +790,7 @@ class AuthFastAccountCard extends StatelessWidget {
                 CircleAvatar(
                   radius: 16,
                   backgroundColor: AuthTokens.accent.withOpacity(0.08),
-                  child: Icon(Icons.person_rounded,
+                  child: ProxoSymbol(ProxoSymbolName.user,
                       size: 18, color: AuthTokens.accent),
                 ),
                 const SizedBox(width: 10),
@@ -825,7 +822,7 @@ class AuthFastAccountCard extends StatelessWidget {
                     style: AuthTokens.chipText,
                   )
                 else
-                  Icon(Icons.chevron_left_rounded,
+                  ProxoSymbol(ProxoSymbolName.forward,
                       size: 20, color: AuthTokens.placeholder),
               ],
             ),

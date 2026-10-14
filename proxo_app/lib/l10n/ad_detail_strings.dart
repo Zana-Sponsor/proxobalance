@@ -16,18 +16,20 @@ import '../theme/app_locale.dart';
 
 class AdDetailStrings {
   final bool ar;
-  const AdDetailStrings._(this.ar);
+  final bool badini;
+  const AdDetailStrings._(this.ar, [this.badini = false]);
 
   static const AdDetailStrings _ckb = AdDetailStrings._(false);
   static const AdDetailStrings _ar = AdDetailStrings._(true);
+  static const AdDetailStrings _kmr = AdDetailStrings._(false, true);
 
   /// کوردی بۆ هەموو زمانێک جگە لە عەرەبی.
   static AdDetailStrings of(Locale locale) =>
-      locale.languageCode == 'ar' ? _ar : _ckb;
+      locale.languageCode == 'ar' ? _ar : locale.languageCode == 'kmr' ? _kmr : _ckb;
 
   static AdDetailStrings get current => of(ProxoLocale.current.value);
 
-  String _t(String ku, String arabic) => ar ? arabic : ProxoStrings.text(ku);
+  String _t(String ku, String arabic) => ar ? arabic : badini ? ProxoStrings.text(ku, language: 'kmr') : ku;
 
   // ── AppBar / سەردێر ─────────────────────────────────────────────────────
   String get appBarTitle => _t('وردەکاری ڕیکلام', 'تفاصيل الإعلان');
@@ -130,7 +132,7 @@ class AdDetailStrings {
     final String normalized = slug.trim().toLowerCase();
     if (normalized.isEmpty) return '—';
     if (!isSupportedAdCategory(normalized)) return slug;
-    if (!ar) return adCategoryLabel(normalized);
+    if (!ar) return adCategoryLabel(normalized, language: badini ? 'kmr' : 'ckb');
     return switch (normalized) {
       'cosmetics_beauty' => 'التجميل والعناية',
       'fashion_apparel' => 'الأزياء والملابس',

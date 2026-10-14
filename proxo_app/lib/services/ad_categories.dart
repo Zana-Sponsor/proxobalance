@@ -1,3 +1,4 @@
+import '../l10n/proxo_strings.dart';
 class AdCategoryOption {
   final String slug;
   final String label;
@@ -27,9 +28,9 @@ bool isSupportedAdCategory(String? slug) {
   return kAdCategories.any((category) => category.slug == slug);
 }
 
-String adCategoryLabel(String? slug) {
+String adCategoryLabel(String? slug, {String? language}) {
   for (final category in kAdCategories) {
-    if (category.slug == slug) return category.label;
+    if (category.slug == slug) return ProxoStrings.text(category.label, language: language);
   }
-  return 'هی تر';
+  return ProxoStrings.text('هی تر', language: language);
 }

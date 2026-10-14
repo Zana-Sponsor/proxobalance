@@ -1,3 +1,4 @@
+import '../l10n/proxo_strings.dart';
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import 'proxo_error_ui.dart';
@@ -34,10 +35,10 @@ void showProxoToast(
       type ?? (isError ? ProxoToastType.error : ProxoToastType.success);
   showProxoErrorSnack(
     context,
-    message,
+    ProxoStrings.text(message),
     tone: proxoToneForToast(toastType),
     duration: duration,
-    actionLabel: actionLabel,
+    actionLabel: actionLabel == null ? null : ProxoStrings.text(actionLabel),
     onAction: onAction,
     textDirection: textDirection,
     fontFamily: fontFamily,

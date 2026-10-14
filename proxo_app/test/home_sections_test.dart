@@ -390,7 +390,7 @@ void main() {
     expect(page, greaterThan(0.5));
     await key.currentState!.refresh(forceRefresh: false);
     await tester.pumpAndSettle();
-    expect(flags, [true, false]);
+    expect(flags, [false, false]); // Mount and pull-to-refresh both honor the cache TTL.
     await tester.ensureVisible(
       find.byKey(const ValueKey('home-results-view-all')),
     );

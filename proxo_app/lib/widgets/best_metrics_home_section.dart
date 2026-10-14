@@ -1,3 +1,4 @@
+import 'package:proxo_app/l10n/proxo_strings.dart';
 import 'dart:async';
 import 'dart:math' as math;
 
@@ -198,7 +199,7 @@ class BestMetricsHomeSectionState extends State<BestMetricsHomeSection> {
               if (_ads.length > 1) ...[
             const SizedBox(height: 4),
                 Semantics(
-                  label: 'ڕیکلامی ${_page + 1} لە ${_ads.length}',
+                  label: ProxoStrings.format('ڕیکلامی {index} لە {count}', {'index': _page+1, 'count': _ads.length}),
                   child: Row(
                     key: const ValueKey('home-results-dots'),
                     mainAxisAlignment: MainAxisAlignment.center,

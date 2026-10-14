@@ -1351,8 +1351,8 @@ class _AuthShellState extends State<AuthShell> {
                               ),
                               child: Row(
                                 children: [
-                                  Icon(
-                                    Icons.info_outline_rounded,
+                                  ProxoSymbol(
+                                    ProxoSymbolName.warning,
                                     color: AuthTokens.danger,
                                     size: 19.0,
                                   ),

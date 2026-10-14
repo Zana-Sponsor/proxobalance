@@ -145,7 +145,7 @@ class _ToolsScreenState extends State<ToolsScreen> {
       return Padding(padding: const EdgeInsets.symmetric(vertical: 56, horizontal: 12), child: Column(children: [
         Icon(_pages.error == null ? Icons.article_outlined : Icons.cloud_off_outlined, size: 40, color: AdUi.secondary),
         const SizedBox(height: 20),
-        ProxoText(_pages.error == null ? 'هێشتا هیچ پەڕەیەکت دروست نەکردووە' : 'نەتوانرا پەڕەکان بار بکرێن',
+        ProxoText(_pages.error == null ? 'هێشتا هیچ پەڕەیەکت دروست نەکردووە' : 'نەتوانرا پەڕەکان بار بکرێن', translate: true,
           textAlign: TextAlign.center, style: AdUi.heading(context)),
         const SizedBox(height: 10),
         if (_pages.error == null) const ProxoText('پەڕەیەک دروستبکە و بەستەرەکەت بەکاربهێنە.', translate: true, textAlign: TextAlign.center),

@@ -1,0 +1,52 @@
+name: Isolated ad correction and notification security
+on:
+  push:
+    branches: [feat/proxolink-private-renderer-migration]
+    paths: ['database/review/**', 'test/ad-security.sql', 'test/fixtures/ad-security-database.sql', '.github/workflows/ad-security.yml']
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: isolated-fixture
+          POSTGRES_DB: ad_security_test
+        ports: ['5432:5432']
+        options: --health-cmd pg_isready --health-interval 5s --health-retries 10
+    env:
+      PGHOST: 127.0.0.1
+      PGPORT: 5432
+      PGUSER: postgres
+      PGPASSWORD: isolated-fixture
+      PGDATABASE: ad_security_test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: supabase/setup-cli@v3
+        with:
+          version: latest
+      - name: Generate migration with Supabase CLI (no hosted project)
+        run: |
+          mkdir -p build/ad-security
+          cd build/ad-security
+          supabase init
+          supabase migration new ad_correction_and_notification_guards
+          cp ../../database/review/ad_correction_and_notification_guards.sql supabase/migrations/*_ad_correction_and_notification_guards.sql
+      - run: psql -v ON_ERROR_STOP=1 -f test/fixtures/ad-security-database.sql
+      - name: Apply twice and verify ownership and privilege boundaries
+        run: |
+          psql -v ON_ERROR_STOP=1 -f database/review/ad_correction_and_notification_guards.sql
+          psql -v ON_ERROR_STOP=1 -f database/review/ad_correction_and_notification_guards.sql
+          psql -v ON_ERROR_STOP=1 -f test/ad-security.sql | tee build/ad-security/results.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: reviewed-ad-security-migration
+          path: |
+            build/ad-security/supabase/migrations/
+            build/ad-security/results.txt

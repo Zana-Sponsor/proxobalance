@@ -1,3 +1,4 @@
+import 'package:proxo_app/l10n/proxo_strings.dart';
 import 'package:proxo_app/widgets/proxo_symbol.dart';
 import '../models/receipt_pricing.dart';
 import '../screens/ad_detail_screen.dart' show adDetailsRoute;
@@ -714,7 +715,7 @@ class _ProxoSidebarState extends State<ProxoSidebar>
                   ),
                   SizedBox(width: m.tileGap),
                   Expanded(
-                    child: ProxoText(label,
+                    child: ProxoText(label, translate: true,
                       style: _kBase.copyWith(
                         fontSize: m.labelSize,
                         fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
@@ -737,7 +738,7 @@ class _ProxoSidebarState extends State<ProxoSidebar>
   }
 
   Widget _buildBadge(_NavMetrics m, int count) => Semantics(
-        label: '$count نەخوێندراوە',
+        label: ProxoStrings.format('{count} نەخوێندراوە', {'count': count}),
         excludeSemantics: true,
         child: Container(
           alignment: Alignment.center,
