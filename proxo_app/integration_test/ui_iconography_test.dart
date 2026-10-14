@@ -64,6 +64,20 @@ void main() {
         await precacheImage((element.widget as Image).image, element);
       }
       await t.pumpAndSettle();
+      // Image decoding can finish before the Android raster frame is presented.
+      // Check the actual mounted image and its layout before capturing evidence.
+      for (final element in find.byType(Image).evaluate().toList()) {
+        final raw = find.descendant(of: find.byWidget(element.widget), matching: find.byType(RawImage));
+        expect(raw, findsOneWidget);
+        final rendered = t.widget<RawImage>(raw);
+        final box = t.getSize(raw);
+        observations['$name-image'] = {'decoded': rendered.image != null,
+          'width_dp': box.width, 'height_dp': box.height};
+        expect(rendered.image, isNotNull, reason: '$name mounted image must finish decoding');
+        expect(box.width, greaterThan(0), reason: '$name image cannot collapse horizontally');
+        expect(box.height, greaterThan(0), reason: '$name image cannot collapse vertically');
+      }
+      await t.pump(const Duration(milliseconds: 100));
       expect(t.takeException(), isNull);
       await binding.takeScreenshot('$config-$name');
     }
