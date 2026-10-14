@@ -340,11 +340,16 @@ Future<void> snapshot(
   void visit(Element e) {
     final ro = e.findRenderObject();
     if (ro is RenderBox && ro.hasSize && ro.attached) {
-      final origin = ro.localToGlobal(Offset.zero, ancestor: boundary);
+      // Include RTL reflection and the baseline's FittedBox scaling. A box's
+      // untransformed width is not its actual painted width on the screenshot.
+      final painted = MatrixUtils.transformRect(
+        ro.getTransformTo(boundary),
+        Offset.zero & ro.size,
+      );
       final record = <String, Object?>{
         'widget': e.widget.runtimeType.toString(),
         'key': e.widget.key?.toString(),
-        'bounds_dp': [origin.dx, origin.dy, ro.size.width, ro.size.height],
+        'bounds_dp': [painted.left, painted.top, painted.width, painted.height],
       };
       if (ro is RenderParagraph) {
         record['text'] = ro.text.toPlainText();
