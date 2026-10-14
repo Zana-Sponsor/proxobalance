@@ -73,90 +73,94 @@ void main() {
       )),
     ));
     final semantics = t.ensureSemantics();
-    addTearDown(semantics.dispose);
-    for (final scale in [1.0, 2.0]) {
-      await mount(actions(true), scale: scale);
-      expect(find.descendant(of: find.byType(HomeQuickActions),
-        matching: find.byType(Image)), findsNothing);
-      for (final name in ['home-create-ad', 'home-add-balance', 'home-create-page']) {
-        final card = find.byKey(ValueKey(name));
-        await t.ensureVisible(card);
+    try {
+      for (final scale in [1.0, 2.0]) {
+        await mount(actions(true), scale: scale);
+        expect(find.descendant(of: find.byType(HomeQuickActions),
+          matching: find.byType(Image)), findsNothing);
+        for (final name in ['home-create-ad', 'home-add-balance', 'home-create-page']) {
+          final card = find.byKey(ValueKey(name));
+          await t.ensureVisible(card);
+          await t.pumpAndSettle();
+          final size = t.getSize(card);
+          expect(size.width, greaterThanOrEqualTo(48));
+          expect(size.height, greaterThanOrEqualTo(48));
+          final semantic = t.getSemantics(card);
+          expect(semantic.getSemanticsData().label, isNotEmpty);
+          await t.tap(card);
+        }
+        await shot('actions-scale-$scale');
+      }
+      expect(taps, ['ad', 'balance', 'page', 'ad', 'balance', 'page']);
+      observations['quick_action_callbacks'] = taps.toList();
+      await mount(actions(false));
+      await t.tap(find.byKey(const ValueKey('home-create-ad')));
+      expect(taps.length, 6);
+      await shot('actions-disabled');
+      observations['disabled_action_did_not_fire'] = true;
+      for (final index in [0, 1, 3, 4]) {
+        await mount(Scaffold(bottomNavigationBar: ProxoBottomNav(
+          currentIndex: index, onTap: (_) {},
+        )));
+        await shot('navigation-$index');
+      }
+      for (final scale in [1.0, 2.0]) {
+        await mount(TransactionDetailScreen(data: TxReceiptData(
+          kind: TxReceiptKind.topUp, status: 'approved', txId: 'TX4UFQVLZ4J6',
+          uid: screenFixtureOwner, date: DateTime.utc(2026, 10, 14, 1, 58),
+          usd: 10, amountIqd: 18000, balanceBefore: null, balanceAfter: null,
+          method: 'fastpay', gateway: 'fastpay', type: 'deposit',
+          adName: null, voucherCode: null,
+        )), scale: scale);
+        await shot('receipt-scale-$scale');
+        // Native safe-area/large text can put this lazy ListView child beyond
+        // the cache extent. Scroll it into the tree before asking for its box.
+        await t.scrollUntilVisible(find.byType(ReceiptPdfButton), 400,
+          scrollable: find.byType(Scrollable).first);
         await t.pumpAndSettle();
-        final size = t.getSize(card);
-        expect(size.width, greaterThanOrEqualTo(48));
-        expect(size.height, greaterThanOrEqualTo(48));
-        final semantic = t.getSemantics(card);
-        expect(semantic.getSemanticsData().label, isNotEmpty);
-        await t.tap(card);
+        expect(t.getSize(find.byType(ReceiptPdfButton)).height, greaterThanOrEqualTo(48));
+        await shot('receipt-bottom-scale-$scale');
       }
-      await shot('actions-scale-$scale');
-    }
-    expect(taps, ['ad', 'balance', 'page', 'ad', 'balance', 'page']);
-    observations['quick_action_callbacks'] = taps.toList();
-    await mount(actions(false));
-    await t.tap(find.byKey(const ValueKey('home-create-ad')));
-    expect(taps.length, 6);
-    await shot('actions-disabled');
-    observations['disabled_action_did_not_fire'] = true;
-    for (final index in [0, 1, 3, 4]) {
-      await mount(Scaffold(bottomNavigationBar: ProxoBottomNav(
-        currentIndex: index, onTap: (_) {},
-      )));
-      await shot('navigation-$index');
-    }
-    for (final scale in [1.0, 2.0]) {
-      await mount(TransactionDetailScreen(data: TxReceiptData(
-        kind: TxReceiptKind.topUp, status: 'approved', txId: 'TX4UFQVLZ4J6',
-        uid: screenFixtureOwner, date: DateTime.utc(2026, 10, 14, 1, 58),
-        usd: 10, amountIqd: 18000, balanceBefore: null, balanceAfter: null,
-        method: 'fastpay', gateway: 'fastpay', type: 'deposit',
-        adName: null, voucherCode: null,
-      )), scale: scale);
-      await shot('receipt-scale-$scale');
-      // Native safe-area/large text can put this lazy ListView child beyond
-      // the cache extent. Scroll it into the tree before asking for its box.
-      await t.scrollUntilVisible(find.byType(ReceiptPdfButton), 400,
-        scrollable: find.byType(Scrollable).first);
+      await mount(ToolsScreen(repository: ActualToolsRepository()));
+      await shot('tools');
+      await mount(AdCreateScreen(repository: ActualAdRepository()));
+      await shot('create');
+      final title = find.byKey(const ValueKey('ad-title'));
+      await t.ensureVisible(title);
       await t.pumpAndSettle();
-      expect(t.getSize(find.byType(ReceiptPdfButton)).height, greaterThanOrEqualTo(48));
-      await shot('receipt-bottom-scale-$scale');
-    }
-    await mount(ToolsScreen(repository: ActualToolsRepository()));
-    await shot('tools');
-    await mount(AdCreateScreen(repository: ActualAdRepository()));
-    await shot('create');
-    final title = find.byKey(const ValueKey('ad-title'));
-    await t.ensureVisible(title);
-    await t.pumpAndSettle();
-    await t.tap(title);
-    Future<void> waitInsets(bool visible) async {
-      for (var i = 0; i < 100; i++) {
-        await t.pump(const Duration(milliseconds: 100));
-        if ((t.view.viewInsets.bottom > 0) == visible) return;
+      await t.tap(title);
+      Future<void> waitInsets(bool visible) async {
+        for (var i = 0; i < 100; i++) {
+          await t.pump(const Duration(milliseconds: 100));
+          if ((t.view.viewInsets.bottom > 0) == visible) return;
+        }
+        fail('Native keyboard visibility did not become $visible');
       }
-      fail('Native keyboard visibility did not become $visible');
+      await waitInsets(true);
+      observations['keyboard_inset_physical_px'] = t.view.viewInsets.bottom;
+      await shot('create-keyboard');
+      // The host runner sees this marker and sends an actual ADB BACK key event.
+      // A framework handlePopRoute call would not test Android keyboard behavior.
+      print('PROXO_UI_NATIVE_BACK_READY');
+      await waitInsets(false);
+      expect(find.byType(AdCreateScreen), findsOneWidget);
+      observations['android_back_dismissed_keyboard_kept_form'] = true;
+      await t.tap(title);
+      await waitInsets(true);
+      final goal = find.byKey(const ValueKey('goal-views'));
+      await t.ensureVisible(goal);
+      await t.pumpAndSettle();
+      await t.tap(goal);
+      await waitInsets(false);
+      observations['choice_dismissed_keyboard'] = true;
+      await shot('create-keyboard-dismissed');
+      expect(t.takeException(), isNull);
+      await t.pumpWidget(const SizedBox());
+      await t.pumpAndSettle();
+      observations['completed'] = true;
+    } finally {
+      // Flutter verifies handles before addTearDown callbacks run.
+      semantics.dispose();
     }
-    await waitInsets(true);
-    observations['keyboard_inset_physical_px'] = t.view.viewInsets.bottom;
-    await shot('create-keyboard');
-    // The host runner sees this marker and sends an actual ADB BACK key event.
-    // A framework handlePopRoute call would not test Android keyboard behavior.
-    print('PROXO_UI_NATIVE_BACK_READY');
-    await waitInsets(false);
-    expect(find.byType(AdCreateScreen), findsOneWidget);
-    observations['android_back_dismissed_keyboard_kept_form'] = true;
-    await t.tap(title);
-    await waitInsets(true);
-    final goal = find.byKey(const ValueKey('goal-views'));
-    await t.ensureVisible(goal);
-    await t.pumpAndSettle();
-    await t.tap(goal);
-    await waitInsets(false);
-    observations['choice_dismissed_keyboard'] = true;
-    await shot('create-keyboard-dismissed');
-    expect(t.takeException(), isNull);
-    await t.pumpWidget(const SizedBox());
-    await t.pumpAndSettle();
-    observations['completed'] = true;
   }, timeout: const Timeout(Duration(minutes: 5)));
 }
