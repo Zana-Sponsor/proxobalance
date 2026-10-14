@@ -42,6 +42,9 @@ void main() {
       expect(find.descendant(of:selected, matching:find.text('پڕۆفایل و ڕێکخستنەکان')),findsOneWidget);
       await t.ensureVisible(find.text('یارمەتی و پشتگیری')); await t.pumpAndSettle();
       await t.tap(find.text('یارمەتی و پشتگیری'));
+      // _go intentionally waits 250ms for the drawer to close. An idle fake
+      // clock does not advance that timer merely because no frame is pending.
+      await t.pump(const Duration(milliseconds: 300));
       await t.pumpAndSettle();
       expect(find.byType(FaqScreen), findsOneWidget);
       app.navigatorKey.currentState!.pop(); await t.pumpAndSettle();

@@ -1313,7 +1313,7 @@ class _ProfileTopBar extends StatelessWidget {
                     ),
               Expanded(
                 child: const ProxoText(
-                        'پرۆفایل',
+                        'پڕۆفایل',
                         textAlign: TextAlign.center,
                         softWrap: true,
                         style: _ProfileText.screenTitle,
