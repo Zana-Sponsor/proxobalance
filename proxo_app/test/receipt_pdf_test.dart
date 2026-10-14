@@ -138,7 +138,7 @@ void main() {
         final surfaceRect = receiptPaintedRect(tester, find.byType(ReceiptSurface));
         final cardRect = receiptPaintedRect(tester, find.byType(ReceiptCard));
         expect(boundary.size.width, narrow ? 280 : 393);
-        final factor = boundary.size.width / ReceiptTokens.referenceWidth;
+        const factor = 1.0;
         expect(cardRect.left - surfaceRect.left, closeTo(16 * factor, 0.01));
         expect(cardRect.top - surfaceRect.top,
             closeTo(ReceiptTokens.pageTop * factor, 0.01));

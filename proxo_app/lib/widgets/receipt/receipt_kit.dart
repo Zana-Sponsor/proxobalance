@@ -447,9 +447,9 @@ class ReceiptRow extends StatelessWidget {
         return result;
       }
       final labelWidget = ProxoText(label, textAlign: TextAlign.right,
-        textDirection: receiptDirOf(label), style: ReceiptTokens.rowLabel);
+        textDirection: receiptDirOf(label), softWrap: true, style: ReceiptTokens.rowLabel);
       final valueWidget = ProxoText(value, textAlign: TextAlign.left,
-        textDirection: valueDirection, style: effectiveStyle);
+        textDirection: valueDirection, softWrap: true, style: effectiveStyle);
       final labelWidth = naturalWidth(label, ReceiptTokens.rowLabel, receiptDirOf(label));
       final valueWidth = naturalWidth(value, effectiveStyle, valueDirection);
       final fits = labelWidth + ReceiptTokens.labelToValue + valueWidth <= constraints.maxWidth;

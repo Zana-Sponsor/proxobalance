@@ -113,8 +113,8 @@ void main() {
         expect(tester.getCenter(back).dx, lessThan(width / 2));
         expect(tester.getCenter(refresh).dx, greaterThan(width / 2));
         expect(tester.getCenter(title).dx, closeTo(width / 2, 0.01));
-        expect(tester.getSize(back), const Size(44, 44));
-        expect(tester.getSize(refresh), const Size(44, 44));
+        expect(tester.getSize(back), const Size(48, 48));
+        expect(tester.getSize(refresh), const Size(48, 48));
         expect(tester.widget<Scaffold>(find.byType(Scaffold)).backgroundColor,
             ReceiptTokens.page);
         final card = find.byKey(firstCardKey);
@@ -125,9 +125,9 @@ void main() {
         final bounds = [
           for (var i = 0; i < 3; i++) receiptPaintedRect(tester, texts.at(i)),
         ];
-        expect(bounds[0].right, lessThan(bounds[1].left));
+        expect(bounds[0].bottom, lessThan(bounds[1].top));
         expect(bounds[1].right, lessThan(bounds[2].left));
-        expect(bounds[0].center.dy, closeTo(bounds[2].center.dy, 0.01));
+        expect(bounds[1].center.dy, closeTo(bounds[2].center.dy, 0.01));
         for (final finder in [
           title,
           ...[texts.at(0), texts.at(1), texts.at(2)]

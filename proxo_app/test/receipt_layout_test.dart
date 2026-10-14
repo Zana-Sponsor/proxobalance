@@ -192,7 +192,7 @@ void main() {
           expect(find.byType(BottomNavigationBar), findsNothing);
 
           final measuredRows = auditReceiptRows(tester);
-          final factor = width / ReceiptTokens.referenceWidth;
+          const factor = 1.0;
           final cardBounds =
               receiptPaintedRect(tester, find.byType(ReceiptCard));
           final expectedInset =
@@ -208,9 +208,9 @@ void main() {
           final uid = find.text(data['id'] as String);
           final uidText = tester.widget<Text>(uid);
           expect(uidText.textDirection, TextDirection.ltr);
-          expect(uidText.maxLines, 1);
-          expect(uidText.softWrap, false);
-          expect(uidText.style!.fontSize, lessThanOrEqualTo(11 * scale));
+          expect(uidText.maxLines, isNull);
+          expect(uidText.softWrap, true);
+          expect(uidText.style!.fontSize, ReceiptTokens.uidSize);
           expect(uidText.overflow, isNot(TextOverflow.ellipsis));
           expect(find.text(strings.receiptNo), findsOneWidget);
           final adId = find.text(data['public_ad_id'] as String);
@@ -250,9 +250,9 @@ void main() {
           expect(
               receiptPaintedRect(tester, uid).right, lessThanOrEqualTo(width));
           for (final icon in tester.widgetList<Icon>(find.byType(Icon))) {
-            expect(icon.size, 16);
+            expect(icon.size, ReceiptTokens.iconSize);
           }
-          expect(ReceiptTokens.rowValue.fontSize, 11);
+          expect(ReceiptTokens.rowValue.fontSize, 13);
           for (final divider in find.byType(ReceiptDivider).evaluate()) {
             expect(
                 receiptPaintedRect(tester, find.byWidget(divider.widget))
@@ -318,7 +318,7 @@ void main() {
   }
 
   testWidgets(
-    'long references fit completely on one line and copying preserves the original',
+    'long references wrap at native font size and copying preserves the original',
     (tester) async {
       final reference =
           '${List.filled(12, 'long-reference').join('-')}@example.com';
@@ -342,11 +342,11 @@ void main() {
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
       final value = tester.widget<Text>(find.text(reference));
-      expect(value.maxLines, 1);
-      expect(value.softWrap, false);
-      expect(value.style!.fontSize, lessThan(11));
+      expect(value.maxLines, isNull);
+      expect(value.softWrap, true);
+      expect(value.style!.fontSize, ReceiptTokens.uidSize);
       auditReceiptRows(tester);
-      expect(tester.getSize(find.byType(ReceiptRow)).height, 20);
+      expect(tester.getSize(find.byType(ReceiptRow)).height, greaterThan(ReceiptTokens.rowMinHeight));
       expect(find.byType(SingleChildScrollView), findsNothing);
       expect(value.overflow, isNot(TextOverflow.ellipsis));
       expect(
@@ -408,8 +408,8 @@ void main() {
             for (final id in <String>[txId]) {
               final text = tester.widget<Text>(find.text(id));
               expect(text.textDirection, TextDirection.ltr);
-              expect(text.maxLines, 1);
-              expect(text.softWrap, false);
+              expect(text.maxLines, isNull);
+              expect(text.softWrap, true);
             }
             final signed = status == 'approved'
                 ? (kind == TxReceiptKind.topUp || kind == TxReceiptKind.refund
@@ -420,7 +420,7 @@ void main() {
               (widget) =>
                   widget is Text &&
                   widget.data == '${signed}21,000 د.ع' &&
-                  widget.style?.fontSize == 12,
+                  widget.style?.fontSize == ReceiptTokens.totalSize,
             );
             expect(totals, findsOneWidget);
             final total = tester.widget<Text>(totals);
@@ -461,9 +461,9 @@ void main() {
     ));
     await tester.pumpAndSettle();
     auditReceiptRows(tester);
-    expect(tester.widget<Text>(find.text('P123456')).style!.fontSize, 11);
-    expect(tester.widget<Text>(find.text('ئایدی ڕیکلام')).style!.fontSize, 11);
-    expect(find.text('New Ad 2021 ناوی سپۆنسەرێکی زۆر درێژ'), findsOneWidget);
+    expect(tester.widget<Text>(find.text('P123456')).style!.fontSize, ReceiptTokens.valueSize);
+    expect(tester.widget<Text>(find.text('ئایدی ڕیکلام')).style!.fontSize, ReceiptTokens.valueSize);
+    expect(find.text('New Ad\n2021\r\nناوی سپۆنسەرێکی زۆر درێژ'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
@@ -482,9 +482,7 @@ void main() {
       matching: find.byType(ReceiptRow),
     );
     final removedHeight = receiptPaintedRect(tester, discount).height +
-        ReceiptTokens.rowToRow *
-            tester.getSize(find.byType(ReceiptSurface)).width /
-            ReceiptTokens.referenceWidth;
+        ReceiptTokens.rowToRow;
     data['pricing_discount_iqd_snapshot'] = 0;
     await tester.pumpWidget(
       receiptHost(strings: strings, data: data, scale: 1),

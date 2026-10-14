@@ -1,1312 +1,2261 @@
-[
-  {
-    "file": "lib/models/proxolink_template_meta.dart",
-    "line": 73,
-    "icon": "Icons.dark_mode_rounded"
-  },
-  {
-    "file": "lib/models/proxolink_template_meta.dart",
-    "line": 75,
-    "icon": "Icons.light_mode_rounded"
-  },
-  {
-    "file": "lib/models/proxolink_template_meta.dart",
-    "line": 77,
-    "icon": "Icons.layers_rounded"
-  },
-  {
-    "file": "lib/models/proxolink_template_meta.dart",
-    "line": 79,
-    "icon": "Icons.healing_rounded"
-  },
-  {
-    "file": "lib/models/proxolink_template_meta.dart",
-    "line": 81,
-    "icon": "Icons.credit_card_rounded"
-  },
-  {
-    "file": "lib/models/proxolink_template_meta.dart",
-    "line": 83,
-    "icon": "Icons.bolt_rounded"
-  },
-  {
-    "file": "lib/models/proxolink_template_meta.dart",
-    "line": 85,
-    "icon": "Icons.zoom_in_rounded"
-  },
-  {
-    "file": "lib/models/proxolink_template_meta.dart",
-    "line": 87,
-    "icon": "Icons.view_stream_rounded"
-  },
-  {
-    "file": "lib/models/proxolink_template_meta.dart",
-    "line": 170,
-    "icon": "FontAwesomeIcons.whatsapp"
-  },
-  {
-    "file": "lib/models/proxolink_template_meta.dart",
-    "line": 184,
-    "icon": "FontAwesomeIcons.viber"
-  },
-  {
-    "file": "lib/models/proxolink_template_meta.dart",
-    "line": 198,
-    "icon": "FontAwesomeIcons.instagram"
-  },
-  {
-    "file": "lib/models/proxolink_template_meta.dart",
-    "line": 212,
-    "icon": "FontAwesomeIcons.phone"
-  },
-  {
-    "file": "lib/models/proxolink_template_meta.dart",
-    "line": 226,
-    "icon": "FontAwesomeIcons.mobileScreenButton"
-  },
-  {
-    "file": "lib/screens/ad_screen.dart",
-    "line": 4252,
-    "icon": "Icons.refresh_rounded"
-  },
-  {
-    "file": "lib/screens/ad_screen.dart",
-    "line": 4252,
-    "icon": "Icons.play_arrow_rounded"
-  },
-  {
-    "file": "lib/screens/auth/auth_shell.dart",
-    "line": 1350,
-    "icon": "Icons.info_outline_rounded"
-  },
-  {
-    "file": "lib/screens/auth/auth_shell.dart",
-    "line": 1529,
-    "icon": "Icons.mail_outline_rounded"
-  },
-  {
-    "file": "lib/screens/auth/auth_shell.dart",
-    "line": 1563,
-    "icon": "Icons.lock_outline_rounded"
-  },
-  {
-    "file": "lib/screens/auth/auth_shell.dart",
-    "line": 1628,
-    "icon": "Icons.phone_iphone_rounded"
-  },
-  {
-    "file": "lib/screens/auth/auth_shell.dart",
-    "line": 1687,
-    "icon": "Icons.person_outline_rounded"
-  },
-  {
-    "file": "lib/screens/auth/auth_shell.dart",
-    "line": 1711,
-    "icon": "Icons.phone_iphone_rounded"
-  },
-  {
-    "file": "lib/screens/auth/auth_shell.dart",
-    "line": 1754,
-    "icon": "Icons.lock_outline_rounded"
-  },
-  {
-    "file": "lib/screens/auth/auth_shell.dart",
-    "line": 1788,
-    "icon": "Icons.lock_reset_rounded"
-  },
-  {
-    "file": "lib/screens/auth/auth_shell.dart",
-    "line": 1973,
-    "icon": "Icons.mail_outline_rounded"
-  },
-  {
-    "file": "lib/screens/auth/auth_shell.dart",
-    "line": 2029,
-    "icon": "Icons.lock_outline_rounded"
-  },
-  {
-    "file": "lib/screens/auth/auth_shell.dart",
-    "line": 2062,
-    "icon": "Icons.lock_reset_rounded"
-  },
-  {
-    "file": "lib/screens/auth/auth_shell.dart",
-    "line": 2106,
-    "icon": "Icons.visibility_off_outlined"
-  },
-  {
-    "file": "lib/screens/auth/auth_shell.dart",
-    "line": 2106,
-    "icon": "Icons.visibility_outlined"
-  },
-  {
-    "file": "lib/screens/best_metrics_screen.dart",
-    "line": 197,
-    "icon": "SolarIcons.altArrowRight"
-  },
-  {
-    "file": "lib/screens/best_metrics_screen.dart",
-    "line": 206,
-    "icon": "SolarIcons.medalStar"
-  },
-  {
-    "file": "lib/screens/best_metrics_screen.dart",
-    "line": 325,
-    "icon": "SolarIcons.dangerTriangle"
-  },
-  {
-    "file": "lib/screens/deposit_screen.dart",
-    "line": 115,
-    "icon": "Icons.account_balance_rounded"
-  },
-  {
-    "file": "lib/screens/deposit_screen.dart",
-    "line": 123,
-    "icon": "Icons.flash_on_rounded"
-  },
-  {
-    "file": "lib/screens/deposit_screen.dart",
-    "line": 131,
-    "icon": "Icons.credit_card_rounded"
-  },
-  {
-    "file": "lib/screens/deposit_screen.dart",
-    "line": 139,
-    "icon": "Icons.account_balance_wallet_rounded"
-  },
-  {
-    "file": "lib/screens/deposit_screen.dart",
-    "line": 147,
-    "icon": "Icons.apps_rounded"
-  },
-  {
-    "file": "lib/screens/deposit_screen.dart",
-    "line": 155,
-    "icon": "Icons.sim_card_rounded"
-  },
-  {
-    "file": "lib/screens/deposit_screen.dart",
-    "line": 164,
-    "icon": "Icons.signal_cellular_alt_rounded"
-  },
-  {
-    "file": "lib/screens/deposit_screen.dart",
-    "line": 266,
-    "icon": "Icons.photo_camera_rounded"
-  },
-  {
-    "file": "lib/screens/deposit_screen.dart",
-    "line": 272,
-    "icon": "Icons.photo_library_rounded"
-  },
-  {
-    "file": "lib/screens/deposit_screen.dart",
-    "line": 708,
-    "icon": "Icons.cloud_upload_rounded"
-  },
-  {
-    "file": "lib/screens/deposit_screen.dart",
-    "line": 844,
-    "icon": "Icons.chevron_right_rounded"
-  },
-  {
-    "file": "lib/screens/deposit_screen.dart",
-    "line": 999,
-    "icon": "Icons.copy_rounded"
-  },
-  {
-    "file": "lib/screens/faq_screen.dart",
-    "line": 300,
-    "icon": "Icons.chevron_right_rounded"
-  },
-  {
-    "file": "lib/screens/faq_screen.dart",
-    "line": 452,
-    "icon": "Icons.keyboard_arrow_down_rounded"
-  },
-  {
-    "file": "lib/screens/home_screen.dart",
-    "line": 716,
-    "icon": "Icons.monetization_on_outlined"
-  },
-  {
-    "file": "lib/screens/home_screen.dart",
-    "line": 736,
-    "icon": "Icons.task_alt"
-  },
-  {
-    "file": "lib/screens/home_screen.dart",
-    "line": 746,
-    "icon": "Icons.percent"
-  },
-  {
-    "file": "lib/screens/home_screen.dart",
-    "line": 847,
-    "icon": "Icons.trending_flat_rounded"
-  },
-  {
-    "file": "lib/screens/home_screen.dart",
-    "line": 849,
-    "icon": "Icons.arrow_upward_rounded"
-  },
-  {
-    "file": "lib/screens/home_screen.dart",
-    "line": 850,
-    "icon": "Icons.arrow_downward_rounded"
-  },
-  {
-    "file": "lib/screens/home_screen.dart",
-    "line": 933,
-    "icon": "Icons.check_rounded"
-  },
-  {
-    "file": "lib/screens/home_screen.dart",
-    "line": 959,
-    "icon": "Icons.calendar_today_outlined"
-  },
-  {
-    "file": "lib/screens/home_screen.dart",
-    "line": 973,
-    "icon": "Icons.keyboard_arrow_down_rounded"
-  },
-  {
-    "file": "lib/screens/notifications_screen.dart",
-    "line": 193,
-    "icon": "Icons.task_alt_rounded"
-  },
-  {
-    "file": "lib/screens/notifications_screen.dart",
-    "line": 195,
-    "icon": "Icons.cancel_rounded"
-  },
-  {
-    "file": "lib/screens/notifications_screen.dart",
-    "line": 197,
-    "icon": "Icons.campaign_rounded"
-  },
-  {
-    "file": "lib/screens/notifications_screen.dart",
-    "line": 199,
-    "icon": "Icons.emoji_events_rounded"
-  },
-  {
-    "file": "lib/screens/notifications_screen.dart",
-    "line": 201,
-    "icon": "Icons.pause_circle_rounded"
-  },
-  {
-    "file": "lib/screens/notifications_screen.dart",
-    "line": 203,
-    "icon": "Icons.rocket_launch_rounded"
-  },
-  {
-    "file": "lib/screens/notifications_screen.dart",
-    "line": 205,
-    "icon": "Icons.verified_rounded"
-  },
-  {
-    "file": "lib/screens/notifications_screen.dart",
-    "line": 207,
-    "icon": "Icons.highlight_off_rounded"
-  },
-  {
-    "file": "lib/screens/notifications_screen.dart",
-    "line": 209,
-    "icon": "Icons.account_balance_wallet_rounded"
-  },
-  {
-    "file": "lib/screens/notifications_screen.dart",
-    "line": 211,
-    "icon": "Icons.currency_exchange_rounded"
-  },
-  {
-    "file": "lib/screens/notifications_screen.dart",
-    "line": 213,
-    "icon": "Icons.currency_exchange_rounded"
-  },
-  {
-    "file": "lib/screens/notifications_screen.dart",
-    "line": 216,
-    "icon": "Icons.card_giftcard_rounded"
-  },
-  {
-    "file": "lib/screens/notifications_screen.dart",
-    "line": 218,
-    "icon": "Icons.forum_rounded"
-  },
-  {
-    "file": "lib/screens/notifications_screen.dart",
-    "line": 220,
-    "icon": "Icons.system_update_rounded"
-  },
-  {
-    "file": "lib/screens/notifications_screen.dart",
-    "line": 222,
-    "icon": "Icons.notifications_rounded"
-  },
-  {
-    "file": "lib/screens/notifications_screen.dart",
-    "line": 224,
-    "icon": "Icons.warning_amber_rounded"
-  },
-  {
-    "file": "lib/screens/notifications_screen.dart",
-    "line": 226,
-    "icon": "Icons.gpp_bad_rounded"
-  },
-  {
-    "file": "lib/screens/notifications_screen.dart",
-    "line": 228,
-    "icon": "Icons.shield_rounded"
-  },
-  {
-    "file": "lib/screens/notifications_screen.dart",
-    "line": 570,
-    "icon": "Icons.mark_email_read_rounded"
-  },
-  {
-    "file": "lib/screens/notifications_screen.dart",
-    "line": 580,
-    "icon": "Icons.push_pin_rounded"
-  },
-  {
-    "file": "lib/screens/notifications_screen.dart",
-    "line": 581,
-    "icon": "Icons.push_pin_outlined"
-  },
-  {
-    "file": "lib/screens/notifications_screen.dart",
-    "line": 591,
-    "icon": "Icons.notifications_off_rounded"
-  },
-  {
-    "file": "lib/screens/notifications_screen.dart",
-    "line": 592,
-    "icon": "Icons.notifications_off_outlined"
-  },
-  {
-    "file": "lib/screens/notifications_screen.dart",
-    "line": 601,
-    "icon": "Icons.archive_outlined"
-  },
-  {
-    "file": "lib/screens/notifications_screen.dart",
-    "line": 610,
-    "icon": "Icons.delete_outline_rounded"
-  },
-  {
-    "file": "lib/screens/notifications_screen.dart",
-    "line": 739,
-    "icon": "Icons.tune_rounded"
-  },
-  {
-    "file": "lib/screens/notifications_screen.dart",
-    "line": 764,
-    "icon": "Icons.done_all_rounded"
-  },
-  {
-    "file": "lib/screens/notifications_screen.dart",
-    "line": 776,
-    "icon": "Icons.arrow_forward_rounded"
-  },
-  {
-    "file": "lib/screens/notifications_screen.dart",
-    "line": 833,
-    "icon": "Icons.notifications_off_outlined"
-  },
-  {
-    "file": "lib/screens/notifications_screen.dart",
-    "line": 986,
-    "icon": "Icons.archive_rounded"
-  },
-  {
-    "file": "lib/screens/notifications_screen.dart",
-    "line": 992,
-    "icon": "Icons.delete_rounded"
-  },
-  {
-    "file": "lib/screens/notifications_screen.dart",
-    "line": 1060,
-    "icon": "Icons.push_pin_rounded"
-  },
-  {
-    "file": "lib/screens/notifications_screen.dart",
-    "line": 1066,
-    "icon": "Icons.notifications_off_rounded"
-  },
-  {
-    "file": "lib/screens/profile_screen.dart",
-    "line": 420,
-    "icon": "SolarIconsOutline.bell"
-  },
-  {
-    "file": "lib/screens/profile_screen.dart",
-    "line": 426,
-    "icon": "SolarIconsOutline.history"
-  },
-  {
-    "file": "lib/screens/profile_screen.dart",
-    "line": 439,
-    "icon": "SolarIconsOutline.chatRoundCall"
-  },
-  {
-    "file": "lib/screens/profile_screen.dart",
-    "line": 445,
-    "icon": "SolarIconsOutline.documentText"
-  },
-  {
-    "file": "lib/screens/profile_screen.dart",
-    "line": 450,
-    "icon": "SolarIconsOutline.questionCircle"
-  },
-  {
-    "file": "lib/screens/profile_screen.dart",
-    "line": 1023,
-    "icon": "SolarIconsOutline.userRounded"
-  },
-  {
-    "file": "lib/screens/profile_screen.dart",
-    "line": 1025,
-    "icon": "SolarIconsOutline.lock"
-  },
-  {
-    "file": "lib/screens/profile_screen.dart",
-    "line": 1056,
-    "icon": "SolarIconsOutline.letter"
-  },
-  {
-    "file": "lib/screens/profile_screen.dart",
-    "line": 1078,
-    "icon": "SolarIconsOutline.smartphone"
-  },
-  {
-    "file": "lib/screens/profile_screen.dart",
-    "line": 1080,
-    "icon": "SolarIconsOutline.lock"
-  },
-  {
-    "file": "lib/screens/profile_screen.dart",
-    "line": 1138,
-    "icon": "SolarIconsOutline.userCrossRounded"
-  },
-  {
-    "file": "lib/screens/profile_screen.dart",
-    "line": 1170,
-    "icon": "SolarIconsOutline.altArrowLeft"
-  },
-  {
-    "file": "lib/screens/profile_screen.dart",
-    "line": 1309,
-    "icon": "SolarIconsOutline.altArrowRight"
-  },
-  {
-    "file": "lib/screens/profile_screen.dart",
-    "line": 1314,
-    "icon": "SolarIconsOutline.penNewSquare"
-  },
-  {
-    "file": "lib/screens/profile_screen.dart",
-    "line": 1331,
-    "icon": "SolarIconsOutline.penNewSquare"
-  },
-  {
-    "file": "lib/screens/profile_screen.dart",
-    "line": 1366,
-    "icon": "SolarIconsOutline.altArrowRight"
-  },
-  {
-    "file": "lib/screens/profile_screen.dart",
-    "line": 1576,
-    "icon": "Icons.photo_camera_outlined"
-  },
-  {
-    "file": "lib/screens/profile_screen.dart",
-    "line": 1602,
-    "icon": "SolarIconsOutline.userRounded"
-  },
-  {
-    "file": "lib/screens/profile_screen.dart",
-    "line": 1754,
-    "icon": "SolarIconsOutline.wallet2"
-  },
-  {
-    "file": "lib/screens/profile_screen.dart",
-    "line": 1807,
-    "icon": "SolarIconsOutline.eye"
-  },
-  {
-    "file": "lib/screens/profile_screen.dart",
-    "line": 1808,
-    "icon": "SolarIconsOutline.eyeClosed"
-  },
-  {
-    "file": "lib/screens/profile_screen.dart",
-    "line": 1858,
-    "icon": "SolarIconsOutline.clapperboardPlay"
-  },
-  {
-    "file": "lib/screens/profile_screen.dart",
-    "line": 1866,
-    "icon": "SolarIconsOutline.widget_2"
-  },
-  {
-    "file": "lib/screens/profile_screen.dart",
-    "line": 1874,
-    "icon": "SolarIconsOutline.tagPrice"
-  },
-  {
-    "file": "lib/screens/profile_screen.dart",
-    "line": 2045,
-    "icon": "SolarIconsOutline.altArrowLeft"
-  },
-  {
-    "file": "lib/screens/profile_screen.dart",
-    "line": 2088,
-    "icon": "SolarIconsOutline.logout"
-  },
-  {
-    "file": "lib/screens/profile_screen.dart",
-    "line": 2108,
-    "icon": "SolarIconsOutline.altArrowLeft"
-  },
-  {
-    "file": "lib/screens/profile_screen.dart",
-    "line": 2167,
-    "icon": "SolarIconsOutline.chatRoundCall"
-  },
-  {
-    "file": "lib/screens/profile_screen.dart",
-    "line": 2185,
-    "icon": "SolarIconsOutline.chatRoundDots"
-  },
-  {
-    "file": "lib/screens/profile_screen.dart",
-    "line": 2196,
-    "icon": "SolarIconsOutline.phoneRounded"
-  },
-  {
-    "file": "lib/screens/profile_screen.dart",
-    "line": 2317,
-    "icon": "SolarIconsOutline.closeCircle"
-  },
-  {
-    "file": "lib/screens/profile_screen.dart",
-    "line": 2339,
-    "icon": "SolarIconsOutline.sledgehammer"
-  },
-  {
-    "file": "lib/screens/profile_screen.dart",
-    "line": 2355,
-    "icon": "SolarIconsOutline.shieldCheck"
-  },
-  {
-    "file": "lib/screens/profile_screen.dart",
-    "line": 2369,
-    "icon": "SolarIconsOutline.usersGroupRounded"
-  },
-  {
-    "file": "lib/screens/profile_screen.dart",
-    "line": 2808,
-    "icon": "SolarIconsOutline.shieldCheck"
-  },
-  {
-    "file": "lib/screens/proxolink_create_page_screen.dart",
-    "line": 200,
-    "icon": "Icons.add_photo_alternate_outlined"
-  },
-  {
-    "file": "lib/screens/proxolink_create_page_screen.dart",
-    "line": 200,
-    "icon": "Icons.check_circle_outline"
-  },
-  {
-    "file": "lib/screens/proxolink_page_details_screen.dart",
-    "line": 290,
-    "icon": "Icons.edit_outlined"
-  },
-  {
-    "file": "lib/screens/proxolink_page_editor.dart",
-    "line": 585,
-    "icon": "Icons.person_outline"
-  },
-  {
-    "file": "lib/screens/proxolink_page_editor.dart",
-    "line": 591,
-    "icon": "Icons.photo_outlined"
-  },
-  {
-    "file": "lib/screens/proxolink_page_editor.dart",
-    "line": 659,
-    "icon": "Icons.check"
-  },
-  {
-    "file": "lib/screens/proxolink_page_editor.dart",
-    "line": 697,
-    "icon": "Icons.arrow_upward"
-  },
-  {
-    "file": "lib/screens/proxolink_page_editor.dart",
-    "line": 704,
-    "icon": "Icons.arrow_downward"
-  },
-  {
-    "file": "lib/screens/proxolink_page_editor.dart",
-    "line": 772,
-    "icon": "Icons.open_in_full"
-  },
-  {
-    "file": "lib/screens/tools_screen.dart",
-    "line": 146,
-    "icon": "Icons.article_outlined"
-  },
-  {
-    "file": "lib/screens/tools_screen.dart",
-    "line": 146,
-    "icon": "Icons.cloud_off_outlined"
-  },
-  {
-    "file": "lib/screens/tutorial_screen.dart",
-    "line": 225,
-    "icon": "Icons.play_circle_fill_rounded"
-  },
-  {
-    "file": "lib/screens/tutorial_screen.dart",
-    "line": 248,
-    "icon": "Icons.play_circle_outline_rounded"
-  },
-  {
-    "file": "lib/screens/tutorial_screen.dart",
-    "line": 345,
-    "icon": "Icons.play_circle_fill_rounded"
-  },
-  {
-    "file": "lib/theme/proxo_icons.dart",
-    "line": 9,
-    "icon": "Icons.block_rounded"
-  },
-  {
-    "file": "lib/theme/proxo_icons.dart",
-    "line": 10,
-    "icon": "Icons.calendar_month_outlined"
-  },
-  {
-    "file": "lib/theme/proxo_icons.dart",
-    "line": 11,
-    "icon": "Icons.schedule_rounded"
-  },
-  {
-    "file": "lib/theme/proxo_icons.dart",
-    "line": 12,
-    "icon": "Icons.edit_outlined"
-  },
-  {
-    "file": "lib/theme/proxo_icons.dart",
-    "line": 13,
-    "icon": "Icons.cloud_off_outlined"
-  },
-  {
-    "file": "lib/theme/proxo_icons.dart",
-    "line": 14,
-    "icon": "Icons.add_rounded"
-  },
-  {
-    "file": "lib/theme/proxo_icons.dart",
-    "line": 15,
-    "icon": "Icons.check_circle_outline_rounded"
-  },
-  {
-    "file": "lib/theme/proxo_icons.dart",
-    "line": 16,
-    "icon": "Icons.warning_amber_rounded"
-  },
-  {
-    "file": "lib/widgets/ad_feedback.dart",
-    "line": 179,
-    "icon": "Icons.close_rounded"
-  },
-  {
-    "file": "lib/widgets/ad_feedback.dart",
-    "line": 357,
-    "icon": "Icons.star_rounded"
-  },
-  {
-    "file": "lib/widgets/ad_feedback.dart",
-    "line": 357,
-    "icon": "Icons.star_outline_rounded"
-  },
-  {
-    "file": "lib/widgets/ad_feedback.dart",
-    "line": 488,
-    "icon": "Icons.star_rounded"
-  },
-  {
-    "file": "lib/widgets/ad_feedback.dart",
-    "line": 488,
-    "icon": "Icons.star_outline_rounded"
-  },
-  {
-    "file": "lib/widgets/ad_feedback.dart",
-    "line": 534,
-    "icon": "Icons.chevron_left_rounded"
-  },
-  {
-    "file": "lib/widgets/ad_feedback.dart",
-    "line": 560,
-    "icon": "Icons.star_rounded"
-  },
-  {
-    "file": "lib/widgets/ad_feedback.dart",
-    "line": 560,
-    "icon": "Icons.star_outline_rounded"
-  },
-  {
-    "file": "lib/widgets/ad_validation_notifications.dart",
-    "line": 179,
-    "icon": "Icons.error_outline"
-  },
-  {
-    "file": "lib/widgets/auth/auth_header.dart",
-    "line": 90,
-    "icon": "Icons.language_rounded"
-  },
-  {
-    "file": "lib/widgets/auth/auth_widgets.dart",
-    "line": 286,
-    "icon": "Icons.arrow_forward_rounded"
-  },
-  {
-    "file": "lib/widgets/auth/auth_widgets.dart",
-    "line": 287,
-    "icon": "Icons.arrow_back_rounded"
-  },
-  {
-    "file": "lib/widgets/auth/auth_widgets.dart",
-    "line": 331,
-    "icon": "Icons.check_circle_outline_rounded"
-  },
-  {
-    "file": "lib/widgets/auth/auth_widgets.dart",
-    "line": 332,
-    "icon": "Icons.info_outline_rounded"
-  },
-  {
-    "file": "lib/widgets/auth/auth_widgets.dart",
-    "line": 443,
-    "icon": "Icons.check_circle_rounded"
-  },
-  {
-    "file": "lib/widgets/auth/auth_widgets.dart",
-    "line": 443,
-    "icon": "Icons.radio_button_unchecked_rounded"
-  },
-  {
-    "file": "lib/widgets/auth/auth_widgets.dart",
-    "line": 542,
-    "icon": "Icons.cancel_rounded"
-  },
-  {
-    "file": "lib/widgets/auth/auth_widgets.dart",
-    "line": 704,
-    "icon": "Icons.lock_clock_rounded"
-  },
-  {
-    "file": "lib/widgets/auth/auth_widgets.dart",
-    "line": 787,
-    "icon": "Icons.person_rounded"
-  },
-  {
-    "file": "lib/widgets/auth/auth_widgets.dart",
-    "line": 819,
-    "icon": "Icons.chevron_left_rounded"
-  },
-  {
-    "file": "lib/widgets/best_metric_card.dart",
-    "line": 95,
-    "icon": "SolarIcons.eye"
-  },
-  {
-    "file": "lib/widgets/best_metric_card.dart",
-    "line": 103,
-    "icon": "SolarIcons.cursorSquare"
-  },
-  {
-    "file": "lib/widgets/best_metric_card.dart",
-    "line": 111,
-    "icon": "SolarIcons.dollarMinimalistic"
-  },
-  {
-    "file": "lib/widgets/best_metric_card.dart",
-    "line": 139,
-    "icon": "SolarIcons.arrowRightUp"
-  },
-  {
-    "file": "lib/widgets/best_metric_card.dart",
-    "line": 186,
-    "icon": "SolarIcons.altArrowDown"
-  },
-  {
-    "file": "lib/widgets/best_metric_card.dart",
-    "line": 212,
-    "icon": "SolarIcons.target"
-  },
-  {
-    "file": "lib/widgets/best_metric_card.dart",
-    "line": 220,
-    "icon": "SolarIcons.wallet"
-  },
-  {
-    "file": "lib/widgets/best_metric_card.dart",
-    "line": 311,
-    "icon": "SolarIcons.gallery"
-  },
-  {
-    "file": "lib/widgets/best_metric_card.dart",
-    "line": 413,
-    "icon": "SolarIcons.cupStar"
-  },
-  {
-    "file": "lib/widgets/best_metric_card.dart",
-    "line": 449,
-    "icon": "SolarIcons.fire"
-  },
-  {
-    "file": "lib/widgets/bottom_nav.dart",
-    "line": 212,
-    "icon": "Icons.grid_view_rounded"
-  },
-  {
-    "file": "lib/widgets/bottom_nav.dart",
-    "line": 213,
-    "icon": "Icons.person_rounded"
-  },
-  {
-    "file": "lib/widgets/fastpay_checkout_sheet.dart",
-    "line": 545,
-    "icon": "Icons.close"
-  },
-  {
-    "file": "lib/widgets/fastpay_checkout_sheet.dart",
-    "line": 563,
-    "icon": "Icons.check_circle_rounded"
-  },
-  {
-    "file": "lib/widgets/fastpay_checkout_sheet.dart",
-    "line": 576,
-    "icon": "Icons.cancel_rounded"
-  },
-  {
-    "file": "lib/widgets/fastpay_checkout_sheet.dart",
-    "line": 589,
-    "icon": "Icons.schedule_rounded"
-  },
-  {
-    "file": "lib/widgets/fastpay_checkout_sheet.dart",
-    "line": 943,
-    "icon": "Icons.copy_rounded"
-  },
-  {
-    "file": "lib/widgets/fastpay_checkout_sheet.dart",
-    "line": 1034,
-    "icon": "Icons.close"
-  },
-  {
-    "file": "lib/widgets/home_quick_actions.dart",
-    "line": 36,
-    "icon": "Icons.add_rounded"
-  },
-  {
-    "file": "lib/widgets/home_quick_actions.dart",
-    "line": 44,
-    "icon": "Icons.link_rounded"
-  },
-  {
-    "file": "lib/widgets/home_quick_actions.dart",
-    "line": 53,
-    "icon": "Icons.add_link"
-  },
-  {
-    "file": "lib/widgets/home_quick_actions.dart",
-    "line": 62,
-    "icon": "Icons.question_mark_rounded"
-  },
-  {
-    "file": "lib/widgets/home_quick_actions.dart",
-    "line": 128,
-    "icon": "Icons.chevron_left_rounded"
-  },
-  {
-    "file": "lib/widgets/levels_page.dart",
-    "line": 247,
-    "icon": "FontAwesomeIcons.medal"
-  },
-  {
-    "file": "lib/widgets/levels_page.dart",
-    "line": 248,
-    "icon": "FontAwesomeIcons.award"
-  },
-  {
-    "file": "lib/widgets/levels_page.dart",
-    "line": 249,
-    "icon": "FontAwesomeIcons.crown"
-  },
-  {
-    "file": "lib/widgets/levels_page.dart",
-    "line": 250,
-    "icon": "FontAwesomeIcons.gem"
-  },
-  {
-    "file": "lib/widgets/levels_page.dart",
-    "line": 251,
-    "icon": "FontAwesomeIcons.gem"
-  },
-  {
-    "file": "lib/widgets/levels_page.dart",
-    "line": 252,
-    "icon": "FontAwesomeIcons.star"
-  },
-  {
-    "file": "lib/widgets/levels_page.dart",
-    "line": 310,
-    "icon": "FontAwesomeIcons.chevronRight"
-  },
-  {
-    "file": "lib/widgets/levels_page.dart",
-    "line": 345,
-    "icon": "FontAwesomeIcons.layerGroup"
-  },
-  {
-    "file": "lib/widgets/levels_page.dart",
-    "line": 607,
-    "icon": "FontAwesomeIcons.solidCircleCheck"
-  },
-  {
-    "file": "lib/widgets/levels_page.dart",
-    "line": 608,
-    "icon": "FontAwesomeIcons.circleCheck"
-  },
-  {
-    "file": "lib/widgets/levels_page.dart",
-    "line": 612,
-    "icon": "FontAwesomeIcons.lock"
-  },
-  {
-    "file": "lib/widgets/no_internet_widget.dart",
-    "line": 128,
-    "icon": "Icons.wifi_off_rounded"
-  },
-  {
-    "file": "lib/widgets/no_internet_widget.dart",
-    "line": 128,
-    "icon": "Icons.wifi_rounded"
-  },
-  {
-    "file": "lib/widgets/notification_bell.dart",
-    "line": 201,
-    "icon": "Icons.notifications_none_rounded"
-  },
-  {
-    "file": "lib/widgets/proxo_banner.dart",
-    "line": 606,
-    "icon": "Icons.wifi_off_rounded"
-  },
-  {
-    "file": "lib/widgets/proxo_banner.dart",
-    "line": 986,
-    "icon": "Icons.broken_image_outlined"
-  },
-  {
-    "file": "lib/widgets/proxo_banner.dart",
-    "line": 1100,
-    "icon": "Icons.image_outlined"
-  },
-  {
-    "file": "lib/widgets/proxo_banner.dart",
-    "line": 1209,
-    "icon": "Icons.play_arrow_rounded"
-  },
-  {
-    "file": "lib/widgets/proxo_banner.dart",
-    "line": 1311,
-    "icon": "Icons.play_arrow_rounded"
-  },
-  {
-    "file": "lib/widgets/proxo_error_ui.dart",
-    "line": 170,
-    "icon": "Icons.error_outline_rounded"
-  },
-  {
-    "file": "lib/widgets/proxo_error_ui.dart",
-    "line": 180,
-    "icon": "Icons.warning_amber_rounded"
-  },
-  {
-    "file": "lib/widgets/proxo_error_ui.dart",
-    "line": 190,
-    "icon": "Icons.wifi_off_rounded"
-  },
-  {
-    "file": "lib/widgets/proxo_error_ui.dart",
-    "line": 200,
-    "icon": "Icons.info_outline_rounded"
-  },
-  {
-    "file": "lib/widgets/proxo_error_ui.dart",
-    "line": 210,
-    "icon": "Icons.check_circle_outline_rounded"
-  },
-  {
-    "file": "lib/widgets/proxo_error_ui.dart",
-    "line": 1017,
-    "icon": "Icons.refresh_rounded"
-  },
-  {
-    "file": "lib/widgets/proxo_error_ui.dart",
-    "line": 1173,
-    "icon": "Icons.refresh_rounded"
-  },
-  {
-    "file": "lib/widgets/proxo_popup.dart",
-    "line": 351,
-    "icon": "Icons.close_rounded"
-  },
-  {
-    "file": "lib/widgets/proxo_sidebar.dart",
-    "line": 204,
-    "icon": "SolarIcons.crown"
-  },
-  {
-    "file": "lib/widgets/proxo_sidebar.dart",
-    "line": 204,
-    "icon": "SolarIcons.diamond"
-  },
-  {
-    "file": "lib/widgets/proxo_sidebar.dart",
-    "line": 205,
-    "icon": "SolarIcons.medalStar"
-  },
-  {
-    "file": "lib/widgets/proxo_sidebar.dart",
-    "line": 208,
-    "icon": "FontAwesomeIcons.award"
-  },
-  {
-    "file": "lib/widgets/proxo_sidebar.dart",
-    "line": 209,
-    "icon": "FontAwesomeIcons.crown"
-  },
-  {
-    "file": "lib/widgets/proxo_sidebar.dart",
-    "line": 210,
-    "icon": "FontAwesomeIcons.gem"
-  },
-  {
-    "file": "lib/widgets/proxo_sidebar.dart",
-    "line": 211,
-    "icon": "FontAwesomeIcons.gem"
-  },
-  {
-    "file": "lib/widgets/proxo_sidebar.dart",
-    "line": 213,
-    "icon": "FontAwesomeIcons.medal"
-  },
-  {
-    "file": "lib/widgets/proxo_sidebar.dart",
-    "line": 231,
-    "icon": "SolarIcons.home2"
-  },
-  {
-    "file": "lib/widgets/proxo_sidebar.dart",
-    "line": 233,
-    "icon": "SolarIcons.target"
-  },
-  {
-    "file": "lib/widgets/proxo_sidebar.dart",
-    "line": 234,
-    "icon": "SolarIcons.history"
-  },
-  {
-    "file": "lib/widgets/proxo_sidebar.dart",
-    "line": 235,
-    "icon": "SolarIcons.tag"
-  },
-  {
-    "file": "lib/widgets/proxo_sidebar.dart",
-    "line": 236,
-    "icon": "SolarIcons.wallet"
-  },
-  {
-    "file": "lib/widgets/proxo_sidebar.dart",
-    "line": 237,
-    "icon": "SolarIcons.bell"
-  },
-  {
-    "file": "lib/widgets/proxo_sidebar.dart",
-    "line": 238,
-    "icon": "SolarIcons.settings"
-  },
-  {
-    "file": "lib/widgets/proxo_sidebar.dart",
-    "line": 239,
-    "icon": "SolarIcons.questionCircle"
-  },
-  {
-    "file": "lib/widgets/proxo_sidebar.dart",
-    "line": 241,
-    "icon": "SolarIcons.user"
-  },
-  {
-    "file": "lib/widgets/proxo_sidebar.dart",
-    "line": 242,
-    "icon": "SolarIcons.logout"
-  },
-  {
-    "file": "lib/widgets/proxolink_design_selector.dart",
-    "line": 132,
-    "icon": "Icons.check_rounded"
-  },
-  {
-    "file": "lib/widgets/proxolink_page_card.dart",
-    "line": 49,
-    "icon": "Icons.person_outline"
-  },
-  {
-    "file": "lib/widgets/proxolink_page_card.dart",
-    "line": 50,
-    "icon": "Icons.restaurant_outlined"
-  },
-  {
-    "file": "lib/widgets/proxolink_page_card.dart",
-    "line": 51,
-    "icon": "Icons.apps_outlined"
-  },
-  {
-    "file": "lib/widgets/receipt/receipt_kit.dart",
-    "line": 222,
-    "icon": "Icons.arrow_back_ios_rounded"
-  },
-  {
-    "file": "lib/widgets/receipt/receipt_kit.dart",
-    "line": 223,
-    "icon": "Icons.arrow_forward_ios_rounded"
-  },
-  {
-    "file": "lib/widgets/receipt/tx_history_layout.dart",
-    "line": 59,
-    "icon": "Icons.refresh_rounded"
-  },
-  {
-    "file": "lib/widgets/tasks_page.dart",
-    "line": 146,
-    "icon": "FontAwesomeIcons.chevronRight"
-  },
-  {
-    "file": "lib/widgets/tasks_page.dart",
-    "line": 162,
-    "icon": "FontAwesomeIcons.listCheck"
-  },
-  {
-    "file": "lib/widgets/tasks_page.dart",
-    "line": 186,
-    "icon": "FontAwesomeIcons.listCheck"
-  },
-  {
-    "file": "lib/widgets/tasks_page.dart",
-    "line": 343,
-    "icon": "FontAwesomeIcons.circleCheck"
-  },
-  {
-    "file": "lib/widgets/top_bar.dart",
-    "line": 47,
-    "icon": "Icons.arrow_forward_rounded"
-  },
-  {
-    "file": "lib/widgets/top_bar.dart",
-    "line": 53,
-    "icon": "Icons.arrow_forward_rounded"
-  },
-  {
-    "file": "lib/widgets/top_bar.dart",
-    "line": 71,
-    "icon": "Icons.search_rounded"
-  },
-  {
-    "file": "lib/widgets/voucher_page.dart",
-    "line": 151,
-    "icon": "FontAwesomeIcons.handHoldingHeart"
-  },
-  {
-    "file": "lib/widgets/voucher_page.dart",
-    "line": 156,
-    "icon": "FontAwesomeIcons.rotateLeft"
-  },
-  {
-    "file": "lib/widgets/voucher_page.dart",
-    "line": 160,
-    "icon": "FontAwesomeIcons.handshake"
-  },
-  {
-    "file": "lib/widgets/voucher_page.dart",
-    "line": 164,
-    "icon": "FontAwesomeIcons.gift"
-  },
-  {
-    "file": "lib/widgets/voucher_page.dart",
-    "line": 167,
-    "icon": "FontAwesomeIcons.ticket"
-  },
-  {
-    "file": "lib/widgets/voucher_page.dart",
-    "line": 203,
-    "icon": "FontAwesomeIcons.arrowRight"
-  },
-  {
-    "file": "lib/widgets/voucher_page.dart",
-    "line": 229,
-    "icon": "FontAwesomeIcons.ticket"
-  },
-  {
-    "file": "lib/widgets/voucher_page.dart",
-    "line": 318,
-    "icon": "FontAwesomeIcons.paste"
-  },
-  {
-    "file": "lib/widgets/voucher_page.dart",
-    "line": 367,
-    "icon": "FontAwesomeIcons.ticket"
-  },
-  {
-    "file": "lib/widgets/voucher_page.dart",
-    "line": 387,
-    "icon": "FontAwesomeIcons.gifts"
-  },
-  {
-    "file": "lib/widgets/voucher_page.dart",
-    "line": 405,
-    "icon": "FontAwesomeIcons.clockRotateLeft"
-  },
-  {
-    "file": "lib/widgets/voucher_page.dart",
-    "line": 553,
-    "icon": "FontAwesomeIcons.ticket"
-  },
-  {
-    "file": "lib/widgets/voucher_page.dart",
-    "line": 576,
-    "icon": "FontAwesomeIcons.clock"
-  },
-  {
-    "file": "lib/widgets/voucher_page.dart",
-    "line": 605,
-    "icon": "FontAwesomeIcons.check"
-  },
-  {
-    "file": "lib/widgets/voucher_page.dart",
-    "line": 650,
-    "icon": "FontAwesomeIcons.check"
-  },
-  {
-    "file": "lib/widgets/voucher_page.dart",
-    "line": 703,
-    "icon": "FontAwesomeIcons.gift"
-  }
-]
+{
+  "method": "Non-comment lexical glyph references, not runtime usage; raster alpha bounds in source pixels. Package-internal SVGs are not local assets.",
+  "families": {
+    "Icons": 160,
+    "FontAwesomeIcons": 41,
+    "SolarIcons": 23,
+    "SolarIconsOutline": 34
+  },
+  "references": [
+    {
+      "path": "proxo_app/lib/models/proxolink_template_meta.dart",
+      "line": 73,
+      "family": "Icons",
+      "glyph": "dark_mode_rounded"
+    },
+    {
+      "path": "proxo_app/lib/models/proxolink_template_meta.dart",
+      "line": 75,
+      "family": "Icons",
+      "glyph": "light_mode_rounded"
+    },
+    {
+      "path": "proxo_app/lib/models/proxolink_template_meta.dart",
+      "line": 77,
+      "family": "Icons",
+      "glyph": "layers_rounded"
+    },
+    {
+      "path": "proxo_app/lib/models/proxolink_template_meta.dart",
+      "line": 79,
+      "family": "Icons",
+      "glyph": "healing_rounded"
+    },
+    {
+      "path": "proxo_app/lib/models/proxolink_template_meta.dart",
+      "line": 81,
+      "family": "Icons",
+      "glyph": "credit_card_rounded"
+    },
+    {
+      "path": "proxo_app/lib/models/proxolink_template_meta.dart",
+      "line": 83,
+      "family": "Icons",
+      "glyph": "bolt_rounded"
+    },
+    {
+      "path": "proxo_app/lib/models/proxolink_template_meta.dart",
+      "line": 85,
+      "family": "Icons",
+      "glyph": "zoom_in_rounded"
+    },
+    {
+      "path": "proxo_app/lib/models/proxolink_template_meta.dart",
+      "line": 87,
+      "family": "Icons",
+      "glyph": "view_stream_rounded"
+    },
+    {
+      "path": "proxo_app/lib/models/proxolink_template_meta.dart",
+      "line": 170,
+      "family": "FontAwesomeIcons",
+      "glyph": "whatsapp"
+    },
+    {
+      "path": "proxo_app/lib/models/proxolink_template_meta.dart",
+      "line": 184,
+      "family": "FontAwesomeIcons",
+      "glyph": "viber"
+    },
+    {
+      "path": "proxo_app/lib/models/proxolink_template_meta.dart",
+      "line": 198,
+      "family": "FontAwesomeIcons",
+      "glyph": "instagram"
+    },
+    {
+      "path": "proxo_app/lib/models/proxolink_template_meta.dart",
+      "line": 212,
+      "family": "FontAwesomeIcons",
+      "glyph": "phone"
+    },
+    {
+      "path": "proxo_app/lib/models/proxolink_template_meta.dart",
+      "line": 226,
+      "family": "FontAwesomeIcons",
+      "glyph": "mobileScreenButton"
+    },
+    {
+      "path": "proxo_app/lib/screens/ad_confirmation_screen.dart",
+      "line": 192,
+      "family": "Icons",
+      "glyph": "info_outline"
+    },
+    {
+      "path": "proxo_app/lib/screens/ad_screen.dart",
+      "line": 4252,
+      "family": "Icons",
+      "glyph": "refresh_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/ad_screen.dart",
+      "line": 4252,
+      "family": "Icons",
+      "glyph": "play_arrow_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/auth/auth_shell.dart",
+      "line": 1350,
+      "family": "Icons",
+      "glyph": "info_outline_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/auth/auth_shell.dart",
+      "line": 1529,
+      "family": "Icons",
+      "glyph": "mail_outline_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/auth/auth_shell.dart",
+      "line": 1563,
+      "family": "Icons",
+      "glyph": "lock_outline_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/auth/auth_shell.dart",
+      "line": 1628,
+      "family": "Icons",
+      "glyph": "phone_iphone_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/auth/auth_shell.dart",
+      "line": 1687,
+      "family": "Icons",
+      "glyph": "person_outline_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/auth/auth_shell.dart",
+      "line": 1711,
+      "family": "Icons",
+      "glyph": "phone_iphone_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/auth/auth_shell.dart",
+      "line": 1754,
+      "family": "Icons",
+      "glyph": "lock_outline_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/auth/auth_shell.dart",
+      "line": 1788,
+      "family": "Icons",
+      "glyph": "lock_reset_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/auth/auth_shell.dart",
+      "line": 1973,
+      "family": "Icons",
+      "glyph": "mail_outline_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/auth/auth_shell.dart",
+      "line": 2029,
+      "family": "Icons",
+      "glyph": "lock_outline_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/auth/auth_shell.dart",
+      "line": 2062,
+      "family": "Icons",
+      "glyph": "lock_reset_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/auth/auth_shell.dart",
+      "line": 2106,
+      "family": "Icons",
+      "glyph": "visibility_off_outlined"
+    },
+    {
+      "path": "proxo_app/lib/screens/auth/auth_shell.dart",
+      "line": 2106,
+      "family": "Icons",
+      "glyph": "visibility_outlined"
+    },
+    {
+      "path": "proxo_app/lib/screens/best_metrics_screen.dart",
+      "line": 197,
+      "family": "SolarIcons",
+      "glyph": "altArrowRight"
+    },
+    {
+      "path": "proxo_app/lib/screens/best_metrics_screen.dart",
+      "line": 206,
+      "family": "SolarIcons",
+      "glyph": "medalStar"
+    },
+    {
+      "path": "proxo_app/lib/screens/best_metrics_screen.dart",
+      "line": 325,
+      "family": "SolarIcons",
+      "glyph": "dangerTriangle"
+    },
+    {
+      "path": "proxo_app/lib/screens/deposit_screen.dart",
+      "line": 115,
+      "family": "Icons",
+      "glyph": "account_balance_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/deposit_screen.dart",
+      "line": 123,
+      "family": "Icons",
+      "glyph": "flash_on_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/deposit_screen.dart",
+      "line": 131,
+      "family": "Icons",
+      "glyph": "credit_card_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/deposit_screen.dart",
+      "line": 139,
+      "family": "Icons",
+      "glyph": "account_balance_wallet_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/deposit_screen.dart",
+      "line": 147,
+      "family": "Icons",
+      "glyph": "apps_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/deposit_screen.dart",
+      "line": 155,
+      "family": "Icons",
+      "glyph": "sim_card_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/deposit_screen.dart",
+      "line": 164,
+      "family": "Icons",
+      "glyph": "signal_cellular_alt_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/deposit_screen.dart",
+      "line": 266,
+      "family": "Icons",
+      "glyph": "photo_camera_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/deposit_screen.dart",
+      "line": 272,
+      "family": "Icons",
+      "glyph": "photo_library_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/deposit_screen.dart",
+      "line": 708,
+      "family": "Icons",
+      "glyph": "cloud_upload_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/deposit_screen.dart",
+      "line": 844,
+      "family": "Icons",
+      "glyph": "chevron_right_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/deposit_screen.dart",
+      "line": 999,
+      "family": "Icons",
+      "glyph": "copy_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/faq_screen.dart",
+      "line": 300,
+      "family": "Icons",
+      "glyph": "chevron_right_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/faq_screen.dart",
+      "line": 452,
+      "family": "Icons",
+      "glyph": "keyboard_arrow_down_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/home_screen.dart",
+      "line": 752,
+      "family": "Icons",
+      "glyph": "monetization_on_outlined"
+    },
+    {
+      "path": "proxo_app/lib/screens/home_screen.dart",
+      "line": 772,
+      "family": "Icons",
+      "glyph": "task_alt"
+    },
+    {
+      "path": "proxo_app/lib/screens/home_screen.dart",
+      "line": 782,
+      "family": "Icons",
+      "glyph": "percent"
+    },
+    {
+      "path": "proxo_app/lib/screens/home_screen.dart",
+      "line": 883,
+      "family": "Icons",
+      "glyph": "trending_flat_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/home_screen.dart",
+      "line": 885,
+      "family": "Icons",
+      "glyph": "arrow_upward_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/home_screen.dart",
+      "line": 886,
+      "family": "Icons",
+      "glyph": "arrow_downward_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/home_screen.dart",
+      "line": 969,
+      "family": "Icons",
+      "glyph": "check_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/home_screen.dart",
+      "line": 995,
+      "family": "Icons",
+      "glyph": "calendar_today_outlined"
+    },
+    {
+      "path": "proxo_app/lib/screens/home_screen.dart",
+      "line": 1009,
+      "family": "Icons",
+      "glyph": "keyboard_arrow_down_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 193,
+      "family": "Icons",
+      "glyph": "task_alt_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 195,
+      "family": "Icons",
+      "glyph": "cancel_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 197,
+      "family": "Icons",
+      "glyph": "campaign_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 199,
+      "family": "Icons",
+      "glyph": "emoji_events_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 201,
+      "family": "Icons",
+      "glyph": "pause_circle_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 203,
+      "family": "Icons",
+      "glyph": "rocket_launch_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 205,
+      "family": "Icons",
+      "glyph": "verified_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 207,
+      "family": "Icons",
+      "glyph": "highlight_off_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 209,
+      "family": "Icons",
+      "glyph": "account_balance_wallet_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 211,
+      "family": "Icons",
+      "glyph": "currency_exchange_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 213,
+      "family": "Icons",
+      "glyph": "currency_exchange_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 216,
+      "family": "Icons",
+      "glyph": "card_giftcard_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 218,
+      "family": "Icons",
+      "glyph": "forum_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 220,
+      "family": "Icons",
+      "glyph": "system_update_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 222,
+      "family": "Icons",
+      "glyph": "notifications_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 224,
+      "family": "Icons",
+      "glyph": "warning_amber_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 226,
+      "family": "Icons",
+      "glyph": "gpp_bad_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 228,
+      "family": "Icons",
+      "glyph": "shield_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 570,
+      "family": "Icons",
+      "glyph": "mark_email_read_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 580,
+      "family": "Icons",
+      "glyph": "push_pin_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 581,
+      "family": "Icons",
+      "glyph": "push_pin_outlined"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 591,
+      "family": "Icons",
+      "glyph": "notifications_off_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 592,
+      "family": "Icons",
+      "glyph": "notifications_off_outlined"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 601,
+      "family": "Icons",
+      "glyph": "archive_outlined"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 610,
+      "family": "Icons",
+      "glyph": "delete_outline_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 739,
+      "family": "Icons",
+      "glyph": "tune_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 764,
+      "family": "Icons",
+      "glyph": "done_all_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 776,
+      "family": "Icons",
+      "glyph": "arrow_forward_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 833,
+      "family": "Icons",
+      "glyph": "notifications_off_outlined"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 986,
+      "family": "Icons",
+      "glyph": "archive_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 992,
+      "family": "Icons",
+      "glyph": "delete_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 1060,
+      "family": "Icons",
+      "glyph": "push_pin_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 1066,
+      "family": "Icons",
+      "glyph": "notifications_off_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 420,
+      "family": "SolarIconsOutline",
+      "glyph": "bell"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 426,
+      "family": "SolarIconsOutline",
+      "glyph": "history"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 439,
+      "family": "SolarIconsOutline",
+      "glyph": "chatRoundCall"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 445,
+      "family": "SolarIconsOutline",
+      "glyph": "documentText"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 450,
+      "family": "SolarIconsOutline",
+      "glyph": "questionCircle"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 1023,
+      "family": "SolarIconsOutline",
+      "glyph": "userRounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 1025,
+      "family": "SolarIconsOutline",
+      "glyph": "lock"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 1056,
+      "family": "SolarIconsOutline",
+      "glyph": "letter"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 1078,
+      "family": "SolarIconsOutline",
+      "glyph": "smartphone"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 1080,
+      "family": "SolarIconsOutline",
+      "glyph": "lock"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 1138,
+      "family": "SolarIconsOutline",
+      "glyph": "userCrossRounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 1170,
+      "family": "SolarIconsOutline",
+      "glyph": "altArrowLeft"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 1309,
+      "family": "SolarIconsOutline",
+      "glyph": "altArrowRight"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 1314,
+      "family": "SolarIconsOutline",
+      "glyph": "penNewSquare"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 1331,
+      "family": "SolarIconsOutline",
+      "glyph": "penNewSquare"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 1366,
+      "family": "SolarIconsOutline",
+      "glyph": "altArrowRight"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 1576,
+      "family": "Icons",
+      "glyph": "photo_camera_outlined"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 1602,
+      "family": "SolarIconsOutline",
+      "glyph": "userRounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 1754,
+      "family": "SolarIconsOutline",
+      "glyph": "wallet2"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 1807,
+      "family": "SolarIconsOutline",
+      "glyph": "eye"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 1808,
+      "family": "SolarIconsOutline",
+      "glyph": "eyeClosed"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 1858,
+      "family": "SolarIconsOutline",
+      "glyph": "clapperboardPlay"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 1866,
+      "family": "SolarIconsOutline",
+      "glyph": "widget_2"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 1874,
+      "family": "SolarIconsOutline",
+      "glyph": "tagPrice"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 2045,
+      "family": "SolarIconsOutline",
+      "glyph": "altArrowLeft"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 2088,
+      "family": "SolarIconsOutline",
+      "glyph": "logout"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 2108,
+      "family": "SolarIconsOutline",
+      "glyph": "altArrowLeft"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 2167,
+      "family": "SolarIconsOutline",
+      "glyph": "chatRoundCall"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 2185,
+      "family": "SolarIconsOutline",
+      "glyph": "chatRoundDots"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 2196,
+      "family": "SolarIconsOutline",
+      "glyph": "phoneRounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 2317,
+      "family": "SolarIconsOutline",
+      "glyph": "closeCircle"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 2339,
+      "family": "SolarIconsOutline",
+      "glyph": "sledgehammer"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 2355,
+      "family": "SolarIconsOutline",
+      "glyph": "shieldCheck"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 2369,
+      "family": "SolarIconsOutline",
+      "glyph": "usersGroupRounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 2808,
+      "family": "SolarIconsOutline",
+      "glyph": "shieldCheck"
+    },
+    {
+      "path": "proxo_app/lib/screens/proxolink_create_page_screen.dart",
+      "line": 200,
+      "family": "Icons",
+      "glyph": "add_photo_alternate_outlined"
+    },
+    {
+      "path": "proxo_app/lib/screens/proxolink_create_page_screen.dart",
+      "line": 200,
+      "family": "Icons",
+      "glyph": "check_circle_outline"
+    },
+    {
+      "path": "proxo_app/lib/screens/proxolink_page_details_screen.dart",
+      "line": 290,
+      "family": "Icons",
+      "glyph": "edit_outlined"
+    },
+    {
+      "path": "proxo_app/lib/screens/proxolink_page_editor.dart",
+      "line": 585,
+      "family": "Icons",
+      "glyph": "person_outline"
+    },
+    {
+      "path": "proxo_app/lib/screens/proxolink_page_editor.dart",
+      "line": 591,
+      "family": "Icons",
+      "glyph": "photo_outlined"
+    },
+    {
+      "path": "proxo_app/lib/screens/proxolink_page_editor.dart",
+      "line": 659,
+      "family": "Icons",
+      "glyph": "check"
+    },
+    {
+      "path": "proxo_app/lib/screens/proxolink_page_editor.dart",
+      "line": 697,
+      "family": "Icons",
+      "glyph": "arrow_upward"
+    },
+    {
+      "path": "proxo_app/lib/screens/proxolink_page_editor.dart",
+      "line": 704,
+      "family": "Icons",
+      "glyph": "arrow_downward"
+    },
+    {
+      "path": "proxo_app/lib/screens/proxolink_page_editor.dart",
+      "line": 772,
+      "family": "Icons",
+      "glyph": "open_in_full"
+    },
+    {
+      "path": "proxo_app/lib/screens/tools_screen.dart",
+      "line": 146,
+      "family": "Icons",
+      "glyph": "article_outlined"
+    },
+    {
+      "path": "proxo_app/lib/screens/tools_screen.dart",
+      "line": 146,
+      "family": "Icons",
+      "glyph": "cloud_off_outlined"
+    },
+    {
+      "path": "proxo_app/lib/screens/tutorial_screen.dart",
+      "line": 225,
+      "family": "Icons",
+      "glyph": "play_circle_fill_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/tutorial_screen.dart",
+      "line": 248,
+      "family": "Icons",
+      "glyph": "play_circle_outline_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/tutorial_screen.dart",
+      "line": 345,
+      "family": "Icons",
+      "glyph": "play_circle_fill_rounded"
+    },
+    {
+      "path": "proxo_app/lib/theme/proxo_icons.dart",
+      "line": 10,
+      "family": "Icons",
+      "glyph": "campaign_outlined"
+    },
+    {
+      "path": "proxo_app/lib/theme/proxo_icons.dart",
+      "line": 11,
+      "family": "Icons",
+      "glyph": "account_balance_wallet_outlined"
+    },
+    {
+      "path": "proxo_app/lib/theme/proxo_icons.dart",
+      "line": 12,
+      "family": "Icons",
+      "glyph": "add_link_outlined"
+    },
+    {
+      "path": "proxo_app/lib/theme/proxo_icons.dart",
+      "line": 13,
+      "family": "Icons",
+      "glyph": "link_outlined"
+    },
+    {
+      "path": "proxo_app/lib/theme/proxo_icons.dart",
+      "line": 14,
+      "family": "Icons",
+      "glyph": "help_outline_rounded"
+    },
+    {
+      "path": "proxo_app/lib/theme/proxo_icons.dart",
+      "line": 15,
+      "family": "Icons",
+      "glyph": "block_rounded"
+    },
+    {
+      "path": "proxo_app/lib/theme/proxo_icons.dart",
+      "line": 16,
+      "family": "Icons",
+      "glyph": "calendar_month_outlined"
+    },
+    {
+      "path": "proxo_app/lib/theme/proxo_icons.dart",
+      "line": 17,
+      "family": "Icons",
+      "glyph": "schedule_rounded"
+    },
+    {
+      "path": "proxo_app/lib/theme/proxo_icons.dart",
+      "line": 18,
+      "family": "Icons",
+      "glyph": "edit_outlined"
+    },
+    {
+      "path": "proxo_app/lib/theme/proxo_icons.dart",
+      "line": 19,
+      "family": "Icons",
+      "glyph": "cloud_off_outlined"
+    },
+    {
+      "path": "proxo_app/lib/theme/proxo_icons.dart",
+      "line": 20,
+      "family": "Icons",
+      "glyph": "add_rounded"
+    },
+    {
+      "path": "proxo_app/lib/theme/proxo_icons.dart",
+      "line": 21,
+      "family": "Icons",
+      "glyph": "check_circle_outline_rounded"
+    },
+    {
+      "path": "proxo_app/lib/theme/proxo_icons.dart",
+      "line": 22,
+      "family": "Icons",
+      "glyph": "warning_amber_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/ad_feedback.dart",
+      "line": 179,
+      "family": "Icons",
+      "glyph": "close_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/ad_feedback.dart",
+      "line": 357,
+      "family": "Icons",
+      "glyph": "star_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/ad_feedback.dart",
+      "line": 357,
+      "family": "Icons",
+      "glyph": "star_outline_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/ad_feedback.dart",
+      "line": 488,
+      "family": "Icons",
+      "glyph": "star_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/ad_feedback.dart",
+      "line": 488,
+      "family": "Icons",
+      "glyph": "star_outline_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/ad_feedback.dart",
+      "line": 534,
+      "family": "Icons",
+      "glyph": "chevron_left_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/ad_feedback.dart",
+      "line": 560,
+      "family": "Icons",
+      "glyph": "star_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/ad_feedback.dart",
+      "line": 560,
+      "family": "Icons",
+      "glyph": "star_outline_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/ad_validation_notifications.dart",
+      "line": 179,
+      "family": "Icons",
+      "glyph": "error_outline"
+    },
+    {
+      "path": "proxo_app/lib/widgets/auth/auth_header.dart",
+      "line": 90,
+      "family": "Icons",
+      "glyph": "language_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/auth/auth_widgets.dart",
+      "line": 286,
+      "family": "Icons",
+      "glyph": "arrow_forward_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/auth/auth_widgets.dart",
+      "line": 287,
+      "family": "Icons",
+      "glyph": "arrow_back_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/auth/auth_widgets.dart",
+      "line": 331,
+      "family": "Icons",
+      "glyph": "check_circle_outline_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/auth/auth_widgets.dart",
+      "line": 332,
+      "family": "Icons",
+      "glyph": "info_outline_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/auth/auth_widgets.dart",
+      "line": 443,
+      "family": "Icons",
+      "glyph": "check_circle_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/auth/auth_widgets.dart",
+      "line": 443,
+      "family": "Icons",
+      "glyph": "radio_button_unchecked_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/auth/auth_widgets.dart",
+      "line": 542,
+      "family": "Icons",
+      "glyph": "cancel_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/auth/auth_widgets.dart",
+      "line": 704,
+      "family": "Icons",
+      "glyph": "lock_clock_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/auth/auth_widgets.dart",
+      "line": 787,
+      "family": "Icons",
+      "glyph": "person_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/auth/auth_widgets.dart",
+      "line": 819,
+      "family": "Icons",
+      "glyph": "chevron_left_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/best_metric_card.dart",
+      "line": 95,
+      "family": "SolarIcons",
+      "glyph": "eye"
+    },
+    {
+      "path": "proxo_app/lib/widgets/best_metric_card.dart",
+      "line": 103,
+      "family": "SolarIcons",
+      "glyph": "cursorSquare"
+    },
+    {
+      "path": "proxo_app/lib/widgets/best_metric_card.dart",
+      "line": 111,
+      "family": "SolarIcons",
+      "glyph": "dollarMinimalistic"
+    },
+    {
+      "path": "proxo_app/lib/widgets/best_metric_card.dart",
+      "line": 139,
+      "family": "SolarIcons",
+      "glyph": "arrowRightUp"
+    },
+    {
+      "path": "proxo_app/lib/widgets/best_metric_card.dart",
+      "line": 186,
+      "family": "SolarIcons",
+      "glyph": "altArrowDown"
+    },
+    {
+      "path": "proxo_app/lib/widgets/best_metric_card.dart",
+      "line": 212,
+      "family": "SolarIcons",
+      "glyph": "target"
+    },
+    {
+      "path": "proxo_app/lib/widgets/best_metric_card.dart",
+      "line": 220,
+      "family": "SolarIcons",
+      "glyph": "wallet"
+    },
+    {
+      "path": "proxo_app/lib/widgets/best_metric_card.dart",
+      "line": 311,
+      "family": "SolarIcons",
+      "glyph": "gallery"
+    },
+    {
+      "path": "proxo_app/lib/widgets/best_metric_card.dart",
+      "line": 413,
+      "family": "SolarIcons",
+      "glyph": "cupStar"
+    },
+    {
+      "path": "proxo_app/lib/widgets/best_metric_card.dart",
+      "line": 449,
+      "family": "SolarIcons",
+      "glyph": "fire"
+    },
+    {
+      "path": "proxo_app/lib/widgets/fastpay_checkout_sheet.dart",
+      "line": 545,
+      "family": "Icons",
+      "glyph": "close"
+    },
+    {
+      "path": "proxo_app/lib/widgets/fastpay_checkout_sheet.dart",
+      "line": 563,
+      "family": "Icons",
+      "glyph": "check_circle_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/fastpay_checkout_sheet.dart",
+      "line": 576,
+      "family": "Icons",
+      "glyph": "cancel_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/fastpay_checkout_sheet.dart",
+      "line": 589,
+      "family": "Icons",
+      "glyph": "schedule_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/fastpay_checkout_sheet.dart",
+      "line": 943,
+      "family": "Icons",
+      "glyph": "copy_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/fastpay_checkout_sheet.dart",
+      "line": 1034,
+      "family": "Icons",
+      "glyph": "close"
+    },
+    {
+      "path": "proxo_app/lib/widgets/levels_page.dart",
+      "line": 247,
+      "family": "FontAwesomeIcons",
+      "glyph": "medal"
+    },
+    {
+      "path": "proxo_app/lib/widgets/levels_page.dart",
+      "line": 248,
+      "family": "FontAwesomeIcons",
+      "glyph": "award"
+    },
+    {
+      "path": "proxo_app/lib/widgets/levels_page.dart",
+      "line": 249,
+      "family": "FontAwesomeIcons",
+      "glyph": "crown"
+    },
+    {
+      "path": "proxo_app/lib/widgets/levels_page.dart",
+      "line": 250,
+      "family": "FontAwesomeIcons",
+      "glyph": "gem"
+    },
+    {
+      "path": "proxo_app/lib/widgets/levels_page.dart",
+      "line": 251,
+      "family": "FontAwesomeIcons",
+      "glyph": "gem"
+    },
+    {
+      "path": "proxo_app/lib/widgets/levels_page.dart",
+      "line": 252,
+      "family": "FontAwesomeIcons",
+      "glyph": "star"
+    },
+    {
+      "path": "proxo_app/lib/widgets/levels_page.dart",
+      "line": 310,
+      "family": "FontAwesomeIcons",
+      "glyph": "chevronRight"
+    },
+    {
+      "path": "proxo_app/lib/widgets/levels_page.dart",
+      "line": 345,
+      "family": "FontAwesomeIcons",
+      "glyph": "layerGroup"
+    },
+    {
+      "path": "proxo_app/lib/widgets/levels_page.dart",
+      "line": 607,
+      "family": "FontAwesomeIcons",
+      "glyph": "solidCircleCheck"
+    },
+    {
+      "path": "proxo_app/lib/widgets/levels_page.dart",
+      "line": 608,
+      "family": "FontAwesomeIcons",
+      "glyph": "circleCheck"
+    },
+    {
+      "path": "proxo_app/lib/widgets/levels_page.dart",
+      "line": 612,
+      "family": "FontAwesomeIcons",
+      "glyph": "lock"
+    },
+    {
+      "path": "proxo_app/lib/widgets/no_internet_widget.dart",
+      "line": 128,
+      "family": "Icons",
+      "glyph": "wifi_off_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/no_internet_widget.dart",
+      "line": 128,
+      "family": "Icons",
+      "glyph": "wifi_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/notification_bell.dart",
+      "line": 201,
+      "family": "Icons",
+      "glyph": "notifications_none_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_banner.dart",
+      "line": 606,
+      "family": "Icons",
+      "glyph": "wifi_off_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_banner.dart",
+      "line": 986,
+      "family": "Icons",
+      "glyph": "broken_image_outlined"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_banner.dart",
+      "line": 1100,
+      "family": "Icons",
+      "glyph": "image_outlined"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_banner.dart",
+      "line": 1209,
+      "family": "Icons",
+      "glyph": "play_arrow_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_banner.dart",
+      "line": 1311,
+      "family": "Icons",
+      "glyph": "play_arrow_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_error_ui.dart",
+      "line": 170,
+      "family": "Icons",
+      "glyph": "error_outline_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_error_ui.dart",
+      "line": 180,
+      "family": "Icons",
+      "glyph": "warning_amber_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_error_ui.dart",
+      "line": 190,
+      "family": "Icons",
+      "glyph": "wifi_off_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_error_ui.dart",
+      "line": 200,
+      "family": "Icons",
+      "glyph": "info_outline_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_error_ui.dart",
+      "line": 210,
+      "family": "Icons",
+      "glyph": "check_circle_outline_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_error_ui.dart",
+      "line": 1017,
+      "family": "Icons",
+      "glyph": "refresh_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_error_ui.dart",
+      "line": 1173,
+      "family": "Icons",
+      "glyph": "refresh_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_popup.dart",
+      "line": 351,
+      "family": "Icons",
+      "glyph": "close_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_sidebar.dart",
+      "line": 208,
+      "family": "FontAwesomeIcons",
+      "glyph": "award"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_sidebar.dart",
+      "line": 209,
+      "family": "FontAwesomeIcons",
+      "glyph": "crown"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_sidebar.dart",
+      "line": 210,
+      "family": "FontAwesomeIcons",
+      "glyph": "gem"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_sidebar.dart",
+      "line": 211,
+      "family": "FontAwesomeIcons",
+      "glyph": "gem"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_sidebar.dart",
+      "line": 213,
+      "family": "FontAwesomeIcons",
+      "glyph": "medal"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_sidebar.dart",
+      "line": 231,
+      "family": "SolarIcons",
+      "glyph": "home2"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_sidebar.dart",
+      "line": 233,
+      "family": "SolarIcons",
+      "glyph": "target"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_sidebar.dart",
+      "line": 234,
+      "family": "SolarIcons",
+      "glyph": "history"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_sidebar.dart",
+      "line": 235,
+      "family": "SolarIcons",
+      "glyph": "tag"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_sidebar.dart",
+      "line": 236,
+      "family": "SolarIcons",
+      "glyph": "wallet"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_sidebar.dart",
+      "line": 237,
+      "family": "SolarIcons",
+      "glyph": "bell"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_sidebar.dart",
+      "line": 238,
+      "family": "SolarIcons",
+      "glyph": "settings"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_sidebar.dart",
+      "line": 239,
+      "family": "SolarIcons",
+      "glyph": "questionCircle"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_sidebar.dart",
+      "line": 241,
+      "family": "SolarIcons",
+      "glyph": "user"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_sidebar.dart",
+      "line": 242,
+      "family": "SolarIcons",
+      "glyph": "logout"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxolink_design_selector.dart",
+      "line": 132,
+      "family": "Icons",
+      "glyph": "check_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxolink_page_card.dart",
+      "line": 49,
+      "family": "Icons",
+      "glyph": "person_outline"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxolink_page_card.dart",
+      "line": 50,
+      "family": "Icons",
+      "glyph": "restaurant_outlined"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxolink_page_card.dart",
+      "line": 51,
+      "family": "Icons",
+      "glyph": "apps_outlined"
+    },
+    {
+      "path": "proxo_app/lib/widgets/receipt/receipt_kit.dart",
+      "line": 222,
+      "family": "Icons",
+      "glyph": "arrow_back_ios_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/receipt/receipt_kit.dart",
+      "line": 223,
+      "family": "Icons",
+      "glyph": "arrow_forward_ios_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/receipt/tx_history_layout.dart",
+      "line": 59,
+      "family": "Icons",
+      "glyph": "refresh_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/tasks_page.dart",
+      "line": 146,
+      "family": "FontAwesomeIcons",
+      "glyph": "chevronRight"
+    },
+    {
+      "path": "proxo_app/lib/widgets/tasks_page.dart",
+      "line": 162,
+      "family": "FontAwesomeIcons",
+      "glyph": "listCheck"
+    },
+    {
+      "path": "proxo_app/lib/widgets/tasks_page.dart",
+      "line": 186,
+      "family": "FontAwesomeIcons",
+      "glyph": "listCheck"
+    },
+    {
+      "path": "proxo_app/lib/widgets/tasks_page.dart",
+      "line": 343,
+      "family": "FontAwesomeIcons",
+      "glyph": "circleCheck"
+    },
+    {
+      "path": "proxo_app/lib/widgets/top_bar.dart",
+      "line": 47,
+      "family": "Icons",
+      "glyph": "arrow_forward_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/top_bar.dart",
+      "line": 53,
+      "family": "Icons",
+      "glyph": "arrow_forward_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/top_bar.dart",
+      "line": 71,
+      "family": "Icons",
+      "glyph": "search_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/voucher_page.dart",
+      "line": 151,
+      "family": "FontAwesomeIcons",
+      "glyph": "handHoldingHeart"
+    },
+    {
+      "path": "proxo_app/lib/widgets/voucher_page.dart",
+      "line": 156,
+      "family": "FontAwesomeIcons",
+      "glyph": "rotateLeft"
+    },
+    {
+      "path": "proxo_app/lib/widgets/voucher_page.dart",
+      "line": 160,
+      "family": "FontAwesomeIcons",
+      "glyph": "handshake"
+    },
+    {
+      "path": "proxo_app/lib/widgets/voucher_page.dart",
+      "line": 164,
+      "family": "FontAwesomeIcons",
+      "glyph": "gift"
+    },
+    {
+      "path": "proxo_app/lib/widgets/voucher_page.dart",
+      "line": 167,
+      "family": "FontAwesomeIcons",
+      "glyph": "ticket"
+    },
+    {
+      "path": "proxo_app/lib/widgets/voucher_page.dart",
+      "line": 203,
+      "family": "FontAwesomeIcons",
+      "glyph": "arrowRight"
+    },
+    {
+      "path": "proxo_app/lib/widgets/voucher_page.dart",
+      "line": 229,
+      "family": "FontAwesomeIcons",
+      "glyph": "ticket"
+    },
+    {
+      "path": "proxo_app/lib/widgets/voucher_page.dart",
+      "line": 318,
+      "family": "FontAwesomeIcons",
+      "glyph": "paste"
+    },
+    {
+      "path": "proxo_app/lib/widgets/voucher_page.dart",
+      "line": 367,
+      "family": "FontAwesomeIcons",
+      "glyph": "ticket"
+    },
+    {
+      "path": "proxo_app/lib/widgets/voucher_page.dart",
+      "line": 387,
+      "family": "FontAwesomeIcons",
+      "glyph": "gifts"
+    },
+    {
+      "path": "proxo_app/lib/widgets/voucher_page.dart",
+      "line": 405,
+      "family": "FontAwesomeIcons",
+      "glyph": "clockRotateLeft"
+    },
+    {
+      "path": "proxo_app/lib/widgets/voucher_page.dart",
+      "line": 553,
+      "family": "FontAwesomeIcons",
+      "glyph": "ticket"
+    },
+    {
+      "path": "proxo_app/lib/widgets/voucher_page.dart",
+      "line": 576,
+      "family": "FontAwesomeIcons",
+      "glyph": "clock"
+    },
+    {
+      "path": "proxo_app/lib/widgets/voucher_page.dart",
+      "line": 605,
+      "family": "FontAwesomeIcons",
+      "glyph": "check"
+    },
+    {
+      "path": "proxo_app/lib/widgets/voucher_page.dart",
+      "line": 650,
+      "family": "FontAwesomeIcons",
+      "glyph": "check"
+    },
+    {
+      "path": "proxo_app/lib/widgets/voucher_page.dart",
+      "line": 703,
+      "family": "FontAwesomeIcons",
+      "glyph": "gift"
+    }
+  ],
+  "assets": [
+    {
+      "path": "proxo_app/assets/icons/account_balance_wallet.svg",
+      "bytes": 374,
+      "sha256": "c5b1e7fd334030939927b262e894baea280b14ed74863f7bbfd0abd9fdb893af",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/ad_card/ad_card_calendar.png",
+      "bytes": 5184,
+      "sha256": "daf725699f80dd7fed99be51e89641bff9eaa8b693cfc30948e609c0349ea97f",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        16,
+        0,
+        496,
+        512
+      ],
+      "alpha_coverage": 0.4403196746227788
+    },
+    {
+      "path": "proxo_app/assets/icons/ad_card/ad_card_cancel.png",
+      "bytes": 13638,
+      "sha256": "378209f77c6c88f723888e8d222dead8b5d74290e1e2c14f1ea91f764da7a2dc",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        36,
+        27,
+        489,
+        480
+      ],
+      "alpha_coverage": 0.12982406616210937
+    },
+    {
+      "path": "proxo_app/assets/icons/ad_card/ad_card_copy.png",
+      "bytes": 6599,
+      "sha256": "3e0dd57d790e0b4990a4d2a979213a9215ce14809dee134fbfab84544b343350",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        37,
+        34,
+        475,
+        478
+      ],
+      "alpha_coverage": 0.2196550406661688
+    },
+    {
+      "path": "proxo_app/assets/icons/ad_card/ad_card_cursor.png",
+      "bytes": 14639,
+      "sha256": "87c63dbf988a7f0311d9bc71a709f2fa1e0110096fd3b29b89758e8a20a1c48a",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        82,
+        0,
+        430,
+        512
+      ],
+      "alpha_coverage": 0.16772257486979167
+    },
+    {
+      "path": "proxo_app/assets/icons/ad_card/ad_card_dollar.png",
+      "bytes": 12055,
+      "sha256": "6b3e9199f198c68727913748885125d360e91bb273e96e5cc268749b639df193",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        109,
+        0,
+        403,
+        512
+      ],
+      "alpha_coverage": 0.24980957928825828
+    },
+    {
+      "path": "proxo_app/assets/icons/ad_card/ad_card_eye.png",
+      "bytes": 14744,
+      "sha256": "7e4535986c510d8019afeb5d83488654471f0742ab4eedbf1eb7ab2f445d7df3",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        18,
+        80,
+        497,
+        432
+      ],
+      "alpha_coverage": 0.20114520203833486
+    },
+    {
+      "path": "proxo_app/assets/icons/ad_card/ad_card_megaphone.png",
+      "bytes": 5728,
+      "sha256": "72fc17294df68ea76e58ba07f0855da13f5ef4b7b12589f213087bcabc5903a0",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        0,
+        16,
+        512,
+        496
+      ],
+      "alpha_coverage": 0.26291420132506127
+    },
+    {
+      "path": "proxo_app/assets/icons/ad_card/ad_card_share.png",
+      "bytes": 6297,
+      "sha256": "c1420a544d5fdc1325df370a17d9fe6d8af38d67763266ab74a77a3a207535e7",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        87,
+        37,
+        425,
+        475
+      ],
+      "alpha_coverage": 0.17443440755208334
+    },
+    {
+      "path": "proxo_app/assets/icons/ad_card/ad_card_trend_down.png",
+      "bytes": 4273,
+      "sha256": "a08742b269dde74777f9eafdbfe3dc5304e3b26a5a7fb662374954a8f04a7274",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        47,
+        132,
+        464,
+        379
+      ],
+      "alpha_coverage": 0.08638162051930147
+    },
+    {
+      "path": "proxo_app/assets/icons/ad_card/ad_card_trend_up.png",
+      "bytes": 3996,
+      "sha256": "25728157dafde2c9bc4698b5b1012353db89dcd546825c8c39d2a6cd6de5f70e",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        48,
+        133,
+        464,
+        379
+      ],
+      "alpha_coverage": 0.08755273257984834
+    },
+    {
+      "path": "proxo_app/assets/icons/ad_card/ad_card_wallet.png",
+      "bytes": 13026,
+      "sha256": "7b24104251a25f09c2607a6458c0d6d9b3d6263f9f16689481a12abd240b5ff0",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        0,
+        11,
+        512,
+        501
+      ],
+      "alpha_coverage": 0.2397518831140855
+    },
+    {
+      "path": "proxo_app/assets/icons/add.svg",
+      "bytes": 175,
+      "sha256": "670df546c8e7b8f19fb262ec89156108f87fcbcb57b19a40f37244b980cb7b53",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/arrow_drop_down.svg",
+      "bytes": 156,
+      "sha256": "2ba90b2254aa2ea918ac86758f42e9fb0a646e66507fc4e0e75b1b232a50d882",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/campaign.svg",
+      "bytes": 768,
+      "sha256": "818a806827aa82928cccc1bd4953d31cc061404e50c7a5e2e510825ff76326e4",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/cancel.svg",
+      "bytes": 379,
+      "sha256": "787d3c3090d367ad2b98f6bf166ef1186cbd5cddb5b9c6ec55083d022aeb07d9",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/check_circle.svg",
+      "bytes": 309,
+      "sha256": "ae55ec8d20e7bc0af882be74eaaae0fbfe9c5010814a5d84025afdd37ab9228b",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/chevron_right.svg",
+      "bytes": 190,
+      "sha256": "dd80108de070d899de9b4ce1ae7c80a459e5d9ef21d9c4aae4528afcddcf9895",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/content_copy.svg",
+      "bytes": 267,
+      "sha256": "a978f7983cb6c8abffb09a1c71081ef2a038003114bccc7a06c1026198b17888",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/detail/det_age.png",
+      "bytes": 18907,
+      "sha256": "f3abc44b3d102d9ea1275499f062c48360bdb64c28ca1fa05aa738416948f50b",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        0,
+        64,
+        512,
+        448
+      ],
+      "alpha_coverage": 0.1597359900381051
+    },
+    {
+      "path": "proxo_app/assets/icons/detail/det_end.png",
+      "bytes": 8204,
+      "sha256": "ba22d8fd37fd54a686adb3fea0c389fb59f0c27a8fd03b4912fa072cb500d600",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        47,
+        48,
+        465,
+        465
+      ],
+      "alpha_coverage": 0.2536762013154871
+    },
+    {
+      "path": "proxo_app/assets/icons/detail/det_goal.png",
+      "bytes": 20716,
+      "sha256": "e1fba45193c8a6824102e2a4e5990b311f5284a7f0a9da5645b1f755488ffce3",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        10,
+        10,
+        502,
+        502
+      ],
+      "alpha_coverage": 0.22517085355870864
+    },
+    {
+      "path": "proxo_app/assets/icons/detail/det_info.png",
+      "bytes": 15454,
+      "sha256": "4ad24ed2c996892492ed6c4f99d2aac524c45e8ae2814ca03f2f445a47402783",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        0,
+        0,
+        512,
+        512
+      ],
+      "alpha_coverage": 0.24300674737668504
+    },
+    {
+      "path": "proxo_app/assets/icons/detail/det_info_circle.png",
+      "bytes": 13333,
+      "sha256": "eca93629863ba7aeb93469d542b4b2ba1ecc8d075b7268c5e9d79edc01523f0a",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        0,
+        0,
+        512,
+        512
+      ],
+      "alpha_coverage": 0.24300674737668504
+    },
+    {
+      "path": "proxo_app/assets/icons/detail/det_invoice.png",
+      "bytes": 13919,
+      "sha256": "f58d140be68adf0f39ec97a51f7584f03d04fe28e7921650d3ecaca542db07cc",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        0,
+        6,
+        512,
+        506
+      ],
+      "alpha_coverage": 0.2951320722991345
+    },
+    {
+      "path": "proxo_app/assets/icons/detail/det_location.png",
+      "bytes": 5298,
+      "sha256": "efb25f10889edc5fe52e9fc74f4f78c028fd6df5f93058e63067ea96628e3b2a",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        104,
+        48,
+        409,
+        469
+      ],
+      "alpha_coverage": 0.12401962280273438
+    },
+    {
+      "path": "proxo_app/assets/icons/detail/det_price.png",
+      "bytes": 24679,
+      "sha256": "a5989b18f9f7c2c514d1a6cc500ca7855e372c5195b41156b6c37612cad9b165",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        19,
+        0,
+        493,
+        512
+      ],
+      "alpha_coverage": 0.1683534210803462
+    },
+    {
+      "path": "proxo_app/assets/icons/detail/det_start.png",
+      "bytes": 8187,
+      "sha256": "b12afbfdf78106a94d14cb8d3d3a4cadcaea23c88212488f97ce3e32a343c933",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        47,
+        48,
+        465,
+        465
+      ],
+      "alpha_coverage": 0.25431745940563727
+    },
+    {
+      "path": "proxo_app/assets/icons/detail/det_users.png",
+      "bytes": 12433,
+      "sha256": "c9d98faff588511f2dcfb2187652b4e3b8aaef24d581e11c4f1b6699ebdc05a4",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        16,
+        73,
+        496,
+        464
+      ],
+      "alpha_coverage": 0.23824563119925704
+    },
+    {
+      "path": "proxo_app/assets/icons/detail/det_video.png",
+      "bytes": 26531,
+      "sha256": "2954429d28ad2004ffc0028bebfe5c0a23662699dccb20bd453b2a5fd1a358ac",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        3,
+        0,
+        510,
+        512
+      ],
+      "alpha_coverage": 0.31555940216662837
+    },
+    {
+      "path": "proxo_app/assets/icons/event.svg",
+      "bytes": 288,
+      "sha256": "ff5ffa4ff734c4103a73e778e319061f642815ce5b7c57305295ef5747a13dfe",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/filter_lines.png",
+      "bytes": 3537,
+      "sha256": "6a9a4f5bc4ff956d97fc99535d6147e1d3fdafde66c33ac7e05481cf06798195",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        42,
+        106,
+        470,
+        406
+      ],
+      "alpha_coverage": 0.14176379933076746
+    },
+    {
+      "path": "proxo_app/assets/icons/help_outline.svg",
+      "bytes": 383,
+      "sha256": "306a505fbf28459fa061d30c66724ab79a52e40c50c89e88dbe89372e954f4ae",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/home/home_bolt.png",
+      "bytes": 11048,
+      "sha256": "260fe5085c6d0780be368f3b116e78030cfdce75db2696779006bb6ad019f0d4",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        74,
+        32,
+        438,
+        480
+      ],
+      "alpha_coverage": 0.08116021249808517
+    },
+    {
+      "path": "proxo_app/assets/icons/home/home_check.png",
+      "bytes": 9697,
+      "sha256": "0bead662ec3d57291b898d465818b42ee6cd8a7e58e4cc52cfb55a83effa98ff",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        102,
+        102,
+        410,
+        410
+      ],
+      "alpha_coverage": 0.08612036611519608
+    },
+    {
+      "path": "proxo_app/assets/icons/home/home_clock.png",
+      "bytes": 13796,
+      "sha256": "7d99e3202dc1aec416decd7a85d12691e3337e6bb8b8a2fbf205eb17e622e2e1",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        32,
+        32,
+        480,
+        480
+      ],
+      "alpha_coverage": 0.1798965902889476
+    },
+    {
+      "path": "proxo_app/assets/icons/home/home_reports.png",
+      "bytes": 9139,
+      "sha256": "797b293f9d7e883824b92305682601e1f97ca8902415debeb2f847038fc1c483",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        32,
+        32,
+        510,
+        510
+      ],
+      "alpha_coverage": 0.30782630770814184
+    },
+    {
+      "path": "proxo_app/assets/icons/home/home_x.png",
+      "bytes": 2841,
+      "sha256": "6d08924834e0f4ee94ae3e5f7b0924732be60e8b26446b62873ea60154e7cb8c",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        134,
+        134,
+        378,
+        378
+      ],
+      "alpha_coverage": 0.09125584621055453
+    },
+    {
+      "path": "proxo_app/assets/icons/insert_chart.svg",
+      "bytes": 269,
+      "sha256": "1cbedbfed5bd42a43edfefb85763f87f0c99a1f1020e72ecae3bf45bc025e8f1",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/mail_outline.svg",
+      "bytes": 262,
+      "sha256": "83b43fc14b016ce99cd68a56e9ebe8e26f2698119fc88bb8a139687eaa527786",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/nav/home.png",
+      "bytes": 6895,
+      "sha256": "d2c19743cbaf7c98332de876ac9a61274bcc5e01245148715817ec46f2abc406",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        1,
+        0,
+        512,
+        511
+      ],
+      "alpha_coverage": 0.2142870585123698
+    },
+    {
+      "path": "proxo_app/assets/icons/nav/home_fill.png",
+      "bytes": 5271,
+      "sha256": "2eefa5fb2a4a9d0d55eb191f895f9760b7cc90580cc01d1848abdb6d2a5caca2",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        0,
+        0,
+        512,
+        512
+      ],
+      "alpha_coverage": 0.6301275515088848
+    },
+    {
+      "path": "proxo_app/assets/icons/nav/megaphone.png",
+      "bytes": 20866,
+      "sha256": "b1f2b2448d9e6c8b38bafa83ff31bb3e93aa634584cca4eaca477b82e0bcbacd",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        6,
+        29,
+        506,
+        482
+      ],
+      "alpha_coverage": 0.15654015634574142
+    },
+    {
+      "path": "proxo_app/assets/icons/nav/megaphone_fill.png",
+      "bytes": 14172,
+      "sha256": "635ce7809be9d129aaf3e93b6da9076005a0a6dca40c2538afaa2e338ed6a92e",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        6,
+        28,
+        506,
+        483
+      ],
+      "alpha_coverage": 0.31890215406230854
+    },
+    {
+      "path": "proxo_app/assets/icons/nav/user.png",
+      "bytes": 8536,
+      "sha256": "75a3194e4cabbffe9a3ec2a4d80514868aaeb0bb56431518aa701d84bcc1706f",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        31,
+        0,
+        481,
+        512
+      ],
+      "alpha_coverage": 0.5186354543648514
+    },
+    {
+      "path": "proxo_app/assets/icons/nav/user_fill.png",
+      "bytes": 11163,
+      "sha256": "8ecdbb68c06aed118140de4d40aed4acf4ee4e18850ee710e000ec8026f03dcb",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        31,
+        0,
+        481,
+        512
+      ],
+      "alpha_coverage": 0.20562652887082566
+    },
+    {
+      "path": "proxo_app/assets/icons/nav/widget.png",
+      "bytes": 5256,
+      "sha256": "f5e173cec1c6e99f52da0cb2711f73855cdac03fd378f69fd54ce0c8c6256126",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        26,
+        69,
+        486,
+        443
+      ],
+      "alpha_coverage": 0.5025492649452359
+    },
+    {
+      "path": "proxo_app/assets/icons/nav/widget_fill.png",
+      "bytes": 5724,
+      "sha256": "fc2e6903d3579e0738ed65c6926118f8a5e0af15b546bd1e14a7eba5af5b7608",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        26,
+        69,
+        486,
+        443
+      ],
+      "alpha_coverage": 0.28407485064338234
+    },
+    {
+      "path": "proxo_app/assets/icons/open_in_new.png",
+      "bytes": 4211,
+      "sha256": "26725daee80b5ad86587183e4aca433309a1014f4152c236d34c4f0e4171b254",
+      "size_px": [
+        428,
+        428
+      ],
+      "alpha_bounds_px": [
+        0,
+        0,
+        428,
+        428
+      ],
+      "alpha_coverage": 0.2590540915466545
+    },
+    {
+      "path": "proxo_app/assets/icons/pause_circle.svg",
+      "bytes": 363,
+      "sha256": "55f28071f494d3cd3970ed8fac0700f3b289ee7010585287b8524ca620c6a49b",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/schedule.svg",
+      "bytes": 322,
+      "sha256": "357d248d4a4a329a232e51253be220c9ab5b0e7473c32cf3f8bdfe44bdc368b9",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/share.svg",
+      "bytes": 660,
+      "sha256": "310f347c9ef3fdb55e028f452f17e1f9df621ef4c67e5b1dce898afc9f398c6d",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/trending_down.svg",
+      "bytes": 213,
+      "sha256": "6e6b21b99e83930eab4b591526e114e9cf0c19607ebd34d4232c4ddc2d84005a",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/trending_up.svg",
+      "bytes": 214,
+      "sha256": "8d9666a184fd1187968e3e3a77035a35d4b81b666615ba2dda2f2d6dc48b8aa3",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/visibility.svg",
+      "bytes": 474,
+      "sha256": "bdd8f956ba9573ff18136d5c3afa560dc72bd7e8262ea6bb0c3989e80e0c06c8",
+      "viewBox": "0 0 24 24"
+    }
+  ]
+}

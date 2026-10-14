@@ -36,6 +36,10 @@ jobs:
       - name: Capture actual widgets, geometry and exported PDF
         run: flutter test test/ui_remediation_capture_test.dart --reporter expanded
         working-directory: ${{ matrix.source }}/proxo_app
+      - name: Verify changed behavior and responsive consumers
+        if: always() && matrix.source == 'candidate'
+        run: flutter test test/iconography_money_test.dart test/home_sections_test.dart test/receipt_layout_test.dart test/tx_history_layout_test.dart test/receipt_pdf_test.dart test/ad_creation_flow_test.dart test/ad_submission_test.dart test/ad_repository_test.dart test/proxolink_tools_create_test.dart test/proxolink_page_management_test.dart --reporter expanded
+        working-directory: candidate/proxo_app
       - name: Upload unapproved before and after evidence
         if: always()
         uses: actions/upload-artifact@v4

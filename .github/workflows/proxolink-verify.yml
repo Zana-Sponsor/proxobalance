@@ -161,10 +161,13 @@ jobs:
       - name: Reproduce unused Home request and verify removal
         run: |
           cp lib/screens/home_screen.dart /tmp/proxo-home-fixed.dart
-          trap 'cp /tmp/proxo-home-fixed.dart lib/screens/home_screen.dart' EXIT
+          cp lib/main.dart /tmp/proxo-main-fixed.dart
+          trap 'cp /tmp/proxo-home-fixed.dart lib/screens/home_screen.dart; cp /tmp/proxo-main-fixed.dart lib/main.dart' EXIT
+          git show cbf06a5ab540ef927eb1252d7fe83f1bb6449231:proxo_app/lib/main.dart > lib/main.dart
           git show cbf06a5ab540ef927eb1252d7fe83f1bb6449231:proxo_app/lib/screens/home_screen.dart > lib/screens/home_screen.dart
           flutter test test/proxolink_actual_screens_test.dart --plain-name 'Home initialization does not fetch an unused profile name' --dart-define=PROXO_REPRODUCE_OLD_HOME=true
           cp /tmp/proxo-home-fixed.dart lib/screens/home_screen.dart
+          cp /tmp/proxo-main-fixed.dart lib/main.dart
           flutter test test/proxolink_actual_screens_test.dart --plain-name 'Home initialization does not fetch an unused profile name'
       - name: Reproduce delayed notice mounting against old source, then verify fix
         run: |

@@ -71,7 +71,8 @@ int? storedTransactionIqd(Map<String, dynamic> transaction) {
   if (currency == 'IQD') return amount.abs().round();
   final rate = storedNumber(transaction['fx_rate']);
   if (currency == 'USD' && rate != null && rate > 0) {
-    return (amount.abs() * rate).round();
+    final converted = amount.abs() * rate;
+    return converted.isFinite ? converted.round() : null;
   }
   return null;
 }
