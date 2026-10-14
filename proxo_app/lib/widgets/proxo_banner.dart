@@ -79,6 +79,17 @@ Uint8List _decodeB64Isolate(String raw) => base64Decode(raw);
 // یەکسەر نیشان دەدات بەبێ هیچ I/O یان async.
 // ─────────────────────────────────────────────────────────────────────────────
 final Map<String, Uint8List> _sImageBytes = {};
+const _maxBannerBytes = 12 * 1024 * 1024;
+void _rememberBannerBytes(String key, Uint8List bytes) {
+  if (bytes.lengthInBytes > _maxBannerBytes) return;
+  _sImageBytes.remove(key);
+  _sImageBytes[key] = bytes;
+  var total = _sImageBytes.values.fold<int>(0, (sum, b) => sum + b.lengthInBytes);
+  while (_sImageBytes.length > 12 || total > _maxBannerBytes) {
+    final oldest = _sImageBytes.keys.first;
+    total -= _sImageBytes.remove(oldest)!.lengthInBytes;
+  }
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Top-level constants & helpers (دەرەوەی هەموو کلاسەکان)
@@ -183,7 +194,7 @@ Future<void> _prewarmGlobal(List<_FbBanner> banners) async {
     if (_sImageBytes.containsKey(b.imageURL)) return;
     try {
       final f = await _bannerCacheManager.getSingleFile(b.imageURL);
-      _sImageBytes[b.imageURL] = await f.readAsBytes();
+      _rememberBannerBytes(b.imageURL, await f.readAsBytes());
     } catch (_) {}
   }));
   _sBannerRevision.value++;
@@ -610,7 +621,7 @@ class _OfflineBannerState extends State<OfflineBanner>
                   const SizedBox(width: ProxoErrorStyle.s8),
                   Flexible(
                     child: ProxoText(
-                      'ئینتەرنێت پچڕاوە — تکایە پەیوەندی بکەرەوە',
+                      'ئینتەرنێت پچڕاوە — تکایە پەیوەندی بکەرەوە', translate: true,
                       style: ProxoErrorType.body(p.ink, kAppFont),
                       textDirection: TextDirection.rtl,
                       maxLines: 2,
@@ -684,7 +695,7 @@ class _FbSliderState extends State<_FbSlider> {
           // ① دیسک کاچ بخوێنەوە (یان دابەزێنە)
           final file  = await _bannerCacheManager.getSingleFile(b.imageURL);
           final bytes = await file.readAsBytes();
-          _sImageBytes[b.imageURL] = bytes;
+          _rememberBannerBytes(b.imageURL, bytes);
           _NetImgState._warmed.add(b.imageURL);
 
           // ② وێنەکە ناو Flutter image codec cache-ەوە pre-decode بکە
@@ -896,7 +907,7 @@ class _NetImgState extends State<_NetImg> with SingleTickerProviderStateMixin {
       if (info != null && mounted) {
         // فایل لە دیسکدا هەیە — bytes بخوێنەرەوە و لە مێموری پاشەکەوت بکە
         final bytes = await info.file.readAsBytes();
-        _sImageBytes[widget.url] = bytes;
+        _rememberBannerBytes(widget.url, bytes);
         _warmed.add(widget.url);
         if (mounted) setState(() => _anim.value = 1.0);
       }
@@ -1275,7 +1286,7 @@ class _StaticHero extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const ProxoText(
-                  'ڕیکلامی تیک تۆک بەردەستە',
+                  'ڕیکلامی تیک تۆک بەردەستە', translate: true,
                   // Same reasoning as _SupaHero above: Bold kept (hero
                   // headline), explicit height added where none existed.
                   style: TextStyle(
@@ -1288,7 +1299,7 @@ class _StaticHero extends StatelessWidget {
                 ),
                 const SizedBox(height: 6),
                 ProxoText(
-                  'ڕیکلامەکانت بڕوانە و بیکەرەوە بە ئاسانی لەگەڵ Proxo',
+                  'ڕیکلامەکانت بڕوانە و بیکەرەوە بە ئاسانی لەگەڵ Proxo', translate: true,
                   style: TextStyle(
                     fontFamily: kAppFont,
                     fontSize:   13.5,
@@ -1311,7 +1322,7 @@ class _StaticHero extends StatelessWidget {
                       Icon(Icons.play_arrow_rounded, size: 14, color: Colors.white),
                       SizedBox(width: 6),
                       ProxoText(
-                        'دەستپێکردن',
+                        'دەستپێکردن', translate: true,
                         style: TextStyle(
                           fontFamily: kAppFont,
                           fontSize:   13,

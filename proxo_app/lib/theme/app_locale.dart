@@ -32,11 +32,15 @@ class ProxoLocale {
   /// ISO 639-3 code; see the note above on why `ku` is not.
   static const Locale kurdishSorani = Locale('ckb');
   static const Locale arabic = Locale('ar');
+  /// Badini Kurdish written in Arabic script.
+  static const Locale kurdishBadini = Locale.fromSubtags(
+    languageCode: 'kmr', scriptCode: 'Arab', countryCode: 'IQ');
   static const Locale english = Locale('en');
 
   static const List<Locale> supported = <Locale>[
     kurdishSorani,
     arabic,
+    kurdishBadini,
     english,
   ];
 
@@ -53,6 +57,7 @@ class ProxoLocale {
     final String? code = prefs.getString(_storageKey);
     current.value = switch (code) {
       'ar' => arabic,
+      'kmr' => kurdishBadini,
       'en' => english,
       _ => kurdishSorani,
     };
@@ -70,6 +75,11 @@ class ProxoLocale {
     await prefs.setString(_storageKey, next.languageCode);
   }
 
+  static Locale watch(BuildContext context) {
+    context.dependOnInheritedWidgetOfExactType<ProxoLocaleData>();
+    return current.value;
+  }
+
   static bool get isArabic => current.value.languageCode == 'ar';
 
   /// Languages written right-to-left, by ISO 639 code.
@@ -84,6 +94,7 @@ class ProxoLocale {
   static const Set<String> _rtlLanguages = <String>{
     'ar', // Arabic
     'ckb', // Central Kurdish (Sorani)
+    'kmr', // This app's Arabic-script Badini locale
     'ku', // Kurdish macrolanguage — see note above
     'fa', // Persian
     'he', 'iw', // Hebrew
@@ -147,11 +158,15 @@ class ProxoLocaleScope extends StatelessWidget {
     return ValueListenableBuilder<Locale>(
       valueListenable: ProxoLocale.current,
       builder: (context, locale, _) {
-        return Directionality(
+        return ProxoLocaleData(child: Directionality(
           textDirection: ProxoLocale.directionOf(locale),
           child: child,
-        );
+        ));
       },
     );
   }
+}
+
+class ProxoLocaleData extends InheritedNotifier<ValueNotifier<Locale>> {
+  ProxoLocaleData({super.key, required super.child}) : super(notifier: ProxoLocale.current);
 }

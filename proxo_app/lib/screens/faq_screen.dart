@@ -1,3 +1,4 @@
+import 'package:proxo_app/theme/app_locale.dart';
 import 'package:flutter/material.dart';
 
 import '../theme/app_theme.dart';
@@ -197,6 +198,7 @@ class FaqScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     final double s = _scaleFor(context);
     final double t = _typeScale(s);
     final MediaQueryData mq = MediaQuery.of(context);
@@ -283,6 +285,7 @@ class _TopBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     final double s = scale;
     final double t = _typeScale(s);
 
@@ -392,6 +395,7 @@ class _FaqTileState extends State<_FaqTile> {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     final double s = widget.scale;
     final double t = widget.typeScale;
     final BorderRadius radius = BorderRadius.circular(_kCardRadius * s);
@@ -541,6 +545,7 @@ class _PressableState extends State<_Pressable> {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     if (widget.onTap == null) return widget.child;
     return Semantics(
       button: true,

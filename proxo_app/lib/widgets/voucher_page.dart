@@ -206,7 +206,7 @@ class _VoucherPageState extends State<VoucherPage>
                 ),
                 const SizedBox(width: 12),
                 const Expanded(
-                  child: ProxoText('فاوچەرەکان',
+                  child: ProxoText('فاوچەرەکان', translate: true,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     // Was 18 — every other in-page bar title in the app
@@ -246,7 +246,7 @@ class _VoucherPageState extends State<VoucherPage>
                     children: [
 
                   // ── Code input section ───────────────────────────────────────
-                  const ProxoText('کۆدی فاوچەر',
+                  const ProxoText('کۆدی فاوچەر', translate: true,
                     style: TextStyle(fontFamily: kAppFont, fontSize: 12.5,
                       fontWeight: FontWeight.w600, color: _cDark,
                       decoration: TextDecoration.none)),
@@ -281,7 +281,7 @@ class _VoucherPageState extends State<VoucherPage>
                                 decoration: TextDecoration.none,
                               ),
                               decoration: const InputDecoration(
-                                hint: ProxoText('کۆدەکەت لێرە بنووسە'),
+                                hint: ProxoText('کۆدەکەت لێرە بنووسە', translate: true),
                                 hintStyle: TextStyle(
                                   fontFamily: kAppFont,
                                   fontWeight: FontWeight.w400,
@@ -604,7 +604,7 @@ class _VoucherPageState extends State<VoucherPage>
               children: [
                 const FaIcon(FontAwesomeIcons.check, size: 12, color: Colors.white),
                 const SizedBox(width: 6),
-                const ProxoText('چالاککردن',
+                const ProxoText('چالاککردن', translate: true,
                   style: TextStyle(fontFamily: kAppFont, fontSize: 13,
                     // button role: SemiBold, not Bold; was 12.5, just under
                     // the button-role floor
@@ -702,7 +702,7 @@ class _VoucherPageState extends State<VoucherPage>
           child: const Center(
             child: FaIcon(FontAwesomeIcons.gift, size: 26, color: _cMt))),
         const SizedBox(height: 14),
-        const ProxoText('هیچ فاوچەرێکی چالاکت بەردەست نییە!',
+        const ProxoText('هیچ فاوچەرێکی چالاکت بەردەست نییە!', translate: true,
           textAlign: TextAlign.center,
           style: TextStyle(fontFamily: kAppFont, fontSize: 13,
             fontWeight: FontWeight.w400, height: 1.30,

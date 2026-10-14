@@ -202,18 +202,18 @@ class ProxoLinkPageEditorState extends State<ProxoLinkPageEditor> {
     return await showDialog<bool>(
           context: context,
           builder: (context) => AlertDialog(
-            title: const ProxoText('پاشگەزبوونەوە لە دەستکاری؟'),
+            title: const ProxoText('پاشگەزبوونەوە لە دەستکاری؟', translate: true),
             content: const ProxoText(
-              'گۆڕانکارییە پاشەکەوت نەکراوەکان لەدەست دەچن.',
+              'گۆڕانکارییە پاشەکەوت نەکراوەکان لەدەست دەچن.', translate: true,
             ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context, false),
-                child: const ProxoText('بەردەوامبوون'),
+                child: const ProxoText('بەردەوامبوون', translate: true),
               ),
               FilledButton(
                 onPressed: () => Navigator.pop(context, true),
-                child: const ProxoText('پاشگەزبوونەوە'),
+                child: const ProxoText('پاشگەزبوونەوە', translate: true),
               ),
             ],
           ),
@@ -456,7 +456,7 @@ class ProxoLinkPageEditorState extends State<ProxoLinkPageEditor> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: ProxoText('پەڕەکە بە سەرکەوتوویی پاشەکەوت کرا.'),
+            content: ProxoText('پەڕەکە بە سەرکەوتوویی پاشەکەوت کرا.', translate: true),
           ),
         );
         await widget.onSaved(card);
@@ -526,7 +526,7 @@ class ProxoLinkPageEditorState extends State<ProxoLinkPageEditor> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const ProxoText('جۆری پەڕە هەڵبژێرە'),
+                  const ProxoText('جۆری پەڕە هەڵبژێرە', translate: true),
                   const SizedBox(height: 20),
                   for (final type in ProxoPageType.values)
                     Padding(
@@ -589,7 +589,7 @@ class ProxoLinkPageEditorState extends State<ProxoLinkPageEditor> {
                             OutlinedButton.icon(
                               onPressed: _pickAvatar,
                               icon: const Icon(Icons.photo_outlined),
-                              label: const ProxoText('هەڵبژاردنی وێنە'),
+                              label: const ProxoText('هەڵبژاردنی وێنە', translate: true),
                             ),
                           ],
                         ),
@@ -618,11 +618,11 @@ class ProxoLinkPageEditorState extends State<ProxoLinkPageEditor> {
                               items: const [
                                 DropdownMenuItem(
                                   value: 'ku',
-                                  child: ProxoText('کوردی'),
+                                  child: ProxoText('کوردی', translate: true),
                                 ),
                                 DropdownMenuItem(
                                   value: 'ar',
-                                  child: ProxoText('عربی'),
+                                  child: ProxoText('عربی', translate: true),
                                 ),
                                 DropdownMenuItem(
                                   value: 'en',
@@ -770,7 +770,7 @@ class ProxoLinkPageEditorState extends State<ProxoLinkPageEditor> {
                                       ),
                                     ),
                                     icon: const Icon(Icons.open_in_full),
-                                    label: const ProxoText('پێشبینینی تەواو'),
+                                    label: const ProxoText('پێشبینینی تەواو', translate: true),
                                   ),
                                 ],
                               ),
@@ -791,7 +791,7 @@ class ProxoLinkPageEditorState extends State<ProxoLinkPageEditor> {
                         OutlinedButton(
                           onPressed: _reloadExisting,
                           child: const ProxoText(
-                            'نوێکردنەوەی پەڕە بۆ دەستکاری',
+                            'نوێکردنەوەی پەڕە بۆ دەستکاری', translate: true,
                           ),
                         ),
                       if (_recoveryId != null)
@@ -816,7 +816,7 @@ class ProxoLinkPageEditorState extends State<ProxoLinkPageEditor> {
                                 );
                             }
                           },
-                          child: const ProxoText('بینینی پەڕەی پاشەکەوتکراو'),
+                          child: const ProxoText('بینینی پەڕەی پاشەکەوتکراو', translate: true),
                         ),
                       const SizedBox(height: AdUi.sectionGap),
                       FilledButton(
@@ -835,7 +835,7 @@ class ProxoLinkPageEditorState extends State<ProxoLinkPageEditor> {
                                   ),
                                   SizedBox(width: 12),
                                   Flexible(
-                                    child: ProxoText('لە دروستکردندایە...'),
+                                    child: ProxoText('لە دروستکردندایە...', translate: true),
                                   ),
                                 ],
                               )
@@ -862,7 +862,7 @@ class _LoadFailure extends StatelessWidget {
     title: 'نەتوانرا زانیارییەکان پیشان بدرێن',
     child: OutlinedButton(
       onPressed: onRetry,
-      child: const ProxoText('دووبارە هەوڵبدەرەوە'),
+      child: const ProxoText('دووبارە هەوڵبدەرەوە', translate: true),
     ),
   );
 }

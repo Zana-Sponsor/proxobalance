@@ -1,3 +1,4 @@
+import 'package:proxo_app/theme/app_locale.dart';
 // notifications_screen.dart
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -645,6 +646,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
@@ -697,7 +699,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         mainAxisSize: MainAxisSize.min,
         children: [
           const ProxoText(
-            'ئاگادارییەکان',
+            'ئاگادارییەکان', translate: true,
             style: TextStyle(
               fontFamily: kAppFont,
               fontSize: 15.5,
@@ -835,7 +837,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               ),
               const SizedBox(height: 16),
               const ProxoText(
-                'هیچ ئاگادارییەک نییە',
+                'هیچ ئاگادارییەک نییە', translate: true,
                 style: TextStyle(
                   fontFamily: kAppFont,
                   fontSize: 15,
@@ -846,7 +848,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               ),
               const SizedBox(height: 4),
               const ProxoText(
-                'کاتێک ئاگادارییەکی نوێت هەبێت لێرە دەردەکەوێت',
+                'کاتێک ئاگادارییەکی نوێت هەبێت لێرە دەردەکەوێت', translate: true,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontFamily: kAppFont,
@@ -916,6 +918,7 @@ class _SectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     return Padding(
       padding: const EdgeInsets.only(top: 10, bottom: 6, right: 2),
       child: ProxoText(
@@ -970,6 +973,7 @@ class _NotifCardState extends State<_NotifCard> {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     final n = widget.notif;
     final t = _typeOf(n.type);
     final style = _catStyles[t.cat]!;
@@ -1178,6 +1182,7 @@ class _SwipeBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     return Container(
       decoration: BoxDecoration(
         color: color,
@@ -1237,6 +1242,7 @@ class _SkeletonCardState extends State<_SkeletonCard>
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     return AnimatedBuilder(
       animation: _ctrl,
       builder: (context, _) {
@@ -1307,6 +1313,7 @@ class _ActionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
@@ -1396,6 +1403,7 @@ class _FilterSheetState extends State<_FilterSheet> {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Container(
@@ -1426,7 +1434,7 @@ class _FilterSheetState extends State<_FilterSheet> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const ProxoText(
-                      'فلتەر',
+                      'فلتەر', translate: true,
                       style: TextStyle(
                         fontFamily: kAppFont,
                         fontSize: 15,
@@ -1440,7 +1448,7 @@ class _FilterSheetState extends State<_FilterSheet> {
                         _date = _FilterDate.all;
                       }),
                       child: const ProxoText(
-                        'پاک بکەرەوە',
+                        'پاک بکەرەوە', translate: true,
                         style: TextStyle(
                           fontFamily: kAppFont,
                           fontSize: 12,
@@ -1453,7 +1461,7 @@ class _FilterSheetState extends State<_FilterSheet> {
                 ),
                 const SizedBox(height: 16),
                 const ProxoText(
-                  'جۆر',
+                  'جۆر', translate: true,
                   style: TextStyle(
                     fontFamily: kAppFont,
                     fontSize: 12.5,
@@ -1474,7 +1482,7 @@ class _FilterSheetState extends State<_FilterSheet> {
                 ),
                 const SizedBox(height: 16),
                 const ProxoText(
-                  'بەروار',
+                  'بەروار', translate: true,
                   style: TextStyle(
                     fontFamily: kAppFont,
                     fontSize: 12.5,
@@ -1507,7 +1515,7 @@ class _FilterSheetState extends State<_FilterSheet> {
                     ),
                     alignment: Alignment.center,
                     child: const ProxoText(
-                      'جێبەجێ بکە',
+                      'جێبەجێ بکە', translate: true,
                       style: TextStyle(
                         fontFamily: kAppFont,
                         fontSize: 13,

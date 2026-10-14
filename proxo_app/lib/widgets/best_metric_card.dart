@@ -62,7 +62,7 @@ class BestMetricCard extends StatelessWidget {
     final opened = await launchUrl(uri, mode: LaunchMode.externalApplication);
     if (!opened && context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: ProxoText('ڤیدیۆکە نەکرایەوە')),
+        const SnackBar(content: ProxoText('ڤیدیۆکە نەکرایەوە', translate: true)),
       );
     }
   }
@@ -143,7 +143,7 @@ class BestMetricCard extends StatelessWidget {
                               ),
                               SizedBox(width: 7),
                               ProxoText(
-                                'بینینی ڤیدیۆ',
+                                'بینینی ڤیدیۆ', translate: true,
                                 style: TextStyle(
                                   fontFamily: kAppFont,
                                   fontSize: 12,
@@ -170,7 +170,7 @@ class BestMetricCard extends StatelessWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             const ProxoText(
-                              'بینینی زیاتر',
+                              'بینینی زیاتر', translate: true,
                               style: TextStyle(
                                 fontFamily: kAppFont,
                                 fontSize: 12,

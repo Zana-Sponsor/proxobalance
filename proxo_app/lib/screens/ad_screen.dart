@@ -1,3 +1,4 @@
+import 'package:proxo_app/theme/app_locale.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
@@ -101,6 +102,7 @@ class _EmptyAdsIllustration extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     final double w = _kEmptyArtW * scale;
     final double h = w / _kEmptyArtAspect;
     final double dpr = MediaQuery.maybeDevicePixelRatioOf(context) ?? 3.0;
@@ -727,6 +729,7 @@ class _DsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     final BorderRadius radius = BorderRadius.circular(_dsCardRadius * scale);
     Widget content = Padding(
       padding: padding ?? EdgeInsets.all(_dsCardPad * scale),
@@ -789,6 +792,7 @@ class _DsPrimaryButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     final double s = scale;
     final BorderRadius r =
         BorderRadius.circular((radius ?? _kBtnRadius) * s);
@@ -1858,7 +1862,7 @@ class _AdScreenState extends State<AdScreen>
                   ),
                   const SizedBox(width: 10),
                   const Expanded(
-                    child: ProxoText('ڕەتکردنەوەی ڕیکلام',
+                    child: ProxoText('ڕەتکردنەوەی ڕیکلام', translate: true,
                       textAlign: TextAlign.right,
                       style: TextStyle(
                         fontFamily: kAppFont, fontSize: 16,
@@ -1868,7 +1872,7 @@ class _AdScreenState extends State<AdScreen>
                 const SizedBox(height: 6),
                 const Align(
                   alignment: Alignment.centerRight,
-                  child: ProxoText('هۆکاری ڕەتکردنەوە هەڵبژێرە، بودجەکەت بەتەواوی دەگەڕێتەوە بۆ باڵانسەکەت.',
+                  child: ProxoText('هۆکاری ڕەتکردنەوە هەڵبژێرە، بودجەکەت بەتەواوی دەگەڕێتەوە بۆ باڵانسەکەت.', translate: true,
                     textAlign: TextAlign.right,
                     style: TextStyle(
                       fontFamily: kAppFont, fontSize: 12, height: 1.6,
@@ -1929,7 +1933,7 @@ class _AdScreenState extends State<AdScreen>
                       onChanged: (_) => setSheetState(() {}),
                       style: const TextStyle(fontFamily: kAppFont, fontSize: 13),
                       decoration: InputDecoration(
-                        hint: const ProxoText('هۆکارەکەت بنووسە...'),
+                        hint: const ProxoText('هۆکارەکەت بنووسە...', translate: true),
                         hintStyle: const TextStyle(
                           fontFamily: kAppFont,
                           fontSize: 12,
@@ -1966,7 +1970,7 @@ class _AdScreenState extends State<AdScreen>
                           ? const SizedBox(
                               width: 18, height: 18,
                               child: CircularProgressIndicator(strokeWidth: 2.2, color: Colors.white))
-                          : ProxoText('دڵنیام، ڕەتی بکەوە',
+                          : ProxoText('دڵنیام، ڕەتی بکەوە', translate: true,
                               style: TextStyle(
                                 fontFamily: kAppFont, fontSize: 14, fontWeight: FontWeight.w700,
                                 // دۆخی ناچالاک — تۆنێکی تۆختر لە #9CA3AFی
@@ -2546,6 +2550,7 @@ class _AdScreenState extends State<AdScreen>
   // ─────────────────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     return ScrollConfiguration(
       behavior: const _AdGlowBehavior(),
       child: Directionality(
@@ -2645,7 +2650,7 @@ class _AdScreenState extends State<AdScreen>
           ),
           SizedBox(width: _dsTileGutter * s),
           Expanded(
-            child: ProxoText('پەیوەندی نییە — داتای پاشەکەوتکراو نیشان دەدرێت',
+            child: ProxoText('پەیوەندی نییە — داتای پاشەکەوتکراو نیشان دەدرێت', translate: true,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: t.subtitle),
@@ -2658,7 +2663,7 @@ class _AdScreenState extends State<AdScreen>
               behavior: HitTestBehavior.opaque,
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: _dsTileGutter * s),
-                child: ProxoText('دووبارە',
+                child: ProxoText('دووبارە', translate: true,
                     style: TextStyle(
                         fontFamily: kAppFont,
                         fontSize: _dsFsAction * s,
@@ -3095,7 +3100,7 @@ class _AdScreenState extends State<AdScreen>
                       ),
                       SizedBox(height: _kEmptyArtGap * s),
                       ProxoText(
-                        'هێشتا هیچ ڕیکلامێک نییە!',
+                        'هێشتا هیچ ڕیکلامێک نییە!', translate: true,
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontFamily: _kAdCardFont,
@@ -3110,7 +3115,7 @@ class _AdScreenState extends State<AdScreen>
                         constraints:
                             BoxConstraints(maxWidth: _kEmptyBodyMax * s),
                         child: ProxoText(
-                          'کاتێک ڕیکلامێک تۆمار دەکەیت، لێرە دەردەکەوێت.',
+                          'کاتێک ڕیکلامێک تۆمار دەکەیت، لێرە دەردەکەوێت.', translate: true,
                           maxLines: 3,
                           overflow: TextOverflow.ellipsis,
                           textAlign: TextAlign.center,
@@ -3161,7 +3166,7 @@ class _AdScreenState extends State<AdScreen>
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               ProxoText(
-                                'ڕیکلامێک بکە',
+                                'ڕیکلامێک بکە', translate: true,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 textAlign: TextAlign.center,
@@ -3617,6 +3622,7 @@ class _AdCardState extends State<_AdCard> {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     // ═══════════════════════════════════════════════════════════════════════
     // داتا — مەتریکەکان، وێنۆچکە و دۆخی فیدباک هەموویان لە هەمان ڕیزی
     // `pa_ads`ەوە دێن؛ هیچ fetchێکی ناو خودی کارت نییە.
@@ -4279,6 +4285,7 @@ class _AdcThumbState extends State<_AdcThumb> {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     final url = _imageUrl;
     final generation = _generation;
     Widget inner;
@@ -4454,6 +4461,7 @@ class _AdcStatusNote extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     final double s = scale;
     final double t = _typeScaleFor(scale);
     return Container(
@@ -4523,6 +4531,7 @@ class _AdcFixBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     final double s = scale;
     final double t = _typeScaleFor(scale);
     final Color ink = submitted ? _kCampaignSubtle : _kAdcFixInk;
@@ -4654,6 +4663,7 @@ class _AdcListEntrance extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     return AnimatedBuilder(
       animation: animation,
       // `child` لە دەرەوەی بیلدەرەکەیە: کارتەکە لە ماوەی ئەنیمەیشنەکەدا
@@ -4690,6 +4700,7 @@ class _AdcBudgetProgress extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     final double s = scale;
     final double t = _typeScaleFor(scale);
     final double safe = progress.clamp(0.0, 1.0).toDouble();
@@ -4702,7 +4713,7 @@ class _AdcBudgetProgress extends StatelessWidget {
           children: [
             Expanded(
               child: ProxoText(
-                'بەکارهێنانی بودجە',
+                'بەکارهێنانی بودجە', translate: true,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
@@ -4815,6 +4826,7 @@ class _AdcMetricTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     final double t = _typeScaleFor(scale);
     final double labelSize = 11.0 * t;
     final double labelHeight = MediaQuery.textScalerOf(context)
@@ -4892,6 +4904,7 @@ class _AdcExpandToggle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     final double s = scale;
     final double t = _typeScaleFor(scale);
     final String label = expanded ? _kAdcSeeLess : _kAdcSeeMore;
@@ -4992,6 +5005,7 @@ class _StatusChipState extends State<_StatusChip> {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     final double s = widget.scale;
     final double t = _typeScaleFor(s);
     final bool on = widget.selected;
@@ -5162,6 +5176,7 @@ class _IosPressableState extends State<_IosPressable> {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     if (!_interactive) return widget.child;
     return Semantics(
       button: widget.semanticButton,
@@ -5221,6 +5236,7 @@ class _SkeletonOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     final double s = _campaignScale(context);
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -5336,6 +5352,7 @@ class _FbSheetSurface extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     final double s = scale;
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -5379,6 +5396,7 @@ class _IosSheetHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     final double s = scale;
     final double t = _typeScaleFor(s);
     return SizedBox(
@@ -5464,6 +5482,7 @@ class _IosOptionSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     final double s = scale;
 
     return _FbSheetSurface(
@@ -5511,6 +5530,7 @@ class _IosRadioRowState extends State<_IosRadioRow> {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     final double s = widget.scale;
     final double t = _typeScaleFor(s);
     return Semantics(
@@ -5662,6 +5682,7 @@ class _CampaignStatusBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     final double s = scale;
     final double t = _typeScaleFor(scale); // same type floor as the card
     return Container(
@@ -5795,6 +5816,7 @@ class SkeletonCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     // دەقاودەق هەمان سێ ڕەمپەکەی `_AdCardState.build`:
     //   s()  → جیۆمیتری   ts() → تایپ   kt() → تایپی کوردی (Rabar)
     final double rs = _campaignScale(context);

@@ -375,6 +375,7 @@ class _AdDetailScreenState extends State<AdDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     final Locale locale = ProxoLocale.current.value;
     final AdDetailStrings l = AdDetailStrings.of(locale);
     final MediaQueryData mq = MediaQuery.of(context);

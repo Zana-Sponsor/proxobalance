@@ -157,7 +157,7 @@ class _AdFeedbackDialogState extends State<_AdFeedbackDialog> {
                       children: <Widget>[
                         const Expanded(
                           child: ProxoText(
-                            'هەڵسەنگاندنی ڕیکلام',
+                            'هەڵسەنگاندنی ڕیکلام', translate: true,
                             style: TextStyle(
                               fontFamily: kAppFont,
                               fontSize: 13,
@@ -191,7 +191,7 @@ class _AdFeedbackDialogState extends State<_AdFeedbackDialog> {
                     ),
                     const SizedBox(height: 20),
                     const ProxoText(
-                      'ئەم ڕیکلامە چۆن بوو؟',
+                      'ئەم ڕیکلامە چۆن بوو؟', translate: true,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontFamily: kAppFont,
@@ -203,7 +203,7 @@ class _AdFeedbackDialogState extends State<_AdFeedbackDialog> {
                     ),
                     const SizedBox(height: 6),
                     const ProxoText(
-                      'ئەستێرەیەک هەڵبژێرە؛ فیدباکەکەت یارمەتیمان دەدات باشتر بین.',
+                      'ئەستێرەیەک هەڵبژێرە؛ فیدباکەکەت یارمەتیمان دەدات باشتر بین.', translate: true,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontFamily: kAppFont,
@@ -295,7 +295,7 @@ class _AdFeedbackDialogState extends State<_AdFeedbackDialog> {
                                 ),
                               )
                             : const ProxoText(
-                                'ناردنی فیدباک',
+                                'ناردنی فیدباک', translate: true,
                                 style: TextStyle(
                                   fontFamily: kAppFont,
                                   fontSize: 13.5,
@@ -514,7 +514,7 @@ class CompletedAdFeedbackTile extends StatelessWidget {
                     rated
                         ? _CompactStars(rating: safeRating, scale: s)
                         : ProxoText(
-                            'بە ئەستێرە هەڵیسەنگێنە',
+                            'بە ئەستێرە هەڵیسەنگێنە', translate: true,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(

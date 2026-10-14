@@ -173,7 +173,7 @@ class _ProxoLinkPreviewState extends State<ProxoLinkPreview> {
       }
       if (!opened && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: ProxoText('نەتوانرا ئەپەکە بکرێتەوە.')),
+          const SnackBar(content: ProxoText('نەتوانرا ئەپەکە بکرێتەوە.', translate: true)),
         );
       }
     }
@@ -211,17 +211,17 @@ class _ProxoLinkPreviewState extends State<ProxoLinkPreview> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    ProxoText('پێشبینین نەکرایەوە', style: AdUi.heading(context)),
+                    ProxoText('پێشبینین نەکرایەوە', translate: true, style: AdUi.heading(context)),
                     const SizedBox(height: 12),
                     ProxoText(
-                      'تکایە پەیوەندی ئینتەرنێتەکەت بپشکنە.',
+                      'تکایە پەیوەندی ئینتەرنێتەکەت بپشکنە.', translate: true,
                       style: AdUi.text(context, color: AdUi.secondary),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 16),
                     OutlinedButton(
                       onPressed: _load,
-                      child: const ProxoText('دووبارە هەوڵبدەرەوە'),
+                      child: const ProxoText('دووبارە هەوڵبدەرەوە', translate: true),
                     ),
                   ],
                 ),

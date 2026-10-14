@@ -1,3 +1,4 @@
+import 'package:proxo_app/theme/app_locale.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -131,16 +132,16 @@ class _ProxoLinkPageDetailsScreenState
             action == 'delete' ? 'ئەرشیفکردنی پەڕە' : 'ناچالاککردنی پەڕە',
           ),
           content: const ProxoText(
-            'بەستەری گشتی بەردەست نابێت. پەڕەی بەکارهاتوو لە ڕیکلامدا پارێزراوە.',
+            'بەستەری گشتی بەردەست نابێت. پەڕەی بەکارهاتوو لە ڕیکلامدا پارێزراوە.', translate: true,
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: const ProxoText('پاشگەزبوونەوە'),
+              child: const ProxoText('پاشگەزبوونەوە', translate: true),
             ),
             FilledButton(
               onPressed: () => Navigator.pop(context, true),
-              child: const ProxoText('بەردەوامبوون'),
+              child: const ProxoText('بەردەوامبوون', translate: true),
             ),
           ],
         ),
@@ -189,6 +190,7 @@ class _ProxoLinkPageDetailsScreenState
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     final page = _page, enabled = !_busy && !_loading && _error == null;
     return Theme(
       data: AdUi.theme(context),
@@ -221,7 +223,7 @@ class _ProxoLinkPageDetailsScreenState
                                   child: OutlinedButton(
                                     onPressed: _load,
                                     child: const ProxoText(
-                                      'دووبارە هەوڵبدەرەوە',
+                                      'دووبارە هەوڵبدەرەوە', translate: true,
                                     ),
                                   ),
                                 ),
@@ -259,13 +261,13 @@ class _ProxoLinkPageDetailsScreenState
                                         'نوێکراوە: ${pageDate(page.updatedAt)}',
                                       ),
                                       const SizedBox(height: 12),
-                                      const ProxoText('ئایدی پەڕە'),
+                                      const ProxoText('ئایدی پەڕە', translate: true),
                                       SelectableText(
                                         page.id,
                                         textDirection: TextDirection.ltr,
                                       ),
                                       const SizedBox(height: 12),
-                                      const ProxoText('بەستەری هەمیشەیی'),
+                                      const ProxoText('بەستەری هەمیشەیی', translate: true),
                                       SelectableText(
                                         widget.repository
                                             .publicUrl(
@@ -288,7 +290,7 @@ class _ProxoLinkPageDetailsScreenState
                                       FilledButton.icon(
                                         onPressed: enabled ? _edit : null,
                                         icon: const Icon(Icons.edit_outlined),
-                                        label: const ProxoText('دەستکاریکردن'),
+                                        label: const ProxoText('دەستکاریکردن', translate: true),
                                       ),
                                       if (page.canPreview)
                                         OutlinedButton(
@@ -296,7 +298,7 @@ class _ProxoLinkPageDetailsScreenState
                                               ? () => _preview()
                                               : null,
                                           child: const ProxoText(
-                                            'پێشبینینی تەواو',
+                                            'پێشبینینی تەواو', translate: true,
                                           ),
                                         ),
                                       if (page.available)
@@ -305,7 +307,7 @@ class _ProxoLinkPageDetailsScreenState
                                               ? () => _preview(public: true)
                                               : null,
                                           child: const ProxoText(
-                                            'کردنەوەی پەڕە',
+                                            'کردنەوەی پەڕە', translate: true,
                                           ),
                                         ),
                                       OutlinedButton(
@@ -328,7 +330,7 @@ class _ProxoLinkPageDetailsScreenState
                                                   );
                                               }
                                             : null,
-                                        child: const ProxoText('کۆپی لینک'),
+                                        child: const ProxoText('کۆپی لینک', translate: true),
                                       ),
                                       if (page.publishStatus == 'ready')
                                         OutlinedButton(
@@ -351,14 +353,14 @@ class _ProxoLinkPageDetailsScreenState
                                               ? () => _action('retry')
                                               : null,
                                           child: const ProxoText(
-                                            'دووبارە دروستکردنەوە',
+                                            'دووبارە دروستکردنەوە', translate: true,
                                           ),
                                         ),
                                       OutlinedButton(
                                         onPressed: enabled
                                             ? () => _action('delete')
                                             : null,
-                                        child: const ProxoText('ئەرشیفکردن'),
+                                        child: const ProxoText('ئەرشیفکردن', translate: true),
                                       ),
                                       if (_busy)
                                         const SizedBox(

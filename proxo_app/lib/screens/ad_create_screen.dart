@@ -426,14 +426,14 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
                                         title: 'پشکنینی داواکاریی پێشوو',
                                         child: Column(children: [
                                           ProxoText(
-                                              'داواکارییە پێشووەکە بار نەبوو؛ پێش داواکارییەکی نوێ دووبارە هەوڵ بدەرەوە.',
+                                              'داواکارییە پێشووەکە بار نەبوو؛ پێش داواکارییەکی نوێ دووبارە هەوڵ بدەرەوە.', translate: true,
                                               style: AdUi.text(context)),
                                           TextButton(
                                               onPressed: _pendingLoading
                                                   ? null
                                                   : _loadPending,
                                               child: const ProxoText(
-                                                  'دووبارە پشکنینەوە')),
+                                                  'دووبارە پشکنینەوە', translate: true)),
                                         ])),
                                     const SizedBox(height: 18),
                                   ],
@@ -442,7 +442,7 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
                                         title: 'داواکارییەکی پێشوو',
                                         child: Column(children: [
                                           ProxoText(
-                                              'ئەنجامی داواکارییەکە پێویستی بە پشکنین هەیە.',
+                                              'ئەنجامی داواکارییەکە پێویستی بە پشکنین هەیە.', translate: true,
                                               style: AdUi.text(context)),
                                           const SizedBox(height: 12),
                                           FilledButton(
@@ -450,7 +450,7 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
                                                   ? null
                                                   : _checkout,
                                               child: const ProxoText(
-                                                  'پشکنینی هەمان داواکاری')),
+                                                  'پشکنینی هەمان داواکاری', translate: true)),
                                         ])),
                                     const SizedBox(height: 18),
                                   ],
@@ -555,7 +555,7 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
         ExpansionTile(
             tilePadding: EdgeInsets.zero,
             childrenPadding: EdgeInsets.zero,
-            title: ProxoText('تێبینی (ئارەزوومەندانە)',
+            title: ProxoText('تێبینی (ئارەزوومەندانە)', translate: true,
                 style: AdUi.text(context, color: AdUi.secondary)),
             children: [_field(context, 'note', _note, 'تێبینی', maxLines: 3)]),
       ]));
@@ -605,10 +605,10 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
                             TextButton(
                                 onPressed: _loadAssets,
                                 child: const ProxoText(
-                                    'دووبارە بارکردنەوەی پەڕەکان'))
+                                    'دووبارە بارکردنەوەی پەڕەکان', translate: true))
                           else if (_assets.isEmpty)
                             ProxoText(
-                                'پەڕەی پەیوەندیت نییە؛ پەڕەیەکی نوێ دروست بکە.',
+                                'پەڕەی پەیوەندیت نییە؛ پەڕەیەکی نوێ دروست بکە.', translate: true,
                                 style:
                                     AdUi.text(context, color: AdUi.secondary))
                           else
@@ -623,7 +623,7 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
                                 style: AdUi.text(context),
                                 decoration: AdUi.dropdownDecoration,
                                 hint:
-                                    const ProxoText('پەڕەی پەیوەندی هەڵبژێرە'),
+                                    const ProxoText('پەڕەی پەیوەندی هەڵبژێرە', translate: true),
                                 items: [
                                   for (final a in _assets)
                                     DropdownMenuItem(
@@ -641,7 +641,7 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
                               child: OutlinedButton(
                                   onPressed: _createContact,
                                   child:
-                                      const ProxoText('دروستکردنی پەڕەی نوێ'))),
+                                      const ProxoText('دروستکردنی پەڕەی نوێ', translate: true))),
                         ]))),
       ]));
   Widget _audience(BuildContext context) => AdFormSection(
@@ -705,7 +705,7 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
             itemHeight: null,
             style: AdUi.text(context),
             decoration: AdUi.dropdownDecoration,
-            hint: const ProxoText('پۆلی ڕیکلام هەڵبژێرە'),
+            hint: const ProxoText('پۆلی ڕیکلام هەڵبژێرە', translate: true),
             items: [
               for (final c in kAdCategories)
                 DropdownMenuItem(value: c.slug, child: ProxoText(c.label))
@@ -876,7 +876,7 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
                   _refreshQuote(clearPromo: true);
                 },
                 decoration: const InputDecoration(
-                    hint: ProxoText('کۆدی داشکاندن (ئارەزوومەندانە)')))),
+                    hint: ProxoText('کۆدی داشکاندن (ئارەزوومەندانە)', translate: true)))),
         const SizedBox(height: 14),
         Align(
             alignment: Alignment.centerRight,
@@ -907,7 +907,7 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
         child:
             Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           if (_goal == null)
-            ProxoText('سەرەتا ئامانجی ڕیکلام هەڵبژێرە.',
+            ProxoText('سەرەتا ئامانجی ڕیکلام هەڵبژێرە.', translate: true,
                 style: AdUi.text(context, color: AdUi.secondary))
           else ...[
             Container(
@@ -929,12 +929,12 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
                 ])),
             if (_goal == 'messages') ...[
               const SizedBox(height: 12),
-              ProxoText('کرتەی پەڕەی پەیوەندی؛ بە گریمانەی کاتی.',
+              ProxoText('کرتەی پەڕەی پەیوەندی؛ بە گریمانەی کاتی.', translate: true,
                   style: AdUi.text(context, color: AdUi.secondary))
             ],
             if (f.provisionalViews) ...[
               const SizedBox(height: 10),
-              ProxoText('پێشبینی بینین بە گریمانەی کاتی.',
+              ProxoText('پێشبینی بینین بە گریمانەی کاتی.', translate: true,
                   style: AdUi.text(context, color: AdUi.secondary))
             ],
           ],
@@ -962,7 +962,7 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
           if (_payment == 'app_balance' &&
               _quote!.balanceUsd + 0.000001 < _quote!.costUsd) ...[
             const SizedBox(height: 10),
-            ProxoText('باڵانسی پێویستت بەردەست نییە',
+            ProxoText('باڵانسی پێویستت بەردەست نییە', translate: true,
                 style: AdUi.text(context, color: const Color(0xFFB74956)))
           ],
         ],
@@ -978,7 +978,7 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
               alignment: Alignment.centerRight,
               child: TextButton(
                   onPressed: _loadQuote,
-                  child: const ProxoText('دووبارە پشکنین')))
+                  child: const ProxoText('دووبارە پشکنین', translate: true)))
         ],
       ]));
   Widget _submission(BuildContext context) => AdFormSection(

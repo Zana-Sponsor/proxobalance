@@ -141,7 +141,7 @@ class ProxoApp extends StatelessWidget {
   }
 
   Widget _buildApp(Locale locale) {
-    final Locale frameworkLocale = locale.languageCode == 'ckb'
+    final Locale frameworkLocale = (locale.languageCode == 'ckb' || locale.languageCode == 'kmr')
         ? ProxoLocale.arabic
         : locale;
     return MaterialApp(

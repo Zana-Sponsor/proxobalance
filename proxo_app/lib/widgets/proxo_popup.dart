@@ -373,7 +373,7 @@ class _ProxoPopupDialog extends StatelessWidget {
                     onTap: () => _openLink(context),
                     child: const Center(
                       child: ProxoText(
-                        'کردنەوە',
+                        'کردنەوە', translate: true,
                         style: TextStyle(
                           fontFamily: kAppFont,
                           fontSize: 14.5,
@@ -394,7 +394,7 @@ class _ProxoPopupDialog extends StatelessWidget {
                 onTap: () => Navigator.of(context).pop(),
                 behavior: HitTestBehavior.opaque,
                 child: const ProxoText(
-                  'داخستن',
+                  'داخستن', translate: true,
                   style: TextStyle(
                     fontFamily: kAppFont,
                     fontSize: 13.5,

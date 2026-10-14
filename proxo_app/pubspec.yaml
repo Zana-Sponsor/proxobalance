@@ -85,6 +85,7 @@ flutter:
     - assets/proxolink_thumbnails/
     - assets/images/
     - assets/icons/
+    - assets/icons/solar/
     - assets/icons/ad_card/
     - assets/icons/nav/
     - assets/icons/home/

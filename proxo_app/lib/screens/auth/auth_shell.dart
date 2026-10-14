@@ -1,3 +1,5 @@
+import 'package:proxo_app/l10n/proxo_strings.dart';
+import '../../widgets/proxo_symbol.dart';
 // auth/auth_shell.dart
 import 'dart:async';
 import 'dart:convert';
@@ -380,7 +382,7 @@ class _AuthShellState extends State<AuthShell> {
     _showErrorCard(AuthStrings.errNetwork);
   }
 
-  String _t(String ku, String ar) => ProxoLocale.isArabic ? ar : ku;
+  String _t(String ku, String ar) => ProxoStrings.text(ku, arabic: ar);
 
   // ── Network ───────────────────────────────────────────────
 
@@ -1299,6 +1301,7 @@ class _AuthShellState extends State<AuthShell> {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     return Directionality(
       textDirection: ProxoLocale.directionOf(ProxoLocale.current.value),
       child: PopScope<Object?>(
@@ -1317,8 +1320,9 @@ class _AuthShellState extends State<AuthShell> {
               // ⚠ بوو 20. گەتەری ئاسۆیی ئێستا 16ـە لە هەموو شاشەکاندا —
               // هەمان `AuthTokens.pagePadding`.
               padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
-              child: ConstrainedBox(
+              child: Center(child: ConstrainedBox(
                 constraints: BoxConstraints(
+                  maxWidth: 480,
                   minHeight: max(0.0, viewport.maxHeight - 32),
                 ),
                 child: Column(
@@ -1372,7 +1376,7 @@ class _AuthShellState extends State<AuthShell> {
                   ),
 
                   AnimatedSwitcher(
-                    duration: AuthTokens.viewTransition,
+                    duration: MediaQuery.disableAnimationsOf(context) ? Duration.zero : AuthTokens.viewTransition,
                     switchInCurve: AuthTokens.curve,
                     switchOutCurve: AuthTokens.curve,
                     layoutBuilder: (current, previous) => Stack(
@@ -1403,7 +1407,7 @@ class _AuthShellState extends State<AuthShell> {
                   ),
                 ],
                 ),
-              ),
+              )),
               ),
             ),
           ),
@@ -1961,6 +1965,7 @@ class _AuthShellState extends State<AuthShell> {
       children: [
         AuthHeader.inner(onBack: _goToSignIn),
         const SizedBox(height: 24),
+        const AuthHeroSymbol(ProxoSymbolName.recovery),
         ProxoText(AuthStrings.resetPasswordTitle, style: _kTitle),
         const SizedBox(height: 4),
         ProxoText(AuthStrings.resetPasswordSubtitle, style: _kSub),
@@ -2014,6 +2019,7 @@ class _AuthShellState extends State<AuthShell> {
         AuthHeader.inner(
             onBack: () => setState(() => _step = _Step.forgotOtp)),
         const SizedBox(height: 24),
+        const AuthHeroSymbol(ProxoSymbolName.recovery),
         ProxoText(AuthStrings.resetPasswordTitle, style: _kTitle),
         const SizedBox(height: 4),
         ProxoText(AuthStrings.resetPasswordSubtitle, style: _kSub),
@@ -2102,9 +2108,11 @@ class _AuthShellState extends State<AuthShell> {
     return IconButton(
       onPressed: onTap,
       splashRadius: 18,
-      icon: Icon(
-        shown ? Icons.visibility_off_outlined : Icons.visibility_outlined,
-        size: 19,
+      tooltip: shown ? _t('شاردنەوەی وشەی نهێنی', 'إخفاء كلمة المرور') : _t('پیشاندانی وشەی نهێنی', 'إظهار كلمة المرور'),
+      constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
+      icon: ProxoSymbol(
+        shown ? ProxoSymbolName.eyeClosed : ProxoSymbolName.eye,
+        size: 22,
         color: AuthTokens.placeholder,
       ),
     );

@@ -1,3 +1,6 @@
+import '../widgets/auth/auth_header.dart';
+import '../widgets/proxo_symbol.dart';
+import 'package:proxo_app/theme/app_locale.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
@@ -344,6 +347,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     final MediaQueryData media = MediaQuery.of(context);
 
     return MediaQuery(
@@ -453,6 +457,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       ),
                                     ],
                                   ),
+                                  const SizedBox(height: 20),
+                                  const AuthLanguageSelector(),
                                   const SizedBox(height: 24),
                                   ValueListenableBuilder<bool>(
                                     valueListenable: _signingOut,
@@ -464,7 +470,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   ),
                                   const SizedBox(height: 20),
                                   const ProxoText(
-                                    'وەشانی ١.٠.٠',
+                                    'وەشانی ١.٠.٠', translate: true,
                                     textAlign: TextAlign.center,
                                     style: _ProfileText.version,
                                   ),
@@ -945,6 +951,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     final MediaQueryData media = MediaQuery.of(context);
     final _ProfileData preview = _ProfileData(
       fullName: widget.initialFullName,
@@ -994,7 +1001,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               ),
                               const SizedBox(height: 9),
                               ProxoText(
-                                'بۆ گۆڕینی وێنە کلیک بکە',
+                                'بۆ گۆڕینی وێنە کلیک بکە', translate: true,
                                 textAlign: TextAlign.center,
                                 style: _ProfileText.userContact.copyWith(
                                   color: _ProfileColors.muted,
@@ -1104,7 +1111,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                             color: Colors.white,
                                           ),
                                         )
-                                      : const ProxoText('پاشەکەوتکردن'),
+                                      : const ProxoText('پاشەکەوتکردن', translate: true),
                                 ),
                               ),
                               const SizedBox(height: 34),
@@ -1131,7 +1138,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                     ),
                                     child: Row(
                                       children: <Widget>[
-                                        const Icon(
+                                        const ProxoSolarIcon(
                                           SolarIconsOutline.userCrossRounded,
                                           size: 21,
                                           color: _ProfileColors.danger,
@@ -1143,12 +1150,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                                 CrossAxisAlignment.start,
                                             children: <Widget>[
                                               ProxoText(
-                                                'سڕینەوەی هەژمار',
+                                                'سڕینەوەی هەژمار', translate: true,
                                                 style: _ProfileText.dangerTitle,
                                               ),
                                               SizedBox(height: 3),
                                               ProxoText(
-                                                'هەموو داتاکانت بە هەمیشەیی دەسڕێتەوە',
+                                                'هەموو داتاکانت بە هەمیشەیی دەسڕێتەوە', translate: true,
                                                 style: _ProfileText.dangerSub,
                                               ),
                                             ],
@@ -1163,7 +1170,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                             ),
                                           )
                                         else
-                                          const Icon(
+                                          const ProxoSolarIcon(
                                             SolarIconsOutline.altArrowLeft,
                                             size: 21,
                                             color: _ProfileColors.danger,
@@ -1292,6 +1299,7 @@ class _ProfileTopBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     return ColoredBox(
       color: _ProfileColors.page,
       child: ConstrainedBox(
@@ -1313,7 +1321,7 @@ class _ProfileTopBar extends StatelessWidget {
                     ),
               Expanded(
                 child: const ProxoText(
-                        'پڕۆفایل',
+                        'پڕۆفایل', translate: true,
                         textAlign: TextAlign.center,
                         softWrap: true,
                         style: _ProfileText.screenTitle,
@@ -1342,6 +1350,7 @@ class _SimpleTopBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     return DecoratedBox(
       decoration: const BoxDecoration(
         color: _ProfileColors.page,
@@ -1362,7 +1371,7 @@ class _SimpleTopBar extends StatelessWidget {
               ),
               Expanded(
                 child: ProxoText(
-                  title,
+                  title, translate: true,
                   textAlign: TextAlign.center,
                   softWrap: true,
                   style: _ProfileText.screenTitle,
@@ -1386,7 +1395,7 @@ class _CircleActionButton extends StatelessWidget {
   Widget build(BuildContext context) => IconButton(
     tooltip: semanticLabel, onPressed: onTap,
     constraints: const BoxConstraints.tightFor(width: 48, height: 48),
-    icon: Icon(icon, size: ProxoChrome.iconSize, color: AppColors.ink),
+    icon: ProxoSolarIcon(icon, size: ProxoChrome.iconSize, color: AppColors.ink),
   );
 }
 
@@ -1397,6 +1406,7 @@ class _ProfileIdentity extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     return Column(
       children: <Widget>[
         _ProfileAvatar(data: data),
@@ -1439,6 +1449,7 @@ class _ProfileAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     final String? avatarUrl = data.avatarUrl;
     final int cacheSize =
         (diameter * MediaQuery.devicePixelRatioOf(context)).ceil();
@@ -1504,6 +1515,7 @@ class _EditableProfileAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     return Semantics(
       button: true,
       enabled: enabled,
@@ -1538,7 +1550,7 @@ class _EditableProfileAvatar extends StatelessWidget {
                   onTap: enabled ? onTap : null,
                   child: const SizedBox.square(
                     dimension: 30,
-                    child: Icon(
+                    child: ProxoSolarIcon(
                       Icons.photo_camera_outlined,
                       size: 17,
                       color: Colors.white,
@@ -1561,10 +1573,11 @@ class _AvatarFallback extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     return ColoredBox(
       color: _ProfileColors.iconSurface,
       child: Center(
-        child: Icon(
+        child: ProxoSolarIcon(
           SolarIconsOutline.userRounded,
           size: iconSize,
           color: _ProfileColors.muted,
@@ -1586,15 +1599,15 @@ class _BalanceCard extends StatelessWidget {
     child: Padding(padding: const EdgeInsets.all(16), child: Column(
       crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         Row(children: [
-          const Icon(SolarIconsOutline.wallet2, size: ProxoChrome.iconSize, color: Colors.white),
+          const ProxoSolarIcon(SolarIconsOutline.wallet2, size: ProxoChrome.iconSize, color: Colors.white),
           const SizedBox(width: 12),
-          const Expanded(child: ProxoText('باڵانسی ڕیکلام', style: _ProfileText.balanceLabel)),
+          const Expanded(child: ProxoText('باڵانسی ڕیکلام', translate: true, style: _ProfileText.balanceLabel)),
           ValueListenableBuilder<bool>(valueListenable: showBalance,
             builder: (_, visible, __) => IconButton(
               tooltip: visible ? 'شاردنەوەی باڵانس' : 'پیشاندانی باڵانس',
               constraints: const BoxConstraints.tightFor(width: 48, height: 48),
               onPressed: () => showBalance.value = !visible,
-              icon: Icon(visible ? SolarIconsOutline.eye : SolarIconsOutline.eyeClosed,
+              icon: ProxoSolarIcon(visible ? SolarIconsOutline.eye : SolarIconsOutline.eyeClosed,
                 size: ProxoChrome.iconSize, color: Colors.white))),
         ]),
         const SizedBox(height: 8),
@@ -1610,8 +1623,8 @@ class _BalanceCard extends StatelessWidget {
         TextButton.icon(onPressed: onTap,
           style: TextButton.styleFrom(foregroundColor: Colors.white,
             minimumSize: const Size(48, 48), alignment: AlignmentDirectional.centerStart),
-          icon: const Icon(SolarIconsOutline.addCircle, size: ProxoChrome.iconSize),
-          label: const ProxoText('زیادکردنی باڵانس', style: TextStyle(fontFamily: kAppFont, fontSize: 14, height: 1.5))),
+          icon: const ProxoSolarIcon(SolarIconsOutline.addCircle, size: ProxoChrome.iconSize),
+          label: const ProxoText('زیادکردنی باڵانس', translate: true, style: TextStyle(fontFamily: kAppFont, fontSize: 14, height: 1.5))),
       ])),
   );
   static String _formatIqd(double? value) {
@@ -1634,6 +1647,7 @@ class _QuickActions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     final cards = <Widget>[
       _QuickActionCard(icon: SolarIconsOutline.clapperboardPlay, label: 'ڕیکلامەکانم', onTap: onAds),
       _QuickActionCard(icon: SolarIconsOutline.widget_2, label: 'ئامرازەکان', onTap: onAssets),
@@ -1665,6 +1679,7 @@ class _QuickActionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     return Material(
       color: _ProfileColors.quickSurface,
       shape: const RoundedRectangleBorder(
@@ -1681,7 +1696,7 @@ class _QuickActionCard extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Icon(icon, size: ProxoChrome.iconSize, color: _ProfileColors.iconInk),
+                ProxoSolarIcon(icon, size: ProxoChrome.iconSize, color: _ProfileColors.iconInk),
                 const SizedBox(height: 6),
                 ProxoText(
                   label,
@@ -1705,7 +1720,8 @@ class _SectionTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ProxoText(text, style: _ProfileText.sectionTitle);
+    ProxoLocale.watch(context);
+    return ProxoText(text, translate: true, style: _ProfileText.sectionTitle);
   }
 }
 
@@ -1730,6 +1746,7 @@ class _SettingsGroup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     return Material(
       color: _ProfileColors.groupSurface,
       shape: const RoundedRectangleBorder(
@@ -1764,6 +1781,7 @@ class _SettingsTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     return InkWell(
       onTap: entry.onTap,
       child: ConstrainedBox(
@@ -1780,7 +1798,7 @@ class _SettingsTile extends StatelessWidget {
                   color: ProxoChrome.surface,
                   borderRadius: BorderRadius.all(Radius.circular(12)),
                 ),
-                child: Icon(
+                child: ProxoSolarIcon(
                   entry.icon,
                   size: ProxoChrome.iconSize,
                   color: _ProfileColors.iconInk,
@@ -1793,14 +1811,14 @@ class _SettingsTile extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     ProxoText(
-                      entry.title,
+                      entry.title, translate: true,
                       softWrap: true,
                       style: _ProfileText.menuTitle,
                     ),
                     if (entry.subtitle != null) ...<Widget>[
                       const SizedBox(height: 2),
                       ProxoText(
-                        entry.subtitle!,
+                        entry.subtitle!, translate: true,
                         softWrap: true,
                         style: _ProfileText.menuSubtitle,
                       ),
@@ -1809,7 +1827,7 @@ class _SettingsTile extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 8),
-              const Icon(
+              const ProxoSolarIcon(
                 SolarIconsOutline.altArrowLeft,
                 size: 20,
                 color: _ProfileColors.chevron,
@@ -1830,6 +1848,7 @@ class _SignOutTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     return Material(
       color: _ProfileColors.groupSurface,
       shape: const RoundedRectangleBorder(
@@ -1852,7 +1871,7 @@ class _SignOutTile extends StatelessWidget {
                       color: Colors.white,
                       shape: BoxShape.circle,
                     ),
-                    child: Icon(
+                    child: ProxoSolarIcon(
                       SolarIconsOutline.logout,
                       size: ProxoChrome.iconSize,
                       color: _ProfileColors.iconInk,
@@ -1861,7 +1880,7 @@ class _SignOutTile extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
                 const Expanded(
-                  child: ProxoText('دەرچوون', style: _ProfileText.signOut),
+                  child: ProxoText('دەرچوون', translate: true, style: _ProfileText.signOut),
                 ),
                 if (busy)
                   const SizedBox.square(
@@ -1872,7 +1891,7 @@ class _SignOutTile extends StatelessWidget {
                     ),
                   )
                 else
-                  const Icon(
+                  const ProxoSolarIcon(
                     SolarIconsOutline.altArrowLeft,
                     size: 20,
                     color: _ProfileColors.chevron,
@@ -1897,6 +1916,7 @@ class _SupportSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Material(
@@ -1931,7 +1951,7 @@ class _SupportSheet extends StatelessWidget {
                     color: _ProfileColors.supportIllustrationSurface,
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(
+                  child: ProxoSolarIcon(
                     SolarIconsOutline.chatRoundCall,
                     size: 38,
                     color: _ProfileColors.supportDark,
@@ -1940,7 +1960,7 @@ class _SupportSheet extends StatelessWidget {
               ),
               const SizedBox(height: 18),
               const ProxoText(
-                'چۆن دەتوانین پەیوەندیتان پێوە بکەین؟',
+                'چۆن دەتوانین پەیوەندیتان پێوە بکەین؟', translate: true,
                 textAlign: TextAlign.center,
                 style: _ProfileText.supportQuestion,
               ),
@@ -1993,6 +2013,7 @@ class _SupportChannelButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     final Color foreground =
         filled ? Colors.white : _ProfileColors.supportDark;
     return Material(
@@ -2019,7 +2040,7 @@ class _SupportChannelButton extends StatelessWidget {
                       : _ProfileColors.iconSurface,
                   shape: BoxShape.circle,
                 ),
-                child: Icon(icon, size: 20, color: foreground),
+                child: ProxoSolarIcon(icon, size: 20, color: foreground),
               ),
               const SizedBox(width: 9),
               Flexible(child: ProxoText(
@@ -2039,6 +2060,7 @@ class _AboutAppSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     final MediaQueryData media = MediaQuery.of(context);
     return MediaQuery(
       data: media,
@@ -2072,7 +2094,7 @@ class _AboutAppSheet extends StatelessWidget {
                       const SizedBox(width: 44),
                       const Expanded(
                         child: ProxoText(
-                          'دەربارەی ئەپڵیکەیشن',
+                          'دەربارەی ئەپڵیکەیشن', translate: true,
                           textAlign: TextAlign.center,
                           style: _ProfileText.screenTitle,
                         ),
@@ -2179,6 +2201,7 @@ class _PolicySection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(15),
@@ -2194,9 +2217,9 @@ class _PolicySection extends StatelessWidget {
         children: <Widget>[
           Row(
             children: <Widget>[
-              Icon(icon, size: 20, color: _ProfileColors.ink),
+              ProxoSolarIcon(icon, size: 20, color: _ProfileColors.ink),
               const SizedBox(width: 9),
-              Expanded(child: ProxoText(title, style: _ProfileText.policyTitle)),
+              Expanded(child: ProxoText(title, translate: true, style: _ProfileText.policyTitle)),
             ],
           ),
           const SizedBox(height: 10),
@@ -2212,6 +2235,7 @@ class _ProfileFaqScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     final MediaQueryData media = MediaQuery.of(context);
     return MediaQuery(
       data: media,
@@ -2258,6 +2282,7 @@ class _FaqExpansionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     return Material(
       color: _ProfileColors.groupSurface,
       shape: const RoundedRectangleBorder(
@@ -2301,7 +2326,8 @@ class _FieldLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ProxoText(text, style: _ProfileText.fieldLabel);
+    ProxoLocale.watch(context);
+    return ProxoText(text, translate: true, style: _ProfileText.fieldLabel);
   }
 }
 
@@ -2321,10 +2347,10 @@ InputDecoration _profileInputDecoration({
   return InputDecoration(
     hint: proxoFieldText(hint),
     hintStyle: _ProfileText.hint,
-    prefixIcon: Icon(icon, size: 20, color: _ProfileColors.muted),
+    prefixIcon: ProxoSolarIcon(icon, size: 20, color: _ProfileColors.muted),
     suffixIcon: suffixIcon == null
         ? null
-        : Icon(suffixIcon, size: 17, color: _ProfileColors.quiet),
+        : ProxoSolarIcon(suffixIcon, size: 17, color: _ProfileColors.quiet),
     filled: true,
     fillColor: fill,
     isDense: true,
@@ -2365,12 +2391,12 @@ Future<bool?> _showConfirmationDialog(
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(ProxoChrome.radius)),
         ),
-        title: ProxoText(title, style: _ProfileText.dialogTitle),
+        title: ProxoText(title, translate: true, style: _ProfileText.dialogTitle),
         content: ProxoText(message, style: _ProfileText.dialogBody),
         actions: <Widget>[
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(false),
-            child: const ProxoText('پاشگەزبوونەوە'),
+            child: const ProxoText('پاشگەزبوونەوە', translate: true),
           ),
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(true),
@@ -2403,7 +2429,7 @@ Future<void> _showInformationDialog(
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(ProxoChrome.radius)),
         ),
-        title: ProxoText(title, style: _ProfileText.dialogTitle),
+        title: ProxoText(title, translate: true, style: _ProfileText.dialogTitle),
         content: ProxoText(message, style: _ProfileText.dialogBody),
         actions: <Widget>[
           TextButton(
@@ -2412,7 +2438,7 @@ Future<void> _showInformationDialog(
               foregroundColor: _ProfileColors.primary,
               textStyle: _ProfileText.dialogAction,
             ),
-            child: const ProxoText('باشە'),
+            child: const ProxoText('باشە', translate: true),
           ),
         ],
       ),
@@ -2507,6 +2533,7 @@ class _EmailChangeVerificationDialogState
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     return Directionality(
       textDirection: TextDirection.rtl,
       child: PopScope(
@@ -2518,7 +2545,7 @@ class _EmailChangeVerificationDialogState
             borderRadius: BorderRadius.all(Radius.circular(ProxoChrome.radius)),
           ),
           title: const ProxoText(
-            'پشتڕاستکردنەوەی ئیمەیڵ',
+            'پشتڕاستکردنەوەی ئیمەیڵ', translate: true,
             style: _ProfileText.dialogTitle,
           ),
           content: ConstrainedBox(
@@ -2528,7 +2555,7 @@ class _EmailChangeVerificationDialogState
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
                 ProxoText(
-                  'کۆدی ٦ ژمارەیی نێردرا بۆ:',
+                  'کۆدی ٦ ژمارەیی نێردرا بۆ:', translate: true,
                   style: _ProfileText.dialogBody,
                 ),
                 const SizedBox(height: 5),
@@ -2604,7 +2631,7 @@ class _EmailChangeVerificationDialogState
                             dimension: 16,
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
-                        : const ProxoText('کۆدت پێ نەگەیشت؟ دووبارە بنێرەوە'),
+                        : const ProxoText('کۆدت پێ نەگەیشت؟ دووبارە بنێرەوە', translate: true),
                   ),
                 ),
               ],
@@ -2613,7 +2640,7 @@ class _EmailChangeVerificationDialogState
           actions: <Widget>[
             TextButton(
               onPressed: _busy ? null : () => Navigator.of(context).pop(false),
-              child: const ProxoText('پاشگەزبوونەوە'),
+              child: const ProxoText('پاشگەزبوونەوە', translate: true),
             ),
             FilledButton(
               onPressed: _busy ? null : _verify,
@@ -2630,7 +2657,7 @@ class _EmailChangeVerificationDialogState
                         color: Colors.white,
                       ),
                     )
-                  : const ProxoText('پشتڕاستکردنەوە'),
+                  : const ProxoText('پشتڕاستکردنەوە', translate: true),
             ),
           ],
         ),

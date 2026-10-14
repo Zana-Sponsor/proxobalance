@@ -1,8 +1,10 @@
+import 'package:proxo_app/theme/app_locale.dart';
 // auth_widgets.dart
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../theme/app_theme.dart' show ProxoInk;
 import 'auth_design.dart';
+import '../proxo_symbol.dart';
 import 'package:proxo_app/widgets/proxo_text.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -57,19 +59,13 @@ class AuthTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     final bool hasError = error != null;
 
     final Widget field = Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AuthTokens.fieldFill,
         borderRadius: BorderRadius.circular(AuthTokens.fieldRadius),
-        boxShadow: const [
-          BoxShadow(
-            color: Color.fromRGBO(0, 0, 0, 0.02),
-            blurRadius: 6,
-            offset: Offset(0, 1),
-          ),
-        ],
       ),
       child: ProxoDirectionalInput(
         controller: controller,
@@ -94,14 +90,15 @@ class AuthTextField extends StatelessWidget {
             hint: proxoFieldText(hint),
             hintStyle: AuthTokens.fieldText.copyWith(color: AuthTokens.placeholder),
             filled: true,
-            fillColor: enabled ? Colors.white : AuthTokens.fieldFillOff,
+            fillColor: enabled ? AuthTokens.fieldFill : AuthTokens.fieldFillOff,
             isDense: true,
             contentPadding: AuthTokens.fieldContentPadding,
-            prefixIcon: Icon(
-              icon,
-              size: 19,
-              color: hasError ? AuthTokens.dangerField : AuthTokens.placeholder,
-            ),
+            prefixIcon: Padding(
+              padding: const EdgeInsets.all(14),
+              child: ProxoSymbol(_fieldSymbol(icon),
+              size: 22,
+              color: hasError ? AuthTokens.dangerField : AuthTokens.inkMuted,
+            )),
             prefix: prefix,
             suffixIcon: trailing,
             border: _border(AuthTokens.line),
@@ -124,7 +121,7 @@ class AuthTextField extends StatelessWidget {
         Padding(
           padding: const EdgeInsetsDirectional.only(
               start: 2, bottom: AuthTokens.gapLabelToField),
-          child: ProxoText(label, style: AuthTokens.fieldLabel),
+          child: ProxoText(label, translate: true, style: AuthTokens.fieldLabel),
         ),
         if (ltr)
           Directionality(textDirection: TextDirection.ltr, child: field)
@@ -132,11 +129,11 @@ class AuthTextField extends StatelessWidget {
           field,
         if (hasError)
           Padding(
-            padding: const EdgeInsets.only(top: 4.0, right: 2.0),
-            child: ProxoText(
-              error!,
-              style: AuthTokens.inlineError.copyWith(color: AuthTokens.dangerField),
-            ),
+            padding: const EdgeInsetsDirectional.only(top: 6, start: 2),
+            child: Semantics(liveRegion: true, child: ProxoText(
+              error!, translate: true,
+              style: AuthTokens.inlineError.copyWith(color: AuthTokens.danger),
+            )),
           ),
       ],
     );
@@ -188,11 +185,13 @@ class _AuthPrimaryButtonState extends State<AuthPrimaryButton> {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     final bool live =
         widget.enabled && !widget.loading && widget.onPressed != null;
 
-    return SizedBox(
-      height: AuthTokens.buttonHeight,
+    return ConstrainedBox(
+      constraints: const BoxConstraints(minHeight: AuthTokens.buttonHeight),
+      child: SizedBox(
       width: double.infinity,
       child: FilledButton(
         onPressed: live ? _tap : null,
@@ -205,7 +204,7 @@ class _AuthPrimaryButtonState extends State<AuthPrimaryButton> {
           disabledBackgroundColor: AuthTokens.primary.withOpacity(0.35),
           disabledForegroundColor: Colors.white.withOpacity(0.8),
           elevation: 0,
-          padding: EdgeInsets.zero,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           animationDuration: AuthTokens.microTransition,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AuthTokens.buttonRadius),
@@ -223,11 +222,11 @@ class _AuthPrimaryButtonState extends State<AuthPrimaryButton> {
                     strokeWidth: 2.2,
                   ),
                 )
-              : ProxoText(widget.label,
+              : ProxoText(widget.label, translate: true,
                   key: const ValueKey('label'), style: AuthTokens.buttonText),
         ),
       ),
-    );
+    ));
   }
 }
 
@@ -249,13 +248,14 @@ class AuthTextLink extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(6),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
         child: ProxoText(
-          label,
+          label, translate: true,
           style: (style ?? AuthTokens.link).copyWith(color: AuthTokens.accent),
         ),
       ),
@@ -274,19 +274,21 @@ class AuthBackButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     return Align(
       alignment: AlignmentDirectional.centerStart,
       child: IconButton(
         onPressed: onTap,
         visualDensity: VisualDensity.compact,
         padding: EdgeInsets.zero,
-        constraints: const BoxConstraints.tightFor(width: 44, height: 44),
-        icon: Icon(
+        constraints: const BoxConstraints.tightFor(width: 48, height: 48),
+        tooltip: AuthStrings.back,
+        icon: ProxoSymbol(
           Directionality.of(context) == TextDirection.rtl
-              ? Icons.arrow_forward_rounded
-              : Icons.arrow_back_rounded,
+              ? ProxoSymbolName.back
+              : ProxoSymbolName.forward,
           color: AuthTokens.ink,
-          size: 22,
+          size: 24,
         ),
       ),
     );
@@ -310,6 +312,7 @@ class AuthAlert extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     if (message == null) return const SizedBox.shrink();
     return Container(
       margin: const EdgeInsets.only(bottom: 14),
@@ -327,16 +330,15 @@ class AuthAlert extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(
-            success ? Icons.check_circle_outline_rounded
-                    : Icons.info_outline_rounded,
-            size: 18,
+          ProxoSymbol(
+            success ? ProxoSymbolName.check : ProxoSymbolName.info,
+            size: 22,
             color: success ? AuthTokens.success : AuthTokens.danger,
           ),
           const SizedBox(width: 8),
           Expanded(
             child: ProxoText(
-              message!,
+              message!, translate: true,
               style: AuthTokens.subtitle.copyWith(
                 fontSize: AuthTokens.textSize,
                 color: success ? AuthTokens.success : AuthTokens.danger,
@@ -361,6 +363,7 @@ class PasswordStrengthMeter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     final PasswordStrength strength = PasswordPolicy.evaluate(password);
     final List<bool> satisfied = PasswordPolicy.satisfaction(password);
     final Color tone = strength == PasswordStrength.none
@@ -427,6 +430,7 @@ class _RuleRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     final Color tone =
         satisfied ? AuthTokens.success : AuthTokens.placeholder;
 
@@ -449,7 +453,7 @@ class _RuleRow extends StatelessWidget {
           const SizedBox(width: 6),
           Expanded(
             child: ProxoText(
-              label,
+              label, translate: true,
               style: AuthTokens.ruleText.copyWith(
                 color: tone,
                 fontWeight: satisfied ? FontWeight.w500 : FontWeight.w500,
@@ -522,6 +526,7 @@ class _AuthClearButtonState extends State<AuthClearButton> {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     final bool visible =
         widget.controller.text.isNotEmpty && widget.focusNode.hasFocus;
 
@@ -612,6 +617,7 @@ class _EmailDomainChipsState extends State<EmailDomainChips> {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     final List<String> matches = _matches;
 
     return AnimatedSize(
@@ -650,6 +656,7 @@ class _Chip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     return Material(
       color: Colors.white,
       borderRadius: BorderRadius.circular(AuthTokens.chipRadius),
@@ -664,7 +671,7 @@ class _Chip extends StatelessWidget {
             border: Border.all(color: AuthTokens.line),
           ),
           child: ProxoText(
-            label,
+            label, translate: true,
             textDirection: TextDirection.ltr,
             style: AuthTokens.chipText.copyWith(color: AuthTokens.accent),
           ),
@@ -685,6 +692,7 @@ class AuthLockoutNotice extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.only(bottom: 14),
@@ -754,6 +762,7 @@ class AuthFastAccountCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     return Container(
       margin: const EdgeInsets.only(bottom: 14),
       decoration: BoxDecoration(
@@ -863,6 +872,7 @@ class AuthSegmentedControl extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     assert(labels.length == 2, 'AuthSegmentedControl is a two-way switch');
 
     return Container(
@@ -945,4 +955,12 @@ class AuthSegmentedControl extends StatelessWidget {
       ),
     );
   }
+}
+
+ProxoSymbolName _fieldSymbol(IconData icon) {
+  if (icon == Icons.mail_outline_rounded) return ProxoSymbolName.email;
+  if (icon == Icons.phone_iphone_rounded) return ProxoSymbolName.phone;
+  if (icon == Icons.person_outline_rounded) return ProxoSymbolName.user;
+  if (icon == Icons.lock_reset_rounded) return ProxoSymbolName.recovery;
+  return ProxoSymbolName.password;
 }

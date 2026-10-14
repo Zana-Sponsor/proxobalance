@@ -606,7 +606,7 @@ class _FastPayCheckoutSheetState extends State<FastPayCheckoutSheet>
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: [
-        const ProxoText('پارەدان لە ڕێگەی فاستپەی',
+        const ProxoText('پارەدان لە ڕێگەی فاستپەی', translate: true,
             style: TextStyle(
               fontFamily: kAppFont,
               fontSize: 16,
@@ -644,7 +644,7 @@ class _FastPayCheckoutSheetState extends State<FastPayCheckoutSheet>
                     const SizedBox(width: 8),
                     GestureDetector(
                       onTap: _copyRef,
-                      child: const ProxoText('کۆپیکردن',
+                      child: const ProxoText('کۆپیکردن', translate: true,
                           style: TextStyle(
                             fontFamily: kAppFont,
                             fontSize: 12,
@@ -727,7 +727,7 @@ class _FastPayCheckoutSheetState extends State<FastPayCheckoutSheet>
               ),
               SizedBox(width: 10),
               Flexible(
-                child: ProxoText('چاوەڕوانی پشتڕاستکردنەوەی پارەدان…',
+                child: ProxoText('چاوەڕوانی پشتڕاستکردنەوەی پارەدان…', translate: true,
                     style: TextStyle(
                       fontFamily: kAppFont,
                       fontSize: 13,
@@ -917,7 +917,7 @@ class _StatusView extends StatelessWidget {
           ),
           child: Row(
             children: [
-              const ProxoText('ژمارەی مامەڵە',
+              const ProxoText('ژمارەی مامەڵە', translate: true,
                   style: TextStyle(
                     fontFamily: kAppFont,
                     fontSize: 12,

@@ -1,3 +1,4 @@
+import 'package:proxo_app/l10n/proxo_strings.dart';
 // auth_design.dart
 import 'package:flutter/material.dart';
 // ⚠ بوو `import '../../main.dart' show kAppFont;` — بەڵام `main.dart`
@@ -20,7 +21,7 @@ abstract final class AuthTokens {
   // #94A3B8 ٤ جار، #0B0B32، #68687F، #FCA5A5 …). ئێستا هەموویان لێرەوە
   // دەخوێنرێنەوە، بۆیە گۆڕینی یەک دێڕ هەموو ڕووکاری چوونەژوورەوە دەگۆڕێت.
   static const Color pageBackground = Color(0xFFFFFFFF);
-  static const Color fieldFill      = Colors.white;
+  static const Color fieldFill      = Color(0xFFF8FAFC);
   static const Color fieldFillOff   = Color(0xFFF8FAFC);
 
   /// مەرەکەبی سەرەکی — هەمان `AppColors.ink`ی ئەپەکە (#0F172A).
@@ -169,7 +170,7 @@ abstract final class AuthTokens {
       EdgeInsets.symmetric(horizontal: 14, vertical: 15);
 
   static const double errorSlotHeight = 20; // یەک دێڕی 14 × 1.30
-  static const double trailingSlot    = 42;
+  static const double trailingSlot    = 48;
   static const double clearIconSize   = 17;
 
   // ── چیپسەکان ─────────────────────────────────────────────────────────────
@@ -213,7 +214,7 @@ abstract final class AuthTokens {
 // ─────────────────────────────────────────────────────────────────────────────
 
 abstract final class AuthStrings {
-  static String _v(String ku, String ar) => ProxoLocale.isArabic ? ar : ku;
+  static String _v(String ku, String ar) => ProxoStrings.text(ku, arabic: ar);
 
   static String get signInTitle => _v('چوونەژوورەوە', 'تسجيل الدخول');
   static String get signInSubtitle => _v(
@@ -228,6 +229,8 @@ abstract final class AuthStrings {
   static String get resetPasswordSubtitle => _v(
       'ئیمەیڵەکەت بنووسە بۆ وەرگرتنی کۆد',
       'أدخل بريدك الإلكتروني لاستلام الرمز');
+
+  static String get back => _v('گەڕانەوە', 'رجوع');
 
   static String get fullNameLabel => _v('ناوی تەواو', 'الاسم الكامل');
   static String get fullNameHint => _v('ناوەکەت لێرە بنووسە', 'اكتب اسمك هنا');

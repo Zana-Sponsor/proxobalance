@@ -1,3 +1,4 @@
+import 'package:proxo_app/theme/app_locale.dart';
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 
@@ -82,6 +83,7 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     return Scaffold(
       backgroundColor: _kBg,
       body: SafeArea(

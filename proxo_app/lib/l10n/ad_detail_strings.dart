@@ -1,3 +1,4 @@
+import 'proxo_strings.dart';
 import 'package:flutter/widgets.dart';
 
 import '../services/ad_categories.dart';
@@ -26,7 +27,7 @@ class AdDetailStrings {
 
   static AdDetailStrings get current => of(ProxoLocale.current.value);
 
-  String _t(String ku, String arabic) => ar ? arabic : ku;
+  String _t(String ku, String arabic) => ar ? arabic : ProxoStrings.text(ku);
 
   // ── AppBar / سەردێر ─────────────────────────────────────────────────────
   String get appBarTitle => _t('وردەکاری ڕیکلام', 'تفاصيل الإعلان');

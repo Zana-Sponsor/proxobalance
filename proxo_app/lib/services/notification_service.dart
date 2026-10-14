@@ -202,12 +202,10 @@ class NotificationService {
     // Edge Function had no token to send FCM push to.
     final token = await _messaging.getToken();
     if (token != null) {
-      debugPrint('[FCM] Token: $token');
       await _saveTokenToSupabase(token);
     }
 
     _messaging.onTokenRefresh.listen((newToken) async {
-      debugPrint('[FCM] Token refresh: $newToken');
       await _saveTokenToSupabase(newToken);
     });
   }

@@ -107,10 +107,10 @@ class ProxoLinkPageCard extends StatelessWidget {
         final scale = MediaQuery.textScalerOf(context).scale(14) / 14;
         final stacked = box.maxWidth < 240 * scale;
         final preview = FilledButton(onPressed: busy ? null : onPreview,
-          child: const ProxoText('پێشبینین'));
+          child: const ProxoText('پێشبینین', translate: true));
         final delete = OutlinedButton(onPressed: busy ? null : onDelete,
           style: OutlinedButton.styleFrom(foregroundColor: const Color(0xFFB74956)),
-          child: const ProxoText('سڕینەوە'));
+          child: const ProxoText('سڕینەوە', translate: true));
         return stacked ? Column(crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [preview, const SizedBox(height: 10), delete]) : Row(children: [
             Expanded(child: preview), const SizedBox(width: 12), Expanded(child: delete)]);

@@ -1,3 +1,5 @@
+import '../l10n/proxo_strings.dart';
+import 'package:proxo_app/widgets/proxo_symbol.dart';
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../theme/proxo_chrome.dart';
@@ -46,13 +48,13 @@ class ProxoTopBar extends StatelessWidget implements PreferredSizeWidget {
     if (onBackTap != null) {
       return _BarIconButton(
         onTap: onBackTap, label: 'گەڕانەوە',
-        child: const Icon(SolarIconsOutline.altArrowRight, size: _iconSize, color: _ink),
+        child: const ProxoSolarIcon(SolarIconsOutline.altArrowRight, size: _iconSize, color: _ink),
       );
     }
     if (automaticallyImplyLeading && Navigator.canPop(context)) {
       return _BarIconButton(
         onTap: () => Navigator.maybePop(context), label: 'گەڕانەوە',
-        child: const Icon(SolarIconsOutline.altArrowRight, size: _iconSize, color: _ink),
+        child: const ProxoSolarIcon(SolarIconsOutline.altArrowRight, size: _iconSize, color: _ink),
       );
     }
 
@@ -60,7 +62,7 @@ class ProxoTopBar extends StatelessWidget implements PreferredSizeWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         if (onMenuTap != null)
-          _BarIconButton(onTap: onMenuTap, label: 'مێنیو', child: const Icon(SolarIconsOutline.hamburgerMenu, size: _iconSize, color: _ink)),
+          _BarIconButton(onTap: onMenuTap, label: 'مێنیو', child: const ProxoSolarIcon(SolarIconsOutline.hamburgerMenu, size: _iconSize, color: _ink)),
 
         NotificationBell(
           onTap: onNotificationTap ?? () {},
@@ -70,7 +72,7 @@ class ProxoTopBar extends StatelessWidget implements PreferredSizeWidget {
 
           _BarIconButton(
             onTap: onSearchTap, label: 'گەڕان',
-            child: const Icon(SolarIconsOutline.magnifier, size: _iconSize, color: _ink),
+            child: const ProxoSolarIcon(SolarIconsOutline.magnifier, size: _iconSize, color: _ink),
           ),
         ],
         ...actions,
@@ -125,7 +127,7 @@ class _BarIconButton extends StatelessWidget {
   const _BarIconButton({required this.onTap, required this.child, required this.label});
   @override
   Widget build(BuildContext context) => IconButton(
-    onPressed: onTap, tooltip: label,
+    onPressed: onTap, tooltip: ProxoStrings.text(label),
     constraints: const BoxConstraints.tightFor(width: 48, height: 48),
     padding: const EdgeInsets.all(12), icon: child,
   );

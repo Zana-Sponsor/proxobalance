@@ -220,7 +220,7 @@ class _AdConfirmationScreenState extends State<AdConfirmationScreen>
                                         key: const ValueKey('retry-submission'),
                                         onPressed: _processing ? null : _submit,
                                         child: const ProxoText(
-                                            'دووبارە پشکنینی هەمان داواکاری')),
+                                            'دووبارە پشکنینی هەمان داواکاری', translate: true)),
                                   ],
                                   const SizedBox(height: 24),
                                   Container(
@@ -268,7 +268,7 @@ class _AdConfirmationScreenState extends State<AdConfirmationScreen>
                                                                       __,
                                                                       ___) =>
                                                                   const ProxoText(
-                                                                      'کردنەوەی FastPay لێبدە'))),
+                                                                      'کردنەوەی FastPay لێبدە', translate: true))),
                                                     ],
                                                     if (p.deepLink != null) ...[
                                                       const SizedBox(
@@ -285,7 +285,7 @@ class _AdConfirmationScreenState extends State<AdConfirmationScreen>
                                                             }
                                                           },
                                                           child: const ProxoText(
-                                                              'کردنەوەی FastPay')),
+                                                              'کردنەوەی FastPay', translate: true)),
                                                     ],
                                                   ],
                                                 ]))),
@@ -407,7 +407,7 @@ class _AdConfirmationScreenState extends State<AdConfirmationScreen>
                         ),
                         if (!_processing && !widget.resume && !unitOutside)
                           ProxoText(
-                            'چرکە',
+                            'چرکە', translate: true,
                             style: AdUi.text(context, color: AdUi.secondary),
                           ),
                       ],
@@ -418,7 +418,7 @@ class _AdConfirmationScreenState extends State<AdConfirmationScreen>
               if (unitOutside) ...[
                 const SizedBox(height: 8),
                 ProxoText(
-                  'چرکە',
+                  'چرکە', translate: true,
                   style: AdUi.text(context, color: AdUi.secondary),
                 ),
               ],
@@ -457,7 +457,7 @@ class _AdConfirmationScreenState extends State<AdConfirmationScreen>
       ],
       ExpansionTile(
           tilePadding: EdgeInsets.zero,
-          title: ProxoText('ئامانجی بینەران', style: AdUi.text(context)),
+          title: ProxoText('ئامانجی بینەران', translate: true, style: AdUi.text(context)),
           children: [
             AdValueRow(label: 'پۆل', value: adCategoryLabel(d.category)),
             const SizedBox(height: 12),

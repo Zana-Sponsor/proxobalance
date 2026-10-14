@@ -1,3 +1,6 @@
+import '../widgets/proxo_app_bar.dart';
+import '../widgets/proxo_symbol.dart';
+import 'package:proxo_app/theme/app_locale.dart';
 // ═══════════════════════════════════════════════════════════════════════
 // DEPOSIT SCREEN — full-screen balance top-up.
 //
@@ -52,7 +55,7 @@ const double _kPageMargin = 16;
 const double _kCardRadius = 16;
 const double _kInputRadius = 14;
 const double _kBtnHeight = 52;
-const double _kBtnRadius = 26;
+const double _kBtnRadius = 14;
 
 /// Minimum accepted top-up, matching the old sheet's validation.
 const int _kMinIqd = 5000;
@@ -264,13 +267,13 @@ class _DepositScreenState extends State<DepositScreen> {
           const SizedBox(height: 12),
           ListTile(
             leading: const Icon(Icons.photo_camera_rounded, color: _cInk),
-            title: const ProxoText('کامێرا',
+            title: const ProxoText('کامێرا', translate: true,
                 style: TextStyle(fontFamily: kAppFont, color: _cInk)),
             onTap: () => Navigator.pop(ctx, ImageSource.camera),
           ),
           ListTile(
-            leading: const Icon(Icons.photo_library_rounded, color: _cInk),
-            title: const ProxoText('گەلەری',
+            leading: const ProxoSymbol(ProxoSymbolName.gallery, color: _cInk),
+            title: const ProxoText('گەلەری', translate: true,
                 style: TextStyle(fontFamily: kAppFont, color: _cInk)),
             onTap: () => Navigator.pop(ctx, ImageSource.gallery),
           ),
@@ -423,12 +426,13 @@ class _DepositScreenState extends State<DepositScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     final isFastPay = _wallet?.key == 'fastpay';
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
         backgroundColor: Colors.white,
-        appBar: const _DepositAppBar(),
+        appBar: const ProxoAppBar(title: 'زیادکردنی باڵانس'),
         body: SafeArea(
           top: false,
           child: ListView(
@@ -485,11 +489,11 @@ class _DepositScreenState extends State<DepositScreen> {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemCount: _kWallets.length,
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: MediaQuery.sizeOf(context).width < 340 || MediaQuery.textScalerOf(context).scale(14) > 20 ? 1 : 2,
         mainAxisSpacing: 10,
         crossAxisSpacing: 10,
-        mainAxisExtent: 92,
+        mainAxisExtent: 72 + MediaQuery.textScalerOf(context).scale(14) * 2,
       ),
       itemBuilder: (_, i) {
         final w = _kWallets[i];
@@ -506,7 +510,7 @@ class _DepositScreenState extends State<DepositScreen> {
     return Container(
       height: _kBtnHeight,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: _cSoft,
         borderRadius: BorderRadius.circular(_kInputRadius),
         border: Border.all(color: _cLine),
       ),
@@ -677,7 +681,7 @@ class _DepositScreenState extends State<DepositScreen> {
           ),
           const SizedBox(width: 12),
           const Expanded(
-            child: ProxoText('وەسڵەکە دانرا',
+            child: ProxoText('وەسڵەکە دانرا', translate: true,
                 style: TextStyle(
                   fontFamily: kAppFont,
                   fontSize: 13.5,
@@ -705,11 +709,11 @@ class _DepositScreenState extends State<DepositScreen> {
               height: 52,
               decoration: const BoxDecoration(
                   color: _cSoft, shape: BoxShape.circle),
-              child: const Icon(Icons.cloud_upload_rounded,
+              child: const ProxoSymbol(ProxoSymbolName.upload,
                   color: _cSlate, size: 24),
             ),
             const SizedBox(height: 12),
-            const ProxoText('دانانی وەسڵی پارەدان',
+            const ProxoText('دانانی وەسڵی پارەدان', translate: true,
                 style: TextStyle(
                   fontFamily: kAppFont,
                   fontSize: 14,
@@ -717,7 +721,7 @@ class _DepositScreenState extends State<DepositScreen> {
                   color: _cInk,
                 )),
             const SizedBox(height: 4),
-            const ProxoText('کلیک بکە بۆ هەڵبژاردنی وێنە لە کامێرا یان گەلەری',
+            const ProxoText('کلیک بکە بۆ هەڵبژاردنی وێنە لە کامێرا یان گەلەری', translate: true,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     fontFamily: kAppFont, fontSize: 12, color: _cMuted)),
@@ -768,7 +772,7 @@ class _DepositScreenState extends State<DepositScreen> {
             color: const Color(0xFF0265FF),
             borderRadius: BorderRadius.circular(16),
           ),
-          child: const ProxoText('بەردەوامبە بۆ پارەدان',
+          child: const ProxoText('بەردەوامبە بۆ پارەدان', translate: true,
               style: TextStyle(
                 fontFamily: kAppFont,
                 fontSize: 15,
@@ -794,7 +798,7 @@ class _DepositScreenState extends State<DepositScreen> {
                 child: CircularProgressIndicator(
                     strokeWidth: 2.4, color: _cMuted),
               )
-            : const ProxoText('ناردنی داواکاری',
+            : const ProxoText('ناردنی داواکاری', translate: true,
                 style: TextStyle(
                   fontFamily: kAppFont,
                   fontSize: 15,
@@ -808,58 +812,13 @@ class _DepositScreenState extends State<DepositScreen> {
 
 // ── Chrome ─────────────────────────────────────────────────────────────
 
-class _DepositAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const _DepositAppBar();
-
-  @override
-  Size get preferredSize => const Size.fromHeight(56);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 56,
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        border: Border(bottom: BorderSide(color: _cHair)),
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Stack(children: [
-          const Center(
-            child: ProxoText('زیادکردنی باڵانس',
-                style: TextStyle(
-                  fontFamily: kAppFont,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                  color: _cInk,
-                )),
-          ),
-          // RTL: `start` is the physical right edge, which is where the back
-          // affordance belongs in this app.
-          PositionedDirectional(
-            start: 4,
-            top: 0,
-            bottom: 0,
-            child: IconButton(
-              icon: const Icon(Icons.chevron_right_rounded,
-                  color: _cInk, size: 26),
-              onPressed: () => Navigator.of(context).maybePop(),
-              tooltip: 'گەڕانەوە',
-            ),
-          ),
-        ]),
-      ),
-    );
-  }
-}
-
 class _SectionLabel extends StatelessWidget {
   final String text;
   const _SectionLabel(this.text);
 
   @override
   Widget build(BuildContext context) => ProxoText(
-        text,
+        text, translate: true,
         style: const TextStyle(
           fontFamily: kAppFont,
           fontSize: 13,
@@ -884,6 +843,7 @@ class _WalletCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
@@ -960,6 +920,7 @@ class _InstructionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -996,7 +957,7 @@ class _InstructionCard extends StatelessWidget {
                 width: 40,
                 height: 40,
                 decoration: ProxoInk.fill(radius: 10, elevated: false),
-                child: const Icon(Icons.copy_rounded,
+                child: const ProxoSymbol(ProxoSymbolName.copy,
                     color: ProxoInk.onInk, size: 17),
               ),
             ),
@@ -1020,7 +981,7 @@ class _InstructionCard extends StatelessWidget {
         if (wallet.numberIsPlaceholder) ...[
           const SizedBox(height: 8),
           const ProxoText(
-            '⚠ ژمارەی ئەم ڕێگایە هێشتا دانەنراوە — تکایە ڕێگایەکی تر هەڵبژێرە',
+            '⚠ ژمارەی ئەم ڕێگایە هێشتا دانەنراوە — تکایە ڕێگایەکی تر هەڵبژێرە', translate: true,
             style: TextStyle(
                 fontFamily: kAppFont, fontSize: 12, color: Color(0xFFB45309)),
           ),
@@ -1065,6 +1026,7 @@ class _MiniAction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     return GestureDetector(
       onTap: onTap,
       child: Container(

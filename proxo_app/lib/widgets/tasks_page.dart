@@ -148,7 +148,7 @@ class _TasksPageState extends State<TasksPage> {
         ),
         const SizedBox(width: 12),
         Expanded(
-          child: ProxoText('ئەرکەکان',
+          child: ProxoText('ئەرکەکان', translate: true,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             // AppBar-title role: SemiBold, not Bold
@@ -186,7 +186,7 @@ class _TasksPageState extends State<TasksPage> {
                 child: FaIcon(FontAwesomeIcons.listCheck, size: 28,
                   color: Color(0xFF8B5CF6)))),
             const SizedBox(height: 16),
-            ProxoText('هیچ ئەرکێکی چالاک نییە ئێستا',
+            ProxoText('هیچ ئەرکێکی چالاک نییە ئێستا', translate: true,
               style: AppTypography.body(color: AppColors.muted)),
           ],
         ),
@@ -321,7 +321,7 @@ class _TasksPageState extends State<TasksPage> {
                           width: 18, height: 18,
                           child: CircularProgressIndicator(
                             color: Colors.white, strokeWidth: 2))
-                      : ProxoText('وەرگرتنی خەڵات',
+                      : ProxoText('وەرگرتنی خەڵات', translate: true,
                           // button role: SemiBold, not Bold
                           style: AppTypography.button(
                               color: Colors.white, size: 13)))),
@@ -343,7 +343,7 @@ class _TasksPageState extends State<TasksPage> {
                   FaIcon(FontAwesomeIcons.circleCheck, size: 14,
                     color: Color(0xFF22C55E)),
                   SizedBox(width: 6),
-                  ProxoText('خەڵاتەکەت وەرگیرا',
+                  ProxoText('خەڵاتەکەت وەرگیرا', translate: true,
                     style: TextStyle(fontFamily: kAppFont, fontSize: 13,
                       // was Bold — routine positive feedback, not a rare/
                       // blocking moment

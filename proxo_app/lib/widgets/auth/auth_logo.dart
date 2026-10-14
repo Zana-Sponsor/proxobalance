@@ -1,3 +1,4 @@
+import 'package:proxo_app/theme/app_locale.dart';
 import 'package:flutter/material.dart';
 
 /// The single Auth wordmark implementation. Its painted size is deliberately
@@ -12,6 +13,7 @@ class AuthLogo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     return Semantics(
       label: 'Proxo',
       image: true,

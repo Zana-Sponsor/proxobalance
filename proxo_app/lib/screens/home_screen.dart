@@ -1,3 +1,4 @@
+import 'package:proxo_app/theme/app_locale.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../widgets/proxo_banner.dart';
 // home_screen.dart
@@ -510,6 +511,7 @@ class _HomeScreenState extends State<HomeScreen>
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     final width = MediaQuery.sizeOf(context).width;
     final s = _scaleFor(width - 32);
 
@@ -574,7 +576,7 @@ class _HomeScreenState extends State<HomeScreen>
                     ),
                     const SizedBox(height: AdUi.sectionGap),
                     ExpansionTile(
-                      title: ProxoText('پوختەی ڕیکلامەکان', style: AdUi.heading(context)),
+                      title: ProxoText('پوختەی ڕیکلامەکان', translate: true, style: AdUi.heading(context)),
                       children: [
                     _Reveal(
                       animation: _aBanner,
@@ -688,6 +690,7 @@ class ProxoOverviewBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     final s = scale;
 
     return Container(
@@ -825,6 +828,7 @@ class _StatColumn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     final s = scale;
     final d = delta;
     final positive = d == null ? null : d >= 0;
@@ -978,6 +982,7 @@ class _RangePill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     final s = scale;
     return Material(
       color: Colors.white.withOpacity(0.88),

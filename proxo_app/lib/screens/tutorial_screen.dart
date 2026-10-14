@@ -1,3 +1,4 @@
+import 'package:proxo_app/theme/app_locale.dart';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -114,6 +115,7 @@ class _TutorialScreenState extends State<TutorialScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
@@ -251,7 +253,7 @@ class _TutorialScreenState extends State<TutorialScreen> {
             ),
             const SizedBox(height: 14),
             ProxoText(
-              'هیچ فێرکارییەک نەدۆزرایەوە',
+              'هیچ فێرکارییەک نەدۆزرایەوە', translate: true,
               // sectionHeading role: SemiBold not Bold
               style: AppTypography.sectionHeading(),
             ),
@@ -318,6 +320,7 @@ class _PersistentThumbState extends State<_PersistentThumb> {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     // ✅ فایلی دایمی بەردەستە
     if (_localFile != null) {
       return Image.file(

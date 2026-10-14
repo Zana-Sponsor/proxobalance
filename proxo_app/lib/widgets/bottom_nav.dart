@@ -1,8 +1,8 @@
+import '../l10n/proxo_strings.dart';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import 'package:solar_icons/solar_icons.dart';
+import 'proxo_symbol.dart';
 import '../theme/app_theme.dart';
-import '../theme/app_locale.dart';
 import '../theme/proxo_chrome.dart';
 import 'proxo_text.dart';
 
@@ -36,11 +36,9 @@ class _ProxoBottomNavState extends State<ProxoBottomNav> {
   }
   @override
   Widget build(BuildContext context) {
-    final labels = ProxoLocale.isArabic
-      ? ['الرئيسية', 'الإعلانات', 'إنشاء إعلان', 'الأدوات', 'الملف']
-      : ['سەرەکی', 'ڕیکلامەکان', 'دروستکردنی ڕیکلام', 'ئامرازەکان', 'پڕۆفایل'];
-    const icons = [SolarIconsOutline.home2, SolarIconsOutline.clapperboardPlay,
-      SolarIconsBold.addCircle, SolarIconsOutline.widget_2, SolarIconsOutline.userRounded];
+    final labels = ['سەرەکی', 'ڕیکلامەکان', 'دروستکردنی ڕیکلام', 'ئامرازەکان', 'پڕۆفایل'].map(ProxoStrings.text).toList();
+    const icons = [ProxoSymbolName.home, ProxoSymbolName.ads,
+      ProxoSymbolName.add, ProxoSymbolName.tools, ProxoSymbolName.user];
     const style = TextStyle(fontFamily: kAppFont, fontSize: 12, height: 1.5);
     double labelWidth = 0, labelHeight = 0;
     for (final i in [0, 1, 3, 4]) {
@@ -68,13 +66,16 @@ class _ProxoBottomNavState extends State<ProxoBottomNav> {
                       key: ValueKey('bottom-nav-$i'), onTap: () => widget.onTap(i),
                       child: SizedBox(width: slot, height: height,
                         child: i == 2
-                          ? const Center(child: Icon(SolarIconsBold.addCircle, size: 48, color: AppColors.accent))
+                          ? Center(child: Container(width: 56, height: 56,
+                              decoration: const BoxDecoration(color: AppColors.accent, shape: BoxShape.circle),
+                              alignment: Alignment.center,
+                              child: const ProxoSymbol(ProxoSymbolName.add, size: 36, color: Colors.white)))
                           : Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                             AnimatedContainer(duration: MediaQuery.disableAnimationsOf(context) ? Duration.zero : const Duration(milliseconds: 160),
                               width: 48, height: 32,
                               decoration: BoxDecoration(color: active ? ProxoChrome.selected : Colors.transparent,
                                 borderRadius: BorderRadius.circular(16)),
-                              child: Icon(icons[i], size: ProxoChrome.iconSize, color: color)),
+                              child: ProxoSymbol(icons[i], size: ProxoChrome.iconSize, color: color)),
                             const SizedBox(height: 6),
                             ProxoText(labels[i], textDirection: TextDirection.rtl, maxLines: 1,
                               style: style.copyWith(color: color, fontWeight: active ? FontWeight.w600 : FontWeight.w400)),

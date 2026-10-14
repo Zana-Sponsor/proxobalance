@@ -1,3 +1,4 @@
+import 'package:proxo_app/widgets/proxo_symbol.dart';
 import '../models/receipt_pricing.dart';
 import '../screens/ad_detail_screen.dart' show adDetailsRoute;
 // lib/widgets/proxo_sidebar.dart
@@ -625,7 +626,7 @@ class _ProxoSidebarState extends State<ProxoSidebar>
                         : null,
                   ),
                   child: _avatarUrl == null
-                      ? Icon(
+                      ? ProxoSolarIcon(
                           _Ico.avatar,
                           size: m.avatarGlyph,
                           color: _navPrimary,
@@ -705,7 +706,7 @@ class _ProxoSidebarState extends State<ProxoSidebar>
                         width: _navIconTileLineW,
                       ),
                     ),
-                    child: Icon(
+                    child: ProxoSolarIcon(
                       icon,
                       size: m.glyph,
                       color: selected ? _navPrimary : _navIconInk,
@@ -785,7 +786,7 @@ class _ProxoSidebarState extends State<ProxoSidebar>
                       width: _navIconTileLineW,
                     ),
                   ),
-                  child: Icon(
+                  child: ProxoSolarIcon(
                     _Ico.logout,
                     size: m.glyph,
                     color: _navLogoutInk,
@@ -793,7 +794,7 @@ class _ProxoSidebarState extends State<ProxoSidebar>
                 ),
                 SizedBox(width: m.tileGap),
                 Expanded(
-                  child: ProxoText('چوونەدەرەوە',
+                  child: ProxoText('چوونەدەرەوە', translate: true,
                     style: _kBase.copyWith(
                       fontSize: m.labelSize,
                       fontWeight: FontWeight.w600,

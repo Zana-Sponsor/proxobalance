@@ -1,0 +1,52 @@
+name: Auth localization and visual polish evidence
+on:
+  push:
+    branches: [feat/proxolink-private-renderer-migration]
+    paths: ['proxo_app/**', '.github/workflows/polish-evidence.yml']
+permissions:
+  contents: read
+concurrency:
+  group: polish-evidence-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        source: [before, after]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: after
+      - uses: actions/checkout@v4
+        with:
+          ref: 74beaa8bc06c7c3c13185d9d0e01bd7078e455bc
+          path: before
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.47.2'
+          channel: stable
+          cache: true
+      - name: Identical read-only capture harness
+        run: cp after/proxo_app/test/polish_capture_test.dart before/proxo_app/test/
+      - run: flutter pub get
+        working-directory: ${{ matrix.source }}/proxo_app
+      - name: Analyze application and tests
+        if: matrix.source == 'after'
+        run: flutter analyze --no-fatal-infos --no-fatal-warnings lib test/polish_capture_test.dart
+        working-directory: after/proxo_app
+      - name: Capture actual screens with bundled fonts
+        timeout-minutes: 12
+        run: flutter test test/polish_capture_test.dart --reporter expanded --dart-define=POLISH_BEFORE=${{ matrix.source == 'before' }}
+        working-directory: ${{ matrix.source }}/proxo_app
+      - name: Auth and language behavior
+        if: matrix.source == 'after'
+        run: flutter test test/auth_phone_flow_test.dart test/auth_otp_lifecycle_test.dart test/localization_test.dart --reporter expanded
+        working-directory: after/proxo_app
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: polish-${{ matrix.source }}
+          path: ${{ matrix.source }}/proxo_app/build/polish-evidence
+          if-no-files-found: warn

@@ -1,3 +1,4 @@
+import 'package:proxo_app/widgets/proxo_symbol.dart';
 // notification_bell.dart
 // بیخەرە ناو:  lib/widgets/notification_bell.dart
 //
@@ -201,7 +202,7 @@ class _NotificationBellState extends State<NotificationBell>
           children: [
 
             // ── زەنگی ساکار (بێ بۆکس) ─────────────────────────────────────
-            Icon(
+            ProxoSolarIcon(
               SolarIconsOutline.bell,
               size:  widget.iconSize,
               color: _ink,

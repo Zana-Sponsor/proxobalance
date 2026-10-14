@@ -1,3 +1,4 @@
+import 'package:proxo_app/theme/app_locale.dart';
 // auth_otp_field.dart
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
@@ -203,6 +204,7 @@ class _AuthOtpBoxesState extends State<AuthOtpBoxes>
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     return AnimatedBuilder(
       animation: _shake,
       builder: (context, child) => Transform.translate(

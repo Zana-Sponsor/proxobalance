@@ -1,3 +1,4 @@
+import '../proxo_symbol.dart';
 import 'package:flutter/material.dart';
 import '../../theme/app_locale.dart';
 import 'auth_design.dart';
@@ -18,15 +19,16 @@ class AuthHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     if (showLanguage) {
       return const Directionality(
         // Brand stays on the physical left and the language control on the
         // physical right, matching the supplied header reference in both RTL
         // languages. Text inside the selector restores RTL independently.
         textDirection: TextDirection.ltr,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
+        child: Wrap(
+          alignment: WrapAlignment.spaceBetween, spacing: 12, runSpacing: 12,
+          crossAxisAlignment: WrapCrossAlignment.center,
           children: <Widget>[
             AuthLogo(),
             Directionality(
@@ -56,6 +58,7 @@ class AuthLanguageSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     return ValueListenableBuilder<Locale>(
       valueListenable: ProxoLocale.current,
       builder: (context, locale, _) {
@@ -69,15 +72,19 @@ class AuthLanguageSelector extends StatelessWidget {
           itemBuilder: (context) => const <PopupMenuEntry<Locale>>[
             PopupMenuItem<Locale>(
               value: ProxoLocale.kurdishSorani,
-              child: ProxoText('کوردی'),
+              child: ProxoText('کوردی سۆرانی', translate: true),
+            ),
+            PopupMenuItem<Locale>(
+              value: ProxoLocale.kurdishBadini,
+              child: ProxoText('کوردی بادینی', translate: true),
             ),
             PopupMenuItem<Locale>(
               value: ProxoLocale.arabic,
-              child: ProxoText('العربية'),
+              child: ProxoText('العربية', translate: true),
             ),
           ],
           child: Container(
-            height: 40,
+            constraints: const BoxConstraints(minHeight: 48),
             padding: const EdgeInsetsDirectional.symmetric(horizontal: 12),
             decoration: BoxDecoration(
               color: Colors.white,
@@ -87,16 +94,17 @@ class AuthLanguageSelector extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                const Icon(Icons.language_rounded,
-                    size: 18, color: AuthTokens.inkMuted),
+                const ProxoSymbol(ProxoSymbolName.language,
+                    size: 22, color: AuthTokens.inkMuted),
                 const SizedBox(width: 6),
-                ProxoText(
-                  locale.languageCode == 'ar' ? 'العربية' : 'کوردی',
+                Flexible(child: ProxoText(
+                  locale.languageCode == 'ar' ? 'العربية' :
+                    locale.languageCode == 'kmr' ? 'کوردی بادینی' : 'کوردی سۆرانی',
                   style: AuthTokens.helper.copyWith(
                     color: AuthTokens.ink,
                     fontWeight: FontWeight.w500,
                   ),
-                ),
+                )),
               ],
             ),
           ),
@@ -104,4 +112,20 @@ class AuthLanguageSelector extends StatelessWidget {
       },
     );
   }
+}
+
+/// Quiet, consistent identity for each authentication step.
+class AuthHeroSymbol extends StatelessWidget {
+  const AuthHeroSymbol(this.symbol, {super.key});
+  final ProxoSymbolName symbol;
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.only(bottom: 18),
+    child: Align(alignment: AlignmentDirectional.centerStart,
+      child: Container(width: 56, height: 56,
+        decoration: BoxDecoration(color: const Color(0xFFEDF4FF),
+          borderRadius: BorderRadius.circular(18)),
+        alignment: Alignment.center,
+        child: ProxoSymbol(symbol, size: 28, color: AuthTokens.accent))),
+  );
 }

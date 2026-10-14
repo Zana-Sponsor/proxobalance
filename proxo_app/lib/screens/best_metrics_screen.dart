@@ -1,3 +1,4 @@
+import 'package:proxo_app/theme/app_locale.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -100,6 +101,7 @@ class _BestMetricsScreenState extends State<BestMetricsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     final filtered = _filteredAds;
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -181,6 +183,7 @@ class _Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     return Container(
       height: 62,
       padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -211,7 +214,7 @@ class _Header extends StatelessWidget {
           const SizedBox(width: 9),
           const Expanded(
             child: ProxoText(
-              'باشترین ئەنجامەکانی هەفتە',
+              'باشترین ئەنجامەکانی هەفتە', translate: true,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
@@ -239,6 +242,7 @@ class _CategoryFilter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     final options = <AdCategoryOption>[
       const AdCategoryOption('all', 'هەموو'),
       ...kAdCategories,
@@ -287,6 +291,7 @@ class _LoadingView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     return const Center(
       child: SizedBox(
         width: 24,
@@ -307,6 +312,7 @@ class _ErrorView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24),
@@ -329,7 +335,7 @@ class _ErrorView extends StatelessWidget {
               ),
               const SizedBox(height: 10),
               const ProxoText(
-                'ئەنجامەکان بار نەبوون',
+                'ئەنجامەکان بار نەبوون', translate: true,
                 style: TextStyle(
                   fontFamily: kAppFont,
                   fontSize: 13,
@@ -341,7 +347,7 @@ class _ErrorView extends StatelessWidget {
               TextButton(
                 onPressed: onRetry,
                 child: const ProxoText(
-                  'دووبارە هەوڵ بدەرەوە',
+                  'دووبارە هەوڵ بدەرەوە', translate: true,
                   style: TextStyle(fontFamily: kAppFont),
                 ),
               ),
@@ -358,11 +364,12 @@ class _EmptyView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     return const Center(
       child: Padding(
         padding: EdgeInsets.all(24),
         child: ProxoText(
-          'لەو بەشەدا هیچ ئەنجامێک نییە',
+          'لەو بەشەدا هیچ ئەنجامێک نییە', translate: true,
           textAlign: TextAlign.center,
           style: TextStyle(
             fontFamily: kAppFont,

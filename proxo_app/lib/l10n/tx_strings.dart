@@ -1,3 +1,4 @@
+import 'proxo_strings.dart';
 import 'package:flutter/widgets.dart';
 
 import '../theme/app_locale.dart';
@@ -21,7 +22,7 @@ class TxStrings {
 
   static TxStrings get current => of(ProxoLocale.current.value);
 
-  String _t(String ku, String arabic) => ar ? arabic : ku;
+  String _t(String ku, String arabic) => ar ? arabic : ProxoStrings.text(ku);
 
   // ── مێژوو ───────────────────────────────────────────────────────────────
   String get historyTitle => _t('مێژووی مامەڵەکان', 'سجل المعاملات');

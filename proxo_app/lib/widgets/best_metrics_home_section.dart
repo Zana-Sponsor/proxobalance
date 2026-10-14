@@ -33,7 +33,7 @@ class BestMetricsHomeSectionState extends State<BestMetricsHomeSection> {
   @override
   void initState() {
     super.initState();
-    unawaited(refresh());
+    unawaited(refresh(forceRefresh: false));
   }
 
   Future<void> refresh({bool forceRefresh = true}) async {
@@ -323,7 +323,7 @@ class _HomeEmpty extends StatelessWidget {
   @override
   Widget build(BuildContext context) => _StateCard(
         child: ProxoText(
-          'هێشتا ئەنجامی ئەم هەفتەیە هەڵنەبژێردراوە',
+          'هێشتا ئەنجامی ئەم هەفتەیە هەڵنەبژێردراوە', translate: true,
           textAlign: TextAlign.center,
           style: AdUi.text(context, color: AdUi.secondary),
         ),
@@ -339,7 +339,7 @@ class _HomeError extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             ProxoText(
-              'ئەنجامەکان بار نەبوون',
+              'ئەنجامەکان بار نەبوون', translate: true,
               style: AdUi.text(context, color: AdUi.secondary),
             ),
             const SizedBox(height: 12),
@@ -349,7 +349,7 @@ class _HomeError extends StatelessWidget {
                 key: const ValueKey('home-results-retry'),
                 onPressed: onRetry,
                 child: ProxoText(
-                  'دووبارە',
+                  'دووبارە', translate: true,
                   style: AdUi.text(context, color: AdUi.blue),
                 ),
               ),

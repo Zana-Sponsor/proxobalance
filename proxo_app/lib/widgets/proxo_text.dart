@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../theme/app_locale.dart';
+import '../l10n/proxo_strings.dart';
 
 /// Shared receipt/app policy. Layout direction is deliberately independent.
 abstract final class ProxoTextDirection {
@@ -132,9 +133,12 @@ abstract final class ProxoTextDirection {
 /// A drop-in Text that retains raw data and every existing typography/layout
 /// option. Only paragraph direction and invisible display isolation change.
 class ProxoText extends Text {
+  /// Opt in only for app-owned labels. Raw user content remains untouched.
+  final bool translate;
   const ProxoText(
     super.data, {
     super.key,
+    this.translate = false,
     super.style,
     super.strutStyle,
     super.textAlign,
@@ -156,6 +160,7 @@ class ProxoText extends Text {
   const ProxoText.rich(
     super.textSpan, {
     super.key,
+    this.translate = false,
     super.style,
     super.strutStyle,
     super.textAlign,
@@ -175,6 +180,7 @@ class ProxoText extends Text {
   }) : super.rich();
 
   String get _plain =>
+      data != null && translate ? ProxoStrings.text(data!) :
       data ?? textSpan!.toPlainText(includeSemanticsLabels: false);
 
   @override
@@ -186,6 +192,7 @@ class ProxoText extends Text {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     final raw = _plain;
     final direction = ProxoTextDirection.of(
       raw,
@@ -196,8 +203,8 @@ class ProxoText extends Text {
     final selectable = SelectionContainer.maybeOf(context) != null;
     final span = data != null
         ? TextSpan(
-            text: selectable ? data : ProxoTextDirection.display(data!),
-            semanticsLabel: semanticsLabel ?? data,
+            text: selectable ? raw : ProxoTextDirection.display(raw),
+            semanticsLabel: semanticsLabel ?? raw,
           )
         : selectable
             ? textSpan!
@@ -230,7 +237,7 @@ class ProxoText extends Text {
 }
 
 /// Nullable decoration labels keep their original presence/absence and styles.
-Widget? proxoFieldText(String? text) => text == null ? null : ProxoText(text);
+Widget? proxoFieldText(String? text) => text == null ? null : ProxoText(text, translate: true);
 
 /// Updates native editable direction when typing or changing a controller.
 /// The same controller, selection, composing range and callbacks are retained.

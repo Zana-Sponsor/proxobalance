@@ -32,7 +32,7 @@ class HomeQuickActions extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            ProxoText('کردارە خێراکان', style: AdUi.heading(context)),
+            ProxoText('کردارە خێراکان', translate: true, style: AdUi.heading(context)),
             const SizedBox(height: 20),
             LayoutBuilder(
               builder: (context, constraints) {
@@ -108,7 +108,7 @@ class HomeQuickActions extends StatelessWidget {
                     onPressed: onToolsTap,
                     icon: const Icon(ProxoIcons.pages),
                     label: ProxoText(
-                      'ProxoLink — پەڕەکانم',
+                      'ProxoLink — پەڕەکانم', translate: true,
                       style: AdUi.text(context),
                     ),
                   ),
@@ -118,7 +118,7 @@ class HomeQuickActions extends StatelessWidget {
                     onPressed: onFaqTap,
                     icon: const Icon(ProxoIcons.help),
                     label: ProxoText(
-                      'پرسیارە دووبارەکان',
+                      'پرسیارە دووبارەکان', translate: true,
                       style: AdUi.text(context),
                     ),
                   ),
@@ -181,7 +181,7 @@ class _QuickActionCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 12),
                     ProxoText(
-                      title,
+                      title, translate: true,
                       textAlign: TextAlign.center,
                       style: AdUi.text(
                         context,

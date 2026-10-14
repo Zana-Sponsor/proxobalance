@@ -1,3 +1,5 @@
+import 'package:proxo_app/theme/app_locale.dart';
+import '../../widgets/proxo_symbol.dart';
 import 'package:flutter/material.dart';
 import '../../widgets/auth/auth_design.dart';
 import '../../widgets/auth/auth_header.dart';
@@ -21,11 +23,13 @@ class OtpScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         AuthHeader.inner(onBack: onBack),
         const SizedBox(height: 24),
+        const AuthHeroSymbol(ProxoSymbolName.verified),
         ProxoText(
           AuthStrings.otpTitle,
           style: AuthTokens.title.copyWith(color: AuthTokens.accent),
@@ -44,7 +48,7 @@ class OtpScreen extends StatelessWidget {
         const SizedBox(height: 28),
         otpBoxes,
         const SizedBox(height: 18),
-        SizedBox(height: 24, child: Center(child: resend)),
+        Center(child: resend),
         const SizedBox(height: 24),
         verifyButton,
         const SizedBox(height: AuthTokens.gapSectionBottom),

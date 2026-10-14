@@ -137,6 +137,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     final TxStrings l = TxStrings.of(ProxoLocale.current.value);
     final MediaQueryData mq = MediaQuery.of(context);
 
@@ -251,6 +252,7 @@ class _TxReceiptCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     final bool settled = d.isSettled;
     final String method = _methodLabel();
 

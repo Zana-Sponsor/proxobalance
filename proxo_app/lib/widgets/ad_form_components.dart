@@ -129,11 +129,11 @@ class AdFormSection extends StatelessWidget {
             child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  ProxoText(title,
+                  ProxoText(title, translate: true,
                       style: AdUi.heading(context), textAlign: TextAlign.right),
                   if (subtitle != null) ...[
                     const SizedBox(height: 6),
-                    ProxoText(subtitle!,
+                    ProxoText(subtitle!, translate: true,
                         style: AdUi.text(context, color: AdUi.secondary)),
                   ],
                   const SizedBox(height: 20),
@@ -172,7 +172,7 @@ class AdChoice extends StatelessWidget {
                     border: Border.all(
                         color: selected ? AdUi.selectedLine : AdUi.controlLine)),
                 child: Center(widthFactor: 1, heightFactor: 1,
-                    child: ProxoText(label,
+                    child: ProxoText(label, translate: true,
                     textAlign: TextAlign.center,
                     style: AdUi.text(context,
                         color: selected ? AdUi.blue : AdUi.ink))),
@@ -259,7 +259,7 @@ class AdValueRow extends StatelessWidget {
         textAlign: TextAlign.left,
       );
       final labelText = ProxoText(
-        label,
+        label, translate: true,
         style: style,
         textAlign: TextAlign.right,
       );

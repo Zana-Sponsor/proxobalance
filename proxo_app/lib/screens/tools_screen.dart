@@ -91,10 +91,10 @@ class _ToolsScreenState extends State<ToolsScreen> {
     try {
       confirmed = await showDialog<bool>(context: context, builder: (context) => Directionality(
       textDirection: TextDirection.rtl, child: AlertDialog(
-        title: const ProxoText('سڕینەوەی پەڕە'),
+        title: const ProxoText('سڕینەوەی پەڕە', translate: true),
         content: ProxoText(page.name),
-        actions: [TextButton(onPressed: () => Navigator.pop(context, false), child: const ProxoText('پاشگەزبوونەوە')),
-          FilledButton(onPressed: () => Navigator.pop(context, true), child: const ProxoText('سڕینەوە'))])));
+        actions: [TextButton(onPressed: () => Navigator.pop(context, false), child: const ProxoText('پاشگەزبوونەوە', translate: true)),
+          FilledButton(onPressed: () => Navigator.pop(context, true), child: const ProxoText('سڕینەوە', translate: true))])));
     } finally { _confirming.remove(page.id); }
     if (!mounted || confirmed != true || owner != _repository.ownerScope) return;
     try { await _pages.manage(page, 'delete'); }
@@ -106,7 +106,7 @@ class _ToolsScreenState extends State<ToolsScreen> {
     _pages.removeListener(_changed); _pages.dispose(); _scroll.dispose();
     _notices.dispose(); _localRefresh.dispose(); super.dispose();
   }
-  Widget _createButton() => FilledButton(onPressed: _create, child: const ProxoText('پەڕە دروستبکە'));
+  Widget _createButton() => FilledButton(onPressed: _create, child: const ProxoText('پەڕە دروستبکە', translate: true));
   @override
   Widget build(BuildContext context) => Theme(data: AdUi.theme(context), child: Directionality(
     textDirection: TextDirection.rtl, child: Builder(builder: (context) => Scaffold(
@@ -148,10 +148,10 @@ class _ToolsScreenState extends State<ToolsScreen> {
         ProxoText(_pages.error == null ? 'هێشتا هیچ پەڕەیەکت دروست نەکردووە' : 'نەتوانرا پەڕەکان بار بکرێن',
           textAlign: TextAlign.center, style: AdUi.heading(context)),
         const SizedBox(height: 10),
-        if (_pages.error == null) const ProxoText('پەڕەیەک دروستبکە و بەستەرەکەت بەکاربهێنە.', textAlign: TextAlign.center),
+        if (_pages.error == null) const ProxoText('پەڕەیەک دروستبکە و بەستەرەکەت بەکاربهێنە.', translate: true, textAlign: TextAlign.center),
         const SizedBox(height: 20),
         if (_pages.error != null) OutlinedButton(onPressed: () => (widget.refreshController ?? _localRefresh).refresh(),
-          child: const ProxoText('دووبارە هەوڵ بدەرەوە')),
+          child: const ProxoText('دووبارە هەوڵ بدەرەوە', translate: true)),
       ]));
     }
     final page = _pages.pages[index - 1];
