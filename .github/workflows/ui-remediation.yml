@@ -1,5 +1,8 @@
 name: UI remediation evidence
 on:
+  push:
+    branches: [feat/proxolink-private-renderer-migration]
+    paths: ['proxo_app/**', '.github/workflows/ui-remediation.yml']
   pull_request:
     paths: ['proxo_app/**', '.github/workflows/ui-remediation.yml']
 permissions:
@@ -14,7 +17,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           path: candidate
       - uses: actions/checkout@v4
         with:
