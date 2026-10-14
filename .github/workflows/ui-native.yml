@@ -12,6 +12,12 @@ jobs:
   android-fixtures:
     runs-on: ubuntu-latest
     timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        config: [phone, narrow, tablet]
+    env:
+      UI_CONFIG: ${{ matrix.config }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
@@ -54,6 +60,6 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: ui-native-android-fixtures
+          name: ui-native-android-fixtures-${{ matrix.config }}
           path: proxo_app/build/ui-native
           if-no-files-found: warn

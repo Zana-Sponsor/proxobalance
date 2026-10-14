@@ -182,9 +182,18 @@ void main() {
       await t.pumpAndSettle();
       await t.tap(title);
       Future<void> waitInsets(bool visible) async {
+        var stableSamples = 0;
+        double? previousInset;
         for (var i = 0; i < 100; i++) {
           await t.pump(const Duration(milliseconds: 100));
-          if ((t.view.viewInsets.bottom > 0) == visible) return;
+          final inset = t.view.viewInsets.bottom;
+          if ((inset > 0) == visible && inset == previousInset) {
+            stableSamples++;
+            if (stableSamples >= 5) return;
+          } else {
+            stableSamples = 0;
+          }
+          previousInset = inset;
         }
         fail('Native keyboard visibility did not become $visible');
       }
@@ -197,11 +206,14 @@ void main() {
       await waitInsets(false);
       expect(find.byType(AdCreateScreen), findsOneWidget);
       observations['android_back_dismissed_keyboard_kept_form'] = true;
+      await t.ensureVisible(title);
+      await t.pumpAndSettle();
       await t.tap(title);
       await waitInsets(true);
       final goal = find.byKey(const ValueKey('goal-views'));
       await t.ensureVisible(goal);
       await t.pumpAndSettle();
+      expect(goal.hitTestable(), findsOneWidget);
       await t.tap(goal);
       await waitInsets(false);
       observations['choice_dismissed_keyboard'] = true;

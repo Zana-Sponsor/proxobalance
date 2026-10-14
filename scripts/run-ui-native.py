@@ -22,9 +22,21 @@ def stop_drive(group_id, metadata):
     except ProcessLookupError:
         pass
 
-for name, size, density in [('phone', '1179x2556', '480'),
-                            ('narrow', '840x2556', '480'),
-                            ('tablet', '1536x1704', '320')]:
+configurations = [('phone', '1179x2556', '480'),
+                  ('narrow', '840x2556', '480'),
+                  ('tablet', '1536x1704', '320')]
+selected = os.environ.get('UI_CONFIG')
+if selected:
+    if selected not in {item[0] for item in configurations}:
+        raise ValueError('Unknown native fixture configuration')
+    configurations = [item for item in configurations if item[0] == selected]
+
+for name, size, density in configurations:
+    # Each CI matrix job has a fresh emulator; clear stale app/VM discovery
+    # state as well when this script is used sequentially during debugging.
+    adb('shell', 'am', 'force-stop', 'com.proxo.proxoapp')
+    adb('forward', '--remove-all')
+    adb('logcat', '-c')
     adb('shell', 'wm', 'size', size)
     adb('shell', 'wm', 'density', density)
     adb('shell', 'settings', 'put', 'secure', 'show_ime_with_hard_keyboard', '1')
