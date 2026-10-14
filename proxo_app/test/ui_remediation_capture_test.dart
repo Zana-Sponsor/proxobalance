@@ -5,6 +5,7 @@ import 'dart:io';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -334,6 +335,37 @@ Future<void> snapshot(
   String name,
   (double, double, double) config,
 ) async {
+  // pumpAndSettle only waits for scheduled frames, not asynchronous asset
+  // decoding. Resolve the actual mounted providers (including ResizeImage)
+  // before recording evidence; never substitute a template or placeholder.
+  final mountedImages = find.descendant(
+    of: find.byKey(key),
+    matching: find.byType(Image),
+  ).evaluate().toList();
+  final decodeErrors = <Object>[];
+  await t.runAsync(() async {
+    await Future.wait(mountedImages.map((element) {
+      final widget = element.widget as Image;
+      return precacheImage(
+        widget.image,
+        element,
+        size: widget.width != null && widget.height != null
+            ? Size(widget.width!, widget.height!)
+            : null,
+        onError: (error, stack) => decodeErrors.add(error),
+      );
+    })).timeout(const Duration(seconds: 20));
+  });
+  expect(decodeErrors, isEmpty, reason: 'Every mounted image must decode');
+  await t.pump();
+  for (final element in mountedImages) {
+    final rendered = find.descendant(
+      of: find.byWidget(element.widget),
+      matching: find.byType(RawImage),
+    );
+    expect(rendered, findsOneWidget);
+    expect(t.widget<RawImage>(rendered).image, isNotNull);
+  }
   final boundary =
       key.currentContext!.findRenderObject() as RenderRepaintBoundary;
   final nodes = <Map<String, Object?>>[];
@@ -369,6 +401,18 @@ Future<void> snapshot(
     final bytes = await shot.toByteData(format: ui.ImageByteFormat.png);
     File('$output/$name.png').writeAsBytesSync(bytes!.buffer.asUint8List());
     shot.dispose();
+    // Static page selectors must be exactly stable after decoding. This is
+    // repeat-capture verification, not an approved golden or a relaxed diff.
+    final stablePreview = name.startsWith('page-contact-') ||
+        name.startsWith('page-order-') || name.startsWith('page-download-');
+    if (stablePreview) {
+      final repeat = await boundary.toImage(pixelRatio: config.$3);
+      final repeated = await repeat.toByteData(format: ui.ImageByteFormat.png);
+      expect(listEquals(bytes.buffer.asUint8List(),
+          repeated!.buffer.asUint8List()), isTrue,
+          reason: 'Decoded selector captures must match pixel for pixel');
+      repeat.dispose();
+    }
     File('$output/$name.json').writeAsStringSync(
       jsonEncode({
         'fixture': 'fictional deterministic records; actual production widgets',
@@ -376,6 +420,8 @@ Future<void> snapshot(
         'viewport_dp': [config.$1, 852],
         'dpr': config.$3,
         'text_scale': config.$2,
+        'mounted_images_decoded': mountedImages.length,
+        'static_preview_repeat_exact': stablePreview ? true : null,
         'nodes': nodes,
       }),
     );

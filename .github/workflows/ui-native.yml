@@ -1,0 +1,59 @@
+name: Native UI iconography verification
+on:
+  push:
+    branches: [feat/proxolink-private-renderer-migration]
+    paths: ['proxo_app/**', 'scripts/run-ui-native.py', '.github/workflows/ui-native.yml']
+permissions:
+  contents: read
+concurrency:
+  group: ui-native-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  android-fixtures:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.47.2'
+          channel: stable
+          cache: true
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.14.3'
+      - name: Prepare test-only target
+        working-directory: proxo_app
+        run: |
+          flutter pub get
+          flutter analyze --no-fatal-infos integration_test/ui_iconography_test.dart test_driver/ui_iconography_driver.dart
+          if [ ! -f android/gradlew ]; then
+            (cd android && gradle wrapper --gradle-version 8.14.3)
+          fi
+          chmod +x android/gradlew
+      - name: Enable emulator acceleration
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Actual Android density and keyboard checks with fictional fixtures
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          arch: x86_64
+          target: google_apis
+          disable-animations: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -memory 2048
+          working-directory: proxo_app
+          script: python3 ../scripts/run-ui-native.py
+      - name: Retain native screenshots and measured device results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-native-android-fixtures
+          path: proxo_app/build/ui-native
+          if-no-files-found: warn
