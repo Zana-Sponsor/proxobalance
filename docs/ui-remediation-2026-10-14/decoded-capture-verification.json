@@ -1,0 +1,50 @@
+{
+  "source": "aeeda8aee7332d7b6011ece0d096a0e96903d56b",
+  "baseline_source": "b77ec5202ed37c179fa52c4c447a4c3719a4c9d8",
+  "run_id": 38636066159,
+  "baseline": {
+    "artifact": 11927454660,
+    "sha256": "13d7ddd40859c26022307843183868ef808aab18ecfe7abc5519a2327b341470",
+    "captures": 108,
+    "mounted_image_decodes": 162,
+    "static_preview_repeat_pairs": 24
+  },
+  "candidate": {
+    "artifact": 11928052244,
+    "sha256": "29cb2c9abe7fb309c58a720b20f350201a49130cd17b91a6a2f68ef74c360b97",
+    "captures": 106,
+    "mounted_image_decodes": 160,
+    "static_preview_repeat_pairs": 24
+  },
+  "capture_cases_per_source": 64,
+  "focused_tests": 298,
+  "digests_and_zip_crc_verified": true,
+  "four_navigation_pixel_diffs": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "measurement_csv_unchanged": true,
+  "eight_committed_screenshots_unchanged": true,
+  "product_source_unchanged": true,
+  "staging_recheck": {
+    "run_id": 38636065957,
+    "job_id": 116099434072,
+    "status": "waiting_for_proxolink-preview-verification_environment_review",
+    "settings_not_inspected_in_this_attempt": true
+  },
+  "independent_repeat": {
+    "run_id": 38637446819,
+    "source": "a4498bc192d58b478303a4d6acf49f7e70a8cdc1",
+    "baseline_artifact": 11929551229,
+    "baseline_sha256": "8338506b9ee25a8dfba9b9fd9f4da72aa9264057ae205c9cc5b5df047f737590",
+    "candidate_artifact": 11928373326,
+    "candidate_sha256": "841c66f3b1efa69fcca98360ad1dc1230e35f7b6f51c4e9034d2020041b2c5ec",
+    "baseline_png_exact": 108,
+    "candidate_png_exact": 106,
+    "changed_png_count": 0,
+    "zip_digests_and_crc_verified": true
+  },
+  "eight_pdf_nine_pages_render_identical_to_reviewed_output": true
+}

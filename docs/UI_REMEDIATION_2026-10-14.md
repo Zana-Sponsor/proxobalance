@@ -25,7 +25,7 @@ Local Flutter startup was rejected by automatic approval review because it attem
 | 3. Consistency | Three primary actions share outline glyphs, 24 logical-pixel icon box, existing 48-pixel accent well, shared AdUi card padding/radius, native Sorani labels and disabled treatment. Labels reflow using actual font metrics; 8 additional logical pixels below the secondary links contain Rabar descenders at scale 3. Receipt controls use the existing app typography roles, 20-pixel glyphs and 48-pixel targets. | Values reuse existing component tokens/navigation conventions. Actual geometry and visual review are recorded below; native Android acceptance remains separate. |
 | 4. Quick actions | Latest instruction applied: native icons + titles; no images. Tools and FAQ remain secondary links. All three routes are wired; Add Balance uses DepositScreen. | `home_quick_actions.dart`, Home callbacks and both MainShell Home constructors. |
 | 5. Flutter integration | No package changes, no new icon asset files, no runtime icon website requests. RTL labels and explicit LTR values retained. Existing bottom-nav PNG outline/fill mappings preserved, including deliberately reversed `user`/`widget` filenames. | Existing SVG Solar-linear Sidebar, Solar-outline Profile and branded/provider FontAwesome groups retained. |
-| 6. Verification | Added responsive action/callback, disabled-state and currency tests; baseline/candidate screenshots and PDF capture harness. Existing tests updated for intentional native-size wrapping rather than the obsolete shrinking contract. | 298 focused Flutter tests and 64 capture cases per source passed; see terminal run evidence below. Visual targets remain unapproved. Native Android touch/accessibility and real profile measurements remain outstanding. |
+| 6. Verification | Added responsive action/callback, disabled-state and currency tests; baseline/candidate screenshots and PDF capture harness. Existing tests updated for intentional native-size wrapping rather than the obsolete shrinking contract. | 298 focused Flutter tests and 64 capture cases per source passed; see terminal run evidence below. Visual targets remain unapproved. Selected Android emulator tap/label/keyboard/density checks now pass below; manual TalkBack and physical-device profile measurements remain outstanding. |
 
 ### Exact icon changes
 
@@ -40,7 +40,7 @@ Local Flutter startup was rejected by automatic approval review because it attem
 | Shared receipt back/refresh | Existing Material glyphs | Glyphs preserved; size/target and disabled back color corrected | No replacement asset. |
 | Bottom center add | Existing custom-painted plus | Drawing preserved; added localized button semantics | Accessibility only; no pixel change intended. |
 
-**Asset files added/replaced: none.** `pubspec.yaml` and lockfile remain unchanged. Retained icon groups: nav PNG pairs; Sidebar Solar Linear; Profile Solar Outline; Tools Material outline controls; existing transaction/status and provider brand marks. Some unused raster artwork has different stroke weights; no speculative wholesale replacement was made.
+**Application icon/image asset files added/replaced: none.** `pubspec.yaml` and lockfile remain unchanged. Retained icon groups: nav PNG pairs; Sidebar Solar Linear; Profile Solar Outline; Tools Material outline controls; existing transaction/status and provider brand marks. Some unused raster artwork has different stroke weights; no speculative wholesale replacement was made.
 
 ## Specification coverage, point by point
 
@@ -49,7 +49,7 @@ Local Flutter startup was rejected by automatic approval review because it attem
 | 1 Global language | Shared receipt rows stop shrinking; app typography roles reused. | Review all shared consumers at all supported scales. |
 | 2 AppBars | ReceiptAppBar title 13→16, glyph 16→20, target 44→48; disabled back visible as disabled. This reaches History, transaction/ad receipts, ad form/confirmation, Tools/page creation. | Actual measured register supplied; native device review remains pending. |
 | 3 Home order | Header → existing configurable ProxoBanner → exactly three actions → real selected-results section → expandable existing overview metrics. | Populated configured banner/real-thumbnail fixtures, full-screen visual review. |
-| 4 Routes | Create Ad, DepositScreen, Tools(initialCreate:true); secondary Tools and FAQ retained. | Native back/state/keyboard journeys. |
+| 4 Routes | Create Ad, DepositScreen, Tools(initialCreate:true); secondary Tools and FAQ retained. | Native keyboard/Back fixture checks passed; full route/state/restart journeys remain open. |
 | 5 Top banner | Reuses existing Firebase/Supabase banner/cache/lifecycle. Known routes mapped, HTTPS external targets validated, unsupported targets get recoverable message. | Actual configured promotional artwork is not supplied; existing static fallback is retained, not invented. Loading transition geometry still to measure. |
 | 6 Best Results | Existing selected ad carousel retained; real first selected thumbnail introduces the group when present. | Records without a thumbnail have no fabricated feature image. Missing-thumbnail/failed-image presentation and all data states need visual review. |
 | 7 Home states | Existing refresh/cache/controller behavior retained. | Full first/warm/slow/offline state matrix. |
@@ -67,7 +67,7 @@ Local Flutter startup was rejected by automatic approval review because it attem
 | 19 Tools failures/cache | Existing owner isolation/mounted guards retained. | Actual failing trace and missing isolated staging settings. |
 | 20–21 Measurements | Harness records bounds/font data per screen/state; baseline and candidate kept separate. | Measured CSV and compressed JSON supplied; no guessed measurements or approved target claimed. |
 | 22 Pixel comparison | No automatic golden replacement or relaxed threshold. | Review intended changes; exact parity for unaffected regions. |
-| 23 Responsive/accessibility | Four rendering configurations; action reflow/tap tests; plus semantics and disabled back state. | Native Android densities/TalkBack/keyboard. |
+| 23 Responsive/accessibility | Four rendering configurations; action reflow/tap tests; plus semantics and disabled back state. | Selected native density/keyboard cases passed below; physical-device TalkBack and remaining controls/routes remain open. |
 | 24 Runtime profiling | Not measured. | Profile-mode P50/P95/frame/memory traces; test speed is not product latency. |
 | 25–26 Sequence/coverage | Source inventory, targeted changes, hosted widget captures and focused tests complete. | Incomplete states remain explicitly open. |
 | 27 Safety | PR Draft/Open/Unmerged, no production or financial mutation, no weakened authorization. | Maintain these constraints through review. |
@@ -146,8 +146,8 @@ Original PNGs are retained without rescaling or editing. These are reconstructed
 ### Still open
 
 1. Explicit visual approval of the intentionally changed screenshots. The attached specification §22 requires approval of a new target; none is inferred from successful tests.
-2. Native Android density, keyboard/back, TalkBack and real profile-mode P50/P95/frame/memory checks on the changed UI. Prior native WebView pixel-parity failures from the existing PR are not resolved by this icon work.
-3. Isolated two-account hosted/create/upload/publish/payment journeys. Eight required staging settings are absent; production was not substituted. The reported generic Tools reopen error still needs its failing network trace.
+2. Physical-device TalkBack and profile-mode P50/P95/frame/memory checks, plus native coverage of the remaining controls/routes/restart states. The selected Android emulator density/keyboard/back cases now pass below. Prior native WebView pixel-parity failures from the existing PR are not resolved by this icon work.
+3. Isolated two-account hosted/create/upload/publish/payment journeys. The last completed audit found eight required staging settings absent; the new recheck awaits GitHub environment review, so their current presence is not yet known. Production was not substituted. The reported generic Tools reopen error still needs its failing network trace.
 4. Full populated Home banner/results data, first/warm/slow/offline/error transitions and all secondary-screen states. Source audit of retained Sidebar/Profile icon groups is complete; exhaustive native visual coverage is not claimed.
 
 PR #7 remains **Draft / Open / Unmerged**. This report does not mark the larger remediation specification complete.
@@ -163,4 +163,50 @@ PR #7 remains **Draft / Open / Unmerged**. This report does not mark the larger 
 
 Both ZIP CRCs and SHA-256 digests were verified after download. All eight committed screenshot originals match the final artifacts byte-for-byte. All eight final candidate PDFs render identically to the nine inspected PDF pages. Artifact retention currently ends 12 January 2027; selected screenshots and the measurement register are committed in the repository.
 
-**Preview readiness limitation:** comparison with the previous identical-product capture found six candidate and five baseline page-type scroll-bottom images with different preview-content readiness. For example, the dark Contact thumbnail is blank in one earlier capture and decoded in the final one. Those page-preview images are retained as observations, not accepted zero-pixel references. The exact four-case navigation comparison and eight committed before/after originals are unaffected. No renderer/template change or pixel tolerance was introduced to conceal this outstanding readiness coverage.
+**Historical preview readiness limitation, superseded by the decoded capture below:** comparison with the previous identical-product capture found six candidate and five baseline page-type scroll-bottom images with different preview-content readiness. For example, the dark Contact thumbnail is blank in one earlier capture and decoded in the later one. Those earlier page-preview images were observations, not accepted zero-pixel references. No renderer/template change or pixel tolerance was introduced.
+
+### Decoded-asset verification — remaining capture gap resolved
+
+[Run 38636066159](https://github.com/Zana-Sponsor/proxobalance/actions/runs/38636066159) at `aeeda8aee7332d7b6011ece0d096a0e96903d56b` passed **64/64 capture cases on each source and 298/298 focused tests**. The capture harness now awaits the actual mounted `ImageProvider` (including resized providers), rejects decode failures/timeouts and asserts each mounted `RawImage` has decoded pixels before capture. It does not replace an image, change a template or relax a pixel comparison. Each static selector capture is read twice from the decoded boundary and must match exactly; this is same-boundary repeat verification, not a claim of independent-process reproducibility.
+
+| Source | Verified artifact / SHA-256 | Captures | Mounted-image decode assertions | Exact static-selector repeat pairs |
+|---|---|---:|---:|---:|
+| Baseline | [11927454660](https://github.com/Zana-Sponsor/proxobalance/actions/runs/38636066159/artifacts/11927454660), `13d7ddd40859c26022307843183868ef808aab18ecfe7abc5519a2327b341470` | 108 | 162 | 24 |
+| Candidate | [11928052244](https://github.com/Zana-Sponsor/proxobalance/actions/runs/38636066159/artifacts/11928052244), `29cb2c9abe7fb309c58a720b20f350201a49130cd17b91a6a2f68ef74c360b97` | 106 | 160 | 24 |
+
+Both downloaded ZIP digests and CRCs passed. Compared with the previous capture, 12 baseline and 10 candidate PNGs now show fully decoded assets, including three navigation cases and the narrow Home logo. This corrects the earlier limitation statement, which identified only selector thumbnails. **All four newly decoded baseline/candidate navigation pairs still differ by exactly zero pixels.** The eight selected committed before/after PNGs and the entire 4,453-row CSV remain byte-identical. The compressed JSON now points to decoded captures and includes decode-readiness metadata. All eight PDFs (nine pages) were re-rendered and match the previously inspected pages pixel for pixel; PDF bounds are unchanged. See [machine-readable verification](ui-remediation-2026-10-14/decoded-capture-verification.json).
+
+The protected staging configuration recheck was requested through its existing gated workflow. Run `38636065957`, job `116099434072`, is waiting for review of the `proxolink-preview-verification` environment. Its current secret/settings presence has therefore **not** been inspected in this attempt; the eight absent settings are the last completed audit's finding. No environment protection was removed, no secret copied, and production was not substituted.
+
+To release that already prepared check, its required GitHub environment reviewer must use **Review deployments** on [the waiting run](https://github.com/Zana-Sponsor/proxobalance/actions/runs/38636065957). If the last completed configuration result is still current, the environment needs `PROXO_STAGING_PROJECT_REF`, `PROXO_STAGING_SUPABASE_URL`, `PROXO_STAGING_BASE_URL`, `PROXO_STAGING_ANON_KEY`, `PROXO_STAGING_TEST_EMAIL`, `PROXO_STAGING_TEST_PASSWORD`, `PROXO_STAGING_OTHER_EMAIL`, and `PROXO_STAGING_OTHER_PASSWORD`. These identify an isolated staging project and two ordinary staging accounts; the workflow rejects substituting production or a privileged service key. Account existence/authentication has not been inferred from configuration presence.
+
+A second independent CI capture at `a4498bc192d58b478303a4d6acf49f7e70a8cdc1`, [run 38637446819](https://github.com/Zana-Sponsor/proxobalance/actions/runs/38637446819), reproduces **all 108 baseline and 106 candidate PNGs exactly, with zero changed images/pixels**. Both artifact digests and ZIP CRCs were verified. This includes all selector bottoms and all navigation states in the widget capture matrix. Native test-only edits separate the commits; product code and capture harness are identical. The repeat artifact IDs/hashes are in the machine-readable verification file. This establishes independent-run reproducibility for these fixture captures without approving a new design target.
+
+### Native Android verification method and diagnostic attempts
+
+The new credential-free workflow runs the production quick-action, bottom-navigation, transaction-receipt, Tools and advertisement-form widgets on an Android API 35 x86_64 emulator. It reuses the existing test fixture repositories and SDK `integration_test` dependency. No production startup, real account, payment, page publication or backend write is needed. Flutter taps verify the three distinct callbacks; the host sends a real ADB `KEYCODE_BACK` event only after the test observes an open keyboard. Actual physical size/DPR/keyboard insets are recorded, rather than assuming that the emulator accepted the requested dimensions. Debug-mode captures retain the debug ribbon and are not performance measurements or physical-device/TalkBack certification.
+
+Test-only files: `.github/workflows/ui-native.yml`, `scripts/run-ui-native.py`, `proxo_app/integration_test/ui_iconography_test.dart`, `proxo_app/test_driver/ui_iconography_driver.dart`. Native screenshots use the SDK's [documented integration-test screenshot API](https://api.flutter.dev/flutter/package-integration_test_integration_test/IntegrationTestWidgetsFlutterBinding/takeScreenshot.html). No application assets or packages were added.
+
+- Run `38636066150` failed when the harness searched for a lazy receipt PDF button before scrolling it into the tree. The harness now scrolls until the control exists and is visible, preserving its target-size assertion. Each mounted screen gets a fresh root to avoid carrying scroll state between cases.
+- Run `38637443999` produced all 15 phone screenshots and recorded six distinct action callbacks, disabled-action suppression, a 595-physical-pixel keyboard inset, one actual ADB Back event, keyboard dismissal with the form retained, and choice-driven keyboard dismissal. The job still **failed**, because its test semantics handle was disposed in `addTearDown`, after Flutter's end-of-test handle verification. Cleanup now runs in a `finally` block before that verification. No accessibility assertion was removed. This failed attempt is diagnostic evidence, not a passing acceptance result.
+
+The final native-test source at `07c3f3397b88b89d9ea237123fba3abfc2bdb0f0` also passed [full source CI 38638671927](https://github.com/Zana-Sponsor/proxobalance/actions/runs/38638671927): all five jobs (Flutter, backend, database/RLS, edge functions and responsive) succeeded. These disposable CI checks do not execute migrations against production.
+
+### Final native result — passed
+
+[Native run 38638671991](https://github.com/Zana-Sponsor/proxobalance/actions/runs/38638671991), job `116108297424`, passed all **three Android configurations** at source `07c3f3397b88b89d9ea237123fba3abfc2bdb0f0`. Artifact [11929439292](https://github.com/Zana-Sponsor/proxobalance/actions/runs/38638671991/artifacts/11929439292) contains **45 PNGs, six observation/device JSONs and three logs**. SHA-256 `17111fe8c7998a7bd30ff4a8a1fed2e9cedbf59b41f3611bab0c74c28bdf0d92` and ZIP CRC passed. All 45 PNG dimensions match their recorded native viewport.
+
+| Configuration | Actual physical pixels | DPR | Actual logical viewport | Observed positive IME inset, px | Actual ADB Back events |
+|---|---|---:|---|---:|---:|
+| Phone | 1179×1920 | 3 | 393×640 dp | 444 | 1 |
+| Narrow | 840×1920 | 3 | 280×640 dp | 225 | 1 |
+| Tablet | 1536×1704 | 2 | 768×852 dp | 665 | 1 |
+
+The emulator limited the requested phone/narrow height to 1920 px; the table reports the observed result, not the requested 2556 px. IME values record the first observed positive inset during opening, not a settled keyboard height. SDK screenshots record the Flutter surface; IME behavior is verified by platform insets and actual ADB input.
+
+Each configuration verified six primary-action callbacks across text scales 1 and 2, disabled-action suppression, accessible labels, at least 48-dp action/PDF targets, four selected navigation appearances, receipt top/bottom at both text scales, populated fixture Tools, the ad form, native keyboard opening, Back dismissing the keyboard while retaining the form, and goal-selection dismissing it. No framework layout exception occurred. The action snapshots follow the taps/ensure-visible operations, so the narrow large-text example is scrolled. This is focused native fixture coverage; it does not certify every application route or a real payment.
+
+[Measured results and hashes for every PNG](ui-remediation-2026-10-14/native-android-verification.json). Unmodified screenshot examples: [phone actions](ui-remediation-2026-10-14/native/phone-actions-scale-1.0.png), [narrow large-text receipt/PDF control](ui-remediation-2026-10-14/native/narrow-receipt-bottom-scale-2.0.png), [tablet actions](ui-remediation-2026-10-14/native/tablet-actions-scale-1.0.png), [tablet large-text receipt](ui-remediation-2026-10-14/native/tablet-receipt-scale-2.0.png). Examples were opened for visual inspection. These are documentation evidence files, not packaged application assets.
+
+The separate existing 240-case WebView strict pixel-parity failure, protected hosted verification, manual TalkBack, full Home data-state coverage and representative physical-device profiling remain open. No golden target was approved, no tolerance relaxed, and PR #7 remains Draft/Open/Unmerged.

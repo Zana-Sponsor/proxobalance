@@ -1,0 +1,527 @@
+{
+  "source": "07c3f3397b88b89d9ea237123fba3abfc2bdb0f0",
+  "run_id": 38638671991,
+  "job_id": 116108297424,
+  "conclusion": "success",
+  "artifact_id": 11929439292,
+  "artifact_sha256": "17111fe8c7998a7bd30ff4a8a1fed2e9cedbf59b41f3611bab0c74c28bdf0d92",
+  "sha256_and_zip_crc_verified": true,
+  "runtime": "Android API 35 x86_64 emulator, debug, fictional fixtures",
+  "configuration_results": {
+    "phone": {
+      "observations": {
+        "fixture_only": true,
+        "mode": "Android emulator debug; not a performance benchmark",
+        "physical_size": [
+          1179.0,
+          1920.0
+        ],
+        "dpr": 3.0,
+        "config": "phone",
+        "quick_action_callbacks": [
+          "ad",
+          "balance",
+          "page",
+          "ad",
+          "balance",
+          "page"
+        ],
+        "disabled_action_did_not_fire": true,
+        "keyboard_inset_physical_px": 444.0,
+        "android_back_dismissed_keyboard_kept_form": true,
+        "choice_dismissed_keyboard": true,
+        "completed": true,
+        "logical_size_dp": [
+          393.0,
+          640.0
+        ]
+      },
+      "device": {
+        "size": "Physical size: 320x640\nOverride size: 1179x1920",
+        "density": "Physical density: 160\nOverride density: 480",
+        "adb_back_events": 1
+      }
+    },
+    "narrow": {
+      "observations": {
+        "fixture_only": true,
+        "mode": "Android emulator debug; not a performance benchmark",
+        "physical_size": [
+          840.0,
+          1920.0
+        ],
+        "dpr": 3.0,
+        "config": "narrow",
+        "quick_action_callbacks": [
+          "ad",
+          "balance",
+          "page",
+          "ad",
+          "balance",
+          "page"
+        ],
+        "disabled_action_did_not_fire": true,
+        "keyboard_inset_physical_px": 225.0,
+        "android_back_dismissed_keyboard_kept_form": true,
+        "choice_dismissed_keyboard": true,
+        "completed": true,
+        "logical_size_dp": [
+          280.0,
+          640.0
+        ]
+      },
+      "device": {
+        "size": "Physical size: 320x640\nOverride size: 840x1920",
+        "density": "Physical density: 160\nOverride density: 480",
+        "adb_back_events": 1
+      }
+    },
+    "tablet": {
+      "observations": {
+        "fixture_only": true,
+        "mode": "Android emulator debug; not a performance benchmark",
+        "physical_size": [
+          1536.0,
+          1704.0
+        ],
+        "dpr": 2.0,
+        "config": "tablet",
+        "quick_action_callbacks": [
+          "ad",
+          "balance",
+          "page",
+          "ad",
+          "balance",
+          "page"
+        ],
+        "disabled_action_did_not_fire": true,
+        "keyboard_inset_physical_px": 665.0,
+        "android_back_dismissed_keyboard_kept_form": true,
+        "choice_dismissed_keyboard": true,
+        "completed": true,
+        "logical_size_dp": [
+          768.0,
+          852.0
+        ]
+      },
+      "device": {
+        "size": "Physical size: 320x640\nOverride size: 1536x1704",
+        "density": "Physical density: 160\nOverride density: 320",
+        "adb_back_events": 1
+      }
+    }
+  },
+  "screenshots": [
+    {
+      "file": "phone-actions-disabled.png",
+      "size_px": [
+        1179,
+        1920
+      ],
+      "sha256": "0c412b20bd22b324ea8d7320b7445d4b463f70fa6ee78a317099d7966e3b17d1",
+      "committed_example": false
+    },
+    {
+      "file": "phone-actions-scale-1.0.png",
+      "size_px": [
+        1179,
+        1920
+      ],
+      "sha256": "3653e5c41452da420c04e24ed80435bef98a3efe6d06755b5d07fdee2a239b64",
+      "committed_example": true
+    },
+    {
+      "file": "phone-actions-scale-2.0.png",
+      "size_px": [
+        1179,
+        1920
+      ],
+      "sha256": "6e9d42f501788c65959a7c93384ab3d73d5570822eaa0614ddfe656119243ad7",
+      "committed_example": false
+    },
+    {
+      "file": "phone-create-keyboard-dismissed.png",
+      "size_px": [
+        1179,
+        1920
+      ],
+      "sha256": "601a83ac9ffc03e120e9f28e22f6508c9085c71cb11bc620b3e00f774b1ed509",
+      "committed_example": false
+    },
+    {
+      "file": "phone-create-keyboard.png",
+      "size_px": [
+        1179,
+        1920
+      ],
+      "sha256": "919ca95cae4f1d392e739fdd0d7665a3837630d5b43b58658870641e78338d52",
+      "committed_example": false
+    },
+    {
+      "file": "phone-create.png",
+      "size_px": [
+        1179,
+        1920
+      ],
+      "sha256": "7a911c0bac566e1e92f74622d835056baf889a9ea104556f4a28c9487ae09b88",
+      "committed_example": false
+    },
+    {
+      "file": "phone-navigation-0.png",
+      "size_px": [
+        1179,
+        1920
+      ],
+      "sha256": "879c4d246c2bc6ee8d7e139118302714c1cb74d7210008c0365c08f8022e3da0",
+      "committed_example": false
+    },
+    {
+      "file": "phone-navigation-1.png",
+      "size_px": [
+        1179,
+        1920
+      ],
+      "sha256": "292870dc186785514dcf03ca32b8a14e90f076283c1aaf32b894bb16263891e8",
+      "committed_example": false
+    },
+    {
+      "file": "phone-navigation-3.png",
+      "size_px": [
+        1179,
+        1920
+      ],
+      "sha256": "d52459f8d9c437259278e8a93b8b3fc01f4bf954c02c440c1fecafe1dbae3af2",
+      "committed_example": false
+    },
+    {
+      "file": "phone-navigation-4.png",
+      "size_px": [
+        1179,
+        1920
+      ],
+      "sha256": "09795109022e0e2e032eba85f2105084f69671314c61bb12b447809b7c404400",
+      "committed_example": false
+    },
+    {
+      "file": "phone-receipt-bottom-scale-1.0.png",
+      "size_px": [
+        1179,
+        1920
+      ],
+      "sha256": "d8149ecba35fbab37c36b1d0c52ff5993cf9b4f8f5e418ef325f298289c5b688",
+      "committed_example": false
+    },
+    {
+      "file": "phone-receipt-bottom-scale-2.0.png",
+      "size_px": [
+        1179,
+        1920
+      ],
+      "sha256": "5adbf8c9cf8fbed73fef5ef424e5d63b15d4aa3fb01972cae6cb6310bba2e1ef",
+      "committed_example": false
+    },
+    {
+      "file": "phone-receipt-scale-1.0.png",
+      "size_px": [
+        1179,
+        1920
+      ],
+      "sha256": "d8149ecba35fbab37c36b1d0c52ff5993cf9b4f8f5e418ef325f298289c5b688",
+      "committed_example": false
+    },
+    {
+      "file": "phone-receipt-scale-2.0.png",
+      "size_px": [
+        1179,
+        1920
+      ],
+      "sha256": "1fdd87b0c5e5a4ed1ecd9d1d3588c2e89f8d4fad9f70a86aa7b500739da3a44c",
+      "committed_example": false
+    },
+    {
+      "file": "phone-tools.png",
+      "size_px": [
+        1179,
+        1920
+      ],
+      "sha256": "3e1c9258665d55dee79c99b5f9429df9916cc01799bbe13d670d48ac772c66cb",
+      "committed_example": false
+    },
+    {
+      "file": "narrow-actions-disabled.png",
+      "size_px": [
+        840,
+        1920
+      ],
+      "sha256": "1070c58b7e3423b4e1328a6d6d88d285adf9fc278ede67343911564144423fd3",
+      "committed_example": false
+    },
+    {
+      "file": "narrow-actions-scale-1.0.png",
+      "size_px": [
+        840,
+        1920
+      ],
+      "sha256": "ea6e4c883fb2fdefc802852950d25a8d1f4b22cefd3fd163e8f9211a5ae8b7d2",
+      "committed_example": false
+    },
+    {
+      "file": "narrow-actions-scale-2.0.png",
+      "size_px": [
+        840,
+        1920
+      ],
+      "sha256": "0c794ecbdf489e278b2876ffd5db926185a311937a947b4421ea38c1819ca862",
+      "committed_example": false
+    },
+    {
+      "file": "narrow-create-keyboard-dismissed.png",
+      "size_px": [
+        840,
+        1920
+      ],
+      "sha256": "db35a568c0c6045b007359aac9b000ddf2dc008e2dbb7f6e35e7000b73817fb0",
+      "committed_example": false
+    },
+    {
+      "file": "narrow-create-keyboard.png",
+      "size_px": [
+        840,
+        1920
+      ],
+      "sha256": "92826cecebecbb39581dfd2521018b51ca8cab5a5b9b913c8064bd69763e541f",
+      "committed_example": false
+    },
+    {
+      "file": "narrow-create.png",
+      "size_px": [
+        840,
+        1920
+      ],
+      "sha256": "33342f659a89187e87d9aebe1f2c11523c81f19b4cd93acc373ef36e7523f40a",
+      "committed_example": false
+    },
+    {
+      "file": "narrow-navigation-0.png",
+      "size_px": [
+        840,
+        1920
+      ],
+      "sha256": "f49d6fa86a466db7a1f939c8c2dcdd39de544ed9e908235e21362b96ada7e7e4",
+      "committed_example": false
+    },
+    {
+      "file": "narrow-navigation-1.png",
+      "size_px": [
+        840,
+        1920
+      ],
+      "sha256": "97b76d5bd80cf2851d2eaa4718114b644becbc17c76540be413f43a5cc042556",
+      "committed_example": false
+    },
+    {
+      "file": "narrow-navigation-3.png",
+      "size_px": [
+        840,
+        1920
+      ],
+      "sha256": "3ecd9eccbcec12987883f33e881126bccadef960768bb2ec8691a9525f61b47b",
+      "committed_example": false
+    },
+    {
+      "file": "narrow-navigation-4.png",
+      "size_px": [
+        840,
+        1920
+      ],
+      "sha256": "5f2b2735244badf0160ceccc79c7964c7eb3267ce2865b394add8c5e5fd85f2f",
+      "committed_example": false
+    },
+    {
+      "file": "narrow-receipt-bottom-scale-1.0.png",
+      "size_px": [
+        840,
+        1920
+      ],
+      "sha256": "456e6812b221ad2c84eb9484d8f8145f832ccd093fd7585810e12638ac982e76",
+      "committed_example": false
+    },
+    {
+      "file": "narrow-receipt-bottom-scale-2.0.png",
+      "size_px": [
+        840,
+        1920
+      ],
+      "sha256": "e3eb112cf0e8463854d74006342f122f96a8b0688a4905d3ce8dc26ca2d4daf7",
+      "committed_example": true
+    },
+    {
+      "file": "narrow-receipt-scale-1.0.png",
+      "size_px": [
+        840,
+        1920
+      ],
+      "sha256": "456e6812b221ad2c84eb9484d8f8145f832ccd093fd7585810e12638ac982e76",
+      "committed_example": false
+    },
+    {
+      "file": "narrow-receipt-scale-2.0.png",
+      "size_px": [
+        840,
+        1920
+      ],
+      "sha256": "4d0d08022e2f723fece90c13ace7c88e7880d6c25ee372fe70a16dad52694177",
+      "committed_example": false
+    },
+    {
+      "file": "narrow-tools.png",
+      "size_px": [
+        840,
+        1920
+      ],
+      "sha256": "451e31554d7a348fc1072ded02d191829333bd2d2030dd551b9cedf2786fc14e",
+      "committed_example": false
+    },
+    {
+      "file": "tablet-actions-disabled.png",
+      "size_px": [
+        1536,
+        1704
+      ],
+      "sha256": "92def789deaf6a09357670825e25b82651fec4cdc2b05da6c89cded1620d77a5",
+      "committed_example": false
+    },
+    {
+      "file": "tablet-actions-scale-1.0.png",
+      "size_px": [
+        1536,
+        1704
+      ],
+      "sha256": "97328d97503c466c5786f34d19c1ebc540b18891867380959810ee0d189db6dc",
+      "committed_example": true
+    },
+    {
+      "file": "tablet-actions-scale-2.0.png",
+      "size_px": [
+        1536,
+        1704
+      ],
+      "sha256": "9d847664bc117cc5d23ca7b4fb0629061d2ef4e40b3c70546b7fa58312eefa1a",
+      "committed_example": false
+    },
+    {
+      "file": "tablet-create-keyboard-dismissed.png",
+      "size_px": [
+        1536,
+        1704
+      ],
+      "sha256": "d0907b68dd060581b2cb0e0ad6d8a5c2d4d4dc7be3104f381b245e5cb782f19a",
+      "committed_example": false
+    },
+    {
+      "file": "tablet-create-keyboard.png",
+      "size_px": [
+        1536,
+        1704
+      ],
+      "sha256": "044f8bf74432c0d5cb2e2e3375f256c793e85e950bc63348d4b538b43cb54a09",
+      "committed_example": false
+    },
+    {
+      "file": "tablet-create.png",
+      "size_px": [
+        1536,
+        1704
+      ],
+      "sha256": "b8e46045989e2f84aae79647dcd79b00ae59f3c5507a2480a58c0a089b8cceb3",
+      "committed_example": false
+    },
+    {
+      "file": "tablet-navigation-0.png",
+      "size_px": [
+        1536,
+        1704
+      ],
+      "sha256": "677d0c72c4e124114f9814a7d7be294d3f478bb768fbbf2886287ee0c28efeeb",
+      "committed_example": false
+    },
+    {
+      "file": "tablet-navigation-1.png",
+      "size_px": [
+        1536,
+        1704
+      ],
+      "sha256": "dcfddec7999d52d25ca69dd6de61e1547ee10f56b48a67067f40ae8cbd5d38c4",
+      "committed_example": false
+    },
+    {
+      "file": "tablet-navigation-3.png",
+      "size_px": [
+        1536,
+        1704
+      ],
+      "sha256": "b6ea24ecbd616dc7164145d393034f0b498ccee23b81d5cf01ba6bbcb86cf7c5",
+      "committed_example": false
+    },
+    {
+      "file": "tablet-navigation-4.png",
+      "size_px": [
+        1536,
+        1704
+      ],
+      "sha256": "9e01cf5c8e7e5aa408a2d4bf4ef2b33da24fd8e7986c4f198c469227bb2d4253",
+      "committed_example": false
+    },
+    {
+      "file": "tablet-receipt-bottom-scale-1.0.png",
+      "size_px": [
+        1536,
+        1704
+      ],
+      "sha256": "1c203c8d828501582fe9c45454a015c699824d3b13d1653c6fc707384a2e946f",
+      "committed_example": false
+    },
+    {
+      "file": "tablet-receipt-bottom-scale-2.0.png",
+      "size_px": [
+        1536,
+        1704
+      ],
+      "sha256": "ab8441b3690b742e5e3cc10a39832e11b92b5764ee09cef99b0a212588067058",
+      "committed_example": false
+    },
+    {
+      "file": "tablet-receipt-scale-1.0.png",
+      "size_px": [
+        1536,
+        1704
+      ],
+      "sha256": "1c203c8d828501582fe9c45454a015c699824d3b13d1653c6fc707384a2e946f",
+      "committed_example": false
+    },
+    {
+      "file": "tablet-receipt-scale-2.0.png",
+      "size_px": [
+        1536,
+        1704
+      ],
+      "sha256": "ab8441b3690b742e5e3cc10a39832e11b92b5764ee09cef99b0a212588067058",
+      "committed_example": true
+    },
+    {
+      "file": "tablet-tools.png",
+      "size_px": [
+        1536,
+        1704
+      ],
+      "sha256": "3d23817b15d19e0023206ff94cceb634bfd4951728a18921706462b895561ba8",
+      "committed_example": false
+    }
+  ],
+  "limitations": [
+    "Not physical-device performance or TalkBack certification",
+    "Callbacks use fictional fixture hosts; no real payment or hosted page publication",
+    "Observed positive IME insets are opening-state observations, not settled keyboard heights",
+    "Separate existing WebView strict pixel-parity failure remains open"
+  ]
+}
