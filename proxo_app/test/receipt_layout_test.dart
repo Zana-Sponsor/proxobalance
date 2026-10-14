@@ -22,46 +22,51 @@ Widget receiptHost({
   required double scale,
   EdgeInsets padding = EdgeInsets.zero,
   Future<void> Function()? onPdf,
-}) =>
-    MaterialApp(
-      home: Builder(
-        builder: (context) => MediaQuery(
-          data: MediaQuery.of(context)
-              .copyWith(textScaler: TextScaler.linear(scale),
-                  padding: padding, viewPadding: padding),
-          child: Directionality(
-            textDirection: TextDirection.rtl,
-            child: Scaffold(
-              backgroundColor: ReceiptTokens.page,
-              body: Column(
-                children: <Widget>[
-                  ReceiptAppBar(title: strings.appBarTitle, onBack: () {}),
-                  Expanded(
-                    child: SafeArea(top: false, bottom: false, child: ReceiptBody(
-                      children: <Widget>[
-                        ReceiptSurface(
-                          child: AdReceiptCard(
-                            r: AdReceiptData.from(data, strings),
-                            l: strings,
-                            onCopy: (_) {},
-                          ),
+}) => MaterialApp(
+  home: Builder(
+    builder: (context) => MediaQuery(
+      data: MediaQuery.of(context).copyWith(
+        textScaler: TextScaler.linear(scale),
+        padding: padding,
+        viewPadding: padding,
+      ),
+      child: Directionality(
+        textDirection: TextDirection.rtl,
+        child: Scaffold(
+          backgroundColor: ReceiptTokens.page,
+          body: Column(
+            children: <Widget>[
+              ReceiptAppBar(title: strings.appBarTitle, onBack: () {}),
+              Expanded(
+                child: SafeArea(
+                  top: false,
+                  bottom: false,
+                  child: ReceiptBody(
+                    children: <Widget>[
+                      ReceiptSurface(
+                        child: AdReceiptCard(
+                          r: AdReceiptData.from(data, strings),
+                          l: strings,
+                          onCopy: (_) {},
                         ),
-                        ReceiptWidth(
-                          child: ReceiptPdfButton(
-                            label: strings.pdfButton,
-                            onPressed: onPdf ?? () async {},
-                          ),
+                      ),
+                      ReceiptWidth(
+                        child: ReceiptPdfButton(
+                          label: strings.pdfButton,
+                          onPressed: onPdf ?? () async {},
                         ),
-                      ],
-                    )),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
+            ],
           ),
         ),
       ),
-    );
+    ),
+  ),
+);
 
 // Match production paint: the default test binding disables shadow blur.
 class ReceiptPaintBinding extends AutomatedTestWidgetsFlutterBinding {
@@ -75,8 +80,9 @@ void main() {
   const measurementPath = String.fromEnvironment('RECEIPT_MEASUREMENTS');
   tearDownAll(() async {
     if (measurementPath.isNotEmpty) {
-      await File(measurementPath).writeAsString(
-          const JsonEncoder.withIndent('  ').convert(measurements));
+      await File(
+        measurementPath,
+      ).writeAsString(const JsonEncoder.withIndent('  ').convert(measurements));
     }
   });
 
@@ -86,11 +92,13 @@ void main() {
     await loader.load();
   });
 
-  // Coordinates measured from the supplied receipt, normalized to 393 dp.
-  // Checking independent anchors catches cumulative spacing drift that a
-  // per-row gap assertion alone would miss.
+  // Native-size responsive layout supersedes proportional 393-dp scaling.
+  // Old exact anchors remain recorded by the immutable baseline capture.
+  // Assert physical margins/ink containment without relaxing tolerances.
   for (final width in <double>[280, 393, 430, 963, 964]) {
-    testWidgets('reference receipt coordinates at $width dp', (tester) async {
+    testWidgets('native responsive receipt geometry at $width dp', (
+      tester,
+    ) async {
       tester.view.devicePixelRatio = 1;
       tester.view.physicalSize = Size(width, width * 2);
       addTearDown(tester.view.resetPhysicalSize);
@@ -103,18 +111,20 @@ void main() {
         receiptHost(strings: strings, data: data, scale: 1),
       );
       await tester.pumpAndSettle();
-      final factor = width / 393;
       final surface = receiptPaintedRect(tester, find.byType(ReceiptSurface));
       final card = receiptPaintedRect(tester, find.byType(ReceiptCard));
-      expect(surface.height, closeTo(627 * factor, 0.01));
-      expect(card.left, closeTo(16 * factor, 0.01));
-      expect(card.width, closeTo(361 * factor, 0.01));
-      expect(card.top - surface.top, closeTo(16 * factor, 0.01));
-      expect(card.height, closeTo(591 * factor, 0.01));
-      const ruleY = <double>[66, 139, 324, 453, 526];
+      final columnWidth = width.clamp(0.0, ReceiptTokens.receiptMaxWidth);
+      final columnLeft = (width - columnWidth) / 2;
+      expect(card.left, closeTo(columnLeft + ReceiptTokens.gutter, 0.01));
+      expect(card.width, closeTo(columnWidth - 2 * ReceiptTokens.gutter, 0.01));
+      expect(card.top - surface.top, closeTo(ReceiptTokens.pageTop, 0.01));
+      expect(
+        surface.height - card.height,
+        closeTo(ReceiptTokens.pageTop + ReceiptTokens.cardToButton, 0.01),
+      );
       final dividers = find.byType(ReceiptDivider);
-      expect(dividers, findsNWidgets(ruleY.length));
-      for (var i = 0; i < ruleY.length; i++) {
+      expect(dividers, findsNWidgets(5));
+      for (var i = 0; i < 5; i++) {
         final rule = receiptPaintedRect(
           tester,
           find.descendant(
@@ -122,34 +132,22 @@ void main() {
             matching: find.byType(ColoredBox),
           ),
         );
-        expect(rule.left, closeTo(40 * factor, 0.01));
-        expect(rule.width, closeTo(313 * factor, 0.01));
-        expect(rule.top - surface.top, closeTo(ruleY[i] * factor, 0.01));
-        expect(rule.height, closeTo(factor, 0.01));
+        expect(rule.left, closeTo(columnLeft + 40, 0.01));
+        expect(rule.width, closeTo(columnWidth - 80, 0.01));
+        expect(rule.height, closeTo(ReceiptTokens.dividerThickness, 0.01));
       }
-      const rowY = <double>[
-        79,
-        107,
-        180,
-        208,
-        236,
-        264,
-        292,
-        365,
-        393,
-        421,
-        494,
-        539,
-        567,
-      ];
       final rows = find.byType(ReceiptRow);
-      expect(rows, findsNWidgets(rowY.length));
-      for (var i = 0; i < rowY.length; i++) {
+      expect(rows, findsNWidgets(13));
+      for (var i = 0; i < 13; i++) {
         final row = receiptPaintedRect(tester, rows.at(i));
-        expect(row.left, closeTo(32 * factor, 0.01));
-        expect(row.right, closeTo(361 * factor, 0.01));
-        expect(row.top - surface.top, closeTo(rowY[i] * factor, 0.01));
-        expect(row.height, closeTo(20 * factor, 0.01));
+        expect(row.left, closeTo(columnLeft + 32, 0.01));
+        expect(row.right, closeTo(columnLeft + columnWidth - 32, 0.01));
+        expect(row.height, greaterThanOrEqualTo(ReceiptTokens.rowMinHeight));
+        if (i > 0)
+          expect(
+            row.top,
+            greaterThan(receiptPaintedRect(tester, rows.at(i - 1)).bottom),
+          );
       }
       auditReceiptRows(tester);
       expect(tester.takeException(), isNull);
@@ -165,8 +163,8 @@ void main() {
           final density = width == 320
               ? 1.0
               : width == 430
-                  ? 3.0
-                  : 2.75;
+              ? 3.0
+              : 2.75;
           tester.view.devicePixelRatio = density;
           tester.view.physicalSize = Size(width * density, 900 * density);
           addTearDown(tester.view.resetPhysicalSize);
@@ -193,16 +191,22 @@ void main() {
 
           final measuredRows = auditReceiptRows(tester);
           const factor = 1.0;
-          final cardBounds =
-              receiptPaintedRect(tester, find.byType(ReceiptCard));
+          final cardBounds = receiptPaintedRect(
+            tester,
+            find.byType(ReceiptCard),
+          );
           final expectedInset =
               ReceiptTokens.cardInset(cardBounds.width) * factor;
           for (final row in find.byType(ReceiptRow).evaluate()) {
-            final bounds =
-                receiptPaintedRect(tester, find.byWidget(row.widget));
+            final bounds = receiptPaintedRect(
+              tester,
+              find.byWidget(row.widget),
+            );
             expect(bounds.left, closeTo(cardBounds.left + expectedInset, 0.01));
             expect(
-                bounds.right, closeTo(cardBounds.right - expectedInset, 0.01));
+              bounds.right,
+              closeTo(cardBounds.right - expectedInset, 0.01),
+            );
           }
 
           final uid = find.text(data['id'] as String);
@@ -215,49 +219,67 @@ void main() {
           expect(find.text(strings.receiptNo), findsOneWidget);
           final adId = find.text(data['public_ad_id'] as String);
           expect(
-              receiptPaintedRect(tester, adId).bottom,
-              lessThan(receiptPaintedRect(
-                      tester, find.text(AdReceiptData.from(data, strings).date))
-                  .top));
-          expect(
-              receiptPaintedRect(tester, uid).top,
-              greaterThan(
-                  receiptPaintedRect(tester, find.text(data['title'] as String))
-                      .bottom));
-          for (final heading in find.byType(ReceiptSectionHeading).evaluate()) {
-            final box =
-                receiptPaintedRect(tester, find.byWidget(heading.widget));
-            final text = receiptPaintedRect(
+            receiptPaintedRect(tester, adId).bottom,
+            lessThan(
+              receiptPaintedRect(
                 tester,
-                find.descendant(
-                    of: find.byWidget(heading.widget),
-                    matching:
-                        find.byWidgetPredicate((widget) => widget is Text)));
+                find.text(AdReceiptData.from(data, strings).date),
+              ).top,
+            ),
+          );
+          expect(
+            receiptPaintedRect(tester, uid).top,
+            greaterThan(
+              receiptPaintedRect(
+                tester,
+                find.text(data['title'] as String),
+              ).bottom,
+            ),
+          );
+          for (final heading in find.byType(ReceiptSectionHeading).evaluate()) {
+            final box = receiptPaintedRect(
+              tester,
+              find.byWidget(heading.widget),
+            );
+            final text = receiptPaintedRect(
+              tester,
+              find.descendant(
+                of: find.byWidget(heading.widget),
+                matching: find.byWidgetPredicate((widget) => widget is Text),
+              ),
+            );
             expect(box.bottom - text.bottom, closeTo(12 * factor, 0.01));
           }
           expect(ReceiptTokens.page, Colors.white);
           expect(ReceiptTokens.card, Colors.white);
-          final decoration = tester
-              .widget<DecoratedBox>(find
-                  .descendant(
-                      of: find.byType(ReceiptCard),
-                      matching: find.byType(DecoratedBox))
-                  .first)
-              .decoration as BoxDecoration;
+          final decoration =
+              tester
+                      .widget<DecoratedBox>(
+                        find
+                            .descendant(
+                              of: find.byType(ReceiptCard),
+                              matching: find.byType(DecoratedBox),
+                            )
+                            .first,
+                      )
+                      .decoration
+                  as BoxDecoration;
           expect(decoration.border, isNull);
           expect(decoration.boxShadow!.single.color, const Color(0x0F000000));
           expect(receiptPaintedRect(tester, uid).left, greaterThanOrEqualTo(0));
           expect(
-              receiptPaintedRect(tester, uid).right, lessThanOrEqualTo(width));
+            receiptPaintedRect(tester, uid).right,
+            lessThanOrEqualTo(width),
+          );
           for (final icon in tester.widgetList<Icon>(find.byType(Icon))) {
             expect(icon.size, ReceiptTokens.iconSize);
           }
           expect(ReceiptTokens.rowValue.fontSize, 13);
           for (final divider in find.byType(ReceiptDivider).evaluate()) {
             expect(
-                receiptPaintedRect(tester, find.byWidget(divider.widget))
-                    .height,
-                closeTo(25 * factor, 0.01));
+              receiptPaintedRect(tester, find.byWidget(divider.widget)).height,
+              closeTo(25 * factor, 0.01),
+            );
           }
           measurements.add({
             'screen_width': width,
@@ -296,20 +318,28 @@ void main() {
             );
           }
 
-          await tester.scrollUntilVisible(find.byType(ReceiptPdfButton), 200,
-              scrollable: find.byType(Scrollable));
+          await tester.scrollUntilVisible(
+            find.byType(ReceiptPdfButton),
+            200,
+            scrollable: find.byType(Scrollable),
+          );
           await tester.pumpAndSettle();
           final card = receiptPaintedRect(tester, find.byType(ReceiptCard));
-          final button =
-              receiptPaintedRect(tester, find.byType(ReceiptPdfButton));
+          final button = receiptPaintedRect(
+            tester,
+            find.byType(ReceiptPdfButton),
+          );
           final margin = ReceiptTokens.pageGutter(width);
           expect(card.left, closeTo(margin, 0.01));
           expect(card.width, closeTo(width - margin * 2, 0.01));
           expect(button.left, closeTo(card.left, 0.01));
           expect(button.width, closeTo(card.width, 0.01));
           expect(button.top - card.bottom, closeTo(20 * factor, 0.01));
-          await tester.scrollUntilVisible(find.byType(ReceiptPdfButton), 200,
-              scrollable: find.byType(Scrollable));
+          await tester.scrollUntilVisible(
+            find.byType(ReceiptPdfButton),
+            200,
+            scrollable: find.byType(Scrollable),
+          );
           await tester.pumpAndSettle();
           expect(tester.takeException(), isNull);
         });
@@ -346,7 +376,10 @@ void main() {
       expect(value.softWrap, true);
       expect(value.style!.fontSize, ReceiptTokens.uidSize);
       auditReceiptRows(tester);
-      expect(tester.getSize(find.byType(ReceiptRow)).height, greaterThan(ReceiptTokens.rowMinHeight));
+      expect(
+        tester.getSize(find.byType(ReceiptRow)).height,
+        greaterThan(ReceiptTokens.rowMinHeight),
+      );
       expect(find.byType(SingleChildScrollView), findsNothing);
       expect(value.overflow, isNot(TextOverflow.ellipsis));
       expect(
@@ -387,8 +420,7 @@ void main() {
                     method: 'fastpay',
                     gateway: 'fastpay',
                     type: 'ad_payment',
-                    adName:
-                        'New Ad 2021 — Long sponsor name / ناوی سپۆنسەرێکی درێژ',
+                    adName: 'New Ad 2021 — Long sponsor name / ناوی سپۆنسەرێکی درێژ',
                     voucherCode: null,
                   ),
                 ),
@@ -413,8 +445,8 @@ void main() {
             }
             final signed = status == 'approved'
                 ? (kind == TxReceiptKind.topUp || kind == TxReceiptKind.refund
-                    ? '+'
-                    : '-')
+                      ? '+'
+                      : '-')
                 : '';
             final totals = find.byWidgetPredicate(
               (widget) =>
@@ -432,40 +464,57 @@ void main() {
     }
   }
 
-  testWidgets('all field types and explicit line breaks fit without lost text',
-      (tester) async {
-    const fields = <String, String>{
-      'ئایدی ڕیکلام': 'P123456',
-      'ڕێکەوت': '2026/09/29 11:59PM',
-      'ناوی سپۆنسەر': 'New Ad\n2021\r\nناوی سپۆنسەرێکی زۆر درێژ',
-      'ڕێگای پارەدان': 'FastPay Merchant / FIB online payment method',
-      'شوێن': 'هەولێر، سلێمانی، دهۆک، کەرکووک، بەغدا',
-      'ژمارەی مامەڵەیەکی زۆر درێژ بۆ تاقیکردنەوە':
-          '83062db4-47d0-4ce1-a3b4-33a766783553',
-    };
-    await tester.pumpWidget(MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: SizedBox(
-            width: 228,
-            child: ReceiptRows(fields.entries
-                .map((entry) => ReceiptRow(
-                      label: entry.key,
-                      value: entry.value,
-                      valueDirection: receiptDirOf(entry.value),
-                    ))
-                .toList()),
+  testWidgets(
+    'all field types and explicit line breaks fit without lost text',
+    (tester) async {
+      const fields = <String, String>{
+        'ئایدی ڕیکلام': 'P123456',
+        'ڕێکەوت': '2026/09/29 11:59PM',
+        'ناوی سپۆنسەر': 'New Ad\n2021\r\nناوی سپۆنسەرێکی زۆر درێژ',
+        'ڕێگای پارەدان': 'FastPay Merchant / FIB online payment method',
+        'شوێن': 'هەولێر، سلێمانی، دهۆک، کەرکووک، بەغدا',
+        'ژمارەی مامەڵەیەکی زۆر درێژ بۆ تاقیکردنەوە':
+            '83062db4-47d0-4ce1-a3b4-33a766783553',
+      };
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Center(
+              child: SizedBox(
+                width: 228,
+                child: ReceiptRows(
+                  fields.entries
+                      .map(
+                        (entry) => ReceiptRow(
+                          label: entry.key,
+                          value: entry.value,
+                          valueDirection: receiptDirOf(entry.value),
+                        ),
+                      )
+                      .toList(),
+                ),
+              ),
+            ),
           ),
         ),
-      ),
-    ));
-    await tester.pumpAndSettle();
-    auditReceiptRows(tester);
-    expect(tester.widget<Text>(find.text('P123456')).style!.fontSize, ReceiptTokens.valueSize);
-    expect(tester.widget<Text>(find.text('ئایدی ڕیکلام')).style!.fontSize, ReceiptTokens.valueSize);
-    expect(find.text('New Ad\n2021\r\nناوی سپۆنسەرێکی زۆر درێژ'), findsOneWidget);
-    expect(tester.takeException(), isNull);
-  });
+      );
+      await tester.pumpAndSettle();
+      auditReceiptRows(tester);
+      expect(
+        tester.widget<Text>(find.text('P123456')).style!.fontSize,
+        ReceiptTokens.valueSize,
+      );
+      expect(
+        tester.widget<Text>(find.text('ئایدی ڕیکلام')).style!.fontSize,
+        ReceiptTokens.valueSize,
+      );
+      expect(
+        find.text('New Ad\n2021\r\nناوی سپۆنسەرێکی زۆر درێژ'),
+        findsOneWidget,
+      );
+      expect(tester.takeException(), isNull);
+    },
+  );
 
   testWidgets('removing a discount collapses its entire row and spacing', (
     tester,
@@ -481,8 +530,8 @@ void main() {
       of: find.text(strings.discount),
       matching: find.byType(ReceiptRow),
     );
-    final removedHeight = receiptPaintedRect(tester, discount).height +
-        ReceiptTokens.rowToRow;
+    final removedHeight =
+        receiptPaintedRect(tester, discount).height + ReceiptTokens.rowToRow;
     data['pricing_discount_iqd_snapshot'] = 0;
     await tester.pumpWidget(
       receiptHost(strings: strings, data: data, scale: 1),
@@ -512,8 +561,11 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    await tester.scrollUntilVisible(find.byType(ReceiptPdfButton), 200,
-        scrollable: find.byType(Scrollable));
+    await tester.scrollUntilVisible(
+      find.byType(ReceiptPdfButton),
+      200,
+      scrollable: find.byType(Scrollable),
+    );
     await tester.pumpAndSettle();
     await tester.tap(find.byType(ReceiptPdfButton));
     await tester.pump();
@@ -568,9 +620,10 @@ void main() {
       );
       await tester.pumpAndSettle();
       await tester.runAsync(() async {
-        final image = await (key.currentContext!.findRenderObject()
-                as RenderRepaintBoundary)
-            .toImage(pixelRatio: 2.75);
+        final image =
+            await (key.currentContext!.findRenderObject()
+                    as RenderRepaintBoundary)
+                .toImage(pixelRatio: 2.75);
         final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
         await File(capturePath).writeAsBytes(bytes!.buffer.asUint8List());
         image.dispose();

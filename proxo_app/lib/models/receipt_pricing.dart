@@ -8,7 +8,8 @@ class ReceiptPricing {
   bool get noPaymentRequired => totalIqd == 0;
 
   factory ReceiptPricing.from(Map<String, dynamic> ad) {
-    final total = storedMoney(ad['pricing_total_iqd_snapshot']) ??
+    final total =
+        storedMoney(ad['pricing_total_iqd_snapshot']) ??
         storedMoney(ad['charged_price_iqd']);
     final budget = storedMoney(ad['pricing_ad_budget_iqd_snapshot']);
     final fee = storedMoney(ad['pricing_service_fee_iqd_snapshot']);
@@ -17,13 +18,14 @@ class ReceiptPricing {
       'direct_discount_iqd',
       'level_discount_iqd',
     ].map((key) => storedMoney(ad[key])).whereType<int>().toList();
-    final discount = storedMoney(ad['pricing_discount_iqd_snapshot']) ??
+    final discount =
+        storedMoney(ad['pricing_discount_iqd_snapshot']) ??
         (components.isEmpty ? null : components.fold<int>(0, (a, b) => a + b));
     final original = budget != null && fee != null
         ? budget + fee
         : total != null && discount != null
-            ? total + discount
-            : null;
+        ? total + discount
+        : null;
     return ReceiptPricing(
       originalIqd: original,
       discountIqd: discount,
@@ -36,8 +38,8 @@ num? storedNumber(dynamic value) {
   final parsed = value is num
       ? value
       : value is String
-          ? num.tryParse(value.trim())
-          : null;
+      ? num.tryParse(value.trim())
+      : null;
   return parsed != null && parsed.isFinite ? parsed : null;
 }
 
@@ -95,8 +97,15 @@ double? storedTransactionUsd(Map<String, dynamic> transaction) {
 double? storedWalletBalanceUsd(Map<String, dynamic> row, String field) {
   final unit = receiptText(row['balance_currency']).toUpperCase();
   final type = receiptText(row['type']);
-  final verifiedWalletWriter = (type == 'ad_payment' || type == 'refund') &&
+  final verifiedWalletWriter =
+      (type == 'ad_payment' || type == 'refund') &&
       receiptText(row['ad_id']).isNotEmpty;
   if (unit != 'USD' && !(unit.isEmpty && verifiedWalletWriter)) return null;
   return storedNumber(row[field])?.toDouble();
+}
+
+/// Balance snapshots can explicitly carry IQD independently of amount currency.
+int? storedWalletBalanceIqd(Map<String, dynamic> row, String field) {
+  if (receiptText(row['balance_currency']).toUpperCase() != 'IQD') return null;
+  return storedNumber(row[field])?.round();
 }

@@ -10,7 +10,7 @@ part of 'proxo_sidebar.dart';
 
 class _TxItem {
   final String
-      kind; // deposit|spend|refund|coin_exchange|reward|admin_deduct|voucher
+  kind; // deposit|spend|refund|coin_exchange|reward|admin_deduct|voucher
   final String label;
   final String sub;
   final String status; // pending|approved|rejected|spent
@@ -33,6 +33,7 @@ class _TxItem {
   final String type;
   final String? adName;
   final String? voucherCode;
+  final int? rawBalanceBeforeIqd, rawBalanceAfterIqd;
   final double? rawBalanceBefore;
   final double? rawBalanceAfter;
 
@@ -58,43 +59,47 @@ class _TxItem {
     this.type = '',
     this.adName,
     this.voucherCode,
+    this.rawBalanceBeforeIqd,
+    this.rawBalanceAfterIqd,
     this.rawBalanceBefore,
     this.rawBalanceAfter,
   });
 
   _TxItem withBalanceAfter(int? v) => _TxItem(
-        kind: kind,
-        label: label,
-        sub: sub,
-        status: status,
-        amtIqd: amtIqd,
-        date: date,
-        coinsRow: coinsRow,
-        coinsAmt: coinsAmt,
-        balanceAfter: v,
-        depositNum: depositNum,
-        receiptAdId: receiptAdId,
-        receiptAmountIqd: receiptAmountIqd,
-        receiptStatus: receiptStatus,
-        uid: uid,
-        txId: txId,
-        usd: usd,
-        method: method,
-        gateway: gateway,
-        type: type,
-        adName: adName,
-        voucherCode: voucherCode,
-        rawBalanceBefore: rawBalanceBefore,
-        rawBalanceAfter: rawBalanceAfter,
-      );
+    kind: kind,
+    label: label,
+    sub: sub,
+    status: status,
+    amtIqd: amtIqd,
+    date: date,
+    coinsRow: coinsRow,
+    coinsAmt: coinsAmt,
+    balanceAfter: v,
+    depositNum: depositNum,
+    receiptAdId: receiptAdId,
+    receiptAmountIqd: receiptAmountIqd,
+    receiptStatus: receiptStatus,
+    uid: uid,
+    txId: txId,
+    usd: usd,
+    method: method,
+    gateway: gateway,
+    type: type,
+    adName: adName,
+    voucherCode: voucherCode,
+    rawBalanceBeforeIqd: rawBalanceBeforeIqd,
+    rawBalanceAfterIqd: rawBalanceAfterIqd,
+    rawBalanceBefore: rawBalanceBefore,
+    rawBalanceAfter: rawBalanceAfter,
+  );
 
   bool get isIn => const <String>{
-        'deposit',
-        'refund',
-        'reward',
-        'coin_exchange',
-        'voucher',
-      }.contains(kind);
+    'deposit',
+    'refund',
+    'reward',
+    'coin_exchange',
+    'voucher',
+  }.contains(kind);
 
   /// هەمان یاسای باڵانسی ڕۆیشتوو: پارەی زیادکراو تەنها کاتێک `approved`
   /// بێت، پارەی بڕدراو هەمیشە جگە لە `rejected`.
@@ -116,8 +121,8 @@ class _TxItem {
       date: date,
       usd: usd,
       amountIqd: amt,
-      balanceBefore: null,
-      balanceAfter: null,
+      balanceBefore: rawBalanceBeforeIqd,
+      balanceAfter: rawBalanceAfterIqd,
       balanceBeforeUsd: rawBalanceBefore,
       balanceAfterUsd: rawBalanceAfter,
       method: method,
@@ -150,13 +155,12 @@ class _TxListState {
     bool? loading,
     bool? refreshing,
     bool? failed,
-  }) =>
-      _TxListState(
-        items: items ?? this.items,
-        loading: loading ?? this.loading,
-        refreshing: refreshing ?? this.refreshing,
-        failed: failed ?? this.failed,
-      );
+  }) => _TxListState(
+    items: items ?? this.items,
+    loading: loading ?? this.loading,
+    refreshing: refreshing ?? this.refreshing,
+    failed: failed ?? this.failed,
+  );
 }
 
 // Keep old name as alias for backwards compatibility if referenced elsewhere
@@ -193,7 +197,8 @@ class TxHistorySheetState extends State<TxHistoryPage> {
     if (mounted) setState(() {});
   }
 
-  static double? _toIqd(Map<String, dynamic> t) => storedTransactionIqd(t)?.toDouble();
+  static double? _toIqd(Map<String, dynamic> t) =>
+      storedTransactionIqd(t)?.toDouble();
   static double? _toUsd(Map<String, dynamic> t) => storedTransactionUsd(t);
 
   static String _s(dynamic v) => (v ?? '').toString().trim();
@@ -322,6 +327,8 @@ class TxHistorySheetState extends State<TxHistoryPage> {
               gateway: gateway,
               type: type,
               adName: adTitle,
+              rawBalanceBeforeIqd: storedWalletBalanceIqd(t, 'balance_before'),
+              rawBalanceAfterIqd: storedWalletBalanceIqd(t, 'balance_after'),
               rawBalanceBefore: rawBefore,
               rawBalanceAfter: rawAfter,
             ),
@@ -387,6 +394,8 @@ class TxHistorySheetState extends State<TxHistoryPage> {
             type: type,
             adName: adTitle,
             voucherCode: type == 'voucher' ? _extractVoucher(note) : null,
+            rawBalanceBeforeIqd: storedWalletBalanceIqd(t, 'balance_before'),
+            rawBalanceAfterIqd: storedWalletBalanceIqd(t, 'balance_after'),
             rawBalanceBefore: rawBefore,
             rawBalanceAfter: rawAfter,
           ),
@@ -399,7 +408,8 @@ class TxHistorySheetState extends State<TxHistoryPage> {
         if (adNumsWithPaymentTx.contains(adNum)) continue;
         final budget = receiptNum(a['budget'])?.toDouble() ?? 0;
         final adStatus = (a['status'] ?? 'spent').toString();
-        final date = DateTime.tryParse((a['created_at'] ?? '').toString()) ??
+        final date =
+            DateTime.tryParse((a['created_at'] ?? '').toString()) ??
             DateTime.now();
         items.add(
           _TxItem(
@@ -428,7 +438,8 @@ class TxHistorySheetState extends State<TxHistoryPage> {
         final reason = (c['reason'] ?? '').toString();
         if (amt >= 0 || !reason.contains('گۆڕینەوە')) continue;
         final coins = amt.abs();
-        final date = DateTime.tryParse((c['created_at'] ?? '').toString()) ??
+        final date =
+            DateTime.tryParse((c['created_at'] ?? '').toString()) ??
             DateTime.now();
         items.add(
           _TxItem(
@@ -562,14 +573,22 @@ class _TxCard extends StatelessWidget {
     final sign = t.isSettled ? (t.isIn ? '+' : '-') : '';
     final String amount = t.amtIqd != null
         ? receiptIqd(t.amtIqd!.round(), sign: sign)
-        : t.usd != null ? '$sign${t.usd!.toStringAsFixed(2)} USD'
+        : t.usd != null
+        ? '$sign${t.usd!.toStringAsFixed(2)} USD'
         : TxStrings.current.amountUnavailable;
-    final Color amountColor = !t.isSettled || (t.amtIqd == null && t.usd == null)
+    final Color amountColor =
+        !t.isSettled || (t.amtIqd == null && t.usd == null)
         ? const Color(0xFF6B7280)
-        : t.isIn ? ReceiptTokens.positive : ReceiptTokens.negative;
+        : t.isIn
+        ? ReceiptTokens.positive
+        : ReceiptTokens.negative;
     return TxHistoryCard(
       label: t.label,
-      status: t.isSettled ? null : t.status == 'rejected' ? TxStrings.current.statusRejected : TxStrings.current.statusPending,
+      status: t.isSettled
+          ? null
+          : t.status == 'rejected'
+          ? TxStrings.current.statusRejected
+          : TxStrings.current.statusPending,
       date: receiptDay(b),
       time: receiptTime(b, spaced: true),
       amount: amount,

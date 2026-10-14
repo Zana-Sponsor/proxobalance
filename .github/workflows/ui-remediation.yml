@@ -38,7 +38,7 @@ jobs:
         working-directory: ${{ matrix.source }}/proxo_app
       - name: Capture actual widgets, geometry and exported PDF
         timeout-minutes: 8
-        run: flutter test test/ui_remediation_capture_test.dart --reporter expanded
+        run: flutter test test/ui_remediation_capture_test.dart --reporter expanded --dart-define=BASELINE_CAPTURE=${{ matrix.source == 'baseline' }}
         working-directory: ${{ matrix.source }}/proxo_app
       - name: Verify changed behavior and responsive consumers
         if: always() && matrix.source == 'candidate'

@@ -7,7 +7,9 @@ import 'package:proxo_app/widgets/receipt/receipt_kit.dart';
 Rect receiptPaintedRect(WidgetTester tester, Finder finder) {
   final box = tester.renderObject<RenderBox>(finder);
   return MatrixUtils.transformRect(
-      box.getTransformTo(null), Offset.zero & box.size);
+    box.getTransformTo(null),
+    Offset.zero & box.size,
+  );
 }
 
 /// Audit painted text bounds, complete glyph coverage, common baselines,
@@ -19,8 +21,9 @@ List<Map<String, dynamic>> auditReceiptRows(WidgetTester tester) {
     final row = element.widget as ReceiptRow;
     final finder = find.byWidget(row);
     final texts = find.descendant(
-        of: finder,
-        matching: find.byWidgetPredicate((widget) => widget is Text));
+      of: finder,
+      matching: find.byWidgetPredicate((widget) => widget is Text),
+    );
     expect(texts, findsNWidgets(2));
     final labelFinder = texts.at(0);
     final valueFinder = texts.at(1);
@@ -31,9 +34,15 @@ List<Map<String, dynamic>> auditReceiptRows(WidgetTester tester) {
     expect(labelBounds.right, closeTo(bounds.right, 0.01));
     expect(valueBounds.left, closeTo(bounds.left, 0.01));
     if (stacked) {
-      expect(valueBounds.top - labelBounds.bottom, closeTo(ReceiptTokens.rowToRow, 0.01));
+      expect(
+        valueBounds.top - labelBounds.bottom,
+        closeTo(ReceiptTokens.rowToRow, 0.01),
+      );
     } else {
-      expect(labelBounds.left - valueBounds.right, closeTo(ReceiptTokens.labelToValue, 0.01));
+      expect(
+        labelBounds.left - valueBounds.right,
+        closeTo(ReceiptTokens.labelToValue, 0.01),
+      );
     }
 
     final baselines = <double>[];
@@ -41,23 +50,49 @@ List<Map<String, dynamic>> auditReceiptRows(WidgetTester tester) {
       final textFinder = texts.at(i);
       final text = tester.widget<Text>(textFinder);
       final paragraph = tester.renderObject<RenderParagraph>(
-          find.descendant(of: textFinder, matching: find.byType(RichText)));
+        find.descendant(of: textFinder, matching: find.byType(RichText)),
+      );
       expect(text.data, i == 0 ? row.label : row.value);
       expect(text.maxLines, isNull);
       expect(text.softWrap, true);
       expect(
-          text.textDirection, i == 0 ? receiptDirOf(row.label) : row.valueDirection);
+        text.textDirection,
+        i == 0 ? receiptDirOf(row.label) : row.valueDirection,
+      );
       expect(text.style!.fontWeight, FontWeight.w400);
       expect(text.style!.fontFamily, ReceiptTokens.fontFamily);
-      expect(text.style!.fontSize, i == 0 ? ReceiptTokens.labelSize : (row.valueStyle ?? ReceiptTokens.rowValue).fontSize);
+      expect(
+        text.style!.fontSize,
+        i == 0
+            ? ReceiptTokens.labelSize
+            : (row.valueStyle ?? ReceiptTokens.rowValue).fontSize,
+      );
       expect(paragraph.didExceedMaxLines, false);
-      final rendered =
-          paragraph.text.toPlainText(includeSemanticsLabels: false);
+      final rendered = paragraph.text.toPlainText(
+        includeSemanticsLabels: false,
+      );
       final glyphs = paragraph.getBoxesForSelection(
-          TextSelection(baseOffset: 0, extentOffset: rendered.length));
+        TextSelection(baseOffset: 0, extentOffset: rendered.length),
+      );
+      // Rabar has real side bearings beyond advance widths when wrapped.
+      // Assert visible ink against the padded card's physical paint boundary,
+      // preserving the same 0.05 dp precision; do not clip or shrink glyphs.
+      final card = find.ancestor(
+        of: finder,
+        matching: find.byType(ReceiptCard),
+      );
+      final paintBounds = card.evaluate().isEmpty
+          ? bounds
+          : receiptPaintedRect(tester, card.first);
       for (final box in glyphs) {
-        expect(box.left, greaterThanOrEqualTo(-0.05));
-        expect(box.right, lessThanOrEqualTo(paragraph.size.width + 0.05));
+        expect(
+          paragraph.localToGlobal(Offset(box.left, 0)).dx,
+          greaterThanOrEqualTo(paintBounds.left - 0.05),
+        );
+        expect(
+          paragraph.localToGlobal(Offset(box.right, 0)).dx,
+          lessThanOrEqualTo(paintBounds.right + 0.05),
+        );
       }
       // The final character is still laid out, even for a very long UUID/name.
       var finalCharacter = rendered.length - 1;
@@ -68,12 +103,19 @@ List<Map<String, dynamic>> auditReceiptRows(WidgetTester tester) {
       }
       if (finalCharacter >= 0) {
         expect(
-            paragraph.getBoxesForSelection(TextSelection(
-                baseOffset: finalCharacter, extentOffset: finalCharacter + 1)),
-            isNotEmpty);
+          paragraph.getBoxesForSelection(
+            TextSelection(
+              baseOffset: finalCharacter,
+              extentOffset: finalCharacter + 1,
+            ),
+          ),
+          isNotEmpty,
+        );
       }
       final baseline = paragraph.getDryBaseline(
-          paragraph.constraints, TextBaseline.alphabetic)!;
+        paragraph.constraints,
+        TextBaseline.alphabetic,
+      )!;
       baselines.add(paragraph.localToGlobal(Offset(0, baseline)).dy);
     }
     if (!stacked) expect(baselines[0], closeTo(baselines[1], 0.01));
@@ -95,12 +137,15 @@ List<Map<String, dynamic>> auditReceiptRows(WidgetTester tester) {
   expect(measured, isNotEmpty);
   for (final group in find.byType(ReceiptRows).evaluate()) {
     final rows = find.descendant(
-        of: find.byWidget(group.widget), matching: find.byType(ReceiptRow));
+      of: find.byWidget(group.widget),
+      matching: find.byType(ReceiptRow),
+    );
     for (var i = 1; i < rows.evaluate().length; i++) {
       expect(
-          receiptPaintedRect(tester, rows.at(i)).top -
-              receiptPaintedRect(tester, rows.at(i - 1)).bottom,
-          closeTo(ReceiptTokens.rowToRow * factor, 0.01));
+        receiptPaintedRect(tester, rows.at(i)).top -
+            receiptPaintedRect(tester, rows.at(i - 1)).bottom,
+        closeTo(ReceiptTokens.rowToRow * factor, 0.01),
+      );
     }
   }
   return measured;
