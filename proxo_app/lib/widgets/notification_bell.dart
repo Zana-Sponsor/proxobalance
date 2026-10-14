@@ -162,11 +162,11 @@ class _NotificationBellState extends State<NotificationBell>
   // ── count گۆڕین + animation ───────────────────────────────────────────────
 
   void _setCount(int count) {
-    if (!mounted) return;
+    if (!mounted || count == _unread) return;
     setState(() => _unread = count);
 
     if (count > 0 && !MediaQuery.disableAnimationsOf(context)) {
-      // pulse بەردەوام
+      // One finite pulse; no idle animation when the badge is unchanged.
       if (!_pulse.isAnimating) _pulse.forward(from: 0);
     } else {
       _pulse.stop();

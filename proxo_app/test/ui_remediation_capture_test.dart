@@ -49,12 +49,12 @@ void main() {
   final backend = ActualScreenBackend();
   setUpAll(() async {
     SharedPreferences.setMockInitialValues({});
-    await (FontLoader(
-      'Rabar',
-    )..addFont(rootBundle.load('assets/fonts/Rabar_021.ttf'))).load();
-    await (FontLoader(
-      'MaterialIcons',
-    )..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf'))).load();
+    final fonts = jsonDecode(await rootBundle.loadString('FontManifest.json')) as List;
+    for (final font in fonts) {
+      final loader = FontLoader(font['family'] as String);
+      for (final file in font['fonts'] as List) { loader.addFont(rootBundle.load(file['asset'] as String)); }
+      await loader.load();
+    }
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(permissions, (_) async => 1);
     await backend.initialize();

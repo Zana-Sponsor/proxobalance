@@ -36,7 +36,7 @@ void main() {
   });
   tearDownAll(backend.dispose);
   for (final config in [(280.0,1.0,1.0),(393.0,1.0,3.0),(393.0,2.0,2.0),(280.0,2.0,2.0),(768.0,1.0,2.0)]) {
-    for (final section in ['sidebar','profile','chrome']) {
+    for (final section in ['sidebar','profile','edit','chrome']) {
       testWidgets('$section $config', (t) async {
         final (width, scale, dpr) = config;
         t.view.devicePixelRatio = dpr;
@@ -50,6 +50,8 @@ void main() {
             child: ProxoSidebar(onClose: () => taps.add('close'), onNavigate: taps.add)));
         } else if (section == 'profile') {
           surface = ProfileScreen(onBottomNavTap: (i) => taps.add('tab-$i'));
+        } else if (section == 'edit') {
+          surface = const EditProfileScreen(initialFullName: 'تاقیکردنەوە Proxo', initialEmail: 'fixture@example.invalid', initialPhone: '+9647500000000');
         } else {
           surface = Scaffold(appBar: ProxoTopBar(onMenuTap: () => taps.add('menu'),
             onNotificationTap: () => taps.add('notifications'), onSearchTap: () => taps.add('search')),
@@ -72,15 +74,19 @@ void main() {
           });
           await t.pumpAndSettle();
           final boundary = key.currentContext!.findRenderObject()! as RenderRepaintBoundary;
-          final image = await boundary.toImage(pixelRatio: dpr);
-          final data = await image.toByteData(format: ui.ImageByteFormat.png); image.dispose();
           final path='build/chrome-evidence/$section-${width.toInt()}-s$scale-d$dpr$suffix';
-          await t.runAsync(() async { await File('$path.png').parent.create(recursive:true); await File('$path.png').writeAsBytes(data!.buffer.asUint8List()); });
+          await t.runAsync(() async {
+            final image = await boundary.toImage(pixelRatio: dpr);
+            final data = await image.toByteData(format: ui.ImageByteFormat.png); image.dispose();
+            await File('$path.png').parent.create(recursive:true);
+            await File('$path.png').writeAsBytes(data!.buffer.asUint8List());
+          });
           expect(t.takeException(), isNull);
         }
         await shot('');
-        if (section == 'profile' || section == 'sidebar') {
-          await t.drag(find.byType(Scrollable).first,const Offset(0,-650)); await t.pumpAndSettle();
+        if (section == 'profile' || section == 'sidebar' || section == 'edit') {
+          final scroll = t.state<ScrollableState>(find.byType(Scrollable).first);
+          scroll.position.jumpTo(scroll.position.maxScrollExtent); await t.pumpAndSettle();
           await shot('-bottom');
         }
         if (!baseline && section == 'chrome') {
@@ -97,7 +103,7 @@ void main() {
           expect(find.byType(FittedBox),findsNothing);
         }
         if (!baseline && section == 'profile') {
-          final profileContext=t.element(find.byType(ProfileScreen));
+          final profileContext=t.element(find.text('باڵانسی ڕیکلام'));
           expect(MediaQuery.textScalerOf(profileContext).scale(14),closeTo(14*scale,.001));
           await t.drag(find.byType(Scrollable).first,const Offset(0,2000)); await t.pumpAndSettle();
           final eye=find.byTooltip('شاردنەوەی باڵانس');

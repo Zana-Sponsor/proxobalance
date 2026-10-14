@@ -19,17 +19,20 @@ class ProxoBottomNav extends StatefulWidget {
 
 class _ProxoBottomNavState extends State<ProxoBottomNav> {
   final _keys = List.generate(5, (_) => GlobalKey());
+  void _revealSelected() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || widget.currentIndex == 2) return;
+      final context = _keys[widget.currentIndex].currentContext;
+      if (context != null) Scrollable.ensureVisible(context, alignment: .5,
+        duration: MediaQuery.disableAnimationsOf(context) ? Duration.zero : const Duration(milliseconds: 180));
+    });
+  }
+  @override
+  void didChangeDependencies() { super.didChangeDependencies(); _revealSelected(); }
   @override
   void didUpdateWidget(covariant ProxoBottomNav oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.currentIndex != widget.currentIndex && widget.currentIndex != 2) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!mounted) return;
-        final context = _keys[widget.currentIndex].currentContext;
-        if (context != null) Scrollable.ensureVisible(context, alignment: .5,
-          duration: MediaQuery.disableAnimationsOf(context) ? Duration.zero : const Duration(milliseconds: 180));
-      });
-    }
+    if (oldWidget.currentIndex != widget.currentIndex) _revealSelected();
   }
   @override
   Widget build(BuildContext context) {

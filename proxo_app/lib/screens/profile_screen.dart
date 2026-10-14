@@ -2001,8 +2001,8 @@ class _SupportChannelButton extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,
-        child: SizedBox(
-          height: 54,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 54),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
@@ -2019,11 +2019,10 @@ class _SupportChannelButton extends StatelessWidget {
                 child: Icon(icon, size: 20, color: foreground),
               ),
               const SizedBox(width: 9),
-              ProxoText(
-                label,
-                maxLines: 1,
+              Flexible(child: ProxoText(
+                label, softWrap: true,
                 style: _ProfileText.supportButton.copyWith(color: foreground),
-              ),
+              )),
             ],
           ),
         ),
@@ -2061,8 +2060,8 @@ class _AboutAppSheet extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(
-                height: 54,
+              ConstrainedBox(
+                constraints: const BoxConstraints(minHeight: 56),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: Row(
