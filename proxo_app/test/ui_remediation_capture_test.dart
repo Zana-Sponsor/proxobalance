@@ -298,8 +298,25 @@ void main() {
         if (scrolls.evaluate().isNotEmpty) {
           final state = t.state<ScrollableState>(scrolls.first);
           if (state.position.maxScrollExtent > 0) {
-            state.position.jumpTo(state.position.maxScrollExtent);
-            await t.pump();
+            // A lazy ListView first estimates unseen child heights. Refine
+            // the end position after layout instead of capturing a transient
+            // overscroll frame beyond the last (now measured) child.
+            for (var pass = 0; pass < 4; pass++) {
+              state.position.jumpTo(state.position.maxScrollExtent);
+              await t.pump(const Duration(milliseconds: 100));
+            }
+            expect(
+              state.position.pixels,
+              lessThanOrEqualTo(state.position.maxScrollExtent + 0.01),
+            );
+            if (screen == 'receipt' || screen == 'ad-receipt') {
+              expect(
+                t
+                    .getRect(find.byType(ReceiptPdfButton))
+                    .overlaps(t.getRect(scrolls.first)),
+                isTrue,
+              );
+            }
             await snapshot(t, key, '$name-bottom', config);
           }
         }
