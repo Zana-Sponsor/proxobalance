@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:proxo_app/screens/home_screen.dart';
 import 'package:proxo_app/screens/ad_detail_screen.dart';
@@ -24,6 +25,7 @@ import 'package:proxo_app/screens/ad_confirmation_screen.dart';
 import 'package:proxo_app/screens/transaction_detail_screen.dart';
 import 'package:proxo_app/services/ad_submission.dart';
 import 'package:proxo_app/theme/app_theme.dart';
+import 'package:proxo_app/theme/app_locale.dart';
 import 'package:proxo_app/widgets/home_quick_actions.dart';
 import 'package:proxo_app/widgets/bottom_nav.dart';
 import 'package:proxo_app/widgets/receipt/receipt_kit.dart';
@@ -198,7 +200,26 @@ void main() {
         };
         await t.pumpWidget(
           MaterialApp(
-            theme: buildAppTheme(),
+            // Match the production MaterialApp's Sorani framework mapping,
+            // locale scope, seed and white fallback canvas.
+            locale: const Locale('ar'),
+            supportedLocales: const [Locale('ar'), Locale('en')],
+            localizationsDelegates: const [
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            builder: (context, child) => ProxoLocaleScope(child: child!),
+            theme: ThemeData(
+              fontFamily: kAppFont,
+              colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primary),
+              useMaterial3: true,
+              scaffoldBackgroundColor: Colors.white,
+              textTheme: const TextTheme().apply(
+                fontFamily: kAppFont,
+                decoration: TextDecoration.none,
+              ),
+            ),
             home: Builder(
               builder: (context) => MediaQuery(
                 data: MediaQuery.of(context)

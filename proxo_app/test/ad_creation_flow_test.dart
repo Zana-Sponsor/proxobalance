@@ -181,6 +181,9 @@ void main() {
         await tester.ensureVisible(field);
         await tester.pumpAndSettle();
         await tester.enterText(field, 'PRESERVED');
+        // Let the focus notification rebuild TextField's active TapRegion,
+        // as it does before the next physical touch on a rendered frame.
+        await tester.pumpAndSettle();
         final editable = tester.widget<EditableText>(
           find.descendant(of: field, matching: find.byType(EditableText)),
         );
@@ -188,7 +191,11 @@ void main() {
         // A real touch outside the text-field group, not a direct callback call.
         await tester.tapAt(const Offset(4, 70));
         await tester.pump();
-        expect(editable.focusNode.hasFocus, isFalse);
+        expect(
+          editable.focusNode.hasFocus,
+          isFalse,
+          reason: '$id outside touch',
+        );
         expect(editable.controller.text, 'PRESERVED');
       }
       expect(tester.takeException(), isNull);
