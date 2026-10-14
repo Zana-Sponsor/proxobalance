@@ -373,8 +373,8 @@ class PasswordStrengthMeter extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        Wrap(
+          alignment: WrapAlignment.spaceBetween, spacing: 8, runSpacing: 4,
           children: [
             ProxoText(
               AuthStrings.strengthHeader,

@@ -1,3 +1,4 @@
+import '../theme/app_locale.dart';
 import '../l10n/proxo_strings.dart';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
@@ -36,6 +37,7 @@ class _ProxoBottomNavState extends State<ProxoBottomNav> {
   }
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     final labels = ['سەرەکی', 'ڕیکلامەکان', 'دروستکردنی ڕیکلام', 'ئامرازەکان', 'پڕۆفایل'].map(ProxoStrings.text).toList();
     const icons = [ProxoSymbolName.home, ProxoSymbolName.ads,
       ProxoSymbolName.add, ProxoSymbolName.tools, ProxoSymbolName.user];

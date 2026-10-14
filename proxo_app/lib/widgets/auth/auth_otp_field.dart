@@ -140,7 +140,9 @@ class _AuthOtpBoxesState extends State<AuthOtpBoxes>
 
   Future<void> _shakeAndReset() async {
     if (!mounted) return;
-    await _shake.forward(from: 0).orCancel.catchError((Object _) {});
+    if (!MediaQuery.disableAnimationsOf(context)) {
+      await _shake.forward(from: 0).orCancel.catchError((Object _) {});
+    }
     if (!mounted) return;
     for (final TextEditingController c in _boxes) {
       c.clear();
@@ -216,19 +218,14 @@ class _AuthOtpBoxesState extends State<AuthOtpBoxes>
         child: LayoutBuilder(
           builder: (context, constraints) {
             final double gap = constraints.maxWidth < 330 ? 5 : AuthTokens.otpBoxGap;
-            final double available =
-                constraints.maxWidth - (gap * (widget.length - 1));
-            final double boxWidth =
-                (available / widget.length).clamp(38.0, AuthTokens.otpBoxWidth);
-            return Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                for (int i = 0; i < widget.length; i++) ...[
-                  if (i > 0) SizedBox(width: gap),
-                  _box(context, i, boxWidth),
-                ],
-              ],
-            );
+            var columns = ((constraints.maxWidth + gap) / (48 + gap)).floor().clamp(1, widget.length);
+            if (widget.length == 6 && columns < 6 && columns >= 3) columns = 3;
+            final boxWidth = ((constraints.maxWidth - gap * (columns - 1)) / columns)
+                .clamp(1.0, AuthTokens.otpBoxWidth);
+            return Center(child: SizedBox(width: columns * boxWidth + (columns - 1) * gap,
+              child: Wrap(spacing: gap, runSpacing: 10, alignment: WrapAlignment.center,
+                children: [for (var i = 0; i < widget.length; i++) _box(context, i, boxWidth)])));
+
           },
         ),
       ),
@@ -249,7 +246,7 @@ class _AuthOtpBoxesState extends State<AuthOtpBoxes>
 
     return SizedBox(
       width: width,
-      height: AuthTokens.otpBoxHeight,
+      height: math.max(AuthTokens.otpBoxHeight, MediaQuery.textScalerOf(context).scale(AuthTokens.titleSize) + 24),
       child: Focus(
         onKeyEvent: (node, event) => _onKey(i, event),
         child: AnimatedContainer(

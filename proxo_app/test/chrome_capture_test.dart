@@ -1,3 +1,4 @@
+import 'package:proxo_app/widgets/proxo_text.dart';
 // Real production surfaces, deterministic read-only data, before/after evidence.
 import 'dart:convert';
 import 'dart:io';
@@ -100,7 +101,12 @@ void main() {
             expect(t.getSize(tab).shortestSide,greaterThanOrEqualTo(48));
             await t.tap(tab); expect(taps,contains('tab-$i'));
           }
-          expect(find.byType(FittedBox),findsNothing);
+          // SVG's renderer legitimately fits its vector canvas. Application text
+          // must never be shrunk to make navigation fit.
+          for (final box in find.byType(FittedBox).evaluate()) {
+            expect(find.descendant(of: find.byWidget(box.widget), matching: find.byType(Text)), findsNothing);
+            expect(find.descendant(of: find.byWidget(box.widget), matching: find.byType(ProxoText)), findsNothing);
+          }
         }
         if (!baseline && section == 'profile') {
           final profileContext=t.element(find.text('باڵانسی ڕیکلام'));

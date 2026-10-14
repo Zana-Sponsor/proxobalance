@@ -301,6 +301,7 @@ class _AuthShellState extends State<AuthShell> {
   @override
   void dispose() {
     _bannerTimer?.cancel();
+    _authService.close();
     _authSub?.cancel();
     _resendTimer?.cancel();
     _authService.close();
@@ -2123,8 +2124,9 @@ class _AuthShellState extends State<AuthShell> {
     required String action,
     required VoidCallback? onTap,
   }) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+    return Wrap(
+      alignment: WrapAlignment.center, crossAxisAlignment: WrapCrossAlignment.center,
+      spacing: 6, runSpacing: 4,
       children: [
         ProxoText(lead, style: _kSub.copyWith(fontSize: AuthTokens.textSize)),
         const SizedBox(width: 4),
