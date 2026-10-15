@@ -35,6 +35,10 @@ do $$ declare r json; c text; v_id uuid; begin
   end loop;
   update otp_whatsapp set last_sent_at=now()-interval '61 seconds' where otp_whatsapp.id=v_id;
   perform test_assert(get_or_generate_otp_whatsapp('+9647500000011','signup')->>'error'='rate_limited','five per hour across purposes');
+  update otp_whatsapp set created_at=now()-interval '61 minutes',
+    last_sent_at=now()-interval '57 minutes',expires_at=now()-interval '56 minutes' where otp_whatsapp.id=v_id;
+  perform test_assert(get_or_generate_otp_whatsapp('+9647500000011','signup')->>'error'='rate_limited','recent resends survive the hour boundary');
+  update otp_whatsapp set expires_at=now()+interval '1 minute' where otp_whatsapp.id=v_id;
   for i in 1..5 loop
     perform pa_verify_whatsapp_otp('+9647500000011',case when c='000000' then '999999' else '000000' end,'login');
   end loop;

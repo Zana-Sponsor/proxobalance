@@ -25,7 +25,9 @@ begin
   -- Serialize all purposes for this phone, including concurrent first sends.
   perform pg_advisory_xact_lock(hashtextextended('whatsapp-otp:' || v_phone,0));
   select coalesce(sum(send_count),0) into v_count from public.otp_whatsapp
-    where phone=v_phone and created_at>now()-interval '1 hour';
+    -- Keep a reused row in the window until its last send ages out. Using
+    -- only created_at would forget recent resends at the hour boundary.
+    where phone=v_phone and coalesce(last_sent_at,created_at)>now()-interval '1 hour';
   if v_count>=5 then
     return json_build_object('success',false,'error','rate_limited','retry_after_seconds',3600);
   end if;
