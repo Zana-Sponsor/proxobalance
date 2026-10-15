@@ -107,6 +107,27 @@ void main() {
               'exceptions':exceptions,'fixture':'fictional GET-only; OTP screen component; no authentication or payment sends',
             }));
           });
+          if (['deposit','create','profile','home'].contains(section)) {
+            final scroll = find.byType(Scrollable);
+            if (scroll.evaluate().isNotEmpty) {
+              final state = t.state<ScrollableState>(scroll.first);
+              if (state.position.maxScrollExtent > 0) {
+                state.position.jumpTo(state.position.maxScrollExtent);
+                await settle();
+                while ((error = t.takeException()) != null) { exceptions.add(error.toString()); }
+                await t.runAsync(() async {
+                  final boundary = key.currentContext!.findRenderObject()! as RenderRepaintBoundary;
+                  final shot = await boundary.toImage(pixelRatio:dpr);
+                  final png = await shot.toByteData(format:ui.ImageByteFormat.png);
+                  await File('build/polish-evidence/$name-bottom.png').writeAsBytes(png!.buffer.asUint8List()); shot.dispose();
+                  await File('build/polish-evidence/$name-bottom.json').writeAsString(jsonEncode({
+                    'source':before?'before':'after','section':section,'locale':language,
+                    'width':width,'height':852,'textScale':scale,'dpr':dpr,'position':'bottom','exceptions':exceptions,
+                  }));
+                });
+              }
+            }
+          }
           await t.pumpWidget(const SizedBox()); await t.pump();
           code.dispose(); focus.dispose();
           if (!before) expect(exceptions,isEmpty, reason:name);

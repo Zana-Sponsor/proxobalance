@@ -11,12 +11,12 @@ enum ProxoSymbolName {
   verified('shield_check'), email('letter'), phone('phone'),
   eye('eye'), eyeClosed('eye_closed'), add('add_circle'),
   back('alt_arrow_right'), forward('alt_arrow_left'), menu('hamburger_menu'),
-  bell('bell'), search('magnifer'), wallet('wallet_2'), card('card'),
+  bell('bell'), search('magnifer'), wallet('wallet_2'),
   gallery('gallery_add'), upload('upload'), history('history'),
   settings('settings'), help('question_circle'), logout('logout_2'),
   discount('tag_price'), check('check_circle'), close('close_circle'),
   info('info_circle'), warning('danger_circle'), language('global'),
-  copy('copy'), calendar('calendar'), filter('filter'), award('cup_star');
+  copy('copy');
 
   const ProxoSymbolName(this.file);
   final String file;

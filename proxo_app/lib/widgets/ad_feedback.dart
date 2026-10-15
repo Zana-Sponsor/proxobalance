@@ -258,7 +258,7 @@ class _AdFeedbackDialogState extends State<_AdFeedbackDialog> {
                     if (_error != null) ...<Widget>[
                       const SizedBox(height: 8),
                       ProxoText(
-                        _error!,
+                        _error!, translate: true,
                         textAlign: TextAlign.center,
                         style: const TextStyle(
                           fontFamily: kAppFont,

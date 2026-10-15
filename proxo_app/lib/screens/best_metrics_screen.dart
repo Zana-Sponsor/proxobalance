@@ -1,3 +1,4 @@
+import 'package:proxo_app/l10n/proxo_strings.dart';
 import 'package:proxo_app/theme/app_locale.dart';
 import 'dart:async';
 
@@ -194,7 +195,7 @@ class _Header extends StatelessWidget {
       child: Row(
         children: [
           IconButton(
-            tooltip: 'گەڕانەوە',
+            tooltip: ProxoStrings.text('گەڕانەوە'),
             onPressed: onBack,
             icon: const SolarIcon(
               SolarIcons.altArrowRight,

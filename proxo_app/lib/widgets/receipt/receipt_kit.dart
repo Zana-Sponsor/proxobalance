@@ -1,3 +1,5 @@
+import '../../theme/app_locale.dart';
+import '../../l10n/proxo_strings.dart';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
@@ -169,11 +171,12 @@ class ReceiptAppBar extends StatelessWidget {
   );
 
   Widget _buildBar(BuildContext context, BoxConstraints constraints) {
+    ProxoLocale.watch(context);
     final double top = MediaQuery.paddingOf(context).top;
     final titlePainter =
         TextPainter(
-          text: TextSpan(text: title, style: ReceiptTokens.barTitle),
-          textDirection: receiptDirOf(title),
+          text: TextSpan(text: ProxoStrings.text(title), style: ReceiptTokens.barTitle),
+          textDirection: receiptDirOf(ProxoStrings.text(title)),
           textScaler: MediaQuery.textScalerOf(context),
         )..layout(
           maxWidth:
@@ -206,7 +209,7 @@ class ReceiptAppBar extends StatelessWidget {
             ),
             child: Center(
               child: ProxoText(
-                title,
+                title, translate: true,
                 textDirection: TextDirection.rtl,
                 textAlign: TextAlign.center,
                 style: ReceiptTokens.barTitle,
@@ -224,7 +227,7 @@ class ReceiptAppBar extends StatelessWidget {
                 height: ReceiptTokens.barTap,
                 child: IconButton(
                   onPressed: onBack,
-                  tooltip: backTooltip ?? 'گەڕانەوە',
+                  tooltip: ProxoStrings.text(backTooltip ?? 'گەڕانەوە'),
                   icon: ReceiptIcon(
                     Directionality.of(context) == TextDirection.ltr
                         ? Icons.arrow_back_ios_rounded
@@ -367,7 +370,7 @@ class ReceiptHeader extends StatelessWidget {
       children: <Widget>[
         Expanded(
           child: ProxoText(
-            title,
+            title, translate: true,
             textDirection: TextDirection.rtl,
             textAlign: TextAlign.start,
             style: ReceiptTokens.receiptTitle,
@@ -775,7 +778,7 @@ class ReceiptStateView extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
                     ProxoText(
-                      title,
+                      title, translate: true,
                       textAlign: TextAlign.center,
                       style: ReceiptTokens.receiptTitle.copyWith(
                         color: ReceiptTokens.ink,

@@ -602,7 +602,7 @@ class ProxoInlineError extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 2),
                         child: ProxoText(
-                          actionLabel!,
+                          actionLabel!, translate: true,
                           style: ProxoErrorType.button(p.accent, fontFamily)
                               .copyWith(decoration: TextDecoration.underline),
                         ),
@@ -713,7 +713,7 @@ class _ProxoSnackBody extends StatelessWidget {
                   const SizedBox(height: ProxoErrorStyle.s2),
                 ],
                 ProxoText(
-                  message,
+                  message, translate: true,
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis,
                   style: ProxoErrorType.body(p.ink, fontFamily),

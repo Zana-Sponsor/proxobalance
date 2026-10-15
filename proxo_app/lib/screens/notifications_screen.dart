@@ -922,7 +922,7 @@ class _SectionHeader extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(top: 10, bottom: 6, right: 2),
       child: ProxoText(
-        label,
+        label, translate: true,
         style: const TextStyle(
           fontFamily: kAppFont,
           fontSize: 12,
@@ -1072,7 +1072,7 @@ class _NotifCardState extends State<_NotifCard> {
                             ),
                           Expanded(
                             child: ProxoText(
-                              title,
+                              title, translate: n.title == null || n.title!.trim().isEmpty || n.title == t.defaultTitle,
                               maxLines: _expanded ? null : 1,
                               overflow: _expanded
                                   ? TextOverflow.visible
@@ -1102,7 +1102,7 @@ class _NotifCardState extends State<_NotifCard> {
                       ),
                       const SizedBox(height: 2),
                       ProxoText(
-                        body,
+                        body, translate: n.body == null || n.body!.trim().isEmpty || n.body == t.defaultBody,
                         maxLines: _expanded ? null : 1,
                         overflow: _expanded
                             ? TextOverflow.visible
@@ -1196,7 +1196,7 @@ class _SwipeBackground extends StatelessWidget {
           Icon(icon, color: Colors.white, size: 17),
           const SizedBox(width: 6),
           ProxoText(
-            label,
+            label, translate: true,
             style: const TextStyle(
               fontFamily: kAppFont,
               fontSize: 11,
@@ -1333,7 +1333,7 @@ class _ActionTile extends StatelessWidget {
             const SizedBox(width: 12),
             Expanded(
               child: ProxoText(
-                label,
+                label, translate: true,
                 style: const TextStyle(
                   fontFamily: kAppFont,
                   fontSize: 13.5,
@@ -1389,7 +1389,7 @@ class _FilterSheetState extends State<_FilterSheet> {
           borderRadius: BorderRadius.circular(10),
         ),
         child: ProxoText(
-          label,
+          label, translate: true,
           style: TextStyle(
             fontFamily: kAppFont,
             fontSize: 12,

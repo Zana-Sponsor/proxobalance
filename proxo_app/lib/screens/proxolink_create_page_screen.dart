@@ -1,3 +1,4 @@
+import 'package:proxo_app/l10n/proxo_strings.dart';
 import 'dart:async';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
@@ -176,7 +177,7 @@ class _CreatePageState extends State<ProxoLinkCreatePageScreen> {
   }
   Widget _field(TextEditingController controller, String label, {int lines = 1, int? limit, TextInputType? keyboard}) =>
     ProxoDirectionalInput(controller: controller, keyboardType: keyboard, builder: (context, direction) =>
-      TextFormField(controller: controller, textDirection: direction, decoration: InputDecoration(labelText: label),
+      TextFormField(controller: controller, textDirection: direction, decoration: InputDecoration(labelText: ProxoStrings.text(label)),
         minLines: lines, maxLines: lines == 1 ? 1 : 6, maxLength: limit, keyboardType: keyboard));
   @override
   Widget build(BuildContext context) => Theme(data: AdUi.theme(context), child: Directionality(

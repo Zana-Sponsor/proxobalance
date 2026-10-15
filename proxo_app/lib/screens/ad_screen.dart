@@ -2328,7 +2328,7 @@ class _AdScreenState extends State<AdScreen>
                     const SizedBox(width: 10),
                     Expanded(
                       child: ProxoText(
-                        label,
+                        label, translate: true,
                         textAlign: TextAlign.right,
                         style: const TextStyle(
                           fontFamily: kAppFont,
@@ -2391,7 +2391,7 @@ class _AdScreenState extends State<AdScreen>
                                   strokeWidth: 2.2, color: Colors.white),
                             )
                           : const ProxoText(
-                              _kAdcFixSave,
+                              _kAdcFixSave, translate: true,
                               style: TextStyle(
                                 fontFamily: kAppFont,
                                 fontSize: 14,
@@ -3234,10 +3234,10 @@ class _AdScreenState extends State<AdScreen>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  ProxoText(title, maxLines: 1,
+                  ProxoText(title, translate: true, maxLines: 1,
                       overflow: TextOverflow.ellipsis, style: t.title),
                   SizedBox(height: _dsTitleGap * s),
-                  ProxoText(body, maxLines: 3,
+                  ProxoText(body, translate: true, maxLines: 3,
                       overflow: TextOverflow.ellipsis, style: t.subtitle),
                 ],
               ),
@@ -3598,7 +3598,7 @@ class _AdCardState extends State<_AdCard> {
               22 * s,
             ),
             child: ProxoText(
-              body,
+              body, translate: true,
               textAlign: TextAlign.start,
               style: TextStyle(
                 fontFamily: _kAdCardFont,
@@ -4470,7 +4470,7 @@ class _AdcStatusNote extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           ProxoText(
-            title,
+            title, translate: true,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
@@ -4483,7 +4483,7 @@ class _AdcStatusNote extends StatelessWidget {
           ),
           SizedBox(height: 3 * s),
           ProxoText(
-            body,
+            body, translate: true,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
@@ -4617,7 +4617,7 @@ class _AdcFixBanner extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8 * s),
                 ),
                 child: ProxoText(
-                  _kAdcFixCta,
+                  _kAdcFixCta, translate: true,
                   maxLines: 1,
                   style: TextStyle(
                     fontFamily: _kAdCardFont,
@@ -4845,7 +4845,7 @@ class _AdcMetricTile extends StatelessWidget {
               height: labelHeight,
               child: Center(
                 child: ProxoText(
-                  label,
+                  label, translate: true,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.center,
@@ -4928,7 +4928,7 @@ class _AdcExpandToggle extends StatelessWidget {
             Expanded(
               child: Center(
                 child: ProxoText(
-                  label,
+                  label, translate: true,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
@@ -5410,7 +5410,7 @@ class _IosSheetHeader extends StatelessWidget {
             child: Align(
               alignment: AlignmentDirectional.centerStart,
               child: ProxoText(
-                title,
+                title, translate: true,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
@@ -5712,7 +5712,7 @@ class _CampaignStatusBadge extends StatelessWidget {
           SizedBox(width: 5 * s),
           Flexible(
             child: ProxoText(
-              label,
+              label, translate: true,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(

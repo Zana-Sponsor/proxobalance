@@ -1,3 +1,5 @@
+import 'package:solar_iconkit/solar_iconkit.dart';
+import '../l10n/proxo_strings.dart';
 import 'package:proxo_app/theme/app_locale.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../widgets/proxo_banner.dart';
@@ -691,368 +693,80 @@ class ProxoOverviewBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ProxoLocale.watch(context);
-    final s = scale;
-
+    final metrics = [
+      ('تێچوو', _money(spend), spendDelta, SolarIcons.dollarMinimalistic),
+      ('کرتەکان', _grouped(clicks), clicksDelta, SolarIcons.cursorSquare),
+      ('کرداری سەرکەوتوو', _grouped(conversions), conversionsDelta, SolarIcons.target),
+      ('ڕێژەی کرتە', '${ctr.toStringAsFixed(2)}%', ctrDelta, SolarIcons.arrowRightUp),
+    ];
     return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(18 * s),
-        gradient: const LinearGradient(
-          begin: Alignment(-0.28, -1),
-          end: Alignment(0.28, 1),
-          colors: [_kBannerTop, _kBannerBot],
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: _kBannerBot.withOpacity(0.26),
-            blurRadius: 26 * s,
-            spreadRadius: -6 * s,
-            offset: Offset(0, 12 * s),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Padding(
-            padding: EdgeInsets.fromLTRB(18 * s, 19 * s, 18 * s, 0),
-            child: SizedBox(
-              height: 28 * s,
-              child: Row(
-                children: [
-                  Expanded(
-                    child: ProxoText(
-                      'Overview',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: _kBase.copyWith(
-                        color: Colors.white,
-                        fontSize: 15 * s,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: -0.2 * s,
-                        height: 1.2,
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 12 * s),
-                  _RangePill(
-                    scale: s,
-                    label: range,
-                    ranges: ranges,
-                    onSelected: onRangeChanged,
-                  ),
-                ],
-              ),
-            ),
-          ),
-          SizedBox(height: 32 * s),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: _StatColumn(
-                  scale: s,
-                  icon: Icons.monetization_on_outlined,
-                  label: 'Spend',
-                  value: _money(spend),
-                  delta: spendDelta,
-                ),
-              ),
-              _StatDivider(scale: s),
-              Expanded(
-                child: _StatColumn(
-                  scale: s,
-                  painter: const _CursorPainter(),
-                  label: 'Clicks',
-                  value: _grouped(clicks),
-                  delta: clicksDelta,
-                ),
-              ),
-              _StatDivider(scale: s),
-              Expanded(
-                child: _StatColumn(
-                  scale: s,
-                  icon: Icons.task_alt,
-                  label: 'Conversions',
-                  value: _grouped(conversions),
-                  delta: conversionsDelta,
-                ),
-              ),
-              _StatDivider(scale: s),
-              Expanded(
-                child: _StatColumn(
-                  scale: s,
-                  icon: Icons.percent,
-                  label: 'CTR',
-                  value: '${ctr.toStringAsFixed(2)}%',
-                  delta: ctrDelta,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 23 * s),
-        ],
-      ),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(color: AppColors.accent,
+        borderRadius: BorderRadius.circular(18)),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+        Wrap(alignment: WrapAlignment.spaceBetween, crossAxisAlignment: WrapCrossAlignment.center,
+          spacing: 12, runSpacing: 10, children: [
+            const ProxoText('پوختەی ڕیکلامەکان', translate: true,
+              style: TextStyle(fontFamily: kAppFont, fontSize: 16, height: 1.5, color: Colors.white)),
+            _RangePill(scale: 1, label: range, ranges: ranges, onSelected: onRangeChanged),
+          ]),
+        const SizedBox(height: 16),
+        LayoutBuilder(builder: (context, constraints) {
+          final columns = constraints.maxWidth < 300 || MediaQuery.textScalerOf(context).scale(14) > 21 ? 1 : 2;
+          final width = (constraints.maxWidth - (columns-1)*12) / columns;
+          return Wrap(spacing: 12, runSpacing: 12, children: [for (final metric in metrics)
+            SizedBox(width: width, child: Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(color: Colors.white.withValues(alpha: .12),
+                borderRadius: BorderRadius.circular(14)),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Row(children: [SolarIcon(metric.$4, style: SolarIconStyle.linear, size: 22, color: Colors.white),
+                  const SizedBox(width: 8),
+                  Expanded(child: ProxoText(metric.$1, translate: true,
+                    style: const TextStyle(fontFamily:kAppFont,fontSize:13,height:1.5,color:Colors.white)))]),
+                const SizedBox(height: 10),
+                ProxoText(metric.$2, textDirection: TextDirection.ltr,
+                  style: const TextStyle(fontFamily:kAppFont,fontSize:21,height:1.3,color:Colors.white)),
+                const SizedBox(height: 6),
+                ProxoText(metric.$3 == null ? '—' : '${metric.$3! >= 0 ? '+' : ''}${metric.$3!.toStringAsFixed(1)}%',
+                  textDirection:TextDirection.ltr,
+                  style: const TextStyle(fontFamily:kAppFont,fontSize:12,height:1.5,color:Colors.white)),
+              ]))))]);
+        }),
+      ]),
     );
   }
 }
 
-class _StatDivider extends StatelessWidget {
-  final double scale;
-  const _StatDivider({required this.scale});
-
-  @override
-  Widget build(BuildContext context) => Container(
-        width: 1,
-        height: 104 * scale,
-        color: Colors.white.withOpacity(0.14),
-      );
-}
-
-class _StatColumn extends StatelessWidget {
-  final double scale;
-  final IconData? icon;
-  final CustomPainter? painter;
-  final String label;
-  final String value;
-  final double? delta;
-
-  const _StatColumn({
-    required this.scale,
-    this.icon,
-    this.painter,
-    required this.label,
-    required this.value,
-    required this.delta,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    ProxoLocale.watch(context);
-    final s = scale;
-    final d = delta;
-    final positive = d == null ? null : d >= 0;
-
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 6 * s),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SizedBox(
-            height: 26 * s,
-            width: 26 * s,
-            child: painter != null
-                ? CustomPaint(painter: painter)
-                : Icon(icon, size: 26 * s, color: Colors.white),
-          ),
-          SizedBox(height: 13 * s),
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            child: ProxoText(
-              label,
-              maxLines: 1,
-              style: _kBase.copyWith(
-                color: Colors.white,
-                fontSize: 10.5 * s,
-                fontWeight: FontWeight.w600,
-                height: 1.25,
-              ),
-            ),
-          ),
-          SizedBox(height: 10 * s),
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            child: ProxoText(
-              value,
-              maxLines: 1,
-              style: _kBase.copyWith(
-                color: Colors.white,
-                fontSize: 15 * s,
-                fontWeight: FontWeight.w700,
-                letterSpacing: -0.2 * s,
-                height: 1.2,
-              ),
-            ),
-          ),
-          SizedBox(height: 12 * s),
-          SizedBox(
-            height: 13.2 * s,
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    positive == null
-                        ? Icons.trending_flat_rounded
-                        : (positive
-                            ? Icons.arrow_upward_rounded
-                            : Icons.arrow_downward_rounded),
-                    size: 12 * s,
-                    color: positive == null
-                        ? Colors.white.withOpacity(0.55)
-                        : (positive ? _kDeltaUp : _kDeltaDown),
-                  ),
-                  SizedBox(width: 4 * s),
-                  ProxoText(
-                    d == null ? '—' : '${d.abs().round()}%',
-                    maxLines: 1,
-                    style: _kBase.copyWith(
-                      color: positive == null
-                          ? Colors.white.withOpacity(0.55)
-                          : (positive ? _kDeltaUp : _kDeltaDown),
-                      fontSize: 11 * s,
-                      fontWeight: FontWeight.w600,
-                      height: 1.2,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
+String _rangeLabel(String value) => ProxoStrings.text(switch(value) {
+  'Today' => 'ئەمڕۆ',
+  'Last 7 days' => '٧ ڕۆژی ڕابردوو',
+  'Last 30 days' => '٣٠ ڕۆژی ڕابردوو',
+  'All time' => 'هەموو کاتەکان',
+  _ => value,
+});
 
 class _RangePill extends StatelessWidget {
+  const _RangePill({required this.scale,required this.label,required this.ranges,required this.onSelected});
   final double scale;
   final String label;
   final List<String> ranges;
   final ValueChanged<String> onSelected;
-
-  const _RangePill({
-    required this.scale,
-    required this.label,
-    required this.ranges,
-    required this.onSelected,
-  });
-
-  Future<void> _open(BuildContext context) async {
-    final box = context.findRenderObject() as RenderBox?;
-    final overlay =
-        Overlay.of(context).context.findRenderObject() as RenderBox?;
-    if (box == null || overlay == null) return;
-
-    final origin = box.localToGlobal(Offset(0, box.size.height + 6),
-        ancestor: overlay);
-    final picked = await showMenu<String>(
-      context: context,
-      color: Colors.white,
-      surfaceTintColor: Colors.white,
-      elevation: 8,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(14 * scale),
-      ),
-      position: RelativeRect.fromLTRB(
-        origin.dx,
-        origin.dy,
-        overlay.size.width - origin.dx - box.size.width,
-        0,
-      ),
-      items: [
-        for (final r in ranges)
-          PopupMenuItem<String>(
-            value: r,
-            height: 42 * scale,
-            child: Row(
-              children: [
-                Expanded(
-                  child: ProxoText(
-                    r,
-                    style: _kBase.copyWith(
-                      fontSize: 12.5 * scale,
-                      fontWeight:
-                          r == label ? FontWeight.w700 : FontWeight.w600,
-                      color: r == label ? kProxoBlue : _kBannerInk,
-                    ),
-                  ),
-                ),
-                if (r == label)
-                  Icon(Icons.check_rounded,
-                      size: 16 * scale, color: kProxoBlue),
-              ],
-            ),
-          ),
-      ],
-    );
-    if (picked != null) onSelected(picked);
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  @override Widget build(BuildContext context) {
     ProxoLocale.watch(context);
-    final s = scale;
-    return Material(
-      color: Colors.white.withOpacity(0.88),
-      borderRadius: BorderRadius.circular(14 * s),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: () => _open(context),
-        child: Padding(
-          padding: EdgeInsets.only(left: 12 * s, right: 9 * s),
-          child: SizedBox(
-            height: 28 * s,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.calendar_today_outlined,
-                    size: 14 * s, color: kProxoBlue),
-                SizedBox(width: 3 * s),
-                ProxoText(
-                  label,
-                  maxLines: 1,
-                  style: _kBase.copyWith(
-                    color: kProxoBlue,
-                    fontSize: 10.5 * s,
-                    fontWeight: FontWeight.w600,
-                    height: 1.2,
-                  ),
-                ),
-                SizedBox(width: 5 * s),
-                Icon(Icons.keyboard_arrow_down_rounded,
-                    size: 16 * s, color: kProxoBlue),
-              ],
-            ),
-          ),
-        ),
-      ),
+    return PopupMenuButton<String>(
+      tooltip: ProxoStrings.text('ماوە هەڵبژێرە'), onSelected:onSelected,
+      itemBuilder: (_) => [for(final range in ranges) PopupMenuItem<String>(
+        value:range, height:48, child:ProxoText(_rangeLabel(range)))],
+      child: Semantics(button:true,label:_rangeLabel(label),
+        child: Container(constraints:const BoxConstraints(minHeight:48),
+          padding:const EdgeInsets.symmetric(horizontal:12,vertical:10),
+          decoration:BoxDecoration(color:Colors.white,borderRadius:BorderRadius.circular(12)),
+          child:Row(mainAxisSize:MainAxisSize.min,children:[
+            Flexible(child:ProxoText(_rangeLabel(label),style:const TextStyle(fontSize:13,height:1.5,color:AppColors.accent))),
+            const SizedBox(width:8),
+            const SolarIcon(SolarIcons.altArrowDown,style:SolarIconStyle.linear,size:18,color:AppColors.accent),
+          ]))),
     );
   }
-}
-
-class _CursorPainter extends CustomPainter {
-  const _CursorPainter();
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final k = size.width / 24.0;
-    canvas.save();
-    canvas.scale(k);
-
-    final path = Path()
-      ..moveTo(4.2, 2.0)
-      ..lineTo(18.8, 13.4)
-      ..lineTo(11.7, 14.0)
-      ..lineTo(14.8, 20.9)
-      ..lineTo(12.0, 22.1)
-      ..lineTo(8.9, 15.2)
-      ..lineTo(4.2, 19.8)
-      ..close();
-
-    canvas.drawPath(
-      path,
-      Paint()
-        ..color = Colors.white
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.9
-        ..strokeJoin = StrokeJoin.round
-        ..strokeCap = StrokeCap.round,
-    );
-    canvas.restore();
-  }
-
-  @override
-  bool shouldRepaint(covariant _CursorPainter oldDelegate) => false;
 }

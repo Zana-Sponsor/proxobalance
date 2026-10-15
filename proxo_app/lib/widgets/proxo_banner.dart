@@ -1,3 +1,4 @@
+import '../theme/app_locale.dart';
 // proxo_banner.dart
 // بیخەرە ناو:  lib/widgets/proxo_banner.dart
 //
@@ -272,6 +273,7 @@ class _ProxoBannerState extends State<ProxoBanner> {
                   imageURL:  e['imageURL']  ?? '',
                   imageB64:  e['imageB64']  ?? '',
                   targetURL: e['targetURL'] ?? '',
+                  locale: e['locale']?.toString() ?? 'ckb',
                 ))
             .where((b) => b.imageURL.isNotEmpty || b.imageB64.length > 10)
             .toList();
@@ -311,6 +313,7 @@ class _ProxoBannerState extends State<ProxoBanner> {
           'imageURL':  b.imageURL,
           'imageB64':  b.imageB64,
           'targetURL': b.targetURL,
+          'locale': b.locale,
         }).toList()),
       );
       // timestamp-ی نوێکردنەوە پاشەکەوت بکە
@@ -455,11 +458,12 @@ class _ProxoBannerState extends State<ProxoBanner> {
       final imageUrl  = get('imageURL');
       final imageB64  = get('imageB64');
       final targetUrl = get('targetURL');
+      final locale = get('locale').isEmpty ? 'ckb' : get('locale');
 
       if (imageUrl.isNotEmpty) {
-        list.add(_FbBanner(imageURL: imageUrl, imageB64: '', targetURL: targetUrl));
+        list.add(_FbBanner(imageURL: imageUrl, imageB64: '', targetURL: targetUrl, locale: locale));
       } else if (imageB64.length > 10) {
-        list.add(_FbBanner(imageURL: '', imageB64: imageB64, targetURL: targetUrl));
+        list.add(_FbBanner(imageURL: '', imageB64: imageB64, targetURL: targetUrl, locale: locale));
       }
     }
     return list;
@@ -477,8 +481,9 @@ class _ProxoBannerState extends State<ProxoBanner> {
     final b64 = get('imageB64');
     final url = get('imageURL');
     final tgt = get('targetURL');
-    if (b64.length > 10) return _FbBanner(imageURL: '', imageB64: b64, targetURL: tgt);
-    if (url.isNotEmpty)  return _FbBanner(imageURL: url, imageB64: '', targetURL: tgt);
+    final locale = get('locale').isEmpty ? 'ckb' : get('locale');
+    if (b64.length > 10) return _FbBanner(imageURL: '', imageB64: b64, targetURL: tgt, locale: locale);
+    if (url.isNotEmpty)  return _FbBanner(imageURL: url, imageB64: '', targetURL: tgt, locale: locale);
     return null;
   }
 
@@ -487,10 +492,15 @@ class _ProxoBannerState extends State<ProxoBanner> {
   @override
   Widget build(BuildContext context) {
     // ئەگەر داتا هاتوو — نیشانی بدە
-    if (_fbBanners.isNotEmpty) {
-      return _FbSlider(banners: _fbBanners, onNavigate: widget.onNavigate);
+    ProxoLocale.watch(context);
+    final locale = ProxoLocale.current.value.languageCode;
+    final banners = _fbBanners.where((b) => b.locale == locale || b.locale == 'all').toList();
+    if (banners.isNotEmpty) {
+      return _FbSlider(key: ValueKey(locale), banners: banners, onNavigate: widget.onNavigate);
     }
-    if (_supaHero != null) {
+    // Embedded image text cannot be translated. When CMS content has no
+    // matching locale, show the app's fully localized text hero instead.
+    if (_supaHero != null && (_supaHero!.locale == locale || _supaHero!.locale == 'all')) {
       return _SupaHero(
         banner:     _supaHero!,
         onStart:    widget.onStart,
@@ -646,7 +656,7 @@ class _FbSlider extends StatefulWidget {
   final List<_FbBanner>             banners;
   final void Function(String page)? onNavigate;
 
-  const _FbSlider({required this.banners, this.onNavigate});
+  const _FbSlider({super.key,required this.banners, this.onNavigate});
 
   @override
   State<_FbSlider> createState() => _FbSliderState();
@@ -663,6 +673,7 @@ class _FbSliderState extends State<_FbSlider> {
   @override
   void initState() {
     super.initState();
+    _cur = _sCurSliderPage.clamp(0, widget.banners.length - 1);
     _ctrl = PageController(
       initialPage: _sCurSliderPage.clamp(0, widget.banners.length - 1),
       keepPage: true,
@@ -747,7 +758,7 @@ class _FbSliderState extends State<_FbSlider> {
   }
 
   void _goNext() {
-    if (!_ctrl.hasClients) return;
+    if (!_ctrl.hasClients || !mounted || MediaQuery.disableAnimationsOf(context) || MediaQuery.accessibleNavigationOf(context)) return;
     _ctrl.animateToPage(
       (_cur + 1) % widget.banners.length,
       duration: _slideDur,
@@ -1391,11 +1402,13 @@ class _FbBanner {
   final String imageURL;
   final String imageB64;
   final String targetURL;
+  final String locale;
 
   const _FbBanner({
     required this.imageURL,
     required this.imageB64,
     required this.targetURL,
+    this.locale = 'ckb',
   });
 }
 
@@ -1405,6 +1418,7 @@ class _SupaBanner {
   final String btnText;
   final String bgColor;
   final String navigateTo;
+  final String locale;
 
   const _SupaBanner({
     required this.title,
@@ -1412,9 +1426,11 @@ class _SupaBanner {
     required this.btnText,
     required this.bgColor,
     required this.navigateTo,
+    this.locale = 'ckb',
   });
 
   factory _SupaBanner.fromMap(Map<String, dynamic> m) => _SupaBanner(
+        locale:     m['locale']?.toString() ?? 'ckb',
         title:      m['title']?.toString()       ?? 'Proxo',
         subtitle:   m['subtitle']?.toString()    ?? '',
         btnText:    m['btn_text']?.toString()    ?? 'دەستپێکردن',

@@ -1,3 +1,4 @@
+import 'package:proxo_app/l10n/proxo_strings.dart';
 // lib/widgets/proxo_popup.dart
 //
 // ═════════════════════════════════════════════════════════════════════════════
@@ -344,14 +345,14 @@ class _ProxoPopupDialog extends StatelessWidget {
                   child: InkWell(
                     customBorder: const CircleBorder(),
                     onTap: () => Navigator.of(context).pop(),
-                    child: const SizedBox(
-                      width: 34,
-                      height: 34,
+                    child: SizedBox(
+                      width: 48,
+                      height: 48,
                       child: Icon(
                         Icons.close_rounded,
                         size: 19,
                         color: Colors.white,
-                        semanticLabel: 'داخستن',
+                        semanticLabel: ProxoStrings.text('داخستن'),
                       ),
                     ),
                   ),

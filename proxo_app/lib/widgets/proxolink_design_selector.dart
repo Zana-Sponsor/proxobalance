@@ -138,7 +138,7 @@ class _DesignCard extends StatelessWidget {
                 SizedBox(
                   height: labelHeight,
                   child: Center(
-                    child: ProxoText(label, textAlign: TextAlign.center,
+                    child: ProxoText(label, translate: true, textAlign: TextAlign.center,
                         style: AdUi.text(context,
                             color: selected ? AdUi.blue : AdUi.ink)),
                   ),

@@ -330,7 +330,7 @@ class _TopBar extends StatelessWidget {
             Expanded(
               child: Center(
                 child: ProxoText(
-                  title,
+                  title, translate: true,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   textDirection: TextDirection.rtl,
@@ -433,7 +433,7 @@ class _FaqTileState extends State<_FaqTile> {
                   children: [
                     Expanded(
                       child: ProxoText(
-                        widget.item.question,
+                        widget.item.question, translate: true,
                         // بێ `maxLines`: پرسیاری درێژی کوردی بە ئاسایی
                         // دەپێچێتەوە و هەرگیز نابڕدرێت.
                         style: TextStyle(
@@ -490,7 +490,7 @@ class _FaqTileState extends State<_FaqTile> {
                           ),
                           SizedBox(height: _kAnswerGap * s),
                           ProxoText(
-                            widget.item.answer,
+                            widget.item.answer, translate: true,
                             textAlign: TextAlign.start,
                             style: TextStyle(
                               fontFamily: _kFont,

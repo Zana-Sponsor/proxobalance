@@ -1,9 +1,23 @@
+import 'dart:convert';
+import 'dart:io';
+import 'dart:ui' as ui;
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:proxo_app/widgets/ad_activation_notice.dart';
 import 'package:proxo_app/theme/app_locale.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+  setUpAll(() async {
+    final fonts = jsonDecode(await rootBundle.loadString('FontManifest.json')) as List;
+    for(final font in fonts) {
+      final loader=FontLoader(font['family'] as String);
+      for(final file in font['fonts'] as List) { loader.addFont(rootBundle.load(file['asset'] as String)); }
+      await loader.load();
+    }
+  });
   final now = DateTime.utc(2026,10,14,12);
   const adId = '11111111-2222-4333-8444-555555555555';
   Map<String,dynamic> row({int minutes = 0, String type = 'ad_active', String owner = 'owner'}) => {
@@ -25,12 +39,20 @@ void main() {
       ProxoLocale.current.value=Locale(language);
       addTearDown(() => ProxoLocale.current.value=ProxoLocale.kurdishSorani);
       var open=0,close=0;
+      final boundaryKey=GlobalKey();
       await t.pumpWidget(MaterialApp(home: ProxoLocaleScope(child: MediaQuery(
         data: const MediaQueryData(size:Size(280,852),textScaler:TextScaler.linear(2)),
-        child: Scaffold(body:Padding(padding:const EdgeInsets.all(12),child:AdActivationNotice(
-          adTitle:'Campaign 123', onOpen:()=>open++,onClose:()=>close++)))))));
+        child: RepaintBoundary(key:boundaryKey,child:Scaffold(body:Padding(padding:const EdgeInsets.all(12),child:AdActivationNotice(
+          adTitle:'Campaign 123', onOpen:()=>open++,onClose:()=>close++))))))));
       await t.pumpAndSettle();
       expect(t.takeException(),isNull);
+      await t.runAsync(() async {
+        final boundary=boundaryKey.currentContext!.findRenderObject()! as RenderRepaintBoundary;
+        final shot=await boundary.toImage(pixelRatio:2);
+        final data=await shot.toByteData(format:ui.ImageByteFormat.png);
+        Directory('build/polish-evidence').createSync(recursive:true);
+        await File('build/polish-evidence/activation-$language-280-s2.0-d2.0.png').writeAsBytes(data!.buffer.asUint8List());shot.dispose();
+      });
       final button=find.byType(TextButton), closeButton=find.byType(IconButton);
       expect(t.getSize(button).height,greaterThanOrEqualTo(48));
       expect(t.getSize(closeButton).height,greaterThanOrEqualTo(48));

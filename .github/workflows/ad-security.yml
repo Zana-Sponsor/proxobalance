@@ -2,7 +2,7 @@ name: Isolated ad correction and notification security
 on:
   push:
     branches: [feat/proxolink-private-renderer-migration]
-    paths: ['database/review/**', 'test/ad-security.sql', 'test/fixtures/ad-security-database.sql', '.github/workflows/ad-security.yml']
+    paths: ['proxo_app/supabase/migrations/*_ad_correction_and_notification_guards.sql', 'test/ad-security.sql', 'test/fixtures/ad-security-database.sql', '.github/workflows/ad-security.yml']
 permissions:
   contents: read
 jobs:
@@ -27,26 +27,17 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
-      - uses: supabase/setup-cli@v3
-        with:
-          version: latest
-      - name: Generate migration with Supabase CLI (no hosted project)
-        run: |
-          mkdir -p build/ad-security
-          cd build/ad-security
-          supabase init
-          supabase migration new ad_correction_and_notification_guards
-          cp ../../database/review/ad_correction_and_notification_guards.sql supabase/migrations/*_ad_correction_and_notification_guards.sql
       - run: psql -v ON_ERROR_STOP=1 -f test/fixtures/ad-security-database.sql
       - name: Apply twice and verify ownership and privilege boundaries
         run: |
-          psql -v ON_ERROR_STOP=1 -f database/review/ad_correction_and_notification_guards.sql
-          psql -v ON_ERROR_STOP=1 -f database/review/ad_correction_and_notification_guards.sql
+          mkdir -p build/ad-security
+          psql -v ON_ERROR_STOP=1 -f proxo_app/supabase/migrations/20261014235516_ad_correction_and_notification_guards.sql
+          psql -v ON_ERROR_STOP=1 -f proxo_app/supabase/migrations/20261014235516_ad_correction_and_notification_guards.sql
           psql -v ON_ERROR_STOP=1 -f test/ad-security.sql | tee build/ad-security/results.txt
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: reviewed-ad-security-migration
           path: |
-            build/ad-security/supabase/migrations/
+            proxo_app/supabase/migrations/20261014235516_ad_correction_and_notification_guards.sql
             build/ad-security/results.txt

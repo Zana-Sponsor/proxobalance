@@ -1,3 +1,4 @@
+import 'package:proxo_app/l10n/proxo_strings.dart';
 import '../proxo_symbol.dart';
 import 'package:flutter/material.dart';
 import '../../theme/app_locale.dart';
@@ -63,7 +64,7 @@ class AuthLanguageSelector extends StatelessWidget {
       valueListenable: ProxoLocale.current,
       builder: (context, locale, _) {
         return PopupMenuButton<Locale>(
-          tooltip: locale.languageCode == 'ar' ? 'اللغة' : 'زمان',
+          tooltip: ProxoStrings.text('زمان'),
           onSelected: ProxoLocale.set,
           position: PopupMenuPosition.under,
           shape: RoundedRectangleBorder(

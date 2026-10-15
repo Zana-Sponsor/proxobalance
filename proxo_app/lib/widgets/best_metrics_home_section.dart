@@ -119,7 +119,7 @@ class BestMetricsHomeSectionState extends State<BestMetricsHomeSection> {
                     ClipRRect(borderRadius: AdUi.radius,
                       child: AspectRatio(aspectRatio: 16 / 9,
                         child: Image.network(_ads.first.thumbnailUrl!, fit: BoxFit.cover,
-                          semanticLabel: 'ئەنجامی ڕیکلامی هەڵبژێردراو',
+                          semanticLabel: ProxoStrings.text('ئەنجامی ڕیکلامی هەڵبژێردراو'),
                           errorBuilder: (_, __, ___) => const ColoredBox(color: Color(0xFFEFF4FE)),
                           loadingBuilder: (_, child, progress) => progress == null ? child
                             : const ColoredBox(color: Color(0xFFEFF4FE))))),

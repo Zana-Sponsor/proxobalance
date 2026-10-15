@@ -92,41 +92,35 @@ class _DiscountCodesPageState extends State<DiscountCodesPage> {
     // This page is LTR/English, so the shared snack is told as much.
     showProxoErrorSnack(
       context,
-      'Copied "$code"',
+      ProxoStrings.format('کۆد کۆپی کرا: {code}', {'code':code}),
       tone: ProxoErrorTone.success,
-      label: 'Copied',
+      label: ProxoStrings.text('بەسەرکەوتوویی کۆپی کرا'),
       duration: const Duration(seconds: 1),
       fontFamily: kAppFont,
-      textDirection: TextDirection.ltr,
+      textDirection: ProxoLocale.directionOf(ProxoLocale.current.value),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     return Directionality(
-      textDirection: TextDirection.ltr,
+      textDirection: ProxoLocale.directionOf(ProxoLocale.current.value),
       child: Scaffold(
         backgroundColor: AppColors.surfaceBase,
-        appBar: AppBar(
-          backgroundColor: AppColors.surfaceCard,
-          elevation: 0,
-          foregroundColor: _kTextDark,
-          title: ProxoText('Discount Codes',
-            // AppBar title role → SemiBold, not Bold
-            style: _kBase.copyWith(fontSize: 16, fontWeight: FontWeight.w600, color: _kTextDark)),
-        ),
+        appBar: const ProxoAppBar(title: 'کۆدی داشکاندن'),
         body: _loading
             ? const Center(child: CircularProgressIndicator())
             : (_codes.isEmpty && _loadFailed)
                 ? ProxoErrorView(
                     fontFamily: kAppFont,
-                    title: "Couldn't load discount codes",
-                    message: 'Check your connection and try again.',
-                    actionLabel: 'Try again',
+                    title: 'کۆدەکان بار نەبوون',
+                    message: 'پەیوەندییەکەت بپشکنە و دووبارە هەوڵ بدەرەوە.',
+                    actionLabel: 'دووبارە هەوڵ بدەرەوە',
                     onAction: _load,
                   )
                 : _codes.isEmpty
-                ? Center(child: ProxoText('No discount codes available right now.',
+                ? Center(child: ProxoText('ئێستا هیچ کۆدی داشکاندنێک بەردەست نییە.', translate: true,
                     style: _kBase.copyWith(fontSize: 13, color: _kTextMuted)))
                 : ListView.separated(
                     padding: const EdgeInsets.all(16),
@@ -135,8 +129,8 @@ class _DiscountCodesPageState extends State<DiscountCodesPage> {
                     itemBuilder: (_, i) {
                       final c = _codes[i];
                       final label = c.discountType == 'percentage'
-                          ? '${c.discountValue.toStringAsFixed(0)}% off'
-                          : '${c.discountIqd} IQD off';
+                          ? ProxoStrings.format('{value}% داشکاندن', {'value':c.discountValue.toStringAsFixed(0)})
+                          : ProxoStrings.format('{value} د.ع داشکاندن', {'value':c.discountIqd});
                       return Container(
                         padding: const EdgeInsets.all(14),
                         decoration: BoxDecoration(
@@ -159,7 +153,7 @@ class _DiscountCodesPageState extends State<DiscountCodesPage> {
                               ],
                               if (c.expiresAt != null) ...[
                                 const SizedBox(height: 3),
-                                ProxoText('Expires ${c.expiresAt!.toLocal().toString().split(' ').first}',
+                                ProxoText(ProxoStrings.format('بەسەرچوون: {date}', {'date':c.expiresAt!.toLocal().toString().split(' ').first}),
                                   style: _kBase.copyWith(fontSize: 11.5, color: _kTextMuted)),
                               ],
                             ]),
@@ -168,9 +162,11 @@ class _DiscountCodesPageState extends State<DiscountCodesPage> {
                           GestureDetector(
                             onTap: () => _copy(c.code),
                             child: Container(
+                              constraints: const BoxConstraints(minWidth:48,minHeight:48),
+                              alignment: Alignment.center,
                               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                               decoration: BoxDecoration(color: _kActiveBlue, borderRadius: BorderRadius.circular(10)),
-                              child: ProxoText('Copy',
+                              child: ProxoText('کۆپیکردن', translate: true,
                                 // button role: 13 (not 12.5) / SemiBold (not Bold)
                                 style: _kBase.copyWith(fontSize: 13, fontWeight: FontWeight.w600, color: Colors.white)),
                             ),

@@ -23,6 +23,7 @@ void main() {
     expect(TxStrings.of(ProxoLocale.kurdishSorani).detailTitle, 'وردەکاری مامەڵە');
     expect(TxStrings.of(ProxoLocale.kurdishBadini).detailTitle, 'هویرکاریێن مامەلێ');
     expect(AdDetailStrings.of(ProxoLocale.kurdishBadini).appBarTitle, 'هویرکاریێن ریکلامێ');
+    expect(ProxoStrings.text('تسجيل الدخول', language: 'ckb'), 'چوونەژوورەوە');
   });
   testWidgets('language changes constant labels without translating user data', (t) async {
     await t.pumpWidget(MaterialApp(home: ProxoLocaleScope(child: const Column(children: [

@@ -1,3 +1,6 @@
+import 'proxo_symbol.dart';
+import '../l10n/proxo_strings.dart';
+import '../theme/app_locale.dart';
 import 'package:flutter/material.dart';
 
 import '../theme/app_theme.dart';
@@ -61,7 +64,7 @@ class HomeQuickActions extends StatelessWidget {
                 double widestWord = 0;
                 for (final card in cards) {
                   final painter = TextPainter(
-                    text: TextSpan(text: card.title, style: AdUi.text(context)),
+                    text: TextSpan(text: ProxoStrings.text(card.title), style: AdUi.text(context)),
                     textDirection: TextDirection.rtl,
                     textScaler: MediaQuery.textScalerOf(context),
                   )..layout();
@@ -145,11 +148,12 @@ class _QuickActionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     final color = onTap == null ? AdUi.secondary : AdUi.blue;
     return Semantics(
       button: true,
       enabled: onTap != null,
-      label: title,
+      label: ProxoStrings.text(title),
       onTap: onTap,
       child: ExcludeSemantics(
         child: Container(
@@ -177,7 +181,7 @@ class _QuickActionCard extends StatelessWidget {
                         color: AppColors.accentSoft,
                         borderRadius: AdUi.controlRadius,
                       ),
-                      child: Icon(icon, size: 24, color: color),
+                      child: ProxoSolarIcon(icon, size: 24, color: color),
                     ),
                     const SizedBox(height: 12),
                     ProxoText(

@@ -1,3 +1,4 @@
+import 'package:proxo_app/l10n/proxo_strings.dart';
 import '../widgets/auth/auth_header.dart';
 import '../widgets/proxo_symbol.dart';
 import 'package:proxo_app/theme/app_locale.dart';
@@ -339,7 +340,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ..hideCurrentSnackBar()
       ..showSnackBar(
         SnackBar(
-          content: ProxoText(message, textDirection: TextDirection.rtl),
+          content: ProxoText(message, translate: true, textDirection: TextDirection.rtl),
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -943,7 +944,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       ..hideCurrentSnackBar()
       ..showSnackBar(
         SnackBar(
-          content: ProxoText(message, textDirection: TextDirection.rtl),
+          content: ProxoText(message, translate: true, textDirection: TextDirection.rtl),
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -1014,7 +1015,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 initialValue: widget.initialFullName.isEmpty ? '—' : widget.initialFullName,
                                 builder: (context, inputDirection) => TextFormField(
                                   textDirection: inputDirection,
-                                  errorBuilder: (context, message) => ProxoText(message),
+                                  errorBuilder: (context, message) => ProxoText(message, translate: true),
                                   initialValue: widget.initialFullName.isEmpty
                                       ? '—'
                                       : widget.initialFullName,
@@ -1041,7 +1042,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   forceLtr: true,
                                   builder: (context, inputDirection) => TextFormField(
                                     textDirection: inputDirection,
-                                    errorBuilder: (context, message) => ProxoText(message),
+                                    errorBuilder: (context, message) => ProxoText(message, translate: true),
                                     controller: _emailController,
                                     enabled: !_saving && !_deleting,
                                     validator: _validateEmail,
@@ -1071,7 +1072,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   initialValue: widget.initialPhone.isEmpty ? '—' : widget.initialPhone,
                                   builder: (context, inputDirection) => TextFormField(
                                     textDirection: inputDirection,
-                                    errorBuilder: (context, message) => ProxoText(message),
+                                    errorBuilder: (context, message) => ProxoText(message, translate: true),
                                     initialValue: widget.initialPhone.isEmpty ? '—' : widget.initialPhone,
                                     readOnly: true,
                                     enableInteractiveSelection: true,
@@ -1393,7 +1394,7 @@ class _CircleActionButton extends StatelessWidget {
   final VoidCallback onTap;
   @override
   Widget build(BuildContext context) => IconButton(
-    tooltip: semanticLabel, onPressed: onTap,
+    tooltip: ProxoStrings.text(semanticLabel), onPressed: onTap,
     constraints: const BoxConstraints.tightFor(width: 48, height: 48),
     icon: ProxoSolarIcon(icon, size: ProxoChrome.iconSize, color: AppColors.ink),
   );
@@ -1604,7 +1605,7 @@ class _BalanceCard extends StatelessWidget {
           const Expanded(child: ProxoText('باڵانسی ڕیکلام', translate: true, style: _ProfileText.balanceLabel)),
           ValueListenableBuilder<bool>(valueListenable: showBalance,
             builder: (_, visible, __) => IconButton(
-              tooltip: visible ? 'شاردنەوەی باڵانس' : 'پیشاندانی باڵانس',
+              tooltip: ProxoStrings.text(visible ? 'شاردنەوەی باڵانس' : 'پیشاندانی باڵانس'),
               constraints: const BoxConstraints.tightFor(width: 48, height: 48),
               onPressed: () => showBalance.value = !visible,
               icon: ProxoSolarIcon(visible ? SolarIconsOutline.eye : SolarIconsOutline.eyeClosed,
@@ -1699,7 +1700,7 @@ class _QuickActionCard extends StatelessWidget {
                 ProxoSolarIcon(icon, size: ProxoChrome.iconSize, color: _ProfileColors.iconInk),
                 const SizedBox(height: 6),
                 ProxoText(
-                  label,
+                  label, translate: true,
                   textAlign: TextAlign.center,
                   softWrap: true,
                   style: _ProfileText.quickAction,
@@ -2044,7 +2045,7 @@ class _SupportChannelButton extends StatelessWidget {
               ),
               const SizedBox(width: 9),
               Flexible(child: ProxoText(
-                label, softWrap: true,
+                label, translate: true, softWrap: true,
                 style: _ProfileText.supportButton.copyWith(color: foreground),
               )),
             ],
@@ -2223,7 +2224,7 @@ class _PolicySection extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 10),
-          ProxoText(body, style: _ProfileText.policyBody),
+          ProxoText(body, translate: true, style: _ProfileText.policyBody),
         ],
       ),
     );
@@ -2301,7 +2302,7 @@ class _FaqExpansionCard extends StatelessWidget {
           childrenPadding: const EdgeInsets.fromLTRB(14, 0, 14, 15),
           iconColor: _ProfileColors.muted,
           collapsedIconColor: _ProfileColors.muted,
-          title: ProxoText(item.question, style: _ProfileText.faqQuestion),
+          title: ProxoText(item.question, translate: true, style: _ProfileText.faqQuestion),
           children: <Widget>[
             const Divider(
               height: 16,
@@ -2310,7 +2311,7 @@ class _FaqExpansionCard extends StatelessWidget {
             ),
             Align(
               alignment: AlignmentDirectional.centerStart,
-              child: ProxoText(item.answer, style: _ProfileText.faqAnswer),
+              child: ProxoText(item.answer, translate: true, style: _ProfileText.faqAnswer),
             ),
           ],
         ),
@@ -2392,7 +2393,7 @@ Future<bool?> _showConfirmationDialog(
           borderRadius: BorderRadius.all(Radius.circular(ProxoChrome.radius)),
         ),
         title: ProxoText(title, translate: true, style: _ProfileText.dialogTitle),
-        content: ProxoText(message, style: _ProfileText.dialogBody),
+        content: ProxoText(message, translate: true, style: _ProfileText.dialogBody),
         actions: <Widget>[
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(false),
@@ -2430,7 +2431,7 @@ Future<void> _showInformationDialog(
           borderRadius: BorderRadius.all(Radius.circular(ProxoChrome.radius)),
         ),
         title: ProxoText(title, translate: true, style: _ProfileText.dialogTitle),
-        content: ProxoText(message, style: _ProfileText.dialogBody),
+        content: ProxoText(message, translate: true, style: _ProfileText.dialogBody),
         actions: <Widget>[
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(),

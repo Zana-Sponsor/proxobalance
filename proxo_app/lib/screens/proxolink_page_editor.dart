@@ -1,3 +1,4 @@
+import 'package:proxo_app/l10n/proxo_strings.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
@@ -466,7 +467,7 @@ class ProxoLinkPageEditorState extends State<ProxoLinkPageEditor> {
         await (await SharedPreferences.getInstance()).remove(_pendingKey);
         if (mounted) {
           ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: ProxoText(e.message)));
+              .showSnackBar(SnackBar(content: ProxoText(e.message, translate: true)));
           await widget.onSaved(e.savedCard);
         }
       } else if (e.savedCardId != null && mounted) {
@@ -510,7 +511,7 @@ class ProxoLinkPageEditorState extends State<ProxoLinkPageEditor> {
       maxLines: lines,
       maxLength: limit,
       style: AdUi.text(context),
-      decoration: InputDecoration(labelText: label, counterText: ''),
+      decoration: InputDecoration(labelText: ProxoStrings.text(label), counterText: ''),
       validator: (value) => required && (value == null || value.trim().isEmpty)
           ? 'تکایە ئەم خانەیە پڕ بکەرەوە.'
           : null,
@@ -536,7 +537,7 @@ class ProxoLinkPageEditorState extends State<ProxoLinkPageEditor> {
                           _kind = type;
                           _cleanDraft = jsonEncode(_data());
                         }),
-                        child: ProxoText(type.label),
+                        child: ProxoText(type.label, translate: true),
                       ),
                     ),
                 ],
@@ -612,8 +613,8 @@ class ProxoLinkPageEditorState extends State<ProxoLinkPageEditor> {
                             DropdownButtonFormField<String>(
                               initialValue: _language,
                               isExpanded: true,
-                              decoration: const InputDecoration(
-                                labelText: 'زمانی پەڕە',
+                              decoration: InputDecoration(
+                                labelText: ProxoStrings.text('زمانی پەڕە'),
                               ),
                               items: const [
                                 DropdownMenuItem(
@@ -693,14 +694,14 @@ class ProxoLinkPageEditorState extends State<ProxoLinkPageEditor> {
                               Row(
                                 children: [
                                   IconButton(
-                                    tooltip: 'بۆ سەرەوە',
+                                    tooltip: ProxoStrings.text('بۆ سەرەوە'),
                                     icon: const Icon(Icons.arrow_upward),
                                     onPressed: () => setState(() {
                                       _moveProvider(p.key, -1);
                                     }),
                                   ),
                                   IconButton(
-                                    tooltip: 'بۆ خوارەوە',
+                                    tooltip: ProxoStrings.text('بۆ خوارەوە'),
                                     icon: const Icon(Icons.arrow_downward),
                                     onPressed: () => setState(() {
                                       _moveProvider(p.key, 1);
@@ -780,7 +781,7 @@ class ProxoLinkPageEditorState extends State<ProxoLinkPageEditor> {
                         Padding(
                           padding: const EdgeInsets.only(top: 20),
                           child: ProxoText(
-                            _error!,
+                            _error!, translate: true,
                             style: AdUi.text(
                               context,
                               color: Theme.of(context).colorScheme.error,

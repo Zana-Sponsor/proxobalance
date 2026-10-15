@@ -210,7 +210,7 @@ class _AdConfirmationScreenState extends State<AdConfirmationScreen>
                                               ? 'دەگەڕێیتەوە بۆ ڕیکلامەکانت.'
                                               : _failure != null
                                                   ? _failure!.message
-                                                  : 'دەتوانیت پێش کۆتایی ژمێرەر پاشگەز ببیتەوە.',
+                                                  : 'دەتوانیت پێش کۆتایی ژمێرەر پاشگەز ببیتەوە.', translate: true,
                                       textAlign: TextAlign.center,
                                       style: AdUi.text(context,
                                           color: AdUi.secondary)),
@@ -251,7 +251,7 @@ class _AdConfirmationScreenState extends State<AdConfirmationScreen>
                                             AdFormSection(
                                                 title: 'پارەدان',
                                                 child: Column(children: [
-                                                  ProxoText(p.message,
+                                                  ProxoText(p.message, translate: true,
                                                       style:
                                                           AdUi.text(context)),
                                                   if (p.waitingForPayment) ...[

@@ -88,7 +88,7 @@ class ProxoLinkPageCard extends StatelessWidget {
         style: Theme.of(context).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.w400)),
       const SizedBox(height: 10),
       Wrap(spacing: 12, runSpacing: 8, crossAxisAlignment: WrapCrossAlignment.center, children: [
-        ProxoText(page.pageType.label, style: AdUi.text(context, color: AdUi.secondary)),
+        ProxoText(page.pageType.label, translate: true, style: AdUi.text(context, color: AdUi.secondary)),
         if (page.moderationLabel.isNotEmpty) _ModerationBadge(page: page),
       ]),
       const SizedBox(height: 16),
@@ -133,7 +133,7 @@ class _ModerationBadge extends StatelessWidget {
     };
     return Container(padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(color: color.withValues(alpha: .07), borderRadius: BorderRadius.circular(8)),
-      child: ProxoText(page.moderationLabel, style: AdUi.text(context, color: color)));
+      child: ProxoText(page.moderationLabel, translate: true, style: AdUi.text(context, color: color)));
   }
 }
 class ProxoLinkPageSkeleton extends StatelessWidget {

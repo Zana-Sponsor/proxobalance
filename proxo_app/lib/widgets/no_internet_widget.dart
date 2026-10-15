@@ -138,14 +138,14 @@ class _BannerContent extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   ProxoText(
-                    offline ? 'ئینتەرنێت نییە' : 'پەیوەندی گەڕایەوە',
+                    offline ? 'ئینتەرنێت نییە' : 'پەیوەندی گەڕایەوە', translate: true,
                     style: ProxoErrorType.label(p.accent, kAppFont),
                   ),
                   const SizedBox(height: ProxoErrorStyle.s2),
                   ProxoText(
                     offline
                         ? 'تکایە پەیوەندی ئینتەرنێتەکەت بپشکنەوە'
-                        : 'ئێستا دەتوانیت بەردەوام بی',
+                        : 'ئێستا دەتوانیت بەردەوام بی', translate: true,
                     style: ProxoErrorType.body(p.ink, kAppFont),
                   ),
                 ],

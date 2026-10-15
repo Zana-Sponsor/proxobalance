@@ -96,7 +96,7 @@ class _ProxoLinkPageDetailsScreenState
 
   void _message(String text) =>
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: ProxoText(text)));
+          .showSnackBar(SnackBar(content: ProxoText(text, translate: true)));
   Future<void> _edit() async {
     if (_page == null || _busy || _loading || _error != null) return;
     final saved = await Navigator.push<ProxoCard>(
@@ -241,11 +241,11 @@ class _ProxoLinkPageDetailsScreenState
                                         ),
                                       ),
                                       const SizedBox(height: 16),
-                                      ProxoText(page.pageType.label),
+                                      ProxoText(page.pageType.label, translate: true),
                                       ProxoText(
                                         ProxoLinkDesign.label(page.templateKey),
                                       ),
-                                      ProxoText(page.stateLabel),
+                                      ProxoText(page.stateLabel, translate: true),
                                       if (page.bio.isNotEmpty)
                                         Padding(
                                           padding: const EdgeInsets.only(

@@ -133,12 +133,6 @@
       "url": "https://raw.githubusercontent.com/480-Design/Solar-Icon-Set/44017167688b49109d88ae6a98979b23d8950db0/icons/SVG/Outline/Money/Wallet%202.svg"
     },
     {
-      "filename": "card.svg",
-      "path": "SVG/Outline/Money/Card.svg",
-      "sha": "f1aca96e75588b2e9cb68c3a13b374404082274b",
-      "url": "https://raw.githubusercontent.com/480-Design/Solar-Icon-Set/44017167688b49109d88ae6a98979b23d8950db0/icons/SVG/Outline/Money/Card.svg"
-    },
-    {
       "filename": "gallery_add.svg",
       "path": "SVG/Outline/Video, Audio, Sound/Gallery Add.svg",
       "sha": "96ea5aa8049dc226e9f953abf8d28a6965e11355",
@@ -215,24 +209,6 @@
       "path": "SVG/Outline/Essentional, UI/Copy.svg",
       "sha": "d21e0f485903a2b85189493dea22ddd8fe10e7ae",
       "url": "https://raw.githubusercontent.com/480-Design/Solar-Icon-Set/44017167688b49109d88ae6a98979b23d8950db0/icons/SVG/Outline/Essentional%2C%20UI/Copy.svg"
-    },
-    {
-      "filename": "calendar.svg",
-      "path": "SVG/Outline/Time/Calendar.svg",
-      "sha": "0ad3a972a36cc5e0b6b91a053a058fa8553658f4",
-      "url": "https://raw.githubusercontent.com/480-Design/Solar-Icon-Set/44017167688b49109d88ae6a98979b23d8950db0/icons/SVG/Outline/Time/Calendar.svg"
-    },
-    {
-      "filename": "filter.svg",
-      "path": "SVG/Outline/Essentional, UI/Filter.svg",
-      "sha": "5885dd8d815ed7bd204539baf44ed9f8a4fab677",
-      "url": "https://raw.githubusercontent.com/480-Design/Solar-Icon-Set/44017167688b49109d88ae6a98979b23d8950db0/icons/SVG/Outline/Essentional%2C%20UI/Filter.svg"
-    },
-    {
-      "filename": "cup_star.svg",
-      "path": "SVG/Outline/Essentional, UI/Cup Star.svg",
-      "sha": "35e0579e15f84d29ab1ba06fa78cec43eb0d5df8",
-      "url": "https://raw.githubusercontent.com/480-Design/Solar-Icon-Set/44017167688b49109d88ae6a98979b23d8950db0/icons/SVG/Outline/Essentional%2C%20UI/Cup%20Star.svg"
     }
   ]
 }

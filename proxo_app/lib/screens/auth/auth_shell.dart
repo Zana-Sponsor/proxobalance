@@ -77,9 +77,7 @@ class _RateLimiter {
     if (e.lockedUntil != null) {
       final remaining = e.lockedUntil!.difference(DateTime.now());
       if (remaining.inSeconds > 0) {
-        return ProxoLocale.isArabic
-            ? 'الحساب مقفل مؤقتاً. انتظر ${_wait(remaining)}.'
-            : 'هەژمارەکەت قفڵ کراوە. ${_wait(remaining)} چاوەڕێ بکە.';
+        return ProxoStrings.format('هەژمارەکەت قفڵ کراوە. {duration} چاوەڕێ بکە.', {'duration': _wait(remaining)});
       } else {
         e.reset();
       }
@@ -91,9 +89,9 @@ class _RateLimiter {
   /// خولەک کاتێک کۆتایی دێت.
   static String _wait(Duration d) {
     final h = d.inHours;
-    if (h >= 1) return ProxoLocale.isArabic ? '$h ساعة' : '$h کاتژمێر';
+    if (h >= 1) return ProxoStrings.format('{hours} کاتژمێر', {'hours':h});
     final m = (d.inSeconds / 60).ceil();
-    return ProxoLocale.isArabic ? '$m دقيقة' : '$m خولەک';
+    return ProxoStrings.format('{minutes} خولەک', {'minutes':m});
   }
 
   /// [lockFor] دیاری دەکات کە ئەم شکستە سەر بە کام کەناڵەوەیە.
@@ -629,8 +627,7 @@ class _AuthShellState extends State<AuthShell> {
         final int? left = attempt['remaining'] as int?;
         _RateLimiter.recordFail(email);
         setState(() => _loginPassErr = left != null
-            ? _t('وشەی تێپەڕ هەڵەیە — $left هەوڵی تر ماوە',
-                'كلمة المرور غير صحيحة — تبقت $left محاولات')
+            ? ProxoStrings.format('وشەی تێپەڕ هەڵەیە — {count} هەوڵی تر ماوە', {'count': left})
             : AuthStrings.errWrongPassword);
         return;
       }
@@ -671,8 +668,7 @@ class _AuthShellState extends State<AuthShell> {
             'تم قفل حسابك لمدة 24 ساعة'));
       } else {
         setState(() => _loginPassErr =
-            _t('${_mapAuthError(e.message)} — ${_RateLimiter.remaining(email)} هەوڵی تر ماوە',
-                '${_mapAuthError(e.message)} — تبقت ${_RateLimiter.remaining(email)} محاولات'));
+            ProxoStrings.format('{error} — {count} هەوڵی تر ماوە', {'error': _mapAuthError(e.message), 'count': _RateLimiter.remaining(email)}));
       }
     } catch (e) {
       AuthFlowGuard.inOtpFlow = false;
@@ -839,8 +835,7 @@ class _AuthShellState extends State<AuthShell> {
           AuthFlowGuard.inOtpFlow = false;
           setState(() { _step = _Step.form; _otpAttempts = 0; _otpHasError = false; });
         } else {
-          _showErrorCard(_t('کۆدەکە هەڵەیە — ${_RateLimiter._maxAttempts - _otpAttempts} هەوڵی تر ماوە',
-              'الرمز غير صحيح — تبقت ${_RateLimiter._maxAttempts - _otpAttempts} محاولات'));
+          _showErrorCard(ProxoStrings.format('کۆدەکە هەڵەیە — {count} هەوڵی تر ماوە', {'count': _RateLimiter._maxAttempts - _otpAttempts}));
           setState(() { _otpHasError = true; });
           _otpShaker.shakeAndReset();
         }
@@ -1148,8 +1143,7 @@ class _AuthShellState extends State<AuthShell> {
               'محاولات كثيرة غير صحيحة — اطلب رمزاً جديداً'));
           setState(() { _step = _Step.forgotEmail; _fpOtpAttempts = 0; _fpOtpHasError = false; });
         } else {
-          _showErrorCard(_t('کۆدەکە هەڵەیە — ${_RateLimiter._maxAttempts - _fpOtpAttempts} هەوڵی تر ماوە',
-              'الرمز غير صحيح — تبقت ${_RateLimiter._maxAttempts - _fpOtpAttempts} محاولات'));
+          _showErrorCard(ProxoStrings.format('کۆدەکە هەڵەیە — {count} هەوڵی تر ماوە', {'count': _RateLimiter._maxAttempts - _fpOtpAttempts}));
           setState(() { _fpOtpHasError = true; });
           _fpOtpShaker.shakeAndReset();
         }

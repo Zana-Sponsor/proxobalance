@@ -777,7 +777,7 @@ class _FastPayCheckoutSheetState extends State<FastPayCheckoutSheet>
                 child: CircularProgressIndicator(
                     strokeWidth: 2.4, color: Colors.white),
               )
-            : ProxoText(label,
+            : ProxoText(label, translate: true,
                 style: const TextStyle(
                   fontFamily: kAppFont,
                   fontSize: 15,
@@ -799,7 +799,7 @@ class _FastPayCheckoutSheetState extends State<FastPayCheckoutSheet>
           borderRadius: BorderRadius.circular(_kRadius),
           border: Border.all(color: _kLine),
         ),
-        child: ProxoText(label,
+        child: ProxoText(label, translate: true,
             style: const TextStyle(
               fontFamily: kAppFont,
               fontSize: 15,
@@ -826,7 +826,7 @@ class _SummaryRow extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          ProxoText(label,
+          ProxoText(label, translate: true,
               style: const TextStyle(
                 fontFamily: kAppFont,
                 fontSize: 13,
@@ -887,7 +887,7 @@ class _StatusView extends StatelessWidget {
             children: [
               Icon(icon, size: 44, color: fg),
               const SizedBox(height: 10),
-              ProxoText(title,
+              ProxoText(title, translate: true,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontFamily: kAppFont,
@@ -896,7 +896,7 @@ class _StatusView extends StatelessWidget {
                     color: fg,
                   )),
               const SizedBox(height: 6),
-              ProxoText(message,
+              ProxoText(message, translate: true,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontFamily: kAppFont,

@@ -1,3 +1,4 @@
+import 'proxo_app_bar.dart';
 import 'package:proxo_app/l10n/proxo_strings.dart';
 import 'package:proxo_app/widgets/proxo_symbol.dart';
 import '../models/receipt_pricing.dart';
