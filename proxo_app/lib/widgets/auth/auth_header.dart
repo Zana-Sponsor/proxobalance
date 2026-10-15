@@ -106,3 +106,28 @@ class AuthLanguageSelector extends StatelessWidget {
     );
   }
 }
+
+/// Keep whole words intact at narrow widths while retaining the user's text
+/// scaling. Only headings whose longest word cannot fit are reduced.
+class AuthTitle extends StatelessWidget {
+  const AuthTitle(this.text, {super.key});
+  final String text;
+  @override
+  Widget build(BuildContext context) => LayoutBuilder(builder: (context, constraints) {
+    var style = AuthTokens.title;
+    final scaler = MediaQuery.textScalerOf(context);
+    for (var pass = 0; pass < 4; pass++) {
+      var widest = 0.0;
+      for (final word in text.split(RegExp(r'\s+'))) {
+        final painter = TextPainter(text: TextSpan(text: word, style: style),
+          textDirection: TextDirection.rtl, textScaler: scaler)..layout();
+        if (painter.width > widest) widest = painter.width;
+        painter.dispose();
+      }
+      if (widest <= constraints.maxWidth || widest == 0) break;
+      style = style.copyWith(fontSize: style.fontSize! * constraints.maxWidth / widest);
+    }
+    return Semantics(header: true, child: ProxoText(text,
+      textAlign: TextAlign.start, style: style));
+  });
+}

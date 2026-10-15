@@ -28,10 +28,7 @@ class OtpScreen extends StatelessWidget {
       children: <Widget>[
         AuthHeader.inner(onBack: onBack),
         const SizedBox(height: 32),
-        ProxoText(
-          AuthStrings.otpTitle,
-          style: AuthTokens.title,
-        ),
+        AuthTitle(AuthStrings.otpTitle),
         const SizedBox(height: AuthTokens.gapTitleToSubtitle),
         ProxoText(AuthStrings.otpSubtitle, style: AuthTokens.subtitle),
         const SizedBox(height: 6),

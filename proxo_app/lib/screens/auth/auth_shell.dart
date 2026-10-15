@@ -217,7 +217,6 @@ class _AuthShellState extends State<AuthShell> {
   // 21، و 12.8/1.35 بەرامبەر 13/1.40). واتە سەرناوی «چوونەژوورەوە» و
   // سەرناوی OTP دوو سەرچاوەی جیاوازیان هەبوو و دەیانتوانی لێک دووربکەونەوە
   // بەبێ ئەوەی کەس تێبینی بکات. ئێستا ئەلیاسن.
-  static const TextStyle _kTitle = AuthTokens.title;
   static const TextStyle _kSub   = AuthTokens.subtitle;
 
   @override
@@ -1892,7 +1891,7 @@ class _AuthShellState extends State<AuthShell> {
       children: [
         AuthHeader.inner(onBack: _goToSignIn),
         const SizedBox(height: 24),
-        ProxoText(AuthStrings.resetPasswordTitle, style: _kTitle),
+        AuthTitle(AuthStrings.resetPasswordTitle),
         const SizedBox(height: 4),
         ProxoText(AuthStrings.resetPasswordSubtitle, style: _kSub),
         const SizedBox(height: 16),
@@ -1945,7 +1944,7 @@ class _AuthShellState extends State<AuthShell> {
         AuthHeader.inner(
             onBack: () => setState(() => _step = _Step.forgotOtp)),
         const SizedBox(height: 24),
-        ProxoText(AuthStrings.resetPasswordTitle, style: _kTitle),
+        AuthTitle(AuthStrings.resetPasswordTitle),
         const SizedBox(height: 4),
         ProxoText(AuthStrings.resetPasswordSubtitle, style: _kSub),
 

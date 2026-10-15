@@ -22,10 +22,7 @@ class SignupScreen extends StatelessWidget {
       children: <Widget>[
         AuthHeader.inner(onBack: onBack),
         const SizedBox(height: 32),
-        ProxoText(
-          AuthStrings.signUpTitle,
-          style: AuthTokens.title,
-        ),
+        AuthTitle(AuthStrings.signUpTitle),
         const SizedBox(height: AuthTokens.gapTitleToSubtitle),
         ProxoText(AuthStrings.signUpSubtitle, style: AuthTokens.subtitle),
         const SizedBox(height: AuthTokens.gapSubtitleToForm),

@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:proxo_app/screens/auth/auth_models.dart';
 import 'package:proxo_app/widgets/auth/auth_widgets.dart';
+import 'package:proxo_app/widgets/auth/auth_header.dart';
 import 'package:proxo_app/widgets/proxo_error_stack.dart';
 import 'package:proxo_app/widgets/proxo_symbol.dart';
 import 'package:proxo_app/theme/app_theme.dart';
@@ -53,6 +54,28 @@ void main() {
     await t.enterText(find.byType(TextField), '٠٧٥٠١٢٣٤٥٦٧');
     expect(c.text, '7501234567');
     await t.pumpWidget(const SizedBox()); c.dispose();
+  });
+  testWidgets('narrow large text keeps Auth words and phone hint on complete lines', (t) async {
+    t.view.physicalSize = const Size(280, 852); t.view.devicePixelRatio = 1;
+    addTearDown(t.view.resetPhysicalSize); addTearDown(t.view.resetDevicePixelRatio);
+    final controller = TextEditingController();
+    await t.pumpWidget(MaterialApp(debugShowCheckedModeBanner: false,
+      builder: (context, child) => MediaQuery(data: MediaQuery.of(context).copyWith(textScaler: const TextScaler.linear(2)), child: child!),
+      home: Scaffold(body: Padding(padding: const EdgeInsets.all(16), child: Column(children: [
+        const AuthTitle('چوونەژوورەوە'),
+        AuthTextField(controller: controller, label: 'ژمارەی مۆبایل', hint: '7XX XXX XXXX',
+          icon: Icons.phone, keyboardType: TextInputType.phone, ltr: true, forceLtr: true,
+          prefix: const Text('+964')),
+      ])))));
+    final title = t.renderObject<RenderParagraph>(find.descendant(of: find.byType(AuthTitle), matching: find.byType(RichText)).first);
+    final lines = title.getBoxesForSelection(TextSelection(baseOffset: 0, extentOffset: title.text.toPlainText().length));
+    expect(lines.map((b) => b.top).toSet().length, 1);
+    expect(title.textScaler.scale(title.text.style!.fontSize!), greaterThan(26));
+    final hint = t.renderObject<RenderParagraph>(find.descendant(of: find.byType(FittedBox), matching: find.byType(RichText)).first);
+    expect(hint.maxLines, 1);
+    expect(t.getSize(find.byType(TextField)).height, lessThan(100));
+    expect(t.takeException(), isNull);
+    await t.pumpWidget(const SizedBox()); controller.dispose();
   });
   for (final width in [280.0, 393.0]) {
     testWidgets('errors overlap with depth, stay readable and dismiss only the front at $width', (t) async {

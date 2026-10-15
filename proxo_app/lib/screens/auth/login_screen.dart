@@ -20,8 +20,7 @@ class LoginScreen extends StatelessWidget {
       children: <Widget>[
         const AuthHeader.login(),
         const SizedBox(height: 28),
-        ProxoText(AuthStrings.signInTitle,
-            textAlign: TextAlign.start, style: AuthTokens.title),
+        AuthTitle(AuthStrings.signInTitle),
         const SizedBox(height: AuthTokens.gapTitleToSubtitle),
         ProxoText(AuthStrings.signInSubtitle,
             textAlign: TextAlign.start, style: AuthTokens.subtitle),
