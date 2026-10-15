@@ -33,6 +33,7 @@ class _LevelsPageState extends State<LevelsPage> with WidgetsBindingObserver {
   List<Map<String, dynamic>> _levels = [];
   double _userPoints = 0;
   bool _loading = true;
+  bool _disposing = false;
 
   // ── Realtime ──────────────────────────────────────────────────────────────
   RealtimeChannel? _channel;
@@ -59,6 +60,7 @@ class _LevelsPageState extends State<LevelsPage> with WidgetsBindingObserver {
 
   @override
   void dispose() {
+    _disposing = true;
     WidgetsBinding.instance.removeObserver(this);
     _channel?.unsubscribe();
     _fallbackPoll?.cancel();
@@ -128,7 +130,7 @@ class _LevelsPageState extends State<LevelsPage> with WidgetsBindingObserver {
           // ئەگەر subscribe سەرکەوتوو نەبوو (channel_error, timed_out,
           // closed) واتە Realtime دانەمەزراوە یان RLS ڕێگری دەکات —
           // لەم حاڵەتەدا fallback polling چالاک دەبێت خۆکار.
-          if (!mounted) return;
+          if (!mounted || _disposing) return;
           _realtimeConnected = status == RealtimeSubscribeStatus.subscribed;
           if (!_realtimeConnected) {
             // یەکسەر جارێک هەوڵ بدە خاڵی ڕاستەقینە بهێنیت
@@ -139,7 +141,7 @@ class _LevelsPageState extends State<LevelsPage> with WidgetsBindingObserver {
 
   // ── Silent refresh (خاڵ تازەکردنەوە بەبێ لۆدینگ ستیمێر) ──────────────────
   Future<void> _silentRefresh() async {
-    if (!mounted) return;
+    if (!mounted || _disposing || _syncing) return;
     setState(() => _syncing = true);
     try {
       final userId = supabase.auth.currentUser?.id;
@@ -417,7 +419,7 @@ class _LevelsPageState extends State<LevelsPage> with WidgetsBindingObserver {
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
 
         // Level icon + name row
-        Row(children: [
+        Wrap(spacing: 14, runSpacing: 12, crossAxisAlignment: WrapCrossAlignment.center, children: [
           Container(
             width: 52, height: 52,
             decoration: BoxDecoration(
@@ -426,7 +428,6 @@ class _LevelsPageState extends State<LevelsPage> with WidgetsBindingObserver {
               border: Border.all(color: levelColor.withOpacity(0.4), width: 1.5)),
             child: Center(
               child: ProxoSolarIcon(levelIcon, size: 22, color: levelColor))),
-          const SizedBox(width: 14),
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             const ProxoText('ئاستی ئێستا', translate: true,
               style: TextStyle(fontFamily: kAppFont, fontSize: 11.5,
@@ -438,7 +439,6 @@ class _LevelsPageState extends State<LevelsPage> with WidgetsBindingObserver {
                 fontWeight: FontWeight.w700, color: levelColor,
                 decoration: TextDecoration.none)),
           ]),
-          const Spacer(),
           // Points badge — نیشانەی خاڵ بە AnimatedSwitcher
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
@@ -546,21 +546,13 @@ class _LevelsPageState extends State<LevelsPage> with WidgetsBindingObserver {
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Row(children: [
-                // Was a bare Text with no overflow protection; wrapped in
-                // Flexible now that the adjacent badge is wider (11.5 vs the
-                // old below-floor 9.5), so a long level name truncates
-                // instead of overflowing the row on a narrow phone.
-                Flexible(
-                  child: ProxoText(levelName,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+              Wrap(spacing: 7, runSpacing: 4, crossAxisAlignment: WrapCrossAlignment.center, children: [
+                // Let the tier name and current-state badge wrap independently.
+                ProxoText(levelName,
                     style: const TextStyle(fontFamily: kAppFont, fontSize: 14,
                       fontWeight: FontWeight.w600, color: AppColors.dark,
                       decoration: TextDecoration.none)),
-                ),
                 if (isCurrent) ...[
-                  const SizedBox(width: 7),
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 7, vertical: 2),

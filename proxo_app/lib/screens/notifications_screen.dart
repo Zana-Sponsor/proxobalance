@@ -1,3 +1,5 @@
+import 'package:solar_icons/solar_icons.dart';
+import '../widgets/proxo_symbol.dart';
 import 'package:proxo_app/l10n/proxo_strings.dart';
 import 'package:proxo_app/theme/app_locale.dart';
 // notifications_screen.dart
@@ -192,42 +194,42 @@ class _NotifTypeDef {
 }
 
 const _typeMap = <String, _NotifTypeDef>{
-  'ad_approved': _NotifTypeDef(Icons.task_alt_rounded, _Cat.success,
+  'ad_approved': _NotifTypeDef(SolarIconsOutline.checkCircle, _Cat.success,
       'ڕیکلامەکەت پەسەندکرا', 'ڕیکلامەکەت پەسەندکرا و ئامادەی بڵاوکردنەوەیە.'),
-  'ad_rejected': _NotifTypeDef(Icons.cancel_rounded, _Cat.error,
+  'ad_rejected': _NotifTypeDef(SolarIconsOutline.closeCircle, _Cat.error,
       'ڕیکلامەکەت ڕەتکرایەوە', 'ڕیکلامەکەت ڕەتکرایەوە. تکایە زانیاریەکان بپشکنە.'),
-  'ad_active': _NotifTypeDef(Icons.campaign_rounded, _Cat.announcement,
+  'ad_active': _NotifTypeDef(SolarIconsOutline.clapperboardPlay, _Cat.announcement,
       'ڕیکلامەکەت چالاکبوو', 'ڕیکلامەکەت ئێستا چالاکە و دەرباز دەبێت.'),
-  'ad_completed': _NotifTypeDef(Icons.emoji_events_rounded, _Cat.success,
+  'ad_completed': _NotifTypeDef(SolarIconsOutline.cupStar, _Cat.success,
       'ڕیکلامەکەت تەواوبوو', 'ڕیکلامەکەت بە سەرکەوتوویی تەواوبوو.'),
-  'ad_paused': _NotifTypeDef(Icons.pause_circle_rounded, _Cat.warning,
+  'ad_paused': _NotifTypeDef(SolarIconsOutline.pauseCircle, _Cat.warning,
       'ڕیکلامەکەت وەستاوە', 'ڕیکلامەکەت وەستێنرا. دەتوانیت دوبارەی چالاک بکەیت.'),
-  'new_ad': _NotifTypeDef(Icons.rocket_launch_rounded, _Cat.promotion,
+  'new_ad': _NotifTypeDef(SolarIconsOutline.rocket, _Cat.promotion,
       'ڕیکلامی نوێ دروستکرا', 'ڕیکلامی نوێت بە سەرکەوتوویی دروستکرا.'),
-  'deposit_approved': _NotifTypeDef(Icons.verified_rounded, _Cat.payment,
+  'deposit_approved': _NotifTypeDef(SolarIconsOutline.shieldCheck, _Cat.payment,
       'پارەدانەکەت پەسەندکرا', 'داواکاری پارەدانەکەت پەسەندکرا.'),
-  'deposit_rejected': _NotifTypeDef(Icons.highlight_off_rounded, _Cat.error,
+  'deposit_rejected': _NotifTypeDef(SolarIconsOutline.closeCircle, _Cat.error,
       'پارەدانەکەت ڕەتکرایەوە', 'داواکاری پارەدانەکەت ڕەتکرایەوە.'),
-  'balance_added': _NotifTypeDef(Icons.account_balance_wallet_rounded,
+  'balance_added': _NotifTypeDef(SolarIconsOutline.wallet2,
       _Cat.wallet, 'باڵانس زیادکرا', 'باڵانسی هەژمارەکەت نوێ کرایەوە.'),
-  'refund': _NotifTypeDef(Icons.currency_exchange_rounded, _Cat.wallet,
+  'refund': _NotifTypeDef(SolarIconsOutline.history, _Cat.wallet,
       'پارەکەت گەڕایەوە', 'پارەی داواکاریەکەت بۆ هەژمارەکەت گەڕایەوە.'),
-  'refund_rejected_ad': _NotifTypeDef(Icons.currency_exchange_rounded,
+  'refund_rejected_ad': _NotifTypeDef(SolarIconsOutline.history,
       _Cat.wallet, 'پارەی ڕیکلامی ڕەتکراو گەڕایەوە',
       'پارەی ڕیکلامی ڕەتکراوەکەت گەڕایەوە.'),
-  'new_asset': _NotifTypeDef(Icons.card_giftcard_rounded, _Cat.gift,
+  'new_asset': _NotifTypeDef(SolarIconsOutline.gift, _Cat.gift,
       'ئامرازێکی نوێ زیادکرا', 'تایبەتمەندییەکی نوێ زیادکرا.'),
-  'admin_msg': _NotifTypeDef(Icons.forum_rounded, _Cat.message,
+  'admin_msg': _NotifTypeDef(SolarIconsOutline.chatRound, _Cat.message,
       'پەیامی ئادمین', 'پەیامێکی نوێت وەرگرت.'),
-  'system_update': _NotifTypeDef(Icons.system_update_rounded, _Cat.update,
+  'system_update': _NotifTypeDef(SolarIconsOutline.restart, _Cat.update,
       'نوێکردنەوەی سیستەم', 'وەشانی نوێی ئەپ ئامادەیە.'),
-  'general': _NotifTypeDef(Icons.notifications_rounded, _Cat.message,
+  'general': _NotifTypeDef(SolarIconsOutline.bell, _Cat.message,
       'ئاگاداری', 'ئاگادارییەکی نوێت هەیە.'),
-  'warning': _NotifTypeDef(Icons.warning_amber_rounded, _Cat.warning,
+  'warning': _NotifTypeDef(SolarIconsOutline.dangerTriangle, _Cat.warning,
       'ئاگادارکردنەوە', 'تکایە ئاگادارییەکە بخوێنەوە.'),
-  'error': _NotifTypeDef(Icons.gpp_bad_rounded, _Cat.error, 'کێشە',
+  'error': _NotifTypeDef(SolarIconsOutline.shieldWarning, _Cat.error, 'کێشە',
       'کێشەیەک لە هەژمارەکەت تۆمارکراوە.'),
-  'security': _NotifTypeDef(Icons.shield_rounded, _Cat.security,
+  'security': _NotifTypeDef(SolarIconsOutline.shield, _Cat.security,
       'ئاسایشی هەژمار', 'چالاکیەک لەسەر هەژمارەکەت تۆمارکراوە.'),
 };
 
@@ -569,7 +571,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                 const SizedBox(height: 12),
                 if (!n.isRead)
                   _ActionTile(
-                    icon: Icons.mark_email_read_rounded,
+                    icon: SolarIconsOutline.letterOpened,
                     label: 'وەک خوێندراوە نیشانبکە',
                     color: _Palette.primary,
                     onTap: () {
@@ -579,8 +581,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   ),
                 _ActionTile(
                   icon: isPinned
-                      ? Icons.push_pin_rounded
-                      : Icons.push_pin_outlined,
+                      ? SolarIconsOutline.pin
+                      : SolarIconsOutline.pin,
                   label: isPinned ? 'لادانی پن' : 'پن بکە',
                   color: _Palette.warning,
                   onTap: () {
@@ -590,8 +592,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                 ),
                 _ActionTile(
                   icon: isMuted
-                      ? Icons.notifications_off_rounded
-                      : Icons.notifications_off_outlined,
+                      ? SolarIconsOutline.bellOff
+                      : SolarIconsOutline.bellOff,
                   label: isMuted ? 'چالاککردنەوەی ئاگاداری' : 'بێدەنگ بکە',
                   color: _Palette.textSecondary,
                   onTap: () {
@@ -600,7 +602,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   },
                 ),
                 _ActionTile(
-                  icon: Icons.archive_outlined,
+                  icon: SolarIconsOutline.archive,
                   label: 'بیخە ئارشیف',
                   color: _Palette.textSecondary,
                   onTap: () {
@@ -609,7 +611,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   },
                 ),
                 _ActionTile(
-                  icon: Icons.delete_outline_rounded,
+                  icon: SolarIconsOutline.trashBinMinimalistic,
                   label: 'بسڕەوە',
                   color: _Palette.error,
                   onTap: () {
@@ -680,13 +682,14 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
   Widget _buildSliverAppBar() {
     final unread = _unreadCount;
+    final barHeight = (MediaQuery.textScalerOf(context).scale(16) * 2.8 + 12).clamp(64.0, 160.0).toDouble();
     return SliverAppBar(
       pinned: true,
       floating: false,
       snap: false,
-      toolbarHeight: 56,
-      collapsedHeight: 56,
-      expandedHeight: 56,
+      toolbarHeight: barHeight,
+      collapsedHeight: barHeight,
+      expandedHeight: barHeight,
       backgroundColor: Colors.white,
       surfaceTintColor: Colors.transparent,
       elevation: 0,
@@ -694,21 +697,22 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       centerTitle: true,
       automaticallyImplyLeading: false,
       titleSpacing: 0,
-      leadingWidth: 0,
-      leading: const SizedBox.shrink(),
+      leadingWidth: 48,
+      leading: IconButton(tooltip: ProxoStrings.text('گەڕانەوە'), onPressed: () => Navigator.of(context).pop(),
+        icon: const ProxoSolarIcon(SolarIconsOutline.altArrowRight, size: 24)),
       title: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const ProxoText(
-            'ئاگادارییەکان', translate: true,
+          const Flexible(child: ProxoText(
+            'ئاگادارییەکان', translate: true, maxLines: 2, overflow: TextOverflow.ellipsis,
             style: TextStyle(
               fontFamily: kAppFont,
               fontSize: 15.5,
               fontWeight: FontWeight.w700,
               color: _Palette.textPrimary,
-              height: 1.2,
+              height: 1.4,
             ),
-          ),
+          )),
           if (unread > 0) ...[
             const SizedBox(width: 6),
             Container(
@@ -736,10 +740,11 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           padding: const EdgeInsets.only(left: 4),
           child: IconButton(
             onPressed: _showFilterSheet,
+            tooltip: ProxoStrings.text('فلتەر'),
             icon: Stack(
               clipBehavior: Clip.none,
               children: [
-                Icon(Icons.tune_rounded,
+                ProxoSolarIcon(SolarIconsOutline.tuning,
                     color: _hasActiveFilters
                         ? _Palette.primary
                         : _Palette.textSecondary,
@@ -763,25 +768,12 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         ),
         if (unread > 0)
           IconButton(
-            onPressed: _markAllRead,
-            icon: const Icon(Icons.done_all_rounded,
+            onPressed: _markingAll ? null : _markAllRead,
+            tooltip: ProxoStrings.text('هەمووی بخوێنەرەوە'),
+            icon: const ProxoSolarIcon(SolarIconsOutline.letterOpened,
                 color: _Palette.primary, size: 21),
           ),
       ],
-      flexibleSpace: SafeArea(
-        bottom: false,
-        child: Align(
-          alignment: Alignment.centerRight,
-          child: Padding(
-            padding: const EdgeInsets.only(right: 4),
-            child: IconButton(
-              onPressed: () => Navigator.of(context).pop(),
-              icon: const Icon(Icons.arrow_forward_rounded,
-                  color: _Palette.textPrimary, size: 21),
-            ),
-          ),
-        ),
-      ),
       bottom: PreferredSize(
         preferredSize: const Size.fromHeight(0.5),
         child: Container(height: 0.5, color: _Palette.divider),
@@ -833,7 +825,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   color: Color(0xFFEFF4FE),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.notifications_off_outlined,
+                child: const ProxoSolarIcon(SolarIconsOutline.bellOff,
                     size: 34, color: _Palette.primary),
               ),
               const SizedBox(height: 16),
@@ -988,13 +980,13 @@ class _NotifCardState extends State<_NotifCard> {
       background: const _SwipeBackground(
         alignment: Alignment.centerRight,
         color: _Palette.success,
-        icon: Icons.archive_rounded,
+        icon: SolarIconsOutline.archive,
         label: 'ئارشیف',
       ),
       secondaryBackground: const _SwipeBackground(
         alignment: Alignment.centerLeft,
         color: _Palette.error,
-        icon: Icons.delete_rounded,
+        icon: SolarIconsOutline.trashBinMinimalistic,
         label: 'سڕینەوە',
       ),
       confirmDismiss: (direction) async {
@@ -1046,7 +1038,7 @@ class _NotifCardState extends State<_NotifCard> {
                       ),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Icon(t.icon, size: 20, color: Colors.white),
+                    child: ProxoSolarIcon(t.icon, size: 20, color: Colors.white),
                   ),
                 ),
                 const SizedBox(width: 10),
@@ -1062,13 +1054,13 @@ class _NotifCardState extends State<_NotifCard> {
                           if (widget.isPinned)
                             const Padding(
                               padding: EdgeInsets.only(left: 4),
-                              child: Icon(Icons.push_pin_rounded,
+                              child: ProxoSolarIcon(SolarIconsOutline.pin,
                                   size: 11, color: _Palette.warning),
                             ),
                           if (widget.isMuted)
                             const Padding(
                               padding: EdgeInsets.only(left: 4),
-                              child: Icon(Icons.notifications_off_rounded,
+                              child: ProxoSolarIcon(SolarIconsOutline.bellOff,
                                   size: 11, color: _Palette.textSecondary),
                             ),
                           Expanded(
@@ -1118,8 +1110,8 @@ class _NotifCardState extends State<_NotifCard> {
                         ),
                       ),
                       const SizedBox(height: 4),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
+                      Wrap(
+                        crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
                           ProxoText(
                             _timeAgo(n.createdAt),
@@ -1194,7 +1186,7 @@ class _SwipeBackground extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, color: Colors.white, size: 17),
+          ProxoSolarIcon(icon, color: Colors.white, size: 17),
           const SizedBox(width: 6),
           ProxoText(
             label, translate: true,
@@ -1329,7 +1321,7 @@ class _ActionTile extends StatelessWidget {
                 color: color.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Icon(icon, color: color, size: 17),
+              child: ProxoSolarIcon(icon, color: color, size: 17),
             ),
             const SizedBox(width: 12),
             Expanded(

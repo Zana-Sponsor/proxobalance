@@ -700,7 +700,8 @@ class _DepositScreenState extends State<DepositScreen> {
       child: CustomPaint(
         painter: const _DashedBorderPainter(),
         child: Container(
-          height: 152,
+          constraints: const BoxConstraints(minHeight: 152),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 20),
           alignment: Alignment.center,
           child: Column(mainAxisSize: MainAxisSize.min, children: [
             Container(

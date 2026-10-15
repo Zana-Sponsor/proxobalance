@@ -119,12 +119,15 @@ class _AdActivationNoticeHostState extends State<AdActivationNoticeHost> with Wi
     unawaited(_restoreAndRefresh(uid, generation));
   }
   Future<void> _restoreAndRefresh(String uid, int generation) async {
-    final prefs = await SharedPreferences.getInstance();
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      if (!mounted || generation != _generation) return;
+      for (final entry in prefs.getStringList('proxo_recent_ad_notice_$uid') ?? <String>[]) {
+        final parts = entry.split('|');
+        if (parts.length == 2) _seen[parts[0]] = int.tryParse(parts[1]) ?? 0;
+      }
+    } catch (_) { /* Session-local deduplication still works if preferences fail. */ }
     if (!mounted || generation != _generation) return;
-    for (final entry in prefs.getStringList('proxo_recent_ad_notice_$uid') ?? <String>[]) {
-      final parts = entry.split('|');
-      if (parts.length == 2) _seen[parts[0]] = int.tryParse(parts[1]) ?? 0;
-    }
     _prune(); _ready = true; await _refresh();
   }
   void _prune() {

@@ -566,6 +566,16 @@ class _TxCard extends StatelessWidget {
 
   const _TxCard({required this.item, required this.onTap});
 
+  String _localizedLabel(String value) {
+    // Only app-generated labels are translated; persisted notes and codes stay intact.
+    final ad = RegExp(r'^ڕیکلام #(.+)$').firstMatch(value);
+    if (ad != null) return ProxoStrings.format('ڕیکلام #{number}', {'number':ad.group(1)!});
+    final refund = RegExp(r'^گەڕانەوەی پارە — ڕیکلام #(.+)$').firstMatch(value);
+    if (refund != null) return ProxoStrings.format('گەڕانەوەی پارە — ڕیکلام #{number}', {'number':refund.group(1)!});
+    if (value.startsWith('ڤووچەر: ')) return ProxoStrings.format('ڤووچەر: {code}', {'code':value.substring('ڤووچەر: '.length)});
+    return ProxoStrings.text(value);
+  }
+
   @override
   Widget build(BuildContext context) {
     final _TxItem t = item;
@@ -583,7 +593,7 @@ class _TxCard extends StatelessWidget {
         ? ReceiptTokens.positive
         : ReceiptTokens.negative;
     return TxHistoryCard(
-      label: t.label,
+      label: _localizedLabel(t.label),
       status: t.isSettled
           ? null
           : t.status == 'rejected'

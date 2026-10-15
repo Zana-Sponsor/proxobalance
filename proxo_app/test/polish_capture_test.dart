@@ -1,3 +1,4 @@
+import 'package:proxo_app/screens/notifications_screen.dart';
 import 'package:proxo_app/widgets/proxo_sidebar.dart';
 import 'package:proxo_app/widgets/levels_page.dart';
 import 'package:proxo_app/widgets/tasks_page.dart';
@@ -49,13 +50,14 @@ void main() {
   tearDownAll(() async { await backend.dispose(); ProxoLocale.current.value = ProxoLocale.kurdishSorani; });
   for (final config in [(393.0, 1.0, 3.0), (280.0, 2.0, 2.0)]) {
     for (final language in ['ckb', 'ar', 'kmr']) {
-      for (final section in ['login', 'signup', 'forgot', 'otp', 'deposit', 'ads', 'create', 'profile', 'home', 'navigation', 'levels', 'tasks', 'vouchers', 'discounts']) {
+      for (final section in ['login', 'signup', 'forgot', 'otp', 'deposit', 'ads', 'create', 'profile', 'home', 'navigation', 'levels', 'tasks', 'vouchers', 'discounts', 'notifications']) {
         testWidgets('$section $language $config', (t) async {
           final (width, scale, dpr) = config;
           t.view.devicePixelRatio = dpr;
           t.view.physicalSize = Size(width*dpr, 852*dpr);
           addTearDown(t.view.resetPhysicalSize); addTearDown(t.view.resetDevicePixelRatio);
           ProxoLocale.current.value = Locale(language);
+          backend.includeNotifications = section == 'notifications';
           final key = GlobalKey();
           final code = TextEditingController(); final focus = FocusNode();
           final child = switch(section) {
@@ -65,6 +67,7 @@ void main() {
                 otpBoxes: AuthOtpBoxes(length: 6, codeController: code, firstBoxFocus: focus, onCompleted: (_) {}),
                 resend: AuthTextLink(label: AuthStrings.resendAction, onTap: () {}),
                 verifyButton: AuthPrimaryButton(label: AuthStrings.verifyButton, onPressed: null))))),
+            'notifications' => const NotificationsScreen(),
             'levels' => const LevelsPage(),
             'tasks' => const TasksPage(),
             'vouchers' => const VoucherPage(),
@@ -135,7 +138,12 @@ void main() {
               }
             }
           }
-          await t.pumpWidget(const SizedBox()); await t.pump();
+          try { await t.pumpWidget(const SizedBox()); await t.pump(); }
+          catch (error) { exceptions.add(error.toString()); }
+          while ((error = t.takeException()) != null) { exceptions.add(error.toString()); }
+          await t.runAsync(() async {
+            await File('build/polish-evidence/$name-lifecycle.json').writeAsString(jsonEncode({'section':section,'locale':language,'width':width,'textScale':scale,'exceptions':exceptions}));
+          });
           code.dispose(); focus.dispose();
           if (!before) expect(exceptions,isEmpty, reason:name);
         });
