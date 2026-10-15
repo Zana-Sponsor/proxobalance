@@ -1,0 +1,2826 @@
+{
+  "method": "Non-comment lexical glyph references, not runtime usage; raster alpha bounds in source pixels. Package-internal SVGs are not local assets.",
+  "families": {
+    "Icons": 100,
+    "FontAwesomeIcons": 5,
+    "ProxoSymbolName": 58,
+    "SolarIcons": 18,
+    "SolarIconsOutline": 137
+  },
+  "references": [
+    {
+      "path": "proxo_app/lib/models/proxolink_template_meta.dart",
+      "line": 73,
+      "family": "Icons",
+      "glyph": "dark_mode_rounded"
+    },
+    {
+      "path": "proxo_app/lib/models/proxolink_template_meta.dart",
+      "line": 75,
+      "family": "Icons",
+      "glyph": "light_mode_rounded"
+    },
+    {
+      "path": "proxo_app/lib/models/proxolink_template_meta.dart",
+      "line": 77,
+      "family": "Icons",
+      "glyph": "layers_rounded"
+    },
+    {
+      "path": "proxo_app/lib/models/proxolink_template_meta.dart",
+      "line": 79,
+      "family": "Icons",
+      "glyph": "healing_rounded"
+    },
+    {
+      "path": "proxo_app/lib/models/proxolink_template_meta.dart",
+      "line": 81,
+      "family": "Icons",
+      "glyph": "credit_card_rounded"
+    },
+    {
+      "path": "proxo_app/lib/models/proxolink_template_meta.dart",
+      "line": 83,
+      "family": "Icons",
+      "glyph": "bolt_rounded"
+    },
+    {
+      "path": "proxo_app/lib/models/proxolink_template_meta.dart",
+      "line": 85,
+      "family": "Icons",
+      "glyph": "zoom_in_rounded"
+    },
+    {
+      "path": "proxo_app/lib/models/proxolink_template_meta.dart",
+      "line": 87,
+      "family": "Icons",
+      "glyph": "view_stream_rounded"
+    },
+    {
+      "path": "proxo_app/lib/models/proxolink_template_meta.dart",
+      "line": 170,
+      "family": "FontAwesomeIcons",
+      "glyph": "whatsapp"
+    },
+    {
+      "path": "proxo_app/lib/models/proxolink_template_meta.dart",
+      "line": 184,
+      "family": "FontAwesomeIcons",
+      "glyph": "viber"
+    },
+    {
+      "path": "proxo_app/lib/models/proxolink_template_meta.dart",
+      "line": 198,
+      "family": "FontAwesomeIcons",
+      "glyph": "instagram"
+    },
+    {
+      "path": "proxo_app/lib/models/proxolink_template_meta.dart",
+      "line": 212,
+      "family": "FontAwesomeIcons",
+      "glyph": "phone"
+    },
+    {
+      "path": "proxo_app/lib/models/proxolink_template_meta.dart",
+      "line": 226,
+      "family": "FontAwesomeIcons",
+      "glyph": "mobileScreenButton"
+    },
+    {
+      "path": "proxo_app/lib/screens/ad_confirmation_screen.dart",
+      "line": 192,
+      "family": "Icons",
+      "glyph": "info_outline"
+    },
+    {
+      "path": "proxo_app/lib/screens/ad_screen.dart",
+      "line": 4252,
+      "family": "Icons",
+      "glyph": "refresh_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/ad_screen.dart",
+      "line": 4252,
+      "family": "Icons",
+      "glyph": "play_arrow_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/auth/auth_shell.dart",
+      "line": 1349,
+      "family": "ProxoSymbolName",
+      "glyph": "warning"
+    },
+    {
+      "path": "proxo_app/lib/screens/auth/auth_shell.dart",
+      "line": 1528,
+      "family": "Icons",
+      "glyph": "mail_outline_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/auth/auth_shell.dart",
+      "line": 1562,
+      "family": "Icons",
+      "glyph": "lock_outline_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/auth/auth_shell.dart",
+      "line": 1627,
+      "family": "Icons",
+      "glyph": "phone_iphone_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/auth/auth_shell.dart",
+      "line": 1686,
+      "family": "Icons",
+      "glyph": "person_outline_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/auth/auth_shell.dart",
+      "line": 1710,
+      "family": "Icons",
+      "glyph": "phone_iphone_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/auth/auth_shell.dart",
+      "line": 1753,
+      "family": "Icons",
+      "glyph": "lock_outline_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/auth/auth_shell.dart",
+      "line": 1787,
+      "family": "Icons",
+      "glyph": "lock_reset_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/auth/auth_shell.dart",
+      "line": 1963,
+      "family": "ProxoSymbolName",
+      "glyph": "recovery"
+    },
+    {
+      "path": "proxo_app/lib/screens/auth/auth_shell.dart",
+      "line": 1973,
+      "family": "Icons",
+      "glyph": "mail_outline_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/auth/auth_shell.dart",
+      "line": 2017,
+      "family": "ProxoSymbolName",
+      "glyph": "recovery"
+    },
+    {
+      "path": "proxo_app/lib/screens/auth/auth_shell.dart",
+      "line": 2030,
+      "family": "Icons",
+      "glyph": "lock_outline_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/auth/auth_shell.dart",
+      "line": 2063,
+      "family": "Icons",
+      "glyph": "lock_reset_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/auth/auth_shell.dart",
+      "line": 2109,
+      "family": "ProxoSymbolName",
+      "glyph": "eyeClosed"
+    },
+    {
+      "path": "proxo_app/lib/screens/auth/auth_shell.dart",
+      "line": 2109,
+      "family": "ProxoSymbolName",
+      "glyph": "eye"
+    },
+    {
+      "path": "proxo_app/lib/screens/auth/login_screen.dart",
+      "line": 24,
+      "family": "ProxoSymbolName",
+      "glyph": "login"
+    },
+    {
+      "path": "proxo_app/lib/screens/auth/otp_screen.dart",
+      "line": 32,
+      "family": "ProxoSymbolName",
+      "glyph": "verified"
+    },
+    {
+      "path": "proxo_app/lib/screens/auth/signup_screen.dart",
+      "line": 26,
+      "family": "ProxoSymbolName",
+      "glyph": "signup"
+    },
+    {
+      "path": "proxo_app/lib/screens/best_metrics_screen.dart",
+      "line": 201,
+      "family": "SolarIcons",
+      "glyph": "altArrowRight"
+    },
+    {
+      "path": "proxo_app/lib/screens/best_metrics_screen.dart",
+      "line": 210,
+      "family": "SolarIcons",
+      "glyph": "medalStar"
+    },
+    {
+      "path": "proxo_app/lib/screens/best_metrics_screen.dart",
+      "line": 332,
+      "family": "SolarIcons",
+      "glyph": "dangerTriangle"
+    },
+    {
+      "path": "proxo_app/lib/screens/deposit_screen.dart",
+      "line": 119,
+      "family": "Icons",
+      "glyph": "account_balance_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/deposit_screen.dart",
+      "line": 127,
+      "family": "Icons",
+      "glyph": "flash_on_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/deposit_screen.dart",
+      "line": 135,
+      "family": "Icons",
+      "glyph": "credit_card_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/deposit_screen.dart",
+      "line": 143,
+      "family": "Icons",
+      "glyph": "account_balance_wallet_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/deposit_screen.dart",
+      "line": 151,
+      "family": "Icons",
+      "glyph": "apps_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/deposit_screen.dart",
+      "line": 159,
+      "family": "Icons",
+      "glyph": "sim_card_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/deposit_screen.dart",
+      "line": 168,
+      "family": "Icons",
+      "glyph": "signal_cellular_alt_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/deposit_screen.dart",
+      "line": 269,
+      "family": "Icons",
+      "glyph": "photo_camera_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/deposit_screen.dart",
+      "line": 275,
+      "family": "ProxoSymbolName",
+      "glyph": "gallery"
+    },
+    {
+      "path": "proxo_app/lib/screens/deposit_screen.dart",
+      "line": 712,
+      "family": "ProxoSymbolName",
+      "glyph": "upload"
+    },
+    {
+      "path": "proxo_app/lib/screens/deposit_screen.dart",
+      "line": 961,
+      "family": "ProxoSymbolName",
+      "glyph": "copy"
+    },
+    {
+      "path": "proxo_app/lib/screens/faq_screen.dart",
+      "line": 303,
+      "family": "Icons",
+      "glyph": "chevron_right_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/faq_screen.dart",
+      "line": 456,
+      "family": "Icons",
+      "glyph": "keyboard_arrow_down_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/home_screen.dart",
+      "line": 697,
+      "family": "SolarIcons",
+      "glyph": "dollarMinimalistic"
+    },
+    {
+      "path": "proxo_app/lib/screens/home_screen.dart",
+      "line": 698,
+      "family": "SolarIcons",
+      "glyph": "cursorSquare"
+    },
+    {
+      "path": "proxo_app/lib/screens/home_screen.dart",
+      "line": 699,
+      "family": "SolarIcons",
+      "glyph": "target"
+    },
+    {
+      "path": "proxo_app/lib/screens/home_screen.dart",
+      "line": 700,
+      "family": "SolarIcons",
+      "glyph": "arrowRightUp"
+    },
+    {
+      "path": "proxo_app/lib/screens/home_screen.dart",
+      "line": 768,
+      "family": "SolarIcons",
+      "glyph": "altArrowDown"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 197,
+      "family": "SolarIconsOutline",
+      "glyph": "checkCircle"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 199,
+      "family": "SolarIconsOutline",
+      "glyph": "closeCircle"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 201,
+      "family": "SolarIconsOutline",
+      "glyph": "clapperboardPlay"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 203,
+      "family": "SolarIconsOutline",
+      "glyph": "cupStar"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 205,
+      "family": "SolarIconsOutline",
+      "glyph": "pauseCircle"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 207,
+      "family": "SolarIconsOutline",
+      "glyph": "rocket"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 209,
+      "family": "SolarIconsOutline",
+      "glyph": "shieldCheck"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 211,
+      "family": "SolarIconsOutline",
+      "glyph": "closeCircle"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 213,
+      "family": "SolarIconsOutline",
+      "glyph": "wallet2"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 215,
+      "family": "SolarIconsOutline",
+      "glyph": "history"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 217,
+      "family": "SolarIconsOutline",
+      "glyph": "history"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 220,
+      "family": "SolarIconsOutline",
+      "glyph": "gift"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 222,
+      "family": "SolarIconsOutline",
+      "glyph": "chatRound"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 224,
+      "family": "SolarIconsOutline",
+      "glyph": "restart"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 226,
+      "family": "SolarIconsOutline",
+      "glyph": "bell"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 228,
+      "family": "SolarIconsOutline",
+      "glyph": "dangerTriangle"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 230,
+      "family": "SolarIconsOutline",
+      "glyph": "shieldWarning"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 232,
+      "family": "SolarIconsOutline",
+      "glyph": "shield"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 574,
+      "family": "SolarIconsOutline",
+      "glyph": "letterOpened"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 584,
+      "family": "SolarIconsOutline",
+      "glyph": "pin"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 585,
+      "family": "SolarIconsOutline",
+      "glyph": "pin"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 595,
+      "family": "SolarIconsOutline",
+      "glyph": "bellOff"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 596,
+      "family": "SolarIconsOutline",
+      "glyph": "bellOff"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 605,
+      "family": "SolarIconsOutline",
+      "glyph": "archive"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 614,
+      "family": "SolarIconsOutline",
+      "glyph": "trashBinMinimalistic"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 702,
+      "family": "SolarIconsOutline",
+      "glyph": "altArrowRight"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 747,
+      "family": "SolarIconsOutline",
+      "glyph": "tuning"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 773,
+      "family": "SolarIconsOutline",
+      "glyph": "letterOpened"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 828,
+      "family": "SolarIconsOutline",
+      "glyph": "bellOff"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 983,
+      "family": "SolarIconsOutline",
+      "glyph": "archive"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 989,
+      "family": "SolarIconsOutline",
+      "glyph": "trashBinMinimalistic"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 1057,
+      "family": "SolarIconsOutline",
+      "glyph": "pin"
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "line": 1063,
+      "family": "SolarIconsOutline",
+      "glyph": "bellOff"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 424,
+      "family": "SolarIconsOutline",
+      "glyph": "bell"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 430,
+      "family": "SolarIconsOutline",
+      "glyph": "history"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 443,
+      "family": "SolarIconsOutline",
+      "glyph": "chatRoundCall"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 449,
+      "family": "SolarIconsOutline",
+      "glyph": "documentText"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 454,
+      "family": "SolarIconsOutline",
+      "glyph": "questionCircle"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 1028,
+      "family": "SolarIconsOutline",
+      "glyph": "userRounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 1030,
+      "family": "SolarIconsOutline",
+      "glyph": "lock"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 1061,
+      "family": "SolarIconsOutline",
+      "glyph": "letter"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 1083,
+      "family": "SolarIconsOutline",
+      "glyph": "smartphone"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 1085,
+      "family": "SolarIconsOutline",
+      "glyph": "lock"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 1143,
+      "family": "SolarIconsOutline",
+      "glyph": "userCrossRounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 1175,
+      "family": "SolarIconsOutline",
+      "glyph": "altArrowLeft"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 1315,
+      "family": "SolarIconsOutline",
+      "glyph": "altArrowRight"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 1320,
+      "family": "SolarIconsOutline",
+      "glyph": "penNewSquare"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 1334,
+      "family": "SolarIconsOutline",
+      "glyph": "penNewSquare"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 1370,
+      "family": "SolarIconsOutline",
+      "glyph": "altArrowRight"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 1555,
+      "family": "Icons",
+      "glyph": "photo_camera_outlined"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 1582,
+      "family": "SolarIconsOutline",
+      "glyph": "userRounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 1603,
+      "family": "SolarIconsOutline",
+      "glyph": "wallet2"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 1611,
+      "family": "SolarIconsOutline",
+      "glyph": "eye"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 1611,
+      "family": "SolarIconsOutline",
+      "glyph": "eyeClosed"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 1627,
+      "family": "SolarIconsOutline",
+      "glyph": "addCircle"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 1653,
+      "family": "SolarIconsOutline",
+      "glyph": "clapperboardPlay"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 1654,
+      "family": "SolarIconsOutline",
+      "glyph": "widget_2"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 1655,
+      "family": "SolarIconsOutline",
+      "glyph": "tagPrice"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 1832,
+      "family": "SolarIconsOutline",
+      "glyph": "altArrowLeft"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 1876,
+      "family": "SolarIconsOutline",
+      "glyph": "logout"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 1896,
+      "family": "SolarIconsOutline",
+      "glyph": "altArrowLeft"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 1956,
+      "family": "SolarIconsOutline",
+      "glyph": "chatRoundCall"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 1974,
+      "family": "SolarIconsOutline",
+      "glyph": "chatRoundDots"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 1985,
+      "family": "SolarIconsOutline",
+      "glyph": "phoneRounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 2105,
+      "family": "SolarIconsOutline",
+      "glyph": "closeCircle"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 2127,
+      "family": "SolarIconsOutline",
+      "glyph": "sledgehammer"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 2143,
+      "family": "SolarIconsOutline",
+      "glyph": "shieldCheck"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 2157,
+      "family": "SolarIconsOutline",
+      "glyph": "usersGroupRounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 2168,
+      "family": "SolarIconsOutline",
+      "glyph": "infoCircle"
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "line": 2610,
+      "family": "SolarIconsOutline",
+      "glyph": "shieldCheck"
+    },
+    {
+      "path": "proxo_app/lib/screens/proxolink_create_page_screen.dart",
+      "line": 201,
+      "family": "Icons",
+      "glyph": "add_photo_alternate_outlined"
+    },
+    {
+      "path": "proxo_app/lib/screens/proxolink_create_page_screen.dart",
+      "line": 201,
+      "family": "Icons",
+      "glyph": "check_circle_outline"
+    },
+    {
+      "path": "proxo_app/lib/screens/proxolink_page_details_screen.dart",
+      "line": 292,
+      "family": "Icons",
+      "glyph": "edit_outlined"
+    },
+    {
+      "path": "proxo_app/lib/screens/proxolink_page_editor.dart",
+      "line": 586,
+      "family": "Icons",
+      "glyph": "person_outline"
+    },
+    {
+      "path": "proxo_app/lib/screens/proxolink_page_editor.dart",
+      "line": 592,
+      "family": "Icons",
+      "glyph": "photo_outlined"
+    },
+    {
+      "path": "proxo_app/lib/screens/proxolink_page_editor.dart",
+      "line": 660,
+      "family": "Icons",
+      "glyph": "check"
+    },
+    {
+      "path": "proxo_app/lib/screens/proxolink_page_editor.dart",
+      "line": 698,
+      "family": "Icons",
+      "glyph": "arrow_upward"
+    },
+    {
+      "path": "proxo_app/lib/screens/proxolink_page_editor.dart",
+      "line": 705,
+      "family": "Icons",
+      "glyph": "arrow_downward"
+    },
+    {
+      "path": "proxo_app/lib/screens/proxolink_page_editor.dart",
+      "line": 773,
+      "family": "Icons",
+      "glyph": "open_in_full"
+    },
+    {
+      "path": "proxo_app/lib/screens/tools_screen.dart",
+      "line": 146,
+      "family": "Icons",
+      "glyph": "article_outlined"
+    },
+    {
+      "path": "proxo_app/lib/screens/tools_screen.dart",
+      "line": 146,
+      "family": "Icons",
+      "glyph": "cloud_off_outlined"
+    },
+    {
+      "path": "proxo_app/lib/screens/tutorial_screen.dart",
+      "line": 227,
+      "family": "Icons",
+      "glyph": "play_circle_fill_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/tutorial_screen.dart",
+      "line": 250,
+      "family": "Icons",
+      "glyph": "play_circle_outline_rounded"
+    },
+    {
+      "path": "proxo_app/lib/screens/tutorial_screen.dart",
+      "line": 348,
+      "family": "Icons",
+      "glyph": "play_circle_fill_rounded"
+    },
+    {
+      "path": "proxo_app/lib/theme/proxo_icons.dart",
+      "line": 10,
+      "family": "Icons",
+      "glyph": "campaign_outlined"
+    },
+    {
+      "path": "proxo_app/lib/theme/proxo_icons.dart",
+      "line": 11,
+      "family": "Icons",
+      "glyph": "account_balance_wallet_outlined"
+    },
+    {
+      "path": "proxo_app/lib/theme/proxo_icons.dart",
+      "line": 12,
+      "family": "Icons",
+      "glyph": "add_link_outlined"
+    },
+    {
+      "path": "proxo_app/lib/theme/proxo_icons.dart",
+      "line": 13,
+      "family": "Icons",
+      "glyph": "link_outlined"
+    },
+    {
+      "path": "proxo_app/lib/theme/proxo_icons.dart",
+      "line": 14,
+      "family": "Icons",
+      "glyph": "help_outline_rounded"
+    },
+    {
+      "path": "proxo_app/lib/theme/proxo_icons.dart",
+      "line": 15,
+      "family": "Icons",
+      "glyph": "block_rounded"
+    },
+    {
+      "path": "proxo_app/lib/theme/proxo_icons.dart",
+      "line": 16,
+      "family": "Icons",
+      "glyph": "calendar_month_outlined"
+    },
+    {
+      "path": "proxo_app/lib/theme/proxo_icons.dart",
+      "line": 17,
+      "family": "Icons",
+      "glyph": "schedule_rounded"
+    },
+    {
+      "path": "proxo_app/lib/theme/proxo_icons.dart",
+      "line": 18,
+      "family": "Icons",
+      "glyph": "edit_outlined"
+    },
+    {
+      "path": "proxo_app/lib/theme/proxo_icons.dart",
+      "line": 19,
+      "family": "Icons",
+      "glyph": "cloud_off_outlined"
+    },
+    {
+      "path": "proxo_app/lib/theme/proxo_icons.dart",
+      "line": 20,
+      "family": "Icons",
+      "glyph": "add_rounded"
+    },
+    {
+      "path": "proxo_app/lib/theme/proxo_icons.dart",
+      "line": 21,
+      "family": "Icons",
+      "glyph": "check_circle_outline_rounded"
+    },
+    {
+      "path": "proxo_app/lib/theme/proxo_icons.dart",
+      "line": 22,
+      "family": "Icons",
+      "glyph": "warning_amber_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/ad_activation_notice.dart",
+      "line": 48,
+      "family": "ProxoSymbolName",
+      "glyph": "verified"
+    },
+    {
+      "path": "proxo_app/lib/widgets/ad_activation_notice.dart",
+      "line": 62,
+      "family": "ProxoSymbolName",
+      "glyph": "close"
+    },
+    {
+      "path": "proxo_app/lib/widgets/ad_feedback.dart",
+      "line": 179,
+      "family": "Icons",
+      "glyph": "close_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/ad_feedback.dart",
+      "line": 357,
+      "family": "Icons",
+      "glyph": "star_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/ad_feedback.dart",
+      "line": 357,
+      "family": "Icons",
+      "glyph": "star_outline_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/ad_feedback.dart",
+      "line": 488,
+      "family": "Icons",
+      "glyph": "star_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/ad_feedback.dart",
+      "line": 488,
+      "family": "Icons",
+      "glyph": "star_outline_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/ad_feedback.dart",
+      "line": 534,
+      "family": "Icons",
+      "glyph": "chevron_left_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/ad_feedback.dart",
+      "line": 560,
+      "family": "Icons",
+      "glyph": "star_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/ad_feedback.dart",
+      "line": 560,
+      "family": "Icons",
+      "glyph": "star_outline_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/ad_validation_notifications.dart",
+      "line": 179,
+      "family": "Icons",
+      "glyph": "error_outline"
+    },
+    {
+      "path": "proxo_app/lib/widgets/auth/auth_header.dart",
+      "line": 98,
+      "family": "ProxoSymbolName",
+      "glyph": "language"
+    },
+    {
+      "path": "proxo_app/lib/widgets/auth/auth_widgets.dart",
+      "line": 288,
+      "family": "ProxoSymbolName",
+      "glyph": "back"
+    },
+    {
+      "path": "proxo_app/lib/widgets/auth/auth_widgets.dart",
+      "line": 289,
+      "family": "ProxoSymbolName",
+      "glyph": "forward"
+    },
+    {
+      "path": "proxo_app/lib/widgets/auth/auth_widgets.dart",
+      "line": 334,
+      "family": "ProxoSymbolName",
+      "glyph": "check"
+    },
+    {
+      "path": "proxo_app/lib/widgets/auth/auth_widgets.dart",
+      "line": 334,
+      "family": "ProxoSymbolName",
+      "glyph": "info"
+    },
+    {
+      "path": "proxo_app/lib/widgets/auth/auth_widgets.dart",
+      "line": 446,
+      "family": "ProxoSymbolName",
+      "glyph": "check"
+    },
+    {
+      "path": "proxo_app/lib/widgets/auth/auth_widgets.dart",
+      "line": 544,
+      "family": "ProxoSymbolName",
+      "glyph": "close"
+    },
+    {
+      "path": "proxo_app/lib/widgets/auth/auth_widgets.dart",
+      "line": 709,
+      "family": "ProxoSymbolName",
+      "glyph": "lock"
+    },
+    {
+      "path": "proxo_app/lib/widgets/auth/auth_widgets.dart",
+      "line": 793,
+      "family": "ProxoSymbolName",
+      "glyph": "user"
+    },
+    {
+      "path": "proxo_app/lib/widgets/auth/auth_widgets.dart",
+      "line": 825,
+      "family": "ProxoSymbolName",
+      "glyph": "forward"
+    },
+    {
+      "path": "proxo_app/lib/widgets/auth/auth_widgets.dart",
+      "line": 958,
+      "family": "Icons",
+      "glyph": "mail_outline_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/auth/auth_widgets.dart",
+      "line": 958,
+      "family": "ProxoSymbolName",
+      "glyph": "email"
+    },
+    {
+      "path": "proxo_app/lib/widgets/auth/auth_widgets.dart",
+      "line": 959,
+      "family": "Icons",
+      "glyph": "phone_iphone_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/auth/auth_widgets.dart",
+      "line": 959,
+      "family": "ProxoSymbolName",
+      "glyph": "phone"
+    },
+    {
+      "path": "proxo_app/lib/widgets/auth/auth_widgets.dart",
+      "line": 960,
+      "family": "Icons",
+      "glyph": "person_outline_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/auth/auth_widgets.dart",
+      "line": 960,
+      "family": "ProxoSymbolName",
+      "glyph": "user"
+    },
+    {
+      "path": "proxo_app/lib/widgets/auth/auth_widgets.dart",
+      "line": 961,
+      "family": "Icons",
+      "glyph": "lock_reset_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/auth/auth_widgets.dart",
+      "line": 961,
+      "family": "ProxoSymbolName",
+      "glyph": "recovery"
+    },
+    {
+      "path": "proxo_app/lib/widgets/auth/auth_widgets.dart",
+      "line": 962,
+      "family": "ProxoSymbolName",
+      "glyph": "password"
+    },
+    {
+      "path": "proxo_app/lib/widgets/best_metric_card.dart",
+      "line": 95,
+      "family": "SolarIcons",
+      "glyph": "eye"
+    },
+    {
+      "path": "proxo_app/lib/widgets/best_metric_card.dart",
+      "line": 103,
+      "family": "SolarIcons",
+      "glyph": "cursorSquare"
+    },
+    {
+      "path": "proxo_app/lib/widgets/best_metric_card.dart",
+      "line": 111,
+      "family": "SolarIcons",
+      "glyph": "dollarMinimalistic"
+    },
+    {
+      "path": "proxo_app/lib/widgets/best_metric_card.dart",
+      "line": 139,
+      "family": "SolarIcons",
+      "glyph": "arrowRightUp"
+    },
+    {
+      "path": "proxo_app/lib/widgets/best_metric_card.dart",
+      "line": 186,
+      "family": "SolarIcons",
+      "glyph": "altArrowDown"
+    },
+    {
+      "path": "proxo_app/lib/widgets/best_metric_card.dart",
+      "line": 212,
+      "family": "SolarIcons",
+      "glyph": "target"
+    },
+    {
+      "path": "proxo_app/lib/widgets/best_metric_card.dart",
+      "line": 220,
+      "family": "SolarIcons",
+      "glyph": "wallet"
+    },
+    {
+      "path": "proxo_app/lib/widgets/best_metric_card.dart",
+      "line": 311,
+      "family": "SolarIcons",
+      "glyph": "gallery"
+    },
+    {
+      "path": "proxo_app/lib/widgets/best_metric_card.dart",
+      "line": 413,
+      "family": "SolarIcons",
+      "glyph": "cupStar"
+    },
+    {
+      "path": "proxo_app/lib/widgets/best_metric_card.dart",
+      "line": 449,
+      "family": "SolarIcons",
+      "glyph": "fire"
+    },
+    {
+      "path": "proxo_app/lib/widgets/bottom_nav.dart",
+      "line": 42,
+      "family": "ProxoSymbolName",
+      "glyph": "home"
+    },
+    {
+      "path": "proxo_app/lib/widgets/bottom_nav.dart",
+      "line": 42,
+      "family": "ProxoSymbolName",
+      "glyph": "ads"
+    },
+    {
+      "path": "proxo_app/lib/widgets/bottom_nav.dart",
+      "line": 43,
+      "family": "ProxoSymbolName",
+      "glyph": "add"
+    },
+    {
+      "path": "proxo_app/lib/widgets/bottom_nav.dart",
+      "line": 43,
+      "family": "ProxoSymbolName",
+      "glyph": "tools"
+    },
+    {
+      "path": "proxo_app/lib/widgets/bottom_nav.dart",
+      "line": 43,
+      "family": "ProxoSymbolName",
+      "glyph": "user"
+    },
+    {
+      "path": "proxo_app/lib/widgets/bottom_nav.dart",
+      "line": 74,
+      "family": "ProxoSymbolName",
+      "glyph": "add"
+    },
+    {
+      "path": "proxo_app/lib/widgets/fastpay_checkout_sheet.dart",
+      "line": 545,
+      "family": "Icons",
+      "glyph": "close"
+    },
+    {
+      "path": "proxo_app/lib/widgets/fastpay_checkout_sheet.dart",
+      "line": 563,
+      "family": "Icons",
+      "glyph": "check_circle_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/fastpay_checkout_sheet.dart",
+      "line": 576,
+      "family": "Icons",
+      "glyph": "cancel_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/fastpay_checkout_sheet.dart",
+      "line": 589,
+      "family": "Icons",
+      "glyph": "schedule_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/fastpay_checkout_sheet.dart",
+      "line": 943,
+      "family": "Icons",
+      "glyph": "copy_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/fastpay_checkout_sheet.dart",
+      "line": 1034,
+      "family": "Icons",
+      "glyph": "close"
+    },
+    {
+      "path": "proxo_app/lib/widgets/levels_page.dart",
+      "line": 252,
+      "family": "SolarIconsOutline",
+      "glyph": "medalStar"
+    },
+    {
+      "path": "proxo_app/lib/widgets/levels_page.dart",
+      "line": 253,
+      "family": "SolarIconsOutline",
+      "glyph": "cupStar"
+    },
+    {
+      "path": "proxo_app/lib/widgets/levels_page.dart",
+      "line": 254,
+      "family": "SolarIconsOutline",
+      "glyph": "crown"
+    },
+    {
+      "path": "proxo_app/lib/widgets/levels_page.dart",
+      "line": 255,
+      "family": "SolarIconsOutline",
+      "glyph": "star"
+    },
+    {
+      "path": "proxo_app/lib/widgets/levels_page.dart",
+      "line": 256,
+      "family": "SolarIconsOutline",
+      "glyph": "star"
+    },
+    {
+      "path": "proxo_app/lib/widgets/levels_page.dart",
+      "line": 257,
+      "family": "SolarIconsOutline",
+      "glyph": "star"
+    },
+    {
+      "path": "proxo_app/lib/widgets/levels_page.dart",
+      "line": 316,
+      "family": "SolarIconsOutline",
+      "glyph": "altArrowRight"
+    },
+    {
+      "path": "proxo_app/lib/widgets/levels_page.dart",
+      "line": 351,
+      "family": "SolarIconsOutline",
+      "glyph": "widget_2"
+    },
+    {
+      "path": "proxo_app/lib/widgets/levels_page.dart",
+      "line": 603,
+      "family": "SolarIconsOutline",
+      "glyph": "checkCircle"
+    },
+    {
+      "path": "proxo_app/lib/widgets/levels_page.dart",
+      "line": 604,
+      "family": "SolarIconsOutline",
+      "glyph": "checkCircle"
+    },
+    {
+      "path": "proxo_app/lib/widgets/levels_page.dart",
+      "line": 608,
+      "family": "SolarIconsOutline",
+      "glyph": "lock"
+    },
+    {
+      "path": "proxo_app/lib/widgets/no_internet_widget.dart",
+      "line": 128,
+      "family": "Icons",
+      "glyph": "wifi_off_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/no_internet_widget.dart",
+      "line": 128,
+      "family": "Icons",
+      "glyph": "wifi_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/notification_bell.dart",
+      "line": 206,
+      "family": "SolarIconsOutline",
+      "glyph": "bell"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_app_bar.dart",
+      "line": 24,
+      "family": "ProxoSymbolName",
+      "glyph": "back"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_app_bar.dart",
+      "line": 24,
+      "family": "ProxoSymbolName",
+      "glyph": "forward"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_banner.dart",
+      "line": 627,
+      "family": "Icons",
+      "glyph": "wifi_off_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_banner.dart",
+      "line": 1008,
+      "family": "Icons",
+      "glyph": "broken_image_outlined"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_banner.dart",
+      "line": 1122,
+      "family": "Icons",
+      "glyph": "image_outlined"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_banner.dart",
+      "line": 1231,
+      "family": "Icons",
+      "glyph": "play_arrow_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_banner.dart",
+      "line": 1333,
+      "family": "Icons",
+      "glyph": "play_arrow_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_error_ui.dart",
+      "line": 170,
+      "family": "Icons",
+      "glyph": "error_outline_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_error_ui.dart",
+      "line": 180,
+      "family": "Icons",
+      "glyph": "warning_amber_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_error_ui.dart",
+      "line": 190,
+      "family": "Icons",
+      "glyph": "wifi_off_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_error_ui.dart",
+      "line": 200,
+      "family": "Icons",
+      "glyph": "info_outline_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_error_ui.dart",
+      "line": 210,
+      "family": "Icons",
+      "glyph": "check_circle_outline_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_error_ui.dart",
+      "line": 1017,
+      "family": "Icons",
+      "glyph": "refresh_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_error_ui.dart",
+      "line": 1173,
+      "family": "Icons",
+      "glyph": "refresh_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_popup.dart",
+      "line": 352,
+      "family": "Icons",
+      "glyph": "close_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_sidebar.dart",
+      "line": 201,
+      "family": "SolarIconsOutline",
+      "glyph": "home2"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_sidebar.dart",
+      "line": 202,
+      "family": "SolarIconsOutline",
+      "glyph": "clapperboardPlay"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_sidebar.dart",
+      "line": 203,
+      "family": "SolarIconsOutline",
+      "glyph": "history"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_sidebar.dart",
+      "line": 204,
+      "family": "SolarIconsOutline",
+      "glyph": "tagPrice"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_sidebar.dart",
+      "line": 205,
+      "family": "SolarIconsOutline",
+      "glyph": "wallet2"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_sidebar.dart",
+      "line": 206,
+      "family": "SolarIconsOutline",
+      "glyph": "bell"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_sidebar.dart",
+      "line": 207,
+      "family": "SolarIconsOutline",
+      "glyph": "settings"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_sidebar.dart",
+      "line": 208,
+      "family": "SolarIconsOutline",
+      "glyph": "questionCircle"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_sidebar.dart",
+      "line": 209,
+      "family": "SolarIconsOutline",
+      "glyph": "userRounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_sidebar.dart",
+      "line": 210,
+      "family": "SolarIconsOutline",
+      "glyph": "logout"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_symbol.dart",
+      "line": 53,
+      "family": "SolarIconsOutline",
+      "glyph": "checkCircle"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_symbol.dart",
+      "line": 53,
+      "family": "ProxoSymbolName",
+      "glyph": "check"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_symbol.dart",
+      "line": 54,
+      "family": "SolarIconsOutline",
+      "glyph": "copy"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_symbol.dart",
+      "line": 54,
+      "family": "ProxoSymbolName",
+      "glyph": "copy"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_symbol.dart",
+      "line": 55,
+      "family": "SolarIconsOutline",
+      "glyph": "home2"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_symbol.dart",
+      "line": 55,
+      "family": "ProxoSymbolName",
+      "glyph": "home"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_symbol.dart",
+      "line": 56,
+      "family": "SolarIconsOutline",
+      "glyph": "clapperboardPlay"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_symbol.dart",
+      "line": 56,
+      "family": "ProxoSymbolName",
+      "glyph": "ads"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_symbol.dart",
+      "line": 57,
+      "family": "SolarIconsOutline",
+      "glyph": "widget_2"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_symbol.dart",
+      "line": 57,
+      "family": "ProxoSymbolName",
+      "glyph": "tools"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_symbol.dart",
+      "line": 58,
+      "family": "SolarIconsOutline",
+      "glyph": "userRounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_symbol.dart",
+      "line": 58,
+      "family": "ProxoSymbolName",
+      "glyph": "user"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_symbol.dart",
+      "line": 59,
+      "family": "SolarIconsOutline",
+      "glyph": "history"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_symbol.dart",
+      "line": 59,
+      "family": "ProxoSymbolName",
+      "glyph": "history"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_symbol.dart",
+      "line": 60,
+      "family": "SolarIconsOutline",
+      "glyph": "tagPrice"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_symbol.dart",
+      "line": 60,
+      "family": "ProxoSymbolName",
+      "glyph": "discount"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_symbol.dart",
+      "line": 61,
+      "family": "SolarIconsOutline",
+      "glyph": "wallet2"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_symbol.dart",
+      "line": 61,
+      "family": "ProxoSymbolName",
+      "glyph": "wallet"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_symbol.dart",
+      "line": 62,
+      "family": "SolarIconsOutline",
+      "glyph": "bell"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_symbol.dart",
+      "line": 62,
+      "family": "ProxoSymbolName",
+      "glyph": "bell"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_symbol.dart",
+      "line": 63,
+      "family": "SolarIconsOutline",
+      "glyph": "settings"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_symbol.dart",
+      "line": 63,
+      "family": "ProxoSymbolName",
+      "glyph": "settings"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_symbol.dart",
+      "line": 64,
+      "family": "SolarIconsOutline",
+      "glyph": "questionCircle"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_symbol.dart",
+      "line": 64,
+      "family": "ProxoSymbolName",
+      "glyph": "help"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_symbol.dart",
+      "line": 65,
+      "family": "SolarIconsOutline",
+      "glyph": "logout"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_symbol.dart",
+      "line": 65,
+      "family": "ProxoSymbolName",
+      "glyph": "logout"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_symbol.dart",
+      "line": 66,
+      "family": "SolarIconsOutline",
+      "glyph": "altArrowRight"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_symbol.dart",
+      "line": 66,
+      "family": "ProxoSymbolName",
+      "glyph": "back"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_symbol.dart",
+      "line": 67,
+      "family": "SolarIconsOutline",
+      "glyph": "altArrowLeft"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_symbol.dart",
+      "line": 67,
+      "family": "ProxoSymbolName",
+      "glyph": "forward"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_symbol.dart",
+      "line": 68,
+      "family": "SolarIconsOutline",
+      "glyph": "hamburgerMenu"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_symbol.dart",
+      "line": 68,
+      "family": "ProxoSymbolName",
+      "glyph": "menu"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_symbol.dart",
+      "line": 69,
+      "family": "SolarIconsOutline",
+      "glyph": "magnifier"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_symbol.dart",
+      "line": 69,
+      "family": "ProxoSymbolName",
+      "glyph": "search"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_symbol.dart",
+      "line": 70,
+      "family": "SolarIconsOutline",
+      "glyph": "eye"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_symbol.dart",
+      "line": 70,
+      "family": "ProxoSymbolName",
+      "glyph": "eye"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_symbol.dart",
+      "line": 71,
+      "family": "SolarIconsOutline",
+      "glyph": "eyeClosed"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_symbol.dart",
+      "line": 71,
+      "family": "ProxoSymbolName",
+      "glyph": "eyeClosed"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_symbol.dart",
+      "line": 72,
+      "family": "SolarIconsOutline",
+      "glyph": "letter"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_symbol.dart",
+      "line": 72,
+      "family": "ProxoSymbolName",
+      "glyph": "email"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_symbol.dart",
+      "line": 73,
+      "family": "SolarIconsOutline",
+      "glyph": "lock"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_symbol.dart",
+      "line": 73,
+      "family": "ProxoSymbolName",
+      "glyph": "lock"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_symbol.dart",
+      "line": 74,
+      "family": "SolarIconsOutline",
+      "glyph": "smartphone"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_symbol.dart",
+      "line": 74,
+      "family": "ProxoSymbolName",
+      "glyph": "phone"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxolink_design_selector.dart",
+      "line": 132,
+      "family": "Icons",
+      "glyph": "check_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxolink_page_card.dart",
+      "line": 49,
+      "family": "Icons",
+      "glyph": "person_outline"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxolink_page_card.dart",
+      "line": 50,
+      "family": "Icons",
+      "glyph": "restaurant_outlined"
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxolink_page_card.dart",
+      "line": 51,
+      "family": "Icons",
+      "glyph": "apps_outlined"
+    },
+    {
+      "path": "proxo_app/lib/widgets/receipt/receipt_kit.dart",
+      "line": 236,
+      "family": "Icons",
+      "glyph": "arrow_back_ios_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/receipt/receipt_kit.dart",
+      "line": 237,
+      "family": "Icons",
+      "glyph": "arrow_forward_ios_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/receipt/tx_history_layout.dart",
+      "line": 60,
+      "family": "Icons",
+      "glyph": "refresh_rounded"
+    },
+    {
+      "path": "proxo_app/lib/widgets/tasks_page.dart",
+      "line": 150,
+      "family": "SolarIconsOutline",
+      "glyph": "altArrowRight"
+    },
+    {
+      "path": "proxo_app/lib/widgets/tasks_page.dart",
+      "line": 166,
+      "family": "SolarIconsOutline",
+      "glyph": "checklist"
+    },
+    {
+      "path": "proxo_app/lib/widgets/tasks_page.dart",
+      "line": 190,
+      "family": "SolarIconsOutline",
+      "glyph": "checklist"
+    },
+    {
+      "path": "proxo_app/lib/widgets/tasks_page.dart",
+      "line": 347,
+      "family": "SolarIconsOutline",
+      "glyph": "checkCircle"
+    },
+    {
+      "path": "proxo_app/lib/widgets/top_bar.dart",
+      "line": 51,
+      "family": "SolarIconsOutline",
+      "glyph": "altArrowRight"
+    },
+    {
+      "path": "proxo_app/lib/widgets/top_bar.dart",
+      "line": 57,
+      "family": "SolarIconsOutline",
+      "glyph": "altArrowRight"
+    },
+    {
+      "path": "proxo_app/lib/widgets/top_bar.dart",
+      "line": 65,
+      "family": "SolarIconsOutline",
+      "glyph": "hamburgerMenu"
+    },
+    {
+      "path": "proxo_app/lib/widgets/top_bar.dart",
+      "line": 75,
+      "family": "SolarIconsOutline",
+      "glyph": "magnifier"
+    },
+    {
+      "path": "proxo_app/lib/widgets/voucher_page.dart",
+      "line": 151,
+      "family": "SolarIconsOutline",
+      "glyph": "handHeart"
+    },
+    {
+      "path": "proxo_app/lib/widgets/voucher_page.dart",
+      "line": 156,
+      "family": "SolarIconsOutline",
+      "glyph": "history"
+    },
+    {
+      "path": "proxo_app/lib/widgets/voucher_page.dart",
+      "line": 160,
+      "family": "SolarIconsOutline",
+      "glyph": "handShake"
+    },
+    {
+      "path": "proxo_app/lib/widgets/voucher_page.dart",
+      "line": 164,
+      "family": "SolarIconsOutline",
+      "glyph": "gift"
+    },
+    {
+      "path": "proxo_app/lib/widgets/voucher_page.dart",
+      "line": 167,
+      "family": "SolarIconsOutline",
+      "glyph": "ticket"
+    },
+    {
+      "path": "proxo_app/lib/widgets/voucher_page.dart",
+      "line": 204,
+      "family": "SolarIconsOutline",
+      "glyph": "altArrowRight"
+    },
+    {
+      "path": "proxo_app/lib/widgets/voucher_page.dart",
+      "line": 230,
+      "family": "SolarIconsOutline",
+      "glyph": "ticket"
+    },
+    {
+      "path": "proxo_app/lib/widgets/voucher_page.dart",
+      "line": 319,
+      "family": "SolarIconsOutline",
+      "glyph": "clipboard"
+    },
+    {
+      "path": "proxo_app/lib/widgets/voucher_page.dart",
+      "line": 368,
+      "family": "SolarIconsOutline",
+      "glyph": "ticket"
+    },
+    {
+      "path": "proxo_app/lib/widgets/voucher_page.dart",
+      "line": 388,
+      "family": "SolarIconsOutline",
+      "glyph": "gift"
+    },
+    {
+      "path": "proxo_app/lib/widgets/voucher_page.dart",
+      "line": 406,
+      "family": "SolarIconsOutline",
+      "glyph": "history"
+    },
+    {
+      "path": "proxo_app/lib/widgets/voucher_page.dart",
+      "line": 554,
+      "family": "SolarIconsOutline",
+      "glyph": "ticket"
+    },
+    {
+      "path": "proxo_app/lib/widgets/voucher_page.dart",
+      "line": 577,
+      "family": "SolarIconsOutline",
+      "glyph": "clockCircle"
+    },
+    {
+      "path": "proxo_app/lib/widgets/voucher_page.dart",
+      "line": 606,
+      "family": "SolarIconsOutline",
+      "glyph": "checkCircle"
+    },
+    {
+      "path": "proxo_app/lib/widgets/voucher_page.dart",
+      "line": 651,
+      "family": "SolarIconsOutline",
+      "glyph": "checkCircle"
+    },
+    {
+      "path": "proxo_app/lib/widgets/voucher_page.dart",
+      "line": 704,
+      "family": "SolarIconsOutline",
+      "glyph": "gift"
+    }
+  ],
+  "assets": [
+    {
+      "path": "proxo_app/assets/icons/account_balance_wallet.svg",
+      "bytes": 374,
+      "sha256": "c5b1e7fd334030939927b262e894baea280b14ed74863f7bbfd0abd9fdb893af",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/ad_card/ad_card_calendar.png",
+      "bytes": 5184,
+      "sha256": "daf725699f80dd7fed99be51e89641bff9eaa8b693cfc30948e609c0349ea97f",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        16,
+        0,
+        496,
+        512
+      ],
+      "alpha_coverage": 0.4403196746227788
+    },
+    {
+      "path": "proxo_app/assets/icons/ad_card/ad_card_cancel.png",
+      "bytes": 13638,
+      "sha256": "378209f77c6c88f723888e8d222dead8b5d74290e1e2c14f1ea91f764da7a2dc",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        36,
+        27,
+        489,
+        480
+      ],
+      "alpha_coverage": 0.12982406616210937
+    },
+    {
+      "path": "proxo_app/assets/icons/ad_card/ad_card_copy.png",
+      "bytes": 6599,
+      "sha256": "3e0dd57d790e0b4990a4d2a979213a9215ce14809dee134fbfab84544b343350",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        37,
+        34,
+        475,
+        478
+      ],
+      "alpha_coverage": 0.2196550406661688
+    },
+    {
+      "path": "proxo_app/assets/icons/ad_card/ad_card_cursor.png",
+      "bytes": 14639,
+      "sha256": "87c63dbf988a7f0311d9bc71a709f2fa1e0110096fd3b29b89758e8a20a1c48a",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        82,
+        0,
+        430,
+        512
+      ],
+      "alpha_coverage": 0.16772257486979167
+    },
+    {
+      "path": "proxo_app/assets/icons/ad_card/ad_card_dollar.png",
+      "bytes": 12055,
+      "sha256": "6b3e9199f198c68727913748885125d360e91bb273e96e5cc268749b639df193",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        109,
+        0,
+        403,
+        512
+      ],
+      "alpha_coverage": 0.24980957928825828
+    },
+    {
+      "path": "proxo_app/assets/icons/ad_card/ad_card_eye.png",
+      "bytes": 14744,
+      "sha256": "7e4535986c510d8019afeb5d83488654471f0742ab4eedbf1eb7ab2f445d7df3",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        18,
+        80,
+        497,
+        432
+      ],
+      "alpha_coverage": 0.20114520203833486
+    },
+    {
+      "path": "proxo_app/assets/icons/ad_card/ad_card_megaphone.png",
+      "bytes": 5728,
+      "sha256": "72fc17294df68ea76e58ba07f0855da13f5ef4b7b12589f213087bcabc5903a0",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        0,
+        16,
+        512,
+        496
+      ],
+      "alpha_coverage": 0.26291420132506127
+    },
+    {
+      "path": "proxo_app/assets/icons/ad_card/ad_card_share.png",
+      "bytes": 6297,
+      "sha256": "c1420a544d5fdc1325df370a17d9fe6d8af38d67763266ab74a77a3a207535e7",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        87,
+        37,
+        425,
+        475
+      ],
+      "alpha_coverage": 0.17443440755208334
+    },
+    {
+      "path": "proxo_app/assets/icons/ad_card/ad_card_trend_down.png",
+      "bytes": 4273,
+      "sha256": "a08742b269dde74777f9eafdbfe3dc5304e3b26a5a7fb662374954a8f04a7274",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        47,
+        132,
+        464,
+        379
+      ],
+      "alpha_coverage": 0.08638162051930147
+    },
+    {
+      "path": "proxo_app/assets/icons/ad_card/ad_card_trend_up.png",
+      "bytes": 3996,
+      "sha256": "25728157dafde2c9bc4698b5b1012353db89dcd546825c8c39d2a6cd6de5f70e",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        48,
+        133,
+        464,
+        379
+      ],
+      "alpha_coverage": 0.08755273257984834
+    },
+    {
+      "path": "proxo_app/assets/icons/ad_card/ad_card_wallet.png",
+      "bytes": 13026,
+      "sha256": "7b24104251a25f09c2607a6458c0d6d9b3d6263f9f16689481a12abd240b5ff0",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        0,
+        11,
+        512,
+        501
+      ],
+      "alpha_coverage": 0.2397518831140855
+    },
+    {
+      "path": "proxo_app/assets/icons/add.svg",
+      "bytes": 175,
+      "sha256": "670df546c8e7b8f19fb262ec89156108f87fcbcb57b19a40f37244b980cb7b53",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/arrow_drop_down.svg",
+      "bytes": 156,
+      "sha256": "2ba90b2254aa2ea918ac86758f42e9fb0a646e66507fc4e0e75b1b232a50d882",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/campaign.svg",
+      "bytes": 768,
+      "sha256": "818a806827aa82928cccc1bd4953d31cc061404e50c7a5e2e510825ff76326e4",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/cancel.svg",
+      "bytes": 379,
+      "sha256": "787d3c3090d367ad2b98f6bf166ef1186cbd5cddb5b9c6ec55083d022aeb07d9",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/check_circle.svg",
+      "bytes": 309,
+      "sha256": "ae55ec8d20e7bc0af882be74eaaae0fbfe9c5010814a5d84025afdd37ab9228b",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/chevron_right.svg",
+      "bytes": 190,
+      "sha256": "dd80108de070d899de9b4ce1ae7c80a459e5d9ef21d9c4aae4528afcddcf9895",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/content_copy.svg",
+      "bytes": 267,
+      "sha256": "a978f7983cb6c8abffb09a1c71081ef2a038003114bccc7a06c1026198b17888",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/detail/det_age.png",
+      "bytes": 18907,
+      "sha256": "f3abc44b3d102d9ea1275499f062c48360bdb64c28ca1fa05aa738416948f50b",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        0,
+        64,
+        512,
+        448
+      ],
+      "alpha_coverage": 0.1597359900381051
+    },
+    {
+      "path": "proxo_app/assets/icons/detail/det_end.png",
+      "bytes": 8204,
+      "sha256": "ba22d8fd37fd54a686adb3fea0c389fb59f0c27a8fd03b4912fa072cb500d600",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        47,
+        48,
+        465,
+        465
+      ],
+      "alpha_coverage": 0.2536762013154871
+    },
+    {
+      "path": "proxo_app/assets/icons/detail/det_goal.png",
+      "bytes": 20716,
+      "sha256": "e1fba45193c8a6824102e2a4e5990b311f5284a7f0a9da5645b1f755488ffce3",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        10,
+        10,
+        502,
+        502
+      ],
+      "alpha_coverage": 0.22517085355870864
+    },
+    {
+      "path": "proxo_app/assets/icons/detail/det_info.png",
+      "bytes": 15454,
+      "sha256": "4ad24ed2c996892492ed6c4f99d2aac524c45e8ae2814ca03f2f445a47402783",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        0,
+        0,
+        512,
+        512
+      ],
+      "alpha_coverage": 0.24300674737668504
+    },
+    {
+      "path": "proxo_app/assets/icons/detail/det_info_circle.png",
+      "bytes": 13333,
+      "sha256": "eca93629863ba7aeb93469d542b4b2ba1ecc8d075b7268c5e9d79edc01523f0a",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        0,
+        0,
+        512,
+        512
+      ],
+      "alpha_coverage": 0.24300674737668504
+    },
+    {
+      "path": "proxo_app/assets/icons/detail/det_invoice.png",
+      "bytes": 13919,
+      "sha256": "f58d140be68adf0f39ec97a51f7584f03d04fe28e7921650d3ecaca542db07cc",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        0,
+        6,
+        512,
+        506
+      ],
+      "alpha_coverage": 0.2951320722991345
+    },
+    {
+      "path": "proxo_app/assets/icons/detail/det_location.png",
+      "bytes": 5298,
+      "sha256": "efb25f10889edc5fe52e9fc74f4f78c028fd6df5f93058e63067ea96628e3b2a",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        104,
+        48,
+        409,
+        469
+      ],
+      "alpha_coverage": 0.12401962280273438
+    },
+    {
+      "path": "proxo_app/assets/icons/detail/det_price.png",
+      "bytes": 24679,
+      "sha256": "a5989b18f9f7c2c514d1a6cc500ca7855e372c5195b41156b6c37612cad9b165",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        19,
+        0,
+        493,
+        512
+      ],
+      "alpha_coverage": 0.1683534210803462
+    },
+    {
+      "path": "proxo_app/assets/icons/detail/det_start.png",
+      "bytes": 8187,
+      "sha256": "b12afbfdf78106a94d14cb8d3d3a4cadcaea23c88212488f97ce3e32a343c933",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        47,
+        48,
+        465,
+        465
+      ],
+      "alpha_coverage": 0.25431745940563727
+    },
+    {
+      "path": "proxo_app/assets/icons/detail/det_users.png",
+      "bytes": 12433,
+      "sha256": "c9d98faff588511f2dcfb2187652b4e3b8aaef24d581e11c4f1b6699ebdc05a4",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        16,
+        73,
+        496,
+        464
+      ],
+      "alpha_coverage": 0.23824563119925704
+    },
+    {
+      "path": "proxo_app/assets/icons/detail/det_video.png",
+      "bytes": 26531,
+      "sha256": "2954429d28ad2004ffc0028bebfe5c0a23662699dccb20bd453b2a5fd1a358ac",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        3,
+        0,
+        510,
+        512
+      ],
+      "alpha_coverage": 0.31555940216662837
+    },
+    {
+      "path": "proxo_app/assets/icons/event.svg",
+      "bytes": 288,
+      "sha256": "ff5ffa4ff734c4103a73e778e319061f642815ce5b7c57305295ef5747a13dfe",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/filter_lines.png",
+      "bytes": 3537,
+      "sha256": "6a9a4f5bc4ff956d97fc99535d6147e1d3fdafde66c33ac7e05481cf06798195",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        42,
+        106,
+        470,
+        406
+      ],
+      "alpha_coverage": 0.14176379933076746
+    },
+    {
+      "path": "proxo_app/assets/icons/help_outline.svg",
+      "bytes": 383,
+      "sha256": "306a505fbf28459fa061d30c66724ab79a52e40c50c89e88dbe89372e954f4ae",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/home/home_bolt.png",
+      "bytes": 11048,
+      "sha256": "260fe5085c6d0780be368f3b116e78030cfdce75db2696779006bb6ad019f0d4",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        74,
+        32,
+        438,
+        480
+      ],
+      "alpha_coverage": 0.08116021249808517
+    },
+    {
+      "path": "proxo_app/assets/icons/home/home_check.png",
+      "bytes": 9697,
+      "sha256": "0bead662ec3d57291b898d465818b42ee6cd8a7e58e4cc52cfb55a83effa98ff",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        102,
+        102,
+        410,
+        410
+      ],
+      "alpha_coverage": 0.08612036611519608
+    },
+    {
+      "path": "proxo_app/assets/icons/home/home_clock.png",
+      "bytes": 13796,
+      "sha256": "7d99e3202dc1aec416decd7a85d12691e3337e6bb8b8a2fbf205eb17e622e2e1",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        32,
+        32,
+        480,
+        480
+      ],
+      "alpha_coverage": 0.1798965902889476
+    },
+    {
+      "path": "proxo_app/assets/icons/home/home_reports.png",
+      "bytes": 9139,
+      "sha256": "797b293f9d7e883824b92305682601e1f97ca8902415debeb2f847038fc1c483",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        32,
+        32,
+        510,
+        510
+      ],
+      "alpha_coverage": 0.30782630770814184
+    },
+    {
+      "path": "proxo_app/assets/icons/home/home_x.png",
+      "bytes": 2841,
+      "sha256": "6d08924834e0f4ee94ae3e5f7b0924732be60e8b26446b62873ea60154e7cb8c",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        134,
+        134,
+        378,
+        378
+      ],
+      "alpha_coverage": 0.09125584621055453
+    },
+    {
+      "path": "proxo_app/assets/icons/insert_chart.svg",
+      "bytes": 269,
+      "sha256": "1cbedbfed5bd42a43edfefb85763f87f0c99a1f1020e72ecae3bf45bc025e8f1",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/mail_outline.svg",
+      "bytes": 262,
+      "sha256": "83b43fc14b016ce99cd68a56e9ebe8e26f2698119fc88bb8a139687eaa527786",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/nav/home.png",
+      "bytes": 6895,
+      "sha256": "d2c19743cbaf7c98332de876ac9a61274bcc5e01245148715817ec46f2abc406",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        1,
+        0,
+        512,
+        511
+      ],
+      "alpha_coverage": 0.2142870585123698
+    },
+    {
+      "path": "proxo_app/assets/icons/nav/home_fill.png",
+      "bytes": 5271,
+      "sha256": "2eefa5fb2a4a9d0d55eb191f895f9760b7cc90580cc01d1848abdb6d2a5caca2",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        0,
+        0,
+        512,
+        512
+      ],
+      "alpha_coverage": 0.6301275515088848
+    },
+    {
+      "path": "proxo_app/assets/icons/nav/megaphone.png",
+      "bytes": 20866,
+      "sha256": "b1f2b2448d9e6c8b38bafa83ff31bb3e93aa634584cca4eaca477b82e0bcbacd",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        6,
+        29,
+        506,
+        482
+      ],
+      "alpha_coverage": 0.15654015634574142
+    },
+    {
+      "path": "proxo_app/assets/icons/nav/megaphone_fill.png",
+      "bytes": 14172,
+      "sha256": "635ce7809be9d129aaf3e93b6da9076005a0a6dca40c2538afaa2e338ed6a92e",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        6,
+        28,
+        506,
+        483
+      ],
+      "alpha_coverage": 0.31890215406230854
+    },
+    {
+      "path": "proxo_app/assets/icons/nav/user.png",
+      "bytes": 8536,
+      "sha256": "75a3194e4cabbffe9a3ec2a4d80514868aaeb0bb56431518aa701d84bcc1706f",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        31,
+        0,
+        481,
+        512
+      ],
+      "alpha_coverage": 0.5186354543648514
+    },
+    {
+      "path": "proxo_app/assets/icons/nav/user_fill.png",
+      "bytes": 11163,
+      "sha256": "8ecdbb68c06aed118140de4d40aed4acf4ee4e18850ee710e000ec8026f03dcb",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        31,
+        0,
+        481,
+        512
+      ],
+      "alpha_coverage": 0.20562652887082566
+    },
+    {
+      "path": "proxo_app/assets/icons/nav/widget.png",
+      "bytes": 5256,
+      "sha256": "f5e173cec1c6e99f52da0cb2711f73855cdac03fd378f69fd54ce0c8c6256126",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        26,
+        69,
+        486,
+        443
+      ],
+      "alpha_coverage": 0.5025492649452359
+    },
+    {
+      "path": "proxo_app/assets/icons/nav/widget_fill.png",
+      "bytes": 5724,
+      "sha256": "fc2e6903d3579e0738ed65c6926118f8a5e0af15b546bd1e14a7eba5af5b7608",
+      "size_px": [
+        512,
+        512
+      ],
+      "alpha_bounds_px": [
+        26,
+        69,
+        486,
+        443
+      ],
+      "alpha_coverage": 0.28407485064338234
+    },
+    {
+      "path": "proxo_app/assets/icons/open_in_new.png",
+      "bytes": 4211,
+      "sha256": "26725daee80b5ad86587183e4aca433309a1014f4152c236d34c4f0e4171b254",
+      "size_px": [
+        428,
+        428
+      ],
+      "alpha_bounds_px": [
+        0,
+        0,
+        428,
+        428
+      ],
+      "alpha_coverage": 0.2590540915466545
+    },
+    {
+      "path": "proxo_app/assets/icons/pause_circle.svg",
+      "bytes": 363,
+      "sha256": "55f28071f494d3cd3970ed8fac0700f3b289ee7010585287b8524ca620c6a49b",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/schedule.svg",
+      "bytes": 322,
+      "sha256": "357d248d4a4a329a232e51253be220c9ab5b0e7473c32cf3f8bdfe44bdc368b9",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/share.svg",
+      "bytes": 660,
+      "sha256": "310f347c9ef3fdb55e028f452f17e1f9df621ef4c67e5b1dce898afc9f398c6d",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/add_circle.svg",
+      "bytes": 840,
+      "sha256": "e1b2e506a2bee4e30b8594304125b64eb2cb104abc0b078eeea1cf4c252a5a42",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/alt_arrow_left.svg",
+      "bytes": 480,
+      "sha256": "0fe6ace99f4597296ec9adfb0c6c6008549cfd65c04745d435d87fec96cfeb84",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/alt_arrow_right.svg",
+      "bytes": 478,
+      "sha256": "eeb8445c7c94bfd15b367c835d219c54c294c29bf72109030b74aa37dc7fab36",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/bell.svg",
+      "bytes": 1210,
+      "sha256": "f8a53685496e90898c46bd737ef45662aa6bc0fa8ecc8de70212d80b3174a00c",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/check_circle.svg",
+      "bytes": 815,
+      "sha256": "4c4301c1d9f8fd648cd233f739e71b12ee5b2f194c00f13c319ba4dd2a0f51c1",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/clapperboard_play.svg",
+      "bytes": 3745,
+      "sha256": "44dab4d6504e9ba9d9520100e8cbbd72bc54e5c38f396d6b50330e81d0f50f05",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/close_circle.svg",
+      "bytes": 1006,
+      "sha256": "88632439c6db1a9d7ee230bdad0a2bb261f7f52a84173b87a610be4542cd2795",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/copy.svg",
+      "bytes": 2252,
+      "sha256": "7d783880fe4bc3d0e6b1ab2c8e6e0b7f4c917bdd2906b3c826e9958f187557bb",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/danger_circle.svg",
+      "bytes": 800,
+      "sha256": "4fed42b96213ebb5ede6f1fa51dab9e41489caf0e84d5452925abef92590ae13",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/eye.svg",
+      "bytes": 1667,
+      "sha256": "bad1f5e80a9f591cd54bf80fd6b559f0b107b6a69d9c6362752d33549d919f76",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/eye_closed.svg",
+      "bytes": 2576,
+      "sha256": "e4ab5e5bdc28a34d6b7735d91568e13c907c6177947151c3442137e1cfe9099a",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/gallery_add.svg",
+      "bytes": 2378,
+      "sha256": "47b8567cc4a63ad3897bc677038bc7acc079d4112997c7ecb93bf0cecaa5266f",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/global.svg",
+      "bytes": 3086,
+      "sha256": "270135ee3efaa732e2c2919f1591037279196dc03cf685d7d43862c7f420dc98",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/hamburger_menu.svg",
+      "bytes": 803,
+      "sha256": "7a1a6265ce90a5f771105093a2d166a8544c45440058367a056c0b7eecaac6be",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/history.svg",
+      "bytes": 1199,
+      "sha256": "55e9117097e912b27170a5033450aac3faf19de7104459dd6597b738613d4777",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/home_2.svg",
+      "bytes": 2318,
+      "sha256": "cf8f62264c8fa40f99448cfa9ebcfd91b3e62b78cff030e26ce1bce417015fb6",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/info_circle.svg",
+      "bytes": 797,
+      "sha256": "5cc2b42eab9eb15469e42cc7f50f17ca8077e4305114ab18cb5711507bb811c1",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/key.svg",
+      "bytes": 3658,
+      "sha256": "9b9c6eec3ebda49ebe531b4e262c3ccc9e0b9c5c40bd12b8cececb4fcd957d37",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/letter.svg",
+      "bytes": 2330,
+      "sha256": "560344cb9e36b706ab6c4e761ada8c2c38a24a9527b5a15f016f13fffe649458",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/lock_keyhole.svg",
+      "bytes": 2325,
+      "sha256": "ffffb40f682313bcb10e60fa203b7d040f042f457e4abbb4bc08ee081c6eceaa",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/lock_password.svg",
+      "bytes": 2368,
+      "sha256": "3545195cfaffce498049447da289ba675f47137f84eb49ad0367f415cc2ea1fc",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/login_2.svg",
+      "bytes": 2366,
+      "sha256": "a1b08977d1b75cb18496a966950370d1bb51a5567da59c12b00dc70eccc1a7f2",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/logout_2.svg",
+      "bytes": 2312,
+      "sha256": "5a363e6d0d59a270186a570bb805ff5a04d66cfa75c8667b5116003716104907",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/magnifer.svg",
+      "bytes": 667,
+      "sha256": "e568903329101b226960434ad7fbc367b99208c82ff75bd710610f1aca82a84f",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/phone.svg",
+      "bytes": 2087,
+      "sha256": "ac013d634509f6179fee6ab7a370c833399ead0919758ec2afdc78a97749c612",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/question_circle.svg",
+      "bytes": 1190,
+      "sha256": "7987ebf026c9e2617b531d1d8165f63696664b3796f4a61c96bf08a090acfcb7",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/settings.svg",
+      "bytes": 6281,
+      "sha256": "682b48f84f61084729d5fc13a7a651a0d1a7d9be9e913efdf0e5c02c697371a4",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/shield_check.svg",
+      "bytes": 2702,
+      "sha256": "c599318fa4c2f9fe36f589a3f309add7c8de8bb683c0fd3e66df4f7a264ba151",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/tag_price.svg",
+      "bytes": 3596,
+      "sha256": "b0cf7045bb655043e95eb4ffed7c25fb5e7c1a9e3c922ba040bc7d4afb8dfe26",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/upload.svg",
+      "bytes": 2340,
+      "sha256": "cd4a5acd852a3960e2e221f4faffff16208741e044964d452d7b3a509a4cd6bd",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/user_plus_rounded.svg",
+      "bytes": 1892,
+      "sha256": "f5774dcf04112310d5a2485243124740192053aab6f2bed35b579143e598eaf5",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/user_rounded.svg",
+      "bytes": 1202,
+      "sha256": "204312a298e3538e0ef442708e84a39c93f3e5e22b2e60de65cfafe24eb1edd1",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/wallet_2.svg",
+      "bytes": 2758,
+      "sha256": "b8622b8102cc5692b33c226ed1040356acbf3a0ea8f1c15061a771c1c904d1e4",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/widget_2.svg",
+      "bytes": 3998,
+      "sha256": "1ccf9ffe792280a0042cf2683dcd7db70af412be83db7560a3728c14be18819d",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/trending_down.svg",
+      "bytes": 213,
+      "sha256": "6e6b21b99e83930eab4b591526e114e9cf0c19607ebd34d4232c4ddc2d84005a",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/trending_up.svg",
+      "bytes": 214,
+      "sha256": "8d9666a184fd1187968e3e3a77035a35d4b81b666615ba2dda2f2d6dc48b8aa3",
+      "viewBox": "0 0 24 24"
+    },
+    {
+      "path": "proxo_app/assets/icons/visibility.svg",
+      "bytes": 474,
+      "sha256": "bdd8f956ba9573ff18136d5c3afa560dc72bd7e8262ea6bb0c3989e80e0c06c8",
+      "viewBox": "0 0 24 24"
+    }
+  ]
+}

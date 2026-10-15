@@ -1,0 +1,210 @@
+{
+  "sourceCommit": "44017167688b49109d88ae6a98979b23d8950db0",
+  "verified": 34,
+  "assets": [
+    {
+      "file": "proxo_app/assets/icons/solar/home_2.svg",
+      "source_blob": "7016d969fa64026d90e750562ba0bc1e654bec34",
+      "sha256": "cf8f62264c8fa40f99448cfa9ebcfd91b3e62b78cff030e26ce1bce417015fb6",
+      "bytes": 2318
+    },
+    {
+      "file": "proxo_app/assets/icons/solar/clapperboard_play.svg",
+      "source_blob": "47aebb9e81d582ed07e9da452e5f84b045868cd4",
+      "sha256": "44dab4d6504e9ba9d9520100e8cbbd72bc54e5c38f396d6b50330e81d0f50f05",
+      "bytes": 3745
+    },
+    {
+      "file": "proxo_app/assets/icons/solar/widget_2.svg",
+      "source_blob": "a084fda3b8bea2dcaef108f52e57d3c7dfd1e651",
+      "sha256": "1ccf9ffe792280a0042cf2683dcd7db70af412be83db7560a3728c14be18819d",
+      "bytes": 3998
+    },
+    {
+      "file": "proxo_app/assets/icons/solar/user_rounded.svg",
+      "source_blob": "3bfe093a82426cb71dc503ee61f22f444ad89b7d",
+      "sha256": "204312a298e3538e0ef442708e84a39c93f3e5e22b2e60de65cfafe24eb1edd1",
+      "bytes": 1202
+    },
+    {
+      "file": "proxo_app/assets/icons/solar/user_plus_rounded.svg",
+      "source_blob": "0b3d713fe72ecdcb2df35d1bd26c38692ff4cf7f",
+      "sha256": "f5774dcf04112310d5a2485243124740192053aab6f2bed35b579143e598eaf5",
+      "bytes": 1892
+    },
+    {
+      "file": "proxo_app/assets/icons/solar/login_2.svg",
+      "source_blob": "3b19669d8d3ecf26cd001ae2a1f1538de2b2fbbb",
+      "sha256": "a1b08977d1b75cb18496a966950370d1bb51a5567da59c12b00dc70eccc1a7f2",
+      "bytes": 2366
+    },
+    {
+      "file": "proxo_app/assets/icons/solar/lock_password.svg",
+      "source_blob": "c34f5452f66b97ae8b85c19ba6d6bddfa91e6001",
+      "sha256": "3545195cfaffce498049447da289ba675f47137f84eb49ad0367f415cc2ea1fc",
+      "bytes": 2368
+    },
+    {
+      "file": "proxo_app/assets/icons/solar/lock_keyhole.svg",
+      "source_blob": "2ea177cf122e2b718d6a6d47a91fce4ecc3aea31",
+      "sha256": "ffffb40f682313bcb10e60fa203b7d040f042f457e4abbb4bc08ee081c6eceaa",
+      "bytes": 2325
+    },
+    {
+      "file": "proxo_app/assets/icons/solar/key.svg",
+      "source_blob": "7d7249bdb1b650f3343af69a2ff7dbe7ff5b8ce1",
+      "sha256": "9b9c6eec3ebda49ebe531b4e262c3ccc9e0b9c5c40bd12b8cececb4fcd957d37",
+      "bytes": 3658
+    },
+    {
+      "file": "proxo_app/assets/icons/solar/shield_check.svg",
+      "source_blob": "ba40c7c30dd5235966d70c8b994ca9ffeaba87ac",
+      "sha256": "c599318fa4c2f9fe36f589a3f309add7c8de8bb683c0fd3e66df4f7a264ba151",
+      "bytes": 2702
+    },
+    {
+      "file": "proxo_app/assets/icons/solar/letter.svg",
+      "source_blob": "52804ff4817cb8c228d544618126b55fc0d9c277",
+      "sha256": "560344cb9e36b706ab6c4e761ada8c2c38a24a9527b5a15f016f13fffe649458",
+      "bytes": 2330
+    },
+    {
+      "file": "proxo_app/assets/icons/solar/phone.svg",
+      "source_blob": "ee227c14a91ee0f833ffee95a8a874ed7f20bbd1",
+      "sha256": "ac013d634509f6179fee6ab7a370c833399ead0919758ec2afdc78a97749c612",
+      "bytes": 2087
+    },
+    {
+      "file": "proxo_app/assets/icons/solar/eye.svg",
+      "source_blob": "ad0623ed60e1968e8b997f69f2ae1da38306922d",
+      "sha256": "bad1f5e80a9f591cd54bf80fd6b559f0b107b6a69d9c6362752d33549d919f76",
+      "bytes": 1667
+    },
+    {
+      "file": "proxo_app/assets/icons/solar/eye_closed.svg",
+      "source_blob": "646495dce97e34e2824172e635c743430804afea",
+      "sha256": "e4ab5e5bdc28a34d6b7735d91568e13c907c6177947151c3442137e1cfe9099a",
+      "bytes": 2576
+    },
+    {
+      "file": "proxo_app/assets/icons/solar/add_circle.svg",
+      "source_blob": "4524338f9f5e9c8cdb788bc688d8549cd1f61fce",
+      "sha256": "e1b2e506a2bee4e30b8594304125b64eb2cb104abc0b078eeea1cf4c252a5a42",
+      "bytes": 840
+    },
+    {
+      "file": "proxo_app/assets/icons/solar/alt_arrow_right.svg",
+      "source_blob": "bb5470e546bec38002b1b9e6d8f0b9e31a3d2e03",
+      "sha256": "eeb8445c7c94bfd15b367c835d219c54c294c29bf72109030b74aa37dc7fab36",
+      "bytes": 478
+    },
+    {
+      "file": "proxo_app/assets/icons/solar/alt_arrow_left.svg",
+      "source_blob": "9341a4f5405e8d826be268b416db4c5834fe627a",
+      "sha256": "0fe6ace99f4597296ec9adfb0c6c6008549cfd65c04745d435d87fec96cfeb84",
+      "bytes": 480
+    },
+    {
+      "file": "proxo_app/assets/icons/solar/hamburger_menu.svg",
+      "source_blob": "3a907f1a5f5078a7f101df4d6b0f0d7d35529e91",
+      "sha256": "7a1a6265ce90a5f771105093a2d166a8544c45440058367a056c0b7eecaac6be",
+      "bytes": 803
+    },
+    {
+      "file": "proxo_app/assets/icons/solar/bell.svg",
+      "source_blob": "01e7d038a99946d8bff8e3751d68d0345b93e18e",
+      "sha256": "f8a53685496e90898c46bd737ef45662aa6bc0fa8ecc8de70212d80b3174a00c",
+      "bytes": 1210
+    },
+    {
+      "file": "proxo_app/assets/icons/solar/magnifer.svg",
+      "source_blob": "444ebcae8eed5b7aa6bc4ce06d87c1abe32104da",
+      "sha256": "e568903329101b226960434ad7fbc367b99208c82ff75bd710610f1aca82a84f",
+      "bytes": 667
+    },
+    {
+      "file": "proxo_app/assets/icons/solar/wallet_2.svg",
+      "source_blob": "24a0550bfb6ce7f51136bda82e7acdb5fb975883",
+      "sha256": "b8622b8102cc5692b33c226ed1040356acbf3a0ea8f1c15061a771c1c904d1e4",
+      "bytes": 2758
+    },
+    {
+      "file": "proxo_app/assets/icons/solar/gallery_add.svg",
+      "source_blob": "96ea5aa8049dc226e9f953abf8d28a6965e11355",
+      "sha256": "47b8567cc4a63ad3897bc677038bc7acc079d4112997c7ecb93bf0cecaa5266f",
+      "bytes": 2378
+    },
+    {
+      "file": "proxo_app/assets/icons/solar/upload.svg",
+      "source_blob": "f77b8d076634ae4195e4cf52b71ef75a948bfddb",
+      "sha256": "cd4a5acd852a3960e2e221f4faffff16208741e044964d452d7b3a509a4cd6bd",
+      "bytes": 2340
+    },
+    {
+      "file": "proxo_app/assets/icons/solar/history.svg",
+      "source_blob": "e8be33ef3b4c80c78fe3b9e6bcc807003a4c225d",
+      "sha256": "55e9117097e912b27170a5033450aac3faf19de7104459dd6597b738613d4777",
+      "bytes": 1199
+    },
+    {
+      "file": "proxo_app/assets/icons/solar/settings.svg",
+      "source_blob": "3813c9db8e1b0d9a35e2f86609257dee8e142f04",
+      "sha256": "682b48f84f61084729d5fc13a7a651a0d1a7d9be9e913efdf0e5c02c697371a4",
+      "bytes": 6281
+    },
+    {
+      "file": "proxo_app/assets/icons/solar/question_circle.svg",
+      "source_blob": "1c0f35946d33d512d53fe9bbded89510bd9e5ee8",
+      "sha256": "7987ebf026c9e2617b531d1d8165f63696664b3796f4a61c96bf08a090acfcb7",
+      "bytes": 1190
+    },
+    {
+      "file": "proxo_app/assets/icons/solar/logout_2.svg",
+      "source_blob": "b62eb0811095b591de8e3b93161b2039b273d548",
+      "sha256": "5a363e6d0d59a270186a570bb805ff5a04d66cfa75c8667b5116003716104907",
+      "bytes": 2312
+    },
+    {
+      "file": "proxo_app/assets/icons/solar/tag_price.svg",
+      "source_blob": "64016f2539fbe4c94e9d79e092cba2ed54616eaf",
+      "sha256": "b0cf7045bb655043e95eb4ffed7c25fb5e7c1a9e3c922ba040bc7d4afb8dfe26",
+      "bytes": 3596
+    },
+    {
+      "file": "proxo_app/assets/icons/solar/check_circle.svg",
+      "source_blob": "431bd69a980352d4bcb97a604d30958904db6f27",
+      "sha256": "4c4301c1d9f8fd648cd233f739e71b12ee5b2f194c00f13c319ba4dd2a0f51c1",
+      "bytes": 815
+    },
+    {
+      "file": "proxo_app/assets/icons/solar/close_circle.svg",
+      "source_blob": "01dd70334135371558801aa5c2112102308a3f52",
+      "sha256": "88632439c6db1a9d7ee230bdad0a2bb261f7f52a84173b87a610be4542cd2795",
+      "bytes": 1006
+    },
+    {
+      "file": "proxo_app/assets/icons/solar/info_circle.svg",
+      "source_blob": "a1bcc58e2826d9d712e915791dcdcf365da121c4",
+      "sha256": "5cc2b42eab9eb15469e42cc7f50f17ca8077e4305114ab18cb5711507bb811c1",
+      "bytes": 797
+    },
+    {
+      "file": "proxo_app/assets/icons/solar/danger_circle.svg",
+      "source_blob": "6697fde8e700473ac221435b61560ab5df30f49a",
+      "sha256": "4fed42b96213ebb5ede6f1fa51dab9e41489caf0e84d5452925abef92590ae13",
+      "bytes": 800
+    },
+    {
+      "file": "proxo_app/assets/icons/solar/global.svg",
+      "source_blob": "ee407ebab1e44b4618577ce0b039ebbd3572976b",
+      "sha256": "270135ee3efaa732e2c2919f1591037279196dc03cf685d7d43862c7f420dc98",
+      "bytes": 3086
+    },
+    {
+      "file": "proxo_app/assets/icons/solar/copy.svg",
+      "source_blob": "d21e0f485903a2b85189493dea22ddd8fe10e7ae",
+      "sha256": "7d783880fe4bc3d0e6b1ab2c8e6e0b7f4c917bdd2906b3c826e9958f187557bb",
+      "bytes": 2252
+    }
+  ]
+}

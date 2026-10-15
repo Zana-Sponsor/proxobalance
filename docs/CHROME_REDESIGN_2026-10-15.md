@@ -1,5 +1,7 @@
 # Sidebar, profile, navigation and app bar
 
+> Historical first-stage report. The current external SVG, language, auth, notification and native verification follow-up is in [the complete visual polish report](visual-polish-2026-10-15/README.md). The original images and source-specific findings below remain historical evidence.
+
 Requested follow-up: use external icons, harmonize typography/size, correct observed layout/navigation/performance issues, and publish actual screenshots. Baseline is `e61144904f5f9986b8d3a2f486ca7756a3ba267a`. PR remains a draft; production is unchanged.
 
 ## Implementation
@@ -56,13 +58,15 @@ The 280dp / 2× text screenshots intentionally show a horizontally scrollable bo
 
 Removing unused reads and idle animation is a concrete reduction in work, not a measured physical-device FPS/latency claim. Real account/payment flows, physical TalkBack/profile performance and earlier unrelated WebView strict parity blockers remain outside this focused verification.
 
-### Native capture follow-up — in progress
+### Native capture follow-up — historical attempts
 
-The initial [native run](https://github.com/Zana-Sponsor/proxobalance/actions/runs/38644003387) passed all three Android configurations and retained 75 PNGs. Visual review found the app-bar logo missing from its converted-surface screenshots, so those app-bar images are **not accepted as final visual evidence**. The widget screenshots above do show the logo.
+The initial [native run](https://github.com/Zana-Sponsor/proxobalance/actions/runs/38644003387) passed three configurations with 75 PNGs, but visual review found a missing logo in its converted-surface app-bar images. Those images were not accepted as final app-bar evidence.
 
-The diagnostic [run at be7fccf](https://github.com/Zana-Sponsor/proxobalance/actions/runs/38645843260) passed phone-side decoded-image/nonzero-layout assertions and all phone test assertions, but the driver then lost its emulator connection before saving the full result; the workflow failed. Two retained ADB images showed the preceding sidebar frame because they were taken after surface conversion, and are not labeled as app-bar evidence.
+The revised harness checks decoded images and nonzero geometry, captures the ordinary Android surface before conversion, and supplies the same status-bar inset as HomeScreen. [Run 38647780598](https://github.com/Zana-Sponsor/proxobalance/actions/runs/38647780598) completed the phone configuration with 27 PNGs: **the logo is visible in both ordinary Android and converted Flutter captures**, at 83.478 × 24dp. Its artifact `11933772230` has SHA-256 `86e4ceec99fcca610f88c20ccf3b9a46ef2ee45ba99c1cd8bfa4d478536add76`; digest/CRC checked. Production widgets and logo asset were unchanged.
 
-The [corrected capture run](https://github.com/Zana-Sponsor/proxobalance/actions/runs/38647144391) at `f2b96d97e3489e4b2e43761fbd2ff892e06061c5` now captures the ordinary Android surface **before** conversion. This is a test-only change; product files/assets/dependencies are identical to the verified source `22db342`. Final Android visual review remains pending this result. Full source CI, focused widgets and the existing UI suite also passed again at `be7fccf`; no assertion or pixel tolerance was relaxed.
+The subsequent narrow configuration repeatedly failed to connect to its Dart VM service before tests started; that sequential run was cancelled to retain its diagnostic results. A 600-second per-driver limit and immediate log flushing now prevent unbounded connection retries. [Run 38650105868](https://github.com/Zana-Sponsor/proxobalance/actions/runs/38650105868) at `74beaa8bc06c7c3c13185d9d0e01bd7078e455bc` uses one fresh emulator per configuration, so configurations do not inherit app/VM state. The final matrix and its exact source are reported in the [current visual polish report](visual-polish-2026-10-15/README.md).
+
+The native keyboard harness also now waits for stable insets before tapping, brings the field back into view, and asserts the choice target is hit-testable. Earlier phone diagnostic logs had a missed-target warning while the native keyboard was still changing geometry. No app keyboard behavior or existing assertion was removed.
 
 
 ## Modified files
@@ -71,5 +75,13 @@ The [corrected capture run](https://github.com/Zana-Sponsor/proxobalance/actions
 - `proxo_app/lib/screens/profile_screen.dart`, `proxo_app/lib/main.dart`, shared `proxo_app/lib/theme/proxo_chrome.dart`.
 - `proxo_app/test/chrome_capture_test.dart`, `chrome_behavior_test.dart`, updated `ui_remediation_capture_test.dart` font loading.
 - `proxo_app/integration_test/ui_iconography_test.dart` and its read-only `support/actual_screen_fixtures.dart`.
-- `.github/workflows/chrome-evidence.yml`, this report, `SOLAR_ICON_LICENSE.txt` and the screenshot/evidence directory.
+- `scripts/run-ui-native.py` captures the ordinary Android surface independently of Flutter's converted screenshot surface.
+- `test/proxolink-v6-api.test.js`: deterministic mutation in an existing integrity regression (see below); no backend production code changed.
+- `.github/workflows/chrome-evidence.yml`, `.github/workflows/ui-native.yml`, this report, `SOLAR_ICON_LICENSE.txt` and the screenshot/evidence directory.
 - **Application icon/image asset files changed: none. Dependency or lockfile changes: none.** PNGs added under `docs/` are actual test evidence only.
+
+## CI regression-test stability
+
+The later [CI run at 25cbe16](https://github.com/Zana-Sponsor/proxobalance/actions/runs/38647780645) passed Flutter/release, database, edge and responsive jobs, but an existing backend integrity test failed: its expected 404 was 200. The test replaced the last two base64url characters with `aa`. That substitution can leave decoded ciphertext unchanged through unused padding bits or an already matching random suffix. An isolated Node AES-GCM reproduction produced a changed text string with identical bytes and a still-valid ciphertext; flipping an actual ciphertext byte was rejected.
+
+Commit `a6592cbe7237deec818ca25dc563fba372e167ef` changes only this test: flip one decoded byte, assert the bytes differ, and retain the same 404 assertion. The [backend rerun](https://github.com/Zana-Sponsor/proxobalance/actions/runs/38649002491) passed **153/153 tests**. No production crypto, authorization, backend route, secret or rejection criterion was changed. Local syntax checking passed; direct local production-module execution was unavailable because the scratch checkout lacks `sharp`, so full backend validation used the hosted dependency-complete job.
