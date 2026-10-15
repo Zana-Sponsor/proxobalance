@@ -1,3 +1,6 @@
+import 'package:proxo_app/widgets/proxo_sidebar.dart';
+import 'package:proxo_app/widgets/levels_page.dart';
+import 'package:proxo_app/widgets/tasks_page.dart';
 // Actual production widgets; fictional read-only backend; no OTP/payment sends.
 import 'dart:convert';
 import 'dart:io';
@@ -46,7 +49,7 @@ void main() {
   tearDownAll(() async { await backend.dispose(); ProxoLocale.current.value = ProxoLocale.kurdishSorani; });
   for (final config in [(393.0, 1.0, 3.0), (280.0, 2.0, 2.0)]) {
     for (final language in ['ckb', 'ar', 'kmr']) {
-      for (final section in ['login', 'signup', 'forgot', 'otp', 'deposit', 'ads', 'create', 'profile', 'home', 'navigation']) {
+      for (final section in ['login', 'signup', 'forgot', 'otp', 'deposit', 'ads', 'create', 'profile', 'home', 'navigation', 'levels', 'tasks', 'vouchers', 'discounts']) {
         testWidgets('$section $language $config', (t) async {
           final (width, scale, dpr) = config;
           t.view.devicePixelRatio = dpr;
@@ -62,6 +65,10 @@ void main() {
                 otpBoxes: AuthOtpBoxes(length: 6, codeController: code, firstBoxFocus: focus, onCompleted: (_) {}),
                 resend: AuthTextLink(label: AuthStrings.resendAction, onTap: () {}),
                 verifyButton: AuthPrimaryButton(label: AuthStrings.verifyButton, onPressed: null))))),
+            'levels' => const LevelsPage(),
+            'tasks' => const TasksPage(),
+            'vouchers' => const VoucherPage(),
+            'discounts' => const DiscountCodesPage(),
             'deposit' => const DepositScreen(),
             'ads' => const AdScreen(),
             'create' => AdCreateScreen(repository: TestAdRepository()),

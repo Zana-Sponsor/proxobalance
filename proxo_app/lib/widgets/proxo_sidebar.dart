@@ -10,7 +10,6 @@ import 'dart:io';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
@@ -194,28 +193,6 @@ Color _parseHexColor(String? hex) {
     return Color(int.parse(h, radix: 16));
   } catch (_) {
     return _kCardBottom;
-  }
-}
-
-// ⚠ ئەمە بە ئەنقەست نەگۆڕدرا بۆ Solar.
-//
-// `_levelIconFor` لە هیچ شوێنێکی ئەم فایلەدا بانگ ناکرێت، بەڵام
-// ئەم فایلە سێ `part`ی هەیە (`tx_history_page`، `voucher_page`،
-// `discount_codes_page`) کە هەمان بوارە تایبەتییان هەیە و لەوانەیە
-// یەکێکیان بانگی بکات. گۆڕینی جۆری گەڕاوەکەی لە `IconData`ـەوە بۆ
-// `String` ئەوان دەشکێنێت.
-//
-// ئەگەر دڵنیایت هیچ کەس بەکاری ناهێنێت، دەتوانرێت بگۆڕدرێت بۆ:
-//   'crown' → SolarIcons.crown · 'diamond'/'gem' → SolarIcons.diamond
-//   'medal'/'award' → SolarIcons.medalStar
-FaIconData _levelIconFor(String key) {
-  switch (key) {
-    case 'award':   return FontAwesomeIcons.award;
-    case 'crown':   return FontAwesomeIcons.crown;
-    case 'gem':     return FontAwesomeIcons.gem;
-    case 'diamond': return FontAwesomeIcons.gem;
-    case 'medal':
-    default:        return FontAwesomeIcons.medal;
   }
 }
 

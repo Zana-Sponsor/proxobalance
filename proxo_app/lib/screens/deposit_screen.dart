@@ -184,8 +184,7 @@ const List<String> _kBaseSteps = [
 List<String> _stepsFor(_Wallet w) => [
       ..._kBaseSteps,
       if (w.hasFee)
-        'تێبینی: بەهۆی تێچووی باڵانسەوە، لە هەر بڕە پارەیەک '
-            '${w.feePercentLabel}% کەمتر زیاد دەکرێت بۆ باڵانسی ئەپەکەت.',
+        ProxoStrings.format('تێبینی: {fee}% کەمتر زیاد دەکرێت بەهۆی تێچووی باڵانسەوە.', {'fee':w.feePercentLabel}),
     ];
 
 // ── Screen ─────────────────────────────────────────────────────────────
@@ -304,7 +303,7 @@ class _DepositScreenState extends State<DepositScreen> {
       return;
     }
     if (_iqd < _kMinIqd) {
-      showProxoToast(context, 'کەمترین بڕ ${_fmt(_kMinIqd)} دینارە',
+      showProxoToast(context, ProxoStrings.format('کەمترین بڕ {amount} دینارە', {'amount':_fmt(_kMinIqd)}),
           type: ProxoToastType.error);
       return;
     }
@@ -581,8 +580,7 @@ class _DepositScreenState extends State<DepositScreen> {
         border: Border.all(color: const Color(0xFFFDE68A)),
       ),
       child: ProxoText(
-        'بڕی پارەی وەرگیراو: ${_fmt(w.creditedIqd(_iqd))} دینار '
-        '(${w.feePercentLabel}% کەمتر بەهۆی باجی باڵانس)',
+        ProxoStrings.format('بڕی پارەی وەرگیراو: {amount} دینار ({fee}% کەمتر بەهۆی باجی باڵانس)', {'amount':_fmt(w.creditedIqd(_iqd)), 'fee':w.feePercentLabel}),
         style: const TextStyle(
           fontFamily: kAppFont,
           fontSize: 12.5,
@@ -736,7 +734,7 @@ class _DepositScreenState extends State<DepositScreen> {
   /// دەکاتەوە لە جیاتی ناردنی داواکارییەکی دەستی.
   Future<void> _openFastPay() async {
     if (_iqd < _kMinIqd) {
-      showProxoToast(context, 'کەمترین بڕ ${_fmt(_kMinIqd)} دینارە',
+      showProxoToast(context, ProxoStrings.format('کەمترین بڕ {amount} دینارە', {'amount':_fmt(_kMinIqd)}),
           type: ProxoToastType.error);
       return;
     }

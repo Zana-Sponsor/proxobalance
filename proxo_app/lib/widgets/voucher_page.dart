@@ -148,23 +148,23 @@ class _VoucherPageState extends State<VoucherPage>
 
   Map<String, dynamic> _reasonMeta(Map<String, dynamic> v) {
     if (v['is_signup_bonus'] == true) {
-      return {'icon': FontAwesomeIcons.handHoldingHeart,
+      return {'icon': SolarIconsOutline.handHeart,
               'color': const Color(0xFF06B6D4), 'label': 'دیاری بەخێرهاتن'};
     }
     final r = (v['reason'] ?? '').toString().trim();
     if (r == 'گەڕانەوەی پارە') {
-      return {'icon': FontAwesomeIcons.rotateLeft,
+      return {'icon': SolarIconsOutline.history,
               'color': const Color(0xFF16A34A), 'label': r};
     }
     if (r == 'قەرەبووکردنەوە') {
-      return {'icon': FontAwesomeIcons.handshake,
+      return {'icon': SolarIconsOutline.handShake,
               'color': const Color(0xFFF59E0B), 'label': r};
     }
     if (r == 'پاداشت') {
-      return {'icon': FontAwesomeIcons.gift,
+      return {'icon': SolarIconsOutline.gift,
               'color': const Color(0xFFA855F7), 'label': r};
     }
-    return {'icon': FontAwesomeIcons.ticket,
+    return {'icon': SolarIconsOutline.ticket,
             'color': const Color(0xFFA855F7),
             'label': r.isNotEmpty ? r : 'فاوچەری تایبەت'};
   }
@@ -200,7 +200,7 @@ class _VoucherPageState extends State<VoucherPage>
                       border: Border.all(color: _cB1),
                     ),
                     child: const Center(
-                      child: FaIcon(FontAwesomeIcons.arrowRight,
+                      child: ProxoSolarIcon(SolarIconsOutline.altArrowRight,
                           size: 15, color: _cDark)),
                   ),
                 ),
@@ -226,7 +226,7 @@ class _VoucherPageState extends State<VoucherPage>
                         color: const Color(0xFF06B6D4).withOpacity(0.25)),
                   ),
                   child: const Center(
-                    child: FaIcon(FontAwesomeIcons.ticket,
+                    child: ProxoSolarIcon(SolarIconsOutline.ticket,
                         size: 14, color: Color(0xFF06B6D4))),
                 ),
               ]),
@@ -315,7 +315,7 @@ class _VoucherPageState extends State<VoucherPage>
                             border: Border(left: BorderSide(color: _cB1)),
                           ),
                           child: const Center(
-                            child: FaIcon(FontAwesomeIcons.paste,
+                            child: ProxoSolarIcon(SolarIconsOutline.clipboard,
                                 size: 14, color: _cMt)),
                         ),
                       ),
@@ -364,7 +364,7 @@ class _VoucherPageState extends State<VoucherPage>
                               child: CircularProgressIndicator(
                                   strokeWidth: 2, color: Colors.white))
                           else
-                            const FaIcon(FontAwesomeIcons.ticket,
+                            const ProxoSolarIcon(SolarIconsOutline.ticket,
                                 size: 14, color: Colors.white),
                           const SizedBox(width: 8),
                           ProxoText(_claiming ? 'چاوەڕوانبە...' : 'چالاککردن',
@@ -384,7 +384,7 @@ class _VoucherPageState extends State<VoucherPage>
 
                   // ── My vouchers section ─────────────────────────────────────
                   _sectionHeader(
-                    icon: FontAwesomeIcons.gifts,
+                    icon: SolarIconsOutline.gift,
                     iconBg: const Color(0xFFDB277710),
                     iconFg: const Color(0xFFDB2777),
                     label: 'فاوچەرەکانت',
@@ -402,7 +402,7 @@ class _VoucherPageState extends State<VoucherPage>
                   if (!_loadingVouchers && _history.isNotEmpty) ...[
                     const SizedBox(height: 22),
                     _sectionHeader(
-                      icon: FontAwesomeIcons.clockRotateLeft,
+                      icon: SolarIconsOutline.history,
                       iconBg: const Color(0xFF16A34A10),
                       iconFg: const Color(0xFF16A34A),
                       label: 'مێژووی فاوچەرەکان',
@@ -443,7 +443,7 @@ class _VoucherPageState extends State<VoucherPage>
   }
 
   Widget _sectionHeader({
-    required FaIconData icon,
+    required IconData icon,
     required Color iconBg,
     required Color iconFg,
     required String label,
@@ -452,7 +452,7 @@ class _VoucherPageState extends State<VoucherPage>
       Container(
         width: 30, height: 30,
         decoration: BoxDecoration(color: iconBg, shape: BoxShape.circle),
-        child: Center(child: FaIcon(icon, size: 13, color: iconFg)),
+        child: Center(child: ProxoSolarIcon(icon, size: 13, color: iconFg)),
       ),
       const SizedBox(width: 8),
       ProxoText(label,
@@ -469,9 +469,9 @@ class _VoucherPageState extends State<VoucherPage>
     final amt    = (v['amount_iqd'] as num?)?.toDouble() ?? 0;
     final meta   = _reasonMeta(v);
     final left   = _daysLeft(v['expires_at']);
-    final leftTxt = left == null ? 'بێ کۆتایی' : '$left ڕۆژی تر ماوە';
+    final leftTxt = left == null ? ProxoStrings.text('بێ کۆتایی') : ProxoStrings.format('{days} ڕۆژی تر ماوە', {'days':left});
     final Color accentColor = meta['color'] as Color;
-    final FaIconData accentIcon = meta['icon'] as FaIconData;
+    final IconData accentIcon = meta['icon'] as IconData;
 
     String sentTxt = '';
     if (v['created_at'] != null) {
@@ -504,7 +504,7 @@ class _VoucherPageState extends State<VoucherPage>
               color: accentColor.withOpacity(0.1),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Center(child: FaIcon(accentIcon, size: 15, color: accentColor)),
+            child: Center(child: ProxoSolarIcon(accentIcon, size: 15, color: accentColor)),
           ),
           const SizedBox(width: 10),
           Expanded(child: Column(
@@ -550,7 +550,7 @@ class _VoucherPageState extends State<VoucherPage>
             border: Border.all(color: _cB1),
           ),
           child: Row(children: [
-            const FaIcon(FontAwesomeIcons.ticket, size: 11, color: _cMt),
+            const ProxoSolarIcon(SolarIconsOutline.ticket, size: 11, color: _cMt),
             const SizedBox(width: 8),
             Expanded(
               child: ProxoText(
@@ -573,7 +573,7 @@ class _VoucherPageState extends State<VoucherPage>
 
         // Expiry
         Row(children: [
-          const FaIcon(FontAwesomeIcons.clock, size: 9, color: _cMt),
+          const ProxoSolarIcon(SolarIconsOutline.clockCircle, size: 9, color: _cMt),
           const SizedBox(width: 5),
           Flexible(
             child: ProxoText(leftTxt,
@@ -602,7 +602,7 @@ class _VoucherPageState extends State<VoucherPage>
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const FaIcon(FontAwesomeIcons.check, size: 12, color: Colors.white),
+                const ProxoSolarIcon(SolarIconsOutline.checkCircle, size: 12, color: Colors.white),
                 const SizedBox(width: 6),
                 const ProxoText('چالاککردن', translate: true,
                   style: TextStyle(fontFamily: kAppFont, fontSize: 13,
@@ -647,7 +647,7 @@ class _VoucherPageState extends State<VoucherPage>
             borderRadius: BorderRadius.circular(9),
           ),
           child: const Center(
-            child: FaIcon(FontAwesomeIcons.check,
+            child: ProxoSolarIcon(SolarIconsOutline.checkCircle,
                 size: 12, color: Color(0xFF16A34A))),
         ),
         const SizedBox(width: 10),
@@ -700,7 +700,7 @@ class _VoucherPageState extends State<VoucherPage>
               color: Colors.black.withOpacity(0.06),
               blurRadius: 16, offset: const Offset(0, 3))]),
           child: const Center(
-            child: FaIcon(FontAwesomeIcons.gift, size: 26, color: _cMt))),
+            child: ProxoSolarIcon(SolarIconsOutline.gift, size: 26, color: _cMt))),
         const SizedBox(height: 14),
         const ProxoText('هیچ فاوچەرێکی چالاکت بەردەست نییە!', translate: true,
           textAlign: TextAlign.center,

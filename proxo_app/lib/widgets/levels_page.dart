@@ -1,3 +1,4 @@
+import '../l10n/proxo_strings.dart';
 // lib/widgets/levels_page.dart
 // ─────────────────────────────────────────────────────────────────────────────
 // LevelsPage — ئاستەکان
@@ -13,7 +14,8 @@
 
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:solar_icons/solar_icons.dart';
+import 'proxo_symbol.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../theme/app_theme.dart';
 import '../main.dart' show supabase;
@@ -108,7 +110,7 @@ class _LevelsPageState extends State<LevelsPage> with WidgetsBindingObserver {
                   if (newLevel != null && newLevel['id'] != oldLevel) {
                     showProxoToast(
                       context,
-                      '🎉 ئاستت گۆڕدرا: ${newLevel['name_ku'] ?? ''}',
+                      ProxoStrings.format('ئاستت گۆڕدرا: {level}', {'level':newLevel['name_ku'] ?? ''}),
                       type: ProxoToastType.success,
                     );
                   }
@@ -241,15 +243,15 @@ class _LevelsPageState extends State<LevelsPage> with WidgetsBindingObserver {
     return ((_userPoints - curMin) / (nextMin - curMin)).clamp(0.0, 1.0);
   }
 
-  // Map icon string from DB -> FontAwesomeIcons
-  FaIconData _iconForString(String? iconStr) {
+  // Preserve stored tier identifiers; render one Solar Outline family.
+  IconData _iconForString(String? iconStr) {
     switch (iconStr?.toLowerCase()) {
-      case 'medal':   return FontAwesomeIcons.medal;
-      case 'award':   return FontAwesomeIcons.award;
-      case 'crown':   return FontAwesomeIcons.crown;
-      case 'gem':     return FontAwesomeIcons.gem;
-      case 'diamond': return FontAwesomeIcons.gem;
-      default:        return FontAwesomeIcons.star;
+      case 'medal':   return SolarIconsOutline.medalStar;
+      case 'award':   return SolarIconsOutline.cupStar;
+      case 'crown':   return SolarIconsOutline.crown;
+      case 'gem':     return SolarIconsOutline.star;
+      case 'diamond': return SolarIconsOutline.star;
+      default:        return SolarIconsOutline.star;
     }
   }
 
@@ -307,7 +309,7 @@ class _LevelsPageState extends State<LevelsPage> with WidgetsBindingObserver {
               color: AppColors.bg, shape: BoxShape.circle,
               border: Border.all(color: AppColors.border)),
             child: const Center(
-              child: FaIcon(FontAwesomeIcons.chevronRight, size: 14,
+              child: ProxoSolarIcon(SolarIconsOutline.altArrowRight, size: 14,
                 color: AppColors.muted))),
         ),
         const SizedBox(width: 12),
@@ -342,7 +344,7 @@ class _LevelsPageState extends State<LevelsPage> with WidgetsBindingObserver {
                     color: const Color(0xFFF97316).withOpacity(0.1),
                     shape: BoxShape.circle),
                   child: const Center(
-                    child: FaIcon(FontAwesomeIcons.layerGroup, size: 15,
+                    child: ProxoSolarIcon(SolarIconsOutline.widget_2, size: 15,
                       color: Color(0xFFF97316)))),
         ),
       ]),
@@ -423,7 +425,7 @@ class _LevelsPageState extends State<LevelsPage> with WidgetsBindingObserver {
               shape: BoxShape.circle,
               border: Border.all(color: levelColor.withOpacity(0.4), width: 1.5)),
             child: Center(
-              child: FaIcon(levelIcon, size: 22, color: levelColor))),
+              child: ProxoSolarIcon(levelIcon, size: 22, color: levelColor))),
           const SizedBox(width: 14),
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             const ProxoText('ئاستی ئێستا', translate: true,
@@ -488,7 +490,7 @@ class _LevelsPageState extends State<LevelsPage> with WidgetsBindingObserver {
               color: Colors.white70, decoration: TextDecoration.none))
         else
           ProxoText(
-            '${pointsToNext.toInt()} خاڵ ماوە بۆ ${next!['name_ku']}',
+            ProxoStrings.format('{count} خاڵ ماوە بۆ {level}', {'count':pointsToNext.toInt(),'level':next!['name_ku'] ?? ''}),
             style: const TextStyle(fontFamily: kAppFont, fontSize: 12.5,
               fontWeight: FontWeight.w400, height: 1.16,
               color: Colors.white70, decoration: TextDecoration.none)),
@@ -536,7 +538,7 @@ class _LevelsPageState extends State<LevelsPage> with WidgetsBindingObserver {
               shape: BoxShape.circle,
               border: Border.all(color: levelColor.withOpacity(0.3))),
             child: Center(
-              child: FaIcon(levelIcon, size: 18, color: levelColor))),
+              child: ProxoSolarIcon(levelIcon, size: 18, color: levelColor))),
 
           const SizedBox(width: 12),
 
@@ -578,7 +580,7 @@ class _LevelsPageState extends State<LevelsPage> with WidgetsBindingObserver {
                 ],
               ]),
               const SizedBox(height: 3),
-              ProxoText('$minPts خاڵ پێویستە',
+              ProxoText(ProxoStrings.format('{count} خاڵ پێویستە', {'count':minPts}),
                 style: const TextStyle(fontFamily: kAppFont, fontSize: 11.5,
                   fontWeight: FontWeight.w400,
                   color: AppColors.muted, decoration: TextDecoration.none)),
@@ -602,14 +604,14 @@ class _LevelsPageState extends State<LevelsPage> with WidgetsBindingObserver {
 
           // Achieved indicator
           if (isAchieved)
-            FaIcon(
+            ProxoSolarIcon(
               isCurrent
-                  ? FontAwesomeIcons.solidCircleCheck
-                  : FontAwesomeIcons.circleCheck,
+                  ? SolarIconsOutline.checkCircle
+                  : SolarIconsOutline.checkCircle,
               size: 18,
               color: isCurrent ? levelColor : const Color(0xFF22C55E))
           else
-            const FaIcon(FontAwesomeIcons.lock, size: 16,
+            const ProxoSolarIcon(SolarIconsOutline.lock, size: 16,
               color: AppColors.muted),
         ]),
       ),

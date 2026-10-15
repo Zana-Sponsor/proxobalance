@@ -731,7 +731,7 @@ class ProxoOverviewBanner extends StatelessWidget {
                 ProxoText(metric.$3 == null ? '—' : '${metric.$3! >= 0 ? '+' : ''}${metric.$3!.toStringAsFixed(1)}%',
                   textDirection:TextDirection.ltr,
                   style: const TextStyle(fontFamily:kAppFont,fontSize:12,height:1.5,color:Colors.white)),
-              ]))))]);
+              ])))]);
         }),
       ]),
     );

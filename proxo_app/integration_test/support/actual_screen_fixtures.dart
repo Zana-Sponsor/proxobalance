@@ -32,12 +32,21 @@ class ActualScreenBackend {
   transport=MockClient((request)async{
     if(request.method!='GET'||request.url.host!='screen-fixtures.invalid')throw StateError('screen_fixture_network_boundary');
     final table=request.url.path.split('/').last;
-    if(!{'profiles','pa_ads','pa_featured_ads_public','pa_popups','pa_notifications','pa_banners','pa_wallets','pa_user_points','pa_levels'}.contains(table))throw StateError('screen_fixture_network_boundary');
+    if(!{'profiles','pa_ads','pa_featured_ads_public','pa_popups','pa_notifications','pa_banners','pa_wallets','pa_user_points','pa_levels','pa_challenges','pa_challenge_progress','pa_vouchers','promo_codes'}.contains(table))throw StateError('screen_fixture_network_boundary');
     reads.update(table,(v)=>v+1,ifAbsent:()=>1);
     if(table=='pa_banners')await bannerGate?.future;
     if(table=='pa_notifications')await unreadGate?.future;
     if(table=='pa_ads'||table=='pa_featured_ads_public')await refreshGate?.future;
-    final Object data=table=='profiles'?{'full_name':'تاقیکردنەوە Proxo','email':'fixture@example.invalid','phone':'+9647500000000'}:table=='pa_ads'?[{
+    final Object data=table=='pa_levels' ? [
+      {'id':'tier-1','level_number':1,'name_ku':'Tier 1','icon':'medal','min_points':0,'color':'#0365FF'},
+      {'id':'tier-2','level_number':2,'name_ku':'Tier 2','icon':'crown','min_points':100,'color':'#7856A8'},
+    ] : table=='pa_challenges' ? [
+      {'id':'challenge-1','title':'Fixture challenge','description':'Read-only fixture','goal_type':'ads_count','goal_value':3,'reward_points':10,'reward_iqd':0},
+    ] : table=='pa_vouchers' ? (request.url.queryParameters.containsKey('used_at') ? [] : [
+      {'id':'voucher-1','code':'DEMO-ONLY','amount_iqd':1000,'reason':'دیاری بەخێرهاتن','is_signup_bonus':true,'created_at':'2026-10-14T10:00:00Z'},
+    ]) : table=='promo_codes' ? [
+      {'id':'promo-1','code':'DEMO-ONLY','discount_type':'percentage','discount_value':5,'is_active':true},
+    ] : table=='profiles'?{'full_name':'تاقیکردنەوە Proxo','email':'fixture@example.invalid','phone':'+9647500000000'}:table=='pa_ads'?[{
      'id':'00000000-0000-4000-8000-000000000001','title':'Fictional screen fixture','status':'active',
      'spend':12.5,'prev_spend':8,'clicks':1246,'impressions':84320,'prev_impressions':60000,
      'conversions':10,'budget':10,'total_budget':30,'created_at':DateTime.now().subtract(const Duration(hours:1)).toIso8601String(),

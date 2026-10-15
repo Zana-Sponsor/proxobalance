@@ -29,7 +29,9 @@ jobs:
           channel: stable
           cache: true
       - name: Identical read-only capture harness
-        run: cp after/proxo_app/test/polish_capture_test.dart before/proxo_app/test/
+        run: |
+          cp after/proxo_app/test/polish_capture_test.dart before/proxo_app/test/
+          cp after/proxo_app/integration_test/support/actual_screen_fixtures.dart before/proxo_app/integration_test/support/
       - run: flutter pub get
         working-directory: ${{ matrix.source }}/proxo_app
       - name: Validate translation catalog

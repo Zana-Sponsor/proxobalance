@@ -1,3 +1,4 @@
+import 'package:proxo_app/l10n/proxo_strings.dart';
 import 'package:proxo_app/theme/app_locale.dart';
 // notifications_screen.dart
 import 'dart:async';
@@ -52,7 +53,7 @@ const _kMonths = [
 ];
 
 String _formatKurdishDate(DateTime dt) =>
-    '${_kd(dt.day)} ${_kMonths[dt.month - 1]} ${_kd(dt.year)}';
+    '${_kd(dt.day)} ${ProxoStrings.text(_kMonths[dt.month - 1])} ${_kd(dt.year)}';
 
 String _formatKurdishTime(DateTime dt) {
   final h24 = dt.hour;
@@ -64,12 +65,12 @@ String _formatKurdishTime(DateTime dt) {
 String _timeAgo(DateTime dt) {
   final diff = DateTime.now().difference(dt);
   final min = diff.inMinutes;
-  if (min < 1) return 'ئێستا';
-  if (min < 60) return '${_kd(min)} خولەک پێش';
+  if (min < 1) return ProxoStrings.text('ئێستا');
+  if (min < 60) return ProxoStrings.format('{count} خولەک پێش', {'count':_kd(min)});
   final hr = diff.inHours;
-  if (hr < 24) return '${_kd(hr)} کاتژمێر پێش';
-  if (_isYesterday(dt)) return 'دوێنێ';
-  if (diff.inDays < 7) return '${_kd(diff.inDays)} ڕۆژ پێش';
+  if (hr < 24) return ProxoStrings.format('{count} کاتژمێر پێش', {'count':_kd(hr)});
+  if (_isYesterday(dt)) return ProxoStrings.text('دوێنێ');
+  if (diff.inDays < 7) return ProxoStrings.format('{count} ڕۆژ پێش', {'count':_kd(diff.inDays)});
   return _formatKurdishDate(dt);
 }
 

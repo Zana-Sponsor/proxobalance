@@ -1,3 +1,4 @@
+import 'package:proxo_app/l10n/proxo_strings.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import '../main.dart' show supabase;
@@ -356,7 +357,7 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
       });
       if (draft.paymentMethod == 'app_balance' &&
           quote.balanceUsd + 0.000001 < quote.costUsd) {
-        setState(() => _quoteError = 'باڵانسی پێویستت بەردەست نییە\nبەردەست: ${quote.balanceUsd.toStringAsFixed(2)} USD — پێویست: ${quote.costUsd.toStringAsFixed(2)} USD');
+        setState(() => _quoteError = ProxoStrings.text('باڵانسی پێویستت بەردەست نییە') + '\n' + ProxoStrings.format('بەردەست: {available} USD — پێویست: {required} USD', {'available':quote.balanceUsd.toStringAsFixed(2), 'required':quote.costUsd.toStringAsFixed(2)}));
         return;
       }
       if (draft.paymentMethod == 'fastpay' && quote.totalIqd < 1000) {
@@ -754,7 +755,7 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
         AdValueRow(label: _budgetIqd(_budgets.last),
             value: _budgetIqd(_budgets.first), color: AdUi.secondary),
         const SizedBox(height: 24),
-        AdValueRow(label: 'ماوەی ڕیکلام', value: '$_days ڕۆژ',
+        AdValueRow(label: 'ماوەی ڕیکلام', value: ProxoStrings.format('{count} ڕۆژ', {'count':_days}),
             valueColor: AdUi.blue),
         const SizedBox(height: 6),
         Directionality(

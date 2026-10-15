@@ -1,3 +1,4 @@
+import '../l10n/proxo_strings.dart';
 // lib/widgets/tasks_page.dart
 // ─────────────────────────────────────────────────────────────────────────────
 // TasksPage — ئەرکەکان
@@ -6,7 +7,8 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:solar_icons/solar_icons.dart';
+import 'proxo_symbol.dart';
 import '../theme/app_theme.dart';
 import '../main.dart' show supabase;
 import 'proxo_toast.dart';
@@ -143,7 +145,7 @@ class _TasksPageState extends State<TasksPage> {
               color: AppColors.bg, shape: BoxShape.circle,
               border: Border.all(color: AppColors.border)),
             child: const Center(
-              child: FaIcon(FontAwesomeIcons.chevronRight, size: 14,
+              child: ProxoSolarIcon(SolarIconsOutline.altArrowRight, size: 14,
                 color: AppColors.muted))),
         ),
         const SizedBox(width: 12),
@@ -159,7 +161,7 @@ class _TasksPageState extends State<TasksPage> {
             color: const Color(0xFF8B5CF6).withOpacity(0.1),
             shape: BoxShape.circle),
           child: const Center(
-            child: FaIcon(FontAwesomeIcons.listCheck, size: 15,
+            child: ProxoSolarIcon(SolarIconsOutline.checklist, size: 15,
               color: Color(0xFF8B5CF6)))),
       ]),
     );
@@ -183,7 +185,7 @@ class _TasksPageState extends State<TasksPage> {
                 color: const Color(0xFF8B5CF6).withOpacity(0.1),
                 shape: BoxShape.circle),
               child: const Center(
-                child: FaIcon(FontAwesomeIcons.listCheck, size: 28,
+                child: ProxoSolarIcon(SolarIconsOutline.checklist, size: 28,
                   color: Color(0xFF8B5CF6)))),
             const SizedBox(height: 16),
             ProxoText('هیچ ئەرکێکی چالاک نییە ئێستا', translate: true,
@@ -230,10 +232,10 @@ class _TasksPageState extends State<TasksPage> {
     String goalLabel;
     if (goalType == 'ads_count') {
       goalLabel =
-          '${userProgress.toInt()} لە ${goalValue.toInt()} ڕیکلام';
+          ProxoStrings.format('{done} لە {goal} ڕیکلام', {'done':userProgress.toInt(),'goal':goalValue.toInt()});
     } else {
       goalLabel =
-          '${userProgress.toStringAsFixed(1)} لە ${goalValue.toStringAsFixed(1)} دۆلار خەرجکراو';
+          ProxoStrings.format('{done} لە {goal} دۆلار خەرجکراو', {'done':userProgress.toStringAsFixed(1),'goal':goalValue.toStringAsFixed(1)});
     }
 
     return Container(
@@ -262,7 +264,7 @@ class _TasksPageState extends State<TasksPage> {
             // Reward badges
             if (rewardPoints > 0)
               _rewardBadge(
-                '${rewardPoints.toInt()} خاڵ',
+                ProxoStrings.format('{count} خاڵ', {'count':rewardPoints.toInt()}),
                 const Color(0xFF8B5CF6)),
             if (rewardPoints > 0 && rewardIqd > 0)
               const SizedBox(width: 6),
@@ -340,7 +342,7 @@ class _TasksPageState extends State<TasksPage> {
                   color: const Color(0xFF22C55E).withOpacity(0.3))),
               child: const Center(
                 child: Row(mainAxisSize: MainAxisSize.min, children: [
-                  FaIcon(FontAwesomeIcons.circleCheck, size: 14,
+                  ProxoSolarIcon(SolarIconsOutline.checkCircle, size: 14,
                     color: Color(0xFF22C55E)),
                   SizedBox(width: 6),
                   ProxoText('خەڵاتەکەت وەرگیرا', translate: true,

@@ -50,6 +50,8 @@ class ProxoSolarIcon extends StatelessWidget {
   final double size;
   final Color? color;
   static final symbols = <IconData, ProxoSymbolName>{
+    SolarIconsOutline.checkCircle: ProxoSymbolName.check,
+    SolarIconsOutline.copy: ProxoSymbolName.copy,
     SolarIconsOutline.home2: ProxoSymbolName.home,
     SolarIconsOutline.clapperboardPlay: ProxoSymbolName.ads,
     SolarIconsOutline.widget_2: ProxoSymbolName.tools,
