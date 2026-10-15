@@ -213,9 +213,16 @@ void main() {
       await mount(AdCreateScreen(repository: ActualAdRepository()));
       await shot('create');
       final title = find.byKey(const ValueKey('ad-title'));
-      await t.ensureVisible(title);
-      await t.pumpAndSettle();
-      await t.tap(title);
+      Future<void> nativeTapTitle() async {
+        await t.ensureVisible(title);
+        await t.pumpAndSettle();
+        expect(title.hitTestable(), findsOneWidget);
+        // Framework-only taps do not necessarily focus Android's FlutterView.
+        // Exercise the real pointer path before asserting the native IME.
+        final point = t.getCenter(title) * t.view.devicePixelRatio;
+        print('PROXO_UI_NATIVE_TAP:${point.dx.round()}:${point.dy.round()}');
+      }
+      await nativeTapTitle();
       Future<void> waitInsets(bool visible) async {
         var stableSamples = 0;
         double? previousInset;
@@ -241,9 +248,7 @@ void main() {
       await waitInsets(false);
       expect(find.byType(AdCreateScreen), findsOneWidget);
       observations['android_back_dismissed_keyboard_kept_form'] = true;
-      await t.ensureVisible(title);
-      await t.pumpAndSettle();
-      await t.tap(title);
+      await nativeTapTitle();
       await waitInsets(true);
       final goal = find.byKey(const ValueKey('goal-views'));
       await t.ensureVisible(goal);

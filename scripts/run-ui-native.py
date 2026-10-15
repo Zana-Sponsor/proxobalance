@@ -42,6 +42,7 @@ for name, size, density in configurations:
     adb('shell', 'settings', 'put', 'secure', 'show_ime_with_hard_keyboard', '1')
     metadata = {'size': adb('shell', 'wm', 'size'),
                 'density': adb('shell', 'wm', 'density'), 'adb_back_events': 0,
+                'adb_tap_events': [],
                 'adb_screenshots': [], 'drive_timeout_seconds': 600,
                 'drive_timed_out': False}
     command = ['flutter', 'drive', '--debug', '-d', 'emulator-5554',
@@ -76,8 +77,28 @@ for name, size, density in configurations:
 
                 adb('shell', 'input', 'keyevent', 'KEYCODE_BACK')
                 metadata['adb_back_events'] += 1
+            tap = re.search(r'PROXO_UI_NATIVE_TAP:(\d+):(\d+)', line)
+            if tap:
+                x, y = map(int, tap.groups())
+                width, height = map(int, re.findall(r'(\d+)x(\d+)', metadata['size'])[-1])
+                if not (0 < x < width and 0 < y < height):
+                    raise RuntimeError('Native tap checkpoint is outside the device')
+                adb('shell', 'input', 'tap', str(x), str(y))
+                metadata['adb_tap_events'].append([x, y])
         result = process.wait()
         watchdog.cancel()
     (OUTPUT / f'{name}-device.json').write_text(json.dumps(metadata, indent=2))
-    if result or metadata['adb_back_events'] != 1 or len(metadata['adb_screenshots']) != 2:
+    if result:
+        # Preserve OS focus/IME evidence when the driver cannot finish. These
+        # disposable emulators contain only the credential-free test fixtures.
+        for label, args in [('input-method', ('shell', 'dumpsys', 'input_method')),
+                            ('window', ('shell', 'dumpsys', 'window', 'windows')),
+                            ('logcat', ('logcat', '-d', '-t', '1500'))]:
+            try:
+                (OUTPUT / f'{name}-{label}.log').write_text(adb(*args))
+            except (subprocess.SubprocessError, OSError) as error:
+                metadata[f'{label}_capture_error'] = str(error)
+        (OUTPUT / f'{name}-device.json').write_text(json.dumps(metadata, indent=2))
+    if (result or metadata['adb_back_events'] != 1 or
+            len(metadata['adb_tap_events']) != 2 or len(metadata['adb_screenshots']) != 2):
         sys.exit(result or 1)
