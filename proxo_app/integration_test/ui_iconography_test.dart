@@ -212,6 +212,9 @@ void main() {
       await shot('tools');
       await mount(AdCreateScreen(repository: ActualAdRepository()));
       await shot('create');
+      // Live test bindings otherwise consume device taps as finder diagnostics.
+      binding.shouldPropagateDevicePointerEvents = true;
+      observations['native_device_pointer_events_enabled'] = true;
       final title = find.byKey(const ValueKey('ad-title'));
       Future<void> nativeTapTitle() async {
         await t.ensureVisible(title);
@@ -263,6 +266,7 @@ void main() {
       await t.pumpAndSettle();
       observations['completed'] = true;
     } finally {
+      binding.shouldPropagateDevicePointerEvents = false;
       // Flutter verifies handles before addTearDown callbacks run.
       semantics.dispose();
     }
