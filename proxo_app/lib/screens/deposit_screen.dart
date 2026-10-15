@@ -838,11 +838,16 @@ class _WalletCard extends StatelessWidget {
             const SizedBox(height: 8),
             ProxoText(wallet.name, textAlign: TextAlign.center, textDirection: TextDirection.ltr,
               style: const TextStyle(fontFamily: kAppFont, fontSize: 14, height: 1.5, color: _cInk)),
-            if (wallet.numberIsPlaceholder) ...[
-              const SizedBox(height: 2),
-              const ProxoText('ژمارە دانەنراوە', translate: true, textAlign: TextAlign.center,
-                style: TextStyle(fontFamily: kAppFont, fontSize: 12, height: 1.5, color: _cSlate)),
-            ],
+            const SizedBox(height: 2),
+            // Reserve the same status line on every card so logos and names
+            // share a baseline, including configured/disabled neighbours.
+            SizedBox(
+              height: MediaQuery.textScalerOf(context).scale(12) * 1.5,
+              child: wallet.numberIsPlaceholder
+                ? const ProxoText('ژمارە دانەنراوە', translate: true, textAlign: TextAlign.center,
+                    style: TextStyle(fontFamily: kAppFont, fontSize: 12, height: 1.5, color: _cSlate))
+                : null,
+            ),
           ]),
         ),
       ),
