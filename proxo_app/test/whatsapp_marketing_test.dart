@@ -43,13 +43,13 @@ void main() {
           case '/functions/v1/phone-otp-session':
             body = {'ok': true, 'token_hash': 'fixture-hash'};
           case '/rest/v1/whatsapp_marketing_preferences':
-            body = {'opted_in': optedIn};
+            body = [{'opted_in': optedIn}];
           case '/rest/v1/rpc/pa_set_whatsapp_marketing':
             if (saveFails) { status = 500; body = {'message': 'fixture failure'}; }
             else { optedIn = (jsonDecode(request.body) as Map)['p_opted_in'] == true; body = {'ok': true}; }
           default: throw StateError('No real network: ${request.url.path}');
         }
-        return http.Response(jsonEncode(body), status, headers: {'content-type': 'application/json'});
+        return http.Response(jsonEncode(body), status, request: request, headers: {'content-type': 'application/json'});
       }));
     client = instance.client; app.supabase = client;
     String part(Object value) => base64Url.encode(utf8.encode(jsonEncode(value))).replaceAll('=', '');
@@ -57,6 +57,8 @@ void main() {
     final token = '${part({'alg': 'HS256'})}.${part({'sub': owner, 'exp': DateTime.now().millisecondsSinceEpoch ~/ 1000 + 86400})}.fixture';
     await client.auth.recoverSession(jsonEncode(Session(accessToken: token, tokenType: 'bearer',
       user: const User(id: owner, appMetadata: {}, userMetadata: {}, aud: 'authenticated', createdAt: '2026-10-15T00:00:00Z')).toJson()));
+    // Match PostgREST's actual response/request contract before mounting UI.
+    expect(await client.from('whatsapp_marketing_preferences').select('opted_in').maybeSingle(), {'opted_in': true});
   });
   tearDownAll(() async { await Supabase.instance.dispose(); ProxoLocale.current.value = ProxoLocale.kurdishSorani; });
   setUp(() { requests.clear(); saveFails = false; optedIn = true; });
