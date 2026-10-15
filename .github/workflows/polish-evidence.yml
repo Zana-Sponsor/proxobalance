@@ -46,7 +46,23 @@ jobs:
         working-directory: after/proxo_app
       - name: Capture actual screens with bundled fonts
         timeout-minutes: 12
-        run: flutter test test/polish_capture_test.dart --reporter expanded --dart-define=POLISH_BEFORE=${{ matrix.source == 'before' }}
+        # The immutable baseline has a confirmed LevelsPage realtime teardown bug.
+        # Preserve its failing test log as evidence; candidate failures still block.
+        continue-on-error: ${{ matrix.source == 'before' }}
+        run: |
+          mkdir -p build/polish-evidence
+          set -o pipefail
+          flutter test test/polish_capture_test.dart --reporter expanded --dart-define=POLISH_BEFORE=${{ matrix.source == 'before' }} 2>&1 | tee build/polish-evidence/capture.log
+        working-directory: ${{ matrix.source }}/proxo_app
+      - name: Require complete screenshot matrix
+        run: |
+          python - <<'PYTHON'
+          from pathlib import Path
+          p=Path('build/polish-evidence')
+          images=[f for f in p.glob('*.png') if not f.stem.endswith('-bottom')]
+          assert len(images)==90, len(images)
+          assert all(f.stat().st_size>1000 and f.with_suffix('.json').exists() for f in images)
+          PYTHON
         working-directory: ${{ matrix.source }}/proxo_app
       - name: Auth and language behavior
         if: matrix.source == 'after'

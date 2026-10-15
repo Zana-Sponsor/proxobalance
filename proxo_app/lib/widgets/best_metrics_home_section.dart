@@ -1,3 +1,4 @@
+import '../theme/app_locale.dart';
 import 'package:proxo_app/l10n/proxo_strings.dart';
 import 'dart:async';
 import 'dart:math' as math;
@@ -232,8 +233,9 @@ class _SectionHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) => LayoutBuilder(
         builder: (context, constraints) {
-          const title = 'باشترین ئەنجامەکانی هەفتە';
-          const action = 'بینینی هەموو';
+          ProxoLocale.watch(context);
+          final title = ProxoStrings.text('باشترین ئەنجامەکانی هەفتە');
+          final action = ProxoStrings.text('بینینی هەموو');
           double width(String text, TextStyle style) {
             final painter = TextPainter(
               text: TextSpan(text: text, style: style),

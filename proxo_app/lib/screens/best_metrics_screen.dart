@@ -261,7 +261,7 @@ class _CategoryFilter extends StatelessWidget {
           final option = options[index];
           final selected = option.slug == value;
           return ChoiceChip(
-            label: ProxoText(option.label),
+            label: ProxoText(option.label, translate: true),
             selected: selected,
             showCheckmark: false,
             onSelected: (_) => onChanged(option.slug),

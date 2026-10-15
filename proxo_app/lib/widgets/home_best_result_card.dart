@@ -64,9 +64,9 @@ class HomeBestResultCard extends StatelessWidget {
   Widget _header(BuildContext context) => LayoutBuilder(
     builder: (context, constraints) {
       final category = adCategoryLabel(ad.category);
-      final title = ProxoText(category, style: AdUi.text(context));
+      final title = ProxoText(category, translate: true, style: AdUi.text(context));
       final goal = ProxoText(
-        ad.goal == 'messages' ? 'نامە و فرۆش' : 'بینین و کارلێک',
+        ad.goal == 'messages' ? 'نامە و فرۆش' : 'بینین و کارلێک', translate: true,
         style: AdUi.text(context, color: AdUi.secondary),
       );
       final details = Column(
@@ -183,7 +183,7 @@ class _ResultMetric extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         ProxoText(
-          label,
+          label, translate: true,
           textAlign: TextAlign.center,
           style: AdUi.text(context, color: AdUi.secondary),
         ),

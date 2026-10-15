@@ -491,6 +491,7 @@ class TxHistorySheetState extends State<TxHistoryPage> {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     final TxStrings l = TxStrings.of(ProxoLocale.current.value);
     final bool canPop = Navigator.of(context).canPop();
     return ValueListenableBuilder<_TxListState>(
@@ -578,6 +579,7 @@ class _TxCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     final _TxItem t = item;
     final DateTime b = receiptBaghdad(t.date) ?? t.date;
     final sign = t.isSettled ? (t.isIn ? '+' : '-') : '';

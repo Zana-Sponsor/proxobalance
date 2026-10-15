@@ -1,3 +1,4 @@
+import '../theme/app_locale.dart';
 import '../l10n/proxo_strings.dart';
 // lib/widgets/levels_page.dart
 // ─────────────────────────────────────────────────────────────────────────────
@@ -282,6 +283,7 @@ class _LevelsPageState extends State<LevelsPage> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(

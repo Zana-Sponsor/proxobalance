@@ -1,3 +1,4 @@
+import '../theme/app_locale.dart';
 import '../l10n/proxo_strings.dart';
 // lib/widgets/tasks_page.dart
 // ─────────────────────────────────────────────────────────────────────────────
@@ -114,6 +115,7 @@ class _TasksPageState extends State<TasksPage> {
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(

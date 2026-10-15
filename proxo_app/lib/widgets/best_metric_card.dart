@@ -471,7 +471,7 @@ class _CategoryPill extends StatelessWidget {
           borderRadius: BorderRadius.circular(999),
         ),
         child: ProxoText(
-          label,
+          label, translate: true,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: const TextStyle(
@@ -530,7 +530,7 @@ class _MetricValue extends StatelessWidget {
           ),
           const SizedBox(height: 2),
           ProxoText(
-            label,
+            label, translate: true,
             maxLines: 1,
             style: const TextStyle(
               fontFamily: kAppFont,
@@ -581,7 +581,7 @@ class _DetailCapsule extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ProxoText(
-                  label,
+                  label, translate: true,
                   maxLines: 1,
                   style: const TextStyle(
                     fontFamily: kAppFont,

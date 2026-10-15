@@ -173,6 +173,7 @@ class _VoucherPageState extends State<VoucherPage>
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     final topPad = MediaQuery.of(context).viewPadding.top;
     return Directionality(
       textDirection: TextDirection.rtl,
