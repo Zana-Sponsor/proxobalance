@@ -1,3 +1,4 @@
+import 'package:proxo_app/widgets/proxo_refresh.dart';
 import 'package:solar_icons/solar_icons.dart';
 import '../widgets/proxo_symbol.dart';
 import 'package:proxo_app/l10n/proxo_strings.dart';
@@ -654,9 +655,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       textDirection: TextDirection.rtl,
       child: Scaffold(
         backgroundColor: _Palette.bg,
-        body: RefreshIndicator(
-          color: _Palette.primary,
-          displacement: 80,
+        body: ProxoRefresh(
+          pullToRefresh: true,
           onRefresh: _load,
           child: CustomScrollView(
             physics: const AlwaysScrollableScrollPhysics(

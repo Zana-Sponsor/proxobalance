@@ -497,7 +497,7 @@ class _DepositScreenState extends State<DepositScreen> {
         crossAxisCount: MediaQuery.sizeOf(context).width < 340 || MediaQuery.textScalerOf(context).scale(14) > 20 ? 1 : 2,
         mainAxisSpacing: 10,
         crossAxisSpacing: 10,
-        mainAxisExtent: 68 + MediaQuery.textScalerOf(context).scale(14) * 3.2,
+        mainAxisExtent: 58 + MediaQuery.textScalerOf(context).scale(14) * 3.2,
       ),
       itemBuilder: (_, i) {
         final w = _kWallets[i];
@@ -831,11 +831,11 @@ class _WalletCard extends StatelessWidget {
       child: InkWell(onTap: onTap,
         child: Padding(padding: const EdgeInsets.all(12),
           child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-            SizedBox(height: 32, width: 88,
+            SizedBox(height: 24, width: 64,
               child: wallet.logoAsset!.endsWith('.svg')
                 ? SvgPicture.asset(wallet.logoAsset!, fit: BoxFit.contain, excludeFromSemantics: true)
-                : Image.asset(wallet.logoAsset!, fit: BoxFit.contain, cacheWidth: 264, excludeFromSemantics: true)),
-            const SizedBox(height: 10),
+                : Image.asset(wallet.logoAsset!, fit: BoxFit.contain, cacheWidth: (64 * MediaQuery.devicePixelRatioOf(context)).ceil(), excludeFromSemantics: true)),
+            const SizedBox(height: 8),
             ProxoText(wallet.name, textAlign: TextAlign.center, textDirection: TextDirection.ltr,
               style: const TextStyle(fontFamily: kAppFont, fontSize: 14, height: 1.5, color: _cInk)),
             if (wallet.numberIsPlaceholder) ...[

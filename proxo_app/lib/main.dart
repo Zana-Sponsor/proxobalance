@@ -304,7 +304,7 @@ class MainShell extends StatefulWidget {
 
 class MainShellState extends State<MainShell> {
   int  _tabIndex       = 0;
-  int  _refreshCounter = 0;
+  bool _creatingAd = false;
 
   /// ⚠ `_sidebarOpen` و `_sidebarKey` لابران.
   ///
@@ -324,12 +324,9 @@ class MainShellState extends State<MainShell> {
   void _closeSidebar() => _scaffoldKey.currentState?.closeEndDrawer();
 
   // ── Keep-alive tabs ──────────────────────────────────────────────────────
-  // Each tab is built once, on its first visit, then kept alive inside the
-  // IndexedStack in _buildBody(). Switching BACK to a tab you've already
-  // opened is instant — no rebuild, no re-fetch from Supabase, no skeleton
-  // flash — because its widget/state was never torn down. A tab you haven't
-  // opened yet is a cheap SizedBox.shrink() placeholder until its first tap,
-  // so nothing is built or fetched before it's needed.
+  // Mount tabs lazily and retain their State/scroll position between visits.
+  // Activation may refresh stale data in the background; it must not replace
+  // the loaded screen with a fresh State or replay its initial skeleton.
   final Set<int> _builtTabs = {0};
 
   // Order of real tabs; slot 2 is the FAB and never owns a screen.
@@ -399,21 +396,23 @@ class MainShellState extends State<MainShell> {
         return;
       }
       if (index == 2) {
-        // ⚠ <String>، نەک <void>: `AdCreateScreen` بە
-        // `Navigator.pop(context, 'refresh')` دەگەڕێتەوە، و ئەم
-        // ڕیزە بەهاکە بەکاردەهێنێت. `Route<void>` بەهاکە دەگۆڕێت بۆ
-        // `void` و بەراوردەکە کۆمپایل نابێت.
-        final result = await Navigator.of(context).push(
-          ProxoPageRoute<String>(builder: (_) => const AdCreateScreen()),
-        );
-        // FIX: هەڵە → بگەڕێوە سەرەکی + refresh هەموو بەشەکان
-        if (result == 'refresh' && mounted) {
-          setState(() {
-            _tabIndex = 1;
-            _refreshCounter++;
-            _builtTabs.add(1);
-          });
-          mainShellTab.value = 1;
+        if (_creatingAd) return;
+        _creatingAd = true;
+        try {
+          final result = await Navigator.of(context).push(
+            ProxoPageRoute<String>(builder: (_) => const AdCreateScreen()),
+          );
+          if (result == 'refresh' && mounted) {
+            if (_tabIndex == 1) {
+              // Already active: refresh the retained list. Switching from
+              // another tab invokes AdScreen's own activation sync instead.
+              unawaited(_refreshers[1]!.refresh());
+            } else {
+              _switchTab(1);
+            }
+          }
+        } finally {
+          _creatingAd = false;
         }
         return;
       }
@@ -424,7 +423,7 @@ class MainShellState extends State<MainShell> {
     switch (index) {
       case 0:
         return HomeScreen(
-          key: ValueKey('home_$_refreshCounter'),
+          key: const ValueKey('home'),
           isActive: _tabIndex == 0,
           refreshController: _refreshers[0],
           onMenuTap:   _openSidebar,
@@ -446,13 +445,13 @@ class MainShellState extends State<MainShell> {
         );
       case 1:
         return RepaintBoundary(
-          key: ValueKey('ads_$_refreshCounter'),
+          key: const ValueKey('ads'),
           child: AdScreen(
-            key: ValueKey('ads_$_refreshCounter'),
+            key: const ValueKey('ads'),
             refreshController: _refreshers[1],
             // تابەکان لە IndexedStackدا زیندوو دەمێننەوە، بۆیە AdScreen
             // خۆی نازانێت کەی گەڕاوەتەوە پێش چاو. ئەمە پێی دەڵێت — و ئەو
-            // سکێلیتۆنی کردنەوە نیشان دەدات پێش کارتەکان.
+            // داتای نوێ بەبێ هەڵوەشاندنەوەی لیستەکە وەردەگرێت.
             isActive: _tabIndex == 1,
             // Same closure HomeScreen gets above — one sidebar, one owner.
             onMenuTap: _openSidebar,
@@ -473,7 +472,7 @@ class MainShellState extends State<MainShell> {
         );
       default:
         return HomeScreen(
-          key: ValueKey('home_def_$_refreshCounter'),
+          key: const ValueKey('home_default'),
           isActive: _tabIndex == 0,
           onMenuTap:   _openSidebar,
           onCreateTap: () => _onTabTap(2),

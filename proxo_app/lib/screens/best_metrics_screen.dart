@@ -1,3 +1,4 @@
+import 'package:proxo_app/widgets/proxo_refresh.dart';
 import 'package:proxo_app/l10n/proxo_strings.dart';
 import 'package:proxo_app/theme/app_locale.dart';
 import 'dart:async';
@@ -130,9 +131,9 @@ class _BestMetricsScreenState extends State<BestMetricsScreen> {
                             )
                           : filtered.isEmpty
                               ? const _EmptyView(key: ValueKey('empty'))
-                              : RefreshIndicator(
+                              : ProxoRefresh(
+                                pullToRefresh: true,
                                   key: const ValueKey('list'),
-                                  color: _accent,
                                   onRefresh: () => _load(forceRefresh: true),
                                   child: ListView.separated(
                                     physics: const AlwaysScrollableScrollPhysics(

@@ -362,6 +362,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 Expanded(
                   child: ProxoRefresh(
+                    pullToRefresh: true,
                     controller: widget.refreshController,
                     scrollController: _scrollController,
                     onRefresh: _loadData,
@@ -1756,21 +1757,21 @@ class _SignOutTile extends StatelessWidget {
         child: ConstrainedBox(
           constraints: const BoxConstraints(minHeight: 60),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
             child: Row(
               children: <Widget>[
-                const SizedBox.square(
-                  dimension: 38,
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                    ),
-                    child: ProxoSolarIcon(
-                      SolarIconsOutline.logout,
-                      size: ProxoChrome.iconSize,
-                      color: _ProfileColors.iconInk,
-                    ),
+                Container(
+                  width: 40,
+                  height: 40,
+                  alignment: Alignment.center,
+                  decoration: const BoxDecoration(
+                    color: ProxoChrome.surface,
+                    borderRadius: BorderRadius.all(Radius.circular(12)),
+                  ),
+                  child: const ProxoSolarIcon(
+                    SolarIconsOutline.logout,
+                    size: ProxoChrome.iconSize,
+                    color: _ProfileColors.iconInk,
                   ),
                 ),
                 const SizedBox(width: 12),

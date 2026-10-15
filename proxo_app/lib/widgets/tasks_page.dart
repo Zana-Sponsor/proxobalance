@@ -1,3 +1,4 @@
+import 'package:proxo_app/widgets/proxo_refresh.dart';
 import '../theme/app_locale.dart';
 import '../l10n/proxo_strings.dart';
 // lib/widgets/tasks_page.dart
@@ -197,9 +198,9 @@ class _TasksPageState extends State<TasksPage> {
       );
     }
 
-    return RefreshIndicator(
+    return ProxoRefresh(
+      pullToRefresh: true,
       onRefresh: _load,
-      color: AppColors.dark,
       child: ListView.builder(
         padding: const EdgeInsets.all(16),
         physics: const AlwaysScrollableScrollPhysics(

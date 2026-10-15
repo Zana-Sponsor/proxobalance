@@ -1,3 +1,4 @@
+import 'package:proxo_app/widgets/proxo_refresh.dart';
 import '../theme/app_locale.dart';
 import '../l10n/proxo_strings.dart';
 // lib/widgets/levels_page.dart
@@ -370,9 +371,9 @@ class _LevelsPageState extends State<LevelsPage> with WidgetsBindingObserver {
             decoration: TextDecoration.none)));
     }
 
-    return RefreshIndicator(
+    return ProxoRefresh(
+      pullToRefresh: true,
       onRefresh: _load,
-      color: AppColors.dark,
       child: ListView(
         padding: const EdgeInsets.all(16),
         physics: const AlwaysScrollableScrollPhysics(

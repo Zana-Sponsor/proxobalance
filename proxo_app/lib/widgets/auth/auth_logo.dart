@@ -7,8 +7,8 @@ import 'package:flutter/material.dart';
 class AuthLogo extends StatelessWidget {
   const AuthLogo({super.key});
 
-  static const double width = 132;
-  static const double height = 38;
+  static const double width = 84;
+  static const double height = 24;
   static const String asset = 'assets/images/proxo_logo.png';
 
   @override

@@ -1,3 +1,4 @@
+import 'package:proxo_app/widgets/proxo_refresh.dart';
 import 'package:proxo_app/theme/app_locale.dart';
 import 'dart:io';
 
@@ -135,8 +136,8 @@ class _TutorialScreenState extends State<TutorialScreen> {
   }
 
   Widget _buildBody() {
-    return RefreshIndicator(
-      color: AppColors.dark,
+    return ProxoRefresh(
+      pullToRefresh: true,
       onRefresh: _loadTutorials,
       child: ListView(
         physics: const AlwaysScrollableScrollPhysics(

@@ -6,41 +6,9 @@ import 'package:flutter/physics.dart';
 
 import '../theme/app_theme.dart';
 
-// ─────────────────────────────────────────────────────────────────────────────
-// ProxoRefresh — programmatic pull-to-refresh for bottom-tab re-selection
-//
-// ── WHY THIS ISN'T CupertinoSliverRefreshControl ────────────────────────────
-// The obvious pick has no programmatic trigger. It is driven entirely by the
-// enclosing ScrollPosition overscrolling past zero: it reads the negative
-// extent during layout and decides for itself when to arm and fire. There is
-// no `.show()`, and the usual workaround — `controller.jumpTo(-100)` — is
-// clamped straight back to 0 by the position's `applyBoundaryConditions`
-// before a frame is ever drawn. It also requires a CustomScrollView, which
-// only AdScreen has: HomeScreen is a SingleChildScrollView, ToolsScreen and
-// ProxoProfilePage are ListViews.
-//
-// `pull_to_refresh_flutter3` does expose `RefreshController.requestRefresh()`,
-// so it would work — but it means a new dependency plus converting all four
-// tab bodies to `SmartRefresher`, and AdScreen's scroll body is load-bearing
-// (see the long comment above `_buildBody`, and `_scrollCtrl` being shared
-// between two CustomScrollViews).
-//
-// So this widget owns the offset itself instead of borrowing the scrollable's.
-// It translates whatever child it is given downward on its own
-// AnimationController + SpringSimulation and paints the spinner in the strip
-// that opens up. Consequences worth knowing:
-//
-//   • it wraps ANY scrollable — no restructuring of the four tab bodies
-//   • it is genuinely programmatic: `controller.refresh()`
-//   • the existing `RefreshIndicator` on each screen keeps working untouched,
-//     because this never touches the ScrollPosition. Pull-down stays Material,
-//     tab re-tap gets this. They cannot both run: `_busy` gates re-entry, and
-//     a pull gesture can't start while the viewport is translated away from
-//     the finger.
-//   • it does NOT overscroll the list itself, so a list already scrolled to
-//     the middle would drop 60px with its middle showing. That's why
-//     `scrollController` exists — pass one and it animates to the top first.
-// ─────────────────────────────────────────────────────────────────────────────
+/// Shared pull gesture and tab re-selection refresh presentation. The content
+/// keeps its element path throughout the animation, and both entry points use
+/// the same in-flight guard, 22dp spinner and 60dp spring-driven reveal.
 
 /// Handle for firing a refresh from outside the screen that owns the list —
 /// `MainShell` holds one per tab and calls [refresh] when the active tab is
@@ -137,7 +105,7 @@ class ProxoRefresh extends StatefulWidget {
   /// wrap their rows in [ProxoArrival] instead.
   final VoidCallback? onArrive;
 
-  /// Optional — omit it and the widget is inert until something attaches.
+  /// Optional handle for tab re-selection; pull gestures work independently.
   final ProxoRefreshController? controller;
 
   /// Supply the list's controller and the viewport animates to the top before
@@ -182,16 +150,21 @@ class _ProxoRefreshState extends State<ProxoRefresh>
   bool _busy = false;
   double _pull = 0;
   bool _onScroll(ScrollNotification notice) {
-    if (!widget.pullToRefresh || _busy || notice.depth != 0) return false;
+    if (!widget.pullToRefresh || _busy || notice.depth != 0 ||
+        notice.metrics.axis != Axis.vertical) return false;
     if (notice is ScrollStartNotification) _pull = 0;
-    if (notice is OverscrollNotification && notice.metrics.pixels <= notice.metrics.minScrollExtent) {
+    if (notice is OverscrollNotification && notice.dragDetails != null &&
+        notice.metrics.pixels <= notice.metrics.minScrollExtent) {
       _pull += math.max(0, -notice.overscroll);
     }
-    if (notice is ScrollUpdateNotification && notice.dragDetails != null && notice.metrics.pixels < notice.metrics.minScrollExtent) {
-      _pull = math.max(_pull, notice.metrics.minScrollExtent - notice.metrics.pixels);
+    if (notice is ScrollUpdateNotification && notice.dragDetails != null) {
+      // Track the current pull, so reversing a drag cancels it. Ballistic
+      // overscroll alone must never start a network request.
+      _pull = math.max(0, notice.metrics.minScrollExtent - notice.metrics.pixels);
     }
     if (notice is ScrollEndNotification) {
-      final armed = _pull >= widget.dropExtent; _pull = 0;
+      final armed = _pull >= widget.dropExtent;
+      _pull = 0;
       if (armed) unawaited(_run());
     }
     return false;
@@ -290,8 +263,8 @@ class _ProxoRefreshState extends State<ProxoRefresh>
 
       await _settleTo(0, _RM.closeSpring);
     } finally {
-      _spin.stop();
       if (mounted) {
+        _spin.stop();
         _drop.value = 0;
       }
       _busy = false;

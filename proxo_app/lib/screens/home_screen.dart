@@ -364,16 +364,35 @@ class _HomeScreenState extends State<HomeScreen>
     }
   }
 
-  Future<void> _loadAds() async {
+  Future<void>? _adsRequest;
+  String? _adsRequestOwner;
+
+  // Opening, activation and pull-to-refresh can overlap. Reuse only an
+  // in-flight request for this owner; a later explicit refresh still fetches.
+  Future<void> _loadAds() {
+    final owner = supabase.auth.currentUser?.id;
+    if (owner == null) return Future<void>.value();
+    if (_adsRequest != null && _adsRequestOwner == owner) return _adsRequest!;
+    _adsRequestOwner = owner;
+    late final Future<void> request;
+    request = _fetchAds(owner).whenComplete(() {
+      if (identical(_adsRequest, request)) {
+        _adsRequest = null;
+        _adsRequestOwner = null;
+      }
+    });
+    _adsRequest = request;
+    return request;
+  }
+
+  Future<void> _fetchAds(String owner) async {
     try {
-      final user = supabase.auth.currentUser;
-      if (user == null) return;
       final res = await supabase
           .from('pa_ads')
           .select(_kDashColumns)
-          .eq('user_id', user.id)
+          .eq('user_id', owner)
           .order('created_at', ascending: false);
-      if (!mounted) return;
+      if (!mounted || supabase.auth.currentUser?.id != owner) return;
       final List<Map<String, dynamic>> rows =
           List<Map<String, dynamic>>.from(res as List? ?? const []);
       setState(() {
@@ -550,6 +569,7 @@ class _HomeScreenState extends State<HomeScreen>
           child: Directionality(
             textDirection: TextDirection.ltr,
             child: ProxoRefresh(
+              pullToRefresh: true,
               controller: widget.refreshController,
               scrollController: _scrollCtrl,
               onRefresh: _refresh,

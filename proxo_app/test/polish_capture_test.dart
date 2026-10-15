@@ -1,3 +1,4 @@
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:proxo_app/screens/notifications_screen.dart';
 import 'package:proxo_app/widgets/proxo_sidebar.dart';
 import 'package:proxo_app/widgets/levels_page.dart';
@@ -42,7 +43,7 @@ List<Map<String, Object?>> measuredLayout(GlobalKey key) {
     final w = e.widget;
     final r = e.findRenderObject();
     if (r is RenderBox && r.hasSize &&
-        (r is RenderParagraph || w is Container || w is Material || w is InkWell || w is TextField)) {
+        (r is RenderParagraph || w is Container || w is Material || w is InkWell || w is TextField || w is Image || w is SvgPicture)) {
       if (seen.add(r)) {
         final at = r.localToGlobal(Offset.zero) - origin;
         final row = <String, Object?>{'widget': w.runtimeType.toString(), 'key': w.key?.toString(),
@@ -58,6 +59,8 @@ List<Map<String, Object?>> measuredLayout(GlobalKey key) {
           row.addAll({'radius': d.borderRadius?.toString(), 'padding': w.padding?.toString(),
             'color': d.color?.toARGB32()});
         }
+        if (w is Image) row['image'] = w.image.toString();
+        if (w is SvgPicture) row['svg'] = w.bytesLoader.toString();
         if (w is Material) row['shape'] = w.shape?.toString();
         rows.add(row);
       }

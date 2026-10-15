@@ -32,13 +32,19 @@ class ProxoSymbol extends StatelessWidget {
   final bool mirrorInRtl;
 
   @override
-  Widget build(BuildContext context) => SvgPicture.asset(
+  Widget build(BuildContext context) => Center(
+    // Like Icon, keep the painted glyph at `size` inside a larger tap target.
+    // SVG width/height alone are overridden by a tight 40/48dp parent.
+    widthFactor: 1,
+    heightFactor: 1,
+    child: SvgPicture.asset(
     'assets/icons/solar/${symbol.file}.svg',
     width: size, height: size, fit: BoxFit.contain,
     colorFilter: ColorFilter.mode(color ?? IconTheme.of(context).color ??
       const Color(0xFF64748B), BlendMode.srcIn),
     semanticsLabel: semanticLabel, excludeFromSemantics: semanticLabel == null,
     matchTextDirection: mirrorInRtl,
+    ),
   );
 }
 

@@ -1,3 +1,4 @@
+import 'package:proxo_app/widgets/proxo_refresh.dart';
 import 'package:proxo_app/theme/app_locale.dart';
 import 'dart:async';
 
@@ -204,7 +205,8 @@ class _ProxoLinkPageDetailsScreenState
                 onBack: () => Navigator.pop(context),
               ),
               Expanded(
-                child: RefreshIndicator(
+                child: ProxoRefresh(
+                  pullToRefresh: true,
                   onRefresh: _load,
                   child: ListView(
                     padding: const EdgeInsets.all(16),

@@ -897,7 +897,7 @@ class _AdScreenState extends State<AdScreen>
 
   /// سینکی پشتەوەی ئێستا، ئەگەر هەبێت.
   ///
-  /// بۆچی Future و نەک `bool`: `RefreshIndicator` سپینەرەکەی هەتا
+  /// بۆچی Future و نەک `bool`: `ProxoRefresh` سپینەرەکەی هەتا
   /// تەواوبوونی ئەو Future-ە ڕادەگرێت کە `onRefresh` دەیگەڕێنێتەوە.
   /// ئەگەر تەنها ئاڵایەکی `bool`مان هەبووایە، ڕاکێشانێک لە کاتی سینکێکی
   /// پشتەوەدا دەستبەجێ Future-ێکی تەواوبووی دەگەڕاندەوە و سپینەرەکە
@@ -1412,7 +1412,7 @@ class _AdScreenState extends State<AdScreen>
   }
 
   // ── ڕاکێشان بۆ نوێکردنەوە ──────────────────────────────────────────────
-  // سپینەری خودی `RefreshIndicator` **تاقە** نیشانەی بارکردنە:
+  // سپینەری خودی `ProxoRefresh` **تاقە** نیشانەی بارکردنە:
   //
   //   • کارتەکان لە شوێنی خۆیان دەمێننەوە و بەهاکانیان لە جێی خۆیاندا
   //     نوێ دەبنەوە کاتێک داواکارییەکە دەگەڕێتەوە
@@ -2792,7 +2792,15 @@ class _AdScreenState extends State<AdScreen>
       base = _buildContentList();
     }
 
-    return Stack(
+    return ProxoRefresh(
+      controller: widget.refreshController,
+      scrollController: _scrollCtrl,
+      pullToRefresh: true,
+      onRefresh: _handlePullRefresh,
+      onArrive: () {
+        if (mounted) _entranceCtrl.forward(from: 0.0);
+      },
+      child: Stack(
       fit: StackFit.expand,
       children: [
         base,
@@ -2826,6 +2834,7 @@ class _AdScreenState extends State<AdScreen>
           ),
         ),
       ],
+      ),
     );
   }
 
@@ -2844,25 +2853,12 @@ class _AdScreenState extends State<AdScreen>
   /// یەک `ScrollPosition`ەوە دەلکێت.
   Widget _buildContentList() {
     final items = _filtered;
-    // `RefreshIndicator` بە ئاراستەی ستوونی کار دەکات، بۆیە RTL هیچ
+    // `ProxoRefresh` بە ئاراستەی ستوونی کار دەکات، بۆیە RTL هیچ
     // کاریگەرییەکی لەسەر ئیشارەتەکە نییە؛ سپینەرەکە خۆی هەمیشە لە
     // ناوەڕاستی ئاسۆیی دادەنیشێت. `AlwaysScrollableScrollPhysics` وەک
     // دایکی `BouncingScrollPhysics` دەمێنێتەوە بۆ ئەوەی ڕاکێشان تەنانەت
     // کاتێک لیستەکە لە یەک شاشە کورتترە کار بکات.
-    return ProxoRefresh(
-      controller: widget.refreshController,
-      scrollController: _scrollCtrl,
-      onRefresh: _handlePullRefresh,
-      // Reuses the entrance this screen already has — see the note on
-      // `ProxoRefresh.onArrive`. No second animation system, and the stagger
-      // stays the one that was tuned here (40ms / 240ms / 6 slots).
-      onArrive: () {
-        if (mounted) _entranceCtrl.forward(from: 0.0);
-      },
-      child: RefreshIndicator(
-        color: AppColors.dark,
-        onRefresh: _handlePullRefresh,
-        child: CustomScrollView(
+    return CustomScrollView(
           // The AnimatedSwitcher in _buildBody tears the list down and rebuilds
           // it whenever the screen flips between skeleton, empty and content.
           // A PageStorageKey makes the offset survive that, so a silent
@@ -2964,8 +2960,6 @@ class _AdScreenState extends State<AdScreen>
               ),
             ),
           ],
-        ),
-      ),
     );
   }
 
@@ -3206,7 +3200,7 @@ class _AdScreenState extends State<AdScreen>
     final _T t = _T.of(s);
     return ListView(
       // A scroll view rather than a Center, so the notice still reaches the
-      // RefreshIndicator's pull gesture and never overflows on a short screen.
+      // ProxoRefresh's pull gesture and never overflows on a short screen.
       physics: const AlwaysScrollableScrollPhysics(),
       padding: EdgeInsets.fromLTRB(
           _kCampaignPageGutter,
