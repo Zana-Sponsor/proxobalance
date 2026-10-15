@@ -1,0 +1,1001 @@
+[
+  {
+    "config": "phone",
+    "file": "phone-sidebar-bottom-scale-1.0.png",
+    "pixels": [
+      1179,
+      1920
+    ],
+    "sha256": "182812fd3820138397b518982b8c5618b6fab6f617065f1b7f79d8dd8983883b"
+  },
+  {
+    "config": "phone",
+    "file": "phone-sidebar-scale-2.0.png",
+    "pixels": [
+      1179,
+      1920
+    ],
+    "sha256": "05545a75b0cce2dec27d86a6fffb19ae0e4cc1b74441a39066e615bcd21fbe51"
+  },
+  {
+    "config": "phone",
+    "file": "phone-actions-scale-1.0.png",
+    "pixels": [
+      1179,
+      1920
+    ],
+    "sha256": "c2159fcf436797d76bde92ea46a1ff4b2b90eb0b906d406dd0bdcff556654388"
+  },
+  {
+    "config": "phone",
+    "file": "phone-home-scale-1.0.png",
+    "pixels": [
+      1179,
+      1920
+    ],
+    "sha256": "ffb5280d0faf7b4cc61910d8af01caeab30d44e17660a867035f2fc3dd887841"
+  },
+  {
+    "config": "phone",
+    "file": "phone-auth-scale-1.0.png",
+    "pixels": [
+      1179,
+      1920
+    ],
+    "sha256": "e7d1adbda314015c0b8b2d0de89d72852350a1685b3276c881ebf1aa13fa828f"
+  },
+  {
+    "config": "phone",
+    "file": "phone-auth-phone-scale-2.0.png",
+    "pixels": [
+      1179,
+      1920
+    ],
+    "sha256": "14e63be8cf4215042a1d02c4eb744ae363e71c4252c2abf3b14396ad2b35324f"
+  },
+  {
+    "config": "phone",
+    "file": "phone-create-keyboard.png",
+    "pixels": [
+      1179,
+      1920
+    ],
+    "sha256": "00c45dd2c10a0b14678c0ab912f14e37e59b350920afeef9a4cceb1a282d344e"
+  },
+  {
+    "config": "phone",
+    "file": "phone-create-keyboard-dismissed.png",
+    "pixels": [
+      1179,
+      1920
+    ],
+    "sha256": "1ca43cd96b1c01c371957a15d128062e6f8bee01b662c0cec74b725ac74efcb4"
+  },
+  {
+    "config": "phone",
+    "file": "phone-navigation-0.png",
+    "pixels": [
+      1179,
+      1920
+    ],
+    "sha256": "6d0b315eed788e64896e3fd5db0870f48cb1ef12a091579512ebdf94532a4825"
+  },
+  {
+    "config": "phone",
+    "file": "phone-profile-scale-1.0.png",
+    "pixels": [
+      1179,
+      1920
+    ],
+    "sha256": "322075f65dc5b9b4a1a3487c55be3a75cb02a9bec0ef948e5e517ba6fc3f5f93"
+  },
+  {
+    "config": "phone",
+    "file": "phone-chrome-scale-2.0.png",
+    "pixels": [
+      1179,
+      1920
+    ],
+    "sha256": "4ad1c08d1a2c3eed4a9e59c180096c311d6b52f43eb9061b2184231cca50d53e"
+  },
+  {
+    "config": "phone",
+    "file": "phone-deposit-bottom-scale-1.0.png",
+    "pixels": [
+      1179,
+      1920
+    ],
+    "sha256": "073f055f2a43c3328d54041ae9c0d1c4fb75419c46ae250e4696bf8418f3d1b8"
+  },
+  {
+    "config": "phone",
+    "file": "phone-deposit-scale-1.0.png",
+    "pixels": [
+      1179,
+      1920
+    ],
+    "sha256": "f86bc70521ae53692341dfcf0ecf11658c6b460302299e8a2ad9293a909bd86c"
+  },
+  {
+    "config": "phone",
+    "file": "phone-deposit-bottom-scale-2.0.png",
+    "pixels": [
+      1179,
+      1920
+    ],
+    "sha256": "d35ba39c01b757334f3164fced0da59c5ce6fec51ff111bf8470746eb0c9434f"
+  },
+  {
+    "config": "phone",
+    "file": "phone-chrome-scale-1.0.png",
+    "pixels": [
+      1179,
+      1920
+    ],
+    "sha256": "3947331107673ed0e7b086e056d8298c595fb7144301cf75b7fe5377ed0a1a9f"
+  },
+  {
+    "config": "phone",
+    "file": "phone-receipt-bottom-scale-2.0.png",
+    "pixels": [
+      1179,
+      1920
+    ],
+    "sha256": "3bfc57ba46dff16baf127a518525439a30aba1944f1f2cecdb35500ea62726c4"
+  },
+  {
+    "config": "phone",
+    "file": "phone-navigation-3.png",
+    "pixels": [
+      1179,
+      1920
+    ],
+    "sha256": "20d33eb62d2074a757a7936b70a6247e5c16082ee9fec047e6d5e057c94aec0c"
+  },
+  {
+    "config": "phone",
+    "file": "phone-sidebar-bottom-scale-2.0.png",
+    "pixels": [
+      1179,
+      1920
+    ],
+    "sha256": "c40f3b38ea61ad23dae0c08ce70d5f2add03ec15d01bc8c742c63472a57d2e14"
+  },
+  {
+    "config": "phone",
+    "file": "phone-actions-disabled.png",
+    "pixels": [
+      1179,
+      1920
+    ],
+    "sha256": "5e51739fb06b67f0930047912dc9219e3634eb8ee907e936e3dd5e0ec1fd2ed7"
+  },
+  {
+    "config": "phone",
+    "file": "phone-profile-scale-2.0.png",
+    "pixels": [
+      1179,
+      1920
+    ],
+    "sha256": "3e0d640974f23a2ed79a5ce5fd403a4f2be23e86dfaa4274410a8719a759ef48"
+  },
+  {
+    "config": "phone",
+    "file": "phone-sidebar-scale-1.0.png",
+    "pixels": [
+      1179,
+      1920
+    ],
+    "sha256": "e1ecc68a4a7250984332446b2ec0cd9fbac258b534b3caccb4b275ceaecc6760"
+  },
+  {
+    "config": "phone",
+    "file": "phone-profile-bottom-scale-2.0.png",
+    "pixels": [
+      1179,
+      1920
+    ],
+    "sha256": "e472758973ea71de4e63986e3433c030dd8a4b69d773a66599a252cce916f85d"
+  },
+  {
+    "config": "phone",
+    "file": "phone-create.png",
+    "pixels": [
+      1179,
+      1920
+    ],
+    "sha256": "5e71e852e9ec36cd18d4fda0d57f0e7cb106afea412e14301ec6c5147937697a"
+  },
+  {
+    "config": "phone",
+    "file": "phone-deposit-scale-2.0.png",
+    "pixels": [
+      1179,
+      1920
+    ],
+    "sha256": "2c3a8b62db6b186f805f4460e8aa24f6571d5e4c5f763e8cf315c343af56b32a"
+  },
+  {
+    "config": "phone",
+    "file": "phone-actions-scale-2.0.png",
+    "pixels": [
+      1179,
+      1920
+    ],
+    "sha256": "2868a986d2a686e023c9160a14589d88acab4471a664f653964a355fd4e59273"
+  },
+  {
+    "config": "phone",
+    "file": "phone-profile-bottom-scale-1.0.png",
+    "pixels": [
+      1179,
+      1920
+    ],
+    "sha256": "2258f873e8189542003842d3da79abd205055d6e335f1238e03522a3be766049"
+  },
+  {
+    "config": "phone",
+    "file": "phone-auth-scale-2.0.png",
+    "pixels": [
+      1179,
+      1920
+    ],
+    "sha256": "6a3b721baeda4b392d1f1584f4f53b30924f098f754c63e65c5665fa3a1e23e8"
+  },
+  {
+    "config": "phone",
+    "file": "phone-chrome-native-scale-2.0-adb.png",
+    "pixels": [
+      1179,
+      1920
+    ],
+    "sha256": "fb27e9b83d40146c9ee089ccf86959fd72375890205f6e1110905cf4ed8ff160"
+  },
+  {
+    "config": "phone",
+    "file": "phone-navigation-4.png",
+    "pixels": [
+      1179,
+      1920
+    ],
+    "sha256": "db141fdd7c4d31ce9dcd7e1ec20daf53ded9ccff456b7ba376013dbca6913b11"
+  },
+  {
+    "config": "phone",
+    "file": "phone-receipt-scale-1.0.png",
+    "pixels": [
+      1179,
+      1920
+    ],
+    "sha256": "fab56bcead9aa7a357be0fd1b28780a45149273c3be20947353af3617ef6aa59"
+  },
+  {
+    "config": "phone",
+    "file": "phone-navigation-1.png",
+    "pixels": [
+      1179,
+      1920
+    ],
+    "sha256": "32e22c5a9441aa7f6036aa7571082972a5de8399c2c60778d1ddd2480dd664e3"
+  },
+  {
+    "config": "phone",
+    "file": "phone-auth-phone-scale-1.0.png",
+    "pixels": [
+      1179,
+      1920
+    ],
+    "sha256": "f8c99e3d6a37af3eb166e3f05bb96855ca06134d92f19a21ae69b8dc535f9291"
+  },
+  {
+    "config": "phone",
+    "file": "phone-receipt-bottom-scale-1.0.png",
+    "pixels": [
+      1179,
+      1920
+    ],
+    "sha256": "fab56bcead9aa7a357be0fd1b28780a45149273c3be20947353af3617ef6aa59"
+  },
+  {
+    "config": "phone",
+    "file": "phone-home-scale-2.0.png",
+    "pixels": [
+      1179,
+      1920
+    ],
+    "sha256": "e4f45cb22e24f670e252133f6a4f4755b62f2746d00cc4d3eb1fdd1cc915f952"
+  },
+  {
+    "config": "phone",
+    "file": "phone-tools.png",
+    "pixels": [
+      1179,
+      1920
+    ],
+    "sha256": "522a4baaece71b3f314c8f30c886e227251ce72ab9c311992b0bc5cc4baa85f4"
+  },
+  {
+    "config": "phone",
+    "file": "phone-receipt-scale-2.0.png",
+    "pixels": [
+      1179,
+      1920
+    ],
+    "sha256": "c8dadc326036ec6b4da5ea73112d62eda037eede9380b33027cbcea0284d966f"
+  },
+  {
+    "config": "phone",
+    "file": "phone-chrome-native-scale-1.0-adb.png",
+    "pixels": [
+      1179,
+      1920
+    ],
+    "sha256": "aef88e21deceeae724635aca83f6f58ba3f04458d98e32385068b469c260cb8b"
+  },
+  {
+    "config": "narrow",
+    "file": "narrow-deposit-bottom-scale-1.0.png",
+    "pixels": [
+      840,
+      1920
+    ],
+    "sha256": "738367240263c086583cc82242a684a2e54b5c967cf7b60ddaee2a9ee9b726b0"
+  },
+  {
+    "config": "narrow",
+    "file": "narrow-create-keyboard-dismissed.png",
+    "pixels": [
+      840,
+      1920
+    ],
+    "sha256": "31772de6c144ae6c1530791776e48f27829d6a19e111e467e4570fe61447bfef"
+  },
+  {
+    "config": "narrow",
+    "file": "narrow-navigation-4.png",
+    "pixels": [
+      840,
+      1920
+    ],
+    "sha256": "2a436a316babe37054e3bbb07c6f5303a099522c6396831be189daf43750d25e"
+  },
+  {
+    "config": "narrow",
+    "file": "narrow-sidebar-bottom-scale-2.0.png",
+    "pixels": [
+      840,
+      1920
+    ],
+    "sha256": "25d4fd39298de419251b937b8edb5fa1013a20f2b18e2c90d8578e9e64d25094"
+  },
+  {
+    "config": "narrow",
+    "file": "narrow-sidebar-bottom-scale-1.0.png",
+    "pixels": [
+      840,
+      1920
+    ],
+    "sha256": "94ee610daa275275ea0c4d7155e88b5e7a4c03d2db1cb95f24d5d1610559c981"
+  },
+  {
+    "config": "narrow",
+    "file": "narrow-navigation-3.png",
+    "pixels": [
+      840,
+      1920
+    ],
+    "sha256": "0b6bc6ef9a6886412e4c8e69681e63dd0d47cfc8f72d9a6d8471422d738a6bfd"
+  },
+  {
+    "config": "narrow",
+    "file": "narrow-create.png",
+    "pixels": [
+      840,
+      1920
+    ],
+    "sha256": "ff5ccebf4f3bb65083601d452be9a33d602b4a673344086e868266d005cad095"
+  },
+  {
+    "config": "narrow",
+    "file": "narrow-profile-scale-1.0.png",
+    "pixels": [
+      840,
+      1920
+    ],
+    "sha256": "6bfd5f774f20d09ba56597a9ca381eb316da618db90546237b6f1c60282e16e5"
+  },
+  {
+    "config": "narrow",
+    "file": "narrow-home-scale-2.0.png",
+    "pixels": [
+      840,
+      1920
+    ],
+    "sha256": "c316194704b539d5ce2ea739562edf11fc8b9a64467db5847f9a7ada9685e736"
+  },
+  {
+    "config": "narrow",
+    "file": "narrow-chrome-scale-2.0.png",
+    "pixels": [
+      840,
+      1920
+    ],
+    "sha256": "f5d373ca5af8ab7d2b99d33e684a6c13ddaa6316e1602e6799a36525cc8c2e5d"
+  },
+  {
+    "config": "narrow",
+    "file": "narrow-actions-scale-1.0.png",
+    "pixels": [
+      840,
+      1920
+    ],
+    "sha256": "2f11f27c0d3f6cc2566b89b2e4cb1621e5c1a1345cefeacbf27b736335b322df"
+  },
+  {
+    "config": "narrow",
+    "file": "narrow-chrome-native-scale-2.0-adb.png",
+    "pixels": [
+      840,
+      1920
+    ],
+    "sha256": "caf22724ee0d9928031847ed2f3ba761806070e44a02f2639119941a14188a8a"
+  },
+  {
+    "config": "narrow",
+    "file": "narrow-auth-scale-1.0.png",
+    "pixels": [
+      840,
+      1920
+    ],
+    "sha256": "a0ca308d7c55e5e348f4200efdd8a24dcdaa5f6f266327bcd21b8a09a68141e5"
+  },
+  {
+    "config": "narrow",
+    "file": "narrow-actions-scale-2.0.png",
+    "pixels": [
+      840,
+      1920
+    ],
+    "sha256": "a95ca8911be8a48e56964b4d5f055617b5f93d8afd1d1ebf755c9ab361550ef3"
+  },
+  {
+    "config": "narrow",
+    "file": "narrow-tools.png",
+    "pixels": [
+      840,
+      1920
+    ],
+    "sha256": "e58707424e49751fdc69193e6cb093ffe31f5dccdeeffc7b3e387ceb780d45c2"
+  },
+  {
+    "config": "narrow",
+    "file": "narrow-navigation-1.png",
+    "pixels": [
+      840,
+      1920
+    ],
+    "sha256": "297c8278b4b4588fce1939fd335c6e1492d65119aeb088b197dd30003854d2cd"
+  },
+  {
+    "config": "narrow",
+    "file": "narrow-sidebar-scale-1.0.png",
+    "pixels": [
+      840,
+      1920
+    ],
+    "sha256": "0c2e29c6c7817c47ce01d67e5ff89e33f0334c49d8a1ab69856000337fa18b1b"
+  },
+  {
+    "config": "narrow",
+    "file": "narrow-auth-phone-scale-2.0.png",
+    "pixels": [
+      840,
+      1920
+    ],
+    "sha256": "ff376fec9db469c6ba00a7c27efd33894c1d398a5412d3aa88a741f392ffc011"
+  },
+  {
+    "config": "narrow",
+    "file": "narrow-profile-bottom-scale-1.0.png",
+    "pixels": [
+      840,
+      1920
+    ],
+    "sha256": "a9e65c9debffd1b0684122b1be654d85b571b3b4a32b8475449220f3fecb3908"
+  },
+  {
+    "config": "narrow",
+    "file": "narrow-auth-phone-scale-1.0.png",
+    "pixels": [
+      840,
+      1920
+    ],
+    "sha256": "391c8693237714c58a7c2ae91951cf92859a44aa036e40eaa98911a45d25ff10"
+  },
+  {
+    "config": "narrow",
+    "file": "narrow-chrome-scale-1.0.png",
+    "pixels": [
+      840,
+      1920
+    ],
+    "sha256": "4b4349ff7ed873d1da02094301be33a52bf5578578c22641dc63ce625c9efee1"
+  },
+  {
+    "config": "narrow",
+    "file": "narrow-receipt-scale-1.0.png",
+    "pixels": [
+      840,
+      1920
+    ],
+    "sha256": "fa22f41e228531596b0d6e68ec6705f557b9c5fc6f3912b953c14ad07470cc55"
+  },
+  {
+    "config": "narrow",
+    "file": "narrow-deposit-scale-2.0.png",
+    "pixels": [
+      840,
+      1920
+    ],
+    "sha256": "55236cef9783aff9e99cd7a555dae3a69ced4aa3a8af97a1c42c65d8ec66f9ff"
+  },
+  {
+    "config": "narrow",
+    "file": "narrow-actions-disabled.png",
+    "pixels": [
+      840,
+      1920
+    ],
+    "sha256": "230efe03de4201a63a381e75703cb0c0eacdbc060f32bc6cc60fc191071a7551"
+  },
+  {
+    "config": "narrow",
+    "file": "narrow-receipt-bottom-scale-2.0.png",
+    "pixels": [
+      840,
+      1920
+    ],
+    "sha256": "ec9275b21625fdaee75c9cfe89cb869b2ab933a33afd0666071ef2f38cdeb6ce"
+  },
+  {
+    "config": "narrow",
+    "file": "narrow-chrome-native-scale-1.0-adb.png",
+    "pixels": [
+      840,
+      1920
+    ],
+    "sha256": "e1fc9f323be69d19b9b8567e977a433cca358757cd88a3fc64c8a1ad09a22223"
+  },
+  {
+    "config": "narrow",
+    "file": "narrow-profile-bottom-scale-2.0.png",
+    "pixels": [
+      840,
+      1920
+    ],
+    "sha256": "690666c560e0a7176bd35307387f964c331c2d4f1d774ce3b7405889051ab418"
+  },
+  {
+    "config": "narrow",
+    "file": "narrow-profile-scale-2.0.png",
+    "pixels": [
+      840,
+      1920
+    ],
+    "sha256": "765fe15708cbe5cf3c746726e3ed9937d2c757f1c17e389263daf4698c6c16f7"
+  },
+  {
+    "config": "narrow",
+    "file": "narrow-sidebar-scale-2.0.png",
+    "pixels": [
+      840,
+      1920
+    ],
+    "sha256": "83ffdfd9d395d099205147c57ffb2c074b07bfbb011d8ab7af993a1ccf0a583f"
+  },
+  {
+    "config": "narrow",
+    "file": "narrow-deposit-scale-1.0.png",
+    "pixels": [
+      840,
+      1920
+    ],
+    "sha256": "2c4ce7f89c5a20af399238965e85d11bc94409ed296bc4c9eced5d8a6e5bd29d"
+  },
+  {
+    "config": "narrow",
+    "file": "narrow-receipt-scale-2.0.png",
+    "pixels": [
+      840,
+      1920
+    ],
+    "sha256": "7bad42b92c5a49d96e1455ede84a1428882424ee4826dc9e2dab488e61162ada"
+  },
+  {
+    "config": "narrow",
+    "file": "narrow-deposit-bottom-scale-2.0.png",
+    "pixels": [
+      840,
+      1920
+    ],
+    "sha256": "f359239f57dfdce5becf61518aee13b3c08d3084974048671542f0c1ebc13df7"
+  },
+  {
+    "config": "narrow",
+    "file": "narrow-receipt-bottom-scale-1.0.png",
+    "pixels": [
+      840,
+      1920
+    ],
+    "sha256": "fa22f41e228531596b0d6e68ec6705f557b9c5fc6f3912b953c14ad07470cc55"
+  },
+  {
+    "config": "narrow",
+    "file": "narrow-home-scale-1.0.png",
+    "pixels": [
+      840,
+      1920
+    ],
+    "sha256": "73c70d40c81094a36c89bf55b21a5d9f49b71e466762942a60f5e6397f97fdb5"
+  },
+  {
+    "config": "narrow",
+    "file": "narrow-auth-scale-2.0.png",
+    "pixels": [
+      840,
+      1920
+    ],
+    "sha256": "d9e8e23c240be8ba4ae8fceeac72a2b5df23e2b136ecebca25ea38241f345fd7"
+  },
+  {
+    "config": "narrow",
+    "file": "narrow-create-keyboard.png",
+    "pixels": [
+      840,
+      1920
+    ],
+    "sha256": "a360d5f96042840a38078b49ed5d204d0b3b874e8d42ab0a0fdb4c8eaa43ae98"
+  },
+  {
+    "config": "narrow",
+    "file": "narrow-navigation-0.png",
+    "pixels": [
+      840,
+      1920
+    ],
+    "sha256": "63c0505dc9422a914a977d683675c53f95125778ef194dcf7eb91c17a31e7201"
+  },
+  {
+    "config": "tablet",
+    "file": "tablet-navigation-0.png",
+    "pixels": [
+      1536,
+      1704
+    ],
+    "sha256": "13ddb58ee354f88c906915440caea2f5d1c74b0a61082ad759026a40a887accd"
+  },
+  {
+    "config": "tablet",
+    "file": "tablet-home-scale-2.0.png",
+    "pixels": [
+      1536,
+      1704
+    ],
+    "sha256": "07f15f8d36861b4b89a9e2080caf3f703e78a0a467a5b1fa5ef70e3f22efda2e"
+  },
+  {
+    "config": "tablet",
+    "file": "tablet-deposit-scale-1.0.png",
+    "pixels": [
+      1536,
+      1704
+    ],
+    "sha256": "359cd715ab188fe9c8f701ff43c6aed1e1fdf3587fcb1620a4a9421716de6e84"
+  },
+  {
+    "config": "tablet",
+    "file": "tablet-deposit-bottom-scale-2.0.png",
+    "pixels": [
+      1536,
+      1704
+    ],
+    "sha256": "35798ffb1f54b939c6b77cca0d26f26b99dbb99e7fde316d27ed979595079f4f"
+  },
+  {
+    "config": "tablet",
+    "file": "tablet-profile-bottom-scale-2.0.png",
+    "pixels": [
+      1536,
+      1704
+    ],
+    "sha256": "6b9e1424254bd9a29fd97fecaa4c515daaa3952c02d593d31df8ae3aa6f05c24"
+  },
+  {
+    "config": "tablet",
+    "file": "tablet-create-keyboard-dismissed.png",
+    "pixels": [
+      1536,
+      1704
+    ],
+    "sha256": "e60b9b4a14e68760501304d531ad02719b1427fc9505b9b1ae6fd53f0c238246"
+  },
+  {
+    "config": "tablet",
+    "file": "tablet-receipt-scale-1.0.png",
+    "pixels": [
+      1536,
+      1704
+    ],
+    "sha256": "2e1b5348464d1fdf8261f172171723d35a0131e2deafeeab36f443149d06d1be"
+  },
+  {
+    "config": "tablet",
+    "file": "tablet-actions-scale-1.0.png",
+    "pixels": [
+      1536,
+      1704
+    ],
+    "sha256": "58d90fe98ce230cebad513bac6432a97d64c2373bbbdbd4959d12d1152b20075"
+  },
+  {
+    "config": "tablet",
+    "file": "tablet-navigation-4.png",
+    "pixels": [
+      1536,
+      1704
+    ],
+    "sha256": "38046410b941ccc36e569544d8fa5d2116d3572d1e46cbfe7b2ed49cc90b7d4a"
+  },
+  {
+    "config": "tablet",
+    "file": "tablet-actions-disabled.png",
+    "pixels": [
+      1536,
+      1704
+    ],
+    "sha256": "5eeb58f38cf74d52f3dd66189c90c7407a4ddd735891a0787d05823858df5410"
+  },
+  {
+    "config": "tablet",
+    "file": "tablet-tools.png",
+    "pixels": [
+      1536,
+      1704
+    ],
+    "sha256": "935e6ff50f81eade7d86ff10ae020e2747758f8f8abbf180430e735f1d6fa2df"
+  },
+  {
+    "config": "tablet",
+    "file": "tablet-profile-scale-2.0.png",
+    "pixels": [
+      1536,
+      1704
+    ],
+    "sha256": "41a4d3a061f9db7ac55eca8a57a250903f9ae2bfb5c06077d05ca82292b37fc8"
+  },
+  {
+    "config": "tablet",
+    "file": "tablet-navigation-3.png",
+    "pixels": [
+      1536,
+      1704
+    ],
+    "sha256": "c04eb4ef21eaa092bb82213e8f998588b68f8ecc5a33167543b2b053106d0a25"
+  },
+  {
+    "config": "tablet",
+    "file": "tablet-auth-phone-scale-1.0.png",
+    "pixels": [
+      1536,
+      1704
+    ],
+    "sha256": "880cc8063f9847172e35ef32ea1b24a434cbeab90116bfdd2ae5c17c5a3cda51"
+  },
+  {
+    "config": "tablet",
+    "file": "tablet-auth-scale-1.0.png",
+    "pixels": [
+      1536,
+      1704
+    ],
+    "sha256": "8b08f571a47402adac2e3c741e5cf9d8062efbefa23a92d162f8a79046494bec"
+  },
+  {
+    "config": "tablet",
+    "file": "tablet-auth-phone-scale-2.0.png",
+    "pixels": [
+      1536,
+      1704
+    ],
+    "sha256": "905cba7dd7719470c0defca4f3c809fdff91fce7fb490b58d9cc6f8c67bd1883"
+  },
+  {
+    "config": "tablet",
+    "file": "tablet-actions-scale-2.0.png",
+    "pixels": [
+      1536,
+      1704
+    ],
+    "sha256": "25a2b720c1b1dab23d0a6b29cb64db98b1a0d03fbdc4d3d24dc73d3a0aea3b5f"
+  },
+  {
+    "config": "tablet",
+    "file": "tablet-receipt-scale-2.0.png",
+    "pixels": [
+      1536,
+      1704
+    ],
+    "sha256": "fa4c984b41cea1049a3f4cc1c2034061dca155bf859d3c6af1640b91f5cbbf6e"
+  },
+  {
+    "config": "tablet",
+    "file": "tablet-sidebar-bottom-scale-2.0.png",
+    "pixels": [
+      1536,
+      1704
+    ],
+    "sha256": "a6dcdc8fc94595a6b5f7411b253dc17892ed7869ae7a4bd88e4874819f102e60"
+  },
+  {
+    "config": "tablet",
+    "file": "tablet-sidebar-bottom-scale-1.0.png",
+    "pixels": [
+      1536,
+      1704
+    ],
+    "sha256": "84349a8ffa9ab811ed4494d2680b5e2c10a5cea4b7984c934afa9b667d594b49"
+  },
+  {
+    "config": "tablet",
+    "file": "tablet-auth-scale-2.0.png",
+    "pixels": [
+      1536,
+      1704
+    ],
+    "sha256": "783984ddf1adc68fc085b919b725ec16dcadc1d68e8112475069104cf12b4e15"
+  },
+  {
+    "config": "tablet",
+    "file": "tablet-chrome-native-scale-2.0-adb.png",
+    "pixels": [
+      1536,
+      1704
+    ],
+    "sha256": "de27a9040f3d4132f90bd70318a48f675754fd14ce760a54754876b216c66552"
+  },
+  {
+    "config": "tablet",
+    "file": "tablet-create.png",
+    "pixels": [
+      1536,
+      1704
+    ],
+    "sha256": "d08e350d20c18ee6f9f382bd523e6882cea048a55c4f4c60a78b2449bbe75103"
+  },
+  {
+    "config": "tablet",
+    "file": "tablet-home-scale-1.0.png",
+    "pixels": [
+      1536,
+      1704
+    ],
+    "sha256": "e98da76ef9bb74e5a423820b871ef57cd81c44327955a058945b239a9be7b251"
+  },
+  {
+    "config": "tablet",
+    "file": "tablet-deposit-scale-2.0.png",
+    "pixels": [
+      1536,
+      1704
+    ],
+    "sha256": "e8b333d5c5f7482a37f26c4ff9cd88827f9dab2723cb8e36c64ffb95b2b4b5d7"
+  },
+  {
+    "config": "tablet",
+    "file": "tablet-profile-scale-1.0.png",
+    "pixels": [
+      1536,
+      1704
+    ],
+    "sha256": "fa3dd6ab96e1f9df7c63f35203168996137ddc2aad8bc6dc347be978e587f7c4"
+  },
+  {
+    "config": "tablet",
+    "file": "tablet-deposit-bottom-scale-1.0.png",
+    "pixels": [
+      1536,
+      1704
+    ],
+    "sha256": "17c20c6dee74809ce27c0636a63ce6837d205d3fadc662af89d9a4a335751490"
+  },
+  {
+    "config": "tablet",
+    "file": "tablet-chrome-native-scale-1.0-adb.png",
+    "pixels": [
+      1536,
+      1704
+    ],
+    "sha256": "48fe4cf5e957b1807c6ffb26deb6e8021a3dd93da991d573940262642dea6a62"
+  },
+  {
+    "config": "tablet",
+    "file": "tablet-chrome-scale-2.0.png",
+    "pixels": [
+      1536,
+      1704
+    ],
+    "sha256": "6ba1ae8c780aecb3ab32e179c28589a892dcf31b1d9d718fb9214e2c9abdd15b"
+  },
+  {
+    "config": "tablet",
+    "file": "tablet-navigation-1.png",
+    "pixels": [
+      1536,
+      1704
+    ],
+    "sha256": "7afcd66e82b29a4254157f1b73495fa5bdc8a834bda8d1b18f261c71235db8fb"
+  },
+  {
+    "config": "tablet",
+    "file": "tablet-sidebar-scale-1.0.png",
+    "pixels": [
+      1536,
+      1704
+    ],
+    "sha256": "84349a8ffa9ab811ed4494d2680b5e2c10a5cea4b7984c934afa9b667d594b49"
+  },
+  {
+    "config": "tablet",
+    "file": "tablet-chrome-scale-1.0.png",
+    "pixels": [
+      1536,
+      1704
+    ],
+    "sha256": "9cf83e79dd147d64fe79bf2ee9c8a9f808c0fe6eec4d789d7e4583b683e338b8"
+  },
+  {
+    "config": "tablet",
+    "file": "tablet-profile-bottom-scale-1.0.png",
+    "pixels": [
+      1536,
+      1704
+    ],
+    "sha256": "ad775fa54e27618acecdacd0296564ed923911c020cc906c42292f376718402b"
+  },
+  {
+    "config": "tablet",
+    "file": "tablet-create-keyboard.png",
+    "pixels": [
+      1536,
+      1704
+    ],
+    "sha256": "fbd312d7ffc82e24585bb7366fa491aa41d3e3d0a9295c310584f984179c14c6"
+  },
+  {
+    "config": "tablet",
+    "file": "tablet-receipt-bottom-scale-2.0.png",
+    "pixels": [
+      1536,
+      1704
+    ],
+    "sha256": "fa4c984b41cea1049a3f4cc1c2034061dca155bf859d3c6af1640b91f5cbbf6e"
+  },
+  {
+    "config": "tablet",
+    "file": "tablet-sidebar-scale-2.0.png",
+    "pixels": [
+      1536,
+      1704
+    ],
+    "sha256": "9e2c4450340922dfe41d3dce925d1aaf2e08385ee7e3da00c15fd506a909aa97"
+  },
+  {
+    "config": "tablet",
+    "file": "tablet-receipt-bottom-scale-1.0.png",
+    "pixels": [
+      1536,
+      1704
+    ],
+    "sha256": "2e1b5348464d1fdf8261f172171723d35a0131e2deafeeab36f443149d06d1be"
+  }
+]

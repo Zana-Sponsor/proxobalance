@@ -1,0 +1,285 @@
+{
+  "application_commit": "e2571ea7507ac1e9103b818fc178e189802a5461",
+  "baseline": "e24575c135ca599a6775bd66e385d3b8033b7e92",
+  "date": "2026-10-15",
+  "workflows": [
+    {
+      "id": 38771491357,
+      "name": "Build ProxoLink native verification",
+      "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/38771491357",
+      "jobs": [
+        {
+          "id": 116548160800,
+          "name": "native-verification-apk",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 116548163002,
+          "name": "isolated-hosted-verification",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "id": 116550136957,
+          "name": "native-runtime",
+          "status": "completed",
+          "conclusion": "skipped"
+        }
+      ]
+    },
+    {
+      "id": 38771491425,
+      "name": "UI remediation evidence",
+      "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/38771491425",
+      "jobs": [
+        {
+          "id": 116548161234,
+          "name": "render (candidate)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 116548161843,
+          "name": "render (baseline)",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 38771491459,
+      "name": "Auth localization and visual polish evidence",
+      "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/38771491459",
+      "jobs": [
+        {
+          "id": 116548161249,
+          "name": "capture (after)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 116548161666,
+          "name": "capture (before)",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 38771491529,
+      "name": "Verify ProxoLink",
+      "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/38771491529",
+      "jobs": [
+        {
+          "id": 116548160988,
+          "name": "backend",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 116548161301,
+          "name": "edge-functions",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 116548161306,
+          "name": "flutter",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 116548161456,
+          "name": "database",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 116548161733,
+          "name": "responsive",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 38771491367,
+      "name": "Sidebar profile navigation evidence",
+      "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/38771491367",
+      "jobs": [
+        {
+          "id": 116548161599,
+          "name": "capture (after)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 116548162048,
+          "name": "capture (before)",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 38771491412,
+      "name": "Native UI iconography verification",
+      "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/38771491412",
+      "jobs": [
+        {
+          "id": 116548323505,
+          "name": "android-fixtures (tablet)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 116548323588,
+          "name": "android-fixtures (narrow)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 116548323896,
+          "name": "android-fixtures (phone)",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    }
+  ],
+  "suite_counts": {
+    "polish_candidate_capture": 90,
+    "auth_language_behavior": 29,
+    "ui_candidate_capture": 64,
+    "ui_behavior": 298,
+    "chrome_candidate_capture": 20,
+    "chrome_behavior": 3,
+    "native_configurations": 3,
+    "native_pngs": 111,
+    "note": "Suites overlap; do not sum as unique test coverage. Full regression/release gate passed; no total inferred from truncated API log."
+  },
+  "artifacts": [
+    {
+      "id": 11992026948,
+      "name": "polish-after",
+      "run": 38771491459,
+      "github_sha256": "sha256:5f82345ef8192114eddf93d491a3c3673ce945812ee8f98f07342c86d3a79348",
+      "independently_verified_sha256_and_crc": true,
+      "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/38771491459/artifacts/11992026948"
+    },
+    {
+      "id": 11990959241,
+      "name": "polish-before",
+      "run": 38771491459,
+      "github_sha256": "sha256:50e1c63f2fde93d100d560bbc95025e1c7d738b0485f464a51c6f1b9a4239c7f",
+      "independently_verified_sha256_and_crc": true,
+      "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/38771491459/artifacts/11990959241"
+    },
+    {
+      "id": 11992810733,
+      "name": "ui-native-android-fixtures-phone",
+      "run": 38771491412,
+      "github_sha256": "sha256:5fe1ff1a161d99c6b1b5ef242a07e87e4d8337aaa1ae93b68761a15a66ea506a",
+      "independently_verified_sha256_and_crc": true,
+      "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/38771491412/artifacts/11992810733"
+    },
+    {
+      "id": 11991314067,
+      "name": "ui-native-android-fixtures-tablet",
+      "run": 38771491412,
+      "github_sha256": "sha256:1489b1b94799b276b0d6fd17d2e5512e3d54e5b6cdc60c9d3a47cdf9046e43a3",
+      "independently_verified_sha256_and_crc": true,
+      "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/38771491412/artifacts/11991314067"
+    },
+    {
+      "id": 11991314015,
+      "name": "ui-native-android-fixtures-narrow",
+      "run": 38771491412,
+      "github_sha256": "sha256:2631f76fe94dae24d4ed3f49209e88dd09cad5e78de13265cff9f13d2539aeb3",
+      "independently_verified_sha256_and_crc": true,
+      "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/38771491412/artifacts/11991314015"
+    },
+    {
+      "id": 11991647119,
+      "name": "ui-remediation-candidate",
+      "run": 38771491425,
+      "github_sha256": "sha256:346fb19cd9757b856d6c46466c8a3db52fcc5af890ec991a5219f3d9380cd430",
+      "independently_verified_sha256_and_crc": false,
+      "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/38771491425/artifacts/11991647119"
+    },
+    {
+      "id": 11990704745,
+      "name": "ui-remediation-baseline",
+      "run": 38771491425,
+      "github_sha256": "sha256:84a81760d47617d78410cd9eee1572ceb6adca44274c14fe6d9a03550f1f5d99",
+      "independently_verified_sha256_and_crc": false,
+      "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/38771491425/artifacts/11990704745"
+    },
+    {
+      "id": 11991801931,
+      "name": "chrome-after",
+      "run": 38771491367,
+      "github_sha256": "sha256:8de34c3b406e6294346d3c47ba9155985ad1b11c308e9523c733aebacb3638a8",
+      "independently_verified_sha256_and_crc": false,
+      "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/38771491367/artifacts/11991801931"
+    },
+    {
+      "id": 11991133002,
+      "name": "chrome-before",
+      "run": 38771491367,
+      "github_sha256": "sha256:2ab03409f13ff1f54f3d6abff64a917dba490340480374d69bf212e85a01b87e",
+      "independently_verified_sha256_and_crc": false,
+      "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/38771491367/artifacts/11991133002"
+    },
+    {
+      "id": 11991692277,
+      "name": "proxolink-ui-verification",
+      "run": 38771491529,
+      "github_sha256": "sha256:d067fb44270b4ede3cadcc8203a873c05f56fc4fe3529a01d631536fc293ecc7",
+      "independently_verified_sha256_and_crc": false,
+      "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/38771491529/artifacts/11991692277"
+    },
+    {
+      "id": 11991607048,
+      "name": "proxolink-footer-thumbnails",
+      "run": 38771491529,
+      "github_sha256": "sha256:6e0d6a504e69994adc22b6ef958ec8a675cd1b0a25bf60ef564ce91c488a4485",
+      "independently_verified_sha256_and_crc": false,
+      "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/38771491529/artifacts/11991607048"
+    },
+    {
+      "id": 11991467678,
+      "name": "proxolink-v6-responsive",
+      "run": 38771491529,
+      "github_sha256": "sha256:878dd7e9a4d96da455929cf28edaee944f54d810670a7a540f01ba3bbacc8b4d",
+      "independently_verified_sha256_and_crc": false,
+      "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/38771491529/artifacts/11991467678"
+    }
+  ],
+  "corrections_during_completion": [
+    {
+      "source": "43a951f8b290d0c9af651aa02e312aea0a5e19e0",
+      "finding": "One legacy notice-lifetime assertion still expected covered notices to expire together.",
+      "resolution": "Updated it to assert the newly requested sequential front-message lifetime."
+    },
+    {
+      "source": "158c327de28485790acfe480802835432644062f",
+      "run": 38769368100,
+      "finding": "Android Home remount triggered an overlapping notification permission PlatformException.",
+      "resolution": "Shared request guard, lifecycle checks and contained failure handling; separate pending/denied/error regression; fixture OS permissions pre-granted explicitly."
+    },
+    {
+      "source": "1e6bdbbfa6fe30ff6bcea70ee8df85af75a85099",
+      "run": 38770860877,
+      "finding": "Arabic channel longest-word regression caught inherited Material letter-spacing mismatch.",
+      "resolution": "Explicit matching letter spacing and half-dp shaping allowance; same strict word-box assertion passes."
+    }
+  ],
+  "limitations": [
+    "Credential-free fictional backend fixtures; no real authentication, payment, admin write or push delivery.",
+    "Android emulator debug verification, not physical-device performance profiling or TalkBack acceptance.",
+    "Separate protected ProxoLink strict FIRST pixel parity remains failed/unproven; isolated staging missing settings remain unresolved.",
+    "Draft/Open/Unmerged; no production deployment, migration or publishing."
+  ]
+}

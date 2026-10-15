@@ -1,0 +1,14 @@
+{
+  "before": {
+    "json_files": 210,
+    "layout_rows": 6297,
+    "exceptions": 0,
+    "pngs": 120
+  },
+  "after": {
+    "json_files": 207,
+    "layout_rows": 5889,
+    "exceptions": 0,
+    "pngs": 126
+  }
+}

@@ -1,0 +1,462 @@
+[
+  {
+    "path": "before/login-ckb-393-s1.0-d3.0.png",
+    "sha256": "24e7ebe641ea9e895d9c9b66f981c38d5ef9832e3e918124acb9ff2f52d83aa1",
+    "pixels": [
+      1179,
+      2556
+    ],
+    "bytes": 130987,
+    "source": "e24575c135ca599a6775bd66e385d3b8033b7e92"
+  },
+  {
+    "path": "before/signup-ckb-393-s1.0-d3.0.png",
+    "sha256": "12d45b383b35e717c4db5a079f87d6919a80d2ff423b5252767d307043712531",
+    "pixels": [
+      1179,
+      2556
+    ],
+    "bytes": 183662,
+    "source": "e24575c135ca599a6775bd66e385d3b8033b7e92"
+  },
+  {
+    "path": "before/forgot-ckb-393-s1.0-d3.0.png",
+    "sha256": "b86b08b3daf49b2111ea0f625e8fe1d2889cedf13173b7b0830108c398ea42d4",
+    "pixels": [
+      1179,
+      2556
+    ],
+    "bytes": 86965,
+    "source": "e24575c135ca599a6775bd66e385d3b8033b7e92"
+  },
+  {
+    "path": "before/otp-ckb-393-s1.0-d3.0.png",
+    "sha256": "17151cd9b15d016dc3d82f9cba8b96ba026c794a35c7153b4e33d7cc722f4768",
+    "pixels": [
+      1179,
+      2556
+    ],
+    "bytes": 80182,
+    "source": "e24575c135ca599a6775bd66e385d3b8033b7e92"
+  },
+  {
+    "path": "before/home-ckb-393-s1.0-d3.0.png",
+    "sha256": "c748c82c7d57dbb4470213966a87febe768037440c2ca46c1ac649b1a3484889",
+    "pixels": [
+      1179,
+      2556
+    ],
+    "bytes": 167377,
+    "source": "e24575c135ca599a6775bd66e385d3b8033b7e92"
+  },
+  {
+    "path": "before/deposit-ckb-393-s1.0-d3.0.png",
+    "sha256": "6478086097218ba7236a3bb16b9172577db6ef17f12b1088e5b04c456a64c0b8",
+    "pixels": [
+      1179,
+      2556
+    ],
+    "bytes": 178986,
+    "source": "e24575c135ca599a6775bd66e385d3b8033b7e92"
+  },
+  {
+    "path": "before/profile-ckb-393-s1.0-d3.0.png",
+    "sha256": "b9a5195f39a3fae2ca173f655febb72139473a8e875418a28359a475699d592c",
+    "pixels": [
+      1179,
+      2556
+    ],
+    "bytes": 164751,
+    "source": "e24575c135ca599a6775bd66e385d3b8033b7e92"
+  },
+  {
+    "path": "before/navigation-ckb-393-s1.0-d3.0.png",
+    "sha256": "8aff4dd05fe91bffef4002a6063c7bb99cdffc695ad298180a9e02b2c998cce0",
+    "pixels": [
+      1179,
+      2556
+    ],
+    "bytes": 49838,
+    "source": "e24575c135ca599a6775bd66e385d3b8033b7e92"
+  },
+  {
+    "path": "before/login-ckb-280-s2.0-d2.0.png",
+    "sha256": "71557ac143cfbc2e4c7d09fb68364e06b24f7f59158d8c70dd671c48d924385a",
+    "pixels": [
+      560,
+      1704
+    ],
+    "bytes": 107131,
+    "source": "e24575c135ca599a6775bd66e385d3b8033b7e92"
+  },
+  {
+    "path": "before/signup-ckb-280-s2.0-d2.0.png",
+    "sha256": "0ab326d8e0b542b58c479b3de92e6506d2ce8f2a3d806f0d933e009bb21a0efc",
+    "pixels": [
+      560,
+      1704
+    ],
+    "bytes": 88700,
+    "source": "e24575c135ca599a6775bd66e385d3b8033b7e92"
+  },
+  {
+    "path": "before/home-ckb-280-s2.0-d2.0.png",
+    "sha256": "49d39196bcae865f3f89a94f260477a5dc26c871727387681abaa8613afa8df8",
+    "pixels": [
+      560,
+      1704
+    ],
+    "bytes": 97439,
+    "source": "e24575c135ca599a6775bd66e385d3b8033b7e92"
+  },
+  {
+    "path": "before/deposit-ckb-280-s2.0-d2.0.png",
+    "sha256": "f243cc75ede311d315b32e628df73010d98c8af63ac91f46392c63f205fd4f52",
+    "pixels": [
+      560,
+      1704
+    ],
+    "bytes": 93621,
+    "source": "e24575c135ca599a6775bd66e385d3b8033b7e92"
+  },
+  {
+    "path": "before/profile-ckb-280-s2.0-d2.0.png",
+    "sha256": "38ef6e1ccf4849d70fdb0db56d5096fece55cbee1c38449dbb0c193e3160c406",
+    "pixels": [
+      560,
+      1704
+    ],
+    "bytes": 89853,
+    "source": "e24575c135ca599a6775bd66e385d3b8033b7e92"
+  },
+  {
+    "path": "before/login-ar-280-s2.0-d2.0.png",
+    "sha256": "3a310b97599de3a8e3c8dc88bf05dbf5c1ae91b3357a9a317048f61cd8b995e8",
+    "pixels": [
+      560,
+      1704
+    ],
+    "bytes": 97396,
+    "source": "e24575c135ca599a6775bd66e385d3b8033b7e92"
+  },
+  {
+    "path": "before/login-kmr-280-s2.0-d2.0.png",
+    "sha256": "63e86be9d6ed081b35d6133df4ea678bec8a2270bf5a499f264455806ce1fb37",
+    "pixels": [
+      560,
+      1704
+    ],
+    "bytes": 100013,
+    "source": "e24575c135ca599a6775bd66e385d3b8033b7e92"
+  },
+  {
+    "path": "before/deposit-ckb-393-s1.0-d3.0-bottom.png",
+    "sha256": "e1aafb7a16b3f719befd084735434838be1d2d48e908632a3ff8d554cd9d87b9",
+    "pixels": [
+      1179,
+      2556
+    ],
+    "bytes": 150450,
+    "source": "e24575c135ca599a6775bd66e385d3b8033b7e92"
+  },
+  {
+    "path": "before/profile-ckb-393-s1.0-d3.0-bottom.png",
+    "sha256": "4593563a35d8695e05cac346624bb3b449b71f7c78f01369e0db7b2b6dc8140a",
+    "pixels": [
+      1179,
+      2556
+    ],
+    "bytes": 158902,
+    "source": "e24575c135ca599a6775bd66e385d3b8033b7e92"
+  },
+  {
+    "path": "before/signup-ckb-280-s2.0-d2.0-bottom.png",
+    "sha256": "e39f20ccf93a7aa973bd086c5b8996f8e14318f72f9aaf1e4811df9f291ccf3c",
+    "pixels": [
+      560,
+      1704
+    ],
+    "bytes": 108589,
+    "source": "e24575c135ca599a6775bd66e385d3b8033b7e92"
+  },
+  {
+    "path": "before/home-ckb-280-s2.0-d2.0-bottom.png",
+    "sha256": "30170ac8e87ce781104d9057d311e61872f0089a643acfc327714fa83acee6d8",
+    "pixels": [
+      560,
+      1704
+    ],
+    "bytes": 91766,
+    "source": "e24575c135ca599a6775bd66e385d3b8033b7e92"
+  },
+  {
+    "path": "after/login-ckb-393-s1.0-d3.0.png",
+    "sha256": "36cc08b4265175a0fd2f1d40e764599f7b9a711d26600cbb3777f97abc3a95cb",
+    "pixels": [
+      1179,
+      2556
+    ],
+    "bytes": 121965,
+    "source": "e2571ea7507ac1e9103b818fc178e189802a5461"
+  },
+  {
+    "path": "after/signup-ckb-393-s1.0-d3.0.png",
+    "sha256": "6b1ccada849f75649292168864b5f8b6ae1575e6d1ed858952490b2a3a3284ad",
+    "pixels": [
+      1179,
+      2556
+    ],
+    "bytes": 175123,
+    "source": "e2571ea7507ac1e9103b818fc178e189802a5461"
+  },
+  {
+    "path": "after/forgot-ckb-393-s1.0-d3.0.png",
+    "sha256": "5efd5b386af10080970a5b70ddb9e199d86585135b346ca906aa39505066dcc9",
+    "pixels": [
+      1179,
+      2556
+    ],
+    "bytes": 83194,
+    "source": "e2571ea7507ac1e9103b818fc178e189802a5461"
+  },
+  {
+    "path": "after/otp-ckb-393-s1.0-d3.0.png",
+    "sha256": "754afa728072532a114ba4daf2c5fda2c067ca1fbc0827f959aee996889df4cf",
+    "pixels": [
+      1179,
+      2556
+    ],
+    "bytes": 78977,
+    "source": "e2571ea7507ac1e9103b818fc178e189802a5461"
+  },
+  {
+    "path": "after/home-ckb-393-s1.0-d3.0.png",
+    "sha256": "0e7e372a4965928749d6ccc2f429feb04171f846b6aa16165c8e68ef1a414d0a",
+    "pixels": [
+      1179,
+      2556
+    ],
+    "bytes": 126257,
+    "source": "e2571ea7507ac1e9103b818fc178e189802a5461"
+  },
+  {
+    "path": "after/deposit-ckb-393-s1.0-d3.0.png",
+    "sha256": "2d874066b380c09822b42f7808dfbcb8b330bb86c356c9b119e11e94ddceef52",
+    "pixels": [
+      1179,
+      2556
+    ],
+    "bytes": 169243,
+    "source": "e2571ea7507ac1e9103b818fc178e189802a5461"
+  },
+  {
+    "path": "after/profile-ckb-393-s1.0-d3.0.png",
+    "sha256": "7af604ec897b84319a4ef92d301368ceb69202709b1e95d8012c4e53eea4d07f",
+    "pixels": [
+      1179,
+      2556
+    ],
+    "bytes": 155850,
+    "source": "e2571ea7507ac1e9103b818fc178e189802a5461"
+  },
+  {
+    "path": "after/navigation-ckb-393-s1.0-d3.0.png",
+    "sha256": "2e7f2295e8ba4c3d919a1491c63d5e5d6c33134f3580f7379ce471f21a95697e",
+    "pixels": [
+      1179,
+      2556
+    ],
+    "bytes": 45813,
+    "source": "e2571ea7507ac1e9103b818fc178e189802a5461"
+  },
+  {
+    "path": "after/login-ckb-280-s2.0-d2.0.png",
+    "sha256": "1c6211f4a24d6761ecdb27a6dd22cbe5e221520e3fe3ac3f549f915c36e62240",
+    "pixels": [
+      560,
+      1704
+    ],
+    "bytes": 102938,
+    "source": "e2571ea7507ac1e9103b818fc178e189802a5461"
+  },
+  {
+    "path": "after/signup-ckb-280-s2.0-d2.0.png",
+    "sha256": "d38496f8ff3b00d46ccc6d094d35b114dffca3be888156d0592aff72a361ad06",
+    "pixels": [
+      560,
+      1704
+    ],
+    "bytes": 111060,
+    "source": "e2571ea7507ac1e9103b818fc178e189802a5461"
+  },
+  {
+    "path": "after/home-ckb-280-s2.0-d2.0.png",
+    "sha256": "49b0a155dccda3f74371a1fe897e3f49487b686733924d04e66de7a59fb65657",
+    "pixels": [
+      560,
+      1704
+    ],
+    "bytes": 77631,
+    "source": "e2571ea7507ac1e9103b818fc178e189802a5461"
+  },
+  {
+    "path": "after/deposit-ckb-280-s2.0-d2.0.png",
+    "sha256": "dbfa7cadee5fc93db1bbf0d0a93ec85cdf9d2cfa54216416e5bcc073a1097af7",
+    "pixels": [
+      560,
+      1704
+    ],
+    "bytes": 69163,
+    "source": "e2571ea7507ac1e9103b818fc178e189802a5461"
+  },
+  {
+    "path": "after/profile-ckb-280-s2.0-d2.0.png",
+    "sha256": "6ccce53c0fe9e3520648a5a0825ad422793366e88c99479bd88e4b9cb9bbb18b",
+    "pixels": [
+      560,
+      1704
+    ],
+    "bytes": 102825,
+    "source": "e2571ea7507ac1e9103b818fc178e189802a5461"
+  },
+  {
+    "path": "after/login-ar-280-s2.0-d2.0.png",
+    "sha256": "b107e4a670279e6700b6ea91a2a5e3a6cca646690a62bcb1957f5583546a66c6",
+    "pixels": [
+      560,
+      1704
+    ],
+    "bytes": 96811,
+    "source": "e2571ea7507ac1e9103b818fc178e189802a5461"
+  },
+  {
+    "path": "after/login-kmr-280-s2.0-d2.0.png",
+    "sha256": "df07c707c33ccb8de338a9734726a753a61b263957b0d7751328bff8bae766a7",
+    "pixels": [
+      560,
+      1704
+    ],
+    "bytes": 92494,
+    "source": "e2571ea7507ac1e9103b818fc178e189802a5461"
+  },
+  {
+    "path": "after/deposit-ckb-393-s1.0-d3.0-bottom.png",
+    "sha256": "dd807eae3938e6683f00df8863237e7816a2c783144cd0dcea9b312889c4e454",
+    "pixels": [
+      1179,
+      2556
+    ],
+    "bytes": 152536,
+    "source": "e2571ea7507ac1e9103b818fc178e189802a5461"
+  },
+  {
+    "path": "after/profile-ckb-393-s1.0-d3.0-bottom.png",
+    "sha256": "d988010dd30678b8ae2dbd6a1bee652c2239231dd7f800e891be9ce2c6d25f87",
+    "pixels": [
+      1179,
+      2556
+    ],
+    "bytes": 152527,
+    "source": "e2571ea7507ac1e9103b818fc178e189802a5461"
+  },
+  {
+    "path": "after/signup-ckb-280-s2.0-d2.0-bottom.png",
+    "sha256": "88f77d014d6bd881ef1c3e1c64492ab4fb68cb01a13eac1f4d4cbcd98cc2a928",
+    "pixels": [
+      560,
+      1704
+    ],
+    "bytes": 107424,
+    "source": "e2571ea7507ac1e9103b818fc178e189802a5461"
+  },
+  {
+    "path": "after/home-ckb-280-s2.0-d2.0-bottom.png",
+    "sha256": "c4957ba012227c00f4ea4dc2283f90db4a535b7549897f0ff9a4f93606b59d63",
+    "pixels": [
+      560,
+      1704
+    ],
+    "bytes": 84203,
+    "source": "e2571ea7507ac1e9103b818fc178e189802a5461"
+  },
+  {
+    "path": "after/ad-validation-stack.png",
+    "sha256": "ed75f7253a82722996d239a80089831e61602b7b7328e0193ca47a9d23956fde",
+    "pixels": [
+      786,
+      1704
+    ],
+    "bytes": 21124,
+    "source": "e2571ea7507ac1e9103b818fc178e189802a5461"
+  },
+  {
+    "path": "after/error-stack-280.png",
+    "sha256": "c8e64b8166b6789426b3a1d01dd2be2a2f6a5fbcd07d4f32bef42476810a5f43",
+    "pixels": [
+      560,
+      1704
+    ],
+    "bytes": 47677,
+    "source": "e2571ea7507ac1e9103b818fc178e189802a5461"
+  },
+  {
+    "path": "after/error-stack-393.png",
+    "sha256": "1909601df643952bd3f00039ade6d4d621ce2bc14ee44ca9fa5732816a15ed1c",
+    "pixels": [
+      786,
+      1704
+    ],
+    "bytes": 35319,
+    "source": "e2571ea7507ac1e9103b818fc178e189802a5461"
+  },
+  {
+    "path": "native/narrow-auth-phone-scale-2.0.png",
+    "sha256": "ff376fec9db469c6ba00a7c27efd33894c1d398a5412d3aa88a741f392ffc011",
+    "pixels": [
+      840,
+      1920
+    ],
+    "bytes": 70917,
+    "source": "e2571ea7507ac1e9103b818fc178e189802a5461"
+  },
+  {
+    "path": "native/phone-deposit-scale-1.0.png",
+    "sha256": "f86bc70521ae53692341dfcf0ecf11658c6b460302299e8a2ad9293a909bd86c",
+    "pixels": [
+      1179,
+      1920
+    ],
+    "bytes": 85533,
+    "source": "e2571ea7507ac1e9103b818fc178e189802a5461"
+  },
+  {
+    "path": "native/phone-home-scale-1.0.png",
+    "sha256": "ffb5280d0faf7b4cc61910d8af01caeab30d44e17660a867035f2fc3dd887841",
+    "pixels": [
+      1179,
+      1920
+    ],
+    "bytes": 115652,
+    "source": "e2571ea7507ac1e9103b818fc178e189802a5461"
+  },
+  {
+    "path": "native/phone-profile-scale-1.0.png",
+    "sha256": "322075f65dc5b9b4a1a3487c55be3a75cb02a9bec0ef948e5e517ba6fc3f5f93",
+    "pixels": [
+      1179,
+      1920
+    ],
+    "bytes": 91262,
+    "source": "e2571ea7507ac1e9103b818fc178e189802a5461"
+  },
+  {
+    "path": "native/tablet-chrome-native-scale-2.0-adb.png",
+    "sha256": "de27a9040f3d4132f90bd70318a48f675754fd14ce760a54754876b216c66552",
+    "pixels": [
+      1536,
+      1704
+    ],
+    "bytes": 48366,
+    "source": "e2571ea7507ac1e9103b818fc178e189802a5461"
+  }
+]

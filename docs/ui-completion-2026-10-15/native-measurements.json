@@ -1,0 +1,382 @@
+{
+  "phone": {
+    "observations": {
+      "fixture_only": true,
+      "mode": "Android emulator debug; not a performance benchmark",
+      "physical_size": [
+        1179.0,
+        1920.0
+      ],
+      "dpr": 3.0,
+      "config": "phone",
+      "fixture_notifications_pregranted": true,
+      "chrome-native-scale-1.0-image": {
+        "decoded": true,
+        "width_dp": 83.47826086956522,
+        "height_dp": 24.0
+      },
+      "chrome-native-scale-2.0-image": {
+        "decoded": true,
+        "width_dp": 83.47826086956522,
+        "height_dp": 24.0
+      },
+      "quick_action_callbacks": [
+        "ad",
+        "balance",
+        "page",
+        "ad",
+        "balance",
+        "page"
+      ],
+      "disabled_action_did_not_fire": true,
+      "auth-scale-1.0-image": {
+        "decoded": true,
+        "width_dp": 132.0,
+        "height_dp": 38.0
+      },
+      "auth-phone-scale-1.0-image": {
+        "decoded": true,
+        "width_dp": 132.0,
+        "height_dp": 38.0
+      },
+      "phone_normalized_scale_1.0": true,
+      "deposit-scale-1.0-image": {
+        "decoded": true,
+        "width_dp": 88.0,
+        "height_dp": 32.0
+      },
+      "home-scale-1.0-image": {
+        "decoded": true,
+        "width_dp": 83.47826086956522,
+        "height_dp": 24.0
+      },
+      "auth-scale-2.0-image": {
+        "decoded": true,
+        "width_dp": 132.0,
+        "height_dp": 38.0
+      },
+      "auth-phone-scale-2.0-image": {
+        "decoded": true,
+        "width_dp": 132.0,
+        "height_dp": 38.0
+      },
+      "phone_normalized_scale_2.0": true,
+      "deposit-scale-2.0-image": {
+        "decoded": true,
+        "width_dp": 88.0,
+        "height_dp": 32.0
+      },
+      "deposit-bottom-scale-2.0-image": {
+        "decoded": true,
+        "width_dp": 88.0,
+        "height_dp": 32.0
+      },
+      "home-scale-2.0-image": {
+        "decoded": true,
+        "width_dp": 83.47826086956522,
+        "height_dp": 24.0
+      },
+      "chrome-scale-1.0-image": {
+        "decoded": true,
+        "width_dp": 83.47826086956522,
+        "height_dp": 24.0
+      },
+      "chrome-scale-2.0-image": {
+        "decoded": true,
+        "width_dp": 83.47826086956522,
+        "height_dp": 24.0
+      },
+      "receipt-scale-1.0-image": {
+        "decoded": true,
+        "width_dp": 62.608695652173914,
+        "height_dp": 18.0
+      },
+      "receipt-bottom-scale-1.0-image": {
+        "decoded": true,
+        "width_dp": 62.608695652173914,
+        "height_dp": 18.0
+      },
+      "receipt-scale-2.0-image": {
+        "decoded": true,
+        "width_dp": 62.608695652173914,
+        "height_dp": 18.0
+      },
+      "receipt-bottom-scale-2.0-image": {
+        "decoded": true,
+        "width_dp": 62.608695652173914,
+        "height_dp": 18.0
+      },
+      "keyboard_inset_physical_px": 1032.0,
+      "android_back_dismissed_keyboard_kept_form": true,
+      "choice_dismissed_keyboard": true,
+      "completed": true
+    },
+    "device": {
+      "size": "Physical size: 320x640\nOverride size: 1179x1920",
+      "density": "Physical density: 160\nOverride density: 480",
+      "adb_back_events": 1,
+      "adb_screenshots": [
+        "phone-chrome-native-scale-1.0",
+        "phone-chrome-native-scale-2.0"
+      ],
+      "drive_timeout_seconds": 600,
+      "drive_timed_out": false
+    },
+    "tap_or_framework_warning_matches": 0
+  },
+  "narrow": {
+    "observations": {
+      "fixture_only": true,
+      "mode": "Android emulator debug; not a performance benchmark",
+      "physical_size": [
+        840.0,
+        1920.0
+      ],
+      "dpr": 3.0,
+      "config": "narrow",
+      "fixture_notifications_pregranted": true,
+      "chrome-native-scale-1.0-image": {
+        "decoded": true,
+        "width_dp": 83.47826086956522,
+        "height_dp": 24.0
+      },
+      "chrome-native-scale-2.0-image": {
+        "decoded": true,
+        "width_dp": 83.47826086956522,
+        "height_dp": 24.0
+      },
+      "quick_action_callbacks": [
+        "ad",
+        "balance",
+        "page",
+        "ad",
+        "balance",
+        "page"
+      ],
+      "disabled_action_did_not_fire": true,
+      "auth-scale-1.0-image": {
+        "decoded": true,
+        "width_dp": 132.0,
+        "height_dp": 38.0
+      },
+      "auth-phone-scale-1.0-image": {
+        "decoded": true,
+        "width_dp": 132.0,
+        "height_dp": 38.0
+      },
+      "phone_normalized_scale_1.0": true,
+      "deposit-scale-1.0-image": {
+        "decoded": true,
+        "width_dp": 88.0,
+        "height_dp": 32.0
+      },
+      "home-scale-1.0-image": {
+        "decoded": true,
+        "width_dp": 83.47826086956522,
+        "height_dp": 24.0
+      },
+      "auth-scale-2.0-image": {
+        "decoded": true,
+        "width_dp": 132.0,
+        "height_dp": 38.0
+      },
+      "auth-phone-scale-2.0-image": {
+        "decoded": true,
+        "width_dp": 132.0,
+        "height_dp": 38.0
+      },
+      "phone_normalized_scale_2.0": true,
+      "deposit-scale-2.0-image": {
+        "decoded": true,
+        "width_dp": 88.0,
+        "height_dp": 32.0
+      },
+      "deposit-bottom-scale-2.0-image": {
+        "decoded": true,
+        "width_dp": 88.0,
+        "height_dp": 32.0
+      },
+      "home-scale-2.0-image": {
+        "decoded": true,
+        "width_dp": 83.47826086956522,
+        "height_dp": 24.0
+      },
+      "chrome-scale-1.0-image": {
+        "decoded": true,
+        "width_dp": 83.47826086956522,
+        "height_dp": 24.0
+      },
+      "chrome-scale-2.0-image": {
+        "decoded": true,
+        "width_dp": 83.47826086956522,
+        "height_dp": 24.0
+      },
+      "receipt-scale-1.0-image": {
+        "decoded": true,
+        "width_dp": 62.608695652173914,
+        "height_dp": 18.0
+      },
+      "receipt-bottom-scale-1.0-image": {
+        "decoded": true,
+        "width_dp": 62.608695652173914,
+        "height_dp": 18.0
+      },
+      "receipt-scale-2.0-image": {
+        "decoded": true,
+        "width_dp": 62.608695652173914,
+        "height_dp": 18.0
+      },
+      "receipt-bottom-scale-2.0-image": {
+        "decoded": true,
+        "width_dp": 62.608695652173914,
+        "height_dp": 18.0
+      },
+      "keyboard_inset_physical_px": 1032.0,
+      "android_back_dismissed_keyboard_kept_form": true,
+      "choice_dismissed_keyboard": true,
+      "completed": true
+    },
+    "device": {
+      "size": "Physical size: 320x640\nOverride size: 840x1920",
+      "density": "Physical density: 160\nOverride density: 480",
+      "adb_back_events": 1,
+      "adb_screenshots": [
+        "narrow-chrome-native-scale-1.0",
+        "narrow-chrome-native-scale-2.0"
+      ],
+      "drive_timeout_seconds": 600,
+      "drive_timed_out": false
+    },
+    "tap_or_framework_warning_matches": 0
+  },
+  "tablet": {
+    "observations": {
+      "fixture_only": true,
+      "mode": "Android emulator debug; not a performance benchmark",
+      "physical_size": [
+        1536.0,
+        1704.0
+      ],
+      "dpr": 2.0,
+      "config": "tablet",
+      "fixture_notifications_pregranted": true,
+      "chrome-native-scale-1.0-image": {
+        "decoded": true,
+        "width_dp": 83.47826086956522,
+        "height_dp": 24.0
+      },
+      "chrome-native-scale-2.0-image": {
+        "decoded": true,
+        "width_dp": 83.47826086956522,
+        "height_dp": 24.0
+      },
+      "quick_action_callbacks": [
+        "ad",
+        "balance",
+        "page",
+        "ad",
+        "balance",
+        "page"
+      ],
+      "disabled_action_did_not_fire": true,
+      "auth-scale-1.0-image": {
+        "decoded": true,
+        "width_dp": 132.0,
+        "height_dp": 38.0
+      },
+      "auth-phone-scale-1.0-image": {
+        "decoded": true,
+        "width_dp": 132.0,
+        "height_dp": 38.0
+      },
+      "phone_normalized_scale_1.0": true,
+      "deposit-scale-1.0-image": {
+        "decoded": true,
+        "width_dp": 88.0,
+        "height_dp": 32.0
+      },
+      "deposit-bottom-scale-1.0-image": {
+        "decoded": true,
+        "width_dp": 88.0,
+        "height_dp": 32.0
+      },
+      "home-scale-1.0-image": {
+        "decoded": true,
+        "width_dp": 83.47826086956522,
+        "height_dp": 24.0
+      },
+      "auth-scale-2.0-image": {
+        "decoded": true,
+        "width_dp": 132.0,
+        "height_dp": 38.0
+      },
+      "auth-phone-scale-2.0-image": {
+        "decoded": true,
+        "width_dp": 132.0,
+        "height_dp": 38.0
+      },
+      "phone_normalized_scale_2.0": true,
+      "deposit-scale-2.0-image": {
+        "decoded": true,
+        "width_dp": 88.0,
+        "height_dp": 32.0
+      },
+      "deposit-bottom-scale-2.0-image": {
+        "decoded": true,
+        "width_dp": 88.0,
+        "height_dp": 32.0
+      },
+      "home-scale-2.0-image": {
+        "decoded": true,
+        "width_dp": 83.47826086956522,
+        "height_dp": 24.0
+      },
+      "chrome-scale-1.0-image": {
+        "decoded": true,
+        "width_dp": 83.47826086956522,
+        "height_dp": 24.0
+      },
+      "chrome-scale-2.0-image": {
+        "decoded": true,
+        "width_dp": 83.47826086956522,
+        "height_dp": 24.0
+      },
+      "receipt-scale-1.0-image": {
+        "decoded": true,
+        "width_dp": 62.608695652173914,
+        "height_dp": 18.0
+      },
+      "receipt-bottom-scale-1.0-image": {
+        "decoded": true,
+        "width_dp": 62.608695652173914,
+        "height_dp": 18.0
+      },
+      "receipt-scale-2.0-image": {
+        "decoded": true,
+        "width_dp": 62.608695652173914,
+        "height_dp": 18.0
+      },
+      "receipt-bottom-scale-2.0-image": {
+        "decoded": true,
+        "width_dp": 62.608695652173914,
+        "height_dp": 18.0
+      },
+      "keyboard_inset_physical_px": 704.0,
+      "android_back_dismissed_keyboard_kept_form": true,
+      "choice_dismissed_keyboard": true,
+      "completed": true
+    },
+    "device": {
+      "size": "Physical size: 320x640\nOverride size: 1536x1704",
+      "density": "Physical density: 160\nOverride density: 320",
+      "adb_back_events": 1,
+      "adb_screenshots": [
+        "tablet-chrome-native-scale-1.0",
+        "tablet-chrome-native-scale-2.0"
+      ],
+      "drive_timeout_seconds": 600,
+      "drive_timed_out": false
+    },
+    "tap_or_framework_warning_matches": 0
+  }
+}
