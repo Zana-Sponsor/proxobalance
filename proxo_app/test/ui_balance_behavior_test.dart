@@ -1,3 +1,6 @@
+import 'dart:io';
+import 'dart:ui' as ui;
+import 'package:flutter/rendering.dart';
 import 'dart:convert';
 import 'package:proxo_app/widgets/tasks_page.dart';
 import 'package:proxo_app/widgets/levels_page.dart';
@@ -53,6 +56,7 @@ void main() {
   }
   Future<void> settle(WidgetTester t) async {
     await t.pump(const Duration(milliseconds: 600));
+    expect(t.takeException(), isNull);
     await t.pumpAndSettle();
   }
 
@@ -206,13 +210,27 @@ void main() {
     await t.pumpWidget(const SizedBox());
   });
 
-  testWidgets('refresh recovers an Ads error even when the returned list is empty', (t) async {
+  for (final width in [393.0, 280.0]) {
+  testWidgets('refresh recovers an empty Ads error at $width', (t) async {
     phone(t);
     await (await SharedPreferences.getInstance()).clear();
     backend.adsUnavailable = true; backend.emptyAds = true;
-    final handle = ProxoRefreshController();
+    t.view.physicalSize = Size(width, 852);
+    final handle = ProxoRefreshController(), key = GlobalKey();
+    Future<void> shot(String state) async { await t.runAsync(() async {
+      final dir = Directory('build/polish-evidence/recovery')..createSync(recursive: true);
+      final boundary = key.currentContext!.findRenderObject()! as RenderRepaintBoundary;
+      final image = await boundary.toImage(pixelRatio: 2);
+      final data = await image.toByteData(format: ui.ImageByteFormat.png);
+      await File('${dir.path}/ads-$state-${width.toInt()}.png').writeAsBytes(data!.buffer.asUint8List());
+      image.dispose();
+    }); }
     try {
-      await t.pumpWidget(host(AdScreen(refreshController: handle))); await settle(t);
+      await t.pumpWidget(host(MediaQuery(
+        data: MediaQueryData(size: Size(width, 852), textScaler: TextScaler.linear(width == 280 ? 2 : 1)),
+        child: RepaintBoundary(key: key, child: AdScreen(refreshController: handle)),
+      ))); await settle(t);
+      await shot('error');
       expect(find.text('پەیوەندی نییە'), findsOneWidget);
       expect(handle.isAttached, isTrue);
       backend.adsUnavailable = false;
@@ -222,11 +240,14 @@ void main() {
       expect(find.text('هەڵەیەک ڕوویدا'), findsNothing);
       expect(handle.isAttached, isTrue);
       expect(t.takeException(), isNull);
+      await shot('recovered-empty');
     } finally {
       backend.adsUnavailable = false; backend.emptyAds = false;
       await t.pumpWidget(const SizedBox()); handle.dispose();
     }
   });
+
+  }
 
   testWidgets('successful creation preserves Home and Ads state and prevents duplicate routes', (t) async {
     phone(t);

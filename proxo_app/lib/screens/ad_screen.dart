@@ -822,8 +822,6 @@ class _DsPrimaryButton extends StatelessWidget {
                   ],
                   Flexible(
                     child: ProxoText(label, translate: true,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
                         textAlign: TextAlign.center,
                         style: labelStyle ?? _T.of(s).button),
                   ),
@@ -3211,34 +3209,40 @@ class _AdScreenState extends State<AdScreen>
         _DsCard(
           scale: s,
           color: cardColor,
-          child: Row(children: [
-            Container(
-              width: _dsTile * s, height: _dsTile * s,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(color: wellColor, shape: BoxShape.circle),
-              child: painter != null
-                  ? CustomPaint(
-                      size: Size(_dsTileIcon * s, _dsTileIcon * s),
-                      painter: painter)
-                  : Icon(icon, size: _dsTileIcon * s, color: iconColor),
-            ),
-            SizedBox(width: _dsTileGutter * s),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  ProxoText(title, translate: true, maxLines: 1,
-                      overflow: TextOverflow.ellipsis, style: t.title),
-                  SizedBox(height: _dsTitleGap * s),
-                  ProxoText(body, translate: true, maxLines: 3,
-                      overflow: TextOverflow.ellipsis, style: t.subtitle),
-                ],
-              ),
-            ),
-            SizedBox(width: _dsTrailGap * s),
-            _DsPrimaryButton(scale: s, label: action, onTap: onAction),
-          ]),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Container(
+                  width: _dsTile * s, height: _dsTile * s,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(color: wellColor, shape: BoxShape.circle),
+                  child: painter != null
+                      ? CustomPaint(
+                          size: Size(_dsTileIcon * s, _dsTileIcon * s),
+                          painter: painter)
+                      : Icon(icon, size: _dsTileIcon * s, color: iconColor),
+                ),
+                SizedBox(width: _dsTileGutter * s),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      ProxoText(title, translate: true, style: t.title),
+                      SizedBox(height: _dsTitleGap * s),
+                      ProxoText(body, translate: true, style: t.subtitle),
+                    ],
+                  ),
+                ),
+              ]),
+              const SizedBox(height: 12),
+              // Bound the retry button's flex row and keep a 48dp tap target.
+              // Beside the message it received infinite width from the Row.
+              _DsPrimaryButton(scale: s, height: 48 / s, label: action, onTap: onAction),
+            ],
+          ),
         ),
       ],
     );
