@@ -1,0 +1,83 @@
+{
+  "application": "82b4fe3c8311e5ee5343965df7e41753c4b01e9a",
+  "harness": "6248e6a24569cfd8ba259e8bc8ec66e20619b39a",
+  "screenshots": [
+    {
+      "path": "docs/ui-update-2026-10-16/images/home-ckb-393-s1.0-d3.0.png",
+      "source_artifact_path": "polish-after/home-ckb-393-s1.0-d3.0.png",
+      "bytes": 126257,
+      "sha256": "0e7e372a4965928749d6ccc2f429feb04171f846b6aa16165c8e68ef1a414d0a",
+      "git_blob": "82d7cafd425e900b881a3c30dc36d4d4ebf7bdbb"
+    },
+    {
+      "path": "docs/ui-update-2026-10-16/images/login-ckb-393-s1.0-d3.0.png",
+      "source_artifact_path": "polish-after/login-ckb-393-s1.0-d3.0.png",
+      "bytes": 112120,
+      "sha256": "13ed88573333b119b13ad93e23f75813b6bae9735c54c145d2fad19b49cfe380",
+      "git_blob": "b8c6720967b76a0b22a7d1514023350b03e7eb12"
+    },
+    {
+      "path": "docs/ui-update-2026-10-16/images/phone-auth-phone-scale-1.0.png",
+      "source_artifact_path": "ui-native-android-fixtures-phone/phone-auth-phone-scale-1.0.png",
+      "bytes": 95067,
+      "sha256": "1419b568931391846457c678a2ca8376ff330867720822240024f2b253aaa366",
+      "git_blob": "1e05ca48fd523593e8f4de84a446d70a8b27d21b"
+    },
+    {
+      "path": "docs/ui-update-2026-10-16/images/signup-ckb-393-s1.0-d3.0.png",
+      "source_artifact_path": "polish-after/signup-ckb-393-s1.0-d3.0.png",
+      "bytes": 165570,
+      "sha256": "c23a9b1e7ba866ecaf5d7365b042be84f3c2282f538240f20a5201efc40667e6",
+      "git_blob": "6cca0511bba73c2c8e4024957f5902ba705d4cb5"
+    },
+    {
+      "path": "docs/ui-update-2026-10-16/images/forgot-ckb-393-s1.0-d3.0.png",
+      "source_artifact_path": "polish-after/forgot-ckb-393-s1.0-d3.0.png",
+      "bytes": 73680,
+      "sha256": "8dc857f1dc644f70fe792b1bbbe6866c5ef7dedcde87cac77df79bddad3a6f8a",
+      "git_blob": "ed73d48ee5607e0ecedce04a7f40ed2c2ca15145"
+    },
+    {
+      "path": "docs/ui-update-2026-10-16/images/otp-ckb-393-s1.0-d3.0.png",
+      "source_artifact_path": "polish-after/otp-ckb-393-s1.0-d3.0.png",
+      "bytes": 69292,
+      "sha256": "5743b0deb1513d5d3ee6cb56a5de861e1466c8553b478556203f6733e2220a9d",
+      "git_blob": "30768af1f5bb0fb50e2cd033e6fe894a2b4fcc22"
+    },
+    {
+      "path": "docs/ui-update-2026-10-16/images/deposit-ckb-393-s1.0-d3.0.png",
+      "source_artifact_path": "polish-after/deposit-ckb-393-s1.0-d3.0.png",
+      "bytes": 159668,
+      "sha256": "b474c59f5a8e91f10f17958e7500d31d3d9acd28991ba01ca703b5917b30b260",
+      "git_blob": "aba5fa060897b5dc39b7f4526a3067c27aaf01ae"
+    },
+    {
+      "path": "docs/ui-update-2026-10-16/images/profile-ckb-393-s1.0-d3.0.png",
+      "source_artifact_path": "polish-after/profile-ckb-393-s1.0-d3.0.png",
+      "bytes": 155850,
+      "sha256": "7af604ec897b84319a4ef92d301368ceb69202709b1e95d8012c4e53eea4d07f",
+      "git_blob": "d3d0eb7a4a81f8645932db62cb8b5b1f4364f279"
+    },
+    {
+      "path": "docs/ui-update-2026-10-16/images/profile-ckb-393-s1.0-d3.0-bottom.png",
+      "source_artifact_path": "polish-after/profile-ckb-393-s1.0-d3.0-bottom.png",
+      "bytes": 152404,
+      "sha256": "5c0308cfbcf6972612b8a750e99983d049740e5ff057ed509f75362b541df5b5",
+      "git_blob": "8858fd100caa185d0a23df84d4cf9de660fb44a2"
+    },
+    {
+      "path": "docs/ui-update-2026-10-16/images/navigation-ckb-393-s1.0-d3.0.png",
+      "source_artifact_path": "polish-after/navigation-ckb-393-s1.0-d3.0.png",
+      "bytes": 42911,
+      "sha256": "94f7ab606b2189448382683dd7f450ea6be0a55d38c03a689485d86f7f63369f",
+      "git_blob": "95c59a9cb398928e60cc808156827386d98b0ab0"
+    },
+    {
+      "path": "docs/ui-update-2026-10-16/images/error-stack-393.png",
+      "source_artifact_path": "polish-after/refinement/error-stack-393.png",
+      "bytes": 35319,
+      "sha256": "1909601df643952bd3f00039ade6d4d621ce2bc14ee44ca9fa5732816a15ed1c",
+      "git_blob": "7a1a0c94a352a7b22a0e8ea730bfbb2ae9e42992"
+    }
+  ]
+}
