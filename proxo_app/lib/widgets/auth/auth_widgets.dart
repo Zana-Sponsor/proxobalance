@@ -864,7 +864,8 @@ class AuthSegmentedControl extends StatelessWidget {
       final width = (constraints.maxWidth - 8) / 2;
       final labelWidth = (width - 20).clamp(1.0, double.infinity);
       final scaler = MediaQuery.textScalerOf(context);
-      var labelStyle = AuthTokens.fieldLabel;
+      // Material's inherited letter spacing must not differ from the painter.
+      var labelStyle = AuthTokens.fieldLabel.copyWith(letterSpacing: 0);
       // Keep whole words on each line, including Arabic email at 280dp/2x.
       // Both segments use the same size and retain system text scaling.
       for (var pass = 0; pass < 4; pass++) {
@@ -875,8 +876,8 @@ class AuthSegmentedControl extends StatelessWidget {
           if (p.width > widest) widest = p.width;
           p.dispose();
         }
-        if (widest <= labelWidth || widest == 0) break;
-        labelStyle = labelStyle.copyWith(fontSize: labelStyle.fontSize! * labelWidth / widest);
+        if (widest <= labelWidth - 0.5 || widest == 0) break;
+        labelStyle = labelStyle.copyWith(fontSize: labelStyle.fontSize! * (labelWidth - 0.5) / widest);
       }
       double height = 48;
       for (final label in labels) {
