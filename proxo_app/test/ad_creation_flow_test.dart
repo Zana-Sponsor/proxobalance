@@ -804,7 +804,14 @@ void main() {
       await tester.pump(const Duration(milliseconds: 350));
       expect(find.text('هەڵەی یەکەم'), findsNothing);
       expect(find.text('هەڵەی چوارەم'), findsOneWidget);
-      await tester.pump(const Duration(seconds: 6));
+      // Only the front card may expire. Each covered error must get five
+      // readable seconds after promotion, including the fourth queued card.
+      for (final next in ['هەڵەی دووەم', 'هەڵەی سێیەم', 'هەڵەی چوارەم']) {
+        await tester.pump(const Duration(milliseconds: 4800));
+        expect(find.text(next), findsOneWidget);
+        await tester.pump(const Duration(milliseconds: 450));
+        expect(find.text(next), findsNothing);
+      }
       await tester.pumpAndSettle();
       expect(find.byType(ProxoText), findsNothing);
       expect(tester.takeException(), isNull);

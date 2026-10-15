@@ -43,7 +43,7 @@ void main() {
   });
   testWidgets('empty phone field shows country code; ordinary fields do not add decorative symbols', (t) async {
     final c = TextEditingController();
-    await t.pumpWidget(MaterialApp(home: Scaffold(body: Padding(padding: const EdgeInsets.all(16),
+    await t.pumpWidget(MaterialApp(debugShowCheckedModeBanner: false,home: Scaffold(body: Padding(padding: const EdgeInsets.all(16),
       child: AuthTextField(controller: c, label: 'Phone', hint: '7XX XXX XXXX',
         icon: Icons.phone, keyboardType: TextInputType.phone, forceLtr: true, ltr: true,
         prefix: const Text('+964'), inputFormatters: const [IraqPhoneInputFormatter()])))));
@@ -59,7 +59,7 @@ void main() {
       t.view.physicalSize = Size(width, 852); t.view.devicePixelRatio = 1;
       addTearDown(t.view.resetPhysicalSize); addTearDown(t.view.resetDevicePixelRatio);
       final boundary = GlobalKey(); late BuildContext screen;
-      await t.pumpWidget(RepaintBoundary(key: boundary, child: MaterialApp(
+      await t.pumpWidget(RepaintBoundary(key: boundary, child: MaterialApp(debugShowCheckedModeBanner: false,
         theme: ThemeData(fontFamily: kAppFont, scaffoldBackgroundColor: const Color(0xFFF8FAFC)),
         builder: (context, child) => MediaQuery(data: MediaQuery.of(context).copyWith(
           textScaler: TextScaler.linear(width == 280 ? 2 : 1), accessibleNavigation: true), child: child!),
@@ -95,7 +95,7 @@ void main() {
     addTearDown(t.view.resetPhysicalSize); addTearDown(t.view.resetDevicePixelRatio);
     final controller = AdValidationController();
     final boundary = GlobalKey();
-    await t.pumpWidget(RepaintBoundary(key: boundary, child: MaterialApp(theme: buildAppTheme(),
+    await t.pumpWidget(RepaintBoundary(key: boundary, child: MaterialApp(debugShowCheckedModeBanner: false,theme: buildAppTheme(),
       home: Scaffold(body: Padding(padding: const EdgeInsets.all(16),
         child: AdValidationNotifications(controller: controller))))));
     controller.show({'name':'تکایە ناوی ڕیکلام بنووسە', 'budget':'بڕی پارەکە پشکنین بکە', 'link':'لینکی ڤیدیۆ بنووسە'});

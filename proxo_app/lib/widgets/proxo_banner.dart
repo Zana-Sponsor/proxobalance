@@ -1134,13 +1134,17 @@ class _SupaHero extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: _handleTap,
+    final background = _parseBg();
+    // Admin-selected light backgrounds still need readable foreground text.
+    final ink = background.computeLuminance() > .45 ? AppColors.ink : Colors.white;
+    final actionable = banner.navigateTo.isNotEmpty ? onNavigate != null : onStart != null;
+    return Semantics(button: actionable, child: GestureDetector(
+      onTap: actionable ? _handleTap : null,
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.all(22),
         decoration: BoxDecoration(
-          color: _parseBg(),
+          color: background,
           borderRadius: AdUi.radius,
         ),
         child: Stack(
@@ -1175,11 +1179,11 @@ class _SupaHero extends StatelessWidget {
                   // attention, which is the "high-priority emphasis" case.
                   // Explicit height added (was unset/font-default) since
                   // banner.title is CMS content of unpredictable length.
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontFamily: kAppFont,
                     fontSize:   21,
                     fontWeight: FontWeight.w700,
-                    color:      Colors.white,
+                    color:      ink,
                     height:     1.5,
                   ),
                 ),
@@ -1191,11 +1195,12 @@ class _SupaHero extends StatelessWidget {
                       fontFamily: kAppFont,
                       fontSize:   13.5,
                       fontWeight: FontWeight.w400,
-                      color:      Colors.white.withOpacity(0.85),
+                      color:      ink.withOpacity(0.85),
                       height:     1.35, // was 1.7, above the multiline ceiling
                     ),
                   ),
                 ],
+                if (actionable && banner.btnText.isNotEmpty) ...[
                 const SizedBox(height: 14),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 9),
@@ -1207,26 +1212,27 @@ class _SupaHero extends StatelessWidget {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.play_arrow_rounded, size: 14, color: Colors.white),
+                      Icon(Icons.play_arrow_rounded, size: 14, color: ink),
                       const SizedBox(width: 6),
                       Flexible(child: ProxoText(
-                        banner.btnText.isNotEmpty ? banner.btnText : ProxoStrings.text('دەستپێکردن'),
-                        style: const TextStyle(
+                        banner.btnText,
+                        style: TextStyle(
                           fontFamily: kAppFont,
                           fontSize:   13,
-                          color:      Colors.white,
+                          color:      ink,
                           fontWeight: FontWeight.w600,
                         ),
                       )),
                     ],
                   ),
                 ),
+                ],
               ],
             ),
           ],
         ),
       ),
-    );
+    ));
   }
 }
 
@@ -1331,7 +1337,7 @@ class _SupaBanner {
         locale:     m['locale']?.toString() ?? 'ckb',
         title:      m['title']?.toString()       ?? 'Proxo',
         subtitle:   m['subtitle']?.toString()    ?? '',
-        btnText:    m['btn_text']?.toString()    ?? 'دەستپێکردن',
+        btnText:    m['btn_text']?.toString()    ?? '',
         bgColor:    m['bg_color']?.toString()    ?? '',
         navigateTo: (m['navigate_to'] ?? m['link'])?.toString() ?? '',
       );

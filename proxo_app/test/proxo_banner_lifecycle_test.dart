@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:proxo_app/widgets/proxo_banner.dart';
+import 'package:proxo_app/widgets/proxo_text.dart';
 import '../integration_test/support/actual_screen_fixtures.dart';
 
 void main() {
@@ -79,6 +80,22 @@ void main() {
     expect(prefs.getKeys().any((k) => (prefs.get(k)?.toString() ?? '').contains('Admin banner fixture')), isFalse);
     await t.pumpWidget(const SizedBox()); await flush(t); await cleanup(t);
     expect(t.takeException(), isNull);
+  });
+  if (!old) testWidgets('light admin backgrounds use readable ink without a synthetic CTA', (t) async {
+    backend.banner = {'title':'Light admin banner','subtitle':'Admin controls this text',
+      'bg_color':'#FFFFFF','locale':'all'};
+    await t.pumpWidget(MaterialApp(home: Scaffold(body: ProxoBanner(onStart: () {}))));
+    await flush(t);
+    final title = t.widget<ProxoText>(find.byWidgetPredicate((w) => w is ProxoText && w.data == 'Light admin banner'));
+    expect(title.style!.color!.computeLuminance(), lessThan(.1));
+    expect(find.byIcon(Icons.play_arrow_rounded), findsNothing);
+    backend.banner = {'title':'Dark admin banner','bg_color':'#102040','locale':'all'};
+    backend.emitBannerChange(); await flush(t);
+    final updated = t.widget<ProxoText>(find.byWidgetPredicate((w) => w is ProxoText && w.data == 'Dark admin banner'));
+    expect(updated.style!.color, Colors.white);
+    await t.pumpWidget(const SizedBox()); await flush(t); await cleanup(t);
+    backend.banner = null;
+    expect(t.takeException(),isNull);
   });
 
 }

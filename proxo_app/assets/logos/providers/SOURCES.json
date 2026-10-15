@@ -33,5 +33,12 @@
     "source_sha256": "5779fcb00363c6e2a86777f0b05d5c4e0650cf67aaf6414428bb1eeb6767499e",
     "bundled_sha256": "5779fcb00363c6e2a86777f0b05d5c4e0650cf67aaf6414428bb1eeb6767499e",
     "change": "none"
+  },
+  {
+    "file": "fastpay.png",
+    "url": "https://fast-pay.iq/img/clogo.png",
+    "source_sha256": "c5aea407251e257a3fdc9c15c7b5ce3a36de4a2ffd8e2561caba9659f8941423",
+    "bundled_sha256": "c5aea407251e257a3fdc9c15c7b5ce3a36de4a2ffd8e2561caba9659f8941423",
+    "change": "none"
   }
 ]

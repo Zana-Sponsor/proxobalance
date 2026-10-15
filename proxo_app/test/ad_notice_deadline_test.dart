@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:proxo_app/widgets/ad_validation_notifications.dart';
 
 void main() {
+  const oldNotice = bool.fromEnvironment('PROXO_REPRODUCE_OLD_NOTICE');
   testWidgets('notice keeps its 400ms deadline after a delayed mounting frame', (t) async {
     final controller = AdValidationController();
     addTearDown(controller.dispose);
@@ -34,7 +35,13 @@ void main() {
     expect(find.text('Second error'), findsOneWidget);
     await t.pump(const Duration(milliseconds: 600)); // 5500ms, unchanged.
     expect(find.text('First error'), findsNothing);
-    expect(find.text('Second error'), findsNothing);
+    expect(find.text('Second error'), oldNotice ? findsNothing : findsOneWidget);
+    if (!oldNotice) {
+      await t.pump(const Duration(milliseconds: 4700)); // 10200: second still readable
+      expect(find.text('Second error'), findsOneWidget);
+      await t.pump(const Duration(milliseconds: 600)); // 10800: second has exited
+      expect(find.text('Second error'), findsNothing);
+    }
     await t.pumpWidget(const SizedBox.shrink());
     expect(t.takeException(), isNull);
   });

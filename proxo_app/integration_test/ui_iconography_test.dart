@@ -1,3 +1,7 @@
+import 'package:proxo_app/screens/auth/auth_shell.dart';
+import 'package:proxo_app/widgets/auth/auth_design.dart';
+import 'package:proxo_app/screens/deposit_screen.dart';
+import 'package:proxo_app/screens/home_screen.dart';
 // Credential-free Android checks of actual production widgets. Fixtures reject
 // writes. This suite neither replaces authenticated E2E nor measures performance.
 import 'package:flutter/material.dart';
@@ -142,6 +146,27 @@ void main() {
         await shot('navigation-$index');
       }
       for (final scale in [1.0, 2.0]) {
+        await mount(const AuthShell(), scale: scale);
+        await shot('auth-scale-$scale');
+        await t.tap(find.text(AuthStrings.channelPhone).first);
+        await t.pumpAndSettle();
+        final phone = find.byWidgetPredicate((w) => w is TextField && w.keyboardType == TextInputType.phone);
+        await t.ensureVisible(phone); await t.pumpAndSettle();
+        await t.tap(phone); await t.enterText(phone, '٠٧٥٠١٢٣٤٥٦٧');
+        await t.pumpAndSettle();
+        expect(t.widget<TextField>(phone).controller!.text, '7501234567');
+        expect(find.text('+964'), findsOneWidget);
+        await shot('auth-phone-scale-$scale');
+        observations['phone_normalized_scale_$scale'] = true;
+        // Leaving the actual auth screen must release its focused field.
+        await mount(const DepositScreen(), scale: scale);
+        await shot('deposit-scale-$scale');
+        await t.drag(find.byType(Scrollable).first, const Offset(0, -1000));
+        await t.pumpAndSettle(); await shot('deposit-bottom-scale-$scale');
+        await mount(HomeScreen(onCreateTap: () {}, onCreatePageTap: () {}, onAddBalanceTap: () {}), scale: scale);
+        await shot('home-scale-$scale');
+      }
+      for (final scale in [1.0, 2.0]) {
         await mount(ProfileScreen(onBottomNavTap: (_) {}), scale: scale);
         await shot('profile-scale-$scale');
         await t.drag(find.byType(Scrollable).first, const Offset(0, -650));
@@ -226,5 +251,5 @@ void main() {
       // Flutter verifies handles before addTearDown callbacks run.
       semantics.dispose();
     }
-  }, timeout: const Timeout(Duration(minutes: 5)));
+  }, timeout: const Timeout(Duration(minutes: 7)));
 }

@@ -129,7 +129,7 @@ const List<_Wallet> _kWallets = [
     number: '7510074008',
     icon: Icons.flash_on_rounded,
     iconBg: Color(0xFFFCE4EC),
-    logoAsset: 'assets/logos/fastpay.jpg',
+    logoAsset: 'assets/logos/providers/fastpay.png',
   ),
   _Wallet(
     key: 'kcard',
@@ -834,7 +834,7 @@ class _WalletCard extends StatelessWidget {
             SizedBox(height: 32, width: 88,
               child: wallet.logoAsset!.endsWith('.svg')
                 ? SvgPicture.asset(wallet.logoAsset!, fit: BoxFit.contain, excludeFromSemantics: true)
-                : Image.asset(wallet.logoAsset!, fit: BoxFit.contain, excludeFromSemantics: true)),
+                : Image.asset(wallet.logoAsset!, fit: BoxFit.contain, cacheWidth: 264, excludeFromSemantics: true)),
             const SizedBox(height: 10),
             ProxoText(wallet.name, textAlign: TextAlign.center, textDirection: TextDirection.ltr,
               style: const TextStyle(fontFamily: kAppFont, fontSize: 14, height: 1.5, color: _cInk)),

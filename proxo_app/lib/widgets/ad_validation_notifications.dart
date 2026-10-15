@@ -34,9 +34,9 @@ class AdValidationController extends ChangeNotifier {
   }
 
   void _armVisible() {
-    // Only three readable cards cover the form. Queued cards receive their
-    // own full five seconds when they become visible, not while hidden.
-    for (final item in _items.take(3)) {
+    // Rear layers are covered by the front card. Only the readable front
+    // starts its five-second lifetime; every queued error gets its own turn.
+    for (final item in _items.take(1)) {
       if (item.armed) continue;
       // A hidden queued notice gets a fresh timeline when its slot opens.
       if (item.queued) {

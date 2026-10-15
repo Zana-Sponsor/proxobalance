@@ -104,7 +104,7 @@ void main() {
         await _png(t,key,'actual-$screen-error-initial-${width.toInt()}');
         await t.tap(button);await t.pump();
         final counts=<String,int>{},visual=<String,Object>{};var previous=0;
-        for(final phase in [100,400,4900,5100,5500]) {
+        for(final phase in [100,400,4900,5100,5500,10200,10800]) {
           // Actual stagger/entry/exit needs frames between Timer callbacks.
           // A single large fake-clock leap can mount a zero-opacity card at
           // the observation time even though its lifetime timer has elapsed.
@@ -118,7 +118,11 @@ void main() {
           }
           if(phase<=4900)expect(counts['${phase}ms'],2);
           if(phase==400||phase==4900)expect(visual['${phase}ms'],{'opacity':[1.0,1.0],'size_factor':[1.0,1.0]});
-          if(phase==5500)expect(counts['${phase}ms'],0);
+          if(phase==5500||phase==10200) {
+            expect(counts['${phase}ms'],1);
+            expect(visual['${phase}ms'],{'opacity':[1.0],'size_factor':[1.0]});
+          }
+          if(phase==10800)expect(counts['${phase}ms'],0);
           await _png(t,key,'actual-$screen-error-${phase}ms-${width.toInt()}');
           expect(t.takeException(),isNull);
         }

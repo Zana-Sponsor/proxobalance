@@ -32,6 +32,41 @@ const before = bool.fromEnvironment('POLISH_BEFORE');
 class PolishBinding extends AutomatedTestWidgetsFlutterBinding {
   @override bool get disableShadows => false;
 }
+// Geometry comes from actual laid-out RenderObjects, not inferred screenshots.
+List<Map<String, Object?>> measuredLayout(GlobalKey key) {
+  final root = key.currentContext! as Element;
+  final origin = (root.findRenderObject() as RenderBox).localToGlobal(Offset.zero);
+  final seen = <RenderObject>{};
+  final rows = <Map<String, Object?>>[];
+  void visit(Element e) {
+    final w = e.widget;
+    final r = e.findRenderObject();
+    if (r is RenderBox && r.hasSize &&
+        (r is RenderParagraph || w is Container || w is Material || w is InkWell || w is TextField)) {
+      if (seen.add(r)) {
+        final at = r.localToGlobal(Offset.zero) - origin;
+        final row = <String, Object?>{'widget': w.runtimeType.toString(), 'key': w.key?.toString(),
+          'bounds_dp': [at.dx, at.dy, r.size.width, r.size.height]};
+        if (r is RenderParagraph) {
+          row.addAll({'text': r.text.toPlainText(), 'font_family': r.text.style?.fontFamily,
+            'font_size': r.text.style?.fontSize, 'font_weight': r.text.style?.fontWeight?.index,
+            'line_height': r.text.style?.height, 'text_scale': r.textScaler.scale(1),
+            'exceeded_max_lines': r.didExceedMaxLines});
+        }
+        if (w is Container && w.decoration is BoxDecoration) {
+          final d = w.decoration as BoxDecoration;
+          row.addAll({'radius': d.borderRadius?.toString(), 'padding': w.padding?.toString(),
+            'color': d.color?.toARGB32()});
+        }
+        if (w is Material) row['shape'] = w.shape?.toString();
+        rows.add(row);
+      }
+    }
+    e.visitChildren(visit);
+  }
+  visit(root);
+  return rows;
+}
 void main() {
   PolishBinding();
   final backend = ActualScreenBackend();
@@ -114,7 +149,7 @@ void main() {
             await File('${directory.path}/$name.json').writeAsString(jsonEncode({
               'source': before?'before':'after','section':section,'locale':language,
               'width':width,'height':852,'textScale':scale,'dpr':dpr,
-              'exceptions':exceptions,'fixture':'fictional GET-only; OTP screen component; no authentication or payment sends',
+              'layout':measuredLayout(key),'exceptions':exceptions,'fixture':'fictional GET-only; OTP screen component; no authentication or payment sends',
             }));
           });
           if (['deposit','create','profile','home'].contains(section)) {
@@ -132,7 +167,7 @@ void main() {
                   await File('build/polish-evidence/$name-bottom.png').writeAsBytes(png!.buffer.asUint8List()); shot.dispose();
                   await File('build/polish-evidence/$name-bottom.json').writeAsString(jsonEncode({
                     'source':before?'before':'after','section':section,'locale':language,
-                    'width':width,'height':852,'textScale':scale,'dpr':dpr,'position':'bottom','exceptions':exceptions,
+                    'width':width,'height':852,'textScale':scale,'dpr':dpr,'position':'bottom','layout':measuredLayout(key),'exceptions':exceptions,
                   }));
                 });
               }

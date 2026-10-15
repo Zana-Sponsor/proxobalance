@@ -1,7 +1,7 @@
 import {createHash} from 'node:crypto';
 export const SCREEN_WIDTHS=[320,393,430,768];
 export const SCREEN_IDS=SCREEN_WIDTHS.flatMap(w=>['home-refresh','tools-refresh','ad-error','proxolink-error'].map(s=>'actual-'+s+'-'+w));
-export const screenPhases=id=>id.includes('-refresh-')?['initial','100ms','300ms','settled']:['initial','400ms','4900ms','5500ms'];
+export const screenPhases=id=>id.includes('-refresh-')?['initial','100ms','300ms','settled']:['initial','400ms','4900ms','5500ms','10200ms','10800ms'];
 export const SCREEN_FILES=SCREEN_IDS.flatMap(id=>screenPhases(id).map(phase=>id+'-'+phase+'.png'));
 const errors=['actual_screen_permission','actual_screen_phase_missed','actual_screen_surface','actual_screen_refresh','actual_screen_reads',
  'actual_screen_settle','actual_screen_notices','actual_screen_validation','actual_screen_lifecycle','actual_screen_appearance','actual_screen_unclassified'];
@@ -28,8 +28,8 @@ export function safeActualScreens(data){
    return[p,out];
   }));
   if(Array.isArray(item.offsets_100_300)&&item.offsets_100_300.length===2&&item.offsets_100_300.every(number))safe.offsets_100_300=item.offsets_100_300;
-  if(item.notice_counts)safe.notice_counts=numeric(item.notice_counts,['400ms','4900ms','5500ms']);
-  if(item.visual_state)safe.visual_state=Object.fromEntries(['400ms','4900ms','5500ms'].map(phase=>[phase,Object.fromEntries(
+  if(item.notice_counts)safe.notice_counts=numeric(item.notice_counts,['400ms','4900ms','5500ms','10200ms','10800ms']);
+  if(item.visual_state)safe.visual_state=Object.fromEntries(['400ms','4900ms','5500ms','10200ms','10800ms'].map(phase=>[phase,Object.fromEntries(
     ['opacity','size_factor'].filter(k=>Array.isArray(item.visual_state[phase]?.[k])&&item.visual_state[phase][k].length<=3&&
       item.visual_state[phase][k].every(v=>number(v)&&v>=0&&v<=1)).map(k=>[k,item.visual_state[phase][k]]))]));
   if(item.appearance&&Object.keys(item.appearance).sort().join(',')==='decoration,icon_color,icon_size,text_style')
@@ -50,10 +50,12 @@ export function validateActualScreens(data,copied){
       item.offsets_100_300?.length!==2||!item.offsets_100_300.every(v=>v>0&&v<100))fail();
   }else{
    if(item.real_form_validation!==true||item.automatic_exit!==true||item.native_input!==false||!item.appearance_sha256||
-      item.notice_counts?.['400ms']!==2||item.notice_counts?.['4900ms']!==2||item.notice_counts?.['5500ms']!==0)fail();
+      item.notice_counts?.['400ms']!==2||item.notice_counts?.['4900ms']!==2||item.notice_counts?.['5500ms']!==1||item.notice_counts?.['10200ms']!==1||item.notice_counts?.['10800ms']!==0)fail();
    for(const phase of ['400ms','4900ms'])for(const key of ['opacity','size_factor'])
     if(item.visual_state?.[phase]?.[key]?.length!==2||!item.visual_state[phase][key].every(v=>v===1))fail();
-   for(const key of ['opacity','size_factor'])if(item.visual_state?.['5500ms']?.[key]?.length!==0)fail();
+   for(const phase of ['5500ms','10200ms'])for(const key of ['opacity','size_factor'])
+    if(item.visual_state?.[phase]?.[key]?.length!==1||item.visual_state[phase][key][0]!==1)fail();
+   for(const key of ['opacity','size_factor'])if(item.visual_state?.['10800ms']?.[key]?.length!==0)fail();
   }
   for(const phase of screenPhases(id)){
    const file=id+'-'+phase+'.png',shot=data.captures[file],width=Number(id.split('-').at(-1));

@@ -203,6 +203,7 @@ class ProxoErrorStack {
       _timer?.cancel();
       _timer = null;
       _entry?.remove();
+      _entry?.dispose();
       _entry = null;
     }
   }

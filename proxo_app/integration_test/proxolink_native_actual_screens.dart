@@ -113,7 +113,7 @@ class _ActualScreensState extends State<NativeActualScreensJourney> {
             // Calls the ACTUAL form submit callback and its actual controller;
             // input provenance is explicit, not represented as an ADB tap.
             final clock=Stopwatch()..start();pressed();
-            await scheduleNativePhases(phases:[400,4900,5500],elapsedMilliseconds:()=>clock.elapsedMilliseconds,capture:(phase)async {
+            await scheduleNativePhases(phases:[400,4900,5500,10200,10800],elapsedMilliseconds:()=>clock.elapsedMilliseconds,capture:(phase)async {
               counts['${phase}ms']=screenNoticeCount(root);
               visual['${phase}ms']=screenNoticeVisualState(root);
               (observation['phase_observations'] as Map<String,Object>)['${phase}ms']={
@@ -123,7 +123,12 @@ class _ActualScreensState extends State<NativeActualScreensJourney> {
               shots.add(await _png(id,'${phase}ms',clock:clock));
               if(phase<5000){final v=visual['${phase}ms'] as Map<String,Object>;
                 if((v['opacity'] as List).any((a)=>a!=1)||(v['size_factor'] as List).any((a)=>a!=1))throw StateError('actual_screen_lifecycle');}
-              if((phase<5000&&counts['${phase}ms']!=2)||(phase==5500&&counts['${phase}ms']!=0))throw StateError('actual_screen_lifecycle');
+              final expected = phase < 5000 ? 2 : phase < 10800 ? 1 : 0;
+              if(counts['${phase}ms']!=expected)throw StateError('actual_screen_lifecycle');
+              if(phase==5500||phase==10200) {
+                final v=visual['${phase}ms'] as Map<String,Object>;
+                if((v['opacity'] as List).single!=1||(v['size_factor'] as List).single!=1)throw StateError('actual_screen_lifecycle');
+              }
               if(phase==400){final a=screenNoticeAppearance(root);if(appearance!=null&&a.toString()!=appearance.toString())throw StateError('actual_screen_appearance');appearance=a;}
             });
             observation.addAll({'passed':true,'notice_counts':counts,'visual_state':visual,'appearance':appearance!,'automatic_exit':true,'real_form_validation':true,
