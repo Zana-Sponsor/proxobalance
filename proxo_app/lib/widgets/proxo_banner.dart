@@ -1136,7 +1136,10 @@ class _SupaHero extends StatelessWidget {
   Widget build(BuildContext context) {
     final background = _parseBg();
     // Admin-selected light backgrounds still need readable foreground text.
-    final ink = background.computeLuminance() > .45 ? AppColors.ink : Colors.white;
+    final luminance = background.computeLuminance();
+    final darkContrast = (luminance + .05) / (AppColors.ink.computeLuminance() + .05);
+    final whiteContrast = 1.05 / (luminance + .05);
+    final ink = darkContrast >= whiteContrast ? AppColors.ink : Colors.white;
     final actionable = banner.navigateTo.isNotEmpty ? onNavigate != null : onStart != null;
     return Semantics(button: actionable, child: GestureDetector(
       onTap: actionable ? _handleTap : null,

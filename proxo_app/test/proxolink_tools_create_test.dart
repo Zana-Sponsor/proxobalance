@@ -254,14 +254,20 @@ void main() {
   await t.pumpWidget(host(RepaintBoundary(key:key,child:ToolsScreen(repository:repo))));await t.pumpAndSettle();
   expect(t.takeException(),isNull);await png(t,key,'tools-${error?'error':'empty'}-$width');
  });
- testWidgets('exact shared Ad notices used by both flows; stacked entry and automatic five-second exit',(t) async {
+ testWidgets('exact shared Ad notices used by both flows; stacked entry and five readable seconds per front card',(t) async {
   size(t,393);final c=AdValidationController(),key=GlobalKey();
   await t.pumpWidget(host(Scaffold(body:Padding(padding:const EdgeInsets.all(16),
    child:RepaintBoundary(key:key,child:AdValidationNotifications(controller:c))))));
   c.show({'name':'تکایە ناو بنووسە.','provider':'تکایە بەستەرەکە بپشکنە.','image':'وێنەکە گونجاو نییە.'});
   await t.pump(const Duration(milliseconds:700));await t.pump(const Duration(milliseconds:250));
   expect(find.byIcon(Icons.error_outline),findsNWidgets(3));await png(t,key,'shared-create-ad-tools-error');
-  await t.pump(const Duration(seconds:5));await t.pump(const Duration(milliseconds:500));expect(find.byIcon(Icons.error_outline),findsNothing);c.dispose();
+  // The two covered messages survive the first expiry, then get their own
+  // full readable lifetime. Do not restore the old all-at-once disappearance.
+  for (final remaining in [2, 1, 0]) {
+    await t.pump(const Duration(seconds:5));await t.pump(const Duration(milliseconds:500));
+    expect(find.byIcon(Icons.error_outline),findsNWidgets(remaining));
+  }
+  c.dispose();
  });
  testWidgets('Home integration pattern and Tools use identical shared motion, with settled offset zero',(t) async {
   size(t,393);final handle=ProxoRefreshController(),gate=Completer<void>(),key=GlobalKey();

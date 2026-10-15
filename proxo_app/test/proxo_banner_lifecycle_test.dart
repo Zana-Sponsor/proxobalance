@@ -89,6 +89,10 @@ void main() {
     final title = t.widget<ProxoText>(find.byWidgetPredicate((w) => w is ProxoText && w.data == 'Light admin banner'));
     expect(title.style!.color!.computeLuminance(), lessThan(.1));
     expect(find.byIcon(Icons.play_arrow_rounded), findsNothing);
+    backend.banner = {'title':'Mid-tone admin banner','bg_color':'#888888','locale':'all'};
+    backend.emitBannerChange(); await flush(t);
+    final mid = t.widget<ProxoText>(find.byWidgetPredicate((w) => w is ProxoText && w.data == 'Mid-tone admin banner'));
+    expect(mid.style!.color!.computeLuminance(), lessThan(.1));
     backend.banner = {'title':'Dark admin banner','bg_color':'#102040','locale':'all'};
     backend.emitBannerChange(); await flush(t);
     final updated = t.widget<ProxoText>(find.byWidgetPredicate((w) => w is ProxoText && w.data == 'Dark admin banner'));

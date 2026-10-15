@@ -111,7 +111,7 @@ void main() {
             'ads' => const AdScreen(),
             'create' => AdCreateScreen(repository: TestAdRepository()),
             'profile' => const ProfileScreen(),
-            'home' => HomeScreen(onCreateTap: () {}, onToolsTap: () {}, onCreatePageTap: () {}, onFaqTap: () {}),
+            'home' => HomeScreen(onCreateTap: () {}, onAddBalanceTap: () {}, onToolsTap: () {}, onCreatePageTap: () {}, onFaqTap: () {}),
             _ => Scaffold(bottomNavigationBar: ProxoBottomNav(currentIndex: 0, onTap: (_) {})),
           };
           await t.pumpWidget(MaterialApp(locale: const Locale('ar'),
