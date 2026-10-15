@@ -112,7 +112,7 @@ class _ToolsScreenState extends State<ToolsScreen> {
     textDirection: TextDirection.rtl, child: Builder(builder: (context) => Scaffold(
       backgroundColor: const Color(0xFFF8FAFD),
       body: Column(children: [
-        ReceiptAppBar(title: 'ئامرازەکان', onBack: Navigator.of(context).canPop() ? () => Navigator.of(context).maybePop() : null),
+        ReceiptAppBar(translateTitle: true, title: 'ئامرازەکان', onBack: Navigator.of(context).canPop() ? () => Navigator.of(context).maybePop() : null),
         Expanded(child: Stack(children: [
           ProxoRefresh(controller: widget.refreshController ?? _localRefresh,
             scrollController: _scroll, pullToRefresh: true, onRefresh: _pages.refresh,

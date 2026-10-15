@@ -199,7 +199,7 @@ class _ProxoLinkPageDetailsScreenState
         body: SafeArea(
           child: Column(
             children: [
-              ReceiptAppBar(
+              ReceiptAppBar(translateTitle: true,
                 title: 'زانیاری و بەڕێوەبردنی پەڕە',
                 onBack: () => Navigator.pop(context),
               ),

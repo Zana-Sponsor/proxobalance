@@ -407,7 +407,7 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
               backgroundColor: Colors.white,
               body: SafeArea(
                   top: false, bottom: false, child: Column(children: [
-                ReceiptAppBar(
+                ReceiptAppBar(translateTitle: true,
                     title: 'دروستکردنی ڕیکلام',
                     onBack: () => Navigator.of(context).maybePop()),
                 Expanded(

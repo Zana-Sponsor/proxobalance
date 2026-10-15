@@ -151,7 +151,7 @@ class _AdConfirmationScreenState extends State<AdConfirmationScreen>
                 backgroundColor: Colors.white,
                 body: SafeArea(
                     top: false, bottom: false, child: Column(children: [
-                  ReceiptAppBar(
+                  ReceiptAppBar(translateTitle: true,
                       title: 'پشتڕاستکردنەوەی ڕیکلام',
                       onBack: _canCancel ? _cancel : null),
                   Expanded(

@@ -159,7 +159,7 @@ class ReceiptAppBar extends StatelessWidget {
   const ReceiptAppBar({
     super.key,
     required this.title,
-    this.translateTitle = true,
+    this.translateTitle = false,
     required this.onBack,
     this.backTooltip,
     this.action,

@@ -184,7 +184,7 @@ class _CreatePageState extends State<ProxoLinkCreatePageScreen> {
     textDirection: TextDirection.rtl, child: Builder(builder: (context) => Scaffold(
       backgroundColor: const Color(0xFFF8FAFD),
       body: Column(children: [
-        ReceiptAppBar(title: 'دروستکردنی پەڕە', onBack: () => Navigator.of(context).maybePop()),
+        ReceiptAppBar(translateTitle: true, title: 'دروستکردنی پەڕە', onBack: () => Navigator.of(context).maybePop()),
         Expanded(child: Stack(children: [
           SingleChildScrollView(controller: _scroll, padding: const EdgeInsets.fromLTRB(16, 20, 16, 32),
             child: Align(alignment: Alignment.topCenter, child: ConstrainedBox(constraints: const BoxConstraints(maxWidth: 600),

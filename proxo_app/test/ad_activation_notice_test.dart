@@ -1,4 +1,4 @@
-import 'package:proxo_app/theme/app_theme.dart' show kAppFont;
+import 'package:proxo_app/theme/app_theme.dart' show buildAppTheme;
 import 'dart:convert';
 import 'dart:io';
 import 'dart:ui' as ui;
@@ -9,8 +9,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:proxo_app/widgets/ad_activation_notice.dart';
 import 'package:proxo_app/theme/app_locale.dart';
 
+class NoticePaintBinding extends AutomatedTestWidgetsFlutterBinding {
+  @override bool get disableShadows => false;
+}
+
 void main() {
-  TestWidgetsFlutterBinding.ensureInitialized();
+  NoticePaintBinding();
   setUpAll(() async {
     final fonts = jsonDecode(await rootBundle.loadString('FontManifest.json')) as List;
     for(final font in fonts) {
@@ -43,7 +47,7 @@ void main() {
       addTearDown(() => ProxoLocale.current.value=ProxoLocale.kurdishSorani);
       var open=0,close=0;
       final boundaryKey=GlobalKey();
-      await t.pumpWidget(MaterialApp(theme: ThemeData(fontFamily: kAppFont), home: ProxoLocaleScope(child: MediaQuery(
+      await t.pumpWidget(MaterialApp(theme: buildAppTheme().copyWith(scaffoldBackgroundColor: Colors.white), home: ProxoLocaleScope(child: MediaQuery(
         data: MediaQueryData(size:Size(width,852),textScaler:TextScaler.linear(scale)),
         child: RepaintBoundary(key:boundaryKey,child:Scaffold(body:Padding(padding:const EdgeInsets.all(12),child:AdActivationNotice(
           adTitle:'Campaign 123', onOpen:()=>open++,onClose:()=>close++))))))));

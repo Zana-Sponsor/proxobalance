@@ -46,7 +46,7 @@ class _ProxoLinkPageEditorScreenState extends State<ProxoLinkPageEditorScreen> {
         body: SafeArea(
           child: Column(
             children: [
-              ReceiptAppBar(
+              ReceiptAppBar(translateTitle: true,
                 title: widget.existing == null
                     ? 'دروستکردنی پەڕە'
                     : 'دەستکاریکردنی پەڕە',
