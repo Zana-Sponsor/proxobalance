@@ -91,9 +91,9 @@ class ActualScreenBackend {
  }
  void emitProfileChange(Map<String,dynamic> record,{bool wallet=false}){
   final prefix=wallet?'realtime:profile_screen_wallet_':'realtime:profile_screen_profile_';
-  for(final channel in client.getChannels().where((c)=>c.topic.startsWith(prefix))){
-   for(final socket in _sockets){
-    socket.emit(channel.topic,'postgres_changes',{'ids':[0],'data':{
+  for(final socket in _sockets){
+   for(final topic in socket.joinedTopics.where((t)=>t.startsWith(prefix))){
+    socket.emit(topic,'postgres_changes',{'ids':[0],'data':{
      'schema':'public','table':wallet?'pa_wallets':'profiles','type':'UPDATE',
      'commit_timestamp':'2026-10-15T20:00:00Z','columns':[],
      'record':record,'old_record':{}}});
@@ -104,6 +104,7 @@ class ActualScreenBackend {
 }
 class _ScreenSocket extends StreamChannelMixin<dynamic> implements WebSocketChannel {
  final incoming=StreamController<dynamic>();
+ final joinedTopics=<String>{};
  final void Function(String)? onJoin;
  bool positional=false;
  _ScreenSocket({this.onJoin});
@@ -131,7 +132,11 @@ class _ScreenSink implements WebSocketSink {
   final topic=positional?frame[2]:frame['topic'],ref=positional?frame[1]:frame['ref'];
   final join=positional?frame[0]:frame['join_ref'],kind=positional?frame[3]:frame['event'];
   final payload=positional?frame[4]:frame['payload'];
-  if(kind=='phx_join')socket.onJoin?.call(topic as String);
+  if(kind=='phx_join'){
+   socket.joinedTopics.add(topic as String);
+   socket.onJoin?.call(topic);
+  }
+  if(kind=='phx_leave')socket.joinedTopics.remove(topic);
   if(!{'phx_join','phx_leave','heartbeat'}.contains(kind))return;
   final bindings=(payload?['config']?['postgres_changes'] as List?)??[];
   final reply={'status':'ok','response':{'postgres_changes':[for(var i=0;i<bindings.length;i++){...Map<String,dynamic>.from(bindings[i] as Map),'id':i}]}};
