@@ -41,6 +41,7 @@ class TxHistoryLayout extends StatelessWidget {
               children: <Widget>[
                 ReceiptAppBar(
                   title: title,
+                  translateTitle: false,
                   onBack: onBack,
                   backTooltip: backLabel,
                   action: IconButton(

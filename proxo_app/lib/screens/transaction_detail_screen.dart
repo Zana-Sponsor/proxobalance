@@ -149,7 +149,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
           backgroundColor: ReceiptTokens.page,
           body: Column(
             children: <Widget>[
-              ReceiptAppBar(title: l.detailTitle, onBack: _back),
+              ReceiptAppBar(title: l.detailTitle, translateTitle: false, onBack: _back),
               Expanded(
                 child: SafeArea(
                   top: false,

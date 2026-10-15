@@ -397,7 +397,7 @@ class _AdDetailScreenState extends State<AdDetailScreen> {
           backgroundColor: ReceiptTokens.page,
           body: Column(
             children: <Widget>[
-              ReceiptAppBar(title: l.appBarTitle, onBack: _back),
+              ReceiptAppBar(title: l.appBarTitle, translateTitle: false, onBack: _back),
               Expanded(
                 child: SafeArea(
                   top: false,

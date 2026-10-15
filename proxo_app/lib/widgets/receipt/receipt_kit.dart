@@ -151,6 +151,7 @@ abstract final class ReceiptTokens {
 
 class ReceiptAppBar extends StatelessWidget {
   final String title;
+  final bool translateTitle;
   final VoidCallback? onBack;
   final String? backTooltip;
   final Widget? action;
@@ -158,6 +159,7 @@ class ReceiptAppBar extends StatelessWidget {
   const ReceiptAppBar({
     super.key,
     required this.title,
+    this.translateTitle = true,
     required this.onBack,
     this.backTooltip,
     this.action,
@@ -172,11 +174,12 @@ class ReceiptAppBar extends StatelessWidget {
 
   Widget _buildBar(BuildContext context, BoxConstraints constraints) {
     ProxoLocale.watch(context);
+    final displayTitle = translateTitle ? ProxoStrings.text(title) : title;
     final double top = MediaQuery.paddingOf(context).top;
     final titlePainter =
         TextPainter(
-          text: TextSpan(text: ProxoStrings.text(title), style: ReceiptTokens.barTitle),
-          textDirection: receiptDirOf(ProxoStrings.text(title)),
+          text: TextSpan(text: displayTitle, style: ReceiptTokens.barTitle),
+          textDirection: receiptDirOf(displayTitle),
           textScaler: MediaQuery.textScalerOf(context),
         )..layout(
           maxWidth:
@@ -209,7 +212,7 @@ class ReceiptAppBar extends StatelessWidget {
             ),
             child: Center(
               child: ProxoText(
-                title, translate: true,
+                displayTitle,
                 textDirection: TextDirection.rtl,
                 textAlign: TextAlign.center,
                 style: ReceiptTokens.barTitle,
@@ -227,7 +230,7 @@ class ReceiptAppBar extends StatelessWidget {
                 height: ReceiptTokens.barTap,
                 child: IconButton(
                   onPressed: onBack,
-                  tooltip: ProxoStrings.text(backTooltip ?? 'گەڕانەوە'),
+                  tooltip: backTooltip ?? ProxoStrings.text('گەڕانەوە'),
                   icon: ReceiptIcon(
                     Directionality.of(context) == TextDirection.ltr
                         ? Icons.arrow_back_ios_rounded

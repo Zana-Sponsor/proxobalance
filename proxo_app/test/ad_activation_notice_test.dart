@@ -33,26 +33,29 @@ void main() {
     }
     expect(AdActivationEvent.parse({...row(),'meta':{'ad_id':'------------------------------------'}},userId:'owner',now:now),isNull);
   });
+  for(final config in [(280.0, 2.0), (393.0, 1.0)]) {
   for(final language in ['ckb','ar','kmr']) {
-    testWidgets('notice is readable at 280dp and 2x in $language; both actions work', (t) async {
-      t.view.physicalSize = const Size(560,1704); t.view.devicePixelRatio=2;
+    testWidgets('notice is compact and readable at $config in $language; both actions work', (t) async {
+      final (width, scale) = config;
+      t.view.physicalSize = Size(width*2,1704); t.view.devicePixelRatio=2;
       addTearDown(t.view.resetPhysicalSize); addTearDown(t.view.resetDevicePixelRatio);
       ProxoLocale.current.value=Locale(language);
       addTearDown(() => ProxoLocale.current.value=ProxoLocale.kurdishSorani);
       var open=0,close=0;
       final boundaryKey=GlobalKey();
       await t.pumpWidget(MaterialApp(theme: ThemeData(fontFamily: kAppFont), home: ProxoLocaleScope(child: MediaQuery(
-        data: const MediaQueryData(size:Size(280,852),textScaler:TextScaler.linear(2)),
+        data: MediaQueryData(size:Size(width,852),textScaler:TextScaler.linear(scale)),
         child: RepaintBoundary(key:boundaryKey,child:Scaffold(body:Padding(padding:const EdgeInsets.all(12),child:AdActivationNotice(
           adTitle:'Campaign 123', onOpen:()=>open++,onClose:()=>close++))))))));
       await t.pumpAndSettle();
       expect(t.takeException(),isNull);
+      expect(t.getSize(find.byType(AdActivationNotice)).height, lessThan(scale > 1 ? 400 : 200));
       await t.runAsync(() async {
         final boundary=boundaryKey.currentContext!.findRenderObject()! as RenderRepaintBoundary;
         final shot=await boundary.toImage(pixelRatio:2);
         final data=await shot.toByteData(format:ui.ImageByteFormat.png);
         Directory('build/polish-evidence').createSync(recursive:true);
-        await File('build/polish-evidence/activation-$language-280-s2.0-d2.0.png').writeAsBytes(data!.buffer.asUint8List());shot.dispose();
+        await File('build/polish-evidence/activation-$language-${width.toInt()}-s$scale-d2.0.png').writeAsBytes(data!.buffer.asUint8List());shot.dispose();
       });
       final button=find.byType(TextButton), closeButton=find.byType(IconButton);
       expect(t.getSize(button).height,greaterThanOrEqualTo(48));
@@ -61,4 +64,5 @@ void main() {
       expect(open,1);expect(close,1);
     });
   }
+}
 }

@@ -47,13 +47,13 @@ class AdActivationNotice extends StatelessWidget {
             const Padding(padding: EdgeInsets.only(top: 10),
               child: ProxoSymbol(ProxoSymbolName.verified, size: 24, color: Color(0xFF157347))),
             const SizedBox(width: 10),
-            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Expanded(child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
               const ProxoText('ڕیکلامەکەت چالاک بوو', translate: true,
                 style: TextStyle(fontSize: 14, color: Color(0xFF0F172A), height: 1.5)),
               if (adTitle.isNotEmpty) ProxoText(adTitle, maxLines: 2, overflow: TextOverflow.ellipsis,
                 style: const TextStyle(fontSize: 13, height: 1.5, color: Color(0xFF64748B))),
               TextButton(onPressed: onOpen,
-                style: TextButton.styleFrom(minimumSize: const Size(48,48),
+                style: TextButton.styleFrom(foregroundColor: const Color(0xFF0365FF), minimumSize: const Size(48,48),
                   padding: const EdgeInsets.symmetric(horizontal: 10)),
                 child: const ProxoText('بینین', translate: true)),
             ])),
