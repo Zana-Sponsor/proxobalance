@@ -79,6 +79,74 @@
       "name": "Final-source Profile/chrome regression",
       "result": "pass",
       "run": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/38817088292"
+    },
+    {
+      "name": "Full backend/database/responsive and release APK verification",
+      "result": "pass",
+      "run": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/38817088306",
+      "jobs": 5
+    },
+    {
+      "name": "Credential-free native APK build",
+      "result": "pass",
+      "run": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/38817088305",
+      "note": "Protected hosted/native runtime jobs skipped; this is not real provider or staging delivery verification."
+    },
+    {
+      "name": "Android API 35 runtime fixtures",
+      "result": "partial; tablet not verified",
+      "run": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/38817088288",
+      "configurations": [
+        {
+          "name": "phone",
+          "result": "pass",
+          "executed_job": 116710127007,
+          "latest_attempt_record": 116713527189,
+          "viewport_dp": [
+            393,
+            640
+          ],
+          "dpr": 3,
+          "png_count": 37,
+          "real_adb_taps": 2,
+          "real_adb_back_events": 1,
+          "native_adb_screenshots": 2,
+          "keyboard_back_preserved_form": true
+        },
+        {
+          "name": "narrow",
+          "result": "pass",
+          "executed_job": 116704552439,
+          "latest_attempt_record": 116713527887,
+          "viewport_dp": [
+            280,
+            640
+          ],
+          "dpr": 3,
+          "png_count": 37,
+          "real_adb_taps": 2,
+          "real_adb_back_events": 1,
+          "native_adb_screenshots": 2,
+          "keyboard_back_preserved_form": true
+        },
+        {
+          "name": "tablet",
+          "result": "failure; runtime assertions not completed",
+          "executed_job": 116713526342,
+          "configured_viewport_dp": [
+            768,
+            852
+          ],
+          "dpr": 2,
+          "png_count": 0,
+          "real_adb_taps": 0,
+          "real_adb_back_events": 0,
+          "native_adb_screenshots": 0,
+          "cause": "The debug APK built and installed. Flutter Driver then reported Service has disappeared while resuming the isolate; adb reported device offline. No application assertion result or tablet screenshot was collected. Emulator/driver failure is observed; its underlying cause is not established."
+        }
+      ],
+      "retries": "One retry for the original failed phone job and one for the original failed tablet job. No assertions, timeout, app code or CI harness were changed for retries.",
+      "scope": "Emulator debug fixtures only; not physical-device performance or provider delivery."
     }
   ],
   "artifacts": [
@@ -95,6 +163,33 @@
       "run": 38815657775,
       "sha256": "27c36505e1f8ef4a283c185749c22489108fcecd04cb9ea783595485bfe38925",
       "sha256_and_zip_crc_verified": true
+    },
+    {
+      "id": 12012637143,
+      "name": "ui-native-android-fixtures-phone",
+      "run": 38817088288,
+      "sha256": "13823246ddbb871aac97b5de6157dd4ae2d0050927a570c3d054b8e553fccfe4",
+      "sha256_and_zip_crc_verified": true,
+      "png_count": 37,
+      "fixture_only": true
+    },
+    {
+      "id": 12011202509,
+      "name": "ui-native-android-fixtures-narrow",
+      "run": 38817088288,
+      "sha256": "fb6770efa7092f410edeb30475676cf78dc36b9e37e3ab44241338bdce02ddfe",
+      "sha256_and_zip_crc_verified": true,
+      "png_count": 37,
+      "fixture_only": true
+    },
+    {
+      "id": 12012633541,
+      "name": "ui-native-android-fixtures-tablet (failed bounded retry)",
+      "run": 38817088288,
+      "sha256": "368ea216a8fb901dac46bf90dfc6948e522220b55f6eb27880ff262456421702",
+      "sha256_and_zip_crc_verified": true,
+      "png_count": 0,
+      "contents": "device report, driver log and logcat only; not passing UI evidence"
     }
   ],
   "broader_automatic_regression_urls": [
@@ -113,6 +208,27 @@
       "environment": "local Node",
       "result": "dependency setup incomplete",
       "cause": "Full suite could not import uninstalled sharp. Actual new 14 tests passed locally; CI installs locked dependencies and the backend suite passes 167 tests."
+    },
+    {
+      "run": 38817088288,
+      "job": 116704552207,
+      "result": "failure",
+      "cause": "Phone emulator reported all app tests passed, then the driver service disappeared and adb became offline before evidence collection completed.",
+      "action": "One bounded retry passed (job 116710127007); same app, assertions and timeout. Original failed artifact 12011576628 retained."
+    },
+    {
+      "run": 38817088288,
+      "job": 116704552622,
+      "result": "failure",
+      "cause": "Tablet Flutter driver could not connect to the VM; existing 600-second watchdog stopped execution.",
+      "action": "One bounded retry executed as job 116713526342 and failed when the VM service disappeared and adb went offline. No further retry; tablet runtime verification remains open."
+    },
+    {
+      "run": 38817088288,
+      "job": 116713526342,
+      "result": "failure",
+      "cause": "At 22:57:35 UTC, Flutter Driver lost the VM service while resuming the isolate; adb was offline. APK build/install succeeded, but no runtime assertion report, tap, Back or PNG was collected. The diagnostic logcat contains no matched FATAL EXCEPTION or Fatal signal; this does not establish the underlying cause.",
+      "action": "Retained artifact 12012633541, independently verified SHA-256 and ZIP CRC. No assertion/timeout weakening and no speculative product change."
     }
   ],
   "launch_requirements": [
@@ -121,7 +237,8 @@
     "Provide an approved MARKETING template before campaigns; supplied IDs are Authentication and Utility only.",
     "Publish a real privacy policy and verify authenticated off-app stop processing and audience checks before campaigns.",
     "Provider end-to-end delivery, production n8n import and real device/physical performance have not been claimed.",
-    "Previously documented unrelated PR WebView/staging release blockers remain open."
+    "Previously documented unrelated PR WebView/staging release blockers remain open.",
+    "Tablet Android runtime verification remains incomplete after the bounded emulator/driver retry; phone and narrow runtime fixtures pass."
   ],
   "count_note": "Suites overlap; numbers are not a sum of unique tests."
 }
