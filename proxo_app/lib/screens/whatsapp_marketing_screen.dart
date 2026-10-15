@@ -5,6 +5,7 @@ import '../theme/app_locale.dart';
 import '../widgets/auth/auth_design.dart';
 import '../widgets/auth/auth_widgets.dart';
 import '../widgets/proxo_text.dart';
+import '../widgets/proxo_app_bar.dart';
 
 /// Loaded only when opened; no additional read/subscription on the Profile tab.
 class WhatsappMarketingScreen extends StatefulWidget {
@@ -69,8 +70,8 @@ class _WhatsappMarketingScreenState extends State<WhatsappMarketingScreen> {
   Widget build(BuildContext context) {
     ProxoLocale.watch(context);
     return Scaffold(backgroundColor: AuthTokens.pageBackground,
-      appBar: AppBar(title: ProxoText(ProxoStrings.text('ئاگاداریی واتسئاپ',
-        arabic: 'إشعارات واتساب'), style: AuthTokens.title)),
+      appBar: ProxoAppBar(title: ProxoStrings.text('ئاگاداریی واتسئاپ',
+        arabic: 'إشعارات واتساب')),
       body: SafeArea(child: SingleChildScrollView(padding: const EdgeInsets.all(16),
         child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           if (_choice == null && _error == null) const Center(child: CircularProgressIndicator())
