@@ -1,5 +1,4 @@
 import 'package:proxo_app/theme/app_locale.dart';
-import '../../widgets/proxo_symbol.dart';
 import 'package:flutter/material.dart';
 import '../../widgets/auth/auth_design.dart';
 import '../../widgets/auth/auth_header.dart';
@@ -22,11 +21,10 @@ class SignupScreen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         AuthHeader.inner(onBack: onBack),
-        const SizedBox(height: 24),
-        const AuthHeroSymbol(ProxoSymbolName.signup),
+        const SizedBox(height: 32),
         ProxoText(
           AuthStrings.signUpTitle,
-          style: AuthTokens.title.copyWith(color: AuthTokens.accent),
+          style: AuthTokens.title,
         ),
         const SizedBox(height: AuthTokens.gapTitleToSubtitle),
         ProxoText(AuthStrings.signUpSubtitle, style: AuthTokens.subtitle),

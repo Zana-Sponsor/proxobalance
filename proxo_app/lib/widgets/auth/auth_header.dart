@@ -1,5 +1,4 @@
 import 'package:proxo_app/l10n/proxo_strings.dart';
-import '../proxo_symbol.dart';
 import 'package:flutter/material.dart';
 import '../../theme/app_locale.dart';
 import 'auth_design.dart';
@@ -40,15 +39,11 @@ class AuthHeader extends StatelessWidget {
         ),
       );
     }
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        AuthBackButton(onTap: onBack!),
-        const SizedBox(height: 14),
-        const Align(
-          alignment: AlignmentDirectional.centerStart,
-          child: AuthLogo(),
-        ),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        SizedBox(width: 48, child: AuthBackButton(onTap: onBack!)),
+        const AuthLogo(),
       ],
     );
   }
@@ -95,9 +90,6 @@ class AuthLanguageSelector extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                const ProxoSymbol(ProxoSymbolName.language,
-                    size: 22, color: AuthTokens.inkMuted),
-                const SizedBox(width: 6),
                 Flexible(child: ProxoText(
                   locale.languageCode == 'ar' ? 'العربية' :
                     locale.languageCode == 'kmr' ? 'کوردی بادینی' : 'کوردی سۆرانی',
@@ -113,20 +105,4 @@ class AuthLanguageSelector extends StatelessWidget {
       },
     );
   }
-}
-
-/// Quiet, consistent identity for each authentication step.
-class AuthHeroSymbol extends StatelessWidget {
-  const AuthHeroSymbol(this.symbol, {super.key});
-  final ProxoSymbolName symbol;
-  @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(bottom: 18),
-    child: Align(alignment: AlignmentDirectional.centerStart,
-      child: Container(width: 56, height: 56,
-        decoration: BoxDecoration(color: const Color(0xFFEDF4FF),
-          borderRadius: BorderRadius.circular(18)),
-        alignment: Alignment.center,
-        child: ProxoSymbol(symbol, size: 28, color: AuthTokens.accent))),
-  );
 }

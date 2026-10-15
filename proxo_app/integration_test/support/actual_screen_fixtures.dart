@@ -28,6 +28,7 @@ class ActualScreenBackend {
  Completer<void>? unreadGate;
  int bannerJoins=0;
  bool includeNotifications = false;
+ Map<String, dynamic>? banner;
  final _sockets=<_ScreenSocket>[];
  ActualScreenBackend(){
   transport=MockClient((request)async{
@@ -38,7 +39,7 @@ class ActualScreenBackend {
     if(table=='pa_banners')await bannerGate?.future;
     if(table=='pa_notifications')await unreadGate?.future;
     if(table=='pa_ads'||table=='pa_featured_ads_public')await refreshGate?.future;
-    final Object data=table=='pa_notifications' && includeNotifications ? [
+    final Object data=table=='pa_banners' ? (banner ?? []) : table=='pa_notifications' && includeNotifications ? [
       {'id':'notice-1','user_id':screenFixtureOwner,'type':'ad_active','is_read':false,'created_at':DateTime.now().subtract(const Duration(minutes:3)).toUtc().toIso8601String()},
       {'id':'notice-2','user_id':screenFixtureOwner,'type':'deposit_approved','is_read':true,'created_at':DateTime.now().subtract(const Duration(days:1)).toUtc().toIso8601String()},
     ] : table=='pa_levels' ? [

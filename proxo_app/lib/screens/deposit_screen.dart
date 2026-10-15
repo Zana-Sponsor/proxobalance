@@ -1,3 +1,6 @@
+import 'dart:math' as math;
+import 'package:flutter_svg/flutter_svg.dart';
+import 'auth/auth_models.dart';
 import 'package:proxo_app/l10n/proxo_strings.dart';
 import '../widgets/proxo_app_bar.dart';
 import '../widgets/proxo_symbol.dart';
@@ -53,7 +56,7 @@ const Color _cSoft = Color(0xFFF8FAFC);
 const Color _cDash = Color(0xFFE2E8EE);
 
 const double _kPageMargin = 16;
-const double _kCardRadius = 16;
+const double _kCardRadius = 18;
 const double _kInputRadius = 14;
 const double _kBtnHeight = 52;
 const double _kBtnRadius = 14;
@@ -118,7 +121,7 @@ const List<_Wallet> _kWallets = [
     number: '7510074008',
     icon: Icons.account_balance_rounded,
     iconBg: Color(0xFFE3F4F0),
-    logoAsset: 'assets/logos/fib.jpg',
+    logoAsset: 'assets/logos/providers/fib.svg',
   ),
   _Wallet(
     key: 'fastpay',
@@ -134,7 +137,7 @@ const List<_Wallet> _kWallets = [
     number: '2879264048',
     icon: Icons.credit_card_rounded,
     iconBg: Color(0xFFFFF8DC),
-    logoAsset: 'assets/logos/qicard.jpg',
+    logoAsset: 'assets/logos/providers/qi.svg',
   ),
   _Wallet(
     key: 'zaincash',
@@ -142,14 +145,7 @@ const List<_Wallet> _kWallets = [
     number: '0750XXXXXXX',
     icon: Icons.account_balance_wallet_rounded,
     iconBg: Color(0xFFF3E8FF),
-    numberIsPlaceholder: true,
-  ),
-  _Wallet(
-    key: 'superapp',
-    name: 'SuperApp',
-    number: '0750XXXXXXX',
-    icon: Icons.apps_rounded,
-    iconBg: Color(0xFFE0F2FE),
+    logoAsset: 'assets/logos/providers/zaincash.svg',
     numberIsPlaceholder: true,
   ),
   _Wallet(
@@ -158,6 +154,7 @@ const List<_Wallet> _kWallets = [
     number: '0770XXXXXXX',
     icon: Icons.sim_card_rounded,
     iconBg: Color(0xFFFEE2E2),
+    logoAsset: 'assets/logos/providers/asiacell.svg',
     numberIsPlaceholder: true,
     feeRate: 0.18,
   ),
@@ -167,6 +164,7 @@ const List<_Wallet> _kWallets = [
     number: '0750XXXXXXX',
     icon: Icons.signal_cellular_alt_rounded,
     iconBg: Color(0xFFFEF3C7),
+    logoAsset: 'assets/logos/providers/korek.svg',
     numberIsPlaceholder: true,
     feeRate: 0.18,
   ),
@@ -290,12 +288,17 @@ class _DepositScreenState extends State<DepositScreen> {
       });
 
   Future<void> _submit() async {
+    if (_submitting) return;
     final name = _nameCtrl.text.trim();
     final note = _noteCtrl.text.trim();
 
     if (_wallet == null) {
       showProxoToast(context, 'ڕێگای پارەدان هەڵبژێرە',
           type: ProxoToastType.error);
+      return;
+    }
+    if (_wallet!.numberIsPlaceholder) {
+      showProxoToast(context, 'ژمارە دانەنراوە', type: ProxoToastType.error);
       return;
     }
     if (name.isEmpty) {
@@ -431,13 +434,14 @@ class _DepositScreenState extends State<DepositScreen> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: const Color(0xFFF8FAFC),
         appBar: const ProxoAppBar(title: 'زیادکردنی باڵانس'),
         body: SafeArea(
           top: false,
           child: ListView(
-            padding: const EdgeInsets.fromLTRB(
-                _kPageMargin, _kPageMargin, _kPageMargin, 32),
+            padding: EdgeInsets.fromLTRB(
+                math.max(_kPageMargin, (MediaQuery.sizeOf(context).width - 560) / 2), _kPageMargin,
+                math.max(_kPageMargin, (MediaQuery.sizeOf(context).width - 560) / 2), 32),
             children: [
               const _SectionLabel('ڕێگای پارەدان'),
               const SizedBox(height: 10),
@@ -493,14 +497,14 @@ class _DepositScreenState extends State<DepositScreen> {
         crossAxisCount: MediaQuery.sizeOf(context).width < 340 || MediaQuery.textScalerOf(context).scale(14) > 20 ? 1 : 2,
         mainAxisSpacing: 10,
         crossAxisSpacing: 10,
-        mainAxisExtent: 72 + MediaQuery.textScalerOf(context).scale(14) * 2,
+        mainAxisExtent: 68 + MediaQuery.textScalerOf(context).scale(14) * 3.2,
       ),
       itemBuilder: (_, i) {
         final w = _kWallets[i];
         return _WalletCard(
           wallet: w,
           selected: _wallet?.key == w.key,
-          onTap: () => setState(() => _wallet = w),
+          onTap: w.numberIsPlaceholder ? null : () => setState(() => _wallet = w),
         );
       },
     );
@@ -508,7 +512,8 @@ class _DepositScreenState extends State<DepositScreen> {
 
   Widget _amountField() {
     return Container(
-      height: _kBtnHeight,
+      constraints: const BoxConstraints(minHeight: 60),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       decoration: BoxDecoration(
         color: _cSoft,
         borderRadius: BorderRadius.circular(_kInputRadius),
@@ -526,7 +531,10 @@ class _DepositScreenState extends State<DepositScreen> {
               keyboardType: TextInputType.number,
               textDirection: inputDirection,
               textAlign: TextAlign.start,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              inputFormatters: [TextInputFormatter.withFunction((oldValue, newValue) {
+                final text = IraqPhone.latinDigits(newValue.text).replaceAll(RegExp(r'[^0-9]'), '');
+                return TextEditingValue(text: text, selection: TextSelection.collapsed(offset: text.length));
+              })],
               onChanged: (_) => setState(() => _quickSelected = null),
               style: const TextStyle(
                 fontFamily: kAppFont,
@@ -592,52 +600,28 @@ class _DepositScreenState extends State<DepositScreen> {
     );
   }
 
-  Widget _quickChips() {
-    return SizedBox(
-      height: 38,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        itemCount: _kQuickAmounts.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 8),
-        itemBuilder: (_, i) {
-          final v = _kQuickAmounts[i];
-          final active = _quickSelected == v;
-          return GestureDetector(
-            onTap: () => setState(() {
-              _quickSelected = v;
-              _amtCtrl.text = v.toString();
-            }),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 160),
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              alignment: Alignment.center,
-              decoration: ProxoInk.toggle(active, radius: 19),
-              child: ProxoText(
-                _fmt(v),
-                style: TextStyle(
-                  fontFamily: kAppFont,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: active ? ProxoInk.onInk : ProxoInk.outlineText,
-                ),
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
+  Widget _quickChips() => Wrap(spacing: 8, runSpacing: 8,
+    children: _kQuickAmounts.map((v) => ChoiceChip(
+      selected: _quickSelected == v,
+      selectedColor: const Color(0xFFE7F0FF), backgroundColor: Colors.white,
+      showCheckmark: false, side: BorderSide(color: _quickSelected == v ? AppColors.accent : _cLine),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      label: ProxoText(_fmt(v), textDirection: TextDirection.ltr,
+        style: TextStyle(fontFamily: kAppFont, fontSize: 13, color: _quickSelected == v ? AppColors.accent : _cSlate)),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      onSelected: (_) => setState(() { _quickSelected = v; _amtCtrl.text = v.toString(); }),
+    )).toList());
 
   Widget _textField(TextEditingController c, String hint) {
     return Container(
-      height: 48,
+      constraints: const BoxConstraints(minHeight: 56),
       alignment: Alignment.center,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: _cLine),
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 14),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
       child: ProxoDirectionalInput(
         controller: c,
         builder: (context, inputDirection) => TextField(
@@ -766,7 +750,8 @@ class _DepositScreenState extends State<DepositScreen> {
       return GestureDetector(
         onTap: _openFastPay,
         child: Container(
-          height: 52,
+          constraints: const BoxConstraints(minHeight: 52),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           alignment: Alignment.center,
           decoration: BoxDecoration(
             color: const Color(0xFF0265FF),
@@ -786,7 +771,8 @@ class _DepositScreenState extends State<DepositScreen> {
     return GestureDetector(
       onTap: _submitting ? null : _submit,
       child: Container(
-        height: _kBtnHeight,
+        constraints: const BoxConstraints(minHeight: _kBtnHeight),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         alignment: Alignment.center,
         decoration: _submitting
             ? ProxoInk.disabled(radius: _kBtnRadius)
@@ -831,84 +817,37 @@ class _SectionLabel extends StatelessWidget {
 // ── Wallet card ────────────────────────────────────────────────────────
 
 class _WalletCard extends StatelessWidget {
+  const _WalletCard({required this.wallet, required this.selected, required this.onTap});
   final _Wallet wallet;
   final bool selected;
-  final VoidCallback onTap;
-
-  const _WalletCard({
-    required this.wallet,
-    required this.selected,
-    required this.onTap,
-  });
-
+  final VoidCallback? onTap;
   @override
-  Widget build(BuildContext context) {
-    ProxoLocale.watch(context);
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 160),
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(_kCardRadius),
-          border: Border.all(
-            color: selected ? _cInk : _cStroke,
-            width: selected ? 1.6 : 1,
-          ),
-          boxShadow: const [
-            BoxShadow(
-                color: Color(0x08000000), blurRadius: 10, offset: Offset(0, 4)),
-          ],
+  Widget build(BuildContext context) => Semantics(button: true, selected: selected,
+    enabled: onTap != null, label: wallet.name,
+    child: Material(color: Colors.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(_kCardRadius),
+        side: BorderSide(color: selected ? AppColors.accent : _cLine, width: selected ? 1.5 : 1)),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(onTap: onTap,
+        child: Padding(padding: const EdgeInsets.all(12),
+          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+            SizedBox(height: 32, width: 88,
+              child: wallet.logoAsset!.endsWith('.svg')
+                ? SvgPicture.asset(wallet.logoAsset!, fit: BoxFit.contain, excludeFromSemantics: true)
+                : Image.asset(wallet.logoAsset!, fit: BoxFit.contain, excludeFromSemantics: true)),
+            const SizedBox(height: 10),
+            ProxoText(wallet.name, textAlign: TextAlign.center, textDirection: TextDirection.ltr,
+              style: const TextStyle(fontFamily: kAppFont, fontSize: 14, height: 1.5, color: _cInk)),
+            if (wallet.numberIsPlaceholder) ...[
+              const SizedBox(height: 2),
+              const ProxoText('ژمارە دانەنراوە', translate: true, textAlign: TextAlign.center,
+                style: TextStyle(fontFamily: kAppFont, fontSize: 12, height: 1.5, color: _cSlate)),
+            ],
+          ]),
         ),
-        child: Row(children: [
-          Container(
-            width: 38,
-            height: 38,
-            decoration:
-                BoxDecoration(color: wallet.iconBg, shape: BoxShape.circle),
-            clipBehavior: Clip.antiAlias,
-            child: wallet.logoAsset != null
-                ? Image.asset(wallet.logoAsset!,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) =>
-                        Icon(wallet.icon, color: _cInk, size: 18))
-                : Icon(wallet.icon, color: _cInk, size: 18),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ProxoText(wallet.name,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontFamily: kAppFont,
-                      fontSize: 13.5,
-                      fontWeight: FontWeight.w700,
-                      color: _cInk,
-                    )),
-                const SizedBox(height: 2),
-                ProxoText(
-                  wallet.numberIsPlaceholder ? 'ژمارە دانەنراوە' : wallet.number,
-                  translate: wallet.numberIsPlaceholder,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  textDirection: wallet.numberIsPlaceholder
-                      ? TextDirection.rtl
-                      : TextDirection.ltr,
-                  style: const TextStyle(
-                      fontFamily: kAppFont, fontSize: 11.5, color: _cMuted),
-                ),
-              ],
-            ),
-          ),
-        ]),
       ),
-    );
-  }
+    ),
+  );
 }
 
 // ── Instruction card ───────────────────────────────────────────────────
@@ -955,8 +894,8 @@ class _InstructionCard extends StatelessWidget {
             GestureDetector(
               onTap: onCopy,
               child: Container(
-                width: 40,
-                height: 40,
+                width: 48,
+                height: 48,
                 decoration: ProxoInk.fill(radius: 10, elevated: false),
                 child: const ProxoSymbol(ProxoSymbolName.copy,
                     color: ProxoInk.onInk, size: 17),

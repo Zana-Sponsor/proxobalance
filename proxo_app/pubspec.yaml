@@ -91,6 +91,7 @@ flutter:
     - assets/icons/home/
     - assets/icons/detail/
     - assets/fonts/
+    - assets/logos/providers/
     - assets/logos/fib.jpg
     - assets/logos/fastpay.jpg
     - assets/logos/fastpay_logo.png

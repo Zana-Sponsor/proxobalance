@@ -63,4 +63,22 @@ void main() {
     await cleanup(t);
     expect(t.takeException(),isNull);
   }, timeout: const Timeout(Duration(seconds:45)));
+  if (!old) testWidgets('admin banner removal clears persistent cache and legacy links still navigate', (t) async {
+    backend.banner = {'title':'Admin banner fixture','subtitle':'Fictional CMS text',
+      'btn_text':'Open','bg_color':'#1457BC','link':'/tools'};
+    String? target;
+    await t.pumpWidget(MaterialApp(home: Scaffold(body: ProxoBanner(onNavigate:(v)=>target=v))));
+    await flush(t);
+    expect(find.text('Admin banner fixture'), findsOneWidget);
+    await t.tap(find.text('Admin banner fixture'));
+    expect(target, '/tools');
+    final prefs = await SharedPreferences.getInstance();
+    expect(prefs.getKeys().any((k) => (prefs.get(k)?.toString() ?? '').contains('Admin banner fixture')), isTrue);
+    backend.banner = null; backend.emitBannerChange(); await flush(t);
+    expect(find.text('Admin banner fixture'), findsNothing);
+    expect(prefs.getKeys().any((k) => (prefs.get(k)?.toString() ?? '').contains('Admin banner fixture')), isFalse);
+    await t.pumpWidget(const SizedBox()); await flush(t); await cleanup(t);
+    expect(t.takeException(), isNull);
+  });
+
 }

@@ -21,7 +21,7 @@ jobs:
           path: after
       - uses: actions/checkout@v4
         with:
-          ref: e61144904f5f9986b8d3a2f486ca7756a3ba267a
+          ref: e24575c135ca599a6775bd66e385d3b8033b7e92
           path: before
       - uses: subosito/flutter-action@v2
         with:

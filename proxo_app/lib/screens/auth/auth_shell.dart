@@ -1,3 +1,4 @@
+import '../../widgets/proxo_error_stack.dart';
 import 'package:proxo_app/l10n/proxo_strings.dart';
 import '../../widgets/proxo_symbol.dart';
 // auth/auth_shell.dart
@@ -139,8 +140,6 @@ class _AuthShellState extends State<AuthShell> {
   final ValueNotifier<bool> _signupConfirmationVisible = ValueNotifier<bool>(false);
 
   // ── کارتی ئیرۆری سپی سەر شاشە (٤ چرکە) ──
-  String? _bannerError;
-  Timer?  _bannerTimer;
 
   final _loginEmailCtrl = TextEditingController();
   final _loginPassCtrl  = TextEditingController();
@@ -298,7 +297,6 @@ class _AuthShellState extends State<AuthShell> {
 
   @override
   void dispose() {
-    _bannerTimer?.cancel();
     _authService.close();
     _authSub?.cancel();
     _resendTimer?.cancel();
@@ -369,12 +367,7 @@ class _AuthShellState extends State<AuthShell> {
 
   // ── پیشاندانی کارتی سپی بۆ ئیرۆر بە مانەوەی ٤ چرکە ─────────────────────────
   void _showErrorCard(String msg) {
-    if (!mounted) return;
-    _bannerTimer?.cancel();
-    setState(() => _bannerError = msg);
-    _bannerTimer = Timer(const Duration(seconds: 4), () {
-      if (mounted) setState(() => _bannerError = null);
-    });
+    if (mounted) ProxoErrorStack.show(context, msg);
   }
 
   void _showNetworkError() {
@@ -396,16 +389,6 @@ class _AuthShellState extends State<AuthShell> {
   }
 
   bool get _regPhoneValid => IraqPhone.isValid(_regPhoneCtrl.text);
-
-  void _keepPhoneControllerLocal(TextEditingController controller) {
-    String local = IraqPhone.editableDigits(controller.text);
-    if (local.length > 10) local = local.substring(0, 10);
-    if (controller.text == local) return;
-    controller.value = TextEditingValue(
-      text: local,
-      selection: TextSelection.collapsed(offset: local.length),
-    );
-  }
 
   /// ناردنی کۆدی واتساپ بە ڕێی وۆرکفلۆی Wevlixـی n8n.
   ///
@@ -1279,7 +1262,6 @@ class _AuthShellState extends State<AuthShell> {
       _tab = _Tab.register;
       _step = _Step.form;
       _regNameErr = _regPhoneErr = _regPassErr = _regPass2Err = null;
-      _bannerError = null;
     });
   }
 
@@ -1290,7 +1272,6 @@ class _AuthShellState extends State<AuthShell> {
       _tab = _Tab.login;
       _step = _Step.form;
       _loginEmailErr = _loginPassErr = null;
-      _bannerError = null;
     });
   }
 
@@ -1317,59 +1298,12 @@ class _AuthShellState extends State<AuthShell> {
               padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
               child: Center(child: ConstrainedBox(
                 constraints: BoxConstraints(
-                  maxWidth: 480,
+                  maxWidth: 440,
                   minHeight: max(0.0, viewport.maxHeight - 32),
                 ),
                 child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // ── کارتی ئیرۆری سپی مۆدێرن (پاش ٤ چرکە دەڕوات) ──
-                  AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 250),
-                    child: _bannerError != null
-                        ? Padding(
-                            padding: const EdgeInsets.only(bottom: 12.0),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 12.0),
-                              // ── بانەری سنوورداری نرخ (١٥ خولەک) ────────
-                              // ئەمە ئەو بانەرەیە کە پەیامی «زۆر کۆدی
-                              // هەڵەت نووسی — ١٥ خولەک چاوەڕێ بکە» نیشان
-                              // دەدات. دەقاودەق هەمان ڕووی `AuthAlert` و
-                              // `AuthLockoutNotice`ە، بۆیە هەر سێ
-                              // ئاگادارکردنەوەکەی ئەم شاشەیە یەک شێوەن.
-                              decoration: BoxDecoration(
-                                color: AuthTokens.dangerBg,
-                                borderRadius: BorderRadius.circular(12.0),
-                                border: Border.all(
-                                    color: AuthTokens.danger, width: 1.0),
-                              ),
-                              child: Row(
-                                children: [
-                                  ProxoSymbol(
-                                    ProxoSymbolName.warning,
-                                    color: AuthTokens.danger,
-                                    size: 19.0,
-                                  ),
-                                  const SizedBox(width: 10.0),
-                                  Expanded(
-                                    child: ProxoText(
-                                      _bannerError!,
-                                      style: TextStyle(
-                                        fontFamily: kAppFont,
-                                        fontSize: AuthTokens.textSize,
-                                        fontWeight: FontWeight.w500,
-                                        color: AuthTokens.danger,
-                                        height: 1.25,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          )
-                        : const SizedBox.shrink(),
-                  ),
-
                   AnimatedSwitcher(
                     duration: MediaQuery.disableAnimationsOf(context) ? Duration.zero : AuthTokens.viewTransition,
                     switchInCurve: AuthTokens.curve,
@@ -1632,14 +1566,14 @@ class _AuthShellState extends State<AuthShell> {
           textInputAction: TextInputAction.done,
           autofillHints: const [AutofillHints.telephoneNumber],
           inputFormatters: <TextInputFormatter>[
-            FilteringTextInputFormatter.digitsOnly,
+            const IraqPhoneInputFormatter(),
           ],
           enabled: !_phoneOtpSending,
           // پێشگری کۆدی وڵات لەناو خودی خانەکەدا — یەک سنوور، یەک فۆکەس.
           prefix: Padding(
             padding: const EdgeInsetsDirectional.only(end: 8),
             child: ProxoText(
-              '🇮🇶  ${AuthStrings.phonePrefix}',
+              AuthStrings.phonePrefix,
               textDirection: TextDirection.ltr,
               style: AuthTokens.fieldText.copyWith(
                 fontWeight: FontWeight.w500,
@@ -1648,7 +1582,6 @@ class _AuthShellState extends State<AuthShell> {
             ),
           ),
           onChanged: (_) {
-            _keepPhoneControllerLocal(_loginPhoneCtrl);
             if (_loginPhoneErr != null) {
               setState(() => _loginPhoneErr = null);
             }
@@ -1700,7 +1633,7 @@ class _AuthShellState extends State<AuthShell> {
             },
           ),
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 16),
 
         AuthTextField(
           controller: _regPhoneCtrl,
@@ -1715,13 +1648,13 @@ class _AuthShellState extends State<AuthShell> {
           textInputAction: TextInputAction.next,
           autofillHints: const [AutofillHints.telephoneNumber],
           inputFormatters: <TextInputFormatter>[
-            FilteringTextInputFormatter.digitsOnly,
+            const IraqPhoneInputFormatter(),
           ],
           enabled: !_loading,
           prefix: Padding(
             padding: const EdgeInsetsDirectional.only(end: 8),
             child: ProxoText(
-              '🇮🇶  ${AuthStrings.phonePrefix}',
+              AuthStrings.phonePrefix,
               textDirection: TextDirection.ltr,
               style: AuthTokens.fieldText.copyWith(
                 fontWeight: FontWeight.w500,
@@ -1730,7 +1663,6 @@ class _AuthShellState extends State<AuthShell> {
             ),
           ),
           onChanged: (_) {
-            _keepPhoneControllerLocal(_regPhoneCtrl);
             if (_regPhoneErr != null) setState(() => _regPhoneErr = null);
           },
           trailing: AuthClearButton(
@@ -1960,7 +1892,6 @@ class _AuthShellState extends State<AuthShell> {
       children: [
         AuthHeader.inner(onBack: _goToSignIn),
         const SizedBox(height: 24),
-        const AuthHeroSymbol(ProxoSymbolName.recovery),
         ProxoText(AuthStrings.resetPasswordTitle, style: _kTitle),
         const SizedBox(height: 4),
         ProxoText(AuthStrings.resetPasswordSubtitle, style: _kSub),
@@ -2014,7 +1945,6 @@ class _AuthShellState extends State<AuthShell> {
         AuthHeader.inner(
             onBack: () => setState(() => _step = _Step.forgotOtp)),
         const SizedBox(height: 24),
-        const AuthHeroSymbol(ProxoSymbolName.recovery),
         ProxoText(AuthStrings.resetPasswordTitle, style: _kTitle),
         const SizedBox(height: 4),
         ProxoText(AuthStrings.resetPasswordSubtitle, style: _kSub),

@@ -202,21 +202,23 @@ void main() {
   testWidgets('all existing quick actions call only their own callback', (
     tester,
   ) async {
-    var creates = 0, tools = 0, faqs = 0;
+    var creates = 0, balances = 0, pages = 0;
     await tester.pumpWidget(
       host(
         HomeQuickActions(
           onCreateTap: () => creates++,
-          onToolsTap: () => tools++,
-          onFaqTap: () => faqs++,
+          onAddBalanceTap: () => balances++,
+          onCreatePageTap: () => pages++,
         ),
       ),
     );
-    for (final key in ['home-create-ad', 'home-contact-tools', 'home-faq']) {
+    for (final key in ['home-create-ad', 'home-add-balance', 'home-create-page']) {
       await tester.tap(find.byKey(ValueKey(key)));
       await tester.pumpAndSettle();
     }
-    expect((creates, tools, faqs), (1, 1, 1));
+    expect((creates, balances, pages), (1, 1, 1));
+    expect(find.byKey(const ValueKey('home-contact-tools')), findsNothing);
+    expect(find.byKey(const ValueKey('home-faq')), findsNothing);
   });
 
   testWidgets('Create quick action opens the existing Create Ad screen', (
@@ -275,7 +277,6 @@ void main() {
         )
         .decoration as BoxDecoration;
     for (final parent in [
-      find.byKey(const ValueKey('home-create-ad')),
       find.byType(HomeBestResultCard),
     ]) {
       final card = tester.widget<Container>(

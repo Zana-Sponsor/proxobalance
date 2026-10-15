@@ -1,3 +1,4 @@
+import '../widgets/proxo_error_stack.dart';
 import 'package:proxo_app/l10n/proxo_strings.dart';
 import '../widgets/auth/auth_header.dart';
 import '../widgets/proxo_symbol.dart';
@@ -336,14 +337,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _showMessage(String message) {
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(
-        SnackBar(
-          content: ProxoText(message, translate: true, textDirection: TextDirection.rtl),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+    ProxoErrorStack.show(context, ProxoStrings.text(message));
   }
 
   @override
@@ -387,7 +381,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         children: <Widget>[
                           Center(
                             child: ConstrainedBox(
-                              constraints: const BoxConstraints(maxWidth: 430),
+                              constraints: const BoxConstraints(maxWidth: 520),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: <Widget>[
@@ -396,30 +390,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     builder: (_, data, __) =>
                                         _ProfileIdentity(data: data),
                                   ),
-                                  const SizedBox(height: 22),
+                                  const SizedBox(height: 16),
                                   _BalanceCard(
                                     balanceIqd: _balanceIqd,
                                     showBalance: _showBalance,
                                     onTap: () => _push(const DepositScreen()),
                                   ),
                                   const SizedBox(height: 24),
-                                  _QuickActions(
-                                    onAds: () => _openTabOrPage(
-                                      1,
-                                      const AdScreen(),
-                                    ),
-                                    onAssets: () => _openTabOrPage(
-                                      3,
-                                      const ToolsScreen(),
-                                    ),
-                                    onCoupons: () => Navigator.of(context)
-                                        .pushNamed('/coupons'),
-                                  ),
-                                  const SizedBox(height: 26),
                                   const _SectionTitle('هەژمار'),
                                   const SizedBox(height: 10),
                                   _SettingsGroup(
                                     entries: <_MenuEntry>[
+                                      _MenuEntry(icon: SolarIconsOutline.clapperboardPlay,
+                                        title: 'ڕیکلامەکانم', onTap: () => _openTabOrPage(1, const AdScreen())),
+                                      _MenuEntry(icon: SolarIconsOutline.widget_2,
+                                        title: 'ئامرازەکان', onTap: () => _openTabOrPage(3, const ToolsScreen())),
+                                      _MenuEntry(icon: SolarIconsOutline.tagPrice,
+                                        title: 'کۆپۆن', onTap: () => Navigator.of(context).pushNamed('/coupons')),
                                       _MenuEntry(
                                         icon: SolarIconsOutline.bell,
                                         title: 'ئاگادارییەکان',
@@ -986,7 +973,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     ),
                     child: Center(
                       child: ConstrainedBox(
-                        constraints: const BoxConstraints(maxWidth: 430),
+                        constraints: const BoxConstraints(maxWidth: 520),
                         child: Form(
                           key: _formKey,
                           child: Column(
@@ -1402,37 +1389,25 @@ class _CircleActionButton extends StatelessWidget {
 
 class _ProfileIdentity extends StatelessWidget {
   const _ProfileIdentity({required this.data});
-
   final _ProfileData data;
-
   @override
-  Widget build(BuildContext context) {
-    ProxoLocale.watch(context);
-    return Column(
-      children: <Widget>[
-        _ProfileAvatar(data: data),
-        const SizedBox(height: 11),
-        ProxoText(
-          data.displayName,
-          textAlign: TextAlign.center,
-          softWrap: true,
-          style: _ProfileText.userName,
-        ),
-        const SizedBox(height: 3),
-        Directionality(
-          textDirection: _containsArabic(data.contact)
-              ? TextDirection.rtl
-              : TextDirection.ltr,
-          child: ProxoText(
-            data.contact,
-            textAlign: TextAlign.center,
-            softWrap: true,
-            style: _ProfileText.userContact,
-          ),
-        ),
-      ],
-    );
-  }
+  Widget build(BuildContext context) => Container(
+    padding: const EdgeInsets.all(16),
+    decoration: BoxDecoration(color: Colors.white,
+      borderRadius: BorderRadius.circular(18), border: Border.all(color: _ProfileColors.cardBorder)),
+    child: Row(children: [
+      _ProfileAvatar(data: data, diameter: 56, iconSize: 27),
+      const SizedBox(width: 14),
+      Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ProxoText(data.displayName, softWrap: true, style: _ProfileText.userName),
+          const SizedBox(height: 4),
+          ProxoText(data.contact, softWrap: true,
+            textDirection: _containsArabic(data.contact) ? TextDirection.rtl : TextDirection.ltr,
+            style: _ProfileText.userContact),
+        ])),
+    ]),
+  );
 }
 
 class _ProfileAvatar extends StatelessWidget {
@@ -1594,123 +1569,42 @@ class _BalanceCard extends StatelessWidget {
   final ValueNotifier<bool> showBalance;
   final VoidCallback onTap;
   @override
-  Widget build(BuildContext context) => Material(
-    color: AppColors.accent, borderRadius: BorderRadius.circular(ProxoChrome.radius),
-    clipBehavior: Clip.antiAlias,
-    child: Padding(padding: const EdgeInsets.all(16), child: Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        Row(children: [
-          const ProxoSolarIcon(SolarIconsOutline.wallet2, size: ProxoChrome.iconSize, color: Colors.white),
-          const SizedBox(width: 12),
-          const Expanded(child: ProxoText('باڵانسی ڕیکلام', translate: true, style: _ProfileText.balanceLabel)),
-          ValueListenableBuilder<bool>(valueListenable: showBalance,
-            builder: (_, visible, __) => IconButton(
-              tooltip: ProxoStrings.text(visible ? 'شاردنەوەی باڵانس' : 'پیشاندانی باڵانس'),
-              constraints: const BoxConstraints.tightFor(width: 48, height: 48),
-              onPressed: () => showBalance.value = !visible,
-              icon: ProxoSolarIcon(visible ? SolarIconsOutline.eye : SolarIconsOutline.eyeClosed,
-                size: ProxoChrome.iconSize, color: Colors.white))),
-        ]),
-        const SizedBox(height: 8),
+  Widget build(BuildContext context) => Container(
+    padding: const EdgeInsets.all(18),
+    decoration: BoxDecoration(color: const Color(0xFFEDF4FF),
+      borderRadius: BorderRadius.circular(18)),
+    child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      Row(children: [
+        const Expanded(child: ProxoText('باڵانسی ڕیکلام', translate: true,
+          style: TextStyle(fontFamily: kAppFont, fontSize: 14, color: AppColors.inkMuted, height: 1.5))),
         ValueListenableBuilder<bool>(valueListenable: showBalance,
-          builder: (_, visible, __) => ValueListenableBuilder<double?>(
-            valueListenable: balanceIqd, builder: (_, value, __) => Directionality(
-              textDirection: TextDirection.ltr, child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: ProxoText(visible ? _formatIqd(value) : '•••••• د.ع',
-                textDirection: TextDirection.ltr, maxLines: 1,
-                style: _ProfileText.balanceAmount))))),
-        const SizedBox(height: 12),
-        TextButton.icon(onPressed: onTap,
-          style: TextButton.styleFrom(foregroundColor: Colors.white,
-            minimumSize: const Size(48, 48), alignment: AlignmentDirectional.centerStart),
-          icon: const ProxoSolarIcon(SolarIconsOutline.addCircle, size: ProxoChrome.iconSize),
-          label: const ProxoText('زیادکردنی باڵانس', translate: true, style: TextStyle(fontFamily: kAppFont, fontSize: 14, height: 1.5))),
-      ])),
+          builder: (_, visible, __) => IconButton(
+            tooltip: ProxoStrings.text(visible ? 'شاردنەوەی باڵانس' : 'پیشاندانی باڵانس'),
+            onPressed: () => showBalance.value = !visible,
+            icon: ProxoSolarIcon(visible ? SolarIconsOutline.eye : SolarIconsOutline.eyeClosed,
+              size: 22, color: AppColors.inkMuted))),
+      ]),
+      ValueListenableBuilder<bool>(valueListenable: showBalance,
+        builder: (_, visible, __) => ValueListenableBuilder<double?>(
+          valueListenable: balanceIqd, builder: (_, value, __) => SingleChildScrollView(
+            scrollDirection: Axis.horizontal, reverse: true,
+            child: ProxoText(visible ? _formatIqd(value) : '•••••• د.ع',
+              textDirection: TextDirection.ltr, maxLines: 1,
+              style: _ProfileText.balanceAmount.copyWith(color: AppColors.ink, height: 1.5)),
+          ))),
+      const SizedBox(height: 16),
+      FilledButton(onPressed: onTap,
+        style: FilledButton.styleFrom(backgroundColor: AppColors.accent, foregroundColor: Colors.white,
+          minimumSize: const Size(48, 52), padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14))),
+        child: const ProxoText('زیادکردنی باڵانس', translate: true, textAlign: TextAlign.center,
+          style: TextStyle(fontFamily: kAppFont, fontSize: 14, height: 1.5))),
+    ]),
   );
   static String _formatIqd(double? value) {
     if (value == null) return '— د.ع';
     final latin = value.round().toString().replaceAllMapped(RegExp(r'\B(?=(\d{3})+(?!\d))'), (_) => ',');
     return '$latin د.ع';
-  }
-}
-
-class _QuickActions extends StatelessWidget {
-  const _QuickActions({
-    required this.onAds,
-    required this.onAssets,
-    required this.onCoupons,
-  });
-
-  final VoidCallback onAds;
-  final VoidCallback onAssets;
-  final VoidCallback onCoupons;
-
-  @override
-  Widget build(BuildContext context) {
-    ProxoLocale.watch(context);
-    final cards = <Widget>[
-      _QuickActionCard(icon: SolarIconsOutline.clapperboardPlay, label: 'ڕیکلامەکانم', onTap: onAds),
-      _QuickActionCard(icon: SolarIconsOutline.widget_2, label: 'ئامرازەکان', onTap: onAssets),
-      _QuickActionCard(icon: SolarIconsOutline.tagPrice, label: 'کۆپۆن', onTap: onCoupons),
-    ];
-    return LayoutBuilder(builder: (context, constraints) {
-      final painter = TextPainter(text: const TextSpan(text: 'ڕیکلامەکانم', style: _ProfileText.quickAction),
-        textDirection: TextDirection.rtl, textScaler: MediaQuery.textScalerOf(context))..layout();
-      final stack = (constraints.maxWidth - 16) / 3 < painter.width + 24;
-      painter.dispose();
-      return stack
-        ? Column(crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [for (var i = 0; i < cards.length; i++) ...[if (i > 0) const SizedBox(height: 8), cards[i]]])
-        : Row(children: [for (var i = 0; i < cards.length; i++) ...[if (i > 0) const SizedBox(width: 8), Expanded(child: cards[i])]]);
-    });
-  }
-}
-
-class _QuickActionCard extends StatelessWidget {
-  const _QuickActionCard({
-    required this.icon,
-    required this.label,
-    required this.onTap,
-  });
-
-  final IconData icon;
-  final String label;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    ProxoLocale.watch(context);
-    return Material(
-      color: _ProfileColors.quickSurface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(ProxoChrome.radius)),
-        side: BorderSide(color: _ProfileColors.cardBorder),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onTap,
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(minHeight: 88),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 9),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                ProxoSolarIcon(icon, size: ProxoChrome.iconSize, color: _ProfileColors.iconInk),
-                const SizedBox(height: 6),
-                ProxoText(
-                  label, translate: true,
-                  textAlign: TextAlign.center,
-                  softWrap: true,
-                  style: _ProfileText.quickAction,
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
   }
 }
 
@@ -2781,7 +2675,7 @@ class _ProfileScrollBehavior extends ScrollBehavior {
 abstract final class _ProfileColors {
   // ڕەنگەکان لە فریمە پڕقەبارەکانی ڤیدیۆکەوە هێمن کراون: پەڕە سپییە،
   // کارت و گرووپەکان تەنها یەک هەنگاو لێی جیاوازن و ڕەشەکە navy نییە.
-  static const Color page = Color(0xFFFFFFFF);
+  static const Color page = Color(0xFFF8FAFC);
   static const Color groupSurface = Colors.white;
   static const Color quickSurface = ProxoChrome.surface;
   static const Color readOnlySurface = Color(0xFFF6F7F8);

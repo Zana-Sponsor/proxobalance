@@ -1,3 +1,5 @@
+import '../l10n/proxo_strings.dart';
+import 'ad_form_components.dart';
 import '../theme/app_locale.dart';
 // proxo_banner.dart
 // بیخەرە ناو:  lib/widgets/proxo_banner.dart
@@ -186,6 +188,7 @@ bool             _sLoaded        = false;
 int              _sCurSliderPage = 0;
 
 StreamSubscription? _sGlobalFbSub;
+StreamSubscription? _sGlobalActiveFbSub;
 final _sBannerRevision = ValueNotifier<int>(0);
 
 Future<void> _prewarmGlobal(List<_FbBanner> banners) async {
@@ -321,11 +324,15 @@ class _ProxoBannerState extends State<ProxoBanner> {
     } catch (_) {}
   }
 
-  Future<void> _saveSupaCache(Map<String, dynamic> data) async {
+  Future<void> _saveSupaCache(Map<String, dynamic>? data) async {
     try {
       final prefs    = await SharedPreferences.getInstance();
       final deviceId = await _getOrCreateDeviceId();
-      await prefs.setString('${_kCacheSupa}_$deviceId', jsonEncode(data));
+      if (data == null) {
+        await prefs.remove('${_kCacheSupa}_$deviceId');
+      } else {
+        await prefs.setString('${_kCacheSupa}_$deviceId', jsonEncode(data));
+      }
       // timestamp-ی نوێکردنەوە پاشەکەوت بکە
       await prefs.setInt(_kCacheTs, DateTime.now().millisecondsSinceEpoch);
     } catch (_) {}
@@ -334,58 +341,28 @@ class _ProxoBannerState extends State<ProxoBanner> {
   // ── ② Global Firebase listener — هەرگیز کنسڵ ناکرێت ────────────────────
 
   void _startGlobalListener() {
-    if (!firebaseAvailable) { _loadSupa(); return; }
-    if (_sGlobalFbSub != null) {
-      if (mounted && _loading) setState(() => _loading = false);
-      return;
-    }
+    // Each mounted banner owns one Supabase subscription, including Firebase
+    // fallback mode. Both Firebase admin paths keep their process-wide listener.
+    _loadSupa();
+    if (!firebaseAvailable || _sGlobalFbSub != null) return;
     try {
-      final ref = FirebaseDatabase.instance.ref('appContent/banners');
-      _sGlobalFbSub = ref.onValue.listen(
-        (event) async {
-          List<_FbBanner> list = _parseBanners(event.snapshot.value);
-          if (list.isEmpty) {
-            try {
-              final snap = await FirebaseDatabase.instance
-                  .ref('appContent/activeBanner').get();
-              final b = _parseActiveBanner(snap.value);
-              if (b != null) list = [b];
-            } catch (_) {}
-          }
-          if (list.isNotEmpty) {
-            await _saveFbCache(list);
-            _sBanners = list;
-            _sLoaded  = true;
-            _prewarmGlobal(list).ignore();
-            _sBannerRevision.value++;
-          } else if (_sBanners.isEmpty) {
-            _loadSupaGlobal();
-          }
-        },
-        onError: (_) { if (_sBanners.isEmpty) _loadSupaGlobal(); },
-      );
-      Future.delayed(const Duration(seconds: 3), () {
-        if (mounted && _loading) _loadSupa();
-      });
-    } catch (_) { _loadSupa(); }
-  }
-
-  Future<void> _loadSupaGlobal() async {
-    try {
-      final res = await supabase
-          .from('pa_banners')
-          .select('title,subtitle,btn_text,bg_color,navigate_to')
-          .eq('is_active', true)
-          .order('created_at', ascending: false)
-          .limit(1)
-          .maybeSingle();
-      if (res != null) {
-        await _saveSupaCache(res);
-        _sSupaHero = _SupaBanner.fromMap(res);
-        _sLoaded   = true;
+      List<_FbBanner> primary = [];
+      _FbBanner? legacy;
+      bool primaryReady = false, legacyReady = false;
+      void publish() {
+        if (!primaryReady || (primary.isEmpty && !legacyReady)) return;
+        final next = primary.isNotEmpty ? primary : [if (legacy != null) legacy!];
+        _sBanners = next;
+        _sLoaded = true;
         _sBannerRevision.value++;
+        _saveFbCache(next).ignore();
+        if (next.isNotEmpty) _prewarmGlobal(next).ignore();
       }
-    } catch (_) {}
+      _sGlobalFbSub = FirebaseDatabase.instance.ref('appContent/banners')
+        .onValue.listen((event) { primaryReady = true; primary = _parseBanners(event.snapshot.value); publish(); }, onError: (_) {});
+      _sGlobalActiveFbSub = FirebaseDatabase.instance.ref('appContent/activeBanner')
+        .onValue.listen((event) { legacyReady = true; legacy = _parseActiveBanner(event.snapshot.value); publish(); }, onError: (_) {});
+    } catch (_) { /* Supabase fallback was already started above. */ }
   }
 
   // ── Supabase ──────────────────────────────────────────────────────────────
@@ -394,17 +371,17 @@ class _ProxoBannerState extends State<ProxoBanner> {
     try {
       final res = await supabase
           .from('pa_banners')
-          .select('title,subtitle,btn_text,bg_color,navigate_to')
+          .select()
           .eq('is_active', true)
           .order('created_at', ascending: false)
           .limit(1)
           .maybeSingle();
 
       // device-ID cache-ە پاشەکەوت بکە
-      if (res != null) await _saveSupaCache(res);
+      await _saveSupaCache(res);
 
       if (mounted) {
-        if (res != null) _sLoaded = true;
+        _sLoaded = true;
         setState(() {
           _supaHero = res != null ? _SupaBanner.fromMap(res) : null;
           _loading  = false;
@@ -455,6 +432,7 @@ class _ProxoBannerState extends State<ProxoBanner> {
               ?.value)
               ?.toString() ?? '';
 
+      if (get('is_active') == 'false' || get('active') == 'false') continue;
       final imageUrl  = get('imageURL');
       final imageB64  = get('imageB64');
       final targetUrl = get('targetURL');
@@ -478,6 +456,7 @@ class _ProxoBannerState extends State<ProxoBanner> {
             .firstOrNull
             ?.value)
             ?.toString() ?? '';
+    if (get('is_active') == 'false' || get('active') == 'false') return null;
     final b64 = get('imageB64');
     final url = get('imageURL');
     final tgt = get('targetURL');
@@ -501,11 +480,11 @@ class _ProxoBannerState extends State<ProxoBanner> {
     // Embedded image text cannot be translated. When CMS content has no
     // matching locale, show the app's fully localized text hero instead.
     if (_supaHero != null && (_supaHero!.locale == locale || _supaHero!.locale == 'all')) {
-      return _SupaHero(
+      return Directionality(textDirection: TextDirection.rtl, child: _SupaHero(
         banner:     _supaHero!,
         onStart:    widget.onStart,
         onNavigate: widget.onNavigate,
-      );
+      ));
     }
     // هەمیشە _StaticHero نیشان بدە (چ لۆدینگدا چ دوای)  — هیچ flash ی سپی نییە
     return _StaticHero(onStart: widget.onStart);
@@ -773,7 +752,7 @@ class _FbSliderState extends State<_FbSlider> {
         final h = constraints.maxWidth * 9 / 16;
         return Container(
           height: h,
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular(22)),
+          decoration: BoxDecoration(borderRadius: AdUi.radius),
           clipBehavior: Clip.hardEdge,
           child: Stack(
             children: [
@@ -1162,7 +1141,7 @@ class _SupaHero extends StatelessWidget {
         padding: const EdgeInsets.all(22),
         decoration: BoxDecoration(
           color: _parseBg(),
-          borderRadius: BorderRadius.circular(22),
+          borderRadius: AdUi.radius,
         ),
         child: Stack(
           clipBehavior: Clip.none,
@@ -1198,10 +1177,10 @@ class _SupaHero extends StatelessWidget {
                   // banner.title is CMS content of unpredictable length.
                   style: const TextStyle(
                     fontFamily: kAppFont,
-                    fontSize:   20,
+                    fontSize:   21,
                     fontWeight: FontWeight.w700,
                     color:      Colors.white,
-                    height:     1.25,
+                    height:     1.5,
                   ),
                 ),
                 if (banner.subtitle.isNotEmpty) ...[
@@ -1212,7 +1191,7 @@ class _SupaHero extends StatelessWidget {
                       fontFamily: kAppFont,
                       fontSize:   13.5,
                       fontWeight: FontWeight.w400,
-                      color:      Colors.white.withOpacity(0.6),
+                      color:      Colors.white.withOpacity(0.85),
                       height:     1.35, // was 1.7, above the multiline ceiling
                     ),
                   ),
@@ -1230,15 +1209,15 @@ class _SupaHero extends StatelessWidget {
                     children: [
                       const Icon(Icons.play_arrow_rounded, size: 14, color: Colors.white),
                       const SizedBox(width: 6),
-                      ProxoText(
-                        banner.btnText.isNotEmpty ? banner.btnText : 'دەستپێکردن',
+                      Flexible(child: ProxoText(
+                        banner.btnText.isNotEmpty ? banner.btnText : ProxoStrings.text('دەستپێکردن'),
                         style: const TextStyle(
                           fontFamily: kAppFont,
                           fontSize:   13,
                           color:      Colors.white,
                           fontWeight: FontWeight.w600,
                         ),
-                      ),
+                      )),
                     ],
                   ),
                 ),
@@ -1258,104 +1237,23 @@ class _SupaHero extends StatelessWidget {
 class _StaticHero extends StatelessWidget {
   final VoidCallback? onStart;
   const _StaticHero({this.onStart});
-
   @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onStart,
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(22),
-        decoration: BoxDecoration(
-          color: AppColors.dark,
-          borderRadius: BorderRadius.circular(22),
-        ),
-        child: Stack(
-          clipBehavior: Clip.none,
-          children: [
-            Positioned(
-              top: -30, right: -30,
-              child: Container(
-                width: 120, height: 120,
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.04),
-                  shape: BoxShape.circle,
-                ),
-              ),
-            ),
-            Positioned(
-              bottom: -20, left: -20,
-              child: Container(
-                width: 80, height: 80,
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.03),
-                  shape: BoxShape.circle,
-                ),
-              ),
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const ProxoText(
-                  'ڕیکلامی تیک تۆک بەردەستە', translate: true,
-                  // Same reasoning as _SupaHero above: Bold kept (hero
-                  // headline), explicit height added where none existed.
-                  style: TextStyle(
-                    fontFamily: kAppFont,
-                    fontSize:   20,
-                    fontWeight: FontWeight.w700,
-                    color:      Colors.white,
-                    height:     1.25,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                ProxoText(
-                  'ڕیکلامەکانت بڕوانە و بیکەرەوە بە ئاسانی لەگەڵ Proxo', translate: true,
-                  style: TextStyle(
-                    fontFamily: kAppFont,
-                    fontSize:   13.5,
-                    fontWeight: FontWeight.w400,
-                    color:      Colors.white.withOpacity(0.6),
-                    height:     1.35, // was 1.7, above the multiline ceiling
-                  ),
-                ),
-                const SizedBox(height: 14),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 9),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.12),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: Colors.white.withOpacity(0.15)),
-                  ),
-                  child: const Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.play_arrow_rounded, size: 14, color: Colors.white),
-                      SizedBox(width: 6),
-                      ProxoText(
-                        'دەستپێکردن', translate: true,
-                        style: TextStyle(
-                          fontFamily: kAppFont,
-                          fontSize:   13,
-                          color:      Colors.white,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => Container(
+    width: double.infinity,
+    padding: const EdgeInsets.all(22),
+    decoration: const BoxDecoration(color: Color(0xFFEDF4FF), borderRadius: AdUi.radius),
+    child: const Directionality(textDirection: TextDirection.rtl,
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        ProxoText('ڕیکلامی تیک تۆک بەردەستە', translate: true,
+          style: TextStyle(fontFamily: kAppFont, fontSize: 21, fontWeight: FontWeight.w600,
+            color: AppColors.ink, height: 1.5)),
+        SizedBox(height: 8),
+        ProxoText('ڕیکلامەکانت بڕوانە و بیکەرەوە بە ئاسانی لەگەڵ Proxo', translate: true,
+          style: TextStyle(fontFamily: kAppFont, fontSize: 14, color: AppColors.inkMuted, height: 1.65)),
+      ]),
+    ),
+  );
 }
-
-// ─────────────────────────────────────────────────────────────────────────────
-// _SkeletonBanner
-// ─────────────────────────────────────────────────────────────────────────────
 
 class _SkeletonBanner extends StatefulWidget {
   const _SkeletonBanner();
@@ -1386,7 +1284,7 @@ class _SkeletonBannerState extends State<_SkeletonBanner>
       builder: (_, __) => Container(
         height: 145,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(22),
+          borderRadius: AdUi.radius,
           color: Color.lerp(AppColors.border1, AppColors.bg, _ctrl.value),
         ),
       ),
@@ -1435,6 +1333,6 @@ class _SupaBanner {
         subtitle:   m['subtitle']?.toString()    ?? '',
         btnText:    m['btn_text']?.toString()    ?? 'دەستپێکردن',
         bgColor:    m['bg_color']?.toString()    ?? '',
-        navigateTo: m['navigate_to']?.toString() ?? '',
+        navigateTo: (m['navigate_to'] ?? m['link'])?.toString() ?? '',
       );
 }

@@ -21,7 +21,7 @@ jobs:
           path: after
       - uses: actions/checkout@v4
         with:
-          ref: 74beaa8bc06c7c3c13185d9d0e01bd7078e455bc
+          ref: e24575c135ca599a6775bd66e385d3b8033b7e92
           path: before
       - uses: subosito/flutter-action@v2
         with:
@@ -46,9 +46,6 @@ jobs:
         working-directory: after/proxo_app
       - name: Capture actual screens with bundled fonts
         timeout-minutes: 12
-        # The immutable baseline has a confirmed LevelsPage realtime teardown bug.
-        # Preserve its failing test log as evidence; candidate failures still block.
-        continue-on-error: ${{ matrix.source == 'before' }}
         run: |
           mkdir -p build/polish-evidence
           set -o pipefail
@@ -66,7 +63,7 @@ jobs:
         working-directory: ${{ matrix.source }}/proxo_app
       - name: Auth and language behavior
         if: matrix.source == 'after'
-        run: flutter test test/auth_phone_flow_test.dart test/auth_otp_lifecycle_test.dart test/localization_test.dart test/ad_activation_notice_test.dart --reporter expanded
+        run: flutter test test/auth_phone_flow_test.dart test/auth_otp_lifecycle_test.dart test/localization_test.dart test/ad_activation_notice_test.dart test/ui_refinement_test.dart --reporter expanded
         working-directory: after/proxo_app
       - uses: actions/upload-artifact@v4
         if: always()

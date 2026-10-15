@@ -1,204 +1,84 @@
-import 'proxo_symbol.dart';
+import 'dart:math' as math;
+import 'package:flutter/material.dart';
 import '../l10n/proxo_strings.dart';
 import '../theme/app_locale.dart';
-import 'package:flutter/material.dart';
-
 import '../theme/app_theme.dart';
-import '../theme/proxo_icons.dart';
 import 'ad_form_components.dart';
+import 'proxo_symbol.dart';
 import 'proxo_text.dart';
 
-/// Three primary destinations. Native icons and scalable Sorani labels follow
-/// the user's latest instruction; tools/help remain secondary destinations.
+/// Exactly three primary actions. Secondary destinations remain in navigation.
 class HomeQuickActions extends StatelessWidget {
-  final VoidCallback? onCreateTap,
-      onAddBalanceTap,
-      onToolsTap,
-      onCreatePageTap,
-      onFaqTap;
-  const HomeQuickActions({
-    super.key,
-    this.onCreateTap,
-    this.onAddBalanceTap,
-    this.onToolsTap,
-    this.onCreatePageTap,
-    this.onFaqTap,
-  });
-
-  @override
-  Widget build(BuildContext context) => Align(
-    alignment: Alignment.topCenter,
-    child: ConstrainedBox(
-      constraints: const BoxConstraints(maxWidth: 600),
-      child: Directionality(
-        textDirection: TextDirection.rtl,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            ProxoText('کردارە خێراکان', translate: true, style: AdUi.heading(context)),
-            const SizedBox(height: 20),
-            LayoutBuilder(
-              builder: (context, constraints) {
-                final cards = [
-                  _QuickActionCard(
-                    key: const ValueKey('home-create-ad'),
-                    icon: ProxoIcons.createAd,
-                    title: 'دروستکردنی ڕیکلام',
-                    onTap: onCreateTap,
-                  ),
-                  _QuickActionCard(
-                    key: const ValueKey('home-add-balance'),
-                    icon: ProxoIcons.wallet,
-                    title: 'زیادکردنی باڵانس',
-                    onTap: onAddBalanceTap,
-                  ),
-                  _QuickActionCard(
-                    key: const ValueKey('home-create-page'),
-                    icon: ProxoIcons.createPage,
-                    title: 'دروستکردنی پەڕە',
-                    onTap: onCreatePageTap,
-                  ),
-                ];
-                // Fit complete words using the real font and system text scale.
-                // Narrow devices/large text reflow instead of shrinking the labels.
-                double widestWord = 0;
-                for (final card in cards) {
-                  final painter = TextPainter(
-                    text: TextSpan(text: ProxoStrings.text(card.title), style: AdUi.text(context)),
-                    textDirection: TextDirection.rtl,
-                    textScaler: MediaQuery.textScalerOf(context),
-                  )..layout();
-                  if (painter.minIntrinsicWidth > widestWord)
-                    widestWord = painter.minIntrinsicWidth;
-                  painter.dispose();
-                }
-                const gap = 12.0; // Existing control spacing.
-                final tileWidth = (constraints.maxWidth - gap * 2) / 3;
-                if (tileWidth - AdUi.cardPadding.horizontal < widestWord) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      for (var i = 0; i < cards.length; i++) ...[
-                        if (i > 0) const SizedBox(height: gap),
-                        cards[i],
-                      ],
-                    ],
-                  );
-                }
-                return IntrinsicHeight(
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      for (var i = 0; i < cards.length; i++) ...[
-                        if (i > 0) const SizedBox(width: gap),
-                        Expanded(child: cards[i]),
-                      ],
-                    ],
-                  ),
-                );
-              },
-            ),
-            const SizedBox(height: 12),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: Wrap(
-                alignment: WrapAlignment.spaceBetween,
-                spacing: 8,
-                children: [
-                  TextButton.icon(
-                    key: const ValueKey('home-contact-tools'),
-                    style: TextButton.styleFrom(foregroundColor: AdUi.blue),
-                    onPressed: onToolsTap,
-                    icon: const Icon(ProxoIcons.pages),
-                    label: ProxoText(
-                      'ProxoLink — پەڕەکانم', translate: true,
-                      style: AdUi.text(context),
-                    ),
-                  ),
-                  TextButton.icon(
-                    key: const ValueKey('home-faq'),
-                    style: TextButton.styleFrom(foregroundColor: AdUi.blue),
-                    onPressed: onFaqTap,
-                    icon: const Icon(ProxoIcons.help),
-                    label: ProxoText(
-                      'پرسیارە دووبارەکان', translate: true,
-                      style: AdUi.text(context),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    ),
-  );
-}
-
-class _QuickActionCard extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final VoidCallback? onTap;
-  const _QuickActionCard({
-    super.key,
-    required this.icon,
-    required this.title,
-    required this.onTap,
-  });
+  const HomeQuickActions({super.key, this.onCreateTap, this.onAddBalanceTap,
+    this.onCreatePageTap, this.onToolsTap, this.onFaqTap});
+  final VoidCallback? onCreateTap, onAddBalanceTap, onCreatePageTap;
+  // Retained for source compatibility; no extra Home buttons are rendered.
+  final VoidCallback? onToolsTap, onFaqTap;
 
   @override
   Widget build(BuildContext context) {
     ProxoLocale.watch(context);
-    final color = onTap == null ? AdUi.secondary : AdUi.blue;
-    return Semantics(
-      button: true,
-      enabled: onTap != null,
-      label: ProxoStrings.text(title),
-      onTap: onTap,
-      child: ExcludeSemantics(
-        child: Container(
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: AdUi.radius,
-            boxShadow: AdUi.cardShadow,
-          ),
-          child: Material(
-            color: Colors.transparent,
-            borderRadius: AdUi.radius,
-            child: InkWell(
-              onTap: onTap,
-              borderRadius: AdUi.radius,
-              child: Padding(
-                padding: AdUi.cardPadding,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: 48,
-                      height: 48,
-                      alignment: Alignment.center,
-                      decoration: const BoxDecoration(
-                        color: AppColors.accentSoft,
-                        borderRadius: AdUi.controlRadius,
-                      ),
-                      child: ProxoSolarIcon(icon, size: 24, color: color),
-                    ),
+    final titles = ['دروستکردنی ڕیکلام', 'زیادکردنی باڵانس', 'دروستکردنی پەڕە']
+      .map(ProxoStrings.text).toList();
+    const icons = [ProxoSymbolName.ads, ProxoSymbolName.wallet, ProxoSymbolName.tools];
+    const keys = ['home-create-ad', 'home-add-balance', 'home-create-page'];
+    final callbacks = [onCreateTap, onAddBalanceTap, onCreatePageTap];
+    const style = TextStyle(fontFamily: kAppFont, fontSize: 13.5,
+      fontWeight: FontWeight.w400, height: 1.55, color: AdUi.ink);
+    final scaler = MediaQuery.textScalerOf(context);
+    double measure(String text) {
+      final p = TextPainter(text: TextSpan(text: text, style: style),
+        textDirection: TextDirection.rtl, textScaler: scaler)..layout();
+      final w = p.width; p.dispose(); return w;
+    }
+    String balanced(String title) {
+      final words = title.split(' ');
+      if (words.length < 2) return title;
+      var best = title; var score = double.infinity;
+      for (var i = 1; i < words.length; i++) {
+        final a = words.take(i).join(' '), b = words.skip(i).join(' ');
+        final candidate = math.max(measure(a), measure(b));
+        if (candidate < score) { score = candidate; best = '$a\n$b'; }
+      }
+      return best;
+    }
+    final labels = titles.map(balanced).toList();
+    return Align(alignment: Alignment.topCenter, child: ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 600),
+      child: Directionality(textDirection: TextDirection.rtl,
+        child: LayoutBuilder(builder: (context, constraints) {
+          final tileWidth = (constraints.maxWidth - 20) / 3;
+          final longestLine = labels.expand((s) => s.split('\n')).map(measure).reduce(math.max);
+          final stacked = tileWidth - 20 < longestLine;
+          Widget card(int i) => Semantics(button: true, enabled: callbacks[i] != null,
+            label: titles[i], onTap: callbacks[i], excludeSemantics: true,
+            child: Material(key: ValueKey(keys[i]),
+              color: Colors.white, shape: const RoundedRectangleBorder(
+                borderRadius: AdUi.radius, side: BorderSide(color: Color(0xFFE5EBF4))),
+              clipBehavior: Clip.antiAlias,
+              child: InkWell(onTap: callbacks[i], borderRadius: AdUi.radius,
+                child: Padding(padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 18),
+                  child: Column(mainAxisSize: MainAxisSize.min, children: [
+                    Container(width: 44, height: 44, alignment: Alignment.center,
+                      decoration: const BoxDecoration(color: AppColors.accentSoft,
+                        borderRadius: BorderRadius.all(Radius.circular(14))),
+                      child: ProxoSymbol(icons[i], size: 24,
+                        color: callbacks[i] == null ? AdUi.secondary : AdUi.blue)),
                     const SizedBox(height: 12),
-                    ProxoText(
-                      title, translate: true,
-                      textAlign: TextAlign.center,
-                      style: AdUi.text(
-                        context,
-                        color: onTap == null ? AdUi.secondary : AdUi.ink,
-                      ),
-                    ),
-                  ],
+                    ProxoText(stacked ? titles[i] : labels[i], textAlign: TextAlign.center,
+                      style: style.copyWith(color: callbacks[i] == null ? AdUi.secondary : AdUi.ink)),
+                  ]),
                 ),
               ),
             ),
-          ),
-        ),
+          );
+          return stacked
+            ? Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+                for (var i=0;i<3;i++) ...[if(i>0) const SizedBox(height: 10),card(i)]])
+            : Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                for(var i=0;i<3;i++) ...[if(i>0) const SizedBox(width: 10),Expanded(child:card(i))]]);
+        }),
       ),
-    );
+    ));
   }
 }

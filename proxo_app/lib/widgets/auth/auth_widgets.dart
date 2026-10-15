@@ -93,13 +93,13 @@ class AuthTextField extends StatelessWidget {
             fillColor: enabled ? AuthTokens.fieldFill : AuthTokens.fieldFillOff,
             isDense: true,
             contentPadding: AuthTokens.fieldContentPadding,
-            prefixIcon: Padding(
-              padding: const EdgeInsets.all(14),
-              child: ProxoSymbol(_fieldSymbol(icon),
-              size: 22,
-              color: hasError ? AuthTokens.dangerField : AuthTokens.inkMuted,
-            )),
-            prefix: prefix,
+            // A persistent country-code inset, not a disappearing inline prefix.
+            // Ordinary fields use their label instead of decorative icons.
+            prefixIcon: prefix == null ? null : Padding(
+              padding: const EdgeInsetsDirectional.only(start: 14, end: 12),
+              child: Center(widthFactor: 1, child: prefix),
+            ),
+            prefixIconConstraints: const BoxConstraints(minHeight: 52),
             suffixIcon: trailing,
             border: _border(AuthTokens.line),
             enabledBorder: _border(
@@ -848,116 +848,44 @@ class AuthFastAccountCard extends StatelessWidget {
 // کوردیدا «یەکەم» واتە لای ڕاست، و هیچ حیسابێکی دەستی بۆ پێچەوانەکردنەوە
 // پێویست نییە.
 class AuthSegmentedControl extends StatelessWidget {
-  const AuthSegmentedControl({
-    super.key,
-    required this.labels,
-    required this.index,
-    required this.onChanged,
-    this.enabled = true,
-  });
-
-  /// دوو لەیبڵ — نە کەمتر، نە زیاتر.
+  const AuthSegmentedControl({super.key, required this.labels, required this.index,
+    required this.onChanged, this.enabled = true});
   final List<String> labels;
   final int index;
   final ValueChanged<int> onChanged;
   final bool enabled;
-
-  static const double _height = 46;
-  static const double _radius = 12;
-  static const double _pad    = 4;
-  static const Duration _dur  = Duration(milliseconds: 260);
-
   @override
   Widget build(BuildContext context) {
     ProxoLocale.watch(context);
-    assert(labels.length == 2, 'AuthSegmentedControl is a two-way switch');
-
-    return Container(
-      height: _height,
-      padding: const EdgeInsets.all(_pad),
-      decoration: BoxDecoration(
-        color: AuthTokens.fieldFillOff,
-        borderRadius: BorderRadius.circular(_radius),
-        border: Border.all(color: AuthTokens.line, width: 1),
-      ),
-      child: LayoutBuilder(
-        builder: (context, c) {
-          // پانی هەر پیلێک — نیوەی پانی ناوەوە. لە `LayoutBuilder`ـەوە
-          // دێت نەک بە `FractionallySizedBox`، چونکە پیلەکە دەبێت
-          // پانییەکی **جێگیر**ی هەبێت تا `AnimatedAlign` بتوانێت
-          // بیجوڵێنێت بەبێ ئەوەی قەبارەشی بگۆڕێت.
-          final double pillW = c.maxWidth / 2;
-
-          return Stack(
-            children: [
-              AnimatedAlign(
-                duration: _dur,
-                curve: Curves.easeOutCubic,
-                alignment: index == 0
-                    ? AlignmentDirectional.centerStart
-                    : AlignmentDirectional.centerEnd,
-                child: Container(
-                  width: pillW,
-                  height: double.infinity,
-                  decoration: BoxDecoration(
-                    gradient: ProxoInk.gradient,
-                    borderRadius: BorderRadius.circular(_radius - _pad + 1),
-                  ),
-                ),
+    return LayoutBuilder(builder: (context, constraints) {
+      final width = (constraints.maxWidth - 8) / 2;
+      double height = 48;
+      for (final label in labels) {
+        final p = TextPainter(text: TextSpan(text: label, style: AuthTokens.fieldLabel),
+          textDirection: TextDirection.rtl, textScaler: MediaQuery.textScalerOf(context))
+          ..layout(maxWidth: (width - 20).clamp(1, double.infinity));
+        if (p.height + 24 > height) height = p.height + 24;
+        p.dispose();
+      }
+      return Container(padding: const EdgeInsets.all(4),
+        decoration: BoxDecoration(color: const Color(0xFFF1F4F8), borderRadius: BorderRadius.circular(16)),
+        child: Row(children: List.generate(labels.length, (i) => Expanded(
+          child: Semantics(selected: i == index, button: true,
+            child: Material(color: i == index ? Colors.white : Colors.transparent,
+              borderRadius: BorderRadius.circular(12),
+              child: InkWell(borderRadius: BorderRadius.circular(12),
+                onTap: enabled ? () => onChanged(i) : null,
+                child: SizedBox(height: height, child: Center(child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: ProxoText(labels[i], textAlign: TextAlign.center,
+                    style: AuthTokens.fieldLabel.copyWith(
+                      color: i == index ? AuthTokens.accent : AuthTokens.inkMuted)),
+                ))),
               ),
-              Row(
-                children: [
-                  for (int i = 0; i < labels.length; i++)
-                    Expanded(
-                      child: Semantics(
-                        button: true,
-                        selected: i == index,
-                        label: labels[i],
-                        child: GestureDetector(
-                          behavior: HitTestBehavior.opaque,
-                          onTap: enabled && i != index
-                              ? () => onChanged(i)
-                              : null,
-                          // ⚠ `AnimatedDefaultTextStyle` نەک `AnimatedSwitcher`:
-                          // دەقەکە نابێت بسڕدرێتەوە و دووبارە دروست ببێتەوە،
-                          // تەنها ڕەنگ و کێشی دەگۆڕێت لە هەمان ماوەی
-                          // سلایدەکەدا.
-                          child: AnimatedDefaultTextStyle(
-                            duration: _dur,
-                            curve: Curves.easeOutCubic,
-                            style: AuthTokens.fieldLabel.copyWith(
-                              fontWeight: i == index
-                                  ? FontWeight.w500
-                                  : FontWeight.w500,
-                              color: i == index
-                                  ? AuthTokens.onPrimary
-                                  : AuthTokens.inkMuted,
-                            ),
-                            child: Center(
-                              child: ProxoText(
-                                labels[i],
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-            ],
-          );
-        },
-      ),
-    );
+            ),
+          ),
+        ))),
+      );
+    });
   }
-}
-
-ProxoSymbolName _fieldSymbol(IconData icon) {
-  if (icon == Icons.mail_outline_rounded) return ProxoSymbolName.email;
-  if (icon == Icons.phone_iphone_rounded) return ProxoSymbolName.phone;
-  if (icon == Icons.person_outline_rounded) return ProxoSymbolName.user;
-  if (icon == Icons.lock_reset_rounded) return ProxoSymbolName.recovery;
-  return ProxoSymbolName.password;
 }

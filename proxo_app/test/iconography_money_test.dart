@@ -1,3 +1,4 @@
+import 'package:proxo_app/widgets/proxo_symbol.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -156,7 +157,7 @@ void main() {
           ),
         ),
       );
-      final glyph = t.widget<Icon>(find.byIcon(ProxoIcons.wallet));
+      final glyph = t.widget<ProxoSymbol>(find.byWidgetPredicate((w) => w is ProxoSymbol && w.symbol == ProxoSymbolName.wallet));
       expect(glyph.color, AdUi.secondary);
       expect(glyph.size, 24);
       final button = find.byKey(const ValueKey('home-add-balance'));

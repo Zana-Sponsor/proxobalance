@@ -62,7 +62,7 @@ abstract final class AuthTokens {
   static const double gapTitleToSubtitle = 6;
   static const double gapSubtitleToForm  = 20;
   static const double gapLabelToField    = 6;
-  static const double gapBetweenFields   = 10.0;
+  static const double gapBetweenFields   = 16.0;
   static const double gapFormToForgot    = 8;
   static const double gapForgotToSubmit  = 18;
   static const double gapSubmitToPrompt  = 16;
@@ -77,13 +77,13 @@ abstract final class AuthTokens {
   //     (= Material 3 Title Medium)
   // ⚠ هیچ Bold / SemiBold ـێک نییە.
   static const double textSize = 14;
-  static const double titleSize = 16;
+  static const double titleSize = 26;
   static const FontWeight weight = FontWeight.w500;
 
   static const TextStyle title = TextStyle(
     fontFamily: kAppFont,
     fontSize: titleSize,
-    fontWeight: weight,
+    fontWeight: FontWeight.w600,
     color: ink,
     height: 1.30,
   );
@@ -152,7 +152,7 @@ abstract final class AuthTokens {
 
   static const TextStyle otpDigit = TextStyle(
     fontFamily: kAppFont,
-    fontSize: titleSize,
+    fontSize: 20,
     fontWeight: weight,
     height: 1.20,
     color: ink,
@@ -162,8 +162,8 @@ abstract final class AuthTokens {
   /// ⚠ بوو 50. 48 ئەو بەرزاییەیە کە هەموو دوگمە سەرەکییەکانی ئەپەکە
   /// بەکاری دەهێنن (`_kCtaHeight`ی ad_details، پیلەکانی tools).
   static const double buttonHeight = 48;
-  static const double buttonRadius = 12;
-  static const double fieldRadius  = 12;
+  static const double buttonRadius = 14;
+  static const double fieldRadius  = 14;
   /// ⚠ ستوونی بوو 13. ئێستا 15 — لەناو مەودای 14–16، بۆیە خانەکە
   /// بەرزاییەکی ئاسوودەی هەیە بەبێ ئەوەی لە دوگمەکە قەڵەوتر بێت.
   static const EdgeInsets fieldContentPadding =

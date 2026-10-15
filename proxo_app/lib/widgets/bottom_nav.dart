@@ -69,9 +69,9 @@ class _ProxoBottomNavState extends State<ProxoBottomNav> {
                       child: SizedBox(width: slot, height: height,
                         child: i == 2
                           ? Center(child: Container(width: 56, height: 56,
-                              decoration: const BoxDecoration(color: AppColors.accent, shape: BoxShape.circle),
+                              decoration: BoxDecoration(color: AppColors.accent, borderRadius: BorderRadius.circular(18)),
                               alignment: Alignment.center,
-                              child: const ProxoSymbol(ProxoSymbolName.add, size: 36, color: Colors.white)))
+                              child: const Icon(Icons.add_rounded, size: 32, color: Colors.white)))
                           : Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                             AnimatedContainer(duration: MediaQuery.disableAnimationsOf(context) ? Duration.zero : const Duration(milliseconds: 160),
                               width: 48, height: 32,

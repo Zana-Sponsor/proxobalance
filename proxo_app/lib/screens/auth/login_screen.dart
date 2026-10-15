@@ -1,5 +1,4 @@
 import 'package:proxo_app/theme/app_locale.dart';
-import '../../widgets/proxo_symbol.dart';
 import 'package:flutter/material.dart';
 import '../../widgets/auth/auth_design.dart';
 import '../../widgets/auth/auth_header.dart';
@@ -21,7 +20,6 @@ class LoginScreen extends StatelessWidget {
       children: <Widget>[
         const AuthHeader.login(),
         const SizedBox(height: 28),
-        const AuthHeroSymbol(ProxoSymbolName.login),
         ProxoText(AuthStrings.signInTitle,
             textAlign: TextAlign.start, style: AuthTokens.title),
         const SizedBox(height: AuthTokens.gapTitleToSubtitle),

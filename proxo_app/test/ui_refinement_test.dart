@@ -1,0 +1,90 @@
+import 'dart:convert';
+import 'dart:io';
+import 'dart:ui' as ui;
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:proxo_app/screens/auth/auth_models.dart';
+import 'package:proxo_app/widgets/auth/auth_widgets.dart';
+import 'package:proxo_app/widgets/proxo_error_stack.dart';
+import 'package:proxo_app/widgets/proxo_symbol.dart';
+import 'package:proxo_app/theme/app_theme.dart';
+
+class RefinementBinding extends AutomatedTestWidgetsFlutterBinding {
+  @override bool get disableShadows => false;
+}
+void main() {
+  RefinementBinding();
+  setUpAll(() async {
+    final fonts = jsonDecode(await rootBundle.loadString('FontManifest.json')) as List;
+    for (final font in fonts) {
+      final loader = FontLoader(font['family'] as String);
+      for (final file in font['fonts'] as List) {
+        loader.addFont(rootBundle.load(file['asset'] as String));
+      }
+      await loader.load();
+    }
+  });
+  test('phone input accepts Kurdish/Arabic digits and international paste without moving mid-edit caret', () {
+    const f = IraqPhoneInputFormatter();
+    for (final raw in ['٠٧٥٠١٢٣٤٥٦٧', '۰۷۵۰۱۲۳۴۵۶۷', '+964 750 123 4567', '00964 7501234567']) {
+      final v = f.formatEditUpdate(TextEditingValue.empty,
+        TextEditingValue(text: raw, selection: TextSelection.collapsed(offset: raw.length)));
+      expect(v.text, '7501234567'); expect(v.selection.baseOffset, 10);
+      expect(IraqPhone.isValid(raw), isTrue);
+    }
+    const old = TextEditingValue(text: '7501234567', selection: TextSelection.collapsed(offset: 4));
+    final edit = f.formatEditUpdate(old,
+      const TextEditingValue(text: '7509234567', selection: TextSelection.collapsed(offset: 4)));
+    expect(edit.selection.baseOffset, 4);
+    expect(f.formatEditUpdate(old, const TextEditingValue(text: '75012345678')), old);
+  });
+  testWidgets('empty phone field shows country code; ordinary fields do not add decorative symbols', (t) async {
+    final c = TextEditingController();
+    await t.pumpWidget(MaterialApp(home: Scaffold(body: Padding(padding: const EdgeInsets.all(16),
+      child: AuthTextField(controller: c, label: 'Phone', hint: '7XX XXX XXXX',
+        icon: Icons.phone, keyboardType: TextInputType.phone, forceLtr: true, ltr: true,
+        prefix: const Text('+964'), inputFormatters: const [IraqPhoneInputFormatter()])))));
+    expect(find.text('+964'), findsOneWidget);
+    expect(t.getSize(find.text('+964')).width, greaterThan(0));
+    expect(find.byType(ProxoSymbol), findsNothing);
+    await t.enterText(find.byType(TextField), '٠٧٥٠١٢٣٤٥٦٧');
+    expect(c.text, '7501234567');
+    await t.pumpWidget(const SizedBox()); c.dispose();
+  });
+  for (final width in [280.0, 393.0]) {
+    testWidgets('errors overlap with depth, stay readable and dismiss only the front at $width', (t) async {
+      t.view.physicalSize = Size(width, 852); t.view.devicePixelRatio = 1;
+      addTearDown(t.view.resetPhysicalSize); addTearDown(t.view.resetDevicePixelRatio);
+      final boundary = GlobalKey(); late BuildContext screen;
+      await t.pumpWidget(RepaintBoundary(key: boundary, child: MaterialApp(
+        theme: ThemeData(fontFamily: kAppFont, scaffoldBackgroundColor: const Color(0xFFF8FAFC)),
+        builder: (context, child) => MediaQuery(data: MediaQuery.of(context).copyWith(
+          textScaler: TextScaler.linear(width == 280 ? 2 : 1), accessibleNavigation: true), child: child!),
+        home: Builder(builder: (context) { screen = context; return const Scaffold(); }))));
+      for (final message in ['تکایە ناوی ڕیکلام بنووسە', 'بڕی پارەکە پشکنین بکە', 'پەیوەندی ئینتەرنێت بپشکنە و دووبارە هەوڵ بدەرەوە']) {
+        ProxoErrorStack.show(screen, message); await t.pump(const Duration(milliseconds: 500));
+      }
+      await t.pumpAndSettle();
+      expect(find.byType(Dismissible), findsOneWidget);
+      final front = t.getRect(find.byType(Dismissible));
+      expect(front.width, lessThanOrEqualTo(width - 32));
+      expect(front.height, lessThan(341));
+      expect(t.takeException(), isNull);
+      await t.runAsync(() async {
+        final dir = Directory('build/polish-evidence/refinement')..createSync(recursive: true);
+        final b = boundary.currentContext!.findRenderObject() as RenderRepaintBoundary;
+        final image = await b.toImage(pixelRatio: 2);
+        final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
+        await File('${dir.path}/error-stack-${width.toInt()}.png').writeAsBytes(bytes!.buffer.asUint8List()); image.dispose();
+      });
+      await t.tap(find.byType(Dismissible)); await t.pumpAndSettle();
+      expect(find.byType(Dismissible), findsOneWidget);
+      expect(find.text('بڕی پارەکە پشکنین بکە'), findsOneWidget);
+      ProxoErrorStack.clear(); await t.pumpAndSettle();
+      expect(find.byType(Dismissible), findsNothing);
+      await t.pumpWidget(const SizedBox());
+    });
+  }
+}

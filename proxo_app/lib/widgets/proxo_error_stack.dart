@@ -19,7 +19,7 @@ import 'package:proxo_app/widgets/proxo_text.dart';
 // • تەنها کارتی پێشەوە کاتی خۆی دەژمێرێت؛ کاتێک تەواو بوو بە نەرمی
 //   دەڕوات و کارتی دواتر دێتە پێشەوە — دانە دانە.
 // • داگرتن یان ڕاکێشان بۆ لا = لابردنی کارتی پێشەوە.
-// • گۆشەی تیژ (0)، بێ سنوور، سێبەری نەرم، w500، بێ Bold.
+// • Rounded cards, soft depth, and a single readable interactive front card.
 // ═════════════════════════════════════════════════════════════════════════════
 
 abstract final class _T {
@@ -38,12 +38,12 @@ abstract final class _T {
   static const double maxWidth = 398;
 
   // ── قووڵایی ستاک ──────────────────────────────────────────────────────
-  static const int visible = 3; // چەند کارت لە پشتەوە دەبینرێن
+  static const int visible = 2; // Front card plus two overlapping layers.
   static const int maxQueued = 10;
-  /// هەموو کارتەکان ڕێک هەمان قەبارەن — هیچ بچووکبوونەوەیەک نییە.
+  /// Equal layout bounds; the two rear layers shrink optically in the stack.
   static const double cardHeight = 74; // دوو دێڕی 14sp + پەدینگ
   static const double depthOffset = 8; // هەر کارتێکی پشتەوە 8px دەردەکەوێت
-  static const double depthFade = 0.12; // کاڵبوونەوەیەکی سووک بۆ قووڵایی
+  static const double depthFade = 0.06;
 
   static const Duration restack = Duration(milliseconds: 380);
   static const Duration enter = Duration(milliseconds: 420);
@@ -79,6 +79,7 @@ class _StackItem {
   final String? actionLabel;
   final VoidCallback? onAction;
   final TextDirection direction;
+  final bool persistent;
   bool leaving = false;
 
   _StackItem({
@@ -88,6 +89,7 @@ class _StackItem {
     required this.actionLabel,
     required this.onAction,
     required this.direction,
+    required this.persistent,
   });
 }
 
@@ -133,6 +135,7 @@ class ProxoErrorStack {
       actionLabel: actionLabel,
       onAction: onAction,
       direction: direction,
+      persistent: MediaQuery.maybeOf(context)?.accessibleNavigation ?? false,
     ));
     // تەنها نوێترینەکان دەمێننەوە.
     while (list.where((e) => !e.leaving).length > _T.maxQueued) {
@@ -168,6 +171,7 @@ class ProxoErrorStack {
   static void _restartTimer(_StackItem item, {Duration? hold}) {
     _timer?.cancel();
     _timedId = item.id;
+    if (item.persistent) return;
     _timer = Timer(hold ?? item.duration, () => _dismiss(item.id));
   }
 
@@ -227,6 +231,20 @@ class _ErrorStackView extends StatelessWidget {
               // دەپارێزن تا ئەنیمەیشنەکەیان تەواو دەبێت.
               final List<_StackItem> live =
                   items.where((e) => !e.leaving).toList();
+              final front = ProxoErrorStack._front(live);
+              final width = (MediaQuery.sizeOf(context).width - _T.gutter * 2)
+                  .clamp(1.0, _T.maxWidth);
+              final painter = TextPainter(
+                text: TextSpan(text: front?.message ?? '', style: _T.text),
+                textDirection: front?.direction ?? TextDirection.rtl,
+                textScaler: MediaQuery.textScalerOf(context),
+              )..layout(maxWidth: (width - _T.pad.horizontal -
+                    (front?.onAction == null ? 0 : 114)).clamp(1, double.infinity));
+              final height = (painter.height + _T.pad.vertical).clamp(
+                _T.cardHeight,
+                (MediaQuery.sizeOf(context).height * .4).clamp(120, 320),
+              );
+              painter.dispose();
               final List<Widget> children = <Widget>[];
               // دواوە سەرەتا دەکێشرێت، پێشەوە لە کۆتایی.
               for (final _StackItem item in items) {
@@ -238,6 +256,7 @@ class _ErrorStackView extends StatelessWidget {
                   key: ValueKey<int>(item.id),
                   item: item,
                   depth: depth,
+                  height: height,
                 ));
               }
               // کارتی ڕۆیشتوو لەسەرەوەی هەموو شتێک بێت.
@@ -269,8 +288,9 @@ class _ErrorStackView extends StatelessWidget {
 class _StackCard extends StatefulWidget {
   final _StackItem item;
   final int depth;
+  final double height;
 
-  const _StackCard({super.key, required this.item, required this.depth});
+  const _StackCard({super.key, required this.item, required this.depth, required this.height});
 
   @override
   State<_StackCard> createState() => _StackCardState();
@@ -285,6 +305,16 @@ class _StackCardState extends State<_StackCard>
   )..forward();
 
   bool _exiting = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (MediaQuery.disableAnimationsOf(context)) {
+      _life.duration = Duration.zero;
+      _life.reverseDuration = Duration.zero;
+      if (!_exiting) _life.value = 1;
+    }
+  }
 
   @override
   void didUpdateWidget(covariant _StackCard old) {
@@ -315,11 +345,11 @@ class _StackCardState extends State<_StackCard>
       child: DecoratedBox(
       decoration: const BoxDecoration(
         color: _T.card,
-        borderRadius: BorderRadius.zero, // گۆشەی تیژ
+        borderRadius: BorderRadius.all(Radius.circular(18)),
         boxShadow: _T.shadow,
       ),
       child: Container(
-        height: _T.cardHeight,
+        height: widget.height,
         padding: _T.pad,
         alignment: Alignment.center,
         child: Directionality(
@@ -328,24 +358,22 @@ class _StackCardState extends State<_StackCard>
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               Expanded(
-                child: ProxoText(
+                child: SingleChildScrollView(child: ProxoText(
                   item.message,
                   style: _T.text,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
+                )),
               ),
               if (front && item.actionLabel != null && item.onAction != null)
                 Padding(
                   padding: const EdgeInsetsDirectional.only(start: 14),
-                  child: GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onTap: () {
+                  child: ConstrainedBox(constraints: const BoxConstraints(maxWidth: 100), child: TextButton(
+                    style: TextButton.styleFrom(minimumSize: const Size(48, 48)),
+                    onPressed: () {
                       _tapDismiss();
                       item.onAction!();
                     },
                     child: ProxoText(item.actionLabel!, style: _T.actionText),
-                  ),
+                  )),
                 ),
             ],
           ),
@@ -357,7 +385,7 @@ class _StackCardState extends State<_StackCard>
     // ── قووڵایی — کارتەکان لەسەر یەکتری، هەمان قەبارە، بە نەرمی جێگۆڕکێ ──
     final Widget depthed = TweenAnimationBuilder<double>(
       tween: Tween<double>(end: widget.depth.toDouble()),
-      duration: _T.restack,
+      duration: MediaQuery.disableAnimationsOf(context) ? Duration.zero : _T.restack,
       curve: Curves.easeOutCubic,
       child: card,
       builder: (BuildContext _, double d, Widget? child) {
@@ -367,7 +395,8 @@ class _StackCardState extends State<_StackCard>
           opacity: opacity,
           child: Transform.translate(
             offset: Offset(0, _T.depthOffset * d),
-            child: child,
+            child: Transform.scale(scale: 1 - d * .045,
+              alignment: Alignment.topCenter, child: child),
           ),
         );
       },
@@ -407,7 +436,7 @@ class _StackCardState extends State<_StackCard>
       },
     );
 
-    if (!front) return IgnorePointer(child: animated);
+    if (!front) return ExcludeSemantics(child: IgnorePointer(child: animated));
 
     return Dismissible(
       key: ValueKey<String>('dismiss_${item.id}'),
@@ -418,11 +447,12 @@ class _StackCardState extends State<_StackCard>
         ProxoErrorStack._dismiss(item.id);
         ProxoErrorStack._remove(item.id);
       },
-      child: GestureDetector(
+      child: Semantics(liveRegion: true, label: item.message, onDismiss: _tapDismiss,
+        child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: _tapDismiss,
         child: animated,
-      ),
+      )),
     );
   }
 }
