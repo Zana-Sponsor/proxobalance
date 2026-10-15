@@ -1,0 +1,10 @@
+00:00 +0: loading /home/runner/work/proxobalance/proxobalance/after/proxo_app/test/profile_loading_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: Profile coalesces overlapping reads and later refresh stays fresh
+PROFILE_READS initial+Auth+two-overlaps: profiles=1 wallets=1
+00:00 +1: returning from a saved edit supersedes a pending older read
+00:01 +2: live profile and wallet updates survive a late read response
+00:01 +3: pending reads cannot apply after the authenticated owner changes
+00:01 +4: closing Profile while its reads are pending is safe
+00:01 +5: (tearDownAll)
+00:01 +5: All tests passed!

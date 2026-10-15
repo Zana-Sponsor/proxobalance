@@ -1,0 +1,23 @@
+{
+  "size": "Physical size: 320x640\nOverride size: 1179x1920",
+  "density": "Physical density: 160\nOverride density: 480",
+  "adb_back_events": 1,
+  "adb_tap_events": [
+    [
+      590,
+      324
+    ],
+    [
+      590,
+      324
+    ]
+  ],
+  "adb_screenshots": [
+    "phone-chrome-native-scale-1.0",
+    "phone-chrome-native-scale-2.0"
+  ],
+  "drive_timeout_seconds": 600,
+  "drive_timed_out": false,
+  "input-method_capture_error": "Command '['adb', 'shell', 'dumpsys', 'input_method']' returned non-zero exit status 1.",
+  "window_capture_error": "Command '['adb', 'shell', 'dumpsys', 'window', 'windows']' returned non-zero exit status 1."
+}

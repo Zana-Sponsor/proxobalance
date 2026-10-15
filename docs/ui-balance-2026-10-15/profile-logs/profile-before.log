@@ -1,0 +1,6 @@
+00:00 +0: loading /home/runner/work/proxobalance/proxobalance/after/proxo_app/test/profile_loading_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: Profile coalesces overlapping reads and later refresh stays fresh
+PROFILE_READS initial+Auth+two-overlaps: profiles=4 wallets=3
+00:00 +1: (tearDownAll)
+00:00 +1: All tests passed!

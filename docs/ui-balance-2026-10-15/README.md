@@ -1,5 +1,7 @@
 # Proportions, retained screen state and shared refresh
 
+[Final requirement audit and Profile data-freshness follow-up](completion-audit.md).
+
 This follow-up addresses the reported oversized Auth/payment marks and logout icon, crowded visual weight, repeat screen creation, and inconsistent refresh behavior.
 
 Application source: `8c0f3645e94300f89371c95b953fe75e0f2e277d`.

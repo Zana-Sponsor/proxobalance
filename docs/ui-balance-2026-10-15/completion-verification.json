@@ -1,0 +1,235 @@
+{
+  "baseline": "83086805d987938958c1a133545c4f3d63340efe",
+  "application": "82b4fe3c8311e5ee5343965df7e41753c4b01e9a",
+  "harness": "6248e6a24569cfd8ba259e8bc8ec66e20619b39a",
+  "runs": [
+    {
+      "id": 38805771230,
+      "name": "Verify ProxoLink",
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 1
+    },
+    {
+      "id": 38805771337,
+      "name": "Sidebar profile navigation evidence",
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 1
+    },
+    {
+      "id": 38805771359,
+      "name": "UI remediation evidence",
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 1
+    },
+    {
+      "id": 38805771272,
+      "name": "Auth localization and visual polish evidence",
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 1
+    },
+    {
+      "id": 38805771273,
+      "name": "Build ProxoLink native verification",
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 1
+    },
+    {
+      "id": 38805771265,
+      "name": "Native UI iconography verification",
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 2
+    }
+  ],
+  "artifacts": [
+    {
+      "id": 12005074598,
+      "name": "chrome-after",
+      "bytes": 3014260,
+      "sha256": "ba2e9c2fd14b0f982bd4298c69f0d4000c5ce70025dc99898b94e7da23710c20",
+      "independent_sha256_verified": true,
+      "zip_crc_verified": true
+    },
+    {
+      "id": 12006487299,
+      "name": "polish-after",
+      "bytes": 10011512,
+      "sha256": "b106df99023869db3475830e25e6f9a4a4bfa4e5b916a25cf8693331025cdc7c",
+      "independent_sha256_verified": true,
+      "zip_crc_verified": true
+    },
+    {
+      "id": 12007300467,
+      "name": "ui-native-android-fixtures-narrow",
+      "bytes": 2554312,
+      "sha256": "e3086e803cf1c513f18ea730dd735f09716f2f383a7b895b53b8ca5c525c11de",
+      "independent_sha256_verified": true,
+      "zip_crc_verified": true
+    },
+    {
+      "id": 12006368461,
+      "name": "ui-native-android-fixtures-tablet",
+      "bytes": 2420123,
+      "sha256": "0f44046b565680afe62560f64700c6bec53518d48ad5ee1afe2cfd0303386f4a",
+      "independent_sha256_verified": true,
+      "zip_crc_verified": true
+    },
+    {
+      "id": 12006054718,
+      "name": "ui-native-android-fixtures-phone",
+      "bytes": 2879613,
+      "sha256": "0fdb39d25b8600401c4153069023fcb0203a4f40fbd3bddcd71efd8850b0d5ee",
+      "independent_sha256_verified": true,
+      "zip_crc_verified": true
+    }
+  ],
+  "profile_cases": 5,
+  "request_counts": {
+    "scenario": "initial mount plus replayed tokenRefreshed plus two overlapping manual refreshes",
+    "before": {
+      "profiles": 4,
+      "wallets": 3
+    },
+    "after": {
+      "profiles": 1,
+      "wallets": 1
+    },
+    "next_manual_refresh": {
+      "profiles": 1,
+      "wallets": 1
+    }
+  },
+  "visual_comparison": {
+    "frames": 123,
+    "exact": 117,
+    "differences": 6,
+    "difference_scope": "Notification fixture timestamp text only; zero changed pixels outside measured timestamp bounds",
+    "record": "completion-pixel-comparison.json"
+  },
+  "diagnostics": [
+    {
+      "run": 38804737364,
+      "result": "failure",
+      "reason": "Baseline test expected 3 profile reads but the replayed Auth event adds a fourth; corrected using pinned GoTrue source and exact reproduction."
+    },
+    {
+      "run": 38805323216,
+      "result": "failure",
+      "reason": "Two internal realtime topic accesses in fixture triggered analyzer warnings; replaced with actual phx_join/phx_leave frame tracking, no rule suppression."
+    },
+    {
+      "run": 38805771265,
+      "attempt": 1,
+      "job": 116666681029,
+      "result": "failure",
+      "reason": "Phone passed all in-app tests, then RequestData lost its VM service and adb reported device offline. Driver timeout was false; two actual taps and one Back are recorded. Only this job was retried.",
+      "artifact": 12006498272,
+      "sha256": "cb72a90bcb6b126c8ec86f45c64a33bbd91aee3142e3502e22173ae806209e9d",
+      "independent_sha256_verified": true,
+      "zip_crc_verified": true
+    }
+  ],
+  "limits": [
+    "Representative physical-device P50/P95, CPU/heap/frame profiling not performed",
+    "Live authentication, bank payments, push delivery and manual TalkBack unverified",
+    "Prior strict FIRST WebView pixel-parity and isolated staging configuration blockers remain open",
+    "Protected native-runtime and isolated-hosted jobs skipped",
+    "PR remains Draft/Open/Unmerged; no production deployment or live migration"
+  ],
+  "logs": {
+    "profile-logs/phone-attempt1-driver-excerpt.log": "017ba74480c8ad4101554644265dc04f44cef6dee152cce6d4e6acc9f23d8a90",
+    "profile-logs/phone-attempt1-device.json": "fba029eff5caf84c991cb0cfd7d39f4e1de31418c911452f8edd4e6ee375fff8",
+    "profile-logs/profile-before.log": "d8684911babc462ce771edb28b47819d1f57c25afadcdf82b90ee891b7529bde",
+    "profile-logs/profile-after.log": "099c6716e365ee2892084490f6807534b3864bcfc3187f81a201f6f1978cf4e8"
+  },
+  "native_configurations": [
+    {
+      "config": "phone",
+      "completed": true,
+      "pngs": 37,
+      "physical_size": [
+        1179.0,
+        1920.0
+      ],
+      "logical_size": [
+        393.0,
+        640.0
+      ],
+      "dpr": 3.0,
+      "adb_taps": 2,
+      "adb_back_events": 1,
+      "drive_timed_out": false,
+      "decoded_png_dimensions": [
+        [
+          1179,
+          1920
+        ]
+      ]
+    },
+    {
+      "config": "narrow",
+      "completed": true,
+      "pngs": 37,
+      "physical_size": [
+        840.0,
+        1920.0
+      ],
+      "logical_size": [
+        280.0,
+        640.0
+      ],
+      "dpr": 3.0,
+      "adb_taps": 2,
+      "adb_back_events": 1,
+      "drive_timed_out": false,
+      "decoded_png_dimensions": [
+        [
+          840,
+          1920
+        ]
+      ]
+    },
+    {
+      "config": "tablet",
+      "completed": true,
+      "pngs": 37,
+      "physical_size": [
+        1536.0,
+        1704.0
+      ],
+      "logical_size": [
+        768.0,
+        852.0
+      ],
+      "dpr": 2.0,
+      "adb_taps": 2,
+      "adb_back_events": 1,
+      "drive_timed_out": false,
+      "decoded_png_dimensions": [
+        [
+          1536,
+          1704
+        ]
+      ]
+    }
+  ],
+  "native_json_sha256": {
+    "completion-native/narrow.json": "566404acea6e7c58b88902963a43f39b67c6ae30b7ea1c26903b26c044c10066",
+    "completion-native/tablet-device.json": "0b66c539dc0e3c694f22466c37039d7a2c71b6ec7c9c4a1745b5e5d9a31fb514",
+    "completion-native/tablet.json": "68995bca9fb459b1c8e33bdb39df8b338bfda444a023c14b48dedc53ecc3d87f",
+    "completion-native/phone.json": "7c5a6b625412625fe5381ea1271c7c23eb18a534c5ade0787c57586af4347f2c",
+    "completion-native/narrow-device.json": "7308d8afc825d02bc4e4eded3d48e0acc3dc20d62191744be7e58725ad4ca83a",
+    "completion-native/phone-device.json": "52bdb3681efa193a16f4f0c728211c438c76f4ddc0fed2357e652b0e5fe6e8c4"
+  },
+  "native_jobs_final_attempt": {
+    "phone": 116670906843,
+    "narrow": 116670908312,
+    "tablet": 116670909473
+  },
+  "checked_at": "2026-10-15T21:16:18.809508+00:00"
+}

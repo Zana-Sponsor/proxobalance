@@ -1,0 +1,1417 @@
+{
+  "baseline_application": "8c0f3645e94300f89371c95b953fe75e0f2e277d",
+  "candidate_application": "82b4fe3c8311e5ee5343965df7e41753c4b01e9a",
+  "candidate_harness": "6248e6a24569cfd8ba259e8bc8ec66e20619b39a",
+  "compared": 123,
+  "equal": 117,
+  "frames": [
+    {
+      "file": "activation-ar-280-s2.0-d2.0.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "522cb8fc96a55715fd205051e3dc0573fb70a03e2ca398c35d8869d5afbeb557"
+    },
+    {
+      "file": "activation-ar-393-s1.0-d2.0.png",
+      "size": [
+        786,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "34b8cc72469e49bafe286559227ddb4c9e63b94b6a55b9f99323ae760cd38239"
+    },
+    {
+      "file": "activation-ckb-280-s2.0-d2.0.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "1800eac107c50affcf3aa853b9ce74173997a0374f3f8dc27b38b804fe4be606"
+    },
+    {
+      "file": "activation-ckb-393-s1.0-d2.0.png",
+      "size": [
+        786,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "937af14db0cda979b8c500723ec6caea8b97caa8e64cb90861557d6c23f6ad36"
+    },
+    {
+      "file": "activation-kmr-280-s2.0-d2.0.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "1efed2c7fbccc121d73bce0cfed8692df4bcb3ca11987c5b21dd0dedc186e6fc"
+    },
+    {
+      "file": "activation-kmr-393-s1.0-d2.0.png",
+      "size": [
+        786,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "0437be4b1bb300d4fbdb24735afd900211859a73d809e95bd03da75fba77c2fb"
+    },
+    {
+      "file": "ads-ar-280-s2.0-d2.0.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "c25c4864303640f769dcd019f06fdff3b0e78f4a0993c74f3ddd76cf5a28fe56"
+    },
+    {
+      "file": "ads-ar-393-s1.0-d3.0.png",
+      "size": [
+        1179,
+        2556
+      ],
+      "equal_pixels": true,
+      "sha256": "be164c81469f45abb38bf5c73d62a6f2e084ec6e7cfb3073c7a6fb7d0004433c"
+    },
+    {
+      "file": "ads-ckb-280-s2.0-d2.0.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "115dc27e6acab75f0cedb2e3aae121f61fff389fae70ffa5f7374e8a5986c7b6"
+    },
+    {
+      "file": "ads-ckb-393-s1.0-d3.0.png",
+      "size": [
+        1179,
+        2556
+      ],
+      "equal_pixels": true,
+      "sha256": "6cb546cc6107c8b32fd93cb6c7ef07cd4439589285a67df9bdc9bcfeb4a6dd4a"
+    },
+    {
+      "file": "ads-kmr-280-s2.0-d2.0.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "cb0a197043a7f631bbaa821777c44ebddf77995a82fa91b61aeca04c6c8556df"
+    },
+    {
+      "file": "ads-kmr-393-s1.0-d3.0.png",
+      "size": [
+        1179,
+        2556
+      ],
+      "equal_pixels": true,
+      "sha256": "a0586f0b19d0e7612b839011285c294a88e4b29aee76095c9fb30011c3b56165"
+    },
+    {
+      "file": "create-ar-280-s2.0-d2.0-bottom.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "c28e4941b2a5067ee411da22ee6a1b6d292a0809ff79ead36cb56ea8c0a33135"
+    },
+    {
+      "file": "create-ar-280-s2.0-d2.0.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "5d3acdd8d656954809d2209421162e3438e03cd49e87ebf5079589284b12fa18"
+    },
+    {
+      "file": "create-ar-393-s1.0-d3.0-bottom.png",
+      "size": [
+        1179,
+        2556
+      ],
+      "equal_pixels": true,
+      "sha256": "e8e95a6a27f26ffa8d8b0eeb9c2db08ee9d355c42738f9f54338d643c9d34021"
+    },
+    {
+      "file": "create-ar-393-s1.0-d3.0.png",
+      "size": [
+        1179,
+        2556
+      ],
+      "equal_pixels": true,
+      "sha256": "1253a7a54acdf36637b85f875171bb51a9542008d3b0e858b4cdf4aed1ccc098"
+    },
+    {
+      "file": "create-ckb-280-s2.0-d2.0-bottom.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "6d3de6442e54443f25c78a71da6784c50ada9ea5f18b8a901d2e0e048abb3206"
+    },
+    {
+      "file": "create-ckb-280-s2.0-d2.0.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "75afba2e74cb7546664cb37351339c75e8732543d6662b27272190d3cbd7d013"
+    },
+    {
+      "file": "create-ckb-393-s1.0-d3.0-bottom.png",
+      "size": [
+        1179,
+        2556
+      ],
+      "equal_pixels": true,
+      "sha256": "34d5cc131ab3cbcc98688ca08af51856cb7c7ed6ccf453505ac583e6f725524c"
+    },
+    {
+      "file": "create-ckb-393-s1.0-d3.0.png",
+      "size": [
+        1179,
+        2556
+      ],
+      "equal_pixels": true,
+      "sha256": "5cb311b63e6eb4549b8ee3cd322c135b699e5b0aac9ee154507b5a6c96418b1b"
+    },
+    {
+      "file": "create-kmr-280-s2.0-d2.0-bottom.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "ae36592beecffc3b04c8b4c350b3c6f37788d78f75afbd53f69fc53741e38926"
+    },
+    {
+      "file": "create-kmr-280-s2.0-d2.0.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "15be1100833f7a9ff3fecf4dbc52852c35a01764d2f095b4c239a897b0b0ec1e"
+    },
+    {
+      "file": "create-kmr-393-s1.0-d3.0-bottom.png",
+      "size": [
+        1179,
+        2556
+      ],
+      "equal_pixels": true,
+      "sha256": "d6647dc2233f9f3f370a3130103756c5cd848f3278423803ced192cf4ec2f3cb"
+    },
+    {
+      "file": "create-kmr-393-s1.0-d3.0.png",
+      "size": [
+        1179,
+        2556
+      ],
+      "equal_pixels": true,
+      "sha256": "3b0fba87784032d1e21a482510087683e4ef756dcdacfceffe89a7dcb099824c"
+    },
+    {
+      "file": "deposit-ar-280-s2.0-d2.0-bottom.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "d8fb392fb1c7b87df9f9dfadbbe12e39c3f543ce2587fbbe004805e322f7e948"
+    },
+    {
+      "file": "deposit-ar-280-s2.0-d2.0.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "91c2d1b4371b13656e8164452c8acb574b8615b8eb039cafd8eaf4fc6b0bf5f3"
+    },
+    {
+      "file": "deposit-ar-393-s1.0-d3.0-bottom.png",
+      "size": [
+        1179,
+        2556
+      ],
+      "equal_pixels": true,
+      "sha256": "bcac862987993a1cafdd20279ae1f49ebe9192ea3e6705d896782819faa3b7f0"
+    },
+    {
+      "file": "deposit-ar-393-s1.0-d3.0.png",
+      "size": [
+        1179,
+        2556
+      ],
+      "equal_pixels": true,
+      "sha256": "b4e1aa71b3679b2cd9411170ba043626f30ab73be8ececd0c4ad6936b70cb6ce"
+    },
+    {
+      "file": "deposit-ckb-280-s2.0-d2.0-bottom.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "ee100bd6586283939dca8494c262c327ec9d0115ac190f7de7413d90fb446fd3"
+    },
+    {
+      "file": "deposit-ckb-280-s2.0-d2.0.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "e712310e89ee081248f7f7a82c3070ac69977fdecf6674985d5a1169bb86c77d"
+    },
+    {
+      "file": "deposit-ckb-393-s1.0-d3.0-bottom.png",
+      "size": [
+        1179,
+        2556
+      ],
+      "equal_pixels": true,
+      "sha256": "9c0f8d11ff7cf3ad833acff8849fbdbe39dbe47936561868875dbdb598a712d9"
+    },
+    {
+      "file": "deposit-ckb-393-s1.0-d3.0.png",
+      "size": [
+        1179,
+        2556
+      ],
+      "equal_pixels": true,
+      "sha256": "b474c59f5a8e91f10f17958e7500d31d3d9acd28991ba01ca703b5917b30b260"
+    },
+    {
+      "file": "deposit-kmr-280-s2.0-d2.0-bottom.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "b2a942c29305bf92fb548a6474f259e37529e9ce2d29d304f03a6f47bc675368"
+    },
+    {
+      "file": "deposit-kmr-280-s2.0-d2.0.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "30222ad7b57cd161054a1bfdc8dbd9f328a29f75c800279e8f9121b32e56a94b"
+    },
+    {
+      "file": "deposit-kmr-393-s1.0-d3.0-bottom.png",
+      "size": [
+        1179,
+        2556
+      ],
+      "equal_pixels": true,
+      "sha256": "6e5f3a9b99aec904de38683c3989961727a78328c164843c7ff509e59a309a02"
+    },
+    {
+      "file": "deposit-kmr-393-s1.0-d3.0.png",
+      "size": [
+        1179,
+        2556
+      ],
+      "equal_pixels": true,
+      "sha256": "09c075805919a589ea44d53a88e35298b297af1d7e7dac982aab29d809127e0e"
+    },
+    {
+      "file": "discounts-ar-280-s2.0-d2.0.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "b33bc6966340a9f2d10725827e8fcabe209e4389460ebf35451b72aec65e3fc9"
+    },
+    {
+      "file": "discounts-ar-393-s1.0-d3.0.png",
+      "size": [
+        1179,
+        2556
+      ],
+      "equal_pixels": true,
+      "sha256": "36d659c059749b2fa2ee68b43aad8369d5774d236cab7ce1eb29bbeb16ad8b79"
+    },
+    {
+      "file": "discounts-ckb-280-s2.0-d2.0.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "113f1a86eed76ede891564154134530841729a186fc201d8488be2209e670575"
+    },
+    {
+      "file": "discounts-ckb-393-s1.0-d3.0.png",
+      "size": [
+        1179,
+        2556
+      ],
+      "equal_pixels": true,
+      "sha256": "2cd9263b401fb8e87725ca9f6990a0d0a2f8064812c032e65ddbdd74b4b9bb22"
+    },
+    {
+      "file": "discounts-kmr-280-s2.0-d2.0.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "6a2016aa788408844735420bb9e0b5ce4a380c08548e339f1a21aaae62ebdf77"
+    },
+    {
+      "file": "discounts-kmr-393-s1.0-d3.0.png",
+      "size": [
+        1179,
+        2556
+      ],
+      "equal_pixels": true,
+      "sha256": "4f9f972c18e3c911bfce05b79a8d9f4aa9223cc9a231fadbcba2b5b118f01a21"
+    },
+    {
+      "file": "forgot-ar-280-s2.0-d2.0.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "e19c795a2eba9618e3532570cd98edd7e495390787fa9c50051453ed858ca70f"
+    },
+    {
+      "file": "forgot-ar-393-s1.0-d3.0.png",
+      "size": [
+        1179,
+        2556
+      ],
+      "equal_pixels": true,
+      "sha256": "a3f2e1c9de524401ce68b8e00662e116ceb07cf06f062b9b9b83fc12aee1956e"
+    },
+    {
+      "file": "forgot-ckb-280-s2.0-d2.0.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "2356a77cbe0a6436db6621b89cc77fdc3fccab8bb290dde95c8b509d89efc341"
+    },
+    {
+      "file": "forgot-ckb-393-s1.0-d3.0.png",
+      "size": [
+        1179,
+        2556
+      ],
+      "equal_pixels": true,
+      "sha256": "8dc857f1dc644f70fe792b1bbbe6866c5ef7dedcde87cac77df79bddad3a6f8a"
+    },
+    {
+      "file": "forgot-kmr-280-s2.0-d2.0.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "3231f57074bf48df64dd358e5d7cf90007642142c6ac4e956b988af654335c03"
+    },
+    {
+      "file": "forgot-kmr-393-s1.0-d3.0.png",
+      "size": [
+        1179,
+        2556
+      ],
+      "equal_pixels": true,
+      "sha256": "05ef8f1c8bbd5a29c30e8c9a2f15fc76e66c0d6fe556e2409913c49ad28764ef"
+    },
+    {
+      "file": "home-ar-280-s2.0-d2.0-bottom.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "a99b5b77457367cb19d8b463d5d2575d32758829e027b8089acff9a4771e1bc7"
+    },
+    {
+      "file": "home-ar-280-s2.0-d2.0.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "b072825ae78bdcdcfa37329f286639c43b08ca634698fa98aaa7147a20fecd82"
+    },
+    {
+      "file": "home-ar-393-s1.0-d3.0.png",
+      "size": [
+        1179,
+        2556
+      ],
+      "equal_pixels": true,
+      "sha256": "6052fec2859a352f74f286435119fc46c4e52be314511fe64b245a7425dced14"
+    },
+    {
+      "file": "home-ckb-280-s2.0-d2.0-bottom.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "c4957ba012227c00f4ea4dc2283f90db4a535b7549897f0ff9a4f93606b59d63"
+    },
+    {
+      "file": "home-ckb-280-s2.0-d2.0.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "49b0a155dccda3f74371a1fe897e3f49487b686733924d04e66de7a59fb65657"
+    },
+    {
+      "file": "home-ckb-393-s1.0-d3.0.png",
+      "size": [
+        1179,
+        2556
+      ],
+      "equal_pixels": true,
+      "sha256": "0e7e372a4965928749d6ccc2f429feb04171f846b6aa16165c8e68ef1a414d0a"
+    },
+    {
+      "file": "home-kmr-280-s2.0-d2.0-bottom.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "5ce1484b0a14fc7141503b143bfdad993d64af3752828b37e544fe4a1e47c43e"
+    },
+    {
+      "file": "home-kmr-280-s2.0-d2.0.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "ecba5cb7daf055cbc91518ca96dc8310afa943e56a6cc79eab3a6bcf36a539ca"
+    },
+    {
+      "file": "home-kmr-393-s1.0-d3.0.png",
+      "size": [
+        1179,
+        2556
+      ],
+      "equal_pixels": true,
+      "sha256": "9af8d3d30b1d6062cef82ac5b81080d9bbc96b61b8c28c674d829000c1a484e4"
+    },
+    {
+      "file": "levels-ar-280-s2.0-d2.0.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "332efe2f1a439b7b538846337abd8bca4dbb60b3164de58c704fe289125a50f3"
+    },
+    {
+      "file": "levels-ar-393-s1.0-d3.0.png",
+      "size": [
+        1179,
+        2556
+      ],
+      "equal_pixels": true,
+      "sha256": "05ca96bbd2dd0ea2d24a45d5eea83568726f75566634d1b4ab3449b03e5c4c85"
+    },
+    {
+      "file": "levels-ckb-280-s2.0-d2.0.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "d95d54cdafcb76a2f5909ce3b7ddf50af2ab572c70284e23ef59e28adf500611"
+    },
+    {
+      "file": "levels-ckb-393-s1.0-d3.0.png",
+      "size": [
+        1179,
+        2556
+      ],
+      "equal_pixels": true,
+      "sha256": "19682450d78df02d660543d0fe6e3eee859f11825462f97986921c3cf747860d"
+    },
+    {
+      "file": "levels-kmr-280-s2.0-d2.0.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "94e24c6b691e9dc90060ca9843ec7b39a5c2a0261fd643177d536e9b0aaf826a"
+    },
+    {
+      "file": "levels-kmr-393-s1.0-d3.0.png",
+      "size": [
+        1179,
+        2556
+      ],
+      "equal_pixels": true,
+      "sha256": "c3cf3a74849bd24f9e6641f7855f696247f3f556cb05e2348cfd003ebc59b24d"
+    },
+    {
+      "file": "login-ar-280-s2.0-d2.0-bottom.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "a4f975d9105f5aa4cbd3a3ee33d3b2bd97a2277d223ca2e6914cca8744f5c239"
+    },
+    {
+      "file": "login-ar-280-s2.0-d2.0.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "0408c4c38fcdb1dcbd36f793c64046cd3cc6da2f2f7ba8588c988f108c667ac2"
+    },
+    {
+      "file": "login-ar-393-s1.0-d3.0.png",
+      "size": [
+        1179,
+        2556
+      ],
+      "equal_pixels": true,
+      "sha256": "66d193d518fed0a65fb5ed25b4d26c3acf013a0390e88f06717c4a215060bc8a"
+    },
+    {
+      "file": "login-ckb-280-s2.0-d2.0-bottom.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "c6197c8138b3d2e7ed288345efa6f511cb6584622f42c021684fe9ba51d587cb"
+    },
+    {
+      "file": "login-ckb-280-s2.0-d2.0.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "578fc26108a2d734ecc3d3ae615e79c942326b162646fbac02197f5fa7623783"
+    },
+    {
+      "file": "login-ckb-393-s1.0-d3.0.png",
+      "size": [
+        1179,
+        2556
+      ],
+      "equal_pixels": true,
+      "sha256": "13ed88573333b119b13ad93e23f75813b6bae9735c54c145d2fad19b49cfe380"
+    },
+    {
+      "file": "login-kmr-280-s2.0-d2.0-bottom.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "fe516e88579c4e68e48422895706f71c76a5f783a7b54188589097be87317984"
+    },
+    {
+      "file": "login-kmr-280-s2.0-d2.0.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "bd69d5b7a7b4dbe432b7fdd96d062519f44569f7d5686195a70df9cb18ca27a2"
+    },
+    {
+      "file": "login-kmr-393-s1.0-d3.0.png",
+      "size": [
+        1179,
+        2556
+      ],
+      "equal_pixels": true,
+      "sha256": "463fc2990e8406de51055434c2993f21f49aea11ec291540f5ada0edbc2a427a"
+    },
+    {
+      "file": "navigation-ar-280-s2.0-d2.0.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "ff10b55fa6c713fc6d4e8048f4aec46fcd26379f4f50902a68020f63b1c9fbb6"
+    },
+    {
+      "file": "navigation-ar-393-s1.0-d3.0.png",
+      "size": [
+        1179,
+        2556
+      ],
+      "equal_pixels": true,
+      "sha256": "1aedcf610785cabf8214c13c752051cc0e1f261d36e1ba03348e895d8ee0127b"
+    },
+    {
+      "file": "navigation-ckb-280-s2.0-d2.0.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "bc2b4816aab9364b937ec6679fc63a5345d859a5afc4fcdb48a6a5e2d1425b8a"
+    },
+    {
+      "file": "navigation-ckb-393-s1.0-d3.0.png",
+      "size": [
+        1179,
+        2556
+      ],
+      "equal_pixels": true,
+      "sha256": "94f7ab606b2189448382683dd7f450ea6be0a55d38c03a689485d86f7f63369f"
+    },
+    {
+      "file": "navigation-kmr-280-s2.0-d2.0.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "6d79828debc03d57ce1d4585c96800842d2f17520b9d153eca55dc7c3d8a50b2"
+    },
+    {
+      "file": "navigation-kmr-393-s1.0-d3.0.png",
+      "size": [
+        1179,
+        2556
+      ],
+      "equal_pixels": true,
+      "sha256": "2b26e6810f0576112321ce262ce01d507dd8dc4f6fc3abdfa2c51e1a07dfe6ec"
+    },
+    {
+      "file": "notifications-ar-280-s2.0-d2.0.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": false,
+      "sha256": "fbef5499aecccee6cffe922b0ecad3a09f5201fb785cccf5dda2478784c82c67",
+      "changed_pixels": 1413,
+      "difference_bounds_px": [
+        160,
+        568,
+        331,
+        937
+      ],
+      "timestamp_text": {
+        "before": [
+          {
+            "text": "٠٥:٤٤ PM",
+            "bounds_dp": [
+              121.3251953125,
+              275.1,
+              77.6748046875,
+              30.0
+            ]
+          },
+          {
+            "text": "٠٥:٤٧ PM",
+            "bounds_dp": [
+              70.28076171875,
+              447.1,
+              77.6748046875,
+              30.0
+            ]
+          }
+        ],
+        "after": [
+          {
+            "text": "٠٨:٥٣ PM",
+            "bounds_dp": [
+              121.3251953125,
+              275.1,
+              77.6748046875,
+              30.0
+            ]
+          },
+          {
+            "text": "٠٨:٥٦ PM",
+            "bounds_dp": [
+              70.28076171875,
+              447.1,
+              77.6748046875,
+              30.0
+            ]
+          }
+        ]
+      },
+      "changed_pixels_outside_timestamp_bounds": 0
+    },
+    {
+      "file": "notifications-ar-393-s1.0-d3.0.png",
+      "size": [
+        1179,
+        2556
+      ],
+      "equal_pixels": false,
+      "sha256": "6f2407968521c7f89d4be5dfdbab5f4dc1ec4229bf26c061ad8afc1c060705a7",
+      "changed_pixels": 565,
+      "difference_bounds_px": [
+        651,
+        490,
+        774,
+        833
+      ],
+      "timestamp_text": {
+        "before": [
+          {
+            "text": "٠٥:٤٣ PM",
+            "bounds_dp": [
+              212.1044921875,
+              158.5,
+              39.21240234375,
+              15.0
+            ]
+          },
+          {
+            "text": "٠٥:٤٦ PM",
+            "bounds_dp": [
+              241.015380859375,
+              266.5,
+              39.21240234375,
+              15.0
+            ]
+          }
+        ],
+        "after": [
+          {
+            "text": "٠٨:٥٣ PM",
+            "bounds_dp": [
+              212.1044921875,
+              158.5,
+              39.21240234375,
+              15.0
+            ]
+          },
+          {
+            "text": "٠٨:٥٦ PM",
+            "bounds_dp": [
+              241.015380859375,
+              266.5,
+              39.21240234375,
+              15.0
+            ]
+          }
+        ]
+      },
+      "changed_pixels_outside_timestamp_bounds": 0
+    },
+    {
+      "file": "notifications-ckb-280-s2.0-d2.0.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": false,
+      "sha256": "93f5a19d5837ac868299bf0f99ef732c9a305d9872d976c8d0454566333d3921",
+      "changed_pixels": 1413,
+      "difference_bounds_px": [
+        136,
+        568,
+        331,
+        937
+      ],
+      "timestamp_text": {
+        "before": [
+          {
+            "text": "٠٥:٤٤ PM",
+            "bounds_dp": [
+              121.3251953125,
+              275.1,
+              77.6748046875,
+              30.0
+            ]
+          },
+          {
+            "text": "٠٥:٤٧ PM",
+            "bounds_dp": [
+              58.232421875,
+              447.1,
+              77.6748046875,
+              30.0
+            ]
+          }
+        ],
+        "after": [
+          {
+            "text": "٠٨:٥٣ PM",
+            "bounds_dp": [
+              121.3251953125,
+              275.1,
+              77.6748046875,
+              30.0
+            ]
+          },
+          {
+            "text": "٠٨:٥٦ PM",
+            "bounds_dp": [
+              58.232421875,
+              447.1,
+              77.6748046875,
+              30.0
+            ]
+          }
+        ]
+      },
+      "changed_pixels_outside_timestamp_bounds": 0
+    },
+    {
+      "file": "notifications-ckb-393-s1.0-d3.0.png",
+      "size": [
+        1179,
+        2556
+      ],
+      "equal_pixels": false,
+      "sha256": "a2c55fa02fb456addb96cbc853f7e426bef4d00b60fbf94ebe9be8ff96efdd73",
+      "changed_pixels": 565,
+      "difference_bounds_px": [
+        638,
+        490,
+        756,
+        833
+      ],
+      "timestamp_text": {
+        "before": [
+          {
+            "text": "٠٥:٤٣ PM",
+            "bounds_dp": [
+              207.74267578125,
+              158.5,
+              39.21240234375,
+              15.0
+            ]
+          },
+          {
+            "text": "٠٥:٤٦ PM",
+            "bounds_dp": [
+              234.9912109375,
+              266.5,
+              39.21240234375,
+              15.0
+            ]
+          }
+        ],
+        "after": [
+          {
+            "text": "٠٨:٥٣ PM",
+            "bounds_dp": [
+              207.74267578125,
+              158.5,
+              39.21240234375,
+              15.0
+            ]
+          },
+          {
+            "text": "٠٨:٥٦ PM",
+            "bounds_dp": [
+              234.9912109375,
+              266.5,
+              39.21240234375,
+              15.0
+            ]
+          }
+        ]
+      },
+      "changed_pixels_outside_timestamp_bounds": 0
+    },
+    {
+      "file": "notifications-kmr-280-s2.0-d2.0.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": false,
+      "sha256": "0d33032b52e92f4437058fd001e83b101355ff6809b1752b0fb01bfcb4900fad",
+      "changed_pixels": 1411,
+      "difference_bounds_px": [
+        153,
+        568,
+        331,
+        937
+      ],
+      "timestamp_text": {
+        "before": [
+          {
+            "text": "٠٥:٤٤ PM",
+            "bounds_dp": [
+              121.3251953125,
+              275.1,
+              77.6748046875,
+              30.0
+            ]
+          },
+          {
+            "text": "٠٥:٤٧ PM",
+            "bounds_dp": [
+              67.06103515625,
+              447.1,
+              77.6748046875,
+              30.0
+            ]
+          }
+        ],
+        "after": [
+          {
+            "text": "٠٨:٥٣ PM",
+            "bounds_dp": [
+              121.3251953125,
+              275.1,
+              77.6748046875,
+              30.0
+            ]
+          },
+          {
+            "text": "٠٨:٥٦ PM",
+            "bounds_dp": [
+              67.06103515625,
+              447.1,
+              77.6748046875,
+              30.0
+            ]
+          }
+        ]
+      },
+      "changed_pixels_outside_timestamp_bounds": 0
+    },
+    {
+      "file": "notifications-kmr-393-s1.0-d3.0.png",
+      "size": [
+        1179,
+        2556
+      ],
+      "equal_pixels": false,
+      "sha256": "79835b9dd923dd9542edcbecd2d9fb30cacc18e0f9e900fffe6c2fb3d75db977",
+      "changed_pixels": 562,
+      "difference_bounds_px": [
+        624,
+        490,
+        769,
+        833
+      ],
+      "timestamp_text": {
+        "before": [
+          {
+            "text": "٠٥:٤٣ PM",
+            "bounds_dp": [
+              203.065673828125,
+              158.5,
+              39.21240234375,
+              15.0
+            ]
+          },
+          {
+            "text": "٠٥:٤٦ PM",
+            "bounds_dp": [
+              239.405517578125,
+              266.5,
+              39.21240234375,
+              15.0
+            ]
+          }
+        ],
+        "after": [
+          {
+            "text": "٠٨:٥٣ PM",
+            "bounds_dp": [
+              203.065673828125,
+              158.5,
+              39.21240234375,
+              15.0
+            ]
+          },
+          {
+            "text": "٠٨:٥٦ PM",
+            "bounds_dp": [
+              239.405517578125,
+              266.5,
+              39.21240234375,
+              15.0
+            ]
+          }
+        ]
+      },
+      "changed_pixels_outside_timestamp_bounds": 0
+    },
+    {
+      "file": "otp-ar-280-s2.0-d2.0.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "2df6cf954e18581b4b25cea4df7df3b2b587ee1c970147b222a8aa4e4a64d782"
+    },
+    {
+      "file": "otp-ar-393-s1.0-d3.0.png",
+      "size": [
+        1179,
+        2556
+      ],
+      "equal_pixels": true,
+      "sha256": "45951447e1299839aad04075ae611633ca54cabb85f9428c4f1eb6aa5c76b611"
+    },
+    {
+      "file": "otp-ckb-280-s2.0-d2.0.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "517663b2c91310adcf2f76d871572159a44c75b570651b461dc97694f0d64b48"
+    },
+    {
+      "file": "otp-ckb-393-s1.0-d3.0.png",
+      "size": [
+        1179,
+        2556
+      ],
+      "equal_pixels": true,
+      "sha256": "5743b0deb1513d5d3ee6cb56a5de861e1466c8553b478556203f6733e2220a9d"
+    },
+    {
+      "file": "otp-kmr-280-s2.0-d2.0.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "069e24302055f80f38b53ba74104990a56f8aa6f1b14c6317e24b89f5f5a3232"
+    },
+    {
+      "file": "otp-kmr-393-s1.0-d3.0.png",
+      "size": [
+        1179,
+        2556
+      ],
+      "equal_pixels": true,
+      "sha256": "052b058ce3706d2d2e9e23c61b09219e1b0cd7800bdb65153e27fdbc859d11f7"
+    },
+    {
+      "file": "profile-ar-280-s2.0-d2.0-bottom.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "6b422f486f6a0cfddc46b05f93d17aa66c476621059ebe8d9c2bd7092f06b438"
+    },
+    {
+      "file": "profile-ar-280-s2.0-d2.0.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "f711f98932da40447f00f9e0f545911a10f11ad0e52d0a72a4f26bc7e9a38e7c"
+    },
+    {
+      "file": "profile-ar-393-s1.0-d3.0-bottom.png",
+      "size": [
+        1179,
+        2556
+      ],
+      "equal_pixels": true,
+      "sha256": "2eba35168e815ccd94d104e849b4b1f3f3c668560338c7235390ccfe97081aa2"
+    },
+    {
+      "file": "profile-ar-393-s1.0-d3.0.png",
+      "size": [
+        1179,
+        2556
+      ],
+      "equal_pixels": true,
+      "sha256": "c097d057f9816fe64d7329c530df0602908cf7dc9e746c01e3411b6844229bd9"
+    },
+    {
+      "file": "profile-ckb-280-s2.0-d2.0-bottom.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "8669bfe9a461f662b7d5e4474dc2beaabfca05dba3abcb2b059a612d6033a8f6"
+    },
+    {
+      "file": "profile-ckb-280-s2.0-d2.0.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "6ccce53c0fe9e3520648a5a0825ad422793366e88c99479bd88e4b9cb9bbb18b"
+    },
+    {
+      "file": "profile-ckb-393-s1.0-d3.0-bottom.png",
+      "size": [
+        1179,
+        2556
+      ],
+      "equal_pixels": true,
+      "sha256": "5c0308cfbcf6972612b8a750e99983d049740e5ff057ed509f75362b541df5b5"
+    },
+    {
+      "file": "profile-ckb-393-s1.0-d3.0.png",
+      "size": [
+        1179,
+        2556
+      ],
+      "equal_pixels": true,
+      "sha256": "7af604ec897b84319a4ef92d301368ceb69202709b1e95d8012c4e53eea4d07f"
+    },
+    {
+      "file": "profile-kmr-280-s2.0-d2.0-bottom.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "9226426011a087202fb025704f68ae116dda373a7b339987d049d111f2d55a81"
+    },
+    {
+      "file": "profile-kmr-280-s2.0-d2.0.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "e40098e36daebd13604c843cf14c292f76ef6da4e137e8df5c27ce3a9c5bcc9f"
+    },
+    {
+      "file": "profile-kmr-393-s1.0-d3.0-bottom.png",
+      "size": [
+        1179,
+        2556
+      ],
+      "equal_pixels": true,
+      "sha256": "05ea2191528384604f83f6a9a54581f832fcf81b3ef931c66ee7355df6528615"
+    },
+    {
+      "file": "profile-kmr-393-s1.0-d3.0.png",
+      "size": [
+        1179,
+        2556
+      ],
+      "equal_pixels": true,
+      "sha256": "335fb3496ec1ecc63e0aabc508b23f720c5700451e068eb7eef3956d9a556f91"
+    },
+    {
+      "file": "signup-ar-280-s2.0-d2.0-bottom.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "6b760a348db880ee8afef1bd05a6308947b5a0ed364d04a0d42a8543fb727802"
+    },
+    {
+      "file": "signup-ar-280-s2.0-d2.0.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "11b6021dc24f4869f4910bc07df86a50503bc17c44db3e9e66bd4dbb93ab44dc"
+    },
+    {
+      "file": "signup-ar-393-s1.0-d3.0.png",
+      "size": [
+        1179,
+        2556
+      ],
+      "equal_pixels": true,
+      "sha256": "6b3f2a013bdca13217d498a3d9135e9647977622215505c7517d0e0294caf502"
+    },
+    {
+      "file": "signup-ckb-280-s2.0-d2.0-bottom.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "88f77d014d6bd881ef1c3e1c64492ab4fb68cb01a13eac1f4d4cbcd98cc2a928"
+    },
+    {
+      "file": "signup-ckb-280-s2.0-d2.0.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "c4782e256c6aed3998ffa702c2c0e313cb4ed5c7f4a95a5896f8b3c48fd850a2"
+    },
+    {
+      "file": "signup-ckb-393-s1.0-d3.0.png",
+      "size": [
+        1179,
+        2556
+      ],
+      "equal_pixels": true,
+      "sha256": "c23a9b1e7ba866ecaf5d7365b042be84f3c2282f538240f20a5201efc40667e6"
+    },
+    {
+      "file": "signup-kmr-280-s2.0-d2.0-bottom.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "b54016ca0725c091575d2a72c8a4d7679af21ffd6f73a25822a0c5c5436ff641"
+    },
+    {
+      "file": "signup-kmr-280-s2.0-d2.0.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "9efaa7123f248157bf8434d3e813e5dd63968d5d587f754f49b57e08dd0a94d7"
+    },
+    {
+      "file": "signup-kmr-393-s1.0-d3.0.png",
+      "size": [
+        1179,
+        2556
+      ],
+      "equal_pixels": true,
+      "sha256": "79d2e40b2c2e601b999bea24a9ccae8eba5e41e2503b8d17b5353d2c84d07ec9"
+    },
+    {
+      "file": "tasks-ar-280-s2.0-d2.0.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "5aacce209dcd46ff115ac75e3c2ebdde1b5d70b598404d973e81aa24724333ed"
+    },
+    {
+      "file": "tasks-ar-393-s1.0-d3.0.png",
+      "size": [
+        1179,
+        2556
+      ],
+      "equal_pixels": true,
+      "sha256": "85fa566f187c4eaff93275f1ed8b2a980b462f5230015aa30674dc4a862eb6c7"
+    },
+    {
+      "file": "tasks-ckb-280-s2.0-d2.0.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "f28b88700210a785595eb71437698598f8bc5fb66e92f9516b58c96713dc7f35"
+    },
+    {
+      "file": "tasks-ckb-393-s1.0-d3.0.png",
+      "size": [
+        1179,
+        2556
+      ],
+      "equal_pixels": true,
+      "sha256": "5813cbae466b3e031328ff61d5e78c67af609d9b52cf0201da2a6e4a79371d06"
+    },
+    {
+      "file": "tasks-kmr-280-s2.0-d2.0.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "92cddb43557b79d5283de5b581d916f0f6c5189aa7f0c416be3d438f32df2c0d"
+    },
+    {
+      "file": "tasks-kmr-393-s1.0-d3.0.png",
+      "size": [
+        1179,
+        2556
+      ],
+      "equal_pixels": true,
+      "sha256": "553facd6c6ea2a3e6f6aef2470734ce2a77a46e4ea67a1b35ee5819e3eec7aac"
+    },
+    {
+      "file": "vouchers-ar-280-s2.0-d2.0.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "b9b36a77424e414a8a2449f889ebb4f381d0f52ff0f28e1d2ecae213c0351f22"
+    },
+    {
+      "file": "vouchers-ar-393-s1.0-d3.0.png",
+      "size": [
+        1179,
+        2556
+      ],
+      "equal_pixels": true,
+      "sha256": "005c64e1958a506a80ea30cd740c569fec6e38c6dbb74cfdc3db391762c5a8bb"
+    },
+    {
+      "file": "vouchers-ckb-280-s2.0-d2.0.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "6c008eef8bda603378eba71bdc42412e431440ba6acf6fe3de710f6d8c948199"
+    },
+    {
+      "file": "vouchers-ckb-393-s1.0-d3.0.png",
+      "size": [
+        1179,
+        2556
+      ],
+      "equal_pixels": true,
+      "sha256": "916936f2c181133547c5ddc23b5bc9b7bf91f1ae1c218c113add922fd1b710ee"
+    },
+    {
+      "file": "vouchers-kmr-280-s2.0-d2.0.png",
+      "size": [
+        560,
+        1704
+      ],
+      "equal_pixels": true,
+      "sha256": "9a7d3ec49cfa1dd9409c043798182bb1f9376082e026af11bdeaa37756a69d82"
+    },
+    {
+      "file": "vouchers-kmr-393-s1.0-d3.0.png",
+      "size": [
+        1179,
+        2556
+      ],
+      "equal_pixels": true,
+      "sha256": "ef27d6bb494a15e205669a406f9df0bdd90aeb44f2bec01348c50cff24179e3e"
+    }
+  ],
+  "comparison_note": "117 of 123 original full frames are exactly equal. Six notification frames retain real fixture clock differences; all pixel differences are reported, without masking or a tolerance."
+}

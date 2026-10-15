@@ -1,0 +1,117 @@
+{
+  "fixture_only": true,
+  "mode": "Android emulator debug; not a performance benchmark",
+  "physical_size": [
+    1536.0,
+    1704.0
+  ],
+  "dpr": 2.0,
+  "config": "tablet",
+  "fixture_notifications_pregranted": true,
+  "chrome-native-scale-1.0-image": {
+    "decoded": true,
+    "width_dp": 83.47826086956522,
+    "height_dp": 24.0
+  },
+  "chrome-native-scale-2.0-image": {
+    "decoded": true,
+    "width_dp": 83.47826086956522,
+    "height_dp": 24.0
+  },
+  "quick_action_callbacks": [
+    "ad",
+    "balance",
+    "page",
+    "ad",
+    "balance",
+    "page"
+  ],
+  "disabled_action_did_not_fire": true,
+  "auth-scale-1.0-image": {
+    "decoded": true,
+    "width_dp": 84.0,
+    "height_dp": 24.0
+  },
+  "auth-phone-scale-1.0-image": {
+    "decoded": true,
+    "width_dp": 84.0,
+    "height_dp": 24.0
+  },
+  "phone_normalized_scale_1.0": true,
+  "deposit-scale-1.0-image": {
+    "decoded": true,
+    "width_dp": 64.0,
+    "height_dp": 24.0
+  },
+  "deposit-bottom-scale-1.0-image": {
+    "decoded": true,
+    "width_dp": 64.0,
+    "height_dp": 24.0
+  },
+  "home-scale-1.0-image": {
+    "decoded": true,
+    "width_dp": 83.47826086956522,
+    "height_dp": 24.0
+  },
+  "auth-scale-2.0-image": {
+    "decoded": true,
+    "width_dp": 84.0,
+    "height_dp": 24.0
+  },
+  "auth-phone-scale-2.0-image": {
+    "decoded": true,
+    "width_dp": 84.0,
+    "height_dp": 24.0
+  },
+  "phone_normalized_scale_2.0": true,
+  "deposit-scale-2.0-image": {
+    "decoded": true,
+    "width_dp": 64.0,
+    "height_dp": 24.0
+  },
+  "deposit-bottom-scale-2.0-image": {
+    "decoded": true,
+    "width_dp": 64.0,
+    "height_dp": 24.0
+  },
+  "home-scale-2.0-image": {
+    "decoded": true,
+    "width_dp": 83.47826086956522,
+    "height_dp": 24.0
+  },
+  "chrome-scale-1.0-image": {
+    "decoded": true,
+    "width_dp": 83.47826086956522,
+    "height_dp": 24.0
+  },
+  "chrome-scale-2.0-image": {
+    "decoded": true,
+    "width_dp": 83.47826086956522,
+    "height_dp": 24.0
+  },
+  "receipt-scale-1.0-image": {
+    "decoded": true,
+    "width_dp": 62.608695652173914,
+    "height_dp": 18.0
+  },
+  "receipt-bottom-scale-1.0-image": {
+    "decoded": true,
+    "width_dp": 62.608695652173914,
+    "height_dp": 18.0
+  },
+  "receipt-scale-2.0-image": {
+    "decoded": true,
+    "width_dp": 62.608695652173914,
+    "height_dp": 18.0
+  },
+  "receipt-bottom-scale-2.0-image": {
+    "decoded": true,
+    "width_dp": 62.608695652173914,
+    "height_dp": 18.0
+  },
+  "native_device_pointer_events_enabled": true,
+  "keyboard_inset_physical_px": 704.0,
+  "android_back_dismissed_keyboard_kept_form": true,
+  "choice_dismissed_keyboard": true,
+  "completed": true
+}
