@@ -67,16 +67,19 @@ void main() {
     final retained = t.state(find.byType(ProfileScreen));
     final first = refresh(t)(), second = refresh(t)();
     await t.pump();
-    final expected = before ? 3 : 1;
-    expect(backend.reads['profiles']! - profileReads, expected);
-    expect(backend.reads['pa_wallets']! - walletReads, expected);
-    debugPrint('PROFILE_READS initial+two-overlaps: profiles=$expected wallets=$expected');
+    // recoverSession emits tokenRefreshed, replayed to the newly mounted
+    // Profile listener: baseline = initial + Auth + two manual profile reads.
+    final expectedProfiles = before ? 4 : 1;
+    final expectedWallets = before ? 3 : 1;
+    expect(backend.reads['profiles']! - profileReads, expectedProfiles);
+    expect(backend.reads['pa_wallets']! - walletReads, expectedWallets);
+    debugPrint('PROFILE_READS initial+Auth+two-overlaps: profiles=$expectedProfiles wallets=$expectedWallets');
     gate.complete(); backend.readGates.clear();
     await t.pump(); await first; await second; await settle(t);
     backend.readResponses['profiles'] = row('Fresh manual refresh');
     await refresh(t)(); await settle(t);
-    expect(backend.reads['profiles']! - profileReads, expected + 1);
-    expect(backend.reads['pa_wallets']! - walletReads, expected + 1);
+    expect(backend.reads['profiles']! - profileReads, expectedProfiles + 1);
+    expect(backend.reads['pa_wallets']! - walletReads, expectedWallets + 1);
     expect(find.text('Fresh manual refresh'), findsOneWidget);
     expect(t.state(find.byType(ProfileScreen)), same(retained));
     await t.pumpWidget(const SizedBox()); await settle(t);
@@ -136,6 +139,10 @@ void main() {
     backend.readResponses['profiles'] = row('Former owner');
     await t.pumpWidget(host()); await t.pump();
     try {
+      // New-owner reads get their own current result; only the original
+      // owner's already-started responses remain held behind the gate.
+      backend.readGates.clear();
+      backend.readResponses['profiles'] = row('Current owner');
       const other = '00000000-0000-4000-8000-000000000098';
       String part(Object value) => base64Url.encode(utf8.encode(jsonEncode(value))).replaceAll('=', '');
       final token = '${part({'alg': 'HS256', 'typ': 'JWT'})}.${part({'sub': other, 'exp': DateTime.now().millisecondsSinceEpoch ~/ 1000 + 86400})}.fictional-signature';
@@ -145,8 +152,11 @@ void main() {
           aud: 'authenticated', createdAt: '2026-10-15T00:00:00Z'),
       ).toJson()));
       expect(backend.client.auth.currentUser!.id, other);
-      gate.complete(); backend.readGates.clear(); await settle(t);
+      await settle(t);
+      expect(find.text('Current owner'), findsOneWidget);
+      gate.complete(); await settle(t);
       expect(find.text('Former owner'), findsNothing);
+      expect(find.text('Current owner'), findsOneWidget);
       expect(balance(t), isNull);
     } finally {
       if (!gate.isCompleted) gate.complete();

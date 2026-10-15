@@ -83,7 +83,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _subscribeToChanges(user);
     _authSubscription = _client.auth.onAuthStateChange.listen((AuthState state) {
       final User? updatedUser = state.session?.user;
-      if (!mounted || updatedUser == null) return;
+      // Auth replays earlier events to new subscribers. Only the currently
+      // active snapshot may start a read or supersede a pending current read.
+      if (!mounted || updatedUser == null ||
+          !identical(updatedUser, _client.auth.currentUser)) return;
       if (state.event == AuthChangeEvent.userUpdated ||
           state.event == AuthChangeEvent.tokenRefreshed) {
         unawaited(_loadProfile(updatedUser));
