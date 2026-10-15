@@ -1,0 +1,127 @@
+{
+  "implementation_commit": "ee40915351df94bac965e80e2f13e2d6651d64c4",
+  "ui_capture_commit": "06285b0d01b7bdbc5179fcdc747e8cc46ac3db7c",
+  "flutter_library_tests_assets_dependencies_identical": true,
+  "baseline_commit": "196ded3397e460ccec8a73b3b98443166c268bce",
+  "scope": "Draft PR #7; no production migration, Edge deployment, n8n activation or live WhatsApp send",
+  "checks": [
+    {
+      "name": "Actual exported workflow + actual Edge handlers",
+      "result": "pass",
+      "tests": 14,
+      "run": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/38817088308",
+      "transport": "intercepted; no real messages"
+    },
+    {
+      "name": "PostgreSQL 17 migration",
+      "result": "pass",
+      "run": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/38817088308",
+      "coverage": [
+        "apply twice",
+        "anonymous OTP privileges denied",
+        "owner RLS",
+        "purpose-bound verification",
+        "one-use and five-minute expiry",
+        "five wrong attempts lock",
+        "resend counting and cooldown",
+        "recent resends at hour boundary",
+        "concurrent reservation",
+        "acceptance/refusal and immutable evidence",
+        "idempotence",
+        "owner withdrawal",
+        "off-app service withdrawal",
+        "confirmed-phone audience gate"
+      ],
+      "database": "disposable fixture"
+    },
+    {
+      "name": "Edited Edge Function type checks",
+      "result": "pass",
+      "run": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/38817088308"
+    },
+    {
+      "name": "Auth/localization/UI capture",
+      "result": "pass",
+      "cases": 90,
+      "layout_and_lifecycle_reports": 210,
+      "exceptions": 0,
+      "run": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/38816700971"
+    },
+    {
+      "name": "Auth/locale/UI behavior",
+      "result": "pass",
+      "tests": 53,
+      "new_marketing_tests": 9,
+      "preference_captures": 6,
+      "run": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/38816700971",
+      "coverage": [
+        "signup unchecked",
+        "consent optional",
+        "signup payload false/true/version/locale",
+        "profile withdrawal",
+        "failed save and retry",
+        "ckb/ar/kmr",
+        "393dp 1x text",
+        "280dp 2x text"
+      ]
+    },
+    {
+      "name": "Same UI at final SQL commit",
+      "result": "pass",
+      "run": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/38817088426"
+    },
+    {
+      "name": "Final-source UI/receipt regression",
+      "result": "pass",
+      "run": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/38817088419"
+    },
+    {
+      "name": "Final-source Profile/chrome regression",
+      "result": "pass",
+      "run": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/38817088292"
+    }
+  ],
+  "artifacts": [
+    {
+      "id": 12010923260,
+      "name": "polish-after",
+      "run": 38816700971,
+      "sha256": "ca5cd55df2ff66d1ca5f480a1dad1756143ee0b6a8ef9e15826c86cf219f1351",
+      "sha256_and_zip_crc_verified": true
+    },
+    {
+      "id": 12010976298,
+      "name": "polish-before",
+      "run": 38815657775,
+      "sha256": "27c36505e1f8ef4a283c185749c22489108fcecd04cb9ea783595485bfe38925",
+      "sha256_and_zip_crc_verified": true
+    }
+  ],
+  "broader_automatic_regression_urls": [
+    "https://github.com/Zana-Sponsor/proxobalance/actions/runs/38817088306",
+    "https://github.com/Zana-Sponsor/proxobalance/actions/runs/38817088288",
+    "https://github.com/Zana-Sponsor/proxobalance/actions/runs/38817088305"
+  ],
+  "retained_diagnostics": [
+    {
+      "run": 38815657775,
+      "result": "failure",
+      "cause": "New profile fixture omitted Response.request required by PostgREST 2.9.1; all 90 captures passed but seven new preference tests failed.",
+      "fix": "a18f0300f239725971db4710bb4f341dd95c7208 adds request metadata, realistic array response and preflight contract assertion; no product assertion removed. Subsequent 53 behavior tests pass."
+    },
+    {
+      "environment": "local Node",
+      "result": "dependency setup incomplete",
+      "cause": "Full suite could not import uninstalled sharp. Actual new 14 tests passed locally; CI installs locked dependencies and the backend suite passes 167 tests."
+    }
+  ],
+  "launch_requirements": [
+    "Review/apply migration and deploy both Edge Functions together with the new workflow after isolated staging verification.",
+    "Bind rotated server credentials; original uploaded export/screenshot exposed secrets, none were copied to Git.",
+    "Provide an approved MARKETING template before campaigns; supplied IDs are Authentication and Utility only.",
+    "Publish a real privacy policy and verify authenticated off-app stop processing and audience checks before campaigns.",
+    "Provider end-to-end delivery, production n8n import and real device/physical performance have not been claimed.",
+    "Previously documented unrelated PR WebView/staging release blockers remain open."
+  ],
+  "count_note": "Suites overlap; numbers are not a sum of unique tests."
+}

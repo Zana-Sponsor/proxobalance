@@ -1,0 +1,93 @@
+[
+  {
+    "file": "images/login.png",
+    "original": "login-ckb-393-s1.0-d3.0.png",
+    "source_commit": "06285b0d01b7bdbc5179fcdc747e8cc46ac3db7c",
+    "artifact_id": 12010923260,
+    "sha256": "0734bba96652e20df49963ad90dff8f31c2027ab2dd1ef071272373c284dc64a"
+  },
+  {
+    "file": "images/signup.png",
+    "original": "signup-ckb-393-s1.0-d3.0.png",
+    "source_commit": "06285b0d01b7bdbc5179fcdc747e8cc46ac3db7c",
+    "artifact_id": 12010923260,
+    "sha256": "a8a6b2d33d5a00cef051782fa5d8e183925f8145ead172a9ef8de8d96e716386"
+  },
+  {
+    "file": "images/otp.png",
+    "original": "otp-ckb-393-s1.0-d3.0.png",
+    "source_commit": "06285b0d01b7bdbc5179fcdc747e8cc46ac3db7c",
+    "artifact_id": 12010923260,
+    "sha256": "9f7fa798a0cb207526588c2c676bf0fd35146a65859d1a34863c9bb5b94a282d"
+  },
+  {
+    "file": "images/forgot.png",
+    "original": "forgot-ckb-393-s1.0-d3.0.png",
+    "source_commit": "06285b0d01b7bdbc5179fcdc747e8cc46ac3db7c",
+    "artifact_id": 12010923260,
+    "sha256": "30f941caf7759fef7ec524f76a713433dbf6de728cbfef9be27cbd67a1b4c1f3"
+  },
+  {
+    "file": "images/signup-ar.png",
+    "original": "signup-ar-393-s1.0-d3.0.png",
+    "source_commit": "06285b0d01b7bdbc5179fcdc747e8cc46ac3db7c",
+    "artifact_id": 12010923260,
+    "sha256": "93186e11bc4b530a40a3badde399ca32f0a9cc95b096cef1f59209f2f2c17e63"
+  },
+  {
+    "file": "images/signup-kmr.png",
+    "original": "signup-kmr-393-s1.0-d3.0.png",
+    "source_commit": "06285b0d01b7bdbc5179fcdc747e8cc46ac3db7c",
+    "artifact_id": 12010923260,
+    "sha256": "293286ba4740dd80489a69d4be19cb095640183906ba471bfbc0827b9790a372"
+  },
+  {
+    "file": "images/signup-ar-large.png",
+    "original": "signup-ar-280-s2.0-d2.0-bottom.png",
+    "source_commit": "06285b0d01b7bdbc5179fcdc747e8cc46ac3db7c",
+    "artifact_id": 12010923260,
+    "sha256": "7097ddfa5297bc2a13fc68580cb9702b50fa8d66f93b2007e9daf2f8088cef0d"
+  },
+  {
+    "file": "images/profile-menu.png",
+    "original": "profile-ckb-393-s1.0-d3.0-bottom.png",
+    "source_commit": "06285b0d01b7bdbc5179fcdc747e8cc46ac3db7c",
+    "artifact_id": 12010923260,
+    "sha256": "389eea916e63dff1295d7acb7e5615bdf4e903e426d7ab534e683d46e3634943"
+  },
+  {
+    "file": "images/preference.png",
+    "original": "marketing/preference-ckb-393.png",
+    "source_commit": "06285b0d01b7bdbc5179fcdc747e8cc46ac3db7c",
+    "artifact_id": 12010923260,
+    "sha256": "0880dda2bc523e0c32c441e83f2508070226f92708a4fa5a816e76d11fb9e307"
+  },
+  {
+    "file": "images/preference-ar-large.png",
+    "original": "marketing/preference-ar-280.png",
+    "source_commit": "06285b0d01b7bdbc5179fcdc747e8cc46ac3db7c",
+    "artifact_id": 12010923260,
+    "sha256": "d357dc88fffeadedda52926311d99efe29617e9c961beb21ad77fb94407ecdbb"
+  },
+  {
+    "file": "images/preference-kmr.png",
+    "original": "marketing/preference-kmr-393.png",
+    "source_commit": "06285b0d01b7bdbc5179fcdc747e8cc46ac3db7c",
+    "artifact_id": 12010923260,
+    "sha256": "825b3b8c9f7a3301523fe3112a20a14b089ec093c55802b6a6afec4a8fb7c47c"
+  },
+  {
+    "file": "images/login-before.png",
+    "original": "login-ckb-393-s1.0-d3.0.png",
+    "source_commit": "196ded3397e460ccec8a73b3b98443166c268bce",
+    "artifact_id": 12010976298,
+    "sha256": "13ed88573333b119b13ad93e23f75813b6bae9735c54c145d2fad19b49cfe380"
+  },
+  {
+    "file": "images/signup-before.png",
+    "original": "signup-ckb-393-s1.0-d3.0.png",
+    "source_commit": "196ded3397e460ccec8a73b3b98443166c268bce",
+    "artifact_id": 12010976298,
+    "sha256": "c23a9b1e7ba866ecaf5d7365b042be84f3c2282f538240f20a5201efc40667e6"
+  }
+]
