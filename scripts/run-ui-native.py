@@ -59,6 +59,9 @@ for name, size, density in configurations:
             log.write(line)
             log.flush()
             print(line, end='', flush=True)
+            if 'PROXO_UI_NATIVE_NOTIFICATIONS_READY' in line:
+                adb('shell', 'pm', 'grant', 'com.proxo.proxoapp',
+                    'android.permission.POST_NOTIFICATIONS')
             match = re.search(r'PROXO_UI_NATIVE_SCREENSHOT:([a-z0-9.\-]+)', line)
             if match:
                 shot_name = match.group(1)

@@ -136,6 +136,10 @@ void main() {
             await t.ensureVisible(link); await t.tap(link); await settle();
           }
           if (section == 'otp') { focus.unfocus(); await t.pump(); }
+          if (!before && ['signup', 'forgot'].contains(section)) {
+            expect(t.state<ScrollableState>(find.byType(Scrollable).first).position.pixels, 0,
+              reason: 'A new Auth step must start at its heading, not inherit the previous form scroll');
+          }
           final exceptions = <String>[];
           Object? error;
           while ((error = t.takeException()) != null) { exceptions.add(error.toString()); }
@@ -152,7 +156,7 @@ void main() {
               'layout':measuredLayout(key),'exceptions':exceptions,'fixture':'fictional GET-only; OTP screen component; no authentication or payment sends',
             }));
           });
-          if (['deposit','create','profile','home'].contains(section)) {
+          if (['deposit','create','profile','home','login','signup','forgot'].contains(section)) {
             final scroll = find.byType(Scrollable);
             if (scroll.evaluate().isNotEmpty) {
               final state = t.state<ScrollableState>(scroll.first);

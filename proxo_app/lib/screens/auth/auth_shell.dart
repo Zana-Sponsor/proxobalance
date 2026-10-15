@@ -135,6 +135,8 @@ class _AuthShellState extends State<AuthShell> {
   _Tab  _tab     = _Tab.login;
   _Step _step    = _Step.form;
   bool  _loading  = false;
+  final _viewScroll = ScrollController(keepScrollOffset: false);
+  String _lastScrollViewKey = 'signin';
   final ValueNotifier<bool> _loginPasswordVisible = ValueNotifier<bool>(false);
   final ValueNotifier<bool> _signupPasswordVisible = ValueNotifier<bool>(false);
   final ValueNotifier<bool> _signupConfirmationVisible = ValueNotifier<bool>(false);
@@ -296,6 +298,7 @@ class _AuthShellState extends State<AuthShell> {
 
   @override
   void dispose() {
+    _viewScroll.dispose();
     _authService.close();
     _authSub?.cancel();
     _resendTimer?.cancel();
@@ -1277,6 +1280,12 @@ class _AuthShellState extends State<AuthShell> {
   @override
   Widget build(BuildContext context) {
     ProxoLocale.watch(context);
+    if (_lastScrollViewKey != _viewKey) {
+      _lastScrollViewKey = _viewKey;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && _viewScroll.hasClients) _viewScroll.jumpTo(0);
+      });
+    }
     return Directionality(
       textDirection: ProxoLocale.directionOf(ProxoLocale.current.value),
       child: PopScope<Object?>(
@@ -1291,6 +1300,7 @@ class _AuthShellState extends State<AuthShell> {
           body: SafeArea(
             child: LayoutBuilder(
               builder: (context, viewport) => SingleChildScrollView(
+              controller: _viewScroll,
               physics: const ClampingScrollPhysics(),
               // ⚠ بوو 20. گەتەری ئاسۆیی ئێستا 16ـە لە هەموو شاشەکاندا —
               // هەمان `AuthTokens.pagePadding`.

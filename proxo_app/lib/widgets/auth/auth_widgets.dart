@@ -862,11 +862,27 @@ class AuthSegmentedControl extends StatelessWidget {
     ProxoLocale.watch(context);
     return LayoutBuilder(builder: (context, constraints) {
       final width = (constraints.maxWidth - 8) / 2;
+      final labelWidth = (width - 20).clamp(1.0, double.infinity);
+      final scaler = MediaQuery.textScalerOf(context);
+      var labelStyle = AuthTokens.fieldLabel;
+      // Keep whole words on each line, including Arabic email at 280dp/2x.
+      // Both segments use the same size and retain system text scaling.
+      for (var pass = 0; pass < 4; pass++) {
+        var widest = 0.0;
+        for (final word in labels.join(' ').split(RegExp(r'\s+'))) {
+          final p = TextPainter(text: TextSpan(text: word, style: labelStyle),
+            textDirection: TextDirection.rtl, textScaler: scaler)..layout();
+          if (p.width > widest) widest = p.width;
+          p.dispose();
+        }
+        if (widest <= labelWidth || widest == 0) break;
+        labelStyle = labelStyle.copyWith(fontSize: labelStyle.fontSize! * labelWidth / widest);
+      }
       double height = 48;
       for (final label in labels) {
-        final p = TextPainter(text: TextSpan(text: label, style: AuthTokens.fieldLabel),
-          textDirection: TextDirection.rtl, textScaler: MediaQuery.textScalerOf(context))
-          ..layout(maxWidth: (width - 20).clamp(1, double.infinity));
+        final p = TextPainter(text: TextSpan(text: label, style: labelStyle),
+          textDirection: TextDirection.rtl, textScaler: scaler)
+          ..layout(maxWidth: labelWidth);
         if (p.height + 24 > height) height = p.height + 24;
         p.dispose();
       }
@@ -881,7 +897,7 @@ class AuthSegmentedControl extends StatelessWidget {
                 child: SizedBox(height: height, child: Center(child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: ProxoText(labels[i], textAlign: TextAlign.center,
-                    style: AuthTokens.fieldLabel.copyWith(
+                    style: labelStyle.copyWith(
                       color: i == index ? AuthTokens.accent : AuthTokens.inkMuted)),
                 ))),
               ),

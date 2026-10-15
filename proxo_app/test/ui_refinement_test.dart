@@ -63,6 +63,8 @@ void main() {
       builder: (context, child) => MediaQuery(data: MediaQuery.of(context).copyWith(textScaler: const TextScaler.linear(2)), child: child!),
       home: Scaffold(body: Padding(padding: const EdgeInsets.all(16), child: Column(children: [
         const AuthTitle('چوونەژوورەوە'),
+        AuthSegmentedControl(labels: const ['رقم الهاتف', 'البريد الإلكتروني'],
+          index: 1, onChanged: (_) {}),
         AuthTextField(controller: controller, label: 'ژمارەی مۆبایل', hint: '7XX XXX XXXX',
           icon: Icons.phone, keyboardType: TextInputType.phone, ltr: true, forceLtr: true,
           prefix: const Text('+964')),
@@ -71,6 +73,13 @@ void main() {
     final lines = title.getBoxesForSelection(TextSelection(baseOffset: 0, extentOffset: title.text.toPlainText().length));
     expect(lines.map((b) => b.top).toSet().length, 1);
     expect(title.textScaler.scale(title.text.style!.fontSize!), greaterThan(26));
+    final email = t.renderObject<RenderParagraph>(find.descendant(
+      of: find.text('البريد الإلكتروني'), matching: find.byType(RichText)).first);
+    final wordStart = email.text.toPlainText().indexOf('الإلكتروني');
+    final wordBoxes = email.getBoxesForSelection(TextSelection(
+      baseOffset: wordStart, extentOffset: wordStart + 'الإلكتروني'.length));
+    expect(wordBoxes.map((b) => b.top).toSet().length, 1);
+    expect(email.textScaler.scale(email.text.style!.fontSize!), greaterThan(14));
     final hint = t.renderObject<RenderParagraph>(find.descendant(of: find.byType(FittedBox), matching: find.byType(RichText)).first);
     expect(hint.maxLines, 1);
     expect(t.getSize(find.byType(TextField)).height, lessThan(100));

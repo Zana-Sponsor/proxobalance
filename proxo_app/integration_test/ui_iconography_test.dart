@@ -9,6 +9,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:permission_handler/permission_handler.dart' as ph;
 import 'package:proxo_app/screens/ad_create_screen.dart';
 import 'package:proxo_app/screens/tools_screen.dart';
 import 'package:proxo_app/screens/profile_screen.dart';
@@ -38,6 +39,15 @@ void main() {
       'config': config,
     };
     binding.reportData = {'observations': observations};
+    // The runner grants notifications to this disposable fixture installation;
+    // the separate lifecycle test covers denied/pending/error permission paths.
+    print('PROXO_UI_NATIVE_NOTIFICATIONS_READY');
+    for (var attempt = 0; attempt < 30; attempt++) {
+      if (await ph.Permission.notification.isGranted) break;
+      await Future<void>.delayed(const Duration(milliseconds: 100));
+    }
+    expect(await ph.Permission.notification.isGranted, isTrue);
+    observations['fixture_notifications_pregranted'] = true;
     Future<void> mount(Widget child, {double scale = 1}) async {
       await t.pumpWidget(MaterialApp(
         key: UniqueKey(),

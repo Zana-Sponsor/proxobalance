@@ -307,9 +307,14 @@ class _HomeScreenState extends State<HomeScreen>
     }
   }
 
+  // Shared across Home instances: the OS dialog may outlive its first screen.
+  static bool _notificationRequestInFlight = false;
   Future<void> _maybeAskNotifPermission() async {
+    if (!mounted || !widget.isActive || _notificationRequestInFlight) return;
+    _notificationRequestInFlight = true;
+    final isAndroid = Theme.of(context).platform == TargetPlatform.android;
     try {
-      if (Theme.of(context).platform == TargetPlatform.android) {
+      if (isAndroid) {
         final status = await ph.Permission.notification.status;
         if (status.isGranted) return;
         if (status.isPermanentlyDenied) return;
@@ -321,35 +326,41 @@ class _HomeScreenState extends State<HomeScreen>
         if (isDenied) return;
         if (isGranted) return;
       }
-    } catch (_) {}
-    if (!mounted) return;
-
-    final isAndroid = Theme.of(context).platform == TargetPlatform.android;
-    if (isAndroid) {
-      await ph.Permission.notification.request();
-    } else {
-      await FirebaseMessaging.instance.requestPermission(
-        alert: true,
-        badge: true,
-        sound: true,
-        provisional: false,
-      );
-    }
-
-    final token = await FirebaseMessaging.instance.getToken();
-    if (token != null) {
-      final user = supabase.auth.currentUser;
-      if (user != null) {
-        await supabase.from('pa_device_tokens').upsert(
-          {
-            'user_id': user.id,
-            'token': token,
-            'platform': isAndroid ? 'android' : 'ios',
-            'updated_at': DateTime.now().toUtc().toIso8601String(),
-          },
-          onConflict: 'user_id, token',
+      if (!mounted) return;
+      if (isAndroid) {
+        final requested = await ph.Permission.notification.request();
+        if (!requested.isGranted) return;
+      } else {
+        final requested = await FirebaseMessaging.instance.requestPermission(
+          alert: true,
+          badge: true,
+          sound: true,
+          provisional: false,
         );
+        if (requested.authorizationStatus != AuthorizationStatus.authorized &&
+            requested.authorizationStatus != AuthorizationStatus.provisional) return;
       }
+      if (!mounted) return;
+      final token = await FirebaseMessaging.instance.getToken();
+      if (token != null) {
+        final user = supabase.auth.currentUser;
+        if (user != null) {
+          await supabase.from('pa_device_tokens').upsert(
+            {
+              'user_id': user.id,
+              'token': token,
+              'platform': isAndroid ? 'android' : 'ios',
+              'updated_at': DateTime.now().toUtc().toIso8601String(),
+            },
+            onConflict: 'user_id, token',
+          );
+        }
+      }
+    } catch (_) {
+      // Notification setup is optional. A platform/FCM failure must not throw
+      // an unhandled asynchronous exception or prevent Home from working.
+    } finally {
+      _notificationRequestInFlight = false;
     }
   }
 

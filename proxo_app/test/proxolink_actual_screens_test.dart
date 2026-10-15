@@ -35,6 +35,30 @@ void main() {
     await backend.initialize();
   });
   setUp(()=>SharedPreferences.setMockInitialValues({}));
+  testWidgets('Home remount cannot overlap an outstanding notification permission request', (t) async {
+    final pending = Completer<Map<int, int>>();
+    var requests = 0;
+    final messenger = TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
+    messenger.setMockMethodCallHandler(permissionChannel, (call) async {
+      if (call.method == 'checkPermissionStatus') return 0;
+      requests++;
+      return pending.future;
+    });
+    addTearDown(() => messenger.setMockMethodCallHandler(permissionChannel,
+      (call) async => call.method == 'checkPermissionStatus' ? 1 : throw StateError('unexpected request')));
+    await t.pumpWidget(MaterialApp(home: HomeScreen(key: UniqueKey())));
+    await t.pumpAndSettle(); expect(requests, 1);
+    await t.pumpWidget(MaterialApp(home: HomeScreen(key: UniqueKey())));
+    await t.pumpAndSettle(); expect(requests, 1);
+    pending.complete({17: 0}); // User denies; no token write or FCM required.
+    await t.pumpAndSettle(); expect(t.takeException(), isNull);
+    await t.pumpWidget(const SizedBox()); await t.pumpAndSettle();
+    // A later platform failure is also contained and releases the gate.
+    messenger.setMockMethodCallHandler(permissionChannel, (_) async => throw PlatformException(code: 'unavailable'));
+    await t.pumpWidget(const MaterialApp(home: HomeScreen()));
+    await t.pumpAndSettle(); expect(t.takeException(), isNull);
+    await t.pumpWidget(const SizedBox()); await t.pumpAndSettle();
+  });
   tearDownAll(()async {
     await backend.dispose();
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(permissionChannel,null);
