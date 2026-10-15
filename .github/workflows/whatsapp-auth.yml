@@ -1,0 +1,50 @@
+name: WhatsApp webhook and consent security
+on:
+  push:
+    branches: [feat/proxolink-private-renderer-migration]
+    paths: ['integrations/wevlix/**', 'proxo_app/supabase/**', 'test/whatsapp-auth*', 'test/wevlix*', 'test/fixtures/whatsapp-auth-database.sql', '.github/workflows/whatsapp-auth.yml']
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: isolated-fixture
+          POSTGRES_DB: whatsapp_auth_test
+        ports: ['5432:5432']
+        options: --health-cmd pg_isready --health-interval 5s --health-retries 10
+    env:
+      PGHOST: 127.0.0.1
+      PGPORT: 5432
+      PGUSER: postgres
+      PGPASSWORD: isolated-fixture
+      PGDATABASE: whatsapp_auth_test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: node integrations/wevlix/build-workflow.mjs && git diff --exit-code -- integrations/wevlix/proxo-wevlix.json
+      - run: node --test test/wevlix-workflow.test.js test/whatsapp-auth-edge.test.js
+      - run: psql -v ON_ERROR_STOP=1 -f test/fixtures/whatsapp-auth-database.sql
+      - name: Apply twice, check privileges, OTP lifecycle and consent
+        run: |
+          psql -v ON_ERROR_STOP=1 -f proxo_app/supabase/migrations/20261015215145_whatsapp_auth_consent.sql
+          psql -v ON_ERROR_STOP=1 -f proxo_app/supabase/migrations/20261015215145_whatsapp_auth_consent.sql
+          psql -v ON_ERROR_STOP=1 -f test/whatsapp-auth.sql
+      - name: Concurrent first requests share one reservation
+        run: |
+          psql -Atc "set role service_role; select get_or_generate_otp_whatsapp('+9647500000088','login');" > /tmp/otp-a &
+          first=$!
+          psql -Atc "set role service_role; select get_or_generate_otp_whatsapp('+9647500000088','signup');" > /tmp/otp-b &
+          second=$!
+          wait "$first"
+          wait "$second"
+          psql -v ON_ERROR_STOP=1 -c "select test_assert((select count(*)=1 and sum(send_count)=1 from otp_whatsapp where phone='9647500000088'),'concurrent reservation');"
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - run: deno check proxo_app/supabase/functions/phone-otp-session/index.ts proxo_app/supabase/functions/whatsapp-session-exchange/index.ts

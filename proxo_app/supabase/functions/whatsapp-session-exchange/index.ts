@@ -30,12 +30,12 @@
  * and be logged in as that user. So verification and session issuance are ONE
  * call and the client never sits between them.
  *
- * It also has to be one call for a mechanical reason: `verify_otp_whatsapp`
+ * It also has to be one call for a mechanical reason: `pa_verify_whatsapp_otp`
  * sets `is_used = true` on the matching row, so a code verifies exactly once.
  * A client that called the n8n verify webhook first would find the code
  * already spent by the time it reached this function.
  *
- * ⚠ `verify_otp_whatsapp` returns `success: true` for a WRONG code — it means
+ * ⚠ `pa_verify_whatsapp_otp` returns `success: true` for a WRONG code — it means
  * "the function ran", not "the code matched". The only correct check is
  * `data.verified === true`. Do not loosen this.
  *
@@ -113,11 +113,11 @@ Deno.serve(async (req) => {
     // ── 1. Verify the OTP ───────────────────────────────────────────────────
     // Consumes the code (is_used = true) when it matches.
     const { data: verifyRes, error: verifyErr } = await admin.rpc(
-      "verify_otp_whatsapp",
-      { p_phone: phone, p_code: code },
+      "pa_verify_whatsapp_otp",
+      { p_phone: phone, p_code: code, p_purpose: "login" },
     );
     if (verifyErr) {
-      console.error("verify_otp_whatsapp failed", verifyErr);
+      console.error("pa_verify_whatsapp_otp failed", verifyErr);
       return json({ ok: false, error: "verify_failed" }, 500);
     }
 
@@ -177,7 +177,7 @@ Deno.serve(async (req) => {
     const { error: backfillErr } = await admin
       .from("otp_whatsapp")
       .update({ user_id: userId })
-      .eq("phone", phone)
+      .eq("id", verifyRes.data.otp_id)
       .is("user_id", null);
     if (backfillErr) console.error("otp user_id backfill", backfillErr);
 

@@ -177,15 +177,20 @@ final class AuthService {
     required String code,
     required String fullName,
     required String password,
+    bool whatsappMarketing = false,
+    String locale = 'ckb',
   }) async {
     try {
       final response = await _supabase.functions.invoke(
         'phone-otp-session',
-        body: <String, String>{
+        body: <String, dynamic>{
           'phone': IraqPhone.normalize(phone),
           'code': code.trim(),
           'full_name': fullName.trim(),
           'password': password,
+          'whatsapp_marketing_opt_in': whatsappMarketing,
+          'whatsapp_consent_version': 'whatsapp-marketing-v1',
+          'whatsapp_consent_locale': locale,
         },
       );
       final dynamic data = _asMap(response.data);

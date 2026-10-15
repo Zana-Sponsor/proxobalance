@@ -21,12 +21,12 @@
  * So verification and session issuance are ONE call. The client never gets to
  * stand between them.
  *
- * This also fixes a second problem. `verify_otp_whatsapp` sets `is_used =
+ * This also fixes a second problem. `pa_verify_whatsapp_otp` sets `is_used =
  * true` on the matching row, so a code can only be verified once. If the
  * client called the n8n webhook first and this function second, the second
  * call would always fail with "code already used".
  *
- * ⚠ `verify_otp_whatsapp` returns `success: true` for a WRONG code — it means
+ * ⚠ `pa_verify_whatsapp_otp` returns `success: true` for a WRONG code — it means
  * "the function ran", not "the code matched". The only correct check is
  * `data.verified === true`. Do not loosen this.
  *
@@ -105,6 +105,13 @@ Deno.serve(async (req) => {
     const code = String(body?.code ?? "").trim();
     const fullName = String(body?.full_name ?? "").trim();
     const password = String(body?.password ?? "");
+    const marketingChoice = body?.whatsapp_marketing_opt_in ?? false;
+    const consentVersion = body?.whatsapp_consent_version ?? "whatsapp-marketing-v1";
+    const consentLocale = body?.whatsapp_consent_locale ?? "ckb";
+    if (typeof marketingChoice !== "boolean" || consentVersion !== "whatsapp-marketing-v1" ||
+        !["ckb", "ar", "kmr"].includes(consentLocale)) {
+      return json({ ok: false, error: "bad_request" }, 400);
+    }
 
     const strongPassword = password.length >= 8 &&
       /[A-Z]/.test(password) && /[0-9]/.test(password) &&
@@ -120,11 +127,11 @@ Deno.serve(async (req) => {
     // ── 1. Verify the OTP ───────────────────────────────────────────────────
     // Consumes the code (is_used = true) when it matches.
     const { data: verifyRes, error: verifyErr } = await admin.rpc(
-      "verify_otp_whatsapp",
-      { p_phone: phone, p_code: code },
+      "pa_verify_whatsapp_otp",
+      { p_phone: phone, p_code: code, p_purpose: "signup" },
     );
     if (verifyErr) {
-      console.error("verify_otp_whatsapp failed", verifyErr);
+      console.error("pa_verify_whatsapp_otp failed", verifyErr);
       return json({ ok: false, error: "verify_failed" }, 500);
     }
 
@@ -193,12 +200,28 @@ Deno.serve(async (req) => {
       return json({ ok: false, error: "provision_failed" }, 500);
     }
 
+    // Record both acceptance and refusal before returning a session. Consent
+    // is a separate marketing purpose; it never gates signup or the OTP.
+    const { data: consent, error: consentError } = await admin.rpc(
+      "pa_record_signup_whatsapp_marketing", {
+        p_user_id: userId,
+        p_opted_in: marketingChoice,
+        p_version: consentVersion,
+        p_locale: consentLocale,
+      },
+    );
+    if (consentError || consent?.ok !== true) {
+      console.error("marketing consent persistence failed");
+      await admin.auth.admin.deleteUser(userId).catch(() => {});
+      return json({ ok: false, error: "provision_failed" }, 500);
+    }
+
     // Link the consumed OTP row to the user for the audit trail. Best-effort:
     // the session must not fail because a bookkeeping write did.
     const { error: linkErr2 } = await admin
       .from("otp_whatsapp")
       .update({ user_id: userId })
-      .eq("phone", phone)
+      .eq("id", verifyRes.data.otp_id)
       .is("user_id", null);
     if (linkErr2) console.error("otp user_id backfill failed", linkErr2);
 

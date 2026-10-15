@@ -19,7 +19,7 @@ class LoginScreen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         const AuthHeader.login(),
-        const SizedBox(height: 28),
+        const SizedBox(height: AuthTokens.gapHeaderToTitle),
         AuthTitle(AuthStrings.signInTitle),
         const SizedBox(height: AuthTokens.gapTitleToSubtitle),
         ProxoText(AuthStrings.signInSubtitle,

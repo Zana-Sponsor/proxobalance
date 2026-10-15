@@ -21,7 +21,7 @@ jobs:
           path: after
       - uses: actions/checkout@v4
         with:
-          ref: 211abe49a8969fa8d250e727736a07668eeee594
+          ref: 196ded3397e460ccec8a73b3b98443166c268bce
           path: before
       - uses: subosito/flutter-action@v2
         with:
@@ -65,7 +65,7 @@ jobs:
         if: matrix.source == 'after'
         run: |
           set -o pipefail
-          flutter test test/auth_phone_flow_test.dart test/auth_otp_lifecycle_test.dart test/localization_test.dart test/ad_activation_notice_test.dart test/ui_refinement_test.dart test/ui_balance_behavior_test.dart --reporter expanded 2>&1 | tee build/polish-evidence/behavior.log
+          flutter test test/auth_phone_flow_test.dart test/auth_otp_lifecycle_test.dart test/localization_test.dart test/ad_activation_notice_test.dart test/ui_refinement_test.dart test/ui_balance_behavior_test.dart test/whatsapp_marketing_test.dart --reporter expanded 2>&1 | tee build/polish-evidence/behavior.log
         working-directory: after/proxo_app
       - uses: actions/upload-artifact@v4
         if: always()

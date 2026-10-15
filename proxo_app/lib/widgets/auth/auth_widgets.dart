@@ -102,7 +102,7 @@ class AuthTextField extends StatelessWidget {
               padding: const EdgeInsetsDirectional.only(start: 14, end: 12),
               child: Center(widthFactor: 1, child: prefix),
             ),
-            prefixIconConstraints: const BoxConstraints(minHeight: 52),
+            prefixIconConstraints: const BoxConstraints(minHeight: AuthTokens.controlHeight),
             suffixIcon: trailing,
             border: _border(AuthTokens.line),
             enabledBorder: _border(
@@ -152,6 +152,38 @@ class AuthTextField extends StatelessWidget {
 // ─────────────────────────────────────────────────────────────────────────────
 // AuthPrimaryButton
 // ─────────────────────────────────────────────────────────────────────────────
+
+class AuthWhatsappConsent extends StatelessWidget {
+  const AuthWhatsappConsent({super.key, required this.value, required this.onChanged});
+
+  final bool value;
+  final ValueChanged<bool>? onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
+    return MergeSemantics(
+      child: CheckboxListTile(
+        key: const ValueKey('signup-whatsapp-consent'),
+        value: value,
+        onChanged: onChanged == null ? null : (next) => onChanged!(next ?? false),
+        controlAffinity: ListTileControlAffinity.leading,
+        activeColor: AuthTokens.primary,
+        contentPadding: const EdgeInsetsDirectional.only(start: 4, end: 12),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AuthTokens.fieldRadius),
+          side: const BorderSide(color: AuthTokens.line),
+        ),
+        title: ProxoText(AuthStrings.whatsappConsent, style: AuthTokens.fieldLabel),
+        subtitle: Padding(
+          padding: const EdgeInsets.only(top: 4),
+          child: ProxoText(AuthStrings.whatsappConsentHint,
+            style: AuthTokens.helper.copyWith(fontSize: 12)),
+        ),
+      ),
+    );
+  }
+}
 
 class AuthPrimaryButton extends StatefulWidget {
   const AuthPrimaryButton({
@@ -226,7 +258,8 @@ class _AuthPrimaryButtonState extends State<AuthPrimaryButton> {
                   ),
                 )
               : ProxoText(widget.label, translate: true,
-                  key: const ValueKey('label'), style: AuthTokens.buttonText),
+                  key: const ValueKey('label'), textAlign: TextAlign.center,
+                  style: AuthTokens.buttonText),
         ),
       ),
     ));

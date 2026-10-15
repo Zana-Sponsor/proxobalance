@@ -59,6 +59,7 @@ abstract final class AuthTokens {
 
   // ── بۆشاییە یەکگرتووەکان ──────────────────────────────────────────────────
   static const double gapTopToTitle      = 16;
+  static const double gapHeaderToTitle   = 20;
   static const double gapTitleToSubtitle = 6;
   static const double gapSubtitleToForm  = 20;
   static const double gapLabelToField    = 6;
@@ -70,14 +71,10 @@ abstract final class AuthTokens {
   static const double gapSectionBottom   = 16;
 
   // ── فۆنت و دەقەکان ────────────────────────────────────────────────────────
-  // هەمان سیستەمی پسوولەکان (`ReceiptTokens`): تەنها دوو قەبارە، هەمووی w500.
-  //   • textSize  = 14 — هەموو دەقێک: خانە، label، دوگمە، لینک، یارمەتی، هەڵە.
-  //     (= Material 3 Body Medium / Label Large)
-  //   • titleSize = 16 — تەنها ناونیشانی پەڕە و ژمارەکانی OTP.
-  //     (= Material 3 Title Medium)
-  // ⚠ هیچ Bold / SemiBold ـێک نییە.
+  // Shared hierarchy: 20dp headings, 14dp controls, 12dp supporting copy.
+  // Text follows accessibility scaling; controls keep a 48dp minimum target.
   static const double textSize = 14;
-  static const double titleSize = 26;
+  static const double titleSize = 20;
   static const FontWeight weight = FontWeight.w500;
 
   static const TextStyle title = TextStyle(
@@ -162,12 +159,13 @@ abstract final class AuthTokens {
   /// ⚠ بوو 50. 48 ئەو بەرزاییەیە کە هەموو دوگمە سەرەکییەکانی ئەپەکە
   /// بەکاری دەهێنن (`_kCtaHeight`ی ad_details، پیلەکانی tools).
   static const double buttonHeight = 48;
+  static const double controlHeight = 48;
   static const double buttonRadius = 14;
   static const double fieldRadius  = 14;
   /// ⚠ ستوونی بوو 13. ئێستا 15 — لەناو مەودای 14–16، بۆیە خانەکە
   /// بەرزاییەکی ئاسوودەی هەیە بەبێ ئەوەی لە دوگمەکە قەڵەوتر بێت.
   static const EdgeInsets fieldContentPadding =
-      EdgeInsets.symmetric(horizontal: 14, vertical: 15);
+      EdgeInsets.symmetric(horizontal: 14, vertical: 13);
 
   static const double errorSlotHeight = 20; // یەک دێڕی 14 × 1.30
   static const double trailingSlot    = 48;
@@ -215,6 +213,13 @@ abstract final class AuthTokens {
 
 abstract final class AuthStrings {
   static String _v(String ku, String ar) => ProxoStrings.text(ku, arabic: ar);
+
+  static String get whatsappConsent => _v(
+      'ڕەزامەندم، بە هاتنی ئاگاداری و نوێکارییەکان لە ڕێگەی واتسئاپ',
+      'أوافق على استلام الإشعارات والمستجدات عبر واتساب');
+  static String get whatsappConsentHint => _v(
+      'نامەکانی مارکێتینگی Proxo؛ ئارەزوومەندانەیە و لە پڕۆفایل دەتوانیت ناچالاکی بکەیت.',
+      'رسائل Proxo التسويقية؛ اختياري ويمكنك إيقافها من الملف الشخصي.');
 
   static String get signInTitle => _v('چوونەژوورەوە', 'تسجيل الدخول');
   static String get signInSubtitle => _v(

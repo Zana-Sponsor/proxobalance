@@ -26,6 +26,7 @@ import 'ad_screen.dart';
 import 'deposit_screen.dart';
 import 'faq_screen.dart' show FaqItem, kFaqItems;
 import 'tools_screen.dart';
+import 'whatsapp_marketing_screen.dart';
 import 'package:proxo_app/widgets/proxo_text.dart';
 
 const String _emailChangeWebhookUrl =
@@ -503,6 +504,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   ),
                                   const SizedBox(height: 20),
                                   const AuthLanguageSelector(),
+                                  const SizedBox(height: 16),
+                                  _SettingsGroup(entries: <_MenuEntry>[
+                                    _MenuEntry(icon: SolarIconsOutline.chatRoundDots,
+                                      title: 'ئاگاداریی واتسئاپ',
+                                      onTap: () => _push(const WhatsappMarketingScreen())),
+                                  ]),
                                   const SizedBox(height: 24),
                                   ValueListenableBuilder<bool>(
                                     valueListenable: _signingOut,

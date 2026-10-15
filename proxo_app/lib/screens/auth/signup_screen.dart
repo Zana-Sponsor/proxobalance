@@ -21,7 +21,7 @@ class SignupScreen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         AuthHeader.inner(onBack: onBack),
-        const SizedBox(height: 32),
+        const SizedBox(height: AuthTokens.gapHeaderToTitle),
         AuthTitle(AuthStrings.signUpTitle),
         const SizedBox(height: AuthTokens.gapTitleToSubtitle),
         ProxoText(AuthStrings.signUpSubtitle, style: AuthTokens.subtitle),

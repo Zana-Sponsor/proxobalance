@@ -160,6 +160,9 @@ class _AuthShellState extends State<AuthShell> {
   String? _regPhoneErr;
   String? _regPassErr;
   String? _regPass2Err;
+  bool _whatsappMarketing = false;
+  bool _pendingWhatsappMarketing = false;
+  String _pendingConsentLocale = 'ckb';
 
   static const int _kOtpLength = 6;
 
@@ -494,11 +497,14 @@ class _AuthShellState extends State<AuthShell> {
     required String code,
     required String fullName,
     required String password,
+    required bool whatsappMarketing,
   }) => _authService.completePhoneSignup(
         phone: phone,
         code: code,
         fullName: fullName,
         password: password,
+        whatsappMarketing: whatsappMarketing,
+        locale: _pendingConsentLocale,
       );
 
   /// تۆکێنی refresh دەگۆڕێت بە سێشنێکی چالاک.
@@ -671,6 +677,8 @@ class _AuthShellState extends State<AuthShell> {
     final String phone = _regPhoneE164;
     final String pass = _regPassCtrl.text;
     final pass2 = _regPass2Ctrl.text;
+    final marketingChoice = _whatsappMarketing;
+    final consentLocale = ProxoLocale.current.value.languageCode;
 
     setState(() {
       _regNameErr = null;
@@ -703,6 +711,7 @@ class _AuthShellState extends State<AuthShell> {
     AuthFlowGuard.inOtpFlow = true;
     try {
       final bool? exists = await _authService.phoneExists(phone);
+      if (!mounted) return;
       if (exists == true) {
         setState(() => _regPhoneErr = AuthStrings.phoneAlreadyRegistered);
         AuthFlowGuard.inOtpFlow = false;
@@ -712,8 +721,9 @@ class _AuthShellState extends State<AuthShell> {
       final bool ok = await _authService.requestWhatsappOtp(
         phone: phone,
         purpose: AuthOtpPurpose.signup,
-        locale: ProxoLocale.current.value.languageCode,
+        locale: consentLocale,
       );
+      if (!mounted) return;
       if (!ok) {
         _showErrorCard(AuthStrings.otpSendFailed);
         AuthFlowGuard.inOtpFlow = false;
@@ -725,6 +735,8 @@ class _AuthShellState extends State<AuthShell> {
       _pendingUserId = '';
       _pendingPass = pass;
       _pendingName = name;
+      _pendingWhatsappMarketing = marketingChoice;
+      _pendingConsentLocale = consentLocale;
       _activeOtpChannel = AuthChannel.phone;
       _activeOtpPurpose = AuthOtpPurpose.signup;
       _otpAttempts = 0;
@@ -773,6 +785,7 @@ class _AuthShellState extends State<AuthShell> {
           code: _otpCode,
           fullName: _pendingName,
           password: _pendingPass,
+          whatsappMarketing: _pendingWhatsappMarketing,
         );
         signupTokenHash = result.tokenHash;
         phoneError = result.error;
@@ -1642,7 +1655,7 @@ class _AuthShellState extends State<AuthShell> {
             },
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: AuthTokens.gapBetweenFields),
 
         AuthTextField(
           controller: _regPhoneCtrl,
@@ -1682,7 +1695,7 @@ class _AuthShellState extends State<AuthShell> {
             },
           ),
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: AuthTokens.gapBetweenFields),
 
         ValueListenableBuilder<bool>(
           valueListenable: _signupPasswordVisible,
@@ -1708,14 +1721,14 @@ class _AuthShellState extends State<AuthShell> {
           ),
         ),
 
-        const SizedBox(height: 10),
+        const SizedBox(height: AuthTokens.gapBetweenFields),
         ValueListenableBuilder<TextEditingValue>(
           valueListenable: _regPassCtrl,
           builder: (context, value, _) =>
               PasswordStrengthMeter(password: value.text),
         ),
 
-        const SizedBox(height: 10),
+        const SizedBox(height: AuthTokens.gapBetweenFields),
         ListenableBuilder(
           listenable: Listenable.merge([_regPassCtrl, _regPass2Ctrl]),
           builder: (context, _) => ValueListenableBuilder<bool>(
@@ -1746,7 +1759,14 @@ class _AuthShellState extends State<AuthShell> {
           ),
         ),
 
-        const SizedBox(height: 18),
+        const SizedBox(height: AuthTokens.gapBetweenFields),
+        AuthWhatsappConsent(
+          value: _whatsappMarketing,
+          onChanged: _loading ? null : (value) {
+            setState(() => _whatsappMarketing = value);
+          },
+        ),
+        const SizedBox(height: AuthTokens.gapBetweenFields),
         ListenableBuilder(
           listenable: Listenable.merge(
               [_regNameCtrl, _regPhoneCtrl, _regPassCtrl, _regPass2Ctrl]),
@@ -1763,13 +1783,13 @@ class _AuthShellState extends State<AuthShell> {
           ),
         ),
 
-        const SizedBox(height: 16),
+        const SizedBox(height: AuthTokens.gapBetweenFields),
         _promptRow(
           lead: AuthStrings.haveAccountLead,
           action: AuthStrings.haveAccountAction,
           onTap: _loading ? null : _goToSignIn,
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: AuthTokens.gapBetweenFields),
       ],
       ),
     );
@@ -1900,7 +1920,7 @@ class _AuthShellState extends State<AuthShell> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         AuthHeader.inner(onBack: _goToSignIn),
-        const SizedBox(height: 24),
+        const SizedBox(height: AuthTokens.gapHeaderToTitle),
         AuthTitle(AuthStrings.resetPasswordTitle),
         const SizedBox(height: 4),
         ProxoText(AuthStrings.resetPasswordSubtitle, style: _kSub),
@@ -1953,7 +1973,7 @@ class _AuthShellState extends State<AuthShell> {
       children: [
         AuthHeader.inner(
             onBack: () => setState(() => _step = _Step.forgotOtp)),
-        const SizedBox(height: 24),
+        const SizedBox(height: AuthTokens.gapHeaderToTitle),
         AuthTitle(AuthStrings.resetPasswordTitle),
         const SizedBox(height: 4),
         ProxoText(AuthStrings.resetPasswordSubtitle, style: _kSub),
