@@ -67,6 +67,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
   RealtimeChannel? _profileChannel;
   RealtimeChannel? _walletChannel;
   StreamSubscription<AuthState>? _authSubscription;
+  Future<void>? _profileRequest;
+  Future<void>? _balanceRequest;
+  User? _profileRequestUser;
+  String? _balanceRequestOwner;
+  int _profileVersion = 0;
+  int _balanceVersion = 0;
 
   @override
   void initState() {
@@ -100,22 +106,44 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.dispose();
   }
 
-  Future<void> _loadData() async {
+  Future<void> _loadData({bool force = false}) async {
     final User? user = _client.auth.currentUser;
     if (user == null) return;
     await Future.wait<void>(<Future<void>>[
-      _loadProfile(user),
-      _loadBalance(user.id),
+      _loadProfile(user, force: force),
+      _loadBalance(user.id, force: force),
     ]);
   }
 
-  Future<void> _loadProfile(User user) async {
+  bool _isCurrentOwner(String owner) =>
+      mounted && _client.auth.currentUser?.id == owner;
+
+  Future<void> _loadProfile(User user, {bool force = false}) {
+    // Only share a pending read of the same Auth snapshot. An updated email or
+    // a completed edit needs a fresh read, even if an older response is pending.
+    if (!force && _profileRequest != null &&
+        identical(_profileRequestUser, user)) return _profileRequest!;
+    final int version = ++_profileVersion;
+    _profileRequestUser = user;
+    late final Future<void> request;
+    request = _fetchProfile(user, version).whenComplete(() {
+      if (identical(_profileRequest, request)) {
+        _profileRequest = null;
+        _profileRequestUser = null;
+      }
+    });
+    _profileRequest = request;
+    return request;
+  }
+
+  Future<void> _fetchProfile(User user, int version) async {
     try {
       Map<String, dynamic>? row = await _client
           .from('profiles')
           .select('full_name, email, phone, avatar_url')
           .eq('id', user.id)
           .maybeSingle();
+      if (!_isCurrentOwner(user.id) || version != _profileVersion) return;
 
       // Supabase Auth is authoritative for the sign-in address. With secure
       // email change enabled, Auth keeps the old address until the user has
@@ -150,21 +178,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
           );
         }
       }
-      if (!mounted) return;
+      if (!_isCurrentOwner(user.id) || version != _profileVersion) return;
       _profile.value = _ProfileData.fromRow(row, fallbackUser: user);
     } catch (error, stackTrace) {
       debugPrint('[ProfileScreen] profile load failed: $error\n$stackTrace');
     }
   }
 
-  Future<void> _loadBalance(String userId) async {
+  Future<void> _loadBalance(String userId, {bool force = false}) {
+    if (!force && _balanceRequest != null &&
+        _balanceRequestOwner == userId) return _balanceRequest!;
+    final int version = ++_balanceVersion;
+    _balanceRequestOwner = userId;
+    late final Future<void> request;
+    request = _fetchBalance(userId, version).whenComplete(() {
+      if (identical(_balanceRequest, request)) {
+        _balanceRequest = null;
+        _balanceRequestOwner = null;
+      }
+    });
+    _balanceRequest = request;
+    return request;
+  }
+
+  Future<void> _fetchBalance(String userId, int version) async {
     try {
       final Map<String, dynamic>? row = await _client
           .from('pa_wallets')
           .select('balance')
           .eq('user_id', userId)
           .maybeSingle();
-      if (!mounted) return;
+      if (!_isCurrentOwner(userId) || version != _balanceVersion) return;
       _balanceIqd.value = _walletValueToIqd(row?['balance']);
     } catch (error, stackTrace) {
       debugPrint('[ProfileScreen] wallet load failed: $error\n$stackTrace');
@@ -187,7 +231,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
             value: user.id,
           ),
           callback: (payload) {
-            if (!mounted || payload.newRecord.isEmpty) return;
+            if (!_isCurrentOwner(user.id) || payload.newRecord.isEmpty) return;
+            // A live update is newer than any read already in flight.
+            _profileVersion++;
+            _profileRequest = null;
+            _profileRequestUser = null;
             _profile.value = _profile.value.merge(payload.newRecord);
           },
         )
@@ -205,7 +253,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
             value: user.id,
           ),
           callback: (payload) {
-            if (!mounted || !payload.newRecord.containsKey('balance')) return;
+            if (!_isCurrentOwner(user.id) ||
+                !payload.newRecord.containsKey('balance')) return;
+            _balanceVersion++;
+            _balanceRequest = null;
+            _balanceRequestOwner = null;
             _balanceIqd.value =
                 _walletValueToIqd(payload.newRecord['balance']);
           },
@@ -248,7 +300,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
     );
     if (changed == true && mounted) {
-      await _loadData();
+      await _loadData(force: true);
     }
   }
 

@@ -46,6 +46,23 @@ jobs:
         if: matrix.source == 'after'
         working-directory: after/proxo_app
         run: flutter test test/chrome_behavior_test.dart --reporter expanded
+      - name: Reproduce duplicate Profile reads on the immediate baseline
+        if: matrix.source == 'after'
+        working-directory: after/proxo_app
+        run: |
+          set -o pipefail
+          git fetch --depth=1 origin 83086805d987938958c1a133545c4f3d63340efe
+          cp lib/screens/profile_screen.dart /tmp/proxo-profile-current.dart
+          trap 'cp /tmp/proxo-profile-current.dart lib/screens/profile_screen.dart' EXIT
+          git show FETCH_HEAD:proxo_app/lib/screens/profile_screen.dart > lib/screens/profile_screen.dart
+          flutter test test/profile_loading_test.dart --plain-name 'Profile coalesces overlapping reads and later refresh stays fresh' --dart-define=PROXO_PROFILE_BEFORE=true --reporter expanded 2>&1 | tee build/chrome-evidence/profile-before.log
+      - name: Profile request freshness and lifecycle regressions
+        if: matrix.source == 'after'
+        working-directory: after/proxo_app
+        run: |
+          set -o pipefail
+          git diff --exit-code -- lib/screens/profile_screen.dart
+          flutter test test/profile_loading_test.dart --reporter expanded 2>&1 | tee build/chrome-evidence/profile-after.log
       - uses: actions/upload-artifact@v4
         if: always()
         with:

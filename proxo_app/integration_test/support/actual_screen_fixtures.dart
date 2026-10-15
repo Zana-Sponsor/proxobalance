@@ -24,6 +24,9 @@ class ActualScreenBackend {
  late final http.Client transport;
  final reads=<String,int>{};
  final readGates=<String,Completer<void>>{};
+ // Capture a response before its gate, so tests can deliver an older response
+ // after a newer read or realtime event without any real network access.
+ final readResponses=<String,Object>{};
  Completer<void>? refreshGate;
  Completer<void>? bannerGate;
  Completer<void>? unreadGate;
@@ -39,6 +42,7 @@ class ActualScreenBackend {
     final table=request.url.path.split('/').last;
     if(!{'profiles','pa_ads','pa_featured_ads_public','pa_popups','pa_notifications','pa_banners','pa_wallets','pa_user_points','pa_levels','pa_challenges','pa_tutorials','pa_challenge_progress','pa_vouchers','promo_codes'}.contains(table))throw StateError('screen_fixture_network_boundary');
     reads.update(table,(v)=>v+1,ifAbsent:()=>1);
+    final response = readResponses[table];
     await readGates[table]?.future;
     if(table=='pa_banners')await bannerGate?.future;
     if(table=='pa_notifications')await unreadGate?.future;
@@ -61,7 +65,7 @@ class ActualScreenBackend {
      'spend':12.5,'prev_spend':8,'clicks':1246,'impressions':84320,'prev_impressions':60000,
      'conversions':10,'budget':10,'total_budget':30,'created_at':DateTime.now().subtract(const Duration(hours:1)).toIso8601String(),
     }]:table=='pa_wallets'?{'balance':10}:table=='pa_user_points'?{'points':0}:[];
-    return http.Response(jsonEncode(data),200,request:request,headers:{'content-type':'application/json','content-range':'*/0'});
+    return http.Response(jsonEncode(response ?? data),200,request:request,headers:{'content-type':'application/json','content-range':'*/0'});
    });
  }
  Future<void> initialize()async{
@@ -83,6 +87,17 @@ class ActualScreenBackend {
    socket.emit('realtime:banner_rt','postgres_changes',{'ids':[0],'data':{
     'schema':'public','table':'pa_banners','type':'UPDATE','commit_timestamp':'2026-10-13T00:00:00Z',
     'columns':[],'record':{'id':'fixture-banner'},'old_record':{}}});
+  }
+ }
+ void emitProfileChange(Map<String,dynamic> record,{bool wallet=false}){
+  final prefix=wallet?'realtime:profile_screen_wallet_':'realtime:profile_screen_profile_';
+  for(final channel in client.getChannels().where((c)=>c.topic.startsWith(prefix))){
+   for(final socket in _sockets){
+    socket.emit(channel.topic,'postgres_changes',{'ids':[0],'data':{
+     'schema':'public','table':wallet?'pa_wallets':'profiles','type':'UPDATE',
+     'commit_timestamp':'2026-10-15T20:00:00Z','columns':[],
+     'record':record,'old_record':{}}});
+   }
   }
  }
  Future<void> dispose()async{if(refreshGate!=null&&!refreshGate!.isCompleted)refreshGate!.complete();await Supabase.instance.dispose();}
