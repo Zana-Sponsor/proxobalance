@@ -126,7 +126,18 @@ void main() {
           );
           await t.pumpAndSettle();
           expect(find.byType(Image), findsNothing);
-          expect(find.byType(FittedBox), findsNothing);
+          // SVG icons scale within their viewBox. Labels must never be
+          // scaled down by a FittedBox instead of respecting system text size.
+          expect(
+            find.ancestor(
+              of: find.descendant(
+                of: find.byType(HomeQuickActions),
+                matching: find.byType(Text),
+              ),
+              matching: find.byType(FittedBox),
+            ),
+            findsNothing,
+          );
           for (final (index, key) in [
             'home-create-ad',
             'home-add-balance',
