@@ -1,3 +1,4 @@
+import 'package:proxo_app/theme/app_theme.dart' show kAppFont;
 import 'dart:convert';
 import 'dart:io';
 import 'dart:ui' as ui;
@@ -40,7 +41,7 @@ void main() {
       addTearDown(() => ProxoLocale.current.value=ProxoLocale.kurdishSorani);
       var open=0,close=0;
       final boundaryKey=GlobalKey();
-      await t.pumpWidget(MaterialApp(home: ProxoLocaleScope(child: MediaQuery(
+      await t.pumpWidget(MaterialApp(theme: ThemeData(fontFamily: kAppFont), home: ProxoLocaleScope(child: MediaQuery(
         data: const MediaQueryData(size:Size(280,852),textScaler:TextScaler.linear(2)),
         child: RepaintBoundary(key:boundaryKey,child:Scaffold(body:Padding(padding:const EdgeInsets.all(12),child:AdActivationNotice(
           adTitle:'Campaign 123', onOpen:()=>open++,onClose:()=>close++))))))));
