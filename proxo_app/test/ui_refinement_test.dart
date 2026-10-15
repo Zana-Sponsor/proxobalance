@@ -1,3 +1,4 @@
+import 'package:proxo_app/widgets/ad_validation_notifications.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:ui' as ui;
@@ -82,9 +83,33 @@ void main() {
       await t.tap(find.byType(Dismissible)); await t.pumpAndSettle();
       expect(find.byType(Dismissible), findsOneWidget);
       expect(find.text('بڕی پارەکە پشکنین بکە'), findsOneWidget);
+      // Clearing must also remove cards deeper than the three visible layers.
+      for (var i=0;i<6;i++) { ProxoErrorStack.show(screen, 'Queued error $i'); await t.pump(); }
       ProxoErrorStack.clear(); await t.pumpAndSettle();
       expect(find.byType(Dismissible), findsNothing);
       await t.pumpWidget(const SizedBox());
     });
   }
+  testWidgets('Create Ad validation uses overlapping cards instead of a vertical list', (t) async {
+    t.view.physicalSize = const Size(393, 852); t.view.devicePixelRatio = 1;
+    addTearDown(t.view.resetPhysicalSize); addTearDown(t.view.resetDevicePixelRatio);
+    final controller = AdValidationController();
+    final boundary = GlobalKey();
+    await t.pumpWidget(RepaintBoundary(key: boundary, child: MaterialApp(theme: buildAppTheme(),
+      home: Scaffold(body: Padding(padding: const EdgeInsets.all(16),
+        child: AdValidationNotifications(controller: controller))))));
+    controller.show({'name':'تکایە ناوی ڕیکلام بنووسە', 'budget':'بڕی پارەکە پشکنین بکە', 'link':'لینکی ڤیدیۆ بنووسە'});
+    await t.pump(const Duration(milliseconds: 500)); await t.pump(const Duration(milliseconds: 500));
+    final total = t.getSize(find.byType(AdValidationNotifications));
+    expect(total.height, lessThan(150));
+    expect(t.takeException(), isNull);
+    await t.runAsync(() async {
+      final dir=Directory('build/polish-evidence/refinement')..createSync(recursive:true);
+      final b=boundary.currentContext!.findRenderObject() as RenderRepaintBoundary;
+      final im=await b.toImage(pixelRatio:2); final png=await im.toByteData(format:ui.ImageByteFormat.png);
+      await File('${dir.path}/ad-validation-stack.png').writeAsBytes(png!.buffer.asUint8List()); im.dispose();
+    });
+    await t.pumpWidget(const SizedBox()); controller.dispose();
+  });
+
 }

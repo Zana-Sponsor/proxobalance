@@ -155,10 +155,12 @@ class ProxoErrorStack {
     _timer?.cancel();
     _timer = null;
     _timedId = null;
-    for (final _StackItem e in _items.value) {
-      e.leaving = true;
-    }
-    _items.value = List<_StackItem>.of(_items.value);
+    // Hidden queued cards have no animation state to report their exit.
+    // Explicit clearing must release the whole overlay, including those cards.
+    _items.value = <_StackItem>[];
+    _entry?.remove();
+    _entry?.dispose();
+    _entry = null;
   }
 
   static _StackItem? _front(List<_StackItem> list) {
@@ -243,7 +245,7 @@ class _ErrorStackView extends StatelessWidget {
               final height = (painter.height + _T.pad.vertical).clamp(
                 _T.cardHeight,
                 (MediaQuery.sizeOf(context).height * .4).clamp(120, 320),
-              );
+              ).toDouble();
               painter.dispose();
               final List<Widget> children = <Widget>[];
               // دواوە سەرەتا دەکێشرێت، پێشەوە لە کۆتایی.
@@ -394,7 +396,7 @@ class _StackCardState extends State<_StackCard>
         return Opacity(
           opacity: opacity,
           child: Transform.translate(
-            offset: Offset(0, _T.depthOffset * d),
+            offset: Offset(0, (_T.depthOffset + widget.height * .045) * d),
             child: Transform.scale(scale: 1 - d * .045,
               alignment: Alignment.topCenter, child: child),
           ),
@@ -447,7 +449,7 @@ class _StackCardState extends State<_StackCard>
         ProxoErrorStack._dismiss(item.id);
         ProxoErrorStack._remove(item.id);
       },
-      child: Semantics(liveRegion: true, label: item.message, onDismiss: _tapDismiss,
+      child: Semantics(liveRegion: true, onDismiss: _tapDismiss,
         child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: _tapDismiss,

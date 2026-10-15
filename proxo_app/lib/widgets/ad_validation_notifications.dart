@@ -80,13 +80,28 @@ class AdValidationNotifications extends StatelessWidget {
             duration: const Duration(milliseconds: 240),
             alignment: Alignment.topCenter,
             curve: Curves.easeOutCubic,
-            child: Column(mainAxisSize: MainAxisSize.min, children: [
-              for (var i = 0; i < controller._items.length.clamp(0, 3); i++)
-                _NoticeCard(
-                    key: ObjectKey(controller._items[i]),
-                    item: controller._items[i],
-                    depth: i % 3),
-            ]),
+            child: LayoutBuilder(builder: (context, constraints) {
+              final visible = controller._items.take(3).toList();
+              if (visible.isEmpty) return const SizedBox.shrink();
+              double height = 64;
+              for (final item in visible) {
+                final painter = TextPainter(text: TextSpan(text: item.message, style: AdUi.text(context)),
+                  textDirection: TextDirection.rtl, textScaler: MediaQuery.textScalerOf(context))
+                  ..layout(maxWidth: (constraints.maxWidth - 60).clamp(1, double.infinity));
+                if (painter.height + 32 > height) height = painter.height + 32;
+                painter.dispose();
+              }
+              height = height.clamp(64, 320).toDouble();
+              return Padding(padding: EdgeInsets.only(bottom: (visible.length - 1) * 8),
+                child: Stack(alignment: Alignment.topCenter, clipBehavior: Clip.none, children: [
+                  for (var i = visible.length - 1; i >= 0; i--)
+                    ExcludeSemantics(key: ObjectKey(visible[i]), excluding: i != 0,
+                      child: Transform.translate(offset: Offset(0, i * (8 + height * .045)),
+                        child: Transform.scale(scale: 1 - i * .045, alignment: Alignment.topCenter,
+                          child: _NoticeCard(key: ObjectKey(visible[i]), item: visible[i], depth: i, height: height)))),
+                ]),
+              );
+            }),
           ),
         ),
       );
@@ -95,7 +110,8 @@ class AdValidationNotifications extends StatelessWidget {
 class _NoticeCard extends StatefulWidget {
   final _ValidationNotice item;
   final int depth;
-  const _NoticeCard({super.key, required this.item, required this.depth});
+  final double height;
+  const _NoticeCard({super.key, required this.item, required this.depth, required this.height});
   @override
   State<_NoticeCard> createState() => _NoticeCardState();
 }
@@ -143,8 +159,7 @@ class _NoticeCardState extends State<_NoticeCard>
         child: FadeTransition(
             opacity: _life,
             child: Padding(
-              padding: EdgeInsets.fromLTRB(
-                  widget.depth * 3, 0, (2 - widget.depth) * 3, 7),
+              padding: EdgeInsets.zero,
               child: SlideTransition(
                 position: Tween<Offset>(
                         begin: const Offset(0, -0.15), end: Offset.zero)
@@ -158,9 +173,8 @@ class _NoticeCardState extends State<_NoticeCard>
                     child: DecoratedBox(
                       decoration: const BoxDecoration(
                           color: Colors.white,
-                          border: BorderDirectional(
-                              start: BorderSide(
-                                  color: Color(0xFFB74956), width: 3)),
+                          borderRadius: AdUi.radius,
+                          border: Border.fromBorderSide(BorderSide(color: Color(0xFFE8EDF4))),
                           boxShadow: [
                             BoxShadow(
                                 color: Color(0x180F172A),
@@ -172,7 +186,7 @@ class _NoticeCardState extends State<_NoticeCard>
                                 spreadRadius: 1,
                                 offset: Offset(2, 3)),
                           ]),
-                      child: Padding(
+                      child: SizedBox(height: widget.height, child: Padding(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 12, vertical: 10),
                           child: Row(children: [
@@ -180,9 +194,9 @@ class _NoticeCardState extends State<_NoticeCard>
                                 size: 18, color: Color(0xFFB74956)),
                             const SizedBox(width: 10),
                             Expanded(
-                                child: ProxoText(widget.item.message,
-                                    style: AdUi.text(context))),
-                          ])),
+                                child: SingleChildScrollView(child: ProxoText(widget.item.message,
+                                    style: AdUi.text(context)))),
+                          ]))),
                     )),
               ),
             )),
