@@ -37,7 +37,7 @@ class _TasksPageState extends State<TasksPage> {
 
   Future<void> _load() async {
     if (!mounted) return;
-    setState(() => _loading = true);
+    if (_challenges.isEmpty) setState(() => _loading = true);
     try {
       final userId = supabase.auth.currentUser!.id;
 

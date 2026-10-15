@@ -1,3 +1,7 @@
+import 'dart:convert';
+import 'package:proxo_app/widgets/tasks_page.dart';
+import 'package:proxo_app/widgets/levels_page.dart';
+import 'package:proxo_app/screens/tutorial_screen.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -20,6 +24,16 @@ import '../integration_test/support/actual_screen_fixtures.dart';
 void main() {
   final backend = ActualScreenBackend();
   setUpAll(() async {
+    // Load the same bundled fonts as the app; Ahem's square test glyphs do
+    // not represent provider-name wrapping or Kurdish line heights.
+    final fonts = jsonDecode(await rootBundle.loadString('FontManifest.json')) as List;
+    for (final font in fonts) {
+      final loader = FontLoader(font['family'] as String);
+      for (final file in font['fonts'] as List) {
+        loader.addFont(rootBundle.load(file['asset'] as String));
+      }
+      await loader.load();
+    }
     SharedPreferences.setMockInitialValues({});
     await backend.initialize();
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
@@ -116,7 +130,7 @@ void main() {
     });
   }
 
-  testWidgets('reversing a pull before release cancels refresh', (t) async {
+  testWidgets('returning a pull below its threshold before release cancels refresh', (t) async {
     var reads = 0;
     await t.pumpWidget(host(Scaffold(body: ProxoRefresh(pullToRefresh: true,
       onRefresh: () async { reads++; },
@@ -125,7 +139,11 @@ void main() {
     ))));
     final gesture = await t.startGesture(t.getCenter(find.byType(ListView)));
     await gesture.moveBy(const Offset(0, 220)); await t.pump();
-    await gesture.moveBy(const Offset(0, -240)); await t.pump();
+    await gesture.moveBy(const Offset(0, -400)); await t.pump();
+    // Bouncing physics applies friction in both directions: pointer travel
+    // alone does not prove the viewport has returned below the threshold.
+    final position = t.state<ScrollableState>(find.byType(Scrollable)).position;
+    expect(position.pixels, greaterThanOrEqualTo(position.minScrollExtent));
     await gesture.up(); await settle(t);
     expect(reads, 0);
     await t.pumpWidget(const SizedBox());
@@ -145,6 +163,29 @@ void main() {
     expect(t.takeException(), isNull);
     handle.dispose();
   });
+
+  for (final entry in <String, Widget>{
+    'pa_challenges': const TasksPage(),
+    'pa_levels': const LevelsPage(),
+    'pa_tutorials': const TutorialScreen(),
+  }.entries) {
+    testWidgets('${entry.key} retains loaded content during pull refresh', (t) async {
+      phone(t);
+      await t.pumpWidget(host(entry.value)); await settle(t);
+      final state = t.state(find.byType(Scrollable).first);
+      final refresh = t.widget<ProxoRefresh>(find.byType(ProxoRefresh)).onRefresh;
+      final gate = Completer<void>();
+      backend.readGates[entry.key] = gate;
+      final running = refresh(); await t.pump();
+      expect(t.state(find.byType(Scrollable).first), same(state));
+      expect(find.byType(ProxoRefresh), findsOneWidget);
+      gate.complete(); backend.readGates.remove(entry.key);
+      await t.pump(); await running; await settle(t);
+      expect(t.state(find.byType(Scrollable).first), same(state));
+      expect(t.takeException(), isNull);
+      await t.pumpWidget(const SizedBox());
+    });
+  }
 
   testWidgets('Home joins overlapping initial and refresh reads, then fetches fresh data', (t) async {
     phone(t);

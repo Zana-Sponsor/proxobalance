@@ -164,7 +164,7 @@ class _LevelsPageState extends State<LevelsPage> with WidgetsBindingObserver {
   // ── Full load (levels + points) ───────────────────────────────────────────
   Future<void> _load() async {
     if (!mounted) return;
-    setState(() => _loading = true);
+    if (_levels.isEmpty) setState(() => _loading = true);
     try {
       final userId = supabase.auth.currentUser!.id;
 

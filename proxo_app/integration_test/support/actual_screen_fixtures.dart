@@ -23,6 +23,7 @@ class ActualScreenBackend {
  late final SupabaseClient client;
  late final http.Client transport;
  final reads=<String,int>{};
+ final readGates=<String,Completer<void>>{};
  Completer<void>? refreshGate;
  Completer<void>? bannerGate;
  Completer<void>? unreadGate;
@@ -34,15 +35,16 @@ class ActualScreenBackend {
   transport=MockClient((request)async{
     if(request.method!='GET'||request.url.host!='screen-fixtures.invalid')throw StateError('screen_fixture_network_boundary');
     final table=request.url.path.split('/').last;
-    if(!{'profiles','pa_ads','pa_featured_ads_public','pa_popups','pa_notifications','pa_banners','pa_wallets','pa_user_points','pa_levels','pa_challenges','pa_challenge_progress','pa_vouchers','promo_codes'}.contains(table))throw StateError('screen_fixture_network_boundary');
+    if(!{'profiles','pa_ads','pa_featured_ads_public','pa_popups','pa_notifications','pa_banners','pa_wallets','pa_user_points','pa_levels','pa_challenges','pa_tutorials','pa_challenge_progress','pa_vouchers','promo_codes'}.contains(table))throw StateError('screen_fixture_network_boundary');
     reads.update(table,(v)=>v+1,ifAbsent:()=>1);
+    await readGates[table]?.future;
     if(table=='pa_banners')await bannerGate?.future;
     if(table=='pa_notifications')await unreadGate?.future;
     if(table=='pa_ads'||table=='pa_featured_ads_public')await refreshGate?.future;
     final Object data=table=='pa_banners' ? (banner ?? []) : table=='pa_notifications' && includeNotifications ? [
       {'id':'notice-1','user_id':screenFixtureOwner,'type':'ad_active','is_read':false,'created_at':DateTime.now().subtract(const Duration(minutes:3)).toUtc().toIso8601String()},
       {'id':'notice-2','user_id':screenFixtureOwner,'type':'deposit_approved','is_read':true,'created_at':DateTime.now().subtract(const Duration(days:1)).toUtc().toIso8601String()},
-    ] : table=='pa_levels' ? [
+    ] : table=='pa_tutorials' ? [{'id':'tutorial-1','title':'Fixture tutorial','section':'دەستێک','youtube_url':''}] : table=='pa_levels' ? [
       {'id':'tier-1','level_number':1,'name_ku':'Tier 1','icon':'medal','min_points':0,'color':'#0365FF'},
       {'id':'tier-2','level_number':2,'name_ku':'Tier 2','icon':'crown','min_points':100,'color':'#7856A8'},
     ] : table=='pa_challenges' ? [

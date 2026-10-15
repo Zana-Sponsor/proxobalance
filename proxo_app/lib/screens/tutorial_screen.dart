@@ -41,7 +41,7 @@ class _TutorialScreenState extends State<TutorialScreen> {
   }
 
   Future<void> _loadTutorials() async {
-    setState(() => _loading = true);
+    if (_tutorials.isEmpty) setState(() => _loading = true);
     try {
       final res = await supabase
           .from('pa_tutorials')

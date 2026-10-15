@@ -38,12 +38,12 @@ class ProxoSymbol extends StatelessWidget {
     widthFactor: 1,
     heightFactor: 1,
     child: SvgPicture.asset(
-    'assets/icons/solar/${symbol.file}.svg',
-    width: size, height: size, fit: BoxFit.contain,
-    colorFilter: ColorFilter.mode(color ?? IconTheme.of(context).color ??
-      const Color(0xFF64748B), BlendMode.srcIn),
-    semanticsLabel: semanticLabel, excludeFromSemantics: semanticLabel == null,
-    matchTextDirection: mirrorInRtl,
+      'assets/icons/solar/${symbol.file}.svg',
+      width: size, height: size, fit: BoxFit.contain,
+      colorFilter: ColorFilter.mode(color ?? IconTheme.of(context).color ??
+        const Color(0xFF64748B), BlendMode.srcIn),
+      semanticsLabel: semanticLabel, excludeFromSemantics: semanticLabel == null,
+      matchTextDirection: mirrorInRtl,
     ),
   );
 }

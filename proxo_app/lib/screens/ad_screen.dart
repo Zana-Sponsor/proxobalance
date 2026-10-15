@@ -2801,39 +2801,39 @@ class _AdScreenState extends State<AdScreen>
         if (mounted) _entranceCtrl.forward(from: 0.0);
       },
       child: Stack(
-      fit: StackFit.expand,
-      children: [
-        base,
-        Positioned.fill(
-          child: IgnorePointer(
-            child: AnimatedSwitcher(
-              duration: _kSkeletonFade,
-              switchInCurve: Curves.easeOut,
-              switchOutCurve: Curves.easeOut,
-              // تەنها فەید. بە ئەنقەست هیچ `SlideTransition`،
-              // `ScaleTransition` یان `SizeTransition`ێک نییە.
-              transitionBuilder: (child, animation) =>
-                  FadeTransition(opacity: animation, child: child),
-              // قەبارە لە دایکەوە دێت (`StackFit.expand`)، نەک لە
-              // منداڵەکانەوە — بۆیە هاتن و چوونی سکێلیتۆنەکە هەرگیز
-              // لایەوتی دەوروبەری ناگۆڕێت.
-              layoutBuilder: (currentChild, previousChildren) => Stack(
-                fit: StackFit.expand,
-                children: [
-                  ...previousChildren,
-                  if (currentChild != null) currentChild,
-                ],
+        fit: StackFit.expand,
+        children: [
+          base,
+          Positioned.fill(
+            child: IgnorePointer(
+              child: AnimatedSwitcher(
+                duration: _kSkeletonFade,
+                switchInCurve: Curves.easeOut,
+                switchOutCurve: Curves.easeOut,
+                // تەنها فەید. بە ئەنقەست هیچ `SlideTransition`،
+                // `ScaleTransition` یان `SizeTransition`ێک نییە.
+                transitionBuilder: (child, animation) =>
+                    FadeTransition(opacity: animation, child: child),
+                // قەبارە لە دایکەوە دێت (`StackFit.expand`)، نەک لە
+                // منداڵەکانەوە — بۆیە هاتن و چوونی سکێلیتۆنەکە هەرگیز
+                // لایەوتی دەوروبەری ناگۆڕێت.
+                layoutBuilder: (currentChild, previousChildren) => Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    ...previousChildren,
+                    if (currentChild != null) currentChild,
+                  ],
+                ),
+                child: showSkeleton
+                    ? _SkeletonOverlay(
+                        key: const ValueKey('sk'),
+                        count: _skeletonOverlayCount,
+                      )
+                    : const SizedBox.expand(key: ValueKey('sk_none')),
               ),
-              child: showSkeleton
-                  ? _SkeletonOverlay(
-                      key: const ValueKey('sk'),
-                      count: _skeletonOverlayCount,
-                    )
-                  : const SizedBox.expand(key: ValueKey('sk_none')),
             ),
           ),
-        ),
-      ],
+        ],
       ),
     );
   }
@@ -2859,107 +2859,105 @@ class _AdScreenState extends State<AdScreen>
     // دایکی `BouncingScrollPhysics` دەمێنێتەوە بۆ ئەوەی ڕاکێشان تەنانەت
     // کاتێک لیستەکە لە یەک شاشە کورتترە کار بکات.
     return CustomScrollView(
-          // The AnimatedSwitcher in _buildBody tears the list down and rebuilds
-          // it whenever the screen flips between skeleton, empty and content.
-          // A PageStorageKey makes the offset survive that, so a silent
-          // background refresh never yanks the user back to the top.
-          key: const PageStorageKey('ads_list'),
-          controller: _scrollCtrl,
-          // سکڕۆڵی نەرم: فیزیکسی iOS (بۆنس + دیسێلەرەیشنی نەرم) لە جیاتی
-          // Clamping-ی ئەندرۆید، لەگەڵ کاشێکی فراوانتر بۆ ئەوەی کارتی داهاتوو
-          // پێش گەیشتن ڕەیستەر بکرێت — بۆیە سکڕۆڵ ناوەستێت.
-          // 2400 → 1200. cacheExtent-ی گەورە کارتی زیاتر پێش وەخت
-          // ڕەیستەر دەکات — لەسەر کۆمپیوتەر باشە، بەڵام لەسەر مۆبایل
-          // واتە لایەری زیاتر لە بیرگەدا و کاری زیاتر بۆ GPU لە کاتی
-          // گەڕانەوە لە شیتی وردەکارییەوە. 1200 ≈ دوو کارت لە پێش و
-          // دوو لە پاش — بەسە بۆ سکڕۆڵێکی بێ‌وەستان.
-          cacheExtent: 1200,
-          physics: const BouncingScrollPhysics(
-            parent: AlwaysScrollableScrollPhysics(),
+      // Preserve the list offset through filtering and data changes. The
+      // shared refresh wrapper stays mounted across empty/error/content states.
+      key: const PageStorageKey('ads_list'),
+      controller: _scrollCtrl,
+      // سکڕۆڵی نەرم: فیزیکسی iOS (بۆنس + دیسێلەرەیشنی نەرم) لە جیاتی
+      // Clamping-ی ئەندرۆید، لەگەڵ کاشێکی فراوانتر بۆ ئەوەی کارتی داهاتوو
+      // پێش گەیشتن ڕەیستەر بکرێت — بۆیە سکڕۆڵ ناوەستێت.
+      // 2400 → 1200. cacheExtent-ی گەورە کارتی زیاتر پێش وەخت
+      // ڕەیستەر دەکات — لەسەر کۆمپیوتەر باشە، بەڵام لەسەر مۆبایل
+      // واتە لایەری زیاتر لە بیرگەدا و کاری زیاتر بۆ GPU لە کاتی
+      // گەڕانەوە لە شیتی وردەکارییەوە. 1200 ≈ دوو کارت لە پێش و
+      // دوو لە پاش — بەسە بۆ سکڕۆڵێکی بێ‌وەستان.
+      cacheExtent: 1200,
+      physics: const BouncingScrollPhysics(
+        parent: AlwaysScrollableScrollPhysics(),
+      ),
+      slivers: [
+        SliverPadding(
+          padding: EdgeInsets.fromLTRB(
+              _kCampaignPageGutter,
+              _kCampaignListTop * _campaignScale(context),
+              _kCampaignPageGutter,
+              0),
+          sliver: SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (_, i) {
+                final ad = items[i];
+                // هەموو ڕیزە بارکراوەکان بە lazy SliverList وێنا
+                // دەکرێن؛ دوگمەی دووەمی «زیاتر» لابرا تا تەنها
+                // کۆنترۆڵی ناو خودی کارت بمێنێتەوە.
+                return _AdcListEntrance(
+                  key: ValueKey(ad['id']),
+                  index: i,
+                  animation: _entranceCtrl,
+                  child: RepaintBoundary(
+                    child: _AdCard(
+                      ad: ad,
+                      isHighlighted: _highlightId == ad['id']?.toString(),
+                      onTap: () => _openAdDetails(ad),
+                      onCopyId: _copyText,
+                      onFix: () => _openAdFixSheet(ad),
+                      onFeedback: () => _openAdFeedback(ad),
+                    ),
+                  ),
+                );
+              },
+              childCount: items.length,
+              // کاتێک لیستەکە دەگۆڕێت (ڕیکلامێکی نوێ لە سەرەوە زیاد
+              // دەبێت، یان یەکێک دەڕژێتە دەرەوەی فلتەرەکە)، ئەمە وا
+              // دەکات Flutter منداڵە کلیلدارەکان **بە کلیل** بدۆزێتەوە
+              // نەک بە ئیندێکس. بەبێ ئەمە، زیادکردنی یەک ڕیکلام واتە
+              // هەموو کارتەکانی خوارەوە بە یەک ئیندێکس دەشێوێن و
+              // state-یان (لەوانەش «بینینی زیاتر»ی کراوە) لەدەست دەچێت.
+              findChildIndexCallback: (Key key) {
+                if (key is! ValueKey) return null;
+                final Object? id = key.value;
+                if (id == null) return null;
+                final int i = items.indexWhere(
+                    (a) => (a['id'] ?? '').toString() == id.toString());
+                return i < 0 ? null : i;
+              },
+              addRepaintBoundaries: false, // We add them manually
+              addAutomaticKeepAlives: false,
+            ),
           ),
-          slivers: [
-            SliverPadding(
-              padding: EdgeInsets.fromLTRB(
-                  _kCampaignPageGutter,
-                  _kCampaignListTop * _campaignScale(context),
-                  _kCampaignPageGutter,
-                  0),
-              sliver: SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (_, i) {
-                    final ad = items[i];
-                    // هەموو ڕیزە بارکراوەکان بە lazy SliverList وێنا
-                    // دەکرێن؛ دوگمەی دووەمی «زیاتر» لابرا تا تەنها
-                    // کۆنترۆڵی ناو خودی کارت بمێنێتەوە.
-                    return _AdcListEntrance(
-                      key: ValueKey(ad['id']),
-                      index: i,
-                      animation: _entranceCtrl,
-                      child: RepaintBoundary(
-                        child: _AdCard(
-                          ad: ad,
-                          isHighlighted: _highlightId == ad['id']?.toString(),
-                          onTap: () => _openAdDetails(ad),
-                          onCopyId: _copyText,
-                          onFix: () => _openAdFixSheet(ad),
-                          onFeedback: () => _openAdFeedback(ad),
+        ),
+        // ── Load more indicator ──
+        SliverToBoxAdapter(
+          child: Padding(
+            // ── 110 بۆ گەردی float-ی ژێرەوە زیادکراوە بەسەر بۆشایی
+            // سەلامەتی خوارەوەی ئامێر (گلید-بار/ئیشارەی ماڵەوە) بۆ
+            // ئەوەی هیچ کارتێک لە پشتی نەشاردرێتەوە لەسەر هیچ ئامێرێک.
+            padding: EdgeInsets.only(bottom: 110 + MediaQuery.of(context).padding.bottom),
+            child: _loadingMore
+                ? const Center(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: 16),
+                      child: SizedBox(
+                        width: 24, height: 24,
+                        child: CircularProgressIndicator(
+                            strokeWidth: 2.5, color: _dsBlue)),
+                    ))
+                : !_hasMore && items.length >= _pageSize
+                    ? Padding(
+                        padding: EdgeInsets.symmetric(
+                            vertical: _dsRowGap *
+                                _responsiveScale(context)),
+                        child: Center(
+                          child: ProxoText(
+                            'هەموو ${items.length} ڕیکلام نیشان دران',
+                            style:
+                                _T.of(_responsiveScale(context)).micro,
+                          ),
                         ),
-                      ),
-                    );
-                  },
-                  childCount: items.length,
-                  // کاتێک لیستەکە دەگۆڕێت (ڕیکلامێکی نوێ لە سەرەوە زیاد
-                  // دەبێت، یان یەکێک دەڕژێتە دەرەوەی فلتەرەکە)، ئەمە وا
-                  // دەکات Flutter منداڵە کلیلدارەکان **بە کلیل** بدۆزێتەوە
-                  // نەک بە ئیندێکس. بەبێ ئەمە، زیادکردنی یەک ڕیکلام واتە
-                  // هەموو کارتەکانی خوارەوە بە یەک ئیندێکس دەشێوێن و
-                  // state-یان (لەوانەش «بینینی زیاتر»ی کراوە) لەدەست دەچێت.
-                  findChildIndexCallback: (Key key) {
-                    if (key is! ValueKey) return null;
-                    final Object? id = key.value;
-                    if (id == null) return null;
-                    final int i = items.indexWhere(
-                        (a) => (a['id'] ?? '').toString() == id.toString());
-                    return i < 0 ? null : i;
-                  },
-                  addRepaintBoundaries: false, // We add them manually
-                  addAutomaticKeepAlives: false,
-                ),
-              ),
-            ),
-            // ── Load more indicator ──
-            SliverToBoxAdapter(
-              child: Padding(
-                // ── 110 بۆ گەردی float-ی ژێرەوە زیادکراوە بەسەر بۆشایی
-                // سەلامەتی خوارەوەی ئامێر (گلید-بار/ئیشارەی ماڵەوە) بۆ
-                // ئەوەی هیچ کارتێک لە پشتی نەشاردرێتەوە لەسەر هیچ ئامێرێک.
-                padding: EdgeInsets.only(bottom: 110 + MediaQuery.of(context).padding.bottom),
-                child: _loadingMore
-                    ? const Center(
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(vertical: 16),
-                          child: SizedBox(
-                            width: 24, height: 24,
-                            child: CircularProgressIndicator(
-                                strokeWidth: 2.5, color: _dsBlue)),
-                        ))
-                    : !_hasMore && items.length >= _pageSize
-                        ? Padding(
-                            padding: EdgeInsets.symmetric(
-                                vertical: _dsRowGap *
-                                    _responsiveScale(context)),
-                            child: Center(
-                              child: ProxoText(
-                                'هەموو ${items.length} ڕیکلام نیشان دران',
-                                style:
-                                    _T.of(_responsiveScale(context)).micro,
-                              ),
-                            ),
-                          )
-                        : const SizedBox.shrink(),
-              ),
-            ),
-          ],
+                      )
+                    : const SizedBox.shrink(),
+          ),
+        ),
+      ],
     );
   }
 
