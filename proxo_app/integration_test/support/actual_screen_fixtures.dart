@@ -29,6 +29,8 @@ class ActualScreenBackend {
  Completer<void>? unreadGate;
  int bannerJoins=0;
  bool includeNotifications = false;
+ bool adsUnavailable = false;
+ bool emptyAds = false;
  Map<String, dynamic>? banner;
  final _sockets=<_ScreenSocket>[];
  ActualScreenBackend(){
@@ -41,6 +43,7 @@ class ActualScreenBackend {
     if(table=='pa_banners')await bannerGate?.future;
     if(table=='pa_notifications')await unreadGate?.future;
     if(table=='pa_ads'||table=='pa_featured_ads_public')await refreshGate?.future;
+    if(table=='pa_ads' && adsUnavailable) throw StateError('fixture_network_error');
     final Object data=table=='pa_banners' ? (banner ?? []) : table=='pa_notifications' && includeNotifications ? [
       {'id':'notice-1','user_id':screenFixtureOwner,'type':'ad_active','is_read':false,'created_at':DateTime.now().subtract(const Duration(minutes:3)).toUtc().toIso8601String()},
       {'id':'notice-2','user_id':screenFixtureOwner,'type':'deposit_approved','is_read':true,'created_at':DateTime.now().subtract(const Duration(days:1)).toUtc().toIso8601String()},
@@ -53,7 +56,7 @@ class ActualScreenBackend {
       {'id':'voucher-1','code':'DEMO-ONLY','amount_iqd':1000,'reason':'دیاری بەخێرهاتن','is_signup_bonus':true,'created_at':'2026-10-14T10:00:00Z'},
     ]) : table=='promo_codes' ? [
       {'id':'promo-1','code':'DEMO-ONLY','discount_type':'percentage','discount_value':5,'is_active':true},
-    ] : table=='profiles'?{'full_name':'تاقیکردنەوە Proxo','email':'fixture@example.invalid','phone':'+9647500000000'}:table=='pa_ads'?[{
+    ] : table=='profiles'?{'full_name':'تاقیکردنەوە Proxo','email':'fixture@example.invalid','phone':'+9647500000000'}:table=='pa_ads' && emptyAds ? [] :table=='pa_ads'?[{
      'id':'00000000-0000-4000-8000-000000000001','title':'Fictional screen fixture','status':'active',
      'spend':12.5,'prev_spend':8,'clicks':1246,'impressions':84320,'prev_impressions':60000,
      'conversions':10,'budget':10,'total_budget':30,'created_at':DateTime.now().subtract(const Duration(hours:1)).toIso8601String(),

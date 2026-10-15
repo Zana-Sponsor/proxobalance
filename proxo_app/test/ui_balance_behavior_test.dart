@@ -206,6 +206,28 @@ void main() {
     await t.pumpWidget(const SizedBox());
   });
 
+  testWidgets('refresh recovers an Ads error even when the returned list is empty', (t) async {
+    phone(t);
+    await (await SharedPreferences.getInstance()).clear();
+    backend.adsUnavailable = true; backend.emptyAds = true;
+    final handle = ProxoRefreshController();
+    try {
+      await t.pumpWidget(host(AdScreen(refreshController: handle))); await settle(t);
+      expect(find.text('پەیوەندی نییە'), findsOneWidget);
+      expect(handle.isAttached, isTrue);
+      backend.adsUnavailable = false;
+      final running = handle.refresh();
+      await settle(t); await running;
+      expect(find.text('پەیوەندی نییە'), findsNothing);
+      expect(find.text('هەڵەیەک ڕوویدا'), findsNothing);
+      expect(handle.isAttached, isTrue);
+      expect(t.takeException(), isNull);
+    } finally {
+      backend.adsUnavailable = false; backend.emptyAds = false;
+      await t.pumpWidget(const SizedBox()); handle.dispose();
+    }
+  });
+
   testWidgets('successful creation preserves Home and Ads state and prevents duplicate routes', (t) async {
     phone(t);
     await t.pumpWidget(host(const app.MainShell())); await settle(t);

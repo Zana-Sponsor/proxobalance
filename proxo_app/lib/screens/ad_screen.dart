@@ -1367,7 +1367,7 @@ class _AdScreenState extends State<AdScreen>
 
       final fresh = List<Map<String, dynamic>>.from(res ?? []);
       if (applyAfter != null) await applyAfter;
-      if (!mounted) return false;
+      if (!mounted || supabase.auth.currentUser?.id != user.id) return false;
 
       unawaited(_saveCache(fresh, filter: requestedFilter));
       // بەکارهێنەر لە ماوەی داواکارییەکەدا فلتەری گۆڕیوە؛ وەڵامی کۆن
@@ -1376,7 +1376,9 @@ class _AdScreenState extends State<AdScreen>
 
       // هیچ نەگۆڕاوە → هیچ کارێک. ئەمە باوترین حاڵەتە (بەکارهێنەر تەنها
       // سەیری وردەکارییەکی کرد و گەڕایەوە)، بۆیە گەڕانەوە دەبێتە سفر کار.
-      if (_adsSignature(fresh) == _adsSignature(_ads)) return false;
+      // An unchanged/empty response still recovers an error or offline view.
+      if (_adsSignature(fresh) == _adsSignature(_ads) &&
+          !_hasError && !_isOffline) return false;
 
       setState(() {
         _ads = fresh;
