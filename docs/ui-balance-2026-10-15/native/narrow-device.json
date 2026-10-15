@@ -1,0 +1,21 @@
+{
+  "size": "Physical size: 320x640\nOverride size: 840x1920",
+  "density": "Physical density: 160\nOverride density: 480",
+  "adb_back_events": 1,
+  "adb_tap_events": [
+    [
+      420,
+      324
+    ],
+    [
+      420,
+      324
+    ]
+  ],
+  "adb_screenshots": [
+    "narrow-chrome-native-scale-1.0",
+    "narrow-chrome-native-scale-2.0"
+  ],
+  "drive_timeout_seconds": 600,
+  "drive_timed_out": false
+}

@@ -1,0 +1,514 @@
+{
+  "schema_version": 1,
+  "application_commit": "8c0f3645e94300f89371c95b953fe75e0f2e277d",
+  "baseline_commit": "211abe49a8969fa8d250e727736a07668eeee594",
+  "recorded_at": "2026-10-15T18:51:37.474Z",
+  "workflows": [
+    {
+      "id": 38779982375,
+      "name": "Sidebar profile navigation evidence",
+      "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/38779982375",
+      "head_sha": "8c0f3645e94300f89371c95b953fe75e0f2e277d",
+      "run_attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "id": 116577351798,
+          "name": "capture (before)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 116577352292,
+          "name": "capture (after)",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 38779982416,
+      "name": "Auth localization and visual polish evidence",
+      "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/38779982416",
+      "head_sha": "8c0f3645e94300f89371c95b953fe75e0f2e277d",
+      "run_attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "id": 116577353003,
+          "name": "capture (after)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 116577353471,
+          "name": "capture (before)",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 38779982397,
+      "name": "UI remediation evidence",
+      "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/38779982397",
+      "head_sha": "8c0f3645e94300f89371c95b953fe75e0f2e277d",
+      "run_attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "id": 116577353473,
+          "name": "render (candidate)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 116577353755,
+          "name": "render (baseline)",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 38779982542,
+      "name": "Verify ProxoLink",
+      "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/38779982542",
+      "head_sha": "8c0f3645e94300f89371c95b953fe75e0f2e277d",
+      "run_attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "id": 116577352173,
+          "name": "edge-functions",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 116577352606,
+          "name": "backend",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 116577352654,
+          "name": "database",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 116577352712,
+          "name": "flutter",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 116577352737,
+          "name": "responsive",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 38779982369,
+      "name": "Build ProxoLink native verification",
+      "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/38779982369",
+      "head_sha": "8c0f3645e94300f89371c95b953fe75e0f2e277d",
+      "run_attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "id": 116577351356,
+          "name": "native-verification-apk",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 116577355092,
+          "name": "isolated-hosted-verification",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "id": 116580538601,
+          "name": "native-runtime",
+          "status": "completed",
+          "conclusion": "skipped"
+        }
+      ]
+    },
+    {
+      "id": 38779982294,
+      "name": "Native UI iconography verification",
+      "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/38779982294",
+      "head_sha": "8c0f3645e94300f89371c95b953fe75e0f2e277d",
+      "run_attempt": 2,
+      "status": "completed",
+      "conclusion": "failure",
+      "jobs": [
+        {
+          "id": 116586124713,
+          "name": "android-fixtures (tablet)",
+          "status": "completed",
+          "conclusion": "failure"
+        },
+        {
+          "id": 116586124796,
+          "name": "android-fixtures (narrow)",
+          "status": "completed",
+          "conclusion": "failure"
+        },
+        {
+          "id": 116586127585,
+          "name": "android-fixtures (phone)",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    }
+  ],
+  "suites": {
+    "polish": {
+      "capture_cases": 90,
+      "behavior_tests": 44,
+      "main_pngs_per_source": 117,
+      "raw_json_records_per_source": 207,
+      "zero_captured_exceptions": true,
+      "viewport_matrix": [
+        {
+          "width_dp": 393,
+          "text_scale": 1,
+          "dpr": 3
+        },
+        {
+          "width_dp": 280,
+          "text_scale": 2,
+          "dpr": 2
+        }
+      ],
+      "locales": [
+        "ckb",
+        "ar",
+        "badini"
+      ]
+    },
+    "ui_receipt": {
+      "capture_cases": 64,
+      "behavior_tests": 298
+    },
+    "profile_navigation": {
+      "capture_cases": 20,
+      "behavior_tests": 3
+    },
+    "actual_ads_error_recovery": {
+      "widths_dp": [
+        393,
+        280
+      ],
+      "requested_text_scales": [
+        1,
+        2
+      ],
+      "pngs": 4,
+      "limitation": "Campaigns retains its existing 1x body text cap; requested 2x is not uncapped large-text accessibility."
+    },
+    "native": {
+      "phone": {
+        "completed": true,
+        "original_pngs": 37,
+        "physical_size_px": [
+          1179,
+          1920
+        ],
+        "dpr": 3,
+        "auth_logo_dp": [
+          84,
+          24
+        ],
+        "provider_logo_dp": [
+          64,
+          24
+        ],
+        "keyboard_back_preserves_form": true,
+        "choice_dismisses_keyboard": true,
+        "real_android_taps": 2,
+        "real_android_back_events": 1
+      },
+      "narrow": {
+        "completed": true,
+        "original_pngs": 37,
+        "physical_size_px": [
+          840,
+          1920
+        ],
+        "dpr": 3,
+        "auth_logo_dp": [
+          84,
+          24
+        ],
+        "provider_logo_dp": [
+          64,
+          24
+        ],
+        "keyboard_back_preserves_form": true,
+        "choice_dismisses_keyboard": true,
+        "real_android_taps": 2,
+        "real_android_back_events": 1
+      },
+      "tablet": {
+        "completed": true,
+        "original_pngs": 37,
+        "physical_size_px": [
+          1536,
+          1704
+        ],
+        "dpr": 2,
+        "auth_logo_dp": [
+          84,
+          24
+        ],
+        "provider_logo_dp": [
+          64,
+          24
+        ],
+        "keyboard_back_preserves_form": true,
+        "choice_dismisses_keyboard": true,
+        "real_android_taps": 2,
+        "real_android_back_events": 1
+      }
+    }
+  },
+  "artifacts": [
+    {
+      "id": 11996555147,
+      "name": "polish-after",
+      "run_id": 38779982416,
+      "size_bytes": 10012883,
+      "sha256": "fac0d4276e349ea02ca83e8d3e642916e9554f81ea97d27367989ac805136535",
+      "independently_verified_sha256": true,
+      "zip_crc_ok": true
+    },
+    {
+      "id": 11994794689,
+      "name": "polish-before",
+      "run_id": 38779982416,
+      "size_bytes": 9900885,
+      "sha256": "3d012a69d14b0edc76d9e7e6d1f0599ed75215fba24af31c85083a29a4f9a40c",
+      "independently_verified_sha256": true,
+      "zip_crc_ok": true
+    },
+    {
+      "id": 11996481150,
+      "name": "ui-native-android-fixtures-phone",
+      "run_id": 38779982294,
+      "run_attempt": 1,
+      "size_bytes": 2879673,
+      "sha256": "ab1d77c6c21cbb36808a5c70f7d294a02d74ca765375eddeca907439fa0cc6ac",
+      "independently_verified_sha256": true,
+      "zip_crc_ok": true
+    },
+    {
+      "id": 11998427577,
+      "name": "ui-native-android-fixtures-tablet",
+      "run_id": 38786262385,
+      "run_attempt": 1,
+      "size_bytes": 2420326,
+      "sha256": "053248ea8c77065e56332e9e88c2db461a45f2b9cb56cb03942a08cd67895f0e",
+      "independently_verified_sha256": true,
+      "zip_crc_ok": true
+    },
+    {
+      "id": 11998179449,
+      "name": "ui-native-android-fixtures-phone",
+      "run_id": 38786262385,
+      "run_attempt": 2,
+      "size_bytes": 2881032,
+      "sha256": "bb877bf3d8322e50faa4a5e7ef09ca14af4191920ecebfc029bd467d520f5396",
+      "independently_verified_sha256": true,
+      "zip_crc_ok": true
+    },
+    {
+      "id": 11997159197,
+      "name": "ui-native-android-fixtures-narrow",
+      "run_id": 38786262385,
+      "run_attempt": 1,
+      "size_bytes": 2555845,
+      "sha256": "83bf36363fe12c0d118b9b0a1282b2556e20426a25747b63bce5b0c37e7a3eab",
+      "independently_verified_sha256": true,
+      "zip_crc_ok": true
+    }
+  ],
+  "native_first_attempt": {
+    "run_id": 38779982294,
+    "run_attempt": 1,
+    "phone": "success",
+    "narrow": "failure",
+    "tablet": "failure",
+    "reason": "Both failed jobs built and installed successfully, then timed out connecting the Flutter driver to the VM before test execution. The 600-second watchdog killed the process. No native test observations/screenshots were produced for these two configurations.",
+    "narrow_artifact": {
+      "id": 11996377438,
+      "sha256": "35d7b59b2854eca5ba32d7b360429ec4080b1bacca906103fe257506997ed98f",
+      "sha256_verified": true,
+      "zip_crc_ok": true
+    },
+    "tablet_artifact": {
+      "id": 11996267437,
+      "sha256": "ea30c2e818ceea2e194bbeeff59aea6815dfdebdb8eb0fb2804906deea209cd6",
+      "sha256_verified": true,
+      "zip_crc_ok": true
+    }
+  },
+  "limitations": [
+    "Overlapping suites are not a unique-test total.",
+    "Android API35 emulator debug checks are rendering/input evidence, not physical-device P50/P95, CPU or heap benchmarks.",
+    "Fictional transports reject writes. No live OTP, payment, push-delivery or production data mutation is tested.",
+    "Protected native-runtime and isolated-hosted jobs are skipped. Earlier isolated-staging configuration and strict FIRST WebView pixel-parity blockers remain open.",
+    "PR 7 remains Draft/Open/Unmerged; no production deployment or migration."
+  ],
+  "native_harness_commit": "8905c7f14cc5097f2304e88e23306f5987b2378c",
+  "native_harness_changes": "Two real Android taps at measured TextField centers precede native keyboard assertions, with shouldPropagateDevicePointerEvents enabled and restored afterward. The runner records both taps and retains OS input/window/logcat diagnostics on failure. Application lib/assets/Android/dependency contents are identical to 8c0f364.",
+  "native_second_attempt": {
+    "run_id": 38779982294,
+    "run_attempt": 2,
+    "phone": "inherited success",
+    "narrow": "failed IME visibility assertion after 35 rendering frames; Android logged PHASE_CLIENT_VIEW_SERVED and ignored synthetic showSoftInput requests",
+    "tablet": "VM driver connection timeout before test execution",
+    "narrow_artifact": {
+      "id": 11995514959,
+      "sha256": "2210aed29a1a88630b70b538771aa3dbb6e4fa4c4437fb6f018d6fbf88957990",
+      "sha256_verified": true,
+      "zip_crc_ok": true
+    },
+    "narrow_evidence": "The original Android system screenshot shows a Pixel Launcher not responding dialog covering the app; Flutter widget captures alone did not reveal the system overlay."
+  },
+  "native_third_attempt": {
+    "run_id": 38784546299,
+    "commit": "7c0cec9cc3982e7ff1d3c8d26b71698b3eb3ba70",
+    "status": "completed",
+    "conclusion": "failure",
+    "phone": "Native keyboard assertion failed",
+    "narrow": "Native keyboard assertion failed",
+    "tablet": "Native keyboard assertion failed",
+    "reason": "The new host taps reached the measured ad-title coordinates but the live test binding consumed them as finder diagnostics. shouldPropagateDevicePointerEvents defaults to false; the final harness enables it without changing application code or weakening assertions.",
+    "primary_api": "https://api.flutter.dev/flutter/flutter_test/TestWidgetsFlutterBinding/shouldPropagateDevicePointerEvents.html",
+    "verified_diagnostic_archives": [
+      {
+        "id": 11998785025,
+        "sha256": "826392ac69689d8a9de20bf5b0aaadd69124755fb1d42e95d5ffa6f453f845ec",
+        "zip_crc_ok": true
+      },
+      {
+        "id": 11997617165,
+        "sha256": "41029298514198408990f335a6054e1f1bb06db873e6dc5d94b8893b5ea163e0",
+        "zip_crc_ok": true
+      }
+    ]
+  },
+  "native_latest_first_attempt": {
+    "run_id": 38786262385,
+    "run_attempt": 1,
+    "commit": "8905c7f14cc5097f2304e88e23306f5987b2378c",
+    "narrow": "success",
+    "tablet": "success",
+    "phone": "failure after in-app tests passed",
+    "phone_details": "The log records both native taps, real Back and '00:45 +2: All tests passed!', then RequestData failed with service disappeared and adb reported device offline. Only the phone job was retried to collect a complete result/artifact.",
+    "phone_artifact": {
+      "id": 11998682035,
+      "sha256": "1b31f97dff21f364cdef1477f6c7238a00f94361dc2354f15147edd4d2c644a5",
+      "independently_verified_sha256": false
+    }
+  },
+  "native_harness_validation": [
+    {
+      "id": 38786262270,
+      "name": "Verify ProxoLink",
+      "head_sha": "8905c7f14cc5097f2304e88e23306f5987b2378c",
+      "run_attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/38786262270"
+    },
+    {
+      "id": 38786262280,
+      "name": "Build ProxoLink native verification",
+      "head_sha": "8905c7f14cc5097f2304e88e23306f5987b2378c",
+      "run_attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/38786262280"
+    },
+    {
+      "id": 38786262768,
+      "name": "Sidebar profile navigation evidence",
+      "head_sha": "8905c7f14cc5097f2304e88e23306f5987b2378c",
+      "run_attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/38786262768"
+    },
+    {
+      "id": 38786262556,
+      "name": "UI remediation evidence",
+      "head_sha": "8905c7f14cc5097f2304e88e23306f5987b2378c",
+      "run_attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/38786262556"
+    },
+    {
+      "id": 38786262249,
+      "name": "Auth localization and visual polish evidence",
+      "head_sha": "8905c7f14cc5097f2304e88e23306f5987b2378c",
+      "run_attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/38786262249"
+    },
+    {
+      "id": 38786262385,
+      "name": "Native UI iconography verification",
+      "head_sha": "8905c7f14cc5097f2304e88e23306f5987b2378c",
+      "run_attempt": 2,
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/38786262385"
+    }
+  ],
+  "native_harness_workflow": {
+    "id": 38786262385,
+    "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/38786262385",
+    "head_sha": "8905c7f14cc5097f2304e88e23306f5987b2378c",
+    "run_attempt": 2,
+    "status": "completed",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "id": 116603504271,
+        "name": "android-fixtures (phone)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 116603506757,
+        "name": "android-fixtures (tablet)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 116603507264,
+        "name": "android-fixtures (narrow)",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ],
+    "original_pngs": 111,
+    "selected_gallery_pngs": 27,
+    "additional_diagnostic_pngs": 1
+  }
+}
