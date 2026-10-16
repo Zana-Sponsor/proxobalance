@@ -4,7 +4,7 @@
 
 Cloudflare's scoped send-path repair is in place. The current instance export supplied at approximately **14:04 UTC** now confirms the four Supabase nodes select the replacement server credential and all three Wevlix nodes select the replacement **Production** credential. Its 33-node graph and Code bodies match the reviewed source; **17 offline intercepted-transport checks passed**, with no reproducible code/graph defect. A single non-sending production validation probe at **14:11:44 UTC** returned **HTTP 400 JSON bad_request**, and no new reservation was created. This verifies production-path reachability and input validation, not the identity of the published version or provider authentication. The earlier development send succeeded at **13:36 UTC**. The single intended-live attempt at **13:49 UTC** remains unresolved: HTTP 502 non-JSON, database reservation pending, no recorded provider ID, and user-reported non-arrival. Its external outcome and charge are unknown. **Do not send another OTP until that attempt is resolved.** Browser control remains unavailable. Earlier sections below are historical evidence and are superseded where explicitly noted.
 
-The subsequent **14:37:41 UTC no-send diagnostic execution**, supplied by the user in screenshots, established a current concrete blocker: Supabase limited read returned **200**, while **both Wevlix production-credential probes returned 401 authentication_rejected**. The next correction is the Wevlix Header Auth credential's header name/private key value, followed by another no-send diagnostic. This new evidence does not retrospectively prove the exact cause or external outcome of the 13:49 attempt.
+The latest **14:42:26 UTC / 17:42:26 Baghdad no-send diagnostic** supersedes the 14:37 authentication failures: Supabase read **200**, Wevlix historical-message read **200**, and the deliberately empty template request **400 / empty_payload_rejected_expected**. Current diagnostic authentication is now working. The user did not disclose which private field changed, so do not claim a specific malformed key or Bearer-prefix cause. A valid production send/delivery has still not been tested successfully. The original one-live-OTP allowance remains potentially consumed by the unresolved 13:49 attempt; a further paid send requires a concrete renewed authorization or definitive resolution of that earlier outcome.
 
 This report supplements [the original deployment report](otp-repair-status-2026-10-16.md). Completed Supabase deployments and rolled-back lifecycle tests were not repeated. PR #7 was read back as Draft, Open and Unmerged at head `435c038175afe78c789b59c1128c2c2125996c77`. No unrelated workflow, ProxoLink deployment or app release was changed.
 
@@ -370,3 +370,21 @@ Required correction: open the existing **Proxo Wevlix Production 2026-10-16** He
 The user can save the credential once and rerun only this **no-send diagnostic**, then share Safe Result. Credential references remain shared with the intended production nodes; no additional rebinding should be necessary if the same credential is edited. A successful read and expected empty-payload rejection still do not verify a valid send, balance, template eligibility or delivery.
 
 No credential value was read or changed by the assistant. No extra valid OTP request, main-workflow execution or publication occurred in this follow-up. Browser credential-state protection still blocks direct management. The remaining secret-entry correction must happen privately in the user's credential UI; the diagnostic provides a safe way to verify its effect.
+
+## Authentication correction verified without sending — 2026-10-16 14:42 UTC
+
+Two new screenshots show **Safe Result** at **2026-10-16T14:42:26.282Z** (**17:42:26 Baghdad**), completed in approximately 2.999 seconds:
+
+| Probe | HTTP | Result |
+|---|---:|---|
+| Supabase zero-row table read | 200 | database_read_access_ok |
+| Wevlix historical-message read | 200 | existing_message_read_access_ok |
+| Wevlix deliberately empty template request | 400 | empty_payload_rejected_expected |
+
+The third attached image repeats the older **17:37** execution with 401; it does not contradict the newer successful diagnostic. The current credential is accepted for reading an existing Wevlix message, and the empty template payload reaches the expected rejection. The diagnostic still correctly reports valid_send_tested=false and previous_live_attempt_resolved=false. Neither a new message, valid-send eligibility, balance nor final delivery is established by these probes.
+
+A new metadata-only database check after these screenshots found no newer reservation: the latest authorized-recipient row is still the **13:49:45.250762 UTC pending** login reservation, without a provider ID, unused, expired at 13:54:45 UTC. The prior 13:36 development row remains queued. No OTP code or private credential was read.
+
+The concrete next real test is **one POST to the production endpoint** `https://email.proxopages.com/webhook/wevlix/otp/send`, recipient **+9647510074008**, purpose **login**, with **no automatic retry**. This avoids needing the user to start a temporary test listener. The existing one-live-send/$0.02 authorization cannot be treated as definitely unused: the old 502 and missing provider record leave its external outcome uncertain. Before an additional valid request, obtain explicit authorization for **one further OTP with up to $0.02 additional cost**, or obtain definitive provider evidence that the previous attempt created no billable message. No further valid request was sent in this continuation.
+
+The original workflow's published-version identity, actual live delivery and private app session completion remain unverified. The current saved export's shared credential IDs are known, but no new browser readback or workflow publication was performed. The next permission request is specifically about the user's original one-message spending limit, not a missing general repair authorization.
