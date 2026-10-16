@@ -1,0 +1,216 @@
+{
+  "name": "Proxo - OTP No-Send Check",
+  "active": false,
+  "nodes": [
+    {
+      "id": "7f93b516-21b1-4e96-808e-3ac7446090cc",
+      "name": "Start no-send check",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        300
+      ],
+      "parameters": {},
+      "notesInFlow": true,
+      "notes": "Run this NEW diagnostic workflow only. No webhook, schedule, OTP reservation or valid message payload. Keep unpublished. Open Safe Result after execution."
+    },
+    {
+      "id": "e92d7dfd-f75d-4e8f-877f-e91e5931c6e5",
+      "name": "Supabase read check",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        260,
+        300
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://cojchkwssmasiejcgvbk.supabase.co/rest/v1/otp_whatsapp?select=id&limit=0",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 15000,
+          "redirect": {
+            "redirect": {
+              "followRedirects": false
+            }
+          },
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "text",
+              "outputPropertyName": "body"
+            }
+          }
+        }
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "qhtEh0Mw6BB7MItC",
+          "name": "Proxo Supabase Server 2026-10-16"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "retryOnFail": false
+    },
+    {
+      "id": "eb164323-f95b-4984-af5f-25c3a49d96cd",
+      "name": "Wevlix read check",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        520,
+        300
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://api.wevlix.com/v1/messages/9d9d9085-1cff-4cc2-b8b6-1fe7b6f1031c",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 15000,
+          "redirect": {
+            "redirect": {
+              "followRedirects": false
+            }
+          },
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "text",
+              "outputPropertyName": "body"
+            }
+          }
+        }
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "hrsb9CeuAkzmwSgn",
+          "name": "Proxo Wevlix Production 2026-10-16"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "retryOnFail": false
+    },
+    {
+      "id": "83b1f8fb-0959-48e3-b72c-b616e74740e2",
+      "name": "Wevlix empty request",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        780,
+        300
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.wevlix.com/v1/messages/template",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 15000,
+          "redirect": {
+            "redirect": {
+              "followRedirects": false
+            }
+          },
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "text",
+              "outputPropertyName": "body"
+            }
+          }
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{}"
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "hrsb9CeuAkzmwSgn",
+          "name": "Proxo Wevlix Production 2026-10-16"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "retryOnFail": false,
+      "notesInFlow": true,
+      "notes": "Intentionally empty JSON: no recipient, template or code. Expected 400/422 rejection. Never replace this body with a real recipient."
+    },
+    {
+      "id": "b0476038-6634-4901-ab74-3e12f5b3b9d9",
+      "name": "Safe Result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1040,
+        300
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Fixed-category output only. Never return raw responses, headers, phone, OTP or keys.\nfunction inspect(name,kind){\n  const raw=$(name).first().json;\n  const status=Number.isInteger(raw.statusCode)?raw.statusCode:null;\n  const body=raw.body??raw.data;\n  const content=typeof body==='string'?body:JSON.stringify(body??{});\n  let parsed=null;try{parsed=typeof body==='string'?JSON.parse(body):body;}catch{}\n  const text=(content+' '+JSON.stringify(raw.error??'')).slice(0,20000).toLowerCase();\n  let reason='unclassified_response';\n  if(status===null){\n    if(/not.*allowed|allow.*domain|domain.*restrict/.test(text))reason='credential_domain_restriction';\n    else if(/credential/.test(text))reason='credential_missing_or_unavailable';\n    else if(/timed?\\s*out|etimedout|timeout/.test(text))reason='request_timeout';\n    else if(/enotfound|eai_again|dns/.test(text))reason='dns_error';\n    else if(/certificate|tls|ssl/.test(text))reason='tls_error';\n    else reason='transport_or_node_error';\n  }else if(status===401)reason='authentication_rejected';\n  else if(status===403){\n    if(/scope|permission/.test(text))reason='permission_or_scope_rejected';\n    else if(/balance|credit|fund/.test(text))reason='balance_related_rejection';\n    else reason='forbidden';\n  }else if(status===404)reason='resource_not_found_or_not_visible';\n  else if(status===429)reason='rate_limited';\n  else if(status>=500)reason='server_or_gateway_error';\n  else if(kind==='empty_payload'&&[400,422].includes(status))reason='empty_payload_rejected_expected';\n  else if(kind==='empty_payload'&&status>=200&&status<300)reason='unexpected_success_investigate';\n  else if(kind==='database_read'&&status===200&&Array.isArray(parsed)&&parsed.length===0)reason='database_read_access_ok';\n  else if(kind==='message_read'&&status===200&&parsed?.success!==false&&['pending','queued','sent','delivered','read','failed','rejected','cancelled'].includes((parsed?.data??parsed)?.status))reason='existing_message_read_access_ok';\n  else if(status>=200&&status<300)reason='http_success_content_unverified';\n  else if(status>=300&&status<400)reason='redirect_not_followed';\n  else if(status===400)reason='bad_request';\n  return {http_status:status,result:reason,response_format:parsed===null?'non_json_or_unavailable':'json'};\n}\nreturn [{json:{\n  check:'Proxo credential diagnostics - no OTP send',\n  checked_at_utc:new Date().toISOString(),\n  Supabase:inspect('Supabase read check','database_read'),\n  Wevlix_read:inspect('Wevlix read check','message_read'),\n  Wevlix_empty_request:inspect('Wevlix empty request','empty_payload'),\n  valid_send_tested:false,\n  previous_live_attempt_resolved:false,\n  note:'Only table access, an existing message lookup, and a deliberately empty request were checked. This does not verify valid-message sending, template eligibility, balance, delivery or the earlier 502.'\n}}];"
+      },
+      "notesInFlow": true,
+      "notes": "Share only this node output. It contains fixed diagnostic categories and HTTP status, not raw provider responses."
+    }
+  ],
+  "connections": {
+    "Start no-send check": {
+      "main": [
+        [
+          {
+            "node": "Supabase read check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase read check": {
+      "main": [
+        [
+          {
+            "node": "Wevlix read check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wevlix read check": {
+      "main": [
+        [
+          {
+            "node": "Wevlix empty request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wevlix empty request": {
+      "main": [
+        [
+          {
+            "node": "Safe Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataErrorExecution": "none",
+    "saveDataSuccessExecution": "none",
+    "saveManualExecutions": false,
+    "saveExecutionProgress": false,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "pinData": {},
+  "tags": []
+}
