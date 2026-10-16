@@ -36,8 +36,12 @@ class ActualScreenBackend {
  bool emptyAds = false;
  Map<String, dynamic>? banner;
  final _sockets=<_ScreenSocket>[];
- ActualScreenBackend(){
+ int logoutRequests=0;
+ ActualScreenBackend({bool allowLogout=false}){
   transport=MockClient((request)async{
+    if(allowLogout && request.method=='POST' && request.url.host=='screen-fixtures.invalid' && request.url.path=='/auth/v1/logout'){
+      logoutRequests++; return http.Response('',204,request:request);
+    }
     if(request.method!='GET'||request.url.host!='screen-fixtures.invalid')throw StateError('screen_fixture_network_boundary');
     final table=request.url.path.split('/').last;
     if(!{'profiles','pa_ads','pa_featured_ads_public','pa_popups','pa_notifications','pa_banners','pa_wallets','pa_user_points','pa_levels','pa_challenges','pa_tutorials','pa_challenge_progress','pa_vouchers','promo_codes'}.contains(table))throw StateError('screen_fixture_network_boundary');
