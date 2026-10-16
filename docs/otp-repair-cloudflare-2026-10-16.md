@@ -202,3 +202,23 @@ After the user reported starting the target workflow listener, one authorized PO
 A metadata-only database check at **12:32:21 UTC** still found the old 02:11:20 UTC reservation as the latest recipient reservation; no new OTP reservation or delivery record appeared. A targeted Supabase log query for **12:31:35–12:32:10 UTC** returned no reservation or finish-send RPC entries in the available logs. Log availability/ingestion timing limits what can be inferred from absence alone.
 
 No second request or live send was attempted. The exact n8n execution path is unknown: its rendered execution status/error is needed to distinguish a trigger-only manual run from a node failure before the response node, or another cause. Browser control remains unavailable after the documented failed runtime recovery, so a screenshot of the current canvas/execution error (with any secrets hidden) is the concrete next diagnostic input. Do not publish or treat the empty HTTP 200 as provider acceptance. The one-real-send authorization remains unused.
+
+## Node inspection after user screenshot — 2026-10-16 13:00 UTC follow-up
+
+The user's screenshot, with an on-screen clock of **15:36 Baghdad**, shows **Record delivery** configured as Generic Credential Type / Header Auth but its credential selector is **Select Credential**, outlined red with a warning icon. This is direct evidence of an unbound node in the displayed editor. It supersedes any implication that the earlier visible four-node selections were confirmed persisted. The earlier report explicitly lacked a final saved export; the assistant must not report those bindings as complete.
+
+The screenshot's POST URL points to the expected `/rest/v1/rpc/pa_finish_whatsapp_otp_send` endpoint. The visible body maps the OTP reservation ID/send count and provider message ID/status as expected, although the bottom of the expression is outside the image. The screenshot shows no execution-error output. A missing credential is a concrete configuration defect, but this image alone does not establish the exact cause of the earlier empty HTTP 200 or prove the state of other nodes.
+
+### Checks performed
+
+- Inspected the supplied screenshot and its repeated uploads; they show the same Record delivery configuration, not separate node evidence.
+- Re-read reservation/finish-send logs for **12:31:35–12:32:20 UTC**: no matching RPC entries in the returned logs. A current metadata-only database query still shows the old **02:11:20 UTC** login reservation as latest, with no sent/delivered timestamps.
+- Reviewed the repository's 33-node configured workflow. Its credential entries are name-only placeholders without instance IDs; the four Supabase nodes in this source still use the original Custom Auth contract. It is not an export of the newly edited instance and cannot establish current saved bindings.
+- Ran the n8n skill's structural helper. On the original source it flagged ten credential-placeholder entries under its public-example policy. A temporary diagnostic copy with credential entries removed passed the graph/identity/activation checks. This does not make that temporary copy ready for execution or certify credential bindings.
+- Ran `node --test test/wevlix-workflow.test.js`: **10/10 passed**, with all transports intercepted. These source-contract checks do not execute the live n8n instance or prove current runtime authentication.
+
+### Concrete remaining correction
+
+In the current target workflow, select existing **Proxo Supabase Server 2026-10-16** in Record delivery's Header Auth field. Check the same selected credential on **Reserve OTP**, **Verify code**, and **Read new account**. Preserve the credential's private value; no new key or chat disclosure is needed merely to bind it. Save the draft, reload it and confirm each selection remains. Keep Send OTP template on **Devlopmemt** until development testing succeeds; do not publish the mixed draft.
+
+The previously documented browser credential-state failure still prevents direct UI correction or a fresh persisted export. A current workflow JSON downloaded through n8n's normal UI, without credential secrets, would allow a complete audit of the actual node parameters and binding IDs. No browser-safety bypass or further runtime reset was attempted. No additional webhook request, paid message, deployment, database mutation or credential revocation occurred during this inspection. The single authorized live-send allowance remains unused.
