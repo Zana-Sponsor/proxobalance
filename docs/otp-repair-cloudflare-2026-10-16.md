@@ -194,3 +194,11 @@ The remaining development test did **not** start. While preparing a UI Download 
 The last actually executed valid request remains the **11:51:08 UTC 503** documented above, before the new Supabase credential was saved/bound. Do not report the new credential as runtime-verified. No new reservation, successful development send, publication, live OTP or session exchange has been demonstrated. The production-send allowance remains unused.
 
 A concrete continuation is available: the user can open target workflow `Cm5W1LFKlWFxr6QO` and start **Execute workflow — from Send webhook** while Send OTP template remains bound to `Devlopmemt`; then the already-authorized development POST can be sent and correlated with sanitized Supabase logs/metadata. This user action registers the test listener on the n8n server; it does not require sharing a browser sign-in session. Do not publish the mixed development/production draft.
+
+## User-started listener request — 2026-10-16 12:31 UTC
+
+After the user reported starting the target workflow listener, one authorized POST was sent to `/webhook-test/wevlix/otp/send` with their specified recipient and `purpose=login`. The response completed at **12:31:58.325694 UTC**: **HTTP 200 with an empty response body**. This is not the workflow's expected JSON success contract and is **not a passing test**.
+
+A metadata-only database check at **12:32:21 UTC** still found the old 02:11:20 UTC reservation as the latest recipient reservation; no new OTP reservation or delivery record appeared. A targeted Supabase log query for **12:31:35–12:32:10 UTC** returned no reservation or finish-send RPC entries in the available logs. Log availability/ingestion timing limits what can be inferred from absence alone.
+
+No second request or live send was attempted. The exact n8n execution path is unknown: its rendered execution status/error is needed to distinguish a trigger-only manual run from a node failure before the response node, or another cause. Browser control remains unavailable after the documented failed runtime recovery, so a screenshot of the current canvas/execution error (with any secrets hidden) is the concrete next diagnostic input. Do not publish or treat the empty HTTP 200 as provider acceptance. The one-real-send authorization remains unused.
