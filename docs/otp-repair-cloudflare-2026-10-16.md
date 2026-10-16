@@ -127,3 +127,18 @@ Browser credential-safety rules require the user to perform credential creation/
 Repository inspection also confirmed that Supabase credential coordination extends beyond n8n: `api/admin.js`, `api/_lib/security.js`, `api/_lib/proxolink.js`, and the OTP, deletion, thumbnail and notification Edge sources reference server-key environment variables. This is a **source consumer inventory**, not a complete inventory of deployed secrets or all external clients. Current Supabase documentation confirms that creating new keys alone does not disable legacy keys; project API-key/signing-key state and deployed consumers still need coordinated inspection before revocation.
 
 Continuation requires explicit authorization for the single real-recipient login test (recipient already supplied privately, ending 4008), with development simulation first and at most one real delivery after production credentials are ready. Successful acceptance must be distinguished from delivery and a completed app session. PR #7 was read as Draft/Open/Unmerged at `c913eb52fa8968c0dec645b7f75101f13332bec2`; this follow-up changes documentation only.
+
+## Replacement key created — 2026-10-16
+
+The user reported completing the Wevlix creation handoff. The exact replacement row `Proxo n8n OTP - 2026-10-16` was then observed as **Active**, with **2 scopes**, last-used **—**, and a creation age of less than one minute. No key value was read or copied. This supersedes the prior note that the replacement was only a prepared form. The old key has not been revoked.
+
+A new, unsaved n8n Header Auth credential form is now prepared with these non-secret settings:
+
+- Credential name: `Proxo Wevlix Production 2026-10-16`.
+- Header name: `X-API-Key`.
+- Value: blank, awaiting private user entry.
+- Allowed HTTP Request Domains: **Specific Domains**, restricted to `api.wevlix.com`.
+
+![Prepared n8n credential form; secret field blank](otp-n8n-credential-form-20261016.jpg)
+
+Browser credential rules require the user to enter and submit the new secret privately. The form was opened from **Send OTP template**; after the user saves it, inspect the selected binding and preserve the development-test stage before making production bindings consistent. No credential was submitted, workflow published, API request sent, or key revoked in this continuation. The explicit real-recipient test authorization requested after the automatic approval rejection is still pending; “I did it” was treated as confirmation of key creation only.
