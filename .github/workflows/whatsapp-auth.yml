@@ -30,11 +30,16 @@ jobs:
       - run: node integrations/wevlix/build-workflow.mjs && git diff --exit-code -- integrations/wevlix/proxo-wevlix.json
       - run: node --test test/wevlix-workflow.test.js test/whatsapp-auth-edge.test.js
       - run: psql -v ON_ERROR_STOP=1 -f test/fixtures/whatsapp-auth-database.sql
-      - name: Apply twice, check privileges, OTP lifecycle and consent
+      - name: Apply twice, preserve secure proofs, check OTP and consent
         run: |
           psql -v ON_ERROR_STOP=1 -f proxo_app/supabase/migrations/20261015215145_whatsapp_auth_consent.sql
+          psql -v ON_ERROR_STOP=1 <<'SQL'
+          set role service_role;
+          do $$ begin perform public.get_or_generate_otp_whatsapp('+9647500000043','login'); end $$;
+          SQL
           psql -v ON_ERROR_STOP=1 -f proxo_app/supabase/migrations/20261015215145_whatsapp_auth_consent.sql
           psql -v ON_ERROR_STOP=1 -f test/whatsapp-auth.sql
+          psql -v ON_ERROR_STOP=1 -c "select test_assert((select expires_at>now() and not is_used from otp_whatsapp where phone='9647500000043'),'migration replay preserves secure proofs');"
       - name: Concurrent first requests share one reservation
         run: |
           psql -Atc "set role service_role; select get_or_generate_otp_whatsapp('+9647500000088','login');" > /tmp/otp-a &
@@ -48,3 +53,4 @@ jobs:
         with:
           deno-version: v2.x
       - run: deno check proxo_app/supabase/functions/phone-otp-session/index.ts proxo_app/supabase/functions/whatsapp-session-exchange/index.ts
+

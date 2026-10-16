@@ -101,17 +101,22 @@ begin
   return json_build_object('success',true,'data',json_build_object('verified',true,'otp_id',v_row.id));
 end $$;
 
+-- Invalidate potentially exposed proofs only on the first transition from
+-- the old verifier. A later migration replay must retain newly issued codes.
+do $$ begin
+  if position('public.pa_verify_whatsapp_otp' in pg_get_functiondef(
+      'public.verify_otp_whatsapp(text,text)'::regprocedure))=0 then
+    update public.otp_whatsapp set expires_at=now()
+      where not is_used and expires_at>now();
+  end if;
+end $$;
+
 -- Keep the currently deployed login Edge handler safe during rollout. The
 -- legacy service-only entry point must reject NULL codes and signup proofs.
 create or replace function public.verify_otp_whatsapp(p_phone text,p_code text)
 returns json language sql security invoker set search_path = '' as $$
   select public.pa_verify_whatsapp_otp(p_phone,p_code,'login');
 $$;
-
--- Outstanding codes from the old publicly callable generator may have been
--- exposed. Invalidate only unused live proofs; no account or audit is deleted.
-update public.otp_whatsapp set expires_at=now()
-  where not is_used and expires_at>now();
 
 -- Revoke the older verifier too: it must never be an anonymous API.
 revoke all on function public.get_or_generate_otp_whatsapp(text,text) from public,anon,authenticated;
