@@ -4,6 +4,7 @@ import {readFileSync} from 'node:fs';
 import * as c from '../integrations/wevlix/contracts.mjs';
 
 const workflow=JSON.parse(readFileSync(new URL('../integrations/wevlix/proxo-wevlix.json',import.meta.url)));
+const configuredWorkflow=JSON.parse(readFileSync(new URL('../integrations/wevlix/proxo-wevlix-configured.json',import.meta.url)));
 const uuid='11111111-1111-4111-8111-111111111111';
 const reserve={statusCode:200,body:{success:true,otp_id:uuid,code:'001234',send_count:1,
   expires_at:'2026-10-16T00:05:00Z',reused:false,client_message_id:`proxo-otp-${uuid}-1`}};
@@ -14,10 +15,10 @@ function expression(source,json,seen) {
 }
 // Execute the actual exported Code, IF, HTTP expressions and response nodes;
 // all HTTP is intercepted. No Wevlix, Supabase or real recipients are used.
-function run(start,input,replies) {
+function run(start,input,replies,target=workflow) {
   let name=start,json=input;const seen=new Map(),calls=[];
   for(let step=0;step<50;step++){
-    const n=workflow.nodes.find(n=>n.name===name);assert.ok(n,name);
+    const n=target.nodes.find(n=>n.name===name);assert.ok(n,name);
     let branch=0;
     if(n.type.endsWith('.code'))json=Function('$json','$',n.parameters.jsCode)(json,
       name=>({item:{json:seen.get(name)}})).json;
@@ -30,7 +31,7 @@ function run(start,input,replies) {
     seen.set(name,json);
     if(n.type.endsWith('.respondToWebhook'))return {status:expression(n.parameters.options.responseCode,json,seen),
       body:expression(n.parameters.responseBody,json,seen),calls};
-    name=workflow.connections[name]?.main[branch]?.[0]?.node;assert.ok(name,'unconnected branch');
+    name=target.connections[name]?.main[branch]?.[0]?.node;assert.ok(name,'unconnected branch');
   }
   throw Error('workflow did not terminate');
 }
@@ -98,4 +99,30 @@ test('private endpoints and secrets are not exported as public capabilities',()=
   }
   assert.equal(workflow.settings.saveDataSuccessExecution,'none');
   assert.doesNotMatch(JSON.stringify(workflow),/wvlx_[A-Za-z0-9]|eyJ[A-Za-z0-9_-]+\./);
+});
+test('configured import resolves every URL with no Variables and preserves OTP security',()=>{
+  const expected={
+    'Reserve OTP':'https://cojchkwssmasiejcgvbk.supabase.co/rest/v1/rpc/get_or_generate_otp_whatsapp',
+    'Record delivery':'https://cojchkwssmasiejcgvbk.supabase.co/rest/v1/rpc/pa_finish_whatsapp_otp_send',
+    'Verify code':'https://cojchkwssmasiejcgvbk.supabase.co/rest/v1/rpc/pa_verify_whatsapp_otp',
+    'Read new account':`https://cojchkwssmasiejcgvbk.supabase.co/auth/v1/admin/users/${uuid}`,
+    'Send OTP template':'https://api.wevlix.com/v1/messages/template',
+    'Send account template':'https://api.wevlix.com/v1/messages/template',
+    'Read delivery':'https://api.wevlix.com/v1/messages/message-12345678',
+  };
+  for(const n of configuredWorkflow.nodes.filter(n=>n.type.endsWith('.httpRequest'))){
+    const raw=n.parameters.url;
+    const resolved=raw.startsWith('={{')?expression(raw,{userId:uuid,messageId:'message-12345678'},new Map()):raw;
+    assert.equal(resolved,expected[n.name]);
+    assert.deepEqual(n.credentials,workflow.nodes.find(old=>old.name===n.name).credentials);
+  }
+  assert.equal(configuredWorkflow.active,false);
+  assert.deepEqual(configuredWorkflow.settings,workflow.settings);
+  assert.doesNotMatch(JSON.stringify(configuredWorkflow),/\$vars|wvlx_[A-Za-z0-9]|eyJ[A-Za-z0-9_-]+\./);
+  const input={body:{phone:'07501234567',purpose:'login'}};
+  const replies={'Reserve OTP':reserve,'Send OTP template':delivery,'Record delivery':{statusCode:200,body:{success:true}}};
+  assert.deepEqual(run('Send webhook',input,replies,configuredWorkflow),run('Send webhook',input,replies));
+  const stopped=run('Send webhook',input,{'Reserve OTP':{error:'database denied'}},configuredWorkflow);
+  assert.equal(stopped.calls.length,1);
+  assert.equal(stopped.body.success,false);
 });

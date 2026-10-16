@@ -2,6 +2,14 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 const shared = readFileSync(new URL('./contracts.mjs', import.meta.url), 'utf8').replace(/^export /gm, '');
+// Optional project URL produces an importable export without paid n8n Variables.
+// This is a public origin only; credentials remain in n8n Credentials.
+const configuredUrl = process.argv[2];
+if (process.argv.length > 3 || (configuredUrl && !/^https:\/\/[a-z0-9]{20}\.supabase\.co\/?$/.test(configuredUrl))) {
+  throw new Error('Usage: node build-workflow.mjs [https://<project-ref>.supabase.co]');
+}
+const supabaseBase = configuredUrl
+  ? JSON.stringify(configuredUrl.replace(/\/$/, '')) : '$vars.PROXO_SUPABASE_URL';
 const nodes = [], connections = {};
 const id = name => name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
 function node(name, type, parameters, version = 2, extra = {}) {
@@ -24,7 +32,7 @@ function webhook(name, path, method = 'POST', internal = false) {
 }
 function http(name, path, body, provider = false, method = 'POST') {
   return node(name, 'httpRequest', { method,
-    url: provider ? path : `={{ $vars.PROXO_SUPABASE_URL + ${JSON.stringify(path)} }}`,
+    url: provider ? path : `={{ ${supabaseBase} + ${JSON.stringify(path)} }}`,
     authentication: 'genericCredentialType', genericAuthType: provider ? 'httpHeaderAuth' : 'httpCustomAuth',
     ...(body ? { sendBody: true, specifyBody: 'json', jsonBody: `={{ ${body} }}` } : {}),
     options: { timeout: 15000, response: { response: { fullResponse: true, neverError: true, responseFormat: 'json' } } },
@@ -74,7 +82,7 @@ const accountResponse=respond('Respond account');
 webhook('Account webhook','wevlix/account/created','POST',true);
 code('Validate account','accountInput($json.body)');link('Account webhook','Validate account');
 http('Read new account','/auth/v1/admin/users/',null,false,'GET');
-nodes.find(n=>n.name==='Read new account').parameters.url="={{ $vars.PROXO_SUPABASE_URL + '/auth/v1/admin/users/' + $json.userId }}";
+nodes.find(n=>n.name==='Read new account').parameters.url=`={{ ${supabaseBase} + '/auth/v1/admin/users/' + $json.userId }}`;
 gate('Validate account','Read new account',accountResponse);
 code('Prepare account',"accountPayload($json, $('Validate account').item.json)");link('Read new account','Prepare account');
 http('Send account template','https://api.wevlix.com/v1/messages/template','$json.payload',true);
@@ -85,5 +93,6 @@ link('Send account template','Finish account');link('Finish account',accountResp
 const workflow = { name: 'Proxo - Wevlix OTP and account confirmation (reviewed)', nodes, connections,
   active: false, settings: { executionOrder: 'v1', saveDataErrorExecution: 'none', saveDataSuccessExecution: 'none',
     saveManualExecutions: false, saveExecutionProgress: false }, pinData: {}, tags: [] };
-writeFileSync(fileURLToPath(new URL('./proxo-wevlix.json', import.meta.url)), JSON.stringify(workflow,null,2)+'\n');
-console.log(`${nodes.length} nodes; no embedded credentials; inactive export`);
+const output = configuredUrl ? './proxo-wevlix-configured.json' : './proxo-wevlix.json';
+writeFileSync(fileURLToPath(new URL(output, import.meta.url)), JSON.stringify(workflow,null,2)+'\n');
+console.log(`${nodes.length} nodes; no embedded credentials; inactive export: ${output}`);

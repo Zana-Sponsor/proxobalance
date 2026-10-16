@@ -1,0 +1,1163 @@
+{
+  "name": "Proxo - Wevlix OTP and account confirmation (reviewed)",
+  "nodes": [
+    {
+      "name": "Respond send",
+      "id": "respond-send",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json.response }}",
+        "options": {
+          "responseCode": "={{ $json.httpStatus }}"
+        }
+      }
+    },
+    {
+      "name": "Send webhook",
+      "id": "send-webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        240,
+        0
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "wevlix/otp/send",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "webhookId": "send-webhook"
+    },
+    {
+      "name": "Validate send",
+      "id": "validate-send",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Shared by the importable n8n Code nodes and the offline contract tests.\nconst templates = Object.freeze({\n  otp: 'fcb360b0-6bee-499c-990b-8fc181dccfbd',\n  account: 'c81050e6-f9af-42ae-90bf-b43b41469b61',\n});\nfunction failure(error, status = 502, retryAfter) {\n  return { proceed: false, httpStatus: status, response: {\n    success: false, error,\n    ...(retryAfter ? { retryAfterSeconds: Math.min(3600, Math.max(1, retryAfter)) } : {}),\n  } };\n}\nfunction normalizePhone(raw) {\n  if (typeof raw !== 'string' || raw.length > 64) return null;\n  let value = raw.replace(/[٠-٩۰-۹]/g, digit => String(\n    digit.charCodeAt(0) >= 0x6f0 ? digit.charCodeAt(0) - 0x6f0 : digit.charCodeAt(0) - 0x660));\n  if (!/^[+\\d\\s()-]+$/.test(value)) return null;\n  value = value.replace(/\\D/g, '').replace(/^00/, '').replace(/^964/, '').replace(/^0/, '');\n  return /^7\\d{9}$/.test(value) ? '+964' + value : null;\n}\nfunction sendInput(body) {\n  const phone = normalizePhone(body?.phone);\n  const purpose = body?.purpose ?? 'login';\n  if (!phone || !['signup', 'login', 'reset_password'].includes(purpose)) return failure('bad_request', 400);\n  return { proceed: true, phone, purpose };\n}\nfunction reservation(raw, request) {\n  const data = raw?.body;\n  if (raw?.statusCode !== 200 || !data || data.success !== true) {\n    if (raw?.statusCode === 200 && ['rate_limited', 'otp_locked'].includes(data?.error)) {\n      return failure(data.error, 429, Number(data.retry_after_seconds) || 60);\n    }\n    return failure('otp_unavailable', 503);\n  }\n  if (!/^\\d{6}$/.test(data.code) || !/^[0-9a-f-]{36}$/.test(data.otp_id) ||\n      !Number.isInteger(data.send_count) || data.send_count < 1 ||\n      !Number.isFinite(Date.parse(data.expires_at)) ||\n      data.client_message_id !== `proxo-otp-${data.otp_id}-${data.send_count}`) return failure('otp_unavailable', 503);\n  return { proceed: true, phone: request.phone, otpId: data.otp_id,\n    sendCount: data.send_count, reused: data.reused === true, expiresAt: data.expires_at,\n    payload: {\n      to: request.phone, templateId: templates.otp, clientMessageId: data.client_message_id,\n      components: [\n        { type: 'body', parameters: [{ type: 'text', text: data.code }] },\n        { type: 'button', sub_type: 'url', index: '0', parameters: [{ type: 'text', text: data.code }] },\n      ],\n    },\n  };\n}\nfunction providerResult(raw) {\n  const envelope = raw?.body;\n  const data = envelope?.data ?? envelope;\n  if (![200, 202].includes(raw?.statusCode) || envelope?.success === false ||\n      typeof data?.messageId !== 'string' || !/^[\\w-]{8,200}$/.test(data.messageId) ||\n      ['failed', 'rejected', 'cancelled'].includes(data.status)) return failure('delivery_unavailable', 502);\n  return { proceed: true, messageId: data.messageId,\n    status: ['sent', 'delivered', 'read'].includes(data.status) ? data.status : 'queued' };\n}\nfunction sendResult(raw, prepared, sent) {\n  if (raw?.statusCode !== 200 || raw?.body?.success !== true) return failure('delivery_record_failed', 503);\n  return { httpStatus: 200, response: { success: true, messageId: sent.messageId,\n    status: sent.status, expiresAt: prepared.expiresAt, reused: prepared.reused } };\n}\nfunction statusInput(query) {\n  const messageId = query?.messageId;\n  return typeof messageId === 'string' && /^[\\w-]{8,200}$/.test(messageId)\n    ? { proceed: true, messageId } : failure('bad_request', 400);\n}\nfunction statusResult(raw) {\n  const envelope = raw?.body;\n  const data = envelope?.data ?? envelope;\n  const states = ['queued', 'pending', 'sent', 'delivered', 'read', 'failed', 'rejected', 'cancelled'];\n  if (raw?.statusCode !== 200 || envelope?.success === false || !states.includes(data?.status)) {\n    return failure('status_unavailable', 502);\n  }\n  return { httpStatus: 200, response: { success: true, status: data.status } };\n}\nfunction verifyInput(body) {\n  const request = sendInput(body);\n  if (!request.proceed || typeof body.code !== 'string' || !/^\\d{6}$/.test(body.code)) return failure('bad_request', 400);\n  return { ...request, code: body.code };\n}\nfunction verifyResult(raw) {\n  const verified = raw?.statusCode === 200 && raw?.body?.data?.verified === true;\n  return { httpStatus: verified ? 200 : 401, response: { success: verified, verified } };\n}\nfunction accountInput(body) {\n  // Trusted server caller only; a Utility confirmation must be a real signup\n  // event with its own requested-message evidence, never a marketing blast.\n  if (body?.event !== 'account_created' || body?.confirmationRequested !== true ||\n      typeof body?.userId !== 'string' || !/^[0-9a-f-]{36}$/.test(body.userId)) return failure('bad_request', 400);\n  return { proceed: true, userId: body.userId };\n}\nfunction accountPayload(raw, request, now = Date.now()) {\n  const user = raw?.body?.user ?? raw?.body;\n  const phone = normalizePhone(user?.phone);\n  const created = Date.parse(user?.created_at);\n  const name = user?.user_metadata?.full_name;\n  if (raw?.statusCode !== 200 || user?.id !== request.userId || !user?.phone_confirmed_at ||\n      !phone || !Number.isFinite(created) || now - created > 15 * 60 * 1000 || created > now ||\n      typeof name !== 'string' || name.trim().length < 3 || name.length > 200) return failure('invalid_account_event', 400);\n  return { proceed: true, payload: { to: phone, templateId: templates.account,\n    clientMessageId: `proxo-account-created-${request.userId}`,\n    components: [{ type: 'body', parameters: [\n      { type: 'text', parameter_name: 'customer_name', text: name.trim() },\n    ] }],\n  } };\n}\n\nreturn {json: sendInput($json.body)};"
+      }
+    },
+    {
+      "name": "Reserve OTP",
+      "id": "reserve-otp",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        720,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ \"https://cojchkwssmasiejcgvbk.supabase.co\" + \"/rest/v1/rpc/get_or_generate_otp_whatsapp\" }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpCustomAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ {p_phone: $json.phone, p_purpose: $json.purpose} }}",
+        "options": {
+          "timeout": 15000,
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "onError": "continueRegularOutput",
+      "credentials": {
+        "httpCustomAuth": {
+          "name": "Proxo Supabase service role"
+        }
+      }
+    },
+    {
+      "name": "Validate send valid",
+      "id": "validate-send-valid",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        960,
+        0
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "validate-send-condition",
+              "leftValue": "={{ $json.proceed }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "name": "Prepare OTP",
+      "id": "prepare-otp",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Shared by the importable n8n Code nodes and the offline contract tests.\nconst templates = Object.freeze({\n  otp: 'fcb360b0-6bee-499c-990b-8fc181dccfbd',\n  account: 'c81050e6-f9af-42ae-90bf-b43b41469b61',\n});\nfunction failure(error, status = 502, retryAfter) {\n  return { proceed: false, httpStatus: status, response: {\n    success: false, error,\n    ...(retryAfter ? { retryAfterSeconds: Math.min(3600, Math.max(1, retryAfter)) } : {}),\n  } };\n}\nfunction normalizePhone(raw) {\n  if (typeof raw !== 'string' || raw.length > 64) return null;\n  let value = raw.replace(/[٠-٩۰-۹]/g, digit => String(\n    digit.charCodeAt(0) >= 0x6f0 ? digit.charCodeAt(0) - 0x6f0 : digit.charCodeAt(0) - 0x660));\n  if (!/^[+\\d\\s()-]+$/.test(value)) return null;\n  value = value.replace(/\\D/g, '').replace(/^00/, '').replace(/^964/, '').replace(/^0/, '');\n  return /^7\\d{9}$/.test(value) ? '+964' + value : null;\n}\nfunction sendInput(body) {\n  const phone = normalizePhone(body?.phone);\n  const purpose = body?.purpose ?? 'login';\n  if (!phone || !['signup', 'login', 'reset_password'].includes(purpose)) return failure('bad_request', 400);\n  return { proceed: true, phone, purpose };\n}\nfunction reservation(raw, request) {\n  const data = raw?.body;\n  if (raw?.statusCode !== 200 || !data || data.success !== true) {\n    if (raw?.statusCode === 200 && ['rate_limited', 'otp_locked'].includes(data?.error)) {\n      return failure(data.error, 429, Number(data.retry_after_seconds) || 60);\n    }\n    return failure('otp_unavailable', 503);\n  }\n  if (!/^\\d{6}$/.test(data.code) || !/^[0-9a-f-]{36}$/.test(data.otp_id) ||\n      !Number.isInteger(data.send_count) || data.send_count < 1 ||\n      !Number.isFinite(Date.parse(data.expires_at)) ||\n      data.client_message_id !== `proxo-otp-${data.otp_id}-${data.send_count}`) return failure('otp_unavailable', 503);\n  return { proceed: true, phone: request.phone, otpId: data.otp_id,\n    sendCount: data.send_count, reused: data.reused === true, expiresAt: data.expires_at,\n    payload: {\n      to: request.phone, templateId: templates.otp, clientMessageId: data.client_message_id,\n      components: [\n        { type: 'body', parameters: [{ type: 'text', text: data.code }] },\n        { type: 'button', sub_type: 'url', index: '0', parameters: [{ type: 'text', text: data.code }] },\n      ],\n    },\n  };\n}\nfunction providerResult(raw) {\n  const envelope = raw?.body;\n  const data = envelope?.data ?? envelope;\n  if (![200, 202].includes(raw?.statusCode) || envelope?.success === false ||\n      typeof data?.messageId !== 'string' || !/^[\\w-]{8,200}$/.test(data.messageId) ||\n      ['failed', 'rejected', 'cancelled'].includes(data.status)) return failure('delivery_unavailable', 502);\n  return { proceed: true, messageId: data.messageId,\n    status: ['sent', 'delivered', 'read'].includes(data.status) ? data.status : 'queued' };\n}\nfunction sendResult(raw, prepared, sent) {\n  if (raw?.statusCode !== 200 || raw?.body?.success !== true) return failure('delivery_record_failed', 503);\n  return { httpStatus: 200, response: { success: true, messageId: sent.messageId,\n    status: sent.status, expiresAt: prepared.expiresAt, reused: prepared.reused } };\n}\nfunction statusInput(query) {\n  const messageId = query?.messageId;\n  return typeof messageId === 'string' && /^[\\w-]{8,200}$/.test(messageId)\n    ? { proceed: true, messageId } : failure('bad_request', 400);\n}\nfunction statusResult(raw) {\n  const envelope = raw?.body;\n  const data = envelope?.data ?? envelope;\n  const states = ['queued', 'pending', 'sent', 'delivered', 'read', 'failed', 'rejected', 'cancelled'];\n  if (raw?.statusCode !== 200 || envelope?.success === false || !states.includes(data?.status)) {\n    return failure('status_unavailable', 502);\n  }\n  return { httpStatus: 200, response: { success: true, status: data.status } };\n}\nfunction verifyInput(body) {\n  const request = sendInput(body);\n  if (!request.proceed || typeof body.code !== 'string' || !/^\\d{6}$/.test(body.code)) return failure('bad_request', 400);\n  return { ...request, code: body.code };\n}\nfunction verifyResult(raw) {\n  const verified = raw?.statusCode === 200 && raw?.body?.data?.verified === true;\n  return { httpStatus: verified ? 200 : 401, response: { success: verified, verified } };\n}\nfunction accountInput(body) {\n  // Trusted server caller only; a Utility confirmation must be a real signup\n  // event with its own requested-message evidence, never a marketing blast.\n  if (body?.event !== 'account_created' || body?.confirmationRequested !== true ||\n      typeof body?.userId !== 'string' || !/^[0-9a-f-]{36}$/.test(body.userId)) return failure('bad_request', 400);\n  return { proceed: true, userId: body.userId };\n}\nfunction accountPayload(raw, request, now = Date.now()) {\n  const user = raw?.body?.user ?? raw?.body;\n  const phone = normalizePhone(user?.phone);\n  const created = Date.parse(user?.created_at);\n  const name = user?.user_metadata?.full_name;\n  if (raw?.statusCode !== 200 || user?.id !== request.userId || !user?.phone_confirmed_at ||\n      !phone || !Number.isFinite(created) || now - created > 15 * 60 * 1000 || created > now ||\n      typeof name !== 'string' || name.trim().length < 3 || name.length > 200) return failure('invalid_account_event', 400);\n  return { proceed: true, payload: { to: phone, templateId: templates.account,\n    clientMessageId: `proxo-account-created-${request.userId}`,\n    components: [{ type: 'body', parameters: [\n      { type: 'text', parameter_name: 'customer_name', text: name.trim() },\n    ] }],\n  } };\n}\n\nreturn {json: reservation($json, $('Validate send').item.json)};"
+      }
+    },
+    {
+      "name": "Send OTP template",
+      "id": "send-otp-template",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1440,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.wevlix.com/v1/messages/template",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.payload }}",
+        "options": {
+          "timeout": 15000,
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "onError": "continueRegularOutput",
+      "credentials": {
+        "httpHeaderAuth": {
+          "name": "Proxo Wevlix server"
+        }
+      }
+    },
+    {
+      "name": "Prepare OTP valid",
+      "id": "prepare-otp-valid",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        260
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "prepare-otp-condition",
+              "leftValue": "={{ $json.proceed }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "name": "Check OTP delivery",
+      "id": "check-otp-delivery",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        260
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Shared by the importable n8n Code nodes and the offline contract tests.\nconst templates = Object.freeze({\n  otp: 'fcb360b0-6bee-499c-990b-8fc181dccfbd',\n  account: 'c81050e6-f9af-42ae-90bf-b43b41469b61',\n});\nfunction failure(error, status = 502, retryAfter) {\n  return { proceed: false, httpStatus: status, response: {\n    success: false, error,\n    ...(retryAfter ? { retryAfterSeconds: Math.min(3600, Math.max(1, retryAfter)) } : {}),\n  } };\n}\nfunction normalizePhone(raw) {\n  if (typeof raw !== 'string' || raw.length > 64) return null;\n  let value = raw.replace(/[٠-٩۰-۹]/g, digit => String(\n    digit.charCodeAt(0) >= 0x6f0 ? digit.charCodeAt(0) - 0x6f0 : digit.charCodeAt(0) - 0x660));\n  if (!/^[+\\d\\s()-]+$/.test(value)) return null;\n  value = value.replace(/\\D/g, '').replace(/^00/, '').replace(/^964/, '').replace(/^0/, '');\n  return /^7\\d{9}$/.test(value) ? '+964' + value : null;\n}\nfunction sendInput(body) {\n  const phone = normalizePhone(body?.phone);\n  const purpose = body?.purpose ?? 'login';\n  if (!phone || !['signup', 'login', 'reset_password'].includes(purpose)) return failure('bad_request', 400);\n  return { proceed: true, phone, purpose };\n}\nfunction reservation(raw, request) {\n  const data = raw?.body;\n  if (raw?.statusCode !== 200 || !data || data.success !== true) {\n    if (raw?.statusCode === 200 && ['rate_limited', 'otp_locked'].includes(data?.error)) {\n      return failure(data.error, 429, Number(data.retry_after_seconds) || 60);\n    }\n    return failure('otp_unavailable', 503);\n  }\n  if (!/^\\d{6}$/.test(data.code) || !/^[0-9a-f-]{36}$/.test(data.otp_id) ||\n      !Number.isInteger(data.send_count) || data.send_count < 1 ||\n      !Number.isFinite(Date.parse(data.expires_at)) ||\n      data.client_message_id !== `proxo-otp-${data.otp_id}-${data.send_count}`) return failure('otp_unavailable', 503);\n  return { proceed: true, phone: request.phone, otpId: data.otp_id,\n    sendCount: data.send_count, reused: data.reused === true, expiresAt: data.expires_at,\n    payload: {\n      to: request.phone, templateId: templates.otp, clientMessageId: data.client_message_id,\n      components: [\n        { type: 'body', parameters: [{ type: 'text', text: data.code }] },\n        { type: 'button', sub_type: 'url', index: '0', parameters: [{ type: 'text', text: data.code }] },\n      ],\n    },\n  };\n}\nfunction providerResult(raw) {\n  const envelope = raw?.body;\n  const data = envelope?.data ?? envelope;\n  if (![200, 202].includes(raw?.statusCode) || envelope?.success === false ||\n      typeof data?.messageId !== 'string' || !/^[\\w-]{8,200}$/.test(data.messageId) ||\n      ['failed', 'rejected', 'cancelled'].includes(data.status)) return failure('delivery_unavailable', 502);\n  return { proceed: true, messageId: data.messageId,\n    status: ['sent', 'delivered', 'read'].includes(data.status) ? data.status : 'queued' };\n}\nfunction sendResult(raw, prepared, sent) {\n  if (raw?.statusCode !== 200 || raw?.body?.success !== true) return failure('delivery_record_failed', 503);\n  return { httpStatus: 200, response: { success: true, messageId: sent.messageId,\n    status: sent.status, expiresAt: prepared.expiresAt, reused: prepared.reused } };\n}\nfunction statusInput(query) {\n  const messageId = query?.messageId;\n  return typeof messageId === 'string' && /^[\\w-]{8,200}$/.test(messageId)\n    ? { proceed: true, messageId } : failure('bad_request', 400);\n}\nfunction statusResult(raw) {\n  const envelope = raw?.body;\n  const data = envelope?.data ?? envelope;\n  const states = ['queued', 'pending', 'sent', 'delivered', 'read', 'failed', 'rejected', 'cancelled'];\n  if (raw?.statusCode !== 200 || envelope?.success === false || !states.includes(data?.status)) {\n    return failure('status_unavailable', 502);\n  }\n  return { httpStatus: 200, response: { success: true, status: data.status } };\n}\nfunction verifyInput(body) {\n  const request = sendInput(body);\n  if (!request.proceed || typeof body.code !== 'string' || !/^\\d{6}$/.test(body.code)) return failure('bad_request', 400);\n  return { ...request, code: body.code };\n}\nfunction verifyResult(raw) {\n  const verified = raw?.statusCode === 200 && raw?.body?.data?.verified === true;\n  return { httpStatus: verified ? 200 : 401, response: { success: verified, verified } };\n}\nfunction accountInput(body) {\n  // Trusted server caller only; a Utility confirmation must be a real signup\n  // event with its own requested-message evidence, never a marketing blast.\n  if (body?.event !== 'account_created' || body?.confirmationRequested !== true ||\n      typeof body?.userId !== 'string' || !/^[0-9a-f-]{36}$/.test(body.userId)) return failure('bad_request', 400);\n  return { proceed: true, userId: body.userId };\n}\nfunction accountPayload(raw, request, now = Date.now()) {\n  const user = raw?.body?.user ?? raw?.body;\n  const phone = normalizePhone(user?.phone);\n  const created = Date.parse(user?.created_at);\n  const name = user?.user_metadata?.full_name;\n  if (raw?.statusCode !== 200 || user?.id !== request.userId || !user?.phone_confirmed_at ||\n      !phone || !Number.isFinite(created) || now - created > 15 * 60 * 1000 || created > now ||\n      typeof name !== 'string' || name.trim().length < 3 || name.length > 200) return failure('invalid_account_event', 400);\n  return { proceed: true, payload: { to: phone, templateId: templates.account,\n    clientMessageId: `proxo-account-created-${request.userId}`,\n    components: [{ type: 'body', parameters: [\n      { type: 'text', parameter_name: 'customer_name', text: name.trim() },\n    ] }],\n  } };\n}\n\nreturn {json: providerResult($json)};"
+      }
+    },
+    {
+      "name": "Record delivery",
+      "id": "record-delivery",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        480,
+        260
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ \"https://cojchkwssmasiejcgvbk.supabase.co\" + \"/rest/v1/rpc/pa_finish_whatsapp_otp_send\" }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpCustomAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ {p_otp_id: $('Prepare OTP').item.json.otpId, p_send_count: $('Prepare OTP').item.json.sendCount, p_message_id: $json.messageId, p_status: $json.status} }}",
+        "options": {
+          "timeout": 15000,
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "onError": "continueRegularOutput",
+      "credentials": {
+        "httpCustomAuth": {
+          "name": "Proxo Supabase service role"
+        }
+      }
+    },
+    {
+      "name": "Check OTP delivery valid",
+      "id": "check-otp-delivery-valid",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        720,
+        260
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "check-otp-delivery-condition",
+              "leftValue": "={{ $json.proceed }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "name": "Finish send",
+      "id": "finish-send",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        260
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Shared by the importable n8n Code nodes and the offline contract tests.\nconst templates = Object.freeze({\n  otp: 'fcb360b0-6bee-499c-990b-8fc181dccfbd',\n  account: 'c81050e6-f9af-42ae-90bf-b43b41469b61',\n});\nfunction failure(error, status = 502, retryAfter) {\n  return { proceed: false, httpStatus: status, response: {\n    success: false, error,\n    ...(retryAfter ? { retryAfterSeconds: Math.min(3600, Math.max(1, retryAfter)) } : {}),\n  } };\n}\nfunction normalizePhone(raw) {\n  if (typeof raw !== 'string' || raw.length > 64) return null;\n  let value = raw.replace(/[٠-٩۰-۹]/g, digit => String(\n    digit.charCodeAt(0) >= 0x6f0 ? digit.charCodeAt(0) - 0x6f0 : digit.charCodeAt(0) - 0x660));\n  if (!/^[+\\d\\s()-]+$/.test(value)) return null;\n  value = value.replace(/\\D/g, '').replace(/^00/, '').replace(/^964/, '').replace(/^0/, '');\n  return /^7\\d{9}$/.test(value) ? '+964' + value : null;\n}\nfunction sendInput(body) {\n  const phone = normalizePhone(body?.phone);\n  const purpose = body?.purpose ?? 'login';\n  if (!phone || !['signup', 'login', 'reset_password'].includes(purpose)) return failure('bad_request', 400);\n  return { proceed: true, phone, purpose };\n}\nfunction reservation(raw, request) {\n  const data = raw?.body;\n  if (raw?.statusCode !== 200 || !data || data.success !== true) {\n    if (raw?.statusCode === 200 && ['rate_limited', 'otp_locked'].includes(data?.error)) {\n      return failure(data.error, 429, Number(data.retry_after_seconds) || 60);\n    }\n    return failure('otp_unavailable', 503);\n  }\n  if (!/^\\d{6}$/.test(data.code) || !/^[0-9a-f-]{36}$/.test(data.otp_id) ||\n      !Number.isInteger(data.send_count) || data.send_count < 1 ||\n      !Number.isFinite(Date.parse(data.expires_at)) ||\n      data.client_message_id !== `proxo-otp-${data.otp_id}-${data.send_count}`) return failure('otp_unavailable', 503);\n  return { proceed: true, phone: request.phone, otpId: data.otp_id,\n    sendCount: data.send_count, reused: data.reused === true, expiresAt: data.expires_at,\n    payload: {\n      to: request.phone, templateId: templates.otp, clientMessageId: data.client_message_id,\n      components: [\n        { type: 'body', parameters: [{ type: 'text', text: data.code }] },\n        { type: 'button', sub_type: 'url', index: '0', parameters: [{ type: 'text', text: data.code }] },\n      ],\n    },\n  };\n}\nfunction providerResult(raw) {\n  const envelope = raw?.body;\n  const data = envelope?.data ?? envelope;\n  if (![200, 202].includes(raw?.statusCode) || envelope?.success === false ||\n      typeof data?.messageId !== 'string' || !/^[\\w-]{8,200}$/.test(data.messageId) ||\n      ['failed', 'rejected', 'cancelled'].includes(data.status)) return failure('delivery_unavailable', 502);\n  return { proceed: true, messageId: data.messageId,\n    status: ['sent', 'delivered', 'read'].includes(data.status) ? data.status : 'queued' };\n}\nfunction sendResult(raw, prepared, sent) {\n  if (raw?.statusCode !== 200 || raw?.body?.success !== true) return failure('delivery_record_failed', 503);\n  return { httpStatus: 200, response: { success: true, messageId: sent.messageId,\n    status: sent.status, expiresAt: prepared.expiresAt, reused: prepared.reused } };\n}\nfunction statusInput(query) {\n  const messageId = query?.messageId;\n  return typeof messageId === 'string' && /^[\\w-]{8,200}$/.test(messageId)\n    ? { proceed: true, messageId } : failure('bad_request', 400);\n}\nfunction statusResult(raw) {\n  const envelope = raw?.body;\n  const data = envelope?.data ?? envelope;\n  const states = ['queued', 'pending', 'sent', 'delivered', 'read', 'failed', 'rejected', 'cancelled'];\n  if (raw?.statusCode !== 200 || envelope?.success === false || !states.includes(data?.status)) {\n    return failure('status_unavailable', 502);\n  }\n  return { httpStatus: 200, response: { success: true, status: data.status } };\n}\nfunction verifyInput(body) {\n  const request = sendInput(body);\n  if (!request.proceed || typeof body.code !== 'string' || !/^\\d{6}$/.test(body.code)) return failure('bad_request', 400);\n  return { ...request, code: body.code };\n}\nfunction verifyResult(raw) {\n  const verified = raw?.statusCode === 200 && raw?.body?.data?.verified === true;\n  return { httpStatus: verified ? 200 : 401, response: { success: verified, verified } };\n}\nfunction accountInput(body) {\n  // Trusted server caller only; a Utility confirmation must be a real signup\n  // event with its own requested-message evidence, never a marketing blast.\n  if (body?.event !== 'account_created' || body?.confirmationRequested !== true ||\n      typeof body?.userId !== 'string' || !/^[0-9a-f-]{36}$/.test(body.userId)) return failure('bad_request', 400);\n  return { proceed: true, userId: body.userId };\n}\nfunction accountPayload(raw, request, now = Date.now()) {\n  const user = raw?.body?.user ?? raw?.body;\n  const phone = normalizePhone(user?.phone);\n  const created = Date.parse(user?.created_at);\n  const name = user?.user_metadata?.full_name;\n  if (raw?.statusCode !== 200 || user?.id !== request.userId || !user?.phone_confirmed_at ||\n      !phone || !Number.isFinite(created) || now - created > 15 * 60 * 1000 || created > now ||\n      typeof name !== 'string' || name.trim().length < 3 || name.length > 200) return failure('invalid_account_event', 400);\n  return { proceed: true, payload: { to: phone, templateId: templates.account,\n    clientMessageId: `proxo-account-created-${request.userId}`,\n    components: [{ type: 'body', parameters: [\n      { type: 'text', parameter_name: 'customer_name', text: name.trim() },\n    ] }],\n  } };\n}\n\nreturn {json: sendResult($json, $('Prepare OTP').item.json, $('Check OTP delivery').item.json)};"
+      }
+    },
+    {
+      "name": "Respond status",
+      "id": "respond-status",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        1200,
+        260
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json.response }}",
+        "options": {
+          "responseCode": "={{ $json.httpStatus }}"
+        }
+      }
+    },
+    {
+      "name": "Status webhook",
+      "id": "status-webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        1440,
+        260
+      ],
+      "parameters": {
+        "httpMethod": "GET",
+        "path": "wevlix/otp/status",
+        "responseMode": "responseNode",
+        "authentication": "headerAuth",
+        "options": {}
+      },
+      "webhookId": "status-webhook",
+      "credentials": {
+        "httpHeaderAuth": {
+          "name": "Proxo internal webhook"
+        }
+      }
+    },
+    {
+      "name": "Validate status",
+      "id": "validate-status",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        520
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Shared by the importable n8n Code nodes and the offline contract tests.\nconst templates = Object.freeze({\n  otp: 'fcb360b0-6bee-499c-990b-8fc181dccfbd',\n  account: 'c81050e6-f9af-42ae-90bf-b43b41469b61',\n});\nfunction failure(error, status = 502, retryAfter) {\n  return { proceed: false, httpStatus: status, response: {\n    success: false, error,\n    ...(retryAfter ? { retryAfterSeconds: Math.min(3600, Math.max(1, retryAfter)) } : {}),\n  } };\n}\nfunction normalizePhone(raw) {\n  if (typeof raw !== 'string' || raw.length > 64) return null;\n  let value = raw.replace(/[٠-٩۰-۹]/g, digit => String(\n    digit.charCodeAt(0) >= 0x6f0 ? digit.charCodeAt(0) - 0x6f0 : digit.charCodeAt(0) - 0x660));\n  if (!/^[+\\d\\s()-]+$/.test(value)) return null;\n  value = value.replace(/\\D/g, '').replace(/^00/, '').replace(/^964/, '').replace(/^0/, '');\n  return /^7\\d{9}$/.test(value) ? '+964' + value : null;\n}\nfunction sendInput(body) {\n  const phone = normalizePhone(body?.phone);\n  const purpose = body?.purpose ?? 'login';\n  if (!phone || !['signup', 'login', 'reset_password'].includes(purpose)) return failure('bad_request', 400);\n  return { proceed: true, phone, purpose };\n}\nfunction reservation(raw, request) {\n  const data = raw?.body;\n  if (raw?.statusCode !== 200 || !data || data.success !== true) {\n    if (raw?.statusCode === 200 && ['rate_limited', 'otp_locked'].includes(data?.error)) {\n      return failure(data.error, 429, Number(data.retry_after_seconds) || 60);\n    }\n    return failure('otp_unavailable', 503);\n  }\n  if (!/^\\d{6}$/.test(data.code) || !/^[0-9a-f-]{36}$/.test(data.otp_id) ||\n      !Number.isInteger(data.send_count) || data.send_count < 1 ||\n      !Number.isFinite(Date.parse(data.expires_at)) ||\n      data.client_message_id !== `proxo-otp-${data.otp_id}-${data.send_count}`) return failure('otp_unavailable', 503);\n  return { proceed: true, phone: request.phone, otpId: data.otp_id,\n    sendCount: data.send_count, reused: data.reused === true, expiresAt: data.expires_at,\n    payload: {\n      to: request.phone, templateId: templates.otp, clientMessageId: data.client_message_id,\n      components: [\n        { type: 'body', parameters: [{ type: 'text', text: data.code }] },\n        { type: 'button', sub_type: 'url', index: '0', parameters: [{ type: 'text', text: data.code }] },\n      ],\n    },\n  };\n}\nfunction providerResult(raw) {\n  const envelope = raw?.body;\n  const data = envelope?.data ?? envelope;\n  if (![200, 202].includes(raw?.statusCode) || envelope?.success === false ||\n      typeof data?.messageId !== 'string' || !/^[\\w-]{8,200}$/.test(data.messageId) ||\n      ['failed', 'rejected', 'cancelled'].includes(data.status)) return failure('delivery_unavailable', 502);\n  return { proceed: true, messageId: data.messageId,\n    status: ['sent', 'delivered', 'read'].includes(data.status) ? data.status : 'queued' };\n}\nfunction sendResult(raw, prepared, sent) {\n  if (raw?.statusCode !== 200 || raw?.body?.success !== true) return failure('delivery_record_failed', 503);\n  return { httpStatus: 200, response: { success: true, messageId: sent.messageId,\n    status: sent.status, expiresAt: prepared.expiresAt, reused: prepared.reused } };\n}\nfunction statusInput(query) {\n  const messageId = query?.messageId;\n  return typeof messageId === 'string' && /^[\\w-]{8,200}$/.test(messageId)\n    ? { proceed: true, messageId } : failure('bad_request', 400);\n}\nfunction statusResult(raw) {\n  const envelope = raw?.body;\n  const data = envelope?.data ?? envelope;\n  const states = ['queued', 'pending', 'sent', 'delivered', 'read', 'failed', 'rejected', 'cancelled'];\n  if (raw?.statusCode !== 200 || envelope?.success === false || !states.includes(data?.status)) {\n    return failure('status_unavailable', 502);\n  }\n  return { httpStatus: 200, response: { success: true, status: data.status } };\n}\nfunction verifyInput(body) {\n  const request = sendInput(body);\n  if (!request.proceed || typeof body.code !== 'string' || !/^\\d{6}$/.test(body.code)) return failure('bad_request', 400);\n  return { ...request, code: body.code };\n}\nfunction verifyResult(raw) {\n  const verified = raw?.statusCode === 200 && raw?.body?.data?.verified === true;\n  return { httpStatus: verified ? 200 : 401, response: { success: verified, verified } };\n}\nfunction accountInput(body) {\n  // Trusted server caller only; a Utility confirmation must be a real signup\n  // event with its own requested-message evidence, never a marketing blast.\n  if (body?.event !== 'account_created' || body?.confirmationRequested !== true ||\n      typeof body?.userId !== 'string' || !/^[0-9a-f-]{36}$/.test(body.userId)) return failure('bad_request', 400);\n  return { proceed: true, userId: body.userId };\n}\nfunction accountPayload(raw, request, now = Date.now()) {\n  const user = raw?.body?.user ?? raw?.body;\n  const phone = normalizePhone(user?.phone);\n  const created = Date.parse(user?.created_at);\n  const name = user?.user_metadata?.full_name;\n  if (raw?.statusCode !== 200 || user?.id !== request.userId || !user?.phone_confirmed_at ||\n      !phone || !Number.isFinite(created) || now - created > 15 * 60 * 1000 || created > now ||\n      typeof name !== 'string' || name.trim().length < 3 || name.length > 200) return failure('invalid_account_event', 400);\n  return { proceed: true, payload: { to: phone, templateId: templates.account,\n    clientMessageId: `proxo-account-created-${request.userId}`,\n    components: [{ type: 'body', parameters: [\n      { type: 'text', parameter_name: 'customer_name', text: name.trim() },\n    ] }],\n  } };\n}\n\nreturn {json: statusInput($json.query)};"
+      }
+    },
+    {
+      "name": "Read delivery",
+      "id": "read-delivery",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        240,
+        520
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "={{ 'https://api.wevlix.com/v1/messages/' + encodeURIComponent($json.messageId) }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 15000,
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "onError": "continueRegularOutput",
+      "credentials": {
+        "httpHeaderAuth": {
+          "name": "Proxo Wevlix server"
+        }
+      }
+    },
+    {
+      "name": "Validate status valid",
+      "id": "validate-status-valid",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        480,
+        520
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "validate-status-condition",
+              "leftValue": "={{ $json.proceed }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "name": "Finish status",
+      "id": "finish-status",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        520
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Shared by the importable n8n Code nodes and the offline contract tests.\nconst templates = Object.freeze({\n  otp: 'fcb360b0-6bee-499c-990b-8fc181dccfbd',\n  account: 'c81050e6-f9af-42ae-90bf-b43b41469b61',\n});\nfunction failure(error, status = 502, retryAfter) {\n  return { proceed: false, httpStatus: status, response: {\n    success: false, error,\n    ...(retryAfter ? { retryAfterSeconds: Math.min(3600, Math.max(1, retryAfter)) } : {}),\n  } };\n}\nfunction normalizePhone(raw) {\n  if (typeof raw !== 'string' || raw.length > 64) return null;\n  let value = raw.replace(/[٠-٩۰-۹]/g, digit => String(\n    digit.charCodeAt(0) >= 0x6f0 ? digit.charCodeAt(0) - 0x6f0 : digit.charCodeAt(0) - 0x660));\n  if (!/^[+\\d\\s()-]+$/.test(value)) return null;\n  value = value.replace(/\\D/g, '').replace(/^00/, '').replace(/^964/, '').replace(/^0/, '');\n  return /^7\\d{9}$/.test(value) ? '+964' + value : null;\n}\nfunction sendInput(body) {\n  const phone = normalizePhone(body?.phone);\n  const purpose = body?.purpose ?? 'login';\n  if (!phone || !['signup', 'login', 'reset_password'].includes(purpose)) return failure('bad_request', 400);\n  return { proceed: true, phone, purpose };\n}\nfunction reservation(raw, request) {\n  const data = raw?.body;\n  if (raw?.statusCode !== 200 || !data || data.success !== true) {\n    if (raw?.statusCode === 200 && ['rate_limited', 'otp_locked'].includes(data?.error)) {\n      return failure(data.error, 429, Number(data.retry_after_seconds) || 60);\n    }\n    return failure('otp_unavailable', 503);\n  }\n  if (!/^\\d{6}$/.test(data.code) || !/^[0-9a-f-]{36}$/.test(data.otp_id) ||\n      !Number.isInteger(data.send_count) || data.send_count < 1 ||\n      !Number.isFinite(Date.parse(data.expires_at)) ||\n      data.client_message_id !== `proxo-otp-${data.otp_id}-${data.send_count}`) return failure('otp_unavailable', 503);\n  return { proceed: true, phone: request.phone, otpId: data.otp_id,\n    sendCount: data.send_count, reused: data.reused === true, expiresAt: data.expires_at,\n    payload: {\n      to: request.phone, templateId: templates.otp, clientMessageId: data.client_message_id,\n      components: [\n        { type: 'body', parameters: [{ type: 'text', text: data.code }] },\n        { type: 'button', sub_type: 'url', index: '0', parameters: [{ type: 'text', text: data.code }] },\n      ],\n    },\n  };\n}\nfunction providerResult(raw) {\n  const envelope = raw?.body;\n  const data = envelope?.data ?? envelope;\n  if (![200, 202].includes(raw?.statusCode) || envelope?.success === false ||\n      typeof data?.messageId !== 'string' || !/^[\\w-]{8,200}$/.test(data.messageId) ||\n      ['failed', 'rejected', 'cancelled'].includes(data.status)) return failure('delivery_unavailable', 502);\n  return { proceed: true, messageId: data.messageId,\n    status: ['sent', 'delivered', 'read'].includes(data.status) ? data.status : 'queued' };\n}\nfunction sendResult(raw, prepared, sent) {\n  if (raw?.statusCode !== 200 || raw?.body?.success !== true) return failure('delivery_record_failed', 503);\n  return { httpStatus: 200, response: { success: true, messageId: sent.messageId,\n    status: sent.status, expiresAt: prepared.expiresAt, reused: prepared.reused } };\n}\nfunction statusInput(query) {\n  const messageId = query?.messageId;\n  return typeof messageId === 'string' && /^[\\w-]{8,200}$/.test(messageId)\n    ? { proceed: true, messageId } : failure('bad_request', 400);\n}\nfunction statusResult(raw) {\n  const envelope = raw?.body;\n  const data = envelope?.data ?? envelope;\n  const states = ['queued', 'pending', 'sent', 'delivered', 'read', 'failed', 'rejected', 'cancelled'];\n  if (raw?.statusCode !== 200 || envelope?.success === false || !states.includes(data?.status)) {\n    return failure('status_unavailable', 502);\n  }\n  return { httpStatus: 200, response: { success: true, status: data.status } };\n}\nfunction verifyInput(body) {\n  const request = sendInput(body);\n  if (!request.proceed || typeof body.code !== 'string' || !/^\\d{6}$/.test(body.code)) return failure('bad_request', 400);\n  return { ...request, code: body.code };\n}\nfunction verifyResult(raw) {\n  const verified = raw?.statusCode === 200 && raw?.body?.data?.verified === true;\n  return { httpStatus: verified ? 200 : 401, response: { success: verified, verified } };\n}\nfunction accountInput(body) {\n  // Trusted server caller only; a Utility confirmation must be a real signup\n  // event with its own requested-message evidence, never a marketing blast.\n  if (body?.event !== 'account_created' || body?.confirmationRequested !== true ||\n      typeof body?.userId !== 'string' || !/^[0-9a-f-]{36}$/.test(body.userId)) return failure('bad_request', 400);\n  return { proceed: true, userId: body.userId };\n}\nfunction accountPayload(raw, request, now = Date.now()) {\n  const user = raw?.body?.user ?? raw?.body;\n  const phone = normalizePhone(user?.phone);\n  const created = Date.parse(user?.created_at);\n  const name = user?.user_metadata?.full_name;\n  if (raw?.statusCode !== 200 || user?.id !== request.userId || !user?.phone_confirmed_at ||\n      !phone || !Number.isFinite(created) || now - created > 15 * 60 * 1000 || created > now ||\n      typeof name !== 'string' || name.trim().length < 3 || name.length > 200) return failure('invalid_account_event', 400);\n  return { proceed: true, payload: { to: phone, templateId: templates.account,\n    clientMessageId: `proxo-account-created-${request.userId}`,\n    components: [{ type: 'body', parameters: [\n      { type: 'text', parameter_name: 'customer_name', text: name.trim() },\n    ] }],\n  } };\n}\n\nreturn {json: statusResult($json)};"
+      }
+    },
+    {
+      "name": "Respond verify",
+      "id": "respond-verify",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        960,
+        520
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json.response }}",
+        "options": {
+          "responseCode": "={{ $json.httpStatus }}"
+        }
+      }
+    },
+    {
+      "name": "Verify webhook",
+      "id": "verify-webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        520
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "wevlix/otp/verify",
+        "responseMode": "responseNode",
+        "authentication": "headerAuth",
+        "options": {}
+      },
+      "webhookId": "verify-webhook",
+      "credentials": {
+        "httpHeaderAuth": {
+          "name": "Proxo internal webhook"
+        }
+      }
+    },
+    {
+      "name": "Validate verify",
+      "id": "validate-verify",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1440,
+        520
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Shared by the importable n8n Code nodes and the offline contract tests.\nconst templates = Object.freeze({\n  otp: 'fcb360b0-6bee-499c-990b-8fc181dccfbd',\n  account: 'c81050e6-f9af-42ae-90bf-b43b41469b61',\n});\nfunction failure(error, status = 502, retryAfter) {\n  return { proceed: false, httpStatus: status, response: {\n    success: false, error,\n    ...(retryAfter ? { retryAfterSeconds: Math.min(3600, Math.max(1, retryAfter)) } : {}),\n  } };\n}\nfunction normalizePhone(raw) {\n  if (typeof raw !== 'string' || raw.length > 64) return null;\n  let value = raw.replace(/[٠-٩۰-۹]/g, digit => String(\n    digit.charCodeAt(0) >= 0x6f0 ? digit.charCodeAt(0) - 0x6f0 : digit.charCodeAt(0) - 0x660));\n  if (!/^[+\\d\\s()-]+$/.test(value)) return null;\n  value = value.replace(/\\D/g, '').replace(/^00/, '').replace(/^964/, '').replace(/^0/, '');\n  return /^7\\d{9}$/.test(value) ? '+964' + value : null;\n}\nfunction sendInput(body) {\n  const phone = normalizePhone(body?.phone);\n  const purpose = body?.purpose ?? 'login';\n  if (!phone || !['signup', 'login', 'reset_password'].includes(purpose)) return failure('bad_request', 400);\n  return { proceed: true, phone, purpose };\n}\nfunction reservation(raw, request) {\n  const data = raw?.body;\n  if (raw?.statusCode !== 200 || !data || data.success !== true) {\n    if (raw?.statusCode === 200 && ['rate_limited', 'otp_locked'].includes(data?.error)) {\n      return failure(data.error, 429, Number(data.retry_after_seconds) || 60);\n    }\n    return failure('otp_unavailable', 503);\n  }\n  if (!/^\\d{6}$/.test(data.code) || !/^[0-9a-f-]{36}$/.test(data.otp_id) ||\n      !Number.isInteger(data.send_count) || data.send_count < 1 ||\n      !Number.isFinite(Date.parse(data.expires_at)) ||\n      data.client_message_id !== `proxo-otp-${data.otp_id}-${data.send_count}`) return failure('otp_unavailable', 503);\n  return { proceed: true, phone: request.phone, otpId: data.otp_id,\n    sendCount: data.send_count, reused: data.reused === true, expiresAt: data.expires_at,\n    payload: {\n      to: request.phone, templateId: templates.otp, clientMessageId: data.client_message_id,\n      components: [\n        { type: 'body', parameters: [{ type: 'text', text: data.code }] },\n        { type: 'button', sub_type: 'url', index: '0', parameters: [{ type: 'text', text: data.code }] },\n      ],\n    },\n  };\n}\nfunction providerResult(raw) {\n  const envelope = raw?.body;\n  const data = envelope?.data ?? envelope;\n  if (![200, 202].includes(raw?.statusCode) || envelope?.success === false ||\n      typeof data?.messageId !== 'string' || !/^[\\w-]{8,200}$/.test(data.messageId) ||\n      ['failed', 'rejected', 'cancelled'].includes(data.status)) return failure('delivery_unavailable', 502);\n  return { proceed: true, messageId: data.messageId,\n    status: ['sent', 'delivered', 'read'].includes(data.status) ? data.status : 'queued' };\n}\nfunction sendResult(raw, prepared, sent) {\n  if (raw?.statusCode !== 200 || raw?.body?.success !== true) return failure('delivery_record_failed', 503);\n  return { httpStatus: 200, response: { success: true, messageId: sent.messageId,\n    status: sent.status, expiresAt: prepared.expiresAt, reused: prepared.reused } };\n}\nfunction statusInput(query) {\n  const messageId = query?.messageId;\n  return typeof messageId === 'string' && /^[\\w-]{8,200}$/.test(messageId)\n    ? { proceed: true, messageId } : failure('bad_request', 400);\n}\nfunction statusResult(raw) {\n  const envelope = raw?.body;\n  const data = envelope?.data ?? envelope;\n  const states = ['queued', 'pending', 'sent', 'delivered', 'read', 'failed', 'rejected', 'cancelled'];\n  if (raw?.statusCode !== 200 || envelope?.success === false || !states.includes(data?.status)) {\n    return failure('status_unavailable', 502);\n  }\n  return { httpStatus: 200, response: { success: true, status: data.status } };\n}\nfunction verifyInput(body) {\n  const request = sendInput(body);\n  if (!request.proceed || typeof body.code !== 'string' || !/^\\d{6}$/.test(body.code)) return failure('bad_request', 400);\n  return { ...request, code: body.code };\n}\nfunction verifyResult(raw) {\n  const verified = raw?.statusCode === 200 && raw?.body?.data?.verified === true;\n  return { httpStatus: verified ? 200 : 401, response: { success: verified, verified } };\n}\nfunction accountInput(body) {\n  // Trusted server caller only; a Utility confirmation must be a real signup\n  // event with its own requested-message evidence, never a marketing blast.\n  if (body?.event !== 'account_created' || body?.confirmationRequested !== true ||\n      typeof body?.userId !== 'string' || !/^[0-9a-f-]{36}$/.test(body.userId)) return failure('bad_request', 400);\n  return { proceed: true, userId: body.userId };\n}\nfunction accountPayload(raw, request, now = Date.now()) {\n  const user = raw?.body?.user ?? raw?.body;\n  const phone = normalizePhone(user?.phone);\n  const created = Date.parse(user?.created_at);\n  const name = user?.user_metadata?.full_name;\n  if (raw?.statusCode !== 200 || user?.id !== request.userId || !user?.phone_confirmed_at ||\n      !phone || !Number.isFinite(created) || now - created > 15 * 60 * 1000 || created > now ||\n      typeof name !== 'string' || name.trim().length < 3 || name.length > 200) return failure('invalid_account_event', 400);\n  return { proceed: true, payload: { to: phone, templateId: templates.account,\n    clientMessageId: `proxo-account-created-${request.userId}`,\n    components: [{ type: 'body', parameters: [\n      { type: 'text', parameter_name: 'customer_name', text: name.trim() },\n    ] }],\n  } };\n}\n\nreturn {json: verifyInput($json.body)};"
+      }
+    },
+    {
+      "name": "Verify code",
+      "id": "verify-code",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        0,
+        780
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ \"https://cojchkwssmasiejcgvbk.supabase.co\" + \"/rest/v1/rpc/pa_verify_whatsapp_otp\" }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpCustomAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ {p_phone: $json.phone, p_code: $json.code, p_purpose: $json.purpose} }}",
+        "options": {
+          "timeout": 15000,
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "onError": "continueRegularOutput",
+      "credentials": {
+        "httpCustomAuth": {
+          "name": "Proxo Supabase service role"
+        }
+      }
+    },
+    {
+      "name": "Validate verify valid",
+      "id": "validate-verify-valid",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        240,
+        780
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "validate-verify-condition",
+              "leftValue": "={{ $json.proceed }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "name": "Finish verify",
+      "id": "finish-verify",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        780
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Shared by the importable n8n Code nodes and the offline contract tests.\nconst templates = Object.freeze({\n  otp: 'fcb360b0-6bee-499c-990b-8fc181dccfbd',\n  account: 'c81050e6-f9af-42ae-90bf-b43b41469b61',\n});\nfunction failure(error, status = 502, retryAfter) {\n  return { proceed: false, httpStatus: status, response: {\n    success: false, error,\n    ...(retryAfter ? { retryAfterSeconds: Math.min(3600, Math.max(1, retryAfter)) } : {}),\n  } };\n}\nfunction normalizePhone(raw) {\n  if (typeof raw !== 'string' || raw.length > 64) return null;\n  let value = raw.replace(/[٠-٩۰-۹]/g, digit => String(\n    digit.charCodeAt(0) >= 0x6f0 ? digit.charCodeAt(0) - 0x6f0 : digit.charCodeAt(0) - 0x660));\n  if (!/^[+\\d\\s()-]+$/.test(value)) return null;\n  value = value.replace(/\\D/g, '').replace(/^00/, '').replace(/^964/, '').replace(/^0/, '');\n  return /^7\\d{9}$/.test(value) ? '+964' + value : null;\n}\nfunction sendInput(body) {\n  const phone = normalizePhone(body?.phone);\n  const purpose = body?.purpose ?? 'login';\n  if (!phone || !['signup', 'login', 'reset_password'].includes(purpose)) return failure('bad_request', 400);\n  return { proceed: true, phone, purpose };\n}\nfunction reservation(raw, request) {\n  const data = raw?.body;\n  if (raw?.statusCode !== 200 || !data || data.success !== true) {\n    if (raw?.statusCode === 200 && ['rate_limited', 'otp_locked'].includes(data?.error)) {\n      return failure(data.error, 429, Number(data.retry_after_seconds) || 60);\n    }\n    return failure('otp_unavailable', 503);\n  }\n  if (!/^\\d{6}$/.test(data.code) || !/^[0-9a-f-]{36}$/.test(data.otp_id) ||\n      !Number.isInteger(data.send_count) || data.send_count < 1 ||\n      !Number.isFinite(Date.parse(data.expires_at)) ||\n      data.client_message_id !== `proxo-otp-${data.otp_id}-${data.send_count}`) return failure('otp_unavailable', 503);\n  return { proceed: true, phone: request.phone, otpId: data.otp_id,\n    sendCount: data.send_count, reused: data.reused === true, expiresAt: data.expires_at,\n    payload: {\n      to: request.phone, templateId: templates.otp, clientMessageId: data.client_message_id,\n      components: [\n        { type: 'body', parameters: [{ type: 'text', text: data.code }] },\n        { type: 'button', sub_type: 'url', index: '0', parameters: [{ type: 'text', text: data.code }] },\n      ],\n    },\n  };\n}\nfunction providerResult(raw) {\n  const envelope = raw?.body;\n  const data = envelope?.data ?? envelope;\n  if (![200, 202].includes(raw?.statusCode) || envelope?.success === false ||\n      typeof data?.messageId !== 'string' || !/^[\\w-]{8,200}$/.test(data.messageId) ||\n      ['failed', 'rejected', 'cancelled'].includes(data.status)) return failure('delivery_unavailable', 502);\n  return { proceed: true, messageId: data.messageId,\n    status: ['sent', 'delivered', 'read'].includes(data.status) ? data.status : 'queued' };\n}\nfunction sendResult(raw, prepared, sent) {\n  if (raw?.statusCode !== 200 || raw?.body?.success !== true) return failure('delivery_record_failed', 503);\n  return { httpStatus: 200, response: { success: true, messageId: sent.messageId,\n    status: sent.status, expiresAt: prepared.expiresAt, reused: prepared.reused } };\n}\nfunction statusInput(query) {\n  const messageId = query?.messageId;\n  return typeof messageId === 'string' && /^[\\w-]{8,200}$/.test(messageId)\n    ? { proceed: true, messageId } : failure('bad_request', 400);\n}\nfunction statusResult(raw) {\n  const envelope = raw?.body;\n  const data = envelope?.data ?? envelope;\n  const states = ['queued', 'pending', 'sent', 'delivered', 'read', 'failed', 'rejected', 'cancelled'];\n  if (raw?.statusCode !== 200 || envelope?.success === false || !states.includes(data?.status)) {\n    return failure('status_unavailable', 502);\n  }\n  return { httpStatus: 200, response: { success: true, status: data.status } };\n}\nfunction verifyInput(body) {\n  const request = sendInput(body);\n  if (!request.proceed || typeof body.code !== 'string' || !/^\\d{6}$/.test(body.code)) return failure('bad_request', 400);\n  return { ...request, code: body.code };\n}\nfunction verifyResult(raw) {\n  const verified = raw?.statusCode === 200 && raw?.body?.data?.verified === true;\n  return { httpStatus: verified ? 200 : 401, response: { success: verified, verified } };\n}\nfunction accountInput(body) {\n  // Trusted server caller only; a Utility confirmation must be a real signup\n  // event with its own requested-message evidence, never a marketing blast.\n  if (body?.event !== 'account_created' || body?.confirmationRequested !== true ||\n      typeof body?.userId !== 'string' || !/^[0-9a-f-]{36}$/.test(body.userId)) return failure('bad_request', 400);\n  return { proceed: true, userId: body.userId };\n}\nfunction accountPayload(raw, request, now = Date.now()) {\n  const user = raw?.body?.user ?? raw?.body;\n  const phone = normalizePhone(user?.phone);\n  const created = Date.parse(user?.created_at);\n  const name = user?.user_metadata?.full_name;\n  if (raw?.statusCode !== 200 || user?.id !== request.userId || !user?.phone_confirmed_at ||\n      !phone || !Number.isFinite(created) || now - created > 15 * 60 * 1000 || created > now ||\n      typeof name !== 'string' || name.trim().length < 3 || name.length > 200) return failure('invalid_account_event', 400);\n  return { proceed: true, payload: { to: phone, templateId: templates.account,\n    clientMessageId: `proxo-account-created-${request.userId}`,\n    components: [{ type: 'body', parameters: [\n      { type: 'text', parameter_name: 'customer_name', text: name.trim() },\n    ] }],\n  } };\n}\n\nreturn {json: verifyResult($json)};"
+      }
+    },
+    {
+      "name": "Respond account",
+      "id": "respond-account",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        720,
+        780
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json.response }}",
+        "options": {
+          "responseCode": "={{ $json.httpStatus }}"
+        }
+      }
+    },
+    {
+      "name": "Account webhook",
+      "id": "account-webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        960,
+        780
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "wevlix/account/created",
+        "responseMode": "responseNode",
+        "authentication": "headerAuth",
+        "options": {}
+      },
+      "webhookId": "account-webhook",
+      "credentials": {
+        "httpHeaderAuth": {
+          "name": "Proxo internal webhook"
+        }
+      }
+    },
+    {
+      "name": "Validate account",
+      "id": "validate-account",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        780
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Shared by the importable n8n Code nodes and the offline contract tests.\nconst templates = Object.freeze({\n  otp: 'fcb360b0-6bee-499c-990b-8fc181dccfbd',\n  account: 'c81050e6-f9af-42ae-90bf-b43b41469b61',\n});\nfunction failure(error, status = 502, retryAfter) {\n  return { proceed: false, httpStatus: status, response: {\n    success: false, error,\n    ...(retryAfter ? { retryAfterSeconds: Math.min(3600, Math.max(1, retryAfter)) } : {}),\n  } };\n}\nfunction normalizePhone(raw) {\n  if (typeof raw !== 'string' || raw.length > 64) return null;\n  let value = raw.replace(/[٠-٩۰-۹]/g, digit => String(\n    digit.charCodeAt(0) >= 0x6f0 ? digit.charCodeAt(0) - 0x6f0 : digit.charCodeAt(0) - 0x660));\n  if (!/^[+\\d\\s()-]+$/.test(value)) return null;\n  value = value.replace(/\\D/g, '').replace(/^00/, '').replace(/^964/, '').replace(/^0/, '');\n  return /^7\\d{9}$/.test(value) ? '+964' + value : null;\n}\nfunction sendInput(body) {\n  const phone = normalizePhone(body?.phone);\n  const purpose = body?.purpose ?? 'login';\n  if (!phone || !['signup', 'login', 'reset_password'].includes(purpose)) return failure('bad_request', 400);\n  return { proceed: true, phone, purpose };\n}\nfunction reservation(raw, request) {\n  const data = raw?.body;\n  if (raw?.statusCode !== 200 || !data || data.success !== true) {\n    if (raw?.statusCode === 200 && ['rate_limited', 'otp_locked'].includes(data?.error)) {\n      return failure(data.error, 429, Number(data.retry_after_seconds) || 60);\n    }\n    return failure('otp_unavailable', 503);\n  }\n  if (!/^\\d{6}$/.test(data.code) || !/^[0-9a-f-]{36}$/.test(data.otp_id) ||\n      !Number.isInteger(data.send_count) || data.send_count < 1 ||\n      !Number.isFinite(Date.parse(data.expires_at)) ||\n      data.client_message_id !== `proxo-otp-${data.otp_id}-${data.send_count}`) return failure('otp_unavailable', 503);\n  return { proceed: true, phone: request.phone, otpId: data.otp_id,\n    sendCount: data.send_count, reused: data.reused === true, expiresAt: data.expires_at,\n    payload: {\n      to: request.phone, templateId: templates.otp, clientMessageId: data.client_message_id,\n      components: [\n        { type: 'body', parameters: [{ type: 'text', text: data.code }] },\n        { type: 'button', sub_type: 'url', index: '0', parameters: [{ type: 'text', text: data.code }] },\n      ],\n    },\n  };\n}\nfunction providerResult(raw) {\n  const envelope = raw?.body;\n  const data = envelope?.data ?? envelope;\n  if (![200, 202].includes(raw?.statusCode) || envelope?.success === false ||\n      typeof data?.messageId !== 'string' || !/^[\\w-]{8,200}$/.test(data.messageId) ||\n      ['failed', 'rejected', 'cancelled'].includes(data.status)) return failure('delivery_unavailable', 502);\n  return { proceed: true, messageId: data.messageId,\n    status: ['sent', 'delivered', 'read'].includes(data.status) ? data.status : 'queued' };\n}\nfunction sendResult(raw, prepared, sent) {\n  if (raw?.statusCode !== 200 || raw?.body?.success !== true) return failure('delivery_record_failed', 503);\n  return { httpStatus: 200, response: { success: true, messageId: sent.messageId,\n    status: sent.status, expiresAt: prepared.expiresAt, reused: prepared.reused } };\n}\nfunction statusInput(query) {\n  const messageId = query?.messageId;\n  return typeof messageId === 'string' && /^[\\w-]{8,200}$/.test(messageId)\n    ? { proceed: true, messageId } : failure('bad_request', 400);\n}\nfunction statusResult(raw) {\n  const envelope = raw?.body;\n  const data = envelope?.data ?? envelope;\n  const states = ['queued', 'pending', 'sent', 'delivered', 'read', 'failed', 'rejected', 'cancelled'];\n  if (raw?.statusCode !== 200 || envelope?.success === false || !states.includes(data?.status)) {\n    return failure('status_unavailable', 502);\n  }\n  return { httpStatus: 200, response: { success: true, status: data.status } };\n}\nfunction verifyInput(body) {\n  const request = sendInput(body);\n  if (!request.proceed || typeof body.code !== 'string' || !/^\\d{6}$/.test(body.code)) return failure('bad_request', 400);\n  return { ...request, code: body.code };\n}\nfunction verifyResult(raw) {\n  const verified = raw?.statusCode === 200 && raw?.body?.data?.verified === true;\n  return { httpStatus: verified ? 200 : 401, response: { success: verified, verified } };\n}\nfunction accountInput(body) {\n  // Trusted server caller only; a Utility confirmation must be a real signup\n  // event with its own requested-message evidence, never a marketing blast.\n  if (body?.event !== 'account_created' || body?.confirmationRequested !== true ||\n      typeof body?.userId !== 'string' || !/^[0-9a-f-]{36}$/.test(body.userId)) return failure('bad_request', 400);\n  return { proceed: true, userId: body.userId };\n}\nfunction accountPayload(raw, request, now = Date.now()) {\n  const user = raw?.body?.user ?? raw?.body;\n  const phone = normalizePhone(user?.phone);\n  const created = Date.parse(user?.created_at);\n  const name = user?.user_metadata?.full_name;\n  if (raw?.statusCode !== 200 || user?.id !== request.userId || !user?.phone_confirmed_at ||\n      !phone || !Number.isFinite(created) || now - created > 15 * 60 * 1000 || created > now ||\n      typeof name !== 'string' || name.trim().length < 3 || name.length > 200) return failure('invalid_account_event', 400);\n  return { proceed: true, payload: { to: phone, templateId: templates.account,\n    clientMessageId: `proxo-account-created-${request.userId}`,\n    components: [{ type: 'body', parameters: [\n      { type: 'text', parameter_name: 'customer_name', text: name.trim() },\n    ] }],\n  } };\n}\n\nreturn {json: accountInput($json.body)};"
+      }
+    },
+    {
+      "name": "Read new account",
+      "id": "read-new-account",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1440,
+        780
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "={{ \"https://cojchkwssmasiejcgvbk.supabase.co\" + '/auth/v1/admin/users/' + $json.userId }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpCustomAuth",
+        "options": {
+          "timeout": 15000,
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "onError": "continueRegularOutput",
+      "credentials": {
+        "httpCustomAuth": {
+          "name": "Proxo Supabase service role"
+        }
+      }
+    },
+    {
+      "name": "Validate account valid",
+      "id": "validate-account-valid",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        1040
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "validate-account-condition",
+              "leftValue": "={{ $json.proceed }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "name": "Prepare account",
+      "id": "prepare-account",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        1040
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Shared by the importable n8n Code nodes and the offline contract tests.\nconst templates = Object.freeze({\n  otp: 'fcb360b0-6bee-499c-990b-8fc181dccfbd',\n  account: 'c81050e6-f9af-42ae-90bf-b43b41469b61',\n});\nfunction failure(error, status = 502, retryAfter) {\n  return { proceed: false, httpStatus: status, response: {\n    success: false, error,\n    ...(retryAfter ? { retryAfterSeconds: Math.min(3600, Math.max(1, retryAfter)) } : {}),\n  } };\n}\nfunction normalizePhone(raw) {\n  if (typeof raw !== 'string' || raw.length > 64) return null;\n  let value = raw.replace(/[٠-٩۰-۹]/g, digit => String(\n    digit.charCodeAt(0) >= 0x6f0 ? digit.charCodeAt(0) - 0x6f0 : digit.charCodeAt(0) - 0x660));\n  if (!/^[+\\d\\s()-]+$/.test(value)) return null;\n  value = value.replace(/\\D/g, '').replace(/^00/, '').replace(/^964/, '').replace(/^0/, '');\n  return /^7\\d{9}$/.test(value) ? '+964' + value : null;\n}\nfunction sendInput(body) {\n  const phone = normalizePhone(body?.phone);\n  const purpose = body?.purpose ?? 'login';\n  if (!phone || !['signup', 'login', 'reset_password'].includes(purpose)) return failure('bad_request', 400);\n  return { proceed: true, phone, purpose };\n}\nfunction reservation(raw, request) {\n  const data = raw?.body;\n  if (raw?.statusCode !== 200 || !data || data.success !== true) {\n    if (raw?.statusCode === 200 && ['rate_limited', 'otp_locked'].includes(data?.error)) {\n      return failure(data.error, 429, Number(data.retry_after_seconds) || 60);\n    }\n    return failure('otp_unavailable', 503);\n  }\n  if (!/^\\d{6}$/.test(data.code) || !/^[0-9a-f-]{36}$/.test(data.otp_id) ||\n      !Number.isInteger(data.send_count) || data.send_count < 1 ||\n      !Number.isFinite(Date.parse(data.expires_at)) ||\n      data.client_message_id !== `proxo-otp-${data.otp_id}-${data.send_count}`) return failure('otp_unavailable', 503);\n  return { proceed: true, phone: request.phone, otpId: data.otp_id,\n    sendCount: data.send_count, reused: data.reused === true, expiresAt: data.expires_at,\n    payload: {\n      to: request.phone, templateId: templates.otp, clientMessageId: data.client_message_id,\n      components: [\n        { type: 'body', parameters: [{ type: 'text', text: data.code }] },\n        { type: 'button', sub_type: 'url', index: '0', parameters: [{ type: 'text', text: data.code }] },\n      ],\n    },\n  };\n}\nfunction providerResult(raw) {\n  const envelope = raw?.body;\n  const data = envelope?.data ?? envelope;\n  if (![200, 202].includes(raw?.statusCode) || envelope?.success === false ||\n      typeof data?.messageId !== 'string' || !/^[\\w-]{8,200}$/.test(data.messageId) ||\n      ['failed', 'rejected', 'cancelled'].includes(data.status)) return failure('delivery_unavailable', 502);\n  return { proceed: true, messageId: data.messageId,\n    status: ['sent', 'delivered', 'read'].includes(data.status) ? data.status : 'queued' };\n}\nfunction sendResult(raw, prepared, sent) {\n  if (raw?.statusCode !== 200 || raw?.body?.success !== true) return failure('delivery_record_failed', 503);\n  return { httpStatus: 200, response: { success: true, messageId: sent.messageId,\n    status: sent.status, expiresAt: prepared.expiresAt, reused: prepared.reused } };\n}\nfunction statusInput(query) {\n  const messageId = query?.messageId;\n  return typeof messageId === 'string' && /^[\\w-]{8,200}$/.test(messageId)\n    ? { proceed: true, messageId } : failure('bad_request', 400);\n}\nfunction statusResult(raw) {\n  const envelope = raw?.body;\n  const data = envelope?.data ?? envelope;\n  const states = ['queued', 'pending', 'sent', 'delivered', 'read', 'failed', 'rejected', 'cancelled'];\n  if (raw?.statusCode !== 200 || envelope?.success === false || !states.includes(data?.status)) {\n    return failure('status_unavailable', 502);\n  }\n  return { httpStatus: 200, response: { success: true, status: data.status } };\n}\nfunction verifyInput(body) {\n  const request = sendInput(body);\n  if (!request.proceed || typeof body.code !== 'string' || !/^\\d{6}$/.test(body.code)) return failure('bad_request', 400);\n  return { ...request, code: body.code };\n}\nfunction verifyResult(raw) {\n  const verified = raw?.statusCode === 200 && raw?.body?.data?.verified === true;\n  return { httpStatus: verified ? 200 : 401, response: { success: verified, verified } };\n}\nfunction accountInput(body) {\n  // Trusted server caller only; a Utility confirmation must be a real signup\n  // event with its own requested-message evidence, never a marketing blast.\n  if (body?.event !== 'account_created' || body?.confirmationRequested !== true ||\n      typeof body?.userId !== 'string' || !/^[0-9a-f-]{36}$/.test(body.userId)) return failure('bad_request', 400);\n  return { proceed: true, userId: body.userId };\n}\nfunction accountPayload(raw, request, now = Date.now()) {\n  const user = raw?.body?.user ?? raw?.body;\n  const phone = normalizePhone(user?.phone);\n  const created = Date.parse(user?.created_at);\n  const name = user?.user_metadata?.full_name;\n  if (raw?.statusCode !== 200 || user?.id !== request.userId || !user?.phone_confirmed_at ||\n      !phone || !Number.isFinite(created) || now - created > 15 * 60 * 1000 || created > now ||\n      typeof name !== 'string' || name.trim().length < 3 || name.length > 200) return failure('invalid_account_event', 400);\n  return { proceed: true, payload: { to: phone, templateId: templates.account,\n    clientMessageId: `proxo-account-created-${request.userId}`,\n    components: [{ type: 'body', parameters: [\n      { type: 'text', parameter_name: 'customer_name', text: name.trim() },\n    ] }],\n  } };\n}\n\nreturn {json: accountPayload($json, $('Validate account').item.json)};"
+      }
+    },
+    {
+      "name": "Send account template",
+      "id": "send-account-template",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        480,
+        1040
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.wevlix.com/v1/messages/template",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.payload }}",
+        "options": {
+          "timeout": 15000,
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "onError": "continueRegularOutput",
+      "credentials": {
+        "httpHeaderAuth": {
+          "name": "Proxo Wevlix server"
+        }
+      }
+    },
+    {
+      "name": "Prepare account valid",
+      "id": "prepare-account-valid",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        720,
+        1040
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "prepare-account-condition",
+              "leftValue": "={{ $json.proceed }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "name": "Finish account",
+      "id": "finish-account",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        1040
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Shared by the importable n8n Code nodes and the offline contract tests.\nconst templates = Object.freeze({\n  otp: 'fcb360b0-6bee-499c-990b-8fc181dccfbd',\n  account: 'c81050e6-f9af-42ae-90bf-b43b41469b61',\n});\nfunction failure(error, status = 502, retryAfter) {\n  return { proceed: false, httpStatus: status, response: {\n    success: false, error,\n    ...(retryAfter ? { retryAfterSeconds: Math.min(3600, Math.max(1, retryAfter)) } : {}),\n  } };\n}\nfunction normalizePhone(raw) {\n  if (typeof raw !== 'string' || raw.length > 64) return null;\n  let value = raw.replace(/[٠-٩۰-۹]/g, digit => String(\n    digit.charCodeAt(0) >= 0x6f0 ? digit.charCodeAt(0) - 0x6f0 : digit.charCodeAt(0) - 0x660));\n  if (!/^[+\\d\\s()-]+$/.test(value)) return null;\n  value = value.replace(/\\D/g, '').replace(/^00/, '').replace(/^964/, '').replace(/^0/, '');\n  return /^7\\d{9}$/.test(value) ? '+964' + value : null;\n}\nfunction sendInput(body) {\n  const phone = normalizePhone(body?.phone);\n  const purpose = body?.purpose ?? 'login';\n  if (!phone || !['signup', 'login', 'reset_password'].includes(purpose)) return failure('bad_request', 400);\n  return { proceed: true, phone, purpose };\n}\nfunction reservation(raw, request) {\n  const data = raw?.body;\n  if (raw?.statusCode !== 200 || !data || data.success !== true) {\n    if (raw?.statusCode === 200 && ['rate_limited', 'otp_locked'].includes(data?.error)) {\n      return failure(data.error, 429, Number(data.retry_after_seconds) || 60);\n    }\n    return failure('otp_unavailable', 503);\n  }\n  if (!/^\\d{6}$/.test(data.code) || !/^[0-9a-f-]{36}$/.test(data.otp_id) ||\n      !Number.isInteger(data.send_count) || data.send_count < 1 ||\n      !Number.isFinite(Date.parse(data.expires_at)) ||\n      data.client_message_id !== `proxo-otp-${data.otp_id}-${data.send_count}`) return failure('otp_unavailable', 503);\n  return { proceed: true, phone: request.phone, otpId: data.otp_id,\n    sendCount: data.send_count, reused: data.reused === true, expiresAt: data.expires_at,\n    payload: {\n      to: request.phone, templateId: templates.otp, clientMessageId: data.client_message_id,\n      components: [\n        { type: 'body', parameters: [{ type: 'text', text: data.code }] },\n        { type: 'button', sub_type: 'url', index: '0', parameters: [{ type: 'text', text: data.code }] },\n      ],\n    },\n  };\n}\nfunction providerResult(raw) {\n  const envelope = raw?.body;\n  const data = envelope?.data ?? envelope;\n  if (![200, 202].includes(raw?.statusCode) || envelope?.success === false ||\n      typeof data?.messageId !== 'string' || !/^[\\w-]{8,200}$/.test(data.messageId) ||\n      ['failed', 'rejected', 'cancelled'].includes(data.status)) return failure('delivery_unavailable', 502);\n  return { proceed: true, messageId: data.messageId,\n    status: ['sent', 'delivered', 'read'].includes(data.status) ? data.status : 'queued' };\n}\nfunction sendResult(raw, prepared, sent) {\n  if (raw?.statusCode !== 200 || raw?.body?.success !== true) return failure('delivery_record_failed', 503);\n  return { httpStatus: 200, response: { success: true, messageId: sent.messageId,\n    status: sent.status, expiresAt: prepared.expiresAt, reused: prepared.reused } };\n}\nfunction statusInput(query) {\n  const messageId = query?.messageId;\n  return typeof messageId === 'string' && /^[\\w-]{8,200}$/.test(messageId)\n    ? { proceed: true, messageId } : failure('bad_request', 400);\n}\nfunction statusResult(raw) {\n  const envelope = raw?.body;\n  const data = envelope?.data ?? envelope;\n  const states = ['queued', 'pending', 'sent', 'delivered', 'read', 'failed', 'rejected', 'cancelled'];\n  if (raw?.statusCode !== 200 || envelope?.success === false || !states.includes(data?.status)) {\n    return failure('status_unavailable', 502);\n  }\n  return { httpStatus: 200, response: { success: true, status: data.status } };\n}\nfunction verifyInput(body) {\n  const request = sendInput(body);\n  if (!request.proceed || typeof body.code !== 'string' || !/^\\d{6}$/.test(body.code)) return failure('bad_request', 400);\n  return { ...request, code: body.code };\n}\nfunction verifyResult(raw) {\n  const verified = raw?.statusCode === 200 && raw?.body?.data?.verified === true;\n  return { httpStatus: verified ? 200 : 401, response: { success: verified, verified } };\n}\nfunction accountInput(body) {\n  // Trusted server caller only; a Utility confirmation must be a real signup\n  // event with its own requested-message evidence, never a marketing blast.\n  if (body?.event !== 'account_created' || body?.confirmationRequested !== true ||\n      typeof body?.userId !== 'string' || !/^[0-9a-f-]{36}$/.test(body.userId)) return failure('bad_request', 400);\n  return { proceed: true, userId: body.userId };\n}\nfunction accountPayload(raw, request, now = Date.now()) {\n  const user = raw?.body?.user ?? raw?.body;\n  const phone = normalizePhone(user?.phone);\n  const created = Date.parse(user?.created_at);\n  const name = user?.user_metadata?.full_name;\n  if (raw?.statusCode !== 200 || user?.id !== request.userId || !user?.phone_confirmed_at ||\n      !phone || !Number.isFinite(created) || now - created > 15 * 60 * 1000 || created > now ||\n      typeof name !== 'string' || name.trim().length < 3 || name.length > 200) return failure('invalid_account_event', 400);\n  return { proceed: true, payload: { to: phone, templateId: templates.account,\n    clientMessageId: `proxo-account-created-${request.userId}`,\n    components: [{ type: 'body', parameters: [\n      { type: 'text', parameter_name: 'customer_name', text: name.trim() },\n    ] }],\n  } };\n}\n\nreturn {json: (() => { const result = providerResult($json); return result.proceed ? {httpStatus: 200, response: {success: true, messageId: result.messageId, status: result.status}} : result; })()};"
+      }
+    }
+  ],
+  "connections": {
+    "Send webhook": {
+      "main": [
+        [
+          {
+            "node": "Validate send",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate send": {
+      "main": [
+        [
+          {
+            "node": "Validate send valid",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate send valid": {
+      "main": [
+        [
+          {
+            "node": "Reserve OTP",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond send",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reserve OTP": {
+      "main": [
+        [
+          {
+            "node": "Prepare OTP",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare OTP": {
+      "main": [
+        [
+          {
+            "node": "Prepare OTP valid",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare OTP valid": {
+      "main": [
+        [
+          {
+            "node": "Send OTP template",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond send",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send OTP template": {
+      "main": [
+        [
+          {
+            "node": "Check OTP delivery",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check OTP delivery": {
+      "main": [
+        [
+          {
+            "node": "Check OTP delivery valid",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check OTP delivery valid": {
+      "main": [
+        [
+          {
+            "node": "Record delivery",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond send",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Record delivery": {
+      "main": [
+        [
+          {
+            "node": "Finish send",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Finish send": {
+      "main": [
+        [
+          {
+            "node": "Respond send",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Status webhook": {
+      "main": [
+        [
+          {
+            "node": "Validate status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate status": {
+      "main": [
+        [
+          {
+            "node": "Validate status valid",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate status valid": {
+      "main": [
+        [
+          {
+            "node": "Read delivery",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read delivery": {
+      "main": [
+        [
+          {
+            "node": "Finish status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Finish status": {
+      "main": [
+        [
+          {
+            "node": "Respond status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verify webhook": {
+      "main": [
+        [
+          {
+            "node": "Validate verify",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate verify": {
+      "main": [
+        [
+          {
+            "node": "Validate verify valid",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate verify valid": {
+      "main": [
+        [
+          {
+            "node": "Verify code",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond verify",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verify code": {
+      "main": [
+        [
+          {
+            "node": "Finish verify",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Finish verify": {
+      "main": [
+        [
+          {
+            "node": "Respond verify",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Account webhook": {
+      "main": [
+        [
+          {
+            "node": "Validate account",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate account": {
+      "main": [
+        [
+          {
+            "node": "Validate account valid",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate account valid": {
+      "main": [
+        [
+          {
+            "node": "Read new account",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond account",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read new account": {
+      "main": [
+        [
+          {
+            "node": "Prepare account",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare account": {
+      "main": [
+        [
+          {
+            "node": "Prepare account valid",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare account valid": {
+      "main": [
+        [
+          {
+            "node": "Send account template",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond account",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send account template": {
+      "main": [
+        [
+          {
+            "node": "Finish account",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Finish account": {
+      "main": [
+        [
+          {
+            "node": "Respond account",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataErrorExecution": "none",
+    "saveDataSuccessExecution": "none",
+    "saveManualExecutions": false,
+    "saveExecutionProgress": false
+  },
+  "pinData": {},
+  "tags": []
+}

@@ -1,8 +1,26 @@
 # Proxo WhatsApp Auth and optional marketing consent
 
-Prepared for Draft PR #7. **Not activated on n8n; not applied to production Supabase.**
+Prepared for Draft PR #7. **Live repair was authorized on 2026-10-16 but is blocked; the migration and Edge deployments have not been applied, and n8n has not been edited.** PR #7 remains Draft/Open/Unmerged.
 
-Importable workflow: [proxo-wevlix.json](proxo-wevlix.json). Regenerate with `node integrations/wevlix/build-workflow.mjs`.
+For the current Zana project, import [proxo-wevlix-configured.json](proxo-wevlix-configured.json): every Supabase URL is already configured and no n8n Variables are needed. Credentials are still stored separately in n8n. Regenerate with:
+
+```sh
+node integrations/wevlix/build-workflow.mjs https://cojchkwssmasiejcgvbk.supabase.co
+```
+
+The portable [proxo-wevlix.json](proxo-wevlix.json) continues to use `PROXO_SUPABASE_URL`; regenerate it with `node integrations/wevlix/build-workflow.mjs` without an argument.
+
+## Live repair status — 2026-10-16
+
+- The observed `Reserve OTP` error comes from an unset `PROXO_SUPABASE_URL`. Writing `$vars.'https://…'` is invalid JavaScript. The configured export fixes all four Supabase node URLs, not just the reservation node.
+- Live read-only inspection also found the old reservation function, without `otp_id` / `client_message_id` or reservation-before-send. The new purpose-bound verifier, delivery recorder and marketing-consent tables are absent. Fixing the URL alone is therefore insufficient.
+- Two migration attempts returned connector error `Invalid or expired requestState`. A subsequent live read confirmed the new verifier and preference table are still absent; the latest migration remains `20261013231219`. No Edge Function was deployed against this incomplete schema. This is a connector failure, not a successful migration.
+- n8n is reachable in the browser, but secure sign-in returned `Wrong username or password`. The existing workflow and credential bindings have not been changed. A manual sign-in handoff is needed to continue that part.
+- Fifteen focused workflow/Edge tests pass locally, including every configured URL without `$vars`, matching OTP/body/button values, failure guards and optional consent. These intercepted tests send no real messages. Production delivery remains unverified.
+
+After restoring access, apply the existing [OTP/consent migration](../../proxo_app/supabase/migrations/20261015215145_whatsapp_auth_consent.sql), then deploy [phone-otp-session](../../proxo_app/supabase/functions/phone-otp-session/index.ts) and [whatsapp-session-exchange](../../proxo_app/supabase/functions/whatsapp-session-exchange/index.ts), and update the existing n8n workflow in one coordinated rollout. Bind the existing valid server credentials before activation; do not run duplicate workflows with the same webhook paths. The staging and credential requirements below still apply. No unrelated production change or PR merge is authorized by this repair.
+
+Once that rollout is complete, ReqBin can POST to `https://email.proxopages.com/webhook/wevlix/otp/send`, with `Content-Type: application/json` and JSON `{ "phone": "+9647XXXXXXXXX", "purpose": "login" }` using the requested recipient's real number. Do not include an OTP, template ID or service-role key in this public request. `success: true` means provider acceptance and stored message ID; receipt must be checked separately. A `503 otp_unavailable` must be diagnosed at the failed node, not retried repeatedly.
 
 ## Supplied templates
 
@@ -48,7 +66,7 @@ The attached original export and screenshot exposed a Wevlix key and Supabase se
 
 1. Use an isolated Supabase project. Review and apply `proxo_app/supabase/migrations/20261015215145_whatsapp_auth_consent.sql`, which targets the inspected existing `otp_whatsapp` schema. The migration revokes old public OTP function access; deploy the workflow and both updated Edge Functions together in a coordinated maintenance window after staging passes. Do not apply it independently to the current production flow.
 2. Deploy `phone-otp-session` and `whatsapp-session-exchange` to that isolated project with the existing server-side Auth environment. Their external HTTP endpoints must allow unauthed requests, because they perform OTP proof themselves. Raw database OTP RPCs remain service-only. The app's signup/login paths must point to that same project.
-3. Import the inactive workflow and set `PROXO_SUPABASE_URL` in n8n Variables to the isolated HTTPS project URL, without a trailing slash. If Variables are unavailable on the installed n8n plan/version, replace only the `$vars.PROXO_SUPABASE_URL` references with the non-secret project URL.
+3. Import the inactive portable workflow and set `PROXO_SUPABASE_URL` in n8n Variables to the isolated HTTPS project URL, without a trailing slash. If Variables are unavailable, generate a configured export using that isolated project's URL as the builder argument. The committed configured export points specifically to the live Zana project and must not be used as a staging destination.
 4. Bind **Proxo Wevlix server** as HTTP Header Auth (`X-API-Key`, rotated development key). Bind **Proxo Supabase service role** as HTTP Custom Auth with two headers: `apikey: <server-key>` and `Authorization: Bearer <service-role-JWT>`. Bind **Proxo internal webhook** as a separate unpredictable header credential shared only with trusted server callers. Verify names resolve to actual credential IDs after import.
 5. Keep execution-data saving disabled (the export disables success/error/manual/progress storage). Use TLS and access-controlled n8n administration. Confirm the reverse proxy protects the public send endpoint with per-source abuse controls in addition to database per-phone limits; never place an internal secret in the app. Disable the old workflow before enabling a replacement with matching paths.
 6. In Wevlix development mode, exercise initial send, resend, cooldown, wrong/expired OTP, signup with both choices, consent withdrawal and re-enrollment, and login. Development messages simulate delivery. No live message has been sent by this implementation or its automated tests.
