@@ -334,7 +334,7 @@ create table public.promo_code_usages(
 "promo_code_id" uuid not null,
 "user_id" text not null,
 "ad_id" text,
-"status" text default 'active'::promo_code_status not null,
+"status" text default 'active'::text not null,
 "discount_applied" numeric not null,
 "used_at" timestamptz default now() not null,
 "refunded_at" timestamptz,
