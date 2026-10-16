@@ -1,3 +1,4 @@
+import '../services/auth_activity_service.dart';
 import '../widgets/proxo_error_stack.dart';
 import 'package:proxo_app/l10n/proxo_strings.dart';
 import '../widgets/auth/auth_header.dart';
@@ -27,6 +28,7 @@ import 'deposit_screen.dart';
 import 'faq_screen.dart' show FaqItem, kFaqItems;
 import 'tools_screen.dart';
 import 'whatsapp_marketing_screen.dart';
+import 'auth_screen.dart';
 import 'package:proxo_app/widgets/proxo_text.dart';
 
 const String _emailChangeWebhookUrl =
@@ -380,7 +382,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     _signingOut.value = true;
     try {
-      await _client.auth.signOut();
+      await AuthActivityService.forClient(_client).signOut();
+      // A successful login may have removed AuthGate's original route.
+      // Clear this stack if another Auth listener has not already navigated.
+      if (mounted && ModalRoute.of(context)?.isCurrent == true) {
+        Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+          MaterialPageRoute<void>(builder: (_) => const AuthScreen()),
+          (route) => false,
+        );
+      }
     } on AuthException catch (error) {
       if (mounted) _showMessage(_friendlyAuthError(error.message));
     } catch (_) {
