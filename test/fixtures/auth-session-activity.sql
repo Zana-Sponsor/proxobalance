@@ -31,6 +31,7 @@ create policy activity_owner_read on public.pa_activity_log for select to authen
 grant select,update on public.profiles to authenticated;
 grant select,insert on public.pa_login_history to authenticated;
 grant select on public.pa_activity_log to authenticated;
+create function public.pa_is_admin() returns boolean language sql stable as $$ select false; $$;
 insert into auth.users values
  ('11111111-1111-4111-8111-111111111111','2026-10-01T12:00:00Z'),
  ('22222222-2222-4222-8222-222222222222',null);
