@@ -169,3 +169,9 @@ This execution failed before reservation/provider sending. It is not a successfu
 ![Prepared Supabase server credential; Value is blank](otp-supabase-credential-form-20261016.jpg)
 
 Browser credential protection intermittently blocked observation after node navigation. Explicit navigation to the canonical editor and then the observed node URL recovered ordinary observation where permitted. No cookies, hidden application state, secret values or forbidden transport were extracted. No workflow publish, old-key revocation, Supabase mutation, Cloudflare mutation or application release was performed in this continuation. PR #7 was read back Draft/Open/Unmerged at `9cb9b356a75c4767a7b359b76284515096e935ab`.
+
+### Supabase sign-in verified — next continuation
+
+After the user's manual sign-in report, explicit navigation to the project's API Keys page showed authenticated access to project `cojchkwssmasiejcgvbk` (Zana, main/Production). The modern-key panel contains one default publishable key and one masked default secret key; no secret was revealed or copied. This supersedes the preceding sign-in blocker.
+
+Attempts to open **New secret key** were blocked by browser credential protection; no key creation was submitted. The user must create a dedicated modern secret key and privately paste it into the already-prepared n8n credential's Value field, then save. The n8n form was reconfirmed open with the expected name and Save button. No extra OTP request was made, and the explicit one-live-send/$0.02 authorization remains unused and in force.
