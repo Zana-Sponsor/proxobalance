@@ -270,3 +270,18 @@ Before the attempt, a metadata-only check found no reservation newer than the su
 Reservation succeeded, but provider acceptance and finish-send recording were not demonstrated. A missing provider ID in this table does **not** prove that no upstream message was accepted. Treat the single intended-live request as potentially consumed and do not retry, send a second message, or use a second endpoint while its external outcome is uncertain.
 
 The next evidence is the current n8n **Send OTP template** error/status and the provider message log for this time/recipient. The user may report whether WhatsApp arrived, without sharing the OTP. This is not a completed live rollout: final charge, provider delivery, protected routes, published route/version, credential rotation completion and secure session exchange remain unverified.
+
+## Screenshot execution-time reconciliation — 2026-10-16 13:55 UTC follow-up
+
+The user reported **no WhatsApp arrival** and supplied two screenshots. They show a run that follows Send webhook → Validate send → Reserve OTP → Prepare OTP → Respond send, returning `503 otp_unavailable`. Reserve OTP's HTTP output is `401`, PostgreSQL code `42501`, permission denied for the reservation function. Crucially, the response header visible in that image is **Fri, 16 Oct 2026 02:12:21 GMT** (**05:12:21 Baghdad**), while the phone screenshot was taken at 16:54. This displayed HTTP response predates both the 13:36 development run and the 13:49 intended-live attempt; it cannot be attributed to either current request solely from the screenshot.
+
+The green node/run **Success** labels do not establish HTTP or OTP success. The reviewed HTTP nodes enable `Never Error`, which [n8n documents](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/) as allowing node success regardless of HTTP response code. The workflow's response node can therefore successfully deliver an application error.
+
+Current read-only checks:
+
+- Both reservation and finish-send RPCs are SECURITY INVOKER, with service_role EXECUTE=true and anon/authenticated EXECUTE=false. No grant or RLS change is justified by the old screenshot.
+- The latest recipient reservation remains the **13:49:45 UTC pending** row, with no provider ID or sent/delivered/failed timestamp; it expired at 13:54:45 UTC.
+- Available edge logs for **13:36:25–13:55:30 UTC** contain the successful finish-send RPC at **13:36:37.405 UTC**, status 200. They do not contain a corresponding later RPC entry in the returned results. A separate PostgreSQL error query for **13:49:30–13:55:30 UTC** returned no reservation-function permission-denial entry. These absences do not exclude an unrecorded error or external message acceptance.
+- No additional webhook call was made. No raw OTP, API key, session token or screenshot cookie was copied into this report.
+
+The process remains incomplete. The original current-instance export request is still outstanding: obtain **Editor → workflow actions → Download**, without credential secrets or embedded execution payloads, to inspect actual saved node parameters and binding IDs. Browser control remains blocked; an old execution screenshot is not a substitute for that current export or the intended-live attempt's provider status. The user-reported non-arrival does not by itself establish no charge or make a repeat safe.
