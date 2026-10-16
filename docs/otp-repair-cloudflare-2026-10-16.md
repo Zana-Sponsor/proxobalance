@@ -2,7 +2,7 @@
 
 ## Current result
 
-The Cloudflare rejection has been diagnosed from actual Security Events and corrected for the two OTP send API paths. One real invalid-input execution of the repair workflow returned the expected HTTP 400. Full provider-development execution, credential rotation, publication of the repaired draft, real delivery and secure app session exchange remain incomplete because the supported browser runtime again cannot safely resume native credential state.
+Cloudflare's scoped send-path repair is in place. After explicit recipient/cost authorization, the real development webhook test ran at **2026-10-16 11:51:08 UTC** and returned **503 otp_unavailable**. Supabase logs correlate it to **401 / PostgREST 42501: permission denied for function get_or_generate_otp_whatsapp**. No new reservation or provider send resulted. The new Wevlix production credential is saved in n8n; a replacement Supabase credential form is prepared but awaits private key entry. The repaired workflow has not been published, and production delivery/session exchange remain unverified. See the latest continuation below; earlier sections are historical evidence.
 
 This report supplements [the original deployment report](otp-repair-status-2026-10-16.md). Completed Supabase deployments and rolled-back lifecycle tests were not repeated. PR #7 was read back as Draft, Open and Unmerged at head `435c038175afe78c789b59c1128c2c2125996c77`. No unrelated workflow, ProxoLink deployment or app release was changed.
 
@@ -142,3 +142,30 @@ A new, unsaved n8n Header Auth credential form is now prepared with these non-se
 ![Prepared n8n credential form; secret field blank](otp-n8n-credential-form-20261016.jpg)
 
 Browser credential rules require the user to enter and submit the new secret privately. The form was opened from **Send OTP template**; after the user saves it, inspect the selected binding and preserve the development-test stage before making production bindings consistent. No credential was submitted, workflow published, API request sent, or key revoked in this continuation. The explicit real-recipient test authorization requested after the automatic approval rejection is still pending; “I did it” was treated as confirmation of key creation only.
+
+## Authorized development execution — 2026-10-16
+
+The user explicitly authorized provider-development testing followed by at most **one real login OTP** to their specified recipient (ending 4008), with a **$0.02 maximum**. This authorization remains in force; it is no longer the blocker. No additional send permission should be requested for the same scope.
+
+### Actual result and diagnosis
+
+1. n8n showed **Saved** for `Proxo Wevlix Production 2026-10-16`, and Send OTP template selected it after the user's private entry. No secret was read.
+2. Before executing, Send OTP template was restored to `Devlopmemt` and verified after navigation. The manual **Send webhook** listener was started.
+3. One POST to `/webhook-test/wevlix/otp/send` used the authorized recipient and `purpose=login`. It returned HTTP **503**, `{"success":false,"error":"otp_unavailable"}`, at **11:51:08.187907 UTC**. The listener completed and Execute workflow became available again.
+4. Read-only reservation metadata before and after the execution remained at the old 02:11:20 UTC login reservation, expired at 02:16:20 UTC, with no send/delivery timestamp. No raw code, proof or session token was queried.
+5. Supabase unified logs for **11:50:50–11:51:20 UTC** show one n8n POST to `/rest/v1/rpc/get_or_generate_otp_whatsapp`: **401**, `PostgREST; error=42501`, API-key JWT role `service_role`. PostgreSQL logs in the same interval say **permission denied for function get_or_generate_otp_whatsapp**.
+6. Live privilege inspection confirms service_role EXECUTE on the reservation RPC, schema USAGE and table SELECT/INSERT/UPDATE are **true**. EXECUTE for anon and authenticated are **false**, as intended. These findings point to the effective authorization credential/header path; they do not establish the exact hidden-header mismatch. Do not weaken RPC grants or RLS to conceal the failure. The earlier SQL attempt used the wrong table name and was read-only; the successful metadata check used `public.otp_whatsapp`.
+
+This execution failed before reservation/provider sending. It is not a successful development-provider test. Cooldown, duplicate, purpose-isolation runtime checks and the single live send remain pending until credentials work. No live send allowance has been consumed by this attempt.
+
+### Draft changes and concrete handoff
+
+- `Read delivery` and `Send account template` were selected onto `Proxo Wevlix Production 2026-10-16` in the draft, with the selected labels read back. A final persisted export/readback is still required before publication. Send OTP template remains on `Devlopmemt` for the development stage.
+- The existing Supabase Custom Auth credential displayed masked `apikey` and `Authorization` JSON fields; values were not extracted. Its four-node usage is documented above.
+- To prepare migration to a modern server secret, Reserve OTP's draft Generic Auth Type was changed to **Header Auth**. A new credential form named `Proxo Supabase Server 2026-10-16` is prepared, **unsaved**, with header **apikey**, a **blank Value**, and Specific Domains limited to `cojchkwssmasiejcgvbk.supabase.co`. Reserve OTP is temporarily unbound while this form awaits completion. **Do not execute or publish this unfinished draft.**
+- Current [Supabase API-key guidance](https://supabase.com/docs/guides/getting-started/api-keys) recommends a dedicated `sb_secret_...` key for a backend component, sent in `apikey`; it must not be treated as a JWT Bearer value. The new key must be entered and submitted privately by the user, then the four Supabase nodes must be bound consistently and tested. Legacy revocation still requires the broader consumer migration already documented.
+- The Supabase API Keys dashboard requires sign-in. Secure browserAuth offered its visible choices and the user selected ChatGPT. The result was `submitted`, which only confirms the method action. After the supported explicit canonical navigation, the dashboard still showed **Sign in**; authenticated access was not verified. A manual sign-in handoff is needed to continue credential administration.
+
+![Prepared Supabase server credential; Value is blank](otp-supabase-credential-form-20261016.jpg)
+
+Browser credential protection intermittently blocked observation after node navigation. Explicit navigation to the canonical editor and then the observed node URL recovered ordinary observation where permitted. No cookies, hidden application state, secret values or forbidden transport were extracted. No workflow publish, old-key revocation, Supabase mutation, Cloudflare mutation or application release was performed in this continuation. PR #7 was read back Draft/Open/Unmerged at `9cb9b356a75c4767a7b359b76284515096e935ab`.
