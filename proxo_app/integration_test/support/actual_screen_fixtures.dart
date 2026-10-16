@@ -37,10 +37,13 @@ class ActualScreenBackend {
  Map<String, dynamic>? banner;
  final _sockets=<_ScreenSocket>[];
  int logoutRequests=0;
+ bool logoutFails=false;
  ActualScreenBackend({bool allowLogout=false}){
   transport=MockClient((request)async{
     if(allowLogout && request.method=='POST' && request.url.host=='screen-fixtures.invalid' && request.url.path=='/auth/v1/logout'){
-      logoutRequests++; return http.Response('',204,request:request);
+      logoutRequests++;
+      return http.Response(logoutFails?'{"message":"fixture logout unavailable"}':'',logoutFails?500:204,
+        request:request,headers:{'content-type':'application/json'});
     }
     if(request.method!='GET'||request.url.host!='screen-fixtures.invalid')throw StateError('screen_fixture_network_boundary');
     final table=request.url.path.split('/').last;
