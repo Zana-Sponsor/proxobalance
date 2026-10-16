@@ -4,6 +4,8 @@
 
 Cloudflare's scoped send-path repair is in place. The current instance export supplied at approximately **14:04 UTC** now confirms the four Supabase nodes select the replacement server credential and all three Wevlix nodes select the replacement **Production** credential. Its 33-node graph and Code bodies match the reviewed source; **17 offline intercepted-transport checks passed**, with no reproducible code/graph defect. A single non-sending production validation probe at **14:11:44 UTC** returned **HTTP 400 JSON bad_request**, and no new reservation was created. This verifies production-path reachability and input validation, not the identity of the published version or provider authentication. The earlier development send succeeded at **13:36 UTC**. The single intended-live attempt at **13:49 UTC** remains unresolved: HTTP 502 non-JSON, database reservation pending, no recorded provider ID, and user-reported non-arrival. Its external outcome and charge are unknown. **Do not send another OTP until that attempt is resolved.** Browser control remains unavailable. Earlier sections below are historical evidence and are superseded where explicitly noted.
 
+The subsequent **14:37:41 UTC no-send diagnostic execution**, supplied by the user in screenshots, established a current concrete blocker: Supabase limited read returned **200**, while **both Wevlix production-credential probes returned 401 authentication_rejected**. The next correction is the Wevlix Header Auth credential's header name/private key value, followed by another no-send diagnostic. This new evidence does not retrospectively prove the exact cause or external outcome of the 13:49 attempt.
+
 This report supplements [the original deployment report](otp-repair-status-2026-10-16.md). Completed Supabase deployments and rolled-back lifecycle tests were not repeated. PR #7 was read back as Draft, Open and Unmerged at head `435c038175afe78c789b59c1128c2c2125996c77`. No unrelated workflow, ProxoLink deployment or app release was changed.
 
 ## n8n observations and saved draft changes
@@ -348,3 +350,23 @@ No redirects or automatic retries are enabled. HTTP responses use text capture s
 Validation: **8/8 offline checks passed**, covering fixed no-recipient requests, expected read/invalid-request results, 401/403, HTML 502, credential/domain restrictions, timeout/404, unexpected empty-request success and repeat fixtures. The structural checker reported only three credential-binding flags under its public-example policy; the credential-stripped structural test copy passed. The private deliverable retains the user's existing instance credential references, with no values. Manual Trigger v1 was checked against official n8n 2.23.4 source; HTTP Request 4.2 and Code 2 match the instance export.
 
 No compatible local n8n runtime is available. **The diagnostic has not been imported or executed in the user's instance.** No authenticated service probe or additional OTP request was made while preparing it. The next step is one manual run of this separate diagnostic and inspection of Safe Result; do not rerun the original valid OTP send while its prior outcome remains unresolved.
+
+## No-send diagnostic executed: Wevlix authentication rejected — 2026-10-16 14:37 UTC
+
+The user imported the diagnostic into a new workflow named **Proxo - OTP No-Send Check** and supplied three screenshots of its completed **Safe Result**. The output timestamp is **2026-10-16T14:37:41.659Z** (**17:37:41 Baghdad**); the UI reports a 2.648-second completed execution.
+
+| Probe | HTTP | Safe Result |
+|---|---:|---|
+| Supabase zero-row table read | 200 | database_read_access_ok; JSON |
+| Wevlix existing-message read | 401 | authentication_rejected; JSON |
+| Wevlix deliberately empty template request | 401 | authentication_rejected; JSON |
+
+The final result correctly retains valid_send_tested=false and previous_live_attempt_resolved=false. The green node status means the diagnostic completed; it does not turn the two 401 responses into provider success.
+
+This supplies actual n8n runtime evidence for the diagnostic and the selected credential references. Supabase's read succeeds, while the replacement Wevlix production credential is rejected on two endpoints. The export contained credential names/IDs only, so this does not identify whether the Wevlix header is incorrectly named, the stored key is missing/truncated/wrong, or the key is revoked/otherwise invalid. It does not establish a scope failure or prove that this is the precise origin of the earlier non-JSON 502.
+
+Required correction: open the existing **Proxo Wevlix Production 2026-10-16** Header Auth credential from the diagnostic's Wevlix read node. The **Name** field inside the credential must be **X-API-Key** (distinct from the credential's display name). Privately replace/check **Value** against the complete active production API key for the ProxoApp project, without a Bearer prefix or quote characters. [Both official Wevlix endpoint references](https://docs.wevlix.com/reference/messagescontroller_getstatus_v1-1) identify X-API-Key authentication. Do not post the key to chat or commit it.
+
+The user can save the credential once and rerun only this **no-send diagnostic**, then share Safe Result. Credential references remain shared with the intended production nodes; no additional rebinding should be necessary if the same credential is edited. A successful read and expected empty-payload rejection still do not verify a valid send, balance, template eligibility or delivery.
+
+No credential value was read or changed by the assistant. No extra valid OTP request, main-workflow execution or publication occurred in this follow-up. Browser credential-state protection still blocks direct management. The remaining secret-entry correction must happen privately in the user's credential UI; the diagnostic provides a safe way to verify its effect.
