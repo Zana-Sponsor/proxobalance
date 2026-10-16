@@ -116,29 +116,27 @@ Future<Map<String, String>> collectAuthDevice() async {
   final platform = kIsWeb ? 'web' : defaultTargetPlatform.name;
   final result = <String, String>{'platform': platform};
   final info = DeviceInfoPlugin();
-  try {
-    if (kIsWeb) {
-      final web = await info.webBrowserInfo;
-      result.addAll({'device_model': web.browserName.name, 'os': 'web'});
-    } else if (defaultTargetPlatform == TargetPlatform.android) {
-      final android = await info.androidInfo;
-      result.addAll({
-        'device_name': '${android.brand} ${android.model}'.trim(),
-        'device_model': android.model,
-        'os': 'Android',
-        'os_version': android.version.release,
-      });
-    } else if (defaultTargetPlatform == TargetPlatform.iOS) {
-      final ios = await info.iosInfo;
-      result.addAll({
-        'device_name': ios.model,
-        'device_model': ios.utsname.machine,
-        'os': 'iOS',
-        'os_version': ios.systemVersion,
-      });
-    }
-  } catch (_) {
-    // A device plugin failure must not suppress the server's session record.
+  // Let transient plugin failures reach the service's retry path. Caching a
+  // platform-only success would otherwise permanently lose this phone's model.
+  if (kIsWeb) {
+    final web = await info.webBrowserInfo;
+    result.addAll({'device_model': web.browserName.name, 'os': 'web'});
+  } else if (defaultTargetPlatform == TargetPlatform.android) {
+    final android = await info.androidInfo;
+    result.addAll({
+      'device_name': '${android.brand} ${android.model}'.trim(),
+      'device_model': android.model,
+      'os': 'Android',
+      'os_version': android.version.release,
+    });
+  } else if (defaultTargetPlatform == TargetPlatform.iOS) {
+    final ios = await info.iosInfo;
+    result.addAll({
+      'device_name': ios.model,
+      'device_model': ios.utsname.machine,
+      'os': 'iOS',
+      'os_version': ios.systemVersion,
+    });
   }
   return result;
 }
