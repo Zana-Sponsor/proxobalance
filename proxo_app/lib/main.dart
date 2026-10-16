@@ -12,6 +12,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'services/notification_service.dart';
 import 'services/admin_notifier.dart';
+import 'services/auth_activity_service.dart';
 import 'screens/auth_screen.dart';
 import 'screens/splash_screen.dart';
 import 'screens/home_screen.dart';
@@ -103,6 +104,7 @@ void main() async {
     anonKey: kSupabaseAnonKey,
   );
   supabase = Supabase.instance.client;
+  AuthActivityService.forClient(supabase).start();
 
   try {
     await Firebase.initializeApp();
@@ -229,18 +231,15 @@ class _AuthGate extends StatefulWidget {
 
 class _AuthGateState extends State<_AuthGate> {
   StreamSubscription<AuthState>? _authSub;
-  String? _lastKnownUserId;
 
   @override
   void initState() {
     super.initState();
-    _lastKnownUserId = supabase.auth.currentUser?.id;
     _authSub = supabase.auth.onAuthStateChange.listen((data) async {
       if (!mounted) return;
       if (AuthScreen.inOtpFlow) return;
       final event   = data.event;
       final session = data.session;
-      if (session != null) _lastKnownUserId = session.user.id;
 
       if (session != null &&
           (event == AuthChangeEvent.signedIn ||
@@ -256,17 +255,7 @@ class _AuthGateState extends State<_AuthGate> {
           (route) => false,
         );
       } else if (event == AuthChangeEvent.signedOut) {
-        final uid = session?.user.id ?? _lastKnownUserId;
-        if (uid != null) {
-          // fire-and-forget — نابێت ڕێگری لە navigation بکات
-          unawaited(supabase.from('pa_activity_log').insert({
-            'user_id': uid,
-            'action': 'logout',
-            'description': 'چوونەدەرەوە لە هەژمار',
-          }).catchError((e) {
-            debugPrint('[PROXO][ACTIVITY_LOG] $e');
-          }));
-        }
+        // Supabase records session revocation before credentials disappear.
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (_) => const AuthScreen()),
           (route) => false,
