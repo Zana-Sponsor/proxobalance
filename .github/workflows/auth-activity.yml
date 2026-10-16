@@ -2,7 +2,19 @@ name: Auth session activity verification
 on:
   push:
     branches: [feat/proxolink-private-renderer-migration]
-    paths: ['proxo_app/lib/services/auth_activity_service.dart', 'proxo_app/test/auth_activity_service_test.dart', 'proxo_app/supabase/migrations/*auth_session_activity*', 'test/auth-session-activity.sql', 'test/fixtures/auth-session-activity.sql', '.github/workflows/auth-activity.yml']
+    paths:
+      - 'proxo_app/lib/services/auth_activity_service.dart'
+      - 'proxo_app/lib/main.dart'
+      - 'proxo_app/lib/screens/auth/auth_shell.dart'
+      - 'proxo_app/lib/screens/profile_screen.dart'
+      - 'proxo_app/lib/widgets/proxo_sidebar.dart'
+      - 'proxo_app/test/auth_activity_service_test.dart'
+      - 'proxo_app/test/profile_logout_test.dart'
+      - 'proxo_app/integration_test/support/actual_screen_fixtures.dart'
+      - 'proxo_app/supabase/migrations/*auth_session_activity*'
+      - 'test/auth-session-activity.sql'
+      - 'test/fixtures/auth-session-activity.sql'
+      - '.github/workflows/auth-activity.yml'
 permissions:
   contents: read
 jobs:
@@ -41,7 +53,7 @@ jobs:
           cache: true
       - run: flutter pub get
         working-directory: proxo_app
-      - run: flutter analyze --no-fatal-infos --no-fatal-warnings lib test/auth_activity_service_test.dart
+      - run: flutter analyze --no-fatal-infos --no-fatal-warnings lib test/auth_activity_service_test.dart test/profile_logout_test.dart
         working-directory: proxo_app
       - run: flutter test test/auth_activity_service_test.dart test/profile_logout_test.dart test/auth_phone_flow_test.dart test/auth_otp_lifecycle_test.dart --reporter expanded
         working-directory: proxo_app
