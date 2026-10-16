@@ -1,3 +1,4 @@
+import '../services/auth_activity_service.dart';
 import 'proxo_app_bar.dart';
 import 'package:proxo_app/l10n/proxo_strings.dart';
 import 'package:proxo_app/widgets/proxo_symbol.dart';
@@ -362,7 +363,7 @@ class _ProxoSidebarState extends State<ProxoSidebar>
     _close();
     await Future<void>.delayed(_closeAnim);
     try {
-      await supabase.auth.signOut();
+      await AuthActivityService.forClient(supabase).signOut();
     } catch (_) {
       // شکستی سێرڤەر نابێت بەکارهێنەر لە دەرچوون بەربگرێت — تۆکێنی
       // ناوخۆیی بە هەر حاڵ لەلایەن SDKـەوە سڕدرایەوە.
