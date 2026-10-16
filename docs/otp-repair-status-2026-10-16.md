@@ -2,7 +2,7 @@
 
 ## Result
 
-The reviewed database repair and both Edge handlers are now deployed and verified. The complete published n8n workflow and real WhatsApp delivery are still unverified because the supported browser runtime remains blocked and no live test recipient is authorized.
+The reviewed database repair and both Edge handlers are deployed and verified. The user has now supplied a specific recipient and authorized one OTP delivery test. That single request returned HTTP 403; no OTP reservation was recorded. The complete published n8n workflow and real WhatsApp delivery remain unverified because browser access is still blocked.
 
 - Core tested source: [`44f1921`](https://github.com/Zana-Sponsor/proxobalance/commit/44f1921912e5d07286db838585a74822d34324d8).
 - Passing source verification: [GitHub run 38834723152](https://github.com/Zana-Sponsor/proxobalance/actions/runs/38834723152).
@@ -73,7 +73,7 @@ Other project-wide advisor warnings remain outside this scoped OTP change. This 
 
 1. The n8n browser still reports: `Browser observation is unavailable because native credential state cannot be safely resumed. Start a new browser runtime to continue.` The earlier supported reset did not repair it. No browser session or credential was extracted through another channel.
 2. The observed n8n workflow was Published and Reserve OTP had the correct project URL with `Custom Auth account 2` bound. The full active export, all bindings, graph and logging settings are still unverified; no n8n edit was made.
-3. Automatic approval review rejected the live n8n send-webhook test because it could trigger a WhatsApp/provider side effect and no recipient was explicitly authorized. The malformed payload was not accepted as sufficient assurance of harmlessness. The rejection was not bypassed. The separate Edge-only negative tests above do not send WhatsApp messages.
+3. The earlier automatic-review rejection was resolved by the user's explicit recipient supplied in this conversation (ending 4008). One POST to `/webhook/wevlix/otp/send`, with `purpose=login`, ran at 2026-10-16 01:43:42–01:43:47 UTC and returned HTTP 403 with a JSON response. No automatic retry was made. Database checks found zero new OTP reservations for that recipient, and the scoped Supabase log query for 01:43:40–01:43:55 UTC returned no events. A separate read-only GET of the n8n home page also returned HTTP 403, with a Cloudflare server header. These observations do not identify the exact denying layer and do not prove provider acceptance or delivery. The full phone number and any OTP are deliberately absent from this report.
 4. Rotation of the previously exposed Wevlix and Supabase server credentials remains unresolved. It requires access to the credential managers and coordinated updates to actual consumers. Do not place secret values in chat, source or workflow exports.
 
 ## Remaining rollout procedure
@@ -93,7 +93,7 @@ The database and Edge steps are complete; do not treat them as still waiting for
 
 5. Confirm there are no duplicate edges or conflicting active paths, execution-data saving stays disabled, all URLs target the repaired project and the public send route has per-source abuse controls at the reverse proxy.
 6. Verify first send, cooldown, resend, wrong/expired/reused code, purpose isolation and the app's complete session exchange using simulated delivery. Confirm all internal routes reject missing credentials.
-7. Obtain an explicitly authorized recipient before any live WhatsApp delivery test. Record provider acceptance separately from confirmed delivery.
+7. The specific recipient and one-message authorization are already present in the private conversation. Resolve the HTTP 403 and inspect n8n/provider execution evidence before retrying; do not send repeatedly or expand the recipient scope. Record provider acceptance separately from confirmed delivery.
 8. Record the verified published n8n workflow version and the delivery result before marking the entire repair complete.
 
 If a caller fails, keep the public OTP permission revocations in place. Do not restore anonymous OTP access or the vulnerable verifier to accommodate an old caller.
