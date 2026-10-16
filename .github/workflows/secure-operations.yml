@@ -1,0 +1,57 @@
+name: Secure operations, setup and private telemetry
+on:
+  push:
+    branches: [feat/secure-operations-telemetry-20261016]
+permissions:
+  contents: read
+jobs:
+  database:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: isolated-fixture
+          POSTGRES_DB: secure_operations
+        ports: ['5432:5432']
+        options: --health-cmd pg_isready --health-interval 5s --health-retries 10
+    env:
+      PGHOST: 127.0.0.1
+      PGPORT: 5432
+      PGUSER: postgres
+      PGPASSWORD: isolated-fixture
+      PGDATABASE: secure_operations
+    steps:
+      - uses: actions/checkout@v4
+      - run: psql -v ON_ERROR_STOP=1 -f test/fixtures/secure-operations-database.sql
+      - name: Apply reviewed migrations twice
+        run: |
+          for pass in 1 2; do
+            for migration in proxo_app/supabase/migrations/202610161743*.sql; do
+              psql -v ON_ERROR_STOP=1 -f "$migration"
+            done
+          done
+      - run: psql -v ON_ERROR_STOP=1 -f test/secure-operations.sql
+      - run: python3 test/secure-operations-concurrency.py
+  flutter:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.47.2'
+          channel: stable
+          cache: true
+      - run: flutter pub get
+        working-directory: proxo_app
+      - name: Dependency lockfile delta for review
+        run: git diff -- proxo_app/pubspec.lock
+      - run: flutter analyze --no-fatal-infos --no-fatal-warnings lib test
+        working-directory: proxo_app
+      - run: flutter test --reporter expanded
+        working-directory: proxo_app
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: reviewed-pubspec-lock
+          path: proxo_app/pubspec.lock

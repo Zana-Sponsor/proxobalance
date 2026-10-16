@@ -1,3 +1,5 @@
+import 'account_cache.dart';
+import 'app_telemetry_service.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
@@ -450,6 +452,7 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
       if (recovered['ok'] == true) {
         await prefs.remove(key);
         final adId = recovered['ad_id'] as String;
+        AppDataCache.forClient(client).financialChanged();
         _ensureThumbnail(adId);
         return adId;
       }
@@ -477,6 +480,8 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
       if (result['ok'] != true) throw AdSubmissionFailure('${result['code']}');
       final adId = result['ad_id'] as String;
       await prefs.remove(key);
+      AppDataCache.forClient(client).financialChanged();
+      AppTelemetryService.active?.event('action', 'ad_submit', outcome: 'success');
       _ensureThumbnail(adId);
       return adId;
     } on AdSubmissionFailure catch (e) {

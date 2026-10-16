@@ -13,6 +13,10 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'services/notification_service.dart';
 import 'services/admin_notifier.dart';
 import 'services/auth_activity_service.dart';
+import 'services/account_setup_service.dart';
+import 'services/account_cache.dart';
+import 'services/app_telemetry_service.dart';
+import 'screens/account_setup_screen.dart';
 import 'screens/auth_screen.dart';
 import 'screens/splash_screen.dart';
 import 'screens/home_screen.dart';
@@ -123,6 +127,7 @@ void main() async {
     }
   }
 
+  AppTelemetryService.forClient(supabase).start();
   runApp(const ProxoApp());
 }
 
@@ -151,6 +156,7 @@ class ProxoApp extends StatelessWidget {
       title: 'Proxo',
       debugShowCheckedModeBanner: false,
       navigatorKey: navigatorKey,
+      navigatorObservers: [AppSectionObserver.instance],
       locale: frameworkLocale,
       supportedLocales: const <Locale>[
         ProxoLocale.arabic,
@@ -201,7 +207,7 @@ class ProxoApp extends StatelessWidget {
         return ProxoPageRoute<void>(
             builder: (_) => const NotificationsScreen());
       case '/wallet':
-        return ProxoPageRoute<void>(builder: (_) => const MainShell());
+        return ProxoPageRoute<void>(builder: (_) => const AccountSetupGate(child: MainShell()));
       case '/profile':
         return ProxoPageRoute<void>(builder: (_) => const ProfileScreen());
       case '/transactions':
@@ -211,7 +217,7 @@ class ProxoApp extends StatelessWidget {
       case '/faq':
         return ProxoPageRoute<void>(builder: (_) => const FaqScreen());
       case '/assets':
-        return ProxoPageRoute<void>(builder: (_) => const MainShell());
+        return ProxoPageRoute<void>(builder: (_) => const AccountSetupGate(child: MainShell()));
       default:
         return null;
     }
@@ -242,16 +248,14 @@ class _AuthGateState extends State<_AuthGate> {
       final session = data.session;
 
       if (session != null &&
-          (event == AuthChangeEvent.signedIn ||
-           event == AuthChangeEvent.tokenRefreshed ||
-           event == AuthChangeEvent.userUpdated)) {
+          (event == AuthChangeEvent.signedIn)) {
 
         if (firebaseAvailable) {
           NotificationService.instance.saveTokenAfterLogin();
         }
 
         Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (_) => const MainShell()),
+          MaterialPageRoute(builder: (_) => const AccountSetupGate(child: MainShell())),
           (route) => false,
         );
       } else if (event == AuthChangeEvent.signedOut) {
@@ -273,7 +277,7 @@ class _AuthGateState extends State<_AuthGate> {
   @override
   Widget build(BuildContext context) {
     final session = supabase.auth.currentSession;
-    if (session != null) return const MainShell();
+    if (session != null) return const AccountSetupGate(child: MainShell());
     // AuthScreen now opens on its Sign In view by default (_Tab.login /
     // _Step.form) — it is the refactored screen, not a legacy fallback.
     return const AuthScreen();
@@ -291,7 +295,7 @@ class MainShell extends StatefulWidget {
   State<MainShell> createState() => MainShellState();
 }
 
-class MainShellState extends State<MainShell> {
+class MainShellState extends State<MainShell> with WidgetsBindingObserver {
   int  _tabIndex       = 0;
   bool _creatingAd = false;
 
@@ -336,6 +340,7 @@ class MainShellState extends State<MainShell> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     mainShellTab.value = _tabIndex;
     mainShellTabRequest.addListener(_onExternalTabRequest);
     // FIX: ئاگاداری پاشەکەوتکراو کاتی داخستنی ئەپ — دوای کردنەوەی تەواو navigate بکە
@@ -355,6 +360,7 @@ class MainShellState extends State<MainShell> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     mainShellTabRequest.removeListener(_onExternalTabRequest);
     for (final ProxoRefreshController c in _refreshers.values) {
       c.dispose();
@@ -372,6 +378,7 @@ class MainShellState extends State<MainShell> {
       _tabIndex = index;
     });
     mainShellTab.value = index;
+    AppSectionObserver.instance.selectTab(const {0:"home",1:"ads",3:"tools",4:"profile"}[index] ?? "home");
   }
 
   Future<void> _onTabTap(int index) async {
@@ -407,6 +414,13 @@ class MainShellState extends State<MainShell> {
       }
       _switchTab(index);
     }
+
+  @override
+  void didHaveMemoryPressure() {
+    if (!mounted) return;
+    AppDataCache.forClient(supabase).cache.clear();
+    setState(() { _builtTabs..clear()..add(_tabIndex); });
+  }
 
   Widget _buildTab(int index) {
     switch (index) {

@@ -1,3 +1,4 @@
+import '../services/account_cache.dart';
 import 'package:proxo_app/theme/app_locale.dart';
 import 'dart:async';
 import 'dart:convert';
@@ -1801,6 +1802,7 @@ class _AdScreenState extends State<AdScreen>
                 'p_ad_id': ad['id'],
                 'p_reason': finalReason,
               });
+              if (raw is Map && raw['ok'] == true) AppDataCache.forClient(supabase).financialChanged();
               final result = Map<String, dynamic>.from(raw as Map);
               if (result['ok'] != true) {
                 final code = (result['code'] ?? '').toString();

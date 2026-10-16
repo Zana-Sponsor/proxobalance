@@ -1,3 +1,4 @@
+import '../services/account_cache.dart';
 import '../services/auth_activity_service.dart';
 import '../widgets/proxo_error_stack.dart';
 import 'package:proxo_app/l10n/proxo_strings.dart';
@@ -83,6 +84,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final User? user = _client.auth.currentUser;
     _profile = ValueNotifier<_ProfileData>(_ProfileData.fromUser(user));
     unawaited(_loadData());
+    AppDataCache.forClient(_client).financialRevision.addListener(_financialChanged);
     _subscribeToChanges(user);
     _authSubscription = _client.auth.onAuthStateChange.listen((AuthState state) {
       final User? updatedUser = state.session?.user;
@@ -97,8 +99,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
   }
 
+  void _financialChanged() {
+    if (mounted) unawaited(_loadData(force: true));
+  }
+
   @override
   void dispose() {
+    AppDataCache.forClient(_client).financialRevision.removeListener(_financialChanged);
     final RealtimeChannel? profileChannel = _profileChannel;
     final RealtimeChannel? walletChannel = _walletChannel;
     profileChannel?.unsubscribe();

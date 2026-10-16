@@ -16,6 +16,7 @@ import '../../theme/app_theme.dart';
 import '../../theme/app_locale.dart';
 import '../../services/trusted_device_service.dart';
 import '../../services/auth_activity_service.dart';
+import '../account_setup_screen.dart';
 import '../../widgets/auth/auth_design.dart';
 import '../../widgets/auth/auth_otp_field.dart';
 import '../../widgets/auth/auth_widgets.dart';
@@ -213,7 +214,6 @@ class _AuthShellState extends State<AuthShell> {
   final _fpOtpFocus = FocusNode();
   bool   _fpOtpHasError = false;
 
-  StreamSubscription<AuthState>? _authSub;
   late final AuthService _authService;
 
   // ── فۆنت و ستایلە یەکگرتووەکان ──────────────────────────────────────────────
@@ -232,7 +232,6 @@ class _AuthShellState extends State<AuthShell> {
       emailOtpUrl: n8nOtpLoginWebhook,
       whatsappOtpUrl: wevlixOtpSendUrl,
     );
-    _authSub = supabase.auth.onAuthStateChange.listen((_) {});
     for (final FocusNode f in <FocusNode>[
       _loginEmailFocus,
       _fpEmailFocus,
@@ -303,7 +302,6 @@ class _AuthShellState extends State<AuthShell> {
   void dispose() {
     _viewScroll.dispose();
     _authService.close();
-    _authSub?.cancel();
     _resendTimer?.cancel();
     _authService.close();
     AuthFlowGuard.inOtpFlow = false;
@@ -851,11 +849,11 @@ class _AuthShellState extends State<AuthShell> {
           if (user == null) throw const AuthException('session_failed');
           unawaited(AuthActivityService.forClient(supabase).recordCurrentSession());
           unawaited(TrustedDeviceService.remember(supabase));
-          await _saveDeviceToken(user.id);
+          unawaited(_saveDeviceToken(user.id));
           AuthFlowGuard.inOtpFlow = false;
           if (!mounted) return;
           Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (_) => const MainShell()),
+            MaterialPageRoute(builder: (_) => const AccountSetupGate(child: MainShell())),
             (route) => false,
           );
         } on AuthException catch (e) {
@@ -878,7 +876,7 @@ class _AuthShellState extends State<AuthShell> {
           AuthFlowGuard.inOtpFlow = false;
           if (!mounted) return;
           Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (_) => const MainShell()),
+            MaterialPageRoute(builder: (_) => const AccountSetupGate(child: MainShell())),
             (r) => false,
           );
         } on AuthException catch (e) {
@@ -910,7 +908,7 @@ class _AuthShellState extends State<AuthShell> {
             AuthFlowGuard.inOtpFlow = false;
             if (!mounted) return;
             Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(builder: (_) => const MainShell()), (r) => false);
+              MaterialPageRoute(builder: (_) => const AccountSetupGate(child: MainShell())), (r) => false);
           } else if (mounted) {
             _showErrorCard(AuthStrings.errServer);
           }

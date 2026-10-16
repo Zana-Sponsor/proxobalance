@@ -48,6 +48,7 @@ dependencies:
   cached_network_image: ^3.3.1
   flutter_cache_manager: ^3.3.1
   device_info_plus: ^10.1.0
+  package_info_plus: 8.3.1
   # ANDROID_ID for trusted-device recovery. device_info_plus deliberately does
   # NOT expose this: its AndroidDeviceInfo.id is the OS BUILD number, identical
   # on every handset running the same firmware, so using it would treat every
