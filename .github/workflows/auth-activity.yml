@@ -1,0 +1,47 @@
+name: Auth session activity verification
+on:
+  push:
+    branches: [feat/proxolink-private-renderer-migration]
+    paths: ['proxo_app/lib/services/auth_activity_service.dart', 'proxo_app/test/auth_activity_service_test.dart', 'proxo_app/supabase/migrations/*auth_session_activity*', 'test/auth-session-activity.sql', 'test/fixtures/auth-session-activity.sql', '.github/workflows/auth-activity.yml']
+permissions:
+  contents: read
+jobs:
+  database:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: isolated-fixture
+          POSTGRES_DB: auth_activity_test
+        ports: ['5432:5432']
+        options: --health-cmd pg_isready --health-interval 5s --health-retries 10
+    env:
+      PGHOST: 127.0.0.1
+      PGPORT: 5432
+      PGUSER: postgres
+      PGPASSWORD: isolated-fixture
+      PGDATABASE: auth_activity_test
+    steps:
+      - uses: actions/checkout@v4
+      - run: psql -v ON_ERROR_STOP=1 -f test/fixtures/auth-session-activity.sql
+      - name: Apply twice and verify session audit security
+        run: |
+          psql -v ON_ERROR_STOP=1 -f proxo_app/supabase/migrations/20261016155756_auth_session_activity_logging.sql
+          psql -v ON_ERROR_STOP=1 -f proxo_app/supabase/migrations/20261016155756_auth_session_activity_logging.sql
+          psql -v ON_ERROR_STOP=1 -f test/auth-session-activity.sql
+  flutter:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.47.2'
+          channel: stable
+          cache: true
+      - run: flutter pub get
+        working-directory: proxo_app
+      - run: flutter analyze --no-fatal-infos --no-fatal-warnings lib test/auth_activity_service_test.dart
+        working-directory: proxo_app
+      - run: flutter test test/auth_activity_service_test.dart test/profile_logout_test.dart test/auth_phone_flow_test.dart test/auth_otp_lifecycle_test.dart --reporter expanded
+        working-directory: proxo_app
