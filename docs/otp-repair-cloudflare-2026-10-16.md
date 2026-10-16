@@ -2,9 +2,11 @@
 
 ## Current result
 
-Cloudflare's scoped send-path repair is in place. The current instance export supplied at approximately **14:04 UTC** now confirms the four Supabase nodes select the replacement server credential and all three Wevlix nodes select the replacement **Production** credential. Its 33-node graph and Code bodies match the reviewed source; **17 offline intercepted-transport checks passed**, with no reproducible code/graph defect. A single non-sending production validation probe at **14:11:44 UTC** returned **HTTP 400 JSON bad_request**, and no new reservation was created. This verifies production-path reachability and input validation, not the identity of the published version or provider authentication. The earlier development send succeeded at **13:36 UTC**. The single intended-live attempt at **13:49 UTC** remains unresolved: HTTP 502 non-JSON, database reservation pending, no recorded provider ID, and user-reported non-arrival. Its external outcome and charge are unknown. **Do not send another OTP until that attempt is resolved.** Browser control remains unavailable. Earlier sections below are historical evidence and are superseded where explicitly noted.
+After the user's explicit authorization for **one additional login OTP with up to $0.02 additional cost**, one POST to the **production** send endpoint completed at **2026-10-16 14:48:38 UTC / 17:48:38 Baghdad** with **HTTP 200**, **success=true**, **queued**, provider message ID **5ad76a0a-834b-452c-bef5-a7372f91e3b5**. A metadata-only database read confirmed the matching new login reservation and stored provider ID, send_count=1. This establishes production-route send acceptance and persistence. **Actual WhatsApp arrival, provider delivery status, final charge and app session completion remain unverified.** No automatic retry or second endpoint was used.
 
-The latest **14:42:26 UTC / 17:42:26 Baghdad no-send diagnostic** supersedes the 14:37 authentication failures: Supabase read **200**, Wevlix historical-message read **200**, and the deliberately empty template request **400 / empty_payload_rejected_expected**. Current diagnostic authentication is now working. The user did not disclose which private field changed, so do not claim a specific malformed key or Bearer-prefix cause. A valid production send/delivery has still not been tested successfully. The original one-live-OTP allowance remains potentially consumed by the unresolved 13:49 attempt; a further paid send requires a concrete renewed authorization or definitive resolution of that earlier outcome.
+The prior no-send diagnostic at **14:42:26 UTC** returned Supabase read 200, Wevlix historical-message read 200, and expected empty-request rejection 400; the earlier current Wevlix 401 authentication issue was resolved. The current export's code/graph and selected credential bindings were already audited. The exact published workflow version has not been independently read back through the unavailable browser session.
+
+The separate **13:49 UTC** intended-live attempt remains an unresolved historical 502/pending record; the new explicit authorization covered the additional request without assuming the original allowance was unused. Earlier report sections below are historical and are superseded where later evidence applies.
 
 This report supplements [the original deployment report](otp-repair-status-2026-10-16.md). Completed Supabase deployments and rolled-back lifecycle tests were not repeated. PR #7 was read back as Draft, Open and Unmerged at head `435c038175afe78c789b59c1128c2c2125996c77`. No unrelated workflow, ProxoLink deployment or app release was changed.
 
@@ -388,3 +390,31 @@ A new metadata-only database check after these screenshots found no newer reserv
 The concrete next real test is **one POST to the production endpoint** `https://email.proxopages.com/webhook/wevlix/otp/send`, recipient **+9647510074008**, purpose **login**, with **no automatic retry**. This avoids needing the user to start a temporary test listener. The existing one-live-send/$0.02 authorization cannot be treated as definitely unused: the old 502 and missing provider record leave its external outcome uncertain. Before an additional valid request, obtain explicit authorization for **one further OTP with up to $0.02 additional cost**, or obtain definitive provider evidence that the previous attempt created no billable message. No further valid request was sent in this continuation.
 
 The original workflow's published-version identity, actual live delivery and private app session completion remain unverified. The current saved export's shared credential IDs are known, but no new browser readback or workflow publication was performed. The next permission request is specifically about the user's original one-message spending limit, not a missing general repair authorization.
+
+## Renewed authorization and production send accepted — 2026-10-16 14:48 UTC
+
+The user explicitly answered **yes, continue** to the concrete request for **one additional login OTP to +9647510074008, with up to $0.02 additional cost**. No further confirmation was requested. The published standard-price estimate documented earlier remained the pricing basis; an exact project-specific quote/final charge has not been read. The earlier uncertain attempt was not silently treated as free or nonexistent.
+
+Exactly one request was sent:
+- **POST** `https://email.proxopages.com/webhook/wevlix/otp/send`
+- Body: authorized recipient, `purpose=login`.
+- Started **2026-10-16T14:48:31.663782Z**; completed **14:48:38.420840Z**.
+- Redirects and automatic retries disabled. A local exclusive-create attempt receipt prevents accidentally rerunning the same script.
+- HTTP **200**, JSON content type, 147 response bytes.
+- Response Date **Fri, 16 Oct 2026 14:48:38 GMT**; Cloudflare Ray **a4b7dd8b1ac2b612-ORD**.
+- Response:
+
+```json
+{"success":true,"status":"queued","messageId":"5ad76a0a-834b-452c-bef5-a7372f91e3b5","expiresAt":"2026-10-16T14:53:36.859131+00:00","reused":false}
+```
+
+An independent metadata-only database read confirmed the recipient's new reservation:
+- created_at **14:48:36.859131 UTC**
+- purpose **login**, message_status **queued**, send_count **1**
+- the same provider message ID
+- expires_at **14:53:36.859131 UTC / 17:53:36 Baghdad**
+- is_used **false** at inspection.
+
+No OTP code, session material or private key was read. The request traversed the production route, reserved an OTP, obtained acceptance according to the workflow contract and persisted the message ID before replying success. It is not yet proof of actual WhatsApp delivery or successful app login, nor independent proof of the responding published version's identity. No further message was sent.
+
+Next: obtain the user's arrival confirmation (without posting the OTP) or inspect the new provider message's delivery status and charge. The user should enter any received OTP only in the app's private login flow. If it does not arrive, investigate **this exact provider message ID**, without triggering another send. Internal route behavior, remaining rotation coordination, published-version readback and complete app-session verification remain tracked rather than being reported as finished.
