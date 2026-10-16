@@ -1,5 +1,9 @@
 # OTP repair follow-up — 2026-10-16 11:12 UTC
 
+## Later authorized Auth activity repair
+
+Login/logout session auditing and last-login timestamps are now deployed to Supabase under the user's subsequent explicit request. The updated Flutter code adds phone model/OS and repairs logout navigation; it still requires a new app build installed on the device. Focused 22-test Flutter verification, PostgreSQL tests, the rollback-only live database diagnostic and all five broad source-CI jobs passed. See [the Auth activity report](auth-session-activity-2026-10-16.md) for exact tables, migration ledger, evidence and the separate Android fixture download retry status. This scoped Auth deployment does not change the historical OTP findings below or represent an unrelated app/ProxoLink release.
+
 ## Current result
 
 **Live OTP arrival is confirmed by the user.** At **2026-10-16 17:56 Baghdad / 14:56 UTC**, the user replied that the WhatsApp message arrived following the single newly authorized production request at **17:48:38 Baghdad**. That request returned HTTP 200 / success=true / queued, and the matching login reservation and provider ID **5ad76a0a-834b-452c-bef5-a7372f91e3b5** were independently read from the database. This verifies the production send path through actual recipient arrival for this test. No further message was sent.
