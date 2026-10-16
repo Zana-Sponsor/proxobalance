@@ -2,7 +2,7 @@
 
 ## Current result
 
-Cloudflare's scoped send-path repair is in place. The latest user-started test send completed at **2026-10-16 13:36:37 UTC** with HTTP **200**, **success=true** and status **queued**. A new Supabase login reservation and the matching provider message ID were read back, and the delivery-record RPC returned **200**. The user's subsequent screenshot confirms **Send OTP template** currently selects **Devlopmemt**. This establishes a successful send-path test with the development credential selected; it does not establish real WhatsApp delivery, the verification/account branches, or the published production version. Exact project pricing still needs inspection before the single authorized live send (maximum $0.02). Browser control remains unavailable. Earlier sections below are historical evidence; see the newest continuations.
+Cloudflare's scoped send-path repair is in place. The development send at **2026-10-16 13:36:37 UTC** returned HTTP **200**, **success=true**, **queued**, with reservation and provider message ID persisted. The user's screenshot subsequently confirmed **Devlopmemt** selected. After the user requested live mode and reported activation, one intended-live test request at **13:49:39–13:49:46 UTC** returned HTTP **502**, non-JSON. A new reservation exists but remains **pending**, without a provider message ID or sent/delivered timestamps. The external send outcome and charge are unknown; do not retry or claim the one-live-send allowance is unused until provider/execution evidence resolves this attempt. Browser control remains unavailable, and current provider binding/publication cannot be independently read back. Earlier sections below are historical evidence.
 
 This report supplements [the original deployment report](otp-repair-status-2026-10-16.md). Completed Supabase deployments and rolled-back lifecycle tests were not repeated. PR #7 was read back as Draft, Open and Unmerged at head `435c038175afe78c789b59c1128c2c2125996c77`. No unrelated workflow, ProxoLink deployment or app release was changed.
 
@@ -248,3 +248,25 @@ The new image partially shows provider output sections for execution/simulation 
 For the authorized $0.02 cap, the public [Iraq pricing page](https://wevlix.com/ar/whatsapp-api-iraq) advertises 16 IQD per delivered authentication message. The documented public calculator endpoint is `GET /v1/public/pricing/calculate`; a read-only request for IQ/authentication/quantity=1 returned an HTTP error, so no live numeric calculator result was obtained. The authenticated [project quote](https://docs.wevlix.com/reference/pricingcontroller_quoteproject_v1-1) accounts for the project's applicable pricing and remains unavailable while browser control is blocked. Public advertising is not proof of this project's exact charge.
 
 The concrete next input is only the provider output's **pricing** section, enlarged so the currency and estimated unit/total values are visible, without OTP payloads or keys. If that section does not establish the live estimate, use the project's pricing quote/dashboard. Keep the current development selection until the budget check is resolved. No additional send, production credential switch, workflow publication or key revocation was performed.
+
+## Single intended-live attempt — 2026-10-16 13:49 UTC
+
+The user requested live mode, then reported activation and explicitly asked to test. No browser action by the assistant changed the credential or published the workflow; those current settings remain user-reported. The last screenshot before that handoff showed the development credential.
+
+### Pricing basis and preflight
+
+The directly opened official [Wevlix Iraq page](https://wevlix.com/ar/whatsapp-api-iraq) now advertises **17 IQD** per delivered OTP, superseding the older indexed 16 IQD excerpt. The [Central Bank of Iraq homepage](https://cbi.iq/) currently lists **1510 IQD/USD**. The advertised standard estimate is therefore **17 / 1510 = $0.011258...**, below the user's $0.02 authorization. This is a public-tariff estimate, not a verified project-specific quote or final charge. The earlier strict project-quote prerequisite was not satisfied; this attempt proceeded on that published estimate after the user's explicit live/test direction. No higher cap was inferred.
+
+Before the attempt, a metadata-only check found no reservation newer than the successful 13:36 development reservation. No code or proof was selected.
+
+### Actual request and observed outcome
+
+- One POST to `https://email.proxopages.com/webhook-test/wevlix/otp/send`, for the authorized recipient and `purpose=login`.
+- Started **2026-10-16T13:49:39.179690Z**; completed **13:49:46.127046Z** (**16:49:46 Baghdad**).
+- HTTP **502**, **16-byte non-JSON body**. The script recorded the format/size without retaining the raw body or response headers, so the precise origin/error text is not established.
+- A subsequent database query found a new login reservation created **13:49:45.250762 UTC**, expiring **13:54:45.250762 UTC**, send_count **1**, provider `wevlix`, message_status **pending**, placeholder message ID `pending:ce3332f5-fc96-446c-a08b-6161c294ba80`. Sent/delivered/read/failed timestamps are null; is_used is false.
+- The immediate targeted Supabase log query for **13:49:30–13:50:00 UTC** returned no matching reservation/finish-send entries; ingestion timing limits this negative evidence. The new database row independently establishes that reservation ran.
+
+Reservation succeeded, but provider acceptance and finish-send recording were not demonstrated. A missing provider ID in this table does **not** prove that no upstream message was accepted. Treat the single intended-live request as potentially consumed and do not retry, send a second message, or use a second endpoint while its external outcome is uncertain.
+
+The next evidence is the current n8n **Send OTP template** error/status and the provider message log for this time/recipient. The user may report whether WhatsApp arrived, without sharing the OTP. This is not a completed live rollout: final charge, provider delivery, protected routes, published route/version, credential rotation completion and secure session exchange remain unverified.
