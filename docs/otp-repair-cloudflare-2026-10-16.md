@@ -222,3 +222,19 @@ The screenshot's POST URL points to the expected `/rest/v1/rpc/pa_finish_whatsap
 In the current target workflow, select existing **Proxo Supabase Server 2026-10-16** in Record delivery's Header Auth field. Check the same selected credential on **Reserve OTP**, **Verify code**, and **Read new account**. Preserve the credential's private value; no new key or chat disclosure is needed merely to bind it. Save the draft, reload it and confirm each selection remains. Keep Send OTP template on **Devlopmemt** until development testing succeeds; do not publish the mixed draft.
 
 The previously documented browser credential-state failure still prevents direct UI correction or a fresh persisted export. A current workflow JSON downloaded through n8n's normal UI, without credential secrets, would allow a complete audit of the actual node parameters and binding IDs. No browser-safety bypass or further runtime reset was attempted. No additional webhook request, paid message, deployment, database mutation or credential revocation occurred during this inspection. The single authorized live-send allowance remains unused.
+
+## Successful user-started send execution — 2026-10-16 13:36 UTC
+
+After the user reported starting **Execute workflow**, one POST was sent to the test send endpoint with the already-authorized recipient and `purpose=login`. It started at **13:36:30.035594 UTC** and completed at **13:36:37.861918 UTC** (**16:36:37 Baghdad**). The response was HTTP **200**, valid JSON:
+
+```json
+{"success":true,"status":"queued","messageId":"9da022c9-988a-4ec8-be3d-573d48a0f9f0","expiresAt":"2026-10-16T13:41:36.191189+00:00","reused":false}
+```
+
+A metadata-only Supabase query independently confirmed a new login reservation created at **13:36:36.191189 UTC**, provider `wevlix`, send_count **1**, message_status **queued**, and the same provider message ID. The sent/delivered/read timestamps remain null and is_used is false. No OTP code or session material was queried.
+
+The targeted log query for **13:36:25–13:36:45 UTC** returned a POST to `/rest/v1/rpc/pa_finish_whatsapp_otp_send` with status **200**. Combined with the database row and successful workflow response, this demonstrates that the send path reserved an OTP, obtained provider acceptance and recorded delivery metadata. The previously pictured missing Record delivery binding did not prevent this execution. This is runtime evidence for this send path, not verification of all four Supabase node bindings or of the published production version.
+
+The browser remains unavailable, so the saved **Send OTP template** credential could not be read again immediately before this request. Its last directly observed selection was **Devlopmemt**. The request was intended as the authorized development check; the successful response and database provider name do not independently distinguish development simulation from a production send. Do not claim actual WhatsApp delivery or an unused real-send allowance as a verified fact until the provider mode is confirmed. No second request was sent.
+
+Next, confirm the selected provider credential / provider message environment for this execution. Then complete remaining development checks and consistent production bindings before any further real send, respecting the original maximum of one real login OTP and $0.02. Verification/status/account branches, publication and secure app session exchange remain unverified. No workflow publication, key revocation, unrelated release, or database schema change was performed in this continuation.
