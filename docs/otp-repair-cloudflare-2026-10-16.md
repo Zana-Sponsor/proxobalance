@@ -2,7 +2,7 @@
 
 ## Current result
 
-Cloudflare's scoped send-path repair is in place. After explicit recipient/cost authorization, the real development webhook test ran at **2026-10-16 11:51:08 UTC** and returned **503 otp_unavailable**. Supabase logs correlate it to **401 / PostgREST 42501: permission denied for function get_or_generate_otp_whatsapp**. No new reservation or provider send resulted. The new Wevlix production credential is saved in n8n; a replacement Supabase credential form is prepared but awaits private key entry. The repaired workflow has not been published, and production delivery/session exchange remain unverified. See the latest continuation below; earlier sections are historical evidence.
+Cloudflare's scoped send-path repair is in place. After explicit recipient/cost authorization, the real development webhook test ran at **2026-10-16 11:51:08 UTC** and returned **503 otp_unavailable**. Supabase logs correlate it to **401 / PostgREST 42501: permission denied for function get_or_generate_otp_whatsapp**. No new reservation or provider send resulted. The new Wevlix and Supabase credentials are saved in n8n. All four Supabase nodes were selected onto the new server credential and their labels read back; credential validity and a successful full execution still need verification. The repaired workflow has not been published, and production delivery/session exchange remain unverified. See the latest continuation below; earlier sections are historical evidence.
 
 This report supplements [the original deployment report](otp-repair-status-2026-10-16.md). Completed Supabase deployments and rolled-back lifecycle tests were not repeated. PR #7 was read back as Draft, Open and Unmerged at head `435c038175afe78c789b59c1128c2c2125996c77`. No unrelated workflow, ProxoLink deployment or app release was changed.
 
@@ -175,3 +175,22 @@ Browser credential protection intermittently blocked observation after node navi
 After the user's manual sign-in report, explicit navigation to the project's API Keys page showed authenticated access to project `cojchkwssmasiejcgvbk` (Zana, main/Production). The modern-key panel contains one default publishable key and one masked default secret key; no secret was revealed or copied. This supersedes the preceding sign-in blocker.
 
 Attempts to open **New secret key** were blocked by browser credential protection; no key creation was submitted. The user must create a dedicated modern secret key and privately paste it into the already-prepared n8n credential's Value field, then save. The n8n form was reconfirmed open with the expected name and Save button. No extra OTP request was made, and the explicit one-live-send/$0.02 authorization remains unused and in force.
+
+## Supabase credential saved and four nodes rebound — 2026-10-16
+
+The user completed private key entry. n8n showed **Saved** for `Proxo Supabase Server 2026-10-16`; no value was read. The user-facing Supabase key name was corrected to `proxo_n8n_otp_20261016` because the dashboard permits lowercase letters, digits and underscores, not hyphens. Creation metadata for that specific Supabase key has not independently been read back.
+
+| Node | Observed draft authentication | Selected credential |
+|---|---|---|
+| Reserve OTP | Header Auth | Proxo Supabase Server 2026-10-16 |
+| Record delivery | Header Auth | Proxo Supabase Server 2026-10-16 |
+| Verify code | Header Auth | Proxo Supabase Server 2026-10-16 |
+| Read new account | Header Auth | Proxo Supabase Server 2026-10-16 |
+
+Reserve OTP's selection was read after closing the user's saved credential form. The other three were changed from Custom Auth to Header Auth, selected onto the new credential, and the visible selection was read back. No raw key was extracted, copied or re-entered by the assistant. A final persisted export still has not been obtained.
+
+The remaining development test did **not** start. While preparing a UI Download for export verification, the browser runtime rejected the download observation because retained native credential data remained restricted; an unhandled rejection reset the REPL. Rebinding the existing tab failed with `native credential state cannot be safely resumed`. One supported explicit reset and fresh-tab attempt returned the same error. No alternate transport, browser-state extraction or repeated execution attempt was used. This is a browser-control blocker, not evidence that n8n or Supabase is down.
+
+The last actually executed valid request remains the **11:51:08 UTC 503** documented above, before the new Supabase credential was saved/bound. Do not report the new credential as runtime-verified. No new reservation, successful development send, publication, live OTP or session exchange has been demonstrated. The production-send allowance remains unused.
+
+A concrete continuation is available: the user can open target workflow `Cm5W1LFKlWFxr6QO` and start **Execute workflow — from Send webhook** while Send OTP template remains bound to `Devlopmemt`; then the already-authorized development POST can be sent and correlated with sanitized Supabase logs/metadata. This user action registers the test listener on the n8n server; it does not require sharing a browser sign-in session. Do not publish the mixed development/production draft.
