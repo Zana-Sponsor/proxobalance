@@ -329,3 +329,22 @@ One POST was made to `https://email.proxopages.com/webhook/wevlix/otp/send` with
 The blocker is now the **13:49 UTC / 16:49 Baghdad intended-live attempt's actual execution/provider result**, rather than a missing saved node binding. Inspect any retained output/error for **Send OTP template** from that exact attempt and the Wevlix message/usage record for the authorized recipient at that time. The earlier 02:12 UTC permission-denial screenshot is not this attempt. If execution data was not retained, provider records or a restored supported management session are needed; repeating the send is not a substitute.
 
 The browser runtime still cannot safely resume its credential state, and the available connector inventory has no n8n/Wevlix management connector. No repeated browser recovery loop or alternate browser-state extraction was attempted. A new live OTP, confirmed production delivery, final charge and app session exchange remain outstanding.
+
+## Missing execution history and no-send diagnostic handoff — 2026-10-16
+
+The user's Wevlix Message Logs screenshot at **17:20 Baghdad** shows the newest visible entry as **Sandbox**, delivered in simulation, **$0.00**, approximately 43 minutes earlier. The next visible Live entry is approximately 15 hours old. No Live record near the 16:49 intended-live attempt is visible on that page. This supports the development-mode interpretation of the successful 13:36 UTC run, but absence from this screenshot alone does not conclusively settle the later attempt's external outcome or charge.
+
+The user could not find the requested n8n execution. Current exported execution-retention settings are all disabled, so continuing to ask for a saved execution that may not exist is not useful.
+
+Prepared a separate private file **Proxo-OTP-No-Send-Check.json**, targeted to n8n **2.23.4**. It has no existing workflow ID, is inactive, uses only a Manual Trigger, and is intended to be imported into a **new** diagnostic workflow. The existing production workflow was not modified.
+
+Its three fixed requests are:
+1. GET Supabase `/rest/v1/otp_whatsapp?select=id&limit=0` with the existing server Header Auth credential. This requests zero rows and does not reserve an OTP.
+2. GET Wevlix `/v1/messages/9d9d9085-1cff-4cc2-b8b6-1fe7b6f1031c` with the replacement production credential, to read a previously observed historical message.
+3. POST Wevlix `/v1/messages/template` with the **literal empty JSON body `{}`** and the same production credential. This deliberately omits the required recipient and template. It is a negative validation probe, not a valid send request. [Wevlix documents](https://docs.wevlix.com/reference/messagescontroller_sendtemplate_v1-1) both fields as required. A 400/422 is the expected validation outcome; a 401/403 can identify an authentication/authorization rejection. A 400 does not independently prove valid-send scope, balance or template eligibility.
+
+No redirects or automatic retries are enabled. HTTP responses use text capture so non-JSON gateway errors remain observable. A final **Safe Result** node returns HTTP statuses and fixed diagnostic categories only, never raw headers/bodies, keys, phone numbers or codes. Current execution data remains unsaved; the user should share only the Safe Result output from this new manual run. The historical message lookup cannot resolve the 13:49 attempt by itself.
+
+Validation: **8/8 offline checks passed**, covering fixed no-recipient requests, expected read/invalid-request results, 401/403, HTML 502, credential/domain restrictions, timeout/404, unexpected empty-request success and repeat fixtures. The structural checker reported only three credential-binding flags under its public-example policy; the credential-stripped structural test copy passed. The private deliverable retains the user's existing instance credential references, with no values. Manual Trigger v1 was checked against official n8n 2.23.4 source; HTTP Request 4.2 and Code 2 match the instance export.
+
+No compatible local n8n runtime is available. **The diagnostic has not been imported or executed in the user's instance.** No authenticated service probe or additional OTP request was made while preparing it. The next step is one manual run of this separate diagnostic and inspection of Safe Result; do not rerun the original valid OTP send while its prior outcome remains unresolved.
