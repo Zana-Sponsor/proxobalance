@@ -2,7 +2,7 @@
 
 ## Current result
 
-Cloudflare's scoped send-path repair is in place. The development send at **2026-10-16 13:36:37 UTC** returned HTTP **200**, **success=true**, **queued**, with reservation and provider message ID persisted. The user's screenshot subsequently confirmed **Devlopmemt** selected. After the user requested live mode and reported activation, one intended-live test request at **13:49:39–13:49:46 UTC** returned HTTP **502**, non-JSON. A new reservation exists but remains **pending**, without a provider message ID or sent/delivered timestamps. The external send outcome and charge are unknown; do not retry or claim the one-live-send allowance is unused until provider/execution evidence resolves this attempt. Browser control remains unavailable, and current provider binding/publication cannot be independently read back. Earlier sections below are historical evidence.
+Cloudflare's scoped send-path repair is in place. The current instance export supplied at approximately **14:04 UTC** now confirms the four Supabase nodes select the replacement server credential and all three Wevlix nodes select the replacement **Production** credential. Its 33-node graph and Code bodies match the reviewed source; **17 offline intercepted-transport checks passed**, with no reproducible code/graph defect. A single non-sending production validation probe at **14:11:44 UTC** returned **HTTP 400 JSON bad_request**, and no new reservation was created. This verifies production-path reachability and input validation, not the identity of the published version or provider authentication. The earlier development send succeeded at **13:36 UTC**. The single intended-live attempt at **13:49 UTC** remains unresolved: HTTP 502 non-JSON, database reservation pending, no recorded provider ID, and user-reported non-arrival. Its external outcome and charge are unknown. **Do not send another OTP until that attempt is resolved.** Browser control remains unavailable. Earlier sections below are historical evidence and are superseded where explicitly noted.
 
 This report supplements [the original deployment report](otp-repair-status-2026-10-16.md). Completed Supabase deployments and rolled-back lifecycle tests were not repeated. PR #7 was read back as Draft, Open and Unmerged at head `435c038175afe78c789b59c1128c2c2125996c77`. No unrelated workflow, ProxoLink deployment or app release was changed.
 
@@ -285,3 +285,47 @@ Current read-only checks:
 - No additional webhook call was made. No raw OTP, API key, session token or screenshot cookie was copied into this report.
 
 The process remains incomplete. The original current-instance export request is still outstanding: obtain **Editor → workflow actions → Download**, without credential secrets or embedded execution payloads, to inspect actual saved node parameters and binding IDs. Browser control remains blocked; an old execution screenshot is not a substitute for that current export or the intended-live attempt's provider status. The user-reported non-arrival does not by itself establish no charge or make a repeat safe.
+
+## Current uploaded workflow audit — 2026-10-16 14:14 UTC
+
+The user supplied the current instance export, `Proxo - Wevlix OTP and account confirmation (reviewed).json`. It was read from the supplied local attachment, not fetched from Library. SHA-256: `980c8bf269e77e5020f1d2472514b7e0a67ebbe5ab3a4b6efc27e95c850ad111`. Workflow ID `Cm5W1LFKlWFxr6QO`, exported version `b4ce2aec-722b-4eee-abe8-8038df42b6b5`, active=true, 33 nodes, pinData empty. No `activeVersionId` is present, so the export alone does not identify the published version.
+
+### Saved bindings now established
+
+| Node group | Selected authentication / saved credential |
+|---|---|
+| Reserve OTP; Record delivery; Verify code; Read new account | Header Auth / Proxo Supabase Server 2026-10-16 |
+| Send OTP template; Read delivery; Send account template | Header Auth / Proxo Wevlix Production 2026-10-16 |
+| Status webhook; Verify webhook; Account webhook | Header Auth / Header Auth account 3 |
+
+Each selected credential has an instance ID. This supersedes the earlier missing-credential screenshot and the earlier mixed development/production saved-state uncertainty **for this export**. Credential contents and allowed-domain settings are outside the workflow export and were not read. A selected credential name does not prove its underlying key validity, scope, balance or runtime acceptance.
+
+The four Supabase nodes also retain an unused `httpCustomAuth` credential reference. The exact official [n8n 2.23.4 HTTP Request source](https://github.com/n8n-io/n8n/blob/n8n%402.23.4/packages/nodes-base/nodes/HttpRequest/V3/HttpRequestV3.node.ts) (blob `145be8c848b712cac5afb324a341c8ef13eb0524`) selects credential loading by an if/else chain on `genericAuthType`. With `httpHeaderAuth` selected, the Custom Auth reference is not loaded. It is not evidence of two conflicting headers and does not justify claiming a 502 fix by deleting that reference.
+
+### Actual-export checks
+
+- All node IDs and names are unique. All graph connections and Code node bodies match the reviewed configured source exactly.
+- All seven HTTP nodes use expected Supabase/Wevlix endpoints and Header Auth; no automatic retry is enabled.
+- All three private webhooks retain their separate header authentication. These are configuration checks, not runtime missing-auth tests.
+- Execution-data settings remain error=none, success=none, manual=false, progress=false. There is no pinned data.
+- Seventeen offline checks executed the **uploaded** Code bodies, IF expressions, HTTP URL/body expressions and response expressions with every outbound transport intercepted. They covered invalid input, Supabase 401/transport/missing-code failures, cooldown, accepted-send persistence/idempotency, provider 403/non-JSON 502/transport/failed-status handling, record failure, verified true/false, status filtering and account consent/template handling. **17/17 passed; zero network requests and zero credential values read by the harness.**
+- These checks are a JavaScript harness, **not a local n8n runtime execution**. They cannot prove credential values, live item linking, the published version, transport behavior or provider delivery.
+- In the inspected logic, provider failure reaching the response node produces JSON `{"success":false,"error":"delivery_unavailable"}`. The earlier 16-byte non-JSON 502 therefore is not explained by this controlled error response. This does not establish which runtime/proxy layer produced it.
+
+No demonstrated code/graph defect was found. The uploaded workflow was left unchanged; no speculative replacement was generated or imported. No credential was created, rebound, revoked or exposed. No remote publish action, database grant/schema change or Cloudflare change was performed.
+
+### Non-sending production runtime check
+
+One POST was made to `https://email.proxopages.com/webhook/wevlix/otp/send` with exactly `{"phone":"invalid","purpose":"login"}`. Started **14:11:37.035891 UTC**, completed **14:11:44.200323 UTC** (**17:11:44 Baghdad**).
+
+- HTTP **400**, Content-Type **application/json; charset=utf-8**, body **`{"success":false,"error":"bad_request"}`**.
+- Response Date **Fri, 16 Oct 2026 14:11:44 GMT**, Cloudflare Ray **a4b7a7883ba7b612-ORD**.
+- Redirects and retries were disabled. No valid recipient or OTP was included.
+- A metadata-only database read afterwards found **zero reservations created since 14:11:30 UTC**. The authorized recipient's latest row is still the **13:49:45.250762 UTC pending** reservation, send_count=1, is_used=false, without a recorded provider message ID.
+- This establishes that the production route answers and rejects invalid input. It does **not** establish which published workflow/version answered, successful provider authentication, actual WhatsApp delivery or session exchange.
+
+### Remaining evidence required
+
+The blocker is now the **13:49 UTC / 16:49 Baghdad intended-live attempt's actual execution/provider result**, rather than a missing saved node binding. Inspect any retained output/error for **Send OTP template** from that exact attempt and the Wevlix message/usage record for the authorized recipient at that time. The earlier 02:12 UTC permission-denial screenshot is not this attempt. If execution data was not retained, provider records or a restored supported management session are needed; repeating the send is not a substitute.
+
+The browser runtime still cannot safely resume its credential state, and the available connector inventory has no n8n/Wevlix management connector. No repeated browser recovery loop or alternate browser-state extraction was attempted. A new live OTP, confirmed production delivery, final charge and app session exchange remain outstanding.
