@@ -14,6 +14,9 @@ function handler(name, options = {}) {
     rpc: async (rpc, params) => {
       calls.push({ rpc, params });
       if (rpc === 'pa_verify_whatsapp_otp') return { data: { success: true, data: { verified: options.verified ?? true, otp_id: otpId } } };
+      if (rpc === 'pa_profile_by_phone') return options.lookupFails
+        ? { error: { message: 'fixture lookup failure' } }
+        : { data: options.existing ? [{id:uid,is_banned:options.banned ?? false,match_count:options.matches ?? 1}] : [] };
       assert.equal(rpc, 'pa_record_signup_whatsapp_marketing');
       return options.consentFails ? { error: { message: 'fixture failure' } } : { data: { ok: true } };
     },
@@ -102,3 +105,37 @@ test('login consumes only login OTPs and never changes marketing preference', as
   assert.equal((await banned.request(signup)).status, 403);
   assert.ok(!banned.calls.some(x => x.mint));
 });
+
+test('canonical profile lookup is preserved and ambiguous numbers cannot mint sessions', async () => {
+  const h=handler('whatsapp-session-exchange',{existing:true,matches:2});
+  const result=await h.request(signup);
+  assert.equal(result.status,409);
+  assert.equal(result.body.error,'ambiguous_phone');
+  assert.ok(h.calls.some(x=>x.rpc==='pa_profile_by_phone'));
+  assert.ok(!h.calls.some(x=>x.mint||x.get));
+});
+test('legacy and Kurdish phone forms normalize identically before verification', async () => {
+  for(const phone of ['07500000001','009647500000001','+96407500000001','٠٧٥٠٠٠٠٠٠٠١','۰۷۵۰۰۰۰۰۰۰۱']){
+    const h=handler('whatsapp-session-exchange',{existing:true});
+    assert.equal((await h.request({...signup,phone})).status,200,phone);
+    assert.equal(h.calls.find(x=>x.rpc==='pa_verify_whatsapp_otp').params.p_phone,'+9647500000001');
+    assert.equal(h.calls.find(x=>x.rpc==='pa_profile_by_phone').params.p_phone,'+9647500000001');
+  }
+});
+test('canonical lookup errors stop signup and login without account or session writes', async () => {
+  for(const name of ['phone-otp-session','whatsapp-session-exchange']){
+    const h=handler(name,{lookupFails:true});
+    assert.equal((await h.request(signup)).status,500);
+    assert.ok(!h.calls.some(x=>x.create||x.mint));
+  }
+});
+test('null, numeric and malformed OTP input is rejected before any database access', async () => {
+  for(const name of ['phone-otp-session','whatsapp-session-exchange']){
+    for(const code of [null,123456,{},'12345','1234567']){
+      const h=handler(name);
+      assert.equal((await h.request({...signup,code})).status,400);
+      assert.equal(h.calls.length,0);
+    }
+  }
+});
+

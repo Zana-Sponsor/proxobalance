@@ -7,7 +7,7 @@ const workflow=JSON.parse(readFileSync(new URL('../integrations/wevlix/proxo-wev
 const configuredWorkflow=JSON.parse(readFileSync(new URL('../integrations/wevlix/proxo-wevlix-configured.json',import.meta.url)));
 const uuid='11111111-1111-4111-8111-111111111111';
 const reserve={statusCode:200,body:{success:true,otp_id:uuid,code:'001234',send_count:1,
-  expires_at:'2026-10-16T00:05:00Z',reused:false,client_message_id:`proxo-otp-${uuid}-1`}};
+  expires_at:new Date(Date.now()+300000).toISOString(),reused:false,client_message_id:`proxo-otp-${uuid}-1`}};
 const delivery={statusCode:202,body:{success:true,data:{messageId:'message-12345678',status:'queued'}}};
 function expression(source,json,seen) {
   const read=name=>({item:{json:seen.get(name)}});
@@ -69,6 +69,16 @@ test('delivery or storage failures cannot claim success or leak provider data',(
     'Record delivery':{statusCode:500,body:{success:false}}});
   assert.equal(store.status,503);assert.equal(store.body.success,false);
 });
+test('expired and malformed reservations stop before any provider request',()=>{
+  for(const change of [{code:123456},{otp_id:null},{send_count:1.5},
+    {expires_at:new Date(Date.now()-1000).toISOString()},
+    {client_message_id:'client-controlled-id'}]){
+    const r=run('Send webhook',{body:{phone:'7501234567'}},
+      {'Reserve OTP':{...reserve,body:{...reserve.body,...change}}});
+    assert.equal(r.status,503);assert.equal(r.body.error,'otp_unavailable');
+    assert.equal(r.calls.length,1);
+  }
+});
 test('raw verifier requires verified=true; success=true alone is insufficient',()=>{
   for(const verified of [false,true]){
     const r=run('Verify webhook',{body:{phone:'7501234567',code:'001234',purpose:'signup'}},
@@ -126,3 +136,4 @@ test('configured import resolves every URL with no Variables and preserves OTP s
   assert.equal(stopped.calls.length,1);
   assert.equal(stopped.body.success,false);
 });
+

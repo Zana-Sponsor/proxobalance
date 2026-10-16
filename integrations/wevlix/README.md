@@ -1,6 +1,6 @@
 # Proxo WhatsApp Auth and optional marketing consent
 
-Prepared for Draft PR #7. **Live repair was authorized on 2026-10-16 but is blocked; the migration and Edge deployments have not been applied, and n8n has not been edited.** PR #7 remains Draft/Open/Unmerged.
+Prepared for Draft PR #7. **The scoped live OTP repair is authorized; see the follow-up status below for what has actually been verified and deployed.** PR #7 remains Draft/Open/Unmerged.
 
 For the current Zana project, import [proxo-wevlix-configured.json](proxo-wevlix-configured.json): every Supabase URL is already configured and no n8n Variables are needed. Credentials are still stored separately in n8n. Regenerate with:
 
@@ -10,17 +10,19 @@ node integrations/wevlix/build-workflow.mjs https://cojchkwssmasiejcgvbk.supabas
 
 The portable [proxo-wevlix.json](proxo-wevlix.json) continues to use `PROXO_SUPABASE_URL`; regenerate it with `node integrations/wevlix/build-workflow.mjs` without an argument.
 
-## Live repair status — 2026-10-16
+## Live repair status — 2026-10-16, follow-up repair
 
-- The observed `Reserve OTP` error comes from an unset `PROXO_SUPABASE_URL`. Writing `$vars.'https://…'` is invalid JavaScript. The configured export fixes all four Supabase node URLs, not just the reservation node.
-- Live read-only inspection also found the old reservation function, without `otp_id` / `client_message_id` or reservation-before-send. The new purpose-bound verifier, delivery recorder and marketing-consent tables are absent. Fixing the URL alone is therefore insufficient.
-- Two migration attempts returned connector error `Invalid or expired requestState`. A subsequent live read confirmed the new verifier and preference table are still absent; the latest migration remains `20261013231219`. No Edge Function was deployed against this incomplete schema. This is a connector failure, not a successful migration.
-- n8n is reachable in the browser, but secure sign-in returned `Wrong username or password`. The existing workflow and credential bindings have not been changed. A manual sign-in handoff is needed to continue that part.
-- Fifteen focused workflow/Edge tests pass locally, including every configured URL without `$vars`, matching OTP/body/button values, failure guards and optional consent. These intercepted tests send no real messages. Production delivery remains unverified.
+The user explicitly authorized a complete scoped OTP repair. The prepared repair now also preserves behavior found only in the deployed login handler: canonical phone lookup through `pa_profile_by_phone` and rejection of ambiguous phone matches. Signup refuses existing canonical matches. Both handlers reject non-string codes before database access and pin supabase-js to 2.118.0.
 
-After restoring access, apply the existing [OTP/consent migration](../../proxo_app/supabase/migrations/20261015215145_whatsapp_auth_consent.sql), then deploy [phone-otp-session](../../proxo_app/supabase/functions/phone-otp-session/index.ts) and [whatsapp-session-exchange](../../proxo_app/supabase/functions/whatsapp-session-exchange/index.ts), and update the existing n8n workflow in one coordinated rollout. Bind the existing valid server credentials before activation; do not run duplicate workflows with the same webhook paths. The staging and credential requirements below still apply. No unrelated production change or PR merge is authorized by this repair.
+Read-only live evidence confirmed the old generator contract, anonymous generator/verifier execution permissions, missing new verifier/delivery/consent objects, a missing `phone-otp-session` deployment and `whatsapp-session-exchange` version 2. The pending migration closes the public OTP surface, invalidates outstanding potentially exposed codes and keeps a service-only, purpose-bound compatibility verifier for the rollout window. No account or audit row is deleted.
 
-Once that rollout is complete, ReqBin can POST to `https://email.proxopages.com/webhook/wevlix/otp/send`, with `Content-Type: application/json` and JSON `{ "phone": "+9647XXXXXXXXX", "purpose": "login" }` using the requested recipient's real number. Do not include an OTP, template ID or service-role key in this public request. `success: true` means provider acceptance and stored message ID; receipt must be checked separately. A `503 otp_unavailable` must be diagnosed at the failed node, not retried repeatedly.
+Twenty isolated workflow/Edge tests pass after five new regression cases failed against the previous source. The migration applies twice and the SQL lifecycle/RLS/consent tests pass on disposable PGlite/PostgreSQL 18.6. The GitHub PostgreSQL 17 concurrency and Deno checks remain a separate gate. These tests send no provider messages.
+
+The n8n editor was reached using secure sign-in and showed the reviewed workflow as Published, with a corrected Reserve OTP URL and `Custom Auth account 2` bound to that node. The browser then reported that native credential state could not safely resume; the supported reset did not restore access. Consequently the current active export, complete bindings, graph and node options have **not** been fully verified or changed. A possible duplicated graph edge in the editor observation remains unconfirmed until the export is available. Do not interpret offline source checks as verification of that active version.
+
+**Deployment status: prepared; live application not yet confirmed.** A subsequent verification report must record the actual migration and Edge results. Keep PR #7 Draft/Open/Unmerged; unrelated release blockers are unchanged. The previous credential-exposure rotation requirement below remains unresolved.
+
+Once the coordinated rollout and bindings are complete, the public send request is `{ "phone": "+9647XXXXXXXXX", "purpose": "login" }`. Do not include an OTP, template ID or privileged key. Provider acceptance is distinct from delivery. A real send requires a specifically authorized test recipient. Do not repeatedly retry `otp_unavailable` or an uncertain provider timeout.
 
 ## Supplied templates
 
@@ -87,3 +89,4 @@ The current product's password reset uses its existing email flow; the prepared 
 - `proxo_app/test/whatsapp_marketing_test.dart` tests the real signup checkbox, outbound signup consent body, profile withdrawal/retry, three languages and 280dp/2× text layout. Actual widget screenshots are captured by the polish workflow. This does not replace a staged provider/Meta delivery test.
 
 References: [Wevlix template send](https://docs.wevlix.com/reference/messagescontroller_sendtemplate_v1-1), [message status](https://docs.wevlix.com/reference/messagescontroller_getstatus_v1-1), [n8n HTTP credentials](https://docs.n8n.io/integrations/builtin/credentials/httprequest/), [Meta opt-in](https://developers.facebook.com/documentation/business-messaging/whatsapp/getting-opt-in).
+

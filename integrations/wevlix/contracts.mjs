@@ -31,9 +31,10 @@ export function reservation(raw, request) {
     }
     return failure('otp_unavailable', 503);
   }
-  if (!/^\d{6}$/.test(data.code) || !/^[0-9a-f-]{36}$/.test(data.otp_id) ||
+  if (typeof data.code !== 'string' || !/^\d{6}$/.test(data.code) ||
+      typeof data.otp_id !== 'string' || !/^[0-9a-f-]{36}$/.test(data.otp_id) ||
       !Number.isInteger(data.send_count) || data.send_count < 1 ||
-      !Number.isFinite(Date.parse(data.expires_at)) ||
+      !Number.isFinite(Date.parse(data.expires_at)) || Date.parse(data.expires_at) <= Date.now() ||
       data.client_message_id !== `proxo-otp-${data.otp_id}-${data.send_count}`) return failure('otp_unavailable', 503);
   return { proceed: true, phone: request.phone, otpId: data.otp_id,
     sendCount: data.send_count, reused: data.reused === true, expiresAt: data.expires_at,
@@ -105,3 +106,4 @@ export function accountPayload(raw, request, now = Date.now()) {
     ] }],
   } };
 }
+

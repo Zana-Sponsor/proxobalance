@@ -54,7 +54,7 @@
  * is safe; it is not a session on its own.
  */
 
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.118.0";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -78,9 +78,12 @@ const json = (body: unknown, status = 200) =>
 
 /** Normalises to E.164 for Iraq. Must match the client's `_phoneE164`. */
 function normalisePhone(raw: string): string | null {
-  let d = (raw ?? "").replace(/[^0-9]/g, "");
+  let d = (raw ?? "").replace(/[٠-٩۰-۹]/g, digit => String(
+    digit.charCodeAt(0) >= 0x6f0 ? digit.charCodeAt(0) - 0x6f0 : digit.charCodeAt(0) - 0x660,
+  )).replace(/[^0-9]/g, "");
   while (d.startsWith("0")) d = d.slice(1);
   if (d.startsWith("964")) d = d.slice(3);
+  d = d.replace(/^0+/, "");
   if (d.length !== 10 || !d.startsWith("7")) return null;
   return `+964${d}`;
 }
@@ -102,7 +105,7 @@ Deno.serve(async (req) => {
   try {
     const body = await req.json().catch(() => ({}));
     const phone = normalisePhone(String(body?.phone ?? ""));
-    const code = String(body?.code ?? "").trim();
+    const code = typeof body?.code === "string" ? body.code.trim() : "";
     const fullName = String(body?.full_name ?? "").trim();
     const password = String(body?.password ?? "");
     const marketingChoice = body?.whatsapp_marketing_opt_in ?? false;
@@ -140,11 +143,12 @@ Deno.serve(async (req) => {
     if (!verified) return json({ ok: false, error: "invalid_code" }, 401);
 
     // ── 2. Resolve the user ─────────────────────────────────────────────────
-    const { data: profile, error: profileErr } = await admin
-      .from("profiles")
-      .select("id, email, is_banned, ban_reason")
-      .eq("phone", phone)
-      .maybeSingle();
+    // Preserve the deployed canonical lookup: legacy profiles can store 07xx,
+    // bare 7xx or +964 forms. Any existing match must stop a new signup.
+    const { data: rows, error: profileErr } = await admin.rpc(
+      "pa_profile_by_phone", { p_phone: phone },
+    );
+    const profile = Array.isArray(rows) ? rows[0] : rows;
 
     if (profileErr) {
       console.error("profile lookup failed", profileErr);
@@ -243,3 +247,4 @@ Deno.serve(async (req) => {
     return json({ ok: false, error: "server_error" }, 500);
   }
 });
+

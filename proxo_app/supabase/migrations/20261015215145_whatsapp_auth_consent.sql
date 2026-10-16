@@ -1,4 +1,5 @@
--- Prepared for review; do not apply to production as part of the draft PR.
+-- Scoped live OTP repair authorized on 2026-10-16. Deploy the reviewed
+-- workflow and both Edge handlers together; the unrelated PR stays Draft.
 -- OTP material is service-only. n8n reserves before sending, then records the
 -- provider result. No client ever receives a code or calls the raw verifier.
 begin;
@@ -100,12 +101,25 @@ begin
   return json_build_object('success',true,'data',json_build_object('verified',true,'otp_id',v_row.id));
 end $$;
 
+-- Keep the currently deployed login Edge handler safe during rollout. The
+-- legacy service-only entry point must reject NULL codes and signup proofs.
+create or replace function public.verify_otp_whatsapp(p_phone text,p_code text)
+returns json language sql security invoker set search_path = '' as $$
+  select public.pa_verify_whatsapp_otp(p_phone,p_code,'login');
+$$;
+
+-- Outstanding codes from the old publicly callable generator may have been
+-- exposed. Invalidate only unused live proofs; no account or audit is deleted.
+update public.otp_whatsapp set expires_at=now()
+  where not is_used and expires_at>now();
+
 -- Revoke the older verifier too: it must never be an anonymous API.
 revoke all on function public.get_or_generate_otp_whatsapp(text,text) from public,anon,authenticated;
 revoke all on function public.verify_otp_whatsapp(text,text) from public,anon,authenticated;
 revoke all on function public.pa_verify_whatsapp_otp(text,text,text) from public,anon,authenticated;
 revoke all on function public.pa_finish_whatsapp_otp_send(uuid,integer,text,text) from public,anon,authenticated;
 grant execute on function public.get_or_generate_otp_whatsapp(text,text),
+  public.verify_otp_whatsapp(text,text),
   public.pa_verify_whatsapp_otp(text,text,text),
   public.pa_finish_whatsapp_otp_send(uuid,integer,text,text) to service_role;
 
@@ -237,3 +251,4 @@ end $$;
 revoke all on function public.pa_withdraw_whatsapp_marketing(text) from public,anon,authenticated;
 grant execute on function public.pa_withdraw_whatsapp_marketing(text) to service_role;
 commit;
+

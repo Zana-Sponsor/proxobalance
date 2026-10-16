@@ -6,6 +6,8 @@ select test_assert(not has_table_privilege('anon','otp_whatsapp','select'),'anon
 select test_assert(not has_function_privilege('anon','get_or_generate_otp_whatsapp(text,text)','execute'),'anonymous generator denied');
 select test_assert(not has_function_privilege('authenticated','verify_otp_whatsapp(text,text)','execute'),'old verifier denied');
 select test_assert(not has_function_privilege('anon','pa_verify_whatsapp_otp(text,text,text)','execute'),'new verifier denied');
+select test_assert(has_function_privilege('service_role','verify_otp_whatsapp(text,text)','execute'),'legacy server compatibility retained');
+select test_assert((select expires_at<=now() from otp_whatsapp where phone='9647500000090'),'old exposed proof invalidated');
 select test_assert(not has_function_privilege('authenticated','pa_record_signup_whatsapp_marketing(uuid,boolean,text,text)','execute'),'cannot forge signup consent');
 select test_assert(not has_function_privilege('authenticated','pa_withdraw_whatsapp_marketing(text)','execute'),'cannot withdraw another phone');
 select test_assert(not has_table_privilege('authenticated','whatsapp_marketing_preferences','update'),'no unaudited preference update');
@@ -23,8 +25,15 @@ do $$ declare r json; c text; v_id uuid; begin
   perform test_assert((pa_finish_whatsapp_otp_send(v_id,1,'fixture-message-1','queued')->>'success')::boolean,'provider id recorded');
   perform test_assert(not (pa_finish_whatsapp_otp_send(v_id,2,'stale-message','queued')->>'success')::boolean,'stale send result rejected');
   perform test_assert(not (pa_verify_whatsapp_otp('+9647500000010',c,'login')->'data'->>'verified')::boolean,'purpose cannot be exchanged');
+  perform test_assert(not (verify_otp_whatsapp('+9647500000010',null)->'data'->>'verified')::boolean,'legacy null code rejected');
+  perform test_assert(not (verify_otp_whatsapp('+9647500000010',c)->'data'->>'verified')::boolean,'legacy login cannot consume signup proof');
   perform test_assert((pa_verify_whatsapp_otp('+9647500000010',c,'signup')->'data'->>'verified')::boolean,'correct code');
   perform test_assert(not (pa_verify_whatsapp_otp('+9647500000010',c,'signup')->'data'->>'verified')::boolean,'one use only');
+end $$;
+do $$ declare r json; c text; begin
+  r:=get_or_generate_otp_whatsapp('+9647500000013','login'); c:=r->>'code';
+  perform test_assert((verify_otp_whatsapp('+9647500000013',c)->'data'->>'verified')::boolean,'legacy login verifies correct proof');
+  perform test_assert(not (verify_otp_whatsapp('+9647500000013',c)->'data'->>'verified')::boolean,'legacy proof is single use');
 end $$;
 do $$ declare r json; c text; v_id uuid; begin
   r:=get_or_generate_otp_whatsapp('+9647500000011','login'); c:=r->>'code'; v_id:=(r->>'otp_id')::uuid;
@@ -93,3 +102,4 @@ select pa_withdraw_whatsapp_marketing('+9647500000001');
 select test_assert((select not opted_in from whatsapp_marketing_preferences where user_id='11111111-1111-4111-8111-111111111111'),'off-app opt-out honored');
 reset role;
 \echo 'WhatsApp OTP, consent, RLS and audit checks passed.'
+

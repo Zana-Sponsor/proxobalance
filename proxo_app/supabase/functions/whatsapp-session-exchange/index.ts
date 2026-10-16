@@ -63,7 +63,7 @@
  *     roughly an hour later, with no obvious cause.
  */
 
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.118.0";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -79,9 +79,12 @@ const json = (body: unknown, status = 200) =>
 
 /** Normalises to E.164 for Iraq. Must match the client's `_phoneE164`. */
 function normalisePhone(raw: string): string | null {
-  let d = (raw ?? "").replace(/[^0-9]/g, "");
+  let d = (raw ?? "").replace(/[٠-٩۰-۹]/g, digit => String(
+    digit.charCodeAt(0) >= 0x6f0 ? digit.charCodeAt(0) - 0x6f0 : digit.charCodeAt(0) - 0x660,
+  )).replace(/[^0-9]/g, "");
   while (d.startsWith("0")) d = d.slice(1);
   if (d.startsWith("964")) d = d.slice(3);
+  d = d.replace(/^0+/, "");
   if (d.length !== 10 || !d.startsWith("7")) return null;
   return `+964${d}`;
 }
@@ -104,7 +107,7 @@ Deno.serve(async (req) => {
   try {
     const body = await req.json().catch(() => ({}));
     const phone = normalisePhone(String(body?.phone ?? ""));
-    const code = String(body?.code ?? "").trim();
+    const code = typeof body?.code === "string" ? body.code.trim() : "";
 
     if (!phone || !/^\d{6}$/.test(code)) {
       return json({ ok: false, error: "bad_request" }, 400);
@@ -127,11 +130,12 @@ Deno.serve(async (req) => {
     }
 
     // ── 2. Resolve the EXISTING user ────────────────────────────────────────
-    const { data: profile, error: profileErr } = await admin
-      .from("profiles")
-      .select("id, email, is_banned, ban_reason")
-      .eq("phone", phone)
-      .maybeSingle();
+    // Keep the deployed normalization and ambiguity check. Exact equality
+    // against profiles.phone loses legacy formats and can select unsafely.
+    const { data: rows, error: profileErr } = await admin.rpc(
+      "pa_profile_by_phone", { p_phone: phone },
+    );
+    const profile = Array.isArray(rows) ? rows[0] : rows;
 
     if (profileErr) {
       console.error("profile lookup failed", profileErr);
@@ -141,6 +145,13 @@ Deno.serve(async (req) => {
     // No account for this number. Stop here — do not provision.
     if (!profile) {
       return json({ ok: false, error: "user_not_found" }, 404);
+    }
+
+    if (profile.match_count > 1) {
+      return json({ ok: false, error: "ambiguous_phone" }, 409);
+    }
+    if (profile.match_count !== 1 || typeof profile.id !== "string") {
+      return json({ ok: false, error: "lookup_failed" }, 500);
     }
 
     // ⚠ A verified phone must not bypass a ban. The email path enforces this
@@ -226,3 +237,4 @@ Deno.serve(async (req) => {
     return json({ ok: false, error: "server_error" }, 500);
   }
 });
+

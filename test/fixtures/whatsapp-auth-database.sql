@@ -24,3 +24,7 @@ insert into auth.users values
  ('11111111-1111-4111-8111-111111111111','9647500000001',now()),
  ('22222222-2222-4222-8222-222222222222','9647500000002',now()),
  ('33333333-3333-4333-8333-333333333333','9647500000003',null);
+-- An unexpired code issued by the old public generator must not survive rollout.
+insert into otp_whatsapp(phone,code,wevlix_message_id,expires_at)
+  values('9647500000090','123456','old-public-proof',now()+interval '10 minutes');
+
