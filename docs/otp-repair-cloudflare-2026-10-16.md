@@ -2,11 +2,11 @@
 
 ## Current result
 
-After the user's explicit authorization for **one additional login OTP with up to $0.02 additional cost**, one POST to the **production** send endpoint completed at **2026-10-16 14:48:38 UTC / 17:48:38 Baghdad** with **HTTP 200**, **success=true**, **queued**, provider message ID **5ad76a0a-834b-452c-bef5-a7372f91e3b5**. A metadata-only database read confirmed the matching new login reservation and stored provider ID, send_count=1. This establishes production-route send acceptance and persistence. **Actual WhatsApp arrival, provider delivery status, final charge and app session completion remain unverified.** No automatic retry or second endpoint was used.
+**Live OTP arrival is confirmed by the user.** At **2026-10-16 17:56 Baghdad / 14:56 UTC**, the user replied that the WhatsApp message arrived following the single newly authorized production request at **17:48:38 Baghdad**. That request returned HTTP 200 / success=true / queued, and the matching login reservation and provider ID **5ad76a0a-834b-452c-bef5-a7372f91e3b5** were independently read from the database. This verifies the production send path through actual recipient arrival for this test. No further message was sent.
 
-The prior no-send diagnostic at **14:42:26 UTC** returned Supabase read 200, Wevlix historical-message read 200, and expected empty-request rejection 400; the earlier current Wevlix 401 authentication issue was resolved. The current export's code/graph and selected credential bindings were already audited. The exact published workflow version has not been independently read back through the unavailable browser session.
+The current Wevlix authentication failure was resolved: the no-send diagnostic changed from Wevlix 401 to a successful existing-message read (200) and the expected empty-payload rejection (400), with Supabase read 200 throughout. The exact credential-field edit was private and is not known. A workflow code/graph defect was not demonstrated.
 
-The separate **13:49 UTC** intended-live attempt remains an unresolved historical 502/pending record; the new explicit authorization covered the additional request without assuming the original allowance was unused. Earlier report sections below are historical and are superseded where later evidence applies.
+**Remaining limits:** receipt is user-confirmed, not an independently fetched provider delivery event; exact delivery time and final charge were not read. The test reservation expired at **17:53:36 Baghdad**, before the user's arrival confirmation, so it must not be presented as a still-valid login code. Complete app login/session exchange, published-version identity, private-route verification and shared legacy-key rotation coordination remain unverified. The older 13:49 UTC 502 attempt remains unresolved historical evidence. Earlier report sections below are historical.
 
 This report supplements [the original deployment report](otp-repair-status-2026-10-16.md). Completed Supabase deployments and rolled-back lifecycle tests were not repeated. PR #7 was read back as Draft, Open and Unmerged at head `435c038175afe78c789b59c1128c2c2125996c77`. No unrelated workflow, ProxoLink deployment or app release was changed.
 
@@ -418,3 +418,19 @@ An independent metadata-only database read confirmed the recipient's new reserva
 No OTP code, session material or private key was read. The request traversed the production route, reserved an OTP, obtained acceptance according to the workflow contract and persisted the message ID before replying success. It is not yet proof of actual WhatsApp delivery or successful app login, nor independent proof of the responding published version's identity. No further message was sent.
 
 Next: obtain the user's arrival confirmation (without posting the OTP) or inspect the new provider message's delivery status and charge. The user should enter any received OTP only in the app's private login flow. If it does not arrive, investigate **this exact provider message ID**, without triggering another send. Internal route behavior, remaining rotation coordination, published-version readback and complete app-session verification remain tracked rather than being reported as finished.
+
+## Recipient confirms actual WhatsApp arrival — 2026-10-16 14:56 UTC
+
+At **17:56 Baghdad**, the user replied **«گەیشت» (arrived)** to the explicit question about the new production OTP. This confirms recipient arrival for the authorized test associated with the **14:48:38 UTC** successful response and provider message ID **5ad76a0a-834b-452c-bef5-a7372f91e3b5**. The user did not share the OTP, and none was read from the database.
+
+The evidence chain is now:
+1. Current saved export audited: intended code/graph and credential references present.
+2. Actual no-send n8n execution exposed Wevlix authentication failures while Supabase read worked.
+3. After private user-side credential correction, actual no-send execution returned 200 / 200 / expected 400.
+4. One separately authorized production request returned 200 / success=true / queued.
+5. Independent metadata read confirmed reservation and provider-ID persistence.
+6. The authorized recipient confirmed WhatsApp arrival.
+
+Do not report that every production requirement is complete. The exact provider-delivered timestamp and final billed amount are not available; no provider status response was fetched for this new message. The original 13:49 uncertain attempt was not retrospectively resolved by this success.
+
+The test OTP expired at **14:53:36.859131 UTC / 17:53:36 Baghdad**, before the confirmation message. No private app code entry/session exchange was performed or verified, and this expired code should not be reused. No new send was triggered after arrival confirmation. The report records the sending repair as verified for this recipient while retaining the remaining login/administration verification limits.
