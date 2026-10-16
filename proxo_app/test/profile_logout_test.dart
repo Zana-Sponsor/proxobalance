@@ -21,8 +21,13 @@ void main() {
       home: const ProfileScreen()));
     await t.pumpAndSettle();
     final logout = find.text('دەرچوون');
-    await t.ensureVisible(logout); await t.tap(logout); await t.pumpAndSettle();
-    await t.tap(find.text('دەرچوون').last); await t.pumpAndSettle();
+    await t.ensureVisible(logout);
+    await t.pumpAndSettle();
+    expect(logout.hitTestable(), findsOneWidget);
+    await t.tap(logout.hitTestable());
+    await t.pumpAndSettle();
+    await t.tap(find.text('دەرچوون').hitTestable().last);
+    await t.pumpAndSettle();
     expect(backend.logoutRequests, 1);
     expect(backend.client.auth.currentSession, isNull);
     expect(find.byType(AuthScreen), findsOneWidget);
