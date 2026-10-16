@@ -42,11 +42,12 @@ void main() {
         if (request.url.path == '/rest/v1/rpc/pa_record_app_session') {
           return http.Response(jsonEncode(failRpc
               ? {'code': '42501', 'message': 'fixture denial'} : sessionA), failRpc ? 403 : 200,
-            headers: {'content-type': 'application/json'});
+            headers: {'content-type': 'application/json'}, request: request);
         }
         if (request.url.path == '/auth/v1/logout') {
           return http.Response(failLogout ? '{"message":"fixture outage"}' : '{}',
-              failLogout ? 500 : 204, headers: {'content-type': 'application/json'});
+              failLogout ? 500 : 204, headers: {'content-type': 'application/json'},
+              request: request);
         }
         throw StateError('No real network: ${request.url.path}');
       }));
@@ -96,6 +97,7 @@ void main() {
     collector = null; failRpc = true;
     await service.recordCurrentSession();
     failRpc = false;
+    await service.recordCurrentSession();
     await service.recordCurrentSession();
     expect(metadataCalls().length, 2);
   });
