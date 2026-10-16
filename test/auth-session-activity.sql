@@ -27,6 +27,8 @@ select pa_record_app_session('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
 select pa_record_app_session('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa','{"device_model":"duplicate"}');
 select test_assert((select count(*)=1 from pa_login_history),'duplicate record is idempotent and RLS hides other owners');
 select test_assert((select device_model='Fixture Model' and os='Android' and os_version='13' and ip_address='192.0.2.1' from pa_login_history),'metadata allowed fields and server IP');
+select pa_login_close_session(id) from pa_login_history;
+select test_assert((select logout_time is null from pa_login_history),'legacy close RPC cannot forge a session-linked logout');
 do $$ begin
   begin
     perform pa_record_app_session('bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb','{}');
@@ -43,6 +45,10 @@ do $$ begin
 end $$;
 update profiles set last_login_at='2099-01-01',last_logout_at='2099-01-01' where id=auth.uid();
 select test_assert((select last_login_at<'2099-01-01' and last_logout_at is null from profiles),'owner cannot forge server times');
+insert into pa_login_history(id,user_id) values
+ ('eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee',auth.uid());
+select pa_login_close_session('eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee');
+select test_assert((select logout_time is not null from pa_login_history where id='eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee'),'legacy unlinked history remains compatible');
 -- A signed token cannot claim someone else's session even when both arguments agree.
 set request.jwt.claims='{"session_id":"bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb"}';
 do $$ begin
