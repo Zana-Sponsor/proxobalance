@@ -39,8 +39,11 @@ jobs:
       - run: psql -v ON_ERROR_STOP=1 -f test/fixtures/auth-session-activity.sql
       - name: Apply twice and verify session audit security
         run: |
-          psql -v ON_ERROR_STOP=1 -f proxo_app/supabase/migrations/20261016155756_auth_session_activity_logging.sql
-          psql -v ON_ERROR_STOP=1 -f proxo_app/supabase/migrations/20261016155756_auth_session_activity_logging.sql
+          for pass in 1 2; do
+            for migration in proxo_app/supabase/migrations/*auth_session_activity*.sql; do
+              psql -v ON_ERROR_STOP=1 -f "$migration"
+            done
+          done
           psql -v ON_ERROR_STOP=1 -f test/auth-session-activity.sql
   flutter:
     runs-on: ubuntu-latest
