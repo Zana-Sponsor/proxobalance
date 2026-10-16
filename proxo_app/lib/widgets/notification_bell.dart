@@ -34,7 +34,7 @@ import 'package:proxo_app/widgets/proxo_symbol.dart';
 //  • ڕەنگ: #1C2333 · قەبارە: iconSize (default 26)
 // ─────────────────────────────────────────────────────────────────────────────
 
-import 'dart:async';
+import '../services/unread_notification_counter.dart';
 import '../theme/app_theme.dart';
 import 'package:solar_icons/solar_icons.dart';
 import 'package:flutter/material.dart';
@@ -74,7 +74,7 @@ class _NotificationBellState extends State<NotificationBell>
   late Animation<double>    _scale;
   late Animation<double>    _shadow;
 
-  RealtimeChannel? _channel;
+  late final UnreadNotificationCounter _counter;
 
   // ── دەستپێکردن ────────────────────────────────────────────────────────────
 
@@ -97,68 +97,21 @@ class _NotificationBellState extends State<NotificationBell>
       TweenSequenceItem(tween: Tween(begin: 4.0, end: 0.0), weight: 40),
     ]).animate(CurvedAnimation(parent: _pulse, curve: Curves.easeInOut));
 
-    _fetchUnread();
-    _subscribeRealtime();
+    _counter = UnreadNotificationCounter.forClient(Supabase.instance.client);
+    _unread = _counter.count.value;
+    _counter.count.addListener(_countChanged);
+    _counter.acquire();
   }
 
   @override
   void dispose() {
     _pulse.dispose();
-    _channel?.unsubscribe();
+    _counter.count.removeListener(_countChanged);
+    _counter.release();
     super.dispose();
   }
 
-  // ── Supabase: ژمارەی نەخوێنراوەکان ───────────────────────────────────────
-
-  Future<void> _fetchUnread() async {
-    try {
-      final uid = Supabase.instance.client.auth.currentUser?.id;
-      if (uid == null) return;
-
-      final res = await Supabase.instance.client
-          .from('pa_notifications')
-          .select()
-          .eq('user_id', uid)
-          .eq('is_read', false)
-          .count(CountOption.exact);
-
-      final count = res.count ?? 0;
-      _setCount(count);
-    } catch (_) {}
-  }
-
-  // ── Realtime: INSERT و UPDATE گوێ دەگرێت ─────────────────────────────────
-
-  void _subscribeRealtime() {
-    final uid = Supabase.instance.client.auth.currentUser?.id;
-    if (uid == null) return;
-
-    _channel = Supabase.instance.client
-        .channel('notif_bell_$uid')
-        .onPostgresChanges(
-          event:    PostgresChangeEvent.insert,
-          schema:   'public',
-          table:    'pa_notifications',
-          filter:   PostgresChangeFilter(
-            type:   PostgresChangeFilterType.eq,
-            column: 'user_id',
-            value:  uid,
-          ),
-          callback: (_) => _fetchUnread(),
-        )
-        .onPostgresChanges(
-          event:    PostgresChangeEvent.update,
-          schema:   'public',
-          table:    'pa_notifications',
-          filter:   PostgresChangeFilter(
-            type:   PostgresChangeFilterType.eq,
-            column: 'user_id',
-            value:  uid,
-          ),
-          callback: (_) => _fetchUnread(),
-        )
-        .subscribe();
-  }
+  void _countChanged() => _setCount(_counter.count.value);
 
   // ── count گۆڕین + animation ───────────────────────────────────────────────
 

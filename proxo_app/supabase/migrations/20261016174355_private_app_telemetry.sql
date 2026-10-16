@@ -45,7 +45,7 @@ create or replace function app_telemetry.ingest(p_batch jsonb) returns jsonb
 language plpgsql security definer set search_path='' as $$
 declare u uuid:=app_finance.actor(); installation uuid; run uuid; sid uuid; seq bigint;
  old app_telemetry.sessions%rowtype; now_at timestamptz:=clock_timestamp(); fg boolean; section_name text; meta jsonb; event jsonb;
- seconds integer:=0; inserted integer; event_id uuid; event_kind text; event_code text; event_section text; ms integer; outcome_value text;
+ seconds integer:=0; inserted integer; v_event_id uuid; event_kind text; event_code text; event_section text; ms integer; outcome_value text;
 begin
  if p_batch is null or jsonb_typeof(p_batch)<>'object' or octet_length(p_batch::text)>32768 then raise exception 'INVALID_TELEMETRY'; end if;
  begin
@@ -76,7 +76,9 @@ begin
    values((now_at at time zone 'Asia/Baghdad')::date,u,installation,old.section,seconds)
    on conflict(day,user_id,installation_id,section) do update set active_seconds=daily_usage.active_seconds+excluded.active_seconds;
   end if;
-  if fg and (not old.foreground or old.section<>section_name) then
+  if fg and (not old.foreground or old.section<>section_name) and not exists(
+   select 1 from jsonb_array_elements(coalesce(p_batch->'events','[]'::jsonb)) e
+   where e->>'kind'='section' and e->>'code'='enter' and e->>'section'=section_name) then
    insert into app_telemetry.daily_usage(day,user_id,installation_id,section,visits)
    values((now_at at time zone 'Asia/Baghdad')::date,u,installation,section_name,1)
    on conflict(day,user_id,installation_id,section) do update set visits=daily_usage.visits+1;
@@ -85,16 +87,21 @@ begin
   where user_id=u and run_id=run;
  end if;
  for event in select value from jsonb_array_elements(coalesce(p_batch->'events','[]'::jsonb)) loop
-  event_id:=(event->>'id')::uuid; event_kind:=event->>'kind'; event_code:=event->>'code'; event_section:=event->>'section';
+  v_event_id:=(event->>'id')::uuid; event_kind:=event->>'kind'; event_code:=event->>'code'; event_section:=event->>'section';
   ms:=(event->>'duration_ms')::integer; outcome_value:=event->>'outcome';
-  if event_id is null or event_kind not in ('section','error','action','performance') or event_kind is null
+  if v_event_id is null or event_kind not in ('section','error','action','performance') or event_kind is null
     or event_code is null or event_code!~'^[A-Za-z0-9_.:-]{1,100}$' or event_section is null or event_section!~'^[a-z0-9_/-]{1,80}$'
     or (ms is not null and ms not between 0 and 600000) or (outcome_value is not null and outcome_value not in ('success','failure','incomplete')) then raise exception 'INVALID_EVENT'; end if;
   insert into app_telemetry.events(user_id,event_id,installation_id,run_id,kind,section,code,outcome,duration_ms,app_version,device_model,received_at)
-  values(u,event_id,installation,run,event_kind,event_section,event_code,outcome_value,ms,left(meta->>'app_version',40),left(meta->>'device_model',100),now_at)
+  values(u,v_event_id,installation,run,event_kind,event_section,event_code,outcome_value,ms,left(meta->>'app_version',40),left(meta->>'device_model',100),now_at)
   on conflict(user_id,event_id) do nothing;
   get diagnostics inserted=row_count;
   if inserted=1 then
+   if event_kind='section' and event_code='enter' then
+    insert into app_telemetry.daily_usage(day,user_id,installation_id,section,visits)
+    values((now_at at time zone 'Asia/Baghdad')::date,u,installation,event_section,1)
+    on conflict(day,user_id,installation_id,section) do update set visits=daily_usage.visits+1;
+   end if;
    insert into app_telemetry.daily_events(day,kind,section,code,app_version,occurrences,duration_ms)
    values((now_at at time zone 'Asia/Baghdad')::date,event_kind,event_section,event_code,coalesce(left(meta->>'app_version',40),'unknown'),1,coalesce(ms,0))
    on conflict(day,kind,section,code,app_version) do update set occurrences=daily_events.occurrences+1,duration_ms=daily_events.duration_ms+excluded.duration_ms;

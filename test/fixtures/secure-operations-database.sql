@@ -983,3 +983,171 @@ grant select,insert,update,delete on public.pa_coins to authenticated;
 create policy fixture_owner on public.profiles to authenticated using(id=auth.uid()) with check(id=auth.uid());
 grant select,insert,update,delete on public.profiles to authenticated;
 grant all on all tables in schema public to service_role;
+
+CREATE OR REPLACE FUNCTION public.pa_protect_profile_columns()
+ RETURNS trigger
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+begin
+  if coalesce(nullif(pg_catalog.current_setting('app.pa_profile_override', true), ''), 'off') = 'on' then
+    return new;
+  end if;
+  if coalesce(auth.role(), '') = 'service_role' then
+    return new;
+  end if;
+  if auth.uid() is null then
+    return new;
+  end if;
+  if public.pa_is_admin() then
+    return new;
+  end if;
+
+  new.is_admin := old.is_admin;
+  new.is_banned := old.is_banned;
+  new.ban_reason := old.ban_reason;
+  new.banned_at := old.banned_at;
+  new.banned_ip := old.banned_ip;
+  new.banned_by := old.banned_by;
+  new.ban_appeal_url := old.ban_appeal_url;
+  new.ban_case_id := old.ban_case_id;
+  new.ban_notice_id := old.ban_notice_id;
+  new.ban_notice_read_at := old.ban_notice_read_at;
+  new.balance_locked := old.balance_locked;
+  new.balance_lock_reason := old.balance_lock_reason;
+  new.balance_locked_at := old.balance_locked_at;
+  new.balance_locked_by := old.balance_locked_by;
+  new.force_logout_at := old.force_logout_at;
+  new.ads_locked := old.ads_locked;
+  new.ads_lock_reason := old.ads_lock_reason;
+  new.ads_locked_at := old.ads_locked_at;
+  new.ads_locked_by := old.ads_locked_by;
+
+  -- Login lockout: only pa_login_attempt (via app.pa_profile_override) and
+  -- admins may write these.
+  new.failed_login_attempts := old.failed_login_attempts;
+  new.locked_until := old.locked_until;
+  new.login_locked_at := old.login_locked_at;
+
+  new.identity_verification_status := old.identity_verification_status;
+  new.identity_requested_at := old.identity_requested_at;
+  new.identity_requested_by := old.identity_requested_by;
+  new.identity_selfie_path := old.identity_selfie_path;
+  new.identity_id_front_path := old.identity_id_front_path;
+  new.identity_id_back_path := old.identity_id_back_path;
+  new.identity_submitted_at := old.identity_submitted_at;
+  new.identity_reviewed_at := old.identity_reviewed_at;
+  new.identity_reviewed_by := old.identity_reviewed_by;
+  new.identity_reject_reason := old.identity_reject_reason;
+  new.is_identity_verified := old.is_identity_verified;
+
+  return new;
+end;
+$function$;
+
+CREATE OR REPLACE FUNCTION public.pa_ads_guard_refund_fields()
+ RETURNS trigger
+ LANGUAGE plpgsql
+ SET search_path TO ''
+AS $function$
+begin
+  if new.refunded_amount is not distinct from old.refunded_amount
+     and new.refunded_at is not distinct from old.refunded_at
+     and new.refunded_by is not distinct from old.refunded_by
+     and new.refund_tx_id is not distinct from old.refund_tx_id then
+    return new;
+  end if;
+
+  if current_user in ('postgres', 'service_role', 'supabase_admin')
+     or coalesce(auth.role(), '') = 'service_role'
+     or public.pa_is_admin() then
+    return new;
+  end if;
+
+  raise exception 'refund_fields_are_admin_only'
+    using errcode = '42501';
+end
+$function$;
+
+CREATE OR REPLACE FUNCTION public.pa_initialize_wallet_after_profile_insert()
+ RETURNS trigger
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+BEGIN
+  INSERT INTO public.pa_wallets (user_id,balance)
+  VALUES (NEW.id,0)
+  ON CONFLICT (user_id) DO NOTHING;
+  RETURN NEW;
+END
+$function$;
+
+CREATE OR REPLACE FUNCTION public.handle_ad_rejection()
+ RETURNS trigger
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+begin
+  if new.status = 'rejected' and old.status is distinct from 'rejected' then
+    perform public.pa_lock_wallet(new.user_id);
+    update public.pa_wallets
+       set coins_balance = greatest(0, coalesce(coins_balance, 0) - 50),
+           updated_at = now()
+     where user_id = new.user_id;
+  end if;
+  return new;
+end
+$function$;
+
+CREATE OR REPLACE FUNCTION public.pa_guard_balance_lock()
+ RETURNS trigger
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO 'public'
+AS $function$
+declare
+  v_locked boolean;
+  v_reason text;
+begin
+  -- تەنها کەمکردنەوە دەپشکنرێت — زیادکردن هەمیشە ڕێگەپێدراوە
+  if new.balance is null or old.balance is null or new.balance >= old.balance then
+    return new;
+  end if;
+
+  -- بایپاسی سیستەم (n8n / فەنکشنە ئۆتۆماتیکەکان)
+  if coalesce(nullif(current_setting('app.pa_balance_override', true), ''), 'off') = 'on' then
+    return new;
+  end if;
+  if coalesce(auth.role(), '') = 'service_role' then
+    return new;
+  end if;
+  -- ئادمین هەمیشە دەتوانێت کەم بکاتەوە
+  if public.pa_is_admin() then
+    return new;
+  end if;
+
+  select balance_locked, balance_lock_reason
+    into v_locked, v_reason
+  from public.profiles
+  where id = new.user_id;
+
+  if coalesce(v_locked, false) then
+    raise exception 'balance_locked: باڵانسەکەت لەلایەن بەڕێوەبەرەوە قفڵکراوە%',
+      case when v_reason is not null and v_reason <> '' then ' — ' || v_reason else '' end
+      using errcode = 'P0001';
+  end if;
+
+  return new;
+end;
+$function$;
+create trigger profile_guard before update on public.profiles for each row execute function public.pa_protect_profile_columns();
+create trigger initialize_wallet after insert on public.profiles for each row execute function public.pa_initialize_wallet_after_profile_insert();
+create trigger wallet_lock before update on public.pa_wallets for each row execute function public.pa_guard_balance_lock();
+create trigger refund_fields before update of refunded_amount,refunded_at,refunded_by,refund_tx_id on public.pa_ads for each row execute function public.pa_ads_guard_refund_fields();
+create trigger ad_rejection after update on public.pa_ads for each row execute function public.handle_ad_rejection();
+revoke insert,update,delete on public.pa_user_points,public.pa_coins from authenticated;
+
+grant update(balance) on public.pa_wallets to authenticated;

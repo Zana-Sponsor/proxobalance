@@ -25,6 +25,7 @@ select fixture_login('22222222-2222-4222-8222-222222222222','bbbbbbbb-bbbb-4bbb-
 select pa_ensure_account_ready();
 select fixture_login('33333333-3333-4333-8333-333333333333','cccccccc-cccc-4ccc-8ccc-cccccccccccc');
 select pa_ensure_account_ready();
+select set_config('request.jwt.claims','{"role":"service_role"}',false);
 update profiles set is_admin=true where id='33333333-3333-4333-8333-333333333333';
 update pa_wallets set balance=100 where user_id='11111111-1111-4111-8111-111111111111';
 
@@ -112,7 +113,13 @@ select fixture_login('22222222-2222-4222-8222-222222222222','bbbbbbbb-bbbb-4bbb-
 set role authenticated;
 select test_assert((select count(*)=0 from pa_ads),'cross-account ad read');
 select test_assert((select count(*)=0 from pa_transactions),'cross-account financial read');
-select test_assert(pa_cancel_pending_ad((select id from pa_ads limit 1),'wrong owner')->>'code'='INVALID_INPUT','cross-account refund');
+select test_assert(pa_cancel_pending_ad('dddddddd-dddd-4ddd-8ddd-dddddddddddd','wrong owner')->>'code'='NOT_FOUND','unknown refund ID does not disclose ownership');
+reset role;
+-- The cancelled advertisement must never reach the provider.
+select test_assert(pa_claim_ad_outbox() is null,'cancelled job not dispatched');
+select fixture_login('11111111-1111-4111-8111-111111111111','aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa');
+set role authenticated;
+select test_assert(fixture_buy('10000000-0000-4000-8000-000000000002')->>'ok'='true','second pending ad');
 reset role;
 -- Outbox timeout: keep the same provider idempotency key and reject stale lease.
 do $$ declare first jsonb;again jsonb;begin

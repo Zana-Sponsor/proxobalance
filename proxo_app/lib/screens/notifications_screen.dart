@@ -277,6 +277,8 @@ class NotificationsScreen extends StatefulWidget {
 }
 
 class _NotificationsScreenState extends State<NotificationsScreen> {
+  int _loadRevision = 0;
+
   List<_Notif> _notifs = [];
   bool _loading = true;
   bool _loadFailed = false;
@@ -390,10 +392,12 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   }
 
   Future<void> _load() async {
+    final revision = ++_loadRevision, owner = supabase.auth.currentUser?.id;
+    bool current() => mounted && revision == _loadRevision && owner == supabase.auth.currentUser?.id;
     try {
       final uid = supabase.auth.currentUser?.id;
       if (uid == null) {
-        if (mounted) setState(() { _loading = false; _loadFailed = false; });
+        if (current()) setState(() { _loading = false; _loadFailed = false; });
         return;
       }
       final data = await supabase
@@ -403,7 +407,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           .order('created_at', ascending: false)
           .limit(50);
 
-      if (mounted) {
+      if (current()) {
         setState(() {
           _notifs = (data as List)
               .map((m) => _Notif.fromMap(m as Map<String, dynamic>))
@@ -414,7 +418,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       }
     } catch (e) {
       debugPrint('Notifications: load failed: $e');
-      if (mounted) setState(() { _loading = false; _loadFailed = true; });
+      if (current()) setState(() { _loading = false; _loadFailed = true; });
     }
   }
 

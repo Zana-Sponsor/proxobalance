@@ -32,6 +32,7 @@ jobs:
             done
           done
       - run: psql -v ON_ERROR_STOP=1 -f test/secure-operations.sql
+      - run: psql -v ON_ERROR_STOP=1 -f test/secure-operations-edge-cases.sql
       - run: python3 test/secure-operations-concurrency.py
   flutter:
     runs-on: ubuntu-latest

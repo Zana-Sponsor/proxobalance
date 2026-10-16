@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'account_cache.dart';
 import 'account_setup_service.dart';
+import 'ad_snapshot_cache.dart';
 import 'auth_activity_service.dart';
 import 'proxolink_service.dart' show newProxoRequestId;
 
@@ -37,6 +38,7 @@ class AppTelemetryService with WidgetsBindingObserver {
   FlutterExceptionHandler? _previousFlutterError;
   bool Function(Object,StackTrace)? _previousPlatformError;
   int get queuedEvents=>_events.length;
+  String get currentSection => _section;
   static String? _currentScope(SupabaseClient c) {
     final s=c.auth.currentSession;
     final id=AuthActivityService.sessionId(s);
@@ -53,6 +55,7 @@ class AppTelemetryService with WidgetsBindingObserver {
   static Future<Map<String,String>> _collectDevice() async {
     final d=await collectAuthDevice();
     final info=await PackageInfo.fromPlatform();
+    d.remove('device_name');
     return {...d,'app_version':info.version,'build_number':info.buildNumber};
   }
   void start() {
@@ -70,6 +73,8 @@ class AppTelemetryService with WidgetsBindingObserver {
   void _bind() {
     final next=_currentScope(client);
     if (next!=_scope) {
+      final previousOwner = _scope?.split(':').first;
+      if (previousOwner != null) unawaited(AdSnapshotCache.clearStoredFor(previousOwner).catchError((Object _) {}));
       _scope=next; _run=newProxoRequestId();_sequence=0;_events.clear();
       AppDataCache.forClient(client).bindOwner();
       AccountSetupService.forClient(client).clear();
@@ -93,11 +98,11 @@ class AppTelemetryService with WidgetsBindingObserver {
     event('section','enter');
     unawaited(flush());
   }
-  void event(String kind,String code,{String? outcome,int? durationMs}) {
+  void event(String kind,String code,{String? outcome,int? durationMs,String? sectionName}) {
     if (_disposed||_currentScope(client)==null) return;
     if (!RegExp(r'^[A-Za-z0-9_.:-]{1,100}$').hasMatch(code)) return;
     if (_events.length>=100) _events.removeAt(0);
-    _events.add({'id':newProxoRequestId(),'kind':kind,'section':_section,'code':code,
+    _events.add({'id':newProxoRequestId(),'kind':kind,'section':sectionName??_section,'code':code,
       if(outcome!=null)'outcome':outcome,if(durationMs!=null)'duration_ms':durationMs.clamp(0,600000)});
   }
   void error(Object error)=>event('error',error.runtimeType.toString().replaceAll(RegExp('[^A-Za-z0-9_.:-]'),'_'),outcome:'failure');
@@ -151,11 +156,15 @@ class AppSectionObserver extends NavigatorObserver {
   String tab='home';
   void register(Route<dynamic>? route,String section) {
     if(route==null)return;_names[route]=section;
-    if(identical(route,_top)) AppTelemetryService.active?.section(section);
+    if(identical(route,_top)) AppTelemetryService.active?.section(section == 'shell' ? tab : section);
   }
   void selectTab(String name) { tab=name; if(_top!=null&&(_names[_top]=='shell'||_names[_top]==null))AppTelemetryService.active?.section(name); }
   void _show(Route<dynamic>? route) {
-    _top=route;final name=_names[route];AppTelemetryService.active?.section(name==null||name=='shell'?tab:name);
+    _top=route;
+    final rawName = route?.settings.name;
+    final safeName = rawName != null && RegExp(r'^[a-z0-9_/-]{1,80}$').hasMatch(rawName) ? rawName : null;
+    final name=_names[route] ?? safeName;
+    AppTelemetryService.active?.section(name==null||name=='shell'||name=='/'?tab:name);
   }
   @override void didPush(Route<dynamic> route,Route<dynamic>? previousRoute)=>_show(route);
   @override void didPop(Route<dynamic> route,Route<dynamic>? previousRoute){_names.remove(route);_show(previousRoute);}
@@ -171,7 +180,10 @@ class _TrackedSectionState extends State<TrackedSection> {
     super.didChangeDependencies();
     final type=widget.child.runtimeType.toString();
     final name=type.replaceAllMapped(RegExp(r'[A-Z]'),(m)=>'_${m[0]!.toLowerCase()}').replaceFirst(RegExp('^_'),'');
-    AppSectionObserver.instance.register(ModalRoute.of(context),name=='main_shell'?'shell':name);
+    final route = ModalRoute.of(context);
+    final named = route?.settings.name?.replaceAll(RegExp(r'[^a-z0-9_/]'), '');
+    AppSectionObserver.instance.register(route, name=='main_shell'?'shell':
+      name=='account_setup_gate' ? (named == null || named == '/' ? 'shell' : named) : name);
   }
   @override Widget build(BuildContext context)=>widget.child;
 }

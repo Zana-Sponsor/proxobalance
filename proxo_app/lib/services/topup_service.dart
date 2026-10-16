@@ -16,6 +16,58 @@ class TopupService {
   TopupService(this.client);
   final SupabaseClient client;
   static final Map<String,Future<Map<String,dynamic>>> _pending={};
+  static Future<void> _storageQueue = Future.value();
+  Future<String> _retryKey(String owner, String fingerprint) {
+    final answer = Completer<String>();
+    _storageQueue = _storageQueue.then((_) async {
+      try {
+        final p = await SharedPreferences.getInstance();
+        final storage = 'proxo.topup.retry.v2.$owner';
+        final now = DateTime.now().millisecondsSinceEpoch;
+        final entries = <String, dynamic>{};
+        final raw = p.getString(storage);
+        if (raw != null) entries.addAll(Map<String, dynamic>.from(jsonDecode(raw) as Map));
+        // Migrate the previous one-request format without losing an uncertain
+        // request when the user edits a form and later restores its details.
+        final legacy = p.getString('proxo.topup.retry.v1.$owner');
+        if (legacy != null) {
+          final old = Map<String, dynamic>.from(jsonDecode(legacy) as Map);
+          if (old['fingerprint'] is String) entries.putIfAbsent(old['fingerprint'], () => old);
+        }
+        entries.removeWhere((_, value) => value is! Map || value['at'] is! int ||
+          (value['complete'] == true && now - (value['at'] as int) > const Duration(days: 7).inMilliseconds));
+        if (!entries.containsKey(fingerprint) && entries.length >= 32) {
+          final completed = entries.keys.where((k) => entries[k]['complete'] == true).toList()
+            ..sort((a, b) => (entries[a]['at'] as int).compareTo(entries[b]['at'] as int));
+          if (completed.isNotEmpty) entries.remove(completed.first);
+        }
+        if (!entries.containsKey(fingerprint) && entries.length >= 32) {
+          // Never evict an unresolved retry key just to allow another charge.
+          throw const TopupFailure('TOO_MANY_PENDING_REQUESTS');
+        }
+        final key = entries[fingerprint]?['key'] as String? ?? newProxoRequestId();
+        entries[fingerprint] = {'key': key, 'at': now, 'complete': entries[fingerprint]?['complete'] == true};
+        if (!await p.setString(storage, jsonEncode(entries))) throw const TopupFailure('STORAGE_UNAVAILABLE');
+        await p.remove('proxo.topup.retry.v1.$owner');
+        answer.complete(key);
+      } catch (error, stack) { answer.completeError(error, stack); }
+    });
+    return answer.future;
+  }
+  Future<void> _completed(String owner, String fingerprint) {
+    _storageQueue = _storageQueue.then((_) async {
+      try {
+        final p = await SharedPreferences.getInstance();
+        final key = 'proxo.topup.retry.v2.$owner';
+        final entries = Map<String, dynamic>.from(jsonDecode(p.getString(key) ?? '{}') as Map);
+        if (entries[fingerprint] is Map) {
+          entries[fingerprint]['complete'] = true;
+          await p.setString(key, jsonEncode(entries));
+        }
+      } catch (_) { /* Keep uncertain keys when completion persistence fails. */ }
+    });
+    return _storageQueue;
+  }
   Future<Map<String,dynamic>> submit({required String method,required int grossIqd,required String sender,required String note,required String receipt}) {
     final owner=client.auth.currentUser?.id;
     if(owner==null)return Future.error(const TopupFailure('NOT_AUTHENTICATED'));
@@ -28,17 +80,7 @@ class TopupService {
     }));
   }
   Future<Map<String,dynamic>> _submit(String owner,String fingerprint,String method,int gross,String sender,String note,String receipt) async {
-    final p=await SharedPreferences.getInstance();
-    final storage='proxo.topup.retry.v1.$owner';
-    final stored=p.getString(storage);
-    Map<String,dynamic>? retry;
-    try { if(stored!=null) retry=Map<String,dynamic>.from(jsonDecode(stored) as Map); } catch(_) {}
-    // A changed payload is a genuinely new request. One bounded last-request
-    // record per account is retained for seven days, including after success.
-    final now=DateTime.now().millisecondsSinceEpoch;
-    final same=retry?['fingerprint']==fingerprint && now-(retry?['at'] as int? ?? 0)<const Duration(days:7).inMilliseconds;
-    final key=same?retry!['key'] as String:newProxoRequestId();
-    if(!await p.setString(storage,jsonEncode({'fingerprint':fingerprint,'key':key,'at':now})))throw const TopupFailure('STORAGE_UNAVAILABLE');
+    final key = await _retryKey(owner, fingerprint);
     if(client.auth.currentUser?.id!=owner)throw const TopupFailure('SESSION_CHANGED');
     AppTelemetryService.active?.event('action','topup_submit',outcome:'incomplete');
     final watch=Stopwatch()..start();
@@ -47,6 +89,8 @@ class TopupService {
       if(client.auth.currentUser?.id!=owner)throw const TopupFailure('SESSION_CHANGED');
       final result=Map<String,dynamic>.from(raw as Map);
       if(result['ok']!=true)throw TopupFailure(result['code'] as String? ?? 'TOPUP_FAILED');
+      await _completed(owner, fingerprint);
+      if(client.auth.currentUser?.id!=owner)throw const TopupFailure('SESSION_CHANGED');
       AppDataCache.forClient(client).financialChanged();
       AppTelemetryService.active?.event('action','topup_submit',outcome:'success');
       return result;

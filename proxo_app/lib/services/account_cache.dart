@@ -36,7 +36,7 @@ class AccountCache {
     final owner = _owner, epoch = _epoch, version = _versions[key]??0;
     late final Future<T> request;
     request = Future<T>.sync(loader).then((v) {
-      if (_owner != owner || _epoch != epoch) throw CacheScopeChanged();
+      if (_owner != owner || _epoch != epoch || (_versions[key]??0)!=version) throw CacheScopeChanged();
       if ((_versions[key]??0)==version) {
         final size=utf8.encode(jsonEncode(v)).length;
         if (size<=maxBytes) {

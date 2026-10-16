@@ -78,6 +78,7 @@ class BestMetricsHomeSectionState extends State<BestMetricsHomeSection> {
   void _openAll({String? initialAdId}) {
     Navigator.of(context).push(
       PageRouteBuilder<void>(
+        settings: const RouteSettings(name: 'best_metrics'),
         transitionDuration: const Duration(milliseconds: 240),
         reverseTransitionDuration: const Duration(milliseconds: 200),
         pageBuilder: (_, animation, __) => FadeTransition(

@@ -407,8 +407,9 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
 
   @override
   Future<AdPendingSubmission?> pending() async {
-    final raw = (await SharedPreferences.getInstance()).getString(_storageKey);
-    if (raw == null) return null;
+    final owner = _user, key = _storageKey;
+    final raw = (await SharedPreferences.getInstance()).getString(key);
+    if (client.auth.currentUser?.id != owner || raw == null) return null;
     return AdPendingSubmission.fromJson(_map(jsonDecode(raw)));
   }
 
@@ -423,16 +424,20 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
           : Future.error(const AdSubmissionFailure('IDEMPOTENCY_CONFLICT',
               uncertain: true));
     }
-    final operation = _submit(request, progress)
+    final operation = _submit(request, progress, user)
         .whenComplete(() => _activeSubmissions.remove(user));
     _activeSubmissions[user] = (request.id, operation);
     return operation;
   }
 
   Future<String> _submit(AdPendingSubmission request,
-      ValueNotifier<AdPaymentProgress> progress) async {
+      ValueNotifier<AdPaymentProgress> progress, String owner) async {
+    void checkOwner() {
+      if (client.auth.currentUser?.id != owner) throw const AdSubmissionFailure('NOT_AUTHENTICATED', uncertain: true);
+    }
+    final key = 'proxo.pending-ad.v1.$owner';
     final prefs = await SharedPreferences.getInstance();
-    final key = _storageKey;
+    checkOwner();
     final existing = prefs.getString(key);
     if (existing != null &&
         AdPendingSubmission.fromJson(_map(jsonDecode(existing))).id !=
@@ -444,11 +449,13 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
     }
     String? paymentId;
     try {
+      checkOwner();
       // Recover a committed operation before checking dates or spending again.
       final recovered =
           _map(await client.rpc('pa_ad_submission_status', params: {
         'p_submission_id': request.id,
       }).timeout(const Duration(seconds: 20)));
+      checkOwner();
       if (recovered['ok'] == true) {
         await prefs.remove(key);
         final adId = recovered['ad_id'] as String;
@@ -466,8 +473,9 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
             errors.containsKey('schedule') ? 'INVALID_SCHEDULE' : 'INVALID_AD');
       }
       if (request.draft.paymentMethod == 'fastpay') {
-        paymentId = await _payWithFastPay(request, progress);
+        paymentId = await _payWithFastPay(request, progress, owner);
       }
+      checkOwner();
       progress.value = const AdPaymentProgress();
       final result = _map(await client.rpc('pa_submit_ad', params: {
         'p_submission_id': request.id,
@@ -477,6 +485,7 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
         'p_promo_id': request.draft.promoId,
         'p_promo_code': request.draft.promoCode,
       }).timeout(const Duration(seconds: 30)));
+      checkOwner();
       if (result['ok'] != true) throw AdSubmissionFailure('${result['code']}');
       final adId = result['ad_id'] as String;
       await prefs.remove(key);
@@ -485,6 +494,7 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
       _ensureThumbnail(adId);
       return adId;
     } on AdSubmissionFailure catch (e) {
+      AppTelemetryService.active?.event('action', 'ad_submit', outcome: 'failure');
       if (!e.uncertain) await prefs.remove(key);
       if (!e.uncertain && paymentId != null) {
         throw AdSubmissionFailure(e.code, paymentCredited: true);
@@ -505,13 +515,18 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
   }
 
   Future<String> _payWithFastPay(
-      AdPendingSubmission r, ValueNotifier<AdPaymentProgress> progress) async {
+      AdPendingSubmission r, ValueNotifier<AdPaymentProgress> progress, String owner) async {
+    void checkOwner() {
+      if (client.auth.currentUser?.id != owner) throw const AdSubmissionFailure('NOT_AUTHENTICATED', uncertain: true);
+    }
+    checkOwner();
     if (r.quote.totalIqd < 1000) {
       throw const AdSubmissionFailure('AMOUNT_TOO_SMALL');
     }
     const base = 'https://email.proxopages.com/webhook/fastpay';
     final orderId = r.fastPayOrderId;
     Map<String, dynamic>? row = await _paymentRow(orderId);
+    checkOwner();
     if (row == null) {
       final session = client.auth.currentSession;
       if (session == null) throw const AdSubmissionFailure('NOT_AUTHENTICATED');
@@ -550,7 +565,9 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
     }
     final deadline = DateTime.now().add(const Duration(minutes: 11));
     while (DateTime.now().isBefore(deadline)) {
+      checkOwner();
       row ??= await _paymentRow(orderId);
+      checkOwner();
       if (row != null) {
         final status = '${row['gateway_status']}'.toUpperCase();
         if (row['status'] == 'approved' &&
@@ -580,6 +597,7 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
                     '&transactionId=${Uri.encodeQueryComponent(orderId)}');
       }
       await Future<void>.delayed(const Duration(seconds: 3));
+      checkOwner();
       final session = client.auth.currentSession;
       if (session == null) throw const AdSubmissionFailure('NOT_AUTHENTICATED');
       try {

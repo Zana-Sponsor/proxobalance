@@ -763,6 +763,7 @@ class ProxoLinkPageEditorState extends State<ProxoLinkPageEditor> {
                                     onPressed: () => Navigator.push(
                                       context,
                                       MaterialPageRoute<void>(
+                                        settings: const RouteSettings(name: 'page_preview'),
                                         builder: (_) => CardWebViewScreen(
                                           title: 'پێشبینینی شێواز',
                                           allowContactActions: false,

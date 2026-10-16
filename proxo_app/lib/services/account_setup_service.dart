@@ -49,6 +49,7 @@ class AccountSetupService {
       client.from('profiles').select('id').eq('id', user.id).maybeSingle(),
       client.from('pa_wallets').select('user_id').eq('user_id', user.id).maybeSingle(),
       client.from('pa_user_points').select('user_id').eq('user_id', user.id).maybeSingle(),
+      client.from('pa_coins').select('user_id').eq('user_id', user.id).maybeSingle(),
     ]).timeout(const Duration(seconds: 15));
     if (scope != owner || records.any((r) => r == null)) throw StateError('SETUP_RECORDS_UNAVAILABLE');
     _readyScope = owner;

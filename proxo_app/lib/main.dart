@@ -11,11 +11,11 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'services/notification_service.dart';
-import 'services/admin_notifier.dart';
 import 'services/auth_activity_service.dart';
-import 'services/account_setup_service.dart';
 import 'services/account_cache.dart';
 import 'services/app_telemetry_service.dart';
+import 'services/observed_http_client.dart';
+import 'package:http/http.dart' as http;
 import 'screens/account_setup_screen.dart';
 import 'screens/auth_screen.dart';
 import 'screens/splash_screen.dart';
@@ -106,6 +106,7 @@ void main() async {
   await Supabase.initialize(
     url: kSupabaseUrl,
     anonKey: kSupabaseAnonKey,
+    httpClient: ObservedHttpClient(http.Client()),
   );
   supabase = Supabase.instance.client;
   AuthActivityService.forClient(supabase).start();
@@ -135,8 +136,31 @@ void main() async {
 // ProxoApp
 // ─────────────────────────────────────────────────────────────────────────────
 
-class ProxoApp extends StatelessWidget {
+class ProxoApp extends StatefulWidget {
   const ProxoApp({super.key});
+  @override State<ProxoApp> createState() => _ProxoAppState();
+}
+class _ProxoAppState extends State<ProxoApp> {
+  StreamSubscription<AuthState>? _auth;
+  String? _owner;
+  @override void initState() {
+    super.initState();
+    final client = Supabase.instance.client;
+    _owner = client.auth.currentUser?.id;
+    _auth = client.auth.onAuthStateChange.listen((state) {
+      final previous = _owner;
+      _owner = state.session?.user.id;
+      if (previous == null || previous == _owner || AuthScreen.inOtpFlow) return;
+      // This listener outlives the login route. Remove every private route,
+      // including a details sheet open when the session is remotely revoked.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        navigatorKey.currentState?.pushAndRemoveUntil(
+          MaterialPageRoute<void>(builder: (_) => const _AuthGate()), (_) => false);
+      });
+    });
+  }
+  @override void dispose() { unawaited(_auth?.cancel()); super.dispose(); }
 
   @override
   Widget build(BuildContext context) {
@@ -174,7 +198,7 @@ class ProxoApp extends StatelessWidget {
         child: AdActivationNoticeHost(
           client: Supabase.instance.client,
           onOpen: (id) => navigatorKey.currentState?.push(
-            ProxoPageRoute<void>(builder: (_) => AdScreen(initialAdId: id))),
+            ProxoPageRoute<void>(builder: (_) => AccountSetupGate(child: AdScreen(initialAdId: id)))),
           child: child ?? const SizedBox.shrink(),
         ),
       ),
@@ -202,22 +226,22 @@ class ProxoApp extends StatelessWidget {
       // `MaterialPageRoute` خۆی 300msـە و `reverseTransitionDuration`ی
       // جیاوازی نییە — ئیشارەتی سوایپی هەبوو، بەڵام هەستەکەی جیاواز بوو.
       case '/my-ads':
-        return ProxoPageRoute<void>(builder: (_) => const AdScreen());
+        return ProxoPageRoute<void>(settings: settings, builder: (_) => const AccountSetupGate(child: AdScreen()));
       case '/notifications':
-        return ProxoPageRoute<void>(
-            builder: (_) => const NotificationsScreen());
+        return ProxoPageRoute<void>(settings: settings, 
+            builder: (_) => const AccountSetupGate(child: NotificationsScreen()));
       case '/wallet':
-        return ProxoPageRoute<void>(builder: (_) => const AccountSetupGate(child: MainShell()));
+        return ProxoPageRoute<void>(settings: settings, builder: (_) => const AccountSetupGate(child: MainShell()));
       case '/profile':
-        return ProxoPageRoute<void>(builder: (_) => const ProfileScreen());
+        return ProxoPageRoute<void>(settings: settings, builder: (_) => const AccountSetupGate(child: ProfileScreen()));
       case '/transactions':
-        return ProxoPageRoute<void>(builder: (_) => const TxHistoryPage());
+        return ProxoPageRoute<void>(settings: settings, builder: (_) => const AccountSetupGate(child: TxHistoryPage()));
       case '/coupons':
-        return ProxoPageRoute<void>(builder: (_) => const DiscountCodesPage());
+        return ProxoPageRoute<void>(settings: settings, builder: (_) => const AccountSetupGate(child: DiscountCodesPage()));
       case '/faq':
-        return ProxoPageRoute<void>(builder: (_) => const FaqScreen());
+        return ProxoPageRoute<void>(settings: settings, builder: (_) => const AccountSetupGate(child: FaqScreen()));
       case '/assets':
-        return ProxoPageRoute<void>(builder: (_) => const AccountSetupGate(child: MainShell()));
+        return ProxoPageRoute<void>(settings: settings, builder: (_) => const AccountSetupGate(child: MainShell()));
       default:
         return null;
     }
