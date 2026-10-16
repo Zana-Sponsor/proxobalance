@@ -383,22 +383,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _signingOut.value = true;
     try {
       await AuthActivityService.forClient(_client).signOut();
-      // A successful login may have removed AuthGate's original route.
-      // Clear this stack if another Auth listener has not already navigated.
-      if (mounted && ModalRoute.of(context)?.isCurrent == true) {
-        Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
-          MaterialPageRoute<void>(builder: (_) => const AuthScreen()),
-          (route) => false,
-        );
-      }
     } on AuthException catch (error) {
-      if (mounted) _showMessage(_friendlyAuthError(error.message));
+      if (mounted && _client.auth.currentSession != null) {
+        _showMessage(_friendlyAuthError(error.message));
+      }
     } catch (_) {
-      if (mounted) {
+      if (mounted && _client.auth.currentSession != null) {
         _showMessage('دەرچوون سەرکەوتوو نەبوو. تکایە دووبارە هەوڵ بدەرەوە.');
       }
     } finally {
-      if (mounted) _signingOut.value = false;
+      if (mounted) {
+        _signingOut.value = false;
+        // AuthGate may no longer be mounted. The SDK also clears its local
+        // session before a remote logout failure: do not leave protected UI
+        // visible in either case. Server audit still requires real revocation.
+        if (_client.auth.currentSession == null &&
+            ModalRoute.of(context)?.isCurrent == true) {
+          Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+            MaterialPageRoute<void>(builder: (_) => const AuthScreen()),
+            (route) => false,
+          );
+        }
+      }
     }
   }
 
