@@ -19,6 +19,9 @@ begin
   x:=public.pa_record_app_session(sa,'{"device_model":"Isolated fixture","device_name":"Isolated Android","os":"Android","os_version":"13","platform":"android"}');
   y:=public.pa_record_app_session(sa,'{"device_model":"duplicate"}');
   if x is distinct from y then raise exception 'Live duplicate session failed'; end if;
+  perform public.pa_login_close_session(x);
+  if exists(select 1 from public.pa_login_history where id=x and logout_time is not null) then
+    raise exception 'Legacy RPC closed an active Auth session history'; end if;
   if (select count(*) from public.pa_login_history where session_id=sa::text)<>1
     or (select device_model from public.pa_login_history where id=x) is distinct from 'Isolated fixture'
     then raise exception 'Live model recording failed'; end if;
