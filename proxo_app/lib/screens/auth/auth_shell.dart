@@ -11,11 +11,11 @@ import 'package:flutter/services.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:http/http.dart' as http;
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/app_locale.dart';
 import '../../services/trusted_device_service.dart';
+import '../../services/auth_activity_service.dart';
 import '../../widgets/auth/auth_design.dart';
 import '../../widgets/auth/auth_otp_field.dart';
 import '../../widgets/auth/auth_widgets.dart';
@@ -516,8 +516,7 @@ class _AuthShellState extends State<AuthShell> {
     final User? u = r.user;
     if (u == null) throw const AuthException('no session');
 
-    unawaited(_logAuthActivity(userId: u.id, action: 'login'));
-    unawaited(_recordLoginHistory(u.id));
+    unawaited(AuthActivityService.forClient(supabase).recordCurrentSession());
     unawaited(TrustedDeviceService.remember(supabase));
     await _saveDeviceToken(u.id);
   }
@@ -850,8 +849,7 @@ class _AuthShellState extends State<AuthShell> {
           );
           final User? user = response.user;
           if (user == null) throw const AuthException('session_failed');
-          unawaited(_logAuthActivity(userId: user.id, action: 'register'));
-          unawaited(_recordLoginHistory(user.id));
+          unawaited(AuthActivityService.forClient(supabase).recordCurrentSession());
           unawaited(TrustedDeviceService.remember(supabase));
           await _saveDeviceToken(user.id);
           AuthFlowGuard.inOtpFlow = false;
@@ -906,11 +904,7 @@ class _AuthShellState extends State<AuthShell> {
             // تەنها دوای دروستبوونی سێشنی خاوەن هەژمار، تۆماری
             // سڕینەوەی هەمان بەکارهێنەر لادەبرێت.
             try { await supabase.rpc('pa_restore_deleted_account'); } catch (_) {}
-            unawaited(_logAuthActivity(
-              userId: r.user!.id,
-              action: _tab == _Tab.login ? 'login' : 'register',
-            ));
-            unawaited(_recordLoginHistory(r.user!.id));
+            unawaited(AuthActivityService.forClient(supabase).recordCurrentSession());
             unawaited(TrustedDeviceService.remember(supabase));
             await _saveDeviceToken(r.user!.id);
             AuthFlowGuard.inOtpFlow = false;
@@ -937,77 +931,6 @@ class _AuthShellState extends State<AuthShell> {
     } finally {
       if (mounted) setState(() => _loading = false);
     }
-  }
-
-  Future<void> _logAuthActivity({
-    required String userId,
-    required String action,
-  }) async {
-    try {
-      await supabase.from('pa_activity_log').insert({
-        'user_id': userId,
-        'action': action,
-        'description': action == 'login'
-            ? 'چوونەژوورەوە بۆ هەژمار'
-            : 'تۆمارکردنی هەژماری نوێ',
-      });
-    } catch (_) {}
-  }
-
-  Future<void> _recordLoginHistory(String userId) async {
-    try {
-      final device = await _getDeviceModel();
-      final geo    = await _getIpLocation();
-      await supabase.from('pa_login_history').insert({
-        'user_id':     userId,
-        'device_info': device,
-        'location':    geo['location'],
-        'ip_address':  geo['ip'],
-        'success':     true,
-      });
-    } catch (_) {}
-  }
-
-  Future<String> _getDeviceModel() async {
-    try {
-      final info = DeviceInfoPlugin();
-      if (Theme.of(context).platform == TargetPlatform.iOS) {
-        final ios = await info.iosInfo;
-        final name = ios.name.isNotEmpty ? ios.name : 'ئایفۆن';
-        return '$name (iOS ${ios.systemVersion})';
-      } else {
-        final android = await info.androidInfo;
-        final brand = android.brand.isNotEmpty
-            ? '${android.brand[0].toUpperCase()}${android.brand.substring(1)}'
-            : '';
-        final model = android.model;
-        final combined = '$brand $model'.trim();
-        return combined.isEmpty ? 'ئامێری ئەندرۆید' : combined;
-      }
-    } catch (_) {
-      return 'ئامێری نەزانراو';
-    }
-  }
-
-  Future<Map<String, String>> _getIpLocation() async {
-    try {
-      final res = await http
-          .get(Uri.parse('https://ipapi.co/json/'))
-          .timeout(const Duration(seconds: 5));
-      if (res.statusCode == 200) {
-        final data = jsonDecode(res.body) as Map<String, dynamic>;
-        if (data['error'] != true) {
-          final city    = data['city']?.toString() ?? '';
-          final country = data['country_name']?.toString() ?? '';
-          final loc = [city, country].where((e) => e.isNotEmpty).join('، ');
-          return {
-            'location': loc.isEmpty ? 'نەزانراو' : loc,
-            'ip': data['ip']?.toString() ?? '',
-          };
-        }
-      }
-    } catch (_) {}
-    return {'location': 'نەزانراو', 'ip': ''};
   }
 
   Future<void> _saveDeviceToken(String userId) async {
@@ -1201,7 +1124,7 @@ class _AuthShellState extends State<AuthShell> {
 
       if (loginRes.user != null) {
         await _saveDeviceToken(loginRes.user!.id);
-        unawaited(_recordLoginHistory(loginRes.user!.id));
+        unawaited(AuthActivityService.forClient(supabase).recordCurrentSession());
         if (!mounted) return;
         _fpUserId = ''; _fpVerifiedOtpId = '';
         _fpEmailCtrl.clear(); _fpNewPassCtrl.clear(); _fpConfirmPassCtrl.clear();
