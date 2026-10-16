@@ -13,7 +13,9 @@ function handler(name, options = {}) {
   const admin = {
     rpc: async (rpc, params) => {
       calls.push({ rpc, params });
-      if (rpc === 'pa_verify_whatsapp_otp') return { data: { success: true, data: { verified: options.verified ?? true, otp_id: otpId } } };
+      if (rpc === 'pa_verify_whatsapp_otp') return options.verifyFails
+        ? { error: { message: 'fixture verification outage' } }
+        : { data: { success: true, data: { verified: options.verified ?? true, otp_id: otpId } } };
       if (rpc === 'pa_profile_by_phone') return options.lookupFails
         ? { error: { message: 'fixture lookup failure' } }
         : { data: options.existing ? [{id:uid,is_banned:options.banned ?? false,match_count:options.matches ?? 1}] : [] };
@@ -27,20 +29,24 @@ function handler(name, options = {}) {
         eq: (field, value) => { calls.push({ table, field, value }); return chain; },
         is: () => chain,
         maybeSingle: async () => ({ data: options.existing ? { id: uid, is_banned: options.banned ?? false } : null }),
-        upsert: async value => { calls.push({ table, upsert: value }); return {}; },
+        upsert: async value => { calls.push({ table, upsert: value }); return options.profileWriteFails ? { error: { message: 'fixture write failure' } } : {}; },
         update: value => { operation = 'update'; calls.push({ table, update: value }); return chain; },
-        then: resolve => resolve(operation === 'update' ? {} : { data: null }),
+        then: resolve => resolve(operation === 'update' ? (options.auditFails ? { error: { message: 'fixture audit failure' } } : {}) : { data: null }),
       };
       return chain;
     },
     auth: { admin: {
-      createUser: async value => { calls.push({ create: value }); return { data: { user: { id: uid } } }; },
+      createUser: async value => { calls.push({ create: value }); return options.createError ? { error: { message: options.createError } } : { data: { user: { id: uid } } }; },
       deleteUser: async id => { calls.push({ delete: id }); return {}; },
-      getUserById: async id => { calls.push({ get: id }); return { data: { user: { email: 'fixture@example.invalid' } } }; },
-      generateLink: async value => { calls.push({ mint: value }); return { data: { properties: { hashed_token: 'fixture-hash' } } }; },
+      getUserById: async id => { calls.push({ get: id }); return options.authLookupFails ? { error: { message: 'fixture auth outage' } } : { data: { user: { email: options.noEmail ? '' : 'fixture@example.invalid' } } }; },
+      generateLink: async value => { calls.push({ mint: value }); return options.mintFails ? { error: { message: 'fixture mint failure' } } : { data: { properties: { hashed_token: options.noHash ? null : 'fixture-hash' } } }; },
     } },
   };
-  const anon = { auth: { verifyOtp: async () => ({ data: { session: { access_token: 'fixture-access', refresh_token: 'fixture-refresh' } } }) } };
+  const anon = { auth: { verifyOtp: async params => {
+    calls.push({ redeem: params });
+    return options.redeemFails ? { error: { message: 'fixture redemption outage' } }
+      : { data: { session: options.noSession ? null : { access_token: 'fixture-access', refresh_token: options.noRefresh ? null : 'fixture-refresh' } } };
+  } } };
   let serve;
   const source = readFileSync(new URL(`../proxo_app/supabase/functions/${name}/index.ts`, import.meta.url), 'utf8')
     .replace(/^import .*?;\s*$/m, '');
@@ -136,6 +142,83 @@ test('null, numeric and malformed OTP input is rejected before any database acce
       assert.equal((await h.request({...signup,code})).status,400);
       assert.equal(h.calls.length,0);
     }
+  }
+});
+
+test('verification outages and false verification cannot reach account lookup or session minting', async () => {
+  for (const name of ['phone-otp-session', 'whatsapp-session-exchange']) {
+    for (const options of [{ verifyFails: true }, { verified: false }]) {
+      const h = handler(name, options);
+      const r = await h.request(signup);
+      assert.equal(r.status, options.verifyFails ? 500 : 401);
+      assert.equal(r.body.error, options.verifyFails ? 'verify_failed' : 'invalid_code');
+      assert.equal(h.calls.length, 1);
+    }
+  }
+});
+
+test('missing, malformed and unavailable login accounts withhold sessions', async () => {
+  for (const [options, status, error] of [
+    [{}, 404, 'user_not_found'],
+    [{ existing: true, matches: 0 }, 500, 'lookup_failed'],
+    [{ existing: true, authLookupFails: true }, 500, 'lookup_failed'],
+    [{ existing: true, noEmail: true }, 409, 'no_email_on_account'],
+  ]) {
+    const h = handler('whatsapp-session-exchange', options);
+    const r = await h.request(signup);
+    assert.equal(r.status, status);
+    assert.equal(r.body.error, error);
+    assert.ok(!h.calls.some(x => x.create || x.mint || x.redeem));
+  }
+});
+
+test('session mint and redemption errors return no proof or session tokens', async () => {
+  for (const name of ['phone-otp-session', 'whatsapp-session-exchange']) {
+    const failures = [{ mintFails: true }, { noHash: true }];
+    if (name === 'whatsapp-session-exchange') failures.push({ redeemFails: true }, { noSession: true }, { noRefresh: true });
+    for (const options of failures) {
+      const h = handler(name, { existing: name === 'whatsapp-session-exchange', ...options });
+      const r = await h.request(signup);
+      assert.equal(r.status, 500);
+      assert.deepEqual(r.body, { ok: false, error: 'session_failed' });
+      if (options.mintFails || options.noHash) assert.ok(!h.calls.some(x => x.redeem));
+    }
+  }
+});
+
+test('signup provisioning failures cannot mint sessions and profile failures roll back the new user', async () => {
+  for (const [options, status, error] of [
+    [{ createError: 'fixture database outage' }, 500, 'provision_failed'],
+    [{ createError: 'user already registered' }, 409, 'already_registered'],
+    [{ profileWriteFails: true }, 500, 'provision_failed'],
+  ]) {
+    const h = handler('phone-otp-session', options);
+    const r = await h.request(signup);
+    assert.equal(r.status, status);
+    assert.equal(r.body.error, error);
+    assert.ok(!h.calls.some(x => x.mint || x.rpc === 'pa_record_signup_whatsapp_marketing'));
+    assert.equal(h.calls.some(x => x.delete), !!options.profileWriteFails);
+  }
+});
+
+test('successful login redeems a magic link and returns both tokens even if audit backfill fails', async () => {
+  const h = handler('whatsapp-session-exchange', { existing: true, auditFails: true });
+  const r = await h.request(signup);
+  assert.equal(r.status, 200);
+  assert.equal(r.body.access_token, 'fixture-access');
+  assert.equal(r.body.refresh_token, 'fixture-refresh');
+  assert.equal(h.calls.find(x => x.redeem).redeem.type, 'magiclink');
+  assert.equal(h.calls.find(x => x.redeem).redeem.token_hash, 'fixture-hash');
+  assert.ok(h.calls.findIndex(x => x.mint) < h.calls.findIndex(x => x.redeem));
+  assert.ok(!h.calls.some(x => x.create || x.delete));
+});
+
+test('weak signup passwords and short names do not consume a valid OTP', async () => {
+  for (const patch of [{ password: 'short' }, { password: 'onlyletters' }, { full_name: 'AB' }]) {
+    const h = handler('phone-otp-session');
+    const r = await h.request({ ...signup, ...patch });
+    assert.equal(r.status, 400);
+    assert.equal(h.calls.length, 0);
   }
 });
 
