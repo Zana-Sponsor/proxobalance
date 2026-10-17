@@ -47,7 +47,7 @@ try {
       const profiles = { 'user-fixture': { full_name: 'کڕیاری تاقیکردنەوە' },
         'admin-fixture': { full_name: 'ئادمینی تاقیکردنەوە' } };
       const orders = {};
-      for (const number of [1, 2, 3, 4, 5]) orders[id(number)] = { id: id(number),
+      for (const number of [1, 2, 3, 4, 5, 6, 7, 8]) orders[id(number)] = { id: id(number),
         order_code: 'P' + String(number).padStart(11, '0'), user_id: 'user-fixture',
         from_method: 'FastPay', to_method: 'FIB', amount: 10000, total: 9800 };
       const partial = (number, patch = {}) => ({ id: id(100 + number), order_id: id(number),
@@ -68,6 +68,15 @@ try {
         created_at: '2026-10-17T08:30:00.000Z' }), partial(2, {
         reason: ('وردەکاریی گەڕاندنەوەی پارە بۆ کڕیار.\n').repeat(100).slice(0, 1970) + ' کۆتایی هۆکاری درێژ.'
       }), partial(3, { reason: '<img src=x onerror="window.refundXss=true"> هۆکاری تاقیکردنەوەی دەقی پارێزراو.' })];
+      for (const [number, expected, payout, remainder] of [[6, 10500, 10000, 500], [7, 1600, 1000, 600], [8, 600, 0, 600]]) {
+        Object.assign(orders[id(number)], { total: expected, payout_iqd: payout,
+          payout_rounding_iqd: remainder, payout_settlement_id: id(600 + number),
+          ...(number === 7 ? { from_method: 'USDT', amount: 1.1 } : {}) });
+        shortfalls.push(partial(number, { refund_source: 'payout_rounding', expected_iqd: expected,
+          amount_iqd: remainder, refunded_after_iqd: remainder, balance_after_iqd: 1000 + remainder,
+          reason: 'پاشماوەی هەزارەکان لە کاتی پەسەندکردن بە ئۆتۆماتیکی بۆ باڵانسی هەژمار گەڕێندرایەوە.',
+          created_at: '2026-10-17T10:00:00.000Z' }));
+      }
       const refunds = [full(4), full(5, { refund_kind: 'failed_payout', confirmed_payout_failed: true })];
       const report = { refunds, shortfalls, orders, profiles };
       fixture.report = report;
@@ -106,6 +115,8 @@ try {
     assert.equal(await page.evaluate(() => document.fonts.check('13px R')), true);
     assert.match(await page.locator('#balanceShortfallList').textContent(), /9,650/);
     assert.match(await page.locator('#balanceShortfallList').textContent(), /9,600/);
+    assert.match(await page.locator('#balanceShortfallList').textContent(), /گەڕاندنەوەی ئۆتۆماتیکی/);
+    assert.match(await page.locator('#balanceShortfallList').textContent(), /ناردنی دەرەکی نییە/);
     assert.match(await page.locator('#balanceRefundList').textContent(), /تۆمار نەکراوە/);
     assert.match(await page.locator('#balanceRefundList').textContent(), /ئادمینی تاقیکردنەوە/);
     assert.equal(await page.locator('#balanceShortfallReference').count(), 0);
@@ -127,11 +138,15 @@ try {
       assert.equal(result.calls[1].snapshot, '2026-10-17T12:00:00.000Z');
       assert.ok(result.calls.every(call => call.date_from === '2026-10-17' && call.date_to === '2026-10-17'));
       const ids = result.captures.flatMap(capture => capture.ids);
-      assert.equal(ids.length, 6);
-      assert.equal(new Set(ids).size, 6);
+      assert.equal(ids.length, 9);
+      assert.equal(new Set(ids).size, 9);
       assert.ok(result.captures.length >= 3, 'Fixture spans real A4 pages');
-      assert.match(result.captures[0].text, /20,500/);
+      assert.match(result.captures[0].text, /22,200/);
       const allText = result.captures.map(capture => capture.text).join('\n');
+      assert.match(allText, /گەڕاندنەوەی ئۆتۆماتیکی/);
+      assert.match(allText, /ناردنی دەرەکی نییە/);
+      assert.match(allText, /10,500/);
+      assert.match(allText, /10,000/);
       assert.match(allText, /کۆتایی هۆکاری درێژ/);
       assert.ok(allText.includes('<img src=x onerror="window.refundXss=true">'));
       assert.ok(!allText.includes('shortfall:'));
@@ -139,7 +154,7 @@ try {
       assert.equal(await page.locator('.balance-refund-pdf').count(), 0);
       assert.equal(await page.locator('#balanceRefundReportError').textContent(), '');
       writeFileSync(output + '/captured-pages.json', JSON.stringify(result.captures, null, 2));
-      console.log('PASS: Kurdish PDF download contains all 6 full/partial cases across ' + result.captures.length + ' complete A4 pages; total 20,500 IQD.');
+      console.log('PASS: Kurdish PDF download contains all 9 full/manual/automatic cases across ' + result.captures.length + ' complete A4 pages; total 22,200 IQD.');
     }
     await page.evaluate(() => { fixture.allowed = false; balanceRefundReportControls(); });
     assert.equal(await page.locator('#balanceRefundReportBtn').isDisabled(), true);

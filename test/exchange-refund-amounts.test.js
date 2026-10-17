@@ -40,6 +40,39 @@ test('a fully accumulated shortfall has zero calculated sent and the individual 
     { expected: 9800, sent: 0, unpaid: 9800, credited: 200 });
 });
 
+test('automatic rounding records exact-thousand payouts and the complete remainder as one balance credit', () => {
+  for (const [expected, sent, remainder] of [[10500, 10000, 500], [1600, 1000, 600], [600, 0, 600]]) {
+    assert.deepEqual(amounts(shortfall({ refund_source: 'payout_rounding', expected_iqd: expected,
+      amount_iqd: remainder, refunded_before_iqd: 0, refunded_after_iqd: remainder })),
+      { expected, sent, unpaid: remainder, credited: remainder });
+  }
+});
+
+test('automatic and later manual credits retain their own snapshots without refunding the same remainder twice', () => {
+  const automatic = shortfall({ refund_source: 'payout_rounding', expected_iqd: 10500,
+    amount_iqd: 500, refunded_before_iqd: 0, refunded_after_iqd: 500 });
+  const later = shortfall({ refund_source: 'manual_shortfall', expected_iqd: 10500,
+    amount_iqd: 150, refunded_before_iqd: 500, refunded_after_iqd: 650 });
+  assert.deepEqual(amounts(automatic), { expected: 10500, sent: 10000, unpaid: 500, credited: 500 });
+  assert.deepEqual(amounts(later), { expected: 10500, sent: 9850, unpaid: 650, credited: 150 });
+  assert.equal(amounts(automatic).credited + amounts(later).credited, 650);
+});
+
+test('a malformed automatic source cannot assert a rounded payout or reuse a previous manual credit', () => {
+  for (const patch of [
+    { amount_iqd: 150, refunded_after_iqd: 150 },
+    { amount_iqd: 1500, refunded_after_iqd: 1500 },
+    { refunded_before_iqd: 100, refunded_after_iqd: 600 },
+    { expected_iqd: 10000 },
+    { expected_iqd: 0, amount_iqd: 0, refunded_after_iqd: 0 }
+  ]) {
+    const result = amounts(shortfall({ refund_source: 'payout_rounding', expected_iqd: 10500,
+      amount_iqd: 500, refunded_before_iqd: 0, refunded_after_iqd: 500, ...patch }));
+    assert.equal(result.sent, null, JSON.stringify(patch));
+    assert.equal(result.unpaid, null, JSON.stringify(patch));
+  }
+});
+
 test('Postgres whole numeric strings are accepted without turning empty or absent fields into zero', () => {
   assert.deepEqual(amounts(shortfall({ amount_iqd: '150', expected_iqd: '9800.00',
     refunded_before_iqd: '0', refunded_after_iqd: '150' })),

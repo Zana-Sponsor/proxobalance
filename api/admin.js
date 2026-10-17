@@ -13,6 +13,7 @@
 //           4xx/5xx { ok: false, error: "...", code: "..." }
 // ─────────────────────────────────────────────────────────────
 import { createClient } from '@supabase/supabase-js';
+import { payoutPlan } from './_lib/payout-rounding.js';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://pycxuugoblkslvwebxuu.supabase.co';
 const SERVICE_KEY  = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
@@ -48,7 +49,7 @@ const REVIEWABLE_ORDER_STATUSES = new Set([STATUS_PENDING, STATUS_CORRECTED]);
 const SUPPORT_STATUSES = new Set(['open', 'in_progress', 'resolved', 'closed']);
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const REFUND_REPORT_PAGE_SIZE = 100;
-const REFUND_ORDER_FIELDS = 'id,order_code,user_id,amount,total,from_method,to_method,status,balance_refunded_at';
+const REFUND_ORDER_FIELDS = 'id,order_code,user_id,amount,total,from_method,to_method,status,balance_refunded_at,payout_iqd,payout_rounding_iqd,payout_settlement_id';
 const BAGHDAD_CALENDAR = new Intl.DateTimeFormat('en-US-u-ca-gregory-nu-latn', {
   timeZone:'Asia/Baghdad',year:'numeric',month:'2-digit',day:'2-digit',era:'short'
 });
@@ -95,6 +96,63 @@ async function balanceRefundOrders(rows) {
   const ids=[...new Set(rows.map(row=>row.order_id).filter(Boolean))];
   const data=await balanceRelationRows('ex_orders',REFUND_ORDER_FIELDS,ids);
   return Object.fromEntries(data.map(order=>[order.id,order]));
+}
+
+function validApprovalTimestamp(value) {
+  if (typeof value !== 'string') return false;
+  const match = /^(\d{4}-\d{2}-\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.\d{1,6})?(Z|[+-]\d{2}:\d{2})$/.exec(value);
+  if (!match || match[1].startsWith('0000') || Number(match[2]) > 23 ||
+      Number(match[3]) > 59 || Number(match[4]) > 59) return false;
+  const day = Date.parse(match[1] + 'T00:00:00.000Z');
+  return Number.isFinite(day) && new Date(day).toISOString().slice(0, 10) === match[1] &&
+    Number.isFinite(Date.parse(value));
+}
+
+function validSettlementReceipt(order, value) {
+  const prefix = SUPABASE_URL + '/storage/v1/object/public/receipts/' + order.user_id + '/';
+  return typeof value === 'string' && value.length > prefix.length && value.length <= 2000 &&
+    value.startsWith(prefix) && !/[\s\u0000-\u001f\u007f?#\\]/.test(value) && !/\.\.|%2e|%2f|%5c/i.test(value.slice(prefix.length));
+}
+
+function settlementError(error) {
+  const message = String(error?.message || '');
+  if (error?.code === '42501' || message.includes('STAFF_PERMISSION_REQUIRED'))
+    return {status:403,code:'staff_permission_required',message:'مۆڵەتی پەسەندکردنی ئەم داواکارییەت نییە'};
+  const known = [
+    ['ORDER_SETTLEMENT_STALE',409,'approval_stale','داواکارییەکە گۆڕاوە؛ نوێی بکەرەوە و بڕی ناردنەکە دووبارە بپشکنە'],
+    ['ORDER_ALREADY_DECIDED',409,'already_decided','ئەم داواکارییە پێشتر بڕیاری لەسەر دراوە'],
+    ['SETTLEMENT_REQUEST_KEY_CONFLICT',409,'approval_request_conflict','ئەم داواکارییەی پەسەندکردن پێشتر بە زانیارییەکی جیاواز تۆمار کراوە'],
+    ['SETTLEMENT_RECEIPT_LOCKED',409,'settlement_receipt_locked','وەسڵی ئەم داواکارییە ناتوانرێت زیاد بکرێت یان بگۆڕدرێت'],
+    ['SETTLEMENT_RECEIPT_CONFLICT',409,'settlement_receipt_conflict','وەسڵێکی جیاواز پێشتر بۆ ئەم داواکارییە تۆمار کراوە'],
+    ['ORDER_NOT_FOUND',404,'not_found','Order not found'],
+    ['INVALID_PAYOUT_RECEIPT',400,'invalid_receipt','وەسڵی ناردن دروست نییە'],
+    ['RECEIPT_HAS_MULTIPLE_ORDERS',409,'receipt_multiple_orders','وەسڵی وەرگرتن لە زیاتر لە داواکارییەک بەکارهاتووە'],
+    ['RECEIVED_FUNDS_PROOF_REQUIRED',400,'received_funds_proof_required','وەسڵی پارەی وەرگیراو پێویستە'],
+    ['BALANCE_DEBIT_PROOF_REQUIRED',400,'balance_debit_proof_required','تۆماری کەمکردنەوەی باڵانسی سەرچاوە پێویستە'],
+    ['PAYOUT_AMOUNT_MISMATCH',400,'payout_amount_mismatch','بڕی ناردن و دۆخی پشتڕاستکردنەوە لەگەڵ داواکارییەکە ناگونجێت'],
+    ['ORDER_NOT_ELIGIBLE_FOR_SETTLEMENT',400,'invalid_payout_amount','بڕ یان ڕێڕەوی ئەم داواکارییە بۆ پەسەندکردن دروست نییە'],
+    ['INVALID_SETTLEMENT_REQUEST',400,'invalid_approval','زانیارییەکانی پەسەندکردن تەواو نییە']
+  ];
+  const match = known.find(([name]) => message.includes(name));
+  if (match) return {status:match[1],code:match[2],message:match[3]};
+  if (['PGRST202','42883','42703','42P01'].includes(error?.code))
+    return {status:503,code:'settlement_unavailable',message:'پەسەندکردن کاتییە بەردەست نییە؛ هەمان داواکاری دووبارە بنێرەوە'};
+  return {status:500,code:'settlement_result_unknown',message:'ئەنجامی کارەکە پشتڕاست نەکرایەوە؛ هەمان داواکاری دووبارە بنێرەوە'};
+}
+
+async function settlementRpc(name, args, record) {
+  let result;
+  try { result = await db.rpc(name, args); }
+  catch (error) { throw settlementError(error); }
+  if (result?.error) throw settlementError(result.error);
+  // JSON and single-row table encodings are both used by PostgREST versions.
+  const data = Array.isArray(result?.data)
+    ? result.data.length === 1 ? result.data[0] : null : result?.data;
+  if (!data || typeof data !== 'object' || Array.isArray(data) ||
+      !data.order || Array.isArray(data.order) || data.order.id !== args.p_order_id ||
+      !data[record] || Array.isArray(data[record]) || !UUID.test(String(data[record].id || '')))
+    throw settlementError(null);
+  return data;
 }
 
 function supportStatusLabel(status) {
@@ -187,9 +245,21 @@ const actions = {
     return data;
   },
   async save_payout_receipt({order_id,payout_receipt_url},ctx){
-    const {data:order,error:readError}=await db.from('ex_orders').select('id,user_id,balance_refunded_at').eq('id',order_id).single();
+    if(typeof order_id!=='string'||!UUID.test(order_id))
+      throw {status:400,code:'bad_input',message:'A valid order_id is required'};
+    order_id=order_id.toLowerCase();
+    const {data:order,error:readError}=await db.from('ex_orders').select('id,user_id,balance_refunded_at,payout_settlement_id').eq('id',order_id).single();
     if(readError||!order)throw {status:404,code:'not_found',message:'Order not found'};
     if(order.balance_refunded_at)throw {status:409,code:'already_refunded',message:'Order was already refunded'};
+    if(order.payout_settlement_id){
+      const receipt=typeof payout_receipt_url==='string'?payout_receipt_url.trim():null;
+      if(!validSettlementReceipt(order,receipt))
+        throw {status:400,code:'invalid_receipt',message:'Invalid payout receipt'};
+      const data=await settlementRpc('ex_admin_attach_settlement_receipt',{
+        p_order_id:order_id,p_admin_id:ctx.user.id,p_payout_receipt_url:receipt
+      },'receipt');
+      return data.order;
+    }
     const prefix=SUPABASE_URL+'/storage/v1/object/public/receipts/'+order.user_id+'/';
     if(typeof payout_receipt_url!=='string'||!payout_receipt_url.startsWith(prefix)||payout_receipt_url.length>2000)
       throw {status:400,code:'invalid_receipt',message:'Invalid payout receipt'};
@@ -268,7 +338,7 @@ const actions = {
     }
     const [full,partial]=await Promise.all([
       reportQuery('ex_refund_cases','id,order_id,user_id,amount_iqd,status,refund_kind,bank_verification_reference,failure_reason,verified_by,confirmed_funds_received,confirmed_payout_failed,journal_id,created_at'),
-      reportQuery('ex_order_shortfall_refunds','id,order_id,order_code,user_id,customer_phone,admin_id,amount_iqd,expected_iqd,refunded_before_iqd,refunded_after_iqd,balance_before_iqd,balance_after_iqd,journal_id,request_key,reason,verification_reference,created_at')
+      reportQuery('ex_order_shortfall_refunds','id,order_id,order_code,user_id,customer_phone,admin_id,amount_iqd,expected_iqd,refunded_before_iqd,refunded_after_iqd,balance_before_iqd,balance_after_iqd,journal_id,request_key,reason,verification_reference,refund_source,created_at')
     ]);
     for(const result of [full,partial]){
       if(result.error)throw result.error;
@@ -291,7 +361,7 @@ const actions = {
     if(!/^(?:[0-9a-f-]{36}|P[A-Z0-9]{11})$/i.test(q))
       throw {status:400,code:'invalid_order',message:'Enter an exact order code or UUID'};
     let query=db.from('ex_orders')
-      .select('id,order_code,user_id,amount,total,fee,from_method,to_method,receipt_url,receipt_hash,payout_receipt_url,status,created_at,decided_at,balance_refunded_at,balance_debit_journal_id,shortfall_refunded_iqd')
+      .select('id,order_code,user_id,amount,total,fee,from_method,to_method,receipt_url,receipt_hash,payout_receipt_url,status,created_at,updated_at,decided_at,balance_refunded_at,balance_debit_journal_id,shortfall_refunded_iqd,payout_iqd,payout_rounding_iqd,payout_settlement_id')
       .limit(1);
     query=/^[0-9a-f-]{36}$/i.test(q)?query.eq('id',q):query.eq('order_code',q.toUpperCase());
     const {data:order,error}=await query.maybeSingle();
@@ -463,12 +533,50 @@ const actions = {
     return { pong: true, admin: ctx.profile.email };
   },
 
-  async approve_order({ order_id, payout_receipt_url, admin_note }, ctx) {
-    if (!order_id) throw { status: 400, code: 'bad_input', message: 'order_id is required' };
+  async approve_order({ order_id, payout_receipt_url, admin_note, request_key,
+    expected_updated_at, expected_total, confirmed_payout_iqd, confirmed_received, confirmed_paid }, ctx) {
+    if (typeof order_id !== 'string' || !UUID.test(order_id))
+      throw { status: 400, code: 'bad_input', message: 'A valid order_id is required' };
+    order_id = order_id.toLowerCase();
 
     const { data: order, error: e1 } = await db
       .from('ex_orders').select('*').eq('id', order_id).single();
     if (e1 || !order) throw { status: 404, code: 'not_found', message: 'Order not found' };
+    const plan = payoutPlan(expected_total, order.to_method);
+    if (plan.applies) {
+      if (typeof request_key !== 'string' || !UUID.test(request_key) ||
+          !validApprovalTimestamp(expected_updated_at) || !plan.valid || confirmed_payout_iqd == null)
+        throw {status:400,code:'approval_refresh_required',message:'نوێی بکەرەوە و بڕی ناردنەکە پێش پەسەندکردن پشتڕاست بکەرەوە'};
+      const confirmed = payoutPlan(confirmed_payout_iqd, order.to_method);
+      if (!confirmed.valid || confirmed.expected_iqd !== plan.payout_iqd)
+        throw {status:400,code:'payout_amount_mismatch',message:'بڕی ناردن دەبێت لەگەڵ بڕی پیشاندراو یەک بێت'};
+      if (confirmed_received !== true || confirmed_paid !== plan.requires_payout)
+        throw {status:400,code:'confirmation_required',message:'وەرگرتنی پارە و دۆخی ناردنی بڕی پیشاندراو پشتڕاست بکەرەوە'};
+      if (order.from_method !== 'USDT' &&
+          (!payoutPlan(order.amount, order.to_method).valid || Number(order.amount) <= 0))
+        throw {status:400,code:'invalid_payout_amount',message:'بڕی سەرچاوەی دینار دەبێت ژمارەیەکی تەواو بێت'};
+      if ((admin_note != null && typeof admin_note !== 'string') || String(admin_note || '').trim().length > 500)
+        throw {status:400,code:'bad_note',message:'Invalid order note'};
+      const receipt = payout_receipt_url == null || payout_receipt_url === '' ? null
+        : typeof payout_receipt_url === 'string' ? payout_receipt_url.trim() || null : false;
+      if (receipt === false || (receipt !== null && (!plan.requires_payout || !validSettlementReceipt(order, receipt))))
+        throw {status:400,code:'invalid_receipt',message:'Invalid payout receipt'};
+      // The RPC checks exact-key replays before order state/stale checks. Do not
+      // preclude a retry merely because the first approval already committed.
+      const data = await settlementRpc('ex_admin_approve_order_settlement', {
+        p_order_id:order_id,p_admin_id:ctx.user.id,p_request_key:request_key.toLowerCase(),
+        // Preserve Postgres microseconds; a JS Date round-trip loses precision.
+        p_expected_updated_at:expected_updated_at,p_expected_total:plan.expected_iqd,
+        p_confirmed_payout_iqd:confirmed.expected_iqd,p_confirmed_received:confirmed_received,
+        p_confirmed_paid:confirmed_paid,p_payout_receipt_url:receipt,p_admin_note:admin_note?.trim() || null
+      }, 'settlement');
+      return {...data.order,settlement:data.settlement,refund:data.refund || null};
+    }
+    if (order.to_method !== 'USDT')
+      throw {status:400,code:'invalid_payout_route',message:'This order has no external payout destination'};
+    if ([request_key,expected_updated_at,expected_total,confirmed_payout_iqd,confirmed_received,confirmed_paid]
+        .some(value => value !== undefined))
+      throw {status:409,code:'approval_stale',message:'ڕێڕەوی داواکارییەکە گۆڕاوە؛ نوێی بکەرەوە و دووبارە بپشکنە'};
     if (order.balance_refunded_at || !REVIEWABLE_ORDER_STATUSES.has(order.status)) {
       throw { status: 409, code: 'already_decided', message: 'Order is not ready for review' };
     }

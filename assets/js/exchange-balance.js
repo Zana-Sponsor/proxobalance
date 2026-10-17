@@ -114,9 +114,10 @@ function renderBalanceHistory(){
     const held=(j.ex_balance_entries||[]).find(x=>x.account==='customer_held');
     const amount=Number(available?.delta_iqd||held?.delta_iqd||0);
     const shortfall=j.kind==='shortfall_refund',detail=shortfalls.get(j.id);
+    const label=shortfall&&detail?.refund_source==='payout_rounding'?'گەڕاندنەوەی ئۆتۆماتیکی پاشماوە':kinds[j.kind]||j.kind;
     const after=available?.balance_after_iqd;
     const hasSnapshot=shortfall&&after!==null&&after!==undefined&&Number.isSafeInteger(Number(after))&&Number.isSafeInteger(amount);
-    return '<div class="pb-history-row"><div><b class="pb-history-title">'+escHtml(kinds[j.kind]||j.kind)+'</b>'+
+    return '<div class="pb-history-row"><div><b class="pb-history-title">'+escHtml(label)+'</b>'+
       '<small>'+escHtml(balanceTime(j.created_at))+'</small>'+
       (j.order_id?'<small dir="ltr">ID: '+escHtml(detail?.order_code||j.order_id)+'</small>':'')+
       '<small>'+escHtml(detail?.reason||j.note||'')+'</small>'+

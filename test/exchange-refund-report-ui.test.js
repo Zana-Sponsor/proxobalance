@@ -93,6 +93,36 @@ test('full admin rejections keep sent and unpaid unknown; verified failed payout
   }
 });
 
+test('automatic remainder reports identify the policy, exact payout and wallet-only settlement without a manual reference',()=>{
+  const p=harness();
+  for(const [expected,sent,remainder] of [[10500,10000,500],[1600,1000,600],[600,0,600]]){
+    const data=pageData(0,{shortfalls:[shortfall(1,{refund_source:'payout_rounding',expected_iqd:expected,
+      amount_iqd:remainder,refunded_before_iqd:0,refunded_after_iqd:remainder,
+      balance_before_iqd:1000,balance_after_iqd:1000+remainder,verification_reference:'rounding-internal-audit'})]});
+    const [row]=p.context.balanceRefundReportRecords(data),card=p.context.balanceRefundReportCard(row,1);
+    assert.equal(row.automatic,true);assert.equal(row.reference,'');
+    assert.deepEqual({expected:row.expected,sent:row.sent,unpaid:row.unpaid,credited:row.credited},
+      {expected,sent,unpaid:remainder,credited:remainder});
+    assert.match(card,/گەڕاندنەوەی ئۆتۆماتیکی/);
+    assert.doesNotMatch(card,/rounding-internal-audit|بەڵگەی تۆمارکراو/);
+    if(sent===0)assert.match(card,/ناردنی دەرەکی نییە/);
+    else assert.match(card,/هەزار/);
+  }
+});
+
+test('PDF totals count an automatic remainder once alongside a later manual correction',()=>{
+  const p=harness(),data=pageData(0,{shortfalls:[
+    shortfall(1,{refund_source:'payout_rounding',expected_iqd:10500,amount_iqd:500,
+      refunded_before_iqd:0,refunded_after_iqd:500,balance_after_iqd:1500}),
+    shortfall(2,{refund_source:'manual_shortfall',expected_iqd:10500,amount_iqd:150,
+      refunded_before_iqd:500,refunded_after_iqd:650,balance_before_iqd:1500,balance_after_iqd:1650})
+  ]});
+  const rows=clone(p.context.balanceRefundReportRecords(data));
+  assert.equal(rows.reduce((sum,row)=>sum+row.credited,0),650);
+  assert.equal(rows.filter(row=>row.automatic).length,1);
+  assert.deepEqual(rows.map(row=>row.sent),[9850,10000]);
+});
+
 test('missing financial snapshots never become fake zero amounts and large legitimate wallet balances remain exact',()=>{
   const p=harness();
   for(const value of [null,undefined,'',false,-1,150.5]){

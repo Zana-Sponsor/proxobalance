@@ -107,3 +107,21 @@
 .balance-refund-pdf-audit{display:grid;grid-template-columns:1fr 1fr;column-gap:10px;margin-top:6px;padding-top:5px;border-top:1px solid #edf0f5;color:#526278;font-size:12px;line-height:1.65;overflow-wrap:anywhere}
 .balance-refund-pdf-footer{flex:0 0 auto;font-size:12px;color:#64748b;text-align:center;border-top:1px solid #edf0f5;padding-top:5px}
 @media(max-width:600px){.balance-refund-report{padding:12px}.balance-refund-report-controls{gap:9px}.balance-refund-report-controls>div{max-width:none;flex-basis:130px}.balance-refund-report-controls button{width:100%}}
+/* Keep the original net entitlement distinct from transfer and wallet credit. */
+.payout-rounding-note{margin:10px 0;font-size:12px;line-height:1.85;color:#526278;overflow-wrap:anywhere}
+#pageHome #xcBreakdown #bdExpectedRow #totalDisplay{font-size:14px!important;font-weight:400!important;color:#526278!important}
+#pageHome #xcBreakdown #payoutDisplay{font-size:20px!important;font-weight:600!important;color:#1568ba!important;overflow-wrap:anywhere}
+.payout-wallet-credit .v,.order-payout-credit,.tx-rounding-credit{color:#15803d}
+.tx-rounding-credit{font-size:12px;line-height:1.8;padding:0 0 9px;overflow-wrap:anywhere}
+.order-payout-cell{font-weight:700;color:var(--gr,#15803d)}
+.order-payout-credit{display:block;font:400 11px/1.8 'R',Rabar,sans-serif;white-space:normal;max-width:250px;overflow-wrap:anywhere}
+.payout-approval-review{border:1px solid #dce5f2;background:#f8fbff;border-radius:12px;padding:12px;margin-bottom:12px}
+.payout-approval-review .detail-row{align-items:flex-start;gap:12px}
+.payout-approval-review .lbl,.payout-approval-review .val{min-width:0;overflow-wrap:anywhere;white-space:normal;line-height:1.8}
+.payout-approval-review .val{flex:0 1 50%;text-align:left}
+.payout-approval-receipt{display:flex;align-items:center;gap:14px;margin-bottom:6px}
+.payout-approval-receipt[hidden]{display:none!important}
+#apReceiptPreview img{width:100%;height:100%;object-fit:cover}
+.payout-approve-button{flex:1;justify-content:center;min-height:48px;white-space:normal!important;line-height:1.8;text-align:center}
+.payout-approve-button:disabled{opacity:.6;cursor:not-allowed}
+@media(max-width:420px){.payout-approval-review{padding:9px}.payout-approval-review .detail-row{font-size:12px;gap:8px}.payout-approve-button{font-size:12px}}
