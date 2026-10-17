@@ -183,6 +183,8 @@ class AppTelemetryService with WidgetsBindingObserver {
         scope == null ||
         (expectedScope != null && scope != expectedScope))
       return;
+    // Auth broadcasts are asynchronous; synchronize before a new-account event.
+    if (_started && scope != _scope) _bind();
     if (!const {'section', 'error', 'action', 'performance'}.contains(kind) ||
         (outcome != null &&
             !const {'success', 'failure', 'incomplete'}.contains(outcome)) ||

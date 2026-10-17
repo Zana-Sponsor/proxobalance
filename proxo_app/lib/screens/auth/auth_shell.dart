@@ -2,8 +2,6 @@ import '../../widgets/proxo_error_stack.dart';
 
 import 'package:proxo_app/l10n/proxo_strings.dart';
 
-import '../../widgets/proxo_symbol.dart';
-
 // auth/auth_shell.dart
 import 'dart:async';
 import 'dart:convert';
@@ -1418,6 +1416,48 @@ class _AuthShellState extends State<AuthShell> {
     }
   }
 
+  Widget _transitionView(BuildContext context) {
+    final child = AbsorbPointer(
+      key: ValueKey<String>(_viewKey),
+      absorbing: _loading,
+      child: _buildCurrentView(),
+    );
+    // A zero-duration AnimatedSize can invalidate itself during layout. Reduced
+    // motion is an immediate replacement, with no animation controller at all.
+    if (MediaQuery.disableAnimationsOf(context)) return child;
+    return AnimatedSize(
+      duration: AuthTokens.viewTransition,
+      curve: AuthTokens.curve,
+      alignment: Alignment.topCenter,
+      child: AnimatedSwitcher(
+        duration: AuthTokens.viewTransition,
+        switchInCurve: const Interval(0.2, 1, curve: Curves.easeOutCubic),
+        switchOutCurve: const Interval(0.6, 1, curve: Curves.easeInCubic),
+        layoutBuilder: (current, previous) => Stack(
+          alignment: Alignment.topCenter,
+          children: [
+            ...previous.map(
+              (w) => IgnorePointer(child: ExcludeSemantics(child: w)),
+            ),
+            if (current != null) current,
+          ],
+        ),
+        transitionBuilder: (child, anim) => FadeTransition(
+          opacity: anim,
+          child: SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(0.025, 0),
+              end: Offset.zero,
+            ).animate(anim),
+            textDirection: Directionality.of(context),
+            child: child,
+          ),
+        ),
+        child: child,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     ProxoLocale.watch(context);
@@ -1444,8 +1484,7 @@ class _AuthShellState extends State<AuthShell> {
               builder: (context, viewport) => SingleChildScrollView(
                 controller: _viewScroll,
                 physics: const ClampingScrollPhysics(),
-                // ⚠ بوو 20. گەتەری ئاسۆیی ئێستا 16ـە لە هەموو شاشەکاندا —
-                // هەمان `AuthTokens.pagePadding`.
+                // Keep form content clear of device edges and keyboard insets.
                 padding: const EdgeInsets.symmetric(
                   horizontal: 20.0,
                   vertical: 20.0,
@@ -1458,60 +1497,7 @@ class _AuthShellState extends State<AuthShell> {
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        AnimatedSize(
-                          duration: MediaQuery.disableAnimationsOf(context)
-                              ? Duration.zero
-                              : AuthTokens.viewTransition,
-                          curve: AuthTokens.curve,
-                          alignment: Alignment.topCenter,
-                          child: AnimatedSwitcher(
-                            duration: MediaQuery.disableAnimationsOf(context)
-                                ? Duration.zero
-                                : AuthTokens.viewTransition,
-                            switchInCurve: const Interval(
-                              0.2,
-                              1,
-                              curve: Curves.easeOutCubic,
-                            ),
-                            switchOutCurve: const Interval(
-                              0.6,
-                              1,
-                              curve: Curves.easeInCubic,
-                            ),
-                            layoutBuilder: (current, previous) => Stack(
-                              alignment: Alignment.topCenter,
-                              children: [
-                                ...previous.map(
-                                  (w) => IgnorePointer(
-                                    child: ExcludeSemantics(child: w),
-                                  ),
-                                ),
-                                if (current != null) current,
-                              ],
-                            ),
-                            transitionBuilder: (child, anim) => FadeTransition(
-                              opacity: anim,
-                              child: SlideTransition(
-                                position: Tween<Offset>(
-                                  begin: const Offset(0.025, 0),
-                                  end: Offset.zero,
-                                ).animate(anim),
-                                textDirection: Directionality.of(context),
-                                child: child,
-                              ),
-                            ),
-                            child: AbsorbPointer(
-                              key: ValueKey<String>(_viewKey),
-                              absorbing: _loading,
-                              child: KeyedSubtree(
-                                key: ValueKey<String>(_viewKey),
-                                child: _buildCurrentView(),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
+                      children: [_transitionView(context)],
                     ),
                   ),
                 ),

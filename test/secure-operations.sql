@@ -139,6 +139,17 @@ create function public.fixture_telemetry(seq integer,foreground boolean default 
  'sequence',seq,'foreground',foreground,'section','ads','device',jsonb_build_object('app_version','1.0.9','device_model','fixture'),
  'events',jsonb_build_array(jsonb_build_object('id','60000000-0000-4000-8000-000000000001','kind','error','section','ads','code','TimeoutException','ordinal',1)));$$;
 set role authenticated;
+
+do $$ begin
+ begin
+  perform pa_record_app_telemetry(fixture_telemetry(1)||jsonb_build_object('section','/profile/11111111-1111-4111-8111-111111111111'));
+  raise exception 'FAIL raw route accepted';
+ exception when others then if sqlerrm<>'INVALID_TELEMETRY' then raise;end if;end;
+ begin
+  perform pa_record_app_telemetry(jsonb_set(fixture_telemetry(1),'{events,0,section}','"/private/path"'));
+  raise exception 'FAIL raw event route accepted';
+ exception when others then if sqlerrm<>'INVALID_EVENT' then raise;end if;end;
+end $$;
 select test_assert(pa_record_app_telemetry(fixture_telemetry(1))->>'ok'='true','telemetry ingestion');
 select pa_record_app_telemetry(fixture_telemetry(1));
 do $$ begin begin perform 1 from app_telemetry.events;raise exception 'FAIL private event access';exception when insufficient_privilege then null;end;end $$;

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:proxo_app/services/app_telemetry_service.dart';
 import 'package:proxo_app/services/observed_http_client.dart';
@@ -18,6 +19,7 @@ void main() {
   final batches = <Map<String, dynamic>>[];
   bool failing = false;
   setUp(() async {
+    SharedPreferences.setMockInitialValues({});
     batches.clear();
     failing = false;
     client = SupabaseClient(
@@ -57,6 +59,58 @@ void main() {
     await telemetry.dispose();
     await client.dispose();
   });
+
+  test(
+    'presence follows foreground, pause and logout; logout flushes first',
+    () async {
+      telemetry.start();
+      await telemetry.flush();
+      telemetry.didChangeAppLifecycleState(AppLifecycleState.resumed);
+      await telemetry.flush();
+      expect(batches.last['foreground'], isTrue);
+      telemetry.didChangeAppLifecycleState(AppLifecycleState.paused);
+      await telemetry.flush();
+      expect(batches.last['foreground'], isFalse);
+      telemetry.didChangeAppLifecycleState(AppLifecycleState.resumed);
+      await telemetry.flush();
+      await telemetry.beforeLogout();
+      await telemetry.flush();
+      expect(batches.last['foreground'], isFalse);
+      final events = batches.expand((b) => b['events'] as List);
+      expect(events.where((e) => e['code'] == 'logout'), hasLength(1));
+      expect(telemetry.queuedEvents, 0);
+    },
+  );
+
+  test(
+    'account change clears failed events and starts a fresh ordered run',
+    () async {
+      telemetry.start();
+      await telemetry.flush();
+      failing = true;
+      telemetry.event('action', 'old_account');
+      await telemetry.flush();
+      expect(telemetry.queuedEvents, 1);
+      final oldRun = batches.last['run_id'];
+      await restoreFixture(client, userB);
+      telemetry.event('action', 'new_account');
+      failing = false;
+      await telemetry.flush();
+      await Future<void>.delayed(Duration.zero);
+      await telemetry.flush();
+      final newBatches = batches.where((b) => b['run_id'] != oldRun).toList();
+      expect(newBatches, isNotEmpty);
+      final events = newBatches.expand((b) => b['events'] as List).toList();
+      expect(events.any((e) => e['code'] == 'old_account'), isFalse);
+      expect(
+        events.where((e) => e['code'] == 'new_account').first['ordinal'],
+        1,
+      );
+      telemetry.event('error', 'discard_on_memory_pressure');
+      telemetry.didHaveMemoryPressure();
+      expect(telemetry.queuedEvents, 0);
+    },
+  );
 
   test(
     'failed batches keep stable event IDs and order until acknowledged',

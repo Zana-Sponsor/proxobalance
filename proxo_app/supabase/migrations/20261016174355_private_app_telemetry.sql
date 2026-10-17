@@ -43,6 +43,14 @@ create table if not exists app_telemetry.audit_events (
 );
 create index if not exists telemetry_audit_subject on app_telemetry.audit_events(subject_id,created_at desc);
 
+-- Accept screen codes only; reject raw URLs, identifiers and free-form routes.
+create or replace function app_telemetry.valid_section(p_section text) returns boolean
+language sql immutable set search_path='' as $$
+ select coalesce(p_section=any(array['unknown','home','ads','tools','profile','account_setup',
+ 'create_ad','ad_details','deposit','notifications','transactions','transaction_details',
+ 'edit_profile','faq','tasks','levels','vouchers','discounts','tutorials','best_metrics',
+ 'pages','page_editor','page_details','create_page','browser','whatsapp_marketing','auth','other']),false); $$;
+
 create or replace function app_telemetry.ingest(p_batch jsonb) returns jsonb
 language plpgsql security definer set search_path='' as $$
 declare u uuid:=app_finance.actor(); installation uuid; run uuid; sid uuid; seq bigint;
@@ -55,7 +63,7 @@ begin
   sid:=(auth.jwt()->>'session_id')::uuid; seq:=(p_batch->>'sequence')::bigint; fg:=(p_batch->>'foreground')::boolean;
  exception when invalid_text_representation then raise exception 'INVALID_TELEMETRY'; end;
  section_name:=coalesce(p_batch->>'section','unknown'); meta:=coalesce(p_batch->'device','{}'::jsonb);
- if installation is null or run is null or seq is null or seq<0 or fg is null or section_name!~'^[a-z0-9_/-]{1,80}$'
+ if installation is null or run is null or seq is null or seq<0 or fg is null or not app_telemetry.valid_section(section_name)
   or jsonb_typeof(meta)<>'object' or jsonb_typeof(coalesce(p_batch->'events','[]'::jsonb))<>'array'
   or jsonb_array_length(coalesce(p_batch->'events','[]'::jsonb))>20 then raise exception 'INVALID_TELEMETRY'; end if;
  if not app_finance.rate_allowed(u,'telemetry',180) then return jsonb_build_object('ok',false,'code','RATE_LIMITED'); end if;
@@ -92,7 +100,7 @@ begin
   v_event_id:=(event->>'id')::uuid; event_kind:=event->>'kind'; event_code:=event->>'code'; event_section:=event->>'section';
   ms:=(event->>'duration_ms')::integer; outcome_value:=event->>'outcome'; ordinal_value:=(event->>'ordinal')::bigint;
   if v_event_id is null or event_kind not in ('section','error','action','performance') or event_kind is null
-    or event_code is null or event_code!~'^[A-Za-z0-9_.:-]{1,100}$' or event_section is null or event_section!~'^[a-z0-9_/-]{1,80}$'
+    or event_code is null or event_code!~'^[A-Za-z0-9_.:-]{1,100}$' or event_section is null or not app_telemetry.valid_section(event_section)
     or (ordinal_value is not null and ordinal_value<1) or (ms is not null and ms not between 0 and 600000) or (outcome_value is not null and outcome_value not in ('success','failure','incomplete')) then raise exception 'INVALID_EVENT'; end if;
   insert into app_telemetry.events(user_id,event_id,installation_id,run_id,kind,section,code,outcome,duration_ms,ordinal,app_version,device_model,received_at)
   values(u,v_event_id,installation,run,event_kind,event_section,event_code,outcome_value,ms,ordinal_value,left(meta->>'app_version',40),left(meta->>'device_model',100),now_at)
@@ -162,6 +170,7 @@ begin
    select event_id,run_id,kind,section,code,outcome,duration_ms,ordinal,received_at
    from app_telemetry.events where user_id=p_user_id
    order by received_at desc,ordinal desc nulls last,event_id desc limit row_limit)x),
+ 'devices_truncated',(select count(*)>100 from (select 1 from app_telemetry.installations where user_id=p_user_id limit 101)x),
  'events_truncated',(select count(*)>row_limit from (select 1 from app_telemetry.events where user_id=p_user_id limit row_limit+1)x),
  'limit',row_limit);
 end $$;

@@ -559,7 +559,7 @@ class _RuleRow extends StatelessWidget {
               translate: true,
               style: AuthTokens.ruleText.copyWith(
                 color: tone,
-                fontWeight: satisfied ? FontWeight.w400 : FontWeight.w400,
+                fontWeight: FontWeight.w400,
               ),
             ),
           ),

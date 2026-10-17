@@ -93,7 +93,9 @@ class _AccountSetupGateState extends State<AccountSetupGate> {
   Widget build(BuildContext context) {
     ProxoLocale.watch(context);
     if (_scope == null) return const AuthScreen();
-    final section = _ready && _service.isReady ? AppSectionObserver.forWidget(widget.child) : 'account_setup';
+    final section = _ready && _service.isReady
+        ? AppSectionObserver.forWidget(widget.child)
+        : 'account_setup';
     AppSectionObserver.instance.register(ModalRoute.of(context), section);
     if (_ready && _service.isReady)
       return KeyedSubtree(key: ValueKey(_scope), child: widget.child);

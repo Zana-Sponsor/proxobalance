@@ -148,6 +148,7 @@ void main() {
       expect(find.byType(FilledButton), findsOneWidget);
       expect(find.text('PRIVATE_HOME'), findsNothing);
       fail = false;
+      await t.ensureVisible(find.byType(FilledButton));
       await t.tap(find.byType(FilledButton));
       await t.pumpAndSettle();
       expect(find.text('PRIVATE_HOME'), findsOneWidget);
