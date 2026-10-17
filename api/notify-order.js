@@ -1,4 +1,7 @@
 import { json, readJson, serviceFetch, withSecurity } from './_lib/security.js';
+import { payoutPlan } from './_lib/payout-rounding.js';
+
+const UNSETTLED_STATUSES = new Set(['چاوەڕوانە', 'ڕاستکراوەتەوە', 'پێویستی بە ڕاستکردنەوەیە']);
 
 const esc = value => String(value ?? '').replace(/[&<>"']/g, char => ({
   '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
@@ -40,17 +43,36 @@ export default withSecurity(async (req, res, { user }) => {
   // receipt_url added — without it there was nothing to attach.
   const rows = await serviceFetch(
     `/rest/v1/ex_orders?id=eq.${encodeURIComponent(orderId)}&user_id=eq.${encodeURIComponent(user.id)}` +
-    `&select=id,order_code,from_method,to_method,amount,total,phone,status,receipt_url&limit=1`
+    `&select=id,order_code,from_method,to_method,amount,total,phone,status,receipt_url,payout_iqd,payout_rounding_iqd,payout_settlement_id&limit=1`
   );
   const order = rows?.[0];
   if (!order) return json(res, 404, { error: 'Not Found' });
 
+  const plan = payoutPlan(order.total, order.to_method);
+  const recordedPayout = payoutPlan(order.payout_iqd, order.to_method);
+  const recordedRemainder = payoutPlan(order.payout_rounding_iqd, order.to_method);
+  const payoutLines = [];
+  if (plan.applies && UNSETTLED_STATUSES.has(order.status)) {
+    if (plan.valid) {
+      payoutLines.push(`Planned recipient payout: ${esc(fmt(plan.payout_iqd))} IQD`,
+        `Planned account refund on approval: ${esc(fmt(plan.remainder_iqd))} IQD`);
+    } else {
+      payoutLines.push('Payout plan: invalid IQD amount; review required');
+    }
+  } else if (plan.valid && order.status === 'پەسەندکرا' &&
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(order.payout_settlement_id || '')) &&
+      recordedPayout.valid && recordedRemainder.valid &&
+      recordedPayout.expected_iqd === plan.payout_iqd && recordedRemainder.expected_iqd === plan.remainder_iqd) {
+    payoutLines.push(`Confirmed recipient payout: ${esc(fmt(order.payout_iqd))} IQD`,
+      `Automatic account refund: ${esc(fmt(order.payout_rounding_iqd))} IQD`);
+  }
   const caption = [
     '<b>New Exchange Order</b>',
     `ID: <code>${esc(order.order_code || order.id)}</code>`,
     `Route: ${esc(order.from_method)} → ${esc(order.to_method)}`,
-    `Amount: ${esc(fmt(order.amount))} IQD`,
-    `Total: ${esc(fmt(order.total))} IQD`,
+    `Amount: ${esc(fmt(order.amount))} ${order.from_method === 'USDT' ? 'USDT' : 'IQD'}`,
+    `Net after fees (before account refund): ${esc(fmt(order.total))} ${order.to_method === 'USDT' ? 'USDT' : 'IQD'}`,
+    ...payoutLines,
     `Phone: <code>${esc(order.phone)}</code>`,
     `Status: ${esc(order.status)}`
   ].join('\n');

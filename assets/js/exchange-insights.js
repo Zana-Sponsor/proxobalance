@@ -75,7 +75,7 @@ function exStatsRender(){
     current.count++;if(o.total!=null&&Number.isFinite(v)){current.total+=v;current.values++}byMethod.set(method,current)});
   const groups=document.getElementById('exMethodTotals');
   if(groups)groups.innerHTML=byMethod.size?[...byMethod.values()].sort((a,b)=>b.count-a.count).map(g=>
-    '<div class="ex-card"><div class="ex-label">وەرگیراو لە '+exSafe(exMethod(g.method))+' · '+exNum(g.count)+' مامەڵە</div><div class="ex-value">'+(g.values?exAmount(g.total):'—')+'</div></div>').join(''):'<div class="ex-note">هیچ مامەڵەیەکی پەسەندکراو لەم پاڵاوتنەدا نییە.</div>';
+    '<div class="ex-card"><div class="ex-label">پاش لێبڕین لە '+exSafe(exMethod(g.method))+' · '+exNum(g.count)+' مامەڵە</div><div class="ex-value">'+(g.values?exAmount(g.total):'—')+'</div></div>').join(''):'<div class="ex-note">هیچ مامەڵەیەکی پەسەندکراو لەم پاڵاوتنەدا نییە.</div>';
   const count=document.getElementById('exResultCount');if(count)count.textContent=exNum(n)+' لە '+exNum(exStatsState.rows.length);
   const warning=document.getElementById('exStatsNotice');if(warning)warning.textContent=(exStatsState.partial?'تەنها 10,000 مامەڵەی دوایین بارکراون؛ ڕاپۆرت و ئامارەکان ئەمانە دەگرنەوە. ':'')+
     'کۆی بڕەکان بە ڕێگای وەرگرتن جیاکراونەتەوە؛ بەهای ڕێگا و دراوی جیاواز لە یەک کۆدا تێکەڵ نەکراون.';
@@ -84,8 +84,8 @@ function exStatsRender(){
   container.innerHTML=rows.slice(0,exStatsState.limit).map(o=>
     '<article class="ex-order"><div class="ex-order-header"><div><div class="ex-order-title">'+exSafe(exMethod(o.from_method))+' ← '+exSafe(exMethod(o.to_method))+
     '</div><div class="ex-order-code" dir="ltr">'+exSafe(exCode(o))+'</div></div><span class="badge '+exSafe(o.status===STATUS_APPROVED?'approved':o.status===STATUS_REJECTED?'rejected':'pending')+'">'+exSafe(exStatus(o.status))+'</span></div>'+
-    '<div class="ex-order-details"><div><div class="ex-label">بڕی نێردراو</div><div class="ex-value">'+exAmount(o.amount)+'</div><div class="ex-label">'+exSafe(exMethod(o.from_method))+'</div></div>'+
-    '<div><div class="ex-label">بڕی وەرگیراو</div><div class="ex-value">'+exAmount(o.total)+'</div><div class="ex-label">'+exSafe(exMethod(o.to_method))+'</div></div>'+
+    '<div class="ex-order-details"><div><div class="ex-label">بڕی سەرەتایی</div><div class="ex-value">'+exAmount(o.amount)+'</div><div class="ex-label">'+exSafe(exMethod(o.from_method))+'</div></div>'+
+    '<div><div class="ex-label">بڕی پاش لێبڕین</div><div class="ex-value">'+exAmount(o.total)+'</div><div class="ex-label">'+exSafe(exMethod(o.to_method))+'</div></div>'+
     '<div><div class="ex-label">ڕێکەوت</div><div class="ex-value" style="font-size:13px">'+exSafe(exDate(o.created_at))+'</div></div></div>'+
     '<div class="ex-order-footer"><span>ئادمین: <bdi>'+exSafe(exAdminName(o))+'</bdi></span><button type="button" class="ex-btn" data-ex-order="'+exSafe(o.id)+'"><i class="fas fa-eye"></i> وردەکاری</button></div></article>').join('')+
     (rows.length>exStatsState.limit?'<button type="button" class="ex-btn" style="width:100%" id="exShowMore">بینینی زیاتر ('+exNum(rows.length-exStatsState.limit)+')</button>':'');
@@ -109,7 +109,7 @@ function exDownload(text,name,mime){const blob=new Blob([text],{type:mime}),url=
 function exExport(kind){
   if(!exStatsState.loaded){showToast('سەرەتا ئامارەکان باربکە','rd');return}
   const rows=exFiltered();if(!rows.length){showToast('هیچ مامەڵەیەک نییە بۆ داگرتن','rd');return}
-  const fields=[['order_code','ئایدی مامەڵە'],['from_method','ڕێگای ناردن'],['to_method','ڕێگای وەرگرتن'],['amount','بڕی نێردراو'],['total','بڕی وەرگیراو'],['status','بار'],['created_at','ڕێکەوت'],['handling_admin_name','ناوی ئادمین']];
+  const fields=[['order_code','ئایدی مامەڵە'],['from_method','ڕێگای ناردن'],['to_method','ڕێگای وەرگرتن'],['amount','بڕی سەرەتایی'],['total','بڕی پاش لێبڕین'],['status','بار'],['created_at','ڕێکەوت'],['handling_admin_name','ناوی ئادمین']];
   const table=[fields.map(x=>x[1]),...rows.map(o=>fields.map(([k])=>o[k]??''))];
   const admin=document.getElementById('exAdmin')?.value||'';
   const filename='Proxo-Balance-statistics-'+(admin?(admin==='unassigned'?'unassigned-':exReportAdminLabel().replace(/[\\/:*?"<>|\x00-\x1f]/g,'_').slice(0,80)+'-'):'')+exDateKey(new Date());
@@ -132,8 +132,8 @@ async function exExportPdf(rows,filename){
     '<div class="ex-note">ئادمین: '+exSafe(exReportAdminLabel())+'</div>'+
     '<div class="ex-title">پوختەی مامەڵەکان</div><div class="ex-grid">'+exCard('کۆی مامەڵەکان',exNum(rows.length))+exCard('پەسەندکراو',exNum(approved.length))+
     exCard('چاوەڕوان',exNum(rows.filter(o=>[STATUS_PENDING,STATUS_CORRECTED,STATUS_NEEDS_CORRECTION].includes(o.status)).length))+exCard('ڕەتکراو',exNum(rows.filter(o=>o.status===STATUS_REJECTED).length))+'</div>'+
-    '<div class="ex-title">کۆی پەسەندکراو بەپێی ڕێگای وەرگرتن</div><table><thead><tr><th>ڕێگا</th><th>ژمارە</th><th>بڕی وەرگیراو</th></tr></thead><tbody>'+groups+'</tbody></table>'+
-    '<div class="ex-title">دواترین مامەڵەکان (تا 20 مامەڵە)</div><table><thead><tr><th>ئایدی</th><th>لە / بۆ</th><th>بڕی نێردراو</th><th>بڕی وەرگیراو</th><th>بار</th><th>ناوی ئادمین</th></tr></thead><tbody>'+
+    '<div class="ex-title">کۆی پەسەندکراو بەپێی ڕێگای وەرگرتن</div><table><thead><tr><th>ڕێگا</th><th>ژمارە</th><th>بڕی پاش لێبڕین</th></tr></thead><tbody>'+groups+'</tbody></table>'+
+    '<div class="ex-title">دواترین مامەڵەکان (تا 20 مامەڵە)</div><table><thead><tr><th>ئایدی</th><th>لە / بۆ</th><th>بڕی سەرەتایی</th><th>بڕی پاش لێبڕین</th><th>بار</th><th>ناوی ئادمین</th></tr></thead><tbody>'+
     rows.slice(0,20).map(o=>'<tr><td dir="ltr">'+exSafe(exCode(o))+'</td><td>'+exSafe(exMethod(o.from_method))+' / '+exSafe(exMethod(o.to_method))+'</td><td>'+exAmount(o.amount)+'</td><td>'+exAmount(o.total)+'</td><td>'+exSafe(exStatus(o.status))+'</td><td>'+exSafe(exAdminName(o))+'</td></tr>').join('')+
     '</tbody></table><div class="ex-note">ڕاپۆرتی PDF پوختەی مامەڵەکان و 20 مامەڵەی دوایین دەگرێتەوە. بۆ لیستی تەواو Excel یان CSV دابگرە.</div>';
   document.body.appendChild(source);

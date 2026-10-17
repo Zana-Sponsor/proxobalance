@@ -11,6 +11,7 @@ function balanceRecordedIqd(value,whole=true){
   const amount=Number(value);
   return Number.isFinite(amount)&&amount>=0&&amount<=1000000000&&(!whole||Number.isSafeInteger(amount))?amount:null;
 }
+function balanceIsAutomaticRefund(row){return row?.refund_source==='payout_rounding';}
 function balanceRefundAmounts(row,kind='shortfall',order={}){
   const credited=balanceRecordedIqd(row?.amount_iqd);
   if(kind==='full'){
@@ -23,7 +24,8 @@ function balanceRefundAmounts(row,kind='shortfall',order={}){
   const expected=balanceRecordedIqd(row?.expected_iqd),after=balanceRecordedIqd(row?.refunded_after_iqd);
   const before=balanceRecordedIqd(row?.refunded_before_iqd);
   const valid=expected!==null&&after!==null&&before!==null&&credited!==null&&credited>0&&
-    after<=expected&&before+credited===after;
+    after<=expected&&before+credited===after&&(!balanceIsAutomaticRefund(row)||
+      (before===0&&credited<1000&&credited===expected%1000));
   return {expected,sent:valid?expected-after:null,unpaid:valid?after:null,credited};
 }
 function balanceRecordedMoney(amount){return amount===null?'تۆمار نەکراوە':balanceMoney(amount);}
@@ -159,7 +161,7 @@ function renderBalanceShortfallPreview(){
   const valid=amount!==null&&amount<=state.remaining&&Number.isSafeInteger(state.available+amount);
   const card=(label,value,highlight=false)=>'<div'+(highlight?' class="balance-credit-highlight"':'')+'><span>'+esc(label)+
     '</span><strong>'+esc(value)+'</strong></div>';
-  out.innerHTML=card('بڕی پێویستی ناردن بۆ کڕیار',balanceMoney(state.expected))+
+  out.innerHTML=card('بڕی پاش لێبڕین پێش گەڕاندنەوە',balanceMoney(state.expected))+
     card('بڕی نێردراو (دوای ئەم ڕیفاوندە)',valid?balanceMoney(state.remaining-amount):'—')+
     card('بڕی نەنێردراو (کۆی گەڕاوەکان)',valid?balanceMoney(state.refunded+amount):balanceMoney(state.refunded))+
     card('پێشتر بۆ باڵانس گەڕاوەتەوە',balanceMoney(state.refunded))+
@@ -168,7 +170,7 @@ function renderBalanceShortfallPreview(){
     card('باڵانسی بەردەستی ئێستا',balanceMoney(state.available))+
     card('باڵانس دوای گەڕاندنەوە',valid?balanceMoney(state.available+amount):'—',true)+
     '<p class="balance-credit-preview-note">'+
-    'بڕی نێردراو هەژمار دەکرێت: بڕی پێویستی ناردن − کۆی بڕە گەڕاوەکان. '+
+    'بڕی نێردراو هەژمار دەکرێت: بڕی پاش لێبڕین − کۆی بڕە گەڕاوەکان. '+
     'پێشبینینە؛ باڵانسی کۆتایی لە کاتی تۆمارکردندا دیاری دەکرێت.</p>';
 }
 function balanceAuditTime(iso){
@@ -176,17 +178,18 @@ function balanceAuditTime(iso){
   return esc(new Date(iso).toLocaleString('en-GB',{timeZone:'Asia/Baghdad'}))+' (بەغدا)';
 }
 function balanceShortfallTable(rows){
-  const legacyReference=r=>r.verification_reference&&String(r.verification_reference).toLowerCase()!=='shortfall:'+String(r.request_key).toLowerCase()?
+  const legacyReference=r=>!balanceIsAutomaticRefund(r)&&r.verification_reference&&String(r.verification_reference).toLowerCase()!=='shortfall:'+String(r.request_key).toLowerCase()?
     '<small>بەڵگەی پێشوو: '+esc(r.verification_reference)+'</small>':'';
   return balanceTable(['مامەڵە / کڕیار','بڕی نێردراو','بڕی نەنێردراو','بڕی ئەم ڕیفاوندە','باڵانسی بەردەست','هۆکار','ئادمین / بەروار'],rows,r=>{
-    const amounts=balanceRefundAmounts(r);
+    const amounts=balanceRefundAmounts(r),automatic=balanceIsAutomaticRefund(r);
     return '<tr><td><b dir="ltr">'+esc(r.order_code||r.order_id)+'</b><small>'+balanceOwner(r.user_id)+'</small>'+
+      '<small>'+(automatic?'گەڕاندنەوەی ئۆتۆماتیکی پاشماوە':'گەڕاندنەوەی کەم نێردراوی پشتڕاستکراو')+'</small>'+
       '<details><summary>ناسنامەی تۆمارەکان</summary><small>مامەڵە: <span dir="ltr">'+esc(r.order_id)+'</span></small>'+
       '<small>گەڕاندنەوە: <span dir="ltr">'+esc(r.id)+'</span></small>'+
       '<small>تۆماری دارایی: <span dir="ltr">'+esc(r.journal_id)+'</span></small>'+
       '<small>داواکاری: <span dir="ltr">'+esc(r.request_key)+'</span></small></details></td>'+
-    '<td><b>'+balanceRecordedMoney(amounts.sent)+'</b><small>هەژمارکراوە بەپێی تۆماری ئەم کاتە</small>'+
-      '<small>بڕی پێویستی ناردن: '+balanceRecordedMoney(amounts.expected)+'</small></td>'+
+    '<td><b>'+balanceRecordedMoney(amounts.sent)+'</b><small>'+(automatic?(amounts.sent===0?'ناردنی دەرەکی نییە':'بڕی ناردن بە هەزاری تەواو'):'هەژمارکراوە بەپێی تۆماری ئەم کاتە')+'</small>'+
+      '<small>بڕی پاش لێبڕین: '+balanceRecordedMoney(amounts.expected)+'</small></td>'+
     '<td><b>'+balanceRecordedMoney(amounts.unpaid)+'</b><small>کۆی گەڕاوەکان تا ئەم تۆمارە</small>'+
       '<small>پێش ئەم ڕیفاوندە: '+balanceMoney(r.refunded_before_iqd)+'</small></td>'+
     '<td><span class="balance-shortfall-amount">+'+balanceRecordedMoney(amounts.credited)+'</span></td>'+
@@ -238,6 +241,7 @@ async function loadBalanceAdmin(){
       '<div class="ex-note"><b>لە چاوەڕوانیدا: '+balanceMoney(held)+'</b></div>'+
       '<div class="ex-note"><b>ڕیفاوندەکان: '+refunds.length+'</b></div>'+
       '<div class="ex-note"><b>تۆماری کەم نێردراوی پیشاندراو: '+shortfalls.length+'</b></div>'+
+      '<div class="ex-note"><b>پاشماوەی ئۆتۆماتیکی پیشاندراو: '+shortfalls.filter(balanceIsAutomaticRefund).length+'</b></div>'+
       '<div class="ex-note"><b>داواکارییە چاوەڕوانەکان: '+payouts.filter(p=>p.status==='pending'||p.status==='processing').length+'</b></div>'+
       '<div class="ex-note"><b>ناردنی باڵانس: '+(d.config?.payouts_enabled?'چالاک (پەسەندکردنی دەستی)':'ناچالاک تا پشکنینی یاسایی')+'</b></div>';
     const rec=d.reconciliation||{};
@@ -339,10 +343,13 @@ async function lookupBalanceOrder(allowDuringCredit=false){
     _balanceShortfallNeedsRefresh=false;_balanceShortfallRecoveryError='';_balanceLookupResult=result;
     balanceRestoreShortfallRequest(o.id);
     const shortfall=balanceShortfallState();
+    const settlement=globalThis.ProxoPayoutRounding?.forOrder(o);
+    const payoutDetails=settlement?.settled?'<div>بڕی نێردراو لە کاتی پەسەندکردن: <b>'+balanceMoney(settlement.payout_iqd)+
+      '</b></div><div>پاشماوەی گەڕاوە بۆ باڵانس: <b>'+balanceMoney(settlement.remainder_iqd)+'</b></div>':'';
     const eligible=!result.refund&&!(result.shortfalls||[]).length&&o.status!=='پەسەندکرا'&&!o.payout_receipt_url&&(!!o.receipt_url||!!o.balance_debit_journal_id)&&o.from_method!=='USDT'&&o.to_method!=='USDT';
     out.innerHTML='<div><b>'+esc(o.order_code||o.id)+'</b> — '+esc(p.full_name||p.email||o.user_id)+'</div>'+
       '<div>بڕی سەرەتایی: <b>'+balanceMoney(o.amount)+'</b> | '+esc(o.from_method)+' → '+esc(o.to_method)+'</div>'+
-      '<div>بڕی پێویستی ناردن بۆ کڕیار: <b>'+balanceMoney(o.total)+'</b></div>'+
+      '<div>بڕی پاش لێبڕین پێش گەڕاندنەوە: <b>'+balanceMoney(o.total)+'</b></div>'+payoutDetails+
       '<div>بار: '+esc(o.status)+' | '+balanceDate(o.created_at)+'</div>'+
       '<div>'+(o.receipt_url?'<a target="_blank" rel="noopener noreferrer" href="'+esc(o.receipt_url)+'">بینینی پسووڵەی نێرەر</a>':o.balance_debit_journal_id?'کەمکردنەوە لە باڵانس: '+esc(o.balance_debit_journal_id):'بەبێ پسووڵە')+'</div>'+
       (result.refund?'<b style="color:#b91c1c">ئەم مامەڵەیە پێشتر ڕیفاوند کراوە.</b>':'')+

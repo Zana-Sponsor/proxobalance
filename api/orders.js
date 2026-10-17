@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+import { payoutPlan } from './_lib/payout-rounding.js';
 import {
   json, readJson, rpc, serviceFetch, stealth404, withSecurity, config
 } from './_lib/security.js';
@@ -140,7 +141,7 @@ async function submitOrderCorrection(res, body, user) {
   );
   const updated = Array.isArray(rows) ? rows[0] : null;
   if (!updated) return json(res, 409, { error: 'Order state changed; please refresh' });
-  return json(res, 200, { ok: true, order: updated });
+  return json(res, 200, { ok: true, order: {...updated, payout_plan:payoutPlan(updated.total, updated.to_method)} });
 }
 
 export default withSecurity(async (req, res, { context, user }) => {
@@ -175,6 +176,9 @@ export default withSecurity(async (req, res, { context, user }) => {
   }
   if (!Number.isFinite(amount) || amount < MIN_AMOUNT || amount > 1_000_000_000) {
     return json(res, 422, { error: 'Invalid amount' });
+  }
+  if (fromMethod !== 'USDT' && !Number.isSafeInteger(amount)) {
+    return json(res, 422, { error: 'IQD amounts must be whole dinars' });
   }
   if (!validRecipient(toMethod, phone)) {
     return json(res, 422, { error: 'Invalid recipient number' });
@@ -266,7 +270,7 @@ export default withSecurity(async (req, res, { context, user }) => {
         p_user_id:user.id,p_request_key:body.request_key,p_to:toMethod,
         p_amount:amount,p_phone:phone,p_security_log_id:velocity?.log_id||null
       });
-      return json(res,201,{ok:true,order});
+      return json(res,201,{ok:true,order:{...order,payout_plan:payoutPlan(order?.total,order?.to_method)}});
     }
     const rows = await serviceFetch('/rest/v1/ex_orders?select=*', {
       method: 'POST',
@@ -275,7 +279,7 @@ export default withSecurity(async (req, res, { context, user }) => {
     });
     return json(res, 201, {
       ok: true,
-      order: rows?.[0],
+      order: rows?.[0] && {...rows[0],payout_plan:payoutPlan(rows[0].total,rows[0].to_method)},
       security: {
         alert_created: Boolean(velocity?.alert_created),
         frequency_count: Number(velocity?.frequency_count || 1)

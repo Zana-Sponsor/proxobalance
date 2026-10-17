@@ -24,7 +24,7 @@
 <link rel="stylesheet" href="assets/css/exchange-admin-workspace.css?v=1">
 <link rel="stylesheet" href="assets/css/admin-contracts.css?v=2">
 <link rel="stylesheet" href="assets/css/exchange-auth-app.css?v=1">
-<link rel="stylesheet" href="assets/css/exchange-balance.css?v=4">
+<link rel="stylesheet" href="assets/css/exchange-balance.css?v=5">
 <script src="assets/js/exchange-access.js?v=1"></script>
 </head>
 <body>
@@ -712,8 +712,9 @@
       <div class="modal-close" onclick="closeMo('moApproveOrder')"><i class="fas fa-xmark"></i></div>
     </div>
     <input type="hidden" id="apOrderId">
-    <div class="fee-toggle-note" style="margin-bottom:12px"><i class="fas fa-circle-info" style="margin-left:4px"></i>کڕیار خۆکارانە ئاگادار دەکرێتەوە. دەتوانیت وێنەی پسووڵەی پارەدانەکەت زیادبکەیت تاکو بۆ کڕیار بنێردرێت وەک بەڵگە (ئارەزوومەندانەیە).</div>
-    <div style="display:flex;align-items:center;gap:14px;margin-bottom:6px">
+    <div id="apReview" class="payout-approval-review"></div>
+    <p id="apActionNote" class="payout-rounding-note"></p>
+    <div id="apReceiptWrap" class="payout-approval-receipt">
       <div id="apReceiptPreview" style="width:58px;height:58px;border-radius:16px;background:var(--bg);border:1.5px dashed var(--b2);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;color:var(--mt);font-size:20px"><i class="fas fa-receipt"></i></div>
       <div style="flex:1;min-width:0">
         <label class="act-btn cy" style="cursor:pointer;display:inline-flex">
@@ -723,8 +724,9 @@
         <div class="fee-toggle-note" id="apReceiptNote">هیچ وێنەیەک هەڵنەبژێردراوە</div>
       </div>
     </div>
+    <div id="apError" class="balance-credit-error" role="alert"></div>
     <div class="act-grp" style="margin-top:14px">
-      <div class="act-btn gr" style="flex:1;justify-content:center" id="apConfirmBtn" onclick="confirmApproveOrder()"><i class="fas fa-check"></i> پەسەندکردن</div>
+      <button type="button" class="act-btn gr payout-approve-button" id="apConfirmBtn" onclick="confirmApproveOrder()"><i class="fas fa-check"></i> پەسەندکردن</button>
     </div>
   </div>
 </div>
@@ -1175,13 +1177,14 @@
       <div id="staffDirectoryList"></div>
     </div>
   </div>
+  <script src="assets/js/exchange-payout-rounding.js?v=1"></script>
   <script src="assets/js/exchange-live.js?v=1"></script>
-<script src="assets/js/admin.js?v=25"></script>
+<script src="assets/js/admin.js?v=26"></script>
 <script src="assets/js/admin-contracts.js?v=2"></script>
   <script src="assets/js/exchange-staff.js?v=8"></script>
-  <script src="assets/js/exchange-balance-admin.js?v=7"></script>
-  <script src="assets/js/exchange-refund-report.js?v=1"></script>
-  <script src="assets/js/exchange-insights.js?v=5"></script>
-  <script src="assets/js/exchange-profit.js?v=4"></script><script src="assets/js/exchange-admin-workspace.js?v=1"></script><script src="assets/js/track.js?v=3"></script>
+  <script src="assets/js/exchange-balance-admin.js?v=8"></script>
+  <script src="assets/js/exchange-refund-report.js?v=2"></script>
+  <script src="assets/js/exchange-insights.js?v=6"></script>
+  <script src="assets/js/exchange-profit.js?v=5"></script><script src="assets/js/exchange-admin-workspace.js?v=1"></script><script src="assets/js/track.js?v=3"></script>
 </body>
 </html>

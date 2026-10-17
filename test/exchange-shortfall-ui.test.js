@@ -102,7 +102,7 @@ test('shortfall form has only amount, reason and confirmation while full refunds
   assert.match(adminHtml,/id="balanceShortfallReason"/);
   assert.match(adminHtml,/id="balanceShortfallConfirmed"/);
   assert.match(adminHtml,/id="balanceBankReference"/);
-  assert.match(adminHtml,/exchange-balance-admin\.js\?v=7/);
+  assert.match(adminHtml,/exchange-balance-admin\.js\?v=8/);
 });
 
 test('150 IQD credits use their own action and preserve approved status and full-refund marker',async()=>{
@@ -398,4 +398,22 @@ test('customer history joins repeated shortfalls by journal ID and escapes audit
   assert.match(out.innerHTML,/گەڕاندنەوەی بڕی کەم نێردراو/);
   assert.match(out.innerHTML,/Second &lt;script&gt;unsafe&lt;\/script&gt; refund[\s\S]*1,150[\s\S]*1,300[\s\S]*First refund[\s\S]*1,000/);
   assert.doesNotMatch(out.innerHTML,/<script>/);
+});
+
+test('customer balance history distinguishes automatic rounding credits from manual shortfalls',()=>{
+  const out=element();
+  const start=customerSource.indexOf('function renderBalanceHistory(){');
+  const end=customerSource.indexOf("document.getElementById('balancePayoutForm')",start);
+  const context=vm.createContext({document:{getElementById:()=>out},escHtml:escapeHtml,
+    balanceTime:value=>value,balanceIqd:value=>Number(value).toLocaleString('en-US')+' د.ع',
+    _myBalanceData:{journal:[{id:'automatic-journal',kind:'shortfall_refund',order_id:orderId,
+      created_at:'2026-10-17T12:00:00Z',ex_balance_entries:[
+        {account:'customer_available',delta_iqd:500,balance_after_iqd:1500}]}],
+      shortfalls:[{journal_id:'automatic-journal',order_code:'P123',refund_source:'payout_rounding',
+        reason:'پاشماوەی ناردن بۆ باڵانس گەڕێندرایەوە.'}],payouts:[]}
+  });
+  vm.runInContext(customerSource.slice(start,end),context);context.renderBalanceHistory();
+  assert.match(out.innerHTML,/گەڕاندنەوەی ئۆتۆماتیکی/);
+  assert.match(out.innerHTML,/500/);assert.match(out.innerHTML,/1,500/);
+  assert.doesNotMatch(out.innerHTML,/گەڕاندنەوەی بڕی کەم نێردراو/);
 });

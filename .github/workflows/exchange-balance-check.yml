@@ -8,6 +8,8 @@ on:
       - 'api/admin.js'
       - 'api/balance.js'
       - 'api/orders.js'
+      - 'api/notify-order.js'
+      - 'api/_lib/payout-rounding.js'
       - 'api/_lib/security.js'
       - 'test/orders-route.test.js'
       - 'test/exchange-order-permissions.sql'
@@ -26,6 +28,11 @@ on:
       - 'test/exchange-shortfall.browser.mjs'
       - 'test/exchange-shortfall.sql'
       - 'test/exchange-shortfall-auto-reference.sql'
+      - 'test/exchange-rounded-payout-api.test.js'
+      - 'test/exchange-payout-rounding.test.js'
+      - 'test/exchange-rounded-payout.browser.mjs'
+      - 'test/exchange-rounded-payout.sql'
+      - 'supabase/migrations/**'
       - 'test/exchange-account-balances-ui.test.js'
       - 'test/exchange-send-balance.test.js'
       - 'test/exchange-statistics-order-codes.test.js'
@@ -68,13 +75,19 @@ jobs:
           node --check server.js
           node --check api/admin.js
           node --check api/balance.js
+          node --check api/orders.js
+          node --check api/notify-order.js
+          node --check api/_lib/payout-rounding.js
           node --check assets/js/admin.js
           node --check assets/js/admin-contracts.js
           node --check assets/js/app.js
           node --check assets/js/exchange-balance.js
           node --check assets/js/exchange-balance-admin.js
           node --check assets/js/exchange-refund-report.js
+          node --check assets/js/exchange-payout-rounding.js
+          node --check assets/js/receipt-download.js
           node --check test/exchange-refund-report.browser.mjs
+          node --check test/exchange-rounded-payout.browser.mjs
           node --check test/exchange-shortfall.browser.mjs
           node --check assets/js/exchange-reward-pricing.js
           node --check assets/js/exchange-insights.js
@@ -87,7 +100,7 @@ jobs:
       - name: Build Vercel static output
         run: node scripts/prepare-vercel.mjs
       - name: Verify authenticated orders, admin refunds and capped fee rewards
-        run: node --test test/orders-route.test.js test/exchange-reward-pricing.test.js test/exchange-admin-rewards-refund.test.js test/exchange-shortfall-api.test.js test/exchange-shortfall-ui.test.js test/exchange-refund-amounts.test.js test/exchange-refund-report-api.test.js test/exchange-refund-report-ui.test.js test/exchange-account-balances-ui.test.js test/exchange-send-balance.test.js test/exchange-statistics-order-codes.test.js test/exchange-report-names.test.js test/exchange-live-saves.test.js test/exchange-access.test.js test/exchange-customer-polish.test.js test/exchange-staff-management.test.js
+        run: node --test test/exchange-rounded-payout-api.test.js test/exchange-payout-rounding.test.js test/orders-route.test.js test/exchange-reward-pricing.test.js test/exchange-admin-rewards-refund.test.js test/exchange-shortfall-api.test.js test/exchange-shortfall-ui.test.js test/exchange-refund-amounts.test.js test/exchange-refund-report-api.test.js test/exchange-refund-report-ui.test.js test/exchange-account-balances-ui.test.js test/exchange-send-balance.test.js test/exchange-statistics-order-codes.test.js test/exchange-report-names.test.js test/exchange-live-saves.test.js test/exchange-access.test.js test/exchange-customer-polish.test.js test/exchange-staff-management.test.js
       - name: Verify deployed asset and board paths
         run: |
           node --input-type=module -e "
@@ -97,6 +110,7 @@ jobs:
               'public/assets/js/exchange-balance.js','public/assets/js/admin-contracts.js',
               'public/assets/js/exchange-balance-admin.js',
               'public/assets/js/exchange-refund-report.js',
+              'public/assets/js/exchange-payout-rounding.js',
               'public/assets/js/exchange-reward-pricing.js',
               'public/assets/css/exchange-balance.css','api/balance.js'])
               check(existsSync(file),'Missing '+file);
@@ -110,8 +124,11 @@ jobs:
               'The shortfall form must not require a manual reference');
             check(readFileSync('public/exchange-admin.html','utf8').includes('id=\"balanceRefundReportBtn\"'),
               'Missing admin refund PDF download');
-            check(readFileSync('public/exchange-admin.html','utf8').includes('exchange-refund-report.js?v=1'),
+            check(readFileSync('public/exchange-admin.html','utf8').includes('exchange-refund-report.js?v=2'),
               'Missing current refund PDF bundle');
+            for(const path of ['public/index.html','public/exchange-admin.html'])
+              check(readFileSync(path,'utf8').includes('exchange-payout-rounding.js?v=1'),
+                'Missing IQD payout rounding helper in '+path);
             check(readFileSync('public/exchange-admin.html','utf8').includes('id=\"pgContracts\"'),
               'Missing admin contracts board');
             console.log('PASS: Exchange customer/admin build and balance assets');

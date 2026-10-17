@@ -78,14 +78,14 @@ function balanceRefundReportRecords(report){
     const order=report.orders[row.order_id]||{},amounts=balanceRefundAmounts(row,kind,order);
     if(amounts.credited===null||!Number.isSafeInteger(amounts.credited)||amounts.credited<=0||typeof row.created_at!=='string'||
       !Number.isFinite(new Date(row.created_at).getTime()))throw balanceRefundReportCorrupt();
-    const shortfall=kind==='shortfall',actor=shortfall?row.admin_id:row.verified_by;
+    const shortfall=kind==='shortfall',automatic=shortfall&&balanceIsAutomaticRefund(row),actor=shortfall?row.admin_id:row.verified_by;
     const storedOrder=shortfall&&row.order_snapshot&&typeof row.order_snapshot==='object'?row.order_snapshot:order;
     const reference=String(shortfall?row.verification_reference||'':row.bank_verification_reference||'');
-    rows.push({kind,id:String(row.id),orderId:String(row.order_id),orderCode:String(row.order_code||order.order_code||row.order_id),
+    rows.push({kind,automatic,id:String(row.id),orderId:String(row.order_id),orderCode:String(row.order_code||order.order_code||row.order_id),
       customerId:String(row.user_id||''),customer:name(row.user_id),phone:String(row.customer_phone||order.phone||''),
       adminId:String(actor||''),admin:name(actor),createdAt:row.created_at,journalId:String(row.journal_id||''),
       reason:String(shortfall?row.reason||'':row.failure_reason||'').replace(/\s+/g,' ').trim(),
-      reference:shortfall&&reference.toLowerCase()==='shortfall:'+String(row.request_key).toLowerCase()?'':reference,
+      reference:automatic||(shortfall&&reference.toLowerCase()==='shortfall:'+String(row.request_key).toLowerCase())?'':reference,
       fromMethod:String(storedOrder.from_method||order.from_method||''),toMethod:String(storedOrder.to_method||order.to_method||''),
       balanceBefore:shortfall?wallet(row.balance_before_iqd):null,balanceAfter:shortfall?wallet(row.balance_after_iqd):null,
       confirmedFailed:!shortfall&&row.refund_kind==='failed_payout'&&row.confirmed_payout_failed===true,
@@ -105,18 +105,21 @@ function balanceRefundReportScope(range){
 function balanceRefundReportCard(row,index){
   const money=value=>esc(balanceRefundReportMoney(value));
   const metric=(label,value,credit=false)=>'<div'+(credit?' class="balance-refund-pdf-credit"':'')+'><span>'+esc(label)+'</span><strong>'+money(value)+'</strong></div>';
-  const explanation=row.kind==='shortfall'?
-    'نێردراو هەژمارکراوە: بڕی پێویستی ناردن − کۆی کەم نێردراوی گەڕاوە تا ئەم تۆمارە.':
+  const explanation=row.automatic?(row.sent===0?
+    'بڕی پاش لێبڕین لە ١٬٠٠٠ دینار کەمترە؛ ناردنی دەرەکی نییە و هەمووی بۆ باڵانسی هەژمار گەڕێندراوەتەوە.':
+    'بڕی ناردن بۆ هەزاری تەواو دیاری کراوە و پاشماوەکە لە کاتی پەسەندکردندا بە ئۆتۆماتیکی بۆ باڵانسی هەژمار گەڕێندراوەتەوە.'):
+    row.kind==='shortfall'?
+    'نێردراو هەژمارکراوە: بڕی پاش لێبڕین − کۆی گەڕاوەکان تا ئەم تۆمارە.':
     row.confirmedFailed?'ناردنی پارە بە پشتڕاستکراوی شکستی هێناوە؛ گەڕاوەی ئەم جارە بڕی پارەی وەرگیراوە.':
     'ڕەتکردنەوەکە بڕی نێردراو و نەنێردراو دیاری ناکات؛ ئەم دوو بڕە لەم تۆمارەدا بەردەست نین.';
   return '<article class="balance-refund-pdf-card" data-refund-case="'+esc(row.kind+':'+row.id)+'">'+
     '<div class="balance-refund-pdf-card-head"><div><span class="balance-refund-pdf-kind">'+index+'. '+
-      (row.kind==='shortfall'?'گەڕاندنەوەی بڕی کەم نێردراو':'گەڕاندنەوەی تەواو')+'</span><strong dir="ltr">'+esc(row.orderCode)+'</strong></div>'+
+      (row.automatic?'گەڕاندنەوەی ئۆتۆماتیکی پاشماوە':row.kind==='shortfall'?'گەڕاندنەوەی بڕی کەم نێردراو':'گەڕاندنەوەی تەواو')+'</span><strong dir="ltr">'+esc(row.orderCode)+'</strong></div>'+
       '<bdi dir="ltr">'+esc(balanceRefundReportTime(row.createdAt))+'</bdi></div>'+
     '<div class="balance-refund-pdf-people"><div>کڕیار: <b>'+esc(row.customer)+'</b>'+(row.phone?' · <bdi dir="ltr">'+esc(row.phone)+'</bdi>':'')+'</div>'+
       '<div>ئادمین: <b>'+esc(row.admin)+'</b></div></div>'+
-    '<div class="balance-refund-pdf-metrics">'+metric('بڕی پێویستی ناردنی مامەڵە',row.expected)+
-      metric(row.kind==='shortfall'?'بڕی نێردراو (هەژمارکراو)':'بڕی نێردراو',row.sent)+
+    '<div class="balance-refund-pdf-metrics">'+metric('بڕی پاش لێبڕین پێش گەڕاندنەوە',row.expected)+
+      metric(row.automatic?'بڕی نێردراو (هەزاری تەواو)':row.kind==='shortfall'?'بڕی نێردراو (هەژمارکراو)':'بڕی نێردراو',row.sent)+
       metric(row.kind==='shortfall'?'نەنێردراو تا ئەم تۆمارە':'بڕی نەنێردراو',row.unpaid)+metric('گەڕاوەی ئەم جارە بۆ باڵانس',row.credited,true)+'</div>'+
     (row.fromMethod||row.toMethod?'<p class="balance-refund-pdf-detail">ڕێگای مامەڵە: <bdi>'+esc(row.fromMethod||'—')+'</bdi> ← <bdi>'+esc(row.toMethod||'—')+'</bdi></p>':'')+
     (row.balanceBefore!==null&&row.balanceAfter!==null?'<p class="balance-refund-pdf-detail">باڵانسی پێش گەڕاندنەوە: '+money(row.balanceBefore)+' · باڵانسی دوای گەڕاندنەوە: '+money(row.balanceAfter)+'</p>':'')+
@@ -134,10 +137,10 @@ function balanceRefundReportPage(source,report,rows,range,page,totalCredit){
     '<p>'+esc(balanceRefundReportScope(range))+' · بەرواری گەڕاندنەوە / کاتی بەغدا</p>'+
     '<p>تۆمارەکان تا: <bdi dir="ltr">'+esc(balanceRefundReportTime(report.snapshot))+'</bdi> · لاپەڕە '+page+'</p></header>'+
     (page===1?'<section class="balance-refund-pdf-summary"><div><span>کۆی تۆمارەکان</span><strong>'+rows.length.toLocaleString('en-US')+'</strong></div>'+
-      '<div><span>گەڕاندنەوەی کەم نێردراو</span><strong>'+rows.filter(r=>r.kind==='shortfall').length.toLocaleString('en-US')+'</strong></div>'+
+      '<div><span>گەڕاندنەوەی بەشێک لە بڕ</span><strong>'+rows.filter(r=>r.kind==='shortfall').length.toLocaleString('en-US')+'</strong></div>'+
       '<div><span>گەڕاندنەوەی تەواو</span><strong>'+rows.filter(r=>r.kind==='full').length.toLocaleString('en-US')+'</strong></div>'+
       '<div><span>کۆی پارەی گەڕاوە بۆ باڵانس</span><strong>'+esc(balanceRefundReportMoney(totalCredit))+'</strong></div>'+
-      '<p class="balance-refund-pdf-summary-note">کۆی پارە تەنها لە بڕی هەر گەڕاندنەوەیەک پێکهاتووە. بڕی نەنێردراوی کۆکراوە لە تۆمارەکانی هەمان مامەڵە دووبارە کۆ ناکرێتەوە.</p></section>':'')+
+      '<p class="balance-refund-pdf-summary-note">تۆماری پاشماوەی ئۆتۆماتیکی: '+rows.filter(r=>r.automatic).length.toLocaleString('en-US')+'. کۆی پارە تەنها لە بڕی هەر گەڕاندنەوەیەک پێکهاتووە؛ بڕە کۆکراوەکانی هەمان مامەڵە دووبارە کۆ ناکرێنەوە.</p></section>':'')+
     '<div class="balance-refund-pdf-records"></div><footer class="balance-refund-pdf-footer">وردەکاریی هەر گەڕاندنەوەیەک بە جیا تۆمار کراوە.</footer>';
   return source.querySelector('.balance-refund-pdf-records');
 }

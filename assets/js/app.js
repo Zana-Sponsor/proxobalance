@@ -1592,11 +1592,13 @@ function updateSubmitState(from,to){
   const closed = !same && !routeAllowed(from,to);
   const amt = parseFloat(getAmtRaw())||0;
   const tooSmall = amt>0 && amt<MIN_AMOUNT;
-  btn.disabled = anyLocked || same || closed || tooSmall;
+  const fractionalIqd=amt>0&&from!=='USDT'&&!Number.isSafeInteger(amt);
+  btn.disabled = anyLocked || same || closed || tooSmall || fractionalIqd;
   btn.innerHTML = anyLocked ? 'ئەم شێوازە لەئێستادا بەردەست نییە'
     : same ? 'هەمان واڵێت نابێت'
     : closed ? 'ئەم گۆڕینەوەیە داخراوە'
     : tooSmall ? 'کەمترین بڕ '+formatNum(MIN_AMOUNT)+' دینارە'
+    : fractionalIqd ? 'بڕەکە دەبێت دیناری تەواو بێت'
     : 'ناردنی داواکاری';
 }
 function calc(){
@@ -1609,6 +1611,9 @@ function calc(){
   updateSubmitState(from,to);
   document.getElementById('formattedHint').innerText=formatNum(val)+(from==='USDT'?' $':' IQD');
   const totalEl=document.getElementById('totalDisplay');
+  for(const id of ['bdPayoutRow','bdRoundingRow','payoutRoundingNote']){
+    const node=document.getElementById(id);if(node)node.hidden=true;
+  }
   const feeEl=document.getElementById('feeDisplay');
   feeEl.hidden=true;
   const rewardBanner=document.getElementById('rewardBanner');
@@ -1625,7 +1630,7 @@ function calc(){
   const showRate=(on)=>{ const row=document.getElementById('bdRateRow'); if(row) row.hidden=!on; };
   const showFee=(on)=>{ const row=document.getElementById('bdFeeRow'); if(row) row.hidden=!on; };
   const isUsdt = from==='USDT' || to==='USDT';
-  if(bdSent) bdSent.textContent = amt>0 ? (formatNum(Math.floor(amt))+(from==='USDT'?' $':' IQD')) : '—';
+  if(bdSent) bdSent.textContent = amt>0 ? (formatNum(from==='USDT'?amt:Math.floor(amt))+(from==='USDT'?' $':' IQD')) : '—';
   const sentRow=document.getElementById('bdSentRow');
   if(sentRow) sentRow.hidden = !(amt>0);
   showRate(isUsdt);
@@ -1658,6 +1663,9 @@ function calc(){
     totalEl.classList.add('warn-text');
     feeEl.innerText='';
     return;
+  }
+  if(amt>0&&from!=='USDT'&&!Number.isSafeInteger(amt)){
+    totalEl.innerText='بڕەکە دەبێت دیناری تەواو بێت';totalEl.classList.add('warn-text');feeEl.innerText='';return;
   }
   let final=0, feeTxt='', feeVal=0,displayFee=0;
   if(r.type==='fee_percent'){
@@ -1702,8 +1710,31 @@ function calc(){
       }
     }
   }
-  totalEl.innerText=formatNum(Math.floor(final))+' IQD';
+  const expected=baseQuote?final:Math.floor(final);
+  totalEl.innerText=formatNum(expected)+(to==='USDT'?' $':' IQD');
   feeEl.innerText=amt>0 && !isUsdt ? 'حمولە: '+formatNum(displayFee)+' IQD' : '';
+  const payout=typeof ProxoPayoutRounding==='object'?ProxoPayoutRounding.plan(expected,to):null;
+  const expectedLabel=document.getElementById('bdExpectedLabel');
+  if(expectedLabel)expectedLabel.textContent=payout?.applies?'بڕ دوای لێبڕین':'بڕی وەرگیراو';
+  if(amt>0&&payout?.applies){
+    const payoutRow=document.getElementById('bdPayoutRow'),creditRow=document.getElementById('bdRoundingRow');
+    const payoutValue=document.getElementById('payoutDisplay'),creditValue=document.getElementById('roundingDisplay');
+    const note=document.getElementById('payoutRoundingNote');
+    if(payoutRow)payoutRow.hidden=false;
+    if(payoutValue)payoutValue.textContent=payout.valid?formatNum(payout.payout_iqd)+' IQD':'—';
+    if(creditRow)creditRow.hidden=!payout.valid||payout.remainder_iqd===0;
+    if(creditValue)creditValue.textContent=payout.valid?formatNum(payout.remainder_iqd)+' IQD':'—';
+    if(note){
+      note.hidden=false;
+      note.textContent=!payout.valid?'بڕی کۆتایی دەبێت دیناری تەواو بێت؛ بڕ یان ڕێگای مامەڵەکە بگۆڕە.':
+        payout.payout_iqd===0?(payout.remainder_iqd>0?
+          'هیچ بڕێک بۆ وەرگر نانێردرێت؛ دوای پەسەندکردن هەموو بڕی ماوە بۆ باڵانسی هەژمارەکەت دەگەڕێتەوە.':
+          'بڕی کۆتایی سفرە؛ هیچ ناردنێک یان زیادکردنێک بۆ باڵانس ئەنجام نادرێت.'):
+          'ناردنی دینار بە هەزار ئەنجام دەدرێت.'+(payout.remainder_iqd>0?' بڕی ماوە دوای پەسەندکردن خۆکارانە بۆ باڵانسی هەژمارەکەت دەگەڕێتەوە.':'');
+    }
+    if(!payout.valid){const btn=document.getElementById('submitBtn');if(btn)btn.disabled=true;}
+  }
+  return payout;
 }
 
 function _validateOrderFields(){
@@ -1715,6 +1746,7 @@ function _validateOrderFields(){
   const file=document.getElementById('fileInput').files[0];
   const amtValue=getAmtRaw();
   const from=document.getElementById('from').value, to=document.getElementById('receiveVia').value;
+  const payout=calc();
   const carrierSender=needsSenderPhone(from);
   let ok=true;
   if(carrierSender && !/^07\d{9}$/.test(senderPhone)){
@@ -1726,6 +1758,10 @@ function _validateOrderFields(){
   }
   if(!amtValue || parseFloat(amtValue)<=0){ setFieldError('amt','بڕی پارە داخڵ بکە'); ok=false; }
   else if(parseFloat(amtValue)<MIN_AMOUNT){ setFieldError('amt','کەمترین بڕی مامەڵە '+formatNum(MIN_AMOUNT)+' دینارە'); ok=false; }
+  else if(from!=='USDT'&&!Number.isSafeInteger(Number(amtValue))){setFieldError('amt','بڕەکە دەبێت دیناری تەواو بێت');ok=false;}
+  if(to!=='USDT'&&to!=='AccountBalance'&&(!payout||!payout.valid)){
+    setFieldError('amt','نەتوانرا بڕی ناردن و گەڕاندنەوە دیاری بکرێت؛ بڕ یان ڕێگاکە بپشکنە.');ok=false;
+  }
   if(to==='QiCard'){
     if(!phone || phone.length<6){ setFieldError('userPhone','ژمارەی کارتی Qi Card داخڵ بکە'); ok=false; }
   } else if(!phone.startsWith("07")||phone.length!==11){ setFieldError('userPhone','تەنها ژمارەی عێراقی (07) بە 11 ژمارە داخڵ بکە'); ok=false; }
@@ -1758,13 +1794,21 @@ async function openOrderConfirm(){
   const senderIdentityRow=from==='AccountBalance' ? '' : needsSenderPhone(from)
     ? '<div class="confirm-row"><span class="confirm-row-label">ژمارەی نێرەر</span><span class="confirm-row-value" dir="ltr">'+escHtml(senderPhone)+'</span></div>'
     : '<div class="confirm-row"><span class="confirm-row-label">ناوی نێرەر</span><span class="confirm-row-value">'+escHtml(senderName)+'</span></div>';
+  const payout=calc();
   const totalTxt=document.getElementById('totalDisplay').innerText;
+  const payoutRows=payout?.applies&&payout.valid?
+    '<div class="confirm-row"><span class="confirm-row-label">بڕ دوای لێبڕین</span><span class="confirm-row-value" dir="ltr">'+escHtml(totalTxt)+'</span></div>'+
+    '<div class="confirm-row"><span class="confirm-row-label">بڕی ناردن بۆ وەرگر</span><span class="confirm-row-value accent" dir="ltr">'+formatNum(payout.payout_iqd)+' IQD</span></div>'+
+    '<div class="confirm-row"><span class="confirm-row-label">گەڕاندنەوەی خۆکار بۆ باڵانست</span><span class="confirm-row-value" dir="ltr">'+formatNum(payout.remainder_iqd)+' IQD</span></div>'+
+    '<p class="payout-rounding-note">'+(payout.payout_iqd===0?'هیچ ناردنێکی دەرەکی ئەنجام نادرێت. ':'')+
+      (payout.remainder_iqd>0?'بڕی ماوە دوای پەسەندکردنی ئادمین بۆ باڵانسی هەژماری تۆ دەگەڕێتەوە.':'بڕێک بۆ گەڕاندنەوە نەماوەتەوە.')+'</p>':
+    '<div class="confirm-row"><span class="confirm-row-label">بڕی وەرگیراو</span><span class="confirm-row-value accent" dir="ltr">'+escHtml(totalTxt)+'</span></div>';
   const displayAmt=(from==='USDT')?`${formatNum(amtValue)}$`:`${formatNum(amtValue)} IQD`;
   document.getElementById('confirmSummary').innerHTML =
     '<div class="confirm-row"><span class="confirm-row-label">'+methodIconHTML(from,'sz-sm')+' لە</span><span class="confirm-row-value">'+METHOD_META[from].label+'</span></div>'
     + '<div class="confirm-row"><span class="confirm-row-label">'+methodIconHTML(to,'sz-sm')+' بۆ</span><span class="confirm-row-value">'+METHOD_META[to].label+'</span></div>'
     + '<div class="confirm-row"><span class="confirm-row-label">بڕی پارە</span><span class="confirm-row-value" dir="ltr">'+displayAmt+'</span></div>'
-    + '<div class="confirm-row"><span class="confirm-row-label">بڕی وەرگیراو</span><span class="confirm-row-value accent" dir="ltr">'+totalTxt+'</span></div>'
+    + payoutRows
     + senderIdentityRow
     + '<div class="confirm-row"><span class="confirm-row-label">ژمارەی وەرگر</span><span class="confirm-row-value" dir="ltr">'+phone+'</span></div>';
   const overlay=document.getElementById('confirmSheet');
@@ -1986,7 +2030,9 @@ const TX_STATE = {
 function txStateOf(o){ return o?.balance_refunded_at ? {key:'done',cls:'status-success'} : (TX_STATE[o && o.status] || {key:'pending',cls:''}); }
 function txLabelOf(o){ return o?.balance_refunded_at?'پارە گەڕێندرایەوە':(o?.status||''); }
 function txAmount(value, method){
-  return formatNum(Math.floor(Number(value)||0)) + (method==='USDT' ? ' $' : ' IQD');
+  if(value===null||value===undefined||value===''||!['number','string'].includes(typeof value)||
+    (typeof value==='string'&&!/^\d+(?:\.\d+)?$/.test(value))||!Number.isFinite(Number(value))||Number(value)<0)return '—';
+  return formatNum(Number(value)) + (method==='USDT' ? ' $' : ' IQD');
 }
 function txWhen(iso, withTime){ return kycFmtDate(iso, withTime); }   // shared Sorani date formatter
 function orderCardHTML(o){
@@ -1994,6 +2040,12 @@ function orderCardHTML(o){
   const st=txStateOf(o);
   const needsAction=!o.balance_refunded_at && o.status==='پێویستی بە ڕاستکردنەوەیە';
   const refunded=!!o.balance_refunded_at;
+  const payout=typeof ProxoPayoutRounding==='object'?ProxoPayoutRounding.forOrder(o):null;
+  const rounded=!refunded&&payout&&(payout.planned||payout.has_settlement);
+  const received=payout?payout.display_amount:o.total;
+  const roundingNote=rounded&&payout.valid&&payout.remainder_iqd>0?
+    '<div class="tx-rounding-credit">'+(payout.settled?'گەڕاوەتەوە بۆ باڵانست: ':'دوای پەسەندکردن بۆ باڵانست: ')+
+      '<bdi>'+txAmount(payout.remainder_iqd,'IQD')+'</bdi></div>':'';
   return '<article class="tx-card'+(needsAction?' needs-action':'')+(st.key==='done'?' is-complete':'')+'" tabindex="0" role="button"'
     + ' onclick="openTxDetail(\''+escHtml(String(o.id))+'\')"'
     + ' onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();openTxDetail(\''+escHtml(String(o.id))+'\');}">'
@@ -2004,8 +2056,9 @@ function orderCardHTML(o){
     + '<div class="tx-card-content"><div class="tx-route">'+escHtml(methodLabel(o.from_method))
       + '<span class="tx-route-arrow" aria-hidden="true">'+ICON.arrowLeftLong+'</span>'
       + escHtml(methodLabel(refunded?'AccountBalance':o.to_method))+'</div>'
-      + '<div class="tx-card-value"><small>'+(refunded?'گەڕاوە بۆ باڵانس':'وەرگرتنت')+'</small><span class="tx-amount" dir="ltr">'+txAmount(refunded?o.amount:o.total,refunded?'AccountBalance':o.to_method)+'</span></div>'
+      + '<div class="tx-card-value"><small>'+(refunded?'گەڕاوە بۆ باڵانس':rounded?'بڕی ناردن بۆ وەرگر':'وەرگرتنت')+'</small><span class="tx-amount" dir="ltr">'+txAmount(refunded?o.amount:received,refunded?'AccountBalance':o.to_method)+'</span></div>'
     + '</div>'
+    + roundingNote
     + '<div class="tx-card-foot">'
       + '<span class="tx-when">'+escHtml(txWhen(o.created_at,true))+'</span>'
       + '<span class="tx-detail-link">وردەکاری <span aria-hidden="true">‹</span></span>'
@@ -2031,6 +2084,9 @@ function openTxDetail(id){
   const rate=Number(o.amount)>0 ? (Number(o.total)/Number(o.amount)) : 0;
   const isUsdt=o.from_method==='USDT';
   const fee=!isUsdt && o.to_method!=='USDT' && Number(o.amount)>Number(o.total) ? Math.floor(Number(o.amount)-Number(o.total)) : 0;
+  const payout=typeof ProxoPayoutRounding==='object'?ProxoPayoutRounding.forOrder(o):null;
+  const rounded=!o.balance_refunded_at&&payout&&(payout.planned||payout.has_settlement);
+  const received=payout?payout.display_amount:o.total;
   let html='<div class="tx-dhead">'
     + '<span class="status-badge '+st.cls+'">'+escHtml(txLabelOf(o))+'</span>'
     + '<button type="button" class="tx-dcode" onclick="copyOrderCode(\''+escHtml(code)+'\', event)" title="کۆپیکردنی ئایدی">'
@@ -2038,7 +2094,7 @@ function openTxDetail(id){
     + '</div>'
     + '<div class="tx-damounts">'
       + '<div><small>ناردنت</small><b dir="ltr">'+txAmount(o.amount,o.from_method)+'</b></div>'
-      + '<div><small>'+(o.balance_refunded_at?'گەڕاوە بۆ باڵانس':'وەرگرتنت')+'</small><b class="recv" dir="ltr">'+txAmount(o.balance_refunded_at?o.amount:o.total,o.balance_refunded_at?'AccountBalance':o.to_method)+'</b></div>'
+      + '<div><small>'+(o.balance_refunded_at?'گەڕاوە بۆ باڵانس':rounded?'بڕی ناردن بۆ وەرگر':'وەرگرتنت')+'</small><b class="recv" dir="ltr">'+txAmount(o.balance_refunded_at?o.amount:received,o.balance_refunded_at?'AccountBalance':o.to_method)+'</b></div>'
     + '</div>'
     + '<div class="tx-dgroup">'
     // same direction rendering as the list card: source on the right, arrow, destination
@@ -2049,6 +2105,9 @@ function openTxDetail(id){
     + (isUsdt && rate ? txRow('نرخی ئاڵوگۆڕ', '1 $ = '+formatNum(Math.round(rate))+' IQD', {ltr:true}) : '')
     + (!o.balance_refunded_at && !isUsdt && o.to_method!=='USDT' ? txRow('کرێی خزمەتگوزاری', formatNum(fee)+' IQD', {ltr:true}) : '')
     + (!o.balance_refunded_at && Number(o.reward_discount_iqd)>0 ? txRow('سوودی داشکاندن',formatNum(o.reward_discount_iqd)+' IQD',{ltr:true}) : '')
+    + (rounded?txRow('بڕی سەرەکی دوای لێبڕین',txAmount(o.total,o.to_method),{ltr:true}):'')
+    + (rounded?txRow(payout.settled?'گەڕاندنەوەی خۆکار بۆ باڵانست':'گەڕاندنەوە بۆ باڵانست دوای پەسەندکردن',txAmount(payout.remainder_iqd,'IQD'),{ltr:true}):'')
+    + (rounded&&payout.valid&&payout.payout_iqd===0?txRow('ناردنی دەرەکی','هیچ ناردنێک بۆ وەرگر ئەنجام نادرێت'):'')
     + txRow('ژمارەی وەرگر', o.phone, {ltr:true})
     + (o.sender_phone ? txRow('ژمارەی نێرەر', o.sender_phone, {ltr:true}) : '')
     + txRow('بەرواری ناردن', txWhen(o.created_at,true))
@@ -2056,6 +2115,9 @@ function openTxDetail(id){
     + ((o.status==='پەسەندکرا'||o.status==='ڕەتکرا') && o.decided_at ? txRow('بەرواری بڕیار', txWhen(o.decided_at,true)) : '')
     + (o.extra_info ? txRow('زانیاری زیاتر', o.extra_info) : '')
     + '</div>';
+  if(rounded&&payout.planned&&payout.valid&&payout.remainder_iqd>0){
+    html+='<p class="payout-rounding-note">بڕی ماوە تەنها دوای پەسەندکردنی مامەڵە خۆکارانە بۆ باڵانسی هەژمارەکەت دەگەڕێتەوە.</p>';
+  }
   if(o.admin_note){
     html+='<div class="tx-dnote"><b>تێبینی ئادمین</b><p>'+escHtml(o.admin_note)+'</p></div>';
   }

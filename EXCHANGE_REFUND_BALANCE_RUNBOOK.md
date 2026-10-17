@@ -1,10 +1,35 @@
 # Proxo Balance: admin refunds, IQD balance and capped fee rewards
 
+## Exact-thousand IQD payouts and automatic balance refunds
+
+New approvals for an external **IQD recipient** pay only complete multiples of 1,000 IQD. The policy uses the final net entitlement **after fees and rewards**: `payout_iqd = floor(total / 1000) * 1000`; `payout_rounding_iqd = total - payout_iqd`. The original `ex_orders.total`, principal, fees and reward snapshots remain intact. The remainder is a customer balance liability, never extra fee income. Statistics and profit reports label principal and post-fee entitlement separately from external payout.
+
+| Net entitlement | External payout | Automatic balance credit |
+| --- | --- | --- |
+| 10,500 IQD | 10,000 IQD | 500 IQD |
+| 1,600 IQD | 1,000 IQD | 600 IQD |
+| 1,500 IQD | 1,000 IQD | 500 IQD |
+| 600 IQD | 0 IQD; no external transfer | 600 IQD |
+| 20,000 IQD | 20,000 IQD | 0 IQD; no zero-value journal |
+| 0 IQD | 0 IQD; no external transfer | 0 IQD; durable approval record only |
+
+This applies to every configured external IQD destination, including a USDT source with an IQD recipient. An external USDT recipient and AccountBalance destination are excluded. Existing pending/corrected orders follow the new rule when explicitly approved; previously approved orders without a payout settlement retain their historical amounts and receive no automatic backfill. Stored IQD entitlement must be a whole amount from 0 through 1,000,000,000; malformed or fractional values require correction rather than silent truncation. Newly entered IQD principal is whole; USDT principal may remain fractional.
+
+The customer sees external payout and planned balance credit before submitting. **Submission alone does not credit a balance.** In admin order details, review the frozen order/version, verify incoming funds, and confirm the exact displayed transfer after making it. A zero-payout order instead shows that no external transfer is required and must not claim a payment was made. Approving uses `approve_order` with a stable UUID, `expected_updated_at`, original `expected_total`, `confirmed_payout_iqd`, `confirmed_received = true`, and `confirmed_paid = (payout_iqd > 0)`. The backend supplies the authenticated actor to service-only `ex_admin_approve_order_settlement` and performs no separate balance mutation outside that transaction.
+
+The database checks fresh approval permission, freezes the order under a row lock, validates receipt or AccountBalance debit proof, and commits status, immutable settlement, optional remainder case, double-entry ledger, balance update and audit together. The request lock and exact payload snapshots make repeat submissions return the original result, including when the remainder is zero. Changed reuses and stale versions fail; an old tab must reopen and review the order. Direct authenticated status updates cannot bypass the settlement requirement. Automated rounding requires approval permission; later discretionary shortfall credits retain their separate refunds permission.
+
+`ex_order_payout_settlements` records every new IQD approval, including actor, customer, policy/unit, original net, exact external payout, remainder, confirmations, proof/version snapshots and refund/journal links. `ex_orders.payout_iqd`, `payout_rounding_iqd` and `payout_settlement_id` are protected cached references. A positive remainder also creates one immutable `ex_order_shortfall_refunds` case marked `refund_source = 'payout_rounding'`, using the existing `shortfall_refund` journal kind and contributing to `shortfall_refunded_iqd`. Manual cases retain `refund_source = 'manual_shortfall'`. A 500 IQD automatic credit followed by a separately confirmed 150 IQD manual correction totals 650 IQD; it never reapplies the rounding rule or creates a second refundable pool.
+
+Payout proof is optional at approval. For a saved positive rounded payout with no proof, the admin may attach the **first** receipt later through audited service-only `ex_admin_attach_settlement_receipt`. That append is allowed only before any additional manual shortfall credit; replacing existing proof is blocked. A zero-payout settlement has no external receipt to attach. Historical non-rounded receipt behavior remains as before.
+
+Apply `supabase/migrations/20261017212501_rounded_iqd_payout_settlement.sql` immediately before deploying the matching approval API and UI. It performs no existing customer credit. Preserve the explicit rollback boundary of `test/exchange-rounded-payout.sql`; the synthetic fixture covers authorization, stale or conflicting retries, zero transfers, USDT-to-IQD, later manual corrections, proof attachment, direct-write guards and atomic accounting failure. It may run as a rollback-only subtransaction after DDL in the same migration transaction, forcing deferred consistency checks before discarding all fixture rows. Run Node API/helper tests and the offline browser flows before publishing; inspect the new settlement reconciliation counters alongside the existing full/partial refund counters after migration.
+
 ## Approved-order shortfall credits
 
 Use **گەڕاندنەوەی بڕی کەم نێردراو بۆ باڵانس** in an approved order's details, or find the exact order in the admin Balance board. Enter the actual unpaid IQD amount (including small amounts such as 150) and the reason, confirm the shortfall, then review the credit before submitting. No manual verification reference is needed. The board shows the expected recipient payout, previous shortfall credits, the remaining limit, and the customer's balance before and after the proposed credit. The final saved balances come from the database transaction.
 
-This action is separate from rejecting and refunding an entire order. It keeps the approved status, original principal, expected payout, fee, reward usage and original payment proof intact. `ex_orders.total` is the expected recipient payout after fees/rewards; `ex_orders.amount` is the original principal. For a 10,000 IQD principal with a 9,800 IQD expected payout, sending 9,650 IQD leaves a 150 IQD shortfall. Crediting that shortfall adds exactly 150 IQD to the customer's available account balance.
+This action is separate from rejecting and refunding an entire order. It keeps the approved status, original principal, net entitlement, fee, reward usage and original payment proof intact. `ex_orders.total` is the original net entitlement after fees/rewards, before balance refunds; `ex_orders.amount` is the original principal. For a historical 10,000 IQD principal with a 9,800 IQD entitlement, sending 9,650 IQD leaves a 150 IQD shortfall. Crediting that shortfall adds exactly 150 IQD to the customer's available account balance. New exact-thousand settlements follow the automatic policy above and include the remainder in the same cumulative refund limit.
 
 The authenticated `balance_credit_shortfall` admin action calls service-only `ex_admin_credit_shortfall`. It derives the recipient from the locked order and independently checks the acting administrator's current refund permission. Only approved IQD orders with original receipt or recorded account-balance debit proof are eligible. USDT orders and fully refunded orders are excluded. Cumulative shortfall credits cannot exceed the original expected payout. Previously credited orders cannot be changed into a full rejection refund.
 
@@ -26,7 +51,8 @@ The board and PDF use these accounting meanings:
 
 | Record | Expected payout | Sent | Unpaid | Credited to balance |
 | --- | --- | --- | --- | --- |
-| Shortfall | Stored `expected_iqd` | Calculated `expected_iqd - refunded_after_iqd` | Cumulative `refunded_after_iqd` at this record | This record's `amount_iqd` |
+| Manual shortfall | Stored `expected_iqd` | Calculated `expected_iqd - refunded_after_iqd` | Cumulative `refunded_after_iqd` at this record | This record's `amount_iqd` |
+| Automatic payout remainder | Stored original net `expected_iqd` | Exact-thousand payout, `expected_iqd - amount_iqd`; zero means no external transfer | Original net modulo 1,000 | This record's `amount_iqd`, counted once |
 | Full refund with `refund_kind = 'failed_payout'` and `confirmed_payout_failed = true` | Valid matching IQD order's `total`, when available | 0 when the linked payout is available; otherwise unknown | Expected payout, when available | Refunded original principal, `amount_iqd` |
 | Admin rejection or other full refund without that confirmation | Valid matching IQD order's `total`, when available | Unknown / not recorded | Unknown / not recorded | Refunded original principal, `amount_iqd` |
 

@@ -74,8 +74,8 @@ function renderProfitStats(d){
     '<article class="profit-order"><div class="profit-order-head"><div><div class="profit-order-title">'+profitEsc(profitMethod(o.from_method))+' ← '+profitEsc(profitMethod(o.to_method))+'</div>'+
     '<div class="profit-order-id" dir="ltr">'+profitEsc(o.order_code||'—')+'</div></div>'+
     '<span class="profit-chip '+(o.deduction_iqd==null?'missing':'recorded')+'">'+(o.deduction_iqd==null?'بەردەست نییە':'پەسەندکراو')+'</span></div>'+
-    '<div class="profit-order-summary"><div><div class="ex-label">بڕی نێردراو</div><b dir="ltr">'+profitNum(o.amount,2)+'</b></div>'+
-    '<div><div class="ex-label">بڕی وەرگیراو</div><b dir="ltr">'+profitNum(o.total,2)+'</b></div>'+
+    '<div class="profit-order-summary"><div><div class="ex-label">بڕی سەرەتایی</div><b dir="ltr">'+profitNum(o.amount,2)+'</b></div>'+
+    '<div><div class="ex-label">بڕی پاش لێبڕین</div><b dir="ltr">'+profitNum(o.total,2)+'</b></div>'+
     '<div><div class="ex-label">لێبڕین</div><b class="profit-net" dir="ltr">'+profitMoney(o.deduction_iqd)+'</b></div></div>'+
     '<div class="profit-date">ئادمین: <bdi>'+profitEsc(profitAdminName(o))+'</bdi> · '+profitEsc(profitTime(o.accounted_at))+'</div></article>').join('')+
     (approved>rows.length?'<div class="ex-note">500 مامەڵەی دوایین نیشاندەدرێن. بۆ ماوەی دیاریکراو پاڵاوتنی ڕێکەوت بەکاربهێنە.</div>':''):
@@ -85,7 +85,7 @@ function profitExport(kind){
   if(!_profitData||String(_profitData.report_admin_id||(_profitData.report_unassigned?'unassigned':''))!==(document.getElementById('profitAdmin')?.value||''))return showToast('سەرەتا ئاماری لێبڕین باربکە','rd');
   const d=_profitData,rows=d.orders||[];
   if(!rows.length)return showToast('هیچ مامەڵەیەک بۆ داگرتن نییە','rd');
-  const fields=[['order_code','Order'],['from_method','From'],['to_method','To'],['amount','Sent'],['total','Received'],['deduction_iqd','Deduction IQD'],['accounted_at','Date'],['handling_admin_name','ناوی ئادمین']];
+  const fields=[['order_code','Order'],['from_method','From'],['to_method','To'],['amount','Original principal'],['total','Net entitlement before balance refund'],['deduction_iqd','Deduction IQD'],['accounted_at','Date'],['handling_admin_name','ناوی ئادمین']];
   const safe=v=>{const x=String(v==null?'':v);return /^[=+\-@\t\r]/.test(x)?"'"+x:x};
   const table=[fields.map(x=>x[1]),...rows.map(o=>fields.map(([k])=>safe(k==='handling_admin_name'?profitAdminName(o):o[k])))];
   const filename='Proxo-Balance-deductions-'+(d.report_admin_id?profitAdminName({handling_admin_name:d.report_admin_name}).replace(/[\\/:*?"<>|\x00-\x1f]/g,'_').slice(0,80)+'-':d.report_unassigned?'unassigned-':'')+new Date().toISOString().slice(0,10);
@@ -115,7 +115,7 @@ async function profitExportPdf(name){
     (d.by_method||[]).map(x=>'<tr><td>'+profitEsc(profitMethod(x.method))+'</td><td>'+profitNum(x.recorded_orders)+'</td><td>'+profitMoney(x.deduction_iqd)+'</td></tr>').join('')+'</tbody></table>'+
     (d.scope==='all'?'<div class="ex-title">قازانج بەپێی ئادمین</div><table><thead><tr><th>ناوی ئادمین</th><th>مامەڵەکان</th><th>لێبڕین (IQD)</th></tr></thead><tbody>'+
       (d.by_admin||[]).map(x=>'<tr><td>'+profitEsc(profitAdminName(x))+'</td><td>'+profitNum(x.approved_orders)+'</td><td>'+(Number(x.recorded_orders)?profitMoney(x.deduction_iqd):'—')+'</td></tr>').join('')+'</tbody></table>':'')+
-    '<div class="ex-title">دوایین مامەڵەکان (تا 20)</div><table><thead><tr><th>ئایدی</th><th>نێردراو</th><th>وەرگیراو</th><th>لێبڕین</th><th>ناوی ئادمین</th></tr></thead><tbody>'+
+    '<div class="ex-title">دوایین مامەڵەکان (تا 20)</div><table><thead><tr><th>ئایدی</th><th>بڕی سەرەتایی</th><th>پاش لێبڕین</th><th>لێبڕین</th><th>ناوی ئادمین</th></tr></thead><tbody>'+
     (d.orders||[]).slice(0,20).map(x=>'<tr><td dir="ltr">'+profitEsc(x.order_code||'—')+'</td><td>'+profitNum(x.amount)+'</td><td>'+profitNum(x.total)+'</td><td>'+profitMoney(x.deduction_iqd)+'</td><td>'+profitEsc(profitAdminName(x))+'</td></tr>').join('')+'</tbody></table>'+
     '<div class="ex-note">ئەم PDFـە پوختە و 20 مامەڵەی دوایین دەگرێتەوە؛ CSV / Excel بۆ داتای وردەکاری بەکاربهێنە.</div>';
   document.body.appendChild(source);

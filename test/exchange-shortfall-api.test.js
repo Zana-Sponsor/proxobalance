@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
+import { payoutPlan } from '../api/_lib/payout-rounding.js';
 
 const adminId = '11111111-1111-4111-8111-111111111111';
 const userId = '22222222-2222-4222-8222-222222222222';
@@ -87,10 +88,11 @@ function application(options = {}) {
   };
   const source = readFileSync(new URL('../api/admin.js', import.meta.url), 'utf8')
     .replace("import { createClient } from '@supabase/supabase-js';", 'const createClient=globalThis.createClient;')
+    .replace("import { payoutPlan } from './_lib/payout-rounding.js';", 'const payoutPlan=globalThis.payoutPlan;')
     .replace('export default async function handler', 'async function handler')
     .replace('export function assertStaffAction', 'function assertStaffAction');
   const context = vm.createContext({
-    createClient: () => db,
+    createClient: () => db, payoutPlan,
     process: { env: { SUPABASE_SERVICE_ROLE_KEY: 'fixture-only-service-key' } },
     console: { error() {} }, URL, Date
   });
@@ -411,7 +413,7 @@ test('customer balance history is scoped to the authenticated user despite a for
   const previous = globalThis.fetch;
   const reads = [];
   const ownCase = { id: caseId, order_id: orderId, journal_id: 'fixture-journal', amount_iqd: 150, reason: validPayload.reason,
-    created_at: savedCase.created_at };
+    refund_source: 'payout_rounding', created_at: savedCase.created_at };
   globalThis.fetch = async (input, options = {}) => {
     const url = new URL(String(input));
     if (url.pathname === '/auth/v1/user') return apiResponse({ id: userId });
@@ -426,6 +428,7 @@ test('customer balance history is scoped to the authenticated user despite a for
     if (url.pathname === '/rest/v1/ex_customer_balances') return apiResponse([{ available_iqd: 1150, held_iqd: 0 }]);
     if (url.pathname === '/rest/v1/ex_order_shortfall_refunds') {
       assert.ok(url.searchParams.get('select').split(',').includes('journal_id'));
+      assert.ok(url.searchParams.get('select').split(',').includes('refund_source'));
       return apiResponse([ownCase]);
     }
     if (url.pathname === '/rest/v1/ex_balance_config') return apiResponse([{ payouts_enabled: false }]);

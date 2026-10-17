@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
+import { payoutPlan } from '../api/_lib/payout-rounding.js';
 
 const NOW = Date.parse('2026-10-17T12:00:00.000Z');
 const SNAPSHOT = new Date(NOW).toISOString();
@@ -21,7 +22,7 @@ function shortfall(n = 1, created_at = new Date(NOW - 60000 - Math.floor(n / 3) 
     expected_iqd: 9800, refunded_before_iqd: 50, refunded_after_iqd: 200,
     balance_before_iqd: 1000, balance_after_iqd: 1150, journal_id: id(50000 + n), request_key: id(60000 + n),
     reason: 'The recipient received 150 IQD less than the agreed payout.',
-    verification_reference: 'shortfall:' + id(60000 + n), created_at };
+    verification_reference: 'shortfall:' + id(60000 + n), refund_source: 'manual_shortfall', created_at };
 }
 
 function application(options = {}) {
@@ -104,9 +105,10 @@ function application(options = {}) {
   }
   const source = readFileSync(new URL('../api/admin.js', import.meta.url), 'utf8')
     .replace("import { createClient } from '@supabase/supabase-js';", 'const createClient=globalThis.createClient;')
+    .replace("import { payoutPlan } from './_lib/payout-rounding.js';", 'const payoutPlan=globalThis.payoutPlan;')
     .replace('export default async function handler', 'async function handler')
     .replace('export function assertStaffAction', 'function assertStaffAction');
-  const context = vm.createContext({ createClient: () => db, Date: FixtureDate, URL,
+  const context = vm.createContext({ createClient: () => db, payoutPlan, Date: FixtureDate, URL,
     process: { env: { SUPABASE_SERVICE_ROLE_KEY: 'fixture-only-service-key' } }, console: { error() {} } });
   vm.runInContext(source + '\nglobalThis.handler=handler;', context);
   return { calls, profile, tables, async request(payload = {}, authorized = true) {
@@ -146,6 +148,20 @@ test('refund reports expose recorded amounts and only related order and actor de
   assert.equal(Object.hasOwn(report.orders[fullRefund().order_id], 'receipt_url'), false);
   assert.equal(Object.hasOwn(report.orders[fullRefund().order_id], 'admin_note'), false);
   assert.equal(app.calls.some(call => call.rpc || call.write), false);
+});
+
+test('reports preserve automatic rounding source and the matching order settlement amounts',async()=>{
+  const automatic = {...shortfall(),amount_iqd:800,refunded_before_iqd:0,refunded_after_iqd:800,
+    refund_source:'payout_rounding'};
+  const app = application({shortfalls:[automatic]});
+  const related = app.tables.ex_orders.find(order=>order.id===automatic.order_id);
+  Object.assign(related,{payout_iqd:9000,payout_rounding_iqd:800,payout_settlement_id:id(80000)});
+  const result = await app.request();
+  assert.equal(result.status,200);
+  assert.equal(result.body.data.shortfalls[0].refund_source,'payout_rounding');
+  assert.equal(result.body.data.orders[automatic.order_id].payout_iqd,9000);
+  assert.equal(result.body.data.orders[automatic.order_id].payout_rounding_iqd,800);
+  assert.equal(result.body.data.orders[automatic.order_id].payout_settlement_id,id(80000));
 });
 
 test('pagination exports more than 150 records with deterministic ties and one shared cutoff', async () => {
