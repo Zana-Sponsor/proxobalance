@@ -21,8 +21,10 @@ create table if not exists app_telemetry.events (
  user_id uuid not null references auth.users(id) on delete cascade,event_id uuid not null,installation_id uuid not null,run_id uuid not null,
  kind text not null check(kind in ('section','error','action','performance')),section text not null,code text not null,
  outcome text check(outcome in ('success','failure','incomplete')),duration_ms integer check(duration_ms between 0 and 600000),
- app_version text,device_model text,received_at timestamptz not null default now(),primary key(user_id,event_id)
+ ordinal bigint check(ordinal>0),app_version text,device_model text,received_at timestamptz not null default now(),primary key(user_id,event_id)
 );
+alter table app_telemetry.events add column if not exists ordinal bigint check(ordinal>0);
+create index if not exists telemetry_user_events on app_telemetry.events(user_id,received_at desc);
 create index if not exists telemetry_events_time on app_telemetry.events(received_at);
 create index if not exists telemetry_events_errors on app_telemetry.events(section,code,app_version,received_at desc) where kind='error';
 create table if not exists app_telemetry.daily_usage (
@@ -45,7 +47,7 @@ create or replace function app_telemetry.ingest(p_batch jsonb) returns jsonb
 language plpgsql security definer set search_path='' as $$
 declare u uuid:=app_finance.actor(); installation uuid; run uuid; sid uuid; seq bigint;
  old app_telemetry.sessions%rowtype; now_at timestamptz:=clock_timestamp(); fg boolean; section_name text; meta jsonb; event jsonb;
- seconds integer:=0; inserted integer; v_event_id uuid; event_kind text; event_code text; event_section text; ms integer; outcome_value text;
+ seconds integer:=0; inserted integer; v_event_id uuid; event_kind text; event_code text; event_section text; ms integer; outcome_value text; ordinal_value bigint;
 begin
  if p_batch is null or jsonb_typeof(p_batch)<>'object' or octet_length(p_batch::text)>32768 then raise exception 'INVALID_TELEMETRY'; end if;
  begin
@@ -88,12 +90,12 @@ begin
  end if;
  for event in select value from jsonb_array_elements(coalesce(p_batch->'events','[]'::jsonb)) loop
   v_event_id:=(event->>'id')::uuid; event_kind:=event->>'kind'; event_code:=event->>'code'; event_section:=event->>'section';
-  ms:=(event->>'duration_ms')::integer; outcome_value:=event->>'outcome';
+  ms:=(event->>'duration_ms')::integer; outcome_value:=event->>'outcome'; ordinal_value:=(event->>'ordinal')::bigint;
   if v_event_id is null or event_kind not in ('section','error','action','performance') or event_kind is null
     or event_code is null or event_code!~'^[A-Za-z0-9_.:-]{1,100}$' or event_section is null or event_section!~'^[a-z0-9_/-]{1,80}$'
-    or (ms is not null and ms not between 0 and 600000) or (outcome_value is not null and outcome_value not in ('success','failure','incomplete')) then raise exception 'INVALID_EVENT'; end if;
-  insert into app_telemetry.events(user_id,event_id,installation_id,run_id,kind,section,code,outcome,duration_ms,app_version,device_model,received_at)
-  values(u,v_event_id,installation,run,event_kind,event_section,event_code,outcome_value,ms,left(meta->>'app_version',40),left(meta->>'device_model',100),now_at)
+    or (ordinal_value is not null and ordinal_value<1) or (ms is not null and ms not between 0 and 600000) or (outcome_value is not null and outcome_value not in ('success','failure','incomplete')) then raise exception 'INVALID_EVENT'; end if;
+  insert into app_telemetry.events(user_id,event_id,installation_id,run_id,kind,section,code,outcome,duration_ms,ordinal,app_version,device_model,received_at)
+  values(u,v_event_id,installation,run,event_kind,event_section,event_code,outcome_value,ms,ordinal_value,left(meta->>'app_version',40),left(meta->>'device_model',100),now_at)
   on conflict(user_id,event_id) do nothing;
   get diagnostics inserted=row_count;
   if inserted=1 then
@@ -143,6 +145,29 @@ end $$;
 create or replace function public.pa_admin_app_report(p_days integer default 30) returns jsonb
 language sql security invoker set search_path='' as $$ select app_telemetry.report(p_days); $$;
 
+-- Administrator-only, bounded per-account detail. Client-side activity is
+-- diagnostic, not authoritative financial evidence. received_at is server time.
+create or replace function app_telemetry.user_activity(p_user_id uuid,p_limit integer) returns jsonb
+language plpgsql security definer set search_path='' as $$
+declare row_limit integer:=least(200,greatest(1,coalesce(p_limit,50)));
+begin
+ perform app_finance.actor();
+ if not public.pa_is_admin() then raise exception 'ADMIN_REQUIRED' using errcode='42501'; end if;
+ if p_user_id is null then raise exception 'USER_REQUIRED'; end if;
+ return jsonb_build_object('user_id',p_user_id,'generated_at',now(),'timezone','Asia/Baghdad',
+ 'devices',(select coalesce(jsonb_agg(x),'[]') from (
+   select installation_id,device_model,os,os_version,app_version,active,last_seen_at,last_reported_section
+   from app_telemetry.device_presence where user_id=p_user_id order by last_seen_at desc limit 100)x),
+ 'events',(select coalesce(jsonb_agg(x),'[]') from (
+   select event_id,run_id,kind,section,code,outcome,duration_ms,ordinal,received_at
+   from app_telemetry.events where user_id=p_user_id
+   order by received_at desc,ordinal desc nulls last,event_id desc limit row_limit)x),
+ 'events_truncated',(select count(*)>row_limit from (select 1 from app_telemetry.events where user_id=p_user_id limit row_limit+1)x),
+ 'limit',row_limit);
+end $$;
+create or replace function public.pa_admin_user_activity(p_user_id uuid,p_limit integer default 50) returns jsonb
+language sql security invoker set search_path='' as $$ select app_telemetry.user_activity(p_user_id,p_limit); $$;
+
 create or replace function app_telemetry.audit_operation() returns trigger
 language plpgsql security definer set search_path='' as $$ begin
  insert into app_telemetry.audit_events(actor_id,subject_id,action,reference,outcome)
@@ -181,7 +206,7 @@ do $$ declare t text; r record; begin
   perform cron.schedule('proxo-private-telemetry-retention','20 2 * * *','select app_telemetry.prune()');
  end if;
 end $$;
-grant execute on function app_telemetry.ingest(jsonb),app_telemetry.report(integer) to authenticated;
-revoke all on function public.pa_record_app_telemetry(jsonb),public.pa_admin_app_report(integer) from public,anon;
-grant execute on function public.pa_record_app_telemetry(jsonb),public.pa_admin_app_report(integer) to authenticated;
+grant execute on function app_telemetry.ingest(jsonb),app_telemetry.report(integer),app_telemetry.user_activity(uuid,integer) to authenticated;
+revoke all on function public.pa_record_app_telemetry(jsonb),public.pa_admin_app_report(integer),public.pa_admin_user_activity(uuid,integer) from public,anon;
+grant execute on function public.pa_record_app_telemetry(jsonb),public.pa_admin_app_report(integer),public.pa_admin_user_activity(uuid,integer) to authenticated;
 commit;

@@ -87,6 +87,7 @@ flutter:
     - assets/images/
     - assets/icons/
     - assets/icons/solar/
+    - assets/icons/auth/
     - assets/icons/ad_card/
     - assets/icons/nav/
     - assets/icons/home/
@@ -101,18 +102,16 @@ flutter:
     - assets/logos/proxo_notification_logo.png
     - assets/logos/tiktok_icon.png
   fonts:
-    # User-selected Rabar_021 at normal Flutter weight. The bundled font
-    # itself is Bold; this registration does not alter its glyph outlines.
+    - family: RabarAuthRegular
+      fonts:
+        - asset: assets/fonts/Rabar_022.ttf
+          weight: 400
+    # Receipt and existing app typography retain the original face.
     - family: ProxoReceipt
       fonts:
         - asset: assets/fonts/Rabar_021.ttf
           weight: 400
-    # Existing application font registration.
     - family: Rabar
       fonts:
         - asset: assets/fonts/Rabar_021.ttf
           weight: 400
-        # - asset: assets/fonts/Rabar-Medium.ttf
-        #   weight: 500
-        # - asset: assets/fonts/Rabar-Bold.ttf
-        #   weight: 700

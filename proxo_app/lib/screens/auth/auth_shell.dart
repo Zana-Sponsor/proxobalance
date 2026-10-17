@@ -1,10 +1,14 @@
 import '../../widgets/proxo_error_stack.dart';
+
 import 'package:proxo_app/l10n/proxo_strings.dart';
+
 import '../../widgets/proxo_symbol.dart';
+
 // auth/auth_shell.dart
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math' show max;
+
 import 'package:flutter/foundation.dart' show ValueListenable;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,6 +16,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
+
 import '../../theme/app_theme.dart';
 import '../../theme/app_locale.dart';
 import '../../services/trusted_device_service.dart';
@@ -21,23 +26,32 @@ import '../../widgets/auth/auth_design.dart';
 import '../../widgets/auth/auth_otp_field.dart';
 import '../../widgets/auth/auth_widgets.dart';
 import '../../widgets/auth/auth_header.dart';
-import '../../main.dart' show n8nWebhookUrl, n8nOtpLoginWebhook, wevlixOtpSendUrl, supabase, MainShell;
+import '../../widgets/auth/auth_intro.dart';
+import '../../widgets/auth/auth_icon.dart';
+import '../../main.dart'
+    show
+        n8nWebhookUrl,
+        n8nOtpLoginWebhook,
+        wevlixOtpSendUrl,
+        supabase,
+        MainShell;
 import 'auth_models.dart';
 import 'login_screen.dart';
 import 'signup_screen.dart';
 import 'otp_screen.dart';
 import 'auth_service.dart';
+
 import 'package:proxo_app/widgets/proxo_text.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Enums
 // ─────────────────────────────────────────────────────────────────────────────
 
-enum _Tab        { login, register }
+enum _Tab { login, register }
 
 /// کەناڵی چوونەژوورەوە. ⚠ تەنها لە `_buildSignInView`دا بەکاردێت —
 /// شاشەی تۆمارکردن هەرگیز ئەم سویچەی نییە.
-enum _Step       { form, otp, forgotEmail, forgotOtp, forgotNewPass }
+enum _Step { form, otp, forgotEmail, forgotOtp, forgotNewPass }
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Rate Limiter
@@ -79,7 +93,10 @@ class _RateLimiter {
     if (e.lockedUntil != null) {
       final remaining = e.lockedUntil!.difference(DateTime.now());
       if (remaining.inSeconds > 0) {
-        return ProxoStrings.format('هەژمارەکەت قفڵ کراوە. {duration} چاوەڕێ بکە.', {'duration': _wait(remaining)});
+        return ProxoStrings.format(
+          'هەژمارەکەت قفڵ کراوە. {duration} چاوەڕێ بکە.',
+          {'duration': _wait(remaining)},
+        );
       } else {
         e.reset();
       }
@@ -91,9 +108,9 @@ class _RateLimiter {
   /// خولەک کاتێک کۆتایی دێت.
   static String _wait(Duration d) {
     final h = d.inHours;
-    if (h >= 1) return ProxoStrings.format('{hours} کاتژمێر', {'hours':h});
+    if (h >= 1) return ProxoStrings.format('{hours} کاتژمێر', {'hours': h});
     final m = (d.inSeconds / 60).ceil();
-    return ProxoStrings.format('{minutes} خولەک', {'minutes':m});
+    return ProxoStrings.format('{minutes} خولەک', {'minutes': m});
   }
 
   /// [lockFor] دیاری دەکات کە ئەم شکستە سەر بە کام کەناڵەوەیە.
@@ -101,7 +118,8 @@ class _RateLimiter {
   /// داتابەیسی هەیە و نابێت بە هەڵە کورت بکرێتەوە.
   static bool recordFail(String email, {Duration? lockFor}) {
     final e = _entry(email);
-    if (e.lockedUntil != null && e.lockedUntil!.isAfter(DateTime.now())) return true;
+    if (e.lockedUntil != null && e.lockedUntil!.isAfter(DateTime.now()))
+      return true;
     e.attempts++;
     if (e.attempts >= _maxAttempts) {
       e.lockedUntil = DateTime.now().add(lockFor ?? _lockForPassword);
@@ -110,14 +128,18 @@ class _RateLimiter {
     return false;
   }
 
-  static int remaining(String email) => max(0, _maxAttempts - _entry(email).attempts);
-  static void reset(String email)    => _entry(email).reset();
+  static int remaining(String email) =>
+      max(0, _maxAttempts - _entry(email).attempts);
+  static void reset(String email) => _entry(email).reset();
 }
 
 class _RateEntry {
-  int       attempts    = 0;
+  int attempts = 0;
   DateTime? lockedUntil;
-  void reset() { attempts = 0; lockedUntil = null; }
+  void reset() {
+    attempts = 0;
+    lockedUntil = null;
+  }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -132,30 +154,31 @@ class AuthShell extends StatefulWidget {
 }
 
 class _AuthShellState extends State<AuthShell> {
-
-  _Tab  _tab     = _Tab.login;
-  _Step _step    = _Step.form;
-  bool  _loading  = false;
+  _Tab _tab = _Tab.login;
+  _Step _step = _Step.form;
+  bool _loading = false;
   final _viewScroll = ScrollController(keepScrollOffset: false);
   String _lastScrollViewKey = 'signin';
   final ValueNotifier<bool> _loginPasswordVisible = ValueNotifier<bool>(false);
   final ValueNotifier<bool> _signupPasswordVisible = ValueNotifier<bool>(false);
-  final ValueNotifier<bool> _signupConfirmationVisible = ValueNotifier<bool>(false);
+  final ValueNotifier<bool> _signupConfirmationVisible = ValueNotifier<bool>(
+    false,
+  );
 
   // ── کارتی ئیرۆری سپی سەر شاشە (٤ چرکە) ──
 
   final _loginEmailCtrl = TextEditingController();
-  final _loginPassCtrl  = TextEditingController();
+  final _loginPassCtrl = TextEditingController();
   final _loginEmailFocus = FocusNode();
-  final _loginPassFocus  = FocusNode();
+  final _loginPassFocus = FocusNode();
   String? _loginEmailErr;
   String? _loginPassErr;
 
-  final _regNameCtrl  = TextEditingController();
+  final _regNameCtrl = TextEditingController();
   final _regPhoneCtrl = TextEditingController();
-  final _regNameFocus  = FocusNode();
+  final _regNameFocus = FocusNode();
   final _regPhoneFocus = FocusNode();
-  final _regPassCtrl  = TextEditingController();
+  final _regPassCtrl = TextEditingController();
   final _regPass2Ctrl = TextEditingController();
   String? _regNameErr;
   String? _regPhoneErr;
@@ -171,48 +194,51 @@ class _AuthShellState extends State<AuthShell> {
   AuthChannel _loginChannel = AuthChannel.email;
   AuthChannel _activeOtpChannel = AuthChannel.email;
   AuthOtpPurpose _activeOtpPurpose = AuthOtpPurpose.login;
-  final _loginPhoneCtrl  = TextEditingController();
+  final _loginPhoneCtrl = TextEditingController();
+
   /// ژمارەی ئەو داواکارییەی OTPـەکەی بۆ نێردراوە — E.164.
   String _pendingPhone = '';
   final _loginPhoneFocus = FocusNode();
   String? _loginPhoneErr;
-  bool    _phoneOtpSending = false;
+  bool _phoneOtpSending = false;
 
-  final _otpCtrl  = TextEditingController();
+  final _otpCtrl = TextEditingController();
   final _otpFocus = FocusNode();
   bool _loginLockedOut = false;
 
   String? _trustedEmail;
   bool _trustedSelected = false;
 
-  final OtpShakeController _otpShaker   = OtpShakeController();
+  final OtpShakeController _otpShaker = OtpShakeController();
   final OtpShakeController _fpOtpShaker = OtpShakeController();
 
-  String _pendingEmail   = '';
-  String _pendingUserId  = '';
-  String _pendingPass    = '';
-  String _pendingName    = '';
+  String _pendingEmail = '';
+  String _pendingUserId = '';
+  String _pendingPass = '';
+  String _pendingName = '';
   Timer? _resendTimer;
   final ValueNotifier<int> _resendSeconds = ValueNotifier<int>(60);
-  int    _otpAttempts    = 0;
-  bool   _otpHasError    = false;
+  int _otpAttempts = 0;
+  bool _otpHasError = false;
 
-  final _fpEmailCtrl       = TextEditingController();
-  final _fpEmailFocus      = FocusNode();
-  final _fpNewPassCtrl     = TextEditingController();
+  final _fpEmailCtrl = TextEditingController();
+  final _fpEmailFocus = FocusNode();
+  final _fpNewPassCtrl = TextEditingController();
   final _fpConfirmPassCtrl = TextEditingController();
   final ValueNotifier<bool> _resetPasswordVisible = ValueNotifier<bool>(false);
-  final ValueNotifier<bool> _resetConfirmationVisible = ValueNotifier<bool>(false);
+  final ValueNotifier<bool> _resetConfirmationVisible = ValueNotifier<bool>(
+    false,
+  );
   String? _fpEmailErr;
   String? _fpNewPassErr;
   String? _fpConfirmPassErr;
-  String _fpUserId        = '';
+  String _fpUserId = '';
   String _fpVerifiedOtpId = '';
-  int    _fpOtpAttempts   = 0;
+  int _fpOtpAttempts = 0;
 
-  final _fpOtpCtrl  = TextEditingController();
+  final _fpOtpCtrl = TextEditingController();
   final _fpOtpFocus = FocusNode();
-  bool   _fpOtpHasError = false;
+  bool _fpOtpHasError = false;
 
   late final AuthService _authService;
 
@@ -222,7 +248,7 @@ class _AuthShellState extends State<AuthShell> {
   // 21، و 12.8/1.35 بەرامبەر 13/1.40). واتە سەرناوی «چوونەژوورەوە» و
   // سەرناوی OTP دوو سەرچاوەی جیاوازیان هەبوو و دەیانتوانی لێک دووربکەونەوە
   // بەبێ ئەوەی کەس تێبینی بکات. ئێستا ئەلیاسن.
-  static const TextStyle _kSub   = AuthTokens.subtitle;
+  static const TextStyle _kSub = AuthTokens.subtitle;
 
   @override
   void initState() {
@@ -232,10 +258,7 @@ class _AuthShellState extends State<AuthShell> {
       emailOtpUrl: n8nOtpLoginWebhook,
       whatsappOtpUrl: wevlixOtpSendUrl,
     );
-    for (final FocusNode f in <FocusNode>[
-      _loginEmailFocus,
-      _fpEmailFocus,
-    ]) {
+    for (final FocusNode f in <FocusNode>[_loginEmailFocus, _fpEmailFocus]) {
       f.addListener(_normalizeBlurredEmails);
     }
     _loadTrustedDevice();
@@ -305,30 +328,37 @@ class _AuthShellState extends State<AuthShell> {
     _resendTimer?.cancel();
     _authService.close();
     AuthFlowGuard.inOtpFlow = false;
-    _loginEmailCtrl.dispose(); _loginPassCtrl.dispose();
-    for (final FocusNode f in <FocusNode>[
-      _loginEmailFocus,
-      _fpEmailFocus,
-    ]) {
+    _loginEmailCtrl.dispose();
+    _loginPassCtrl.dispose();
+    for (final FocusNode f in <FocusNode>[_loginEmailFocus, _fpEmailFocus]) {
       f.removeListener(_normalizeBlurredEmails);
     }
-    _loginEmailFocus.dispose(); _loginPassFocus.dispose();
-    _regNameCtrl.dispose();    _regPhoneCtrl.dispose();
-    _regNameFocus.dispose();   _regPhoneFocus.dispose();
-    _regPassCtrl.dispose();    _regPass2Ctrl.dispose();
-    _loginPhoneCtrl.dispose(); _loginPhoneFocus.dispose();
-    _otpCtrl.dispose();   _otpFocus.dispose();
-    _fpEmailCtrl.dispose();    _fpEmailFocus.dispose();
+    _loginEmailFocus.dispose();
+    _loginPassFocus.dispose();
+    _regNameCtrl.dispose();
+    _regPhoneCtrl.dispose();
+    _regNameFocus.dispose();
+    _regPhoneFocus.dispose();
+    _regPassCtrl.dispose();
+    _regPass2Ctrl.dispose();
+    _loginPhoneCtrl.dispose();
+    _loginPhoneFocus.dispose();
+    _otpCtrl.dispose();
+    _otpFocus.dispose();
+    _fpEmailCtrl.dispose();
+    _fpEmailFocus.dispose();
     _fpNewPassCtrl.dispose();
     _fpConfirmPassCtrl.dispose();
-    _fpOtpCtrl.dispose(); _fpOtpFocus.dispose();
+    _fpOtpCtrl.dispose();
+    _fpOtpFocus.dispose();
     _loginPasswordVisible.dispose();
     _signupPasswordVisible.dispose();
     _signupConfirmationVisible.dispose();
     _resetPasswordVisible.dispose();
     _resetConfirmationVisible.dispose();
     _resendSeconds.dispose();
-    _otpShaker.dispose(); _fpOtpShaker.dispose();
+    _otpShaker.dispose();
+    _fpOtpShaker.dispose();
     super.dispose();
   }
 
@@ -346,8 +376,10 @@ class _AuthShellState extends State<AuthShell> {
   Future<bool> _checkLockedOut(String email) async {
     if (email.isEmpty) return false;
     try {
-      final res = await supabase
-          .rpc('pa_login_lock_status', params: {'p_email': email});
+      final res = await supabase.rpc(
+        'pa_login_lock_status',
+        params: {'p_email': email},
+      );
       if (res is List && res.isNotEmpty && res.first is Map) {
         return (res.first as Map)['locked'] == true;
       }
@@ -370,7 +402,12 @@ class _AuthShellState extends State<AuthShell> {
 
   // ── پیشاندانی کارتی سپی بۆ ئیرۆر بە مانەوەی ٤ چرکە ─────────────────────────
   void _showErrorCard(String msg) {
-    if (mounted) ProxoErrorStack.show(context, msg);
+    if (mounted)
+      ProxoErrorStack.show(
+        context,
+        msg,
+        textStyle: AuthTokens.subtitle.copyWith(color: AuthTokens.ink),
+      );
   }
 
   void _showNetworkError() {
@@ -497,13 +534,13 @@ class _AuthShellState extends State<AuthShell> {
     required String password,
     required bool whatsappMarketing,
   }) => _authService.completePhoneSignup(
-        phone: phone,
-        code: code,
-        fullName: fullName,
-        password: password,
-        whatsappMarketing: whatsappMarketing,
-        locale: _pendingConsentLocale,
-      );
+    phone: phone,
+    code: code,
+    fullName: fullName,
+    password: password,
+    whatsappMarketing: whatsappMarketing,
+    locale: _pendingConsentLocale,
+  );
 
   /// تۆکێنی refresh دەگۆڕێت بە سێشنێکی چالاک.
   ///
@@ -550,24 +587,32 @@ class _AuthShellState extends State<AuthShell> {
   Future<bool> _sendLoginOtp(String email) =>
       _authService.sendLoginEmailOtp(email);
 
-  Future<bool> _verifyLoginOtp({
-    required String email,
-    required String code,
-  }) => _authService.verifyLoginEmailOtp(email: email, code: code);
+  Future<bool> _verifyLoginOtp({required String email, required String code}) =>
+      _authService.verifyLoginEmailOtp(email: email, code: code);
 
   void _notifyN8n(String action, Map<String, dynamic> data) {
-    http.post(Uri.parse(n8nWebhookUrl),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'action': action, ...data}),
-    ).timeout(const Duration(seconds: 8)).catchError((_) => http.Response('', 0));
+    http
+        .post(
+          Uri.parse(n8nWebhookUrl),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({'action': action, ...data}),
+        )
+        .timeout(const Duration(seconds: 8))
+        .catchError((_) => http.Response('', 0));
   }
 
   void _startResendTimer() {
     _resendSeconds.value = 60;
     _resendTimer?.cancel();
     _resendTimer = Timer.periodic(const Duration(seconds: 1), (t) {
-      if (!mounted) { t.cancel(); return; }
-      if (_resendSeconds.value == 0) { t.cancel(); return; }
+      if (!mounted) {
+        t.cancel();
+        return;
+      }
+      if (_resendSeconds.value == 0) {
+        t.cancel();
+        return;
+      }
       _resendSeconds.value--;
     });
   }
@@ -575,7 +620,8 @@ class _AuthShellState extends State<AuthShell> {
   bool _isNetworkError() {
     final s = _authService.lastOtpError ?? '';
     if (s.contains('timeout') || s.contains('TimeoutException')) return true;
-    if (s.contains('SocketException') || s.contains('connection refused')) return true;
+    if (s.contains('SocketException') || s.contains('connection refused'))
+      return true;
     if (s.contains('NetworkException') || s.contains('network')) return true;
     final code = _authService.lastOtpStatus;
     return code == 408 || code == 503 || code == 504;
@@ -586,21 +632,37 @@ class _AuthShellState extends State<AuthShell> {
   Future<void> _doLogin() async {
     if (_loading) return;
     final email = AuthValidators.normalizeEmail(_loginEmailCtrl.text);
-    final pass  = _loginPassCtrl.text;
-    setState(() { _loginEmailErr = null; _loginPassErr = null; });
-    if (email.isEmpty) { setState(() => _loginEmailErr = AuthStrings.errEmptyField); return; }
-    if (!_isGmail(email)) { setState(() => _loginEmailErr = AuthStrings.errInvalidEmail); return; }
-    if (pass.isEmpty)  { setState(() => _loginPassErr = AuthStrings.errEmptyField); return; }
+    final pass = _loginPassCtrl.text;
+    setState(() {
+      _loginEmailErr = null;
+      _loginPassErr = null;
+    });
+    if (email.isEmpty) {
+      setState(() => _loginEmailErr = AuthStrings.errEmptyField);
+      return;
+    }
+    if (!_isGmail(email)) {
+      setState(() => _loginEmailErr = AuthStrings.errInvalidEmail);
+      return;
+    }
+    if (pass.isEmpty) {
+      setState(() => _loginPassErr = AuthStrings.errEmptyField);
+      return;
+    }
     final lockMsg = _RateLimiter.check(email);
-    if (lockMsg != null) { _showErrorCard(lockMsg); return; }
+    if (lockMsg != null) {
+      _showErrorCard(lockMsg);
+      return;
+    }
     setState(() => _loading = true);
     AuthFlowGuard.inOtpFlow = true;
     try {
-      final Map<String, dynamic> attempt =
-          Map<String, dynamic>.from(await supabase.rpc(
-        'pa_login_attempt',
-        params: {'p_email': email, 'p_password': pass},
-      ) as Map);
+      final Map<String, dynamic> attempt = Map<String, dynamic>.from(
+        await supabase.rpc(
+          'pa_login_attempt',
+          params: {'p_email': email, 'p_password': pass},
+        ) as Map,
+      );
 
       final String status = (attempt['status'] as String?) ?? 'invalid';
 
@@ -614,9 +676,14 @@ class _AuthShellState extends State<AuthShell> {
         AuthFlowGuard.inOtpFlow = false;
         final int? left = attempt['remaining'] as int?;
         _RateLimiter.recordFail(email);
-        setState(() => _loginPassErr = left != null
-            ? ProxoStrings.format('وشەی تێپەڕ هەڵەیە — {count} هەوڵی تر ماوە', {'count': left})
-            : AuthStrings.errWrongPassword);
+        setState(
+          () => _loginPassErr = left != null
+              ? ProxoStrings.format(
+                  'وشەی تێپەڕ هەڵەیە — {count} هەوڵی تر ماوە',
+                  {'count': left},
+                )
+              : AuthStrings.errWrongPassword,
+        );
         return;
       }
 
@@ -625,13 +692,17 @@ class _AuthShellState extends State<AuthShell> {
       String name = ((attempt['full_name'] as String?) ?? '').trim();
       if (name.isEmpty) name = email.split('@').first;
 
-      try { await supabase.auth.signOut(); } catch (_) {}
+      try {
+        await supabase.auth.signOut();
+      } catch (_) {}
 
-      _pendingEmail = email; _pendingUserId = uid;
-      _pendingPass  = pass;  _pendingName   = name;
+      _pendingEmail = email;
+      _pendingUserId = uid;
+      _pendingPass = pass;
+      _pendingName = name;
       _activeOtpChannel = AuthChannel.email;
       _activeOtpPurpose = AuthOtpPurpose.login;
-      _otpAttempts  = 0;
+      _otpAttempts = 0;
       _RateLimiter.reset(email);
 
       final ok = await _sendLoginOtp(email);
@@ -647,16 +718,30 @@ class _AuthShellState extends State<AuthShell> {
 
       _startResendTimer();
       _otpCtrl.clear();
-      setState(() { _otpHasError = false; _step = _Step.otp; });
+      setState(() {
+        _otpHasError = false;
+        _step = _Step.otp;
+      });
     } on AuthException catch (e) {
       AuthFlowGuard.inOtpFlow = false;
       final locked = _RateLimiter.recordFail(email);
       if (locked) {
-        _showErrorCard(_t('هەژمارەکەت بۆ ماوەی ٢٤ کاتژمێر قفڵ کراوە',
-            'تم قفل حسابك لمدة 24 ساعة'));
+        _showErrorCard(
+          _t(
+            'هەژمارەکەت بۆ ماوەی ٢٤ کاتژمێر قفڵ کراوە',
+            'تم قفل حسابك لمدة 24 ساعة',
+          ),
+        );
       } else {
-        setState(() => _loginPassErr =
-            ProxoStrings.format('{error} — {count} هەوڵی تر ماوە', {'error': _mapAuthError(e.message), 'count': _RateLimiter.remaining(email)}));
+        setState(
+          () => _loginPassErr = ProxoStrings.format(
+            '{error} — {count} هەوڵی تر ماوە',
+            {
+              'error': _mapAuthError(e.message),
+              'count': _RateLimiter.remaining(email),
+            },
+          ),
+        );
       }
     } catch (e) {
       AuthFlowGuard.inOtpFlow = false;
@@ -697,8 +782,10 @@ class _AuthShellState extends State<AuthShell> {
       setState(() => _regPassErr = passwordError);
       return;
     }
-    final String? confirmationError =
-        AuthValidators.confirmPassword(pass2, pass);
+    final String? confirmationError = AuthValidators.confirmPassword(
+      pass2,
+      pass,
+    );
     if (confirmationError != null) {
       setState(() => _regPass2Err = confirmationError);
       return;
@@ -739,7 +826,10 @@ class _AuthShellState extends State<AuthShell> {
       _otpAttempts = 0;
       _startResendTimer();
       _otpCtrl.clear();
-      setState(() { _otpHasError = false; _step = _Step.otp; });
+      setState(() {
+        _otpHasError = false;
+        _step = _Step.otp;
+      });
     } catch (_) {
       AuthFlowGuard.inOtpFlow = false;
       _showNetworkError();
@@ -754,9 +844,9 @@ class _AuthShellState extends State<AuthShell> {
 
   Future<void> _doVerifyOtp() async {
     if (_loading) return;
-    if (_otpCode.length < 6) { 
+    if (_otpCode.length < 6) {
       _showErrorCard(AuthStrings.errEmptyField);
-      return; 
+      return;
     }
     // ── کام کەناڵ؟ ───────────────────────────────────────────────────────
     // هەمان ڕووکاری OTP بۆ هەردوو کەناڵەکە بەکاردێت؛ تەنها ئەو
@@ -799,8 +889,7 @@ class _AuthShellState extends State<AuthShell> {
           return;
         }
       } else if (byPhone) {
-        final r = await _exchangePhoneOtp(
-            phone: _pendingPhone, code: _otpCode);
+        final r = await _exchangePhoneOtp(phone: _pendingPhone, code: _otpCode);
         phoneRefreshToken = r.refreshToken;
         phoneError = r.error;
         valid = r.refreshToken != null;
@@ -823,15 +912,28 @@ class _AuthShellState extends State<AuthShell> {
         if (_otpAttempts >= _RateLimiter._maxAttempts) {
           // OTP، نەک وشەی نهێنی — بۆیە ماوەیەکی کورتتر و پەیامێکی
           // جیاواز. هیچ قفڵێکی داتابەیس لێرەوە دانانرێت.
-          _RateLimiter.recordFail(rateKey,
-              lockFor: _RateLimiter._lockForOtp);
-          _showErrorCard(_t('زۆر کۆدی هەڵەت نووسی — ١٥ خولەک چاوەڕێ بکە',
-              'محاولات كثيرة غير صحيحة — انتظر 15 دقيقة'));
+          _RateLimiter.recordFail(rateKey, lockFor: _RateLimiter._lockForOtp);
+          _showErrorCard(
+            _t(
+              'زۆر کۆدی هەڵەت نووسی — ١٥ خولەک چاوەڕێ بکە',
+              'محاولات كثيرة غير صحيحة — انتظر 15 دقيقة',
+            ),
+          );
           AuthFlowGuard.inOtpFlow = false;
-          setState(() { _step = _Step.form; _otpAttempts = 0; _otpHasError = false; });
+          setState(() {
+            _step = _Step.form;
+            _otpAttempts = 0;
+            _otpHasError = false;
+          });
         } else {
-          _showErrorCard(ProxoStrings.format('کۆدەکە هەڵەیە — {count} هەوڵی تر ماوە', {'count': _RateLimiter._maxAttempts - _otpAttempts}));
-          setState(() { _otpHasError = true; });
+          _showErrorCard(
+            ProxoStrings.format('کۆدەکە هەڵەیە — {count} هەوڵی تر ماوە', {
+              'count': _RateLimiter._maxAttempts - _otpAttempts,
+            }),
+          );
+          setState(() {
+            _otpHasError = true;
+          });
           _otpShaker.shakeAndReset();
         }
         return;
@@ -847,13 +949,17 @@ class _AuthShellState extends State<AuthShell> {
           );
           final User? user = response.user;
           if (user == null) throw const AuthException('session_failed');
-          unawaited(AuthActivityService.forClient(supabase).recordCurrentSession());
+          unawaited(
+            AuthActivityService.forClient(supabase).recordCurrentSession(),
+          );
           unawaited(TrustedDeviceService.remember(supabase));
           unawaited(_saveDeviceToken(user.id));
           AuthFlowGuard.inOtpFlow = false;
           if (!mounted) return;
           Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (_) => const AccountSetupGate(child: MainShell())),
+            MaterialPageRoute(
+              builder: (_) => const AccountSetupGate(child: MainShell()),
+            ),
             (route) => false,
           );
         } on AuthException catch (e) {
@@ -876,7 +982,9 @@ class _AuthShellState extends State<AuthShell> {
           AuthFlowGuard.inOtpFlow = false;
           if (!mounted) return;
           Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (_) => const AccountSetupGate(child: MainShell())),
+            MaterialPageRoute(
+              builder: (_) => const AccountSetupGate(child: MainShell()),
+            ),
             (r) => false,
           );
         } on AuthException catch (e) {
@@ -897,18 +1005,28 @@ class _AuthShellState extends State<AuthShell> {
       Future<void> signInAndNavigate() async {
         try {
           final r = await supabase.auth.signInWithPassword(
-            email: _pendingEmail, password: _pendingPass);
+            email: _pendingEmail,
+            password: _pendingPass,
+          );
           if (r.user != null && mounted) {
             // تەنها دوای دروستبوونی سێشنی خاوەن هەژمار، تۆماری
             // سڕینەوەی هەمان بەکارهێنەر لادەبرێت.
-            try { await supabase.rpc('pa_restore_deleted_account'); } catch (_) {}
-            unawaited(AuthActivityService.forClient(supabase).recordCurrentSession());
+            try {
+              await supabase.rpc('pa_restore_deleted_account');
+            } catch (_) {}
+            unawaited(
+              AuthActivityService.forClient(supabase).recordCurrentSession(),
+            );
             unawaited(TrustedDeviceService.remember(supabase));
             await _saveDeviceToken(r.user!.id);
             AuthFlowGuard.inOtpFlow = false;
             if (!mounted) return;
             Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(builder: (_) => const AccountSetupGate(child: MainShell())), (r) => false);
+              MaterialPageRoute(
+                builder: (_) => const AccountSetupGate(child: MainShell()),
+              ),
+              (r) => false,
+            );
           } else if (mounted) {
             _showErrorCard(AuthStrings.errServer);
           }
@@ -920,8 +1038,16 @@ class _AuthShellState extends State<AuthShell> {
       if (_tab == _Tab.login) {
         await signInAndNavigate();
       } else {
-        _notifyN8n('email_verified', {'email': _pendingEmail, 'user_id': _pendingUserId});
-        try { await supabase.rpc('proxo_confirm_email', params: {'p_user_id': _pendingUserId}); } catch (_) {}
+        _notifyN8n('email_verified', {
+          'email': _pendingEmail,
+          'user_id': _pendingUserId,
+        });
+        try {
+          await supabase.rpc(
+            'proxo_confirm_email',
+            params: {'p_user_id': _pendingUserId},
+          );
+        } catch (_) {}
         await signInAndNavigate();
       }
     } catch (e) {
@@ -935,22 +1061,26 @@ class _AuthShellState extends State<AuthShell> {
     try {
       final token = await FirebaseMessaging.instance.getToken();
       if (token == null) return;
-      final platform = Theme.of(context).platform == TargetPlatform.iOS ? 'ios' : 'android';
-      await supabase.from('pa_device_tokens').upsert(
-        {
-          'user_id':    userId,
-          'token':      token,
-          'platform':   platform,
-          'updated_at': DateTime.now().toUtc().toIso8601String(),
-        },
-        onConflict: 'user_id, token',
-      );
+      final platform = Theme.of(context).platform == TargetPlatform.iOS
+          ? 'ios'
+          : 'android';
+      await supabase.from('pa_device_tokens').upsert({
+        'user_id': userId,
+        'token': token,
+        'platform': platform,
+        'updated_at': DateTime.now().toUtc().toIso8601String(),
+      }, onConflict: 'user_id, token');
     } catch (_) {}
   }
 
   void _cancelOtpAndGoBack() {
+    FocusScope.of(context).unfocus();
     AuthFlowGuard.inOtpFlow = false;
-    setState(() { _step = _Step.form; _otpAttempts = 0; _otpHasError = false; });
+    setState(() {
+      _step = _Step.form;
+      _otpAttempts = 0;
+      _otpHasError = false;
+    });
     _otpCtrl.clear();
   }
 
@@ -980,7 +1110,8 @@ class _AuthShellState extends State<AuthShell> {
         );
       }
       if (ok) {
-        _startResendTimer(); _otpAttempts = 0;
+        _startResendTimer();
+        _otpAttempts = 0;
         _otpCtrl.clear();
         setState(() => _otpHasError = false);
         _otpFocus.requestFocus();
@@ -1001,21 +1132,38 @@ class _AuthShellState extends State<AuthShell> {
   Future<void> _doForgotSendOtp() async {
     final email = AuthValidators.normalizeEmail(_fpEmailCtrl.text);
     setState(() => _fpEmailErr = null);
-    if (email.isEmpty)    { setState(() => _fpEmailErr = AuthStrings.errEmptyField); return; }
-    if (!_isGmail(email)) { setState(() => _fpEmailErr = AuthStrings.errInvalidEmail); return; }
+    if (email.isEmpty) {
+      setState(() => _fpEmailErr = AuthStrings.errEmptyField);
+      return;
+    }
+    if (!_isGmail(email)) {
+      setState(() => _fpEmailErr = AuthStrings.errInvalidEmail);
+      return;
+    }
     setState(() => _loading = true);
     try {
-      final prof = await supabase.from('profiles')
-          .select('id, full_name').eq('email', email).maybeSingle();
-      if (prof == null) { 
-        _showErrorCard(_t('ئەگەر هەژمارەکە هەبێت، کۆدێک بۆی دەنێردرێت',
-            'إذا كان الحساب موجوداً فسيتم إرسال رمز إليه'));
-        return; 
+      final prof = await supabase
+          .from('profiles')
+          .select('id, full_name')
+          .eq('email', email)
+          .maybeSingle();
+      if (prof == null) {
+        _showErrorCard(
+          _t(
+            'ئەگەر هەژمارەکە هەبێت، کۆدێک بۆی دەنێردرێت',
+            'إذا كان الحساب موجوداً فسيتم إرسال رمز إليه',
+          ),
+        );
+        return;
       }
       _fpUserId = prof['id'] as String;
       final name = (prof['full_name'] as String?) ?? '';
       final ok = await _authService.requestEmailOtp(
-          email: email, userId: _fpUserId, name: name, purpose: 'reset_password');
+        email: email,
+        userId: _fpUserId,
+        name: name,
+        purpose: 'reset_password',
+      );
       if (!ok) {
         if (_isNetworkError()) {
           _showNetworkError();
@@ -1028,7 +1176,9 @@ class _AuthShellState extends State<AuthShell> {
       _fpOtpCtrl.clear();
       _activeOtpChannel = AuthChannel.email;
       _activeOtpPurpose = AuthOtpPurpose.passwordReset;
-      setState(() { _fpOtpHasError = false; });
+      setState(() {
+        _fpOtpHasError = false;
+      });
       _startResendTimer();
       setState(() => _step = _Step.forgotOtp);
     } catch (e) {
@@ -1041,29 +1191,45 @@ class _AuthShellState extends State<AuthShell> {
   String get _fpOtpCode => _fpOtpCtrl.text.trim();
 
   Future<void> _doForgotVerifyOtp() async {
-    if (_fpOtpCode.length < 6) { 
+    if (_fpOtpCode.length < 6) {
       _showErrorCard(AuthStrings.errEmptyField);
-      return; 
+      return;
     }
     setState(() => _loading = true);
     try {
-      final rpc = await supabase.rpc('pa_verify_reset_otp', params: {
-        'p_email': AuthValidators.normalizeEmail(_fpEmailCtrl.text),
-        'p_code': _fpOtpCode.trim(),
-      });
-      final Map<String, dynamic>? res =
-          (rpc is Map && rpc['valid'] == true)
-              ? Map<String, dynamic>.from(rpc as Map)
-              : null;
+      final rpc = await supabase.rpc(
+        'pa_verify_reset_otp',
+        params: {
+          'p_email': AuthValidators.normalizeEmail(_fpEmailCtrl.text),
+          'p_code': _fpOtpCode.trim(),
+        },
+      );
+      final Map<String, dynamic>? res = (rpc is Map && rpc['valid'] == true)
+          ? Map<String, dynamic>.from(rpc as Map)
+          : null;
       if (res == null) {
         _fpOtpAttempts++;
         if (_fpOtpAttempts >= _RateLimiter._maxAttempts) {
-          _showErrorCard(_t('زۆر هەوڵی هەڵەت دا — کۆدی نوێ داوا بکە',
-              'محاولات كثيرة غير صحيحة — اطلب رمزاً جديداً'));
-          setState(() { _step = _Step.forgotEmail; _fpOtpAttempts = 0; _fpOtpHasError = false; });
+          _showErrorCard(
+            _t(
+              'زۆر هەوڵی هەڵەت دا — کۆدی نوێ داوا بکە',
+              'محاولات كثيرة غير صحيحة — اطلب رمزاً جديداً',
+            ),
+          );
+          setState(() {
+            _step = _Step.forgotEmail;
+            _fpOtpAttempts = 0;
+            _fpOtpHasError = false;
+          });
         } else {
-          _showErrorCard(ProxoStrings.format('کۆدەکە هەڵەیە — {count} هەوڵی تر ماوە', {'count': _RateLimiter._maxAttempts - _fpOtpAttempts}));
-          setState(() { _fpOtpHasError = true; });
+          _showErrorCard(
+            ProxoStrings.format('کۆدەکە هەڵەیە — {count} هەوڵی تر ماوە', {
+              'count': _RateLimiter._maxAttempts - _fpOtpAttempts,
+            }),
+          );
+          setState(() {
+            _fpOtpHasError = true;
+          });
           _fpOtpShaker.shakeAndReset();
         }
         return;
@@ -1081,11 +1247,14 @@ class _AuthShellState extends State<AuthShell> {
   }
 
   Future<void> _doForgotSetPassword() async {
-    final newPass     = _fpNewPassCtrl.text;
+    final newPass = _fpNewPassCtrl.text;
     final confirmPass = _fpConfirmPassCtrl.text;
-    final email       = AuthValidators.normalizeEmail(_fpEmailCtrl.text);
+    final email = AuthValidators.normalizeEmail(_fpEmailCtrl.text);
 
-    setState(() { _fpNewPassErr = null; _fpConfirmPassErr = null; });
+    setState(() {
+      _fpNewPassErr = null;
+      _fpConfirmPassErr = null;
+    });
     final String? passwordError = AuthValidators.newPassword(newPass);
     if (passwordError != null) {
       setState(() => _fpNewPassErr = passwordError);
@@ -1112,27 +1281,37 @@ class _AuthShellState extends State<AuthShell> {
         return;
       }
 
-      try { await supabase.auth.signOut(); } catch (_) {}
+      try {
+        await supabase.auth.signOut();
+      } catch (_) {}
       await Future.delayed(const Duration(milliseconds: 600));
 
       final loginRes = await supabase.auth.signInWithPassword(
-        email:    email,
+        email: email,
         password: newPass,
       );
 
       if (loginRes.user != null) {
         await _saveDeviceToken(loginRes.user!.id);
-        unawaited(AuthActivityService.forClient(supabase).recordCurrentSession());
+        unawaited(
+          AuthActivityService.forClient(supabase).recordCurrentSession(),
+        );
         if (!mounted) return;
-        _fpUserId = ''; _fpVerifiedOtpId = '';
-        _fpEmailCtrl.clear(); _fpNewPassCtrl.clear(); _fpConfirmPassCtrl.clear();
+        _fpUserId = '';
+        _fpVerifiedOtpId = '';
+        _fpEmailCtrl.clear();
+        _fpNewPassCtrl.clear();
+        _fpConfirmPassCtrl.clear();
       } else {
         setState(() {
           _step = _Step.form;
-          _tab  = _Tab.login;
+          _tab = _Tab.login;
           _loginEmailCtrl.text = email;
-          _fpUserId = ''; _fpVerifiedOtpId = '';
-          _fpEmailCtrl.clear(); _fpNewPassCtrl.clear(); _fpConfirmPassCtrl.clear();
+          _fpUserId = '';
+          _fpVerifiedOtpId = '';
+          _fpEmailCtrl.clear();
+          _fpNewPassCtrl.clear();
+          _fpConfirmPassCtrl.clear();
         });
       }
     } catch (e) {
@@ -1146,15 +1325,21 @@ class _AuthShellState extends State<AuthShell> {
     if (_resendSeconds.value > 0) return;
     setState(() => _loading = true);
     try {
-      final prof = await supabase.from('profiles')
-          .select('full_name').eq('id', _fpUserId).maybeSingle();
+      final prof = await supabase
+          .from('profiles')
+          .select('full_name')
+          .eq('id', _fpUserId)
+          .maybeSingle();
       final name = (prof?['full_name'] as String?) ?? '';
       final ok = await _authService.requestEmailOtp(
-        email: AuthValidators.normalizeEmail(_fpEmailCtrl.text), userId: _fpUserId,
-        name: name, purpose: 'reset_password',
+        email: AuthValidators.normalizeEmail(_fpEmailCtrl.text),
+        userId: _fpUserId,
+        name: name,
+        purpose: 'reset_password',
       );
       if (ok) {
-        _startResendTimer(); _fpOtpAttempts = 0;
+        _startResendTimer();
+        _fpOtpAttempts = 0;
         _fpOtpCtrl.clear();
         setState(() => _fpOtpHasError = false);
         _fpOtpFocus.requestFocus();
@@ -1173,23 +1358,28 @@ class _AuthShellState extends State<AuthShell> {
   String _mapAuthError(String msg) {
     final m = msg.toLowerCase();
     if (m.contains('email not confirmed')) return AuthStrings.errWrongPassword;
-    if (m.contains('invalid login') || m.contains('invalid credentials') ||
-        m.contains('invalid email or password') || m.contains('invalid')) return AuthStrings.errWrongPassword;
-    if (m.contains('email already') || m.contains('already registered')) return AuthStrings.errEmailExists;
+    if (m.contains('invalid login') ||
+        m.contains('invalid credentials') ||
+        m.contains('invalid email or password') ||
+        m.contains('invalid'))
+      return AuthStrings.errWrongPassword;
+    if (m.contains('email already') || m.contains('already registered'))
+      return AuthStrings.errEmailExists;
     if (m.contains('otp')) return AuthStrings.errInvalidOtp;
     if (m.contains('expired')) return AuthStrings.errExpiredOtp;
     if (m.contains('weak password')) return AuthStrings.errWeakPassword;
-    if (m.contains('network') || m.contains('connection')) return AuthStrings.errNetwork;
+    if (m.contains('network') || m.contains('connection'))
+      return AuthStrings.errNetwork;
     return AuthStrings.errWrongPassword;
   }
 
   String get _viewKey => switch (_step) {
-        _Step.form => _tab == _Tab.login ? 'signin' : 'signup',
-        _Step.otp => 'otp',
-        _Step.forgotEmail => 'fpEmail',
-        _Step.forgotOtp => 'fpOtp',
-        _Step.forgotNewPass => 'fpPass',
-      };
+    _Step.form => _tab == _Tab.login ? 'signin' : 'signup',
+    _Step.otp => 'otp',
+    _Step.forgotEmail => 'fpEmail',
+    _Step.forgotOtp => 'fpOtp',
+    _Step.forgotNewPass => 'fpPass',
+  };
 
   void _goToSignUp() {
     FocusScope.of(context).unfocus();
@@ -1211,6 +1401,23 @@ class _AuthShellState extends State<AuthShell> {
     });
   }
 
+  void _back() {
+    if (_loading || _phoneOtpSending) return;
+    FocusScope.of(context).unfocus();
+    switch (_step) {
+      case _Step.otp:
+        _cancelOtpAndGoBack();
+      case _Step.forgotNewPass:
+        setState(() => _step = _Step.forgotOtp);
+      case _Step.forgotOtp:
+        setState(() => _step = _Step.forgotEmail);
+      case _Step.forgotEmail:
+        _goToSignIn();
+      case _Step.form:
+        if (_tab == _Tab.register) _goToSignIn();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     ProxoLocale.watch(context);
@@ -1223,63 +1430,91 @@ class _AuthShellState extends State<AuthShell> {
     return Directionality(
       textDirection: ProxoLocale.directionOf(ProxoLocale.current.value),
       child: PopScope<Object?>(
-        // Auth history is internal state, not Navigator history. Disabling
-        // route pop also prevents Android back and iOS edge-swipe from
-        // bypassing the visible, state-aware Back control.
+        // System Back follows the same internal Auth history as the button.
+        // Never pop into a protected route or skip an unfinished OTP step.
         canPop: false,
-        onPopInvokedWithResult: (didPop, _) {},
+        onPopInvokedWithResult: (didPop, _) {
+          if (!didPop) _back();
+        },
         child: Scaffold(
           backgroundColor: AuthTokens.pageBackground,
           resizeToAvoidBottomInset: true,
           body: SafeArea(
             child: LayoutBuilder(
               builder: (context, viewport) => SingleChildScrollView(
-              controller: _viewScroll,
-              physics: const ClampingScrollPhysics(),
-              // ⚠ بوو 20. گەتەری ئاسۆیی ئێستا 16ـە لە هەموو شاشەکاندا —
-              // هەمان `AuthTokens.pagePadding`.
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
-              child: Center(child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  maxWidth: 440,
-                  minHeight: max(0.0, viewport.maxHeight - 32),
+                controller: _viewScroll,
+                physics: const ClampingScrollPhysics(),
+                // ⚠ بوو 20. گەتەری ئاسۆیی ئێستا 16ـە لە هەموو شاشەکاندا —
+                // هەمان `AuthTokens.pagePadding`.
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20.0,
+                  vertical: 20.0,
                 ),
-                child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  AnimatedSwitcher(
-                    duration: MediaQuery.disableAnimationsOf(context) ? Duration.zero : AuthTokens.viewTransition,
-                    switchInCurve: AuthTokens.curve,
-                    switchOutCurve: AuthTokens.curve,
-                    layoutBuilder: (current, previous) => Stack(
-                      alignment: Alignment.topCenter,
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxWidth: 440,
+                      minHeight: max(0.0, viewport.maxHeight - 40),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        ...previous.map((w) => Positioned.fill(child: w)),
-                        if (current != null) current,
+                        AnimatedSize(
+                          duration: MediaQuery.disableAnimationsOf(context)
+                              ? Duration.zero
+                              : AuthTokens.viewTransition,
+                          curve: AuthTokens.curve,
+                          alignment: Alignment.topCenter,
+                          child: AnimatedSwitcher(
+                            duration: MediaQuery.disableAnimationsOf(context)
+                                ? Duration.zero
+                                : AuthTokens.viewTransition,
+                            switchInCurve: const Interval(
+                              0.2,
+                              1,
+                              curve: Curves.easeOutCubic,
+                            ),
+                            switchOutCurve: const Interval(
+                              0.6,
+                              1,
+                              curve: Curves.easeInCubic,
+                            ),
+                            layoutBuilder: (current, previous) => Stack(
+                              alignment: Alignment.topCenter,
+                              children: [
+                                ...previous.map(
+                                  (w) => IgnorePointer(
+                                    child: ExcludeSemantics(child: w),
+                                  ),
+                                ),
+                                if (current != null) current,
+                              ],
+                            ),
+                            transitionBuilder: (child, anim) => FadeTransition(
+                              opacity: anim,
+                              child: SlideTransition(
+                                position: Tween<Offset>(
+                                  begin: const Offset(0.025, 0),
+                                  end: Offset.zero,
+                                ).animate(anim),
+                                textDirection: Directionality.of(context),
+                                child: child,
+                              ),
+                            ),
+                            child: AbsorbPointer(
+                              key: ValueKey<String>(_viewKey),
+                              absorbing: _loading,
+                              child: KeyedSubtree(
+                                key: ValueKey<String>(_viewKey),
+                                child: _buildCurrentView(),
+                              ),
+                            ),
+                          ),
+                        ),
                       ],
                     ),
-                    transitionBuilder: (child, anim) => FadeTransition(
-                      opacity: anim,
-                      child: SlideTransition(
-                        position: Tween<Offset>(
-                          begin: const Offset(0.04, 0),
-                          end: Offset.zero,
-                        ).animate(anim),
-                        textDirection: Directionality.of(context),
-                        child: child,
-                      ),
-                    ),
-                    child: AbsorbPointer(
-                      absorbing: _loading,
-                      child: KeyedSubtree(
-                        key: ValueKey<String>(_viewKey),
-                        child: _buildCurrentView(),
-                      ),
-                    ),
                   ),
-                ],
                 ),
-              )),
               ),
             ),
           ),
@@ -1289,95 +1524,98 @@ class _AuthShellState extends State<AuthShell> {
   }
 
   Widget _buildCurrentView() => switch (_step) {
-        _Step.form =>
-          _tab == _Tab.login ? _buildSignInView() : _buildSignUpView(),
-        _Step.otp => _buildOtpView(),
-        _Step.forgotEmail => _buildForgotEmailView(),
-        _Step.forgotOtp => _buildForgotOtpView(),
-        _Step.forgotNewPass => _buildForgotNewPassView(),
-      };
+    _Step.form => _tab == _Tab.login ? _buildSignInView() : _buildSignUpView(),
+    _Step.otp => _buildOtpView(),
+    _Step.forgotEmail => _buildForgotEmailView(),
+    _Step.forgotOtp => _buildForgotOtpView(),
+    _Step.forgotNewPass => _buildForgotNewPassView(),
+  };
 
   // ── View 1: Sign In ───────────────────────────────────────────────────────
 
   Widget _buildSignInView() {
-    final String? lockMsg =
-        _RateLimiter.check(AuthValidators.normalizeEmail(_loginEmailCtrl.text));
+    final String? lockMsg = _RateLimiter.check(
+      AuthValidators.normalizeEmail(_loginEmailCtrl.text),
+    );
 
     return LoginScreen(
       content: Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        // ── سویچی کەناڵ ────────────────────────────────────────────────
-        // ⚠ تەنها لێرەیە. `_buildSignUpView` دەستی لێ نەدراوە.
-        AuthSegmentedControl(
-          labels: [AuthStrings.channelPhone, AuthStrings.channelEmail],
-          index: _loginChannel == AuthChannel.phone ? 0 : 1,
-          enabled: !_loading && !_phoneOtpSending,
-          onChanged: (i) {
-            FocusScope.of(context).unfocus();
-            setState(() {
-              _loginChannel =
-                  i == 0 ? AuthChannel.phone : AuthChannel.email;
-              // هەڵەکانی کەناڵی پێشوو نامێننەوە بۆ ئەوەی بەکارهێنەر
-              // هەڵەیەکی خانەیەکی شاراوە نەبینێت.
-              _loginPhoneErr = null;
-              _loginEmailErr = null;
-              _loginPassErr = null;
-            });
-          },
-        ),
-        const SizedBox(height: 14),
-
-        if (_loginLockedOut)
-          AuthLockoutNotice(onContactSupport: _contactSupportOnWhatsApp)
-        else
-          AuthAlert(message: lockMsg),
-
-        // ── فۆڕمی کەناڵ ────────────────────────────────────────────────
-        // `AnimatedSwitcher` بە فەید + سلایدی سووک. ⚠ `KeyedSubtree` بە
-        // کلیلی کەناڵەکە پێویستە: بەبێ ئەو، `AnimatedSwitcher` هەردوو
-        // فۆڕمەکە وەک هەمان ویدجێت دەبینێت (هەردووکیان `Column`ن) و هیچ
-        // گواستنەوەیەک ناکات.
-        AnimatedSwitcher(
-          duration: const Duration(milliseconds: 260),
-          switchInCurve: Curves.easeOutCubic,
-          switchOutCurve: Curves.easeInCubic,
-          // بەرزایی دوو فۆڕمەکە جیاوازە، بۆیە `AnimatedSize`ـی ناوەوەی
-          // `AnimatedSwitcher` (لەیئاوتبیلدەر) پێویستە تا ستوونەکە
-          // نەبازێت لە کاتی گۆڕیندا.
-          layoutBuilder: (current, previous) => Stack(
-            alignment: AlignmentDirectional.topStart,
-            children: [
-              ...previous,
-              if (current != null) current,
-            ],
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // ── سویچی کەناڵ ────────────────────────────────────────────────
+          // ⚠ تەنها لێرەیە. `_buildSignUpView` دەستی لێ نەدراوە.
+          AuthSegmentedControl(
+            labels: [AuthStrings.channelPhone, AuthStrings.channelEmail],
+            index: _loginChannel == AuthChannel.phone ? 0 : 1,
+            enabled: !_loading && !_phoneOtpSending,
+            onChanged: (i) {
+              FocusScope.of(context).unfocus();
+              setState(() {
+                _loginChannel = i == 0 ? AuthChannel.phone : AuthChannel.email;
+                // هەڵەکانی کەناڵی پێشوو نامێننەوە بۆ ئەوەی بەکارهێنەر
+                // هەڵەیەکی خانەیەکی شاراوە نەبینێت.
+                _loginPhoneErr = null;
+                _loginEmailErr = null;
+                _loginPassErr = null;
+              });
+            },
           ),
-          transitionBuilder: (child, anim) => FadeTransition(
-            opacity: anim,
-            child: SlideTransition(
-              position: Tween<Offset>(
-                begin: const Offset(0, 0.04),
-                end: Offset.zero,
-              ).animate(anim),
-              child: child,
+          const SizedBox(height: 14),
+
+          if (_loginLockedOut)
+            AuthLockoutNotice(onContactSupport: _contactSupportOnWhatsApp)
+          else
+            AuthAlert(message: lockMsg),
+
+          // ── فۆڕمی کەناڵ ────────────────────────────────────────────────
+          // `AnimatedSwitcher` بە فەید + سلایدی سووک. ⚠ `KeyedSubtree` بە
+          // کلیلی کەناڵەکە پێویستە: بەبێ ئەو، `AnimatedSwitcher` هەردوو
+          // فۆڕمەکە وەک هەمان ویدجێت دەبینێت (هەردووکیان `Column`ن) و هیچ
+          // گواستنەوەیەک ناکات.
+          AnimatedSwitcher(
+            duration: MediaQuery.disableAnimationsOf(context)
+                ? Duration.zero
+                : AuthTokens.viewTransition,
+            switchInCurve: Curves.easeOutCubic,
+            switchOutCurve: Curves.easeInCubic,
+            // بەرزایی دوو فۆڕمەکە جیاوازە، بۆیە `AnimatedSize`ـی ناوەوەی
+            // `AnimatedSwitcher` (لەیئاوتبیلدەر) پێویستە تا ستوونەکە
+            // نەبازێت لە کاتی گۆڕیندا.
+            layoutBuilder: (current, previous) => Stack(
+              alignment: AlignmentDirectional.topStart,
+              children: [
+                ...previous.map(
+                  (w) => IgnorePointer(child: ExcludeSemantics(child: w)),
+                ),
+                if (current != null) current,
+              ],
+            ),
+            transitionBuilder: (child, anim) => FadeTransition(
+              opacity: anim,
+              child: SlideTransition(
+                position: Tween<Offset>(
+                  begin: const Offset(0, 0.04),
+                  end: Offset.zero,
+                ).animate(anim),
+                child: child,
+              ),
+            ),
+            child: KeyedSubtree(
+              key: ValueKey<AuthChannel>(_loginChannel),
+              child: _loginChannel == AuthChannel.phone
+                  ? _buildPhoneForm()
+                  : _buildEmailForm(),
             ),
           ),
-          child: KeyedSubtree(
-            key: ValueKey<AuthChannel>(_loginChannel),
-            child: _loginChannel == AuthChannel.phone
-                ? _buildPhoneForm()
-                : _buildEmailForm(),
-          ),
-        ),
 
-        const SizedBox(height: 16),
-        _promptRow(
-          lead: AuthStrings.noAccountLead,
-          action: AuthStrings.noAccountAction,
-          onTap: _loading ? null : _goToSignUp,
-        ),
-        const SizedBox(height: 16),
-      ],
+          const SizedBox(height: 16),
+          _promptRow(
+            lead: AuthStrings.noAccountLead,
+            action: AuthStrings.noAccountAction,
+            onTap: _loading ? null : _goToSignUp,
+          ),
+          const SizedBox(height: 16),
+        ],
       ),
     );
   }
@@ -1416,7 +1654,8 @@ class _AuthShellState extends State<AuthShell> {
               controller: _loginEmailCtrl,
               focusNode: _loginEmailFocus,
               onCleared: () {
-                if (_loginEmailErr != null) setState(() => _loginEmailErr = null);
+                if (_loginEmailErr != null)
+                  setState(() => _loginEmailErr = null);
               },
             ),
           ),
@@ -1425,32 +1664,31 @@ class _AuthShellState extends State<AuthShell> {
             controller: _loginEmailCtrl,
             focusNode: _loginEmailFocus,
           ),
-        if (!_trustedSelected)
-          const SizedBox(height: 10),
+        if (!_trustedSelected) const SizedBox(height: 10),
 
         ValueListenableBuilder<bool>(
           valueListenable: _loginPasswordVisible,
           builder: (context, visible, _) => AuthTextField(
-          controller: _loginPassCtrl,
-          focusNode: _loginPassFocus,
-          label: AuthStrings.passwordLabel,
-          forceLtr: true,
-          hint: AuthStrings.passwordHint,
-          icon: Icons.lock_outline_rounded,
-          error: _loginPassErr,
-          obscure: !visible,
-          ltr: true,
-          textInputAction: TextInputAction.done,
-          autofillHints: const [AutofillHints.password],
-          enabled: !_loading,
-          onChanged: (_) {
-            if (_loginPassErr != null) setState(() => _loginPassErr = null);
-          },
-          onSubmitted: (_) => _doLogin(),
-          trailing: _visibilityToggle(
-            shown: visible,
-            onTap: () => _loginPasswordVisible.value = !visible,
-          ),
+            controller: _loginPassCtrl,
+            focusNode: _loginPassFocus,
+            label: AuthStrings.passwordLabel,
+            forceLtr: true,
+            hint: AuthStrings.passwordHint,
+            icon: Icons.lock_outline_rounded,
+            error: _loginPassErr,
+            obscure: !visible,
+            ltr: true,
+            textInputAction: TextInputAction.done,
+            autofillHints: const [AutofillHints.password],
+            enabled: !_loading,
+            onChanged: (_) {
+              if (_loginPassErr != null) setState(() => _loginPassErr = null);
+            },
+            onSubmitted: (_) => _doLogin(),
+            trailing: _visibilityToggle(
+              shown: visible,
+              onTap: () => _loginPasswordVisible.value = !visible,
+            ),
           ),
         ),
 
@@ -1466,8 +1704,9 @@ class _AuthShellState extends State<AuthShell> {
                     setState(() {
                       _step = _Step.forgotEmail;
                       _fpEmailErr = null;
-                      _fpEmailCtrl.text =
-                          AuthValidators.normalizeEmail(_loginEmailCtrl.text);
+                      _fpEmailCtrl.text = AuthValidators.normalizeEmail(
+                        _loginEmailCtrl.text,
+                      );
                     });
                   },
           ),
@@ -1519,7 +1758,7 @@ class _AuthShellState extends State<AuthShell> {
               AuthStrings.phonePrefix,
               textDirection: TextDirection.ltr,
               style: AuthTokens.fieldText.copyWith(
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.w400,
                 color: AuthTokens.inkMuted,
               ),
             ),
@@ -1550,168 +1789,175 @@ class _AuthShellState extends State<AuthShell> {
 
   Widget _buildSignUpView() {
     return SignupScreen(
-      onBack: _goToSignIn,
+      onBack: _back,
       content: Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        AuthTextField(
-          controller: _regNameCtrl,
-          focusNode: _regNameFocus,
-          label: AuthStrings.fullNameLabel,
-          hint: AuthStrings.fullNameHint,
-          icon: Icons.person_outline_rounded,
-          error: _regNameErr,
-          keyboardType: TextInputType.name,
-          textInputAction: TextInputAction.next,
-          autofillHints: const [AutofillHints.name],
-          enabled: !_loading,
-          onChanged: (_) {
-            if (_regNameErr != null) setState(() => _regNameErr = null);
-          },
-          trailing: AuthClearButton(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          AuthTextField(
             controller: _regNameCtrl,
             focusNode: _regNameFocus,
-            onCleared: () {
+            label: AuthStrings.fullNameLabel,
+            hint: AuthStrings.fullNameHint,
+            icon: Icons.person_outline_rounded,
+            error: _regNameErr,
+            keyboardType: TextInputType.name,
+            textInputAction: TextInputAction.next,
+            autofillHints: const [AutofillHints.name],
+            enabled: !_loading,
+            onChanged: (_) {
               if (_regNameErr != null) setState(() => _regNameErr = null);
             },
+            trailing: AuthClearButton(
+              controller: _regNameCtrl,
+              focusNode: _regNameFocus,
+              onCleared: () {
+                if (_regNameErr != null) setState(() => _regNameErr = null);
+              },
+            ),
           ),
-        ),
-        const SizedBox(height: AuthTokens.gapBetweenFields),
+          const SizedBox(height: AuthTokens.gapBetweenFields),
 
-        AuthTextField(
-          controller: _regPhoneCtrl,
-          focusNode: _regPhoneFocus,
-          label: AuthStrings.phoneLabel,
-          hint: AuthStrings.phoneHint,
-          icon: Icons.phone_iphone_rounded,
-          error: _regPhoneErr,
-          ltr: true,
-          forceLtr: true,
-          keyboardType: TextInputType.phone,
-          textInputAction: TextInputAction.next,
-          autofillHints: const [AutofillHints.telephoneNumber],
-          inputFormatters: <TextInputFormatter>[
-            const IraqPhoneInputFormatter(),
-          ],
-          enabled: !_loading,
-          prefix: Padding(
-            padding: const EdgeInsetsDirectional.only(end: 8),
-            child: ProxoText(
-              AuthStrings.phonePrefix,
-              textDirection: TextDirection.ltr,
-              style: AuthTokens.fieldText.copyWith(
-                fontWeight: FontWeight.w500,
-                color: AuthTokens.inkMuted,
+          AuthTextField(
+            controller: _regPhoneCtrl,
+            focusNode: _regPhoneFocus,
+            label: AuthStrings.phoneLabel,
+            hint: AuthStrings.phoneHint,
+            icon: Icons.phone_iphone_rounded,
+            error: _regPhoneErr,
+            ltr: true,
+            forceLtr: true,
+            keyboardType: TextInputType.phone,
+            textInputAction: TextInputAction.next,
+            autofillHints: const [AutofillHints.telephoneNumber],
+            inputFormatters: <TextInputFormatter>[
+              const IraqPhoneInputFormatter(),
+            ],
+            enabled: !_loading,
+            prefix: Padding(
+              padding: const EdgeInsetsDirectional.only(end: 8),
+              child: ProxoText(
+                AuthStrings.phonePrefix,
+                textDirection: TextDirection.ltr,
+                style: AuthTokens.fieldText.copyWith(
+                  fontWeight: FontWeight.w400,
+                  color: AuthTokens.inkMuted,
+                ),
+              ),
+            ),
+            onChanged: (_) {
+              if (_regPhoneErr != null) setState(() => _regPhoneErr = null);
+            },
+            trailing: AuthClearButton(
+              controller: _regPhoneCtrl,
+              focusNode: _regPhoneFocus,
+              onCleared: () {
+                if (_regPhoneErr != null) setState(() => _regPhoneErr = null);
+              },
+            ),
+          ),
+          const SizedBox(height: AuthTokens.gapBetweenFields),
+
+          ValueListenableBuilder<bool>(
+            valueListenable: _signupPasswordVisible,
+            builder: (context, visible, _) => AuthTextField(
+              controller: _regPassCtrl,
+              forceLtr: true,
+              label: AuthStrings.passwordLabel,
+              hint: AuthStrings.passwordHint,
+              icon: Icons.lock_outline_rounded,
+              error: _regPassErr,
+              obscure: !visible,
+              ltr: true,
+              textInputAction: TextInputAction.next,
+              autofillHints: const [AutofillHints.newPassword],
+              enabled: !_loading,
+              onChanged: (_) {
+                if (_regPassErr != null) setState(() => _regPassErr = null);
+              },
+              trailing: _visibilityToggle(
+                shown: visible,
+                onTap: () => _signupPasswordVisible.value = !visible,
               ),
             ),
           ),
-          onChanged: (_) {
-            if (_regPhoneErr != null) setState(() => _regPhoneErr = null);
-          },
-          trailing: AuthClearButton(
-            controller: _regPhoneCtrl,
-            focusNode: _regPhoneFocus,
-            onCleared: () {
-              if (_regPhoneErr != null) setState(() => _regPhoneErr = null);
-            },
-          ),
-        ),
-        const SizedBox(height: AuthTokens.gapBetweenFields),
 
-        ValueListenableBuilder<bool>(
-          valueListenable: _signupPasswordVisible,
-          builder: (context, visible, _) => AuthTextField(
-          controller: _regPassCtrl,
-          forceLtr: true,
-          label: AuthStrings.passwordLabel,
-          hint: AuthStrings.passwordHint,
-          icon: Icons.lock_outline_rounded,
-          error: _regPassErr,
-          obscure: !visible,
-          ltr: true,
-          textInputAction: TextInputAction.next,
-          autofillHints: const [AutofillHints.newPassword],
-          enabled: !_loading,
-          onChanged: (_) {
-            if (_regPassErr != null) setState(() => _regPassErr = null);
-          },
-          trailing: _visibilityToggle(
-            shown: visible,
-            onTap: () => _signupPasswordVisible.value = !visible,
+          const SizedBox(height: AuthTokens.gapBetweenFields),
+          ValueListenableBuilder<TextEditingValue>(
+            valueListenable: _regPassCtrl,
+            builder: (context, value, _) =>
+                PasswordStrengthMeter(password: value.text),
           ),
-          ),
-        ),
 
-        const SizedBox(height: AuthTokens.gapBetweenFields),
-        ValueListenableBuilder<TextEditingValue>(
-          valueListenable: _regPassCtrl,
-          builder: (context, value, _) =>
-              PasswordStrengthMeter(password: value.text),
-        ),
-
-        const SizedBox(height: AuthTokens.gapBetweenFields),
-        ListenableBuilder(
-          listenable: Listenable.merge([_regPassCtrl, _regPass2Ctrl]),
-          builder: (context, _) => ValueListenableBuilder<bool>(
-            valueListenable: _signupConfirmationVisible,
-            builder: (context, visible, __) => AuthTextField(
-            controller: _regPass2Ctrl,
-            forceLtr: true,
-            label: AuthStrings.confirmPasswordLabel,
-            hint: AuthStrings.passwordHint,
-            icon: Icons.lock_reset_rounded,
-            error: _regPass2Err ??
-                (_confirmMismatch(_regPassCtrl.text, _regPass2Ctrl.text)
-                    ? AuthStrings.errPasswordMismatch
-                    : null),
-            obscure: !visible,
-            ltr: true,
-            textInputAction: TextInputAction.done,
-            enabled: !_loading,
-            onChanged: (_) {
-              if (_regPass2Err != null) setState(() => _regPass2Err = null);
-            },
-            onSubmitted: (_) => _doRegister(),
-            trailing: _visibilityToggle(
-              shown: visible,
-              onTap: () => _signupConfirmationVisible.value = !visible,
-            ),
+          const SizedBox(height: AuthTokens.gapBetweenFields),
+          ListenableBuilder(
+            listenable: Listenable.merge([_regPassCtrl, _regPass2Ctrl]),
+            builder: (context, _) => ValueListenableBuilder<bool>(
+              valueListenable: _signupConfirmationVisible,
+              builder: (context, visible, __) => AuthTextField(
+                controller: _regPass2Ctrl,
+                forceLtr: true,
+                label: AuthStrings.confirmPasswordLabel,
+                hint: AuthStrings.passwordHint,
+                icon: Icons.lock_reset_rounded,
+                error:
+                    _regPass2Err ??
+                    (_confirmMismatch(_regPassCtrl.text, _regPass2Ctrl.text)
+                        ? AuthStrings.errPasswordMismatch
+                        : null),
+                obscure: !visible,
+                ltr: true,
+                textInputAction: TextInputAction.done,
+                enabled: !_loading,
+                onChanged: (_) {
+                  if (_regPass2Err != null) setState(() => _regPass2Err = null);
+                },
+                onSubmitted: (_) => _doRegister(),
+                trailing: _visibilityToggle(
+                  shown: visible,
+                  onTap: () => _signupConfirmationVisible.value = !visible,
+                ),
+              ),
             ),
           ),
-        ),
 
-        const SizedBox(height: AuthTokens.gapBetweenFields),
-        AuthWhatsappConsent(
-          value: _whatsappMarketing,
-          onChanged: _loading ? null : (value) {
-            setState(() => _whatsappMarketing = value);
-          },
-        ),
-        const SizedBox(height: AuthTokens.gapBetweenFields),
-        ListenableBuilder(
-          listenable: Listenable.merge(
-              [_regNameCtrl, _regPhoneCtrl, _regPassCtrl, _regPass2Ctrl]),
-          builder: (context, _) => AuthPrimaryButton(
-            label: AuthStrings.signUpButton,
-            loading: _loading,
-            enabled: AuthValidators.signUpReady(
-              name: _regNameCtrl.text,
-              phone: _regPhoneE164,
-              password: _regPassCtrl.text,
-              confirmation: _regPass2Ctrl.text,
-            ),
-            onPressed: _doRegister,
+          const SizedBox(height: AuthTokens.gapBetweenFields),
+          AuthWhatsappConsent(
+            value: _whatsappMarketing,
+            onChanged: _loading
+                ? null
+                : (value) {
+                    setState(() => _whatsappMarketing = value);
+                  },
           ),
-        ),
+          const SizedBox(height: AuthTokens.gapBetweenFields),
+          ListenableBuilder(
+            listenable: Listenable.merge([
+              _regNameCtrl,
+              _regPhoneCtrl,
+              _regPassCtrl,
+              _regPass2Ctrl,
+            ]),
+            builder: (context, _) => AuthPrimaryButton(
+              label: AuthStrings.signUpButton,
+              loading: _loading,
+              enabled: AuthValidators.signUpReady(
+                name: _regNameCtrl.text,
+                phone: _regPhoneE164,
+                password: _regPassCtrl.text,
+                confirmation: _regPass2Ctrl.text,
+              ),
+              onPressed: _doRegister,
+            ),
+          ),
 
-        const SizedBox(height: AuthTokens.gapBetweenFields),
-        _promptRow(
-          lead: AuthStrings.haveAccountLead,
-          action: AuthStrings.haveAccountAction,
-          onTap: _loading ? null : _goToSignIn,
-        ),
-        const SizedBox(height: AuthTokens.gapBetweenFields),
-      ],
+          const SizedBox(height: AuthTokens.gapBetweenFields),
+          _promptRow(
+            lead: AuthStrings.haveAccountLead,
+            action: AuthStrings.haveAccountAction,
+            onTap: _loading ? null : _goToSignIn,
+          ),
+          const SizedBox(height: AuthTokens.gapBetweenFields),
+        ],
       ),
     );
   }
@@ -1719,36 +1965,34 @@ class _AuthShellState extends State<AuthShell> {
   // ── View 3: OTP ───────────────────────────────────────────────────────────
 
   Widget _buildOtpView() => _otpScaffold(
-        destination: otpDestination(
-          _activeOtpChannel,
-          _activeOtpChannel == AuthChannel.phone
-              ? _pendingPhone
-              : _pendingEmail,
-        ),
-        codeCtrl: _otpCtrl,
-        focus: _otpFocus,
-        shaker: _otpShaker,
-        hasError: _otpHasError,
-        seconds: _resendSeconds,
-        onBack: _cancelOtpAndGoBack,
-        onSubmit: _doVerifyOtp,
-        onResend: _resendOtp,
-      );
+    destination: otpDestination(
+      _activeOtpChannel,
+      _activeOtpChannel == AuthChannel.phone ? _pendingPhone : _pendingEmail,
+    ),
+    codeCtrl: _otpCtrl,
+    focus: _otpFocus,
+    shaker: _otpShaker,
+    hasError: _otpHasError,
+    seconds: _resendSeconds,
+    onBack: _back,
+    onSubmit: _doVerifyOtp,
+    onResend: _resendOtp,
+  );
 
   Widget _buildForgotOtpView() => _otpScaffold(
-        destination: otpDestination(
-          AuthChannel.email,
-          AuthValidators.normalizeEmail(_fpEmailCtrl.text),
-        ),
-        codeCtrl: _fpOtpCtrl,
-        focus: _fpOtpFocus,
-        shaker: _fpOtpShaker,
-        hasError: _fpOtpHasError,
-        seconds: _resendSeconds,
-        onBack: () => setState(() => _step = _Step.forgotEmail),
-        onSubmit: _doForgotVerifyOtp,
-        onResend: _resendFpOtp,
-      );
+    destination: otpDestination(
+      AuthChannel.email,
+      AuthValidators.normalizeEmail(_fpEmailCtrl.text),
+    ),
+    codeCtrl: _fpOtpCtrl,
+    focus: _fpOtpFocus,
+    shaker: _fpOtpShaker,
+    hasError: _fpOtpHasError,
+    seconds: _resendSeconds,
+    onBack: _back,
+    onSubmit: _doForgotVerifyOtp,
+    onResend: _resendFpOtp,
+  );
 
   Widget _otpScaffold({
     required String destination,
@@ -1765,25 +2009,25 @@ class _AuthShellState extends State<AuthShell> {
       onBack: onBack,
       destination: destination,
       otpBoxes: AuthOtpBoxes(
-          length: _kOtpLength,
-          codeController: codeCtrl,
-          firstBoxFocus: focus,
-          shaker: shaker,
-          hasError: hasError,
-          enabled: !_loading,
-          onChanged: (_) {
-            if (hasError) {
-              setState(() {
-                if (identical(codeCtrl, _otpCtrl)) {
-                  _otpHasError = false;
-                } else {
-                  _fpOtpHasError = false;
-                }
-              });
-            }
-          },
-          onCompleted: (_) => onSubmit(),
-        ),
+        length: _kOtpLength,
+        codeController: codeCtrl,
+        firstBoxFocus: focus,
+        shaker: shaker,
+        hasError: hasError,
+        enabled: !_loading,
+        onChanged: (_) {
+          if (hasError) {
+            setState(() {
+              if (identical(codeCtrl, _otpCtrl)) {
+                _otpHasError = false;
+              } else {
+                _fpOtpHasError = false;
+              }
+            });
+          }
+        },
+        onCompleted: (_) => onSubmit(),
+      ),
       resend: ValueListenableBuilder<int>(
         valueListenable: seconds,
         builder: (context, value, _) =>
@@ -1809,7 +2053,7 @@ class _AuthShellState extends State<AuthShell> {
       return AuthTextLink(
         label: AuthStrings.resendAction,
         onTap: _loading ? null : () => onResend(),
-        style: AuthTokens.helper.copyWith(fontWeight: FontWeight.w500),
+        style: AuthTokens.helper.copyWith(fontWeight: FontWeight.w400),
       );
     }
     final String mm = (seconds ~/ 60).toString().padLeft(2, '0');
@@ -1820,16 +2064,18 @@ class _AuthShellState extends State<AuthShell> {
     // ژێری هەڵدەبەزی. `SizedBox(height:)` بەرزاییەکە دەبەستێتەوە، و
     // `Center` هەردووکیان لە یەک خاڵدا ناوەڕاست دەکات.
     return ProxoText.rich(
-      TextSpan(children: [
-        TextSpan(text: '${AuthStrings.resendIn} '),
-        TextSpan(
-          text: '$mm:$ss',
-          style: const TextStyle(
-            fontWeight: FontWeight.w500,
-            color: AuthTokens.ink,
+      TextSpan(
+        children: [
+          TextSpan(text: '${AuthStrings.resendIn} '),
+          TextSpan(
+            text: '$mm:$ss',
+            style: const TextStyle(
+              fontWeight: FontWeight.w400,
+              color: AuthTokens.ink,
+            ),
           ),
-        ),
-      ]),
+        ],
+      ),
       style: AuthTokens.helper,
     );
   }
@@ -1840,12 +2086,13 @@ class _AuthShellState extends State<AuthShell> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        AuthHeader.inner(onBack: _goToSignIn),
+        AuthHeader.inner(onBack: _back),
         const SizedBox(height: AuthTokens.gapHeaderToTitle),
-        AuthTitle(AuthStrings.resetPasswordTitle),
-        const SizedBox(height: 4),
-        ProxoText(AuthStrings.resetPasswordSubtitle, style: _kSub),
-        const SizedBox(height: 16),
+        AuthIntro(
+          icon: 'lock_reset',
+          title: AuthStrings.resetPasswordTitle,
+          subtitle: AuthStrings.resetPasswordSubtitle,
+        ),
         AuthTextField(
           controller: _fpEmailCtrl,
           focusNode: _fpEmailFocus,
@@ -1869,10 +2116,7 @@ class _AuthShellState extends State<AuthShell> {
             },
           ),
         ),
-        EmailDomainChips(
-          controller: _fpEmailCtrl,
-          focusNode: _fpEmailFocus,
-        ),
+        EmailDomainChips(controller: _fpEmailCtrl, focusNode: _fpEmailFocus),
         const SizedBox(height: 18),
         ListenableBuilder(
           listenable: _fpEmailCtrl,
@@ -1892,34 +2136,36 @@ class _AuthShellState extends State<AuthShell> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        AuthHeader.inner(
-            onBack: () => setState(() => _step = _Step.forgotOtp)),
+        AuthHeader.inner(onBack: _back),
         const SizedBox(height: AuthTokens.gapHeaderToTitle),
-        AuthTitle(AuthStrings.resetPasswordTitle),
-        const SizedBox(height: 4),
-        ProxoText(AuthStrings.resetPasswordSubtitle, style: _kSub),
-
-        const SizedBox(height: 16),
+        AuthIntro(
+          icon: 'lock_reset',
+          title: AuthStrings.resetPasswordTitle,
+          subtitle: _t(
+            'وشەی نهێنییەکی نوێ بۆ هەژمارەکەت دابنێ',
+            'اختر كلمة مرور جديدة لحسابك',
+          ),
+        ),
         ValueListenableBuilder<bool>(
           valueListenable: _resetPasswordVisible,
           builder: (context, visible, _) => AuthTextField(
-          controller: _fpNewPassCtrl,
-          forceLtr: true,
-          label: AuthStrings.passwordLabel,
-          hint: AuthStrings.passwordHint,
-          icon: Icons.lock_outline_rounded,
-          error: _fpNewPassErr,
-          obscure: !visible,
-          ltr: true,
-          textInputAction: TextInputAction.next,
-          enabled: !_loading,
-          onChanged: (_) {
-            if (_fpNewPassErr != null) setState(() => _fpNewPassErr = null);
-          },
-          trailing: _visibilityToggle(
-            shown: visible,
-            onTap: () => _resetPasswordVisible.value = !visible,
-          ),
+            controller: _fpNewPassCtrl,
+            forceLtr: true,
+            label: AuthStrings.passwordLabel,
+            hint: AuthStrings.passwordHint,
+            icon: Icons.lock_outline_rounded,
+            error: _fpNewPassErr,
+            obscure: !visible,
+            ltr: true,
+            textInputAction: TextInputAction.next,
+            enabled: !_loading,
+            onChanged: (_) {
+              if (_fpNewPassErr != null) setState(() => _fpNewPassErr = null);
+            },
+            trailing: _visibilityToggle(
+              shown: visible,
+              onTap: () => _resetPasswordVisible.value = !visible,
+            ),
           ),
         ),
 
@@ -1936,29 +2182,33 @@ class _AuthShellState extends State<AuthShell> {
           builder: (context, _) => ValueListenableBuilder<bool>(
             valueListenable: _resetConfirmationVisible,
             builder: (context, visible, __) => AuthTextField(
-            controller: _fpConfirmPassCtrl,
-            forceLtr: true,
-            label: AuthStrings.confirmPasswordLabel,
-            hint: AuthStrings.passwordHint,
-            icon: Icons.lock_reset_rounded,
-            error: _fpConfirmPassErr ??
-                (_confirmMismatch(_fpNewPassCtrl.text, _fpConfirmPassCtrl.text)
-                    ? AuthStrings.errPasswordMismatch
-                    : null),
-            obscure: !visible,
-            ltr: true,
-            textInputAction: TextInputAction.done,
-            enabled: !_loading,
-            onChanged: (_) {
-              if (_fpConfirmPassErr != null) {
-                setState(() => _fpConfirmPassErr = null);
-              }
-            },
-            onSubmitted: (_) => _doForgotSetPassword(),
-            trailing: _visibilityToggle(
-              shown: visible,
-              onTap: () => _resetConfirmationVisible.value = !visible,
-            ),
+              controller: _fpConfirmPassCtrl,
+              forceLtr: true,
+              label: AuthStrings.confirmPasswordLabel,
+              hint: AuthStrings.passwordHint,
+              icon: Icons.lock_reset_rounded,
+              error:
+                  _fpConfirmPassErr ??
+                  (_confirmMismatch(
+                        _fpNewPassCtrl.text,
+                        _fpConfirmPassCtrl.text,
+                      )
+                      ? AuthStrings.errPasswordMismatch
+                      : null),
+              obscure: !visible,
+              ltr: true,
+              textInputAction: TextInputAction.done,
+              enabled: !_loading,
+              onChanged: (_) {
+                if (_fpConfirmPassErr != null) {
+                  setState(() => _fpConfirmPassErr = null);
+                }
+              },
+              onSubmitted: (_) => _doForgotSetPassword(),
+              trailing: _visibilityToggle(
+                shown: visible,
+                onTap: () => _resetConfirmationVisible.value = !visible,
+              ),
             ),
           ),
         ),
@@ -1976,17 +2226,16 @@ class _AuthShellState extends State<AuthShell> {
 
   // ── Small shared pieces ───────────────────────────────────────────────────
 
-  Widget _visibilityToggle({
-    required bool shown,
-    required VoidCallback onTap,
-  }) {
+  Widget _visibilityToggle({required bool shown, required VoidCallback onTap}) {
     return IconButton(
       onPressed: onTap,
       splashRadius: 18,
-      tooltip: shown ? _t('شاردنەوەی وشەی نهێنی', 'إخفاء كلمة المرور') : _t('پیشاندانی وشەی نهێنی', 'إظهار كلمة المرور'),
+      tooltip: shown
+          ? _t('شاردنەوەی وشەی نهێنی', 'إخفاء كلمة المرور')
+          : _t('پیشاندانی وشەی نهێنی', 'إظهار كلمة المرور'),
       constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
-      icon: ProxoSymbol(
-        shown ? ProxoSymbolName.eyeClosed : ProxoSymbolName.eye,
+      icon: AuthIcon(
+        shown ? 'visibility_off' : 'visibility',
         size: 22,
         color: AuthTokens.placeholder,
       ),
@@ -1999,8 +2248,10 @@ class _AuthShellState extends State<AuthShell> {
     required VoidCallback? onTap,
   }) {
     return Wrap(
-      alignment: WrapAlignment.center, crossAxisAlignment: WrapCrossAlignment.center,
-      spacing: 6, runSpacing: 4,
+      alignment: WrapAlignment.center,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      spacing: 6,
+      runSpacing: 4,
       children: [
         ProxoText(lead, style: _kSub.copyWith(fontSize: AuthTokens.textSize)),
         const SizedBox(width: 4),
@@ -2008,9 +2259,9 @@ class _AuthShellState extends State<AuthShell> {
           label: action,
           onTap: onTap,
           style: const TextStyle(
-            fontFamily: kAppFont,
+            fontFamily: AuthTokens.fontFamily,
             fontSize: AuthTokens.textSize,
-            fontWeight: FontWeight.w500,
+            fontWeight: FontWeight.w400,
             color: AppColors.accent,
           ),
         ),

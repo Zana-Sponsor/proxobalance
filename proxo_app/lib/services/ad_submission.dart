@@ -447,6 +447,8 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
     if (!await prefs.setString(key, jsonEncode(request.toJson()))) {
       throw const AdSubmissionFailure('STORAGE_UNAVAILABLE');
     }
+    final telemetry = AppTelemetryService.active;
+    final telemetryScope = telemetry?.sessionScope;
     String? paymentId;
     try {
       checkOwner();
@@ -490,11 +492,11 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
       final adId = result['ad_id'] as String;
       await prefs.remove(key);
       AppDataCache.forClient(client).financialChanged();
-      AppTelemetryService.active?.event('action', 'ad_submit', outcome: 'success');
+      telemetry?.event('action', 'ad_submit', outcome: 'success', expectedScope: telemetryScope);
       _ensureThumbnail(adId);
       return adId;
     } on AdSubmissionFailure catch (e) {
-      AppTelemetryService.active?.event('action', 'ad_submit', outcome: 'failure');
+      telemetry?.event('action', 'ad_submit', outcome: 'failure', expectedScope: telemetryScope);
       if (!e.uncertain) await prefs.remove(key);
       if (!e.uncertain && paymentId != null) {
         throw AdSubmissionFailure(e.code, paymentCredited: true);

@@ -80,9 +80,11 @@ class TopupService {
     }));
   }
   Future<Map<String,dynamic>> _submit(String owner,String fingerprint,String method,int gross,String sender,String note,String receipt) async {
+    final telemetry = AppTelemetryService.active;
+    final telemetryScope = telemetry?.sessionScope;
     final key = await _retryKey(owner, fingerprint);
     if(client.auth.currentUser?.id!=owner)throw const TopupFailure('SESSION_CHANGED');
-    AppTelemetryService.active?.event('action','topup_submit',outcome:'incomplete');
+    telemetry?.event('action','topup_submit',outcome:'incomplete',expectedScope:telemetryScope);
     final watch=Stopwatch()..start();
     try {
       final raw=await client.rpc('pa_submit_topup',params:{'p_key':key,'p_method':method,'p_gross_iqd':gross,'p_sender':sender,'p_note':note,'p_receipt':receipt}).timeout(const Duration(seconds:30));
@@ -92,9 +94,9 @@ class TopupService {
       await _completed(owner, fingerprint);
       if(client.auth.currentUser?.id!=owner)throw const TopupFailure('SESSION_CHANGED');
       AppDataCache.forClient(client).financialChanged();
-      AppTelemetryService.active?.event('action','topup_submit',outcome:'success');
+      telemetry?.event('action','topup_submit',outcome:'success',expectedScope:telemetryScope);
       return result;
-    } catch(e) { AppTelemetryService.active?.error(e);rethrow; }
-    finally { AppTelemetryService.active?.event('performance','topup_request',durationMs:watch.elapsedMilliseconds); }
+    } catch(e) { telemetry?.error(e,expectedScope:telemetryScope);rethrow; }
+    finally { telemetry?.event('performance','topup_request',durationMs:watch.elapsedMilliseconds,expectedScope:telemetryScope); }
   }
 }

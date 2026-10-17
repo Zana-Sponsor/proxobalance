@@ -4,6 +4,13 @@ on:
     branches: [feat/secure-operations-telemetry-20261016]
 permissions:
   contents: read
+concurrency:
+  group: secure-operations-${{ github.ref }}
+  cancel-in-progress: true
+env:
+  CI: true
+  DART_SUPPRESS_ANALYTICS: true
+  FLUTTER_SUPPRESS_ANALYTICS: true
 jobs:
   database:
     runs-on: ubuntu-latest
@@ -38,6 +45,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Block instance metadata in the isolated build runner
+        run: sudo iptables -I OUTPUT -d 169.254.169.254/32 -j REJECT
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.47.2'
@@ -51,6 +60,15 @@ jobs:
         working-directory: proxo_app
       - run: flutter test --reporter expanded
         working-directory: proxo_app
+      - name: Capture Auth and setup evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: auth-setup-visual-evidence
+          path: |
+            proxo_app/build/polish-evidence/
+            proxo_app/build/auth-refresh/
+          retention-days: 7
       - uses: actions/upload-artifact@v4
         if: always()
         with:

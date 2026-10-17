@@ -1,14 +1,12 @@
 import 'package:proxo_app/theme/app_locale.dart';
 import 'package:flutter/material.dart';
+
 import '../../widgets/auth/auth_design.dart';
 import '../../widgets/auth/auth_header.dart';
-import 'package:proxo_app/widgets/proxo_text.dart';
+import '../../widgets/auth/auth_intro.dart';
 
 class LoginScreen extends StatelessWidget {
-  const LoginScreen({
-    super.key,
-    required this.content,
-  });
+  const LoginScreen({super.key, required this.content});
 
   final Widget content;
 
@@ -20,11 +18,11 @@ class LoginScreen extends StatelessWidget {
       children: <Widget>[
         const AuthHeader.login(),
         const SizedBox(height: AuthTokens.gapHeaderToTitle),
-        AuthTitle(AuthStrings.signInTitle),
-        const SizedBox(height: AuthTokens.gapTitleToSubtitle),
-        ProxoText(AuthStrings.signInSubtitle,
-            textAlign: TextAlign.start, style: AuthTokens.subtitle),
-        const SizedBox(height: AuthTokens.gapSubtitleToForm),
+        AuthIntro(
+          icon: 'login',
+          title: AuthStrings.signInTitle,
+          subtitle: AuthStrings.signInSubtitle,
+        ),
         content,
         const SizedBox(height: AuthTokens.gapSectionBottom),
       ],

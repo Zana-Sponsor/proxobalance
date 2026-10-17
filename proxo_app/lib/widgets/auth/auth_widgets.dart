@@ -2,9 +2,12 @@ import 'package:proxo_app/theme/app_locale.dart';
 // auth_widgets.dart
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 import '../../theme/app_theme.dart' show ProxoInk;
 import 'auth_design.dart';
+import 'auth_icon.dart';
 import '../proxo_symbol.dart';
+
 import 'package:proxo_app/widgets/proxo_text.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -87,22 +90,40 @@ class AuthTextField extends StatelessWidget {
           style: AuthTokens.fieldText,
           cursorColor: AuthTokens.accent,
           decoration: InputDecoration(
-            hint: FittedBox(fit: BoxFit.scaleDown,
+            hint: FittedBox(
+              fit: BoxFit.scaleDown,
               alignment: AlignmentDirectional.centerStart,
-              child: ProxoText(hint, translate: true, maxLines: 1, softWrap: false,
-                style: AuthTokens.fieldText.copyWith(color: AuthTokens.placeholder))),
-            hintStyle: AuthTokens.fieldText.copyWith(color: AuthTokens.placeholder),
+              child: ProxoText(
+                hint,
+                translate: true,
+                maxLines: 1,
+                softWrap: false,
+                style: AuthTokens.fieldText.copyWith(
+                  color: AuthTokens.placeholder,
+                ),
+              ),
+            ),
+            hintStyle: AuthTokens.fieldText.copyWith(
+              color: AuthTokens.placeholder,
+            ),
             filled: true,
             fillColor: enabled ? AuthTokens.fieldFill : AuthTokens.fieldFillOff,
             isDense: true,
             contentPadding: AuthTokens.fieldContentPadding,
             // A persistent country-code inset, not a disappearing inline prefix.
             // Ordinary fields use their label instead of decorative icons.
-            prefixIcon: prefix == null ? null : Padding(
-              padding: const EdgeInsetsDirectional.only(start: 14, end: 12),
-              child: Center(widthFactor: 1, child: prefix),
+            prefixIcon: prefix == null
+                ? null
+                : Padding(
+                    padding: const EdgeInsetsDirectional.only(
+                      start: 14,
+                      end: 12,
+                    ),
+                    child: Center(widthFactor: 1, child: prefix),
+                  ),
+            prefixIconConstraints: const BoxConstraints(
+              minHeight: AuthTokens.controlHeight,
             ),
-            prefixIconConstraints: const BoxConstraints(minHeight: AuthTokens.controlHeight),
             suffixIcon: trailing,
             border: _border(AuthTokens.line),
             enabledBorder: _border(
@@ -123,8 +144,14 @@ class AuthTextField extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsetsDirectional.only(
-              start: 2, bottom: AuthTokens.gapLabelToField),
-          child: ProxoText(label, translate: true, style: AuthTokens.fieldLabel),
+            start: 2,
+            bottom: AuthTokens.gapLabelToField,
+          ),
+          child: ProxoText(
+            label,
+            translate: true,
+            style: AuthTokens.fieldLabel,
+          ),
         ),
         if (ltr)
           Directionality(textDirection: TextDirection.ltr, child: field)
@@ -133,10 +160,16 @@ class AuthTextField extends StatelessWidget {
         if (hasError)
           Padding(
             padding: const EdgeInsetsDirectional.only(top: 6, start: 2),
-            child: Semantics(liveRegion: true, child: ProxoText(
-              error!, translate: true,
-              style: AuthTokens.inlineError.copyWith(color: AuthTokens.danger),
-            )),
+            child: Semantics(
+              liveRegion: true,
+              child: ProxoText(
+                error!,
+                translate: true,
+                style: AuthTokens.inlineError.copyWith(
+                  color: AuthTokens.danger,
+                ),
+              ),
+            ),
           ),
       ],
     );
@@ -154,7 +187,11 @@ class AuthTextField extends StatelessWidget {
 // ─────────────────────────────────────────────────────────────────────────────
 
 class AuthWhatsappConsent extends StatelessWidget {
-  const AuthWhatsappConsent({super.key, required this.value, required this.onChanged});
+  const AuthWhatsappConsent({
+    super.key,
+    required this.value,
+    required this.onChanged,
+  });
 
   final bool value;
   final ValueChanged<bool>? onChanged;
@@ -166,7 +203,9 @@ class AuthWhatsappConsent extends StatelessWidget {
       child: CheckboxListTile(
         key: const ValueKey('signup-whatsapp-consent'),
         value: value,
-        onChanged: onChanged == null ? null : (next) => onChanged!(next ?? false),
+        onChanged: onChanged == null
+            ? null
+            : (next) => onChanged!(next ?? false),
         controlAffinity: ListTileControlAffinity.leading,
         activeColor: AuthTokens.primary,
         contentPadding: const EdgeInsetsDirectional.only(start: 4, end: 12),
@@ -174,11 +213,16 @@ class AuthWhatsappConsent extends StatelessWidget {
           borderRadius: BorderRadius.circular(AuthTokens.fieldRadius),
           side: const BorderSide(color: AuthTokens.line),
         ),
-        title: ProxoText(AuthStrings.whatsappConsent, style: AuthTokens.fieldLabel),
+        title: ProxoText(
+          AuthStrings.whatsappConsent,
+          style: AuthTokens.fieldLabel,
+        ),
         subtitle: Padding(
           padding: const EdgeInsets.only(top: 4),
-          child: ProxoText(AuthStrings.whatsappConsentHint,
-            style: AuthTokens.helper.copyWith(fontSize: 12)),
+          child: ProxoText(
+            AuthStrings.whatsappConsentHint,
+            style: AuthTokens.helper.copyWith(fontSize: 12),
+          ),
         ),
       ),
     );
@@ -227,42 +271,47 @@ class _AuthPrimaryButtonState extends State<AuthPrimaryButton> {
     return ConstrainedBox(
       constraints: const BoxConstraints(minHeight: AuthTokens.buttonHeight),
       child: SizedBox(
-      width: double.infinity,
-      child: FilledButton(
-        onPressed: live ? _tap : null,
-        style: FilledButton.styleFrom(
-          // ⚠ بوو شینی #0365FF. دوگمەی سەرەکی ئێستا مەرەکەبی تۆخە —
-          // هەمان پیلی «ئامرازی نوێ +»ی tools_screen و CTAی دۆخە
-          // بەتاڵەکان. شینەکە هێشتا فۆکەسی خانەکان و لینکەکان دەگرێت.
-          backgroundColor: AuthTokens.primary,
-          foregroundColor: AuthTokens.onPrimary,
-          disabledBackgroundColor: AuthTokens.primary.withOpacity(0.35),
-          disabledForegroundColor: Colors.white.withOpacity(0.8),
-          elevation: 0,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-          animationDuration: AuthTokens.microTransition,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AuthTokens.buttonRadius),
+        width: double.infinity,
+        child: FilledButton(
+          onPressed: live ? _tap : null,
+          style: FilledButton.styleFrom(
+            // ⚠ بوو شینی #0365FF. دوگمەی سەرەکی ئێستا مەرەکەبی تۆخە —
+            // هەمان پیلی «ئامرازی نوێ +»ی tools_screen و CTAی دۆخە
+            // بەتاڵەکان. شینەکە هێشتا فۆکەسی خانەکان و لینکەکان دەگرێت.
+            backgroundColor: AuthTokens.primary,
+            foregroundColor: AuthTokens.onPrimary,
+            disabledBackgroundColor: AuthTokens.primary.withOpacity(0.35),
+            disabledForegroundColor: Colors.white.withOpacity(0.8),
+            elevation: 0,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            animationDuration: AuthTokens.microTransition,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(AuthTokens.buttonRadius),
+            ),
+          ),
+          child: AnimatedSwitcher(
+            duration: AuthTokens.microTransition,
+            child: widget.loading
+                ? const SizedBox(
+                    key: ValueKey('busy'),
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      color: Colors.white,
+                      strokeWidth: 2.2,
+                    ),
+                  )
+                : ProxoText(
+                    widget.label,
+                    translate: true,
+                    key: const ValueKey('label'),
+                    textAlign: TextAlign.center,
+                    style: AuthTokens.buttonText,
+                  ),
           ),
         ),
-        child: AnimatedSwitcher(
-          duration: AuthTokens.microTransition,
-          child: widget.loading
-              ? const SizedBox(
-                  key: ValueKey('busy'),
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(
-                    color: Colors.white,
-                    strokeWidth: 2.2,
-                  ),
-                )
-              : ProxoText(widget.label, translate: true,
-                  key: const ValueKey('label'), textAlign: TextAlign.center,
-                  style: AuthTokens.buttonText),
-        ),
       ),
-    ));
+    );
   }
 }
 
@@ -291,7 +340,8 @@ class AuthTextLink extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
         child: ProxoText(
-          label, translate: true,
+          label,
+          translate: true,
           style: (style ?? AuthTokens.link).copyWith(color: AuthTokens.accent),
         ),
       ),
@@ -319,12 +369,17 @@ class AuthBackButton extends StatelessWidget {
         padding: EdgeInsets.zero,
         constraints: const BoxConstraints.tightFor(width: 48, height: 48),
         tooltip: AuthStrings.back,
-        icon: ProxoSymbol(
-          Directionality.of(context) == TextDirection.rtl
-              ? ProxoSymbolName.back
-              : ProxoSymbolName.forward,
+        style: IconButton.styleFrom(
+          backgroundColor: AuthTokens.fieldFill,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+        ),
+        icon: const AuthIcon(
+          'arrow_back',
+          directional: true,
           color: AuthTokens.ink,
-          size: 24,
+          size: 22,
         ),
       ),
     );
@@ -361,7 +416,8 @@ class AuthAlert extends StatelessWidget {
         color: success ? AuthTokens.successBg : AuthTokens.dangerBg,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-            color: success ? AuthTokens.success : AuthTokens.danger),
+          color: success ? AuthTokens.success : AuthTokens.danger,
+        ),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -374,11 +430,12 @@ class AuthAlert extends StatelessWidget {
           const SizedBox(width: 8),
           Expanded(
             child: ProxoText(
-              message!, translate: true,
+              message!,
+              translate: true,
               style: AuthTokens.subtitle.copyWith(
                 fontSize: AuthTokens.textSize,
                 color: success ? AuthTokens.success : AuthTokens.danger,
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.w400,
               ),
             ),
           ),
@@ -410,7 +467,9 @@ class PasswordStrengthMeter extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Wrap(
-          alignment: WrapAlignment.spaceBetween, spacing: 8, runSpacing: 4,
+          alignment: WrapAlignment.spaceBetween,
+          spacing: 8,
+          runSpacing: 4,
           children: [
             ProxoText(
               AuthStrings.strengthHeader,
@@ -423,7 +482,7 @@ class PasswordStrengthMeter extends StatelessWidget {
                 key: ValueKey<PasswordStrength>(strength),
                 style: AuthTokens.ruleText.copyWith(
                   color: tone,
-                  fontWeight: FontWeight.w500,
+                  fontWeight: FontWeight.w400,
                 ),
               ),
             ),
@@ -440,10 +499,10 @@ class PasswordStrengthMeter extends StatelessWidget {
                   curve: AuthTokens.microCurve,
                   height: AuthTokens.meterSegmentHeight,
                   decoration: BoxDecoration(
-                    color: i < strength.filledSegments
-                        ? tone
-                        : AuthTokens.line,
-                    borderRadius: BorderRadius.circular(AuthTokens.meterSegmentRadius),
+                    color: i < strength.filledSegments ? tone : AuthTokens.line,
+                    borderRadius: BorderRadius.circular(
+                      AuthTokens.meterSegmentRadius,
+                    ),
                   ),
                 ),
               ),
@@ -452,7 +511,10 @@ class PasswordStrengthMeter extends StatelessWidget {
         ),
         const SizedBox(height: 10),
         for (int i = 0; i < PasswordPolicy.rules.length; i++)
-          _RuleRow(label: PasswordPolicy.rules[i].label, satisfied: satisfied[i]),
+          _RuleRow(
+            label: PasswordPolicy.rules[i].label,
+            satisfied: satisfied[i],
+          ),
       ],
     );
   }
@@ -467,8 +529,7 @@ class _RuleRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ProxoLocale.watch(context);
-    final Color tone =
-        satisfied ? AuthTokens.success : AuthTokens.placeholder;
+    final Color tone = satisfied ? AuthTokens.success : AuthTokens.placeholder;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 4),
@@ -479,17 +540,26 @@ class _RuleRow extends StatelessWidget {
             width: 16,
             height: 16,
             child: Center(
-              child: satisfied ? ProxoSymbol(ProxoSymbolName.check, size: 16, color: tone)
-                : Container(width: 13, height: 13, decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: tone))),
+              child: satisfied
+                  ? ProxoSymbol(ProxoSymbolName.check, size: 16, color: tone)
+                  : Container(
+                      width: 13,
+                      height: 13,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(color: tone),
+                      ),
+                    ),
             ),
           ),
           const SizedBox(width: 6),
           Expanded(
             child: ProxoText(
-              label, translate: true,
+              label,
+              translate: true,
               style: AuthTokens.ruleText.copyWith(
                 color: tone,
-                fontWeight: satisfied ? FontWeight.w500 : FontWeight.w500,
+                fontWeight: satisfied ? FontWeight.w400 : FontWeight.w400,
               ),
             ),
           ),
@@ -660,7 +730,10 @@ class _EmailDomainChipsState extends State<EmailDomainChips> {
       child: matches.isEmpty
           ? const SizedBox(width: double.infinity, height: 0)
           : Padding(
-              padding: const EdgeInsets.only(top: AuthTokens.gapFieldToChips, bottom: 2),
+              padding: const EdgeInsets.only(
+                top: AuthTokens.gapFieldToChips,
+                bottom: 2,
+              ),
               child: SizedBox(
                 height: AuthTokens.chipHeight,
                 child: ListView.separated(
@@ -670,10 +743,8 @@ class _EmailDomainChipsState extends State<EmailDomainChips> {
                   itemCount: matches.length,
                   separatorBuilder: (_, __) =>
                       const SizedBox(width: AuthTokens.chipGap),
-                  itemBuilder: (context, i) => _Chip(
-                    label: matches[i],
-                    onTap: () => _apply(matches[i]),
-                  ),
+                  itemBuilder: (context, i) =>
+                      _Chip(label: matches[i], onTap: () => _apply(matches[i])),
                 ),
               ),
             ),
@@ -704,7 +775,8 @@ class _Chip extends StatelessWidget {
             border: Border.all(color: AuthTokens.line),
           ),
           child: ProxoText(
-            label, translate: true,
+            label,
+            translate: true,
             textDirection: TextDirection.ltr,
             style: AuthTokens.chipText.copyWith(color: AuthTokens.accent),
           ),
@@ -826,8 +898,11 @@ class AuthFastAccountCard extends StatelessWidget {
                 CircleAvatar(
                   radius: 16,
                   backgroundColor: AuthTokens.accent.withOpacity(0.08),
-                  child: ProxoSymbol(ProxoSymbolName.user,
-                      size: 18, color: AuthTokens.accent),
+                  child: ProxoSymbol(
+                    ProxoSymbolName.user,
+                    size: 18,
+                    color: AuthTokens.accent,
+                  ),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
@@ -836,8 +911,9 @@ class AuthFastAccountCard extends StatelessWidget {
                     children: [
                       ProxoText(
                         AuthStrings.continueAsPrefix.trim(),
-                        style: AuthTokens.ruleText
-                            .copyWith(color: AuthTokens.inkMuted),
+                        style: AuthTokens.ruleText.copyWith(
+                          color: AuthTokens.inkMuted,
+                        ),
                       ),
                       ProxoText(
                         email,
@@ -845,7 +921,9 @@ class AuthFastAccountCard extends StatelessWidget {
                         textAlign: TextAlign.left,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: AuthTokens.fieldLabel.copyWith(fontSize: AuthTokens.textSize),
+                        style: AuthTokens.fieldLabel.copyWith(
+                          fontSize: AuthTokens.textSize,
+                        ),
                       ),
                     ],
                   ),
@@ -858,8 +936,11 @@ class AuthFastAccountCard extends StatelessWidget {
                     style: AuthTokens.chipText,
                   )
                 else
-                  ProxoSymbol(ProxoSymbolName.forward,
-                      size: 20, color: AuthTokens.placeholder),
+                  ProxoSymbol(
+                    ProxoSymbolName.forward,
+                    size: 20,
+                    color: AuthTokens.placeholder,
+                  ),
               ],
             ),
           ),
@@ -884,8 +965,13 @@ class AuthFastAccountCard extends StatelessWidget {
 // کوردیدا «یەکەم» واتە لای ڕاست، و هیچ حیسابێکی دەستی بۆ پێچەوانەکردنەوە
 // پێویست نییە.
 class AuthSegmentedControl extends StatelessWidget {
-  const AuthSegmentedControl({super.key, required this.labels, required this.index,
-    required this.onChanged, this.enabled = true});
+  const AuthSegmentedControl({
+    super.key,
+    required this.labels,
+    required this.index,
+    required this.onChanged,
+    this.enabled = true,
+  });
   final List<String> labels;
   final int index;
   final ValueChanged<int> onChanged;
@@ -893,52 +979,85 @@ class AuthSegmentedControl extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ProxoLocale.watch(context);
-    return LayoutBuilder(builder: (context, constraints) {
-      final width = (constraints.maxWidth - 8) / 2;
-      final labelWidth = (width - 20).clamp(1.0, double.infinity);
-      final scaler = MediaQuery.textScalerOf(context);
-      // Material's inherited letter spacing must not differ from the painter.
-      var labelStyle = AuthTokens.fieldLabel.copyWith(letterSpacing: 0);
-      // Keep whole words on each line, including Arabic email at 280dp/2x.
-      // Both segments use the same size and retain system text scaling.
-      for (var pass = 0; pass < 4; pass++) {
-        var widest = 0.0;
-        for (final word in labels.join(' ').split(RegExp(r'\s+'))) {
-          final p = TextPainter(text: TextSpan(text: word, style: labelStyle),
-            textDirection: TextDirection.rtl, textScaler: scaler)..layout();
-          if (p.width > widest) widest = p.width;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final width = (constraints.maxWidth - 8) / 2;
+        final labelWidth = (width - 20).clamp(1.0, double.infinity);
+        final scaler = MediaQuery.textScalerOf(context);
+        // Material's inherited letter spacing must not differ from the painter.
+        var labelStyle = AuthTokens.fieldLabel.copyWith(letterSpacing: 0);
+        // Keep whole words on each line, including Arabic email at 280dp/2x.
+        // Both segments use the same size and retain system text scaling.
+        for (var pass = 0; pass < 4; pass++) {
+          var widest = 0.0;
+          for (final word in labels.join(' ').split(RegExp(r'\s+'))) {
+            final p = TextPainter(
+              text: TextSpan(text: word, style: labelStyle),
+              textDirection: TextDirection.rtl,
+              textScaler: scaler,
+            )..layout();
+            if (p.width > widest) widest = p.width;
+            p.dispose();
+          }
+          if (widest <= labelWidth - 0.5 || widest == 0) break;
+          labelStyle = labelStyle.copyWith(
+            fontSize: labelStyle.fontSize! * (labelWidth - 0.5) / widest,
+          );
+        }
+        double height = 48;
+        for (final label in labels) {
+          final p = TextPainter(
+            text: TextSpan(text: label, style: labelStyle),
+            textDirection: TextDirection.rtl,
+            textScaler: scaler,
+          )..layout(maxWidth: labelWidth);
+          if (p.height + 24 > height) height = p.height + 24;
           p.dispose();
         }
-        if (widest <= labelWidth - 0.5 || widest == 0) break;
-        labelStyle = labelStyle.copyWith(fontSize: labelStyle.fontSize! * (labelWidth - 0.5) / widest);
-      }
-      double height = 48;
-      for (final label in labels) {
-        final p = TextPainter(text: TextSpan(text: label, style: labelStyle),
-          textDirection: TextDirection.rtl, textScaler: scaler)
-          ..layout(maxWidth: labelWidth);
-        if (p.height + 24 > height) height = p.height + 24;
-        p.dispose();
-      }
-      return Container(padding: const EdgeInsets.all(4),
-        decoration: BoxDecoration(color: const Color(0xFFF1F4F8), borderRadius: BorderRadius.circular(16)),
-        child: Row(children: List.generate(labels.length, (i) => Expanded(
-          child: Semantics(selected: i == index, button: true,
-            child: Material(color: i == index ? Colors.white : Colors.transparent,
-              borderRadius: BorderRadius.circular(12),
-              child: InkWell(borderRadius: BorderRadius.circular(12),
-                onTap: enabled ? () => onChanged(i) : null,
-                child: SizedBox(height: height, child: Center(child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: ProxoText(labels[i], textAlign: TextAlign.center,
-                    style: labelStyle.copyWith(
-                      color: i == index ? AuthTokens.accent : AuthTokens.inkMuted)),
-                ))),
+        return Container(
+          padding: const EdgeInsets.all(4),
+          decoration: BoxDecoration(
+            color: const Color(0xFFF1F4F8),
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Row(
+            children: List.generate(
+              labels.length,
+              (i) => Expanded(
+                child: Semantics(
+                  selected: i == index,
+                  button: true,
+                  child: Material(
+                    color: i == index ? Colors.white : Colors.transparent,
+                    borderRadius: BorderRadius.circular(12),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(12),
+                      onTap: enabled ? () => onChanged(i) : null,
+                      child: SizedBox(
+                        height: height,
+                        child: Center(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            child: ProxoText(
+                              labels[i],
+                              textAlign: TextAlign.center,
+                              style: labelStyle.copyWith(
+                                color: i == index
+                                    ? AuthTokens.accent
+                                    : AuthTokens.inkMuted,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ),
           ),
-        ))),
-      );
-    });
+        );
+      },
+    );
   }
 }

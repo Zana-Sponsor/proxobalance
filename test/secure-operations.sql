@@ -51,6 +51,7 @@ do $$ declare r jsonb; retry jsonb; begin
  begin perform pa_create_ad(fixture_ad(),10);raise exception 'FAIL legacy bypass';exception when insufficient_privilege then null;end;
  begin perform pa_review_topup(gen_random_uuid(),gen_random_uuid(),true,'payment checked');raise exception 'FAIL unauthorized approval';exception when insufficient_privilege then null;end;
  begin perform pa_admin_app_report();raise exception 'FAIL report privacy';exception when insufficient_privilege then null;end;
+ begin perform pa_admin_user_activity(auth.uid());raise exception 'FAIL per-user report privacy';exception when insufficient_privilege then null;end;
  begin perform 1 from app_finance.ledger;raise exception 'FAIL ledger read';exception when insufficient_privilege then null;end;
 end $$;
 reset role;
@@ -136,7 +137,7 @@ select fixture_login('11111111-1111-4111-8111-111111111111','aaaaaaaa-aaaa-4aaa-
 create function public.fixture_telemetry(seq integer,foreground boolean default true) returns jsonb language sql as $$
  select jsonb_build_object('installation_id','40000000-0000-4000-8000-000000000001','run_id','50000000-0000-4000-8000-000000000001',
  'sequence',seq,'foreground',foreground,'section','ads','device',jsonb_build_object('app_version','1.0.9','device_model','fixture'),
- 'events',jsonb_build_array(jsonb_build_object('id','60000000-0000-4000-8000-000000000001','kind','error','section','ads','code','TimeoutException')));$$;
+ 'events',jsonb_build_array(jsonb_build_object('id','60000000-0000-4000-8000-000000000001','kind','error','section','ads','code','TimeoutException','ordinal',1)));$$;
 set role authenticated;
 select test_assert(pa_record_app_telemetry(fixture_telemetry(1))->>'ok'='true','telemetry ingestion');
 select pa_record_app_telemetry(fixture_telemetry(1));
@@ -153,6 +154,10 @@ select test_assert((select sum(active_seconds) between 29 and 31 from app_teleme
 select fixture_login('33333333-3333-4333-8333-333333333333','cccccccc-cccc-4ccc-8ccc-cccccccccccc');
 set role authenticated;
 select test_assert(jsonb_array_length(pa_admin_app_report()->'most_used_sections')=1,'ranked sections');
+select test_assert(jsonb_array_length(pa_admin_user_activity('11111111-1111-4111-8111-111111111111')->'events')=1,'admin can inspect one account');
+select test_assert(pa_admin_user_activity('11111111-1111-4111-8111-111111111111')->'events'->0->>'ordinal'='1','client order retained without trusting client timestamps');
+select test_assert(pa_admin_user_activity('11111111-1111-4111-8111-111111111111')->'devices'->0->>'last_reported_section'='ads','last reported section available to admin');
+select test_assert(jsonb_array_length(pa_admin_user_activity('22222222-2222-4222-8222-222222222222')->'events')=0,'per-user report filters identity');
 reset role;
 -- Revoked session may neither provision nor submit financial requests.
 delete from auth.sessions where id='bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb';
