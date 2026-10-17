@@ -100,7 +100,7 @@ jobs:
       - name: Build Vercel static output
         run: node scripts/prepare-vercel.mjs
       - name: Verify authenticated orders, admin refunds and capped fee rewards
-        run: node --test test/exchange-rounded-payout-api.test.js test/exchange-payout-rounding.test.js test/orders-route.test.js test/exchange-reward-pricing.test.js test/exchange-admin-rewards-refund.test.js test/exchange-shortfall-api.test.js test/exchange-shortfall-ui.test.js test/exchange-refund-amounts.test.js test/exchange-refund-report-api.test.js test/exchange-refund-report-ui.test.js test/exchange-account-balances-ui.test.js test/exchange-send-balance.test.js test/exchange-statistics-order-codes.test.js test/exchange-report-names.test.js test/exchange-live-saves.test.js test/exchange-access.test.js test/exchange-customer-polish.test.js test/exchange-staff-management.test.js
+        run: node --test test/exchange-customer-receipt.test.js test/exchange-rounded-payout-api.test.js test/exchange-payout-rounding.test.js test/orders-route.test.js test/exchange-reward-pricing.test.js test/exchange-admin-rewards-refund.test.js test/exchange-shortfall-api.test.js test/exchange-shortfall-ui.test.js test/exchange-refund-amounts.test.js test/exchange-refund-report-api.test.js test/exchange-refund-report-ui.test.js test/exchange-account-balances-ui.test.js test/exchange-send-balance.test.js test/exchange-statistics-order-codes.test.js test/exchange-report-names.test.js test/exchange-live-saves.test.js test/exchange-access.test.js test/exchange-customer-polish.test.js test/exchange-staff-management.test.js
       - name: Verify deployed asset and board paths
         run: |
           node --input-type=module -e "

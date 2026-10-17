@@ -138,7 +138,7 @@ test('customer receipt preserves pricing, saved target and automatic refund; fra
   assert.equal(data.get('گەڕاندنەوەی خۆکار بۆ باڵانسی هەژمار'),'500 د.ع');
   assert.equal(data.get('بڕی لێبڕین'),'500 د.ع');
   const usdt=new Map(rows(c.pbBuildReceipt(savedOrder({...base,from_method:'USDT',amount:1.1,total:1600}))));
-  assert.equal(usdt.get('بڕی نێردراو'),'1.1 $');
+  assert.equal(usdt.get('بڕی سەرەکی داواکاری'),'1.1 $');
   assert.equal(usdt.get('بڕی ناردنی دیاریکراو بۆ وەرگر'),'1,000 د.ع');
   const legacy=new Map(rows(c.pbBuildReceipt({...base,status:approved})));
   assert.equal(legacy.get('بڕی وەرگیراو'),'10,500 د.ع');

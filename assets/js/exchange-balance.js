@@ -11,6 +11,8 @@ function resetMyBalance(){
   if(typeof _balanceOrderKey!=='undefined')_balanceOrderKey=null;
   const form=document.getElementById('balancePayoutForm');if(form){form.hidden=true;form.reset();}
   const history=document.getElementById('balanceHistoryList');if(history){history.hidden=true;history.textContent='';}
+  document.getElementById('balanceHistoryToggle')?.setAttribute('aria-expanded','false');
+  const notice=document.getElementById('balanceRefundNotice');if(notice){notice.hidden=true;notice.textContent='';}
 }
 function balanceIqd(n){return Number(n||0).toLocaleString('en-US')+' د.ع';}
 function balanceTime(iso){return iso?new Date(iso).toLocaleString('en-GB'):'—';}
@@ -100,30 +102,53 @@ async function openAccountBalanceSend(){
 }
 function toggleBalanceHistory(){
   const el=document.getElementById('balanceHistoryList');el.hidden=!el.hidden;
+  document.getElementById('balanceHistoryToggle')?.setAttribute('aria-expanded',String(!el.hidden));
   if(!el.hidden)renderBalanceHistory();
+}
+function showBalanceRefundHistory(){
+  const el=document.getElementById('balanceHistoryList');if(!el)return;
+  el.hidden=false;
+  document.getElementById('balanceHistoryToggle')?.setAttribute('aria-expanded','true');
+  renderBalanceHistory();
+  el.querySelector('.pb-history-refund')?.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 function renderBalanceHistory(){
   const el=document.getElementById('balanceHistoryList');
   if(!el||!_myBalanceData)return;
   const kinds={order_debit:'ناردن لە باڵانسی هەژمار',verified_refund:'گەڕاندنەوەی پارە',payout_hold:'داواکاری ناردن',
     payout_cancel:'هەڵوەشاندنەوەی ناردن',payout_paid:'ناردنی سەرکەوتوو',shortfall_refund:'گەڕاندنەوەی بڕی کەم نێردراو'};
-  const journal=(_myBalanceData.journal||[]).slice(0,20);
+  const journal=(_myBalanceData.journal||[]).slice(0,50);
   const shortfalls=new Map((_myBalanceData.shortfalls||[]).map(r=>[r.journal_id,r]));
+  const money=value=>value!==null&&value!==undefined&&value!==''&&typeof value!=='boolean'&&
+    Number.isSafeInteger(Number(value))&&Number(value)>=0?Number(value):null;
+  let latestRefund=null;
   let html=journal.map(j=>{
     const available=(j.ex_balance_entries||[]).find(x=>x.account==='customer_available');
     const held=(j.ex_balance_entries||[]).find(x=>x.account==='customer_held');
     const amount=Number(available?.delta_iqd||held?.delta_iqd||0);
     const shortfall=j.kind==='shortfall_refund',detail=shortfalls.get(j.id);
-    const label=shortfall&&detail?.refund_source==='payout_rounding'?'گەڕاندنەوەی ئۆتۆماتیکی پاشماوە':kinds[j.kind]||j.kind;
+    const automatic=shortfall&&detail?.refund_source==='payout_rounding';
+    const refund=(shortfall||j.kind==='verified_refund')&&Number.isSafeInteger(amount)&&amount>0;
+    const label=automatic?'گەڕاندنەوەی ئۆتۆماتیکی پاشماوە':kinds[j.kind]||j.kind;
+    const expected=money(detail?.expected_iqd),before=money(detail?.refunded_before_iqd),refunded=money(detail?.refunded_after_iqd);
+    const hasSplit=refund&&shortfall&&expected!==null&&before!==null&&refunded!==null&&
+      money(detail?.amount_iqd)===amount&&refunded===before+amount&&refunded<=expected&&
+      (!automatic||(before===0&&amount<1000&&(expected-refunded)%1000===0));
     const after=available?.balance_after_iqd;
-    const hasSnapshot=shortfall&&after!==null&&after!==undefined&&Number.isSafeInteger(Number(after))&&Number.isSafeInteger(amount);
-    return '<div class="pb-history-row"><div><b class="pb-history-title">'+escHtml(label)+'</b>'+
+    const hasSnapshot=refund&&money(after)!==null&&Number(after)>=amount;
+    if(refund&&!latestRefund)latestRefund={amount,code:detail?.order_code};
+    const reason=automatic?'بڕی ناردن بە هەزاری تەواو هەژمار کراوە؛ پاشماوەکە بۆ باڵانسی هەژمارەکەت گەڕێندراوەتەوە.':detail?.reason||j.note||'';
+    return '<div class="pb-history-row'+(refund?' pb-history-refund':'')+'"><div><b class="pb-history-title">'+escHtml(label)+'</b>'+
+      (refund?'<span class="pb-refund-badge">'+(automatic?'ڕیفاوندی خۆکار':'گەڕاوە بۆ باڵانس')+'</span>':'')+
       '<small>'+escHtml(balanceTime(j.created_at))+'</small>'+
-      (j.order_id?'<small dir="ltr">ID: '+escHtml(detail?.order_code||j.order_id)+'</small>':'')+
-      '<small>'+escHtml(detail?.reason||j.note||'')+'</small>'+
+      (j.order_id?'<small>کۆدی مامەڵە: <bdi>'+escHtml(detail?.order_code||j.order_id)+'</bdi></small>':'')+
+      '<small class="pb-history-reason">'+escHtml(reason)+'</small>'+
+      (hasSplit?'<div class="pb-refund-amounts"><div><span>بڕی نێردراو'+(automatic?'':' (هەژمارکراو)')+'</span><b>'+balanceIqd(expected-refunded)+'</b></div>'+
+        '<div><span>بڕی نەنێردراو تا ئەم تۆمارە</span><b>'+balanceIqd(refunded)+'</b></div></div>':'')+
       (hasSnapshot?'<small>باڵانس پێش گەڕاندنەوە: '+balanceIqd(Number(after)-amount)+'</small>'+
         '<small>باڵانس دوای گەڕاندنەوە: '+balanceIqd(after)+'</small>':'')+'</div>'+
-      '<b dir="ltr"'+(shortfall?' class="pb-history-credit"':'')+'>'+(amount>0?'+':'')+balanceIqd(amount)+'</b></div>';
+      '<b dir="ltr"'+(refund?' class="pb-history-credit"':'')+'>'+(amount>0?'+':'')+balanceIqd(amount)+
+        (refund?'<small dir="rtl">گەڕاوەی ئەم جارە</small>':'')+'</b></div>';
   }).join('');
   const requests=(_myBalanceData.payouts||[]).filter(p=>p.status==='pending').slice(0,5);
   html+=requests.map(p=>'<div class="pb-history-row"><div><b>داواکاری چاوەڕوانە</b>'+
@@ -132,6 +157,12 @@ function renderBalanceHistory(){
     '<button type="button" class="pb-btn pb-secondary" onclick="cancelMyBalancePayout(\''+
        escHtml(p.id)+'\')">هەڵوەشاندنەوە</button></div>').join('');
   el.innerHTML=html||'<p class="pb-message">هێشتا هیچ جوڵەیەکی باڵانس نییە.</p>';
+  const notice=document.getElementById('balanceRefundNotice');
+  if(notice){
+    notice.hidden=!latestRefund;
+    notice.textContent=latestRefund?'دوایین ڕیفاوند: +'+balanceIqd(latestRefund.amount)+
+      (latestRefund.code?' · مامەڵە '+latestRefund.code:'')+' — بینینی لە مێژوو':'';
+  }
 }
 document.getElementById('balancePayoutForm')?.addEventListener('input',()=>{
   _balanceRequestKey=null;

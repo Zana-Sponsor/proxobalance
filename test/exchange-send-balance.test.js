@@ -7,7 +7,8 @@ const source=readFileSync(new URL('../assets/js/exchange-balance.js',import.meta
 function customer(){
   const els=new Map(),events={},calls=[];
   const el=id=>{
-    if(!els.has(id))els.set(id,{hidden:true,disabled:false,textContent:'',innerHTML:'',value:'',
+    if(!els.has(id))els.set(id,{hidden:true,disabled:false,textContent:'',innerHTML:'',value:'',attrs:{},
+      setAttribute(name,value){this.attrs[name]=value;},querySelector(){return null;},
       addEventListener(){},appendChild(){},reset(){},focus(){this.focused=true;},scrollIntoView(){this.scrolled=true;}});
     return els.get(id);
   };
@@ -66,6 +67,9 @@ test('late balance responses cannot expose the signed-out customer balance',asyn
   await request;
   assert.equal(p.el('balanceSendSection').hidden,true);
   assert.equal(p.el('balanceAvailable').textContent,'—');
+  assert.equal(p.el('balanceRefundNotice').hidden,true);
+  assert.equal(p.el('balanceRefundNotice').textContent,'');
+  assert.equal(p.el('balanceHistoryToggle').attrs['aria-expanded'],'false');
 });
 test('returning to an active Send page refreshes the latest refund balance',async()=>{
   const p=customer();await p.c.loadMyBalance();p.setBalance(80000);

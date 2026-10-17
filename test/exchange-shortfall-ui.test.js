@@ -396,36 +396,60 @@ test('customer history joins repeated shortfalls by journal ID and escapes audit
   const start=customerSource.indexOf('function renderBalanceHistory(){');
   const end=customerSource.indexOf("document.getElementById('balancePayoutForm')",start);
   assert.ok(start>=0&&end>start);
-  const context=vm.createContext({document:{getElementById:()=>out},escHtml:escapeHtml,
+  const context=vm.createContext({document:{getElementById:id=>id==='balanceHistoryList'?out:null},escHtml:escapeHtml,
     balanceTime:value=>value,balanceIqd:value=>Number(value).toLocaleString('en-US')+' د.ع',
     _myBalanceData:{journal:[
       {id:'journal-second',kind:'shortfall_refund',order_id:orderId,created_at:'2026-10-17T12:00:00Z',
         ex_balance_entries:[{account:'customer_available',delta_iqd:150,balance_after_iqd:1300}]},
       {id:'journal-first',kind:'shortfall_refund',order_id:orderId,created_at:'2026-10-17T11:00:00Z',
         ex_balance_entries:[{account:'customer_available',delta_iqd:150,balance_after_iqd:1150}]}],
-      shortfalls:[{journal_id:'journal-first',order_code:'P123',reason:'First refund'},
-        {journal_id:'journal-second',order_code:'P123',reason:'Second <script>unsafe</script> refund'}],payouts:[]}
+      shortfalls:[{journal_id:'journal-first',order_code:'P123',reason:'First refund',amount_iqd:150,
+        expected_iqd:9800,refunded_before_iqd:0,refunded_after_iqd:150},
+        {journal_id:'journal-second',order_code:'P123',reason:'Second <script>unsafe</script> refund',amount_iqd:150,
+          expected_iqd:9800,refunded_before_iqd:150,refunded_after_iqd:300}],payouts:[]}
   });
   vm.runInContext(customerSource.slice(start,end),context);context.renderBalanceHistory();
   assert.match(out.innerHTML,/گەڕاندنەوەی بڕی کەم نێردراو/);
   assert.match(out.innerHTML,/Second &lt;script&gt;unsafe&lt;\/script&gt; refund[\s\S]*1,150[\s\S]*1,300[\s\S]*First refund[\s\S]*1,000/);
   assert.doesNotMatch(out.innerHTML,/<script>/);
+  assert.match(out.innerHTML,/9,500/);assert.match(out.innerHTML,/9,650/);
+  assert.match(out.innerHTML,/بڕی نەنێردراو تا ئەم تۆمارە/);
 });
 
-test('customer balance history distinguishes automatic rounding credits from manual shortfalls',()=>{
-  const out=element();
+test('customer balance history distinguishes automatic rounding credits and shows a discoverable refund notice',()=>{
+  const out=element(),notice=element();
   const start=customerSource.indexOf('function renderBalanceHistory(){');
   const end=customerSource.indexOf("document.getElementById('balancePayoutForm')",start);
-  const context=vm.createContext({document:{getElementById:()=>out},escHtml:escapeHtml,
+  const context=vm.createContext({document:{getElementById:id=>id==='balanceHistoryList'?out:notice},escHtml:escapeHtml,
     balanceTime:value=>value,balanceIqd:value=>Number(value).toLocaleString('en-US')+' د.ع',
     _myBalanceData:{journal:[{id:'automatic-journal',kind:'shortfall_refund',order_id:orderId,
       created_at:'2026-10-17T12:00:00Z',ex_balance_entries:[
         {account:'customer_available',delta_iqd:500,balance_after_iqd:1500}]}],
       shortfalls:[{journal_id:'automatic-journal',order_code:'P123',refund_source:'payout_rounding',
+        amount_iqd:500,expected_iqd:10500,refunded_before_iqd:0,refunded_after_iqd:500,
         reason:'پاشماوەی ناردن بۆ باڵانس گەڕێندرایەوە.'}],payouts:[]}
   });
   vm.runInContext(customerSource.slice(start,end),context);context.renderBalanceHistory();
   assert.match(out.innerHTML,/گەڕاندنەوەی ئۆتۆماتیکی/);
   assert.match(out.innerHTML,/500/);assert.match(out.innerHTML,/1,500/);
+  assert.match(out.innerHTML,/10,000/);assert.match(out.innerHTML,/ڕیفاوندی خۆکار/);
+  assert.match(out.innerHTML,/بڕی نێردراو/);assert.match(out.innerHTML,/گەڕاوەی ئەم جارە/);
+  assert.equal(notice.hidden,false);assert.match(notice.textContent,/دوایین ڕیفاوند: \+500/);
+  assert.match(notice.textContent,/P123/);
   assert.doesNotMatch(out.innerHTML,/گەڕاندنەوەی بڕی کەم نێردراو/);
+});
+
+test('incomplete or inconsistent refund snapshots do not invent sent amounts',()=>{
+  const start=customerSource.indexOf('function renderBalanceHistory(){');
+  const end=customerSource.indexOf("document.getElementById('balancePayoutForm')",start);
+  for(const detail of [undefined,{amount_iqd:500,expected_iqd:10500,refunded_before_iqd:0,refunded_after_iqd:700}]){
+    const out=element();
+    const context=vm.createContext({document:{getElementById:id=>id==='balanceHistoryList'?out:null},escHtml:escapeHtml,
+      balanceTime:value=>value,balanceIqd:value=>Number(value).toLocaleString('en-US')+' د.ع',
+      _myBalanceData:{journal:[{id:'refund-journal',kind:'shortfall_refund',order_id:orderId,
+        ex_balance_entries:[{account:'customer_available',delta_iqd:500,balance_after_iqd:1500}]}],
+        shortfalls:detail?[{...detail,journal_id:'refund-journal'}]:[],payouts:[]}});
+    vm.runInContext(customerSource.slice(start,end),context);context.renderBalanceHistory();
+    assert.match(out.innerHTML,/\+500/);assert.doesNotMatch(out.innerHTML,/بڕی نێردراو|pb-refund-amounts/);
+  }
 });

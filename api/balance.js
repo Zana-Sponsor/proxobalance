@@ -7,20 +7,27 @@ const STATUS = { disabled:'Payout requests are not enabled yet' };
 
 async function ownBalance(userId) {
   const id=encodeURIComponent(userId);
-  const [balances,journal,shortfalls,payouts,config,wallets] = await Promise.all([
+  const [balances,journal,payouts,config,wallets] = await Promise.all([
     serviceFetch('/rest/v1/ex_customer_balances?user_id=eq.'+id+'&select=available_iqd,held_iqd,updated_at&limit=1'),
     serviceFetch('/rest/v1/ex_balance_journal?user_id=eq.'+id+
       '&select=id,kind,order_id,payout_id,note,evidence_ref,created_at,ex_balance_entries(account,delta_iqd,balance_after_iqd)'+
-      '&order=created_at.desc&limit=50'),
-    serviceFetch('/rest/v1/ex_order_shortfall_refunds?user_id=eq.'+id+
-      '&select=id,order_id,order_code,journal_id,amount_iqd,expected_iqd,refunded_before_iqd,refunded_after_iqd,balance_before_iqd,balance_after_iqd,reason,refund_source,created_at'+
-      '&order=created_at.desc&limit=50'),
+      '&order=created_at.desc,id.desc&limit=50'),
     serviceFetch('/rest/v1/ex_payout_requests?user_id=eq.'+id+
       '&select=id,amount_iqd,destination_wallet,destination_number,status,transfer_reference,payout_receipt_url,created_at,updated_at'+
       '&order=created_at.desc&limit=25'),
     serviceFetch('/rest/v1/ex_balance_config?id=eq.true&select=payouts_enabled,max_single_payout_iqd&limit=1'),
     serviceFetch('/rest/v1/ex_wallets?allow_receive=eq.true&is_locked=eq.false&select=key,name&order=sort_order.asc')
   ]);
+  // Load the cases for this exact history page. A newer refund must not push a
+  // displayed journal's immutable details out of an independent recent list.
+  const shortfallJournalIds=[...new Set((journal||[])
+    .filter(row=>row?.kind==='shortfall_refund'&&typeof row.id==='string'&&uuid.test(row.id))
+    .map(row=>row.id.toLowerCase()))].slice(0,50);
+  const shortfalls=shortfallJournalIds.length?await serviceFetch(
+    '/rest/v1/ex_order_shortfall_refunds?user_id=eq.'+id+
+    '&journal_id=in.('+shortfallJournalIds.join(',')+')'+
+    '&select=id,order_id,order_code,journal_id,amount_iqd,expected_iqd,refunded_before_iqd,refunded_after_iqd,balance_before_iqd,balance_after_iqd,reason,refund_source,created_at'+
+    '&order=created_at.desc,id.desc&limit=50'):[];
   return { balance:balances?.[0]||{available_iqd:0,held_iqd:0},
     journal:journal||[],shortfalls:shortfalls||[],payouts:payouts||[],
     payouts_enabled:config?.[0]?.payouts_enabled===true,

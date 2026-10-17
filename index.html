@@ -93,7 +93,7 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
 <link rel="stylesheet" href="/assets/css/exchange-light-panel.css?v=12">
 <link rel="stylesheet" href="/assets/css/exchange-ux.css?v=1">
 <link rel="stylesheet" href="/assets/css/panel-consistency.css?v=1">
-<link rel="stylesheet" href="/assets/css/exchange-balance.css?v=5">
+<link rel="stylesheet" href="/assets/css/exchange-balance.css?v=6">
 <link rel="stylesheet" href="/assets/css/exchange-features.css?v=2">
 <link rel="stylesheet" href="/assets/css/exchange-auth-app.css?v=1"><script src="/assets/js/exchange-access.js?v=1"></script>
 <link rel="stylesheet" href="/assets/css/exchange-customer-polish.css?v=2">
@@ -629,8 +629,9 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
       </div>
       <div class="pb-actions">
         <button type="button" id="balancePayoutToggle" class="pb-btn" onclick="openAccountBalanceSend()" disabled>هەڵبژاردنی باڵانس بۆ ناردن</button>
-        <button type="button" class="pb-btn pb-secondary" onclick="toggleBalanceHistory()">مێژووی باڵانس</button>
+        <button type="button" id="balanceHistoryToggle" class="pb-btn pb-secondary" onclick="toggleBalanceHistory()" aria-controls="balanceHistoryList" aria-expanded="false">مێژووی باڵانس و ڕیفاوند</button>
       </div>
+      <button type="button" id="balanceRefundNotice" class="pb-refund-notice" onclick="showBalanceRefundHistory()" aria-controls="balanceHistoryList" hidden></button>
       <p class="pb-message" id="balanceStatusMessage" tabindex="-1" role="status">باڵانس بار دەکرێت...</p>
       <form id="balancePayoutForm" class="pb-form" hidden onsubmit="requestBalancePayout(event)">
         <label for="balanceDestWallet">جزدانی وەرگر</label>
@@ -642,7 +643,7 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
         <p class="pb-message">ناردن دەستییە؛ دوای پشتڕاستکردنەوەی بەڕێوەبەر و خاوەندارێتی جزدان ئەنجام دەدرێت.</p>
         <button type="submit" id="balancePayoutSubmit" class="pb-btn">داواکاری ناردن</button>
       </form>
-      <div id="balanceHistoryList" class="pb-history" hidden></div>
+      <div id="balanceHistoryList" class="pb-history" role="region" aria-label="مێژووی باڵانس و ڕیفاوند" hidden></div>
     </section>
 
     <aside class="welcome-reward" id="welcomeReward" aria-label="پاداشتی هەژماری نوێ" hidden>
@@ -1557,9 +1558,9 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
 <script src="/assets/js/exchange-live.js?v=1"></script>
 <script src="/assets/js/app.js?v=47"></script>
 <script src="/assets/js/exchange-customer-features.js?v=3"></script>
-<script src="/assets/js/exchange-balance.js?v=6"></script>
+<script src="/assets/js/exchange-balance.js?v=7"></script>
 <script src="/assets/js/exchange-ux.js?v=1"></script>
-<script src="/assets/js/receipt-download.js?v=5"></script>
+<script src="/assets/js/receipt-download.js?v=6"></script>
 <script src="/assets/js/track.js?v=3"></script>
 </body>
 </html>

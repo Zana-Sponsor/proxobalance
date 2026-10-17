@@ -412,8 +412,11 @@ async function customerRequest(authorized = true) {
 test('customer balance history is scoped to the authenticated user despite a forged user_id query', async t => {
   const previous = globalThis.fetch;
   const reads = [];
-  const ownCase = { id: caseId, order_id: orderId, journal_id: 'fixture-journal', amount_iqd: 150, reason: validPayload.reason,
+  const journalId = '66666666-6666-4666-8666-666666666666';
+  const ownCase = { id: caseId, order_id: orderId, journal_id: journalId, amount_iqd: 150, reason: validPayload.reason,
     refund_source: 'payout_rounding', created_at: savedCase.created_at };
+  const ownJournal = { id: journalId, kind: 'shortfall_refund', order_id: orderId, created_at: savedCase.created_at,
+    ex_balance_entries: [{account:'customer_available',delta_iqd:150,balance_after_iqd:1150}] };
   globalThis.fetch = async (input, options = {}) => {
     const url = new URL(String(input));
     if (url.pathname === '/auth/v1/user') return apiResponse({ id: userId });
@@ -426,13 +429,19 @@ test('customer balance history is scoped to the authenticated user despite a for
       assert.equal(url.searchParams.get('user_id'), 'eq.' + userId);
     }
     if (url.pathname === '/rest/v1/ex_customer_balances') return apiResponse([{ available_iqd: 1150, held_iqd: 0 }]);
+    if (url.pathname === '/rest/v1/ex_balance_journal') {
+      assert.equal(url.searchParams.get('order'),'created_at.desc,id.desc');
+      assert.equal(url.searchParams.get('limit'),'50');
+      return apiResponse([ownJournal]);
+    }
     if (url.pathname === '/rest/v1/ex_order_shortfall_refunds') {
       assert.ok(url.searchParams.get('select').split(',').includes('journal_id'));
       assert.ok(url.searchParams.get('select').split(',').includes('refund_source'));
+      assert.equal(url.searchParams.get('journal_id'),'in.('+journalId+')');
       return apiResponse([ownCase]);
     }
     if (url.pathname === '/rest/v1/ex_balance_config') return apiResponse([{ payouts_enabled: false }]);
-    if (['/rest/v1/ex_balance_journal', '/rest/v1/ex_payout_requests', '/rest/v1/ex_wallets'].includes(url.pathname))
+    if (['/rest/v1/ex_payout_requests', '/rest/v1/ex_wallets'].includes(url.pathname))
       return apiResponse([]);
     throw new Error('Unexpected fixture request: ' + url.pathname);
   };
@@ -440,8 +449,92 @@ test('customer balance history is scoped to the authenticated user despite a for
   const result = await customerRequest();
   assert.equal(result.status, 200);
   assert.equal(result.body.balance.available_iqd, 1150);
+  assert.deepEqual(result.body.journal, [ownJournal]);
   assert.deepEqual(result.body.shortfalls, [ownCase]);
+  assert.equal(JSON.stringify(result.body).includes('fixture-only-service-key'), false);
   assert.ok(reads.some(url => url.pathname === '/rest/v1/ex_order_shortfall_refunds'));
+});
+
+test('customer history keeps the oldest displayed refund detail when a newer refund arrives',async t=>{
+  const previous=globalThis.fetch;
+  const id=n=>'77777777-7777-4777-8777-'+String(n).padStart(12,'0');
+  const journal=Array.from({length:50},(_,index)=>({id:id(50-index),kind:'shortfall_refund',
+    order_id:orderId,created_at:savedCase.created_at,
+    ex_balance_entries:[{account:'customer_available',delta_iqd:500,balance_after_iqd:25500-index*500}]}));
+  const cases=journal.map((row,index)=>({id:id(100+index),journal_id:row.id,order_id:orderId,
+    order_code:'P123456789AB',user_id:userId,amount_iqd:500,expected_iqd:10500,
+    refunded_before_iqd:0,refunded_after_iqd:500,refund_source:'payout_rounding',
+    reason:'Automatic remainder returned to the account',created_at:row.created_at}));
+  const newer={...cases[0],id:id(200),journal_id:id(51),created_at:'2026-10-17T18:00:00Z'};
+  let journalResolved=false,detailQueries=0;
+  globalThis.fetch=async(input,options={})=>{
+    const url=new URL(String(input));
+    if(url.pathname==='/auth/v1/user')return apiResponse({id:userId});
+    if(url.pathname==='/rest/v1/rpc/ex_ip_check')return apiResponse([{banned:false}]);
+    if(url.pathname==='/rest/v1/rpc/ex_record_event')return apiResponse(null);
+    assert.equal(options.method||'GET','GET');
+    if(url.pathname==='/rest/v1/ex_balance_journal'){
+      assert.equal(url.searchParams.get('user_id'),'eq.'+userId);
+      assert.equal(url.searchParams.get('order'),'created_at.desc,id.desc');
+      assert.equal(url.searchParams.get('limit'),'50');
+      await Promise.resolve();
+      journalResolved=true;
+      return apiResponse(journal);
+    }
+    if(url.pathname==='/rest/v1/ex_order_shortfall_refunds'){
+      ++detailQueries;
+      assert.equal(journalResolved,true,'details must follow the resolved history page');
+      assert.equal(url.searchParams.get('user_id'),'eq.'+userId);
+      assert.equal(url.searchParams.get('limit'),'50');
+      const filter=url.searchParams.get('journal_id');
+      const requested=filter?.startsWith('in.(')?filter.slice(4,-1).split(','):null;
+      // The independent recent-50 query drops cases[49] after this new commit.
+      const available=[newer,...cases];
+      return apiResponse((requested?available.filter(row=>requested.includes(row.journal_id)):available).slice(0,50));
+    }
+    if(['/rest/v1/ex_customer_balances','/rest/v1/ex_payout_requests','/rest/v1/ex_balance_config','/rest/v1/ex_wallets'].includes(url.pathname))
+      return apiResponse([]);
+    throw Error('Unexpected history fixture request: '+url.pathname);
+  };
+  t.after(()=>{globalThis.fetch=previous;});
+  const result=await customerRequest();
+  assert.equal(result.status,200);
+  assert.equal(detailQueries,1);
+  assert.deepEqual(result.body.journal,journal);
+  assert.equal(result.body.shortfalls.length,50);
+  assert.deepEqual(result.body.shortfalls.find(row=>row.journal_id===journal[49].id),cases[49]);
+  assert.equal(result.body.shortfalls.some(row=>row.journal_id===newer.journal_id),false);
+  assert.ok(result.body.shortfalls.every(row=>row.refund_source==='payout_rounding'));
+});
+
+test('customer history skips the detail query without valid shortfall journal IDs',async t=>{
+  const previous=globalThis.fetch;
+  let rows=[];
+  const detailQueries=[];
+  globalThis.fetch=async(input,options={})=>{
+    const url=new URL(String(input));
+    if(url.pathname==='/auth/v1/user')return apiResponse({id:userId});
+    if(url.pathname==='/rest/v1/rpc/ex_ip_check')return apiResponse([{banned:false}]);
+    if(url.pathname==='/rest/v1/rpc/ex_record_event')return apiResponse(null);
+    assert.equal(options.method||'GET','GET');
+    if(url.pathname==='/rest/v1/ex_order_shortfall_refunds'){
+      detailQueries.push(url);
+      throw Error('No matching refund journal exists');
+    }
+    if(url.pathname==='/rest/v1/ex_balance_journal')return apiResponse(rows);
+    if(['/rest/v1/ex_customer_balances','/rest/v1/ex_payout_requests','/rest/v1/ex_balance_config','/rest/v1/ex_wallets'].includes(url.pathname))
+      return apiResponse([]);
+    throw Error('Unexpected history fixture request: '+url.pathname);
+  };
+  t.after(()=>{globalThis.fetch=previous;});
+  for(const journal of [[],[{id:orderId,kind:'order_debit'}],
+    [{id:'invalid,(injected)',kind:'shortfall_refund'},{id:null,kind:'shortfall_refund'}]]){
+    rows=journal;
+    const result=await customerRequest();
+    assert.equal(result.status,200);
+    assert.deepEqual(result.body.shortfalls,[]);
+  }
+  assert.equal(detailQueries.length,0);
 });
 
 test('anonymous customers cannot read balances or shortfall history', async t => {

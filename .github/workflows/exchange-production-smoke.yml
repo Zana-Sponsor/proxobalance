@@ -16,6 +16,9 @@ jobs:
           for attempt in $(seq 1 24); do
             if curl -fLsS --max-time 15 'https://www.proxobalance.app/' -o current-index.html &&
                grep -q 'app.js?v=47' current-index.html &&
+               grep -q 'exchange-balance.js?v=7' current-index.html &&
+               grep -q 'receipt-download.js?v=6' current-index.html &&
+               grep -q 'id="balanceRefundNotice"' current-index.html &&
                grep -q 'exchange-payout-rounding.js?v=1' current-index.html &&
                grep -q 'exchange-customer-polish.css?v=2' current-index.html &&
                curl -fLsS --max-time 15 'https://www.proxobalance.app/exchange-admin' -o current-admin.html &&
@@ -35,7 +38,7 @@ jobs:
                grep -q 'ex_admin_deduction_stats_filtered' current-profit.js &&
                curl -fLsS --max-time 15 'https://www.proxobalance.app/assets/js/app.js?v=47' -o current-app.js &&
                grep -q 'accountBalanceSourceOption' current-app.js &&
-               curl -fLsS --max-time 15 'https://www.proxobalance.app/assets/js/exchange-balance.js?v=6' -o current-balance.js &&
+               curl -fLsS --max-time 15 'https://www.proxobalance.app/assets/js/exchange-balance.js?v=7' -o current-balance.js &&
                grep -q 'openAccountBalanceSend' current-balance.js; then
               exit 0
             fi
@@ -58,7 +61,10 @@ jobs:
           fi
           grep -q 'app.js?v=47' index.html
           grep -q 'exchange-payout-rounding.js?v=1' index.html
-          grep -q 'receipt-download.js?v=5' index.html
+          grep -q 'receipt-download.js?v=6' index.html
+          grep -q 'exchange-balance.css?v=6' index.html
+          grep -q 'id="balanceRefundNotice"' index.html
+          grep -q 'id="balanceHistoryToggle"' index.html
           grep -q 'exchange-customer-polish.css?v=2' index.html
           curl -fLsS --max-time 25 "$root/assets/css/exchange-customer-polish.css?v=2" -o customer-polish.css
           grep -q 'tx-card-content' customer-polish.css
@@ -96,9 +102,14 @@ jobs:
           grep -q 'accountBalanceCell' admin.js
           grep -q 'accountBalanceDetails' admin.js
           grep -q "'account_balances'" admin.js
-          curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/assets/js/exchange-balance.js?v=6" -o exchange-balance.js
+          curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/assets/js/exchange-balance.js?v=7" -o exchange-balance.js
           grep -q 'requestBalancePayout' exchange-balance.js
           grep -q 'refreshVisibleBalance' exchange-balance.js
+          grep -q 'showBalanceRefundHistory' exchange-balance.js
+          grep -q 'pb-refund-badge' exchange-balance.js
+          curl -fLsS --max-time 25 "$root/assets/js/receipt-download.js?v=6" -o receipt-download.js
+          grep -q 'pbReceiptRefunds' receipt-download.js
+          grep -q 'RECEIPT_REFRESH_FAILED' receipt-download.js
           curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/assets/js/exchange-balance-admin.js?v=8" -o exchange-balance-admin.js
           grep -q 'creditVerifiedRefund' exchange-balance-admin.js
           grep -q 'creditOrderShortfall' exchange-balance-admin.js
