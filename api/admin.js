@@ -272,8 +272,12 @@ const actions = {
       throw {status:400,code:'invalid_refund_snapshot',message:'Refresh the order before recording its shortfall'};
     if(confirmed_shortfall!==true)
       throw {status:400,code:'confirmation_required',message:'Confirm the actual unpaid shortfall'};
+    const normalizedRequestKey=request_key.toLowerCase();
     const note=typeof reason==='string'?reason.trim():'';
-    const evidence=typeof verification_reference==='string'?verification_reference.trim():'';
+    // New forms omit the manual reference. Derive its audit value from the same
+    // canonical key on every retry; preserve references submitted by older tabs.
+    const evidence=verification_reference==null?`shortfall:${normalizedRequestKey}`:
+      typeof verification_reference==='string'?verification_reference.trim():'';
     if(note.length<10||note.length>2000)
       throw {status:400,code:'invalid_reason',message:'Explain the shortfall in 10 to 2000 characters'};
     if(evidence.length<6||evidence.length>160)
@@ -283,7 +287,7 @@ const actions = {
     // financial case, journal, balance change, audit and notification together.
     const {data,error}=await db.rpc('ex_admin_credit_shortfall',{
       p_order_id:order_id.toLowerCase(),p_admin_id:ctx.user.id,p_amount_iqd:amount_iqd,
-      p_request_key:request_key.toLowerCase(),p_expected_refunded_iqd:expected_refunded_iqd,p_reason:note,
+      p_request_key:normalizedRequestKey,p_expected_refunded_iqd:expected_refunded_iqd,p_reason:note,
       p_verification_reference:evidence,p_confirmed_shortfall:true
     });
     if(error){

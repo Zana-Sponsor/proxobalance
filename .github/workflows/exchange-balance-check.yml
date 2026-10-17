@@ -21,6 +21,7 @@ on:
       - 'test/exchange-shortfall-ui.test.js'
       - 'test/exchange-shortfall.browser.mjs'
       - 'test/exchange-shortfall.sql'
+      - 'test/exchange-shortfall-auto-reference.sql'
       - 'test/exchange-account-balances-ui.test.js'
       - 'test/exchange-send-balance.test.js'
       - 'test/exchange-statistics-order-codes.test.js'
@@ -98,6 +99,8 @@ jobs:
               'Missing admin balance board');
             check(readFileSync('public/exchange-admin.html','utf8').includes('id=\"balanceShortfallAmount\"'),
               'Missing approved-order shortfall form');
+            check(!readFileSync('public/exchange-admin.html','utf8').includes('id=\"balanceShortfallReference\"'),
+              'The shortfall form must not require a manual reference');
             check(readFileSync('public/exchange-admin.html','utf8').includes('id=\"pgContracts\"'),
               'Missing admin contracts board');
             console.log('PASS: Exchange customer/admin build and balance assets');

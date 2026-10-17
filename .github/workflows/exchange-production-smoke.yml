@@ -19,6 +19,8 @@ jobs:
                grep -q 'exchange-customer-polish.css?v=2' current-index.html &&
                curl -fLsS --max-time 15 'https://www.proxobalance.app/exchange-admin' -o current-admin.html &&
                grep -q 'assets/js/admin.js?v=25' current-admin.html &&
+               grep -q 'exchange-balance-admin.js?v=6' current-admin.html &&
+               ! grep -q 'id="balanceShortfallReference"' current-admin.html &&
                grep -q 'assets/js/exchange-insights.js?v=5' current-admin.html &&
                curl -fLsS --max-time 15 'https://www.proxobalance.app/assets/js/exchange-insights.js?v=5' -o current-insights.js &&
                grep -q 'handling_admin_name' current-insights.js &&
@@ -66,7 +68,7 @@ jobs:
           grep -q 'id="moStaffPermissions"' exchange-admin.html
           grep -q 'id="staffDirectoryButton"' exchange-admin.html
           grep -q 'ڕەتکردنەوە و گەڕاندنەوە بۆ باڵانس' exchange-admin.html
-          grep -q 'exchange-balance-admin.js?v=5' exchange-admin.html
+          grep -q 'exchange-balance-admin.js?v=6' exchange-admin.html
           grep -q 'admin.js?v=25' exchange-admin.html
           grep -q 'exchange-insights.js?v=5' exchange-admin.html
           grep -q 'exchange-profit.js?v=4' exchange-admin.html
@@ -82,11 +84,15 @@ jobs:
           curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/assets/js/exchange-balance.js?v=5" -o exchange-balance.js
           grep -q 'requestBalancePayout' exchange-balance.js
           grep -q 'refreshVisibleBalance' exchange-balance.js
-          curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/assets/js/exchange-balance-admin.js?v=5" -o exchange-balance-admin.js
+          curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/assets/js/exchange-balance-admin.js?v=6" -o exchange-balance-admin.js
           grep -q 'creditVerifiedRefund' exchange-balance-admin.js
           grep -q 'creditOrderShortfall' exchange-balance-admin.js
           grep -q 'balance_credit_shortfall' exchange-balance-admin.js
           grep -q 'id="balanceShortfallAmount"' exchange-admin.html
+          if grep -q 'id="balanceShortfallReference"' exchange-admin.html; then
+            echo 'FAIL: the removed shortfall reference field is still published.'
+            exit 1
+          fi
           grep -q 'startBalancePayout' exchange-balance-admin.js
           grep -q 'abortProcessingPayout' exchange-balance-admin.js
           curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/assets/js/exchange-reward-pricing.js?v=2" -o exchange-reward-pricing.js

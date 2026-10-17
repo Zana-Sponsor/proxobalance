@@ -34,10 +34,8 @@ async function pageFor(browser, path, width) {
 const browser = await chromium.launch({ headless: true,
   ...(process.env.PROXO_BROWSER_EXECUTABLE ? { executablePath: process.env.PROXO_BROWSER_EXECUTABLE } : {}),
   args: ['--no-sandbox', '--disable-dev-shm-usage'] });
-try {
-  for (const width of [390, 1280]) {
-    const { page, errors } = await pageFor(browser, 'exchange-admin.html', width);
-    await page.evaluate(() => {
+async function installAdminFixture(page, restored = null) {
+    await page.evaluate(restored => {
       document.getElementById('authWrap').style.display = 'none';
       document.getElementById('main').classList.add('show');
       document.querySelectorAll('.pg').forEach(el => el.classList.remove('on'));
@@ -46,7 +44,7 @@ try {
       document.getElementById('pageSubtitle').textContent = 'گەڕاندنەوەی بڕی کەم نێردراو';
       window.esc = value => String(value ?? '').replace(/[&<>"']/g, c =>
         ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
-      window.fixture = { allowed: true, confirm: true, failAfterCommit: false, calls: [], records: [],
+      window.fixture = restored || { allowed: true, confirm: true, failAfterCommit: false, failBeforeCommit: false, calls: [], records: [],
         available: 1000, refunded: 0, confirmations: [], toasts: [],
         order: { id: '33333333-3333-4333-8333-333333333333', order_code: 'P123456789AB',
           user_id: '22222222-2222-4222-8222-222222222222', amount: 10000, total: 9800, fee: 200,
@@ -55,6 +53,7 @@ try {
       window.showToast = message => fixture.toasts.push(message);
       window.confirm = message => { fixture.confirmations.push(message); return fixture.confirm; };
       const admin = '11111111-1111-4111-8111-111111111111';
+      window.adminUser = { id: admin };
       const profiles = { [fixture.order.user_id]: { full_name: 'کڕیاری تاقیکردنەوە' },
         [admin]: { full_name: 'ئادمینی تاقیکردنەوە' } };
       window.adminApiRequest = async (action, payload) => {
@@ -69,6 +68,7 @@ try {
           profiles, config: { payouts_enabled: false }, reconciliation: {} });
         if (action !== 'balance_credit_shortfall') throw new Error('Unexpected action ' + action);
         f.calls.push(structuredClone(payload));
+        if (f.failBeforeCommit) { f.failBeforeCommit = false; throw new Error('Fixture network unavailable'); }
         const existing = f.records.find(row => row.request_key === payload.request_key);
         if (existing) return structuredClone(existing);
         if (payload.expected_refunded_iqd !== f.refunded)
@@ -79,18 +79,24 @@ try {
           refunded_after_iqd: f.refunded + payload.amount_iqd,
           balance_before_iqd: f.available, balance_after_iqd: f.available + payload.amount_iqd,
           journal_id: crypto.randomUUID(), request_key: payload.request_key, reason: payload.reason,
-          verification_reference: payload.verification_reference, created_at: '2026-10-17T17:00:00Z' };
+          verification_reference: 'shortfall:' + payload.request_key, created_at: '2026-10-17T17:00:00Z' };
         f.refunded = row.refunded_after_iqd; f.available = row.balance_after_iqd; f.records.push(row);
         if (f.failAfterCommit) { f.failAfterCommit = false; throw new Error('Fixture network response lost'); }
         return structuredClone(row);
       };
-    });
+    }, restored);
     await page.addScriptTag({ content: read('assets/js/exchange-balance-admin.js') });
     await page.evaluate(() => loadBalanceAdmin());
+}
+try {
+  for (const width of [390, 1280]) {
+    const { page, errors } = await pageFor(browser, 'exchange-admin.html', width);
+    await installAdminFixture(page);
     await page.locator('#balanceOrderSearch').fill('P123456789AB');
     await page.locator('#balanceOrderLookupBtn').click();
     await page.waitForFunction(() => !document.getElementById('balanceShortfallFields').disabled);
-    await page.locator('#balanceShortfallReference').fill('fixture-bank-transfer-001');
+    assert.equal(await page.locator('#balanceShortfallReference').count(), 0, 'No manual shortfall reference field');
+    assert.equal(await page.locator('#balanceBankReference').count(), 1, 'The full-refund proof field remains available');
     await page.locator('#balanceShortfallReason').fill('150 دینار کەمتر لە بڕی دیاریکراو نێردراوە.');
     await page.locator('#balanceShortfallAmount').fill('150.5');
     await page.locator('#balanceShortfallBtn').click();
@@ -112,6 +118,7 @@ try {
     const credited = await page.evaluate(() => fixture);
     assert.equal(credited.calls.length, 2);
     assert.equal(credited.calls[0].amount_iqd, 150);
+    assert.equal(Object.hasOwn(credited.calls[0], 'verification_reference'), false, 'The server generates the audit reference');
     assert.equal(credited.calls[0].expected_refunded_iqd, 0);
     assert.equal(credited.calls[0].request_key, credited.calls[1].request_key, 'Network retries must preserve their key');
     assert.equal(credited.records.length, 1, 'The browser retry must produce one fixture credit');
@@ -127,21 +134,45 @@ try {
     assert.ok(overflow <= 1, 'The page must not overflow horizontally at ' + width + ': ' + overflow);
     if (screenshots) await page.locator('#balanceShortfallPanel').screenshot({ path: screenshots + '/admin-' + width + '.png' });
 
+    // A request that never reaches the server must retain its exact UUID and
+    // original balance snapshot across a real browser reload.
+    await page.locator('#balanceShortfallAmount').fill('50');
+    await page.locator('#balanceShortfallReason').fill('بڕێکی کەم نێردراوی دیکە بۆ کڕیار بگەڕێتەوە.');
+    await page.locator('#balanceShortfallConfirmed').check();
+    await page.evaluate(() => { fixture.failBeforeCommit = true; });
+    await page.locator('#balanceShortfallBtn').click();
+    await page.waitForFunction(() => document.getElementById('balanceShortfallError').textContent.includes('Fixture network'));
+    const pending = await page.evaluate(() => structuredClone(fixture));
+    assert.equal(pending.records.length, 1);
+    const pendingPayload = pending.calls.at(-1);
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await installAdminFixture(page, pending);
+    await page.locator('#balanceOrderSearch').fill('P123456789AB');
+    await page.locator('#balanceOrderLookupBtn').click();
+    await page.waitForFunction(() => document.getElementById('balanceShortfallAmount').value === '50');
+    assert.equal(await page.locator('#balanceShortfallConfirmed').isChecked(), false, 'Reload must require fresh confirmation');
+    await page.locator('#balanceShortfallConfirmed').check();
+    await page.locator('#balanceShortfallBtn').click();
+    await page.waitForFunction(() => document.getElementById('balanceShortfallSuccess').textContent.includes('50'));
+    const recovered = await page.evaluate(() => structuredClone(fixture));
+    assert.deepEqual(recovered.calls.at(-1), pendingPayload, 'Reload must retry the frozen request');
+    assert.equal(recovered.records.length, 2);
+    assert.equal(recovered.available, 1200);
+
     // Another admin acts after lookup. This form must stop and demand a fresh
     // lookup/confirmation rather than silently rebasing its pending credit.
     await page.locator('#balanceShortfallAmount').fill('50');
-    await page.locator('#balanceShortfallReference').fill('fixture-bank-transfer-002');
     await page.locator('#balanceShortfallReason').fill('بڕێکی دیکە لە ناردنەکە کەمە و پشتڕاستکراوەتەوە.');
     await page.locator('#balanceShortfallConfirmed').check();
-    await page.evaluate(() => { fixture.refunded = 250; fixture.available = 1250; });
+    await page.evaluate(() => { fixture.refunded = 350; fixture.available = 1350; });
     await page.locator('#balanceShortfallBtn').click();
     await page.waitForFunction(() => document.getElementById('balanceShortfallBtn').disabled);
     assert.match(await page.locator('#balanceShortfallError').textContent(), /دۆزینەوە/);
     assert.equal(await page.locator('#balanceShortfallConfirmed').isChecked(), false);
-    assert.equal(await page.evaluate(() => fixture.records.length), 1);
+    assert.equal(await page.evaluate(() => fixture.records.length), 2);
     await page.locator('#balanceOrderLookupBtn').click();
     await page.waitForFunction(() => !document.getElementById('balanceShortfallFields').disabled);
-    assert.match(await page.locator('#balanceShortfallPreview').textContent(), /1,250/);
+    assert.match(await page.locator('#balanceShortfallPreview').textContent(), /1,350/);
     await page.evaluate(() => { fixture.allowed = false; balanceSetControls(); });
     assert.equal(await page.locator('#balanceShortfallBtn').isDisabled(), true);
     assert.deepEqual(errors, [], 'No browser runtime errors');
