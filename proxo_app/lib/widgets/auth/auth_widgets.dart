@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:proxo_app/theme/app_locale.dart';
 // auth_widgets.dart
 import 'package:flutter/material.dart';
@@ -250,6 +252,13 @@ class AuthPrimaryButton extends StatefulWidget {
 class _AuthPrimaryButtonState extends State<AuthPrimaryButton> {
   static const Duration _cooldown = Duration(milliseconds: 350);
   bool _locked = false;
+  Timer? _cooldownTimer;
+
+  @override
+  void dispose() {
+    _cooldownTimer?.cancel();
+    super.dispose();
+  }
 
   Future<void> _tap() async {
     if (_locked || widget.loading || widget.onPressed == null) return;
@@ -257,8 +266,9 @@ class _AuthPrimaryButtonState extends State<AuthPrimaryButton> {
     try {
       await widget.onPressed!.call();
     } finally {
-      await Future<void>.delayed(_cooldown);
-      if (mounted) _locked = false;
+      if (mounted) {
+        _cooldownTimer = Timer(_cooldown, () => _locked = false);
+      }
     }
   }
 

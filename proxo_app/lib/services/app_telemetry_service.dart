@@ -216,14 +216,19 @@ class AppTelemetryService with WidgetsBindingObserver {
       return _sending!;
     }
     late final Future<void> request;
-    request = _flush().whenComplete(() {
+    request = _drain().whenComplete(() {
       if (identical(_sending, request)) _sending = null;
-      if (_sendAgain && !_disposed) {
-        _sendAgain = false;
-        unawaited(flush());
-      }
     });
     return _sending = request;
+  }
+
+  Future<void> _drain() async {
+    // A caller joining an in-flight send also waits for the queued lifecycle
+    // update. In particular, logout must wait for the final background report.
+    do {
+      _sendAgain = false;
+      await _flush();
+    } while (_sendAgain && !_disposed && _currentScope(client) != null);
   }
 
   Future<void> _flush() async {
