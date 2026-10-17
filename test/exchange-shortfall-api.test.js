@@ -58,12 +58,12 @@ function application(options = {}) {
             ? profile : single ? { id: userId, full_name: 'Fixture Customer' }
               : [{ id: userId, full_name: 'Fixture Customer' }, { id: adminId, full_name: 'Fixture Admin' }], error: null };
         }
-        if (table === 'ex_orders') return { data: options.orderMissing ? null : order, error: null };
+        if (table === 'ex_orders') return { data: options.orderMissing ? single ? null : [] : single ? order : [order], error: null };
         if (table === 'ex_customer_balances') {
           const balances = options.balances || [{ user_id: userId, available_iqd: 1000, held_iqd: 50 }];
           return { data: single ? balances[0] || null : balances, error: null };
         }
-        if (table === 'ex_refund_cases') return { data: single ? options.fullRefund || null : [], error: null };
+        if (table === 'ex_refund_cases') return { data: single ? options.fullRefund || null : options.fullRefund ? [options.fullRefund] : [], error: null };
         if (table === 'ex_order_shortfall_refunds') return { data: single ? options.shortfalls?.[0] || null : options.shortfalls || [], error: null };
         if (table === 'ex_balance_config') return { data: { payouts_enabled: false }, error: null };
         return { data: single ? null : [], error: null };
@@ -361,6 +361,32 @@ test('the admin dashboard returns shortfall cases and actor names', async () => 
   assert.ok(ids.includes(userId));
   assert.ok(ids.includes(adminId));
   assert.equal(result.data.data.profiles[adminId].full_name, 'Fixture Admin');
+  assert.equal(result.data.data.orders[orderId].order_code, 'P123456789AB');
+  assert.equal(result.data.data.orders[orderId].total, 9800);
+});
+
+test('the dashboard joins full-refund order details and its verified_by actor', async () => {
+  const refund = { id: caseId, order_id: orderId, user_id: userId, verified_by: adminId,
+    amount_iqd: 10000, status: 'credited', refund_kind: 'admin_rejection', confirmed_payout_failed: false };
+  const app = application({ fullRefund: refund });
+  const result = await app.request('balance_dashboard', {});
+  assert.equal(result.status, 200);
+  assert.deepEqual(result.data.data.refunds, [refund]);
+  assert.equal(result.data.data.orders[orderId].amount, 10000);
+  assert.equal(result.data.data.orders[orderId].total, 9800);
+  const profileRead = app.calls.find(c => c.read?.table === 'ex_profiles' && c.read.filters.some(f => f[0] === 'in')).read;
+  assert.ok(profileRead.filters.find(f => f[0] === 'in')[2].includes(adminId));
+  const orderRead = app.calls.find(c => c.read?.table === 'ex_orders').read;
+  assert.deepEqual(orderRead.filters, [['in', 'id', [orderId]]]);
+  assert.equal(orderRead.columns.includes('receipt_url'), false);
+});
+
+test('the dashboard fails closed when refund order details cannot be read', async () => {
+  const app = application({ readErrorTable: 'ex_orders', shortfalls: [savedCase] });
+  const result = await app.request('balance_dashboard', {});
+  assert.equal(result.status, 500);
+  assert.equal(result.data.ok, false);
+  assert.equal(Object.hasOwn(result.data, 'data'), false);
 });
 
 // Exercise the customer route with its real authentication/security wrapper.

@@ -102,7 +102,7 @@ test('shortfall form has only amount, reason and confirmation while full refunds
   assert.match(adminHtml,/id="balanceShortfallReason"/);
   assert.match(adminHtml,/id="balanceShortfallConfirmed"/);
   assert.match(adminHtml,/id="balanceBankReference"/);
-  assert.match(adminHtml,/exchange-balance-admin\.js\?v=6/);
+  assert.match(adminHtml,/exchange-balance-admin\.js\?v=7/);
 });
 
 test('150 IQD credits use their own action and preserve approved status and full-refund marker',async()=>{

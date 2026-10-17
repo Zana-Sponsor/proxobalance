@@ -24,7 +24,7 @@
 <link rel="stylesheet" href="assets/css/exchange-admin-workspace.css?v=1">
 <link rel="stylesheet" href="assets/css/admin-contracts.css?v=2">
 <link rel="stylesheet" href="assets/css/exchange-auth-app.css?v=1">
-<link rel="stylesheet" href="assets/css/exchange-balance.css?v=3">
+<link rel="stylesheet" href="assets/css/exchange-balance.css?v=4">
 <script src="assets/js/exchange-access.js?v=1"></script>
 </head>
 <body>
@@ -383,6 +383,17 @@
       <div class="sec-hdr"><h3>ڕیفاوند و باڵانسی بەکارهێنەران</h3>
         <button type="button" class="act-btn dark" onclick="loadBalanceAdmin()"><i class="fas fa-rotate"></i> نوێکردنەوە</button></div>
       <div class="ex-rates" id="balanceAdminStats"><div class="ex-note">زانیارییەکان بار دەکرێن...</div></div>
+      <section class="balance-refund-report" aria-labelledby="balanceRefundReportTitle">
+        <div><h4 id="balanceRefundReportTitle">ڕاپۆرتی گەڕاندنەوەی پارە</h4>
+          <p>هەموو گەڕاندنەوە تەواوەکان و بڕە کەم نێردراوەکان لە ماوەی هەڵبژێردراودا دابگرە. بەتاڵ = هەموو مێژوو؛ بەروار بەپێی کاتی گەڕاندنەوەی پارە لە بەغدا.</p></div>
+        <div class="balance-refund-report-controls">
+          <div><label for="balanceRefundReportFrom">لە بەرواری</label><input class="minp" id="balanceRefundReportFrom" type="date" dir="ltr"></div>
+          <div><label for="balanceRefundReportTo">تا بەرواری</label><input class="minp" id="balanceRefundReportTo" type="date" dir="ltr"></div>
+          <button type="button" class="act-btn dark" id="balanceRefundReportBtn" onclick="exportBalanceRefundPdf()"><i class="fas fa-file-pdf" aria-hidden="true"></i> داگرتنی PDFـی گەڕاندنەوەکان</button>
+        </div>
+        <p id="balanceRefundReportStatus" class="balance-refund-report-status" role="status" aria-live="polite"></p>
+        <p id="balanceRefundReportError" class="balance-refund-report-error" role="alert"></p>
+      </section>
       <section class="ex-sheet" style="padding:18px;margin:14px 0">
         <div class="ex-head"><div><h3>گەڕاندنەوەی پارە بۆ باڵانس</h3>
           <p>مامەڵەکە هەڵبژێرە بۆ گەڕاندنەوەی بڕی کەم نێردراو یان ڕەتکردنەوە و گەڕاندنەوەی تەواو.</p></div></div>
@@ -1167,8 +1178,9 @@
   <script src="assets/js/exchange-live.js?v=1"></script>
 <script src="assets/js/admin.js?v=25"></script>
 <script src="assets/js/admin-contracts.js?v=2"></script>
-  <script src="assets/js/exchange-staff.js?v=7"></script>
-  <script src="assets/js/exchange-balance-admin.js?v=6"></script>
+  <script src="assets/js/exchange-staff.js?v=8"></script>
+  <script src="assets/js/exchange-balance-admin.js?v=7"></script>
+  <script src="assets/js/exchange-refund-report.js?v=1"></script>
   <script src="assets/js/exchange-insights.js?v=5"></script>
   <script src="assets/js/exchange-profit.js?v=4"></script><script src="assets/js/exchange-admin-workspace.js?v=1"></script><script src="assets/js/track.js?v=3"></script>
 </body>

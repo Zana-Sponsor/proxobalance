@@ -47,6 +47,55 @@ const STATUS_CORRECTED = 'ڕاستکراوەتەوە';
 const REVIEWABLE_ORDER_STATUSES = new Set([STATUS_PENDING, STATUS_CORRECTED]);
 const SUPPORT_STATUSES = new Set(['open', 'in_progress', 'resolved', 'closed']);
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const REFUND_REPORT_PAGE_SIZE = 100;
+const REFUND_ORDER_FIELDS = 'id,order_code,user_id,amount,total,from_method,to_method,status,balance_refunded_at';
+const BAGHDAD_CALENDAR = new Intl.DateTimeFormat('en-US-u-ca-gregory-nu-latn', {
+  timeZone:'Asia/Baghdad',year:'numeric',month:'2-digit',day:'2-digit',era:'short'
+});
+
+function refundReportDate(value) {
+  if(value==null||value==='')return null;
+  if(typeof value!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(value)||value.startsWith('0000'))
+    throw {status:400,code:'invalid_report_date',message:'Use a valid YYYY-MM-DD report date'};
+  const timestamp=Date.parse(value+'T00:00:00.000Z');
+  if(!Number.isFinite(timestamp)||new Date(timestamp).toISOString().slice(0,10)!==value)
+    throw {status:400,code:'invalid_report_date',message:'Use a valid YYYY-MM-DD report date'};
+  return timestamp;
+}
+
+// Resolve the start of a Baghdad calendar day with its actual timezone rules.
+// Comparing dates also handles historical midnight clock changes correctly.
+function baghdadDayStart(timestamp) {
+  const targetDate=new Date(timestamp);
+  const target=targetDate.getUTCFullYear()*10000+(targetDate.getUTCMonth()+1)*100+targetDate.getUTCDate();
+  let low=timestamp-172800000,high=timestamp+172800000;
+  while(low<high){
+    const middle=Math.floor((low+high)/2);
+    const parts=Object.fromEntries(BAGHDAD_CALENDAR.formatToParts(middle).map(p=>[p.type,p.value]));
+    const year=parts.era==='BC'?1-Number(parts.year):Number(parts.year);
+    const day=year*10000+Number(parts.month)*100+Number(parts.day);
+    if(day<target)low=middle+1;else high=middle;
+  }
+  return new Date(low).toISOString();
+}
+
+async function balanceRelationRows(table,fields,ids) {
+  const batches=[];
+  for(let start=0;start<ids.length;start+=100)
+    batches.push(db.from(table).select(fields).in('id',ids.slice(start,start+100)));
+  const results=await Promise.all(batches);
+  for(const result of results){
+    if(result.error)throw result.error;
+    if(!Array.isArray(result.data))throw {status:500,code:'refund_details_unavailable',message:'Refund details could not be loaded'};
+  }
+  return results.flatMap(result=>result.data);
+}
+
+async function balanceRefundOrders(rows) {
+  const ids=[...new Set(rows.map(row=>row.order_id).filter(Boolean))];
+  const data=await balanceRelationRows('ex_orders',REFUND_ORDER_FIELDS,ids);
+  return Object.fromEntries(data.map(order=>[order.id,order]));
+}
 
 function supportStatusLabel(status) {
   return status === 'open' ? 'نوێ'
@@ -117,7 +166,7 @@ export function assertStaffAction(profile,action){
     list_order_correction_history:'view',list_rewards:'view',
     approve_order:'approve_orders',reject_order:'approve_orders',request_order_correction:'approve_orders',
     save_order_note:'approve_orders',save_payout_receipt:'approve_orders',
-    balance_credit_refund:'refunds',balance_credit_shortfall:'refunds',
+    balance_credit_refund:'refunds',balance_credit_shortfall:'refunds',balance_refund_report:'refunds',
     balance_cancel_payout:'refunds',balance_abort_processing:'refunds',
     balance_claim_payout:'approve_orders',balance_mark_payout_paid:'approve_orders',
     grant_reward:'manage_rewards',revoke_reward:'manage_rewards'
@@ -179,15 +228,62 @@ const actions = {
     for(const r of [balances,refunds,shortfalls,payouts,alerts,config]) if(r.error)throw r.error;
     const ids=[...new Set([...(balances.data||[]),...(refunds.data||[]),
       ...(shortfalls.data||[]),...(payouts.data||[]),...(alerts.data||[])]
-      .flatMap(x=>[x.user_id,x.admin_id]).filter(Boolean))];
-    const names=ids.length?await db.from('ex_profiles').select('id,full_name,username,email').in('id',ids):{data:[],error:null};
-    if(names.error)throw names.error;
+      .flatMap(x=>[x.user_id,x.admin_id,x.verified_by]).filter(Boolean))];
+    const [names,orders]=await Promise.all([
+      balanceRelationRows('ex_profiles','id,full_name,username,email',ids),
+      balanceRefundOrders([...(refunds.data||[]),...(shortfalls.data||[])])
+    ]);
     const reconciliation=await db.rpc('ex_admin_balance_reconcile',{p_admin_id:_ctx.user.id});
     if(reconciliation.error)throw reconciliation.error;
-    const profiles=Object.fromEntries((names.data||[]).map(p=>[p.id,p]));
+    const profiles=Object.fromEntries(names.map(p=>[p.id,p]));
     return {balances:balances.data||[],refunds:refunds.data||[],shortfalls:shortfalls.data||[],
-      payouts:payouts.data||[],alerts:alerts.data||[],config:config.data,profiles,
+      payouts:payouts.data||[],alerts:alerts.data||[],config:config.data,profiles,orders,
       reconciliation:reconciliation.data};
+  },
+
+  async balance_refund_report({date_from,date_to,page=0,snapshot},_ctx){
+    if(!Number.isSafeInteger(page)||page<0||!Number.isSafeInteger(page*REFUND_REPORT_PAGE_SIZE+REFUND_REPORT_PAGE_SIZE))
+      throw {status:400,code:'invalid_report_page',message:'Use a nonnegative report page number'};
+    const from=refundReportDate(date_from),to=refundReportDate(date_to);
+    if(from!==null&&to!==null&&from>to)
+      throw {status:400,code:'invalid_report_range',message:'The report start date must not follow its end date'};
+    if(snapshot==null){
+      if(page>0)throw {status:400,code:'report_snapshot_required',message:'Continue with the snapshot returned by the first report page'};
+      snapshot=new Date().toISOString();
+    }else{
+      const timestamp=typeof snapshot==='string'?Date.parse(snapshot):NaN;
+      if(!Number.isFinite(timestamp)||new Date(timestamp).toISOString()!==snapshot||timestamp>Date.now())
+        throw {status:400,code:'invalid_report_snapshot',message:'Use the UTC snapshot returned by the first report page'};
+    }
+    const lower=from===null?null:baghdadDayStart(from);
+    const upper=to===null?null:baghdadDayStart(to+86400000);
+    const start=page*REFUND_REPORT_PAGE_SIZE;
+    function reportQuery(table,fields){
+      let query=db.from(table).select(fields).lte('created_at',snapshot);
+      if(table==='ex_refund_cases')query=query.eq('status','credited');
+      if(lower!==null)query=query.gte('created_at',lower);
+      if(upper!==null)query=query.lt('created_at',upper);
+      return query.order('created_at',{ascending:false}).order('id',{ascending:false})
+        .range(start,start+REFUND_REPORT_PAGE_SIZE);
+    }
+    const [full,partial]=await Promise.all([
+      reportQuery('ex_refund_cases','id,order_id,user_id,amount_iqd,status,refund_kind,bank_verification_reference,failure_reason,verified_by,confirmed_funds_received,confirmed_payout_failed,journal_id,created_at'),
+      reportQuery('ex_order_shortfall_refunds','id,order_id,order_code,user_id,customer_phone,admin_id,amount_iqd,expected_iqd,refunded_before_iqd,refunded_after_iqd,balance_before_iqd,balance_after_iqd,journal_id,request_key,reason,verification_reference,created_at')
+    ]);
+    for(const result of [full,partial]){
+      if(result.error)throw result.error;
+      if(!Array.isArray(result.data))throw {status:500,code:'refund_report_unavailable',message:'Refund report records could not be loaded'};
+    }
+    const has_more=full.data.length>REFUND_REPORT_PAGE_SIZE||partial.data.length>REFUND_REPORT_PAGE_SIZE;
+    const refunds=full.data.slice(0,REFUND_REPORT_PAGE_SIZE),shortfalls=partial.data.slice(0,REFUND_REPORT_PAGE_SIZE);
+    const rows=[...refunds,...shortfalls];
+    const ids=[...new Set(rows.flatMap(row=>[row.user_id,row.verified_by,row.admin_id]).filter(Boolean))];
+    const [orders,names]=await Promise.all([
+      balanceRefundOrders(rows),
+      balanceRelationRows('ex_profiles','id,full_name,username',ids)
+    ]);
+    const profiles=Object.fromEntries(names.map(profile=>[profile.id,profile]));
+    return {refunds,shortfalls,orders,profiles,page,next_page:has_more?page+1:null,has_more,snapshot};
   },
 
   async balance_lookup_order({search},_ctx){

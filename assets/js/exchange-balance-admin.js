@@ -5,6 +5,28 @@ let _balanceShortfallBusy=false, _balanceShortfallRequest=null, _balanceShortfal
 let _balanceShortfallNeedsRefresh=false, _balanceShortfallRecoveryError='';
 let _balanceShortfallDraftAdminId=null;
 function balanceMoney(n){return Number(n||0).toLocaleString('en-US')+' د.ع';}
+function balanceRecordedIqd(value,whole=true){
+  if(value===null||value===undefined||value===''||!['number','string'].includes(typeof value))return null;
+  if(typeof value==='string'&&!/^(?:\d+)(?:\.\d+)?$/.test(value))return null;
+  const amount=Number(value);
+  return Number.isFinite(amount)&&amount>=0&&amount<=1000000000&&(!whole||Number.isSafeInteger(amount))?amount:null;
+}
+function balanceRefundAmounts(row,kind='shortfall',order={}){
+  const credited=balanceRecordedIqd(row?.amount_iqd);
+  if(kind==='full'){
+    const linked=!!row?.order_id&&!!row?.user_id&&order?.id===row.order_id&&order?.user_id===row.user_id&&
+      order.from_method&&order.to_method&&order.from_method!=='USDT'&&order.to_method!=='USDT';
+    const expected=linked?balanceRecordedIqd(order.total,false):null;
+    const failed=expected!==null&&row?.refund_kind==='failed_payout'&&row?.confirmed_payout_failed===true;
+    return {expected,sent:failed?0:null,unpaid:failed?expected:null,credited};
+  }
+  const expected=balanceRecordedIqd(row?.expected_iqd),after=balanceRecordedIqd(row?.refunded_after_iqd);
+  const before=balanceRecordedIqd(row?.refunded_before_iqd);
+  const valid=expected!==null&&after!==null&&before!==null&&credited!==null&&credited>0&&
+    after<=expected&&before+credited===after;
+  return {expected,sent:valid?expected-after:null,unpaid:valid?after:null,credited};
+}
+function balanceRecordedMoney(amount){return amount===null?'تۆمار نەکراوە':balanceMoney(amount);}
 function balanceOwner(id){
   const p=(_balanceAdminData&&_balanceAdminData.profiles||{})[id]||
     _balanceLookupResult?.profiles?.[id]||
@@ -138,13 +160,15 @@ function renderBalanceShortfallPreview(){
   const card=(label,value,highlight=false)=>'<div'+(highlight?' class="balance-credit-highlight"':'')+'><span>'+esc(label)+
     '</span><strong>'+esc(value)+'</strong></div>';
   out.innerHTML=card('بڕی پێویستی ناردن بۆ کڕیار',balanceMoney(state.expected))+
+    card('بڕی نێردراو (دوای ئەم ڕیفاوندە)',valid?balanceMoney(state.remaining-amount):'—')+
+    card('بڕی نەنێردراو (کۆی گەڕاوەکان)',valid?balanceMoney(state.refunded+amount):balanceMoney(state.refunded))+
     card('پێشتر بۆ باڵانس گەڕاوەتەوە',balanceMoney(state.refunded))+
     card('ماوەی گەڕاندنەوە',balanceMoney(state.remaining))+
     card('بڕی ئەم گەڕاندنەوەیە',valid?balanceMoney(amount):'—',true)+
     card('باڵانسی بەردەستی ئێستا',balanceMoney(state.available))+
     card('باڵانس دوای گەڕاندنەوە',valid?balanceMoney(state.available+amount):'—',true)+
     '<p class="balance-credit-preview-note">'+
-    (valid?'بڕی پێویستی ناردن دوای کەمکردنەوەی کۆی گەڕاوەکان: '+balanceMoney(state.remaining-amount)+' · ':'')+
+    'بڕی نێردراو هەژمار دەکرێت: بڕی پێویستی ناردن − کۆی بڕە گەڕاوەکان. '+
     'پێشبینینە؛ باڵانسی کۆتایی لە کاتی تۆمارکردندا دیاری دەکرێت.</p>';
 }
 function balanceAuditTime(iso){
@@ -154,20 +178,36 @@ function balanceAuditTime(iso){
 function balanceShortfallTable(rows){
   const legacyReference=r=>r.verification_reference&&String(r.verification_reference).toLowerCase()!=='shortfall:'+String(r.request_key).toLowerCase()?
     '<small>بەڵگەی پێشوو: '+esc(r.verification_reference)+'</small>':'';
-  return balanceTable(['مامەڵە / کڕیار','بڕی گەڕاوە','کۆی گەڕاوەکان','باڵانسی بەردەست','هۆکار','ئادمین / بەروار'],rows,r=>
-    '<tr><td><b dir="ltr">'+esc(r.order_code||r.order_id)+'</b><small>'+balanceOwner(r.user_id)+'</small>'+
+  return balanceTable(['مامەڵە / کڕیار','بڕی نێردراو','بڕی نەنێردراو','بڕی ئەم ڕیفاوندە','باڵانسی بەردەست','هۆکار','ئادمین / بەروار'],rows,r=>{
+    const amounts=balanceRefundAmounts(r);
+    return '<tr><td><b dir="ltr">'+esc(r.order_code||r.order_id)+'</b><small>'+balanceOwner(r.user_id)+'</small>'+
       '<details><summary>ناسنامەی تۆمارەکان</summary><small>مامەڵە: <span dir="ltr">'+esc(r.order_id)+'</span></small>'+
       '<small>گەڕاندنەوە: <span dir="ltr">'+esc(r.id)+'</span></small>'+
       '<small>تۆماری دارایی: <span dir="ltr">'+esc(r.journal_id)+'</span></small>'+
       '<small>داواکاری: <span dir="ltr">'+esc(r.request_key)+'</span></small></details></td>'+
-    '<td><span class="balance-shortfall-amount">+'+balanceMoney(r.amount_iqd)+'</span>'+
-      '<small>بڕی پێویستی ناردن: '+balanceMoney(r.expected_iqd)+'</small>'+
-      '<small>دوای کەمکردنەوەی کۆی گەڕاوەکان: '+balanceMoney(Number(r.expected_iqd)-Number(r.refunded_after_iqd))+'</small></td>'+
-    '<td><small>پێش: '+balanceMoney(r.refunded_before_iqd)+'</small><b>دوای: '+balanceMoney(r.refunded_after_iqd)+'</b></td>'+
+    '<td><b>'+balanceRecordedMoney(amounts.sent)+'</b><small>هەژمارکراوە بەپێی تۆماری ئەم کاتە</small>'+
+      '<small>بڕی پێویستی ناردن: '+balanceRecordedMoney(amounts.expected)+'</small></td>'+
+    '<td><b>'+balanceRecordedMoney(amounts.unpaid)+'</b><small>کۆی گەڕاوەکان تا ئەم تۆمارە</small>'+
+      '<small>پێش ئەم ڕیفاوندە: '+balanceMoney(r.refunded_before_iqd)+'</small></td>'+
+    '<td><span class="balance-shortfall-amount">+'+balanceRecordedMoney(amounts.credited)+'</span></td>'+
     '<td><small>پێش: '+balanceMoney(r.balance_before_iqd)+'</small><b>دوای: '+balanceMoney(r.balance_after_iqd)+'</b></td>'+
     '<td><div class="balance-shortfall-note">'+esc(r.reason)+'</div>'+legacyReference(r)+'</td>'+
-    '<td>'+balanceOwner(r.admin_id)+'<small dir="ltr">'+esc(r.admin_id)+'</small><small>'+balanceAuditTime(r.created_at)+'</small></td></tr>',
+    '<td>'+balanceOwner(r.admin_id)+'<small dir="ltr">'+esc(r.admin_id)+'</small><small>'+balanceAuditTime(r.created_at)+'</small></td></tr>';},
     'balance-shortfall-table');
+}
+function balanceFullRefundTable(rows){
+  return balanceTable(['مامەڵە / کڕیار','بڕی نێردراو','بڕی نەنێردراو','بڕی ڕیفاوند','هۆکار','ئادمین / بەروار'],rows,r=>{
+    const order=_balanceAdminData?.orders?.[r.order_id]||{},amounts=balanceRefundAmounts(r,'full',order);
+    return '<tr><td><b dir="ltr">'+esc(order.order_code||r.order_id)+'</b><small>'+balanceOwner(r.user_id)+'</small>'+
+      '<small>'+(r.refund_kind==='failed_payout'?'گەڕاندنەوەی ناردنی سەرنەکەوتوو':'ڕەتکردنەوە و گەڕاندنەوەی تەواو')+'</small>'+
+      '<details><summary>ناسنامەی تۆمارەکان</summary><small>مامەڵە: '+esc(r.order_id)+'</small>'+
+      '<small>ڕیفاوند: '+esc(r.id)+'</small><small>تۆماری دارایی: '+esc(r.journal_id)+'</small></details></td>'+
+      '<td><b>'+balanceRecordedMoney(amounts.sent)+'</b><small>بڕی پێویستی ناردنی مامەڵە: '+balanceRecordedMoney(amounts.expected)+'</small></td>'+
+      '<td><b>'+balanceRecordedMoney(amounts.unpaid)+'</b><small>'+(amounts.sent===null?'بڕی ناردن لەم تۆمارەدا دیاری نەکراوە':'بەپێی پشتڕاستکردنەوەی شکستی ناردن')+'</small></td>'+
+      '<td><span class="balance-shortfall-amount">+'+balanceRecordedMoney(amounts.credited)+'</span><small>گەڕاندنەوەی بڕی سەرەتایی بۆ باڵانس</small></td>'+
+      '<td><div class="balance-shortfall-note">'+esc(r.failure_reason)+'</div><small>ژمارەی بەڵگە: '+esc(r.bank_verification_reference)+'</small></td>'+
+      '<td>'+balanceOwner(r.verified_by)+'<small>'+balanceAuditTime(r.created_at)+'</small></td></tr>';
+  },'balance-shortfall-table');
 }
 function renderBalanceOrderShortfalls(rows){
   const details=document.getElementById('balanceShortfallOrderDetails');
@@ -178,8 +218,10 @@ function renderBalanceOrderShortfalls(rows){
 function renderBalanceShortfallSuccess(refund){
   const out=document.getElementById('balanceShortfallSuccess');if(!out)return;
   if(!refund||typeof refund!=='object'){out.textContent='گەڕاندنەوەکە تۆمار کرا؛ وردەکاری لە مێژوودا بەردەستە.';return;}
+  const amounts=balanceRefundAmounts(refund);
   out.innerHTML='<b>'+balanceMoney(refund.amount_iqd)+' بۆ باڵانسی کڕیار گەڕێندرایەوە.</b>'+
     '<div>مامەڵە: <span dir="ltr">'+esc(refund.order_code||refund.order_id)+'</span></div>'+
+    '<div>بڕی نێردراو (هەژمارکراو): '+balanceRecordedMoney(amounts.sent)+' · بڕی نەنێردراو: '+balanceRecordedMoney(amounts.unpaid)+'</div>'+
     '<div>باڵانس پێش تۆمارکردن: '+balanceMoney(refund.balance_before_iqd)+' · دوای: '+balanceMoney(refund.balance_after_iqd)+'</div>'+
     '<div>کۆی گەڕاوەکانی مامەڵە: '+balanceMoney(refund.refunded_after_iqd)+'</div>'+
     '<div>تۆماری دارایی: <span dir="ltr">'+esc(refund.journal_id)+'</span></div>'+
@@ -217,11 +259,7 @@ async function loadBalanceAdmin(){
         p.status==='processing'?'<button type="button" class="act-btn gr" onclick="reviewBalancePayout(\''+p.id+'\')">تۆمارکردنی ناردن</button> '+
         '<button type="button" class="act-btn rd" onclick="abortProcessingPayout(\''+p.id+'\')">ناردن شکستی هێنا</button>':
         p.payout_receipt_url?'<a class="act-btn dark" href="'+esc(p.payout_receipt_url)+'" target="_blank" rel="noopener noreferrer">پسووڵە</a>':'—')+'</td></tr>');
-    document.getElementById('balanceRefundList').innerHTML=balanceTable(
-      ['بەکارهێنەر','ئایدی مامەڵە','بڕی ڕیفاوند','ژمارەی بەڵگە','تێبینی','بەروار'],refunds,r=>
-      '<tr><td>'+balanceOwner(r.user_id)+'</td><td><span dir="ltr">'+esc(r.order_id)+'</span></td>'+
-      '<td>'+balanceMoney(r.amount_iqd)+'</td><td>'+esc(r.bank_verification_reference)+'</td>'+
-      '<td>'+esc(r.failure_reason)+'</td><td>'+balanceDate(r.created_at)+'</td></tr>');
+    document.getElementById('balanceRefundList').innerHTML=balanceFullRefundTable(refunds);
     const shortfallList=document.getElementById('balanceShortfallList');
     if(shortfallList)shortfallList.innerHTML=balanceShortfallTable(shortfalls);
     document.getElementById('balanceAccountList').innerHTML=balanceTable(
