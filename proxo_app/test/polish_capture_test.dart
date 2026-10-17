@@ -88,7 +88,7 @@ void main() {
   tearDownAll(() async { await backend.dispose(); ProxoLocale.current.value = ProxoLocale.kurdishSorani; });
   for (final config in [(393.0, 1.0, 3.0), (280.0, 2.0, 2.0)]) {
     for (final language in ['ckb', 'ar', 'kmr']) {
-      for (final section in ['login', 'signup', 'forgot', 'otp', 'deposit', 'ads', 'create', 'profile', 'home', 'navigation', 'levels', 'tasks', 'vouchers', 'discounts', 'notifications']) {
+      for (final section in ['login', 'login-phone', 'signup', 'forgot', 'otp', 'deposit', 'ads', 'create', 'profile', 'home', 'navigation', 'levels', 'tasks', 'vouchers', 'discounts', 'notifications']) {
         testWidgets('$section $language $config', (t) async {
           final (width, scale, dpr) = config;
           t.view.devicePixelRatio = dpr;
@@ -99,8 +99,8 @@ void main() {
           final key = GlobalKey();
           final code = TextEditingController(); final focus = FocusNode();
           final child = switch(section) {
-            'login' || 'signup' || 'forgot' => const AuthShell(),
-            'otp' => Scaffold(body: SafeArea(child: SingleChildScrollView(padding: const EdgeInsets.all(16),
+            'login' || 'login-phone' || 'signup' || 'forgot' => const AuthShell(),
+            'otp' => Scaffold(body: SafeArea(child: SingleChildScrollView(padding: const EdgeInsets.all(20),
               child: OtpScreen(onBack: () {}, destination: '+964 750 *** ** 67',
                 otpBoxes: AuthOtpBoxes(length: 6, codeController: code, firstBoxFocus: focus, onCompleted: (_) {}),
                 resend: AuthTextLink(label: AuthStrings.resendAction, onTap: () {}),
@@ -129,6 +129,9 @@ void main() {
             for (var i=0;i<12;i++) { await t.pump(const Duration(milliseconds: 100)); }
           }
           await settle();
+          if (section == 'login-phone') {
+            await t.tap(find.text(AuthStrings.channelPhone).first); await settle();
+          }
           if (section == 'signup') {
             final link = find.byWidgetPredicate((w) => w is AuthTextLink && w.label == AuthStrings.noAccountAction);
             await t.ensureVisible(link); await t.tap(link); await settle();
@@ -159,7 +162,7 @@ void main() {
               'layout':measuredLayout(key),'exceptions':exceptions,'fixture':'fictional GET-only; OTP screen component; no authentication or payment sends',
             }));
           });
-          if (['deposit','create','profile','home','login','signup','forgot'].contains(section)) {
+          if (['deposit','create','profile','home','login','login-phone','signup','forgot'].contains(section)) {
             final scroll = find.byType(Scrollable);
             if (scroll.evaluate().isNotEmpty) {
               final state = t.state<ScrollableState>(scroll.first);

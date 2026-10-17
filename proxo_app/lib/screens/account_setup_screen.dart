@@ -135,11 +135,16 @@ class AccountSetupView extends StatelessWidget {
     ProxoLocale.watch(context);
     final step = phase.index.clamp(0, 2);
     final labels = [
-      _text('Your account', 'هەژمارەکەت', 'حسابك', 'هەژمارێ تە'),
-      _text('Your profile', 'پڕۆفایلەکەت', 'ملفك الشخصي', 'پرۆفایلێ تە'),
+      _text('Your account', 'پشتڕاستکردنەوەی هەژمار', 'حسابك', 'هەژمارێ تە'),
+      _text(
+        'Your profile',
+        'ئامادەکردنی پڕۆفایل',
+        'ملفك الشخصي',
+        'پرۆفایلێ تە',
+      ),
       _text(
         'Ready to begin',
-        'ئامادەی دەستپێکردن',
+        'ئامادەبوون بۆ بەکارهێنان',
         'جاهز للبدء',
         'ئامادەی دەستپێکرنێ',
       ),
@@ -147,26 +152,26 @@ class AccountSetupView extends StatelessWidget {
     final title = failed
         ? _text(
             'Let’s try again',
-            'با دووبارە هەوڵ بدەینەوە',
+            'ئامادەکردن تەواو نەبوو',
             'لنحاول مرة أخرى',
             'بلا جارەکا دی هەوڵ بدەین',
           )
         : _text(
             'Getting things ready',
-            'هەژمارەکەت ئامادە دەکەین',
+            'ئامادەکردنی هەژمار',
             'نجهّز حسابك',
             'هەژمارێ تە ئامادە دکەین',
           );
     final detail = failed
         ? _text(
             'Setup could not finish. You can safely retry.',
-            'ئامادەکردنی هەژمار تەواو نەبوو. تکایە دووبارە هەوڵ بدەرەوە.',
+            'تکایە دووبارە هەوڵ بدەرەوە بۆ تەواوکردنی ئامادەکاری.',
             'تعذر إكمال الإعداد. يمكنك إعادة المحاولة بأمان.',
             'ئامادەکرنا هەژمارێ تەمام نەبوو. جارەکا دی هەوڵ بدە.',
           )
         : _text(
             'Just a moment. We’ll open Proxo when everything is ready.',
-            'کەمێک چاوەڕێ بکە؛ کە تەواو بوو خۆکارانە دەچیتە ناو پڕۆکسۆ.',
+            'دوای تەواوبوونی ئامادەکاری، پڕۆکسۆ خۆکارانە دەکرێتەوە.',
             'لحظة من فضلك؛ سنفتح Proxo تلقائياً عندما يكتمل الإعداد.',
             'کەمەک چاڤەرێ بکە؛ دێ پاشی ب خۆکارانە چیە ناڤ پڕۆکسۆ.',
           );
@@ -286,7 +291,7 @@ class AccountSetupView extends StatelessWidget {
                           AuthPrimaryButton(
                             label: _text(
                               'Try again',
-                              'دووبارە هەوڵبدەرەوە',
+                              'دووبارە هەوڵدانەوە',
                               'إعادة المحاولة',
                               'جارەکا دی هەوڵ بدە',
                             ),

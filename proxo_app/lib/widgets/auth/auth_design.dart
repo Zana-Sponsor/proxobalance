@@ -2,7 +2,6 @@ import 'package:proxo_app/l10n/proxo_strings.dart';
 // auth_design.dart
 import 'package:flutter/material.dart';
 
-
 // ─────────────────────────────────────────────────────────────────────────────
 // AuthTokens
 // ─────────────────────────────────────────────────────────────────────────────
@@ -214,33 +213,34 @@ abstract final class AuthStrings {
   static String _v(String ku, String ar) => ProxoStrings.text(ku, arabic: ar);
 
   static String get whatsappConsent => _v(
-    'ڕەزامەندم، بە هاتنی ئاگاداری و نوێکارییەکان لە ڕێگەی واتسئاپ',
-    'أوافق على استلام الإشعارات والمستجدات عبر واتساب',
+    'ڕازیم پەیامی بانگەشە لە واتساپ وەربگرم.',
+    'أوافق على تلقي الرسائل التسويقية عبر واتساب.',
   );
   static String get whatsappConsentHint => _v(
-    'نامەکانی مارکێتینگی Proxo؛ ئارەزوومەندانەیە و لە پڕۆفایل دەتوانیت ناچالاکی بکەیت.',
-    'رسائل Proxo التسويقية؛ اختياري ويمكنك إيقافها من الملف الشخصي.',
+    'ئارەزوومەندانەیە؛ لە پڕۆفایل ناچالاک دەکرێت.',
+    'اختياري؛ يمكنك إيقافه من الملف الشخصي.',
   );
 
   static String get signInTitle => _v('چوونەژوورەوە', 'تسجيل الدخول');
   static String get signInSubtitle => _v(
-    'بەخێربێیتەوە! تکایە زانیارییەکانت بنووسە',
-    'مرحباً بعودتك! أدخل معلوماتك للمتابعة',
+    'بەخێر بێیتەوە. بۆ بەردەوامبوون بچۆ ژوورەوە.',
+    'مرحباً بعودتك. سجّل الدخول للمتابعة.',
   );
   static String get signUpTitle => _v('دروستکردنی هەژمار', 'إنشاء حساب');
   static String get signUpSubtitle =>
-      _v('هەژمارێکی نوێ لە پڕۆکسۆ دروست بکە', 'أنشئ حساباً جديداً في Proxo');
+      _v('بۆ دەستپێکردن، زانیارییەکانت بنووسە.', 'أدخل معلوماتك للبدء.');
   static String get resetPasswordTitle =>
       _v('گۆڕینی وشەی نهێنی', 'إعادة تعيين كلمة المرور');
   static String get resetPasswordSubtitle => _v(
-    'ئیمەیڵەکەت بنووسە بۆ وەرگرتنی کۆد',
-    'أدخل بريدك الإلكتروني لاستلام الرمز',
+    'بۆ وەرگرتنی کۆد، ئیمەیڵەکەت بنووسە.',
+    'أدخل بريدك الإلكتروني لاستلام الرمز.',
   );
 
   static String get back => _v('گەڕانەوە', 'رجوع');
 
   static String get fullNameLabel => _v('ناوی تەواو', 'الاسم الكامل');
-  static String get fullNameHint => _v('ناوەکەت لێرە بنووسە', 'اكتب اسمك هنا');
+  static String get fullNameHint =>
+      _v('ناوی تەواوت بنووسە', 'أدخل اسمك الكامل');
   static String get emailLabel => _v('ئیمەیڵ', 'البريد الإلكتروني');
 
   // ── کۆنترۆڵی بەشەکراوی چوونەژوورەوە ─────────────────────────────────────
@@ -251,13 +251,12 @@ abstract final class AuthStrings {
   static String get phoneLabel => _v('ژمارەی مۆبایل', 'رقم الهاتف');
   static const phoneHint = '7XX XXX XXXX';
   static const phonePrefix = '+964';
-  static String get sendOtpButton =>
-      _v('ناردنی کۆدی دڵنیابوونەوە', 'إرسال رمز التحقق');
+  static String get sendOtpButton => _v('ناردنی کۆد', 'إرسال الرمز');
   static String get phoneInvalid =>
       _v('ژمارەی مۆبایل دروست نییە', 'رقم الهاتف غير صحيح');
   static String get otpSendFailed => _v(
-    'ناردنی کۆد سەرکەوتوو نەبوو — دووبارە هەوڵ بدەوە',
-    'تعذر إرسال الرمز، حاول مرة أخرى',
+    'کۆدەکە نەنێردرا. تکایە دووبارە هەوڵ بدەرەوە.',
+    'تعذر إرسال الرمز. حاول مرة أخرى.',
   );
   static String get phoneBanned => _v(
     'ئەم هەژمارە ڕاگیراوە. پەیوەندی بە پشتگیرییەوە بکە.',
@@ -267,7 +266,7 @@ abstract final class AuthStrings {
   /// چەند هەژمارێک هەمان ژمارەیان تۆمار کردووە. ⚠ ئەپەکە بە ئەنقەست
   /// یەکێکیان هەڵنابژێرێت — بڕوانە `ambiguous_phone` لە فەنکشنی ئێج.
   static String get phoneAmbiguous => _v(
-    'ئەم ژمارەیە لەسەر زیاتر لە هەژمارێک تۆمارکراوە!',
+    'ئەم ژمارەیە بە زیاتر لە هەژمارێکەوە بەستراوە.',
     'رقم الهاتف مرتبط بأكثر من حساب',
   );
   static String get phoneNotRegistered => _v(
@@ -279,8 +278,8 @@ abstract final class AuthStrings {
     'هذا الرقم مسجل مسبقاً؛ سجّل الدخول',
   );
   static String get phoneNoEmail => _v(
-    'ناتوانرێت بە ژمارە بچیتە ژوورەوە بۆ ئەم هەژمارە. تکایە بە ئیمەیڵ بچۆرە ژوورەوە.',
-    'تعذر تسجيل الدخول بالرقم لهذا الحساب. استخدم البريد الإلكتروني.',
+    'بۆ ئەم هەژمارە، تکایە بە ئیمەیڵ بچۆ ژوورەوە.',
+    'استخدم البريد الإلكتروني للدخول إلى هذا الحساب.',
   );
   static const emailHint = 'example@gmail.com';
   static String get passwordLabel => _v('وشەی نهێنی', 'كلمة المرور');
@@ -295,7 +294,7 @@ abstract final class AuthStrings {
       _v('بەردەوامبوون وەک ', 'المتابعة باسم ');
   static String get notYou => _v('ئەمە من نیم', 'ليس أنا');
   static String get enterPasswordToContinue =>
-      _v('وشەی نهێنیت بنووسە بۆ بەردەوامبوون', 'أدخل كلمة المرور للمتابعة');
+      _v('بۆ بەردەوامبوون، وشەی نهێنیت بنووسە.', 'أدخل كلمة المرور للمتابعة');
   static String get signInButton => _v('چوونەژوورەوە', 'تسجيل الدخول');
   static String get signUpButton => _v('بەردەوامبوون', 'متابعة');
   static String get savePasswordButton =>
@@ -303,29 +302,26 @@ abstract final class AuthStrings {
   static String get verifyButton => _v('پشتڕاستکردنەوە', 'تحقق');
 
   static String get noAccountLead => _v('هەژمارت نییە؟', 'ليس لديك حساب؟');
-  static String get noAccountAction => _v('تۆمارکردن', 'إنشاء حساب');
+  static String get noAccountAction => signUpTitle;
   static String get haveAccountLead => _v('هەژمارت هەیە؟', 'لديك حساب؟');
   static String get haveAccountAction => _v('چوونەژوورەوە', 'تسجيل الدخول');
 
-  static String get strengthHeader =>
-      _v('هێزی وشەی نهێنی:', 'قوة كلمة المرور:');
+  static String get strengthHeader => _v('هێزی وشەی نهێنی', 'قوة كلمة المرور');
   static String get strengthWeak => _v('لاواز', 'ضعيفة');
-  static String get strengthMedium => _v('مامناوەند', 'متوسطة');
+  static String get strengthMedium => _v('ناوەند', 'متوسطة');
   static String get strengthStrong => _v('بەهێز', 'قوية');
 
-  static String get ruleMinChars => _v('لانیکەم ٨ پیت بێت', '8 أحرف على الأقل');
-  static String get ruleUppercase =>
-      _v('پیتی گەورەی تێدا بێت (A-Z)', 'حرف كبير (A-Z)');
+  static String get ruleMinChars => _v('لانیکەم ٨ نووسە', '8 أحرف على الأقل');
+  static String get ruleUppercase => _v('پیتی گەورە (A–Z)', 'حرف كبير (A–Z)');
   static String get ruleSpecial =>
-      _v('هێمای تایبەتی تێدا بێت (@, #, \$, ...)', 'رمز خاص (@, #, \$, ...)');
-  static String get ruleDigit => _v('ژمارەی تێدا بێت (0-9)', 'رقم (0-9)');
+      _v('هێمای تایبەت (!، @، #)', 'رمز خاص (!، @، #)');
+  static String get ruleDigit => _v('ژمارە (0–9)', 'رقم (0–9)');
 
-  static String get otpTitle => _v('کۆدی دڵنیاکردنەوە', 'رمز التحقق');
-  static String get otpSubtitle => _v('کۆد نێردرا بۆ:', 'تم إرسال الرمز إلى:');
-  static String get resendIn =>
-      _v('داواکردنەوەی کۆد دوای', 'إعادة الإرسال خلال');
-  static String get resendAction =>
-      _v('دووبارە ناردنەوەی کۆد', 'إعادة إرسال الرمز');
+  static String get otpTitle => _v('کۆدی پشتڕاستکردنەوە', 'رمز التحقق');
+  static String get otpSubtitle =>
+      _v('کۆدە نێردراوەکە بنووسە:', 'أدخل الرمز المرسل إلى:');
+  static String get resendIn => _v('ناردنەوەی کۆد دوای', 'إعادة الإرسال خلال');
+  static String get resendAction => _v('ناردنەوەی کۆد', 'إعادة إرسال الرمز');
 
   static String get errorPrefix => _v('هەڵە: ', 'خطأ: ');
 
@@ -337,15 +333,15 @@ abstract final class AuthStrings {
   }
 
   static String get errEmptyField =>
-      _v('تکایە ئەم خانەیە پڕبکەرەوە', 'يرجى ملء هذا الحقل');
+      _v('تکایە ئەم خانەیە پڕ بکەرەوە.', 'يرجى ملء هذا الحقل');
   static String get errInvalidEmail =>
       _v('ئیمەیڵێکی دروست بنووسە', 'أدخل بريداً إلكترونياً صحيحاً');
   static String get errShortPassword => _v(
-    'وشەی نهێنی دەبێت کەمترین ٨ پیت بێت',
+    'وشەی نهێنی دەبێت لانیکەم ٨ نووسە بێت.',
     'يجب ألا تقل كلمة المرور عن 8 أحرف',
   );
   static String get errWeakPassword => _v(
-    'وشەی نهێنی دەبێت پیتی گەورە، ژمارە و هێمای تایبەتی تێدا بێت',
+    'وشەی نهێنی دەبێت پیتی گەورە، ژمارە و هێمای تایبەت لەخۆ بگرێت.',
     'يجب أن تتضمن كلمة المرور حرفاً كبيراً ورقماً ورمزاً خاصاً',
   );
   static String get errPasswordMismatch =>
@@ -353,9 +349,9 @@ abstract final class AuthStrings {
   static String get errInvalidName =>
       _v('ناوێکی دروست بنووسە', 'أدخل اسماً صحيحاً');
   static String get errInvalidOtp =>
-      _v('کۆدی دڵنیاکردنەوە هەڵەیە', 'رمز التحقق غير صحيح');
+      _v('کۆدی پشتڕاستکردنەوە دروست نییە.', 'رمز التحقق غير صحيح');
   static String get errExpiredOtp =>
-      _v('کاتی کۆدەکە بەسەرچووە', 'انتهت صلاحية الرمز');
+      _v('ماوەی بەکارهێنانی کۆدەکە بەسەر چووە.', 'انتهت صلاحية الرمز');
   static String get errUserNotFound =>
       _v('زانیارییەکان دروست نین', 'تعذر التحقق من المعلومات');
   static String get errWrongPassword => _v(
@@ -363,22 +359,24 @@ abstract final class AuthStrings {
     'البريد الإلكتروني أو كلمة المرور غير صحيحة',
   );
   static String get errEmailExists => _v(
-    'ناتوانرێت بەم ئیمەیڵە بەردەوام بیت',
+    'نەتوانرا بەم ئیمەیڵە بەردەوام بکرێت.',
     'تعذر المتابعة بهذا البريد الإلكتروني',
   );
   static String get errNetwork =>
-      _v('پەیوەندی ئینتەرنێت نییە', 'لا يوجد اتصال بالإنترنت');
-  static String get errServer =>
-      _v('هەڵەیەک لە سێرڤەر ڕوویدا', 'حدث خطأ في الخادم');
+      _v('پەیوەندی بە ئینتەرنێتەوە نییە.', 'لا يوجد اتصال بالإنترنت');
+  static String get errServer => _v(
+    'داواکارییەکە تەواو نەبوو. تکایە دووبارە هەوڵ بدەرەوە.',
+    'تعذر إكمال الطلب. حاول مرة أخرى.',
+  );
 
   static String get lockoutBody => _v(
-    'ئەم هەژمارە کاتی قفڵکراوە بەهۆی هەوڵی زۆر.',
+    'بەهۆی زۆریی هەوڵەکانەوە، هەژمارەکە بە کاتی داخراوە.',
     'تم قفل الحساب مؤقتاً بسبب كثرة المحاولات.',
   );
   static String get lockoutAction =>
-      _v('پەیوەندی بە پشتگیری بکە.', 'تواصل مع الدعم.');
+      _v('پەیوەندی بە پشتگیرییەوە بکە.', 'تواصل مع الدعم.');
   static String get supportUnavailable => _v(
-    'ناتوانرێت واتساپ بکرێتەوە. پەیوەندی بکە بە ٠٧٧٥٨٨٨٧٤٨٨',
+    'نەتوانرا واتساپ بکرێتەوە. پەیوەندی بە ٠٧٧٥٨٨٨٧٤٨٨ بکە.',
     'تعذر فتح واتساب. اتصل على 07758887488',
   );
 }

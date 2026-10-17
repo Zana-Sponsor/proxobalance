@@ -520,11 +520,32 @@ class PasswordStrengthMeter extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 10),
-        for (int i = 0; i < PasswordPolicy.rules.length; i++)
-          _RuleRow(
-            label: PasswordPolicy.rules[i].label,
-            satisfied: satisfied[i],
-          ),
+        LayoutBuilder(
+          builder: (context, constraints) {
+            // Two short columns on ordinary phones; one column when text is
+            // enlarged or space is narrow. Requirements always remain visible.
+            final twoColumns =
+                constraints.maxWidth >= 320 &&
+                MediaQuery.textScalerOf(context).scale(12) <= 16;
+            final width = twoColumns
+                ? (constraints.maxWidth - 16) / 2
+                : constraints.maxWidth;
+            return Wrap(
+              spacing: 16,
+              runSpacing: 6,
+              children: [
+                for (int i = 0; i < PasswordPolicy.rules.length; i++)
+                  SizedBox(
+                    width: width,
+                    child: _RuleRow(
+                      label: PasswordPolicy.rules[i].label,
+                      satisfied: satisfied[i],
+                    ),
+                  ),
+              ],
+            );
+          },
+        ),
       ],
     );
   }
@@ -539,7 +560,7 @@ class _RuleRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ProxoLocale.watch(context);
-    final Color tone = satisfied ? AuthTokens.success : AuthTokens.placeholder;
+    final Color tone = satisfied ? AuthTokens.success : AuthTokens.inkMuted;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 4),
@@ -551,7 +572,7 @@ class _RuleRow extends StatelessWidget {
             height: 16,
             child: Center(
               child: satisfied
-                  ? ProxoSymbol(ProxoSymbolName.check, size: 16, color: tone)
+                  ? AuthIcon('check_circle', size: 16, color: tone)
                   : Container(
                       width: 13,
                       height: 13,
@@ -569,6 +590,7 @@ class _RuleRow extends StatelessWidget {
               translate: true,
               style: AuthTokens.ruleText.copyWith(
                 color: tone,
+                fontSize: 12,
                 fontWeight: FontWeight.w400,
               ),
             ),

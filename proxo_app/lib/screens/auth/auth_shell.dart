@@ -677,7 +677,7 @@ class _AuthShellState extends State<AuthShell> {
         setState(
           () => _loginPassErr = left != null
               ? ProxoStrings.format(
-                  'وشەی تێپەڕ هەڵەیە — {count} هەوڵی تر ماوە',
+                  'وشەی نهێنی دروست نییە؛ {count} هەوڵی تر ماوە.',
                   {'count': left},
                 )
               : AuthStrings.errWrongPassword,
@@ -913,7 +913,7 @@ class _AuthShellState extends State<AuthShell> {
           _RateLimiter.recordFail(rateKey, lockFor: _RateLimiter._lockForOtp);
           _showErrorCard(
             _t(
-              'زۆر کۆدی هەڵەت نووسی — ١٥ خولەک چاوەڕێ بکە',
+              'ژمارەی هەوڵەکان لە سنوور تێپەڕیوە. تکایە ١٥ خولەک چاوەڕێ بکە.',
               'محاولات كثيرة غير صحيحة — انتظر 15 دقيقة',
             ),
           );
@@ -925,7 +925,7 @@ class _AuthShellState extends State<AuthShell> {
           });
         } else {
           _showErrorCard(
-            ProxoStrings.format('کۆدەکە هەڵەیە — {count} هەوڵی تر ماوە', {
+            ProxoStrings.format('کۆدەکە دروست نییە؛ {count} هەوڵی تر ماوە.', {
               'count': _RateLimiter._maxAttempts - _otpAttempts,
             }),
           );
@@ -1210,7 +1210,7 @@ class _AuthShellState extends State<AuthShell> {
         if (_fpOtpAttempts >= _RateLimiter._maxAttempts) {
           _showErrorCard(
             _t(
-              'زۆر هەوڵی هەڵەت دا — کۆدی نوێ داوا بکە',
+              'ژمارەی هەوڵەکان لە سنوور تێپەڕیوە. کۆدێکی نوێ داوا بکە.',
               'محاولات كثيرة غير صحيحة — اطلب رمزاً جديداً',
             ),
           );
@@ -1221,7 +1221,7 @@ class _AuthShellState extends State<AuthShell> {
           });
         } else {
           _showErrorCard(
-            ProxoStrings.format('کۆدەکە هەڵەیە — {count} هەوڵی تر ماوە', {
+            ProxoStrings.format('کۆدەکە دروست نییە؛ {count} هەوڵی تر ماوە.', {
               'count': _RateLimiter._maxAttempts - _fpOtpAttempts,
             }),
           );
@@ -2107,7 +2107,7 @@ class _AuthShellState extends State<AuthShell> {
         ListenableBuilder(
           listenable: _fpEmailCtrl,
           builder: (context, _) => AuthPrimaryButton(
-            label: AuthStrings.resendAction,
+            label: AuthStrings.sendOtpButton,
             loading: _loading,
             enabled: AuthValidators.email(_fpEmailCtrl.text) == null,
             onPressed: _doForgotSendOtp,
@@ -2128,7 +2128,7 @@ class _AuthShellState extends State<AuthShell> {
           icon: 'lock_reset',
           title: AuthStrings.resetPasswordTitle,
           subtitle: _t(
-            'وشەی نهێنییەکی نوێ بۆ هەژمارەکەت دابنێ',
+            'وشەی نهێنییەکی نوێ بۆ هەژمارەکەت هەڵبژێرە.',
             'اختر كلمة مرور جديدة لحسابك',
           ),
         ),
