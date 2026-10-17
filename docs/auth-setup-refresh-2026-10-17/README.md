@@ -1,5 +1,7 @@
 # Auth, account setup and private activity — 17 October 2026
 
+**Latest Auth screenshots:** [Formal Sorani copy and responsive password guidance](../auth-sorani-polish/README.md). The captures and test counts below preserve the earlier verification checkpoint.
+
 This work completes the source and verification work on `feat/secure-operations-telemetry-20261016`, stacked on the still-unmerged Proxo app branch in PR #7. It does not assert that the three migrations or this app version are deployed.
 
 ## Delivered behavior
