@@ -106,7 +106,10 @@ async function adminApiRequest(action, payload={}){
   });
   let body={};
   try{ body=await response.json(); }catch(_){}
-  if(!response.ok || !body.ok) throw new Error(body.error||'هەڵەی پەیوەندی بە سێرڤەر');
+  if(!response.ok || !body.ok){
+    const error=new Error(body.error||'هەڵەی پەیوەندی بە سێرڤەر');
+    error.code=body.code;error.status=response.status;throw error;
+  }
   return body.data;
 }
 
@@ -1200,7 +1203,9 @@ function showOrderDetail(id){
     <div class="detail-row"><span class="lbl">لە</span><span class="val">${methodPill(order.from_method)}</span></div>
     <div class="detail-row"><span class="lbl">بۆ</span><span class="val">${methodPill(order.to_method)}</span></div>
     <div class="detail-row"><span class="lbl">بڕی نێردراو</span><span class="val">${displayAmt}</span></div>
-    <div class="detail-row"><span class="lbl">بڕی وەرگیراو</span><span class="val" style="color:var(--gr)">${formatNum(order.total)} IQD</span></div>
+    <div class="detail-row"><span class="lbl">بڕی پێویستی ناردن بۆ کڕیار</span><span class="val" style="color:var(--gr)">${formatNum(order.total)} IQD</span></div>
+    ${Number(order.shortfall_refunded_iqd||0)>0?`<div class="detail-row"><span class="lbl">بڕی کەم نێردراوی گەڕاوە بۆ باڵانس</span><span class="val" style="color:var(--gr)">${formatNum(order.shortfall_refunded_iqd)} IQD</span></div>
+    <div class="detail-row"><span class="lbl">بڕی ناردن دوای کەمکردنەوەی گەڕاوەکان</span><span class="val">${formatNum(Number(order.total)-Number(order.shortfall_refunded_iqd))} IQD</span></div>`:''}
     <div class="detail-row"><span class="lbl">ژمارەی وەرگر</span><span class="val">${esc(order.phone||'—')}</span></div>
     ${order.extra_info?`<div class="detail-row"><span class="lbl">زانیاری زیاتر</span><span class="val">${esc(order.extra_info)}</span></div>`:''}
     <div class="detail-row"><span class="lbl">باری</span><span class="val"><span class="badge ${statusBadgeClass(order.balance_refunded_at?'پەسەندکرا':order.status)}">${esc(order.balance_refunded_at?'ڕیفاوندکرا':order.status)}</span></span></div>
@@ -1225,6 +1230,9 @@ function showOrderDetail(id){
     </div>
     ${!order.balance_refunded_at && order.status!==STATUS_APPROVED && !order.payout_receipt_url && order.from_method!=='USDT' && order.to_method!=='USDT'?`<div class="act-grp" style="margin-top:12px">
       <button type="button" class="act-btn rd" onclick="openOrderRefund('${order.id}')"><i class="fas fa-wallet"></i> ڕەتکردنەوە و گەڕاندنەوە بۆ باڵانس</button>
+    </div>`:''}
+    ${!order.balance_refunded_at && order.status===STATUS_APPROVED && order.from_method!=='USDT' && order.to_method!=='USDT'?`<div class="act-grp" style="margin-top:12px">
+      <button type="button" class="act-btn cy" onclick="openOrderShortfall('${order.id}')"><i class="fas fa-wallet" aria-hidden="true"></i> گەڕاندنەوەی بڕی کەم نێردراو بۆ باڵانس</button>
     </div>`:''}
     ${!order.balance_refunded_at && REVIEWABLE_ORDER_STATUSES.has(order.status)?`<div class="act-grp" style="margin-top:12px">
       <div class="act-btn gr" style="flex:1;justify-content:center" onclick="approveOrder('${order.id}');closeMo('moOrderDetail')"><i class="fas fa-check"></i> پەسەندکردن</div>

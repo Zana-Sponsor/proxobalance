@@ -17,6 +17,10 @@ on:
       - 'test/exchange-customer-polish.browser.mjs'
       - 'test/exchange-welcome-reward.sql'
       - 'test/exchange-admin-rewards-refund.test.js'
+      - 'test/exchange-shortfall-api.test.js'
+      - 'test/exchange-shortfall-ui.test.js'
+      - 'test/exchange-shortfall.browser.mjs'
+      - 'test/exchange-shortfall.sql'
       - 'test/exchange-account-balances-ui.test.js'
       - 'test/exchange-send-balance.test.js'
       - 'test/exchange-statistics-order-codes.test.js'
@@ -64,6 +68,7 @@ jobs:
           node --check assets/js/app.js
           node --check assets/js/exchange-balance.js
           node --check assets/js/exchange-balance-admin.js
+          node --check test/exchange-shortfall.browser.mjs
           node --check assets/js/exchange-reward-pricing.js
           node --check assets/js/exchange-insights.js
           node --check assets/js/exchange-profit.js
@@ -75,7 +80,7 @@ jobs:
       - name: Build Vercel static output
         run: node scripts/prepare-vercel.mjs
       - name: Verify authenticated orders, admin refunds and capped fee rewards
-        run: node --test test/orders-route.test.js test/exchange-reward-pricing.test.js test/exchange-admin-rewards-refund.test.js test/exchange-account-balances-ui.test.js test/exchange-send-balance.test.js test/exchange-statistics-order-codes.test.js test/exchange-report-names.test.js test/exchange-live-saves.test.js test/exchange-access.test.js test/exchange-customer-polish.test.js test/exchange-staff-management.test.js
+        run: node --test test/orders-route.test.js test/exchange-reward-pricing.test.js test/exchange-admin-rewards-refund.test.js test/exchange-shortfall-api.test.js test/exchange-shortfall-ui.test.js test/exchange-account-balances-ui.test.js test/exchange-send-balance.test.js test/exchange-statistics-order-codes.test.js test/exchange-report-names.test.js test/exchange-live-saves.test.js test/exchange-access.test.js test/exchange-customer-polish.test.js test/exchange-staff-management.test.js
       - name: Verify deployed asset and board paths
         run: |
           node --input-type=module -e "
@@ -91,6 +96,8 @@ jobs:
               'Missing customer send balance');
             check(readFileSync('public/exchange-admin.html','utf8').includes('id=\"pgBalance\"'),
               'Missing admin balance board');
+            check(readFileSync('public/exchange-admin.html','utf8').includes('id=\"balanceShortfallAmount\"'),
+              'Missing approved-order shortfall form');
             check(readFileSync('public/exchange-admin.html','utf8').includes('id=\"pgContracts\"'),
               'Missing admin contracts board');
             console.log('PASS: Exchange customer/admin build and balance assets');

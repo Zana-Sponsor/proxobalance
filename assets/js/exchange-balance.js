@@ -1,4 +1,4 @@
-// Customer refund balance is visible ONLY in the Send section.
+// Customer full refunds and order shortfall credits are visible in Send balance history.
 // Actual payouts are manual, gated in the database and reviewed by an admin.
 let _myBalanceData=null,_balanceRequestKey=null,_balanceLoadId=0;
 function resetMyBalance(){
@@ -106,17 +106,23 @@ function renderBalanceHistory(){
   const el=document.getElementById('balanceHistoryList');
   if(!el||!_myBalanceData)return;
   const kinds={order_debit:'ناردن لە باڵانسی هەژمار',verified_refund:'گەڕاندنەوەی پارە',payout_hold:'داواکاری ناردن',
-    payout_cancel:'هەڵوەشاندنەوەی ناردن',payout_paid:'ناردنی سەرکەوتوو'};
+    payout_cancel:'هەڵوەشاندنەوەی ناردن',payout_paid:'ناردنی سەرکەوتوو',shortfall_refund:'گەڕاندنەوەی بڕی کەم نێردراو'};
   const journal=(_myBalanceData.journal||[]).slice(0,20);
+  const shortfalls=new Map((_myBalanceData.shortfalls||[]).map(r=>[r.journal_id,r]));
   let html=journal.map(j=>{
     const available=(j.ex_balance_entries||[]).find(x=>x.account==='customer_available');
     const held=(j.ex_balance_entries||[]).find(x=>x.account==='customer_held');
     const amount=Number(available?.delta_iqd||held?.delta_iqd||0);
-    return '<div class="pb-history-row"><div><b>'+escHtml(kinds[j.kind]||j.kind)+'</b>'+
+    const shortfall=j.kind==='shortfall_refund',detail=shortfalls.get(j.id);
+    const after=available?.balance_after_iqd;
+    const hasSnapshot=shortfall&&after!==null&&after!==undefined&&Number.isSafeInteger(Number(after))&&Number.isSafeInteger(amount);
+    return '<div class="pb-history-row"><div><b class="pb-history-title">'+escHtml(kinds[j.kind]||j.kind)+'</b>'+
       '<small>'+escHtml(balanceTime(j.created_at))+'</small>'+
-      (j.order_id?'<small dir="ltr">ID: '+escHtml(j.order_id)+'</small>':'')+
-      '<small>'+escHtml(j.note||'')+'</small></div>'+
-      '<b dir="ltr">'+(amount>0?'+':'')+balanceIqd(amount)+'</b></div>';
+      (j.order_id?'<small dir="ltr">ID: '+escHtml(detail?.order_code||j.order_id)+'</small>':'')+
+      '<small>'+escHtml(detail?.reason||j.note||'')+'</small>'+
+      (hasSnapshot?'<small>باڵانس پێش گەڕاندنەوە: '+balanceIqd(Number(after)-amount)+'</small>'+
+        '<small>باڵانس دوای گەڕاندنەوە: '+balanceIqd(after)+'</small>':'')+'</div>'+
+      '<b dir="ltr"'+(shortfall?' class="pb-history-credit"':'')+'>'+(amount>0?'+':'')+balanceIqd(amount)+'</b></div>';
   }).join('');
   const requests=(_myBalanceData.payouts||[]).filter(p=>p.status==='pending').slice(0,5);
   html+=requests.map(p=>'<div class="pb-history-row"><div><b>داواکاری چاوەڕوانە</b>'+
