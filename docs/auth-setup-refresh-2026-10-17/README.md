@@ -15,9 +15,28 @@ This work completes the source and verification work on `feat/secure-operations-
 
 The isolated workflow blocks cloud instance metadata, uses no application secrets, and has read-only GitHub permissions. It applies the migrations twice to a synthetic PostgreSQL 17 fixture, checks permissions/rollback/retries and concurrent financial operations, analyzes Dart, and runs the full Flutter suite.
 
-First refresh run: [39078215552](https://github.com/Zana-Sponsor/proxobalance/actions/runs/39078215552). Database passed; 735 Flutter tests passed and two failed. Both failures were investigated: reduced-motion AnimatedSize invalidated layout, and the setup retry test tapped below the viewport. The code now removes animation controllers for reduced motion; the retry test scrolls to the real button. A subsequent full run is required before marking this work verified.
+**Verified source:** `2a960fd78f8e230edb054af368a50c584c350192` — [run 39078941825](https://github.com/Zana-Sponsor/proxobalance/actions/runs/39078941825). Both database and Flutter jobs passed. **739/739 Flutter tests passed.** Analysis had no errors; 361 nonfatal warnings and information remain in the broader application. The dependency lockfile was unchanged.
+
+The final screenshots cover **36 Auth/setup scenarios** with no captured layout exceptions. All **495 measured nonempty text paragraphs** use `RabarAuthRegular` at weight 400. The artifact ZIP SHA-256 is `2ec563cd69813a5b1d356b089d84d7c930805499bba954e0bed58a01d4c79a04`; selected original PNGs and their hashes are preserved in `evidence.json`.
+
+Earlier failure history: first refresh run: [39078215552](https://github.com/Zana-Sponsor/proxobalance/actions/runs/39078215552). Database passed; 735 Flutter tests passed and two failed. Both failures were investigated: reduced-motion AnimatedSize invalidated layout, and the setup retry test tapped below the viewport. The code now removes animation controllers for reduced motion; the retry test scrolls to the real button. The second run additionally exposed lifecycle flush completion and a button cooldown timer surviving disposal. The final source drains queued lifecycle reports before resolving flush and cancels cooldown timers in dispose. All assertions remain enabled and pass in the final run.
 
 Visual evidence uses actual widgets with a fictional HTTP backend: Sorani, Arabic and Badini; 393 dp normal text and 280 dp text at 200%. It includes login, signup, recovery, OTP, setup progress and retry states. No messages, OTP sends or payments are made by these tests.
+
+
+## Actual screen captures
+
+The images below are untouched captures from the verified source, using fictional test data.
+
+| Login | Account setup |
+| --- | --- |
+| <img src="images/login-ckb.png" width="270" alt="Sorani login with regular Rabar"> | <img src="images/setup-ckb.png" width="270" alt="Sorani account setup"> |
+
+| Signup | OTP |
+| --- | --- |
+| <img src="images/signup-ckb.png" width="270" alt="Sorani signup"> | <img src="images/otp-ckb.png" width="270" alt="Sorani OTP verification"> |
+
+[Signup after scrolling](images/signup-ckb-bottom.png) · [Setup retry](images/setup-retry-ckb.png) · [Arabic password recovery](images/recovery-ar.png)
 
 ## Reading activity after rollout
 

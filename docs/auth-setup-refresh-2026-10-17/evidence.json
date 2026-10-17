@@ -1,0 +1,44 @@
+{
+  "source_commit": "2a960fd78f8e230edb054af368a50c584c350192",
+  "workflow_run": 39078941825,
+  "artifact_id": 12118530969,
+  "captures": [
+    {
+      "file": "images/login-ckb.png",
+      "original": "polish-evidence/login-ckb-393-s1.0-d3.0.png",
+      "sha256": "71a07b218a7e9a60f86a7cb1ea19795d2984fdd8b2312a0fb5ac34beb64eb8c1"
+    },
+    {
+      "file": "images/signup-ckb.png",
+      "original": "polish-evidence/signup-ckb-393-s1.0-d3.0.png",
+      "sha256": "24dd74d88a81f79b9e216774c9f4153d1ff09d80838bcb6853cdafb50da0497c"
+    },
+    {
+      "file": "images/signup-ckb-bottom.png",
+      "original": "polish-evidence/signup-ckb-393-s1.0-d3.0-bottom.png",
+      "sha256": "006dffa0b05a77bd7fa9e0219d5f766d1d93ab82c4536e563181d1651de26317"
+    },
+    {
+      "file": "images/otp-ckb.png",
+      "original": "polish-evidence/otp-ckb-393-s1.0-d3.0.png",
+      "sha256": "2a99a2f014898c4e3cd1493b54045382efa2918e26a2e66600aef9ba8efd612b"
+    },
+    {
+      "file": "images/recovery-ar.png",
+      "original": "polish-evidence/forgot-ar-393-s1.0-d3.0.png",
+      "sha256": "58f9b7a7033706642dd379558b004512a57b9200c798594726713e5958571156"
+    },
+    {
+      "file": "images/setup-ckb.png",
+      "original": "auth-refresh/setup-ckb-393-loading.png",
+      "sha256": "6c3bd08c3f0e9cf8d9343dfdfe8c055f277d312bf4ca8f81895c923d2c880f93"
+    },
+    {
+      "file": "images/setup-retry-ckb.png",
+      "original": "auth-refresh/setup-ckb-393-error.png",
+      "sha256": "b59a9090360d1f3846f9570d9df8114c6a81770a4e6a189707f567c38422a833"
+    }
+  ],
+  "font_paragraphs": 495,
+  "scenarios": 36
+}
