@@ -312,10 +312,10 @@ abstract final class AuthStrings {
   static String get strengthStrong => _v('بەهێز', 'قوية');
 
   static String get ruleMinChars => _v('لانیکەم ٨ نووسە', '8 أحرف على الأقل');
-  static String get ruleUppercase => _v('پیتی گەورە (A–Z)', 'حرف كبير (A–Z)');
+  static String get ruleUppercase => _v('پیتی گەورە (A-Z)', 'حرف كبير (A-Z)');
   static String get ruleSpecial =>
       _v('هێمای تایبەت (!، @، #)', 'رمز خاص (!، @، #)');
-  static String get ruleDigit => _v('ژمارە (0–9)', 'رقم (0–9)');
+  static String get ruleDigit => _v('ژمارە (0-9)', 'رقم (0-9)');
 
   static String get otpTitle => _v('کۆدی پشتڕاستکردنەوە', 'رمز التحقق');
   static String get otpSubtitle =>
