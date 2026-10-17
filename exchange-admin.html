@@ -398,12 +398,8 @@
           <p id="balanceShortfallEligibility" class="balance-credit-help" role="status">سەرەتا مامەڵەیەکی پەسەندکراو هەڵبژێرە.</p>
           <form id="balanceShortfallForm" onsubmit="creditOrderShortfall(event)" novalidate>
             <fieldset id="balanceShortfallFields" disabled>
-              <div class="balance-credit-fields">
-                <div><label class="modal-lbl" for="balanceShortfallAmount">بڕی کەم نێردراو (دینار)</label>
-                  <input class="minp" id="balanceShortfallAmount" type="text" inputmode="numeric" dir="ltr" autocomplete="off" maxlength="20" placeholder="150" aria-describedby="balanceShortfallEligibility balanceShortfallPreview" required></div>
-                <div><label class="modal-lbl" for="balanceShortfallReference">ژمارە یان بەڵگەی پشتڕاستکردنەوە</label>
-                  <input class="minp" id="balanceShortfallReference" dir="ltr" autocomplete="off" minlength="6" maxlength="160" placeholder="ژمارەی مامەڵەی ناردن / بەڵگە" required></div>
-              </div>
+              <label class="modal-lbl" for="balanceShortfallAmount">بڕی کەم نێردراو (دینار)</label>
+              <input class="minp" id="balanceShortfallAmount" type="text" inputmode="numeric" dir="ltr" autocomplete="off" maxlength="20" placeholder="150" aria-describedby="balanceShortfallEligibility balanceShortfallPreview" required>
               <label class="modal-lbl" for="balanceShortfallReason">هۆکاری کەم ناردن و گەڕاندنەوە</label>
               <textarea class="minp mta" id="balanceShortfallReason" minlength="10" maxlength="2000" rows="3" placeholder="بڕی نەنێردراو و هۆکارەکە بە ڕوونی بنووسە" required></textarea>
               <div id="balanceShortfallPreview" class="balance-credit-preview" aria-live="polite"></div>
@@ -1172,7 +1168,7 @@
 <script src="assets/js/admin.js?v=25"></script>
 <script src="assets/js/admin-contracts.js?v=2"></script>
   <script src="assets/js/exchange-staff.js?v=7"></script>
-  <script src="assets/js/exchange-balance-admin.js?v=5"></script>
+  <script src="assets/js/exchange-balance-admin.js?v=6"></script>
   <script src="assets/js/exchange-insights.js?v=5"></script>
   <script src="assets/js/exchange-profit.js?v=4"></script><script src="assets/js/exchange-admin-workspace.js?v=1"></script><script src="assets/js/track.js?v=3"></script>
 </body>

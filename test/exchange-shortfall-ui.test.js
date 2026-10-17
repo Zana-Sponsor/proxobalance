@@ -4,6 +4,7 @@ import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
 
 const source=readFileSync(new URL('../assets/js/exchange-balance-admin.js',import.meta.url),'utf8');
+const adminHtml=readFileSync(new URL('../exchange-admin.html',import.meta.url),'utf8');
 const customerSource=readFileSync(new URL('../assets/js/exchange-balance.js',import.meta.url),'utf8');
 const userId='22222222-2222-4222-8222-222222222222';
 const adminId='11111111-1111-4111-8111-111111111111';
@@ -20,10 +21,10 @@ function element(){
     scrollIntoView(){},focus(){this.focused=true;}
   };
 }
-function panel(){
+function panel({storage=new Map(),owner=adminId,uuidStart=0}={}){
   const elements=new Map(),calls=[],confirmations=[],toasts=[];
   const el=id=>{if(!elements.has(id))elements.set(id,element());return elements.get(id);};
-  let keyCount=0,allowed=true,creditImpl=null,lookupImpl=null;
+  let keyCount=uuidStart,allowed=true,creditImpl=null,lookupImpl=null;
   let lookup={order:{id:orderId,user_id:userId,order_code:'P123456789AB',amount:50000,total:49000,
       from_method:'FastPay',to_method:'QiCard',status:'پەسەندکرا',balance_refunded_at:null,
       receipt_url:'https://example.invalid/sender-receipt.jpg',payout_receipt_url:'https://example.invalid/payout.jpg',
@@ -35,13 +36,15 @@ function panel(){
     shortfalls:lookup.shortfalls,payouts:[],alerts:[],config:{},reconciliation:{},
     profiles:{[userId]:lookup.profile,[adminId]:{full_name:'Auditor One'}}});
   const postCredit=payload=>{
+    const existing=lookup.shortfalls.find(row=>row.request_key===payload.request_key);
+    if(existing)return copy(existing);
     const before=Number(lookup.balance.available_iqd),refunded=Number(lookup.shortfall_summary.refunded_iqd);
     const row={id:'44444444-4444-4444-8444-444444444444',user_id:userId,admin_id:adminId,
       order_id:payload.order_id,order_code:lookup.order.order_code,journal_id:'55555555-5555-4555-8555-555555555555',
       request_key:payload.request_key,amount_iqd:payload.amount_iqd,expected_iqd:lookup.order.total,
       refunded_before_iqd:refunded,refunded_after_iqd:refunded+payload.amount_iqd,
       balance_before_iqd:before,balance_after_iqd:before+payload.amount_iqd,
-      reason:payload.reason,verification_reference:payload.verification_reference,created_at:'2026-10-17T11:00:00Z'};
+      reason:payload.reason,verification_reference:payload.verification_reference??'shortfall:'+payload.request_key.toLowerCase(),created_at:'2026-10-17T11:00:00Z'};
     lookup.balance.available_iqd=row.balance_after_iqd;
     lookup.order.shortfall_refunded_iqd=row.refunded_after_iqd;
     Object.assign(lookup.shortfall_summary,{refunded_iqd:row.refunded_after_iqd,
@@ -49,7 +52,9 @@ function panel(){
     lookup.shortfalls.unshift(row);return copy(row);
   };
   const context=vm.createContext({
-    document:{getElementById:el},esc:escapeHtml,Date,console,
+    document:{getElementById:id=>id==='balanceShortfallReference'?null:el(id)},esc:escapeHtml,Date,console,
+    adminUser:{id:owner},sessionStorage:{getItem:key=>storage.get(key)??null,
+      setItem:(key,value)=>storage.set(key,String(value)),removeItem:key=>storage.delete(key)},
     crypto:{randomUUID:()=>`00000000-0000-4000-8000-${String(++keyCount).padStart(12,'0')}`},
     allOrders:[copy(lookup.order)],staffCan:()=>allowed,
     showToast:(...args)=>toasts.push(args),confirm:value=>{confirmations.push(value);return true;},
@@ -69,12 +74,11 @@ function panel(){
   vm.runInContext(source,context);
   const fill=(amount='150')=>{
     el('balanceShortfallAmount').value=amount;
-    el('balanceShortfallReference').value='BANK-FIXTURE-0001';
     el('balanceShortfallReason').value='Actual payout was short by the stated amount';
     el('balanceShortfallConfirmed').checked=true;
     el('balanceShortfallForm').handlers.input();
   };
-  return {context,el,calls,confirmations,toasts,fill,postCredit,
+  return {context,el,calls,confirmations,toasts,fill,postCredit,storage,
     credits:()=>calls.filter(c=>c.action==='balance_credit_shortfall'),
     get lookup(){return lookup;},setLookup(value){lookup=value;},
     setCredit(fn){creditImpl=fn;},setLookupImpl(fn){lookupImpl=fn;},deny(){allowed=false;},
@@ -92,6 +96,15 @@ test('approved order previews exact shortfall against recipient total and fresh 
   assert.match(p.el('balanceFoundOrder').innerHTML,/50,000/);
 });
 
+test('shortfall form has only amount, reason and confirmation while full refunds keep their reference',()=>{
+  assert.doesNotMatch(adminHtml,/balanceShortfallReference|ژمارە یان بەڵگەی پشتڕاستکردنەوە/);
+  assert.match(adminHtml,/id="balanceShortfallAmount"/);
+  assert.match(adminHtml,/id="balanceShortfallReason"/);
+  assert.match(adminHtml,/id="balanceShortfallConfirmed"/);
+  assert.match(adminHtml,/id="balanceBankReference"/);
+  assert.match(adminHtml,/exchange-balance-admin\.js\?v=6/);
+});
+
 test('150 IQD credits use their own action and preserve approved status and full-refund marker',async()=>{
   const p=panel();await p.select();p.fill();
   await p.context.creditOrderShortfall();
@@ -99,14 +112,30 @@ test('150 IQD credits use their own action and preserve approved status and full
   assert.equal(payload.amount_iqd,150);assert.equal(payload.expected_refunded_iqd,0);
   assert.equal(payload.order_id,orderId);assert.equal(payload.confirmed_shortfall,true);
   assert.match(payload.request_key,/^00000000-/);
-  for(const forbidden of ['status','admin_id','user_id','balance_after_iqd','reward_id'])assert.equal(Object.hasOwn(payload,forbidden),false);
+  for(const forbidden of ['verification_reference','status','admin_id','user_id','balance_after_iqd','reward_id'])assert.equal(Object.hasOwn(payload,forbidden),false);
   assert.equal(p.lookup.order.status,'پەسەندکرا');assert.equal(p.lookup.order.balance_refunded_at,null);
   assert.equal(p.lookup.balance.available_iqd,1150);assert.equal(p.lookup.order.shortfall_refunded_iqd,150);
   assert.equal(p.el('balanceShortfallAmount').value,'');assert.equal(p.el('balanceShortfallConfirmed').checked,false);
   assert.match(p.el('balanceShortfallSuccess').innerHTML,/1,150/);
   const history=p.el('balanceShortfallList').innerHTML;
-  for(const value of ['P123456789AB','Customer One','Auditor One','BANK-FIXTURE-0001','1,000','1,150','55555555'])assert.ok(history.includes(value),value);
+  for(const value of ['P123456789AB','Customer One','Auditor One','1,000','1,150','55555555'])assert.ok(history.includes(value),value);
+  assert.doesNotMatch(history,/shortfall:|بەڵگەی پێشوو/);
   assert.doesNotMatch(p.el('balanceRefundList').innerHTML,/BANK-FIXTURE/);
+  assert.equal(p.storage.size,0);
+  p.fill('50');await p.context.creditOrderShortfall();
+  assert.notEqual(p.credits()[1].payload.request_key,payload.request_key);
+  assert.equal(p.lookup.balance.available_iqd,1200);
+});
+
+test('shortfall history keeps escaped legacy references without labelling generated identifiers as proof',async()=>{
+  const p=panel();await p.select();p.fill();await p.context.creditOrderShortfall();
+  const row=copy(p.lookup.shortfalls[0]);
+  const generated=p.context.balanceShortfallTable([row]);
+  assert.doesNotMatch(generated,/shortfall:|بەڵگەی پێشوو/);
+  row.verification_reference='BANK-LEGACY-<script>bad</script>';
+  const legacy=p.context.balanceShortfallTable([row]);
+  assert.match(legacy,/بەڵگەی پێشوو: BANK-LEGACY-&lt;script&gt;bad&lt;\/script&gt;/);
+  assert.doesNotMatch(legacy,/<script>/);
 });
 
 test('invalid fractional, exponential, negative and excessive amounts never reach the API',async()=>{
@@ -119,9 +148,9 @@ test('invalid fractional, exponential, negative and excessive amounts never reac
   assert.equal(p.context.balanceWholeIqd('150'),150);
 });
 
-test('a reason, evidence and explicit undelivered confirmation are required',async()=>{
+test('a reason and explicit undelivered confirmation are required without a manual reference',async()=>{
   const p=panel();await p.select();
-  for(const [id,value] of [['balanceShortfallReason','short'],['balanceShortfallReference','123'],['balanceShortfallConfirmed',false]]){
+  for(const [id,value] of [['balanceShortfallReason','short'],['balanceShortfallConfirmed',false]]){
     p.fill();if(typeof value==='boolean')p.el(id).checked=value;else p.el(id).value=value;
     await p.context.creditOrderShortfall();assert.equal(p.credits().length,0,id);
   }
@@ -149,6 +178,120 @@ test('network retry keeps request UUID and frozen cumulative baseline after look
   assert.match(p.el('balanceShortfallSuccess').innerHTML,/2,000[\s\S]*2,150/);
 });
 
+test('pending payload is saved before POST and recovered exactly after a page reload',async()=>{
+  const p=panel();await p.select();p.fill('١٥٠');
+  p.setCredit(payload=>{
+    const [[key,raw]]=p.storage;
+    assert.equal(key,'proxo:shortfall:pending:v1:'+adminId+':'+orderId);
+    assert.deepEqual(JSON.parse(raw),{version:1,admin_id:adminId,payload:copy(payload)});
+    throw Error('Connection interrupted before a response');
+  });
+  await p.context.creditOrderShortfall();const original=p.credits()[0].payload;
+  const reloaded=panel({storage:p.storage,uuidStart:100});
+  reloaded.setLookup(copy(p.lookup));reloaded.lookup.balance.available_iqd=2000;
+  await reloaded.select();
+  assert.equal(reloaded.el('balanceShortfallAmount').value,'150');
+  assert.equal(reloaded.el('balanceShortfallReason').value,original.reason);
+  assert.equal(reloaded.el('balanceShortfallAmount').readOnly,true);
+  assert.equal(reloaded.el('balanceShortfallReason').readOnly,true);
+  assert.equal(reloaded.el('balanceShortfallConfirmed').checked,false);
+  await reloaded.context.creditOrderShortfall();assert.equal(reloaded.credits().length,0);
+  reloaded.el('balanceShortfallConfirmed').checked=true;await reloaded.context.creditOrderShortfall();
+  assert.deepEqual(reloaded.credits()[0].payload,original);
+  assert.equal(reloaded.lookup.balance.available_iqd,2150);
+  assert.equal(reloaded.storage.size,0);
+});
+
+test('returning to an order restores its unresolved request while another administrator sees no draft',async()=>{
+  const p=panel();await p.select();p.fill();
+  p.setCredit(()=>{throw Error('No response');});await p.context.creditOrderShortfall();
+  const firstOrder=copy(p.lookup),original=p.credits()[0].payload;
+  const otherOrder=copy(firstOrder);otherOrder.order.id='66666666-6666-4666-8666-666666666666';
+  otherOrder.order.order_code='OTHER';
+  p.el('balanceOrderSearch').handlers.input();p.setLookup(otherOrder);await p.select('OTHER');
+  assert.equal(p.el('balanceShortfallAmount').value,'');
+  assert.equal(p.el('balanceShortfallAmount').readOnly,false);assert.equal(p.storage.size,1);
+  const otherAdmin=panel({storage:p.storage,owner:'77777777-7777-4777-8777-777777777777'});
+  otherAdmin.setLookup(copy(firstOrder));await otherAdmin.select();
+  assert.equal(otherAdmin.el('balanceShortfallReason').value,'');
+  assert.equal(otherAdmin.el('balanceShortfallAmount').readOnly,false);assert.equal(otherAdmin.storage.size,1);
+  p.el('balanceOrderSearch').handlers.input();p.setLookup(firstOrder);await p.select();
+  assert.equal(p.el('balanceShortfallAmount').value,'150');
+  assert.equal(p.el('balanceShortfallConfirmed').checked,false);
+  p.el('balanceShortfallConfirmed').checked=true;await p.context.creditOrderShortfall();
+  assert.deepEqual(p.credits()[1].payload,original);assert.equal(p.storage.size,1);
+});
+
+test('ambiguous errors including stale text and edited pending values never create a fresh request',async()=>{
+  for(const error of [
+    Error('A stale network connection lost the response'),
+    Object.assign(Error('Upstream stale response'),{status:500,code:'shortfall_failed'}),
+    Object.assign(Error('No credit result was returned'),{status:500,code:'shortfall_result_missing'}),
+    Object.assign(Error('SHORTFALL_REQUEST_KEY_CONFLICT'),{status:400,code:'22023'})
+  ]){
+    const p=panel();await p.select();p.fill();p.setCredit(()=>{throw error;});
+    await p.context.creditOrderShortfall();const original=p.credits()[0].payload;
+    assert.equal(p.storage.size,1,error.message);
+    assert.equal(p.el('balanceShortfallAmount').readOnly,true,error.message);
+    p.fill('200');p.el('balanceShortfallReason').value='Changed reason must not silently create a new request';
+    p.el('balanceShortfallForm').handlers.input();
+    assert.equal(p.el('balanceShortfallBtn').disabled,true,error.message);
+    await p.context.creditOrderShortfall();assert.equal(p.credits().length,1,error.message);
+    await p.select();assert.equal(p.el('balanceShortfallAmount').value,'150');
+    assert.equal(p.el('balanceShortfallReason').value,original.reason);
+    await p.context.creditOrderShortfall();assert.deepEqual(p.credits()[1].payload,original,error.message);
+    assert.equal(p.storage.size,1,error.message);
+  }
+});
+
+test('unavailable or unreadable session storage blocks sending and preserves any pending record',async()=>{
+  const blocked=panel();await blocked.select();blocked.fill();
+  const originalSet=blocked.context.sessionStorage.setItem;
+  blocked.context.sessionStorage.setItem=()=>{throw Error('Storage is blocked');};
+  await blocked.context.creditOrderShortfall();assert.equal(blocked.credits().length,0);
+  assert.equal(blocked.storage.size,0);assert.equal(blocked.el('balanceShortfallBtn').disabled,true);
+  blocked.context.sessionStorage.setItem=originalSet;await blocked.select();
+  assert.equal(blocked.el('balanceShortfallAmount').readOnly,false);
+  await blocked.context.creditOrderShortfall();assert.equal(blocked.credits().length,1);
+  const unreadable=panel();
+  const key='proxo:shortfall:pending:v1:'+adminId+':'+orderId;
+  unreadable.storage.set(key,'{invalid json');await unreadable.select();unreadable.fill();
+  assert.equal(unreadable.el('balanceShortfallBtn').disabled,true);
+  await unreadable.context.creditOrderShortfall();assert.equal(unreadable.credits().length,0);
+  assert.equal(unreadable.storage.get(key),'{invalid json');
+  const inaccessible=panel();
+  inaccessible.context.sessionStorage.getItem=()=>{throw Error('Storage is blocked');};
+  await inaccessible.select();inaccessible.fill();await inaccessible.context.creditOrderShortfall();
+  assert.equal(inaccessible.credits().length,0);
+});
+
+test('a definite pre-RPC validation rejection permits correction with new confirmation',async()=>{
+  const p=panel();await p.select();p.fill();let attempt=0;
+  p.setCredit(payload=>{
+    if(++attempt===1)throw Object.assign(Error('Explain the shortfall'),{status:400,code:'invalid_reason'});
+    return p.postCredit(payload);
+  });
+  await p.context.creditOrderShortfall();const original=p.credits()[0].payload;
+  assert.equal(p.storage.size,0);assert.equal(p.el('balanceShortfallReason').readOnly,false);
+  assert.equal(p.el('balanceShortfallConfirmed').checked,false);
+  p.fill();p.el('balanceShortfallReason').value='Corrected description of the actual undelivered shortfall';
+  await p.context.creditOrderShortfall();assert.notEqual(p.credits()[1].payload.request_key,original.request_key);
+  assert.equal(p.lookup.balance.available_iqd,1150);
+});
+
+test('a validation rejection on retry cannot discard an earlier ambiguous attempt',async()=>{
+  const p=panel();await p.select();p.fill();let attempt=0;
+  p.setCredit(()=>{
+    if(++attempt===1)throw Error('The server response was lost');
+    throw Object.assign(Error('A different deployment requires evidence'),{status:400,code:'invalid_evidence'});
+  });
+  await p.context.creditOrderShortfall();const original=p.credits()[0].payload;
+  await p.context.creditOrderShortfall();
+  assert.deepEqual(p.credits()[1].payload,original);assert.equal(p.storage.size,1);
+  assert.equal(p.el('balanceShortfallAmount').readOnly,true);
+  p.fill('200');await p.context.creditOrderShortfall();assert.equal(p.credits().length,2);
+});
+
 test('retry retains its original baseline when another credit has changed the order',async()=>{
   const p=panel();await p.select();p.fill();let attempt=0;
   p.setCredit(()=>{
@@ -174,6 +317,18 @@ test('lookup recognizes a committed timed-out request without sending another cr
   assert.equal(p.el('balanceShortfallConfirmed').checked,false);
 });
 
+test('reload recognizes a committed lost-response request in history without another POST',async()=>{
+  const p=panel();await p.select();p.fill();
+  p.setCredit(payload=>{p.postCredit(payload);throw Error('Response lost after commit');});
+  await p.context.creditOrderShortfall();assert.equal(p.storage.size,1);
+  const reloaded=panel({storage:p.storage,uuidStart:100});reloaded.setLookup(copy(p.lookup));
+  await reloaded.select();assert.equal(reloaded.credits().length,0);assert.equal(reloaded.storage.size,0);
+  assert.equal(reloaded.lookup.balance.available_iqd,1150);
+  assert.match(reloaded.el('balanceShortfallSuccess').innerHTML,/150[\s\S]*1,150/);
+  assert.equal(reloaded.el('balanceShortfallAmount').value,'');
+  assert.equal(reloaded.el('balanceShortfallConfirmed').checked,false);
+});
+
 test('stale state requires a fresh lookup and new explicit confirmation before another request',async()=>{
   const p=panel();await p.select();p.fill();let attempt=0;
   p.setCredit(payload=>{
@@ -181,6 +336,7 @@ test('stale state requires a fresh lookup and new explicit confirmation before a
     return p.postCredit(payload);
   });
   await p.context.creditOrderShortfall();const first=p.credits()[0].payload;
+  assert.equal(p.storage.size,0);
   assert.equal(p.el('balanceShortfallBtn').disabled,true);assert.equal(p.el('balanceShortfallConfirmed').checked,false);
   await p.context.creditOrderShortfall();assert.equal(p.credits().length,1);
   p.lookup.shortfall_summary.refunded_iqd=150;p.lookup.shortfall_summary.remaining_iqd=48850;

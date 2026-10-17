@@ -8,13 +8,13 @@ const userId = '22222222-2222-4222-8222-222222222222';
 const orderId = '33333333-3333-4333-8333-333333333333';
 const requestKey = '44444444-4444-4444-8444-444444444444';
 const caseId = '55555555-5555-4555-8555-555555555555';
+const legacyReference = 'fixture-payout-proof-001';
 const validPayload = {
   order_id: orderId,
   amount_iqd: 150,
   request_key: requestKey,
   expected_refunded_iqd: 0,
   reason: 'The recipient received 150 IQD less than the agreed payout.',
-  verification_reference: 'fixture-payout-proof-001',
   confirmed_shortfall: true
 };
 const savedCase = {
@@ -123,7 +123,7 @@ test('a 150 IQD shortfall uses the atomic RPC and the authenticated admin identi
   assert.deepEqual(call.args, {
     p_order_id: orderId, p_admin_id: adminId, p_amount_iqd: 150,
     p_request_key: requestKey, p_expected_refunded_iqd: 0, p_reason: validPayload.reason,
-    p_verification_reference: validPayload.verification_reference, p_confirmed_shortfall: true
+    p_verification_reference: 'shortfall:' + requestKey, p_confirmed_shortfall: true
   });
   assert.equal(app.calls.filter(c => c.write).length, 0, 'The route must not separately change balance or audit rows');
 });
@@ -135,6 +135,54 @@ test('replaying a submission forwards the same key and returns the persisted cas
   assert.equal(first.status, 200);
   assert.deepEqual(retry.data, first.data);
   assert.deepEqual(app.calls.filter(c => c.rpc).map(c => c.args.p_request_key), [requestKey, requestKey]);
+  assert.deepEqual(app.calls.filter(c => c.rpc).map(c => c.args.p_verification_reference),
+    ['shortfall:' + requestKey, 'shortfall:' + requestKey]);
+  assert.equal(app.calls.filter(c => c.write).length, 0);
+});
+
+test('omitted, undefined and null shortfall references produce the same retry payload', async () => {
+  const app = application();
+  for (const payload of [validPayload, { ...validPayload, verification_reference: undefined },
+    { ...validPayload, verification_reference: null }]) {
+    const result = await app.request('balance_credit_shortfall', payload);
+    assert.equal(result.status, 200);
+    assert.deepEqual(result.data.data, savedCase);
+  }
+  const rpcCalls = app.calls.filter(c => c.rpc);
+  assert.equal(rpcCalls.length, 3);
+  for (const call of rpcCalls) {
+    assert.deepEqual(call.args, rpcCalls[0].args);
+    assert.equal(call.args.p_verification_reference, 'shortfall:' + requestKey);
+  }
+  assert.equal(app.calls.filter(c => c.write).length, 0);
+});
+
+test('UUID case changes preserve the generated reference and canonical replay key', async () => {
+  const app = application();
+  const canonicalKey = 'abcdef12-abcd-4abc-8def-abcdef123456';
+  for (const request_key of [canonicalKey.toUpperCase(), canonicalKey]) {
+    const result = await app.request('balance_credit_shortfall', { ...validPayload, request_key });
+    assert.equal(result.status, 200);
+  }
+  const rpcCalls = app.calls.filter(c => c.rpc);
+  assert.equal(rpcCalls.length, 2);
+  assert.deepEqual(rpcCalls[0].args, rpcCalls[1].args);
+  assert.equal(rpcCalls[0].args.p_request_key, canonicalKey);
+  assert.equal(rpcCalls[0].args.p_verification_reference, 'shortfall:' + canonicalKey);
+});
+
+test('legacy manual references keep their existing value and persisted record on replay', async () => {
+  const legacyCase = { ...savedCase, request_key: requestKey, verification_reference: legacyReference };
+  const app = application({ rpcResult: { data: legacyCase, error: null } });
+  for (const verification_reference of ['  ' + legacyReference + '  ', legacyReference]) {
+    const result = await app.request('balance_credit_shortfall', { ...validPayload, verification_reference });
+    assert.equal(result.status, 200);
+    assert.deepEqual(result.data.data, legacyCase);
+  }
+  const rpcCalls = app.calls.filter(c => c.rpc);
+  assert.equal(rpcCalls.length, 2);
+  assert.deepEqual(rpcCalls[0].args, rpcCalls[1].args);
+  assert.equal(rpcCalls[0].args.p_verification_reference, legacyReference);
   assert.equal(app.calls.filter(c => c.write).length, 0);
 });
 
@@ -186,7 +234,7 @@ test('invalid IQD amounts are rejected before any refund RPC', async () => {
   }
 });
 
-test('valid UUIDs, explicit shortfall confirmation and detailed evidence are required', async () => {
+test('valid UUIDs, explicit shortfall confirmation and a detailed reason are required', async () => {
   const invalid = [
     { order_id: 'not-an-order' }, { order_id: null },
     { request_key: 'not-a-key' }, { request_key: undefined },
@@ -194,13 +242,22 @@ test('valid UUIDs, explicit shortfall confirmation and detailed evidence are req
     { expected_refunded_iqd: '0' }, { expected_refunded_iqd: -1 }, { expected_refunded_iqd: 1.5 },
     { expected_refunded_iqd: 1000000001 },
     { confirmed_shortfall: false }, { confirmed_shortfall: 'true' }, { confirmed_shortfall: undefined },
-    { reason: 'too short' }, { reason: null }, { reason: 'x'.repeat(2001) },
-    { verification_reference: 'short' }, { verification_reference: null }, { verification_reference: 'x'.repeat(161) }
+    { reason: 'too short' }, { reason: null }, { reason: 'x'.repeat(2001) }
   ];
   for (const patch of invalid) {
     const app = application();
     const result = await app.request('balance_credit_shortfall', { ...validPayload, ...patch });
     assert.equal(result.status, 400, JSON.stringify(patch));
+    assert.equal(app.calls.filter(c => c.rpc || c.write).length, 0);
+  }
+});
+
+test('explicit malformed optional references are rejected before the shortfall RPC', async () => {
+  for (const verification_reference of ['', '   ', 'short', 'x'.repeat(161), false, 150, {}, []]) {
+    const app = application();
+    const result = await app.request('balance_credit_shortfall', { ...validPayload, verification_reference });
+    assert.equal(result.status, 400, JSON.stringify(verification_reference));
+    assert.equal(result.data.code, 'invalid_evidence');
     assert.equal(app.calls.filter(c => c.rpc || c.write).length, 0);
   }
 });
@@ -234,11 +291,26 @@ test('a full refund cannot run after a partial shortfall credit', async () => {
   const app = application({ order: { shortfall_refunded_iqd: 150 } });
   const result = await app.request('balance_credit_refund', {
     order_id: orderId, reason: validPayload.reason,
-    verification_reference: validPayload.verification_reference, confirmed_received: true
+    verification_reference: legacyReference, confirmed_received: true
   });
   assert.equal(result.status, 409);
   assert.equal(result.data.code, 'partially_refunded');
   assert.equal(app.calls.filter(c => c.rpc || c.write).length, 0);
+});
+
+test('full refunds never receive an automatically generated shortfall reference', async () => {
+  const app = application({ rpcResult: { data: null, error: {
+    code: '22023', message: 'VERIFICATION_REFERENCE_REQUIRED'
+  } } });
+  const result = await app.request('balance_credit_refund', {
+    order_id: orderId, reason: validPayload.reason, request_key: requestKey, confirmed_received: true
+  });
+  assert.equal(result.status, 409);
+  assert.equal(result.data.ok, false);
+  const call = app.calls.find(c => c.rpc);
+  assert.equal(call.rpc, 'ex_admin_reject_and_refund');
+  assert.equal(call.args.p_verification_reference, '');
+  assert.equal(app.calls.filter(c => c.rpc).length, 1);
 });
 
 test('order lookup includes net payout, remaining capacity, fresh balance and shortfall history', async () => {
