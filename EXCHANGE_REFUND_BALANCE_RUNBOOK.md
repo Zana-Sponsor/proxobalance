@@ -18,6 +18,34 @@ Apply `SUPABASE_EXCHANGE_ORDER_SHORTFALL.sql` before the new server/UI because b
 
 `test/exchange-shortfall-auto-reference.sql` verifies generated-reference credits, exact retries, stale requests, legacy references and detailed accounting using synthetic data inside an explicit rollback transaction. It contains no schema changes. `npm test` includes the API and UI regressions. The optional `test/exchange-shortfall.browser.mjs` exercises the real admin/customer HTML, styles and modules with synthetic responses at 390px and 1280px, including pending-request recovery after reload; it blocks external network requests. Set `PROXO_PLAYWRIGHT_MODULE` to an installed Playwright module and, if required, `PROXO_BROWSER_EXECUTABLE` to its Chromium executable. `PROXO_SHORTFALL_SCREENSHOTS` selects a screenshot directory.
 
+## Refund amounts and PDF reports
+
+In the admin Refund and Balance board, choose optional **from/to dates** and **داگرتنی PDFـی گەڕاندنەوەکان**. One PDF includes both credited full refunds and partial shortfall credits, with customer/admin names, order and journal IDs, reasons, credit timestamps, amounts and available recorded balance snapshots. Dates select the **refund credit's `created_at` in Asia/Baghdad**, including the entire end date; PDF timestamps also use Baghdad time. Blank dates select all available history up to the report cutoff.
+
+The board and PDF use these accounting meanings:
+
+| Record | Expected payout | Sent | Unpaid | Credited to balance |
+| --- | --- | --- | --- | --- |
+| Shortfall | Stored `expected_iqd` | Calculated `expected_iqd - refunded_after_iqd` | Cumulative `refunded_after_iqd` at this record | This record's `amount_iqd` |
+| Full refund with `refund_kind = 'failed_payout'` and `confirmed_payout_failed = true` | Valid matching IQD order's `total`, when available | 0 when the linked payout is available; otherwise unknown | Expected payout, when available | Refunded original principal, `amount_iqd` |
+| Admin rejection or other full refund without that confirmation | Valid matching IQD order's `total`, when available | Unknown / not recorded | Unknown / not recorded | Refunded original principal, `amount_iqd` |
+
+Full refund cases do not store the shortfall table's payout or before/after balance snapshots. Their joined order details are contextual data, not frozen refund snapshots. Missing historical amounts stay unknown; an order rejection alone does not establish how much was sent. For repeated shortfall credits, each row describes its own historical state. The PDF total sums each case's **credited amount once**; it never sums cumulative unpaid or calculated sent amounts across records for the same order.
+
+The browser explicitly limits one PDF to **2,000 records combined across both refund types**. More records stop the export with a request to narrow the date range; no truncated PDF is saved. This is separate from the board's recent 150-record lists. The export reads its own paginated history, not the dashboard's cached rows. Empty ranges create no PDF. Duplicate records, inconsistent pages, failed reads or rendering failures stop the download rather than save a partial report.
+
+### Read-only report API
+
+`POST /api/admin` accepts action `balance_refund_report` with payload `{date_from?, date_to?, page: 0, snapshot?}`. Date strings use `YYYY-MM-DD`; omitted, null or empty dates are unbounded. The response contains `{refunds, shortfalls, orders, profiles, page, next_page, has_more, snapshot}`. `orders` and `profiles` are maps keyed by ID. Full cases identify the acting admin through `verified_by`; shortfalls use `admin_id`.
+
+Each page returns up to 100 records from each table, ordered by `created_at DESC, id DESC`, with one additional row fetched to detect continuation. Full cases explicitly require `status = 'credited'`; shortfall rows are immutable committed credits. Continue until `next_page` is null, preserving the original date filters and exact canonical UTC `snapshot` returned by the first page. Pages after zero require that snapshot. Related order/profile reads use batches of at most 100 IDs, and every source and relation batch must succeed.
+
+The backend verifies the current authenticated admin and **refunds permission on every page**; dashboard viewing keeps its existing view permission. The browser also checks account identity and permission while collecting and rendering the report and before saving. Reporting performs no financial writes and requires no new database migration.
+
+`snapshot` is a `created_at <= cutoff` filter, **not a strict MVCC database snapshot**. A transaction started before the cutoff can commit during export and shift offset pages. The browser rejects detected duplicate IDs or inconsistent pages and asks for a fresh export; retry after concurrent refund activity settles. Absence of a detected duplicate does not establish transaction-level snapshot isolation. Related names/order details are current reads rather than historical snapshots.
+
+`npm test` includes the amount, report API and client regressions. They cover history beyond 150 records, Baghdad date boundaries, actor ownership, pagination, permissions and failed relation batches. `test/exchange-refund-report.browser.mjs` verifies the real Kurdish PDF download with synthetic full and partial refunds, repeated credits, a long reason, complete A4 cards and mobile/desktop controls. Set the Playwright variables described above and `PROXO_REPORT_LIB_DIR` to a directory containing the existing html2canvas 1.4.1 bundle as `html2canvas.js`, jsPDF 2.5.1 as `jspdf.js`, and the site's `Rabar_021.woff2` font. `PROXO_REFUND_REPORT_OUTPUT_DIR` selects the test output directory. This test blocks all external requests.
+
 ## Release and verification
 1. Apply Exchange migrations in their original order, followed by `SUPABASE_EXCHANGE_SERVER_ONLY_ORDERS.sql` and `SUPABASE_EXCHANGE_ADMIN_REFUND_REWARD_CAP.sql`. These migrations create no refund credits or reward grants and leave existing financial records unchanged.
 2. Deploy the server and UI together. The Vercel build copies root `index.html`, `exchange-admin.html` and `assets/` into `public/`, including `exchange-reward-pricing.js` before `app.js`.

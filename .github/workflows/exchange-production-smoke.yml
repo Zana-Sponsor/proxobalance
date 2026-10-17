@@ -19,7 +19,11 @@ jobs:
                grep -q 'exchange-customer-polish.css?v=2' current-index.html &&
                curl -fLsS --max-time 15 'https://www.proxobalance.app/exchange-admin' -o current-admin.html &&
                grep -q 'assets/js/admin.js?v=25' current-admin.html &&
-               grep -q 'exchange-balance-admin.js?v=6' current-admin.html &&
+               grep -q 'exchange-balance-admin.js?v=7' current-admin.html &&
+               grep -q 'exchange-refund-report.js?v=1' current-admin.html &&
+               grep -q 'exchange-staff.js?v=8' current-admin.html &&
+               grep -q 'exchange-balance.css?v=4' current-admin.html &&
+               grep -q 'id="balanceRefundReportBtn"' current-admin.html &&
                ! grep -q 'id="balanceShortfallReference"' current-admin.html &&
                grep -q 'assets/js/exchange-insights.js?v=5' current-admin.html &&
                curl -fLsS --max-time 15 'https://www.proxobalance.app/assets/js/exchange-insights.js?v=5' -o current-insights.js &&
@@ -68,7 +72,13 @@ jobs:
           grep -q 'id="moStaffPermissions"' exchange-admin.html
           grep -q 'id="staffDirectoryButton"' exchange-admin.html
           grep -q 'ڕەتکردنەوە و گەڕاندنەوە بۆ باڵانس' exchange-admin.html
-          grep -q 'exchange-balance-admin.js?v=6' exchange-admin.html
+          grep -q 'exchange-balance-admin.js?v=7' exchange-admin.html
+          grep -q 'exchange-refund-report.js?v=1' exchange-admin.html
+          grep -q 'exchange-staff.js?v=8' exchange-admin.html
+          grep -q 'exchange-balance.css?v=4' exchange-admin.html
+          grep -q 'id="balanceRefundReportBtn"' exchange-admin.html
+          grep -q 'id="balanceRefundReportFrom"' exchange-admin.html
+          grep -q 'id="balanceRefundReportTo"' exchange-admin.html
           grep -q 'admin.js?v=25' exchange-admin.html
           grep -q 'exchange-insights.js?v=5' exchange-admin.html
           grep -q 'exchange-profit.js?v=4' exchange-admin.html
@@ -84,10 +94,16 @@ jobs:
           curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/assets/js/exchange-balance.js?v=5" -o exchange-balance.js
           grep -q 'requestBalancePayout' exchange-balance.js
           grep -q 'refreshVisibleBalance' exchange-balance.js
-          curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/assets/js/exchange-balance-admin.js?v=6" -o exchange-balance-admin.js
+          curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/assets/js/exchange-balance-admin.js?v=7" -o exchange-balance-admin.js
           grep -q 'creditVerifiedRefund' exchange-balance-admin.js
           grep -q 'creditOrderShortfall' exchange-balance-admin.js
           grep -q 'balance_credit_shortfall' exchange-balance-admin.js
+          grep -q 'balanceRefundAmounts' exchange-balance-admin.js
+          grep -q 'balanceFullRefundTable' exchange-balance-admin.js
+          curl -fLsS --max-time 25 "$root/assets/js/exchange-refund-report.js?v=1" -o refund-report.js
+          grep -q 'exportBalanceRefundPdf' refund-report.js
+          grep -q 'balance_refund_report' refund-report.js
+          grep -q 'balanceCreateRefundPdf' refund-report.js
           grep -q 'id="balanceShortfallAmount"' exchange-admin.html
           if grep -q 'id="balanceShortfallReference"' exchange-admin.html; then
             echo 'FAIL: the removed shortfall reference field is still published.'
@@ -102,7 +118,8 @@ jobs:
           grep -q 'observeWalletBadges' customer-features.js
           grep -q 'saveRecipient' customer-features.js
           grep -q 'ex_refresh_reward_alerts' customer-features.js
-          curl -fLsS --max-time 25 "$root/assets/js/exchange-staff.js?v=7" -o staff.js
+          curl -fLsS --max-time 25 "$root/assets/js/exchange-staff.js?v=8" -o staff.js
+          grep -q "exportBalanceRefundPdf:'refunds'" staff.js
           grep -q 'staffPageAllowed' staff.js
           grep -q 'staffDirectoryAction' staff.js
           grep -q 'staffPasswordAllowed' staff.js
@@ -146,3 +163,9 @@ jobs:
             exit 1
           fi
           echo "PASS: shortfall balance credits require authentication (HTTP 401)."
+          http="$(curl -sS -L --max-time 25 -o refund-report-response.json -w '%{http_code}' -H 'Content-Type: application/json' --data '{"action":"balance_refund_report","payload":{}}' 'https://www.proxobalance.app/api/admin')"
+          if [ "$http" != "401" ]; then
+            echo "FAIL: unauthenticated refund report returned HTTP $http; expected 401"
+            exit 1
+          fi
+          echo "PASS: refund PDF report data requires authentication (HTTP 401)."
