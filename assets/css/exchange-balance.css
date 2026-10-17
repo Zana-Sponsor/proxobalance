@@ -24,4 +24,42 @@
 .pb-history-row{display:flex;align-items:center;justify-content:space-between;gap:9px;padding:10px 0;border-bottom:1px solid #edf0f5;font-size:12px}
 .pb-history-row small{display:block;color:#758198;font-size:11px}
 .pb-history-row b{font-weight:600;white-space:nowrap;font-size:12px}
+.pb-history-row>div{min-width:0;overflow-wrap:anywhere}
+.pb-history-row .pb-history-title{white-space:normal}
+.pb-history-row .pb-history-credit{color:#15803d}
+/* Admin shortfall credits keep the amount, evidence and audit together. */
+.balance-credit-panel{border:1px solid #dce5f2;background:#f8fbff;border-radius:12px;padding:16px;margin-top:16px;color:#1c2333}
+.balance-credit-panel h4{font-size:15px;font-weight:700;line-height:1.65;margin:0 0 5px;color:#1d4ed8}
+.balance-credit-help{font-size:12px;line-height:1.85;color:#526278;margin:5px 0 12px}
+.balance-credit-panel fieldset{border:0;padding:0;margin:0;min-width:0}
+.balance-credit-panel fieldset:disabled{opacity:.65}
+.balance-credit-panel .modal-btn{max-width:360px;min-height:44px;margin-top:12px;white-space:normal}
+.balance-credit-panel .modal-btn:disabled{opacity:.55;cursor:not-allowed}
+.balance-credit-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.balance-credit-fields>div{min-width:0}
+.balance-credit-preview{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:14px 0}
+.balance-credit-preview:empty,.balance-credit-error:empty,.balance-credit-success:empty{display:none}
+.balance-credit-preview>div{background:#fff;border:1px solid #e2e8f0;border-radius:9px;padding:10px;min-width:0}
+.balance-credit-preview span,.balance-credit-preview strong{display:block;line-height:1.7;overflow-wrap:anywhere}
+.balance-credit-preview span{color:#64748b;font-size:11px}
+.balance-credit-preview strong{font-size:14px;font-weight:700;color:#1e293b}
+.balance-credit-preview .balance-credit-highlight{border-color:#b7dac4;background:#f3fbf6}
+.balance-credit-preview .balance-credit-highlight strong{color:#15803d}
+.balance-credit-preview .balance-credit-preview-note{grid-column:1/-1;font-size:11px;color:#64748b;margin:0;line-height:1.8}
+.balance-credit-confirm{display:flex;align-items:flex-start;gap:9px;font-size:12px;line-height:1.85;margin-top:12px;cursor:pointer}
+.balance-credit-confirm input{flex:0 0 auto;margin-top:4px;width:17px;height:17px;accent-color:#2563eb}
+.balance-credit-error{color:#b91c1c;font-size:12px;line-height:1.8;margin-top:12px;overflow-wrap:anywhere}
+.balance-credit-success{color:#166534;background:#ecfdf3;border:1px solid #b8e4c6;border-radius:9px;padding:12px;font-size:12px;line-height:1.85;margin-top:12px;overflow-wrap:anywhere}
+.balance-credit-history{font-size:12px;line-height:1.8;margin-top:14px}
+.balance-credit-history[hidden]{display:none!important}
+.balance-credit-history summary{cursor:pointer;font-weight:600;padding:8px 0;color:#334155}
+.balance-credit-full{background:#fff;border-color:#e2e8f0}
+.balance-credit-full h4{color:#334155}
+.balance-shortfall-table td{vertical-align:top}
+.balance-shortfall-table small{display:block;font-size:11px;line-height:1.8;color:#64748b;white-space:normal;overflow-wrap:anywhere;max-width:260px}
+.balance-shortfall-table .balance-shortfall-note{white-space:pre-wrap;overflow-wrap:anywhere;min-width:180px;max-width:300px}
+.balance-shortfall-table .balance-shortfall-amount{font-weight:700;color:#15803d;white-space:nowrap}
+.balance-shortfall-table details{font-size:11px;line-height:1.8;margin-top:5px}
+.balance-shortfall-table summary{cursor:pointer;color:#2563eb}
+@media(max-width:600px){.balance-credit-panel{padding:12px}.balance-credit-fields{grid-template-columns:1fr;gap:0}.balance-credit-preview{grid-template-columns:repeat(2,minmax(0,1fr))}.balance-credit-panel .modal-btn{max-width:none;width:100%}}
 @media(max-width:420px){.pb-balance{padding:12px}.pb-bal-grid strong{font-size:13px}}

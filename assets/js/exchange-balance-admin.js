@@ -1,31 +1,146 @@
 // Exchange balance board. All money-changing actions go through /api/admin.
-let _balanceAdminData=null, _balanceChosenOrder=null;
+let _balanceAdminData=null, _balanceChosenOrder=null, _balanceLookupResult=null;
+let _balanceLookupSequence=0, _balanceLookupPending=false, _balanceRefundBusy=false;
+let _balanceShortfallBusy=false, _balanceShortfallRequest=null, _balanceShortfallDraftOrderId=null;
+let _balanceShortfallNeedsRefresh=false;
 function balanceMoney(n){return Number(n||0).toLocaleString('en-US')+' د.ع';}
 function balanceOwner(id){
-  const p=(_balanceAdminData&&_balanceAdminData.profiles||{})[id]||{};
+  const p=(_balanceAdminData&&_balanceAdminData.profiles||{})[id]||
+    _balanceLookupResult?.profiles?.[id]||
+    (_balanceLookupResult?.order?.user_id===id?_balanceLookupResult.profile:null)||{};
   return esc(p.full_name||p.username||p.email||id||'—');
 }
 function balanceDate(s){return s?esc(new Date(s).toLocaleString('en-GB')):'—';}
-function balanceTable(head,rows,cols){
+function balanceTable(head,rows,cols,className=''){
   if(!rows.length)return '<div class="empty">هیچ تۆمارێک نییە</div>';
-  return '<table><thead><tr>'+head.map(h=>'<th>'+esc(h)+'</th>').join('')+
+  return '<table'+(className?' class="'+esc(className)+'"':'')+'><thead><tr>'+head.map(h=>'<th>'+esc(h)+'</th>').join('')+
     '</tr></thead><tbody>'+rows.map(cols).join('')+'</tbody></table>';
+}
+function balanceCanRefund(){return typeof staffCan!=='function'||staffCan('refunds');}
+function balanceWholeIqd(value){
+  const text=String(value??'').trim().replace(/[٠-٩]/g,c=>String(c.charCodeAt(0)-0x660))
+    .replace(/[۰-۹]/g,c=>String(c.charCodeAt(0)-0x6f0));
+  if(!/^(?:\d+|\d{1,3}(?:[,٬]\d{3})+)$/.test(text))return null;
+  const amount=Number(text.replace(/[,٬]/g,''));
+  return Number.isSafeInteger(amount)&&amount>0&&amount<=1000000000?amount:null;
+}
+function balanceShortfallState(){
+  const result=_balanceLookupResult,summary=result?.shortfall_summary,balance=result?.balance;
+  if(!summary||!balance)return null;
+  const expected=Number(summary.expected_iqd),refunded=Number(summary.refunded_iqd);
+  const remaining=Number(summary.remaining_iqd),available=Number(balance.available_iqd);
+  if(![expected,refunded,remaining,available].every(n=>Number.isSafeInteger(n)&&n>=0))return null;
+  return {expected,refunded,remaining,available,eligible:summary.eligible===true};
+}
+function balanceShortfallFormPayload(){
+  return {order_id:_balanceLookupResult?.order?.id,
+    amount_iqd:balanceWholeIqd(document.getElementById('balanceShortfallAmount')?.value),
+    reason:(document.getElementById('balanceShortfallReason')?.value||'').trim(),
+    verification_reference:(document.getElementById('balanceShortfallReference')?.value||'').trim(),
+    confirmed_shortfall:true};
+}
+function balanceShortfallIsRetry(){
+  return !!_balanceShortfallRequest&&_balanceShortfallRequest.fingerprint===JSON.stringify(balanceShortfallFormPayload());
+}
+function balanceSetControls(){
+  const busy=_balanceShortfallBusy||_balanceRefundBusy,allowed=balanceCanRefund();
+  const state=balanceShortfallState();
+  const retry=balanceShortfallIsRetry();
+  const shortfallDisabled=busy||_balanceLookupPending||!allowed||(!state?.eligible&&!retry)||_balanceShortfallNeedsRefresh;
+  const fields=document.getElementById('balanceShortfallFields');if(fields)fields.disabled=shortfallDisabled;
+  const shortfallBtn=document.getElementById('balanceShortfallBtn');
+  if(shortfallBtn){
+    shortfallBtn.disabled=shortfallDisabled;
+    shortfallBtn.textContent=_balanceShortfallBusy?'گەڕاندنەوەکە تۆمار دەکرێت...':
+      retry?'پشکنینەوەی هەمان داواکاری':'گەڕاندنەوەی بڕی کەم نێردراو بۆ باڵانس';
+  }
+  const fullBtn=document.getElementById('balanceCreditBtn');
+  if(fullBtn)fullBtn.disabled=busy||_balanceLookupPending||!allowed||!_balanceChosenOrder;
+  const search=document.getElementById('balanceOrderSearch');if(search)search.disabled=busy;
+  const lookup=document.getElementById('balanceOrderLookupBtn');if(lookup)lookup.disabled=busy||_balanceLookupPending;
+  document.getElementById('balanceShortfallForm')?.setAttribute('aria-busy',String(_balanceShortfallBusy));
+}
+function balanceClearShortfallDraft(){
+  _balanceShortfallRequest=null;_balanceShortfallNeedsRefresh=false;
+  for(const id of ['balanceShortfallAmount','balanceShortfallReason','balanceShortfallReference']){
+    const el=document.getElementById(id);if(el)el.value='';
+  }
+  const confirmed=document.getElementById('balanceShortfallConfirmed');if(confirmed)confirmed.checked=false;
+  for(const id of ['balanceShortfallError','balanceShortfallSuccess']){
+    const el=document.getElementById(id);if(el)el.textContent='';
+  }
+}
+function renderBalanceShortfallPreview(){
+  const out=document.getElementById('balanceShortfallPreview');if(!out)return;
+  const state=balanceShortfallState();
+  if(!state){out.innerHTML='';return;}
+  const amount=balanceWholeIqd(document.getElementById('balanceShortfallAmount')?.value);
+  const valid=amount!==null&&amount<=state.remaining&&Number.isSafeInteger(state.available+amount);
+  const card=(label,value,highlight=false)=>'<div'+(highlight?' class="balance-credit-highlight"':'')+'><span>'+esc(label)+
+    '</span><strong>'+esc(value)+'</strong></div>';
+  out.innerHTML=card('بڕی پێویستی ناردن بۆ کڕیار',balanceMoney(state.expected))+
+    card('پێشتر بۆ باڵانس گەڕاوەتەوە',balanceMoney(state.refunded))+
+    card('ماوەی گەڕاندنەوە',balanceMoney(state.remaining))+
+    card('بڕی ئەم گەڕاندنەوەیە',valid?balanceMoney(amount):'—',true)+
+    card('باڵانسی بەردەستی ئێستا',balanceMoney(state.available))+
+    card('باڵانس دوای گەڕاندنەوە',valid?balanceMoney(state.available+amount):'—',true)+
+    '<p class="balance-credit-preview-note">'+
+    (valid?'بڕی پێویستی ناردن دوای کەمکردنەوەی کۆی گەڕاوەکان: '+balanceMoney(state.remaining-amount)+' · ':'')+
+    'پێشبینینە؛ باڵانسی کۆتایی لە کاتی تۆمارکردندا دیاری دەکرێت.</p>';
+}
+function balanceAuditTime(iso){
+  if(!iso||!Number.isFinite(new Date(iso).getTime()))return '—';
+  return esc(new Date(iso).toLocaleString('en-GB',{timeZone:'Asia/Baghdad'}))+' (بەغدا)';
+}
+function balanceShortfallTable(rows){
+  return balanceTable(['مامەڵە / کڕیار','بڕی گەڕاوە','کۆی گەڕاوەکان','باڵانسی بەردەست','هۆکار / بەڵگە','ئادمین / بەروار'],rows,r=>
+    '<tr><td><b dir="ltr">'+esc(r.order_code||r.order_id)+'</b><small>'+balanceOwner(r.user_id)+'</small>'+
+      '<details><summary>ناسنامەی تۆمارەکان</summary><small>مامەڵە: <span dir="ltr">'+esc(r.order_id)+'</span></small>'+
+      '<small>گەڕاندنەوە: <span dir="ltr">'+esc(r.id)+'</span></small>'+
+      '<small>تۆماری دارایی: <span dir="ltr">'+esc(r.journal_id)+'</span></small>'+
+      '<small>داواکاری: <span dir="ltr">'+esc(r.request_key)+'</span></small></details></td>'+
+    '<td><span class="balance-shortfall-amount">+'+balanceMoney(r.amount_iqd)+'</span>'+
+      '<small>بڕی پێویستی ناردن: '+balanceMoney(r.expected_iqd)+'</small>'+
+      '<small>دوای کەمکردنەوەی کۆی گەڕاوەکان: '+balanceMoney(Number(r.expected_iqd)-Number(r.refunded_after_iqd))+'</small></td>'+
+    '<td><small>پێش: '+balanceMoney(r.refunded_before_iqd)+'</small><b>دوای: '+balanceMoney(r.refunded_after_iqd)+'</b></td>'+
+    '<td><small>پێش: '+balanceMoney(r.balance_before_iqd)+'</small><b>دوای: '+balanceMoney(r.balance_after_iqd)+'</b></td>'+
+    '<td><div class="balance-shortfall-note">'+esc(r.reason)+'</div><small>بەڵگە: '+esc(r.verification_reference)+'</small></td>'+
+    '<td>'+balanceOwner(r.admin_id)+'<small dir="ltr">'+esc(r.admin_id)+'</small><small>'+balanceAuditTime(r.created_at)+'</small></td></tr>',
+    'balance-shortfall-table');
+}
+function renderBalanceOrderShortfalls(rows){
+  const details=document.getElementById('balanceShortfallOrderDetails');
+  const out=document.getElementById('balanceShortfallOrderHistory');
+  if(details)details.hidden=rows.length===0;
+  if(out)out.innerHTML=balanceShortfallTable(rows);
+}
+function renderBalanceShortfallSuccess(refund){
+  const out=document.getElementById('balanceShortfallSuccess');if(!out)return;
+  if(!refund||typeof refund!=='object'){out.textContent='گەڕاندنەوەکە تۆمار کرا؛ وردەکاری لە مێژوودا بەردەستە.';return;}
+  out.innerHTML='<b>'+balanceMoney(refund.amount_iqd)+' بۆ باڵانسی کڕیار گەڕێندرایەوە.</b>'+
+    '<div>مامەڵە: <span dir="ltr">'+esc(refund.order_code||refund.order_id)+'</span></div>'+
+    '<div>باڵانس پێش تۆمارکردن: '+balanceMoney(refund.balance_before_iqd)+' · دوای: '+balanceMoney(refund.balance_after_iqd)+'</div>'+
+    '<div>کۆی گەڕاوەکانی مامەڵە: '+balanceMoney(refund.refunded_after_iqd)+'</div>'+
+    '<div>تۆماری دارایی: <span dir="ltr">'+esc(refund.journal_id)+'</span></div>'+
+    '<div>'+balanceAuditTime(refund.created_at)+'</div>';
 }
 async function loadBalanceAdmin(){
   try{
     _balanceAdminData=await adminApiRequest('balance_dashboard');
-    const d=_balanceAdminData,balances=d.balances||[],refunds=d.refunds||[],payouts=d.payouts||[],alerts=d.alerts||[];
+    const d=_balanceAdminData,balances=d.balances||[],refunds=d.refunds||[],shortfalls=d.shortfalls||[],payouts=d.payouts||[],alerts=d.alerts||[];
     const total=balances.reduce((sum,r)=>sum+Number(r.available_iqd||0),0);
     const held=balances.reduce((sum,r)=>sum+Number(r.held_iqd||0),0);
     document.getElementById('balanceAdminStats').innerHTML=
       '<div class="ex-note"><b>باڵانسی بەردەست: '+balanceMoney(total)+'</b></div>'+
       '<div class="ex-note"><b>لە چاوەڕوانیدا: '+balanceMoney(held)+'</b></div>'+
       '<div class="ex-note"><b>ڕیفاوندەکان: '+refunds.length+'</b></div>'+
+      '<div class="ex-note"><b>تۆماری کەم نێردراوی پیشاندراو: '+shortfalls.length+'</b></div>'+
       '<div class="ex-note"><b>داواکارییە چاوەڕوانەکان: '+payouts.filter(p=>p.status==='pending'||p.status==='processing').length+'</b></div>'+
       '<div class="ex-note"><b>ناردنی باڵانس: '+(d.config?.payouts_enabled?'چالاک (پەسەندکردنی دەستی)':'ناچالاک تا پشکنینی یاسایی')+'</b></div>';
     const rec=d.reconciliation||{};
     const discrepancies=Number(rec.unbalanced_journals||0)+Number(rec.balance_mismatches||0)+
       Number(rec.held_payout_mismatches||0)+Number(rec.unlinked_refunds||0)+
+      Number(rec.unlinked_shortfalls||0)+Number(rec.shortfall_amount_mismatches||0)+
       (rec.clearing_mismatch?1:0);
     document.getElementById('balanceAdminStats').innerHTML+=
       '<div class="ex-note" style="color:'+(discrepancies?'#b91c1c':'#15803d')+'"><b>'+
@@ -46,6 +161,8 @@ async function loadBalanceAdmin(){
       '<tr><td>'+balanceOwner(r.user_id)+'</td><td><span dir="ltr">'+esc(r.order_id)+'</span></td>'+
       '<td>'+balanceMoney(r.amount_iqd)+'</td><td>'+esc(r.bank_verification_reference)+'</td>'+
       '<td>'+esc(r.failure_reason)+'</td><td>'+balanceDate(r.created_at)+'</td></tr>');
+    const shortfallList=document.getElementById('balanceShortfallList');
+    if(shortfallList)shortfallList.innerHTML=balanceShortfallTable(shortfalls);
     document.getElementById('balanceAccountList').innerHTML=balanceTable(
       ['بەکارهێنەر','باڵانسی بەردەست','پارەی گیراو','دوایین نوێکردنەوە'],balances,r=>
       '<tr><td>'+balanceOwner(r.user_id)+'</td><td>'+balanceMoney(r.available_iqd)+'</td>'+
@@ -61,43 +178,95 @@ async function loadBalanceAdmin(){
   }
 }
 function balanceResetChosen(){
-  _balanceChosenOrder=null;
-  const btn=document.getElementById('balanceCreditBtn');
-  if(btn)btn.disabled=true;
+  ++_balanceLookupSequence;_balanceLookupPending=false;
+  _balanceChosenOrder=null;_balanceLookupResult=null;
   document.getElementById('balanceFoundOrder').textContent='مامەڵەی پشتڕاستکراوە هەڵنەبژێردراوە';
+  const eligibility=document.getElementById('balanceShortfallEligibility');
+  if(eligibility)eligibility.textContent='سەرەتا مامەڵەیەکی پەسەندکراو هەڵبژێرە.';
+  const details=document.getElementById('balanceShortfallOrderDetails');if(details)details.hidden=true;
+  const history=document.getElementById('balanceShortfallOrderHistory');if(history)history.textContent='';
+  renderBalanceShortfallPreview();balanceSetControls();
 }
-document.getElementById('balanceOrderSearch')?.addEventListener('input',balanceResetChosen);
+document.getElementById('balanceOrderSearch')?.addEventListener('input',()=>{
+  if(_balanceShortfallBusy||_balanceRefundBusy)return;
+  balanceClearShortfallDraft();balanceResetChosen();
+});
+document.getElementById('balanceOrderSearch')?.addEventListener('keydown',event=>{
+  if(event.key==='Enter'){event.preventDefault();lookupBalanceOrder();}
+});
+document.getElementById('balanceShortfallForm')?.addEventListener('input',()=>{
+  if(_balanceShortfallBusy)return;
+  document.getElementById('balanceShortfallError').textContent='';
+  document.getElementById('balanceShortfallSuccess').textContent='';
+  renderBalanceShortfallPreview();balanceSetControls();
+});
 async function openOrderRefund(id){
+  if(_balanceShortfallBusy||_balanceRefundBusy)return;
   const order=allOrders.find(o=>String(o.id)===String(id));
   closeMo('moOrderDetail');goPage('balance');
+  balanceClearShortfallDraft();
   document.getElementById('balanceOrderSearch').value=order?.order_code||id;
   document.getElementById('balanceFundsVerified').checked=false;
   document.getElementById('balanceBankReference').value='';
   document.getElementById('balanceRefundReason').value='';
   await lookupBalanceOrder();
 }
-async function lookupBalanceOrder(){
+async function openOrderShortfall(id){
+  if(_balanceShortfallBusy||_balanceRefundBusy)return;
+  if(!balanceCanRefund()){showToast('مۆڵەتی گەڕاندنەوەی پارەت نییە','rd');return;}
+  const order=allOrders.find(o=>String(o.id)===String(id));
+  closeMo('moOrderDetail');goPage('balance');
+  balanceClearShortfallDraft();
+  document.getElementById('balanceOrderSearch').value=order?.order_code||id;
+  await lookupBalanceOrder();
+  document.getElementById('balanceShortfallPanel')?.scrollIntoView({behavior:'smooth',block:'start'});
+  if(balanceShortfallState()?.eligible)document.getElementById('balanceShortfallAmount')?.focus({preventScroll:true});
+}
+async function lookupBalanceOrder(allowDuringCredit=false){
+  if((_balanceShortfallBusy||_balanceRefundBusy)&&allowDuringCredit!==true)return;
   balanceResetChosen();
+  const sequence=_balanceLookupSequence;
   const out=document.getElementById('balanceFoundOrder');
   const err=document.getElementById('balanceRefundError');err.textContent='';
+  const search=document.getElementById('balanceOrderSearch').value.trim();
+  if(!search){err.textContent='ئایدی یان کۆدی مامەڵە بنووسە.';return;}
+  _balanceLookupPending=true;balanceSetControls();out.textContent='مامەڵە بار دەکرێت...';
   try{
-    const result=await adminApiRequest('balance_lookup_order',{
-      search:document.getElementById('balanceOrderSearch').value.trim()
-    });
+    const result=await adminApiRequest('balance_lookup_order',{search});
+    if(sequence!==_balanceLookupSequence)return;
     const o=result.order,p=result.profile||{};
-    const eligible=!result.refund&&o.status!=='پەسەندکرا'&&!o.payout_receipt_url&&(!!o.receipt_url||!!o.balance_debit_journal_id)&&o.from_method!=='USDT'&&o.to_method!=='USDT';
-    out.innerHTML='<div><b>'+esc(o.order_code)+'</b> — '+esc(p.full_name||p.email||o.user_id)+'</div>'+
-      '<div>بڕی پارە: <b>'+balanceMoney(o.amount)+'</b> | '+esc(o.from_method)+' → '+esc(o.to_method)+'</div>'+
+    if(_balanceShortfallDraftOrderId!==o.id)balanceClearShortfallDraft();
+    _balanceShortfallDraftOrderId=o.id;_balanceShortfallNeedsRefresh=false;_balanceLookupResult=result;
+    const shortfall=balanceShortfallState();
+    const eligible=!result.refund&&!(result.shortfalls||[]).length&&o.status!=='پەسەندکرا'&&!o.payout_receipt_url&&(!!o.receipt_url||!!o.balance_debit_journal_id)&&o.from_method!=='USDT'&&o.to_method!=='USDT';
+    out.innerHTML='<div><b>'+esc(o.order_code||o.id)+'</b> — '+esc(p.full_name||p.email||o.user_id)+'</div>'+
+      '<div>بڕی سەرەتایی: <b>'+balanceMoney(o.amount)+'</b> | '+esc(o.from_method)+' → '+esc(o.to_method)+'</div>'+
+      '<div>بڕی پێویستی ناردن بۆ کڕیار: <b>'+balanceMoney(o.total)+'</b></div>'+
       '<div>بار: '+esc(o.status)+' | '+balanceDate(o.created_at)+'</div>'+
       '<div>'+(o.receipt_url?'<a target="_blank" rel="noopener noreferrer" href="'+esc(o.receipt_url)+'">بینینی پسووڵەی نێرەر</a>':o.balance_debit_journal_id?'کەمکردنەوە لە باڵانس: '+esc(o.balance_debit_journal_id):'بەبێ پسووڵە')+'</div>'+
       (result.refund?'<b style="color:#b91c1c">ئەم مامەڵەیە پێشتر ڕیفاوند کراوە.</b>':'')+
-      (!eligible?'<div style="color:#b91c1c">ئەم مامەڵەیە بۆ گەڕاندنەوە بۆ باڵانس گونجاو نییە.</div>':'');
+      (!eligible&&!shortfall?.eligible?'<div style="color:#b91c1c">ئەم مامەڵەیە ئێستا بۆ گەڕاندنەوەی پارە گونجاو نییە.</div>':'');
     _balanceChosenOrder=eligible?o:null;
     if(eligible&&o.balance_debit_journal_id)document.getElementById('balanceBankReference').value='balance-debit:'+o.balance_debit_journal_id;
-    document.getElementById('balanceCreditBtn').disabled=!eligible;
-  }catch(e){out.textContent='مامەڵە نەدۆزرایەوە';err.textContent=e.message;}
+    const eligibility=document.getElementById('balanceShortfallEligibility');
+    if(eligibility)eligibility.textContent=!balanceCanRefund()?'مۆڵەتی گەڕاندنەوەی پارەت نییە.':
+      shortfall?.eligible?'زۆرترین بڕی گەڕاندنەوەی ماوە: '+balanceMoney(shortfall.remaining)+'؛ مامەڵەکە پەسەندکراو دەمێنێتەوە.':
+      shortfall?.remaining===0&&shortfall?.refunded>0?'هەموو بڕی پێویستی ناردن پێشتر بۆ باڵانس گەڕاوەتەوە.':
+      o.status!=='پەسەندکرا'?'ئەم کردارە بۆ مامەڵەی پەسەندکراوە.':
+      o.from_method==='USDT'||o.to_method==='USDT'?'گەڕاندنەوەی بڕی کەم نێردراو تەنها بۆ مامەڵەکانی دینار بەردەستە.':
+      'ئەم مامەڵەیە بۆ گەڕاندنەوەی بڕی کەم نێردراو گونجاو نییە؛ زانیارییەکان نوێ بکەرەوە.';
+    const posted=(result.shortfalls||[]).find(r=>r.request_key===_balanceShortfallRequest?.payload.request_key);
+    if(posted&&_balanceShortfallRequest){balanceClearShortfallDraft();renderBalanceShortfallSuccess(posted);}
+    renderBalanceShortfallPreview();renderBalanceOrderShortfalls(result.shortfalls||[]);
+  }catch(e){
+    if(sequence!==_balanceLookupSequence)return;
+    out.textContent='نەتوانرا مامەڵەکە بار بکرێت';err.textContent=e.message;
+  }finally{
+    if(sequence===_balanceLookupSequence){_balanceLookupPending=false;balanceSetControls();}
+  }
 }
 async function creditVerifiedRefund(){
+  if(_balanceShortfallBusy||_balanceRefundBusy)return;
   const err=document.getElementById('balanceRefundError');err.textContent='';
   if(!_balanceChosenOrder){err.textContent='سەرەتا مامەڵەیەکی گونجاو هەڵبژێرە';return;}
   const ref=document.getElementById('balanceBankReference').value.trim();
@@ -107,18 +276,72 @@ async function creditVerifiedRefund(){
     err.textContent='ژمارەی بەڵگە، هۆکاری گەڕاندنەوە و پشتڕاستکردنەوەی وەرگرتنی پارە پێویستن.';return;
   }
   if(!confirm('ئەم مامەڵەیە ڕەت بکرێتەوە و '+balanceMoney(_balanceChosenOrder.amount)+' بگەڕێتەوە بۆ باڵانسی کڕیار؟'))return;
-  const btn=document.getElementById('balanceCreditBtn');btn.disabled=true;
+  const orderId=_balanceChosenOrder.id;
+  _balanceRefundBusy=true;balanceSetControls();
   try{
     await adminApiRequest('balance_credit_refund',{
-      order_id:_balanceChosenOrder.id,verification_reference:ref,reason,
+      order_id:orderId,verification_reference:ref,reason,
       confirmed_received
     });
     showToast('ڕیفاوند و تۆماری دارایی بە سەرکەوتوویی ئەنجام درا','gr');
     document.getElementById('balanceBankReference').value='';
     document.getElementById('balanceRefundReason').value='';
     document.getElementById('balanceFundsVerified').checked=false;
-    await lookupBalanceOrder();await loadBalanceAdmin();
-  }catch(e){err.textContent=e.message;btn.disabled=false;}
+    await lookupBalanceOrder(true);await loadBalanceAdmin();
+  }catch(e){err.textContent=e.message;}
+  finally{_balanceRefundBusy=false;balanceSetControls();}
+}
+async function creditOrderShortfall(event){
+  event?.preventDefault();
+  if(_balanceShortfallBusy||_balanceRefundBusy||_balanceLookupPending)return;
+  const err=document.getElementById('balanceShortfallError');err.textContent='';
+  const state=balanceShortfallState(),order=_balanceLookupResult?.order;
+  if(!balanceCanRefund()){err.textContent='مۆڵەتی گەڕاندنەوەی پارەت نییە.';return;}
+  if(_balanceShortfallNeedsRefresh){err.textContent='سەرەتا «دۆزینەوە» دابگرە بۆ نوێکردنەوەی زانیاریی مامەڵە.';return;}
+  const retry=balanceShortfallIsRetry();
+  if(!state||!order||(!state.eligible&&!retry)){err.textContent='سەرەتا مامەڵەیەکی پەسەندکراو و گونجاو هەڵبژێرە.';return;}
+  const amount=balanceWholeIqd(document.getElementById('balanceShortfallAmount').value);
+  if(amount===null||(!retry&&amount>state.remaining)||!Number.isSafeInteger(state.available+amount)){
+    err.textContent='بڕێکی تەواوی دینار بنووسە، لە 1 تا '+balanceMoney(Math.min(state.remaining,1000000000))+'.';return;
+  }
+  const reason=document.getElementById('balanceShortfallReason').value.trim();
+  const verification_reference=document.getElementById('balanceShortfallReference').value.trim();
+  if(reason.length<10||reason.length>2000){err.textContent='هۆکاری ڕوون بنووسە (لە 10 تا 2,000 پیت).';return;}
+  if(verification_reference.length<6||verification_reference.length>160){err.textContent='ژمارە یان بەڵگەی پشتڕاستکردنەوە بنووسە (لە 6 تا 160 پیت).';return;}
+  if(!document.getElementById('balanceShortfallConfirmed').checked){err.textContent='نەگەیشتنی ئەم بڕە بە کڕیار پشتڕاست بکەرەوە.';return;}
+  const payload=balanceShortfallFormPayload();
+  const fingerprint=JSON.stringify(payload);
+  const p=_balanceLookupResult.profile||{};
+  if(!confirm((retry?'هەمان داواکاری پێشوو دووبارە دەپشکنرێت؛ ئەگەر تۆمار کرابێت دووبارە باڵانس زیاد ناکرێت.\n':'')+
+    'بۆ مامەڵەی '+(order.order_code||order.id)+'\n'+
+    'کڕیار: '+(p.full_name||p.email||order.user_id)+'\n'+
+    'بڕی گەڕاندنەوە: '+balanceMoney(amount)+'\n'+
+    'کۆی گەڕاوەکان دوای ئەم کردارە: '+balanceMoney((retry?_balanceShortfallRequest.payload.expected_refunded_iqd:state.refunded)+amount)+'\n'+
+    'باڵانسی ئێستا: '+balanceMoney(state.available)+'\n'+
+    (retry?'':'باڵانسی پێشبینیکراو: '+balanceMoney(state.available+amount)+'\n')+
+    'باری مامەڵە پەسەندکراو دەمێنێتەوە. گەڕاندنەوەکە تۆمار بکرێت؟'))return;
+  if(!_balanceShortfallRequest||_balanceShortfallRequest.fingerprint!==fingerprint){
+    _balanceShortfallRequest={fingerprint,payload:{...payload,expected_refunded_iqd:state.refunded,request_key:crypto.randomUUID()}};
+  }
+  _balanceShortfallBusy=true;balanceSetControls();
+  document.getElementById('balanceShortfallSuccess').textContent='';
+  try{
+    const refund=await adminApiRequest('balance_credit_shortfall',_balanceShortfallRequest.payload);
+    balanceClearShortfallDraft();
+    await lookupBalanceOrder(true);await loadBalanceAdmin();
+    showToast('بڕی کەم نێردراو بۆ باڵانسی کڕیار گەڕێندرایەوە و تۆمار کرا','gr');
+    renderBalanceShortfallSuccess(refund);
+  }catch(e){
+    const failure=String(e.code||'')+' '+String(e.message||'');
+    if(/REFUND_STATE_CHANGED|SHORTFALL_STATE_CHANGED|STALE|stale/.test(failure)){
+      _balanceShortfallNeedsRefresh=true;_balanceShortfallRequest=null;
+      document.getElementById('balanceShortfallConfirmed').checked=false;
+      err.textContent='زانیاریی گەڕاندنەوەی ئەم مامەڵەیە گۆڕاوە. «دۆزینەوە» دابگرە، بڕە نوێیەکان بپشکنە و دووبارە پشتڕاست بکەرەوە.';
+    }else{
+      err.textContent=e.message||'نەتوانرا گەڕاندنەوەکە تۆمار بکرێت.';
+      if(!e.status||e.status>=500)err.textContent+=' بۆ دووبارە هەوڵدان، هەمان زانیاری بەکاربهێنە.';
+    }
+  }finally{_balanceShortfallBusy=false;balanceSetControls();}
 }
 async function startBalancePayout(id){
   const p=(_balanceAdminData?.payouts||[]).find(x=>x.id===id&&x.status==='pending');

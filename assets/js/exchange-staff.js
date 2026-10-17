@@ -28,6 +28,7 @@ function applyStaffUI(){
   approveOrder:'approve_orders',showRejectReason:'approve_orders',confirmRejectOrder:'approve_orders',
   openOrderCorrectionRequest:'approve_orders',confirmOrderCorrectionRequest:'approve_orders',
   openOrderRefund:'refunds',creditVerifiedRefund:'refunds',cancelBalancePayout:'refunds',
+  openOrderShortfall:'refunds',creditOrderShortfall:'refunds',
   abortProcessingPayout:'refunds',claimBalancePayout:'approve_orders',reviewBalancePayout:'approve_orders',
   startBalancePayout:'approve_orders',completeBalancePayout:'approve_orders',saveUserReward:'manage_rewards',revokeUserReward:'manage_rewards',
   openWalletModal:'manage_fees',openWalletBadge:'manage_fees',saveWallet:'manage_fees',deleteWallet:'manage_fees',

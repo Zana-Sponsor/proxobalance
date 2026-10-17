@@ -46,6 +46,7 @@ const STATUS_NEEDS_CORRECTION = 'پێویستی بە ڕاستکردنەوەیە'
 const STATUS_CORRECTED = 'ڕاستکراوەتەوە';
 const REVIEWABLE_ORDER_STATUSES = new Set([STATUS_PENDING, STATUS_CORRECTED]);
 const SUPPORT_STATUSES = new Set(['open', 'in_progress', 'resolved', 'closed']);
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 function supportStatusLabel(status) {
   return status === 'open' ? 'نوێ'
@@ -116,7 +117,8 @@ export function assertStaffAction(profile,action){
     list_order_correction_history:'view',list_rewards:'view',
     approve_order:'approve_orders',reject_order:'approve_orders',request_order_correction:'approve_orders',
     save_order_note:'approve_orders',save_payout_receipt:'approve_orders',
-    balance_credit_refund:'refunds',balance_cancel_payout:'refunds',balance_abort_processing:'refunds',
+    balance_credit_refund:'refunds',balance_credit_shortfall:'refunds',
+    balance_cancel_payout:'refunds',balance_abort_processing:'refunds',
     balance_claim_payout:'approve_orders',balance_mark_payout_paid:'approve_orders',
     grant_reward:'manage_rewards',revoke_reward:'manage_rewards'
   };
@@ -163,24 +165,27 @@ const actions = {
   },
 
   // Refund credits and wallet payouts are committed atomically by service-only
-  // PostgreSQL RPCs. A browser never chooses a balance delta.
+  // PostgreSQL RPCs. The database validates the order and any shortfall amount;
+  // a browser never chooses the credited account or its resulting balance.
   async balance_dashboard(_payload,_ctx) {
-    const [balances,refunds,payouts,alerts,config] = await Promise.all([
+    const [balances,refunds,shortfalls,payouts,alerts,config] = await Promise.all([
       db.from('ex_customer_balances').select('*').or('available_iqd.gt.0,held_iqd.gt.0').order('updated_at',{ascending:false}).limit(150),
       db.from('ex_refund_cases').select('*').order('created_at',{ascending:false}).limit(150),
+      db.from('ex_order_shortfall_refunds').select('*').order('created_at',{ascending:false}).limit(150),
       db.from('ex_payout_requests').select('*').order('created_at',{ascending:false}).limit(150),
       db.from('ex_balance_risk_alerts').select('*').eq('status','open').order('created_at',{ascending:false}).limit(100),
       db.from('ex_balance_config').select('*').eq('id',true).single()
     ]);
-    for(const r of [balances,refunds,payouts,alerts,config]) if(r.error)throw r.error;
+    for(const r of [balances,refunds,shortfalls,payouts,alerts,config]) if(r.error)throw r.error;
     const ids=[...new Set([...(balances.data||[]),...(refunds.data||[]),
-      ...(payouts.data||[]),...(alerts.data||[])].map(x=>x.user_id).filter(Boolean))];
+      ...(shortfalls.data||[]),...(payouts.data||[]),...(alerts.data||[])]
+      .flatMap(x=>[x.user_id,x.admin_id]).filter(Boolean))];
     const names=ids.length?await db.from('ex_profiles').select('id,full_name,username,email').in('id',ids):{data:[],error:null};
     if(names.error)throw names.error;
     const reconciliation=await db.rpc('ex_admin_balance_reconcile',{p_admin_id:_ctx.user.id});
     if(reconciliation.error)throw reconciliation.error;
     const profiles=Object.fromEntries((names.data||[]).map(p=>[p.id,p]));
-    return {balances:balances.data||[],refunds:refunds.data||[],
+    return {balances:balances.data||[],refunds:refunds.data||[],shortfalls:shortfalls.data||[],
       payouts:payouts.data||[],alerts:alerts.data||[],config:config.data,profiles,
       reconciliation:reconciliation.data};
   },
@@ -190,25 +195,51 @@ const actions = {
     if(!/^(?:[0-9a-f-]{36}|P[A-Z0-9]{11})$/i.test(q))
       throw {status:400,code:'invalid_order',message:'Enter an exact order code or UUID'};
     let query=db.from('ex_orders')
-      .select('id,order_code,user_id,amount,total,fee,from_method,to_method,receipt_url,receipt_hash,payout_receipt_url,status,created_at,decided_at,balance_refunded_at,balance_debit_journal_id')
+      .select('id,order_code,user_id,amount,total,fee,from_method,to_method,receipt_url,receipt_hash,payout_receipt_url,status,created_at,decided_at,balance_refunded_at,balance_debit_journal_id,shortfall_refunded_iqd')
       .limit(1);
     query=/^[0-9a-f-]{36}$/i.test(q)?query.eq('id',q):query.eq('order_code',q.toUpperCase());
     const {data:order,error}=await query.maybeSingle();
     if(error)throw error;
     if(!order)throw {status:404,code:'order_not_found',message:'Order not found'};
-    const [p,r]=await Promise.all([
+    const [p,r,s,b]=await Promise.all([
       db.from('ex_profiles').select('id,full_name,username,email').eq('id',order.user_id).maybeSingle(),
       db.from('ex_refund_cases').select('id,status,amount_iqd,created_at,bank_verification_reference')
-        .eq('order_id',order.id).maybeSingle()
+        .eq('order_id',order.id).maybeSingle(),
+      db.from('ex_order_shortfall_refunds').select('*').eq('order_id',order.id)
+        .order('created_at',{ascending:false}).limit(150),
+      db.from('ex_customer_balances').select('user_id,available_iqd,held_iqd,updated_at')
+        .eq('user_id',order.user_id).maybeSingle()
     ]);
-    if(p.error)throw p.error;if(r.error)throw r.error;
-    return {order,profile:p.data,refund:r.data};
+    for(const result of [p,r,s,b])if(result.error)throw result.error;
+    const adminIds=[...new Set((s.data||[]).map(row=>row.admin_id).filter(Boolean))];
+    const actors=adminIds.length?await db.from('ex_profiles').select('id,full_name,username,email')
+      .in('id',adminIds):{data:[],error:null};
+    if(actors.error)throw actors.error;
+    const profiles=Object.fromEntries([...(p.data?[p.data]:[]),...(actors.data||[])].map(row=>[row.id,row]));
+    const expected=Number(order.total),refunded=Number(order.shortfall_refunded_iqd||0);
+    let code=null;
+    if(order.balance_refunded_at||r.data)code='already_refunded';
+    else if(order.status!==STATUS_APPROVED)code='order_not_approved';
+    else if(order.from_method==='USDT'||order.to_method==='USDT')code='iqd_orders_only';
+    else if(!order.receipt_url&&!order.balance_debit_journal_id)code='original_funds_proof_required';
+    else if(!Number.isSafeInteger(expected)||expected<=0||!Number.isSafeInteger(refunded)||refunded<0)
+      code='invalid_payout_amount';
+    else if(refunded>=expected)code='no_remaining_shortfall';
+    return {order,profile:p.data,profiles,refund:r.data,shortfalls:s.data||[],
+      balance:b.data||{user_id:order.user_id,available_iqd:0,held_iqd:0,updated_at:null},
+      shortfall_summary:{eligible:code===null,code,expected_iqd:expected,
+        refunded_iqd:refunded,remaining_iqd:Math.max(0,expected-refunded)}};
   },
 
   async balance_credit_refund({order_id,verification_reference,reason,failure_reason,
     confirmed_received},ctx){
     if(confirmed_received!==true)
       throw {status:400,code:'confirmation_required',message:'Confirm that customer funds were received'};
+    const existing=await db.from('ex_orders').select('id,shortfall_refunded_iqd')
+      .eq('id',order_id).maybeSingle();
+    if(existing.error)throw existing.error;
+    if(Number(existing.data?.shortfall_refunded_iqd||0)>0)
+      throw {status:409,code:'partially_refunded',message:'An order with a shortfall credit cannot receive a full refund'};
     const {data,error}=await db.rpc('ex_admin_reject_and_refund',{
       p_order_id:order_id,p_admin_id:ctx.user.id,
       p_verification_reference:String(verification_reference||'').trim().slice(0,160),
@@ -226,6 +257,48 @@ const actions = {
       throw {status:409,code:error.code||'refund_failed',message:error.message};
     }
     return data;
+  },
+
+  async balance_credit_shortfall({order_id,amount_iqd,request_key,expected_refunded_iqd,reason,
+    verification_reference,confirmed_shortfall},ctx){
+    if(typeof order_id!=='string'||!UUID.test(order_id))
+      throw {status:400,code:'invalid_order',message:'A valid order ID is required'};
+    if(typeof request_key!=='string'||!UUID.test(request_key))
+      throw {status:400,code:'invalid_request_key',message:'A valid submission key is required'};
+    if(typeof amount_iqd!=='number'||!Number.isSafeInteger(amount_iqd)||amount_iqd<=0||amount_iqd>1000000000)
+      throw {status:400,code:'invalid_amount',message:'Enter a positive whole number of IQD'};
+    if(typeof expected_refunded_iqd!=='number'||!Number.isSafeInteger(expected_refunded_iqd)||
+      expected_refunded_iqd<0||expected_refunded_iqd>1000000000)
+      throw {status:400,code:'invalid_refund_snapshot',message:'Refresh the order before recording its shortfall'};
+    if(confirmed_shortfall!==true)
+      throw {status:400,code:'confirmation_required',message:'Confirm the actual unpaid shortfall'};
+    const note=typeof reason==='string'?reason.trim():'';
+    const evidence=typeof verification_reference==='string'?verification_reference.trim():'';
+    if(note.length<10||note.length>2000)
+      throw {status:400,code:'invalid_reason',message:'Explain the shortfall in 10 to 2000 characters'};
+    if(evidence.length<6||evidence.length>160)
+      throw {status:400,code:'invalid_evidence',message:'Provide a verification reference of 6 to 160 characters'};
+    // Never generate a new request key on retry. The atomic RPC checks replay
+    // equality, locks the order, caps credits at the net payout and records its
+    // financial case, journal, balance change, audit and notification together.
+    const {data,error}=await db.rpc('ex_admin_credit_shortfall',{
+      p_order_id:order_id.toLowerCase(),p_admin_id:ctx.user.id,p_amount_iqd:amount_iqd,
+      p_request_key:request_key.toLowerCase(),p_expected_refunded_iqd:expected_refunded_iqd,p_reason:note,
+      p_verification_reference:evidence,p_confirmed_shortfall:true
+    });
+    if(error){
+      const stale=/SHORTFALL_STATE_CHANGED/.test(error.message||'');
+      const status=stale?409:error.code==='42501'?403:error.code==='22023'?400:
+        error.code==='P0002'?404:['23505','23514','P0001'].includes(error.code)?409:500;
+      const code=stale?'shortfall_stale':error.code||'shortfall_failed';
+      throw {status,code,
+        message:status===500?'The shortfall could not be saved; retry with the same submission':error.message};
+    }
+    // PostgREST may serialize the composite result as a row or a one-row array.
+    const refund=Array.isArray(data)?(data.length===1?data[0]:null):data;
+    if(!refund||typeof refund!=='object'||Array.isArray(refund)||typeof refund.id!=='string')
+      throw {status:500,code:'shortfall_result_missing',message:'No credit result was returned; retry with the same submission'};
+    return refund;
   },
 
   async balance_claim_payout({payout_id,verification},ctx){
