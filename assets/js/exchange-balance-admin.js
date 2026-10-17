@@ -248,6 +248,7 @@ async function loadBalanceAdmin(){
     const discrepancies=Number(rec.unbalanced_journals||0)+Number(rec.balance_mismatches||0)+
       Number(rec.held_payout_mismatches||0)+Number(rec.unlinked_refunds||0)+
       Number(rec.unlinked_shortfalls||0)+Number(rec.shortfall_amount_mismatches||0)+
+      Number(rec.rounding_settlement_mismatches||0)+
       (rec.clearing_mismatch?1:0);
     document.getElementById('balanceAdminStats').innerHTML+=
       '<div class="ex-note" style="color:'+(discrepancies?'#b91c1c':'#15803d')+'"><b>'+

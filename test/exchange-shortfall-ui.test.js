@@ -379,6 +379,18 @@ test('pending orders retain the existing full rejection/refund action',async()=>
   assert.equal(p.lookup.order.status,'ڕەتکرا');
 });
 
+test('a settlement mismatch prevents the dashboard from claiming that accounting reconciles',async()=>{
+  const p=panel(),request=p.context.adminApiRequest;
+  p.context.adminApiRequest=async(action,payload)=>{
+    const data=await request(action,payload);
+    if(action==='balance_dashboard')data.reconciliation={rounding_settlement_mismatches:1};
+    return data;
+  };
+  await p.context.loadBalanceAdmin();
+  assert.match(p.el('balanceAdminStats').innerHTML,/ئاگاداری: 1 نایەکسانی/);
+  assert.doesNotMatch(p.el('balanceAdminStats').innerHTML,/حسابداری و تۆماری جوڵەکان یەکدەگرنەوە/);
+});
+
 test('customer history joins repeated shortfalls by journal ID and escapes audit text',()=>{
   const out=element();
   const start=customerSource.indexOf('function renderBalanceHistory(){');
