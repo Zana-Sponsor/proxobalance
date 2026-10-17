@@ -135,7 +135,7 @@ declare
   r public.ex_order_shortfall_refunds%rowtype;
   result jsonb; retried jsonb; receipt_result jsonb; v_before_report jsonb; v_report jsonb;
   v_expected numeric; v_invalid numeric; v_role uuid; v_key uuid; v_fail_key uuid:=gen_random_uuid();
-  v_before_balance bigint; v_before_journals bigint; v_before_notifications bigint;
+  v_before_balance bigint; v_before_journals bigint; v_before_notifications bigint; v_affected bigint;
   v_receipt text; v_reward uuid; v_field text;
   v_reward_route text := 'rounding-reward-' || gen_random_uuid()::text;
 begin
@@ -273,7 +273,7 @@ begin
 
   -- A valid IQD recipient can have a fractional USDT source amount.
   insert into public.ex_orders(user_id,from_method,to_method,amount,total,phone,receipt_url)
-    values(f.customer,'USDT',v_dest,7.5,10500,'07700000001','https://example.invalid/usdt-funding.png') returning * into o;
+    values(f.customer,'USDT',v_dest,10000.5,10500,'07700000001','https://example.invalid/usdt-funding.png') returning * into o;
   v_key:=gen_random_uuid();result:=pg_temp.rounding_approve(o,f.approver,v_key);
   if (result->'order'->>'payout_iqd')::bigint<>10000 or (result->'refund'->>'amount_iqd')::bigint<>500 then
     raise exception 'USDT_TO_IQD_NOT_ROUNDED';end if;
@@ -282,7 +282,7 @@ begin
     o.id,f.refund_admin,gen_random_uuid(),'Manual FX exclusion is preserved','fixture-manual-fx'),
     'ORDER_NOT_ELIGIBLE_FOR_SHORTFALL','22023');
   insert into public.ex_orders(user_id,from_method,to_method,amount,total,phone,receipt_url)
-    values(f.customer,'USDT',v_dest,7.5,10500.5,'07700000001','https://example.invalid/usdt-fraction.png') returning * into o;
+    values(f.customer,'USDT',v_dest,10000.5,10500.5,'07700000001','https://example.invalid/usdt-fraction.png') returning * into o;
   perform pg_temp.rounding_expect_error(format('select public.ex_admin_approve_order_settlement(%L,%L,%L,%L,10500,10000,true,true,null,null)',
     o.id,f.approver,gen_random_uuid(),o.updated_at),'ORDER_NOT_ELIGIBLE_FOR_SETTLEMENT','22023');
   insert into public.ex_orders(user_id,from_method,to_method,amount,total,phone,receipt_url)
@@ -401,6 +401,30 @@ begin
   perform set_config('request.jwt.claim.sub',f.approver::text,true);
   perform set_config('request.jwt.claim.role','authenticated',true);
   execute 'set local role authenticated';
+  if auth.uid() is distinct from f.approver or not public.ex_staff_has('approve_orders')
+    or public.is_ex_admin() or (select count(*) from public.ex_orders where id=o.id)<>1 then
+    raise exception 'LIMITED_APPROVER_RLS_FIXTURE_INVALID';end if;
+  -- Scoped staff approve through the RPC/API; legacy direct UPDATE RLS only
+  -- permits full admins. A zero-row write here must not masquerade as a guard test.
+  update public.ex_orders set status='پەسەندکرا' where id=o.id;
+  get diagnostics v_affected = row_count;
+  if v_affected<>0 or (select status from public.ex_orders where id=o.id) is distinct from 'چاوەڕوانە' then
+    raise exception 'LIMITED_APPROVER_DIRECT_UPDATE_NOT_BLOCKED_BY_RLS';end if;
+  execute 'reset role';
+  perform set_config('request.jwt.claim.role','service_role',true);
+  perform set_config('request.jwt.claim.sub','',true);
+  -- Temporarily elevate this synthetic profile only, to reach the full-admin
+  -- table boundary. All earlier RPC approvals used approve_orders without refunds.
+  update public.ex_profiles set staff_permissions=null where id=f.approver;
+  perform set_config('request.jwt.claim.sub',f.approver::text,true);
+  perform set_config('request.jwt.claim.role','authenticated',true);
+  execute 'set local role authenticated';
+  if auth.uid() is distinct from f.approver or public.is_ex_admin() is distinct from true
+    or (select count(*) from public.ex_orders where id=o.id)<>1 then
+    raise exception 'FULL_ADMIN_RLS_FIXTURE_INVALID';end if;
+  update public.ex_orders set status=status where id=o.id;
+  get diagnostics v_affected = row_count;
+  if v_affected<>1 then raise exception 'FULL_ADMIN_FIXTURE_ROW_NOT_WRITABLE';end if;
   begin
     update public.ex_orders set status='پەسەندکرا' where id=o.id;
     raise exception 'DIRECT_AUTHENTICATED_APPROVAL_BYPASSED_SETTLEMENT';
@@ -408,7 +432,11 @@ begin
     if sqlerrm<>'ATOMIC_IQD_SETTLEMENT_REQUIRED' then raise;end if;
   end;
   execute 'reset role';
+  perform set_config('request.jwt.claim.role','service_role',true);
+  perform set_config('request.jwt.claim.sub','',true);
+  update public.ex_profiles set staff_permissions=array['view','approve_orders'] where id=f.approver;
   perform set_config('request.jwt.claim.sub',f.other_customer::text,true);
+  perform set_config('request.jwt.claim.role','authenticated',true);
   execute 'set local role authenticated';
   if exists(select 1 from public.ex_order_payout_settlements where user_id=f.customer)
     or exists(select 1 from public.ex_order_settlement_receipts where user_id=f.customer) then
