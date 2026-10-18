@@ -64,7 +64,8 @@ class BestMetricAd {
       serviceBudgetUsd: _double(map['service_budget_usd']),
       sortOrder: _int(map['featured_sort'], fallback: 999),
       createdAt: DateTime.tryParse(_text(map['created_at'])),
-      weekStart: DateTime.tryParse(_text(map['featured_week_start'])) ??
+      weekStart:
+          DateTime.tryParse(_text(map['featured_week_start'])) ??
           BestMetricsService.currentBaghdadWeekStart(),
     );
   }
@@ -90,84 +91,105 @@ class BestMetricAd {
   }
 }
 
-class BestMetricsService {
-  BestMetricsService._();
+typedef FeaturedPageLoader = Future<List<BestMetricAd>> Function(
+  String week,
+  int offset,
+  int limit,
+);
 
-  static const Duration _cacheTtl = Duration(minutes: 10);
-  static const int homePreviewLimit = 5;
+/// One bounded, immutable in-memory snapshot shared by Home and Results.
+/// Requests coalesce; invalidated/previous-week responses cannot replace it.
+class BestMetricsRepository {
+  BestMetricsRepository({required this.loadPage, DateTime Function()? now})
+    : now = now ?? DateTime.now;
+  final FeaturedPageLoader loadPage;
+  final DateTime Function() now;
+  static const ttl = Duration(minutes: 10);
+  static const pageSize = 100;
+  List<BestMetricAd>? _rows;
+  String? _week;
+  DateTime? _savedAt;
+  Future<List<BestMetricAd>>? _pending;
+  String? _pendingWeek;
+  int _generation = 0;
 
-  static String? _previewCacheWeek;
-  static DateTime? _previewCachedAt;
-  static List<BestMetricAd>? _cachedPreviewAds;
-
-  static String? _cacheWeek;
-  static DateTime? _cachedAt;
-  static List<BestMetricAd>? _cachedAds;
-
-  static DateTime currentBaghdadWeekStart() {
-    final baghdadNow = DateTime.now().toUtc().add(const Duration(hours: 3));
-    final day = DateTime(baghdadNow.year, baghdadNow.month, baghdadNow.day);
+  static DateTime weekStart(DateTime instant) {
+    final local = instant.toUtc().add(const Duration(hours: 3));
+    final day = DateTime.utc(local.year, local.month, local.day);
     return day.subtract(Duration(days: day.weekday - DateTime.monday));
   }
 
-  static String _dateKey(DateTime value) {
-    String two(int number) => number.toString().padLeft(2, '0');
-    return value.year.toString() +
-        '-' +
-        two(value.month) +
-        '-' +
-        two(value.day);
+  Future<List<BestMetricAd>> fetch({bool forceRefresh = false}) {
+    final clock = now();
+    final week = weekStart(clock).toIso8601String().substring(0, 10);
+    if (!forceRefresh &&
+        _week == week &&
+        _rows != null &&
+        _savedAt != null &&
+        clock.difference(_savedAt!) < ttl)
+      return Future.value(_rows);
+    if (_pending != null && _pendingWeek == week) return _pending!;
+    final generation = ++_generation;
+    _pendingWeek = week;
+    final request = _readAll(week)
+        .then((rows) {
+          if (generation == _generation) {
+            _rows = rows;
+            _week = week;
+            _savedAt = now();
+          }
+          return rows;
+        })
+        .whenComplete(() {
+          if (generation == _generation) {
+            _pending = null;
+            _pendingWeek = null;
+          }
+        });
+    _pending = request;
+    return request;
   }
 
-  /// Lightweight query used only by Home. It deliberately requests a maximum
-  /// of five rows so the complete weekly list is not downloaded or built while
-  /// the user is scrolling the dashboard.
+  Future<List<BestMetricAd>> _readAll(String week) async {
+    final rows = <String, BestMetricAd>{};
+    for (var offset = 0; ; offset += pageSize) {
+      final page = await loadPage(week, offset, pageSize);
+      for (final ad in page) {
+        rows[ad.id] = ad;
+      }
+      if (page.length < pageSize) break;
+    }
+    return List<BestMetricAd>.unmodifiable(rows.values);
+  }
+
+  void invalidate() {
+    _generation++;
+    _rows = null;
+    _week = null;
+    _savedAt = null;
+    _pending = null;
+    _pendingWeek = null;
+  }
+}
+
+class BestMetricsService {
+  BestMetricsService._();
+  static final _repository = BestMetricsRepository(loadPage: _loadPage);
+  static DateTime currentBaghdadWeekStart() =>
+      BestMetricsRepository.weekStart(DateTime.now());
+
   static Future<List<BestMetricAd>> fetchHomePreview({
     bool forceRefresh = false,
-  }) async {
-    final weekStart = currentBaghdadWeekStart();
-    final weekKey = _dateKey(weekStart);
-    final cacheIsFresh = !forceRefresh &&
-        _cachedPreviewAds != null &&
-        _previewCacheWeek == weekKey &&
-        _previewCachedAt != null &&
-        DateTime.now().difference(_previewCachedAt!) < _cacheTtl;
-    if (cacheIsFresh) {
-      return List<BestMetricAd>.unmodifiable(_cachedPreviewAds!);
-    }
-
-    final raw = await supabase
-        .from('pa_featured_ads_public')
-        .select(
-          'id,goal,category,video_link,thumbnail_url,clicks,impressions,'
-          'spend,daily_budget,days,service_budget_usd,featured_sort,'
-          'created_at,featured_week_start,is_featured',
-        )
-        .eq('is_featured', true)
-        .eq('featured_week_start', weekKey)
-        .order('featured_sort', ascending: true)
-        .order('impressions', ascending: false)
-        .limit(homePreviewLimit);
-
-    final rows = _parseRows(raw);
-    _previewCacheWeek = weekKey;
-    _previewCachedAt = DateTime.now();
-    _cachedPreviewAds = rows;
-    return List<BestMetricAd>.unmodifiable(rows);
-  }
-
+  }) => _repository.fetch(forceRefresh: forceRefresh);
   static Future<List<BestMetricAd>> fetchWeeklyResults({
     bool forceRefresh = false,
-  }) async {
-    final weekStart = currentBaghdadWeekStart();
-    final weekKey = _dateKey(weekStart);
-    final cacheIsFresh = !forceRefresh &&
-        _cachedAds != null &&
-        _cacheWeek == weekKey &&
-        _cachedAt != null &&
-        DateTime.now().difference(_cachedAt!) < _cacheTtl;
-    if (cacheIsFresh) return List<BestMetricAd>.unmodifiable(_cachedAds!);
+  }) => _repository.fetch(forceRefresh: forceRefresh);
 
+  static Future<List<BestMetricAd>> _loadPage(
+    String week,
+    int offset,
+    int limit,
+  ) async {
     final raw = await supabase
         .from('pa_featured_ads_public')
         .select(
@@ -176,33 +198,13 @@ class BestMetricsService {
           'created_at,featured_week_start,is_featured',
         )
         .eq('is_featured', true)
-        .eq('featured_week_start', weekKey)
+        .eq('featured_week_start', week)
         .order('featured_sort', ascending: true)
         .order('impressions', ascending: false)
-        .limit(100);
-
-    final rows = _parseRows(raw);
-
-    _cacheWeek = weekKey;
-    _cachedAt = DateTime.now();
-    _cachedAds = rows;
-    return List<BestMetricAd>.unmodifiable(rows);
+        .order('id')
+        .range(offset, offset + limit - 1);
+    return raw.map((row) => BestMetricAd.fromMap(row)).toList(growable: false);
   }
 
-  static List<BestMetricAd> _parseRows(dynamic raw) {
-    return (raw as List)
-        .map((row) => BestMetricAd.fromMap(
-              Map<String, dynamic>.from(row as Map),
-            ))
-        .toList(growable: false);
-  }
-
-  static void invalidateCache() {
-    _previewCacheWeek = null;
-    _previewCachedAt = null;
-    _cachedPreviewAds = null;
-    _cacheWeek = null;
-    _cachedAt = null;
-    _cachedAds = null;
-  }
+  static void invalidateCache() => _repository.invalidate();
 }

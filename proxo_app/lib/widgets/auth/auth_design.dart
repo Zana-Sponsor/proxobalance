@@ -229,6 +229,17 @@ abstract final class AuthStrings {
   static String get signUpTitle => _v('دروستکردنی هەژمار', 'إنشاء حساب');
   static String get signUpSubtitle =>
       _v('بۆ دەستپێکردن، زانیارییەکانت بنووسە.', 'أدخل معلوماتك للبدء.');
+  static String get signupSecurityTitle =>
+      _v('پاراستنی هەژمار', 'حماية الحساب');
+  static String get signupDetailsSubtitle =>
+      _v('ناو و ژمارەی مۆبایلەکەت بنووسە.', 'أدخل اسمك ورقم هاتفك.');
+  static String get signupSecuritySubtitle =>
+      _v('وشەی نهێنییەکی بەهێز هەڵبژێرە.', 'اختر كلمة مرور قوية.');
+  static String get signupFirstStep => _v('هەنگاوی ١ لە ٢', 'الخطوة ١ من ٢');
+  static String get signupSecondStep => _v('هەنگاوی ٢ لە ٢', 'الخطوة ٢ من ٢');
+  static String get recoveryTitle => _v('گەڕاندنەوەی هەژمار', 'استعادة الحساب');
+  static String get newPasswordTitle =>
+      _v('وشەی نهێنیی نوێ', 'كلمة مرور جديدة');
   static String get resetPasswordTitle =>
       _v('گۆڕینی وشەی نهێنی', 'إعادة تعيين كلمة المرور');
   static String get resetPasswordSubtitle => _v(

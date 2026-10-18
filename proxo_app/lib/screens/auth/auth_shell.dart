@@ -1,3 +1,5 @@
+import 'recovery_screen.dart';
+import 'new_password_screen.dart';
 import '../../widgets/proxo_error_stack.dart';
 
 import 'package:proxo_app/l10n/proxo_strings.dart';
@@ -24,7 +26,7 @@ import '../../widgets/auth/auth_design.dart';
 import '../../widgets/auth/auth_otp_field.dart';
 import '../../widgets/auth/auth_widgets.dart';
 import '../../widgets/auth/auth_header.dart';
-import '../../widgets/auth/auth_intro.dart';
+import '../../widgets/auth/auth_swap.dart';
 import '../../widgets/auth/auth_icon.dart';
 import '../../main.dart'
     show
@@ -154,6 +156,7 @@ class AuthShell extends StatefulWidget {
 class _AuthShellState extends State<AuthShell> {
   _Tab _tab = _Tab.login;
   _Step _step = _Step.form;
+  int _signupStage = 0;
   bool _loading = false;
   final _viewScroll = ScrollController(keepScrollOffset: false);
   String _lastScrollViewKey = 'signin';
@@ -768,11 +771,17 @@ class _AuthShellState extends State<AuthShell> {
     });
     final String? nameError = AuthValidators.fullName(name);
     if (nameError != null) {
-      setState(() => _regNameErr = nameError);
+      setState(() {
+        _regNameErr = nameError;
+        _signupStage = 0;
+      });
       return;
     }
     if (!_regPhoneValid) {
-      setState(() => _regPhoneErr = AuthStrings.phoneInvalid);
+      setState(() {
+        _regPhoneErr = AuthStrings.phoneInvalid;
+        _signupStage = 0;
+      });
       return;
     }
     final String? passwordError = AuthValidators.newPassword(pass);
@@ -795,7 +804,10 @@ class _AuthShellState extends State<AuthShell> {
       final bool? exists = await _authService.phoneExists(phone);
       if (!mounted) return;
       if (exists == true) {
-        setState(() => _regPhoneErr = AuthStrings.phoneAlreadyRegistered);
+        setState(() {
+          _regPhoneErr = AuthStrings.phoneAlreadyRegistered;
+          _signupStage = 0;
+        });
         AuthFlowGuard.inOtpFlow = false;
         return;
       }
@@ -1372,7 +1384,7 @@ class _AuthShellState extends State<AuthShell> {
   }
 
   String get _viewKey => switch (_step) {
-    _Step.form => _tab == _Tab.login ? 'signin' : 'signup',
+    _Step.form => _tab == _Tab.login ? 'signin' : 'signup-$_signupStage',
     _Step.otp => 'otp',
     _Step.forgotEmail => 'fpEmail',
     _Step.forgotOtp => 'fpOtp',
@@ -1385,6 +1397,7 @@ class _AuthShellState extends State<AuthShell> {
     setState(() {
       _tab = _Tab.register;
       _step = _Step.form;
+      _signupStage = 0;
       _regNameErr = _regPhoneErr = _regPassErr = _regPass2Err = null;
     });
   }
@@ -1412,51 +1425,23 @@ class _AuthShellState extends State<AuthShell> {
       case _Step.forgotEmail:
         _goToSignIn();
       case _Step.form:
-        if (_tab == _Tab.register) _goToSignIn();
+        if (_tab == _Tab.register) {
+          if (_signupStage > 0) {
+            setState(() => _signupStage = 0);
+          } else {
+            _goToSignIn();
+          }
+        }
     }
   }
 
-  Widget _transitionView(BuildContext context) {
-    final child = AbsorbPointer(
+  Widget _transitionView(BuildContext context) => AuthSwap(
+    child: AbsorbPointer(
       key: ValueKey<String>(_viewKey),
       absorbing: _loading,
       child: _buildCurrentView(),
-    );
-    // A zero-duration AnimatedSize can invalidate itself during layout. Reduced
-    // motion is an immediate replacement, with no animation controller at all.
-    if (MediaQuery.disableAnimationsOf(context)) return child;
-    return AnimatedSize(
-      duration: AuthTokens.viewTransition,
-      curve: AuthTokens.curve,
-      alignment: Alignment.topCenter,
-      child: AnimatedSwitcher(
-        duration: AuthTokens.viewTransition,
-        switchInCurve: const Interval(0.2, 1, curve: Curves.easeOutCubic),
-        switchOutCurve: const Interval(0.6, 1, curve: Curves.easeInCubic),
-        layoutBuilder: (current, previous) => Stack(
-          alignment: Alignment.topCenter,
-          children: [
-            ...previous.map(
-              (w) => IgnorePointer(child: ExcludeSemantics(child: w)),
-            ),
-            if (current != null) current,
-          ],
-        ),
-        transitionBuilder: (child, anim) => FadeTransition(
-          opacity: anim,
-          child: SlideTransition(
-            position: Tween<Offset>(
-              begin: const Offset(0.025, 0),
-              end: Offset.zero,
-            ).animate(anim),
-            textDirection: Directionality.of(context),
-            child: child,
-          ),
-        ),
-        child: child,
-      ),
-    );
-  }
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -1553,39 +1538,8 @@ class _AuthShellState extends State<AuthShell> {
           else
             AuthAlert(message: lockMsg),
 
-          // ── فۆڕمی کەناڵ ────────────────────────────────────────────────
-          // `AnimatedSwitcher` بە فەید + سلایدی سووک. ⚠ `KeyedSubtree` بە
-          // کلیلی کەناڵەکە پێویستە: بەبێ ئەو، `AnimatedSwitcher` هەردوو
-          // فۆڕمەکە وەک هەمان ویدجێت دەبینێت (هەردووکیان `Column`ن) و هیچ
-          // گواستنەوەیەک ناکات.
-          AnimatedSwitcher(
-            duration: MediaQuery.disableAnimationsOf(context)
-                ? Duration.zero
-                : AuthTokens.viewTransition,
-            switchInCurve: Curves.easeOutCubic,
-            switchOutCurve: Curves.easeInCubic,
-            // بەرزایی دوو فۆڕمەکە جیاوازە، بۆیە `AnimatedSize`ـی ناوەوەی
-            // `AnimatedSwitcher` (لەیئاوتبیلدەر) پێویستە تا ستوونەکە
-            // نەبازێت لە کاتی گۆڕیندا.
-            layoutBuilder: (current, previous) => Stack(
-              alignment: AlignmentDirectional.topStart,
-              children: [
-                ...previous.map(
-                  (w) => IgnorePointer(child: ExcludeSemantics(child: w)),
-                ),
-                if (current != null) current,
-              ],
-            ),
-            transitionBuilder: (child, anim) => FadeTransition(
-              opacity: anim,
-              child: SlideTransition(
-                position: Tween<Offset>(
-                  begin: const Offset(0, 0.04),
-                  end: Offset.zero,
-                ).animate(anim),
-                child: child,
-              ),
-            ),
+          AuthSwap(
+            duration: const Duration(milliseconds: 260),
             child: KeyedSubtree(
               key: ValueKey<AuthChannel>(_loginChannel),
               child: _loginChannel == AuthChannel.phone
@@ -1773,170 +1727,199 @@ class _AuthShellState extends State<AuthShell> {
 
   // ── View 2: Sign Up ───────────────────────────────────────────────────────
 
+  void _advanceSignup() {
+    if (_loading) return;
+    final nameError = AuthValidators.fullName(_regNameCtrl.text.trim());
+    final phoneError = _regPhoneValid ? null : AuthStrings.phoneInvalid;
+    setState(() {
+      _regNameErr = nameError;
+      _regPhoneErr = phoneError;
+      if (nameError == null && phoneError == null) _signupStage = 1;
+    });
+    if (nameError == null && phoneError == null)
+      FocusScope.of(context).unfocus();
+  }
+
   Widget _buildSignUpView() {
     return SignupScreen(
       onBack: _back,
+      stage: _signupStage,
       content: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          AuthTextField(
-            controller: _regNameCtrl,
-            focusNode: _regNameFocus,
-            label: AuthStrings.fullNameLabel,
-            hint: AuthStrings.fullNameHint,
-            icon: Icons.person_outline_rounded,
-            error: _regNameErr,
-            keyboardType: TextInputType.name,
-            textInputAction: TextInputAction.next,
-            autofillHints: const [AutofillHints.name],
-            enabled: !_loading,
-            onChanged: (_) {
-              if (_regNameErr != null) setState(() => _regNameErr = null);
-            },
-            trailing: AuthClearButton(
+          if (_signupStage == 0) ...[
+            AuthTextField(
               controller: _regNameCtrl,
               focusNode: _regNameFocus,
-              onCleared: () {
-                if (_regNameErr != null) setState(() => _regNameErr = null);
-              },
-            ),
-          ),
-          const SizedBox(height: AuthTokens.gapBetweenFields),
-
-          AuthTextField(
-            controller: _regPhoneCtrl,
-            focusNode: _regPhoneFocus,
-            label: AuthStrings.phoneLabel,
-            hint: AuthStrings.phoneHint,
-            icon: Icons.phone_iphone_rounded,
-            error: _regPhoneErr,
-            ltr: true,
-            forceLtr: true,
-            keyboardType: TextInputType.phone,
-            textInputAction: TextInputAction.next,
-            autofillHints: const [AutofillHints.telephoneNumber],
-            inputFormatters: <TextInputFormatter>[
-              const IraqPhoneInputFormatter(),
-            ],
-            enabled: !_loading,
-            prefix: Padding(
-              padding: const EdgeInsetsDirectional.only(end: 8),
-              child: ProxoText(
-                AuthStrings.phonePrefix,
-                textDirection: TextDirection.ltr,
-                style: AuthTokens.fieldText.copyWith(
-                  fontWeight: FontWeight.w400,
-                  color: AuthTokens.inkMuted,
-                ),
-              ),
-            ),
-            onChanged: (_) {
-              if (_regPhoneErr != null) setState(() => _regPhoneErr = null);
-            },
-            trailing: AuthClearButton(
-              controller: _regPhoneCtrl,
-              focusNode: _regPhoneFocus,
-              onCleared: () {
-                if (_regPhoneErr != null) setState(() => _regPhoneErr = null);
-              },
-            ),
-          ),
-          const SizedBox(height: AuthTokens.gapBetweenFields),
-
-          ValueListenableBuilder<bool>(
-            valueListenable: _signupPasswordVisible,
-            builder: (context, visible, _) => AuthTextField(
-              controller: _regPassCtrl,
-              forceLtr: true,
-              label: AuthStrings.passwordLabel,
-              hint: AuthStrings.passwordHint,
-              icon: Icons.lock_outline_rounded,
-              error: _regPassErr,
-              obscure: !visible,
-              ltr: true,
+              label: AuthStrings.fullNameLabel,
+              hint: AuthStrings.fullNameHint,
+              icon: Icons.person_outline_rounded,
+              error: _regNameErr,
+              keyboardType: TextInputType.name,
               textInputAction: TextInputAction.next,
-              autofillHints: const [AutofillHints.newPassword],
+              autofillHints: const [AutofillHints.name],
               enabled: !_loading,
               onChanged: (_) {
-                if (_regPassErr != null) setState(() => _regPassErr = null);
+                if (_regNameErr != null) setState(() => _regNameErr = null);
               },
-              trailing: _visibilityToggle(
-                shown: visible,
-                onTap: () => _signupPasswordVisible.value = !visible,
+              trailing: AuthClearButton(
+                controller: _regNameCtrl,
+                focusNode: _regNameFocus,
+                onCleared: () {
+                  if (_regNameErr != null) setState(() => _regNameErr = null);
+                },
               ),
             ),
-          ),
+            const SizedBox(height: AuthTokens.gapBetweenFields),
 
-          const SizedBox(height: AuthTokens.gapBetweenFields),
-          ValueListenableBuilder<TextEditingValue>(
-            valueListenable: _regPassCtrl,
-            builder: (context, value, _) =>
-                PasswordStrengthMeter(password: value.text),
-          ),
+            AuthTextField(
+              controller: _regPhoneCtrl,
+              focusNode: _regPhoneFocus,
+              label: AuthStrings.phoneLabel,
+              hint: AuthStrings.phoneHint,
+              icon: Icons.phone_iphone_rounded,
+              error: _regPhoneErr,
+              ltr: true,
+              forceLtr: true,
+              keyboardType: TextInputType.phone,
+              textInputAction: TextInputAction.done,
+              onSubmitted: (_) => _advanceSignup(),
+              autofillHints: const [AutofillHints.telephoneNumber],
+              inputFormatters: <TextInputFormatter>[
+                const IraqPhoneInputFormatter(),
+              ],
+              enabled: !_loading,
+              prefix: Padding(
+                padding: const EdgeInsetsDirectional.only(end: 8),
+                child: ProxoText(
+                  AuthStrings.phonePrefix,
+                  textDirection: TextDirection.ltr,
+                  style: AuthTokens.fieldText.copyWith(
+                    fontWeight: FontWeight.w400,
+                    color: AuthTokens.inkMuted,
+                  ),
+                ),
+              ),
+              onChanged: (_) {
+                if (_regPhoneErr != null) setState(() => _regPhoneErr = null);
+              },
+              trailing: AuthClearButton(
+                controller: _regPhoneCtrl,
+                focusNode: _regPhoneFocus,
+                onCleared: () {
+                  if (_regPhoneErr != null) setState(() => _regPhoneErr = null);
+                },
+              ),
+            ),
+            const SizedBox(height: AuthTokens.gapBetweenFields),
 
-          const SizedBox(height: AuthTokens.gapBetweenFields),
-          ListenableBuilder(
-            listenable: Listenable.merge([_regPassCtrl, _regPass2Ctrl]),
-            builder: (context, _) => ValueListenableBuilder<bool>(
-              valueListenable: _signupConfirmationVisible,
-              builder: (context, visible, __) => AuthTextField(
-                controller: _regPass2Ctrl,
+            ListenableBuilder(
+              listenable: Listenable.merge([_regNameCtrl, _regPhoneCtrl]),
+              builder: (context, _) => AuthPrimaryButton(
+                key: const ValueKey('signup-next'),
+                label: AuthStrings.signUpButton,
+                enabled:
+                    _regNameCtrl.text.trim().isNotEmpty &&
+                    _regPhoneCtrl.text.trim().isNotEmpty,
+                onPressed: _advanceSignup,
+              ),
+            ),
+          ] else ...[
+            ValueListenableBuilder<bool>(
+              valueListenable: _signupPasswordVisible,
+              builder: (context, visible, _) => AuthTextField(
+                controller: _regPassCtrl,
                 forceLtr: true,
-                label: AuthStrings.confirmPasswordLabel,
+                label: AuthStrings.passwordLabel,
                 hint: AuthStrings.passwordHint,
-                icon: Icons.lock_reset_rounded,
-                error:
-                    _regPass2Err ??
-                    (_confirmMismatch(_regPassCtrl.text, _regPass2Ctrl.text)
-                        ? AuthStrings.errPasswordMismatch
-                        : null),
+                icon: Icons.lock_outline_rounded,
+                error: _regPassErr,
                 obscure: !visible,
                 ltr: true,
-                textInputAction: TextInputAction.done,
+                textInputAction: TextInputAction.next,
+                autofillHints: const [AutofillHints.newPassword],
                 enabled: !_loading,
                 onChanged: (_) {
-                  if (_regPass2Err != null) setState(() => _regPass2Err = null);
+                  if (_regPassErr != null) setState(() => _regPassErr = null);
                 },
-                onSubmitted: (_) => _doRegister(),
                 trailing: _visibilityToggle(
                   shown: visible,
-                  onTap: () => _signupConfirmationVisible.value = !visible,
+                  onTap: () => _signupPasswordVisible.value = !visible,
                 ),
               ),
             ),
-          ),
 
-          const SizedBox(height: AuthTokens.gapBetweenFields),
-          AuthWhatsappConsent(
-            value: _whatsappMarketing,
-            onChanged: _loading
-                ? null
-                : (value) {
-                    setState(() => _whatsappMarketing = value);
-                  },
-          ),
-          const SizedBox(height: AuthTokens.gapBetweenFields),
-          ListenableBuilder(
-            listenable: Listenable.merge([
-              _regNameCtrl,
-              _regPhoneCtrl,
-              _regPassCtrl,
-              _regPass2Ctrl,
-            ]),
-            builder: (context, _) => AuthPrimaryButton(
-              label: AuthStrings.signUpButton,
-              loading: _loading,
-              enabled: AuthValidators.signUpReady(
-                name: _regNameCtrl.text,
-                phone: _regPhoneE164,
-                password: _regPassCtrl.text,
-                confirmation: _regPass2Ctrl.text,
-              ),
-              onPressed: _doRegister,
+            const SizedBox(height: 12),
+            ValueListenableBuilder<TextEditingValue>(
+              valueListenable: _regPassCtrl,
+              builder: (context, value, _) =>
+                  PasswordStrengthMeter(password: value.text),
             ),
-          ),
 
-          const SizedBox(height: AuthTokens.gapBetweenFields),
+            const SizedBox(height: AuthTokens.gapBetweenFields),
+            ListenableBuilder(
+              listenable: Listenable.merge([_regPassCtrl, _regPass2Ctrl]),
+              builder: (context, _) => ValueListenableBuilder<bool>(
+                valueListenable: _signupConfirmationVisible,
+                builder: (context, visible, __) => AuthTextField(
+                  controller: _regPass2Ctrl,
+                  forceLtr: true,
+                  label: AuthStrings.confirmPasswordLabel,
+                  hint: AuthStrings.passwordHint,
+                  icon: Icons.lock_reset_rounded,
+                  error:
+                      _regPass2Err ??
+                      (_confirmMismatch(_regPassCtrl.text, _regPass2Ctrl.text)
+                          ? AuthStrings.errPasswordMismatch
+                          : null),
+                  obscure: !visible,
+                  ltr: true,
+                  textInputAction: TextInputAction.done,
+                  enabled: !_loading,
+                  onChanged: (_) {
+                    if (_regPass2Err != null)
+                      setState(() => _regPass2Err = null);
+                  },
+                  onSubmitted: (_) => _doRegister(),
+                  trailing: _visibilityToggle(
+                    shown: visible,
+                    onTap: () => _signupConfirmationVisible.value = !visible,
+                  ),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: AuthTokens.gapBetweenFields),
+            AuthWhatsappConsent(
+              value: _whatsappMarketing,
+              onChanged: _loading
+                  ? null
+                  : (value) {
+                      setState(() => _whatsappMarketing = value);
+                    },
+            ),
+            const SizedBox(height: AuthTokens.gapBetweenFields),
+            ListenableBuilder(
+              listenable: Listenable.merge([
+                _regNameCtrl,
+                _regPhoneCtrl,
+                _regPassCtrl,
+                _regPass2Ctrl,
+              ]),
+              builder: (context, _) => AuthPrimaryButton(
+                label: AuthStrings.signUpButton,
+                loading: _loading,
+                enabled: AuthValidators.signUpReady(
+                  name: _regNameCtrl.text,
+                  phone: _regPhoneE164,
+                  password: _regPassCtrl.text,
+                  confirmation: _regPass2Ctrl.text,
+                ),
+                onPressed: _doRegister,
+              ),
+            ),
+          ],
+          const SizedBox(height: 24),
           _promptRow(
             lead: AuthStrings.haveAccountLead,
             action: AuthStrings.haveAccountAction,
@@ -2069,146 +2052,69 @@ class _AuthShellState extends State<AuthShell> {
   // ── Forgot-password views ─────────────────────────────────────────────────
 
   Widget _buildForgotEmailView() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        AuthHeader.inner(onBack: _back),
-        const SizedBox(height: AuthTokens.gapHeaderToTitle),
-        AuthIntro(
-          icon: 'lock_reset',
-          title: AuthStrings.resetPasswordTitle,
-          subtitle: AuthStrings.resetPasswordSubtitle,
-        ),
-        AuthTextField(
-          controller: _fpEmailCtrl,
-          focusNode: _fpEmailFocus,
-          label: AuthStrings.emailLabel,
-          hint: AuthStrings.emailHint,
-          icon: Icons.mail_outline_rounded,
-          error: _fpEmailErr,
-          ltr: true,
-          keyboardType: TextInputType.emailAddress,
-          textInputAction: TextInputAction.done,
-          enabled: !_loading,
-          onChanged: (_) {
-            if (_fpEmailErr != null) setState(() => _fpEmailErr = null);
-          },
-          onSubmitted: (_) => _doForgotSendOtp(),
-          trailing: AuthClearButton(
+    return RecoveryScreen(
+      onBack: _back,
+      newPassword: false,
+      content: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          AuthTextField(
             controller: _fpEmailCtrl,
             focusNode: _fpEmailFocus,
-            onCleared: () {
-              if (_fpEmailErr != null) setState(() => _fpEmailErr = null);
-            },
-          ),
-        ),
-        EmailDomainChips(controller: _fpEmailCtrl, focusNode: _fpEmailFocus),
-        const SizedBox(height: 18),
-        ListenableBuilder(
-          listenable: _fpEmailCtrl,
-          builder: (context, _) => AuthPrimaryButton(
-            label: AuthStrings.sendOtpButton,
-            loading: _loading,
-            enabled: AuthValidators.email(_fpEmailCtrl.text) == null,
-            onPressed: _doForgotSendOtp,
-          ),
-        ),
-        const SizedBox(height: 16),
-      ],
-    );
-  }
-
-  Widget _buildForgotNewPassView() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        AuthHeader.inner(onBack: _back),
-        const SizedBox(height: AuthTokens.gapHeaderToTitle),
-        AuthIntro(
-          icon: 'lock_reset',
-          title: AuthStrings.resetPasswordTitle,
-          subtitle: _t(
-            'وشەی نهێنییەکی نوێ بۆ هەژمارەکەت هەڵبژێرە.',
-            'اختر كلمة مرور جديدة لحسابك',
-          ),
-        ),
-        ValueListenableBuilder<bool>(
-          valueListenable: _resetPasswordVisible,
-          builder: (context, visible, _) => AuthTextField(
-            controller: _fpNewPassCtrl,
-            forceLtr: true,
-            label: AuthStrings.passwordLabel,
-            hint: AuthStrings.passwordHint,
-            icon: Icons.lock_outline_rounded,
-            error: _fpNewPassErr,
-            obscure: !visible,
+            label: AuthStrings.emailLabel,
+            hint: AuthStrings.emailHint,
+            icon: Icons.mail_outline_rounded,
+            error: _fpEmailErr,
             ltr: true,
-            textInputAction: TextInputAction.next,
+            keyboardType: TextInputType.emailAddress,
+            textInputAction: TextInputAction.done,
             enabled: !_loading,
             onChanged: (_) {
-              if (_fpNewPassErr != null) setState(() => _fpNewPassErr = null);
+              if (_fpEmailErr != null) setState(() => _fpEmailErr = null);
             },
-            trailing: _visibilityToggle(
-              shown: visible,
-              onTap: () => _resetPasswordVisible.value = !visible,
-            ),
-          ),
-        ),
-
-        const SizedBox(height: 10),
-        ValueListenableBuilder<TextEditingValue>(
-          valueListenable: _fpNewPassCtrl,
-          builder: (context, value, _) =>
-              PasswordStrengthMeter(password: value.text),
-        ),
-
-        const SizedBox(height: 10),
-        ListenableBuilder(
-          listenable: Listenable.merge([_fpNewPassCtrl, _fpConfirmPassCtrl]),
-          builder: (context, _) => ValueListenableBuilder<bool>(
-            valueListenable: _resetConfirmationVisible,
-            builder: (context, visible, __) => AuthTextField(
-              controller: _fpConfirmPassCtrl,
-              forceLtr: true,
-              label: AuthStrings.confirmPasswordLabel,
-              hint: AuthStrings.passwordHint,
-              icon: Icons.lock_reset_rounded,
-              error:
-                  _fpConfirmPassErr ??
-                  (_confirmMismatch(
-                        _fpNewPassCtrl.text,
-                        _fpConfirmPassCtrl.text,
-                      )
-                      ? AuthStrings.errPasswordMismatch
-                      : null),
-              obscure: !visible,
-              ltr: true,
-              textInputAction: TextInputAction.done,
-              enabled: !_loading,
-              onChanged: (_) {
-                if (_fpConfirmPassErr != null) {
-                  setState(() => _fpConfirmPassErr = null);
-                }
+            onSubmitted: (_) => _doForgotSendOtp(),
+            trailing: AuthClearButton(
+              controller: _fpEmailCtrl,
+              focusNode: _fpEmailFocus,
+              onCleared: () {
+                if (_fpEmailErr != null) setState(() => _fpEmailErr = null);
               },
-              onSubmitted: (_) => _doForgotSetPassword(),
-              trailing: _visibilityToggle(
-                shown: visible,
-                onTap: () => _resetConfirmationVisible.value = !visible,
-              ),
             ),
           ),
-        ),
-
-        const SizedBox(height: 18),
-        AuthPrimaryButton(
-          label: AuthStrings.savePasswordButton,
-          loading: _loading,
-          onPressed: _doForgotSetPassword,
-        ),
-        const SizedBox(height: 16),
-      ],
+          EmailDomainChips(controller: _fpEmailCtrl, focusNode: _fpEmailFocus),
+          const SizedBox(height: 18),
+          ListenableBuilder(
+            listenable: _fpEmailCtrl,
+            builder: (context, _) => AuthPrimaryButton(
+              label: AuthStrings.sendOtpButton,
+              loading: _loading,
+              enabled: AuthValidators.email(_fpEmailCtrl.text) == null,
+              onPressed: _doForgotSendOtp,
+            ),
+          ),
+          const SizedBox(height: 16),
+        ],
+      ),
     );
   }
+
+  Widget _buildForgotNewPassView() => NewPasswordScreen(
+    onBack: _back,
+    password: _fpNewPassCtrl,
+    confirmation: _fpConfirmPassCtrl,
+    passwordVisible: _resetPasswordVisible,
+    confirmationVisible: _resetConfirmationVisible,
+    passwordError: _fpNewPassErr,
+    confirmationError: _fpConfirmPassErr,
+    loading: _loading,
+    onPasswordChanged: (_) {
+      if (_fpNewPassErr != null) setState(() => _fpNewPassErr = null);
+    },
+    onConfirmationChanged: (_) {
+      if (_fpConfirmPassErr != null) setState(() => _fpConfirmPassErr = null);
+    },
+    onSave: _doForgotSetPassword,
+  );
 
   // ── Small shared pieces ───────────────────────────────────────────────────
 

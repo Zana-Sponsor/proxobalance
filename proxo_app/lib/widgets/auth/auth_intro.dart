@@ -5,6 +5,7 @@ import 'auth_design.dart';
 import 'auth_header.dart';
 import 'auth_icon.dart';
 
+/// One quiet, centered introduction shared by every Auth step.
 class AuthIntro extends StatelessWidget {
   const AuthIntro({
     super.key,
@@ -18,28 +19,32 @@ class AuthIntro extends StatelessWidget {
   Widget build(BuildContext context) => Column(
     crossAxisAlignment: CrossAxisAlignment.stretch,
     children: [
-      Align(
-        alignment: AlignmentDirectional.centerStart,
+      Center(
         child: Container(
-          width: 52,
-          height: 52,
+          width: 64,
+          height: 64,
           decoration: BoxDecoration(
             color: AuthTokens.accentSoft,
-            borderRadius: BorderRadius.circular(18),
+            borderRadius: BorderRadius.circular(22),
           ),
           alignment: Alignment.center,
-          child: AuthIcon(icon, size: 27),
+          child: AuthIcon(icon, size: 30),
         ),
       ),
-      const SizedBox(height: 16),
-      AuthTitle(title),
-      const SizedBox(height: AuthTokens.gapTitleToSubtitle),
-      ProxoText(
-        subtitle,
-        textAlign: TextAlign.start,
-        style: AuthTokens.subtitle,
+      const SizedBox(height: 20),
+      AuthTitle(title, textAlign: TextAlign.center),
+      const SizedBox(height: 8),
+      Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 320),
+          child: ProxoText(
+            subtitle,
+            textAlign: TextAlign.center,
+            style: AuthTokens.subtitle,
+          ),
+        ),
       ),
-      const SizedBox(height: AuthTokens.gapSubtitleToForm),
+      const SizedBox(height: 28),
     ],
   );
 }

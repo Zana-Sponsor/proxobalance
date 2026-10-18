@@ -136,8 +136,9 @@ class AuthLanguageSelector extends StatelessWidget {
 /// Keep whole words intact at narrow widths while retaining the user's text
 /// scaling. Only headings whose longest word cannot fit are reduced.
 class AuthTitle extends StatelessWidget {
-  const AuthTitle(this.text, {super.key});
+  const AuthTitle(this.text, {super.key, this.textAlign = TextAlign.start});
   final String text;
+  final TextAlign textAlign;
   @override
   Widget build(BuildContext context) => LayoutBuilder(
     builder: (context, constraints) {
@@ -161,7 +162,7 @@ class AuthTitle extends StatelessWidget {
       }
       return Semantics(
         header: true,
-        child: ProxoText(text, textAlign: TextAlign.start, style: style),
+        child: ProxoText(text, textAlign: textAlign, style: style),
       );
     },
   );

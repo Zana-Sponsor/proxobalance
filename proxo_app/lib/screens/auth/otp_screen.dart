@@ -36,20 +36,27 @@ class OtpScreen extends StatelessWidget {
           title: AuthStrings.otpTitle,
           subtitle: AuthStrings.otpSubtitle,
         ),
-        Directionality(
-          textDirection: TextDirection.ltr,
-          child: ProxoText(
-            destination,
-            textAlign: TextAlign.start,
-            style: AuthTokens.fieldText.copyWith(fontWeight: FontWeight.w400),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
+            color: AuthTokens.fieldFill,
+            borderRadius: BorderRadius.circular(14),
+          ),
+          child: Directionality(
+            textDirection: TextDirection.ltr,
+            child: ProxoText(
+              destination,
+              textAlign: TextAlign.center,
+              style: AuthTokens.fieldText.copyWith(fontWeight: FontWeight.w400),
+            ),
           ),
         ),
-        const SizedBox(height: AuthTokens.gapHeaderToPin),
+        const SizedBox(height: 28),
         otpBoxes,
-        const SizedBox(height: AuthTokens.gapBetweenFields),
-        Center(child: resend),
-        const SizedBox(height: AuthTokens.gapBetweenFields),
+        const SizedBox(height: 28),
         verifyButton,
+        const SizedBox(height: 18),
+        Center(child: resend),
         const SizedBox(height: AuthTokens.gapSectionBottom),
       ],
     );

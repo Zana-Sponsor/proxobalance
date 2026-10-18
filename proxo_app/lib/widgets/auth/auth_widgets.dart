@@ -1046,37 +1046,80 @@ class AuthSegmentedControl extends StatelessWidget {
           if (p.height + 24 > height) height = p.height + 24;
           p.dispose();
         }
+        final reduced = MediaQuery.disableAnimationsOf(context);
         return Container(
           padding: const EdgeInsets.all(4),
           decoration: BoxDecoration(
             color: const Color(0xFFF1F4F8),
             borderRadius: BorderRadius.circular(16),
           ),
-          child: Row(
-            children: List.generate(
-              labels.length,
-              (i) => Expanded(
-                child: Semantics(
-                  selected: i == index,
-                  button: true,
-                  child: Material(
-                    color: i == index ? Colors.white : Colors.transparent,
-                    borderRadius: BorderRadius.circular(12),
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(12),
-                      onTap: enabled ? () => onChanged(i) : null,
-                      child: SizedBox(
-                        height: height,
-                        child: Center(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                            child: ProxoText(
-                              labels[i],
-                              textAlign: TextAlign.center,
-                              style: labelStyle.copyWith(
-                                color: i == index
-                                    ? AuthTokens.accent
-                                    : AuthTokens.inkMuted,
+          child: SizedBox(
+            height: height,
+            child: Stack(
+              children: [
+                AnimatedAlign(
+                  key: const ValueKey('auth-channel-indicator'),
+                  alignment: index == 0
+                      ? AlignmentDirectional.centerStart
+                      : AlignmentDirectional.centerEnd,
+                  duration: reduced
+                      ? Duration.zero
+                      : const Duration(milliseconds: 260),
+                  curve: Curves.easeInOutCubic,
+                  child: SizedBox(
+                    width: width,
+                    height: height,
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Color(0x080F172A),
+                            blurRadius: 8,
+                            offset: Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Row(
+                  children: List.generate(
+                    labels.length,
+                    (i) => Expanded(
+                      child: Semantics(
+                        selected: i == index,
+                        button: true,
+                        child: Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(12),
+                            onTap: enabled && i != index
+                                ? () => onChanged(i)
+                                : null,
+                            child: SizedBox(
+                              height: height,
+                              child: Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                  ),
+                                  child: AnimatedDefaultTextStyle(
+                                    duration: reduced
+                                        ? Duration.zero
+                                        : const Duration(milliseconds: 220),
+                                    style: labelStyle.copyWith(
+                                      color: i == index
+                                          ? AuthTokens.accent
+                                          : AuthTokens.inkMuted,
+                                    ),
+                                    child: ProxoText(
+                                      labels[i],
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ),
                               ),
                             ),
                           ),
@@ -1085,7 +1128,7 @@ class AuthSegmentedControl extends StatelessWidget {
                     ),
                   ),
                 ),
-              ),
+              ],
             ),
           ),
         );

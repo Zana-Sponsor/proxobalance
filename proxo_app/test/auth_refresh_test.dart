@@ -113,6 +113,92 @@ void main() {
     );
   }
 
+  testWidgets(
+    'signup validates identity before security and Back preserves fields',
+    (t) async {
+      await t.pumpWidget(host(const AuthShell()));
+      await settle(t);
+      final link = find.byWidgetPredicate(
+        (w) => w is AuthTextLink && w.label == AuthStrings.noAccountAction,
+      );
+      await t.ensureVisible(link);
+      await t.tap(link);
+      await settle(t);
+      final fields = find.byType(TextField);
+      expect(fields, findsNWidgets(2));
+      await t.enterText(fields.at(0), 'Fixture User');
+      await t.enterText(fields.at(1), '123');
+      await t.pump();
+      final next = find.byKey(const ValueKey('signup-next'));
+      await t.ensureVisible(next);
+      await t.tap(next);
+      await settle(t);
+      expect(
+        find.byWidgetPredicate(
+          (w) => w is AuthTitle && w.text == AuthStrings.signUpTitle,
+        ),
+        findsOneWidget,
+      );
+      await t.enterText(fields.at(1), '7500000001');
+      await t.pump();
+      await t.ensureVisible(next);
+      await t.tap(next);
+      await settle(t);
+      expect(
+        find.byWidgetPredicate(
+          (w) => w is AuthTitle && w.text == AuthStrings.signupSecurityTitle,
+        ),
+        findsOneWidget,
+      );
+      expect(fields, findsNWidgets(2));
+      await t.binding.handlePopRoute();
+      await settle(t);
+      expect(
+        t.widget<TextField>(fields.at(0)).controller!.text,
+        'Fixture User',
+      );
+      expect(t.widget<TextField>(fields.at(1)).controller!.text, '7500000001');
+      expect(t.takeException(), isNull);
+      await t.pumpWidget(const SizedBox());
+    },
+  );
+
+  testWidgets(
+    'channel pill interpolates and rapid switches retain one active form',
+    (t) async {
+      await t.pumpWidget(host(const AuthShell()));
+      await settle(t);
+      await t.tap(find.text(AuthStrings.channelPhone).first);
+      await settle(t);
+      final pill = find
+          .descendant(
+            of: find.byKey(const ValueKey('auth-channel-indicator')),
+            matching: find.byType(Container),
+          )
+          .first;
+      final start = t.getCenter(pill).dx;
+      await t.tap(find.text(AuthStrings.channelEmail).first);
+      await t.pump();
+      await t.pump(const Duration(milliseconds: 100));
+      final middle = t.getCenter(pill).dx;
+      await t.pump(const Duration(milliseconds: 200));
+      final end = t.getCenter(pill).dx;
+      expect(middle, isNot(start));
+      expect(middle, isNot(end));
+      expect(
+        middle,
+        inInclusiveRange(start < end ? start : end, start > end ? start : end),
+      );
+      await t.tap(find.text(AuthStrings.channelPhone).first);
+      await t.pump(const Duration(milliseconds: 40));
+      await t.tap(find.text(AuthStrings.channelEmail).first);
+      await settle(t);
+      expect(find.byType(TextField), findsNWidgets(2));
+      expect(t.takeException(), isNull);
+      await t.pumpWidget(const SizedBox());
+    },
+  );
+
   for (final width in [393.0, 280.0]) {
     for (final locale in ['ckb', 'ar', 'kmr']) {
       for (final failed in [false, true]) {
