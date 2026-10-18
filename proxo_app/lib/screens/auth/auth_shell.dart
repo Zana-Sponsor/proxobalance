@@ -20,6 +20,7 @@ import '../../theme/app_locale.dart';
 import '../../services/trusted_device_service.dart';
 import '../../services/auth_activity_service.dart';
 import '../account_setup_screen.dart';
+import '../authenticated_gate.dart';
 import '../../widgets/auth/auth_design.dart';
 import '../../widgets/auth/auth_otp_field.dart';
 import '../../widgets/auth/auth_widgets.dart';
@@ -818,7 +819,7 @@ class _AuthShellState extends State<AuthShell> {
       unawaited(_saveDeviceToken(user.id));
       AuthFlowGuard.inOtpFlow = false;
       Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(
+        ProxoPageRoute(
             builder: (_) => const AccountSetupGate(child: MainShell())),
         (route) => false,
       );
@@ -962,7 +963,7 @@ class _AuthShellState extends State<AuthShell> {
           AuthFlowGuard.inOtpFlow = false;
           if (!mounted) return;
           Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(
+            ProxoPageRoute(
               builder: (_) => const AccountSetupGate(child: MainShell()),
             ),
             (route) => false,
@@ -987,8 +988,8 @@ class _AuthShellState extends State<AuthShell> {
           AuthFlowGuard.inOtpFlow = false;
           if (!mounted) return;
           Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(
-              builder: (_) => const AccountSetupGate(child: MainShell()),
+            ProxoPageRoute(
+              builder: (_) => const AuthenticatedGate(child: MainShell()),
             ),
             (r) => false,
           );
@@ -1027,8 +1028,8 @@ class _AuthShellState extends State<AuthShell> {
             AuthFlowGuard.inOtpFlow = false;
             if (!mounted) return;
             Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(
-                builder: (_) => const AccountSetupGate(child: MainShell()),
+              ProxoPageRoute(
+                builder: (_) => const AuthenticatedGate(child: MainShell()),
               ),
               (r) => false,
             );
@@ -1509,7 +1510,7 @@ class _AuthShellState extends State<AuthShell> {
               });
             },
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 24),
 
           if (_loginLockedOut)
             AuthLockoutNotice(onContactSupport: _contactSupportOnWhatsApp)
@@ -1517,7 +1518,7 @@ class _AuthShellState extends State<AuthShell> {
             AuthAlert(message: lockMsg),
 
           AuthSwap(
-            duration: const Duration(milliseconds: 260),
+            duration: const Duration(milliseconds: 320),
             child: KeyedSubtree(
               key: ValueKey<AuthChannel>(_loginChannel),
               child: _loginChannel == AuthChannel.phone
@@ -1666,17 +1667,7 @@ class _AuthShellState extends State<AuthShell> {
           ],
           enabled: !_phoneOtpSending,
           // پێشگری کۆدی وڵات لەناو خودی خانەکەدا — یەک سنوور، یەک فۆکەس.
-          prefix: Padding(
-            padding: const EdgeInsetsDirectional.only(end: 8),
-            child: ProxoText(
-              AuthStrings.phonePrefix,
-              textDirection: TextDirection.ltr,
-              style: AuthTokens.fieldText.copyWith(
-                fontWeight: FontWeight.w400,
-                color: AuthTokens.inkMuted,
-              ),
-            ),
-          ),
+          prefix: const IraqPhonePrefix(),
           onChanged: (_) {
             if (_loginPhoneErr != null) {
               setState(() => _loginPhoneErr = null);

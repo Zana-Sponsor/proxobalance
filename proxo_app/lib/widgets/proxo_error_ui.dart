@@ -59,7 +59,7 @@ class ProxoErrorStyle {
   static const double rField  = 12; // field-level chips
   static const double rWell   = 14; // icon wells
   static const double rInline = 16; // inline banners
-  static const double rButton = 16; // all buttons
+  static const double rButton = 18; // all buttons
   static const double rCard   = 20; // notice cards / dialogs
   static const double rSnack  = 20; // floating snack
   static const double rSheet  = 28; // bottom sheets (matches the app's sheets)

@@ -292,7 +292,7 @@ const double _kCampaignCardMaxWidth = AdSurface.contentMaxWidth;
 const double _kReadableBump = 1.0;
 
 const double _kBtnHeight     = 30.0;          // = _PrimaryButton's height
-const double _kBtnRadius     = 8.0;           // = _PrimaryButton's radius
+const double _kBtnRadius     = ProxoControls.radius;           // = _PrimaryButton's radius
 const double _kBtnChevron    = 16.0;
 const double _kBtnChevronPad = 13.0;          // = _PrimaryButton's h-padding
 

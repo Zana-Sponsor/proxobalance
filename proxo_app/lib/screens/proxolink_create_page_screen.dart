@@ -1,3 +1,4 @@
+import '../widgets/form_help_actions.dart';
 import 'package:proxo_app/l10n/proxo_strings.dart';
 import 'dart:async';
 import 'dart:typed_data';
@@ -189,6 +190,10 @@ class _CreatePageState extends State<ProxoLinkCreatePageScreen> {
           SingleChildScrollView(controller: _scroll, padding: const EdgeInsets.fromLTRB(16, 20, 16, 32),
             child: Align(alignment: Alignment.topCenter, child: ConstrainedBox(constraints: const BoxConstraints(maxWidth: 600),
               child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+                FormHelpActions(helpKey: 'page_creation',
+                  exampleAsset: 'assets/proxolink_thumbnails/${_type.key}-pill.png',
+                  exampleCaption: 'نمونەی پەڕەکە؛ ناو و وێنە و بەستەرەکانی خۆت دابنێ'),
+                const SizedBox(height: 12),
                 if (_loading) const LinearProgressIndicator(minHeight: 2),
                 AbsorbPointer(absorbing: _busy || _submitted != null || !_sameOwner, child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
                   AdFormSection(title: 'جۆری پەڕە', child: Column(children: [for (final type in ProxoPageType.values)

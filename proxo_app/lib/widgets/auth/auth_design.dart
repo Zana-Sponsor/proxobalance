@@ -13,7 +13,7 @@ abstract final class AuthTokens {
   static const Color accentLine = Color(0xFFBDD5FA);
   static const Color accentInk = Color(0xFF0759CE);
   static const double toolbarHeight = 56;
-  static const double introIconSize = 40;
+  static const double introIconSize = 64;
   static const double contentMaxWidth = 440;
   // ── پەلێتی ڕەنگ — تاقە سەرچاوە بۆ هەموو شاشەکانی چوونەژوورەوە ────────────
   // ⚠ پێش ئەمە هیچ ڕەنگێک لێرە نەبوو: هەر سێ فایلەکەی auth ژمارە hex-ەکانی
@@ -58,9 +58,9 @@ abstract final class AuthTokens {
 
   // ── بۆشاییە یەکگرتووەکان ──────────────────────────────────────────────────
   static const double gapTopToTitle = 16;
-  static const double gapHeaderToTitle = 24;
+  static const double gapHeaderToTitle = 40;
   static const double gapTitleToSubtitle = 6;
-  static const double gapSubtitleToForm = 24;
+  static const double gapSubtitleToForm = 28;
   static const double gapLabelToField = 6;
   static const double gapBetweenFields = 16.0;
   static const double gapFormToForgot = 8;
@@ -158,8 +158,8 @@ abstract final class AuthTokens {
   /// Primary actions grow with text; compact icon targets remain 48dp.
   static const double buttonHeight = 50;
   static const double controlHeight = 48;
-  static const double buttonRadius = 12;
-  static const double fieldRadius = 12;
+  static const double buttonRadius = 18;
+  static const double fieldRadius = 16;
 
   /// ⚠ ستوونی بوو 13. ئێستا 15 — لەناو مەودای 14–16، بۆیە خانەکە
   /// بەرزاییەکی ئاسوودەی هەیە بەبێ ئەوەی لە دوگمەکە قەڵەوتر بێت.
@@ -187,8 +187,8 @@ abstract final class AuthTokens {
   // ── سندووقەکانی OTP ───────────────────────────────────────────────────────
   /// ⚠ بوو 46 × 52.
   static const double otpBoxWidth = 48;
-  static const double otpBoxHeight = 54;
-  static const double otpBoxRadius = 12;
+  static const double otpBoxHeight = 56;
+  static const double otpBoxRadius = 16;
   static const double otpBoxGap = 8;
   static const double otpHeaderIcon = 42;
 
@@ -201,7 +201,7 @@ abstract final class AuthTokens {
   static const Color strengthStrongColor = Color(0xFF13A56A);
 
   // ── ئەنیمەیشن ──────────────────────────────────────────────────────────────
-  static const Duration viewTransition = Duration(milliseconds: 180);
+  static const Duration viewTransition = Duration(milliseconds: 320);
   static const Duration microTransition = Duration(milliseconds: 140);
   static const Duration shake = Duration(milliseconds: 250);
   static const Curve curve = Curves.easeOutCubic;

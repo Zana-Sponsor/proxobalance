@@ -85,8 +85,10 @@ flutter:
     # was NOT declared before, so any Image.asset from it threw at runtime.
     - assets/proxolink_thumbnails/
     - assets/images/
+    - assets/images/auth/
     - assets/icons/
     - assets/icons/solar/
+    - assets/icons/help/
     - assets/icons/auth/
     - assets/icons/results/
     - assets/icons/ad_card/

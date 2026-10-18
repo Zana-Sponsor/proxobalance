@@ -1,3 +1,5 @@
+import '../widgets/form_help_actions.dart';
+import 'package:proxo_app/theme/app_theme.dart';
 import 'package:proxo_app/l10n/proxo_strings.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -305,7 +307,7 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
     final card = widget.createContactPage != null
         ? await widget.createContactPage!(context)
         : await Navigator.of(context).push<Map<String, dynamic>>(
-            MaterialPageRoute(
+            ProxoPageRoute(
                 settings: const RouteSettings(name: 'tools'),
                 builder: (routeContext) => ToolsScreen(
                     initialCreate: true,
@@ -381,7 +383,7 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
       {bool resume = false}) async {
     setState(() => _openingConfirmation = true);
     final result = await Navigator.of(context).push<AdConfirmationResult>(
-        MaterialPageRoute(
+        ProxoPageRoute(
             settings: const RouteSettings(name: 'ad_confirmation'),
             builder: (_) => AdConfirmationScreen(
                 request: request, repository: _repository, resume: resume)));
@@ -550,10 +552,15 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
             keyboard: TextInputType.name),
         const SizedBox(height: 20),
         _field(context, 'code', _code, 'کۆدی ڤیدیۆ', ltr: true),
+        const FormHelpActions(helpKey: 'ad_video_code'),
         const SizedBox(height: 20),
         // Existing video processing and thumbnails require the URL as well as the authorization code.
         _field(context, 'link', _link, 'بەستەری ڤیدیۆ',
             ltr: true, keyboard: TextInputType.url),
+        const FormHelpActions(helpKey: 'ad_video_link',
+          exampleAsset: 'assets/icons/help/video_link_example.svg',
+          exampleCaption: 'بەستەری ڤیدیۆکەت لە TikTok کۆپی بکە و لێرە دایبنێ',
+          sampleValue: 'https://www.tiktok.com/@example/video/1234567890123456789'),
         const SizedBox(height: 8),
         ExpansionTile(
             tilePadding: EdgeInsets.zero,

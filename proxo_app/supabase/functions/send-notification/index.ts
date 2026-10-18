@@ -256,6 +256,8 @@ serve(async (req) => {
         android: {
           priority: "high",
           notification: {
+            icon: "ic_notification",
+            color: "#046CFA",
             channel_id:   "proxo_high_importance",
             click_action: "FLUTTER_NOTIFICATION_CLICK",
             default_sound: true,

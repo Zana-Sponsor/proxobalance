@@ -4,25 +4,34 @@
   "implementation_branch": "codex/auth-ux-redesign",
   "flutter_version": "3.47.2",
   "dart_version": "3.13.2",
-  "visual_cases_passed": 42,
-  "behavior_tests_passed": 44,
-  "core_behavior_tests_passed": 35,
-  "marketing_regression_tests_passed": 9,
-  "screenshots_including_scroll_bottoms": 57,
-  "captured_render_objects": 2523,
+  "visual_cases_passed": 150,
+  "behavior_tests_passed": 57,
+  "screenshots_including_scroll_bottoms": 194,
+  "captured_render_objects": 10290,
   "captured_exceptions": 0,
-  "paragraphs_exceeding_max_lines": 0,
+  "paragraphs_exceeding_max_lines": 18,
   "analyzer": {
     "errors": 0,
     "warnings": 3,
-    "infos": 25,
-    "notes": "Warnings are in unchanged auth_shell logic: one unnecessary cast and two visible-for-testing calls."
+    "infos": 27,
+    "notes": "Three pre-existing Auth warnings: unnecessary cast and visible-for-testing calls. Remaining lints are informational."
   },
   "source_sha256": {
+    ".github/workflows/proxolink-verify.yml": "ac4e99b53bae018fd8c1d7fa8d2c958f0cf7b968e57f17a476f6cf358a2e22a1",
+    "proxo_app/android/app/src/main/AndroidManifest.xml": "122af4ac420c89d46baa48ab601bbddb87811dc03b865abc866ace6e22db0a45",
+    "proxo_app/android/app/src/main/res/drawable/ic_notification.xml": "03b2d45faec6b3d1aabe5d2577a4e40c6d2943b9468e0cbec2d490fee3442ff2",
+    "proxo_app/android/app/src/main/res/drawable/launch_background.xml": "80ad0bf44713c5c6c7a23bb314b84c8034bfc114d9f3980d177223c34abcf37f",
+    "proxo_app/android/app/src/main/res/drawable/proxo_logo.png": "6a91249509a4664d9fcebc8975bd9f71fbec877a6d58d4d0f323cc3d957ac591",
+    "proxo_app/android/app/src/main/res/drawable/proxo_notification_large.png": "02577c1e1533c12d653d6703b3d8690d56b0956fd7a9cdaf31e2c55d15f12e40",
+    "proxo_app/android/app/src/main/res/drawable/proxo_splash_mark.xml": "9dba5f5d3830aa3c408a534e1aaff8383fa9e4eab5b256183e7519697e02f899",
+    "proxo_app/android/app/src/main/res/values-v31/styles.xml": "9f93ff812a8f4225b3ea8be2e195f425cea04a4a8c5af00a03bfde0eae91b3ad",
+    "proxo_app/android/app/src/main/res/values/colors.xml": "be7df8c978a0c793bd44096ef2688b2fb5ccea752c63afac0e2fbad803d0e0e5",
+    "proxo_app/assets/icons/auth/SOURCES.md": "383993022c74213671a013a56e7f73f61e4611f53e45e3ad2db98e86ed7c6420",
     "proxo_app/assets/icons/auth/account_outline.svg": "5dbd88ec213c3f2d759a47e3fa37deb6321a055ce822f5f957b9aea919307478",
     "proxo_app/assets/icons/auth/back_outline.svg": "42137d80069ada7d23e451f768c319b2588b7e8870f285380dab089f56c175c2",
     "proxo_app/assets/icons/auth/check_outline.svg": "39acc44f01e6666f2278093eb73748fece3465c426871af0434f37f91643fa6e",
     "proxo_app/assets/icons/auth/email_outline.svg": "de4b7ac700fc13776dc44327060f46d2485409d41d6ff6e5d4a2f0c0811e23f7",
+    "proxo_app/assets/icons/auth/iraq_flag.svg": "2a3ac265b9efcfb0b8761b753b8dba85b63af329deed39dc7a363e61dad70667",
     "proxo_app/assets/icons/auth/language_outline.svg": "b7f140e1a6a062680078d715e4ecc51bb5994b6d9b3cfe28c746d47bc4a87aff",
     "proxo_app/assets/icons/auth/lock_outline.svg": "25c6a7a9a86f681b693e61821edd16c2b5a665f07a5fdf97df9b205b49be4f3a",
     "proxo_app/assets/icons/auth/person_outline.svg": "6a756b8fac14bd0fefc246f02b66b80529fc346d0ae35c4fad449ac7a700bbfe",
@@ -31,27 +40,451 @@
     "proxo_app/assets/icons/auth/security_outline.svg": "6d51368f23b99d196bd15c0dd38b687a55668cf6fc4681e2351f5277e8d706e5",
     "proxo_app/assets/icons/auth/signin_outline.svg": "1798e3b2962dfba2a91c07c3af6316e77a0c7d74b73111e08d0cea67ab19e3af",
     "proxo_app/assets/icons/auth/verification_outline.svg": "68d69ba5a9cc75ff2e36cf77d47ce7f0dcda985827032265452003f92948276d",
-    "proxo_app/lib/l10n/proxo_messages.dart": "f43b778015390ae6336d6127f0ad3b2bbbe25ec99623319f328b9903c00f6b7e",
+    "proxo_app/assets/images/auth/account_3d.png": "54632924d04e42f14ea04d206cc80644851df0b3ad9f41e042cfc01d2057227a",
+    "proxo_app/assets/images/auth/verification_3d.png": "d68c34137d244b5fad4d4392a46533f261444e1ed3b7f4e13366c5904244229e",
+    "proxo_app/l10n/messages.tsv": "2a86866d05b6c86db1cb9ccc9c64ed70fc5b49f9b29efea7a67d3e473965fb64",
+    "proxo_app/lib/l10n/proxo_messages.dart": "f962d9479304c2fc5258be486e6abfcc9c9af4ca675b4006c66dba866ded2b8a",
+    "proxo_app/lib/main.dart": "2a5f1cd3decf0c1d6bbcf5286c69254b9bf8e30fa2240e3cfd1cc430146d7628",
+    "proxo_app/lib/screens/ad_create_screen.dart": "5e16adf55b82ea9c5daf54b27717a96cb6f3523b718cf1d3556228347646078f",
+    "proxo_app/lib/screens/ad_screen.dart": "6e02291a11195e122bcfd9f3588d3a69aa6a17addd008952e62130387e43f21d",
     "proxo_app/lib/screens/auth/auth_service.dart": "6038581d6a0ebd8a4c848d54a1b4950e682a050089efdbdfb1515d4194ff03da",
-    "proxo_app/lib/screens/auth/auth_shell.dart": "e67e664e478892935820a7a8547ad685d92869e7d3722b456e8059c29b2ac625",
+    "proxo_app/lib/screens/auth/auth_shell.dart": "a0e08a3e388d54429bb3d51966664b8bb069b8e58d56c4a0a6563b8ea9fcb736",
     "proxo_app/lib/screens/auth/login_screen.dart": "9140cc01ce0ab37176b7be14c32f4d99465f144f7dc2916fc3a3b25ee7bad845",
     "proxo_app/lib/screens/auth/otp_screen.dart": "23c6654e352e926f542164fa5918aceca113190edc70f4abda72bd9a550a20e7",
     "proxo_app/lib/screens/auth/recovery_screen.dart": "0377a0133dff13535cb8bc9631a43b282464d387b401a1f720df2f218bfc5f5e",
     "proxo_app/lib/screens/auth/signup_screen.dart": "9998adde276691590e52678b7dd191a1c3737a8c15f00a483b56bb8b4f28c63d",
-    "proxo_app/lib/widgets/auth/auth_design.dart": "6135464446f0f3018c6ffe12d19209b310649b476de16b3a1af398ced545cb95",
-    "proxo_app/lib/widgets/auth/auth_header.dart": "a831b8483269cdab154a34e6893dea3dfb37245a8fd61f913f6a9a8c57ba9b99",
+    "proxo_app/lib/screens/authenticated_gate.dart": "daf5bf28b559bb7b00ad2ef257524820ad197fb41a03b2528980ddcc483be9b0",
+    "proxo_app/lib/screens/deposit_screen.dart": "01bc3d0321f1f70c0a08f98d358ff153e68d6351856ff7c3175954de7a6dc696",
+    "proxo_app/lib/screens/profile_screen.dart": "af66bbd2e7388b788dd1badbee76f6c7a767ab3e0e56542db1fce0bf0e6fdc2d",
+    "proxo_app/lib/screens/proxolink_page_editor.dart": "2ca9b232d64768668aca504e5a1be4db88d7b9ebe06e215d8595863e861a5ca7",
+    "proxo_app/lib/screens/splash_screen.dart": "3eb2174770687303b2396d419b052e153dde12b5d759c1bf9a8fed8f3407dca6",
+    "proxo_app/lib/screens/tools_screen.dart": "a87ab7e03e3ea51f92d8df15d59f580603be8db62dd0f0e28d91bb7547cbc9ec",
+    "proxo_app/lib/services/notification_service.dart": "359baf575ff22eb12bb1e1e3df706661ce405a3ed02cd82dd38e4f17d56d4384",
+    "proxo_app/lib/theme/app_theme.dart": "c01bdc07f4e311fde3db67f865eb2184d3cd75f44d79a2af0e88c302def734b4",
+    "proxo_app/lib/widgets/ad_feedback.dart": "390570495a193ed7303868e7ea236a8543db7cb5eea8b1d91c83d94a6909bdc2",
+    "proxo_app/lib/widgets/ad_form_components.dart": "02622579c796ef9c3302b762edf4e51cc4c180db3a9c7de82c9617936477c06e",
+    "proxo_app/lib/widgets/auth/auth_design.dart": "b33a28f2e70e1d0848eaf8d48a53d5f111591e16150bf4ff67e2fe9fea657222",
+    "proxo_app/lib/widgets/auth/auth_header.dart": "96c599cf50038ec10602145c6bda45081a9723386e017ad5aa1bb56ceeaabc48",
     "proxo_app/lib/widgets/auth/auth_icon.dart": "00f4552af727eaffd4871cb69d7d87c3c40ec8d8b560c2aafef5f3004a95e0ea",
-    "proxo_app/lib/widgets/auth/auth_intro.dart": "8b6ad0a6398cac3ca5f6eeefea5e5a6854d5a0eb8f7938bc5f52a22e475367ba",
-    "proxo_app/lib/widgets/auth/auth_widgets.dart": "e48add038defe9270573c8b673595ddeed1d617c40778eb9ade901ddea64e9a4",
-    "proxo_app/test/auth_phone_flow_test.dart": "6f2325581ced9a51cc240d05160bd8837a28c88b02eaf5c5c62af3460217dec8",
-    "proxo_app/test/auth_refresh_test.dart": "f842cd09d0508005e82e65407a9d102587950cafc2275f40d8042c27f2758c09",
-    "proxo_app/test/polish_capture_test.dart": "ade1f5950fc0c98b141b00282d4dd1505af87c8d692e46fd5c170b7b43341bd2",
-    "proxo_app/test/whatsapp_marketing_test.dart": "41b788ce67f9b91e71798efabe2bd42558ecd7de26f7d754bc6959ef243483fe",
+    "proxo_app/lib/widgets/auth/auth_intro.dart": "6491511bb65ebf1e6d64522034da1304f0be75f644aaeeab5ccda31f41849611",
+    "proxo_app/lib/widgets/auth/auth_otp_field.dart": "2459c92759a11126eb1bdb9ebe8ee7ae4f83ae9ae9fa0782c2d6265809ee78c9",
+    "proxo_app/lib/widgets/auth/auth_swap.dart": "837a219e62a811cf2578ccf57d4c72caa79288acaecb110d8a1bbe5a4ae3270e",
+    "proxo_app/lib/widgets/auth/auth_widgets.dart": "f6b07230e27c27fe830ca79f5ac32cce4ea9fc7ece1275854fe83d0b6c9a716b",
+    "proxo_app/lib/widgets/best_metric_card.dart": "8555dcbb0849ce79d6a9c61f0f344a413d7dc7d379a2b057c01f256908f014f2",
+    "proxo_app/lib/widgets/best_results_design.dart": "36e74458d4368906b80059a8c91863734ebeb13298a6ea0c6a6c9bfdf700f055",
+    "proxo_app/lib/widgets/proxo_error_ui.dart": "0fca3db035d37beac939a59a4e3d3c6fe1d31fb347645d5190b046857529c605",
+    "proxo_app/lib/widgets/proxo_refresh.dart": "caf43072a5f586418a2af97baf7cb0ed4fd704f32e9cc48f79787bd6242defcd",
+    "proxo_app/lib/widgets/proxo_tab_stack.dart": "a44f15aed063b47d5e328c860310b3b535fbbf7bc2ee881bba04893f908b4947",
+    "proxo_app/lib/widgets/receipt/receipt_kit.dart": "d10fa5788ab3c129f4c62a66c7e417c6403e51e23faafe97fc44e255f52fa829",
+    "proxo_app/pubspec.yaml": "f9ab6002a0a4a4feb9f2df8ea24e8383a3f94b285b1ecf75dd3c9f60623150c6",
+    "proxo_app/supabase/functions/send-notification/index.ts": "30282f5cb75981e6be0b66c2526f9bd84da3f2f4f369c13a29ced22220fc7828",
+    "proxo_app/supabase/functions/send-push-notification/index.ts": "c33e1073ac41031831b8e5cc568592b9c39baca0624736b859e79d47c9ca1712",
     "proxo_app/supabase/templates/confirm-signup.html": "d6948dda8486a06d187541dfc6bcb34f6335a284ab8210a98f562e808544f2bb",
     "proxo_app/test/auth_email_signup_test.dart": "89a3ce6db9731f4658b32aa85508db62a85af3cba02eb082b733d1c0adf3ff30",
-    "proxo_app/test/support/memory_auth_storage.dart": "488b57222b29c3aff57a3f1f1d824f6ae52bf6555789f881291e2dbc24add9a0"
+    "proxo_app/test/auth_phone_flow_test.dart": "6f2325581ced9a51cc240d05160bd8837a28c88b02eaf5c5c62af3460217dec8",
+    "proxo_app/test/auth_refresh_test.dart": "b1f71cb4c129418506c6a094751bcfd9ae1a523278e756652d32fb8c7415e4a0",
+    "proxo_app/test/polish_capture_test.dart": "4e0212fd0a586cc0cbd2906d14606590674136b21f6a496596310b69c66e5553",
+    "proxo_app/test/proxo_polish_test.dart": "84f8c6ffb568d1daeb8edfca60756fcd8b7850b9cd7290d32b42393e17f5516e",
+    "proxo_app/test/support/memory_auth_storage.dart": "488b57222b29c3aff57a3f1f1d824f6ae52bf6555789f881291e2dbc24add9a0",
+    "proxo_app/test/whatsapp_marketing_test.dart": "41b788ce67f9b91e71798efabe2bd42558ecd7de26f7d754bc6959ef243483fe"
   },
   "screenshots": [
+    {
+      "section": "ads",
+      "locale": "ar",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/ads-ar-280-2x.png",
+      "screenshot_sha256": "c25c4864303640f769dcd019f06fdff3b0e78f4a0993c74f3ddd76cf5a28fe56",
+      "position": "top"
+    },
+    {
+      "section": "ads",
+      "locale": "ar",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/ads-ar-393.png",
+      "screenshot_sha256": "be164c81469f45abb38bf5c73d62a6f2e084ec6e7cfb3073c7a6fb7d0004433c",
+      "position": "top"
+    },
+    {
+      "section": "ads",
+      "locale": "ckb",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/ads-ckb-280-2x.png",
+      "screenshot_sha256": "115dc27e6acab75f0cedb2e3aae121f61fff389fae70ffa5f7374e8a5986c7b6",
+      "position": "top"
+    },
+    {
+      "section": "ads",
+      "locale": "ckb",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/ads-ckb-393.png",
+      "screenshot_sha256": "6cb546cc6107c8b32fd93cb6c7ef07cd4439589285a67df9bdc9bcfeb4a6dd4a",
+      "position": "top"
+    },
+    {
+      "section": "ads",
+      "locale": "kmr",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/ads-kmr-280-2x.png",
+      "screenshot_sha256": "cb0a197043a7f631bbaa821777c44ebddf77995a82fa91b61aeca04c6c8556df",
+      "position": "top"
+    },
+    {
+      "section": "ads",
+      "locale": "kmr",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/ads-kmr-393.png",
+      "screenshot_sha256": "a0586f0b19d0e7612b839011285c294a88e4b29aee76095c9fb30011c3b56165",
+      "position": "top"
+    },
+    {
+      "section": "create",
+      "locale": "ar",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/create-ar-280-2x-bottom.png",
+      "screenshot_sha256": "37a3d4e4b53bcda39e1cabffbc06937150acbd6a62905dfb09cecb2734e268e9",
+      "position": "bottom"
+    },
+    {
+      "section": "create",
+      "locale": "ar",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/create-ar-280-2x.png",
+      "screenshot_sha256": "3ea91d17a007a936b3fcb5a35a8dc0952dbfecb9956d75749db43460361d9d5b",
+      "position": "top"
+    },
+    {
+      "section": "create",
+      "locale": "ar",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/create-ar-393-bottom.png",
+      "screenshot_sha256": "758b5c4c1b96cf95f3ba9add89c0d3a7d43052fd8e6f6adf59e60d97b44c2032",
+      "position": "bottom"
+    },
+    {
+      "section": "create",
+      "locale": "ar",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/create-ar-393.png",
+      "screenshot_sha256": "920726dbef5e62da668f2e7111c9d4e8260d30c83a3af1ab84be0a05e73be684",
+      "position": "top"
+    },
+    {
+      "section": "create",
+      "locale": "ckb",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/create-ckb-280-2x-bottom.png",
+      "screenshot_sha256": "ed39ba695880af10e1d9ed8765d2bdcae20c71427f3e11205446be8392cab8bf",
+      "position": "bottom"
+    },
+    {
+      "section": "create",
+      "locale": "ckb",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/create-ckb-280-2x.png",
+      "screenshot_sha256": "15a5ad5481c4a7b7e8435f5c38681e5f1545a242e2a1dbdd425414a0d0bfb4e2",
+      "position": "top"
+    },
+    {
+      "section": "create",
+      "locale": "ckb",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/create-ckb-393-bottom.png",
+      "screenshot_sha256": "c28e5172122fcd3d8fd456fa4da86ab31e939f63dcc3ece2b86efb4575452366",
+      "position": "bottom"
+    },
+    {
+      "section": "create",
+      "locale": "ckb",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/create-ckb-393.png",
+      "screenshot_sha256": "c468da3cae047260015f48bb8a8586ffe9863100034b0d3fa4c9dc42e2aed847",
+      "position": "top"
+    },
+    {
+      "section": "create",
+      "locale": "kmr",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/create-kmr-280-2x-bottom.png",
+      "screenshot_sha256": "4851eb0a869a658d6800d94f28d27d7301c054b2f35e00b38a0898c390760bc9",
+      "position": "bottom"
+    },
+    {
+      "section": "create",
+      "locale": "kmr",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/create-kmr-280-2x.png",
+      "screenshot_sha256": "d40d7de6e7ceb38c040fbf3673b194ae2341e080b85c0d9ca6e8c6cd7fb968f9",
+      "position": "top"
+    },
+    {
+      "section": "create",
+      "locale": "kmr",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/create-kmr-393-bottom.png",
+      "screenshot_sha256": "546d0c4527484f97ea93548ef4e003ebdb7133830cf7218042c43e41bd7019ed",
+      "position": "bottom"
+    },
+    {
+      "section": "create",
+      "locale": "kmr",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/create-kmr-393.png",
+      "screenshot_sha256": "aa8dbbe6fc8dc4a5dd8ed7b8612806e8278fc60927019f8954502438d649d188",
+      "position": "top"
+    },
+    {
+      "section": "deposit",
+      "locale": "ar",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/deposit-ar-280-2x-bottom.png",
+      "screenshot_sha256": "8e55b287adb56e35e552b74aa36200e3db91838f5853cfe03f5580648d20a9d2",
+      "position": "bottom"
+    },
+    {
+      "section": "deposit",
+      "locale": "ar",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/deposit-ar-280-2x.png",
+      "screenshot_sha256": "edd8f287d1e461b41ba946ff3362e0e29a2768ff138bf855311c08e622a38539",
+      "position": "top"
+    },
+    {
+      "section": "deposit",
+      "locale": "ar",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/deposit-ar-393-bottom.png",
+      "screenshot_sha256": "682af2d1ed4cc202b63a01c0872b963ada91e8a051391c0cbe30c8c519730170",
+      "position": "bottom"
+    },
+    {
+      "section": "deposit",
+      "locale": "ar",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/deposit-ar-393.png",
+      "screenshot_sha256": "db47e2dcbef9e069c32ac291436c2ea3e8b1f87c2cba70af62fd67758feacffd",
+      "position": "top"
+    },
+    {
+      "section": "deposit",
+      "locale": "ckb",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/deposit-ckb-280-2x-bottom.png",
+      "screenshot_sha256": "0ac45e9ff4934fdd35057b6e65d87083ba4e92f68f699dd51e36319bf3466015",
+      "position": "bottom"
+    },
+    {
+      "section": "deposit",
+      "locale": "ckb",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/deposit-ckb-280-2x.png",
+      "screenshot_sha256": "cf7661cabce94d553763c313254af390b4b54a3a246eeb546f8d714d2551f7af",
+      "position": "top"
+    },
+    {
+      "section": "deposit",
+      "locale": "ckb",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/deposit-ckb-393-bottom.png",
+      "screenshot_sha256": "e39518250fa516cede466d5309883cff1166318e528b9f1077f0cd67f3ee8207",
+      "position": "bottom"
+    },
+    {
+      "section": "deposit",
+      "locale": "ckb",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/deposit-ckb-393.png",
+      "screenshot_sha256": "d2252929ea26c6c0fa4a18a3609c46062ae75269a97fd9bf5133759799137db1",
+      "position": "top"
+    },
+    {
+      "section": "deposit",
+      "locale": "kmr",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/deposit-kmr-280-2x-bottom.png",
+      "screenshot_sha256": "cf6683d6271dbf8a6a9a0c05a4db537bec935f1349ac1978efeb036ae9c928ce",
+      "position": "bottom"
+    },
+    {
+      "section": "deposit",
+      "locale": "kmr",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/deposit-kmr-280-2x.png",
+      "screenshot_sha256": "644ca590f407692090bca9d91be8364ea17db4aabfe1325cc55bf34c91e64697",
+      "position": "top"
+    },
+    {
+      "section": "deposit",
+      "locale": "kmr",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/deposit-kmr-393-bottom.png",
+      "screenshot_sha256": "f4ace7b170d3dc6bc9ef275ba6e337a75d09b46380403aa0788dcb9eb78713d9",
+      "position": "bottom"
+    },
+    {
+      "section": "deposit",
+      "locale": "kmr",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/deposit-kmr-393.png",
+      "screenshot_sha256": "298fa189d4d3afecb169d7de054007cf07394555533e441862b77dc91026c34e",
+      "position": "top"
+    },
+    {
+      "section": "discounts",
+      "locale": "ar",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/discounts-ar-280-2x.png",
+      "screenshot_sha256": "0a1228bbd8c5466bdf09303bc5616be00db900c9bef1a76a8c695a77290cc993",
+      "position": "top"
+    },
+    {
+      "section": "discounts",
+      "locale": "ar",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/discounts-ar-393.png",
+      "screenshot_sha256": "62c5661d42e0c04e5b0f17f962c9c6d481c596bda3514f02b72bbb52feec7358",
+      "position": "top"
+    },
+    {
+      "section": "discounts",
+      "locale": "ckb",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/discounts-ckb-280-2x.png",
+      "screenshot_sha256": "df5c9b592234818c3f340ef69d68ecad4e9897b737b6a0712fc1357256846268",
+      "position": "top"
+    },
+    {
+      "section": "discounts",
+      "locale": "ckb",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/discounts-ckb-393.png",
+      "screenshot_sha256": "092bda5a0e10628e4a76e73609929e0bcb69ee848fc18ee79e58a2ee0b10fa8a",
+      "position": "top"
+    },
+    {
+      "section": "discounts",
+      "locale": "kmr",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/discounts-kmr-280-2x.png",
+      "screenshot_sha256": "abd417084261f0218d389f57f0f600576be6bd0edf3cca43a163bcdfc88559fb",
+      "position": "top"
+    },
+    {
+      "section": "discounts",
+      "locale": "kmr",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/discounts-kmr-393.png",
+      "screenshot_sha256": "475757c2bfff4192d4b39092702f5d41bf78bb99e69016280600ad2a61d1ffe5",
+      "position": "top"
+    },
     {
       "section": "forgot",
       "locale": "ar",
@@ -60,7 +493,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/forgot-ar-280-2x.png",
-      "screenshot_sha256": "62b3f8c63cd56fd3cd28195d4f790a70e6069dddd1bf7fbab880556c372961bf",
+      "screenshot_sha256": "bc7b0378a3dbb865b078e0f235b853757852034472c63a9c692a2ec506effd20",
       "position": "top"
     },
     {
@@ -71,7 +504,7 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/forgot-ar-393.png",
-      "screenshot_sha256": "0086889b4f3dde1706e311d67e78d591ad105d4d4508351007f773fc9f76fff1",
+      "screenshot_sha256": "c26df56f02174adb63dea5a114cd6d76ba8be6abbcf6f5dfc3b9039df377b547",
       "position": "top"
     },
     {
@@ -82,7 +515,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/forgot-ckb-280-2x.png",
-      "screenshot_sha256": "aede21443f64edaf4bc5685a94a907c3e9b70a461e7b9705d23f2cef78f249f7",
+      "screenshot_sha256": "e83c60d41211ba7bc367aaf5f17042629a231fd4ee619112f4b169bdaeba4eee",
       "position": "top"
     },
     {
@@ -93,7 +526,7 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/forgot-ckb-393.png",
-      "screenshot_sha256": "eb19b09e106e80c4a90f193db8b4f74033a16fcc42f5a0a43ab552f7954ee0a0",
+      "screenshot_sha256": "5218abe8efe3536891fd1595ccfc6dc9f6e1c423bdc8d9aad0da16ae8305b8f2",
       "position": "top"
     },
     {
@@ -104,7 +537,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/forgot-kmr-280-2x.png",
-      "screenshot_sha256": "2d43437c008518572f9b73e15c43ef9c6dcc2e7ab36ac99ba61997e326008684",
+      "screenshot_sha256": "7527ffa0068fcd64cd4fff8d5d0ddff2c1d998b9ac6f73d11fe4139b617df50d",
       "position": "top"
     },
     {
@@ -115,7 +548,172 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/forgot-kmr-393.png",
-      "screenshot_sha256": "4751d475c5335f953e3654ba9927e8df152b67da6c8eaccfbe2bf46cfa7a7389",
+      "screenshot_sha256": "b94fc47f03230983237951a0bfd7a646b32f7f9a4e381d9a00cb8d68b06f65bb",
+      "position": "top"
+    },
+    {
+      "section": "home",
+      "locale": "ar",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/home-ar-280-2x-bottom.png",
+      "screenshot_sha256": "05c501d1788cc2bab82850ffd048fd2f47ebbbd2abb8db734c3d4069613db13a",
+      "position": "bottom"
+    },
+    {
+      "section": "home",
+      "locale": "ar",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/home-ar-280-2x.png",
+      "screenshot_sha256": "9d685360c57cd8753a44633fd767335a8b698e8dbffe3bb33ed256a19e895c3f",
+      "position": "top"
+    },
+    {
+      "section": "home",
+      "locale": "ar",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/home-ar-393.png",
+      "screenshot_sha256": "fbf83ec385724d2d69c031a957e4ce8e240fdac8c3bb85ddce4f94a384eddddf",
+      "position": "top"
+    },
+    {
+      "section": "home",
+      "locale": "ckb",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/home-ckb-280-2x-bottom.png",
+      "screenshot_sha256": "2bd09de13d885da2e8040c8f8e36ac58ec10b18150b804b7a345f7d0738645d5",
+      "position": "bottom"
+    },
+    {
+      "section": "home",
+      "locale": "ckb",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/home-ckb-280-2x.png",
+      "screenshot_sha256": "49b0a155dccda3f74371a1fe897e3f49487b686733924d04e66de7a59fb65657",
+      "position": "top"
+    },
+    {
+      "section": "home",
+      "locale": "ckb",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/home-ckb-393.png",
+      "screenshot_sha256": "d3960d8fb49e8e4c5f7b887ef15a6f81d0554ec2aba4e5c4c231b5bb22bd1efa",
+      "position": "top"
+    },
+    {
+      "section": "home",
+      "locale": "kmr",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/home-kmr-280-2x-bottom.png",
+      "screenshot_sha256": "f6fdf93b30c42dbfb57aa92129050011b1026a62be5d30c0f20c20f37453efd7",
+      "position": "bottom"
+    },
+    {
+      "section": "home",
+      "locale": "kmr",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/home-kmr-280-2x.png",
+      "screenshot_sha256": "ecba5cb7daf055cbc91518ca96dc8310afa943e56a6cc79eab3a6bcf36a539ca",
+      "position": "top"
+    },
+    {
+      "section": "home",
+      "locale": "kmr",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/home-kmr-393.png",
+      "screenshot_sha256": "717292ad528b210e83169c25df3a324deb8397eb72085dd8299d6ac98f0779ab",
+      "position": "top"
+    },
+    {
+      "section": "levels",
+      "locale": "ar",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/levels-ar-280-2x.png",
+      "screenshot_sha256": "332efe2f1a439b7b538846337abd8bca4dbb60b3164de58c704fe289125a50f3",
+      "position": "top"
+    },
+    {
+      "section": "levels",
+      "locale": "ar",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/levels-ar-393.png",
+      "screenshot_sha256": "05ca96bbd2dd0ea2d24a45d5eea83568726f75566634d1b4ab3449b03e5c4c85",
+      "position": "top"
+    },
+    {
+      "section": "levels",
+      "locale": "ckb",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/levels-ckb-280-2x.png",
+      "screenshot_sha256": "d95d54cdafcb76a2f5909ce3b7ddf50af2ab572c70284e23ef59e28adf500611",
+      "position": "top"
+    },
+    {
+      "section": "levels",
+      "locale": "ckb",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/levels-ckb-393.png",
+      "screenshot_sha256": "19682450d78df02d660543d0fe6e3eee859f11825462f97986921c3cf747860d",
+      "position": "top"
+    },
+    {
+      "section": "levels",
+      "locale": "kmr",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/levels-kmr-280-2x.png",
+      "screenshot_sha256": "94e24c6b691e9dc90060ca9843ec7b39a5c2a0261fd643177d536e9b0aaf826a",
+      "position": "top"
+    },
+    {
+      "section": "levels",
+      "locale": "kmr",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/levels-kmr-393.png",
+      "screenshot_sha256": "c3cf3a74849bd24f9e6641f7855f696247f3f556cb05e2348cfd003ebc59b24d",
       "position": "top"
     },
     {
@@ -126,7 +724,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/login-ar-280-2x-bottom.png",
-      "screenshot_sha256": "2b05ee3ef07e77e3665a336dbecc0eca50470a04d6f2b7bdd41193af3e871a29",
+      "screenshot_sha256": "d5fe7eca8ee532ae71abe27597632ffd2cfab1386a58ba24eeb38beddf8b7e44",
       "position": "bottom"
     },
     {
@@ -137,7 +735,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/login-ar-280-2x.png",
-      "screenshot_sha256": "361efbc228383cf3b615a22d475ef3cdd0dc863e577c1cb006993d86c7f83ae7",
+      "screenshot_sha256": "97fed95100589671f209d817012e975217fa563907e79cc02e4d2b47bb1de49a",
       "position": "top"
     },
     {
@@ -148,7 +746,7 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/login-ar-393.png",
-      "screenshot_sha256": "81279bc3877c22e41fe0680c4bf4cbd891255c12500844b9c392895c1703d386",
+      "screenshot_sha256": "c080d8ae550034216407b9bba8937c906dd57a6da58f1758a8bbfb49dd8bd72b",
       "position": "top"
     },
     {
@@ -159,7 +757,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/login-ckb-280-2x-bottom.png",
-      "screenshot_sha256": "a73bd8a035366925863b47b09c4b089013d1efaa64e5d2b05e791c8c295b8dda",
+      "screenshot_sha256": "c379b07b527e1a93a20d67e820bde0b8a493f3fad195532eb9bc6e547f51f59e",
       "position": "bottom"
     },
     {
@@ -170,7 +768,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/login-ckb-280-2x.png",
-      "screenshot_sha256": "bff0c753c8d1fe72f2f78500e212e1d5928140d9bb85a39c2b234eecc95a5304",
+      "screenshot_sha256": "34860308758476577d78a1e0d83dddb6e27056cd942b3632dec78721751f9836",
       "position": "top"
     },
     {
@@ -181,7 +779,7 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/login-ckb-393.png",
-      "screenshot_sha256": "d4c9d41bf32a6fc27aa75f19b1c153361fcb41ecd2bc0c79554d67256c9cd97d",
+      "screenshot_sha256": "ef064f2968a47f5b965ed00ab7bec78bf68951cb80b2f92a1dd91a82d79adb1e",
       "position": "top"
     },
     {
@@ -192,7 +790,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/login-kmr-280-2x-bottom.png",
-      "screenshot_sha256": "aebec903be389b25c23864247466a9c7d0496d0ec14e1ea2d7b3323fcff2d9b0",
+      "screenshot_sha256": "d070028b7d4fa0c745df574492fb8f152459e7fda8f6acf6f1fc9ead37e6c713",
       "position": "bottom"
     },
     {
@@ -203,7 +801,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/login-kmr-280-2x.png",
-      "screenshot_sha256": "f88e78cd4483551e60027d45e003de0abe1f9bafef025ca96bd03cc3df68a958",
+      "screenshot_sha256": "aae99ce48f798551b951d9c5f9fca6ae71e83416fdd9a1787b1b8afc9449d2ec",
       "position": "top"
     },
     {
@@ -214,7 +812,7 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/login-kmr-393.png",
-      "screenshot_sha256": "c68fd96f6fd5ccf7ee7b41037a9c8ed00c5086b43e946012de7ba62fb48cf93a",
+      "screenshot_sha256": "3810d79a907168231b1e43426ad794dffc371340dbc6b070f30746f3d1c4c721",
       "position": "top"
     },
     {
@@ -225,7 +823,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/login-phone-ar-280-2x-bottom.png",
-      "screenshot_sha256": "b3844bc8e6bf29eaa55ac39cf747ce34f6eb0ad14dda8ccb54e073e86d5787aa",
+      "screenshot_sha256": "7a0a7b0ded8850eaeb30d9eb2d0f39e6e1a7866c92580b59ea13330a70681d1a",
       "position": "bottom"
     },
     {
@@ -236,7 +834,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/login-phone-ar-280-2x.png",
-      "screenshot_sha256": "72b9399361fd69541d827473ebcb3d793512909026aa3bd6d8f3387813a740ec",
+      "screenshot_sha256": "9982ecc399d8e7f754cceec9a8f1d40c31d7e319c74788b6bfddb87b56ff928f",
       "position": "top"
     },
     {
@@ -247,7 +845,7 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/login-phone-ar-393.png",
-      "screenshot_sha256": "df7240d260a103588f215b3a552647ce759fbc1be665fb9466028c1804d0c58c",
+      "screenshot_sha256": "9e40535c79e6d2358d64bd127626fecd3ccf88f25426f2dfc96dc76c7871a124",
       "position": "top"
     },
     {
@@ -258,7 +856,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/login-phone-ckb-280-2x-bottom.png",
-      "screenshot_sha256": "34161976ecf19dad380f088dd145fba51dc0477c0ea1f250b1cd1f31cd0e102e",
+      "screenshot_sha256": "0e6dabbd1ca21a39821fb96ad73c7a241407ea6ff4fe2c7a13a28238130843a4",
       "position": "bottom"
     },
     {
@@ -269,7 +867,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/login-phone-ckb-280-2x.png",
-      "screenshot_sha256": "30948d98e96b8589a54fc3ac3d4f15245b888211c32af7fa7670854d8671b461",
+      "screenshot_sha256": "a1a86a4c6ecef595e99f8e8685efa60522bd712fdf2e6d2c4020a94e85cf7f87",
       "position": "top"
     },
     {
@@ -280,7 +878,73 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/login-phone-ckb-393.png",
-      "screenshot_sha256": "6c17f28cc9f4afb135027abff02bae5cdd5ddcd6688865fb7fbf332c3e4c5024",
+      "screenshot_sha256": "1e408a858e9f55f0a84e38cc1221bc8cba52fb6b5e239d93db93ec0ed2db1ed1",
+      "position": "top"
+    },
+    {
+      "section": "login-phone-filled",
+      "locale": "ar",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/login-phone-filled-ar-280-2x.png",
+      "screenshot_sha256": "f845909147e00037d21ef94e17e5bc09bede1a4ce4b6ce6ddd4ea9a77f25d747",
+      "position": "top"
+    },
+    {
+      "section": "login-phone-filled",
+      "locale": "ar",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/login-phone-filled-ar-393.png",
+      "screenshot_sha256": "09aa5710623c5cf3bf1ca5cc61bec4d052da85e80b89fc73077a35d780f82b5f",
+      "position": "top"
+    },
+    {
+      "section": "login-phone-filled",
+      "locale": "ckb",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/login-phone-filled-ckb-280-2x.png",
+      "screenshot_sha256": "68ae5bdc492a254def4166a1cffbbaa14d17917eb48749626e9dbce2a239229f",
+      "position": "top"
+    },
+    {
+      "section": "login-phone-filled",
+      "locale": "ckb",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/login-phone-filled-ckb-393.png",
+      "screenshot_sha256": "2537a111463d40df8449effac6a558c72b3c9e27e6636f1e338851cabf143529",
+      "position": "top"
+    },
+    {
+      "section": "login-phone-filled",
+      "locale": "kmr",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/login-phone-filled-kmr-280-2x.png",
+      "screenshot_sha256": "30e7ddc10165238d6ef4ec12d2e6c564931bd8b311295b0480517d2fe576f86f",
+      "position": "top"
+    },
+    {
+      "section": "login-phone-filled",
+      "locale": "kmr",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/login-phone-filled-kmr-393.png",
+      "screenshot_sha256": "d97ceb4ba4c8c232bfaf0bc0f55e2a248dc735c75cfec2a92702f5cfcbb51121",
       "position": "top"
     },
     {
@@ -291,7 +955,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/login-phone-kmr-280-2x-bottom.png",
-      "screenshot_sha256": "1888fd6f5b8db1abc704e4185bda8ac3592f32fc6024020289a093997ff89fbe",
+      "screenshot_sha256": "2f5bf1d6f6ca77fb28a85c3e0479061276af1a28f7e8f5a1109c71967537cdc0",
       "position": "bottom"
     },
     {
@@ -302,7 +966,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/login-phone-kmr-280-2x.png",
-      "screenshot_sha256": "c1e0588432d3aed96b2ad271c74c45b00004ce844947ce2e44b31b87f8c1a98d",
+      "screenshot_sha256": "2d3c0b8257d57e5c6ed49fffe940ce9bb0ad8e685af526f3b1dde063a064df0e",
       "position": "top"
     },
     {
@@ -313,7 +977,73 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/login-phone-kmr-393.png",
-      "screenshot_sha256": "6f295ff416d3fcba8c3e4964b56af03f33cdcc19ad3e577a2f6c3d6e716e8428",
+      "screenshot_sha256": "acb1d3680aeeb0b26572de359fdf35e8baac6e5d4d83f124256910b53ff5361b",
+      "position": "top"
+    },
+    {
+      "section": "navigation",
+      "locale": "ar",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/navigation-ar-280-2x.png",
+      "screenshot_sha256": "ff10b55fa6c713fc6d4e8048f4aec46fcd26379f4f50902a68020f63b1c9fbb6",
+      "position": "top"
+    },
+    {
+      "section": "navigation",
+      "locale": "ar",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/navigation-ar-393.png",
+      "screenshot_sha256": "1aedcf610785cabf8214c13c752051cc0e1f261d36e1ba03348e895d8ee0127b",
+      "position": "top"
+    },
+    {
+      "section": "navigation",
+      "locale": "ckb",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/navigation-ckb-280-2x.png",
+      "screenshot_sha256": "bc2b4816aab9364b937ec6679fc63a5345d859a5afc4fcdb48a6a5e2d1425b8a",
+      "position": "top"
+    },
+    {
+      "section": "navigation",
+      "locale": "ckb",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/navigation-ckb-393.png",
+      "screenshot_sha256": "94f7ab606b2189448382683dd7f450ea6be0a55d38c03a689485d86f7f63369f",
+      "position": "top"
+    },
+    {
+      "section": "navigation",
+      "locale": "kmr",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/navigation-kmr-280-2x.png",
+      "screenshot_sha256": "6d79828debc03d57ce1d4585c96800842d2f17520b9d153eca55dc7c3d8a50b2",
+      "position": "top"
+    },
+    {
+      "section": "navigation",
+      "locale": "kmr",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/navigation-kmr-393.png",
+      "screenshot_sha256": "2b26e6810f0576112321ce262ce01d507dd8dc4f6fc3abdfa2c51e1a07dfe6ec",
       "position": "top"
     },
     {
@@ -324,7 +1054,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/new-password-ar-280-2x-bottom.png",
-      "screenshot_sha256": "959754aa2b1ec4459cb5968a48bea27d6112aa3e0c57ae930f1e2eca1ca68229",
+      "screenshot_sha256": "3d8b37129ab4c076871a5e5cfffb07a5816a9621056b6985c7da3701e2637953",
       "position": "bottom"
     },
     {
@@ -335,7 +1065,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/new-password-ar-280-2x.png",
-      "screenshot_sha256": "6a0e899b69b9177fa7649385111a14486090b82a88e80f6e1903b060213d9940",
+      "screenshot_sha256": "d8e35fb66af15d8f79780ffe78f5e214974c7f7d72f69737993d39a741a7a504",
       "position": "top"
     },
     {
@@ -346,7 +1076,7 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/new-password-ar-393.png",
-      "screenshot_sha256": "fd1483a8add10ffd76bc741602489786a231be47a58a30b338d6ba1f7cf8c17b",
+      "screenshot_sha256": "6ff252760162acf63d4652ed07906d8de094f0f96d550310dde59219db8f612c",
       "position": "top"
     },
     {
@@ -357,7 +1087,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/new-password-ckb-280-2x-bottom.png",
-      "screenshot_sha256": "75321731966051681b25f67157c4fba7c57385aba44db69eae9007fc460dd3f0",
+      "screenshot_sha256": "1ee3909486409aa4708fb93870a341018e061a3f2a692284ac8767a672e13e53",
       "position": "bottom"
     },
     {
@@ -368,7 +1098,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/new-password-ckb-280-2x.png",
-      "screenshot_sha256": "9e9e539a7fbf9f654b31059070ce4e3e8a3c1294e5a96fdb2e9ca852de1218ef",
+      "screenshot_sha256": "dfc887d8dcc540bf048e4c387e559a12f32b2dee536c94932a95bca846901a50",
       "position": "top"
     },
     {
@@ -379,7 +1109,7 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/new-password-ckb-393.png",
-      "screenshot_sha256": "07260c52f6d8d81adb5ff76aaa9914da7deff6fa19ef01e7416e3d54440f9b69",
+      "screenshot_sha256": "d81826c52de523f61344b6a8cdc22112f5b6f5159c219a8fc2690b2b89eca3af",
       "position": "top"
     },
     {
@@ -390,7 +1120,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/new-password-kmr-280-2x-bottom.png",
-      "screenshot_sha256": "d82e9719443ca780cd5f828f042abc5fd6eaa735618bc9b9a9b48d26fe757640",
+      "screenshot_sha256": "531f9d7efc6ef06741c0c59d77d52c3b3c223639bf549d693f80fed058df8bc3",
       "position": "bottom"
     },
     {
@@ -401,7 +1131,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/new-password-kmr-280-2x.png",
-      "screenshot_sha256": "02102c594c52751a5003a0e618d1bf80e06389b39e007c542012ea7be52a40e8",
+      "screenshot_sha256": "403f270036d491a7efa33894211534101d133539745c978d07232f628e175959",
       "position": "top"
     },
     {
@@ -412,7 +1142,73 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/new-password-kmr-393.png",
-      "screenshot_sha256": "d4fc93269cb1c95031d1f74004ac8b63d48f5efb9c480a563211faf3e0c01f6f",
+      "screenshot_sha256": "59a6ecb414b74e8a7c0d04caf70689af7a5eff480511fa0dfad2158ee9964e1a",
+      "position": "top"
+    },
+    {
+      "section": "notifications",
+      "locale": "ar",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/notifications-ar-280-2x.png",
+      "screenshot_sha256": "2a99b2e76024ddced220ec05330c03680292fc3f894fd0c57237ae6f71b58208",
+      "position": "top"
+    },
+    {
+      "section": "notifications",
+      "locale": "ar",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/notifications-ar-393.png",
+      "screenshot_sha256": "7ebc39e3fc76c301a52bacafcfafb4d8dd8c2fde4e9a67644897d064859c2e8e",
+      "position": "top"
+    },
+    {
+      "section": "notifications",
+      "locale": "ckb",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/notifications-ckb-280-2x.png",
+      "screenshot_sha256": "773104c2298d284694f17402a455b9783a5e93242ce14616bd4ff77d89a6a3aa",
+      "position": "top"
+    },
+    {
+      "section": "notifications",
+      "locale": "ckb",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/notifications-ckb-393.png",
+      "screenshot_sha256": "fd4fdf0fe7205b708a0778742c0b39ba65b9c7174ccb49b4e59dcf60666f67fb",
+      "position": "top"
+    },
+    {
+      "section": "notifications",
+      "locale": "kmr",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/notifications-kmr-280-2x.png",
+      "screenshot_sha256": "469fc6f9b06100bfe0641151e37a85258ef8f98e6949eea5c79487b07ad9b6f7",
+      "position": "top"
+    },
+    {
+      "section": "notifications",
+      "locale": "kmr",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/notifications-kmr-393.png",
+      "screenshot_sha256": "85d0d50748eea5d1b3aaea796b2a434b72e2c6bbbd9a4b71b25d08b862e3ef6f",
       "position": "top"
     },
     {
@@ -423,7 +1219,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/otp-ar-280-2x.png",
-      "screenshot_sha256": "43b9612a04037460372565cc10b7f22ffd37df1ea0c741ba3f00823a65ac989d",
+      "screenshot_sha256": "30b8cc110c22c4b138015be6a3f3fc6a32899e7697ce88c81ae043373a38869b",
       "position": "top"
     },
     {
@@ -434,7 +1230,7 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/otp-ar-393.png",
-      "screenshot_sha256": "39ca30bdfe16b9842eef9f0ab9c6b25f33e821092c0a42586e45c2937c3fcb35",
+      "screenshot_sha256": "55da092f4a05b8214f401ac3e937b70c54efca1b2ed1274915907e9abf70c652",
       "position": "top"
     },
     {
@@ -445,7 +1241,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/otp-ckb-280-2x.png",
-      "screenshot_sha256": "32786a489c4da0cac7abc8ed2d32d79e2c373e5c912c142dc5c2026ee6908f74",
+      "screenshot_sha256": "7ef4a48d1b13c98277ea38ffc08de0b79457f912434f62ab5c296d613991d6dd",
       "position": "top"
     },
     {
@@ -456,7 +1252,73 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/otp-ckb-393.png",
-      "screenshot_sha256": "1fb655122e57814f387d644fa939f9fb678b613533bcd567e9bcb683f48f9598",
+      "screenshot_sha256": "5e662562a9d8ed838db97d64e407d7d1ef0082317584947845f7aec895b2b71c",
+      "position": "top"
+    },
+    {
+      "section": "otp-filled",
+      "locale": "ar",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/otp-filled-ar-280-2x.png",
+      "screenshot_sha256": "ee32b67fbdcafeb632de4b35b656ba68bd1f521b0615f5526d3e34f23936cdf5",
+      "position": "top"
+    },
+    {
+      "section": "otp-filled",
+      "locale": "ar",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/otp-filled-ar-393.png",
+      "screenshot_sha256": "51c5b292dbe2716759fbab89d7e5fc14826fa882e2a34d31c2a45a4f9bfceb98",
+      "position": "top"
+    },
+    {
+      "section": "otp-filled",
+      "locale": "ckb",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/otp-filled-ckb-280-2x.png",
+      "screenshot_sha256": "6e73a01fe3dd7783df52757618e85fa8d58d7cf17cb7488d9d0a85132c54aec0",
+      "position": "top"
+    },
+    {
+      "section": "otp-filled",
+      "locale": "ckb",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/otp-filled-ckb-393.png",
+      "screenshot_sha256": "dbd2f75bc1f8c2e9d43d9970275ae195ddf69c8b9b1592b50ecdf8ce31eb3200",
+      "position": "top"
+    },
+    {
+      "section": "otp-filled",
+      "locale": "kmr",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/otp-filled-kmr-280-2x.png",
+      "screenshot_sha256": "6d9683236bf2bb01136a8df479cadb8ea2596af5c8977ba8a5b590e57be9f753",
+      "position": "top"
+    },
+    {
+      "section": "otp-filled",
+      "locale": "kmr",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/otp-filled-kmr-393.png",
+      "screenshot_sha256": "8a043d5ce6f8814599568acfcba39ffa9bbcfdf8f7cc96d5dff207b2cd33f04a",
       "position": "top"
     },
     {
@@ -467,7 +1329,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/otp-kmr-280-2x.png",
-      "screenshot_sha256": "5ed61d73138240ee9827a5aeb0c8558a4c9d0f00a85e21976494569a29bb3aeb",
+      "screenshot_sha256": "f4c45bb8d827140b2763fde93403b61b4141c6bb9f35518ef010891875bf8a42",
       "position": "top"
     },
     {
@@ -478,7 +1340,491 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/otp-kmr-393.png",
-      "screenshot_sha256": "1d0a1cac1001c6382360baeae677b81eb4d2f597b56e73f48826786fa6457859",
+      "screenshot_sha256": "f26c5093bc33d4665be29486f237977823fa7d796af3c6c7810362292fbd2c4d",
+      "position": "top"
+    },
+    {
+      "section": "profile",
+      "locale": "ar",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/profile-ar-280-2x-bottom.png",
+      "screenshot_sha256": "4ecec57aa28db4131714b3e229912bcf84fc2edf6ddaaf403f146e239f722c09",
+      "position": "bottom"
+    },
+    {
+      "section": "profile",
+      "locale": "ar",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/profile-ar-280-2x.png",
+      "screenshot_sha256": "84666e021e6d9e70b92a9ed99cf65ad7a3631d05d2d53d8c3d3f5bf081fd2bbb",
+      "position": "top"
+    },
+    {
+      "section": "profile",
+      "locale": "ar",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/profile-ar-393-bottom.png",
+      "screenshot_sha256": "d5f25c2542f7fa47b8f1da625f1304482defc8ae029078b5ea97130479e9a6e6",
+      "position": "bottom"
+    },
+    {
+      "section": "profile",
+      "locale": "ar",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/profile-ar-393.png",
+      "screenshot_sha256": "e925f2d356bf12bf123fa304fe55488998b20b94072ee78f3bd946f81aada058",
+      "position": "top"
+    },
+    {
+      "section": "profile",
+      "locale": "ckb",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/profile-ckb-280-2x-bottom.png",
+      "screenshot_sha256": "a5d4980d759104f4166fe5ba06a0fb372dda30825351bb2b9db2bfc56c251abb",
+      "position": "bottom"
+    },
+    {
+      "section": "profile",
+      "locale": "ckb",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/profile-ckb-280-2x.png",
+      "screenshot_sha256": "a0186b28982de9e8ab54fc1196c3d5c48134ab5c558d1ce0cbb894714ed40ba2",
+      "position": "top"
+    },
+    {
+      "section": "profile",
+      "locale": "ckb",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/profile-ckb-393-bottom.png",
+      "screenshot_sha256": "34258020d0813ed56fbcfb63dffe1e61729522881e7af2c9f4439648246cdf11",
+      "position": "bottom"
+    },
+    {
+      "section": "profile",
+      "locale": "ckb",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/profile-ckb-393.png",
+      "screenshot_sha256": "85b1ba2833e4594a35f6b3679f50eda3459944aa95f0c9e5c486642eecb308cf",
+      "position": "top"
+    },
+    {
+      "section": "profile",
+      "locale": "kmr",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/profile-kmr-280-2x-bottom.png",
+      "screenshot_sha256": "1487bd8e833d46db9d7ed3c826dbde01a8e2b7a1a264314602307e757d58b8ec",
+      "position": "bottom"
+    },
+    {
+      "section": "profile",
+      "locale": "kmr",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/profile-kmr-280-2x.png",
+      "screenshot_sha256": "f6139ce6c5af0ea4cc0ded4ec151be48e8c35216f6f36beb16cfd282ae7a0924",
+      "position": "top"
+    },
+    {
+      "section": "profile",
+      "locale": "kmr",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/profile-kmr-393-bottom.png",
+      "screenshot_sha256": "3db676f7cbe92aab289cfecec433a85858d539ca81dc87a320dbed0a789029cb",
+      "position": "bottom"
+    },
+    {
+      "section": "profile",
+      "locale": "kmr",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/profile-kmr-393.png",
+      "screenshot_sha256": "fdb1a60374f9ac025d67552bce4fc597d838d811de4e85e2f79c422347542cb7",
+      "position": "top"
+    },
+    {
+      "section": "refresh",
+      "locale": "ar",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/refresh-ar-280-2x.png",
+      "screenshot_sha256": "358d952d370fdc7ca4cd266b9a908f1c50cde975d38a01241f2ee23898aa14e5",
+      "position": "top"
+    },
+    {
+      "section": "refresh",
+      "locale": "ar",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/refresh-ar-393.png",
+      "screenshot_sha256": "6240fb8ad386876051a86e4382d618e7f9860fe9e9658392515f7576148cdf50",
+      "position": "top"
+    },
+    {
+      "section": "refresh",
+      "locale": "ckb",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/refresh-ckb-280-2x.png",
+      "screenshot_sha256": "308ef92bd434e25354a5c71056ec32428a1604826594bb7d9bab1c8b9e1c8880",
+      "position": "top"
+    },
+    {
+      "section": "refresh",
+      "locale": "ckb",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/refresh-ckb-393.png",
+      "screenshot_sha256": "4804846c74488ecd141aa17ab1322d99a9f8b7d842ad257d163b80192f0b4731",
+      "position": "top"
+    },
+    {
+      "section": "refresh",
+      "locale": "kmr",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/refresh-kmr-280-2x.png",
+      "screenshot_sha256": "944639ce1051e45d3ca0a30d6335e15452404134926fc34f1c149d77151deb57",
+      "position": "top"
+    },
+    {
+      "section": "refresh",
+      "locale": "kmr",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/refresh-kmr-393.png",
+      "screenshot_sha256": "4c3c47807a11af25e333f0ddd17db2207b0aa378621bee5f3c39b0ba2c3e0407",
+      "position": "top"
+    },
+    {
+      "section": "results",
+      "locale": "ar",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/results-ar-280-2x-bottom.png",
+      "screenshot_sha256": "f891aca7db43a93ecabde0532694aff694ca10d3be8b69f11a62ace4b4572595",
+      "position": "bottom"
+    },
+    {
+      "section": "results",
+      "locale": "ar",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/results-ar-280-2x.png",
+      "screenshot_sha256": "e61806fa283e65bc08313151288342438e7dd8870560b19b27ef1787ab34843a",
+      "position": "top"
+    },
+    {
+      "section": "results",
+      "locale": "ar",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/results-ar-393-bottom.png",
+      "screenshot_sha256": "85e28e2e6a0125780c5b14a229c841015645160cd7a73fe7fdf040074d3a28ba",
+      "position": "bottom"
+    },
+    {
+      "section": "results",
+      "locale": "ar",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/results-ar-393.png",
+      "screenshot_sha256": "04697251f0493a461963c9f7c1f1621472bb0fc192b64ad3c681a4d709216c06",
+      "position": "top"
+    },
+    {
+      "section": "results-banner",
+      "locale": "ar",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/results-banner-ar-280-2x.png",
+      "screenshot_sha256": "f015bc970a3a5ede9f3e287bdf7267360846e08e3133a6001bc3169588afb616",
+      "position": "top"
+    },
+    {
+      "section": "results-banner",
+      "locale": "ar",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/results-banner-ar-393.png",
+      "screenshot_sha256": "a16e51df1e5f9c7def783637fbbf03b1a10d5525d037d209bfa712dce4788e32",
+      "position": "top"
+    },
+    {
+      "section": "results-banner",
+      "locale": "ckb",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/results-banner-ckb-280-2x-bottom.png",
+      "screenshot_sha256": "3a1bee27a2404ae832f91e73921ff539499af39773dc845224b3235d092083cb",
+      "position": "bottom"
+    },
+    {
+      "section": "results-banner",
+      "locale": "ckb",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/results-banner-ckb-280-2x.png",
+      "screenshot_sha256": "0601d1f7e64592b97fa89e6884a4770f013a2b8b5c16a776f9635b05f77c8e85",
+      "position": "top"
+    },
+    {
+      "section": "results-banner",
+      "locale": "ckb",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/results-banner-ckb-393.png",
+      "screenshot_sha256": "54913b156229ce5e562aa3d6a6e6c949a76d54397631a24aec896aa50fd22d54",
+      "position": "top"
+    },
+    {
+      "section": "results-banner",
+      "locale": "kmr",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/results-banner-kmr-280-2x-bottom.png",
+      "screenshot_sha256": "00435b93240221cd4b0f8992c5b844333a73e9b9d1d156404426dfa35612d93f",
+      "position": "bottom"
+    },
+    {
+      "section": "results-banner",
+      "locale": "kmr",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/results-banner-kmr-280-2x.png",
+      "screenshot_sha256": "d3bc38d8ceeda066e8969ebc159e8dbf50a351a2077c58ce043b1d1c1371d2af",
+      "position": "top"
+    },
+    {
+      "section": "results-banner",
+      "locale": "kmr",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/results-banner-kmr-393.png",
+      "screenshot_sha256": "10558ad044a56f00e50ef5268934a55e1e4dbb314150868246a2c1a26994e827",
+      "position": "top"
+    },
+    {
+      "section": "results",
+      "locale": "ckb",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/results-ckb-280-2x-bottom.png",
+      "screenshot_sha256": "41f63669272830f423aefc466f2d3e37a7f2ae76b074a7194ebd612fea6b536e",
+      "position": "bottom"
+    },
+    {
+      "section": "results",
+      "locale": "ckb",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/results-ckb-280-2x.png",
+      "screenshot_sha256": "2f2143a3e2fd60f0a36769eb5804140ab7a049b75e2ef936051cc9be6ce38ec9",
+      "position": "top"
+    },
+    {
+      "section": "results",
+      "locale": "ckb",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/results-ckb-393-bottom.png",
+      "screenshot_sha256": "6a9c4919b7a33c3a2d1179c585186f14152c9ae6386f324ab087abafc1644bd9",
+      "position": "bottom"
+    },
+    {
+      "section": "results",
+      "locale": "ckb",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/results-ckb-393.png",
+      "screenshot_sha256": "901ee6878d2934eeec2b82784f5923de62b6d2b4b2a190349aff1c5aba4f78b2",
+      "position": "top"
+    },
+    {
+      "section": "results-empty",
+      "locale": "ar",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/results-empty-ar-280-2x.png",
+      "screenshot_sha256": "f95d0838420e5e68967669e0457e33286479a47425af879410f6a99f195a1207",
+      "position": "top"
+    },
+    {
+      "section": "results-empty",
+      "locale": "ar",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/results-empty-ar-393.png",
+      "screenshot_sha256": "0dc9bf8544e44b6196062bc9d981276f18c1444f773fc6eb67cbc445020b5576",
+      "position": "top"
+    },
+    {
+      "section": "results-empty",
+      "locale": "ckb",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/results-empty-ckb-280-2x.png",
+      "screenshot_sha256": "fbc622c79c6e794818f9849ed8c5bd1a8aa86c771687e30bea31c8bdc04c18b3",
+      "position": "top"
+    },
+    {
+      "section": "results-empty",
+      "locale": "ckb",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/results-empty-ckb-393.png",
+      "screenshot_sha256": "ee2d85b719bbf11e4c7f2e4c25720ea84a9d5873cbeb24323c3c117d484776f6",
+      "position": "top"
+    },
+    {
+      "section": "results-empty",
+      "locale": "kmr",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/results-empty-kmr-280-2x.png",
+      "screenshot_sha256": "e6cd60eca15151e5a135a9c616bcf9fa4e2e4bf50452b60596178b2100ea207a",
+      "position": "top"
+    },
+    {
+      "section": "results-empty",
+      "locale": "kmr",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/results-empty-kmr-393.png",
+      "screenshot_sha256": "4569027fe4f8e0def3c2956f1daa54f816541da4e558773f97dafa8b1487b4e8",
+      "position": "top"
+    },
+    {
+      "section": "results",
+      "locale": "kmr",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/results-kmr-280-2x-bottom.png",
+      "screenshot_sha256": "9ecff82f14a2e8d2185cdbc748c6963ba8e65baf8ae10eb1ad546d108beb366e",
+      "position": "bottom"
+    },
+    {
+      "section": "results",
+      "locale": "kmr",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/results-kmr-280-2x.png",
+      "screenshot_sha256": "32a118e789850f4ee3fd484d850ae7d65cc0d48c286edac2e25d8c0db5bf7fbb",
+      "position": "top"
+    },
+    {
+      "section": "results",
+      "locale": "kmr",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/results-kmr-393-bottom.png",
+      "screenshot_sha256": "add5557ae11ed7ffe1eb2c1e746b9094e382f2aafdf538343c4067ad0dae7a4d",
+      "position": "bottom"
+    },
+    {
+      "section": "results",
+      "locale": "kmr",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/results-kmr-393.png",
+      "screenshot_sha256": "ae95361ebddb285a579a5fce9cff76830668976ec81426aca0cdd3481b5de5ec",
       "position": "top"
     },
     {
@@ -489,7 +1835,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/signup-ar-280-2x-bottom.png",
-      "screenshot_sha256": "5cd9c12e8dba4dcb46a30820d43b859488496d7a62c2e7dd14a9cac5a9f00d23",
+      "screenshot_sha256": "c178a1a4917985872d5592ef21d0e5ba6997c1f2992bf71be1a3dff09df4a9db",
       "position": "bottom"
     },
     {
@@ -500,7 +1846,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/signup-ar-280-2x.png",
-      "screenshot_sha256": "6b7a2bcd8d177d9f778a88c21834cef8278fc7222f26eca4801aaa434a2b7559",
+      "screenshot_sha256": "3b68e5729079ad8a7db130655ca5fef2dc242b96414e8a5c9dc02771c46a4475",
       "position": "top"
     },
     {
@@ -511,7 +1857,7 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/signup-ar-393.png",
-      "screenshot_sha256": "cca711fc0d582682fd9f863d1da0fd2f1ffafb5a5443a240ddd24b381fe15e66",
+      "screenshot_sha256": "f48d99c942fb7ed55f6d8e76f24fce010f481493ca78872729dafe60a43bde5b",
       "position": "top"
     },
     {
@@ -522,7 +1868,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/signup-ckb-280-2x-bottom.png",
-      "screenshot_sha256": "c916b1ab32e65c77b0befc5f2dd6816e6f0d95549ef85f81457dd270856c4aaa",
+      "screenshot_sha256": "e451f04eaf69775a30ace7e83fa44bd076b5bbdfada14a65927fd6e562c18082",
       "position": "bottom"
     },
     {
@@ -533,7 +1879,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/signup-ckb-280-2x.png",
-      "screenshot_sha256": "4b60d6660f7fc5110d3375bd573f76d9957ac958e9f1e32d5755dca208d990f2",
+      "screenshot_sha256": "a66b231deb348c6d698ae7d164834d833c7390b480ac32256d8d763229987b03",
       "position": "top"
     },
     {
@@ -544,7 +1890,7 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/signup-ckb-393.png",
-      "screenshot_sha256": "e40e9374468ed878d8b946562c07e0bf52c6240ecbaf4cd221d40b88a3e4e883",
+      "screenshot_sha256": "2857c7474b24265a78dc55ad5bab9fd959a4a62b7b64bae9fac62845adfae4cd",
       "position": "top"
     },
     {
@@ -555,7 +1901,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/signup-filled-ar-280-2x-bottom.png",
-      "screenshot_sha256": "94eb504238d909da155f83689374b2ef83978a87a29c955cef20db9dc1c87571",
+      "screenshot_sha256": "b83cacbd29a823f7fcbc9b27e592d17efa6e48c1677a957a393be66ce0e87e5c",
       "position": "bottom"
     },
     {
@@ -566,7 +1912,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/signup-filled-ar-280-2x.png",
-      "screenshot_sha256": "278a91af966ebff89887d0b25676ec0ade15c82ed22fb16b9f67065df2b18087",
+      "screenshot_sha256": "1abe84a92eb6703e4cd0ddc6e15928187c2716a32606f3a4e0866f29864fff0e",
       "position": "top"
     },
     {
@@ -577,7 +1923,7 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/signup-filled-ar-393.png",
-      "screenshot_sha256": "f10773c2e174a761f26b35429503fc554c1db95255dc81a97aef00f3e706f3ae",
+      "screenshot_sha256": "0683979b3154565ac17fdd896cc4c6853a3ba1411037f417695c4774bc43a927",
       "position": "top"
     },
     {
@@ -588,7 +1934,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/signup-filled-ckb-280-2x-bottom.png",
-      "screenshot_sha256": "e40a7fbd6cf25051b24fe93cd042e913bb37909217bf33442877025d2a82f91c",
+      "screenshot_sha256": "a9a8e8d9b11fbc3275ae6ec0268fa9dd37eac2dba9f578671815c5b9c53a34cd",
       "position": "bottom"
     },
     {
@@ -599,7 +1945,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/signup-filled-ckb-280-2x.png",
-      "screenshot_sha256": "62e9e4ca62071f59d117dc2e0649762431e4f63a1525211fe10b7d948217db34",
+      "screenshot_sha256": "65907a80cfcdc3e28ee430e7e5056ffa2085bd56af78a4222bbb8fa6ace7d8b8",
       "position": "top"
     },
     {
@@ -610,7 +1956,7 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/signup-filled-ckb-393.png",
-      "screenshot_sha256": "ffdd72896ac0b9ab9ae091b6bb2de96ef2ab3b4581a97596bac27576a5b2354a",
+      "screenshot_sha256": "4f1b5367df23d75e1a585c8eee55ee313b83c55d474f6afbc1849aa659f809f2",
       "position": "top"
     },
     {
@@ -621,7 +1967,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/signup-filled-kmr-280-2x-bottom.png",
-      "screenshot_sha256": "ccf89d857a5f4213c2e788d47836c6b8171b29e522f027d9f8205bf86e9caed2",
+      "screenshot_sha256": "1570c20b84b18d5c22eb2a30031301440cf7b5f3b3b2bec2f106fbf3a00e23b4",
       "position": "bottom"
     },
     {
@@ -632,7 +1978,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/signup-filled-kmr-280-2x.png",
-      "screenshot_sha256": "cff70baeb5870f6669fe16d235089fcb75914b829e6d6ace859f6e80493f2bcc",
+      "screenshot_sha256": "28c24f6c1fa8d6a3df5f2f674a6adbef69ab8ed24fb4a9679591a533931cca2b",
       "position": "top"
     },
     {
@@ -643,7 +1989,7 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/signup-filled-kmr-393.png",
-      "screenshot_sha256": "b6a4519a1b96e2484edeb950d5aa93449c4f294c982cd6311944767b4028b173",
+      "screenshot_sha256": "2a43e2c326f6b54dbf9566aa535820c96d3717c8304e9c4487cbb3273a36ad0f",
       "position": "top"
     },
     {
@@ -654,7 +2000,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/signup-kmr-280-2x-bottom.png",
-      "screenshot_sha256": "36b4acc7404dd9dd031a295bfc503dee9b4d389f1f4b85fc7ac3bd656014d0bb",
+      "screenshot_sha256": "deca5cc54d22b1ab2422a84cefb26e805e76e553de6a043b8b3704c35ba28265",
       "position": "bottom"
     },
     {
@@ -665,7 +2011,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/signup-kmr-280-2x.png",
-      "screenshot_sha256": "97dfa422d9c6b0c0aa2fed1a861921bf86ae00b750c4911db1fb7f2bbbba04c0",
+      "screenshot_sha256": "fb57a6c512182183dfb26387ddfa219d3a86111154fe4ee6149fc4aa0e5eb03e",
       "position": "top"
     },
     {
@@ -676,7 +2022,205 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/signup-kmr-393.png",
-      "screenshot_sha256": "3267cbc3dabdd1538b8d4cd3960b6e2442c4c997afd3f59e088345db56cdf6db",
+      "screenshot_sha256": "57ad41437a56103c05d0274a7a1614d6fa47e0bb4baa1d6b51c0bcbbe6d9ded7",
+      "position": "top"
+    },
+    {
+      "section": "splash",
+      "locale": "ar",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/splash-ar-280-2x.png",
+      "screenshot_sha256": "16e1169510694955ebf301714e9a5cd534bdf764fa2c1cd1af07c43c888aeba3",
+      "position": "top"
+    },
+    {
+      "section": "splash",
+      "locale": "ar",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/splash-ar-393.png",
+      "screenshot_sha256": "1bd9d286ea663b0c6131deb30a5d59e72890053ede74dbed2ae70d1848dd2445",
+      "position": "top"
+    },
+    {
+      "section": "splash",
+      "locale": "ckb",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/splash-ckb-280-2x.png",
+      "screenshot_sha256": "16e1169510694955ebf301714e9a5cd534bdf764fa2c1cd1af07c43c888aeba3",
+      "position": "top"
+    },
+    {
+      "section": "splash",
+      "locale": "ckb",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/splash-ckb-393.png",
+      "screenshot_sha256": "1bd9d286ea663b0c6131deb30a5d59e72890053ede74dbed2ae70d1848dd2445",
+      "position": "top"
+    },
+    {
+      "section": "splash",
+      "locale": "kmr",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/splash-kmr-280-2x.png",
+      "screenshot_sha256": "16e1169510694955ebf301714e9a5cd534bdf764fa2c1cd1af07c43c888aeba3",
+      "position": "top"
+    },
+    {
+      "section": "splash",
+      "locale": "kmr",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/splash-kmr-393.png",
+      "screenshot_sha256": "1bd9d286ea663b0c6131deb30a5d59e72890053ede74dbed2ae70d1848dd2445",
+      "position": "top"
+    },
+    {
+      "section": "tasks",
+      "locale": "ar",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/tasks-ar-280-2x.png",
+      "screenshot_sha256": "5aacce209dcd46ff115ac75e3c2ebdde1b5d70b598404d973e81aa24724333ed",
+      "position": "top"
+    },
+    {
+      "section": "tasks",
+      "locale": "ar",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/tasks-ar-393.png",
+      "screenshot_sha256": "85fa566f187c4eaff93275f1ed8b2a980b462f5230015aa30674dc4a862eb6c7",
+      "position": "top"
+    },
+    {
+      "section": "tasks",
+      "locale": "ckb",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/tasks-ckb-280-2x.png",
+      "screenshot_sha256": "f28b88700210a785595eb71437698598f8bc5fb66e92f9516b58c96713dc7f35",
+      "position": "top"
+    },
+    {
+      "section": "tasks",
+      "locale": "ckb",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/tasks-ckb-393.png",
+      "screenshot_sha256": "5813cbae466b3e031328ff61d5e78c67af609d9b52cf0201da2a6e4a79371d06",
+      "position": "top"
+    },
+    {
+      "section": "tasks",
+      "locale": "kmr",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/tasks-kmr-280-2x.png",
+      "screenshot_sha256": "92cddb43557b79d5283de5b581d916f0f6c5189aa7f0c416be3d438f32df2c0d",
+      "position": "top"
+    },
+    {
+      "section": "tasks",
+      "locale": "kmr",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/tasks-kmr-393.png",
+      "screenshot_sha256": "553facd6c6ea2a3e6f6aef2470734ce2a77a46e4ea67a1b35ee5819e3eec7aac",
+      "position": "top"
+    },
+    {
+      "section": "vouchers",
+      "locale": "ar",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/vouchers-ar-280-2x.png",
+      "screenshot_sha256": "97d2efebaabb54d74734ed77e30f50c3665a01b38a7a9a2868b1d742e8fb46ef",
+      "position": "top"
+    },
+    {
+      "section": "vouchers",
+      "locale": "ar",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/vouchers-ar-393.png",
+      "screenshot_sha256": "1b923491db6b1053eaa9d04846e3489b6e041062b65b3bd31646cb39dad1494e",
+      "position": "top"
+    },
+    {
+      "section": "vouchers",
+      "locale": "ckb",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/vouchers-ckb-280-2x.png",
+      "screenshot_sha256": "1681c084ef9eeca3a72277aa6a5b9e0b719b20f8b3b9b82fc70831b7b06fa597",
+      "position": "top"
+    },
+    {
+      "section": "vouchers",
+      "locale": "ckb",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/vouchers-ckb-393.png",
+      "screenshot_sha256": "1c874014914d17b9a65659833d9aca9ef33bfecdddb0936612c7fc314cbc7d86",
+      "position": "top"
+    },
+    {
+      "section": "vouchers",
+      "locale": "kmr",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/vouchers-kmr-280-2x.png",
+      "screenshot_sha256": "a37654a18608b158c5cef2c79030d13a6a0d3903bfed144bbf46b95bd1e1b78c",
+      "position": "top"
+    },
+    {
+      "section": "vouchers",
+      "locale": "kmr",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/vouchers-kmr-393.png",
+      "screenshot_sha256": "060e042b3d953491bf6157935062d6945a4976d7eb1c0ebd4c18dcfe7e553c3e",
       "position": "top"
     }
   ]

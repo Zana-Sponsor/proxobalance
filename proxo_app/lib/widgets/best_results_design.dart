@@ -1,3 +1,4 @@
+import '../theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -137,9 +138,7 @@ class ResultsStateCard extends StatelessWidget {
                   horizontal: 18,
                   vertical: 12,
                 ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
-                ),
+                shape: ProxoControls.shape,
               ),
               icon: const ResultIcon('refresh', size: 19),
               label: ProxoText(

@@ -22,9 +22,6 @@ class AuthHeader extends StatelessWidget {
     return Container(
       key: const ValueKey('auth-app-bar'),
       height: AuthTokens.toolbarHeight,
-      decoration: const BoxDecoration(
-        border: Border(bottom: BorderSide(color: AuthTokens.line)),
-      ),
       child: Row(
         children: [
           SizedBox(

@@ -5,6 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
 
 import '../theme/app_theme.dart';
+import '../theme/app_locale.dart';
+import '../l10n/proxo_strings.dart';
+import 'proxo_text.dart';
 
 /// Shared pull gesture and tab re-selection refresh presentation. The content
 /// keeps its element path throughout the animation, and both entry points use
@@ -147,6 +150,8 @@ class _ProxoRefreshState extends State<ProxoRefresh>
   late final AnimationController _spin =
       AnimationController(vsync: this, duration: _RM.spinPeriod);
 
+  double get _extent => math.max(widget.dropExtent, MediaQuery.textScalerOf(context).scale(13) * 1.5 + 28);
+
   bool _busy = false;
   double _pull = 0;
   bool _onScroll(ScrollNotification notice) {
@@ -251,7 +256,7 @@ class _ProxoRefreshState extends State<ProxoRefresh>
       await Future.wait<void>([
         work,
         Future<void>.delayed(_RM.minVisible),
-        _settleTo(widget.dropExtent, _RM.openSpring),
+        _settleTo(_extent, _RM.openSpring),
       ]);
       if (!mounted) return;
 
@@ -273,6 +278,7 @@ class _ProxoRefreshState extends State<ProxoRefresh>
 
   @override
   Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
     return ProxoRefreshScope(
       generation: _generation,
       child: AnimatedBuilder(
@@ -285,7 +291,7 @@ class _ProxoRefreshState extends State<ProxoRefresh>
 
           final double strip = math.max(d, 0.0);
           final double reveal =
-              (d / widget.dropExtent).clamp(0.0, 1.0).toDouble();
+              (d / _extent).clamp(0.0, 1.0).toDouble();
 
           return ClipRect(
             child: Stack(
@@ -302,7 +308,22 @@ class _ProxoRefreshState extends State<ProxoRefresh>
                   right: 0,
                   height: strip,
                   child: Center(
-                    child: _ProxoSpinner(spin: _spin, reveal: reveal),
+                    child: Visibility(
+                      visible: strip > 1,
+                      child: Semantics(liveRegion: true,
+                        child: Padding(padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Row(mainAxisSize: MainAxisSize.min, children: [
+                            _ProxoSpinner(spin: _spin, reveal: reveal),
+                            const SizedBox(width: 10),
+                            Flexible(child: Opacity(opacity: reveal,
+                              child: ProxoText(ProxoStrings.text('نوێدەکرێتەوە'),
+                                key: const ValueKey('refresh-status-label'),
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(fontFamily: 'RabarAuthRegular',
+                                  fontSize: 13, height: 1.5, color: AppColors.inkMuted)))),
+                          ])),
+                      ),
+                    ),
                   ),
                 ),
               ],

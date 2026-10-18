@@ -1,3 +1,4 @@
+import 'package:proxo_app/theme/app_theme.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -61,7 +62,7 @@ class _ToolsScreenState extends State<ToolsScreen> {
     final owner = _repository.ownerScope;
     ProxoCard? saved;
     try {
-      saved = await Navigator.of(context).push<ProxoCard>(MaterialPageRoute(
+      saved = await Navigator.of(context).push<ProxoCard>(ProxoPageRoute(
         settings: const RouteSettings(name: 'create_page'),
         builder: (_) => ProxoLinkCreatePageScreen(repository: _repository)));
     } finally { _creating = false; }

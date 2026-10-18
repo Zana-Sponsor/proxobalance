@@ -1,3 +1,4 @@
+import '../theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -120,9 +121,7 @@ class BestMetricCard extends StatelessWidget {
                       horizontal: 16,
                       vertical: 14,
                     ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
-                    ),
+                    shape: ProxoControls.shape,
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,

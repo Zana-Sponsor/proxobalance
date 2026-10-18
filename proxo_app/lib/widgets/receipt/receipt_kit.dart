@@ -1,3 +1,4 @@
+import '../../theme/app_theme.dart';
 import '../../theme/app_locale.dart';
 import '../../l10n/proxo_strings.dart';
 import 'dart:typed_data';
@@ -101,7 +102,7 @@ abstract final class ReceiptTokens {
   // ── دوگمەی PDF ───────────────────────────────────────────────────────────
   static const double cardToButton = 20;
   static const double buttonHeight = 48;
-  static const double buttonRadius = 12;
+  static const double buttonRadius = ProxoControls.radius;
 
   // ── تایپۆگرافی — قەبارەی دیاریکراو، هەمووی w400 ──────────────────────────
   static const FontWeight weight = FontWeight.w400;

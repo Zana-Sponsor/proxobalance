@@ -171,7 +171,10 @@ void main() {
     await t.enterText(fields.at(1), ' Fixture@Example.com ');
     await t.pump();
     expect(t.widget<AuthPrimaryButton>(submit).enabled, isTrue);
+    FocusManager.instance.primaryFocus?.unfocus();
+    await settle(t);
     await t.ensureVisible(submit);
+    await t.pumpAndSettle();
     await t.runAsync(() async {
       await t.tap(submit);
     });
@@ -213,7 +216,10 @@ void main() {
       await t.enterText(find.byType(TextField).at(1), 'fixture@example.com');
       await t.enterText(find.byType(TextField).at(2), 'Strong#123');
       await t.enterText(find.byType(TextField).at(3), 'Strong#123');
+      FocusManager.instance.primaryFocus?.unfocus();
+      await settle(t);
       await t.ensureVisible(find.byType(AuthLanguageSelector));
+      await t.pumpAndSettle();
       await t.tap(find.byType(AuthLanguageSelector));
       await t.pumpAndSettle();
       await t.tap(find.text('العربية').last);
@@ -252,6 +258,10 @@ void main() {
             matching: find.byType(DecoratedBox),
           )
           .first;
+      expect(find.byKey(const ValueKey('iraq-phone-flag')), findsOneWidget);
+      await t.enterText(find.byType(TextField).first, '7501234567');
+      await t.pump();
+      expect(find.byKey(const ValueKey('iraq-phone-flag')), findsOneWidget);
       final start = t.getCenter(pill).dx;
       await t.tap(find.text(AuthStrings.channelEmail).first);
       await t.pump();

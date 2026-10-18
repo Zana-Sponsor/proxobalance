@@ -407,7 +407,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         if (_client.auth.currentSession == null &&
             ModalRoute.of(context)?.isCurrent == true) {
           Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
-            MaterialPageRoute<void>(builder: (_) => const AuthScreen()),
+            ProxoPageRoute<void>(builder: (_) => const AuthScreen()),
             (route) => false,
           );
         }
@@ -1171,10 +1171,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                     foregroundColor: Colors.white,
                                     disabledBackgroundColor:
                                         _ProfileColors.primary.withOpacity(.45),
-                                    shape: const RoundedRectangleBorder(
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(14)),
-                                    ),
+                                    shape: ProxoControls.shape,
                                     textStyle: _ProfileText.button,
                                   ),
                                   child: _saving
@@ -1682,7 +1679,7 @@ class _BalanceCard extends StatelessWidget {
       FilledButton(onPressed: onTap,
         style: FilledButton.styleFrom(backgroundColor: AppColors.accent, foregroundColor: Colors.white,
           minimumSize: const Size(48, 52), padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14))),
+          shape: ProxoControls.shape),
         child: const ProxoText('زیادکردنی باڵانس', translate: true, textAlign: TextAlign.center,
           style: TextStyle(fontFamily: kAppFont, fontSize: 14, height: 1.5))),
     ]),

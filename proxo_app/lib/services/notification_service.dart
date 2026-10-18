@@ -54,6 +54,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'notification_presentation.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // BACKGROUND HANDLER — top-level، دەرەوەی هەر کلاسێک
@@ -133,14 +134,7 @@ class NotificationService {
   // FIX: Channel ID matches AndroidManifest.xml
   //   android:value="proxo_high_importance"
   // and is used consistently in every show() call and the background handler.
-  static const _channel = AndroidNotificationChannel(
-    'proxo_high_importance',
-    'Proxo Notifications',
-    description: 'ئاگادارکردنەوەی پرۆکسۆ',
-    importance: Importance.max,
-    enableVibration: true,
-    playSound: true,
-  );
+  static const _channel = ProxoNotificationPresentation.channel;
 
   GlobalKey<NavigatorState>? _navigatorKey;
   Map<String, dynamic>? _pendingData; // FIX: ئاگاداری پاشەکەوتکراو کاتی داخستنی ئەپ
@@ -171,6 +165,12 @@ class NotificationService {
 
     // _initLocalPlugin creates the plugin + channel in the foreground process.
     await _initLocalPlugin(navigatorKey: navigatorKey);
+
+    // A data-only push is displayed by the local plugin. Its terminated-app
+    // tap is not returned by FirebaseMessaging.getInitialMessage().
+    _pendingData = ProxoNotificationPresentation.launchPayload(
+      await _localPlugin.getNotificationAppLaunchDetails(),
+    );
 
     await _messaging.setForegroundNotificationPresentationOptions(
       alert: false, // Foreground presentation is handled once below.
@@ -280,7 +280,6 @@ class NotificationService {
   // ── Helpers ───────────────────────────────────────────────────────────────
 
   // Stable notification ID: same string always → same int (no duplicates)
-  static int _stableId(String key) => key.hashCode & 0x7FFFFFFF;
 
   Future<String?> getToken()                  => _messaging.getToken();
   Future<void> subscribeToTopic(String topic) => _messaging.subscribeToTopic(topic);
@@ -343,60 +342,9 @@ class NotificationService {
         ?.createNotificationChannel(_channel);
   }
 
-  static Future<void> _showLocalNotification(RemoteMessage message) async {
-    final n = message.notification;
-    if (n == null) return;
-    await _localPlugin.show(
-      _stableId(message.messageId ?? (message.notification?.title ?? 'proxo')),
-      n.title,
-      n.body,
-      NotificationDetails(
-        android: AndroidNotificationDetails(
-          _channel.id,
-          _channel.name,
-          channelDescription: _channel.description,
-          importance: Importance.max,
-          priority:   Priority.high,
-          icon:       'ic_notification',
-          largeIcon:  null,
-          color:      const Color(0xFF0E78FF),
-        ),
-        iOS: const DarwinNotificationDetails(
-          presentAlert: true,
-          presentBadge: true,
-          presentSound: true,
-        ),
-      ),
-      payload: jsonEncode(message.data),
-    );
-  }
+  static Future<void> _showLocalNotification(RemoteMessage message) =>
+      ProxoNotificationPresentation.showMessage(_localPlugin, message);
 
-  static Future<void> _showFromData(Map<String, dynamic> data) async {
-    await _localPlugin.show(
-      _stableId(data['id'] as String? ?? data['title'] as String? ?? 'proxo'),
-      data['title'] as String? ?? 'Proxo',
-      data['body']  as String? ?? '',
-      NotificationDetails(
-        android: AndroidNotificationDetails(
-          _channel.id,
-          _channel.name,
-          channelDescription: _channel.description,
-          importance:   Importance.max,
-          priority:     Priority.high,
-          icon:         'ic_notification',
-          largeIcon:    null,
-          color:        const Color(0xFF0E78FF),
-          autoCancel:   true,
-          ongoing:      false,
-          showProgress: false,
-        ),
-        iOS: const DarwinNotificationDetails(
-          presentAlert: true,
-          presentBadge: true,
-          presentSound: true,
-        ),
-      ),
-      payload: jsonEncode(data),
-    );
-  }
+  static Future<void> _showFromData(Map<String, dynamic> data) =>
+      ProxoNotificationPresentation.showData(_localPlugin, data);
 }

@@ -1,5 +1,6 @@
 import '../services/app_telemetry_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart' show CupertinoPageTransitionsBuilder;
 
 class AppColors {
   // ── Surface ramp ──────────────────────────────────────────────────────────
@@ -247,12 +248,50 @@ class AppBackground extends StatelessWidget {
 }
 
 /// Global ThemeData — بەکاربهێنە لە MaterialApp
+abstract final class ProxoControls {
+  static const double radius = 18;
+  static const shape = RoundedRectangleBorder(
+    borderRadius: BorderRadius.all(Radius.circular(radius)));
+  static final ButtonStyle style = ButtonStyle(
+    shape: const WidgetStatePropertyAll(shape),
+    minimumSize: const WidgetStatePropertyAll(Size(48, 48)),
+    padding: const WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: 18, vertical: 13)),
+    animationDuration: const Duration(milliseconds: 180),
+    elevation: const WidgetStatePropertyAll(0),
+    overlayColor: WidgetStateProperty.resolveWith((states) =>
+      states.contains(WidgetState.pressed) ? AppColors.accent.withValues(alpha: .10) : null),
+  );
+}
+
+class ProxoPageTransitions extends PageTransitionsBuilder {
+  const ProxoPageTransitions();
+  @override
+  Widget buildTransitions<T>(PageRoute<T> route, BuildContext context,
+      Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+    if (MediaQuery.disableAnimationsOf(context)) return child;
+    return const CupertinoPageTransitionsBuilder().buildTransitions(
+      route, context, animation, secondaryAnimation, child);
+  }
+}
+
 ThemeData buildAppTheme() => ThemeData(
-  fontFamily: kAppFont,
-  textTheme: const TextTheme().apply(
-    fontFamily: kAppFont,
-    decoration: TextDecoration.none,
-  ),
+  fontFamily: kAppFont, useMaterial3: true,
+  colorScheme: ColorScheme.fromSeed(seedColor: AppColors.accent),
+  scaffoldBackgroundColor: Colors.white,
+  textTheme: const TextTheme().apply(fontFamily: kAppFont, decoration: TextDecoration.none),
+  filledButtonTheme: FilledButtonThemeData(style: ProxoControls.style),
+  elevatedButtonTheme: ElevatedButtonThemeData(style: ProxoControls.style),
+  outlinedButtonTheme: OutlinedButtonThemeData(style: ProxoControls.style),
+  textButtonTheme: TextButtonThemeData(style: ProxoControls.style),
+  iconButtonTheme: const IconButtonThemeData(style: ButtonStyle(
+    shape: WidgetStatePropertyAll(ProxoControls.shape),
+    minimumSize: WidgetStatePropertyAll(Size(48, 48)),
+    animationDuration: Duration(milliseconds: 180))),
+  pageTransitionsTheme: const PageTransitionsTheme(builders: {
+    TargetPlatform.android: ProxoPageTransitions(), TargetPlatform.iOS: ProxoPageTransitions(),
+    TargetPlatform.macOS: ProxoPageTransitions(), TargetPlatform.windows: ProxoPageTransitions(),
+    TargetPlatform.linux: ProxoPageTransitions(), TargetPlatform.fuchsia: ProxoPageTransitions(),
+  }),
 );
 
 TextStyle rabar({
@@ -763,7 +802,7 @@ abstract final class ProxoInk {
   static const Color outlineText = start;
 
   /// ڕووی شینی ڕەق.
-  static BoxDecoration fill({double radius = 12, bool elevated = true}) =>
+  static BoxDecoration fill({double radius = ProxoControls.radius, bool elevated = true}) =>
       BoxDecoration(
         color: start,
         borderRadius: BorderRadius.circular(radius),
@@ -778,13 +817,13 @@ abstract final class ProxoInk {
       );
 
   /// دوگمەی ناچالاک (کاتی ناردن).
-  static BoxDecoration disabled({double radius = 12}) => BoxDecoration(
+  static BoxDecoration disabled({double radius = ProxoControls.radius}) => BoxDecoration(
         color: const Color(0xFFB9C9E6),
         borderRadius: BorderRadius.circular(radius),
       );
 
   /// هەڵبژاردەی خێرا: چالاک = شین، ناچالاک = سپی بە سنووری شینی کاڵ.
-  static BoxDecoration toggle(bool active, {double radius = 12}) => active
+  static BoxDecoration toggle(bool active, {double radius = ProxoControls.radius}) => active
       ? fill(radius: radius, elevated: false)
       : BoxDecoration(
           color: const Color(0xFFFFFFFF),
@@ -800,7 +839,7 @@ class ProxoMotion {
   ProxoMotion._();
 
   /// هاتنە ژوورەوە.
-  static const Duration routePush = Duration(milliseconds: 250);
+  static const Duration routePush = Duration(milliseconds: 320);
 
   /// چوونەدەرەوە — **دەقاودەق** وەک هاتنە ژوورەوە.
   ///
@@ -826,7 +865,7 @@ class ProxoMotion {
 /// ══ بۆچی `MaterialPageRoute` و نەک `PageRouteBuilder` ═══════════════════
 /// `main.dart` ئەمەی دانراوە:
 ///
-///     pageTransitionsTheme: AuthTokens.pageTransitionsTheme
+///     pageTransitionsTheme: buildAppTheme().pageTransitionsTheme
 ///         → CupertinoPageTransitionsBuilder() بۆ android / iOS / macOS
 ///
 /// ئەو builderە لەناو خۆیدا `_CupertinoBackGestureDetector` دادەمەزرێنێت —

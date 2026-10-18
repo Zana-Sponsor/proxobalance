@@ -1,5 +1,725 @@
 [
   {
+    "section": "ads",
+    "locale": "ar",
+    "width": 280.0,
+    "height": 852,
+    "textScale": 2.0,
+    "dpr": 2.0,
+    "screenshot": "images/ads-ar-280-2x.png",
+    "components": [
+      {
+        "widget": "Image",
+        "key": null,
+        "bounds_dp": [
+          12.0,
+          15.5,
+          83.47826086956522,
+          24.0
+        ],
+        "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
+      }
+    ]
+  },
+  {
+    "section": "ads",
+    "locale": "ar",
+    "width": 393.0,
+    "height": 852,
+    "textScale": 1.0,
+    "dpr": 3.0,
+    "screenshot": "images/ads-ar-393.png",
+    "components": [
+      {
+        "widget": "Image",
+        "key": null,
+        "bounds_dp": [
+          12.0,
+          15.5,
+          83.47826086956522,
+          24.0
+        ],
+        "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
+      }
+    ]
+  },
+  {
+    "section": "ads",
+    "locale": "ckb",
+    "width": 280.0,
+    "height": 852,
+    "textScale": 2.0,
+    "dpr": 2.0,
+    "screenshot": "images/ads-ckb-280-2x.png",
+    "components": [
+      {
+        "widget": "Image",
+        "key": null,
+        "bounds_dp": [
+          12.0,
+          15.5,
+          83.47826086956522,
+          24.0
+        ],
+        "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
+      }
+    ]
+  },
+  {
+    "section": "ads",
+    "locale": "ckb",
+    "width": 393.0,
+    "height": 852,
+    "textScale": 1.0,
+    "dpr": 3.0,
+    "screenshot": "images/ads-ckb-393.png",
+    "components": [
+      {
+        "widget": "Image",
+        "key": null,
+        "bounds_dp": [
+          12.0,
+          15.5,
+          83.47826086956522,
+          24.0
+        ],
+        "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
+      }
+    ]
+  },
+  {
+    "section": "ads",
+    "locale": "kmr",
+    "width": 280.0,
+    "height": 852,
+    "textScale": 2.0,
+    "dpr": 2.0,
+    "screenshot": "images/ads-kmr-280-2x.png",
+    "components": [
+      {
+        "widget": "Image",
+        "key": null,
+        "bounds_dp": [
+          12.0,
+          15.5,
+          83.47826086956522,
+          24.0
+        ],
+        "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
+      }
+    ]
+  },
+  {
+    "section": "ads",
+    "locale": "kmr",
+    "width": 393.0,
+    "height": 852,
+    "textScale": 1.0,
+    "dpr": 3.0,
+    "screenshot": "images/ads-kmr-393.png",
+    "components": [
+      {
+        "widget": "Image",
+        "key": null,
+        "bounds_dp": [
+          12.0,
+          15.5,
+          83.47826086956522,
+          24.0
+        ],
+        "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
+      }
+    ]
+  },
+  {
+    "section": "create",
+    "locale": "ar",
+    "width": 280.0,
+    "height": 852,
+    "textScale": 2.0,
+    "dpr": 2.0,
+    "screenshot": "images/create-ar-280-2x.png",
+    "components": [
+      {
+        "widget": "TextField",
+        "key": "[<'ad-title'>]",
+        "bounds_dp": [
+          36.0,
+          214.0,
+          208.0,
+          76.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": "[<'ad-code'>]",
+        "bounds_dp": [
+          36.0,
+          360.0,
+          208.0,
+          76.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": "[<'ad-link'>]",
+        "bounds_dp": [
+          36.0,
+          506.0,
+          208.0,
+          76.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": "[<'ad-coupon'>]",
+        "bounds_dp": [
+          36.0,
+          3574.0,
+          208.0,
+          116.0
+        ]
+      }
+    ]
+  },
+  {
+    "section": "create",
+    "locale": "ar",
+    "width": 393.0,
+    "height": 852,
+    "textScale": 1.0,
+    "dpr": 3.0,
+    "screenshot": "images/create-ar-393.png",
+    "components": [
+      {
+        "widget": "TextField",
+        "key": "[<'ad-title'>]",
+        "bounds_dp": [
+          36.0,
+          170.0,
+          321.0,
+          56.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": "[<'ad-code'>]",
+        "bounds_dp": [
+          36.0,
+          276.0,
+          321.0,
+          56.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": "[<'ad-link'>]",
+        "bounds_dp": [
+          36.0,
+          382.0,
+          321.0,
+          56.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": "[<'ad-coupon'>]",
+        "bounds_dp": [
+          36.0,
+          1922.0,
+          321.0,
+          56.0
+        ]
+      }
+    ]
+  },
+  {
+    "section": "create",
+    "locale": "ckb",
+    "width": 280.0,
+    "height": 852,
+    "textScale": 2.0,
+    "dpr": 2.0,
+    "screenshot": "images/create-ckb-280-2x.png",
+    "components": [
+      {
+        "widget": "TextField",
+        "key": "[<'ad-title'>]",
+        "bounds_dp": [
+          36.0,
+          254.0,
+          208.0,
+          76.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": "[<'ad-code'>]",
+        "bounds_dp": [
+          36.0,
+          400.0,
+          208.0,
+          76.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": "[<'ad-link'>]",
+        "bounds_dp": [
+          36.0,
+          546.0,
+          208.0,
+          76.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": "[<'ad-coupon'>]",
+        "bounds_dp": [
+          36.0,
+          3646.0,
+          208.0,
+          116.0
+        ]
+      }
+    ]
+  },
+  {
+    "section": "create",
+    "locale": "ckb",
+    "width": 393.0,
+    "height": 852,
+    "textScale": 1.0,
+    "dpr": 3.0,
+    "screenshot": "images/create-ckb-393.png",
+    "components": [
+      {
+        "widget": "TextField",
+        "key": "[<'ad-title'>]",
+        "bounds_dp": [
+          36.0,
+          170.0,
+          321.0,
+          56.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": "[<'ad-code'>]",
+        "bounds_dp": [
+          36.0,
+          276.0,
+          321.0,
+          56.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": "[<'ad-link'>]",
+        "bounds_dp": [
+          36.0,
+          382.0,
+          321.0,
+          56.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": "[<'ad-coupon'>]",
+        "bounds_dp": [
+          36.0,
+          1922.0,
+          321.0,
+          56.0
+        ]
+      }
+    ]
+  },
+  {
+    "section": "create",
+    "locale": "kmr",
+    "width": 280.0,
+    "height": 852,
+    "textScale": 2.0,
+    "dpr": 2.0,
+    "screenshot": "images/create-kmr-280-2x.png",
+    "components": [
+      {
+        "widget": "TextField",
+        "key": "[<'ad-title'>]",
+        "bounds_dp": [
+          36.0,
+          254.0,
+          208.0,
+          76.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": "[<'ad-code'>]",
+        "bounds_dp": [
+          36.0,
+          400.0,
+          208.0,
+          76.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": "[<'ad-link'>]",
+        "bounds_dp": [
+          36.0,
+          546.0,
+          208.0,
+          76.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": "[<'ad-coupon'>]",
+        "bounds_dp": [
+          36.0,
+          3734.0,
+          208.0,
+          156.0
+        ]
+      }
+    ]
+  },
+  {
+    "section": "create",
+    "locale": "kmr",
+    "width": 393.0,
+    "height": 852,
+    "textScale": 1.0,
+    "dpr": 3.0,
+    "screenshot": "images/create-kmr-393.png",
+    "components": [
+      {
+        "widget": "TextField",
+        "key": "[<'ad-title'>]",
+        "bounds_dp": [
+          36.0,
+          170.0,
+          321.0,
+          56.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": "[<'ad-code'>]",
+        "bounds_dp": [
+          36.0,
+          276.0,
+          321.0,
+          56.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": "[<'ad-link'>]",
+        "bounds_dp": [
+          36.0,
+          382.0,
+          321.0,
+          56.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": "[<'ad-coupon'>]",
+        "bounds_dp": [
+          36.0,
+          1922.0,
+          321.0,
+          56.0
+        ]
+      }
+    ]
+  },
+  {
+    "section": "deposit",
+    "locale": "ar",
+    "width": 280.0,
+    "height": 852,
+    "textScale": 2.0,
+    "dpr": 2.0,
+    "screenshot": "images/deposit-ar-280-2x.png",
+    "components": [
+      {
+        "widget": "Image",
+        "key": null,
+        "bounds_dp": [
+          108.0,
+          302.40000000000003,
+          64.0,
+          24.0
+        ],
+        "image": "ResizeImage()"
+      }
+    ]
+  },
+  {
+    "section": "deposit",
+    "locale": "ar",
+    "width": 393.0,
+    "height": 852,
+    "textScale": 1.0,
+    "dpr": 3.0,
+    "screenshot": "images/deposit-ar-393.png",
+    "components": [
+      {
+        "widget": "Image",
+        "key": null,
+        "bounds_dp": [
+          71.75,
+          123.9,
+          64.0,
+          24.0
+        ],
+        "image": "ResizeImage()"
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          80.1875,
+          493.90000000000003,
+          281.8125,
+          41.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          31.0,
+          664.4000000000001,
+          331.0,
+          28.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          31.0,
+          769.4000000000001,
+          331.0,
+          28.0
+        ]
+      }
+    ]
+  },
+  {
+    "section": "deposit",
+    "locale": "ckb",
+    "width": 280.0,
+    "height": 852,
+    "textScale": 2.0,
+    "dpr": 2.0,
+    "screenshot": "images/deposit-ckb-280-2x.png",
+    "components": [
+      {
+        "widget": "Image",
+        "key": null,
+        "bounds_dp": [
+          108.0,
+          302.40000000000003,
+          64.0,
+          24.0
+        ],
+        "image": "ResizeImage()"
+      }
+    ]
+  },
+  {
+    "section": "deposit",
+    "locale": "ckb",
+    "width": 393.0,
+    "height": 852,
+    "textScale": 1.0,
+    "dpr": 3.0,
+    "screenshot": "images/deposit-ckb-393.png",
+    "components": [
+      {
+        "widget": "Image",
+        "key": null,
+        "bounds_dp": [
+          71.75,
+          123.9,
+          64.0,
+          24.0
+        ],
+        "image": "ResizeImage()"
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          80.1875,
+          493.90000000000003,
+          281.8125,
+          41.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          31.0,
+          664.4000000000001,
+          331.0,
+          28.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          31.0,
+          769.4000000000001,
+          331.0,
+          28.0
+        ]
+      }
+    ]
+  },
+  {
+    "section": "deposit",
+    "locale": "kmr",
+    "width": 280.0,
+    "height": 852,
+    "textScale": 2.0,
+    "dpr": 2.0,
+    "screenshot": "images/deposit-kmr-280-2x.png",
+    "components": [
+      {
+        "widget": "Image",
+        "key": null,
+        "bounds_dp": [
+          108.0,
+          302.40000000000003,
+          64.0,
+          24.0
+        ],
+        "image": "ResizeImage()"
+      }
+    ]
+  },
+  {
+    "section": "deposit",
+    "locale": "kmr",
+    "width": 393.0,
+    "height": 852,
+    "textScale": 1.0,
+    "dpr": 3.0,
+    "screenshot": "images/deposit-kmr-393.png",
+    "components": [
+      {
+        "widget": "Image",
+        "key": null,
+        "bounds_dp": [
+          71.75,
+          123.9,
+          64.0,
+          24.0
+        ],
+        "image": "ResizeImage()"
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          80.1875,
+          493.90000000000003,
+          281.8125,
+          41.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          31.0,
+          664.4000000000001,
+          331.0,
+          28.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          31.0,
+          769.4000000000001,
+          331.0,
+          28.0
+        ]
+      }
+    ]
+  },
+  {
+    "section": "discounts",
+    "locale": "ar",
+    "width": 280.0,
+    "height": 852,
+    "textScale": 2.0,
+    "dpr": 2.0,
+    "screenshot": "images/discounts-ar-280-2x.png",
+    "components": []
+  },
+  {
+    "section": "discounts",
+    "locale": "ar",
+    "width": 393.0,
+    "height": 852,
+    "textScale": 1.0,
+    "dpr": 3.0,
+    "screenshot": "images/discounts-ar-393.png",
+    "components": []
+  },
+  {
+    "section": "discounts",
+    "locale": "ckb",
+    "width": 280.0,
+    "height": 852,
+    "textScale": 2.0,
+    "dpr": 2.0,
+    "screenshot": "images/discounts-ckb-280-2x.png",
+    "components": []
+  },
+  {
+    "section": "discounts",
+    "locale": "ckb",
+    "width": 393.0,
+    "height": 852,
+    "textScale": 1.0,
+    "dpr": 3.0,
+    "screenshot": "images/discounts-ckb-393.png",
+    "components": []
+  },
+  {
+    "section": "discounts",
+    "locale": "kmr",
+    "width": 280.0,
+    "height": 852,
+    "textScale": 2.0,
+    "dpr": 2.0,
+    "screenshot": "images/discounts-kmr-280-2x.png",
+    "components": []
+  },
+  {
+    "section": "discounts",
+    "locale": "kmr",
+    "width": 393.0,
+    "height": 852,
+    "textScale": 1.0,
+    "dpr": 3.0,
+    "screenshot": "images/discounts-kmr-393.png",
+    "components": []
+  },
+  {
     "section": "forgot",
     "locale": "ar",
     "width": 280.0,
@@ -16,41 +736,36 @@
           20.0,
           240.0,
           56.0
-        ],
-        "radius": null,
-        "padding": null,
-        "color": null
+        ]
       },
       {
         "widget": "Image",
         "key": null,
         "bounds_dp": [
           98.0,
-          35.5,
+          36.0,
           84.0,
           24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
       {
-        "widget": "Container",
+        "widget": "Image",
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
-          220.0,
-          100.0,
-          40.0,
-          40.0
+          196.0,
+          116.0,
+          64.0,
+          64.0
         ],
-        "radius": "BorderRadius.circular(12.0)",
-        "padding": null,
-        "color": 4293784831
+        "image": "ResizeImage()"
       },
       {
         "widget": "TextField",
         "key": null,
         "bounds_dp": [
           20.0,
-          371.0,
+          415.0,
           240.0,
           68.0
         ]
@@ -74,41 +789,36 @@
           20.0,
           353.0,
           56.0
-        ],
-        "radius": null,
-        "padding": null,
-        "color": null
+        ]
       },
       {
         "widget": "Image",
         "key": null,
         "bounds_dp": [
           154.5,
-          35.5,
+          36.0,
           84.0,
           24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
       {
-        "widget": "Container",
+        "widget": "Image",
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
           20.0,
-          100.0,
-          40.0,
-          40.0
+          116.0,
+          64.0,
+          64.0
         ],
-        "radius": "BorderRadius.circular(12.0)",
-        "padding": null,
-        "color": 4293784831
+        "image": "ResizeImage()"
       },
       {
         "widget": "TextField",
         "key": null,
         "bounds_dp": [
           20.0,
-          217.0,
+          261.0,
           353.0,
           48.0
         ]
@@ -132,41 +842,36 @@
           20.0,
           240.0,
           56.0
-        ],
-        "radius": null,
-        "padding": null,
-        "color": null
+        ]
       },
       {
         "widget": "Image",
         "key": null,
         "bounds_dp": [
           98.0,
-          35.5,
+          36.0,
           84.0,
           24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
       {
-        "widget": "Container",
+        "widget": "Image",
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
-          220.0,
-          100.0,
-          40.0,
-          40.0
+          196.0,
+          116.0,
+          64.0,
+          64.0
         ],
-        "radius": "BorderRadius.circular(12.0)",
-        "padding": null,
-        "color": 4293784831
+        "image": "ResizeImage()"
       },
       {
         "widget": "TextField",
         "key": null,
         "bounds_dp": [
           20.0,
-          431.0,
+          475.0,
           240.0,
           68.0
         ]
@@ -190,41 +895,36 @@
           20.0,
           353.0,
           56.0
-        ],
-        "radius": null,
-        "padding": null,
-        "color": null
+        ]
       },
       {
         "widget": "Image",
         "key": null,
         "bounds_dp": [
           154.5,
-          35.5,
+          36.0,
           84.0,
           24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
       {
-        "widget": "Container",
+        "widget": "Image",
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
           20.0,
-          100.0,
-          40.0,
-          40.0
+          116.0,
+          64.0,
+          64.0
         ],
-        "radius": "BorderRadius.circular(12.0)",
-        "padding": null,
-        "color": 4293784831
+        "image": "ResizeImage()"
       },
       {
         "widget": "TextField",
         "key": null,
         "bounds_dp": [
           20.0,
-          217.0,
+          261.0,
           353.0,
           48.0
         ]
@@ -248,41 +948,36 @@
           20.0,
           240.0,
           56.0
-        ],
-        "radius": null,
-        "padding": null,
-        "color": null
+        ]
       },
       {
         "widget": "Image",
         "key": null,
         "bounds_dp": [
           98.0,
-          35.5,
+          36.0,
           84.0,
           24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
       {
-        "widget": "Container",
+        "widget": "Image",
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
-          220.0,
-          100.0,
-          40.0,
-          40.0
+          196.0,
+          116.0,
+          64.0,
+          64.0
         ],
-        "radius": "BorderRadius.circular(12.0)",
-        "padding": null,
-        "color": 4293784831
+        "image": "ResizeImage()"
       },
       {
         "widget": "TextField",
         "key": null,
         "bounds_dp": [
           20.0,
-          431.0,
+          475.0,
           240.0,
           68.0
         ]
@@ -306,46 +1001,233 @@
           20.0,
           353.0,
           56.0
-        ],
-        "radius": null,
-        "padding": null,
-        "color": null
+        ]
       },
       {
         "widget": "Image",
         "key": null,
         "bounds_dp": [
           154.5,
-          35.5,
+          36.0,
           84.0,
           24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
       {
-        "widget": "Container",
+        "widget": "Image",
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
           20.0,
-          100.0,
-          40.0,
-          40.0
+          116.0,
+          64.0,
+          64.0
         ],
-        "radius": "BorderRadius.circular(12.0)",
-        "padding": null,
-        "color": 4293784831
+        "image": "ResizeImage()"
       },
       {
         "widget": "TextField",
         "key": null,
         "bounds_dp": [
           20.0,
-          217.0,
+          261.0,
           353.0,
           48.0
         ]
       }
     ]
+  },
+  {
+    "section": "home",
+    "locale": "ar",
+    "width": 280.0,
+    "height": 852,
+    "textScale": 2.0,
+    "dpr": 2.0,
+    "screenshot": "images/home-ar-280-2x.png",
+    "components": [
+      {
+        "widget": "Image",
+        "key": null,
+        "bounds_dp": [
+          12.0,
+          15.5,
+          83.47826086956522,
+          24.0
+        ],
+        "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
+      }
+    ]
+  },
+  {
+    "section": "home",
+    "locale": "ar",
+    "width": 393.0,
+    "height": 852,
+    "textScale": 1.0,
+    "dpr": 3.0,
+    "screenshot": "images/home-ar-393.png",
+    "components": [
+      {
+        "widget": "Image",
+        "key": null,
+        "bounds_dp": [
+          12.0,
+          15.5,
+          83.47826086956522,
+          24.0
+        ],
+        "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
+      }
+    ]
+  },
+  {
+    "section": "home",
+    "locale": "ckb",
+    "width": 280.0,
+    "height": 852,
+    "textScale": 2.0,
+    "dpr": 2.0,
+    "screenshot": "images/home-ckb-280-2x.png",
+    "components": [
+      {
+        "widget": "Image",
+        "key": null,
+        "bounds_dp": [
+          12.0,
+          15.5,
+          83.47826086956522,
+          24.0
+        ],
+        "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
+      }
+    ]
+  },
+  {
+    "section": "home",
+    "locale": "ckb",
+    "width": 393.0,
+    "height": 852,
+    "textScale": 1.0,
+    "dpr": 3.0,
+    "screenshot": "images/home-ckb-393.png",
+    "components": [
+      {
+        "widget": "Image",
+        "key": null,
+        "bounds_dp": [
+          12.0,
+          15.5,
+          83.47826086956522,
+          24.0
+        ],
+        "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
+      }
+    ]
+  },
+  {
+    "section": "home",
+    "locale": "kmr",
+    "width": 280.0,
+    "height": 852,
+    "textScale": 2.0,
+    "dpr": 2.0,
+    "screenshot": "images/home-kmr-280-2x.png",
+    "components": [
+      {
+        "widget": "Image",
+        "key": null,
+        "bounds_dp": [
+          12.0,
+          15.5,
+          83.47826086956522,
+          24.0
+        ],
+        "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
+      }
+    ]
+  },
+  {
+    "section": "home",
+    "locale": "kmr",
+    "width": 393.0,
+    "height": 852,
+    "textScale": 1.0,
+    "dpr": 3.0,
+    "screenshot": "images/home-kmr-393.png",
+    "components": [
+      {
+        "widget": "Image",
+        "key": null,
+        "bounds_dp": [
+          12.0,
+          15.5,
+          83.47826086956522,
+          24.0
+        ],
+        "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
+      }
+    ]
+  },
+  {
+    "section": "levels",
+    "locale": "ar",
+    "width": 280.0,
+    "height": 852,
+    "textScale": 2.0,
+    "dpr": 2.0,
+    "screenshot": "images/levels-ar-280-2x.png",
+    "components": []
+  },
+  {
+    "section": "levels",
+    "locale": "ar",
+    "width": 393.0,
+    "height": 852,
+    "textScale": 1.0,
+    "dpr": 3.0,
+    "screenshot": "images/levels-ar-393.png",
+    "components": []
+  },
+  {
+    "section": "levels",
+    "locale": "ckb",
+    "width": 280.0,
+    "height": 852,
+    "textScale": 2.0,
+    "dpr": 2.0,
+    "screenshot": "images/levels-ckb-280-2x.png",
+    "components": []
+  },
+  {
+    "section": "levels",
+    "locale": "ckb",
+    "width": 393.0,
+    "height": 852,
+    "textScale": 1.0,
+    "dpr": 3.0,
+    "screenshot": "images/levels-ckb-393.png",
+    "components": []
+  },
+  {
+    "section": "levels",
+    "locale": "kmr",
+    "width": 280.0,
+    "height": 852,
+    "textScale": 2.0,
+    "dpr": 2.0,
+    "screenshot": "images/levels-kmr-280-2x.png",
+    "components": []
+  },
+  {
+    "section": "levels",
+    "locale": "kmr",
+    "width": 393.0,
+    "height": 852,
+    "textScale": 1.0,
+    "dpr": 3.0,
+    "screenshot": "images/levels-kmr-393.png",
+    "components": []
   },
   {
     "section": "login",
@@ -364,41 +1246,36 @@
           20.0,
           240.0,
           56.0
-        ],
-        "radius": null,
-        "padding": null,
-        "color": null
+        ]
       },
       {
         "widget": "Image",
         "key": null,
         "bounds_dp": [
           98.0,
-          35.5,
+          36.0,
           84.0,
           24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
       {
-        "widget": "Container",
+        "widget": "Image",
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
-          220.0,
-          100.0,
-          40.0,
-          40.0
+          196.0,
+          116.0,
+          64.0,
+          64.0
         ],
-        "radius": "BorderRadius.circular(12.0)",
-        "padding": null,
-        "color": 4293784831
+        "image": "ResizeImage()"
       },
       {
         "widget": "TextField",
         "key": null,
         "bounds_dp": [
           20.0,
-          493.0,
+          547.0,
           240.0,
           68.0
         ]
@@ -408,7 +1285,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          616.0,
+          670.0,
           240.0,
           68.0
         ]
@@ -432,41 +1309,36 @@
           20.0,
           353.0,
           56.0
-        ],
-        "radius": null,
-        "padding": null,
-        "color": null
+        ]
       },
       {
         "widget": "Image",
         "key": null,
         "bounds_dp": [
           154.5,
-          35.5,
+          36.0,
           84.0,
           24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
       {
-        "widget": "Container",
+        "widget": "Image",
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
           20.0,
-          100.0,
-          40.0,
-          40.0
+          116.0,
+          64.0,
+          64.0
         ],
-        "radius": "BorderRadius.circular(12.0)",
-        "padding": null,
-        "color": 4293784831
+        "image": "ResizeImage()"
       },
       {
         "widget": "TextField",
         "key": null,
         "bounds_dp": [
           20.0,
-          287.0,
+          343.0,
           353.0,
           48.0
         ]
@@ -476,7 +1348,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          371.0,
+          427.0,
           353.0,
           48.0
         ]
@@ -500,41 +1372,36 @@
           20.0,
           240.0,
           56.0
-        ],
-        "radius": null,
-        "padding": null,
-        "color": null
+        ]
       },
       {
         "widget": "Image",
         "key": null,
         "bounds_dp": [
           98.0,
-          35.5,
+          36.0,
           84.0,
           24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
       {
-        "widget": "Container",
+        "widget": "Image",
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
-          220.0,
-          100.0,
-          40.0,
-          40.0
+          196.0,
+          116.0,
+          64.0,
+          64.0
         ],
-        "radius": "BorderRadius.circular(12.0)",
-        "padding": null,
-        "color": 4293784831
+        "image": "ResizeImage()"
       },
       {
         "widget": "TextField",
         "key": null,
         "bounds_dp": [
           20.0,
-          537.0,
+          593.0,
           240.0,
           68.0
         ]
@@ -544,7 +1411,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          660.0,
+          716.0,
           240.0,
           68.0
         ]
@@ -568,41 +1435,36 @@
           20.0,
           353.0,
           56.0
-        ],
-        "radius": null,
-        "padding": null,
-        "color": null
+        ]
       },
       {
         "widget": "Image",
         "key": null,
         "bounds_dp": [
           154.5,
-          35.5,
+          36.0,
           84.0,
           24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
       {
-        "widget": "Container",
+        "widget": "Image",
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
           20.0,
-          100.0,
-          40.0,
-          40.0
+          116.0,
+          64.0,
+          64.0
         ],
-        "radius": "BorderRadius.circular(12.0)",
-        "padding": null,
-        "color": 4293784831
+        "image": "ResizeImage()"
       },
       {
         "widget": "TextField",
         "key": null,
         "bounds_dp": [
           20.0,
-          287.0,
+          343.0,
           353.0,
           48.0
         ]
@@ -612,7 +1474,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          371.0,
+          427.0,
           353.0,
           48.0
         ]
@@ -636,41 +1498,36 @@
           20.0,
           240.0,
           56.0
-        ],
-        "radius": null,
-        "padding": null,
-        "color": null
+        ]
       },
       {
         "widget": "Image",
         "key": null,
         "bounds_dp": [
           98.0,
-          35.5,
+          36.0,
           84.0,
           24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
       {
-        "widget": "Container",
+        "widget": "Image",
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
-          220.0,
-          100.0,
-          40.0,
-          40.0
+          196.0,
+          116.0,
+          64.0,
+          64.0
         ],
-        "radius": "BorderRadius.circular(12.0)",
-        "padding": null,
-        "color": 4293784831
+        "image": "ResizeImage()"
       },
       {
         "widget": "TextField",
         "key": null,
         "bounds_dp": [
           20.0,
-          495.0,
+          551.0,
           240.0,
           68.0
         ]
@@ -680,7 +1537,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          618.0,
+          674.0,
           240.0,
           68.0
         ]
@@ -704,41 +1561,36 @@
           20.0,
           353.0,
           56.0
-        ],
-        "radius": null,
-        "padding": null,
-        "color": null
+        ]
       },
       {
         "widget": "Image",
         "key": null,
         "bounds_dp": [
           154.5,
-          35.5,
+          36.0,
           84.0,
           24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
       {
-        "widget": "Container",
+        "widget": "Image",
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
           20.0,
-          100.0,
-          40.0,
-          40.0
+          116.0,
+          64.0,
+          64.0
         ],
-        "radius": "BorderRadius.circular(12.0)",
-        "padding": null,
-        "color": 4293784831
+        "image": "ResizeImage()"
       },
       {
         "widget": "TextField",
         "key": null,
         "bounds_dp": [
           20.0,
-          287.0,
+          343.0,
           353.0,
           48.0
         ]
@@ -748,7 +1600,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          371.0,
+          427.0,
           353.0,
           48.0
         ]
@@ -772,41 +1624,36 @@
           20.0,
           240.0,
           56.0
-        ],
-        "radius": null,
-        "padding": null,
-        "color": null
+        ]
       },
       {
         "widget": "Image",
         "key": null,
         "bounds_dp": [
           98.0,
-          35.5,
+          36.0,
           84.0,
           24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
       {
-        "widget": "Container",
+        "widget": "Image",
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
-          220.0,
-          100.0,
-          40.0,
-          40.0
+          196.0,
+          116.0,
+          64.0,
+          64.0
         ],
-        "radius": "BorderRadius.circular(12.0)",
-        "padding": null,
-        "color": 4293784831
+        "image": "ResizeImage()"
       },
       {
         "widget": "TextField",
         "key": null,
         "bounds_dp": [
           20.0,
-          493.0,
+          547.0,
           240.0,
           68.0
         ]
@@ -830,41 +1677,36 @@
           20.0,
           353.0,
           56.0
-        ],
-        "radius": null,
-        "padding": null,
-        "color": null
+        ]
       },
       {
         "widget": "Image",
         "key": null,
         "bounds_dp": [
           154.5,
-          35.5,
+          36.0,
           84.0,
           24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
       {
-        "widget": "Container",
+        "widget": "Image",
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
           20.0,
-          100.0,
-          40.0,
-          40.0
+          116.0,
+          64.0,
+          64.0
         ],
-        "radius": "BorderRadius.circular(12.0)",
-        "padding": null,
-        "color": 4293784831
+        "image": "ResizeImage()"
       },
       {
         "widget": "TextField",
         "key": null,
         "bounds_dp": [
           20.0,
-          287.0,
+          343.0,
           353.0,
           48.0
         ]
@@ -888,41 +1730,36 @@
           20.0,
           240.0,
           56.0
-        ],
-        "radius": null,
-        "padding": null,
-        "color": null
+        ]
       },
       {
         "widget": "Image",
         "key": null,
         "bounds_dp": [
           98.0,
-          35.5,
+          36.0,
           84.0,
           24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
       {
-        "widget": "Container",
+        "widget": "Image",
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
-          220.0,
-          100.0,
-          40.0,
-          40.0
+          196.0,
+          116.0,
+          64.0,
+          64.0
         ],
-        "radius": "BorderRadius.circular(12.0)",
-        "padding": null,
-        "color": 4293784831
+        "image": "ResizeImage()"
       },
       {
         "widget": "TextField",
         "key": null,
         "bounds_dp": [
           20.0,
-          537.0,
+          593.0,
           240.0,
           68.0
         ]
@@ -946,41 +1783,354 @@
           20.0,
           353.0,
           56.0
-        ],
-        "radius": null,
-        "padding": null,
-        "color": null
+        ]
       },
       {
         "widget": "Image",
         "key": null,
         "bounds_dp": [
           154.5,
-          35.5,
+          36.0,
           84.0,
           24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
       {
-        "widget": "Container",
+        "widget": "Image",
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
           20.0,
-          100.0,
-          40.0,
-          40.0
+          116.0,
+          64.0,
+          64.0
         ],
-        "radius": "BorderRadius.circular(12.0)",
-        "padding": null,
-        "color": 4293784831
+        "image": "ResizeImage()"
       },
       {
         "widget": "TextField",
         "key": null,
         "bounds_dp": [
           20.0,
-          287.0,
+          343.0,
+          353.0,
+          48.0
+        ]
+      }
+    ]
+  },
+  {
+    "section": "login-phone-filled",
+    "locale": "ar",
+    "width": 280.0,
+    "height": 852,
+    "textScale": 2.0,
+    "dpr": 2.0,
+    "screenshot": "images/login-phone-filled-ar-280-2x.png",
+    "components": [
+      {
+        "widget": "Container",
+        "key": "[<'auth-app-bar'>]",
+        "bounds_dp": [
+          20.0,
+          20.0,
+          240.0,
+          56.0
+        ]
+      },
+      {
+        "widget": "Image",
+        "key": null,
+        "bounds_dp": [
+          98.0,
+          36.0,
+          84.0,
+          24.0
+        ],
+        "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
+      },
+      {
+        "widget": "Image",
+        "key": "[<'auth-intro-icon'>]",
+        "bounds_dp": [
+          196.0,
+          116.0,
+          64.0,
+          64.0
+        ],
+        "image": "ResizeImage()"
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          20.0,
+          547.0,
+          240.0,
+          68.0
+        ]
+      }
+    ]
+  },
+  {
+    "section": "login-phone-filled",
+    "locale": "ar",
+    "width": 393.0,
+    "height": 852,
+    "textScale": 1.0,
+    "dpr": 3.0,
+    "screenshot": "images/login-phone-filled-ar-393.png",
+    "components": [
+      {
+        "widget": "Container",
+        "key": "[<'auth-app-bar'>]",
+        "bounds_dp": [
+          20.0,
+          20.0,
+          353.0,
+          56.0
+        ]
+      },
+      {
+        "widget": "Image",
+        "key": null,
+        "bounds_dp": [
+          154.5,
+          36.0,
+          84.0,
+          24.0
+        ],
+        "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
+      },
+      {
+        "widget": "Image",
+        "key": "[<'auth-intro-icon'>]",
+        "bounds_dp": [
+          20.0,
+          116.0,
+          64.0,
+          64.0
+        ],
+        "image": "ResizeImage()"
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          20.0,
+          343.0,
+          353.0,
+          48.0
+        ]
+      }
+    ]
+  },
+  {
+    "section": "login-phone-filled",
+    "locale": "ckb",
+    "width": 280.0,
+    "height": 852,
+    "textScale": 2.0,
+    "dpr": 2.0,
+    "screenshot": "images/login-phone-filled-ckb-280-2x.png",
+    "components": [
+      {
+        "widget": "Container",
+        "key": "[<'auth-app-bar'>]",
+        "bounds_dp": [
+          20.0,
+          20.0,
+          240.0,
+          56.0
+        ]
+      },
+      {
+        "widget": "Image",
+        "key": null,
+        "bounds_dp": [
+          98.0,
+          36.0,
+          84.0,
+          24.0
+        ],
+        "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
+      },
+      {
+        "widget": "Image",
+        "key": "[<'auth-intro-icon'>]",
+        "bounds_dp": [
+          196.0,
+          116.0,
+          64.0,
+          64.0
+        ],
+        "image": "ResizeImage()"
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          20.0,
+          593.0,
+          240.0,
+          68.0
+        ]
+      }
+    ]
+  },
+  {
+    "section": "login-phone-filled",
+    "locale": "ckb",
+    "width": 393.0,
+    "height": 852,
+    "textScale": 1.0,
+    "dpr": 3.0,
+    "screenshot": "images/login-phone-filled-ckb-393.png",
+    "components": [
+      {
+        "widget": "Container",
+        "key": "[<'auth-app-bar'>]",
+        "bounds_dp": [
+          20.0,
+          20.0,
+          353.0,
+          56.0
+        ]
+      },
+      {
+        "widget": "Image",
+        "key": null,
+        "bounds_dp": [
+          154.5,
+          36.0,
+          84.0,
+          24.0
+        ],
+        "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
+      },
+      {
+        "widget": "Image",
+        "key": "[<'auth-intro-icon'>]",
+        "bounds_dp": [
+          20.0,
+          116.0,
+          64.0,
+          64.0
+        ],
+        "image": "ResizeImage()"
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          20.0,
+          343.0,
+          353.0,
+          48.0
+        ]
+      }
+    ]
+  },
+  {
+    "section": "login-phone-filled",
+    "locale": "kmr",
+    "width": 280.0,
+    "height": 852,
+    "textScale": 2.0,
+    "dpr": 2.0,
+    "screenshot": "images/login-phone-filled-kmr-280-2x.png",
+    "components": [
+      {
+        "widget": "Container",
+        "key": "[<'auth-app-bar'>]",
+        "bounds_dp": [
+          20.0,
+          20.0,
+          240.0,
+          56.0
+        ]
+      },
+      {
+        "widget": "Image",
+        "key": null,
+        "bounds_dp": [
+          98.0,
+          36.0,
+          84.0,
+          24.0
+        ],
+        "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
+      },
+      {
+        "widget": "Image",
+        "key": "[<'auth-intro-icon'>]",
+        "bounds_dp": [
+          196.0,
+          116.0,
+          64.0,
+          64.0
+        ],
+        "image": "ResizeImage()"
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          20.0,
+          551.0,
+          240.0,
+          68.0
+        ]
+      }
+    ]
+  },
+  {
+    "section": "login-phone-filled",
+    "locale": "kmr",
+    "width": 393.0,
+    "height": 852,
+    "textScale": 1.0,
+    "dpr": 3.0,
+    "screenshot": "images/login-phone-filled-kmr-393.png",
+    "components": [
+      {
+        "widget": "Container",
+        "key": "[<'auth-app-bar'>]",
+        "bounds_dp": [
+          20.0,
+          20.0,
+          353.0,
+          56.0
+        ]
+      },
+      {
+        "widget": "Image",
+        "key": null,
+        "bounds_dp": [
+          154.5,
+          36.0,
+          84.0,
+          24.0
+        ],
+        "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
+      },
+      {
+        "widget": "Image",
+        "key": "[<'auth-intro-icon'>]",
+        "bounds_dp": [
+          20.0,
+          116.0,
+          64.0,
+          64.0
+        ],
+        "image": "ResizeImage()"
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          20.0,
+          343.0,
           353.0,
           48.0
         ]
@@ -1004,41 +2154,36 @@
           20.0,
           240.0,
           56.0
-        ],
-        "radius": null,
-        "padding": null,
-        "color": null
+        ]
       },
       {
         "widget": "Image",
         "key": null,
         "bounds_dp": [
           98.0,
-          35.5,
+          36.0,
           84.0,
           24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
       {
-        "widget": "Container",
+        "widget": "Image",
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
-          220.0,
-          100.0,
-          40.0,
-          40.0
+          196.0,
+          116.0,
+          64.0,
+          64.0
         ],
-        "radius": "BorderRadius.circular(12.0)",
-        "padding": null,
-        "color": 4293784831
+        "image": "ResizeImage()"
       },
       {
         "widget": "TextField",
         "key": null,
         "bounds_dp": [
           20.0,
-          495.0,
+          551.0,
           240.0,
           68.0
         ]
@@ -1062,46 +2207,101 @@
           20.0,
           353.0,
           56.0
-        ],
-        "radius": null,
-        "padding": null,
-        "color": null
+        ]
       },
       {
         "widget": "Image",
         "key": null,
         "bounds_dp": [
           154.5,
-          35.5,
+          36.0,
           84.0,
           24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
       {
-        "widget": "Container",
+        "widget": "Image",
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
           20.0,
-          100.0,
-          40.0,
-          40.0
+          116.0,
+          64.0,
+          64.0
         ],
-        "radius": "BorderRadius.circular(12.0)",
-        "padding": null,
-        "color": 4293784831
+        "image": "ResizeImage()"
       },
       {
         "widget": "TextField",
         "key": null,
         "bounds_dp": [
           20.0,
-          287.0,
+          343.0,
           353.0,
           48.0
         ]
       }
     ]
+  },
+  {
+    "section": "navigation",
+    "locale": "ar",
+    "width": 280.0,
+    "height": 852,
+    "textScale": 2.0,
+    "dpr": 2.0,
+    "screenshot": "images/navigation-ar-280-2x.png",
+    "components": []
+  },
+  {
+    "section": "navigation",
+    "locale": "ar",
+    "width": 393.0,
+    "height": 852,
+    "textScale": 1.0,
+    "dpr": 3.0,
+    "screenshot": "images/navigation-ar-393.png",
+    "components": []
+  },
+  {
+    "section": "navigation",
+    "locale": "ckb",
+    "width": 280.0,
+    "height": 852,
+    "textScale": 2.0,
+    "dpr": 2.0,
+    "screenshot": "images/navigation-ckb-280-2x.png",
+    "components": []
+  },
+  {
+    "section": "navigation",
+    "locale": "ckb",
+    "width": 393.0,
+    "height": 852,
+    "textScale": 1.0,
+    "dpr": 3.0,
+    "screenshot": "images/navigation-ckb-393.png",
+    "components": []
+  },
+  {
+    "section": "navigation",
+    "locale": "kmr",
+    "width": 280.0,
+    "height": 852,
+    "textScale": 2.0,
+    "dpr": 2.0,
+    "screenshot": "images/navigation-kmr-280-2x.png",
+    "components": []
+  },
+  {
+    "section": "navigation",
+    "locale": "kmr",
+    "width": 393.0,
+    "height": 852,
+    "textScale": 1.0,
+    "dpr": 3.0,
+    "screenshot": "images/navigation-kmr-393.png",
+    "components": []
   },
   {
     "section": "new-password",
@@ -1120,41 +2320,36 @@
           20.0,
           240.0,
           56.0
-        ],
-        "radius": null,
-        "padding": null,
-        "color": null
+        ]
       },
       {
         "widget": "Image",
         "key": null,
         "bounds_dp": [
           98.0,
-          35.5,
+          36.0,
           84.0,
           24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
       {
-        "widget": "Container",
+        "widget": "Image",
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
-          220.0,
-          100.0,
-          40.0,
-          40.0
+          196.0,
+          116.0,
+          64.0,
+          64.0
         ],
-        "radius": "BorderRadius.circular(12.0)",
-        "padding": null,
-        "color": 4293784831
+        "image": "ResizeImage()"
       },
       {
         "widget": "TextField",
         "key": null,
         "bounds_dp": [
           20.0,
-          329.0,
+          373.0,
           240.0,
           68.0
         ]
@@ -1164,7 +2359,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          713.0,
+          757.0,
           240.0,
           68.0
         ]
@@ -1188,41 +2383,36 @@
           20.0,
           353.0,
           56.0
-        ],
-        "radius": null,
-        "padding": null,
-        "color": null
+        ]
       },
       {
         "widget": "Image",
         "key": null,
         "bounds_dp": [
           154.5,
-          35.5,
+          36.0,
           84.0,
           24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
       {
-        "widget": "Container",
+        "widget": "Image",
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
           20.0,
-          100.0,
-          40.0,
-          40.0
+          116.0,
+          64.0,
+          64.0
         ],
-        "radius": "BorderRadius.circular(12.0)",
-        "padding": null,
-        "color": 4293784831
+        "image": "ResizeImage()"
       },
       {
         "widget": "TextField",
         "key": null,
         "bounds_dp": [
           20.0,
-          217.0,
+          261.0,
           353.0,
           48.0
         ]
@@ -1232,7 +2422,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          415.0,
+          459.0,
           353.0,
           48.0
         ]
@@ -1256,41 +2446,36 @@
           20.0,
           240.0,
           56.0
-        ],
-        "radius": null,
-        "padding": null,
-        "color": null
+        ]
       },
       {
         "widget": "Image",
         "key": null,
         "bounds_dp": [
           98.0,
-          35.5,
+          36.0,
           84.0,
           24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
       {
-        "widget": "Container",
+        "widget": "Image",
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
-          220.0,
-          100.0,
-          40.0,
-          40.0
+          196.0,
+          116.0,
+          64.0,
+          64.0
         ],
-        "radius": "BorderRadius.circular(12.0)",
-        "padding": null,
-        "color": 4293784831
+        "image": "ResizeImage()"
       },
       {
         "widget": "TextField",
         "key": null,
         "bounds_dp": [
           20.0,
-          431.0,
+          475.0,
           240.0,
           68.0
         ]
@@ -1300,7 +2485,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          854.0,
+          898.0,
           240.0,
           68.0
         ]
@@ -1324,41 +2509,36 @@
           20.0,
           353.0,
           56.0
-        ],
-        "radius": null,
-        "padding": null,
-        "color": null
+        ]
       },
       {
         "widget": "Image",
         "key": null,
         "bounds_dp": [
           154.5,
-          35.5,
+          36.0,
           84.0,
           24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
       {
-        "widget": "Container",
+        "widget": "Image",
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
           20.0,
-          100.0,
-          40.0,
-          40.0
+          116.0,
+          64.0,
+          64.0
         ],
-        "radius": "BorderRadius.circular(12.0)",
-        "padding": null,
-        "color": 4293784831
+        "image": "ResizeImage()"
       },
       {
         "widget": "TextField",
         "key": null,
         "bounds_dp": [
           20.0,
-          217.0,
+          261.0,
           353.0,
           48.0
         ]
@@ -1368,7 +2548,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          415.0,
+          459.0,
           353.0,
           48.0
         ]
@@ -1392,41 +2572,36 @@
           20.0,
           240.0,
           56.0
-        ],
-        "radius": null,
-        "padding": null,
-        "color": null
+        ]
       },
       {
         "widget": "Image",
         "key": null,
         "bounds_dp": [
           98.0,
-          35.5,
+          36.0,
           84.0,
           24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
       {
-        "widget": "Container",
+        "widget": "Image",
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
-          220.0,
-          100.0,
-          40.0,
-          40.0
+          196.0,
+          116.0,
+          64.0,
+          64.0
         ],
-        "radius": "BorderRadius.circular(12.0)",
-        "padding": null,
-        "color": 4293784831
+        "image": "ResizeImage()"
       },
       {
         "widget": "TextField",
         "key": null,
         "bounds_dp": [
           20.0,
-          431.0,
+          475.0,
           240.0,
           68.0
         ]
@@ -1436,7 +2611,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          815.0,
+          859.0,
           240.0,
           68.0
         ]
@@ -1460,41 +2635,36 @@
           20.0,
           353.0,
           56.0
-        ],
-        "radius": null,
-        "padding": null,
-        "color": null
+        ]
       },
       {
         "widget": "Image",
         "key": null,
         "bounds_dp": [
           154.5,
-          35.5,
+          36.0,
           84.0,
           24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
       {
-        "widget": "Container",
+        "widget": "Image",
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
           20.0,
-          100.0,
-          40.0,
-          40.0
+          116.0,
+          64.0,
+          64.0
         ],
-        "radius": "BorderRadius.circular(12.0)",
-        "padding": null,
-        "color": 4293784831
+        "image": "ResizeImage()"
       },
       {
         "widget": "TextField",
         "key": null,
         "bounds_dp": [
           20.0,
-          217.0,
+          261.0,
           353.0,
           48.0
         ]
@@ -1504,12 +2674,72 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          415.0,
+          459.0,
           353.0,
           48.0
         ]
       }
     ]
+  },
+  {
+    "section": "notifications",
+    "locale": "ar",
+    "width": 280.0,
+    "height": 852,
+    "textScale": 2.0,
+    "dpr": 2.0,
+    "screenshot": "images/notifications-ar-280-2x.png",
+    "components": []
+  },
+  {
+    "section": "notifications",
+    "locale": "ar",
+    "width": 393.0,
+    "height": 852,
+    "textScale": 1.0,
+    "dpr": 3.0,
+    "screenshot": "images/notifications-ar-393.png",
+    "components": []
+  },
+  {
+    "section": "notifications",
+    "locale": "ckb",
+    "width": 280.0,
+    "height": 852,
+    "textScale": 2.0,
+    "dpr": 2.0,
+    "screenshot": "images/notifications-ckb-280-2x.png",
+    "components": []
+  },
+  {
+    "section": "notifications",
+    "locale": "ckb",
+    "width": 393.0,
+    "height": 852,
+    "textScale": 1.0,
+    "dpr": 3.0,
+    "screenshot": "images/notifications-ckb-393.png",
+    "components": []
+  },
+  {
+    "section": "notifications",
+    "locale": "kmr",
+    "width": 280.0,
+    "height": 852,
+    "textScale": 2.0,
+    "dpr": 2.0,
+    "screenshot": "images/notifications-kmr-280-2x.png",
+    "components": []
+  },
+  {
+    "section": "notifications",
+    "locale": "kmr",
+    "width": 393.0,
+    "height": 852,
+    "textScale": 1.0,
+    "dpr": 3.0,
+    "screenshot": "images/notifications-kmr-393.png",
+    "components": []
   },
   {
     "section": "otp",
@@ -1528,41 +2758,36 @@
           20.0,
           240.0,
           56.0
-        ],
-        "radius": null,
-        "padding": null,
-        "color": null
+        ]
       },
       {
         "widget": "Image",
         "key": null,
         "bounds_dp": [
           98.0,
-          35.5,
+          36.0,
           84.0,
           24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
       {
-        "widget": "Container",
+        "widget": "Image",
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
-          220.0,
-          100.0,
-          40.0,
-          40.0
+          196.0,
+          116.0,
+          64.0,
+          64.0
         ],
-        "radius": "BorderRadius.circular(12.0)",
-        "padding": null,
-        "color": 4293784831
+        "image": "ResizeImage()"
       },
       {
         "widget": "TextField",
         "key": null,
         "bounds_dp": [
           64.5,
-          421.5,
+          465.5,
           45.0,
           61.0
         ]
@@ -1572,7 +2797,7 @@
         "key": null,
         "bounds_dp": [
           117.0,
-          421.0,
+          465.0,
           46.0,
           62.0
         ]
@@ -1582,7 +2807,7 @@
         "key": null,
         "bounds_dp": [
           170.0,
-          421.0,
+          465.0,
           46.0,
           62.0
         ]
@@ -1592,7 +2817,7 @@
         "key": null,
         "bounds_dp": [
           64.0,
-          495.0,
+          539.0,
           46.0,
           62.0
         ]
@@ -1602,7 +2827,7 @@
         "key": null,
         "bounds_dp": [
           117.0,
-          495.0,
+          539.0,
           46.0,
           62.0
         ]
@@ -1612,7 +2837,7 @@
         "key": null,
         "bounds_dp": [
           170.0,
-          495.0,
+          539.0,
           46.0,
           62.0
         ]
@@ -1636,43 +2861,38 @@
           20.0,
           353.0,
           56.0
-        ],
-        "radius": null,
-        "padding": null,
-        "color": null
+        ]
       },
       {
         "widget": "Image",
         "key": null,
         "bounds_dp": [
           154.5,
-          35.5,
+          36.0,
           84.0,
           24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
       {
-        "widget": "Container",
+        "widget": "Image",
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
           20.0,
-          100.0,
-          40.0,
-          40.0
+          116.0,
+          64.0,
+          64.0
         ],
-        "radius": "BorderRadius.circular(12.0)",
-        "padding": null,
-        "color": 4293784831
+        "image": "ResizeImage()"
       },
       {
         "widget": "TextField",
         "key": null,
         "bounds_dp": [
           34.0,
-          265.5,
+          309.5,
           45.0,
-          51.0
+          53.0
         ]
       },
       {
@@ -1680,9 +2900,9 @@
         "key": null,
         "bounds_dp": [
           89.5,
-          265.0,
+          309.0,
           46.0,
-          52.0
+          54.0
         ]
       },
       {
@@ -1690,9 +2910,9 @@
         "key": null,
         "bounds_dp": [
           145.5,
-          265.0,
+          309.0,
           46.0,
-          52.0
+          54.0
         ]
       },
       {
@@ -1700,9 +2920,9 @@
         "key": null,
         "bounds_dp": [
           201.5,
-          265.0,
+          309.0,
           46.0,
-          52.0
+          54.0
         ]
       },
       {
@@ -1710,9 +2930,9 @@
         "key": null,
         "bounds_dp": [
           257.5,
-          265.0,
+          309.0,
           46.0,
-          52.0
+          54.0
         ]
       },
       {
@@ -1720,9 +2940,9 @@
         "key": null,
         "bounds_dp": [
           313.5,
-          265.0,
+          309.0,
           46.0,
-          52.0
+          54.0
         ]
       }
     ]
@@ -1744,41 +2964,36 @@
           20.0,
           240.0,
           56.0
-        ],
-        "radius": null,
-        "padding": null,
-        "color": null
+        ]
       },
       {
         "widget": "Image",
         "key": null,
         "bounds_dp": [
           98.0,
-          35.5,
+          36.0,
           84.0,
           24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
       {
-        "widget": "Container",
+        "widget": "Image",
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
-          220.0,
-          100.0,
-          40.0,
-          40.0
+          196.0,
+          116.0,
+          64.0,
+          64.0
         ],
-        "radius": "BorderRadius.circular(12.0)",
-        "padding": null,
-        "color": 4293784831
+        "image": "ResizeImage()"
       },
       {
         "widget": "TextField",
         "key": null,
         "bounds_dp": [
           64.5,
-          481.5,
+          525.5,
           45.0,
           61.0
         ]
@@ -1788,7 +3003,7 @@
         "key": null,
         "bounds_dp": [
           117.0,
-          481.0,
+          525.0,
           46.0,
           62.0
         ]
@@ -1798,7 +3013,7 @@
         "key": null,
         "bounds_dp": [
           170.0,
-          481.0,
+          525.0,
           46.0,
           62.0
         ]
@@ -1808,7 +3023,7 @@
         "key": null,
         "bounds_dp": [
           64.0,
-          555.0,
+          599.0,
           46.0,
           62.0
         ]
@@ -1818,7 +3033,7 @@
         "key": null,
         "bounds_dp": [
           117.0,
-          555.0,
+          599.0,
           46.0,
           62.0
         ]
@@ -1828,7 +3043,7 @@
         "key": null,
         "bounds_dp": [
           170.0,
-          555.0,
+          599.0,
           46.0,
           62.0
         ]
@@ -1852,43 +3067,38 @@
           20.0,
           353.0,
           56.0
-        ],
-        "radius": null,
-        "padding": null,
-        "color": null
+        ]
       },
       {
         "widget": "Image",
         "key": null,
         "bounds_dp": [
           154.5,
-          35.5,
+          36.0,
           84.0,
           24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
       {
-        "widget": "Container",
+        "widget": "Image",
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
           20.0,
-          100.0,
-          40.0,
-          40.0
+          116.0,
+          64.0,
+          64.0
         ],
-        "radius": "BorderRadius.circular(12.0)",
-        "padding": null,
-        "color": 4293784831
+        "image": "ResizeImage()"
       },
       {
         "widget": "TextField",
         "key": null,
         "bounds_dp": [
           34.0,
-          265.5,
+          309.5,
           45.0,
-          51.0
+          53.0
         ]
       },
       {
@@ -1896,9 +3106,9 @@
         "key": null,
         "bounds_dp": [
           89.5,
-          265.0,
+          309.0,
           46.0,
-          52.0
+          54.0
         ]
       },
       {
@@ -1906,9 +3116,9 @@
         "key": null,
         "bounds_dp": [
           145.5,
-          265.0,
+          309.0,
           46.0,
-          52.0
+          54.0
         ]
       },
       {
@@ -1916,9 +3126,9 @@
         "key": null,
         "bounds_dp": [
           201.5,
-          265.0,
+          309.0,
           46.0,
-          52.0
+          54.0
         ]
       },
       {
@@ -1926,9 +3136,9 @@
         "key": null,
         "bounds_dp": [
           257.5,
-          265.0,
+          309.0,
           46.0,
-          52.0
+          54.0
         ]
       },
       {
@@ -1936,9 +3146,627 @@
         "key": null,
         "bounds_dp": [
           313.5,
-          265.0,
+          309.0,
           46.0,
-          52.0
+          54.0
+        ]
+      }
+    ]
+  },
+  {
+    "section": "otp-filled",
+    "locale": "ar",
+    "width": 280.0,
+    "height": 852,
+    "textScale": 2.0,
+    "dpr": 2.0,
+    "screenshot": "images/otp-filled-ar-280-2x.png",
+    "components": [
+      {
+        "widget": "Container",
+        "key": "[<'auth-app-bar'>]",
+        "bounds_dp": [
+          20.0,
+          20.0,
+          240.0,
+          56.0
+        ]
+      },
+      {
+        "widget": "Image",
+        "key": null,
+        "bounds_dp": [
+          98.0,
+          36.0,
+          84.0,
+          24.0
+        ],
+        "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
+      },
+      {
+        "widget": "Image",
+        "key": "[<'auth-intro-icon'>]",
+        "bounds_dp": [
+          196.0,
+          116.0,
+          64.0,
+          64.0
+        ],
+        "image": "ResizeImage()"
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          64.5,
+          465.5,
+          45.0,
+          61.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          117.0,
+          465.0,
+          46.0,
+          62.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          170.0,
+          465.0,
+          46.0,
+          62.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          64.0,
+          539.0,
+          46.0,
+          62.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          117.0,
+          539.0,
+          46.0,
+          62.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          170.0,
+          539.0,
+          46.0,
+          62.0
+        ]
+      }
+    ]
+  },
+  {
+    "section": "otp-filled",
+    "locale": "ar",
+    "width": 393.0,
+    "height": 852,
+    "textScale": 1.0,
+    "dpr": 3.0,
+    "screenshot": "images/otp-filled-ar-393.png",
+    "components": [
+      {
+        "widget": "Container",
+        "key": "[<'auth-app-bar'>]",
+        "bounds_dp": [
+          20.0,
+          20.0,
+          353.0,
+          56.0
+        ]
+      },
+      {
+        "widget": "Image",
+        "key": null,
+        "bounds_dp": [
+          154.5,
+          36.0,
+          84.0,
+          24.0
+        ],
+        "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
+      },
+      {
+        "widget": "Image",
+        "key": "[<'auth-intro-icon'>]",
+        "bounds_dp": [
+          20.0,
+          116.0,
+          64.0,
+          64.0
+        ],
+        "image": "ResizeImage()"
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          34.0,
+          309.5,
+          45.0,
+          53.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          89.5,
+          309.0,
+          46.0,
+          54.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          145.5,
+          309.0,
+          46.0,
+          54.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          201.5,
+          309.0,
+          46.0,
+          54.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          257.5,
+          309.0,
+          46.0,
+          54.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          313.5,
+          309.0,
+          46.0,
+          54.0
+        ]
+      }
+    ]
+  },
+  {
+    "section": "otp-filled",
+    "locale": "ckb",
+    "width": 280.0,
+    "height": 852,
+    "textScale": 2.0,
+    "dpr": 2.0,
+    "screenshot": "images/otp-filled-ckb-280-2x.png",
+    "components": [
+      {
+        "widget": "Container",
+        "key": "[<'auth-app-bar'>]",
+        "bounds_dp": [
+          20.0,
+          20.0,
+          240.0,
+          56.0
+        ]
+      },
+      {
+        "widget": "Image",
+        "key": null,
+        "bounds_dp": [
+          98.0,
+          36.0,
+          84.0,
+          24.0
+        ],
+        "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
+      },
+      {
+        "widget": "Image",
+        "key": "[<'auth-intro-icon'>]",
+        "bounds_dp": [
+          196.0,
+          116.0,
+          64.0,
+          64.0
+        ],
+        "image": "ResizeImage()"
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          64.5,
+          525.5,
+          45.0,
+          61.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          117.0,
+          525.0,
+          46.0,
+          62.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          170.0,
+          525.0,
+          46.0,
+          62.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          64.0,
+          599.0,
+          46.0,
+          62.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          117.0,
+          599.0,
+          46.0,
+          62.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          170.0,
+          599.0,
+          46.0,
+          62.0
+        ]
+      }
+    ]
+  },
+  {
+    "section": "otp-filled",
+    "locale": "ckb",
+    "width": 393.0,
+    "height": 852,
+    "textScale": 1.0,
+    "dpr": 3.0,
+    "screenshot": "images/otp-filled-ckb-393.png",
+    "components": [
+      {
+        "widget": "Container",
+        "key": "[<'auth-app-bar'>]",
+        "bounds_dp": [
+          20.0,
+          20.0,
+          353.0,
+          56.0
+        ]
+      },
+      {
+        "widget": "Image",
+        "key": null,
+        "bounds_dp": [
+          154.5,
+          36.0,
+          84.0,
+          24.0
+        ],
+        "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
+      },
+      {
+        "widget": "Image",
+        "key": "[<'auth-intro-icon'>]",
+        "bounds_dp": [
+          20.0,
+          116.0,
+          64.0,
+          64.0
+        ],
+        "image": "ResizeImage()"
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          34.0,
+          309.5,
+          45.0,
+          53.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          89.5,
+          309.0,
+          46.0,
+          54.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          145.5,
+          309.0,
+          46.0,
+          54.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          201.5,
+          309.0,
+          46.0,
+          54.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          257.5,
+          309.0,
+          46.0,
+          54.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          313.5,
+          309.0,
+          46.0,
+          54.0
+        ]
+      }
+    ]
+  },
+  {
+    "section": "otp-filled",
+    "locale": "kmr",
+    "width": 280.0,
+    "height": 852,
+    "textScale": 2.0,
+    "dpr": 2.0,
+    "screenshot": "images/otp-filled-kmr-280-2x.png",
+    "components": [
+      {
+        "widget": "Container",
+        "key": "[<'auth-app-bar'>]",
+        "bounds_dp": [
+          20.0,
+          20.0,
+          240.0,
+          56.0
+        ]
+      },
+      {
+        "widget": "Image",
+        "key": null,
+        "bounds_dp": [
+          98.0,
+          36.0,
+          84.0,
+          24.0
+        ],
+        "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
+      },
+      {
+        "widget": "Image",
+        "key": "[<'auth-intro-icon'>]",
+        "bounds_dp": [
+          196.0,
+          116.0,
+          64.0,
+          64.0
+        ],
+        "image": "ResizeImage()"
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          64.5,
+          567.5,
+          45.0,
+          61.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          117.0,
+          567.0,
+          46.0,
+          62.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          170.0,
+          567.0,
+          46.0,
+          62.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          64.0,
+          641.0,
+          46.0,
+          62.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          117.0,
+          641.0,
+          46.0,
+          62.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          170.0,
+          641.0,
+          46.0,
+          62.0
+        ]
+      }
+    ]
+  },
+  {
+    "section": "otp-filled",
+    "locale": "kmr",
+    "width": 393.0,
+    "height": 852,
+    "textScale": 1.0,
+    "dpr": 3.0,
+    "screenshot": "images/otp-filled-kmr-393.png",
+    "components": [
+      {
+        "widget": "Container",
+        "key": "[<'auth-app-bar'>]",
+        "bounds_dp": [
+          20.0,
+          20.0,
+          353.0,
+          56.0
+        ]
+      },
+      {
+        "widget": "Image",
+        "key": null,
+        "bounds_dp": [
+          154.5,
+          36.0,
+          84.0,
+          24.0
+        ],
+        "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
+      },
+      {
+        "widget": "Image",
+        "key": "[<'auth-intro-icon'>]",
+        "bounds_dp": [
+          20.0,
+          116.0,
+          64.0,
+          64.0
+        ],
+        "image": "ResizeImage()"
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          34.0,
+          309.5,
+          45.0,
+          53.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          89.5,
+          309.0,
+          46.0,
+          54.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          145.5,
+          309.0,
+          46.0,
+          54.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          201.5,
+          309.0,
+          46.0,
+          54.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          257.5,
+          309.0,
+          46.0,
+          54.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          313.5,
+          309.0,
+          46.0,
+          54.0
         ]
       }
     ]
@@ -1960,41 +3788,36 @@
           20.0,
           240.0,
           56.0
-        ],
-        "radius": null,
-        "padding": null,
-        "color": null
+        ]
       },
       {
         "widget": "Image",
         "key": null,
         "bounds_dp": [
           98.0,
-          35.5,
+          36.0,
           84.0,
           24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
       {
-        "widget": "Container",
+        "widget": "Image",
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
-          220.0,
-          100.0,
-          40.0,
-          40.0
+          196.0,
+          116.0,
+          64.0,
+          64.0
         ],
-        "radius": "BorderRadius.circular(12.0)",
-        "padding": null,
-        "color": 4293784831
+        "image": "ResizeImage()"
       },
       {
         "widget": "TextField",
         "key": null,
         "bounds_dp": [
           64.5,
-          523.5,
+          567.5,
           45.0,
           61.0
         ]
@@ -2004,7 +3827,7 @@
         "key": null,
         "bounds_dp": [
           117.0,
-          523.0,
+          567.0,
           46.0,
           62.0
         ]
@@ -2014,7 +3837,7 @@
         "key": null,
         "bounds_dp": [
           170.0,
-          523.0,
+          567.0,
           46.0,
           62.0
         ]
@@ -2024,7 +3847,7 @@
         "key": null,
         "bounds_dp": [
           64.0,
-          597.0,
+          641.0,
           46.0,
           62.0
         ]
@@ -2034,7 +3857,7 @@
         "key": null,
         "bounds_dp": [
           117.0,
-          597.0,
+          641.0,
           46.0,
           62.0
         ]
@@ -2044,7 +3867,7 @@
         "key": null,
         "bounds_dp": [
           170.0,
-          597.0,
+          641.0,
           46.0,
           62.0
         ]
@@ -2068,43 +3891,38 @@
           20.0,
           353.0,
           56.0
-        ],
-        "radius": null,
-        "padding": null,
-        "color": null
+        ]
       },
       {
         "widget": "Image",
         "key": null,
         "bounds_dp": [
           154.5,
-          35.5,
+          36.0,
           84.0,
           24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
       {
-        "widget": "Container",
+        "widget": "Image",
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
           20.0,
-          100.0,
-          40.0,
-          40.0
+          116.0,
+          64.0,
+          64.0
         ],
-        "radius": "BorderRadius.circular(12.0)",
-        "padding": null,
-        "color": 4293784831
+        "image": "ResizeImage()"
       },
       {
         "widget": "TextField",
         "key": null,
         "bounds_dp": [
           34.0,
-          265.5,
+          309.5,
           45.0,
-          51.0
+          53.0
         ]
       },
       {
@@ -2112,9 +3930,9 @@
         "key": null,
         "bounds_dp": [
           89.5,
-          265.0,
+          309.0,
           46.0,
-          52.0
+          54.0
         ]
       },
       {
@@ -2122,9 +3940,9 @@
         "key": null,
         "bounds_dp": [
           145.5,
-          265.0,
+          309.0,
           46.0,
-          52.0
+          54.0
         ]
       },
       {
@@ -2132,9 +3950,9 @@
         "key": null,
         "bounds_dp": [
           201.5,
-          265.0,
+          309.0,
           46.0,
-          52.0
+          54.0
         ]
       },
       {
@@ -2142,9 +3960,9 @@
         "key": null,
         "bounds_dp": [
           257.5,
-          265.0,
+          309.0,
           46.0,
-          52.0
+          54.0
         ]
       },
       {
@@ -2152,12 +3970,384 @@
         "key": null,
         "bounds_dp": [
           313.5,
-          265.0,
+          309.0,
           46.0,
-          52.0
+          54.0
         ]
       }
     ]
+  },
+  {
+    "section": "profile",
+    "locale": "ar",
+    "width": 280.0,
+    "height": 852,
+    "textScale": 2.0,
+    "dpr": 2.0,
+    "screenshot": "images/profile-ar-280-2x.png",
+    "components": []
+  },
+  {
+    "section": "profile",
+    "locale": "ar",
+    "width": 393.0,
+    "height": 852,
+    "textScale": 1.0,
+    "dpr": 3.0,
+    "screenshot": "images/profile-ar-393.png",
+    "components": []
+  },
+  {
+    "section": "profile",
+    "locale": "ckb",
+    "width": 280.0,
+    "height": 852,
+    "textScale": 2.0,
+    "dpr": 2.0,
+    "screenshot": "images/profile-ckb-280-2x.png",
+    "components": []
+  },
+  {
+    "section": "profile",
+    "locale": "ckb",
+    "width": 393.0,
+    "height": 852,
+    "textScale": 1.0,
+    "dpr": 3.0,
+    "screenshot": "images/profile-ckb-393.png",
+    "components": []
+  },
+  {
+    "section": "profile",
+    "locale": "kmr",
+    "width": 280.0,
+    "height": 852,
+    "textScale": 2.0,
+    "dpr": 2.0,
+    "screenshot": "images/profile-kmr-280-2x.png",
+    "components": []
+  },
+  {
+    "section": "profile",
+    "locale": "kmr",
+    "width": 393.0,
+    "height": 852,
+    "textScale": 1.0,
+    "dpr": 3.0,
+    "screenshot": "images/profile-kmr-393.png",
+    "components": []
+  },
+  {
+    "section": "refresh",
+    "locale": "ar",
+    "width": 280.0,
+    "height": 852,
+    "textScale": 2.0,
+    "dpr": 2.0,
+    "screenshot": "images/refresh-ar-280-2x.png",
+    "components": [
+      {
+        "widget": "Image",
+        "key": null,
+        "bounds_dp": [
+          12.0,
+          15.5,
+          83.47826086956522,
+          24.0
+        ],
+        "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
+      }
+    ]
+  },
+  {
+    "section": "refresh",
+    "locale": "ar",
+    "width": 393.0,
+    "height": 852,
+    "textScale": 1.0,
+    "dpr": 3.0,
+    "screenshot": "images/refresh-ar-393.png",
+    "components": [
+      {
+        "widget": "Image",
+        "key": null,
+        "bounds_dp": [
+          12.0,
+          15.5,
+          83.47826086956522,
+          24.0
+        ],
+        "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
+      }
+    ]
+  },
+  {
+    "section": "refresh",
+    "locale": "ckb",
+    "width": 280.0,
+    "height": 852,
+    "textScale": 2.0,
+    "dpr": 2.0,
+    "screenshot": "images/refresh-ckb-280-2x.png",
+    "components": [
+      {
+        "widget": "Image",
+        "key": null,
+        "bounds_dp": [
+          12.0,
+          15.5,
+          83.47826086956522,
+          24.0
+        ],
+        "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
+      }
+    ]
+  },
+  {
+    "section": "refresh",
+    "locale": "ckb",
+    "width": 393.0,
+    "height": 852,
+    "textScale": 1.0,
+    "dpr": 3.0,
+    "screenshot": "images/refresh-ckb-393.png",
+    "components": [
+      {
+        "widget": "Image",
+        "key": null,
+        "bounds_dp": [
+          12.0,
+          15.5,
+          83.47826086956522,
+          24.0
+        ],
+        "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
+      }
+    ]
+  },
+  {
+    "section": "refresh",
+    "locale": "kmr",
+    "width": 280.0,
+    "height": 852,
+    "textScale": 2.0,
+    "dpr": 2.0,
+    "screenshot": "images/refresh-kmr-280-2x.png",
+    "components": [
+      {
+        "widget": "Image",
+        "key": null,
+        "bounds_dp": [
+          12.0,
+          15.5,
+          83.47826086956522,
+          24.0
+        ],
+        "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
+      }
+    ]
+  },
+  {
+    "section": "refresh",
+    "locale": "kmr",
+    "width": 393.0,
+    "height": 852,
+    "textScale": 1.0,
+    "dpr": 3.0,
+    "screenshot": "images/refresh-kmr-393.png",
+    "components": [
+      {
+        "widget": "Image",
+        "key": null,
+        "bounds_dp": [
+          12.0,
+          15.5,
+          83.47826086956522,
+          24.0
+        ],
+        "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
+      }
+    ]
+  },
+  {
+    "section": "results",
+    "locale": "ar",
+    "width": 280.0,
+    "height": 852,
+    "textScale": 2.0,
+    "dpr": 2.0,
+    "screenshot": "images/results-ar-280-2x.png",
+    "components": []
+  },
+  {
+    "section": "results",
+    "locale": "ar",
+    "width": 393.0,
+    "height": 852,
+    "textScale": 1.0,
+    "dpr": 3.0,
+    "screenshot": "images/results-ar-393.png",
+    "components": []
+  },
+  {
+    "section": "results-banner",
+    "locale": "ar",
+    "width": 280.0,
+    "height": 852,
+    "textScale": 2.0,
+    "dpr": 2.0,
+    "screenshot": "images/results-banner-ar-280-2x.png",
+    "components": []
+  },
+  {
+    "section": "results-banner",
+    "locale": "ar",
+    "width": 393.0,
+    "height": 852,
+    "textScale": 1.0,
+    "dpr": 3.0,
+    "screenshot": "images/results-banner-ar-393.png",
+    "components": []
+  },
+  {
+    "section": "results-banner",
+    "locale": "ckb",
+    "width": 280.0,
+    "height": 852,
+    "textScale": 2.0,
+    "dpr": 2.0,
+    "screenshot": "images/results-banner-ckb-280-2x.png",
+    "components": []
+  },
+  {
+    "section": "results-banner",
+    "locale": "ckb",
+    "width": 393.0,
+    "height": 852,
+    "textScale": 1.0,
+    "dpr": 3.0,
+    "screenshot": "images/results-banner-ckb-393.png",
+    "components": []
+  },
+  {
+    "section": "results-banner",
+    "locale": "kmr",
+    "width": 280.0,
+    "height": 852,
+    "textScale": 2.0,
+    "dpr": 2.0,
+    "screenshot": "images/results-banner-kmr-280-2x.png",
+    "components": []
+  },
+  {
+    "section": "results-banner",
+    "locale": "kmr",
+    "width": 393.0,
+    "height": 852,
+    "textScale": 1.0,
+    "dpr": 3.0,
+    "screenshot": "images/results-banner-kmr-393.png",
+    "components": []
+  },
+  {
+    "section": "results",
+    "locale": "ckb",
+    "width": 280.0,
+    "height": 852,
+    "textScale": 2.0,
+    "dpr": 2.0,
+    "screenshot": "images/results-ckb-280-2x.png",
+    "components": []
+  },
+  {
+    "section": "results",
+    "locale": "ckb",
+    "width": 393.0,
+    "height": 852,
+    "textScale": 1.0,
+    "dpr": 3.0,
+    "screenshot": "images/results-ckb-393.png",
+    "components": []
+  },
+  {
+    "section": "results-empty",
+    "locale": "ar",
+    "width": 280.0,
+    "height": 852,
+    "textScale": 2.0,
+    "dpr": 2.0,
+    "screenshot": "images/results-empty-ar-280-2x.png",
+    "components": []
+  },
+  {
+    "section": "results-empty",
+    "locale": "ar",
+    "width": 393.0,
+    "height": 852,
+    "textScale": 1.0,
+    "dpr": 3.0,
+    "screenshot": "images/results-empty-ar-393.png",
+    "components": []
+  },
+  {
+    "section": "results-empty",
+    "locale": "ckb",
+    "width": 280.0,
+    "height": 852,
+    "textScale": 2.0,
+    "dpr": 2.0,
+    "screenshot": "images/results-empty-ckb-280-2x.png",
+    "components": []
+  },
+  {
+    "section": "results-empty",
+    "locale": "ckb",
+    "width": 393.0,
+    "height": 852,
+    "textScale": 1.0,
+    "dpr": 3.0,
+    "screenshot": "images/results-empty-ckb-393.png",
+    "components": []
+  },
+  {
+    "section": "results-empty",
+    "locale": "kmr",
+    "width": 280.0,
+    "height": 852,
+    "textScale": 2.0,
+    "dpr": 2.0,
+    "screenshot": "images/results-empty-kmr-280-2x.png",
+    "components": []
+  },
+  {
+    "section": "results-empty",
+    "locale": "kmr",
+    "width": 393.0,
+    "height": 852,
+    "textScale": 1.0,
+    "dpr": 3.0,
+    "screenshot": "images/results-empty-kmr-393.png",
+    "components": []
+  },
+  {
+    "section": "results",
+    "locale": "kmr",
+    "width": 280.0,
+    "height": 852,
+    "textScale": 2.0,
+    "dpr": 2.0,
+    "screenshot": "images/results-kmr-280-2x.png",
+    "components": []
+  },
+  {
+    "section": "results",
+    "locale": "kmr",
+    "width": 393.0,
+    "height": 852,
+    "textScale": 1.0,
+    "dpr": 3.0,
+    "screenshot": "images/results-kmr-393.png",
+    "components": []
   },
   {
     "section": "signup",
@@ -2176,41 +4366,36 @@
           20.0,
           240.0,
           56.0
-        ],
-        "radius": null,
-        "padding": null,
-        "color": null
+        ]
       },
       {
         "widget": "Image",
         "key": null,
         "bounds_dp": [
           98.0,
-          35.5,
+          36.0,
           84.0,
           24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
       {
-        "widget": "Container",
+        "widget": "Image",
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
-          220.0,
-          100.0,
-          40.0,
-          40.0
+          196.0,
+          116.0,
+          64.0,
+          64.0
         ],
-        "radius": "BorderRadius.circular(12.0)",
-        "padding": null,
-        "color": 4293784831
+        "image": "ResizeImage()"
       },
       {
         "widget": "TextField",
         "key": null,
         "bounds_dp": [
           20.0,
-          329.0,
+          373.0,
           240.0,
           68.0
         ]
@@ -2220,7 +4405,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          458.0,
+          502.0,
           240.0,
           68.0
         ]
@@ -2230,7 +4415,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          587.0,
+          631.0,
           240.0,
           68.0
         ]
@@ -2240,7 +4425,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          965.0,
+          1009.0,
           240.0,
           68.0
         ]
@@ -2264,41 +4449,36 @@
           20.0,
           353.0,
           56.0
-        ],
-        "radius": null,
-        "padding": null,
-        "color": null
+        ]
       },
       {
         "widget": "Image",
         "key": null,
         "bounds_dp": [
           154.5,
-          35.5,
+          36.0,
           84.0,
           24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
       {
-        "widget": "Container",
+        "widget": "Image",
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
           20.0,
-          100.0,
-          40.0,
-          40.0
+          116.0,
+          64.0,
+          64.0
         ],
-        "radius": "BorderRadius.circular(12.0)",
-        "padding": null,
-        "color": 4293784831
+        "image": "ResizeImage()"
       },
       {
         "widget": "TextField",
         "key": null,
         "bounds_dp": [
           20.0,
-          217.0,
+          261.0,
           353.0,
           48.0
         ]
@@ -2308,7 +4488,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          307.0,
+          351.0,
           353.0,
           48.0
         ]
@@ -2318,7 +4498,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          397.0,
+          441.0,
           353.0,
           48.0
         ]
@@ -2328,7 +4508,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          589.0,
+          633.0,
           353.0,
           48.0
         ]
@@ -2352,41 +4532,36 @@
           20.0,
           240.0,
           56.0
-        ],
-        "radius": null,
-        "padding": null,
-        "color": null
+        ]
       },
       {
         "widget": "Image",
         "key": null,
         "bounds_dp": [
           98.0,
-          35.5,
+          36.0,
           84.0,
           24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
       {
-        "widget": "Container",
+        "widget": "Image",
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
-          220.0,
-          100.0,
-          40.0,
-          40.0
+          196.0,
+          116.0,
+          64.0,
+          64.0
         ],
-        "radius": "BorderRadius.circular(12.0)",
-        "padding": null,
-        "color": 4293784831
+        "image": "ResizeImage()"
       },
       {
         "widget": "TextField",
         "key": null,
         "bounds_dp": [
           20.0,
-          431.0,
+          475.0,
           240.0,
           68.0
         ]
@@ -2396,7 +4571,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          560.0,
+          604.0,
           240.0,
           68.0
         ]
@@ -2406,7 +4581,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          689.0,
+          733.0,
           240.0,
           68.0
         ]
@@ -2416,7 +4591,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          1106.0,
+          1150.0,
           240.0,
           68.0
         ]
@@ -2440,41 +4615,36 @@
           20.0,
           353.0,
           56.0
-        ],
-        "radius": null,
-        "padding": null,
-        "color": null
+        ]
       },
       {
         "widget": "Image",
         "key": null,
         "bounds_dp": [
           154.5,
-          35.5,
+          36.0,
           84.0,
           24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
       {
-        "widget": "Container",
+        "widget": "Image",
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
           20.0,
-          100.0,
-          40.0,
-          40.0
+          116.0,
+          64.0,
+          64.0
         ],
-        "radius": "BorderRadius.circular(12.0)",
-        "padding": null,
-        "color": 4293784831
+        "image": "ResizeImage()"
       },
       {
         "widget": "TextField",
         "key": null,
         "bounds_dp": [
           20.0,
-          217.0,
+          261.0,
           353.0,
           48.0
         ]
@@ -2484,7 +4654,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          307.0,
+          351.0,
           353.0,
           48.0
         ]
@@ -2494,7 +4664,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          397.0,
+          441.0,
           353.0,
           48.0
         ]
@@ -2504,7 +4674,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          589.0,
+          633.0,
           353.0,
           48.0
         ]
@@ -2528,41 +4698,36 @@
           20.0,
           240.0,
           56.0
-        ],
-        "radius": null,
-        "padding": null,
-        "color": null
+        ]
       },
       {
         "widget": "Image",
         "key": null,
         "bounds_dp": [
           98.0,
-          35.5,
+          36.0,
           84.0,
           24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
       {
-        "widget": "Container",
+        "widget": "Image",
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
-          220.0,
-          100.0,
-          40.0,
-          40.0
+          196.0,
+          116.0,
+          64.0,
+          64.0
         ],
-        "radius": "BorderRadius.circular(12.0)",
-        "padding": null,
-        "color": 4293784831
+        "image": "ResizeImage()"
       },
       {
         "widget": "TextField",
         "key": null,
         "bounds_dp": [
           20.0,
-          329.0,
+          373.0,
           240.0,
           68.0
         ]
@@ -2572,7 +4737,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          458.0,
+          502.0,
           240.0,
           68.0
         ]
@@ -2582,7 +4747,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          587.0,
+          631.0,
           240.0,
           68.0
         ]
@@ -2592,7 +4757,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          965.0,
+          1009.0,
           240.0,
           68.0
         ]
@@ -2616,41 +4781,36 @@
           20.0,
           353.0,
           56.0
-        ],
-        "radius": null,
-        "padding": null,
-        "color": null
+        ]
       },
       {
         "widget": "Image",
         "key": null,
         "bounds_dp": [
           154.5,
-          35.5,
+          36.0,
           84.0,
           24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
       {
-        "widget": "Container",
+        "widget": "Image",
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
           20.0,
-          100.0,
-          40.0,
-          40.0
+          116.0,
+          64.0,
+          64.0
         ],
-        "radius": "BorderRadius.circular(12.0)",
-        "padding": null,
-        "color": 4293784831
+        "image": "ResizeImage()"
       },
       {
         "widget": "TextField",
         "key": null,
         "bounds_dp": [
           20.0,
-          217.0,
+          261.0,
           353.0,
           48.0
         ]
@@ -2660,7 +4820,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          307.0,
+          351.0,
           353.0,
           48.0
         ]
@@ -2670,7 +4830,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          397.0,
+          441.0,
           353.0,
           48.0
         ]
@@ -2680,7 +4840,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          589.0,
+          633.0,
           353.0,
           48.0
         ]
@@ -2704,41 +4864,36 @@
           20.0,
           240.0,
           56.0
-        ],
-        "radius": null,
-        "padding": null,
-        "color": null
+        ]
       },
       {
         "widget": "Image",
         "key": null,
         "bounds_dp": [
           98.0,
-          35.5,
+          36.0,
           84.0,
           24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
       {
-        "widget": "Container",
+        "widget": "Image",
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
-          220.0,
-          100.0,
-          40.0,
-          40.0
+          196.0,
+          116.0,
+          64.0,
+          64.0
         ],
-        "radius": "BorderRadius.circular(12.0)",
-        "padding": null,
-        "color": 4293784831
+        "image": "ResizeImage()"
       },
       {
         "widget": "TextField",
         "key": null,
         "bounds_dp": [
           20.0,
-          431.0,
+          475.0,
           240.0,
           68.0
         ]
@@ -2748,7 +4903,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          560.0,
+          604.0,
           240.0,
           68.0
         ]
@@ -2758,7 +4913,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          689.0,
+          733.0,
           240.0,
           68.0
         ]
@@ -2768,7 +4923,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          1149.0,
+          1193.0,
           240.0,
           68.0
         ]
@@ -2792,41 +4947,36 @@
           20.0,
           353.0,
           56.0
-        ],
-        "radius": null,
-        "padding": null,
-        "color": null
+        ]
       },
       {
         "widget": "Image",
         "key": null,
         "bounds_dp": [
           154.5,
-          35.5,
+          36.0,
           84.0,
           24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
       {
-        "widget": "Container",
+        "widget": "Image",
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
           20.0,
-          100.0,
-          40.0,
-          40.0
+          116.0,
+          64.0,
+          64.0
         ],
-        "radius": "BorderRadius.circular(12.0)",
-        "padding": null,
-        "color": 4293784831
+        "image": "ResizeImage()"
       },
       {
         "widget": "TextField",
         "key": null,
         "bounds_dp": [
           20.0,
-          217.0,
+          261.0,
           353.0,
           48.0
         ]
@@ -2836,7 +4986,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          307.0,
+          351.0,
           353.0,
           48.0
         ]
@@ -2846,7 +4996,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          397.0,
+          441.0,
           353.0,
           48.0
         ]
@@ -2856,7 +5006,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          589.0,
+          633.0,
           353.0,
           48.0
         ]
@@ -2880,41 +5030,36 @@
           20.0,
           240.0,
           56.0
-        ],
-        "radius": null,
-        "padding": null,
-        "color": null
+        ]
       },
       {
         "widget": "Image",
         "key": null,
         "bounds_dp": [
           98.0,
-          35.5,
+          36.0,
           84.0,
           24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
       {
-        "widget": "Container",
+        "widget": "Image",
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
-          220.0,
-          100.0,
-          40.0,
-          40.0
+          196.0,
+          116.0,
+          64.0,
+          64.0
         ],
-        "radius": "BorderRadius.circular(12.0)",
-        "padding": null,
-        "color": 4293784831
+        "image": "ResizeImage()"
       },
       {
         "widget": "TextField",
         "key": null,
         "bounds_dp": [
           20.0,
-          371.0,
+          415.0,
           240.0,
           68.0
         ]
@@ -2924,7 +5069,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          500.0,
+          544.0,
           240.0,
           68.0
         ]
@@ -2934,7 +5079,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          629.0,
+          673.0,
           240.0,
           68.0
         ]
@@ -2944,7 +5089,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          1007.0,
+          1051.0,
           240.0,
           68.0
         ]
@@ -2968,41 +5113,36 @@
           20.0,
           353.0,
           56.0
-        ],
-        "radius": null,
-        "padding": null,
-        "color": null
+        ]
       },
       {
         "widget": "Image",
         "key": null,
         "bounds_dp": [
           154.5,
-          35.5,
+          36.0,
           84.0,
           24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
       {
-        "widget": "Container",
+        "widget": "Image",
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
           20.0,
-          100.0,
-          40.0,
-          40.0
+          116.0,
+          64.0,
+          64.0
         ],
-        "radius": "BorderRadius.circular(12.0)",
-        "padding": null,
-        "color": 4293784831
+        "image": "ResizeImage()"
       },
       {
         "widget": "TextField",
         "key": null,
         "bounds_dp": [
           20.0,
-          217.0,
+          261.0,
           353.0,
           48.0
         ]
@@ -3012,7 +5152,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          307.0,
+          351.0,
           353.0,
           48.0
         ]
@@ -3022,7 +5162,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          397.0,
+          441.0,
           353.0,
           48.0
         ]
@@ -3032,7 +5172,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          589.0,
+          633.0,
           353.0,
           48.0
         ]
@@ -3056,41 +5196,36 @@
           20.0,
           240.0,
           56.0
-        ],
-        "radius": null,
-        "padding": null,
-        "color": null
+        ]
       },
       {
         "widget": "Image",
         "key": null,
         "bounds_dp": [
           98.0,
-          35.5,
+          36.0,
           84.0,
           24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
       {
-        "widget": "Container",
+        "widget": "Image",
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
-          220.0,
-          100.0,
-          40.0,
-          40.0
+          196.0,
+          116.0,
+          64.0,
+          64.0
         ],
-        "radius": "BorderRadius.circular(12.0)",
-        "padding": null,
-        "color": 4293784831
+        "image": "ResizeImage()"
       },
       {
         "widget": "TextField",
         "key": null,
         "bounds_dp": [
           20.0,
-          371.0,
+          415.0,
           240.0,
           68.0
         ]
@@ -3100,7 +5235,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          500.0,
+          544.0,
           240.0,
           68.0
         ]
@@ -3110,7 +5245,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          629.0,
+          673.0,
           240.0,
           68.0
         ]
@@ -3120,7 +5255,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          1007.0,
+          1051.0,
           240.0,
           68.0
         ]
@@ -3144,41 +5279,36 @@
           20.0,
           353.0,
           56.0
-        ],
-        "radius": null,
-        "padding": null,
-        "color": null
+        ]
       },
       {
         "widget": "Image",
         "key": null,
         "bounds_dp": [
           154.5,
-          35.5,
+          36.0,
           84.0,
           24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
       {
-        "widget": "Container",
+        "widget": "Image",
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
           20.0,
-          100.0,
-          40.0,
-          40.0
+          116.0,
+          64.0,
+          64.0
         ],
-        "radius": "BorderRadius.circular(12.0)",
-        "padding": null,
-        "color": 4293784831
+        "image": "ResizeImage()"
       },
       {
         "widget": "TextField",
         "key": null,
         "bounds_dp": [
           20.0,
-          217.0,
+          261.0,
           353.0,
           48.0
         ]
@@ -3188,7 +5318,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          307.0,
+          351.0,
           353.0,
           48.0
         ]
@@ -3198,7 +5328,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          397.0,
+          441.0,
           353.0,
           48.0
         ]
@@ -3208,9 +5338,327 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          589.0,
+          633.0,
           353.0,
           48.0
+        ]
+      }
+    ]
+  },
+  {
+    "section": "splash",
+    "locale": "ar",
+    "width": 280.0,
+    "height": 852,
+    "textScale": 2.0,
+    "dpr": 2.0,
+    "screenshot": "images/splash-ar-280-2x.png",
+    "components": [
+      {
+        "widget": "Image",
+        "key": null,
+        "bounds_dp": [
+          89.232,
+          394.4042,
+          101.536,
+          29.1916
+        ],
+        "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
+      }
+    ]
+  },
+  {
+    "section": "splash",
+    "locale": "ar",
+    "width": 393.0,
+    "height": 852,
+    "textScale": 1.0,
+    "dpr": 3.0,
+    "screenshot": "images/splash-ar-393.png",
+    "components": [
+      {
+        "widget": "Image",
+        "key": null,
+        "bounds_dp": [
+          115.1542,
+          385.6130825,
+          162.6916,
+          46.773835
+        ],
+        "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
+      }
+    ]
+  },
+  {
+    "section": "splash",
+    "locale": "ckb",
+    "width": 280.0,
+    "height": 852,
+    "textScale": 2.0,
+    "dpr": 2.0,
+    "screenshot": "images/splash-ckb-280-2x.png",
+    "components": [
+      {
+        "widget": "Image",
+        "key": null,
+        "bounds_dp": [
+          89.232,
+          394.4042,
+          101.536,
+          29.1916
+        ],
+        "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
+      }
+    ]
+  },
+  {
+    "section": "splash",
+    "locale": "ckb",
+    "width": 393.0,
+    "height": 852,
+    "textScale": 1.0,
+    "dpr": 3.0,
+    "screenshot": "images/splash-ckb-393.png",
+    "components": [
+      {
+        "widget": "Image",
+        "key": null,
+        "bounds_dp": [
+          115.1542,
+          385.6130825,
+          162.6916,
+          46.773835
+        ],
+        "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
+      }
+    ]
+  },
+  {
+    "section": "splash",
+    "locale": "kmr",
+    "width": 280.0,
+    "height": 852,
+    "textScale": 2.0,
+    "dpr": 2.0,
+    "screenshot": "images/splash-kmr-280-2x.png",
+    "components": [
+      {
+        "widget": "Image",
+        "key": null,
+        "bounds_dp": [
+          89.232,
+          394.4042,
+          101.536,
+          29.1916
+        ],
+        "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
+      }
+    ]
+  },
+  {
+    "section": "splash",
+    "locale": "kmr",
+    "width": 393.0,
+    "height": 852,
+    "textScale": 1.0,
+    "dpr": 3.0,
+    "screenshot": "images/splash-kmr-393.png",
+    "components": [
+      {
+        "widget": "Image",
+        "key": null,
+        "bounds_dp": [
+          115.1542,
+          385.6130825,
+          162.6916,
+          46.773835
+        ],
+        "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
+      }
+    ]
+  },
+  {
+    "section": "tasks",
+    "locale": "ar",
+    "width": 280.0,
+    "height": 852,
+    "textScale": 2.0,
+    "dpr": 2.0,
+    "screenshot": "images/tasks-ar-280-2x.png",
+    "components": []
+  },
+  {
+    "section": "tasks",
+    "locale": "ar",
+    "width": 393.0,
+    "height": 852,
+    "textScale": 1.0,
+    "dpr": 3.0,
+    "screenshot": "images/tasks-ar-393.png",
+    "components": []
+  },
+  {
+    "section": "tasks",
+    "locale": "ckb",
+    "width": 280.0,
+    "height": 852,
+    "textScale": 2.0,
+    "dpr": 2.0,
+    "screenshot": "images/tasks-ckb-280-2x.png",
+    "components": []
+  },
+  {
+    "section": "tasks",
+    "locale": "ckb",
+    "width": 393.0,
+    "height": 852,
+    "textScale": 1.0,
+    "dpr": 3.0,
+    "screenshot": "images/tasks-ckb-393.png",
+    "components": []
+  },
+  {
+    "section": "tasks",
+    "locale": "kmr",
+    "width": 280.0,
+    "height": 852,
+    "textScale": 2.0,
+    "dpr": 2.0,
+    "screenshot": "images/tasks-kmr-280-2x.png",
+    "components": []
+  },
+  {
+    "section": "tasks",
+    "locale": "kmr",
+    "width": 393.0,
+    "height": 852,
+    "textScale": 1.0,
+    "dpr": 3.0,
+    "screenshot": "images/tasks-kmr-393.png",
+    "components": []
+  },
+  {
+    "section": "vouchers",
+    "locale": "ar",
+    "width": 280.0,
+    "height": 852,
+    "textScale": 2.0,
+    "dpr": 2.0,
+    "screenshot": "images/vouchers-ar-280-2x.png",
+    "components": [
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          75.5,
+          142.5,
+          173.0,
+          64.0
+        ]
+      }
+    ]
+  },
+  {
+    "section": "vouchers",
+    "locale": "ar",
+    "width": 393.0,
+    "height": 852,
+    "textScale": 1.0,
+    "dpr": 3.0,
+    "screenshot": "images/vouchers-ar-393.png",
+    "components": [
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          75.5,
+          124.5,
+          286.0,
+          44.0
+        ]
+      }
+    ]
+  },
+  {
+    "section": "vouchers",
+    "locale": "ckb",
+    "width": 280.0,
+    "height": 852,
+    "textScale": 2.0,
+    "dpr": 2.0,
+    "screenshot": "images/vouchers-ckb-280-2x.png",
+    "components": [
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          75.5,
+          142.5,
+          173.0,
+          104.0
+        ]
+      }
+    ]
+  },
+  {
+    "section": "vouchers",
+    "locale": "ckb",
+    "width": 393.0,
+    "height": 852,
+    "textScale": 1.0,
+    "dpr": 3.0,
+    "screenshot": "images/vouchers-ckb-393.png",
+    "components": [
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          75.5,
+          124.5,
+          286.0,
+          44.0
+        ]
+      }
+    ]
+  },
+  {
+    "section": "vouchers",
+    "locale": "kmr",
+    "width": 280.0,
+    "height": 852,
+    "textScale": 2.0,
+    "dpr": 2.0,
+    "screenshot": "images/vouchers-kmr-280-2x.png",
+    "components": [
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          75.5,
+          142.5,
+          173.0,
+          104.0
+        ]
+      }
+    ]
+  },
+  {
+    "section": "vouchers",
+    "locale": "kmr",
+    "width": 393.0,
+    "height": 852,
+    "textScale": 1.0,
+    "dpr": 3.0,
+    "screenshot": "images/vouchers-kmr-393.png",
+    "components": [
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          75.5,
+          124.5,
+          286.0,
+          44.0
         ]
       }
     ]

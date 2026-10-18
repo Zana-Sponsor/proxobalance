@@ -94,8 +94,7 @@ abstract final class AdUi {
         foregroundColor: Colors.white,
         minimumSize: const Size(0, 52),
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-        shape: const RoundedRectangleBorder(
-            borderRadius: controlRadius),
+        shape: ProxoControls.shape,
         textStyle: t.labelLarge?.copyWith(fontWeight: FontWeight.w400),
       )),
       outlinedButtonTheme: OutlinedButtonThemeData(
@@ -104,8 +103,7 @@ abstract final class AdUi {
         minimumSize: const Size(0, 48),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
         side: const BorderSide(color: controlLine),
-        shape: const RoundedRectangleBorder(
-            borderRadius: controlRadius),
+        shape: ProxoControls.shape,
         textStyle: t.labelLarge?.copyWith(fontWeight: FontWeight.w400),
       )),
     );

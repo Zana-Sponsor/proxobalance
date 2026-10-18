@@ -1,3 +1,4 @@
+import 'package:proxo_app/theme/app_theme.dart';
 import 'package:proxo_app/l10n/proxo_strings.dart';
 import 'dart:async';
 import 'dart:convert';
@@ -762,7 +763,7 @@ class ProxoLinkPageEditorState extends State<ProxoLinkPageEditor> {
                                   OutlinedButton.icon(
                                     onPressed: () => Navigator.push(
                                       context,
-                                      MaterialPageRoute<void>(
+                                      ProxoPageRoute<void>(
                                         settings: const RouteSettings(name: 'page_preview'),
                                         builder: (_) => CardWebViewScreen(
                                           title: 'پێشبینینی شێواز',

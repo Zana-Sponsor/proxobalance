@@ -1,119 +1,126 @@
-import 'package:proxo_app/theme/app_locale.dart';
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 
-/// Proxo splash screen.
-///
-/// Logo-only, the way most major apps (Instagram, Uber, X, ...) do it:
-/// no tagline, no progress bar — just the mark, centred, with a quiet
-/// fade + scale entrance. Total time on screen ≈ 1.1s (was ≈ 6.4s).
-///
-/// Public API unchanged: SplashScreen(nextScreen: ...)
+/// Native and Flutter launch surfaces share white and the Proxo brand mark.
 class SplashScreen extends StatefulWidget {
-  final Widget nextScreen;
   const SplashScreen({super.key, required this.nextScreen});
-
+  final Widget nextScreen;
   @override
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
 class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
-  // Same background as the native launch_background.xml — no flash.
-  static const Color _kBg = AppColors.page;
-
-  // Transparent PNG. The previous asset was a .jpg, which has no alpha
-  // channel — the mark shipped baked onto a solid #FFFFFF square, so the
-  // splash showed a white box sitting on the #F7F8FA background. The PNG is
-  // also tightly cropped: the .jpg was a 3264x3264 canvas whose wordmark
-  // filled only 64% of the width and 18% of the height, so `logoWidth` was
-  // sizing mostly empty padding and the mark rendered far smaller than the
-  // clamp below implies.
-  static const String _kLogoAsset = 'assets/images/proxo_logo.png';
-
-  // ── Timing ────────────────────────────────────────────────────────────────
-  static const int _kEntranceMs = 450;
-  static const int _kHoldMs = 500; // logo sits on screen, fully visible
-  static const int _kExitMs = 320;
-
-  late final AnimationController _ctrl;
-  late final Animation<double> _fade;
-  late final Animation<double> _scale;
-
-  bool _navigated = false;
-
+  late final AnimationController _entrance = AnimationController(
+      vsync: this, duration: const Duration(milliseconds: 500));
+  bool _started = false;
   @override
-  void initState() {
-    super.initState();
-    _ctrl = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: _kEntranceMs),
-    );
-    _fade = CurvedAnimation(parent: _ctrl, curve: Curves.easeOut);
-    _scale = Tween<double>(begin: 0.94, end: 1.0).animate(
-      CurvedAnimation(parent: _ctrl, curve: Curves.easeOutCubic),
-    );
-    _run();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_started) {
+      _started = true;
+      _run();
+    }
   }
 
   Future<void> _run() async {
-    await _ctrl.forward();
-    await Future<void>.delayed(const Duration(milliseconds: _kHoldMs));
-    _goNext();
-  }
-
-  void _goNext() {
-    if (_navigated || !mounted) return;
-    _navigated = true;
-    Navigator.of(context).pushReplacement(
-      PageRouteBuilder(
-        pageBuilder: (_, __, ___) => widget.nextScreen,
-        transitionsBuilder: (_, animation, __, child) =>
-            FadeTransition(opacity: animation, child: child),
-        transitionDuration: const Duration(milliseconds: _kExitMs),
-      ),
-    );
+    try {
+      if (MediaQuery.disableAnimationsOf(context)) {
+        _entrance.value = 1;
+      } else {
+        await _entrance.forward().orCancel;
+      }
+      await Future<void>.delayed(const Duration(milliseconds: 350));
+      if (!mounted) return;
+      Navigator.of(context).pushReplacement(
+          ProxoPageRoute<void>(builder: (_) => widget.nextScreen));
+    } on TickerCanceled {/* App closed during the entrance. */}
   }
 
   @override
   void dispose() {
-    _ctrl.dispose();
+    _entrance.dispose();
     super.dispose();
   }
 
   @override
-  Widget build(BuildContext context) {
-    ProxoLocale.watch(context);
-    return Scaffold(
-      backgroundColor: _kBg,
-      body: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            // Responsive logo width, verified 320 → 430 dp.
-            final double logoWidth = (constraints.maxWidth * 0.42)
-                .clamp(140.0, 220.0);
+  Widget build(BuildContext context) => Scaffold(
+        backgroundColor: Colors.white,
+        body: FadeTransition(
+            opacity: _entrance,
+            child: ScaleTransition(
+                scale: Tween<double>(begin: .96, end: 1).animate(
+                    CurvedAnimation(
+                        parent: _entrance, curve: Curves.easeOutCubic)),
+                child: const SplashArtwork())),
+      );
+}
 
-            return Center(
-              child: FadeTransition(
-                opacity: _fade,
-                child: ScaleTransition(
-                  scale: _scale,
-                  child: Image.asset(
-                    _kLogoAsset,
-                    width: logoWidth,
-                    fit: BoxFit.contain,
-                    // The asset is 1200 px wide and paints at ~140-220 dp, so
-                    // it is always downscaled; high filtering keeps the
-                    // wordmark's curves clean at every density.
-                    filterQuality: FilterQuality.high,
-                    isAntiAlias: true,
-                  ),
-                ),
-              ),
-            );
-          },
-        ),
-      ),
-    );
-  }
+/// Shared production artwork, also used by the screenshot harness.
+class SplashArtwork extends StatelessWidget {
+  const SplashArtwork({super.key});
+  @override
+  Widget build(BuildContext context) => ColoredBox(
+        color: Colors.white,
+        child: SafeArea(
+            child: Center(child: LayoutBuilder(builder: (context, constraints) {
+          final size = (constraints.maxWidth * .82).clamp(180.0, 336.0);
+          return SizedBox.square(
+              dimension: size,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Container(
+                      decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          gradient: RadialGradient(
+                              colors: [Color(0xFFE3EFFF), Color(0x00FFFFFF)]))),
+                  Container(
+                      width: size * .84,
+                      height: size * .84,
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(color: const Color(0xFFEAF2FF)))),
+                  Container(
+                      width: size * .64,
+                      height: size * .64,
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(color: const Color(0xFFDDEBFF)))),
+                  Column(mainAxisSize: MainAxisSize.min, children: [
+                    Container(
+                        width: size * .66,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 24, vertical: 30),
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(30),
+                            border: Border.all(color: const Color(0xFFF1F6FF)),
+                            boxShadow: const [
+                              BoxShadow(
+                                  color: Color(0x17046CFA),
+                                  blurRadius: 34,
+                                  offset: Offset(0, 12))
+                            ]),
+                        child: Image.asset('assets/images/proxo_logo.png',
+                            semanticLabel: 'Proxo',
+                            filterQuality: FilterQuality.high)),
+                    const SizedBox(height: 28),
+                    Row(mainAxisSize: MainAxisSize.min, children: [
+                      for (final opacity in [.24, .70, .24])
+                        Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 4),
+                            child: Container(
+                                width: 6,
+                                height: 6,
+                                decoration: BoxDecoration(
+                                    color: AppColors.accent
+                                        .withValues(alpha: opacity),
+                                    shape: BoxShape.circle))),
+                    ]),
+                  ]),
+                ],
+              ));
+        }))),
+      );
 }

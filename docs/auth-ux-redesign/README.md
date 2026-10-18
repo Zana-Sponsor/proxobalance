@@ -1,122 +1,98 @@
-# دیزاینی نوێی Auth — Proxo
+# Proxo — Auth and interface polish
 
-وەشانی دووەم: سەردێر و AppBar بچووکتر و هاوسەنگتر کراون. ناو، ئیمەیڵ، وشەی نهێنی و دووبارەکردنەوەی لە یەک فۆڕمدان؛ OTP شاشەیەکی جیاوازە. نیشاندەری هەنگاو و کارتەکانی دوو بەشی پێشوو لابراون.
+فۆڕمی دروستکردنی هەژمار یەک بەشە و OTP لە شاشەی جیاوازە. ئایکۆنی 3D، AppBar ـی هاوسەنگ، دوگمەی نەرم، ئاڵای عێراق، سپڵاش و گواستنەوەی ئەنیمەیشن زیاد کراون. چوونەژوورەوەی هەژماری پێشوو پێویستی بە ئامادەکردنی پڕۆفایل نییە.
 
-**Email signup requires the Supabase email settings and code template described in [email signup rollout](email-signup.md) before release.** Live provider settings and email delivery were not changed or verified by this PR. The template and integration are included for review.
+## Changes
 
-## پلان → پێوانە → گۆڕانکاری
+- Returning email/phone logins, restored sessions and named routes use a session-only `AuthenticatedGate`. Only signup retains provisioning. Database access still uses the signed-in user's RLS policies.
+- Locally bundled 3D glass/porcelain artwork replaces the Auth intro tiles. Toolbar and field glyphs stay compact. The AppBar has 40 dp breathing room below it.
+- Name, email, password and confirmation stay together, without numbered steps; OTP is separate. Email/phone forms fade sequentially, so fields never overlap. The selected channel moves across a pale track and values persist when switching back.
+- Shared Material button themes and custom CTA tokens use soft 18 dp corners, including Auth, profile, ad, results, ProxoLink, deposit, receipt and error actions. Auth fields and OTP cells use 16 dp corners.
+- OTP digits align horizontally and vertically without an invisible caret reserving width. The Iraq flag and +964 remain visible while typing.
+- Routes animate for 320 ms; tabs have a 280 ms arrival while retaining scroll/form state and muting hidden tickers. Reduced-motion settings are respected.
+- The shared refresh strip shows **نوێدەکرێتەوە** beside its spinner, with Arabic/Badini translations and space for large text.
+- Native launch colors and the Flutter splash are aligned. The splash adds a blue halo and rounded brand surface.
+- Background/terminated Android notification messages use the compact monochrome Proxo P mark and blue tint. Foreground and data-only messages also show the Proxo wordmark as their large icon. Removed the generic Firebase service declaration that competed with the Flutter messaging service.
 
-1. Flatten registration into one continuous form, followed by its own verification screen. Preserve the input values when returning from OTP or changing language.
-2. Reduce the toolbar, wordmark, heading and icons; use a consistent 20 dp page gutter and shared type/spacing tokens. Retain usable touch areas and natural text scaling.
-3. Implement the form and native email signup boundary, then render the actual Flutter widgets in Sorani, Arabic and Badini at ordinary and enlarged text sizes.
+## Actual screen captures
 
-## سکرینشۆتەکان / Screenshots
+Production Flutter widgets with bundled fonts and fictional offline fixtures. The icon artwork was generated; these screenshots are rendered from the app implementation.
 
-These are captures of production Flutter widgets with the bundled fonts, not generated mockups. Fictional fixture data is used. The filled signup is the same screen after typing, **not an additional form stage**.
-
-| فۆڕمی دروستکردنی هەژمار | هەمان فۆڕم، پڕکراوە |
+| Email login | Phone entry |
 |---|---|
-| ![Create account](images/signup-ckb-393.png) | ![Filled account form](images/signup-filled-ckb-393.png) |
+| ![Email](images/login-ckb-393.png) | ![Phone](images/login-phone-filled-ckb-393.png) |
 
-| چوونەژوورەوە | OTP ـی جیاواز |
+| Single signup form | Separate OTP |
 |---|---|
-| ![Login](images/login-ckb-393.png) | ![Verification](images/otp-ckb-393.png) |
+| ![Signup](images/signup-ckb-393.png) | ![OTP](images/otp-filled-ckb-393.png) |
 
-| گەڕاندنەوەی هەژمار | وشەی نهێنیی نوێ |
+| Splash | Refresh in progress |
 |---|---|
-| ![Recovery](images/forgot-ckb-393.png) | ![New password](images/new-password-ckb-393.png) |
+| ![Splash](images/splash-ckb-393.png) | ![Refresh](images/refresh-ckb-393.png) |
 
-[All capture cases, languages and scroll-bottom views](screenshots.md)
+[Full 150-case gallery with other app sections and scroll-bottom captures](screenshots.md)
 
-## پێوانەکان / Design specifications
+## Measurements
 
-All dimensions are Flutter logical pixels (dp). Type sizes follow the user's text scaling. The 280 dp, 2× text captures intentionally scroll; text is not clamped to fit the whole form into one viewport.
+Flutter logical pixels. Text follows system accessibility scaling. At 280 dp / 2× text, long forms scroll and phone digits can scroll horizontally within the input.
 
-| Component | Previous revision | Current revision |
-|---|---:|---:|
-| AppBar height | 64 | 56 |
-| Centered logo | 98 × 28 | 84 × 24 |
-| Page heading | 24 | 20 |
-| Supporting copy / field labels | 14 | 13 |
-| Input / button text | 14 | 14 |
-| Intro icon tile | 48 × 48, radius 16 | 40 × 40, radius 12 |
-| Intro / toolbar / label glyphs | 24 / 22 / 18 | 20 / 20 / 16 |
-| Field radius | 14 | 12 |
-| Primary button | Minimum 52, radius 14 | Minimum 50, radius 12 |
-| Between fields | 18 | 16 |
-| Progress cards | Two, minimum 56 high | Removed |
-
-| Shared rule | Measurement |
+| Component | Specification |
 |---|---|
-| Page gutter | 20 per side |
-| Form maximum width | 440, centered on wider screens |
-| Back / language hit area | 48 × 48, transparent surface |
-| Input height | Minimum 48; expands with text |
-| AppBar → intro / intro → form | 24 / 24 |
-| Title → subtitle / label → field | 6 / 6 |
-| Input padding | Horizontal 14, vertical 13 |
-| Font | Bundled RabarAuthRegular, weight 400 |
-| Heading / field line height | 1.5 |
-| Supporting copy line height | 1.6 |
-| Outline assets | 24 × 24 grid, 1.7 stroke, rounded caps and joins |
+| Page gutters / maximum form width | 20 each side / 440 |
+| AppBar / wordmark | 56 high / 84 × 24 |
+| Back and language touch areas | 48 × 48 |
+| AppBar → intro / intro → form | 40 / 28 |
+| 3D intro artwork | 64 × 64; decoded at 256 px |
+| Heading / labels / input and button text | 20 / 13 / 14 |
+| Auth font | RabarAuthRegular, weight 400 |
+| Input height / radius | Minimum 48 / 16 |
+| Primary button height / radius | Minimum 50 / 18 |
+| OTP cell / radius / gap | 48 × 56 / 16 / 8; 3 columns on narrow screens |
+| Phone flag | 24 × 16, 8 dp from +964 |
+| Refresh spinner / normal reveal | 22 / 60 |
+| Android notification small icon | White-alpha P on a 24 dp canvas |
 
-| Color role | Value |
-|---|---|
-| Background | `#FFFFFF` |
-| Main text | `#0F172A` |
-| Supporting text / placeholder | `#64748B` |
-| Primary action | `#046CFA` |
-| Accent ink / icon surface | `#0759CE` / `#EDF4FF` |
-| Accent border | `#BDD5FA` |
-| Field surface | `#F8FAFC` |
-| Divider / field border | `#E2E8F0` |
-
-## پێوانەی ڕاستەقینە / Measured layout
-
-The Sorani signup screen at **393 × 852 dp**, **3× DPR** produces a **1179 × 2556** PNG. It fits all four fields, the requirements, submit action and login prompt in the viewport at the default text size.
+Actual Sorani signup at 393 × 852 dp (DPR 3):
 
 | Element | Left | Top | Width | Height |
 |---|---:|---:|---:|---:|
 | AppBar | 20 | 20 | 353 | 56 |
-| Logo | 154.5 | 35.5 | 84 | 24 |
-| Page title | 76 | 105 | 297 | 30 |
-| Intro icon tile | 20 | 100 | 40 | 40 |
-| Name input | 20 | 217 | 353 | 48 |
-| Email input | 20 | 307 | 353 | 48 |
-| Password input | 20 | 397 | 353 | 48 |
-| Confirm password input | 20 | 589 | 353 | 48 |
-| Submit action | 20 | 653 | 353 | 50 |
+| Wordmark | 154.5 | 36 | 84 | 24 |
+| Title | 100 | 133 | 273 | 30 |
+| 3D artwork | 20 | 116 | 64 | 64 |
+| Name | 20 | 261 | 353 | 48 |
+| Email | 20 | 351 | 353 | 48 |
+| Password | 20 | 441 | 353 | 48 |
+| Confirmation | 20 | 633 | 353 | 48 |
+| Submit | 20 | 697 | 353 | 50 |
 
-- [Every measured component — CSV](measurements.csv)
-- [Main component bounds — JSON](component-bounds.json)
-- [Full geometry, typography and decoration metadata — compressed JSON](measurements.json.gz)
-- [Source and screenshot hashes, counts and validation results](evidence.json)
+[CSV geometry](measurements.csv) · [Component bounds](component-bounds.json) · [Full measurements](measurements.json.gz) · [OTP ink centers](otp-ink-centers.json) · [Hashes and counts](evidence.json)
 
-## Validation
+## Verification and remaining deployment work
 
-- **42 visual cases passed; 44 behavior tests passed (35 core + 9 marketing regressions).**
-- **57 PNGs** including scroll-bottom views; **2,523 measured RenderObjects**.
-- **0 rendering exceptions; 0 paragraphs exceeding their maximum line count.**
-- Analyzer: **0 errors**, 3 existing warnings (one unnecessary cast and two visible-for-testing calls) and 25 informational lints.
+- **57 behavior tests passed:** native email signup/OTP contracts, invalid-code and auto-confirmation rejection, field retention, phone normalization, OTP lifecycle, returning-user entry, refresh coalescing, tab state, reduced-motion splash and signup provisioning.
+- **150 visual cases passed:** 25 views/states × 3 languages × 2 viewport/text settings. **194 screenshots**, **10,290 measured RenderObjects**, **zero rendering exceptions**.
+- No Auth text exceeds its maximum line count. Eighteen existing truncations remain in narrow notification summaries, an ad identifier and a task title; the report records them.
+- Targeted analyzer: zero errors, 3 pre-existing Auth warnings, 27 informational lints.
+- These are headless Flutter captures, not Android device screenshots. No live account, OTP, push message or payment was created.
+- **Live email signup is blocked by server configuration:** the connected project's public Auth settings report `mailer_autoconfirm: true`, so Confirm email is currently disabled. The app rejects an auto-confirmed signup session instead of bypassing OTP. Email signup is enabled and the live profile trigger copies `full_name`, but the connector cannot edit hosted Auth configuration. Apply the remaining settings in [email-signup.md](email-signup.md) before releasing email signup.
+- **Push server branding deployed:** live `send-notification` is now version 5, with `icon: ic_notification` and `color: #046CFA`. Its JWT requirement and all other behavior were preserved; the retrieved deployment matches the repository source. `send-push-notification` is not deployed in this project and was only updated in the repository. No live notification was sent; delivery and OEM notification rendering remain unverified.
+- The workflow builds and retains `proxo-release-apk`. Without a configured release keystore it uses the repository's debug-signing fallback, so this is a test APK.
 
-The behavior coverage includes email signup request/verification/resend contracts, rejection of invalid OTP and unexpected auto-confirmed sessions, one form → OTP → Back with field retention, language switching, phone login normalization, OTP paste/lifecycle, navigation and setup states. All backend calls in these tests use offline fixtures; no live account or message was created.
-
-The visual matrix contains seven views/states × three languages × two viewport/text-scale settings: 393 × 852 at 1× text and DPR 3; 280 × 852 at 2× text and DPR 2. It checks rendering exceptions and scroll resets and records the real RenderObject geometry. These are headless widget captures, not Android-device screenshots.
-
-[Capture log](capture.log) · [Behavior log](behavior.log) · [Analyzer log](analyze.log) · [Marketing regression log](marketing-regression.log)
+[Visual log](capture.log) · [Behavior log](behavior.log) · [Analyzer log](analyze.log) · [OTP recapture](otp-centering.log)
 
 ## Reproduce
 
-Use Flutter 3.47.2 / Dart 3.13.2 with the locked dependencies and bundled fonts:
+Flutter 3.47.2 / Dart 3.13.2 with locked dependencies:
 
 ```sh
 cd proxo_app
 export FLUTTER_SUPPRESS_ANALYTICS=true DART_SUPPRESS_ANALYTICS=true
 flutter --suppress-analytics pub get
-flutter --suppress-analytics test --no-pub test/auth_email_signup_test.dart test/auth_phone_flow_test.dart test/auth_otp_lifecycle_test.dart test/auth_refresh_test.dart --reporter expanded
-flutter --suppress-analytics test --no-pub test/whatsapp_marketing_test.dart --reporter expanded
-flutter --suppress-analytics test --no-pub test/polish_capture_test.dart --name '^(login|login-phone|signup|signup-filled|forgot|new-password|otp) ' --reporter expanded
-flutter --suppress-analytics analyze --no-pub --no-fatal-infos --no-fatal-warnings lib/widgets/auth lib/screens/auth test/auth_refresh_test.dart test/auth_email_signup_test.dart
+flutter --suppress-analytics test --no-pub test/auth_refresh_test.dart test/auth_email_signup_test.dart test/auth_phone_flow_test.dart test/auth_otp_lifecycle_test.dart test/proxo_tab_stack_test.dart test/account_setup_test.dart test/whatsapp_marketing_test.dart test/proxo_polish_test.dart
+flutter --suppress-analytics test --no-pub test/polish_capture_test.dart --reporter expanded
 ```
 
-This review branch targets `feat/secure-operations-telemetry-20261016`. It does not merge into `main`, change live Supabase settings or publish an APK/AAB.
+Android notification reference: https://firebase.google.com/docs/cloud-messaging/android/receive-messages
+
+[Artwork provenance](../../proxo_app/assets/icons/auth/SOURCES.md)

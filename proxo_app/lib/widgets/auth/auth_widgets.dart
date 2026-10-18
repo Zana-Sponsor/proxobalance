@@ -4,6 +4,7 @@ import 'package:proxo_app/theme/app_locale.dart';
 // auth_widgets.dart
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import 'auth_design.dart';
 import 'auth_icon.dart';
@@ -305,7 +306,7 @@ class _AuthPrimaryButtonState extends State<AuthPrimaryButton> {
             backgroundColor: AuthTokens.primary,
             foregroundColor: AuthTokens.onPrimary,
             disabledBackgroundColor:
-                widget.loading ? AuthTokens.primary : AuthTokens.line,
+                widget.loading ? AuthTokens.primary : AuthTokens.accentSoft,
             disabledForegroundColor: AuthTokens.inkMuted,
             elevation: 0,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -332,7 +333,7 @@ class _AuthPrimaryButtonState extends State<AuthPrimaryButton> {
                     key: const ValueKey('label'),
                     textAlign: TextAlign.center,
                     style: AuthTokens.buttonText.copyWith(
-                      color: live ? AuthTokens.onPrimary : AuthTokens.inkMuted,
+                      color: live ? AuthTokens.onPrimary : AuthTokens.accentInk,
                     ),
                   ),
           ),
@@ -363,13 +364,21 @@ class AuthTextLink extends StatelessWidget {
     ProxoLocale.watch(context);
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(6),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-        child: ProxoText(
-          label,
-          translate: true,
-          style: (style ?? AuthTokens.link).copyWith(color: AuthTokens.accent),
+      borderRadius: BorderRadius.circular(12),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+          child: Center(
+            widthFactor: 1,
+            heightFactor: 1,
+            child: ProxoText(
+              label,
+              translate: true,
+              style:
+                  (style ?? AuthTokens.link).copyWith(color: AuthTokens.accent),
+            ),
+          ),
         ),
       ),
     );
@@ -1028,7 +1037,7 @@ class AuthSegmentedControl extends StatelessWidget {
     ProxoLocale.watch(context);
     return LayoutBuilder(
       builder: (context, constraints) {
-        final width = (constraints.maxWidth - 8) / 2;
+        final width = (constraints.maxWidth - 10) / 2;
         final labelWidth = (width - 20).clamp(1.0, double.infinity);
         final scaler = MediaQuery.textScalerOf(context);
         // Material's inherited letter spacing must not differ from the painter.
@@ -1065,8 +1074,9 @@ class AuthSegmentedControl extends StatelessWidget {
         return Container(
           padding: const EdgeInsets.all(4),
           decoration: BoxDecoration(
-            color: const Color(0xFFF1F4F8),
-            borderRadius: BorderRadius.circular(16),
+            color: const Color(0xFFF7F9FC),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: AuthTokens.line),
           ),
           child: SizedBox(
             height: height,
@@ -1086,15 +1096,9 @@ class AuthSegmentedControl extends StatelessWidget {
                     height: height,
                     child: DecoratedBox(
                       decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Color(0x080F172A),
-                            blurRadius: 8,
-                            offset: Offset(0, 2),
-                          ),
-                        ],
+                        color: AuthTokens.accentSoft,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: AuthTokens.accentLine),
                       ),
                     ),
                   ),
@@ -1109,7 +1113,7 @@ class AuthSegmentedControl extends StatelessWidget {
                         child: Material(
                           color: Colors.transparent,
                           child: InkWell(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(16),
                             onTap: enabled && i != index
                                 ? () => onChanged(i)
                                 : null,
@@ -1150,4 +1154,27 @@ class AuthSegmentedControl extends StatelessWidget {
       },
     );
   }
+}
+
+/// Persistent country marker, outside the editable phone digits.
+class IraqPhonePrefix extends StatelessWidget {
+  const IraqPhonePrefix({super.key});
+  @override
+  Widget build(BuildContext context) => Row(
+        mainAxisSize: MainAxisSize.min,
+        textDirection: TextDirection.ltr,
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(3),
+            child: SvgPicture.asset('assets/icons/auth/iraq_flag.svg',
+                key: const ValueKey('iraq-phone-flag'),
+                width: 24,
+                height: 16,
+                excludeFromSemantics: true),
+          ),
+          const SizedBox(width: 8),
+          const Text('+964',
+              textDirection: TextDirection.ltr, style: AuthTokens.fieldText),
+        ],
+      );
 }

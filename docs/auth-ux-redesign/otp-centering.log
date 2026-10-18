@@ -1,0 +1,20 @@
+   Woah! You appear to be trying to run flutter as root.
+   We strongly recommend running the flutter tool without superuser privileges.
+  /
+📎
+00:00 +0: loading proxo_app/test/polish_capture_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: otp ckb (393.0, 1.0, 3.0)
+00:01 +1: otp-filled ckb (393.0, 1.0, 3.0)
+00:01 +2: otp ar (393.0, 1.0, 3.0)
+00:02 +3: otp-filled ar (393.0, 1.0, 3.0)
+00:02 +4: otp kmr (393.0, 1.0, 3.0)
+00:02 +5: otp-filled kmr (393.0, 1.0, 3.0)
+00:03 +6: otp ckb (280.0, 2.0, 2.0)
+00:03 +7: otp-filled ckb (280.0, 2.0, 2.0)
+00:03 +8: otp ar (280.0, 2.0, 2.0)
+00:03 +9: otp-filled ar (280.0, 2.0, 2.0)
+00:04 +10: otp kmr (280.0, 2.0, 2.0)
+00:04 +11: otp-filled kmr (280.0, 2.0, 2.0)
+00:04 +12: (tearDownAll)
+00:04 +12: All tests passed!

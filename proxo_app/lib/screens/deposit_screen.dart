@@ -47,7 +47,7 @@ const double _kPageMargin = 16;
 const double _kCardRadius = 18;
 const double _kInputRadius = 14;
 const double _kBtnHeight = 52;
-const double _kBtnRadius = 14;
+const double _kBtnRadius = ProxoControls.radius;
 
 /// Minimum accepted top-up, matching the old sheet's validation.
 const int _kMinIqd = 5000;
@@ -846,7 +846,7 @@ class _InstructionCard extends StatelessWidget {
               child: Container(
                 width: 48,
                 height: 48,
-                decoration: ProxoInk.fill(radius: 10, elevated: false),
+                decoration: ProxoInk.fill(radius: ProxoControls.radius, elevated: false),
                 child: const ProxoSymbol(ProxoSymbolName.copy,
                     color: ProxoInk.onInk, size: 17),
               ),

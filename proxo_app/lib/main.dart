@@ -16,7 +16,7 @@ import 'services/account_cache.dart';
 import 'services/app_telemetry_service.dart';
 import 'services/observed_http_client.dart';
 import 'package:http/http.dart' as http;
-import 'screens/account_setup_screen.dart';
+import 'screens/authenticated_gate.dart';
 import 'screens/auth_screen.dart';
 import 'screens/splash_screen.dart';
 import 'screens/home_screen.dart';
@@ -33,7 +33,6 @@ import 'screens/profile_screen.dart';
 import 'widgets/no_internet_widget.dart';
 import 'theme/app_theme.dart';
 import 'theme/app_locale.dart';
-import 'widgets/auth/auth_design.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Global constants
@@ -156,7 +155,7 @@ class _ProxoAppState extends State<ProxoApp> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
         navigatorKey.currentState?.pushAndRemoveUntil(
-          MaterialPageRoute<void>(builder: (_) => const _AuthGate()), (_) => false);
+          ProxoPageRoute<void>(builder: (_) => const _AuthGate()), (_) => false);
       });
     });
   }
@@ -198,22 +197,11 @@ class _ProxoAppState extends State<ProxoApp> {
         child: AdActivationNoticeHost(
           client: Supabase.instance.client,
           onOpen: (id) => navigatorKey.currentState?.push(
-            ProxoPageRoute<void>(builder: (_) => AccountSetupGate(child: AdScreen(initialAdId: id)))),
+            ProxoPageRoute<void>(builder: (_) => AuthenticatedGate(child: AdScreen(initialAdId: id)))),
           child: child ?? const SizedBox.shrink(),
         ),
       ),
-      theme: ThemeData(
-        fontFamily: kAppFont,
-        colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primary),
-        useMaterial3: true,
-        // Shared Auth surface; screens that omit an explicit background still
-        // use the same white canvas.
-        scaffoldBackgroundColor: AuthTokens.pageBackground,
-        textTheme: const TextTheme().apply(
-          fontFamily: kAppFont,
-          decoration: TextDecoration.none,
-        ),
-      ),
+      theme: buildAppTheme(),
       home: const SplashScreen(nextScreen: _AuthGate()),
       onGenerateRoute: _onGenerateRoute,
     );
@@ -221,27 +209,24 @@ class _ProxoAppState extends State<ProxoApp> {
 
   static Route<dynamic>? _onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
-      // هەموو ڕێڕەوە ناودارەکان `ProxoPageRoute`ن، بۆیە ماوەی هاتن و
-      // چوونیان هەمان ئەوەیە کە ڕێڕەوە دەستکردەکان هەیانە (250ms).
-      // `MaterialPageRoute` خۆی 300msـە و `reverseTransitionDuration`ی
-      // جیاوازی نییە — ئیشارەتی سوایپی هەبوو، بەڵام هەستەکەی جیاواز بوو.
+      // Named and direct routes share the same 320 ms directional transition.
       case '/my-ads':
-        return ProxoPageRoute<void>(settings: settings, builder: (_) => const AccountSetupGate(child: AdScreen()));
+        return ProxoPageRoute<void>(settings: settings, builder: (_) => const AuthenticatedGate(child: AdScreen()));
       case '/notifications':
         return ProxoPageRoute<void>(settings: settings, 
-            builder: (_) => const AccountSetupGate(child: NotificationsScreen()));
+            builder: (_) => const AuthenticatedGate(child: NotificationsScreen()));
       case '/wallet':
-        return ProxoPageRoute<void>(settings: settings, builder: (_) => const AccountSetupGate(child: MainShell()));
+        return ProxoPageRoute<void>(settings: settings, builder: (_) => const AuthenticatedGate(child: MainShell()));
       case '/profile':
-        return ProxoPageRoute<void>(settings: settings, builder: (_) => const AccountSetupGate(child: ProfileScreen()));
+        return ProxoPageRoute<void>(settings: settings, builder: (_) => const AuthenticatedGate(child: ProfileScreen()));
       case '/transactions':
-        return ProxoPageRoute<void>(settings: settings, builder: (_) => const AccountSetupGate(child: TxHistoryPage()));
+        return ProxoPageRoute<void>(settings: settings, builder: (_) => const AuthenticatedGate(child: TxHistoryPage()));
       case '/coupons':
-        return ProxoPageRoute<void>(settings: settings, builder: (_) => const AccountSetupGate(child: DiscountCodesPage()));
+        return ProxoPageRoute<void>(settings: settings, builder: (_) => const AuthenticatedGate(child: DiscountCodesPage()));
       case '/faq':
-        return ProxoPageRoute<void>(settings: settings, builder: (_) => const AccountSetupGate(child: FaqScreen()));
+        return ProxoPageRoute<void>(settings: settings, builder: (_) => const AuthenticatedGate(child: FaqScreen()));
       case '/assets':
-        return ProxoPageRoute<void>(settings: settings, builder: (_) => const AccountSetupGate(child: MainShell()));
+        return ProxoPageRoute<void>(settings: settings, builder: (_) => const AuthenticatedGate(child: MainShell()));
       default:
         return null;
     }
@@ -279,13 +264,13 @@ class _AuthGateState extends State<_AuthGate> {
         }
 
         Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (_) => const AccountSetupGate(child: MainShell())),
+          ProxoPageRoute(builder: (_) => const AuthenticatedGate(child: MainShell())),
           (route) => false,
         );
       } else if (event == AuthChangeEvent.signedOut) {
         // Supabase records session revocation before credentials disappear.
         Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (_) => const AuthScreen()),
+          ProxoPageRoute(builder: (_) => const AuthScreen()),
           (route) => false,
         );
       }
@@ -301,7 +286,7 @@ class _AuthGateState extends State<_AuthGate> {
   @override
   Widget build(BuildContext context) {
     final session = supabase.auth.currentSession;
-    if (session != null) return const AccountSetupGate(child: MainShell());
+    if (session != null) return const AuthenticatedGate(child: MainShell());
     // AuthScreen now opens on its Sign In view by default (_Tab.login /
     // _Step.form) — it is the refactored screen, not a legacy fallback.
     return const AuthScreen();
@@ -574,9 +559,7 @@ class MainShellState extends State<MainShell> with WidgetsBindingObserver {
             // خۆی `Container(width: …)` + `Material` + سێبەری خۆی هەیە،
             // بۆیە لفەکردنی بە `Drawer` دوو ڕوو و دوو سێبەری لەسەر یەک
             // دادەنا. `DrawerController` هیچ پانییەکی ناسەپێنێت.
-            // The kept-alive IndexedStack switches immediately. Motion stays
-            // in the tiny bottom-nav indicator and press capsule, exactly like
-            // the supplied reference; no full-screen opacity/saveLayer pass.
+            // Kept-alive tab state with the shared short arrival transition.
             body: Directionality(
               textDirection: TextDirection.rtl,
               child: _buildBody(),

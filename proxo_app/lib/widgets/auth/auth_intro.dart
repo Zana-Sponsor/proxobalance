@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../proxo_text.dart';
 import 'auth_design.dart';
 import 'auth_header.dart';
-import 'auth_icon.dart';
 
 /// A compact, directional title block. The icon shares the title's row instead
 /// of consuming a separate hero row above the form.
@@ -18,17 +17,16 @@ class AuthIntro extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final symbol = Container(
+    final symbol = Image.asset(
+      icon == 'verification_outline' || icon == 'recovery_outline'
+          ? 'assets/images/auth/verification_3d.png'
+          : 'assets/images/auth/account_3d.png',
       key: const ValueKey('auth-intro-icon'),
       width: AuthTokens.introIconSize,
       height: AuthTokens.introIconSize,
-      decoration: BoxDecoration(
-        color: AuthTokens.accentSoft,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AuthTokens.accentLine),
-      ),
-      alignment: Alignment.center,
-      child: AuthIcon(icon, size: 20),
+      cacheWidth: 256,
+      filterQuality: FilterQuality.high,
+      excludeFromSemantics: true,
     );
     return Padding(
       padding: const EdgeInsets.only(bottom: AuthTokens.gapSubtitleToForm),

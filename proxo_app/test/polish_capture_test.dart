@@ -12,6 +12,9 @@ import 'package:proxo_app/widgets/tasks_page.dart';
 
 // Actual production widgets; fictional read-only backend; no OTP/payment sends.
 import 'dart:convert';
+import 'dart:async';
+import 'package:proxo_app/screens/splash_screen.dart';
+import 'package:proxo_app/widgets/proxo_refresh.dart';
 import 'dart:io';
 import 'dart:ui' as ui;
 
@@ -134,11 +137,15 @@ void main() {
       for (final section in [
         'login',
         'login-phone',
+        'login-phone-filled',
         'signup',
         'signup-filled',
         'forgot',
         'new-password',
         'otp',
+        'otp-filled',
+        'splash',
+        'refresh',
         'results-banner',
         'results',
         'results-empty',
@@ -164,6 +171,8 @@ void main() {
           backend.includeNotifications = section == 'notifications';
           final key = GlobalKey();
           final code = TextEditingController();
+          final refresh = ProxoRefreshController();
+          Future<void>? refreshing;
           final focus = FocusNode();
           final password = TextEditingController(),
               confirmation = TextEditingController();
@@ -172,6 +181,7 @@ void main() {
           final child = switch (section) {
             'login' ||
             'login-phone' ||
+            'login-phone-filled' ||
             'signup' ||
             'signup-filled' ||
             'forgot' =>
@@ -211,7 +221,8 @@ void main() {
             'results-empty' => BestMetricsScreen(
                 loadResults: ({bool forceRefresh = false}) async => [],
               ),
-            'otp' => Scaffold(
+            'splash' => const Scaffold(body: SplashArtwork()),
+            'otp' || 'otp-filled' => Scaffold(
                 body: SafeArea(
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.all(20),
@@ -245,7 +256,8 @@ void main() {
             'ads' => const AdScreen(),
             'create' => AdCreateScreen(repository: TestAdRepository()),
             'profile' => const ProfileScreen(),
-            'home' => HomeScreen(
+            'home' || 'refresh' => HomeScreen(
+                refreshController: refresh,
                 onCreateTap: () {},
                 onAddBalanceTap: () {},
                 onToolsTap: () {},
@@ -268,11 +280,7 @@ void main() {
                 GlobalWidgetsLocalizations.delegate,
                 GlobalCupertinoLocalizations.delegate,
               ],
-              theme: ThemeData(
-                fontFamily: kAppFont,
-                useMaterial3: true,
-                scaffoldBackgroundColor: Colors.white,
-              ),
+              theme: buildAppTheme(),
               builder: (context, child) => ProxoLocaleScope(
                 child: MediaQuery(
                   data: MediaQuery.of(context)
@@ -293,8 +301,13 @@ void main() {
           }
 
           await settle();
-          if (section == 'login-phone') {
+          if (section == 'login-phone' || section == 'login-phone-filled') {
             await t.tap(find.text(AuthStrings.channelPhone).first);
+            await settle();
+          }
+          if (section == 'login-phone-filled') {
+            await t.enterText(find.byType(TextField).first, '7501234567');
+            FocusManager.instance.primaryFocus?.unfocus();
             await settle();
           }
           if (section == 'signup' || section == 'signup-filled') {
@@ -334,7 +347,11 @@ void main() {
             await t.tap(link);
             await settle();
           }
-          if (section == 'otp') {
+          if (section == 'otp-filled') {
+            await t.enterText(find.byType(TextField).first, '123456');
+            await t.pump();
+          }
+          if (section == 'otp' || section == 'otp-filled') {
             focus.unfocus();
             await t.pump();
           }
@@ -349,6 +366,14 @@ void main() {
               reason:
                   'A new Auth step must start at its heading, not inherit the previous form scroll',
             );
+          }
+          if (section == 'refresh') {
+            refreshing = refresh.refresh();
+            await t.pump();
+            for (var frame = 0; frame < 20; frame++) {
+              await t.pump(const Duration(milliseconds: 16));
+            }
+            expect(find.byKey(const ValueKey('refresh-status-label')), findsOneWidget);
           }
           final exceptions = <String>[];
           Object? error;
@@ -437,6 +462,11 @@ void main() {
             }
           }
           try {
+            if (refreshing != null) {
+              await settle();
+              await t.pump(const Duration(seconds: 1));
+              await refreshing;
+            }
             await t.pumpWidget(const SizedBox());
             await t.pump();
           } catch (error) {
@@ -457,6 +487,7 @@ void main() {
               }),
             );
           });
+          refresh.dispose();
           code.dispose();
           focus.dispose();
           password.dispose();
