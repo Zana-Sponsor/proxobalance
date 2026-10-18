@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../theme/app_theme.dart' show kAppFont;
+
 import 'package:proxo_app/widgets/proxo_text.dart';
 
 // ═════════════════════════════════════════════════════════════════════════════
@@ -32,7 +33,10 @@ abstract final class _T {
     BoxShadow(color: Color(0x0D0F172A), blurRadius: 6, offset: Offset(0, 2)),
   ];
 
-  static const EdgeInsets pad = EdgeInsets.symmetric(horizontal: 18, vertical: 16);
+  static const EdgeInsets pad = EdgeInsets.symmetric(
+    horizontal: 18,
+    vertical: 16,
+  );
   static const double gutter = 16;
   static const double top = 12;
   static const double maxWidth = 398;
@@ -40,6 +44,7 @@ abstract final class _T {
   // ── قووڵایی ستاک ──────────────────────────────────────────────────────
   static const int visible = 2; // Front card plus two overlapping layers.
   static const int maxQueued = 10;
+
   /// Equal layout bounds; the two rear layers shrink optically in the stack.
   static const double cardHeight = 74; // دوو دێڕی 14sp + پەدینگ
   static const double depthOffset = 8; // هەر کارتێکی پشتەوە 8px دەردەکەوێت
@@ -80,6 +85,7 @@ class _StackItem {
   final VoidCallback? onAction;
   final TextDirection direction;
   final bool persistent;
+  final TextStyle? textStyle;
   bool leaving = false;
 
   _StackItem({
@@ -90,6 +96,7 @@ class _StackItem {
     required this.onAction,
     required this.direction,
     required this.persistent,
+    this.textStyle,
   });
 }
 
@@ -108,6 +115,7 @@ class ProxoErrorStack {
     BuildContext context,
     String message, {
     Duration duration = const Duration(seconds: 4),
+    TextStyle? textStyle,
     String? actionLabel,
     VoidCallback? onAction,
     TextDirection direction = TextDirection.rtl,
@@ -128,15 +136,18 @@ class ProxoErrorStack {
       return;
     }
 
-    list.add(_StackItem(
-      id: ++_seq,
-      message: text,
-      duration: duration,
-      actionLabel: actionLabel,
-      onAction: onAction,
-      direction: direction,
-      persistent: MediaQuery.maybeOf(context)?.accessibleNavigation ?? false,
-    ));
+    list.add(
+      _StackItem(
+        id: ++_seq,
+        textStyle: textStyle,
+        message: text,
+        duration: duration,
+        actionLabel: actionLabel,
+        onAction: onAction,
+        direction: direction,
+        persistent: MediaQuery.maybeOf(context)?.accessibleNavigation ?? false,
+      ),
+    );
     // تەنها نوێترینەکان دەمێننەوە.
     while (list.where((e) => !e.leaving).length > _T.maxQueued) {
       list.remove(list.firstWhere((e) => !e.leaving));
@@ -232,21 +243,33 @@ class _ErrorStackView extends StatelessWidget {
             builder: (BuildContext _, List<_StackItem> items, Widget? __) {
               // قووڵایی: 0 = پێشەوە. کارتە ڕۆیشتووەکان قووڵایی خۆیان
               // دەپارێزن تا ئەنیمەیشنەکەیان تەواو دەبێت.
-              final List<_StackItem> live =
-                  items.where((e) => !e.leaving).toList();
+              final List<_StackItem> live = items
+                  .where((e) => !e.leaving)
+                  .toList();
               final front = ProxoErrorStack._front(live);
               final width = (MediaQuery.sizeOf(context).width - _T.gutter * 2)
                   .clamp(1.0, _T.maxWidth);
-              final painter = TextPainter(
-                text: TextSpan(text: front?.message ?? '', style: _T.text),
-                textDirection: front?.direction ?? TextDirection.rtl,
-                textScaler: MediaQuery.textScalerOf(context),
-              )..layout(maxWidth: (width - _T.pad.horizontal -
-                    (front?.onAction == null ? 0 : 114)).clamp(1, double.infinity));
-              final height = (painter.height + _T.pad.vertical).clamp(
-                _T.cardHeight,
-                (MediaQuery.sizeOf(context).height * .4).clamp(120, 320),
-              ).toDouble();
+              final painter =
+                  TextPainter(
+                    text: TextSpan(
+                      text: front?.message ?? '',
+                      style: front?.textStyle ?? _T.text,
+                    ),
+                    textDirection: front?.direction ?? TextDirection.rtl,
+                    textScaler: MediaQuery.textScalerOf(context),
+                  )..layout(
+                    maxWidth:
+                        (width -
+                                _T.pad.horizontal -
+                                (front?.onAction == null ? 0 : 114))
+                            .clamp(1, double.infinity),
+                  );
+              final height = (painter.height + _T.pad.vertical)
+                  .clamp(
+                    _T.cardHeight,
+                    (MediaQuery.sizeOf(context).height * .4).clamp(120, 320),
+                  )
+                  .toDouble();
               painter.dispose();
               final List<Widget> children = <Widget>[];
               // دواوە سەرەتا دەکێشرێت، پێشەوە لە کۆتایی.
@@ -255,12 +278,14 @@ class _ErrorStackView extends StatelessWidget {
                     ? 0
                     : (live.length - 1 - live.indexOf(item));
                 if (depth > _T.visible) continue;
-                children.add(_StackCard(
-                  key: ValueKey<int>(item.id),
-                  item: item,
-                  depth: depth,
-                  height: height,
-                ));
+                children.add(
+                  _StackCard(
+                    key: ValueKey<int>(item.id),
+                    item: item,
+                    depth: depth,
+                    height: height,
+                  ),
+                );
               }
               // کارتی ڕۆیشتوو لەسەرەوەی هەموو شتێک بێت.
               children.sort((Widget a, Widget b) {
@@ -293,7 +318,12 @@ class _StackCard extends StatefulWidget {
   final int depth;
   final double height;
 
-  const _StackCard({super.key, required this.item, required this.depth, required this.height});
+  const _StackCard({
+    super.key,
+    required this.item,
+    required this.depth,
+    required this.height,
+  });
 
   @override
   State<_StackCard> createState() => _StackCardState();
@@ -325,8 +355,8 @@ class _StackCardState extends State<_StackCard>
     if (widget.item.leaving && !_exiting) {
       _exiting = true;
       _life.reverse().whenComplete(
-            () => ProxoErrorStack._remove(widget.item.id),
-          );
+        () => ProxoErrorStack._remove(widget.item.id),
+      );
     }
   }
 
@@ -346,60 +376,78 @@ class _StackCardState extends State<_StackCard>
     final Widget card = Material(
       type: MaterialType.transparency,
       child: DecoratedBox(
-      decoration: const BoxDecoration(
-        color: _T.card,
-        borderRadius: BorderRadius.all(Radius.circular(18)),
-        boxShadow: _T.shadow,
-      ),
-      child: Container(
-        height: widget.height,
-        padding: _T.pad,
-        alignment: Alignment.center,
-        child: Directionality(
-          textDirection: item.direction,
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Expanded(
-                child: SingleChildScrollView(child: ProxoText(
-                  item.message,
-                  style: _T.text,
-                )),
-              ),
-              if (front && item.actionLabel != null && item.onAction != null)
-                Padding(
-                  padding: const EdgeInsetsDirectional.only(start: 14),
-                  child: ConstrainedBox(constraints: const BoxConstraints(maxWidth: 100), child: TextButton(
-                    style: TextButton.styleFrom(minimumSize: const Size(48, 48)),
-                    onPressed: () {
-                      _tapDismiss();
-                      item.onAction!();
-                    },
-                    child: ProxoText(item.actionLabel!, style: _T.actionText),
-                  )),
+        decoration: const BoxDecoration(
+          color: _T.card,
+          borderRadius: BorderRadius.all(Radius.circular(18)),
+          boxShadow: _T.shadow,
+        ),
+        child: Container(
+          height: widget.height,
+          padding: _T.pad,
+          alignment: Alignment.center,
+          child: Directionality(
+            textDirection: item.direction,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: ProxoText(
+                      item.message,
+                      style: item.textStyle ?? _T.text,
+                    ),
+                  ),
                 ),
-            ],
+                if (front && item.actionLabel != null && item.onAction != null)
+                  Padding(
+                    padding: const EdgeInsetsDirectional.only(start: 14),
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 100),
+                      child: TextButton(
+                        style: TextButton.styleFrom(
+                          minimumSize: const Size(48, 48),
+                        ),
+                        onPressed: () {
+                          _tapDismiss();
+                          item.onAction!();
+                        },
+                        child: ProxoText(
+                          item.actionLabel!,
+                          style:
+                              item.textStyle?.copyWith(color: _T.action) ??
+                              _T.actionText,
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
           ),
         ),
-      ),
       ),
     );
 
     // ── قووڵایی — کارتەکان لەسەر یەکتری، هەمان قەبارە، بە نەرمی جێگۆڕکێ ──
     final Widget depthed = TweenAnimationBuilder<double>(
       tween: Tween<double>(end: widget.depth.toDouble()),
-      duration: MediaQuery.disableAnimationsOf(context) ? Duration.zero : _T.restack,
+      duration: MediaQuery.disableAnimationsOf(context)
+          ? Duration.zero
+          : _T.restack,
       curve: Curves.easeOutCubic,
       child: card,
       builder: (BuildContext _, double d, Widget? child) {
-        final double opacity =
-            (1 - _T.depthFade * d).clamp(0.0, 1.0).toDouble();
+        final double opacity = (1 - _T.depthFade * d)
+            .clamp(0.0, 1.0)
+            .toDouble();
         return Opacity(
           opacity: opacity,
           child: Transform.translate(
             offset: Offset(0, (_T.depthOffset + widget.height * .045) * d),
-            child: Transform.scale(scale: 1 - d * .045,
-              alignment: Alignment.topCenter, child: child),
+            child: Transform.scale(
+              scale: 1 - d * .045,
+              alignment: Alignment.topCenter,
+              child: child,
+            ),
           ),
         );
       },
@@ -414,8 +462,9 @@ class _StackCardState extends State<_StackCard>
       builder: (BuildContext _, Widget? child) {
         if (_exiting) {
           final double p = Curves.easeInOutCubic.transform(1 - _life.value);
-          final double sign =
-              Directionality.of(context) == TextDirection.rtl ? 1 : -1;
+          final double sign = Directionality.of(context) == TextDirection.rtl
+              ? 1
+              : -1;
           final double fade = p < 0.55 ? 1 : 1 - (p - 0.55) / 0.45;
           return Opacity(
             opacity: fade.clamp(0.0, 1.0).toDouble(),
@@ -450,12 +499,15 @@ class _StackCardState extends State<_StackCard>
         ProxoErrorStack._dismiss(item.id);
         ProxoErrorStack._remove(item.id);
       },
-      child: Semantics(liveRegion: true, onDismiss: _tapDismiss,
+      child: Semantics(
+        liveRegion: true,
+        onDismiss: _tapDismiss,
         child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: _tapDismiss,
-        child: animated,
-      )),
+          behavior: HitTestBehavior.opaque,
+          onTap: _tapDismiss,
+          child: animated,
+        ),
+      ),
     );
   }
 }

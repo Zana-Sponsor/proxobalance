@@ -13,6 +13,7 @@ import 'package:proxo_app/theme/app_theme.dart';
 import 'package:proxo_app/widgets/ad_form_components.dart';
 import 'package:proxo_app/widgets/best_metrics_home_section.dart';
 import 'package:proxo_app/widgets/home_best_result_card.dart';
+import 'package:proxo_app/widgets/best_results_design.dart';
 import 'package:proxo_app/widgets/home_quick_actions.dart';
 import 'package:proxo_app/widgets/proxo_text.dart';
 
@@ -45,55 +46,58 @@ BestMetricAd featured(String id, {String category = 'cosmetics_beauty'}) =>
     );
 
 List<BestMetricAd> examples() => [
-      featured('beauty'),
-      featured('fashion', category: 'fashion_apparel'),
-      featured('electronics', category: 'electronics'),
-    ];
+  featured('beauty'),
+  featured('fashion', category: 'fashion_apparel'),
+  featured('electronics', category: 'electronics'),
+];
 
 Widget host(Widget child, {double scale = 1}) => MaterialApp(
-      theme: buildAppTheme(),
-      home: Builder(
-        builder: (context) => MediaQuery(
-          data: MediaQuery.of(context)
-              .copyWith(textScaler: TextScaler.linear(scale)),
-          child: Directionality(
-            textDirection: TextDirection.rtl,
-            child: Scaffold(
-              backgroundColor: Colors.white,
-              body: SingleChildScrollView(
-                child: RepaintBoundary(
-                  key: captureKey,
-                  child: ColoredBox(
-                    color: Colors.white,
-                    child: Padding(
-                        padding: const EdgeInsets.all(16), child: child),
-                  ),
-                ),
+  theme: buildAppTheme(),
+  home: Builder(
+    builder: (context) => MediaQuery(
+      data: MediaQuery.of(context)
+          .copyWith(textScaler: TextScaler.linear(scale)),
+      child: Directionality(
+        textDirection: TextDirection.rtl,
+        child: Scaffold(
+          backgroundColor: Colors.white,
+          body: SingleChildScrollView(
+            child: RepaintBoundary(
+              key: captureKey,
+              child: ColoredBox(
+                color: Colors.white,
+                child: Padding(padding: const EdgeInsets.all(16), child: child),
               ),
             ),
           ),
         ),
       ),
-    );
+    ),
+  ),
+);
 
 Widget sections({GlobalKey<BestMetricsHomeSectionState>? resultsKey}) => Column(
-      children: [
-        HomeQuickActions(
-            onCreateTap: () {}, onToolsTap: () {}, onFaqTap: () {}),
-        const SizedBox(height: AdUi.sectionGap),
-        BestMetricsHomeSection(
-          key: resultsKey,
-          loadPreview: ({bool forceRefresh = true}) async => examples(),
-        ),
-      ],
-    );
+  children: [
+    HomeQuickActions(onCreateTap: () {}, onToolsTap: () {}, onFaqTap: () {}),
+    const SizedBox(height: AdUi.sectionGap),
+    BestMetricsHomeSection(
+      autoPlay: false,
+      key: resultsKey,
+      loadPreview: ({bool forceRefresh = true}) async => examples(),
+    ),
+  ],
+);
 
-void auditText(WidgetTester tester, Finder parent) {
+void auditText(
+  WidgetTester tester,
+  Finder parent, {
+  String font = ResultsUi.font,
+}) {
   for (final text in tester.widgetList<ProxoText>(
     find.descendant(of: parent, matching: find.byType(ProxoText)),
   )) {
     expect(text.style!.fontWeight, FontWeight.w400);
-    expect(text.style!.fontFamily, 'Rabar');
+    expect(text.style!.fontFamily, font);
     final paragraph = paragraphOf(tester, find.byWidget(text));
     expect(paragraph.didExceedMaxLines, false);
     final rendered = paragraph.text.toPlainText(includeSemanticsLabels: false);
@@ -108,7 +112,8 @@ void auditText(WidgetTester tester, Finder parent) {
           return false;
         }
         return (widget.decoration! as BoxDecoration).borderRadius ==
-            AdUi.radius;
+                ResultsUi.radius ||
+            (widget.decoration! as BoxDecoration).borderRadius == AdUi.radius;
       }),
     );
     final paintSpace = tester.getRect(
@@ -154,12 +159,13 @@ void main() {
   setUpAll(() async {
     await (FontLoader(
       'Rabar',
-    )..addFont(rootBundle.load('assets/fonts/Rabar_021.ttf')))
-        .load();
+    )..addFont(rootBundle.load('assets/fonts/Rabar_021.ttf'))).load();
+    await (FontLoader(
+      'RabarAuthRegular',
+    )..addFont(rootBundle.load('assets/fonts/Rabar_022.ttf'))).load();
     await (FontLoader(
       'MaterialIcons',
-    )..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf')))
-        .load();
+    )..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf'))).load();
   });
 
   for (final size in [
@@ -182,7 +188,7 @@ void main() {
         addTearDown(tester.view.resetDevicePixelRatio);
         await tester.pumpWidget(host(sections(), scale: scale));
         await tester.pumpAndSettle();
-        auditText(tester, find.byType(HomeQuickActions));
+        auditText(tester, find.byType(HomeQuickActions), font: 'Rabar');
         auditText(tester, find.byType(BestMetricsHomeSection));
         final carousel = find.byKey(const ValueKey('home-results-carousel'));
         final card = find.byKey(const ValueKey('weekly-beauty'));
@@ -212,7 +218,11 @@ void main() {
         ),
       ),
     );
-    for (final key in ['home-create-ad', 'home-add-balance', 'home-create-page']) {
+    for (final key in [
+      'home-create-ad',
+      'home-add-balance',
+      'home-create-page',
+    ]) {
       await tester.tap(find.byKey(ValueKey(key)));
       await tester.pumpAndSettle();
     }
@@ -250,50 +260,34 @@ void main() {
     expect(repo.submissions, 0);
   });
 
-  testWidgets('card corners, padding and shadows match Create Ad', (
+  testWidgets('result card has a quiet border and consistent content inset', (
     tester,
   ) async {
     await tester.pumpWidget(
-      host(
-        Column(
-          children: [
-            const AdFormSection(title: 'Reference', child: SizedBox()),
-            const SizedBox(height: 22),
-            const HomeQuickActions(),
-            HomeBestResultCard(ad: featured('beauty'), rank: 1),
-          ],
-        ),
-      ),
+      host(HomeBestResultCard(ad: featured('beauty'), rank: 1)),
     );
     await tester.pumpAndSettle();
-    final reference = tester
-        .widget<Container>(
-          find
-              .descendant(
-                of: find.byType(AdFormSection),
-                matching: find.byType(Container),
-              )
-              .first,
-        )
-        .decoration as BoxDecoration;
-    for (final parent in [
-      find.byType(HomeBestResultCard),
-    ]) {
-      final card = tester.widget<Container>(
-        find.descendant(of: parent, matching: find.byType(Container)).first,
-      );
-      final decoration = card.decoration as BoxDecoration;
-      expect(decoration.color, reference.color);
-      expect(decoration.borderRadius, reference.borderRadius);
-      expect(decoration.boxShadow, reference.boxShadow);
-      expect(decoration.border, isNull);
-      final padding = tester
-          .widgetList<Padding>(
-            find.descendant(of: parent, matching: find.byType(Padding)),
+    final card = tester.widget<Container>(
+      find
+          .descendant(
+            of: find.byType(HomeBestResultCard),
+            matching: find.byType(Container),
           )
-          .firstWhere((widget) => widget.padding == AdUi.cardPadding);
-      expect(padding.padding, const EdgeInsets.all(20));
-    }
+          .first,
+    );
+    final decoration = card.decoration as BoxDecoration;
+    expect(decoration.color, Colors.white);
+    expect(decoration.borderRadius, ResultsUi.radius);
+    expect(decoration.border, isNotNull);
+    expect(
+      find.descendant(
+        of: find.byType(HomeBestResultCard),
+        matching: find.byWidgetPredicate(
+          (w) => w is Padding && w.padding == const EdgeInsets.all(16),
+        ),
+      ),
+      findsWidgets,
+    );
   });
 
   testWidgets('metrics retain database values, normal type and LTR currency', (
@@ -326,6 +320,7 @@ void main() {
       await tester.pumpWidget(
         host(
           BestMetricsHomeSection(
+            autoPlay: false,
             loadPreview: ({bool forceRefresh = true}) {
               calls++;
               return calls == 1 ? initial.future : Future.value(examples());
@@ -346,6 +341,7 @@ void main() {
       await tester.pumpWidget(
         host(
           BestMetricsHomeSection(
+            autoPlay: false,
             loadPreview: ({bool forceRefresh = true}) async => [],
           ),
         ),
@@ -374,6 +370,7 @@ void main() {
     await tester.pumpWidget(
       host(
         BestMetricsHomeSection(
+          autoPlay: false,
           key: key,
           loadPreview: ({bool forceRefresh = true}) async {
             flags.add(forceRefresh);
@@ -391,7 +388,10 @@ void main() {
     expect(page, greaterThan(0.5));
     await key.currentState!.refresh(forceRefresh: false);
     await tester.pumpAndSettle();
-    expect(flags, [false, false]); // Mount and pull-to-refresh both honor the cache TTL.
+    expect(flags, [
+      false,
+      false,
+    ]); // Mount and pull-to-refresh both honor the cache TTL.
     await tester.ensureVisible(
       find.byKey(const ValueKey('home-results-view-all')),
     );
@@ -414,6 +414,7 @@ void main() {
     await tester.pumpWidget(
       host(
         BestMetricsHomeSection(
+          autoPlay: false,
           loadPreview: ({bool forceRefresh = true}) async => examples(),
         ),
       ),
@@ -457,6 +458,7 @@ void main() {
     await tester.pumpWidget(
       host(
         BestMetricsHomeSection(
+          autoPlay: false,
           loadPreview: ({bool forceRefresh = true}) => pending.future,
         ),
       ),

@@ -1,18 +1,19 @@
 import 'package:proxo_app/l10n/proxo_strings.dart';
 import 'package:flutter/material.dart';
+
 import '../../theme/app_locale.dart';
 import 'auth_design.dart';
 import 'auth_logo.dart';
 import 'auth_widgets.dart';
+import 'auth_icon.dart';
+
 import 'package:proxo_app/widgets/proxo_text.dart';
 
 class AuthHeader extends StatelessWidget {
-  const AuthHeader.login({super.key})
-      : onBack = null,
-        showLanguage = true;
+  const AuthHeader.login({super.key}) : onBack = null, showLanguage = true;
 
   const AuthHeader.inner({super.key, required this.onBack})
-      : showLanguage = false;
+    : showLanguage = false;
 
   final VoidCallback? onBack;
   final bool showLanguage;
@@ -27,7 +28,9 @@ class AuthHeader extends StatelessWidget {
         // languages. Text inside the selector restores RTL independently.
         textDirection: TextDirection.ltr,
         child: Wrap(
-          alignment: WrapAlignment.spaceBetween, spacing: 12, runSpacing: 12,
+          alignment: WrapAlignment.spaceBetween,
+          spacing: 12,
+          runSpacing: 12,
           crossAxisAlignment: WrapCrossAlignment.center,
           children: <Widget>[
             AuthLogo(),
@@ -68,15 +71,27 @@ class AuthLanguageSelector extends StatelessWidget {
           itemBuilder: (context) => const <PopupMenuEntry<Locale>>[
             PopupMenuItem<Locale>(
               value: ProxoLocale.kurdishSorani,
-              child: ProxoText('کوردی سۆرانی', translate: true),
+              child: ProxoText(
+                'کوردی سۆرانی',
+                translate: true,
+                style: AuthTokens.fieldText,
+              ),
             ),
             PopupMenuItem<Locale>(
               value: ProxoLocale.kurdishBadini,
-              child: ProxoText('کوردی بادینی', translate: true),
+              child: ProxoText(
+                'کوردی بادینی',
+                translate: true,
+                style: AuthTokens.fieldText,
+              ),
             ),
             PopupMenuItem<Locale>(
               value: ProxoLocale.arabic,
-              child: ProxoText('العربية', translate: true),
+              child: ProxoText(
+                'العربية',
+                translate: true,
+                style: AuthTokens.fieldText,
+              ),
             ),
           ],
           child: Container(
@@ -90,14 +105,25 @@ class AuthLanguageSelector extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                Flexible(child: ProxoText(
-                  locale.languageCode == 'ar' ? 'العربية' :
-                    locale.languageCode == 'kmr' ? 'کوردی بادینی' : 'کوردی سۆرانی',
-                  style: AuthTokens.helper.copyWith(
-                    color: AuthTokens.ink,
-                    fontWeight: FontWeight.w500,
+                const AuthIcon(
+                  'language',
+                  size: 19,
+                  color: AuthTokens.inkMuted,
+                ),
+                const SizedBox(width: 7),
+                Flexible(
+                  child: ProxoText(
+                    locale.languageCode == 'ar'
+                        ? 'العربية'
+                        : locale.languageCode == 'kmr'
+                        ? 'کوردی بادینی'
+                        : 'کوردی سۆرانی',
+                    style: AuthTokens.helper.copyWith(
+                      color: AuthTokens.ink,
+                      fontWeight: FontWeight.w400,
+                    ),
                   ),
-                )),
+                ),
               ],
             ),
           ),
@@ -110,24 +136,34 @@ class AuthLanguageSelector extends StatelessWidget {
 /// Keep whole words intact at narrow widths while retaining the user's text
 /// scaling. Only headings whose longest word cannot fit are reduced.
 class AuthTitle extends StatelessWidget {
-  const AuthTitle(this.text, {super.key});
+  const AuthTitle(this.text, {super.key, this.textAlign = TextAlign.start});
   final String text;
+  final TextAlign textAlign;
   @override
-  Widget build(BuildContext context) => LayoutBuilder(builder: (context, constraints) {
-    var style = AuthTokens.title;
-    final scaler = MediaQuery.textScalerOf(context);
-    for (var pass = 0; pass < 4; pass++) {
-      var widest = 0.0;
-      for (final word in text.split(RegExp(r'\s+'))) {
-        final painter = TextPainter(text: TextSpan(text: word, style: style),
-          textDirection: TextDirection.rtl, textScaler: scaler)..layout();
-        if (painter.width > widest) widest = painter.width;
-        painter.dispose();
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (context, constraints) {
+      var style = AuthTokens.title;
+      final scaler = MediaQuery.textScalerOf(context);
+      for (var pass = 0; pass < 4; pass++) {
+        var widest = 0.0;
+        for (final word in text.split(RegExp(r'\s+'))) {
+          final painter = TextPainter(
+            text: TextSpan(text: word, style: style),
+            textDirection: TextDirection.rtl,
+            textScaler: scaler,
+          )..layout();
+          if (painter.width > widest) widest = painter.width;
+          painter.dispose();
+        }
+        if (widest <= constraints.maxWidth || widest == 0) break;
+        style = style.copyWith(
+          fontSize: style.fontSize! * constraints.maxWidth / widest,
+        );
       }
-      if (widest <= constraints.maxWidth || widest == 0) break;
-      style = style.copyWith(fontSize: style.fontSize! * constraints.maxWidth / widest);
-    }
-    return Semantics(header: true, child: ProxoText(text,
-      textAlign: TextAlign.start, style: style));
-  });
+      return Semantics(
+        header: true,
+        child: ProxoText(text, textAlign: textAlign, style: style),
+      );
+    },
+  );
 }

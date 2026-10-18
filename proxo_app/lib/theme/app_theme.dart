@@ -1,3 +1,4 @@
+import '../services/app_telemetry_service.dart';
 import 'package:flutter/material.dart';
 
 class AppColors {
@@ -860,11 +861,11 @@ class ProxoMotion {
 /// دوگمە دابخرێن.
 class ProxoPageRoute<T> extends MaterialPageRoute<T> {
   ProxoPageRoute({
-    required super.builder,
+    required WidgetBuilder builder,
     super.settings,
     super.fullscreenDialog,
     super.maintainState,
-  });
+  }) : super(builder: (context) => TrackedSection(child: builder(context)));
 
   @override
   Duration get transitionDuration => ProxoMotion.routePush;

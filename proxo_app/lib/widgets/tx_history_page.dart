@@ -175,6 +175,7 @@ class TxHistoryPage extends StatefulWidget {
 }
 
 class TxHistorySheetState extends State<TxHistoryPage> {
+  int _loadRevision = 0;
   final ValueNotifier<_TxListState> _state = ValueNotifier<_TxListState>(
     const _TxListState(),
   );
@@ -241,6 +242,8 @@ class TxHistorySheetState extends State<TxHistoryPage> {
   }
 
   Future<void> _load() async {
+    final revision = ++_loadRevision, owner = supabase.auth.currentUser?.id;
+    bool current() => mounted && revision == _loadRevision && owner == supabase.auth.currentUser?.id;
     try {
       final user = supabase.auth.currentUser;
       if (user == null) {
@@ -266,6 +269,7 @@ class TxHistorySheetState extends State<TxHistoryPage> {
             .order('created_at', ascending: false),
       ]);
 
+      if (!current()) return;
       final txRes = results[0] as List<dynamic>;
       final adRes = results[1] as List<dynamic>;
       final coinRes = results[2] as List<dynamic>;
@@ -460,11 +464,11 @@ class TxHistorySheetState extends State<TxHistoryPage> {
 
       items.sort((a, b) => b.date.compareTo(a.date));
 
-      if (!mounted) return;
+      if (!current()) return;
       _state.value = _TxListState(items: items, loading: false);
     } catch (e) {
       debugPrint('TxHistory: load failed: $e');
-      if (!mounted) return;
+      if (!current()) return;
       _state.value = _state.value.copyWith(
         loading: false,
         refreshing: false,

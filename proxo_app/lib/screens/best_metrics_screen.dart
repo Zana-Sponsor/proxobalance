@@ -1,83 +1,75 @@
-import 'package:proxo_app/widgets/proxo_refresh.dart';
-import 'package:proxo_app/l10n/proxo_strings.dart';
-import 'package:proxo_app/theme/app_locale.dart';
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:solar_iconkit/solar_iconkit.dart';
 
-import '../theme/app_theme.dart' show kAppFont;
+import '../l10n/proxo_strings.dart';
+import '../theme/app_locale.dart';
 import '../services/ad_categories.dart';
 import '../services/best_metrics_service.dart';
 import '../widgets/best_metric_card.dart';
-import 'package:proxo_app/widgets/proxo_text.dart';
+import '../widgets/best_results_design.dart';
+import '../widgets/proxo_app_bar.dart';
+import '../widgets/proxo_refresh.dart';
+import '../widgets/proxo_text.dart';
 
-const Color _page = Colors.white;
-const Color _ink = Color(0xFF0B0B32);
-const Color _muted = Color(0xFF5D6677);
-const Color _accent = Color(0xFF0365FF);
-const Color _line = Color(0xFFE6EAF0);
-const List<BoxShadow> _softCardShadow = <BoxShadow>[
-  BoxShadow(
-    color: Color(0x0F000000),
-    blurRadius: 18,
-    offset: Offset(0, 5),
-  ),
-];
+typedef ResultsLoader = Future<List<BestMetricAd>> Function({
+  bool forceRefresh,
+});
 
 class BestMetricsScreen extends StatefulWidget {
-  final List<BestMetricAd> initialAds;
-  final String? initialAdId;
-
   const BestMetricsScreen({
     super.key,
-    this.initialAds = const <BestMetricAd>[],
+    this.initialAds = const [],
     this.initialAdId,
+    this.loadResults,
   });
-
+  final List<BestMetricAd> initialAds;
+  final String? initialAdId;
+  final ResultsLoader? loadResults;
   @override
   State<BestMetricsScreen> createState() => _BestMetricsScreenState();
 }
 
 class _BestMetricsScreenState extends State<BestMetricsScreen> {
-  List<BestMetricAd> _ads = const <BestMetricAd>[];
+  List<BestMetricAd> _ads = const [];
   String _category = 'all';
-  String? _expandedId;
+  String? _anchorId;
   bool _loading = true;
   Object? _error;
-
+  int _request = 0;
   @override
   void initState() {
     super.initState();
     _ads = widget.initialAds;
-    _expandedId = widget.initialAdId;
+    _anchorId = widget.initialAdId;
     _loading = _ads.isEmpty;
     unawaited(_load());
   }
 
   Future<void> _load({bool forceRefresh = false}) async {
-    if (mounted && _ads.isEmpty) {
+    final request = ++_request;
+    if (_ads.isEmpty)
       setState(() {
         _loading = true;
         _error = null;
       });
-    }
     try {
-      final rows = await BestMetricsService.fetchWeeklyResults(
-        forceRefresh: forceRefresh,
-      );
-      if (!mounted) return;
+      final rows =
+          await (widget.loadResults ?? BestMetricsService.fetchWeeklyResults)(
+            forceRefresh: forceRefresh,
+          );
+      if (!mounted || request != _request) return;
       setState(() {
         _ads = rows;
         _loading = false;
         _error = null;
-        if (_expandedId != null &&
-            !_ads.any((ad) => ad.id == _expandedId)) {
-          _expandedId = null;
-        }
+        if (!_ads.any((ad) => ad.id == _anchorId)) _anchorId = null;
+        if (_category != 'all' && !_ads.any((ad) => ad.category == _category))
+          _category = 'all';
       });
     } catch (error) {
-      if (!mounted) return;
+      if (!mounted || request != _request) return;
       setState(() {
         _loading = false;
         _error = error;
@@ -85,301 +77,182 @@ class _BestMetricsScreenState extends State<BestMetricsScreen> {
     }
   }
 
-  List<BestMetricAd> get _filteredAds {
-    if (_category == 'all') return _ads;
-    return _ads.where((ad) => ad.category == _category).toList(growable: false);
-  }
-
-  void _selectCategory(String value) {
-    if (_category == value) return;
-    setState(() {
-      _category = value;
-      if (_expandedId != null &&
-          !_filteredAds.any((ad) => ad.id == _expandedId)) {
-        _expandedId = null;
-      }
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     ProxoLocale.watch(context);
-    final filtered = _filteredAds;
-    return Directionality(
+    final filtered = _category == 'all'
+        ? _ads
+        : _ads.where((ad) => ad.category == _category).toList();
+    final titleStyle = ResultsUi.text(size: 16);
+    final titlePainter = TextPainter(
+      text: TextSpan(
+        text: ProxoStrings.text('باشترین ئەنجامەکان'),
+        style: titleStyle,
+      ),
       textDirection: TextDirection.rtl,
-      child: Scaffold(
-        backgroundColor: _page,
-        body: SafeArea(
-          child: Column(
-            children: [
-              _Header(onBack: () => Navigator.of(context).maybePop()),
-              if (_ads.isNotEmpty) _CategoryFilter(
-                value: _category,
-                onChanged: _selectCategory,
-              ),
-              Expanded(
-                child: AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 220),
-                  switchInCurve: Curves.easeOutCubic,
-                  switchOutCurve: Curves.easeInCubic,
+      textScaler: MediaQuery.textScalerOf(context),
+    )..layout(maxWidth: math.max(80, MediaQuery.sizeOf(context).width - 144));
+    final toolbarHeight = math.max(64.0, titlePainter.height + 20);
+    titlePainter.dispose();
+    return Theme(
+      data: ResultsUi.theme(context),
+      child: Directionality(
+        textDirection: TextDirection.rtl,
+        child: Scaffold(
+          backgroundColor: const Color(0xFFF8F9FB),
+          appBar: ProxoAppBar(
+            title: 'باشترین ئەنجامەکان',
+            titleStyle: titleStyle,
+            titleMaxLines: null,
+            toolbarHeight: toolbarHeight,
+          ),
+          body: SafeArea(
+            top: false,
+            child: Column(
+              children: [
+                if (_ads.isNotEmpty) _categories(),
+                if (_error != null && _ads.isNotEmpty)
+                  TextButton.icon(
+                    onPressed: () => _load(forceRefresh: true),
+                    icon: const ResultIcon('refresh', size: 18),
+                    label: ProxoText(
+                      'ئەنجامەکان بار نەبوون',
+                      translate: true,
+                      style: ResultsUi.text(color: ResultsUi.muted),
+                    ),
+                  ),
+                Expanded(
                   child: _loading && _ads.isEmpty
-                      ? const _LoadingView(key: ValueKey('loading'))
-                      : _error != null && _ads.isEmpty
-                          ? _ErrorView(
-                              key: const ValueKey('error'),
-                              onRetry: () => _load(forceRefresh: true),
-                            )
-                          : filtered.isEmpty
-                              ? const _EmptyView(key: ValueKey('empty'))
-                              : ProxoRefresh(
-                                pullToRefresh: true,
-                                  key: const ValueKey('list'),
-                                  onRefresh: () => _load(forceRefresh: true),
-                                  child: ListView.separated(
-                                    physics: const AlwaysScrollableScrollPhysics(
-                                      parent: BouncingScrollPhysics(),
+                      ? const Center(
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : filtered.isEmpty
+                      ? LayoutBuilder(
+                          builder: (context, constraints) =>
+                              SingleChildScrollView(
+                                physics: const AlwaysScrollableScrollPhysics(
+                                  parent: BouncingScrollPhysics(),
+                                ),
+                                child: ConstrainedBox(
+                                  constraints: BoxConstraints(
+                                    minHeight: constraints.maxHeight,
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(24),
+                                    child: ResultsStateCard(
+                                      error: _error != null,
+                                      onRefresh: () =>
+                                          _load(forceRefresh: true),
                                     ),
-                                    cacheExtent: 900,
-                                    padding: const EdgeInsets.fromLTRB(
-                                      16,
-                                      8,
-                                      16,
-                                      28,
-                                    ),
-                                    itemCount: filtered.length,
-                                    separatorBuilder: (_, __) =>
-                                        const SizedBox(height: 14),
-                                    itemBuilder: (context, index) {
-                                      final ad = filtered[index];
-                                      final rank =
-                                          _ads.indexWhere((row) => row.id == ad.id) + 1;
-                                      return BestMetricCard(
-                                        key: ValueKey(ad.id),
-                                        ad: ad,
-                                        rank: rank,
-                                        expanded: _expandedId == ad.id,
-                                        onToggleExpanded: () {
-                                          setState(() {
-                                            _expandedId =
-                                                _expandedId == ad.id ? null : ad.id;
-                                          });
-                                        },
-                                      );
-                                    },
                                   ),
                                 ),
+                              ),
+                        )
+                      : _results(filtered),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
     );
   }
-}
 
-class _Header extends StatelessWidget {
-  final VoidCallback onBack;
-
-  const _Header({required this.onBack});
-
-  @override
-  Widget build(BuildContext context) {
-    ProxoLocale.watch(context);
-    return Container(
-      height: 62,
-      padding: const EdgeInsets.symmetric(horizontal: 8),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        border: Border(bottom: BorderSide(color: _line)),
-      ),
+  Widget _categories() => ColoredBox(
+    color: Colors.white,
+    child: SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      physics: const BouncingScrollPhysics(),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       child: Row(
         children: [
-          IconButton(
-            tooltip: ProxoStrings.text('گەڕانەوە'),
-            onPressed: onBack,
-            icon: const SolarIcon(
-              SolarIcons.altArrowRight,
-              style: SolarIconStyle.linear,
-              size: 22,
-              color: _ink,
-              matchTextDirection: true,
-            ),
-          ),
-          const SizedBox(width: 4),
-          const SolarIcon(
-            SolarIcons.medalStar,
-            style: SolarIconStyle.linear,
-            size: 22,
-            color: Color(0xFFE19A13),
-          ),
-          const SizedBox(width: 9),
-          const Expanded(
-            child: ProxoText(
-              'باشترین ئەنجامەکانی هەفتە', translate: true,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                fontFamily: kAppFont,
-                fontSize: 16,
-                fontWeight: FontWeight.w800,
-                color: _ink,
+          for (final option in [
+            const AdCategoryOption('all', 'هەموو'),
+            ...kAdCategories,
+          ])
+            Padding(
+              padding: const EdgeInsetsDirectional.only(end: 8),
+              child: ChoiceChip(
+                selected: option.slug == _category,
+                showCheckmark: false,
+                onSelected: (_) => setState(() {
+                  _category = option.slug;
+                  _anchorId = null;
+                }),
+                selectedColor: const Color(0xFFEAF2FF),
+                backgroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 10,
+                ),
+                side: BorderSide(
+                  color: option.slug == _category
+                      ? ResultsUi.blue.withValues(alpha: .35)
+                      : ResultsUi.line,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                label: ProxoText(
+                  option.label,
+                  translate: true,
+                  style: ResultsUi.text(
+                    size: 13,
+                    color: option.slug == _category
+                        ? ResultsUi.blue
+                        : ResultsUi.muted,
+                  ),
+                ),
               ),
+            ),
+        ],
+      ),
+    ),
+  );
+
+  Widget _results(List<BestMetricAd> rows) {
+    // Anchor the tapped card without estimating pixel heights or eagerly building
+    // earlier cards. The preceding sliver remains reachable by scrolling back.
+    final inset = math.max(16.0, (MediaQuery.sizeOf(context).width - 600) / 2);
+    final selected = math.max(0, rows.indexWhere((ad) => ad.id == _anchorId));
+    final center = ValueKey('results-anchor-$_category-$_anchorId');
+    Widget card(BestMetricAd ad) => Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: BestMetricCard(
+        key: ValueKey('result-${ad.id}'),
+        ad: ad,
+        rank: _ads.indexWhere((row) => row.id == ad.id) + 1,
+        expanded: ad.id == _anchorId,
+      ),
+    );
+    return ProxoRefresh(
+      pullToRefresh: true,
+      onRefresh: () => _load(forceRefresh: true),
+      child: CustomScrollView(
+        key: center,
+        center: center,
+        physics: const AlwaysScrollableScrollPhysics(
+          parent: BouncingScrollPhysics(),
+        ),
+        cacheExtent: 500,
+        slivers: [
+          if (selected > 0)
+            SliverPadding(
+              padding: EdgeInsets.symmetric(horizontal: inset),
+              sliver: SliverList.builder(
+                itemCount: selected,
+                itemBuilder: (_, i) => card(rows[selected - 1 - i]),
+              ),
+            ),
+          SliverPadding(
+            key: center,
+            padding: EdgeInsets.fromLTRB(inset, 16, inset, 24),
+            sliver: SliverList.builder(
+              itemCount: rows.length - selected,
+              itemBuilder: (_, i) => card(rows[selected + i]),
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _CategoryFilter extends StatelessWidget {
-  final String value;
-  final ValueChanged<String> onChanged;
-
-  const _CategoryFilter({
-    required this.value,
-    required this.onChanged,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    ProxoLocale.watch(context);
-    final options = <AdCategoryOption>[
-      const AdCategoryOption('all', 'هەموو'),
-      ...kAdCategories,
-    ];
-    return Container(
-      height: 58,
-      color: Colors.white,
-      child: ListView.separated(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        scrollDirection: Axis.horizontal,
-        physics: const BouncingScrollPhysics(),
-        itemCount: options.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 8),
-        itemBuilder: (context, index) {
-          final option = options[index];
-          final selected = option.slug == value;
-          return ChoiceChip(
-            label: ProxoText(option.label, translate: true),
-            selected: selected,
-            showCheckmark: false,
-            onSelected: (_) => onChanged(option.slug),
-            backgroundColor: const Color(0xFFF7F9FC),
-            selectedColor: const Color(0xFFEAF2FF),
-            side: BorderSide(
-              color: selected ? _accent : _line,
-              width: selected ? 1.2 : 1,
-            ),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(999),
-            ),
-            labelStyle: TextStyle(
-              fontFamily: kAppFont,
-              fontSize: 11.5,
-              fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
-              color: selected ? _accent : _muted,
-            ),
-          );
-        },
-      ),
-    );
-  }
-}
-
-class _LoadingView extends StatelessWidget {
-  const _LoadingView({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    ProxoLocale.watch(context);
-    return const Center(
-      child: SizedBox(
-        width: 24,
-        height: 24,
-        child: CircularProgressIndicator(
-          strokeWidth: 2.4,
-          color: _accent,
-        ),
-      ),
-    );
-  }
-}
-
-class _ErrorView extends StatelessWidget {
-  final VoidCallback onRetry;
-
-  const _ErrorView({super.key, required this.onRetry});
-
-  @override
-  Widget build(BuildContext context) {
-    ProxoLocale.watch(context);
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Container(
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: _line),
-            boxShadow: _softCardShadow,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const SolarIcon(
-                SolarIcons.dangerTriangle,
-                style: SolarIconStyle.linear,
-                size: 28,
-                color: Color(0xFFE5484D),
-              ),
-              const SizedBox(height: 10),
-              const ProxoText(
-                'ئەنجامەکان بار نەبوون', translate: true,
-                style: TextStyle(
-                  fontFamily: kAppFont,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w700,
-                  color: _ink,
-                ),
-              ),
-              const SizedBox(height: 10),
-              TextButton(
-                onPressed: onRetry,
-                child: const ProxoText(
-                  'دووبارە هەوڵ بدەرەوە', translate: true,
-                  style: TextStyle(fontFamily: kAppFont),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _EmptyView extends StatelessWidget {
-  const _EmptyView({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    ProxoLocale.watch(context);
-    return const Center(
-      child: Padding(
-        padding: EdgeInsets.all(24),
-        child: ProxoText(
-          'لەو بەشەدا هیچ ئەنجامێک نییە', translate: true,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontFamily: kAppFont,
-            fontSize: 12.5,
-            fontWeight: FontWeight.w500,
-            color: _muted,
-          ),
-        ),
       ),
     );
   }

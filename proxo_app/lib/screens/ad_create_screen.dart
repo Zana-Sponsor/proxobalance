@@ -306,6 +306,7 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
         ? await widget.createContactPage!(context)
         : await Navigator.of(context).push<Map<String, dynamic>>(
             MaterialPageRoute(
+                settings: const RouteSettings(name: 'tools'),
                 builder: (routeContext) => ToolsScreen(
                     initialCreate: true,
                     onUseForAd: (card) =>
@@ -381,6 +382,7 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
     setState(() => _openingConfirmation = true);
     final result = await Navigator.of(context).push<AdConfirmationResult>(
         MaterialPageRoute(
+            settings: const RouteSettings(name: 'ad_confirmation'),
             builder: (_) => AdConfirmationScreen(
                 request: request, repository: _repository, resume: resume)));
     if (!mounted) return;

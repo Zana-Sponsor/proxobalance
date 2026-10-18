@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'app_telemetry_service.dart';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
@@ -39,7 +40,7 @@ final class AuthActivityService {
     unawaited(recordCurrentSession());
   }
 
-  static String? _sessionId(Session? session) {
+  static String? sessionId(Session? session) {
     if (session == null) return null;
     try {
       final parts = session.accessToken.split('.');
@@ -60,7 +61,7 @@ final class AuthActivityService {
 
   Future<void> recordCurrentSession() {
     final session = _client.auth.currentSession;
-    final id = _sessionId(session);
+    final id = sessionId(session);
     if (_disposed || session == null || id == null) return Future.value();
     final key = '${session.user.id}:$id';
     if (_recordedSession == key) return Future.value();
@@ -74,7 +75,7 @@ final class AuthActivityService {
           .timeout(const Duration(seconds: 3));
       final current = _client.auth.currentSession;
       // An old device lookup must never write under a newly signed-in owner.
-      if (_disposed || current?.user.id != owner || _sessionId(current) != id) {
+      if (_disposed || current?.user.id != owner || sessionId(current) != id) {
         return;
       }
       await _client.rpc('pa_record_app_session', params: {
@@ -82,7 +83,7 @@ final class AuthActivityService {
         'p_device': device,
       }).timeout(const Duration(seconds: 5));
       if (_client.auth.currentUser?.id == owner &&
-          _sessionId(_client.auth.currentSession) == id) {
+          sessionId(_client.auth.currentSession) == id) {
         _recordedSession = key;
       }
     } catch (error) {
@@ -100,6 +101,7 @@ final class AuthActivityService {
     try {
       await recordCurrentSession().timeout(const Duration(seconds: 3));
     } catch (_) {}
+    await AppTelemetryService.forClient(_client).beforeLogout();
     await _client.auth.signOut();
   }
 

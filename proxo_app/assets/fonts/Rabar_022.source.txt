@@ -1,0 +1,5 @@
+Rabar_022 — Regular (OS/2 weight 400), unmodified font.
+Source: https://www.kurdfonts.com/font-info/531
+Retrieved: 2026-10-17
+SHA-256: 7cd3577902d05ff51d12ed0c05f94a7c3561dd9fe050a96018b5645cfa9387a5
+Original naming and copyright metadata retained.

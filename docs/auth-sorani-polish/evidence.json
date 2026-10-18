@@ -1,0 +1,80 @@
+{
+  "source_commit": "c4666bd92a068ab2fc68ddae7166723f1f931f3d",
+  "workflow_run": 39080312206,
+  "artifact_id": 12118244258,
+  "artifact_zip_sha256": "47242e0b0225b9375023b59f08174b352fd204e6ea2577f55f25343ed7d5d523",
+  "captures": [
+    {
+      "file": "images/login-email-ckb.png",
+      "original": "polish-evidence/login-ckb-393-s1.0-d3.0.png",
+      "sha256": "65fe835102f5a946f9621eabad3b1183ccb97b9c890191ff6f289806172f3e39"
+    },
+    {
+      "file": "images/login-phone-ckb.png",
+      "original": "polish-evidence/login-phone-ckb-393-s1.0-d3.0.png",
+      "sha256": "632fdf71c09d0466c14de1499242f5f9d2fa2efb8d99d9613deb80e270b79cb1"
+    },
+    {
+      "file": "images/signup-ckb.png",
+      "original": "polish-evidence/signup-ckb-393-s1.0-d3.0.png",
+      "sha256": "5b727c36f4dd2bd9710a21db061b2c7cd59ed53396559c42163a2d603f7d342f"
+    },
+    {
+      "file": "images/signup-ckb-bottom.png",
+      "original": "polish-evidence/signup-ckb-393-s1.0-d3.0-bottom.png",
+      "sha256": "fca813885f1051d991cca478c5ee6516a78d1f485d92ecd7c0d238cc235df1d8"
+    },
+    {
+      "file": "images/otp-ckb.png",
+      "original": "polish-evidence/otp-ckb-393-s1.0-d3.0.png",
+      "sha256": "7b21d836ea20ef4e3d404f99297308e19eac31bb1383309b49d32aa594a9a33c"
+    },
+    {
+      "file": "images/recovery-ckb.png",
+      "original": "polish-evidence/forgot-ckb-393-s1.0-d3.0.png",
+      "sha256": "859fe998e0076a0471ff59a42a07545298c3118d1b2b64cf5542edc02e902457"
+    },
+    {
+      "file": "images/setup-ckb.png",
+      "original": "auth-refresh/setup-ckb-393-loading.png",
+      "sha256": "bb07ede76e823024ca3277fbf65ff144088e461c15a172721e82a9ff804c7c44"
+    },
+    {
+      "file": "images/setup-retry-ckb.png",
+      "original": "auth-refresh/setup-ckb-393-error.png",
+      "sha256": "0c0cfb6a5f9a3ecd44aee5ae8a91f0b9e132082348f44aa73820e87a7260d493"
+    },
+    {
+      "file": "images/signup-ckb-large-text.png",
+      "original": "polish-evidence/signup-ckb-280-s2.0-d2.0.png",
+      "sha256": "b4a4e184da42c094a8093a250b492effa2b5eb503fbde70ac6ac7349a3c5ebce"
+    },
+    {
+      "file": "images/signup-ckb-large-text-bottom.png",
+      "original": "polish-evidence/signup-ckb-280-s2.0-d2.0-bottom.png",
+      "sha256": "a964ac15dfb1c6393fcaf44cc4d2fd04c47298673e7b0f8b04cb75250e1c7c62"
+    }
+  ],
+  "scenarios": 42,
+  "font_paragraphs": 583,
+  "font_family": "RabarAuthRegular",
+  "font_weight": 400,
+  "captured_layout_exceptions": [],
+  "clipped_text_paragraphs": [],
+  "locales": [
+    "ckb",
+    "ar",
+    "kmr"
+  ],
+  "viewports": [
+    {
+      "width_dp": 393,
+      "text_scale": 1
+    },
+    {
+      "width_dp": 280,
+      "text_scale": 2
+    }
+  ],
+  "fixture": "Actual widgets; fictional GET-only backend; no OTP or payment sends."
+}

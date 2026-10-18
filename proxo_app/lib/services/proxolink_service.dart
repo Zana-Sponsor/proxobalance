@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'account_cache.dart';
 import 'dart:math';
 import 'dart:typed_data';
 
@@ -177,7 +178,8 @@ class ProxoLinkService implements ProxoLinkRepository {
 
   @override
   Future<List<ProxoTemplate>> templates() async {
-    final body = await _request('/api/contact-templates');
+    final cache = AppDataCache.forClient(db)..bindOwner();
+    final body = await cache.cache.get('templates', () => _request('/api/contact-templates')); 
     return [
       for (final j in body['templates'] as List)
         ProxoTemplate.fromJson(Map<String, dynamic>.from(j as Map)),
@@ -186,7 +188,8 @@ class ProxoLinkService implements ProxoLinkRepository {
 
   @override
   Future<List<ProxoProvider>> providers() async {
-    final body = await _request('/api/page-providers');
+    final cache = AppDataCache.forClient(db)..bindOwner();
+    final body = await cache.cache.get('providers', () => _request('/api/page-providers'));
     return [
       for (final j in body['providers'] as List)
         ProxoProvider.fromJson(Map<String, dynamic>.from(j as Map)),

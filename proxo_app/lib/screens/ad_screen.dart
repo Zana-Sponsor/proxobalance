@@ -1,12 +1,13 @@
+import '../services/ad_snapshot_cache.dart';
+import '../services/app_telemetry_service.dart';
+import '../services/account_cache.dart';
 import 'package:proxo_app/theme/app_locale.dart';
 import 'dart:async';
-import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/cupertino.dart' show showCupertinoModalPopup;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:shimmer/shimmer.dart';
@@ -877,11 +878,13 @@ class AdScreen extends StatefulWidget {
 }
 
 class _AdScreenState extends State<AdScreen>
-    with TickerProviderStateMixin {
+    with TickerProviderStateMixin, WidgetsBindingObserver {
   AdFilter _filter = AdFilter.all;
   List<Map<String, dynamic>> _ads = [];
-  final Map<String, List<Map<String, dynamic>>> _memoryCache =
-      <String, List<Map<String, dynamic>>>{};
+  late final AdSnapshotCache _cache;
+  int _loadRevision = 0;
+  late final String? _owner;
+  bool _current(int revision) => mounted && revision == _loadRevision && supabase.auth.currentUser?.id == _owner;
   bool _loading = true;
   bool _isOffline = false;
   bool _hasError = false;
@@ -979,6 +982,10 @@ class _AdScreenState extends State<AdScreen>
   @override
   void initState() {
     super.initState();
+    _owner = supabase.auth.currentUser?.id;
+    _cache = AdSnapshotCache(_owner, () => supabase.auth.currentUser?.id);
+    WidgetsBinding.instance.addObserver(this);
+    AppDataCache.forClient(supabase).financialRevision.addListener(_financialChanged);
     _entranceCtrl = AnimationController(
       vsync: this, duration: _kAdcEnterTotal, value: 1.0);
 
@@ -1007,11 +1014,22 @@ class _AdScreenState extends State<AdScreen>
 
   @override
   void dispose() {
+    ++_loadRevision;
+    AppDataCache.forClient(supabase).financialRevision.removeListener(_financialChanged);
+    WidgetsBinding.instance.removeObserver(this);
+    _cache.clearMemory();
     _entranceCtrl.dispose();
     _scrollCtrl.removeListener(_onScroll);
     _scrollCtrl.dispose();
     _metricsChannel?.unsubscribe();
     super.dispose();
+  }
+
+  @override void didHaveMemoryPressure() => _cache.clearMemory();
+  void _financialChanged() {
+    unawaited(_cache.invalidate().then((_) {
+      if (mounted && supabase.auth.currentUser?.id == _owner) unawaited(_syncAdsSilently());
+    }));
   }
 
   // ── Infinite scroll trigger ───────────────────────────────
@@ -1053,7 +1071,7 @@ class _AdScreenState extends State<AdScreen>
               old['feedback_at']   != changed['feedback_at'] ||
               old['thumbnail_url'] != changed['thumbnail_url'];
           if (!metricsChanged) return;
-          if (!mounted) return;
+          if (!mounted || supabase.auth.currentUser?.id != _owner) return;
           final String changedId = (changed['id'] ?? '').toString();
           final bool exists = _ads.any(
             (ad) => (ad['id'] ?? '').toString() == changedId,
@@ -1073,108 +1091,17 @@ class _AdScreenState extends State<AdScreen>
       ..subscribe();
   }
 
-  // ── کاش — ڕیکلامەکان لە بیرگەی ئامێرەکەدا هەڵدەگیرێن ─────────────────────
-  // بۆ چی: کاتێک بەشەکە دەکرێتەوە، لیستەکە دەستبەجێ لە ئامێرەکەوە دێت و
-  // داواکاری Supabase لە پشتەوە دەڕوات. بۆیە هیچ کاتێکی چاوەڕوانی نییە،
-  // و بەبێ ئینتەرنێتیش کارتەکان دەبینرێن.
-  //
-  // ژمارەی وەشان 3 — لە v1دا تەنها لیستێکی خاو هەڵدەگیرا، بێ کات و بێ
-  // ماوە؛ لە v3دا هەر ماوە و هەر دۆخێک کاشی سەربەخۆی خۆی هەیە:
-  //   • `range` — کاش بەپێی فلتەری ماوە جیا دەکرێتەوە. بەبێ ئەمە کاشی
-  //     «٣٠ ڕۆژ» بۆ «ئەمڕۆ» نیشان دەدرا کە هەڵەیە.
-  //   • `at`    — تەمەنی کاش. لە `_kCacheTtl` زیاتر بێت پشتگوێ دەخرێت،
-  //     بۆیە داتای زۆر کۆن هەرگیز دەرناکەوێت.
-  // کاشی v1 هێشتا دەخوێندرێتەوە (بێ ڕیستارت، بێ لۆدینگی بەتاڵ).
-  static const _cacheKey = 'proxo_ads_cache_';
-  static const int _kCacheVersion = 3;
-  static const Duration _kCacheTtl = Duration(hours: 24);
-
-  String _cacheKeyFor(String userId, AdFilter filter) =>
-      '$_cacheKey${userId}_${_dateRangeLabel.replaceAll(' ', '_')}_${filter.name}';
-
-  String _memoryCacheKey(AdFilter filter) =>
-      '${_dateRangeLabel.replaceAll(' ', '_')}|${filter.name}';
-
-  Future<void> _saveCache(
-    List<Map<String, dynamic>> ads, {
-    AdFilter? filter,
-  }) async {
-    try {
-      final AdFilter target = filter ?? _filter;
-      _memoryCache[_memoryCacheKey(target)] =
-          List<Map<String, dynamic>>.from(ads);
-      final userId = supabase.auth.currentUser?.id;
-      if (userId == null) return;
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(_cacheKeyFor(userId, target), jsonEncode({
-        'v': _kCacheVersion,
-        'range': _dateRangeLabel,
-        'filter': target.name,
-        'at': DateTime.now().toIso8601String(),
-        'ads': ads,
-      }));
-    } catch (_) {}
+  String _snapshotKey(AdFilter filter) => '${_dateRangeLabel.replaceAll(' ', '_')}_${filter.name}_${_sortAscending}';
+  Future<void> _saveCache(List<Map<String, dynamic>> ads, {AdFilter? filter}) async {
+    try { await _cache.write(_snapshotKey(filter ?? _filter), ads); } catch (_) {}
   }
-
   Future<bool> _loadCached({AdFilter? filter}) async {
-    try {
-      final AdFilter target = filter ?? _filter;
-      final List<Map<String, dynamic>>? memory =
-          _memoryCache[_memoryCacheKey(target)];
-      if (memory != null) {
-        if (mounted && target == _filter) {
-          setState(() {
-            _ads = List<Map<String, dynamic>>.from(memory);
-            _hasMore = memory.length >= _pageSize;
-          });
-        }
-        return true;
-      }
-
-      final userId = supabase.auth.currentUser?.id;
-      if (userId == null) return false;
-      final prefs = await SharedPreferences.getInstance();
-      // کاشی v1/v2 تەنها بۆ «هەموو دۆخەکان» گونجاوە. بەکارهێنانی ئەو
-      // کاشە بۆ فلتەرێکی تایبەت pagination ـەکە هەڵە دەکات.
-      final raw = prefs.getString(_cacheKeyFor(userId, target)) ??
-          (target == AdFilter.all
-              ? prefs.getString(
-                    '$_cacheKey${userId}_${_dateRangeLabel.replaceAll(' ', '_')}',
-                  ) ??
-                  prefs.getString('$_cacheKey$userId')
-              : null);
-      if (raw == null || raw.isEmpty) return false;
-
-      final decoded = jsonDecode(raw);
-      List<Map<String, dynamic>> list;
-      if (decoded is List) {
-        // v1: لیستێکی خاو، بێ کات — قبووڵ دەکرێت یەک جار.
-        list = decoded.cast<Map<String, dynamic>>();
-      } else if (decoded is Map<String, dynamic>) {
-        if (decoded['range'] != _dateRangeLabel) return false;
-        final String? cachedFilter = decoded['filter']?.toString();
-        if (cachedFilter != null && cachedFilter != target.name) return false;
-        final DateTime? at = DateTime.tryParse((decoded['at'] ?? '').toString());
-        if (at == null || DateTime.now().difference(at) > _kCacheTtl) {
-          return false;
-        }
-        list = (decoded['ads'] as List).cast<Map<String, dynamic>>();
-      } else {
-        return false;
-      }
-
-      _memoryCache[_memoryCacheKey(target)] =
-          List<Map<String, dynamic>>.from(list);
-      if (mounted && target == _filter) {
-        setState(() {
-          _ads = list;
-          _hasMore = list.length >= _pageSize;
-        });
-      }
-      return true;
-    } catch (_) {
-      return false;
-    }
+    final target = filter ?? _filter;
+    final revision = _loadRevision, key = _snapshotKey(target);
+    final rows = await _cache.read(key);
+    if (!_current(revision) || rows == null || key != _snapshotKey(_filter)) return false;
+    setState(() { _ads = rows; _hasMore = rows.length >= _pageSize; _isOffline = true; });
+    return true;
   }
 
   // ── مۆری کاتی سنووردارکەر بۆ فلتەری ماوە (Date range) — ئەگەر 'All
@@ -1193,6 +1120,7 @@ class _AdScreenState extends State<AdScreen>
   }
 
   Future<void> _loadAds({bool refresh = false}) async {
+    final revision = ++_loadRevision;
     final AdFilter requestedFilter = _filter;
     if (refresh) {
       setState(() => _hasMore = true);
@@ -1209,6 +1137,7 @@ class _AdScreenState extends State<AdScreen>
         setState(() => _loading = false);
       }
     }
+    if (!_current(revision)) return;
     try {
       final user = supabase.auth.currentUser;
       if (user == null) {
@@ -1233,8 +1162,9 @@ class _AdScreenState extends State<AdScreen>
           .limit(_pageSize);
 
       final fresh = List<Map<String, dynamic>>.from(res ?? []);
+      if (!_current(revision)) return;
       await _saveCache(fresh, filter: requestedFilter);
-      if (mounted && requestedFilter == _filter) {
+      if (_current(revision) && requestedFilter == _filter) {
         DateTime? latestUpdate;
         for (final ad in fresh) {
           final raw = ad['updated_at']?.toString() ?? ad['created_at']?.toString();
@@ -1259,9 +1189,10 @@ class _AdScreenState extends State<AdScreen>
         }
       }
     } catch (e) {
-      if (mounted) {
+      AppTelemetryService.active?.event('error', 'ads_load_failed', outcome: 'failure');
+      if (_current(revision)) {
         final cached = await _loadCached(filter: requestedFilter);
-        if (requestedFilter != _filter) return;
+        if (!_current(revision) || requestedFilter != _filter) return;
         if (!cached && _ads.isEmpty) {
           // The offline / general split stays here, in the screen that knows
           // what it was doing. What changed is that the exception itself is
@@ -1292,7 +1223,7 @@ class _AdScreenState extends State<AdScreen>
         }
       }
     } finally {
-      if (mounted && requestedFilter == _filter) {
+      if (_current(revision) && requestedFilter == _filter) {
         setState(() => _loading = false);
       }
     }
@@ -1338,6 +1269,7 @@ class _AdScreenState extends State<AdScreen>
     Future<void>? applyAfter,
     required bool announceErrors,
   }) async {
+    final revision = ++_loadRevision;
     final AdFilter requestedFilter = _filter;
     try {
       final user = supabase.auth.currentUser;
@@ -1365,7 +1297,7 @@ class _AdScreenState extends State<AdScreen>
 
       final fresh = List<Map<String, dynamic>>.from(res ?? []);
       if (applyAfter != null) await applyAfter;
-      if (!mounted || supabase.auth.currentUser?.id != user.id) return false;
+      if (!_current(revision) || supabase.auth.currentUser?.id != user.id) return false;
 
       unawaited(_saveCache(fresh, filter: requestedFilter));
       // بەکارهێنەر لە ماوەی داواکارییەکەدا فلتەری گۆڕیوە؛ وەڵامی کۆن
@@ -1376,11 +1308,12 @@ class _AdScreenState extends State<AdScreen>
       // سەیری وردەکارییەکی کرد و گەڕایەوە)، بۆیە گەڕانەوە دەبێتە سفر کار.
       // An unchanged/empty response still recovers an error or offline view.
       if (_adsSignature(fresh) == _adsSignature(_ads) &&
-          !_hasError && !_isOffline) return false;
+          !_hasError && !_isOffline && !_loading) return false;
 
       setState(() {
         _ads = fresh;
         _lastSync = DateTime.now();
+        _loading = false;
         _isOffline = false;
         _hasError = false;
         _offlineError = false;
@@ -1392,7 +1325,10 @@ class _AdScreenState extends State<AdScreen>
       // شکست **هەرگیز** ناوەڕۆکی شاشەکە ناگۆڕێت: نە `_hasError`، نە
       // شاشەی بەتاڵ، نە هەڵوەشاندنەوەی لیستەکە. ئەوەی لەبەرچاوە
       // دەمێنێتەوە، چونکە داتای کۆن لە هیچ باشترە.
-      debugPrint('AdScreen: silent sync skipped: $e');
+      AppTelemetryService.active?.event('error', 'ads_refresh_failed', outcome: 'failure');
+      if (!_current(revision)) return false;
+      setState(() => _isOffline = _ads.isNotEmpty);
+      debugPrint('AdScreen: silent sync skipped: ${e.runtimeType}');
       // تەنها کاتێک بەکارهێنەر خۆی داوای نوێکردنەوەی کردووە (ڕاکێشان)
       // پێی دەڵێین سەرنەکەوت — ئەگەرنا تۆستێک بۆ کارێکی پشتەوە دەردەکەوێت
       // کە داوای نەکردووە.
@@ -1565,6 +1501,7 @@ class _AdScreenState extends State<AdScreen>
   Future<void> _loadMore() async {
     if (_loadingMore || !_hasMore) return;
     final AdFilter requestedFilter = _filter;
+    final revision = _loadRevision;
     final int start = _ads.length;
     setState(() => _loadingMore = true);
     try {
@@ -1586,7 +1523,7 @@ class _AdScreenState extends State<AdScreen>
       final res = await query
           .order('created_at', ascending: _sortAscending)
           .range(start, start + _pageSize - 1);
-      if (mounted && requestedFilter == _filter) {
+      if (_current(revision) && requestedFilter == _filter) {
         final more = List<Map<String, dynamic>>.from(res ?? []);
         setState(() {
           _ads.addAll(more);
@@ -1596,8 +1533,9 @@ class _AdScreenState extends State<AdScreen>
         _queueLegacyThumbnailMigrations(more);
       }
     } catch (_) {
+      AppTelemetryService.active?.event('error', 'ads_page_failed', outcome: 'failure');
     } finally {
-      if (mounted && requestedFilter == _filter) {
+      if (mounted) {
         setState(() => _loadingMore = false);
       }
     }
@@ -1801,6 +1739,7 @@ class _AdScreenState extends State<AdScreen>
                 'p_ad_id': ad['id'],
                 'p_reason': finalReason,
               });
+              if (raw is Map && raw['ok'] == true) AppDataCache.forClient(supabase).financialChanged();
               final result = Map<String, dynamic>.from(raw as Map);
               if (result['ok'] != true) {
                 final code = (result['code'] ?? '').toString();

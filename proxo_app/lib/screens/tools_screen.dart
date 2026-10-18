@@ -62,6 +62,7 @@ class _ToolsScreenState extends State<ToolsScreen> {
     ProxoCard? saved;
     try {
       saved = await Navigator.of(context).push<ProxoCard>(MaterialPageRoute(
+        settings: const RouteSettings(name: 'create_page'),
         builder: (_) => ProxoLinkCreatePageScreen(repository: _repository)));
     } finally { _creating = false; }
     if (!mounted || saved == null || owner != _repository.ownerScope) return;

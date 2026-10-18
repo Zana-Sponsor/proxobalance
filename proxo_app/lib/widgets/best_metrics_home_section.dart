@@ -1,15 +1,16 @@
-import '../theme/app_locale.dart';
-import 'package:proxo_app/l10n/proxo_strings.dart';
 import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
+import '../l10n/proxo_strings.dart';
+import '../theme/app_locale.dart';
 import '../screens/best_metrics_screen.dart';
 import '../services/best_metrics_service.dart';
-import 'ad_form_components.dart';
+import '../services/featured_image_cache.dart';
 import 'best_metric_card.dart';
+import 'best_results_design.dart';
 import 'proxo_text.dart';
 
 typedef HomeResultsLoader = Future<List<BestMetricAd>> Function({
@@ -17,177 +18,343 @@ typedef HomeResultsLoader = Future<List<BestMetricAd>> Function({
 });
 
 class BestMetricsHomeSection extends StatefulWidget {
+  const BestMetricsHomeSection({
+    super.key,
+    this.loadPreview,
+    this.autoPlay = true,
+  });
   final HomeResultsLoader? loadPreview;
-  const BestMetricsHomeSection({super.key, this.loadPreview});
+  final bool autoPlay;
   @override
   State<BestMetricsHomeSection> createState() => BestMetricsHomeSectionState();
 }
 
-class BestMetricsHomeSectionState extends State<BestMetricsHomeSection> {
-  final PageController _pageController = PageController(viewportFraction: 0.94);
-  final Map<String, double> _cardHeights = {};
-  double? _layoutWidth;
-  TextScaler? _textScaler;
-  List<BestMetricAd> _ads = const <BestMetricAd>[];
-  bool _loading = true;
+class BestMetricsHomeSectionState extends State<BestMetricsHomeSection>
+    with WidgetsBindingObserver {
+  final PageController _pages = PageController(viewportFraction: .94);
+  final Map<String, double> _heights = {};
+  ScrollPosition? _parentScroll;
+  Timer? _timer;
+  double? _width;
+  TextScaler? _scale;
+  List<BestMetricAd> _ads = const [];
+  bool _loading = true,
+      _touching = false,
+      _scrolling = false,
+      _opening = false,
+      _active = true;
   Object? _error;
-  int _page = 0;
+  int _page = 0, _request = 0;
+  static const slideDelay = Duration(seconds: 5);
+
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     unawaited(refresh(forceRefresh: false));
   }
 
-  Future<void> refresh({bool forceRefresh = true}) async {
-    if (mounted && _ads.isEmpty) {
-      setState(() {
-        _loading = true;
-        _error = null;
-      });
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final parent = Scrollable.maybeOf(context)?.position;
+    if (parent != _parentScroll) {
+      _parentScroll?.removeListener(_parentMoved);
+      _parentScroll?.isScrollingNotifier.removeListener(_parentMoved);
+      _parentScroll = parent;
+      parent?.addListener(_parentMoved);
+      parent?.isScrollingNotifier.addListener(_parentMoved);
     }
-    try {
-      final rows =
-          await (widget.loadPreview ?? BestMetricsService.fetchHomePreview)(
-        forceRefresh: forceRefresh,
-      );
-      if (!mounted) return;
-      final resetPage = _page >= rows.length;
-      setState(() {
-        _ads = rows;
-        _loading = false;
-        _error = null;
-        _cardHeights.removeWhere((id, _) => !rows.any((ad) => ad.id == id));
-        if (resetPage) _page = 0;
-      });
-      if (resetPage) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (mounted && _pageController.hasClients) {
-            _pageController.jumpToPage(0);
-          }
-        });
-      }
-    } catch (error) {
-      if (!mounted) return;
-      setState(() {
-        _loading = false;
-        _error = error;
-      });
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _schedule();
+    });
   }
 
-  void _openAll({String? initialAdId}) {
-    Navigator.of(context).push(
-      PageRouteBuilder<void>(
-        transitionDuration: const Duration(milliseconds: 240),
-        reverseTransitionDuration: const Duration(milliseconds: 200),
-        pageBuilder: (_, animation, __) => FadeTransition(
-          opacity: CurvedAnimation(
-            parent: animation,
-            curve: Curves.easeOutCubic,
-          ),
-          child: BestMetricsScreen(initialAds: _ads, initialAdId: initialAdId),
-        ),
+  @override
+  void didUpdateWidget(BestMetricsHomeSection oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.autoPlay != widget.autoPlay) _schedule();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    _active = state == AppLifecycleState.resumed;
+    _schedule();
+  }
+
+  void _parentMoved() => _schedule();
+
+  bool get _canSlide {
+    if (!mounted ||
+        !widget.autoPlay ||
+        !_active ||
+        _opening ||
+        _touching ||
+        _scrolling ||
+        _ads.length < 2 ||
+        !_pages.hasClients ||
+        !TickerMode.of(context) ||
+        MediaQuery.disableAnimationsOf(context) ||
+        MediaQuery.accessibleNavigationOf(context) ||
+        !(ModalRoute.of(context)?.isCurrent ?? true) ||
+        (_parentScroll?.isScrollingNotifier.value ?? false))
+      return false;
+    final box = context.findRenderObject();
+    if (box is! RenderBox || !box.hasSize) return false;
+    final origin = box.localToGlobal(Offset.zero);
+    return origin.dy < MediaQuery.sizeOf(context).height &&
+        origin.dy + box.size.height > 0;
+  }
+
+  void _schedule() {
+    _timer?.cancel();
+    _timer = null;
+    if (!_canSlide) return;
+    _timer = Timer(slideDelay, () async {
+      if (!_canSlide || _pages.position.isScrollingNotifier.value) return;
+      // Forward-only virtual pages avoid an abrupt last-to-first rewind.
+      await _pages.animateToPage(
+        _page + 1,
+        duration: const Duration(milliseconds: 700),
+        curve: Curves.easeInOutCubic,
+      );
+      if (mounted) _schedule();
+    });
+  }
+
+  void _warmNext() {
+    if (!mounted || _ads.isEmpty) return;
+    unawaited(
+      FeaturedImageCache.warm(
+        context,
+        _ads[(_page + 1) % _ads.length].thumbnailUrl,
       ),
     );
   }
 
-  void _recordHeight(String id, Size size) {
-    if (!mounted || ((_cardHeights[id] ?? 0) - size.height).abs() < 0.1) return;
-    setState(() => _cardHeights[id] = size.height);
+  Future<void> refresh({bool forceRefresh = true}) async {
+    final request = ++_request;
+    if (_ads.isEmpty)
+      setState(() {
+        _loading = true;
+        _error = null;
+      });
+    try {
+      final rows =
+          await (widget.loadPreview ?? BestMetricsService.fetchHomePreview)(
+            forceRefresh: forceRefresh,
+          );
+      if (!mounted || request != _request) return;
+      final currentId = _ads.isEmpty ? null : _ads[_page % _ads.length].id;
+      final next = math.max(0, rows.indexWhere((ad) => ad.id == currentId));
+      setState(() {
+        _ads = rows;
+        _loading = false;
+        _error = null;
+        _page = next;
+        _heights.removeWhere((id, _) => !rows.any((ad) => ad.id == id));
+      });
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        if (_pages.hasClients) _pages.jumpToPage(next);
+        _warmNext();
+        _schedule();
+      });
+    } catch (error) {
+      if (!mounted || request != _request) return;
+      setState(() {
+        _loading = false;
+        _error = error;
+      });
+      _schedule();
+    }
+  }
+
+  Future<void> _openAll({String? initialAdId}) async {
+    if (_opening) return;
+    _opening = true;
+    _schedule();
+    final reduced = MediaQuery.disableAnimationsOf(context);
+    await Navigator.of(context).push(
+      PageRouteBuilder<void>(
+        settings: const RouteSettings(name: 'best_metrics'),
+        transitionDuration: reduced
+            ? Duration.zero
+            : const Duration(milliseconds: 240),
+        reverseTransitionDuration: reduced
+            ? Duration.zero
+            : const Duration(milliseconds: 200),
+        pageBuilder: (_, __, ___) =>
+            BestMetricsScreen(initialAds: _ads, initialAdId: initialAdId),
+        transitionsBuilder: (_, animation, __, child) => FadeTransition(
+          opacity: CurvedAnimation(
+            parent: animation,
+            curve: Curves.easeOutCubic,
+          ),
+          child: child,
+        ),
+      ),
+    );
+    if (!mounted) return;
+    _opening = false;
+    _schedule();
   }
 
   @override
   void dispose() {
-    _pageController.dispose();
+    _timer?.cancel();
+    WidgetsBinding.instance.removeObserver(this);
+    _parentScroll?.removeListener(_parentMoved);
+    _parentScroll?.isScrollingNotifier.removeListener(_parentMoved);
+    _pages.dispose();
     super.dispose();
   }
 
   @override
-  Widget build(BuildContext context) => Align(
-        alignment: Alignment.topCenter,
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 600),
-          child: Theme(
-            data: AdUi.theme(context),
-            child: Directionality(
-              textDirection: TextDirection.rtl,
+  Widget build(BuildContext context) {
+    ProxoLocale.watch(context);
+    return Align(
+      alignment: Alignment.topCenter,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 600),
+        child: Theme(
+          data: ResultsUi.theme(context),
+          child: Directionality(
+            textDirection: TextDirection.rtl,
+            child: Container(
+              key: const ValueKey('home-results-banner'),
+              padding: const EdgeInsets.fromLTRB(12, 10, 12, 16),
+              decoration: const BoxDecoration(
+                color: ResultsUi.banner,
+                borderRadius: BorderRadius.all(Radius.circular(24)),
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  _SectionHeader(canOpen: _ads.isNotEmpty, onOpen: _openAll),
-                  const SizedBox(height: 20),
-                  if (_ads.isNotEmpty && (_ads.first.thumbnailUrl ?? '').isNotEmpty) ...[
-                    ClipRRect(borderRadius: AdUi.radius,
-                      child: AspectRatio(aspectRatio: 16 / 9,
-                        child: Image.network(_ads.first.thumbnailUrl!, fit: BoxFit.cover,
-                          semanticLabel: ProxoStrings.text('ئەنجامی ڕیکلامی هەڵبژێردراو'),
-                          errorBuilder: (_, __, ___) => const ColoredBox(color: Color(0xFFEFF4FE)),
-                          loadingBuilder: (_, child, progress) => progress == null ? child
-                            : const ColoredBox(color: Color(0xFFEFF4FE))))),
-                    const SizedBox(height: 20),
-                  ],
-                  AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 220),
-                    child: _loading && _ads.isEmpty
-                        ? const _HomeLoading(key: ValueKey('loading'))
-                        : _error != null && _ads.isEmpty
-                            ? _HomeError(
-                                key: const ValueKey('error'),
-                                onRetry: () => refresh(),
-                              )
-                            : _ads.isEmpty
-                                ? const _HomeEmpty(key: ValueKey('empty'))
-                                : _carousel(),
+                  TextButton(
+                    key: const ValueKey('home-results-view-all'),
+                    onPressed: _ads.isEmpty ? null : () => _openAll(),
+                    style: TextButton.styleFrom(
+                      minimumSize: const Size(48, 48),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 12,
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        const ResultIcon(
+                          'fire',
+                          size: 28,
+                          color: Color(0xFFE87832),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: ProxoText(
+                            'باشترین ئەنجامەکان',
+                            translate: true,
+                            style: ResultsUi.text(size: 17),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
+                  const SizedBox(height: 4),
+                  if (_loading && _ads.isEmpty)
+                    const SizedBox(
+                      height: 180,
+                      child: Center(
+                        child: SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                      ),
+                    )
+                  else if (_ads.isEmpty)
+                    ResultsStateCard(
+                      error: _error != null,
+                      onRefresh: () => refresh(),
+                    )
+                  else
+                    _carousel(),
                 ],
               ),
             ),
           ),
         ),
-      );
+      ),
+    );
+  }
 
   Widget _carousel() => LayoutBuilder(
-        key: const ValueKey('content'),
-        builder: (context, constraints) {
-          final scaler = MediaQuery.textScalerOf(context);
-          if (_layoutWidth != constraints.maxWidth || _textScaler != scaler) {
-            _layoutWidth = constraints.maxWidth;
-            _textScaler = scaler;
-            _cardHeights.clear();
-          }
-          final height = _cardHeights.isEmpty
-              ? 272.0
-              : _cardHeights.values.reduce(math.max);
-          return Column(
-            children: [
-              SizedBox(
+    builder: (context, constraints) {
+      final scale = MediaQuery.textScalerOf(context);
+      if (_width != constraints.maxWidth || _scale != scale) {
+        _width = constraints.maxWidth;
+        _scale = scale;
+        _heights.clear();
+      }
+      final height = _heights.isEmpty
+          ? 272.0
+          : _heights.values.reduce(math.max);
+      return Column(
+        children: [
+          Listener(
+            onPointerDown: (_) {
+              _touching = true;
+              _schedule();
+            },
+            onPointerUp: (_) {
+              _touching = false;
+              _schedule();
+            },
+            onPointerCancel: (_) {
+              _touching = false;
+              _schedule();
+            },
+            child: NotificationListener<ScrollNotification>(
+              onNotification: (notification) {
+                if (notification.depth != 0) return false;
+                if (notification is ScrollStartNotification) {
+                  _scrolling = true;
+                  _schedule();
+                }
+                if (notification is ScrollEndNotification) {
+                  _scrolling = false;
+                  _schedule();
+                }
+                return false;
+              },
+              child: SizedBox(
                 height: height,
                 child: PageView.builder(
                   key: const ValueKey('home-results-carousel'),
-                  controller: _pageController,
-              clipBehavior: Clip.hardEdge,
+                  controller: _pages,
                   padEnds: false,
                   physics: const BouncingScrollPhysics(),
-                  itemCount: _ads.length,
-                  onPageChanged: (value) {
-                    if (mounted) setState(() => _page = value);
+                  itemCount: _ads.length == 1 ? 1 : null,
+                  onPageChanged: (page) {
+                    setState(() => _page = page);
+                    _warmNext();
                   },
                   itemBuilder: (context, index) {
-                    final ad = _ads[index];
-                    // Measure the actual unbounded card rather than truncate scaled
-                    // text to a fixed carousel height. The outer Home scroll stays in charge.
+                    final ad = _ads[index % _ads.length];
                     return SingleChildScrollView(
                       physics: const NeverScrollableScrollPhysics(),
                       child: _CardSizeObserver(
-                        onSize: (size) => _recordHeight(ad.id, size),
+                        onSize: (size) {
+                          if (!mounted ||
+                              ((_heights[ad.id] ?? 0) - size.height).abs() < .1)
+                            return;
+                          setState(() => _heights[ad.id] = size.height);
+                        },
                         child: Padding(
-                      // Leave enough room for the shared soft shadow below
-                      // the card while keeping the carousel inside its width.
-                      padding: const EdgeInsets.fromLTRB(0, 6, 12, 24),
+                          padding: const EdgeInsets.fromLTRB(0, 6, 10, 24),
                           child: BestMetricCard(
                             key: ValueKey('weekly-${ad.id}'),
                             ad: ad,
-                            rank: index + 1,
+                            rank: index % _ads.length + 1,
                             compact: true,
                             onOpenDetails: () => _openAll(initialAdId: ad.id),
                           ),
@@ -197,169 +364,46 @@ class BestMetricsHomeSectionState extends State<BestMetricsHomeSection> {
                   },
                 ),
               ),
-              if (_ads.length > 1) ...[
-            const SizedBox(height: 4),
-                Semantics(
-                  label: ProxoStrings.format('ڕیکلامی {index} لە {count}', {'index': _page+1, 'count': _ads.length}),
-                  child: Row(
-                    key: const ValueKey('home-results-dots'),
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: List.generate(
-                      _ads.length,
-                      (index) => AnimatedContainer(
-                        duration: const Duration(milliseconds: 180),
-                        margin: const EdgeInsets.symmetric(horizontal: 3),
-                        width: index == _page ? 18 : 6,
-                        height: 6,
-                        decoration: BoxDecoration(
-                          color: index == _page ? AdUi.blue : AdUi.controlLine,
-                          borderRadius: AdUi.controlRadius,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ],
-          );
-        },
-      );
-}
-
-class _SectionHeader extends StatelessWidget {
-  final bool canOpen;
-  final VoidCallback onOpen;
-  const _SectionHeader({required this.canOpen, required this.onOpen});
-  @override
-  Widget build(BuildContext context) => LayoutBuilder(
-        builder: (context, constraints) {
-          ProxoLocale.watch(context);
-          final title = ProxoStrings.text('باشترین ئەنجامەکانی هەفتە');
-          final action = ProxoStrings.text('بینینی هەموو');
-          double width(String text, TextStyle style) {
-            final painter = TextPainter(
-              text: TextSpan(text: text, style: style),
-              textDirection: TextDirection.rtl,
-              textScaler: MediaQuery.textScalerOf(context),
-            )..layout();
-            final result = painter.width;
-            painter.dispose();
-            return result;
-          }
-
-          final heading = ProxoText(title, style: AdUi.heading(context));
-          final button = TextButton(
-            key: const ValueKey('home-results-view-all'),
-            onPressed: canOpen ? onOpen : null,
-            style: TextButton.styleFrom(
-              minimumSize: const Size(0, 48),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
-              shape: const RoundedRectangleBorder(
-                  borderRadius: AdUi.controlRadius),
-            ),
-            child: ProxoText(
-              action,
-              style: AdUi.text(
-                context,
-                color: canOpen ? AdUi.blue : AdUi.secondary,
-              ),
-            ),
-          );
-          if (width(title, AdUi.heading(context)) +
-                  width(action, AdUi.text(context)) +
-                  48 >
-              constraints.maxWidth) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                heading,
-                const SizedBox(height: 8),
-                Align(alignment: Alignment.centerLeft, child: button),
-              ],
-            );
-          }
-          return Row(
-            children: [
-              Expanded(child: heading),
-              button,
-            ],
-          );
-        },
-      );
-}
-
-class _StateCard extends StatelessWidget {
-  final Widget child;
-  const _StateCard({required this.child});
-  @override
-  Widget build(BuildContext context) => Container(
-        padding: AdUi.cardPadding,
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: AdUi.radius,
-          boxShadow: AdUi.cardShadow,
-        ),
-        child: child,
-      );
-}
-
-class _HomeLoading extends StatelessWidget {
-  const _HomeLoading({super.key});
-  @override
-  Widget build(BuildContext context) => const _StateCard(
-        child: SizedBox(
-          height: 104,
-          child: Center(
-            child: SizedBox(
-              width: 24,
-              height: 24,
-              child:
-                  CircularProgressIndicator(color: AdUi.blue, strokeWidth: 2),
             ),
           ),
-        ),
-      );
-}
-
-class _HomeEmpty extends StatelessWidget {
-  const _HomeEmpty({super.key});
-  @override
-  Widget build(BuildContext context) => _StateCard(
-        child: ProxoText(
-          'هێشتا ئەنجامی ئەم هەفتەیە هەڵنەبژێردراوە', translate: true,
-          textAlign: TextAlign.center,
-          style: AdUi.text(context, color: AdUi.secondary),
-        ),
-      );
-}
-
-class _HomeError extends StatelessWidget {
-  final VoidCallback onRetry;
-  const _HomeError({super.key, required this.onRetry});
-  @override
-  Widget build(BuildContext context) => _StateCard(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            ProxoText(
-              'ئەنجامەکان بار نەبوون', translate: true,
-              style: AdUi.text(context, color: AdUi.secondary),
-            ),
-            const SizedBox(height: 12),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: OutlinedButton(
-                key: const ValueKey('home-results-retry'),
-                onPressed: onRetry,
-                child: ProxoText(
-                  'دووبارە', translate: true,
-                  style: AdUi.text(context, color: AdUi.blue),
-                ),
+          if (_ads.length > 1)
+            Semantics(
+              label: ProxoStrings.format('ڕیکلامی {index} لە {count}', {
+                'index': _page % _ads.length + 1,
+                'count': _ads.length,
+              }),
+              child: Row(
+                key: const ValueKey('home-results-dots'),
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Keep pagination bounded even if the curator selects many adverts.
+                  for (var i = 0; i < math.min(5, _ads.length); i++)
+                    AnimatedContainer(
+                      duration: MediaQuery.disableAnimationsOf(context)
+                          ? Duration.zero
+                          : const Duration(milliseconds: 180),
+                      margin: const EdgeInsets.symmetric(horizontal: 3),
+                      width:
+                          i == (_page % _ads.length) % math.min(5, _ads.length)
+                          ? 18
+                          : 6,
+                      height: 6,
+                      decoration: BoxDecoration(
+                        color:
+                            i ==
+                                (_page % _ads.length) % math.min(5, _ads.length)
+                            ? ResultsUi.ink
+                            : const Color(0xFFD5CEC4),
+                        borderRadius: BorderRadius.circular(3),
+                      ),
+                    ),
+                ],
               ),
             ),
-          ],
-        ),
+        ],
       );
+    },
+  );
 }
 
 class _CardSizeObserver extends SingleChildRenderObjectWidget {

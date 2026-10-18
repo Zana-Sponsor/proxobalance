@@ -1,3 +1,5 @@
+import '../services/unread_notification_counter.dart';
+import '../services/app_telemetry_service.dart';
 import '../services/auth_activity_service.dart';
 import 'proxo_app_bar.dart';
 import 'package:proxo_app/l10n/proxo_strings.dart';
@@ -44,8 +46,6 @@ part 'voucher_page.dart';
 // نووسرابوو (بڕوانە سەرەتای ئەو فایلە) بەڵام هیچ شوێنێک بانگ نەدەکرا.
 part 'discount_codes_page.dart';
 
-const _kTgDepBot  = '8547356331:AAGwypl4NFS5dsXTp3DQW2L0mz7_Ttx7M70';
-const _kTgChatId  = '6259019006';
 
 const _cDark  = AppColors.ink;
 const _cDark2 = Color(0xFF2E3A50);
@@ -240,9 +240,15 @@ class _ProxoSidebarState extends State<ProxoSidebar>
 
   int _unreadNotifs = 0;
 
+  late final UnreadNotificationCounter _counter;
+  void _unreadChanged() { if (mounted) setState(() => _unreadNotifs = _counter.count.value); }
   @override
   void initState() {
     super.initState();
+    _counter = UnreadNotificationCounter.forClient(supabase);
+    _unreadNotifs = _counter.count.value;
+    _counter.count.addListener(_unreadChanged);
+    _counter.acquire();
     _intro = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 300),
@@ -254,6 +260,8 @@ class _ProxoSidebarState extends State<ProxoSidebar>
 
   @override
   void dispose() {
+    _counter.count.removeListener(_unreadChanged);
+    _counter.release();
     _intro.dispose();
     _menuScroll.dispose();
     super.dispose();
@@ -274,6 +282,7 @@ class _ProxoSidebarState extends State<ProxoSidebar>
           .eq('id', user.id)
           .maybeSingle();
 
+      if (!mounted || supabase.auth.currentUser?.id != user.id) return;
       final name   = (profile?['full_name'] ?? '').toString().trim();
       final email  = (profile?['email'] ?? user.email ?? '').toString();
       final avatar = (profile?['avatar_url'] ?? '').toString();
@@ -286,15 +295,8 @@ class _ProxoSidebarState extends State<ProxoSidebar>
           _loading      = false;
         });
       }
-      final unreadRows = await supabase
-          .from('pa_notifications')
-          .select('id')
-          .eq('user_id', user.id)
-          .eq('is_read', false);
-      final unread = (unreadRows as List).length;
-
-      if (mounted) setState(() => _unreadNotifs = unread);
     } catch (_) {
+      AppTelemetryService.active?.event('error', 'sidebar_profile_failed', outcome: 'failure');
       if (mounted) setState(() => _loading = false);
     }
   }

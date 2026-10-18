@@ -1,7 +1,10 @@
 import 'package:proxo_app/theme/app_locale.dart';
 import 'package:flutter/material.dart';
+
 import '../../widgets/auth/auth_design.dart';
 import '../../widgets/auth/auth_header.dart';
+import '../../widgets/auth/auth_intro.dart';
+
 import 'package:proxo_app/widgets/proxo_text.dart';
 
 class OtpScreen extends StatelessWidget {
@@ -28,24 +31,32 @@ class OtpScreen extends StatelessWidget {
       children: <Widget>[
         AuthHeader.inner(onBack: onBack),
         const SizedBox(height: AuthTokens.gapHeaderToTitle),
-        AuthTitle(AuthStrings.otpTitle),
-        const SizedBox(height: AuthTokens.gapTitleToSubtitle),
-        ProxoText(AuthStrings.otpSubtitle, style: AuthTokens.subtitle),
-        const SizedBox(height: 6),
-        Directionality(
-          textDirection: TextDirection.ltr,
-          child: ProxoText(
-            destination,
-            textAlign: TextAlign.start,
-            style: AuthTokens.fieldText.copyWith(fontWeight: FontWeight.w500),
+        AuthIntro(
+          icon: 'verified_user',
+          title: AuthStrings.otpTitle,
+          subtitle: AuthStrings.otpSubtitle,
+        ),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
+            color: AuthTokens.fieldFill,
+            borderRadius: BorderRadius.circular(14),
+          ),
+          child: Directionality(
+            textDirection: TextDirection.ltr,
+            child: ProxoText(
+              destination,
+              textAlign: TextAlign.center,
+              style: AuthTokens.fieldText.copyWith(fontWeight: FontWeight.w400),
+            ),
           ),
         ),
-        const SizedBox(height: AuthTokens.gapHeaderToPin),
+        const SizedBox(height: 28),
         otpBoxes,
-        const SizedBox(height: AuthTokens.gapBetweenFields),
-        Center(child: resend),
-        const SizedBox(height: AuthTokens.gapBetweenFields),
+        const SizedBox(height: 28),
         verifyButton,
+        const SizedBox(height: 18),
+        Center(child: resend),
         const SizedBox(height: AuthTokens.gapSectionBottom),
       ],
     );

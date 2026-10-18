@@ -24,6 +24,8 @@ class TasksPage extends StatefulWidget {
 }
 
 class _TasksPageState extends State<TasksPage> {
+  int _loadRevision = 0;
+
   List<Map<String, dynamic>> _challenges = [];
   Map<String, Map<String, dynamic>> _progressMap = {};
   bool _loading = true;
@@ -36,7 +38,9 @@ class _TasksPageState extends State<TasksPage> {
   }
 
   Future<void> _load() async {
-    if (!mounted) return;
+    final revision = ++_loadRevision, owner = supabase.auth.currentUser?.id;
+    bool current() => mounted && revision == _loadRevision && owner == supabase.auth.currentUser?.id;
+    if (!current()) return;
     if (_challenges.isEmpty) setState(() => _loading = true);
     try {
       final userId = supabase.auth.currentUser!.id;
@@ -58,7 +62,7 @@ class _TasksPageState extends State<TasksPage> {
         map[r['challenge_id'] as String] = r;
       }
 
-      if (mounted) {
+      if (current()) {
         setState(() {
           _challenges = (challenges as List)
               .map((e) => Map<String, dynamic>.from(e as Map))
@@ -69,7 +73,7 @@ class _TasksPageState extends State<TasksPage> {
       }
     } catch (e) {
       debugPrint('TasksPage: load failed: $e');
-      if (mounted) {
+      if (current()) {
         setState(() => _loading = false);
         showProxoToast(context, 'ئەرکەکان بار نەبوون — دووبارە هەوڵ بدەرەوە',
             type: ProxoToastType.error);

@@ -12,28 +12,16 @@ import 'package:proxo_app/theme/app_locale.dart';
 // with a single scrolling page: wallet grid -> instructions -> amount ->
 // receipt -> submit.
 //
-// Backend contract is unchanged from the sheet, deliberately:
-//   1. Firebase RTDB  requests/<uid>  +  allRequests/<key>   (admin panel)
-//   2. Supabase       pa_transactions insert
-//   3. Telegram       now via the `notify-deposit-request` Edge Function
-//                     instead of a bot token compiled into this client.
-//
-// Two things the sheet got wrong that are fixed here:
-//   • It generated `deposit_number` client-side. That column is text and is
-//     filled by the `auto_deposit_number` BEFORE INSERT trigger, so the
-//     hand-rolled 6-digit int was overwritten every time. It is no longer
-//     sent.
-//   • The receipt only ever reached Telegram. pa_transactions has a
-//     `receipt_b64` column, so it is now persisted on the row as well —
-//     which is also what lets the Edge Function re-read it under RLS
-//     instead of trusting an image handed to it by the caller.
+// Manual top-ups use pa_submit_topup. It prices the selected rail on the
+// server and atomically records an idempotent pending request. Approval is a
+// separate authorized RPC; an uploaded receipt never credits a wallet.
 // ═══════════════════════════════════════════════════════════════════════
 
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:firebase_database/firebase_database.dart';
+import '../services/topup_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
@@ -323,56 +311,13 @@ class _DepositScreenState extends State<DepositScreen> {
       if (user == null) throw Exception('no session');
 
       final wallet = _wallet!;
-      // The balance is credited with what survives the rail's fee, not with
-      // what the user handed over — crediting the gross on an 18% rail would
-      // silently over-pay every telecom deposit. The gross is preserved in
-      // the note and in the Telegram payload so the admin can reconcile.
-      final creditedIqd = wallet.creditedIqd(_iqd);
-      final amountUsd = creditedIqd / kIqdRate;
-
-      // 1. Firebase RTDB — the admin panel reads these two paths.
-      try {
-        final db = FirebaseDatabase.instance;
-        final ref = db.ref('requests/${user.id}').push();
-        final payload = {
-          'type': 'deposit',
-          'amount': amountUsd,
-          'method': wallet.name,
-          'name': name,
-          'note': note,
-          'status': 'pending',
-          'timestamp': DateTime.now().millisecondsSinceEpoch,
-          'userId': user.id,
-          'userEmail': user.email ?? '',
-        };
-        await ref.set(payload);
-        await db.ref('allRequests/${ref.key}').set({...payload, 'reqId': ref.key});
-      } catch (e) {
-        // The Supabase row below is the record of truth; RTDB is a mirror.
-        debugPrint('DepositScreen: rtdb mirror failed: $e');
-      }
-
-      // 2. Supabase. deposit_number / tx_id / public_transaction_id are all
-      //    filled by BEFORE INSERT triggers, so none of them are sent.
-      final row = await supabase
-          .from('pa_transactions')
-          .insert({
-            'user_id': user.id,
-            'amount': amountUsd,
-            'method': wallet.key,
-            'note': [
-              if (name.isNotEmpty) 'ناو: $name',
-              if (wallet.hasFee)
-                'نێردراو: ${_fmt(_iqd)} IQD | باج ${wallet.feePercentLabel}% | '
-                    'وەرگیراو: ${_fmt(creditedIqd)} IQD',
-              if (note.isNotEmpty) note,
-            ].join(' | '),
-            'status': 'pending',
-            'type': 'deposit',
-            'receipt_b64': _receiptB64,
-          })
-          .select('public_transaction_id')
-          .single();
+      // The server derives the authenticated owner, rail fee and USD credit.
+      // A receipt is evidence for review; submitting it does not add balance.
+      final row = await TopupService(supabase).submit(
+        method: wallet.key, grossIqd: _iqd, sender: name, note: note,
+        receipt: _receiptB64,
+      );
+      final creditedIqd = row['credited_iqd'] as num;
 
       final txId = row['public_transaction_id'] as String?;
 
@@ -391,7 +336,7 @@ class _DepositScreenState extends State<DepositScreen> {
                 // receipt image.
                 'amount_iqd': _iqd,
                 'credited_iqd': creditedIqd,
-                'fee_percent': (wallet.feeRate * 100).round(),
+                'fee_percent': _iqd == 0 ? 0 : ((row['fee_iqd'] as num) * 100 / _iqd).round(),
                 'sender_name': name,
               },
             );
@@ -412,7 +357,7 @@ class _DepositScreenState extends State<DepositScreen> {
     } catch (e) {
       // Money-adjacent: the user needs to know it did not go through, not
       // what Postgrest called the failure.
-      debugPrint('DepositScreen: submit failed: $e');
+      debugPrint('DepositScreen: submit failed: ${e.runtimeType}');
       if (mounted) {
         showProxoToast(
           context,

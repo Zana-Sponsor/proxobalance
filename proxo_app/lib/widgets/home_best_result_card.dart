@@ -1,260 +1,99 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../services/ad_categories.dart';
 import '../services/best_metrics_service.dart';
-import 'ad_form_components.dart';
+import 'best_results_design.dart';
 import 'proxo_text.dart';
+import 'result_metrics.dart';
+import 'result_thumbnail.dart';
 
-/// Home's compact result card. Data and navigation are supplied by the
-/// existing BestMetricCard; the full results screen keeps its existing UI.
+/// Compact summary; video, campaign goal and budget live on Results only.
 class HomeBestResultCard extends StatelessWidget {
-  final BestMetricAd ad;
-  final int rank;
-  final VoidCallback? onOpenDetails;
-
   const HomeBestResultCard({
     super.key,
     required this.ad,
     required this.rank,
     this.onOpenDetails,
   });
-
-  String _number(int value) => value.toString().replaceAllMapped(
-    RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-    (match) => '${match[1]},',
-  );
-
-  // Retain the existing result metric's currency and precision. Home does not
-  // receive a quoted exchange rate, so it must not invent an IQD conversion.
-  String _usd(double value) =>
-      '\$${value.toStringAsFixed(value == value.roundToDouble() ? 0 : 2)}';
-
+  final BestMetricAd ad;
+  final int rank;
+  final VoidCallback? onOpenDetails;
   @override
   Widget build(BuildContext context) => Directionality(
     textDirection: TextDirection.rtl,
     child: Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: AdUi.radius,
-        boxShadow: AdUi.cardShadow,
+        borderRadius: ResultsUi.radius,
+        border: Border.all(color: const Color(0xFFE8E5E0)),
       ),
       child: Material(
         color: Colors.transparent,
-        borderRadius: AdUi.radius,
+        borderRadius: ResultsUi.radius,
         child: InkWell(
           onTap: onOpenDetails,
-          borderRadius: AdUi.radius,
+          borderRadius: ResultsUi.radius,
           child: Padding(
-            padding: AdUi.cardPadding,
+            padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                _header(context),
-                const SizedBox(height: 20),
-                _metrics(context),
-              ],
-            ),
-          ),
-        ),
-      ),
-    ),
-  );
-
-  Widget _header(BuildContext context) => LayoutBuilder(
-    builder: (context, constraints) {
-      final category = adCategoryLabel(ad.category);
-      final title = ProxoText(category, translate: true, style: AdUi.text(context));
-      final goal = ProxoText(
-        ad.goal == 'messages' ? 'نامە و فرۆش' : 'بینین و کارلێک', translate: true,
-        style: AdUi.text(context, color: AdUi.secondary),
-      );
-      final details = Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [title, const SizedBox(height: 8), goal],
-      );
-      final rankBadge = Semantics(
-        label: 'پلەی ڕێزبەندی $rank',
-        child: ProxoText('#$rank', style: AdUi.text(context, color: AdUi.blue)),
-      );
-      final thumb = SizedBox(
-        width: 72,
-        height: 96,
-        child: _ResultThumbnail(url: ad.thumbnailUrl),
-      );
-      // Measure inherited type with the real system text scale rather
-      // than shrinking text or forcing it into a fixed-height header.
-      final minimumTextWidth = _minimumWidth(context, category);
-      if (constraints.maxWidth < minimumTextWidth + 88) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Row(children: [thumb, const Spacer(), rankBadge]),
-            const SizedBox(height: 16),
-            details,
-          ],
-        );
-      }
-      return Row(
-        children: [
-          thumb,
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Align(alignment: Alignment.centerRight, child: rankBadge),
-                const SizedBox(height: 8),
-                details,
-              ],
-            ),
-          ),
-        ],
-      );
-    },
-  );
-
-  double _minimumWidth(BuildContext context, String text) {
-    final painter = TextPainter(
-      text: TextSpan(text: text, style: AdUi.text(context)),
-      textDirection: ProxoTextDirection.of(text),
-      textScaler: MediaQuery.textScalerOf(context),
-    )..layout();
-    final width = painter.minIntrinsicWidth;
-    painter.dispose();
-    return width;
-  }
-
-  Widget _metrics(BuildContext context) => LayoutBuilder(
-    builder: (context, constraints) {
-      final rows = <(String, String)>[
-        ('بینین', _number(ad.impressions)),
-        ('کرتە', _number(ad.clicks)),
-        ('تێچوو', _usd(ad.spendUsd)),
-      ];
-      final cellWidth = (constraints.maxWidth - 24) / 3;
-      final fits = rows.every(
-        (row) =>
-            _minimumWidth(context, row.$1) + 24 <= cellWidth &&
-            _minimumWidth(context, row.$2) + 24 <= cellWidth,
-      );
-      if (!fits) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            for (var i = 0; i < rows.length; i++) ...[
-              if (i > 0) const SizedBox(height: 12),
-              _ResultMetric(label: rows[i].$1, value: rows[i].$2),
-            ],
-          ],
-        );
-      }
-      return IntrinsicHeight(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            for (var i = 0; i < rows.length; i++) ...[
-              if (i > 0) const SizedBox(width: 12),
-              Expanded(
-                child: _ResultMetric(label: rows[i].$1, value: rows[i].$2),
-              ),
-            ],
-          ],
-        ),
-      );
-    },
-  );
-}
-
-class _ResultMetric extends StatelessWidget {
-  final String label, value;
-  const _ResultMetric({required this.label, required this.value});
-
-  @override
-  Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.all(12),
-    decoration: const BoxDecoration(
-      color: Colors.white,
-      borderRadius: AdUi.controlRadius,
-      boxShadow: AdUi.cardShadow,
-    ),
-    child: Column(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        ProxoText(
-          label, translate: true,
-          textAlign: TextAlign.center,
-          style: AdUi.text(context, color: AdUi.secondary),
-        ),
-        const SizedBox(height: 8),
-        ProxoText(
-          value,
-          textAlign: TextAlign.center,
-          style: AdUi.text(context),
-        ),
-      ],
-    ),
-  );
-}
-
-class _ResultThumbnail extends StatelessWidget {
-  final String? url;
-  const _ResultThumbnail({required this.url});
-
-  @override
-  Widget build(BuildContext context) {
-    final uri = Uri.tryParse(url ?? '');
-    final valid =
-        uri != null &&
-        (uri.scheme == 'https' || uri.scheme == 'http') &&
-        uri.host.isNotEmpty;
-    return ClipRRect(
-      borderRadius: AdUi.controlRadius,
-      child: valid
-          ? CachedNetworkImage(
-              imageUrl: url!,
-              fit: BoxFit.cover,
-              memCacheWidth: 300,
-              fadeInDuration: const Duration(milliseconds: 180),
-              placeholder: (_, __) => const _BrandedFallback(),
-              errorWidget: (_, __, ___) => const _BrandedFallback(),
-            )
-          : const _BrandedFallback(),
-    );
-  }
-}
-
-class _BrandedFallback extends StatelessWidget {
-  const _BrandedFallback();
-
-  @override
-  Widget build(BuildContext context) => ColoredBox(
-    color: AdUi.controlSurface,
-    child: Padding(
-      padding: const EdgeInsets.all(6),
-      child: Opacity(
-        opacity: 0.12,
-        child: Column(
-          children: [
-            for (var row = 0; row < 5; row++)
-              Expanded(
-                child: Row(
-                  children: [
-                    for (var col = 0; col < 2; col++)
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.all(3),
-                          child: Image.asset(
-                            'assets/images/proxo_logo.png',
-                            fit: BoxFit.contain,
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    final thumb = SizedBox(
+                      width: 76,
+                      height: 86,
+                      child: ResultThumbnail(url: ad.thumbnailUrl),
+                    );
+                    final title = ProxoText(
+                      adCategoryLabel(ad.category),
+                      translate: true,
+                      style: ResultsUi.text(size: 16),
+                    );
+                    final details = Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ResultRank(rank: rank),
+                        const SizedBox(height: 10),
+                        title,
+                      ],
+                    );
+                    if (constraints.maxWidth < 240 ||
+                        MediaQuery.textScalerOf(context).scale(16) > 24) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Row(
+                            children: [
+                              thumb,
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: ResultRank(rank: rank),
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                      ),
-                  ],
+                          const SizedBox(height: 14),
+                          title,
+                        ],
+                      );
+                    }
+                    return Row(
+                      children: [
+                        thumb,
+                        const SizedBox(width: 16),
+                        Expanded(child: details),
+                      ],
+                    );
+                  },
                 ),
-              ),
-          ],
+                const SizedBox(height: 16),
+                ResultMetrics(ad: ad),
+              ],
+            ),
+          ),
         ),
       ),
     ),
