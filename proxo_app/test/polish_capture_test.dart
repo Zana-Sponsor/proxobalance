@@ -121,9 +121,9 @@ void main() {
     await backend.initialize();
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(
-          const MethodChannel('flutter.baseflow.com/permissions/methods'),
-          (_) async => 1,
-        );
+      const MethodChannel('flutter.baseflow.com/permissions/methods'),
+      (_) async => 1,
+    );
   });
   tearDownAll(() async {
     await backend.dispose();
@@ -135,7 +135,7 @@ void main() {
         'login',
         'login-phone',
         'signup',
-        'signup-security',
+        'signup-filled',
         'forgot',
         'new-password',
         'otp',
@@ -173,68 +173,69 @@ void main() {
             'login' ||
             'login-phone' ||
             'signup' ||
-            'signup-security' ||
-            'forgot' => const AuthShell(),
+            'signup-filled' ||
+            'forgot' =>
+              const AuthShell(),
             'new-password' => Scaffold(
-              body: SafeArea(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(20),
-                  child: NewPasswordScreen(
-                    onBack: () {},
-                    password: password,
-                    confirmation: confirmation,
-                    passwordVisible: passwordVisible,
-                    confirmationVisible: confirmationVisible,
-                    onSave: () async {},
+                body: SafeArea(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(20),
+                    child: NewPasswordScreen(
+                      onBack: () {},
+                      password: password,
+                      confirmation: confirmation,
+                      passwordVisible: passwordVisible,
+                      confirmationVisible: confirmationVisible,
+                      onSave: () async {},
+                    ),
                   ),
                 ),
               ),
-            ),
             'results-banner' => Scaffold(
-              body: SafeArea(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(16),
-                  child: BestMetricsHomeSection(
-                    autoPlay: false,
-                    loadPreview: ({bool forceRefresh = false}) async =>
-                        examples(),
+                body: SafeArea(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(16),
+                    child: BestMetricsHomeSection(
+                      autoPlay: false,
+                      loadPreview: ({bool forceRefresh = false}) async =>
+                          examples(),
+                    ),
                   ),
                 ),
               ),
-            ),
             'results' => BestMetricsScreen(
-              initialAds: examples(),
-              initialAdId: 'beauty',
-              loadResults: ({bool forceRefresh = false}) async => examples(),
-            ),
+                initialAds: examples(),
+                initialAdId: 'beauty',
+                loadResults: ({bool forceRefresh = false}) async => examples(),
+              ),
             'results-empty' => BestMetricsScreen(
-              loadResults: ({bool forceRefresh = false}) async => [],
-            ),
+                loadResults: ({bool forceRefresh = false}) async => [],
+              ),
             'otp' => Scaffold(
-              body: SafeArea(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(20),
-                  child: OtpScreen(
-                    onBack: () {},
-                    destination: '+964 750 *** ** 67',
-                    otpBoxes: AuthOtpBoxes(
-                      length: 6,
-                      codeController: code,
-                      firstBoxFocus: focus,
-                      onCompleted: (_) {},
-                    ),
-                    resend: AuthTextLink(
-                      label: AuthStrings.resendAction,
-                      onTap: () {},
-                    ),
-                    verifyButton: AuthPrimaryButton(
-                      label: AuthStrings.verifyButton,
-                      onPressed: null,
+                body: SafeArea(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(20),
+                    child: OtpScreen(
+                      onBack: () {},
+                      destination: 'he***@example.com',
+                      otpBoxes: AuthOtpBoxes(
+                        length: 6,
+                        codeController: code,
+                        firstBoxFocus: focus,
+                        onCompleted: (_) {},
+                      ),
+                      resend: AuthTextLink(
+                        label: AuthStrings.resendAction,
+                        onTap: () {},
+                      ),
+                      verifyButton: AuthPrimaryButton(
+                        label: AuthStrings.verifyButton,
+                        onPressed: null,
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
             'notifications' => const NotificationsScreen(),
             'levels' => const LevelsPage(),
             'tasks' => const TasksPage(),
@@ -245,18 +246,18 @@ void main() {
             'create' => AdCreateScreen(repository: TestAdRepository()),
             'profile' => const ProfileScreen(),
             'home' => HomeScreen(
-              onCreateTap: () {},
-              onAddBalanceTap: () {},
-              onToolsTap: () {},
-              onCreatePageTap: () {},
-              onFaqTap: () {},
-            ),
-            _ => Scaffold(
-              bottomNavigationBar: ProxoBottomNav(
-                currentIndex: 0,
-                onTap: (_) {},
+                onCreateTap: () {},
+                onAddBalanceTap: () {},
+                onToolsTap: () {},
+                onCreatePageTap: () {},
+                onFaqTap: () {},
               ),
-            ),
+            _ => Scaffold(
+                bottomNavigationBar: ProxoBottomNav(
+                  currentIndex: 0,
+                  onTap: (_) {},
+                ),
+              ),
           };
           await t.pumpWidget(
             MaterialApp(
@@ -296,7 +297,7 @@ void main() {
             await t.tap(find.text(AuthStrings.channelPhone).first);
             await settle();
           }
-          if (section == 'signup' || section == 'signup-security') {
+          if (section == 'signup' || section == 'signup-filled') {
             final link = find.byWidgetPredicate(
               (w) =>
                   w is AuthTextLink && w.label == AuthStrings.noAccountAction,
@@ -305,14 +306,21 @@ void main() {
             await t.tap(link);
             await settle();
           }
-          if (section == 'signup-security') {
-            await t.enterText(find.byType(TextField).at(0), 'Fixture User');
-            await t.enterText(find.byType(TextField).at(1), '7500000001');
-            await t.pump();
-            final next = find.byKey(const ValueKey('signup-next'));
-            await t.ensureVisible(next);
-            await t.tap(next);
+          if (section == 'signup-filled') {
+            await t.enterText(find.byType(TextField).at(0), 'هێمن ئەحمەد');
+            await t.enterText(
+                find.byType(TextField).at(1), 'hemin@example.com');
+            await t.enterText(find.byType(TextField).at(2), 'Example#2026');
+            await t.enterText(find.byType(TextField).at(3), 'Example#2026');
+            FocusManager.instance.primaryFocus?.unfocus();
             await settle();
+            // Let the input's scheduled ensureVisible finish before framing
+            // the filled-form evidence at the top of the same screen.
+            t
+                .state<ScrollableState>(find.byType(Scrollable).first)
+                .position
+                .jumpTo(0);
+            await t.pump();
           }
           if (section == 'forgot') {
             await t.tap(find.text(AuthStrings.channelEmail).first);
@@ -331,14 +339,15 @@ void main() {
             await t.pump();
           }
           if (!before &&
-              ['signup', 'signup-security', 'forgot'].contains(section)) {
+              ['signup', 'signup-filled', 'forgot'].contains(section)) {
             expect(
               t
                   .state<ScrollableState>(find.byType(Scrollable).first)
                   .position
                   .pixels,
               0,
-              reason: 'A new Auth step must start at its heading, not inherit the previous form scroll',
+              reason:
+                  'A new Auth step must start at its heading, not inherit the previous form scroll',
             );
           }
           final exceptions = <String>[];
@@ -350,9 +359,8 @@ void main() {
           await t.runAsync(() async {
             final directory = Directory('build/polish-evidence')
               ..createSync(recursive: true);
-            final boundary =
-                key.currentContext!.findRenderObject()!
-                    as RenderRepaintBoundary;
+            final boundary = key.currentContext!.findRenderObject()!
+                as RenderRepaintBoundary;
             final image = await boundary.toImage(pixelRatio: dpr);
             final bytes = await image.toByteData(
               format: ui.ImageByteFormat.png,
@@ -371,7 +379,8 @@ void main() {
                 'dpr': dpr,
                 'layout': measuredLayout(key),
                 'exceptions': exceptions,
-                'fixture': 'fictional GET-only; OTP/new-password production components; Results fixture metrics and missing-thumbnail fallback; no authentication or payment sends',
+                'fixture':
+                    'fictional GET-only; OTP/new-password production components; Results fixture metrics and missing-thumbnail fallback; no authentication or payment sends',
               }),
             );
           });
@@ -383,7 +392,7 @@ void main() {
             'login',
             'login-phone',
             'signup',
-            'signup-security',
+            'signup-filled',
             'forgot',
             'new-password',
             'results-banner',
@@ -399,9 +408,8 @@ void main() {
                   exceptions.add(error.toString());
                 }
                 await t.runAsync(() async {
-                  final boundary =
-                      key.currentContext!.findRenderObject()!
-                          as RenderRepaintBoundary;
+                  final boundary = key.currentContext!.findRenderObject()!
+                      as RenderRepaintBoundary;
                   final shot = await boundary.toImage(pixelRatio: dpr);
                   final png = await shot.toByteData(
                     format: ui.ImageByteFormat.png,
@@ -411,19 +419,19 @@ void main() {
                   shot.dispose();
                   await File('build/polish-evidence/$name-bottom.json')
                       .writeAsString(
-                        jsonEncode({
-                          'source': before ? 'before' : 'after',
-                          'section': section,
-                          'locale': language,
-                          'width': width,
-                          'height': 852,
-                          'textScale': scale,
-                          'dpr': dpr,
-                          'position': 'bottom',
-                          'layout': measuredLayout(key),
-                          'exceptions': exceptions,
-                        }),
-                      );
+                    jsonEncode({
+                      'source': before ? 'before' : 'after',
+                      'section': section,
+                      'locale': language,
+                      'width': width,
+                      'height': 852,
+                      'textScale': scale,
+                      'dpr': dpr,
+                      'position': 'bottom',
+                      'layout': measuredLayout(key),
+                      'exceptions': exceptions,
+                    }),
+                  );
                 });
               }
             }
@@ -440,14 +448,14 @@ void main() {
           await t.runAsync(() async {
             await File('build/polish-evidence/$name-lifecycle.json')
                 .writeAsString(
-                  jsonEncode({
-                    'section': section,
-                    'locale': language,
-                    'width': width,
-                    'textScale': scale,
-                    'exceptions': exceptions,
-                  }),
-                );
+              jsonEncode({
+                'section': section,
+                'locale': language,
+                'width': width,
+                'textScale': scale,
+                'exceptions': exceptions,
+              }),
+            );
           });
           code.dispose();
           focus.dispose();

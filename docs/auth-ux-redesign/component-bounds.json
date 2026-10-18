@@ -15,7 +15,7 @@
           20.0,
           20.0,
           240.0,
-          64.0
+          56.0
         ],
         "radius": null,
         "padding": null,
@@ -25,10 +25,10 @@
         "widget": "Image",
         "key": null,
         "bounds_dp": [
-          91.0,
-          37.5,
           98.0,
-          28.0
+          35.5,
+          84.0,
+          24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
@@ -36,12 +36,12 @@
         "widget": "Container",
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
-          212.0,
-          108.0,
-          48.0,
-          48.0
+          220.0,
+          100.0,
+          40.0,
+          40.0
         ],
-        "radius": "BorderRadius.circular(16.0)",
+        "radius": "BorderRadius.circular(12.0)",
         "padding": null,
         "color": 4293784831
       },
@@ -50,7 +50,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          480.0,
+          371.0,
           240.0,
           68.0
         ]
@@ -73,7 +73,7 @@
           20.0,
           20.0,
           353.0,
-          64.0
+          56.0
         ],
         "radius": null,
         "padding": null,
@@ -83,10 +83,10 @@
         "widget": "Image",
         "key": null,
         "bounds_dp": [
-          147.5,
-          37.5,
-          98.0,
-          28.0
+          154.5,
+          35.5,
+          84.0,
+          24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
@@ -95,11 +95,11 @@
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
           20.0,
-          108.0,
-          48.0,
-          48.0
+          100.0,
+          40.0,
+          40.0
         ],
-        "radius": "BorderRadius.circular(16.0)",
+        "radius": "BorderRadius.circular(12.0)",
         "padding": null,
         "color": 4293784831
       },
@@ -108,7 +108,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          235.0,
+          217.0,
           353.0,
           48.0
         ]
@@ -131,7 +131,7 @@
           20.0,
           20.0,
           240.0,
-          64.0
+          56.0
         ],
         "radius": null,
         "padding": null,
@@ -141,10 +141,10 @@
         "widget": "Image",
         "key": null,
         "bounds_dp": [
-          91.0,
-          37.5,
           98.0,
-          28.0
+          35.5,
+          84.0,
+          24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
@@ -152,12 +152,12 @@
         "widget": "Container",
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
-          212.0,
-          108.0,
-          48.0,
-          48.0
+          220.0,
+          100.0,
+          40.0,
+          40.0
         ],
-        "radius": "BorderRadius.circular(16.0)",
+        "radius": "BorderRadius.circular(12.0)",
         "padding": null,
         "color": 4293784831
       },
@@ -166,7 +166,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          480.0,
+          431.0,
           240.0,
           68.0
         ]
@@ -189,7 +189,7 @@
           20.0,
           20.0,
           353.0,
-          64.0
+          56.0
         ],
         "radius": null,
         "padding": null,
@@ -199,10 +199,10 @@
         "widget": "Image",
         "key": null,
         "bounds_dp": [
-          147.5,
-          37.5,
-          98.0,
-          28.0
+          154.5,
+          35.5,
+          84.0,
+          24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
@@ -211,11 +211,11 @@
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
           20.0,
-          108.0,
-          48.0,
-          48.0
+          100.0,
+          40.0,
+          40.0
         ],
-        "radius": "BorderRadius.circular(16.0)",
+        "radius": "BorderRadius.circular(12.0)",
         "padding": null,
         "color": 4293784831
       },
@@ -224,7 +224,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          235.0,
+          217.0,
           353.0,
           48.0
         ]
@@ -247,7 +247,7 @@
           20.0,
           20.0,
           240.0,
-          64.0
+          56.0
         ],
         "radius": null,
         "padding": null,
@@ -257,10 +257,10 @@
         "widget": "Image",
         "key": null,
         "bounds_dp": [
-          91.0,
-          37.5,
           98.0,
-          28.0
+          35.5,
+          84.0,
+          24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
@@ -268,12 +268,12 @@
         "widget": "Container",
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
-          212.0,
-          108.0,
-          48.0,
-          48.0
+          220.0,
+          100.0,
+          40.0,
+          40.0
         ],
-        "radius": "BorderRadius.circular(16.0)",
+        "radius": "BorderRadius.circular(12.0)",
         "padding": null,
         "color": 4293784831
       },
@@ -282,7 +282,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          480.0,
+          431.0,
           240.0,
           68.0
         ]
@@ -305,7 +305,7 @@
           20.0,
           20.0,
           353.0,
-          64.0
+          56.0
         ],
         "radius": null,
         "padding": null,
@@ -315,10 +315,10 @@
         "widget": "Image",
         "key": null,
         "bounds_dp": [
-          147.5,
-          37.5,
-          98.0,
-          28.0
+          154.5,
+          35.5,
+          84.0,
+          24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
@@ -327,11 +327,11 @@
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
           20.0,
-          108.0,
-          48.0,
-          48.0
+          100.0,
+          40.0,
+          40.0
         ],
-        "radius": "BorderRadius.circular(16.0)",
+        "radius": "BorderRadius.circular(12.0)",
         "padding": null,
         "color": 4293784831
       },
@@ -340,7 +340,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          235.0,
+          217.0,
           353.0,
           48.0
         ]
@@ -363,7 +363,7 @@
           20.0,
           20.0,
           240.0,
-          64.0
+          56.0
         ],
         "radius": null,
         "padding": null,
@@ -373,10 +373,10 @@
         "widget": "Image",
         "key": null,
         "bounds_dp": [
-          91.0,
-          37.5,
           98.0,
-          28.0
+          35.5,
+          84.0,
+          24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
@@ -384,12 +384,12 @@
         "widget": "Container",
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
-          212.0,
-          108.0,
-          48.0,
-          48.0
+          220.0,
+          100.0,
+          40.0,
+          40.0
         ],
-        "radius": "BorderRadius.circular(16.0)",
+        "radius": "BorderRadius.circular(12.0)",
         "padding": null,
         "color": 4293784831
       },
@@ -398,7 +398,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          602.0,
+          493.0,
           240.0,
           68.0
         ]
@@ -408,7 +408,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          728.0,
+          616.0,
           240.0,
           68.0
         ]
@@ -431,7 +431,7 @@
           20.0,
           20.0,
           353.0,
-          64.0
+          56.0
         ],
         "radius": null,
         "padding": null,
@@ -441,10 +441,10 @@
         "widget": "Image",
         "key": null,
         "bounds_dp": [
-          147.5,
-          37.5,
-          98.0,
-          28.0
+          154.5,
+          35.5,
+          84.0,
+          24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
@@ -453,11 +453,11 @@
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
           20.0,
-          108.0,
-          48.0,
-          48.0
+          100.0,
+          40.0,
+          40.0
         ],
-        "radius": "BorderRadius.circular(16.0)",
+        "radius": "BorderRadius.circular(12.0)",
         "padding": null,
         "color": 4293784831
       },
@@ -466,7 +466,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          305.0,
+          287.0,
           353.0,
           48.0
         ]
@@ -476,7 +476,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          390.0,
+          371.0,
           353.0,
           48.0
         ]
@@ -499,7 +499,7 @@
           20.0,
           20.0,
           240.0,
-          64.0
+          56.0
         ],
         "radius": null,
         "padding": null,
@@ -509,10 +509,10 @@
         "widget": "Image",
         "key": null,
         "bounds_dp": [
-          91.0,
-          37.5,
           98.0,
-          28.0
+          35.5,
+          84.0,
+          24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
@@ -520,12 +520,12 @@
         "widget": "Container",
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
-          212.0,
-          108.0,
-          48.0,
-          48.0
+          220.0,
+          100.0,
+          40.0,
+          40.0
         ],
-        "radius": "BorderRadius.circular(16.0)",
+        "radius": "BorderRadius.circular(12.0)",
         "padding": null,
         "color": 4293784831
       },
@@ -534,7 +534,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          583.0,
+          537.0,
           240.0,
           68.0
         ]
@@ -544,7 +544,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          709.0,
+          660.0,
           240.0,
           68.0
         ]
@@ -567,7 +567,7 @@
           20.0,
           20.0,
           353.0,
-          64.0
+          56.0
         ],
         "radius": null,
         "padding": null,
@@ -577,10 +577,10 @@
         "widget": "Image",
         "key": null,
         "bounds_dp": [
-          147.5,
-          37.5,
-          98.0,
-          28.0
+          154.5,
+          35.5,
+          84.0,
+          24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
@@ -589,11 +589,11 @@
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
           20.0,
-          108.0,
-          48.0,
-          48.0
+          100.0,
+          40.0,
+          40.0
         ],
-        "radius": "BorderRadius.circular(16.0)",
+        "radius": "BorderRadius.circular(12.0)",
         "padding": null,
         "color": 4293784831
       },
@@ -602,7 +602,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          305.0,
+          287.0,
           353.0,
           48.0
         ]
@@ -612,7 +612,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          390.0,
+          371.0,
           353.0,
           48.0
         ]
@@ -635,7 +635,7 @@
           20.0,
           20.0,
           240.0,
-          64.0
+          56.0
         ],
         "radius": null,
         "padding": null,
@@ -645,10 +645,10 @@
         "widget": "Image",
         "key": null,
         "bounds_dp": [
-          91.0,
-          37.5,
           98.0,
-          28.0
+          35.5,
+          84.0,
+          24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
@@ -656,12 +656,12 @@
         "widget": "Container",
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
-          212.0,
-          108.0,
-          48.0,
-          48.0
+          220.0,
+          100.0,
+          40.0,
+          40.0
         ],
-        "radius": "BorderRadius.circular(16.0)",
+        "radius": "BorderRadius.circular(12.0)",
         "padding": null,
         "color": 4293784831
       },
@@ -670,7 +670,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          583.0,
+          495.0,
           240.0,
           68.0
         ]
@@ -680,7 +680,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          709.0,
+          618.0,
           240.0,
           68.0
         ]
@@ -703,7 +703,7 @@
           20.0,
           20.0,
           353.0,
-          64.0
+          56.0
         ],
         "radius": null,
         "padding": null,
@@ -713,10 +713,10 @@
         "widget": "Image",
         "key": null,
         "bounds_dp": [
-          147.5,
-          37.5,
-          98.0,
-          28.0
+          154.5,
+          35.5,
+          84.0,
+          24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
@@ -725,11 +725,11 @@
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
           20.0,
-          108.0,
-          48.0,
-          48.0
+          100.0,
+          40.0,
+          40.0
         ],
-        "radius": "BorderRadius.circular(16.0)",
+        "radius": "BorderRadius.circular(12.0)",
         "padding": null,
         "color": 4293784831
       },
@@ -738,7 +738,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          305.0,
+          287.0,
           353.0,
           48.0
         ]
@@ -748,7 +748,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          390.0,
+          371.0,
           353.0,
           48.0
         ]
@@ -771,7 +771,7 @@
           20.0,
           20.0,
           240.0,
-          64.0
+          56.0
         ],
         "radius": null,
         "padding": null,
@@ -781,10 +781,10 @@
         "widget": "Image",
         "key": null,
         "bounds_dp": [
-          91.0,
-          37.5,
           98.0,
-          28.0
+          35.5,
+          84.0,
+          24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
@@ -792,12 +792,12 @@
         "widget": "Container",
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
-          212.0,
-          108.0,
-          48.0,
-          48.0
+          220.0,
+          100.0,
+          40.0,
+          40.0
         ],
-        "radius": "BorderRadius.circular(16.0)",
+        "radius": "BorderRadius.circular(12.0)",
         "padding": null,
         "color": 4293784831
       },
@@ -806,7 +806,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          602.0,
+          493.0,
           240.0,
           68.0
         ]
@@ -829,7 +829,7 @@
           20.0,
           20.0,
           353.0,
-          64.0
+          56.0
         ],
         "radius": null,
         "padding": null,
@@ -839,10 +839,10 @@
         "widget": "Image",
         "key": null,
         "bounds_dp": [
-          147.5,
-          37.5,
-          98.0,
-          28.0
+          154.5,
+          35.5,
+          84.0,
+          24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
@@ -851,11 +851,11 @@
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
           20.0,
-          108.0,
-          48.0,
-          48.0
+          100.0,
+          40.0,
+          40.0
         ],
-        "radius": "BorderRadius.circular(16.0)",
+        "radius": "BorderRadius.circular(12.0)",
         "padding": null,
         "color": 4293784831
       },
@@ -864,7 +864,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          305.0,
+          287.0,
           353.0,
           48.0
         ]
@@ -887,7 +887,7 @@
           20.0,
           20.0,
           240.0,
-          64.0
+          56.0
         ],
         "radius": null,
         "padding": null,
@@ -897,10 +897,10 @@
         "widget": "Image",
         "key": null,
         "bounds_dp": [
-          91.0,
-          37.5,
           98.0,
-          28.0
+          35.5,
+          84.0,
+          24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
@@ -908,12 +908,12 @@
         "widget": "Container",
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
-          212.0,
-          108.0,
-          48.0,
-          48.0
+          220.0,
+          100.0,
+          40.0,
+          40.0
         ],
-        "radius": "BorderRadius.circular(16.0)",
+        "radius": "BorderRadius.circular(12.0)",
         "padding": null,
         "color": 4293784831
       },
@@ -922,7 +922,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          583.0,
+          537.0,
           240.0,
           68.0
         ]
@@ -945,7 +945,7 @@
           20.0,
           20.0,
           353.0,
-          64.0
+          56.0
         ],
         "radius": null,
         "padding": null,
@@ -955,10 +955,10 @@
         "widget": "Image",
         "key": null,
         "bounds_dp": [
-          147.5,
-          37.5,
-          98.0,
-          28.0
+          154.5,
+          35.5,
+          84.0,
+          24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
@@ -967,11 +967,11 @@
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
           20.0,
-          108.0,
-          48.0,
-          48.0
+          100.0,
+          40.0,
+          40.0
         ],
-        "radius": "BorderRadius.circular(16.0)",
+        "radius": "BorderRadius.circular(12.0)",
         "padding": null,
         "color": 4293784831
       },
@@ -980,7 +980,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          305.0,
+          287.0,
           353.0,
           48.0
         ]
@@ -1003,7 +1003,7 @@
           20.0,
           20.0,
           240.0,
-          64.0
+          56.0
         ],
         "radius": null,
         "padding": null,
@@ -1013,10 +1013,10 @@
         "widget": "Image",
         "key": null,
         "bounds_dp": [
-          91.0,
-          37.5,
           98.0,
-          28.0
+          35.5,
+          84.0,
+          24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
@@ -1024,12 +1024,12 @@
         "widget": "Container",
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
-          212.0,
-          108.0,
-          48.0,
-          48.0
+          220.0,
+          100.0,
+          40.0,
+          40.0
         ],
-        "radius": "BorderRadius.circular(16.0)",
+        "radius": "BorderRadius.circular(12.0)",
         "padding": null,
         "color": 4293784831
       },
@@ -1038,7 +1038,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          583.0,
+          495.0,
           240.0,
           68.0
         ]
@@ -1061,7 +1061,7 @@
           20.0,
           20.0,
           353.0,
-          64.0
+          56.0
         ],
         "radius": null,
         "padding": null,
@@ -1071,10 +1071,10 @@
         "widget": "Image",
         "key": null,
         "bounds_dp": [
-          147.5,
-          37.5,
-          98.0,
-          28.0
+          154.5,
+          35.5,
+          84.0,
+          24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
@@ -1083,11 +1083,11 @@
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
           20.0,
-          108.0,
-          48.0,
-          48.0
+          100.0,
+          40.0,
+          40.0
         ],
-        "radius": "BorderRadius.circular(16.0)",
+        "radius": "BorderRadius.circular(12.0)",
         "padding": null,
         "color": 4293784831
       },
@@ -1096,7 +1096,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          305.0,
+          287.0,
           353.0,
           48.0
         ]
@@ -1119,7 +1119,7 @@
           20.0,
           20.0,
           240.0,
-          64.0
+          56.0
         ],
         "radius": null,
         "padding": null,
@@ -1129,10 +1129,10 @@
         "widget": "Image",
         "key": null,
         "bounds_dp": [
-          91.0,
-          37.5,
           98.0,
-          28.0
+          35.5,
+          84.0,
+          24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
@@ -1140,12 +1140,12 @@
         "widget": "Container",
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
-          212.0,
-          108.0,
-          48.0,
-          48.0
+          220.0,
+          100.0,
+          40.0,
+          40.0
         ],
-        "radius": "BorderRadius.circular(16.0)",
+        "radius": "BorderRadius.circular(12.0)",
         "padding": null,
         "color": 4293784831
       },
@@ -1154,7 +1154,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          435.0,
+          329.0,
           240.0,
           68.0
         ]
@@ -1164,7 +1164,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          825.0,
+          713.0,
           240.0,
           68.0
         ]
@@ -1187,7 +1187,7 @@
           20.0,
           20.0,
           353.0,
-          64.0
+          56.0
         ],
         "radius": null,
         "padding": null,
@@ -1197,10 +1197,10 @@
         "widget": "Image",
         "key": null,
         "bounds_dp": [
-          147.5,
-          37.5,
-          98.0,
-          28.0
+          154.5,
+          35.5,
+          84.0,
+          24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
@@ -1209,11 +1209,11 @@
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
           20.0,
-          108.0,
-          48.0,
-          48.0
+          100.0,
+          40.0,
+          40.0
         ],
-        "radius": "BorderRadius.circular(16.0)",
+        "radius": "BorderRadius.circular(12.0)",
         "padding": null,
         "color": 4293784831
       },
@@ -1222,7 +1222,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          235.0,
+          217.0,
           353.0,
           48.0
         ]
@@ -1232,7 +1232,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          435.0,
+          415.0,
           353.0,
           48.0
         ]
@@ -1255,7 +1255,7 @@
           20.0,
           20.0,
           240.0,
-          64.0
+          56.0
         ],
         "radius": null,
         "padding": null,
@@ -1265,10 +1265,10 @@
         "widget": "Image",
         "key": null,
         "bounds_dp": [
-          91.0,
-          37.5,
           98.0,
-          28.0
+          35.5,
+          84.0,
+          24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
@@ -1276,12 +1276,12 @@
         "widget": "Container",
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
-          212.0,
-          108.0,
-          48.0,
-          48.0
+          220.0,
+          100.0,
+          40.0,
+          40.0
         ],
-        "radius": "BorderRadius.circular(16.0)",
+        "radius": "BorderRadius.circular(12.0)",
         "padding": null,
         "color": 4293784831
       },
@@ -1290,7 +1290,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          480.0,
+          431.0,
           240.0,
           68.0
         ]
@@ -1300,7 +1300,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          912.0,
+          854.0,
           240.0,
           68.0
         ]
@@ -1323,7 +1323,7 @@
           20.0,
           20.0,
           353.0,
-          64.0
+          56.0
         ],
         "radius": null,
         "padding": null,
@@ -1333,10 +1333,10 @@
         "widget": "Image",
         "key": null,
         "bounds_dp": [
-          147.5,
-          37.5,
-          98.0,
-          28.0
+          154.5,
+          35.5,
+          84.0,
+          24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
@@ -1345,11 +1345,11 @@
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
           20.0,
-          108.0,
-          48.0,
-          48.0
+          100.0,
+          40.0,
+          40.0
         ],
-        "radius": "BorderRadius.circular(16.0)",
+        "radius": "BorderRadius.circular(12.0)",
         "padding": null,
         "color": 4293784831
       },
@@ -1358,7 +1358,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          235.0,
+          217.0,
           353.0,
           48.0
         ]
@@ -1368,7 +1368,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          435.0,
+          415.0,
           353.0,
           48.0
         ]
@@ -1391,7 +1391,7 @@
           20.0,
           20.0,
           240.0,
-          64.0
+          56.0
         ],
         "radius": null,
         "padding": null,
@@ -1401,10 +1401,10 @@
         "widget": "Image",
         "key": null,
         "bounds_dp": [
-          91.0,
-          37.5,
           98.0,
-          28.0
+          35.5,
+          84.0,
+          24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
@@ -1412,12 +1412,12 @@
         "widget": "Container",
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
-          212.0,
-          108.0,
-          48.0,
-          48.0
+          220.0,
+          100.0,
+          40.0,
+          40.0
         ],
-        "radius": "BorderRadius.circular(16.0)",
+        "radius": "BorderRadius.circular(12.0)",
         "padding": null,
         "color": 4293784831
       },
@@ -1426,7 +1426,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          480.0,
+          431.0,
           240.0,
           68.0
         ]
@@ -1436,7 +1436,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          912.0,
+          815.0,
           240.0,
           68.0
         ]
@@ -1459,7 +1459,7 @@
           20.0,
           20.0,
           353.0,
-          64.0
+          56.0
         ],
         "radius": null,
         "padding": null,
@@ -1469,10 +1469,10 @@
         "widget": "Image",
         "key": null,
         "bounds_dp": [
-          147.5,
-          37.5,
-          98.0,
-          28.0
+          154.5,
+          35.5,
+          84.0,
+          24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
@@ -1481,11 +1481,11 @@
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
           20.0,
-          108.0,
-          48.0,
-          48.0
+          100.0,
+          40.0,
+          40.0
         ],
-        "radius": "BorderRadius.circular(16.0)",
+        "radius": "BorderRadius.circular(12.0)",
         "padding": null,
         "color": 4293784831
       },
@@ -1494,7 +1494,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          235.0,
+          217.0,
           353.0,
           48.0
         ]
@@ -1504,7 +1504,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          435.0,
+          415.0,
           353.0,
           48.0
         ]
@@ -1527,7 +1527,7 @@
           20.0,
           20.0,
           240.0,
-          64.0
+          56.0
         ],
         "radius": null,
         "padding": null,
@@ -1537,10 +1537,10 @@
         "widget": "Image",
         "key": null,
         "bounds_dp": [
-          91.0,
-          37.5,
           98.0,
-          28.0
+          35.5,
+          84.0,
+          24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
@@ -1548,12 +1548,12 @@
         "widget": "Container",
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
-          212.0,
-          108.0,
-          48.0,
-          48.0
+          220.0,
+          100.0,
+          40.0,
+          40.0
         ],
-        "radius": "BorderRadius.circular(16.0)",
+        "radius": "BorderRadius.circular(12.0)",
         "padding": null,
         "color": 4293784831
       },
@@ -1562,9 +1562,9 @@
         "key": null,
         "bounds_dp": [
           64.5,
-          452.5,
+          421.5,
           45.0,
-          69.0
+          61.0
         ]
       },
       {
@@ -1572,9 +1572,9 @@
         "key": null,
         "bounds_dp": [
           117.0,
-          452.0,
+          421.0,
           46.0,
-          70.0
+          62.0
         ]
       },
       {
@@ -1582,9 +1582,9 @@
         "key": null,
         "bounds_dp": [
           170.0,
-          452.0,
+          421.0,
           46.0,
-          70.0
+          62.0
         ]
       },
       {
@@ -1592,9 +1592,9 @@
         "key": null,
         "bounds_dp": [
           64.0,
-          534.0,
+          495.0,
           46.0,
-          70.0
+          62.0
         ]
       },
       {
@@ -1602,9 +1602,9 @@
         "key": null,
         "bounds_dp": [
           117.0,
-          534.0,
+          495.0,
           46.0,
-          70.0
+          62.0
         ]
       },
       {
@@ -1612,9 +1612,9 @@
         "key": null,
         "bounds_dp": [
           170.0,
-          534.0,
+          495.0,
           46.0,
-          70.0
+          62.0
         ]
       }
     ]
@@ -1635,7 +1635,7 @@
           20.0,
           20.0,
           353.0,
-          64.0
+          56.0
         ],
         "radius": null,
         "padding": null,
@@ -1645,10 +1645,10 @@
         "widget": "Image",
         "key": null,
         "bounds_dp": [
-          147.5,
-          37.5,
-          98.0,
-          28.0
+          154.5,
+          35.5,
+          84.0,
+          24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
@@ -1657,11 +1657,11 @@
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
           20.0,
-          108.0,
-          48.0,
-          48.0
+          100.0,
+          40.0,
+          40.0
         ],
-        "radius": "BorderRadius.circular(16.0)",
+        "radius": "BorderRadius.circular(12.0)",
         "padding": null,
         "color": 4293784831
       },
@@ -1670,7 +1670,7 @@
         "key": null,
         "bounds_dp": [
           34.0,
-          282.5,
+          265.5,
           45.0,
           51.0
         ]
@@ -1680,7 +1680,7 @@
         "key": null,
         "bounds_dp": [
           89.5,
-          282.0,
+          265.0,
           46.0,
           52.0
         ]
@@ -1690,7 +1690,7 @@
         "key": null,
         "bounds_dp": [
           145.5,
-          282.0,
+          265.0,
           46.0,
           52.0
         ]
@@ -1700,7 +1700,7 @@
         "key": null,
         "bounds_dp": [
           201.5,
-          282.0,
+          265.0,
           46.0,
           52.0
         ]
@@ -1710,7 +1710,7 @@
         "key": null,
         "bounds_dp": [
           257.5,
-          282.0,
+          265.0,
           46.0,
           52.0
         ]
@@ -1720,7 +1720,7 @@
         "key": null,
         "bounds_dp": [
           313.5,
-          282.0,
+          265.0,
           46.0,
           52.0
         ]
@@ -1743,7 +1743,7 @@
           20.0,
           20.0,
           240.0,
-          64.0
+          56.0
         ],
         "radius": null,
         "padding": null,
@@ -1753,10 +1753,10 @@
         "widget": "Image",
         "key": null,
         "bounds_dp": [
-          91.0,
-          37.5,
           98.0,
-          28.0
+          35.5,
+          84.0,
+          24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
@@ -1764,12 +1764,12 @@
         "widget": "Container",
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
-          212.0,
-          108.0,
-          48.0,
-          48.0
+          220.0,
+          100.0,
+          40.0,
+          40.0
         ],
-        "radius": "BorderRadius.circular(16.0)",
+        "radius": "BorderRadius.circular(12.0)",
         "padding": null,
         "color": 4293784831
       },
@@ -1778,9 +1778,9 @@
         "key": null,
         "bounds_dp": [
           64.5,
-          547.5,
+          481.5,
           45.0,
-          69.0
+          61.0
         ]
       },
       {
@@ -1788,9 +1788,9 @@
         "key": null,
         "bounds_dp": [
           117.0,
-          547.0,
+          481.0,
           46.0,
-          70.0
+          62.0
         ]
       },
       {
@@ -1798,9 +1798,9 @@
         "key": null,
         "bounds_dp": [
           170.0,
-          547.0,
+          481.0,
           46.0,
-          70.0
+          62.0
         ]
       },
       {
@@ -1808,9 +1808,9 @@
         "key": null,
         "bounds_dp": [
           64.0,
-          629.0,
+          555.0,
           46.0,
-          70.0
+          62.0
         ]
       },
       {
@@ -1818,9 +1818,9 @@
         "key": null,
         "bounds_dp": [
           117.0,
-          629.0,
+          555.0,
           46.0,
-          70.0
+          62.0
         ]
       },
       {
@@ -1828,9 +1828,9 @@
         "key": null,
         "bounds_dp": [
           170.0,
-          629.0,
+          555.0,
           46.0,
-          70.0
+          62.0
         ]
       }
     ]
@@ -1851,7 +1851,7 @@
           20.0,
           20.0,
           353.0,
-          64.0
+          56.0
         ],
         "radius": null,
         "padding": null,
@@ -1861,10 +1861,10 @@
         "widget": "Image",
         "key": null,
         "bounds_dp": [
-          147.5,
-          37.5,
-          98.0,
-          28.0
+          154.5,
+          35.5,
+          84.0,
+          24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
@@ -1873,11 +1873,11 @@
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
           20.0,
-          108.0,
-          48.0,
-          48.0
+          100.0,
+          40.0,
+          40.0
         ],
-        "radius": "BorderRadius.circular(16.0)",
+        "radius": "BorderRadius.circular(12.0)",
         "padding": null,
         "color": 4293784831
       },
@@ -1886,7 +1886,7 @@
         "key": null,
         "bounds_dp": [
           34.0,
-          282.5,
+          265.5,
           45.0,
           51.0
         ]
@@ -1896,7 +1896,7 @@
         "key": null,
         "bounds_dp": [
           89.5,
-          282.0,
+          265.0,
           46.0,
           52.0
         ]
@@ -1906,7 +1906,7 @@
         "key": null,
         "bounds_dp": [
           145.5,
-          282.0,
+          265.0,
           46.0,
           52.0
         ]
@@ -1916,7 +1916,7 @@
         "key": null,
         "bounds_dp": [
           201.5,
-          282.0,
+          265.0,
           46.0,
           52.0
         ]
@@ -1926,7 +1926,7 @@
         "key": null,
         "bounds_dp": [
           257.5,
-          282.0,
+          265.0,
           46.0,
           52.0
         ]
@@ -1936,7 +1936,7 @@
         "key": null,
         "bounds_dp": [
           313.5,
-          282.0,
+          265.0,
           46.0,
           52.0
         ]
@@ -1959,7 +1959,7 @@
           20.0,
           20.0,
           240.0,
-          64.0
+          56.0
         ],
         "radius": null,
         "padding": null,
@@ -1969,10 +1969,10 @@
         "widget": "Image",
         "key": null,
         "bounds_dp": [
-          91.0,
-          37.5,
           98.0,
-          28.0
+          35.5,
+          84.0,
+          24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
@@ -1980,12 +1980,12 @@
         "widget": "Container",
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
-          212.0,
-          108.0,
-          48.0,
-          48.0
+          220.0,
+          100.0,
+          40.0,
+          40.0
         ],
-        "radius": "BorderRadius.circular(16.0)",
+        "radius": "BorderRadius.circular(12.0)",
         "padding": null,
         "color": 4293784831
       },
@@ -1994,9 +1994,9 @@
         "key": null,
         "bounds_dp": [
           64.5,
-          567.5,
+          523.5,
           45.0,
-          69.0
+          61.0
         ]
       },
       {
@@ -2004,9 +2004,9 @@
         "key": null,
         "bounds_dp": [
           117.0,
-          567.0,
+          523.0,
           46.0,
-          70.0
+          62.0
         ]
       },
       {
@@ -2014,9 +2014,9 @@
         "key": null,
         "bounds_dp": [
           170.0,
-          567.0,
+          523.0,
           46.0,
-          70.0
+          62.0
         ]
       },
       {
@@ -2024,9 +2024,9 @@
         "key": null,
         "bounds_dp": [
           64.0,
-          649.0,
+          597.0,
           46.0,
-          70.0
+          62.0
         ]
       },
       {
@@ -2034,9 +2034,9 @@
         "key": null,
         "bounds_dp": [
           117.0,
-          649.0,
+          597.0,
           46.0,
-          70.0
+          62.0
         ]
       },
       {
@@ -2044,9 +2044,9 @@
         "key": null,
         "bounds_dp": [
           170.0,
-          649.0,
+          597.0,
           46.0,
-          70.0
+          62.0
         ]
       }
     ]
@@ -2067,7 +2067,7 @@
           20.0,
           20.0,
           353.0,
-          64.0
+          56.0
         ],
         "radius": null,
         "padding": null,
@@ -2077,10 +2077,10 @@
         "widget": "Image",
         "key": null,
         "bounds_dp": [
-          147.5,
-          37.5,
-          98.0,
-          28.0
+          154.5,
+          35.5,
+          84.0,
+          24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
@@ -2089,11 +2089,11 @@
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
           20.0,
-          108.0,
-          48.0,
-          48.0
+          100.0,
+          40.0,
+          40.0
         ],
-        "radius": "BorderRadius.circular(16.0)",
+        "radius": "BorderRadius.circular(12.0)",
         "padding": null,
         "color": 4293784831
       },
@@ -2102,7 +2102,7 @@
         "key": null,
         "bounds_dp": [
           34.0,
-          282.5,
+          265.5,
           45.0,
           51.0
         ]
@@ -2112,7 +2112,7 @@
         "key": null,
         "bounds_dp": [
           89.5,
-          282.0,
+          265.0,
           46.0,
           52.0
         ]
@@ -2122,7 +2122,7 @@
         "key": null,
         "bounds_dp": [
           145.5,
-          282.0,
+          265.0,
           46.0,
           52.0
         ]
@@ -2132,7 +2132,7 @@
         "key": null,
         "bounds_dp": [
           201.5,
-          282.0,
+          265.0,
           46.0,
           52.0
         ]
@@ -2142,7 +2142,7 @@
         "key": null,
         "bounds_dp": [
           257.5,
-          282.0,
+          265.0,
           46.0,
           52.0
         ]
@@ -2152,7 +2152,7 @@
         "key": null,
         "bounds_dp": [
           313.5,
-          282.0,
+          265.0,
           46.0,
           52.0
         ]
@@ -2175,7 +2175,7 @@
           20.0,
           20.0,
           240.0,
-          64.0
+          56.0
         ],
         "radius": null,
         "padding": null,
@@ -2185,49 +2185,23 @@
         "widget": "Image",
         "key": null,
         "bounds_dp": [
-          91.0,
-          37.5,
           98.0,
-          28.0
+          35.5,
+          84.0,
+          24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
       {
         "widget": "Container",
-        "key": "[<'signup-progress-0'>]",
-        "bounds_dp": [
-          20.0,
-          108.0,
-          240.0,
-          68.0
-        ],
-        "radius": "BorderRadius.circular(14.0)",
-        "padding": "EdgeInsets.all(12.0)",
-        "color": 4293784831
-      },
-      {
-        "widget": "Container",
-        "key": "[<'signup-progress-1'>]",
-        "bounds_dp": [
-          20.0,
-          184.0,
-          240.0,
-          68.0
-        ],
-        "radius": "BorderRadius.circular(14.0)",
-        "padding": "EdgeInsets.all(12.0)",
-        "color": 4294967295
-      },
-      {
-        "widget": "Container",
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
-          212.0,
-          276.0,
-          48.0,
-          48.0
+          220.0,
+          100.0,
+          40.0,
+          40.0
         ],
-        "radius": "BorderRadius.circular(16.0)",
+        "radius": "BorderRadius.circular(12.0)",
         "padding": null,
         "color": 4293784831
       },
@@ -2236,7 +2210,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          576.0,
+          329.0,
           240.0,
           68.0
         ]
@@ -2246,7 +2220,27 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          710.0,
+          458.0,
+          240.0,
+          68.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          20.0,
+          587.0,
+          240.0,
+          68.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          20.0,
+          965.0,
           240.0,
           68.0
         ]
@@ -2269,7 +2263,7 @@
           20.0,
           20.0,
           353.0,
-          64.0
+          56.0
         ],
         "radius": null,
         "padding": null,
@@ -2279,49 +2273,23 @@
         "widget": "Image",
         "key": null,
         "bounds_dp": [
-          147.5,
-          37.5,
-          98.0,
-          28.0
+          154.5,
+          35.5,
+          84.0,
+          24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
-      },
-      {
-        "widget": "Container",
-        "key": "[<'signup-progress-0'>]",
-        "bounds_dp": [
-          202.5,
-          108.0,
-          170.5,
-          56.0
-        ],
-        "radius": "BorderRadius.circular(14.0)",
-        "padding": "EdgeInsets.all(12.0)",
-        "color": 4293784831
-      },
-      {
-        "widget": "Container",
-        "key": "[<'signup-progress-1'>]",
-        "bounds_dp": [
-          20.0,
-          108.0,
-          170.5,
-          56.0
-        ],
-        "radius": "BorderRadius.circular(14.0)",
-        "padding": "EdgeInsets.all(12.0)",
-        "color": 4294967295
       },
       {
         "widget": "Container",
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
           20.0,
-          188.0,
-          48.0,
-          48.0
+          100.0,
+          40.0,
+          40.0
         ],
-        "radius": "BorderRadius.circular(16.0)",
+        "radius": "BorderRadius.circular(12.0)",
         "padding": null,
         "color": 4293784831
       },
@@ -2330,7 +2298,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          315.0,
+          217.0,
           353.0,
           48.0
         ]
@@ -2340,7 +2308,27 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          408.0,
+          307.0,
+          353.0,
+          48.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          20.0,
+          397.0,
+          353.0,
+          48.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          20.0,
+          589.0,
           353.0,
           48.0
         ]
@@ -2363,7 +2351,7 @@
           20.0,
           20.0,
           240.0,
-          64.0
+          56.0
         ],
         "radius": null,
         "padding": null,
@@ -2373,49 +2361,23 @@
         "widget": "Image",
         "key": null,
         "bounds_dp": [
-          91.0,
-          37.5,
           98.0,
-          28.0
+          35.5,
+          84.0,
+          24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
       {
         "widget": "Container",
-        "key": "[<'signup-progress-0'>]",
-        "bounds_dp": [
-          20.0,
-          108.0,
-          240.0,
-          68.0
-        ],
-        "radius": "BorderRadius.circular(14.0)",
-        "padding": "EdgeInsets.all(12.0)",
-        "color": 4293784831
-      },
-      {
-        "widget": "Container",
-        "key": "[<'signup-progress-1'>]",
-        "bounds_dp": [
-          20.0,
-          184.0,
-          240.0,
-          68.0
-        ],
-        "radius": "BorderRadius.circular(14.0)",
-        "padding": "EdgeInsets.all(12.0)",
-        "color": 4294967295
-      },
-      {
-        "widget": "Container",
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
-          212.0,
-          276.0,
-          48.0,
-          48.0
+          220.0,
+          100.0,
+          40.0,
+          40.0
         ],
-        "radius": "BorderRadius.circular(16.0)",
+        "radius": "BorderRadius.circular(12.0)",
         "padding": null,
         "color": 4293784831
       },
@@ -2424,7 +2386,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          648.0,
+          431.0,
           240.0,
           68.0
         ]
@@ -2434,7 +2396,27 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          782.0,
+          560.0,
+          240.0,
+          68.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          20.0,
+          689.0,
+          240.0,
+          68.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          20.0,
+          1106.0,
           240.0,
           68.0
         ]
@@ -2457,7 +2439,7 @@
           20.0,
           20.0,
           353.0,
-          64.0
+          56.0
         ],
         "radius": null,
         "padding": null,
@@ -2467,49 +2449,23 @@
         "widget": "Image",
         "key": null,
         "bounds_dp": [
-          147.5,
-          37.5,
-          98.0,
-          28.0
+          154.5,
+          35.5,
+          84.0,
+          24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
-      },
-      {
-        "widget": "Container",
-        "key": "[<'signup-progress-0'>]",
-        "bounds_dp": [
-          202.5,
-          108.0,
-          170.5,
-          56.0
-        ],
-        "radius": "BorderRadius.circular(14.0)",
-        "padding": "EdgeInsets.all(12.0)",
-        "color": 4293784831
-      },
-      {
-        "widget": "Container",
-        "key": "[<'signup-progress-1'>]",
-        "bounds_dp": [
-          20.0,
-          108.0,
-          170.5,
-          56.0
-        ],
-        "radius": "BorderRadius.circular(14.0)",
-        "padding": "EdgeInsets.all(12.0)",
-        "color": 4294967295
       },
       {
         "widget": "Container",
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
           20.0,
-          188.0,
-          48.0,
-          48.0
+          100.0,
+          40.0,
+          40.0
         ],
-        "radius": "BorderRadius.circular(16.0)",
+        "radius": "BorderRadius.circular(12.0)",
         "padding": null,
         "color": 4293784831
       },
@@ -2518,7 +2474,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          315.0,
+          217.0,
           353.0,
           48.0
         ]
@@ -2528,7 +2484,555 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          408.0,
+          307.0,
+          353.0,
+          48.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          20.0,
+          397.0,
+          353.0,
+          48.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          20.0,
+          589.0,
+          353.0,
+          48.0
+        ]
+      }
+    ]
+  },
+  {
+    "section": "signup-filled",
+    "locale": "ar",
+    "width": 280.0,
+    "height": 852,
+    "textScale": 2.0,
+    "dpr": 2.0,
+    "screenshot": "images/signup-filled-ar-280-2x.png",
+    "components": [
+      {
+        "widget": "Container",
+        "key": "[<'auth-app-bar'>]",
+        "bounds_dp": [
+          20.0,
+          20.0,
+          240.0,
+          56.0
+        ],
+        "radius": null,
+        "padding": null,
+        "color": null
+      },
+      {
+        "widget": "Image",
+        "key": null,
+        "bounds_dp": [
+          98.0,
+          35.5,
+          84.0,
+          24.0
+        ],
+        "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
+      },
+      {
+        "widget": "Container",
+        "key": "[<'auth-intro-icon'>]",
+        "bounds_dp": [
+          220.0,
+          100.0,
+          40.0,
+          40.0
+        ],
+        "radius": "BorderRadius.circular(12.0)",
+        "padding": null,
+        "color": 4293784831
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          20.0,
+          329.0,
+          240.0,
+          68.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          20.0,
+          458.0,
+          240.0,
+          68.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          20.0,
+          587.0,
+          240.0,
+          68.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          20.0,
+          965.0,
+          240.0,
+          68.0
+        ]
+      }
+    ]
+  },
+  {
+    "section": "signup-filled",
+    "locale": "ar",
+    "width": 393.0,
+    "height": 852,
+    "textScale": 1.0,
+    "dpr": 3.0,
+    "screenshot": "images/signup-filled-ar-393.png",
+    "components": [
+      {
+        "widget": "Container",
+        "key": "[<'auth-app-bar'>]",
+        "bounds_dp": [
+          20.0,
+          20.0,
+          353.0,
+          56.0
+        ],
+        "radius": null,
+        "padding": null,
+        "color": null
+      },
+      {
+        "widget": "Image",
+        "key": null,
+        "bounds_dp": [
+          154.5,
+          35.5,
+          84.0,
+          24.0
+        ],
+        "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
+      },
+      {
+        "widget": "Container",
+        "key": "[<'auth-intro-icon'>]",
+        "bounds_dp": [
+          20.0,
+          100.0,
+          40.0,
+          40.0
+        ],
+        "radius": "BorderRadius.circular(12.0)",
+        "padding": null,
+        "color": 4293784831
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          20.0,
+          217.0,
+          353.0,
+          48.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          20.0,
+          307.0,
+          353.0,
+          48.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          20.0,
+          397.0,
+          353.0,
+          48.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          20.0,
+          589.0,
+          353.0,
+          48.0
+        ]
+      }
+    ]
+  },
+  {
+    "section": "signup-filled",
+    "locale": "ckb",
+    "width": 280.0,
+    "height": 852,
+    "textScale": 2.0,
+    "dpr": 2.0,
+    "screenshot": "images/signup-filled-ckb-280-2x.png",
+    "components": [
+      {
+        "widget": "Container",
+        "key": "[<'auth-app-bar'>]",
+        "bounds_dp": [
+          20.0,
+          20.0,
+          240.0,
+          56.0
+        ],
+        "radius": null,
+        "padding": null,
+        "color": null
+      },
+      {
+        "widget": "Image",
+        "key": null,
+        "bounds_dp": [
+          98.0,
+          35.5,
+          84.0,
+          24.0
+        ],
+        "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
+      },
+      {
+        "widget": "Container",
+        "key": "[<'auth-intro-icon'>]",
+        "bounds_dp": [
+          220.0,
+          100.0,
+          40.0,
+          40.0
+        ],
+        "radius": "BorderRadius.circular(12.0)",
+        "padding": null,
+        "color": 4293784831
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          20.0,
+          431.0,
+          240.0,
+          68.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          20.0,
+          560.0,
+          240.0,
+          68.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          20.0,
+          689.0,
+          240.0,
+          68.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          20.0,
+          1149.0,
+          240.0,
+          68.0
+        ]
+      }
+    ]
+  },
+  {
+    "section": "signup-filled",
+    "locale": "ckb",
+    "width": 393.0,
+    "height": 852,
+    "textScale": 1.0,
+    "dpr": 3.0,
+    "screenshot": "images/signup-filled-ckb-393.png",
+    "components": [
+      {
+        "widget": "Container",
+        "key": "[<'auth-app-bar'>]",
+        "bounds_dp": [
+          20.0,
+          20.0,
+          353.0,
+          56.0
+        ],
+        "radius": null,
+        "padding": null,
+        "color": null
+      },
+      {
+        "widget": "Image",
+        "key": null,
+        "bounds_dp": [
+          154.5,
+          35.5,
+          84.0,
+          24.0
+        ],
+        "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
+      },
+      {
+        "widget": "Container",
+        "key": "[<'auth-intro-icon'>]",
+        "bounds_dp": [
+          20.0,
+          100.0,
+          40.0,
+          40.0
+        ],
+        "radius": "BorderRadius.circular(12.0)",
+        "padding": null,
+        "color": 4293784831
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          20.0,
+          217.0,
+          353.0,
+          48.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          20.0,
+          307.0,
+          353.0,
+          48.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          20.0,
+          397.0,
+          353.0,
+          48.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          20.0,
+          589.0,
+          353.0,
+          48.0
+        ]
+      }
+    ]
+  },
+  {
+    "section": "signup-filled",
+    "locale": "kmr",
+    "width": 280.0,
+    "height": 852,
+    "textScale": 2.0,
+    "dpr": 2.0,
+    "screenshot": "images/signup-filled-kmr-280-2x.png",
+    "components": [
+      {
+        "widget": "Container",
+        "key": "[<'auth-app-bar'>]",
+        "bounds_dp": [
+          20.0,
+          20.0,
+          240.0,
+          56.0
+        ],
+        "radius": null,
+        "padding": null,
+        "color": null
+      },
+      {
+        "widget": "Image",
+        "key": null,
+        "bounds_dp": [
+          98.0,
+          35.5,
+          84.0,
+          24.0
+        ],
+        "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
+      },
+      {
+        "widget": "Container",
+        "key": "[<'auth-intro-icon'>]",
+        "bounds_dp": [
+          220.0,
+          100.0,
+          40.0,
+          40.0
+        ],
+        "radius": "BorderRadius.circular(12.0)",
+        "padding": null,
+        "color": 4293784831
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          20.0,
+          371.0,
+          240.0,
+          68.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          20.0,
+          500.0,
+          240.0,
+          68.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          20.0,
+          629.0,
+          240.0,
+          68.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          20.0,
+          1007.0,
+          240.0,
+          68.0
+        ]
+      }
+    ]
+  },
+  {
+    "section": "signup-filled",
+    "locale": "kmr",
+    "width": 393.0,
+    "height": 852,
+    "textScale": 1.0,
+    "dpr": 3.0,
+    "screenshot": "images/signup-filled-kmr-393.png",
+    "components": [
+      {
+        "widget": "Container",
+        "key": "[<'auth-app-bar'>]",
+        "bounds_dp": [
+          20.0,
+          20.0,
+          353.0,
+          56.0
+        ],
+        "radius": null,
+        "padding": null,
+        "color": null
+      },
+      {
+        "widget": "Image",
+        "key": null,
+        "bounds_dp": [
+          154.5,
+          35.5,
+          84.0,
+          24.0
+        ],
+        "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
+      },
+      {
+        "widget": "Container",
+        "key": "[<'auth-intro-icon'>]",
+        "bounds_dp": [
+          20.0,
+          100.0,
+          40.0,
+          40.0
+        ],
+        "radius": "BorderRadius.circular(12.0)",
+        "padding": null,
+        "color": 4293784831
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          20.0,
+          217.0,
+          353.0,
+          48.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          20.0,
+          307.0,
+          353.0,
+          48.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          20.0,
+          397.0,
+          353.0,
+          48.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          20.0,
+          589.0,
           353.0,
           48.0
         ]
@@ -2551,7 +3055,7 @@
           20.0,
           20.0,
           240.0,
-          64.0
+          56.0
         ],
         "radius": null,
         "padding": null,
@@ -2561,49 +3065,23 @@
         "widget": "Image",
         "key": null,
         "bounds_dp": [
-          91.0,
-          37.5,
           98.0,
-          28.0
+          35.5,
+          84.0,
+          24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
       },
       {
         "widget": "Container",
-        "key": "[<'signup-progress-0'>]",
-        "bounds_dp": [
-          20.0,
-          108.0,
-          240.0,
-          68.0
-        ],
-        "radius": "BorderRadius.circular(14.0)",
-        "padding": "EdgeInsets.all(12.0)",
-        "color": 4293784831
-      },
-      {
-        "widget": "Container",
-        "key": "[<'signup-progress-1'>]",
-        "bounds_dp": [
-          20.0,
-          184.0,
-          240.0,
-          68.0
-        ],
-        "radius": "BorderRadius.circular(14.0)",
-        "padding": "EdgeInsets.all(12.0)",
-        "color": 4294967295
-      },
-      {
-        "widget": "Container",
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
-          212.0,
-          276.0,
-          48.0,
-          48.0
+          220.0,
+          100.0,
+          40.0,
+          40.0
         ],
-        "radius": "BorderRadius.circular(16.0)",
+        "radius": "BorderRadius.circular(12.0)",
         "padding": null,
         "color": 4293784831
       },
@@ -2612,7 +3090,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          648.0,
+          371.0,
           240.0,
           68.0
         ]
@@ -2622,7 +3100,27 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          782.0,
+          500.0,
+          240.0,
+          68.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          20.0,
+          629.0,
+          240.0,
+          68.0
+        ]
+      },
+      {
+        "widget": "TextField",
+        "key": null,
+        "bounds_dp": [
+          20.0,
+          1007.0,
           240.0,
           68.0
         ]
@@ -2645,7 +3143,7 @@
           20.0,
           20.0,
           353.0,
-          64.0
+          56.0
         ],
         "radius": null,
         "padding": null,
@@ -2655,49 +3153,23 @@
         "widget": "Image",
         "key": null,
         "bounds_dp": [
-          147.5,
-          37.5,
-          98.0,
-          28.0
+          154.5,
+          35.5,
+          84.0,
+          24.0
         ],
         "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
-      },
-      {
-        "widget": "Container",
-        "key": "[<'signup-progress-0'>]",
-        "bounds_dp": [
-          202.5,
-          108.0,
-          170.5,
-          56.0
-        ],
-        "radius": "BorderRadius.circular(14.0)",
-        "padding": "EdgeInsets.all(12.0)",
-        "color": 4293784831
-      },
-      {
-        "widget": "Container",
-        "key": "[<'signup-progress-1'>]",
-        "bounds_dp": [
-          20.0,
-          108.0,
-          170.5,
-          56.0
-        ],
-        "radius": "BorderRadius.circular(14.0)",
-        "padding": "EdgeInsets.all(12.0)",
-        "color": 4294967295
       },
       {
         "widget": "Container",
         "key": "[<'auth-intro-icon'>]",
         "bounds_dp": [
           20.0,
-          188.0,
-          48.0,
-          48.0
+          100.0,
+          40.0,
+          40.0
         ],
-        "radius": "BorderRadius.circular(16.0)",
+        "radius": "BorderRadius.circular(12.0)",
         "padding": null,
         "color": 4293784831
       },
@@ -2706,7 +3178,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          315.0,
+          217.0,
           353.0,
           48.0
         ]
@@ -2716,185 +3188,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          408.0,
-          353.0,
-          48.0
-        ]
-      }
-    ]
-  },
-  {
-    "section": "signup-security",
-    "locale": "ar",
-    "width": 280.0,
-    "height": 852,
-    "textScale": 2.0,
-    "dpr": 2.0,
-    "screenshot": "images/signup-security-ar-280-2x.png",
-    "components": [
-      {
-        "widget": "Container",
-        "key": "[<'auth-app-bar'>]",
-        "bounds_dp": [
-          20.0,
-          20.0,
-          240.0,
-          64.0
-        ],
-        "radius": null,
-        "padding": null,
-        "color": null
-      },
-      {
-        "widget": "Image",
-        "key": null,
-        "bounds_dp": [
-          91.0,
-          37.5,
-          98.0,
-          28.0
-        ],
-        "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
-      },
-      {
-        "widget": "Container",
-        "key": "[<'signup-progress-0'>]",
-        "bounds_dp": [
-          20.0,
-          108.0,
-          240.0,
-          68.0
-        ],
-        "radius": "BorderRadius.circular(14.0)",
-        "padding": "EdgeInsets.all(12.0)",
-        "color": 4294967295
-      },
-      {
-        "widget": "Container",
-        "key": "[<'signup-progress-1'>]",
-        "bounds_dp": [
-          20.0,
-          184.0,
-          240.0,
-          68.0
-        ],
-        "radius": "BorderRadius.circular(14.0)",
-        "padding": "EdgeInsets.all(12.0)",
-        "color": 4293784831
-      },
-      {
-        "widget": "Container",
-        "key": "[<'auth-intro-icon'>]",
-        "bounds_dp": [
-          212.0,
-          276.0,
-          48.0,
-          48.0
-        ],
-        "radius": "BorderRadius.circular(16.0)",
-        "padding": null,
-        "color": 4293784831
-      },
-      {
-        "widget": "TextField",
-        "key": null,
-        "bounds_dp": [
-          20.0,
-          531.0,
-          240.0,
-          68.0
-        ]
-      },
-      {
-        "widget": "TextField",
-        "key": null,
-        "bounds_dp": [
-          20.0,
-          917.0,
-          240.0,
-          68.0
-        ]
-      }
-    ]
-  },
-  {
-    "section": "signup-security",
-    "locale": "ar",
-    "width": 393.0,
-    "height": 852,
-    "textScale": 1.0,
-    "dpr": 3.0,
-    "screenshot": "images/signup-security-ar-393.png",
-    "components": [
-      {
-        "widget": "Container",
-        "key": "[<'auth-app-bar'>]",
-        "bounds_dp": [
-          20.0,
-          20.0,
-          353.0,
-          64.0
-        ],
-        "radius": null,
-        "padding": null,
-        "color": null
-      },
-      {
-        "widget": "Image",
-        "key": null,
-        "bounds_dp": [
-          147.5,
-          37.5,
-          98.0,
-          28.0
-        ],
-        "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
-      },
-      {
-        "widget": "Container",
-        "key": "[<'signup-progress-0'>]",
-        "bounds_dp": [
-          202.5,
-          108.0,
-          170.5,
-          56.0
-        ],
-        "radius": "BorderRadius.circular(14.0)",
-        "padding": "EdgeInsets.all(12.0)",
-        "color": 4294967295
-      },
-      {
-        "widget": "Container",
-        "key": "[<'signup-progress-1'>]",
-        "bounds_dp": [
-          20.0,
-          108.0,
-          170.5,
-          56.0
-        ],
-        "radius": "BorderRadius.circular(14.0)",
-        "padding": "EdgeInsets.all(12.0)",
-        "color": 4293784831
-      },
-      {
-        "widget": "Container",
-        "key": "[<'auth-intro-icon'>]",
-        "bounds_dp": [
-          20.0,
-          188.0,
-          48.0,
-          48.0
-        ],
-        "radius": "BorderRadius.circular(16.0)",
-        "padding": null,
-        "color": 4293784831
-      },
-      {
-        "widget": "TextField",
-        "key": null,
-        "bounds_dp": [
-          20.0,
-          315.0,
+          307.0,
           353.0,
           48.0
         ]
@@ -2904,185 +3198,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          511.0,
-          353.0,
-          48.0
-        ]
-      }
-    ]
-  },
-  {
-    "section": "signup-security",
-    "locale": "ckb",
-    "width": 280.0,
-    "height": 852,
-    "textScale": 2.0,
-    "dpr": 2.0,
-    "screenshot": "images/signup-security-ckb-280-2x.png",
-    "components": [
-      {
-        "widget": "Container",
-        "key": "[<'auth-app-bar'>]",
-        "bounds_dp": [
-          20.0,
-          20.0,
-          240.0,
-          64.0
-        ],
-        "radius": null,
-        "padding": null,
-        "color": null
-      },
-      {
-        "widget": "Image",
-        "key": null,
-        "bounds_dp": [
-          91.0,
-          37.5,
-          98.0,
-          28.0
-        ],
-        "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
-      },
-      {
-        "widget": "Container",
-        "key": "[<'signup-progress-0'>]",
-        "bounds_dp": [
-          20.0,
-          108.0,
-          240.0,
-          68.0
-        ],
-        "radius": "BorderRadius.circular(14.0)",
-        "padding": "EdgeInsets.all(12.0)",
-        "color": 4294967295
-      },
-      {
-        "widget": "Container",
-        "key": "[<'signup-progress-1'>]",
-        "bounds_dp": [
-          20.0,
-          184.0,
-          240.0,
-          68.0
-        ],
-        "radius": "BorderRadius.circular(14.0)",
-        "padding": "EdgeInsets.all(12.0)",
-        "color": 4293784831
-      },
-      {
-        "widget": "Container",
-        "key": "[<'auth-intro-icon'>]",
-        "bounds_dp": [
-          212.0,
-          276.0,
-          48.0,
-          48.0
-        ],
-        "radius": "BorderRadius.circular(16.0)",
-        "padding": null,
-        "color": 4293784831
-      },
-      {
-        "widget": "TextField",
-        "key": null,
-        "bounds_dp": [
-          20.0,
-          648.0,
-          240.0,
-          68.0
-        ]
-      },
-      {
-        "widget": "TextField",
-        "key": null,
-        "bounds_dp": [
-          20.0,
-          1076.0,
-          240.0,
-          68.0
-        ]
-      }
-    ]
-  },
-  {
-    "section": "signup-security",
-    "locale": "ckb",
-    "width": 393.0,
-    "height": 852,
-    "textScale": 1.0,
-    "dpr": 3.0,
-    "screenshot": "images/signup-security-ckb-393.png",
-    "components": [
-      {
-        "widget": "Container",
-        "key": "[<'auth-app-bar'>]",
-        "bounds_dp": [
-          20.0,
-          20.0,
-          353.0,
-          64.0
-        ],
-        "radius": null,
-        "padding": null,
-        "color": null
-      },
-      {
-        "widget": "Image",
-        "key": null,
-        "bounds_dp": [
-          147.5,
-          37.5,
-          98.0,
-          28.0
-        ],
-        "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
-      },
-      {
-        "widget": "Container",
-        "key": "[<'signup-progress-0'>]",
-        "bounds_dp": [
-          202.5,
-          108.0,
-          170.5,
-          56.0
-        ],
-        "radius": "BorderRadius.circular(14.0)",
-        "padding": "EdgeInsets.all(12.0)",
-        "color": 4294967295
-      },
-      {
-        "widget": "Container",
-        "key": "[<'signup-progress-1'>]",
-        "bounds_dp": [
-          20.0,
-          108.0,
-          170.5,
-          56.0
-        ],
-        "radius": "BorderRadius.circular(14.0)",
-        "padding": "EdgeInsets.all(12.0)",
-        "color": 4293784831
-      },
-      {
-        "widget": "Container",
-        "key": "[<'auth-intro-icon'>]",
-        "bounds_dp": [
-          20.0,
-          188.0,
-          48.0,
-          48.0
-        ],
-        "radius": "BorderRadius.circular(16.0)",
-        "padding": null,
-        "color": 4293784831
-      },
-      {
-        "widget": "TextField",
-        "key": null,
-        "bounds_dp": [
-          20.0,
-          315.0,
+          397.0,
           353.0,
           48.0
         ]
@@ -3092,195 +3208,7 @@
         "key": null,
         "bounds_dp": [
           20.0,
-          511.0,
-          353.0,
-          48.0
-        ]
-      }
-    ]
-  },
-  {
-    "section": "signup-security",
-    "locale": "kmr",
-    "width": 280.0,
-    "height": 852,
-    "textScale": 2.0,
-    "dpr": 2.0,
-    "screenshot": "images/signup-security-kmr-280-2x.png",
-    "components": [
-      {
-        "widget": "Container",
-        "key": "[<'auth-app-bar'>]",
-        "bounds_dp": [
-          20.0,
-          20.0,
-          240.0,
-          64.0
-        ],
-        "radius": null,
-        "padding": null,
-        "color": null
-      },
-      {
-        "widget": "Image",
-        "key": null,
-        "bounds_dp": [
-          91.0,
-          37.5,
-          98.0,
-          28.0
-        ],
-        "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
-      },
-      {
-        "widget": "Container",
-        "key": "[<'signup-progress-0'>]",
-        "bounds_dp": [
-          20.0,
-          108.0,
-          240.0,
-          68.0
-        ],
-        "radius": "BorderRadius.circular(14.0)",
-        "padding": "EdgeInsets.all(12.0)",
-        "color": 4294967295
-      },
-      {
-        "widget": "Container",
-        "key": "[<'signup-progress-1'>]",
-        "bounds_dp": [
-          20.0,
-          184.0,
-          240.0,
-          68.0
-        ],
-        "radius": "BorderRadius.circular(14.0)",
-        "padding": "EdgeInsets.all(12.0)",
-        "color": 4293784831
-      },
-      {
-        "widget": "Container",
-        "key": "[<'auth-intro-icon'>]",
-        "bounds_dp": [
-          212.0,
-          276.0,
-          48.0,
-          48.0
-        ],
-        "radius": "BorderRadius.circular(16.0)",
-        "padding": null,
-        "color": 4293784831
-      },
-      {
-        "widget": "TextField",
-        "key": null,
-        "bounds_dp": [
-          20.0,
-          648.0,
-          240.0,
-          68.0
-        ]
-      },
-      {
-        "widget": "TextField",
-        "key": null,
-        "bounds_dp": [
-          20.0,
-          1076.0,
-          240.0,
-          68.0
-        ]
-      }
-    ]
-  },
-  {
-    "section": "signup-security",
-    "locale": "kmr",
-    "width": 393.0,
-    "height": 852,
-    "textScale": 1.0,
-    "dpr": 3.0,
-    "screenshot": "images/signup-security-kmr-393.png",
-    "components": [
-      {
-        "widget": "Container",
-        "key": "[<'auth-app-bar'>]",
-        "bounds_dp": [
-          20.0,
-          20.0,
-          353.0,
-          64.0
-        ],
-        "radius": null,
-        "padding": null,
-        "color": null
-      },
-      {
-        "widget": "Image",
-        "key": null,
-        "bounds_dp": [
-          147.5,
-          37.5,
-          98.0,
-          28.0
-        ],
-        "image": "AssetImage(bundle: null, name: \"assets/images/proxo_logo.png\")"
-      },
-      {
-        "widget": "Container",
-        "key": "[<'signup-progress-0'>]",
-        "bounds_dp": [
-          202.5,
-          108.0,
-          170.5,
-          56.0
-        ],
-        "radius": "BorderRadius.circular(14.0)",
-        "padding": "EdgeInsets.all(12.0)",
-        "color": 4294967295
-      },
-      {
-        "widget": "Container",
-        "key": "[<'signup-progress-1'>]",
-        "bounds_dp": [
-          20.0,
-          108.0,
-          170.5,
-          56.0
-        ],
-        "radius": "BorderRadius.circular(14.0)",
-        "padding": "EdgeInsets.all(12.0)",
-        "color": 4293784831
-      },
-      {
-        "widget": "Container",
-        "key": "[<'auth-intro-icon'>]",
-        "bounds_dp": [
-          20.0,
-          188.0,
-          48.0,
-          48.0
-        ],
-        "radius": "BorderRadius.circular(16.0)",
-        "padding": null,
-        "color": 4293784831
-      },
-      {
-        "widget": "TextField",
-        "key": null,
-        "bounds_dp": [
-          20.0,
-          315.0,
-          353.0,
-          48.0
-        ]
-      },
-      {
-        "widget": "TextField",
-        "key": null,
-        "bounds_dp": [
-          20.0,
-          511.0,
+          589.0,
           353.0,
           48.0
         ]

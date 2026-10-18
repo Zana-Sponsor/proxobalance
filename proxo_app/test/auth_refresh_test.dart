@@ -1,6 +1,12 @@
+import 'support/memory_auth_storage.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:ui' as ui;
+import 'package:http/http.dart' as http;
+import 'package:http/testing.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:proxo_app/screens/auth/auth_service.dart';
+import 'package:proxo_app/screens/auth/otp_screen.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -114,57 +120,85 @@ void main() {
   }
 
   testWidgets(
-    'signup validates identity before security and Back preserves fields',
-    (t) async {
-      await t.pumpWidget(host(const AuthShell()));
-      await settle(t);
-      final link = find.byWidgetPredicate(
-        (w) => w is AuthTextLink && w.label == AuthStrings.noAccountAction,
-      );
-      await t.ensureVisible(link);
-      await t.tap(link);
-      await settle(t);
-      final fields = find.byType(TextField);
-      expect(fields, findsNWidgets(2));
-      await t.enterText(fields.at(0), 'Fixture User');
-      await t.enterText(fields.at(1), '123');
-      await t.pump();
-      final next = find.byKey(const ValueKey('signup-next'));
-      await t.ensureVisible(next);
-      await t.tap(next);
-      await settle(t);
-      expect(
-        find.byWidgetPredicate(
-          (w) => w is AuthTitle && w.text == AuthStrings.signUpTitle,
-        ),
-        findsOneWidget,
-      );
-      await t.enterText(fields.at(1), '7500000001');
-      await t.pump();
-      await t.ensureVisible(next);
-      await t.tap(next);
-      await settle(t);
-      expect(
-        find.byWidgetPredicate(
-          (w) => w is AuthTitle && w.text == AuthStrings.signupSecurityTitle,
-        ),
-        findsOneWidget,
-      );
-      expect(fields, findsNWidgets(2));
-      await t.binding.handlePopRoute();
-      await settle(t);
-      expect(
-        t.widget<TextField>(fields.at(0)).controller!.text,
-        'Fixture User',
-      );
-      expect(t.widget<TextField>(fields.at(1)).controller!.text, '7500000001');
-      expect(t.takeException(), isNull);
-      await t.pumpWidget(const SizedBox());
-    },
-  );
+      'single signup form validates email, opens separate OTP and Back retains values',
+      (t) async {
+    final requests = <http.Request>[];
+    final transport = MockClient((request) async {
+      requests.add(request);
+      expect(request.url.host, 'signup-fixture.invalid');
+      expect(request.url.path, '/auth/v1/signup');
+      return http.Response(
+          jsonEncode({
+            'id': '00000000-0000-4000-8000-000000000088',
+            'aud': 'authenticated',
+            'role': 'authenticated',
+            'email': 'fixture@example.com',
+            'created_at': '2026-10-18T12:00:00Z',
+            'app_metadata': {},
+            'user_metadata': {},
+          }),
+          200,
+          headers: {'content-type': 'application/json'});
+    });
+    final client = (await t.runAsync(() async => SupabaseClient(
+        'https://signup-fixture.invalid', 'fixture-key',
+        httpClient: transport,
+        authOptions: AuthClientOptions(
+            autoRefreshToken: false, pkceAsyncStorage: MemoryAuthStorage()))))!;
+    final service = AuthService(
+        supabase: client,
+        emailOtpUrl: 'https://unused.invalid',
+        whatsappOtpUrl: 'https://unused.invalid',
+        httpClient: transport);
+    await t.pumpWidget(host(AuthShell(authService: service)));
+    await settle(t);
+    final link = find.byWidgetPredicate(
+        (w) => w is AuthTextLink && w.label == AuthStrings.noAccountAction);
+    await t.ensureVisible(link);
+    await t.tap(link);
+    await settle(t);
+    final fields = find.byType(TextField);
+    expect(fields, findsNWidgets(4));
+    expect(find.byType(OtpScreen), findsNothing);
+    await t.enterText(fields.at(0), 'Fixture User');
+    await t.enterText(fields.at(1), 'invalid-email');
+    await t.enterText(fields.at(2), 'Strong#123');
+    await t.enterText(fields.at(3), 'Strong#123');
+    await t.pump();
+    final submit = find.byKey(const ValueKey('signup-submit'));
+    expect(t.widget<AuthPrimaryButton>(submit).enabled, isFalse);
+    expect(requests, isEmpty);
+    await t.enterText(fields.at(1), ' Fixture@Example.com ');
+    await t.pump();
+    expect(t.widget<AuthPrimaryButton>(submit).enabled, isTrue);
+    await t.ensureVisible(submit);
+    await t.runAsync(() async {
+      await t.tap(submit);
+    });
+    await settle(t);
+    expect(find.byType(OtpScreen), findsOneWidget);
+    expect(find.byKey(const ValueKey('signup-submit')), findsNothing);
+    expect(requests, hasLength(1));
+    expect(jsonDecode(requests.single.body)['email'], 'fixture@example.com');
+    await t.binding.handlePopRoute();
+    await settle(t);
+    expect(fields, findsNWidgets(4));
+    expect(find.byType(OtpScreen), findsNothing);
+    expect(t.widget<TextField>(fields.at(0)).controller!.text, 'Fixture User');
+    expect(t.widget<TextField>(fields.at(1)).controller!.text,
+        'fixture@example.com');
+    expect(t.widget<TextField>(fields.at(2)).controller!.text, 'Strong#123');
+    expect(t.widget<TextField>(fields.at(3)).controller!.text, 'Strong#123');
+    expect(t.takeException(), isNull);
+    await t.pumpWidget(const SizedBox());
+    await t.runAsync(() async {
+      service.close();
+      await client.dispose();
+    });
+  });
 
   testWidgets(
-    'signup language menu preserves details and the validated next step',
+    'signup language menu preserves all fields in one form',
     (t) async {
       ProxoLocale.current.value = ProxoLocale.kurdishSorani;
       await t.pumpWidget(host(const AuthShell()));
@@ -176,7 +210,9 @@ void main() {
       await t.tap(signup);
       await settle(t);
       await t.enterText(find.byType(TextField).at(0), 'Fixture User');
-      await t.enterText(find.byType(TextField).at(1), '7500000001');
+      await t.enterText(find.byType(TextField).at(1), 'fixture@example.com');
+      await t.enterText(find.byType(TextField).at(2), 'Strong#123');
+      await t.enterText(find.byType(TextField).at(3), 'Strong#123');
       await t.ensureVisible(find.byType(AuthLanguageSelector));
       await t.tap(find.byType(AuthLanguageSelector));
       await t.pumpAndSettle();
@@ -189,18 +225,14 @@ void main() {
       );
       expect(
         t.widget<TextField>(find.byType(TextField).at(1)).controller!.text,
-        '7500000001',
+        'fixture@example.com',
       );
-      final next = find.byKey(const ValueKey('signup-next'));
-      await t.ensureVisible(next);
-      await t.tap(next);
-      await settle(t);
-      expect(
-        find.byWidgetPredicate(
-          (w) => w is AuthTitle && w.text == AuthStrings.signupSecurityTitle,
-        ),
-        findsOneWidget,
-      );
+      expect(find.byType(TextField), findsNWidgets(4));
+      expect(t.widget<TextField>(find.byType(TextField).at(2)).controller!.text,
+          'Strong#123');
+      expect(t.widget<TextField>(find.byType(TextField).at(3)).controller!.text,
+          'Strong#123');
+      expect(find.byType(OtpScreen), findsNothing);
       expect(t.takeException(), isNull);
       await t.pumpWidget(const SizedBox());
       ProxoLocale.current.value = ProxoLocale.kurdishSorani;

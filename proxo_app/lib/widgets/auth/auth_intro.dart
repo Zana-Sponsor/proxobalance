@@ -24,11 +24,11 @@ class AuthIntro extends StatelessWidget {
       height: AuthTokens.introIconSize,
       decoration: BoxDecoration(
         color: AuthTokens.accentSoft,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(color: AuthTokens.accentLine),
       ),
       alignment: Alignment.center,
-      child: AuthIcon(icon, size: 24),
+      child: AuthIcon(icon, size: 20),
     );
     return Padding(
       padding: const EdgeInsets.only(bottom: AuthTokens.gapSubtitleToForm),

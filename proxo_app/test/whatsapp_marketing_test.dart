@@ -81,8 +81,10 @@ void main() {
     String part(Object value) =>
         base64Url.encode(utf8.encode(jsonEncode(value))).replaceAll('=', '');
     const owner = '11111111-1111-4111-8111-111111111111';
-    final token =
-        '${part({'alg': 'HS256'})}.${part({'sub': owner, 'exp': DateTime.now().millisecondsSinceEpoch ~/ 1000 + 86400})}.fixture';
+    final token = '${part({'alg': 'HS256'})}.${part({
+          'sub': owner,
+          'exp': DateTime.now().millisecondsSinceEpoch ~/ 1000 + 86400
+        })}.fixture';
     await client.auth.recoverSession(
       jsonEncode(
         Session(
@@ -118,24 +120,24 @@ void main() {
   });
 
   Widget host(Widget child, {double scale = 1}) => MaterialApp(
-    debugShowCheckedModeBanner: false,
-    locale: const Locale('ar'),
-    supportedLocales: const [Locale('ar')],
-    localizationsDelegates: const [
-      GlobalMaterialLocalizations.delegate,
-      GlobalWidgetsLocalizations.delegate,
-      GlobalCupertinoLocalizations.delegate,
-    ],
-    theme: ThemeData(fontFamily: kAppFont, useMaterial3: true),
-    builder: (context, child) => ProxoLocaleScope(
-      child: MediaQuery(
-        data: MediaQuery.of(context)
-            .copyWith(textScaler: TextScaler.linear(scale)),
-        child: child!,
-      ),
-    ),
-    home: child,
-  );
+        debugShowCheckedModeBanner: false,
+        locale: const Locale('ar'),
+        supportedLocales: const [Locale('ar')],
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        theme: ThemeData(fontFamily: kAppFont, useMaterial3: true),
+        builder: (context, child) => ProxoLocaleScope(
+          child: MediaQuery(
+            data: MediaQuery.of(context)
+                .copyWith(textScaler: TextScaler.linear(scale)),
+            child: child!,
+          ),
+        ),
+        home: child,
+      );
   Future<void> settle(WidgetTester t) async {
     await t.runAsync(() async {
       await Future<void>.delayed(const Duration(milliseconds: 30));
@@ -186,7 +188,7 @@ void main() {
     },
   );
   testWidgets(
-    'signup starts unchecked and remains ready without marketing consent',
+    'email signup does not ask for phone marketing consent',
     (t) async {
       await t.pumpWidget(host(const AuthShell()));
       await settle(t);
@@ -197,37 +199,18 @@ void main() {
       await t.tap(link);
       await settle(t);
       final fields = find.byType(TextField);
+      expect(fields, findsNWidgets(4));
       await t.enterText(fields.at(0), 'Fixture User');
-      await t.enterText(fields.at(1), '7500000001');
+      await t.enterText(fields.at(1), 'fixture@example.com');
+      await t.enterText(fields.at(2), 'Example#9');
+      await t.enterText(fields.at(3), 'Example#9');
       await t.pump();
-      await t.ensureVisible(find.byKey(const ValueKey('signup-next')));
-      await t.tap(find.byKey(const ValueKey('signup-next')));
-      await settle(t);
-      expect(
-        t.widget<CheckboxListTile>(find.byType(CheckboxListTile)).value,
-        false,
-      );
-      for (final field in [0, 1]) {
-        await t.enterText(fields.at(field), 'Example#9');
-      }
-      await t.pump();
-      final button = find.byWidgetPredicate(
-        (w) => w is AuthPrimaryButton && w.label == AuthStrings.signUpButton,
-      );
+      expect(find.byType(CheckboxListTile), findsNothing);
+      expect(find.byType(AuthWhatsappConsent), findsNothing);
+      final button = find.byKey(const ValueKey('signup-submit'));
       expect(t.widget<AuthPrimaryButton>(button).enabled, true);
-      await t.ensureVisible(find.byType(CheckboxListTile));
-      await t.tap(find.byType(CheckboxListTile));
-      await t.pump();
-      expect(
-        t.widget<CheckboxListTile>(find.byType(CheckboxListTile)).value,
-        true,
-      );
-      expect(t.widget<AuthPrimaryButton>(button).enabled, true);
-      expect(
-        requests,
-        isEmpty,
-        reason: 'Toggling never sends a WhatsApp message',
-      );
+      expect(requests, isEmpty,
+          reason: 'Entering email details sends no WhatsApp request');
       await t.pumpWidget(const SizedBox());
       await t.pump();
     },

@@ -88,16 +88,15 @@ class AuthLanguageSelector extends StatelessWidget {
             constraints: const BoxConstraints(minHeight: 48, minWidth: 48),
             padding: const EdgeInsetsDirectional.symmetric(horizontal: 12),
             decoration: BoxDecoration(
-              color: AuthTokens.fieldFill,
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: AuthTokens.line),
+              color: Colors.transparent,
+              borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 const AuthIcon(
                   'language_outline',
-                  size: 22,
+                  size: 20,
                   color: AuthTokens.ink,
                 ),
                 if (!compact) ...[
@@ -121,10 +120,10 @@ class AuthLanguageSelector extends StatelessWidget {
   }
 
   String _languageName(Locale locale) => switch (locale.languageCode) {
-    'ar' => 'العربية',
-    'kmr' => 'کوردی بادینی',
-    _ => 'کوردی سۆرانی',
-  };
+        'ar' => 'العربية',
+        'kmr' => 'کوردی بادینی',
+        _ => 'کوردی سۆرانی',
+      };
 }
 
 /// Keep whole words intact at narrow widths while retaining the user's text
@@ -135,29 +134,29 @@ class AuthTitle extends StatelessWidget {
   final TextAlign textAlign;
   @override
   Widget build(BuildContext context) => LayoutBuilder(
-    builder: (context, constraints) {
-      var style = AuthTokens.title;
-      final scaler = MediaQuery.textScalerOf(context);
-      for (var pass = 0; pass < 4; pass++) {
-        var widest = 0.0;
-        for (final word in text.split(RegExp(r'\s+'))) {
-          final painter = TextPainter(
-            text: TextSpan(text: word, style: style),
-            textDirection: TextDirection.rtl,
-            textScaler: scaler,
-          )..layout();
-          if (painter.width > widest) widest = painter.width;
-          painter.dispose();
-        }
-        if (widest <= constraints.maxWidth || widest == 0) break;
-        style = style.copyWith(
-          fontSize: style.fontSize! * constraints.maxWidth / widest,
-        );
-      }
-      return Semantics(
-        header: true,
-        child: ProxoText(text, textAlign: textAlign, style: style),
+        builder: (context, constraints) {
+          var style = AuthTokens.title;
+          final scaler = MediaQuery.textScalerOf(context);
+          for (var pass = 0; pass < 4; pass++) {
+            var widest = 0.0;
+            for (final word in text.split(RegExp(r'\s+'))) {
+              final painter = TextPainter(
+                text: TextSpan(text: word, style: style),
+                textDirection: TextDirection.rtl,
+                textScaler: scaler,
+              )..layout();
+              if (painter.width > widest) widest = painter.width;
+              painter.dispose();
+            }
+            if (widest <= constraints.maxWidth || widest == 0) break;
+            style = style.copyWith(
+              fontSize: style.fontSize! * constraints.maxWidth / widest,
+            );
+          }
+          return Semantics(
+            header: true,
+            child: ProxoText(text, textAlign: textAlign, style: style),
+          );
+        },
       );
-    },
-  );
 }

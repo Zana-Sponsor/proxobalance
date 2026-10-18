@@ -5,15 +5,17 @@
   "flutter_version": "3.47.2",
   "dart_version": "3.13.2",
   "visual_cases_passed": 42,
-  "behavior_tests_passed": 30,
+  "behavior_tests_passed": 44,
+  "core_behavior_tests_passed": 35,
+  "marketing_regression_tests_passed": 9,
   "screenshots_including_scroll_bottoms": 57,
-  "captured_render_objects": 2298,
+  "captured_render_objects": 2523,
   "captured_exceptions": 0,
   "paragraphs_exceeding_max_lines": 0,
   "analyzer": {
     "errors": 0,
     "warnings": 3,
-    "infos": 23,
+    "infos": 25,
     "notes": "Warnings are in unchanged auth_shell logic: one unnecessary cast and two visible-for-testing calls."
   },
   "source_sha256": {
@@ -29,20 +31,25 @@
     "proxo_app/assets/icons/auth/security_outline.svg": "6d51368f23b99d196bd15c0dd38b687a55668cf6fc4681e2351f5277e8d706e5",
     "proxo_app/assets/icons/auth/signin_outline.svg": "1798e3b2962dfba2a91c07c3af6316e77a0c7d74b73111e08d0cea67ab19e3af",
     "proxo_app/assets/icons/auth/verification_outline.svg": "68d69ba5a9cc75ff2e36cf77d47ce7f0dcda985827032265452003f92948276d",
-    "proxo_app/l10n/messages.tsv": "443835123c6ae08aa5d2faddebd0f7f829f222cb0abd000dc52f0cfe71c55b81",
     "proxo_app/lib/l10n/proxo_messages.dart": "f43b778015390ae6336d6127f0ad3b2bbbe25ec99623319f328b9903c00f6b7e",
-    "proxo_app/lib/screens/auth/auth_shell.dart": "547ebfaa6a89c44aa223d7657a97b5f05462c1d68cd7926f3c7ef85b672002b7",
+    "proxo_app/lib/screens/auth/auth_service.dart": "6038581d6a0ebd8a4c848d54a1b4950e682a050089efdbdfb1515d4194ff03da",
+    "proxo_app/lib/screens/auth/auth_shell.dart": "e67e664e478892935820a7a8547ad685d92869e7d3722b456e8059c29b2ac625",
     "proxo_app/lib/screens/auth/login_screen.dart": "9140cc01ce0ab37176b7be14c32f4d99465f144f7dc2916fc3a3b25ee7bad845",
     "proxo_app/lib/screens/auth/otp_screen.dart": "23c6654e352e926f542164fa5918aceca113190edc70f4abda72bd9a550a20e7",
     "proxo_app/lib/screens/auth/recovery_screen.dart": "0377a0133dff13535cb8bc9631a43b282464d387b401a1f720df2f218bfc5f5e",
-    "proxo_app/lib/screens/auth/signup_screen.dart": "8d9548c5d53135938f7f0ac96f82ef0381a24950869aaac9992d228f72223a3c",
-    "proxo_app/lib/widgets/auth/auth_design.dart": "951c2162f37bd3564f74b179ed246fb51a267ff8350f8b6b79b484a93488ded9",
-    "proxo_app/lib/widgets/auth/auth_header.dart": "fb62137052105346f5d98c756eeebdd33f9c17e2fdd5bb2313e357ca9052bb55",
+    "proxo_app/lib/screens/auth/signup_screen.dart": "9998adde276691590e52678b7dd191a1c3737a8c15f00a483b56bb8b4f28c63d",
+    "proxo_app/lib/widgets/auth/auth_design.dart": "6135464446f0f3018c6ffe12d19209b310649b476de16b3a1af398ced545cb95",
+    "proxo_app/lib/widgets/auth/auth_header.dart": "a831b8483269cdab154a34e6893dea3dfb37245a8fd61f913f6a9a8c57ba9b99",
     "proxo_app/lib/widgets/auth/auth_icon.dart": "00f4552af727eaffd4871cb69d7d87c3c40ec8d8b560c2aafef5f3004a95e0ea",
-    "proxo_app/lib/widgets/auth/auth_intro.dart": "a446662dc3078b318d82996aa1f7065377422cca078262f3a1624d35a65157e3",
-    "proxo_app/lib/widgets/auth/auth_logo.dart": "38cc2dcfb30a324465b16c06ac03167e9bd276f407d96ce87aea7b76fe463aca",
-    "proxo_app/lib/widgets/auth/auth_widgets.dart": "43df0ac863e47621dd8d128e589e46e9fbb84d898d17a10a8b822c4cde4276a6",
-    "proxo_app/test/auth_refresh_test.dart": "c91583b18ad88f2aca81f79ad10d6f1c44d8a584850dddc46de7a4d7332ee197"
+    "proxo_app/lib/widgets/auth/auth_intro.dart": "8b6ad0a6398cac3ca5f6eeefea5e5a6854d5a0eb8f7938bc5f52a22e475367ba",
+    "proxo_app/lib/widgets/auth/auth_widgets.dart": "e48add038defe9270573c8b673595ddeed1d617c40778eb9ade901ddea64e9a4",
+    "proxo_app/test/auth_phone_flow_test.dart": "6f2325581ced9a51cc240d05160bd8837a28c88b02eaf5c5c62af3460217dec8",
+    "proxo_app/test/auth_refresh_test.dart": "f842cd09d0508005e82e65407a9d102587950cafc2275f40d8042c27f2758c09",
+    "proxo_app/test/polish_capture_test.dart": "ade1f5950fc0c98b141b00282d4dd1505af87c8d692e46fd5c170b7b43341bd2",
+    "proxo_app/test/whatsapp_marketing_test.dart": "41b788ce67f9b91e71798efabe2bd42558ecd7de26f7d754bc6959ef243483fe",
+    "proxo_app/supabase/templates/confirm-signup.html": "d6948dda8486a06d187541dfc6bcb34f6335a284ab8210a98f562e808544f2bb",
+    "proxo_app/test/auth_email_signup_test.dart": "89a3ce6db9731f4658b32aa85508db62a85af3cba02eb082b733d1c0adf3ff30",
+    "proxo_app/test/support/memory_auth_storage.dart": "488b57222b29c3aff57a3f1f1d824f6ae52bf6555789f881291e2dbc24add9a0"
   },
   "screenshots": [
     {
@@ -53,7 +60,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/forgot-ar-280-2x.png",
-      "screenshot_sha256": "c5c88844c0bbbf9b395d9bcb8ee27bba8ed0a5b84ca73bab721208590779106d",
+      "screenshot_sha256": "62b3f8c63cd56fd3cd28195d4f790a70e6069dddd1bf7fbab880556c372961bf",
       "position": "top"
     },
     {
@@ -64,7 +71,7 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/forgot-ar-393.png",
-      "screenshot_sha256": "a06e1f2989011931d89d5b9a9809dc4d3965f553c30ad1eadc3b8a1e0f30399a",
+      "screenshot_sha256": "0086889b4f3dde1706e311d67e78d591ad105d4d4508351007f773fc9f76fff1",
       "position": "top"
     },
     {
@@ -75,7 +82,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/forgot-ckb-280-2x.png",
-      "screenshot_sha256": "aeb1d2ab2746bdfd05c84b9e7a8bc8d07ba9105fc97934be826378125c9d7834",
+      "screenshot_sha256": "aede21443f64edaf4bc5685a94a907c3e9b70a461e7b9705d23f2cef78f249f7",
       "position": "top"
     },
     {
@@ -86,7 +93,7 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/forgot-ckb-393.png",
-      "screenshot_sha256": "ae54d8b53a52efff970a19d13b606953065c51a0e0d61ed26192860a9cc549c5",
+      "screenshot_sha256": "eb19b09e106e80c4a90f193db8b4f74033a16fcc42f5a0a43ab552f7954ee0a0",
       "position": "top"
     },
     {
@@ -97,7 +104,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/forgot-kmr-280-2x.png",
-      "screenshot_sha256": "2fb80d058800087e9b0de8b85a330e5f0868536a15731fa0cd4d3404c125c525",
+      "screenshot_sha256": "2d43437c008518572f9b73e15c43ef9c6dcc2e7ab36ac99ba61997e326008684",
       "position": "top"
     },
     {
@@ -108,7 +115,7 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/forgot-kmr-393.png",
-      "screenshot_sha256": "d11f754b47dfb2b61efb9c41102407c206efe9a1191b9fb756724932a6d65255",
+      "screenshot_sha256": "4751d475c5335f953e3654ba9927e8df152b67da6c8eaccfbe2bf46cfa7a7389",
       "position": "top"
     },
     {
@@ -119,7 +126,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/login-ar-280-2x-bottom.png",
-      "screenshot_sha256": "a4d967140cc97ce7f758835c6f98e8b2d0c6442a6394d6d54ffc84eff605ab41",
+      "screenshot_sha256": "2b05ee3ef07e77e3665a336dbecc0eca50470a04d6f2b7bdd41193af3e871a29",
       "position": "bottom"
     },
     {
@@ -130,7 +137,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/login-ar-280-2x.png",
-      "screenshot_sha256": "a33a1f0a24effc9ee144253c8fb0a7c955159c52c94fe0aaf07d7715d43da3aa",
+      "screenshot_sha256": "361efbc228383cf3b615a22d475ef3cdd0dc863e577c1cb006993d86c7f83ae7",
       "position": "top"
     },
     {
@@ -141,7 +148,7 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/login-ar-393.png",
-      "screenshot_sha256": "aac1985214c47d11f6718eb861c7fbbabf5063c58fe8cfc20f98e00297aa1f33",
+      "screenshot_sha256": "81279bc3877c22e41fe0680c4bf4cbd891255c12500844b9c392895c1703d386",
       "position": "top"
     },
     {
@@ -152,7 +159,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/login-ckb-280-2x-bottom.png",
-      "screenshot_sha256": "f70afbef0853db077dd12e6aa580b66b1dfd08bcc4194cc407c04908fe6023bc",
+      "screenshot_sha256": "a73bd8a035366925863b47b09c4b089013d1efaa64e5d2b05e791c8c295b8dda",
       "position": "bottom"
     },
     {
@@ -163,7 +170,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/login-ckb-280-2x.png",
-      "screenshot_sha256": "72f7c2528497272426e88af656b2bacea0a8b938d23e43e1c3f7d62076e675d1",
+      "screenshot_sha256": "bff0c753c8d1fe72f2f78500e212e1d5928140d9bb85a39c2b234eecc95a5304",
       "position": "top"
     },
     {
@@ -174,7 +181,7 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/login-ckb-393.png",
-      "screenshot_sha256": "9bab402f7841602c9b2973d4e4697efcc324b14f23639f28288105dcbcaffc5d",
+      "screenshot_sha256": "d4c9d41bf32a6fc27aa75f19b1c153361fcb41ecd2bc0c79554d67256c9cd97d",
       "position": "top"
     },
     {
@@ -185,7 +192,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/login-kmr-280-2x-bottom.png",
-      "screenshot_sha256": "df8033f82e6b0b53b6fe8a7207a2114d84d8ea677ec0ab9715b18bc7b58bdd46",
+      "screenshot_sha256": "aebec903be389b25c23864247466a9c7d0496d0ec14e1ea2d7b3323fcff2d9b0",
       "position": "bottom"
     },
     {
@@ -196,7 +203,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/login-kmr-280-2x.png",
-      "screenshot_sha256": "d86b2e76c45f81a761addaf7239a980a132958bbcb263e09364330da11b6e74d",
+      "screenshot_sha256": "f88e78cd4483551e60027d45e003de0abe1f9bafef025ca96bd03cc3df68a958",
       "position": "top"
     },
     {
@@ -207,7 +214,7 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/login-kmr-393.png",
-      "screenshot_sha256": "34583306d170df28ac9796f4e146287a0470c80e82474c02d29dfbb99cbfc28d",
+      "screenshot_sha256": "c68fd96f6fd5ccf7ee7b41037a9c8ed00c5086b43e946012de7ba62fb48cf93a",
       "position": "top"
     },
     {
@@ -229,7 +236,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/login-phone-ar-280-2x.png",
-      "screenshot_sha256": "1afa7b0aafcc725228df9add51ff9d8ba7b29d9d4cc1817d020ba8c8b345a1a1",
+      "screenshot_sha256": "72b9399361fd69541d827473ebcb3d793512909026aa3bd6d8f3387813a740ec",
       "position": "top"
     },
     {
@@ -240,7 +247,7 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/login-phone-ar-393.png",
-      "screenshot_sha256": "378cfc625dd5bd720df73b978dda922d844d23c2f43a528c63495e08874fe955",
+      "screenshot_sha256": "df7240d260a103588f215b3a552647ce759fbc1be665fb9466028c1804d0c58c",
       "position": "top"
     },
     {
@@ -262,7 +269,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/login-phone-ckb-280-2x.png",
-      "screenshot_sha256": "814ad38b1b59ec845019ac69fc86944e42d0d20c08ce776b2660eaa6e589bbbb",
+      "screenshot_sha256": "30948d98e96b8589a54fc3ac3d4f15245b888211c32af7fa7670854d8671b461",
       "position": "top"
     },
     {
@@ -273,7 +280,7 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/login-phone-ckb-393.png",
-      "screenshot_sha256": "28cc65b81a3bbe5b7826aaab9b7d4fa79fd98f0f63b3ecb7e287dc0ab575bbfe",
+      "screenshot_sha256": "6c17f28cc9f4afb135027abff02bae5cdd5ddcd6688865fb7fbf332c3e4c5024",
       "position": "top"
     },
     {
@@ -295,7 +302,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/login-phone-kmr-280-2x.png",
-      "screenshot_sha256": "762d2c9868c32e8c5645e37929fef1e66a705cd0d09635c847692ced775c92ed",
+      "screenshot_sha256": "c1e0588432d3aed96b2ad271c74c45b00004ce844947ce2e44b31b87f8c1a98d",
       "position": "top"
     },
     {
@@ -306,7 +313,7 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/login-phone-kmr-393.png",
-      "screenshot_sha256": "89727425da2c3a734c45f2f815358f05b1f6e61309ff9510a6f9852a0bd74e81",
+      "screenshot_sha256": "6f295ff416d3fcba8c3e4964b56af03f33cdcc19ad3e577a2f6c3d6e716e8428",
       "position": "top"
     },
     {
@@ -317,7 +324,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/new-password-ar-280-2x-bottom.png",
-      "screenshot_sha256": "75ac319394332d0bd215d11153709a74270407d2b76cc334a3395f14e4fb60f3",
+      "screenshot_sha256": "959754aa2b1ec4459cb5968a48bea27d6112aa3e0c57ae930f1e2eca1ca68229",
       "position": "bottom"
     },
     {
@@ -328,7 +335,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/new-password-ar-280-2x.png",
-      "screenshot_sha256": "a47219d9aeb6b8e2d4d1edbb23e0d4d180b458b4c6f373e358cd07e908001dfe",
+      "screenshot_sha256": "6a0e899b69b9177fa7649385111a14486090b82a88e80f6e1903b060213d9940",
       "position": "top"
     },
     {
@@ -339,7 +346,7 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/new-password-ar-393.png",
-      "screenshot_sha256": "2fe962c094c2c09e38a39e5798c45c8400e133fe30793f9f8aba7be4dd128dab",
+      "screenshot_sha256": "fd1483a8add10ffd76bc741602489786a231be47a58a30b338d6ba1f7cf8c17b",
       "position": "top"
     },
     {
@@ -350,7 +357,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/new-password-ckb-280-2x-bottom.png",
-      "screenshot_sha256": "753cedc781a26b8685775bf5ef416e826d39529a808b8e0fef4f7346189e6585",
+      "screenshot_sha256": "75321731966051681b25f67157c4fba7c57385aba44db69eae9007fc460dd3f0",
       "position": "bottom"
     },
     {
@@ -361,7 +368,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/new-password-ckb-280-2x.png",
-      "screenshot_sha256": "6e1097d70dc2d458c5914ebe748e331d318bcf8d4ab15cf11d882b99c71ddf82",
+      "screenshot_sha256": "9e9e539a7fbf9f654b31059070ce4e3e8a3c1294e5a96fdb2e9ca852de1218ef",
       "position": "top"
     },
     {
@@ -372,7 +379,7 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/new-password-ckb-393.png",
-      "screenshot_sha256": "6e7d2b2f54cfaecd333651aa68bb8a8107f2e664d2b00ea0b294d46692b8c1ee",
+      "screenshot_sha256": "07260c52f6d8d81adb5ff76aaa9914da7deff6fa19ef01e7416e3d54440f9b69",
       "position": "top"
     },
     {
@@ -383,7 +390,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/new-password-kmr-280-2x-bottom.png",
-      "screenshot_sha256": "cb15c4ed1a35ff3dc53d11bbfedad4602f0caaf4168b8bcc54785f4536849445",
+      "screenshot_sha256": "d82e9719443ca780cd5f828f042abc5fd6eaa735618bc9b9a9b48d26fe757640",
       "position": "bottom"
     },
     {
@@ -394,7 +401,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/new-password-kmr-280-2x.png",
-      "screenshot_sha256": "4ac6f918f5db8c9b288f28f251f5997aa639aa395d8904c5e335a8dfe45f2e4d",
+      "screenshot_sha256": "02102c594c52751a5003a0e618d1bf80e06389b39e007c542012ea7be52a40e8",
       "position": "top"
     },
     {
@@ -405,7 +412,7 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/new-password-kmr-393.png",
-      "screenshot_sha256": "faa8bf729fcb0368fbdcbe7c0119d7dcef74372637bf8640df531eb368dcbaf9",
+      "screenshot_sha256": "d4fc93269cb1c95031d1f74004ac8b63d48f5efb9c480a563211faf3e0c01f6f",
       "position": "top"
     },
     {
@@ -416,7 +423,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/otp-ar-280-2x.png",
-      "screenshot_sha256": "3a3431fc2e0cb7c76b0fba20641a199691f48c8f0720440f36313a68375f3722",
+      "screenshot_sha256": "43b9612a04037460372565cc10b7f22ffd37df1ea0c741ba3f00823a65ac989d",
       "position": "top"
     },
     {
@@ -427,7 +434,7 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/otp-ar-393.png",
-      "screenshot_sha256": "66395319c6e8f4abec73204fa3f5222aab2e0d3dab3b2d808a22dc1ba930e925",
+      "screenshot_sha256": "39ca30bdfe16b9842eef9f0ab9c6b25f33e821092c0a42586e45c2937c3fcb35",
       "position": "top"
     },
     {
@@ -438,7 +445,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/otp-ckb-280-2x.png",
-      "screenshot_sha256": "06c5c2c1823e5647c00ed70982d10e96384bccf8785ec0b3f01434645d8a68a0",
+      "screenshot_sha256": "32786a489c4da0cac7abc8ed2d32d79e2c373e5c912c142dc5c2026ee6908f74",
       "position": "top"
     },
     {
@@ -449,7 +456,7 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/otp-ckb-393.png",
-      "screenshot_sha256": "d1c97d93825ddf48d97d34ddb0a22ff9511194edc2ec4355c24ed300547ff272",
+      "screenshot_sha256": "1fb655122e57814f387d644fa939f9fb678b613533bcd567e9bcb683f48f9598",
       "position": "top"
     },
     {
@@ -460,7 +467,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/otp-kmr-280-2x.png",
-      "screenshot_sha256": "210cea76491602c165ed2487e5c97c96b5b5efc83574639ff1ec514250b81136",
+      "screenshot_sha256": "5ed61d73138240ee9827a5aeb0c8558a4c9d0f00a85e21976494569a29bb3aeb",
       "position": "top"
     },
     {
@@ -471,7 +478,7 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/otp-kmr-393.png",
-      "screenshot_sha256": "868dad548087f6954226a36dbea737467c7559769639619877710ca58c3d72fe",
+      "screenshot_sha256": "1d0a1cac1001c6382360baeae677b81eb4d2f597b56e73f48826786fa6457859",
       "position": "top"
     },
     {
@@ -482,7 +489,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/signup-ar-280-2x-bottom.png",
-      "screenshot_sha256": "13a86ac8811e09c317cec34c276a3eaccd4e707d9e99be710712c175255582f8",
+      "screenshot_sha256": "5cd9c12e8dba4dcb46a30820d43b859488496d7a62c2e7dd14a9cac5a9f00d23",
       "position": "bottom"
     },
     {
@@ -493,7 +500,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/signup-ar-280-2x.png",
-      "screenshot_sha256": "774f06fd0c974038dd2161a45f1d9f9c10902538101858eabb9ca3159ec9a546",
+      "screenshot_sha256": "6b7a2bcd8d177d9f778a88c21834cef8278fc7222f26eca4801aaa434a2b7559",
       "position": "top"
     },
     {
@@ -504,7 +511,7 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/signup-ar-393.png",
-      "screenshot_sha256": "1d90403ce6aaa91213b1d60bcc1b3d17085913d3ef0d050207ebe6dfee57eea3",
+      "screenshot_sha256": "cca711fc0d582682fd9f863d1da0fd2f1ffafb5a5443a240ddd24b381fe15e66",
       "position": "top"
     },
     {
@@ -515,7 +522,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/signup-ckb-280-2x-bottom.png",
-      "screenshot_sha256": "05bf935a5561abdd17b2bae017a348f1d870f79f74230064a3c21eba62a2696d",
+      "screenshot_sha256": "c916b1ab32e65c77b0befc5f2dd6816e6f0d95549ef85f81457dd270856c4aaa",
       "position": "bottom"
     },
     {
@@ -526,7 +533,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/signup-ckb-280-2x.png",
-      "screenshot_sha256": "c79c626e74cdc3010e23dee0eedec8902c388cff87fde9b50856b49fdbe56328",
+      "screenshot_sha256": "4b60d6660f7fc5110d3375bd573f76d9957ac958e9f1e32d5755dca208d990f2",
       "position": "top"
     },
     {
@@ -537,7 +544,106 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/signup-ckb-393.png",
-      "screenshot_sha256": "a62c2475c1f693cbbe565ddc843823a15cfd760af7f19d6dd3ddf90d93817f86",
+      "screenshot_sha256": "e40e9374468ed878d8b946562c07e0bf52c6240ecbaf4cd221d40b88a3e4e883",
+      "position": "top"
+    },
+    {
+      "section": "signup-filled",
+      "locale": "ar",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/signup-filled-ar-280-2x-bottom.png",
+      "screenshot_sha256": "94eb504238d909da155f83689374b2ef83978a87a29c955cef20db9dc1c87571",
+      "position": "bottom"
+    },
+    {
+      "section": "signup-filled",
+      "locale": "ar",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/signup-filled-ar-280-2x.png",
+      "screenshot_sha256": "278a91af966ebff89887d0b25676ec0ade15c82ed22fb16b9f67065df2b18087",
+      "position": "top"
+    },
+    {
+      "section": "signup-filled",
+      "locale": "ar",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/signup-filled-ar-393.png",
+      "screenshot_sha256": "f10773c2e174a761f26b35429503fc554c1db95255dc81a97aef00f3e706f3ae",
+      "position": "top"
+    },
+    {
+      "section": "signup-filled",
+      "locale": "ckb",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/signup-filled-ckb-280-2x-bottom.png",
+      "screenshot_sha256": "e40a7fbd6cf25051b24fe93cd042e913bb37909217bf33442877025d2a82f91c",
+      "position": "bottom"
+    },
+    {
+      "section": "signup-filled",
+      "locale": "ckb",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/signup-filled-ckb-280-2x.png",
+      "screenshot_sha256": "62e9e4ca62071f59d117dc2e0649762431e4f63a1525211fe10b7d948217db34",
+      "position": "top"
+    },
+    {
+      "section": "signup-filled",
+      "locale": "ckb",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/signup-filled-ckb-393.png",
+      "screenshot_sha256": "ffdd72896ac0b9ab9ae091b6bb2de96ef2ab3b4581a97596bac27576a5b2354a",
+      "position": "top"
+    },
+    {
+      "section": "signup-filled",
+      "locale": "kmr",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/signup-filled-kmr-280-2x-bottom.png",
+      "screenshot_sha256": "ccf89d857a5f4213c2e788d47836c6b8171b29e522f027d9f8205bf86e9caed2",
+      "position": "bottom"
+    },
+    {
+      "section": "signup-filled",
+      "locale": "kmr",
+      "width": 280.0,
+      "height": 852,
+      "textScale": 2.0,
+      "dpr": 2.0,
+      "screenshot": "images/signup-filled-kmr-280-2x.png",
+      "screenshot_sha256": "cff70baeb5870f6669fe16d235089fcb75914b829e6d6ace859f6e80493f2bcc",
+      "position": "top"
+    },
+    {
+      "section": "signup-filled",
+      "locale": "kmr",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
+      "screenshot": "images/signup-filled-kmr-393.png",
+      "screenshot_sha256": "b6a4519a1b96e2484edeb950d5aa93449c4f294c982cd6311944767b4028b173",
       "position": "top"
     },
     {
@@ -548,7 +654,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/signup-kmr-280-2x-bottom.png",
-      "screenshot_sha256": "1316a0ba54c52b4b64364b1b0e4f644a5879944310da35ba3335302acdb889fa",
+      "screenshot_sha256": "36b4acc7404dd9dd031a295bfc503dee9b4d389f1f4b85fc7ac3bd656014d0bb",
       "position": "bottom"
     },
     {
@@ -559,7 +665,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/signup-kmr-280-2x.png",
-      "screenshot_sha256": "33fc4dc2185ba7dfdb069b72a29e0d61af4c4ce10df07f8d56013c31d00d0ee2",
+      "screenshot_sha256": "97dfa422d9c6b0c0aa2fed1a861921bf86ae00b750c4911db1fb7f2bbbba04c0",
       "position": "top"
     },
     {
@@ -570,108 +676,8 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/signup-kmr-393.png",
-      "screenshot_sha256": "0a3270c61115a445e4cd57fe1b0cd5613b3ccdce94430a2b27b8f8475a4480de",
-      "position": "top"
-    },
-    {
-      "section": "signup-security",
-      "locale": "ar",
-      "width": 280.0,
-      "height": 852,
-      "textScale": 2.0,
-      "dpr": 2.0,
-      "screenshot": "images/signup-security-ar-280-2x-bottom.png",
-      "screenshot_sha256": "09e82740eb1101a3e9623bf8cbd2646d4f76ba81788c6d0bfcd521058b194215",
-      "position": "bottom"
-    },
-    {
-      "section": "signup-security",
-      "locale": "ar",
-      "width": 280.0,
-      "height": 852,
-      "textScale": 2.0,
-      "dpr": 2.0,
-      "screenshot": "images/signup-security-ar-280-2x.png",
-      "screenshot_sha256": "a0b30c8418b81c4a7dde81f960aa2c980299a012efe94dbb921ce88716f1059a",
-      "position": "top"
-    },
-    {
-      "section": "signup-security",
-      "locale": "ar",
-      "width": 393.0,
-      "height": 852,
-      "textScale": 1.0,
-      "dpr": 3.0,
-      "screenshot": "images/signup-security-ar-393.png",
-      "screenshot_sha256": "bb2a4bf47e2c233c5d176294d18cb14af92f48047538d0fb9f15918d185514ab",
-      "position": "top"
-    },
-    {
-      "section": "signup-security",
-      "locale": "ckb",
-      "width": 280.0,
-      "height": 852,
-      "textScale": 2.0,
-      "dpr": 2.0,
-      "screenshot": "images/signup-security-ckb-280-2x-bottom.png",
-      "screenshot_sha256": "9f0224045857ebd5dd909235532a9d0df009f296c2eb4556c67655b2ba09ad4b",
-      "position": "bottom"
-    },
-    {
-      "section": "signup-security",
-      "locale": "ckb",
-      "width": 280.0,
-      "height": 852,
-      "textScale": 2.0,
-      "dpr": 2.0,
-      "screenshot": "images/signup-security-ckb-280-2x.png",
-      "screenshot_sha256": "3880d4c6a1a50a0fd04b7416da10a2c93dbdee51c79de0c4e78af57abae325ec",
-      "position": "top"
-    },
-    {
-      "section": "signup-security",
-      "locale": "ckb",
-      "width": 393.0,
-      "height": 852,
-      "textScale": 1.0,
-      "dpr": 3.0,
-      "screenshot": "images/signup-security-ckb-393.png",
-      "screenshot_sha256": "a2c17fd7f9ac350a822b072cb9d14b72d841fd42da9bdefe3cd686dde4207310",
-      "position": "top"
-    },
-    {
-      "section": "signup-security",
-      "locale": "kmr",
-      "width": 280.0,
-      "height": 852,
-      "textScale": 2.0,
-      "dpr": 2.0,
-      "screenshot": "images/signup-security-kmr-280-2x-bottom.png",
-      "screenshot_sha256": "498d9f80359ebcd6180c33da171235dbca3408bae28f6d9052a2979a62557dcd",
-      "position": "bottom"
-    },
-    {
-      "section": "signup-security",
-      "locale": "kmr",
-      "width": 280.0,
-      "height": 852,
-      "textScale": 2.0,
-      "dpr": 2.0,
-      "screenshot": "images/signup-security-kmr-280-2x.png",
-      "screenshot_sha256": "7497b77100be919538cc0353260caaea7419a4543d5bb6974d398efb6aae592b",
-      "position": "top"
-    },
-    {
-      "section": "signup-security",
-      "locale": "kmr",
-      "width": 393.0,
-      "height": 852,
-      "textScale": 1.0,
-      "dpr": 3.0,
-      "screenshot": "images/signup-security-kmr-393.png",
-      "screenshot_sha256": "46c914472b1c4f6e1264cdc23e646f5d2526bc8bb8e6224084c7b58eae906f29",
+      "screenshot_sha256": "3267cbc3dabdd1538b8d4cd3960b6e2442c4c997afd3f59e088345db56cdf6db",
       "position": "top"
     }
-  ],
-  "toolbar_regression_cases_passed": 3
+  ]
 }

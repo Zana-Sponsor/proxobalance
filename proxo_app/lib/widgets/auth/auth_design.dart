@@ -12,8 +12,8 @@ abstract final class AuthTokens {
   static const Color accentSoft = Color(0xFFEDF4FF);
   static const Color accentLine = Color(0xFFBDD5FA);
   static const Color accentInk = Color(0xFF0759CE);
-  static const double toolbarHeight = 64;
-  static const double introIconSize = 48;
+  static const double toolbarHeight = 56;
+  static const double introIconSize = 40;
   static const double contentMaxWidth = 440;
   // ── پەلێتی ڕەنگ — تاقە سەرچاوە بۆ هەموو شاشەکانی چوونەژوورەوە ────────────
   // ⚠ پێش ئەمە هیچ ڕەنگێک لێرە نەبوو: هەر سێ فایلەکەی auth ژمارە hex-ەکانی
@@ -62,7 +62,7 @@ abstract final class AuthTokens {
   static const double gapTitleToSubtitle = 6;
   static const double gapSubtitleToForm = 24;
   static const double gapLabelToField = 6;
-  static const double gapBetweenFields = 18.0;
+  static const double gapBetweenFields = 16.0;
   static const double gapFormToForgot = 8;
   static const double gapForgotToSubmit = 18;
   static const double gapSubmitToPrompt = 16;
@@ -70,10 +70,10 @@ abstract final class AuthTokens {
   static const double gapSectionBottom = 16;
 
   // ── فۆنت و دەقەکان ────────────────────────────────────────────────────────
-  // Shared hierarchy: 24dp headings, 14dp controls, 12dp supporting copy.
+  // Shared hierarchy: 20dp headings, 14dp inputs, 13dp labels and supporting copy.
   // Text follows accessibility scaling; controls keep a 48dp minimum target.
   static const double textSize = 14;
-  static const double titleSize = 24;
+  static const double titleSize = 20;
   static const FontWeight weight = FontWeight.w400;
 
   static const TextStyle title = TextStyle(
@@ -86,7 +86,7 @@ abstract final class AuthTokens {
 
   static const TextStyle subtitle = TextStyle(
     fontFamily: fontFamily,
-    fontSize: textSize,
+    fontSize: 13,
     fontWeight: weight,
     color: inkMuted,
     height: 1.6,
@@ -102,7 +102,7 @@ abstract final class AuthTokens {
 
   static const TextStyle fieldLabel = TextStyle(
     fontFamily: fontFamily,
-    fontSize: textSize,
+    fontSize: 13,
     fontWeight: weight,
     color: ink,
     height: 1.5,
@@ -119,7 +119,7 @@ abstract final class AuthTokens {
   /// ژمێرەری دووبارەناردنەوە و دەقی یارمەتی ژێر OTP.
   static const TextStyle helper = TextStyle(
     fontFamily: fontFamily,
-    fontSize: textSize,
+    fontSize: 13,
     fontWeight: weight,
     color: inkMuted,
     height: 1.5,
@@ -141,7 +141,7 @@ abstract final class AuthTokens {
 
   static const TextStyle ruleText = TextStyle(
     fontFamily: fontFamily,
-    fontSize: textSize,
+    fontSize: 13,
     fontWeight: weight,
     height: 1.5,
   );
@@ -156,10 +156,10 @@ abstract final class AuthTokens {
 
   // ── پێوانەی کۆنتڕۆڵەکان ────────────────────────────────────────────────────
   /// Primary actions grow with text; compact icon targets remain 48dp.
-  static const double buttonHeight = 52;
+  static const double buttonHeight = 50;
   static const double controlHeight = 48;
-  static const double buttonRadius = 14;
-  static const double fieldRadius = 14;
+  static const double buttonRadius = 12;
+  static const double fieldRadius = 12;
 
   /// ⚠ ستوونی بوو 13. ئێستا 15 — لەناو مەودای 14–16، بۆیە خانەکە
   /// بەرزاییەکی ئاسوودەی هەیە بەبێ ئەوەی لە دوگمەکە قەڵەوتر بێت.
@@ -216,41 +216,33 @@ abstract final class AuthStrings {
   static String _v(String ku, String ar) => ProxoStrings.text(ku, arabic: ar);
 
   static String get whatsappConsent => _v(
-    'ڕازیم پەیامی بانگەشە لە واتساپ وەربگرم.',
-    'أوافق على تلقي الرسائل التسويقية عبر واتساب.',
-  );
+        'ڕازیم پەیامی بانگەشە لە واتساپ وەربگرم.',
+        'أوافق على تلقي الرسائل التسويقية عبر واتساب.',
+      );
   static String get whatsappConsentHint => _v(
-    'ئارەزوومەندانەیە؛ لە پڕۆفایل ناچالاک دەکرێت.',
-    'اختياري؛ يمكنك إيقافه من الملف الشخصي.',
-  );
+        'ئارەزوومەندانەیە؛ لە پڕۆفایل ناچالاک دەکرێت.',
+        'اختياري؛ يمكنك إيقافه من الملف الشخصي.',
+      );
 
   static String get signInTitle => _v('چوونەژوورەوە', 'تسجيل الدخول');
   static String get signInSubtitle => _v(
-    'بەخێر بێیتەوە. بۆ بەردەوامبوون بچۆ ژوورەوە.',
-    'مرحباً بعودتك. سجّل الدخول للمتابعة.',
-  );
+        'بەخێر بێیتەوە. بۆ بەردەوامبوون بچۆ ژوورەوە.',
+        'مرحباً بعودتك. سجّل الدخول للمتابعة.',
+      );
   static String get signUpTitle => _v('دروستکردنی هەژمار', 'إنشاء حساب');
   static String get signUpSubtitle =>
       _v('بۆ دەستپێکردن، زانیارییەکانت بنووسە.', 'أدخل معلوماتك للبدء.');
-  static String get signupSecurityTitle =>
-      _v('پاراستنی هەژمار', 'حماية الحساب');
-  static String get signupDetailsSubtitle =>
-      _v('ناو و ژمارەی مۆبایلەکەت بنووسە.', 'أدخل اسمك ورقم هاتفك.');
   static String get signupSecuritySubtitle =>
       _v('وشەی نهێنییەکی بەهێز هەڵبژێرە.', 'اختر كلمة مرور قوية.');
-  static String get signupFirstStep => _v('هەنگاوی ١ لە ٢', 'الخطوة ١ من ٢');
-  static String get signupSecondStep => _v('هەنگاوی ٢ لە ٢', 'الخطوة ٢ من ٢');
-  static String get signupDetailsStep => _v('زانیارییەکان', 'المعلومات');
-  static String get signupSecurityStep => _v('پاراستن', 'الحماية');
   static String get recoveryTitle => _v('گەڕاندنەوەی هەژمار', 'استعادة الحساب');
   static String get newPasswordTitle =>
       _v('وشەی نهێنیی نوێ', 'كلمة مرور جديدة');
   static String get resetPasswordTitle =>
       _v('گۆڕینی وشەی نهێنی', 'إعادة تعيين كلمة المرور');
   static String get resetPasswordSubtitle => _v(
-    'بۆ وەرگرتنی کۆد، ئیمەیڵەکەت بنووسە.',
-    'أدخل بريدك الإلكتروني لاستلام الرمز.',
-  );
+        'بۆ وەرگرتنی کۆد، ئیمەیڵەکەت بنووسە.',
+        'أدخل بريدك الإلكتروني لاستلام الرمز.',
+      );
 
   static String get back => _v('گەڕانەوە', 'رجوع');
 
@@ -271,32 +263,32 @@ abstract final class AuthStrings {
   static String get phoneInvalid =>
       _v('ژمارەی مۆبایل دروست نییە', 'رقم الهاتف غير صحيح');
   static String get otpSendFailed => _v(
-    'کۆدەکە نەنێردرا. تکایە دووبارە هەوڵ بدەرەوە.',
-    'تعذر إرسال الرمز. حاول مرة أخرى.',
-  );
+        'کۆدەکە نەنێردرا. تکایە دووبارە هەوڵ بدەرەوە.',
+        'تعذر إرسال الرمز. حاول مرة أخرى.',
+      );
   static String get phoneBanned => _v(
-    'ئەم هەژمارە ڕاگیراوە. پەیوەندی بە پشتگیرییەوە بکە.',
-    'هذا الحساب موقوف. تواصل مع الدعم.',
-  );
+        'ئەم هەژمارە ڕاگیراوە. پەیوەندی بە پشتگیرییەوە بکە.',
+        'هذا الحساب موقوف. تواصل مع الدعم.',
+      );
 
   /// چەند هەژمارێک هەمان ژمارەیان تۆمار کردووە. ⚠ ئەپەکە بە ئەنقەست
   /// یەکێکیان هەڵنابژێرێت — بڕوانە `ambiguous_phone` لە فەنکشنی ئێج.
   static String get phoneAmbiguous => _v(
-    'ئەم ژمارەیە بە زیاتر لە هەژمارێکەوە بەستراوە.',
-    'رقم الهاتف مرتبط بأكثر من حساب',
-  );
+        'ئەم ژمارەیە بە زیاتر لە هەژمارێکەوە بەستراوە.',
+        'رقم الهاتف مرتبط بأكثر من حساب',
+      );
   static String get phoneNotRegistered => _v(
-    'نەتوانرا بەم ژمارەیە بەردەوام بیت. زانیارییەکان بپشکنەوە.',
-    'تعذر المتابعة بهذا الرقم. تحقق من المعلومات.',
-  );
+        'نەتوانرا بەم ژمارەیە بەردەوام بیت. زانیارییەکان بپشکنەوە.',
+        'تعذر المتابعة بهذا الرقم. تحقق من المعلومات.',
+      );
   static String get phoneAlreadyRegistered => _v(
-    'ئەم ژمارەیە پێشتر تۆمارکراوە؛ تکایە بچۆ ژوورەوە',
-    'هذا الرقم مسجل مسبقاً؛ سجّل الدخول',
-  );
+        'ئەم ژمارەیە پێشتر تۆمارکراوە؛ تکایە بچۆ ژوورەوە',
+        'هذا الرقم مسجل مسبقاً؛ سجّل الدخول',
+      );
   static String get phoneNoEmail => _v(
-    'بۆ ئەم هەژمارە، تکایە بە ئیمەیڵ بچۆ ژوورەوە.',
-    'استخدم البريد الإلكتروني للدخول إلى هذا الحساب.',
-  );
+        'بۆ ئەم هەژمارە، تکایە بە ئیمەیڵ بچۆ ژوورەوە.',
+        'استخدم البريد الإلكتروني للدخول إلى هذا الحساب.',
+      );
   static const emailHint = 'example@gmail.com';
   static String get passwordLabel => _v('وشەی نهێنی', 'كلمة المرور');
   static const passwordHint = '••••••••';
@@ -353,13 +345,13 @@ abstract final class AuthStrings {
   static String get errInvalidEmail =>
       _v('ئیمەیڵێکی دروست بنووسە', 'أدخل بريداً إلكترونياً صحيحاً');
   static String get errShortPassword => _v(
-    'وشەی نهێنی دەبێت لانیکەم ٨ نووسە بێت.',
-    'يجب ألا تقل كلمة المرور عن 8 أحرف',
-  );
+        'وشەی نهێنی دەبێت لانیکەم ٨ نووسە بێت.',
+        'يجب ألا تقل كلمة المرور عن 8 أحرف',
+      );
   static String get errWeakPassword => _v(
-    'وشەی نهێنی دەبێت پیتی گەورە، ژمارە و هێمای تایبەت لەخۆ بگرێت.',
-    'يجب أن تتضمن كلمة المرور حرفاً كبيراً ورقماً ورمزاً خاصاً',
-  );
+        'وشەی نهێنی دەبێت پیتی گەورە، ژمارە و هێمای تایبەت لەخۆ بگرێت.',
+        'يجب أن تتضمن كلمة المرور حرفاً كبيراً ورقماً ورمزاً خاصاً',
+      );
   static String get errPasswordMismatch =>
       _v('وشەی نهێنییەکان یەکسان نین', 'كلمتا المرور غير متطابقتين');
   static String get errInvalidName =>
@@ -371,30 +363,30 @@ abstract final class AuthStrings {
   static String get errUserNotFound =>
       _v('زانیارییەکان دروست نین', 'تعذر التحقق من المعلومات');
   static String get errWrongPassword => _v(
-    'ئیمەیڵ یان وشەی نهێنی هەڵەیە',
-    'البريد الإلكتروني أو كلمة المرور غير صحيحة',
-  );
+        'ئیمەیڵ یان وشەی نهێنی هەڵەیە',
+        'البريد الإلكتروني أو كلمة المرور غير صحيحة',
+      );
   static String get errEmailExists => _v(
-    'نەتوانرا بەم ئیمەیڵە بەردەوام بکرێت.',
-    'تعذر المتابعة بهذا البريد الإلكتروني',
-  );
+        'نەتوانرا بەم ئیمەیڵە بەردەوام بکرێت.',
+        'تعذر المتابعة بهذا البريد الإلكتروني',
+      );
   static String get errNetwork =>
       _v('پەیوەندی بە ئینتەرنێتەوە نییە.', 'لا يوجد اتصال بالإنترنت');
   static String get errServer => _v(
-    'داواکارییەکە تەواو نەبوو. تکایە دووبارە هەوڵ بدەرەوە.',
-    'تعذر إكمال الطلب. حاول مرة أخرى.',
-  );
+        'داواکارییەکە تەواو نەبوو. تکایە دووبارە هەوڵ بدەرەوە.',
+        'تعذر إكمال الطلب. حاول مرة أخرى.',
+      );
 
   static String get lockoutBody => _v(
-    'بەهۆی زۆریی هەوڵەکانەوە، هەژمارەکە بە کاتی داخراوە.',
-    'تم قفل الحساب مؤقتاً بسبب كثرة المحاولات.',
-  );
+        'بەهۆی زۆریی هەوڵەکانەوە، هەژمارەکە بە کاتی داخراوە.',
+        'تم قفل الحساب مؤقتاً بسبب كثرة المحاولات.',
+      );
   static String get lockoutAction =>
       _v('پەیوەندی بە پشتگیرییەوە بکە.', 'تواصل مع الدعم.');
   static String get supportUnavailable => _v(
-    'نەتوانرا واتساپ بکرێتەوە. پەیوەندی بە ٠٧٧٥٨٨٨٧٤٨٨ بکە.',
-    'تعذر فتح واتساب. اتصل على 07758887488',
-  );
+        'نەتوانرا واتساپ بکرێتەوە. پەیوەندی بە ٠٧٧٥٨٨٨٧٤٨٨ بکە.',
+        'تعذر فتح واتساب. اتصل على 07758887488',
+      );
 }
 
 const String kSupportWhatsAppNumber = '9647758887488';
@@ -411,25 +403,25 @@ enum PasswordStrength { none, weak, medium, strong }
 
 extension PasswordStrengthX on PasswordStrength {
   int get filledSegments => switch (this) {
-    PasswordStrength.none => 0,
-    PasswordStrength.weak => 1,
-    PasswordStrength.medium => 2,
-    PasswordStrength.strong => 3,
-  };
+        PasswordStrength.none => 0,
+        PasswordStrength.weak => 1,
+        PasswordStrength.medium => 2,
+        PasswordStrength.strong => 3,
+      };
 
   String get label => switch (this) {
-    PasswordStrength.none => '',
-    PasswordStrength.weak => AuthStrings.strengthWeak,
-    PasswordStrength.medium => AuthStrings.strengthMedium,
-    PasswordStrength.strong => AuthStrings.strengthStrong,
-  };
+        PasswordStrength.none => '',
+        PasswordStrength.weak => AuthStrings.strengthWeak,
+        PasswordStrength.medium => AuthStrings.strengthMedium,
+        PasswordStrength.strong => AuthStrings.strengthStrong,
+      };
 
   Color get color => switch (this) {
-    PasswordStrength.none => const Color(0x00000000),
-    PasswordStrength.weak => AuthTokens.strengthWeakColor,
-    PasswordStrength.medium => AuthTokens.strengthMediumColor,
-    PasswordStrength.strong => AuthTokens.strengthStrongColor,
-  };
+        PasswordStrength.none => const Color(0x00000000),
+        PasswordStrength.weak => AuthTokens.strengthWeakColor,
+        PasswordStrength.medium => AuthTokens.strengthMediumColor,
+        PasswordStrength.strong => AuthTokens.strengthStrongColor,
+      };
 
   bool get isAcceptable => this == PasswordStrength.strong;
 }
@@ -448,20 +440,21 @@ abstract final class PasswordPolicy {
   static final RegExp _special = RegExp(r'[@#$%&!?*^~]');
 
   static List<PasswordRule> get rules => <PasswordRule>[
-    PasswordRule(
-      label: AuthStrings.ruleMinChars,
-      test: (p) => p.length >= minLength,
-    ),
-    PasswordRule(
-      label: AuthStrings.ruleUppercase,
-      test: (p) => _uppercase.hasMatch(p),
-    ),
-    PasswordRule(
-      label: AuthStrings.ruleSpecial,
-      test: (p) => _special.hasMatch(p),
-    ),
-    PasswordRule(label: AuthStrings.ruleDigit, test: (p) => _digit.hasMatch(p)),
-  ];
+        PasswordRule(
+          label: AuthStrings.ruleMinChars,
+          test: (p) => p.length >= minLength,
+        ),
+        PasswordRule(
+          label: AuthStrings.ruleUppercase,
+          test: (p) => _uppercase.hasMatch(p),
+        ),
+        PasswordRule(
+          label: AuthStrings.ruleSpecial,
+          test: (p) => _special.hasMatch(p),
+        ),
+        PasswordRule(
+            label: AuthStrings.ruleDigit, test: (p) => _digit.hasMatch(p)),
+      ];
 
   static List<bool> satisfaction(String password) =>
       rules.map((r) => r.test(password)).toList(growable: false);
@@ -504,12 +497,12 @@ abstract final class AuthValidators {
 
   static bool signUpReady({
     required String name,
-    required String phone,
+    required String email,
     required String password,
     required String confirmation,
   }) =>
-      name.trim().isNotEmpty &&
-      RegExp(r'^\+9647\d{9}$').hasMatch(phone) &&
+      fullName(name) == null &&
+      AuthValidators.email(email) == null &&
       AuthValidators.newPassword(password) == null &&
       confirmation.isNotEmpty &&
       confirmation == password;

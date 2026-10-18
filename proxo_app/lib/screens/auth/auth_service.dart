@@ -31,6 +31,51 @@ final class AuthService {
   String? lastOtpError;
   int? lastOtpStatus;
 
+  /// Uses Supabase's confirmation token, separate from legacy login OTPs.
+  /// The Confirm signup email template must include {{ .Token }} (six digits).
+  Future<void> beginEmailSignup({
+    required String email,
+    required String password,
+    required String name,
+  }) async {
+    final response = await _supabase.auth.signUp(
+      email: email.trim().toLowerCase(),
+      password: password,
+      data: {'full_name': name.trim(), 'signup_channel': 'email'},
+    );
+    // Do not silently bypass the requested verification screen if the server
+    // was configured to auto-confirm new accounts.
+    if (response.session != null) {
+      await _supabase.auth.signOut(scope: SignOutScope.local);
+      throw const AuthException('email_confirmation_required');
+    }
+    if (response.user == null) throw const AuthException('signup_failed');
+  }
+
+  Future<AuthResponse> verifyEmailSignup({
+    required String email,
+    required String code,
+  }) =>
+      _supabase.auth.verifyOTP(
+        email: email.trim().toLowerCase(),
+        token: code.trim(),
+        type: OtpType.signup,
+      );
+
+  Future<bool> resendEmailSignup(String email) async {
+    _resetLastRequest();
+    try {
+      await _supabase.auth.resend(
+        email: email.trim().toLowerCase(),
+        type: OtpType.signup,
+      );
+      return true;
+    } catch (error) {
+      lastOtpError = error.toString();
+      return false;
+    }
+  }
+
   Future<bool> requestEmailOtp({
     required String email,
     required String userId,

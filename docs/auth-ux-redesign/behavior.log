@@ -2,38 +2,41 @@
    We strongly recommend running the flutter tool without superuser privileges.
   /
 📎
-Waiting for another flutter command to release the startup lock...
-00:00 +0: loading proxo_app/test/auth_phone_flow_test.dart
-00:00 +0: proxo_app/test/auth_phone_flow_test.dart: IraqPhone normalizes local, 00964 and duplicated country codes
-00:00 +1: proxo_app/test/auth_phone_flow_test.dart: IraqPhone validates exactly ten Iraqi mobile digits
-00:00 +2: proxo_app/test/auth_phone_flow_test.dart: IraqPhone masks the active OTP destination
-00:00 +3: proxo_app/test/auth_phone_flow_test.dart: login CTA readiness is visual-only
-00:00 +4: proxo_app/test/auth_phone_flow_test.dart: signup readiness includes phone, strong password and confirmation
-00:00 +5: proxo_app/test/auth_otp_lifecycle_test.dart: renders one box per digit
-00:01 +6: proxo_app/test/auth_otp_lifecycle_test.dart: typing syncs into the screen-owned controller
-00:01 +7: proxo_app/test/auth_otp_lifecycle_test.dart: a paste is distributed across the boxes
-00:01 +8: proxo_app/test/auth_refresh_test.dart: (setUpAll)
-00:01 +8: proxo_app/test/auth_otp_lifecycle_test.dart: an external clear empties the boxes
-00:01 +9: proxo_app/test/auth_refresh_test.dart: Auth back restores login quickly, with reduced motion false
-00:01 +10: proxo_app/test/auth_refresh_test.dart: Auth back restores login quickly, with reduced motion false
+00:00 +0: loading proxo_app/test/auth_email_signup_test.dart
+00:00 +0: proxo_app/test/auth_email_signup_test.dart: signup sends normalized email and profile name without a session or WhatsApp call
+00:00 +1: proxo_app/test/auth_email_signup_test.dart: signup sends normalized email and profile name without a session or WhatsApp call
+00:00 +2: proxo_app/test/auth_phone_flow_test.dart: IraqPhone validates exactly ten Iraqi mobile digits
+00:00 +3: proxo_app/test/auth_email_signup_test.dart: invalid signup OTP cannot create a session
+00:00 +4: proxo_app/test/auth_email_signup_test.dart: invalid signup OTP cannot create a session
+00:00 +5: proxo_app/test/auth_email_signup_test.dart: invalid signup OTP cannot create a session
+00:00 +6: proxo_app/test/auth_phone_flow_test.dart: signup readiness includes email, strong password and confirmation
+00:00 +7: proxo_app/test/auth_email_signup_test.dart: valid signup OTP is bound to email and signup purpose and creates a session
+00:00 +8: proxo_app/test/auth_email_signup_test.dart: resend targets signup confirmation and reports rate limiting
+00:00 +9: proxo_app/test/auth_email_signup_test.dart: auto-confirm configuration cannot bypass the separate OTP flow
+00:00 +10: proxo_app/test/auth_otp_lifecycle_test.dart: renders one box per digit
 00:01 +11: proxo_app/test/auth_refresh_test.dart: Auth back restores login quickly, with reduced motion false
 00:01 +12: proxo_app/test/auth_refresh_test.dart: Auth back restores login quickly, with reduced motion false
-00:02 +13: proxo_app/test/auth_refresh_test.dart: Auth back restores login quickly, with reduced motion false
-00:03 +14: proxo_app/test/auth_refresh_test.dart: Auth back restores login quickly, with reduced motion true
-00:03 +15: proxo_app/test/auth_refresh_test.dart: signup validates identity before security and Back preserves fields
-00:04 +16: proxo_app/test/auth_refresh_test.dart: signup language menu preserves details and the validated next step
-00:05 +17: proxo_app/test/auth_refresh_test.dart: channel pill interpolates and rapid switches retain one active form
-00:06 +18: proxo_app/test/auth_refresh_test.dart: setup ckb 393 failed=false
-00:06 +19: proxo_app/test/auth_refresh_test.dart: setup ckb 393 failed=true
-00:06 +20: proxo_app/test/auth_refresh_test.dart: setup ar 393 failed=false
-00:06 +21: proxo_app/test/auth_refresh_test.dart: setup ar 393 failed=true
-00:06 +22: proxo_app/test/auth_refresh_test.dart: setup kmr 393 failed=false
-00:07 +23: proxo_app/test/auth_refresh_test.dart: setup kmr 393 failed=true
-00:07 +24: proxo_app/test/auth_refresh_test.dart: setup ckb 280 failed=false
-00:07 +25: proxo_app/test/auth_refresh_test.dart: setup ckb 280 failed=true
-00:07 +26: proxo_app/test/auth_refresh_test.dart: setup ar 280 failed=false
-00:07 +27: proxo_app/test/auth_refresh_test.dart: setup ar 280 failed=true
-00:07 +28: proxo_app/test/auth_refresh_test.dart: setup kmr 280 failed=false
-00:07 +29: proxo_app/test/auth_refresh_test.dart: setup kmr 280 failed=true
-00:07 +30: proxo_app/test/auth_refresh_test.dart: (tearDownAll)
-00:07 +30: All tests passed!
+00:01 +13: proxo_app/test/auth_refresh_test.dart: Auth back restores login quickly, with reduced motion false
+00:01 +14: proxo_app/test/auth_refresh_test.dart: Auth back restores login quickly, with reduced motion false
+00:01 +15: proxo_app/test/auth_refresh_test.dart: Auth back restores login quickly, with reduced motion false
+00:01 +16: proxo_app/test/auth_refresh_test.dart: Auth back restores login quickly, with reduced motion false
+00:01 +17: proxo_app/test/auth_refresh_test.dart: Auth back restores login quickly, with reduced motion false
+00:01 +18: proxo_app/test/auth_refresh_test.dart: Auth back restores login quickly, with reduced motion false
+00:02 +19: proxo_app/test/auth_refresh_test.dart: Auth back restores login quickly, with reduced motion true
+00:02 +20: proxo_app/test/auth_refresh_test.dart: single signup form validates email, opens separate OTP and Back retains values
+00:03 +21: proxo_app/test/auth_refresh_test.dart: signup language menu preserves all fields in one form
+00:04 +22: proxo_app/test/auth_refresh_test.dart: channel pill interpolates and rapid switches retain one active form
+00:05 +23: proxo_app/test/auth_refresh_test.dart: setup ckb 393 failed=false
+00:05 +24: proxo_app/test/auth_refresh_test.dart: setup ckb 393 failed=true
+00:05 +25: proxo_app/test/auth_refresh_test.dart: setup ar 393 failed=false
+00:05 +26: proxo_app/test/auth_refresh_test.dart: setup ar 393 failed=true
+00:05 +27: proxo_app/test/auth_refresh_test.dart: setup kmr 393 failed=false
+00:05 +28: proxo_app/test/auth_refresh_test.dart: setup kmr 393 failed=true
+00:05 +29: proxo_app/test/auth_refresh_test.dart: setup ckb 280 failed=false
+00:05 +30: proxo_app/test/auth_refresh_test.dart: setup ckb 280 failed=true
+00:05 +31: proxo_app/test/auth_refresh_test.dart: setup ar 280 failed=false
+00:06 +32: proxo_app/test/auth_refresh_test.dart: setup ar 280 failed=true
+00:06 +33: proxo_app/test/auth_refresh_test.dart: setup kmr 280 failed=false
+00:06 +34: proxo_app/test/auth_refresh_test.dart: setup kmr 280 failed=true
+00:06 +35: proxo_app/test/auth_refresh_test.dart: (tearDownAll)
+00:06 +35: All tests passed!

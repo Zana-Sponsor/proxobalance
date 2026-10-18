@@ -160,7 +160,7 @@ class AuthTextField extends StatelessWidget {
           child: Row(
             children: [
               if (_labelIcon != null) ...[
-                AuthIcon(_labelIcon!, size: 18, color: AuthTokens.inkMuted),
+                AuthIcon(_labelIcon!, size: 16, color: AuthTokens.inkMuted),
                 const SizedBox(width: 7),
               ],
               Expanded(
@@ -397,8 +397,7 @@ class AuthBackButton extends StatelessWidget {
         constraints: const BoxConstraints.tightFor(width: 48, height: 48),
         tooltip: AuthStrings.back,
         style: IconButton.styleFrom(
-          backgroundColor: AuthTokens.fieldFill,
-          side: const BorderSide(color: AuthTokens.line),
+          backgroundColor: Colors.transparent,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14),
           ),
@@ -407,7 +406,7 @@ class AuthBackButton extends StatelessWidget {
           'back_outline',
           directional: true,
           color: AuthTokens.ink,
-          size: 22,
+          size: 20,
         ),
       ),
     );

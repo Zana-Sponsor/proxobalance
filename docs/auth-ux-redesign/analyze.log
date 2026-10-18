@@ -2,33 +2,35 @@
    We strongly recommend running the flutter tool without superuser privileges.
   /
 📎
-Analyzing 3 items...
+Analyzing 4 items...
 
-   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/auth/auth_shell.dart:121:7 • curly_braces_in_flow_control_structures
-   info • Use interpolation to compose strings and values. Try using string interpolation to build the composite string • lib/screens/auth/auth_shell.dart:395:7 • prefer_interpolation_to_compose_strings
-   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/auth/auth_shell.dart:406:7 • curly_braces_in_flow_control_structures
-   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/auth/auth_shell.dart:624:7 • curly_braces_in_flow_control_structures
-   info • Don't use 'BuildContext's across async gaps. Try rewriting the code to not use the 'BuildContext', or guard the use with a 'mounted' check • lib/screens/auth/auth_shell.dart:1073:33 • use_build_context_synchronously
-warning • Unnecessary cast. Try removing the cast • lib/screens/auth/auth_shell.dart:1217:39 • unnecessary_cast
-   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/auth/auth_shell.dart:1374:7 • curly_braces_in_flow_control_structures
-   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/auth/auth_shell.dart:1376:7 • curly_braces_in_flow_control_structures
-   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/auth/auth_shell.dart:1381:7 • curly_braces_in_flow_control_structures
-   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/auth/auth_shell.dart:1597:19 • curly_braces_in_flow_control_structures
-   info • Use 'const' literals as arguments to constructors of '@immutable' classes. Try adding 'const' before the literal • lib/screens/auth/auth_shell.dart:1689:28 • prefer_const_literals_to_create_immutables
-   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/auth/auth_shell.dart:1739:7 • curly_braces_in_flow_control_structures
-   info • Use 'const' literals as arguments to constructors of '@immutable' classes. Try adding 'const' before the literal • lib/screens/auth/auth_shell.dart:1787:32 • prefer_const_literals_to_create_immutables
-   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/auth/auth_shell.dart:1880:23 • curly_braces_in_flow_control_structures
-warning • The member 'otpDestination' can only be used within 'package:proxo_app/screens/auth/auth_models.dart' or a test • lib/screens/auth/auth_shell.dart:1936:18 • invalid_use_of_visible_for_testing_member
-warning • The member 'otpDestination' can only be used within 'package:proxo_app/screens/auth/auth_models.dart' or a test • lib/screens/auth/auth_shell.dart:1951:18 • invalid_use_of_visible_for_testing_member
-   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/widgets/auth/auth_design.dart:521:7 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/auth/auth_shell.dart:114:7 • curly_braces_in_flow_control_structures
+   info • The private field _pendingWhatsappMarketing could be 'final'. Try making the field 'final' • lib/screens/auth/auth_shell.dart:182:8 • prefer_final_fields
+   info • The private field _pendingConsentLocale could be 'final'. Try making the field 'final' • lib/screens/auth/auth_shell.dart:183:10 • prefer_final_fields
+   info • Use interpolation to compose strings and values. Try using string interpolation to build the composite string • lib/screens/auth/auth_shell.dart:398:7 • prefer_interpolation_to_compose_strings
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/auth/auth_shell.dart:409:7 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/auth/auth_shell.dart:614:7 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/auth/auth_shell.dart:759:33 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/auth/auth_shell.dart:782:9 • curly_braces_in_flow_control_structures
+   info • Don't use 'BuildContext's across async gaps. Try rewriting the code to not use the 'BuildContext', or guard the use with a 'mounted' check • lib/screens/auth/auth_shell.dart:1056:20 • use_build_context_synchronously
+warning • Unnecessary cast. Try removing the cast • lib/screens/auth/auth_shell.dart:1201:39 • unnecessary_cast
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/auth/auth_shell.dart:1357:32 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/auth/auth_shell.dart:1359:7 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/auth/auth_shell.dart:1364:7 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/auth/auth_shell.dart:1575:19 • curly_braces_in_flow_control_structures
+   info • Use 'const' literals as arguments to constructors of '@immutable' classes. Try adding 'const' before the literal • lib/screens/auth/auth_shell.dart:1664:28 • prefer_const_literals_to_create_immutables
+warning • The member 'otpDestination' can only be used within 'package:proxo_app/screens/auth/auth_models.dart' or a test • lib/screens/auth/auth_shell.dart:1851:22 • invalid_use_of_visible_for_testing_member
+warning • The member 'otpDestination' can only be used within 'package:proxo_app/screens/auth/auth_models.dart' or a test • lib/screens/auth/auth_shell.dart:1868:22 • invalid_use_of_visible_for_testing_member
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/auth/auth_shell.dart:2031:13 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/widgets/auth/auth_design.dart:514:7 • curly_braces_in_flow_control_structures
    info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement • lib/widgets/auth/auth_otp_field.dart:244:37 • deprecated_member_use
    info • Use 'const' literals as arguments to constructors of '@immutable' classes. Try adding 'const' before the literal • lib/widgets/auth/auth_otp_field.dart:262:24 • prefer_const_literals_to_create_immutables
    info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/widgets/auth/auth_otp_field.dart:263:15 • prefer_const_constructors
-   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/widgets/auth/auth_widgets.dart:697:19 • prefer_const_constructors
-   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/widgets/auth/auth_widgets.dart:865:11 • prefer_const_constructors
-   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement • lib/widgets/auth/auth_widgets.dart:948:54 • deprecated_member_use
-   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/widgets/auth/auth_widgets.dart:949:26 • prefer_const_constructors
-   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/widgets/auth/auth_widgets.dart:987:19 • prefer_const_constructors
-   info • 'index' is deprecated and shouldn't be used. Use value, which is more precise. Try replacing the use of the deprecated member with the replacement • test/auth_refresh_test.dart:282:55 • deprecated_member_use
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/widgets/auth/auth_widgets.dart:696:19 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/widgets/auth/auth_widgets.dart:864:11 • prefer_const_constructors
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement • lib/widgets/auth/auth_widgets.dart:947:54 • deprecated_member_use
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/widgets/auth/auth_widgets.dart:948:26 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/widgets/auth/auth_widgets.dart:986:19 • prefer_const_constructors
+   info • 'index' is deprecated and shouldn't be used. Use value, which is more precise. Try replacing the use of the deprecated member with the replacement • test/auth_refresh_test.dart:314:55 • deprecated_member_use
 
-26 issues found. (ran in 16.3s)
+28 issues found. (ran in 8.5s)
