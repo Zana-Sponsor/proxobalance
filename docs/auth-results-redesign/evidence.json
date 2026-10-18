@@ -1,0 +1,617 @@
+{
+  "source_commit": "ebb3cbca5ae285baf0834b63e1085675c45d9534",
+  "workflow_run": 39083190517,
+  "artifact_id": 12119832416,
+  "artifact_zip_sha256": "1f68a189faa4d01456838958c702fec43b97561a5b42e345bc4f196be9a24847",
+  "flutter_tests_passed": 785,
+  "analyzer_errors": 0,
+  "nonfatal_analysis_items": 367,
+  "capture_scenarios": 72,
+  "measured_layouts": 94,
+  "nonempty_text_paragraphs": 1293,
+  "font_family": "RabarAuthRegular",
+  "font_weight": 400,
+  "layout_exceptions": 0,
+  "text_exceeding_max_lines": 0,
+  "fixture": "Production widgets; fictional GET-only backend; OTP/new-password component fixtures; featured metrics with missing-thumbnail fallback; no real OTP/payment/video-provider session.",
+  "captures": [
+    {
+      "file": "images/login-ckb.png",
+      "original": "polish-evidence/login-ckb-393-s1.0-d3.0.png",
+      "sha256": "8edea90c41457063cc26836de91d116a87138a781a44fecbd3cd7b083c192acb",
+      "bytes": 120862
+    },
+    {
+      "file": "images/login-phone-ckb.png",
+      "original": "polish-evidence/login-phone-ckb-393-s1.0-d3.0.png",
+      "sha256": "b6023afd67a216eab1c7db09609adb08e6e9299c5348b82765e9f8e4a008f02f",
+      "bytes": 99737
+    },
+    {
+      "file": "images/signup-ckb.png",
+      "original": "polish-evidence/signup-ckb-393-s1.0-d3.0.png",
+      "sha256": "5cd9b7f0490e0408111b95db988540f53c735718605f1133b3ff26a674aecbae",
+      "bytes": 99331
+    },
+    {
+      "file": "images/signup-security-ckb.png",
+      "original": "polish-evidence/signup-security-ckb-393-s1.0-d3.0.png",
+      "sha256": "4122364c7cca1395b00ac37f23b18fd8c88e4994c1aaf2499cf808ebb4bf67a7",
+      "bytes": 152839
+    },
+    {
+      "file": "images/forgot-ckb.png",
+      "original": "polish-evidence/forgot-ckb-393-s1.0-d3.0.png",
+      "sha256": "e1896c6330a38fb0ef2985d8f5caa5cc2e6df0f0415806b5801921733be4f47c",
+      "bytes": 74254
+    },
+    {
+      "file": "images/new-password-ckb.png",
+      "original": "polish-evidence/new-password-ckb-393-s1.0-d3.0.png",
+      "sha256": "2c56103b5d0bd0d95927d8646acdf443477238c257fef55729b88b0435678c2c",
+      "bytes": 124759
+    },
+    {
+      "file": "images/otp-ckb.png",
+      "original": "polish-evidence/otp-ckb-393-s1.0-d3.0.png",
+      "sha256": "4f955edb24dfbe92eab49c2280206dead997921b3a3d34b3b077316c8e945bbe",
+      "bytes": 80222
+    },
+    {
+      "file": "images/results-banner-ckb.png",
+      "original": "polish-evidence/results-banner-ckb-393-s1.0-d3.0.png",
+      "sha256": "54913b156229ce5e562aa3d6a6e6c949a76d54397631a24aec896aa50fd22d54",
+      "bytes": 79105
+    },
+    {
+      "file": "images/results-ckb.png",
+      "original": "polish-evidence/results-ckb-393-s1.0-d3.0.png",
+      "sha256": "542b62f40b445045382f86d26d7d6e355b9db8d8dae3f03544b53a0f099d1af1",
+      "bytes": 136345
+    },
+    {
+      "file": "images/results-empty-ckb.png",
+      "original": "polish-evidence/results-empty-ckb-393-s1.0-d3.0.png",
+      "sha256": "05c62c9c7505d79a1676501dd5cb414177269bb15defd1197e79c7cc79bb869b",
+      "bytes": 56313
+    },
+    {
+      "file": "images/signup-security-large-text.png",
+      "original": "polish-evidence/signup-security-ckb-280-s2.0-d2.0.png",
+      "sha256": "6f6d270f0fefdd6a40218b4b49ea3488271169731bd0434811d980dab5a67454",
+      "bytes": 102441
+    },
+    {
+      "file": "images/signup-security-large-text-bottom.png",
+      "original": "polish-evidence/signup-security-ckb-280-s2.0-d2.0-bottom.png",
+      "sha256": "04b2e30dc68f39f3faafe352cc07af667f35cdeb937bb346d541fd6b46fa2064",
+      "bytes": 90681
+    },
+    {
+      "file": "images/results-banner-large-text.png",
+      "original": "polish-evidence/results-banner-ckb-280-s2.0-d2.0.png",
+      "sha256": "0601d1f7e64592b97fa89e6884a4770f013a2b8b5c16a776f9635b05f77c8e85",
+      "bytes": 70541
+    },
+    {
+      "file": "images/results-banner-large-text-bottom.png",
+      "original": "polish-evidence/results-banner-ckb-280-s2.0-d2.0-bottom.png",
+      "sha256": "3a1bee27a2404ae832f91e73921ff539499af39773dc845224b3235d092083cb",
+      "bytes": 70533
+    },
+    {
+      "file": "images/results-large-text.png",
+      "original": "polish-evidence/results-ckb-280-s2.0-d2.0.png",
+      "sha256": "85d02424565777358d1b84e26cf6486f1cae9856e881bc1e416165699ce2dae2",
+      "bytes": 71577
+    },
+    {
+      "file": "images/results-large-text-bottom.png",
+      "original": "polish-evidence/results-ckb-280-s2.0-d2.0-bottom.png",
+      "sha256": "b493d85f6af55245a993ffc1480c3866ad51934ef3b89737d68de3e4a128edd7",
+      "bytes": 68964
+    },
+    {
+      "file": "images/otp-large-text.png",
+      "original": "polish-evidence/otp-ckb-280-s2.0-d2.0.png",
+      "sha256": "f15d3c176897f754b684c7faecb929d9ea4b3dab32524503c6cc3d5c5b6bd00e",
+      "bytes": 69943
+    },
+    {
+      "file": "images/new-password-large-text.png",
+      "original": "polish-evidence/new-password-ckb-280-s2.0-d2.0.png",
+      "sha256": "8e20b977cbf37beddd1e560393a779a848c2192bf19abe8b1b4adbe56a032284",
+      "bytes": 103430
+    },
+    {
+      "file": "images/new-password-large-text-bottom.png",
+      "original": "polish-evidence/new-password-ckb-280-s2.0-d2.0-bottom.png",
+      "sha256": "a2b2d75c8a39c245658d287fd1f998c12eda9d6add9fa966becb7f95f7a01f24",
+      "bytes": 101253
+    },
+    {
+      "file": "images/setup-ckb.png",
+      "original": "auth-refresh/setup-ckb-393-loading.png",
+      "sha256": "bb07ede76e823024ca3277fbf65ff144088e461c15a172721e82a9ff804c7c44",
+      "bytes": 59524
+    },
+    {
+      "file": "images/setup-retry-ckb.png",
+      "original": "auth-refresh/setup-ckb-393-error.png",
+      "sha256": "0c0cfb6a5f9a3ecd44aee5ae8a91f0b9e132082348f44aa73820e87a7260d493",
+      "bytes": 60405
+    }
+  ],
+  "measured_layout_records": [
+    {
+      "file": "auth-refresh/setup-ar-280-error.json",
+      "sha256": "17ed501600e43648fe684316fc1f349411840b33fc6bdf5723b24fd545bad946",
+      "text_paragraphs": 6
+    },
+    {
+      "file": "auth-refresh/setup-kmr-393-error.json",
+      "sha256": "67d0a28a82b7aadf60dd0034be4826184f205c6fe5a3a3b21564b5b9df06a681",
+      "text_paragraphs": 6
+    },
+    {
+      "file": "auth-refresh/setup-ar-393-loading.json",
+      "sha256": "7b8546dd190f8aecb28d4171baec1f0af4cfe2745221a4897cd995821f1c28e6",
+      "text_paragraphs": 5
+    },
+    {
+      "file": "auth-refresh/setup-ar-280-loading.json",
+      "sha256": "e3e92684e1a2bd65df2252c0408f7a3acd04f9ead0c3ff8161704816df6962e2",
+      "text_paragraphs": 5
+    },
+    {
+      "file": "auth-refresh/setup-ckb-280-loading.json",
+      "sha256": "eeadf43ee6bf2a1c60596bf6555380eb0e2812007b52045221def4674cae43fd",
+      "text_paragraphs": 5
+    },
+    {
+      "file": "auth-refresh/setup-ar-393-error.json",
+      "sha256": "8163b543279333a504781e221e135fa6abd86f6f0d5a1f3947d17dac86d013cc",
+      "text_paragraphs": 6
+    },
+    {
+      "file": "auth-refresh/setup-kmr-280-error.json",
+      "sha256": "a394419aa84450c4208aa8b2c2493d8183e030c25c89ce16f4d33ce5d132ba32",
+      "text_paragraphs": 6
+    },
+    {
+      "file": "auth-refresh/setup-ckb-393-loading.json",
+      "sha256": "757e58542f422b804b0acd61b410cbd08ec2c3117458de367eeeadb53260eb64",
+      "text_paragraphs": 5
+    },
+    {
+      "file": "auth-refresh/setup-ckb-280-error.json",
+      "sha256": "7b8f0f907972c0c5508f8ed1db78f545f31d359a02573e6b1abef563f893a129",
+      "text_paragraphs": 6
+    },
+    {
+      "file": "auth-refresh/setup-kmr-393-loading.json",
+      "sha256": "98ee82a781b34227451c7b1b49da079707f6be778b9a160bd3bfffb93c759191",
+      "text_paragraphs": 5
+    },
+    {
+      "file": "auth-refresh/setup-kmr-280-loading.json",
+      "sha256": "5a3741cff569102b625d2e2d95c09c54d38572de8040e694582a01bd0e458043",
+      "text_paragraphs": 5
+    },
+    {
+      "file": "auth-refresh/setup-ckb-393-error.json",
+      "sha256": "a7c99e41dd51f97d5c6a2bab6a3d785811ffe157d330c05ca7969a62215dcb07",
+      "text_paragraphs": 6
+    },
+    {
+      "file": "polish-evidence/login-kmr-393-s1.0-d3.0.json",
+      "sha256": "8222ba3b2f8d0693452f41926efed02401baffc4dfe0b0a68e68a5fb6f803fde",
+      "text_paragraphs": 13
+    },
+    {
+      "file": "polish-evidence/forgot-ar-280-s2.0-d2.0.json",
+      "sha256": "f91059e521b26f46ba2e91b06e4730cfb249559da00d6484909e79cd6751ec83",
+      "text_paragraphs": 5
+    },
+    {
+      "file": "polish-evidence/forgot-ckb-393-s1.0-d3.0.json",
+      "sha256": "c6395473c92651e743b00aecfe335272138d6b1b37c6299d47b9f3cd803e55b4",
+      "text_paragraphs": 5
+    },
+    {
+      "file": "polish-evidence/signup-ckb-280-s2.0-d2.0-bottom.json",
+      "sha256": "be57499234da883552ee0d283b66d6a293b6f4e61ae07f6e8d053b740d015629",
+      "text_paragraphs": 11
+    },
+    {
+      "file": "polish-evidence/signup-ar-280-s2.0-d2.0.json",
+      "sha256": "8bf09a4a4bc7b2c32e2b4384927f957bcfc8174178e5b17121f3d80f3b35b87e",
+      "text_paragraphs": 11
+    },
+    {
+      "file": "polish-evidence/results-ar-393-s1.0-d3.0-bottom.json",
+      "sha256": "74ba3ef3ba6603cc5073f4a58159e48f3494f3997159f6c736d27927cc4bb412",
+      "text_paragraphs": 42
+    },
+    {
+      "file": "polish-evidence/signup-ckb-280-s2.0-d2.0.json",
+      "sha256": "65e2b2e106a98595ee55ff4d599017a6eca5c82eb21e7b5903e2ece6929078e2",
+      "text_paragraphs": 11
+    },
+    {
+      "file": "polish-evidence/results-empty-ar-393-s1.0-d3.0.json",
+      "sha256": "e0bf62ba2d92db568a7d8f773308ff3fac472c802ce301aae087a64972f034a5",
+      "text_paragraphs": 3
+    },
+    {
+      "file": "polish-evidence/new-password-kmr-280-s2.0-d2.0.json",
+      "sha256": "84b227dfc30aa6f845c1e12ebf509cc4b9f768d18368ad0ce206b703e0dc2c7d",
+      "text_paragraphs": 12
+    },
+    {
+      "file": "polish-evidence/results-ar-280-s2.0-d2.0-bottom.json",
+      "sha256": "a5600653bdf2b74a0f426313452c2b8bde2b72735b277a69e77a0343e371c622",
+      "text_paragraphs": 42
+    },
+    {
+      "file": "polish-evidence/results-kmr-280-s2.0-d2.0.json",
+      "sha256": "c7dd7d44da52826fa24313c2fd252320998e12d19a9e0ab2cd527d7df79b70c1",
+      "text_paragraphs": 28
+    },
+    {
+      "file": "polish-evidence/results-banner-kmr-393-s1.0-d3.0.json",
+      "sha256": "f43152b6e19d31ec0d581364fe8b125735a749a44ac2859b6250d2a6cb4d133f",
+      "text_paragraphs": 17
+    },
+    {
+      "file": "polish-evidence/login-phone-kmr-280-s2.0-d2.0-bottom.json",
+      "sha256": "81b57db528e13f8b28c99368bb03075a08419ad69eaca086275041a9aab1a22b",
+      "text_paragraphs": 11
+    },
+    {
+      "file": "polish-evidence/signup-security-kmr-280-s2.0-d2.0.json",
+      "sha256": "6a0d6a42249cbcd0dfd72812254c23bce43cceeb54c52f7bbab116e4206dcc1d",
+      "text_paragraphs": 17
+    },
+    {
+      "file": "polish-evidence/forgot-ar-393-s1.0-d3.0.json",
+      "sha256": "a28dcf91237b9a7c6429ab96984b25bd790a2036233f3ccdd9a5dc8113c21fa9",
+      "text_paragraphs": 5
+    },
+    {
+      "file": "polish-evidence/signup-kmr-280-s2.0-d2.0-bottom.json",
+      "sha256": "40042b9262093607583cf14a1a4bb38d224d311c3b08f9bf80bd55a567ef27cc",
+      "text_paragraphs": 11
+    },
+    {
+      "file": "polish-evidence/signup-security-kmr-393-s1.0-d3.0.json",
+      "sha256": "acc6f72f051cbba4a9bb81205a2e5cb1ac9be122d71e5c3837bccceec90b1f67",
+      "text_paragraphs": 17
+    },
+    {
+      "file": "polish-evidence/otp-kmr-393-s1.0-d3.0.json",
+      "sha256": "364ba41f193ee6bda5dd0f0a17cac1b99ad487cf49a5e955cbae52f859410b83",
+      "text_paragraphs": 5
+    },
+    {
+      "file": "polish-evidence/login-phone-ar-280-s2.0-d2.0.json",
+      "sha256": "72f1933f262b9183aee1106a9d1f23f1f91d552f47db06091d4d29371f308bf8",
+      "text_paragraphs": 11
+    },
+    {
+      "file": "polish-evidence/signup-security-ckb-393-s1.0-d3.0.json",
+      "sha256": "a94f934ba3bddb86c24cda15a5bbe9e80444f63ae269fef2bfd85d794ae3b691",
+      "text_paragraphs": 17
+    },
+    {
+      "file": "polish-evidence/login-ar-280-s2.0-d2.0-bottom.json",
+      "sha256": "d8ebe9b2a1545448b464324dda097fe55aa8830802f14c54c93dce0aac24907d",
+      "text_paragraphs": 13
+    },
+    {
+      "file": "polish-evidence/results-empty-ckb-393-s1.0-d3.0.json",
+      "sha256": "cf2fa2ca969d66fb2b7d7257b8307229fcd3b074cb5de0e6a97d546489f279c4",
+      "text_paragraphs": 3
+    },
+    {
+      "file": "polish-evidence/login-kmr-280-s2.0-d2.0.json",
+      "sha256": "b5bce6526980c936872d8935a7b158ef3a00eb8e376fb427d00af5fff71fa4f5",
+      "text_paragraphs": 13
+    },
+    {
+      "file": "polish-evidence/results-ckb-280-s2.0-d2.0.json",
+      "sha256": "592d7eb879f44591fe82bdce3c54486cd5c4b229a6cc038f123d60b2dfaf194b",
+      "text_paragraphs": 28
+    },
+    {
+      "file": "polish-evidence/signup-security-ckb-280-s2.0-d2.0-bottom.json",
+      "sha256": "31ac45039da86e7f50ea36a43048e8caecfe9a91c189d1722c666a2665a3e3c0",
+      "text_paragraphs": 17
+    },
+    {
+      "file": "polish-evidence/forgot-ckb-280-s2.0-d2.0.json",
+      "sha256": "ab6b0344b4c71fda4ae61554226e8d041f66c5d07eb82ba2e1eb944e2796c2b1",
+      "text_paragraphs": 5
+    },
+    {
+      "file": "polish-evidence/results-empty-kmr-280-s2.0-d2.0.json",
+      "sha256": "7cf45a9d6327e82068a899167081d46f51e7facebab6148c92cadced130ad1e8",
+      "text_paragraphs": 3
+    },
+    {
+      "file": "polish-evidence/new-password-ckb-280-s2.0-d2.0.json",
+      "sha256": "d24bf511d7b7a1af61d21d72d171b675bcefb8c01f65e3486ab4614f08335fca",
+      "text_paragraphs": 12
+    },
+    {
+      "file": "polish-evidence/otp-ar-280-s2.0-d2.0.json",
+      "sha256": "4fa98aa40dc9d5ec20aacad55552262d934f0bcc3bde27327d41fb6a06f7ced4",
+      "text_paragraphs": 5
+    },
+    {
+      "file": "polish-evidence/new-password-kmr-393-s1.0-d3.0.json",
+      "sha256": "0f444237748514669cd477b8e8498d2c0be2e49f6ebe5661d574eb10b3983d2f",
+      "text_paragraphs": 12
+    },
+    {
+      "file": "polish-evidence/signup-ckb-393-s1.0-d3.0.json",
+      "sha256": "e8a3c01a7e3d6229eeaadf6fb5d5e30c5bf310417489eb02cc3d2d42873626fa",
+      "text_paragraphs": 11
+    },
+    {
+      "file": "polish-evidence/signup-ar-393-s1.0-d3.0.json",
+      "sha256": "5127abf6b9dd8f82fca07e1e8a2f7b30a6af96ed459f1c9bb5d7b5d7c8e8c2ee",
+      "text_paragraphs": 11
+    },
+    {
+      "file": "polish-evidence/results-kmr-393-s1.0-d3.0.json",
+      "sha256": "2d519e7844bc20f69a8dac31f8dbdb4a618d04a38c256cb9d43beda8796c8952",
+      "text_paragraphs": 42
+    },
+    {
+      "file": "polish-evidence/signup-security-ar-280-s2.0-d2.0.json",
+      "sha256": "d1bf06ed5ca1420a69550c8a50d6fe091e95f59bdaed2f14e542af7da7a54b27",
+      "text_paragraphs": 17
+    },
+    {
+      "file": "polish-evidence/login-ckb-393-s1.0-d3.0.json",
+      "sha256": "97d6741d1174b2ba22eb712f54e36aa135a27a0be328afb36e8ebdad1f1422ea",
+      "text_paragraphs": 13
+    },
+    {
+      "file": "polish-evidence/login-ckb-280-s2.0-d2.0.json",
+      "sha256": "7868a2670a3bdcb97202b8a8a4a4ee9eb104e4c2c4687595b387cff92aef4b07",
+      "text_paragraphs": 13
+    },
+    {
+      "file": "polish-evidence/login-phone-ckb-280-s2.0-d2.0-bottom.json",
+      "sha256": "99a208251efed1c3bfa94e3ccba51f3eddb934afeef2037821271952685e77e1",
+      "text_paragraphs": 11
+    },
+    {
+      "file": "polish-evidence/login-phone-ar-393-s1.0-d3.0.json",
+      "sha256": "8c2ceaf2b639a6ab29007ea277baa3f7400bcadd3f57e6390104fdfebd4ca719",
+      "text_paragraphs": 11
+    },
+    {
+      "file": "polish-evidence/results-kmr-393-s1.0-d3.0-bottom.json",
+      "sha256": "d684308e497f6fb720b8b80baa2c57eef7250f8673bb906fe519f734db3559cd",
+      "text_paragraphs": 42
+    },
+    {
+      "file": "polish-evidence/signup-kmr-280-s2.0-d2.0.json",
+      "sha256": "9596663d73a23f526a10d64acbff3091b7c09eff975bda59597d7e6d130327f7",
+      "text_paragraphs": 11
+    },
+    {
+      "file": "polish-evidence/new-password-ckb-280-s2.0-d2.0-bottom.json",
+      "sha256": "1de9bc7105e2cbfe272873527050293d3878735743017e829d6d3fbb2b5c44f2",
+      "text_paragraphs": 12
+    },
+    {
+      "file": "polish-evidence/results-banner-ckb-280-s2.0-d2.0.json",
+      "sha256": "72736071f1fb740bd69c5eeb6d868af0344ba50d39f540ceec9b525c1e94526b",
+      "text_paragraphs": 17
+    },
+    {
+      "file": "polish-evidence/results-ckb-280-s2.0-d2.0-bottom.json",
+      "sha256": "ca70a53e06c0c87b0f5d0891bd0dc1fcf379feefa5f100f5b62b284c5108febb",
+      "text_paragraphs": 28
+    },
+    {
+      "file": "polish-evidence/results-banner-kmr-280-s2.0-d2.0-bottom.json",
+      "sha256": "093594d5ea5078d0eb48bbde7d228047a96d2627fda67f0b7dc19e765d6497f8",
+      "text_paragraphs": 17
+    },
+    {
+      "file": "polish-evidence/otp-ckb-280-s2.0-d2.0.json",
+      "sha256": "a1b00ca8c854f4643aebcef6103d6de2676144f4f5b137e00715be45fb159e0e",
+      "text_paragraphs": 5
+    },
+    {
+      "file": "polish-evidence/login-phone-ckb-393-s1.0-d3.0.json",
+      "sha256": "6f69e0792265ce942e6392567fac9f9a9eb044f42939a82745f28ec2969fc42f",
+      "text_paragraphs": 11
+    },
+    {
+      "file": "polish-evidence/results-ckb-393-s1.0-d3.0-bottom.json",
+      "sha256": "9de64b0402ad833d341e081a2e76e31bec7cf2ce751a4eb91d464101229dffc4",
+      "text_paragraphs": 42
+    },
+    {
+      "file": "polish-evidence/login-phone-kmr-393-s1.0-d3.0.json",
+      "sha256": "793aaee6e3980ab0b9cc6918c2b16a57b26701069f4e3fd95b0c5c292d57d254",
+      "text_paragraphs": 11
+    },
+    {
+      "file": "polish-evidence/login-ar-393-s1.0-d3.0.json",
+      "sha256": "3b7e49da1861a2a10e6f26245eacd0e13b11860b10516ed776ba84a549d7354d",
+      "text_paragraphs": 13
+    },
+    {
+      "file": "polish-evidence/new-password-ckb-393-s1.0-d3.0.json",
+      "sha256": "c668f5121a11850fbd4c9992a29d5429fe199b9e5f5d3e14fdb3fa88a0a4257b",
+      "text_paragraphs": 12
+    },
+    {
+      "file": "polish-evidence/signup-security-kmr-280-s2.0-d2.0-bottom.json",
+      "sha256": "ea34f6b15d42b9a5825e686afe9e216097bb9e682583d3e4e25c085abb0c8b4f",
+      "text_paragraphs": 17
+    },
+    {
+      "file": "polish-evidence/signup-security-ar-393-s1.0-d3.0.json",
+      "sha256": "53c1a0bc82277e1ed280667c43459b9d1d647464fdb69ddbedff5a69182544aa",
+      "text_paragraphs": 17
+    },
+    {
+      "file": "polish-evidence/results-empty-ckb-280-s2.0-d2.0.json",
+      "sha256": "00cffdecfcfe68fc27073172e76e444071de8e2112f271682be56658c0b0766f",
+      "text_paragraphs": 3
+    },
+    {
+      "file": "polish-evidence/signup-security-ckb-280-s2.0-d2.0.json",
+      "sha256": "89896aafc1f436ebb90461e81fe089c50065fe61f04172ca9dc2eb9319573b5d",
+      "text_paragraphs": 17
+    },
+    {
+      "file": "polish-evidence/login-kmr-280-s2.0-d2.0-bottom.json",
+      "sha256": "9eae7f9318dcad41f1c5281fc337d45d1baad83db4d973b0acacbdd2fb50c3c5",
+      "text_paragraphs": 13
+    },
+    {
+      "file": "polish-evidence/forgot-kmr-280-s2.0-d2.0.json",
+      "sha256": "3b7cd98e2b8ef8eff40f3ef165f7664f6dbd6767ed7f466ce01feed07d89ae35",
+      "text_paragraphs": 5
+    },
+    {
+      "file": "polish-evidence/results-banner-ar-280-s2.0-d2.0.json",
+      "sha256": "101d2509d204fea2964b5949d411814ad95495c5e5e38fb80cb27aed9ade3089",
+      "text_paragraphs": 17
+    },
+    {
+      "file": "polish-evidence/new-password-ar-393-s1.0-d3.0.json",
+      "sha256": "0a3eb73544819e4f1fb1bcbb14125d0f644d97296998102115ddf6912b88c3c9",
+      "text_paragraphs": 12
+    },
+    {
+      "file": "polish-evidence/results-banner-ar-393-s1.0-d3.0.json",
+      "sha256": "9629201bd32559c9738017c59565add72c037a9fb9e688a6c2295e7d1e1c624e",
+      "text_paragraphs": 17
+    },
+    {
+      "file": "polish-evidence/results-banner-ckb-393-s1.0-d3.0.json",
+      "sha256": "0a4ba6b7695582fddf4e3cd28727d8ce0e9d2c93cddce3dd5483f99b6a1023f1",
+      "text_paragraphs": 17
+    },
+    {
+      "file": "polish-evidence/results-empty-ar-280-s2.0-d2.0.json",
+      "sha256": "18ca78555941216d0f14d63accf32f04d4311fdf1e6e3533b4d7b362c856fe6b",
+      "text_paragraphs": 3
+    },
+    {
+      "file": "polish-evidence/results-empty-kmr-393-s1.0-d3.0.json",
+      "sha256": "cc368677b9acd596fa1d85dffe1cf71f291ca781f5607c7f80e1deec65276b96",
+      "text_paragraphs": 3
+    },
+    {
+      "file": "polish-evidence/login-phone-ckb-280-s2.0-d2.0.json",
+      "sha256": "b936d4e803275716afb41d3648fbf716621f41df7e4d9fc7722ce53652e3c95b",
+      "text_paragraphs": 11
+    },
+    {
+      "file": "polish-evidence/login-phone-kmr-280-s2.0-d2.0.json",
+      "sha256": "fbb88ce07dfc8d3059051811e9aba976954ea63b22ff8d8c3f419f3ca07214cd",
+      "text_paragraphs": 11
+    },
+    {
+      "file": "polish-evidence/results-banner-ckb-280-s2.0-d2.0-bottom.json",
+      "sha256": "0749a56895197a7bea996685499f7978d82d509594ab8199bce133878c8129b1",
+      "text_paragraphs": 17
+    },
+    {
+      "file": "polish-evidence/results-ar-393-s1.0-d3.0.json",
+      "sha256": "a22616b577cbeb7a4f7b3827873a711d1d91c357693a74a31ff346c3dce944f8",
+      "text_paragraphs": 42
+    },
+    {
+      "file": "polish-evidence/login-ckb-280-s2.0-d2.0-bottom.json",
+      "sha256": "7d2ea02140b07cf43a1f27615ad006bfab7ceadfc52618c0763572b639a67ffa",
+      "text_paragraphs": 13
+    },
+    {
+      "file": "polish-evidence/results-ckb-393-s1.0-d3.0.json",
+      "sha256": "eba7c9fa5304413c5cba1dcfa8875b67c216fc9e80028e79c2ca2977e5927900",
+      "text_paragraphs": 42
+    },
+    {
+      "file": "polish-evidence/new-password-ar-280-s2.0-d2.0-bottom.json",
+      "sha256": "20a1c7744243deed957e8a2d1e381ec2a9288b51caf5fd108d10e1db1f6a5d27",
+      "text_paragraphs": 12
+    },
+    {
+      "file": "polish-evidence/signup-ar-280-s2.0-d2.0-bottom.json",
+      "sha256": "4948ca486d061870cf877f0d55248c0bf01fe1f06a1ddebf4fd4c33b5135f45f",
+      "text_paragraphs": 11
+    },
+    {
+      "file": "polish-evidence/signup-security-ar-280-s2.0-d2.0-bottom.json",
+      "sha256": "b82f30eb05d3aec16b188b559417bdae8f4a214097b7d36dc8f40383b0425606",
+      "text_paragraphs": 17
+    },
+    {
+      "file": "polish-evidence/new-password-kmr-280-s2.0-d2.0-bottom.json",
+      "sha256": "77b3f68fd8f77e3dfb339d88f9a37149530a2d20dc93406b7689b9d8ccea6e9e",
+      "text_paragraphs": 12
+    },
+    {
+      "file": "polish-evidence/results-ar-280-s2.0-d2.0.json",
+      "sha256": "fa4989c43f3d81f031f58ddf35b994045e9e13f92479bb3c77882b13136d551e",
+      "text_paragraphs": 42
+    },
+    {
+      "file": "polish-evidence/signup-kmr-393-s1.0-d3.0.json",
+      "sha256": "cce7c08fc213abc1c8b5fde2cc4a3f0902184e67e865cbc548796395dcddf560",
+      "text_paragraphs": 11
+    },
+    {
+      "file": "polish-evidence/new-password-ar-280-s2.0-d2.0.json",
+      "sha256": "9f3e8a4d00134f11e52a68c09e9bd62d470a641d1735c8ab00a06fba682cba25",
+      "text_paragraphs": 12
+    },
+    {
+      "file": "polish-evidence/login-ar-280-s2.0-d2.0.json",
+      "sha256": "cccd559c58f9a1279ae409a0e7861fb2786986f4beb8cc4968a55be98bb68869",
+      "text_paragraphs": 13
+    },
+    {
+      "file": "polish-evidence/forgot-kmr-393-s1.0-d3.0.json",
+      "sha256": "36fd9819de7d714305899f03d593fcd0fc114b6856e44f3938aedd2621dabce7",
+      "text_paragraphs": 5
+    },
+    {
+      "file": "polish-evidence/otp-kmr-280-s2.0-d2.0.json",
+      "sha256": "ab7f2010d1a1a916d81e6e0fbbe6cb08ef703a84fcb1d6c86a9d73d736dbefb3",
+      "text_paragraphs": 5
+    },
+    {
+      "file": "polish-evidence/otp-ckb-393-s1.0-d3.0.json",
+      "sha256": "2a59558df9217b9573c30174df42ba1f1c1ad621fdb7a0e1298114609f99bb3c",
+      "text_paragraphs": 5
+    },
+    {
+      "file": "polish-evidence/otp-ar-393-s1.0-d3.0.json",
+      "sha256": "48445c49eff73963c1e60ce44b0836e78d6f557b22d6abcce19944e1d1eafdf0",
+      "text_paragraphs": 5
+    },
+    {
+      "file": "polish-evidence/results-banner-kmr-280-s2.0-d2.0.json",
+      "sha256": "7ccc2c078351d4e0f35f7898d4d8320074c243c3052c52c49f5c72266aeb08f7",
+      "text_paragraphs": 17
+    },
+    {
+      "file": "polish-evidence/results-kmr-280-s2.0-d2.0-bottom.json",
+      "sha256": "b1d3a23262a50c226f3d0e58855d9381a966b10cca842decbefc4597228328a2",
+      "text_paragraphs": 28
+    }
+  ]
+}
