@@ -10,6 +10,11 @@ abstract final class AuthTokens {
   // A real Regular face: Rabar_021 contains bold outlines even at weight 400.
   static const String fontFamily = 'RabarAuthRegular';
   static const Color accentSoft = Color(0xFFEDF4FF);
+  static const Color accentLine = Color(0xFFBDD5FA);
+  static const Color accentInk = Color(0xFF0759CE);
+  static const double toolbarHeight = 64;
+  static const double introIconSize = 48;
+  static const double contentMaxWidth = 440;
   // ── پەلێتی ڕەنگ — تاقە سەرچاوە بۆ هەموو شاشەکانی چوونەژوورەوە ────────────
   // ⚠ پێش ئەمە هیچ ڕەنگێک لێرە نەبوو: هەر سێ فایلەکەی auth ژمارە hex-ەکانی
   // خۆیان لەناو `build`ـەکاندا دەنووسییەوە (#0365FF ١٢ جار، #E2E8F0 ٤ جار،
@@ -26,7 +31,7 @@ abstract final class AuthTokens {
   static const Color inkMuted = Color(0xFF64748B);
 
   /// دەقی جێگرەوە (placeholder) و ئایکۆنی پێشەوەی خانەکان.
-  static const Color placeholder = Color(0xFF94A3B8);
+  static const Color placeholder = inkMuted;
 
   /// سنووری نەچالاکی خانەکان — هەمان سنووری چیپەکانی فلتەری ڕیکلام.
   static const Color line = Color(0xFFE2E8F0);
@@ -47,14 +52,13 @@ abstract final class AuthTokens {
   static const Color success = Color(0xFF13A56A);
   static const Color successBg = Color(0xFFECFDF5);
 
-  /// ⚠ بوو 20. ئێستا 16 — هەمان گەتەری ئاسۆیی هەموو شاشەکانی تری ئەپەکە
-  /// (باری فلتەری ڕیکلام، کارتە خێراکان، دۆخە بەتاڵەکان).
+  /// Shared page gutters for the Auth shell and visual fixtures.
   static const EdgeInsetsDirectional pagePadding =
-      EdgeInsetsDirectional.symmetric(horizontal: 16);
+      EdgeInsetsDirectional.symmetric(horizontal: 20);
 
   // ── بۆشاییە یەکگرتووەکان ──────────────────────────────────────────────────
   static const double gapTopToTitle = 16;
-  static const double gapHeaderToTitle = 28;
+  static const double gapHeaderToTitle = 24;
   static const double gapTitleToSubtitle = 6;
   static const double gapSubtitleToForm = 24;
   static const double gapLabelToField = 6;
@@ -66,10 +70,10 @@ abstract final class AuthTokens {
   static const double gapSectionBottom = 16;
 
   // ── فۆنت و دەقەکان ────────────────────────────────────────────────────────
-  // Shared hierarchy: 20dp headings, 14dp controls, 12dp supporting copy.
+  // Shared hierarchy: 24dp headings, 14dp controls, 12dp supporting copy.
   // Text follows accessibility scaling; controls keep a 48dp minimum target.
   static const double textSize = 14;
-  static const double titleSize = 20;
+  static const double titleSize = 24;
   static const FontWeight weight = FontWeight.w400;
 
   static const TextStyle title = TextStyle(
@@ -151,9 +155,8 @@ abstract final class AuthTokens {
   );
 
   // ── پێوانەی کۆنتڕۆڵەکان ────────────────────────────────────────────────────
-  /// ⚠ بوو 50. 48 ئەو بەرزاییەیە کە هەموو دوگمە سەرەکییەکانی ئەپەکە
-  /// بەکاری دەهێنن (`_kCtaHeight`ی ad_details، پیلەکانی tools).
-  static const double buttonHeight = 48;
+  /// Primary actions grow with text; compact icon targets remain 48dp.
+  static const double buttonHeight = 52;
   static const double controlHeight = 48;
   static const double buttonRadius = 14;
   static const double fieldRadius = 14;
@@ -237,6 +240,8 @@ abstract final class AuthStrings {
       _v('وشەی نهێنییەکی بەهێز هەڵبژێرە.', 'اختر كلمة مرور قوية.');
   static String get signupFirstStep => _v('هەنگاوی ١ لە ٢', 'الخطوة ١ من ٢');
   static String get signupSecondStep => _v('هەنگاوی ٢ لە ٢', 'الخطوة ٢ من ٢');
+  static String get signupDetailsStep => _v('زانیارییەکان', 'المعلومات');
+  static String get signupSecurityStep => _v('پاراستن', 'الحماية');
   static String get recoveryTitle => _v('گەڕاندنەوەی هەژمار', 'استعادة الحساب');
   static String get newPasswordTitle =>
       _v('وشەی نهێنیی نوێ', 'كلمة مرور جديدة');

@@ -5,7 +5,8 @@ import 'auth_design.dart';
 import 'auth_header.dart';
 import 'auth_icon.dart';
 
-/// One quiet, centered introduction shared by every Auth step.
+/// A compact, directional title block. The icon shares the title's row instead
+/// of consuming a separate hero row above the form.
 class AuthIntro extends StatelessWidget {
   const AuthIntro({
     super.key,
@@ -16,35 +17,52 @@ class AuthIntro extends StatelessWidget {
   final String icon, title, subtitle;
 
   @override
-  Widget build(BuildContext context) => Column(
-    crossAxisAlignment: CrossAxisAlignment.stretch,
-    children: [
-      Center(
-        child: Container(
-          width: 64,
-          height: 64,
-          decoration: BoxDecoration(
-            color: AuthTokens.accentSoft,
-            borderRadius: BorderRadius.circular(22),
-          ),
-          alignment: Alignment.center,
-          child: AuthIcon(icon, size: 30),
-        ),
+  Widget build(BuildContext context) {
+    final symbol = Container(
+      key: const ValueKey('auth-intro-icon'),
+      width: AuthTokens.introIconSize,
+      height: AuthTokens.introIconSize,
+      decoration: BoxDecoration(
+        color: AuthTokens.accentSoft,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AuthTokens.accentLine),
       ),
-      const SizedBox(height: 20),
-      AuthTitle(title, textAlign: TextAlign.center),
-      const SizedBox(height: 8),
-      Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 320),
-          child: ProxoText(
-            subtitle,
-            textAlign: TextAlign.center,
-            style: AuthTokens.subtitle,
-          ),
-        ),
+      alignment: Alignment.center,
+      child: AuthIcon(icon, size: 24),
+    );
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AuthTokens.gapSubtitleToForm),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          // At large text sizes the heading gets the complete line width.
+          // No text scaling is clamped and no title is ellipsized.
+          final stacked = constraints.maxWidth < 260 ||
+              MediaQuery.textScalerOf(context).scale(14) > 18;
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              if (stacked) ...[
+                Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: symbol,
+                ),
+                const SizedBox(height: 12),
+                AuthTitle(title),
+              ] else
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(child: AuthTitle(title)),
+                    const SizedBox(width: 16),
+                    symbol,
+                  ],
+                ),
+              const SizedBox(height: AuthTokens.gapTitleToSubtitle),
+              ProxoText(subtitle, style: AuthTokens.subtitle),
+            ],
+          );
+        },
       ),
-      const SizedBox(height: 28),
-    ],
-  );
+    );
+  }
 }

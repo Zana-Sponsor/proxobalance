@@ -10,50 +10,39 @@ import 'auth_icon.dart';
 import 'package:proxo_app/widgets/proxo_text.dart';
 
 class AuthHeader extends StatelessWidget {
-  const AuthHeader.login({super.key}) : onBack = null, showLanguage = true;
+  const AuthHeader.login({super.key}) : onBack = null;
 
-  const AuthHeader.inner({super.key, required this.onBack})
-    : showLanguage = false;
+  const AuthHeader.inner({super.key, required this.onBack});
 
   final VoidCallback? onBack;
-  final bool showLanguage;
 
   @override
   Widget build(BuildContext context) {
     ProxoLocale.watch(context);
-    if (showLanguage) {
-      return const Directionality(
-        // Brand stays on the physical left and the language control on the
-        // physical right, matching the supplied header reference in both RTL
-        // languages. Text inside the selector restores RTL independently.
-        textDirection: TextDirection.ltr,
-        child: Wrap(
-          alignment: WrapAlignment.spaceBetween,
-          spacing: 12,
-          runSpacing: 12,
-          crossAxisAlignment: WrapCrossAlignment.center,
-          children: <Widget>[
-            AuthLogo(),
-            Directionality(
-              textDirection: TextDirection.rtl,
-              child: AuthLanguageSelector(),
-            ),
-          ],
-        ),
-      );
-    }
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        SizedBox(width: 48, child: AuthBackButton(onTap: onBack!)),
-        const AuthLogo(),
-      ],
+    return Container(
+      key: const ValueKey('auth-app-bar'),
+      height: AuthTokens.toolbarHeight,
+      decoration: const BoxDecoration(
+        border: Border(bottom: BorderSide(color: AuthTokens.line)),
+      ),
+      child: Row(
+        children: [
+          SizedBox(
+            width: AuthTokens.controlHeight,
+            child: onBack == null ? null : AuthBackButton(onTap: onBack!),
+          ),
+          const Expanded(child: Center(child: AuthLogo())),
+          const AuthLanguageSelector(compact: true),
+        ],
+      ),
     );
   }
 }
 
 class AuthLanguageSelector extends StatelessWidget {
-  const AuthLanguageSelector({super.key});
+  const AuthLanguageSelector({super.key, this.compact = false});
+
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +51,8 @@ class AuthLanguageSelector extends StatelessWidget {
       valueListenable: ProxoLocale.current,
       builder: (context, locale, _) {
         return PopupMenuButton<Locale>(
-          tooltip: ProxoStrings.text('زمان'),
+          tooltip: '${ProxoStrings.text('زمان')} · ${_languageName(locale)}',
+          initialValue: locale,
           onSelected: ProxoLocale.set,
           position: PopupMenuPosition.under,
           shape: RoundedRectangleBorder(
@@ -95,35 +85,33 @@ class AuthLanguageSelector extends StatelessWidget {
             ),
           ],
           child: Container(
-            constraints: const BoxConstraints(minHeight: 48),
+            constraints: const BoxConstraints(minHeight: 48, minWidth: 48),
             padding: const EdgeInsetsDirectional.symmetric(horizontal: 12),
             decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
+              color: AuthTokens.fieldFill,
+              borderRadius: BorderRadius.circular(14),
               border: Border.all(color: AuthTokens.line),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 const AuthIcon(
-                  'language',
-                  size: 19,
-                  color: AuthTokens.inkMuted,
+                  'language_outline',
+                  size: 22,
+                  color: AuthTokens.ink,
                 ),
-                const SizedBox(width: 7),
-                Flexible(
-                  child: ProxoText(
-                    locale.languageCode == 'ar'
-                        ? 'العربية'
-                        : locale.languageCode == 'kmr'
-                        ? 'کوردی بادینی'
-                        : 'کوردی سۆرانی',
-                    style: AuthTokens.helper.copyWith(
-                      color: AuthTokens.ink,
-                      fontWeight: FontWeight.w400,
+                if (!compact) ...[
+                  const SizedBox(width: 7),
+                  Flexible(
+                    child: ProxoText(
+                      _languageName(locale),
+                      style: AuthTokens.helper.copyWith(
+                        color: AuthTokens.ink,
+                        fontWeight: FontWeight.w400,
+                      ),
                     ),
                   ),
-                ),
+                ],
               ],
             ),
           ),
@@ -131,6 +119,12 @@ class AuthLanguageSelector extends StatelessWidget {
       },
     );
   }
+
+  String _languageName(Locale locale) => switch (locale.languageCode) {
+    'ar' => 'العربية',
+    'kmr' => 'کوردی بادینی',
+    _ => 'کوردی سۆرانی',
+  };
 }
 
 /// Keep whole words intact at narrow widths while retaining the user's text

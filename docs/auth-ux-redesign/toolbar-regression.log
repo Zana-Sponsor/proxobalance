@@ -1,0 +1,11 @@
+   Woah! You appear to be trying to run flutter as root.
+   We strongly recommend running the flutter tool without superuser privileges.
+  /
+📎
+00:00 +0: loading /workspace/scratch/8d19aeba9fd7/proxobalance/proxo_app/test/auth_refresh_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: Auth back restores login quickly, with reduced motion false
+00:01 +1: Auth back restores login quickly, with reduced motion true
+00:01 +2: signup language menu preserves details and the validated next step
+00:02 +3: (tearDownAll)
+00:02 +3: All tests passed!

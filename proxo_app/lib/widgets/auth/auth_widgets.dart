@@ -5,7 +5,6 @@ import 'package:proxo_app/theme/app_locale.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../../theme/app_theme.dart' show ProxoInk;
 import 'auth_design.dart';
 import 'auth_icon.dart';
 import '../proxo_symbol.dart';
@@ -61,6 +60,15 @@ class AuthTextField extends StatelessWidget {
   /// بۆکسێکی جیا لەتەنیشتی، بۆیە یەک سنوور و یەک ڕەنگی فۆکەسیان هەیە.
   final Widget? prefix;
   final List<TextInputFormatter>? inputFormatters;
+
+  String? get _labelIcon => switch (icon) {
+        Icons.person_outline_rounded => 'person_outline',
+        Icons.mail_outline_rounded => 'email_outline',
+        Icons.phone_iphone_rounded => 'phone_outline',
+        Icons.lock_outline_rounded => 'lock_outline',
+        Icons.lock_reset_rounded => 'security_outline',
+        _ => null,
+      };
 
   @override
   Widget build(BuildContext context) {
@@ -149,10 +157,20 @@ class AuthTextField extends StatelessWidget {
             start: 2,
             bottom: AuthTokens.gapLabelToField,
           ),
-          child: ProxoText(
-            label,
-            translate: true,
-            style: AuthTokens.fieldLabel,
+          child: Row(
+            children: [
+              if (_labelIcon != null) ...[
+                AuthIcon(_labelIcon!, size: 18, color: AuthTokens.inkMuted),
+                const SizedBox(width: 7),
+              ],
+              Expanded(
+                child: ProxoText(
+                  label,
+                  translate: true,
+                  style: AuthTokens.fieldLabel,
+                ),
+              ),
+            ],
           ),
         ),
         if (ltr)
@@ -205,9 +223,8 @@ class AuthWhatsappConsent extends StatelessWidget {
       child: CheckboxListTile(
         key: const ValueKey('signup-whatsapp-consent'),
         value: value,
-        onChanged: onChanged == null
-            ? null
-            : (next) => onChanged!(next ?? false),
+        onChanged:
+            onChanged == null ? null : (next) => onChanged!(next ?? false),
         controlAffinity: ListTileControlAffinity.leading,
         activeColor: AuthTokens.primary,
         contentPadding: const EdgeInsetsDirectional.only(start: 4, end: 12),
@@ -285,13 +302,11 @@ class _AuthPrimaryButtonState extends State<AuthPrimaryButton> {
         child: FilledButton(
           onPressed: live ? _tap : null,
           style: FilledButton.styleFrom(
-            // ⚠ بوو شینی #0365FF. دوگمەی سەرەکی ئێستا مەرەکەبی تۆخە —
-            // هەمان پیلی «ئامرازی نوێ +»ی tools_screen و CTAی دۆخە
-            // بەتاڵەکان. شینەکە هێشتا فۆکەسی خانەکان و لینکەکان دەگرێت.
             backgroundColor: AuthTokens.primary,
             foregroundColor: AuthTokens.onPrimary,
-            disabledBackgroundColor: AuthTokens.primary.withOpacity(0.35),
-            disabledForegroundColor: Colors.white.withOpacity(0.8),
+            disabledBackgroundColor:
+                widget.loading ? AuthTokens.primary : AuthTokens.line,
+            disabledForegroundColor: AuthTokens.inkMuted,
             elevation: 0,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             animationDuration: AuthTokens.microTransition,
@@ -316,7 +331,9 @@ class _AuthPrimaryButtonState extends State<AuthPrimaryButton> {
                     translate: true,
                     key: const ValueKey('label'),
                     textAlign: TextAlign.center,
-                    style: AuthTokens.buttonText,
+                    style: AuthTokens.buttonText.copyWith(
+                      color: live ? AuthTokens.onPrimary : AuthTokens.inkMuted,
+                    ),
                   ),
           ),
         ),
@@ -375,18 +392,19 @@ class AuthBackButton extends StatelessWidget {
       alignment: AlignmentDirectional.centerStart,
       child: IconButton(
         onPressed: onTap,
-        visualDensity: VisualDensity.compact,
+        visualDensity: VisualDensity.standard,
         padding: EdgeInsets.zero,
         constraints: const BoxConstraints.tightFor(width: 48, height: 48),
         tooltip: AuthStrings.back,
         style: IconButton.styleFrom(
           backgroundColor: AuthTokens.fieldFill,
+          side: const BorderSide(color: AuthTokens.line),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(14),
           ),
         ),
         icon: const AuthIcon(
-          'arrow_back',
+          'back_outline',
           directional: true,
           color: AuthTokens.ink,
           size: 22,
@@ -469,9 +487,8 @@ class PasswordStrengthMeter extends StatelessWidget {
     ProxoLocale.watch(context);
     final PasswordStrength strength = PasswordPolicy.evaluate(password);
     final List<bool> satisfied = PasswordPolicy.satisfaction(password);
-    final Color tone = strength == PasswordStrength.none
-        ? AuthTokens.line
-        : strength.color;
+    final Color tone =
+        strength == PasswordStrength.none ? AuthTokens.line : strength.color;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -524,8 +541,7 @@ class PasswordStrengthMeter extends StatelessWidget {
           builder: (context, constraints) {
             // Two short columns on ordinary phones; one column when text is
             // enlarged or space is narrow. Requirements always remain visible.
-            final twoColumns =
-                constraints.maxWidth >= 320 &&
+            final twoColumns = constraints.maxWidth >= 320 &&
                 MediaQuery.textScalerOf(context).scale(12) <= 16;
             final width = twoColumns
                 ? (constraints.maxWidth - 16) / 2

@@ -164,6 +164,50 @@ void main() {
   );
 
   testWidgets(
+    'signup language menu preserves details and the validated next step',
+    (t) async {
+      ProxoLocale.current.value = ProxoLocale.kurdishSorani;
+      await t.pumpWidget(host(const AuthShell()));
+      await settle(t);
+      final signup = find.byWidgetPredicate(
+        (w) => w is AuthTextLink && w.label == AuthStrings.noAccountAction,
+      );
+      await t.ensureVisible(signup);
+      await t.tap(signup);
+      await settle(t);
+      await t.enterText(find.byType(TextField).at(0), 'Fixture User');
+      await t.enterText(find.byType(TextField).at(1), '7500000001');
+      await t.ensureVisible(find.byType(AuthLanguageSelector));
+      await t.tap(find.byType(AuthLanguageSelector));
+      await t.pumpAndSettle();
+      await t.tap(find.text('العربية').last);
+      await settle(t);
+      expect(ProxoLocale.current.value, ProxoLocale.arabic);
+      expect(
+        t.widget<TextField>(find.byType(TextField).at(0)).controller!.text,
+        'Fixture User',
+      );
+      expect(
+        t.widget<TextField>(find.byType(TextField).at(1)).controller!.text,
+        '7500000001',
+      );
+      final next = find.byKey(const ValueKey('signup-next'));
+      await t.ensureVisible(next);
+      await t.tap(next);
+      await settle(t);
+      expect(
+        find.byWidgetPredicate(
+          (w) => w is AuthTitle && w.text == AuthStrings.signupSecurityTitle,
+        ),
+        findsOneWidget,
+      );
+      expect(t.takeException(), isNull);
+      await t.pumpWidget(const SizedBox());
+      ProxoLocale.current.value = ProxoLocale.kurdishSorani;
+    },
+  );
+
+  testWidgets(
     'channel pill interpolates and rapid switches retain one active form',
     (t) async {
       await t.pumpWidget(host(const AuthShell()));
@@ -242,10 +286,9 @@ void main() {
           await t.runAsync(() async {
             final out = Directory('build/auth-refresh')
               ..createSync(recursive: true);
-            final image =
-                await (key.currentContext!.findRenderObject()
-                        as RenderRepaintBoundary)
-                    .toImage(pixelRatio: 2);
+            final image = await (key.currentContext!.findRenderObject()
+                    as RenderRepaintBoundary)
+                .toImage(pixelRatio: 2);
             final data = await image.toByteData(format: ui.ImageByteFormat.png);
             image.dispose();
             final name =

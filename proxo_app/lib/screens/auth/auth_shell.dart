@@ -1476,7 +1476,7 @@ class _AuthShellState extends State<AuthShell> {
                 child: Center(
                   child: ConstrainedBox(
                     constraints: BoxConstraints(
-                      maxWidth: 440,
+                      maxWidth: AuthTokens.contentMaxWidth,
                       minHeight: max(0.0, viewport.maxHeight - 40),
                     ),
                     child: Column(
