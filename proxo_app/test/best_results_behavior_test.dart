@@ -159,7 +159,11 @@ void main() {
         final stopped = controller.page!;
         await t.pump(const Duration(seconds: 6));
         expect(controller.page, stopped);
+        // First movement crosses touch slop; the following move drags the page.
+        await gesture.moveBy(const Offset(24, 0));
+        await t.pump(const Duration(milliseconds: 16));
         await gesture.moveBy(const Offset(420, 0));
+        await t.pump(const Duration(milliseconds: 16));
         await gesture.up();
         await t.pumpAndSettle();
         final manual = controller.page!.round();

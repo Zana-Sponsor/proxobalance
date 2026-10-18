@@ -173,7 +173,7 @@ void main() {
       final pill = find
           .descendant(
             of: find.byKey(const ValueKey('auth-channel-indicator')),
-            matching: find.byType(Container),
+            matching: find.byType(DecoratedBox),
           )
           .first;
       final start = t.getCenter(pill).dx;
