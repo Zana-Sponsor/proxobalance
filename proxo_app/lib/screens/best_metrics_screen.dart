@@ -213,6 +213,7 @@ class _BestMetricsScreenState extends State<BestMetricsScreen> {
   Widget _results(List<BestMetricAd> rows) {
     // Anchor the tapped card without estimating pixel heights or eagerly building
     // earlier cards. The preceding sliver remains reachable by scrolling back.
+    final inset = math.max(16.0, (MediaQuery.sizeOf(context).width - 600) / 2);
     final selected = math.max(0, rows.indexWhere((ad) => ad.id == _anchorId));
     final center = ValueKey('results-anchor-$_category-$_anchorId');
     Widget card(BestMetricAd ad) => Padding(
@@ -237,7 +238,7 @@ class _BestMetricsScreenState extends State<BestMetricsScreen> {
         slivers: [
           if (selected > 0)
             SliverPadding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding: EdgeInsets.symmetric(horizontal: inset),
               sliver: SliverList.builder(
                 itemCount: selected,
                 itemBuilder: (_, i) => card(rows[selected - 1 - i]),
@@ -245,7 +246,7 @@ class _BestMetricsScreenState extends State<BestMetricsScreen> {
             ),
           SliverPadding(
             key: center,
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+            padding: EdgeInsets.fromLTRB(inset, 16, inset, 24),
             sliver: SliverList.builder(
               itemCount: rows.length - selected,
               itemBuilder: (_, i) => card(rows[selected + i]),

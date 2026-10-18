@@ -25,7 +25,6 @@ import '../account_setup_screen.dart';
 import '../../widgets/auth/auth_design.dart';
 import '../../widgets/auth/auth_otp_field.dart';
 import '../../widgets/auth/auth_widgets.dart';
-import '../../widgets/auth/auth_header.dart';
 import '../../widgets/auth/auth_swap.dart';
 import '../../widgets/auth/auth_icon.dart';
 import '../../main.dart'
@@ -1727,7 +1726,7 @@ class _AuthShellState extends State<AuthShell> {
 
   // ── View 2: Sign Up ───────────────────────────────────────────────────────
 
-  void _advanceSignup() {
+  Future<void> _advanceSignup() async {
     if (_loading) return;
     final nameError = AuthValidators.fullName(_regNameCtrl.text.trim());
     final phoneError = _regPhoneValid ? null : AuthStrings.phoneInvalid;

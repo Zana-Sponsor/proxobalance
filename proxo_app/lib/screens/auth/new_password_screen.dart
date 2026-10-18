@@ -22,7 +22,8 @@ class NewPasswordScreen extends StatelessWidget {
     this.confirmationError,
     this.loading = false,
   });
-  final VoidCallback onBack, onSave;
+  final VoidCallback onBack;
+  final Future<void> Function() onSave;
   final TextEditingController password, confirmation;
   final ValueNotifier<bool> passwordVisible, confirmationVisible;
   final ValueChanged<String>? onPasswordChanged, onConfirmationChanged;
