@@ -9,8 +9,8 @@ Actual production Flutter widgets. Each primary image has recorded RenderObject 
 | Email login | [View](images/login-ckb-393.png) | [View](images/login-ar-393.png) | [View](images/login-kmr-393.png) |
 | Phone login | [View](images/login-phone-ckb-393.png) | [View](images/login-phone-ar-393.png) | [View](images/login-phone-kmr-393.png) |
 | login-phone-filled | [View](images/login-phone-filled-ckb-393.png) | [View](images/login-phone-filled-ar-393.png) | [View](images/login-phone-filled-kmr-393.png) |
-| Create account | [View](images/signup-ckb-393.png) | [View](images/signup-ar-393.png) | [View](images/signup-kmr-393.png) |
-| Create account (filled) | [View](images/signup-filled-ckb-393.png) | [View](images/signup-filled-ar-393.png) | [View](images/signup-filled-kmr-393.png) |
+| Create account | [View](images/signup-ckb-393.png) · [Bottom](images/signup-ckb-393-bottom.png) | [View](images/signup-ar-393.png) · [Bottom](images/signup-ar-393-bottom.png) | [View](images/signup-kmr-393.png) · [Bottom](images/signup-kmr-393-bottom.png) |
+| Create account (filled) | [View](images/signup-filled-ckb-393.png) · [Bottom](images/signup-filled-ckb-393-bottom.png) | [View](images/signup-filled-ar-393.png) · [Bottom](images/signup-filled-ar-393-bottom.png) | [View](images/signup-filled-kmr-393.png) · [Bottom](images/signup-filled-kmr-393-bottom.png) |
 | Recovery | [View](images/forgot-ckb-393.png) | [View](images/forgot-ar-393.png) | [View](images/forgot-kmr-393.png) |
 | New password | [View](images/new-password-ckb-393.png) | [View](images/new-password-ar-393.png) | [View](images/new-password-kmr-393.png) |
 | Verification | [View](images/otp-ckb-393.png) | [View](images/otp-ar-393.png) | [View](images/otp-kmr-393.png) |

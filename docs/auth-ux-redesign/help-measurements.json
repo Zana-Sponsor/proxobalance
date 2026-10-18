@@ -1,0 +1,410 @@
+[
+  {
+    "section": "contact",
+    "locale": "ar",
+    "width_dp": 280.0,
+    "text_scale": 2.0,
+    "dpr": 2,
+    "dialog_bounds_dp": [
+      0.0,
+      0.0,
+      280.0,
+      852.0
+    ],
+    "exceptions": [],
+    "fixture": "Production FormHelpActions; local example assets; no network",
+    "screenshot": "help-images/contact-ar-280.png",
+    "screenshot_sha256": "f3938b6d81f447375d4d3bb3aaa5967eb31ea03a62170686a73b2d17e3a8b9e4"
+  },
+  {
+    "section": "contact",
+    "locale": "ar",
+    "width_dp": 393.0,
+    "text_scale": 1.0,
+    "dpr": 2,
+    "dialog_bounds_dp": [
+      0.0,
+      0.0,
+      393.0,
+      852.0
+    ],
+    "exceptions": [],
+    "fixture": "Production FormHelpActions; local example assets; no network",
+    "screenshot": "help-images/contact-ar-393.png",
+    "screenshot_sha256": "3cf972ce44acd290a1f8b2ef4e2edbf09f5aa6d44fa439851b84ab734e47aead"
+  },
+  {
+    "section": "contact",
+    "locale": "ckb",
+    "width_dp": 280.0,
+    "text_scale": 2.0,
+    "dpr": 2,
+    "dialog_bounds_dp": [
+      0.0,
+      0.0,
+      280.0,
+      852.0
+    ],
+    "exceptions": [],
+    "fixture": "Production FormHelpActions; local example assets; no network",
+    "screenshot": "help-images/contact-ckb-280.png",
+    "screenshot_sha256": "7a2f328c272231d3cadc3f8915283a08f18b7b5ad93f74001b178c37b18e3027"
+  },
+  {
+    "section": "contact",
+    "locale": "ckb",
+    "width_dp": 393.0,
+    "text_scale": 1.0,
+    "dpr": 2,
+    "dialog_bounds_dp": [
+      0.0,
+      0.0,
+      393.0,
+      852.0
+    ],
+    "exceptions": [],
+    "fixture": "Production FormHelpActions; local example assets; no network",
+    "screenshot": "help-images/contact-ckb-393.png",
+    "screenshot_sha256": "bb95fe280ac9e10c7d6d0bfa6a218ab82a8a4cdb42fce317479c87fe73842e61"
+  },
+  {
+    "section": "contact",
+    "locale": "kmr",
+    "width_dp": 280.0,
+    "text_scale": 2.0,
+    "dpr": 2,
+    "dialog_bounds_dp": [
+      0.0,
+      0.0,
+      280.0,
+      852.0
+    ],
+    "exceptions": [],
+    "fixture": "Production FormHelpActions; local example assets; no network",
+    "screenshot": "help-images/contact-kmr-280.png",
+    "screenshot_sha256": "023c1fb8ec40d5afdbb8e03b6a470f00f94b9d1f83e2fa492aaf79321071ae4c"
+  },
+  {
+    "section": "contact",
+    "locale": "kmr",
+    "width_dp": 393.0,
+    "text_scale": 1.0,
+    "dpr": 2,
+    "dialog_bounds_dp": [
+      0.0,
+      0.0,
+      393.0,
+      852.0
+    ],
+    "exceptions": [],
+    "fixture": "Production FormHelpActions; local example assets; no network",
+    "screenshot": "help-images/contact-kmr-393.png",
+    "screenshot_sha256": "e9285c9f0fb3f92caa521b6a016145e766ceb789db2be5031db35c610c64f42c"
+  },
+  {
+    "section": "download",
+    "locale": "ar",
+    "width_dp": 280.0,
+    "text_scale": 2.0,
+    "dpr": 2,
+    "dialog_bounds_dp": [
+      0.0,
+      0.0,
+      280.0,
+      852.0
+    ],
+    "exceptions": [],
+    "fixture": "Production FormHelpActions; local example assets; no network",
+    "screenshot": "help-images/download-ar-280.png",
+    "screenshot_sha256": "cd7884da79b5b0f01c17b08801316efe538853d769537c5afc882da23aa39285"
+  },
+  {
+    "section": "download",
+    "locale": "ar",
+    "width_dp": 393.0,
+    "text_scale": 1.0,
+    "dpr": 2,
+    "dialog_bounds_dp": [
+      0.0,
+      0.0,
+      393.0,
+      852.0
+    ],
+    "exceptions": [],
+    "fixture": "Production FormHelpActions; local example assets; no network",
+    "screenshot": "help-images/download-ar-393.png",
+    "screenshot_sha256": "ad1f75fae853b55886cfb1d793de88c7f7806e63f418b00712c4491bc9d103ea"
+  },
+  {
+    "section": "download",
+    "locale": "ckb",
+    "width_dp": 280.0,
+    "text_scale": 2.0,
+    "dpr": 2,
+    "dialog_bounds_dp": [
+      0.0,
+      0.0,
+      280.0,
+      852.0
+    ],
+    "exceptions": [],
+    "fixture": "Production FormHelpActions; local example assets; no network",
+    "screenshot": "help-images/download-ckb-280.png",
+    "screenshot_sha256": "832841fce8913689843f5e767c692e108f37dada945e184942ef644975458ed1"
+  },
+  {
+    "section": "download",
+    "locale": "ckb",
+    "width_dp": 393.0,
+    "text_scale": 1.0,
+    "dpr": 2,
+    "dialog_bounds_dp": [
+      0.0,
+      0.0,
+      393.0,
+      852.0
+    ],
+    "exceptions": [],
+    "fixture": "Production FormHelpActions; local example assets; no network",
+    "screenshot": "help-images/download-ckb-393.png",
+    "screenshot_sha256": "b69d4349bebe60a0dcfb3aa9fd566a4775fada3d8e7c7b8a7844e9f9c373634b"
+  },
+  {
+    "section": "download",
+    "locale": "kmr",
+    "width_dp": 280.0,
+    "text_scale": 2.0,
+    "dpr": 2,
+    "dialog_bounds_dp": [
+      0.0,
+      0.0,
+      280.0,
+      852.0
+    ],
+    "exceptions": [],
+    "fixture": "Production FormHelpActions; local example assets; no network",
+    "screenshot": "help-images/download-kmr-280.png",
+    "screenshot_sha256": "f578cfa7bceeb06ea52712c7d8604458d1e26f5f9a03ff7bf19122001b8d3757"
+  },
+  {
+    "section": "download",
+    "locale": "kmr",
+    "width_dp": 393.0,
+    "text_scale": 1.0,
+    "dpr": 2,
+    "dialog_bounds_dp": [
+      0.0,
+      0.0,
+      393.0,
+      852.0
+    ],
+    "exceptions": [],
+    "fixture": "Production FormHelpActions; local example assets; no network",
+    "screenshot": "help-images/download-kmr-393.png",
+    "screenshot_sha256": "fd8bacf3160556ab6ffe0dd44783d55386119677675a450bcc3fd6b3f66ceba2"
+  },
+  {
+    "section": "order",
+    "locale": "ar",
+    "width_dp": 280.0,
+    "text_scale": 2.0,
+    "dpr": 2,
+    "dialog_bounds_dp": [
+      0.0,
+      0.0,
+      280.0,
+      852.0
+    ],
+    "exceptions": [],
+    "fixture": "Production FormHelpActions; local example assets; no network",
+    "screenshot": "help-images/order-ar-280.png",
+    "screenshot_sha256": "fdcf8ed0cf29097ffc53da41da94e06ca318d350516433de64d7da2426daddee"
+  },
+  {
+    "section": "order",
+    "locale": "ar",
+    "width_dp": 393.0,
+    "text_scale": 1.0,
+    "dpr": 2,
+    "dialog_bounds_dp": [
+      0.0,
+      0.0,
+      393.0,
+      852.0
+    ],
+    "exceptions": [],
+    "fixture": "Production FormHelpActions; local example assets; no network",
+    "screenshot": "help-images/order-ar-393.png",
+    "screenshot_sha256": "64177d81e7c1bc014d8e52c953dfa6bfb257d955cc72d80378023bf971a5d450"
+  },
+  {
+    "section": "order",
+    "locale": "ckb",
+    "width_dp": 280.0,
+    "text_scale": 2.0,
+    "dpr": 2,
+    "dialog_bounds_dp": [
+      0.0,
+      0.0,
+      280.0,
+      852.0
+    ],
+    "exceptions": [],
+    "fixture": "Production FormHelpActions; local example assets; no network",
+    "screenshot": "help-images/order-ckb-280.png",
+    "screenshot_sha256": "7518605e883dbf4c546e57363cfa3e29ffabd388e38b6875135ae3eb85ae8493"
+  },
+  {
+    "section": "order",
+    "locale": "ckb",
+    "width_dp": 393.0,
+    "text_scale": 1.0,
+    "dpr": 2,
+    "dialog_bounds_dp": [
+      0.0,
+      0.0,
+      393.0,
+      852.0
+    ],
+    "exceptions": [],
+    "fixture": "Production FormHelpActions; local example assets; no network",
+    "screenshot": "help-images/order-ckb-393.png",
+    "screenshot_sha256": "8f6d67be3487d9a0bd5269ace14654b5c25eac483f4d48d8d01a3ad50431d2d8"
+  },
+  {
+    "section": "order",
+    "locale": "kmr",
+    "width_dp": 280.0,
+    "text_scale": 2.0,
+    "dpr": 2,
+    "dialog_bounds_dp": [
+      0.0,
+      0.0,
+      280.0,
+      852.0
+    ],
+    "exceptions": [],
+    "fixture": "Production FormHelpActions; local example assets; no network",
+    "screenshot": "help-images/order-kmr-280.png",
+    "screenshot_sha256": "dba059b5d21fc20d39ada176c2872d2a059059b5efcb6c89215d78daa030f9c6"
+  },
+  {
+    "section": "order",
+    "locale": "kmr",
+    "width_dp": 393.0,
+    "text_scale": 1.0,
+    "dpr": 2,
+    "dialog_bounds_dp": [
+      0.0,
+      0.0,
+      393.0,
+      852.0
+    ],
+    "exceptions": [],
+    "fixture": "Production FormHelpActions; local example assets; no network",
+    "screenshot": "help-images/order-kmr-393.png",
+    "screenshot_sha256": "6e78cd4c1e3bef0c67116deb4c26643d0677cf5c7fe5682a0e1ce6de66386290"
+  },
+  {
+    "section": "video-link",
+    "locale": "ar",
+    "width_dp": 280.0,
+    "text_scale": 2.0,
+    "dpr": 2,
+    "dialog_bounds_dp": [
+      0.0,
+      0.0,
+      280.0,
+      852.0
+    ],
+    "exceptions": [],
+    "fixture": "Production FormHelpActions; local example assets; no network",
+    "screenshot": "help-images/video-link-ar-280.png",
+    "screenshot_sha256": "1e6b0f54891d3a68ab459fe7ddc94f37395ce747cfb3730aa6fc798b687e8dff"
+  },
+  {
+    "section": "video-link",
+    "locale": "ar",
+    "width_dp": 393.0,
+    "text_scale": 1.0,
+    "dpr": 2,
+    "dialog_bounds_dp": [
+      0.0,
+      0.0,
+      393.0,
+      852.0
+    ],
+    "exceptions": [],
+    "fixture": "Production FormHelpActions; local example assets; no network",
+    "screenshot": "help-images/video-link-ar-393.png",
+    "screenshot_sha256": "f58d05c7572ed5d30b70543f057a1356bb6112c230258b0fbf79c83fe1dbaca6"
+  },
+  {
+    "section": "video-link",
+    "locale": "ckb",
+    "width_dp": 280.0,
+    "text_scale": 2.0,
+    "dpr": 2,
+    "dialog_bounds_dp": [
+      0.0,
+      0.0,
+      280.0,
+      852.0
+    ],
+    "exceptions": [],
+    "fixture": "Production FormHelpActions; local example assets; no network",
+    "screenshot": "help-images/video-link-ckb-280.png",
+    "screenshot_sha256": "45e56dcd84c0e67284dc9520b192b3a183cb1a4a157ef5b980b997bc3832cded"
+  },
+  {
+    "section": "video-link",
+    "locale": "ckb",
+    "width_dp": 393.0,
+    "text_scale": 1.0,
+    "dpr": 2,
+    "dialog_bounds_dp": [
+      0.0,
+      0.0,
+      393.0,
+      852.0
+    ],
+    "exceptions": [],
+    "fixture": "Production FormHelpActions; local example assets; no network",
+    "screenshot": "help-images/video-link-ckb-393.png",
+    "screenshot_sha256": "8b566ed6f4d4a1b4780e10a11d4560fe7cdbe8f0b5738fa8d6ca4ade76f16f6c"
+  },
+  {
+    "section": "video-link",
+    "locale": "kmr",
+    "width_dp": 280.0,
+    "text_scale": 2.0,
+    "dpr": 2,
+    "dialog_bounds_dp": [
+      0.0,
+      0.0,
+      280.0,
+      852.0
+    ],
+    "exceptions": [],
+    "fixture": "Production FormHelpActions; local example assets; no network",
+    "screenshot": "help-images/video-link-kmr-280.png",
+    "screenshot_sha256": "73d599b40582c26eb9c9f60cf81389e9d30c849abb7f2ebb071c3a8110db31df"
+  },
+  {
+    "section": "video-link",
+    "locale": "kmr",
+    "width_dp": 393.0,
+    "text_scale": 1.0,
+    "dpr": 2,
+    "dialog_bounds_dp": [
+      0.0,
+      0.0,
+      393.0,
+      852.0
+    ],
+    "exceptions": [],
+    "fixture": "Production FormHelpActions; local example assets; no network",
+    "screenshot": "help-images/video-link-kmr-393.png",
+    "screenshot_sha256": "0bae9c833282d08e0a2ccf2ec33bd76986f74ef3a77f14568a0b202eeec44699"
+  }
+]

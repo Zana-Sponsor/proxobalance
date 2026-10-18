@@ -1,0 +1,19 @@
+   Woah! You appear to be trying to run flutter as root.
+   We strongly recommend running the flutter tool without superuser privileges.
+  /
+📎
+Analyzing 10 items...
+
+   info • The import of 'package:flutter/rendering.dart' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart'. Try removing the import directive • integration_test/polish_runtime_test.dart:6:8 • unnecessary_import
+   info • Don't invoke 'print' in production code. Try using a logging framework • integration_test/polish_runtime_test.dart:83:5 • avoid_print
+   info • Statements in a for should be enclosed in a block. Try wrapping the statement in a block • integration_test/polish_runtime_test.dart:275:42 • curly_braces_in_flow_control_structures
+   info • Statements in a for should be enclosed in a block. Try wrapping the statement in a block • integration_test/polish_runtime_test.dart:327:9 • curly_braces_in_flow_control_structures
+   info • Don't invoke 'print' in production code. Try using a logging framework • integration_test/polish_runtime_test.dart:340:5 • avoid_print
+   info • Don't invoke 'print' in production code. Try using a logging framework • integration_test/polish_runtime_test.dart:354:5 • avoid_print
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/services/context_help_service.dart:14:40 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/services/notification_presentation.dart:47:7 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/widgets/form_help_actions.dart:35:7 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/widgets/form_help_actions.dart:55:7 • curly_braces_in_flow_control_structures
+   info • The import of 'package:flutter/services.dart' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart'. Try removing the import directive • test/context_help_test.dart:4:8 • unnecessary_import
+
+11 issues found. (ran in 2.5s)

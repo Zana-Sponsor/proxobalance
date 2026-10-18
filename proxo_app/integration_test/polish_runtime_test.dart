@@ -1,9 +1,11 @@
 // Production widgets in an Android profile build, with fictional backend data.
 // No real account, payment, message, credential or external page is used.
 import 'dart:async';
+import 'dart:ui' show FrameTiming;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -114,11 +116,33 @@ void main() {
       expect(result?['status'], 0, reason: 'Android PixelCopy $name');
     }
 
+    Future<void> measureFrames(
+        String name, Future<void> Function() action) async {
+      // Read the engine's actual frame timings directly. watchPerformance also
+      // connects to VM Service for GC counts; flutter drive may advertise its
+      // host-forwarded port to the Android process, where it is unreachable.
+      await Future<void>.delayed(const Duration(seconds: 2));
+      final frames = <FrameTiming>[];
+      void collect(List<FrameTiming> timings) => frames.addAll(timings);
+      SchedulerBinding.instance.addTimingsCallback(collect);
+      try {
+        await action();
+        await t.pump();
+        // Profile-mode frame timing callbacks are batched by the engine.
+        await Future<void>.delayed(const Duration(seconds: 2));
+      } finally {
+        SchedulerBinding.instance.removeTimingsCallback(collect);
+      }
+      expect(frames, isNotEmpty, reason: 'Engine frame timings for $name');
+      binding.reportData!['frames_$name'] =
+          FrameTimingSummarizer(frames).summary;
+    }
+
     Future<void> record(String name, Widget widget,
         {Future<void> Function()? action}) async {
       final row = <String, Object?>{};
       (observations['screens'] as Map<String, Object?>)[name] = row;
-      await binding.watchPerformance(() async {
+      await measureFrames(name, () async {
         final clock = Stopwatch()..start();
         await mount(widget);
         row['mount_and_settle_ms'] = clock.elapsedMilliseconds;
@@ -135,7 +159,7 @@ void main() {
             await t.pumpAndSettle(const Duration(milliseconds: 16));
           }
         }
-      }, reportKey: 'frames_$name');
+      });
       final controls = <Map<String, Object?>>[];
       for (final element in find
           .byWidgetPredicate(
@@ -161,6 +185,7 @@ void main() {
       row['exception'] = t.takeException()?.toString();
       expect(row['exception'], isNull, reason: name);
       await capture(name);
+      print('PROXO_POLISH_SCREEN $name');
     }
 
     Future<void> tapLabel(String label) async {

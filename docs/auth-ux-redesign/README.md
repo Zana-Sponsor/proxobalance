@@ -13,6 +13,9 @@
 - The shared refresh strip shows **نوێدەکرێتەوە** beside its spinner, with Arabic/Badini translations and space for large text.
 - Native launch colors and the Flutter splash are aligned. The splash adds a blue halo and rounded brand surface.
 - Background/terminated Android notification messages use the compact monochrome Proxo P mark and blue tint. Foreground and data-only messages also show the Proxo wordmark as their large icon. Removed the generic Firebase service declaration that competed with the Flutter messaging service.
+- Fixed visible data-only pushes being dropped in the foreground and local-notification taps losing their destination after a terminated launch. Silent data updates remain silent.
+- Auth text links now have a minimum 44 × 44 dp touch area. Rapid Auth swaps retain the latest form, and repeated submit taps share one pending operation.
+- Ad video links and Create Page now have immediate local **بینینی نمونە** dialogs. Page examples match contact/order/download. **بینینی فێرکاری** resolves the admin's HTTPS video URL from Supabase only when tapped. [Configuration and screenshots](form-help.md).
 
 ## Actual screen captures
 
@@ -71,13 +74,16 @@ Actual Sorani signup at 393 × 852 dp (DPR 3):
 ## Verification and remaining deployment work
 
 - **57 behavior tests passed:** native email signup/OTP contracts, invalid-code and auto-confirmation rejection, field retention, phone normalization, OTP lifecycle, returning-user entry, refresh coalescing, tab state, reduced-motion splash and signup provisioning.
-- **150 visual cases passed:** 25 views/states × 3 languages × 2 viewport/text settings. **194 screenshots**, **10,290 measured RenderObjects**, **zero rendering exceptions**.
+- **859 tests passed in the complete Flutter suite**, including the existing behavior, security, lifecycle, validation and visual regressions. [Complete log](full-suite.log).
+- **150 app visual cases passed:** 25 views/states × 3 languages × 2 viewport/text settings. **200 screenshots**, **10,812 measured RenderObjects**, **zero rendering exceptions**. A further **24 example-dialog captures** cover video links and all three page types at both sizes in all three languages.
 - No Auth text exceeds its maximum line count. Eighteen existing truncations remain in narrow notification summaries, an ad identifier and a task title; the report records them.
 - Targeted analyzer: zero errors, 3 pre-existing Auth warnings, 27 informational lints.
+- Added help, notification and Android profile-harness analyzer: zero errors, zero warnings; 11 informational lints. [Log](added-analyze.log).
 - These are headless Flutter captures, not Android device screenshots. No live account, OTP, push message or payment was created.
 - **Live email signup is blocked by server configuration:** the connected project's public Auth settings report `mailer_autoconfirm: true`, so Confirm email is currently disabled. The app rejects an auto-confirmed signup session instead of bypassing OTP. Email signup is enabled and the live profile trigger copies `full_name`, but the connector cannot edit hosted Auth configuration. Apply the remaining settings in [email-signup.md](email-signup.md) before releasing email signup.
 - **Push server branding deployed:** live `send-notification` is now version 5, with `icon: ic_notification` and `color: #046CFA`. Its JWT requirement and all other behavior were preserved; the retrieved deployment matches the repository source. `send-push-notification` is not deployed in this project and was only updated in the repository. No live notification was sent; delivery and OEM notification rendering remain unverified.
 - The workflow builds and retains `proxo-release-apk`. Without a configured release keystore it uses the repository's debug-signing fallback, so this is a test APK.
+- `Proxo Android polish runtime` runs production screens in Android profile mode with fictional read-only fixtures, records frame timing and control dimensions, and captures the real Android background-notification surface using Firebase's automatic-notification builder. Its screenshots and timing are retained as `proxo-polish-android-runtime`. The fixture bypasses FCM network transport and does not certify physical-device performance. Profile hooks are excluded from release builds.
 
 [Visual log](capture.log) · [Behavior log](behavior.log) · [Analyzer log](analyze.log) · [OTP recapture](otp-centering.log)
 
@@ -91,6 +97,7 @@ export FLUTTER_SUPPRESS_ANALYTICS=true DART_SUPPRESS_ANALYTICS=true
 flutter --suppress-analytics pub get
 flutter --suppress-analytics test --no-pub test/auth_refresh_test.dart test/auth_email_signup_test.dart test/auth_phone_flow_test.dart test/auth_otp_lifecycle_test.dart test/proxo_tab_stack_test.dart test/account_setup_test.dart test/whatsapp_marketing_test.dart test/proxo_polish_test.dart
 flutter --suppress-analytics test --no-pub test/polish_capture_test.dart --reporter expanded
+flutter --suppress-analytics test --no-pub --reporter expanded
 ```
 
 Android notification reference: https://firebase.google.com/docs/cloud-messaging/android/receive-messages

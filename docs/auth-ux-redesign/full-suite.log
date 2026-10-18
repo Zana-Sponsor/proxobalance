@@ -1,0 +1,1194 @@
+   Woah! You appear to be trying to run flutter as root.
+   We strongly recommend running the flutter tool without superuser privileges.
+  /
+📎
+00:00 +0: loading proxo_app/test/proxolink_page_management_test.dart
+00:00 +0: proxo_app/test/proxolink_page_management_test.dart: (setUpAll)
+00:00 +0: proxo_app/test/proxolink_page_management_test.dart: latest request wins; older owner list cannot replace refreshed cards
+00:00 +1: proxo_app/test/proxolink_page_management_test.dart: newly saved UUID is immediately upserted once and invalidates old GET
+00:00 +2: proxo_app/test/proxolink_page_management_test.dart: list deduplicates and retains newest updated record
+00:00 +3: proxo_app/test/proxolink_page_management_test.dart: late responses after disposal do not notify or throw
+00:00 +4: proxo_app/test/proxolink_page_management_test.dart: (tearDownAll)
+00:00 +4: proxo_app/test/context_help_test.dart: tutorial reads only its admin-configured slot
+00:00 +5: proxo_app/test/context_help_test.dart: tutorial destination rejects unsafe or malformed schemes and credentials
+00:00 +6: proxo_app/test/context_help_test.dart: example opens locally and preserves the form (393.0, 1.0)
+00:00 +7: proxo_app/test/context_help_test.dart: example opens locally and preserves the form (393.0, 1.0)
+00:00 +8: proxo_app/test/context_help_test.dart: example opens locally and preserves the form (393.0, 1.0)
+00:00 +9: proxo_app/test/context_help_test.dart: example opens locally and preserves the form (393.0, 1.0)
+00:00 +10: proxo_app/test/context_help_test.dart: example opens locally and preserves the form (393.0, 1.0)
+00:01 +11: proxo_app/test/context_help_test.dart: example opens locally and preserves the form (393.0, 1.0)
+00:01 +12: proxo_app/test/context_help_test.dart: example opens locally and preserves the form (393.0, 1.0)
+00:01 +13: proxo_app/test/context_help_test.dart: example opens locally and preserves the form (393.0, 1.0)
+00:01 +14: proxo_app/test/context_help_test.dart: example opens locally and preserves the form (393.0, 1.0)
+00:01 +15: proxo_app/test/context_help_test.dart: example opens locally and preserves the form (393.0, 1.0)
+00:01 +16: proxo_app/test/context_help_test.dart: example opens locally and preserves the form (393.0, 1.0)
+00:01 +17: proxo_app/test/context_help_test.dart: example opens locally and preserves the form (393.0, 1.0)
+00:01 +18: proxo_app/test/context_help_test.dart: example opens locally and preserves the form (393.0, 1.0)
+00:01 +19: proxo_app/test/context_help_test.dart: example opens locally and preserves the form (393.0, 1.0)
+00:01 +20: proxo_app/test/context_help_test.dart: example opens locally and preserves the form (393.0, 1.0)
+00:01 +21: proxo_app/test/context_help_test.dart: example opens locally and preserves the form (393.0, 1.0)
+00:01 +22: proxo_app/test/context_help_test.dart: example opens locally and preserves the form (393.0, 1.0)
+00:01 +23: proxo_app/test/context_help_test.dart: example opens locally and preserves the form (393.0, 1.0)
+00:01 +24: proxo_app/test/context_help_test.dart: example opens locally and preserves the form (393.0, 1.0)
+00:01 +25: proxo_app/test/context_help_test.dart: example opens locally and preserves the form (393.0, 1.0)
+00:01 +26: proxo_app/test/text_direction_test.dart: ABC-123 stays LTR within RTL words / TextDirection.rtl
+00:01 +27: proxo_app/test/tx_history_layout_test.dart: LTR history fits 280.0 dp at 1.3 text scale
+00:01 +28: proxo_app/test/context_help_test.dart: example opens locally and preserves the form (280.0, 2.0)
+00:01 +29: proxo_app/test/text_direction_test.dart: -12,345.67 IQD stays LTR within RTL words / TextDirection.rtl
+00:01 +30: proxo_app/test/tx_history_layout_test.dart: LTR history fits 393.0 dp at 1.0 text scale
+00:01 +31: proxo_app/test/tx_history_layout_test.dart: LTR history fits 393.0 dp at 1.0 text scale
+00:01 +32: proxo_app/test/context_help_test.dart: page example uses the bundled page image
+00:01 +33: proxo_app/test/context_help_test.dart: page example uses the bundled page image
+00:01 +34: proxo_app/test/context_help_test.dart: page example uses the bundled page image
+00:01 +35: proxo_app/test/context_help_test.dart: page example uses the bundled page image
+00:01 +36: proxo_app/test/context_help_test.dart: page example uses the bundled page image
+00:01 +37: proxo_app/test/tx_history_layout_test.dart: LTR history fits 430.0 dp at 1.0 text scale
+00:01 +38: proxo_app/test/tx_history_layout_test.dart: LTR history fits 430.0 dp at 1.0 text scale
+00:01 +39: proxo_app/test/context_help_test.dart: tutorial coalesces taps and launches the configured destination once
+00:01 +40: proxo_app/test/context_help_test.dart: tutorial coalesces taps and launches the configured destination once
+00:01 +41: proxo_app/test/context_help_test.dart: tutorial coalesces taps and launches the configured destination once
+00:01 +42: proxo_app/test/context_help_test.dart: tutorial coalesces taps and launches the configured destination once
+00:01 +43: proxo_app/test/text_direction_test.dart: 03:26 PM stays LTR within RTL words / TextDirection.ltr
+00:01 +44: proxo_app/test/tx_history_layout_test.dart: LTR history fits 768.0 dp at 1.0 text scale
+00:02 +45: proxo_app/test/tx_history_layout_test.dart: LTR history fits 768.0 dp at 1.0 text scale
+00:02 +46: proxo_app/test/context_help_test.dart: unpublished tutorial does not open a fake video
+00:02 +47: proxo_app/test/context_help_test.dart: unpublished tutorial does not open a fake video
+00:02 +48: proxo_app/test/tx_history_layout_test.dart: LTR history fits 768.0 dp at 1.3 text scale
+00:02 +49: proxo_app/test/tx_history_layout_test.dart: LTR history fits 768.0 dp at 1.3 text scale
+00:02 +50: proxo_app/test/tx_history_layout_test.dart: LTR history fits 768.0 dp at 1.3 text scale
+00:02 +51: proxo_app/test/text_direction_test.dart: native text geometry and typography remain unchanged
+00:02 +52: proxo_app/test/tx_history_layout_test.dart: back, refresh and card taps reach their handlers
+00:02 +53: proxo_app/test/tx_history_layout_test.dart: back, refresh and card taps reach their handlers
+00:02 +54: proxo_app/test/tx_history_layout_test.dart: back, refresh and card taps reach their handlers
+00:02 +55: proxo_app/test/tx_history_layout_test.dart: back, refresh and card taps reach their handlers
+00:02 +56: proxo_app/test/tx_history_layout_test.dart: back, refresh and card taps reach their handlers
+00:02 +57: proxo_app/test/tx_history_layout_test.dart: back, refresh and card taps reach their handlers
+00:02 +58: proxo_app/test/text_direction_test.dart: auth names switch direction without modifying input or selection
+00:02 +59: proxo_app/test/text_direction_test.dart: auth names switch direction without modifying input or selection
+00:02 +60: proxo_app/test/account_setup_test.dart: slow setup shows indeterminate loading and never builds home early
+00:02 +61: proxo_app/test/account_setup_test.dart: slow setup shows indeterminate loading and never builds home early
+00:02 +62: proxo_app/test/account_setup_test.dart: slow setup shows indeterminate loading and never builds home early
+00:02 +63: proxo_app/test/account_setup_test.dart: slow setup shows indeterminate loading and never builds home early
+00:02 +64: proxo_app/test/account_setup_test.dart: slow setup shows indeterminate loading and never builds home early
+00:03 +65: proxo_app/test/chrome_capture_test.dart: sidebar (280.0, 1.0, 1.0)
+00:03 +66: proxo_app/test/chrome_capture_test.dart: sidebar (280.0, 1.0, 1.0)
+00:03 +67: proxo_app/test/chrome_capture_test.dart: sidebar (280.0, 1.0, 1.0)
+00:03 +68: proxo_app/test/chrome_capture_test.dart: sidebar (280.0, 1.0, 1.0)
+00:03 +69: proxo_app/test/chrome_capture_test.dart: sidebar (280.0, 1.0, 1.0)
+00:03 +70: proxo_app/test/chrome_capture_test.dart: sidebar (280.0, 1.0, 1.0)
+00:03 +71: proxo_app/test/chrome_capture_test.dart: sidebar (280.0, 1.0, 1.0)
+00:03 +72: proxo_app/test/chrome_capture_test.dart: sidebar (280.0, 1.0, 1.0)
+00:03 +73: proxo_app/test/chrome_capture_test.dart: sidebar (280.0, 1.0, 1.0)
+00:03 +74: proxo_app/test/chrome_capture_test.dart: sidebar (280.0, 1.0, 1.0)
+00:03 +75: proxo_app/test/chrome_capture_test.dart: sidebar (280.0, 1.0, 1.0)
+00:03 +76: proxo_app/test/chrome_capture_test.dart: sidebar (280.0, 1.0, 1.0)
+00:03 +77: proxo_app/test/chrome_capture_test.dart: sidebar (280.0, 1.0, 1.0)
+00:03 +78: proxo_app/test/chrome_capture_test.dart: sidebar (280.0, 1.0, 1.0)
+00:03 +79: proxo_app/test/chrome_capture_test.dart: sidebar (280.0, 1.0, 1.0)
+00:03 +80: proxo_app/test/chrome_capture_test.dart: sidebar (280.0, 1.0, 1.0)
+00:03 +81: proxo_app/test/chrome_capture_test.dart: sidebar (280.0, 1.0, 1.0)
+00:03 +82: proxo_app/test/chrome_capture_test.dart: sidebar (280.0, 1.0, 1.0)
+00:03 +83: proxo_app/test/chrome_capture_test.dart: sidebar (280.0, 1.0, 1.0)
+00:03 +84: proxo_app/test/chrome_capture_test.dart: sidebar (280.0, 1.0, 1.0)
+00:04 +85: proxo_app/test/chrome_capture_test.dart: sidebar (280.0, 1.0, 1.0)
+00:04 +86: proxo_app/test/chrome_capture_test.dart: sidebar (280.0, 1.0, 1.0)
+00:04 +87: proxo_app/test/ad_detail_loading_test.dart: a deleted ad clears the cached receipt and PDF action
+00:04 +88: proxo_app/test/localization_test.dart: language changes constant labels without translating user data
+00:04 +89: proxo_app/test/localization_test.dart: language changes constant labels without translating user data
+00:04 +90: proxo_app/test/chrome_capture_test.dart: profile (280.0, 1.0, 1.0)
+00:04 +91: proxo_app/test/chrome_capture_test.dart: profile (280.0, 1.0, 1.0)
+00:04 +92: proxo_app/test/chrome_capture_test.dart: profile (280.0, 1.0, 1.0)
+00:05 +93: proxo_app/test/context_help_capture_test.dart: example dialog video-link ckb (393.0, 1.0)
+00:05 +94: proxo_app/test/context_help_capture_test.dart: example dialog video-link ckb (393.0, 1.0)
+00:05 +95: proxo_app/test/context_help_capture_test.dart: example dialog video-link ckb (393.0, 1.0)
+00:05 +96: proxo_app/test/context_help_capture_test.dart: example dialog video-link ckb (393.0, 1.0)
+00:05 +97: proxo_app/test/context_help_capture_test.dart: example dialog video-link ckb (393.0, 1.0)
+00:05 +98: proxo_app/test/chrome_capture_test.dart: chrome (280.0, 1.0, 1.0)
+00:05 +99: proxo_app/test/proxolink_tools_create_test.dart: shared AppBar, only value cards and two actions; browser return preserves route/scroll and one GET
+00:06 +100: proxo_app/test/proxolink_tools_create_test.dart: shared AppBar, only value cards and two actions; browser return preserves route/scroll and one GET
+00:06 +101: proxo_app/test/proxolink_tools_create_test.dart: shared AppBar, only value cards and two actions; browser return preserves route/scroll and one GET
+00:06 +102: proxo_app/test/proxolink_tools_create_test.dart: shared AppBar, only value cards and two actions; browser return preserves route/scroll and one GET
+00:06 +103: proxo_app/test/proxolink_tools_create_test.dart: shared AppBar, only value cards and two actions; browser return preserves route/scroll and one GET
+00:06 +104: proxo_app/test/proxolink_tools_create_test.dart: shared AppBar, only value cards and two actions; browser return preserves route/scroll and one GET
+00:06 +105: proxo_app/test/context_help_capture_test.dart: example dialog download ckb (393.0, 1.0)
+00:06 +106: proxo_app/test/chrome_capture_test.dart: edit (393.0, 1.0, 3.0)
+00:06 +107: proxo_app/test/chrome_capture_test.dart: edit (393.0, 1.0, 3.0)
+00:06 +108: proxo_app/test/chrome_capture_test.dart: edit (393.0, 1.0, 3.0)
+00:07 +109: proxo_app/test/proxolink_tools_create_test.dart: delete confirmation blocks dependency without changing list
+00:07 +110: proxo_app/test/proxolink_tools_create_test.dart: delete confirmation blocks dependency without changing list
+00:07 +111: proxo_app/test/proxolink_tools_create_test.dart: delete confirmation blocks dependency without changing list
+00:07 +112: proxo_app/test/proxolink_tools_create_test.dart: delete confirmation blocks dependency without changing list
+00:07 +113: proxo_app/test/proxolink_tools_create_test.dart: delete confirmation blocks dependency without changing list
+00:07 +114: proxo_app/test/proxolink_tools_create_test.dart: delete confirmation blocks dependency without changing list
+00:07 +115: proxo_app/test/proxolink_tools_create_test.dart: delete confirmation blocks dependency without changing list
+00:07 +116: proxo_app/test/proxolink_tools_create_test.dart: delete confirmation blocks dependency without changing list
+00:07 +117: proxo_app/test/chrome_capture_test.dart: chrome (393.0, 1.0, 3.0)
+00:07 +118: proxo_app/test/chrome_capture_test.dart: chrome (393.0, 1.0, 3.0)
+00:07 +119: proxo_app/test/chrome_capture_test.dart: chrome (393.0, 1.0, 3.0)
+00:07 +120: proxo_app/test/chrome_capture_test.dart: chrome (393.0, 1.0, 3.0)
+00:07 +121: proxo_app/test/proxolink_tools_create_test.dart: refresh retains loaded rows, gates rapid taps and settles the same element/geometry
+00:07 +122: proxo_app/test/context_help_capture_test.dart: example dialog download ckb (280.0, 2.0)
+00:07 +123: proxo_app/test/chrome_capture_test.dart: sidebar (393.0, 2.0, 2.0)
+00:07 +124: proxo_app/test/proxolink_tools_create_test.dart: new Create form validates with shared notices; three types; no live WebView; back preserves Tools
+00:07 +125: proxo_app/test/proxolink_tools_create_test.dart: new Create form validates with shared notices; three types; no live WebView; back preserves Tools
+00:07 +126: proxo_app/test/proxolink_tools_create_test.dart: new Create form validates with shared notices; three types; no live WebView; back preserves Tools
+00:07 +127: proxo_app/test/proxolink_tools_create_test.dart: new Create form validates with shared notices; three types; no live WebView; back preserves Tools
+00:07 +128: proxo_app/test/proxolink_tools_create_test.dart: new Create form validates with shared notices; three types; no live WebView; back preserves Tools
+00:07 +129: proxo_app/test/proxolink_tools_create_test.dart: new Create form validates with shared notices; three types; no live WebView; back preserves Tools
+00:07 +130: proxo_app/test/proxolink_tools_create_test.dart: new Create form validates with shared notices; three types; no live WebView; back preserves Tools
+00:07 +131: proxo_app/test/proxolink_tools_create_test.dart: new Create form validates with shared notices; three types; no live WebView; back preserves Tools
+00:07 +132: proxo_app/test/proxolink_tools_create_test.dart: new Create form validates with shared notices; three types; no live WebView; back preserves Tools
+00:08 +133: proxo_app/test/proxolink_tools_create_test.dart: new Create form validates with shared notices; three types; no live WebView; back preserves Tools
+00:08 +134: proxo_app/test/proxolink_tools_create_test.dart: new Create form validates with shared notices; three types; no live WebView; back preserves Tools
+00:08 +135: proxo_app/test/proxolink_tools_create_test.dart: new Create form validates with shared notices; three types; no live WebView; back preserves Tools
+00:08 +136: proxo_app/test/proxolink_tools_create_test.dart: new Create form validates with shared notices; three types; no live WebView; back preserves Tools
+00:08 +137: proxo_app/test/proxolink_tools_create_test.dart: new Create form validates with shared notices; three types; no live WebView; back preserves Tools
+00:08 +138: proxo_app/test/chrome_capture_test.dart: sidebar (280.0, 2.0, 2.0)
+00:08 +139: proxo_app/test/context_help_capture_test.dart: example dialog contact ar (280.0, 2.0)
+00:08 +140: proxo_app/test/context_help_capture_test.dart: example dialog contact ar (280.0, 2.0)
+00:08 +141: proxo_app/test/context_help_capture_test.dart: example dialog contact ar (280.0, 2.0)
+00:08 +142: proxo_app/test/proxolink_tools_create_test.dart: rapid create taps open one route and rapid delete taps open one confirmation
+00:08 +143: proxo_app/test/proxolink_tools_create_test.dart: rapid create taps open one route and rapid delete taps open one confirmation
+00:08 +144: proxo_app/test/proxolink_tools_create_test.dart: rapid create taps open one route and rapid delete taps open one confirmation
+00:09 +145: proxo_app/test/context_help_capture_test.dart: example dialog order ar (280.0, 2.0)
+00:09 +146: proxo_app/test/best_results_behavior_test.dart: Home and detail thumbnail providers reuse one decoded cache key
+00:09 +147: proxo_app/test/chrome_capture_test.dart: edit (280.0, 2.0, 2.0)
+00:09 +148: proxo_app/test/chrome_capture_test.dart: edit (280.0, 2.0, 2.0)
+00:09 +149: proxo_app/test/proxolink_tools_create_test.dart: single submit returns stored pending UUID and locally upserts without GET
+00:09 +150: proxo_app/test/proxolink_tools_create_test.dart: single submit returns stored pending UUID and locally upserts without GET
+00:09 +151: proxo_app/test/proxolink_tools_create_test.dart: single submit returns stored pending UUID and locally upserts without GET
+
+Warning: A call to tap() with finder "Found 1 widget with key [<'create-page-submit'>]: [
+  FilledButton-[<'create-page-submit'>](disabled, dependencies: [IconTheme, InheritedCupertinoTheme, MediaQuery, _InheritedTheme, _LocalizationsScope-[GlobalKey#20c17], _ScrollableScope], state: _ButtonStyleState#7e3e2),
+]" derived an Offset (Offset(196.5, 1142.0)) that would not hit test on the specified widget.
+Maybe the widget is actually off-screen, or another widget is obscuring it, or the widget cannot receive pointer events.
+The finder corresponds to this RenderBox: RenderSemanticsAnnotations#ece0c relayoutBoundary=up16
+The hit test result at that offset is: HitTestResult(RenderPointerListener#9f27d@Offset(196.5, 1086.0), RenderSemanticsGestureHandler#0d7d5@Offset(196.5, 1086.0), RenderPointerListener#1e82d@Offset(196.5, 1086.0), _RenderScrollSemantics#b253b@Offset(196.5, 1086.0), RenderClipRect#95b5e@Offset(196.5, 1086.0), RenderStack#e7ba7@Offset(196.5, 1086.0), RenderFlex#7a56f@Offset(196.5, 1142.0), RenderCustomMultiChildLayoutBox#b8531@Offset(196.5, 1142.0), _RenderInkFeatures#7410c@Offset(196.5, 1142.0), RenderPhysicalModel#0a755@Offset(196.5, 1142.0), RenderSemanticsAnnotations#86684@Offset(196.5, 1142.0), RenderRepaintBoundary#95714@Offset(196.5, 1142.0), RenderIgnorePointer#f4b1c@Offset(196.5, 1142.0), RenderStack#42c73@Offset(196.5, 1142.0), RenderDecoratedBox#392d2@Offset(196.5, 1142.0), RenderRepaintBoundary#334d1@Offset(196.5, 1142.0), RenderSemanticsAnnotations#7facc@Offset(196.5, 1142.0), RenderOffstage#752e9@Offset(196.5, 1142.0), RenderSemanticsAnnotations#8b9d4@Offset(196.5, 1142.0), _RenderTheater#c9727@Offset(196.5, 1142.0), RenderAbsorbPointer#a74f5@Offset(196.5, 1142.0), RenderPointerListener#f1631@Offset(196.5, 1142.0), RenderSemanticsAnnotations#b3868@Offset(196.5, 1142.0), RenderCustomPaint#309ab@Offset(196.5, 1142.0), RenderSemanticsAnnotations#0eeab@Offset(196.5, 1142.0), RenderSemanticsAnnotations#3d728@Offset(196.5, 1142.0), RenderSemanticsAnnotations#8ecc6@Offset(196.5, 1142.0), RenderTapRegionSurface#5c2b6@Offset(196.5, 1142.0), RenderSemanticsAnnotations#b250d@Offset(196.5, 1142.0), RenderSemanticsAnnotations#51e6e@Offset(196.5, 1142.0), HitTestEntry<HitTestTarget>#a304d(_ReusableRenderView#ebe6a), HitTestEntry<HitTestTarget>#8ad05(<AutomatedTestWidgetsFlutterBinding>))
+#0      WidgetController._getElementPoint (package:flutter_test/src/controller.dart:2165:25)
+#1      WidgetController.getCenter (package:flutter_test/src/controller.dart:1947:12)
+#2      WidgetController.tap (package:flutter_test/src/controller.dart:1080:7)
+#3      main.<anonymous closure> (file://proxo_app/test/proxolink_tools_create_test.dart:172:11)
+<asynchronous suspension>
+#4      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#5      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+#6      StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)
+<asynchronous suspension>
+To silence this warning, pass "warnIfMissed: false" to "tap()".
+To make this warning fatal, set WidgetController.hitTestWarningShouldBeFatal to true.
+
+00:09 +152: proxo_app/test/best_results_behavior_test.dart: single row auto-slide honors touch, direction and reduced motion false
+00:09 +153: proxo_app/test/best_results_behavior_test.dart: single row auto-slide honors touch, direction and reduced motion false
+00:09 +154: proxo_app/test/best_results_behavior_test.dart: single row auto-slide honors touch, direction and reduced motion false
+00:09 +155: proxo_app/test/best_results_behavior_test.dart: single row auto-slide honors touch, direction and reduced motion false
+00:09 +156: proxo_app/test/best_results_behavior_test.dart: single row auto-slide honors touch, direction and reduced motion false
+00:09 +157: proxo_app/test/best_results_behavior_test.dart: single row auto-slide honors touch, direction and reduced motion false
+00:10 +158: proxo_app/test/best_results_behavior_test.dart: single row auto-slide honors touch, direction and reduced motion false
+00:10 +159: proxo_app/test/best_results_behavior_test.dart: single row auto-slide honors touch, direction and reduced motion false
+00:10 +160: proxo_app/test/best_results_behavior_test.dart: single row auto-slide honors touch, direction and reduced motion false
+00:10 +161: proxo_app/test/best_results_behavior_test.dart: single row auto-slide honors touch, direction and reduced motion false
+00:10 +162: proxo_app/test/chrome_capture_test.dart: edit (768.0, 1.0, 2.0)
+00:10 +163: proxo_app/test/chrome_capture_test.dart: edit (768.0, 1.0, 2.0)
+00:10 +164: proxo_app/test/chrome_capture_test.dart: edit (768.0, 1.0, 2.0)
+00:10 +165: proxo_app/test/best_results_behavior_test.dart: single row auto-slide honors touch, direction and reduced motion true
+00:10 +166: proxo_app/test/proxolink_tools_create_test.dart: Create contact 320.0 scale1.0 full sections and crisp chooser no overflow
+00:10 +167: proxo_app/test/proxolink_tools_create_test.dart: Create contact 320.0 scale1.0 full sections and crisp chooser no overflow
+00:10 +168: proxo_app/test/proxolink_tools_create_test.dart: Create contact 320.0 scale1.0 full sections and crisp chooser no overflow
+00:10 +169: proxo_app/test/proxolink_tools_create_test.dart: Create contact 320.0 scale1.0 full sections and crisp chooser no overflow
+00:10 +170: proxo_app/test/best_results_behavior_test.dart: detail opens the selected rank and can scroll to earlier results
+00:10 +171: proxo_app/test/proxolink_tools_create_test.dart: Create order 320.0 scale1.0 full sections and crisp chooser no overflow
+00:10 +172: proxo_app/test/proxolink_tools_create_test.dart: Create order 320.0 scale1.0 full sections and crisp chooser no overflow
+00:11 +173: proxo_app/test/proxolink_tools_create_test.dart: Create download 320.0 scale1.0 full sections and crisp chooser no overflow
+00:11 +174: proxo_app/test/proxolink_tools_create_test.dart: Create download 320.0 scale1.0 full sections and crisp chooser no overflow
+00:11 +175: proxo_app/test/ad_activation_notice_test.dart: notice is compact and readable at (280.0, 2.0) in ckb; both actions work
+00:11 +176: proxo_app/test/ad_activation_notice_test.dart: notice is compact and readable at (280.0, 2.0) in ckb; both actions work
+00:11 +177: proxo_app/test/ad_activation_notice_test.dart: notice is compact and readable at (280.0, 2.0) in ckb; both actions work
+00:11 +178: proxo_app/test/ad_activation_notice_test.dart: notice is compact and readable at (280.0, 2.0) in ckb; both actions work
+00:11 +179: proxo_app/test/ad_activation_notice_test.dart: notice is compact and readable at (280.0, 2.0) in ckb; both actions work
+00:11 +180: proxo_app/test/ad_activation_notice_test.dart: notice is compact and readable at (280.0, 2.0) in ckb; both actions work
+00:11 +181: proxo_app/test/ad_activation_notice_test.dart: notice is compact and readable at (280.0, 2.0) in ckb; both actions work
+00:11 +182: proxo_app/test/ad_activation_notice_test.dart: notice is compact and readable at (280.0, 2.0) in ckb; both actions work
+00:11 +183: proxo_app/test/ad_activation_notice_test.dart: notice is compact and readable at (280.0, 2.0) in ckb; both actions work
+00:11 +184: proxo_app/test/ad_activation_notice_test.dart: notice is compact and readable at (280.0, 2.0) in ckb; both actions work
+00:11 +185: proxo_app/test/ad_activation_notice_test.dart: notice is compact and readable at (280.0, 2.0) in ckb; both actions work
+00:12 +186: proxo_app/test/ad_activation_notice_test.dart: notice is compact and readable at (280.0, 2.0) in ckb; both actions work
+00:12 +187: proxo_app/test/ad_creation_flow_test.dart: create form fits 280.0 at text scale 1.0
+00:12 +188: proxo_app/test/ad_creation_flow_test.dart: create form fits 280.0 at text scale 1.0
+00:12 +189: proxo_app/test/ad_creation_flow_test.dart: create form fits 280.0 at text scale 1.0
+00:12 +190: proxo_app/test/ad_creation_flow_test.dart: create form fits 280.0 at text scale 1.0
+00:12 +191: proxo_app/test/ad_creation_flow_test.dart: create form fits 280.0 at text scale 1.0
+00:12 +192: proxo_app/test/ad_creation_flow_test.dart: create form fits 280.0 at text scale 1.0
+00:12 +193: proxo_app/test/ad_creation_flow_test.dart: create form fits 280.0 at text scale 1.0
+00:12 +194: proxo_app/test/ad_creation_flow_test.dart: create form fits 280.0 at text scale 1.0
+00:12 +195: proxo_app/test/ad_creation_flow_test.dart: create form fits 280.0 at text scale 1.0
+00:13 +196: proxo_app/test/ad_creation_flow_test.dart: create form fits 280.0 at text scale 1.0
+00:13 +197: proxo_app/test/auth_otp_lifecycle_test.dart: renders one box per digit
+00:13 +198: proxo_app/test/proxolink_tools_create_test.dart: Create download 360.0 scale1.0 full sections and crisp chooser no overflow
+00:13 +199: proxo_app/test/ad_creation_flow_test.dart: create form fits 280.0 at text scale 1.5
+00:13 +200: proxo_app/test/ad_creation_flow_test.dart: create form fits 280.0 at text scale 1.5
+00:13 +201: proxo_app/test/ad_creation_flow_test.dart: create form fits 280.0 at text scale 1.5
+00:13 +202: proxo_app/test/ad_creation_flow_test.dart: create form fits 280.0 at text scale 1.5
+00:13 +203: proxo_app/test/ad_creation_flow_test.dart: create form fits 280.0 at text scale 1.5
+00:13 +204: proxo_app/test/auth_otp_lifecycle_test.dart: an external clear empties the boxes
+00:13 +205: proxo_app/test/chrome_behavior_test.dart: sidebar identity does not wait for notification response or unused loyalty reads
+00:13 +206: proxo_app/test/chrome_behavior_test.dart: sidebar identity does not wait for notification response or unused loyalty reads
+00:13 +207: proxo_app/test/chrome_behavior_test.dart: sidebar identity does not wait for notification response or unused loyalty reads
+00:13 +208: proxo_app/test/chrome_behavior_test.dart: sidebar identity does not wait for notification response or unused loyalty reads
+00:14 +209: proxo_app/test/chrome_behavior_test.dart: sidebar identity does not wait for notification response or unused loyalty reads
+00:14 +210: proxo_app/test/chrome_behavior_test.dart: sidebar identity does not wait for notification response or unused loyalty reads
+00:14 +211: proxo_app/test/chrome_behavior_test.dart: sidebar identity does not wait for notification response or unused loyalty reads
+00:14 +212: proxo_app/test/chrome_behavior_test.dart: sidebar identity does not wait for notification response or unused loyalty reads
+00:14 +213: proxo_app/test/chrome_behavior_test.dart: sidebar identity does not wait for notification response or unused loyalty reads
+00:14 +214: proxo_app/test/chrome_behavior_test.dart: sidebar identity does not wait for notification response or unused loyalty reads
+00:14 +215: proxo_app/test/ad_creation_flow_test.dart: create form fits 393.0 at text scale 1.5
+00:14 +216: proxo_app/test/proxolink_tools_create_test.dart: Create order 375.0 scale1.0 full sections and crisp chooser no overflow
+00:14 +217: proxo_app/test/chrome_behavior_test.dart: sidebar selected semantics follow actual tab and FAQ survives drawer removal
+00:14 +218: proxo_app/test/chrome_behavior_test.dart: sidebar selected semantics follow actual tab and FAQ survives drawer removal
+00:15 +219: proxo_app/test/chrome_behavior_test.dart: sidebar selected semantics follow actual tab and FAQ survives drawer removal
+00:15 +220: proxo_app/test/ad_creation_flow_test.dart: create form fits 430.0 at text scale 1.5
+00:15 +221: proxo_app/test/ad_creation_flow_test.dart: create form fits 430.0 at text scale 1.5
+00:15 +222: proxo_app/test/proxo_banner_lifecycle_test.dart: banner does not subscribe after pending load is disposed
+00:15 +223: proxo_app/test/proxo_banner_lifecycle_test.dart: banner does not subscribe after pending load is disposed
+BANNER_DISPOSE old=false joins=0 channels=0
+00:15 +224: proxo_app/test/chrome_behavior_test.dart: profile edit action retains production edit route
+00:15 +224: proxo_app/test/proxo_banner_lifecycle_test.dart: banner realtime reload retains one subscription
+BANNER_RELOAD old=false joins=1 reads=1
+00:15 +225: proxo_app/test/chrome_behavior_test.dart: profile edit action retains production edit route
+00:15 +226: proxo_app/test/chrome_behavior_test.dart: profile edit action retains production edit route
+00:15 +227: proxo_app/test/ad_creation_flow_test.dart: create form fits 768.0 at text scale 1.0
+00:15 +228: proxo_app/test/proxo_banner_lifecycle_test.dart: admin banner removal clears persistent cache and legacy links still navigate
+00:15 +229: proxo_app/test/proxolink_tools_create_test.dart: Create download 375.0 scale1.6 full sections and crisp chooser no overflow
+00:16 +230: proxo_app/test/proxolink_tools_create_test.dart: Create download 375.0 scale1.6 full sections and crisp chooser no overflow
+00:16 +231: proxo_app/test/ad_creation_flow_test.dart: create form fits 768.0 at text scale 1.5
+00:16 +232: proxo_app/test/ad_creation_flow_test.dart: create form fits 768.0 at text scale 1.5
+00:16 +233: proxo_app/test/proxolink_tools_create_test.dart: Create contact 393.0 scale1.0 full sections and crisp chooser no overflow
+00:16 +234: proxo_app/test/proxolink_tools_create_test.dart: Create contact 393.0 scale1.0 full sections and crisp chooser no overflow
+00:16 +235: proxo_app/test/proxolink_tools_create_test.dart: Create contact 393.0 scale1.0 full sections and crisp chooser no overflow
+00:16 +236: proxo_app/test/proxolink_tools_create_test.dart: Create contact 393.0 scale1.0 full sections and crisp chooser no overflow
+00:16 +237: proxo_app/test/proxolink_tools_create_test.dart: Create contact 393.0 scale1.0 full sections and crisp chooser no overflow
+00:16 +238: proxo_app/test/proxolink_tools_create_test.dart: Create contact 393.0 scale1.0 full sections and crisp chooser no overflow
+00:16 +239: proxo_app/test/ad_creation_flow_test.dart: invalid form shows deduplicated validation stack and cannot confirm
+00:16 +240: proxo_app/test/proxolink_tools_create_test.dart: Create order 393.0 scale1.0 full sections and crisp chooser no overflow
+00:16 +241: proxo_app/test/ad_creation_flow_test.dart: touch outside title and coupon dismisses input without losing values
+00:17 +242: proxo_app/test/ad_creation_flow_test.dart: touch outside title and coupon dismisses input without losing values
+00:17 +243: proxo_app/test/proxolink_tools_create_test.dart: Create download 393.0 scale1.0 full sections and crisp chooser no overflow
+00:17 +244: proxo_app/test/ui_balance_behavior_test.dart: (setUpAll)
+00:17 +244: proxo_app/test/proxo_polish_test.dart: channel transition never paints two forms at once
+00:17 +245: proxo_app/test/ad_creation_flow_test.dart: targeting natural widths, RTL order and supported values
+00:17 +246: proxo_app/test/ad_creation_flow_test.dart: targeting natural widths, RTL order and supported values
+00:17 +247: proxo_app/test/ad_creation_flow_test.dart: targeting natural widths, RTL order and supported values
+00:17 +248: proxo_app/test/ad_creation_flow_test.dart: targeting natural widths, RTL order and supported values
+00:17 +249: proxo_app/test/ad_creation_flow_test.dart: targeting natural widths, RTL order and supported values
+00:17 +250: proxo_app/test/ui_balance_behavior_test.dart: glyph paint stays 24dp inside a 48dp control
+00:17 +251: proxo_app/test/ui_balance_behavior_test.dart: glyph paint stays 24dp inside a 48dp control
+00:18 +252: proxo_app/test/ad_creation_flow_test.dart: both sliders update budget, forecasts and prices without compounding
+00:18 +253: proxo_app/test/ad_creation_flow_test.dart: both sliders update budget, forecasts and prices without compounding
+00:18 +254: proxo_app/test/ad_creation_flow_test.dart: both sliders update budget, forecasts and prices without compounding
+00:18 +255: proxo_app/test/ad_creation_flow_test.dart: both sliders update budget, forecasts and prices without compounding
+00:18 +256: proxo_app/test/ui_balance_behavior_test.dart: Auth and provider marks have bounded paint at text scale 1.0
+00:18 +257: proxo_app/test/proxolink_tools_create_test.dart: Create order 412.0 scale1.0 full sections and crisp chooser no overflow
+00:18 +258: proxo_app/test/polish_capture_test.dart: login ckb (393.0, 1.0, 3.0)
+00:19 +259: proxo_app/test/polish_capture_test.dart: login ckb (393.0, 1.0, 3.0)
+00:19 +260: proxo_app/test/polish_capture_test.dart: login ckb (393.0, 1.0, 3.0)
+00:19 +261: proxo_app/test/polish_capture_test.dart: login ckb (393.0, 1.0, 3.0)
+00:19 +262: proxo_app/test/polish_capture_test.dart: login ckb (393.0, 1.0, 3.0)
+00:19 +263: proxo_app/test/polish_capture_test.dart: login ckb (393.0, 1.0, 3.0)
+00:19 +264: proxo_app/test/polish_capture_test.dart: login ckb (393.0, 1.0, 3.0)
+00:19 +265: proxo_app/test/polish_capture_test.dart: login ckb (393.0, 1.0, 3.0)
+00:19 +266: proxo_app/test/polish_capture_test.dart: login ckb (393.0, 1.0, 3.0)
+00:19 +267: proxo_app/test/polish_capture_test.dart: login ckb (393.0, 1.0, 3.0)
+00:19 +268: proxo_app/test/polish_capture_test.dart: login ckb (393.0, 1.0, 3.0)
+00:19 +269: proxo_app/test/polish_capture_test.dart: login ckb (393.0, 1.0, 3.0)
+00:19 +270: proxo_app/test/polish_capture_test.dart: login ckb (393.0, 1.0, 3.0)
+00:19 +271: proxo_app/test/polish_capture_test.dart: login ckb (393.0, 1.0, 3.0)
+00:19 +272: proxo_app/test/polish_capture_test.dart: login ckb (393.0, 1.0, 3.0)
+00:19 +273: proxo_app/test/polish_capture_test.dart: login ckb (393.0, 1.0, 3.0)
+00:19 +274: proxo_app/test/polish_capture_test.dart: login ckb (393.0, 1.0, 3.0)
+00:19 +275: proxo_app/test/polish_capture_test.dart: login ckb (393.0, 1.0, 3.0)
+00:20 +276: proxo_app/test/polish_capture_test.dart: login ckb (393.0, 1.0, 3.0)
+00:20 +277: proxo_app/test/polish_capture_test.dart: login ckb (393.0, 1.0, 3.0)
+00:20 +278: proxo_app/test/proxolink_tools_create_test.dart: Create contact 430.0 scale1.0 full sections and crisp chooser no overflow
+00:20 +279: proxo_app/test/ui_balance_behavior_test.dart: refresh recovers an empty Ads error at 393.0
+AdScreen: _loadAds failed: Bad state: fixture_network_error
+00:20 +280: proxo_app/test/ui_balance_behavior_test.dart: refresh recovers an empty Ads error at 393.0
+00:20 +281: proxo_app/test/polish_capture_test.dart: login-phone ckb (393.0, 1.0, 3.0)
+00:20 +281: proxo_app/test/ui_balance_behavior_test.dart: refresh recovers an empty Ads error at 280.0
+AdScreen: _loadAds failed: Bad state: fixture_network_error
+00:20 +282: proxo_app/test/polish_capture_test.dart: login-phone ckb (393.0, 1.0, 3.0)
+00:20 +283: proxo_app/test/ad_creation_flow_test.dart: unreadable pending submission blocks a fresh checkout
+00:20 +284: proxo_app/test/ad_creation_flow_test.dart: unreadable pending submission blocks a fresh checkout
+00:21 +285: proxo_app/test/proxolink_tools_create_test.dart: Create download 430.0 scale1.0 full sections and crisp chooser no overflow
+00:21 +286: proxo_app/test/polish_capture_test.dart: login-phone-filled ckb (393.0, 1.0, 3.0)
+00:21 +287: proxo_app/test/polish_capture_test.dart: login-phone-filled ckb (393.0, 1.0, 3.0)
+00:21 +288: proxo_app/test/polish_capture_test.dart: login-phone-filled ckb (393.0, 1.0, 3.0)
+00:21 +289: proxo_app/test/ui_balance_behavior_test.dart: successful creation preserves Home and Ads state and prevents duplicate routes
+00:21 +290: proxo_app/test/ui_balance_behavior_test.dart: successful creation preserves Home and Ads state and prevents duplicate routes
+00:21 +291: proxo_app/test/ui_balance_behavior_test.dart: successful creation preserves Home and Ads state and prevents duplicate routes
+00:21 +292: proxo_app/test/ui_balance_behavior_test.dart: successful creation preserves Home and Ads state and prevents duplicate routes
+00:22 +293: proxo_app/test/ui_balance_behavior_test.dart: successful creation preserves Home and Ads state and prevents duplicate routes
+00:22 +294: proxo_app/test/ui_balance_behavior_test.dart: successful creation preserves Home and Ads state and prevents duplicate routes
+00:22 +295: proxo_app/test/ui_balance_behavior_test.dart: successful creation preserves Home and Ads state and prevents duplicate routes
+00:22 +296: proxo_app/test/ui_balance_behavior_test.dart: successful creation preserves Home and Ads state and prevents duplicate routes
+00:22 +297: proxo_app/test/ui_balance_behavior_test.dart: successful creation preserves Home and Ads state and prevents duplicate routes
+00:22 +298: proxo_app/test/polish_capture_test.dart: signup-filled ckb (393.0, 1.0, 3.0)
+00:22 +299: proxo_app/test/polish_capture_test.dart: signup-filled ckb (393.0, 1.0, 3.0)
+00:22 +300: proxo_app/test/polish_capture_test.dart: signup-filled ckb (393.0, 1.0, 3.0)
+00:22 +301: proxo_app/test/polish_capture_test.dart: signup-filled ckb (393.0, 1.0, 3.0)
+00:22 +302: proxo_app/test/polish_capture_test.dart: signup-filled ckb (393.0, 1.0, 3.0)
+00:23 +303: proxo_app/test/polish_capture_test.dart: signup-filled ckb (393.0, 1.0, 3.0)
+00:23 +304: proxo_app/test/polish_capture_test.dart: signup-filled ckb (393.0, 1.0, 3.0)
+00:23 +305: proxo_app/test/polish_capture_test.dart: signup-filled ckb (393.0, 1.0, 3.0)
+00:23 +306: proxo_app/test/ad_creation_flow_test.dart: successful confirmation returns refresh and invokes creation once
+00:23 +307: proxo_app/test/proxolink_tools_create_test.dart: Create contact 768.0 scale1.0 full sections and crisp chooser no overflow
+00:23 +308: proxo_app/test/proxolink_tools_create_test.dart: Create contact 768.0 scale1.0 full sections and crisp chooser no overflow
+00:23 +309: proxo_app/test/profile_loading_test.dart: Profile coalesces overlapping reads and later refresh stays fresh
+00:23 +310: proxo_app/test/profile_loading_test.dart: Profile coalesces overlapping reads and later refresh stays fresh
+00:24 +311: proxo_app/test/profile_loading_test.dart: Profile coalesces overlapping reads and later refresh stays fresh
+00:24 +312: proxo_app/test/profile_loading_test.dart: Profile coalesces overlapping reads and later refresh stays fresh
+00:24 +313: proxo_app/test/profile_loading_test.dart: Profile coalesces overlapping reads and later refresh stays fresh
+PROFILE_READS initial+Auth+two-overlaps: profiles=1 wallets=1
+00:24 +314: proxo_app/test/profile_loading_test.dart: Profile coalesces overlapping reads and later refresh stays fresh
+00:24 +315: proxo_app/test/proxolink_tools_create_test.dart: Create download 768.0 scale1.0 full sections and crisp chooser no overflow
+00:24 +316: proxo_app/test/polish_capture_test.dart: otp ckb (393.0, 1.0, 3.0)
+00:24 +317: proxo_app/test/polish_capture_test.dart: otp ckb (393.0, 1.0, 3.0)
+00:24 +318: proxo_app/test/ad_creation_flow_test.dart: editing after a paid FastPay failure switches to account credit
+00:24 +319: proxo_app/test/ad_creation_flow_test.dart: editing after a paid FastPay failure switches to account credit
+00:24 +320: proxo_app/test/profile_loading_test.dart: returning from a saved edit supersedes a pending older read
+00:24 +321: proxo_app/test/profile_loading_test.dart: returning from a saved edit supersedes a pending older read
+00:24 +322: proxo_app/test/profile_loading_test.dart: returning from a saved edit supersedes a pending older read
+00:24 +323: proxo_app/test/profile_loading_test.dart: returning from a saved edit supersedes a pending older read
+00:25 +324: proxo_app/test/profile_loading_test.dart: returning from a saved edit supersedes a pending older read
+00:25 +325: proxo_app/test/profile_loading_test.dart: returning from a saved edit supersedes a pending older read
+00:25 +326: proxo_app/test/profile_loading_test.dart: returning from a saved edit supersedes a pending older read
+00:25 +327: proxo_app/test/profile_loading_test.dart: returning from a saved edit supersedes a pending older read
+00:25 +328: proxo_app/test/proxolink_tools_create_test.dart: Create download 768.0 scale1.6 full sections and crisp chooser no overflow
+00:25 +329: proxo_app/test/polish_capture_test.dart: splash ckb (393.0, 1.0, 3.0)
+00:25 +330: proxo_app/test/polish_capture_test.dart: splash ckb (393.0, 1.0, 3.0)
+00:25 +331: proxo_app/test/polish_capture_test.dart: splash ckb (393.0, 1.0, 3.0)
+00:25 +332: proxo_app/test/ad_creation_flow_test.dart: render Create Ad preview
+00:25 +333: proxo_app/test/ad_creation_flow_test.dart: render Create Ad preview
+00:25 +334: proxo_app/test/ad_creation_flow_test.dart: render Create Ad preview
+00:25 +335: proxo_app/test/polish_capture_test.dart: refresh ckb (393.0, 1.0, 3.0)
+00:25 +336: proxo_app/test/polish_capture_test.dart: refresh ckb (393.0, 1.0, 3.0)
+00:25 +337: proxo_app/test/polish_capture_test.dart: refresh ckb (393.0, 1.0, 3.0)
+00:25 +338: proxo_app/test/polish_capture_test.dart: refresh ckb (393.0, 1.0, 3.0)
+00:25 +339: proxo_app/test/polish_capture_test.dart: refresh ckb (393.0, 1.0, 3.0)
+00:25 +340: proxo_app/test/polish_capture_test.dart: refresh ckb (393.0, 1.0, 3.0)
+00:25 +341: proxo_app/test/polish_capture_test.dart: refresh ckb (393.0, 1.0, 3.0)
+00:25 +342: proxo_app/test/polish_capture_test.dart: refresh ckb (393.0, 1.0, 3.0)
+00:26 +343: proxo_app/test/ad_creation_flow_test.dart: render complete Create Ad design
+00:26 +344: proxo_app/test/ad_creation_flow_test.dart: render complete Create Ad design
+00:26 +345: proxo_app/test/ad_creation_flow_test.dart: render complete Create Ad design
+00:26 +346: proxo_app/test/polish_capture_test.dart: results-banner ckb (393.0, 1.0, 3.0)
+00:26 +347: proxo_app/test/polish_capture_test.dart: results-banner ckb (393.0, 1.0, 3.0)
+00:26 +348: proxo_app/test/polish_capture_test.dart: results-banner ckb (393.0, 1.0, 3.0)
+00:26 +349: proxo_app/test/polish_capture_test.dart: results-banner ckb (393.0, 1.0, 3.0)
+00:26 +350: proxo_app/test/responsive_ad_ui_test.dart: create fits Size(240.0, 480.0), text 1.0, density 1.0
+00:26 +351: proxo_app/test/responsive_ad_ui_test.dart: create fits Size(240.0, 480.0), text 1.0, density 1.0
+00:26 +352: proxo_app/test/responsive_ad_ui_test.dart: create fits Size(240.0, 480.0), text 1.0, density 1.0
+00:26 +353: proxo_app/test/responsive_ad_ui_test.dart: create fits Size(240.0, 480.0), text 1.0, density 1.0
+00:26 +354: proxo_app/test/responsive_ad_ui_test.dart: create fits Size(240.0, 480.0), text 1.0, density 1.0
+00:26 +355: proxo_app/test/responsive_ad_ui_test.dart: create fits Size(240.0, 480.0), text 1.0, density 1.0
+00:26 +356: proxo_app/test/responsive_ad_ui_test.dart: create fits Size(240.0, 480.0), text 1.0, density 1.0
+00:27 +357: proxo_app/test/responsive_ad_ui_test.dart: create fits Size(240.0, 480.0), text 1.0, density 1.0
+00:27 +358: proxo_app/test/responsive_ad_ui_test.dart: create fits Size(240.0, 480.0), text 1.0, density 1.0
+00:27 +359: proxo_app/test/responsive_ad_ui_test.dart: create fits Size(240.0, 480.0), text 1.0, density 1.0
+00:27 +360: proxo_app/test/responsive_ad_ui_test.dart: create fits Size(240.0, 480.0), text 1.0, density 1.0
+00:27 +361: proxo_app/test/polish_capture_test.dart: deposit ckb (393.0, 1.0, 3.0)
+00:27 +362: proxo_app/test/polish_capture_test.dart: deposit ckb (393.0, 1.0, 3.0)
+00:27 +363: proxo_app/test/polish_capture_test.dart: deposit ckb (393.0, 1.0, 3.0)
+00:28 +364: proxo_app/test/polish_capture_test.dart: deposit ckb (393.0, 1.0, 3.0)
+00:28 +365: proxo_app/test/responsive_ad_ui_test.dart: confirmation fits Size(240.0, 480.0), text 1.0, density 1.0
+00:28 +366: proxo_app/test/ui_refinement_test.dart: empty phone field shows country code; ordinary fields do not add decorative symbols
+00:28 +366: proxo_app/test/polish_capture_test.dart: ads ckb (393.0, 1.0, 3.0)
+AdScreen: thumbnail generation failed: FunctionsFetchException(status: 0, details: Bad state: screen_fixture_network_boundary, reasonPhrase: null)
+00:28 +367: proxo_app/test/ui_refinement_test.dart: empty phone field shows country code; ordinary fields do not add decorative symbols
+00:28 +368: proxo_app/test/ui_refinement_test.dart: empty phone field shows country code; ordinary fields do not add decorative symbols
+00:28 +369: proxo_app/test/responsive_ad_ui_test.dart: create fits Size(240.0, 568.0), text 3.0, density 2.0
+00:28 +370: proxo_app/test/responsive_ad_ui_test.dart: create fits Size(240.0, 568.0), text 3.0, density 2.0
+00:28 +371: proxo_app/test/responsive_ad_ui_test.dart: create fits Size(240.0, 568.0), text 3.0, density 2.0
+00:28 +372: proxo_app/test/responsive_ad_ui_test.dart: create fits Size(240.0, 568.0), text 3.0, density 2.0
+00:28 +373: proxo_app/test/polish_capture_test.dart: create ckb (393.0, 1.0, 3.0)
+00:28 +374: proxo_app/test/polish_capture_test.dart: create ckb (393.0, 1.0, 3.0)
+00:28 +375: proxo_app/test/polish_capture_test.dart: create ckb (393.0, 1.0, 3.0)
+00:29 +376: proxo_app/test/polish_capture_test.dart: create ckb (393.0, 1.0, 3.0)
+00:29 +377: proxo_app/test/polish_capture_test.dart: create ckb (393.0, 1.0, 3.0)
+00:29 +378: proxo_app/test/polish_capture_test.dart: create ckb (393.0, 1.0, 3.0)
+00:29 +379: proxo_app/test/polish_capture_test.dart: create ckb (393.0, 1.0, 3.0)
+00:29 +380: proxo_app/test/polish_capture_test.dart: create ckb (393.0, 1.0, 3.0)
+00:29 +381: proxo_app/test/polish_capture_test.dart: create ckb (393.0, 1.0, 3.0)
+00:29 +382: proxo_app/test/polish_capture_test.dart: create ckb (393.0, 1.0, 3.0)
+00:29 +383: proxo_app/test/responsive_ad_ui_test.dart: create fits Size(393.0, 852.0), text 3.0, density 3.0
+00:29 +384: proxo_app/test/responsive_ad_ui_test.dart: create fits Size(393.0, 852.0), text 3.0, density 3.0
+00:29 +385: proxo_app/test/responsive_ad_ui_test.dart: create fits Size(393.0, 852.0), text 3.0, density 3.0
+00:29 +386: proxo_app/test/responsive_ad_ui_test.dart: create fits Size(393.0, 852.0), text 3.0, density 3.0
+00:29 +387: proxo_app/test/responsive_ad_ui_test.dart: create fits Size(393.0, 852.0), text 3.0, density 3.0
+00:29 +388: proxo_app/test/responsive_ad_ui_test.dart: create fits Size(393.0, 852.0), text 3.0, density 3.0
+00:29 +389: proxo_app/test/polish_capture_test.dart: profile ckb (393.0, 1.0, 3.0)
+00:29 +390: proxo_app/test/polish_capture_test.dart: profile ckb (393.0, 1.0, 3.0)
+00:30 +391: proxo_app/test/polish_capture_test.dart: profile ckb (393.0, 1.0, 3.0)
+00:30 +392: proxo_app/test/polish_capture_test.dart: profile ckb (393.0, 1.0, 3.0)
+00:30 +393: proxo_app/test/responsive_ad_ui_test.dart: create fits Size(600.0, 960.0), text 2.0, density 1.5
+00:30 +394: proxo_app/test/polish_capture_test.dart: home ckb (393.0, 1.0, 3.0)
+00:30 +395: proxo_app/test/polish_capture_test.dart: home ckb (393.0, 1.0, 3.0)
+00:30 +395: proxo_app/test/ad_repository_test.dart: interrupted response retains frozen request and recovers without another charge
+Ad thumbnail generation deferred: StateError
+00:30 +396: proxo_app/test/polish_capture_test.dart: home ckb (393.0, 1.0, 3.0)
+00:30 +397: proxo_app/test/polish_capture_test.dart: home ckb (393.0, 1.0, 3.0)
+00:30 +398: proxo_app/test/responsive_ad_ui_test.dart: history and receipt fit Size(600.0, 960.0) at text 2.0
+00:30 +398: proxo_app/test/ad_repository_test.dart: simultaneous repeated calls share one operation; competing request is blocked
+Ad thumbnail generation deferred: StateError
+00:30 +399: proxo_app/test/responsive_ad_ui_test.dart: history and receipt fit Size(600.0, 960.0) at text 2.0
+00:30 +400: proxo_app/test/responsive_ad_ui_test.dart: history and receipt fit Size(600.0, 960.0) at text 2.0
+00:30 +401: proxo_app/test/responsive_ad_ui_test.dart: history and receipt fit Size(600.0, 960.0) at text 2.0
+00:30 +402: proxo_app/test/responsive_ad_ui_test.dart: history and receipt fit Size(600.0, 960.0) at text 2.0
+00:30 +403: proxo_app/test/responsive_ad_ui_test.dart: history and receipt fit Size(600.0, 960.0) at text 2.0
+00:30 +404: proxo_app/test/polish_capture_test.dart: navigation ckb (393.0, 1.0, 3.0)
+00:30 +405: proxo_app/test/polish_capture_test.dart: navigation ckb (393.0, 1.0, 3.0)
+00:30 +406: proxo_app/test/polish_capture_test.dart: navigation ckb (393.0, 1.0, 3.0)
+00:30 +407: proxo_app/test/polish_capture_test.dart: navigation ckb (393.0, 1.0, 3.0)
+00:30 +408: proxo_app/test/polish_capture_test.dart: navigation ckb (393.0, 1.0, 3.0)
+00:30 +409: proxo_app/test/polish_capture_test.dart: navigation ckb (393.0, 1.0, 3.0)
+00:30 +410: proxo_app/test/responsive_ad_ui_test.dart: create fits Size(768.0, 1024.0), text 1.0, density 2.0
+00:31 +411: proxo_app/test/polish_capture_test.dart: levels ckb (393.0, 1.0, 3.0)
+00:31 +412: proxo_app/test/polish_capture_test.dart: levels ckb (393.0, 1.0, 3.0)
+00:31 +413: proxo_app/test/polish_capture_test.dart: levels ckb (393.0, 1.0, 3.0)
+00:31 +414: proxo_app/test/responsive_ad_ui_test.dart: create fits Size(1024.0, 600.0), text 2.0, density 2.0
+00:31 +415: proxo_app/test/polish_capture_test.dart: tasks ckb (393.0, 1.0, 3.0)
+00:31 +416: proxo_app/test/proxo_tab_stack_test.dart: Original kept-alive tab ticker lifecycle
+00:31 +417: proxo_app/test/proxo_tab_stack_test.dart: Original kept-alive tab ticker lifecycle
+00:31 +418: proxo_app/test/proxo_tab_stack_test.dart: Original kept-alive tab ticker lifecycle
+00:31 +419: proxo_app/test/proxo_tab_stack_test.dart: Original kept-alive tab ticker lifecycle
+00:31 +420: proxo_app/test/proxo_tab_stack_test.dart: Original kept-alive tab ticker lifecycle
+TAB_TICKS optimized=false hidden=10 active=10 pumps=10
+00:31 +421: proxo_app/test/proxo_tab_stack_test.dart: Original kept-alive tab ticker lifecycle
+00:31 +422: proxo_app/test/home_sections_test.dart: Home sections fit Size(240.0, 700.0) at system text scale 1.0
+00:31 +423: proxo_app/test/home_sections_test.dart: Home sections fit Size(240.0, 700.0) at system text scale 1.0
+00:31 +424: proxo_app/test/home_sections_test.dart: Home sections fit Size(240.0, 700.0) at system text scale 1.0
+00:32 +424: proxo_app/test/proxo_tab_stack_test.dart: Scoped kept-alive tab ticker lifecycle
+TAB_TICKS optimized=true hidden=0 active=10 pumps=10
+00:32 +425: proxo_app/test/home_sections_test.dart: Home sections fit Size(240.0, 700.0) at system text scale 1.0
+00:32 +426: proxo_app/test/home_sections_test.dart: Home sections fit Size(240.0, 700.0) at system text scale 1.0
+00:32 +427: proxo_app/test/home_sections_test.dart: Home sections fit Size(240.0, 700.0) at system text scale 1.0
+00:32 +428: proxo_app/test/home_sections_test.dart: Home sections fit Size(240.0, 700.0) at system text scale 1.0
+00:32 +429: proxo_app/test/home_sections_test.dart: Home sections fit Size(240.0, 700.0) at system text scale 1.0
+00:32 +430: proxo_app/test/home_sections_test.dart: Home sections fit Size(240.0, 700.0) at system text scale 1.0
+00:32 +431: proxo_app/test/responsive_ad_ui_test.dart: long contact menu stays readable and selectable at large text
+00:32 +432: proxo_app/test/responsive_ad_ui_test.dart: long contact menu stays readable and selectable at large text
+00:32 +433: proxo_app/test/polish_capture_test.dart: login-phone ar (393.0, 1.0, 3.0)
+00:32 +434: proxo_app/test/polish_capture_test.dart: login-phone ar (393.0, 1.0, 3.0)
+00:32 +435: proxo_app/test/polish_capture_test.dart: login-phone ar (393.0, 1.0, 3.0)
+00:32 +436: proxo_app/test/proxolink_flow_test.dart: a stalled signed-preview request times out and offers retry
+00:33 +437: proxo_app/test/proxolink_flow_test.dart: a stalled signed-preview request times out and offers retry
+00:33 +438: proxo_app/test/proxolink_flow_test.dart: a stalled signed-preview request times out and offers retry
+00:33 +439: proxo_app/test/proxolink_flow_test.dart: a stalled signed-preview request times out and offers retry
+00:33 +440: proxo_app/test/polish_capture_test.dart: login-phone-filled ar (393.0, 1.0, 3.0)
+00:33 +441: proxo_app/test/polish_capture_test.dart: login-phone-filled ar (393.0, 1.0, 3.0)
+00:33 +442: proxo_app/test/polish_capture_test.dart: login-phone-filled ar (393.0, 1.0, 3.0)
+00:33 +443: proxo_app/test/proxolink_flow_test.dart: theme and language reload one live demo while retaining form input
+00:33 +444: proxo_app/test/proxolink_flow_test.dart: theme and language reload one live demo while retaining form input
+00:33 +445: proxo_app/test/proxolink_flow_test.dart: theme and language reload one live demo while retaining form input
+00:33 +446: proxo_app/test/proxolink_flow_test.dart: theme and language reload one live demo while retaining form input
+00:33 +447: proxo_app/test/proxolink_flow_test.dart: theme and language reload one live demo while retaining form input
+00:33 +448: proxo_app/test/proxolink_flow_test.dart: theme and language reload one live demo while retaining form input
+00:34 +449: proxo_app/test/proxolink_flow_test.dart: theme and language reload one live demo while retaining form input
+00:34 +450: proxo_app/test/proxolink_flow_test.dart: theme and language reload one live demo while retaining form input
+00:34 +451: proxo_app/test/proxolink_flow_test.dart: theme and language reload one live demo while retaining form input
+00:34 +452: proxo_app/test/proxolink_flow_test.dart: theme and language reload one live demo while retaining form input
+00:34 +453: proxo_app/test/proxolink_flow_test.dart: theme and language reload one live demo while retaining form input
+00:34 +454: proxo_app/test/proxolink_flow_test.dart: theme and language reload one live demo while retaining form input
+00:34 +455: proxo_app/test/proxolink_flow_test.dart: theme and language reload one live demo while retaining form input
+00:34 +456: proxo_app/test/proxolink_flow_test.dart: theme and language reload one live demo while retaining form input
+00:34 +457: proxo_app/test/proxolink_flow_test.dart: theme and language reload one live demo while retaining form input
+00:34 +458: proxo_app/test/polish_capture_test.dart: signup-filled ar (393.0, 1.0, 3.0)
+00:34 +459: proxo_app/test/polish_capture_test.dart: signup-filled ar (393.0, 1.0, 3.0)
+00:34 +460: proxo_app/test/polish_capture_test.dart: signup-filled ar (393.0, 1.0, 3.0)
+00:34 +461: proxo_app/test/polish_capture_test.dart: signup-filled ar (393.0, 1.0, 3.0)
+00:34 +462: proxo_app/test/polish_capture_test.dart: signup-filled ar (393.0, 1.0, 3.0)
+00:35 +463: proxo_app/test/polish_capture_test.dart: signup-filled ar (393.0, 1.0, 3.0)
+00:35 +464: proxo_app/test/polish_capture_test.dart: signup-filled ar (393.0, 1.0, 3.0)
+00:35 +465: proxo_app/test/polish_capture_test.dart: signup-filled ar (393.0, 1.0, 3.0)
+00:35 +466: proxo_app/test/polish_capture_test.dart: signup-filled ar (393.0, 1.0, 3.0)
+00:35 +467: proxo_app/test/polish_capture_test.dart: signup-filled ar (393.0, 1.0, 3.0)
+00:35 +468: proxo_app/test/proxolink_flow_test.dart: long RTL card at width 430.0 has no overflow at enlarged system text
+00:35 +469: proxo_app/test/home_sections_test.dart: Home sections fit Size(852.0, 393.0) at system text scale 3.0
+00:35 +470: proxo_app/test/polish_capture_test.dart: forgot ar (393.0, 1.0, 3.0)
+00:35 +471: proxo_app/test/polish_capture_test.dart: forgot ar (393.0, 1.0, 3.0)
+00:35 +472: proxo_app/test/polish_capture_test.dart: forgot ar (393.0, 1.0, 3.0)
+00:35 +473: proxo_app/test/polish_capture_test.dart: forgot ar (393.0, 1.0, 3.0)
+00:35 +474: proxo_app/test/polish_capture_test.dart: forgot ar (393.0, 1.0, 3.0)
+00:35 +475: proxo_app/test/polish_capture_test.dart: forgot ar (393.0, 1.0, 3.0)
+00:35 +476: proxo_app/test/polish_capture_test.dart: forgot ar (393.0, 1.0, 3.0)
+00:35 +477: proxo_app/test/polish_capture_test.dart: forgot ar (393.0, 1.0, 3.0)
+00:35 +478: proxo_app/test/polish_capture_test.dart: forgot ar (393.0, 1.0, 3.0)
+00:35 +479: proxo_app/test/home_sections_test.dart: all existing quick actions call only their own callback
+00:35 +480: proxo_app/test/proxolink_flow_test.dart: form and real-preview failure recovery fit width 393.0
+00:35 +481: proxo_app/test/polish_capture_test.dart: new-password ar (393.0, 1.0, 3.0)
+00:35 +482: proxo_app/test/home_sections_test.dart: Create quick action opens the existing Create Ad screen
+00:36 +483: proxo_app/test/home_sections_test.dart: Create quick action opens the existing Create Ad screen
+00:36 +484: proxo_app/test/home_sections_test.dart: Create quick action opens the existing Create Ad screen
+00:36 +485: proxo_app/test/home_sections_test.dart: Create quick action opens the existing Create Ad screen
+00:36 +485: proxo_app/test/auth_activity_service_test.dart: failed writes and device failures remain retryable
+[AuthActivity] metadata pending (StateError)
+[AuthActivity] metadata pending (PostgrestException)
+00:36 +486: proxo_app/test/home_sections_test.dart: Create quick action opens the existing Create Ad screen
+00:36 +487: proxo_app/test/home_sections_test.dart: Create quick action opens the existing Create Ad screen
+00:36 +488: proxo_app/test/home_sections_test.dart: Create quick action opens the existing Create Ad screen
+00:36 +489: proxo_app/test/home_sections_test.dart: Create quick action opens the existing Create Ad screen
+00:36 +490: proxo_app/test/home_sections_test.dart: Create quick action opens the existing Create Ad screen
+00:36 +491: proxo_app/test/home_sections_test.dart: Create quick action opens the existing Create Ad screen
+00:36 +492: proxo_app/test/polish_capture_test.dart: otp-filled ar (393.0, 1.0, 3.0)
+00:36 +493: proxo_app/test/polish_capture_test.dart: otp-filled ar (393.0, 1.0, 3.0)
+00:36 +494: proxo_app/test/polish_capture_test.dart: otp-filled ar (393.0, 1.0, 3.0)
+00:36 +495: proxo_app/test/polish_capture_test.dart: otp-filled ar (393.0, 1.0, 3.0)
+00:36 +496: proxo_app/test/home_sections_test.dart: carousel swipes, cached refresh and view-all keep ranking
+00:36 +497: proxo_app/test/home_sections_test.dart: carousel swipes, cached refresh and view-all keep ranking
+00:36 +498: proxo_app/test/home_sections_test.dart: carousel swipes, cached refresh and view-all keep ranking
+00:36 +499: proxo_app/test/home_sections_test.dart: carousel swipes, cached refresh and view-all keep ranking
+00:36 +500: proxo_app/test/home_sections_test.dart: carousel swipes, cached refresh and view-all keep ranking
+00:36 +501: proxo_app/test/home_sections_test.dart: carousel swipes, cached refresh and view-all keep ranking
+00:36 +502: proxo_app/test/home_sections_test.dart: carousel swipes, cached refresh and view-all keep ranking
+00:37 +503: proxo_app/test/receipt_pdf_test.dart: PDF captures full ad standard receipt
+00:37 +504: proxo_app/test/receipt_pdf_test.dart: PDF captures full ad standard receipt
+00:37 +505: proxo_app/test/receipt_pdf_test.dart: PDF captures full ad standard receipt
+00:37 +506: proxo_app/test/receipt_pdf_test.dart: PDF captures full ad standard receipt
+00:37 +507: proxo_app/test/receipt_pdf_test.dart: PDF captures full ad standard receipt
+00:37 +508: proxo_app/test/receipt_pdf_test.dart: PDF captures full ad standard receipt
+00:37 +509: proxo_app/test/receipt_pdf_test.dart: PDF captures full ad standard receipt
+00:37 +510: proxo_app/test/receipt_pdf_test.dart: PDF captures full ad standard receipt
+00:38 +511: proxo_app/test/receipt_pdf_test.dart: PDF captures full ad standard receipt
+00:38 +512: proxo_app/test/receipt_pdf_test.dart: PDF captures full ad standard receipt
+00:38 +513: proxo_app/test/proxolink_actual_screens_test.dart: Home remount cannot overlap an outstanding notification permission request
+00:38 +514: proxo_app/test/proxolink_actual_screens_test.dart: Home remount cannot overlap an outstanding notification permission request
+00:38 +515: proxo_app/test/proxolink_actual_screens_test.dart: Home remount cannot overlap an outstanding notification permission request
+00:38 +516: proxo_app/test/receipt_pdf_test.dart: PDF captures full ad narrow receipt
+00:38 +517: proxo_app/test/receipt_pdf_test.dart: PDF captures full ad narrow receipt
+00:39 +517: proxo_app/test/polish_capture_test.dart: ads ar (393.0, 1.0, 3.0)
+AdScreen: thumbnail generation failed: FunctionsFetchException(status: 0, details: Bad state: screen_fixture_network_boundary, reasonPhrase: null)
+00:39 +518: proxo_app/test/receipt_pdf_test.dart: PDF captures full ad narrow receipt
+00:39 +519: proxo_app/test/whatsapp_marketing_test.dart: email signup does not ask for phone marketing consent
+00:39 +520: proxo_app/test/whatsapp_marketing_test.dart: email signup does not ask for phone marketing consent
+00:39 +521: proxo_app/test/whatsapp_marketing_test.dart: email signup does not ask for phone marketing consent
+00:39 +522: proxo_app/test/whatsapp_marketing_test.dart: email signup does not ask for phone marketing consent
+00:40 +523: proxo_app/test/whatsapp_marketing_test.dart: email signup does not ask for phone marketing consent
+00:40 +524: proxo_app/test/whatsapp_marketing_test.dart: email signup does not ask for phone marketing consent
+00:40 +525: proxo_app/test/whatsapp_marketing_test.dart: email signup does not ask for phone marketing consent
+00:40 +526: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 320.0
+00:40 +527: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 320.0
+00:41 +528: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 320.0
+00:41 +529: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 320.0
+00:41 +530: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 320.0
+00:41 +531: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 320.0
+00:41 +532: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 320.0
+00:41 +533: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 320.0
+00:41 +534: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 320.0
+00:41 +535: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 320.0
+00:42 +536: proxo_app/test/receipt_layout_test.dart: native responsive receipt geometry at 280.0 dp
+00:42 +537: proxo_app/test/receipt_layout_test.dart: native responsive receipt geometry at 280.0 dp
+00:42 +538: proxo_app/test/receipt_layout_test.dart: native responsive receipt geometry at 280.0 dp
+00:42 +539: proxo_app/test/proxolink_actual_screens_test.dart: actual Home and Tools corresponding refresh phases at 393.0
+00:42 +540: proxo_app/test/proxolink_actual_screens_test.dart: actual Home and Tools corresponding refresh phases at 393.0
+00:42 +541: proxo_app/test/proxolink_actual_screens_test.dart: actual Home and Tools corresponding refresh phases at 393.0
+00:42 +542: proxo_app/test/proxolink_actual_screens_test.dart: actual Home and Tools corresponding refresh phases at 393.0
+00:42 +543: proxo_app/test/proxolink_actual_screens_test.dart: actual Home and Tools corresponding refresh phases at 393.0
+00:42 +544: proxo_app/test/whatsapp_marketing_test.dart: failed opt-out stays unsaved and can be retried
+00:42 +545: proxo_app/test/whatsapp_marketing_test.dart: failed opt-out stays unsaved and can be retried
+00:42 +546: proxo_app/test/whatsapp_marketing_test.dart: failed opt-out stays unsaved and can be retried
+00:42 +547: proxo_app/test/whatsapp_marketing_test.dart: failed opt-out stays unsaved and can be retried
+00:42 +548: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 393.0
+00:42 +549: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 393.0
+00:43 +550: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 393.0
+00:43 +551: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 393.0
+00:43 +552: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 393.0
+00:43 +553: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 393.0
+00:43 +554: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 393.0
+00:43 +555: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 393.0
+00:43 +556: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 393.0
+00:43 +557: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 393.0
+00:43 +558: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 393.0
+00:43 +559: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 393.0
+00:44 +560: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 393.0
+00:44 +561: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 393.0
+00:44 +562: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 393.0
+00:44 +563: proxo_app/test/polish_capture_test.dart: signup-filled kmr (393.0, 1.0, 3.0)
+00:44 +564: proxo_app/test/polish_capture_test.dart: signup-filled kmr (393.0, 1.0, 3.0)
+00:44 +565: proxo_app/test/polish_capture_test.dart: signup-filled kmr (393.0, 1.0, 3.0)
+00:44 +566: proxo_app/test/polish_capture_test.dart: signup-filled kmr (393.0, 1.0, 3.0)
+00:44 +567: proxo_app/test/proxolink_v6_flow_test.dart: contact thumbnail chooser at 320.0 TextDirection.rtl loads four images, wraps names, selects cards and has no WebView
+00:44 +568: proxo_app/test/proxolink_v6_flow_test.dart: contact thumbnail chooser at 320.0 TextDirection.rtl loads four images, wraps names, selects cards and has no WebView
+00:44 +569: proxo_app/test/proxolink_v6_flow_test.dart: contact thumbnail chooser at 320.0 TextDirection.rtl loads four images, wraps names, selects cards and has no WebView
+00:44 +570: proxo_app/test/proxolink_v6_flow_test.dart: contact thumbnail chooser at 320.0 TextDirection.rtl loads four images, wraps names, selects cards and has no WebView
+00:44 +571: proxo_app/test/polish_capture_test.dart: forgot kmr (393.0, 1.0, 3.0)
+00:44 +572: proxo_app/test/polish_capture_test.dart: forgot kmr (393.0, 1.0, 3.0)
+00:45 +573: proxo_app/test/polish_capture_test.dart: forgot kmr (393.0, 1.0, 3.0)
+00:45 +574: proxo_app/test/polish_capture_test.dart: forgot kmr (393.0, 1.0, 3.0)
+00:45 +575: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 430.0
+00:45 +576: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 430.0
+00:45 +577: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 430.0
+00:45 +578: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 430.0
+00:45 +579: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 430.0
+00:45 +580: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 430.0
+00:45 +581: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 430.0
+00:45 +582: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 430.0
+00:45 +583: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 430.0
+00:45 +584: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 430.0
+00:45 +585: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 430.0
+00:45 +586: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 430.0
+00:45 +587: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 430.0
+00:45 +588: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 430.0
+00:45 +589: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 430.0
+00:45 +590: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 430.0
+00:45 +591: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 430.0
+00:46 +592: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 430.0
+00:46 +593: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 430.0
+00:46 +594: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 430.0
+00:46 +595: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 430.0
+00:46 +596: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 430.0
+00:46 +597: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 430.0
+00:46 +598: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 430.0
+00:46 +599: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 430.0
+00:46 +600: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 430.0
+00:46 +601: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 430.0
+00:46 +602: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 430.0
+00:46 +603: proxo_app/test/polish_capture_test.dart: refresh kmr (393.0, 1.0, 3.0)
+00:46 +604: proxo_app/test/polish_capture_test.dart: refresh kmr (393.0, 1.0, 3.0)
+00:46 +605: proxo_app/test/polish_capture_test.dart: refresh kmr (393.0, 1.0, 3.0)
+00:46 +606: proxo_app/test/proxolink_actual_screens_test.dart: actual Home and Tools corresponding refresh phases at 768.0
+00:46 +607: proxo_app/test/proxolink_actual_screens_test.dart: actual Home and Tools corresponding refresh phases at 768.0
+00:46 +608: proxo_app/test/proxolink_actual_screens_test.dart: actual Home and Tools corresponding refresh phases at 768.0
+00:46 +609: proxo_app/test/proxolink_actual_screens_test.dart: actual Home and Tools corresponding refresh phases at 768.0
+00:46 +610: proxo_app/test/proxolink_actual_screens_test.dart: actual Home and Tools corresponding refresh phases at 768.0
+00:46 +611: proxo_app/test/proxolink_actual_screens_test.dart: actual Home and Tools corresponding refresh phases at 768.0
+00:46 +612: proxo_app/test/proxolink_actual_screens_test.dart: actual Home and Tools corresponding refresh phases at 768.0
+00:46 +613: proxo_app/test/proxolink_actual_screens_test.dart: actual Home and Tools corresponding refresh phases at 768.0
+00:46 +614: proxo_app/test/proxolink_actual_screens_test.dart: actual Home and Tools corresponding refresh phases at 768.0
+00:47 +615: proxo_app/test/proxolink_actual_screens_test.dart: actual Home and Tools corresponding refresh phases at 768.0
+00:47 +616: proxo_app/test/proxolink_actual_screens_test.dart: actual Home and Tools corresponding refresh phases at 768.0
+00:47 +617: proxo_app/test/polish_capture_test.dart: results kmr (393.0, 1.0, 3.0)
+00:47 +618: proxo_app/test/polish_capture_test.dart: results kmr (393.0, 1.0, 3.0)
+00:47 +619: proxo_app/test/polish_capture_test.dart: results kmr (393.0, 1.0, 3.0)
+00:47 +620: proxo_app/test/polish_capture_test.dart: results kmr (393.0, 1.0, 3.0)
+00:47 +621: proxo_app/test/polish_capture_test.dart: results kmr (393.0, 1.0, 3.0)
+00:47 +622: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 768.0
+00:47 +623: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 768.0
+00:47 +624: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 768.0
+00:47 +625: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 768.0
+00:47 +626: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 768.0
+00:47 +627: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 768.0
+00:47 +628: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 768.0
+00:47 +629: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 768.0
+00:47 +630: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 768.0
+00:47 +631: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 768.0
+00:47 +632: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 768.0
+00:47 +633: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 768.0
+00:47 +634: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 768.0
+00:47 +635: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 768.0
+00:47 +636: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 768.0
+00:47 +637: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 768.0
+00:48 +638: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 768.0
+00:48 +639: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 768.0
+00:48 +640: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 768.0
+00:48 +641: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 768.0
+00:48 +642: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 768.0
+00:48 +643: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 768.0
+00:48 +643: proxo_app/test/polish_capture_test.dart: ads kmr (393.0, 1.0, 3.0)
+AdScreen: thumbnail generation failed: FunctionsFetchException(status: 0, details: Bad state: screen_fixture_network_boundary, reasonPhrase: null)
+00:48 +644: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 768.0
+00:48 +645: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 768.0
+00:48 +646: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 768.0
+00:48 +647: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 768.0
+00:48 +648: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 768.0
+00:48 +649: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 768.0
+00:48 +650: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 768.0
+00:48 +651: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 768.0
+00:48 +652: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 768.0
+00:48 +653: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 768.0
+00:48 +654: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 768.0
+00:48 +655: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 768.0
+00:48 +656: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 768.0
+00:48 +657: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 768.0
+00:48 +658: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 768.0
+00:48 +659: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 768.0
+00:49 +660: proxo_app/test/proxolink_actual_screens_test.dart: actual Create Ad and ProxoLink shared notices and lifecycle at 768.0
+00:49 +661: proxo_app/test/polish_capture_test.dart: create kmr (393.0, 1.0, 3.0)
+00:49 +662: proxo_app/test/polish_capture_test.dart: create kmr (393.0, 1.0, 3.0)
+00:49 +662: proxo_app/test/proxolink_actual_screens_test.dart: Home initialization does not fetch an unused profile name
+HOME_UNUSED_PROFILE old=false requests=0
+00:49 +663: proxo_app/test/polish_capture_test.dart: create kmr (393.0, 1.0, 3.0)
+00:49 +664: proxo_app/test/polish_capture_test.dart: create kmr (393.0, 1.0, 3.0)
+00:49 +665: proxo_app/test/receipt_layout_test.dart: transaction TxReceiptKind.refund / pending at 640.0 preserves complete IDs and neutral amounts
+00:49 +666: proxo_app/test/polish_capture_test.dart: profile kmr (393.0, 1.0, 3.0)
+00:49 +667: proxo_app/test/polish_capture_test.dart: profile kmr (393.0, 1.0, 3.0)
+00:49 +668: proxo_app/test/polish_capture_test.dart: profile kmr (393.0, 1.0, 3.0)
+00:49 +669: proxo_app/test/polish_capture_test.dart: profile kmr (393.0, 1.0, 3.0)
+00:49 +670: proxo_app/test/polish_capture_test.dart: profile kmr (393.0, 1.0, 3.0)
+00:49 +671: proxo_app/test/polish_capture_test.dart: profile kmr (393.0, 1.0, 3.0)
+00:49 +672: proxo_app/test/polish_capture_test.dart: profile kmr (393.0, 1.0, 3.0)
+00:49 +673: proxo_app/test/polish_capture_test.dart: profile kmr (393.0, 1.0, 3.0)
+00:49 +674: proxo_app/test/polish_capture_test.dart: profile kmr (393.0, 1.0, 3.0)
+00:49 +675: proxo_app/test/ad_name_direction_test.dart: actual ad name accepts all languages and keeps native editing
+00:49 +676: proxo_app/test/ad_name_direction_test.dart: actual ad name accepts all languages and keeps native editing
+00:49 +677: proxo_app/test/ad_name_direction_test.dart: actual ad name accepts all languages and keeps native editing
+00:49 +678: proxo_app/test/ad_name_direction_test.dart: actual ad name accepts all languages and keeps native editing
+00:49 +679: proxo_app/test/ad_name_direction_test.dart: actual ad name accepts all languages and keeps native editing
+00:49 +680: proxo_app/test/ad_name_direction_test.dart: actual ad name accepts all languages and keeps native editing
+00:49 +681: proxo_app/test/ad_name_direction_test.dart: actual ad name accepts all languages and keeps native editing
+00:49 +682: proxo_app/test/ad_name_direction_test.dart: actual ad name accepts all languages and keeps native editing
+00:50 +683: proxo_app/test/ad_name_direction_test.dart: actual ad name accepts all languages and keeps native editing
+00:50 +684: proxo_app/test/ad_name_direction_test.dart: actual ad name accepts all languages and keeps native editing
+00:50 +685: proxo_app/test/ad_name_direction_test.dart: actual ad name accepts all languages and keeps native editing
+00:50 +685: proxo_app/test/ui_remediation_capture_test.dart: render home (280.0, 1.0, 1.0)
+EVIDENCE start home (280.0, 1.0, 1.0)
+00:50 +686: proxo_app/test/ad_name_direction_test.dart: actual ad name accepts all languages and keeps native editing
+00:50 +687: proxo_app/test/ad_name_direction_test.dart: actual ad name accepts all languages and keeps native editing
+00:50 +688: proxo_app/test/ad_name_direction_test.dart: actual ad name accepts all languages and keeps native editing
+00:50 +689: proxo_app/test/ui_remediation_capture_test.dart: render home (280.0, 1.0, 1.0)
+00:50 +690: proxo_app/test/ui_remediation_capture_test.dart: render home (280.0, 1.0, 1.0)
+00:50 +691: proxo_app/test/ui_remediation_capture_test.dart: render home (280.0, 1.0, 1.0)
+EVIDENCE painted home-280-s1.0-d1.0
+00:51 +692: proxo_app/test/ui_remediation_capture_test.dart: render home (280.0, 1.0, 1.0)
+00:51 +693: proxo_app/test/ui_remediation_capture_test.dart: render home (280.0, 1.0, 1.0)
+EVIDENCE screenshot home-280-s1.0-d1.0
+00:51 +694: proxo_app/test/profile_logout_test.dart: profile logout clears the protected stack without AuthGate (remote fails: false)
+00:51 +694: proxo_app/test/ui_remediation_capture_test.dart: render actions (280.0, 1.0, 1.0)
+EVIDENCE start actions (280.0, 1.0, 1.0)
+00:51 +695: proxo_app/test/profile_logout_test.dart: profile logout clears the protected stack without AuthGate (remote fails: false)
+00:51 +695: proxo_app/test/ui_remediation_capture_test.dart: render actions (280.0, 1.0, 1.0)
+EVIDENCE painted actions-280-s1.0-d1.0
+EVIDENCE screenshot actions-280-s1.0-d1.0
+00:51 +696: proxo_app/test/profile_logout_test.dart: profile logout clears the protected stack without AuthGate (remote fails: false)
+00:51 +696: proxo_app/test/ui_remediation_capture_test.dart: render history (280.0, 1.0, 1.0)
+EVIDENCE start history (280.0, 1.0, 1.0)
+00:51 +697: proxo_app/test/profile_logout_test.dart: profile logout clears the protected stack without AuthGate (remote fails: false)
+00:51 +697: proxo_app/test/ui_remediation_capture_test.dart: render history (280.0, 1.0, 1.0)
+EVIDENCE painted history-280-s1.0-d1.0
+00:51 +698: proxo_app/test/profile_logout_test.dart: profile logout clears the protected stack without AuthGate (remote fails: false)
+00:51 +698: proxo_app/test/ui_remediation_capture_test.dart: render history (280.0, 1.0, 1.0)
+EVIDENCE screenshot history-280-s1.0-d1.0
+00:51 +699: proxo_app/test/profile_logout_test.dart: profile logout clears the protected stack without AuthGate (remote fails: false)
+00:51 +699: proxo_app/test/ui_remediation_capture_test.dart: render receipt (280.0, 1.0, 1.0)
+EVIDENCE start receipt (280.0, 1.0, 1.0)
+00:51 +700: proxo_app/test/profile_logout_test.dart: profile logout clears the protected stack without AuthGate (remote fails: false)
+00:51 +700: proxo_app/test/ui_remediation_capture_test.dart: render receipt (280.0, 1.0, 1.0)
+EVIDENCE painted receipt-280-s1.0-d1.0
+EVIDENCE screenshot receipt-280-s1.0-d1.0
+00:51 +701: proxo_app/test/profile_logout_test.dart: profile logout clears the protected stack without AuthGate (remote fails: false)
+00:51 +702: proxo_app/test/profile_logout_test.dart: profile logout clears the protected stack without AuthGate (remote fails: false)
+00:51 +703: proxo_app/test/profile_logout_test.dart: profile logout clears the protected stack without AuthGate (remote fails: false)
+00:51 +704: proxo_app/test/profile_logout_test.dart: profile logout clears the protected stack without AuthGate (remote fails: false)
+00:51 +704: proxo_app/test/ui_remediation_capture_test.dart: render receipt (280.0, 1.0, 1.0)
+EVIDENCE PDF receipt-280-s1.0-d1.0 done=true
+00:51 +705: proxo_app/test/profile_logout_test.dart: profile logout clears the protected stack without AuthGate (remote fails: false)
+00:51 +705: proxo_app/test/ui_remediation_capture_test.dart: render ad-receipt (280.0, 1.0, 1.0)
+EVIDENCE start ad-receipt (280.0, 1.0, 1.0)
+00:51 +706: proxo_app/test/profile_logout_test.dart: profile logout clears the protected stack without AuthGate (remote fails: false)
+00:51 +706: proxo_app/test/ui_remediation_capture_test.dart: render ad-receipt (280.0, 1.0, 1.0)
+EVIDENCE painted ad-receipt-280-s1.0-d1.0
+00:51 +707: proxo_app/test/profile_logout_test.dart: profile logout clears the protected stack without AuthGate (remote fails: false)
+00:51 +707: proxo_app/test/ui_remediation_capture_test.dart: render ad-receipt (280.0, 1.0, 1.0)
+EVIDENCE screenshot ad-receipt-280-s1.0-d1.0
+00:52 +708: proxo_app/test/profile_logout_test.dart: profile logout clears the protected stack without AuthGate (remote fails: false)
+00:52 +709: proxo_app/test/ui_remediation_capture_test.dart: render ad-receipt (280.0, 1.0, 1.0)
+EVIDENCE PDF ad-receipt-280-s1.0-d1.0 done=true
+00:52 +710: proxo_app/test/polish_capture_test.dart: signup ckb (280.0, 2.0, 2.0)
+00:52 +710: proxo_app/test/ui_remediation_capture_test.dart: render create (280.0, 1.0, 1.0)
+EVIDENCE start create (280.0, 1.0, 1.0)
+00:52 +711: proxo_app/test/profile_logout_test.dart: profile logout clears the protected stack without AuthGate (remote fails: true)
+00:52 +712: proxo_app/test/ui_remediation_capture_test.dart: render create (280.0, 1.0, 1.0)
+EVIDENCE painted create-280-s1.0-d1.0
+EVIDENCE screenshot create-280-s1.0-d1.0
+00:53 +713: proxo_app/test/polish_capture_test.dart: signup-filled ckb (280.0, 2.0, 2.0)
+00:53 +713: proxo_app/test/ui_remediation_capture_test.dart: render confirmation (280.0, 1.0, 1.0)
+EVIDENCE start confirmation (280.0, 1.0, 1.0)
+00:53 +714: proxo_app/test/auth_refresh_test.dart: Auth back restores login quickly, with reduced motion false
+00:53 +714: proxo_app/test/ui_remediation_capture_test.dart: render confirmation (280.0, 1.0, 1.0)
+EVIDENCE painted confirmation-280-s1.0-d1.0
+EVIDENCE screenshot confirmation-280-s1.0-d1.0
+00:53 +715: proxo_app/test/auth_refresh_test.dart: Auth back restores login quickly, with reduced motion false
+00:53 +715: proxo_app/test/ui_remediation_capture_test.dart: render confirmation-error (280.0, 1.0, 1.0)
+EVIDENCE start confirmation-error (280.0, 1.0, 1.0)
+EVIDENCE painted confirmation-error-280-s1.0-d1.0
+EVIDENCE screenshot confirmation-error-280-s1.0-d1.0
+00:53 +716: proxo_app/test/auth_refresh_test.dart: Auth back restores login quickly, with reduced motion false
+00:53 +716: proxo_app/test/ui_remediation_capture_test.dart: render confirmation-unknown (280.0, 1.0, 1.0)
+EVIDENCE start confirmation-unknown (280.0, 1.0, 1.0)
+00:53 +717: proxo_app/test/auth_refresh_test.dart: Auth back restores login quickly, with reduced motion false
+00:53 +717: proxo_app/test/ui_remediation_capture_test.dart: render confirmation-unknown (280.0, 1.0, 1.0)
+EVIDENCE painted confirmation-unknown-280-s1.0-d1.0
+EVIDENCE screenshot confirmation-unknown-280-s1.0-d1.0
+00:53 +718: proxo_app/test/auth_refresh_test.dart: Auth back restores login quickly, with reduced motion false
+00:53 +718: proxo_app/test/ui_remediation_capture_test.dart: render tools (280.0, 1.0, 1.0)
+EVIDENCE start tools (280.0, 1.0, 1.0)
+EVIDENCE painted tools-280-s1.0-d1.0
+EVIDENCE screenshot tools-280-s1.0-d1.0
+00:53 +719: proxo_app/test/auth_refresh_test.dart: Auth back restores login quickly, with reduced motion false
+00:53 +719: proxo_app/test/ui_remediation_capture_test.dart: render page-contact (280.0, 1.0, 1.0)
+EVIDENCE start page-contact (280.0, 1.0, 1.0)
+00:53 +720: proxo_app/test/auth_refresh_test.dart: Auth back restores login quickly, with reduced motion false
+00:53 +721: proxo_app/test/auth_refresh_test.dart: Auth back restores login quickly, with reduced motion false
+00:54 +721: proxo_app/test/ui_remediation_capture_test.dart: render page-contact (280.0, 1.0, 1.0)
+EVIDENCE painted page-contact-280-s1.0-d1.0
+00:54 +722: proxo_app/test/auth_refresh_test.dart: Auth back restores login quickly, with reduced motion false
+00:54 +722: proxo_app/test/ui_remediation_capture_test.dart: render page-contact (280.0, 1.0, 1.0)
+EVIDENCE screenshot page-contact-280-s1.0-d1.0
+00:54 +723: proxo_app/test/auth_refresh_test.dart: Auth back restores login quickly, with reduced motion false
+00:54 +724: proxo_app/test/ui_remediation_capture_test.dart: render page-contact (280.0, 1.0, 1.0)
+00:54 +725: proxo_app/test/polish_capture_test.dart: refresh ckb (280.0, 2.0, 2.0)
+00:54 +725: proxo_app/test/ui_remediation_capture_test.dart: render page-order (280.0, 1.0, 1.0)
+EVIDENCE start page-order (280.0, 1.0, 1.0)
+EVIDENCE painted page-order-280-s1.0-d1.0
+00:54 +726: proxo_app/test/auth_refresh_test.dart: Auth back restores login quickly, with reduced motion true
+00:54 +727: proxo_app/test/ui_remediation_capture_test.dart: render page-order (280.0, 1.0, 1.0)
+EVIDENCE screenshot page-order-280-s1.0-d1.0
+00:54 +728: proxo_app/test/polish_capture_test.dart: results-banner ckb (280.0, 2.0, 2.0)
+00:54 +728: proxo_app/test/ui_remediation_capture_test.dart: render page-download (280.0, 1.0, 1.0)
+EVIDENCE start page-download (280.0, 1.0, 1.0)
+00:54 +729: proxo_app/test/auth_refresh_test.dart: single signup form validates email, opens separate OTP and Back retains values
+00:55 +729: proxo_app/test/ui_remediation_capture_test.dart: render page-download (280.0, 1.0, 1.0)
+EVIDENCE painted page-download-280-s1.0-d1.0
+EVIDENCE screenshot page-download-280-s1.0-d1.0
+00:55 +730: proxo_app/test/auth_refresh_test.dart: single signup form validates email, opens separate OTP and Back retains values
+00:55 +730: proxo_app/test/ui_remediation_capture_test.dart: render page-details (280.0, 1.0, 1.0)
+EVIDENCE start page-details (280.0, 1.0, 1.0)
+00:55 +731: proxo_app/test/auth_refresh_test.dart: single signup form validates email, opens separate OTP and Back retains values
+00:55 +731: proxo_app/test/ui_remediation_capture_test.dart: render page-details (280.0, 1.0, 1.0)
+EVIDENCE painted page-details-280-s1.0-d1.0
+EVIDENCE screenshot page-details-280-s1.0-d1.0
+00:55 +732: proxo_app/test/auth_refresh_test.dart: single signup form validates email, opens separate OTP and Back retains values
+00:55 +733: proxo_app/test/auth_refresh_test.dart: single signup form validates email, opens separate OTP and Back retains values
+00:55 +733: proxo_app/test/ui_remediation_capture_test.dart: render page-edit (280.0, 1.0, 1.0)
+EVIDENCE start page-edit (280.0, 1.0, 1.0)
+EVIDENCE painted page-edit-280-s1.0-d1.0
+00:55 +734: proxo_app/test/auth_refresh_test.dart: single signup form validates email, opens separate OTP and Back retains values
+00:55 +734: proxo_app/test/ui_remediation_capture_test.dart: render page-edit (280.0, 1.0, 1.0)
+EVIDENCE screenshot page-edit-280-s1.0-d1.0
+00:55 +735: proxo_app/test/auth_refresh_test.dart: single signup form validates email, opens separate OTP and Back retains values
+00:55 +735: proxo_app/test/ui_remediation_capture_test.dart: render navigation (280.0, 1.0, 1.0)
+EVIDENCE start navigation (280.0, 1.0, 1.0)
+00:55 +736: proxo_app/test/polish_capture_test.dart: ads ckb (280.0, 2.0, 2.0)
+AdScreen: thumbnail generation failed: FunctionsFetchException(status: 0, details: Bad state: screen_fixture_network_boundary, reasonPhrase: null)
+00:55 +736: proxo_app/test/ui_remediation_capture_test.dart: render navigation (280.0, 1.0, 1.0)
+EVIDENCE painted navigation-280-s1.0-d1.0
+EVIDENCE screenshot navigation-280-s1.0-d1.0
+00:55 +737: proxo_app/test/polish_capture_test.dart: ads ckb (280.0, 2.0, 2.0)
+00:55 +737: proxo_app/test/ui_remediation_capture_test.dart: render home (393.0, 1.0, 3.0)
+EVIDENCE start home (393.0, 1.0, 3.0)
+00:55 +738: proxo_app/test/auth_refresh_test.dart: signup language menu preserves all fields in one form
+00:56 +738: proxo_app/test/ui_remediation_capture_test.dart: render home (393.0, 1.0, 3.0)
+EVIDENCE painted home-393-s1.0-d3.0
+EVIDENCE screenshot home-393-s1.0-d3.0
+00:56 +739: proxo_app/test/auth_refresh_test.dart: signup language menu preserves all fields in one form
+00:56 +739: proxo_app/test/ui_remediation_capture_test.dart: render actions (393.0, 1.0, 3.0)
+EVIDENCE start actions (393.0, 1.0, 3.0)
+EVIDENCE painted actions-393-s1.0-d3.0
+EVIDENCE screenshot actions-393-s1.0-d3.0
+00:56 +740: proxo_app/test/auth_refresh_test.dart: signup language menu preserves all fields in one form
+00:56 +740: proxo_app/test/ui_remediation_capture_test.dart: render history (393.0, 1.0, 3.0)
+EVIDENCE start history (393.0, 1.0, 3.0)
+EVIDENCE painted history-393-s1.0-d3.0
+00:56 +741: proxo_app/test/auth_refresh_test.dart: signup language menu preserves all fields in one form
+00:56 +741: proxo_app/test/ui_remediation_capture_test.dart: render history (393.0, 1.0, 3.0)
+EVIDENCE screenshot history-393-s1.0-d3.0
+00:56 +742: proxo_app/test/auth_refresh_test.dart: signup language menu preserves all fields in one form
+00:56 +742: proxo_app/test/ui_remediation_capture_test.dart: render receipt (393.0, 1.0, 3.0)
+EVIDENCE start receipt (393.0, 1.0, 3.0)
+EVIDENCE painted receipt-393-s1.0-d3.0
+00:56 +743: proxo_app/test/polish_capture_test.dart: profile ckb (280.0, 2.0, 2.0)
+00:56 +743: proxo_app/test/ui_remediation_capture_test.dart: render receipt (393.0, 1.0, 3.0)
+EVIDENCE screenshot receipt-393-s1.0-d3.0
+00:56 +744: proxo_app/test/ui_remediation_capture_test.dart: render receipt (393.0, 1.0, 3.0)
+EVIDENCE PDF receipt-393-s1.0-d3.0 done=true
+00:56 +745: proxo_app/test/auth_refresh_test.dart: channel pill interpolates and rapid switches retain one active form
+00:56 +745: proxo_app/test/ui_remediation_capture_test.dart: render ad-receipt (393.0, 1.0, 3.0)
+EVIDENCE start ad-receipt (393.0, 1.0, 3.0)
+00:56 +746: proxo_app/test/auth_refresh_test.dart: channel pill interpolates and rapid switches retain one active form
+00:57 +747: proxo_app/test/ui_remediation_capture_test.dart: render ad-receipt (393.0, 1.0, 3.0)
+EVIDENCE painted ad-receipt-393-s1.0-d3.0
+00:57 +748: proxo_app/test/ui_remediation_capture_test.dart: render ad-receipt (393.0, 1.0, 3.0)
+EVIDENCE screenshot ad-receipt-393-s1.0-d3.0
+00:57 +749: proxo_app/test/ui_remediation_capture_test.dart: render ad-receipt (393.0, 1.0, 3.0)
+00:57 +750: proxo_app/test/ui_remediation_capture_test.dart: render ad-receipt (393.0, 1.0, 3.0)
+00:57 +751: proxo_app/test/ui_remediation_capture_test.dart: render ad-receipt (393.0, 1.0, 3.0)
+00:57 +752: proxo_app/test/ui_remediation_capture_test.dart: render ad-receipt (393.0, 1.0, 3.0)
+00:57 +753: proxo_app/test/ui_remediation_capture_test.dart: render ad-receipt (393.0, 1.0, 3.0)
+00:57 +754: proxo_app/test/ui_remediation_capture_test.dart: render ad-receipt (393.0, 1.0, 3.0)
+00:57 +755: proxo_app/test/ui_remediation_capture_test.dart: render ad-receipt (393.0, 1.0, 3.0)
+00:57 +756: proxo_app/test/ui_remediation_capture_test.dart: render ad-receipt (393.0, 1.0, 3.0)
+00:57 +757: proxo_app/test/ui_remediation_capture_test.dart: render ad-receipt (393.0, 1.0, 3.0)
+EVIDENCE PDF ad-receipt-393-s1.0-d3.0 done=true
+00:57 +758: proxo_app/test/auth_refresh_test.dart: setup kmr 393 failed=true
+00:57 +758: proxo_app/test/ui_remediation_capture_test.dart: render create (393.0, 1.0, 3.0)
+EVIDENCE start create (393.0, 1.0, 3.0)
+00:57 +759: proxo_app/test/polish_capture_test.dart: notifications ckb (280.0, 2.0, 2.0)
+00:57 +760: proxo_app/test/polish_capture_test.dart: notifications ckb (280.0, 2.0, 2.0)
+00:57 +761: proxo_app/test/ui_remediation_capture_test.dart: render create (393.0, 1.0, 3.0)
+00:57 +762: proxo_app/test/ui_remediation_capture_test.dart: render create (393.0, 1.0, 3.0)
+EVIDENCE painted create-393-s1.0-d3.0
+00:57 +763: proxo_app/test/ui_remediation_capture_test.dart: render create (393.0, 1.0, 3.0)
+00:58 +764: proxo_app/test/ui_remediation_capture_test.dart: render create (393.0, 1.0, 3.0)
+EVIDENCE screenshot create-393-s1.0-d3.0
+00:58 +765: proxo_app/test/ui_remediation_capture_test.dart: render create (393.0, 1.0, 3.0)
+00:58 +766: proxo_app/test/ui_remediation_capture_test.dart: render create (393.0, 1.0, 3.0)
+00:58 +767: proxo_app/test/ui_remediation_capture_test.dart: render create (393.0, 1.0, 3.0)
+00:58 +768: proxo_app/test/polish_capture_test.dart: login-phone ar (280.0, 2.0, 2.0)
+00:58 +768: proxo_app/test/ui_remediation_capture_test.dart: render confirmation (393.0, 1.0, 3.0)
+EVIDENCE start confirmation (393.0, 1.0, 3.0)
+EVIDENCE painted confirmation-393-s1.0-d3.0
+EVIDENCE screenshot confirmation-393-s1.0-d3.0
+00:58 +769: proxo_app/test/ui_remediation_capture_test.dart: render confirmation (393.0, 1.0, 3.0)
+00:58 +770: proxo_app/test/polish_capture_test.dart: login-phone-filled ar (280.0, 2.0, 2.0)
+00:58 +770: proxo_app/test/ui_remediation_capture_test.dart: render confirmation-error (393.0, 1.0, 3.0)
+EVIDENCE start confirmation-error (393.0, 1.0, 3.0)
+EVIDENCE painted confirmation-error-393-s1.0-d3.0
+EVIDENCE screenshot confirmation-error-393-s1.0-d3.0
+00:58 +771: proxo_app/test/ui_remediation_capture_test.dart: render confirmation-error (393.0, 1.0, 3.0)
+00:58 +772: proxo_app/test/polish_capture_test.dart: signup ar (280.0, 2.0, 2.0)
+00:58 +772: proxo_app/test/ui_remediation_capture_test.dart: render confirmation-unknown (393.0, 1.0, 3.0)
+EVIDENCE start confirmation-unknown (393.0, 1.0, 3.0)
+EVIDENCE painted confirmation-unknown-393-s1.0-d3.0
+EVIDENCE screenshot confirmation-unknown-393-s1.0-d3.0
+00:59 +773: proxo_app/test/ui_remediation_capture_test.dart: render confirmation-unknown (393.0, 1.0, 3.0)
+00:59 +774: proxo_app/test/polish_capture_test.dart: signup-filled ar (280.0, 2.0, 2.0)
+00:59 +774: proxo_app/test/ui_remediation_capture_test.dart: render tools (393.0, 1.0, 3.0)
+EVIDENCE start tools (393.0, 1.0, 3.0)
+EVIDENCE painted tools-393-s1.0-d3.0
+EVIDENCE screenshot tools-393-s1.0-d3.0
+00:59 +775: proxo_app/test/polish_capture_test.dart: signup-filled ar (280.0, 2.0, 2.0)
+00:59 +775: proxo_app/test/ui_remediation_capture_test.dart: render page-contact (393.0, 1.0, 3.0)
+EVIDENCE start page-contact (393.0, 1.0, 3.0)
+EVIDENCE painted page-contact-393-s1.0-d3.0
+00:59 +776: proxo_app/test/ui_remediation_capture_test.dart: render page-contact (393.0, 1.0, 3.0)
+EVIDENCE screenshot page-contact-393-s1.0-d3.0
+01:00 +777: proxo_app/test/ui_remediation_capture_test.dart: render page-contact (393.0, 1.0, 3.0)
+01:00 +778: proxo_app/test/ui_remediation_capture_test.dart: render page-contact (393.0, 1.0, 3.0)
+01:00 +779: proxo_app/test/ui_remediation_capture_test.dart: render page-contact (393.0, 1.0, 3.0)
+01:00 +780: proxo_app/test/polish_capture_test.dart: otp-filled ar (280.0, 2.0, 2.0)
+01:00 +780: proxo_app/test/ui_remediation_capture_test.dart: render page-order (393.0, 1.0, 3.0)
+EVIDENCE start page-order (393.0, 1.0, 3.0)
+01:00 +781: proxo_app/test/ui_remediation_capture_test.dart: render page-order (393.0, 1.0, 3.0)
+01:00 +782: proxo_app/test/ui_remediation_capture_test.dart: render page-order (393.0, 1.0, 3.0)
+EVIDENCE painted page-order-393-s1.0-d3.0
+01:01 +783: proxo_app/test/ui_remediation_capture_test.dart: render page-order (393.0, 1.0, 3.0)
+EVIDENCE screenshot page-order-393-s1.0-d3.0
+01:01 +784: proxo_app/test/ui_remediation_capture_test.dart: render page-order (393.0, 1.0, 3.0)
+01:01 +785: proxo_app/test/ui_remediation_capture_test.dart: render page-order (393.0, 1.0, 3.0)
+01:01 +786: proxo_app/test/ui_remediation_capture_test.dart: render page-order (393.0, 1.0, 3.0)
+01:01 +787: proxo_app/test/polish_capture_test.dart: deposit ar (280.0, 2.0, 2.0)
+01:01 +787: proxo_app/test/ui_remediation_capture_test.dart: render page-download (393.0, 1.0, 3.0)
+EVIDENCE start page-download (393.0, 1.0, 3.0)
+EVIDENCE painted page-download-393-s1.0-d3.0
+01:02 +788: proxo_app/test/ui_remediation_capture_test.dart: render page-download (393.0, 1.0, 3.0)
+01:02 +788: proxo_app/test/polish_capture_test.dart: ads ar (280.0, 2.0, 2.0)
+AdScreen: thumbnail generation failed: FunctionsFetchException(status: 0, details: Bad state: screen_fixture_network_boundary, reasonPhrase: null)
+01:02 +788: proxo_app/test/ui_remediation_capture_test.dart: render page-download (393.0, 1.0, 3.0)
+EVIDENCE screenshot page-download-393-s1.0-d3.0
+01:02 +789: proxo_app/test/ui_remediation_capture_test.dart: render page-download (393.0, 1.0, 3.0)
+01:02 +790: proxo_app/test/ui_remediation_capture_test.dart: render page-download (393.0, 1.0, 3.0)
+01:02 +791: proxo_app/test/polish_capture_test.dart: profile ar (280.0, 2.0, 2.0)
+01:02 +791: proxo_app/test/ui_remediation_capture_test.dart: render page-details (393.0, 1.0, 3.0)
+EVIDENCE start page-details (393.0, 1.0, 3.0)
+EVIDENCE painted page-details-393-s1.0-d3.0
+EVIDENCE screenshot page-details-393-s1.0-d3.0
+01:03 +792: proxo_app/test/polish_capture_test.dart: profile ar (280.0, 2.0, 2.0)
+01:03 +792: proxo_app/test/ui_remediation_capture_test.dart: render page-edit (393.0, 1.0, 3.0)
+EVIDENCE start page-edit (393.0, 1.0, 3.0)
+01:03 +793: proxo_app/test/ui_remediation_capture_test.dart: render page-edit (393.0, 1.0, 3.0)
+EVIDENCE painted page-edit-393-s1.0-d3.0
+01:03 +794: proxo_app/test/ui_remediation_capture_test.dart: render page-edit (393.0, 1.0, 3.0)
+EVIDENCE screenshot page-edit-393-s1.0-d3.0
+01:03 +795: proxo_app/test/ui_remediation_capture_test.dart: render page-edit (393.0, 1.0, 3.0)
+01:03 +796: proxo_app/test/polish_capture_test.dart: levels ar (280.0, 2.0, 2.0)
+01:03 +796: proxo_app/test/ui_remediation_capture_test.dart: render navigation (393.0, 1.0, 3.0)
+EVIDENCE start navigation (393.0, 1.0, 3.0)
+EVIDENCE painted navigation-393-s1.0-d3.0
+01:03 +797: proxo_app/test/ui_remediation_capture_test.dart: render navigation (393.0, 1.0, 3.0)
+EVIDENCE screenshot navigation-393-s1.0-d3.0
+01:03 +798: proxo_app/test/polish_capture_test.dart: tasks ar (280.0, 2.0, 2.0)
+01:03 +798: proxo_app/test/ui_remediation_capture_test.dart: render home (393.0, 2.0, 1.0)
+EVIDENCE start home (393.0, 2.0, 1.0)
+01:03 +799: proxo_app/test/ui_remediation_capture_test.dart: render home (393.0, 2.0, 1.0)
+EVIDENCE painted home-393-s2.0-d1.0
+EVIDENCE screenshot home-393-s2.0-d1.0
+01:03 +800: proxo_app/test/polish_capture_test.dart: vouchers ar (280.0, 2.0, 2.0)
+01:03 +800: proxo_app/test/ui_remediation_capture_test.dart: render actions (393.0, 2.0, 1.0)
+EVIDENCE start actions (393.0, 2.0, 1.0)
+EVIDENCE painted actions-393-s2.0-d1.0
+EVIDENCE screenshot actions-393-s2.0-d1.0
+01:03 +801: proxo_app/test/polish_capture_test.dart: vouchers ar (280.0, 2.0, 2.0)
+01:03 +801: proxo_app/test/ui_remediation_capture_test.dart: render history (393.0, 2.0, 1.0)
+EVIDENCE start history (393.0, 2.0, 1.0)
+EVIDENCE painted history-393-s2.0-d1.0
+01:04 +802: proxo_app/test/ui_remediation_capture_test.dart: render history (393.0, 2.0, 1.0)
+EVIDENCE screenshot history-393-s2.0-d1.0
+01:04 +803: proxo_app/test/polish_capture_test.dart: discounts ar (280.0, 2.0, 2.0)
+01:04 +803: proxo_app/test/ui_remediation_capture_test.dart: render receipt (393.0, 2.0, 1.0)
+EVIDENCE start receipt (393.0, 2.0, 1.0)
+EVIDENCE painted receipt-393-s2.0-d1.0
+EVIDENCE screenshot receipt-393-s2.0-d1.0
+01:04 +804: proxo_app/test/ui_remediation_capture_test.dart: render receipt (393.0, 2.0, 1.0)
+01:04 +805: proxo_app/test/ui_remediation_capture_test.dart: render receipt (393.0, 2.0, 1.0)
+EVIDENCE PDF receipt-393-s2.0-d1.0 done=true
+01:04 +806: proxo_app/test/polish_capture_test.dart: login kmr (280.0, 2.0, 2.0)
+01:04 +807: proxo_app/test/ui_remediation_capture_test.dart: render ad-receipt (393.0, 2.0, 1.0)
+EVIDENCE start ad-receipt (393.0, 2.0, 1.0)
+EVIDENCE painted ad-receipt-393-s2.0-d1.0
+EVIDENCE screenshot ad-receipt-393-s2.0-d1.0
+01:05 +808: proxo_app/test/ui_remediation_capture_test.dart: render ad-receipt (393.0, 2.0, 1.0)
+01:05 +809: proxo_app/test/ui_remediation_capture_test.dart: render ad-receipt (393.0, 2.0, 1.0)
+EVIDENCE PDF ad-receipt-393-s2.0-d1.0 done=true
+01:05 +810: proxo_app/test/polish_capture_test.dart: signup kmr (280.0, 2.0, 2.0)
+01:05 +810: proxo_app/test/ui_remediation_capture_test.dart: render create (393.0, 2.0, 1.0)
+EVIDENCE start create (393.0, 2.0, 1.0)
+01:05 +811: proxo_app/test/ui_remediation_capture_test.dart: render create (393.0, 2.0, 1.0)
+EVIDENCE painted create-393-s2.0-d1.0
+EVIDENCE screenshot create-393-s2.0-d1.0
+01:06 +812: proxo_app/test/polish_capture_test.dart: signup-filled kmr (280.0, 2.0, 2.0)
+01:06 +812: proxo_app/test/ui_remediation_capture_test.dart: render confirmation (393.0, 2.0, 1.0)
+EVIDENCE start confirmation (393.0, 2.0, 1.0)
+EVIDENCE painted confirmation-393-s2.0-d1.0
+EVIDENCE screenshot confirmation-393-s2.0-d1.0
+01:06 +813: proxo_app/test/polish_capture_test.dart: signup-filled kmr (280.0, 2.0, 2.0)
+01:06 +813: proxo_app/test/ui_remediation_capture_test.dart: render confirmation-error (393.0, 2.0, 1.0)
+EVIDENCE start confirmation-error (393.0, 2.0, 1.0)
+EVIDENCE painted confirmation-error-393-s2.0-d1.0
+EVIDENCE screenshot confirmation-error-393-s2.0-d1.0
+01:06 +814: proxo_app/test/polish_capture_test.dart: signup-filled kmr (280.0, 2.0, 2.0)
+01:06 +814: proxo_app/test/ui_remediation_capture_test.dart: render confirmation-unknown (393.0, 2.0, 1.0)
+EVIDENCE start confirmation-unknown (393.0, 2.0, 1.0)
+01:06 +815: proxo_app/test/ui_remediation_capture_test.dart: render confirmation-unknown (393.0, 2.0, 1.0)
+EVIDENCE painted confirmation-unknown-393-s2.0-d1.0
+EVIDENCE screenshot confirmation-unknown-393-s2.0-d1.0
+01:06 +816: proxo_app/test/polish_capture_test.dart: forgot kmr (280.0, 2.0, 2.0)
+01:06 +816: proxo_app/test/ui_remediation_capture_test.dart: render tools (393.0, 2.0, 1.0)
+EVIDENCE start tools (393.0, 2.0, 1.0)
+EVIDENCE painted tools-393-s2.0-d1.0
+EVIDENCE screenshot tools-393-s2.0-d1.0
+01:06 +817: proxo_app/test/polish_capture_test.dart: forgot kmr (280.0, 2.0, 2.0)
+01:06 +817: proxo_app/test/ui_remediation_capture_test.dart: render page-contact (393.0, 2.0, 1.0)
+EVIDENCE start page-contact (393.0, 2.0, 1.0)
+01:06 +818: proxo_app/test/ui_remediation_capture_test.dart: render page-contact (393.0, 2.0, 1.0)
+EVIDENCE painted page-contact-393-s2.0-d1.0
+EVIDENCE screenshot page-contact-393-s2.0-d1.0
+01:06 +819: proxo_app/test/polish_capture_test.dart: new-password kmr (280.0, 2.0, 2.0)
+01:06 +819: proxo_app/test/ui_remediation_capture_test.dart: render page-order (393.0, 2.0, 1.0)
+EVIDENCE start page-order (393.0, 2.0, 1.0)
+01:06 +820: proxo_app/test/ui_remediation_capture_test.dart: render page-order (393.0, 2.0, 1.0)
+EVIDENCE painted page-order-393-s2.0-d1.0
+EVIDENCE screenshot page-order-393-s2.0-d1.0
+01:07 +821: proxo_app/test/ui_remediation_capture_test.dart: render page-order (393.0, 2.0, 1.0)
+01:07 +822: proxo_app/test/polish_capture_test.dart: otp-filled kmr (280.0, 2.0, 2.0)
+01:07 +822: proxo_app/test/ui_remediation_capture_test.dart: render page-download (393.0, 2.0, 1.0)
+EVIDENCE start page-download (393.0, 2.0, 1.0)
+01:07 +823: proxo_app/test/ui_remediation_capture_test.dart: render page-download (393.0, 2.0, 1.0)
+EVIDENCE painted page-download-393-s2.0-d1.0
+EVIDENCE screenshot page-download-393-s2.0-d1.0
+01:07 +824: proxo_app/test/ui_remediation_capture_test.dart: render page-download (393.0, 2.0, 1.0)
+01:07 +825: proxo_app/test/polish_capture_test.dart: refresh kmr (280.0, 2.0, 2.0)
+01:07 +825: proxo_app/test/ui_remediation_capture_test.dart: render page-details (393.0, 2.0, 1.0)
+EVIDENCE start page-details (393.0, 2.0, 1.0)
+EVIDENCE painted page-details-393-s2.0-d1.0
+EVIDENCE screenshot page-details-393-s2.0-d1.0
+01:07 +826: proxo_app/test/polish_capture_test.dart: refresh kmr (280.0, 2.0, 2.0)
+01:07 +826: proxo_app/test/ui_remediation_capture_test.dart: render page-edit (393.0, 2.0, 1.0)
+EVIDENCE start page-edit (393.0, 2.0, 1.0)
+01:07 +827: proxo_app/test/ui_remediation_capture_test.dart: render page-edit (393.0, 2.0, 1.0)
+EVIDENCE painted page-edit-393-s2.0-d1.0
+EVIDENCE screenshot page-edit-393-s2.0-d1.0
+01:07 +828: proxo_app/test/polish_capture_test.dart: results-banner kmr (280.0, 2.0, 2.0)
+01:07 +828: proxo_app/test/ui_remediation_capture_test.dart: render navigation (393.0, 2.0, 1.0)
+EVIDENCE start navigation (393.0, 2.0, 1.0)
+EVIDENCE painted navigation-393-s2.0-d1.0
+EVIDENCE screenshot navigation-393-s2.0-d1.0
+01:07 +829: proxo_app/test/polish_capture_test.dart: results-banner kmr (280.0, 2.0, 2.0)
+01:07 +829: proxo_app/test/ui_remediation_capture_test.dart: render home (768.0, 1.0, 2.0)
+EVIDENCE start home (768.0, 1.0, 2.0)
+EVIDENCE painted home-768-s1.0-d2.0
+01:07 +830: proxo_app/test/ui_remediation_capture_test.dart: render home (768.0, 1.0, 2.0)
+EVIDENCE screenshot home-768-s1.0-d2.0
+01:08 +831: proxo_app/test/polish_capture_test.dart: results kmr (280.0, 2.0, 2.0)
+01:08 +831: proxo_app/test/ui_remediation_capture_test.dart: render actions (768.0, 1.0, 2.0)
+EVIDENCE start actions (768.0, 1.0, 2.0)
+EVIDENCE painted actions-768-s1.0-d2.0
+EVIDENCE screenshot actions-768-s1.0-d2.0
+01:08 +832: proxo_app/test/polish_capture_test.dart: results kmr (280.0, 2.0, 2.0)
+01:08 +832: proxo_app/test/ui_remediation_capture_test.dart: render history (768.0, 1.0, 2.0)
+EVIDENCE start history (768.0, 1.0, 2.0)
+EVIDENCE painted history-768-s1.0-d2.0
+01:08 +833: proxo_app/test/ui_remediation_capture_test.dart: render history (768.0, 1.0, 2.0)
+EVIDENCE screenshot history-768-s1.0-d2.0
+01:08 +834: proxo_app/test/polish_capture_test.dart: results-empty kmr (280.0, 2.0, 2.0)
+01:08 +834: proxo_app/test/ui_remediation_capture_test.dart: render receipt (768.0, 1.0, 2.0)
+EVIDENCE start receipt (768.0, 1.0, 2.0)
+EVIDENCE painted receipt-768-s1.0-d2.0
+01:08 +835: proxo_app/test/ui_remediation_capture_test.dart: render receipt (768.0, 1.0, 2.0)
+EVIDENCE screenshot receipt-768-s1.0-d2.0
+01:08 +836: proxo_app/test/ui_remediation_capture_test.dart: render receipt (768.0, 1.0, 2.0)
+01:08 +836: proxo_app/test/polish_capture_test.dart: ads kmr (280.0, 2.0, 2.0)
+AdScreen: thumbnail generation failed: FunctionsFetchException(status: 0, details: Bad state: screen_fixture_network_boundary, reasonPhrase: null)
+01:08 +837: proxo_app/test/ui_remediation_capture_test.dart: render receipt (768.0, 1.0, 2.0)
+EVIDENCE PDF receipt-768-s1.0-d2.0 done=true
+01:08 +838: proxo_app/test/polish_capture_test.dart: create kmr (280.0, 2.0, 2.0)
+01:08 +838: proxo_app/test/ui_remediation_capture_test.dart: render ad-receipt (768.0, 1.0, 2.0)
+EVIDENCE start ad-receipt (768.0, 1.0, 2.0)
+EVIDENCE painted ad-receipt-768-s1.0-d2.0
+EVIDENCE screenshot ad-receipt-768-s1.0-d2.0
+01:09 +839: proxo_app/test/ui_remediation_capture_test.dart: render ad-receipt (768.0, 1.0, 2.0)
+01:09 +840: proxo_app/test/ui_remediation_capture_test.dart: render ad-receipt (768.0, 1.0, 2.0)
+01:09 +841: proxo_app/test/ui_remediation_capture_test.dart: render ad-receipt (768.0, 1.0, 2.0)
+EVIDENCE PDF ad-receipt-768-s1.0-d2.0 done=true
+01:09 +842: proxo_app/test/polish_capture_test.dart: navigation kmr (280.0, 2.0, 2.0)
+01:09 +842: proxo_app/test/ui_remediation_capture_test.dart: render create (768.0, 1.0, 2.0)
+EVIDENCE start create (768.0, 1.0, 2.0)
+01:09 +843: proxo_app/test/ui_remediation_capture_test.dart: render create (768.0, 1.0, 2.0)
+EVIDENCE painted create-768-s1.0-d2.0
+EVIDENCE screenshot create-768-s1.0-d2.0
+01:10 +844: proxo_app/test/ui_remediation_capture_test.dart: render create (768.0, 1.0, 2.0)
+01:10 +845: proxo_app/test/ui_remediation_capture_test.dart: render create (768.0, 1.0, 2.0)
+01:10 +846: proxo_app/test/polish_capture_test.dart: vouchers kmr (280.0, 2.0, 2.0)
+01:10 +846: proxo_app/test/ui_remediation_capture_test.dart: render confirmation (768.0, 1.0, 2.0)
+EVIDENCE start confirmation (768.0, 1.0, 2.0)
+EVIDENCE painted confirmation-768-s1.0-d2.0
+01:10 +847: proxo_app/test/ui_remediation_capture_test.dart: render confirmation (768.0, 1.0, 2.0)
+EVIDENCE screenshot confirmation-768-s1.0-d2.0
+01:10 +848: proxo_app/test/ui_remediation_capture_test.dart: render confirmation (768.0, 1.0, 2.0)
+01:10 +849: proxo_app/test/polish_capture_test.dart: notifications kmr (280.0, 2.0, 2.0)
+01:10 +849: proxo_app/test/ui_remediation_capture_test.dart: render confirmation-error (768.0, 1.0, 2.0)
+EVIDENCE start confirmation-error (768.0, 1.0, 2.0)
+EVIDENCE painted confirmation-error-768-s1.0-d2.0
+01:10 +850: proxo_app/test/ui_remediation_capture_test.dart: render confirmation-error (768.0, 1.0, 2.0)
+EVIDENCE screenshot confirmation-error-768-s1.0-d2.0
+01:10 +851: proxo_app/test/ui_remediation_capture_test.dart: render confirmation-unknown (768.0, 1.0, 2.0)
+EVIDENCE start confirmation-unknown (768.0, 1.0, 2.0)
+EVIDENCE painted confirmation-unknown-768-s1.0-d2.0
+EVIDENCE screenshot confirmation-unknown-768-s1.0-d2.0
+01:11 +852: proxo_app/test/ui_remediation_capture_test.dart: render tools (768.0, 1.0, 2.0)
+EVIDENCE start tools (768.0, 1.0, 2.0)
+EVIDENCE painted tools-768-s1.0-d2.0
+EVIDENCE screenshot tools-768-s1.0-d2.0
+01:11 +853: proxo_app/test/ui_remediation_capture_test.dart: render page-contact (768.0, 1.0, 2.0)
+EVIDENCE start page-contact (768.0, 1.0, 2.0)
+EVIDENCE painted page-contact-768-s1.0-d2.0
+EVIDENCE screenshot page-contact-768-s1.0-d2.0
+01:12 +854: proxo_app/test/ui_remediation_capture_test.dart: render page-order (768.0, 1.0, 2.0)
+EVIDENCE start page-order (768.0, 1.0, 2.0)
+EVIDENCE painted page-order-768-s1.0-d2.0
+EVIDENCE screenshot page-order-768-s1.0-d2.0
+01:12 +855: proxo_app/test/ui_remediation_capture_test.dart: render page-download (768.0, 1.0, 2.0)
+EVIDENCE start page-download (768.0, 1.0, 2.0)
+EVIDENCE painted page-download-768-s1.0-d2.0
+EVIDENCE screenshot page-download-768-s1.0-d2.0
+01:13 +856: proxo_app/test/ui_remediation_capture_test.dart: render page-details (768.0, 1.0, 2.0)
+EVIDENCE start page-details (768.0, 1.0, 2.0)
+EVIDENCE painted page-details-768-s1.0-d2.0
+EVIDENCE screenshot page-details-768-s1.0-d2.0
+01:13 +857: proxo_app/test/ui_remediation_capture_test.dart: render page-edit (768.0, 1.0, 2.0)
+EVIDENCE start page-edit (768.0, 1.0, 2.0)
+EVIDENCE painted page-edit-768-s1.0-d2.0
+EVIDENCE screenshot page-edit-768-s1.0-d2.0
+01:14 +858: proxo_app/test/ui_remediation_capture_test.dart: render navigation (768.0, 1.0, 2.0)
+EVIDENCE start navigation (768.0, 1.0, 2.0)
+EVIDENCE painted navigation-768-s1.0-d2.0
+EVIDENCE screenshot navigation-768-s1.0-d2.0
+01:14 +859: proxo_app/test/ui_remediation_capture_test.dart: (tearDownAll)
+01:14 +859: All tests passed!

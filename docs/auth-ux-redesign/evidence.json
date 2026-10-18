@@ -6,8 +6,8 @@
   "dart_version": "3.13.2",
   "visual_cases_passed": 150,
   "behavior_tests_passed": 57,
-  "screenshots_including_scroll_bottoms": 194,
-  "captured_render_objects": 10290,
+  "screenshots_including_scroll_bottoms": 200,
+  "captured_render_objects": 10812,
   "captured_exceptions": 0,
   "paragraphs_exceeding_max_lines": 18,
   "analyzer": {
@@ -17,7 +17,8 @@
     "notes": "Three pre-existing Auth warnings: unnecessary cast and visible-for-testing calls. Remaining lints are informational."
   },
   "source_sha256": {
-    ".github/workflows/proxolink-verify.yml": "ac4e99b53bae018fd8c1d7fa8d2c958f0cf7b968e57f17a476f6cf358a2e22a1",
+    ".github/workflows/polish-runtime.yml": "2df3d33e7577d16c9b16d6ad0f4cf15c9899e4f9f6ca36357bd59ebf5354f248",
+    ".github/workflows/proxolink-verify.yml": "4508755dd744f28c69436d0e669f40f34089a699cfb346214406bb24bb525a81",
     "proxo_app/android/app/src/main/AndroidManifest.xml": "122af4ac420c89d46baa48ab601bbddb87811dc03b865abc866ace6e22db0a45",
     "proxo_app/android/app/src/main/res/drawable/ic_notification.xml": "03b2d45faec6b3d1aabe5d2577a4e40c6d2943b9468e0cbec2d490fee3442ff2",
     "proxo_app/android/app/src/main/res/drawable/launch_background.xml": "80ad0bf44713c5c6c7a23bb314b84c8034bfc114d9f3980d177223c34abcf37f",
@@ -26,6 +27,8 @@
     "proxo_app/android/app/src/main/res/drawable/proxo_splash_mark.xml": "9dba5f5d3830aa3c408a534e1aaff8383fa9e4eab5b256183e7519697e02f899",
     "proxo_app/android/app/src/main/res/values-v31/styles.xml": "9f93ff812a8f4225b3ea8be2e195f425cea04a4a8c5af00a03bfde0eae91b3ad",
     "proxo_app/android/app/src/main/res/values/colors.xml": "be7df8c978a0c793bd44096ef2688b2fb5ccea752c63afac0e2fbad803d0e0e5",
+    "proxo_app/android/app/src/profile/AndroidManifest.xml": "f908f5a5ac61416edc9bd2b214be0d2d420ce3065ede2f0af5620e85f8fc5504",
+    "proxo_app/android/app/src/profile/kotlin/com/proxo/proxoapp/PolishRuntimeActivity.kt": "b6c81622c70e3175d1cbb2680dc49131cea8a4fd55e1123a98cd139c0dac188d",
     "proxo_app/assets/icons/auth/SOURCES.md": "383993022c74213671a013a56e7f73f61e4611f53e45e3ad2db98e86ed7c6420",
     "proxo_app/assets/icons/auth/account_outline.svg": "5dbd88ec213c3f2d759a47e3fa37deb6321a055ce822f5f957b9aea919307478",
     "proxo_app/assets/icons/auth/back_outline.svg": "42137d80069ada7d23e451f768c319b2588b7e8870f285380dab089f56c175c2",
@@ -40,12 +43,15 @@
     "proxo_app/assets/icons/auth/security_outline.svg": "6d51368f23b99d196bd15c0dd38b687a55668cf6fc4681e2351f5277e8d706e5",
     "proxo_app/assets/icons/auth/signin_outline.svg": "1798e3b2962dfba2a91c07c3af6316e77a0c7d74b73111e08d0cea67ab19e3af",
     "proxo_app/assets/icons/auth/verification_outline.svg": "68d69ba5a9cc75ff2e36cf77d47ce7f0dcda985827032265452003f92948276d",
+    "proxo_app/assets/icons/help/video_link_example.svg": "06cfa8ea6829f91b3ed4bbc95c1a5ef26836998f538ccc102035a1085f506a2c",
     "proxo_app/assets/images/auth/account_3d.png": "54632924d04e42f14ea04d206cc80644851df0b3ad9f41e042cfc01d2057227a",
     "proxo_app/assets/images/auth/verification_3d.png": "d68c34137d244b5fad4d4392a46533f261444e1ed3b7f4e13366c5904244229e",
-    "proxo_app/l10n/messages.tsv": "2a86866d05b6c86db1cb9ccc9c64ed70fc5b49f9b29efea7a67d3e473965fb64",
-    "proxo_app/lib/l10n/proxo_messages.dart": "f962d9479304c2fc5258be486e6abfcc9c9af4ca675b4006c66dba866ded2b8a",
+    "proxo_app/integration_test/polish_runtime_test.dart": "b234be2a77aa3cd709e6c2d0f3cbf45af4ecd06fd8f367b5df925afdc617c7f2",
+    "proxo_app/integration_test/support/actual_screen_fixtures.dart": "d296e3bb3190821ead4911cc1262d8dac2ad8344a837d641f9c288d071b8d666",
+    "proxo_app/l10n/messages.tsv": "ce18be28e0197a4807efabb2932c6af62e74202c5b6b2a213d0d3b7a3eaf3e4d",
+    "proxo_app/lib/l10n/proxo_messages.dart": "1d23508e161fd4ddb03e4fffd78e95a02a3ebc37f35e3c26719e940d00798cc4",
     "proxo_app/lib/main.dart": "2a5f1cd3decf0c1d6bbcf5286c69254b9bf8e30fa2240e3cfd1cc430146d7628",
-    "proxo_app/lib/screens/ad_create_screen.dart": "5e16adf55b82ea9c5daf54b27717a96cb6f3523b718cf1d3556228347646078f",
+    "proxo_app/lib/screens/ad_create_screen.dart": "93a58beb7c91ad39c0c6ad253aac9f08c193f06cd017c602aa553311e16480f6",
     "proxo_app/lib/screens/ad_screen.dart": "6e02291a11195e122bcfd9f3588d3a69aa6a17addd008952e62130387e43f21d",
     "proxo_app/lib/screens/auth/auth_service.dart": "6038581d6a0ebd8a4c848d54a1b4950e682a050089efdbdfb1515d4194ff03da",
     "proxo_app/lib/screens/auth/auth_shell.dart": "a0e08a3e388d54429bb3d51966664b8bb069b8e58d56c4a0a6563b8ea9fcb736",
@@ -56,10 +62,13 @@
     "proxo_app/lib/screens/authenticated_gate.dart": "daf5bf28b559bb7b00ad2ef257524820ad197fb41a03b2528980ddcc483be9b0",
     "proxo_app/lib/screens/deposit_screen.dart": "01bc3d0321f1f70c0a08f98d358ff153e68d6351856ff7c3175954de7a6dc696",
     "proxo_app/lib/screens/profile_screen.dart": "af66bbd2e7388b788dd1badbee76f6c7a767ab3e0e56542db1fce0bf0e6fdc2d",
+    "proxo_app/lib/screens/proxolink_create_page_screen.dart": "b8eda215a1348c99cf63565ae3b5f9b3ee4348e979c7f3380c4229f4b29d78b8",
     "proxo_app/lib/screens/proxolink_page_editor.dart": "2ca9b232d64768668aca504e5a1be4db88d7b9ebe06e215d8595863e861a5ca7",
     "proxo_app/lib/screens/splash_screen.dart": "3eb2174770687303b2396d419b052e153dde12b5d759c1bf9a8fed8f3407dca6",
     "proxo_app/lib/screens/tools_screen.dart": "a87ab7e03e3ea51f92d8df15d59f580603be8db62dd0f0e28d91bb7547cbc9ec",
-    "proxo_app/lib/services/notification_service.dart": "359baf575ff22eb12bb1e1e3df706661ce405a3ed02cd82dd38e4f17d56d4384",
+    "proxo_app/lib/services/context_help_service.dart": "0a3e91544fc300de5ba4484e7b26f55ef0e51fd94a9672678739d80eeb592f3f",
+    "proxo_app/lib/services/notification_presentation.dart": "19b6022890c48911d48e92415dabd5b3f228aa1b07e621db11d65cd78208253d",
+    "proxo_app/lib/services/notification_service.dart": "692b23a2e3f2d1f366beaf36f121a1356bd8c34dd5832bf512604a526bda82d4",
     "proxo_app/lib/theme/app_theme.dart": "c01bdc07f4e311fde3db67f865eb2184d3cd75f44d79a2af0e88c302def734b4",
     "proxo_app/lib/widgets/ad_feedback.dart": "390570495a193ed7303868e7ea236a8543db7cb5eea8b1d91c83d94a6909bdc2",
     "proxo_app/lib/widgets/ad_form_components.dart": "02622579c796ef9c3302b762edf4e51cc4c180db3a9c7de82c9617936477c06e",
@@ -69,24 +78,32 @@
     "proxo_app/lib/widgets/auth/auth_intro.dart": "6491511bb65ebf1e6d64522034da1304f0be75f644aaeeab5ccda31f41849611",
     "proxo_app/lib/widgets/auth/auth_otp_field.dart": "2459c92759a11126eb1bdb9ebe8ee7ae4f83ae9ae9fa0782c2d6265809ee78c9",
     "proxo_app/lib/widgets/auth/auth_swap.dart": "837a219e62a811cf2578ccf57d4c72caa79288acaecb110d8a1bbe5a4ae3270e",
-    "proxo_app/lib/widgets/auth/auth_widgets.dart": "f6b07230e27c27fe830ca79f5ac32cce4ea9fc7ece1275854fe83d0b6c9a716b",
+    "proxo_app/lib/widgets/auth/auth_widgets.dart": "e1a05fd4cc083d96d3ac5f906a663a915b7128604fe4df57feeed5edadcfdf3f",
     "proxo_app/lib/widgets/best_metric_card.dart": "8555dcbb0849ce79d6a9c61f0f344a413d7dc7d379a2b057c01f256908f014f2",
     "proxo_app/lib/widgets/best_results_design.dart": "36e74458d4368906b80059a8c91863734ebeb13298a6ea0c6a6c9bfdf700f055",
+    "proxo_app/lib/widgets/form_help_actions.dart": "40d3cc6c0cb25817b77f08db7a1a95c039907f16e35313622606f1b08a8852f5",
     "proxo_app/lib/widgets/proxo_error_ui.dart": "0fca3db035d37beac939a59a4e3d3c6fe1d31fb347645d5190b046857529c605",
     "proxo_app/lib/widgets/proxo_refresh.dart": "caf43072a5f586418a2af97baf7cb0ed4fd704f32e9cc48f79787bd6242defcd",
     "proxo_app/lib/widgets/proxo_tab_stack.dart": "a44f15aed063b47d5e328c860310b3b535fbbf7bc2ee881bba04893f908b4947",
     "proxo_app/lib/widgets/receipt/receipt_kit.dart": "d10fa5788ab3c129f4c62a66c7e417c6403e51e23faafe97fc44e255f52fa829",
-    "proxo_app/pubspec.yaml": "f9ab6002a0a4a4feb9f2df8ea24e8383a3f94b285b1ecf75dd3c9f60623150c6",
+    "proxo_app/pubspec.yaml": "30bb507d0eb3a301d2daa8211038d102f2e9bea0bd963629f592c7de08c78e30",
     "proxo_app/supabase/functions/send-notification/index.ts": "30282f5cb75981e6be0b66c2526f9bd84da3f2f4f369c13a29ced22220fc7828",
     "proxo_app/supabase/functions/send-push-notification/index.ts": "c33e1073ac41031831b8e5cc568592b9c39baca0624736b859e79d47c9ca1712",
+    "proxo_app/supabase/migrations/20261018232023_contextual_form_help.sql": "f96afc40a083cdd043ecc92653f22c4c6715791e43e3eca69304782a1cf994fc",
     "proxo_app/supabase/templates/confirm-signup.html": "d6948dda8486a06d187541dfc6bcb34f6335a284ab8210a98f562e808544f2bb",
     "proxo_app/test/auth_email_signup_test.dart": "89a3ce6db9731f4658b32aa85508db62a85af3cba02eb082b733d1c0adf3ff30",
     "proxo_app/test/auth_phone_flow_test.dart": "6f2325581ced9a51cc240d05160bd8837a28c88b02eaf5c5c62af3460217dec8",
     "proxo_app/test/auth_refresh_test.dart": "b1f71cb4c129418506c6a094751bcfd9ae1a523278e756652d32fb8c7415e4a0",
+    "proxo_app/test/context_help_capture_test.dart": "7d2e4af530c5befaaa43725bc1bbac7f3f7272e2445f533444d2d514f2bfe9e9",
+    "proxo_app/test/context_help_test.dart": "773083e563bf784507750a7c3b5f719bcf01288370c655719c1b0462b4368500",
+    "proxo_app/test/notification_presentation_test.dart": "54ab8430f5a1495c27934275805a60b840c2a49527384a4362cf48a7a40a417a",
     "proxo_app/test/polish_capture_test.dart": "4e0212fd0a586cc0cbd2906d14606590674136b21f6a496596310b69c66e5553",
+    "proxo_app/test/proxo_motion_stress_test.dart": "fd916b054a443a97eb6c1a60a1dbbfbb4e448b81adbe7d1deb65defa3c83297f",
     "proxo_app/test/proxo_polish_test.dart": "84f8c6ffb568d1daeb8edfca60756fcd8b7850b9cd7290d32b42393e17f5516e",
     "proxo_app/test/support/memory_auth_storage.dart": "488b57222b29c3aff57a3f1f1d824f6ae52bf6555789f881291e2dbc24add9a0",
-    "proxo_app/test/whatsapp_marketing_test.dart": "41b788ce67f9b91e71798efabe2bd42558ecd7de26f7d754bc6959ef243483fe"
+    "proxo_app/test/whatsapp_marketing_test.dart": "41b788ce67f9b91e71798efabe2bd42558ecd7de26f7d754bc6959ef243483fe",
+    "proxo_app/test_driver/polish_runtime_driver.dart": "34de13de1c02dbb20bdf6f0b5f1a5ff61cb8afc2f29f3088fa0dbe6fb2d429ae",
+    "scripts/run-polish-runtime.py": "531792431073e3d0e1097ba91b22a9289b1430fe98e5e98d7f1412f23dd19018"
   },
   "screenshots": [
     {
@@ -174,7 +191,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/create-ar-280-2x.png",
-      "screenshot_sha256": "3ea91d17a007a936b3fcb5a35a8dc0952dbfecb9956d75749db43460361d9d5b",
+      "screenshot_sha256": "eece50ae1ad5941ff3b25d53f30a0e2302f3a668d68ad93bfb0de90e57dd3214",
       "position": "top"
     },
     {
@@ -196,7 +213,7 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/create-ar-393.png",
-      "screenshot_sha256": "920726dbef5e62da668f2e7111c9d4e8260d30c83a3af1ab84be0a05e73be684",
+      "screenshot_sha256": "bfceb9cd9f8b9ec4f44ad1351a7cead92fce2993d4aa5c1c1c07526aece6a67d",
       "position": "top"
     },
     {
@@ -218,7 +235,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/create-ckb-280-2x.png",
-      "screenshot_sha256": "15a5ad5481c4a7b7e8435f5c38681e5f1545a242e2a1dbdd425414a0d0bfb4e2",
+      "screenshot_sha256": "b69709eb45100e3eeb41c8c62fb88effc714a75eb653681f3de25cb8a7a988ee",
       "position": "top"
     },
     {
@@ -240,7 +257,7 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/create-ckb-393.png",
-      "screenshot_sha256": "c468da3cae047260015f48bb8a8586ffe9863100034b0d3fa4c9dc42e2aed847",
+      "screenshot_sha256": "b33408e6eb274aa3765c9d2fbc94e40d45109042a13099f5a78841a3439c954b",
       "position": "top"
     },
     {
@@ -262,7 +279,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/create-kmr-280-2x.png",
-      "screenshot_sha256": "d40d7de6e7ceb38c040fbf3673b194ae2341e080b85c0d9ca6e8c6cd7fb968f9",
+      "screenshot_sha256": "744e2c7ed7fcf633b45433433df65e1293e33b16c1c660f05b972ae099b336e6",
       "position": "top"
     },
     {
@@ -284,7 +301,7 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/create-kmr-393.png",
-      "screenshot_sha256": "aa8dbbe6fc8dc4a5dd8ed7b8612806e8278fc60927019f8954502438d649d188",
+      "screenshot_sha256": "cde0ecdcad93c772733897589eb917e16ef95ea0a39afc2b51cde2ff3a605876",
       "position": "top"
     },
     {
@@ -746,7 +763,7 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/login-ar-393.png",
-      "screenshot_sha256": "c080d8ae550034216407b9bba8937c906dd57a6da58f1758a8bbfb49dd8bd72b",
+      "screenshot_sha256": "07b2f1fc9350c6207c5d0f041e795a5203f613587e7f66700a8fbfcc54d17646",
       "position": "top"
     },
     {
@@ -779,7 +796,7 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/login-ckb-393.png",
-      "screenshot_sha256": "ef064f2968a47f5b965ed00ab7bec78bf68951cb80b2f92a1dd91a82d79adb1e",
+      "screenshot_sha256": "cf73320fba969b3a6d07ba0c0904c0cb97e71cc582330ce35e0918b7932b455f",
       "position": "top"
     },
     {
@@ -812,7 +829,7 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/login-kmr-393.png",
-      "screenshot_sha256": "3810d79a907168231b1e43426ad794dffc371340dbc6b070f30746f3d1c4c721",
+      "screenshot_sha256": "eab4a575d72235fdf3a632fe038e366d9690ab5d00d6d12b294faeac5a535931",
       "position": "top"
     },
     {
@@ -845,7 +862,7 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/login-phone-ar-393.png",
-      "screenshot_sha256": "9e40535c79e6d2358d64bd127626fecd3ccf88f25426f2dfc96dc76c7871a124",
+      "screenshot_sha256": "af7674972c271d4a91c57c9960a331a3453971fbcb76fbbe81bd7bf7a89a2cbe",
       "position": "top"
     },
     {
@@ -878,7 +895,7 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/login-phone-ckb-393.png",
-      "screenshot_sha256": "1e408a858e9f55f0a84e38cc1221bc8cba52fb6b5e239d93db93ec0ed2db1ed1",
+      "screenshot_sha256": "93620294f05b37d8283288a3b8a82fdb8745c6c7831cbc4416c11000bfdae17e",
       "position": "top"
     },
     {
@@ -900,7 +917,7 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/login-phone-filled-ar-393.png",
-      "screenshot_sha256": "09aa5710623c5cf3bf1ca5cc61bec4d052da85e80b89fc73077a35d780f82b5f",
+      "screenshot_sha256": "e5899e1513e13b7539f217570a11f4a4d9b3436fc5f217564070a1fce21e91ac",
       "position": "top"
     },
     {
@@ -922,7 +939,7 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/login-phone-filled-ckb-393.png",
-      "screenshot_sha256": "2537a111463d40df8449effac6a558c72b3c9e27e6636f1e338851cabf143529",
+      "screenshot_sha256": "1c2be712a5f5b1dee3c8bdaffd395360c1d586c93fb0fc06e59a353e5652f6a9",
       "position": "top"
     },
     {
@@ -944,7 +961,7 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/login-phone-filled-kmr-393.png",
-      "screenshot_sha256": "d97ceb4ba4c8c232bfaf0bc0f55e2a248dc735c75cfec2a92702f5cfcbb51121",
+      "screenshot_sha256": "d7d41f009786b6ad8114d39ec97d19095dd82cc7526882400937370b61150bea",
       "position": "top"
     },
     {
@@ -977,7 +994,7 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/login-phone-kmr-393.png",
-      "screenshot_sha256": "acb1d3680aeeb0b26572de359fdf35e8baac6e5d4d83f124256910b53ff5361b",
+      "screenshot_sha256": "7d589b97efcb370f277dccfe42f2158faa16e9e31b26897c9ed1ad0413f8463b",
       "position": "top"
     },
     {
@@ -1153,7 +1170,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/notifications-ar-280-2x.png",
-      "screenshot_sha256": "2a99b2e76024ddced220ec05330c03680292fc3f894fd0c57237ae6f71b58208",
+      "screenshot_sha256": "44da874f703dcf20728805352383c32ec4c3d5da32d542670d37b2e12ec47060",
       "position": "top"
     },
     {
@@ -1164,7 +1181,7 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/notifications-ar-393.png",
-      "screenshot_sha256": "7ebc39e3fc76c301a52bacafcfafb4d8dd8c2fde4e9a67644897d064859c2e8e",
+      "screenshot_sha256": "f681f5de3fbaf2f162c7d1887f83e39c45434caa5565ae1a551784bfb1a917dd",
       "position": "top"
     },
     {
@@ -1175,7 +1192,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/notifications-ckb-280-2x.png",
-      "screenshot_sha256": "773104c2298d284694f17402a455b9783a5e93242ce14616bd4ff77d89a6a3aa",
+      "screenshot_sha256": "f54feb45cadf135d46aedec69ca73be8d279cd7da7444e6baf5da6fd2659fc0e",
       "position": "top"
     },
     {
@@ -1186,7 +1203,7 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/notifications-ckb-393.png",
-      "screenshot_sha256": "fd4fdf0fe7205b708a0778742c0b39ba65b9c7174ccb49b4e59dcf60666f67fb",
+      "screenshot_sha256": "889381af027da9d80bfa21f7bf1fac74a8344898892b68fc5a8f3d7fb8ff4d4e",
       "position": "top"
     },
     {
@@ -1197,7 +1214,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/notifications-kmr-280-2x.png",
-      "screenshot_sha256": "469fc6f9b06100bfe0641151e37a85258ef8f98e6949eea5c79487b07ad9b6f7",
+      "screenshot_sha256": "1abbba2a5fd6e6662dd71cb6eef862d7b50200a5bc5ff3c5985695e7fca06c5a",
       "position": "top"
     },
     {
@@ -1208,7 +1225,7 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/notifications-kmr-393.png",
-      "screenshot_sha256": "85d0d50748eea5d1b3aaea796b2a434b72e2c6bbbd9a4b71b25d08b862e3ef6f",
+      "screenshot_sha256": "149ac367ba875e033c1163cee78953643817fd55b1b2ad8449d8c95959f5ce4d",
       "position": "top"
     },
     {
@@ -1230,7 +1247,7 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/otp-ar-393.png",
-      "screenshot_sha256": "55da092f4a05b8214f401ac3e937b70c54efca1b2ed1274915907e9abf70c652",
+      "screenshot_sha256": "356d0e937b6e35b5cd9421873f98cde5ec832c194230eb70e8614ae93dab84e5",
       "position": "top"
     },
     {
@@ -1252,7 +1269,7 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/otp-ckb-393.png",
-      "screenshot_sha256": "5e662562a9d8ed838db97d64e407d7d1ef0082317584947845f7aec895b2b71c",
+      "screenshot_sha256": "6ad1358dfe99d04c7583efcaabd03561bc16bd7b92fd5c5cb2c422183b880283",
       "position": "top"
     },
     {
@@ -1274,7 +1291,7 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/otp-filled-ar-393.png",
-      "screenshot_sha256": "51c5b292dbe2716759fbab89d7e5fc14826fa882e2a34d31c2a45a4f9bfceb98",
+      "screenshot_sha256": "4b11191739435b7369570996da34d9a2be6579e9b19ccc324345f45db0176adc",
       "position": "top"
     },
     {
@@ -1296,7 +1313,7 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/otp-filled-ckb-393.png",
-      "screenshot_sha256": "dbd2f75bc1f8c2e9d43d9970275ae195ddf69c8b9b1592b50ecdf8ce31eb3200",
+      "screenshot_sha256": "bc54414a7febb7281ca2b3a6f7b518db8fd6ffb6fe7190ce254e8ff6c7358cf5",
       "position": "top"
     },
     {
@@ -1318,7 +1335,7 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/otp-filled-kmr-393.png",
-      "screenshot_sha256": "8a043d5ce6f8814599568acfcba39ffa9bbcfdf8f7cc96d5dff207b2cd33f04a",
+      "screenshot_sha256": "55c84312e94cdb9aa7a8069850804e90b5574306fc08934d40c0f7ec527821c3",
       "position": "top"
     },
     {
@@ -1340,7 +1357,7 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/otp-kmr-393.png",
-      "screenshot_sha256": "f26c5093bc33d4665be29486f237977823fa7d796af3c6c7810362292fbd2c4d",
+      "screenshot_sha256": "28cf1a8c69fb62c2303c4f4f817063e13fa46a3784c03323a4b5bcf64849eedf",
       "position": "top"
     },
     {
@@ -1856,8 +1873,19 @@
       "height": 852,
       "textScale": 1.0,
       "dpr": 3.0,
+      "screenshot": "images/signup-ar-393-bottom.png",
+      "screenshot_sha256": "49e3e4bddb194ac4852b1f4a5b686925017c663ac3304cbf045200a5e66b5cc4",
+      "position": "bottom"
+    },
+    {
+      "section": "signup",
+      "locale": "ar",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
       "screenshot": "images/signup-ar-393.png",
-      "screenshot_sha256": "f48d99c942fb7ed55f6d8e76f24fce010f481493ca78872729dafe60a43bde5b",
+      "screenshot_sha256": "b8da9c37358d3a7d1c358591769c1966db827a0c2c803b3928340c4d0e22a5f9",
       "position": "top"
     },
     {
@@ -1889,8 +1917,19 @@
       "height": 852,
       "textScale": 1.0,
       "dpr": 3.0,
+      "screenshot": "images/signup-ckb-393-bottom.png",
+      "screenshot_sha256": "d276cb6920ed0fddbaa43a6f413cdc873549a5a274d68612f35b619b479da1de",
+      "position": "bottom"
+    },
+    {
+      "section": "signup",
+      "locale": "ckb",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
       "screenshot": "images/signup-ckb-393.png",
-      "screenshot_sha256": "2857c7474b24265a78dc55ad5bab9fd959a4a62b7b64bae9fac62845adfae4cd",
+      "screenshot_sha256": "f2e7c3e01f0cf1a3aa28611b415297be7a259535c75e80db8429fec4444d55d7",
       "position": "top"
     },
     {
@@ -1922,8 +1961,19 @@
       "height": 852,
       "textScale": 1.0,
       "dpr": 3.0,
+      "screenshot": "images/signup-filled-ar-393-bottom.png",
+      "screenshot_sha256": "e889d634d09e2896f753e8bfe4b43e3951b6548b12bc6d64388ce24fca6fcae7",
+      "position": "bottom"
+    },
+    {
+      "section": "signup-filled",
+      "locale": "ar",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
       "screenshot": "images/signup-filled-ar-393.png",
-      "screenshot_sha256": "0683979b3154565ac17fdd896cc4c6853a3ba1411037f417695c4774bc43a927",
+      "screenshot_sha256": "da0d285a2c3eda185caaee354287138b3c387c3b5a1cf8de0b7abfbc8c2bbbfe",
       "position": "top"
     },
     {
@@ -1955,8 +2005,19 @@
       "height": 852,
       "textScale": 1.0,
       "dpr": 3.0,
+      "screenshot": "images/signup-filled-ckb-393-bottom.png",
+      "screenshot_sha256": "5ed8465ce4b47791ad40a2d671d880d0226af10bb2574055a6dd52b775b6658b",
+      "position": "bottom"
+    },
+    {
+      "section": "signup-filled",
+      "locale": "ckb",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
       "screenshot": "images/signup-filled-ckb-393.png",
-      "screenshot_sha256": "4f1b5367df23d75e1a585c8eee55ee313b83c55d474f6afbc1849aa659f809f2",
+      "screenshot_sha256": "3e3607ee9c53c3e54868ae674bcf22e0f1e62f6430803b89ef8f2ec5d7f0744d",
       "position": "top"
     },
     {
@@ -1988,8 +2049,19 @@
       "height": 852,
       "textScale": 1.0,
       "dpr": 3.0,
+      "screenshot": "images/signup-filled-kmr-393-bottom.png",
+      "screenshot_sha256": "31011b7ae740c00f50594c2e5e0746ec96e9b77e976095a078948787456920c9",
+      "position": "bottom"
+    },
+    {
+      "section": "signup-filled",
+      "locale": "kmr",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
       "screenshot": "images/signup-filled-kmr-393.png",
-      "screenshot_sha256": "2a43e2c326f6b54dbf9566aa535820c96d3717c8304e9c4487cbb3273a36ad0f",
+      "screenshot_sha256": "f24ab17e85e2c6eb4783070014f545c82b591c664c89d6a57b8f753ebcb17027",
       "position": "top"
     },
     {
@@ -2021,8 +2093,19 @@
       "height": 852,
       "textScale": 1.0,
       "dpr": 3.0,
+      "screenshot": "images/signup-kmr-393-bottom.png",
+      "screenshot_sha256": "9de39cac8cb48320c8b3b2af34e741c1974540763bf1362002d5477b1f924341",
+      "position": "bottom"
+    },
+    {
+      "section": "signup",
+      "locale": "kmr",
+      "width": 393.0,
+      "height": 852,
+      "textScale": 1.0,
+      "dpr": 3.0,
       "screenshot": "images/signup-kmr-393.png",
-      "screenshot_sha256": "57ad41437a56103c05d0274a7a1614d6fa47e0bb4baa1d6b51c0bcbbe6d9ded7",
+      "screenshot_sha256": "18ac576772a2e37c23b75b0587dd9f947de706c9982800154daa4bae652897ae",
       "position": "top"
     },
     {
@@ -2223,5 +2306,9 @@
       "screenshot_sha256": "060e042b3d953491bf6157935062d6945a4976d7eb1c0ebd4c18dcfe7e553c3e",
       "position": "top"
     }
-  ]
+  ],
+  "full_suite_tests_passed": 859,
+  "context_help_visual_cases_passed": 24,
+  "context_help_screenshots": 24,
+  "android_profile_runtime": "Engine FrameTiming callbacks; no VM Service dependency. Run separately in Proxo Android polish runtime; see CI artifact."
 }
