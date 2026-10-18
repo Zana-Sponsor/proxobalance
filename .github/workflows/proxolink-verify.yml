@@ -211,6 +211,14 @@ jobs:
       - name: Measure thumbnail-only release APK impact
         working-directory: .
         run: python3 scripts/measure-proxolink-thumbnail-apk.py
+      - name: Retain installable APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: proxo-release-apk
+          path: proxo_app/build/app/outputs/flutter-apk/app-release.apk
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 30
       - uses: actions/upload-artifact@v4
         if: always()
         with:
