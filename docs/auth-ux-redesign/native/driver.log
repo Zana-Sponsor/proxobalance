@@ -1,0 +1,318 @@
+Upgrading gradle.properties
+Upgrading gradle.properties
+Running Gradle task 'assembleProfile'...                        
+Warning: Flutter support for your project's Gradle version (8.14.3) will soon be dropped. Please upgrade your Gradle version to a version of at least 9.1.0 soon.
+Alternatively, use the flag "--android-skip-build-dependency-validation" to bypass this check.
+
+Potential fix: Your project's gradle version is typically defined in the gradle wrapper file. By default, this can be found at /home/runner/work/proxobalance/proxobalance/proxo_app/android/gradle/wrapper/gradle-wrapper.properties. 
+For more information, see https://docs.gradle.org/current/userguide/gradle_wrapper.html.
+
+Warning: Flutter support for your project's Android Gradle Plugin version (Android Gradle Plugin version 8.11.1) will soon be dropped. Please upgrade your Android Gradle Plugin version to a version of at least Android Gradle Plugin version 9.0.1 soon.
+Alternatively, use the flag "--android-skip-build-dependency-validation" to bypass this check.
+
+Potential fix: Your project's AGP version is typically defined in the plugins block of the `settings.gradle` file (/home/runner/work/proxobalance/proxobalance/proxo_app/android/settings.gradle), by a plugin with the id of com.android.application. 
+If you don't see a plugins block, your project was likely created with an older template version. In this case it is most likely defined in the top-level build.gradle file (/home/runner/work/proxobalance/proxobalance/proxo_app/android/build.gradle) by the following line in the dependencies block of the buildscript: "classpath 'com.android.tools.build:gradle:<version>'".
+
+Warning: Flutter support for your project's Kotlin version (2.2.20) will soon be dropped. Please upgrade your Kotlin version to a version of at least 2.3.20 soon.
+Alternatively, use the flag "--android-skip-build-dependency-validation" to bypass this check.
+
+Potential fix: Your project's KGP version is typically defined in the plugins block of the `settings.gradle` file (/home/runner/work/proxobalance/proxobalance/proxo_app/android/settings.gradle), by a plugin with the id of org.jetbrains.kotlin.android. 
+If you don't see a plugins block, your project was likely created with an older template version, in which case it is most likely defined in the top-level build.gradle file (/home/runner/work/proxobalance/proxobalance/proxo_app/android/build.gradle) by the ext.kotlin_version property.
+
+Checking the license for package Android SDK Platform 31 in /usr/local/lib/android/sdk/licenses
+License for package Android SDK Platform 31 accepted.
+Preparing "Install Android SDK Platform 31 (revision 1)".
+"Install Android SDK Platform 31 (revision 1)" ready.
+Installing Android SDK Platform 31 in /usr/local/lib/android/sdk/platforms/android-31
+"Install Android SDK Platform 31 (revision 1)" complete.
+"Install Android SDK Platform 31 (revision 1)" finished.
+[=========                              ] 25%                                   
+[=========                              ] 25% Fetch remote repository...        
+[=======================================] 100% Fetch remote repository...       
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+Checking the license for package CMake 3.22.1 in /usr/local/lib/android/sdk/licenses
+License for package CMake 3.22.1 accepted.
+Preparing "Install CMake 3.22.1 v.3.22.1".
+"Install CMake 3.22.1 v.3.22.1" ready.
+Installing CMake 3.22.1 in /usr/local/lib/android/sdk/cmake/3.22.1
+"Install CMake 3.22.1 v.3.22.1" complete.
+"Install CMake 3.22.1 v.3.22.1" finished.
+Running Gradle task 'assembleProfile'...                          164.0s
+✓ Built build/app/outputs/flutter-apk/app-profile.apk (60.0MB)
+Installing build/app/outputs/flutter-apk/app-profile.apk...        484ms
+I/.proxo.proxoapp( 4118): Compiler allocated 5174KB to compile void android.view.ViewRootImpl.performTraversals()
+I/Choreographer( 4118): Skipped 32 frames!  The application may be doing too much work on its main thread.
+VMServiceFlutterDriver: Connecting to Flutter application at http://127.0.0.1:43117/MdLwkzdsfx0=/
+VMServiceFlutterDriver: Isolate found with number: 74139461459623
+VMServiceFlutterDriver: Isolate 74139461459623 is runnable.
+VMServiceFlutterDriver: Isolate is paused at start.
+VMServiceFlutterDriver: Attempting to resume isolate
+I/flutter ( 4118): 00:00 +0: profile screen, control, motion and background-notification evidence
+I/flutter ( 4118): PROXO_POLISH_PERMISSION_READY
+VMServiceFlutterDriver: Connected to Flutter application.
+D/ProfileInstaller( 4118): Installing profile for com.proxo.proxoapp
+D/EGL_emulation( 4118): app_time_stats: avg=1129.52ms min=38.01ms max=2350.20ms count=4
+I/flutter ( 4118): PROXO_POLISH_SCREEN splash
+D/EGL_emulation( 4118): app_time_stats: avg=2247.39ms min=2247.39ms max=2247.39ms count=1
+D/EGL_emulation( 4118): app_time_stats: avg=62.79ms min=25.53ms max=473.07ms count=16
+D/EGL_emulation( 4118): app_time_stats: avg=32.64ms min=24.10ms max=39.40ms count=30
+D/EGL_emulation( 4118): app_time_stats: avg=43.12ms min=21.09ms max=263.47ms count=25
+D/EGL_emulation( 4118): app_time_stats: avg=259.88ms min=28.83ms max=2007.22ms count=9
+I/flutter ( 4118): PROXO_POLISH_SCREEN home
+I/flutter ( 4118): AdScreen: thumbnail generation failed: FunctionsFetchException(status: 0, details: Bad state: screen_fixture_network_boundary, reasonPhrase: null)
+D/EGL_emulation( 4118): app_time_stats: avg=2361.20ms min=2361.20ms max=2361.20ms count=1
+D/EGL_emulation( 4118): app_time_stats: avg=333.53ms min=39.21ms max=1961.85ms count=7
+I/flutter ( 4118): PROXO_POLISH_SCREEN ads
+D/EGL_emulation( 4118): app_time_stats: avg=2178.42ms min=2178.42ms max=2178.42ms count=1
+D/EGL_emulation( 4118): app_time_stats: avg=274.06ms min=51.52ms max=1960.15ms count=9
+I/flutter ( 4118): PROXO_POLISH_SCREEN ad-create
+D/EGL_emulation( 4118): app_time_stats: avg=2132.82ms min=2132.82ms max=2132.82ms count=1
+D/EGL_emulation( 4118): app_time_stats: avg=34.90ms min=25.10ms max=55.59ms count=27
+D/EGL_emulation( 4118): app_time_stats: avg=53.47ms min=41.55ms max=62.49ms count=18
+D/EGL_emulation( 4118): app_time_stats: avg=35.73ms min=24.25ms max=54.81ms count=27
+D/EGL_emulation( 4118): app_time_stats: avg=685.50ms min=35.57ms max=1984.05ms count=3
+I/flutter ( 4118): PROXO_POLISH_SCREEN ad-confirmation
+D/EGL_emulation( 4118): app_time_stats: avg=2163.50ms min=2163.50ms max=2163.50ms count=1
+D/EGL_emulation( 4118): app_time_stats: avg=40.96ms min=33.43ms max=52.94ms count=23
+D/EGL_emulation( 4118): app_time_stats: avg=170.38ms min=33.72ms max=1970.30ms count=15
+I/flutter ( 4118): PROXO_POLISH_SCREEN ad-details
+D/EGL_emulation( 4118): app_time_stats: avg=2160.96ms min=2160.96ms max=2160.96ms count=1
+D/EGL_emulation( 4118): app_time_stats: avg=221.07ms min=53.43ms max=1961.71ms count=12
+I/flutter ( 4118): PROXO_POLISH_SCREEN tools
+D/EGL_emulation( 4118): app_time_stats: avg=2168.28ms min=2168.28ms max=2168.28ms count=1
+D/EGL_emulation( 4118): app_time_stats: avg=261.16ms min=62.55ms max=1934.64ms count=10
+I/flutter ( 4118): PROXO_POLISH_SCREEN page-create
+D/EGL_emulation( 4118): app_time_stats: avg=2163.00ms min=2163.00ms max=2163.00ms count=1
+D/EGL_emulation( 4118): app_time_stats: avg=98.99ms min=59.17ms max=277.65ms count=10
+D/EGL_emulation( 4118): app_time_stats: avg=71.07ms min=53.32ms max=117.78ms count=14
+D/EGL_emulation( 4118): app_time_stats: avg=331.50ms min=58.85ms max=1957.65ms count=7
+I/flutter ( 4118): PROXO_POLISH_SCREEN page-details
+D/EGL_emulation( 4118): app_time_stats: avg=2174.57ms min=2174.57ms max=2174.57ms count=1
+I/WebViewFactory( 4118): Loading com.google.android.webview version 124.0.6367.219 (code 636771938)
+W/ResourcesManager( 4118): Found a null ResourcesImpl, skipped.
+V/ResourcesManager( 4118): The following library key has been added: ResourcesKey{ mHash=f2b7288e mResDir=null mSplitDirs=[] mOverlayDirs=[/product/overlay/NavigationBarModeGestural/NavigationBarModeGesturalOverlay.apk,/data/resource-cache/com.android.systemui-neutral-GD2l.frro,/data/resource-cache/com.android.systemui-accent-KYD6.frro,/data/resource-cache/com.android.systemui-dynamic-ybDl.frro] mLibDirs=[/data/app/~~Wbq24nBZH7VkZ_yvahf5XA==/com.google.android.webview-Ylw-lc3ZcqCe6f9dkBMOuA==/WebViewGoogle.apk,/data/app/~~BFrj7jGkTeu8IIYBT3k0_w==/com.google.android.trichromelibrary_636771938-8DEIxzYSnnh5KfXEePQqrw==/TrichromeLibrary.apk,/system_ext/framework/androidx.window.extensions.jar] mDisplayId=0 mOverrideConfig=v35 mCompatInfo={160dpi always-compat} mLoaders=[]}
+W/ziparchive( 4118): Unable to open '/data/app/~~BFrj7jGkTeu8IIYBT3k0_w==/com.google.android.trichromelibrary_636771938-8DEIxzYSnnh5KfXEePQqrw==/TrichromeLibrary.dm': No such file or directory
+W/ziparchive( 4118): Unable to open '/data/app/~~BFrj7jGkTeu8IIYBT3k0_w==/com.google.android.trichromelibrary_636771938-8DEIxzYSnnh5KfXEePQqrw==/TrichromeLibrary.dm': No such file or directory
+W/.proxo.proxoapp( 4118): Entry not found
+D/nativeloader( 4118): Configuring clns-8 for other apk /data/app/~~BFrj7jGkTeu8IIYBT3k0_w==/com.google.android.trichromelibrary_636771938-8DEIxzYSnnh5KfXEePQqrw==/TrichromeLibrary.apk. target_sdk_version=34, uses_libraries=ALL, library_path=/data/app/~~Wbq24nBZH7VkZ_yvahf5XA==/com.google.android.webview-Ylw-lc3ZcqCe6f9dkBMOuA==/lib/x86_64:/data/app/~~Wbq24nBZH7VkZ_yvahf5XA==/com.google.android.webview-Ylw-lc3ZcqCe6f9dkBMOuA==/WebViewGoogle.apk!/lib/x86_64:/data/app/~~BFrj7jGkTeu8IIYBT3k0_w==/com.google.android.trichromelibrary_636771938-8DEIxzYSnnh5KfXEePQqrw==/TrichromeLibrary.apk!/lib/x86_64, permitted_path=/data:/mnt/expand
+D/ApplicationLoaders( 4118): Returning zygote-cached class loader: /system_ext/framework/androidx.window.extensions.jar
+D/nativeloader( 4118): Configuring clns-9 for other apk /data/app/~~Wbq24nBZH7VkZ_yvahf5XA==/com.google.android.webview-Ylw-lc3ZcqCe6f9dkBMOuA==/WebViewGoogle.apk. target_sdk_version=34, uses_libraries=, library_path=/data/app/~~Wbq24nBZH7VkZ_yvahf5XA==/com.google.android.webview-Ylw-lc3ZcqCe6f9dkBMOuA==/lib/x86_64:/data/app/~~Wbq24nBZH7VkZ_yvahf5XA==/com.google.android.webview-Ylw-lc3ZcqCe6f9dkBMOuA==/WebViewGoogle.apk!/lib/x86_64:/data/app/~~BFrj7jGkTeu8IIYBT3k0_w==/com.google.android.trichromelibrary_636771938-8DEIxzYSnnh5KfXEePQqrw==/TrichromeLibrary.apk!/lib/x86_64, permitted_path=/data:/mnt/expand
+I/cr_WVCFactoryProvider( 4118): Loaded version=124.0.6367.219 minSdkVersion=29 isBundle=false multiprocess=true packageId=2
+D/nativeloader( 4118): Load /data/app/~~BFrj7jGkTeu8IIYBT3k0_w==/com.google.android.trichromelibrary_636771938-8DEIxzYSnnh5KfXEePQqrw==/TrichromeLibrary.apk!/lib/x86_64/libmonochrome_64.so using ns clns-9 from class loader (caller=/data/app/~~Wbq24nBZH7VkZ_yvahf5XA==/com.google.android.webview-Ylw-lc3ZcqCe6f9dkBMOuA==/WebViewGoogle.apk): ok
+D/nativeloader( 4118): Load /system/lib64/libwebviewchromium_plat_support.so using ns clns-9 from class loader (caller=/data/app/~~Wbq24nBZH7VkZ_yvahf5XA==/com.google.android.webview-Ylw-lc3ZcqCe6f9dkBMOuA==/WebViewGoogle.apk): ok
+I/cr_LibraryLoader( 4118): Successfully loaded native library
+I/cr_CachingUmaRecorder( 4118): Flushed 6 samples from 6 histograms, 0 samples were dropped.
+I/chromium( 4118): [INFO:variations_seed_loader.cc(66)] Failed to open file for reading.: No such file or directory (2)
+I/cr_VariationsUtils( 4118): Failed reading seed file "/data/user/0/com.proxo.proxoapp/app_webview/variations_seed_new"
+I/chromium( 4118): [INFO:variations_seed_loader.cc(66)] Failed to open file for reading.: No such file or directory (2)
+I/cr_VariationsUtils( 4118): Failed reading seed file "/data/user/0/com.proxo.proxoapp/app_webview/variations_seed"
+I/cr_VariationsUtils( 4118): Requesting new seed from IVariationsSeedServer
+I/cr_CombinedPProvider( 4118): #registerProvider() provider:WV.V7@7121dd1 isPolicyCacheEnabled:false policyProvidersSize:0
+I/cr_PolicyProvider( 4118): #setManagerAndSource() 0
+I/cr_CombinedPProvider( 4118): #linkNativeInternal() 1
+I/cr_AppResProvider( 4118): #getApplicationRestrictionsFromUserManager() Bundle[EMPTY_PARCEL]
+I/cr_PolicyProvider( 4118): #notifySettingsAvailable() 0
+I/cr_CombinedPProvider( 4118): #onSettingsAvailable() 0
+I/cr_CombinedPProvider( 4118): #flushPolicies()
+W/cr_media( 4118): BLUETOOTH_CONNECT permission is missing.
+W/cr_media( 4118): registerBluetoothIntentsIfNeeded: Requires BLUETOOTH permission
+D/EGL_emulation( 4118): app_time_stats: avg=116.81ms min=62.00ms max=399.83ms count=9
+W/.proxo.proxoapp( 4118): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/talkback/talkback.apk' with 2 weak references
+W/.proxo.proxoapp( 4118): ApkAssets: Deleting an ApkAssets object '/vendor/overlay/EmulatorTalkBackOverlay/EmulatorTalkBackOverlay.apk' with 2 weak references
+W/.proxo.proxoapp( 4118): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~Wbq24nBZH7VkZ_yvahf5XA==/com.google.android.webview-Ylw-lc3ZcqCe6f9dkBMOuA==/WebViewGoogle.apk' with 2 weak references
+D/EGL_emulation( 4118): app_time_stats: avg=61.91ms min=51.90ms max=83.38ms count=16
+D/EGL_emulation( 4118): app_time_stats: avg=65.54ms min=55.97ms max=83.29ms count=16
+D/EGL_emulation( 4118): app_time_stats: avg=68.65ms min=57.42ms max=78.72ms count=15
+W/chromium( 4118): [WARNING:spdy_session.cc(2980)] Received HEADERS for invalid stream 99
+W/chromium( 4118): [WARNING:spdy_session.cc(2980)] Received HEADERS for invalid stream 95
+W/chromium( 4118): [WARNING:spdy_session.cc(2980)] Received HEADERS for invalid stream 97
+D/EGL_emulation( 4118): app_time_stats: avg=19339.22ms min=293.71ms max=53727.13ms count=3
+D/EGL_emulation( 4118): app_time_stats: avg=74.10ms min=56.03ms max=118.35ms count=14
+D/EGL_emulation( 4118): app_time_stats: avg=553.64ms min=58.23ms max=1976.13ms count=4
+I/flutter ( 4118): PROXO_POLISH_SCREEN page-edit
+W/WindowOnBackDispatcher( 4118): sendCancelIfRunning: isInProgress=false callback=io.flutter.embedding.android.FlutterActivity$1@a718a8b
+D/EGL_emulation( 4118): app_time_stats: avg=2094.89ms min=2094.89ms max=2094.89ms count=1
+D/EGL_emulation( 4118): app_time_stats: avg=2294.88ms min=49.18ms max=4540.58ms count=2
+D/EGL_emulation( 4118): app_time_stats: avg=311.47ms min=20.93ms max=2005.05ms count=7
+I/flutter ( 4118): PROXO_POLISH_SCREEN profile
+D/EGL_emulation( 4118): app_time_stats: avg=2096.36ms min=2096.36ms max=2096.36ms count=1
+D/EGL_emulation( 4118): app_time_stats: avg=30.55ms min=12.88ms max=84.17ms count=33
+D/EGL_emulation( 4118): app_time_stats: avg=135.00ms min=21.47ms max=2020.47ms count=19
+I/flutter ( 4118): PROXO_POLISH_SCREEN profile-edit
+D/EGL_emulation( 4118): app_time_stats: avg=2118.49ms min=2118.49ms max=2118.49ms count=1
+E/chromium( 4118): [ERROR:aw_browser_terminator.cc(154)] Renderer process (4254) crash detected (code -1).
+D/EGL_emulation( 4118): app_time_stats: avg=194.16ms min=21.30ms max=2015.66ms count=12
+I/flutter ( 4118): PROXO_POLISH_SCREEN deposit
+D/EGL_emulation( 4118): app_time_stats: avg=2099.40ms min=2099.40ms max=2099.40ms count=1
+D/EGL_emulation( 4118): app_time_stats: avg=683.30ms min=28.64ms max=1991.82ms count=3
+I/flutter ( 4118): PROXO_POLISH_SCREEN transaction
+D/EGL_emulation( 4118): app_time_stats: avg=2120.17ms min=2120.17ms max=2120.17ms count=1
+D/EGL_emulation( 4118): app_time_stats: avg=539.98ms min=21.25ms max=1995.96ms count=4
+I/flutter ( 4118): PROXO_POLISH_SCREEN notifications
+D/EGL_emulation( 4118): app_time_stats: avg=2147.69ms min=2147.69ms max=2147.69ms count=1
+D/EGL_emulation( 4118): app_time_stats: avg=686.28ms min=42.30ms max=1973.18ms count=3
+I/flutter ( 4118): PROXO_POLISH_SCREEN faq
+D/EGL_emulation( 4118): app_time_stats: avg=2114.06ms min=2114.06ms max=2114.06ms count=1
+D/EGL_emulation( 4118): app_time_stats: avg=282.03ms min=20.09ms max=1992.26ms count=8
+I/flutter ( 4118): PROXO_POLISH_SCREEN tutorial
+D/EGL_emulation( 4118): app_time_stats: avg=2130.35ms min=2130.35ms max=2130.35ms count=1
+D/EGL_emulation( 4118): app_time_stats: avg=353.99ms min=17.47ms max=2014.78ms count=6
+I/flutter ( 4118): PROXO_POLISH_SCREEN results
+D/EGL_emulation( 4118): app_time_stats: avg=2079.20ms min=2079.20ms max=2079.20ms count=1
+D/EGL_emulation( 4118): app_time_stats: avg=533.58ms min=38.26ms max=1938.23ms count=4
+I/flutter ( 4118): PROXO_POLISH_SCREEN levels
+D/EGL_emulation( 4118): app_time_stats: avg=2079.35ms min=2079.35ms max=2079.35ms count=1
+D/EGL_emulation( 4118): app_time_stats: avg=526.12ms min=20.41ms max=2008.56ms count=4
+I/flutter ( 4118): PROXO_POLISH_SCREEN tasks
+D/EGL_emulation( 4118): app_time_stats: avg=2111.51ms min=2111.51ms max=2111.51ms count=1
+D/EGL_emulation( 4118): app_time_stats: avg=237.42ms min=28.24ms max=1991.33ms count=11
+I/flutter ( 4118): PROXO_POLISH_SCREEN vouchers
+D/EGL_emulation( 4118): app_time_stats: avg=2118.60ms min=2118.60ms max=2118.60ms count=1
+D/EGL_emulation( 4118): app_time_stats: avg=524.35ms min=19.36ms max=2013.71ms count=4
+I/flutter ( 4118): PROXO_POLISH_SCREEN discounts
+D/EGL_emulation( 4118): app_time_stats: avg=2130.36ms min=2130.36ms max=2130.36ms count=1
+D/EGL_emulation( 4118): app_time_stats: avg=236.16ms min=50.64ms max=1972.82ms count=11
+I/flutter ( 4118): PROXO_POLISH_SCREEN sidebar
+D/EGL_emulation( 4118): app_time_stats: avg=2059.11ms min=2059.11ms max=2059.11ms count=1
+D/EGL_emulation( 4118): app_time_stats: avg=527.43ms min=19.29ms max=2027.20ms count=4
+I/flutter ( 4118): PROXO_POLISH_SCREEN whatsapp-preferences
+D/EGL_emulation( 4118): app_time_stats: avg=2098.94ms min=2098.94ms max=2098.94ms count=1
+D/EGL_emulation( 4118): app_time_stats: avg=686.99ms min=20.35ms max=2013.20ms count=3
+I/flutter ( 4118): PROXO_POLISH_SCREEN account-setup-error
+W/WindowOnBackDispatcher( 4118): sendCancelIfRunning: isInProgress=false callback=io.flutter.embedding.android.FlutterActivity$1@a718a8b
+D/EGL_emulation( 4118): app_time_stats: avg=2109.35ms min=2109.35ms max=2109.35ms count=1
+D/EGL_emulation( 4118): app_time_stats: avg=525.24ms min=16.58ms max=2015.51ms count=4
+I/flutter ( 4118): PROXO_POLISH_SCREEN web-preview-error
+D/EGL_emulation( 4118): app_time_stats: avg=2119.83ms min=2119.83ms max=2119.83ms count=1
+D/EGL_emulation( 4118): app_time_stats: avg=680.12ms min=18.21ms max=1989.97ms count=3
+I/flutter ( 4118): PROXO_POLISH_SCREEN new-password
+I/ImeTracker( 4118): com.proxo.proxoapp:14390920: onRequestShow at ORIGIN_CLIENT reason SHOW_SOFT_INPUT fromUser false
+D/EGL_emulation( 4118): app_time_stats: avg=2125.30ms min=2125.30ms max=2125.30ms count=1
+D/InputMethodManager( 4118): showSoftInput() view=io.flutter.embedding.android.FlutterView{5c596e8 VFE...... .F....ID 0,0-1080,1920 #1 aid=1073741824} flags=0 reason=SHOW_SOFT_INPUT
+I/ImeTracker( 4118): com.proxo.proxoapp:4eab8d86: onRequestShow at ORIGIN_CLIENT reason SHOW_SOFT_INPUT fromUser false
+D/InputMethodManager( 4118): showSoftInput() view=io.flutter.embedding.android.FlutterView{5c596e8 VFE...... .F....ID 0,0-1080,1920 #1 aid=1073741824} flags=0 reason=SHOW_SOFT_INPUT
+I/AssistStructure( 4118): Flattened final assist data: 456 bytes, containing 1 windows, 3 views
+D/EGL_emulation( 4118): app_time_stats: avg=74686.02ms min=74686.02ms max=74686.02ms count=1
+D/InsetsController( 4118): show(ime(), fromIme=true)
+W/InteractionJankMonitor( 4118): Initializing without READ_DEVICE_CONFIG permission. enabled=true, interval=1, missedFrameThreshold=3, frameTimeThreshold=64, package=com.proxo.proxoapp
+D/EGL_emulation( 4118): app_time_stats: avg=52.94ms min=5.02ms max=738.45ms count=18
+I/ImeTracker( 4118): com.proxo.proxoapp:4eab8d86: onShown
+D/EGL_emulation( 4118): app_time_stats: avg=280.49ms min=20.13ms max=1989.12ms count=8
+I/flutter ( 4118): PROXO_POLISH_SCREEN otp
+I/ImeTracker( 4118): com.proxo.proxoapp:e84d7b81: onRequestHide at ORIGIN_CLIENT reason HIDE_SOFT_INPUT fromUser false
+W/WindowOnBackDispatcher( 4118): sendCancelIfRunning: isInProgress=false callback=ImeCallback=ImeOnBackInvokedCallback@170669156 Callback=android.window.IOnBackInvokedCallback$Stub$Proxy@ca4e06d
+D/EGL_emulation( 4118): app_time_stats: avg=2163.83ms min=2163.83ms max=2163.83ms count=1
+D/InsetsController( 4118): hide(ime(), fromIme=true)
+D/EGL_emulation( 4118): app_time_stats: avg=1137.77ms min=7.90ms max=3388.82ms count=3
+W/.proxo.proxoapp( 4118): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/talkback/talkback.apk' with 1 weak references
+W/.proxo.proxoapp( 4118): ApkAssets: Deleting an ApkAssets object '/vendor/overlay/EmulatorTalkBackOverlay/EmulatorTalkBackOverlay.apk' with 1 weak references
+I/ImeTracker( 4118): com.proxo.proxoapp:b2104c60: onRequestHide at ORIGIN_CLIENT reason HIDE_SOFT_INPUT_ON_ANIMATION_STATE_CHANGED fromUser false
+I/ImeTracker( 4118): com.proxo.proxoapp:e84d7b81: onHidden
+D/EGL_emulation( 4118): app_time_stats: avg=110.92ms min=56.19ms max=276.90ms count=9
+D/EGL_emulation( 4118): app_time_stats: avg=387.41ms min=75.16ms max=1914.82ms count=6
+I/flutter ( 4118): PROXO_POLISH_SCREEN ad-video-example
+W/WindowOnBackDispatcher( 4118): sendCancelIfRunning: isInProgress=false callback=io.flutter.embedding.android.FlutterActivity$1@a718a8b
+D/EGL_emulation( 4118): app_time_stats: avg=2171.40ms min=2171.40ms max=2171.40ms count=1
+D/EGL_emulation( 4118): app_time_stats: avg=92.68ms min=54.74ms max=278.13ms count=11
+E/FrameTracker( 4118): force finish cuj, time out: J<IME_INSETS_SHOW_ANIMATION::0@1@com.proxo.proxoapp>
+D/EGL_emulation( 4118): app_time_stats: avg=572.73ms min=82.18ms max=2007.70ms count=4
+I/flutter ( 4118): PROXO_POLISH_SCREEN page-example
+E/FrameTracker( 4118): force finish cuj, time out: J<IME_INSETS_HIDE_ANIMATION::1@1@com.proxo.proxoapp>
+I/flutter ( 4118): [PROXO][DEVICE] lookup failed: Bad state: screen_fixture_network_boundary
+D/EGL_emulation( 4118): app_time_stats: avg=2281.07ms min=2281.07ms max=2281.07ms count=1
+D/EGL_emulation( 4118): app_time_stats: avg=39.70ms min=15.19ms max=59.91ms count=25
+D/EGL_emulation( 4118): app_time_stats: avg=286.26ms min=11.66ms max=2016.99ms count=8
+I/flutter ( 4118): PROXO_POLISH_SCREEN auth-login
+I/flutter ( 4118): [PROXO][DEVICE] lookup failed: Bad state: screen_fixture_network_boundary
+D/EGL_emulation( 4118): app_time_stats: avg=2107.76ms min=2107.76ms max=2107.76ms count=1
+D/EGL_emulation( 4118): app_time_stats: avg=32.43ms min=23.44ms max=38.77ms count=31
+I/ImeTracker( 4118): com.proxo.proxoapp:97c32646: onRequestShow at ORIGIN_CLIENT reason SHOW_SOFT_INPUT fromUser false
+D/InputMethodManager( 4118): showSoftInput() view=io.flutter.embedding.android.FlutterView{5c596e8 VFE...... .F...... 0,0-1080,1920 #1 aid=1073741824} flags=0 reason=SHOW_SOFT_INPUT
+I/AssistStructure( 4118): Flattened final assist data: 456 bytes, containing 1 windows, 3 views
+D/InsetsController( 4118): show(ime(), fromIme=true)
+D/EGL_emulation( 4118): app_time_stats: avg=1763.52ms min=4.00ms max=17390.73ms count=10
+I/flutter ( 4118): PROXO_POLISH_PHONE_INPUT_READY
+I/ImeTracker( 4118): com.proxo.proxoapp:97c32646: onShown
+I/ImeTracker( 4118): com.proxo.proxoapp:50b5076: onRequestHide at ORIGIN_CLIENT reason HIDE_SOFT_INPUT fromUser false
+D/InsetsController( 4118): hide(ime(), fromIme=true)
+W/WindowOnBackDispatcher( 4118): sendCancelIfRunning: isInProgress=false callback=ImeCallback=ImeOnBackInvokedCallback@170669156 Callback=android.window.IOnBackInvokedCallback$Stub$Proxy@233e2b8
+I/ImeTracker( 4118): com.proxo.proxoapp:9b994c06: onRequestHide at ORIGIN_CLIENT reason HIDE_SOFT_INPUT_ON_ANIMATION_STATE_CHANGED fromUser false
+I/ImeTracker( 4118): com.proxo.proxoapp:50b5076: onHidden
+D/EGL_emulation( 4118): app_time_stats: avg=196.76ms min=18.25ms max=2017.24ms count=15
+I/flutter ( 4118): PROXO_POLISH_SCREEN auth-phone
+I/flutter ( 4118): [PROXO][DEVICE] lookup failed: Bad state: screen_fixture_network_boundary
+D/EGL_emulation( 4118): app_time_stats: avg=2109.14ms min=2109.14ms max=2109.14ms count=1
+D/EGL_emulation( 4118): app_time_stats: avg=35.21ms min=13.09ms max=75.09ms count=28
+D/EGL_emulation( 4118): app_time_stats: avg=152.91ms min=12.25ms max=2006.33ms count=18
+I/flutter ( 4118): PROXO_POLISH_SCREEN auth-signup
+E/FrameTracker( 4118): force finish cuj, time out: J<IME_INSETS_SHOW_ANIMATION::0@1@com.proxo.proxoapp>
+I/flutter ( 4118): [PROXO][DEVICE] lookup failed: Bad state: screen_fixture_network_boundary
+D/EGL_emulation( 4118): app_time_stats: avg=2093.14ms min=2093.14ms max=2093.14ms count=1
+E/FrameTracker( 4118): force finish cuj, time out: J<IME_INSETS_HIDE_ANIMATION::1@1@com.proxo.proxoapp>
+D/EGL_emulation( 4118): app_time_stats: avg=100.36ms min=9.79ms max=2011.69ms count=29
+I/flutter ( 4118): PROXO_POLISH_SCREEN auth-recovery
+I/flutter ( 4118): [PROXO][DEVICE] lookup failed: Bad state: screen_fixture_network_boundary
+D/EGL_emulation( 4118): app_time_stats: avg=2122.59ms min=2122.59ms max=2122.59ms count=1
+D/EGL_emulation( 4118): app_time_stats: avg=30.89ms min=15.13ms max=36.99ms count=33
+D/EGL_emulation( 4118): app_time_stats: avg=31.94ms min=19.30ms max=39.80ms count=32
+D/EGL_emulation( 4118): app_time_stats: avg=30.99ms min=20.48ms max=37.74ms count=33
+D/EGL_emulation( 4118): app_time_stats: avg=31.29ms min=16.58ms max=38.01ms count=32
+D/EGL_emulation( 4118): app_time_stats: avg=30.24ms min=18.84ms max=37.19ms count=33
+D/EGL_emulation( 4118): app_time_stats: avg=33.97ms min=20.46ms max=62.12ms count=31
+D/EGL_emulation( 4118): app_time_stats: avg=150.16ms min=13.23ms max=2022.29ms count=18
+I/flutter ( 4118): PROXO_POLISH_SCREEN auth-channel-cycles
+W/WindowOnBackDispatcher( 4118): sendCancelIfRunning: isInProgress=false callback=io.flutter.embedding.android.FlutterActivity$1@a718a8b
+D/EGL_emulation( 4118): app_time_stats: avg=2094.74ms min=2094.74ms max=2094.74ms count=1
+D/EGL_emulation( 4118): app_time_stats: avg=39.22ms min=24.43ms max=59.45ms count=25
+D/EGL_emulation( 4118): app_time_stats: avg=42.86ms min=29.73ms max=105.97ms count=24
+D/EGL_emulation( 4118): app_time_stats: avg=34.70ms min=28.34ms max=52.37ms count=29
+D/EGL_emulation( 4118): app_time_stats: avg=32.87ms min=24.00ms max=41.85ms count=31
+D/EGL_emulation( 4118): app_time_stats: avg=37.84ms min=23.68ms max=56.55ms count=26
+D/EGL_emulation( 4118): app_time_stats: avg=1014.22ms min=33.55ms max=1994.89ms count=2
+I/flutter ( 4118): PROXO_POLISH_SCREEN home-refresh
+I/flutter ( 4118): [PROXO][DEVICE] lookup failed: Bad state: screen_fixture_network_boundary
+I/ImeTracker( 4118): com.proxo.proxoapp:d1942e60: onRequestShow at ORIGIN_CLIENT reason SHOW_SOFT_INPUT fromUser false
+D/InputMethodManager( 4118): showSoftInput() view=io.flutter.embedding.android.FlutterView{5c596e8 VFE...... .F...... 0,0-1080,1920 #1 aid=1073741824} flags=0 reason=SHOW_SOFT_INPUT
+I/AssistStructure( 4118): Flattened final assist data: 452 bytes, containing 1 windows, 3 views
+D/InsetsController( 4118): show(ime(), fromIme=true)
+D/EGL_emulation( 4118): app_time_stats: avg=1158.45ms min=3.60ms max=34022.63ms count=30
+D/EGL_emulation( 4118): app_time_stats: avg=52.88ms min=18.63ms max=170.36ms count=21
+I/ImeTracker( 4118): com.proxo.proxoapp:d1942e60: onShown
+I/flutter ( 4118): PROXO_POLISH_KEYBOARD_READY
+D/EGL_emulation( 4118): app_time_stats: avg=66.80ms min=35.16ms max=112.83ms count=15
+D/InsetsController( 4118): hide(ime(), fromIme=true)
+W/WindowOnBackDispatcher( 4118): sendCancelIfRunning: isInProgress=false callback=ImeCallback=ImeOnBackInvokedCallback@170669156 Callback=android.window.IOnBackInvokedCallback$Stub$Proxy@640d440
+D/EGL_emulation( 4118): app_time_stats: avg=162.71ms min=5.70ms max=1765.47ms count=13
+W/FrameTracker( 4118): Missed SF frame:UNKNOWN: 66, 43717, 0, CUJ=J<IME_INSETS_SHOW_ANIMATION::0@1@com.proxo.proxoapp>
+W/FrameTracker( 4118): Missed SF frame:UNKNOWN: 80, 43739, 0, CUJ=J<IME_INSETS_SHOW_ANIMATION::0@1@com.proxo.proxoapp>
+W/FrameTracker( 4118): Missed SF frame:UNKNOWN: 66, 43761, 0, CUJ=J<IME_INSETS_SHOW_ANIMATION::0@1@com.proxo.proxoapp>
+W/FrameTracker( 4118): Missed SF frame:UNKNOWN: 80, 43777, 0, CUJ=J<IME_INSETS_SHOW_ANIMATION::0@1@com.proxo.proxoapp>
+W/FrameTracker( 4118): Missed SF frame:UNKNOWN: 80, 43799, 0, CUJ=J<IME_INSETS_SHOW_ANIMATION::0@1@com.proxo.proxoapp>
+W/FrameTracker( 4118): Missed App frame:UNKNOWN: 88, 43815, 0, CUJ=J<IME_INSETS_SHOW_ANIMATION::0@1@com.proxo.proxoapp>
+W/FrameTracker( 4118): Missed SF frame:UNKNOWN: 88, 43815, 0, CUJ=J<IME_INSETS_SHOW_ANIMATION::0@1@com.proxo.proxoapp>
+W/FrameTracker( 4118): Missed App frame:UNKNOWN: 88, 43845, 0, CUJ=J<IME_INSETS_SHOW_ANIMATION::0@1@com.proxo.proxoapp>
+W/FrameTracker( 4118): Missed SF frame:UNKNOWN: 88, 43845, 0, CUJ=J<IME_INSETS_SHOW_ANIMATION::0@1@com.proxo.proxoapp>
+W/FrameTracker( 4118): Missed SF frame:UNKNOWN: 66, 43868, 0, CUJ=J<IME_INSETS_SHOW_ANIMATION::0@1@com.proxo.proxoapp>
+W/FrameTracker( 4118): Missed App frame:UNKNOWN: 74, 43883, 0, CUJ=J<IME_INSETS_SHOW_ANIMATION::0@1@com.proxo.proxoapp>
+W/FrameTracker( 4118): Missed SF frame:UNKNOWN: 74, 43883, 0, CUJ=J<IME_INSETS_SHOW_ANIMATION::0@1@com.proxo.proxoapp>
+W/FrameTracker( 4118): Missed App frame:UNKNOWN: 88, 43898, 0, CUJ=J<IME_INSETS_SHOW_ANIMATION::0@1@com.proxo.proxoapp>
+W/FrameTracker( 4118): Missed SF frame:UNKNOWN: 88, 43898, 0, CUJ=J<IME_INSETS_SHOW_ANIMATION::0@1@com.proxo.proxoapp>
+V/PerfettoTrigger( 4118): Triggering /system/bin/trigger_perfetto com.android.telemetry.interaction-jank-monitor-80
+D/EGL_emulation( 4118): app_time_stats: avg=69.87ms min=62.42ms max=118.54ms count=15
+I/ImeTracker( 4118): com.proxo.proxoapp:99507302: onRequestHide at ORIGIN_CLIENT reason HIDE_SOFT_INPUT_ON_ANIMATION_STATE_CHANGED fromUser false
+I/ImeTracker( 4118): com.google.android.inputmethod.latin:24cb6ec: onHidden
+D/EGL_emulation( 4118): app_time_stats: avg=67.77ms min=52.76ms max=91.40ms count=15
+D/EGL_emulation( 4118): app_time_stats: avg=66.68ms min=65.09ms max=68.08ms count=15
+I/ImeTracker( 4118): com.proxo.proxoapp:cd8d34b6: onRequestHide at ORIGIN_CLIENT reason HIDE_SOFT_INPUT fromUser false
+D/EGL_emulation( 4118): app_time_stats: avg=66.70ms min=65.65ms max=67.37ms count=15
+W/WindowOnBackDispatcher( 4118): sendCancelIfRunning: isInProgress=false callback=io.flutter.embedding.android.FlutterActivity$1@a718a8b
+D/VRI[PolishRuntimeActivity]( 4118): visibilityChanged oldVisibility=true newVisibility=false
+I/flutter ( 4118): PROXO_POLISH_NOTIFICATION_VISIBLE
+D/com.llfbandit.app_links( 4118): Intent { flg=0x10400000 cmp=com.proxo.proxoapp/.PolishRuntimeActivity }
+D/com.llfbandit.app_links( 4118): handleIntent: (Action) null
+D/com.llfbandit.app_links( 4118): handleIntent: (Data) null
+I/flutter ( 4118): 03:25 +1: (tearDownAll)
+I/flutter ( 4118): 03:25 +2: All tests passed!
+All tests passed.
+Leaving the application running.

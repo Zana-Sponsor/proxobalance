@@ -1,0 +1,42 @@
+   Woah! You appear to be trying to run flutter as root.
+   We strongly recommend running the flutter tool without superuser privileges.
+  /
+📎
+Analyzing 4 items...                                            
+
+   info • The import of 'dart:ui' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/scheduler.dart'. Try removing the import directive • integration_test/polish_runtime_test.dart:4:8 • unnecessary_import
+   info • The import of 'package:flutter/rendering.dart' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart'. Try removing the import directive • integration_test/polish_runtime_test.dart:7:8 • unnecessary_import
+   info • Don't invoke 'print' in production code. Try using a logging framework • integration_test/polish_runtime_test.dart:85:5 • avoid_print
+   info • Don't invoke 'print' in production code. Try using a logging framework • integration_test/polish_runtime_test.dart:202:7 • avoid_print
+   info • Statements in a for should be enclosed in a block. Try wrapping the statement in a block • integration_test/polish_runtime_test.dart:314:42 • curly_braces_in_flow_control_structures
+   info • Statements in a for should be enclosed in a block. Try wrapping the statement in a block • integration_test/polish_runtime_test.dart:366:9 • curly_braces_in_flow_control_structures
+   info • Don't invoke 'print' in production code. Try using a logging framework • integration_test/polish_runtime_test.dart:379:5 • avoid_print
+   info • Don't invoke 'print' in production code. Try using a logging framework • integration_test/polish_runtime_test.dart:393:5 • avoid_print
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement • lib/widgets/auth/auth_otp_field.dart:261:37 • deprecated_member_use
+   info • The private field _claiming could be 'final'. Try making the field 'final' • lib/widgets/tasks_page.dart:32:15 • prefer_final_fields
+   info • Don't use 'BuildContext's across async gaps. Try rewriting the code to not use the 'BuildContext', or guard the use with a 'mounted' check • lib/widgets/tasks_page.dart:78:24 • use_build_context_synchronously
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement • lib/widgets/tasks_page.dart:168:44 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement • lib/widgets/tasks_page.dart:192:48 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement • lib/widgets/tasks_page.dart:256:33 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement • lib/widgets/tasks_page.dart:325:40 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement • lib/widgets/tasks_page.dart:347:48 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement • lib/widgets/tasks_page.dart:350:50 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement • lib/widgets/tasks_page.dart:374:22 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement • lib/widgets/tasks_page.dart:376:41 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement • lib/widgets/voucher_page.dart:224:52 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement • lib/widgets/voucher_page.dart:227:56 • deprecated_member_use
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/widgets/voucher_page.dart:315:39 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/widgets/voucher_page.dart:316:37 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/widgets/voucher_page.dart:316:50 • prefer_const_constructors
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement • lib/widgets/voucher_page.dart:352:38 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement • lib/widgets/voucher_page.dart:357:43 • deprecated_member_use
+   info • Instances of 'Color' should be created using an 8-digit hexadecimal integer (such as '0xFFFFFFFF') • lib/widgets/voucher_page.dart:390:41 • use_full_hex_values_for_flutter_colors
+   info • Instances of 'Color' should be created using an 8-digit hexadecimal integer (such as '0xFFFFFFFF') • lib/widgets/voucher_page.dart:408:43 • use_full_hex_values_for_flutter_colors
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement • lib/widgets/voucher_page.dart:497:31 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement • lib/widgets/voucher_page.dart:506:34 • deprecated_member_use
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/widgets/voucher_page.dart:605:20 • prefer_const_constructors
+   info • Use 'const' literals as arguments to constructors of '@immutable' classes. Try adding 'const' before the literal • lib/widgets/voucher_page.dart:607:25 • prefer_const_literals_to_create_immutables
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement • lib/widgets/voucher_page.dart:649:44 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement • lib/widgets/voucher_page.dart:703:35 • deprecated_member_use
+
+34 issues found. (ran in 2.1s)

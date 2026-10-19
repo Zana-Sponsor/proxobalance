@@ -1,0 +1,17 @@
+   Woah! You appear to be trying to run flutter as root.
+   We strongly recommend running the flutter tool without superuser privileges.
+  /
+📎
+Analyzing 2 items...                                            
+
+   info • The import of 'dart:ui' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/scheduler.dart'. Try removing the import directive • integration_test/polish_runtime_test.dart:4:8 • unnecessary_import
+   info • The import of 'package:flutter/rendering.dart' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart'. Try removing the import directive • integration_test/polish_runtime_test.dart:7:8 • unnecessary_import
+   info • Don't invoke 'print' in production code. Try using a logging framework • integration_test/polish_runtime_test.dart:86:5 • avoid_print
+   info • Don't invoke 'print' in production code. Try using a logging framework • integration_test/polish_runtime_test.dart:203:7 • avoid_print
+   info • Statements in a for should be enclosed in a block. Try wrapping the statement in a block • integration_test/polish_runtime_test.dart:315:42 • curly_braces_in_flow_control_structures
+   info • Don't invoke 'print' in production code. Try using a logging framework • integration_test/polish_runtime_test.dart:344:7 • avoid_print
+   info • Statements in a for should be enclosed in a block. Try wrapping the statement in a block • integration_test/polish_runtime_test.dart:381:9 • curly_braces_in_flow_control_structures
+   info • Don't invoke 'print' in production code. Try using a logging framework • integration_test/polish_runtime_test.dart:408:5 • avoid_print
+   info • Don't invoke 'print' in production code. Try using a logging framework • integration_test/polish_runtime_test.dart:422:5 • avoid_print
+
+9 issues found. (ran in 1.6s)

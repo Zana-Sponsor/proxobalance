@@ -1,0 +1,19 @@
+   Woah! You appear to be trying to run flutter as root.
+   We strongly recommend running the flutter tool without superuser privileges.
+  /
+📎
+00:00 +0: loading proxo_app/test/auth_otp_lifecycle_test.dart
+00:00 +0: renders one box per digit
+00:00 +1: typing syncs into the screen-owned controller
+00:00 +2: a paste is distributed across the boxes
+00:00 +3: Arabic-Indic OTP completes once and survives a rebuild
+00:01 +4: Eastern Arabic OTP completes once and survives a rebuild
+00:01 +5: mixed numeral paste OTP completes once and survives a rebuild
+00:01 +6: ASCII OTP completes once and survives a rebuild
+00:01 +7: localized typing and a later mixed paste retain earlier digits
+00:01 +8: an external clear empties the boxes
+00:01 +9: disposes without touching the borrowed focus node
+00:01 +10: shake mid-flight then dispose does not strand the future
+00:01 +11: changing length rebuilds the box arrays cleanly
+00:02 +12: six boxes fit a 320dp phone without overflow
+00:02 +13: All tests passed!

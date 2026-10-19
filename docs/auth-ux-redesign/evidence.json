@@ -5,7 +5,7 @@
   "flutter_version": "3.47.2",
   "dart_version": "3.13.2",
   "visual_cases_passed": 150,
-  "behavior_tests_passed": 57,
+  "behavior_tests_passed": 78,
   "screenshots_including_scroll_bottoms": 200,
   "captured_render_objects": 10812,
   "captured_exceptions": 0,
@@ -46,15 +46,15 @@
     "proxo_app/assets/icons/help/video_link_example.svg": "06cfa8ea6829f91b3ed4bbc95c1a5ef26836998f538ccc102035a1085f506a2c",
     "proxo_app/assets/images/auth/account_3d.png": "54632924d04e42f14ea04d206cc80644851df0b3ad9f41e042cfc01d2057227a",
     "proxo_app/assets/images/auth/verification_3d.png": "d68c34137d244b5fad4d4392a46533f261444e1ed3b7f4e13366c5904244229e",
-    "proxo_app/integration_test/polish_runtime_test.dart": "b234be2a77aa3cd709e6c2d0f3cbf45af4ecd06fd8f367b5df925afdc617c7f2",
+    "proxo_app/integration_test/polish_runtime_test.dart": "d81225b024d5f1a8cde868c256fa59b697508454f4593f8b894bb42097acf089",
     "proxo_app/integration_test/support/actual_screen_fixtures.dart": "d296e3bb3190821ead4911cc1262d8dac2ad8344a837d641f9c288d071b8d666",
     "proxo_app/l10n/messages.tsv": "ce18be28e0197a4807efabb2932c6af62e74202c5b6b2a213d0d3b7a3eaf3e4d",
     "proxo_app/lib/l10n/proxo_messages.dart": "1d23508e161fd4ddb03e4fffd78e95a02a3ebc37f35e3c26719e940d00798cc4",
     "proxo_app/lib/main.dart": "2a5f1cd3decf0c1d6bbcf5286c69254b9bf8e30fa2240e3cfd1cc430146d7628",
     "proxo_app/lib/screens/ad_create_screen.dart": "93a58beb7c91ad39c0c6ad253aac9f08c193f06cd017c602aa553311e16480f6",
     "proxo_app/lib/screens/ad_screen.dart": "6e02291a11195e122bcfd9f3588d3a69aa6a17addd008952e62130387e43f21d",
-    "proxo_app/lib/screens/auth/auth_service.dart": "6038581d6a0ebd8a4c848d54a1b4950e682a050089efdbdfb1515d4194ff03da",
-    "proxo_app/lib/screens/auth/auth_shell.dart": "a0e08a3e388d54429bb3d51966664b8bb069b8e58d56c4a0a6563b8ea9fcb736",
+    "proxo_app/lib/screens/auth/auth_service.dart": "d28c09eacf7f0d67afbc04c19a1093091b9118e7c9a30b6a5004430182b0f101",
+    "proxo_app/lib/screens/auth/auth_shell.dart": "0246fa88032b3ef657f960ddd65fb4ed11a9abaf89f8df15a57bbcdaf9865964",
     "proxo_app/lib/screens/auth/login_screen.dart": "9140cc01ce0ab37176b7be14c32f4d99465f144f7dc2916fc3a3b25ee7bad845",
     "proxo_app/lib/screens/auth/otp_screen.dart": "23c6654e352e926f542164fa5918aceca113190edc70f4abda72bd9a550a20e7",
     "proxo_app/lib/screens/auth/recovery_screen.dart": "0377a0133dff13535cb8bc9631a43b282464d387b401a1f720df2f218bfc5f5e",
@@ -76,7 +76,7 @@
     "proxo_app/lib/widgets/auth/auth_header.dart": "96c599cf50038ec10602145c6bda45081a9723386e017ad5aa1bb56ceeaabc48",
     "proxo_app/lib/widgets/auth/auth_icon.dart": "00f4552af727eaffd4871cb69d7d87c3c40ec8d8b560c2aafef5f3004a95e0ea",
     "proxo_app/lib/widgets/auth/auth_intro.dart": "6491511bb65ebf1e6d64522034da1304f0be75f644aaeeab5ccda31f41849611",
-    "proxo_app/lib/widgets/auth/auth_otp_field.dart": "2459c92759a11126eb1bdb9ebe8ee7ae4f83ae9ae9fa0782c2d6265809ee78c9",
+    "proxo_app/lib/widgets/auth/auth_otp_field.dart": "97d06c7f26ecd715580a4069772fb7e223da8df026fc8ad0706af84eda507f0f",
     "proxo_app/lib/widgets/auth/auth_swap.dart": "837a219e62a811cf2578ccf57d4c72caa79288acaecb110d8a1bbe5a4ae3270e",
     "proxo_app/lib/widgets/auth/auth_widgets.dart": "e1a05fd4cc083d96d3ac5f906a663a915b7128604fe4df57feeed5edadcfdf3f",
     "proxo_app/lib/widgets/best_metric_card.dart": "8555dcbb0849ce79d6a9c61f0f344a413d7dc7d379a2b057c01f256908f014f2",
@@ -86,14 +86,16 @@
     "proxo_app/lib/widgets/proxo_refresh.dart": "caf43072a5f586418a2af97baf7cb0ed4fd704f32e9cc48f79787bd6242defcd",
     "proxo_app/lib/widgets/proxo_tab_stack.dart": "a44f15aed063b47d5e328c860310b3b535fbbf7bc2ee881bba04893f908b4947",
     "proxo_app/lib/widgets/receipt/receipt_kit.dart": "d10fa5788ab3c129f4c62a66c7e417c6403e51e23faafe97fc44e255f52fa829",
+    "proxo_app/lib/widgets/tasks_page.dart": "8405db1643bd3b339d929bd9be62503c28d0e6b7254a1d455c36fe4b42ed11cd",
+    "proxo_app/lib/widgets/voucher_page.dart": "40e6ddf8afee0ea91c04f19d54e747cf2457a0ad122decf76a4fffb02843dd33",
     "proxo_app/pubspec.yaml": "30bb507d0eb3a301d2daa8211038d102f2e9bea0bd963629f592c7de08c78e30",
     "proxo_app/supabase/functions/send-notification/index.ts": "30282f5cb75981e6be0b66c2526f9bd84da3f2f4f369c13a29ced22220fc7828",
     "proxo_app/supabase/functions/send-push-notification/index.ts": "c33e1073ac41031831b8e5cc568592b9c39baca0624736b859e79d47c9ca1712",
     "proxo_app/supabase/migrations/20261018232023_contextual_form_help.sql": "f96afc40a083cdd043ecc92653f22c4c6715791e43e3eca69304782a1cf994fc",
-    "proxo_app/supabase/templates/confirm-signup.html": "d6948dda8486a06d187541dfc6bcb34f6335a284ab8210a98f562e808544f2bb",
-    "proxo_app/test/auth_email_signup_test.dart": "89a3ce6db9731f4658b32aa85508db62a85af3cba02eb082b733d1c0adf3ff30",
+    "proxo_app/test/auth_email_signup_test.dart": "ecdc52a3628af7d3ee35bcc9c8b63d41ec3ccdfc9e4b1f6ae86f70c44ad5848e",
+    "proxo_app/test/auth_otp_lifecycle_test.dart": "6c2e5957899dcb62087fd2d5db444fd710cf7f57701c24f1b8cefc7cb04e90f8",
     "proxo_app/test/auth_phone_flow_test.dart": "6f2325581ced9a51cc240d05160bd8837a28c88b02eaf5c5c62af3460217dec8",
-    "proxo_app/test/auth_refresh_test.dart": "b1f71cb4c129418506c6a094751bcfd9ae1a523278e756652d32fb8c7415e4a0",
+    "proxo_app/test/auth_refresh_test.dart": "d4acd2740d4250ebd88a039129469225179d11d97a8ec16e07b3c75275dc98db",
     "proxo_app/test/context_help_capture_test.dart": "7d2e4af530c5befaaa43725bc1bbac7f3f7272e2445f533444d2d514f2bfe9e9",
     "proxo_app/test/context_help_test.dart": "773083e563bf784507750a7c3b5f719bcf01288370c655719c1b0462b4368500",
     "proxo_app/test/notification_presentation_test.dart": "54ab8430f5a1495c27934275805a60b840c2a49527384a4362cf48a7a40a417a",
@@ -102,8 +104,8 @@
     "proxo_app/test/proxo_polish_test.dart": "84f8c6ffb568d1daeb8edfca60756fcd8b7850b9cd7290d32b42393e17f5516e",
     "proxo_app/test/support/memory_auth_storage.dart": "488b57222b29c3aff57a3f1f1d824f6ae52bf6555789f881291e2dbc24add9a0",
     "proxo_app/test/whatsapp_marketing_test.dart": "41b788ce67f9b91e71798efabe2bd42558ecd7de26f7d754bc6959ef243483fe",
-    "proxo_app/test_driver/polish_runtime_driver.dart": "34de13de1c02dbb20bdf6f0b5f1a5ff61cb8afc2f29f3088fa0dbe6fb2d429ae",
-    "scripts/run-polish-runtime.py": "531792431073e3d0e1097ba91b22a9289b1430fe98e5e98d7f1412f23dd19018"
+    "proxo_app/test_driver/polish_runtime_driver.dart": "eb3275c36e5a03329adc9b38a39b2458c197143afd8e936c03e706ec2293b2f5",
+    "scripts/run-polish-runtime.py": "d55b761c59a5a3da649f14870b62131674ca3e2d4007f9b033e03f02b6cc5bb2"
   },
   "screenshots": [
     {
@@ -1170,7 +1172,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/notifications-ar-280-2x.png",
-      "screenshot_sha256": "44da874f703dcf20728805352383c32ec4c3d5da32d542670d37b2e12ec47060",
+      "screenshot_sha256": "8435d4168a47e1a6a73f7d80247b7d37f8de13e2502e6af3fe73d82287c37db4",
       "position": "top"
     },
     {
@@ -1181,7 +1183,7 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/notifications-ar-393.png",
-      "screenshot_sha256": "f681f5de3fbaf2f162c7d1887f83e39c45434caa5565ae1a551784bfb1a917dd",
+      "screenshot_sha256": "837be65ac80c2d790060614b4639e4f48ea8f888ae6851f21950d42fc0fc6fac",
       "position": "top"
     },
     {
@@ -1192,7 +1194,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/notifications-ckb-280-2x.png",
-      "screenshot_sha256": "f54feb45cadf135d46aedec69ca73be8d279cd7da7444e6baf5da6fd2659fc0e",
+      "screenshot_sha256": "596b541b3f80fc522ea8b079e3a51fc0171c6f16272cac7ebc3baba6589f64d0",
       "position": "top"
     },
     {
@@ -1203,7 +1205,7 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/notifications-ckb-393.png",
-      "screenshot_sha256": "889381af027da9d80bfa21f7bf1fac74a8344898892b68fc5a8f3d7fb8ff4d4e",
+      "screenshot_sha256": "80c0dd0438b7ef4e5233012d4317b789f69ca5dd781bef9009582e57e730800b",
       "position": "top"
     },
     {
@@ -1214,7 +1216,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/notifications-kmr-280-2x.png",
-      "screenshot_sha256": "1abbba2a5fd6e6662dd71cb6eef862d7b50200a5bc5ff3c5985695e7fca06c5a",
+      "screenshot_sha256": "890e949b7a29afc7c3e568fe2250c51250b057ccc6e379b3f0c91e2a63c17b47",
       "position": "top"
     },
     {
@@ -1225,7 +1227,7 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/notifications-kmr-393.png",
-      "screenshot_sha256": "149ac367ba875e033c1163cee78953643817fd55b1b2ad8449d8c95959f5ce4d",
+      "screenshot_sha256": "fbff4191f1f41020e67bcbdb5c7ef99bbad4a0ab2abd5952b06fc9655bec0e79",
       "position": "top"
     },
     {
@@ -2248,7 +2250,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/vouchers-ar-280-2x.png",
-      "screenshot_sha256": "97d2efebaabb54d74734ed77e30f50c3665a01b38a7a9a2868b1d742e8fb46ef",
+      "screenshot_sha256": "1b1588038167735b283fbdad7ffd012711b1c57aef8b6afca055f654e4b5f021",
       "position": "top"
     },
     {
@@ -2259,7 +2261,7 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/vouchers-ar-393.png",
-      "screenshot_sha256": "1b923491db6b1053eaa9d04846e3489b6e041062b65b3bd31646cb39dad1494e",
+      "screenshot_sha256": "d810022b438c5b18bf940f246e36258529ad2daad1f29414bb46fe13067c8894",
       "position": "top"
     },
     {
@@ -2270,7 +2272,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/vouchers-ckb-280-2x.png",
-      "screenshot_sha256": "1681c084ef9eeca3a72277aa6a5b9e0b719b20f8b3b9b82fc70831b7b06fa597",
+      "screenshot_sha256": "04fbf6aa34a9f15cd1391f5ce125c3d7625c9b3be53e195eb22d9e126b9ba63f",
       "position": "top"
     },
     {
@@ -2281,7 +2283,7 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/vouchers-ckb-393.png",
-      "screenshot_sha256": "1c874014914d17b9a65659833d9aca9ef33bfecdddb0936612c7fc314cbc7d86",
+      "screenshot_sha256": "62c760f3f533123d14131c6c84f1c0a86507e3eab57a00ef40f033b687f5b5bf",
       "position": "top"
     },
     {
@@ -2292,7 +2294,7 @@
       "textScale": 2.0,
       "dpr": 2.0,
       "screenshot": "images/vouchers-kmr-280-2x.png",
-      "screenshot_sha256": "a37654a18608b158c5cef2c79030d13a6a0d3903bfed144bbf46b95bd1e1b78c",
+      "screenshot_sha256": "46b13c5a589ec798281f19290d32c1914bc8bb6b308de245bfcf3cba9771365e",
       "position": "top"
     },
     {
@@ -2303,12 +2305,42 @@
       "textScale": 1.0,
       "dpr": 3.0,
       "screenshot": "images/vouchers-kmr-393.png",
-      "screenshot_sha256": "060e042b3d953491bf6157935062d6945a4976d7eb1c0ebd4c18dcfe7e553c3e",
+      "screenshot_sha256": "4ae7952676aeaaf3f1084f9879ef897fb925771776d08758bdf89d7bbfb241fa",
       "position": "top"
     }
   ],
-  "full_suite_tests_passed": 859,
+  "full_suite_tests_passed": 880,
   "context_help_visual_cases_passed": 24,
   "context_help_screenshots": 24,
-  "android_profile_runtime": "Engine FrameTiming callbacks; no VM Service dependency. Run separately in Proxo Android polish runtime; see CI artifact."
+  "android_profile_runtime": {
+    "status": "passed",
+    "source_commit": "65021db17ef8ea496ba21fa1971b583cb3c956f2",
+    "workflow_run": 39183672140,
+    "measured_cases": 36,
+    "frames": 1023,
+    "screenshots": 40,
+    "layout_exceptions": 0,
+    "report": "native/README.md",
+    "metrics": "native/native-runtime-metrics.json",
+    "live_fcm_transport_tested": false,
+    "physical_device_performance_tested": false,
+    "native_splash_wordmark_verified": false
+  },
+  "email_api_verification": {
+    "source_commit": "65021db17ef8ea496ba21fa1971b583cb3c956f2",
+    "service_regressions": 21,
+    "provider": "configured custom send_otp API",
+    "live_delivery_tested": false,
+    "analyzer": {
+      "errors": 0,
+      "warnings": 3,
+      "infos": 23
+    },
+    "routes_report": "email-signup.md",
+    "tests_log": "email-api-tests.log",
+    "analyzer_log": "email-api-analyze.log"
+  },
+  "total_screenshots": 264,
+  "apk_verification": "apk-verification.json",
+  "ci_verification": "ci-verification.json"
 }

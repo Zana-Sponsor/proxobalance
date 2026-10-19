@@ -1,0 +1,15 @@
+{
+  "fixture_only": true,
+  "mode": "profile",
+  "device": "sdk_gphone64_x86_64",
+  "android": "15",
+  "wm_size": "Physical size: 320x640\nOverride size: 1080x1920",
+  "wm_density": "Physical density: 160\nOverride density: 440",
+  "transport": "Local Firebase builder fixture; FCM network delivery is not tested",
+  "phone_input_injected": true,
+  "keyboard_captured": true,
+  "background_notification_captured": true,
+  "exit_code": 0,
+  "screenshot_transfer_exit_code": 0,
+  "native_screenshot_count": 37
+}

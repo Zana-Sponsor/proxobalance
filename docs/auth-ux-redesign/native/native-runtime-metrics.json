@@ -1,0 +1,1204 @@
+{
+  "run_id": 39183672140,
+  "job_id": 117841532408,
+  "workflow_url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/39183672140",
+  "source_commit": "65021db17ef8ea496ba21fa1971b583cb3c956f2",
+  "artifact_id": 12157089016,
+  "artifact_zip_sha256": "a6911f4876b750974265013cb19a51f778eae680973afe00689245b498f68392",
+  "outcome": "success",
+  "observations": {
+    "environment": "Android emulator, profile AOT, software GPU; not physical-device certification",
+    "fixture_only": true,
+    "completed": true,
+    "network_latency_measured": false,
+    "physical_size": [
+      1080.0,
+      1920.0
+    ],
+    "dpr": 2.75,
+    "phone_input_transport": "Android adb input text",
+    "keyboard_inset_px": 946.0,
+    "keyboard_field_bottom_dp": 328.8181818181816,
+    "keyboard_visible_bottom_dp": 354.1818181818182,
+    "background_notification": {
+      "builder": "createNotificationInfo",
+      "small_icon": 2131165306,
+      "color": -16487174,
+      "channel": "proxo_high_importance",
+      "transport": "local fixture; no FCM network request"
+    },
+    "active_background_notifications": [
+      {
+        "id": 4321,
+        "icon": 2131165306,
+        "channel": "proxo_high_importance",
+        "color": -16487174
+      }
+    ]
+  },
+  "device": {
+    "fixture_only": true,
+    "mode": "profile",
+    "device": "sdk_gphone64_x86_64",
+    "android": "15",
+    "wm_size": "Physical size: 320x640\nOverride size: 1080x1920",
+    "wm_density": "Physical density: 160\nOverride density: 440",
+    "transport": "Local Firebase builder fixture; FCM network delivery is not tested",
+    "phone_input_injected": true,
+    "keyboard_captured": true,
+    "background_notification_captured": true,
+    "exit_code": 0,
+    "screenshot_transfer_exit_code": 0,
+    "native_screenshot_count": 37
+  },
+  "case_count": 36,
+  "rendered_capture_count": 37,
+  "os_capture_count": 3,
+  "total_capture_count": 40,
+  "recorded_control_nodes": 413,
+  "captured_layout_exceptions": {},
+  "aggregate_mean_method": "Arithmetic mean of concatenated raw frame times in microseconds, divided by 1000; cases are weighted by frame count.",
+  "aggregate_percentile_method": "Exact Flutter rounded-index percentile: sort concatenated raw engine times and select index floor((N-1)*p+0.5), then convert microseconds to milliseconds. Per-case values have been checked against the raw arrays and Flutter FrameTimingSummarizer. Strictly above 16,000 microseconds matches Flutter budget counters; strictly above 16,667 microseconds is a separate comparison.",
+  "aggregate": {
+    "build": {
+      "frame_count": 1023,
+      "mean_ms": 1.329126099706745,
+      "p90_ms": 3.017,
+      "p99_ms": 10.026,
+      "max_ms": 62.645,
+      "frames_above_16_000_ms_flutter_budget": 5,
+      "frames_above_16_667_ms": 5
+    },
+    "raster": {
+      "frame_count": 1023,
+      "mean_ms": 36.255026392961874,
+      "p90_ms": 66.605,
+      "p99_ms": 119.139,
+      "max_ms": 463.362,
+      "frames_above_16_000_ms_flutter_budget": 760,
+      "frames_above_16_667_ms": 746
+    }
+  },
+  "per_case": [
+    {
+      "screen": "account-setup-error",
+      "mount_and_settle_ms": 47,
+      "frame_count": 3,
+      "build": {
+        "frame_count": 3,
+        "mean_ms": 1.088,
+        "p90_ms": 2.585,
+        "p99_ms": 2.585,
+        "max_ms": 2.585,
+        "frames_above_16_000_ms_flutter_budget": 0,
+        "frames_above_16_667_ms": 0
+      },
+      "raster": {
+        "frame_count": 3,
+        "mean_ms": 14.809,
+        "p90_ms": 18.351,
+        "p99_ms": 18.351,
+        "max_ms": 18.351,
+        "frames_above_16_000_ms_flutter_budget": 1,
+        "frames_above_16_667_ms": 1
+      }
+    },
+    {
+      "screen": "ad-confirmation",
+      "mount_and_settle_ms": 873,
+      "frame_count": 75,
+      "build": {
+        "frame_count": 75,
+        "mean_ms": 2.06988,
+        "p90_ms": 3.199,
+        "p99_ms": 6.844,
+        "max_ms": 56.229,
+        "frames_above_16_000_ms_flutter_budget": 1,
+        "frames_above_16_667_ms": 1
+      },
+      "raster": {
+        "frame_count": 75,
+        "mean_ms": 39.62157333333333,
+        "p90_ms": 58.045,
+        "p99_ms": 62.732,
+        "max_ms": 66.664,
+        "frames_above_16_000_ms_flutter_budget": 75,
+        "frames_above_16_667_ms": 75
+      }
+    },
+    {
+      "screen": "ad-create",
+      "mount_and_settle_ms": 342,
+      "frame_count": 9,
+      "build": {
+        "frame_count": 9,
+        "mean_ms": 4.0377777777777775,
+        "p90_ms": 8.14,
+        "p99_ms": 16.762,
+        "max_ms": 16.762,
+        "frames_above_16_000_ms_flutter_budget": 1,
+        "frames_above_16_667_ms": 1
+      },
+      "raster": {
+        "frame_count": 9,
+        "mean_ms": 65.91644444444444,
+        "p90_ms": 72.447,
+        "p99_ms": 73.79,
+        "max_ms": 73.79,
+        "frames_above_16_000_ms_flutter_budget": 9,
+        "frames_above_16_667_ms": 9
+      }
+    },
+    {
+      "screen": "ad-details",
+      "mount_and_settle_ms": 50,
+      "frame_count": 38,
+      "build": {
+        "frame_count": 38,
+        "mean_ms": 0.7843947368421054,
+        "p90_ms": 1.793,
+        "p99_ms": 7.365,
+        "max_ms": 7.365,
+        "frames_above_16_000_ms_flutter_budget": 0,
+        "frames_above_16_667_ms": 0
+      },
+      "raster": {
+        "frame_count": 38,
+        "mean_ms": 43.55747368421053,
+        "p90_ms": 50.762,
+        "p99_ms": 54.161,
+        "max_ms": 54.161,
+        "frames_above_16_000_ms_flutter_budget": 38,
+        "frames_above_16_667_ms": 38
+      }
+    },
+    {
+      "screen": "ad-video-example",
+      "mount_and_settle_ms": 501,
+      "frame_count": 15,
+      "build": {
+        "frame_count": 15,
+        "mean_ms": 4.334533333333334,
+        "p90_ms": 10.472,
+        "p99_ms": 13.111,
+        "max_ms": 13.111,
+        "frames_above_16_000_ms_flutter_budget": 0,
+        "frames_above_16_667_ms": 0
+      },
+      "raster": {
+        "frame_count": 15,
+        "mean_ms": 89.09393333333334,
+        "p90_ms": 143.525,
+        "p99_ms": 275.666,
+        "max_ms": 275.666,
+        "frames_above_16_000_ms_flutter_budget": 15,
+        "frames_above_16_667_ms": 15
+      }
+    },
+    {
+      "screen": "ads",
+      "mount_and_settle_ms": 449,
+      "frame_count": 7,
+      "build": {
+        "frame_count": 7,
+        "mean_ms": 1.3017142857142858,
+        "p90_ms": 3.759,
+        "p99_ms": 4.276,
+        "max_ms": 4.276,
+        "frames_above_16_000_ms_flutter_budget": 0,
+        "frames_above_16_667_ms": 0
+      },
+      "raster": {
+        "frame_count": 7,
+        "mean_ms": 97.781,
+        "p90_ms": 138.006,
+        "p99_ms": 283.066,
+        "max_ms": 283.066,
+        "frames_above_16_000_ms_flutter_budget": 7,
+        "frames_above_16_667_ms": 7
+      }
+    },
+    {
+      "screen": "auth-channel-cycles",
+      "mount_and_settle_ms": 395,
+      "frame_count": 212,
+      "build": {
+        "frame_count": 212,
+        "mean_ms": 0.9029811320754717,
+        "p90_ms": 1.616,
+        "p99_ms": 5.347,
+        "max_ms": 6.483,
+        "frames_above_16_000_ms_flutter_budget": 0,
+        "frames_above_16_667_ms": 0
+      },
+      "raster": {
+        "frame_count": 212,
+        "mean_ms": 17.63316981132075,
+        "p90_ms": 29.254,
+        "p99_ms": 56.035,
+        "max_ms": 62.451,
+        "frames_above_16_000_ms_flutter_budget": 89,
+        "frames_above_16_667_ms": 84
+      }
+    },
+    {
+      "screen": "auth-login",
+      "mount_and_settle_ms": 383,
+      "frame_count": 33,
+      "build": {
+        "frame_count": 33,
+        "mean_ms": 0.8183636363636364,
+        "p90_ms": 2.587,
+        "p99_ms": 5.093,
+        "max_ms": 5.093,
+        "frames_above_16_000_ms_flutter_budget": 0,
+        "frames_above_16_667_ms": 0
+      },
+      "raster": {
+        "frame_count": 33,
+        "mean_ms": 33.825878787878786,
+        "p90_ms": 56.308,
+        "p99_ms": 65.268,
+        "max_ms": 65.268,
+        "frames_above_16_000_ms_flutter_budget": 23,
+        "frames_above_16_667_ms": 22
+      }
+    },
+    {
+      "screen": "auth-phone",
+      "mount_and_settle_ms": 383,
+      "frame_count": 46,
+      "build": {
+        "frame_count": 46,
+        "mean_ms": 1.5434347826086958,
+        "p90_ms": 3.781,
+        "p99_ms": 11.187,
+        "max_ms": 11.187,
+        "frames_above_16_000_ms_flutter_budget": 0,
+        "frames_above_16_667_ms": 0
+      },
+      "raster": {
+        "frame_count": 46,
+        "mean_ms": 17.499304347826087,
+        "p90_ms": 31.781,
+        "p99_ms": 60.877,
+        "max_ms": 60.877,
+        "frames_above_16_000_ms_flutter_budget": 20,
+        "frames_above_16_667_ms": 19
+      }
+    },
+    {
+      "screen": "auth-recovery",
+      "mount_and_settle_ms": 370,
+      "frame_count": 29,
+      "build": {
+        "frame_count": 29,
+        "mean_ms": 0.8552068965517242,
+        "p90_ms": 1.371,
+        "p99_ms": 4.398,
+        "max_ms": 4.398,
+        "frames_above_16_000_ms_flutter_budget": 0,
+        "frames_above_16_667_ms": 0
+      },
+      "raster": {
+        "frame_count": 29,
+        "mean_ms": 18.624172413793104,
+        "p90_ms": 39.709,
+        "p99_ms": 45.787,
+        "max_ms": 45.787,
+        "frames_above_16_000_ms_flutter_budget": 10,
+        "frames_above_16_667_ms": 10
+      }
+    },
+    {
+      "screen": "auth-signup",
+      "mount_and_settle_ms": 385,
+      "frame_count": 46,
+      "build": {
+        "frame_count": 46,
+        "mean_ms": 1.1237391304347826,
+        "p90_ms": 2.044,
+        "p99_ms": 16.877,
+        "max_ms": 16.877,
+        "frames_above_16_000_ms_flutter_budget": 1,
+        "frames_above_16_667_ms": 1
+      },
+      "raster": {
+        "frame_count": 46,
+        "mean_ms": 31.87217391304348,
+        "p90_ms": 55.403,
+        "p99_ms": 71.375,
+        "max_ms": 71.375,
+        "frames_above_16_000_ms_flutter_budget": 25,
+        "frames_above_16_667_ms": 25
+      }
+    },
+    {
+      "screen": "deposit",
+      "mount_and_settle_ms": 45,
+      "frame_count": 12,
+      "build": {
+        "frame_count": 12,
+        "mean_ms": 1.6165833333333333,
+        "p90_ms": 3.736,
+        "p99_ms": 7.624,
+        "max_ms": 7.624,
+        "frames_above_16_000_ms_flutter_budget": 0,
+        "frames_above_16_667_ms": 0
+      },
+      "raster": {
+        "frame_count": 12,
+        "mean_ms": 31.20808333333333,
+        "p90_ms": 36.953,
+        "p99_ms": 57.837,
+        "max_ms": 57.837,
+        "frames_above_16_000_ms_flutter_budget": 12,
+        "frames_above_16_667_ms": 12
+      }
+    },
+    {
+      "screen": "discounts",
+      "mount_and_settle_ms": 84,
+      "frame_count": 4,
+      "build": {
+        "frame_count": 4,
+        "mean_ms": 0.86025,
+        "p90_ms": 1.87,
+        "p99_ms": 1.87,
+        "max_ms": 1.87,
+        "frames_above_16_000_ms_flutter_budget": 0,
+        "frames_above_16_667_ms": 0
+      },
+      "raster": {
+        "frame_count": 4,
+        "mean_ms": 8.3715,
+        "p90_ms": 8.916,
+        "p99_ms": 8.916,
+        "max_ms": 8.916,
+        "frames_above_16_000_ms_flutter_budget": 0,
+        "frames_above_16_667_ms": 0
+      }
+    },
+    {
+      "screen": "faq",
+      "mount_and_settle_ms": 42,
+      "frame_count": 3,
+      "build": {
+        "frame_count": 3,
+        "mean_ms": 1.2513333333333332,
+        "p90_ms": 3.399,
+        "p99_ms": 3.399,
+        "max_ms": 3.399,
+        "frames_above_16_000_ms_flutter_budget": 0,
+        "frames_above_16_667_ms": 0
+      },
+      "raster": {
+        "frame_count": 3,
+        "mean_ms": 49.552,
+        "p90_ms": 51.066,
+        "p99_ms": 51.066,
+        "max_ms": 51.066,
+        "frames_above_16_000_ms_flutter_budget": 3,
+        "frames_above_16_667_ms": 3
+      }
+    },
+    {
+      "screen": "home",
+      "mount_and_settle_ms": 613,
+      "frame_count": 80,
+      "build": {
+        "frame_count": 80,
+        "mean_ms": 1.1032875,
+        "p90_ms": 2.451,
+        "p99_ms": 4.732,
+        "max_ms": 16.875,
+        "frames_above_16_000_ms_flutter_budget": 1,
+        "frames_above_16_667_ms": 1
+      },
+      "raster": {
+        "frame_count": 80,
+        "mean_ms": 38.623125,
+        "p90_ms": 43.705,
+        "p99_ms": 248.67,
+        "max_ms": 463.362,
+        "frames_above_16_000_ms_flutter_budget": 79,
+        "frames_above_16_667_ms": 78
+      }
+    },
+    {
+      "screen": "home-refresh",
+      "mount_and_settle_ms": 569,
+      "frame_count": 137,
+      "build": {
+        "frame_count": 137,
+        "mean_ms": 0.8844963503649635,
+        "p90_ms": 2.302,
+        "p99_ms": 4.435,
+        "max_ms": 4.743,
+        "frames_above_16_000_ms_flutter_budget": 0,
+        "frames_above_16_667_ms": 0
+      },
+      "raster": {
+        "frame_count": 137,
+        "mean_ms": 29.22782481751825,
+        "p90_ms": 50.814,
+        "p99_ms": 59.849,
+        "max_ms": 61.55,
+        "frames_above_16_000_ms_flutter_budget": 135,
+        "frames_above_16_667_ms": 134
+      }
+    },
+    {
+      "screen": "levels",
+      "mount_and_settle_ms": 70,
+      "frame_count": 4,
+      "build": {
+        "frame_count": 4,
+        "mean_ms": 1.4175,
+        "p90_ms": 2.951,
+        "p99_ms": 2.951,
+        "max_ms": 2.951,
+        "frames_above_16_000_ms_flutter_budget": 0,
+        "frames_above_16_667_ms": 0
+      },
+      "raster": {
+        "frame_count": 4,
+        "mean_ms": 45.68475,
+        "p90_ms": 98.883,
+        "p99_ms": 98.883,
+        "max_ms": 98.883,
+        "frames_above_16_000_ms_flutter_budget": 3,
+        "frames_above_16_667_ms": 3
+      }
+    },
+    {
+      "screen": "new-password",
+      "mount_and_settle_ms": 37,
+      "frame_count": 3,
+      "build": {
+        "frame_count": 3,
+        "mean_ms": 2.135,
+        "p90_ms": 5.276,
+        "p99_ms": 5.276,
+        "max_ms": 5.276,
+        "frames_above_16_000_ms_flutter_budget": 0,
+        "frames_above_16_667_ms": 0
+      },
+      "raster": {
+        "frame_count": 3,
+        "mean_ms": 24.339666666666666,
+        "p90_ms": 28.006,
+        "p99_ms": 28.006,
+        "max_ms": 28.006,
+        "frames_above_16_000_ms_flutter_budget": 3,
+        "frames_above_16_667_ms": 3
+      }
+    },
+    {
+      "screen": "notifications",
+      "mount_and_settle_ms": 78,
+      "frame_count": 4,
+      "build": {
+        "frame_count": 4,
+        "mean_ms": 1.5815,
+        "p90_ms": 3.378,
+        "p99_ms": 3.378,
+        "max_ms": 3.378,
+        "frames_above_16_000_ms_flutter_budget": 0,
+        "frames_above_16_667_ms": 0
+      },
+      "raster": {
+        "frame_count": 4,
+        "mean_ms": 41.7695,
+        "p90_ms": 98.089,
+        "p99_ms": 98.089,
+        "max_ms": 98.089,
+        "frames_above_16_000_ms_flutter_budget": 3,
+        "frames_above_16_667_ms": 3
+      }
+    },
+    {
+      "screen": "otp",
+      "mount_and_settle_ms": 246,
+      "frame_count": 8,
+      "build": {
+        "frame_count": 8,
+        "mean_ms": 1.932125,
+        "p90_ms": 3.243,
+        "p99_ms": 4.267,
+        "max_ms": 4.267,
+        "frames_above_16_000_ms_flutter_budget": 0,
+        "frames_above_16_667_ms": 0
+      },
+      "raster": {
+        "frame_count": 8,
+        "mean_ms": 19.099875,
+        "p90_ms": 24.229,
+        "p99_ms": 37.753,
+        "max_ms": 37.753,
+        "frames_above_16_000_ms_flutter_budget": 4,
+        "frames_above_16_667_ms": 3
+      }
+    },
+    {
+      "screen": "page-create",
+      "mount_and_settle_ms": 389,
+      "frame_count": 10,
+      "build": {
+        "frame_count": 10,
+        "mean_ms": 2.3004000000000002,
+        "p90_ms": 5.498,
+        "p99_ms": 7.85,
+        "max_ms": 7.85,
+        "frames_above_16_000_ms_flutter_budget": 0,
+        "frames_above_16_667_ms": 0
+      },
+      "raster": {
+        "frame_count": 10,
+        "mean_ms": 75.18010000000001,
+        "p90_ms": 100.942,
+        "p99_ms": 102.811,
+        "max_ms": 102.811,
+        "frames_above_16_000_ms_flutter_budget": 10,
+        "frames_above_16_667_ms": 10
+      }
+    },
+    {
+      "screen": "page-details",
+      "mount_and_settle_ms": 292,
+      "frame_count": 31,
+      "build": {
+        "frame_count": 31,
+        "mean_ms": 1.0016451612903225,
+        "p90_ms": 2.429,
+        "p99_ms": 4.469,
+        "max_ms": 4.469,
+        "frames_above_16_000_ms_flutter_budget": 0,
+        "frames_above_16_667_ms": 0
+      },
+      "raster": {
+        "frame_count": 31,
+        "mean_ms": 79.58870967741935,
+        "p90_ms": 113.013,
+        "p99_ms": 277.359,
+        "max_ms": 277.359,
+        "frames_above_16_000_ms_flutter_budget": 31,
+        "frames_above_16_667_ms": 31
+      }
+    },
+    {
+      "screen": "page-edit",
+      "mount_and_settle_ms": 4989,
+      "frame_count": 74,
+      "build": {
+        "frame_count": 74,
+        "mean_ms": 2.7477027027027026,
+        "p90_ms": 4.43,
+        "p99_ms": 12.974,
+        "max_ms": 62.645,
+        "frames_above_16_000_ms_flutter_budget": 1,
+        "frames_above_16_667_ms": 1
+      },
+      "raster": {
+        "frame_count": 74,
+        "mean_ms": 69.35883783783784,
+        "p90_ms": 82.017,
+        "p99_ms": 107.314,
+        "max_ms": 119.139,
+        "frames_above_16_000_ms_flutter_budget": 74,
+        "frames_above_16_667_ms": 74
+      }
+    },
+    {
+      "screen": "page-example",
+      "mount_and_settle_ms": 304,
+      "frame_count": 15,
+      "build": {
+        "frame_count": 15,
+        "mean_ms": 2.3735999999999997,
+        "p90_ms": 7.553,
+        "p99_ms": 8.792,
+        "max_ms": 8.792,
+        "frames_above_16_000_ms_flutter_budget": 0,
+        "frames_above_16_667_ms": 0
+      },
+      "raster": {
+        "frame_count": 15,
+        "mean_ms": 91.49533333333333,
+        "p90_ms": 108.233,
+        "p99_ms": 277.758,
+        "max_ms": 277.758,
+        "frames_above_16_000_ms_flutter_budget": 15,
+        "frames_above_16_667_ms": 15
+      }
+    },
+    {
+      "screen": "profile",
+      "mount_and_settle_ms": 61,
+      "frame_count": 7,
+      "build": {
+        "frame_count": 7,
+        "mean_ms": 2.5748571428571427,
+        "p90_ms": 7.22,
+        "p99_ms": 10.026,
+        "max_ms": 10.026,
+        "frames_above_16_000_ms_flutter_budget": 0,
+        "frames_above_16_667_ms": 0
+      },
+      "raster": {
+        "frame_count": 7,
+        "mean_ms": 30.427,
+        "p90_ms": 36.29,
+        "p99_ms": 40.824,
+        "max_ms": 40.824,
+        "frames_above_16_000_ms_flutter_budget": 7,
+        "frames_above_16_667_ms": 7
+      }
+    },
+    {
+      "screen": "profile-edit",
+      "mount_and_settle_ms": 42,
+      "frame_count": 52,
+      "build": {
+        "frame_count": 52,
+        "mean_ms": 0.8080576923076923,
+        "p90_ms": 1.184,
+        "p99_ms": 3.39,
+        "max_ms": 5.027,
+        "frames_above_16_000_ms_flutter_budget": 0,
+        "frames_above_16_667_ms": 0
+      },
+      "raster": {
+        "frame_count": 52,
+        "mean_ms": 16.037326923076925,
+        "p90_ms": 21.355,
+        "p99_ms": 24.912,
+        "max_ms": 62.509,
+        "frames_above_16_000_ms_flutter_budget": 17,
+        "frames_above_16_667_ms": 13
+      }
+    },
+    {
+      "screen": "results",
+      "mount_and_settle_ms": 48,
+      "frame_count": 6,
+      "build": {
+        "frame_count": 6,
+        "mean_ms": 2.3776666666666664,
+        "p90_ms": 7.339,
+        "p99_ms": 7.339,
+        "max_ms": 7.339,
+        "frames_above_16_000_ms_flutter_budget": 0,
+        "frames_above_16_667_ms": 0
+      },
+      "raster": {
+        "frame_count": 6,
+        "mean_ms": 25.72116666666667,
+        "p90_ms": 31.75,
+        "p99_ms": 31.75,
+        "max_ms": 31.75,
+        "frames_above_16_000_ms_flutter_budget": 6,
+        "frames_above_16_667_ms": 6
+      }
+    },
+    {
+      "screen": "sidebar",
+      "mount_and_settle_ms": 372,
+      "frame_count": 11,
+      "build": {
+        "frame_count": 11,
+        "mean_ms": 0.892,
+        "p90_ms": 1.908,
+        "p99_ms": 3.331,
+        "max_ms": 3.331,
+        "frames_above_16_000_ms_flutter_budget": 0,
+        "frames_above_16_667_ms": 0
+      },
+      "raster": {
+        "frame_count": 11,
+        "mean_ms": 61.40081818181818,
+        "p90_ms": 74.686,
+        "p99_ms": 76.209,
+        "max_ms": 76.209,
+        "frames_above_16_000_ms_flutter_budget": 11,
+        "frames_above_16_667_ms": 11
+      }
+    },
+    {
+      "screen": "splash",
+      "mount_and_settle_ms": 49,
+      "frame_count": 3,
+      "build": {
+        "frame_count": 3,
+        "mean_ms": 0.86,
+        "p90_ms": 2.263,
+        "p99_ms": 2.263,
+        "max_ms": 2.263,
+        "frames_above_16_000_ms_flutter_budget": 0,
+        "frames_above_16_667_ms": 0
+      },
+      "raster": {
+        "frame_count": 3,
+        "mean_ms": 153.346,
+        "p90_ms": 367.62,
+        "p99_ms": 367.62,
+        "max_ms": 367.62,
+        "frames_above_16_000_ms_flutter_budget": 3,
+        "frames_above_16_667_ms": 3
+      }
+    },
+    {
+      "screen": "tasks",
+      "mount_and_settle_ms": 74,
+      "frame_count": 4,
+      "build": {
+        "frame_count": 4,
+        "mean_ms": 0.93025,
+        "p90_ms": 1.888,
+        "p99_ms": 1.888,
+        "max_ms": 1.888,
+        "frames_above_16_000_ms_flutter_budget": 0,
+        "frames_above_16_667_ms": 0
+      },
+      "raster": {
+        "frame_count": 4,
+        "mean_ms": 14.65125,
+        "p90_ms": 20.327,
+        "p99_ms": 20.327,
+        "max_ms": 20.327,
+        "frames_above_16_000_ms_flutter_budget": 1,
+        "frames_above_16_667_ms": 1
+      }
+    },
+    {
+      "screen": "tools",
+      "mount_and_settle_ms": 350,
+      "frame_count": 12,
+      "build": {
+        "frame_count": 12,
+        "mean_ms": 1.2515,
+        "p90_ms": 2.484,
+        "p99_ms": 7.669,
+        "max_ms": 7.669,
+        "frames_above_16_000_ms_flutter_budget": 0,
+        "frames_above_16_667_ms": 0
+      },
+      "raster": {
+        "frame_count": 12,
+        "mean_ms": 63.290166666666664,
+        "p90_ms": 71.767,
+        "p99_ms": 72.865,
+        "max_ms": 72.865,
+        "frames_above_16_000_ms_flutter_budget": 12,
+        "frames_above_16_667_ms": 12
+      }
+    },
+    {
+      "screen": "transaction",
+      "mount_and_settle_ms": 40,
+      "frame_count": 3,
+      "build": {
+        "frame_count": 3,
+        "mean_ms": 1.5186666666666668,
+        "p90_ms": 3.919,
+        "p99_ms": 3.919,
+        "max_ms": 3.919,
+        "frames_above_16_000_ms_flutter_budget": 0,
+        "frames_above_16_667_ms": 0
+      },
+      "raster": {
+        "frame_count": 3,
+        "mean_ms": 32.22266666666667,
+        "p90_ms": 34.931,
+        "p99_ms": 34.931,
+        "max_ms": 34.931,
+        "frames_above_16_000_ms_flutter_budget": 3,
+        "frames_above_16_667_ms": 3
+      }
+    },
+    {
+      "screen": "tutorial",
+      "mount_and_settle_ms": 211,
+      "frame_count": 8,
+      "build": {
+        "frame_count": 8,
+        "mean_ms": 0.518,
+        "p90_ms": 0.993,
+        "p99_ms": 1.421,
+        "max_ms": 1.421,
+        "frames_above_16_000_ms_flutter_budget": 0,
+        "frames_above_16_667_ms": 0
+      },
+      "raster": {
+        "frame_count": 8,
+        "mean_ms": 29.82075,
+        "p90_ms": 45.063,
+        "p99_ms": 46.772,
+        "max_ms": 46.772,
+        "frames_above_16_000_ms_flutter_budget": 6,
+        "frames_above_16_667_ms": 6
+      }
+    },
+    {
+      "screen": "vouchers",
+      "mount_and_settle_ms": 580,
+      "frame_count": 11,
+      "build": {
+        "frame_count": 11,
+        "mean_ms": 0.9921818181818182,
+        "p90_ms": 2.721,
+        "p99_ms": 3.043,
+        "max_ms": 3.043,
+        "frames_above_16_000_ms_flutter_budget": 0,
+        "frames_above_16_667_ms": 0
+      },
+      "raster": {
+        "frame_count": 11,
+        "mean_ms": 56.27490909090909,
+        "p90_ms": 59.058,
+        "p99_ms": 180.835,
+        "max_ms": 180.835,
+        "frames_above_16_000_ms_flutter_budget": 10,
+        "frames_above_16_667_ms": 10
+      }
+    },
+    {
+      "screen": "web-preview-error",
+      "mount_and_settle_ms": 78,
+      "frame_count": 4,
+      "build": {
+        "frame_count": 4,
+        "mean_ms": 0.70175,
+        "p90_ms": 1.519,
+        "p99_ms": 1.519,
+        "max_ms": 1.519,
+        "frames_above_16_000_ms_flutter_budget": 0,
+        "frames_above_16_667_ms": 0
+      },
+      "raster": {
+        "frame_count": 4,
+        "mean_ms": 8.85725,
+        "p90_ms": 10.471,
+        "p99_ms": 10.471,
+        "max_ms": 10.471,
+        "frames_above_16_000_ms_flutter_budget": 0,
+        "frames_above_16_667_ms": 0
+      }
+    },
+    {
+      "screen": "whatsapp-preferences",
+      "mount_and_settle_ms": 69,
+      "frame_count": 4,
+      "build": {
+        "frame_count": 4,
+        "mean_ms": 1.061,
+        "p90_ms": 2.022,
+        "p99_ms": 2.022,
+        "max_ms": 2.022,
+        "frames_above_16_000_ms_flutter_budget": 0,
+        "frames_above_16_667_ms": 0
+      },
+      "raster": {
+        "frame_count": 4,
+        "mean_ms": 10.75375,
+        "p90_ms": 13.193,
+        "p99_ms": 13.193,
+        "max_ms": 13.193,
+        "frames_above_16_000_ms_flutter_budget": 0,
+        "frames_above_16_667_ms": 0
+      }
+    }
+  ],
+  "capture_manifest": [
+    {
+      "path": "auth-keyboard-android.png",
+      "width_px": 1080,
+      "height_px": 1920,
+      "sha256": "9257025e704695c2b8e5ea78e3d7e17436013c8a4e483e9a7fb7abe6f1eea5ad",
+      "inspection_note": "Verified native IME after stable inset: focused email field fully above keyboard, bottom 328.818 dp < visible bottom 354.182 dp; inset 946 px."
+    },
+    {
+      "path": "background-heads-up-android.png",
+      "width_px": 1080,
+      "height_px": 1920,
+      "sha256": "07ba0b7249d25e7221042479c1eef7f5261b9f1b92b6ed4f7ee50cd32ad15fed",
+      "inspection_note": "Verified Android launcher with Proxo blue P-logo heads-up notification while the app is backgrounded; local Firebase builder fixture."
+    },
+    {
+      "path": "background-notification-shade-android.png",
+      "width_px": 1080,
+      "height_px": 1920,
+      "sha256": "f1817035afb8818feb20085a7f0755405e90794eafec7eb1bbc1569a92dab8a3",
+      "inspection_note": "Verified expanded Android notification shade with Proxo and blue P icon; local Firebase builder fixture."
+    },
+    {
+      "path": "screens/account-setup-error.png",
+      "width_px": 1080,
+      "height_px": 1920,
+      "sha256": "cbb4928299bc51d988402f05f22a0a833323ad03bf6d69b3010c4278d7fed435",
+      "inspection_note": "Production Flutter widget fixture; fictional backend data."
+    },
+    {
+      "path": "screens/ad-confirmation.png",
+      "width_px": 1080,
+      "height_px": 1920,
+      "sha256": "7dfde568f7f82f6320bbaa2333dda989519c9ee2686c00287673a8f723feac7c",
+      "inspection_note": "Live countdown captured during digit crossfade; not a settled digit alignment sample."
+    },
+    {
+      "path": "screens/ad-create.png",
+      "width_px": 1080,
+      "height_px": 1920,
+      "sha256": "cf53011c17fc9b2a76f256413c5cd2b260406bf8ef1723e0059b6e88d572c630",
+      "inspection_note": "Production Flutter widget fixture; fictional backend data."
+    },
+    {
+      "path": "screens/ad-details.png",
+      "width_px": 1080,
+      "height_px": 1920,
+      "sha256": "29b67bb2923e012d1edbb6f77fb2ea3cda9d2a54a92eb861f41390bee1a90a3a",
+      "inspection_note": "Production Flutter widget fixture; fictional backend data."
+    },
+    {
+      "path": "screens/ad-video-example.png",
+      "width_px": 1080,
+      "height_px": 1920,
+      "sha256": "71d86d01524d8a4ca7a290630bbbcdd19a9bc7a875e8cacd01a4427078c686c8",
+      "inspection_note": "Verified actual local example dialog opened over the production form."
+    },
+    {
+      "path": "screens/ads.png",
+      "width_px": 1080,
+      "height_px": 1920,
+      "sha256": "79038172becb4e5628c90f6c323e766566012359942bc225f93634def830859b",
+      "inspection_note": "Production Flutter widget fixture; fictional backend data."
+    },
+    {
+      "path": "screens/auth-channel-cycles.png",
+      "width_px": 1080,
+      "height_px": 1920,
+      "sha256": "6c7c485417f52fc412ed4de3d66c221ba827b1ff7e20ff23f121fe6a40ffb547",
+      "inspection_note": "Production Flutter widget fixture; fictional backend data."
+    },
+    {
+      "path": "screens/auth-login.png",
+      "width_px": 1080,
+      "height_px": 1920,
+      "sha256": "6c7c485417f52fc412ed4de3d66c221ba827b1ff7e20ff23f121fe6a40ffb547",
+      "inspection_note": "Production Flutter widget fixture; fictional backend data."
+    },
+    {
+      "path": "screens/auth-phone.png",
+      "width_px": 1080,
+      "height_px": 1920,
+      "sha256": "d467887eaa92b97e5b8bc5359a4be4240764e0d2bca9b699448398ae899b24db",
+      "inspection_note": "Verified real Android input 7501234567 retained beside Iraq flag and +964; send button enabled."
+    },
+    {
+      "path": "screens/auth-recovery.png",
+      "width_px": 1080,
+      "height_px": 1920,
+      "sha256": "1a4dd7ccf81434234ea90ff11d5ea7f9f6429ac8e94eb9d1be80db73f31c0690",
+      "inspection_note": "Production Flutter widget fixture; fictional backend data."
+    },
+    {
+      "path": "screens/auth-signup.png",
+      "width_px": 1080,
+      "height_px": 1920,
+      "sha256": "05c570606e6a49ce8b03f5d3eec067cd31ea30c4188f140f2a77c5be88bd6da9",
+      "inspection_note": "Production Flutter widget fixture; fictional backend data."
+    },
+    {
+      "path": "screens/deposit.png",
+      "width_px": 1080,
+      "height_px": 1920,
+      "sha256": "23beb54bc8982f5d20a5ea8262e5d9e3c3c497aec471c9c2bc23592ee0a89d1a",
+      "inspection_note": "Production Flutter widget fixture; fictional backend data."
+    },
+    {
+      "path": "screens/discounts.png",
+      "width_px": 1080,
+      "height_px": 1920,
+      "sha256": "0dd157fec96590e807e1c9ccfc04195693a03f608769d610fba57d380b8478e8",
+      "inspection_note": "Production Flutter widget fixture; fictional backend data."
+    },
+    {
+      "path": "screens/faq.png",
+      "width_px": 1080,
+      "height_px": 1920,
+      "sha256": "03c1722185eabdd9ce98ae951423e2bb8c847227c1b6c601b9406028b3c42e24",
+      "inspection_note": "Production Flutter widget fixture; fictional backend data."
+    },
+    {
+      "path": "screens/home-refresh-pending.png",
+      "width_px": 1080,
+      "height_px": 1920,
+      "sha256": "cf90e2855aadbdaae290cf709f22a2697181de3e23abea93269f8597449e413c",
+      "inspection_note": "Verified localized refresh label beside spinner while response is pending."
+    },
+    {
+      "path": "screens/home-refresh.png",
+      "width_px": 1080,
+      "height_px": 1920,
+      "sha256": "dbe15a2d28d9b522423c1e06c82786783a4aef949b20c09e82be9e61181c1ab9",
+      "inspection_note": "Refresh future and closing animation completed; completion assertion passed."
+    },
+    {
+      "path": "screens/home.png",
+      "width_px": 1080,
+      "height_px": 1920,
+      "sha256": "46bdbb354f81e8a29af1f2f7ec9d65cda8eb7dc48d8dd9fe473bb225cf183f74",
+      "inspection_note": "Production Flutter widget fixture; fictional backend data."
+    },
+    {
+      "path": "screens/levels.png",
+      "width_px": 1080,
+      "height_px": 1920,
+      "sha256": "4c48f757f958de7d3beb2a60c999028994f8faf0c306f0a64e252cde20172744",
+      "inspection_note": "Production Flutter widget fixture; fictional backend data."
+    },
+    {
+      "path": "screens/new-password.png",
+      "width_px": 1080,
+      "height_px": 1920,
+      "sha256": "71dd1d6b771db440d7dd67a258bf5b9c67ee5423df7022ada77dbffec2633dcd",
+      "inspection_note": "Production Flutter widget fixture; fictional backend data."
+    },
+    {
+      "path": "screens/notifications.png",
+      "width_px": 1080,
+      "height_px": 1920,
+      "sha256": "16e413fd10a939127f5b9c414808e70a257f1bd958bf7b8e8378e51d2ec39059",
+      "inspection_note": "Production Flutter widget fixture; fictional backend data."
+    },
+    {
+      "path": "screens/otp.png",
+      "width_px": 1080,
+      "height_px": 1920,
+      "sha256": "a03e52dca5f935181edcbadf0fbdc6d64d1ad5cb65efc04a58bebcd664cd6ee1",
+      "inspection_note": "Six rounded, evenly spaced empty OTP boxes; this screenshot alone does not establish digit centering."
+    },
+    {
+      "path": "screens/page-create.png",
+      "width_px": 1080,
+      "height_px": 1920,
+      "sha256": "96fb6c1cd9ecd1b790d145b5ee6673f3956da81f89cc832daa738ea1179a64f2",
+      "inspection_note": "Production Flutter widget fixture; fictional backend data."
+    },
+    {
+      "path": "screens/page-details.png",
+      "width_px": 1080,
+      "height_px": 1920,
+      "sha256": "89973eac310460024b91ff4ee90ead7191d51cf8d1b6dd0b66bfbe874e54d753",
+      "inspection_note": "Production Flutter widget fixture; fictional backend data."
+    },
+    {
+      "path": "screens/page-edit.png",
+      "width_px": 1080,
+      "height_px": 1920,
+      "sha256": "8fde7060e7b3378cd906ee9759cb9f316addce24410a17cb4659f6d28d5fe839",
+      "inspection_note": "Production Flutter widget fixture; fictional backend data."
+    },
+    {
+      "path": "screens/page-example.png",
+      "width_px": 1080,
+      "height_px": 1920,
+      "sha256": "de3cfe6b845def03f7e3c6b37e03410e817f3a9bdaf7a6e4bb3613767707845a",
+      "inspection_note": "Verified actual local example dialog opened over the production form."
+    },
+    {
+      "path": "screens/profile-edit.png",
+      "width_px": 1080,
+      "height_px": 1920,
+      "sha256": "fbec587ffa96cc0cecf643652bf61f1f8ed477fd7deacbb2d39e579bf2333e4d",
+      "inspection_note": "Production Flutter widget fixture; fictional backend data."
+    },
+    {
+      "path": "screens/profile.png",
+      "width_px": 1080,
+      "height_px": 1920,
+      "sha256": "d5d2708da63c371a5ace730e38f05cbb39aa412c30c8e77ae4f4f5692f609c1b",
+      "inspection_note": "Production Flutter widget fixture; fictional backend data."
+    },
+    {
+      "path": "screens/results.png",
+      "width_px": 1080,
+      "height_px": 1920,
+      "sha256": "5ae891ad07444f0e64c997c2915fdd3558b3c279e901ab7ae584bd00ebee60b7",
+      "inspection_note": "Production Flutter widget fixture; fictional backend data."
+    },
+    {
+      "path": "screens/sidebar.png",
+      "width_px": 1080,
+      "height_px": 1920,
+      "sha256": "72c59b760afceea9dfd5713d335e3131c829500ba65a2f78460abcd85c777e63",
+      "inspection_note": "Production Flutter widget fixture; fictional backend data."
+    },
+    {
+      "path": "screens/splash.png",
+      "width_px": 1080,
+      "height_px": 1920,
+      "sha256": "d8d40f9357c59bf4850617397916c58760c6566b03fb6a2a56bb5436ce426e60",
+      "inspection_note": "Capture limitation: central wordmark pill is blank; this frame does not verify the completed splash logo."
+    },
+    {
+      "path": "screens/tasks.png",
+      "width_px": 1080,
+      "height_px": 1920,
+      "sha256": "2c5df6ffc50ef84e9dd6054bc31bf56ab9ff0221e131e69f8e94e8c01f4db31f",
+      "inspection_note": "Production Flutter widget fixture; fictional backend data."
+    },
+    {
+      "path": "screens/tools.png",
+      "width_px": 1080,
+      "height_px": 1920,
+      "sha256": "612f2605adc6d69122e0a97f247114c27e1a34596ef220d9430b62b67ab04976",
+      "inspection_note": "Production Flutter widget fixture; fictional backend data."
+    },
+    {
+      "path": "screens/transaction.png",
+      "width_px": 1080,
+      "height_px": 1920,
+      "sha256": "33fb6953e0ebe82e7d19f464ef1ac9b86aeac96aba7699594de90ae7245044df",
+      "inspection_note": "Production Flutter widget fixture; fictional backend data."
+    },
+    {
+      "path": "screens/tutorial.png",
+      "width_px": 1080,
+      "height_px": 1920,
+      "sha256": "5fb045949aef18d7d90fb0dda5a08ec8758383ddde9962c006a1dcdda4a1fbe8",
+      "inspection_note": "Production Flutter widget fixture; fictional backend data."
+    },
+    {
+      "path": "screens/vouchers.png",
+      "width_px": 1080,
+      "height_px": 1920,
+      "sha256": "51a0c55b13efc4b1935667b92c18a065e486bfaee0fb48b69b0b6f1942808da6",
+      "inspection_note": "Production Flutter widget fixture; fictional backend data."
+    },
+    {
+      "path": "screens/web-preview-error.png",
+      "width_px": 1080,
+      "height_px": 1920,
+      "sha256": "c805048857741a25f2ed7255c792f393307869a0156a0c2667f77d11713bdd4e",
+      "inspection_note": "Production Flutter widget fixture; fictional backend data."
+    },
+    {
+      "path": "screens/whatsapp-preferences.png",
+      "width_px": 1080,
+      "height_px": 1920,
+      "sha256": "83dd65d23e2a10b9cb3ad7d8cb8942cc6a5cd94907b41bfa158172f8bbb92d57",
+      "inspection_note": "Production Flutter widget fixture; fictional backend data."
+    }
+  ],
+  "limitations": [
+    "Android 15 x86_64 emulator with software GPU in profile AOT; frame timings are not physical-device smoothness or 60 fps certification.",
+    "Metrics cover mounts, scrolling and selected UI actions, not network latency or production cold startup.",
+    "The splash capture has a blank wordmark pill and does not verify completed splash branding; the countdown screenshot catches a live digit crossfade. The native OTP capture is empty and alone does not establish digit centering.",
+    "Local example dialogs were exercised; live administrator tutorial configuration and external video playback were not exercised by this native fixture.",
+    "413 control-node observations include nested Button/InkWell duplicates and disabled nodes; these are not 413 unique business-action clicks.",
+    "No real signup/login, email or phone OTP delivery, payment, account mutation or actual email API request was submitted in the native fixture.",
+    "Background notification appearance used the actual Firebase Android notification builder locally after backgrounding the app. FCM transport and terminated/force-stopped receipt were not tested.",
+    "Fictional backend fixtures intentionally block unsupported operations; trusted-device and thumbnail-generation network-boundary fallbacks do not verify live backend behavior."
+  ]
+}

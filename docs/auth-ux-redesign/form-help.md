@@ -27,6 +27,12 @@ All three rows were seeded and read back successfully. Their values are currentl
 
 The same four dialogs were captured in Arabic and Badini: **24 cases total**, zero layout exceptions, dialog bounds checked against the viewport. Tall images scroll. [All geometry and image hashes](help-measurements.json).
 
-Eight behavior tests cover scoped GET-only configuration lookup, unsafe URL rejection, local example opening at both sizes, input retention, bundled page images, repeated taps, unpublished links and disposal while awaiting a response. The complete suite contains 859 passing tests.
+Eight behavior tests cover scoped GET-only configuration lookup, unsafe URL rejection, local example opening at both sizes, input retention, bundled page images, repeated taps, unpublished links and disposal while awaiting a response. The complete Flutter suite passed **880 tests**; its final log ends with `+880: All tests passed!`.
+
+The suite also covers OTP entry and paste using Arabic-Indic (`١٢٣٤٥٦`), Eastern Arabic (`۱۲۳۴۵۶`), ASCII and mixed numerals. Input is normalized to ASCII for submission; the five added cases check that prior digits survive a partial paste and that a rebuild preserves the code without repeating the completion callback.
+
+Reward claims, voucher-code claims and assigned-voucher activation now share a minimum height of **48 dp** and the **18 dp** control-radius token. Existing tasks/vouchers captures passed all 12 locale/viewport combinations, and all six voucher combinations passed again after the assigned-voucher adjustment. Both voucher controls measured 48 dp at normal text size; at 2× text they grew to 67 dp and 59 dp without layout exceptions. The task-reward claim has the same constraints in code, but the current task fixture has no completed reward, so that branch was not measured in these captures.
+
+These screen and button checks use controlled fixtures and cover the exercised states; they do not certify every business transaction or smooth animation on physical devices. The Android runtime passed 36 cases and captured the production example dialogs; [native evidence and performance limits](native/README.md).
 
 The requested TikTok thumbnail preview is a feasibility question, not a feature added by this change. TikTok's public oEmbed response can provide `thumbnail_url` for available public videos; private/deleted/unavailable videos need a fallback. See https://developers.tiktok.com/doc/embed-videos/.
