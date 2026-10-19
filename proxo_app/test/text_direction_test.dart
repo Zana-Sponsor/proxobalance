@@ -53,6 +53,9 @@ void main() {
     await (FontLoader('Rabar')
           ..addFont(rootBundle.load('assets/fonts/Rabar_021.ttf')))
         .load();
+    await (FontLoader(ReceiptTokens.fontFamily)
+          ..addFont(rootBundle.load(ReceiptTokens.fontAsset)))
+        .load();
     await (FontLoader('MaterialIcons')
           ..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf')))
         .load();
@@ -176,7 +179,9 @@ void main() {
       expect(
           shared.getDryBaseline(shared.constraints, TextBaseline.alphabetic),
           closeTo(
-              native.getDryBaseline(native.constraints, TextBaseline.alphabetic)!, 0.01));
+              native.getDryBaseline(
+                  native.constraints, TextBaseline.alphabetic)!,
+              0.01));
     }
   });
 
@@ -272,8 +277,7 @@ void main() {
                   child: ReceiptRows([
                     ReceiptRow(label: 'ناو', value: 'New Ad 2021'),
                     ReceiptRow(label: 'کۆد', value: 'ABC-123'),
-                    ReceiptRow(
-                        label: 'ڕێکەوت', value: '19/09/2026 03:26 PM'),
+                    ReceiptRow(label: 'ڕێکەوت', value: '19/09/2026 03:26 PM'),
                     ReceiptRow(label: 'بڕ', value: '-36,000 د.ع'),
                   ]),
                 ),

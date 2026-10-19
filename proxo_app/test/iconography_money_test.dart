@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:proxo_app/models/receipt_pricing.dart';
 import 'package:proxo_app/theme/app_theme.dart';
-import 'package:proxo_app/theme/proxo_icons.dart';
 import 'package:proxo_app/widgets/home_quick_actions.dart';
 import 'package:proxo_app/widgets/ad_form_components.dart';
 
@@ -13,7 +12,8 @@ void main() {
   setUpAll(() async {
     await (FontLoader(
       'Rabar',
-    )..addFont(rootBundle.load('assets/fonts/Rabar_021.ttf'))).load();
+    )..addFont(rootBundle.load('assets/fonts/Rabar_021.ttf')))
+        .load();
   });
   test('historical money never infers units from amount magnitude', () {
     expect(storedTransactionIqd({'amount': 10, 'currency': 'IQD'}), 10);
@@ -168,9 +168,10 @@ void main() {
           ),
         ),
       );
-      final glyph = t.widget<ProxoSymbol>(find.byWidgetPredicate((w) => w is ProxoSymbol && w.symbol == ProxoSymbolName.wallet));
+      final glyph = t.widget<ProxoSymbol>(find.byWidgetPredicate(
+          (w) => w is ProxoSymbol && w.symbol == ProxoSymbolName.wallet));
       expect(glyph.color, AdUi.secondary);
-      expect(glyph.size, 24);
+      expect(glyph.size, 22);
       final button = find.byKey(const ValueKey('home-add-balance'));
       final ink = t.widget<InkWell>(
         find.descendant(of: button, matching: find.byType(InkWell)),

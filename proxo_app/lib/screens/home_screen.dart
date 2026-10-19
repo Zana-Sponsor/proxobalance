@@ -1,5 +1,3 @@
-import 'package:solar_iconkit/solar_iconkit.dart';
-import '../l10n/proxo_strings.dart';
 import 'package:proxo_app/theme/app_locale.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../widgets/proxo_banner.dart';
@@ -17,58 +15,7 @@ import '../widgets/ad_feedback.dart';
 import '../widgets/proxo_popup.dart';
 import '../widgets/best_metrics_home_section.dart';
 import '../widgets/home_quick_actions.dart';
-import '../widgets/ad_form_components.dart';
 import '../main.dart' show supabase, navigatorKey;
-import 'package:proxo_app/widgets/proxo_text.dart';
-
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Design tokens
-// ─────────────────────────────────────────────────────────────────────────────
-
-const Color kProxoBlue   = AppColors.accent;
-const Color _kBannerTop  = AppColors.accent;
-const Color _kBannerBot  = AppColors.accent;
-const Color _kDeltaUp    = Color(0xFF74F96E);
-const Color _kDeltaDown  = Color(0xFFFFC0B4);
-const Color _kBannerInk  = AppColors.ink;
-
-const Color _kPageBg = Colors.white;
-
-const double _kRefContentW = 398.0;
-
-double _scaleFor(double contentWidth) =>
-    (contentWidth / _kRefContentW).clamp(0.86, 1.06);
-
-const TextStyle _kBase =
-    TextStyle(fontFamily: kAppFont, decoration: TextDecoration.none);
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Formatting helpers
-// ─────────────────────────────────────────────────────────────────────────────
-
-num? _asNum(dynamic v) {
-  if (v == null) return null;
-  if (v is num) return v;
-  if (v is String) return num.tryParse(v.trim());
-  return null;
-}
-
-String _grouped(int n) {
-  final s = n.abs().toString();
-  final b = StringBuffer();
-  for (var i = 0; i < s.length; i++) {
-    if (i > 0 && (s.length - i) % 3 == 0) b.write(',');
-    b.write(s[i]);
-  }
-  return '${n < 0 ? '-' : ''}$b';
-}
-
-String _money(double v) {
-  final cents = (v.abs() * 100).round();
-  final frac = (cents % 100).toString().padLeft(2, '0');
-  return '${v < 0 ? '-' : ''}\$${_grouped(cents ~/ 100)}.$frac';
-}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // HomeScreen
@@ -112,20 +59,10 @@ class _HomeScreenState extends State<HomeScreen>
   final GlobalKey<BestMetricsHomeSectionState> _bestMetricsKey =
       GlobalKey<BestMetricsHomeSectionState>();
 
-  static const String _kDashColumns =
-      'id,title,status,spend,prev_spend,clicks,impressions,'
-      'prev_impressions,conversions,budget,total_budget,'
-      'tiktok_ad_id,created_at,start_date,end_date,'
-      'thumbnail_url,feedback_rating,feedback_at';
-
-  static const List<String> kRanges = <String>[
-    'Today',
-    'Last 7 days',
-    'Last 30 days',
-    'All time',
-  ];
-
-  String _range = 'Last 7 days';
+  // The removed overview no longer needs campaign totals. Keep the small
+  // feedback query because completed adverts must still be rateable on Home.
+  static const String _kFeedbackColumns =
+      'id,title,status,thumbnail_url,feedback_rating,feedback_at,created_at';
 
   List<Map<String, dynamic>> _ads = const [];
   bool _feedbackDialogOpen = false;
@@ -175,7 +112,8 @@ class _HomeScreenState extends State<HomeScreen>
     _startFeedbackRealtime();
     _startPopupRealtime();
     unawaited(_maybeShowAdminPopup());
-    WidgetsBinding.instance.addPostFrameCallback((_) => _maybeAskNotifPermission());
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => _maybeAskNotifPermission());
   }
 
   @override
@@ -321,8 +259,9 @@ class _HomeScreenState extends State<HomeScreen>
       } else {
         final s = await FirebaseMessaging.instance.getNotificationSettings();
         final isDenied = s.authorizationStatus == AuthorizationStatus.denied;
-        final isGranted = s.authorizationStatus == AuthorizationStatus.authorized ||
-                          s.authorizationStatus == AuthorizationStatus.provisional;
+        final isGranted =
+            s.authorizationStatus == AuthorizationStatus.authorized ||
+                s.authorizationStatus == AuthorizationStatus.provisional;
         if (isDenied) return;
         if (isGranted) return;
       }
@@ -338,7 +277,8 @@ class _HomeScreenState extends State<HomeScreen>
           provisional: false,
         );
         if (requested.authorizationStatus != AuthorizationStatus.authorized &&
-            requested.authorizationStatus != AuthorizationStatus.provisional) return;
+            requested.authorizationStatus != AuthorizationStatus.provisional)
+          return;
       }
       if (!mounted) return;
       final token = await FirebaseMessaging.instance.getToken();
@@ -389,18 +329,16 @@ class _HomeScreenState extends State<HomeScreen>
     try {
       final res = await supabase
           .from('pa_ads')
-          .select(_kDashColumns)
+          .select(_kFeedbackColumns)
           .eq('user_id', owner)
           .order('created_at', ascending: false);
       if (!mounted || supabase.auth.currentUser?.id != owner) return;
       final List<Map<String, dynamic>> rows =
           List<Map<String, dynamic>>.from(res as List? ?? const []);
-      setState(() {
-        _ads = rows;
-      });
+      _ads = rows;
       if (widget.isActive) unawaited(_maybePromptForFeedback(rows));
     } catch (e) {
-      debugPrint('HomeScreen: dashboard fetch failed: $e');
+      debugPrint('HomeScreen: feedback fetch failed: $e');
     }
   }
 
@@ -453,10 +391,9 @@ class _HomeScreenState extends State<HomeScreen>
       );
       if (!mounted || rating == null) return;
 
-      // Feedback does not affect any visible dashboard total. Patch the warm
-      // list without rebuilding the whole Home screen.
-      final int index = _ads.indexWhere((Map<String, dynamic> ad) =>
-          (ad['id'] ?? '').toString() == adId);
+      // Patch the warm feedback list without rebuilding the Home layout.
+      final int index = _ads.indexWhere(
+          (Map<String, dynamic> ad) => (ad['id'] ?? '').toString() == adId);
       if (index >= 0) {
         _ads = List<Map<String, dynamic>>.from(_ads)
           ..[index] = <String, dynamic>{
@@ -470,43 +407,6 @@ class _HomeScreenState extends State<HomeScreen>
     }
   }
 
-  Duration? _rangeSpan() {
-    switch (_range) {
-      case 'Today':        return const Duration(days: 1);
-      case 'Last 7 days':  return const Duration(days: 7);
-      case 'Last 30 days': return const Duration(days: 30);
-      default:             return null;
-    }
-  }
-
-  DateTime? _createdAt(Map<String, dynamic> ad) =>
-      DateTime.tryParse(ad['created_at']?.toString() ?? '')?.toLocal();
-
-  _Totals _totalsIn(DateTime? from, DateTime? to) {
-    var spend = 0.0;
-    var clicks = 0, impressions = 0, conversions = 0;
-    for (final ad in _ads) {
-      if (from != null || to != null) {
-        final at = _createdAt(ad);
-        if (at == null) continue;
-        if (from != null && at.isBefore(from)) continue;
-        if (to != null && !at.isBefore(to)) continue;
-      }
-      spend += (_asNum(ad['prev_spend'])?.toDouble() ?? 0) +
-               (_asNum(ad['spend'])?.toDouble() ?? 0);
-      clicks += _asNum(ad['clicks'])?.toInt() ?? 0;
-      impressions += (_asNum(ad['prev_impressions'])?.toInt() ?? 0) +
-                     (_asNum(ad['impressions'])?.toInt() ?? 0);
-      conversions += _asNum(ad['conversions'])?.toInt() ?? 0;
-    }
-    return _Totals(
-      spend: spend,
-      clicks: clicks,
-      impressions: impressions,
-      conversions: conversions,
-    );
-  }
-
   Future<void> _refresh() async {
     await Future.wait(<Future<void>>[
       _loadAds(),
@@ -517,48 +417,55 @@ class _HomeScreenState extends State<HomeScreen>
   Future<void> _openBannerTarget(String target) async {
     final route = target.trim();
     switch (route) {
-      case 'create': case '/create': widget.onCreateTap?.call(); return;
-      case 'deposit': case '/deposit': case 'wallet': case '/wallet':
-        widget.onAddBalanceTap?.call(); return;
-      case 'tools': case '/tools': case 'assets': case '/assets':
-        widget.onToolsTap?.call(); return;
-      case 'create-page': widget.onCreatePageTap?.call(); return;
-      case 'faq': case '/faq': widget.onFaqTap?.call(); return;
-      case '/my-ads': case '/notifications': case '/profile':
-      case '/transactions': case '/coupons':
-        await Navigator.of(context).pushNamed(route); return;
+      case 'create':
+      case '/create':
+        widget.onCreateTap?.call();
+        return;
+      case 'deposit':
+      case '/deposit':
+      case 'wallet':
+      case '/wallet':
+        widget.onAddBalanceTap?.call();
+        return;
+      case 'tools':
+      case '/tools':
+      case 'assets':
+      case '/assets':
+        widget.onToolsTap?.call();
+        return;
+      case 'create-page':
+        widget.onCreatePageTap?.call();
+        return;
+      case 'faq':
+      case '/faq':
+        widget.onFaqTap?.call();
+        return;
+      case '/my-ads':
+      case '/notifications':
+      case '/profile':
+      case '/transactions':
+      case '/coupons':
+        await Navigator.of(context).pushNamed(route);
+        return;
     }
     final uri = Uri.tryParse(route);
     if (uri != null && uri.scheme == 'https' && uri.host.isNotEmpty) {
-      try { if (await launchUrl(uri, mode: LaunchMode.externalApplication)) return; } catch (_) {}
+      try {
+        if (await launchUrl(uri, mode: LaunchMode.externalApplication)) return;
+      } catch (_) {}
     }
-    if (mounted) ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('ئەم بەستەرە بەردەست نییە')));
-  }
-
-  void _onRangeChanged(String r) {
-    if (r == _range) return;
-    setState(() => _range = r);
+    if (mounted)
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('ئەم بەستەرە بەردەست نییە')));
   }
 
   @override
   Widget build(BuildContext context) {
     ProxoLocale.watch(context);
-    final width = MediaQuery.sizeOf(context).width;
-    final s = _scaleFor(width - 32);
-
-    final span = _rangeSpan();
-    final now = DateTime.now();
-    final from = span == null ? null : now.subtract(span);
-    final current = _totalsIn(from, null);
-    final previous = span == null
-        ? const _Totals.zero()
-        : _totalsIn(now.subtract(span * 2), from);
-
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: _kPageBg,
+        backgroundColor: Colors.white,
         appBar: ProxoTopBar(
           topPadding: MediaQuery.of(context).padding.top,
           onMenuTap: widget.onMenuTap,
@@ -580,62 +487,43 @@ class _HomeScreenState extends State<HomeScreen>
                 controller: _scrollCtrl,
                 physics: const AlwaysScrollableScrollPhysics(
                     parent: BouncingScrollPhysics()),
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    _Reveal(animation: _aBanner,
-                      child: RepaintBoundary(child: ProxoBanner(
-                        onStart: widget.onCreateTap, onNavigate: _openBannerTarget))),
-                    const SizedBox(height: AdUi.sectionGap),
-                    _Reveal(
-                      animation: _aActions,
-                      child: RepaintBoundary(
-                        child: HomeQuickActions(
-                          onCreateTap: widget.onCreateTap,
-                          onAddBalanceTap: widget.onAddBalanceTap,
-                          onToolsTap: widget.onToolsTap,
-                          onCreatePageTap: widget.onCreatePageTap,
-                          onFaqTap: widget.onFaqTap,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: AdUi.sectionGap),
-                    _Reveal(
-                      animation: _aWeekly,
-                      child: RepaintBoundary(
-                        child: BestMetricsHomeSection(key: _bestMetricsKey),
-                      ),
-                    ),
-                    const SizedBox(height: AdUi.sectionGap),
-                    ExpansionTile(
-                      title: ProxoText('پوختەی ڕیکلامەکان', translate: true, style: AdUi.heading(context)),
+                padding: const EdgeInsets.fromLTRB(20, 20, 20, 32),
+                child: Align(
+                  alignment: Alignment.topCenter,
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 600),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                    _Reveal(
-                      animation: _aBanner,
-                      child: RepaintBoundary(
-                        child: ProxoOverviewBanner(
-                          scale: s,
-                          range: _range,
-                          ranges: kRanges,
-                          onRangeChanged: _onRangeChanged,
-                          spend: current.spend,
-                          clicks: current.clicks,
-                          conversions: current.conversions,
-                          ctr: current.ctr,
-                          spendDelta: current.deltaOf(previous.spend, current.spend),
-                          clicksDelta: current.deltaOf(
-                              previous.clicks.toDouble(), current.clicks.toDouble()),
-                          conversionsDelta: current.deltaOf(
-                              previous.conversions.toDouble(),
-                              current.conversions.toDouble()),
-                          ctrDelta: current.deltaOf(previous.ctr, current.ctr),
+                        _Reveal(
+                            animation: _aBanner,
+                            child: RepaintBoundary(
+                                child: ProxoBanner(
+                                    onStart: widget.onCreateTap,
+                                    onNavigate: _openBannerTarget))),
+                        const SizedBox(height: 24),
+                        _Reveal(
+                          animation: _aActions,
+                          child: RepaintBoundary(
+                            child: HomeQuickActions(
+                              onCreateTap: widget.onCreateTap,
+                              onAddBalanceTap: widget.onAddBalanceTap,
+                              onToolsTap: widget.onToolsTap,
+                              onCreatePageTap: widget.onCreatePageTap,
+                              onFaqTap: widget.onFaqTap,
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
+                        const SizedBox(height: 24),
+                        _Reveal(
+                          animation: _aWeekly,
+                          child: RepaintBoundary(
+                            child: BestMetricsHomeSection(key: _bestMetricsKey),
+                          ),
+                        ),
                       ],
                     ),
-                  ],
+                  ),
                 ),
               ),
             ),
@@ -643,33 +531,6 @@ class _HomeScreenState extends State<HomeScreen>
         ),
       ),
     );
-  }
-}
-
-class _Totals {
-  final double spend;
-  final int clicks;
-  final int impressions;
-  final int conversions;
-
-  const _Totals({
-    required this.spend,
-    required this.clicks,
-    required this.impressions,
-    required this.conversions,
-  });
-
-  const _Totals.zero()
-      : spend = 0,
-        clicks = 0,
-        impressions = 0,
-        conversions = 0;
-
-  double get ctr => impressions > 0 ? clicks / impressions * 100 : 0;
-
-  double? deltaOf(double before, double after) {
-    if (before <= 0) return after > 0 ? null : 0;
-    return (after - before) / before * 100;
   }
 }
 
@@ -689,115 +550,4 @@ class _Reveal extends StatelessWidget {
           child: child,
         ),
       );
-}
-
-class ProxoOverviewBanner extends StatelessWidget {
-  final double scale;
-  final String range;
-  final List<String> ranges;
-  final ValueChanged<String> onRangeChanged;
-  final double spend;
-  final int clicks;
-  final int conversions;
-  final double ctr;
-  final double? spendDelta;
-  final double? clicksDelta;
-  final double? conversionsDelta;
-  final double? ctrDelta;
-
-  const ProxoOverviewBanner({
-    super.key,
-    required this.scale,
-    required this.range,
-    required this.ranges,
-    required this.onRangeChanged,
-    required this.spend,
-    required this.clicks,
-    required this.conversions,
-    required this.ctr,
-    this.spendDelta,
-    this.clicksDelta,
-    this.conversionsDelta,
-    this.ctrDelta,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    ProxoLocale.watch(context);
-    final metrics = [
-      ('تێچوو', _money(spend), spendDelta, SolarIcons.dollarMinimalistic),
-      ('کرتەکان', _grouped(clicks), clicksDelta, SolarIcons.cursorSquare),
-      ('کرداری سەرکەوتوو', _grouped(conversions), conversionsDelta, SolarIcons.target),
-      ('ڕێژەی کرتە', '${ctr.toStringAsFixed(2)}%', ctrDelta, SolarIcons.arrowRightUp),
-    ];
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: AppColors.accent,
-        borderRadius: BorderRadius.circular(18)),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        Wrap(alignment: WrapAlignment.spaceBetween, crossAxisAlignment: WrapCrossAlignment.center,
-          spacing: 12, runSpacing: 10, children: [
-            const ProxoText('پوختەی ڕیکلامەکان', translate: true,
-              style: TextStyle(fontFamily: kAppFont, fontSize: 16, height: 1.5, color: Colors.white)),
-            _RangePill(scale: 1, label: range, ranges: ranges, onSelected: onRangeChanged),
-          ]),
-        const SizedBox(height: 16),
-        LayoutBuilder(builder: (context, constraints) {
-          final columns = constraints.maxWidth < 300 || MediaQuery.textScalerOf(context).scale(14) > 21 ? 1 : 2;
-          final width = (constraints.maxWidth - (columns-1)*12) / columns;
-          return Wrap(spacing: 12, runSpacing: 12, children: [for (final metric in metrics)
-            SizedBox(width: width, child: Container(
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(color: Colors.white.withValues(alpha: .12),
-                borderRadius: BorderRadius.circular(14)),
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Row(children: [SolarIcon(metric.$4, style: SolarIconStyle.linear, size: 22, color: Colors.white),
-                  const SizedBox(width: 8),
-                  Expanded(child: ProxoText(metric.$1, translate: true,
-                    style: const TextStyle(fontFamily:kAppFont,fontSize:13,height:1.5,color:Colors.white)))]),
-                const SizedBox(height: 10),
-                ProxoText(metric.$2, textDirection: TextDirection.ltr,
-                  style: const TextStyle(fontFamily:kAppFont,fontSize:21,height:1.3,color:Colors.white)),
-                const SizedBox(height: 6),
-                ProxoText(metric.$3 == null ? '—' : '${metric.$3! >= 0 ? '+' : ''}${metric.$3!.toStringAsFixed(1)}%',
-                  textDirection:TextDirection.ltr,
-                  style: const TextStyle(fontFamily:kAppFont,fontSize:12,height:1.5,color:Colors.white)),
-              ])))]);
-        }),
-      ]),
-    );
-  }
-}
-
-String _rangeLabel(String value) => ProxoStrings.text(switch(value) {
-  'Today' => 'ئەمڕۆ',
-  'Last 7 days' => '٧ ڕۆژی ڕابردوو',
-  'Last 30 days' => '٣٠ ڕۆژی ڕابردوو',
-  'All time' => 'هەموو کاتەکان',
-  _ => value,
-});
-
-class _RangePill extends StatelessWidget {
-  const _RangePill({required this.scale,required this.label,required this.ranges,required this.onSelected});
-  final double scale;
-  final String label;
-  final List<String> ranges;
-  final ValueChanged<String> onSelected;
-  @override Widget build(BuildContext context) {
-    ProxoLocale.watch(context);
-    return PopupMenuButton<String>(
-      tooltip: ProxoStrings.text('ماوە هەڵبژێرە'), onSelected:onSelected,
-      itemBuilder: (_) => [for(final range in ranges) PopupMenuItem<String>(
-        value:range, height:48, child:ProxoText(_rangeLabel(range)))],
-      child: Semantics(button:true,label:_rangeLabel(label),
-        child: Container(constraints:const BoxConstraints(minHeight:48),
-          padding:const EdgeInsets.symmetric(horizontal:12,vertical:10),
-          decoration:BoxDecoration(color:Colors.white,borderRadius:BorderRadius.circular(12)),
-          child:Row(mainAxisSize:MainAxisSize.min,children:[
-            Flexible(child:ProxoText(_rangeLabel(label),style:const TextStyle(fontSize:13,height:1.5,color:AppColors.accent))),
-            const SizedBox(width:8),
-            const SolarIcon(SolarIcons.altArrowDown,style:SolarIconStyle.linear,size:18,color:AppColors.accent),
-          ]))),
-    );
-  }
 }

@@ -450,7 +450,7 @@ class MainShellState extends State<MainShell> with WidgetsBindingObserver {
           //     دەستیان لێنەدراوە، و «دواوە» دەگەڕێتەوە سەر پەڕەی سەرەکی.
           onToolsTap:  () => _onTabTap(3),
           onCreatePageTap: () => Navigator.of(context).push(
-            ProxoPageRoute<void>(builder: (_) => const ToolsScreen(initialCreate: true))),
+            ProxoPageRoute<void>(builder: (_) => const ToolsScreen())),
           onFaqTap:    () => Navigator.of(context).push(
                 ProxoPageRoute<void>(builder: (_) => const FaqScreen()),
               ),
@@ -493,7 +493,7 @@ class MainShellState extends State<MainShell> with WidgetsBindingObserver {
           onGoToAds:   () => _onTabTap(1),
           onToolsTap:  () => _onTabTap(3),
           onCreatePageTap: () => Navigator.of(context).push(
-            ProxoPageRoute<void>(builder: (_) => const ToolsScreen(initialCreate: true))),
+            ProxoPageRoute<void>(builder: (_) => const ToolsScreen())),
           onFaqTap:    () => Navigator.of(context).push(
                 ProxoPageRoute<void>(builder: (_) => const FaqScreen()),
               ),
@@ -547,7 +547,6 @@ class MainShellState extends State<MainShell> with WidgetsBindingObserver {
                 currentIndex: _tabIndex,
                 onClose: _closeSidebar,
                 onNavigate: (page) {
-                  _closeSidebar();
                   if (page == 'home')      _switchTab(0);
                   if (page == 'ads')       _switchTab(1);
                   if (page == 'tools')     _switchTab(3);
@@ -555,10 +554,8 @@ class MainShellState extends State<MainShell> with WidgetsBindingObserver {
                 },
               ),
             ),
-            // ⚠ `Drawer` نییە بەڵکو ڕاستەوخۆ `ProxoSidebar`ە: پانێڵەکە
-            // خۆی `Container(width: …)` + `Material` + سێبەری خۆی هەیە،
-            // بۆیە لفەکردنی بە `Drawer` دوو ڕوو و دوو سێبەری لەسەر یەک
-            // دادەنا. `DrawerController` هیچ پانییەکی ناسەپێنێت.
+            // ProxoSidebar owns its bounded width and safe-area layout;
+            // Scaffold's DrawerController owns the scrim and closing motion.
             // Kept-alive tab state with the shared short arrival transition.
             body: Directionality(
               textDirection: TextDirection.rtl,

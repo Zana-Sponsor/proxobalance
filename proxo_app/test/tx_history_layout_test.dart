@@ -85,7 +85,7 @@ void main() {
   HistoryPaintBinding();
   setUpAll(() async {
     await (FontLoader(ReceiptTokens.fontFamily)
-          ..addFont(rootBundle.load('assets/fonts/Rabar_021.ttf')))
+          ..addFont(rootBundle.load(ReceiptTokens.fontAsset)))
         .load();
     await (FontLoader('MaterialIcons')
           ..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf')))
@@ -103,7 +103,9 @@ void main() {
         await tester.pumpWidget(historyHost(scale: scale));
         await tester.pumpAndSettle();
         expect(tester.takeException(), isNull);
-        expect(tester.widget<Scaffold>(find.byType(Scaffold)).bottomNavigationBar, isNull);
+        expect(
+            tester.widget<Scaffold>(find.byType(Scaffold)).bottomNavigationBar,
+            isNull);
         final l = TxStrings.of(const Locale('ckb'));
         final title = find.text(l.historyTitle);
         final back = find.byTooltip(l.back);
@@ -133,7 +135,7 @@ void main() {
           ...[texts.at(0), texts.at(1), texts.at(2)]
         ]) {
           final style = tester.widget<Text>(finder).style!;
-          expect(style.fontFamily, 'Rabar');
+          expect(style.fontFamily, ReceiptTokens.fontFamily);
           expect(style.fontWeight, FontWeight.w400);
         }
       });

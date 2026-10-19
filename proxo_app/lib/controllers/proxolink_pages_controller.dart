@@ -47,7 +47,11 @@ class ProxoLinkPagesController extends ChangeNotifier {
   Future<void> refresh() async {
     if (_disposed) return;
     final revision = ++_revision, owner = repository.ownerScope;
-    if (_scope != owner) { _scope = owner; _pages = []; busy.clear(); }
+    if (_scope != owner) {
+      _scope = owner;
+      _pages = [];
+      busy.clear();
+    }
     _poll?.cancel();
     loading = true;
     error = null;
@@ -69,8 +73,12 @@ class ProxoLinkPagesController extends ChangeNotifier {
           unique[page.id] = page;
       }
       final previous = {for (final p in _pages) p.id: p};
-      changedIds = unique.keys.where((id) => previous[id] == null ||
-        jsonEncode(previous[id]!.toJson()) != jsonEncode(unique[id]!.toJson())).toSet();
+      changedIds = unique.keys
+          .where((id) =>
+              previous[id] == null ||
+              jsonEncode(previous[id]!.toJson()) !=
+                  jsonEncode(unique[id]!.toJson()))
+          .toSet();
       for (final id in unique.keys.toList()) {
         if (!changedIds.contains(id)) unique[id] = previous[id]!;
       }
@@ -83,9 +91,8 @@ class ProxoLinkPagesController extends ChangeNotifier {
       }
     } catch (e) {
       if (_disposed || revision != _revision) return;
-      error = e is ProxoLinkFailure
-          ? e
-          : const ProxoLinkFailure('network_error');
+      error =
+          e is ProxoLinkFailure ? e : const ProxoLinkFailure('network_error');
       if (owner != repository.ownerScope || error!.code == 'unauthorized')
         _pages = [];
       loading = false;
@@ -101,9 +108,13 @@ class ProxoLinkPagesController extends ChangeNotifier {
     _poll?.cancel();
     _pages = [page, ..._pages.where((p) => p.id != page.id)]
       ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    changedIds = {page.id};
     loading = false;
     error = null;
     _notify();
+    if (_pages.any((p) => p.publishStatus == 'creating')) {
+      _poll = Timer(const Duration(seconds: 5), refresh);
+    }
   }
 
   Future<void> manage(ProxoCard page, String action) async {

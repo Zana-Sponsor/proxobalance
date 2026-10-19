@@ -21,10 +21,10 @@ Widget responsiveHost(
   double scale,
   EdgeInsets padding, {
   double keyboard = 0,
-}) => MaterialApp(
-  theme: buildAppTheme(),
-  builder:
-      (context, child) => MediaQuery(
+}) =>
+    MaterialApp(
+      theme: buildAppTheme(),
+      builder: (context, child) => MediaQuery(
         data: MediaQuery.of(context).copyWith(
           textScaler: TextScaler.linear(scale),
           padding: padding,
@@ -33,8 +33,8 @@ Widget responsiveHost(
         ),
         child: child!,
       ),
-  home: RepaintBoundary(key: capture, child: child),
-);
+      home: RepaintBoundary(key: capture, child: child),
+    );
 
 void expectVisibleTextFits(WidgetTester tester) {
   final size = tester.view.physicalSize / tester.view.devicePixelRatio;
@@ -66,9 +66,14 @@ void main() {
   AdPaintBinding();
   setUpAll(() async {
     await (FontLoader('Rabar')
-      ..addFont(rootBundle.load('assets/fonts/Rabar_021.ttf'))).load();
+          ..addFont(rootBundle.load('assets/fonts/Rabar_021.ttf')))
+        .load();
+    await (FontLoader(ReceiptTokens.fontFamily)
+          ..addFont(rootBundle.load(ReceiptTokens.fontAsset)))
+        .load();
     await (FontLoader('MaterialIcons')
-      ..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf'))).load();
+          ..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf')))
+        .load();
   });
   const scenarios = [
     (Size(240, 480), 1.0, 1.0, EdgeInsets.zero),
@@ -295,9 +300,8 @@ void main() {
     tester.view.physicalSize = const Size(640, 320);
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
-    final repo =
-        TestAdRepository()
-          ..failure = const AdSubmissionFailure('INSUFFICIENT_BALANCE');
+    final repo = TestAdRepository()
+      ..failure = const AdSubmissionFailure('INSUFFICIENT_BALANCE');
     final request = AdPendingSubmission.create(
       validDraft(),
       const AdQuote(grossUsd: 10, costUsd: 10, rate: 1800),
@@ -341,9 +345,12 @@ void main() {
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
     await tester.pumpWidget(responsiveHost(
-        AdCreateScreen(repository: TestAdRepository(),
-            proxoCard: validDraft(goal: 'messages', asset: 'contact-1').toJson()),
-        1, const EdgeInsets.only(top: 24, bottom: 20)));
+        AdCreateScreen(
+            repository: TestAdRepository(),
+            proxoCard:
+                validDraft(goal: 'messages', asset: 'contact-1').toJson()),
+        1,
+        const EdgeInsets.only(top: 24, bottom: 20)));
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
     await capturePng(tester, 'docs/create_ad_tablet_preview.png');
@@ -356,8 +363,10 @@ void main() {
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
     final repo = TestAdRepository();
-    await tester.pumpWidget(responsiveHost(AdCreateScreen(repository: repo,
-        proxoCard: validDraft().toJson()), 1, EdgeInsets.zero));
+    await tester.pumpWidget(responsiveHost(
+        AdCreateScreen(repository: repo, proxoCard: validDraft().toJson()),
+        1,
+        EdgeInsets.zero));
     await tester.pumpAndSettle();
     final code = find.byKey(const ValueKey('ad-code'));
     final category = find.byType(DropdownButtonFormField<String>).first;
@@ -375,7 +384,8 @@ void main() {
     await tester.drag(duration, const Offset(90, 0));
     await tester.pumpAndSettle();
     expect(repo.lastQuoteDraft!.days, greaterThan(1));
-    final quote = tester.widget<AdPriceDetails>(find.byType(AdPriceDetails)).quote;
+    final quote =
+        tester.widget<AdPriceDetails>(find.byType(AdPriceDetails)).quote;
     expect(quote.grossUsd,
         repo.lastQuoteDraft!.dailyBudget * repo.lastQuoteDraft!.days);
     expect(tester.takeException(), isNull);
@@ -386,11 +396,13 @@ void main() {
     tester.view.physicalSize = const Size(320, 568);
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
-    await tester.pumpWidget(responsiveHost(AdConfirmationScreen(
-        request: AdPendingSubmission.create(validDraft(),
-            const AdQuote(grossUsd: 10, costUsd: 10, rate: 1800)),
-        repository: TestAdRepository()),
-        3, const EdgeInsets.only(top: 24, bottom: 16)));
+    await tester.pumpWidget(responsiveHost(
+        AdConfirmationScreen(
+            request: AdPendingSubmission.create(validDraft(),
+                const AdQuote(grossUsd: 10, costUsd: 10, rate: 1800)),
+            repository: TestAdRepository()),
+        3,
+        const EdgeInsets.only(top: 24, bottom: 16)));
     await tester.pump(const Duration(milliseconds: 300));
     expect(tester.takeException(), isNull);
     expectVisibleTextFits(tester);

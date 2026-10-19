@@ -26,7 +26,7 @@ void main() {
   ReceiptPaintBinding();
   setUpAll(() async {
     final loader = FontLoader(ReceiptTokens.fontFamily)
-      ..addFont(rootBundle.load('assets/fonts/Rabar_021.ttf'));
+      ..addFont(rootBundle.load(ReceiptTokens.fontAsset));
     await loader.load();
   });
   for (final transaction in [false, true]) {
@@ -130,20 +130,22 @@ void main() {
         } else {
           expect(find.text(receipt.adId), findsOneWidget);
           expect(find.text(receipt.uid), findsOneWidget);
-          expect(receiptPaintedRect(tester, find.text(receipt.uid)).top,
-              greaterThan(receiptPaintedRect(tester, find.text(receipt.adName)).bottom));
+          expect(
+              receiptPaintedRect(tester, find.text(receipt.uid)).top,
+              greaterThan(receiptPaintedRect(tester, find.text(receipt.adName))
+                  .bottom));
         }
         final boundary =
             key.currentContext!.findRenderObject() as RenderRepaintBoundary;
-        final surfaceRect = receiptPaintedRect(tester, find.byType(ReceiptSurface));
+        final surfaceRect =
+            receiptPaintedRect(tester, find.byType(ReceiptSurface));
         final cardRect = receiptPaintedRect(tester, find.byType(ReceiptCard));
         expect(boundary.size.width, narrow ? 280 : 393);
         const factor = 1.0;
-        expect(cardRect.left - surfaceRect.left, closeTo(16 * factor, 0.01));
+        expect(cardRect.left - surfaceRect.left, closeTo(20 * factor, 0.01));
         expect(cardRect.top - surfaceRect.top,
             closeTo(ReceiptTokens.pageTop * factor, 0.01));
-        expect(
-            surfaceRect.bottom - cardRect.bottom,
+        expect(surfaceRect.bottom - cardRect.bottom,
             closeTo(ReceiptTokens.cardToButton * factor, 0.01));
         if (narrow && !transaction) {
           expect(boundary.size.height, greaterThan(500));
@@ -171,6 +173,11 @@ void main() {
           expect(filename,
               transaction ? 'Proxo-$txId.pdf' : 'Proxo-PARZNFHCOKVL.pdf');
           expect(String.fromCharCodes(pdf!.take(5)), '%PDF-');
+          // A normal receipt must not orphan its last identifier on another
+          // A4 page; large-text narrow receipts still paginate without cuts.
+          final pages =
+              RegExp(r'/Type\s*/Page\b').allMatches(latin1.decode(pdf!)).length;
+          expect(pages, narrow ? greaterThan(1) : 1);
           const output = String.fromEnvironment('RECEIPT_PDF_CAPTURE');
           if (output.isNotEmpty) {
             final name = transaction

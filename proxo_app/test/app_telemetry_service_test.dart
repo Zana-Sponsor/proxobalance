@@ -8,6 +8,7 @@ import 'package:http/testing.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:proxo_app/services/app_telemetry_service.dart';
+import 'package:proxo_app/services/account_cache.dart';
 import 'package:proxo_app/services/observed_http_client.dart';
 
 import 'support/session_fixture.dart';
@@ -18,10 +19,12 @@ void main() {
   late AppTelemetryService telemetry;
   final batches = <Map<String, dynamic>>[];
   bool failing = false;
+  Completer<void>? responseGate;
   setUp(() async {
     SharedPreferences.setMockInitialValues({});
     batches.clear();
     failing = false;
+    responseGate = null;
     client = SupabaseClient(
       'https://telemetry.invalid',
       'fixture',
@@ -33,6 +36,7 @@ void main() {
               jsonDecode(request.body)['p_batch'] as Map,
             ),
           );
+          await responseGate?.future;
           return http.Response(
             jsonEncode(
               failing
@@ -129,6 +133,30 @@ void main() {
     },
   );
 
+  test('old logout cleanup cannot clear a newly signed-in account', () async {
+    telemetry.start();
+    telemetry.didChangeAppLifecycleState(AppLifecycleState.resumed);
+    await telemetry.flush();
+    final gate = Completer<void>();
+    responseGate = gate;
+    final oldLogout = telemetry.beforeLogout();
+    await Future<void>.delayed(Duration.zero);
+    await restoreFixture(client, userB);
+    telemetry.event('action', 'new_owner_action');
+    final cache = AppDataCache.forClient(client)..bindOwner();
+    await cache.cache.get('new-owner-value', () async => 'retained');
+    // Leave B's event pending so the old cleanup cannot hide lost telemetry.
+    failing = true;
+    responseGate = null;
+    gate.complete();
+    await oldLogout;
+    await telemetry.flush();
+    expect(telemetry.queuedEvents, 1);
+    expect(cache.cache.length, 1);
+    expect(batches.last['foreground'], isTrue);
+    expect((batches.last['events'] as List).single['code'], 'new_owner_action');
+  });
+
   test(
     'queue is bounded and rejects private route data or malformed events',
     () {
@@ -183,9 +211,9 @@ void main() {
     () async {
       final observer = AppSectionObserver();
       Route<void> route(String name) => MaterialPageRoute<void>(
-        settings: RouteSettings(name: name),
-        builder: (_) => const SizedBox(),
-      );
+            settings: RouteSettings(name: name),
+            builder: (_) => const SizedBox(),
+          );
       final shell = route('/'),
           create = route('/create'),
           dialog = route('/dialog/$userA'),

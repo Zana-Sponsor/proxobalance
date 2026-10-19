@@ -1,62 +1,20 @@
-import 'package:proxo_app/widgets/proxo_symbol.dart';
-// notification_bell.dart
-// بیخەرە ناو:  lib/widgets/notification_bell.dart
-//
-// ── بەکارهێنان لە Topbar ──────────────────────────────────────────────────────
-//
-//   NotificationBell(
-//     onTap: () => Navigator.pushNamed(context, '/notifications'),
-//   )
-//
-//   یان ئەگەر navigatorKey بەکاردەهێنیت:
-//
-//   NotificationBell(
-//     onTap: () => navigatorKey.currentState?.pushNamed('/notifications'),
-//   )
-//
-// ── pubspec.yaml ─────────────────────────────────────────────────────────────
-//   dependencies:
-//     supabase_flutter: ^2.5.6
-//
-// ── Supabase table: pa_notifications ────────────────────────────────────────
-//   user_id  uuid   (= auth.uid())
-//   is_read  bool   (false = نەخوێنراوە)
-//
-// ── کارکردن ──────────────────────────────────────────────────────────────────
-//  • دەستپێک: Supabase query → ژمارەی نەخوێنراوەکان
-//  • Realtime: INSERT + UPDATE لە pa_notifications → ئۆتۆماتیک نوێدەبێتەوە
-//  • ئەگەر count > 99 → "99+" نیشان دەدات
-//  • ئانیمەیشنی pulse (وەک index.html) بۆ badge
-//  • کرتەکردن → onTap دەخوێنێتەوە
-//
-// ── UI ───────────────────────────────────────────────────────────────────────
-//  • زەنگی ساکار (outline) — بێ بۆکس/بۆردەر، وەک top_bar.png
-//  • ڕەنگ: #1C2333 · قەبارە: iconSize (default 26)
-// ─────────────────────────────────────────────────────────────────────────────
-
-import '../services/unread_notification_counter.dart';
-import '../theme/app_theme.dart';
-import 'package:solar_icons/solar_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:proxo_app/widgets/proxo_text.dart';
 
-// ─────────────────────────────────────────────────────────────────────────────
-// NotificationBell  — public widget
-// ─────────────────────────────────────────────────────────────────────────────
+import '../l10n/proxo_strings.dart';
+import '../services/unread_notification_counter.dart';
+import '../theme/app_theme.dart';
+import '../theme/proxo_chrome.dart';
+import 'proxo_symbol.dart';
 
+/// Shares one owner-filtered unread subscription with every drawer and bell.
 class NotificationBell extends StatefulWidget {
-  /// کرتەکردن روو دەکات بەم → بچۆ بەشی ئاگاداریەکان
+  const NotificationBell(
+      {super.key,
+      required this.onTap,
+      this.iconSize = ProxoChrome.toolbarIconSize});
   final VoidCallback onTap;
-
-  /// قەبارەی زەنگ (default 26 — بۆ گونجاندن لەگەڵ top_bar.png)
   final double iconSize;
-
-  const NotificationBell({
-    super.key,
-    required this.onTap,
-    this.iconSize = 26,
-  });
 
   @override
   State<NotificationBell> createState() => _NotificationBellState();
@@ -64,39 +22,20 @@ class NotificationBell extends StatefulWidget {
 
 class _NotificationBellState extends State<NotificationBell>
     with SingleTickerProviderStateMixin {
-
-  static const Color _ink = AppColors.ink; // وەک زەنگ لە reference (re-sampled)
-
-  int _unread = 0;
-
-  // Pulse animation — وەک notifPulse لە CSS
-  late AnimationController _pulse;
-  late Animation<double>    _scale;
-  late Animation<double>    _shadow;
-
   late final UnreadNotificationCounter _counter;
-
-  // ── دەستپێکردن ────────────────────────────────────────────────────────────
+  late final AnimationController _pulse;
+  late final Animation<double> _scale;
+  int _unread = 0;
 
   @override
   void initState() {
     super.initState();
-
     _pulse = AnimationController(
-      vsync:    this,
-      duration: const Duration(milliseconds: 1800),
-    );
-
+        vsync: this, duration: const Duration(milliseconds: 400));
     _scale = TweenSequence<double>([
-      TweenSequenceItem(tween: Tween(begin: 1.0, end: 1.15), weight: 60),
-      TweenSequenceItem(tween: Tween(begin: 1.15, end: 1.0),  weight: 40),
+      TweenSequenceItem(tween: Tween(begin: 1.0, end: 1.08), weight: 50),
+      TweenSequenceItem(tween: Tween(begin: 1.08, end: 1.0), weight: 50),
     ]).animate(CurvedAnimation(parent: _pulse, curve: Curves.easeInOut));
-
-    _shadow = TweenSequence<double>([
-      TweenSequenceItem(tween: Tween(begin: 0.0, end: 4.0), weight: 60),
-      TweenSequenceItem(tween: Tween(begin: 4.0, end: 0.0), weight: 40),
-    ]).animate(CurvedAnimation(parent: _pulse, curve: Curves.easeInOut));
-
     _counter = UnreadNotificationCounter.forClient(Supabase.instance.client);
     _unread = _counter.count.value;
     _counter.count.addListener(_countChanged);
@@ -105,139 +44,87 @@ class _NotificationBellState extends State<NotificationBell>
 
   @override
   void dispose() {
-    _pulse.dispose();
     _counter.count.removeListener(_countChanged);
     _counter.release();
+    _pulse.dispose();
     super.dispose();
   }
 
-  void _countChanged() => _setCount(_counter.count.value);
-
-  // ── count گۆڕین + animation ───────────────────────────────────────────────
-
-  void _setCount(int count) {
-    if (!mounted || count == _unread) return;
-    setState(() => _unread = count);
-
-    if (count > 0 && !MediaQuery.disableAnimationsOf(context)) {
-      // One finite pulse; no idle animation when the badge is unchanged.
-      if (!_pulse.isAnimating) _pulse.forward(from: 0);
+  void _countChanged() {
+    if (!mounted || _unread == _counter.count.value) return;
+    setState(() => _unread = _counter.count.value);
+    if (_unread > 0 && !MediaQuery.disableAnimationsOf(context)) {
+      _pulse.forward(from: 0);
     } else {
-      _pulse.stop();
       _pulse.reset();
     }
   }
 
-  // ── پیشاندانی ژمارە ───────────────────────────────────────────────────────
-
-  String get _label {
-    if (_unread <= 0)  return '';
-    if (_unread >= 99) return '99+';
-    return '$_unread';
+  void _open() {
+    // A second tap during the route transition must not stack notifications.
+    if (!mounted || ModalRoute.of(context)?.isCurrent == false) return;
+    widget.onTap();
   }
-
-  // ── Build ─────────────────────────────────────────────────────────────────
 
   @override
   Widget build(BuildContext context) {
+    final label = ProxoStrings.text('ئاگادارییەکان');
+    final countLabel =
+        ProxoStrings.format('{count} نەخوێندراوە', {'count': _unread});
     return Semantics(
-      button: true, label: 'ئاگادارییەکان؛ $_unread نەخوێندراوە',
-      onTap: widget.onTap, excludeSemantics: true,
-      child: GestureDetector(
-      onTap: widget.onTap,
-      behavior: HitTestBehavior.opaque,
-      child: SizedBox(
-        width: 48,
-        height: 48,
-        child: Stack(
-          clipBehavior: Clip.none,
-          alignment: Alignment.center,
-          children: [
-
-            // ── زەنگی ساکار (بێ بۆکس) ─────────────────────────────────────
-            ProxoSolarIcon(
-              SolarIconsOutline.bell,
-              size:  widget.iconSize,
-              color: _ink,
-            ),
-
-            // ── Badge (نەخوێنراو) ──────────────────────────────────────────
-            if (_unread > 0)
-              // PositionedDirectional, not Positioned: `right` is a PHYSICAL
-              // edge and does not mirror, so under RTL the badge sat on the
-              // bell's inner side pointing at the screen centre. `end` puts it
-              // on the outer corner in both directions.
-              PositionedDirectional(
-                top: 3,
-                end: 1,
-                child: AnimatedBuilder(
-                  animation: _pulse,
-                  builder: (_, child) => Transform.scale(
-                    scale: _scale.value,
-                    child: Container(
-                      constraints: const BoxConstraints(minWidth: 18),
-                      height: 18,
-                      padding: const EdgeInsets.symmetric(horizontal: 4),
-                      decoration: BoxDecoration(
-                        color:        const Color(0xFFDC2626),
-                        borderRadius: BorderRadius.circular(9),
-                        border: Border.all(color: Colors.white, width: 2),
-                        boxShadow: [
-                          BoxShadow(
-                            color:       Color.fromRGBO(220, 38, 38,
-                                         0.35 + _shadow.value * 0.15),
-                            blurRadius:  4 + _shadow.value,
-                            spreadRadius: _shadow.value * 0.3,
-                          ),
-                        ],
-                      ),
-                      child: child,
-                    ),
-                  ),
-                  child: Center(
-                    child: ProxoText(
-                      _label,
-                      style: const TextStyle(
-                        fontFamily:  kAppFont,
-                        fontSize:    9,
-                        fontWeight:  FontWeight.w700,
-                        color:       Colors.white,
-                        height:      1,
-                        letterSpacing: -0.3,
+      button: true,
+      label: '$label؛ $countLabel',
+      onTap: _open,
+      excludeSemantics: true,
+      child: SizedBox.square(
+        key: const ValueKey('notification-bell-target'),
+        dimension: 48,
+        child: IconButton(
+          tooltip: label,
+          onPressed: _open,
+          constraints: const BoxConstraints.tightFor(width: 48, height: 48),
+          padding: EdgeInsets.zero,
+          icon: Stack(
+              clipBehavior: Clip.none,
+              alignment: Alignment.center,
+              children: [
+                const SizedBox.square(dimension: 48),
+                ProxoSymbol(ProxoSymbolName.bell,
+                    size: widget.iconSize, color: AppColors.ink),
+                if (_unread > 0)
+                  PositionedDirectional(
+                    top: 4,
+                    end: 2,
+                    child: ScaleTransition(
+                      scale: _scale,
+                      child: Container(
+                        key: const ValueKey('notification-badge'),
+                        constraints: const BoxConstraints(minWidth: 18),
+                        height: 18,
+                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                            color: const Color(0xFFD92D20),
+                            borderRadius: BorderRadius.circular(9),
+                            border:
+                                Border.all(color: Colors.white, width: 1.5)),
+                        // The full count is announced above. This tiny decorative
+                        // badge stays inside its 48dp target at every text scale.
+                        child: Text(_unread > 99 ? '99+' : '$_unread',
+                            textDirection: TextDirection.ltr,
+                            textScaler: TextScaler.noScaling,
+                            style: const TextStyle(
+                                fontFamily: kAppFont,
+                                fontSize: 9,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.white,
+                                height: 1)),
                       ),
                     ),
                   ),
-                ),
-              ),
-
-          ],
+              ]),
         ),
       ),
-    ));
+    );
   }
 }
-
-// ─────────────────────────────────────────────────────────────────────────────
-// نموونەی بەکارهێنان لە AppBar / Topbar
-// ─────────────────────────────────────────────────────────────────────────────
-//
-//  ProxoTopBar(
-//    onMenuTap:         () => scaffoldKey.currentState?.openDrawer(),
-//    onNotificationTap: () => Navigator.pushNamed(context, '/notifications'),
-//    topPadding:        MediaQuery.of(context).padding.top,
-//  )
-//
-// ─────────────────────────────────────────────────────────────────────────────
-//
-// ── خوێندنەوەی ئاگاداریەکان + نیشاندانی is_read ────────────────────────────
-//
-// کاتێک بەشی ئاگاداریەکان کرایەوە، مارک بکە وەک خوێنراو:
-//
-//   await Supabase.instance.client
-//       .from('pa_notifications')
-//       .update({'is_read': true})
-//       .eq('user_id', uid)
-//       .eq('is_read', false);
-//
-// ئەمە ئۆتۆماتیکی UPDATE event دەنێرێت → badge خۆی نوێ دەبێتەوە بە 0
-// ─────────────────────────────────────────────────────────────────────────────

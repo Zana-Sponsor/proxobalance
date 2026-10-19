@@ -5,6 +5,7 @@ import '../l10n/tx_strings.dart';
 import '../models/receipt_pricing.dart';
 import '../theme/app_locale.dart';
 import '../widgets/receipt/receipt_kit.dart';
+import '../widgets/proxo_symbol.dart';
 
 // ═════════════════════════════════════════════════════════════════════════════
 // TransactionDetailScreen — پسوولەی مامەڵە (Proxo Transaction Detail — V1)
@@ -149,7 +150,8 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
           backgroundColor: ReceiptTokens.page,
           body: Column(
             children: <Widget>[
-              ReceiptAppBar(title: l.detailTitle, translateTitle: false, onBack: _back),
+              ReceiptAppBar(
+                  title: l.detailTitle, translateTitle: false, onBack: _back),
               Expanded(
                 child: SafeArea(
                   top: false,
@@ -203,7 +205,8 @@ class _TxReceiptCard extends StatelessWidget {
   static const TextDirection _ltr = TextDirection.ltr;
 
   String _money(int? v) => v == null ? l.notRecorded : formatIqd(v);
-  String _balance(int? iqd, double? usd) => usd != null ? '${usd.toStringAsFixed(2)} USD' : _money(iqd);
+  String _balance(int? iqd, double? usd) =>
+      usd != null ? '${usd.toStringAsFixed(2)} USD' : _money(iqd);
 
   bool get _free => d.kind == TxReceiptKind.adPayment && d.amountIqd == 0;
 
@@ -284,7 +287,9 @@ class _TxReceiptCard extends StatelessWidget {
     final moneySign = settled ? sign : '';
     final String signedValue = d.amountIqd != null
         ? formatIqd(d.amountIqd!, sign: d.amountIqd == 0 ? '' : moneySign)
-        : d.usd != null ? '$moneySign${d.usd!.toStringAsFixed(2)} USD' : l.amountUnavailable;
+        : d.usd != null
+            ? '$moneySign${d.usd!.toStringAsFixed(2)} USD'
+            : l.amountUnavailable;
 
     final List<Widget?> summaryRows = <Widget?>[
       if (d.kind == TxReceiptKind.adPayment) ...<Widget?>[
@@ -320,7 +325,9 @@ class _TxReceiptCard extends StatelessWidget {
     final Widget? finalRow = switch (d.kind) {
       TxReceiptKind.adPayment => ReceiptRow(
           label: l.adName,
-          value: receiptText(d.adName).isEmpty ? l.notRecorded : receiptText(d.adName),
+          value: receiptText(d.adName).isEmpty
+              ? l.notRecorded
+              : receiptText(d.adName),
           valueDirection: receiptDirOf(d.adName ?? ''),
         ),
       TxReceiptKind.refund when receiptText(d.adName).isNotEmpty => ReceiptRow(
@@ -368,6 +375,7 @@ class _TxReceiptCard extends StatelessWidget {
               label: l.date,
               value: receiptDateTime(d.date),
               valueDirection: _ltr,
+              valueStyle: ReceiptTokens.metadataValue,
             ),
             if (!settled && !_free)
               ReceiptRow(label: l.status, value: statusText),
@@ -375,12 +383,12 @@ class _TxReceiptCard extends StatelessWidget {
           const ReceiptDivider(),
 
           // ── ١٢/١٥/١٦) پوختە ─────────────────────────────────────────────
-          ReceiptSectionHeading(heading),
+          ReceiptSectionHeading(heading, icon: ProxoSymbolName.graph),
           ReceiptRows(summaryRows),
           const ReceiptDivider(),
 
           // ── ١٣) زانیاری پارەدان ─────────────────────────────────────────
-          ReceiptSectionHeading(l.paymentInfo),
+          ReceiptSectionHeading(l.paymentInfo, icon: ProxoSymbolName.wallet),
           ReceiptRows(<Widget?>[
             ReceiptRow(
               label: l.paymentMethod,

@@ -181,6 +181,21 @@ jobs:
       - run: flutter test test/proxolink_v6_flow_test.dart test/proxolink_flow_test.dart test/proxolink_page_management_test.dart test/proxolink_tools_create_test.dart test/proxolink_actual_screens_test.dart test/ad_repository_test.dart test/ad_creation_flow_test.dart test/ad_submission_test.dart test/text_direction_test.dart test/native_phase_schedule_test.dart test/ad_notice_deadline_test.dart test/proxo_tab_stack_test.dart test/proxo_banner_lifecycle_test.dart
       - name: Verify the complete Flutter behavior and visual suite
         run: flutter test --reporter expanded
+      - name: Analyze balanced screens and account-safe navigation
+        run: >-
+          flutter analyze --no-fatal-infos
+          lib/screens/home_screen.dart lib/screens/deposit_screen.dart lib/screens/best_metrics_screen.dart
+          lib/widgets/home_quick_actions.dart lib/widgets/home_best_result_card.dart lib/widgets/best_metric_card.dart
+          lib/widgets/best_metrics_home_section.dart lib/widgets/best_results_design.dart lib/widgets/result_metrics.dart
+          lib/widgets/proxo_sidebar.dart lib/widgets/top_bar.dart lib/widgets/notification_bell.dart
+          lib/widgets/proxo_symbol.dart lib/theme/proxo_chrome.dart
+          lib/screens/transaction_detail_screen.dart lib/widgets/receipt/receipt_kit.dart
+          lib/widgets/receipt/ad_receipt_card.dart lib/widgets/receipt/tx_history_layout.dart
+          lib/services/auth_activity_service.dart lib/services/app_telemetry_service.dart
+          test/deposit_screen_test.dart test/navigation_chrome_layout_test.dart test/sidebar_navigation_test.dart
+          test/receipt_layout_test.dart test/receipt_pdf_test.dart test/tx_history_layout_test.dart
+          test/proxolink_creation_recovery_test.dart test/app_balance_capture_test.dart
+          integration_test/polish_runtime_test.dart
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -188,6 +203,9 @@ jobs:
           path: |
             proxo_app/build/ui-verification/*.png
             proxo_app/build/ui-verification/actual-screen-measurements.json
+            proxo_app/build/app-balance-evidence/**
+            proxo_app/build/home-balance-evidence/**
+            proxo_app/build/receipt-redesign-evidence/**
           retention-days: 7
       - uses: gradle/actions/setup-gradle@v4
         with:

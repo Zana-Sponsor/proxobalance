@@ -67,6 +67,21 @@ void main() {
     final backend = ActualScreenBackend();
     await backend.initialize();
     backend.includeNotifications = true;
+    backend.readResponses['pa_featured_ads_public'] = [
+      for (final ad in examples())
+        {
+          'id': ad.id,
+          'goal': ad.goal,
+          'category': ad.category,
+          'clicks': ad.clicks,
+          'impressions': ad.impressions,
+          'spend': ad.spendUsd,
+          'daily_budget': ad.dailyBudgetUsd,
+          'days': ad.days,
+          'service_budget_usd': ad.serviceBudgetUsd,
+          'featured_sort': ad.sortOrder,
+        },
+    ];
     backend.readResponses['whatsapp_marketing_preferences'] = {
       'opted_in': false
     };
@@ -211,6 +226,20 @@ void main() {
       await settle();
     }
 
+    Future<void> reveal(Finder target, Finder scrollable) async {
+      // ListView children below the cache extent have no Element yet.
+      // Scroll the intended outer list until mounted before ensuring visibility.
+      await t.scrollUntilVisible(target, 220, scrollable: scrollable);
+      await t.ensureVisible(target);
+      await settle();
+    }
+
+    Finder depositScroll() => find
+        .descendant(
+            of: find.byKey(const ValueKey('deposit-scroll')),
+            matching: find.byType(Scrollable))
+        .first;
+
     final code = TextEditingController(), focus = FocusNode();
     final password = TextEditingController(),
         confirmation = TextEditingController();
@@ -237,6 +266,7 @@ void main() {
           initialAd: receiptFixture(),
           loadAd: (_) async => receiptFixture()),
       'tools': ToolsScreen(repository: ActualToolsRepository()),
+      'tools-empty': ToolsScreen(repository: ToolsRepository([])),
       'page-create': ProxoLinkCreatePageScreen(repository: ToolsRepository([])),
       'page-details': ProxoLinkPageDetailsScreen(
           initialPage: page(1), repository: ToolsRepository([page(1)])),
@@ -313,6 +343,54 @@ void main() {
                           onPressed: () async {}))))),
     };
     for (final entry in screens.entries) await record(entry.key, entry.value);
+    await record(
+        'home-result-expanded',
+        HomeScreen(
+            onCreateTap: () {},
+            onAddBalanceTap: () {},
+            onToolsTap: () {},
+            onCreatePageTap: () {},
+            onFaqTap: () {}), action: () async {
+      final details = find.byKey(const ValueKey('result-details-beauty'));
+      final scroll = find
+          .descendant(
+              of: find.byType(HomeScreen), matching: find.byType(Scrollable))
+          .first;
+      await reveal(details, scroll);
+      await t.tap(details);
+      await settle();
+      expect(
+          find.byKey(const ValueKey('result-expanded-beauty')), findsOneWidget);
+      await capture('home-result-details');
+      // Repeat the actual disclosure animation to measure both directions.
+      for (var i = 0; i < 4; i++) {
+        await reveal(details, scroll);
+        await t.tap(details);
+        await settle();
+      }
+    });
+    for (final method in ['fib', 'fastpay', 'kcard']) {
+      await record('deposit-$method', const DepositScreen(), action: () async {
+        final option = find.byKey(ValueKey('deposit-method-$method'));
+        await reveal(option, depositScroll());
+        await t.tap(option);
+        await settle();
+        final amount = find.byKey(const ValueKey('deposit-quick-10000'));
+        await reveal(amount, depositScroll());
+        await t.tap(amount);
+        await settle();
+        if (method != 'fastpay') {
+          final details = find.byKey(const ValueKey('deposit-payment-details'));
+          await reveal(details, depositScroll());
+          final instructions =
+              find.byKey(const ValueKey('deposit-instructions'));
+          await reveal(instructions, depositScroll());
+          await t.tap(instructions);
+          await settle();
+          await capture('deposit-$method-instructions');
+        }
+      });
+    }
     await record(
         'ad-video-example', AdCreateScreen(repository: TestAdRepository()),
         action: () async {
@@ -456,6 +534,21 @@ void main() {
     confirmation.dispose();
     showPassword.dispose();
     showConfirmation.dispose();
+    final unexpectedWrites = backend.writeAttempts
+        .where((attempt) => attempt['blocked_fixture_thumbnail_repair'] != true)
+        .toList();
+    observations['backend_write_attempts'] = backend.requestWrites;
+    observations['blocked_fixture_thumbnail_repairs'] =
+        backend.requestWrites - unexpectedWrites.length;
+    observations['unexpected_backend_write_attempts'] = unexpectedWrites;
+    observations['thumbnail_repair_fixture'] =
+        'Only the exact fictional ad repair POST may be attempted; the mock '
+        'rejects it before network access. The production endpoint can write '
+        'Storage and ad metadata; it is not executed by this fixture.';
+    expect(unexpectedWrites, isEmpty,
+        reason: 'No payment, page, auth or other backend mutations may be '
+            'attempted; only the explicitly blocked fictional thumbnail repair '
+            'is expected');
     observations['completed'] = true;
   }, timeout: const Timeout(Duration(minutes: 10)));
 }

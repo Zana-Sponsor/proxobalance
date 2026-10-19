@@ -1,6 +1,6 @@
 import '../theme/app_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'proxo_symbol.dart';
 
 import '../l10n/proxo_strings.dart';
 import 'proxo_text.dart';
@@ -12,14 +12,14 @@ abstract final class ResultsUi {
   static const line = Color(0xFFE7EBF1);
   static const banner = Color(0xFFF5F0E8);
   static const font = 'RabarAuthRegular';
-  static const radius = BorderRadius.all(Radius.circular(20));
+  static const radius = BorderRadius.all(Radius.circular(18));
   static TextStyle text({double size = 14, Color color = ink}) => TextStyle(
-    fontFamily: font,
-    fontSize: size,
-    fontWeight: FontWeight.w400,
-    height: 1.5,
-    color: color,
-  );
+        fontFamily: font,
+        fontSize: size,
+        fontWeight: FontWeight.w400,
+        height: 1.5,
+        color: color,
+      );
   static ThemeData theme(BuildContext context) {
     final base = Theme.of(context);
     final text = base.textTheme.apply(fontFamily: font);
@@ -34,9 +34,9 @@ abstract final class ResultsUi {
   }
 
   static String number(int value) => value.toString().replaceAllMapped(
-    RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-    (m) => '${m[1]},',
-  );
+        RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+        (m) => '${m[1]},',
+      );
   static String usd(double value) =>
       '\$${value.toStringAsFixed(value == value.roundToDouble() ? 0 : 2)}';
 }
@@ -52,14 +52,18 @@ class ResultIcon extends StatelessWidget {
   final double size;
   final Color color;
   @override
-  Widget build(BuildContext context) => ExcludeSemantics(
-    child: SvgPicture.asset(
-      'assets/icons/results/$name.svg',
-      width: size,
-      height: size,
-      colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
-    ),
-  );
+  Widget build(BuildContext context) => ProxoSymbol(
+      switch (name) {
+        'eye' => ProxoSymbolName.eye,
+        'wallet' => ProxoSymbolName.wallet,
+        'image' => ProxoSymbolName.gallery,
+        'play' => ProxoSymbolName.play,
+        'refresh' => ProxoSymbolName.refresh,
+        'click' => ProxoSymbolName.click,
+        _ => ProxoSymbolName.trophy,
+      },
+      size: size,
+      color: color);
 }
 
 class ResultRank extends StatelessWidget {
@@ -67,21 +71,20 @@ class ResultRank extends StatelessWidget {
   final int rank;
   @override
   Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(12),
-      border: Border.all(color: ResultsUi.line),
-    ),
-    child: Wrap(
-      crossAxisAlignment: WrapCrossAlignment.center,
-      spacing: 5,
-      children: [
-        const ResultIcon('trophy', size: 17, color: Color(0xFFB77918)),
-        ProxoText('#$rank', style: ResultsUi.text(size: 12)),
-      ],
-    ),
-  );
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF1F6FF),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Wrap(
+          crossAxisAlignment: WrapCrossAlignment.center,
+          spacing: 5,
+          children: [
+            const ResultIcon('trophy', size: 16, color: ResultsUi.blue),
+            ProxoText('#$rank', style: ResultsUi.text(size: 12)),
+          ],
+        ),
+      );
 }
 
 class ResultsStateCard extends StatelessWidget {
@@ -94,61 +97,61 @@ class ResultsStateCard extends StatelessWidget {
   final VoidCallback onRefresh;
   @override
   Widget build(BuildContext context) => Center(
-    child: ConstrainedBox(
-      constraints: const BoxConstraints(maxWidth: 360),
-      child: Container(
-        padding: const EdgeInsets.all(24),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: ResultsUi.radius,
-          border: Border.all(color: ResultsUi.line),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: ResultsUi.banner,
-                borderRadius: BorderRadius.circular(22),
-              ),
-              child: ResultIcon(
-                error ? 'refresh' : 'trophy',
-                size: 34,
-                color: const Color(0xFFB77918),
-              ),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 360),
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: ResultsUi.radius,
+              border: Border.all(color: ResultsUi.line),
             ),
-            const SizedBox(height: 20),
-            ProxoText(
-              error
-                  ? 'ئەنجامەکان بار نەبوون'
-                  : 'هێشتا ئەنجامی ئەم هەفتەیە هەڵنەبژێردراوە',
-              translate: true,
-              textAlign: TextAlign.center,
-              style: ResultsUi.text(size: 16),
-            ),
-            const SizedBox(height: 20),
-            OutlinedButton.icon(
-              key: const ValueKey('home-results-retry'),
-              onPressed: onRefresh,
-              style: OutlinedButton.styleFrom(
-                minimumSize: const Size(48, 48),
-                side: const BorderSide(color: ResultsUi.line),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 18,
-                  vertical: 12,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: ResultsUi.banner,
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: ResultIcon(
+                    error ? 'refresh' : 'trophy',
+                    size: 24,
+                    color: const Color(0xFFB77918),
+                  ),
                 ),
-                shape: ProxoControls.shape,
-              ),
-              icon: const ResultIcon('refresh', size: 19),
-              label: ProxoText(
-                ProxoStrings.text('نوێکردنەوە'),
-                style: ResultsUi.text(color: ResultsUi.blue),
-              ),
+                const SizedBox(height: 12),
+                ProxoText(
+                  error
+                      ? 'ئەنجامەکان بار نەبوون'
+                      : 'هێشتا ئەنجامی ئەم هەفتەیە هەڵنەبژێردراوە',
+                  translate: true,
+                  textAlign: TextAlign.center,
+                  style: ResultsUi.text(size: 14),
+                ),
+                const SizedBox(height: 12),
+                OutlinedButton.icon(
+                  key: const ValueKey('home-results-retry'),
+                  onPressed: onRefresh,
+                  style: OutlinedButton.styleFrom(
+                    minimumSize: const Size(48, 48),
+                    side: const BorderSide(color: ResultsUi.line),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 18,
+                      vertical: 12,
+                    ),
+                    shape: ProxoControls.shape,
+                  ),
+                  icon: const ResultIcon('refresh', size: 19),
+                  label: ProxoText(
+                    ProxoStrings.text('نوێکردنەوە'),
+                    style: ResultsUi.text(color: ResultsUi.blue),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
-      ),
-    ),
-  );
+      );
 }

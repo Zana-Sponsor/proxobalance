@@ -14,6 +14,7 @@ import 'package:proxo_app/theme/app_theme.dart';
 import 'package:proxo_app/widgets/ad_form_components.dart';
 import 'package:proxo_app/widgets/ad_validation_notifications.dart';
 import 'package:proxo_app/widgets/proxo_text.dart';
+import 'package:proxo_app/widgets/receipt/receipt_kit.dart';
 
 import 'ad_submission_test.dart' show validDraft;
 
@@ -119,6 +120,8 @@ void main() {
     await (FontLoader(
       'Rabar',
     )..addFont(rootBundle.load('assets/fonts/Rabar_021.ttf'))).load();
+    await (FontLoader(ReceiptTokens.fontFamily)
+      ..addFont(rootBundle.load(ReceiptTokens.fontAsset))).load();
     await (FontLoader(
       'MaterialIcons',
     )..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf'))).load();

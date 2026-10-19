@@ -12,8 +12,12 @@ typedef AuthDeviceCollector = Future<Map<String, String>> Function();
 /// Server triggers own login/logout times; no writes run after signedOut.
 /// This listener lives with the client, not with a route that navigation removes.
 final class AuthActivityService {
-  AuthActivityService(this._client, {AuthDeviceCollector? collectDevice})
-      : _collectDevice = collectDevice ?? collectAuthDevice;
+  AuthActivityService(this._client,
+      {AuthDeviceCollector? collectDevice,
+      Future<void> Function()? beforeLogout})
+      : _collectDevice = collectDevice ?? collectAuthDevice,
+        _beforeLogout =
+            beforeLogout ?? AppTelemetryService.forClient(_client).beforeLogout;
 
   static final _instances = Expando<AuthActivityService>();
   static AuthActivityService forClient(SupabaseClient client) =>
@@ -21,10 +25,12 @@ final class AuthActivityService {
 
   final SupabaseClient _client;
   final AuthDeviceCollector _collectDevice;
+  final Future<void> Function() _beforeLogout;
   StreamSubscription<AuthState>? _subscription;
   final Map<String, Future<void>> _pending = {};
   Future<Map<String, String>>? _device;
   String? _recordedSession;
+  Future<void>? _logout;
   bool _disposed = false;
 
   void start() {
@@ -95,13 +101,40 @@ final class AuthActivityService {
     }
   }
 
-  Future<void> signOut() async {
+  Future<void> signOut() {
+    final requested = _client.auth.currentSession;
+    return _logout ??= Future<void>.microtask(() => _signOut(requested))
+        .whenComplete(() => _logout = null);
+  }
+
+  Future<void> _signOut(Session? requested) async {
+    if (requested == null) return;
+    final owner = requested.user.id;
+    final id = sessionId(requested);
+    bool sameSession() {
+      final current = _client.auth.currentSession;
+      return current?.user.id == owner &&
+          (id != null
+              ? sessionId(current) == id
+              : current?.accessToken == requested.accessToken);
+    }
+
+    if (!sameSession()) return;
+
     // Give an in-flight model lookup a bounded chance to finish while the JWT
     // still exists. The database records logout only when Auth revokes it.
     try {
       await recordCurrentSession().timeout(const Duration(seconds: 3));
     } catch (_) {}
-    await AppTelemetryService.forClient(_client).beforeLogout();
+    if (!sameSession()) return;
+    // Optional analytics must not trap the customer in their account. Keep the
+    // actual Auth call outside this catch so its failure remains visible.
+    try {
+      await _beforeLogout().timeout(const Duration(seconds: 2));
+    } catch (_) {}
+    // A delayed collector/flush belongs to the account which requested logout,
+    // never to an account that was subsequently restored on this client.
+    if (!sameSession()) return;
     await _client.auth.signOut();
   }
 

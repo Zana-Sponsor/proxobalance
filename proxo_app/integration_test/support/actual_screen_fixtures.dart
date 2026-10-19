@@ -37,9 +37,25 @@ class ActualScreenBackend {
  Map<String, dynamic>? banner;
  final _sockets=<_ScreenSocket>[];
  int logoutRequests=0;
+ final writeAttempts=<Map<String,Object?>>[];
+ int get requestWrites=>writeAttempts.length;
  bool logoutFails=false;
  ActualScreenBackend({bool allowLogout=false}){
   transport=MockClient((request)async{
+    if({'POST','PUT','PATCH','DELETE'}.contains(request.method)){
+      var fixtureThumbnailRepair=false;
+      if(request.method=='POST' && request.url.host=='screen-fixtures.invalid' && request.url.path=='/functions/v1/generate-ad-thumbnail'){
+        try{
+          final body=jsonDecode(request.body);
+          fixtureThumbnailRepair=body is Map && body.length==1 && body['ad_id']=='00000000-0000-4000-8000-000000000001';
+        }catch(_){}
+      }
+      // Record attempts, not successful writes. The thumbnail repair endpoint
+      // mutates Storage/pa_ads in production; this fixture still rejects it
+      // at the network boundary below. Never record headers or request bodies.
+      writeAttempts.add({'method':request.method,'host':request.url.host,
+        'path':request.url.path,'blocked_fixture_thumbnail_repair':fixtureThumbnailRepair});
+    }
     if(allowLogout && request.method=='POST' && request.url.host=='screen-fixtures.invalid' && request.url.path=='/auth/v1/logout'){
       logoutRequests++;
       return http.Response(logoutFails?'{"message":"fixture logout unavailable"}':'',logoutFails?500:204,

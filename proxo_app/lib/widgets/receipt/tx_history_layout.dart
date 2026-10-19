@@ -34,39 +34,41 @@ class TxHistoryLayout extends StatelessWidget {
       child: Directionality(
         textDirection: TextDirection.ltr,
         child: Scaffold(
-            backgroundColor: ReceiptTokens.page,
-            body: SafeArea(
-                top: false, bottom: false, child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                ReceiptAppBar(
-                  title: title,
-                  translateTitle: false,
-                  onBack: onBack,
-                  backTooltip: backLabel,
-                  action: IconButton(
-                    tooltip: refreshLabel,
-                    onPressed: onRefresh,
-                    icon: refreshing
-                        ? const SizedBox(
-                            width: ReceiptTokens.iconSize,
-                            height: ReceiptTokens.iconSize,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 1.6,
-                              color: ReceiptTokens.accent,
+          backgroundColor: ReceiptTokens.page,
+          body: SafeArea(
+              top: false,
+              bottom: false,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  ReceiptAppBar(
+                    title: title,
+                    translateTitle: false,
+                    onBack: onBack,
+                    backTooltip: backLabel,
+                    action: IconButton(
+                      tooltip: refreshLabel,
+                      onPressed: onRefresh,
+                      icon: refreshing
+                          ? const SizedBox(
+                              width: ReceiptTokens.iconSize,
+                              height: ReceiptTokens.iconSize,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 1.6,
+                                color: ReceiptTokens.accent,
+                              ),
+                            )
+                          : ReceiptIcon(
+                              Icons.refresh_rounded,
+                              color: onRefresh == null
+                                  ? ReceiptTokens.divider
+                                  : ReceiptTokens.accent,
                             ),
-                          )
-                        : ReceiptIcon(
-                            Icons.refresh_rounded,
-                            color: onRefresh == null
-                                ? ReceiptTokens.divider
-                                : ReceiptTokens.accent,
-                          ),
+                    ),
                   ),
-                ),
-                Expanded(child: body),
-              ],
-            )),
+                  Expanded(child: body),
+                ],
+              )),
         ),
       ),
     );
@@ -84,7 +86,8 @@ class TxHistoryCard extends StatelessWidget {
 
   const TxHistoryCard({
     super.key,
-    this.label, this.status,
+    this.label,
+    this.status,
     required this.date,
     required this.time,
     required this.amount,
@@ -123,23 +126,36 @@ class TxHistoryCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     if (label != null) ...[
-                      ProxoText(label!, textAlign: TextAlign.right, style: ReceiptTokens.rowLabel),
+                      ProxoText(label!,
+                          textAlign: TextAlign.right,
+                          style: ReceiptTokens.rowLabel),
                       const SizedBox(height: ReceiptTokens.rowToRow),
                     ],
-                    ProxoText(amount, textAlign: TextAlign.left,
-                      style: ReceiptTokens.totalValue.copyWith(color: amountColor)),
+                    ProxoText(amount,
+                        textAlign: TextAlign.left,
+                        style: ReceiptTokens.totalValue
+                            .copyWith(color: amountColor)),
                     if (status != null) ...[
                       const SizedBox(height: ReceiptTokens.rowToRow),
-                      ProxoText(status!, textAlign: TextAlign.right, style: ReceiptTokens.rowLabel),
+                      ProxoText(status!,
+                          textAlign: TextAlign.right,
+                          style: ReceiptTokens.rowLabel),
                     ],
                     const SizedBox(height: ReceiptTokens.headingToRow),
-                    Wrap(alignment: WrapAlignment.spaceBetween,
-                      spacing: ReceiptTokens.labelToValue, runSpacing: ReceiptTokens.rowToRow,
-                      children: [
-                        ProxoText(time, textDirection: TextDirection.ltr,
-                          style: ReceiptTokens.rowLabel.copyWith(color: const Color(0xFF6B7280))),
-                        ProxoText(date, textDirection: TextDirection.ltr, style: ReceiptTokens.rowValue),
-                      ]),
+                    Wrap(
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        alignment: WrapAlignment.spaceBetween,
+                        spacing: ReceiptTokens.labelToValue,
+                        runSpacing: ReceiptTokens.rowToRow,
+                        children: [
+                          ProxoText(time,
+                              textDirection: TextDirection.ltr,
+                              style: ReceiptTokens.rowLabel
+                                  .copyWith(color: const Color(0xFF6B7280))),
+                          ProxoText(date,
+                              textDirection: TextDirection.ltr,
+                              style: ReceiptTokens.rowValue),
+                        ]),
                   ],
                 ),
               ),
@@ -194,7 +210,8 @@ class TxHistorySkeletonList extends StatelessWidget {
               child: Padding(
                 padding: TxHistoryCard.padding,
                 child: SizedBox(
-                  height: ReceiptTokens.rowMinHeight * 2 + ReceiptTokens.headingToRow,
+                  height: ReceiptTokens.rowMinHeight * 2 +
+                      ReceiptTokens.headingToRow,
                   child: Row(
                     children: <Widget>[
                       _bar(0.7, Alignment.centerLeft),

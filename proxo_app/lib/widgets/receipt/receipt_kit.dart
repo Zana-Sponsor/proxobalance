@@ -1,4 +1,3 @@
-import '../../theme/app_theme.dart';
 import '../../theme/app_locale.dart';
 import '../../l10n/proxo_strings.dart';
 import 'dart:typed_data';
@@ -9,7 +8,9 @@ import 'package:flutter/rendering.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:proxo_app/widgets/proxo_text.dart';
+import '../proxo_symbol.dart';
 
 // ═════════════════════════════════════════════════════════════════════════════
 // Receipt Kit — دیزاین سیستەمی هاوبەشی پسوولەکان
@@ -22,17 +23,16 @@ import 'package:proxo_app/widgets/proxo_text.dart';
 //
 // یاساکان (بەپێی Proxo Ad Detail — V2):
 //   • هەموو دەقێک w400؛ بێ قەڵەوکردنی زیادە لە Flutter.
-//   • ڕەنگی سەردێر و دوگمەی PDF یەک تۆکنە: `accent` = #046CFA.
-//   • کارت: سپی، گۆشەی خڕی 16dp، بێ سنوور، سێبەری زۆر نەرم.
+//   • Regular Auth typography, quiet labels and clearly readable values.
+//   • White 18dp cards, 20dp page gutters and a fine neutral border.
 // ═════════════════════════════════════════════════════════════════════════════
 
 abstract final class ReceiptTokens {
-  // User-selected Rabar_021, requested at normal Flutter weight (w400).
-  // The supplied font itself has Bold outlines/metadata; w400 does not
-  // manufacture a Regular face or alter those outlines.
-  static const String fontFamily = 'Rabar';
+  // The same genuinely regular Kurdish face used by the redesigned Auth UI.
+  static const String fontFamily = 'RabarAuthRegular';
+  static const String fontAsset = 'assets/fonts/Rabar_022.ttf';
   // ── ڕەنگ ─────────────────────────────────────────────────────────────────
-  /// White receipt page; the white card is separated only by its soft shadow.
+  /// White page with a fine card border and restrained shadow.
   static const Color page = Color(0xFFFFFFFF);
   static const Color historyPage = Color(0xFFF2F2F7);
   static const Color bar = Color(0xFFFFFFFF);
@@ -45,7 +45,7 @@ abstract final class ReceiptTokens {
   static const Color onAccent = Color(0xFFFFFFFF);
 
   static const Color ink = Color(0xFF111111);
-  static const Color label = ink;
+  static const Color label = Color(0xFF667085);
   static const Color title = ink; // shared neutral for titles and values
   static const Color divider = Color(0xFFE5E7EB);
   static const Color positive = Color(0xFF15803D); // + / داشکاندن
@@ -53,41 +53,42 @@ abstract final class ReceiptTokens {
 
   /// سێبەری زۆر نەرم — بەرزبوونەوەیەکی سووک، نەک سێبەرێکی دیار.
   static const List<BoxShadow> cardShadow = <BoxShadow>[
-    BoxShadow(color: Color(0x0F000000), blurRadius: 18, offset: Offset(0, 5)),
+    BoxShadow(color: Color(0x060F172A), blurRadius: 12, offset: Offset(0, 3)),
   ];
 
   // ── AppBar ───────────────────────────────────────────────────────────────
-  static const double iconSize = 20;
-  static const double iconBox = 20;
+  static const double iconSize = 22;
+  static const double iconBox = 22;
   static const double barHeight = 56;
   static const double barTap = 48;
   static const double barSidePad = 6;
 
   // ── پەڕە و کارت ──────────────────────────────────────────────────────────
-  static const double gutter = 16;
-  // Retained for the history list; receipt cards use all available width.
-  static const double contentMaxWidth = 398;
-  static const double pageTop = 16;
+  static const double gutter = 20;
+  // One readable content width for history and both receipt types.
+  static const double contentMaxWidth = 600;
+  static const double pageTop = 20;
   static const double pageBottom = 28;
-  static const double cardRadius = 16;
-  static const double cardVerticalPadding = 20;
+  static const double cardRadius = 18;
+  static const double cardVerticalPadding = 16;
 
   /// Measured reference canvas. One proportional transform preserves every
   /// fractional coordinate; rounding individual gaps would accumulate drift.
   static const double referenceWidth = 393;
   // Same readable column limit used by Home actions and the ad form.
   static const double receiptMaxWidth = 600;
+  static const double surfaceMaxWidth = receiptMaxWidth + 2 * gutter;
   static double pageGutter(double width) => gutter;
   static double cardInset(double width) => 16;
 
   // ── جیاکەرەوە ─────────────────────────────────────────────────────────────
   /// Divider inset within the responsive card padding.
-  static const double dividerInset = 8;
+  static const double dividerInset = 0;
   static const double dividerThickness = 1;
 
   // ── ڕیتمی ستوونی ─────────────────────────────────────────────────────────
   static const double contentToDivider = 12;
-  static const double dividerToContent = 12;
+  static const double dividerToContent = 11;
   static const double headingToRow = 12;
   static const double rowToRow = 8;
   static const double labelToValue = 8;
@@ -96,18 +97,19 @@ abstract final class ReceiptTokens {
   static const double labelMaxFraction = 0.4;
 
   // ── سەرووی پسوولە ────────────────────────────────────────────────────────
-  static const double logoHeight = 18;
+  static const double logoHeight = 24;
+  static const double logoWidth = 84;
   static const String logoAsset = 'assets/images/proxo_logo.png';
 
   // ── دوگمەی PDF ───────────────────────────────────────────────────────────
-  static const double cardToButton = 20;
+  static const double cardToButton = 24;
   static const double buttonHeight = 48;
-  static const double buttonRadius = ProxoControls.radius;
+  static const double buttonRadius = 18;
 
   // ── تایپۆگرافی — قەبارەی دیاریکراو، هەمووی w400 ──────────────────────────
   static const FontWeight weight = FontWeight.w400;
 
-  static TextStyle _s(double size, Color color, {double height = 1.25}) =>
+  static TextStyle _s(double size, Color color, {double height = 1.5}) =>
       TextStyle(
         inherit: false,
         fontFamily: fontFamily,
@@ -120,26 +122,27 @@ abstract final class ReceiptTokens {
         letterSpacing: 0,
       );
 
-  // 2026-10-14: match the existing AppTypography roles (bar 16, section 15,
-  // card 14, body 13); preserve the bundled Rabar weight.
-  static const double appBarTitleSize = 16;
-  static const double receiptTitleSize = 14;
-  static const double sectionTitleSize = 15;
+  static const double appBarTitleSize = 18;
+  static const double receiptTitleSize = 18;
+  static const double sectionTitleSize = 16;
   static const double labelSize = 13;
-  static const double valueSize = 13;
-  static const double totalSize = 14;
-  static const double uidSize = valueSize;
-  static const double pdfButtonSize = 13.5;
+  static const double valueSize = 14;
+  static const double totalSize = 16;
+  static const double uidSize = 13;
+  static const double pdfButtonSize = 14;
 
-  static final TextStyle barTitle = _s(appBarTitleSize, title, height: 1.25);
-  static final TextStyle receiptTitle = _s(receiptTitleSize, title);
-  static final TextStyle heading = _s(sectionTitleSize, accent);
+  static final TextStyle barTitle = _s(appBarTitleSize, title, height: 1.4);
+  static final TextStyle receiptTitle =
+      _s(receiptTitleSize, title, height: 1.4);
+  static final TextStyle heading = _s(sectionTitleSize, ink);
   static final TextStyle rowLabel = _s(labelSize, label);
   static final TextStyle rowValue = _s(valueSize, ink);
   static final TextStyle uidValue = _s(uidSize, ink);
+  static final TextStyle metadataValue = _s(13, ink);
+  static final TextStyle moneyValue = _s(16, ink);
   static final TextStyle totalValue = _s(totalSize, ink);
-  static final TextStyle discountValue = _s(valueSize, ink);
-  static final TextStyle button = _s(pdfButtonSize, onAccent, height: 1.20);
+  static final TextStyle discountValue = _s(16, ink);
+  static final TextStyle button = _s(pdfButtonSize, onAccent, height: 1.5);
 
   /// سنووری قەبارەی نووسینی سیستەم — تا 1.3× بە بێ تێکچوونی دیزاین.
   static const double minTextScale = 1.0;
@@ -168,26 +171,24 @@ class ReceiptAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => SafeArea(
-    top: false,
-    bottom: false,
-    child: LayoutBuilder(builder: _buildBar),
-  );
+        top: false,
+        bottom: false,
+        child: LayoutBuilder(builder: _buildBar),
+      );
 
   Widget _buildBar(BuildContext context, BoxConstraints constraints) {
     ProxoLocale.watch(context);
     final displayTitle = translateTitle ? ProxoStrings.text(title) : title;
     final double top = MediaQuery.paddingOf(context).top;
-    final titlePainter =
-        TextPainter(
-          text: TextSpan(text: displayTitle, style: ReceiptTokens.barTitle),
-          textDirection: receiptDirOf(displayTitle),
-          textScaler: MediaQuery.textScalerOf(context),
-        )..layout(
-          maxWidth:
-              (constraints.maxWidth -
-                      2 * (ReceiptTokens.barTap + ReceiptTokens.barSidePad + 4))
-                  .clamp(1.0, double.infinity),
-        );
+    final titlePainter = TextPainter(
+      text: TextSpan(text: displayTitle, style: ReceiptTokens.barTitle),
+      textDirection: receiptDirOf(displayTitle),
+      textScaler: MediaQuery.textScalerOf(context),
+    )..layout(
+        maxWidth: (constraints.maxWidth -
+                2 * (ReceiptTokens.barTap + ReceiptTokens.barSidePad + 4))
+            .clamp(1.0, double.infinity),
+      );
     final barHeight = (titlePainter.height + 16).clamp(
       ReceiptTokens.barHeight,
       double.infinity,
@@ -280,6 +281,7 @@ class ReceiptCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: ReceiptTokens.card,
           borderRadius: BorderRadius.circular(ReceiptTokens.cardRadius),
+          border: Border.all(color: ReceiptTokens.divider),
           boxShadow: ReceiptTokens.cardShadow,
         ),
         child: Padding(
@@ -301,25 +303,25 @@ class ReceiptSurface extends StatelessWidget {
   const ReceiptSurface({super.key, required this.child});
   @override
   Widget build(BuildContext context) => Align(
-    alignment: Alignment.topCenter,
-    child: ConstrainedBox(
-      constraints: const BoxConstraints(
-        maxWidth: ReceiptTokens.receiptMaxWidth,
-      ),
-      child: ColoredBox(
-        color: ReceiptTokens.page,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(
-            ReceiptTokens.gutter,
-            ReceiptTokens.pageTop,
-            ReceiptTokens.gutter,
-            ReceiptTokens.cardToButton,
+        alignment: Alignment.topCenter,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(
+            maxWidth: ReceiptTokens.surfaceMaxWidth,
           ),
-          child: SizedBox(width: double.infinity, child: child),
+          child: ColoredBox(
+            color: ReceiptTokens.page,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(
+                ReceiptTokens.gutter,
+                ReceiptTokens.pageTop,
+                ReceiptTokens.gutter,
+                ReceiptTokens.cardToButton,
+              ),
+              child: SizedBox(width: double.infinity, child: child),
+            ),
+          ),
         ),
-      ),
-    ),
-  );
+      );
 }
 
 /// Full-width viewport: the capture surface owns its exact white page insets.
@@ -328,14 +330,15 @@ class ReceiptBody extends StatelessWidget {
   const ReceiptBody({super.key, required this.children});
   @override
   Widget build(BuildContext context) => ListView(
-    physics: const BouncingScrollPhysics(
-      parent: AlwaysScrollableScrollPhysics(),
-    ),
-    padding: EdgeInsets.only(
-      bottom: ReceiptTokens.pageBottom + MediaQuery.paddingOf(context).bottom,
-    ),
-    children: children,
-  );
+        physics: const BouncingScrollPhysics(
+          parent: AlwaysScrollableScrollPhysics(),
+        ),
+        padding: EdgeInsets.only(
+          bottom:
+              ReceiptTokens.pageBottom + MediaQuery.paddingOf(context).bottom,
+        ),
+        children: children,
+      );
 }
 
 /// Aligns the separate PDF button with the card inside the capture surface.
@@ -344,17 +347,18 @@ class ReceiptWidth extends StatelessWidget {
   const ReceiptWidth({super.key, required this.child});
   @override
   Widget build(BuildContext context) => Align(
-    alignment: Alignment.topCenter,
-    child: ConstrainedBox(
-      constraints: const BoxConstraints(
-        maxWidth: ReceiptTokens.receiptMaxWidth,
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: ReceiptTokens.gutter),
-        child: SizedBox(width: double.infinity, child: child),
-      ),
-    ),
-  );
+        alignment: Alignment.topCenter,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(
+            maxWidth: ReceiptTokens.surfaceMaxWidth,
+          ),
+          child: Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: ReceiptTokens.gutter),
+            child: SizedBox(width: double.infinity, child: child),
+          ),
+        ),
+      );
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -368,28 +372,54 @@ class ReceiptHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      textDirection: TextDirection.rtl,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: <Widget>[
-        Expanded(
-          child: ProxoText(
-            title, translate: true,
-            textDirection: TextDirection.rtl,
-            textAlign: TextAlign.start,
-            style: ReceiptTokens.receiptTitle,
-          ),
-        ),
-        const SizedBox(width: ReceiptTokens.labelToValue),
-        Image.asset(
-          ReceiptTokens.logoAsset,
-          height: ReceiptTokens.logoHeight,
-          fit: BoxFit.contain,
-          filterQuality: FilterQuality.medium,
-          semanticLabel: 'Proxo',
-        ),
-      ],
-    );
+    return LayoutBuilder(builder: (context, constraints) {
+      final titleText = ProxoText(
+        title,
+        translate: true,
+        textDirection: TextDirection.rtl,
+        textAlign: TextAlign.start,
+        style: ReceiptTokens.receiptTitle,
+      );
+      final logo = Image.asset(
+        ReceiptTokens.logoAsset,
+        width: ReceiptTokens.logoWidth,
+        height: ReceiptTokens.logoHeight,
+        fit: BoxFit.contain,
+        filterQuality: FilterQuality.medium,
+        semanticLabel: 'Proxo',
+      );
+      final painter = TextPainter(
+        text: TextSpan(
+            text: ProxoStrings.text(title), style: ReceiptTokens.receiptTitle),
+        textDirection: TextDirection.rtl,
+        textScaler: MediaQuery.textScalerOf(context),
+      )..layout();
+      final stacked =
+          painter.width + ReceiptTokens.logoWidth + ReceiptTokens.labelToValue >
+              constraints.maxWidth;
+      painter.dispose();
+      if (stacked) {
+        // Keep the title's full reading width at large text sizes instead of
+        // forcing Kurdish/Arabic words into the space beside a fixed logo.
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Align(alignment: Alignment.centerLeft, child: logo),
+            const SizedBox(height: 12),
+            titleText,
+          ],
+        );
+      }
+      return Row(
+        textDirection: TextDirection.rtl,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Expanded(child: titleText),
+          const SizedBox(width: ReceiptTokens.labelToValue),
+          logo,
+        ],
+      );
+    });
   }
 }
 
@@ -426,21 +456,22 @@ class ReceiptDivider extends StatelessWidget {
 
 class ReceiptSectionHeading extends StatelessWidget {
   final String text;
+  final ProxoSymbolName icon;
 
-  const ReceiptSectionHeading(this.text, {super.key});
+  const ReceiptSectionHeading(this.text,
+      {super.key, this.icon = ProxoSymbolName.info});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: ReceiptTokens.headingToRow),
-      child: Align(
-        alignment: AlignmentDirectional.centerStart,
-        child: ProxoText(
-          text,
-          style: ReceiptTokens.heading,
-          textAlign: TextAlign.start,
-        ),
-      ),
+      child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+        ProxoSymbol(icon, size: 20, color: ReceiptTokens.accent),
+        const SizedBox(width: 8),
+        Expanded(
+            child: ProxoText(text,
+                style: ReceiptTokens.heading, textAlign: TextAlign.start)),
+      ]),
     );
   }
 }
@@ -509,8 +540,7 @@ class ReceiptRow extends StatelessWidget {
           receiptDirOf(label),
         );
         final valueWidth = naturalWidth(value, effectiveStyle, valueDirection);
-        final fits =
-            labelWidth + ReceiptTokens.labelToValue + valueWidth <=
+        final fits = labelWidth + ReceiptTokens.labelToValue + valueWidth <=
             constraints.maxWidth;
         return Padding(
           padding: const EdgeInsets.symmetric(
@@ -544,7 +574,9 @@ class ReceiptRow extends StatelessWidget {
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onLongPress: onLongPress,
-        child: row,
+        child: ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 48),
+            child: Center(child: row)),
       ),
     );
   }
@@ -556,12 +588,20 @@ class ReceiptIcon extends StatelessWidget {
   const ReceiptIcon(this.icon, {super.key, this.color = ReceiptTokens.ink});
   @override
   Widget build(BuildContext context) => SizedBox(
-    width: ReceiptTokens.iconBox,
-    height: ReceiptTokens.iconBox,
-    child: Center(
-      child: Icon(icon, size: ReceiptTokens.iconSize, color: color),
-    ),
-  );
+        width: ReceiptTokens.iconBox,
+        height: ReceiptTokens.iconBox,
+        child: Center(
+          child: ProxoSymbol(
+              switch (icon) {
+                Icons.arrow_back_ios_rounded => ProxoSymbolName.forward,
+                Icons.arrow_forward_ios_rounded => ProxoSymbolName.back,
+                Icons.refresh_rounded => ProxoSymbolName.refresh,
+                _ => ProxoSymbolName.info,
+              },
+              size: ReceiptTokens.iconSize,
+              color: color),
+        ),
+      );
 }
 
 class ReceiptMoneyRow extends StatelessWidget {
@@ -576,11 +616,12 @@ class ReceiptMoneyRow extends StatelessWidget {
   });
   @override
   Widget build(BuildContext context) => ReceiptRow(
-    label: label,
-    value: value,
-    valueDirection: TextDirection.ltr,
-    valueStyle: important ? ReceiptTokens.totalValue : ReceiptTokens.rowValue,
-  );
+        label: label,
+        value: value,
+        valueDirection: TextDirection.ltr,
+        valueStyle:
+            important ? ReceiptTokens.totalValue : ReceiptTokens.moneyValue,
+      );
 }
 
 /// Identifiers use the exact same opposite-edge row as every other field.
@@ -597,12 +638,12 @@ class ReceiptIdRow extends StatelessWidget {
   });
   @override
   Widget build(BuildContext context) => ReceiptRow(
-    label: label,
-    value: value,
-    valueDirection: TextDirection.ltr,
-    valueStyle: ReceiptTokens.uidValue,
-    onLongPress: onLongPress,
-  );
+        label: label,
+        value: value,
+        valueDirection: TextDirection.ltr,
+        valueStyle: ReceiptTokens.uidValue,
+        onLongPress: onLongPress,
+      );
 }
 
 /// Compatibility name for existing callers.
@@ -676,17 +717,18 @@ class _ReceiptPdfButtonState extends State<ReceiptPdfButton> {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final painter =
-            TextPainter(
-              text: TextSpan(text: widget.label, style: ReceiptTokens.button),
-              textDirection: receiptDirOf(widget.label),
-              textScaler: MediaQuery.textScalerOf(context),
-            )..layout(
-              maxWidth: (constraints.maxWidth - ReceiptTokens.gutter * 2).clamp(
-                1.0,
-                double.infinity,
-              ),
-            );
+        final painter = TextPainter(
+          text: TextSpan(text: widget.label, style: ReceiptTokens.button),
+          textDirection: receiptDirOf(widget.label),
+          textScaler: MediaQuery.textScalerOf(context),
+        )..layout(
+            // Match the actual 16dp padding, 20dp icon and 8dp gap so large
+            // accessibility text gets the same wrapping in measurement/layout.
+            maxWidth: (constraints.maxWidth - 32 - 20 - 8).clamp(
+              1.0,
+              double.infinity,
+            ),
+          );
         final buttonHeight = (painter.height + ReceiptTokens.headingToRow * 2)
             .clamp(ReceiptTokens.buttonHeight, double.infinity);
         painter.dispose();
@@ -724,11 +766,24 @@ class _ReceiptPdfButtonState extends State<ReceiptPdfButton> {
                               ),
                             ),
                           )
-                        : ProxoText(
-                            widget.label,
-                            softWrap: true,
-                            textAlign: TextAlign.center,
-                            style: ReceiptTokens.button,
+                        : Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const ProxoSymbol(
+                                ProxoSymbolName.download,
+                                size: 20,
+                                color: ReceiptTokens.onAccent,
+                              ),
+                              const SizedBox(width: 8),
+                              Flexible(
+                                child: ProxoText(
+                                  widget.label,
+                                  softWrap: true,
+                                  textAlign: TextAlign.center,
+                                  style: ReceiptTokens.button,
+                                ),
+                              ),
+                            ],
                           ),
                   ),
                 ),
@@ -782,7 +837,8 @@ class ReceiptStateView extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
                     ProxoText(
-                      title, translate: true,
+                      title,
+                      translate: true,
                       textAlign: TextAlign.center,
                       style: ReceiptTokens.receiptTitle.copyWith(
                         color: ReceiptTokens.ink,
@@ -818,15 +874,15 @@ class ReceiptSpinner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => const Center(
-    child: SizedBox(
-      width: 22,
-      height: 22,
-      child: CircularProgressIndicator(
-        strokeWidth: 2,
-        valueColor: AlwaysStoppedAnimation<Color>(ReceiptTokens.accent),
-      ),
-    ),
-  );
+        child: SizedBox(
+          width: 22,
+          height: 22,
+          child: CircularProgressIndicator(
+            strokeWidth: 2,
+            valueColor: AlwaysStoppedAnimation<Color>(ReceiptTokens.accent),
+          ),
+        ),
+      );
 }
 
 /// Receipt notices use the same restrained type and the caller's locale.
@@ -866,14 +922,28 @@ Future<bool> exportReceiptPdf({
     // Exporting immediately after opening a receipt must not omit its logo.
     final context = boundaryKey.currentContext;
     if (context == null) return false;
+    // The shared SVG headings must be ready in an immediate export too.
+    final vectors = <Future<ByteData>>[];
+    void warmVectors(Element element) {
+      final widget = element.widget;
+      if (widget is SvgPicture) {
+        vectors.add(widget.bytesLoader.loadBytes(element));
+      }
+      element.visitChildren(warmVectors);
+    }
+
+    (context as Element).visitChildren(warmVectors);
     Object? logoError;
-    await precacheImage(
+    final logoReady = precacheImage(
       const AssetImage(ReceiptTokens.logoAsset),
       context,
       onError: (error, stackTrace) => logoError = error,
     );
+    await Future.wait(vectors);
+    await logoReady;
     if (logoError != null || boundaryKey.currentContext == null) return false;
     await WidgetsBinding.instance.endOfFrame;
+    if (!context.mounted) return false;
     final RenderObject? ro = boundaryKey.currentContext?.findRenderObject();
     if (ro is! RenderRepaintBoundary) return false;
 
@@ -887,9 +957,10 @@ Future<bool> exportReceiptPdf({
       final widget = element.widget;
       if (widget is ReceiptCard) {
         final card = element.findRenderObject();
-        if (card is RenderBox && card.hasSize)
+        if (card is RenderBox && card.hasSize) {
           cardBounds =
               card.localToGlobal(Offset.zero, ancestor: ro) & card.size;
+        }
       }
       if (widget is ReceiptRow ||
           widget is ReceiptHeader ||
@@ -903,40 +974,49 @@ Future<bool> exportReceiptPdf({
       element.visitChildren(collect);
     }
 
-    (context as Element).visitChildren(collect);
+    context.visitChildren(collect);
     rows.sort((a, b) => a.top.compareTo(b.top));
     final protected = <Rect>[...rows];
     for (final heading in headings) {
       final following = rows.where((row) => row.top >= heading.bottom - 0.1);
-      if (following.isNotEmpty)
+      if (following.isNotEmpty) {
         protected.add(heading.expandToInclude(following.first));
+      }
     }
     final cuts = <double>[0, ro.size.height];
     for (final rect in [...rows, ...headings]) {
       final y = rect.top;
       if (!protected.any(
         (block) => y > block.top + 0.1 && y < block.bottom - 0.1,
-      ))
+      )) {
         cuts.add(y);
+      }
     }
     cuts.sort();
     const margin = 36.0; // Standard half-inch printable inset, in PDF points.
     final availableW = PdfPageFormat.a4.width - margin * 2;
     final availableH = PdfPageFormat.a4.height - margin * 2;
-    final captureLeft = cardBounds == null
-        ? 0.0
-        : cardBounds!.left - ReceiptTokens.gutter;
+    final captureLeft =
+        cardBounds == null ? 0.0 : cardBounds!.left - ReceiptTokens.gutter;
     final captureWidth = cardBounds == null
         ? ro.size.width
         : cardBounds!.width + ReceiptTokens.gutter * 2;
-    final scale = (availableW / captureWidth).clamp(0.0, 1.0);
+    var scale = (availableW / captureWidth).clamp(0.0, 1.0);
+    // Avoid an almost empty second page when the complete card is only a few
+    // points taller than A4. Long accessible receipts keep their natural scale
+    // and row-safe pagination; the small fit adjustment is bounded to 5%.
+    final fullPageScale = availableH / ro.size.height;
+    if (fullPageScale < scale && fullPageScale >= scale * .95) {
+      scale = fullPageScale;
+    }
     final source = await ro.toImage(pixelRatio: 4.0);
     final doc = pw.Document(title: title, author: 'Proxo', creator: 'Proxo');
     try {
       double start = 0;
       while (start < ro.size.height - 0.1) {
         final limit = start + availableH / scale;
-        final eligible = cuts.where((cut) => cut > start + 0.1 && cut <= limit);
+        final eligible =
+            cuts.where((cut) => cut > start + 0.1 && cut <= limit + 0.1);
         final end = eligible.isNotEmpty
             ? eligible.last
             : cuts.firstWhere((cut) => cut > start + 0.1);
@@ -1008,8 +1088,8 @@ num? receiptNum(dynamic v) {
   final num? parsed = v is num
       ? v
       : v is String
-      ? num.tryParse(v.trim())
-      : null;
+          ? num.tryParse(v.trim())
+          : null;
   return parsed != null && parsed.isFinite ? parsed : null;
 }
 
@@ -1040,9 +1120,8 @@ String receiptIqd(int v, {String sign = ''}) => formatIqd(v, sign: sign);
 
 /// کاتی بەغدا (UTC+3، بێ کاتی هاوین).
 DateTime? receiptBaghdad(dynamic raw) {
-  final DateTime? dt = raw is DateTime
-      ? raw
-      : DateTime.tryParse((raw ?? '').toString().trim());
+  final DateTime? dt =
+      raw is DateTime ? raw : DateTime.tryParse((raw ?? '').toString().trim());
   if (dt == null) return null;
   return dt.toUtc().add(const Duration(hours: 3));
 }

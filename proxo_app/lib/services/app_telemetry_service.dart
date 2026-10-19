@@ -21,8 +21,8 @@ class AppTelemetryService with WidgetsBindingObserver {
     this.client, {
     Future<Map<String, String>> Function()? deviceCollector,
     Future<String> Function()? installationLoader,
-  }) : _collect = deviceCollector ?? _collectDevice,
-       _installationLoader = installationLoader ?? _loadInstallation;
+  })  : _collect = deviceCollector ?? _collectDevice,
+        _installationLoader = installationLoader ?? _loadInstallation;
   final SupabaseClient client;
   final Future<Map<String, String>> Function() _collect;
   final Future<String> Function() _installationLoader;
@@ -40,6 +40,7 @@ class AppTelemetryService with WidgetsBindingObserver {
   String? _scope;
   int _sequence = 0, _eventSequence = 0;
   bool _foreground = false, _disposed = false, _started = false;
+  bool _lifecycleForeground = false;
   bool _sendAgain = false;
   FlutterExceptionHandler? _previousFlutterError;
   bool Function(Object, StackTrace)? _previousPlatformError;
@@ -107,7 +108,7 @@ class AppTelemetryService with WidgetsBindingObserver {
     _started = true;
     active = this;
     WidgetsBinding.instance.addObserver(this);
-    _foreground =
+    _foreground = _lifecycleForeground =
         WidgetsBinding.instance.lifecycleState == AppLifecycleState.resumed;
     _bind();
     _auth = client.auth.onAuthStateChange.listen((_) => _bind());
@@ -133,6 +134,7 @@ class AppTelemetryService with WidgetsBindingObserver {
               .catchError((Object _) {}),
         );
       _scope = next;
+      _foreground = _lifecycleForeground;
       _run = newProxoRequestId();
       _sequence = 0;
       _eventSequence = 0;
@@ -153,7 +155,7 @@ class AppTelemetryService with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    _foreground = state == AppLifecycleState.resumed;
+    _foreground = _lifecycleForeground = state == AppLifecycleState.resumed;
     _bind();
   }
 
@@ -181,15 +183,13 @@ class AppTelemetryService with WidgetsBindingObserver {
     final scope = _currentScope(client);
     if (_disposed ||
         scope == null ||
-        (expectedScope != null && scope != expectedScope))
-      return;
+        (expectedScope != null && scope != expectedScope)) return;
     // Auth broadcasts are asynchronous; synchronize before a new-account event.
     if (_started && scope != _scope) _bind();
     if (!const {'section', 'error', 'action', 'performance'}.contains(kind) ||
         (outcome != null &&
             !const {'success', 'failure', 'incomplete'}.contains(outcome)) ||
-        !sections.contains(sectionName ?? _section))
-      return;
+        !sections.contains(sectionName ?? _section)) return;
     if (!RegExp(r'^[A-Za-z0-9_.:-]{1,100}$').hasMatch(code)) return;
     if (_events.length >= 100) _events.removeAt(0);
     _events.add({
@@ -204,11 +204,13 @@ class AppTelemetryService with WidgetsBindingObserver {
   }
 
   void error(Object error, {String? expectedScope}) => event(
-    'error',
-    error.runtimeType.toString().replaceAll(RegExp('[^A-Za-z0-9_.:-]'), '_'),
-    outcome: 'failure',
-    expectedScope: expectedScope,
-  );
+        'error',
+        error.runtimeType
+            .toString()
+            .replaceAll(RegExp('[^A-Za-z0-9_.:-]'), '_'),
+        outcome: 'failure',
+        expectedScope: expectedScope,
+      );
   Future<void> flush() {
     if (_disposed || _currentScope(client) == null) return Future.value();
     if (_sending != null) {
@@ -248,22 +250,20 @@ class AppTelemetryService with WidgetsBindingObserver {
         device = {};
       }
       if (_disposed || owner != _currentScope(client) || run != _run) return;
-      final result = await client
-          .rpc(
-            'pa_record_app_telemetry',
-            params: {
-              'p_batch': {
-                'installation_id': installation,
-                'run_id': run,
-                'sequence': seq,
-                'foreground': fg,
-                'section': sectionName,
-                'device': device,
-                'events': batch,
-              },
-            },
-          )
-          .timeout(const Duration(seconds: 8));
+      final result = await client.rpc(
+        'pa_record_app_telemetry',
+        params: {
+          'p_batch': {
+            'installation_id': installation,
+            'run_id': run,
+            'sequence': seq,
+            'foreground': fg,
+            'section': sectionName,
+            'device': device,
+            'events': batch,
+          },
+        },
+      ).timeout(const Duration(seconds: 8));
       if (result is Map &&
           result['ok'] == true &&
           owner == _currentScope(client) &&
@@ -272,18 +272,22 @@ class AppTelemetryService with WidgetsBindingObserver {
         _events.removeWhere((e) => ids.contains(e['id']));
       }
     } catch (_) {
-      _installation = null; /* Retry on next heartbeat; never recursively log telemetry failure. */
+      _installation =
+          null; /* Retry on next heartbeat; never recursively log telemetry failure. */
     }
   }
 
   Future<void> beforeLogout() async {
     if (!_started) return;
+    if (_scope != _currentScope(client)) _bind();
+    final scope = _scope, run = _run;
     _foreground = false;
     _heartbeat?.cancel();
     event('action', 'logout', outcome: 'success');
     try {
       await flush().timeout(const Duration(seconds: 2));
     } catch (_) {}
+    if (_disposed || scope != _currentScope(client) || run != _run) return;
     _events.clear();
     AppDataCache.forClient(client).cache.clear();
     AccountSetupService.forClient(client).clear();
