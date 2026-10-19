@@ -53,9 +53,12 @@ void main() {
     expect(field.top, greaterThan(0));
     expect(field.bottom, lessThan(852));
     expect(tester.takeException(), isNull);
-    // Native render-layer crop of the actual screen through the URL field.
+    // Native render-layer crop of the real label and URL field. Keep the
+    // unrelated empty fields and the next row outside this focused capture.
     // No retouching, synthesized UI, or external/cost-bearing request.
-    final bounds = Rect.fromLTWH(0, 0, 393, (field.bottom + 20).ceilToDouble());
+    final bounds = Rect.fromLTRB(
+        (field.left - 12).floorToDouble(), (field.top - 42).floorToDouble(),
+        (field.right + 12).ceilToDouble(), (field.bottom + 8).ceilToDouble());
     final render = capture.currentContext!.findRenderObject()! as RenderRepaintBoundary;
     await tester.runAsync(() async {
       final image = await (render.layer! as OffsetLayer).toImage(bounds, pixelRatio: 3);
