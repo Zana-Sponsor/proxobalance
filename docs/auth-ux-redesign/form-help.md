@@ -1,6 +1,6 @@
 # Contextual examples and tutorial links
 
-The ad video-link field and Create Page expose **بینینی نمونە**. A dialog opens a bundled image without waiting for Supabase or a web view; closing it retains the form. Page images are the existing rendered contact, order and download templates. They are warmed in the image cache while the form is visible. The link example is an exact SVG illustration with selectable sample URL text.
+The ad video-link field and Create Page expose **بینینی نمونە**. A dialog opens a bundled image without waiting for Supabase or a web view; closing it retains the form. Page images are real full-page captures of the production contact, order and download templates, and now match all four selected styles. They are warmed in the image cache while the form is visible. The link example is a real PNG screenshot of the production Proxo URL field, with a complete selectable sample URL beneath it; the old SVG has been removed. [Latest screenshots, 24 selection cases and 96 footer checks](../evidence/proxolink-examples-2026-10-19/README.md).
 
 The ad video-code field, video-link field and Create Page expose **بینینی فێرکاری**. This button reads one configured URL from the existing `public.pa_settings` table on demand. HTTPS URLs open in the user's external video/browser app. Repeated taps share one request; leaving the form prevents a late launch. Missing configuration, a failed lookup or a failed launch shows a localized message and preserves form input.
 
@@ -20,14 +20,14 @@ All three rows were seeded and read back successfully. Their values are currentl
 
 | Example | Sorani, 393 dp | Sorani, 280 dp / 2× text |
 |---|---|---|
-| Video link | [View](help-images/video-link-ckb-393.png) | [View](help-images/video-link-ckb-280.png) |
-| Contact page | [View](help-images/contact-ckb-393.png) | [View](help-images/contact-ckb-280.png) |
-| Order page | [View](help-images/order-ckb-393.png) | [View](help-images/order-ckb-280.png) |
-| Download page | [View](help-images/download-ckb-393.png) | [View](help-images/download-ckb-280.png) |
+| Video link | [View](../evidence/proxolink-examples-2026-10-19/app/help-evidence/video-link-ckb-393.png) | [View](../evidence/proxolink-examples-2026-10-19/app/help-evidence/video-link-ckb-280.png) |
+| Contact page | [View](../evidence/proxolink-examples-2026-10-19/app/help-evidence/contact-ckb-393.png) | [View](../evidence/proxolink-examples-2026-10-19/app/help-evidence/contact-ckb-280.png) |
+| Order page | [View](../evidence/proxolink-examples-2026-10-19/app/help-evidence/order-ckb-393.png) | [View](../evidence/proxolink-examples-2026-10-19/app/help-evidence/order-ckb-280.png) |
+| Download page | [View](../evidence/proxolink-examples-2026-10-19/app/help-evidence/download-ckb-393.png) | [View](../evidence/proxolink-examples-2026-10-19/app/help-evidence/download-ckb-280.png) |
 
-The same four dialogs were captured in Arabic and Badini: **24 cases total**, zero layout exceptions, dialog bounds checked against the viewport. Tall images scroll. [All geometry and image hashes](help-measurements.json).
+The same four dialogs were captured in Arabic and Badini: **24 cases total**, zero layout exceptions, dialog bounds checked against the viewport. Tall images scroll. [Current geometry and image hashes](../evidence/proxolink-examples-2026-10-19/app/page-example-evidence/manifest.json). The new localized captures include the exact production captions.
 
-Eight behavior tests cover scoped GET-only configuration lookup, unsafe URL rejection, local example opening at both sizes, input retention, bundled page images, repeated taps, unpublished links and disposal while awaiting a response. The complete Flutter suite passed **880 tests**; its final log ends with `+880: All tests passed!`.
+Eight behavior tests cover scoped GET-only configuration lookup, unsafe URL rejection, local example opening at both sizes, input retention, bundled page images, repeated taps, unpublished links and disposal while awaiting a response. Together with the new selected-style tests and localized captures, the focused run passed **34 tests**, including **24 actual-screen selection scenarios**. [Current log](../evidence/proxolink-examples-2026-10-19/app/example-tests/tests.log).
 
 The suite also covers OTP entry and paste using Arabic-Indic (`١٢٣٤٥٦`), Eastern Arabic (`۱۲۳۴۵۶`), ASCII and mixed numerals. Input is normalized to ASCII for submission; the five added cases check that prior digits survive a partial paste and that a rebuild preserves the code without repeating the completion callback.
 

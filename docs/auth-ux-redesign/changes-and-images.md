@@ -1,5 +1,7 @@
 # گۆڕانکاریەکان و وێنەی هەر بەش
 
+[نوێترین ٧٢ سکرینشۆت: نمونەی ڕاستەقینە، هەموو ستایلەکان و فۆتەر](../evidence/proxolink-examples-2026-10-19/README.md).
+
 وێنەکان لە ڕووکاری جێبەجێکراوی ئەپەکە و داتای نمونە گیراون. بۆ بینینی قەبارەی تەواو کلیک لە لینکەکان بکە. پێوانەکانی پیکسڵی لۆژیکی، زمان، قەبارەی دەق و SHA-256 لە [بەڵگەکان](evidence.json) و [پێوانەکان](measurements.csv) تۆمار کراون.
 
 | داواکاری | ئەوەی جێبەجێ کراوە | وێنە / بەڵگە |
@@ -16,8 +18,8 @@
 | سپڵاش | لۆگۆی هاوسەنگ، تیشکی شین و جووڵەی دەستپێک | [سپڵاش](images/splash-ckb-393.png) |
 | چوونەژوورەوەی پێشوو | دووبارە ئامادەکردنی پڕۆفایل داوا ناکات | [تێستەکان](behavior.log) |
 | ئاگاداریی باکگراووند | نیشانی P و ڕەنگی شین لە ئاگاداریی سیستەمی Android | [وێنە و تێستی Android](native/README.md) |
-| نمونەی لینکی ڤیدیۆ | پیشاندانی دەستبەجێی وێنەی ناوخۆیی | [بینینی نمونە](help-images/video-link-ckb-393.png) |
-| نمونەی دروستکردنی پەڕە | نموونە بۆ پەیوەندی، داواکردن و داگرتن | [پەیوەندی](help-images/contact-ckb-393.png) · [داواکردن](help-images/order-ckb-393.png) · [داگرتن](help-images/download-ckb-393.png) |
+| نمونەی لینکی ڤیدیۆ | پیشاندانی دەستبەجێی سکرینشۆتی ڕاستەقینەی خانەی بەستەر | [بینینی نمونە](../evidence/proxolink-examples-2026-10-19/app/help-evidence/video-link-ckb-393.png) |
+| نمونەی دروستکردنی پەڕە | نمونەی هەمان جۆر و ستایلی هەڵبژێردراو؛ هەموو ١٢ شێوە و فۆتەر پشکنران | [پەیوەندی](../evidence/proxolink-examples-2026-10-19/app/help-evidence/contact-ckb-393.png) · [داواکردن](../evidence/proxolink-examples-2026-10-19/app/help-evidence/order-ckb-393.png) · [داگرتن](../evidence/proxolink-examples-2026-10-19/app/help-evidence/download-ckb-393.png) |
 | لینکی فێرکاری | لینکی HTTPS ـی دانراوی ئەدمین لە Supabase | [ناوی خانەکان و ڕێکخستن](form-help.md) |
 | API ـی ئیمێڵ | ناردن و دووبارە ناردنی کۆد لە API ـەکەتەوە | [ڕێڕەوەکان](email-signup.md) · [تێستەکان](email-api-tests.log) |
 | زمان و دەقی گەورە | سۆرانی، عەرەبی، بادینی؛ ٣٩٣dp/١× و ٢٨٠dp/٢× | [گشت ٢٠٠ سکرینشۆتی ئەپ](screenshots.md) · [٢٤ وێنەی نمونەکان](form-help.md) |
@@ -34,6 +36,6 @@
 
 | نموونەی لینک | نموونەی پەڕە |
 |---|---|
-| ![لینک](help-images/video-link-ckb-393.png) | ![پەڕە](help-images/contact-ckb-393.png) |
+| ![لینک](../evidence/proxolink-examples-2026-10-19/app/help-evidence/video-link-ckb-393.png) | ![پەڕە](../evidence/proxolink-examples-2026-10-19/app/help-evidence/contact-ckb-393.png) |
 
 [ڕاپۆرتی سۆرانی](review-ckb.md) · [ڕاپۆرتی تەکنیکی](README.md) · [گشت تێستەکان](full-suite.log)

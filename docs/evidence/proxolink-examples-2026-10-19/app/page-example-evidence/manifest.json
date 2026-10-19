@@ -1,0 +1,1434 @@
+{
+  "source_commit": "ba867942896571d6fbcc38e77ec533a320c239dc",
+  "evidence_type": "Actual production Flutter Create Page screen and FormHelpActions dialog; real bundled production-renderer PNGs.",
+  "test": "test/proxolink_page_example_test.dart",
+  "fixture": "integration_test/support/actual_screen_fixtures.dart: ActualToolsRepository; fictional form content; writes and network previews rejected.",
+  "native_device": false,
+  "customer_data": false,
+  "fonts": [
+    "Rabar_021.ttf",
+    "MaterialIcons-Regular.otf"
+  ],
+  "expected_screenshots": 24,
+  "complete_capture_set": true,
+  "validated_interaction_cases": [
+    {
+      "page_type": "contact",
+      "style": "pill",
+      "width_dp": 393.0,
+      "text_scale": 1.0,
+      "selected_asset_verified": true,
+      "image_bottom_reachable": true,
+      "form_input_retained": true,
+      "close_button_used": true
+    },
+    {
+      "page_type": "contact",
+      "style": "pill-mint",
+      "width_dp": 393.0,
+      "text_scale": 1.0,
+      "selected_asset_verified": true,
+      "image_bottom_reachable": true,
+      "form_input_retained": true,
+      "close_button_used": true
+    },
+    {
+      "page_type": "contact",
+      "style": "pill-dark",
+      "width_dp": 393.0,
+      "text_scale": 1.0,
+      "selected_asset_verified": true,
+      "image_bottom_reachable": true,
+      "form_input_retained": true,
+      "close_button_used": true
+    },
+    {
+      "page_type": "contact",
+      "style": "pill-white",
+      "width_dp": 393.0,
+      "text_scale": 1.0,
+      "selected_asset_verified": true,
+      "image_bottom_reachable": true,
+      "form_input_retained": true,
+      "close_button_used": true
+    },
+    {
+      "page_type": "order",
+      "style": "pill",
+      "width_dp": 393.0,
+      "text_scale": 1.0,
+      "selected_asset_verified": true,
+      "image_bottom_reachable": true,
+      "form_input_retained": true,
+      "close_button_used": true
+    },
+    {
+      "page_type": "order",
+      "style": "pill-mint",
+      "width_dp": 393.0,
+      "text_scale": 1.0,
+      "selected_asset_verified": true,
+      "image_bottom_reachable": true,
+      "form_input_retained": true,
+      "close_button_used": true
+    },
+    {
+      "page_type": "order",
+      "style": "pill-dark",
+      "width_dp": 393.0,
+      "text_scale": 1.0,
+      "selected_asset_verified": true,
+      "image_bottom_reachable": true,
+      "form_input_retained": true,
+      "close_button_used": true
+    },
+    {
+      "page_type": "order",
+      "style": "pill-white",
+      "width_dp": 393.0,
+      "text_scale": 1.0,
+      "selected_asset_verified": true,
+      "image_bottom_reachable": true,
+      "form_input_retained": true,
+      "close_button_used": true
+    },
+    {
+      "page_type": "download",
+      "style": "pill",
+      "width_dp": 393.0,
+      "text_scale": 1.0,
+      "selected_asset_verified": true,
+      "image_bottom_reachable": true,
+      "form_input_retained": true,
+      "close_button_used": true
+    },
+    {
+      "page_type": "download",
+      "style": "pill-mint",
+      "width_dp": 393.0,
+      "text_scale": 1.0,
+      "selected_asset_verified": true,
+      "image_bottom_reachable": true,
+      "form_input_retained": true,
+      "close_button_used": true
+    },
+    {
+      "page_type": "download",
+      "style": "pill-dark",
+      "width_dp": 393.0,
+      "text_scale": 1.0,
+      "selected_asset_verified": true,
+      "image_bottom_reachable": true,
+      "form_input_retained": true,
+      "close_button_used": true
+    },
+    {
+      "page_type": "download",
+      "style": "pill-white",
+      "width_dp": 393.0,
+      "text_scale": 1.0,
+      "selected_asset_verified": true,
+      "image_bottom_reachable": true,
+      "form_input_retained": true,
+      "close_button_used": true
+    },
+    {
+      "page_type": "contact",
+      "style": "pill",
+      "width_dp": 320.0,
+      "text_scale": 1.6,
+      "selected_asset_verified": true,
+      "image_bottom_reachable": true,
+      "form_input_retained": true,
+      "close_button_used": true
+    },
+    {
+      "page_type": "contact",
+      "style": "pill-mint",
+      "width_dp": 320.0,
+      "text_scale": 1.6,
+      "selected_asset_verified": true,
+      "image_bottom_reachable": true,
+      "form_input_retained": true,
+      "close_button_used": true
+    },
+    {
+      "page_type": "contact",
+      "style": "pill-dark",
+      "width_dp": 320.0,
+      "text_scale": 1.6,
+      "selected_asset_verified": true,
+      "image_bottom_reachable": true,
+      "form_input_retained": true,
+      "close_button_used": true
+    },
+    {
+      "page_type": "contact",
+      "style": "pill-white",
+      "width_dp": 320.0,
+      "text_scale": 1.6,
+      "selected_asset_verified": true,
+      "image_bottom_reachable": true,
+      "form_input_retained": true,
+      "close_button_used": true
+    },
+    {
+      "page_type": "order",
+      "style": "pill",
+      "width_dp": 320.0,
+      "text_scale": 1.6,
+      "selected_asset_verified": true,
+      "image_bottom_reachable": true,
+      "form_input_retained": true,
+      "close_button_used": true
+    },
+    {
+      "page_type": "order",
+      "style": "pill-mint",
+      "width_dp": 320.0,
+      "text_scale": 1.6,
+      "selected_asset_verified": true,
+      "image_bottom_reachable": true,
+      "form_input_retained": true,
+      "close_button_used": true
+    },
+    {
+      "page_type": "order",
+      "style": "pill-dark",
+      "width_dp": 320.0,
+      "text_scale": 1.6,
+      "selected_asset_verified": true,
+      "image_bottom_reachable": true,
+      "form_input_retained": true,
+      "close_button_used": true
+    },
+    {
+      "page_type": "order",
+      "style": "pill-white",
+      "width_dp": 320.0,
+      "text_scale": 1.6,
+      "selected_asset_verified": true,
+      "image_bottom_reachable": true,
+      "form_input_retained": true,
+      "close_button_used": true
+    },
+    {
+      "page_type": "download",
+      "style": "pill",
+      "width_dp": 320.0,
+      "text_scale": 1.6,
+      "selected_asset_verified": true,
+      "image_bottom_reachable": true,
+      "form_input_retained": true,
+      "close_button_used": true
+    },
+    {
+      "page_type": "download",
+      "style": "pill-mint",
+      "width_dp": 320.0,
+      "text_scale": 1.6,
+      "selected_asset_verified": true,
+      "image_bottom_reachable": true,
+      "form_input_retained": true,
+      "close_button_used": true
+    },
+    {
+      "page_type": "download",
+      "style": "pill-dark",
+      "width_dp": 320.0,
+      "text_scale": 1.6,
+      "selected_asset_verified": true,
+      "image_bottom_reachable": true,
+      "form_input_retained": true,
+      "close_button_used": true
+    },
+    {
+      "page_type": "download",
+      "style": "pill-white",
+      "width_dp": 320.0,
+      "text_scale": 1.6,
+      "selected_asset_verified": true,
+      "image_bottom_reachable": true,
+      "form_input_retained": true,
+      "close_button_used": true
+    }
+  ],
+  "captures": [
+    {
+      "file": "contact-pill-top.png",
+      "sha256": "c6884f8f31eb77bd4475501a1a8523842a5c18101549ae528823973f0ff91868",
+      "size_px": [
+        786,
+        1704
+      ],
+      "capture_pixel_ratio": 2,
+      "viewport_dp": [
+        393,
+        852
+      ],
+      "text_scale": 1,
+      "asset": "assets/proxolink_thumbnails/contact-pill.png",
+      "asset_sha256": "00c272d3a28794b2377ca3809e9bb3d5f8280451b5d1b9c2722d58574f3ac52a",
+      "dialog_bounds_dp": [
+        0.0,
+        0.0,
+        393.0,
+        852.0
+      ],
+      "image_bounds_dp": [
+        40.0,
+        143.90000000000003,
+        313.0,
+        828.1458333333333
+      ],
+      "scroll_viewport_bounds_dp": [
+        20.0,
+        63.900000000000034,
+        353.0,
+        724.1999999999998
+      ],
+      "scroll_offset_dp": 0.0,
+      "decoded_size_px": [
+        720,
+        1905
+      ],
+      "footer_band_y_fraction": [
+        0.8,
+        1
+      ],
+      "footer_band_luminance_range": [
+        102,
+        240
+      ],
+      "footer_band_opaque_fraction": 1.0,
+      "pixel_check_scope": "Nonblank paint only; footer contents verified by the separate production renderer footer audit."
+    },
+    {
+      "file": "contact-pill-bottom.png",
+      "sha256": "4d8e7858da509163380d4974bd06bdaaf9a6e4b211475d7a5a7fdbd610c02346",
+      "size_px": [
+        786,
+        1704
+      ],
+      "capture_pixel_ratio": 2,
+      "viewport_dp": [
+        393,
+        852
+      ],
+      "text_scale": 1,
+      "asset": "assets/proxolink_thumbnails/contact-pill.png",
+      "asset_sha256": "00c272d3a28794b2377ca3809e9bb3d5f8280451b5d1b9c2722d58574f3ac52a",
+      "dialog_bounds_dp": [
+        0.0,
+        0.0,
+        393.0,
+        852.0
+      ],
+      "image_bounds_dp": [
+        40.0,
+        -98.0458333333334,
+        313.0,
+        828.1458333333333
+      ],
+      "scroll_viewport_bounds_dp": [
+        20.0,
+        63.900000000000034,
+        353.0,
+        724.1999999999998
+      ],
+      "scroll_offset_dp": 241.94583333333344,
+      "decoded_size_px": [
+        720,
+        1905
+      ],
+      "footer_band_y_fraction": [
+        0.8,
+        1
+      ],
+      "footer_band_luminance_range": [
+        102,
+        240
+      ],
+      "footer_band_opaque_fraction": 1.0,
+      "pixel_check_scope": "Nonblank paint only; footer contents verified by the separate production renderer footer audit."
+    },
+    {
+      "file": "contact-pill-mint-top.png",
+      "sha256": "815b8b7bb0b2b421782f253f1385ef71339957aa5a844313be29409de768fd4e",
+      "size_px": [
+        786,
+        1704
+      ],
+      "capture_pixel_ratio": 2,
+      "viewport_dp": [
+        393,
+        852
+      ],
+      "text_scale": 1,
+      "asset": "assets/proxolink_thumbnails/contact-pill-mint.png",
+      "asset_sha256": "84c78806da105ef308a02cc8033262baddf2810f8fea09181e860cf965d518dc",
+      "dialog_bounds_dp": [
+        0.0,
+        0.0,
+        393.0,
+        852.0
+      ],
+      "image_bounds_dp": [
+        40.0,
+        143.90000000000003,
+        313.0,
+        828.1458333333333
+      ],
+      "scroll_viewport_bounds_dp": [
+        20.0,
+        63.900000000000034,
+        353.0,
+        724.1999999999998
+      ],
+      "scroll_offset_dp": 0.0,
+      "decoded_size_px": [
+        720,
+        1905
+      ],
+      "footer_band_y_fraction": [
+        0.8,
+        1
+      ],
+      "footer_band_luminance_range": [
+        89,
+        239
+      ],
+      "footer_band_opaque_fraction": 1.0,
+      "pixel_check_scope": "Nonblank paint only; footer contents verified by the separate production renderer footer audit."
+    },
+    {
+      "file": "contact-pill-mint-bottom.png",
+      "sha256": "5b597f3c7ee888c5566cc2caf548a2112f9745353c508235cc9cb32603ce2f7a",
+      "size_px": [
+        786,
+        1704
+      ],
+      "capture_pixel_ratio": 2,
+      "viewport_dp": [
+        393,
+        852
+      ],
+      "text_scale": 1,
+      "asset": "assets/proxolink_thumbnails/contact-pill-mint.png",
+      "asset_sha256": "84c78806da105ef308a02cc8033262baddf2810f8fea09181e860cf965d518dc",
+      "dialog_bounds_dp": [
+        0.0,
+        0.0,
+        393.0,
+        852.0
+      ],
+      "image_bounds_dp": [
+        40.0,
+        -98.0458333333334,
+        313.0,
+        828.1458333333333
+      ],
+      "scroll_viewport_bounds_dp": [
+        20.0,
+        63.900000000000034,
+        353.0,
+        724.1999999999998
+      ],
+      "scroll_offset_dp": 241.94583333333344,
+      "decoded_size_px": [
+        720,
+        1905
+      ],
+      "footer_band_y_fraction": [
+        0.8,
+        1
+      ],
+      "footer_band_luminance_range": [
+        89,
+        239
+      ],
+      "footer_band_opaque_fraction": 1.0,
+      "pixel_check_scope": "Nonblank paint only; footer contents verified by the separate production renderer footer audit."
+    },
+    {
+      "file": "contact-pill-dark-top.png",
+      "sha256": "c822d05b1f16cd13c7f4c570362f97885a98048d5edd9f65b821dc105c4e6232",
+      "size_px": [
+        786,
+        1704
+      ],
+      "capture_pixel_ratio": 2,
+      "viewport_dp": [
+        393,
+        852
+      ],
+      "text_scale": 1,
+      "asset": "assets/proxolink_thumbnails/contact-pill-dark.png",
+      "asset_sha256": "58683f32d4be33d0fef7edbc84ac0943647a4caae4a320372de0e89d2013fd38",
+      "dialog_bounds_dp": [
+        0.0,
+        0.0,
+        393.0,
+        852.0
+      ],
+      "image_bounds_dp": [
+        40.0,
+        143.90000000000003,
+        313.0,
+        828.1458333333333
+      ],
+      "scroll_viewport_bounds_dp": [
+        20.0,
+        63.900000000000034,
+        353.0,
+        724.1999999999998
+      ],
+      "scroll_offset_dp": 0.0,
+      "decoded_size_px": [
+        720,
+        1905
+      ],
+      "footer_band_y_fraction": [
+        0.8,
+        1
+      ],
+      "footer_band_luminance_range": [
+        44,
+        203
+      ],
+      "footer_band_opaque_fraction": 1.0,
+      "pixel_check_scope": "Nonblank paint only; footer contents verified by the separate production renderer footer audit."
+    },
+    {
+      "file": "contact-pill-dark-bottom.png",
+      "sha256": "c379689f2eeb0ba35ab30863b1e710f68bd47b9002a34361a7723a7862a43e6c",
+      "size_px": [
+        786,
+        1704
+      ],
+      "capture_pixel_ratio": 2,
+      "viewport_dp": [
+        393,
+        852
+      ],
+      "text_scale": 1,
+      "asset": "assets/proxolink_thumbnails/contact-pill-dark.png",
+      "asset_sha256": "58683f32d4be33d0fef7edbc84ac0943647a4caae4a320372de0e89d2013fd38",
+      "dialog_bounds_dp": [
+        0.0,
+        0.0,
+        393.0,
+        852.0
+      ],
+      "image_bounds_dp": [
+        40.0,
+        -98.0458333333334,
+        313.0,
+        828.1458333333333
+      ],
+      "scroll_viewport_bounds_dp": [
+        20.0,
+        63.900000000000034,
+        353.0,
+        724.1999999999998
+      ],
+      "scroll_offset_dp": 241.94583333333344,
+      "decoded_size_px": [
+        720,
+        1905
+      ],
+      "footer_band_y_fraction": [
+        0.8,
+        1
+      ],
+      "footer_band_luminance_range": [
+        44,
+        203
+      ],
+      "footer_band_opaque_fraction": 1.0,
+      "pixel_check_scope": "Nonblank paint only; footer contents verified by the separate production renderer footer audit."
+    },
+    {
+      "file": "contact-pill-white-top.png",
+      "sha256": "3c23d546f23aafc5eee96fed55f71c3669d7efac74d05bf45d14accaab84928e",
+      "size_px": [
+        786,
+        1704
+      ],
+      "capture_pixel_ratio": 2,
+      "viewport_dp": [
+        393,
+        852
+      ],
+      "text_scale": 1,
+      "asset": "assets/proxolink_thumbnails/contact-pill-white.png",
+      "asset_sha256": "73653a7e2174f412d282ac840a3b9811598de4b41cdcdbf2622b3190b1da342f",
+      "dialog_bounds_dp": [
+        0.0,
+        0.0,
+        393.0,
+        852.0
+      ],
+      "image_bounds_dp": [
+        40.0,
+        143.90000000000003,
+        313.0,
+        828.1458333333333
+      ],
+      "scroll_viewport_bounds_dp": [
+        20.0,
+        63.900000000000034,
+        353.0,
+        724.1999999999998
+      ],
+      "scroll_offset_dp": 0.0,
+      "decoded_size_px": [
+        720,
+        1905
+      ],
+      "footer_band_y_fraction": [
+        0.8,
+        1
+      ],
+      "footer_band_luminance_range": [
+        102,
+        255
+      ],
+      "footer_band_opaque_fraction": 1.0,
+      "pixel_check_scope": "Nonblank paint only; footer contents verified by the separate production renderer footer audit."
+    },
+    {
+      "file": "contact-pill-white-bottom.png",
+      "sha256": "6f8aa94e5df3f2edc4c679f3b50ced17db54ad0bc6caee6e0ad9ae02714bcb3c",
+      "size_px": [
+        786,
+        1704
+      ],
+      "capture_pixel_ratio": 2,
+      "viewport_dp": [
+        393,
+        852
+      ],
+      "text_scale": 1,
+      "asset": "assets/proxolink_thumbnails/contact-pill-white.png",
+      "asset_sha256": "73653a7e2174f412d282ac840a3b9811598de4b41cdcdbf2622b3190b1da342f",
+      "dialog_bounds_dp": [
+        0.0,
+        0.0,
+        393.0,
+        852.0
+      ],
+      "image_bounds_dp": [
+        40.0,
+        -98.0458333333334,
+        313.0,
+        828.1458333333333
+      ],
+      "scroll_viewport_bounds_dp": [
+        20.0,
+        63.900000000000034,
+        353.0,
+        724.1999999999998
+      ],
+      "scroll_offset_dp": 241.94583333333344,
+      "decoded_size_px": [
+        720,
+        1905
+      ],
+      "footer_band_y_fraction": [
+        0.8,
+        1
+      ],
+      "footer_band_luminance_range": [
+        102,
+        255
+      ],
+      "footer_band_opaque_fraction": 1.0,
+      "pixel_check_scope": "Nonblank paint only; footer contents verified by the separate production renderer footer audit."
+    },
+    {
+      "file": "order-pill-top.png",
+      "sha256": "0ab303f95b5bc1ee78ffdce4034f169ef80437516b814c1a167db11caa33ab3d",
+      "size_px": [
+        786,
+        1704
+      ],
+      "capture_pixel_ratio": 2,
+      "viewport_dp": [
+        393,
+        852
+      ],
+      "text_scale": 1,
+      "asset": "assets/proxolink_thumbnails/order-pill.png",
+      "asset_sha256": "3713b1593a42da01ef2745c9adfb92fc7bf47590746428933a831d0b4f28dfa6",
+      "dialog_bounds_dp": [
+        0.0,
+        0.0,
+        393.0,
+        852.0
+      ],
+      "image_bounds_dp": [
+        40.0,
+        143.90000000000003,
+        313.0,
+        828.1458333333333
+      ],
+      "scroll_viewport_bounds_dp": [
+        20.0,
+        63.900000000000034,
+        353.0,
+        724.1999999999998
+      ],
+      "scroll_offset_dp": 0.0,
+      "decoded_size_px": [
+        720,
+        1905
+      ],
+      "footer_band_y_fraction": [
+        0.8,
+        1
+      ],
+      "footer_band_luminance_range": [
+        102,
+        240
+      ],
+      "footer_band_opaque_fraction": 1.0,
+      "pixel_check_scope": "Nonblank paint only; footer contents verified by the separate production renderer footer audit."
+    },
+    {
+      "file": "order-pill-bottom.png",
+      "sha256": "d0defbb731c5cc5e0e5f9363f734c646e9f15fd9b0ab6d1ad3e9bdda32df7c67",
+      "size_px": [
+        786,
+        1704
+      ],
+      "capture_pixel_ratio": 2,
+      "viewport_dp": [
+        393,
+        852
+      ],
+      "text_scale": 1,
+      "asset": "assets/proxolink_thumbnails/order-pill.png",
+      "asset_sha256": "3713b1593a42da01ef2745c9adfb92fc7bf47590746428933a831d0b4f28dfa6",
+      "dialog_bounds_dp": [
+        0.0,
+        0.0,
+        393.0,
+        852.0
+      ],
+      "image_bounds_dp": [
+        40.0,
+        -98.0458333333334,
+        313.0,
+        828.1458333333333
+      ],
+      "scroll_viewport_bounds_dp": [
+        20.0,
+        63.900000000000034,
+        353.0,
+        724.1999999999998
+      ],
+      "scroll_offset_dp": 241.94583333333344,
+      "decoded_size_px": [
+        720,
+        1905
+      ],
+      "footer_band_y_fraction": [
+        0.8,
+        1
+      ],
+      "footer_band_luminance_range": [
+        102,
+        240
+      ],
+      "footer_band_opaque_fraction": 1.0,
+      "pixel_check_scope": "Nonblank paint only; footer contents verified by the separate production renderer footer audit."
+    },
+    {
+      "file": "order-pill-mint-top.png",
+      "sha256": "6ee99d9500b3e108ee0fbbedd58a3bdbc710789a16a0db98aed0d8b21c595b26",
+      "size_px": [
+        786,
+        1704
+      ],
+      "capture_pixel_ratio": 2,
+      "viewport_dp": [
+        393,
+        852
+      ],
+      "text_scale": 1,
+      "asset": "assets/proxolink_thumbnails/order-pill-mint.png",
+      "asset_sha256": "24e775ed4f7bae46027f1c091dd81ce18e85be58dc6ed08da973e0ecd4c93d86",
+      "dialog_bounds_dp": [
+        0.0,
+        0.0,
+        393.0,
+        852.0
+      ],
+      "image_bounds_dp": [
+        40.0,
+        143.90000000000003,
+        313.0,
+        828.1458333333333
+      ],
+      "scroll_viewport_bounds_dp": [
+        20.0,
+        63.900000000000034,
+        353.0,
+        724.1999999999998
+      ],
+      "scroll_offset_dp": 0.0,
+      "decoded_size_px": [
+        720,
+        1905
+      ],
+      "footer_band_y_fraction": [
+        0.8,
+        1
+      ],
+      "footer_band_luminance_range": [
+        89,
+        239
+      ],
+      "footer_band_opaque_fraction": 1.0,
+      "pixel_check_scope": "Nonblank paint only; footer contents verified by the separate production renderer footer audit."
+    },
+    {
+      "file": "order-pill-mint-bottom.png",
+      "sha256": "67a438f7d1d4c5101ca4ade285bf6213e61e033631795fbd8e1de3f8e2ec2b26",
+      "size_px": [
+        786,
+        1704
+      ],
+      "capture_pixel_ratio": 2,
+      "viewport_dp": [
+        393,
+        852
+      ],
+      "text_scale": 1,
+      "asset": "assets/proxolink_thumbnails/order-pill-mint.png",
+      "asset_sha256": "24e775ed4f7bae46027f1c091dd81ce18e85be58dc6ed08da973e0ecd4c93d86",
+      "dialog_bounds_dp": [
+        0.0,
+        0.0,
+        393.0,
+        852.0
+      ],
+      "image_bounds_dp": [
+        40.0,
+        -98.0458333333334,
+        313.0,
+        828.1458333333333
+      ],
+      "scroll_viewport_bounds_dp": [
+        20.0,
+        63.900000000000034,
+        353.0,
+        724.1999999999998
+      ],
+      "scroll_offset_dp": 241.94583333333344,
+      "decoded_size_px": [
+        720,
+        1905
+      ],
+      "footer_band_y_fraction": [
+        0.8,
+        1
+      ],
+      "footer_band_luminance_range": [
+        89,
+        239
+      ],
+      "footer_band_opaque_fraction": 1.0,
+      "pixel_check_scope": "Nonblank paint only; footer contents verified by the separate production renderer footer audit."
+    },
+    {
+      "file": "order-pill-dark-top.png",
+      "sha256": "a9593367ef3e1bec2a46fb57fb3683ffa880e29d6fb8297c374e9601b1aaba69",
+      "size_px": [
+        786,
+        1704
+      ],
+      "capture_pixel_ratio": 2,
+      "viewport_dp": [
+        393,
+        852
+      ],
+      "text_scale": 1,
+      "asset": "assets/proxolink_thumbnails/order-pill-dark.png",
+      "asset_sha256": "28a257b9478e393d26e534500e9ea9202dc07854d0864ead88aa82473bd04906",
+      "dialog_bounds_dp": [
+        0.0,
+        0.0,
+        393.0,
+        852.0
+      ],
+      "image_bounds_dp": [
+        40.0,
+        143.90000000000003,
+        313.0,
+        828.1458333333333
+      ],
+      "scroll_viewport_bounds_dp": [
+        20.0,
+        63.900000000000034,
+        353.0,
+        724.1999999999998
+      ],
+      "scroll_offset_dp": 0.0,
+      "decoded_size_px": [
+        720,
+        1905
+      ],
+      "footer_band_y_fraction": [
+        0.8,
+        1
+      ],
+      "footer_band_luminance_range": [
+        44,
+        203
+      ],
+      "footer_band_opaque_fraction": 1.0,
+      "pixel_check_scope": "Nonblank paint only; footer contents verified by the separate production renderer footer audit."
+    },
+    {
+      "file": "order-pill-dark-bottom.png",
+      "sha256": "9c362176b533c3bfc3efafc15a65886815c3eec600704efa0662bb69369b9437",
+      "size_px": [
+        786,
+        1704
+      ],
+      "capture_pixel_ratio": 2,
+      "viewport_dp": [
+        393,
+        852
+      ],
+      "text_scale": 1,
+      "asset": "assets/proxolink_thumbnails/order-pill-dark.png",
+      "asset_sha256": "28a257b9478e393d26e534500e9ea9202dc07854d0864ead88aa82473bd04906",
+      "dialog_bounds_dp": [
+        0.0,
+        0.0,
+        393.0,
+        852.0
+      ],
+      "image_bounds_dp": [
+        40.0,
+        -98.0458333333334,
+        313.0,
+        828.1458333333333
+      ],
+      "scroll_viewport_bounds_dp": [
+        20.0,
+        63.900000000000034,
+        353.0,
+        724.1999999999998
+      ],
+      "scroll_offset_dp": 241.94583333333344,
+      "decoded_size_px": [
+        720,
+        1905
+      ],
+      "footer_band_y_fraction": [
+        0.8,
+        1
+      ],
+      "footer_band_luminance_range": [
+        44,
+        203
+      ],
+      "footer_band_opaque_fraction": 1.0,
+      "pixel_check_scope": "Nonblank paint only; footer contents verified by the separate production renderer footer audit."
+    },
+    {
+      "file": "order-pill-white-top.png",
+      "sha256": "d590772bdf1b9570c7fd73c4677786d235760dabca2fe0e2112485a95d0652a1",
+      "size_px": [
+        786,
+        1704
+      ],
+      "capture_pixel_ratio": 2,
+      "viewport_dp": [
+        393,
+        852
+      ],
+      "text_scale": 1,
+      "asset": "assets/proxolink_thumbnails/order-pill-white.png",
+      "asset_sha256": "ef56ab39cea1f61b590412882578486f5cfc092d190737b829c03f1756e5332d",
+      "dialog_bounds_dp": [
+        0.0,
+        0.0,
+        393.0,
+        852.0
+      ],
+      "image_bounds_dp": [
+        40.0,
+        143.90000000000003,
+        313.0,
+        828.1458333333333
+      ],
+      "scroll_viewport_bounds_dp": [
+        20.0,
+        63.900000000000034,
+        353.0,
+        724.1999999999998
+      ],
+      "scroll_offset_dp": 0.0,
+      "decoded_size_px": [
+        720,
+        1905
+      ],
+      "footer_band_y_fraction": [
+        0.8,
+        1
+      ],
+      "footer_band_luminance_range": [
+        102,
+        255
+      ],
+      "footer_band_opaque_fraction": 1.0,
+      "pixel_check_scope": "Nonblank paint only; footer contents verified by the separate production renderer footer audit."
+    },
+    {
+      "file": "order-pill-white-bottom.png",
+      "sha256": "534da557d5f48eba6cd9ea5dd11f1994132a799fd68dbc4751db4b8e675cb7aa",
+      "size_px": [
+        786,
+        1704
+      ],
+      "capture_pixel_ratio": 2,
+      "viewport_dp": [
+        393,
+        852
+      ],
+      "text_scale": 1,
+      "asset": "assets/proxolink_thumbnails/order-pill-white.png",
+      "asset_sha256": "ef56ab39cea1f61b590412882578486f5cfc092d190737b829c03f1756e5332d",
+      "dialog_bounds_dp": [
+        0.0,
+        0.0,
+        393.0,
+        852.0
+      ],
+      "image_bounds_dp": [
+        40.0,
+        -98.0458333333334,
+        313.0,
+        828.1458333333333
+      ],
+      "scroll_viewport_bounds_dp": [
+        20.0,
+        63.900000000000034,
+        353.0,
+        724.1999999999998
+      ],
+      "scroll_offset_dp": 241.94583333333344,
+      "decoded_size_px": [
+        720,
+        1905
+      ],
+      "footer_band_y_fraction": [
+        0.8,
+        1
+      ],
+      "footer_band_luminance_range": [
+        102,
+        255
+      ],
+      "footer_band_opaque_fraction": 1.0,
+      "pixel_check_scope": "Nonblank paint only; footer contents verified by the separate production renderer footer audit."
+    },
+    {
+      "file": "download-pill-top.png",
+      "sha256": "950de9f196a006c263094807bcd5df96e3738d9277b661ccc64435597dcb1a87",
+      "size_px": [
+        786,
+        1704
+      ],
+      "capture_pixel_ratio": 2,
+      "viewport_dp": [
+        393,
+        852
+      ],
+      "text_scale": 1,
+      "asset": "assets/proxolink_thumbnails/download-pill.png",
+      "asset_sha256": "54192b41d7e396d37c926bfe9df2f6ed260ac4ddfa92570a891986172d5729ea",
+      "dialog_bounds_dp": [
+        0.0,
+        0.0,
+        393.0,
+        852.0
+      ],
+      "image_bounds_dp": [
+        40.0,
+        143.90000000000003,
+        313.0,
+        828.1458333333333
+      ],
+      "scroll_viewport_bounds_dp": [
+        20.0,
+        63.900000000000034,
+        353.0,
+        724.1999999999998
+      ],
+      "scroll_offset_dp": 0.0,
+      "decoded_size_px": [
+        720,
+        1905
+      ],
+      "footer_band_y_fraction": [
+        0.8,
+        1
+      ],
+      "footer_band_luminance_range": [
+        102,
+        240
+      ],
+      "footer_band_opaque_fraction": 1.0,
+      "pixel_check_scope": "Nonblank paint only; footer contents verified by the separate production renderer footer audit."
+    },
+    {
+      "file": "download-pill-bottom.png",
+      "sha256": "23c414968dbb8975c6adcd5c1d9dc1bc04d7e4d1d99c5a0b3bf535580677a113",
+      "size_px": [
+        786,
+        1704
+      ],
+      "capture_pixel_ratio": 2,
+      "viewport_dp": [
+        393,
+        852
+      ],
+      "text_scale": 1,
+      "asset": "assets/proxolink_thumbnails/download-pill.png",
+      "asset_sha256": "54192b41d7e396d37c926bfe9df2f6ed260ac4ddfa92570a891986172d5729ea",
+      "dialog_bounds_dp": [
+        0.0,
+        0.0,
+        393.0,
+        852.0
+      ],
+      "image_bounds_dp": [
+        40.0,
+        -98.0458333333334,
+        313.0,
+        828.1458333333333
+      ],
+      "scroll_viewport_bounds_dp": [
+        20.0,
+        63.900000000000034,
+        353.0,
+        724.1999999999998
+      ],
+      "scroll_offset_dp": 241.94583333333344,
+      "decoded_size_px": [
+        720,
+        1905
+      ],
+      "footer_band_y_fraction": [
+        0.8,
+        1
+      ],
+      "footer_band_luminance_range": [
+        102,
+        240
+      ],
+      "footer_band_opaque_fraction": 1.0,
+      "pixel_check_scope": "Nonblank paint only; footer contents verified by the separate production renderer footer audit."
+    },
+    {
+      "file": "download-pill-mint-top.png",
+      "sha256": "24021e3504557237f65199ec48058457349325b96b94cc113c952601296fa27f",
+      "size_px": [
+        786,
+        1704
+      ],
+      "capture_pixel_ratio": 2,
+      "viewport_dp": [
+        393,
+        852
+      ],
+      "text_scale": 1,
+      "asset": "assets/proxolink_thumbnails/download-pill-mint.png",
+      "asset_sha256": "59d6ccc7638934f49cf9d17c0ce85068b0c75ce813d3c4db559e8004513ce738",
+      "dialog_bounds_dp": [
+        0.0,
+        0.0,
+        393.0,
+        852.0
+      ],
+      "image_bounds_dp": [
+        40.0,
+        143.90000000000003,
+        313.0,
+        828.1458333333333
+      ],
+      "scroll_viewport_bounds_dp": [
+        20.0,
+        63.900000000000034,
+        353.0,
+        724.1999999999998
+      ],
+      "scroll_offset_dp": 0.0,
+      "decoded_size_px": [
+        720,
+        1905
+      ],
+      "footer_band_y_fraction": [
+        0.8,
+        1
+      ],
+      "footer_band_luminance_range": [
+        89,
+        239
+      ],
+      "footer_band_opaque_fraction": 1.0,
+      "pixel_check_scope": "Nonblank paint only; footer contents verified by the separate production renderer footer audit."
+    },
+    {
+      "file": "download-pill-mint-bottom.png",
+      "sha256": "3eb432f7a7bc8773b4ac18b810009f599a48ea42f4e1deb69f1cf9d27159d5d8",
+      "size_px": [
+        786,
+        1704
+      ],
+      "capture_pixel_ratio": 2,
+      "viewport_dp": [
+        393,
+        852
+      ],
+      "text_scale": 1,
+      "asset": "assets/proxolink_thumbnails/download-pill-mint.png",
+      "asset_sha256": "59d6ccc7638934f49cf9d17c0ce85068b0c75ce813d3c4db559e8004513ce738",
+      "dialog_bounds_dp": [
+        0.0,
+        0.0,
+        393.0,
+        852.0
+      ],
+      "image_bounds_dp": [
+        40.0,
+        -98.0458333333334,
+        313.0,
+        828.1458333333333
+      ],
+      "scroll_viewport_bounds_dp": [
+        20.0,
+        63.900000000000034,
+        353.0,
+        724.1999999999998
+      ],
+      "scroll_offset_dp": 241.94583333333344,
+      "decoded_size_px": [
+        720,
+        1905
+      ],
+      "footer_band_y_fraction": [
+        0.8,
+        1
+      ],
+      "footer_band_luminance_range": [
+        89,
+        239
+      ],
+      "footer_band_opaque_fraction": 1.0,
+      "pixel_check_scope": "Nonblank paint only; footer contents verified by the separate production renderer footer audit."
+    },
+    {
+      "file": "download-pill-dark-top.png",
+      "sha256": "9a8c6b3dfe0451958a94190fde39178c0c5e7f4017fc9c3335a332f291d63a11",
+      "size_px": [
+        786,
+        1704
+      ],
+      "capture_pixel_ratio": 2,
+      "viewport_dp": [
+        393,
+        852
+      ],
+      "text_scale": 1,
+      "asset": "assets/proxolink_thumbnails/download-pill-dark.png",
+      "asset_sha256": "28577cd6a0c58bbb1e5379b631be76b2d9e9dee33f71763c4a77a8b23a11ac00",
+      "dialog_bounds_dp": [
+        0.0,
+        0.0,
+        393.0,
+        852.0
+      ],
+      "image_bounds_dp": [
+        40.0,
+        143.90000000000003,
+        313.0,
+        828.1458333333333
+      ],
+      "scroll_viewport_bounds_dp": [
+        20.0,
+        63.900000000000034,
+        353.0,
+        724.1999999999998
+      ],
+      "scroll_offset_dp": 0.0,
+      "decoded_size_px": [
+        720,
+        1905
+      ],
+      "footer_band_y_fraction": [
+        0.8,
+        1
+      ],
+      "footer_band_luminance_range": [
+        44,
+        203
+      ],
+      "footer_band_opaque_fraction": 1.0,
+      "pixel_check_scope": "Nonblank paint only; footer contents verified by the separate production renderer footer audit."
+    },
+    {
+      "file": "download-pill-dark-bottom.png",
+      "sha256": "b083e9116b06ba1bb28bcb8d43f62513b3ec2408a2dd375870df1584a5dd0259",
+      "size_px": [
+        786,
+        1704
+      ],
+      "capture_pixel_ratio": 2,
+      "viewport_dp": [
+        393,
+        852
+      ],
+      "text_scale": 1,
+      "asset": "assets/proxolink_thumbnails/download-pill-dark.png",
+      "asset_sha256": "28577cd6a0c58bbb1e5379b631be76b2d9e9dee33f71763c4a77a8b23a11ac00",
+      "dialog_bounds_dp": [
+        0.0,
+        0.0,
+        393.0,
+        852.0
+      ],
+      "image_bounds_dp": [
+        40.0,
+        -98.0458333333334,
+        313.0,
+        828.1458333333333
+      ],
+      "scroll_viewport_bounds_dp": [
+        20.0,
+        63.900000000000034,
+        353.0,
+        724.1999999999998
+      ],
+      "scroll_offset_dp": 241.94583333333344,
+      "decoded_size_px": [
+        720,
+        1905
+      ],
+      "footer_band_y_fraction": [
+        0.8,
+        1
+      ],
+      "footer_band_luminance_range": [
+        44,
+        203
+      ],
+      "footer_band_opaque_fraction": 1.0,
+      "pixel_check_scope": "Nonblank paint only; footer contents verified by the separate production renderer footer audit."
+    },
+    {
+      "file": "download-pill-white-top.png",
+      "sha256": "1aa8a082b6b652de53985cdc6f2edc7bed898106d7760f6ec1889782097f4e43",
+      "size_px": [
+        786,
+        1704
+      ],
+      "capture_pixel_ratio": 2,
+      "viewport_dp": [
+        393,
+        852
+      ],
+      "text_scale": 1,
+      "asset": "assets/proxolink_thumbnails/download-pill-white.png",
+      "asset_sha256": "0765d854615a1281338a7669a208584b53489a0815c98470b1f78412767a6c5c",
+      "dialog_bounds_dp": [
+        0.0,
+        0.0,
+        393.0,
+        852.0
+      ],
+      "image_bounds_dp": [
+        40.0,
+        143.90000000000003,
+        313.0,
+        828.1458333333333
+      ],
+      "scroll_viewport_bounds_dp": [
+        20.0,
+        63.900000000000034,
+        353.0,
+        724.1999999999998
+      ],
+      "scroll_offset_dp": 0.0,
+      "decoded_size_px": [
+        720,
+        1905
+      ],
+      "footer_band_y_fraction": [
+        0.8,
+        1
+      ],
+      "footer_band_luminance_range": [
+        102,
+        255
+      ],
+      "footer_band_opaque_fraction": 1.0,
+      "pixel_check_scope": "Nonblank paint only; footer contents verified by the separate production renderer footer audit."
+    },
+    {
+      "file": "download-pill-white-bottom.png",
+      "sha256": "b51b421926486814dba3d58e286d4a030f6e8493212323131424abbe550dcb51",
+      "size_px": [
+        786,
+        1704
+      ],
+      "capture_pixel_ratio": 2,
+      "viewport_dp": [
+        393,
+        852
+      ],
+      "text_scale": 1,
+      "asset": "assets/proxolink_thumbnails/download-pill-white.png",
+      "asset_sha256": "0765d854615a1281338a7669a208584b53489a0815c98470b1f78412767a6c5c",
+      "dialog_bounds_dp": [
+        0.0,
+        0.0,
+        393.0,
+        852.0
+      ],
+      "image_bounds_dp": [
+        40.0,
+        -98.0458333333334,
+        313.0,
+        828.1458333333333
+      ],
+      "scroll_viewport_bounds_dp": [
+        20.0,
+        63.900000000000034,
+        353.0,
+        724.1999999999998
+      ],
+      "scroll_offset_dp": 241.94583333333344,
+      "decoded_size_px": [
+        720,
+        1905
+      ],
+      "footer_band_y_fraction": [
+        0.8,
+        1
+      ],
+      "footer_band_luminance_range": [
+        102,
+        255
+      ],
+      "footer_band_opaque_fraction": 1.0,
+      "pixel_check_scope": "Nonblank paint only; footer contents verified by the separate production renderer footer audit."
+    }
+  ]
+}

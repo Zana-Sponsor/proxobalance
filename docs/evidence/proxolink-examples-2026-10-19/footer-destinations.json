@@ -1,0 +1,72 @@
+{
+  "verification": "Unauthenticated read-only HTTP GET of the three footer destinations",
+  "generated_at": "2026-10-19T10:00:13.669701Z",
+  "checks": [
+    {
+      "url": "https://proxopages.com/",
+      "method": "GET",
+      "started_at": "2026-10-19T10:00:08.144122Z",
+      "checked_at": "2026-10-19T10:00:13.668229Z",
+      "status": 200,
+      "final_url": "https://proxopages.com/",
+      "redirects": [],
+      "content_type": "text/html; charset=utf-8",
+      "bytes": 1364867,
+      "sha256": "7fef2c761bbaf066353a04904b7fb80443dde44430fde3958b9f61675ce270b7",
+      "title": "Proxo App",
+      "document_heading": "Proxo App",
+      "legal_sections": []
+    },
+    {
+      "url": "https://proxopages.com/policy",
+      "method": "GET",
+      "started_at": "2026-10-19T10:00:08.144713Z",
+      "checked_at": "2026-10-19T10:00:13.486922Z",
+      "status": 200,
+      "final_url": "https://proxopages.com/policy",
+      "redirects": [],
+      "content_type": "text/html; charset=utf-8",
+      "bytes": 5978,
+      "sha256": "998d3c9d490609a53e94efc2364fcf3174fd9cace06aaa3b3d273bff32078934",
+      "title": "Proxo | Privacy Policy",
+      "document_heading": "Privacy Policy",
+      "legal_sections": [
+        "1. Data Collection",
+        "2. Tracking & TikTok API Technology",
+        "3. Purpose of Processing",
+        "4. Data Security",
+        "5. Third-Party Disclosure",
+        "6. Data Retention",
+        "7. User Rights & Opt-Out",
+        "8. Policy Updates"
+      ]
+    },
+    {
+      "url": "https://proxopages.com/terms",
+      "method": "GET",
+      "started_at": "2026-10-19T10:00:08.145140Z",
+      "checked_at": "2026-10-19T10:00:13.498628Z",
+      "status": 200,
+      "final_url": "https://proxopages.com/terms",
+      "redirects": [],
+      "content_type": "text/html; charset=utf-8",
+      "bytes": 5506,
+      "sha256": "7a4b7dfda1d2953f236c071eea22c37fe570754aa1963d72d7714e8f02aa42bf",
+      "title": "Proxo | Terms of Service",
+      "document_heading": "Terms of Service",
+      "legal_sections": [
+        "1. Regulatory Compliance",
+        "2. Data Processing & Pixel Usage",
+        "3. Client Content Responsibility",
+        "4. Transparency & Anti-Fraud Policy",
+        "5. Privacy & Data Rights",
+        "6. Service Agreement & Financial Commitment"
+      ]
+    }
+  ],
+  "limits": [
+    "HTTP status, redirect chain, document title, and legal headings were verified; this is not a legal-content review.",
+    "The browser footer geometry audit made no external requests; these HTTP checks are separate."
+  ],
+  "stored_content": "Response metadata and document headings only; no complete HTML, authentication, or customer data retained."
+}

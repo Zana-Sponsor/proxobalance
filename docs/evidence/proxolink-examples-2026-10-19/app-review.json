@@ -1,0 +1,111 @@
+{
+  "status": "PASSED",
+  "reviewed_at_utc": "2026-10-19T09:53:45.494624+00:00",
+  "ci": {
+    "workflow": "Real example images and footer evidence",
+    "run_id": 39232901508,
+    "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/39232901508",
+    "capture_job_id": 117994915458,
+    "capture_job_conclusion": "success",
+    "branch_head": "eca117d1338e8b0e8f04e6573aa0e0af34574a28",
+    "checkout_commit": "ba867942896571d6fbcc38e77ec533a320c239dc",
+    "checkout_ref": "refs/remotes/pull/44/merge",
+    "checkout_provenance": "Capture job log confirms GitHub PR merge of the branch head; manifest source_commit is preserved unchanged.",
+    "dialog_artifact_id": 12178361945,
+    "dialog_artifact_bytes": 12926204,
+    "dialog_artifact_zip_sha256": "ca3f92eebff94c9e90d486dcea19f1e128585c144e321a748404f5e6776277eb",
+    "zip_digest_verified_before_extraction_by_parent": true,
+    "dialog_test_functions_passed": 34,
+    "real_source_capture_test_passed": 1,
+    "branch_and_checkout_tree_sha": "89e99bb527e9cfcac9f312d9fd9217a590b86b94",
+    "branch_and_checkout_trees_equal": true
+  },
+  "counts": {
+    "copied_files": 74,
+    "copied_pngs": 48,
+    "page_selection_interaction_cases": 24,
+    "unique_page_selection_cases": 24,
+    "page_type_style_combinations": 12,
+    "page_top_bottom_pngs": 24,
+    "localized_help_pngs": 24,
+    "ad_help_pngs_visually_reviewed": 6,
+    "page_pngs_visually_reviewed": 24
+  },
+  "validation": {
+    "copied_folder_byte_exact": true,
+    "page_manifest_png_hashes_verified": 24,
+    "page_manifest_source_asset_hashes_verified": 24,
+    "page_capture_dimensions_verified": [
+      786,
+      1704
+    ],
+    "all_selection_input_retention_close_and_image_bottom_flags_passed": true,
+    "selection_configurations": [
+      {
+        "width_dp": 393,
+        "text_scale": 1
+      },
+      {
+        "width_dp": 320,
+        "text_scale": 1.6
+      }
+    ],
+    "localized_help_configurations": [
+      {
+        "width_dp": 393,
+        "text_scale": 1
+      },
+      {
+        "width_dp": 280,
+        "text_scale": 2
+      }
+    ],
+    "localized_help_languages": [
+      "ckb",
+      "ar",
+      "kmr"
+    ],
+    "ad_png_reproduced_byte_exact_in_final_ci": true,
+    "ad_png_sha256": "b987786229b5c0b860cd39e510fc48f07d6e41c89fadecf1ac53672a1e175e89",
+    "help_metadata_exception_count": 0
+  },
+  "bounds": {
+    "page_capture_viewport_dp": [
+      393,
+      852
+    ],
+    "page_image_width_dp": 313,
+    "page_image_height_dp": 828.1458333333333,
+    "page_scroll_viewport_dp": [
+      20,
+      63.900000000000034,
+      353,
+      724.1999999999998
+    ],
+    "all_12_bottom_image_bottom_dp": 730.0999999999999,
+    "all_12_bottom_viewport_bottom_dp": 788.0999999999999,
+    "all_12_bottom_clearance_dp": 58,
+    "note": "Manifest dialog_bounds_dp describes the outer Dialog layout box, not the visible white card. Image reachability is established against scroll_viewport_bounds_dp."
+  },
+  "visual_findings": [
+    "All six ad help images show the real Proxo field capture, translated caption, full selectable URL and close control; no visible clipping.",
+    "All twelve page type/style combinations show the expected content and lavender, mint, dark or white styling.",
+    "All twelve bottom captures show the complete sponsor credit, Proxo logo, Privacy Policy and Terms & Conditions, followed by the app caption.",
+    "Top and bottom pairs show the full image is scrollable. No blank examples, wrong styles or clipped footers were observed."
+  ],
+  "limits": [
+    "Headless Flutter widget captures with fictional data; not native device, live customer, network latency or performance evidence.",
+    "Page selection behavior was checked at 393 dp/1x and 320 dp/1.6x; the 24 page PNGs are the 393 dp/1x top and bottom views only.",
+    "Thirty of the forty-eight copied PNGs were manually reviewed in this pass: six ad-help and twenty-four page-selection captures. Remaining localized page-help PNGs retain CI checks and metadata.",
+    "The source ad screenshot has a fixed Kurdish field label; surrounding dialog title and caption are localized. The horizontal URL input shows a visible prefix, with the complete selectable URL below.",
+    "Footer links are pixels inside example images and are not interactive; live footer destination availability was not tested here.",
+    "The footer pixel check establishes nonblank paint, while the separate production-renderer footer audit and visual inspection establish footer contents.",
+    "The dialog header and close control scroll with content and are absent from bottom captures; tests scroll back and close successfully. These static captures show no scrollbar thumb."
+  ],
+  "evidence": {
+    "page_manifest": "app/page-example-evidence/manifest.json",
+    "test_log": "app/example-tests/tests.log",
+    "localized_captures": "app/help-evidence/",
+    "page_captures": "app/page-example-evidence/"
+  }
+}
