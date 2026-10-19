@@ -1,0 +1,54 @@
+name: Real example images and footer evidence
+on:
+  pull_request:
+    paths:
+      - 'proxo_app/lib/screens/proxolink_create_page_screen.dart'
+      - 'proxo_app/lib/screens/ad_create_screen.dart'
+      - 'proxo_app/lib/widgets/form_help_actions.dart'
+      - 'proxo_app/tool/capture_ad_link_example.dart'
+      - 'proxo_app/test/*example*'
+      - 'scripts/verify-proxolink-footers.mjs'
+      - '.github/workflows/example-evidence.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  footers:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: node scripts/verify-proxolink-footers.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: real-page-footer-evidence
+          path: verification/proxolink-footers/
+          if-no-files-found: error
+          retention-days: 30
+  capture:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: proxo_app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.47.2'
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - run: flutter test tool/capture_ad_link_example.dart --reporter expanded
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: real-ad-link-example
+          path: proxo_app/build/example-source/
+          if-no-files-found: error
+          retention-days: 30
