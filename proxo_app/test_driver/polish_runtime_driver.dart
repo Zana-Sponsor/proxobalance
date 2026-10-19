@@ -10,6 +10,10 @@ Future<void> main() async {
     responseDataCallback: (data) async {
       await File('${directory.path}/runtime.json')
           .writeAsString(const JsonEncoder.withIndent('  ').convert(data));
+      final observations = data?['observations'];
+      if (observations is! Map || observations['completed'] != true) {
+        throw StateError('Profile fixture did not complete; inspect runtime.json');
+      }
     },
   );
 }

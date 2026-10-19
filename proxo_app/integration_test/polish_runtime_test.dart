@@ -76,6 +76,7 @@ void main() {
       'environment':
           'Android emulator, profile AOT, software GPU; not physical-device certification',
       'fixture_only': true,
+      'completed': false,
       'network_latency_measured': false,
       'physical_size': [t.view.physicalSize.width, t.view.physicalSize.height],
       'dpr': t.view.devicePixelRatio,
@@ -205,9 +206,9 @@ void main() {
     Future<void> tapLabel(String label) async {
       final target = find.text(label).first;
       await t.ensureVisible(target);
-      await t.pumpAndSettle();
+      await settle();
       await t.tap(target);
-      await t.pumpAndSettle(const Duration(milliseconds: 16));
+      await settle();
     }
 
     final code = TextEditingController(), focus = FocusNode();
@@ -317,9 +318,9 @@ void main() {
         action: () async {
       final button = find.byKey(const ValueKey('help-example-ad_video_link'));
       await t.ensureVisible(button);
-      await t.pumpAndSettle();
+      await settle();
       await t.tap(button);
-      await t.pumpAndSettle();
+      await settle();
       expect(find.byType(Dialog), findsOneWidget);
     });
     await record('page-example',
@@ -327,18 +328,32 @@ void main() {
         action: () async {
       final button = find.byKey(const ValueKey('help-example-page_creation'));
       await t.ensureVisible(button);
-      await t.pumpAndSettle();
+      await settle();
       await t.tap(button);
-      await t.pumpAndSettle();
+      await settle();
       expect(find.byType(Dialog), findsOneWidget);
     });
     await record('auth-login', const AuthShell());
     await record('auth-phone', const AuthShell(), action: () async {
       await tapLabel(AuthStrings.channelPhone);
-      await t.enterText(find.byType(TextField).first, '7501234567');
+      final input = find.byType(TextField).first;
+      // Profile builds reject TestTextInput's debug-only client id -1.
+      // Type through Android's actual input channel instead.
+      await t.tap(input);
+      await t.pump(const Duration(milliseconds: 100));
+      print('PROXO_POLISH_PHONE_INPUT_READY');
+      final inputClock = Stopwatch()..start();
+      while (t.widget<TextField>(input).controller!.text != '7501234567' &&
+          inputClock.elapsed < const Duration(seconds: 12)) {
+        await t.pump(const Duration(milliseconds: 50));
+      }
+      expect(t.widget<TextField>(input).controller!.text, '7501234567');
+      observations['phone_input_transport'] = 'Android adb input text';
       FocusManager.instance.primaryFocus?.unfocus();
-      await t.pumpAndSettle();
+      await settle();
       expect(find.byType(IraqPhonePrefix), findsOneWidget);
+      expect(t.widget<TextField>(input).controller!.text, '7501234567',
+          reason: 'Phone input must survive unfocus');
     });
     await record('auth-signup', const AuthShell(), action: () async {
       await tapLabel(AuthStrings.noAccountAction);
@@ -367,19 +382,33 @@ void main() {
       expect(find.text('نوێدەکرێتەوە'), findsOneWidget);
       await capture('home-refresh-pending');
       gate.complete();
-      await first;
       backend.refreshGate = null;
-      await t.pumpAndSettle(const Duration(milliseconds: 16));
-      expect(refresh.isRefreshing, isFalse);
+      // The refresh Future also awaits its closing spring; integration tests
+      // must pump those frames before awaiting the Future's completion.
+      final completionClock = Stopwatch()..start();
+      while (refresh.isRefreshing &&
+          completionClock.elapsed < const Duration(seconds: 12)) {
+        await t.pump(const Duration(milliseconds: 16));
+      }
+      expect(refresh.isRefreshing, isFalse,
+          reason: 'Refresh fetch and closing animation must finish');
+      await first.timeout(const Duration(seconds: 1));
+      await settle();
     });
     await mount(const AuthShell());
     await t.tap(find.byType(TextField).first);
-    await t.pumpAndSettle();
+    final keyboardClock = Stopwatch()..start();
+    while (t.view.viewInsets.bottom <= 0 &&
+        keyboardClock.elapsed < const Duration(seconds: 5)) {
+      await t.pump(const Duration(milliseconds: 50));
+    }
+    expect(t.view.viewInsets.bottom, greaterThan(0),
+        reason: 'Capture the real Android software keyboard');
     observations['keyboard_inset_px'] = t.view.viewInsets.bottom;
     print('PROXO_POLISH_KEYBOARD_READY');
     await Future<void>.delayed(const Duration(seconds: 4));
     FocusManager.instance.primaryFocus?.unfocus();
-    await t.pumpAndSettle();
+    await settle();
     await mount(const Scaffold(
         body: Center(child: Text('Proxo notification fixture'))));
     observations['background_notification'] = await native
@@ -394,7 +423,7 @@ void main() {
     await native
         .invokeMethod<bool>('waitForResume')
         .timeout(const Duration(seconds: 30));
-    await t.pumpAndSettle();
+    await settle();
     await mount(const SizedBox());
     refresh.dispose();
     code.dispose();

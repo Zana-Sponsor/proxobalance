@@ -13,7 +13,7 @@ output.mkdir(parents=True, exist_ok=True)
 package = 'com.proxo.proxoapp'
 
 def adb(*args, check=True):
-    return subprocess.run(['adb', *args], check=check, capture_output=True).stdout
+    return subprocess.run(['adb', *args], check=check, capture_output=True, timeout=30).stdout
 
 def screenshot(name):
     data = adb('exec-out', 'screencap', '-p')
@@ -23,6 +23,7 @@ def screenshot(name):
 adb('shell', 'wm', 'size', '1080x2340')
 adb('shell', 'wm', 'density', '440')
 adb('shell', 'settings', 'put', 'system', 'font_scale', '1.0')
+adb('shell', 'settings', 'put', 'secure', 'show_ime_with_hard_keyboard', '1')
 adb('shell', 'settings', 'put', 'global', 'heads_up_notifications_enabled', '1')
 metadata = {
     'fixture_only': True, 'mode': 'profile',
@@ -45,6 +46,9 @@ with (output / 'driver.log').open('w') as log:
         log.write(line); log.flush()
         if 'PROXO_POLISH_PERMISSION_READY' in line:
             adb('shell', 'pm', 'grant', package, 'android.permission.POST_NOTIFICATIONS')
+        if 'PROXO_POLISH_PHONE_INPUT_READY' in line:
+            adb('shell', 'input', 'text', '7501234567')
+            metadata['phone_input_injected'] = True
         if 'PROXO_POLISH_KEYBOARD_READY' in line:
             screenshot('auth-keyboard-android')
             (output/'keyboard.log').write_bytes(adb('shell','dumpsys','input_method'))
@@ -63,7 +67,7 @@ result = process.wait()
 metadata['exit_code'] = result
 pull = subprocess.run(['adb', 'pull',
     f'/sdcard/Android/data/{package}/files/polish-runtime', str(output/'screens')],
-    capture_output=True, text=True)
+    capture_output=True, text=True, timeout=30)
 (output/'screenshot-transfer.log').write_text(pull.stdout + pull.stderr)
 metadata['screenshot_transfer_exit_code'] = pull.returncode
 captures = list((output/'screens').rglob('*.png'))
@@ -74,9 +78,10 @@ if result:
     (output/'failure-logcat.log').write_bytes(adb('logcat','-d','-t','1500'))
     sys.exit(result)
 data=json.loads((output/'runtime.json').read_text())
-assert data['observations']['completed']
+assert data['observations'].get('completed') is True, 'Profile fixture incomplete; inspect runtime.json'
 assert metadata.get('background_notification_captured')
 assert metadata.get('keyboard_captured')
+assert metadata.get('phone_input_injected')
 assert pull.returncode == 0, 'Android screenshots could not be pulled; see screenshot-transfer.log'
 assert len(captures) >= 30, f'Only {len(captures)} native screenshots retained'
 rows=[]
