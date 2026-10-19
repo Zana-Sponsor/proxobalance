@@ -90,7 +90,20 @@ void main() {
     }
     expect(await ph.Permission.notification.isGranted, isTrue);
 
-    Future<void> mount(Widget widget) async {
+    Future<void> settle({bool continuous = false}) async {
+      if (continuous) {
+        // The confirmation countdown intentionally ticks for an hour in this
+        // read-only fixture. Observe it without waiting for a real submission.
+        for (var frame = 0; frame < 24; frame++) {
+          await t.pump(const Duration(milliseconds: 16));
+        }
+      } else {
+        await t.pumpAndSettle(const Duration(milliseconds: 16),
+            EnginePhase.sendSemanticsUpdate, const Duration(seconds: 8));
+      }
+    }
+
+    Future<void> mount(Widget widget, {bool continuous = false}) async {
       await t.pumpWidget(MaterialApp(
         key: UniqueKey(),
         theme: buildAppTheme(),
@@ -104,8 +117,7 @@ void main() {
         builder: (context, child) => ProxoLocaleScope(child: child!),
         home: widget,
       ));
-      await t.pumpAndSettle(const Duration(milliseconds: 16),
-          EnginePhase.sendSemanticsUpdate, const Duration(seconds: 8));
+      await settle(continuous: continuous);
       expect(t.takeException(), isNull);
     }
 
@@ -141,10 +153,12 @@ void main() {
     Future<void> record(String name, Widget widget,
         {Future<void> Function()? action}) async {
       final row = <String, Object?>{};
+      final continuous = widget is AdConfirmationScreen;
+      row['continuous_animation_fixture'] = continuous;
       (observations['screens'] as Map<String, Object?>)[name] = row;
       await measureFrames(name, () async {
         final clock = Stopwatch()..start();
-        await mount(widget);
+        await mount(widget, continuous: continuous);
         row['mount_and_settle_ms'] = clock.elapsedMilliseconds;
         if (action != null) await action();
         // Real scrolling/animation work, rather than timing a static screenshot.
@@ -154,9 +168,9 @@ void main() {
           final state = t.state<ScrollableState>(scrolls.first);
           if (state.position.maxScrollExtent > 0) {
             await t.drag(scrolls.first, const Offset(0, -250));
-            await t.pumpAndSettle(const Duration(milliseconds: 16));
+            await settle(continuous: continuous);
             await t.drag(scrolls.first, const Offset(0, 250));
-            await t.pumpAndSettle(const Duration(milliseconds: 16));
+            await settle(continuous: continuous);
           }
         }
       });

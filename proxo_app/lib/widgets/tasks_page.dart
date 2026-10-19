@@ -318,12 +318,13 @@ class _TasksPageState extends State<TasksPage> {
               onTap: isClaiming ? null : () => _claimReward(challenge),
               child: Container(
                 width: double.infinity,
+                constraints: const BoxConstraints(minHeight: 48),
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 decoration: BoxDecoration(
                   color: isClaiming
                       ? AppColors.dark.withOpacity(0.5)
                       : AppColors.dark,
-                  borderRadius: BorderRadius.circular(12)),
+                  borderRadius: BorderRadius.circular(ProxoControls.radius)),
                 child: Center(
                   child: isClaiming
                       ? const SizedBox(

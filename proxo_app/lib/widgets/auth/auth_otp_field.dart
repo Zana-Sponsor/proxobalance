@@ -3,6 +3,7 @@ import 'package:proxo_app/theme/app_locale.dart';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:proxo_app/screens/auth/auth_models.dart' show IraqPhone;
 import 'auth_design.dart';
 import 'package:proxo_app/widgets/proxo_text.dart';
 
@@ -155,7 +156,10 @@ class _AuthOtpBoxesState extends State<AuthOtpBoxes>
   }
 
   void _onChanged(int index, String raw) {
-    final String digits = raw.replaceAll(RegExp(r'[^0-9]'), '');
+    // Iraqi Arabic and Kurdish keyboards can enter either localized digit set.
+    // Normalize before filtering, keeping the submitted OTP in ASCII.
+    final String digits =
+        IraqPhone.latinDigits(raw).replaceAll(RegExp(r'[^0-9]'), '');
 
     if (digits.length > 1) {
       int cursor = index;

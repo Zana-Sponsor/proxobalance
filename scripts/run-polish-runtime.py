@@ -32,7 +32,7 @@ metadata = {
     'wm_density': adb('shell', 'wm', 'density').decode().strip(),
     'transport': 'Local Firebase builder fixture; FCM network delivery is not tested',
 }
-command = ['flutter', 'drive', '--profile', '--no-pub',
+command = ['flutter', 'drive', '--profile', '--no-pub', '--keep-app-running',
            '--target=integration_test/polish_runtime_test.dart',
            '--driver=test_driver/polish_runtime_driver.dart', '-d', 'emulator-5554']
 process = subprocess.Popen(command, cwd=app, stdout=subprocess.PIPE,
@@ -61,7 +61,14 @@ with (output / 'driver.log').open('w') as log:
             metadata['background_notification_captured'] = True
 result = process.wait()
 metadata['exit_code'] = result
-adb('pull',f'/sdcard/Android/data/{package}/files/polish-runtime',str(output/'screens'),check=False)
+pull = subprocess.run(['adb', 'pull',
+    f'/sdcard/Android/data/{package}/files/polish-runtime', str(output/'screens')],
+    capture_output=True, text=True)
+(output/'screenshot-transfer.log').write_text(pull.stdout + pull.stderr)
+metadata['screenshot_transfer_exit_code'] = pull.returncode
+captures = list((output/'screens').rglob('*.png'))
+metadata['native_screenshot_count'] = len(captures)
+assert all(p.read_bytes().startswith(b'\x89PNG') for p in captures)
 (output/'device.json').write_text(json.dumps(metadata,indent=2))
 if result:
     (output/'failure-logcat.log').write_bytes(adb('logcat','-d','-t','1500'))
@@ -70,6 +77,8 @@ data=json.loads((output/'runtime.json').read_text())
 assert data['observations']['completed']
 assert metadata.get('background_notification_captured')
 assert metadata.get('keyboard_captured')
+assert pull.returncode == 0, 'Android screenshots could not be pulled; see screenshot-transfer.log'
+assert len(captures) >= 30, f'Only {len(captures)} native screenshots retained'
 rows=[]
 for name, summary in data.items():
     if not name.startswith('frames_'): continue
