@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
@@ -70,19 +69,26 @@ void main() {
             TextField(controller: input),
             FormHelpActions(
                 helpKey: 'ad_video_link',
-                exampleAsset: 'assets/icons/help/video_link_example.svg',
+                exampleAsset: 'assets/images/ad_video_link_example.png',
+                exampleCaption:
+                    'سکرینشۆتی خانەی بەستەر لە ئەپی Proxo؛ بەستەری ڤیدیۆی خۆت دابنێ',
                 sampleValue:
-                    'https://www.tiktok.com/@example/video/1234567890123456789',
+                    'https://www.tiktok.com/@scout2015/video/6718335390845095173',
                 loadTutorial: (_) async {
                   loads++;
                   return null;
                 })
           ]),
           scale: config.$2));
+      await t.runAsync(() => precacheImage(
+          ResizeImage.resizeIfNeeded(720, null,
+              const AssetImage('assets/images/ad_video_link_example.png')),
+          t.element(find.byType(FormHelpActions))));
+      await t.pump();
       await t.tap(find.byKey(const ValueKey('help-example-ad_video_link')));
       await t.pumpAndSettle();
       expect(find.byType(Dialog), findsOneWidget);
-      expect(find.byType(SvgPicture), findsOneWidget);
+      expect(find.byType(Image), findsOneWidget);
       expect(loads, 0, reason: 'Viewing an example must not wait for Supabase');
       Navigator.of(t.element(find.byType(Dialog))).pop();
       await t.pumpAndSettle();

@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/proxo_card.dart';
+import '../models/proxolink_design.dart';
 import '../models/proxolink_page_type.dart';
 import '../services/proxolink_service.dart';
 import '../widgets/ad_form_components.dart';
@@ -191,7 +192,7 @@ class _CreatePageState extends State<ProxoLinkCreatePageScreen> {
             child: Align(alignment: Alignment.topCenter, child: ConstrainedBox(constraints: const BoxConstraints(maxWidth: 600),
               child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
                 FormHelpActions(helpKey: 'page_creation',
-                  exampleAsset: 'assets/proxolink_thumbnails/${_type.key}-pill.png',
+                  exampleAsset: ProxoLinkDesign.thumbnail(_design, _type),
                   exampleCaption: 'نمونەی پەڕەکە؛ ناو و وێنە و بەستەرەکانی خۆت دابنێ'),
                 const SizedBox(height: 12),
                 if (_loading) const LinearProgressIndicator(minHeight: 2),

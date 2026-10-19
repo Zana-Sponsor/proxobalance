@@ -5,8 +5,12 @@ on:
       - 'proxo_app/lib/screens/proxolink_create_page_screen.dart'
       - 'proxo_app/lib/screens/ad_create_screen.dart'
       - 'proxo_app/lib/widgets/form_help_actions.dart'
+      - 'proxo_app/assets/images/ad_video_link_example.png'
       - 'proxo_app/tool/capture_ad_link_example.dart'
       - 'proxo_app/test/*example*'
+      - 'proxo_app/test/context_help*'
+      - 'api/_lib/proxolink*'
+      - 'api/_lib/proxolink-templates/**'
       - 'scripts/verify-proxolink-footers.mjs'
       - '.github/workflows/example-evidence.yml'
   workflow_dispatch:
@@ -45,10 +49,25 @@ jobs:
           cache: true
       - run: flutter pub get
       - run: flutter test tool/capture_ad_link_example.dart --reporter expanded
+      - name: Verify actual page selections and localized example dialogs
+        run: |
+          mkdir -p build/example-tests
+          set -o pipefail
+          flutter test test/proxolink_page_example_test.dart test/context_help_test.dart test/context_help_capture_test.dart --reporter expanded 2>&1 | tee build/example-tests/tests.log
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: real-ad-link-example
           path: proxo_app/build/example-source/
+          if-no-files-found: error
+          retention-days: 30
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: real-example-dialogs
+          path: |
+            proxo_app/build/page-example-evidence/
+            proxo_app/build/help-evidence/
+            proxo_app/build/example-tests/
           if-no-files-found: error
           retention-days: 30

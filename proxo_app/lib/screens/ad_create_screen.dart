@@ -558,9 +558,9 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
         _field(context, 'link', _link, 'بەستەری ڤیدیۆ',
             ltr: true, keyboard: TextInputType.url),
         const FormHelpActions(helpKey: 'ad_video_link',
-          exampleAsset: 'assets/icons/help/video_link_example.svg',
-          exampleCaption: 'بەستەری ڤیدیۆکەت لە TikTok کۆپی بکە و لێرە دایبنێ',
-          sampleValue: 'https://www.tiktok.com/@example/video/1234567890123456789'),
+          exampleAsset: 'assets/images/ad_video_link_example.png',
+          exampleCaption: 'سکرینشۆتی خانەی بەستەر لە ئەپی Proxo؛ بەستەری ڤیدیۆی خۆت دابنێ',
+          sampleValue: 'https://www.tiktok.com/@scout2015/video/6718335390845095173'),
         const SizedBox(height: 8),
         ExpansionTile(
             tilePadding: EdgeInsets.zero,

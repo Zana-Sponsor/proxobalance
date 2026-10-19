@@ -60,20 +60,24 @@ void main() {
                         child: FormHelpActions(
                             helpKey: 'sample',
                             exampleAsset: video
-                                ? 'assets/icons/help/video_link_example.svg'
+                                ? 'assets/images/ad_video_link_example.png'
                                 : 'assets/proxolink_thumbnails/$section-pill.png',
+                            exampleCaption: video
+                                ? 'سکرینشۆتی خانەی بەستەر لە ئەپی Proxo؛ بەستەری ڤیدیۆی خۆت دابنێ'
+                                : 'نمونەی پەڕەکە؛ ناو و وێنە و بەستەرەکانی خۆت دابنێ',
                             sampleValue: video
-                                ? 'https://www.tiktok.com/@example/video/1234567890123456789'
+                                ? 'https://www.tiktok.com/@scout2015/video/6718335390845095173'
                                 : null,
                             loadTutorial: (_) async => null))),
               )));
-          if (!video) {
+          {
             await t.runAsync(() => precacheImage(
                 ResizeImage.resizeIfNeeded(
                     720,
                     null,
                     AssetImage(
-                        'assets/proxolink_thumbnails/$section-pill.png')),
+                        video ? 'assets/images/ad_video_link_example.png'
+                            : 'assets/proxolink_thumbnails/$section-pill.png')),
                 t.element(find.byType(FormHelpActions))));
             await t.pump();
           }
