@@ -1,34 +1,36 @@
-# Email signup rollout
+# Email API routes and signup verification
 
-The revised form collects the name, email, password and password confirmation together. It sends one Supabase Auth signup request. After that succeeds, the separate OTP screen verifies the **signup** token for that email. Back restores the four field values. Email and phone login retain their existing services.
+Email delivery uses the configured custom API **`https://email.proxopages.com/webhook/send_otp`**. Supabase stores identities, profiles and sessions and executes the existing verification RPCs. The previous draft incorrectly switched signup OTP delivery to Supabase-native email; that change and its email-template instructions have been removed. No Auth provider settings were changed.
 
-## Live inspection — 2026-10-18 UTC
+## Route audit
 
-The connected project `cojchkwssmasiejcgvbk` is active. A read-only request to its public Auth settings returned `disable_signup: false`, `external.email: true`, and **`mailer_autoconfirm: true`**. Email signup is enabled, but **Confirm email is disabled**. This is a release blocker for the code-based email signup flow: the app deliberately signs out an unexpectedly auto-confirmed session and reports the configuration problem.
+| Operation | Request | Verification / completion |
+|---|---|---|
+| Email login | Custom API `POST {email}` after `pa_login_attempt` validates credentials | `pa_verify_login_otp(p_email,p_code)`, then password sign-in; returning users enter `AuthenticatedGate` |
+| Email signup | Supabase `auth.signUp` creates the identity; its provisional session is signed out locally. Custom API receives `{action:"request_otp",purpose:"signup",email,name,user_id}` | `pa_verify_login_otp` must return `valid:true`; `proxo_confirm_email(p_user_id)` must succeed; password sign-in then opens `AccountSetupGate` |
+| Signup resend | Same custom API and `request_otp` signup payload | Screen cooldown remains active; no Supabase-native `/resend` request |
+| Password recovery | Existing custom `request_otp` request with `purpose:"reset_password"` | `pa_verify_reset_otp`, then `proxo_reset_password` with user-bound OTP proof |
+| Email change in Profile | Custom API authenticated actions `request_email_change {new_email}` and `verify_email_change {request_id,code}` | Existing workflow confirms the new email; this route was inspected and retained |
+| Phone login | Existing WhatsApp API | `whatsapp-session-exchange`; unchanged by the email correction |
 
-The live `on_auth_user_created` trigger calls `public.handle_new_user`, which copies `raw_user_meta_data.full_name` and the email into `public.profiles`. This was inspected without creating or reading any user accounts.
+The URLs are defined in [`main.dart`](../../proxo_app/lib/main.dart). Signup, login OTP and resend use [`AuthService`](../../proxo_app/lib/screens/auth/auth_service.dart); screen state and recovery remain in [`AuthShell`](../../proxo_app/lib/screens/auth/auth_shell.dart). Email-change requests are in [`ProfileScreen`](../../proxo_app/lib/screens/profile_screen.dart).
 
-The connected Supabase tools expose database and Edge Function operations, but no hosted Auth configuration or email-template update operation. SMTP, template contents and OTP length therefore remain unverified. No live signup request or email was sent. Separately, the notification function's icon/color update was deployed; it does not change Auth settings.
+## Failure and retry handling
 
-## Required server settings before release
+- The unified name/email/password/confirmation form opens a separate OTP screen only after the custom API accepts the send. Back retains the form values.
+- Email is trimmed and lowercased. The custom send contains the created Auth user ID, required by the existing confirmation proof.
+- HTTP errors, timeouts and explicit `success:false` / `ok:false` responses do not advance to OTP. The existing API's empty/plain successful responses remain compatible.
+- A failed delivery can be retried with the same email/password without creating the identity again. Pending credentials exist only in memory and are cleared when the service closes or verification succeeds.
+- Once the identity exists, changing its password is not a password update: the server's duplicate-account error is shown and the user can use the existing login/recovery screen. The original registration name remains the identity metadata; profile editing is available after entry.
+- Invalid/expired OTP never calls confirmation or sign-in. Confirmation errors are not swallowed. Its server function requires fresh, consumed OTP proof bound to both user ID and email.
+- Completed verification stages are retained for the same email/user/code/password while the screen is alive. A transient confirmation failure retries confirmation; a sign-in failure after successful confirmation retries sign-in. Resend invalidates the cached stage.
+- If confirmation committed but its response was lost, the client cannot infer success: a fresh OTP is required. A local success flag never replaces a successful confirmation response.
+- Signup OTP attempts use the existing in-memory rate limiter; it is a UI guard, not a replacement for server rate limits.
 
-1. In [Auth email provider settings](https://supabase.com/dashboard/project/cojchkwssmasiejcgvbk/auth/providers), keep email signup enabled and turn on **Confirm email**. Keep the email OTP length at **6 digits**, matching the existing Auth OTP input.
-2. In Auth → Email templates → Confirm signup, apply [`confirm-signup.html`](../../proxo_app/supabase/templates/confirm-signup.html). Its `{{ .Token }}` placeholder displays the code; a template containing only a confirmation link would not satisfy this screen.
-3. Verify the project's SMTP sender and delivery configuration. These account-level settings cannot be inferred from the repository and were not changed here.
-4. On staging, register an address you control; check that the code arrives, a wrong/expired code cannot sign in, a correct code opens account setup, and resend supplies a new usable signup code. Confirm the inspected profile trigger's behavior with that test account.
+## What was verified
 
-Until these settings and delivery are confirmed, the email signup flow is **not verified against the live service**. An unexpectedly auto-confirmed session is signed out locally and the UI does not continue into the account.
+The repository contracts and the live definitions of `pa_verify_login_otp` and `proxo_confirm_email` were inspected. The latter consumes a used OTP bound to the target identity/email and created within 15 minutes. The live profile-creation trigger copies `full_name` and email. The current `mailer_autoconfirm:true` setting is compatible with the existing custom-mail arrangement; it is **not** a reason to switch mail providers or enable Supabase confirmation emails.
 
-## Implementation and offline checks
+Mock HTTP regressions verify exact routes, bodies, ordering, delivery rejection/retry, provisional-session signout, invalid OTP, confirmation failure, retry stages, resend and final session. Fixtures reject unexpected Supabase-native `/verify` and `/resend` calls. The widget regression exercises form → OTP → Back with preserved values. See [`auth_email_signup_test.dart`](../../proxo_app/test/auth_email_signup_test.dart), [`auth_refresh_test.dart`](../../proxo_app/test/auth_refresh_test.dart), and [test log](email-api-tests.log).
 
-- `AuthService.beginEmailSignup` uses `auth.signUp(email, password, data)` with normalized email and full-name metadata.
-- `verifyEmailSignup` uses `auth.verifyOTP` with the signup purpose, email and token. It must return a user **and** a session before navigation. No legacy `proxo_confirm_email` RPC is used by this flow.
-- Resend uses `auth.resend(type: OtpType.signup)`, with the existing screen cooldown and error handling.
-- The email form no longer asks for phone-only WhatsApp marketing consent. Existing phone login and backend phone functions remain available.
-- Mock HTTP tests exercise request bodies, PKCE storage, invalid/valid OTP, resend rate limiting and the auto-confirm configuration guard. A widget test exercises the real unified form → OTP → Back transition and value retention. No real account was registered by the tests.
-
-## Reference
-
-- [Supabase Flutter signUp](https://supabase.com/docs/reference/dart/auth-signup)
-- [Supabase Flutter verifyOTP](https://supabase.com/docs/reference/dart/auth-verifyotp)
-- [Supabase email templates](https://supabase.com/docs/guides/auth/auth-email-templates)
+**Live email delivery has not been exercised.** No account was created and no email was sent. The current n8n workflow is not checked into this repository, so its runtime handling of `purpose:"signup"` and `user_id` still needs an end-to-end check with an address controlled by the owner. The implementation follows the application's existing request/verification contracts; the account-creation ordering is a reconstruction for the new email signup form, not a recovered historical flow. Existing Supabase Auth policy remains unchanged; the app's OTP gate is not a claim that direct Auth API signup is server-enforced MFA.

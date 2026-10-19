@@ -120,11 +120,23 @@ void main() {
   }
 
   testWidgets(
-      'single signup form validates email, opens separate OTP and Back retains values',
+      'single signup form uses custom email delivery, opens separate OTP and Back retains values',
       (t) async {
     final requests = <http.Request>[];
     final transport = MockClient((request) async {
       requests.add(request);
+      if (request.url.host == 'signup-email-api-fixture.invalid') {
+        expect(request.url.path, '/webhook/send_otp');
+        expect(jsonDecode(request.body), {
+          'action': 'request_otp',
+          'purpose': 'signup',
+          'email': 'fixture@example.com',
+          'name': 'Fixture User',
+          'user_id': '00000000-0000-4000-8000-000000000088',
+        });
+        return http.Response('{"success":true}', 200,
+            headers: {'content-type': 'application/json'});
+      }
       expect(request.url.host, 'signup-fixture.invalid');
       expect(request.url.path, '/auth/v1/signup');
       return http.Response(
@@ -147,7 +159,7 @@ void main() {
             autoRefreshToken: false, pkceAsyncStorage: MemoryAuthStorage()))))!;
     final service = AuthService(
         supabase: client,
-        emailOtpUrl: 'https://unused.invalid',
+        emailOtpUrl: 'https://signup-email-api-fixture.invalid/webhook/send_otp',
         whatsappOtpUrl: 'https://unused.invalid',
         httpClient: transport);
     await t.pumpWidget(host(AuthShell(authService: service)));
@@ -181,8 +193,10 @@ void main() {
     await settle(t);
     expect(find.byType(OtpScreen), findsOneWidget);
     expect(find.byKey(const ValueKey('signup-submit')), findsNothing);
-    expect(requests, hasLength(1));
-    expect(jsonDecode(requests.single.body)['email'], 'fixture@example.com');
+    expect(requests.map((r) => r.url.path),
+        ['/auth/v1/signup', '/webhook/send_otp']);
+    expect(jsonDecode(requests.first.body)['email'], 'fixture@example.com');
+    expect(client.auth.currentSession, isNull);
     await t.binding.handlePopRoute();
     await settle(t);
     expect(fields, findsNWidgets(4));

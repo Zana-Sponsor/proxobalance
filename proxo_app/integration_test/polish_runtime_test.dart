@@ -396,17 +396,41 @@ void main() {
       await settle();
     });
     await mount(const AuthShell());
-    await t.tap(find.byType(TextField).first);
+    final keyboardField = find.byType(TextField).first;
+    await t.tap(keyboardField);
     final keyboardClock = Stopwatch()..start();
-    while (t.view.viewInsets.bottom <= 0 &&
-        keyboardClock.elapsed < const Duration(seconds: 5)) {
+    var stableKeyboardFrames = 0;
+    var previousKeyboardInset = 0.0;
+    while (stableKeyboardFrames < 6 &&
+        keyboardClock.elapsed < const Duration(seconds: 8)) {
       await t.pump(const Duration(milliseconds: 50));
+      final inset = t.view.viewInsets.bottom;
+      stableKeyboardFrames = inset > 0 && inset == previousKeyboardInset
+          ? stableKeyboardFrames + 1
+          : 0;
+      previousKeyboardInset = inset;
     }
     expect(t.view.viewInsets.bottom, greaterThan(0),
         reason: 'Capture the real Android software keyboard');
+    expect(stableKeyboardFrames, greaterThanOrEqualTo(6));
+    for (var i = 0; i < 6; i++) {
+      await t.pump(const Duration(milliseconds: 50));
+    }
+    final keyboardFieldBounds = t.getRect(keyboardField);
+    final visibleBottom =
+        (t.view.physicalSize.height - t.view.viewInsets.bottom) /
+            t.view.devicePixelRatio;
+    expect(keyboardFieldBounds.bottom, lessThanOrEqualTo(visibleBottom),
+        reason: 'Focused email field must remain above the Android keyboard');
     observations['keyboard_inset_px'] = t.view.viewInsets.bottom;
+    observations['keyboard_field_bottom_dp'] = keyboardFieldBounds.bottom;
+    observations['keyboard_visible_bottom_dp'] = visibleBottom;
     print('PROXO_POLISH_KEYBOARD_READY');
-    await Future<void>.delayed(const Duration(seconds: 4));
+    // Continue Flutter frames while the host captures the native IME surface.
+    final captureClock = Stopwatch()..start();
+    while (captureClock.elapsed < const Duration(seconds: 4)) {
+      await t.pump(const Duration(milliseconds: 50));
+    }
     FocusManager.instance.primaryFocus?.unfocus();
     await settle();
     await mount(const Scaffold(

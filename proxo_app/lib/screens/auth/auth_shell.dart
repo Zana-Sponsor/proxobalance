@@ -758,14 +758,21 @@ class _AuthShellState extends State<AuthShell> {
     });
     if ([_regNameErr, _regEmailErr, _regPassErr, _regPass2Err]
         .any((e) => e != null)) return;
+    final lockMsg = _RateLimiter.check(email);
+    if (lockMsg != null) {
+      _showErrorCard(lockMsg);
+      return;
+    }
     FocusScope.of(context).unfocus();
     setState(() => _loading = true);
     AuthFlowGuard.inOtpFlow = true;
     try {
-      await _authService.beginEmailSignup(
+      final userId = await _authService.beginEmailSignup(
           email: email, password: password, name: name);
       if (!mounted) return;
       _pendingEmail = email;
+      _pendingUserId = userId;
+      _pendingPass = password;
       _pendingPhone = '';
       _pendingName = name;
       _activeOtpChannel = AuthChannel.email;
@@ -779,10 +786,13 @@ class _AuthShellState extends State<AuthShell> {
       });
     } on AuthException catch (error) {
       AuthFlowGuard.inOtpFlow = false;
-      if (mounted)
-        _showErrorCard(error.message == 'email_confirmation_required'
-            ? AuthStrings.otpSendFailed
-            : _mapSignupError(error));
+      if (mounted) {
+        if (error.message == 'otp_send_failed' && _isNetworkError()) {
+          _showNetworkError();
+        } else {
+          _showErrorCard(_mapSignupError(error));
+        }
+      }
     } catch (_) {
       AuthFlowGuard.inOtpFlow = false;
       if (mounted) _showNetworkError();
@@ -799,14 +809,21 @@ class _AuthShellState extends State<AuthShell> {
     return AuthStrings.otpSendFailed;
   }
 
-  // Supabase verifies the signup token and creates the session atomically.
-  // A login OTP or a client-side flag cannot confirm a new email account.
+  // Verify the custom API's OTP, consume the server's user-bound confirmation
+  // proof, and only then establish the session for account setup.
   Future<void> _verifyEmailSignup() async {
+    final lockMsg = _RateLimiter.check(_pendingEmail);
+    if (lockMsg != null) {
+      _showErrorCard(lockMsg);
+      return;
+    }
     setState(() => _loading = true);
     try {
       final response = await _authService.verifyEmailSignup(
         email: _pendingEmail,
         code: _otpCode,
+        userId: _pendingUserId,
+        password: _pendingPass,
       );
       if (!mounted) return;
       final user = response.user;
@@ -814,6 +831,8 @@ class _AuthShellState extends State<AuthShell> {
         _showErrorCard(AuthStrings.errServer);
         return;
       }
+      _RateLimiter.reset(_pendingEmail);
+      _pendingPass = '';
       unawaited(AuthActivityService.forClient(supabase).recordCurrentSession());
       unawaited(TrustedDeviceService.remember(supabase));
       unawaited(_saveDeviceToken(user.id));
@@ -826,12 +845,16 @@ class _AuthShellState extends State<AuthShell> {
     } on AuthException catch (error) {
       if (!mounted) return;
       if (error.code == 'otp_expired' || error.code == 'access_denied') {
+        _RateLimiter.recordFail(_pendingEmail,
+            lockFor: _RateLimiter._lockForOtp);
         setState(() => _otpHasError = true);
         _otpShaker.shakeAndReset();
         _showErrorCard(AuthStrings.errInvalidOtp);
       } else {
         _showErrorCard(AuthStrings.errServer);
       }
+    } on PostgrestException {
+      if (mounted) _showErrorCard(AuthStrings.errServer);
     } catch (_) {
       if (mounted) _showNetworkError();
     } finally {
@@ -1087,7 +1110,11 @@ class _AuthShellState extends State<AuthShell> {
           locale: ProxoLocale.current.value.languageCode,
         );
       } else if (_activeOtpPurpose == AuthOtpPurpose.signup) {
-        ok = await _authService.resendEmailSignup(_pendingEmail);
+        ok = await _authService.resendEmailSignup(
+          email: _pendingEmail,
+          userId: _pendingUserId,
+          name: _pendingName,
+        );
       } else if (_activeOtpPurpose == AuthOtpPurpose.login) {
         ok = await _sendLoginOtp(_pendingEmail);
       } else {
