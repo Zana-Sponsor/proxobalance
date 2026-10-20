@@ -36,6 +36,7 @@ import 'package:proxo_app/screens/transaction_detail_screen.dart';
 import 'package:proxo_app/screens/tutorial_screen.dart';
 import 'package:proxo_app/screens/whatsapp_marketing_screen.dart';
 import 'package:proxo_app/services/account_setup_service.dart';
+import 'package:proxo_app/services/ad_snapshot_cache.dart';
 import 'package:proxo_app/services/ad_submission.dart';
 import 'package:proxo_app/services/proxolink_service.dart';
 import 'package:proxo_app/theme/app_locale.dart';
@@ -343,6 +344,22 @@ void main() {
                           onPressed: () async {}))))),
     };
     for (final entry in screens.entries) await record(entry.key, entry.value);
+    await mount(const SizedBox.shrink());
+    await AdSnapshotCache.clearStoredFor(screenFixtureOwner);
+    backend.emptyAds = true;
+    await record('ads-empty', const AdScreen(), action: () async {
+      final empty = find.byKey(const ValueKey('ads-empty-state'));
+      final create = find.byKey(const ValueKey('ads-create-empty'));
+      expect(empty, findsOneWidget);
+      final scroll =
+          find.ancestor(of: empty, matching: find.byType(Scrollable)).first;
+      await reveal(create, scroll);
+      expect(t.widget<FilledButton>(create).onPressed, isNotNull);
+      await capture('ads-empty-action');
+    });
+    await mount(const SizedBox.shrink());
+    backend.emptyAds = false;
+    await AdSnapshotCache.clearStoredFor(screenFixtureOwner);
     await record(
         'home-result-expanded',
         HomeScreen(
@@ -534,21 +551,28 @@ void main() {
     confirmation.dispose();
     showPassword.dispose();
     showConfirmation.dispose();
-    final unexpectedWrites = backend.writeAttempts
-        .where((attempt) => attempt['blocked_fixture_thumbnail_repair'] != true)
+    final unexpectedAttempts = backend.nonGetAttempts
+        .where((attempt) => attempt['expected_blocked_operation'] == null)
         .toList();
-    observations['backend_write_attempts'] = backend.requestWrites;
-    observations['blocked_fixture_thumbnail_repairs'] =
-        backend.requestWrites - unexpectedWrites.length;
-    observations['unexpected_backend_write_attempts'] = unexpectedWrites;
-    observations['thumbnail_repair_fixture'] =
-        'Only the exact fictional ad repair POST may be attempted; the mock '
-        'rejects it before network access. The production endpoint can write '
-        'Storage and ad metadata; it is not executed by this fixture.';
-    expect(unexpectedWrites, isEmpty,
-        reason: 'No payment, page, auth or other backend mutations may be '
-            'attempted; only the explicitly blocked fictional thumbnail repair '
-            'is expected');
+    observations['blocked_non_get_requests'] = backend.nonGetAttempts;
+    observations['blocked_fixture_thumbnail_repairs'] = backend.nonGetAttempts
+        .where((attempt) =>
+            attempt['expected_blocked_operation'] ==
+            'fictional_thumbnail_repair')
+        .length;
+    observations['blocked_trusted_device_lookups'] = backend.nonGetAttempts
+        .where((attempt) =>
+            attempt['expected_blocked_operation'] == 'trusted_device_lookup')
+        .length;
+    observations['unexpected_backend_requests'] = unexpectedAttempts;
+    observations['fixture_network_boundary'] =
+        'Every non-GET request is rejected by the local mock before network '
+        'access. Only the exact fictional thumbnail repair and Android Auth '
+        'trusted-device lookup shapes are expected. Production RPC semantics '
+        'and writes are not exercised by this fixture.';
+    expect(unexpectedAttempts, isEmpty,
+        reason: 'No payment, page, auth registration or other unexpected '
+            'backend request may be attempted by the visual fixture');
     observations['completed'] = true;
   }, timeout: const Timeout(Duration(minutes: 10)));
 }

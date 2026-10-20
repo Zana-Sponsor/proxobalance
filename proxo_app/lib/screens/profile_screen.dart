@@ -1,4 +1,5 @@
 import '../services/account_cache.dart';
+import '../config/backend_config.dart';
 import '../services/auth_activity_service.dart';
 import '../widgets/proxo_error_stack.dart';
 import 'package:proxo_app/l10n/proxo_strings.dart';
@@ -7,13 +8,13 @@ import '../widgets/proxo_symbol.dart';
 import 'package:proxo_app/theme/app_locale.dart';
 import 'dart:async';
 import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart' show ValueListenable;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:solar_icons/solar_icons.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -21,8 +22,9 @@ import 'package:url_launcher/url_launcher.dart';
 import '../main.dart' show kIqdRate;
 import '../theme/app_theme.dart';
 import '../theme/proxo_chrome.dart';
+import '../theme/proxo_surface.dart';
 import '../widgets/auth/auth_design.dart'
-    show kSupportWhatsAppNumber;
+    show AuthTokens, kSupportWhatsAppNumber;
 import '../widgets/proxo_refresh.dart';
 import 'ad_screen.dart';
 import 'deposit_screen.dart';
@@ -66,7 +68,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final ValueNotifier<double?> _balanceIqd = ValueNotifier<double?>(null);
   final ValueNotifier<bool> _showBalance = ValueNotifier<bool>(true);
   final ValueNotifier<bool> _signingOut = ValueNotifier<bool>(false);
+  final ValueNotifier<bool> _profileLoadError = ValueNotifier<bool>(false);
+  final ValueNotifier<bool> _balanceLoadError = ValueNotifier<bool>(false);
   final ScrollController _scrollController = ScrollController();
+  late final Future<PackageInfo?> _packageInfo;
+  bool _navigating = false;
+  bool _confirmingSignOut = false;
+  String? _boundOwner;
 
   RealtimeChannel? _profileChannel;
   RealtimeChannel? _walletChannel;
@@ -82,16 +90,43 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void initState() {
     super.initState();
     final User? user = _client.auth.currentUser;
+    _boundOwner = user?.id;
+    _packageInfo = PackageInfo.fromPlatform()
+        .then<PackageInfo?>((info) => info)
+        .catchError((Object _) => null);
     _profile = ValueNotifier<_ProfileData>(_ProfileData.fromUser(user));
     unawaited(_loadData());
-    AppDataCache.forClient(_client).financialRevision.addListener(_financialChanged);
+    AppDataCache.forClient(_client)
+        .financialRevision
+        .addListener(_financialChanged);
     _subscribeToChanges(user);
-    _authSubscription = _client.auth.onAuthStateChange.listen((AuthState state) {
+    _authSubscription =
+        _client.auth.onAuthStateChange.listen((AuthState state) {
       final User? updatedUser = state.session?.user;
       // Auth replays earlier events to new subscribers. Only the currently
       // active snapshot may start a read or supersede a pending current read.
-      if (!mounted || updatedUser == null ||
-          !identical(updatedUser, _client.auth.currentUser)) return;
+      if (!mounted || !identical(updatedUser, _client.auth.currentUser)) return;
+      if (updatedUser?.id != _boundOwner) {
+        _boundOwner = updatedUser?.id;
+        _profileVersion++;
+        _balanceVersion++;
+        _profileRequest = null;
+        _profileRequestUser = null;
+        _balanceRequest = null;
+        _balanceRequestOwner = null;
+        _profile.value = _ProfileData.fromUser(updatedUser);
+        _balanceIqd.value = null;
+        _profileLoadError.value = false;
+        _balanceLoadError.value = false;
+        _profileChannel?.unsubscribe();
+        _walletChannel?.unsubscribe();
+        _profileChannel = null;
+        _walletChannel = null;
+        _subscribeToChanges(updatedUser);
+        if (updatedUser != null) unawaited(_loadData());
+        return;
+      }
+      if (updatedUser == null) return;
       if (state.event == AuthChangeEvent.userUpdated ||
           state.event == AuthChangeEvent.tokenRefreshed) {
         unawaited(_loadProfile(updatedUser));
@@ -105,7 +140,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   void dispose() {
-    AppDataCache.forClient(_client).financialRevision.removeListener(_financialChanged);
+    AppDataCache.forClient(_client)
+        .financialRevision
+        .removeListener(_financialChanged);
     final RealtimeChannel? profileChannel = _profileChannel;
     final RealtimeChannel? walletChannel = _walletChannel;
     profileChannel?.unsubscribe();
@@ -116,6 +153,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _balanceIqd.dispose();
     _showBalance.dispose();
     _signingOut.dispose();
+    _profileLoadError.dispose();
+    _balanceLoadError.dispose();
     super.dispose();
   }
 
@@ -134,7 +173,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> _loadProfile(User user, {bool force = false}) {
     // Only share a pending read of the same Auth snapshot. An updated email or
     // a completed edit needs a fresh read, even if an older response is pending.
-    if (!force && _profileRequest != null &&
+    if (!force &&
+        _profileRequest != null &&
         identical(_profileRequestUser, user)) return _profileRequest!;
     final int version = ++_profileVersion;
     _profileRequestUser = user;
@@ -193,14 +233,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
       }
       if (!_isCurrentOwner(user.id) || version != _profileVersion) return;
       _profile.value = _ProfileData.fromRow(row, fallbackUser: user);
+      _profileLoadError.value = false;
     } catch (error, stackTrace) {
+      if (_isCurrentOwner(user.id) && version == _profileVersion) {
+        _profileLoadError.value = true;
+      }
       debugPrint('[ProfileScreen] profile load failed: $error\n$stackTrace');
     }
   }
 
   Future<void> _loadBalance(String userId, {bool force = false}) {
-    if (!force && _balanceRequest != null &&
-        _balanceRequestOwner == userId) return _balanceRequest!;
+    if (!force && _balanceRequest != null && _balanceRequestOwner == userId)
+      return _balanceRequest!;
     final int version = ++_balanceVersion;
     _balanceRequestOwner = userId;
     late final Future<void> request;
@@ -223,7 +267,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
           .maybeSingle();
       if (!_isCurrentOwner(userId) || version != _balanceVersion) return;
       _balanceIqd.value = _walletValueToIqd(row?['balance']);
+      _balanceLoadError.value = false;
     } catch (error, stackTrace) {
+      if (_isCurrentOwner(userId) && version == _balanceVersion) {
+        _balanceLoadError.value = true;
+      }
       debugPrint('[ProfileScreen] wallet load failed: $error\n$stackTrace');
     }
   }
@@ -271,8 +319,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             _balanceVersion++;
             _balanceRequest = null;
             _balanceRequestOwner = null;
-            _balanceIqd.value =
-                _walletValueToIqd(payload.newRecord['balance']);
+            _balanceIqd.value = _walletValueToIqd(payload.newRecord['balance']);
           },
         )
         .subscribe();
@@ -285,117 +332,185 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return walletValue * kIqdRate;
   }
 
-  void _push(Widget page) {
-    Navigator.of(context).push(
-      ProxoPageRoute<void>(builder: (_) => page),
-    );
+  Future<void> _push(Widget page) async {
+    if (_signingOut.value ||
+        _navigating ||
+        ModalRoute.of(context)?.isCurrent != true) return;
+    _navigating = true;
+    try {
+      await Navigator.of(context).push(
+        ProxoPageRoute<void>(builder: (_) => page),
+      );
+    } finally {
+      _navigating = false;
+    }
+  }
+
+  Future<void> _pushNamed(String route) async {
+    if (_signingOut.value ||
+        _navigating ||
+        ModalRoute.of(context)?.isCurrent != true) return;
+    _navigating = true;
+    try {
+      await Navigator.of(context).pushNamed(route);
+    } finally {
+      _navigating = false;
+    }
   }
 
   void _openTabOrPage(int tab, Widget page) {
     final ValueChanged<int>? onBottomNavTap = widget.onBottomNavTap;
     if (onBottomNavTap != null) {
+      if (_signingOut.value || _navigating) return;
+      _navigating = true;
       onBottomNavTap(tab);
+      WidgetsBinding.instance.addPostFrameCallback((_) => _navigating = false);
       return;
     }
     _push(page);
   }
 
   Future<void> _openEditProfile() async {
+    if (_signingOut.value ||
+        _navigating ||
+        ModalRoute.of(context)?.isCurrent != true) return;
+    final owner = _client.auth.currentUser?.id;
     final _ProfileData current = _profile.value;
-    final bool? changed = await Navigator.of(context).push<bool>(
-      ProxoPageRoute<bool>(
-        builder: (_) => EditProfileScreen(
-          initialFullName: current.fullName,
-          initialEmail: current.email,
-          initialPhone: current.phone,
-          initialAvatarUrl: current.avatarUrl,
+    _navigating = true;
+    try {
+      final bool? changed = await Navigator.of(context).push<bool>(
+        ProxoPageRoute<bool>(
+          builder: (_) => EditProfileScreen(
+            initialFullName: current.fullName,
+            initialEmail: current.email,
+            initialPhone: current.phone,
+            initialAvatarUrl: current.avatarUrl,
+          ),
         ),
-      ),
-    );
-    if (changed == true && mounted) {
-      await _loadData(force: true);
+      );
+      if (changed == true && mounted && _client.auth.currentUser?.id == owner) {
+        await _loadData(force: true);
+      }
+    } finally {
+      _navigating = false;
     }
   }
 
   Future<void> _openSupport() async {
-    final _SupportAction? action = await showModalBottomSheet<_SupportAction>(
-      context: context,
-      useSafeArea: true,
-      backgroundColor: Colors.transparent,
-      barrierColor: _ProfileColors.scrim,
-      builder: (_) => const _SupportSheet(),
-    );
-    if (action == null || !mounted) return;
-
-    final String supportNumber =
-        kSupportWhatsAppNumber.replaceAll(RegExp(r'[^0-9]'), '');
-    final Uri uri = action == _SupportAction.chat
-        ? Uri.https(
-            'wa.me',
-            '/$supportNumber',
-            const <String, String>{
-              'text':
-                  'سڵاو، پێویستم بە یارمەتیی تیمی پشتگیریی پڕۆکسۆ هەیە.',
-            },
-          )
-        : Uri(
-            scheme: 'tel',
-            path: '+$supportNumber',
-          );
+    if (_signingOut.value ||
+        _navigating ||
+        ModalRoute.of(context)?.isCurrent != true) return;
+    _navigating = true;
+    final owner = _client.auth.currentUser?.id;
+    final origin = ModalRoute.of(context);
     try {
-      final bool opened = await launchUrl(
-        uri,
-        mode: LaunchMode.externalApplication,
+      final _SupportAction? action = await showModalBottomSheet<_SupportAction>(
+        context: context,
+        useSafeArea: true,
+        isScrollControlled: true,
+        constraints:
+            BoxConstraints(maxHeight: MediaQuery.sizeOf(context).height * .88),
+        backgroundColor: Colors.transparent,
+        barrierColor: _ProfileColors.scrim,
+        builder: (_) => const _SupportSheet(),
       );
-      if (!opened && mounted) {
-        _showMessage(
-          action == _SupportAction.chat
-              ? 'نەتوانرا واتساپ بکرێتەوە. تکایە دواتر هەوڵ بدەرەوە.'
-              : 'نەتوانرا پەیوەندی بکرێت. تکایە دواتر هەوڵ بدەرەوە.',
+      if (action == null ||
+          !mounted ||
+          origin?.isCurrent != true ||
+          _client.auth.currentUser?.id != owner) return;
+
+      final String supportNumber =
+          kSupportWhatsAppNumber.replaceAll(RegExp(r'[^0-9]'), '');
+      final Uri uri = action == _SupportAction.chat
+          ? Uri.https(
+              'wa.me',
+              '/$supportNumber',
+              const <String, String>{
+                'text': 'سڵاو، پێویستم بە یارمەتیی تیمی پشتگیریی پڕۆکسۆ هەیە.',
+              },
+            )
+          : Uri(
+              scheme: 'tel',
+              path: '+$supportNumber',
+            );
+      try {
+        final bool opened = await launchUrl(
+          uri,
+          mode: LaunchMode.externalApplication,
         );
+        if (!opened && mounted) {
+          _showMessage(
+            action == _SupportAction.chat
+                ? 'نەتوانرا واتساپ بکرێتەوە. تکایە دواتر هەوڵ بدەرەوە.'
+                : 'نەتوانرا پەیوەندی بکرێت. تکایە دواتر هەوڵ بدەرەوە.',
+          );
+        }
+      } catch (_) {
+        if (mounted) {
+          _showMessage(
+            action == _SupportAction.chat
+                ? 'نەتوانرا واتساپ بکرێتەوە. تکایە دواتر هەوڵ بدەرەوە.'
+                : 'نەتوانرا پەیوەندی بکرێت. تکایە دواتر هەوڵ بدەرەوە.',
+          );
+        }
       }
-    } catch (_) {
-      if (mounted) {
-        _showMessage(
-          action == _SupportAction.chat
-              ? 'نەتوانرا واتساپ بکرێتەوە. تکایە دواتر هەوڵ بدەرەوە.'
-              : 'نەتوانرا پەیوەندی بکرێت. تکایە دواتر هەوڵ بدەرەوە.',
-        );
-      }
+    } finally {
+      _navigating = false;
     }
   }
 
-  void _openAbout() {
-    showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      useSafeArea: true,
-      backgroundColor: Colors.transparent,
-      barrierColor: _ProfileColors.scrim,
-      builder: (_) => const _AboutAppSheet(),
-    );
+  Future<void> _openAbout() async {
+    if (_signingOut.value ||
+        _navigating ||
+        ModalRoute.of(context)?.isCurrent != true) return;
+    _navigating = true;
+    try {
+      await showModalBottomSheet<void>(
+        context: context,
+        isScrollControlled: true,
+        useSafeArea: true,
+        backgroundColor: Colors.transparent,
+        barrierColor: _ProfileColors.scrim,
+        builder: (_) => const _AboutAppSheet(),
+      );
+    } finally {
+      _navigating = false;
+    }
   }
 
   Future<void> _confirmSignOut() async {
-    if (_signingOut.value) return;
-    final bool confirmed = await _showConfirmationDialog(
-          context,
-          title: 'دەرچوون لە هەژمار',
-          message: 'دڵنیایت دەتەوێت لە هەژمارەکەت دەربچیت؟',
-          confirmText: 'دەرچوون',
-        ) ??
-        false;
-    if (!confirmed || !mounted) return;
+    if (_signingOut.value ||
+        _confirmingSignOut ||
+        _navigating ||
+        ModalRoute.of(context)?.isCurrent != true) return;
+    final owner = _client.auth.currentUser?.id;
+    final origin = ModalRoute.of(context);
+    if (owner == null) return;
+    _confirmingSignOut = true;
+    bool confirmed;
+    try {
+      confirmed = await _showConfirmationDialog(
+            context,
+            title: 'دەرچوون لە هەژمار',
+            message: 'دڵنیایت دەتەوێت لە هەژمارەکەت دەربچیت؟',
+            confirmText: 'دەرچوون',
+          ) ??
+          false;
+    } finally {
+      _confirmingSignOut = false;
+    }
+    if (!confirmed || !_isCurrentOwner(owner) || origin?.isCurrent != true)
+      return;
 
     _signingOut.value = true;
     try {
       await AuthActivityService.forClient(_client).signOut();
     } on AuthException catch (error) {
-      if (mounted && _client.auth.currentSession != null) {
+      if (_isCurrentOwner(owner) && _client.auth.currentSession != null) {
         _showMessage(_friendlyAuthError(error.message));
       }
     } catch (_) {
-      if (mounted && _client.auth.currentSession != null) {
+      if (_isCurrentOwner(owner) && _client.auth.currentSession != null) {
         _showMessage('دەرچوون سەرکەوتوو نەبوو. تکایە دووبارە هەوڵ بدەرەوە.');
       }
     } finally {
@@ -404,13 +519,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
         // AuthGate may no longer be mounted. The SDK also clears its local
         // session before a remote logout failure: do not leave protected UI
         // visible in either case. Server audit still requires real revocation.
-        if (_client.auth.currentSession == null &&
-            ModalRoute.of(context)?.isCurrent == true) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!mounted ||
+              _client.auth.currentSession != null ||
+              origin?.isCurrent != true) return;
           Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
-            ProxoPageRoute<void>(builder: (_) => const AuthScreen()),
-            (route) => false,
-          );
-        }
+              ProxoPageRoute<void>(builder: (_) => const AuthScreen()),
+              (route) => false);
+        });
       }
     }
   }
@@ -448,20 +564,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: ScrollConfiguration(
                       behavior: const _ProfileScrollBehavior(),
                       child: ListView(
+                        key: const ValueKey('profile-scroll'),
                         controller: _scrollController,
                         physics: const BouncingScrollPhysics(
                           parent: AlwaysScrollableScrollPhysics(),
                         ),
                         padding: EdgeInsets.fromLTRB(
-                          16,
-                          14,
-                          16,
+                          ProxoSurface.gutter,
+                          ProxoSurface.sectionGap,
+                          ProxoSurface.gutter,
                           media.padding.bottom + 24,
                         ),
                         children: <Widget>[
                           Center(
                             child: ConstrainedBox(
-                              constraints: const BoxConstraints(maxWidth: 520),
+                              constraints: const BoxConstraints(
+                                  maxWidth: ProxoSurface.maxWidth),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: <Widget>[
@@ -469,6 +587,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     valueListenable: _profile,
                                     builder: (_, data, __) =>
                                         _ProfileIdentity(data: data),
+                                  ),
+                                  ValueListenableBuilder<bool>(
+                                    valueListenable: _profileLoadError,
+                                    builder: (_, profileError, __) =>
+                                        ValueListenableBuilder<bool>(
+                                      valueListenable: _balanceLoadError,
+                                      builder: (_, balanceError, __) =>
+                                          profileError || balanceError
+                                              ? _ProfileLoadNotice(
+                                                  onRetry: _loadData)
+                                              : const SizedBox.shrink(),
+                                    ),
                                   ),
                                   const SizedBox(height: 16),
                                   _BalanceCard(
@@ -478,46 +608,63 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   ),
                                   const SizedBox(height: 24),
                                   const _SectionTitle('هەژمار'),
-                                  const SizedBox(height: 10),
+                                  const SizedBox(height: 8),
                                   _SettingsGroup(
                                     entries: <_MenuEntry>[
-                                      _MenuEntry(icon: SolarIconsOutline.clapperboardPlay,
-                                        title: 'ڕیکلامەکانم', onTap: () => _openTabOrPage(1, const AdScreen())),
-                                      _MenuEntry(icon: SolarIconsOutline.widget_2,
-                                        title: 'ئامرازەکان', onTap: () => _openTabOrPage(3, const ToolsScreen())),
-                                      _MenuEntry(icon: SolarIconsOutline.tagPrice,
-                                        title: 'کۆپۆن', onTap: () => Navigator.of(context).pushNamed('/coupons')),
                                       _MenuEntry(
+                                          id: 'ads',
+                                          icon: SolarIconsOutline
+                                              .clapperboardPlay,
+                                          title: 'ڕیکلامەکانم',
+                                          onTap: () => _openTabOrPage(
+                                              1, const AdScreen())),
+                                      _MenuEntry(
+                                          id: 'tools',
+                                          icon: SolarIconsOutline.widget_2,
+                                          title: 'ئامرازەکان',
+                                          onTap: () => _openTabOrPage(
+                                              3, const ToolsScreen())),
+                                      _MenuEntry(
+                                          id: 'coupons',
+                                          icon: SolarIconsOutline.tagPrice,
+                                          title: 'کۆپۆن',
+                                          onTap: () => _pushNamed('/coupons')),
+                                      _MenuEntry(
+                                        id: 'notifications',
                                         icon: SolarIconsOutline.bell,
                                         title: 'ئاگادارییەکان',
-                                        onTap: () => Navigator.of(context)
-                                            .pushNamed('/notifications'),
+                                        onTap: () =>
+                                            _pushNamed('/notifications'),
                                       ),
                                       _MenuEntry(
+                                        id: 'transactions',
                                         icon: SolarIconsOutline.history,
                                         title: 'مێژووی مامەڵەکان',
-                                        onTap: () => Navigator.of(context)
-                                            .pushNamed('/transactions'),
+                                        onTap: () =>
+                                            _pushNamed('/transactions'),
                                       ),
                                     ],
                                   ),
                                   const SizedBox(height: 24),
                                   const _SectionTitle('پشتگیری و ڕێساکان'),
-                                  const SizedBox(height: 10),
+                                  const SizedBox(height: 8),
                                   _SettingsGroup(
                                     entries: <_MenuEntry>[
                                       _MenuEntry(
+                                        id: 'support',
                                         icon: SolarIconsOutline.chatRoundCall,
                                         title: 'پشتگیری',
                                         subtitle: 'پەیوەندی ڕاستەوخۆ بە واتساپ',
                                         onTap: _openSupport,
                                       ),
                                       _MenuEntry(
+                                        id: 'about',
                                         icon: SolarIconsOutline.documentText,
                                         title: 'دەربارەی ئەپڵیکەیشن',
                                         onTap: _openAbout,
                                       ),
                                       _MenuEntry(
+                                        id: 'faq',
                                         icon: SolarIconsOutline.questionCircle,
                                         title: 'پرسیارە دووبارەکان',
                                         onTap: () =>
@@ -525,13 +672,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       ),
                                     ],
                                   ),
-                                  const SizedBox(height: 20),
-                                  const AuthLanguageSelector(),
-                                  const SizedBox(height: 16),
+                                  const SizedBox(
+                                      height: ProxoSurface.sectionGap),
+                                  const KeyedSubtree(
+                                      key: ValueKey('profile-language'),
+                                      child: AuthLanguageSelector()),
+                                  const SizedBox(
+                                      height: ProxoSurface.sectionGap),
                                   _SettingsGroup(entries: <_MenuEntry>[
-                                    _MenuEntry(icon: SolarIconsOutline.chatRoundDots,
-                                      title: 'ئاگاداریی واتسئاپ',
-                                      onTap: () => _push(const WhatsappMarketingScreen())),
+                                    _MenuEntry(
+                                        id: 'whatsapp',
+                                        icon: SolarIconsOutline.chatRoundDots,
+                                        title: 'ئاگاداریی واتسئاپ',
+                                        onTap: () => _push(
+                                            const WhatsappMarketingScreen())),
                                   ]),
                                   const SizedBox(height: 24),
                                   ValueListenableBuilder<bool>(
@@ -543,10 +697,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     ),
                                   ),
                                   const SizedBox(height: 20),
-                                  const ProxoText(
-                                    'وەشانی ١.٠.٠', translate: true,
-                                    textAlign: TextAlign.center,
-                                    style: _ProfileText.version,
+                                  FutureBuilder<PackageInfo?>(
+                                    future: _packageInfo,
+                                    builder: (_, snapshot) => snapshot.data ==
+                                            null
+                                        ? const SizedBox.shrink()
+                                        : ProxoText(
+                                            'Proxo ${snapshot.data!.version}',
+                                            textDirection: TextDirection.ltr,
+                                            textAlign: TextAlign.center,
+                                            style: _ProfileText.version),
                                   ),
                                 ],
                               ),
@@ -578,12 +738,20 @@ class EditProfileScreen extends StatefulWidget {
     required this.initialEmail,
     required this.initialPhone,
     this.initialAvatarUrl,
+    this.pickAvatar,
+    this.emailClient,
+    this.backendConfig,
   });
 
   final String initialFullName;
   final String initialEmail;
   final String initialPhone;
   final String? initialAvatarUrl;
+
+  /// Optional adapters keep UI tests on local files and isolated HTTP fixtures.
+  final Future<XFile?> Function()? pickAvatar;
+  final http.Client? emailClient;
+  final BackendConfig? backendConfig;
 
   @override
   State<EditProfileScreen> createState() => _EditProfileScreenState();
@@ -599,13 +767,21 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   Uint8List? _pendingAvatarBytes;
   String? _pendingAvatarContentType;
   bool _saving = false;
+  bool _awaitingEmail = false;
   bool _deleting = false;
+  bool _pickingAvatar = false;
+  bool _confirmingDelete = false;
+  late final String? _owner;
+
+  bool get _isCurrentOwner =>
+      mounted && _owner != null && _client.auth.currentUser?.id == _owner;
 
   @override
   void initState() {
     super.initState();
     _emailController = TextEditingController(text: widget.initialEmail);
     _currentAvatarUrl = widget.initialAvatarUrl;
+    _owner = _client.auth.currentUser?.id;
   }
 
   @override
@@ -615,17 +791,24 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Future<void> _pickAvatar() async {
-    if (_saving || _deleting) return;
+    if (_saving ||
+        _awaitingEmail ||
+        _deleting ||
+        _pickingAvatar ||
+        !_isCurrentOwner) return;
+    setState(() => _pickingAvatar = true);
     try {
-      final XFile? image = await _imagePicker.pickImage(
-        source: ImageSource.gallery,
-        maxWidth: 1024,
-        maxHeight: 1024,
-        imageQuality: 88,
-      );
-      if (image == null) return;
+      final XFile? image = await (widget.pickAvatar?.call() ??
+          _imagePicker.pickImage(
+            source: ImageSource.gallery,
+            maxWidth: 1024,
+            maxHeight: 1024,
+            imageQuality: 88,
+          ));
+      if (image == null || !_isCurrentOwner) return;
 
       final Uint8List bytes = await image.readAsBytes();
+      if (!_isCurrentOwner) return;
       if (bytes.isEmpty) {
         _showMessage('وێنەکە بە دروستی نەخوێندرایەوە.');
         return;
@@ -640,7 +823,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         _showMessage('تەنها وێنەی JPG، PNG یان WebP ڕێگەپێدراوە.');
         return;
       }
-      if (!mounted) return;
+      if (!_isCurrentOwner) return;
       setState(() {
         _pendingAvatarBytes = bytes;
         _pendingAvatarContentType = contentType;
@@ -649,14 +832,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       debugPrint(
         '[EditProfileScreen] avatar picker failed: $error\n$stackTrace',
       );
-      if (mounted) {
+      if (_isCurrentOwner) {
         _showMessage('دەستگەیشتن بە گەلەری نەکرا؛ ڕێگەپێدانەکان بپشکنەوە.');
       }
     } catch (error, stackTrace) {
       debugPrint(
         '[EditProfileScreen] avatar read failed: $error\n$stackTrace',
       );
-      if (mounted) _showMessage('وێنەکە هەڵنەبژێردرا؛ دووبارە هەوڵ بدەرەوە.');
+      if (_isCurrentOwner)
+        _showMessage('وێنەکە هەڵنەبژێردرا؛ دووبارە هەوڵ بدەرەوە.');
+    } finally {
+      if (mounted) setState(() => _pickingAvatar = false);
     }
   }
 
@@ -693,6 +879,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Future<String> _uploadAvatar(User user) async {
+    if (!_isCurrentOwner || user.id != _owner) {
+      throw const _EmailWebhookException('unauthorized');
+    }
     final Uint8List? bytes = _pendingAvatarBytes;
     final String? contentType = _pendingAvatarContentType;
     if (bytes == null || contentType == null) {
@@ -710,15 +899,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           ),
         );
 
+    if (!_isCurrentOwner) throw const _EmailWebhookException('unauthorized');
+
     final String publicUrl =
         _client.storage.from('avatars').getPublicUrl(objectPath);
-    final String versionedUrl = Uri.parse(publicUrl)
-        .replace(
-          queryParameters: <String, String>{
-            'v': DateTime.now().millisecondsSinceEpoch.toString(),
-          },
-        )
-        .toString();
+    final String versionedUrl = Uri.parse(publicUrl).replace(
+      queryParameters: <String, String>{
+        'v': DateTime.now().millisecondsSinceEpoch.toString(),
+      },
+    ).toString();
 
     final Map<String, dynamic>? savedProfile = await _client
         .from('profiles')
@@ -734,12 +923,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Future<void> _save() async {
-    if (_saving || _deleting || !_formKey.currentState!.validate()) return;
+    if (_saving ||
+        _awaitingEmail ||
+        _deleting ||
+        _pickingAvatar ||
+        !_formKey.currentState!.validate()) return;
     final User? user = _client.auth.currentUser;
-    if (user == null) {
+    if (user == null || !_isCurrentOwner) {
       _showMessage('دانیشتنەکەت بەسەرچووە؛ تکایە دووبارە بچۆ ژوورەوە.');
       return;
     }
+
+    final origin = ModalRoute.of(context);
 
     final String email = _normaliseEmail(_emailController.text);
     final String currentEmail = _normaliseEmail(widget.initialEmail);
@@ -755,7 +950,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       if (avatarChanged) {
         final String savedAvatarUrl = await _uploadAvatar(user);
         avatarSaved = true;
-        if (!mounted) return;
+        if (!_isCurrentOwner) return;
         setState(() {
           _currentAvatarUrl = savedAvatarUrl;
           _pendingAvatarBytes = null;
@@ -764,7 +959,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       }
 
       if (!emailChanged) {
-        if (mounted) Navigator.of(context).pop(true);
+        if (mounted && _isCurrentOwner && origin?.isCurrent == true) {
+          _popCurrentRoute(context, true);
+        }
         return;
       }
 
@@ -772,13 +969,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       // Auth is not asked to change anything until that code is verified.
       String requestId = await _requestEmailChangeCode(email);
 
-      if (!mounted) return;
-      setState(() => _saving = false);
+      if (!mounted || !_isCurrentOwner || origin?.isCurrent != true) return;
+      setState(() {
+        _saving = false;
+        _awaitingEmail = true;
+      });
       final bool? verified = await showDialog<bool>(
         context: context,
         barrierDismissible: false,
-        builder: (BuildContext dialogContext) =>
-            _EmailChangeVerificationDialog(
+        builder: (BuildContext dialogContext) => _EmailChangeVerificationDialog(
           email: email,
           onVerify: (String code) => _verifyEmailChangeCode(
             userId: user.id,
@@ -802,14 +1001,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           },
         ),
       );
-      if (!mounted) return;
+      if (!mounted || !_isCurrentOwner) return;
       if (verified == true) {
-        Navigator.of(context).pop(true);
+        if (origin?.isCurrent == true) _popCurrentRoute(context, true);
       } else if (avatarSaved) {
         _showMessage('وێنەکە پاشەکەوت کرا؛ گۆڕینی ئیمەیڵ تەواو نەکرا.');
       }
     } on _EmailWebhookException catch (error) {
-      if (mounted) {
+      if (_isCurrentOwner) {
         final String emailError = _friendlyEmailWebhookError(error.code);
         _showMessage(
           avatarSaved ? 'وێنەکە پاشەکەوت کرا؛ $emailError' : emailError,
@@ -819,16 +1018,21 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       debugPrint(
         '[EditProfileScreen] avatar upload failed: $error\n$stackTrace',
       );
-      if (mounted) {
-        _showMessage('وێنەکە بارنەکرا؛ ئینتەرنێتەکەت بپشکنەوە و دووبارە هەوڵ بدەرەوە.');
+      if (_isCurrentOwner) {
+        _showMessage(
+            'وێنەکە بارنەکرا؛ ئینتەرنێتەکەت بپشکنەوە و دووبارە هەوڵ بدەرەوە.');
       }
     } catch (error, stackTrace) {
-      if (mounted) {
+      if (_isCurrentOwner) {
         _showMessage('گۆڕانکارییەکان پاشەکەوت نەکران. دووبارە هەوڵ بدەرەوە.');
       }
       debugPrint('[EditProfileScreen] save failed: $error\n$stackTrace');
     } finally {
-      if (mounted) setState(() => _saving = false);
+      if (mounted)
+        setState(() {
+          _saving = false;
+          _awaitingEmail = false;
+        });
     }
   }
 
@@ -848,23 +1052,27 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     Map<String, dynamic> payload,
   ) async {
     final Session? session = _client.auth.currentSession;
-    if (session == null || session.accessToken.isEmpty) {
+    if (!_isCurrentOwner || session == null || session.accessToken.isEmpty) {
       throw const _EmailWebhookException('unauthorized');
     }
 
     late final http.Response response;
     try {
-      response = await http
-          .post(
-            Uri.parse(_emailChangeWebhookUrl),
-            headers: <String, String>{
-              'Authorization': 'Bearer ${session.accessToken}',
-              'Accept': 'application/json',
-              'Content-Type': 'application/json',
-            },
-            body: jsonEncode(payload),
-          )
-          .timeout(const Duration(seconds: 25));
+      (widget.backendConfig ?? BackendConfig.current)
+          .requireProductionTransport();
+      final send = widget.emailClient?.post ?? http.post;
+      response = await send(
+        Uri.parse(_emailChangeWebhookUrl),
+        headers: <String, String>{
+          'Authorization': 'Bearer ${session.accessToken}',
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(payload),
+      ).timeout(const Duration(seconds: 25));
+      if (!_isCurrentOwner) throw const _EmailWebhookException('unauthorized');
+    } on _EmailWebhookException {
+      rethrow;
     } on TimeoutException {
       throw const _EmailWebhookException('timeout');
     } catch (error) {
@@ -893,6 +1101,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     required String userId,
     required String email,
   }) async {
+    if (!_isCurrentOwner || userId != _owner) {
+      throw const _EmailWebhookException('unauthorized');
+    }
     // Only a confirmed Auth address may be mirrored into public.profiles.
     // Returning the row also catches an UPDATE rejected by RLS.
     final Map<String, dynamic>? savedProfile = await _client
@@ -923,6 +1134,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       );
       final String confirmedEmail =
           _normaliseEmail(result['email']?.toString() ?? '');
+      if (!_isCurrentOwner) throw const _EmailWebhookException('unauthorized');
       if (result['verified'] != true || confirmedEmail != email) {
         return 'پشتڕاستکردنەوە سەرکەوتوو نەبوو؛ دووبارە هەوڵ بدەرەوە.';
       }
@@ -936,6 +1148,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         // A later automatic refresh will update the local User object.
       }
       await _syncConfirmedEmail(userId: userId, email: email);
+      if (!_isCurrentOwner) throw const _EmailWebhookException('unauthorized');
       return null;
     } on PostgrestException catch (error) {
       return _friendlyDatabaseError(error);
@@ -950,22 +1163,35 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Future<void> _deleteAccount() async {
-    if (_saving || _deleting) return;
-    final bool confirmed = await _showConfirmationDialog(
-          context,
-          title: 'سڕینەوەی هەژمار',
-          message: 'ئەم کردارە هەمیشەییە و هەموو داتا، مامەڵە و '
-              'ڕیکلامەکانت دەسڕێتەوە. دڵنیایت؟',
-          confirmText: 'هەژمارەکەم بسڕەوە',
-          destructive: true,
-        ) ??
-        false;
-    if (!confirmed || !mounted) return;
+    if (_saving ||
+        _awaitingEmail ||
+        _deleting ||
+        _pickingAvatar ||
+        _confirmingDelete ||
+        !_isCurrentOwner) return;
+    final origin = ModalRoute.of(context);
+    _confirmingDelete = true;
+    bool confirmed;
+    try {
+      confirmed = await _showConfirmationDialog(
+            context,
+            title: 'سڕینەوەی هەژمار',
+            message: 'ئەم کردارە هەمیشەییە و هەموو داتا، مامەڵە و '
+                'ڕیکلامەکانت دەسڕێتەوە. دڵنیایت؟',
+            confirmText: 'هەژمارەکەم بسڕەوە',
+            destructive: true,
+          ) ??
+          false;
+    } finally {
+      _confirmingDelete = false;
+    }
+    if (!confirmed || !_isCurrentOwner || origin?.isCurrent != true) return;
 
     setState(() => _deleting = true);
     try {
       final FunctionResponse response =
           await _client.functions.invoke('delete-user');
+      if (!_isCurrentOwner) return;
       final Object? data = response.data;
       final bool succeeded = data is Map && data['success'] == true;
       if (!succeeded) {
@@ -984,7 +1210,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         // still handled by the Auth state listener when local state is cleared.
       }
     } catch (error) {
-      if (!mounted) return;
+      if (!_isCurrentOwner) return;
       setState(() => _deleting = false);
       _showMessage(
         'هەژمارەکە نەسڕایەوە. تکایە پەیوەندی بە پشتگیری بکە یان دواتر هەوڵ بدەرەوە.',
@@ -995,6 +1221,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   String? _validateEmail(String? value) {
     final String email = _normaliseEmail(value ?? '');
+    // An avatar-only edit must also work for phone accounts and legacy
+    // addresses. Gmail validation applies only when changing the address.
+    if (email == _normaliseEmail(widget.initialEmail)) return null;
     if (email.isEmpty) return 'تکایە ئیمەیڵەکەت بنووسە.';
     if (email.length > 254 ||
         !RegExp(r"^[a-z0-9.!#$%&'*+/=?^_`{|}~-]+@"
@@ -1017,7 +1246,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       ..hideCurrentSnackBar()
       ..showSnackBar(
         SnackBar(
-          content: ProxoText(message, translate: true, textDirection: TextDirection.rtl),
+          content: ProxoText(message,
+              translate: true, textDirection: TextDirection.rtl),
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -1050,16 +1280,20 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 ),
                 Expanded(
                   child: SingleChildScrollView(
+                    key: const ValueKey('profile-edit-scroll'),
+                    keyboardDismissBehavior:
+                        ScrollViewKeyboardDismissBehavior.onDrag,
                     physics: const BouncingScrollPhysics(),
                     padding: EdgeInsets.fromLTRB(
-                      16,
-                      24,
-                      16,
-                      media.padding.bottom + 28,
+                      ProxoSurface.gutter,
+                      ProxoSurface.sectionGap,
+                      ProxoSurface.gutter,
+                      media.padding.bottom + ProxoSurface.sectionGap,
                     ),
                     child: Center(
                       child: ConstrainedBox(
-                        constraints: const BoxConstraints(maxWidth: 520),
+                        constraints: const BoxConstraints(
+                            maxWidth: ProxoSurface.maxWidth),
                         child: Form(
                           key: _formKey,
                           child: Column(
@@ -1069,33 +1303,42 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 child: _EditableProfileAvatar(
                                   data: preview,
                                   memoryBytes: _pendingAvatarBytes,
-                                  enabled: !_saving && !_deleting,
+                                  enabled: !_saving &&
+                                      !_awaitingEmail &&
+                                      !_deleting &&
+                                      !_pickingAvatar,
                                   onTap: _pickAvatar,
                                 ),
                               ),
-                              const SizedBox(height: 9),
+                              const SizedBox(height: 8),
                               ProxoText(
-                                'بۆ گۆڕینی وێنە کلیک بکە', translate: true,
+                                'بۆ گۆڕینی وێنە کلیک بکە',
+                                translate: true,
                                 textAlign: TextAlign.center,
                                 style: _ProfileText.userContact.copyWith(
                                   color: _ProfileColors.muted,
                                 ),
                               ),
-                              const SizedBox(height: 28),
+                              const SizedBox(height: ProxoSurface.sectionGap),
                               const _FieldLabel('ناوی تەواو'),
-                              const SizedBox(height: 7),
+                              const SizedBox(height: 8),
                               ProxoDirectionalInput(
-                                initialValue: widget.initialFullName.isEmpty ? '—' : widget.initialFullName,
-                                builder: (context, inputDirection) => TextFormField(
+                                initialValue: widget.initialFullName.isEmpty
+                                    ? '—'
+                                    : widget.initialFullName,
+                                builder: (context, inputDirection) =>
+                                    TextFormField(
                                   textDirection: inputDirection,
-                                  errorBuilder: (context, message) => ProxoText(message, translate: true),
+                                  errorBuilder: (context, message) =>
+                                      ProxoText(message, translate: true),
                                   initialValue: widget.initialFullName.isEmpty
                                       ? '—'
                                       : widget.initialFullName,
                                   readOnly: true,
                                   enableInteractiveSelection: true,
                                   canRequestFocus: false,
-                                  style: _ProfileText.field.copyWith(color: _ProfileColors.muted),
+                                  style: _ProfileText.field
+                                      .copyWith(color: _ProfileColors.muted),
                                   decoration: _profileInputDecoration(
                                     hint: '—',
                                     icon: SolarIconsOutline.userRounded,
@@ -1106,25 +1349,33 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               ),
                               const SizedBox(height: 16),
                               const _FieldLabel('ئیمەیڵ'),
-                              const SizedBox(height: 7),
+                              const SizedBox(height: 8),
                               Directionality(
                                 textDirection: TextDirection.ltr,
                                 child: ProxoDirectionalInput(
                                   controller: _emailController,
                                   keyboardType: TextInputType.emailAddress,
                                   forceLtr: true,
-                                  builder: (context, inputDirection) => TextFormField(
+                                  builder: (context, inputDirection) =>
+                                      TextFormField(
+                                    key: const ValueKey('profile-email'),
                                     textDirection: inputDirection,
-                                    errorBuilder: (context, message) => ProxoText(message, translate: true),
+                                    errorBuilder: (context, message) =>
+                                        ProxoText(message, translate: true),
                                     controller: _emailController,
-                                    enabled: !_saving && !_deleting,
+                                    enabled: !_saving &&
+                                        !_awaitingEmail &&
+                                        !_deleting &&
+                                        !_pickingAvatar,
                                     validator: _validateEmail,
                                     keyboardType: TextInputType.emailAddress,
                                     textInputAction: TextInputAction.done,
                                     onFieldSubmitted: (_) => _save(),
                                     autocorrect: false,
                                     textCapitalization: TextCapitalization.none,
-                                    autofillHints: const <String>[AutofillHints.email],
+                                    autofillHints: const <String>[
+                                      AutofillHints.email
+                                    ],
                                     inputFormatters: <TextInputFormatter>[
                                       LengthLimitingTextInputFormatter(254),
                                     ],
@@ -1138,19 +1389,26 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               ),
                               const SizedBox(height: 16),
                               const _FieldLabel('ژمارەی مۆبایل'),
-                              const SizedBox(height: 7),
+                              const SizedBox(height: 8),
                               Directionality(
                                 textDirection: TextDirection.ltr,
                                 child: ProxoDirectionalInput(
-                                  initialValue: widget.initialPhone.isEmpty ? '—' : widget.initialPhone,
-                                  builder: (context, inputDirection) => TextFormField(
+                                  initialValue: widget.initialPhone.isEmpty
+                                      ? '—'
+                                      : widget.initialPhone,
+                                  builder: (context, inputDirection) =>
+                                      TextFormField(
                                     textDirection: inputDirection,
-                                    errorBuilder: (context, message) => ProxoText(message, translate: true),
-                                    initialValue: widget.initialPhone.isEmpty ? '—' : widget.initialPhone,
+                                    errorBuilder: (context, message) =>
+                                        ProxoText(message, translate: true),
+                                    initialValue: widget.initialPhone.isEmpty
+                                        ? '—'
+                                        : widget.initialPhone,
                                     readOnly: true,
                                     enableInteractiveSelection: true,
                                     canRequestFocus: false,
-                                    style: _ProfileText.field.copyWith(color: _ProfileColors.muted),
+                                    style: _ProfileText.field
+                                        .copyWith(color: _ProfileColors.muted),
                                     decoration: _profileInputDecoration(
                                       hint: '—',
                                       icon: SolarIconsOutline.smartphone,
@@ -1161,17 +1419,27 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 ),
                               ),
                               const SizedBox(height: 24),
-                              SizedBox(
-                                height: 48,
+                              ConstrainedBox(
+                                constraints: const BoxConstraints(
+                                    minHeight: ProxoSurface.actionHeight),
                                 child: FilledButton(
-                                  onPressed:
-                                      _saving || _deleting ? null : _save,
+                                  key: const ValueKey('profile-save'),
+                                  onPressed: _saving ||
+                                          _awaitingEmail ||
+                                          _deleting ||
+                                          _pickingAvatar
+                                      ? null
+                                      : _save,
                                   style: FilledButton.styleFrom(
                                     backgroundColor: _ProfileColors.primary,
                                     foregroundColor: Colors.white,
-                                    disabledBackgroundColor:
-                                        _ProfileColors.primary.withOpacity(.45),
+                                    disabledBackgroundColor: _ProfileColors
+                                        .primary
+                                        .withValues(alpha: .45),
                                     shape: ProxoControls.shape,
+                                    minimumSize: const Size(48, 48),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16, vertical: 12),
                                     textStyle: _ProfileText.button,
                                   ),
                                   child: _saving
@@ -1182,24 +1450,29 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                             color: Colors.white,
                                           ),
                                         )
-                                      : const ProxoText('پاشەکەوتکردن', translate: true),
+                                      : const ProxoText('پاشەکەوتکردن',
+                                          translate: true),
                                 ),
                               ),
-                              const SizedBox(height: 34),
+                              const SizedBox(height: ProxoSurface.sectionGap),
                               const _SectionTitle('ناوچەی مەترسیدار'),
                               const SizedBox(height: 8),
                               Material(
                                 color: _ProfileColors.dangerSoft,
                                 shape: const RoundedRectangleBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(ProxoChrome.radius)),
+                                  borderRadius: BorderRadius.all(
+                                      Radius.circular(ProxoChrome.radius)),
                                   side: BorderSide(
                                     color: _ProfileColors.dangerBorder,
                                   ),
                                 ),
                                 clipBehavior: Clip.antiAlias,
                                 child: InkWell(
-                                  onTap: _saving || _deleting
+                                  key: const ValueKey('profile-delete'),
+                                  onTap: _saving ||
+                                          _awaitingEmail ||
+                                          _deleting ||
+                                          _pickingAvatar
                                       ? null
                                       : _deleteAccount,
                                   child: Padding(
@@ -1209,7 +1482,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                     ),
                                     child: Row(
                                       children: <Widget>[
-                                        const ProxoSolarIcon(
+                                        const _ProfileSymbol(
                                           SolarIconsOutline.userCrossRounded,
                                           size: 21,
                                           color: _ProfileColors.danger,
@@ -1221,12 +1494,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                                 CrossAxisAlignment.start,
                                             children: <Widget>[
                                               ProxoText(
-                                                'سڕینەوەی هەژمار', translate: true,
+                                                'سڕینەوەی هەژمار',
+                                                translate: true,
                                                 style: _ProfileText.dangerTitle,
                                               ),
                                               SizedBox(height: 3),
                                               ProxoText(
-                                                'هەموو داتاکانت بە هەمیشەیی دەسڕێتەوە', translate: true,
+                                                'هەموو داتاکانت بە هەمیشەیی دەسڕێتەوە',
+                                                translate: true,
                                                 style: _ProfileText.dangerSub,
                                               ),
                                             ],
@@ -1241,7 +1516,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                             ),
                                           )
                                         else
-                                          const ProxoSolarIcon(
+                                          const _ProfileSymbol(
                                             SolarIconsOutline.altArrowLeft,
                                             size: 21,
                                             color: _ProfileColors.danger,
@@ -1279,9 +1554,8 @@ class _ProfileData {
     final Map<String, dynamic> metadata =
         user?.userMetadata ?? const <String, dynamic>{};
     return _ProfileData(
-      fullName: (metadata['full_name'] ?? metadata['name'] ?? '')
-          .toString()
-          .trim(),
+      fullName:
+          (metadata['full_name'] ?? metadata['name'] ?? '').toString().trim(),
       email: ((user?.email ?? '').trim().endsWith('@phone.proxopages.com'))
           ? ''
           : (user?.email ?? '').trim(),
@@ -1300,7 +1574,7 @@ class _ProfileData {
     if (row == null) return fallback;
     return _ProfileData(
       fullName: _nonEmpty(row['full_name']) ?? fallback.fullName,
-      email: _nonEmpty(row['email']) ?? fallback.email,
+      email: _cleanEmail(row['email']) ?? fallback.email,
       phone: _nonEmpty(row['phone']) ?? fallback.phone,
       avatarUrl: _cleanAvatar(row['avatar_url']) ?? fallback.avatarUrl,
     );
@@ -1320,7 +1594,8 @@ class _ProfileData {
 
   String get contact {
     final bool generatedPhoneEmail = email.endsWith('@phone.proxopages.com');
-    if (phone.isNotEmpty && (email.isEmpty || generatedPhoneEmail)) return phone;
+    if (phone.isNotEmpty && (email.isEmpty || generatedPhoneEmail))
+      return phone;
     if (email.isNotEmpty) return email;
     return phone.isNotEmpty ? phone : '—';
   }
@@ -1330,12 +1605,9 @@ class _ProfileData {
       fullName: row.containsKey('full_name')
           ? (_nonEmpty(row['full_name']) ?? fullName)
           : fullName,
-      email: row.containsKey('email')
-          ? (_nonEmpty(row['email']) ?? email)
-          : email,
-      phone: row.containsKey('phone')
-          ? (_nonEmpty(row['phone']) ?? '')
-          : phone,
+      email:
+          row.containsKey('email') ? (_cleanEmail(row['email']) ?? '') : email,
+      phone: row.containsKey('phone') ? (_nonEmpty(row['phone']) ?? '') : phone,
       avatarUrl: row.containsKey('avatar_url')
           ? _cleanAvatar(row['avatar_url'])
           : avatarUrl,
@@ -1345,6 +1617,14 @@ class _ProfileData {
   static String? _nonEmpty(Object? value) {
     final String text = value?.toString().trim() ?? '';
     return text.isEmpty ? null : text;
+  }
+
+  static String? _cleanEmail(Object? value) {
+    final email = _nonEmpty(value);
+    return email != null &&
+            !email.toLowerCase().endsWith('@phone.proxopages.com')
+        ? email
+        : null;
   }
 
   static String? _cleanAvatar(Object? value) {
@@ -1392,11 +1672,12 @@ class _ProfileTopBar extends StatelessWidget {
                     ),
               Expanded(
                 child: const ProxoText(
-                        'پڕۆفایل', translate: true,
-                        textAlign: TextAlign.center,
-                        softWrap: true,
-                        style: _ProfileText.screenTitle,
-                      ),
+                  'پڕۆفایل',
+                  translate: true,
+                  textAlign: TextAlign.center,
+                  softWrap: true,
+                  style: _ProfileText.screenTitle,
+                ),
               ),
               showBack
                   ? _CircleActionButton(
@@ -1442,7 +1723,8 @@ class _SimpleTopBar extends StatelessWidget {
               ),
               Expanded(
                 child: ProxoText(
-                  title, translate: true,
+                  title,
+                  translate: true,
                   textAlign: TextAlign.center,
                   softWrap: true,
                   style: _ProfileText.screenTitle,
@@ -1457,40 +1739,164 @@ class _SimpleTopBar extends StatelessWidget {
   }
 }
 
+class _ProfileSymbol extends StatelessWidget {
+  const _ProfileSymbol(this.icon, {this.size = 22, this.color});
+  final IconData icon;
+  final double size;
+  final Color? color;
+  static final _symbols = <IconData, ProxoSymbolName>{
+    SolarIconsOutline.altArrowLeft: ProxoSymbolName.forward,
+    SolarIconsOutline.altArrowRight: ProxoSymbolName.back,
+    SolarIconsOutline.bell: ProxoSymbolName.bell,
+    SolarIconsOutline.chatRoundCall: ProxoSymbolName.chat,
+    SolarIconsOutline.chatRoundDots: ProxoSymbolName.chat,
+    SolarIconsOutline.clapperboardPlay: ProxoSymbolName.ads,
+    SolarIconsOutline.closeCircle: ProxoSymbolName.close,
+    SolarIconsOutline.documentText: ProxoSymbolName.document,
+    SolarIconsOutline.eye: ProxoSymbolName.eye,
+    SolarIconsOutline.eyeClosed: ProxoSymbolName.eyeClosed,
+    SolarIconsOutline.history: ProxoSymbolName.history,
+    SolarIconsOutline.infoCircle: ProxoSymbolName.info,
+    SolarIconsOutline.letter: ProxoSymbolName.email,
+    SolarIconsOutline.lock: ProxoSymbolName.lock,
+    SolarIconsOutline.logout: ProxoSymbolName.logout,
+    SolarIconsOutline.penNewSquare: ProxoSymbolName.edit,
+    SolarIconsOutline.phoneRounded: ProxoSymbolName.phone,
+    SolarIconsOutline.questionCircle: ProxoSymbolName.help,
+    SolarIconsOutline.shieldCheck: ProxoSymbolName.verified,
+    SolarIconsOutline.sledgehammer: ProxoSymbolName.document,
+    SolarIconsOutline.smartphone: ProxoSymbolName.phone,
+    SolarIconsOutline.tagPrice: ProxoSymbolName.discount,
+    SolarIconsOutline.userCrossRounded: ProxoSymbolName.trash,
+    SolarIconsOutline.userRounded: ProxoSymbolName.user,
+    SolarIconsOutline.usersGroupRounded: ProxoSymbolName.user,
+    SolarIconsOutline.widget_2: ProxoSymbolName.tools,
+  };
+  @override
+  Widget build(BuildContext context) =>
+      ProxoSymbol(_symbols[icon]!, size: size, color: color);
+}
+
 class _CircleActionButton extends StatelessWidget {
-  const _CircleActionButton({required this.semanticLabel, required this.icon, required this.onTap});
+  const _CircleActionButton(
+      {required this.semanticLabel, required this.icon, required this.onTap});
   final String semanticLabel;
   final IconData icon;
   final VoidCallback onTap;
   @override
   Widget build(BuildContext context) => IconButton(
-    tooltip: ProxoStrings.text(semanticLabel), onPressed: onTap,
-    constraints: const BoxConstraints.tightFor(width: 48, height: 48),
-    icon: ProxoSolarIcon(icon, size: ProxoChrome.iconSize, color: AppColors.ink),
-  );
+        key: ValueKey(semanticLabel == 'دەستکاری پڕۆفایل'
+            ? 'profile-edit'
+            : 'profile-back'),
+        tooltip: ProxoStrings.text(semanticLabel),
+        onPressed: onTap,
+        constraints: const BoxConstraints.tightFor(width: 48, height: 48),
+        icon: _ProfileSymbol(icon, size: 22, color: AppColors.ink),
+      );
 }
 
 class _ProfileIdentity extends StatelessWidget {
   const _ProfileIdentity({required this.data});
   final _ProfileData data;
+
   @override
   Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.all(16),
-    decoration: BoxDecoration(color: Colors.white,
-      borderRadius: BorderRadius.circular(18), border: Border.all(color: _ProfileColors.cardBorder)),
-    child: Row(children: [
-      _ProfileAvatar(data: data, diameter: 56, iconSize: 27),
-      const SizedBox(width: 14),
-      Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ProxoText(data.displayName, softWrap: true, style: _ProfileText.userName),
-          const SizedBox(height: 4),
-          ProxoText(data.contact, softWrap: true,
-            textDirection: _containsArabic(data.contact) ? TextDirection.rtl : TextDirection.ltr,
-            style: _ProfileText.userContact),
-        ])),
-    ]),
-  );
+        key: const ValueKey('profile-identity'),
+        padding: const EdgeInsets.all(ProxoSurface.padding),
+        decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(ProxoSurface.radius),
+            border: Border.all(color: _ProfileColors.cardBorder)),
+        child: LayoutBuilder(builder: (context, constraints) {
+          final stacked = constraints.maxWidth < 300 &&
+              MediaQuery.textScalerOf(context).scale(14) > 21;
+          final text = Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ProxoText(
+                    data.fullName.isEmpty &&
+                            data.email.isEmpty &&
+                            data.phone.isEmpty
+                        ? ProxoStrings.text('بەکارهێنەر')
+                        : data.displayName,
+                    softWrap: true,
+                    style: _ProfileText.userName),
+                const SizedBox(height: 8),
+                ProxoText(data.contact,
+                    softWrap: true,
+                    textDirection: _containsArabic(data.contact)
+                        ? TextDirection.rtl
+                        : TextDirection.ltr,
+                    style: _ProfileText.userContact),
+                if (data.phone.isNotEmpty && data.phone != data.contact) ...[
+                  const SizedBox(height: 4),
+                  ProxoText(data.phone,
+                      softWrap: true,
+                      textDirection: TextDirection.ltr,
+                      style: _ProfileText.userContact),
+                ],
+              ]);
+          final avatar = _ProfileAvatar(data: data, diameter: 56, iconSize: 26);
+          if (stacked) {
+            return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [avatar, const SizedBox(height: 12), text]);
+          }
+          return Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            avatar,
+            const SizedBox(width: 12),
+            Expanded(child: text)
+          ]);
+        }),
+      );
+}
+
+class _ProfileLoadNotice extends StatefulWidget {
+  const _ProfileLoadNotice({required this.onRetry});
+  final Future<void> Function() onRetry;
+  @override
+  State<_ProfileLoadNotice> createState() => _ProfileLoadNoticeState();
+}
+
+class _ProfileLoadNoticeState extends State<_ProfileLoadNotice> {
+  bool _retrying = false;
+  Future<void> _retry() async {
+    if (_retrying) return;
+    setState(() => _retrying = true);
+    try {
+      await widget.onRetry();
+    } finally {
+      if (mounted) setState(() => _retrying = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) => Padding(
+        padding: const EdgeInsets.only(top: 16),
+        child: Container(
+          key: const ValueKey('profile-load-error'),
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+              color: AuthTokens.dangerBg,
+              borderRadius: BorderRadius.circular(ProxoSurface.radius)),
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+            const ProxoText('نەتوانرا زانیارییەکان پیشان بدرێن',
+                translate: true, style: ProxoSurface.body),
+            const SizedBox(height: 8),
+            TextButton(
+                onPressed: _retrying ? null : _retry,
+                style: TextButton.styleFrom(minimumSize: const Size(48, 48)),
+                child: _retrying
+                    ? const SizedBox.square(
+                        dimension: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2))
+                    : const ProxoText('دووبارە',
+                        translate: true, style: ProxoSurface.body)),
+          ]),
+        ),
+      );
 }
 
 class _ProfileAvatar extends StatelessWidget {
@@ -1514,7 +1920,7 @@ class _ProfileAvatar extends StatelessWidget {
         (diameter * MediaQuery.devicePixelRatioOf(context)).ceil();
     return Semantics(
       image: true,
-      label: 'وێنەی پرۆفایل',
+      label: ProxoStrings.text('وێنەی پرۆفایل'),
       child: Container(
         width: diameter,
         height: diameter,
@@ -1560,69 +1966,58 @@ class _ProfileAvatar extends StatelessWidget {
 }
 
 class _EditableProfileAvatar extends StatelessWidget {
-  const _EditableProfileAvatar({
-    required this.data,
-    required this.memoryBytes,
-    required this.enabled,
-    required this.onTap,
-  });
-
+  const _EditableProfileAvatar(
+      {required this.data,
+      required this.memoryBytes,
+      required this.enabled,
+      required this.onTap});
   final _ProfileData data;
   final Uint8List? memoryBytes;
   final bool enabled;
   final VoidCallback onTap;
 
   @override
-  Widget build(BuildContext context) {
-    ProxoLocale.watch(context);
-    return Semantics(
-      button: true,
-      enabled: enabled,
-      label: 'گۆڕینی وێنەی پرۆفایل',
-      child: SizedBox(
-        width: 88,
-        height: 84,
-        child: Stack(
-          clipBehavior: Clip.none,
-          alignment: Alignment.topCenter,
-          children: <Widget>[
-            GestureDetector(
+  Widget build(BuildContext context) => Semantics(
+        button: true,
+        enabled: enabled,
+        label: ProxoStrings.text('گۆڕینی وێنەی پرۆفایل'),
+        child: Material(
+            color: Colors.transparent,
+            shape: const CircleBorder(),
+            clipBehavior: Clip.antiAlias,
+            child: InkWell(
+              key: const ValueKey('profile-avatar'),
+              customBorder: const CircleBorder(),
               onTap: enabled ? onTap : null,
-              child: _ProfileAvatar(
-                data: data,
-                diameter: 76,
-                iconSize: 32,
-                memoryBytes: memoryBytes,
-              ),
-            ),
-            Positioned(
-              right: 0,
-              bottom: 0,
-              child: Material(
-                color: enabled
-                    ? _ProfileColors.primary
-                    : _ProfileColors.muted,
-                shape: const CircleBorder(),
-                elevation: 2,
-                child: InkWell(
-                  customBorder: const CircleBorder(),
-                  onTap: enabled ? onTap : null,
-                  child: const SizedBox.square(
-                    dimension: 30,
-                    child: ProxoSolarIcon(
-                      Icons.photo_camera_outlined,
-                      size: 17,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+              child: SizedBox.square(
+                  dimension: 96,
+                  child: Stack(alignment: Alignment.center, children: [
+                    _ProfileAvatar(
+                        data: data,
+                        diameter: 76,
+                        iconSize: 30,
+                        memoryBytes: memoryBytes),
+                    // Keep the complete badge circle inside the 96dp ink
+                    // clip so the camera remains round at every density.
+                    PositionedDirectional(
+                        end: 12,
+                        bottom: 12,
+                        child: DecoratedBox(
+                            decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: enabled
+                                    ? _ProfileColors.primary
+                                    : _ProfileColors.muted,
+                                border:
+                                    Border.all(color: Colors.white, width: 2)),
+                            child: const SizedBox.square(
+                                key: ValueKey('profile-avatar-camera-badge'),
+                                dimension: 32,
+                                child: ProxoSymbol(ProxoSymbolName.camera,
+                                    size: 18, color: Colors.white)))),
+                  ])),
+            )),
+      );
 }
 
 class _AvatarFallback extends StatelessWidget {
@@ -1636,7 +2031,7 @@ class _AvatarFallback extends StatelessWidget {
     return ColoredBox(
       color: _ProfileColors.iconSurface,
       child: Center(
-        child: ProxoSolarIcon(
+        child: _ProfileSymbol(
           SolarIconsOutline.userRounded,
           size: iconSize,
           color: _ProfileColors.muted,
@@ -1647,46 +2042,76 @@ class _AvatarFallback extends StatelessWidget {
 }
 
 class _BalanceCard extends StatelessWidget {
-  const _BalanceCard({required this.balanceIqd, required this.showBalance, required this.onTap});
+  const _BalanceCard(
+      {required this.balanceIqd,
+      required this.showBalance,
+      required this.onTap});
   final ValueListenable<double?> balanceIqd;
   final ValueNotifier<bool> showBalance;
   final VoidCallback onTap;
   @override
   Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.all(18),
-    decoration: BoxDecoration(color: const Color(0xFFEDF4FF),
-      borderRadius: BorderRadius.circular(18)),
-    child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-      Row(children: [
-        const Expanded(child: ProxoText('باڵانسی ڕیکلام', translate: true,
-          style: TextStyle(fontFamily: kAppFont, fontSize: 14, color: AppColors.inkMuted, height: 1.5))),
-        ValueListenableBuilder<bool>(valueListenable: showBalance,
-          builder: (_, visible, __) => IconButton(
-            tooltip: ProxoStrings.text(visible ? 'شاردنەوەی باڵانس' : 'پیشاندانی باڵانس'),
-            onPressed: () => showBalance.value = !visible,
-            icon: ProxoSolarIcon(visible ? SolarIconsOutline.eye : SolarIconsOutline.eyeClosed,
-              size: 22, color: AppColors.inkMuted))),
-      ]),
-      ValueListenableBuilder<bool>(valueListenable: showBalance,
-        builder: (_, visible, __) => ValueListenableBuilder<double?>(
-          valueListenable: balanceIqd, builder: (_, value, __) => SingleChildScrollView(
-            scrollDirection: Axis.horizontal, reverse: true,
-            child: ProxoText(visible ? _formatIqd(value) : '•••••• د.ع',
-              textDirection: TextDirection.ltr, maxLines: 1,
-              style: _ProfileText.balanceAmount.copyWith(color: AppColors.ink, height: 1.5)),
-          ))),
-      const SizedBox(height: 16),
-      FilledButton(onPressed: onTap,
-        style: FilledButton.styleFrom(backgroundColor: AppColors.accent, foregroundColor: Colors.white,
-          minimumSize: const Size(48, 52), padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-          shape: ProxoControls.shape),
-        child: const ProxoText('زیادکردنی باڵانس', translate: true, textAlign: TextAlign.center,
-          style: TextStyle(fontFamily: kAppFont, fontSize: 14, height: 1.5))),
-    ]),
-  );
+        key: const ValueKey('profile-balance'),
+        padding: const EdgeInsets.all(ProxoSurface.padding),
+        decoration: BoxDecoration(
+            color: AuthTokens.accentSoft,
+            border: Border.all(color: AuthTokens.accentLine),
+            borderRadius: BorderRadius.circular(ProxoSurface.radius)),
+        child:
+            Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+          Row(children: [
+            const Expanded(
+                child: ProxoText('باڵانسی ڕیکلام',
+                    translate: true, style: _ProfileText.balanceLabel)),
+            ValueListenableBuilder<bool>(
+                valueListenable: showBalance,
+                builder: (_, visible, __) => IconButton(
+                    key: const ValueKey('profile-balance-toggle'),
+                    constraints:
+                        const BoxConstraints.tightFor(width: 48, height: 48),
+                    tooltip: ProxoStrings.text(
+                        visible ? 'شاردنەوەی باڵانس' : 'پیشاندانی باڵانس'),
+                    onPressed: () => showBalance.value = !visible,
+                    icon: ProxoSymbol(
+                        visible
+                            ? ProxoSymbolName.eye
+                            : ProxoSymbolName.eyeClosed,
+                        size: 22,
+                        color: AppColors.inkMuted))),
+          ]),
+          ValueListenableBuilder<bool>(
+              valueListenable: showBalance,
+              builder: (_, visible, __) => ValueListenableBuilder<double?>(
+                  valueListenable: balanceIqd,
+                  builder: (_, value, __) => ProxoText(
+                      visible ? _formatIqd(value) : '•••••• د.ع',
+                      key: const ValueKey('profile-balance-amount'),
+                      textDirection: TextDirection.ltr,
+                      textAlign: TextAlign.start,
+                      softWrap: true,
+                      style: _ProfileText.balanceAmount))),
+          const SizedBox(height: 16),
+          FilledButton(
+              key: const ValueKey('profile-add-balance'),
+              onPressed: onTap,
+              style: ProxoSurface.actionStyle(),
+              child: const ProxoText('زیادکردنی باڵانس',
+                  translate: true,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontFamily: ProxoSurface.fontFamily,
+                      fontSize: 14,
+                      height: 1.5,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.white))),
+        ]),
+      );
   static String _formatIqd(double? value) {
     if (value == null) return '— د.ع';
-    final latin = value.round().toString().replaceAllMapped(RegExp(r'\B(?=(\d{3})+(?!\d))'), (_) => ',');
+    final latin = value
+        .round()
+        .toString()
+        .replaceAllMapped(RegExp(r'\B(?=(\d{3})+(?!\d))'), (_) => ',');
     return '$latin د.ع';
   }
 }
@@ -1705,12 +2130,14 @@ class _SectionTitle extends StatelessWidget {
 
 class _MenuEntry {
   const _MenuEntry({
+    required this.id,
     required this.icon,
     required this.title,
     required this.onTap,
     this.subtitle,
   });
 
+  final String id;
   final IconData icon;
   final String title;
   final String? subtitle;
@@ -1761,24 +2188,25 @@ class _SettingsTile extends StatelessWidget {
   Widget build(BuildContext context) {
     ProxoLocale.watch(context);
     return InkWell(
+      key: ValueKey('profile-${entry.id}'),
       onTap: entry.onTap,
       child: ConstrainedBox(
-        constraints: const BoxConstraints(minHeight: 60),
+        constraints: const BoxConstraints(minHeight: ProxoSurface.actionHeight),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Row(
             children: <Widget>[
               Container(
-                width: 40,
-                height: 40,
+                width: 32,
+                height: 32,
                 alignment: Alignment.center,
                 decoration: const BoxDecoration(
                   color: ProxoChrome.surface,
                   borderRadius: BorderRadius.all(Radius.circular(12)),
                 ),
-                child: ProxoSolarIcon(
+                child: _ProfileSymbol(
                   entry.icon,
-                  size: ProxoChrome.iconSize,
+                  size: 22,
                   color: _ProfileColors.iconInk,
                 ),
               ),
@@ -1789,14 +2217,16 @@ class _SettingsTile extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     ProxoText(
-                      entry.title, translate: true,
+                      entry.title,
+                      translate: true,
                       softWrap: true,
                       style: _ProfileText.menuTitle,
                     ),
                     if (entry.subtitle != null) ...<Widget>[
                       const SizedBox(height: 2),
                       ProxoText(
-                        entry.subtitle!, translate: true,
+                        entry.subtitle!,
+                        translate: true,
                         softWrap: true,
                         style: _ProfileText.menuSubtitle,
                       ),
@@ -1805,7 +2235,7 @@ class _SettingsTile extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 8),
-              const ProxoSolarIcon(
+              const _ProfileSymbol(
                 SolarIconsOutline.altArrowLeft,
                 size: 20,
                 color: _ProfileColors.chevron,
@@ -1835,30 +2265,33 @@ class _SignOutTile extends StatelessWidget {
       ),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
+        key: const ValueKey('profile-sign-out'),
         onTap: busy ? null : onTap,
         child: ConstrainedBox(
-          constraints: const BoxConstraints(minHeight: 60),
+          constraints:
+              const BoxConstraints(minHeight: ProxoSurface.actionHeight),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Row(
               children: <Widget>[
                 Container(
-                  width: 40,
-                  height: 40,
+                  width: 32,
+                  height: 32,
                   alignment: Alignment.center,
                   decoration: const BoxDecoration(
                     color: ProxoChrome.surface,
                     borderRadius: BorderRadius.all(Radius.circular(12)),
                   ),
-                  child: const ProxoSolarIcon(
+                  child: const _ProfileSymbol(
                     SolarIconsOutline.logout,
-                    size: ProxoChrome.iconSize,
+                    size: 22,
                     color: _ProfileColors.iconInk,
                   ),
                 ),
                 const SizedBox(width: 12),
                 const Expanded(
-                  child: ProxoText('دەرچوون', translate: true, style: _ProfileText.signOut),
+                  child: ProxoText('دەرچوون',
+                      translate: true, style: _ProfileText.signOut),
                 ),
                 if (busy)
                   const SizedBox.square(
@@ -1869,7 +2302,7 @@ class _SignOutTile extends StatelessWidget {
                     ),
                   )
                 else
-                  const ProxoSolarIcon(
+                  const _ProfileSymbol(
                     SolarIconsOutline.altArrowLeft,
                     size: 20,
                     color: _ProfileColors.chevron,
@@ -1901,12 +2334,13 @@ class _SupportSheet extends StatelessWidget {
         color: Colors.white,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
         clipBehavior: Clip.antiAlias,
-        child: Padding(
+        child: SingleChildScrollView(
+          key: const ValueKey('profile-support-scroll'),
           padding: EdgeInsets.fromLTRB(
-            16,
+            ProxoSurface.gutter,
             10,
-            16,
-            MediaQuery.paddingOf(context).bottom + 20,
+            ProxoSurface.gutter,
+            MediaQuery.paddingOf(context).bottom + ProxoSurface.sectionGap,
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -1929,7 +2363,7 @@ class _SupportSheet extends StatelessWidget {
                     color: _ProfileColors.supportIllustrationSurface,
                     shape: BoxShape.circle,
                   ),
-                  child: ProxoSolarIcon(
+                  child: _ProfileSymbol(
                     SolarIconsOutline.chatRoundCall,
                     size: 38,
                     color: _ProfileColors.supportDark,
@@ -1938,7 +2372,8 @@ class _SupportSheet extends StatelessWidget {
               ),
               const SizedBox(height: 18),
               const ProxoText(
-                'چۆن دەتوانین پەیوەندیتان پێوە بکەین؟', translate: true,
+                'چۆن دەتوانین پەیوەندیتان پێوە بکەین؟',
+                translate: true,
                 textAlign: TextAlign.center,
                 style: _ProfileText.supportQuestion,
               ),
@@ -1950,7 +2385,8 @@ class _SupportSheet extends StatelessWidget {
                       label: 'چات',
                       icon: SolarIconsOutline.chatRoundDots,
                       filled: false,
-                      onTap: () => Navigator.of(context).pop(
+                      onTap: () => _popCurrentRoute(
+                        context,
                         _SupportAction.chat,
                       ),
                     ),
@@ -1961,7 +2397,8 @@ class _SupportSheet extends StatelessWidget {
                       label: 'تەلەفۆن',
                       icon: SolarIconsOutline.phoneRounded,
                       filled: true,
-                      onTap: () => Navigator.of(context).pop(
+                      onTap: () => _popCurrentRoute(
+                        context,
                         _SupportAction.phone,
                       ),
                     ),
@@ -1992,8 +2429,7 @@ class _SupportChannelButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ProxoLocale.watch(context);
-    final Color foreground =
-        filled ? Colors.white : _ProfileColors.supportDark;
+    final Color foreground = filled ? Colors.white : _ProfileColors.supportDark;
     return Material(
       color: filled ? _ProfileColors.supportDark : Colors.white,
       shape: RoundedRectangleBorder(
@@ -2009,8 +2445,8 @@ class _SupportChannelButton extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Container(
-                width: 40,
-                height: 40,
+                width: 32,
+                height: 32,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   color: filled
@@ -2018,11 +2454,14 @@ class _SupportChannelButton extends StatelessWidget {
                       : _ProfileColors.iconSurface,
                   shape: BoxShape.circle,
                 ),
-                child: ProxoSolarIcon(icon, size: 20, color: foreground),
+                child: _ProfileSymbol(icon, size: 20, color: foreground),
               ),
               const SizedBox(width: 9),
-              Flexible(child: ProxoText(
-                label, translate: true, softWrap: true,
+              Flexible(
+                  child: ProxoText(
+                label,
+                translate: true,
+                softWrap: true,
                 style: _ProfileText.supportButton.copyWith(color: foreground),
               )),
             ],
@@ -2045,121 +2484,123 @@ class _AboutAppSheet extends StatelessWidget {
       child: FractionallySizedBox(
         heightFactor: .88,
         child: Material(
-        color: Colors.white,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
-        clipBehavior: Clip.antiAlias,
-        child: Directionality(
-          textDirection: TextDirection.rtl,
-          child: Column(
-            children: <Widget>[
-              const SizedBox(height: 10),
-              const SizedBox(
-                width: 42,
-                height: 4,
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: _ProfileColors.dragHandle,
-                    borderRadius: BorderRadius.all(Radius.circular(99)),
+          color: Colors.white,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+          clipBehavior: Clip.antiAlias,
+          child: Directionality(
+            textDirection: TextDirection.rtl,
+            child: Column(
+              children: <Widget>[
+                const SizedBox(height: 10),
+                const SizedBox(
+                  width: 42,
+                  height: 4,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: _ProfileColors.dragHandle,
+                      borderRadius: BorderRadius.all(Radius.circular(99)),
+                    ),
                   ),
                 ),
-              ),
-              ConstrainedBox(
-                constraints: const BoxConstraints(minHeight: 56),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: Row(
-                    children: <Widget>[
-                      const SizedBox(width: 44),
-                      const Expanded(
-                        child: ProxoText(
-                          'دەربارەی ئەپڵیکەیشن', translate: true,
-                          textAlign: TextAlign.center,
-                          style: _ProfileText.screenTitle,
+                ConstrainedBox(
+                  constraints: const BoxConstraints(minHeight: 56),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: Row(
+                      children: <Widget>[
+                        const SizedBox(width: 44),
+                        const Expanded(
+                          child: ProxoText(
+                            'دەربارەی ئەپڵیکەیشن',
+                            translate: true,
+                            textAlign: TextAlign.center,
+                            style: _ProfileText.screenTitle,
+                          ),
                         ),
-                      ),
-                      _CircleActionButton(
-                        semanticLabel: 'داخستن',
-                        icon: SolarIconsOutline.closeCircle,
-                        onTap: () => Navigator.of(context).pop(),
-                      ),
-                    ],
+                        _CircleActionButton(
+                          semanticLabel: 'داخستن',
+                          icon: SolarIconsOutline.closeCircle,
+                          onTap: () => _popCurrentRoute(context),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              const Divider(
-                height: 1,
-                thickness: 1,
-                color: _ProfileColors.hairline,
-              ),
-              Expanded(
-                child: SingleChildScrollView(
-                  physics: BouncingScrollPhysics(),
-                  padding: EdgeInsets.fromLTRB(16, 18, 16, 30),
-                  child: Center(
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(maxWidth: 520),
-                      child: Column(
-                        children: <Widget>[
-                          _PolicySection(
-                            icon: SolarIconsOutline.sledgehammer,
-                            title: 'مەرج و ڕێساکان',
-                            body: 'بە بەکارهێنانی پڕۆکسۆ، بەکارهێنەر '
-                                'بەرپرسیارە لە ڕاستی و یاساییبوونی ناوەڕۆکی '
-                                'ڕیکلامەکە و مافی بەکارهێنانی وێنە، دەنگ و '
-                                'براند. ڕیکلامی فێڵ، یاریی قومار، کاڵای '
-                                'قەدەغەکراو یان ناوەڕۆکی دژ بە ڕێنماییەکانی '
-                                'TikTok پەسەند ناکرێت. هەر داواکارییەک '
-                                'پێداچوونەوەی بۆ دەکرێت و TikTok دەتوانێت '
-                                'پەسەندی نەکات یان ڕابگرێت. دوای دەستپێکردنی '
-                                'کەمپەین، تێچووی بەکارهاتوو ناگەڕێندرێتەوە؛ '
-                                'تەنها باڵانسی بەکارنەهاتوو بەپێی دۆخی '
-                                'داواکارییەکە هەژمار دەکرێت.',
-                          ),
-                          SizedBox(height: 12),
-                          _PolicySection(
-                            icon: SolarIconsOutline.shieldCheck,
-                            title: 'سیاسەتی پاراستنی نهێنی',
-                            body: 'تەنها ئەو زانیارییانە کۆدەکرێنەوە کە بۆ '
-                                'بەڕێوەبردنی هەژمار، پارەدان، ڕیکلام و '
-                                'پشتگیری پێویستن. داتای کەسی بە مەبەستی '
-                                'بازرگانی نافرۆشرێت. دەستگەیشتن بە داتا بە '
-                                'چوونەژوورەوە و مۆڵەتی هەژمار سنووردارە و '
-                                'زانیاریی هەستیار بە شێوەی پارێزراو '
-                                'مامەڵەی لەگەڵ دەکرێت. بەکارهێنەر دەتوانێت '
-                                'لە بەشی دەستکاری پڕۆفایل داوای '
-                                'سڕینەوەی هەژمار و داتاکانی بکات.',
-                          ),
-                          SizedBox(height: 12),
-                          _PolicySection(
-                            icon: SolarIconsOutline.usersGroupRounded,
-                            title: 'دەربارەی ئێمە',
-                            body: 'پڕۆکسۆ پلاتفۆرمێکە بۆ ئاسانکردنی '
-                                'دروستکردن و بەڕێوەبردنی ڕیکلامی TikTok بۆ '
-                                'بازرگان و خاوەنکارەکان لە کوردستان و عێراق. '
-                                'ئامانجمان ئەوەیە بە شێوەیەکی ڕوون و سادە '
-                                'باڵانس زیاد بکەیت، کەمپەین بنێریت، ئامارەکان '
-                                'ببینیت و مێژووی مامەڵەکانت بەدواداچوون بکەیت.',
-                          ),
-                          const SizedBox(height: 12),
-                          const _PolicySection(
-                            icon: SolarIconsOutline.infoCircle,
-                            title: 'سەرچاوەی ئایکۆنەکان',
-                            body: 'Solar Icons © 480 Design — CC BY 4.0. '
-                                'Icons are resized and recolored for Proxo.\n'
-                                'https://www.figma.com/community/file/1166831539721848736\n'
-                                'https://creativecommons.org/licenses/by/4.0/\n'
-                                'Flutter package: solar_icons, BSD-3-Clause; '
-                                '© 2023 Sebastine Odeh.',
-                          ),
-                        ],
+                const Divider(
+                  height: 1,
+                  thickness: 1,
+                  color: _ProfileColors.hairline,
+                ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    physics: BouncingScrollPhysics(),
+                    padding: const EdgeInsets.fromLTRB(20, 24, 20, 24),
+                    child: Center(
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(
+                            maxWidth: ProxoSurface.maxWidth),
+                        child: Column(
+                          children: <Widget>[
+                            _PolicySection(
+                              icon: SolarIconsOutline.sledgehammer,
+                              title: 'مەرج و ڕێساکان',
+                              body: 'بە بەکارهێنانی پڕۆکسۆ، بەکارهێنەر '
+                                  'بەرپرسیارە لە ڕاستی و یاساییبوونی ناوەڕۆکی '
+                                  'ڕیکلامەکە و مافی بەکارهێنانی وێنە، دەنگ و '
+                                  'براند. ڕیکلامی فێڵ، یاریی قومار، کاڵای '
+                                  'قەدەغەکراو یان ناوەڕۆکی دژ بە ڕێنماییەکانی '
+                                  'TikTok پەسەند ناکرێت. هەر داواکارییەک '
+                                  'پێداچوونەوەی بۆ دەکرێت و TikTok دەتوانێت '
+                                  'پەسەندی نەکات یان ڕابگرێت. دوای دەستپێکردنی '
+                                  'کەمپەین، تێچووی بەکارهاتوو ناگەڕێندرێتەوە؛ '
+                                  'تەنها باڵانسی بەکارنەهاتوو بەپێی دۆخی '
+                                  'داواکارییەکە هەژمار دەکرێت.',
+                            ),
+                            SizedBox(height: 12),
+                            _PolicySection(
+                              icon: SolarIconsOutline.shieldCheck,
+                              title: 'سیاسەتی پاراستنی نهێنی',
+                              body: 'تەنها ئەو زانیارییانە کۆدەکرێنەوە کە بۆ '
+                                  'بەڕێوەبردنی هەژمار، پارەدان، ڕیکلام و '
+                                  'پشتگیری پێویستن. داتای کەسی بە مەبەستی '
+                                  'بازرگانی نافرۆشرێت. دەستگەیشتن بە داتا بە '
+                                  'چوونەژوورەوە و مۆڵەتی هەژمار سنووردارە و '
+                                  'زانیاریی هەستیار بە شێوەی پارێزراو '
+                                  'مامەڵەی لەگەڵ دەکرێت. بەکارهێنەر دەتوانێت '
+                                  'لە بەشی دەستکاری پڕۆفایل داوای '
+                                  'سڕینەوەی هەژمار و داتاکانی بکات.',
+                            ),
+                            SizedBox(height: 12),
+                            _PolicySection(
+                              icon: SolarIconsOutline.usersGroupRounded,
+                              title: 'دەربارەی ئێمە',
+                              body: 'پڕۆکسۆ پلاتفۆرمێکە بۆ ئاسانکردنی '
+                                  'دروستکردن و بەڕێوەبردنی ڕیکلامی TikTok بۆ '
+                                  'بازرگان و خاوەنکارەکان لە کوردستان و عێراق. '
+                                  'ئامانجمان ئەوەیە بە شێوەیەکی ڕوون و سادە '
+                                  'باڵانس زیاد بکەیت، کەمپەین بنێریت، ئامارەکان '
+                                  'ببینیت و مێژووی مامەڵەکانت بەدواداچوون بکەیت.',
+                            ),
+                            const SizedBox(height: 12),
+                            const _PolicySection(
+                              icon: SolarIconsOutline.infoCircle,
+                              title: 'سەرچاوەی ئایکۆنەکان',
+                              body: 'Solar Icons © 480 Design — CC BY 4.0. '
+                                  'Icons are resized and recolored for Proxo.\n'
+                                  'https://www.figma.com/community/file/1166831539721848736\n'
+                                  'https://creativecommons.org/licenses/by/4.0/\n'
+                                  'Flutter package: solar_icons, BSD-3-Clause; '
+                                  '© 2023 Sebastine Odeh.',
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
         ),
       ),
     );
@@ -2182,7 +2623,7 @@ class _PolicySection extends StatelessWidget {
     ProxoLocale.watch(context);
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(15),
+      padding: const EdgeInsets.all(ProxoSurface.padding),
       decoration: const BoxDecoration(
         color: _ProfileColors.groupSurface,
         borderRadius: BorderRadius.all(Radius.circular(ProxoChrome.radius)),
@@ -2195,9 +2636,11 @@ class _PolicySection extends StatelessWidget {
         children: <Widget>[
           Row(
             children: <Widget>[
-              ProxoSolarIcon(icon, size: 20, color: _ProfileColors.ink),
+              _ProfileSymbol(icon, size: 20, color: _ProfileColors.ink),
               const SizedBox(width: 9),
-              Expanded(child: ProxoText(title, translate: true, style: _ProfileText.policyTitle)),
+              Expanded(
+                  child: ProxoText(title,
+                      translate: true, style: _ProfileText.policyTitle)),
             ],
           ),
           const SizedBox(height: 10),
@@ -2220,33 +2663,36 @@ class _ProfileFaqScreen extends StatelessWidget {
       child: Directionality(
         textDirection: TextDirection.rtl,
         child: Scaffold(
-        backgroundColor: _ProfileColors.page,
-        body: SafeArea(
-          bottom: false,
-          child: Column(
-            children: <Widget>[
-              _SimpleTopBar(
-                title: 'پرسیارە دووبارەکان',
-                onBack: () => Navigator.of(context).maybePop(),
-              ),
-              Expanded(
-                child: ListView.separated(
-                  physics: const BouncingScrollPhysics(),
-                  padding: EdgeInsets.fromLTRB(
-                    16,
-                    18,
-                    16,
-                    MediaQuery.paddingOf(context).bottom + 24,
-                  ),
-                  itemCount: kFaqItems.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 10),
-                  itemBuilder: (_, int index) =>
-                      _FaqExpansionCard(item: kFaqItems[index]),
+          backgroundColor: _ProfileColors.page,
+          body: SafeArea(
+            bottom: false,
+            child: Column(
+              children: <Widget>[
+                _SimpleTopBar(
+                  title: 'پرسیارە دووبارەکان',
+                  onBack: () => Navigator.of(context).maybePop(),
                 ),
-              ),
-            ],
+                Expanded(
+                  child: ListView.separated(
+                    physics: const BouncingScrollPhysics(),
+                    padding: EdgeInsets.fromLTRB(
+                      ProxoSurface.gutter,
+                      ProxoSurface.sectionGap,
+                      ProxoSurface.gutter,
+                      MediaQuery.paddingOf(context).bottom + 24,
+                    ),
+                    itemCount: kFaqItems.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 10),
+                    itemBuilder: (_, int index) => Center(
+                        child: ConstrainedBox(
+                            constraints: const BoxConstraints(
+                                maxWidth: ProxoSurface.maxWidth),
+                            child: _FaqExpansionCard(item: kFaqItems[index]))),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
         ),
       ),
     );
@@ -2272,14 +2718,15 @@ class _FaqExpansionCard extends StatelessWidget {
         data: Theme.of(context).copyWith(
           dividerColor: Colors.transparent,
           splashColor: _ProfileColors.iconSurface,
-          highlightColor: _ProfileColors.iconSurface.withOpacity(.45),
+          highlightColor: _ProfileColors.iconSurface.withValues(alpha: .45),
         ),
         child: ExpansionTile(
           tilePadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 2),
           childrenPadding: const EdgeInsets.fromLTRB(14, 0, 14, 15),
           iconColor: _ProfileColors.muted,
           collapsedIconColor: _ProfileColors.muted,
-          title: ProxoText(item.question, translate: true, style: _ProfileText.faqQuestion),
+          title: ProxoText(item.question,
+              translate: true, style: _ProfileText.faqQuestion),
           children: <Widget>[
             const Divider(
               height: 16,
@@ -2288,7 +2735,8 @@ class _FaqExpansionCard extends StatelessWidget {
             ),
             Align(
               alignment: AlignmentDirectional.centerStart,
-              child: ProxoText(item.answer, translate: true, style: _ProfileText.faqAnswer),
+              child: ProxoText(item.answer,
+                  translate: true, style: _ProfileText.faqAnswer),
             ),
           ],
         ),
@@ -2315,7 +2763,8 @@ InputDecoration _profileInputDecoration({
   bool readOnly = false,
   IconData? suffixIcon,
 }) {
-  const BorderRadius radius = BorderRadius.all(Radius.circular(ProxoChrome.radius));
+  const BorderRadius radius =
+      BorderRadius.all(Radius.circular(ProxoChrome.radius));
   final Color fill =
       readOnly ? _ProfileColors.readOnlySurface : _ProfileColors.groupSurface;
   const OutlineInputBorder normal = OutlineInputBorder(
@@ -2325,10 +2774,10 @@ InputDecoration _profileInputDecoration({
   return InputDecoration(
     hint: proxoFieldText(hint),
     hintStyle: _ProfileText.hint,
-    prefixIcon: ProxoSolarIcon(icon, size: 20, color: _ProfileColors.muted),
+    prefixIcon: _ProfileSymbol(icon, size: 20, color: _ProfileColors.muted),
     suffixIcon: suffixIcon == null
         ? null
-        : ProxoSolarIcon(suffixIcon, size: 17, color: _ProfileColors.quiet),
+        : _ProfileSymbol(suffixIcon, size: 17, color: _ProfileColors.quiet),
     filled: true,
     fillColor: fill,
     isDense: true,
@@ -2352,6 +2801,15 @@ InputDecoration _profileInputDecoration({
   );
 }
 
+// Route transitions keep widgets mounted during their exit animation. A second
+// tap or late completion must not dismiss the screen now underneath them.
+bool _popCurrentRoute<T>(BuildContext context, [T? result]) {
+  if (!context.mounted || ModalRoute.of(context)?.isCurrent != true)
+    return false;
+  Navigator.of(context).pop<T>(result);
+  return true;
+}
+
 Future<bool?> _showConfirmationDialog(
   BuildContext context, {
   required String title,
@@ -2364,59 +2822,35 @@ Future<bool?> _showConfirmationDialog(
     builder: (BuildContext dialogContext) => Directionality(
       textDirection: TextDirection.rtl,
       child: AlertDialog(
+        scrollable: true,
         backgroundColor: Colors.white,
         surfaceTintColor: Colors.transparent,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(ProxoChrome.radius)),
         ),
-        title: ProxoText(title, translate: true, style: _ProfileText.dialogTitle),
-        content: ProxoText(message, translate: true, style: _ProfileText.dialogBody),
+        title:
+            ProxoText(title, translate: true, style: _ProfileText.dialogTitle),
+        content:
+            ProxoText(message, translate: true, style: _ProfileText.dialogBody),
         actions: <Widget>[
           TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(false),
+            key: const ValueKey('profile-dialog-cancel'),
+            style: TextButton.styleFrom(
+                minimumSize: const Size(48, 48),
+                textStyle: _ProfileText.dialogAction),
+            onPressed: () => _popCurrentRoute(dialogContext, false),
             child: const ProxoText('پاشگەزبوونەوە', translate: true),
           ),
           TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(true),
+            key: const ValueKey('profile-dialog-confirm'),
+            onPressed: () => _popCurrentRoute(dialogContext, true),
             style: TextButton.styleFrom(
-              foregroundColor: destructive
-                  ? _ProfileColors.danger
-                  : _ProfileColors.primary,
+              minimumSize: const Size(48, 48),
+              foregroundColor:
+                  destructive ? _ProfileColors.danger : _ProfileColors.primary,
               textStyle: _ProfileText.dialogAction,
             ),
-            child: ProxoText(confirmText),
-          ),
-        ],
-      ),
-    ),
-  );
-}
-
-Future<void> _showInformationDialog(
-  BuildContext context, {
-  required String title,
-  required String message,
-}) {
-  return showDialog<void>(
-    context: context,
-    builder: (BuildContext dialogContext) => Directionality(
-      textDirection: TextDirection.rtl,
-      child: AlertDialog(
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.transparent,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(ProxoChrome.radius)),
-        ),
-        title: ProxoText(title, translate: true, style: _ProfileText.dialogTitle),
-        content: ProxoText(message, translate: true, style: _ProfileText.dialogBody),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(),
-            style: TextButton.styleFrom(
-              foregroundColor: _ProfileColors.primary,
-              textStyle: _ProfileText.dialogAction,
-            ),
-            child: const ProxoText('باشە', translate: true),
+            child: ProxoText(confirmText, translate: true),
           ),
         ],
       ),
@@ -2448,6 +2882,7 @@ class _EmailChangeVerificationDialogState
   final TextEditingController _codeController = TextEditingController();
   final FocusNode _codeFocus = FocusNode();
   bool _verifying = false;
+  bool _verified = false;
   bool _resending = false;
   String? _error;
   String? _notice;
@@ -2463,6 +2898,10 @@ class _EmailChangeVerificationDialogState
 
   Future<void> _verify() async {
     if (_busy) return;
+    if (_verified) {
+      _popCurrentRoute(context, true);
+      return;
+    }
     final String code = _normaliseOtp(_codeController.text);
     if (code.length != 6) {
       setState(() => _error = 'تکایە کۆدی ٦ ژمارەیی بنووسە.');
@@ -2478,7 +2917,13 @@ class _EmailChangeVerificationDialogState
     final String? error = await widget.onVerify(code);
     if (!mounted) return;
     if (error == null) {
-      Navigator.of(context).pop(true);
+      // If another route covers this dialog, keep the completed result so
+      // returning to it never submits the already-used OTP a second time.
+      setState(() {
+        _verifying = false;
+        _verified = true;
+      });
+      _popCurrentRoute(context, true);
       return;
     }
     setState(() {
@@ -2492,7 +2937,7 @@ class _EmailChangeVerificationDialogState
   }
 
   Future<void> _resend() async {
-    if (_busy) return;
+    if (_busy || _verified) return;
     setState(() {
       _resending = true;
       _error = null;
@@ -2503,9 +2948,7 @@ class _EmailChangeVerificationDialogState
     setState(() {
       _resending = false;
       _error = error;
-      _notice = error == null
-          ? 'کۆدێکی نوێ نێردرا؛ ئیمەیڵەکەت بپشکنە.'
-          : null;
+      _notice = error == null ? 'کۆدێکی نوێ نێردرا؛ ئیمەیڵەکەت بپشکنە.' : null;
     });
   }
 
@@ -2517,13 +2960,15 @@ class _EmailChangeVerificationDialogState
       child: PopScope(
         canPop: !_busy,
         child: AlertDialog(
+          scrollable: true,
           backgroundColor: Colors.white,
           surfaceTintColor: Colors.transparent,
           shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(ProxoChrome.radius)),
           ),
           title: const ProxoText(
-            'پشتڕاستکردنەوەی ئیمەیڵ', translate: true,
+            'پشتڕاستکردنەوەی ئیمەیڵ',
+            translate: true,
             style: _ProfileText.dialogTitle,
           ),
           content: ConstrainedBox(
@@ -2533,7 +2978,8 @@ class _EmailChangeVerificationDialogState
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
                 ProxoText(
-                  'کۆدی ٦ ژمارەیی نێردرا بۆ:', translate: true,
+                  'کۆدی ٦ ژمارەیی نێردرا بۆ:',
+                  translate: true,
                   style: _ProfileText.dialogBody,
                 ),
                 const SizedBox(height: 5),
@@ -2555,6 +3001,7 @@ class _EmailChangeVerificationDialogState
                     keyboardType: TextInputType.number,
                     forceLtr: true,
                     builder: (context, inputDirection) => TextField(
+                      key: const ValueKey('profile-otp'),
                       textDirection: inputDirection,
                       controller: _codeController,
                       focusNode: _codeFocus,
@@ -2565,7 +3012,8 @@ class _EmailChangeVerificationDialogState
                       textAlign: TextAlign.center,
                       autofillHints: const <String>[AutofillHints.oneTimeCode],
                       inputFormatters: <TextInputFormatter>[
-                        FilteringTextInputFormatter.allow(RegExp(r'[0-9٠-٩۰-۹]')),
+                        FilteringTextInputFormatter.allow(
+                            RegExp(r'[0-9٠-٩۰-۹]')),
                         LengthLimitingTextInputFormatter(6),
                       ],
                       onChanged: (_) {
@@ -2578,9 +3026,9 @@ class _EmailChangeVerificationDialogState
                       },
                       onSubmitted: (_) => _verify(),
                       style: _ProfileText.field.copyWith(
-                        fontSize: 22,
-                        letterSpacing: 7,
-                        fontWeight: FontWeight.w700,
+                        fontSize: 20,
+                        letterSpacing: 2,
+                        fontWeight: FontWeight.w400,
                       ),
                       decoration: _profileInputDecoration(
                         hint: '000000',
@@ -2603,13 +3051,18 @@ class _EmailChangeVerificationDialogState
                 Align(
                   alignment: AlignmentDirectional.centerStart,
                   child: TextButton(
-                    onPressed: _busy ? null : _resend,
+                    key: const ValueKey('profile-otp-resend'),
+                    style: TextButton.styleFrom(
+                        minimumSize: const Size(48, 48),
+                        textStyle: _ProfileText.dialogAction),
+                    onPressed: _busy || _verified ? null : _resend,
                     child: _resending
                         ? const SizedBox.square(
                             dimension: 16,
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
-                        : const ProxoText('کۆدت پێ نەگەیشت؟ دووبارە بنێرەوە', translate: true),
+                        : const ProxoText('کۆدت پێ نەگەیشت؟ دووبارە بنێرەوە',
+                            translate: true),
                   ),
                 ),
               ],
@@ -2617,12 +3070,19 @@ class _EmailChangeVerificationDialogState
           ),
           actions: <Widget>[
             TextButton(
-              onPressed: _busy ? null : () => Navigator.of(context).pop(false),
+              key: const ValueKey('profile-otp-cancel'),
+              style: TextButton.styleFrom(
+                  minimumSize: const Size(48, 48),
+                  textStyle: _ProfileText.dialogAction),
+              onPressed:
+                  _busy ? null : () => _popCurrentRoute(context, _verified),
               child: const ProxoText('پاشگەزبوونەوە', translate: true),
             ),
             FilledButton(
+              key: const ValueKey('profile-otp-confirm'),
               onPressed: _busy ? null : _verify,
               style: FilledButton.styleFrom(
+                minimumSize: const Size(48, 48),
                 backgroundColor: _ProfileColors.primary,
                 foregroundColor: Colors.white,
                 textStyle: _ProfileText.dialogAction,
@@ -2635,7 +3095,8 @@ class _EmailChangeVerificationDialogState
                         color: Colors.white,
                       ),
                     )
-                  : const ProxoText('پشتڕاستکردنەوە', translate: true),
+                  : ProxoText(_verified ? 'بەردەوامبوون' : 'پشتڕاستکردنەوە',
+                      translate: true),
             ),
           ],
         ),
@@ -2736,14 +3197,6 @@ String _friendlyEmailWebhookError(String rawCode) {
 bool _containsArabic(String value) =>
     RegExp(r'[\u0600-\u06FF]').hasMatch(value);
 
-String _toKurdishDigits(String value) {
-  const List<String> digits = <String>['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
-  return value.replaceAllMapped(
-    RegExp(r'\d'),
-    (Match match) => digits[int.parse(match.group(0)!)],
-  );
-}
-
 class _ProfileScrollBehavior extends ScrollBehavior {
   const _ProfileScrollBehavior();
 
@@ -2752,7 +3205,8 @@ class _ProfileScrollBehavior extends ScrollBehavior {
     BuildContext context,
     Widget child,
     ScrollableDetails details,
-  ) => child;
+  ) =>
+      child;
 }
 
 abstract final class _ProfileColors {
@@ -2760,215 +3214,63 @@ abstract final class _ProfileColors {
   // کارت و گرووپەکان تەنها یەک هەنگاو لێی جیاوازن و ڕەشەکە navy نییە.
   static const Color page = Color(0xFFF8FAFC);
   static const Color groupSurface = Colors.white;
-  static const Color quickSurface = ProxoChrome.surface;
   static const Color readOnlySurface = Color(0xFFF6F7F8);
-  static const Color ink = Color(0xFF222428);
+  static const Color ink = AuthTokens.ink;
   static const Color iconInk = AppColors.ink;
-  static const Color section = Color(0xFF3A3C42);
-  static const Color muted = Color(0xFF636365);
-  static const Color quiet = Color(0xFF8A8D92);
-  static const Color border = Color(0xFFE6EAEC);
+  static const Color muted = AuthTokens.inkMuted;
+  static const Color quiet = AuthTokens.inkMuted;
+  static const Color border = AuthTokens.line;
   static const Color cardBorder = ProxoChrome.border;
-  static const Color hairline = Color(0xFFE4E6E8);
+  static const Color hairline = AuthTokens.lineOff;
   static const Color topBarHairline = Color(0xFFF3F4F5);
   static const Color iconSurface = Color(0xFFF4F8FA);
-  static const Color chevron = Color(0xFF74777B);
+  static const Color chevron = AuthTokens.inkMuted;
   static const Color primary = AppColors.accent;
-  static const Color danger = Color(0xFFB74956);
+  static const Color danger = AuthTokens.danger;
   static const Color dangerSoft = Color(0xFFFFF7F7);
   static const Color dangerBorder = Color(0xFFF2DADD);
   static const Color dragHandle = Color(0xFFBEBEBE);
   static const Color scrim = Color(0x8A000000);
-  static const Color supportDark = Color(0xFF032D4C);
-  static const Color supportIconWell = Color(0xFF1F4A61);
+  static const Color supportDark = AppColors.accent;
+  static const Color supportIconWell = AuthTokens.accentInk;
   static const Color supportIllustrationSurface = Color(0xFFF2F8FA);
 }
 
 abstract final class _ProfileText {
-  static const TextStyle screenTitle = TextStyle(
-    fontFamily: kAppFont,
-    fontSize: 17,
-    fontWeight: FontWeight.w500,
-    color: _ProfileColors.ink,
-    height: 1.5,
-  );
-  static const TextStyle userName = TextStyle(
-    fontFamily: kAppFont,
-    fontSize: 16,
-    fontWeight: FontWeight.w500,
-    color: _ProfileColors.ink,
-    height: 1.5,
-  );
-  static const TextStyle userContact = TextStyle(
-    fontFamily: kAppFont,
-    fontSize: 12,
-    fontWeight: FontWeight.w400,
-    color: _ProfileColors.muted,
-    height: 1.3,
-  );
-  static const TextStyle balanceLabel = TextStyle(
-    fontFamily: kAppFont,
-    fontSize: 13,
-    fontWeight: FontWeight.w400,
-    color: Color(0xE6FFFFFF),
-    height: 1.5,
-  );
-  static const TextStyle balanceAmount = TextStyle(
-    fontFamily: kAppFont,
-    fontSize: 24,
-    fontWeight: FontWeight.w600,
-    color: Colors.white,
-    height: 1.05,
-    letterSpacing: 0.1,
-  );
-  static const TextStyle quickAction = TextStyle(
-    fontFamily: kAppFont,
-    fontSize: 14,
-    fontWeight: FontWeight.w400,
-    color: _ProfileColors.ink,
-    height: 1.5,
-  );
-  static const TextStyle sectionTitle = TextStyle(
-    fontFamily: kAppFont,
-    fontSize: 14,
-    fontWeight: FontWeight.w500,
-    color: _ProfileColors.section,
-    height: 1.5,
-  );
-  static const TextStyle menuTitle = TextStyle(
-    fontFamily: kAppFont,
-    fontSize: 14,
-    fontWeight: FontWeight.w400,
-    color: _ProfileColors.ink,
-    height: 1.5,
-  );
-  static const TextStyle menuSubtitle = TextStyle(
-    fontFamily: kAppFont,
-    fontSize: 11.5,
-    fontWeight: FontWeight.w400,
-    color: _ProfileColors.muted,
-    height: 1.3,
-  );
-  static const TextStyle signOut = TextStyle(
-    fontFamily: kAppFont,
-    fontSize: 14,
-    fontWeight: FontWeight.w400,
-    color: _ProfileColors.ink,
-    height: 1.5,
-  );
-  static const TextStyle version = TextStyle(
-    fontFamily: kAppFont,
-    fontSize: 11,
-    fontWeight: FontWeight.w400,
-    color: _ProfileColors.quiet,
-    height: 1.5,
-  );
-  static const TextStyle fieldLabel = TextStyle(
-    fontFamily: kAppFont,
-    fontSize: 14,
-    fontWeight: FontWeight.w500,
-    color: _ProfileColors.section,
-    height: 1.5,
-  );
-  static const TextStyle field = TextStyle(
-    fontFamily: kAppFont,
-    fontSize: 14,
-    fontWeight: FontWeight.w400,
-    color: _ProfileColors.ink,
-    height: 1.5,
-  );
-  static const TextStyle hint = TextStyle(
-    fontFamily: kAppFont,
-    fontSize: 13,
-    fontWeight: FontWeight.w400,
-    color: _ProfileColors.quiet,
-    height: 1.5,
-  );
+  static const TextStyle screenTitle = ProxoSurface.title;
+  static const TextStyle userName = ProxoSurface.section;
+  static const TextStyle userContact = ProxoSurface.secondary;
+  static const TextStyle balanceLabel = ProxoSurface.secondary;
+  static const TextStyle balanceAmount = ProxoSurface.amount;
+  static const TextStyle sectionTitle = ProxoSurface.section;
+  static const TextStyle menuTitle = ProxoSurface.body;
+  static const TextStyle menuSubtitle = ProxoSurface.secondary;
+  static const TextStyle signOut = ProxoSurface.body;
+  static const TextStyle version = ProxoSurface.secondary;
+  static const TextStyle fieldLabel = ProxoSurface.secondary;
+  static const TextStyle field = ProxoSurface.body;
+  static const TextStyle hint = ProxoSurface.secondary;
   static const TextStyle error = TextStyle(
-    fontFamily: kAppFont,
-    fontSize: 11,
-    fontWeight: FontWeight.w400,
-    color: _ProfileColors.danger,
-    height: 1.5,
-  );
-  static const TextStyle button = TextStyle(
-    fontFamily: kAppFont,
-    fontSize: 14,
-    fontWeight: FontWeight.w500,
-  );
+      fontFamily: ProxoSurface.fontFamily,
+      fontSize: 13,
+      height: 1.5,
+      fontWeight: FontWeight.w400,
+      color: AuthTokens.danger);
+  static const TextStyle button = ProxoSurface.body;
   static const TextStyle dangerTitle = TextStyle(
-    fontFamily: kAppFont,
-    fontSize: 13.5,
-    fontWeight: FontWeight.w500,
-    color: _ProfileColors.danger,
-    height: 1.5,
-  );
-  static const TextStyle dangerSub = TextStyle(
-    fontFamily: kAppFont,
-    fontSize: 11.5,
-    fontWeight: FontWeight.w400,
-    color: _ProfileColors.muted,
-    height: 1.3,
-  );
-  static const TextStyle policyTitle = TextStyle(
-    fontFamily: kAppFont,
-    fontSize: 14,
-    fontWeight: FontWeight.w500,
-    color: _ProfileColors.ink,
-    height: 1.5,
-  );
-  static const TextStyle policyBody = TextStyle(
-    fontFamily: kAppFont,
-    fontSize: 12,
-    fontWeight: FontWeight.w400,
-    color: _ProfileColors.muted,
-    height: 1.6,
-  );
-  static const TextStyle faqQuestion = TextStyle(
-    fontFamily: kAppFont,
-    fontSize: 13.5,
-    fontWeight: FontWeight.w400,
-    color: _ProfileColors.ink,
-    height: 1.35,
-  );
-  static const TextStyle faqAnswer = TextStyle(
-    fontFamily: kAppFont,
-    fontSize: 12,
-    fontWeight: FontWeight.w400,
-    color: _ProfileColors.muted,
-    height: 1.55,
-  );
-  static const TextStyle dialogTitle = TextStyle(
-    fontFamily: kAppFont,
-    fontSize: 16,
-    fontWeight: FontWeight.w500,
-    color: _ProfileColors.ink,
-  );
-  static const TextStyle dialogBody = TextStyle(
-    fontFamily: kAppFont,
-    fontSize: 13,
-    fontWeight: FontWeight.w400,
-    color: _ProfileColors.muted,
-    height: 1.5,
-  );
-  static const TextStyle dialogAction = TextStyle(
-    fontFamily: kAppFont,
-    fontSize: 13,
-    fontWeight: FontWeight.w500,
-  );
-
-  static const TextStyle supportQuestion = TextStyle(
-    fontFamily: kAppFont,
-    fontSize: 16,
-    fontWeight: FontWeight.w500,
-    color: _ProfileColors.ink,
-    height: 1.35,
-  );
-
-  static const TextStyle supportButton = TextStyle(
-    fontFamily: kAppFont,
-    fontSize: 14,
-    fontWeight: FontWeight.w500,
-    height: 1.5,
-  );
+      fontFamily: ProxoSurface.fontFamily,
+      fontSize: 14,
+      height: 1.5,
+      fontWeight: FontWeight.w400,
+      color: AuthTokens.danger);
+  static const TextStyle dangerSub = ProxoSurface.secondary;
+  static const TextStyle policyTitle = ProxoSurface.body;
+  static const TextStyle policyBody = ProxoSurface.secondary;
+  static const TextStyle faqQuestion = ProxoSurface.body;
+  static const TextStyle faqAnswer = ProxoSurface.secondary;
+  static const TextStyle dialogTitle = ProxoSurface.title;
+  static const TextStyle dialogBody = ProxoSurface.body;
+  static const TextStyle dialogAction = ProxoSurface.body;
+  static const TextStyle supportQuestion = ProxoSurface.section;
+  static const TextStyle supportButton = ProxoSurface.body;
 }

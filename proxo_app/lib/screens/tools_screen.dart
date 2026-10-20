@@ -12,6 +12,8 @@ import '../widgets/ad_validation_notifications.dart';
 import '../widgets/proxo_refresh.dart';
 import '../widgets/proxo_text.dart';
 import '../widgets/proxo_symbol.dart';
+import '../widgets/proxo_empty_state.dart';
+import '../theme/proxo_surface.dart';
 import '../widgets/proxolink_page_card.dart';
 import '../widgets/receipt/receipt_kit.dart';
 import 'proxolink_create_page_screen.dart';
@@ -170,7 +172,7 @@ class _ToolsScreenState extends State<ToolsScreen> {
   Widget _createButton() => FilledButton.icon(
       key: const ValueKey('tools-create-page'),
       onPressed: _create,
-      style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(48)),
+      style: ProxoSurface.actionStyle(),
       icon:
           const ProxoSymbol(ProxoSymbolName.add, size: 20, color: Colors.white),
       label: const ProxoText('پەڕە دروستبکە', translate: true));
@@ -263,80 +265,46 @@ class _ToolsScreenState extends State<ToolsScreen> {
 
   Widget _emptyState(BuildContext context) {
     final failed = _pages.error != null;
-    return Container(
+    return ProxoEmptyState(
       key: ValueKey(failed ? 'tools-error-state' : 'tools-empty-state'),
-      padding: const EdgeInsets.fromLTRB(20, 28, 20, 20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: AdUi.controlLine),
-        boxShadow: AdUi.cardShadow,
-      ),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        Center(
-            child: Container(
-          width: 72,
-          height: 72,
-          decoration: BoxDecoration(
-            color: const Color(0xFFEDF4FF),
-            borderRadius: BorderRadius.circular(22),
-            border: Border.all(color: const Color(0xFFDCE9FC)),
-          ),
-          child: ProxoSymbol(
-              failed ? ProxoSymbolName.warning : ProxoSymbolName.tools,
-              size: 32,
-              color: AdUi.blue),
-        )),
-        const SizedBox(height: 24),
-        ProxoText(
-            failed
-                ? 'نەتوانرا پەڕەکان بار بکرێن'
-                : 'هێشتا هیچ پەڕەیەکت دروست نەکردووە',
-            translate: true,
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 18, height: 1.5, color: AdUi.ink)),
-        const SizedBox(height: 12),
-        ProxoText(
-            failed
-                ? _pages.error!.message
-                : 'پەڕەیەک دروستبکە و بەستەرەکەت بەکاربهێنە.',
-            translate: true,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-                fontSize: 14, height: 1.65, color: AdUi.secondary)),
-        if (!failed) ...[
-          const SizedBox(height: 24),
-          Wrap(
-              alignment: WrapAlignment.center,
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                for (final type in ProxoPageType.values)
-                  DecoratedBox(
-                      decoration: BoxDecoration(
-                          color: const Color(0xFFF5F8FC),
-                          borderRadius: BorderRadius.circular(12)),
-                      child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 8),
-                          child: ProxoText(type.label,
-                              translate: true,
-                              style: const TextStyle(
-                                  fontSize: 12,
-                                  height: 1.5,
-                                  color: AdUi.secondary))))
-              ]),
+      symbol: failed ? ProxoSymbolName.warning : ProxoSymbolName.tools,
+      isError: failed,
+      title: failed
+          ? 'نەتوانرا پەڕەکان بار بکرێن'
+          : 'هێشتا هیچ پەڕەیەکت دروست نەکردووە',
+      body: failed
+          ? _pages.error!.message
+          : 'پەڕەیەک دروستبکە و بەستەرەکەت بەکاربهێنە.',
+      details: failed ? null : Wrap(
+        alignment: WrapAlignment.center,
+        spacing: 8,
+        runSpacing: 8,
+        children: [
+          for (final type in ProxoPageType.values)
+            DecoratedBox(
+              decoration: BoxDecoration(
+                color: const Color(0xFFF5F8FC),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                child: ProxoText(type.label, translate: true,
+                    style: ProxoSurface.secondary),
+              ),
+            ),
         ],
-        const SizedBox(height: 28),
-        if (failed)
-          OutlinedButton(
+      ),
+      action: failed
+          ? FilledButton.icon(
               key: const ValueKey('tools-retry-pages'),
               onPressed: () =>
                   (widget.refreshController ?? _localRefresh).refresh(),
-              child: const ProxoText('دووبارە هەوڵ بدەرەوە', translate: true))
-        else
-          _createButton(),
-      ]),
+              style: ProxoSurface.actionStyle(),
+              icon: const ProxoSymbol(ProxoSymbolName.refresh,
+                  size: 20, color: Colors.white),
+              label: const ProxoText('دووبارە هەوڵ بدەرەوە', translate: true),
+            )
+          : _createButton(),
     );
   }
 }

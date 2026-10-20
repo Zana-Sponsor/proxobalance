@@ -19,6 +19,7 @@ import '../../theme/app_theme.dart';
 import '../../theme/app_locale.dart';
 import '../../services/trusted_device_service.dart';
 import '../../services/auth_activity_service.dart';
+import '../../config/backend_config.dart';
 import '../account_setup_screen.dart';
 import '../authenticated_gate.dart';
 import '../../widgets/auth/auth_design.dart';
@@ -1073,6 +1074,7 @@ class _AuthShellState extends State<AuthShell> {
   }
 
   Future<void> _saveDeviceToken(String userId) async {
+    if (!BackendConfig.current.productionTransportsEnabled) return;
     try {
       final token = await FirebaseMessaging.instance.getToken();
       if (token == null) return;

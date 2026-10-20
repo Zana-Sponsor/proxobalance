@@ -14,7 +14,6 @@ import 'package:proxo_app/screens/tools_screen.dart';
 import 'package:proxo_app/screens/proxolink_create_page_screen.dart';
 import 'package:proxo_app/services/proxolink_service.dart';
 import 'package:proxo_app/theme/app_theme.dart';
-import 'package:proxo_app/widgets/ad_form_components.dart';
 import 'package:proxo_app/widgets/ad_validation_notifications.dart';
 import 'package:proxo_app/widgets/proxo_refresh.dart';
 import 'package:proxo_app/widgets/proxolink_preview.dart';
@@ -64,6 +63,7 @@ void main() {
  TestWidgetsFlutterBinding.ensureInitialized();
  setUpAll(()async {
   await (FontLoader(kAppFont)..addFont(rootBundle.load('assets/fonts/Rabar_021.ttf'))).load();
+  await (FontLoader('RabarAuthRegular')..addFont(rootBundle.load('assets/fonts/Rabar_022.ttf'))).load();
   await (FontLoader('MaterialIcons')..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf'))).load();
  });
  setUp(()=>SharedPreferences.setMockInitialValues({}));
@@ -168,8 +168,11 @@ void main() {
   await t.pumpWidget(host(ToolsScreen(repository:repo)));await t.pumpAndSettle();await tap(t,find.text('پەڕە دروستبکە'));
   await t.ensureVisible(field('ناوی پەڕە'));await t.enterText(field('ناوی پەڕە'),'پەڕەی تاقیکردنەوە');
   await t.ensureVisible(field('telegram'));await t.enterText(field('telegram'),'proxo_iq');
-  await t.ensureVisible(find.byKey(const ValueKey('create-page-submit')));await t.tap(find.byKey(const ValueKey('create-page-submit')));await t.pump();
-  await t.tap(find.byKey(const ValueKey('create-page-submit')));await t.pump();expect(repo.saves,1);
+  final submit=find.byKey(const ValueKey('create-page-submit'));
+  await t.ensureVisible(submit);
+  final rapidSubmit=t.widget<FilledButton>(submit).onPressed!;
+  await t.tap(submit);rapidSubmit();await t.pump();
+  expect(t.widget<FilledButton>(submit).onPressed,isNull);expect(repo.saves,1);
   expect(repo.submitted!.containsKey('id'),false);expect(repo.submitted!.containsKey('moderation_status'),false);
   repo.saveGate!.complete(moderated(1,'pending'));await t.pumpAndSettle();expect(find.text('چاوەڕوانی'),findsOneWidget);expect(repo.listReads,1);
  });

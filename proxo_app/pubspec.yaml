@@ -1,7 +1,7 @@
 name: proxo_app
 description: Proxo — TikTok Ad Manager for Kurdistan & Iraq
 publish_to: 'none'
-version: 1.0.10+10
+version: 1.0.11+11
 
 environment:
   # ⚠ بوو '>=3.3.0'. solar_iconkit داوای Dart >= 3.6.0 (Flutter >= 3.27)

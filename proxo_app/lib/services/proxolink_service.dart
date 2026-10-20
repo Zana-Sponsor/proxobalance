@@ -6,6 +6,7 @@ import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../config/backend_config.dart';
 import '../models/proxo_card.dart';
 import '../models/proxolink_page_type.dart';
 
@@ -100,10 +101,7 @@ abstract class ProxoLinkRepository {
 
 class ProxoLinkService
     implements ProxoLinkRepository, ProxoLinkAuthoringAvailability {
-  static const publicBase = String.fromEnvironment(
-    'PROXO_PUBLIC_BASE_URL',
-    defaultValue: 'https://www.proxobalance.app',
-  );
+  static String get publicBase => BackendConfig.current.publicBase;
   final SupabaseClient db;
   final http.Client? httpClient;
   bool? _pageCreationEnabled;

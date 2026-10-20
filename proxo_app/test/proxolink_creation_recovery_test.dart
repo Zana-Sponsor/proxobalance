@@ -72,7 +72,8 @@ void main() {
     await (FontLoader(kAppFont)
           ..addFont(rootBundle.load('assets/fonts/Rabar_021.ttf')))
         .load();
-    await (FontLoader('MaterialIcons')..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf'))).load();
+    await (FontLoader('RabarAuthRegular')..addFont(rootBundle.load('assets/fonts/Rabar_022.ttf'))).load();
+  await (FontLoader('MaterialIcons')..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf'))).load();
   });
   setUp(() => SharedPreferences.setMockInitialValues({}));
 

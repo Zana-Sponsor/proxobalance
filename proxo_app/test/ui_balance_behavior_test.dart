@@ -93,7 +93,7 @@ void main() {
     });
   }
 
-  testWidgets('logout uses the same 24dp paint as profile menu glyphs', (t) async {
+  testWidgets('logout uses balanced 22dp paint inside a 48dp profile action', (t) async {
     phone(t);
     await t.pumpWidget(host(const ProfileScreen()));
     await settle(t);
@@ -101,7 +101,9 @@ void main() {
     scroll.position.jumpTo(scroll.position.maxScrollExtent);
     await t.pump();
     final logout = find.byWidgetPredicate((w) => w is ProxoSymbol && w.symbol == ProxoSymbolName.logout);
-    expect(t.getSize(find.descendant(of: logout, matching: find.byType(SvgPicture))), const Size(24, 24));
+    expect(t.getSize(find.descendant(of: logout, matching: find.byType(SvgPicture))), const Size(22, 22));
+    expect(t.getSize(find.byKey(const ValueKey('profile-sign-out'))).height,
+        greaterThanOrEqualTo(48));
     expect(t.takeException(), isNull);
     await t.pumpWidget(const SizedBox());
   });

@@ -1,6 +1,7 @@
 // Review evidence from production widgets, not synthetic mockups or goldens.
 // All records are fictional. The transport rejects every write; capture never
 // submits a payment, publishes a page or signs out a real account.
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:ui' as ui;
@@ -12,23 +13,33 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:http/http.dart' as http;
+import 'package:http/testing.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:proxo_app/models/proxo_card.dart';
+import 'package:proxo_app/screens/ad_screen.dart';
 import 'package:proxo_app/screens/deposit_screen.dart';
 import 'package:proxo_app/screens/ad_detail_screen.dart';
 import 'package:proxo_app/screens/home_screen.dart';
+import 'package:proxo_app/screens/profile_screen.dart';
 import 'package:proxo_app/screens/proxolink_create_page_screen.dart';
 import 'package:proxo_app/screens/tools_screen.dart';
 import 'package:proxo_app/screens/transaction_detail_screen.dart';
 import 'package:proxo_app/services/best_metrics_service.dart';
+import 'package:proxo_app/services/ad_snapshot_cache.dart';
+import 'package:proxo_app/services/featured_image_cache.dart';
 import 'package:proxo_app/services/proxolink_service.dart';
 import 'package:proxo_app/theme/app_locale.dart';
 import 'package:proxo_app/theme/app_theme.dart';
 import 'package:proxo_app/widgets/bottom_nav.dart';
 import 'package:proxo_app/widgets/proxo_sidebar.dart';
+import 'package:proxo_app/widgets/proxo_thumbnail_fallback.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../integration_test/support/actual_screen_fixtures.dart';
 import 'ad_receipt_data_test.dart' show receiptFixture;
+import 'support/featured_thumbnail_fixture.dart';
+import 'proxolink_tools_create_test.dart' show ToolsRepository, field;
 
 const _output = 'build/app-balance-evidence';
 const _permissions = MethodChannel('flutter.baseflow.com/permissions/methods');
@@ -47,6 +58,11 @@ class _EmptyToolsRepository extends ActualToolsRepository {
 }
 
 Finder _key(String name) => find.byKey(ValueKey(name));
+Finder _verticalScroll() => find
+    .byWidgetPredicate((widget) =>
+        widget is Scrollable &&
+        axisDirectionToAxis(widget.axisDirection) == Axis.vertical)
+    .first;
 Finder _depositScroll() => find
     .descendant(of: _key('deposit-scroll'), matching: find.byType(Scrollable))
     .first;
@@ -67,8 +83,14 @@ Future<void> _bottom(WidgetTester t, Finder finder) async {
 
 Future<void> _capture(WidgetTester t, GlobalKey boundaryKey, String name,
     ({double width, double height, double scale}) config,
-    {bool settle = true}) async {
-  final images = find.byType(Image).evaluate().toList();
+    {bool settle = true, ImageProvider? expectedFailedImage}) async {
+  final mountedImages = find.byType(Image).evaluate().toList();
+  // A deliberate failure is already handled by the real Image.errorBuilder.
+  // Do not resolve its provider again and turn the screenshot into a retry.
+  final images = mountedImages
+      .where(
+          (element) => (element.widget as Image).image != expectedFailedImage)
+      .toList();
   final errors = <Object>[];
   await t.runAsync(() async {
     await Future.wait(images.map((element) => precacheImage(
@@ -137,14 +159,19 @@ Future<void> _capture(WidgetTester t, GlobalKey boundaryKey, String name,
     shot.dispose();
     File('${output.path}/$name.json')
         .writeAsStringSync(const JsonEncoder.withIndent('  ').convert({
-      'fixture': 'Fictional records; actual production widgets; no writes',
+      'fixture':
+          'Fictional records; actual production widgets; no external writes',
       'runtime': 'Flutter widget test on Linux; not a device performance test',
       'viewport_dp': [config.width, config.height],
       'capture_pixel_ratio': 2,
       'device_pixel_ratio': 2,
       'text_scale': config.scale,
       'safe_area_dp': {'top': 24, 'bottom': 16},
+      'keyboard_inset_dp':
+          MediaQuery.of(boundaryKey.currentContext!).viewInsets.bottom,
       'mounted_images_decoded': images.length,
+      'intentional_failed_image_providers':
+          mountedImages.length - images.length,
       'layout_exceptions': 0,
       'nodes': measurements,
     }));
@@ -156,6 +183,16 @@ void main() {
   final backend = ActualScreenBackend();
   setUpAll(() async {
     SharedPreferences.setMockInitialValues({});
+    final version = RegExp(r'^version:\s*(\S+)', multiLine: true)
+        .firstMatch(File('pubspec.yaml').readAsStringSync())!
+        .group(1)!
+        .split('+');
+    PackageInfo.setMockInitialValues(
+        appName: 'Proxo',
+        packageName: 'app.proxo.fixture',
+        version: version.first,
+        buildNumber: version.length > 1 ? version.last : '',
+        buildSignature: 'fixture');
     final fonts =
         jsonDecode(await rootBundle.loadString('FontManifest.json')) as List;
     for (final font in fonts) {
@@ -167,6 +204,7 @@ void main() {
     }
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(_permissions, (_) async => 1);
+    await FeaturedThumbnailFixture.initialize();
     await backend.initialize();
     backend.readResponses['pa_featured_ads_public'] = [
       {
@@ -190,6 +228,7 @@ void main() {
   });
   tearDownAll(() async {
     await backend.dispose();
+    await FeaturedThumbnailFixture.shutdown();
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(_permissions, null);
   });
@@ -202,12 +241,24 @@ void main() {
       'transaction-receipt',
       'ad-receipt',
       'home',
+      'home-thumbnail-image',
+      'home-thumbnail-failed',
+      'home-long-label',
       'deposit',
       'deposit-fib',
       'deposit-fastpay',
       'deposit-kcard',
       'tools',
+      'tools-create-flow',
       'menu',
+      'profile',
+      'profile-long',
+      'profile-missing',
+      'profile-email-otp',
+      'ads-empty',
+      'ads-filter-empty',
+      'ads-error',
+      'ads-loading',
     ]) {
       testWidgets('actual balanced $screen ${config.width} ${config.scale}',
           (t) async {
@@ -217,6 +268,68 @@ void main() {
         addTearDown(t.view.resetDevicePixelRatio);
         ProxoLocale.current.value = const Locale('ckb');
         BestMetricsService.invalidateCache();
+        final thumbnailUrl = screen.startsWith('home-thumbnail-')
+            ? 'https://fixtures.invalid/$screen-${config.width}.jpg'
+            : null;
+        final thumbnailFixture = thumbnailUrl == null
+            ? null
+            : await FeaturedThumbnailFixture.pending(thumbnailUrl);
+        if (thumbnailFixture != null) addTearDown(thumbnailFixture.dispose);
+        final expectedFailedImage = screen == 'home-thumbnail-failed'
+            ? FeaturedImageCache.provider(thumbnailUrl!)
+            : null;
+        final featured = Map<String, dynamic>.from(
+            (backend.readResponses['pa_featured_ads_public'] as List).single
+                as Map);
+        featured['thumbnail_url'] = thumbnailUrl;
+        featured['category'] = screen == 'home-long-label'
+            ? 'health_wellness'
+            : 'cosmetics_beauty';
+        backend.readResponses['pa_featured_ads_public'] = [featured];
+        backend.emptyAds = screen.startsWith('ads-');
+        backend.adsUnavailable = screen == 'ads-error';
+        await AdSnapshotCache.clearStoredFor(screenFixtureOwner);
+        backend.readResponses.remove('profiles');
+        if (screen.startsWith('profile')) {
+          backend.readResponses['profiles'] = screen == 'profile-missing'
+              ? {'full_name': '', 'email': '', 'phone': '', 'avatar_url': null}
+              : {
+                  'full_name': screen == 'profile-long'
+                      ? 'بەکارهێنەری تاقیکردنەوە بۆ ناوی درێژ و ڕێکخستنی پڕۆفایل Proxo'
+                      : 'بەکارهێنەری تاقیکردنەوە',
+                  'email': screen == 'profile-long'
+                      ? 'fictional.long.profile.name@example.invalid'
+                      : 'fixture@example.invalid',
+                  'phone': '+9647500000000',
+                  'avatar_url': null,
+                };
+        }
+        final loadingGate = screen == 'ads-loading' ? Completer<void>() : null;
+        if (loadingGate != null) backend.readGates['pa_ads'] = loadingGate;
+        addTearDown(() {
+          if (loadingGate != null && !loadingGate.isCompleted) {
+            loadingGate.complete();
+          }
+          backend.readGates.clear();
+          backend.emptyAds = false;
+          backend.adsUnavailable = false;
+          backend.readResponses.remove('profiles');
+        });
+        final pageRepository = ToolsRepository([]);
+        var emailFixtureRequests = 0;
+        final emailClient = MockClient((request) async {
+          expect(request.method, 'POST');
+          expect(request.url.toString(),
+              'https://email.proxopages.com/webhook/send_otp');
+          final payload = jsonDecode(request.body) as Map;
+          expect(payload['action'], 'request_email_change');
+          expect(payload['new_email'], 'fixture@gmail.com');
+          emailFixtureRequests++;
+          return http.Response(
+              '{"success":true,"request_id":"fixture-email-change"}', 200,
+              headers: {'content-type': 'application/json'});
+        });
+        addTearDown(emailClient.close);
         final boundaryKey = GlobalKey();
         final name = '$screen-${config.width.toInt()}-s${config.scale.toInt()}';
         var logoutAttempts = 0;
@@ -225,17 +338,35 @@ void main() {
           ..['thumbnail_url'] = null;
         final Widget surface = switch (screen) {
           'ad-receipt' => AdDetailScreen(
-              adId: adReceipt['id'] as String, initialAd: adReceipt,
+              adId: adReceipt['id'] as String,
+              initialAd: adReceipt,
               loadAd: (_) async => adReceipt),
-          'home' => Scaffold(
-              body: HomeScreen(
-                  onMenuTap: () {},
-                  onCreateTap: () {},
-                  onAddBalanceTap: () {},
-                  onCreatePageTap: () {}),
-              bottomNavigationBar:
-                  ProxoBottomNav(currentIndex: 0, onTap: (_) {})),
+          'home' ||
+          'home-thumbnail-image' ||
+          'home-thumbnail-failed' ||
+          'home-long-label' =>
+            Scaffold(
+                body: HomeScreen(
+                    onMenuTap: () {},
+                    onCreateTap: () {},
+                    onAddBalanceTap: () {},
+                    onCreatePageTap: () {}),
+                bottomNavigationBar:
+                    ProxoBottomNav(currentIndex: 0, onTap: (_) {})),
           'tools' => ToolsScreen(repository: _EmptyToolsRepository()),
+          'tools-create-flow' => ToolsScreen(repository: pageRepository),
+          'profile-email-otp' => EditProfileScreen(
+              initialFullName: 'بەکارهێنەری تاقیکردنەوە',
+              initialEmail: 'before.fixture@gmail.com',
+              initialPhone: '+9647500000000',
+              initialAvatarUrl: null,
+              emailClient: emailClient),
+          'profile' ||
+          'profile-long' ||
+          'profile-missing' =>
+            const ProfileScreen(),
+          'ads-empty' || 'ads-error' || 'ads-loading' => const AdScreen(),
+          'ads-filter-empty' => const AdScreen(initialFilter: AdFilter.pending),
           'menu' => Scaffold(
               body: Align(
                   alignment: Alignment.centerRight,
@@ -285,9 +416,31 @@ void main() {
                   child: RepaintBoundary(key: boundaryKey, child: child!))),
           home: surface,
         ));
+        if (screen == 'ads-loading') {
+          await t.pump(const Duration(milliseconds: 400));
+          expect(_key('sk'), findsOneWidget);
+          expect(_key('ads-empty-state'), findsNothing);
+          expect(_key('ads-error-state'), findsNothing);
+          await _capture(t, boundaryKey, name, config, settle: false);
+          loadingGate!.complete();
+          backend.readGates.clear();
+          await t.pumpAndSettle();
+          await t.pumpWidget(const SizedBox());
+          await t.pumpAndSettle();
+          return;
+        }
         await t.pumpAndSettle();
         await t.pump(const Duration(milliseconds: 600));
         await t.pumpAndSettle();
+        if (screen == 'home-thumbnail-image') {
+          await t.runAsync(thumbnailFixture!.succeed);
+          await t.pumpAndSettle();
+          expect(find.byType(ProxoThumbnailFallback), findsNothing);
+        } else if (screen == 'home-thumbnail-failed') {
+          thumbnailFixture!.fail();
+          await t.pumpAndSettle();
+          expect(find.byType(ProxoThumbnailFallback), findsOneWidget);
+        }
         expect(t.takeException(), isNull);
         if (screen.startsWith('deposit-')) {
           final method = screen.substring('deposit-'.length);
@@ -349,16 +502,55 @@ void main() {
             await _capture(t, boundaryKey, '$name-checkout-entry', config);
           }
         } else {
-          await _capture(t, boundaryKey, name, config);
-          if (screen == 'home') {
+          await _capture(t, boundaryKey, name, config,
+              expectedFailedImage: expectedFailedImage);
+          if (screen.startsWith('home')) {
             final scroll = find.byType(Scrollable).first;
             await _reveal(t, _key('result-details-fixture-beauty'), scroll);
+            await _capture(t, boundaryKey, '$name-collapsed-card', config,
+                expectedFailedImage: expectedFailedImage);
             await t.tap(_key('result-details-fixture-beauty'));
             await t.pumpAndSettle();
             expect(_key('result-expanded-fixture-beauty'), findsWidgets);
-            await _capture(t, boundaryKey, '$name-expanded', config);
+            await _capture(t, boundaryKey, '$name-expanded', config,
+                expectedFailedImage: expectedFailedImage);
             await _bottom(t, scroll);
-            await _capture(t, boundaryKey, '$name-expanded-bottom', config);
+            await _capture(t, boundaryKey, '$name-expanded-bottom', config,
+                expectedFailedImage: expectedFailedImage);
+          } else if (screen == 'tools-create-flow') {
+            expect(find.byType(ProxoLinkCreatePageScreen), findsNothing);
+            await _reveal(t, _key('tools-create-page'), _verticalScroll());
+            await t.tap(_key('tools-create-page'));
+            await t.pumpAndSettle();
+            expect(find.byType(ProxoLinkCreatePageScreen), findsOneWidget);
+            for (final type in ['contact', 'order', 'download']) {
+              await _reveal(t, _key('create-type-$type'), _verticalScroll());
+              await t.tap(_key('create-type-$type'));
+              await t.pumpAndSettle();
+              t.state<ScrollableState>(_verticalScroll()).position.jumpTo(0);
+              await t.pumpAndSettle();
+              await _capture(t, boundaryKey, '$name-$type-form', config);
+            }
+            await _reveal(t, _key('create-type-contact'), _verticalScroll());
+            await t.tap(_key('create-type-contact'));
+            await t.pumpAndSettle();
+            await _reveal(t, field('ناوی پەڕە'), _verticalScroll());
+            await t.enterText(field('ناوی پەڕە'), 'پەڕەی تاقیکردنەوە Proxo');
+            await _reveal(t, field('telegram'), _verticalScroll());
+            await t.enterText(field('telegram'), 'proxo_iq');
+            FocusManager.instance.primaryFocus?.unfocus();
+            await t.pumpAndSettle();
+            await _capture(t, boundaryKey, '$name-contact-filled', config);
+            await _bottom(t, _verticalScroll());
+            await _capture(t, boundaryKey, '$name-designs-submit', config);
+            // Only this in-memory repository receives a save. No API dispatch.
+            await _reveal(t, _key('create-page-submit'), _verticalScroll());
+            await t.tap(_key('create-page-submit'));
+            await t.pumpAndSettle();
+            expect(pageRepository.saves, 1);
+            expect(pageRepository.rows, hasLength(1));
+            expect(find.byType(ProxoLinkCreatePageScreen), findsNothing);
+            await _capture(t, boundaryKey, '$name-created-in-memory', config);
           } else if (screen == 'tools') {
             expect(find.byType(ProxoLinkCreatePageScreen), findsNothing,
                 reason: 'Empty tools must not open the creation route');
@@ -397,13 +589,124 @@ void main() {
             }
             await _capture(
                 t, boundaryKey, '$name-unconfigured-methods', config);
-          } else if (screen == 'transaction-receipt' || screen == 'ad-receipt') {
+          } else if (screen.startsWith('ads-')) {
+            final state = switch (screen) {
+              'ads-empty' => 'ads-empty-state',
+              'ads-filter-empty' => 'ads-filter-empty-state',
+              _ => 'ads-error-state',
+            };
+            expect(_key(state), findsOneWidget);
+            final scroll = _verticalScroll();
+            await _bottom(t, scroll);
+            await _capture(t, boundaryKey, '$name-action', config);
+            final action = switch (screen) {
+              'ads-empty' => 'ads-create-empty',
+              'ads-filter-empty' => 'ads-clear-filter',
+              _ => 'ads-retry',
+            };
+            expect(t.getSize(_key(action)).height, greaterThanOrEqualTo(48));
+          } else if (screen == 'profile-email-otp') {
+            await _reveal(t, _key('profile-email'), _verticalScroll());
+            await t.enterText(_key('profile-email'), 'fixture@gmail.com');
+            FocusManager.instance.primaryFocus?.unfocus();
+            await _reveal(t, _key('profile-save'), _verticalScroll());
+            await t.tap(_key('profile-save'));
+            await t.pumpAndSettle();
+            expect(emailFixtureRequests, 1);
+            expect(_key('profile-otp'), findsOneWidget);
+            await _capture(t, boundaryKey, '$name-dialog', config);
+            await t.enterText(_key('profile-otp'), '123456');
+            FocusManager.instance.primaryFocus?.unfocus();
+            await t.pumpAndSettle();
+            await _capture(t, boundaryKey, '$name-filled', config);
+            // Widget tests do not paint a platform keyboard. This checks the
+            // real dialog's response to a 300dp keyboard occlusion instead.
+            await t.tap(_key('profile-otp'));
+            t.view.viewInsets = const FakeViewPadding(bottom: 600);
+            addTearDown(t.view.resetViewInsets);
+            await t.pumpAndSettle();
+            await t.ensureVisible(_key('profile-otp'));
+            await t.pumpAndSettle();
+            final otpBounds = t.getRect(_key('profile-otp'));
+            expect(otpBounds.bottom, lessThanOrEqualTo(config.height - 300));
+            expect(otpBounds.top, greaterThanOrEqualTo(24));
+            await _capture(t, boundaryKey, '$name-keyboard-inset', config);
+            t.view.resetViewInsets();
+            await t.pumpAndSettle();
+            await t.tap(_key('profile-otp-cancel'));
+            await t.pumpAndSettle();
+            expect(emailFixtureRequests, 1);
+          } else if (screen.startsWith('profile')) {
+            final scroll = _verticalScroll();
+            await _reveal(t, _key('profile-balance-toggle'), scroll);
+            await t.tap(_key('profile-balance-toggle'));
+            await t.pumpAndSettle();
+            await _capture(t, boundaryKey, '$name-balance-hidden', config);
+            await t.tap(_key('profile-balance-toggle'));
+            await t.pumpAndSettle();
+            await _bottom(t, scroll);
+            await _capture(t, boundaryKey, '$name-bottom', config);
+            if (screen == 'profile') {
+              for (final action in ['support', 'about', 'faq']) {
+                await _reveal(t, _key('profile-$action'), scroll);
+                await t.tap(_key('profile-$action'));
+                await t.pumpAndSettle();
+                await _capture(t, boundaryKey, '$name-$action', config);
+                await _bottom(
+                    t,
+                    find
+                        .byWidgetPredicate((widget) =>
+                            widget is Scrollable &&
+                            axisDirectionToAxis(widget.axisDirection) ==
+                                Axis.vertical)
+                        .last);
+                await _capture(t, boundaryKey, '$name-$action-bottom', config);
+                await t.binding.handlePopRoute();
+                await t.pumpAndSettle();
+              }
+              await _reveal(t, _key('profile-sign-out'), scroll);
+              await t.tap(_key('profile-sign-out'));
+              await t.pumpAndSettle();
+              await _capture(t, boundaryKey, '$name-sign-out-confirm', config);
+              await t.tap(_key('profile-dialog-cancel'));
+              await t.pumpAndSettle();
+              await _reveal(t, _key('profile-edit'), scroll);
+              await t.tap(_key('profile-edit'));
+              await t.pumpAndSettle();
+              expect(find.byType(EditProfileScreen), findsOneWidget);
+              await _capture(t, boundaryKey, '$name-edit', config);
+              await _bottom(t, _verticalScroll());
+              await _capture(t, boundaryKey, '$name-edit-bottom', config);
+              await _reveal(t, _key('profile-delete'), _verticalScroll());
+              await t.tap(_key('profile-delete'));
+              await t.pumpAndSettle();
+              await _capture(t, boundaryKey, '$name-delete-confirm', config);
+              await t.tap(_key('profile-dialog-cancel'));
+              await t.pumpAndSettle();
+            }
+          } else if (screen == 'transaction-receipt' ||
+              screen == 'ad-receipt') {
             final scroll = find.byType(Scrollable).first;
             final position = t.state<ScrollableState>(scroll).position;
-            if (position.maxScrollExtent > config.height) {
-              position.jumpTo(position.maxScrollExtent / 2);
+            // ListView's initial extent estimates unbuilt children using the
+            // first (large) receipt item. Materialize the bottom before using
+            // its actual extent, then capture overlapping viewport segments.
+            await _bottom(t, scroll);
+            final extent = position.maxScrollExtent;
+            final stride = config.height * .6;
+            var part = 0;
+            for (var offset = stride; offset < extent - 1; offset += stride) {
+              position.jumpTo(offset);
               await t.pumpAndSettle();
-              await _capture(t, boundaryKey, '$name-middle', config);
+              expect(position.pixels, closeTo(offset, .01));
+              part++;
+              await _capture(t, boundaryKey,
+                  part == 1 ? '$name-middle' : '$name-middle-$part', config);
+              if (screen == 'ad-receipt' && config.scale == 2 && part == 1) {
+                final budget = t.getRect(find.text('نرخی سەرەتایی'));
+                expect(budget.top, greaterThanOrEqualTo(80));
+                expect(budget.bottom, lessThan(config.height - 16));
+              }
             }
             await _bottom(t, scroll);
             await _capture(t, boundaryKey, '$name-bottom', config);

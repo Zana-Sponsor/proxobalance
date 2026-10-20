@@ -47,7 +47,11 @@ enum ProxoSymbolName {
   play('play_circle'),
   chevronDown('alt_arrow_down'),
   camera('camera'),
-  download('download');
+  download('download'),
+  edit('pen_new_square'),
+  chat('chat_round'),
+  document('document_text'),
+  trash('trash_bin_trash');
 
   const ProxoSymbolName(this.file);
   final String file;

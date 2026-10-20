@@ -10,6 +10,7 @@ import 'package:proxo_app/screens/ad_create_screen.dart';
 import 'package:proxo_app/screens/best_metrics_screen.dart';
 import 'package:proxo_app/services/best_metrics_service.dart';
 import 'package:proxo_app/theme/app_theme.dart';
+import 'package:proxo_app/theme/proxo_surface.dart';
 import 'package:proxo_app/widgets/ad_form_components.dart';
 import 'package:proxo_app/widgets/best_metrics_home_section.dart';
 import 'package:proxo_app/widgets/home_best_result_card.dart';
@@ -196,7 +197,8 @@ void main() {
         addTearDown(tester.view.resetDevicePixelRatio);
         await tester.pumpWidget(host(sections(), scale: scale));
         await tester.pumpAndSettle();
-        auditText(tester, find.byType(HomeQuickActions), font: 'Rabar');
+        auditText(tester, find.byType(HomeQuickActions),
+            font: ProxoSurface.fontFamily);
         auditText(tester, find.byType(BestMetricsHomeSection));
         final carousel = find.byKey(const ValueKey('home-results-carousel'));
         final card = find.byKey(const ValueKey('weekly-beauty'));

@@ -1,4 +1,5 @@
 import 'widgets/ad_activation_notice.dart';
+import 'config/backend_config.dart';
 // main.dart — Proxo App entry point
 
 import 'dart:async';
@@ -41,10 +42,8 @@ import 'theme/app_locale.dart';
 
 const double kIqdRate = 1800.0;
 
-const String kSupabaseUrl     = 'https://cojchkwssmasiejcgvbk.supabase.co';
-const String kSupabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9'
-    '.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNvamNoa3dzc21hc2llamNndmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTE1MTIsImV4cCI6MjA5Mjg4NzUxMn0'
-    '.RCALy3wpKHGAkmXWcBqEb_QFEUmh6ErdRbfrBmagvtw';
+const String kSupabaseUrl = BackendConfig.productionSupabaseUrl;
+const String kSupabaseAnonKey = BackendConfig.productionAnonKey;
 bool firebaseAvailable = false;
 
 /// URL ی n8n کراوەکەت بنووسەرەوە — بۆ ناردنی OTP ئیمێڵ
@@ -97,26 +96,29 @@ late final SupabaseClient supabase;
 // ─────────────────────────────────────────────────────────────────────────────
 
 void main() async {
+  final backend = BackendConfig.current;
   WidgetsFlutterBinding.ensureInitialized();
   // PERF: gesture resampling بۆ scroll ی جوانتر
 
   await ProxoLocale.load();
 
   await Supabase.initialize(
-    url: kSupabaseUrl,
-    anonKey: kSupabaseAnonKey,
+    url: backend.supabaseUrl,
+    anonKey: backend.supabaseAnonKey,
     httpClient: ObservedHttpClient(http.Client()),
   );
   supabase = Supabase.instance.client;
   AuthActivityService.forClient(supabase).start();
 
-  try {
-    await Firebase.initializeApp();
-    firebaseAvailable = true;
-    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
-  } catch (e, st) {
-    debugPrint('[Firebase] init failed: $e\n$st');
-    firebaseAvailable = false;
+  if (backend.productionTransportsEnabled) {
+    try {
+      await Firebase.initializeApp();
+      firebaseAvailable = true;
+      FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+    } catch (e, st) {
+      debugPrint('[Firebase] init failed: $e\n$st');
+      firebaseAvailable = false;
+    }
   }
 
   if (firebaseAvailable) {

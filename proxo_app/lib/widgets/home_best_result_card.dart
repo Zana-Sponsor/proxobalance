@@ -90,10 +90,9 @@ class _HomeBestResultCardState extends State<HomeBestResultCard> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         SizedBox(
-                            width: 56,
-                            height: 64,
-                            child: ResultThumbnail(
-                                url: ad.thumbnailUrl, radius: 12)),
+                            width: ResultsUi.thumbnailWidth,
+                            height: ResultsUi.thumbnailHeight,
+                            child: ResultThumbnail(url: ad.thumbnailUrl)),
                         const SizedBox(width: 12),
                         Expanded(
                             child: Column(

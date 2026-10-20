@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../l10n/proxo_strings.dart';
 import '../theme/app_locale.dart';
 import '../theme/app_theme.dart';
+import '../theme/proxo_surface.dart';
 import 'ad_form_components.dart';
 import 'proxo_symbol.dart';
 import 'proxo_text.dart';
@@ -34,7 +35,7 @@ class HomeQuickActions extends StatelessWidget {
     const keys = ['home-create-ad', 'home-add-balance', 'home-create-page'];
     final callbacks = [onCreateTap, onAddBalanceTap, onCreatePageTap];
     const style = TextStyle(
-        fontFamily: kAppFont,
+        fontFamily: ProxoSurface.fontFamily,
         fontSize: 13,
         fontWeight: FontWeight.w400,
         height: 1.5,

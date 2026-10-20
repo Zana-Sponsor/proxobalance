@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:solar_icons/solar_icons.dart';
 import '../theme/proxo_chrome.dart';
+import '../theme/proxo_surface.dart';
 import '../screens/faq_screen.dart' show FaqScreen;
 import '../theme/app_theme.dart';
 import '../main.dart' show supabase;
@@ -262,6 +263,7 @@ class _ProxoSidebarState extends State<ProxoSidebar> {
                           child: ProxoText('مێنیو',
                               translate: true,
                               style: TextStyle(
+                                  fontFamily: ProxoSurface.fontFamily,
                                   fontSize: 16,
                                   height: 1.4,
                                   fontWeight: FontWeight.w700,
@@ -328,6 +330,7 @@ class _ProxoSidebarState extends State<ProxoSidebar> {
                               translate: true,
                               key: const ValueKey('sidebar-logout-error'),
                               style: const TextStyle(
+                                  fontFamily: ProxoSurface.fontFamily,
                                   fontSize: 13,
                                   height: 1.5,
                                   color: Color(0xFFB42318)))),
@@ -349,6 +352,7 @@ class _ProxoSidebarState extends State<ProxoSidebar> {
         child: ProxoText(text,
             translate: true,
             style: const TextStyle(
+                fontFamily: ProxoSurface.fontFamily,
                 fontSize: 12,
                 height: 1.5,
                 fontWeight: FontWeight.w600,
@@ -385,6 +389,7 @@ class _ProxoSidebarState extends State<ProxoSidebar> {
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
+                        fontFamily: ProxoSurface.fontFamily,
                         fontSize: 14,
                         height: 1.45,
                         fontWeight: FontWeight.w600,
@@ -395,6 +400,7 @@ class _ProxoSidebarState extends State<ProxoSidebar> {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
+                          fontFamily: ProxoSurface.fontFamily,
                           fontSize: 12,
                           height: 1.5,
                           color: AppColors.inkMuted)),
@@ -453,6 +459,7 @@ class _ProxoSidebarState extends State<ProxoSidebar> {
                       child: ProxoText(label,
                           translate: true,
                           style: TextStyle(
+                              fontFamily: ProxoSurface.fontFamily,
                               fontSize: 14,
                               height: 1.5,
                               fontWeight: selected || danger
@@ -475,7 +482,7 @@ class _ProxoSidebarState extends State<ProxoSidebar> {
                                 child: Text(badge > 99 ? '99+' : '$badge',
                                     textDirection: TextDirection.ltr,
                                     style: const TextStyle(
-                                        fontFamily: kAppFont,
+                                        fontFamily: ProxoSurface.fontFamily,
                                         fontSize: 11,
                                         height: 1.2,
                                         fontWeight: FontWeight.w600,

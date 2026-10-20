@@ -263,6 +263,30 @@
       "path": "SVG/Outline/Arrows Action/Download.svg",
       "sha": "b29637a551a22ed4177215a103e40c29cc52ec62",
       "url": "https://raw.githubusercontent.com/480-Design/Solar-Icon-Set/44017167688b49109d88ae6a98979b23d8950db0/icons/SVG/Outline/Arrows%20Action/Download.svg"
+    },
+    {
+      "filename": "trash_bin_trash.svg",
+      "path": "SVG/Outline/Essentional, UI/Trash Bin Trash.svg",
+      "sha": "2ca54786278aa54a68212d0443880e3835f5c02b",
+      "url": "https://raw.githubusercontent.com/480-Design/Solar-Icon-Set/44017167688b49109d88ae6a98979b23d8950db0/icons/SVG/Outline/Essentional%2C%20UI/Trash%20Bin%20Trash.svg"
+    },
+    {
+      "filename": "chat_round.svg",
+      "path": "SVG/Outline/Messages, Conversation/Chat Round.svg",
+      "sha": "505f7953d3b4ca0362cd042bc62c968860edf2b8",
+      "url": "https://raw.githubusercontent.com/480-Design/Solar-Icon-Set/44017167688b49109d88ae6a98979b23d8950db0/icons/SVG/Outline/Messages%2C%20Conversation/Chat%20Round.svg"
+    },
+    {
+      "filename": "pen_new_square.svg",
+      "path": "SVG/Outline/Messages, Conversation/Pen New Square.svg",
+      "sha": "9d294575ffd15153c07644a4ef1db9bfab37e716",
+      "url": "https://raw.githubusercontent.com/480-Design/Solar-Icon-Set/44017167688b49109d88ae6a98979b23d8950db0/icons/SVG/Outline/Messages%2C%20Conversation/Pen%20New%20Square.svg"
+    },
+    {
+      "filename": "document_text.svg",
+      "path": "SVG/Outline/Notes/Document Text.svg",
+      "sha": "03bb2ebd9b8853327d00860c4ff4a6c6cdeb761d",
+      "url": "https://raw.githubusercontent.com/480-Design/Solar-Icon-Set/44017167688b49109d88ae6a98979b23d8950db0/icons/SVG/Outline/Notes/Document%20Text.svg"
     }
   ]
 }

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../config/backend_config.dart';
 import 'auth_models.dart';
 
 typedef PhoneLoginExchange = ({String? refreshToken, String? error});
@@ -18,15 +19,18 @@ final class AuthService {
     required String emailOtpUrl,
     required String whatsappOtpUrl,
     http.Client? httpClient,
+    BackendConfig? backendConfig,
   })  : _supabase = supabase,
         _emailOtpUrl = emailOtpUrl,
         _whatsappOtpUrl = whatsappOtpUrl,
-        _http = httpClient ?? http.Client();
+        _http = httpClient ?? http.Client(),
+        _backend = backendConfig ?? BackendConfig.current;
 
   final SupabaseClient _supabase;
   final String _emailOtpUrl;
   final String _whatsappOtpUrl;
   final http.Client _http;
+  final BackendConfig _backend;
 
   String? lastOtpError;
   int? lastOtpStatus;
@@ -47,6 +51,8 @@ final class AuthService {
     required String password,
     required String name,
   }) async {
+    // Block before signup can create an identity or trigger Auth email.
+    _backend.requireProductionTransport();
     final normalizedEmail = email.trim().toLowerCase();
     var pending = _createdEmailSignup;
     if (pending == null ||
@@ -166,6 +172,7 @@ final class AuthService {
   }) async {
     _resetLastRequest();
     try {
+      _backend.requireProductionTransport();
       final http.Response response = await _http
           .post(
             Uri.parse(_emailOtpUrl),
@@ -199,6 +206,7 @@ final class AuthService {
   Future<bool> sendLoginEmailOtp(String email) async {
     _resetLastRequest();
     try {
+      _backend.requireProductionTransport();
       final http.Response response = await _http
           .post(
             Uri.parse(_emailOtpUrl),
@@ -250,6 +258,7 @@ final class AuthService {
     required String locale,
   }) async {
     try {
+      _backend.requireProductionTransport();
       final http.Response response = await _http
           .post(
             Uri.parse(_whatsappOtpUrl),

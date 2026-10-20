@@ -28,15 +28,16 @@ import 'package:image_picker/image_picker.dart';
 
 import '../main.dart' show supabase;
 import '../theme/app_theme.dart';
+import '../theme/proxo_surface.dart';
 import '../widgets/fastpay_checkout_sheet.dart';
 import '../widgets/proxo_toast.dart';
 import 'package:proxo_app/widgets/proxo_text.dart';
 
 // ── Palette ────────────────────────────────────────────────────────────
-const Color _cInk = Color(0xFF0F172A);
-const Color _cSlate = Color(0xFF64748B);
+const Color _cInk = ProxoSurface.ink;
+const Color _cSlate = ProxoSurface.muted;
 const Color _cMuted = Color(0xFF94A3B8);
-const Color _cLine = Color(0xFFE2E8F0);
+const Color _cLine = ProxoSurface.line;
 const Color _cSoft = Color(0xFFF8FAFC);
 
 const double _kPageMargin = 20;
@@ -463,7 +464,10 @@ class _DepositScreenState extends State<DepositScreen> {
   }
 
   static const _bodyStyle = TextStyle(
-      fontFamily: kAppFont, fontSize: 13, height: 1.5, color: _cSlate);
+      fontFamily: ProxoSurface.fontFamily,
+      fontSize: 13,
+      height: 1.5,
+      color: _cSlate);
 
   Widget _card({required List<Widget> children, Key? key}) => Container(
         key: key,
@@ -524,7 +528,7 @@ class _DepositScreenState extends State<DepositScreen> {
           ],
           onChanged: (_) => setState(() => _quickSelected = null),
           style: const TextStyle(
-              fontFamily: kAppFont,
+              fontFamily: ProxoSurface.fontFamily,
               fontSize: 20,
               height: 1.3,
               fontWeight: FontWeight.w700,
@@ -538,7 +542,7 @@ class _DepositScreenState extends State<DepositScreen> {
                 padding: EdgeInsetsDirectional.only(start: 10),
                 child: ProxoText('IQD',
                     style: TextStyle(
-                        fontFamily: kAppFont,
+                        fontFamily: ProxoSurface.fontFamily,
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
                         color: _cSlate))),
@@ -573,7 +577,7 @@ class _DepositScreenState extends State<DepositScreen> {
               label: ProxoText(_fmt(amount),
                   textDirection: TextDirection.ltr,
                   style: TextStyle(
-                      fontFamily: kAppFont,
+                      fontFamily: ProxoSurface.fontFamily,
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
                       color: _quickSelected == amount
@@ -627,7 +631,7 @@ class _DepositScreenState extends State<DepositScreen> {
                       key: const ValueKey('deposit-recipient'),
                       textDirection: TextDirection.ltr,
                       style: const TextStyle(
-                          fontFamily: kAppFont,
+                          fontFamily: ProxoSurface.fontFamily,
                           fontSize: 17,
                           fontWeight: FontWeight.w700,
                           height: 1.4,
@@ -662,7 +666,7 @@ class _DepositScreenState extends State<DepositScreen> {
                   child: ProxoText('ڕێنمایی پارەدان',
                       translate: true,
                       style: TextStyle(
-                          fontFamily: kAppFont,
+                          fontFamily: ProxoSurface.fontFamily,
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
                           color: AppColors.accent))),
@@ -702,7 +706,7 @@ class _DepositScreenState extends State<DepositScreen> {
   Widget _fieldLabel(String text) => ProxoText(text,
       translate: true,
       style: const TextStyle(
-          fontFamily: kAppFont,
+          fontFamily: ProxoSurface.fontFamily,
           fontSize: 14,
           height: 1.5,
           color: _cInk,
@@ -723,7 +727,7 @@ class _DepositScreenState extends State<DepositScreen> {
                     ? TextInputAction.next
                     : TextInputAction.newline,
                 style: const TextStyle(
-                    fontFamily: kAppFont,
+                    fontFamily: ProxoSurface.fontFamily,
                     fontSize: 14,
                     height: 1.5,
                     color: _cInk),
@@ -760,7 +764,7 @@ class _DepositScreenState extends State<DepositScreen> {
               child: ProxoText('وەسڵەکە دانرا',
                   translate: true,
                   style: TextStyle(
-                      fontFamily: kAppFont,
+                      fontFamily: ProxoSurface.fontFamily,
                       fontSize: 14,
                       height: 1.5,
                       fontWeight: FontWeight.w600,
@@ -882,7 +886,7 @@ class _DepositScreenState extends State<DepositScreen> {
               translate: true,
               textAlign: TextAlign.center,
               style: const TextStyle(
-                  fontFamily: kAppFont,
+                  fontFamily: ProxoSurface.fontFamily,
                   fontSize: 14,
                   height: 1.5,
                   fontWeight: FontWeight.w700)),
@@ -897,7 +901,7 @@ class _SectionTitle extends StatelessWidget {
   Widget build(BuildContext context) => ProxoText(text,
       translate: true,
       style: const TextStyle(
-          fontFamily: kAppFont,
+          fontFamily: ProxoSurface.fontFamily,
           fontSize: 18,
           height: 1.4,
           fontWeight: FontWeight.w700,
@@ -935,7 +939,7 @@ class _WalletCard extends StatelessWidget {
           ProxoText(wallet.name,
               textDirection: TextDirection.ltr,
               style: const TextStyle(
-                  fontFamily: kAppFont,
+                  fontFamily: ProxoSurface.fontFamily,
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                   height: 1.4,
@@ -945,7 +949,7 @@ class _WalletCard extends StatelessWidget {
             const ProxoText('ژمارە دانەنراوە',
                 translate: true,
                 style: TextStyle(
-                    fontFamily: kAppFont,
+                    fontFamily: ProxoSurface.fontFamily,
                     fontSize: 12,
                     height: 1.4,
                     color: _cSlate)),
@@ -1007,7 +1011,7 @@ class _SummaryRow extends StatelessWidget {
         final labelWidget = ProxoText(label,
             translate: true,
             style: TextStyle(
-                fontFamily: kAppFont,
+                fontFamily: ProxoSurface.fontFamily,
                 fontSize: 13,
                 height: 1.5,
                 color: strong ? _cInk : _cSlate,
@@ -1015,7 +1019,7 @@ class _SummaryRow extends StatelessWidget {
         final valueWidget = ProxoText(amount,
             textDirection: TextDirection.ltr,
             style: TextStyle(
-                fontFamily: kAppFont,
+                fontFamily: ProxoSurface.fontFamily,
                 fontSize: 14,
                 height: 1.5,
                 color: strong ? AppColors.accent : _cInk,

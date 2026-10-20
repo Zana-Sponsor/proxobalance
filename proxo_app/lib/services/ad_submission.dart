@@ -1,4 +1,5 @@
 import 'account_cache.dart';
+import '../config/backend_config.dart';
 import 'app_telemetry_service.dart';
 import 'dart:async';
 import 'dart:convert';
@@ -376,7 +377,9 @@ abstract class AdCreationRepository {
 class SupabaseAdCreationRepository extends AdCreationRepository {
   static final Map<String, (String, Future<String>)> _activeSubmissions = {};
   final SupabaseClient client;
-  SupabaseAdCreationRepository(this.client);
+  final BackendConfig _backend;
+  SupabaseAdCreationRepository(this.client, {BackendConfig? backendConfig})
+      : _backend = backendConfig ?? BackendConfig.current;
   String get _user =>
       client.auth.currentUser?.id ??
       (throw const AdSubmissionFailure('NOT_AUTHENTICATED'));
@@ -416,6 +419,9 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
   @override
   Future<String> submit(
       AdPendingSubmission request, ValueNotifier<AdPaymentProgress> progress) {
+    if (request.draft.paymentMethod == 'fastpay') {
+      _backend.requireProductionTransport();
+    }
     final user = _user;
     final active = _activeSubmissions[user];
     if (active != null) {
@@ -518,6 +524,7 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
 
   Future<String> _payWithFastPay(
       AdPendingSubmission r, ValueNotifier<AdPaymentProgress> progress, String owner) async {
+    _backend.requireProductionTransport();
     void checkOwner() {
       if (client.auth.currentUser?.id != owner) throw const AdSubmissionFailure('NOT_AUTHENTICATED', uncertain: true);
     }

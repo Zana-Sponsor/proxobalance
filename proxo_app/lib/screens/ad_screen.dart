@@ -18,7 +18,11 @@ import '../widgets/proxo_toast.dart';
 import '../widgets/proxo_error_ui.dart';
 import '../widgets/top_bar.dart';
 import '../widgets/proxo_refresh.dart';
+import '../widgets/proxo_empty_state.dart';
+import '../widgets/proxo_symbol.dart';
+import '../theme/proxo_surface.dart';
 import '../widgets/ad_feedback.dart';
+import '../widgets/proxo_thumbnail_fallback.dart';
 import 'ad_create_screen.dart';
 import 'ad_detail_screen.dart';
 import 'package:proxo_app/widgets/proxo_text.dart';
@@ -75,56 +79,6 @@ num? _asNum(dynamic v) {
   return null;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// _EmptyAdsIllustration — ئیلوستراسیۆنی «هیچ ڕیکلامێک نییە»
-// ─────────────────────────────────────────────────────────────────────────────
-// ⚠ ئەم دۆخە بەتاڵە ئێستا جیاوازە لە هی `home_screen.dart`: ئارتوۆرکی
-// نوێی سندوق + مێگافۆن (`empty_ads_box.png`) و ڕەمپێکی نوێی تایپ و
-// بۆشایی وەرگرتووە، لە کاتێکدا داشبۆرد هێشتا لەسەر `empty_ads.png`ی
-// کۆنە. ئەگەر ویستت هەردووکیان یەک بن، هەمان ژمارە و هەمان ئاسێت لە
-// `home_screen.dart`ـیش دابنێ (بڕوانە تێبینی «Empty-state language»).
-//
-// وێنەکە شەفافە (پڕکەرەوەی ناو مێگافۆنیش)، بۆیە لەسەر هەر یەکێک لە چوار
-// ئاستی `AppColors`ـەکە هەمان شێوە دەبینرێت. ڕەنگەکانی خۆی لە شینی
-// سیستەمن، بۆیە هیچ تینتێکی پێ نادرێت — ئەگەرنا پیلە سووکەکان و گلیفەکە
-// یەک تۆن دەبن و قووڵایی لەدەست دەدەن.
-const double _kEmptyArtW      = 216.0;         // پانی ئارتوۆرکەکە (dp)
-const double _kEmptyArtAspect = 966.0 / 672.0; // = 1.4375، ڕاستەوخۆ لە فایلەکەوە
-const String _kEmptyArtAsset  = 'assets/images/empty_ads_box.png';
-// قەبارەی ڕاستەقینەی فایلەکە بە px — تەنها بۆ سنووری `cacheWidth/Height`.
-const int _kEmptyArtPxW = 720;
-const int _kEmptyArtPxH = 501;
-
-class _EmptyAdsIllustration extends StatelessWidget {
-  final double scale;
-  final String? semanticLabel;
-
-  const _EmptyAdsIllustration({required this.scale, this.semanticLabel});
-
-  @override
-  Widget build(BuildContext context) {
-    ProxoLocale.watch(context);
-    final double w = _kEmptyArtW * scale;
-    final double h = w / _kEmptyArtAspect;
-    final double dpr = MediaQuery.maybeDevicePixelRatioOf(context) ?? 3.0;
-
-    return RepaintBoundary(
-      child: Image.asset(
-        _kEmptyArtAsset,
-        width: w,
-        height: h,
-        // بە قەبارەی پێویست دیکۆد بکە، نەک وێنەی تەواو بۆ بۆکسێکی
-        // نزیکەی 200 dp؛ بەمە memory و سکڕۆڵ سووکتر دەبن.
-        cacheWidth: (w * dpr).ceil().clamp(72, _kEmptyArtPxW),
-        cacheHeight: (h * dpr).ceil().clamp(50, _kEmptyArtPxH),
-        fit: BoxFit.contain,
-        filterQuality: FilterQuality.medium,
-        semanticLabel: semanticLabel,
-      ),
-    );
-  }
-}
-
 String _thousands(int n) {
   final s = n.toString();
   final buf = StringBuffer();
@@ -160,7 +114,6 @@ const Color _dsBorder    = AppColors.surfaceBorder;
 const Color _dsInk       = AppColors.ink;
 const Color _dsSubtle    = AppColors.inkMuted;
 const Color _dsSkeleton  = Color(0xFFE2E5EF); // لەسەر سپی دیارتر
-const Color _dsInfoBg    = Color(0xFFF0F4FF);
 
 /// سێبەری کارتەکانی ئەم شاشەیە (بانەری ئۆفلاین، کارتی ئاگاداری، دۆخی
 /// بەتاڵ) — ئێستا **هەمان** `kProxoCardShadow`ی کارتی ڕیکلامە، نەک
@@ -176,7 +129,6 @@ const Color _dsInfoBg    = Color(0xFFF0F4FF);
 const List<BoxShadow> _dsCardShadow = AdSurface.cardShadow;
 
 // ── Geometry (dp at scale 1.0 = a 430 dp device) ────────────────────────────
-const double _dsScreenPad   = 16.0;  // 390 spec: 16 px gutter → card width 358
 const double _dsCardRadius = AdSurface.cardRadius;
 const double _dsCardPad    = 18.0;
 const double _dsTile       = 46.0;
@@ -199,12 +151,6 @@ const double _dsFsStatVal  = 14.2;  // w700 / ls −0.2 / h 1.2
 const double _dsFsDelta    = 11.0;  // w600 / h 1.2
 const double _dsFsPill     =  9.8;  // w600 / h 1.0 — measured 9.8 dp painted
 const double _dsFsChip     = 11.0;  // w600 / h 1.2
-
-// ── Empty-state language ────────────────────────────────────────────────────
-// A direct mirror of the refined below-banner system in `home_screen.dart`, so
-// the Campaigns empty state and the Dashboard empty state are the same object
-// seen twice. Values are duplicated rather than imported because the two files
-// deliberately keep separate token namespaces — if one moves, move the other.
 
 // ═════════════════════════════════════════════════════════════════════════════
 // RESPONSIVE SCALE — one factor, anchored on the 430 dp reference device
@@ -291,10 +237,6 @@ const double _kCampaignCardMaxWidth = AdSurface.contentMaxWidth;
 /// card type in one edit; nothing else needs to change.
 const double _kReadableBump = 1.0;
 
-const double _kBtnHeight     = 30.0;          // = _PrimaryButton's height
-const double _kBtnRadius     = ProxoControls.radius;           // = _PrimaryButton's radius
-const double _kBtnChevron    = 16.0;
-const double _kBtnChevronPad = 13.0;          // = _PrimaryButton's h-padding
 
 // ═════════════════════════════════════════════════════════════════════════════
 // CAMPAIGN CARD — v6 geometry, measured off the reference screenshot
@@ -349,16 +291,8 @@ const double _kCampaignPageGutter       = _kPageGutter;
 // بۆشایی گەورەتر بەرەو خوارەوە دەڕوات، بۆیە پیلەکان بە سەرەوە دەلکێن و
 // کارتەکان هەناسەیان هەیە — گواستنەوەیەکی سروشتی، نەک سێ بۆشایی هاوشێوە.
 const double _kCampaignListTop          =  8.0;
-const double _kCampaignPadLeft          = AdSurface.cardPad;  // 14
-const double _kCampaignPadRight         = AdSurface.cardPad;
-const double _kCampaignPadTop           = AdSurface.cardPad;
-const double _kCampaignPadBottom        = AdSurface.cardPad;
 
 // ── Header ──────────────────────────────────────────────────────────────────
-const double _kCampaignTileSize         = AdSurface.thumbSize;   // 52
-const double _kCampaignTileRadius       = AdSurface.thumbRadius; // 12
-const double _kCampaignHeaderHeight     = _kCampaignTileSize;
-const double _kCampaignTileTextGap      = 10.0;  // v2 (بوو 12)
 /// ناو → #کۆد. ⚠ بوو 2.5، کە لەگەڵ ناونیشانێکی w700دا دوو دێڕەکەی
 /// بەیەکەوە دەلکاند. 4 هێندە هەیە کە جیایان بکاتەوە بەبێ ئەوەی
 /// ستوونەکە بتەقێنێت.
@@ -383,18 +317,11 @@ const double _kPressOpacity = 0.55;
 // دادەنرێت: هەمان زمانی ڕەنگی ئەپ، بەبێ ڕەش/خۆڵەمێشی.
 //
 //   • ڕووە سپی/ڕووناکەکان (کارتی ڕیکلام، دوگمە نەرمەکان)  → `_kPressTint`
-//   • ڕووە شینە قووڵەکان (وەک کارتی Overview / CTA-ی شین) → `_kPressTintOnBlue`
 //
 // چینەکە بە هەمان `borderRadius`ی کارتەکە وێنا دەکرێت، بۆیە هەرگیز لە
 // گۆشە خڕەکان نایەتە دەرەوە — و چونکە `ClipRRect` بەکارنەهێنراوە، سێبەری
 // کارتەکە وەک خۆی دەمێنێتەوە (کلیپ سێبەری دەبڕی).
 const Color _kPressTint       = Color(0x0F0D73E8); // ~6% شینی سەرەکی
-const Color _kPressTintOnBlue = Color(0x14FFFFFF); // ~8% سپی بۆ ڕووی شین
-
-/// خێرا بەڵام نەرم. `_kFbPressDur`ی پیلەکان 90ms-ە؛ کارت ڕووبەرێکی
-/// گەورەترە بۆیە 110ms تەواوتر جێگیر دەبێت — هەردووکیان لە خشتەی
-/// داواکراوی 90–120ms دان.
-const Duration _kCardPressDur = Duration(milliseconds: 110);
 
 // ── Action buttons ──────────────────────────────────────────────────────────
 // ⚠ بەرزایی/گۆشە/بۆشایی دوگمەکان پێشتر لێرە بوون و پیلی فلتەر لێیانەوە
@@ -410,7 +337,6 @@ const Duration _kCardPressDur = Duration(milliseconds: 110);
 const Color _kCampaignBlue     = AdSurface.accent; // #0365FF
 const Color _kCampaignInk      = AdSurface.ink;    // #0B0B32
 const Color _kCampaignSubtle   = AdSurface.slate;  // #334155 — بوو #68687F
-const Color _kCampaignSoftBlue = AppColors.accentSoft;
 
 // ── سنوور و سێبەری کارتی ڕیکلام ────────────────────────────────────────────
 // ئێستا ئەلیاسی تۆکنە هاوبەشەکانی `app_theme.dart`ن، نەک کۆپییەکیان — بۆیە
@@ -423,7 +349,6 @@ const Color _kCampaignSoftBlue = AppColors.accentSoft;
 //
 //   border:     1px solid #D4D9E1;
 //   box-shadow: 0 8px 30px rgba(15, 23, 42, 0.07);
-const double _kAdCardBorderW    = AdSurface.hairline;
 
 // (ئێستا تیرەکە لە قەبارەی دەقی ڕێژەکەوە دەردەهێنرێت — _kAdCardTrendIconRatio)
 // ── قەبارەی ئایکۆنەکانی کارت — پەیوەستە بە دەقەکەی تەنیشتی ────────────────
@@ -431,8 +356,6 @@ const double _kAdCardBorderW    = AdSurface.hairline;
 // بە دەقی 11–12 dp زۆر گەورە دەرکەوت. ئێستا هەر ئایکۆنێک لە قەبارەی ئەو
 // شتەوە دەردەهێنرێت کە لەگەڵیدا دادەنیشێت — دەق یان بازنە یان خشتە — بۆیە
 // لە هەموو ئامێرێکدا هاوسەنگی ئۆپتیکی خۆی دەپارێزێت.
-/// ئایکۆنی سپی ناو خشتەی شینی سەرپەڕە = تیرەی خشتە × ئەمە.
-const double _kAdCardIconTileRatio = 0.48;
 
 // ── زمان و فۆنتی کارتی ڕیکلام ──────────────────────────────────────────────
 // کارتەکە بە تەواوی کوردی (سۆرانی)یە و لە RTL دەخرێتە ڕوو. فۆنتی Rabar
@@ -480,12 +403,10 @@ const bool _kCardTapOpensDetails = true;
 // بەبێ هیچ بلۆکێکی خۆڵەمێشی جیا دەبنەوە — هەمان زمانی کارتەکە.
 /// هایلایتی پەستانی ڕیزی شیت. پێشتر systemGray6ی iOS بوو (#F2F2F7) — ڕەنگێکی
 /// بێگانە بۆ ئەم سیستەمە. ئێستا هەمان شینی سووکی دوگمەکانی کارت و پیلی چالاک.
-const Color  _kFbRowPress     = _kCampaignSoftBlue;
 /// قەبارەی دەقی ڕیزی شیت. پێشتر 17.2 بوو — لە `_kCampaignFsTitle` (16.8)
 /// **گەورەتر**، واتە هەڵبژاردنێکی فلتەر لە ناوی ڕیکلامەکە گەورەتر
 /// دەردەکەوت. ئێستا پلەی دووەمی ڕەمپی کارتەکەیە، بۆیە هەرەمەکە دروستە:
 /// سەرپەڕەی شیت (16.8) > ڕیزی شیت (15.0) > پیلی فلتەر (12.9).
-const double _kFbFsSheetItem  = _kCampaignFsStatValue;
 const Duration _kFbPressDur   = Duration(milliseconds: 90);
 
 /// لەیبڵی کوردی — بەهای ناوەوە (ئینگلیزی) هەرگیز ناگۆڕێت، چونکە هەر ئەوە
@@ -556,21 +477,7 @@ const double _kCampaignBadgePadE   =  8.0;
 const double _kCampaignFsTitle     = 16.8;  // was 15.7 — ناوی ڕیکلام, w700
 const double _kCampaignFsId        = 11.4;  // v2: 11–12 — «#کۆدی ڕیکلام», w400
 const double _kCampaignFsStatLabel = 11.0;
-const double _kCampaignFsStatValue = 15.0;  // was 13.8 — بەهای مەتریک, w700
 const double _kCampaignFsBadge     = 10.8;
-
-/// Summed from the parts above so the skeleton can never drift out of sync
-/// with the card's own vertical rhythm. The real card does NOT pin this as a
-/// height — its content decides, so a wrapped label or a missing day counter
-/// grows or shrinks it instead of clipping.
-const double _kCampaignCardHeight =
-    _kCampaignPadTop +
-    _kAdcHeaderH +
-    _kAdcRowGap +
-    _kAdcStatTileH +
-    _kAdcToggleGapTop +
-    _kAdcToggleH +
-    _kCampaignPadBottom;
 
 // ── Vertical rhythm — the dashboard's list rhythm, on the 8 dp grid ─────────
 
@@ -706,136 +613,37 @@ class _T {
 // _DsCard — the dashboard's `_CardShell`
 // ═════════════════════════════════════════════════════════════════════════════
 // White (or tinted), radius 16, padding 18, borderless with the system's two
-// shadows. Optional ink response, bounded by `InkWell.borderRadius` rather
-// than a clip layer so a long list never pays for one.
+// shadows. Used by the non-interactive offline banner.
 
 class _DsCard extends StatelessWidget {
   final double scale;
   final Widget child;
   final EdgeInsets? padding;
   final Color color;
-  final Color? border;
-  final VoidCallback? onTap;
-  final List<BoxShadow>? shadow;
 
   const _DsCard({
     required this.scale,
     required this.child,
     this.padding,
     this.color = _dsCard,
-    this.border,
-    this.onTap,
-    this.shadow,
   });
 
   @override
   Widget build(BuildContext context) {
     ProxoLocale.watch(context);
     final BorderRadius radius = BorderRadius.circular(_dsCardRadius * scale);
-    Widget content = Padding(
+    final Widget content = Padding(
       padding: padding ?? EdgeInsets.all(_dsCardPad * scale),
       child: child,
     );
-    if (onTap != null) {
-      content = Material(
-        color: Colors.transparent,
-        borderRadius: radius,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: radius,
-          splashColor: _dsBlue.withOpacity(0.06),
-          highlightColor: _dsBlue.withOpacity(0.03),
-          child: content,
-        ),
-      );
-    }
     return DecoratedBox(
       decoration: BoxDecoration(
         color: color,
         borderRadius: radius,
-        border: Border.all(color: border ?? _dsBorder, width: _dsRule),
-        boxShadow: shadow ?? _dsCardShadow,
+        border: Border.all(color: _dsBorder, width: _dsRule),
+        boxShadow: _dsCardShadow,
       ),
       child: content,
-    );
-  }
-}
-
-/// The dashboard's `_PrimaryButton`, stretched full width: `kProxoBlue`,
-/// radius 12, height 30, 10.5/w700 white label.
-class _DsPrimaryButton extends StatelessWidget {
-  final double scale;
-  final String label;
-  final Widget? leading;
-  final IconData? trailing;
-  final VoidCallback? onTap;
-
-  /// Opt-in overrides. All default to null, which reproduces the compact
-  /// notice-card button exactly — `_buildNoticeCard` passes none of them and
-  /// is unchanged. `_buildEmpty` passes all four to match the Dashboard's
-  /// refined CTA (40 dp tall, radius 12, 11.5/w600 label).
-  final double? height;
-  final double? radius;
-  final double? leadingGap;
-  final TextStyle? labelStyle;
-
-  const _DsPrimaryButton({
-    required this.scale,
-    required this.label,
-    this.leading,
-    this.trailing,
-    this.onTap,
-    this.height,
-    this.radius,
-    this.leadingGap,
-    this.labelStyle,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    ProxoLocale.watch(context);
-    final double s = scale;
-    final BorderRadius r =
-        BorderRadius.circular((radius ?? _kBtnRadius) * s);
-    return Semantics(
-      button: true,
-      label: label,
-      child: Material(
-        color: _dsBlue,
-        borderRadius: r,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: r,
-          splashColor: Colors.white.withOpacity(0.18),
-          highlightColor: Colors.white.withOpacity(0.08),
-          child: ConstrainedBox(
-            constraints:
-                BoxConstraints(minHeight: (height ?? _kBtnHeight) * s),
-            child: Padding(
-              padding: EdgeInsets.symmetric(
-                  horizontal: _kBtnChevronPad * s, vertical: 5 * s),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  if (leading != null) ...[
-                    leading!,
-                    SizedBox(width: (leadingGap ?? 8) * s),
-                  ],
-                  Flexible(
-                    child: ProxoText(label, translate: true,
-                        textAlign: TextAlign.center,
-                        style: labelStyle ?? _T.of(s).button),
-                  ),
-                  if (trailing != null) ...[
-                    SizedBox(width: 6 * s),
-                    Icon(trailing, size: _kBtnChevron * s, color: Colors.white),
-                  ],
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
     );
   }
 }
@@ -895,6 +703,8 @@ class _AdScreenState extends State<AdScreen>
 
   // ── پاگینەیشن ──────────────────────────────────────────────
   bool _loadingMore = false;
+  bool _openingEmptyCreate = false;
+  bool _retryingNotice = false;
 
   /// سینکی پشتەوەی ئێستا، ئەگەر هەبێت.
   ///
@@ -926,7 +736,6 @@ class _AdScreenState extends State<AdScreen>
   late final AnimationController _entranceCtrl;
   final ScrollController _scrollCtrl = ScrollController();
   String? _highlightId;
-  DateTime? _lastSync;
   RealtimeChannel? _metricsChannel;
 
   // One background generation per missing/legacy thumbnail at a time.
@@ -1161,22 +970,12 @@ class _AdScreenState extends State<AdScreen>
           .order('created_at', ascending: _sortAscending)
           .limit(_pageSize);
 
-      final fresh = List<Map<String, dynamic>>.from(res ?? []);
+      final fresh = List<Map<String, dynamic>>.from(res);
       if (!_current(revision)) return;
       await _saveCache(fresh, filter: requestedFilter);
       if (_current(revision) && requestedFilter == _filter) {
-        DateTime? latestUpdate;
-        for (final ad in fresh) {
-          final raw = ad['updated_at']?.toString() ?? ad['created_at']?.toString();
-          if (raw == null) continue;
-          try {
-            final dt = DateTime.parse(raw).toLocal();
-            if (latestUpdate == null || dt.isAfter(latestUpdate)) latestUpdate = dt;
-          } catch (_) {}
-        }
         setState(() {
           _ads = fresh;
-          _lastSync = latestUpdate ?? DateTime.now();
           _isOffline = false;
           _hasError = false;
           _offlineError = false;
@@ -1295,7 +1094,7 @@ class _AdScreenState extends State<AdScreen>
           .order('created_at', ascending: _sortAscending)
           .limit(wanted);
 
-      final fresh = List<Map<String, dynamic>>.from(res ?? []);
+      final fresh = List<Map<String, dynamic>>.from(res);
       if (applyAfter != null) await applyAfter;
       if (!_current(revision) || supabase.auth.currentUser?.id != user.id) return false;
 
@@ -1312,7 +1111,6 @@ class _AdScreenState extends State<AdScreen>
 
       setState(() {
         _ads = fresh;
-        _lastSync = DateTime.now();
         _loading = false;
         _isOffline = false;
         _hasError = false;
@@ -1524,7 +1322,7 @@ class _AdScreenState extends State<AdScreen>
           .order('created_at', ascending: _sortAscending)
           .range(start, start + _pageSize - 1);
       if (_current(revision) && requestedFilter == _filter) {
-        final more = List<Map<String, dynamic>>.from(res ?? []);
+        final more = List<Map<String, dynamic>>.from(res);
         setState(() {
           _ads.addAll(more);
           _hasMore = more.length >= _pageSize;
@@ -2900,292 +2698,101 @@ class _AdScreenState extends State<AdScreen>
     );
   }
 
-  // ── Error / Empty / Skeleton ─────────────────────────────
-  // Both of these are the dashboard's `_NoActiveCampaignsCard`: a tinted
-  // `_CardShell`, a 46 dp circular well, a 14 dp gutter, a 14/w700 title,
-  // 5 dp, a 10.5/w400 body, 12 dp, and a `_PrimaryButton`. Only the tone
-  // differs — the Rejected pair for an error, the system's cream for empty.
-  Widget _buildErrorState() {
-    // Same card geometry as before — only the tone and the icon now follow
-    // whether this was a connectivity failure or something else, using the
-    // app-wide error palette so it matches the rest of Proxo exactly.
-    final p = proxoErrorPalette(
-        _offlineError ? ProxoErrorTone.offline : ProxoErrorTone.danger);
-    return _buildNoticeCard(
-      wellColor: p.well,
-      iconColor: p.accent,
-      cardColor: p.surface,
-      icon: p.icon,
-      title: _offlineError ? 'پەیوەندی نییە' : 'هەڵەیەک ڕوویدا',
-      body: _errorMsg,
-      action: 'دووبارە هەوڵ بدەرەوە',
-      onAction: () => _loadAds(refresh: true),
+  // Empty and failed collections use the same measured surface as Pages.
+  // A filtered empty query is not evidence that the account has no adverts.
+  Widget _buildErrorState() => _stateList(
+        ProxoEmptyState(
+          key: const ValueKey('ads-error-state'),
+          symbol: ProxoSymbolName.warning,
+          isError: true,
+          title: _offlineError ? 'پەیوەندی نییە' : 'هەڵەیەک ڕوویدا',
+          body: _errorMsg,
+          action: FilledButton.icon(
+            key: const ValueKey('ads-retry'),
+            onPressed: _retryingNotice ? null : _retryEmptyError,
+            style: ProxoSurface.actionStyle(),
+            icon: _retryingNotice
+                ? const SizedBox(width: 20, height: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2))
+                : const ProxoSymbol(ProxoSymbolName.refresh,
+                    size: 20, color: Colors.white),
+            label: const ProxoText('دووبارە هەوڵ بدەرەوە', translate: true),
+          ),
+        ),
+      );
+
+  Future<void> _retryEmptyError() async {
+    if (_retryingNotice) return;
+    setState(() => _retryingNotice = true);
+    try {
+      await _loadAds(refresh: true);
+    } finally {
+      if (mounted) setState(() => _retryingNotice = false);
+    }
+  }
+
+  Future<void> _createFromEmpty() async {
+    if (_openingEmptyCreate || supabase.auth.currentUser?.id != _owner) return;
+    _openingEmptyCreate = true;
+    try {
+      await Navigator.of(context).push<String>(ProxoPageRoute(
+        settings: const RouteSettings(name: 'create_ad'),
+        builder: (_) => const AdCreateScreen(),
+      ));
+      // Returning from the form refreshes the list without a second route or
+      // a stale response from a previously signed-in account.
+      if (mounted && supabase.auth.currentUser?.id == _owner) {
+        await _syncAdsSilently();
+      }
+    } finally {
+      _openingEmptyCreate = false;
+    }
+  }
+
+  Widget _buildEmpty() {
+    final filtered = _filter != AdFilter.all;
+    return _stateList(
+      ProxoEmptyState(
+        key: ValueKey(filtered ? 'ads-filter-empty-state' : 'ads-empty-state'),
+        symbol: filtered ? ProxoSymbolName.search : ProxoSymbolName.ads,
+        title: filtered
+            ? 'هیچ ڕیکلامێک لەم دۆخەدا نییە'
+            : 'هێشتا هیچ ڕیکلامێک نییە!',
+        body: filtered
+            ? 'بۆ بینینی ڕیکلامەکانت هەموو دۆخەکان هەڵبژێرە.'
+            : 'کاتێک ڕیکلامێک تۆمار دەکەیت، لێرە دەردەکەوێت.',
+        action: FilledButton.icon(
+          key: ValueKey(filtered ? 'ads-clear-filter' : 'ads-create-empty'),
+          onPressed: filtered
+              ? () => _setFilter(0, AdFilter.all)
+              : _createFromEmpty,
+          style: ProxoSurface.actionStyle(),
+          icon: ProxoSymbol(filtered ? ProxoSymbolName.ads : ProxoSymbolName.add,
+              size: 20, color: Colors.white),
+          label: ProxoText(filtered ? 'هەموو دۆخەکان' : 'ڕیکلامێک بکە',
+              translate: true),
+        ),
+      ),
     );
   }
 
-  // ── حاڵەتی بەتاڵ — بێ کارت، بێ بۆکسی پشتەوە ────────────────────────────
-  // یەک کۆمپۆنێنتی یەکگرتوو: ئیلوستراسیۆن → ناونیشان → دەقی لاوەکی →
-  // دوگمە، هەموویان لە ناوەڕاستی ستوونێکدا و هەموو بۆشاییەکان لەسەر
-  // هەمان پێوەری `s`.
-  //
-  // ⚠ ئەم ڕەمپە ئێستا **جیاوازە** لە هی داشبۆرد (`_EmptyCampaignsState`
-  // لە `home_screen.dart`)، کە هێشتا لەسەر ئارتوۆرک و ژمارە کۆنەکانە.
-  // ئەگەر ویستت هەردووکیان یەک بن، هەمان ژمارەکان بۆ ئەوێش ببە.
-  // پێوانەکانی خودی ئارتوۆرکەکە لە ئاستی فایلدان (`_kEmptyArtW` و هاوڕێکانی
-  // لە سەرەوە)، چونکە `_EmptyAdsIllustration` وێدژێتێکی سەربەخۆیە.
-  static const double _kEmptyArtGap    = 28.0;  // ئیلوستراسیۆن → ناونیشان
-  static const double _kEmptyTitleGap  = 10.0;  // ناونیشان → دەقی لاوەکی
-  static const double _kEmptyBodyGap   = 28.0;  // دەقی لاوەکی → دوگمە
-  static const double _kEmptyBodyMax   = 300.0; // پانی زۆرترینی ڕستەکە
-
-  // ── تایپی دۆخی بەتاڵ — هاوبەشە لەگەڵ `tools_screen.dart` ─────────────────
-  // ئەم چوار ژمارەیە دەبێت **دەقاودەق** وەک ئەوانەی `tools_screen.dart`
-  // بن (`_kFsEmptyTitle` / `_kFsEmptyBody` / `_kLhEmptyTitle` /
-  // `_kLhEmptyBody`)، چونکە هەردوو دۆخی بەتاڵ یەک کۆمپۆنێنتن بە ئارتوۆرکی
-  // جیاواز. ئەگەر یەکێکیان گۆڕا، ئەوی تریش بگۆڕە.
-  //
-  // ⚠ ژمارە **کۆتایی**ن بە dp: بە ئەنقەست `_kAdCardKuBump` جێبەجێ
-  // ناکرێن، وەک لای tools. `s` (پێوەری شاشە) هێشتا جێبەجێ دەکرێت.
-  static const double _kEmptyFsTitle   = 17.0;
-  static const double _kEmptyFsBody    = 13.0;
-  static const double _kEmptyLhTitle   = 1.35;
-  static const double _kEmptyLhBody    = 1.40;
-
-  /// ناونیشان — هەمان مەرەکەبی tools (`_kInk`, slate-900). ⚠ بوو
-  /// `#000000`ی ڕەق، کە لە هیچ شوێنێکی تری ئەپەکەدا بەکارنەهاتووە.
-  static const Color _kEmptyInkTitle = Color(0xFF0F172A);
-
-  /// دەقی لاوەکی — slate-500، هەمان `_kMuted`ی tools. پێشتر هەمان ڕەشی
-  /// ناونیشانەکە بوو، بۆیە هیچ هێرارکییەکی ڕەنگ نەبوو.
-  static const Color _kEmptyInkBody = Color(0xFF64748B);
-
-  static const FontWeight _kEmptyFwTitle = FontWeight.w700;
-
-  // ── دوگمەی CTA — هەمان «ئامرازی نوێ +»ی tools ────────────────────────────
-  // ⚠ پێشتر مستطیلێکی شینی پان بوو بە «گلۆ»ی شین لە ژێری. ئێستا کەپسولێکی
-  // تۆخی بچووکە کە پانییەکەی لە ناوەڕۆکەکەیەوە دێت — دەقاودەق ئەو
-  // کۆمپۆنێنتەی لە شاشەی ئامرازەکاندا هەیە.
-  static const double _kEmptyBtnH      = 42.0;  // = tools `_NewToolPill`
-  static const double _kEmptyBtnHMin   = 42.0;  // هێشتا ≥ 42 بۆ دەستلێدان
-  static const double _kEmptyBtnPadH   = 18.0;  // = tools
-  static const double _kEmptyFsBtn     = 13.0;  // = tools `_kFsAction`
-  static const double _kEmptyBtnIcon   = 17.0;  // = tools
-  static const double _kEmptyBtnIconGap = 7.0;  // = tools
-  static const Color  _kEmptyBtnFill   = Color(0xFF0265FF);
-
-  /// پێوەری دۆخی بەتاڵ — **نەک** `_responsiveScale`.
-  ///
-  /// `_responsiveScale` پانی تەواوی شاشە بەسەر 393 دادەبەشێت، بەڵام
-  /// `home_screen.dart` پانی ناوەڕۆک (پانی شاشە − 32) بەسەر 398 دادەبەشێت.
-  /// لەسەر مۆبایلێکی 390 dp ئەوە 0.992 بەرامبەر 0.899ە — واتە هەمان ژمارەی
-  /// dp لە دوو شاشەکەدا ~10% جیاواز دەردەدەکەوت. ئەمە دەقاودەق فۆرمولەی
-  /// داشبۆردە، بۆیە هەردوو دۆخی بەتاڵ لەسەر یەک ئامێر **یەک قەبارەی
-  /// فیزیکییان** هەیە.
-  double _emptyStateScale(BuildContext context) =>
-      ((MediaQuery.sizeOf(context).width - 32) / 398.0)
-          .clamp(_kScaleMin, _kScaleMax);
-
-  Widget _buildEmpty() {
-    // `s` هەمان پێوەری داشبۆردە (بڕوانە `_emptyStateScale`)، و **هەمان `s`**
-    // بۆ دەقەکانیش بەکاردێت نەک `_typeScaleFor` — چونکە داشبۆرد وا دەکات،
-    // و مەبەست ئەوەیە هەردوو دۆخی بەتاڵ تەواو یەک بن. لە 320 dpـیش
-    // ناونیشانەکە 15.3 dp دەبێت، کە بەئاسانی دەخوێندرێتەوە.
-    final double s = _emptyStateScale(context);
-    final double horizontalInset = _kCampaignPageGutter;
-    final double bottomInset = _dsScreenPad * s;
-    // ناوچەی دەستلێدان هەرگیز لە 44 dp کەمتر نابێتەوە، تەنانەت لەسەر
-    // مۆبایلە باریکەکانیش کە `s` لێیان کەمە.
-    final double btnH = max(_kEmptyBtnHMin, _kEmptyBtnH * s);
-
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final double availableHeight = constraints.maxHeight.isFinite
-            ? max(0.0, constraints.maxHeight - bottomInset)
-            : 460 * s;
-
-        return Directionality(
+  Widget _stateList(Widget panel) => MediaQuery(
+        // Legacy advertisement cards use their own measured text scale. Empty
+        // and error content must honor the actual accessibility setting.
+        data: MediaQuery.of(context),
+        child: Directionality(
           textDirection: TextDirection.rtl,
           child: ListView(
             key: const PageStorageKey('empty_ads_state'),
+            controller: _scrollCtrl,
             physics: const AlwaysScrollableScrollPhysics(),
-            padding: EdgeInsets.fromLTRB(
-                horizontalInset, 0, horizontalInset, bottomInset),
-            children: [
-              SizedBox(
-                height: availableHeight,
-                child: Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // ئارتوۆرکی سندوق + مێگافۆن — بڕوانە
-                      // `_EmptyAdsIllustration` لە سەرەوەی فایلەکە.
-                      _EmptyAdsIllustration(
-                        scale: s,
-                        semanticLabel: 'هێشتا هیچ ڕیکلامێک نییە!',
-                      ),
-                      SizedBox(height: _kEmptyArtGap * s),
-                      ProxoText(
-                        'هێشتا هیچ ڕیکلامێک نییە!', translate: true,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontFamily: _kAdCardFont,
-                          fontSize: _kEmptyFsTitle * s,
-                          fontWeight: _kEmptyFwTitle,
-                          color: _kEmptyInkTitle,
-                          height: _kEmptyLhTitle,
-                        ),
-                      ),
-                      SizedBox(height: _kEmptyTitleGap * s),
-                      ConstrainedBox(
-                        constraints:
-                            BoxConstraints(maxWidth: _kEmptyBodyMax * s),
-                        child: ProxoText(
-                          'کاتێک ڕیکلامێک تۆمار دەکەیت، لێرە دەردەکەوێت.', translate: true,
-                          maxLines: 3,
-                          overflow: TextOverflow.ellipsis,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontFamily: _kAdCardFont,
-                            fontSize: _kEmptyFsBody * s,
-                            fontWeight: FontWeight.w400,
-                            color: _kEmptyInkBody,
-                            height: _kEmptyLhBody,
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: _kEmptyBodyGap * s),
-                      // ── CTA: کەپسولی تۆخ، دەقاودەق وەک «ئامرازی نوێ +» ──
-                      // ⚠ چیتر مستطیلێکی شینی پان نییە. سێ شت گۆڕان:
-                      //   • ڕوو  شینی #0365FF  →  تۆخی #0F172A
-                      //   • شێوە پانی پڕ + «گلۆ»ی شین  →  کەپسولی بچووک
-                      //     بەبێ هیچ سێبەرێک، پانی بە ناوەڕۆکەکەیەوە
-                      //   • ناوەڕۆک تەنها دەق  →  دەق + ئایکۆنی «+»
-                      //
-                      // `MainAxisSize.min` واتە پانییەکەی لە ڕیزەکەیەوە
-                      // دێت، نەک لە ستوونەکەوە — بۆیە `ConstrainedBox`ی
-                      // پێشوو لابرا: هیچی نەدەکرد جگە لە سنووردارکردنی
-                      // شتێک کە خۆی شرینک‌ڕاپ دەبێت.
-                      _IosPressable(
-                        semanticLabel: 'ڕیکلامێک بکە',
-                        pressScale: _kPressScale,
-                        pressOpacity: 1.0,
-                        pressTint: _kPressTintOnBlue,
-                        pressRadius: BorderRadius.circular(btnH / 2),
-                        pressDuration: _kCardPressDur,
-                        onTap: () => Navigator.push(
-                          context,
-                          ProxoPageRoute<String>(
-                            builder: (_) => const AdCreateScreen(),
-                          ),
-                        ),
-                        child: Container(
-                          height: btnH,
-                          padding: EdgeInsets.symmetric(
-                              horizontal: _kEmptyBtnPadH * s),
-                          decoration: BoxDecoration(
-                            color: _kEmptyBtnFill,
-                            borderRadius: BorderRadius.circular(btnH / 2),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              ProxoText(
-                                'ڕیکلامێک بکە', translate: true,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontFamily: _kAdCardFont,
-                                  fontSize: _kEmptyFsBtn * s,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.white,
-                                  height: 1.2,
-                                ),
-                              ),
-                              SizedBox(width: _kEmptyBtnIconGap * s),
-                              Icon(ProxoIcons.add,
-                                  size: _kEmptyBtnIcon * s,
-                                  color: Colors.white),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildNoticeCard({
-    required Color wellColor,
-    required Color iconColor,
-    required Color cardColor,
-    required String title,
-    required String body,
-    required String action,
-    required VoidCallback onAction,
-    IconData? icon,
-    CustomPainter? painter,
-  }) {
-    final double s = _responsiveScale(context);
-    final _T t = _T.of(s);
-    return ListView(
-      // A scroll view rather than a Center, so the notice still reaches the
-      // ProxoRefresh's pull gesture and never overflows on a short screen.
-      physics: const AlwaysScrollableScrollPhysics(),
-      padding: EdgeInsets.fromLTRB(
-          _kCampaignPageGutter,
-          _kCampaignListTop * _campaignScale(context),
-          _kCampaignPageGutter,
-          _dsScreenPad * s),
-      children: [
-        _DsCard(
-          scale: s,
-          color: cardColor,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Container(
-                  width: _dsTile * s, height: _dsTile * s,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(color: wellColor, shape: BoxShape.circle),
-                  child: painter != null
-                      ? CustomPaint(
-                          size: Size(_dsTileIcon * s, _dsTileIcon * s),
-                          painter: painter)
-                      : Icon(icon, size: _dsTileIcon * s, color: iconColor),
-                ),
-                SizedBox(width: _dsTileGutter * s),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      ProxoText(title, translate: true, style: t.title),
-                      SizedBox(height: _dsTitleGap * s),
-                      ProxoText(body, translate: true, style: t.subtitle),
-                    ],
-                  ),
-                ),
-              ]),
-              const SizedBox(height: 12),
-              // Bound the retry button's flex row and keep a 48dp tap target.
-              // Beside the message it received infinite width from the Row.
-              _DsPrimaryButton(scale: s, height: 48 / s, label: action, onTap: onAction),
-            ],
+            padding: const EdgeInsets.fromLTRB(
+                ProxoSurface.gutter, ProxoSurface.sectionGap,
+                ProxoSurface.gutter, 32),
+            children: [Align(alignment: Alignment.topCenter, child: panel)],
           ),
         ),
-      ],
-    );
-  }
+      );
 
 }
 
@@ -3216,7 +2823,6 @@ const double _kAdcCardPad = 16.0;
 const double _kAdcThumb = 78.0;
 const double _kAdcThumbHeight = 104.0; // 3:4 portrait preview, cropped, never stretched.
 const double _kAdcThumbRadius = 12.0;
-const double _kAdcHeaderH = _kAdcThumbHeight;
 const double _kAdcThumbGap = 12.0;
 const double _kAdcRowGap = 16.0;
 const double _kAdcTileRadius = 12.0;
@@ -3329,7 +2935,6 @@ const String _kAdcColSubmittedAt  = 'update_submitted_at';
 /// `'pending_review'` — پانێڵەکە بەم بەهایە پاڵاوتن دەکات
 /// (`.eq('status','review')`) و ڕیزی پەسەندکردنی خۆی لەسەری بنیات
 /// دەنێت (`.in('status',['pending','review'])`).
-const String _kAdcStatusReview = 'review';
 
 /// ناوی کوردی هەر خانەیەک — هەمان `AD_UPDATE_FIELDS`ی پانێڵەکە.
 const Map<String, String> _kAdcFieldLabels = <String, String>{
@@ -4202,7 +3807,7 @@ class _AdcThumbState extends State<_AdcThumb> {
         ),
       );
     }
-    const Widget fallback = _AdcProxoThumbFallback();
+    const Widget fallback = ProxoThumbnailFallback();
     return Semantics(
       label: retry ? 'دووبارە بارکردنی وێنۆچکە' : 'وێنۆچکە بەردەست نییە',
       button: retry,
@@ -4289,85 +3894,6 @@ class _AdcThumbState extends State<_AdcThumb> {
         : clipped;
     return RepaintBoundary(child: body);
   }
-}
-
-
-/// Branded fallback only: inherits the real thumbnail's tight dimensions and
-/// rounded clip from _AdcThumb. No independent aspect ratio, padding or motion.
-class _AdcProxoThumbFallback extends StatelessWidget {
-  const _AdcProxoThumbFallback();
-
-  @override
-  Widget build(BuildContext context) => const RepaintBoundary(
-    child: CustomPaint(
-      painter: _AdcProxoPatternPainter(),
-      child: SizedBox.expand(),
-    ),
-  );
-}
-
-/// Paint one laid-out word eighteen times, in six gently staggered rows.
-/// All positions and type sizes are proportional to the available thumbnail.
-class _AdcProxoPatternPainter extends CustomPainter {
-  const _AdcProxoPatternPainter();
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    if (size.isEmpty) return;
-    canvas.save();
-    canvas.clipRect(Offset.zero & size);
-    canvas.drawRect(
-      Offset.zero & size,
-      Paint()..color = const Color(0xFFFBFDFF),
-    );
-
-    const int columns = 3;
-    const int rows = 6;
-    final double cellWidth = size.width / columns;
-    final double cellHeight = size.height / rows;
-    final word = TextPainter(
-      text: TextSpan(
-        text: 'Proxo',
-        style: TextStyle(
-          fontFamily: _kAdCardNumFont,
-          fontSize: size.width * 0.105,
-          fontWeight: FontWeight.w400,
-          // #046CFA at 12.2% opacity; the background stays almost white.
-          color: const Color(0x1F046CFA),
-          height: 1.0,
-        ),
-      ),
-      textDirection: TextDirection.ltr,
-      maxLines: 1,
-    )..layout();
-
-    // Fit uniformly inside each cell, preserving letter proportions and a
-    // clear gutter even if the app's font changes in a later release.
-    final double wordScale = min(
-      1.0,
-      min(cellWidth * 0.72 / max(word.width, 1.0),
-          cellHeight * 0.60 / max(word.height, 1.0)),
-    );
-    for (int row = 0; row < rows; row++) {
-      final double stagger = (row.isOdd ? 0.025 : -0.025) * size.width;
-      for (int column = 0; column < columns; column++) {
-        final double x = (column + 0.5) * cellWidth + stagger;
-        // Slightly inset the outer rows so complete words clear the corners.
-        final double y = (row + 0.75) * size.height / (rows + 0.5);
-        canvas.save();
-        canvas.translate(x - word.width * wordScale / 2,
-            y - word.height * wordScale / 2);
-        canvas.scale(wordScale);
-        word.paint(canvas, Offset.zero);
-        canvas.restore();
-      }
-    }
-    word.dispose();
-    canvas.restore();
-  }
-
-  @override
-  bool shouldRepaint(covariant _AdcProxoPatternPainter oldDelegate) => false;
 }
 
 
@@ -5023,16 +4549,13 @@ class _IosPressable extends StatefulWidget {
   final double pressOpacity;
 
   /// چینی ڕەنگی داگرتن. `null` = ڕەفتاری کۆنی «ڕوونی کەمکردنەوە».
-  /// بۆ ڕووە ڕووناکەکان `_kPressTint` و بۆ ڕووە شینەکان `_kPressTintOnBlue`.
+  /// بۆ ڕووە ڕووناکەکان `_kPressTint`.
   final Color? pressTint;
 
   /// گۆشەی خڕی چینەکە — دەبێت **دەقاودەق** هی کارتەکە بێت، بۆیە
   /// چینەکە لە دەرەوەی کارتەکە دەرناکەوێت. ئەگەر `pressTint` دابنرێت و
   /// ئەمە نا، چینەکە بە گۆشەی تەخت وێنا دەکرێت.
   final BorderRadius? pressRadius;
-
-  /// ماوەی ئەنیمەیشن. بنەڕەت = 90ms (هی پیلەکان).
-  final Duration pressDuration;
 
   final String? semanticLabel;
   final bool semanticButton;
@@ -5045,7 +4568,6 @@ class _IosPressable extends StatefulWidget {
     this.pressOpacity = 0.90,
     this.pressTint,
     this.pressRadius,
-    this.pressDuration = _kFbPressDur,
     this.semanticLabel,
     this.semanticButton = true,
   });
@@ -5072,7 +4594,7 @@ class _IosPressableState extends State<_IosPressable> {
     if (tint == null) {
       return AnimatedOpacity(
         opacity: _down ? widget.pressOpacity : 1.0,
-        duration: widget.pressDuration,
+        duration: _kFbPressDur,
         curve: Curves.easeOut,
         child: child,
       );
@@ -5089,7 +4611,7 @@ class _IosPressableState extends State<_IosPressable> {
         Positioned.fill(
           child: IgnorePointer(
             child: AnimatedContainer(
-              duration: widget.pressDuration,
+              duration: _kFbPressDur,
               curve: Curves.easeOut,
               decoration: BoxDecoration(
                 // `tint.withAlpha(0)` نەک `transparent`: `Color.lerp`
@@ -5128,7 +4650,7 @@ class _IosPressableState extends State<_IosPressable> {
               },
         child: AnimatedScale(
           scale: _down ? widget.pressScale : 1.0,
-          duration: widget.pressDuration,
+          duration: _kFbPressDur,
           curve: Curves.easeOut,
           child: _withTint(widget.child),
         ),
@@ -5237,22 +4759,18 @@ const double _kFbFsSheetHead    = _kCampaignFsTitle;     // 16.8 — was 19.2
 const double _kFbSheetGutter    = AdSurface.sheetPad;    // 20 — بوو 18
 const double _kFbSheetEndInset  = AdSurface.sheetPad;    // 20 — بوو 18
 /// پیچی ڕیز لەسەر تۆڕی 8 dp، و هەروەها = کەمترین ئامانجی دەستلێدانی 48 dp.
-const double _kFbSheetRowPitch  = 48.0;                  // 6 × 8 — was 49.1
 /// سێبەری شیت — هەمان بەهاکانی سێبەری کارت بەڵام بەرەوسەرەوە، چونکە شیتەکە
 /// لە خوارەوە دێت. بۆیە لێواری سەرەوەی بەڕوونی لە پەڕەکە جیا دەبێتەوە.
 const List<BoxShadow> _kFbSheetShadow = [
   BoxShadow(color: Color(0x1F07112A), blurRadius: 24, offset: Offset(0, -6)),
 ];
 const double _kFbRadioSize      = 24.0;
-const double _kFbRadioRing      =  1.7;
-const double _kFbRadioDot       =  8.5;
 const double _kFbCloseTap       = 44.0;
 const double _kFbCloseGlyph     = 16.0;
 const double _kFbCloseStroke    =  2.4;
 /// ڕەنگی ڕادیۆی هەڵبژێردراو. ڕیفرنسەکە ڕەشە؛ لێرەدا شینی سیستەمەکە
 /// بەکاردێت بۆ ئەوەی لەگەڵ فلتەری چالاک و کارتەکە یەک بێت. بۆ ڕەشی
 /// ڕیفرنس، تەنها ئەمە بکە بە `_kCampaignInk`.
-const Color _kFbRadioOn = _kCampaignBlue;
 
 /// ڕووکاری هاوبەشی هەموو شیتەکانی خوارەوە — فلتەری دۆخ، فلتەری ماوە، و
 /// مینیوی کلیکی درێژی کارت. هەر سێکیان پێشتر هەمان کۆدیان دووبارە
@@ -5394,139 +4912,6 @@ class _IosSheetHeader extends StatelessWidget {
   }
 }
 
-class _IosOptionSheet extends StatelessWidget {
-  final String title;
-  final List<String> options;
-  final String current;
-  final String Function(String) labelOf;
-  final void Function(String) onSelect;
-  final double scale;
-
-  const _IosOptionSheet({
-    required this.title,
-    required this.options,
-    required this.current,
-    required this.labelOf,
-    required this.onSelect,
-    required this.scale,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    ProxoLocale.watch(context);
-    final double s = scale;
-
-    return _FbSheetSurface(
-      scale: s,
-      children: [
-        _IosSheetHeader(scale: s, title: title),
-        // ── ڕیزەکان — بێ جیاکەرەوە ──
-        for (final o in options)
-          _IosRadioRow(
-            scale: s,
-            label: labelOf(o),
-            selected: o == current,
-            onTap: () {
-              Navigator.pop(context);
-              onSelect(o);
-            },
-          ),
-        SizedBox(height: 12 * s),
-      ],
-    );
-  }
-}
-
-/// ڕیزێکی هەڵبژاردن: لەیبڵ لای ڕاست، ڕادیۆ لای چەپ، بێ هێڵی ژێرەوە.
-class _IosRadioRow extends StatefulWidget {
-  final double scale;
-  final String label;
-  final bool selected;
-  final VoidCallback onTap;
-
-  const _IosRadioRow({
-    required this.scale,
-    required this.label,
-    required this.selected,
-    required this.onTap,
-  });
-
-  @override
-  State<_IosRadioRow> createState() => _IosRadioRowState();
-}
-
-class _IosRadioRowState extends State<_IosRadioRow> {
-  bool _down = false;
-  void _set(bool v) { if (_down != v && mounted) setState(() => _down = v); }
-
-  @override
-  Widget build(BuildContext context) {
-    ProxoLocale.watch(context);
-    final double s = widget.scale;
-    final double t = _typeScaleFor(s);
-    return Semantics(
-      inMutuallyExclusiveGroup: true,
-      selected: widget.selected,
-      button: true,
-      label: widget.label,
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTapDown:   (_) => _set(true),
-        onTapUp:     (_) => _set(false),
-        onTapCancel: () => _set(false),
-        onTap: widget.onTap,
-        // هەمان کاردانەوەی `_IosSheetRow`: هایلایتێکی ڕەنگ، نەک گۆڕینی
-        // ڕوونی. پێشتر ئەم ڕیزە بە opacity کاردانەوەی دەنواند و ئەوی تر
-        // بە ڕەنگ — دوو ڕیزی هاوشێوە بە دوو شێوەی جیا.
-        child: AnimatedContainer(
-          duration: _kFbPressDur,
-          curve: Curves.easeOut,
-          height: _kFbSheetRowPitch * s,
-          color: _down ? _kFbRowPress : AdSurface.sheetSurface,
-          padding: EdgeInsetsDirectional.only(
-            start: _kFbSheetGutter * s,
-            end: _kFbSheetEndInset * s,
-          ),
-          alignment: AlignmentDirectional.centerStart,
-            child: Row(
-              children: [
-                Expanded(
-                  child: ProxoText(
-                    widget.label,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontFamily: _kAdCardFont,
-                      fontSize: _kFbFsSheetItem * t * _kAdCardKuBump,
-                      // دەقاودەق هەمان زمانی پیلی چالاک: شین + w700 کاتێک
-                      // هەڵبژێردراوە، مەرەکەبی ئاسایی + w500 ئەگەرنا.
-                      fontWeight:
-                          widget.selected ? FontWeight.w700 : FontWeight.w600,
-                      color:
-                          widget.selected ? _kCampaignBlue : _kCampaignInk,
-                      height: 1.35,
-                    ),
-                  ),
-                ),
-                SizedBox(width: 12 * s),
-                CustomPaint(
-                  size: Size.square(_kFbRadioSize * s),
-                  painter: _RadioPainter(
-                    selected: widget.selected,
-                    on: _kFbRadioOn,
-                    off: _kCampaignSubtle,
-                    ring: _kFbRadioRing * s,
-                    dot: _kFbRadioDot * s,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-    );
-  }
-}
-
 /// ✕ی سەرپەڕەی شیت — دوو هێڵی خاچ بە کۆتایی خڕ.
 class _SheetClosePainter extends CustomPainter {
   final Color color;
@@ -5547,49 +4932,6 @@ class _SheetClosePainter extends CustomPainter {
   @override
   bool shouldRepaint(_SheetClosePainter old) =>
       old.color != color || old.stroke != stroke;
-}
-
-/// ڕادیۆ: بازنەی داپۆشراو + خاڵی سپی کاتێک هەڵبژێردراوە، بازنەی بەتاڵ ئەگەرنا.
-class _RadioPainter extends CustomPainter {
-  final bool selected;
-  final Color on;
-  final Color off;
-  final double ring;
-  final double dot;
-  const _RadioPainter({
-    required this.selected,
-    required this.on,
-    required this.off,
-    required this.ring,
-    required this.dot,
-  });
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final Offset c = size.center(Offset.zero);
-    final double r = size.width / 2;
-    if (selected) {
-      canvas.drawCircle(c, r - ring / 2, Paint()..color = on..isAntiAlias = true);
-      canvas.drawCircle(
-          c, dot / 2, Paint()..color = Colors.white..isAntiAlias = true);
-    } else {
-      canvas.drawCircle(
-        c,
-        r - ring / 2,
-        Paint()
-          // ⚠ بێ `withOpacity`: 55٪ی تۆنێکی سلەیت بازنەیەکی
-          // هێڵکێشراوی 1.7 dp دەکاتە شتێکی بەزەحمەت دیار.
-          ..color = off
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = ring
-          ..isAntiAlias = true,
-      );
-    }
-  }
-
-  @override
-  bool shouldRepaint(_RadioPainter old) =>
-      old.selected != selected || old.on != on || old.off != off;
 }
 
 /// Campaign-card status badge.

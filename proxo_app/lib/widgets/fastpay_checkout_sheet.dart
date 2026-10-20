@@ -28,6 +28,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import '../main.dart' show supabase;
+import '../config/backend_config.dart';
 import '../theme/app_theme.dart' show kAppFont;
 import 'proxo_toast.dart';
 import 'package:proxo_app/widgets/proxo_text.dart';
@@ -157,7 +158,9 @@ class FastPayService {
     required String orderId,
     required int billAmountIqd,
     String? note,
+    BackendConfig? backendConfig,
   }) async {
+    (backendConfig ?? BackendConfig.current).requireProductionTransport();
     final session = supabase.auth.currentSession;
     if (session == null) {
       throw const FastPayException('تکایە دووبارە بچۆ ژوورەوە');

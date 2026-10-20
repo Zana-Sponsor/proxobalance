@@ -37,24 +37,30 @@ class ActualScreenBackend {
  Map<String, dynamic>? banner;
  final _sockets=<_ScreenSocket>[];
  int logoutRequests=0;
- final writeAttempts=<Map<String,Object?>>[];
- int get requestWrites=>writeAttempts.length;
+ final nonGetAttempts=<Map<String,Object?>>[];
  bool logoutFails=false;
  ActualScreenBackend({bool allowLogout=false}){
   transport=MockClient((request)async{
-    if({'POST','PUT','PATCH','DELETE'}.contains(request.method)){
-      var fixtureThumbnailRepair=false;
-      if(request.method=='POST' && request.url.host=='screen-fixtures.invalid' && request.url.path=='/functions/v1/generate-ad-thumbnail'){
+    if(request.method!='GET'){
+      String? expectedBlockedOperation;
+      if(request.method=='POST' && request.url.scheme=='https' && request.url.host=='screen-fixtures.invalid' && request.url.userInfo.isEmpty && !request.url.hasQuery){
         try{
           final body=jsonDecode(request.body);
-          fixtureThumbnailRepair=body is Map && body.length==1 && body['ad_id']=='00000000-0000-4000-8000-000000000001';
+          if(body is Map && body.length==1){
+            if(request.url.path=='/functions/v1/generate-ad-thumbnail' && body['ad_id']=='00000000-0000-4000-8000-000000000001'){
+              expectedBlockedOperation='fictional_thumbnail_repair';
+            }else if(request.url.path=='/rest/v1/rpc/pa_trusted_device_lookup' && body['p_device_id'] is String && RegExp(r'^[0-9a-f]{64}$').hasMatch(body['p_device_id'] as String)){
+              expectedBlockedOperation='trusted_device_lookup';
+            }
+          }
         }catch(_){}
       }
-      // Record attempts, not successful writes. The thumbnail repair endpoint
-      // mutates Storage/pa_ads in production; this fixture still rejects it
-      // at the network boundary below. Never record headers or request bodies.
-      writeAttempts.add({'method':request.method,'host':request.url.host,
-        'path':request.url.path,'blocked_fixture_thumbnail_repair':fixtureThumbnailRepair});
+      // Classify expected attempts, never execute them. Android Auth mounts
+      // ask for a trusted-device lookup; thumbnail repair mutates production.
+      // Both still hit the rejecting boundary below. HTTP POST alone does not
+      // identify a write. Do not persist bodies, device hashes or headers.
+      nonGetAttempts.add({'method':request.method,'host':request.url.host,
+        'path':request.url.path,'expected_blocked_operation':expectedBlockedOperation});
     }
     if(allowLogout && request.method=='POST' && request.url.host=='screen-fixtures.invalid' && request.url.path=='/auth/v1/logout'){
       logoutRequests++;

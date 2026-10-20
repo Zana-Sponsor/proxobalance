@@ -13,6 +13,9 @@ abstract final class ResultsUi {
   static const banner = Color(0xFFF5F0E8);
   static const font = 'RabarAuthRegular';
   static const radius = BorderRadius.all(Radius.circular(18));
+  static const thumbnailWidth = 56.0;
+  static const thumbnailHeight = 64.0;
+  static const thumbnailRadius = 12.0;
   static TextStyle text({double size = 14, Color color = ink}) => TextStyle(
         fontFamily: font,
         fontSize: size,

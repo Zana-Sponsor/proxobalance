@@ -1,4 +1,5 @@
 import 'ad_activation_bridge.dart';
+import '../config/backend_config.dart';
 // notification_service.dart  (نسخەی نوێ — توکێن پاشەکەوت دەکات)
 // بیخەرە ناو:  lib/services/notification_service.dart
 //
@@ -66,16 +67,17 @@ import 'notification_presentation.dart';
 
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  // Validate outside the delivery catch: invalid staging must fail closed.
+  final backend = BackendConfig.current;
+  if (!backend.productionTransportsEnabled) return;
   await Firebase.initializeApp();
 
   // FIX: کاتی لۆگ ئاوت، ئاگاداری نیشان مەدە
   // Supabase initialize کردن بۆ خوێندنەوەی سێشنی پاشەکەوتکراو
   try {
     await Supabase.initialize(
-      url: 'https://cojchkwssmasiejcgvbk.supabase.co',
-      anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9'
-          '.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNvamNoa3dzc21hc2llamNndmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTE1MTIsImV4cCI6MjA5Mjg4NzUxMn0'
-          '.RCALy3wpKHGAkmXWcBqEb_QFEUmh6ErdRbfrBmagvtw',
+      url: backend.supabaseUrl,
+      anonKey: backend.supabaseAnonKey,
     );
     final session = Supabase.instance.client.auth.currentSession;
     if (session == null) return; // لۆگ ئاوتە — ئاگاداری نیشان مەدە
@@ -158,6 +160,7 @@ class NotificationService {
     required GlobalKey<NavigatorState> navigatorKey,
     void Function(RemoteMessage)? onForegroundMessage,
   }) async {
+    if (!BackendConfig.current.productionTransportsEnabled) return;
     _navigatorKey = navigatorKey;
 
     // NOTE: onBackgroundMessage is already registered in main() before init()
@@ -221,6 +224,7 @@ class NotificationService {
   // after login ensures the token is always stored in pa_device_tokens, which
   // is required for background FCM push notifications to reach the device.
   Future<void> saveTokenAfterLogin() async {
+    if (!BackendConfig.current.productionTransportsEnabled) return;
     try {
       final token = await _messaging.getToken();
       if (token != null) {
@@ -234,6 +238,7 @@ class NotificationService {
 
   // ── توکێن بخەرە Supabase ─────────────────────────────────────────────────
   static Future<void> _saveTokenToSupabase(String token) async {
+    if (!BackendConfig.current.productionTransportsEnabled) return;
     try {
       final uid = Supabase.instance.client.auth.currentUser?.id;
       if (uid == null) return;
@@ -260,6 +265,7 @@ class NotificationService {
 
   // ── توکێن کاتی logout سڕینەوە ────────────────────────────────────────────
   Future<void> removeToken() async {
+    if (!BackendConfig.current.productionTransportsEnabled) return;
     try {
       final uid   = Supabase.instance.client.auth.currentUser?.id;
       final token = await _messaging.getToken();
@@ -281,9 +287,18 @@ class NotificationService {
 
   // Stable notification ID: same string always → same int (no duplicates)
 
-  Future<String?> getToken()                  => _messaging.getToken();
-  Future<void> subscribeToTopic(String topic) => _messaging.subscribeToTopic(topic);
-  Future<void> unsubscribeFromTopic(String t) => _messaging.unsubscribeFromTopic(t);
+  Future<String?> getToken() async {
+    if (!BackendConfig.current.productionTransportsEnabled) return null;
+    return _messaging.getToken();
+  }
+  Future<void> subscribeToTopic(String topic) async {
+    if (!BackendConfig.current.productionTransportsEnabled) return;
+    await _messaging.subscribeToTopic(topic);
+  }
+  Future<void> unsubscribeFromTopic(String topic) async {
+    if (!BackendConfig.current.productionTransportsEnabled) return;
+    await _messaging.unsubscribeFromTopic(topic);
+  }
 
   // ── _navigate ─────────────────────────────────────────────────────────────
 
