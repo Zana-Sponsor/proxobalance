@@ -81,9 +81,11 @@ void main() {
   const measurementPath = String.fromEnvironment('RECEIPT_MEASUREMENTS');
   tearDownAll(() async {
     if (measurementPath.isNotEmpty) {
-      await File(
-        measurementPath,
-      ).writeAsString(const JsonEncoder.withIndent('  ').convert(measurements));
+      final file = File(measurementPath);
+      await file.parent.create(recursive: true);
+      await file.writeAsString(
+        const JsonEncoder.withIndent('  ').convert(measurements),
+      );
     }
   });
 

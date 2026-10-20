@@ -55,9 +55,16 @@ class ActualScreenBackend {
           }
         }catch(_){}
       }
+      if(request.method=='HEAD' && request.url.scheme=='https' && request.url.host=='screen-fixtures.invalid' && request.url.userInfo.isEmpty && !request.url.hasPort && !request.url.hasFragment && request.url.path=='/rest/v1/pa_notifications' && request.body.isEmpty){
+        final query=request.url.queryParametersAll;
+        if(query.length==2 && query['user_id']?.length==1 && query['user_id']?.single=='eq.$screenFixtureOwner' && query['is_read']?.length==1 && query['is_read']?.single=='eq.false'){
+          expectedBlockedOperation='unread_notification_count';
+        }
+      }
       // Classify expected attempts, never execute them. Android Auth mounts
       // ask for a trusted-device lookup; thumbnail repair mutates production.
-      // Both still hit the rejecting boundary below. HTTP POST alone does not
+      // The shared notification bell reads its count with HEAD. All three
+      // still hit the rejecting boundary below. HTTP POST alone does not
       // identify a write. Do not persist bodies, device hashes or headers.
       nonGetAttempts.add({'method':request.method,'host':request.url.host,
         'path':request.url.path,'expected_blocked_operation':expectedBlockedOperation});

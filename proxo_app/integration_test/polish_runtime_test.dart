@@ -564,11 +564,17 @@ void main() {
         .where((attempt) =>
             attempt['expected_blocked_operation'] == 'trusted_device_lookup')
         .length;
+    observations['blocked_unread_notification_counts'] = backend.nonGetAttempts
+        .where((attempt) =>
+            attempt['expected_blocked_operation'] ==
+            'unread_notification_count')
+        .length;
     observations['unexpected_backend_requests'] = unexpectedAttempts;
     observations['fixture_network_boundary'] =
         'Every non-GET request is rejected by the local mock before network '
-        'access. Only the exact fictional thumbnail repair and Android Auth '
-        'trusted-device lookup shapes are expected. Production RPC semantics '
+        'access. Only the exact fictional thumbnail repair, Android Auth '
+        'trusted-device lookup and owner-filtered unread-count HEAD shapes '
+        'are expected. Production RPC semantics '
         'and writes are not exercised by this fixture.';
     expect(unexpectedAttempts, isEmpty,
         reason: 'No payment, page, auth registration or other unexpected '

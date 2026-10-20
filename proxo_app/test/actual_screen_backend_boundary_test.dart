@@ -1,10 +1,55 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../integration_test/support/actual_screen_fixtures.dart';
 
 void main() {
+  test('actual unread count HEAD is classified but remains blocked', () async {
+    final backend = ActualScreenBackend();
+    final client = SupabaseClient(
+        'https://screen-fixtures.invalid', 'fictional-publishable-key',
+        httpClient: backend.transport,
+        authOptions: const AuthClientOptions(autoRefreshToken: false));
+    addTearDown(client.dispose);
+    await expectLater(
+      client
+          .from('pa_notifications')
+          .count(CountOption.exact)
+          .eq('user_id', screenFixtureOwner)
+          .eq('is_read', false),
+      throwsA(isA<StateError>()),
+    );
+    expect(backend.nonGetAttempts.single['method'], 'HEAD');
+    expect(backend.nonGetAttempts.single['expected_blocked_operation'],
+        'unread_notification_count');
+  });
+
+  test('other HEAD hosts, paths, owners and query shapes stay unexpected',
+      () async {
+    final backend = ActualScreenBackend();
+    addTearDown(backend.transport.close);
+    const query = 'user_id=eq.$screenFixtureOwner&is_read=eq.false';
+    final cases = [
+      'https://other.invalid/rest/v1/pa_notifications?$query',
+      'https://screen-fixtures.invalid/rest/v1/pa_wallets?$query',
+      'https://screen-fixtures.invalid/rest/v1/pa_notifications?user_id=eq.another-owner&is_read=eq.false',
+      'https://screen-fixtures.invalid/rest/v1/pa_notifications?user_id=eq.$screenFixtureOwner',
+      'https://screen-fixtures.invalid/rest/v1/pa_notifications?$query&limit=1',
+      'https://screen-fixtures.invalid/rest/v1/pa_notifications?$query&is_read=eq.true',
+    ];
+    for (final uri in cases) {
+      await expectLater(
+          backend.transport.head(Uri.parse(uri)), throwsA(isA<StateError>()));
+    }
+    expect(backend.nonGetAttempts, hasLength(cases.length));
+    expect(
+        backend.nonGetAttempts
+            .every((attempt) => attempt['expected_blocked_operation'] == null),
+        isTrue);
+  });
+
   test('expected Android lookup is classified but remains blocked', () async {
     final backend = ActualScreenBackend();
     addTearDown(backend.transport.close);
