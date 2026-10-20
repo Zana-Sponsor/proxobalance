@@ -69,6 +69,7 @@ String? _ageRange(List<String> groups) {
 // ═════════════════════════════════════════════════════════════════════════════
 
 class AdReceiptData {
+  final String paymentStatus;
   final String adId;
   final String date;
   final String age;
@@ -90,6 +91,7 @@ class AdReceiptData {
   final String uid;
 
   const AdReceiptData({
+    this.paymentStatus = '—',
     required this.adId,
     required this.date,
     required this.age,
@@ -154,6 +156,9 @@ class AdReceiptData {
     final String name = _str(ad['title']).isEmpty ? '—' : _str(ad['title']);
 
     return AdReceiptData(
+      paymentStatus: pricing.noPaymentRequired
+          ? l.noPaymentRequired
+          : l.paymentStatusLabel(_str(ad['payment_status'])),
       adId: adId,
       date: receiptDateTime(ad['created_at']),
       age: age,

@@ -24,8 +24,8 @@ import 'widgets/proxo_sidebar.dart';
 import 'screens/profile_screen.dart';
 import 'widgets/no_internet_widget.dart';
 import 'theme/app_theme.dart';
+import 'theme/proxo_ui.dart';
 import 'theme/app_locale.dart';
-import 'widgets/auth/auth_design.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Global constants
@@ -34,14 +34,15 @@ import 'widgets/auth/auth_design.dart';
 
 const double kIqdRate = 1800.0;
 
-const String kSupabaseUrl     = 'https://cojchkwssmasiejcgvbk.supabase.co';
+const String kSupabaseUrl = 'https://cojchkwssmasiejcgvbk.supabase.co';
 const String kSupabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9'
     '.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNvamNoa3dzc21hc2llamNndmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTE1MTIsImV4cCI6MjA5Mjg4NzUxMn0'
     '.RCALy3wpKHGAkmXWcBqEb_QFEUmh6ErdRbfrBmagvtw';
 bool firebaseAvailable = false;
 
 /// URL ی n8n کراوەکەت بنووسەرەوە — بۆ ناردنی OTP ئیمێڵ
-const String n8nOtpLoginWebhook = 'https://email.proxopages.com/webhook/send_otp';
+const String n8nOtpLoginWebhook =
+    'https://email.proxopages.com/webhook/send_otp';
 
 /// URL ی n8n کراوەکەت بنووسەرەوە — بۆ ئاگاداری تۆمارکردن / چوونەژوورەوە
 const String n8nWebhookUrl = 'https://email.proxopages.com/webhook/send_otp';
@@ -60,7 +61,7 @@ const String n8nWebhookUrl = 'https://email.proxopages.com/webhook/send_otp';
 // نموونەی n8nـن. ئەگەر Wevlix لەسەر هۆستێکی جیاوازە، تەنها ئەم سێ دێڕە
 // بگۆڕە.
 const String _n8nBase = 'https://email.proxopages.com/webhook';
-const String wevlixOtpSendUrl   = '$_n8nBase/wevlix/otp/send';
+const String wevlixOtpSendUrl = '$_n8nBase/wevlix/otp/send';
 const String wevlixOtpStatusUrl = '$_n8nBase/wevlix/otp/status';
 const String wevlixOtpVerifyUrl = '$_n8nBase/wevlix/otp/verify';
 
@@ -139,9 +140,8 @@ class ProxoApp extends StatelessWidget {
   }
 
   Widget _buildApp(Locale locale) {
-    final Locale frameworkLocale = locale.languageCode == 'ckb'
-        ? ProxoLocale.arabic
-        : locale;
+    final Locale frameworkLocale =
+        locale.languageCode == 'ckb' ? ProxoLocale.arabic : locale;
     return MaterialApp(
       title: 'Proxo',
       debugShowCheckedModeBanner: false,
@@ -162,18 +162,7 @@ class ProxoApp extends StatelessWidget {
       builder: (context, child) => ProxoLocaleScope(
         child: child ?? const SizedBox.shrink(),
       ),
-      theme: ThemeData(
-        fontFamily: kAppFont,
-        colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primary),
-        useMaterial3: true,
-        // Shared Auth surface; screens that omit an explicit background still
-        // use the same white canvas.
-        scaffoldBackgroundColor: AuthTokens.pageBackground,
-        textTheme: const TextTheme().apply(
-          fontFamily: kAppFont,
-          decoration: TextDecoration.none,
-        ),
-      ),
+      theme: buildProxoTheme(),
       home: const SplashScreen(nextScreen: _AuthGate()),
       onGenerateRoute: _onGenerateRoute,
     );
@@ -230,15 +219,11 @@ class _AuthGateState extends State<_AuthGate> {
     _authSub = supabase.auth.onAuthStateChange.listen((data) async {
       if (!mounted) return;
       if (AuthScreen.inOtpFlow) return;
-      final event   = data.event;
+      final event = data.event;
       final session = data.session;
       if (session != null) _lastKnownUserId = session.user.id;
 
-      if (session != null &&
-          (event == AuthChangeEvent.signedIn ||
-           event == AuthChangeEvent.tokenRefreshed ||
-           event == AuthChangeEvent.userUpdated)) {
-
+      if (session != null && event == AuthChangeEvent.signedIn) {
         if (firebaseAvailable) {
           NotificationService.instance.saveTokenAfterLogin();
         }
@@ -295,8 +280,9 @@ class MainShell extends StatefulWidget {
 }
 
 class MainShellState extends State<MainShell> {
-  int  _tabIndex       = 0;
-  int  _refreshCounter = 0;
+  int _tabIndex = 0;
+  int _refreshCounter = 0;
+  bool _openingCreate = false;
 
   /// ⚠ `_sidebarOpen` و `_sidebarKey` لابران.
   ///
@@ -381,36 +367,43 @@ class MainShellState extends State<MainShell> {
   }
 
   Future<void> _onTabTap(int index) async {
-      // ── Re-tap on the active tab = refresh ───────────────────────────────
-      // Fire-and-forget on purpose. Awaiting would hold this handler open for
-      // the whole drop + fetch + settle (~1s), and a second tap during that
-      // window is already a no-op inside the controller, so there is nothing
-      // to serialise.
-      if (index == _tabIndex && index != 2) {
-        unawaited(_refreshers[index]?.refresh() ?? Future<void>.value());
-        return;
-      }
-      if (index == 2) {
-        // ⚠ <String>، نەک <void>: `AdCreateScreen` بە
-        // `Navigator.pop(context, 'refresh')` دەگەڕێتەوە، و ئەم
-        // ڕیزە بەهاکە بەکاردەهێنێت. `Route<void>` بەهاکە دەگۆڕێت بۆ
-        // `void` و بەراوردەکە کۆمپایل نابێت.
-        final result = await Navigator.of(context).push(
+    // ── Re-tap on the active tab = refresh ───────────────────────────────
+    // Fire-and-forget on purpose. Awaiting would hold this handler open for
+    // the whole drop + fetch + settle (~1s), and a second tap during that
+    // window is already a no-op inside the controller, so there is nothing
+    // to serialise.
+    if (index == _tabIndex && index != 2) {
+      unawaited(_refreshers[index]?.refresh() ?? Future<void>.value());
+      return;
+    }
+    if (index == 2) {
+      if (_openingCreate) return;
+      _openingCreate = true;
+      // ⚠ <String>، نەک <void>: `AdCreateScreen` بە
+      // `Navigator.pop(context, 'refresh')` دەگەڕێتەوە، و ئەم
+      // ڕیزە بەهاکە بەکاردەهێنێت. `Route<void>` بەهاکە دەگۆڕێت بۆ
+      // `void` و بەراوردەکە کۆمپایل نابێت.
+      String? result;
+      try {
+        result = await Navigator.of(context).push(
           ProxoPageRoute<String>(builder: (_) => const AdCreateScreen()),
         );
-        // FIX: هەڵە → بگەڕێوە سەرەکی + refresh هەموو بەشەکان
-        if (result == 'refresh' && mounted) {
-          setState(() {
-            _tabIndex = 1;
-            _refreshCounter++;
-            _builtTabs.add(1);
-          });
-          mainShellTab.value = 1;
-        }
-        return;
+      } finally {
+        _openingCreate = false;
       }
-      _switchTab(index);
+      // FIX: هەڵە → بگەڕێوە سەرەکی + refresh هەموو بەشەکان
+      if (result == 'refresh' && mounted) {
+        setState(() {
+          _tabIndex = 1;
+          _refreshCounter++;
+          _builtTabs.add(1);
+        });
+        mainShellTab.value = 1;
+      }
+      return;
     }
+    _switchTab(index);
+  }
 
   Widget _buildTab(int index) {
     switch (index) {
@@ -419,18 +412,18 @@ class MainShellState extends State<MainShell> {
           key: ValueKey('home_$_refreshCounter'),
           isActive: _tabIndex == 0,
           refreshController: _refreshers[0],
-          onMenuTap:   _openSidebar,
+          onMenuTap: _openSidebar,
           onCreateTap: () => _onTabTap(2),
-          onGoToAds:   () => _onTabTap(1),
+          onGoToAds: () => _onTabTap(1),
           // کوێک ئاکشنەکانی پەڕەی سەرەکی:
           //   ئامرازی پەیوەندی → تابی Tools ی ئێستا (3)
           //   پرسیارە دووبارەکان → شاشەی تایبەتی FAQ، وەک ڕووتێکی پوش‌کراو
           //     (هەمان شێوازی `AdCreateScreen`) — باری خوارەوە و تابەکان
           //     دەستیان لێنەدراوە، و «دواوە» دەگەڕێتەوە سەر پەڕەی سەرەکی.
-          onToolsTap:  () => _onTabTap(3),
-          onFaqTap:    () => Navigator.of(context).push(
-                ProxoPageRoute<void>(builder: (_) => const FaqScreen()),
-              ),
+          onToolsTap: () => _onTabTap(3),
+          onFaqTap: () => Navigator.of(context).push(
+            ProxoPageRoute<void>(builder: (_) => const FaqScreen()),
+          ),
         );
       case 1:
         return RepaintBoundary(
@@ -447,9 +440,9 @@ class MainShellState extends State<MainShell> {
           ),
         );
       case 3:
-        return const RepaintBoundary(
-          key: ValueKey('tools'),
-          child: ToolsScreen(),
+        return RepaintBoundary(
+          key: const ValueKey('tools'),
+          child: ToolsScreen(isActive: _tabIndex == 3),
         );
       case 4:
         return RepaintBoundary(
@@ -463,13 +456,13 @@ class MainShellState extends State<MainShell> {
         return HomeScreen(
           key: ValueKey('home_def_$_refreshCounter'),
           isActive: _tabIndex == 0,
-          onMenuTap:   _openSidebar,
+          onMenuTap: _openSidebar,
           onCreateTap: () => _onTabTap(2),
-          onGoToAds:   () => _onTabTap(1),
-          onToolsTap:  () => _onTabTap(3),
-          onFaqTap:    () => Navigator.of(context).push(
-                ProxoPageRoute<void>(builder: (_) => const FaqScreen()),
-              ),
+          onGoToAds: () => _onTabTap(1),
+          onToolsTap: () => _onTabTap(3),
+          onFaqTap: () => Navigator.of(context).push(
+            ProxoPageRoute<void>(builder: (_) => const FaqScreen()),
+          ),
         );
     }
   }
@@ -512,40 +505,49 @@ class MainShellState extends State<MainShell> {
           Directionality(
             textDirection: TextDirection.ltr,
             child: Scaffold(
-            key: _scaffoldKey,
-            backgroundColor: AppColors.bg,
-            endDrawer: Directionality(
-              textDirection: TextDirection.rtl,
-              child: ProxoSidebar(
-                onClose: _closeSidebar,
-                onNavigate: (page) {
-                  _closeSidebar();
-                  if (page == 'ads')       _switchTab(1);
-                  if (page == 'tools')     _switchTab(3);
-                  if (page == 'tutorials') _switchTab(4);
-                },
+              key: _scaffoldKey,
+              backgroundColor: AppColors.bg,
+              endDrawer: Directionality(
+                textDirection: TextDirection.rtl,
+                child: ProxoSidebar(
+                  onClose: _closeSidebar,
+                  selectedRoute: switch (_tabIndex) {
+                    1 => 'ads',
+                    3 => 'tools',
+                    4 => 'profile',
+                    _ => 'home',
+                  },
+                  onNavigate: (page) {
+                    _closeSidebar();
+                    if (page == 'home') _switchTab(0);
+                    if (page == 'ads') _switchTab(1);
+                    if (page == 'tools') _switchTab(3);
+                    if (page == 'profile') _switchTab(4);
+                  },
+                ),
               ),
-            ),
-            // ⚠ `Drawer` نییە بەڵکو ڕاستەوخۆ `ProxoSidebar`ە: پانێڵەکە
-            // خۆی `Container(width: …)` + `Material` + سێبەری خۆی هەیە،
-            // بۆیە لفەکردنی بە `Drawer` دوو ڕوو و دوو سێبەری لەسەر یەک
-            // دادەنا. `DrawerController` هیچ پانییەکی ناسەپێنێت.
-            // The kept-alive IndexedStack switches immediately. Motion stays
-            // in the tiny bottom-nav indicator and press capsule, exactly like
-            // the supplied reference; no full-screen opacity/saveLayer pass.
-            body: Directionality(
-              textDirection: TextDirection.rtl,
-              child: _buildBody(),
-            ),
-            bottomNavigationBar: ProxoBottomNav(
-              currentIndex: _tabIndex,
-              onTap: _onTabTap,
-            ),
+              // ⚠ `Drawer` نییە بەڵکو ڕاستەوخۆ `ProxoSidebar`ە: پانێڵەکە
+              // خۆی `Container(width: …)` + `Material` + سێبەری خۆی هەیە،
+              // بۆیە لفەکردنی بە `Drawer` دوو ڕوو و دوو سێبەری لەسەر یەک
+              // دادەنا. `DrawerController` هیچ پانییەکی ناسەپێنێت.
+              // The kept-alive IndexedStack switches immediately. Motion stays
+              // in the tiny bottom-nav indicator and press capsule, exactly like
+              // the supplied reference; no full-screen opacity/saveLayer pass.
+              body: Directionality(
+                textDirection: TextDirection.rtl,
+                child: _buildBody(),
+              ),
+              bottomNavigationBar: ProxoBottomNav(
+                currentIndex: _tabIndex,
+                onTap: _onTabTap,
+              ),
             ),
           ),
           // ── No Internet Banner ──────────────────────────────────────────
           const Positioned(
-            top: 0, left: 0, right: 0,
+            top: 0,
+            left: 0,
+            right: 0,
             child: ProxoNoInternetBanner(),
           ),
         ],

@@ -35,6 +35,14 @@ class AdDetailStrings {
 
   // ── سەرەوە ──────────────────────────────────────────────────────────────
   String get adId => _t('ئایدی ڕیکلام', 'معرّف الإعلان');
+  String get paymentStatus => _t('دۆخی پارەدان', 'حالة الدفع');
+  String paymentStatusLabel(String value) => switch (value.toLowerCase()) {
+        'paid' || 'approved' || 'completed' => _t('پارەدراوە', 'مدفوع'),
+        'pending' || 'unpaid' => _t('چاوەڕوانی پارەدان', 'بانتظار الدفع'),
+        'rejected' || 'failed' => _t('سەرکەوتوو نەبوو', 'لم ينجح'),
+        'refunded' => _t('گەڕێندراوەتەوە', 'مسترد'),
+        _ => value.isEmpty ? '—' : value,
+      };
   String get date => _t('ڕێکەوت', 'التاريخ');
 
   // ── ئامانجی ڕیکلام ──────────────────────────────────────────────────────

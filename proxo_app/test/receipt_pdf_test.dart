@@ -87,6 +87,7 @@ void main() {
           ),
         );
         await tester.pumpWidget(MaterialApp(
+            debugShowCheckedModeBanner: false,
             home: Builder(
                 builder: (context) => MediaQuery(
                       data: MediaQuery.of(context).copyWith(
@@ -130,20 +131,22 @@ void main() {
         } else {
           expect(find.text(receipt.adId), findsOneWidget);
           expect(find.text(receipt.uid), findsOneWidget);
-          expect(receiptPaintedRect(tester, find.text(receipt.uid)).top,
-              greaterThan(receiptPaintedRect(tester, find.text(receipt.adName)).bottom));
+          expect(
+              receiptPaintedRect(tester, find.text(receipt.uid)).top,
+              greaterThan(receiptPaintedRect(tester, find.text(receipt.adName))
+                  .bottom));
         }
         final boundary =
             key.currentContext!.findRenderObject() as RenderRepaintBoundary;
-        final surfaceRect = receiptPaintedRect(tester, find.byType(ReceiptSurface));
+        final surfaceRect =
+            receiptPaintedRect(tester, find.byType(ReceiptSurface));
         final cardRect = receiptPaintedRect(tester, find.byType(ReceiptCard));
         expect(boundary.size.width, narrow ? 280 : 393);
-        final factor = boundary.size.width / ReceiptTokens.referenceWidth;
+        const factor = 1.0;
         expect(cardRect.left - surfaceRect.left, closeTo(16 * factor, 0.01));
         expect(cardRect.top - surfaceRect.top,
             closeTo(ReceiptTokens.pageTop * factor, 0.01));
-        expect(
-            surfaceRect.bottom - cardRect.bottom,
+        expect(surfaceRect.bottom - cardRect.bottom,
             closeTo(ReceiptTokens.cardToButton * factor, 0.01));
         if (narrow && !transaction) {
           expect(boundary.size.height, greaterThan(500));

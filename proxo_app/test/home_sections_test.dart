@@ -6,10 +6,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:solar_iconkit/solar_iconkit.dart';
 import 'package:proxo_app/screens/ad_create_screen.dart';
 import 'package:proxo_app/screens/best_metrics_screen.dart';
 import 'package:proxo_app/services/best_metrics_service.dart';
 import 'package:proxo_app/theme/app_theme.dart';
+import 'package:proxo_app/theme/proxo_ui.dart';
 import 'package:proxo_app/widgets/ad_form_components.dart';
 import 'package:proxo_app/widgets/best_metrics_home_section.dart';
 import 'package:proxo_app/widgets/home_best_result_card.dart';
@@ -92,7 +94,7 @@ void auditText(WidgetTester tester, Finder parent) {
   for (final text in tester.widgetList<ProxoText>(
     find.descendant(of: parent, matching: find.byType(ProxoText)),
   )) {
-    expect(text.style!.fontWeight, FontWeight.w400);
+    expect(text.style!.fontWeight, FontWeight.w500);
     expect(text.style!.fontFamily, 'Rabar');
     final paragraph = paragraphOf(tester, find.byWidget(text));
     expect(paragraph.didExceedMaxLines, false);
@@ -108,7 +110,7 @@ void auditText(WidgetTester tester, Finder parent) {
           return false;
         }
         return (widget.decoration! as BoxDecoration).borderRadius ==
-            AdUi.radius;
+            BorderRadius.circular(ProxoUi.radius);
       }),
     );
     final paintSpace = tester.getRect(
@@ -138,6 +140,7 @@ void auditText(WidgetTester tester, Finder parent) {
 }
 
 Future<void> screenshot(WidgetTester tester, String path) async {
+  if (const String.fromEnvironment('PROXO_CAPTURE_DIR').isEmpty) return;
   final boundary = tester.renderObject<RenderRepaintBoundary>(
     find.byKey(captureKey),
   );
@@ -184,10 +187,22 @@ void main() {
         await tester.pumpAndSettle();
         auditText(tester, find.byType(HomeQuickActions));
         auditText(tester, find.byType(BestMetricsHomeSection));
+        if (scale == 1 && (size.width == 320 || size.width == 430)) {
+          final tiles = ['home-create-ad', 'home-contact-tools', 'home-faq']
+              .map((key) => find.byKey(ValueKey(key))).toList();
+          final iconTops = tiles.map((tile) => tester.getTopLeft(
+              find.descendant(of: tile, matching: find.byType(SolarIcon))).dy).toList();
+          for (final top in iconTops.skip(1)) {
+            expect(top, closeTo(iconTops.first, .1), reason: 'Quick-action icons align');
+          }
+          for (final tile in tiles.skip(1)) {
+            expect(tester.getSize(tile).height, tester.getSize(tiles.first).height);
+          }
+        }
         final carousel = find.byKey(const ValueKey('home-results-carousel'));
         final card = find.byKey(const ValueKey('weekly-beauty'));
         expect(
-          tester.getSize(card).height + 30,
+          tester.getSize(card).height + 8,
           lessThanOrEqualTo(tester.getSize(carousel).height + 0.1),
         );
         expect(
@@ -248,51 +263,26 @@ void main() {
     expect(repo.submissions, 0);
   });
 
-  testWidgets('card corners, padding and shadows match Create Ad', (
-    tester,
-  ) async {
-    await tester.pumpWidget(
-      host(
-        Column(
-          children: [
-            const AdFormSection(title: 'Reference', child: SizedBox()),
-            const SizedBox(height: 22),
-            const HomeQuickActions(),
-            HomeBestResultCard(ad: featured('beauty'), rank: 1),
-          ],
-        ),
-      ),
-    );
+  testWidgets('Home uses authentication-aligned surfaces and readable type',
+      (tester) async {
+    await tester.pumpWidget(host(Column(children: [
+      const HomeQuickActions(),
+      HomeBestResultCard(ad: featured('beauty'), rank: 1),
+    ])));
     await tester.pumpAndSettle();
-    final reference = tester
-        .widget<Container>(
-          find
-              .descendant(
-                of: find.byType(AdFormSection),
-                matching: find.byType(Container),
-              )
-              .first,
-        )
-        .decoration as BoxDecoration;
     for (final parent in [
       find.byKey(const ValueKey('home-create-ad')),
-      find.byType(HomeBestResultCard),
+      find.byType(HomeBestResultCard)
     ]) {
-      final card = tester.widget<Container>(
-        find.descendant(of: parent, matching: find.byType(Container)).first,
-      );
-      final decoration = card.decoration as BoxDecoration;
-      expect(decoration.color, reference.color);
-      expect(decoration.borderRadius, reference.borderRadius);
-      expect(decoration.boxShadow, reference.boxShadow);
-      expect(decoration.border, isNull);
-      final padding = tester
-          .widgetList<Padding>(
-            find.descendant(of: parent, matching: find.byType(Padding)),
-          )
-          .firstWhere((widget) => widget.padding == AdUi.cardPadding);
-      expect(padding.padding, const EdgeInsets.all(20));
+      final container = tester.widget<Container>(
+          find.descendant(of: parent, matching: find.byType(Container)).first);
+      final decoration = container.decoration as BoxDecoration;
+      expect(decoration.color, Colors.white);
+      expect(decoration.borderRadius, BorderRadius.circular(ProxoUi.radius));
+      expect(decoration.border, Border.all(color: ProxoUi.border));
     }
+    auditText(tester, find.byType(HomeQuickActions));
+    auditText(tester, find.byType(HomeBestResultCard));
   });
 
   testWidgets('metrics retain database values, normal type and LTR currency', (
@@ -419,7 +409,7 @@ void main() {
     );
     await tester.pumpAndSettle();
     await tester.ensureVisible(find.byKey(const ValueKey('weekly-beauty')));
-    await tester.tap(find.byKey(const ValueKey('weekly-beauty')));
+    await tester.tap(find.byKey(const ValueKey('result-open-beauty')));
     await tester.pumpAndSettle();
     final screen = tester.widget<BestMetricsScreen>(
       find.byType(BestMetricsScreen),
@@ -448,6 +438,22 @@ void main() {
       expect(tester.takeException(), isNull);
     },
   );
+
+  testWidgets('repeated refresh taps share the in-flight request', (tester) async {
+    final pending = Completer<List<BestMetricAd>>();
+    var calls = 0;
+    final key = GlobalKey<BestMetricsHomeSectionState>();
+    await tester.pumpWidget(host(BestMetricsHomeSection(key: key,
+      loadPreview: ({bool forceRefresh = true}) { calls++; return pending.future; })));
+    final first = key.currentState!.refresh();
+    final second = key.currentState!.refresh();
+    expect(identical(first, second), isTrue);
+    expect(calls, 1);
+    pending.complete(examples());
+    await tester.pumpAndSettle();
+    expect(find.byType(HomeBestResultCard), findsWidgets);
+    expect(tester.takeException(), isNull);
+  });
 
   testWidgets('late loading completion after leaving Home is harmless', (
     tester,

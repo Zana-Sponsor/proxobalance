@@ -1,0 +1,2130 @@
+{
+  "generated_at_utc": "2026-10-20T09:27:41.583646+00:00",
+  "flutter_version": "3.47.2",
+  "dart_version": "3.13.2",
+  "renderer": "Flutter test engine; actual production widget trees",
+  "fixture_notice": "Synthetic local data. No live payment, OTP, or account deletion.",
+  "limitations": [
+    "Widget captures are not screenshots from a physical Android/iOS device.",
+    "Pages reopen behavior uses a controlled repository, not a live database.",
+    "Template preview fixture deliberately shows retrieval failure and retry.",
+    "Full Home combines production widgets with fixture records, excluding remote initialization.",
+    "Operating-system share/print sheets, real keyboards, and payment settlement are not tested."
+  ],
+  "png_count": 101,
+  "pdf_count": 4,
+  "files": [
+    {
+      "file": "add-balance-fastpay-320x780.png",
+      "label": "Add Balance Fastpay",
+      "format": "png",
+      "viewport_logical_pixels": [
+        320,
+        780
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 97035,
+      "sha256": "b02854dbac43106356a462d0715ab1f83c1e4e6c042fded46935a5a49baf4eda",
+      "image_pixels": [
+        640,
+        1560
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "add-balance-fastpay-393x852.png",
+      "label": "Add Balance Fastpay",
+      "format": "png",
+      "viewport_logical_pixels": [
+        393,
+        852
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 109626,
+      "sha256": "9c9b6a656552cb15978628022d9b1deb9e9aeb9d173e25eb96c572bcdeaed125",
+      "image_pixels": [
+        786,
+        1704
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "add-balance-fastpay-430x932.png",
+      "label": "Add Balance Fastpay",
+      "format": "png",
+      "viewport_logical_pixels": [
+        430,
+        932
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 110590,
+      "sha256": "5761940a083d577eb26440cfd37a40c91ba08599629ef3fb67436b8520d8518f",
+      "image_pixels": [
+        860,
+        1864
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "add-balance-initial-320x780.png",
+      "label": "Add Balance Initial",
+      "format": "png",
+      "viewport_logical_pixels": [
+        320,
+        780
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 83693,
+      "sha256": "61c6301275b4e6937253724532646be3d1045e8803c6daa559805261e9bc081f",
+      "image_pixels": [
+        640,
+        1560
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "add-balance-initial-393x852.png",
+      "label": "Add Balance Initial",
+      "format": "png",
+      "viewport_logical_pixels": [
+        393,
+        852
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 84501,
+      "sha256": "71e8d4b0d5213b7dbceee2d5fe956d91c75b81961ea898a3b5e8ac62b11eebd3",
+      "image_pixels": [
+        786,
+        1704
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "add-balance-initial-430x932.png",
+      "label": "Add Balance Initial",
+      "format": "png",
+      "viewport_logical_pixels": [
+        430,
+        932
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 84941,
+      "sha256": "c705a0c0db8e9d415c205e53748ac9f17cb5794c2b779780b9b376ee03194ee3",
+      "image_pixels": [
+        860,
+        1864
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "add-balance-manual-bottom-320x780.png",
+      "label": "Add Balance Manual Bottom",
+      "format": "png",
+      "viewport_logical_pixels": [
+        320,
+        780
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 96863,
+      "sha256": "ed86267a27bff40cac5e898d0cd5256c57636c3c1c5d2977327886a8f15162ba",
+      "image_pixels": [
+        640,
+        1560
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "add-balance-manual-bottom-393x852.png",
+      "label": "Add Balance Manual Bottom",
+      "format": "png",
+      "viewport_logical_pixels": [
+        393,
+        852
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 110955,
+      "sha256": "eaf3ed60774ca009ad826f6fae43ce6c42aaf19f1dd56eb6558900cb39673554",
+      "image_pixels": [
+        786,
+        1704
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "add-balance-manual-bottom-430x932.png",
+      "label": "Add Balance Manual Bottom",
+      "format": "png",
+      "viewport_logical_pixels": [
+        430,
+        932
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 126375,
+      "sha256": "46db7bf51abd11fcd2eb299effa8235985affa48a36319b748d093424b207f56",
+      "image_pixels": [
+        860,
+        1864
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "add-balance-validation-320x780.png",
+      "label": "Add Balance Validation",
+      "format": "png",
+      "viewport_logical_pixels": [
+        320,
+        780
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 96756,
+      "sha256": "b741aec98d99504c88179e95629a56da4750025244ca30635d060397d7229774",
+      "image_pixels": [
+        640,
+        1560
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "add-balance-validation-393x852.png",
+      "label": "Add Balance Validation",
+      "format": "png",
+      "viewport_logical_pixels": [
+        393,
+        852
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 110874,
+      "sha256": "b2e83d35c05bcefa458a78b554b74d57d964f67c2b130dc48e8988717324cd7e",
+      "image_pixels": [
+        786,
+        1704
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "add-balance-validation-430x932.png",
+      "label": "Add Balance Validation",
+      "format": "png",
+      "viewport_logical_pixels": [
+        430,
+        932
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 126141,
+      "sha256": "64b1a0fe21caf447f643bd2fa602873a0348cee7d184bc8353a37917f371e3af",
+      "image_pixels": [
+        860,
+        1864
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "advertisement-receipt-bottom-320x780.png",
+      "label": "Advertisement Receipt Bottom",
+      "format": "png",
+      "viewport_logical_pixels": [
+        320,
+        780
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 106875,
+      "sha256": "44182bff6cf444e2555927afc4aff132a13b398720263db7d43f274bc2268366",
+      "image_pixels": [
+        640,
+        1560
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "advertisement-receipt-bottom-393x852.png",
+      "label": "Advertisement Receipt Bottom",
+      "format": "png",
+      "viewport_logical_pixels": [
+        393,
+        852
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 125712,
+      "sha256": "40b15daa696015c35def16cd3f97670335165fe04051f21b946a3686687f22e8",
+      "image_pixels": [
+        786,
+        1704
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "advertisement-receipt-bottom-430x932.png",
+      "label": "Advertisement Receipt Bottom",
+      "format": "png",
+      "viewport_logical_pixels": [
+        430,
+        932
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 138699,
+      "sha256": "004bb3c63b6dfac2d8ea94fea352b1b83b7eab724e8ca61c9638ebbc72632de8",
+      "image_pixels": [
+        860,
+        1864
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "advertisement-receipt-top-320x780.png",
+      "label": "Advertisement Receipt Top",
+      "format": "png",
+      "viewport_logical_pixels": [
+        320,
+        780
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 113065,
+      "sha256": "d00accfc017c2721dd190985a2be4e84ab4d079be06cd0a7fb59bc237bb39e54",
+      "image_pixels": [
+        640,
+        1560
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "advertisement-receipt-top-393x852.png",
+      "label": "Advertisement Receipt Top",
+      "format": "png",
+      "viewport_logical_pixels": [
+        393,
+        852
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 131859,
+      "sha256": "c514fca0479faa2e7c64b8ea8a405f46507141e145650d142659bfbacc821c6f",
+      "image_pixels": [
+        786,
+        1704
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "advertisement-receipt-top-430x932.png",
+      "label": "Advertisement Receipt Top",
+      "format": "png",
+      "viewport_logical_pixels": [
+        430,
+        932
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 138592,
+      "sha256": "b96c57449b243234b86c411f66c31a49abfebdff6d446cb58f0b51f81c860e53",
+      "image_pixels": [
+        860,
+        1864
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "advertisements-empty-320x740.png",
+      "label": "Advertisements Empty",
+      "format": "png",
+      "viewport_logical_pixels": [
+        320,
+        740
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 29252,
+      "sha256": "4b2079fdda38071f519f90741b0d4141a3ec304df9645bce93d31e6a005f8d54",
+      "image_pixels": [
+        640,
+        650
+      ],
+      "capture_extent": "component_or_export",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "advertisements-empty-430x932.png",
+      "label": "Advertisements Empty",
+      "format": "png",
+      "viewport_logical_pixels": [
+        430,
+        932
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 29565,
+      "sha256": "10262192e9fd6e64765cf647b13a30709cfc8d09e8e02cc3d437f3af1d674901",
+      "image_pixels": [
+        860,
+        610
+      ],
+      "capture_extent": "component_or_export",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "advertisements-error-320x740.png",
+      "label": "Advertisements Error",
+      "format": "png",
+      "viewport_logical_pixels": [
+        320,
+        740
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 23976,
+      "sha256": "67533382cc2d541a7fce08780ceced6a7277739d93f4b30c1f2dbd4c5bd6e663",
+      "image_pixels": [
+        640,
+        610
+      ],
+      "capture_extent": "component_or_export",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "advertisements-error-430x932.png",
+      "label": "Advertisements Error",
+      "format": "png",
+      "viewport_logical_pixels": [
+        430,
+        932
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 24990,
+      "sha256": "8511f1591aa752547f8aa53b26010bea718500c65676eef54d4cf2f20bd853f2",
+      "image_pixels": [
+        860,
+        610
+      ],
+      "capture_extent": "component_or_export",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "app-bar-badge-320x568.png",
+      "label": "App Bar Badge",
+      "format": "png",
+      "viewport_logical_pixels": [
+        320,
+        568
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 15354,
+      "sha256": "4f76e63915c884567229f9a1d0a8f46e156486169cc057cb80400099bdf3c650",
+      "image_pixels": [
+        640,
+        1136
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "app-bar-badge-430x932.png",
+      "label": "App Bar Badge",
+      "format": "png",
+      "viewport_logical_pixels": [
+        430,
+        932
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 20240,
+      "sha256": "996e34d5cb366abdfd18e27eaeee35497c341302d3d539e4367a0654786c2635",
+      "image_pixels": [
+        860,
+        1864
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "auth-login-reference-320x740.png",
+      "label": "Auth Login Reference",
+      "format": "png",
+      "viewport_logical_pixels": [
+        320,
+        740
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 70748,
+      "sha256": "6dc6ddbad47eaad5cd9a0efd0450dc75f8463bd62934a6461e36d2b06dbfb08c",
+      "image_pixels": [
+        640,
+        1480
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "auth-login-reference-430x932.png",
+      "label": "Auth Login Reference",
+      "format": "png",
+      "viewport_logical_pixels": [
+        430,
+        932
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 74731,
+      "sha256": "6e2281fd7dd5e4dbe31f1864848340d97b0c0880af1d18d952fb924eb18b979f",
+      "image_pixels": [
+        860,
+        1864
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "auth-signup-reference-320x740.png",
+      "label": "Auth Signup Reference",
+      "format": "png",
+      "viewport_logical_pixels": [
+        320,
+        740
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 98274,
+      "sha256": "f3090377e72d932f39ce5c0b0efdbd5d0d684329638f47219cef1fd34d82bfb7",
+      "image_pixels": [
+        640,
+        1480
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "auth-signup-reference-430x932.png",
+      "label": "Auth Signup Reference",
+      "format": "png",
+      "viewport_logical_pixels": [
+        430,
+        932
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 109442,
+      "sha256": "e30e5d8a2b07680b5ef45bf020c91fcb57f7e12870504e27085d80d36c7f5b52",
+      "image_pixels": [
+        860,
+        1864
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "best-card-failed-thumbnail-320x740.png",
+      "label": "Best Card Failed Thumbnail",
+      "format": "png",
+      "viewport_logical_pixels": [
+        320,
+        740
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 30518,
+      "sha256": "3d3553ebda29ef84679ad5e66eea7cb650ad2e14eec48b013eb6bd04a05967a3",
+      "image_pixels": [
+        640,
+        544
+      ],
+      "capture_extent": "component_or_export",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "best-card-failed-thumbnail-430x932.png",
+      "label": "Best Card Failed Thumbnail",
+      "format": "png",
+      "viewport_logical_pixels": [
+        430,
+        932
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 31836,
+      "sha256": "f5912a12fc4a3cdb33b1d096066efd6c1488f4730f3574eeb3bc73485ce3587a",
+      "image_pixels": [
+        860,
+        544
+      ],
+      "capture_extent": "component_or_export",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "best-card-no-thumbnail-collapsed-320x740.png",
+      "label": "Best Card No Thumbnail Collapsed",
+      "format": "png",
+      "viewport_logical_pixels": [
+        320,
+        740
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 30179,
+      "sha256": "acfee1033a40441e95820f502e16912a3ed9ab8a395814c68c0a0c8928ffdae0",
+      "image_pixels": [
+        640,
+        544
+      ],
+      "capture_extent": "component_or_export",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "best-card-no-thumbnail-collapsed-430x932.png",
+      "label": "Best Card No Thumbnail Collapsed",
+      "format": "png",
+      "viewport_logical_pixels": [
+        430,
+        932
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 31492,
+      "sha256": "8d5ade16a8f5d424f9d4b894816cbdc9e7dce4df795c806800989d40437a569e",
+      "image_pixels": [
+        860,
+        544
+      ],
+      "capture_extent": "component_or_export",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "best-card-no-thumbnail-expanded-320x740.png",
+      "label": "Best Card No Thumbnail Expanded",
+      "format": "png",
+      "viewport_logical_pixels": [
+        320,
+        740
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 50084,
+      "sha256": "28e583b354476748fe2ada8ec6e1a9f67e78a7ce85a29523816a55da66c06bea",
+      "image_pixels": [
+        640,
+        826
+      ],
+      "capture_extent": "component_or_export",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "best-card-no-thumbnail-expanded-430x932.png",
+      "label": "Best Card No Thumbnail Expanded",
+      "format": "png",
+      "viewport_logical_pixels": [
+        430,
+        932
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 51965,
+      "sha256": "b1132be0ac2d2e660d9f704d5fccc73e2e81c8d344959806e89784748520143f",
+      "image_pixels": [
+        860,
+        826
+      ],
+      "capture_extent": "component_or_export",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "best-card-with-thumbnail-collapsed-320x740.png",
+      "label": "Best Card With Thumbnail Collapsed",
+      "format": "png",
+      "viewport_logical_pixels": [
+        320,
+        740
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 28012,
+      "sha256": "1d00b76665177dfaca24da96cebfea3704d725648a0d98d66f2710845a1161ca",
+      "image_pixels": [
+        640,
+        544
+      ],
+      "capture_extent": "component_or_export",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "best-card-with-thumbnail-collapsed-430x932.png",
+      "label": "Best Card With Thumbnail Collapsed",
+      "format": "png",
+      "viewport_logical_pixels": [
+        430,
+        932
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 43521,
+      "sha256": "4b5ac31c55c2c82dafcd99738205c056bba5735bdc585ad885552540154aee83",
+      "image_pixels": [
+        860,
+        544
+      ],
+      "capture_extent": "component_or_export",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "best-card-with-thumbnail-expanded-320x740.png",
+      "label": "Best Card With Thumbnail Expanded",
+      "format": "png",
+      "viewport_logical_pixels": [
+        320,
+        740
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 47927,
+      "sha256": "aa1321c9ab4ac9709817ec0864a7243b2dbd13f2c0a6ee8dcf5ed95dd5b64aee",
+      "image_pixels": [
+        640,
+        826
+      ],
+      "capture_extent": "component_or_export",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "best-card-with-thumbnail-expanded-430x932.png",
+      "label": "Best Card With Thumbnail Expanded",
+      "format": "png",
+      "viewport_logical_pixels": [
+        430,
+        932
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 64079,
+      "sha256": "1fb43a4f4d342c634cb2726c3f4ba832b1063d424e15123d7705ec619bbecac0",
+      "image_pixels": [
+        860,
+        826
+      ],
+      "capture_extent": "component_or_export",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "best-results-section-collapsed-320x740.png",
+      "label": "Best Results Section Collapsed",
+      "format": "png",
+      "viewport_logical_pixels": [
+        320,
+        740
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 45473,
+      "sha256": "b93ee620eb1a95414641c1409215b28e7132d7a65e0182278d97b2759a53197f",
+      "image_pixels": [
+        640,
+        720
+      ],
+      "capture_extent": "component_or_export",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "best-results-section-collapsed-430x932.png",
+      "label": "Best Results Section Collapsed",
+      "format": "png",
+      "viewport_logical_pixels": [
+        430,
+        932
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 46699,
+      "sha256": "2056c18e8c52ab9db2ed846e04dce146001d127256c9aa45a196379a1361766b",
+      "image_pixels": [
+        860,
+        720
+      ],
+      "capture_extent": "component_or_export",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "best-results-section-expanded-320x740.png",
+      "label": "Best Results Section Expanded",
+      "format": "png",
+      "viewport_logical_pixels": [
+        320,
+        740
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 70495,
+      "sha256": "25bd9d3d750b105c14d7d01a20cdb6630e9b4d9673491684c6686a7ea0df5652",
+      "image_pixels": [
+        640,
+        1098
+      ],
+      "capture_extent": "component_or_export",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "best-results-section-expanded-430x932.png",
+      "label": "Best Results Section Expanded",
+      "format": "png",
+      "viewport_logical_pixels": [
+        430,
+        932
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 72340,
+      "sha256": "a43cea427bcb6ece167a6cb873231fa747a351b8f416e32811ebc2f34966fcf3",
+      "image_pixels": [
+        860,
+        1098
+      ],
+      "capture_extent": "component_or_export",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "fastpay-confirmation-320x780.png",
+      "label": "Fastpay Confirmation",
+      "format": "png",
+      "viewport_logical_pixels": [
+        320,
+        780
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 60979,
+      "sha256": "244bafb43dd8bda6820dea864f71de75abce8ce6eaea94341dd6b424b2db6c09",
+      "image_pixels": [
+        640,
+        1560
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "fastpay-confirmation-430x932.png",
+      "label": "Fastpay Confirmation",
+      "format": "png",
+      "viewport_logical_pixels": [
+        430,
+        932
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 63629,
+      "sha256": "ec29c957633797eebc3f0691aa789e2e95dd900e76ba2489420f38fb93fae8db",
+      "image_pixels": [
+        860,
+        1864
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "home-overview-320x740.png",
+      "label": "Home Overview",
+      "format": "png",
+      "viewport_logical_pixels": [
+        320,
+        740
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 110029,
+      "sha256": "ce20faa8bdc7389366176d34f969c287ee3d186462b91bce12de3f0678e60d45",
+      "image_pixels": [
+        640,
+        1480
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "home-overview-430x932.png",
+      "label": "Home Overview",
+      "format": "png",
+      "viewport_logical_pixels": [
+        430,
+        932
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 115677,
+      "sha256": "5459b1dedbc4098b80a75a5fd74b487dcb44e062b015652074e2336cb4b215e3",
+      "image_pixels": [
+        860,
+        1864
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "home-results-expanded-320x740.png",
+      "label": "Home Results Expanded",
+      "format": "png",
+      "viewport_logical_pixels": [
+        320,
+        740
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 105406,
+      "sha256": "4d5f9d5b511acf58a5da6838b82dedb1510cb11ddc98cc250b84557c519c8569",
+      "image_pixels": [
+        640,
+        1480
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "home-results-expanded-430x932.png",
+      "label": "Home Results Expanded",
+      "format": "png",
+      "viewport_logical_pixels": [
+        430,
+        932
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 138325,
+      "sha256": "8b5cc81f4477bb81cbb1b1cd83b2d3278acb0a6ed693edbced40f360c63262e4",
+      "image_pixels": [
+        860,
+        1864
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "menu-bottom-320x568.png",
+      "label": "Menu Bottom",
+      "format": "png",
+      "viewport_logical_pixels": [
+        320,
+        568
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 64075,
+      "sha256": "5766b6c49d41524630fa842b0614a8295a112510ffef0b609357a621cd5d740b",
+      "image_pixels": [
+        640,
+        1136
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "menu-bottom-430x932.png",
+      "label": "Menu Bottom",
+      "format": "png",
+      "viewport_logical_pixels": [
+        430,
+        932
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 98721,
+      "sha256": "2a6f21bfef4899eb72a06fd65253fea9a51177aeaedebbdbf79968e1ccf213ab",
+      "image_pixels": [
+        860,
+        1864
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "menu-open-drawer-320x568.png",
+      "label": "Menu Open Drawer",
+      "format": "png",
+      "viewport_logical_pixels": [
+        320,
+        568
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 75110,
+      "sha256": "8f52fe37b66112283fe878cab40acf0a5f3fe946025081c49f1544e7b9f449b6",
+      "image_pixels": [
+        640,
+        1136
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "menu-top-320x568.png",
+      "label": "Menu Top",
+      "format": "png",
+      "viewport_logical_pixels": [
+        320,
+        568
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 75029,
+      "sha256": "f59c6c99c34e5ea64e52020fa447222f9551433800b3fb74d8c2cce18dd2094a",
+      "image_pixels": [
+        640,
+        1136
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "menu-top-430x932.png",
+      "label": "Menu Top",
+      "format": "png",
+      "viewport_logical_pixels": [
+        430,
+        932
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 98721,
+      "sha256": "2a6f21bfef4899eb72a06fd65253fea9a51177aeaedebbdbf79968e1ccf213ab",
+      "image_pixels": [
+        860,
+        1864
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "pages-create-bottom-320x740.png",
+      "label": "Pages Create Bottom",
+      "format": "png",
+      "viewport_logical_pixels": [
+        320,
+        740
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 70568,
+      "sha256": "85f246311f0c8786a226acec8b8ede7109715d5e9636f3432aa493d120f5e2e2",
+      "image_pixels": [
+        640,
+        1480
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "pages-create-bottom-430x932.png",
+      "label": "Pages Create Bottom",
+      "format": "png",
+      "viewport_logical_pixels": [
+        430,
+        932
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 91336,
+      "sha256": "20d707a9222d477b92dcba9ff9a407a4bf4550e140b5e385ecf8e76b7738ef61",
+      "image_pixels": [
+        860,
+        1864
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "pages-create-fields-320x740.png",
+      "label": "Pages Create Fields",
+      "format": "png",
+      "viewport_logical_pixels": [
+        320,
+        740
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 74790,
+      "sha256": "7223e8ce98501d49956085378e8e1de0ed75d9e38654691b2e3b89810c3aa7fb",
+      "image_pixels": [
+        640,
+        1480
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "pages-create-fields-430x932.png",
+      "label": "Pages Create Fields",
+      "format": "png",
+      "viewport_logical_pixels": [
+        430,
+        932
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 95526,
+      "sha256": "96b411cf6bb29aee675af42b39f154b55c634a86e091a31b46229b65e6ba57cc",
+      "image_pixels": [
+        860,
+        1864
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "pages-create-top-320x740.png",
+      "label": "Pages Create Top",
+      "format": "png",
+      "viewport_logical_pixels": [
+        320,
+        740
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 72780,
+      "sha256": "554bcb7dc7877a0edb8884c718024a0384ef58e35bf82fdb3d156298fbadca07",
+      "image_pixels": [
+        640,
+        1480
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "pages-create-top-430x932.png",
+      "label": "Pages Create Top",
+      "format": "png",
+      "viewport_logical_pixels": [
+        430,
+        932
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 94547,
+      "sha256": "463c48d8376a0021b86a76568b4a001caf766fa0f54cea15c5aa80b5a024ef69",
+      "image_pixels": [
+        860,
+        1864
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "pages-create-validation-320x740.png",
+      "label": "Pages Create Validation",
+      "format": "png",
+      "viewport_logical_pixels": [
+        320,
+        740
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 62508,
+      "sha256": "c4ab54dc5173766c48fa3fde1ac7afaa6c9b3ab7e4e531d957152eea89d5fa99",
+      "image_pixels": [
+        640,
+        1480
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "pages-create-validation-430x932.png",
+      "label": "Pages Create Validation",
+      "format": "png",
+      "viewport_logical_pixels": [
+        430,
+        932
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 84681,
+      "sha256": "b389dcbb3c34e99825bf026d825ac75484f69380f4afb24f62bfacfce1b819dd",
+      "image_pixels": [
+        860,
+        1864
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "pages-created-320x740.png",
+      "label": "Pages Created",
+      "format": "png",
+      "viewport_logical_pixels": [
+        320,
+        740
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 49831,
+      "sha256": "956b3e31609f962573503fc711a7458890bae801bacfb63de51280d5f91430b8",
+      "image_pixels": [
+        640,
+        1480
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "pages-created-430x932.png",
+      "label": "Pages Created",
+      "format": "png",
+      "viewport_logical_pixels": [
+        430,
+        932
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 53614,
+      "sha256": "5aae3783bd174b16aef1f3d1ea9f5d9fb93dad9230e706ebe0edd61f282f49b8",
+      "image_pixels": [
+        860,
+        1864
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "pages-empty-320x740.png",
+      "label": "Pages Empty",
+      "format": "png",
+      "viewport_logical_pixels": [
+        320,
+        740
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 35157,
+      "sha256": "f727570e9017ec397540969025a76b5d59ec5106eb0bff295ca2f12c67fde09f",
+      "image_pixels": [
+        640,
+        1480
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "pages-empty-430x932.png",
+      "label": "Pages Empty",
+      "format": "png",
+      "viewport_logical_pixels": [
+        430,
+        932
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 37555,
+      "sha256": "356d66591ebc5315658f6abdc8abfd4c55db5933640f40ca36efbc027b008f51",
+      "image_pixels": [
+        860,
+        1864
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "pages-loading-320x740.png",
+      "label": "Pages Loading",
+      "format": "png",
+      "viewport_logical_pixels": [
+        320,
+        740
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 10291,
+      "sha256": "bb3567cd9d97763ac007115f23a8ff90802b12f59a13e706cf803b636627446d",
+      "image_pixels": [
+        640,
+        1480
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "pages-loading-430x932.png",
+      "label": "Pages Loading",
+      "format": "png",
+      "viewport_logical_pixels": [
+        430,
+        932
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 13570,
+      "sha256": "1ac48d2e8d2fc075eb55262fe131f313dbb987bfe847c1089ea0fc85434600d1",
+      "image_pixels": [
+        860,
+        1864
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "pages-reopened-fixture-320x740.png",
+      "label": "Pages Reopened Fixture",
+      "format": "png",
+      "viewport_logical_pixels": [
+        320,
+        740
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 43390,
+      "sha256": "1e25d624c40ee41e9a941fcd0ce1e14dab83cb462dee74c98e00f3643add137a",
+      "image_pixels": [
+        640,
+        1480
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "pages-reopened-fixture-430x932.png",
+      "label": "Pages Reopened Fixture",
+      "format": "png",
+      "viewport_logical_pixels": [
+        430,
+        932
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 47353,
+      "sha256": "36bec062ceece50c6ae284099440c3fd4edfe6bf36f42114e14079c37434c0f1",
+      "image_pixels": [
+        860,
+        1864
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "pages-retrieval-error-320x740.png",
+      "label": "Pages Retrieval Error",
+      "format": "png",
+      "viewport_logical_pixels": [
+        320,
+        740
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 39647,
+      "sha256": "9bb343fd376427cf32035b4a991a0e7e6fbd700fc4623c6cefee080ae6339fe3",
+      "image_pixels": [
+        640,
+        1480
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "pages-retrieval-error-430x932.png",
+      "label": "Pages Retrieval Error",
+      "format": "png",
+      "viewport_logical_pixels": [
+        430,
+        932
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 43683,
+      "sha256": "581e170122988404b7a16541c5256de7187cab5a33bee22903c900c30ab12829",
+      "image_pixels": [
+        860,
+        1864
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "payment-details-fib-320x780.png",
+      "label": "Payment Details Fib",
+      "format": "png",
+      "viewport_logical_pixels": [
+        320,
+        780
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 99229,
+      "sha256": "7fe0cca7e728865047ae16ecc8e47214e6db5f1832663ed00c0d618303c57647",
+      "image_pixels": [
+        640,
+        1560
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "payment-details-fib-393x852.png",
+      "label": "Payment Details Fib",
+      "format": "png",
+      "viewport_logical_pixels": [
+        393,
+        852
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 113298,
+      "sha256": "cc70646bcb8be8e82683be1850097daeb80cec306b94b6c442eaf6633d3e34ab",
+      "image_pixels": [
+        786,
+        1704
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "payment-details-fib-430x932.png",
+      "label": "Payment Details Fib",
+      "format": "png",
+      "viewport_logical_pixels": [
+        430,
+        932
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 122009,
+      "sha256": "f16a77e0a031f493e9a60fd74f09ee800c123596a8208fd3873c3c44a2570199",
+      "image_pixels": [
+        860,
+        1864
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "payment-details-qicard-320x780.png",
+      "label": "Payment Details Qicard",
+      "format": "png",
+      "viewport_logical_pixels": [
+        320,
+        780
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 105741,
+      "sha256": "abeb57bee99760a5f59a1b80ef2a8f639f5d9f69edd503be9b3b7ddba8f3d9fb",
+      "image_pixels": [
+        640,
+        1560
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "payment-details-qicard-393x852.png",
+      "label": "Payment Details Qicard",
+      "format": "png",
+      "viewport_logical_pixels": [
+        393,
+        852
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 120015,
+      "sha256": "75441bf92e004ab6e0d834e27c25985d9211db32f028ff6f9ce0eadb7396e381",
+      "image_pixels": [
+        786,
+        1704
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "payment-details-qicard-430x932.png",
+      "label": "Payment Details Qicard",
+      "format": "png",
+      "viewport_logical_pixels": [
+        430,
+        932
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 129227,
+      "sha256": "f5b93aaf2546859e9adb02402dd3d13c659b3f3366c5b85b02b0cf98b31c7b2c",
+      "image_pixels": [
+        860,
+        1864
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "payment-receipt-bottom-320x780.png",
+      "label": "Payment Receipt Bottom",
+      "format": "png",
+      "viewport_logical_pixels": [
+        320,
+        780
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 90385,
+      "sha256": "6e23cb165a13bb2fea92cdaa84d9a2f4f641c6f88522fd7717882adeea435adc",
+      "image_pixels": [
+        640,
+        1560
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "payment-receipt-bottom-393x852.png",
+      "label": "Payment Receipt Bottom",
+      "format": "png",
+      "viewport_logical_pixels": [
+        393,
+        852
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 92144,
+      "sha256": "7a57b7e3840779f6cf52d42b6e999056bc08b379e9dd993edfbcf2a29d46e54c",
+      "image_pixels": [
+        786,
+        1704
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "payment-receipt-bottom-430x932.png",
+      "label": "Payment Receipt Bottom",
+      "format": "png",
+      "viewport_logical_pixels": [
+        430,
+        932
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 93879,
+      "sha256": "b01ee3bddc85fdadb1fb03647476a3a793ff1750d6951e56937d7f947cbc3a64",
+      "image_pixels": [
+        860,
+        1864
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "payment-receipt-top-320x780.png",
+      "label": "Payment Receipt Top",
+      "format": "png",
+      "viewport_logical_pixels": [
+        320,
+        780
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 90385,
+      "sha256": "6e23cb165a13bb2fea92cdaa84d9a2f4f641c6f88522fd7717882adeea435adc",
+      "image_pixels": [
+        640,
+        1560
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "payment-receipt-top-393x852.png",
+      "label": "Payment Receipt Top",
+      "format": "png",
+      "viewport_logical_pixels": [
+        393,
+        852
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 92144,
+      "sha256": "7a57b7e3840779f6cf52d42b6e999056bc08b379e9dd993edfbcf2a29d46e54c",
+      "image_pixels": [
+        786,
+        1704
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "payment-receipt-top-430x932.png",
+      "label": "Payment Receipt Top",
+      "format": "png",
+      "viewport_logical_pixels": [
+        430,
+        932
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 93879,
+      "sha256": "b01ee3bddc85fdadb1fb03647476a3a793ff1750d6951e56937d7f947cbc3a64",
+      "image_pixels": [
+        860,
+        1864
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "profile-bottom-320x568.png",
+      "label": "Profile Bottom",
+      "format": "png",
+      "viewport_logical_pixels": [
+        320,
+        568
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 61605,
+      "sha256": "dcd5bf4c82803f21af528101293af6240398e05bb3b9f000d5080cd082e7e32a",
+      "image_pixels": [
+        640,
+        1136
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "profile-bottom-430x932.png",
+      "label": "Profile Bottom",
+      "format": "png",
+      "viewport_logical_pixels": [
+        430,
+        932
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 119372,
+      "sha256": "e09836622678a3bde563207c11399dd384a9f080740e8c6f697380d23f33ec6f",
+      "image_pixels": [
+        860,
+        1864
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "profile-edit-bottom-320x568.png",
+      "label": "Profile Edit Bottom",
+      "format": "png",
+      "viewport_logical_pixels": [
+        320,
+        568
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 67124,
+      "sha256": "30976ae8bc425459dd7d1f76f0f34ffa519979a00cd39c10a863a2f05929da09",
+      "image_pixels": [
+        640,
+        1136
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "profile-edit-top-320x568.png",
+      "label": "Profile Edit Top",
+      "format": "png",
+      "viewport_logical_pixels": [
+        320,
+        568
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 64989,
+      "sha256": "a6b0f4baa1617f3c182e840e05bd40cd36a06a08019f079c94a9c3d49211a558",
+      "image_pixels": [
+        640,
+        1136
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "profile-edit-validation-keyboard-320x568.png",
+      "label": "Profile Edit Validation Keyboard",
+      "format": "png",
+      "viewport_logical_pixels": [
+        320,
+        568
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 34746,
+      "sha256": "6bf890a3c04836ae155a3b4d5d7ea22a18cb10ef25f3ccbd4506f6b789e99526",
+      "image_pixels": [
+        640,
+        1136
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "profile-missing-large-text-320x568.png",
+      "label": "Profile Missing Large Text",
+      "format": "png",
+      "viewport_logical_pixels": [
+        320,
+        568
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 75726,
+      "sha256": "bed4813f6e06e4ac2f3b9c07904b0f42d6806ece51a5f684f155ec91a6d48884",
+      "image_pixels": [
+        640,
+        1136
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1.5,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "profile-top-320x568.png",
+      "label": "Profile Top",
+      "format": "png",
+      "viewport_logical_pixels": [
+        320,
+        568
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 74058,
+      "sha256": "777e8fa1187a9cb89134c78e68eb26956b7e82333430d878669467a6a4505a3b",
+      "image_pixels": [
+        640,
+        1136
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "profile-top-430x932.png",
+      "label": "Profile Top",
+      "format": "png",
+      "viewport_logical_pixels": [
+        430,
+        932
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 122863,
+      "sha256": "52ac8fe67e32895ef58e485fa566483a639e3344f239e78a9d4329efbb77d5f9",
+      "image_pixels": [
+        860,
+        1864
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "receipt-pdfs/narrow_paid.pdf",
+      "label": "Advertisement receipt actual export (narrow, 200 percent text)",
+      "format": "pdf",
+      "viewport_logical_pixels": [
+        280,
+        640
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 462245,
+      "sha256": "d1602a13a093fe206c6860277450bc5f59d90fd8762dd6d64daeeabf6dbac7f8",
+      "text_scale": 2,
+      "capture_extent": "actual_full_receipt_export",
+      "component_logical_pixels": [
+        280.0,
+        2294.4285714285716
+      ],
+      "language": "ckb"
+    },
+    {
+      "file": "receipt-pdfs/narrow_paid.png",
+      "label": "Advertisement receipt actual export (narrow, 200 percent text)",
+      "format": "png",
+      "viewport_logical_pixels": [
+        280,
+        640
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 583456,
+      "sha256": "6751ec2d4cab63a9196b06ee3ba5c7b495e694df5bf07589e0f7f6f8ff2e3f18",
+      "image_pixels": [
+        1120,
+        9178
+      ],
+      "capture_extent": "actual_full_receipt_export",
+      "text_scale": 2,
+      "component_logical_pixels": [
+        280.0,
+        2294.4285714285716
+      ],
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 4
+    },
+    {
+      "file": "receipt-pdfs/standard_free.pdf",
+      "label": "Advertisement receipt actual export (standard, 100 percent text)",
+      "format": "pdf",
+      "viewport_logical_pixels": [
+        393,
+        640
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 192699,
+      "sha256": "c6685c18f7e1b710888b24cfc889f2e3a6685d14a23df1cfe5344a4c6cb3396d",
+      "text_scale": 1,
+      "capture_extent": "actual_full_receipt_export",
+      "component_logical_pixels": [
+        393.0,
+        750.7142857142858
+      ],
+      "language": "ckb"
+    },
+    {
+      "file": "receipt-pdfs/standard_free.png",
+      "label": "Advertisement receipt actual export (standard, 100 percent text)",
+      "format": "png",
+      "viewport_logical_pixels": [
+        393,
+        640
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 246737,
+      "sha256": "b36426ff4b46adf0a651e4ec821bae2a87dfd648742fa67107bd5a24bf69f25a",
+      "image_pixels": [
+        1572,
+        3003
+      ],
+      "capture_extent": "actual_full_receipt_export",
+      "text_scale": 1,
+      "component_logical_pixels": [
+        393.0,
+        750.7142857142858
+      ],
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 4
+    },
+    {
+      "file": "receipt-pdfs/transaction_narrow.pdf",
+      "label": "Payment receipt actual export (narrow, 200 percent text)",
+      "format": "pdf",
+      "viewport_logical_pixels": [
+        280,
+        640
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 273116,
+      "sha256": "a240bf49960094f869f808d475c87aaf187777b9b1cbad953ed401ee5a50f06b",
+      "text_scale": 2,
+      "capture_extent": "actual_full_receipt_export",
+      "component_logical_pixels": [
+        280.0,
+        1414.4285714285716
+      ],
+      "language": "ar"
+    },
+    {
+      "file": "receipt-pdfs/transaction_narrow.png",
+      "label": "Payment receipt actual export (narrow, 200 percent text)",
+      "format": "png",
+      "viewport_logical_pixels": [
+        280,
+        640
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 342646,
+      "sha256": "ecc6914f5c066853d3540956f2015e9ac7c803178bb4e200c8fb3da378140644",
+      "image_pixels": [
+        1120,
+        5658
+      ],
+      "capture_extent": "actual_full_receipt_export",
+      "text_scale": 2,
+      "component_logical_pixels": [
+        280.0,
+        1414.4285714285716
+      ],
+      "language": "ar",
+      "render_pixels_per_logical_pixel": 4
+    },
+    {
+      "file": "receipt-pdfs/transaction_standard.pdf",
+      "label": "Payment receipt actual export (standard, 100 percent text)",
+      "format": "pdf",
+      "viewport_logical_pixels": [
+        393,
+        640
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 126266,
+      "sha256": "6e734a8acfda3ab4e032ab9e18498813e8e127a4b08b852bc04629693c7cdf77",
+      "text_scale": 1,
+      "capture_extent": "actual_full_receipt_export",
+      "component_logical_pixels": [
+        393.0,
+        477.7142857142857
+      ],
+      "language": "ckb"
+    },
+    {
+      "file": "receipt-pdfs/transaction_standard.png",
+      "label": "Payment receipt actual export (standard, 100 percent text)",
+      "format": "png",
+      "viewport_logical_pixels": [
+        393,
+        640
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 161934,
+      "sha256": "40eae7d82b3dc888d294ab026819fba760132bce566effe83aab089715094646",
+      "image_pixels": [
+        1572,
+        1911
+      ],
+      "capture_extent": "actual_full_receipt_export",
+      "text_scale": 1,
+      "component_logical_pixels": [
+        393.0,
+        477.7142857142857
+      ],
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 4
+    },
+    {
+      "file": "statistics-error-320x740.png",
+      "label": "Statistics Error",
+      "format": "png",
+      "viewport_logical_pixels": [
+        320,
+        740
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 28945,
+      "sha256": "2dcd940ef19f2414baee3226841474d45506b2f0157719dc6b42ce7c78a1b51e",
+      "image_pixels": [
+        640,
+        1480
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "statistics-error-430x932.png",
+      "label": "Statistics Error",
+      "format": "png",
+      "viewport_logical_pixels": [
+        430,
+        932
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 32731,
+      "sha256": "51e933a9913eb062d6cc28eae34057f0d256ded9d496bd119f10b756cf3a6a93",
+      "image_pixels": [
+        860,
+        1864
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "statistics-loading-320x740.png",
+      "label": "Statistics Loading",
+      "format": "png",
+      "viewport_logical_pixels": [
+        320,
+        740
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 10301,
+      "sha256": "07678cf597abca77ef6ea77d76914d8a9145b01940ee04df002aca176e7c508c",
+      "image_pixels": [
+        640,
+        1480
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "statistics-loading-430x932.png",
+      "label": "Statistics Loading",
+      "format": "png",
+      "viewport_logical_pixels": [
+        430,
+        932
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 13564,
+      "sha256": "78023203c8582c1a1bc36db0e40ad9c8ffd76ef30fc67944b0c053672d888655",
+      "image_pixels": [
+        860,
+        1864
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "statistics-results-320x740.png",
+      "label": "Statistics Results",
+      "format": "png",
+      "viewport_logical_pixels": [
+        320,
+        740
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 56671,
+      "sha256": "d03c834566a516c381316dcd87b7a1f4cf9329d6d29f16b70af9a6962c26e2d9",
+      "image_pixels": [
+        640,
+        1480
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    },
+    {
+      "file": "statistics-results-430x932.png",
+      "label": "Statistics Results",
+      "format": "png",
+      "viewport_logical_pixels": [
+        430,
+        932
+      ],
+      "synthetic_sample_data": true,
+      "bytes": 61439,
+      "sha256": "9b8b6a36e35da2233bf125e5143b688ee1b78a002781a4bdc5f884f2e49c0442",
+      "image_pixels": [
+        860,
+        1864
+      ],
+      "capture_extent": "screen",
+      "text_scale": 1,
+      "language": "ckb",
+      "render_pixels_per_logical_pixel": 2
+    }
+  ]
+}

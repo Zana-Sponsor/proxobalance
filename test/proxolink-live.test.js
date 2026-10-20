@@ -13,7 +13,7 @@ const owner='11111111-1111-4111-8111-111111111111';
 const id='22222222-2222-4222-8222-222222222222';
 const other='33333333-3333-4333-8333-333333333333';
 const token='aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
-const card={id,user_id:owner,name:'Proxo',bio:'Hello',tt:'proxo_iq',template_key:'pill-white',template_version:TEMPLATE_VERSION,page_type:'contact',color_theme:'purple',card_language:'ku',platforms:{wa:'07501234567',tg:'proxo_iq'},status:'active',publish_status:'ready',updated_at:'2026-10-06T00:00:00Z'};
+const card={id,user_id:owner,name:'Proxo',bio:'Hello',tt:'proxo_iq',template_key:'pill-white',template_version:TEMPLATE_VERSION,page_type:'contact',color_theme:'purple',card_language:'ku',platforms:{wa:'07501234567',tg:'proxo_iq'},status:'active',publish_status:'ready',created_at:'2026-10-06T00:00:00Z',updated_at:'2026-10-06T00:00:00Z'};
 const templates=TEMPLATE_KEYS.map(key=>{
  const source=readFileSync(new URL('../api/_lib/proxolink-templates/'+key+'.html',import.meta.url),'utf8');
  return {template_key:key,version:TEMPLATE_VERSION,display_name_ckb:key,display_name_en:key,storage_path:key+'/v'+TEMPLATE_VERSION+'/template.html',checksum_sha256:createHash('sha256').update(source).digest('hex'),requires_avatar:false,is_active:true,is_catalog_visible:true};
@@ -34,7 +34,7 @@ function store({rows=[card],authUser=owner,failChecksum=false,adDependency=false
    const data=options.body?JSON.parse(options.body):null;
    if(method==='POST'){
     if(state.rows.has(data.id))return new Response(null,{status:409});
-    const row={...data,updated_at:new Date(1791244800000+state.tick++).toISOString()};state.rows.set(data.id,row);state.writes.push(data);return Response.json([row]);
+    const row={...data,created_at:new Date(1791244800000).toISOString(),card_number:state.rows.size+1,updated_at:new Date(1791244800000+state.tick++).toISOString()};state.rows.set(data.id,row);state.writes.push(data);return Response.json([row]);
    }
    const key=u.searchParams.get('id')?.slice(3),uid=u.searchParams.get('user_id')?.slice(3);
    const found=[...state.rows.values()].filter(r=>(!key||r.id===key)&&(!uid||r.user_id===uid));
@@ -168,4 +168,23 @@ test('editing a previous published template version upgrades its renderer withou
  const r=await invoke({op:'cards',id},{method:'PATCH',body:{expected_updated_at:card.updated_at,name:'Updated'}});
  assert.equal(r.statusCode,200);assert.equal(s.rows.get(id).template_version,TEMPLATE_VERSION);
  assert.deepEqual(s.rows.get(id).platforms,previous.platforms);assert.equal(s.rows.get(id).id,previous.id);
+});
+
+
+test('create response contains persisted owner fields without needing another list fetch',async()=>{
+ const s=store({rows:[]});global.fetch=s.fetch;
+ const r=await invoke({op:'cards'},{method:'POST',body:payload});
+ assert.equal(r.statusCode,201);const saved=JSON.parse(r.body).card;
+ assert.equal(saved.id,id);assert.equal(saved.user_id,owner);
+ assert.equal(saved.created_at,s.rows.get(id).created_at);
+ assert.equal(saved.updated_at,s.rows.get(id).updated_at);
+ assert.equal(saved.template_version,TEMPLATE_VERSION);
+ assert.deepEqual(saved.platforms,payload.platforms);
+ assert.doesNotMatch(r.body,/creation_request_hash|avatar_b64|last_publish_error/);
+ const reopened=await invoke({op:'cards'});
+ assert.ok(JSON.parse(reopened.body).cards.some(row=>row.id===saved.id));
+ const conflict=await invoke({op:'cards'},{method:'POST',body:{...payload,name:'Changed after interrupted response'}});
+ assert.equal(conflict.statusCode,409);
+ assert.equal(JSON.parse(conflict.body).card.id,id);
+ assert.equal(s.rows.size,1);
 });

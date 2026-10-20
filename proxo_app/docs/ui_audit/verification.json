@@ -1,0 +1,42 @@
+{
+  "flutter": "3.47.2",
+  "dart": "3.13.2",
+  "baseline": {
+    "tests_passed": 309,
+    "analyzer_errors": 0,
+    "analyzer_warnings": 88,
+    "analyzer_info": 172
+  },
+  "full_suite": {
+    "passed": 327,
+    "failed": 0,
+    "log": "flutter-full-suite.log"
+  },
+  "deposit_after_validation_fix": {
+    "passed": 7,
+    "failed": 0,
+    "log": "flutter-deposit-validation.log"
+  },
+  "analyzer": {
+    "errors": 0,
+    "warnings": 65,
+    "info": 167,
+    "exit_code": 1,
+    "reason": "Warnings remain; no compile errors and no newly introduced warnings versus baseline. Four new style-only informational findings.",
+    "log": "flutter-analysis.log"
+  },
+  "live_backend_or_payment_writes_performed": false,
+  "screenshot_count": 101,
+  "pdf_count": 4,
+  "node_suite": {
+    "passed": 240,
+    "failed": 0,
+    "log": "node-tests.log"
+  },
+  "deposit_submission": {
+    "passed": 2,
+    "failed": 0,
+    "log": "flutter-deposit-submission.log",
+    "transport": "isolated HTTP, Firebase and image-picker fakes; no live calls"
+  }
+}

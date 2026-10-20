@@ -22,6 +22,9 @@ jobs:
       - run: test "$(find api -maxdepth 1 -name '*.js' | wc -l)" -le 12
   flutter:
     runs-on: ubuntu-latest
+    env:
+      FLUTTER_SUPPRESS_ANALYTICS: 'true'
+      DASH__SUPPRESS_ANALYTICS: 'true'
     defaults:
       run:
         working-directory: proxo_app
@@ -39,8 +42,8 @@ jobs:
       - run: flutter pub get
       - name: Analyze changed app code
         run: flutter analyze --no-fatal-infos lib/screens/tools_screen.dart lib/screens/card_webview_screen.dart lib/screens/proxo_cards_list_screen.dart lib/widgets/proxolink_preview.dart lib/services/proxolink_service.dart lib/models/proxo_card.dart lib/models/proxolink_template_meta.dart lib/controllers/proxo_card_controller.dart lib/services/ad_submission.dart lib/screens/ad_create_screen.dart test/proxo_four_flow_test.dart test/text_direction_test.dart
-      - name: Verify page creation and existing ad flows
-        run: flutter test test/proxo_four_flow_test.dart test/ad_creation_flow_test.dart test/ad_submission_test.dart test/ad_repository_test.dart test/text_direction_test.dart
+      - name: Verify app flows and responsive layouts
+        run: flutter test
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.14.3'

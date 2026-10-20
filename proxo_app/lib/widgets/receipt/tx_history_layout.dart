@@ -34,38 +34,40 @@ class TxHistoryLayout extends StatelessWidget {
       child: Directionality(
         textDirection: TextDirection.ltr,
         child: Scaffold(
-            backgroundColor: ReceiptTokens.page,
-            body: SafeArea(
-                top: false, bottom: false, child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                ReceiptAppBar(
-                  title: title,
-                  onBack: onBack,
-                  backTooltip: backLabel,
-                  action: IconButton(
-                    tooltip: refreshLabel,
-                    onPressed: onRefresh,
-                    icon: refreshing
-                        ? const SizedBox(
-                            width: ReceiptTokens.iconSize,
-                            height: ReceiptTokens.iconSize,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 1.6,
-                              color: ReceiptTokens.accent,
+          backgroundColor: ReceiptTokens.page,
+          body: SafeArea(
+              top: false,
+              bottom: false,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  ReceiptAppBar(
+                    title: title,
+                    onBack: onBack,
+                    backTooltip: backLabel,
+                    action: IconButton(
+                      tooltip: refreshLabel,
+                      onPressed: onRefresh,
+                      icon: refreshing
+                          ? const SizedBox(
+                              width: ReceiptTokens.iconSize,
+                              height: ReceiptTokens.iconSize,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 1.6,
+                                color: ReceiptTokens.accent,
+                              ),
+                            )
+                          : ReceiptIcon(
+                              Icons.refresh_rounded,
+                              color: onRefresh == null
+                                  ? ReceiptTokens.divider
+                                  : ReceiptTokens.accent,
                             ),
-                          )
-                        : ReceiptIcon(
-                            Icons.refresh_rounded,
-                            color: onRefresh == null
-                                ? ReceiptTokens.divider
-                                : ReceiptTokens.accent,
-                          ),
+                    ),
                   ),
-                ),
-                Expanded(child: body),
-              ],
-            )),
+                  Expanded(child: body),
+                ],
+              )),
         ),
       ),
     );
@@ -137,35 +139,40 @@ class TxHistoryCard extends StatelessWidget {
                     ? Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          ProxoText(amount,
-                              textAlign: TextAlign.left,
-                              style: ReceiptTokens.rowValue
-                                  .copyWith(color: amountColor)),
-                          const SizedBox(height: ReceiptTokens.rowToRow),
-                          Wrap(
-                              alignment: WrapAlignment.spaceBetween,
-                              spacing: ReceiptTokens.labelToValue,
-                              runSpacing: ReceiptTokens.rowToRow,
-                              children: [
-                                ProxoText(time,
-                                    style: ReceiptTokens.rowLabel.copyWith(
-                                        color: const Color(0xFF6B7280))),
-                                ProxoText(date, style: ReceiptTokens.rowValue),
-                              ]),
-                        ])
+                            ProxoText(amount,
+                                textAlign: TextAlign.left,
+                                style: ReceiptTokens.rowValue
+                                    .copyWith(color: amountColor)),
+                            const SizedBox(height: ReceiptTokens.rowToRow),
+                            Wrap(
+                                alignment: WrapAlignment.spaceBetween,
+                                spacing: ReceiptTokens.labelToValue,
+                                runSpacing: ReceiptTokens.rowToRow,
+                                children: [
+                                  ProxoText(time,
+                                      style: ReceiptTokens.rowLabel.copyWith(
+                                          color: const Color(0xFF6B7280))),
+                                  ProxoText(date,
+                                      style: ReceiptTokens.rowValue),
+                                ]),
+                          ])
                     : Row(
-                  textDirection: TextDirection.ltr,
-                  children: <Widget>[
-                    _value(amount, Alignment.centerLeft,
-                        ReceiptTokens.rowValue.copyWith(color: amountColor)),
-                    _value(
-                        time,
-                        Alignment.center,
-                        ReceiptTokens.rowLabel
-                            .copyWith(color: const Color(0xFF6B7280))),
-                    _value(date, Alignment.centerRight, ReceiptTokens.rowValue),
-                  ],
-                ),
+                        textDirection: TextDirection.ltr,
+                        children: <Widget>[
+                          _value(
+                              amount,
+                              Alignment.centerLeft,
+                              ReceiptTokens.rowValue
+                                  .copyWith(color: amountColor)),
+                          _value(
+                              time,
+                              Alignment.center,
+                              ReceiptTokens.rowLabel
+                                  .copyWith(color: const Color(0xFF6B7280))),
+                          _value(date, Alignment.centerRight,
+                              ReceiptTokens.rowValue),
+                        ],
+                      ),
               ),
             ),
           ),

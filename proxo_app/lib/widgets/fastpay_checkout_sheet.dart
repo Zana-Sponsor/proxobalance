@@ -23,6 +23,8 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:solar_iconkit/solar_iconkit.dart';
+import '../theme/proxo_ui.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -51,7 +53,7 @@ const Duration kFastPayFallbackWindow = Duration(minutes: 5);
 /// ماوەی نێوان دوو پشکنینی دۆخ.
 const Duration kFastPayPollInterval = Duration(seconds: 3);
 
-const String kFastPayLogoAsset = 'assets/logos/fastpay.jpg';
+const String kFastPayLogoAsset = 'assets/logos/fastpay_official.png';
 
 // ── تۆکنەکانی دیزاین ──────────────────────────────────────────────────────
 
@@ -59,7 +61,7 @@ const Color _kInk = Color(0xFF0F172A);
 const Color _kSlate = Color(0xFF64748B);
 const Color _kLine = Color(0xFFE2E8F0);
 const Color _kSoft = Color(0xFFF8FAFC);
-const Color _kAccent = Color(0xFF0265FF);
+const Color _kAccent = ProxoUi.primary;
 
 const Color _kDangerBg = Color(0xFFFEF2F2);
 const Color _kDangerLine = Color(0xFFFECACA);
@@ -74,7 +76,7 @@ const Color _kOkLine = Color(0xFFA7F3D0);
 const Color _kOkFg = Color(0xFF059669);
 
 const double _kRadius = 16;
-const double _kBtnHeight = 52;
+const double _kBtnHeight = ProxoUi.controlHeight;
 
 const List<BoxShadow> _kSoftElevation = [
   BoxShadow(color: Color(0x05000000), blurRadius: 8, offset: Offset(0, 2)),
@@ -190,7 +192,8 @@ class FastPayService {
     // بۆدییەکی بەتاڵ = وەرکفلۆکە بەبێ وەڵام کۆتایی هاتووە. ئەمە
     // `Unexpected end of JSON input`ـە کە جاران دەردەکەوت.
     if (res.body.trim().isEmpty) {
-      throw const FastPayException('سێرڤەر وەڵامی نەدایەوە، دووبارە هەوڵبدەرەوە');
+      throw const FastPayException(
+          'سێرڤەر وەڵامی نەدایەوە، دووبارە هەوڵبدەرەوە');
     }
 
     Map<String, dynamic> body;
@@ -291,8 +294,7 @@ class _FastPayCheckoutSheetState extends State<FastPayCheckoutSheet>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed &&
-        _phase == FastPayPhase.waiting) {
+    if (state == AppLifecycleState.resumed && _phase == FastPayPhase.waiting) {
       unawaited(_checkOnce());
     }
   }
@@ -477,10 +479,19 @@ class _FastPayCheckoutSheetState extends State<FastPayCheckoutSheet>
     _startTicker();
   }
 
-  void _copyRef() {
-    Clipboard.setData(ClipboardData(text: _reference));
-    showProxoToast(context, 'ژمارەی مامەڵە کۆپی کرا',
-        type: ProxoToastType.success);
+  Future<void> _copyRef() async {
+    try {
+      await Clipboard.setData(ClipboardData(text: _reference));
+      if (mounted) {
+        showProxoToast(context, 'ژمارەی مامەڵە کۆپی کرا',
+            type: ProxoToastType.success);
+      }
+    } catch (_) {
+      if (mounted) {
+        showProxoToast(context, 'کۆپی نەکرا، دووبارە هەوڵ بدەرەوە.',
+            type: ProxoToastType.error);
+      }
+    }
   }
 
   String get _reference => _publicTxId ?? _orderId;
@@ -498,8 +509,8 @@ class _FastPayCheckoutSheetState extends State<FastPayCheckoutSheet>
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Padding(
-        padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom),
+        padding:
+            EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
         child: Container(
           margin: const EdgeInsets.all(12),
           decoration: BoxDecoration(
@@ -534,15 +545,16 @@ class _FastPayCheckoutSheetState extends State<FastPayCheckoutSheet>
         Image.asset(kFastPayLogoAsset, height: 28),
         const Spacer(),
         InkResponse(
-          onTap: () => Navigator.of(context)
-              .pop(_phase == FastPayPhase.paid),
+          onTap: () => Navigator.of(context).pop(_phase == FastPayPhase.paid),
           radius: 22,
           child: Container(
-            width: 34,
-            height: 34,
-            decoration: const BoxDecoration(
-                color: _kSoft, shape: BoxShape.circle),
-            child: const Icon(Icons.close, size: 18, color: _kSlate),
+            width: 48,
+            height: 48,
+            decoration:
+                const BoxDecoration(color: _kSoft, shape: BoxShape.circle),
+            child: const Center(
+                child: SolarIcon(SolarIcons.closeCircle,
+                    style: SolarIconStyle.linear, size: 24, color: _kSlate)),
           ),
         ),
       ],
@@ -560,7 +572,7 @@ class _FastPayCheckoutSheetState extends State<FastPayCheckoutSheet>
           bg: _kOkBg,
           line: _kOkLine,
           fg: _kOkFg,
-          icon: Icons.check_circle_rounded,
+          icon: SolarIcons.checkCircle,
           title: 'سەرکەوتوو بوو',
           message: 'پارەدان بە سەرکەوتوویی ئەنجامدرا و باڵانسەکەت نوێکرایەوە.',
           reference: _reference,
@@ -573,7 +585,7 @@ class _FastPayCheckoutSheetState extends State<FastPayCheckoutSheet>
           bg: _kDangerBg,
           line: _kDangerLine,
           fg: _kDangerFg,
-          icon: Icons.cancel_rounded,
+          icon: SolarIcons.closeCircle,
           title: 'ڕەتکرایەوە',
           message: 'مامەڵەکە ڕەتکرایەوە.',
           reference: _reference,
@@ -586,7 +598,7 @@ class _FastPayCheckoutSheetState extends State<FastPayCheckoutSheet>
           bg: _kWarnBg,
           line: _kWarnLine,
           fg: _kWarnFg,
-          icon: Icons.schedule_rounded,
+          icon: SolarIcons.clockCircle,
           title: 'بەسەرچوو',
           message: 'کاتی دیاریکراوی ئەم مامەڵەیە بەسەرچوو، '
               'تکایە داواکاریی نوێ تۆمار بکە.',
@@ -610,10 +622,10 @@ class _FastPayCheckoutSheetState extends State<FastPayCheckoutSheet>
             style: TextStyle(
               fontFamily: kAppFont,
               fontSize: 16,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w500,
               color: _kInk,
             )),
-        const SizedBox(height: 14),
+        const SizedBox(height: 16),
         Container(
           decoration: BoxDecoration(
             color: _kSoft,
@@ -632,11 +644,11 @@ class _FastPayCheckoutSheetState extends State<FastPayCheckoutSheet>
                       child: ProxoText(
                         _reference,
                         textDirection: TextDirection.ltr,
-                        overflow: TextOverflow.ellipsis,
+                        softWrap: true,
                         style: const TextStyle(
                           fontFamily: 'monospace',
                           fontSize: 14,
-                          fontWeight: FontWeight.w600,
+                          fontWeight: FontWeight.w500,
                           color: _kInk,
                         ),
                       ),
@@ -647,8 +659,8 @@ class _FastPayCheckoutSheetState extends State<FastPayCheckoutSheet>
                       child: const ProxoText('کۆپیکردن',
                           style: TextStyle(
                             fontFamily: kAppFont,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
                             color: _kAccent,
                           )),
                     ),
@@ -662,7 +674,7 @@ class _FastPayCheckoutSheetState extends State<FastPayCheckoutSheet>
                     style: const TextStyle(
                       fontFamily: kAppFont,
                       fontSize: 20,
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w500,
                       color: _kInk,
                     )),
               ),
@@ -688,8 +700,8 @@ class _FastPayCheckoutSheetState extends State<FastPayCheckoutSheet>
                   textDirection: TextDirection.ltr,
                   style: TextStyle(
                     fontFamily: 'monospace',
-                    fontSize: 15,
-                    fontWeight: FontWeight.w700,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
                     color: _remaining.inSeconds <= 60 ? _kWarnFg : _kSlate,
                   ),
                 ),
@@ -709,28 +721,28 @@ class _FastPayCheckoutSheetState extends State<FastPayCheckoutSheet>
             child: ProxoText(_error!,
                 style: const TextStyle(
                   fontFamily: kAppFont,
-                  fontSize: 13,
+                  fontSize: 14,
                   color: _kDangerFg,
                 )),
           ),
         ],
         if (waiting) ...[
-          const SizedBox(height: 14),
+          const SizedBox(height: 16),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: const [
               SizedBox(
                 width: 16,
                 height: 16,
-                child: CircularProgressIndicator(
-                    strokeWidth: 2, color: _kAccent),
+                child:
+                    CircularProgressIndicator(strokeWidth: 2, color: _kAccent),
               ),
               SizedBox(width: 10),
               Flexible(
                 child: ProxoText('چاوەڕوانی پشتڕاستکردنەوەی پارەدان…',
                     style: TextStyle(
                       fontFamily: kAppFont,
-                      fontSize: 13,
+                      fontSize: 14,
                       color: _kSlate,
                     )),
               ),
@@ -780,8 +792,8 @@ class _FastPayCheckoutSheetState extends State<FastPayCheckoutSheet>
             : ProxoText(label,
                 style: const TextStyle(
                   fontFamily: kAppFont,
-                  fontSize: 15,
-                  fontWeight: FontWeight.w700,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
                   color: Colors.white,
                 )),
       ),
@@ -802,8 +814,8 @@ class _FastPayCheckoutSheetState extends State<FastPayCheckoutSheet>
         child: ProxoText(label,
             style: const TextStyle(
               fontFamily: kAppFont,
-              fontSize: 15,
-              fontWeight: FontWeight.w600,
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
               color: _kSlate,
             )),
       ),
@@ -826,14 +838,18 @@ class _SummaryRow extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          ProxoText(label,
-              style: const TextStyle(
-                fontFamily: kAppFont,
-                fontSize: 13,
-                color: _kSlate,
-              )),
+          Expanded(
+              flex: 2,
+              child: ProxoText(label,
+                  style: const TextStyle(
+                    fontFamily: kAppFont,
+                    fontSize: 14,
+                    height: 1.4,
+                    color: _kSlate,
+                  ))),
           const SizedBox(width: 12),
           Expanded(
+            flex: 3,
             child: Align(alignment: Alignment.centerLeft, child: child),
           ),
         ],
@@ -859,7 +875,7 @@ class _StatusView extends StatelessWidget {
   final Color bg;
   final Color line;
   final Color fg;
-  final IconData icon;
+  final String icon;
   final String title;
   final String message;
   final String reference;
@@ -885,14 +901,15 @@ class _StatusView extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(icon, size: 44, color: fg),
+              SolarIcon(icon,
+                  style: SolarIconStyle.linear, size: 32, color: fg),
               const SizedBox(height: 10),
               ProxoText(title,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontFamily: kAppFont,
-                    fontSize: 17,
-                    fontWeight: FontWeight.w700,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
                     color: fg,
                   )),
               const SizedBox(height: 6),
@@ -900,7 +917,7 @@ class _StatusView extends StatelessWidget {
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontFamily: kAppFont,
-                    fontSize: 13,
+                    fontSize: 14,
                     height: 1.5,
                     color: fg,
                   )),
@@ -920,7 +937,7 @@ class _StatusView extends StatelessWidget {
               const ProxoText('ژمارەی مامەڵە',
                   style: TextStyle(
                     fontFamily: kAppFont,
-                    fontSize: 12,
+                    fontSize: 14,
                     color: _kSlate,
                   )),
               const SizedBox(width: 10),
@@ -929,18 +946,20 @@ class _StatusView extends StatelessWidget {
                   reference,
                   textDirection: TextDirection.ltr,
                   textAlign: TextAlign.left,
-                  overflow: TextOverflow.ellipsis,
+                  softWrap: true,
                   style: const TextStyle(
                     fontFamily: 'monospace',
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
                     color: _kInk,
                   ),
                 ),
               ),
-              GestureDetector(
-                onTap: onCopy,
-                child: const Icon(Icons.copy_rounded, size: 17, color: _kSlate),
+              IconButton(
+                onPressed: onCopy,
+                tooltip: 'کۆپیکردنی ژمارە',
+                icon: const SolarIcon(SolarIcons.copy,
+                    style: SolarIconStyle.linear, size: 20, color: _kSlate),
               ),
             ],
           ),
@@ -958,8 +977,8 @@ class _StatusView extends StatelessWidget {
             child: ProxoText(actionLabel,
                 style: const TextStyle(
                   fontFamily: kAppFont,
-                  fontSize: 15,
-                  fontWeight: FontWeight.w700,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
                   color: Colors.white,
                 )),
           ),
@@ -1026,12 +1045,15 @@ class _FastPayWebViewSheetState extends State<_FastPayWebViewSheet> {
                     onTap: () => Navigator.of(context).pop(),
                     radius: 22,
                     child: Container(
-                      width: 32,
-                      height: 32,
+                      width: 48,
+                      height: 48,
                       decoration: const BoxDecoration(
                           color: _kSoft, shape: BoxShape.circle),
-                      child:
-                          const Icon(Icons.close, size: 17, color: _kSlate),
+                      child: const Center(
+                          child: SolarIcon(SolarIcons.closeCircle,
+                              style: SolarIconStyle.linear,
+                              size: 24,
+                              color: _kSlate)),
                     ),
                   ),
                 ],

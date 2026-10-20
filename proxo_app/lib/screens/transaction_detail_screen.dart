@@ -329,8 +329,11 @@ class _TxReceiptCard extends StatelessWidget {
       _ => null,
     };
 
-    final String statusText =
-        d.status == 'rejected' ? l.statusRejected : l.statusPending;
+    final String statusText = settled
+        ? l.statusApproved
+        : d.status == 'rejected'
+            ? l.statusRejected
+            : l.statusPending;
 
     return ReceiptCard(
       child: Column(
@@ -362,8 +365,16 @@ class _TxReceiptCard extends StatelessWidget {
               value: receiptDateTime(d.date),
               valueDirection: _ltr,
             ),
-            if (!settled && !_free)
-              ReceiptRow(label: l.status, value: statusText),
+            if (!_free)
+              ReceiptRow(
+                  label: l.status,
+                  value: statusText,
+                  valueStyle: ReceiptTokens.rowValue.copyWith(
+                      color: settled
+                          ? ReceiptTokens.positive
+                          : d.status == 'rejected'
+                              ? ReceiptTokens.negative
+                              : ReceiptTokens.ink)),
           ]),
           const ReceiptDivider(),
 

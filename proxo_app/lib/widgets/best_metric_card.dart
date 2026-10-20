@@ -7,6 +7,7 @@ import '../theme/app_theme.dart' show kAppFont;
 import '../services/ad_categories.dart';
 import '../services/best_metrics_service.dart';
 import 'home_best_result_card.dart';
+import 'ad_thumbnail.dart';
 import 'package:proxo_app/widgets/proxo_text.dart';
 
 const Color _ink = Color(0xFF0B0B32);
@@ -303,19 +304,7 @@ class _MetricThumbnailState extends State<_MetricThumbnail>
     super.dispose();
   }
 
-  Widget _fallback() {
-    return const ColoredBox(
-      color: Color(0xFFF1F4F8),
-      child: Center(
-        child: SolarIcon(
-          SolarIcons.gallery,
-          style: SolarIconStyle.linear,
-          size: 34,
-          color: Color(0xFF98A2B3),
-        ),
-      ),
-    );
-  }
+  Widget _fallback() => const AdThumbnailFallback();
 
   @override
   Widget build(BuildContext context) {
