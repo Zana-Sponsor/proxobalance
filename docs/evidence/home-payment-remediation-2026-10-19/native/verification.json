@@ -1,0 +1,332 @@
+{
+  "source_commit": "ade200a23732cb5029087e1a6ccac0036f1161b9",
+  "source_tree": "35ed6cc439c5e431a474085e04395e014bc94b13",
+  "workflow_run": 39391606860,
+  "workflow_job": 118524216189,
+  "artifact_id": 12250257876,
+  "workflow_url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/39391606860",
+  "artifact_zip_sha256": "6aa7dc0429eec6a53772d31dfc0f7ce574ad28178dfcc534fd1b1993a91b95f1",
+  "passed": true,
+  "checks": {
+    "fixture_completed": true,
+    "driver_exit_zero": true,
+    "android_screenshot_transfer": true,
+    "42_scenarios": true,
+    "42_engine_measurements": true,
+    "no_screen_exceptions": true,
+    "no_unexpected_backend_attempts": true,
+    "all_non_get_attempts_classified": true,
+    "required_current_pngs": true,
+    "valid_png_headers": true,
+    "background_notification_captured": true,
+    "keyboard_captured": true,
+    "phone_input_injected": true,
+    "field_above_keyboard": true,
+    "frame_samples_present": true
+  },
+  "scenario_count": 42,
+  "measurement_count": 42,
+  "png_count": 50,
+  "device": {
+    "fixture_only": true,
+    "mode": "profile",
+    "device": "sdk_gphone64_x86_64",
+    "android": "15",
+    "wm_size": "Physical size: 320x640\nOverride size: 1080x1920",
+    "wm_density": "Physical density: 160\nOverride density: 440",
+    "transport": "Local Firebase builder fixture; FCM network delivery is not tested",
+    "phone_input_injected": true,
+    "keyboard_captured": true,
+    "background_notification_captured": true,
+    "exit_code": 0,
+    "screenshot_transfer_exit_code": 0,
+    "native_screenshot_count": 47
+  },
+  "blocked_trusted_device_lookups": 6,
+  "blocked_fixture_thumbnail_repairs": 1,
+  "blocked_unread_notification_counts": 4,
+  "unexpected_backend_requests": [],
+  "engine_build": {
+    "samples": 1562,
+    "p50_ms": 0.574,
+    "p90_ms": 2.497,
+    "p99_ms": 9.381,
+    "worst_ms": 31.779
+  },
+  "engine_raster": {
+    "samples": 1562,
+    "p50_ms": 20.677,
+    "p90_ms": 56.039,
+    "p99_ms": 105.038,
+    "worst_ms": 414.545
+  },
+  "missed_build_budget_frames": 5,
+  "missed_raster_budget_frames": 1038,
+  "limits": [
+    "Android emulator profile AOT with software GPU; frame timings are not physical-phone speed certification.",
+    "Scenario mounting, selected interactions and scrolling were tested; not every button or production backend flow was executed.",
+    "Fictional local backend data; every non-GET Supabase fixture request was rejected before network access.",
+    "Background notification uses the actual local Android/Firebase notification builder; remote FCM delivery was not tested.",
+    "Production page creation, payment, account mutations and network latency were not exercised."
+  ],
+  "screenshots": [
+    {
+      "path": "auth-keyboard-android.png",
+      "bytes": 162048,
+      "sha256": "52335f8b93a805b5afda19717afd8151ea435ab7b737cf6b746703fb6a48b067"
+    },
+    {
+      "path": "background-heads-up-android.png",
+      "bytes": 1092011,
+      "sha256": "bbc5e217811f9805f779ace42afb08c8619a7739ac0376b5113c44dd122e475d"
+    },
+    {
+      "path": "background-notification-shade-android.png",
+      "bytes": 122790,
+      "sha256": "bcd7c6767d2017d6a54ed20af7e1bf865dad303ae4c5eff04bbba42de473d4f3"
+    },
+    {
+      "path": "screens/account-setup-error.png",
+      "bytes": 76468,
+      "sha256": "cbb4928299bc51d988402f05f22a0a833323ad03bf6d69b3010c4278d7fed435"
+    },
+    {
+      "path": "screens/ad-confirmation.png",
+      "bytes": 104534,
+      "sha256": "d619aa438fc539b7a0d44d93a95c1cf06b2e18e70e4ebd76d32e2cc4c833a326"
+    },
+    {
+      "path": "screens/ad-create.png",
+      "bytes": 72107,
+      "sha256": "52a1552e62888750434e28fa0efd66df442c02312946f232dab48905bc05b8b6"
+    },
+    {
+      "path": "screens/ad-details.png",
+      "bytes": 130249,
+      "sha256": "33844fa861eee64557efe7e036c73c9caa098fc239c6ac52c8bc732ca9ad4404"
+    },
+    {
+      "path": "screens/ad-video-example.png",
+      "bytes": 143454,
+      "sha256": "ee05b09069d3848407e16a063f0d5a210690dfbd17f7be253159536116e4aefb"
+    },
+    {
+      "path": "screens/ads-empty-action.png",
+      "bytes": 64191,
+      "sha256": "cae75acc1ba09dc1ec37a45ab730ca4800f609870a1ffebfa12e59758bebd7d0"
+    },
+    {
+      "path": "screens/ads-empty.png",
+      "bytes": 64191,
+      "sha256": "cae75acc1ba09dc1ec37a45ab730ca4800f609870a1ffebfa12e59758bebd7d0"
+    },
+    {
+      "path": "screens/ads.png",
+      "bytes": 88314,
+      "sha256": "19c5f35c793ee61e677f72896dcccba7acab9c5a2beb6fcc14b866b1a96ff596"
+    },
+    {
+      "path": "screens/auth-channel-cycles.png",
+      "bytes": 119867,
+      "sha256": "6c7c485417f52fc412ed4de3d66c221ba827b1ff7e20ff23f121fe6a40ffb547"
+    },
+    {
+      "path": "screens/auth-login.png",
+      "bytes": 119867,
+      "sha256": "6c7c485417f52fc412ed4de3d66c221ba827b1ff7e20ff23f121fe6a40ffb547"
+    },
+    {
+      "path": "screens/auth-phone.png",
+      "bytes": 104569,
+      "sha256": "d467887eaa92b97e5b8bc5359a4be4240764e0d2bca9b699448398ae899b24db"
+    },
+    {
+      "path": "screens/auth-recovery.png",
+      "bytes": 92767,
+      "sha256": "1a4dd7ccf81434234ea90ff11d5ea7f9f6429ac8e94eb9d1be80db73f31c0690"
+    },
+    {
+      "path": "screens/auth-signup.png",
+      "bytes": 137901,
+      "sha256": "05c570606e6a49ce8b03f5d3eec067cd31ea30c4188f140f2a77c5be88bd6da9"
+    },
+    {
+      "path": "screens/deposit-fastpay.png",
+      "bytes": 91492,
+      "sha256": "76917b9cb9f8fa8d4a721d39fd13725e1d108adc7ade04cc5655ee77e2ff49ea"
+    },
+    {
+      "path": "screens/deposit-fib-instructions.png",
+      "bytes": 119349,
+      "sha256": "499cbc77b0d2f123e5589c6555ab88392e8af99b3a42c46e7bab5f893a3f4b5e"
+    },
+    {
+      "path": "screens/deposit-fib.png",
+      "bytes": 110913,
+      "sha256": "bf192d32ccea087c625b6298d353f9cc10e93c72dd641e2095cc373f26d9bdda"
+    },
+    {
+      "path": "screens/deposit-kcard-instructions.png",
+      "bytes": 120734,
+      "sha256": "8ac44d22aad25211621dfe4e6904c282adbdf93e4b446fbe1fb3c6db06175be9"
+    },
+    {
+      "path": "screens/deposit-kcard.png",
+      "bytes": 114529,
+      "sha256": "c049bb381e8c4eadb30c1a9238da965e3142218c24ec617535c22bf7335ef6cb"
+    },
+    {
+      "path": "screens/deposit.png",
+      "bytes": 80729,
+      "sha256": "85801a54816f76b016027f710d2364ffdf4e568238621812cfd42972e294c4f7"
+    },
+    {
+      "path": "screens/discounts.png",
+      "bytes": 32108,
+      "sha256": "0dd157fec96590e807e1c9ccfc04195693a03f608769d610fba57d380b8478e8"
+    },
+    {
+      "path": "screens/faq.png",
+      "bytes": 113948,
+      "sha256": "03c1722185eabdd9ce98ae951423e2bb8c847227c1b6c601b9406028b3c42e24"
+    },
+    {
+      "path": "screens/home-refresh-pending.png",
+      "bytes": 117259,
+      "sha256": "892dbef9ef082b40f680d610a65431f182d45f91ec09f0b8bf27369ae96c5984"
+    },
+    {
+      "path": "screens/home-refresh.png",
+      "bytes": 113019,
+      "sha256": "5c8243c95d87a1784131894dee8f465a5ac49179fe27eb89522f2060d70bd1f2"
+    },
+    {
+      "path": "screens/home-result-details.png",
+      "bytes": 124815,
+      "sha256": "3e9f90645ff14a338beffa7b8924bc3d89f8e1aaed1e0f8bc1d77e76acd4fdc1"
+    },
+    {
+      "path": "screens/home-result-expanded.png",
+      "bytes": 124720,
+      "sha256": "c597952ca13f30b9fd79c6feba2324037ea55a7a4c0ecf01a57b21f68da97fd9"
+    },
+    {
+      "path": "screens/home.png",
+      "bytes": 112561,
+      "sha256": "28201f2b386c024a211d8e126de70b145978eebf6b99a1fea3e79a1268e5d8c7"
+    },
+    {
+      "path": "screens/levels.png",
+      "bytes": 94595,
+      "sha256": "4c48f757f958de7d3beb2a60c999028994f8faf0c306f0a64e252cde20172744"
+    },
+    {
+      "path": "screens/new-password.png",
+      "bytes": 129718,
+      "sha256": "f42dd52e16a73af85bbb37cb286c1fe4ffe287bc2991c6dbb5b9ce2ba2bb031b"
+    },
+    {
+      "path": "screens/notifications.png",
+      "bytes": 73910,
+      "sha256": "4880ce4e4ffc5c5ac98122e98928f4caafc3b1d7d223b1b538e694b6b9946db6"
+    },
+    {
+      "path": "screens/otp.png",
+      "bytes": 102313,
+      "sha256": "a03e52dca5f935181edcbadf0fbdc6d64d1ad5cb65efc04a58bebcd664cd6ee1"
+    },
+    {
+      "path": "screens/page-create.png",
+      "bytes": 77671,
+      "sha256": "f4b0a8ba737fdb1c34a1dd3dd3dcdbae3298669353dcf16f5c1bf7b675525cfc"
+    },
+    {
+      "path": "screens/page-details.png",
+      "bytes": 119639,
+      "sha256": "3504e5c12e7801051d1cbabf2a81b71cefed6f4e0c14c98ee8ac5da0207ffd05"
+    },
+    {
+      "path": "screens/page-edit.png",
+      "bytes": 67153,
+      "sha256": "c4c3e99551691c0b7b3878a1407888431e64d2d151792e55727ebbc60b9c4677"
+    },
+    {
+      "path": "screens/page-example.png",
+      "bytes": 547931,
+      "sha256": "b8eced11a4bd26d90b2ff391db96183b4c0892b1d36d4dee4b3c393f95c4b9d0"
+    },
+    {
+      "path": "screens/profile-edit.png",
+      "bytes": 98276,
+      "sha256": "493051e29077c05e9e41a1b1ce8e1f9bf4b40a58171d0fb1bfc1fe51364ee1d1"
+    },
+    {
+      "path": "screens/profile.png",
+      "bytes": 97222,
+      "sha256": "238894102b95d582f88970bc0e65ad41f3df9722b04389f30750dfd2cc3b191b"
+    },
+    {
+      "path": "screens/results.png",
+      "bytes": 103684,
+      "sha256": "7d97557d42d668e5fd6ef3656e7a3112e49d271721ddf4e4e92b4b945b314b04"
+    },
+    {
+      "path": "screens/sidebar.png",
+      "bytes": 82998,
+      "sha256": "4186ecb428cceff37a684f8c7e7810733af96ff5cce617be031315f25d49448a"
+    },
+    {
+      "path": "screens/splash.png",
+      "bytes": 73459,
+      "sha256": "d8d40f9357c59bf4850617397916c58760c6566b03fb6a2a56bb5436ce426e60"
+    },
+    {
+      "path": "screens/tasks.png",
+      "bytes": 42194,
+      "sha256": "2c5df6ffc50ef84e9dd6054bc31bf56ab9ff0221e131e69f8e94e8c01f4db31f"
+    },
+    {
+      "path": "screens/tools-empty.png",
+      "bytes": 58863,
+      "sha256": "d7ced826dcf60171ccea5efd7792f4e69d995491fdf3eec19dfff1de0a311086"
+    },
+    {
+      "path": "screens/tools.png",
+      "bytes": 109979,
+      "sha256": "b4b928880cfa606a7e6a0257b3886954863c0cff9e52649fc734409b00ca5538"
+    },
+    {
+      "path": "screens/transaction.png",
+      "bytes": 102333,
+      "sha256": "c421485817ab91f4e09ac62a6692a66911e5e47b977a3426dc8b21e643fbccb2"
+    },
+    {
+      "path": "screens/tutorial.png",
+      "bytes": 24271,
+      "sha256": "5fb045949aef18d7d90fb0dda5a08ec8758383ddde9962c006a1dcdda4a1fbe8"
+    },
+    {
+      "path": "screens/vouchers.png",
+      "bytes": 89741,
+      "sha256": "51a0c55b13efc4b1935667b92c18a065e486bfaee0fb48b69b0b6f1942808da6"
+    },
+    {
+      "path": "screens/web-preview-error.png",
+      "bytes": 36988,
+      "sha256": "c805048857741a25f2ed7255c792f393307869a0156a0c2667f77d11713bdd4e"
+    },
+    {
+      "path": "screens/whatsapp-preferences.png",
+      "bytes": 45352,
+      "sha256": "83dd65d23e2a10b9cb3ad7d8cb8942cc6a5cd94907b41bfa158172f8bbb92d57"
+    }
+  ],
+  "tested_merge_commit": "d92868011776e0a5ae655fc340ae5db5e1f15e50",
+  "tested_merge_tree": "35ed6cc439c5e431a474085e04395e014bc94b13",
+  "source_and_tested_merge_trees_identical": true,
+  "source_tree_proof": "../ci-source-proof.json",
+  "workflow_status": "completed",
+  "workflow_conclusion": "success",
+  "artifact_digest_verified": true,
+  "artifact_zip_bytes": 5951444
+}

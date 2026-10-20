@@ -1,0 +1,82 @@
+{
+  "checked_at": "2026-10-20T08:05:09.733822+00:00",
+  "repository": "Zana-Sponsor/proxobalance",
+  "scope": "Read-only git object inspection after fetching the supplied PR merge commit; no checkout or index change.",
+  "source_commit": "9fdd08d14f982e40221455cc4ab5dac0f3c368e3",
+  "source_tree": "6fc053222783ebdbe878a34e87883da0034f7b2a",
+  "tested_pr_merge_commit": "8ed2216ad60fc7ec99eedee7c9aa81668c388eae",
+  "tested_pr_merge_tree": "6fc053222783ebdbe878a34e87883da0034f7b2a",
+  "trees_identical": true,
+  "git_diff_tree_exit_code": 0,
+  "meaning": "The supplied CI-tested PR merge commit and published source have exactly the same complete Git tree. CI job results are recorded separately; this artifact proves source-tree equivalence only.",
+  "final_build": {
+    "source_sha": "ade200a23732cb5029087e1a6ccac0036f1161b9",
+    "tree_sha": "35ed6cc439c5e431a474085e04395e014bc94b13",
+    "verify_run_id": 39391606925,
+    "native_run_id": 39391606860,
+    "state": "passed",
+    "capture_source_sha": "9fdd08d14f982e40221455cc4ab5dac0f3c368e3",
+    "changes_since_capture": [
+      "proxo_app/integration_test/polish_runtime_test.dart",
+      "proxo_app/integration_test/support/actual_screen_fixtures.dart",
+      "proxo_app/test/actual_screen_backend_boundary_test.dart",
+      "proxo_app/test/receipt_layout_test.dart"
+    ],
+    "production_code_identity": [
+      {
+        "path": "proxo_app/lib",
+        "capture_source_object": "a7ec9540864e594d1ae40806be176b0d81caa05f",
+        "build_source_object": "a7ec9540864e594d1ae40806be176b0d81caa05f",
+        "identical": true
+      },
+      {
+        "path": "proxo_app/assets",
+        "capture_source_object": "f05c7f5f4106871eeda1a3595cf4e374121825e1",
+        "build_source_object": "f05c7f5f4106871eeda1a3595cf4e374121825e1",
+        "identical": true
+      },
+      {
+        "path": "proxo_app/android",
+        "capture_source_object": "5f26c2fa60f58361528269c0b48e4e11eaaf3f5c",
+        "build_source_object": "5f26c2fa60f58361528269c0b48e4e11eaaf3f5c",
+        "identical": true
+      },
+      {
+        "path": "proxo_app/ios",
+        "capture_source_object": "d77fd7d0c493a7894283c0566555413e15d4aaeb",
+        "build_source_object": "d77fd7d0c493a7894283c0566555413e15d4aaeb",
+        "identical": true
+      },
+      {
+        "path": "proxo_app/pubspec.yaml",
+        "capture_source_object": "2338442232f788bfede2031dd48415a8c143be12",
+        "build_source_object": "2338442232f788bfede2031dd48415a8c143be12",
+        "identical": true
+      },
+      {
+        "path": "proxo_app/pubspec.lock",
+        "capture_source_object": "c314b7074bf7a87a1960890ec251715fd3939413",
+        "build_source_object": "c314b7074bf7a87a1960890ec251715fd3939413",
+        "identical": true
+      },
+      {
+        "path": "api",
+        "capture_source_object": "f89d51b7f8325ce0824e5b33c82a750474996003",
+        "build_source_object": "f89d51b7f8325ce0824e5b33c82a750474996003",
+        "identical": true
+      }
+    ],
+    "checked_at": "2026-10-20T08:27:18.226923+00:00",
+    "source_commit": "ade200a23732cb5029087e1a6ccac0036f1161b9",
+    "source_tree": "35ed6cc439c5e431a474085e04395e014bc94b13",
+    "tested_pr_merge_commit": "d92868011776e0a5ae655fc340ae5db5e1f15e50",
+    "tested_pr_merge_tree": "35ed6cc439c5e431a474085e04395e014bc94b13",
+    "trees_identical": true,
+    "git_diff_tree_exit_code": 0,
+    "ci_state": "passed",
+    "meaning": "Final source and tested PR merge have the same complete Git tree. All five Verify ProxoLink jobs and the native Android profile job completed successfully. Exact results and artifacts are recorded separately.",
+    "ci_results": "ci-results.json",
+    "native_results": "native/verification.json"
+  },
+  "previous_workflow_limit": "Source9fdd tested1100cases successfully but measurement-export teardown failed on a missing parent directory; native42screens rendered but the rejecting fixture did not classify four HEAD count probes. ade200a fixes only these evidence/test harness issues."
+}

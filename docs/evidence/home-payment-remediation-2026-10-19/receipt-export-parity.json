@@ -1,0 +1,176 @@
+{
+  "pdfs": [
+    {
+      "pdf": "receipts/narrow_paid.pdf",
+      "source_png": "receipts/narrow_paid.png",
+      "sha256": "f75e059efd4a51e91c753364317b1ac734d5652d61d4f74f186b796b79fddc60",
+      "pages": [
+        {
+          "page": 1,
+          "pdf_size_pt": [
+            595.2755737304688,
+            841.8897705078125
+          ],
+          "embedded_image_px": [
+            1120,
+            2892
+          ],
+          "render": "receipts/narrow_paid-page-1.png"
+        },
+        {
+          "page": 2,
+          "pdf_size_pt": [
+            595.2755737304688,
+            841.8897705078125
+          ],
+          "embedded_image_px": [
+            1120,
+            2868
+          ],
+          "render": "receipts/narrow_paid-page-2.png"
+        },
+        {
+          "page": 3,
+          "pdf_size_pt": [
+            595.2755737304688,
+            841.8897705078125
+          ],
+          "embedded_image_px": [
+            1120,
+            2664
+          ],
+          "render": "receipts/narrow_paid-page-3.png"
+        }
+      ],
+      "source_pixels": 9434880,
+      "pixel_parity": {
+        "max_channel_error": 0,
+        "changed_pixels": 0,
+        "method": "Concatenate decoded embedded RGBA page slices, composite on white, and compare every RGB pixel with the actual 4x Flutter receipt boundary."
+      }
+    },
+    {
+      "pdf": "receipts/standard_free.pdf",
+      "source_png": "receipts/standard_free.png",
+      "sha256": "a926e99af8522ddb3658e206790404599e6fda547b091011c0a3a9737339168e",
+      "pages": [
+        {
+          "page": 1,
+          "pdf_size_pt": [
+            595.2755737304688,
+            841.8897705078125
+          ],
+          "embedded_image_px": [
+            1572,
+            3089
+          ],
+          "render": "receipts/standard_free-page-1.png"
+        }
+      ],
+      "source_pixels": 4855908,
+      "pixel_parity": {
+        "max_channel_error": 0,
+        "changed_pixels": 0,
+        "method": "Concatenate decoded embedded RGBA page slices, composite on white, and compare every RGB pixel with the actual 4x Flutter receipt boundary."
+      }
+    },
+    {
+      "pdf": "receipts/transaction_narrow.pdf",
+      "source_png": "receipts/transaction_narrow.png",
+      "sha256": "6414d4b540fc70e3811bc1040d80b8b9cf66f0c4d3b7cbcbb1eacbc4a83fb813",
+      "pages": [
+        {
+          "page": 1,
+          "pdf_size_pt": [
+            595.2755737304688,
+            841.8897705078125
+          ],
+          "embedded_image_px": [
+            1120,
+            2700
+          ],
+          "render": "receipts/transaction_narrow-page-1.png"
+        },
+        {
+          "page": 2,
+          "pdf_size_pt": [
+            595.2755737304688,
+            841.8897705078125
+          ],
+          "embedded_image_px": [
+            1120,
+            2236
+          ],
+          "render": "receipts/transaction_narrow-page-2.png"
+        }
+      ],
+      "source_pixels": 5528320,
+      "pixel_parity": {
+        "max_channel_error": 0,
+        "changed_pixels": 0,
+        "method": "Concatenate decoded embedded RGBA page slices, composite on white, and compare every RGB pixel with the actual 4x Flutter receipt boundary."
+      }
+    },
+    {
+      "pdf": "receipts/transaction_standard.pdf",
+      "source_png": "receipts/transaction_standard.png",
+      "sha256": "17b061c213f2ec7b28f127aef30a32919fca12e28508760419c7c61f82944adc",
+      "pages": [
+        {
+          "page": 1,
+          "pdf_size_pt": [
+            595.2755737304688,
+            841.8897705078125
+          ],
+          "embedded_image_px": [
+            1572,
+            1841
+          ],
+          "render": "receipts/transaction_standard-page-1.png"
+        }
+      ],
+      "source_pixels": 2894052,
+      "pixel_parity": {
+        "max_channel_error": 0,
+        "changed_pixels": 0,
+        "method": "Concatenate decoded embedded RGBA page slices, composite on white, and compare every RGB pixel with the actual 4x Flutter receipt boundary."
+      }
+    }
+  ],
+  "layout_cases": 108,
+  "row_measurements": 1102,
+  "row_fields": [
+    "baseline_error",
+    "center_error",
+    "label",
+    "label_font_size",
+    "label_value_gap",
+    "label_width",
+    "row_height",
+    "row_width",
+    "stacked",
+    "value",
+    "value_font_size",
+    "value_width"
+  ],
+  "screen_widths_dp": [
+    280.0,
+    320.0,
+    360.0,
+    392.72727272727275,
+    393.0,
+    430.0,
+    480.0,
+    640.0,
+    768.0
+  ],
+  "text_scales": [
+    1.0,
+    1.3,
+    2.0
+  ],
+  "locales": [
+    "ar",
+    "ckb"
+  ]
+}

@@ -1,0 +1,504 @@
+{
+  "source": "ade200a23732cb5029087e1a6ccac0036f1161b9",
+  "tested_pr_merge": "d92868011776e0a5ae655fc340ae5db5e1f15e50",
+  "tree": "35ed6cc439c5e431a474085e04395e014bc94b13",
+  "run_id": 39391606925,
+  "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/39391606925",
+  "jobs": [
+    {
+      "id": 118524216474,
+      "name": "flutter",
+      "status": "completed",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-java@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run subosito/flutter-action@v2",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Render requested high-DPI footer thumbnails if source bundle is pending",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/upload-artifact@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run flutter pub get",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Analyze changed ProxoLink code",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Reproduce banner subscription lifecycle and verify fix",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Reproduce unused Home request and verify removal",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Reproduce delayed notice mounting against old source, then verify fix",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run flutter test test/proxolink_v6_flow_test.dart test/proxolink_flow_test.dart test/proxolink_page_management_test.dart test/proxolink_tools_create_test.dart test/proxolink_actual_screens_test.dart test/ad_repository_test.dart test/ad_creation_flow_test.dart test/ad_submission_test.dart test/text_direction_test.dart test/native_phase_schedule_test.dart test/ad_notice_deadline_test.dart test/proxo_tab_stack_test.dart test/proxo_banner_lifecycle_test.dart",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify the complete Flutter behavior and visual suite",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify isolated staging blocks production delivery",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Analyze balanced screens and account-safe navigation",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/upload-artifact@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run gradle/actions/setup-gradle@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Restore wrapper if missing",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run flutter build apk --release --no-tree-shake-icons",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Scan release APK for template source",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Measure thumbnail-only release APK impact",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Retain installable APK",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/upload-artifact@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run gradle/actions/setup-gradle@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run subosito/flutter-action@v2",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-java@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 118524216479,
+      "name": "responsive",
+      "status": "completed",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm ci",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npx playwright install --with-deps chromium",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run node scripts/proxolink-repaint-contract.mjs",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run node scripts/proxolink-v6-responsive.mjs",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/upload-artifact@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 118524216607,
+      "name": "database",
+      "status": "completed",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Initialize containers",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm ci",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run psql -v ON_ERROR_STOP=1 -f test/fixtures/proxolink-v5-database.sql",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify migration transaction rollback",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run psql -v ON_ERROR_STOP=1 -f proxo_app/supabase/migrations/20261006220119_proxolink_v6_independent_pages.sql",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify additive migration is rerunnable",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run psql -v ON_ERROR_STOP=1 -f test/proxolink-v6-database.sql",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify page-management migration transaction and contract",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify Tools moderation migration rollback, rerun and security",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run node scripts/proxolink-v6-database.mjs",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Stop containers",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 118524216635,
+      "name": "backend",
+      "status": "completed",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm ci",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm test",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm run build",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run test \"$(find api -maxdepth 1 -name '*.js' | wc -l)\" -le 12",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run node scripts/scan-proxolink-source.mjs",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 118524216780,
+      "name": "edge-functions",
+      "status": "completed",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run denoland/setup-deno@v2",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run deno check proxo_app/supabase/functions/delete-user/index.ts",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run deno check proxo_app/supabase/functions/notify-tool-created/index.ts",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run denoland/setup-deno@v2",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    }
+  ],
+  "full_flutter_suite": {
+    "passed": 1102,
+    "skipped": 1,
+    "skip_reason": "Compile-time staging configuration test runs in the separate staging step."
+  },
+  "dedicated_staging_suite": {
+    "passed": 6
+  },
+  "backend": {
+    "passed": 179,
+    "failed": 0
+  },
+  "analysis": {
+    "changed_ui_files": 49,
+    "errors": 0,
+    "warnings": 0,
+    "infos": 84,
+    "note": "Scoped changed UI analysis; not a claim that the entire legacy application is warning-free."
+  },
+  "apk": {
+    "artifact_id": 12250317662,
+    "artifact_zip_sha256": "de8d7a4a70b12092c7d5e541e9998d17849e4f0cd7b2c87fd5b6944653d543cb",
+    "sha256": "65d805e69d09eddf24bfc5c449972fed0274c9c63095ae7c8795d3d962e2eda7",
+    "bytes": 93142023
+  },
+  "artifacts": [
+    {
+      "id": 12250317662,
+      "name": "proxo-release-apk",
+      "size_in_bytes": 93142167,
+      "digest": "sha256:de8d7a4a70b12092c7d5e541e9998d17849e4f0cd7b2c87fd5b6944653d543cb",
+      "created_at": "2026-10-20T08:24:19Z",
+      "expires_at": "2026-11-19T08:24:16Z"
+    },
+    {
+      "id": 12250122142,
+      "name": "proxolink-ui-verification",
+      "size_in_bytes": 28108365,
+      "digest": "sha256:0f987f5d0e7acfea4934695a2f374dc9021b580d5af14e3de83cf723278e4eca",
+      "created_at": "2026-10-20T08:19:42Z",
+      "expires_at": "2026-10-27T08:19:39Z"
+    },
+    {
+      "id": 12249924069,
+      "name": "proxolink-thumbnail-apk-size",
+      "size_in_bytes": 1083,
+      "digest": "sha256:e3a10e4f17404b4fa99a9d127213c078539f80e2fb37ad3e19641fb3a6af64db",
+      "created_at": "2026-10-20T08:24:20Z",
+      "expires_at": "2026-10-27T08:24:19Z"
+    },
+    {
+      "id": 12249922256,
+      "name": "proxolink-v6-responsive",
+      "size_in_bytes": 1604642,
+      "digest": "sha256:b360d7a591b2e03e45209164162d980993f02bb0e60464c26db174792a1555dc",
+      "created_at": "2026-10-20T08:14:51Z",
+      "expires_at": "2026-10-27T08:14:50Z"
+    },
+    {
+      "id": 12249288309,
+      "name": "proxolink-footer-thumbnails",
+      "size_in_bytes": 6184774,
+      "digest": "sha256:6c30116166ec604cc40c8213acc9b2ef29d83111f5c465c48cdf96e542450989",
+      "created_at": "2026-10-20T08:12:20Z",
+      "expires_at": "2026-10-27T08:12:18Z"
+    }
+  ],
+  "limitations": [
+    "These automated fixture suites do not prove live page persistence, live payment, remote FCM delivery or physical-phone performance."
+  ]
+}

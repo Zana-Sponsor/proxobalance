@@ -1,0 +1,2644 @@
+{
+  "captured_at_utc": "2026-10-20T07:57:40.914787+00:00",
+  "runtime": "Flutter 3.47.2 widget tests on Linux; actual production widgets and bundled fonts; not Android device performance",
+  "source": "capture-source-manifest.json",
+  "fixture_boundary": "Fictional read-only transport; in-memory page save; mocked custom email request; no live payments, page publication, OTP email or account changes",
+  "screenshots": 155,
+  "files": [
+    {
+      "path": "widgets/ad-receipt-320-s2-bottom.png",
+      "geometry": "geometry/ad-receipt-320-s2-bottom.json",
+      "bytes": 106956,
+      "sha256": "e07d1c1fff5f27fe531a6a78a2551bf7980006de628543365541c2bf83905dbd",
+      "geometry_sha256": "28216b65b908a13c4284dc443e89fe68fd0fb43d453e641d3dfbeac3314e3153",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 1,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/ad-receipt-320-s2-middle-2.png",
+      "geometry": "geometry/ad-receipt-320-s2-middle-2.json",
+      "bytes": 108364,
+      "sha256": "9cafdbb3969320323b5a1d6ca0e22b25c12038d9dd78583a823a36af9fc5c235",
+      "geometry_sha256": "94e4065c55013816324dae91c335902fbc4f08fb0db92807ae241e076f367936",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 1,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/ad-receipt-320-s2-middle.png",
+      "geometry": "geometry/ad-receipt-320-s2-middle.json",
+      "bytes": 89283,
+      "sha256": "818504734ecd6576e8fad6c2fc2c75d5746cbd15549ff2bb8e7f0b46821256e3",
+      "geometry_sha256": "d74fc96b959949a24eca505a372aece96fb4860082ecc76fd9453f9b784fa73a",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 1,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/ad-receipt-320-s2.png",
+      "geometry": "geometry/ad-receipt-320-s2.json",
+      "bytes": 96804,
+      "sha256": "855b3ef8968bc6e0ac276a70656d362259f1cfbb6b0b7c3610a2572949e1b287",
+      "geometry_sha256": "61af3d17330d71769351e56b3f256776fe9caaf29c37bf72b3b21fc933b937c7",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 1,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/ad-receipt-393-s1-bottom.png",
+      "geometry": "geometry/ad-receipt-393-s1-bottom.json",
+      "bytes": 112143,
+      "sha256": "07d7e745892302960377cd4c106a2a96314a20f2fa6b2e7e37e6e74a418863eb",
+      "geometry_sha256": "ae9d6108c005ee23985f8f631ee57160eb0dd9e8ba09f42951e69b4c02b27a14",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 1,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/ad-receipt-393-s1.png",
+      "geometry": "geometry/ad-receipt-393-s1.json",
+      "bytes": 125394,
+      "sha256": "9371c65a83131a5a87bb4e28fe859ca4d8691c2604ddaa488ca26602eb49630c",
+      "geometry_sha256": "07dfacaa116fa6ad143b080acd7d25cea1b158bd51fd797f5a52cd20e1ab3996",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 1,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/ads-empty-320-s2-action.png",
+      "geometry": "geometry/ads-empty-320-s2-action.json",
+      "bytes": 68014,
+      "sha256": "a2ee4f6d91f016f6cbfca1da4bf3092be551e30b9087364e976ddb72c9327337",
+      "geometry_sha256": "3bba5a2f70ba9d4bffce092b0254abbe286925dff3d9241dd4e155442bc74c84",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 1,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/ads-empty-320-s2.png",
+      "geometry": "geometry/ads-empty-320-s2.json",
+      "bytes": 68014,
+      "sha256": "a2ee4f6d91f016f6cbfca1da4bf3092be551e30b9087364e976ddb72c9327337",
+      "geometry_sha256": "3bba5a2f70ba9d4bffce092b0254abbe286925dff3d9241dd4e155442bc74c84",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 1,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/ads-empty-393-s1-action.png",
+      "geometry": "geometry/ads-empty-393-s1-action.json",
+      "bytes": 52658,
+      "sha256": "42c81c3b26464003c67ef4324f02c5e5f348487d8003a6a064d23314a57286f6",
+      "geometry_sha256": "a31b3678fc023c302504922783f81e4f667dc8ef60040caade316dadb0d3a79f",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 1,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/ads-empty-393-s1.png",
+      "geometry": "geometry/ads-empty-393-s1.json",
+      "bytes": 52658,
+      "sha256": "42c81c3b26464003c67ef4324f02c5e5f348487d8003a6a064d23314a57286f6",
+      "geometry_sha256": "a31b3678fc023c302504922783f81e4f667dc8ef60040caade316dadb0d3a79f",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 1,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/ads-error-320-s2-action.png",
+      "geometry": "geometry/ads-error-320-s2-action.json",
+      "bytes": 63408,
+      "sha256": "5250bc8aff32bde11e27f418aea097aaa87347544f7cf56b2a819e1b8033fd0b",
+      "geometry_sha256": "b693d8d77424fbfe7a922c6d1e9c32d340891ea20f3d133218e9fc5a3bad3a9a",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 1,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/ads-error-320-s2.png",
+      "geometry": "geometry/ads-error-320-s2.json",
+      "bytes": 63408,
+      "sha256": "5250bc8aff32bde11e27f418aea097aaa87347544f7cf56b2a819e1b8033fd0b",
+      "geometry_sha256": "b693d8d77424fbfe7a922c6d1e9c32d340891ea20f3d133218e9fc5a3bad3a9a",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 1,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/ads-error-393-s1-action.png",
+      "geometry": "geometry/ads-error-393-s1-action.json",
+      "bytes": 50907,
+      "sha256": "f03330af370aa19d11cdf244c836fdb927ffae0514a8c0931bbb76063ab0b1af",
+      "geometry_sha256": "ed1c410e51a5b919aa19e134d2e07947475088d342d74d1cfdc68a063de882f7",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 1,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/ads-error-393-s1.png",
+      "geometry": "geometry/ads-error-393-s1.json",
+      "bytes": 50907,
+      "sha256": "f03330af370aa19d11cdf244c836fdb927ffae0514a8c0931bbb76063ab0b1af",
+      "geometry_sha256": "ed1c410e51a5b919aa19e134d2e07947475088d342d74d1cfdc68a063de882f7",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 1,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/ads-filter-empty-320-s2-action.png",
+      "geometry": "geometry/ads-filter-empty-320-s2-action.json",
+      "bytes": 72531,
+      "sha256": "6f618b89463feb1afd1390364bf20ffc72dbac83e80209ee35aa798faa1c4b0b",
+      "geometry_sha256": "cab3dfa6701cdd91c1f3ee133f7512b0de2bff63b27dae8e68c3d1fca2824dc9",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 1,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/ads-filter-empty-320-s2.png",
+      "geometry": "geometry/ads-filter-empty-320-s2.json",
+      "bytes": 72531,
+      "sha256": "6f618b89463feb1afd1390364bf20ffc72dbac83e80209ee35aa798faa1c4b0b",
+      "geometry_sha256": "cab3dfa6701cdd91c1f3ee133f7512b0de2bff63b27dae8e68c3d1fca2824dc9",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 1,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/ads-filter-empty-393-s1-action.png",
+      "geometry": "geometry/ads-filter-empty-393-s1-action.json",
+      "bytes": 54163,
+      "sha256": "7940769ec50e2a5cc11370a3ae299fc40279a266eac4d716a8d24f327949f000",
+      "geometry_sha256": "607f7ce2b37cf3123d1b9d05c0e7cd5089a3d3c8f4c1b3f420b601ece60f2789",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 1,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/ads-filter-empty-393-s1.png",
+      "geometry": "geometry/ads-filter-empty-393-s1.json",
+      "bytes": 54163,
+      "sha256": "7940769ec50e2a5cc11370a3ae299fc40279a266eac4d716a8d24f327949f000",
+      "geometry_sha256": "607f7ce2b37cf3123d1b9d05c0e7cd5089a3d3c8f4c1b3f420b601ece60f2789",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 1,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/ads-loading-320-s2.png",
+      "geometry": "geometry/ads-loading-320-s2.json",
+      "bytes": 111475,
+      "sha256": "baa21d337cd91697c4f4c94151c47c08e20cf6da10b417fba3bd0f4de8f07147",
+      "geometry_sha256": "37e2585c8b39597ad1108a4e4c8eaa0f48f4998c3c6a7e8f632ccf4d6aae5d55",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 1,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/ads-loading-393-s1.png",
+      "geometry": "geometry/ads-loading-393-s1.json",
+      "bytes": 129109,
+      "sha256": "ca514282b86d9d4fdafd4edb9d6e18b4635859ef4cfe7ac9f428d9bd0bef70c8",
+      "geometry_sha256": "4dd05d7150fbb9dd7b1976faa555faa6e192bdc494ee3060a6cac66b0517ed3b",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 1,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/deposit-320-s2-unconfigured-methods.png",
+      "geometry": "geometry/deposit-320-s2-unconfigured-methods.json",
+      "bytes": 74798,
+      "sha256": "92cbc75614390d881e783ca86eaca4ecc800ec1cf5f43781ba78f433120f5316",
+      "geometry_sha256": "b784568867005b8de72174df4b3fbfbaee46ad313e56524059b4a4491f0ffb60",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 1,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/deposit-320-s2.png",
+      "geometry": "geometry/deposit-320-s2.json",
+      "bytes": 84255,
+      "sha256": "0f04df68f5c409d168aed40402e2d856770da977c60f958b197b8ddee3d16db9",
+      "geometry_sha256": "fc69eb3fe42b2da2de990cdfa06781862cd55956dfb597b5731f1ee4d7277609",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 1,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/deposit-393-s1-unconfigured-methods.png",
+      "geometry": "geometry/deposit-393-s1-unconfigured-methods.json",
+      "bytes": 88946,
+      "sha256": "1509ca2201bbb73a11f1bfeec5d04fab99f6a53a58f6989970e5b118fcd14c50",
+      "geometry_sha256": "a23a333ceb8f062daadeeba47ad7e3831dca38126de503e5722b74313aaac703",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 1,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/deposit-393-s1.png",
+      "geometry": "geometry/deposit-393-s1.json",
+      "bytes": 88946,
+      "sha256": "1509ca2201bbb73a11f1bfeec5d04fab99f6a53a58f6989970e5b118fcd14c50",
+      "geometry_sha256": "a23a333ceb8f062daadeeba47ad7e3831dca38126de503e5722b74313aaac703",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 1,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/deposit-fastpay-320-s2-amount.png",
+      "geometry": "geometry/deposit-fastpay-320-s2-amount.json",
+      "bytes": 86200,
+      "sha256": "70ff4c80f53b1a66c2d349c7d2fce801ab0b0f76a58658b07dc65bfd791724af",
+      "geometry_sha256": "892eaf1c7023836f7c3f643d9025e7cdc003c5a9f45a6c70a35ea7f43f8c76fc",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 1,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/deposit-fastpay-320-s2-checkout-entry.png",
+      "geometry": "geometry/deposit-fastpay-320-s2-checkout-entry.json",
+      "bytes": 85861,
+      "sha256": "697905baa72c04a759439644edeb443ef92d30987a98649b3f92995473652c81",
+      "geometry_sha256": "325f3fa692fdb90e5c12c80777d4880e0392c073e19c35805ba428925c70620a",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/deposit-fastpay-393-s1-amount.png",
+      "geometry": "geometry/deposit-fastpay-393-s1-amount.json",
+      "bytes": 110172,
+      "sha256": "2609f88a63bf8f51abfdcabba9f097415002d684a4a667af60ee3e129d42c5af",
+      "geometry_sha256": "a461d8648b429b2c5ab87ca59bd59d7f1627eef593b25a1b67b9acb77618078a",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 1,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/deposit-fastpay-393-s1-checkout-entry.png",
+      "geometry": "geometry/deposit-fastpay-393-s1-checkout-entry.json",
+      "bytes": 104935,
+      "sha256": "643cfd75a406c2fba3c77add06ba107223e27b1cc69788d7ff4de8adcc31ff3e",
+      "geometry_sha256": "03cf1c3df0890d84bc526d6495bfcd13ac7d0cc3e49ade3f87a9035b3ad7f502",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 1,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/deposit-fib-320-s2-amount.png",
+      "geometry": "geometry/deposit-fib-320-s2-amount.json",
+      "bytes": 88402,
+      "sha256": "4346e2cc0a3948044a18faa9259d783b89c7b48a3ee32551acf0777d3a997fa0",
+      "geometry_sha256": "5861471616f1217ca32888ed625df1161d4e0191b49a9b7564543c1ca5c39c15",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/deposit-fib-320-s2-details.png",
+      "geometry": "geometry/deposit-fib-320-s2-details.json",
+      "bytes": 82585,
+      "sha256": "cf202e6625c6be34c8db7b7453a96345b3943d55a71c2a631860e5b9a5a0c634",
+      "geometry_sha256": "530a37b6736dd47fce185a0f7be9e56618830ed10f65a626c14523d738452962",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/deposit-fib-320-s2-instructions.png",
+      "geometry": "geometry/deposit-fib-320-s2-instructions.json",
+      "bytes": 104793,
+      "sha256": "76d9cf7072a5920fe2e46343ee0b466748c94381eca2e494dc445cce95317be1",
+      "geometry_sha256": "4c5f4e18fac412cd8fd728d94cf2ea6dd43a9f00f970051d281b5f4e5abe7783",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/deposit-fib-320-s2-receipt-attached.png",
+      "geometry": "geometry/deposit-fib-320-s2-receipt-attached.json",
+      "bytes": 79773,
+      "sha256": "002e116343717a98b28381c89733fc74d1e1f202ad39b76950bf851d8416d296",
+      "geometry_sha256": "f6a6432e0d3395373c0d49fb282787d5732f070696eacff093a41815b831c2db",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 1,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/deposit-fib-320-s2-receipt-picker.png",
+      "geometry": "geometry/deposit-fib-320-s2-receipt-picker.json",
+      "bytes": 71751,
+      "sha256": "bea418b94bb622fb963785f9f53b80b5030b482c312c04ee05623dce88dc53f9",
+      "geometry_sha256": "26cda7d5372a3ee1dbd3c5d807fdf3a36d2adf8e4237bb153c57a9341dfa2818",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/deposit-fib-320-s2-receipt.png",
+      "geometry": "geometry/deposit-fib-320-s2-receipt.json",
+      "bytes": 72018,
+      "sha256": "8b7b7397c726caf43e47b4ac5572bc25a93d4377b5945c35aa439efb6d5ed75c",
+      "geometry_sha256": "6c382b236b441c69e710a809a361f4aeef7f01c8dcc0fab85ac6c8d0c0233d43",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/deposit-fib-393-s1-amount.png",
+      "geometry": "geometry/deposit-fib-393-s1-amount.json",
+      "bytes": 101500,
+      "sha256": "e1aebd45c981edbd6be130af0af74d519ed00b8b3579a9dfdfdc67ce3f934263",
+      "geometry_sha256": "7b52bacfe623a0a4eab78e45f86bd0ffb6239baf7aa01c3166b2b19bbdeaa317",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/deposit-fib-393-s1-details.png",
+      "geometry": "geometry/deposit-fib-393-s1-details.json",
+      "bytes": 88285,
+      "sha256": "8f764610c8c3ab92cb1542599e4e495fcaaad87f63d66b03995b206c0161fbd9",
+      "geometry_sha256": "79188a497f046ea0e08589f10a753413d5c5a0ebbc192745427b24fa5d2320e8",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/deposit-fib-393-s1-instructions.png",
+      "geometry": "geometry/deposit-fib-393-s1-instructions.json",
+      "bytes": 113042,
+      "sha256": "514018aaa1c0084e6f15ec70615ee7304acf916717a47fc99a25619dcbc7ad7a",
+      "geometry_sha256": "53b5604e88efd3dab0158eabf9f1fd1071342a87ed88d9fe12b295a6bf1d89d3",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/deposit-fib-393-s1-receipt-attached.png",
+      "geometry": "geometry/deposit-fib-393-s1-receipt-attached.json",
+      "bytes": 83968,
+      "sha256": "0273a2e325f332b0ef7d10b09f075145a5a34468cb61f27852960fd59209cf94",
+      "geometry_sha256": "aebf502fdfd36304807da0eae13a607f564b2ed7b18c36447bf4d85a5381308b",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 1,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/deposit-fib-393-s1-receipt-picker.png",
+      "geometry": "geometry/deposit-fib-393-s1-receipt-picker.json",
+      "bytes": 85415,
+      "sha256": "c68e3b9fe408475f0c0802913d90b2dd33231cf361cbce89ab5dbfef7b2c35dc",
+      "geometry_sha256": "5cfef0611095b8c3cf559bcdae4db4b1ebaf560799b5e256623dcf1f6d666479",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/deposit-fib-393-s1-receipt.png",
+      "geometry": "geometry/deposit-fib-393-s1-receipt.json",
+      "bytes": 88285,
+      "sha256": "8f764610c8c3ab92cb1542599e4e495fcaaad87f63d66b03995b206c0161fbd9",
+      "geometry_sha256": "79188a497f046ea0e08589f10a753413d5c5a0ebbc192745427b24fa5d2320e8",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/deposit-kcard-320-s2-amount.png",
+      "geometry": "geometry/deposit-kcard-320-s2-amount.json",
+      "bytes": 88402,
+      "sha256": "4346e2cc0a3948044a18faa9259d783b89c7b48a3ee32551acf0777d3a997fa0",
+      "geometry_sha256": "501ec13cd6c37605b55afbf582df3ce86a5ef2de0af570c09441fb5a2453026c",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/deposit-kcard-320-s2-details.png",
+      "geometry": "geometry/deposit-kcard-320-s2-details.json",
+      "bytes": 84253,
+      "sha256": "6558f50dd88264a99ed51d1a32dbc846c4400ab909d6d9d808a6046d6894cdbd",
+      "geometry_sha256": "5762be30a1d2a4f8d8c08752514fee0634b736ed02b49dc61d9977564d0ea2d9",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/deposit-kcard-320-s2-instructions.png",
+      "geometry": "geometry/deposit-kcard-320-s2-instructions.json",
+      "bytes": 104793,
+      "sha256": "76d9cf7072a5920fe2e46343ee0b466748c94381eca2e494dc445cce95317be1",
+      "geometry_sha256": "a8d7df2016e0d09f9139416e4cb7eb22ad526678469f7f6d272a186b67aa889d",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/deposit-kcard-320-s2-receipt.png",
+      "geometry": "geometry/deposit-kcard-320-s2-receipt.json",
+      "bytes": 72018,
+      "sha256": "8b7b7397c726caf43e47b4ac5572bc25a93d4377b5945c35aa439efb6d5ed75c",
+      "geometry_sha256": "3956618ab3fb3a2a2739bcd530ca21ca6d38e18949af8b02aaa08091549c8212",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/deposit-kcard-393-s1-amount.png",
+      "geometry": "geometry/deposit-kcard-393-s1-amount.json",
+      "bytes": 103685,
+      "sha256": "40e68d2a4c146d0f50ccaf5e734a2ed5c9963dd53b84e2c37efc217c3ff16622",
+      "geometry_sha256": "5b55e6321371b39a0b5aa04e1fbad6cbc2dc81823ab40aa1e54ae1880b40c90b",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/deposit-kcard-393-s1-details.png",
+      "geometry": "geometry/deposit-kcard-393-s1-details.json",
+      "bytes": 90586,
+      "sha256": "823a80cb1728d7560779851444fea6711207fbc5d1e21f5cd890d87599a505bc",
+      "geometry_sha256": "0bc54e055cafe1adf0f866de8c0802ddb2cea7d2e92f5f5844574a54560aa4b3",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/deposit-kcard-393-s1-instructions.png",
+      "geometry": "geometry/deposit-kcard-393-s1-instructions.json",
+      "bytes": 115324,
+      "sha256": "7455f0e3f8bff2482712faecfc5a3b21ad96a1ed2a09f00d3226bf8c8452a7d7",
+      "geometry_sha256": "ceba1b744a49d482ae9c1c666999e58a3bb986255b8f2a28a3239e9337fe043d",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/deposit-kcard-393-s1-receipt.png",
+      "geometry": "geometry/deposit-kcard-393-s1-receipt.json",
+      "bytes": 90586,
+      "sha256": "823a80cb1728d7560779851444fea6711207fbc5d1e21f5cd890d87599a505bc",
+      "geometry_sha256": "0bc54e055cafe1adf0f866de8c0802ddb2cea7d2e92f5f5844574a54560aa4b3",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/home-320-s2-collapsed-card.png",
+      "geometry": "geometry/home-320-s2-collapsed-card.json",
+      "bytes": 92518,
+      "sha256": "6f37c2336b954b6fc894f3e7e9fa5737cd6e26b9d69b0a622d2f736fc6acd65f",
+      "geometry_sha256": "8ea555db5a7e0c378f4c1dd2881ac25c24741085301930cdf9598887eb604293",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 1,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/home-320-s2-expanded-bottom.png",
+      "geometry": "geometry/home-320-s2-expanded-bottom.json",
+      "bytes": 88481,
+      "sha256": "3ba28ce1c2f3a1cf4edcd628011527ea1456e0cec8587ba8936790308b0b40c7",
+      "geometry_sha256": "ae511abd329e263f75c605d10de32d19c4dcae1595d9c964138c64ebd55c7501",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 1,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/home-320-s2-expanded.png",
+      "geometry": "geometry/home-320-s2-expanded.json",
+      "bytes": 94879,
+      "sha256": "589b88cad93a4a9b43a121eda7cc0490b76f6fa39416184c9158c2aa89dc9dde",
+      "geometry_sha256": "832cc6be76ad1ae0098bcdecbb8540d8dd0ba5f5a2e9cc516ca1829ec07e5818",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 1,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/home-320-s2.png",
+      "geometry": "geometry/home-320-s2.json",
+      "bytes": 95065,
+      "sha256": "47cf8881692238b90741e9f13e4c379493cbfb92e881a92107fec0f92e614926",
+      "geometry_sha256": "f448d6573523c814986bcaae4c471f68b414ebbb9ba384e6137d1a0b13ac31d5",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 1,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/home-393-s1-collapsed-card.png",
+      "geometry": "geometry/home-393-s1-collapsed-card.json",
+      "bytes": 107676,
+      "sha256": "7277cf4ebadf6b4241640ef38f73a0f94134016108e07a688ba29ec3afc48da9",
+      "geometry_sha256": "f246966054f8caa4a4a257e0fdbbaf965ac25df73312fd78e987ec0dc0cf0ef6",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 1,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/home-393-s1-expanded-bottom.png",
+      "geometry": "geometry/home-393-s1-expanded-bottom.json",
+      "bytes": 119962,
+      "sha256": "f6383a19572eb8c1b8e6aecc8cf4bd6ae5295e812107d6dfd67ccf34217a5d1f",
+      "geometry_sha256": "264b5dc94895411c581a6206768dea916bb3de8021ad0ad7202ce1549583d345",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 1,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/home-393-s1-expanded.png",
+      "geometry": "geometry/home-393-s1-expanded.json",
+      "bytes": 120168,
+      "sha256": "a0fe331d9a9b7229a4a09abbaa2d28c91151d515dbad2141090449d2bc7b9e27",
+      "geometry_sha256": "b6cb49999c76b35d93d5f125d5e9cc191898626eda3ecac377f78452e85c42f3",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 1,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/home-393-s1.png",
+      "geometry": "geometry/home-393-s1.json",
+      "bytes": 107676,
+      "sha256": "7277cf4ebadf6b4241640ef38f73a0f94134016108e07a688ba29ec3afc48da9",
+      "geometry_sha256": "f246966054f8caa4a4a257e0fdbbaf965ac25df73312fd78e987ec0dc0cf0ef6",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 1,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/home-long-label-320-s2-collapsed-card.png",
+      "geometry": "geometry/home-long-label-320-s2-collapsed-card.json",
+      "bytes": 92160,
+      "sha256": "a072cd4bd6805aaf78dc7829241fb41da544e8f75732f46f3a61a9da7e6c2637",
+      "geometry_sha256": "b443935b934f38ce198713077cc535ca0842fae64e8b11163c6b639c1cf5c916",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 1,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/home-long-label-320-s2-expanded-bottom.png",
+      "geometry": "geometry/home-long-label-320-s2-expanded-bottom.json",
+      "bytes": 88481,
+      "sha256": "3ba28ce1c2f3a1cf4edcd628011527ea1456e0cec8587ba8936790308b0b40c7",
+      "geometry_sha256": "b08745bedc7868a2b92fa4b1175b242711cfee262f48d3c388a8f666a705af0c",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 1,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/home-long-label-320-s2-expanded.png",
+      "geometry": "geometry/home-long-label-320-s2-expanded.json",
+      "bytes": 94490,
+      "sha256": "612a93ca99f2e1cfba9503d114c55f34856254c046c4fb03eef72989dbdf7bea",
+      "geometry_sha256": "025ae190b23efa430ef775e2b0a3550f3fad53e7b633d4e18bc4f570e2beb3e9",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 1,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/home-long-label-320-s2.png",
+      "geometry": "geometry/home-long-label-320-s2.json",
+      "bytes": 95065,
+      "sha256": "47cf8881692238b90741e9f13e4c379493cbfb92e881a92107fec0f92e614926",
+      "geometry_sha256": "42fdc7bcbc0da8b6e5ca2f82593497f629a0c33408cb62872a7456e4c84b11a5",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 1,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/home-long-label-393-s1-collapsed-card.png",
+      "geometry": "geometry/home-long-label-393-s1-collapsed-card.json",
+      "bytes": 107550,
+      "sha256": "91e5a9e91159ae821ab6287bbbe20a70d8a50dcbca04c5d83920b268e190eda2",
+      "geometry_sha256": "70c5747d176e28519701d9e859808fe70b77ecf1dda6e557980ae74621aed201",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 1,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/home-long-label-393-s1-expanded-bottom.png",
+      "geometry": "geometry/home-long-label-393-s1-expanded-bottom.json",
+      "bytes": 119845,
+      "sha256": "841dcc3e8b05e6ad8820b35253c4ae80a254a93229abcbce00c305261bb422e4",
+      "geometry_sha256": "86be60b30042341f8bc5bd9fdfaf38efa18b25339797b59b6db97d2b3ccebb13",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 1,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/home-long-label-393-s1-expanded.png",
+      "geometry": "geometry/home-long-label-393-s1-expanded.json",
+      "bytes": 120060,
+      "sha256": "ba740a8ee84693bade9aec19fc0134102fbaba86000cb7584883d5f0888f37c4",
+      "geometry_sha256": "7248ca07263ac790bb9bac63d9eb28285f9e6632905af7ebacbbe54d1a436736",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 1,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/home-long-label-393-s1.png",
+      "geometry": "geometry/home-long-label-393-s1.json",
+      "bytes": 107550,
+      "sha256": "91e5a9e91159ae821ab6287bbbe20a70d8a50dcbca04c5d83920b268e190eda2",
+      "geometry_sha256": "70c5747d176e28519701d9e859808fe70b77ecf1dda6e557980ae74621aed201",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 1,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/home-thumbnail-failed-320-s2-collapsed-card.png",
+      "geometry": "geometry/home-thumbnail-failed-320-s2-collapsed-card.json",
+      "bytes": 92518,
+      "sha256": "6f37c2336b954b6fc894f3e7e9fa5737cd6e26b9d69b0a622d2f736fc6acd65f",
+      "geometry_sha256": "f4a29c6db83b9f5811cef0010c0e055747390facc9ed9c0061a85e534e0fa640",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 1,
+      "intentional_failed_image_providers": 1
+    },
+    {
+      "path": "widgets/home-thumbnail-failed-320-s2-expanded-bottom.png",
+      "geometry": "geometry/home-thumbnail-failed-320-s2-expanded-bottom.json",
+      "bytes": 88481,
+      "sha256": "3ba28ce1c2f3a1cf4edcd628011527ea1456e0cec8587ba8936790308b0b40c7",
+      "geometry_sha256": "46e162e27733b43fe7cbf4a2ea90723cf56e61eaa032a3c1fa476cf084255148",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 1,
+      "intentional_failed_image_providers": 1
+    },
+    {
+      "path": "widgets/home-thumbnail-failed-320-s2-expanded.png",
+      "geometry": "geometry/home-thumbnail-failed-320-s2-expanded.json",
+      "bytes": 94879,
+      "sha256": "589b88cad93a4a9b43a121eda7cc0490b76f6fa39416184c9158c2aa89dc9dde",
+      "geometry_sha256": "5a07589ef4530069cb3f0b3c5d0a1d2a93cd0db3214b713f14c4b2831895fe82",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 1,
+      "intentional_failed_image_providers": 1
+    },
+    {
+      "path": "widgets/home-thumbnail-failed-320-s2.png",
+      "geometry": "geometry/home-thumbnail-failed-320-s2.json",
+      "bytes": 95065,
+      "sha256": "47cf8881692238b90741e9f13e4c379493cbfb92e881a92107fec0f92e614926",
+      "geometry_sha256": "b8ce87f19102a7417f9daf611ec3e4dcc73db001e3728b5074ef9ce17bcde822",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 1,
+      "intentional_failed_image_providers": 1
+    },
+    {
+      "path": "widgets/home-thumbnail-failed-393-s1-collapsed-card.png",
+      "geometry": "geometry/home-thumbnail-failed-393-s1-collapsed-card.json",
+      "bytes": 107676,
+      "sha256": "7277cf4ebadf6b4241640ef38f73a0f94134016108e07a688ba29ec3afc48da9",
+      "geometry_sha256": "494674fcf76a224b8275c5184469290b8fa75762df6d3f91397ed44ac61bf141",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 1,
+      "intentional_failed_image_providers": 1
+    },
+    {
+      "path": "widgets/home-thumbnail-failed-393-s1-expanded-bottom.png",
+      "geometry": "geometry/home-thumbnail-failed-393-s1-expanded-bottom.json",
+      "bytes": 119962,
+      "sha256": "f6383a19572eb8c1b8e6aecc8cf4bd6ae5295e812107d6dfd67ccf34217a5d1f",
+      "geometry_sha256": "5e304c5ccf97ebb95d55017d499ded614326e70c4235c1c2c1a935d375719eb5",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 1,
+      "intentional_failed_image_providers": 1
+    },
+    {
+      "path": "widgets/home-thumbnail-failed-393-s1-expanded.png",
+      "geometry": "geometry/home-thumbnail-failed-393-s1-expanded.json",
+      "bytes": 120168,
+      "sha256": "a0fe331d9a9b7229a4a09abbaa2d28c91151d515dbad2141090449d2bc7b9e27",
+      "geometry_sha256": "89f0622467970fe15647b389ee9205438ba57bc60ee74d78eb7581a7bea10be0",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 1,
+      "intentional_failed_image_providers": 1
+    },
+    {
+      "path": "widgets/home-thumbnail-failed-393-s1.png",
+      "geometry": "geometry/home-thumbnail-failed-393-s1.json",
+      "bytes": 107676,
+      "sha256": "7277cf4ebadf6b4241640ef38f73a0f94134016108e07a688ba29ec3afc48da9",
+      "geometry_sha256": "494674fcf76a224b8275c5184469290b8fa75762df6d3f91397ed44ac61bf141",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 1,
+      "intentional_failed_image_providers": 1
+    },
+    {
+      "path": "widgets/home-thumbnail-image-320-s2-collapsed-card.png",
+      "geometry": "geometry/home-thumbnail-image-320-s2-collapsed-card.json",
+      "bytes": 89560,
+      "sha256": "3bce0f229ecbd7955cb9217a7d7c44bd14dfa0ae2783732e21167c4f6d35cecf",
+      "geometry_sha256": "3c72dd3f590461fcf0c9276a17e5a6bdaace8f28d0c2c20a7edd21fc3b2b6afc",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 2,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/home-thumbnail-image-320-s2-expanded-bottom.png",
+      "geometry": "geometry/home-thumbnail-image-320-s2-expanded-bottom.json",
+      "bytes": 88481,
+      "sha256": "3ba28ce1c2f3a1cf4edcd628011527ea1456e0cec8587ba8936790308b0b40c7",
+      "geometry_sha256": "59d2d7233a85b781e255326a0bde6fd06667e1b0713aba149d5c843030b4d048",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 2,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/home-thumbnail-image-320-s2-expanded.png",
+      "geometry": "geometry/home-thumbnail-image-320-s2-expanded.json",
+      "bytes": 91959,
+      "sha256": "7b46bf9cfb48843d382f9dc674510243b2a84f1f019b1481693f813cd54f1222",
+      "geometry_sha256": "3d163b00edf2002d10247a29671d8c59eb54f9cfec33dae4a021a7bdae1ecf9d",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 2,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/home-thumbnail-image-320-s2.png",
+      "geometry": "geometry/home-thumbnail-image-320-s2.json",
+      "bytes": 95065,
+      "sha256": "47cf8881692238b90741e9f13e4c379493cbfb92e881a92107fec0f92e614926",
+      "geometry_sha256": "2df3cfc956901d6e9d0589b9a4c93641dd5bca1d984ef4bca47860d7d0587c0a",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 2,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/home-thumbnail-image-393-s1-collapsed-card.png",
+      "geometry": "geometry/home-thumbnail-image-393-s1-collapsed-card.json",
+      "bytes": 104476,
+      "sha256": "f5c7c5777a9dbdb281db7036787151dacfebca5df3982e0d25761f326aaa3840",
+      "geometry_sha256": "c8b479ded3bf92c79c7e1066ea8b924713b5c4020062a6065b5e91f4ea5151f4",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 2,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/home-thumbnail-image-393-s1-expanded-bottom.png",
+      "geometry": "geometry/home-thumbnail-image-393-s1-expanded-bottom.json",
+      "bytes": 116921,
+      "sha256": "5444cfd47dbbe71e654fb22eda37924cc2caee5f9e8d3a20981431125b0381d4",
+      "geometry_sha256": "975f92f232840cb9818abf5e11eb9d617cd4ce8faed65e6a49b1e1f1c7a6a0c2",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 2,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/home-thumbnail-image-393-s1-expanded.png",
+      "geometry": "geometry/home-thumbnail-image-393-s1-expanded.json",
+      "bytes": 117127,
+      "sha256": "c3ca8f4e5652c3c693f8cacdb3ffe48ffe558a789999b2a5a723c510c86de3cc",
+      "geometry_sha256": "15ed51fbd1522e4617f5eb269f9f1fd4eff4047b8c43768f0908a5d52814f2db",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 2,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/home-thumbnail-image-393-s1.png",
+      "geometry": "geometry/home-thumbnail-image-393-s1.json",
+      "bytes": 104476,
+      "sha256": "f5c7c5777a9dbdb281db7036787151dacfebca5df3982e0d25761f326aaa3840",
+      "geometry_sha256": "c8b479ded3bf92c79c7e1066ea8b924713b5c4020062a6065b5e91f4ea5151f4",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 2,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/menu-320-s2-bottom.png",
+      "geometry": "geometry/menu-320-s2-bottom.json",
+      "bytes": 81867,
+      "sha256": "17ef81e66b7d21b0a23c752c66807d3ca8dd978918f701ab42e67ae1d109710b",
+      "geometry_sha256": "381b56c3699c4d9343fadf6bfe695d9d34c9673cda71e5f7e2f801de17af5a86",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/menu-320-s2-logout-error.png",
+      "geometry": "geometry/menu-320-s2-logout-error.json",
+      "bytes": 90170,
+      "sha256": "8cb2b8e3b3b6277ab63ebdad2c415cc1dd7560c33ab21b6c4a92571210599890",
+      "geometry_sha256": "50ac6861344da98b4c9375b3a67b67820bdce02af60f19969580604ff786d3fa",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/menu-320-s2.png",
+      "geometry": "geometry/menu-320-s2.json",
+      "bytes": 77999,
+      "sha256": "8f3c994e186ccb673a9be39ad998594871e311205693c0058524fe4f10375f6e",
+      "geometry_sha256": "fae0db1748bbbdecd41571e8dca7c58c6fe50eead694ea89ed153f5f58381532",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/menu-393-s1-bottom.png",
+      "geometry": "geometry/menu-393-s1-bottom.json",
+      "bytes": 82088,
+      "sha256": "5c482667c30ecfb3a4fed0fea512c4cd54e7fc708539a75c10ccc97f29ca9ed3",
+      "geometry_sha256": "cd29879a4829e8351f14cc1a578bb99f877d29c34e30a4ebff9ada27ca0ce058",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/menu-393-s1-logout-error.png",
+      "geometry": "geometry/menu-393-s1-logout-error.json",
+      "bytes": 88950,
+      "sha256": "1b53dc8c1e3b040fc14fcca409c6a73032e45371aa062801632e7bdeb97d3983",
+      "geometry_sha256": "5cc71c727fe48443fb2e3e0d29d668ff559151542245402798d2389ac6550e65",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/menu-393-s1.png",
+      "geometry": "geometry/menu-393-s1.json",
+      "bytes": 82088,
+      "sha256": "5c482667c30ecfb3a4fed0fea512c4cd54e7fc708539a75c10ccc97f29ca9ed3",
+      "geometry_sha256": "cd29879a4829e8351f14cc1a578bb99f877d29c34e30a4ebff9ada27ca0ce058",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/profile-320-s2-about-bottom.png",
+      "geometry": "geometry/profile-320-s2-about-bottom.json",
+      "bytes": 131887,
+      "sha256": "271910250bbe7ff7b52721cd3747bc34bf49eeb5c9cb742dc4f505c2680950ef",
+      "geometry_sha256": "9df48c6edd52015a7ca06328c615012b81eee7bfcec23cc4f12bc34230ba28af",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/profile-320-s2-about.png",
+      "geometry": "geometry/profile-320-s2-about.json",
+      "bytes": 123383,
+      "sha256": "0a64ead276bd9a3e30c07456164469404c254bfae58e833db351caae3790bdb5",
+      "geometry_sha256": "84281ed08d6d9f43c5b4e2a15d063bc8a9b84120df63bc4f93122321391d46a8",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/profile-320-s2-balance-hidden.png",
+      "geometry": "geometry/profile-320-s2-balance-hidden.json",
+      "bytes": 81783,
+      "sha256": "79b54e8298874ab833a4501dfd03fba074e9ac276de5b07e43fdc03e2429a3b1",
+      "geometry_sha256": "93634281610161175648d9ed5f4dac17074659dad3a8a8daa4c78771d7f452d6",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/profile-320-s2-bottom.png",
+      "geometry": "geometry/profile-320-s2-bottom.json",
+      "bytes": 78292,
+      "sha256": "944d8942853fb8842dc5656b167b9f3e11bb7b6db7eaac2ca01f4d28320cb7d9",
+      "geometry_sha256": "41e0dcaa33b6c3d4f17ea73527fcd7780633df627128fa7a05e4a2de78f34863",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/profile-320-s2-delete-confirm.png",
+      "geometry": "geometry/profile-320-s2-delete-confirm.json",
+      "bytes": 84670,
+      "sha256": "bf5c71e49abd113e00fb232a36e0e729329ed4514a7b6d762fc3a56f6859ad66",
+      "geometry_sha256": "f9f561e1f0af61f755c94bcc181204d4ffe33ba6ef58bf2901fb4820d15a2087",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/profile-320-s2-edit-bottom.png",
+      "geometry": "geometry/profile-320-s2-edit-bottom.json",
+      "bytes": 84867,
+      "sha256": "1f44bdc94d0e6028c3908f23af53c91b778d7b6c7ae8d1df163ea2c5db7b7ce6",
+      "geometry_sha256": "33ed1241b629c8aa32c0d56fb89f00c8217564b86de926c7901d68378814538c",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/profile-320-s2-edit.png",
+      "geometry": "geometry/profile-320-s2-edit.json",
+      "bytes": 88117,
+      "sha256": "3b74d99d1d47bfe0759702f3e83c3e3ccadd17a20ffc9c296d2b5dc653fec1dd",
+      "geometry_sha256": "a2a13e7ee3a1e70896c2923e868aba72cde19844d89d6c8e1c7c065eddade4bd",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/profile-320-s2-faq-bottom.png",
+      "geometry": "geometry/profile-320-s2-faq-bottom.json",
+      "bytes": 89156,
+      "sha256": "11c2e4872ba67604d38eca589eaf602d3ebcbf3431efb74e5ec651e9b9876a0e",
+      "geometry_sha256": "ce4a93c19f173d4c5400d7c9e2c5bf53a33b63ec3925d981bcc8fc9ee254f133",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/profile-320-s2-faq.png",
+      "geometry": "geometry/profile-320-s2-faq.json",
+      "bytes": 93220,
+      "sha256": "5ee7eb4686095c3165bb452f141add43d394c0a18b2eba7cffc262264ed4f201",
+      "geometry_sha256": "913a068eca86294d41da7d9bf8f42c8a7845fcbf5befaeac84e55b5eb496c006",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/profile-320-s2-sign-out-confirm.png",
+      "geometry": "geometry/profile-320-s2-sign-out-confirm.json",
+      "bytes": 74502,
+      "sha256": "33e7e4efe423ba489af2cfc42d97cb41883bdd18cc47244dbeb2288c6868f317",
+      "geometry_sha256": "8ca70fa32b273ec295670a8a24eba76cf074e5001f247cf97306485db757f6f0",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/profile-320-s2-support-bottom.png",
+      "geometry": "geometry/profile-320-s2-support-bottom.json",
+      "bytes": 83211,
+      "sha256": "42b4d358699a4ef6251ee5534fea4be302fb3ec657e707edc9688cf6c05ec355",
+      "geometry_sha256": "6b18ea28d7f7460e08d22ee078e4ba8b4c1e28d50497f5a97f750eee8d5683a2",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/profile-320-s2-support.png",
+      "geometry": "geometry/profile-320-s2-support.json",
+      "bytes": 83211,
+      "sha256": "42b4d358699a4ef6251ee5534fea4be302fb3ec657e707edc9688cf6c05ec355",
+      "geometry_sha256": "6b18ea28d7f7460e08d22ee078e4ba8b4c1e28d50497f5a97f750eee8d5683a2",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/profile-320-s2.png",
+      "geometry": "geometry/profile-320-s2.json",
+      "bytes": 81618,
+      "sha256": "fa21bf046b6dbe1a9f4dc1e186cb8bf570728a2025d0d08ace5594f22dc9d463",
+      "geometry_sha256": "a8606cb5fc3ce728f7e52e39f3ecf1d1933af4480e6255c1fa5d7cca9157114a",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/profile-393-s1-about-bottom.png",
+      "geometry": "geometry/profile-393-s1-about-bottom.json",
+      "bytes": 201149,
+      "sha256": "853657ca07ead7df5638f31a36f66ac76bf73878fb45cac0037af782710b46d0",
+      "geometry_sha256": "8fb821f768877d8565ca0740f79a48307312d8abd41f1548c08d3f987d5cf719",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/profile-393-s1-about.png",
+      "geometry": "geometry/profile-393-s1-about.json",
+      "bytes": 203688,
+      "sha256": "66e22e4c36e5f86f7c9ca6211142430c58f7a241e79337890ecd2f74185c7c6b",
+      "geometry_sha256": "6bc3ba80c83a8776858b6522cc025a07fceeec9452c12408e23c4c73df3484ba",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/profile-393-s1-balance-hidden.png",
+      "geometry": "geometry/profile-393-s1-balance-hidden.json",
+      "bytes": 95840,
+      "sha256": "2e50be20e3fa810cabc4b510381a0efd784765d6d861a159affadf0389bf3f06",
+      "geometry_sha256": "176a255e6d4c3f0742fb87e3e83a7608ec7dd35be5dd4bf966d030b44ffbad51",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/profile-393-s1-bottom.png",
+      "geometry": "geometry/profile-393-s1-bottom.json",
+      "bytes": 101955,
+      "sha256": "cc5160c0f84a523da2724ea3a3b83e5f7f2421bdaab018aa5b96ab7a294a1b7d",
+      "geometry_sha256": "66728c9756fc9fa704d855c7d03a4bf5779bd2c898f0e8e659fd86da0da9f0e2",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/profile-393-s1-delete-confirm.png",
+      "geometry": "geometry/profile-393-s1-delete-confirm.json",
+      "bytes": 92136,
+      "sha256": "864f646c8c121a0e9cb6d3f89562c6301083550f100e4608ea19af0cede17083",
+      "geometry_sha256": "3beef3032226b0e971bb173fdce007284d4da763e1a15529d1dcee4e757c1380",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/profile-393-s1-edit-bottom.png",
+      "geometry": "geometry/profile-393-s1-edit-bottom.json",
+      "bytes": 86464,
+      "sha256": "eb1134d2c6d81e4d1e7c3c5065070734bb1aa4a1804d57219f4a56257eef91b2",
+      "geometry_sha256": "984e1441964014c10cc3dd1b30f5da05cbd27a05223134c03333a63350a5e2e5",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/profile-393-s1-edit.png",
+      "geometry": "geometry/profile-393-s1-edit.json",
+      "bytes": 86464,
+      "sha256": "eb1134d2c6d81e4d1e7c3c5065070734bb1aa4a1804d57219f4a56257eef91b2",
+      "geometry_sha256": "984e1441964014c10cc3dd1b30f5da05cbd27a05223134c03333a63350a5e2e5",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/profile-393-s1-faq-bottom.png",
+      "geometry": "geometry/profile-393-s1-faq-bottom.json",
+      "bytes": 60679,
+      "sha256": "f6474be5e10c961afe305e41ccea7747495cbf2cc22c229fef47a2759bbd6772",
+      "geometry_sha256": "a0732d88882eba5b9c5c11df349de5502791971b75777c964bbcd2f584a13f59",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/profile-393-s1-faq.png",
+      "geometry": "geometry/profile-393-s1-faq.json",
+      "bytes": 60679,
+      "sha256": "f6474be5e10c961afe305e41ccea7747495cbf2cc22c229fef47a2759bbd6772",
+      "geometry_sha256": "a0732d88882eba5b9c5c11df349de5502791971b75777c964bbcd2f584a13f59",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/profile-393-s1-sign-out-confirm.png",
+      "geometry": "geometry/profile-393-s1-sign-out-confirm.json",
+      "bytes": 97352,
+      "sha256": "dc35cf990c58f06fd65b28cf7b984166c630114a40bded8476e258a514ab8fb2",
+      "geometry_sha256": "dea8522489b328e0cdaef680ff44d0e83a87ffa62256270ff2b4fdd9894773d0",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/profile-393-s1-support-bottom.png",
+      "geometry": "geometry/profile-393-s1-support-bottom.json",
+      "bytes": 99543,
+      "sha256": "35883d6db534a7dba1e4a385afbc2476a8a6c635aaed9dbacb750d948b6eca27",
+      "geometry_sha256": "10cec2cca691d466f66459a317417a67bdabae38c10695c9e699d2c1c88522fc",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/profile-393-s1-support.png",
+      "geometry": "geometry/profile-393-s1-support.json",
+      "bytes": 99543,
+      "sha256": "35883d6db534a7dba1e4a385afbc2476a8a6c635aaed9dbacb750d948b6eca27",
+      "geometry_sha256": "10cec2cca691d466f66459a317417a67bdabae38c10695c9e699d2c1c88522fc",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/profile-393-s1.png",
+      "geometry": "geometry/profile-393-s1.json",
+      "bytes": 109027,
+      "sha256": "8e859a1a1e4240e2e624b3a9621e7da448fb0b3a4dd656f6f072ad365d65ebf5",
+      "geometry_sha256": "99860d8d37b9cadfe196b37d12d8491f979f416d78e9af3db282ecb1f6145da9",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/profile-email-otp-320-s2-dialog.png",
+      "geometry": "geometry/profile-email-otp-320-s2-dialog.json",
+      "bytes": 85935,
+      "sha256": "48e03bca86f692c9d2d9bb722463e31a3dd6baa0b81ce782da08b386207e5d48",
+      "geometry_sha256": "c5ddf097d53bc58c75cf8faaf4660b0258fc13ee68adbb67a4d19fb2742a814d",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/profile-email-otp-320-s2-filled.png",
+      "geometry": "geometry/profile-email-otp-320-s2-filled.json",
+      "bytes": 89058,
+      "sha256": "d1eca2882618346715613f07fa543b05b04c5d8b2613bbb4c0547224bb041909",
+      "geometry_sha256": "737bd6d678054e4fc62293fe47a869b84eaad2e2ea5c5d288038cfc38d44a742",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/profile-email-otp-320-s2-keyboard-inset.png",
+      "geometry": "geometry/profile-email-otp-320-s2-keyboard-inset.json",
+      "bytes": 49619,
+      "sha256": "53b3bf1ba8b00758e899991949e2841b5431acf151c6ca16939d334cdfe99955",
+      "geometry_sha256": "fadb7f5e999ee228a7cce1499efeb36846b1f4bca73c589280440f66fa96f0fe",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 300.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/profile-email-otp-320-s2.png",
+      "geometry": "geometry/profile-email-otp-320-s2.json",
+      "bytes": 89074,
+      "sha256": "cfa8d1c43bbf7d13e82391005065258e492efe465f9e5a8f1935b423089f4972",
+      "geometry_sha256": "f176cc2b37f636dc0ecb119159701739e19978d6b82c3d4e9994bff781106216",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/profile-email-otp-393-s1-dialog.png",
+      "geometry": "geometry/profile-email-otp-393-s1-dialog.json",
+      "bytes": 101485,
+      "sha256": "00d5ff3661cf2a25d05b30e538d1aa37562e0e62db8f0b6ea38126f0b7d3d3a6",
+      "geometry_sha256": "5797a977e9a14757b9587d6bdc6d6dbf9a094c56ba9b47c8dc14593f820bf619",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/profile-email-otp-393-s1-filled.png",
+      "geometry": "geometry/profile-email-otp-393-s1-filled.json",
+      "bytes": 102531,
+      "sha256": "94b3ea8f109b8d8c25b1eed7df0f3be21c4d96799780fd1862401e6b2745421e",
+      "geometry_sha256": "816b4f4c737499b7650fccf22acf256a1ea8c1148f2084929137da7e486a94d0",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/profile-email-otp-393-s1-keyboard-inset.png",
+      "geometry": "geometry/profile-email-otp-393-s1-keyboard-inset.json",
+      "bytes": 77683,
+      "sha256": "90cc8b3624f5ac48f2eff910ce20f3aab337cfda3c0869c6d4e7801ec8d5dacb",
+      "geometry_sha256": "65a21e8bf58d436dcf802bb6f3f2280f5c17bc30b63a4a8c260b175fdb7be0e5",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 300.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/profile-email-otp-393-s1.png",
+      "geometry": "geometry/profile-email-otp-393-s1.json",
+      "bytes": 86991,
+      "sha256": "eb4cef514b5717ddc6bb3add1dfbd78b2eae16183b301b34d46b2896dc4ee612",
+      "geometry_sha256": "42881d14dd4abbf1b8998c03b508176db413a9f463bc125f68f66dc388ae91d0",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/profile-long-320-s2-balance-hidden.png",
+      "geometry": "geometry/profile-long-320-s2-balance-hidden.json",
+      "bytes": 81769,
+      "sha256": "69899bd4962a9d58474e580c69cf94b9d004878b49459c6156c1bbe73ca63a9e",
+      "geometry_sha256": "56e5a5094fc6dcbbbd42374473645936ee71456b45c0be540aa04d3b9da4848b",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/profile-long-320-s2-bottom.png",
+      "geometry": "geometry/profile-long-320-s2-bottom.json",
+      "bytes": 78292,
+      "sha256": "944d8942853fb8842dc5656b167b9f3e11bb7b6db7eaac2ca01f4d28320cb7d9",
+      "geometry_sha256": "37cfae01bf8dc1a0f8a33e6537bc636271d3bfcd79b3abf539e50aecff7817b8",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/profile-long-320-s2.png",
+      "geometry": "geometry/profile-long-320-s2.json",
+      "bytes": 103974,
+      "sha256": "45a4c51793e018ee0ae748d71f1c1c4272e5c210add926be5f98a48b24e26db6",
+      "geometry_sha256": "6f9a8c5f10080c98221a0681441319a547a4632ed3d056c5a2cff46e02f62c2b",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/profile-long-393-s1-balance-hidden.png",
+      "geometry": "geometry/profile-long-393-s1-balance-hidden.json",
+      "bytes": 95840,
+      "sha256": "2e50be20e3fa810cabc4b510381a0efd784765d6d861a159affadf0389bf3f06",
+      "geometry_sha256": "0065572de2f1d026c14a218bc18053bb01fcb94c31152730da0ddb8efc75124f",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/profile-long-393-s1-bottom.png",
+      "geometry": "geometry/profile-long-393-s1-bottom.json",
+      "bytes": 101955,
+      "sha256": "cc5160c0f84a523da2724ea3a3b83e5f7f2421bdaab018aa5b96ab7a294a1b7d",
+      "geometry_sha256": "6d97d4694155427821b10f0cfe39bb63c84f64b6f20d3242559317e4c7cd2abc",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/profile-long-393-s1.png",
+      "geometry": "geometry/profile-long-393-s1.json",
+      "bytes": 117568,
+      "sha256": "7bbcae29f059b7f6e08526edec663a6aab50633065937432bbe89fdba12382a3",
+      "geometry_sha256": "5b69fdd04787a9be43bd6211e26530de32a4307886b1be7f6b3845015cfebe38",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/profile-missing-320-s2-balance-hidden.png",
+      "geometry": "geometry/profile-missing-320-s2-balance-hidden.json",
+      "bytes": 81784,
+      "sha256": "a963eb2d1fb499063e7b0f4e92c5863322df477331cb6086fe2d81e3c609121d",
+      "geometry_sha256": "38b146187bc2170bae6f3d1cbe247a8e9dd28ea8b46f4f75f8f4825154c0de6d",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/profile-missing-320-s2-bottom.png",
+      "geometry": "geometry/profile-missing-320-s2-bottom.json",
+      "bytes": 78289,
+      "sha256": "af8e371e33284797cb9988d95c7d2e4b953954b2c16eaac726ee0d0585af114d",
+      "geometry_sha256": "d3c8328f425933b57ed38bd8151735709d1cac85cd33858f99c4584a175e4cc4",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/profile-missing-320-s2.png",
+      "geometry": "geometry/profile-missing-320-s2.json",
+      "bytes": 71901,
+      "sha256": "f359b841cd12dc3c5c249cae2fd9f4eb43d2ba045ab6c95e11edcc73f0c59289",
+      "geometry_sha256": "49200e6dbc84e2a710e5a27021c221b3843224e31556e94463869748bec867eb",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/profile-missing-393-s1-balance-hidden.png",
+      "geometry": "geometry/profile-missing-393-s1-balance-hidden.json",
+      "bytes": 95850,
+      "sha256": "e270c9bf747a80e635cd5699fdde2f572cf8f287be9fcdccbe5e08b05b1d5141",
+      "geometry_sha256": "7da8d6ae668aa956f59adcfe7f6eeeea4f9c1a9c62fcd551c6bb6e6bc51b0c0b",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/profile-missing-393-s1-bottom.png",
+      "geometry": "geometry/profile-missing-393-s1-bottom.json",
+      "bytes": 101959,
+      "sha256": "61d463e1245e5b603f45dfe94ef108f93254f793c41a9e2f2edaa88416823a62",
+      "geometry_sha256": "29273c134240ab863b86d3a87f5307a428fb7b371bf8266e30babf08b0afc7e9",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/profile-missing-393-s1.png",
+      "geometry": "geometry/profile-missing-393-s1.json",
+      "bytes": 100030,
+      "sha256": "9e89257cb10ee661aec6d1438a1da0492c060f951d8a15eb6947828e8ef7a4cb",
+      "geometry_sha256": "70669f84a3941ecc02074871bcad5d2f983477f783d4388dc5832f9eff46283b",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/tools-320-s2-action.png",
+      "geometry": "geometry/tools-320-s2-action.json",
+      "bytes": 75930,
+      "sha256": "453846f18b387d26dd54a97357a3613bfae989a2ae9e54bfd31dfe7619d9f07f",
+      "geometry_sha256": "06c9a38d08ba11e4f5ae74cb20900789e2dba7222cf2a4222f96d22f353169e6",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/tools-320-s2-create-unavailable.png",
+      "geometry": "geometry/tools-320-s2-create-unavailable.json",
+      "bytes": 53916,
+      "sha256": "022d373a9c8333ae863f016325081b85ea122a0c725fbe8ae0ebf1e2c41f37f2",
+      "geometry_sha256": "28cca192fdd673b8d584e1d3ab9db84686436a40ee9a0ac9335f1c06d477eaa7",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/tools-320-s2.png",
+      "geometry": "geometry/tools-320-s2.json",
+      "bytes": 73602,
+      "sha256": "511bfedf3461c7597523ca273a1c1df087c13d63c2a913247eeb65e6ddaa5a1e",
+      "geometry_sha256": "cc714061f15604d5aa666c10c532656f721d6c34e2a8b2bd36e4c2412ce97ec3",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/tools-393-s1-create-unavailable.png",
+      "geometry": "geometry/tools-393-s1-create-unavailable.json",
+      "bytes": 34307,
+      "sha256": "4e495767b974a3c1be8d20d67cd868a80c987ecc9eee7fd6fc9cc142266af76e",
+      "geometry_sha256": "96211f6a58d10aee91cb611579591687ef9719f8124405185a02d6fea11c1286",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/tools-393-s1.png",
+      "geometry": "geometry/tools-393-s1.json",
+      "bytes": 49363,
+      "sha256": "7f85cd594b907de73489e51c16a37c80d4681ff83f9c410447bb22a1efc24ca5",
+      "geometry_sha256": "b25f279da79dce3d9ea786cf857a47f1f6a814d599ff73c5f7e539fc9f3d4381",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/tools-create-flow-320-s2-contact-filled.png",
+      "geometry": "geometry/tools-create-flow-320-s2-contact-filled.json",
+      "bytes": 71225,
+      "sha256": "9817d27eced90bfbf8f85e69e491e63f5f5b3714d3b5dbef7cb9ca91a527242e",
+      "geometry_sha256": "bf4181304233bed14b2e67fc4f02f0c75286666337a1d5935d824c31b3c2ea87",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 4,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/tools-create-flow-320-s2-contact-form.png",
+      "geometry": "geometry/tools-create-flow-320-s2-contact-form.json",
+      "bytes": 66602,
+      "sha256": "0cdd02641440f53d755b20325095d5bc18248e218fc61f02b25fd2958ae82e0c",
+      "geometry_sha256": "c948ea1ad020a50158d614e1dc7f4b38efc9c775864d6cc964ce282ebf785cbe",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 4,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/tools-create-flow-320-s2-created-in-memory.png",
+      "geometry": "geometry/tools-create-flow-320-s2-created-in-memory.json",
+      "bytes": 76877,
+      "sha256": "7b0aef014c2c7bf1583c6eb0640664177a245e4a5fce315d39920ce0b6f6b246",
+      "geometry_sha256": "9117e4f788bb9cf7d57e1f03bd9f243ee24e265441c41bd0a86aa4a8b905fe2c",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/tools-create-flow-320-s2-designs-submit.png",
+      "geometry": "geometry/tools-create-flow-320-s2-designs-submit.json",
+      "bytes": 128657,
+      "sha256": "59191510e494b596028716cb82d0004a200cff858045ddb4b43c998fa77761fd",
+      "geometry_sha256": "63e1896d95570938bcd54bc65b204578c99afb99430cc71fcfe6085e3da2109e",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 4,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/tools-create-flow-320-s2-download-form.png",
+      "geometry": "geometry/tools-create-flow-320-s2-download-form.json",
+      "bytes": 66391,
+      "sha256": "c7b5220579efbfde33daa8ee561a914b93d0ca808c58d64fc95a34eb57559c41",
+      "geometry_sha256": "f2abf4919d25d857a2993965b152c7325f75b287794524066492d643035d4442",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 4,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/tools-create-flow-320-s2-order-form.png",
+      "geometry": "geometry/tools-create-flow-320-s2-order-form.json",
+      "bytes": 66064,
+      "sha256": "2a60a68ae17a9ac7eab73f657fd3533a94631a0a6768798a45ab4f115d4d73c0",
+      "geometry_sha256": "cd7b0b7797a9f61871132a88b3728b1ef8b8d721da275db059922ef52c2a14b8",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 4,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/tools-create-flow-320-s2.png",
+      "geometry": "geometry/tools-create-flow-320-s2.json",
+      "bytes": 73602,
+      "sha256": "511bfedf3461c7597523ca273a1c1df087c13d63c2a913247eeb65e6ddaa5a1e",
+      "geometry_sha256": "9417f75155e8f86d77603ac392e2b5f6405ea12ec13acce7225d94de225f55c8",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/tools-create-flow-393-s1-contact-filled.png",
+      "geometry": "geometry/tools-create-flow-393-s1-contact-filled.json",
+      "bytes": 77455,
+      "sha256": "5f2dd451373a0da225347f89c485eca81a40414de13da58fc38b7d0dd6531177",
+      "geometry_sha256": "539cd4c44b8cd8f1d1bcb963b1a0e735c4f2dfae37eac35f5a9651327e900cea",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 4,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/tools-create-flow-393-s1-contact-form.png",
+      "geometry": "geometry/tools-create-flow-393-s1-contact-form.json",
+      "bytes": 74927,
+      "sha256": "22fb7f1cb9090c5a7e4d7dcf7b103d722035a3845e8c3802ffe712024b7d7497",
+      "geometry_sha256": "76a6f50003355c88dacae9680096279ccbd2e00f9a5973cb14118d167e4b5774",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 4,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/tools-create-flow-393-s1-created-in-memory.png",
+      "geometry": "geometry/tools-create-flow-393-s1-created-in-memory.json",
+      "bytes": 54021,
+      "sha256": "41a8ad25f3078f25e7e98180b36c56452d3c225da97c16e9f466d4e0a3ed92b9",
+      "geometry_sha256": "78c5df64f6989f3dfd7dbc3bc7a2c37043c15a57b818894d90c6ca89e69fb589",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/tools-create-flow-393-s1-designs-submit.png",
+      "geometry": "geometry/tools-create-flow-393-s1-designs-submit.json",
+      "bytes": 238750,
+      "sha256": "a608e5dadf3b3e9a9aec67b9057619ad747861908c0b8df551fe643d9bcbc7ae",
+      "geometry_sha256": "c134eeac34836abfe3fbd14df09f953d9c49279f871833c4cad91ef32e4bf44c",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 4,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/tools-create-flow-393-s1-download-form.png",
+      "geometry": "geometry/tools-create-flow-393-s1-download-form.json",
+      "bytes": 74588,
+      "sha256": "57e8317fd7a98e7ecc3e0882e0af9a2584b19a1980e5c631041fbe01ae7ba391",
+      "geometry_sha256": "ad6aa6ddaa08597506a1600e90058647ce108afb960c127cb026fd2dc1530f85",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 4,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/tools-create-flow-393-s1-order-form.png",
+      "geometry": "geometry/tools-create-flow-393-s1-order-form.json",
+      "bytes": 76862,
+      "sha256": "36875a9752c8051899f40efcff940c141c4d4e07abe4c70cd70cb2dc0f835e88",
+      "geometry_sha256": "a48b74f0290cb9284f1531c816dc0231f8076df4bcb6fa0d8bdb5882c0003f6f",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 4,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/tools-create-flow-393-s1.png",
+      "geometry": "geometry/tools-create-flow-393-s1.json",
+      "bytes": 49363,
+      "sha256": "7f85cd594b907de73489e51c16a37c80d4681ff83f9c410447bb22a1efc24ca5",
+      "geometry_sha256": "545fec828fde9cb34cbbf48e8cf14e7a87264e4b9fcce01033a5a375b954b38a",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 0,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/transaction-receipt-320-s2-bottom.png",
+      "geometry": "geometry/transaction-receipt-320-s2-bottom.json",
+      "bytes": 87116,
+      "sha256": "f2cd593cab7011dab51b873e65e535ef3d093c4bcb6d74428a4f7294631e1bff",
+      "geometry_sha256": "f8a80a684a266299c46b83195dbc2420f8b7ac23ff72f0881e989d5c879001ef",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 1,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/transaction-receipt-320-s2.png",
+      "geometry": "geometry/transaction-receipt-320-s2.json",
+      "bytes": 92789,
+      "sha256": "d402f992dffb6d27d2701a19cc1c1e09524d69087fdbc01ffd1a636273ec630e",
+      "geometry_sha256": "d3cb0e2296880492be0d6569a991a322ce1a714e619920a6b7e967b5720b488e",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 1,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/transaction-receipt-393-s1-bottom.png",
+      "geometry": "geometry/transaction-receipt-393-s1-bottom.json",
+      "bytes": 77707,
+      "sha256": "23492baec4e62e1791c49a4a3f352cd1aacd15f99803c5f822f26f90aacb5dc3",
+      "geometry_sha256": "b0e059bd8469e0c03b39dd47e982daf780b1056244c9560e2e468180eddff38e",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 1,
+      "intentional_failed_image_providers": 0
+    },
+    {
+      "path": "widgets/transaction-receipt-393-s1.png",
+      "geometry": "geometry/transaction-receipt-393-s1.json",
+      "bytes": 77707,
+      "sha256": "23492baec4e62e1791c49a4a3f352cd1aacd15f99803c5f822f26f90aacb5dc3",
+      "geometry_sha256": "b0e059bd8469e0c03b39dd47e982daf780b1056244c9560e2e468180eddff38e",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "keyboard_inset_dp": 0.0,
+      "layout_exceptions": 0,
+      "mounted_images_decoded": 1,
+      "intentional_failed_image_providers": 0
+    }
+  ]
+}
