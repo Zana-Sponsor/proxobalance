@@ -4,6 +4,7 @@ import 'dart:typed_data';
 
 import 'package:http/http.dart' as http;
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/proxo_card.dart';
 
@@ -21,17 +22,58 @@ class ProxoLinkFailure implements Exception {
   final String? savedCardId;
   const ProxoLinkFailure(this.code, {this.savedCardId});
   String get message => switch (code) {
-    'ad_dependency' => 'ئەم پەڕەیە لە ڕیکلامێکدا بەکارهاتووە و ناتوانرێت ئێستا ناچالاک بکرێت یان بسڕدرێتەوە.',
-    'edit_conflict' =>
-      'پەڕەکە لە شوێنێکی تر دەستکاری کراوە. تکایە نوێی بکەرەوە.',
-    'unauthorized' => 'تکایە دووبارە بچۆ ژوورەوە.',
-    'avatar_required' => 'تکایە وێنەی پرۆفایل هەڵبژێرە.',
-    'invalid_avatar' =>
-      'وێنەکە گونجاو نییە. وێنەی JPEG، PNG یان WebP هەڵبژێرە.',
-    'invalid_platform_value' => 'تکایە ژمارە و بەستەری دووگمەکان بپشکنە.',
-    'publish_failed' => 'پەڕەکە پاشەکەوت کرا، بەڵام دروستکردنی سەرکەوتوو نەبوو. دەتوانیت دووبارە هەوڵ بدەیتەوە.',
-    _ => 'نەتوانرا داواکارییەکە تەواو بکرێت. تکایە دووبارە هەوڵ بدەرەوە.',
-  };
+        'ad_dependency' =>
+          'ئەم پەڕەیە لە ڕیکلامێکدا بەکارهاتووە و ناتوانرێت ئێستا ناچالاک بکرێت یان بسڕدرێتەوە.',
+        'edit_conflict' =>
+          'پەڕەکە لە شوێنێکی تر دەستکاری کراوە. تکایە نوێی بکەرەوە.',
+        'unauthorized' => 'تکایە دووبارە بچۆ ژوورەوە.',
+        'invalid_card_name' => 'تکایە ناوێکی دروست بۆ پەڕەکە بنووسە.',
+        'invalid_bio' => 'دەقی دەربارە زۆر درێژە. تکایە کورتی بکەرەوە.',
+        'templates_unavailable' ||
+        'template_not_found' ||
+        'template_invalid' =>
+          'شێوازەکانی پەڕە ئێستا بەردەست نین. تکایە دووبارە هەوڵ بدەرەوە.',
+        'backend_unavailable' =>
+          'خزمەتگوزاریی پەڕەکان ئێستا بەردەست نییە. تکایە دووبارە هەوڵ بدەرەوە.',
+        'saved_refresh_failed' =>
+          'پەڕەکە پاشەکەوت کرا، بەڵام لیستەکە نوێ نەکرایەوە. تکایە لیستی پەڕەکان نوێ بکەرەوە.',
+        'idempotency_conflict' =>
+          'داواکاریی پێشووت پاشەکەوت کراوە. بۆ گۆڕانکاری، پەڕەکە لە لیستەکە دەستکاری بکە.',
+        'avatar_required' => 'تکایە وێنەی پرۆفایل هەڵبژێرە.',
+        'invalid_avatar' =>
+          'وێنەکە گونجاو نییە. وێنەی JPEG، PNG یان WebP هەڵبژێرە.',
+        'invalid_platform_value' => 'تکایە ژمارە و بەستەری دووگمەکان بپشکنە.',
+        'publish_failed' =>
+          'پەڕەکە پاشەکەوت کرا، بەڵام دروستکردنی سەرکەوتوو نەبوو. دەتوانیت دووبارە هەوڵ بدەیتەوە.',
+        _ => 'نەتوانرا داواکارییەکە تەواو بکرێت. تکایە دووبارە هەوڵ بدەرەوە.',
+      };
+}
+
+/// The server owns saved pages. This local draft only preserves the request ID
+/// across an interrupted submission; cleanup must never change write success.
+abstract class ProxoPageDraftStorage {
+  const ProxoPageDraftStorage();
+  Future<String?> read(String key);
+  Future<void> write(String key, String value);
+  Future<void> clear(String key);
+}
+
+class SharedPreferencesPageDraftStorage extends ProxoPageDraftStorage {
+  const SharedPreferencesPageDraftStorage();
+  @override
+  Future<String?> read(String key) async =>
+      (await SharedPreferences.getInstance()).getString(key);
+  @override
+  Future<void> write(String key, String value) async {
+    final stored =
+        await (await SharedPreferences.getInstance()).setString(key, value);
+    if (!stored) throw StateError('Pending page request could not be stored');
+  }
+
+  @override
+  Future<void> clear(String key) async {
+    await (await SharedPreferences.getInstance()).remove(key);
+  }
 }
 
 abstract class ProxoLinkRepository {
@@ -40,7 +82,9 @@ abstract class ProxoLinkRepository {
   Future<ProxoCard> save(Map<String, dynamic> data, {ProxoCard? existing});
   Future<void> action(String id, String action);
   Future<Uri> preview(String id);
-  Future<Uri> templatePreview(String key, int version, {
+  Future<Uri> templatePreview(
+    String key,
+    int version, {
     String theme = 'purple',
     String language = 'ku',
     String pageType = 'contact',
@@ -55,7 +99,8 @@ class ProxoLinkService implements ProxoLinkRepository {
     defaultValue: 'https://www.proxobalance.app',
   );
   final SupabaseClient db;
-  ProxoLinkService(this.db);
+  final http.Client? httpClient;
+  ProxoLinkService(this.db, {this.httpClient});
   Uri _url(String path) {
     final base = Uri.parse(publicBase);
     final result = base.resolve(path);
@@ -80,12 +125,17 @@ class ProxoLinkService implements ProxoLinkRepository {
       });
     if (data != null) request.body = jsonEncode(data);
     try {
-      final response = await request
-          .send()
+      final response = await (httpClient?.send(request) ?? request.send())
           .then(http.Response.fromStream)
           .timeout(const Duration(seconds: 30));
-      final body =
-          jsonDecode(utf8.decode(response.bodyBytes)) as Map<String, dynamic>;
+      if (response.statusCode == 401) {
+        throw const ProxoLinkFailure('unauthorized');
+      }
+      final decoded = jsonDecode(utf8.decode(response.bodyBytes));
+      if (decoded is! Map<String, dynamic>) {
+        throw const ProxoLinkFailure('network_error');
+      }
+      final body = decoded;
       if (response.statusCode >= 400 || body['ok'] != true) {
         throw ProxoLinkFailure(
           body['error'] as String? ?? 'network_error',
@@ -132,11 +182,19 @@ class ProxoLinkService implements ProxoLinkRepository {
           'expected_updated_at': existing.updatedAt.toIso8601String(),
       },
     );
-    final id = (result['card'] as Map)['id'];
+    final saved = Map<String, dynamic>.from(result['card'] as Map);
+    final id = saved['id'] as String;
+    // New servers return the authoritative persisted row. Older deployments
+    // return a summary; retain their read-back path during a rolling upgrade.
+    if (saved['user_id'] is String &&
+        saved['created_at'] is String &&
+        saved['updated_at'] is String) {
+      return ProxoCard.fromJson(saved);
+    }
     try {
       return (await cards()).firstWhere((card) => card.id == id);
     } catch (_) {
-      throw ProxoLinkFailure('saved_refresh_failed', savedCardId: id as String);
+      throw ProxoLinkFailure('saved_refresh_failed', savedCardId: id);
     }
   }
 
@@ -151,27 +209,29 @@ class ProxoLinkService implements ProxoLinkRepository {
 
   @override
   Future<Uri> preview(String id) async => _url(
-    (await _request(
+        (await _request(
           '/api/contact-preview-token',
           method: 'POST',
           data: {'card_id': id},
-        ))['preview_path']
-        as String,
-  );
+        ))['preview_path'] as String,
+      );
   @override
-  Future<Uri> templatePreview(String key, int version, {
+  Future<Uri> templatePreview(
+    String key,
+    int version, {
     String theme = 'purple',
     String language = 'ku',
     String pageType = 'contact',
-  }) async => _url(
-    ((await _request(
-              '/api/contact-templates?template_key=${Uri.encodeQueryComponent(key)}&version=$version&theme=${Uri.encodeQueryComponent(theme)}&language=${Uri.encodeQueryComponent(language)}&page_type=${Uri.encodeQueryComponent(pageType)}',
-            ))['templates']
-            as List)
-        .map((j) => ProxoTemplate.fromJson(Map<String, dynamic>.from(j as Map)))
-        .firstWhere((t) => t.key == key && t.version == version)
-        .previewPath,
-  );
+  }) async =>
+      _url(
+        ((await _request(
+          '/api/contact-templates?template_key=${Uri.encodeQueryComponent(key)}&version=$version&theme=${Uri.encodeQueryComponent(theme)}&language=${Uri.encodeQueryComponent(language)}&page_type=${Uri.encodeQueryComponent(pageType)}',
+        ))['templates'] as List)
+            .map((j) =>
+                ProxoTemplate.fromJson(Map<String, dynamic>.from(j as Map)))
+            .firstWhere((t) => t.key == key && t.version == version)
+            .previewPath,
+      );
   @override
   Uri publicUrl(String id) => _url('/contact/$id');
   @override
@@ -199,9 +259,7 @@ class ProxoLinkService implements ProxoLinkRepository {
     final user = db.auth.currentUser?.id;
     if (user == null) throw const ProxoLinkFailure('unauthorized');
     final path = '$user/$id/avatar-${newProxoRequestId()}.$extension';
-    await db.storage
-        .from('proxolink-assets')
-        .uploadBinary(
+    await db.storage.from('proxolink-assets').uploadBinary(
           path,
           bytes,
           fileOptions: FileOptions(contentType: mime, upsert: false),

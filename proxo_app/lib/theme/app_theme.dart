@@ -68,7 +68,7 @@ class AppColors {
   /// دۆخە بەتاڵەکان و چیپەکان هەموویان بەکاری دەهێنن.
   static const Color inkMuted  = Color(0xFF64748B);
   /// ⚠ بوو #0365FF. ڕەنگی سەرەکیی نوێی ئەپەکە #0265FFـە.
-  static const Color accent    = Color(0xFF0265FF);
+  static const Color accent    = Color(0xFF046CFA);
   static const Color accentSoft= Color(0xFFEFF4FE);
   static const Color positive  = Color(0xFF13A56A);
   static const Color negative  = Color(0xFFB74956);
@@ -101,7 +101,7 @@ class AppColors {
   static const Color amber   = Color(0xFFD97706);
   static const Color blue    = Color(0xFF2563EB);
   static const Color indigo  = Color(0xFF6366F1);
-  static const Color primary = Color(0xFF0E78FF);
+  static const Color primary = accent;
 
   // ── background gradient tones — a barely-there lift behind screen content.
   // The delta between the two stops is intentionally tiny (a few hex steps)

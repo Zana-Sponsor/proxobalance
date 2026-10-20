@@ -7,14 +7,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
-import 'package:solar_icons/solar_icons.dart';
+import 'package:solar_iconkit/solar_iconkit.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../main.dart' show kIqdRate;
+import 'auth_screen.dart' show AuthScreen;
+import '../theme/proxo_ui.dart';
 import '../theme/app_theme.dart';
 import '../widgets/auth/auth_design.dart'
-    show kSupportWhatsAppNumber;
+    show kSupportWhatsAppNumber, AuthTokens;
 import '../widgets/proxo_refresh.dart';
 import 'ad_screen.dart';
 import 'deposit_screen.dart';
@@ -38,6 +40,8 @@ class ProfileScreen extends StatefulWidget {
     super.key,
     this.onBottomNavTap,
     this.refreshController,
+    this.client,
+    this.listenToRealtime = true,
   });
 
   /// Present when this screen is a MainShell tab. Standalone profile routes
@@ -45,18 +49,24 @@ class ProfileScreen extends StatefulWidget {
   final ValueChanged<int>? onBottomNavTap;
   final ProxoRefreshController? refreshController;
 
+  /// Optional scoped client for embedding and isolated UI tests.
+  final SupabaseClient? client;
+  final bool listenToRealtime;
+
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  SupabaseClient get _client => Supabase.instance.client;
+  SupabaseClient get _client => widget.client ?? Supabase.instance.client;
 
   late final ValueNotifier<_ProfileData> _profile;
   final ValueNotifier<double?> _balanceIqd = ValueNotifier<double?>(null);
   final ValueNotifier<bool> _showBalance = ValueNotifier<bool>(true);
   final ValueNotifier<bool> _signingOut = ValueNotifier<bool>(false);
   final ScrollController _scrollController = ScrollController();
+  final ValueNotifier<String?> _loadError = ValueNotifier(null);
+  bool _openingRoute = false;
 
   RealtimeChannel? _profileChannel;
   RealtimeChannel? _walletChannel;
@@ -68,8 +78,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final User? user = _client.auth.currentUser;
     _profile = ValueNotifier<_ProfileData>(_ProfileData.fromUser(user));
     unawaited(_loadData());
-    _subscribeToChanges(user);
-    _authSubscription = _client.auth.onAuthStateChange.listen((AuthState state) {
+    if (widget.listenToRealtime) _subscribeToChanges(user);
+    _authSubscription =
+        _client.auth.onAuthStateChange.listen((AuthState state) {
       final User? updatedUser = state.session?.user;
       if (!mounted || updatedUser == null) return;
       if (state.event == AuthChangeEvent.userUpdated ||
@@ -87,6 +98,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     walletChannel?.unsubscribe();
     _authSubscription?.cancel();
     _scrollController.dispose();
+    _loadError.dispose();
     _profile.dispose();
     _balanceIqd.dispose();
     _showBalance.dispose();
@@ -95,6 +107,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _loadData() async {
+    _loadError.value = null;
     final User? user = _client.auth.currentUser;
     if (user == null) return;
     await Future.wait<void>(<Future<void>>[
@@ -147,6 +160,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       if (!mounted) return;
       _profile.value = _ProfileData.fromRow(row, fallbackUser: user);
     } catch (error, stackTrace) {
+      if (mounted) _loadError.value = 'زانیاری پرۆفایل تازە نەکرایەوە. دووبارە هەوڵ بدەرەوە.';
       debugPrint('[ProfileScreen] profile load failed: $error\n$stackTrace');
     }
   }
@@ -161,6 +175,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       if (!mounted) return;
       _balanceIqd.value = _walletValueToIqd(row?['balance']);
     } catch (error, stackTrace) {
+      if (mounted) _loadError.value = 'باڵانس تازە نەکرایەوە. دووبارە هەوڵ بدەرەوە.';
       debugPrint('[ProfileScreen] wallet load failed: $error\n$stackTrace');
     }
   }
@@ -200,8 +215,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           callback: (payload) {
             if (!mounted || !payload.newRecord.containsKey('balance')) return;
-            _balanceIqd.value =
-                _walletValueToIqd(payload.newRecord['balance']);
+            _balanceIqd.value = _walletValueToIqd(payload.newRecord['balance']);
           },
         )
         .subscribe();
@@ -214,10 +228,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return walletValue * kIqdRate;
   }
 
-  void _push(Widget page) {
-    Navigator.of(context).push(
-      ProxoPageRoute<void>(builder: (_) => page),
-    );
+  Future<void> _push(Widget page) async {
+    if (_openingRoute) return;
+    _openingRoute = true;
+    try {
+      await Navigator.of(context).push(ProxoPageRoute<void>(builder: (_) => page));
+    } finally {
+      _openingRoute = false;
+    }
   }
 
   void _openTabOrPage(int tab, Widget page) {
@@ -230,6 +248,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _openEditProfile() async {
+    if (_openingRoute) return;
+    _openingRoute = true;
     final _ProfileData current = _profile.value;
     final bool? changed = await Navigator.of(context).push<bool>(
       ProxoPageRoute<bool>(
@@ -238,9 +258,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
           initialEmail: current.email,
           initialPhone: current.phone,
           initialAvatarUrl: current.avatarUrl,
+          client: _client,
         ),
       ),
     );
+    _openingRoute = false;
     if (changed == true && mounted) {
       await _loadData();
     }
@@ -263,8 +285,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             'wa.me',
             '/$supportNumber',
             const <String, String>{
-              'text':
-                  'سڵاو، پێویستم بە یارمەتیی تیمی پشتگیریی پڕۆکسۆ هەیە.',
+              'text': 'سڵاو، پێویستم بە یارمەتیی تیمی پشتگیریی پڕۆکسۆ هەیە.',
             },
           )
         : Uri(
@@ -307,6 +328,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _confirmSignOut() async {
     if (_signingOut.value) return;
+    _signingOut.value = true;
     final bool confirmed = await _showConfirmationDialog(
           context,
           title: 'دەرچوون لە هەژمار',
@@ -314,18 +336,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
           confirmText: 'دەرچوون',
         ) ??
         false;
-    if (!confirmed || !mounted) return;
-
-    _signingOut.value = true;
+    if (!mounted) return;
+    if (!confirmed) {
+      _signingOut.value = false;
+      return;
+    }
+    final navigator = Navigator.of(context, rootNavigator: true);
     try {
       await _client.auth.signOut();
-    } on AuthException catch (error) {
-      if (mounted) _showMessage(_friendlyAuthError(error.message));
     } catch (_) {
-      if (mounted) {
+      if (mounted && _client.auth.currentSession != null) {
         _showMessage('دەرچوون سەرکەوتوو نەبوو. تکایە دووبارە هەوڵ بدەرەوە.');
       }
     } finally {
+      // The SDK clears local auth before requesting server revocation. A
+      // network error must not leave a signed-out user on a privileged route.
+      if (navigator.mounted && _client.auth.currentSession == null) {
+        navigator.pushAndRemoveUntil(
+          ProxoPageRoute<void>(builder: (_) => const AuthScreen()), (_) => false);
+      }
       if (mounted) _signingOut.value = false;
     }
   }
@@ -345,7 +374,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     final MediaQueryData media = MediaQuery.of(context);
     final double textScale =
-        media.textScaler.scale(1).clamp(0.9, 1.05).toDouble();
+        media.textScaler.scale(1).clamp(0.9, 1.5).toDouble();
 
     return MediaQuery(
       data: media.copyWith(textScaler: TextScaler.linear(textScale)),
@@ -387,12 +416,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: <Widget>[
+                                  ValueListenableBuilder<String?>(
+                                    valueListenable: _loadError,
+                                    builder: (_, message, __) => message == null
+                                      ? const SizedBox.shrink()
+                                      : Padding(
+                                          padding: const EdgeInsets.only(bottom: 16),
+                                          child: Container(
+                                            padding: const EdgeInsets.all(12),
+                                            decoration: BoxDecoration(
+                                              color: AuthTokens.dangerBg,
+                                              borderRadius: BorderRadius.circular(12)),
+                                            child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                ProxoText(message, style: ProxoUi.body),
+                                                TextButton(onPressed: _loadData,
+                                                  child: const ProxoText('دووبارە هەوڵبدەرەوە')),
+                                              ]),
+                                          ),
+                                        ),
+                                  ),
                                   ValueListenableBuilder<_ProfileData>(
                                     valueListenable: _profile,
                                     builder: (_, data, __) =>
                                         _ProfileIdentity(data: data),
                                   ),
-                                  const SizedBox(height: 22),
+                                  const SizedBox(height: 16),
                                   _BalanceCard(
                                     balanceIqd: _balanceIqd,
                                     showBalance: _showBalance,
@@ -411,19 +460,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     onCoupons: () => Navigator.of(context)
                                         .pushNamed('/coupons'),
                                   ),
-                                  const SizedBox(height: 26),
+                                  const SizedBox(height: 24),
                                   const _SectionTitle('هەژمار'),
-                                  const SizedBox(height: 10),
+                                  const SizedBox(height: 8),
                                   _SettingsGroup(
                                     entries: <_MenuEntry>[
                                       _MenuEntry(
-                                        icon: SolarIconsOutline.bell,
+                                        icon: SolarIcons.bell,
                                         title: 'ئاگادارییەکان',
                                         onTap: () => Navigator.of(context)
                                             .pushNamed('/notifications'),
                                       ),
                                       _MenuEntry(
-                                        icon: SolarIconsOutline.history,
+                                        icon: SolarIcons.history,
                                         title: 'مێژووی مامەڵەکان',
                                         onTap: () => Navigator.of(context)
                                             .pushNamed('/transactions'),
@@ -432,22 +481,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   ),
                                   const SizedBox(height: 24),
                                   const _SectionTitle('پشتگیری و ڕێساکان'),
-                                  const SizedBox(height: 10),
+                                  const SizedBox(height: 8),
                                   _SettingsGroup(
                                     entries: <_MenuEntry>[
                                       _MenuEntry(
-                                        icon: SolarIconsOutline.chatRoundCall,
+                                        icon: SolarIcons.chatRoundCall,
                                         title: 'پشتگیری',
                                         subtitle: 'پەیوەندی ڕاستەوخۆ بە واتساپ',
                                         onTap: _openSupport,
                                       ),
                                       _MenuEntry(
-                                        icon: SolarIconsOutline.documentText,
+                                        icon: SolarIcons.documentText,
                                         title: 'دەربارەی ئەپڵیکەیشن',
                                         onTap: _openAbout,
                                       ),
                                       _MenuEntry(
-                                        icon: SolarIconsOutline.questionCircle,
+                                        icon: SolarIcons.questionCircle,
                                         title: 'پرسیارە دووبارەکان',
                                         onTap: () =>
                                             _push(const _ProfileFaqScreen()),
@@ -499,19 +548,21 @@ class EditProfileScreen extends StatefulWidget {
     required this.initialEmail,
     required this.initialPhone,
     this.initialAvatarUrl,
+    this.client,
   });
 
   final String initialFullName;
   final String initialEmail;
   final String initialPhone;
   final String? initialAvatarUrl;
+  final SupabaseClient? client;
 
   @override
   State<EditProfileScreen> createState() => _EditProfileScreenState();
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
-  SupabaseClient get _client => Supabase.instance.client;
+  SupabaseClient get _client => widget.client ?? Supabase.instance.client;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final ImagePicker _imagePicker = ImagePicker();
@@ -633,13 +684,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
     final String publicUrl =
         _client.storage.from('avatars').getPublicUrl(objectPath);
-    final String versionedUrl = Uri.parse(publicUrl)
-        .replace(
-          queryParameters: <String, String>{
-            'v': DateTime.now().millisecondsSinceEpoch.toString(),
-          },
-        )
-        .toString();
+    final String versionedUrl = Uri.parse(publicUrl).replace(
+      queryParameters: <String, String>{
+        'v': DateTime.now().millisecondsSinceEpoch.toString(),
+      },
+    ).toString();
 
     final Map<String, dynamic>? savedProfile = await _client
         .from('profiles')
@@ -698,8 +747,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       final bool? verified = await showDialog<bool>(
         context: context,
         barrierDismissible: false,
-        builder: (BuildContext dialogContext) =>
-            _EmailChangeVerificationDialog(
+        builder: (BuildContext dialogContext) => _EmailChangeVerificationDialog(
           email: email,
           onVerify: (String code) => _verifyEmailChangeCode(
             userId: user.id,
@@ -741,7 +789,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         '[EditProfileScreen] avatar upload failed: $error\n$stackTrace',
       );
       if (mounted) {
-        _showMessage('وێنەکە بارنەکرا؛ ئینتەرنێتەکەت بپشکنەوە و دووبارە هەوڵ بدەرەوە.');
+        _showMessage(
+            'وێنەکە بارنەکرا؛ ئینتەرنێتەکەت بپشکنەوە و دووبارە هەوڵ بدەرەوە.');
       }
     } catch (error, stackTrace) {
       if (mounted) {
@@ -883,6 +932,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         false;
     if (!confirmed || !mounted) return;
 
+    final navigator = Navigator.of(context, rootNavigator: true);
     setState(() => _deleting = true);
     try {
       final FunctionResponse response =
@@ -896,13 +946,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         throw StateError(detail.isEmpty ? 'delete-user failed' : detail);
       }
 
-      // Clear this device's cached session after the server has completed the
-      // hard delete. AuthGate owns the resulting stack replacement.
+      // Clear this device's cached session after the confirmed server delete.
+      // This route can outlive AuthGate, so it owns its auth-stack fallback.
       try {
         await _client.auth.signOut();
       } catch (_) {
-        // The just-deleted access token can already be invalid. Navigation is
-        // still handled by the Auth state listener when local state is cleared.
+        // A deleted access token can already be invalid; inspect local state.
+      }
+      if (navigator.mounted && _client.auth.currentSession == null) {
+        navigator.pushAndRemoveUntil(
+          ProxoPageRoute<void>(builder: (_) => const AuthScreen()), (_) => false);
       }
     } catch (error) {
       if (!mounted) return;
@@ -948,7 +1001,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   Widget build(BuildContext context) {
     final MediaQueryData media = MediaQuery.of(context);
     final double textScale =
-        media.textScaler.scale(1).clamp(0.9, 1.05).toDouble();
+        media.textScaler.scale(1).clamp(0.9, 1.5).toDouble();
     final _ProfileData preview = _ProfileData(
       fullName: widget.initialFullName,
       email: _emailController.text.trim(),
@@ -995,7 +1048,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   onTap: _pickAvatar,
                                 ),
                               ),
-                              const SizedBox(height: 9),
+                              const SizedBox(height: 8),
                               ProxoText(
                                 'بۆ گۆڕینی وێنە کلیک بکە',
                                 textAlign: TextAlign.center,
@@ -1003,41 +1056,48 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   color: _ProfileColors.muted,
                                 ),
                               ),
-                              const SizedBox(height: 28),
+                              const SizedBox(height: 24),
                               const _FieldLabel('ناوی تەواو'),
-                              const SizedBox(height: 7),
+                              const SizedBox(height: 8),
                               ProxoDirectionalInput(
-                                initialValue: widget.initialFullName.isEmpty ? '—' : widget.initialFullName,
-                                builder: (context, inputDirection) => TextFormField(
+                                initialValue: widget.initialFullName.isEmpty
+                                    ? '—'
+                                    : widget.initialFullName,
+                                builder: (context, inputDirection) =>
+                                    TextFormField(
                                   textDirection: inputDirection,
-                                  errorBuilder: (context, message) => ProxoText(message),
+                                  errorBuilder: (context, message) =>
+                                      ProxoText(message),
                                   initialValue: widget.initialFullName.isEmpty
                                       ? '—'
                                       : widget.initialFullName,
                                   readOnly: true,
                                   enableInteractiveSelection: true,
                                   canRequestFocus: false,
-                                  style: _ProfileText.field.copyWith(color: _ProfileColors.muted),
+                                  style: _ProfileText.field
+                                      .copyWith(color: _ProfileColors.muted),
                                   decoration: _profileInputDecoration(
                                     hint: '—',
-                                    icon: SolarIconsOutline.userRounded,
+                                    icon: SolarIcons.userRounded,
                                     readOnly: true,
-                                    suffixIcon: SolarIconsOutline.lock,
+                                    suffixIcon: SolarIcons.lock,
                                   ),
                                 ),
                               ),
                               const SizedBox(height: 16),
                               const _FieldLabel('ئیمەیڵ'),
-                              const SizedBox(height: 7),
+                              const SizedBox(height: 8),
                               Directionality(
                                 textDirection: TextDirection.ltr,
                                 child: ProxoDirectionalInput(
                                   controller: _emailController,
                                   keyboardType: TextInputType.emailAddress,
                                   forceLtr: true,
-                                  builder: (context, inputDirection) => TextFormField(
+                                  builder: (context, inputDirection) =>
+                                      TextFormField(
                                     textDirection: inputDirection,
-                                    errorBuilder: (context, message) => ProxoText(message),
+                                    errorBuilder: (context, message) =>
+                                        ProxoText(message),
                                     controller: _emailController,
                                     enabled: !_saving && !_deleting,
                                     validator: _validateEmail,
@@ -1046,38 +1106,47 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                     onFieldSubmitted: (_) => _save(),
                                     autocorrect: false,
                                     textCapitalization: TextCapitalization.none,
-                                    autofillHints: const <String>[AutofillHints.email],
+                                    autofillHints: const <String>[
+                                      AutofillHints.email
+                                    ],
                                     inputFormatters: <TextInputFormatter>[
                                       LengthLimitingTextInputFormatter(254),
                                     ],
                                     style: _ProfileText.field,
                                     decoration: _profileInputDecoration(
                                       hint: 'name@gmail.com',
-                                      icon: SolarIconsOutline.letter,
+                                      icon: SolarIcons.letter,
                                     ),
                                   ),
                                 ),
                               ),
                               const SizedBox(height: 16),
                               const _FieldLabel('ژمارەی مۆبایل'),
-                              const SizedBox(height: 7),
+                              const SizedBox(height: 8),
                               Directionality(
                                 textDirection: TextDirection.ltr,
                                 child: ProxoDirectionalInput(
-                                  initialValue: widget.initialPhone.isEmpty ? '—' : widget.initialPhone,
-                                  builder: (context, inputDirection) => TextFormField(
+                                  initialValue: widget.initialPhone.isEmpty
+                                      ? '—'
+                                      : widget.initialPhone,
+                                  builder: (context, inputDirection) =>
+                                      TextFormField(
                                     textDirection: inputDirection,
-                                    errorBuilder: (context, message) => ProxoText(message),
-                                    initialValue: widget.initialPhone.isEmpty ? '—' : widget.initialPhone,
+                                    errorBuilder: (context, message) =>
+                                        ProxoText(message),
+                                    initialValue: widget.initialPhone.isEmpty
+                                        ? '—'
+                                        : widget.initialPhone,
                                     readOnly: true,
                                     enableInteractiveSelection: true,
                                     canRequestFocus: false,
-                                    style: _ProfileText.field.copyWith(color: _ProfileColors.muted),
+                                    style: _ProfileText.field
+                                        .copyWith(color: _ProfileColors.muted),
                                     decoration: _profileInputDecoration(
                                       hint: '—',
-                                      icon: SolarIconsOutline.smartphone,
+                                      icon: SolarIcons.smartphone,
                                       readOnly: true,
-                                      suffixIcon: SolarIconsOutline.lock,
+                                      suffixIcon: SolarIcons.lock,
                                     ),
                                   ),
                                 ),
@@ -1095,7 +1164,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                         _ProfileColors.primary.withOpacity(.45),
                                     shape: const RoundedRectangleBorder(
                                       borderRadius:
-                                          BorderRadius.all(Radius.circular(14)),
+                                          BorderRadius.all(Radius.circular(12)),
                                     ),
                                     textStyle: _ProfileText.button,
                                   ),
@@ -1117,7 +1186,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 color: _ProfileColors.dangerSoft,
                                 shape: const RoundedRectangleBorder(
                                   borderRadius:
-                                      BorderRadius.all(Radius.circular(20)),
+                                      BorderRadius.all(Radius.circular(16)),
                                   side: BorderSide(
                                     color: _ProfileColors.dangerBorder,
                                   ),
@@ -1134,8 +1203,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                     ),
                                     child: Row(
                                       children: <Widget>[
-                                        const Icon(
-                                          SolarIconsOutline.userCrossRounded,
+                                        const _ProfileIcon(
+                                          SolarIcons.userCrossRounded,
                                           size: 21,
                                           color: _ProfileColors.danger,
                                         ),
@@ -1166,8 +1235,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                             ),
                                           )
                                         else
-                                          const Icon(
-                                            SolarIconsOutline.altArrowLeft,
+                                          const _ProfileIcon(
+                                            SolarIcons.altArrowLeft,
                                             size: 21,
                                             color: _ProfileColors.danger,
                                           ),
@@ -1204,9 +1273,8 @@ class _ProfileData {
     final Map<String, dynamic> metadata =
         user?.userMetadata ?? const <String, dynamic>{};
     return _ProfileData(
-      fullName: (metadata['full_name'] ?? metadata['name'] ?? '')
-          .toString()
-          .trim(),
+      fullName:
+          (metadata['full_name'] ?? metadata['name'] ?? '').toString().trim(),
       email: ((user?.email ?? '').trim().endsWith('@phone.proxopages.com'))
           ? ''
           : (user?.email ?? '').trim(),
@@ -1245,9 +1313,10 @@ class _ProfileData {
 
   String get contact {
     final bool generatedPhoneEmail = email.endsWith('@phone.proxopages.com');
-    if (phone.isNotEmpty && (email.isEmpty || generatedPhoneEmail)) return phone;
+    if (phone.isNotEmpty && (email.isEmpty || generatedPhoneEmail))
+      return phone;
     if (email.isNotEmpty) return email;
-    return phone.isNotEmpty ? phone : '—';
+    return phone.isNotEmpty ? phone : 'زانیاری پەیوەندی زیاد نەکراوە';
   }
 
   _ProfileData merge(Map<String, dynamic> row) {
@@ -1255,12 +1324,9 @@ class _ProfileData {
       fullName: row.containsKey('full_name')
           ? (_nonEmpty(row['full_name']) ?? fullName)
           : fullName,
-      email: row.containsKey('email')
-          ? (_nonEmpty(row['email']) ?? email)
-          : email,
-      phone: row.containsKey('phone')
-          ? (_nonEmpty(row['phone']) ?? '')
-          : phone,
+      email:
+          row.containsKey('email') ? (_nonEmpty(row['email']) ?? email) : email,
+      phone: row.containsKey('phone') ? (_nonEmpty(row['phone']) ?? '') : phone,
       avatarUrl: row.containsKey('avatar_url')
           ? _cleanAvatar(row['avatar_url'])
           : avatarUrl,
@@ -1306,32 +1372,30 @@ class _ProfileTopBar extends StatelessWidget {
               showBack
                   ? _CircleActionButton(
                       semanticLabel: 'گەڕانەوە',
-                      icon: SolarIconsOutline.altArrowRight,
+                      icon: SolarIcons.altArrowRight,
                       onTap: onBack,
                     )
                   : _CircleActionButton(
                       semanticLabel: 'دەستکاریکردنی پرۆفایل',
-                      icon: SolarIconsOutline.penNewSquare,
+                      icon: SolarIcons.penNewSquare,
                       onTap: onEdit,
                     ),
               Expanded(
-                child: showBack
-                    ? const ProxoText(
-                        'پرۆفایل',
-                        textAlign: TextAlign.center,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: _ProfileText.screenTitle,
-                      )
-                    : const SizedBox.shrink(),
+                child: const ProxoText(
+                  'پرۆفایل',
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: _ProfileText.screenTitle,
+                ),
               ),
               showBack
                   ? _CircleActionButton(
                       semanticLabel: 'دەستکاریکردنی پرۆفایل',
-                      icon: SolarIconsOutline.penNewSquare,
+                      icon: SolarIcons.penNewSquare,
                       onTap: onEdit,
                     )
-                  : const SizedBox(width: 44, height: 44),
+                  : const SizedBox(width: 48, height: 48),
             ],
           ),
         ),
@@ -1363,7 +1427,7 @@ class _SimpleTopBar extends StatelessWidget {
             children: <Widget>[
               _CircleActionButton(
                 semanticLabel: 'گەڕانەوە',
-                icon: SolarIconsOutline.altArrowRight,
+                icon: SolarIcons.altArrowRight,
                 onTap: onBack,
               ),
               Expanded(
@@ -1375,7 +1439,7 @@ class _SimpleTopBar extends StatelessWidget {
                   style: _ProfileText.screenTitle,
                 ),
               ),
-              const SizedBox(width: 44, height: 44),
+              const SizedBox(width: 48, height: 48),
             ],
           ),
         ),
@@ -1392,7 +1456,7 @@ class _CircleActionButton extends StatelessWidget {
   });
 
   final String semanticLabel;
-  final IconData icon;
+  final String icon;
   final VoidCallback onTap;
 
   @override
@@ -1402,7 +1466,7 @@ class _CircleActionButton extends StatelessWidget {
       label: semanticLabel,
       excludeSemantics: true,
       child: SizedBox.square(
-        dimension: 44,
+        dimension: 48,
         child: Center(
           child: Material(
             color: _ProfileColors.iconSurface,
@@ -1411,8 +1475,8 @@ class _CircleActionButton extends StatelessWidget {
               customBorder: const CircleBorder(),
               onTap: onTap,
               child: SizedBox.square(
-                dimension: 40,
-                child: Icon(icon, size: 20, color: _ProfileColors.iconInk),
+                dimension: 48,
+                child: _ProfileIcon(icon, size: 20, color: _ProfileColors.iconInk),
               ),
             ),
           ),
@@ -1432,15 +1496,15 @@ class _ProfileIdentity extends StatelessWidget {
     return Column(
       children: <Widget>[
         _ProfileAvatar(data: data),
-        const SizedBox(height: 11),
+        const SizedBox(height: 12),
         ProxoText(
           data.displayName,
           textAlign: TextAlign.center,
-          maxLines: 1,
+          maxLines: 3,
           overflow: TextOverflow.ellipsis,
           style: _ProfileText.userName,
         ),
-        const SizedBox(height: 3),
+        const SizedBox(height: 4),
         Directionality(
           textDirection: _containsArabic(data.contact)
               ? TextDirection.rtl
@@ -1448,7 +1512,7 @@ class _ProfileIdentity extends StatelessWidget {
           child: ProxoText(
             data.contact,
             textAlign: TextAlign.center,
-            maxLines: 1,
+            maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: _ProfileText.userContact,
           ),
@@ -1461,8 +1525,8 @@ class _ProfileIdentity extends StatelessWidget {
 class _ProfileAvatar extends StatelessWidget {
   const _ProfileAvatar({
     required this.data,
-    this.diameter = 86,
-    this.iconSize = 35,
+    this.diameter = 72,
+    this.iconSize = 30,
     this.memoryBytes,
   });
 
@@ -1562,9 +1626,7 @@ class _EditableProfileAvatar extends StatelessWidget {
               right: 0,
               bottom: 0,
               child: Material(
-                color: enabled
-                    ? _ProfileColors.primary
-                    : _ProfileColors.muted,
+                color: enabled ? _ProfileColors.primary : _ProfileColors.muted,
                 shape: const CircleBorder(),
                 elevation: 2,
                 child: InkWell(
@@ -1572,8 +1634,8 @@ class _EditableProfileAvatar extends StatelessWidget {
                   onTap: enabled ? onTap : null,
                   child: const SizedBox.square(
                     dimension: 30,
-                    child: Icon(
-                      Icons.photo_camera_outlined,
+                    child: _ProfileIcon(
+                      SolarIcons.camera,
                       size: 17,
                       color: Colors.white,
                     ),
@@ -1598,8 +1660,8 @@ class _AvatarFallback extends StatelessWidget {
     return ColoredBox(
       color: _ProfileColors.iconSurface,
       child: Center(
-        child: Icon(
-          SolarIconsOutline.userRounded,
+        child: _ProfileIcon(
+          SolarIcons.userRounded,
           size: iconSize,
           color: _ProfileColors.muted,
         ),
@@ -1623,205 +1685,56 @@ class _BalanceCard extends StatefulWidget {
   State<_BalanceCard> createState() => _BalanceCardState();
 }
 
-class _BalanceCardState extends State<_BalanceCard>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _shineController;
-
-  @override
-  void initState() {
-    super.initState();
-    _shineController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 4400),
-    );
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final bool reduceMotion = MediaQuery.of(context).disableAnimations;
-    if (reduceMotion) {
-      _shineController
-        ..stop()
-        ..value = 0;
-    } else if (!_shineController.isAnimating) {
-      _shineController.repeat();
-    }
-  }
-
-  @override
-  void dispose() {
-    _shineController.dispose();
-    super.dispose();
-  }
-
+class _BalanceCardState extends State<_BalanceCard> {
   @override
   Widget build(BuildContext context) {
-    return Semantics(
-      button: true,
-      label: 'باڵانسی ڕیکلام؛ دەستلێبدە بۆ زیادکردنی باڵانس',
-      child: DecoratedBox(
-        decoration: const BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(22)),
-          boxShadow: <BoxShadow>[
-            BoxShadow(
-              color: Color(0x3D0057FF),
-              blurRadius: 22,
-              spreadRadius: -7,
-              offset: Offset(0, 10),
-            ),
-          ],
-        ),
-        child: Material(
-          color: Colors.transparent,
-          borderRadius: const BorderRadius.all(Radius.circular(22)),
-          clipBehavior: Clip.antiAlias,
-          child: Ink(
-            height: 120,
-            decoration: const BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(22)),
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: <Color>[
-                  Color(0xFF003FCC),
-                  Color(0xFF0057FF),
-                  Color(0xFF3D7BFF),
-                ],
-              ),
-            ),
-            child: Stack(
-              fit: StackFit.expand,
-              children: <Widget>[
-                Positioned.fill(
-                  child: IgnorePointer(
-                    child: RepaintBoundary(
-                      child: AnimatedBuilder(
-                        animation: _shineController,
-                        child: Transform.rotate(
-                          angle: -0.28,
-                          child: const SizedBox(
-                            width: 56,
-                            height: 180,
-                            child: DecoratedBox(
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  begin: Alignment.centerLeft,
-                                  end: Alignment.centerRight,
-                                  colors: <Color>[
-                                    Color(0x00FFFFFF),
-                                    Color(0x1FFFFFFF),
-                                    Color(0x00FFFFFF),
-                                  ],
-                                  stops: <double>[0, 0.5, 1],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        builder: (_, child) {
-                          final double progress = const Interval(
-                            0,
-                            0.52,
-                            curve: Curves.easeInOutCubic,
-                          ).transform(_shineController.value);
-                          return Align(
-                            alignment: Alignment(-1.55 + (3.1 * progress), 0),
-                            child: child,
-                          );
-                        },
+    return Material(
+      color: AuthTokens.primary,
+      borderRadius: BorderRadius.circular(ProxoUi.radius),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: widget.onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Row(children: [
+                _ProfileIcon(SolarIcons.wallet2, size: 20, color: Colors.white),
+                SizedBox(width: 8),
+                Expanded(
+                    child: ProxoText('باڵانسی ڕیکلام',
+                        style: _ProfileText.balanceLabel)),
+              ]),
+              const SizedBox(height: 8),
+              ValueListenableBuilder<bool>(
+                valueListenable: widget.showBalance,
+                builder: (_, visible, __) => Row(children: [
+                  Expanded(
+                    child: ValueListenableBuilder<double?>(
+                      valueListenable: widget.balanceIqd,
+                      builder: (_, value, __) => ProxoText(
+                        visible ? _formatIqd(value) : '•••••• IQD',
+                        textDirection: TextDirection.ltr,
+                        textAlign: TextAlign.right,
+                        style: _ProfileText.balanceAmount,
                       ),
                     ),
                   ),
-                ),
-                InkWell(
-                  onTap: widget.onTap,
-                  child: Padding(
-                padding: const EdgeInsets.all(18),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    const Row(
-                      children: <Widget>[
-                        SizedBox.square(
-                          dimension: 36,
-                          child: DecoratedBox(
-                            decoration: BoxDecoration(
-                              color: Color(0x2EFFFFFF),
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(
-                              SolarIconsOutline.wallet2,
-                              size: 18,
-                              color: Color(0xE6FFFFFF),
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 8),
-                        ProxoText(
-                          'باڵانسی ڕیکلام',
-                          style: _ProfileText.balanceLabel,
-                        ),
-                      ],
-                    ),
-                    const Spacer(),
-                    ValueListenableBuilder<bool>(
-                      valueListenable: widget.showBalance,
-                      builder: (_, visible, __) => Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Expanded(
-                            child: Directionality(
-                              textDirection: TextDirection.ltr,
-                              child: ValueListenableBuilder<double?>(
-                                valueListenable: widget.balanceIqd,
-                                builder: (_, value, __) => ProxoText(
-                                  visible
-                                      ? _formatIqd(value)
-                                      : '•••••• د.ع',
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: _ProfileText.balanceAmount,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Semantics(
-                            button: true,
-                            label: visible
-                                ? 'شاردنەوەی باڵانس'
-                                : 'پیشاندانی باڵانس',
-                            excludeSemantics: true,
-                            child: Material(
-                              color: const Color(0x24FFFFFF),
-                              shape: const CircleBorder(),
-                              child: InkWell(
-                                customBorder: const CircleBorder(),
-                                onTap: () =>
-                                    widget.showBalance.value = !visible,
-                                child: SizedBox.square(
-                                  dimension: 38,
-                                  child: Icon(
-                                    visible
-                                        ? SolarIconsOutline.eye
-                                        : SolarIconsOutline.eyeClosed,
-                                    size: 19,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+                  const SizedBox(width: 8),
+                  IconButton(
+                    tooltip: visible ? 'شاردنەوەی باڵانس' : 'پیشاندانی باڵانس',
+                    constraints:
+                        const BoxConstraints(minWidth: 48, minHeight: 48),
+                    onPressed: () => widget.showBalance.value = !visible,
+                    icon: _ProfileIcon(
+                        visible ? SolarIcons.eye : SolarIcons.eyeClosed,
+                        size: 20,
+                        color: Colors.white),
+                  ),
+                ]),
               ),
-            ),
-              ],
-            ),
+            ],
           ),
         ),
       ),
@@ -1829,12 +1742,12 @@ class _BalanceCardState extends State<_BalanceCard>
   }
 
   static String _formatIqd(double? value) {
-    if (value == null) return '— د.ع';
-    final String latin = value.round().toString().replaceAllMapped(
-          RegExp(r'\B(?=(\d{3})+(?!\d))'),
-          (_) => ',',
-        );
-    return '$latin د.ع';
+    if (value == null) return '— IQD';
+    final latin = value
+        .round()
+        .toString()
+        .replaceAllMapped(RegExp(r'\B(?=(\d{3})+(?!\d))'), (_) => ',');
+    return '$latin IQD';
   }
 }
 
@@ -1855,7 +1768,7 @@ class _QuickActions extends StatelessWidget {
       children: <Widget>[
         Expanded(
           child: _QuickActionCard(
-            icon: SolarIconsOutline.clapperboardPlay,
+            icon: SolarIcons.clapperboardPlay,
             label: 'ڕیکلامەکانم',
             onTap: onAds,
           ),
@@ -1863,7 +1776,7 @@ class _QuickActions extends StatelessWidget {
         const SizedBox(width: 8),
         Expanded(
           child: _QuickActionCard(
-            icon: SolarIconsOutline.widget_2,
+            icon: SolarIcons.widget2,
             label: 'کەرەستەکان',
             onTap: onAssets,
           ),
@@ -1871,7 +1784,7 @@ class _QuickActions extends StatelessWidget {
         const SizedBox(width: 8),
         Expanded(
           child: _QuickActionCard(
-            icon: SolarIconsOutline.tagPrice,
+            icon: SolarIcons.tagPrice,
             label: 'کۆپۆن',
             onTap: onCoupons,
           ),
@@ -1888,7 +1801,7 @@ class _QuickActionCard extends StatelessWidget {
     required this.onTap,
   });
 
-  final IconData icon;
+  final String icon;
   final String label;
   final VoidCallback onTap;
 
@@ -1897,25 +1810,26 @@ class _QuickActionCard extends StatelessWidget {
     return Material(
       color: _ProfileColors.quickSurface,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(18)),
+        borderRadius: BorderRadius.all(Radius.circular(16)),
         side: BorderSide(color: _ProfileColors.cardBorder),
       ),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,
         child: SizedBox(
-          height: 76,
+          height:
+              96 * MediaQuery.textScalerOf(context).scale(1).clamp(1.0, 1.5),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 9),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Icon(icon, size: 23, color: _ProfileColors.iconInk),
+                _ProfileIcon(icon, size: 23, color: _ProfileColors.iconInk),
                 const SizedBox(height: 6),
                 ProxoText(
                   label,
                   textAlign: TextAlign.center,
-                  maxLines: 1,
+                  maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: _ProfileText.quickAction,
                 ),
@@ -1947,7 +1861,7 @@ class _MenuEntry {
     this.subtitle,
   });
 
-  final IconData icon;
+  final String icon;
   final String title;
   final String? subtitle;
   final VoidCallback onTap;
@@ -1963,7 +1877,7 @@ class _SettingsGroup extends StatelessWidget {
     return Material(
       color: _ProfileColors.groupSurface,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(20)),
+        borderRadius: BorderRadius.all(Radius.circular(16)),
         side: BorderSide(color: _ProfileColors.cardBorder),
       ),
       clipBehavior: Clip.antiAlias,
@@ -1997,9 +1911,9 @@ class _SettingsTile extends StatelessWidget {
     return InkWell(
       onTap: entry.onTap,
       child: ConstrainedBox(
-        constraints: const BoxConstraints(minHeight: 60),
+        constraints: const BoxConstraints(minHeight: 56),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: Row(
             children: <Widget>[
               Container(
@@ -2010,7 +1924,7 @@ class _SettingsTile extends StatelessWidget {
                   color: Colors.white,
                   shape: BoxShape.circle,
                 ),
-                child: Icon(
+                child: _ProfileIcon(
                   entry.icon,
                   size: 20,
                   color: _ProfileColors.iconInk,
@@ -2024,7 +1938,7 @@ class _SettingsTile extends StatelessWidget {
                   children: <Widget>[
                     ProxoText(
                       entry.title,
-                      maxLines: 1,
+                      maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: _ProfileText.menuTitle,
                     ),
@@ -2032,7 +1946,7 @@ class _SettingsTile extends StatelessWidget {
                       const SizedBox(height: 2),
                       ProxoText(
                         entry.subtitle!,
-                        maxLines: 1,
+                        maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: _ProfileText.menuSubtitle,
                       ),
@@ -2041,8 +1955,8 @@ class _SettingsTile extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 8),
-              const Icon(
-                SolarIconsOutline.altArrowLeft,
+              const _ProfileIcon(
+                SolarIcons.altArrowLeft,
                 size: 20,
                 color: _ProfileColors.chevron,
               ),
@@ -2065,7 +1979,7 @@ class _SignOutTile extends StatelessWidget {
     return Material(
       color: _ProfileColors.groupSurface,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(20)),
+        borderRadius: BorderRadius.all(Radius.circular(16)),
         side: BorderSide(color: _ProfileColors.cardBorder),
       ),
       clipBehavior: Clip.antiAlias,
@@ -2078,14 +1992,14 @@ class _SignOutTile extends StatelessWidget {
             child: Row(
               children: <Widget>[
                 const SizedBox.square(
-                  dimension: 38,
+                  dimension: 48,
                   child: DecoratedBox(
                     decoration: BoxDecoration(
                       color: Colors.white,
                       shape: BoxShape.circle,
                     ),
-                    child: Icon(
-                      SolarIconsOutline.logout,
+                    child: _ProfileIcon(
+                      SolarIcons.logout,
                       size: 20,
                       color: _ProfileColors.iconInk,
                     ),
@@ -2104,8 +2018,8 @@ class _SignOutTile extends StatelessWidget {
                     ),
                   )
                 else
-                  const Icon(
-                    SolarIconsOutline.altArrowLeft,
+                  const _ProfileIcon(
+                    SolarIcons.altArrowLeft,
                     size: 20,
                     color: _ProfileColors.chevron,
                   ),
@@ -2163,8 +2077,8 @@ class _SupportSheet extends StatelessWidget {
                     color: _ProfileColors.supportIllustrationSurface,
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(
-                    SolarIconsOutline.chatRoundCall,
+                  child: _ProfileIcon(
+                    SolarIcons.chatRoundCall,
                     size: 38,
                     color: _ProfileColors.supportDark,
                   ),
@@ -2182,7 +2096,7 @@ class _SupportSheet extends StatelessWidget {
                   Expanded(
                     child: _SupportChannelButton(
                       label: 'چات',
-                      icon: SolarIconsOutline.chatRoundDots,
+                      icon: SolarIcons.chatRoundDots,
                       filled: false,
                       onTap: () => Navigator.of(context).pop(
                         _SupportAction.chat,
@@ -2193,7 +2107,7 @@ class _SupportSheet extends StatelessWidget {
                   Expanded(
                     child: _SupportChannelButton(
                       label: 'تەلەفۆن',
-                      icon: SolarIconsOutline.phoneRounded,
+                      icon: SolarIcons.phoneRounded,
                       filled: true,
                       onTap: () => Navigator.of(context).pop(
                         _SupportAction.phone,
@@ -2219,14 +2133,13 @@ class _SupportChannelButton extends StatelessWidget {
   });
 
   final String label;
-  final IconData icon;
+  final String icon;
   final bool filled;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    final Color foreground =
-        filled ? Colors.white : _ProfileColors.supportDark;
+    final Color foreground = filled ? Colors.white : _ProfileColors.supportDark;
     return Material(
       color: filled ? _ProfileColors.supportDark : Colors.white,
       shape: RoundedRectangleBorder(
@@ -2251,7 +2164,7 @@ class _SupportChannelButton extends StatelessWidget {
                       : _ProfileColors.iconSurface,
                   shape: BoxShape.circle,
                 ),
-                child: Icon(icon, size: 20, color: foreground),
+                child: _ProfileIcon(icon, size: 20, color: foreground),
               ),
               const SizedBox(width: 9),
               ProxoText(
@@ -2274,116 +2187,116 @@ class _AboutAppSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final MediaQueryData media = MediaQuery.of(context);
     final double textScale =
-        media.textScaler.scale(1).clamp(0.9, 1.05).toDouble();
+        media.textScaler.scale(1).clamp(0.9, 1.5).toDouble();
     return MediaQuery(
       data: media.copyWith(textScaler: TextScaler.linear(textScale)),
       child: FractionallySizedBox(
         heightFactor: .88,
         child: Material(
-        color: Colors.white,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
-        clipBehavior: Clip.antiAlias,
-        child: Directionality(
-          textDirection: TextDirection.rtl,
-          child: Column(
-            children: <Widget>[
-              const SizedBox(height: 10),
-              const SizedBox(
-                width: 42,
-                height: 4,
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: _ProfileColors.dragHandle,
-                    borderRadius: BorderRadius.all(Radius.circular(99)),
+          color: Colors.white,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+          clipBehavior: Clip.antiAlias,
+          child: Directionality(
+            textDirection: TextDirection.rtl,
+            child: Column(
+              children: <Widget>[
+                const SizedBox(height: 10),
+                const SizedBox(
+                  width: 42,
+                  height: 4,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: _ProfileColors.dragHandle,
+                      borderRadius: BorderRadius.all(Radius.circular(99)),
+                    ),
                   ),
                 ),
-              ),
-              SizedBox(
-                height: 54,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: Row(
-                    children: <Widget>[
-                      const SizedBox(width: 44),
-                      const Expanded(
-                        child: ProxoText(
-                          'دەربارەی ئەپڵیکەیشن',
-                          textAlign: TextAlign.center,
-                          style: _ProfileText.screenTitle,
+                SizedBox(
+                  height: 54,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: Row(
+                      children: <Widget>[
+                        const SizedBox(width: 44),
+                        const Expanded(
+                          child: ProxoText(
+                            'دەربارەی ئەپڵیکەیشن',
+                            textAlign: TextAlign.center,
+                            style: _ProfileText.screenTitle,
+                          ),
                         ),
-                      ),
-                      _CircleActionButton(
-                        semanticLabel: 'داخستن',
-                        icon: SolarIconsOutline.closeCircle,
-                        onTap: () => Navigator.of(context).pop(),
-                      ),
-                    ],
+                        _CircleActionButton(
+                          semanticLabel: 'داخستن',
+                          icon: SolarIcons.closeCircle,
+                          onTap: () => Navigator.of(context).pop(),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              const Divider(
-                height: 1,
-                thickness: 1,
-                color: _ProfileColors.hairline,
-              ),
-              Expanded(
-                child: SingleChildScrollView(
-                  physics: BouncingScrollPhysics(),
-                  padding: EdgeInsets.fromLTRB(16, 18, 16, 30),
-                  child: Center(
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(maxWidth: 520),
-                      child: Column(
-                        children: <Widget>[
-                          _PolicySection(
-                            icon: SolarIconsOutline.sledgehammer,
-                            title: 'مەرج و ڕێساکان',
-                            body: 'بە بەکارهێنانی پڕۆکسۆ، بەکارهێنەر '
-                                'بەرپرسیارە لە ڕاستی و یاساییبوونی ناوەڕۆکی '
-                                'ڕیکلامەکە و مافی بەکارهێنانی وێنە، دەنگ و '
-                                'براند. ڕیکلامی فێڵ، یاریی قومار، کاڵای '
-                                'قەدەغەکراو یان ناوەڕۆکی دژ بە ڕێنماییەکانی '
-                                'TikTok پەسەند ناکرێت. هەر داواکارییەک '
-                                'پێداچوونەوەی بۆ دەکرێت و TikTok دەتوانێت '
-                                'پەسەندی نەکات یان ڕابگرێت. دوای دەستپێکردنی '
-                                'کەمپەین، تێچووی بەکارهاتوو ناگەڕێندرێتەوە؛ '
-                                'تەنها باڵانسی بەکارنەهاتوو بەپێی دۆخی '
-                                'داواکارییەکە هەژمار دەکرێت.',
-                          ),
-                          SizedBox(height: 12),
-                          _PolicySection(
-                            icon: SolarIconsOutline.shieldCheck,
-                            title: 'سیاسەتی پاراستنی نهێنی',
-                            body: 'تەنها ئەو زانیارییانە کۆدەکرێنەوە کە بۆ '
-                                'بەڕێوەبردنی هەژمار، پارەدان، ڕیکلام و '
-                                'پشتگیری پێویستن. داتای کەسی بە مەبەستی '
-                                'بازرگانی نافرۆشرێت. دەستگەیشتن بە داتا بە '
-                                'چوونەژوورەوە و مۆڵەتی هەژمار سنووردارە و '
-                                'زانیاریی هەستیار بە شێوەی پارێزراو '
-                                'مامەڵەی لەگەڵ دەکرێت. بەکارهێنەر دەتوانێت '
-                                'لە بەشی دەستکاریکردنی پرۆفایل داوای '
-                                'سڕینەوەی هەژمار و داتاکانی بکات.',
-                          ),
-                          SizedBox(height: 12),
-                          _PolicySection(
-                            icon: SolarIconsOutline.usersGroupRounded,
-                            title: 'دەربارەی ئێمە',
-                            body: 'پڕۆکسۆ پلاتفۆرمێکە بۆ ئاسانکردنی '
-                                'دروستکردن و بەڕێوەبردنی ڕیکلامی TikTok بۆ '
-                                'بازرگان و خاوەنکارەکان لە کوردستان و عێراق. '
-                                'ئامانجمان ئەوەیە بە شێوەیەکی ڕوون و سادە '
-                                'باڵانس زیاد بکەیت، کەمپەین بنێریت، ئامارەکان '
-                                'ببینیت و مێژووی مامەڵەکانت بەدواداچوون بکەیت.',
-                          ),
-                        ],
+                const Divider(
+                  height: 1,
+                  thickness: 1,
+                  color: _ProfileColors.hairline,
+                ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    physics: BouncingScrollPhysics(),
+                    padding: EdgeInsets.fromLTRB(16, 18, 16, 30),
+                    child: Center(
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(maxWidth: 520),
+                        child: Column(
+                          children: <Widget>[
+                            _PolicySection(
+                              icon: SolarIcons.sledgehammer,
+                              title: 'مەرج و ڕێساکان',
+                              body: 'بە بەکارهێنانی پڕۆکسۆ، بەکارهێنەر '
+                                  'بەرپرسیارە لە ڕاستی و یاساییبوونی ناوەڕۆکی '
+                                  'ڕیکلامەکە و مافی بەکارهێنانی وێنە، دەنگ و '
+                                  'براند. ڕیکلامی فێڵ، یاریی قومار، کاڵای '
+                                  'قەدەغەکراو یان ناوەڕۆکی دژ بە ڕێنماییەکانی '
+                                  'TikTok پەسەند ناکرێت. هەر داواکارییەک '
+                                  'پێداچوونەوەی بۆ دەکرێت و TikTok دەتوانێت '
+                                  'پەسەندی نەکات یان ڕابگرێت. دوای دەستپێکردنی '
+                                  'کەمپەین، تێچووی بەکارهاتوو ناگەڕێندرێتەوە؛ '
+                                  'تەنها باڵانسی بەکارنەهاتوو بەپێی دۆخی '
+                                  'داواکارییەکە هەژمار دەکرێت.',
+                            ),
+                            SizedBox(height: 12),
+                            _PolicySection(
+                              icon: SolarIcons.shieldCheck,
+                              title: 'سیاسەتی پاراستنی نهێنی',
+                              body: 'تەنها ئەو زانیارییانە کۆدەکرێنەوە کە بۆ '
+                                  'بەڕێوەبردنی هەژمار، پارەدان، ڕیکلام و '
+                                  'پشتگیری پێویستن. داتای کەسی بە مەبەستی '
+                                  'بازرگانی نافرۆشرێت. دەستگەیشتن بە داتا بە '
+                                  'چوونەژوورەوە و مۆڵەتی هەژمار سنووردارە و '
+                                  'زانیاریی هەستیار بە شێوەی پارێزراو '
+                                  'مامەڵەی لەگەڵ دەکرێت. بەکارهێنەر دەتوانێت '
+                                  'لە بەشی دەستکاریکردنی پرۆفایل داوای '
+                                  'سڕینەوەی هەژمار و داتاکانی بکات.',
+                            ),
+                            SizedBox(height: 12),
+                            _PolicySection(
+                              icon: SolarIcons.usersGroupRounded,
+                              title: 'دەربارەی ئێمە',
+                              body: 'پڕۆکسۆ پلاتفۆرمێکە بۆ ئاسانکردنی '
+                                  'دروستکردن و بەڕێوەبردنی ڕیکلامی TikTok بۆ '
+                                  'بازرگان و خاوەنکارەکان لە کوردستان و عێراق. '
+                                  'ئامانجمان ئەوەیە بە شێوەیەکی ڕوون و سادە '
+                                  'باڵانس زیاد بکەیت، کەمپەین بنێریت، ئامارەکان '
+                                  'ببینیت و مێژووی مامەڵەکانت بەدواداچوون بکەیت.',
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
         ),
       ),
     );
@@ -2397,7 +2310,7 @@ class _PolicySection extends StatelessWidget {
     required this.body,
   });
 
-  final IconData icon;
+  final String icon;
   final String title;
   final String body;
 
@@ -2408,7 +2321,7 @@ class _PolicySection extends StatelessWidget {
       padding: const EdgeInsets.all(15),
       decoration: const BoxDecoration(
         color: _ProfileColors.groupSurface,
-        borderRadius: BorderRadius.all(Radius.circular(20)),
+        borderRadius: BorderRadius.all(Radius.circular(16)),
         border: Border.fromBorderSide(
           BorderSide(color: _ProfileColors.cardBorder),
         ),
@@ -2418,9 +2331,10 @@ class _PolicySection extends StatelessWidget {
         children: <Widget>[
           Row(
             children: <Widget>[
-              Icon(icon, size: 20, color: _ProfileColors.ink),
+              _ProfileIcon(icon, size: 20, color: _ProfileColors.ink),
               const SizedBox(width: 9),
-              Expanded(child: ProxoText(title, style: _ProfileText.policyTitle)),
+              Expanded(
+                  child: ProxoText(title, style: _ProfileText.policyTitle)),
             ],
           ),
           const SizedBox(height: 10),
@@ -2438,39 +2352,39 @@ class _ProfileFaqScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final MediaQueryData media = MediaQuery.of(context);
     final double textScale =
-        media.textScaler.scale(1).clamp(0.9, 1.05).toDouble();
+        media.textScaler.scale(1).clamp(0.9, 1.5).toDouble();
     return MediaQuery(
       data: media.copyWith(textScaler: TextScaler.linear(textScale)),
       child: Directionality(
         textDirection: TextDirection.rtl,
         child: Scaffold(
-        backgroundColor: _ProfileColors.page,
-        body: SafeArea(
-          bottom: false,
-          child: Column(
-            children: <Widget>[
-              _SimpleTopBar(
-                title: 'پرسیارە دووبارەکان',
-                onBack: () => Navigator.of(context).maybePop(),
-              ),
-              Expanded(
-                child: ListView.separated(
-                  physics: const BouncingScrollPhysics(),
-                  padding: EdgeInsets.fromLTRB(
-                    16,
-                    18,
-                    16,
-                    MediaQuery.paddingOf(context).bottom + 24,
-                  ),
-                  itemCount: kFaqItems.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 10),
-                  itemBuilder: (_, int index) =>
-                      _FaqExpansionCard(item: kFaqItems[index]),
+          backgroundColor: _ProfileColors.page,
+          body: SafeArea(
+            bottom: false,
+            child: Column(
+              children: <Widget>[
+                _SimpleTopBar(
+                  title: 'پرسیارە دووبارەکان',
+                  onBack: () => Navigator.of(context).maybePop(),
                 ),
-              ),
-            ],
+                Expanded(
+                  child: ListView.separated(
+                    physics: const BouncingScrollPhysics(),
+                    padding: EdgeInsets.fromLTRB(
+                      16,
+                      18,
+                      16,
+                      MediaQuery.paddingOf(context).bottom + 24,
+                    ),
+                    itemCount: kFaqItems.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 10),
+                    itemBuilder: (_, int index) =>
+                        _FaqExpansionCard(item: kFaqItems[index]),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
         ),
       ),
     );
@@ -2487,7 +2401,7 @@ class _FaqExpansionCard extends StatelessWidget {
     return Material(
       color: _ProfileColors.groupSurface,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(20)),
+        borderRadius: BorderRadius.all(Radius.circular(16)),
         side: BorderSide(color: _ProfileColors.cardBorder),
       ),
       clipBehavior: Clip.antiAlias,
@@ -2533,11 +2447,11 @@ class _FieldLabel extends StatelessWidget {
 
 InputDecoration _profileInputDecoration({
   required String hint,
-  required IconData icon,
+  required String icon,
   bool readOnly = false,
-  IconData? suffixIcon,
+  String? suffixIcon,
 }) {
-  const BorderRadius radius = BorderRadius.all(Radius.circular(18));
+  const BorderRadius radius = BorderRadius.all(Radius.circular(16));
   final Color fill =
       readOnly ? _ProfileColors.readOnlySurface : _ProfileColors.groupSurface;
   const OutlineInputBorder normal = OutlineInputBorder(
@@ -2547,10 +2461,10 @@ InputDecoration _profileInputDecoration({
   return InputDecoration(
     hint: proxoFieldText(hint),
     hintStyle: _ProfileText.hint,
-    prefixIcon: Icon(icon, size: 20, color: _ProfileColors.muted),
+    prefixIcon: _ProfileIcon(icon, size: 20, color: _ProfileColors.muted),
     suffixIcon: suffixIcon == null
         ? null
-        : Icon(suffixIcon, size: 17, color: _ProfileColors.quiet),
+        : _ProfileIcon(suffixIcon, size: 17, color: _ProfileColors.quiet),
     filled: true,
     fillColor: fill,
     isDense: true,
@@ -2589,7 +2503,7 @@ Future<bool?> _showConfirmationDialog(
         backgroundColor: Colors.white,
         surfaceTintColor: Colors.transparent,
         shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(20)),
+          borderRadius: BorderRadius.all(Radius.circular(16)),
         ),
         title: ProxoText(title, style: _ProfileText.dialogTitle),
         content: ProxoText(message, style: _ProfileText.dialogBody),
@@ -2601,9 +2515,8 @@ Future<bool?> _showConfirmationDialog(
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(true),
             style: TextButton.styleFrom(
-              foregroundColor: destructive
-                  ? _ProfileColors.danger
-                  : _ProfileColors.primary,
+              foregroundColor:
+                  destructive ? _ProfileColors.danger : _ProfileColors.primary,
               textStyle: _ProfileText.dialogAction,
             ),
             child: ProxoText(confirmText),
@@ -2627,7 +2540,7 @@ Future<void> _showInformationDialog(
         backgroundColor: Colors.white,
         surfaceTintColor: Colors.transparent,
         shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(20)),
+          borderRadius: BorderRadius.all(Radius.circular(16)),
         ),
         title: ProxoText(title, style: _ProfileText.dialogTitle),
         content: ProxoText(message, style: _ProfileText.dialogBody),
@@ -2725,9 +2638,7 @@ class _EmailChangeVerificationDialogState
     setState(() {
       _resending = false;
       _error = error;
-      _notice = error == null
-          ? 'کۆدێکی نوێ نێردرا؛ ئیمەیڵەکەت بپشکنە.'
-          : null;
+      _notice = error == null ? 'کۆدێکی نوێ نێردرا؛ ئیمەیڵەکەت بپشکنە.' : null;
     });
   }
 
@@ -2741,7 +2652,7 @@ class _EmailChangeVerificationDialogState
           backgroundColor: Colors.white,
           surfaceTintColor: Colors.transparent,
           shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(20)),
+            borderRadius: BorderRadius.all(Radius.circular(16)),
           ),
           title: const ProxoText(
             'پشتڕاستکردنەوەی ئیمەیڵ',
@@ -2786,7 +2697,8 @@ class _EmailChangeVerificationDialogState
                       textAlign: TextAlign.center,
                       autofillHints: const <String>[AutofillHints.oneTimeCode],
                       inputFormatters: <TextInputFormatter>[
-                        FilteringTextInputFormatter.allow(RegExp(r'[0-9٠-٩۰-۹]')),
+                        FilteringTextInputFormatter.allow(
+                            RegExp(r'[0-9٠-٩۰-۹]')),
                         LengthLimitingTextInputFormatter(6),
                       ],
                       onChanged: (_) {
@@ -2805,13 +2717,13 @@ class _EmailChangeVerificationDialogState
                       ),
                       decoration: _profileInputDecoration(
                         hint: '000000',
-                        icon: SolarIconsOutline.shieldCheck,
+                        icon: SolarIcons.shieldCheck,
                       ).copyWith(error: proxoFieldText(_error)),
                     ),
                   ),
                 ),
                 if (_notice != null) ...<Widget>[
-                  const SizedBox(height: 7),
+                  const SizedBox(height: 8),
                   ProxoText(
                     _notice!,
                     textAlign: TextAlign.center,
@@ -2900,22 +2812,6 @@ String _friendlyDatabaseError(PostgrestException error) {
   return 'گۆڕانکارییەکان پاشەکەوت نەکران. دووبارە هەوڵ بدەرەوە.';
 }
 
-String _friendlyAuthError(String message) {
-  final String error = message.toLowerCase();
-  if (error.contains('already') ||
-      error.contains('exists') ||
-      error.contains('registered')) {
-    return 'ئەم ئیمەیڵە پێشتر لە هەژمارێکی تر بەکارهاتووە.';
-  }
-  if (error.contains('invalid') && error.contains('email')) {
-    return 'ناونیشانی ئیمەیڵەکە دروست نییە.';
-  }
-  if (error.contains('rate') || error.contains('too many')) {
-    return 'داواکاری زۆر بوو؛ تکایە کەمێک چاوەڕێ بکە و دووبارە هەوڵ بدەرەوە.';
-  }
-  return 'دانیشتنەکەت نوێ بکەرەوە و دووبارە هەوڵ بدەرەوە.';
-}
-
 String _friendlyEmailWebhookError(String rawCode) {
   final String code = rawCode.trim().toLowerCase();
   if (code == 'invalid_email') {
@@ -2958,7 +2854,18 @@ bool _containsArabic(String value) =>
     RegExp(r'[\u0600-\u06FF]').hasMatch(value);
 
 String _toKurdishDigits(String value) {
-  const List<String> digits = <String>['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+  const List<String> digits = <String>[
+    '٠',
+    '١',
+    '٢',
+    '٣',
+    '٤',
+    '٥',
+    '٦',
+    '٧',
+    '٨',
+    '٩'
+  ];
   return value.replaceAllMapped(
     RegExp(r'\d'),
     (Match match) => digits[int.parse(match.group(0)!)],
@@ -2973,30 +2880,30 @@ class _ProfileScrollBehavior extends ScrollBehavior {
     BuildContext context,
     Widget child,
     ScrollableDetails details,
-  ) => child;
+  ) =>
+      child;
 }
 
 abstract final class _ProfileColors {
   // ڕەنگەکان لە فریمە پڕقەبارەکانی ڤیدیۆکەوە هێمن کراون: پەڕە سپییە،
   // کارت و گرووپەکان تەنها یەک هەنگاو لێی جیاوازن و ڕەشەکە navy نییە.
-  static const Color page = Color(0xFFFFFFFF);
-  static const Color groupSurface = Color(0xFFFBFBFB);
-  static const Color quickSurface = Color(0xFFF7FCFB);
-  static const Color readOnlySurface = Color(0xFFF6F7F8);
-  static const Color ink = Color(0xFF222428);
-  static const Color iconInk = Color(0xFF2D3035);
-  static const Color section = Color(0xFF3A3C42);
-  static const Color muted = Color(0xFF636365);
-  static const Color quiet = Color(0xFF8A8D92);
-  static const Color border = Color(0xFFE6EAEC);
-  static const Color cardBorder = Color(0xFFE6ECEE);
-  static const Color hairline = Color(0xFFE4E6E8);
-  static const Color topBarHairline = Color(0xFFF3F4F5);
-  static const Color iconSurface = Color(0xFFF4F8FA);
-  static const Color chevron = Color(0xFF74777B);
-  static const Color primary = Color(0xFF2A8FE2);
-  static const Color danger = Color(0xFFB74956);
-  static const Color dangerSoft = Color(0xFFFFF7F7);
+  static const Color page = AuthTokens.pageBackground;
+  static const Color groupSurface = Colors.white;
+  static const Color quickSurface = AuthTokens.fieldFillOff;
+  static const Color readOnlySurface = AuthTokens.fieldFillOff;
+  static const Color ink = AuthTokens.ink;
+  static const Color iconInk = AuthTokens.ink;
+  static const Color muted = AuthTokens.inkMuted;
+  static const Color quiet = AuthTokens.inkMuted;
+  static const Color border = AuthTokens.line;
+  static const Color cardBorder = AuthTokens.line;
+  static const Color hairline = AuthTokens.lineOff;
+  static const Color topBarHairline = AuthTokens.lineOff;
+  static const Color iconSurface = AuthTokens.fieldFillOff;
+  static const Color chevron = AuthTokens.inkMuted;
+  static const Color primary = AuthTokens.primary;
+  static const Color danger = AuthTokens.danger;
+  static const Color dangerSoft = AuthTokens.dangerBg;
   static const Color dangerBorder = Color(0xFFF2DADD);
   static const Color dragHandle = Color(0xFFBEBEBE);
   static const Color scrim = Color(0x8A000000);
@@ -3006,27 +2913,9 @@ abstract final class _ProfileColors {
 }
 
 abstract final class _ProfileText {
-  static const TextStyle screenTitle = TextStyle(
-    fontFamily: kAppFont,
-    fontSize: 17,
-    fontWeight: FontWeight.w500,
-    color: _ProfileColors.ink,
-    height: 1.2,
-  );
-  static const TextStyle userName = TextStyle(
-    fontFamily: kAppFont,
-    fontSize: 16,
-    fontWeight: FontWeight.w500,
-    color: _ProfileColors.ink,
-    height: 1.25,
-  );
-  static const TextStyle userContact = TextStyle(
-    fontFamily: kAppFont,
-    fontSize: 12,
-    fontWeight: FontWeight.w400,
-    color: _ProfileColors.muted,
-    height: 1.3,
-  );
+  static const TextStyle screenTitle = ProxoUi.title;
+  static const TextStyle userName = ProxoUi.title;
+  static const TextStyle userContact = ProxoUi.secondary;
   static const TextStyle balanceLabel = TextStyle(
     fontFamily: kAppFont,
     fontSize: 13,
@@ -3036,40 +2925,16 @@ abstract final class _ProfileText {
   );
   static const TextStyle balanceAmount = TextStyle(
     fontFamily: kAppFont,
-    fontSize: 24,
-    fontWeight: FontWeight.w600,
+    fontSize: 20,
+    fontWeight: FontWeight.w500,
     color: Colors.white,
-    height: 1.05,
+    height: 1.4,
     letterSpacing: 0.1,
   );
-  static const TextStyle quickAction = TextStyle(
-    fontFamily: kAppFont,
-    fontSize: 12.5,
-    fontWeight: FontWeight.w400,
-    color: _ProfileColors.ink,
-    height: 1.2,
-  );
-  static const TextStyle sectionTitle = TextStyle(
-    fontFamily: kAppFont,
-    fontSize: 14,
-    fontWeight: FontWeight.w500,
-    color: _ProfileColors.section,
-    height: 1.25,
-  );
-  static const TextStyle menuTitle = TextStyle(
-    fontFamily: kAppFont,
-    fontSize: 14,
-    fontWeight: FontWeight.w400,
-    color: _ProfileColors.ink,
-    height: 1.25,
-  );
-  static const TextStyle menuSubtitle = TextStyle(
-    fontFamily: kAppFont,
-    fontSize: 11.5,
-    fontWeight: FontWeight.w400,
-    color: _ProfileColors.muted,
-    height: 1.3,
-  );
+  static const TextStyle quickAction = ProxoUi.body;
+  static const TextStyle sectionTitle = ProxoUi.sectionTitle;
+  static const TextStyle menuTitle = ProxoUi.body;
+  static const TextStyle menuSubtitle = ProxoUi.secondary;
   static const TextStyle signOut = TextStyle(
     fontFamily: kAppFont,
     fontSize: 14,
@@ -3084,20 +2949,8 @@ abstract final class _ProfileText {
     color: _ProfileColors.quiet,
     height: 1.2,
   );
-  static const TextStyle fieldLabel = TextStyle(
-    fontFamily: kAppFont,
-    fontSize: 12.5,
-    fontWeight: FontWeight.w500,
-    color: _ProfileColors.section,
-    height: 1.2,
-  );
-  static const TextStyle field = TextStyle(
-    fontFamily: kAppFont,
-    fontSize: 14,
-    fontWeight: FontWeight.w400,
-    color: _ProfileColors.ink,
-    height: 1.25,
-  );
+  static const TextStyle fieldLabel = ProxoUi.label;
+  static const TextStyle field = ProxoUi.body;
   static const TextStyle hint = TextStyle(
     fontFamily: kAppFont,
     fontSize: 13,
@@ -3191,5 +3044,20 @@ abstract final class _ProfileText {
     fontSize: 14,
     fontWeight: FontWeight.w500,
     height: 1.2,
+  );
+}
+
+/// SVG widgets obey tight parent constraints; isolate the glyph from its
+/// larger touch target so a 20 dp icon never stretches into a 48 dp button.
+class _ProfileIcon extends StatelessWidget {
+  const _ProfileIcon(this.name, {this.size = 20, this.color});
+  final String name;
+  final double size;
+  final Color? color;
+  @override
+  Widget build(BuildContext context) => Center(
+    widthFactor: 1, heightFactor: 1,
+    child: SizedBox.square(dimension: size,
+      child: SolarIcon(name, size: size, color: color)),
   );
 }

@@ -66,9 +66,14 @@ async function readiness(data,{allowLegacy=false}={}) {
   if(data.avatar_path)await verifyPublicAvatar(data.avatar_path);
   await renderedPage(data);
 }
+// Authenticated owner responses include the persisted record so a successful
+// write is not coupled to a second list request in the mobile client. Keep a
+// whitelist: internal hashes, audit details and encoded images stay private.
+const OWNER_COLUMNS='id,user_id,name,bio,tt,platforms,template_key,template_version,style,color_theme,card_language,page_type,avatar_path,status,publish_status,card_number,created_at,updated_at';
+const OWNER_SELECT=OWNER_COLUMNS+',avatar_b64,logo_b64';
 const publicCard=(card)=>({
-  id:card.id,name:card.name,status:card.status,
-  publish_status:card.publish_status,
+  ...Object.fromEntries(OWNER_COLUMNS.split(',').map(key=>[key,card[key]])),
+  has_avatar:Boolean(card.avatar_path||card.avatar_b64||card.logo_b64),
   public_path:card.status==='active'&&card.publish_status==='ready'
     ?'/contact/'+card.id:null
 });
@@ -83,12 +88,12 @@ async function create(req,res,userId,body) {
     platforms:Object.fromEntries(Object.entries(data.platforms).sort())})).digest('hex');
   const existing=await proxoRows('proxolink_cards',
     '&id=eq.'+id+'&limit=1',
-    'id,user_id,name,status,publish_status,creation_request_hash');
+    OWNER_SELECT+',creation_request_hash');
   if(existing.length) {
     if(existing[0].user_id!==userId)
       return json(res,409,{ok:false,error:'invalid_request'});
     if(existing[0].creation_request_hash!==hash)
-      return json(res,409,{ok:false,error:'idempotency_conflict'});
+      return json(res,409,{ok:false,error:'idempotency_conflict',card:publicCard(existing[0])});
     return json(res,200,{ok:true,card:publicCard(existing[0]),reused:true});
   }
   let card;
@@ -97,16 +102,16 @@ async function create(req,res,userId,body) {
       ...data,style:data.template_key,tiktok:data.tt,
       status:'inactive',publish_status:'creating',
       client_request_id:id,creation_request_hash:hash
-    },'select=id,user_id,name,status,publish_status,updated_at');
+    },'select='+OWNER_SELECT);
     card=inserted[0];
   } catch(error) {
     // Concurrent duplicate POST: re-read the exact same idempotency key.
     const rows=await proxoRows('proxolink_cards',
       '&id=eq.'+id+'&user_id=eq.'+userId+'&limit=1',
-      'id,user_id,name,status,publish_status,creation_request_hash');
+      OWNER_SELECT+',creation_request_hash');
     if(rows.length) {
       if(rows[0].creation_request_hash!==hash)
-        return json(res,409,{ok:false,error:'idempotency_conflict'});
+        return json(res,409,{ok:false,error:'idempotency_conflict',card:publicCard(rows[0])});
       return json(res,200,{ok:true,card:publicCard(rows[0]),reused:true});
     }
     throw error;
@@ -118,7 +123,7 @@ async function create(req,res,userId,body) {
       publish_status:'ready',status:'active',
       last_publish_error_code:null,last_publish_error_at:null,
       published_at:new Date().toISOString()
-    },'id=eq.'+id+'&user_id=eq.'+userId+'&updated_at=eq.'+encodeURIComponent(card.updated_at)+'&select=id,user_id,name,status,publish_status');
+    },'id=eq.'+id+'&user_id=eq.'+userId+'&updated_at=eq.'+encodeURIComponent(card.updated_at)+'&select='+OWNER_SELECT);
     if(!updated.length)return json(res,200,{ok:true,card:publicCard(await cardById(id)),reused:true});
     await publishAudit(data,'create','success');
     return json(res,201,{ok:true,card:publicCard(updated[0])});
@@ -127,7 +132,7 @@ async function create(req,res,userId,body) {
       publish_status:'failed',status:'inactive',
       last_publish_error_code:String(error?.code||'render_failed').slice(0,80),
       last_publish_error_at:new Date().toISOString()
-    },'id=eq.'+id+'&user_id=eq.'+userId+'&updated_at=eq.'+encodeURIComponent(card.updated_at)+'&select=id,user_id,name,status,publish_status');
+    },'id=eq.'+id+'&user_id=eq.'+userId+'&updated_at=eq.'+encodeURIComponent(card.updated_at)+'&select='+OWNER_SELECT);
     if(!failed.length)return json(res,200,{ok:true,card:publicCard(await cardById(id)),reused:true});
     await publishAudit(data,'create','failed',error?.code||'render_failed');
     return json(res,422,{ok:false,error:'publish_failed',
@@ -157,7 +162,7 @@ async function edit(req,res,userId,body,id) {
   // Keep an intentionally inactive card inactive; editing must not expose it.
   const updated=await proxoWrite('proxolink_cards','PATCH',fields,
     'id=eq.'+id+'&user_id=eq.'+userId+'&updated_at=eq.'+encodeURIComponent(current.updated_at)
-      +'&select=id,user_id,name,status,publish_status');
+      +'&select='+OWNER_SELECT);
   if(!updated.length)return json(res,409,{ok:false,error:'edit_conflict'});
   await publishAudit(proposed,'edit_publish','success');
   return json(res,200,{ok:true,card:publicCard(updated[0])});

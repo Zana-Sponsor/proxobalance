@@ -2,24 +2,21 @@ import '../models/receipt_pricing.dart';
 import '../screens/ad_detail_screen.dart' show adDetailsRoute;
 // lib/widgets/proxo_sidebar.dart
 import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:firebase_database/firebase_database.dart';
-import 'package:http/http.dart' as http;
-import 'package:image_picker/image_picker.dart';
 import 'package:solar_iconkit/solar_iconkit.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import '../theme/proxo_ui.dart';
+import 'auth/auth_design.dart' show AuthTokens;
+import '../screens/faq_screen.dart' show FaqScreen;
 import '../theme/app_theme.dart';
-import '../main.dart'
-    show supabase, kIqdRate, navigatorKey;
+import '../main.dart' show supabase, kIqdRate, navigatorKey;
 import '../l10n/tx_strings.dart';
 import '../theme/app_locale.dart';
 import '../screens/transaction_detail_screen.dart'
     show TransactionDetailScreen, TxReceiptData, TxReceiptKind;
-import 'top_bar.dart' show ProxoTopBar;
 import 'receipt/receipt_kit.dart';
 import 'receipt/tx_history_layout.dart';
 import 'tasks_page.dart';
@@ -39,55 +36,51 @@ part 'voucher_page.dart';
 // نووسرابوو (بڕوانە سەرەتای ئەو فایلە) بەڵام هیچ شوێنێک بانگ نەدەکرا.
 part 'discount_codes_page.dart';
 
-const _kTgDepBot  = '8547356331:AAGwypl4NFS5dsXTp3DQW2L0mz7_Ttx7M70';
-const _kTgChatId  = '6259019006';
-
-const _cDark  = AppColors.ink;
+const _cDark = AppColors.ink;
 const _cDark2 = Color(0xFF2E3A50);
-const _cMt    = Color(0xFF8A95A8);
-const _cBg    = Color(0xFFF4F6FB);
-const _cB1    = AppColors.line;
-const _cB2    = Color(0xFFD0D4DE);
+const _cMt = Color(0xFF8A95A8);
+const _cBg = Color(0xFFF4F6FB);
+const _cB1 = AppColors.line;
+const _cB2 = Color(0xFFD0D4DE);
 const _cWhite = Color(0xFFFFFFFF);
-const _cBlue  = AppColors.accent;
+const _cBlue = AppColors.accent;
 const _cGreen = Color(0xFF16A34A);
-const _cRed   = Color(0xFFDC2626);
-const _cYellow= Color(0xFFD97706);
+const _cRed = Color(0xFFDC2626);
+const _cYellow = Color(0xFFD97706);
 
 const TextStyle _kBase =
     TextStyle(fontFamily: kAppFont, decoration: TextDecoration.none);
-const Color _kIconBg       = Color(0xFFF6F6F8);
-const Color _kTextDark     = Color(0xFF000000);
-const Color _kTextMuted    = Color(0xFF454C63);
-const Color _kGlyph        = AppColors.ink;
-const Color _kChevron      = Color(0xFF3E4260);
-const Color _kActiveBg     = Color(0xFFF5F8FE);
-const Color _kActiveTile   = Color(0xFFF0F3FC);
-const Color _kActiveBlue   = Color(0xFF0B34F6);
-const Color _kAccentBar    = Color(0xFF0D4CF5);
-const Color _kBadgeBg      = Color(0xFFEBE5FE);
-const Color _kBadgeText    = Color(0xFF5426F8);
-const Color _kDivider      = Color(0xFFF0F1F4);
-const Color _kInviteBg     = Color(0xFFFFFFFF);
+const Color _kIconBg = Color(0xFFF6F6F8);
+const Color _kTextDark = Color(0xFF000000);
+const Color _kTextMuted = Color(0xFF454C63);
+const Color _kGlyph = AppColors.ink;
+const Color _kChevron = Color(0xFF3E4260);
+const Color _kActiveBg = Color(0xFFF5F8FE);
+const Color _kActiveTile = Color(0xFFF0F3FC);
+const Color _kActiveBlue = Color(0xFF0B34F6);
+const Color _kAccentBar = Color(0xFF0D4CF5);
+const Color _kBadgeBg = Color(0xFFEBE5FE);
+const Color _kBadgeText = Color(0xFF5426F8);
+const Color _kDivider = Color(0xFFF0F1F4);
+const Color _kInviteBg = Color(0xFFFFFFFF);
 const Color _kInviteBorder = Color(0xFFF1F0F7);
-const Color _kGiftTile     = Color(0xFFF1F2F8);
-const Color _kLogoutBg     = Color(0xFFF7F7F9);
-const Color _kLogoutRed    = Color(0xFFE81F27);
-const Color _kLevelDot     = Color(0xFF23E37F);
-const Color _kCardBottom   = Color(0xFF5A55FC);
-const Color _kCardTop      = Color(0xFF8792FB);
-const Color _kAvatarTop    = Color(0xFF2E6BFA);
+const Color _kGiftTile = Color(0xFFF1F2F8);
+const Color _kLogoutBg = Color(0xFFF7F7F9);
+const Color _kLogoutRed = Color(0xFFE81F27);
+const Color _kLevelDot = Color(0xFF23E37F);
+const Color _kCardTop = Color(0xFF8792FB);
+const Color _kAvatarTop = Color(0xFF2E6BFA);
 const Color _kAvatarBottom = Color(0xFF5B15FB);
 
-const Color _navBg          = Color(0xFFFFFFFF);
-const Color _navPrimary     = AppColors.accent;
-const Color _navSelected    = Color(0xFFEEF4FF);
-const Color _navText        = AppColors.ink;
-const Color _navMuted       = AppColors.inkMuted;
-const Color _navDivider     = Color(0xFFEEF2F7);
-const Color _navSurface     = Color(0xFFF6F8FC);
-const Color _navAvatarBg    = Color(0xFFE6EDFE);
-const Color _navIconInk     = Color(0xFF2C3648);  // ⚠ بوو #374151 — تۆزێک تۆخکرا.
+const Color _navBg = Color(0xFFFFFFFF);
+const Color _navPrimary = AuthTokens.primary;
+const Color _navSelected = Color(0xFFEEF4FF);
+const Color _navText = AppColors.ink;
+const Color _navMuted = AppColors.inkMuted;
+const Color _navDivider = Color(0xFFEEF2F7);
+const Color _navSurface = Color(0xFFF6F8FC);
+const Color _navAvatarBg = Color(0xFFE6EDFE);
+const Color _navIconInk = Color(0xFF2C3648); // ⚠ بوو #374151 — تۆزێک تۆخکرا.
 
 // ── خانەی پشتی ئایکۆن ───────────────────────────────────────────────────
 //
@@ -100,131 +93,26 @@ const Color _navIconInk     = Color(0xFF2C3648);  // ⚠ بوو #374151 — تۆ
 //
 // ئێستا: ڕوویەکی تۆختر + هێڵێکی مووی سنوور. خانەکە شێوەی خۆی هەیە،
 // ئایکۆنەکەش لەسەری دەردەکەوێت.
-const Color _navIconTileBg     = Color(0xFFEFF3FA);
-const Color _navIconTileLine   = Color(0xFFE1E8F3);
-const Color _navIconTileBgSel  = Color(0xFFDCE8FF);
-const Color _navLogoutTileBg   = Color(0xFFFDEAEA);
+const Color _navIconTileBg = Color(0xFFEFF3FA);
+const Color _navIconTileLine = Color(0xFFE1E8F3);
+const Color _navIconTileBgSel = Color(0xFFDCE8FF);
+const Color _navLogoutTileBg = Color(0xFFFDEAEA);
 const Color _navLogoutTileLine = Color(0xFFF7D5D5);
 const double _navIconTileLineW = 1.0;
-const Color _navLogoutBg    = Color(0xFFFEF4F4);
-const Color _navLogoutInk   = Color(0xFFEF4444);
+const Color _navLogoutBg = Color(0xFFFEF4F4);
+const Color _navLogoutInk = Color(0xFFEF4444);
 const Color _navPanelShadow = Color(0x0F101828);
 
-const Color  _navLiftShadow = Color(0x141B2A4A);
-const double _navLift       = 1.5;
+const Color _navLiftShadow = Color(0x141B2A4A);
+const double _navLift = 0.0;
 
-const double _navMaxWidth         = 304.0;
-const double _navGutter           = 22.0;
-const double _navTopGap           = 26.0;
-const double _navBottomGap        = 28.0;
-const double _navRadius           = 15.0;
-const double _navCardHeight       = 82.0;
-const double _navCardPadding      = 12.0;
-const double _navAvatar           = 48.0;
-const double _navAvatarGlyph      = 25.0;
-const double _navAvatarGap        = 20.0;
-const double _navNameSize         = 16.0;
-const double _navEmailSize        = 12.5;
-const double _navChevron          = 20.0;
-const double _navCardToMenu       = 21.75;
-const double _navRowHeight        = 54.0;
-const double _navRowGap           = 3.67;
-const double _navRowInset         = 9.5;
-const double _navIconTile         = 40.0;
-const double _navIconTileRadius   = 13.0;
+const double _navMaxWidth = 304.0;
 // ⚠ ڕێژەی ئایکۆن بۆ خانە = 22/40 ≈ ٥٥٪. هەردووکیان بە هەمان `sw`
 //   دەگۆڕدرێن، بۆیە ئەم ڕێژەیە لەسەر هەموو شاشەیەک دەپارێزرێت و
 //   ئایکۆنەکە هەرگیز نە تەنگ دەبێتەوە نە دەبڕدرێت.
-const double _navGlyph            = 22.0;
-const double _navTileGap          = 16.5;
-const double _navLabelSize        = 14.5;
-const double _navMenuToDivider    = 9.3;
 const double _navDividerThickness = 1.0;
-const double _navDividerToLogout  = 21.0;
-const double _navLogoutHeight     = 56.0;
-const double _navNameToEmail      = 4.0;
-const double _navChevronGap       = 8.0;
-const double _navRowPadV          = 6.0;
-const double _navBadgeSize        = 20.0;
-const double _navBadgeTextSize    = 12.0;
-const double _navRevealSlide      = 0.06;
-const int    _navMenuRows         = 8;  // ⚠ بوو ٩ — «باوچەرەکان» لابرا.
-const double _navMinTapTarget     = 48.0;
-const double _navMinCardHeight    = 56.0;
+const double _navRevealSlide = 0.06;
 
-class _LevelTier {
-  final int number;
-  final String nameEn;
-  final double minPoints;
-  final double discountPercent;
-  final double discountIqd;
-  final String icon;
-  final Color color;
-  _LevelTier({
-    required this.number,
-    required this.nameEn,
-    required this.minPoints,
-    required this.discountPercent,
-    required this.discountIqd,
-    required this.icon,
-    required this.color,
-  });
-
-  factory _LevelTier.fromMap(Map<String, dynamic> m) => _LevelTier(
-        number: (m['level_number'] as num?)?.toInt() ?? 0,
-        nameEn: (m['name_en'] ?? '').toString(),
-        minPoints: (m['min_points'] as num?)?.toDouble() ?? 0,
-        discountPercent: (m['discount_percent'] as num?)?.toDouble() ?? 0,
-        discountIqd: (m['discount_iqd'] as num?)?.toDouble() ?? 0,
-        icon: (m['icon'] ?? 'medal').toString(),
-        color: _parseHexColor(m['color']?.toString()),
-      );
-}
-
-Color _parseHexColor(String? hex) {
-  if (hex == null || hex.isEmpty) return _kCardBottom;
-  var h = hex.replaceAll('#', '');
-  if (h.length == 6) h = 'FF$h';
-  try {
-    return Color(int.parse(h, radix: 16));
-  } catch (_) {
-    return _kCardBottom;
-  }
-}
-
-// ⚠ ئەمە بە ئەنقەست نەگۆڕدرا بۆ Solar.
-//
-// `_levelIconFor` لە هیچ شوێنێکی ئەم فایلەدا بانگ ناکرێت، بەڵام
-// ئەم فایلە سێ `part`ی هەیە (`tx_history_page`، `voucher_page`،
-// `discount_codes_page`) کە هەمان بوارە تایبەتییان هەیە و لەوانەیە
-// یەکێکیان بانگی بکات. گۆڕینی جۆری گەڕاوەکەی لە `IconData`ـەوە بۆ
-// `String` ئەوان دەشکێنێت.
-//
-// ئەگەر دڵنیایت هیچ کەس بەکاری ناهێنێت، دەتوانرێت بگۆڕدرێت بۆ:
-//   'crown' → SolarIcons.crown · 'diamond'/'gem' → SolarIcons.diamond
-//   'medal'/'award' → SolarIcons.medalStar
-FaIconData _levelIconFor(String key) {
-  switch (key) {
-    case 'award':   return FontAwesomeIcons.award;
-    case 'crown':   return FontAwesomeIcons.crown;
-    case 'gem':     return FontAwesomeIcons.gem;
-    case 'diamond': return FontAwesomeIcons.gem;
-    case 'medal':
-    default:        return FontAwesomeIcons.medal;
-  }
-}
-
-// ═════════════════════════════════════════════════════════════════════════════
-// ئایکۆنەکان — Solar Linear (`solar_iconkit`)
-// ═════════════════════════════════════════════════════════════════════════════
-//
-// پێشتر `Icons.*`ـی مێتریاڵ بوون. ئەوانە لە ٦١ dpـی ئەم دراوەرەدا ئەستوور
-// و قەڵەو دەردەکەوتن و لەگەڵ شێوازی ئەپەکە نەدەگونجان. ئێستا هەموویان
-// Solar Linearن — هەمان کۆمەڵەی `ad_detail_screen.dart`.
-//
-// ⚠ ناوی ئایکۆنەکان تەنها لێرەن. ئەگەر ئەنالایزەر یەکێکیانی نەناسییەوە
-//   یان ئایکۆنێک بە دڵت نەبوو، هەر ئەم یەک ڕیزە بگۆڕە.
-//   لیستی تەواو: solar-icons-web.vercel.app
 class _Ico {
   const _Ico._();
 
@@ -243,9 +131,17 @@ class _Ico {
 }
 
 class ProxoSidebar extends StatefulWidget {
-  const ProxoSidebar({super.key, this.onClose, this.onNavigate});
+  const ProxoSidebar(
+      {super.key,
+      this.onClose,
+      this.onNavigate,
+      this.selectedRoute = 'home',
+      this.client});
 
   final VoidCallback? onClose;
+  final String selectedRoute;
+  final SupabaseClient? client;
+
   /// ⚠ بوو `void Function(Widget page)?`. `MainShell` بەرامبەری
   /// دەکردەوە لەگەڵ `'ads'`, `'tools'`, `'tutorials'` — واتە بەراوردی
   /// `Widget == String`، کە **هەمیشە** `false`ە. بۆیە هیچ کامێک لەو
@@ -258,21 +154,19 @@ class ProxoSidebar extends StatefulWidget {
 
 class _ProxoSidebarState extends State<ProxoSidebar>
     with SingleTickerProviderStateMixin {
+  SupabaseClient get _client => widget.client ?? supabase;
+  bool _navigating = false;
+  bool _signingOut = false;
   String? _avatarUrl;
-  String _userName  = '';
+  String _userName = '';
   String _userEmail = '';
-  String _initial   = '';
-  bool   _loading   = true;
+  bool _loading = true;
 
   late final AnimationController _intro;
   late final List<Animation<double>> _revealFade;
   late final List<Animation<Offset>> _revealSlide;
   final ScrollController _menuScroll = ScrollController();
 
-  double _points = 0;
-  List<_LevelTier> _levels = [];
-  _LevelTier? _currentTier;
-  _LevelTier? _nextTier;
   int _unreadNotifs = 0;
 
   @override
@@ -295,70 +189,44 @@ class _ProxoSidebarState extends State<ProxoSidebar>
   }
 
   Future<void> _load() async {
-    if (!mounted) return;
+    final user = _client.auth.currentUser;
+    if (user == null) {
+      if (mounted) setState(() => _loading = false);
+      return;
+    }
+    final authName = (user.userMetadata?['full_name'] ?? '').toString().trim();
+    _userName = authName.isEmpty ? 'بەکارهێنەر' : authName;
+    _userEmail = (user.email ?? '').endsWith('@phone.proxopages.com')
+        ? (user.phone ?? '')
+        : (user.email ?? '');
     try {
-      final user = supabase.auth.currentUser;
-      if (user == null) return;
-
-      final profile = await supabase
+      final profile = await _client
           .from('profiles')
           .select('full_name, email, avatar_url')
           .eq('id', user.id)
           .maybeSingle();
-
-      final name   = (profile?['full_name'] ?? '').toString().trim();
-      final email  = (profile?['email'] ?? user.email ?? '').toString();
-      final avatar = (profile?['avatar_url'] ?? '').toString();
-
-      final pointsRow = await supabase
-          .from('pa_user_points')
-          .select('points')
-          .eq('user_id', user.id)
-          .maybeSingle();
-      final points = (pointsRow?['points'] as num?)?.toDouble() ?? 0;
-
-      final levelRows = await supabase
-          .from('pa_levels')
-          .select('level_number, name_en, min_points, discount_percent, discount_iqd, icon, color')
-          .order('level_number', ascending: true);
-      final levels = (levelRows as List)
-          .map((m) => _LevelTier.fromMap(m as Map<String, dynamic>))
-          .toList();
-
-      _LevelTier? current;
-      _LevelTier? next;
-      for (var i = 0; i < levels.length; i++) {
-        if (points >= levels[i].minPoints) {
-          current = levels[i];
-          next = (i + 1 < levels.length) ? levels[i + 1] : null;
-        }
-      }
-      current ??= levels.isNotEmpty ? levels.first : null;
-
-      final unreadRows = await supabase
+      if (!mounted) return;
+      final name = profile?['full_name']?.toString().trim() ?? '';
+      final email = profile?['email']?.toString().trim() ?? _userEmail;
+      final avatar = profile?['avatar_url']?.toString().trim() ?? '';
+      setState(() {
+        if (name.isNotEmpty) _userName = name;
+        if (!email.endsWith('@phone.proxopages.com')) _userEmail = email;
+        _avatarUrl = avatar.isEmpty ? null : avatar;
+        _loading = false;
+      });
+    } catch (_) {
+      if (mounted) setState(() => _loading = false);
+    }
+    // Optional badge failure must never hide the successfully loaded identity.
+    try {
+      final rows = await _client
           .from('pa_notifications')
           .select('id')
           .eq('user_id', user.id)
           .eq('is_read', false);
-      final unread = (unreadRows as List).length;
-
-      if (mounted) {
-        setState(() {
-          _userName     = name.isNotEmpty ? name : (email.isNotEmpty ? email.split('@').first : '—');
-          _userEmail    = email;
-          _initial      = name.isNotEmpty ? name[0].toUpperCase() : (email.isNotEmpty ? email[0].toUpperCase() : '?');
-          _avatarUrl    = avatar.isNotEmpty ? avatar : null;
-          _points       = points;
-          _levels       = levels;
-          _currentTier  = current;
-          _nextTier     = next;
-          _unreadNotifs = unread;
-          _loading      = false;
-        });
-      }
-    } catch (_) {
-      if (mounted) setState(() => _loading = false);
-    }
+      if (mounted) setState(() => _unreadNotifs = rows.length);
+    } catch (_) {}
   }
 
   /// ⚠ پێشتر دوای `onClose` یەکێکی تریش `Navigator.pop` دەکرد.
@@ -368,7 +236,20 @@ class _ProxoSidebarState extends State<ProxoSidebar>
   /// دایدەخات، و ئەو `pop`ـە **ڕووتی ژێرەوە** لادەبات — واتە
   /// `MainShell` خۆی. ئەوە هۆکاری «بەستنەوە» و ونبوونی ستاکی
   /// ڕێنیشاندەری بوو.
-  void _close() => widget.onClose?.call();
+  void _close() {
+    if (widget.onClose != null) {
+      widget.onClose!();
+    } else {
+      Scaffold.maybeOf(context)?.closeEndDrawer();
+    }
+  }
+
+  void _openTab(String route) {
+    if (_navigating || _signingOut) return;
+    _navigating = true;
+    widget.onNavigate?.call(route);
+    _close();
+  }
 
   /// ماوەی ئەنیمەیشنی داخستنی دراوەر — `_kBaseSettleMs`ی Flutter.
   static const Duration _closeAnim = Duration(milliseconds: 250);
@@ -384,10 +265,16 @@ class _ProxoSidebarState extends State<ProxoSidebar>
   /// چارەسەرەکە: ڕێنیشاندەری ڕەگ **پێش** داخستن بگرە و پاشان ئەوە
   /// بەکاربهێنە، نەک `context`.
   Future<void> _go(Widget Function() page, {bool wait = true}) async {
-    final NavigatorState? nav = navigatorKey.currentState;
+    if (_navigating || _signingOut) return;
+    _navigating = true;
+    final nav =
+        navigatorKey.currentState ?? Navigator.of(context, rootNavigator: true);
     _close();
     if (wait) await Future<void>.delayed(_closeAnim);
-    nav?.push(ProxoPageRoute<void>(builder: (_) => page()));
+    if (nav.mounted) {
+      await nav.push(ProxoPageRoute<void>(builder: (_) => page()));
+    }
+    if (mounted) setState(() => _navigating = false);
   }
 
   Future<void> _openTasks() => _go(() => const TasksPage());
@@ -412,7 +299,6 @@ class _ProxoSidebarState extends State<ProxoSidebar>
 
   Future<void> _openTxHistory() => _go(() => const TxHistoryPage());
 
-
   /// ⚠ پێشتر تەنها `signOut()` بوو و هیچ ڕێنیشاندەرێکی نەدەکرد. ئەوە
   /// پشتی بە گوێگرێکی دۆخی auth دەبەست بۆ گەڕاندنەوە بۆ شاشەی
   /// چوونەژوورەوە؛ ئەگەر ئەو گوێگرە نەبێت یان بەدواوە بێت، بەکارهێنەر
@@ -421,41 +307,50 @@ class _ProxoSidebarState extends State<ProxoSidebar>
   /// ئێستا ستاکەکە بە ڕوونی دەسڕدرێتەوە: هیچ ڕووتێکی پێشوو نامێنێتەوە
   /// کە بتوانرێت بگەڕێتەوە بۆی بە دوگمەی «دواوە».
   Future<void> _signOut() async {
-    final NavigatorState? nav = navigatorKey.currentState;
-    _close();
-    await Future<void>.delayed(_closeAnim);
+    if (_signingOut || _navigating) return;
+    setState(() => _signingOut = true);
+    final nav = navigatorKey.currentState ?? Navigator.of(context, rootNavigator: true);
+    final messenger = ScaffoldMessenger.of(context);
     try {
-      await supabase.auth.signOut();
+      await _client.auth.signOut();
     } catch (_) {
-      // شکستی سێرڤەر نابێت بەکارهێنەر لە دەرچوون بەربگرێت — تۆکێنی
-      // ناوخۆیی بە هەر حاڵ لەلایەن SDKـەوە سڕدرایەوە.
+      if (messenger.mounted && _client.auth.currentSession != null) {
+        messenger.showSnackBar(const SnackBar(content: ProxoText(
+          'دەرچوون سەرکەوتوو نەبوو. تکایە دووبارە هەوڵ بدەرەوە.')));
+      }
+    } finally {
+      // Server revocation may fail after the SDK has already removed the
+      // local session. Route by actual local auth state, not HTTP success.
+      if (nav.mounted && _client.auth.currentSession == null) {
+        nav.pushAndRemoveUntil(
+          ProxoPageRoute<void>(builder: (_) => const AuthScreen()), (_) => false);
+      }
+      if (mounted) setState(() => _signingOut = false);
     }
-    nav?.pushAndRemoveUntil(
-      ProxoPageRoute<void>(builder: (_) => const AuthScreen()),
-      (r) => false,
-    );
   }
 
   Future<void> _openDiscountCodes() => _go(() => const DiscountCodesPage());
 
   Future<void> _openNotifications() async {
-    if (!mounted) return;
-    // ⚠ بوو `await _close()`. `_close()` گەڕاندنەوەی `void`ـە، بۆیە
-    // ئەمە کۆمپایل نەدەبوو. هەمان شێوازی `_go` / `_openDeposit`:
-    // ڕێنیشاندەرەکە پێش داخستن بگرە، دواتر چاوەڕوانی ئەنیمەیشن بکە.
-    final NavigatorState? nav = navigatorKey.currentState;
+    if (_navigating || _signingOut) return;
+    _navigating = true;
+    final nav =
+        navigatorKey.currentState ?? Navigator.of(context, rootNavigator: true);
     _close();
     await Future<void>.delayed(_closeAnim);
-    nav?.pushNamed('/notifications');
+    if (nav.mounted) await nav.pushNamed('/notifications');
+    if (mounted) setState(() => _navigating = false);
   }
 
-  static String _fmtNum(double v) => v.round().toString()
+  static String _fmtNum(double v) => v
+      .round()
+      .toString()
       .replaceAllMapped(RegExp(r'\B(?=(\d{3})+(?!\d))'), (m) => ',');
 
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
-    final double panelWidth = math.min(screenWidth * 0.78, _navMaxWidth);
+    final double panelWidth = math.min(screenWidth - 48, _navMaxWidth);
 
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -464,7 +359,8 @@ class _ProxoSidebarState extends State<ProxoSidebar>
         decoration: const BoxDecoration(
           color: _navBg,
           boxShadow: [
-            BoxShadow(color: _navPanelShadow, blurRadius: 20, offset: Offset(-4, 0)),
+            BoxShadow(
+                color: _navPanelShadow, blurRadius: 20, offset: Offset(-4, 0)),
           ],
         ),
         child: Material(
@@ -480,7 +376,7 @@ class _ProxoSidebarState extends State<ProxoSidebar>
                 return RepaintBoundary(
                   child: ScrollConfiguration(
                     behavior: const _NavScrollBehavior(),
-                    child: m.scrolls ? _buildCompact(m) : _buildRelaxed(m),
+                    child: _buildRelaxed(m),
                   ),
                 );
               },
@@ -499,6 +395,16 @@ class _ProxoSidebarState extends State<ProxoSidebar>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          Row(children: [
+            const Expanded(child: ProxoText('مێنیو', style: ProxoUi.title)),
+            IconButton(
+                tooltip: 'داخستن',
+                onPressed: _close,
+                constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
+                icon: const SolarIcon(SolarIcons.closeCircle,
+                    size: 20, color: AuthTokens.inkMuted)),
+          ]),
+          const SizedBox(height: 8),
           _reveal(0, _buildAccountCard(m)),
           SizedBox(height: m.cardToMenu),
           ..._menuRows(m),
@@ -511,97 +417,74 @@ class _ProxoSidebarState extends State<ProxoSidebar>
     );
   }
 
-  Widget _buildCompact(_NavMetrics m) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Expanded(
-          child: Scrollbar(
-            controller: _menuScroll,
-            child: SingleChildScrollView(
-              controller: _menuScroll,
-              physics: const AlwaysScrollableScrollPhysics(),
-              padding: EdgeInsets.fromLTRB(
-                m.gutter, m.topGap, m.gutter, m.menuToDivider),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  _reveal(0, _buildAccountCard(m)),
-                  SizedBox(height: m.cardToMenu),
-                  ..._menuRows(m),
-                ],
-              ),
-            ),
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.fromLTRB(m.gutter, 0, m.gutter, m.bottomGap),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              _reveal(9, _buildDivider()),
-              SizedBox(height: m.dividerToLogout),
-              _reveal(10, _buildLogoutTile(m)),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
   Widget _buildDivider() => const SizedBox(
         height: _navDividerThickness,
         child: DecoratedBox(decoration: BoxDecoration(color: _navDivider)),
       );
 
   List<Widget> _menuRows(_NavMetrics m) => [
-        _reveal(1, _navItem(m,
-          icon: _Ico.home,
-          label: 'سەرەکی',
-          onTap: _close,
-          selected: true)),
-        _reveal(2, _navItem(m,
-          icon: _Ico.ads,
-          // ⚠ بوو `_close` — تەنها دراوەرەکەی دادەخست و هیچی تر.
-          label: 'ڕیکلامەکان',
-          onTap: () {
-            widget.onNavigate?.call('ads');
-            _close();
-          })),
-        _reveal(3, _navItem(m,
-          icon: _Ico.history,
-          label: 'مێژووی مامەڵەکان',
-          onTap: _openTxHistory)),
-        _reveal(4, _navItem(m,
-          icon: _Ico.discount,
-          label: 'کۆدی داشکاندن',
-          onTap: _openDiscountCodes)),
+        _reveal(
+            1,
+            _navItem(m,
+                icon: _Ico.home,
+                label: 'سەرەکی',
+                onTap: () => _openTab('home'),
+                selected: widget.selectedRoute == 'home')),
+        _reveal(
+            2,
+            _navItem(m,
+                icon: _Ico.ads,
+                // ⚠ بوو `_close` — تەنها دراوەرەکەی دادەخست و هیچی تر.
+                label: 'ڕیکلامەکان',
+                onTap: () => _openTab('ads'),
+                selected: widget.selectedRoute == 'ads')),
+        _reveal(
+            3,
+            _navItem(m,
+                icon: _Ico.history,
+                label: 'مێژووی مامەڵەکان',
+                onTap: _openTxHistory)),
+        _reveal(
+            4,
+            _navItem(m,
+                icon: _Ico.discount,
+                label: 'کۆدی داشکاندن',
+                onTap: _openDiscountCodes)),
         // ⚠ ڕیزی «باوچەرەکان» لابرا. `VoucherPage` خۆی هێشتا ماوە
         //   (`part 'voucher_page.dart'`)، بۆیە ئەگەر ڕۆژێک ویستت
         //   بیگەڕێنیتەوە تەنها ڕیزێکی نوێ لێرە زیاد بکە.
-        _reveal(5, _navItem(m,
-          icon: _Ico.balance,
-          // ⚠ بوو `_openTxHistory` — دەیبرد بۆ مێژووی مامەڵەکان، کە
-          // ڕیزێکی سەربەخۆی خۆی هەیە لە سەرەوە. `_openDeposit` هەبوو
-          // بەڵام هیچ شوێنێک بانگ نەدەکرا.
-          label: 'باڵانس و پارەدان',
-          onTap: _openDeposit)),
-        _reveal(6, _navItem(m,
-          icon: _Ico.notifications,
-          label: 'ئاگادارییەکان',
-          onTap: _openNotifications,
-          badge: _unreadNotifs)),
-        _reveal(7, _navItem(m,
-          icon: _Ico.settings,
-          label: 'ڕێکخستنەکان',
-          onTap: _openProfile)),
-        _reveal(8, _navItem(m,
-          icon: _Ico.help,
-          label: 'یارمەتی و پشتگیری',
-          onTap: _close)),
+        _reveal(
+            5,
+            _navItem(m,
+                icon: _Ico.balance,
+                // ⚠ بوو `_openTxHistory` — دەیبرد بۆ مێژووی مامەڵەکان، کە
+                // ڕیزێکی سەربەخۆی خۆی هەیە لە سەرەوە. `_openDeposit` هەبوو
+                // بەڵام هیچ شوێنێک بانگ نەدەکرا.
+                label: 'باڵانس و پارەدان',
+                onTap: _openDeposit)),
+        _reveal(
+            6,
+            _navItem(m,
+                icon: _Ico.notifications,
+                label: 'ئاگادارییەکان',
+                onTap: _openNotifications,
+                badge: _unreadNotifs)),
+        _reveal(
+            7,
+            _navItem(m,
+                icon: _Ico.settings,
+                label: 'ڕێکخستنەکان',
+                selected: widget.selectedRoute == 'profile',
+                onTap: _openProfile)),
+        _reveal(
+            8,
+            _navItem(m,
+                icon: _Ico.help,
+                label: 'یارمەتی و پشتگیری',
+                onTap: () => _go(() => const FaqScreen()))),
       ];
 
-  static const int _revealCount = 11;  // ⚠ بوو ١٢ — ڕیزێک کەم بووەوە.
+  static const int _revealCount = 11; // ⚠ بوو ١٢ — ڕیزێک کەم بووەوە.
 
   void _buildRevealAnimations() {
     Interval windowFor(int i) {
@@ -610,8 +493,8 @@ class _ProxoSidebarState extends State<ProxoSidebar>
           curve: Curves.easeOutCubic);
     }
 
-    _revealFade = List<Animation<double>>.generate(_revealCount,
-        (i) => _intro.drive(CurveTween(curve: windowFor(i))));
+    _revealFade = List<Animation<double>>.generate(
+        _revealCount, (i) => _intro.drive(CurveTween(curve: windowFor(i))));
     _revealSlide = List<Animation<Offset>>.generate(
         _revealCount,
         (i) => _intro.drive(
@@ -628,9 +511,8 @@ class _ProxoSidebarState extends State<ProxoSidebar>
       );
 
   Widget _buildAccountCard(_NavMetrics m) {
-    final String name = _userName.isNotEmpty
-        ? _userName
-        : (_loading ? 'بارکردن…' : '—');
+    final String name =
+        _userName.isNotEmpty ? _userName : (_loading ? 'بارکردن…' : '—');
 
     // ⚠ ئەم کارتە **دەستلێدانی نییە**. پێشتر `InkWell(onTap: _openProfile)`
     //   بوو، بۆیە هەر کلیکێک لەسەر ناو یان ئیمێڵ دەیبرد بۆ شاشەی پڕۆفایل.
@@ -648,59 +530,59 @@ class _ProxoSidebarState extends State<ProxoSidebar>
       shadowColor: _navLiftShadow,
       borderRadius: BorderRadius.circular(m.radius),
       child: ConstrainedBox(
-            constraints: BoxConstraints(minHeight: m.cardHeight),
-            child: Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: m.cardPadding, vertical: m.cardPadV),
-              child: Row(children: [
-                Container(
-                  width: m.avatar,
-                  height: m.avatar,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: _navAvatarBg,
-                    image: _avatarUrl != null
-                        ? DecorationImage(
-                            image: NetworkImage(_avatarUrl!), fit: BoxFit.cover)
-                        : null,
-                  ),
+        constraints: BoxConstraints(minHeight: m.cardHeight),
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+              horizontal: m.cardPadding, vertical: m.cardPadV),
+          child: Row(children: [
+            Container(
+              width: m.avatar,
+              height: m.avatar,
+              alignment: Alignment.center,
+              decoration: const BoxDecoration(
+                  shape: BoxShape.circle, color: _navAvatarBg),
+              child: ClipOval(
                   child: _avatarUrl == null
-                      ? SolarIcon(
-                          _Ico.avatar,
-                          style: SolarIconStyle.linear,
-                          size: m.avatarGlyph,
-                          color: _navPrimary,
-                        )
-                      : null,
-                ),
-                SizedBox(width: m.avatarGap),
-                Expanded(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ProxoText(name,
-                        style: _kBase.copyWith(
+                      ? SolarIcon(_Ico.avatar,
+                          size: m.avatarGlyph, color: _navPrimary)
+                      : Image.network(_avatarUrl!,
+                          width: m.avatar,
+                          height: m.avatar,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => SolarIcon(_Ico.avatar,
+                              size: m.avatarGlyph, color: _navPrimary))),
+            ),
+            SizedBox(width: m.avatarGap),
+            Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ProxoText(name,
+                      style: _kBase.copyWith(
                           fontSize: m.nameSize,
                           fontWeight: FontWeight.w600,
                           color: _navText,
                           height: 1.25,
                           letterSpacing: -0.1),
-                        maxLines: 1, overflow: TextOverflow.ellipsis),
-                      SizedBox(height: m.nameToEmail),
-                      ProxoText(_userEmail,
-                        style: _kBase.copyWith(
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis),
+                  SizedBox(height: m.nameToEmail),
+                  ProxoText(_userEmail.isEmpty ? '—' : _userEmail,
+                      textDirection: TextDirection.ltr,
+                      textAlign: TextAlign.right,
+                      style: _kBase.copyWith(
                           fontSize: m.emailSize,
                           fontWeight: FontWeight.w400,
                           color: _navMuted,
                           height: 1.3),
-                        maxLines: 1, overflow: TextOverflow.ellipsis),
-                    ],
-                  ),
-                ),
-              ]),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis),
+                ],
+              ),
             ),
+          ]),
+        ),
       ),
     );
   }
@@ -731,7 +613,7 @@ class _ProxoSidebarState extends State<ProxoSidebar>
               constraints: BoxConstraints(minHeight: m.rowHeight),
               child: Padding(
                 padding: EdgeInsets.symmetric(
-                  horizontal: m.rowInset, vertical: m.rowPadV),
+                    horizontal: m.rowInset, vertical: m.rowPadV),
                 child: Row(children: [
                   Container(
                     width: m.iconTile,
@@ -741,9 +623,7 @@ class _ProxoSidebarState extends State<ProxoSidebar>
                       color: selected ? _navIconTileBgSel : _navIconTileBg,
                       borderRadius: BorderRadius.circular(m.iconTileRadius),
                       border: Border.all(
-                        color: selected
-                            ? _navIconTileBgSel
-                            : _navIconTileLine,
+                        color: selected ? _navIconTileBgSel : _navIconTileLine,
                         width: _navIconTileLineW,
                       ),
                     ),
@@ -757,13 +637,15 @@ class _ProxoSidebarState extends State<ProxoSidebar>
                   SizedBox(width: m.tileGap),
                   Expanded(
                     child: ProxoText(label,
-                      style: _kBase.copyWith(
-                        fontSize: m.labelSize,
-                        fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
-                        color: selected ? _navPrimary : _navText,
-                        height: 1.2,
-                        letterSpacing: -0.05),
-                      maxLines: 2, overflow: TextOverflow.ellipsis),
+                        style: _kBase.copyWith(
+                            fontSize: m.labelSize,
+                            fontWeight:
+                                selected ? FontWeight.w600 : FontWeight.w400,
+                            color: selected ? _navPrimary : _navText,
+                            height: 1.2,
+                            letterSpacing: -0.05),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis),
                   ),
                   if (badge > 0) ...[
                     SizedBox(width: m.chevronGap),
@@ -783,17 +665,19 @@ class _ProxoSidebarState extends State<ProxoSidebar>
         excludeSemantics: true,
         child: Container(
           alignment: Alignment.center,
-          constraints: BoxConstraints(
-            minWidth: m.badgeSize, minHeight: m.badgeSize),
+          constraints:
+              BoxConstraints(minWidth: m.badgeSize, minHeight: m.badgeSize),
           padding: EdgeInsets.symmetric(horizontal: m.badgeSize * 0.3),
           decoration: BoxDecoration(
-            color: _navPrimary,
-            borderRadius: BorderRadius.circular(m.badgeSize)),
+              color: _navPrimary,
+              borderRadius: BorderRadius.circular(m.badgeSize)),
           child: ProxoText(count > 99 ? '+99' : '$count',
-            maxLines: 1,
-            style: _kBase.copyWith(
-              fontSize: m.badgeTextSize, fontWeight: FontWeight.w700,
-              color: Colors.white, height: 1.0)),
+              maxLines: 1,
+              style: _kBase.copyWith(
+                  fontSize: m.badgeTextSize,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white,
+                  height: 1.0)),
         ),
       );
 
@@ -806,7 +690,7 @@ class _ProxoSidebarState extends State<ProxoSidebar>
         shadowColor: _navLiftShadow,
         borderRadius: BorderRadius.circular(m.radius),
         child: InkWell(
-          onTap: _signOut,
+          onTap: _signingOut ? null : _signOut,
           borderRadius: BorderRadius.circular(m.radius),
           splashColor: _navLogoutInk.withOpacity(0.10),
           highlightColor: _navLogoutInk.withOpacity(0.06),
@@ -814,7 +698,7 @@ class _ProxoSidebarState extends State<ProxoSidebar>
             constraints: BoxConstraints(minHeight: m.logoutHeight),
             child: Padding(
               padding: EdgeInsets.symmetric(
-                horizontal: m.rowInset, vertical: m.logoutPadV),
+                  horizontal: m.rowInset, vertical: m.logoutPadV),
               child: Row(children: [
                 Container(
                   width: m.iconTile,
@@ -837,14 +721,15 @@ class _ProxoSidebarState extends State<ProxoSidebar>
                 ),
                 SizedBox(width: m.tileGap),
                 Expanded(
-                  child: ProxoText('چوونەدەرەوە',
-                    style: _kBase.copyWith(
-                      fontSize: m.labelSize,
-                      fontWeight: FontWeight.w600,
-                      color: _navLogoutInk,
-                      height: 1.2,
-                      letterSpacing: -0.05),
-                    maxLines: 2, overflow: TextOverflow.ellipsis),
+                  child: ProxoText(_signingOut ? 'چاوەڕێبە…' : 'چوونەدەرەوە',
+                      style: _kBase.copyWith(
+                          fontSize: m.labelSize,
+                          fontWeight: FontWeight.w600,
+                          color: _navLogoutInk,
+                          height: 1.2,
+                          letterSpacing: -0.05),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis),
                 ),
               ]),
             ),
@@ -899,97 +784,21 @@ class _NavMetrics {
   final double badgeSize, badgeTextSize, logoutHeight;
   final bool scrolls;
 
-  static const double _gapBudget = _navTopGap + _navCardToMenu +
-      _navMenuToDivider + _navDividerToLogout + _navBottomGap;
-
-  static const double _itemBudget = _navCardHeight +
-      _navMenuRows * (_navRowHeight + 2 * _navRowGap) + _navLogoutHeight;
-
   factory _NavMetrics.resolve({
     required double panelWidth,
     required double viewportHeight,
-  }) {
-    final double sw = (panelWidth / _navMaxWidth).clamp(0.84, 1.0);
-    final double tile = _navIconTile * sw;
-
-    double sg = 1.0;
-    double sh = 1.0;
-    final double natural = _gapBudget + _itemBudget + _navDividerThickness;
-    if (viewportHeight.isFinite && viewportHeight < natural) {
-      sg = ((viewportHeight - _itemBudget - _navDividerThickness) / _gapBudget)
-          .clamp(0.62, 1.0);
-      sh = ((viewportHeight - _gapBudget * sg - _navDividerThickness) /
-              _itemBudget)
-          .clamp(0.80, 1.0);
-    }
-
-    final double rowHeight =
-        math.max(_navRowHeight * sh, _navMinTapTarget);
-    final double logoutHeight =
-        math.max(_navLogoutHeight * sh, _navMinTapTarget);
-    final double cardHeight =
-        math.max(_navCardHeight * sh, _navMinCardHeight);
-
-    double padFor(double height) => math.max(
-        2.0, math.min(_navRowPadV * sw, (height - tile) / 2));
-
-    final double rowGap = _navRowGap * sh;
-    final double topGap = _navTopGap * sg;
-    final double bottomGap = _navBottomGap * sg;
-    final double cardToMenu = _navCardToMenu * sg;
-    final double menuToDivider = _navMenuToDivider * sg;
-    final double dividerToLogout = _navDividerToLogout * sg;
-
-    final double footerHeight = _navDividerThickness +
-        dividerToLogout + logoutHeight + bottomGap;
-
-    final double contentHeight = topGap +
-        cardHeight +
-        cardToMenu +
-        _navMenuRows * (rowHeight + 2 * rowGap) +
-        menuToDivider +
-        _navDividerThickness +
-        dividerToLogout +
-        logoutHeight +
-        bottomGap;
-
-    return _NavMetrics._(
-      gutter:          _navGutter * sw,
-      topGap:          topGap,
-      bottomGap:       bottomGap,
-      cardToMenu:      cardToMenu,
-      menuToDivider:   menuToDivider,
-      dividerToLogout: dividerToLogout,
-      radius:          _navRadius * sw,
-      cardHeight:      cardHeight,
-      cardPadding:     _navCardPadding * sw,
-      cardPadV:        padFor(cardHeight).clamp(2.0, _navCardPadding * sw),
-      avatar:          _navAvatar * sw,
-      avatarGlyph:     _navAvatarGlyph * sw,
-      avatarGap:       _navAvatarGap * sw,
-      nameSize:        _navNameSize * sw,
-      emailSize:       _navEmailSize * sw,
-      nameToEmail:     _navNameToEmail * sw,
-      chevron:         _navChevron * sw,
-      chevronGap:      _navChevronGap * sw,
-      rowHeight:       rowHeight,
-      rowGap:          rowGap,
-      rowInset:        _navRowInset * sw,
-      rowPadV:         padFor(rowHeight),
-      logoutPadV:      padFor(logoutHeight),
-      iconTile:        tile,
-      iconTileRadius:  _navIconTileRadius * sw,
-      glyph:           _navGlyph * sw,
-      tileGap:         _navTileGap * sw,
-      labelSize:       _navLabelSize * sw,
-      badgeSize:       _navBadgeSize * sw,
-      badgeTextSize:   _navBadgeTextSize * sw,
-      logoutHeight:    logoutHeight,
-      scrolls:         viewportHeight.isFinite &&
-                       contentHeight > viewportHeight + 0.5 &&
-                       viewportHeight > footerHeight * 3,
-    );
-  }
+  }) => const _NavMetrics._(
+    gutter: 16, topGap: 8, bottomGap: 24,
+    cardToMenu: 16, menuToDivider: 12, dividerToLogout: 12,
+    radius: 16, cardHeight: 80, cardPadding: 12, cardPadV: 12,
+    avatar: 48, avatarGlyph: 24, avatarGap: 12,
+    nameSize: 14, emailSize: 12, nameToEmail: 4,
+    chevron: 20, chevronGap: 8,
+    rowHeight: 56, rowGap: 2, rowInset: 12, rowPadV: 8,
+    logoutPadV: 8, iconTile: 32, iconTileRadius: 12, glyph: 20,
+    tileGap: 12, labelSize: 14, badgeSize: 20, badgeTextSize: 12,
+    logoutHeight: 56, scrolls: true,
+  );
 }
 
 class _NavScrollBehavior extends ScrollBehavior {
@@ -997,9 +806,11 @@ class _NavScrollBehavior extends ScrollBehavior {
 
   @override
   Widget buildOverscrollIndicator(
-      BuildContext context, Widget child, ScrollableDetails details) => child;
+          BuildContext context, Widget child, ScrollableDetails details) =>
+      child;
 
   @override
   Widget buildScrollbar(
-      BuildContext context, Widget child, ScrollableDetails details) => child;
+          BuildContext context, Widget child, ScrollableDetails details) =>
+      child;
 }

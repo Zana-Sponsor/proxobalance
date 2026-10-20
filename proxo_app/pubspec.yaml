@@ -97,6 +97,9 @@ flutter:
     - assets/logos/fib.jpg
     - assets/logos/fastpay.jpg
     - assets/logos/fastpay_logo.png
+    - assets/logos/fib_official.svg
+    - assets/logos/fastpay_official.png
+    - assets/logos/qi_official.svg
     - assets/logos/qicard.jpg
     - assets/logos/proxo_logo_white.png
     - assets/logos/proxo_notification_logo.png

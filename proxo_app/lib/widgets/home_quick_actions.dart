@@ -1,21 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:solar_iconkit/solar_iconkit.dart';
 
-import '../theme/app_theme.dart';
-import 'ad_form_components.dart';
+import '../theme/proxo_ui.dart';
 import 'proxo_text.dart';
 
-/// The existing Home destinations, styled with the Create Ad card system.
+/// Three equal actions; narrow screens and large text use compact rows.
 class HomeQuickActions extends StatelessWidget {
   final VoidCallback? onCreateTap;
   final VoidCallback? onToolsTap;
   final VoidCallback? onFaqTap;
 
-  const HomeQuickActions({
-    super.key,
-    this.onCreateTap,
-    this.onToolsTap,
-    this.onFaqTap,
-  });
+  const HomeQuickActions(
+      {super.key, this.onCreateTap, this.onToolsTap, this.onFaqTap});
 
   @override
   Widget build(BuildContext context) => Align(
@@ -24,137 +20,115 @@ class HomeQuickActions extends StatelessWidget {
           constraints: const BoxConstraints(maxWidth: 600),
           child: Directionality(
             textDirection: TextDirection.rtl,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                ProxoText('کردارە خێراکان', style: AdUi.heading(context)),
-                const SizedBox(height: 20),
+            child: LayoutBuilder(builder: (context, constraints) {
+              final rows = constraints.maxWidth < 260 ||
+                  MediaQuery.textScalerOf(context).scale(14) > 21;
+              final actions = <Widget>[
                 _QuickActionCard(
-                  key: const ValueKey('home-create-ad'),
-                  icon: Icons.add_rounded,
-                  title: 'کەمپەینی نوێ',
-                  subtitle: 'کەمپەینێکی نوێ دروست بکە!',
-                  onTap: onCreateTap,
-                ),
-                const SizedBox(height: 16),
+                    key: const ValueKey('home-create-ad'),
+                    icon: SolarIcons.target,
+                    title: 'کەمپەینی نوێ',
+                    onTap: onCreateTap,
+                    row: rows),
                 _QuickActionCard(
-                  key: const ValueKey('home-contact-tools'),
-                  icon: Icons.link_rounded,
-                  title: 'ئامرازی پەیوەندی',
-                  subtitle: 'لاندینگ پەیجێکی پەیوەندی دروست بکە!',
-                  onTap: onToolsTap,
-                ),
-                const SizedBox(height: 16),
+                    key: const ValueKey('home-contact-tools'),
+                    icon: SolarIcons.link,
+                    title: 'ئامرازی پەیوەندی',
+                    onTap: onToolsTap,
+                    row: rows),
                 _QuickActionCard(
-                  key: const ValueKey('home-faq'),
-                  icon: Icons.question_mark_rounded,
-                  title: 'پرسیارە دووبارەکان',
-                  subtitle: 'وەڵامی پرسیارە باوەکان ببینە!',
-                  onTap: onFaqTap,
-                ),
-              ],
-            ),
+                    key: const ValueKey('home-faq'),
+                    icon: SolarIcons.questionCircle,
+                    title: 'پرسیارەکان',
+                    onTap: onFaqTap,
+                    row: rows),
+              ];
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const ProxoText('کردارە خێراکان',
+                      style: ProxoUi.sectionTitle),
+                  const SizedBox(height: ProxoUi.gap12),
+                  if (rows)
+                    Column(children: [
+                      for (var i = 0; i < actions.length; i++) ...[
+                        if (i > 0) const SizedBox(height: ProxoUi.gap8),
+                        actions[i],
+                      ]
+                    ])
+                  else
+                    IntrinsicHeight(
+                        child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                          for (var i = 0; i < actions.length; i++) ...[
+                            if (i > 0) const SizedBox(width: ProxoUi.gap8),
+                            Expanded(child: actions[i]),
+                          ]
+                        ])),
+                ],
+              );
+            }),
           ),
         ),
       );
 }
 
 class _QuickActionCard extends StatelessWidget {
-  final IconData icon;
-  final String title, subtitle;
+  final String icon, title;
   final VoidCallback? onTap;
-
-  const _QuickActionCard({
-    super.key,
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-    required this.onTap,
-  });
+  final bool row;
+  const _QuickActionCard(
+      {super.key,
+      required this.icon,
+      required this.title,
+      required this.onTap,
+      required this.row});
 
   @override
-  Widget build(BuildContext context) => Container(
-        decoration: const BoxDecoration(
+  Widget build(BuildContext context) {
+    final iconWell = Container(
+        width: 40,
+        height: 40,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+            color: const Color(0xFFF0F6FF),
+            borderRadius: BorderRadius.circular(ProxoUi.controlRadius)),
+        child: SolarIcon(icon,
+            style: SolarIconStyle.linear,
+            size: ProxoUi.iconSize,
+            color: const Color(0xFF046CFA)));
+    final label = ProxoText(title,
+        textAlign: row ? TextAlign.start : TextAlign.center,
+        style: ProxoUi.label);
+    return Container(
+      decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: AdUi.radius,
-          boxShadow: AdUi.cardShadow,
-        ),
-        child: Material(
-          color: Colors.transparent,
-          borderRadius: AdUi.radius,
-          child: InkWell(
-            onTap: onTap,
-            borderRadius: AdUi.radius,
-            child: Padding(
-              padding: AdUi.cardPadding,
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  final iconWell = Container(
-                    width: 48,
-                    height: 48,
-                    alignment: Alignment.center,
-                    decoration: const BoxDecoration(
-                      color: AppColors.accentSoft,
-                      borderRadius: AdUi.controlRadius,
-                    ),
-                    child: Icon(icon, color: AdUi.blue),
-                  );
-                  final copy = Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      ProxoText(title, style: AdUi.text(context)),
-                      const SizedBox(height: 6),
-                      ProxoText(
-                        subtitle,
-                        style: AdUi.text(context, color: AdUi.secondary),
-                      ),
-                    ],
-                  );
-                  const chevron = Directionality(
-                    textDirection: TextDirection.ltr,
-                    child:
-                        Icon(Icons.chevron_left_rounded, color: AdUi.secondary),
-                  );
-                  double minimumWidth(String text) {
-                    final painter = TextPainter(
-                      text: TextSpan(text: text, style: AdUi.text(context)),
-                      textDirection: ProxoTextDirection.of(text),
-                      textScaler: MediaQuery.textScalerOf(context),
-                    )..layout();
-                    final width = painter.minIntrinsicWidth;
-                    painter.dispose();
-                    return width;
-                  }
-
-                  final textWidth = constraints.maxWidth -
-                      48 -
-                      16 -
-                      8 -
-                      (IconTheme.of(context).size ?? 24);
-                  if (textWidth < minimumWidth(title) ||
-                      textWidth < minimumWidth(subtitle)) {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Row(children: [iconWell, const Spacer(), chevron]),
-                        const SizedBox(height: 16),
-                        copy,
-                      ],
-                    );
-                  }
-                  return Row(
-                    children: [
+          borderRadius: BorderRadius.circular(ProxoUi.radius),
+          border: Border.all(color: const Color(0xFFE2E8F0))),
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(ProxoUi.radius),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(ProxoUi.radius),
+          child: Padding(
+              padding: const EdgeInsets.all(ProxoUi.gap12),
+              child: row
+                  ? Row(children: [
                       iconWell,
-                      const SizedBox(width: 16),
-                      Expanded(child: copy),
-                      const SizedBox(width: 8),
-                      chevron,
-                    ],
-                  );
-                },
-              ),
-            ),
-          ),
+                      const SizedBox(width: ProxoUi.gap12),
+                      Expanded(child: label)
+                    ])
+                  : Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                          iconWell,
+                          const SizedBox(height: ProxoUi.gap8),
+                          label
+                        ])),
         ),
-      );
+      ),
+    );
+  }
 }

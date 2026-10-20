@@ -37,6 +37,7 @@ class AdReceiptCard extends StatelessWidget {
               onLongPress: () => onCopy(r.adId),
             ),
             ReceiptRow(label: l.date, value: r.date, valueDirection: ltr),
+            ReceiptRow(label: l.paymentStatus, value: r.paymentStatus),
           ]),
           const ReceiptDivider(),
 
