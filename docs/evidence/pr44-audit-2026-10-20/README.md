@@ -1,5 +1,7 @@
 # Proxo: current 15-point audit
 
+Receipt appearance was subsequently restored to the original style with balanced typography. See the [October 23 receipt correction and new previews](../receipt-restoration-2026-10-23/README.md). The receipt images below remain evidence of the earlier checkpoint.
+
 Started October 20, resumed October 22, 2026. This work updates PR #44 from `2a98e20d33f37fd1b6357a21a8758192806361dd`; it does not use the separate PR #45 implementation. The latest 15-point request is the scope.
 
 Latest source is `12e4e7cc9048449cd46d347597fbedda714a5563` (tree `f73cb469f9a3ea92e299ecb8da07c3aff0d39576`). Its full local Flutter suite and all four CI workflows passed, including Android profile functional checks and the release APK build. It follows tested checkpoint `3a90b93059a2a74d7eb37eb3f509582cce2fa366`. The first native run exposed an Android Back registration defect; this follow-up repairs it and the final narrow checkout issues. Live page creation remains blocked by the deployed backend, and measured software-GPU raster timing misses the frame budget. Both limitations are detailed below. This PR has not been merged or deployed.

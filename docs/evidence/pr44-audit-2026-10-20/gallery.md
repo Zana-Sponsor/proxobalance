@@ -1,5 +1,7 @@
 # Current screenshot and receipt review
 
+Receipt appearance was subsequently restored to the original style with balanced typography. See the [October 23 receipt correction and new previews](../receipt-restoration-2026-10-23/README.md). The receipt images below remain evidence of the earlier checkpoint.
+
 Actual Flutter renders using fictional fixtures and production widgets. The original 34 screenshots and four PDFs are from verified source `3a90b93059a2a74d7eb37eb3f509582cce2fa366`; the four opened-checkout screenshots are from follow-up source `12e4e7cc9048449cd46d347597fbedda714a5563`. They do not prove hosted persistence or physical-device performance. Images are captured at 2× pixel density. Checkout captures use the bundled Kurdish fonts and DejaVu Sans Mono as a declared fixture substitute for Android's system monospace font.
 
 [Eight actual Android profile captures from the final source](native/current/README.md) include native Back dismissal, real keyboard input after an error, and both receipts, with observed device dimensions and performance limits.

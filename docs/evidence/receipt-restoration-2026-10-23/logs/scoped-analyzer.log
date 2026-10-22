@@ -1,0 +1,8 @@
+Analyzing 13 items...
+
+   info • Don't invoke 'print' in production code. Try using a logging framework • test/ui_remediation_capture_test.dart:90:9 • avoid_print
+   info • Don't invoke 'print' in production code. Try using a logging framework • test/ui_remediation_capture_test.dart:250:9 • avoid_print
+   info • Don't invoke 'print' in production code. Try using a logging framework • test/ui_remediation_capture_test.dart:252:9 • avoid_print
+   info • Don't invoke 'print' in production code. Try using a logging framework • test/ui_remediation_capture_test.dart:288:11 • avoid_print
+
+4 issues found. (ran in 6.3s)
