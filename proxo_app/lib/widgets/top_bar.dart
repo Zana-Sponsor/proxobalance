@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../l10n/proxo_strings.dart';
 import '../theme/app_theme.dart';
+import '../theme/app_locale.dart';
 import '../theme/proxo_chrome.dart';
 import 'notification_bell.dart';
 import 'proxo_symbol.dart';
@@ -40,57 +41,61 @@ class ProxoTopBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final direction = ProxoLocale.directionOf(ProxoLocale.watch(context));
     final back = onBackTap ??
         (automaticallyImplyLeading && Navigator.canPop(context)
             ? () => Navigator.maybePop(context)
             : null);
-    return Material(
-      color: Colors.white,
-      child: SafeArea(
-        bottom: false,
-        minimum: EdgeInsets.only(top: topPadding),
-        child: Container(
-          key: const ValueKey('proxo-toolbar'),
-          height: ProxoChrome.toolbarHeight,
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          decoration: const BoxDecoration(
-              border: Border(bottom: BorderSide(color: ProxoChrome.border))),
-          child: Row(children: [
-            if (back != null)
-              _BarIconButton(
-                  label: 'گەڕانەوە',
-                  onTap: back,
-                  symbol: Directionality.of(context) == TextDirection.rtl
-                      ? ProxoSymbolName.back
-                      : ProxoSymbolName.forward)
-            else ...[
-              if (onMenuTap != null)
+    return Directionality(
+      textDirection: direction,
+      child: Material(
+        color: Colors.white,
+        child: SafeArea(
+          bottom: false,
+          minimum: EdgeInsets.only(top: topPadding),
+          child: Container(
+            key: const ValueKey('proxo-toolbar'),
+            height: ProxoChrome.toolbarHeight,
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            decoration: const BoxDecoration(
+                border: Border(bottom: BorderSide(color: ProxoChrome.border))),
+            child: Row(children: [
+              if (back != null)
                 _BarIconButton(
-                    label: 'مێنیو',
-                    onTap: onMenuTap,
-                    symbol: ProxoSymbolName.menu),
-              if (onNotificationTap != null)
-                NotificationBell(
-                    onTap: onNotificationTap!,
-                    iconSize: ProxoChrome.toolbarIconSize),
-              if (onSearchTap != null)
-                _BarIconButton(
-                    label: 'گەڕان',
-                    onTap: onSearchTap,
-                    symbol: ProxoSymbolName.search),
-              ...actions,
-            ],
-            const Spacer(),
-            Semantics(
-                label: 'Proxo',
-                image: true,
-                child: Image.asset('assets/images/proxo_logo.png',
-                    key: const ValueKey('proxo-toolbar-logo'),
-                    height: 24,
-                    width: 84,
-                    fit: BoxFit.contain,
-                    excludeFromSemantics: true)),
-          ]),
+                    label: 'گەڕانەوە',
+                    onTap: back,
+                    symbol: direction == TextDirection.rtl
+                        ? ProxoSymbolName.back
+                        : ProxoSymbolName.forward)
+              else ...[
+                if (onMenuTap != null)
+                  _BarIconButton(
+                      label: 'مێنیو',
+                      onTap: onMenuTap,
+                      symbol: ProxoSymbolName.menu),
+                if (onNotificationTap != null)
+                  NotificationBell(
+                      onTap: onNotificationTap!,
+                      iconSize: ProxoChrome.toolbarIconSize),
+                if (onSearchTap != null)
+                  _BarIconButton(
+                      label: 'گەڕان',
+                      onTap: onSearchTap,
+                      symbol: ProxoSymbolName.search),
+                ...actions,
+              ],
+              const Spacer(),
+              Semantics(
+                  label: 'Proxo',
+                  image: true,
+                  child: Image.asset('assets/images/proxo_logo.png',
+                      key: const ValueKey('proxo-toolbar-logo'),
+                      height: 22,
+                      width: 77,
+                      fit: BoxFit.contain,
+                      excludeFromSemantics: true)),
+            ]),
+          ),
         ),
       ),
     );

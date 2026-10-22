@@ -13,6 +13,7 @@ import 'package:proxo_app/theme/app_theme.dart';
 import 'package:proxo_app/theme/proxo_surface.dart';
 import 'package:proxo_app/widgets/ad_form_components.dart';
 import 'package:proxo_app/widgets/best_metrics_home_section.dart';
+import 'package:proxo_app/widgets/best_metric_card.dart';
 import 'package:proxo_app/widgets/home_best_result_card.dart';
 import 'package:proxo_app/widgets/best_results_design.dart';
 import 'package:proxo_app/widgets/home_quick_actions.dart';
@@ -463,7 +464,7 @@ void main() {
 
   for (final width in [320.0, 393.0, 430.0, 768.0]) {
     for (final scale in [1.0, 2.0]) {
-      testWidgets('balanced Home geometry and inline details $width/$scale',
+      testWidgets('balanced Home geometry is summary-only $width/$scale',
           (tester) async {
         tester.view.devicePixelRatio = 1;
         tester.view.physicalSize = Size(width, 1400);
@@ -518,27 +519,16 @@ void main() {
         if (scale == 1) expect(collapsed.height, lessThanOrEqualTo(290));
         expect(
             find.byKey(const ValueKey('result-expanded-beauty')), findsNothing);
-        final toggle = find.byKey(const ValueKey('result-details-beauty'));
-        expect(tester.getSize(toggle).height, greaterThanOrEqualTo(48));
-        await tester.ensureVisible(toggle);
-        await tester.tap(toggle);
-        await tester.pumpAndSettle();
-        expect(find.byType(BestMetricsScreen), findsNothing);
-        expect(find.byKey(const ValueKey('result-expanded-beauty')),
-            findsOneWidget);
-        expect(find.text('کۆی بودجە'), findsOneWidget);
-        expect(find.text('نامە و فرۆش'), findsOneWidget);
-        expect(find.text(r'$30'), findsOneWidget);
+        expect(
+            find.byKey(const ValueKey('result-details-beauty')), findsNothing);
+        expect(find.text('وردەکاری زیاتر'), findsNothing);
+        expect(find.text('وردەکاری کەمتر'), findsNothing);
+        expect(find.text('کۆی بودجە'), findsNothing);
+        expect(find.text('ئامانج'), findsNothing);
         final carousel = find.byKey(const ValueKey('home-results-carousel'));
         expect(tester.getSize(carousel).height,
             closeTo(tester.getSize(card).height, .1));
         auditText(tester, find.byType(BestMetricsHomeSection));
-        await tester.ensureVisible(toggle);
-        await tester.tap(toggle);
-        await tester.pumpAndSettle();
-        expect(
-            find.byKey(const ValueKey('result-expanded-beauty')), findsNothing);
-        expect(tester.getSize(card).height, closeTo(collapsed.height, .1));
         expect(tester.takeException(), isNull);
       });
     }
@@ -551,11 +541,13 @@ void main() {
       tester.view.physicalSize = Size(width, 1400);
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
-      await tester.pumpWidget(
-          host(sections(), scale: width == 320 ? 2 : 1, reduced: true));
+      await tester.pumpWidget(host(
+          BestMetricCard(ad: featured('beauty'), rank: 1),
+          scale: width == 320 ? 2 : 1,
+          reduced: true));
       await tester.pumpAndSettle();
       final toggle = find.byKey(const ValueKey('result-details-beauty'));
-      final card = find.byKey(const ValueKey('weekly-beauty'));
+      final card = find.byType(BestMetricCard);
       final originalHeight = tester.getSize(card).height;
       for (var i = 0; i < 3; i++) {
         await tester.ensureVisible(toggle);
@@ -574,28 +566,72 @@ void main() {
     });
   }
 
-  testWidgets('expanded result pauses carousel until the reader collapses it',
-      (tester) async {
-    await tester.pumpWidget(host(BestMetricsHomeSection(
-      loadPreview: ({bool forceRefresh = false}) async => examples(),
-    )));
-    await tester.pumpAndSettle();
-    final carousel = find.byKey(const ValueKey('home-results-carousel'));
-    final controller = tester.widget<PageView>(carousel).controller!;
-    await tester.tap(find.byKey(const ValueKey('result-details-beauty')));
-    await tester.pumpAndSettle();
-    await tester.pump(const Duration(seconds: 6));
-    expect(controller.page, 0);
-    await tester.tap(find.byKey(const ValueKey('result-details-beauty')));
-    await tester.pumpAndSettle();
-    await tester.pump(const Duration(seconds: 5));
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 800));
-    await tester.pumpAndSettle();
-    expect(controller.page, closeTo(1, .01));
-    await tester.pumpWidget(const SizedBox());
-    expect(tester.takeException(), isNull);
-  });
+  for (final width in [280.0, 320.0, 430.0]) {
+    for (final scale in [1.0, 2.0]) {
+      testWidgets(
+          'dedicated results keep objective and budget side by side $width/$scale',
+          (tester) async {
+        tester.view.devicePixelRatio = 1;
+        tester.view.physicalSize = Size(width, 1400);
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+        await tester.pumpWidget(MaterialApp(
+          theme: buildAppTheme(),
+          builder: (context, child) => MediaQuery(
+            data: MediaQuery.of(context)
+                .copyWith(textScaler: TextScaler.linear(scale)),
+            child: child!,
+          ),
+          home: BestMetricsScreen(
+            initialAds: [featured('beauty')],
+            loadResults: ({bool forceRefresh = false}) async =>
+                [featured('beauty')],
+          ),
+        ));
+        await tester.pumpAndSettle();
+        final card = find.byKey(const ValueKey('result-beauty'));
+        final originalHeight = tester.getSize(card).height;
+        final toggle = find.byKey(const ValueKey('result-details-beauty'));
+        expect(tester.getSize(toggle).height, greaterThanOrEqualTo(48));
+        await tester.ensureVisible(toggle);
+        await tester.tap(toggle);
+        await tester.pumpAndSettle();
+        final objective = tester
+            .getRect(find.byKey(const ValueKey('result-objective-beauty')));
+        final budget =
+            tester.getRect(find.byKey(const ValueKey('result-budget-beauty')));
+        expect(objective.top, closeTo(budget.top, .1));
+        expect(objective.height, closeTo(budget.height, .1));
+        expect(objective.width, closeTo(budget.width, .1));
+        expect(objective.left - budget.right, closeTo(8, .1));
+        expect(
+          tester
+              .getRect(
+                  find.byKey(const ValueKey('result-objective-value-beauty')))
+              .top,
+          closeTo(
+              tester
+                  .getRect(
+                      find.byKey(const ValueKey('result-budget-value-beauty')))
+                  .top,
+              .1),
+        );
+        expect(find.text('کۆی بودجە'), findsOneWidget);
+        expect(find.text('نامە و فرۆش'), findsOneWidget);
+        expect(find.text(r'$30'), findsOneWidget);
+        auditText(tester, card);
+        expect(tester.getSize(card).height, greaterThan(originalHeight));
+        expect(tester.takeException(), isNull);
+        await tester.ensureVisible(toggle);
+        await tester.tap(toggle);
+        await tester.pumpAndSettle();
+        expect(
+            find.byKey(const ValueKey('result-expanded-beauty')), findsNothing);
+        expect(tester.getSize(card).height, closeTo(originalHeight, .1));
+        expect(tester.takeException(), isNull);
+      });
+    }
+  }
 
   testWidgets('late loading completion after leaving Home is harmless', (
     tester,

@@ -144,8 +144,12 @@ void main() {
   Future<void> select(WidgetTester t, String method) async {
     await top(t);
     await reveal(t, 'deposit-method-$method');
+    final optionSize = t.getSize(key('deposit-method-$method'));
     await t.tap(key('deposit-method-$method'));
     await settle(t);
+    expect(t.getSize(key('deposit-method-$method')), optionSize,
+        reason:
+            'Changing selection must not shift labels or resize the option');
   }
 
   Future<void> amount(WidgetTester t, String value) async {
@@ -252,29 +256,26 @@ void main() {
     }
   }
 
-  testWidgets(
-      'unconfigured wallets stay disabled and account numbers remain exact',
+  testWidgets('only FastPay and FIB are offered and recipient remains exact',
       (t) async {
     await mount(t);
     await reveal(t, 'deposit-submit');
     expect(t.widget<FilledButton>(key('deposit-submit')).onPressed, isNull);
     for (final method in ['zaincash', 'asiacell', 'korek']) {
-      await top(t);
-      await reveal(t, 'deposit-method-$method');
-      expect(t.widget<InkWell>(key('deposit-method-$method')).onTap, isNull);
+      expect(key('deposit-method-$method'), findsNothing);
     }
     await select(t, 'fib');
     await reveal(t, 'deposit-recipient');
     expect(find.text('7510074008'), findsOneWidget);
-    await select(t, 'kcard');
-    await reveal(t, 'deposit-recipient');
-    expect(find.text('2879264048'), findsOneWidget);
+    expect(key('deposit-method-kcard'), findsNothing);
+    await select(t, 'fastpay');
+    expect(key('deposit-recipient'), findsNothing);
     expect(requests, isEmpty);
     await unmount(t);
   });
 
   testWidgets(
-      'localized amounts and chips show zero-fee credit without changing the amount',
+      'localized amounts and chips preserve exact request total across providers',
       (t) async {
     await mount(t);
     await select(t, 'fib');
@@ -282,15 +283,15 @@ void main() {
     expect(
         t.widget<TextField>(key('deposit-amount')).controller!.text, '25000');
     await reveal(t, 'deposit-fee-summary');
-    expect(find.text('25,000 IQD'), findsNWidgets(2));
-    expect(find.text('0 IQD'), findsOneWidget);
+    expect(find.text('25,000 IQD'), findsOneWidget);
+    expect(find.text('0 IQD'), findsNothing);
     await top(t);
     await reveal(t, 'deposit-quick-50000');
     await t.tap(key('deposit-quick-50000'));
     await settle(t);
     expect(
         t.widget<TextField>(key('deposit-amount')).controller!.text, '50000');
-    await select(t, 'kcard');
+    await select(t, 'fastpay');
     await reveal(t, 'deposit-amount');
     expect(
         t.widget<TextField>(key('deposit-amount')).controller!.text, '50000');
@@ -312,12 +313,12 @@ void main() {
         .instance.defaultBinaryMessenger
         .setMockMethodCallHandler(SystemChannels.platform, null));
     await mount(t);
-    await select(t, 'kcard');
+    await select(t, 'fib');
     await reveal(t, 'deposit-copy');
     expect(t.getSize(key('deposit-copy')), const Size(48, 48));
     await t.tap(key('deposit-copy'));
     await settle(t);
-    expect(copied, '2879264048');
+    expect(copied, '7510074008');
     expect(requests, isEmpty);
     await unmount(t);
   });
@@ -370,9 +371,13 @@ void main() {
 
   testWidgets('submission snapshots details, locks edits and joins double taps',
       (t) async {
-    await mount(t, picker: (_) async => XFile(receipt.path));
+    await mount(t, scale: 2, picker: (_) async => XFile(receipt.path));
     await validForm(t);
+    final submitSize = t.getSize(key('deposit-submit'));
     await submit(t, twice: true, gated: true);
+    expect(t.getSize(key('deposit-submit')), submitSize,
+        reason:
+            'Loading must retain the label and button geometry at 200% text');
     expect(requests, hasLength(1));
     expect(requests.single['p_gross_iqd'], 25000);
     expect(requests.single['p_sender'], 'Fictional Sender');
@@ -424,11 +429,12 @@ void main() {
     expect(notices, isEmpty);
     expect(find.byType(DepositScreen), findsOneWidget);
     expect(
-        find.text('داواکارییەکەت نێردرا — لە ماوەی ١ کاتژمێردا پەسەند دەکرێت'),
+        find.text(
+            'داواکارییەکەت نێردرا — دوای پشکنین باڵانسەکەت نوێ دەکرێتەوە'),
         findsNothing);
     expect(
         find.text(
-            'داواکارییەکە نەنێردرا — ئینتەرنێتەکەت بپشکنەوە و دووبارە هەوڵ بدەرەوە'),
+            'نەتوانرا ئەنجامی داواکارییەکە پشتڕاست بکرێتەوە — دووبارە هەوڵ بدەرەوە'),
         findsNothing);
     await unmount(t);
   });
@@ -469,6 +475,15 @@ void main() {
     expect(find.byType(FastPayCheckoutSheet), findsOneWidget);
     expect(requests, isEmpty);
     expect(notices, isEmpty);
+    Navigator.of(t.element(find.byType(FastPayCheckoutSheet))).pop(false);
+    await settle(t);
+    expect(t.widget<FilledButton>(key('deposit-submit')).onPressed, isNotNull);
+    await amount(t, '25000');
+    await select(t, 'fib');
+    await reveal(t, 'deposit-amount');
+    expect(
+        t.widget<TextField>(key('deposit-amount')).controller!.text, '25000');
+    expect(requests, isEmpty);
     await unmount(t);
   });
 }

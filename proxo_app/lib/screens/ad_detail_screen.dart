@@ -351,7 +351,7 @@ class _AdDetailScreenState extends State<AdDetailScreen> {
       await Clipboard.setData(ClipboardData(text: raw));
       if (!mounted) return;
       unawaited(HapticFeedback.selectionClick());
-      showReceiptMessage(context, AdDetailStrings.current.copied);
+      showReceiptMessage(context, AdDetailStrings.current.copied, isError: false);
     } catch (_) {
       if (mounted) {
         showReceiptMessage(context, AdDetailStrings.current.copyFailed);

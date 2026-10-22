@@ -17,6 +17,8 @@ import 'package:proxo_app/services/ad_submission.dart';
 import 'package:proxo_app/services/proxolink_service.dart';
 import 'package:proxo_app/widgets/ad_validation_notifications.dart';
 import 'package:proxo_app/widgets/proxo_text.dart';
+import 'package:proxo_app/widgets/proxo_notice.dart';
+import 'package:proxo_app/widgets/proxo_symbol.dart';
 
 const screenFixtureOwner='00000000-0000-4000-8000-000000000099';
 class ActualScreenBackend {
@@ -198,7 +200,14 @@ class ActualToolsRepository extends ProxoLinkRepository {
  }
  @override Future<List<ProxoTemplate>> templates()async=>[for(final key in ProxoLinkDesign.labels.keys)
   ProxoTemplate(key:key,label:ProxoLinkDesign.label(key),previewPath:'',version:6,requiresAvatar:false)];
- @override Future<List<ProxoProvider>> providers()async=>[const ProxoProvider(key:'telegram',pageType:'contact',label:'telegram',icon:'telegram',inputKind:'url')];
+ // A complete catalogue is required by the authoring readiness guard. Keep
+ // each page type represented with supported providers; all fixture writes
+ // and external previews remain rejected below.
+ @override Future<List<ProxoProvider>> providers()async=>const[
+   ProxoProvider(key:'telegram',pageType:'contact',label:'telegram',icon:'telegram',inputKind:'url'),
+   ProxoProvider(key:'talabat',pageType:'order',label:'talabat',icon:'talabat',inputKind:'url'),
+   ProxoProvider(key:'google_play',pageType:'download',label:'google_play',icon:'google_play',inputKind:'url'),
+ ];
  @override Future<ProxoCard> save(Map<String,dynamic> data,{ProxoCard? existing})=>throw StateError('screen_fixture_write_boundary');
  @override Future<void> action(String id,String action)=>throw StateError('screen_fixture_write_boundary');
  @override Future<Uri> preview(String id)=>throw StateError('screen_fixture_preview_boundary');
@@ -222,7 +231,7 @@ List<Element> screenElements(Element root,bool Function(Widget) predicate){
 int screenNoticeCount(Element root){
  final notices=screenElements(root,(w)=>w is AdValidationNotifications);
  if(notices.length!=1)throw StateError('screen_notice_component');
- return screenElements(notices.single,(w)=>w is Icon&&w.icon==Icons.error_outline).length;
+ return screenElements(notices.single,(w)=>w is ProxoNoticeCard).length;
 }
 Map<String,Object> screenNoticeVisualState(Element root){
  final notice=screenElements(root,(w)=>w is AdValidationNotifications).single;
@@ -235,6 +244,6 @@ Map<String,Object> screenNoticeAppearance(Element root){
  final notice=screenElements(root,(w)=>w is AdValidationNotifications).single;
  final decoration=screenElements(notice,(w)=>w is DecoratedBox&&w.decoration is BoxDecoration).map((e)=>(e.widget as DecoratedBox).decoration as BoxDecoration).first;
  final text=screenElements(notice,(w)=>w is ProxoText).first.widget as ProxoText;
- final icon=screenElements(notice,(w)=>w is Icon&&w.icon==Icons.error_outline).first.widget as Icon;
- return {'decoration':decoration.toString(),'text_style':text.style.toString(),'icon_size':icon.size??0,'icon_color':icon.color?.toARGB32()??0};
+ final icon=screenElements(notice,(w)=>w is ProxoSymbol).first.widget as ProxoSymbol;
+ return {'decoration':decoration.toString(),'text_style':text.style.toString(),'icon_size':icon.size,'icon_color':icon.color?.toARGB32()??0};
 }

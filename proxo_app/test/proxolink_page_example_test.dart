@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:proxo_app/l10n/proxo_strings.dart';
 import 'package:proxo_app/models/proxolink_design.dart';
 import 'package:proxo_app/models/proxolink_page_type.dart';
 import 'package:proxo_app/screens/proxolink_create_page_screen.dart';
@@ -45,7 +46,8 @@ Future<Map<String, Object>> _footerPixels(
   var samples = 0, opaque = 0;
   await tester.runAsync(() async {
     final data = (await image.toByteData(format: ui.ImageByteFormat.rawRgba))!;
-    final bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
+    final bytes =
+        data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
     // The footer occupies the lower fifth of the bundled full-page captures.
     // Check real decoded paint, not just the presence of an Image widget.
     for (var y = (image.height * .8).floor(); y < image.height; y += 2) {
@@ -88,11 +90,13 @@ Future<Map<String, Object>> _capture(
         boundary.currentContext!.findRenderObject() as RenderRepaintBoundary;
     final screenshot = await render.toImage(pixelRatio: 2);
     try {
-      final png = (await screenshot.toByteData(format: ui.ImageByteFormat.png))!;
-      final bytes = png.buffer.asUint8List(png.offsetInBytes, png.lengthInBytes);
+      final png =
+          (await screenshot.toByteData(format: ui.ImageByteFormat.png))!;
+      final bytes =
+          png.buffer.asUint8List(png.offsetInBytes, png.lengthInBytes);
       final source = await rootBundle.load(asset);
-      final sourceBytes = source.buffer
-          .asUint8List(source.offsetInBytes, source.lengthInBytes);
+      final sourceBytes =
+          source.buffer.asUint8List(source.offsetInBytes, source.lengthInBytes);
       final file = File('build/page-example-evidence/$name.png');
       await file.parent.create(recursive: true);
       await file.writeAsBytes(bytes);
@@ -188,6 +192,9 @@ void main() {
       ));
       await tester.pumpAndSettle();
 
+      expect(find.byType(TextFormField), findsAtLeastNWidgets(2),
+          reason:
+              'Complete fictional providers must make the authoring form ready.');
       final name = find.byType(TextFormField).at(0);
       final bio = find.byType(TextFormField).at(1);
       const retainedName = 'پەڕەی من Proxo';
@@ -213,8 +220,8 @@ void main() {
                       find.byType(ProxoLinkDesignSelector))
                   .selectedKey,
               style);
-          await _tapVisible(tester,
-              find.byKey(const ValueKey('help-example-page_creation')));
+          await _tapVisible(
+              tester, find.byKey(const ValueKey('help-example-page_creation')));
 
           final dialog = find.byType(Dialog);
           expect(dialog, findsOneWidget);
@@ -228,8 +235,8 @@ void main() {
           expect(image.fit, BoxFit.contain);
           // Real decoding is required: a matching asset name with a blank or
           // unresolved Image is insufficient evidence that the example works.
-          await tester.runAsync(() =>
-              precacheImage(image.image, tester.element(imageFinder)));
+          await tester.runAsync(
+              () => precacheImage(image.image, tester.element(imageFinder)));
           await tester.pumpAndSettle();
           final pixels = tester.widget<RawImage>(find.descendant(
               of: imageFinder, matching: find.byType(RawImage)));
@@ -240,8 +247,8 @@ void main() {
 
           final scrollView = find.descendant(
               of: dialog, matching: find.byType(SingleChildScrollView));
-          final scrollable = find.descendant(
-              of: dialog, matching: find.byType(Scrollable));
+          final scrollable =
+              find.descendant(of: dialog, matching: find.byType(Scrollable));
           final position = tester.state<ScrollableState>(scrollable).position;
           expect(position.maxScrollExtent, greaterThan(0),
               reason: 'The full page capture must remain scrollable.');
@@ -284,13 +291,12 @@ void main() {
               tester,
               find.descendant(
                   of: dialog,
-                  matching: find.widgetWithIcon(
-                      IconButton, Icons.close_rounded)));
+                  matching: find.byTooltip(ProxoStrings.text('داخستن'))));
           expect(find.byType(Dialog), findsNothing);
           expect(tester.widget<TextFormField>(name).controller!.text,
               retainedName);
-          expect(tester.widget<TextFormField>(bio).controller!.text,
-              retainedBio);
+          expect(
+              tester.widget<TextFormField>(bio).controller!.text, retainedBio);
           expect(tester.takeException(), isNull);
           examplesSeen.add('${type.key}-$style');
           validatedCases.add({

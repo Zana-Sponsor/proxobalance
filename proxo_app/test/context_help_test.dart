@@ -8,6 +8,7 @@ import 'package:http/testing.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:proxo_app/services/context_help_service.dart';
 import 'package:proxo_app/widgets/form_help_actions.dart';
+import 'package:proxo_app/widgets/proxo_notice.dart';
 import 'package:proxo_app/theme/app_theme.dart';
 
 void main() {
@@ -147,7 +148,9 @@ void main() {
     await t.tap(find.byKey(const ValueKey('help-tutorial-ad_video_code')));
     await t.pumpAndSettle();
     expect(opened, isFalse);
-    expect(find.byType(SnackBar), findsOneWidget);
+    expect(find.byType(ProxoNoticeCard), findsOneWidget);
+    await t.pump(const Duration(milliseconds: 2000));
+    expect(find.byType(ProxoNoticeCard), findsNothing);
   });
   testWidgets(
       'closing the screen while its tutorial is loading does not launch or update disposed state',

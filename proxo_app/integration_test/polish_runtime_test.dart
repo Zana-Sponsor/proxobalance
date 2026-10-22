@@ -46,6 +46,7 @@ import 'package:proxo_app/widgets/auth/auth_otp_field.dart';
 import 'package:proxo_app/widgets/auth/auth_widgets.dart';
 import 'package:proxo_app/widgets/levels_page.dart';
 import 'package:proxo_app/widgets/proxo_refresh.dart';
+import 'package:proxo_app/widgets/proxo_notice.dart';
 import 'package:proxo_app/widgets/proxo_sidebar.dart';
 import 'package:proxo_app/widgets/tasks_page.dart';
 import '../test/ad_creation_flow_test.dart' show TestAdRepository;
@@ -179,7 +180,9 @@ void main() {
         row['mount_and_settle_ms'] = clock.elapsedMilliseconds;
         if (action != null) await action();
         // Real scrolling/animation work, rather than timing a static screenshot.
-        final scrolls = find.byType(Scrollable);
+        final scrolls = find.byWidgetPredicate((widget) =>
+            widget is Scrollable &&
+            axisDirectionToAxis(widget.axisDirection) == Axis.vertical);
         if (find.byType(Dialog).evaluate().isEmpty &&
             scrolls.evaluate().isNotEmpty) {
           final state = t.state<ScrollableState>(scrolls.first);
@@ -283,7 +286,7 @@ void main() {
           data: TxReceiptData(
               kind: TxReceiptKind.topUp,
               status: 'approved',
-              txId: 'TX-FIXTURE',
+              txId: '75e3a228-4a4c-4d1e-a6c4-f705ecba349e',
               uid: 'fixture',
               date: DateTime.utc(2026, 10, 18),
               usd: 10,
@@ -361,32 +364,233 @@ void main() {
     backend.emptyAds = false;
     await AdSnapshotCache.clearStoredFor(screenFixtureOwner);
     await record(
-        'home-result-expanded',
+        'home-result-summary',
         HomeScreen(
             onCreateTap: () {},
             onAddBalanceTap: () {},
             onToolsTap: () {},
             onCreatePageTap: () {},
             onFaqTap: () {}), action: () async {
-      final details = find.byKey(const ValueKey('result-details-beauty'));
+      final card = find.byKey(const ValueKey('result-open-beauty'));
       final scroll = find
           .descendant(
               of: find.byType(HomeScreen), matching: find.byType(Scrollable))
           .first;
+      await reveal(card, scroll);
+      expect(find.byKey(const ValueKey('result-details-beauty')), findsNothing);
+      expect(
+          find.byKey(const ValueKey('result-expanded-beauty')), findsNothing);
+      await capture('home-result-summary');
+    });
+    await record(
+        'results-expansion',
+        BestMetricsScreen(
+          initialAds: examples(),
+          loadResults: ({bool forceRefresh = false}) async => examples(),
+        ), action: () async {
+      final details = find.byKey(const ValueKey('result-details-beauty'));
+      final scroll = find.byType(Scrollable).first;
       await reveal(details, scroll);
+      await capture('results-collapsed');
       await t.tap(details);
       await settle();
+      final objective =
+          t.getRect(find.byKey(const ValueKey('result-objective-beauty')));
+      final budget =
+          t.getRect(find.byKey(const ValueKey('result-budget-beauty')));
+      expect(objective.top, closeTo(budget.top, .01));
+      expect(objective.height, closeTo(budget.height, .01));
+      expect(objective.left, greaterThan(budget.right));
       expect(
-          find.byKey(const ValueKey('result-expanded-beauty')), findsOneWidget);
-      await capture('home-result-details');
-      // Repeat the actual disclosure animation to measure both directions.
+          t
+              .getRect(
+                  find.byKey(const ValueKey('result-objective-value-beauty')))
+              .top,
+          closeTo(
+              t
+                  .getRect(
+                      find.byKey(const ValueKey('result-budget-value-beauty')))
+                  .top,
+              .01));
+      await capture('results-expanded');
       for (var i = 0; i < 4; i++) {
         await reveal(details, scroll);
         await t.tap(details);
         await settle();
       }
     });
-    for (final method in ['fib', 'fastpay', 'kcard']) {
+    // Exercise the actual native Drawer route with the production menu. The
+    // host deliberately omits authentication/backend navigation side effects.
+    final drawerKey = GlobalKey<ScaffoldState>();
+    final menuDestinations = <String>[];
+    await record(
+        'menu-route-dismissal',
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: Scaffold(
+            key: drawerKey,
+            endDrawer: Directionality(
+              textDirection: TextDirection.rtl,
+              child: ProxoSidebar(
+                onClose: () => drawerKey.currentState!.closeEndDrawer(),
+                onNavigate: (destination) {
+                  menuDestinations.add(destination);
+                  drawerKey.currentState!.closeEndDrawer();
+                },
+              ),
+            ),
+            body: const SizedBox.expand(),
+          ),
+        ), action: () async {
+      for (var cycle = 0; cycle < 3; cycle++) {
+        drawerKey.currentState!.openEndDrawer();
+        await settle();
+        expect(drawerKey.currentState!.isEndDrawerOpen, isTrue);
+        if (cycle == 0) {
+          await capture('menu-open-native');
+          print('PROXO_POLISH_MENU_BACK_READY');
+          final backClock = Stopwatch()..start();
+          while (drawerKey.currentState!.isEndDrawerOpen &&
+              backClock.elapsed < const Duration(seconds: 8)) {
+            await t.pump(const Duration(milliseconds: 16));
+          }
+        } else if (cycle == 1) {
+          // The exposed strip is the native scrim on this narrow viewport.
+          await t.tapAt(const Offset(8, 300));
+        } else {
+          await t.tap(find.byKey(const ValueKey('sidebar-close')));
+        }
+        await settle();
+        expect(drawerKey.currentState!.isEndDrawerOpen, isFalse);
+      }
+      observations['menu_native_dismissal_cycles'] = 3;
+      observations['menu_destinations_from_dismissal'] = menuDestinations;
+    });
+
+    await record('ad-validation-notice-scroll',
+        AdCreateScreen(repository: TestAdRepository()), action: () async {
+      final scroll = find
+          .descendant(
+              of: find.byKey(const ValueKey('ad-form-scroll')),
+              matching: find.byType(Scrollable))
+          .first;
+      await reveal(find.byKey(const ValueKey('review-ad')), scroll);
+      await t.tap(find.byKey(const ValueKey('review-ad')));
+      await t.pump(const Duration(milliseconds: 16));
+      expect(find.byType(ProxoNoticeCard), findsOneWidget);
+      final noticeClock = Stopwatch()..start();
+      await capture('ad-validation-notice');
+      await t.drag(scroll, const Offset(0, 100));
+      while (find.byType(ProxoNoticeCard).evaluate().isNotEmpty &&
+          noticeClock.elapsed < const Duration(seconds: 3)) {
+        await t.pump(const Duration(milliseconds: 16));
+      }
+      final visibleMs = noticeClock.elapsedMilliseconds;
+      expect(find.byType(ProxoNoticeCard), findsNothing);
+      // Exact timer boundaries are covered by FakeAsync widget checks; this
+      // permits one platform scheduling/frame interval around the real timer.
+      expect(visibleMs, inInclusiveRange(1800, 2600));
+      observations['ad_validation_notice_observed_ms'] = visibleMs;
+      observations['ad_validation_notice_scroll_recovered'] = true;
+      await capture('ad-validation-dismissed');
+    });
+
+    final failedAdRepository = TestAdRepository()
+      ..failure = const AdSubmissionFailure('NETWORK', uncertain: true);
+    await record(
+        'ad-create-error-recovery',
+        AdCreateScreen(
+          repository: failedAdRepository,
+          proxoCard: validDraft().toJson(),
+        ), action: () async {
+      Finder adScroll() => find
+          .descendant(
+              of: find.byKey(const ValueKey('ad-form-scroll')),
+              matching: find.byType(Scrollable))
+          .first;
+      final review = find.byKey(const ValueKey('review-ad'));
+      await reveal(review, adScroll());
+      await t.tap(review);
+      // A second tap in the same frame must not push another confirmation.
+      await t.tap(review, warnIfMissed: false);
+      final failureClock = Stopwatch()..start();
+      while (failedAdRepository.submissions == 0 &&
+          failureClock.elapsed < const Duration(seconds: 15)) {
+        await t.pump(const Duration(milliseconds: 50));
+      }
+      await settle();
+      expect(failedAdRepository.submissions, 1);
+      expect(find.byType(AdConfirmationScreen), findsOneWidget);
+      final savedId = failedAdRepository.saved!.id;
+      await capture('ad-submit-error');
+      final cancel = find.byKey(const ValueKey('cancel-submission'));
+      await t.ensureVisible(cancel);
+      await settle();
+      await t.tap(cancel);
+      await settle();
+      expect(find.byType(AdConfirmationScreen), findsNothing);
+      final title = find.byKey(const ValueKey('ad-title'));
+      await reveal(title, adScroll());
+      expect(t.widget<TextField>(title).enabled, isNot(false));
+      expect(t.widget<TextField>(title).controller!.text, validDraft().title);
+      await capture('ad-error-editable');
+      await t.tap(title);
+      final titleController = t.widget<TextField>(title).controller!;
+      titleController.selection = TextSelection(
+          baseOffset: 0, extentOffset: titleController.text.length);
+      await t.pump(const Duration(milliseconds: 100));
+      print('PROXO_POLISH_AD_INPUT_READY');
+      final editClock = Stopwatch()..start();
+      while (titleController.text != 'Recovered-ad' &&
+          editClock.elapsed < const Duration(seconds: 12)) {
+        await t.pump(const Duration(milliseconds: 50));
+      }
+      expect(titleController.text, 'Recovered-ad');
+      var stableFrames = 0;
+      var lastInset = 0.0;
+      final keyboardClock = Stopwatch()..start();
+      while (stableFrames < 6 &&
+          keyboardClock.elapsed < const Duration(seconds: 8)) {
+        await t.pump(const Duration(milliseconds: 50));
+        final inset = t.view.viewInsets.bottom;
+        stableFrames = inset > 0 && inset == lastInset ? stableFrames + 1 : 0;
+        lastInset = inset;
+      }
+      expect(stableFrames, greaterThanOrEqualTo(6));
+      final visibleBottom =
+          (t.view.physicalSize.height - t.view.viewInsets.bottom) /
+              t.view.devicePixelRatio;
+      expect(t.getRect(title).bottom, lessThanOrEqualTo(visibleBottom));
+      observations['ad_error_keyboard_inset_px'] = t.view.viewInsets.bottom;
+      observations['ad_error_title_edit_transport'] = 'Android adb input text';
+      print('PROXO_POLISH_AD_KEYBOARD_READY');
+      final captureClock = Stopwatch()..start();
+      while (captureClock.elapsed < const Duration(seconds: 3)) {
+        await t.pump(const Duration(milliseconds: 50));
+      }
+      FocusManager.instance.primaryFocus?.unfocus();
+      await settle();
+      final resume = find.byKey(const ValueKey('resume-pending-ad'));
+      await reveal(resume, adScroll());
+      await t.tap(resume);
+      await settle();
+      expect(failedAdRepository.submissions, 2);
+      expect(failedAdRepository.saved!.id, savedId);
+      await t.ensureVisible(cancel);
+      await settle();
+      await t.tap(cancel);
+      await settle();
+      await reveal(title, adScroll());
+      expect(titleController.text, 'Recovered-ad');
+      observations['ad_error_recovery'] = {
+        'submissions': failedAdRepository.submissions,
+        'same_pending_id': failedAdRepository.saved!.id == savedId,
+        'edited_title_retained': true,
+        'navigation_recovered': true,
+      };
+      await capture('ad-error-retry-restored');
+    });
+    for (final method in ['fib', 'fastpay']) {
       await record('deposit-$method', const DepositScreen(), action: () async {
         final option = find.byKey(ValueKey('deposit-method-$method'));
         await reveal(option, depositScroll());

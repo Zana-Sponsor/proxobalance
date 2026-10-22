@@ -30,6 +30,7 @@ import 'widgets/bottom_nav.dart';
 import 'widgets/proxo_refresh.dart';
 import 'widgets/proxo_tab_stack.dart';
 import 'widgets/proxo_sidebar.dart';
+import 'widgets/proxo_error_stack.dart';
 import 'screens/profile_screen.dart';
 import 'widgets/no_internet_widget.dart';
 import 'theme/app_theme.dart';
@@ -181,7 +182,10 @@ class _ProxoAppState extends State<ProxoApp> {
       title: 'Proxo',
       debugShowCheckedModeBanner: false,
       navigatorKey: navigatorKey,
-      navigatorObservers: [AppSectionObserver.instance],
+      navigatorObservers: [
+        AppSectionObserver.instance,
+        ProxoNoticeObserver.instance,
+      ],
       locale: frameworkLocale,
       supportedLocales: const <Locale>[
         ProxoLocale.arabic,
@@ -372,6 +376,7 @@ class MainShellState extends State<MainShell> with WidgetsBindingObserver {
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    ProxoErrorStack.clear();
     mainShellTabRequest.removeListener(_onExternalTabRequest);
     for (final ProxoRefreshController c in _refreshers.values) {
       c.dispose();
@@ -384,6 +389,7 @@ class MainShellState extends State<MainShell> with WidgetsBindingObserver {
   // avoiding a whole-screen opacity layer during every tab change.
   void _switchTab(int index) {
     if (index == _tabIndex) return;
+    ProxoErrorStack.clear();
     setState(() {
       _builtTabs.add(index);
       _tabIndex = index;
@@ -552,7 +558,7 @@ class MainShellState extends State<MainShell> with WidgetsBindingObserver {
                   if (page == 'home')      _switchTab(0);
                   if (page == 'ads')       _switchTab(1);
                   if (page == 'tools')     _switchTab(3);
-                  if (page == 'tutorials') _switchTab(4);
+                  if (page == 'profile')   _switchTab(4);
                 },
               ),
             ),

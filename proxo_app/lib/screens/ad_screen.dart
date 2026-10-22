@@ -13,7 +13,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:shimmer/shimmer.dart';
 import '../theme/app_theme.dart';
 import '../theme/proxo_icons.dart';
-import '../main.dart' show supabase;
+import '../main.dart' show supabase, navigatorKey;
 import '../widgets/proxo_toast.dart';
 import '../widgets/proxo_error_ui.dart';
 import '../widgets/top_bar.dart';
@@ -2302,6 +2302,8 @@ class _AdScreenState extends State<AdScreen>
           appBar: ProxoTopBar(
             topPadding: MediaQuery.paddingOf(context).top,
             onMenuTap: widget.onMenuTap,
+            onNotificationTap: () =>
+                navigatorKey.currentState?.pushNamed('/notifications'),
           ),
           body: MediaQuery(
             data: MediaQuery.of(context).copyWith(

@@ -1,5 +1,5 @@
 import 'dart:math' as math;
-import 'package:flutter_svg/flutter_svg.dart';
+import '../widgets/payments/payment_option.dart';
 import 'auth/auth_models.dart';
 import 'package:proxo_app/l10n/proxo_strings.dart';
 import '../widgets/proxo_app_bar.dart';
@@ -9,7 +9,7 @@ import 'package:proxo_app/theme/app_locale.dart';
 // DEPOSIT SCREEN — full-screen balance top-up.
 //
 // Replaces the three-step modal `_DepositSheet` (part of proxo_sidebar.dart)
-// with a single scrolling page: payment method -> amount -> payment details
+// with a single scrolling page: amount -> payment method -> payment details
 // -> receipt -> submit. FastPay keeps its automatic checkout flow.
 //
 // Manual top-ups use pa_submit_topup. It prices the selected rail on the
@@ -41,10 +41,10 @@ const Color _cLine = ProxoSurface.line;
 const Color _cSoft = Color(0xFFF8FAFC);
 
 const double _kPageMargin = 20;
-const double _kCardRadius = 18;
+const double _kCardRadius = ProxoSurface.radius;
 const double _kInputRadius = 14;
 const double _kBtnHeight = 52;
-const double _kBtnRadius = ProxoControls.radius;
+const double _kBtnRadius = 12;
 
 /// Minimum accepted top-up, matching the old sheet's validation.
 const int _kMinIqd = 5000;
@@ -61,81 +61,15 @@ class _Wallet {
   final String key;
   final String name;
 
-  /// Recipient account / phone. Placeholders are deliberate and obvious —
-  /// see the note on [_kWallets].
   final String number;
-  final String? logoAsset;
-  final bool numberIsPlaceholder;
-
-  /// Share of the transfer swallowed before it reaches the app balance.
-  /// Telecom balance transfers (Asiacell / Korek) cost 18%; bank and wallet
-  /// rails cost nothing. 0.0 means "credited 1:1".
-  final double feeRate;
-
-  const _Wallet({
-    required this.key,
-    required this.name,
-    required this.number,
-    this.logoAsset,
-    this.numberIsPlaceholder = false,
-    this.feeRate = 0,
-  });
-
-  bool get hasFee => feeRate > 0;
-
-  /// What actually lands in the user's balance, in IQD.
-  int creditedIqd(int enteredIqd) => (enteredIqd * (1 - feeRate)).round();
-
-  /// 18% -> "18"
-  String get feePercentLabel => (feeRate * 100).round().toString();
+  const _Wallet({required this.key, required this.name, required this.number});
 }
 
-/// FIB / FastPay / Qi Card carry the real numbers already in production
-/// (from the old `_kDepMethods`). ZainCash, Asiacell and Korek have no
-/// configured recipient. Their placeholder values are never selectable,
-/// copied or submitted.
+// Keep the configured FIB recipient. FastPay uses authenticated checkout,
+// never a manual transfer to this account.
 const List<_Wallet> _kWallets = [
-  _Wallet(
-    key: 'fib',
-    name: 'FIB',
-    number: '7510074008',
-    logoAsset: 'assets/logos/providers/fib.svg',
-  ),
-  _Wallet(
-    key: 'fastpay',
-    name: 'FastPay',
-    number: '7510074008',
-    logoAsset: 'assets/logos/providers/fastpay.png',
-  ),
-  _Wallet(
-    key: 'kcard',
-    name: 'Qi Card',
-    number: '2879264048',
-    logoAsset: 'assets/logos/providers/qi.svg',
-  ),
-  _Wallet(
-    key: 'zaincash',
-    name: 'ZainCash',
-    number: '0750XXXXXXX',
-    logoAsset: 'assets/logos/providers/zaincash.svg',
-    numberIsPlaceholder: true,
-  ),
-  _Wallet(
-    key: 'asiacell',
-    name: 'Asiacell',
-    number: '0770XXXXXXX',
-    logoAsset: 'assets/logos/providers/asiacell.svg',
-    numberIsPlaceholder: true,
-    feeRate: 0.18,
-  ),
-  _Wallet(
-    key: 'korek',
-    name: 'Korek Telecom',
-    number: '0750XXXXXXX',
-    logoAsset: 'assets/logos/providers/korek.svg',
-    numberIsPlaceholder: true,
-    feeRate: 0.18,
-  ),
+  _Wallet(key: 'fastpay', name: 'FastPay', number: ''),
+  _Wallet(key: 'fib', name: 'FIB', number: '7510074008'),
 ];
 
 const List<String> _kBaseSteps = [
@@ -144,16 +78,6 @@ const List<String> _kBaseSteps = [
   'سکرینشۆتی وەسڵی تەواوبوونی مامەڵەکە بگرە.',
   'وەسڵەکە لە بەشی خوارەوە دابنێ و داواکاری بنێرە.',
 ];
-
-/// The fee note is appended only for rails that actually charge one, so the
-/// bank wallets don't carry a warning that doesn't apply to them.
-List<String> _stepsFor(_Wallet w) => [
-      ..._kBaseSteps,
-      if (w.hasFee)
-        ProxoStrings.format(
-            'تێبینی: {fee}% کەمتر زیاد دەکرێت بەهۆی تێچووی باڵانسەوە.',
-            {'fee': w.feePercentLabel}),
-    ];
 
 // ── Screen ─────────────────────────────────────────────────────────────
 
@@ -202,7 +126,7 @@ class _DepositScreenState extends State<DepositScreen> {
 
   Future<void> _copyNumber() async {
     final w = _wallet;
-    if (w == null || w.numberIsPlaceholder) return;
+    if (w == null || w.number.isEmpty) return;
     try {
       await Clipboard.setData(ClipboardData(text: w.number));
       if (!mounted) return;
@@ -291,10 +215,6 @@ class _DepositScreenState extends State<DepositScreen> {
           type: ProxoToastType.error);
       return;
     }
-    if (_wallet!.numberIsPlaceholder) {
-      showProxoToast(context, 'ژمارە دانەنراوە', type: ProxoToastType.error);
-      return;
-    }
     if (name.isEmpty) {
       showProxoToast(context, 'ناوی هەژمار بنووسە', type: ProxoToastType.error);
       return;
@@ -376,7 +296,7 @@ class _DepositScreenState extends State<DepositScreen> {
       if (!mounted || !sameOwner() || route?.isCurrent != true) return;
       showProxoToast(
         context,
-        'داواکارییەکەت نێردرا — لە ماوەی ١ کاتژمێردا پەسەند دەکرێت',
+        'داواکارییەکەت نێردرا — دوای پشکنین باڵانسەکەت نوێ دەکرێتەوە',
         type: ProxoToastType.success,
       );
       await Future<void>.delayed(const Duration(milliseconds: 900));
@@ -392,7 +312,7 @@ class _DepositScreenState extends State<DepositScreen> {
           route?.isCurrent == true) {
         showProxoToast(
           context,
-          'داواکارییەکە نەنێردرا — ئینتەرنێتەکەت بپشکنەوە و دووبارە هەوڵ بدەرەوە',
+          'نەتوانرا ئەنجامی داواکارییەکە پشتڕاست بکرێتەوە — دووبارە هەوڵ بدەرەوە',
           type: ProxoToastType.error,
         );
       }
@@ -409,7 +329,7 @@ class _DepositScreenState extends State<DepositScreen> {
       textDirection: ProxoLocale.directionOf(ProxoLocale.current.value),
       child: Scaffold(
         backgroundColor: AppColors.page,
-        appBar: const ProxoAppBar(title: 'زیادکردنی باڵانس'),
+        appBar: ProxoAppBar.adaptive(context, title: 'زیادکردنی باڵانس'),
         body: SafeArea(
             top: false,
             child: ListView(
@@ -418,15 +338,11 @@ class _DepositScreenState extends State<DepositScreen> {
               padding: EdgeInsets.fromLTRB(
                   math.max(_kPageMargin,
                       (MediaQuery.sizeOf(context).width - 600) / 2),
-                  24,
+                  16,
                   math.max(_kPageMargin,
                       (MediaQuery.sizeOf(context).width - 600) / 2),
                   32),
               children: [
-                const _SectionTitle('ڕێگای پارەدان'),
-                const SizedBox(height: 12),
-                _walletGrid(),
-                const SizedBox(height: 24),
                 _card(key: const ValueKey('deposit-amount-card'), children: [
                   const _SectionTitle('بڕی پارە'),
                   const SizedBox(height: 12),
@@ -438,13 +354,18 @@ class _DepositScreenState extends State<DepositScreen> {
                       style: _bodyStyle),
                   const SizedBox(height: 12),
                   _quickChips(),
-                  if (_wallet != null && _iqd > 0) ...[
-                    const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 16),
-                        child: Divider(height: 1, color: _cLine)),
-                    _amountSummary(),
-                  ],
                 ]),
+                const SizedBox(height: 24),
+                const _SectionTitle('ڕێگای پارەدان'),
+                const SizedBox(height: 12),
+                _walletGrid(),
+                if (isFastPay) ...[
+                  const SizedBox(height: 12),
+                  const ProxoText(
+                      'پارەدان بە FastPay تەواو بکە. دوای پشتڕاستکردنەوە، باڵانسەکەت نوێ دەکرێتەوە.',
+                      translate: true,
+                      style: _bodyStyle),
+                ],
                 if (!isFastPay && _wallet != null) ...[
                   const SizedBox(height: 24),
                   _paymentDetails(),
@@ -455,7 +376,11 @@ class _DepositScreenState extends State<DepositScreen> {
                     _receiptBox(),
                   ]),
                 ],
-                const SizedBox(height: 24),
+                if (_wallet != null && _iqd > 0) ...[
+                  const SizedBox(height: 24),
+                  _amountSummary(),
+                ],
+                const SizedBox(height: 16),
                 _submitButton(),
               ],
             )),
@@ -480,31 +405,29 @@ class _DepositScreenState extends State<DepositScreen> {
             crossAxisAlignment: CrossAxisAlignment.start, children: children),
       );
 
-  Widget _walletGrid() => LayoutBuilder(builder: (context, constraints) {
-        final columns = constraints.maxWidth >= 300 &&
-                MediaQuery.textScalerOf(context).scale(14) <= 20
-            ? 2
-            : 1;
-        final width = (constraints.maxWidth - (columns - 1) * 10) / columns;
-        return Wrap(spacing: 10, runSpacing: 10, children: [
-          for (final wallet in _kWallets)
-            SizedBox(
-                width: width,
-                child: _WalletCard(
-                    wallet: wallet,
-                    selected: _wallet?.key == wallet.key,
-                    compact: columns == 1,
-                    onTap: _busy || wallet.numberIsPlaceholder
-                        ? null
-                        : () {
-                            FocusScope.of(context).unfocus();
-                            setState(() {
-                              _wallet = wallet;
-                              _instructionsOpen = false;
-                            });
-                          })),
-        ]);
-      });
+  Widget _walletGrid() => Column(children: [
+        for (var index = 0; index < _kWallets.length; index++) ...[
+          if (index > 0) const SizedBox(height: 8),
+          PaymentOption(
+            tapKey: ValueKey('deposit-method-${_kWallets[index].key}'),
+            label: _kWallets[index].name,
+            subtitle: _kWallets[index].key == 'fastpay'
+                ? 'پارەدانی ئۆنلاین'
+                : 'گواستنەوە و ناردنی وەسڵ',
+            leading: ProviderLogo(provider: _kWallets[index].key),
+            selected: _wallet?.key == _kWallets[index].key,
+            onTap: _busy
+                ? null
+                : () {
+                    FocusScope.of(context).unfocus();
+                    setState(() {
+                      _wallet = _kWallets[index];
+                      _instructionsOpen = false;
+                    });
+                  },
+          ),
+        ],
+      ]);
 
   Widget _amountField() => ProxoDirectionalInput(
         controller: _amtCtrl,
@@ -531,7 +454,7 @@ class _DepositScreenState extends State<DepositScreen> {
               fontFamily: ProxoSurface.fontFamily,
               fontSize: 20,
               height: 1.3,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w400,
               color: _cInk),
           decoration: InputDecoration(
             hintText: '0',
@@ -544,7 +467,7 @@ class _DepositScreenState extends State<DepositScreen> {
                     style: TextStyle(
                         fontFamily: ProxoSurface.fontFamily,
                         fontSize: 13,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.w400,
                         color: _cSlate))),
             contentPadding:
                 const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
@@ -579,7 +502,7 @@ class _DepositScreenState extends State<DepositScreen> {
                   style: TextStyle(
                       fontFamily: ProxoSurface.fontFamily,
                       fontSize: 13,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w400,
                       color: _quickSelected == amount
                           ? AppColors.accent
                           : _cSlate)),
@@ -593,21 +516,15 @@ class _DepositScreenState extends State<DepositScreen> {
           ),
       ]);
 
-  Widget _amountSummary() {
-    final wallet = _wallet!;
-    final credited = wallet.creditedIqd(_iqd);
-    return Column(key: const ValueKey('deposit-fee-summary'), children: [
-      _SummaryRow(label: 'بڕی پارە', amount: '${_fmt(_iqd)} IQD'),
-      const SizedBox(height: 8),
-      _SummaryRow(
-          label: 'تێچووی خزمەتگوزاری', amount: '${_fmt(_iqd - credited)} IQD'),
-      const SizedBox(height: 10),
-      _SummaryRow(
-          label: 'زیاد دەکرێت بۆ باڵانس',
-          amount: '${_fmt(credited)} IQD',
-          strong: true),
-    ]);
-  }
+  Widget _amountSummary() => Padding(
+        key: const ValueKey('deposit-fee-summary'),
+        padding: const EdgeInsets.symmetric(horizontal: 4),
+        child: _SummaryRow(
+          label: _wallet?.key == 'fib' ? 'بڕی داواکاری' : 'کۆی پارەدان',
+          amount: '${_fmt(_iqd)} IQD',
+          strong: true,
+        ),
+      );
 
   Widget _paymentDetails() =>
       _card(key: const ValueKey('deposit-payment-details'), children: [
@@ -633,7 +550,7 @@ class _DepositScreenState extends State<DepositScreen> {
                       style: const TextStyle(
                           fontFamily: ProxoSurface.fontFamily,
                           fontSize: 17,
-                          fontWeight: FontWeight.w700,
+                          fontWeight: FontWeight.w400,
                           height: 1.4,
                           color: _cInk))),
               const SizedBox(width: 8),
@@ -668,7 +585,7 @@ class _DepositScreenState extends State<DepositScreen> {
                       style: TextStyle(
                           fontFamily: ProxoSurface.fontFamily,
                           fontSize: 13,
-                          fontWeight: FontWeight.w600,
+                          fontWeight: FontWeight.w400,
                           color: AppColors.accent))),
               AnimatedRotation(
                   turns: _instructionsOpen ? .25 : 0,
@@ -685,7 +602,7 @@ class _DepositScreenState extends State<DepositScreen> {
                     child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          for (final step in _stepsFor(_wallet!))
+                          for (final step in _kBaseSteps)
                             Padding(
                                 padding: const EdgeInsets.only(bottom: 8),
                                 child: ProxoText(step,
@@ -710,7 +627,7 @@ class _DepositScreenState extends State<DepositScreen> {
           fontSize: 14,
           height: 1.5,
           color: _cInk,
-          fontWeight: FontWeight.w600));
+          fontWeight: FontWeight.w400));
 
   Widget _textField(TextEditingController controller, String hint, String key,
           {int maxLines = 1}) =>
@@ -767,7 +684,7 @@ class _DepositScreenState extends State<DepositScreen> {
                       fontFamily: ProxoSurface.fontFamily,
                       fontSize: 14,
                       height: 1.5,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w400,
                       color: _cInk))),
           const ProxoSymbol(ProxoSymbolName.check,
               color: AppColors.positive, size: 22),
@@ -854,13 +771,22 @@ class _DepositScreenState extends State<DepositScreen> {
           route?.isCurrent == true) {
         Navigator.of(context).pop(true);
       }
+    } catch (error) {
+      if (mounted &&
+          identical(supabase, client) &&
+          client.auth.currentUser?.id == user.id &&
+          route?.isCurrent == true) {
+        showProxoToast(
+            context, 'نەتوانرا پارەدان بکرێتەوە — دووبارە هەوڵ بدەرەوە',
+            type: ProxoToastType.error);
+      }
     } finally {
       if (mounted) setState(() => _checkoutOpen = false);
     }
   }
 
   Widget _submitButton() {
-    final available = _wallet != null && !_wallet!.numberIsPlaceholder;
+    final available = _wallet != null;
     final fastPay = _wallet?.key == 'fastpay';
     return FilledButton(
       key: const ValueKey('deposit-submit'),
@@ -878,18 +804,33 @@ class _DepositScreenState extends State<DepositScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(_kBtnRadius))),
-      child: _submitting
-          ? const SizedBox.square(
-              dimension: 22,
-              child: CircularProgressIndicator(strokeWidth: 2, color: _cSlate))
-          : ProxoText(fastPay ? 'بەردەوامبە بۆ پارەدان' : 'ناردنی داواکاری',
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox.square(
+            dimension: 22,
+            child: _submitting
+                ? const CircularProgressIndicator(
+                    strokeWidth: 2, color: _cSlate)
+                : ProxoSymbol(ProxoSymbolName.check,
+                    size: 22,
+                    color: !available || _busy ? _cSlate : Colors.white),
+          ),
+          const SizedBox(width: 8),
+          Flexible(
+            child: ProxoText(
+              fastPay ? 'بەردەوامبە بۆ پارەدان' : 'ناردنی داواکاری',
               translate: true,
               textAlign: TextAlign.center,
               style: const TextStyle(
                   fontFamily: ProxoSurface.fontFamily,
                   fontSize: 14,
                   height: 1.5,
-                  fontWeight: FontWeight.w700)),
+                  fontWeight: FontWeight.w400),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -898,106 +839,8 @@ class _SectionTitle extends StatelessWidget {
   const _SectionTitle(this.text);
   final String text;
   @override
-  Widget build(BuildContext context) => ProxoText(text,
-      translate: true,
-      style: const TextStyle(
-          fontFamily: ProxoSurface.fontFamily,
-          fontSize: 18,
-          height: 1.4,
-          fontWeight: FontWeight.w700,
-          color: _cInk));
-}
-
-class _WalletCard extends StatelessWidget {
-  const _WalletCard(
-      {required this.wallet,
-      required this.selected,
-      required this.compact,
-      required this.onTap});
-  final _Wallet wallet;
-  final bool selected;
-  final bool compact;
-  final VoidCallback? onTap;
-  @override
-  Widget build(BuildContext context) {
-    final logo = SizedBox(
-        height: 24,
-        width: 64,
-        child: wallet.logoAsset!.endsWith('.svg')
-            ? SvgPicture.asset(wallet.logoAsset!,
-                fit: BoxFit.contain, excludeFromSemantics: true)
-            : Image.asset(wallet.logoAsset!,
-                fit: BoxFit.contain,
-                cacheWidth:
-                    (64 * MediaQuery.devicePixelRatioOf(context)).ceil(),
-                excludeFromSemantics: true));
-    final label = Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment:
-            compact ? CrossAxisAlignment.start : CrossAxisAlignment.center,
-        children: [
-          ProxoText(wallet.name,
-              textDirection: TextDirection.ltr,
-              style: const TextStyle(
-                  fontFamily: ProxoSurface.fontFamily,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  height: 1.4,
-                  color: _cInk)),
-          if (wallet.numberIsPlaceholder) ...[
-            const SizedBox(height: 4),
-            const ProxoText('ژمارە دانەنراوە',
-                translate: true,
-                style: TextStyle(
-                    fontFamily: ProxoSurface.fontFamily,
-                    fontSize: 12,
-                    height: 1.4,
-                    color: _cSlate)),
-          ],
-        ]);
-    return Semantics(
-      button: true,
-      selected: selected,
-      enabled: onTap != null,
-      label: wallet.name,
-      child: Material(
-        color: selected ? AppColors.accentSoft : Colors.white,
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-            side: BorderSide(
-                color: selected ? AppColors.accent : _cLine,
-                width: selected ? 1.5 : 1)),
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          key: ValueKey('deposit-method-${wallet.key}'),
-          onTap: onTap,
-          child: ConstrainedBox(
-            constraints: BoxConstraints(minHeight: compact ? 76 : 104),
-            child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: compact
-                    ? Row(children: [
-                        logo,
-                        const SizedBox(width: 14),
-                        Expanded(child: label),
-                        if (selected)
-                          const Padding(
-                              padding: EdgeInsetsDirectional.only(start: 8),
-                              child: ProxoSymbol(ProxoSymbolName.check,
-                                  size: 18, color: AppColors.accent)),
-                      ])
-                    : Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                            logo,
-                            const SizedBox(height: 8),
-                            label,
-                          ])),
-          ),
-        ),
-      ),
-    );
-  }
+  Widget build(BuildContext context) =>
+      ProxoText(text, translate: true, style: ProxoSurface.section);
 }
 
 class _SummaryRow extends StatelessWidget {
@@ -1023,7 +866,7 @@ class _SummaryRow extends StatelessWidget {
                 fontSize: 14,
                 height: 1.5,
                 color: strong ? AppColors.accent : _cInk,
-                fontWeight: FontWeight.w600));
+                fontWeight: FontWeight.w400));
         if (constraints.maxWidth < 280 ||
             MediaQuery.textScalerOf(context).scale(14) > 20) {
           return Column(

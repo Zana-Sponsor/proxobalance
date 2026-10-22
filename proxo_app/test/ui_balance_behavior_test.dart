@@ -82,7 +82,7 @@ void main() {
       // The grid lazily mounts visible cards; scroll to inspect the remainder.
       for (var pass = 0; pass < 2; pass++) {
         for (final mark in marks.evaluate()) {
-          expect((mark.findRenderObject()! as RenderBox).size, const Size(64, 24));
+          expect((mark.findRenderObject()! as RenderBox).size, const Size(56, 28));
         }
         final scroll = t.state<ScrollableState>(find.byType(Scrollable).first);
         scroll.position.jumpTo(scroll.position.maxScrollExtent);

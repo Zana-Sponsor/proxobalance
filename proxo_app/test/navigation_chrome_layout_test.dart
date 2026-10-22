@@ -18,6 +18,44 @@ void main() {
   });
   tearDownAll(backend.dispose);
 
+  testWidgets(
+      'shared toolbar ignores legacy screen direction and follows app locale',
+      (t) async {
+    t.view.devicePixelRatio = 1;
+    t.view.physicalSize = const Size(393, 852);
+    addTearDown(t.view.resetPhysicalSize);
+    addTearDown(t.view.resetDevicePixelRatio);
+    final originalLocale = ProxoLocale.current.value;
+    addTearDown(() => ProxoLocale.current.value = originalLocale);
+    ProxoLocale.current.value = ProxoLocale.kurdishSorani;
+    List<Rect> bounds() => [
+          t.getRect(find.byKey(const ValueKey('proxo-toolbar-logo'))),
+          t.getRect(find.byTooltip('مێنیو')),
+          t.getRect(find.byKey(const ValueKey('notification-bell-target'))),
+        ];
+    Future<void> mount(TextDirection screenDirection) async {
+      await t.pumpWidget(MaterialApp(
+        theme: buildAppTheme(),
+        builder: (context, child) => ProxoLocaleScope(child: child!),
+        home: Directionality(
+          textDirection: screenDirection,
+          child: Scaffold(
+              appBar: ProxoTopBar(onMenuTap: () {}, onNotificationTap: () {})),
+        ),
+      ));
+      await t.pumpAndSettle();
+    }
+
+    await mount(TextDirection.rtl);
+    final homeBounds = bounds();
+    await mount(TextDirection.ltr);
+    expect(bounds(), homeBounds,
+        reason:
+            'Home and Ads retain identical logo, menu, and notification geometry');
+    expect(homeBounds[0].left, lessThan(homeBounds[1].left));
+    expect(t.takeException(), isNull);
+  });
+
   for (final width in [320.0, 393.0, 430.0, 768.0]) {
     for (final scale in [1.0, 2.0]) {
       testWidgets('toolbar and menu retain balanced targets at $width / $scale',
@@ -58,7 +96,9 @@ void main() {
         expect(toolbar.top, 24);
         expect(toolbar.height, 56);
         expect(t.getRect(find.byKey(const ValueKey('chrome-body'))).top, 80);
-        expect(logo.size, const Size(84, 24));
+        expect(logo.size, const Size(77, 22));
+        expect(menu.right, closeTo(toolbar.right - 12, .1));
+        expect(logo.left, closeTo(toolbar.left + 12, .1));
         expect(menu.size, const Size(48, 48));
         expect(bell.size, const Size(48, 48));
         expect(menu.center.dy, logo.center.dy);

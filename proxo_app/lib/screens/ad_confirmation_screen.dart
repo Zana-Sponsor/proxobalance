@@ -6,6 +6,7 @@ import '../services/ad_categories.dart';
 import '../services/ad_submission.dart';
 import '../widgets/ad_form_components.dart';
 import '../widgets/proxo_text.dart';
+import '../widgets/proxo_error_stack.dart';
 import '../widgets/receipt/receipt_kit.dart';
 
 const kAdConfirmationSeconds =
@@ -14,7 +15,9 @@ const kAdConfirmationSeconds =
 class AdConfirmationResult {
   final String? adId;
   final bool useWallet;
-  const AdConfirmationResult({this.adId, this.useWallet = false});
+  final bool pending;
+  const AdConfirmationResult(
+      {this.adId, this.useWallet = false, this.pending = false});
 }
 
 class AdConfirmationScreen extends StatefulWidget {
@@ -42,8 +45,7 @@ class _AdConfirmationScreenState extends State<AdConfirmationScreen>
   final _payment = ValueNotifier<AdPaymentProgress>(const AdPaymentProgress());
   bool _processing = false, _success = false, _cancelled = false;
   AdSubmissionFailure? _failure;
-  bool get _canCancel =>
-      !_processing && !_success && (!widget.resume || _failure != null);
+  bool get _canCancel => !_success && !_cancelled;
 
   @override
   void initState() {
@@ -92,8 +94,12 @@ class _AdConfirmationScreenState extends State<AdConfirmationScreen>
     if (!_canCancel) return;
     _cancelled = true;
     _countdown.stop();
-    Navigator.of(context).pop(
-        AdConfirmationResult(useWallet: _failure?.paymentCredited == true));
+    if (_processing) {
+      widget.repository.cancelPendingOperation(widget.request.id);
+    }
+    Navigator.of(context).pop(AdConfirmationResult(
+        useWallet: _failure?.paymentCredited == true,
+        pending: _processing || _failure?.uncertain == true));
   }
 
   Future<void> _submit() async {
@@ -126,6 +132,7 @@ class _AdConfirmationScreenState extends State<AdConfirmationScreen>
             ? error
             : const AdSubmissionFailure('NETWORK', uncertain: true);
       });
+      ProxoErrorStack.show(context, _failure!.briefMessage);
     }
   }
 
@@ -136,7 +143,9 @@ class _AdConfirmationScreenState extends State<AdConfirmationScreen>
         builder: (context) => Directionality(
             textDirection: TextDirection.rtl,
             child: PopScope<AdConfirmationResult>(
-              canPop: _canCancel && _failure?.paymentCredited != true,
+              canPop: _canCancel &&
+                  !_processing &&
+                  _failure?.paymentCredited != true,
               onPopInvokedWithResult: (didPop, result) {
                 if (didPop) {
                   _cancelled = true;
@@ -306,7 +315,12 @@ class _AdConfirmationScreenState extends State<AdConfirmationScreen>
                                                                       .openPayment(
                                                                           p.deepLink!);
                                                                 } catch (_) {
-                                                                  /* QR remains available if the app cannot open. */
+                                                                  if (context
+                                                                      .mounted) {
+                                                                    ProxoErrorStack.show(
+                                                                        context,
+                                                                        'کردنەوەی FastPay سەرکەوتوو نەبوو؛ کۆدی QR بەکاربهێنە.');
+                                                                  }
                                                                 }
                                                               },
                                                               child: const ProxoText(
@@ -337,8 +351,8 @@ class _AdConfirmationScreenState extends State<AdConfirmationScreen>
                                         key:
                                             const ValueKey('cancel-submission'),
                                         onPressed: _canCancel ? _cancel : null,
-                                        child: ProxoText(_failure?.uncertain ==
-                                                true
+                                        child: ProxoText(_processing ||
+                                                _failure?.uncertain == true
                                             ? 'گەڕانەوە — داواکاریەکە پارێزراوە'
                                             : _failure != null
                                                 ? 'گەڕانەوە بۆ دەستکاری'

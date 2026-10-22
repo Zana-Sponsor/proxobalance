@@ -4,16 +4,18 @@ import 'dart:async';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/proxo_card.dart';
 import '../models/proxolink_design.dart';
 import '../models/proxolink_page_type.dart';
 import '../services/proxolink_service.dart';
+import '../services/proxolink_pending_request.dart';
+import '../theme/proxo_surface.dart';
 import '../widgets/ad_form_components.dart';
 import '../widgets/ad_validation_notifications.dart';
 import '../widgets/proxo_text.dart';
 import '../widgets/proxo_symbol.dart';
+import '../widgets/proxo_empty_state.dart';
 import '../widgets/proxolink_design_selector.dart';
 import '../widgets/receipt/receipt_kit.dart';
 
@@ -21,7 +23,12 @@ import '../widgets/receipt/receipt_kit.dart';
 /// only twelve bundled raster thumbnails are decoded in this route.
 class ProxoLinkCreatePageScreen extends StatefulWidget {
   final ProxoLinkRepository repository;
-  const ProxoLinkCreatePageScreen({super.key, required this.repository});
+  final ProxoLinkPendingRequestStore pendingRequests;
+  const ProxoLinkCreatePageScreen({
+    super.key,
+    required this.repository,
+    this.pendingRequests = const ProxoLinkPendingRequestStore(),
+  });
   @override
   State<ProxoLinkCreatePageScreen> createState() => _CreatePageState();
 }
@@ -39,14 +46,12 @@ class _CreatePageState extends State<ProxoLinkCreatePageScreen> {
   String _design = 'pill', _request = newProxoRequestId();
   String? _owner, _avatar;
   Uint8List? _image;
-  Map<String, dynamic>? _submitted;
   ProxoCard? _completedPage;
   bool _returningPage = false;
   String? _loadFailure;
   bool _loading = true, _busy = false, _picking = false, _invalidated = false;
   bool _loadInFlight = false;
   StreamSubscription<AuthState>? _auth;
-  String get _pendingKey => 'proxolink-create-request-${_owner ?? 'fixture'}';
   @override
   void initState() {
     super.initState();
@@ -55,8 +60,7 @@ class _CreatePageState extends State<ProxoLinkCreatePageScreen> {
     if (repo is ProxoLinkService) {
       _auth = repo.db.auth.onAuthStateChange.listen((_) {
         if (_owner != repo.ownerScope && mounted) {
-          unawaited(SharedPreferences.getInstance()
-              .then((prefs) => prefs.remove(_pendingKey)));
+          unawaited(_clearPendingRequest());
           _invalidated = true;
           _name.clear();
           _bio.clear();
@@ -67,7 +71,6 @@ class _CreatePageState extends State<ProxoLinkCreatePageScreen> {
           setState(() {
             _image = null;
             _avatar = null;
-            _submitted = null;
           });
           _notice('owner', const ProxoLinkFailure('unauthorized').message);
         }
@@ -88,19 +91,27 @@ class _CreatePageState extends State<ProxoLinkCreatePageScreen> {
         _loadFailure = null;
       });
     try {
-      final prefs = await SharedPreferences.getInstance();
+      final pending = await widget.pendingRequests
+          .read(_owner)
+          .timeout(const Duration(seconds: 10));
       if (!mounted || !_sameOwner) return;
       final originRoute = ModalRoute.of(context);
-      final pending = prefs.getString(_pendingKey);
       if (pending != null) {
-        final rows = await widget.repository.cards();
-        if (!mounted || !_sameOwner) return;
-        for (final page in rows) {
-          if (page.clientRequestId == pending &&
-              (_owner == null || page.userId == _owner)) {
-            await _returnPage(page, originRoute);
-            return;
+        _request = pending;
+        try {
+          final rows = await widget.repository.cards();
+          if (!mounted || !_sameOwner) return;
+          for (final page in rows) {
+            if (page.clientRequestId == pending &&
+                (_owner == null || page.userId == _owner)) {
+              await _returnPage(page, originRoute);
+              return;
+            }
           }
+        } on ProxoLinkFailure catch (e) {
+          if (e.code == 'unauthorized') rethrow;
+          // A list refresh failure must not make the authoring form unusable.
+          // Retaining this ID still prevents duplicate creates on retry.
         }
       }
       final results = await Future.wait<Object>(
@@ -113,18 +124,27 @@ class _CreatePageState extends State<ProxoLinkCreatePageScreen> {
         throw const ProxoLinkFailure('page_creation_unavailable');
       }
       final templates = (results[0] as List<ProxoTemplate>)
-          .where((t) => t.version == 6)
+          .where((t) =>
+              t.version == 6 && ProxoLinkDesign.labels.containsKey(t.key))
           .toList();
-      if (templates.map((t) => t.key).toSet().length != 4)
+      if (!templates
+          .map((t) => t.key)
+          .toSet()
+          .containsAll(ProxoLinkDesign.labels.keys))
         throw const ProxoLinkFailure('template_not_found');
+      final providers = results[1] as List<ProxoProvider>;
+      if (ProxoPageType.values.any((type) =>
+          !providers.any((provider) => provider.pageType == type.key))) {
+        throw const ProxoLinkFailure('providers_unavailable');
+      }
       setState(() {
         _templates = templates;
-        _providers = results[1] as List<ProxoProvider>;
+        _providers = providers;
         for (final p in _providers) {
           _values.putIfAbsent(p.key, TextEditingController.new);
         }
         // Only the random request key is retained, never form/customer content.
-        _request = prefs.getString(_pendingKey) ?? _request;
+        _request = pending ?? _request;
         _loading = false;
       });
     } catch (e) {
@@ -141,6 +161,17 @@ class _CreatePageState extends State<ProxoLinkCreatePageScreen> {
   String _failure(Object e) =>
       (e is ProxoLinkFailure ? e : const ProxoLinkFailure('network_error'))
           .message;
+  Future<void> _clearPendingRequest() async {
+    try {
+      await widget.pendingRequests
+          .clear(_owner)
+          .timeout(const Duration(seconds: 3));
+    } catch (_) {
+      // The server's confirmed result remains successful if local cleanup
+      // fails. A stale key can be reconciled with that same saved page later.
+    }
+  }
+
   Future<void> _returnPage(ProxoCard page, Route<dynamic>? originRoute) async {
     if (!mounted || !_sameOwner || _returningPage) return;
     _completedPage = page;
@@ -150,9 +181,7 @@ class _CreatePageState extends State<ProxoLinkCreatePageScreen> {
     }
     _returningPage = true;
     try {
-      final prefs = await SharedPreferences.getInstance();
-      if (!mounted || !_sameOwner || originRoute?.isCurrent != true) return;
-      await prefs.remove(_pendingKey);
+      await _clearPendingRequest();
       if (mounted && _sameOwner && originRoute?.isCurrent == true) {
         Navigator.of(context).pop(page);
       }
@@ -227,19 +256,21 @@ class _CreatePageState extends State<ProxoLinkCreatePageScreen> {
     final originRoute = ModalRoute.of(context);
     setState(() => _busy = true);
     try {
-      final prefs = await SharedPreferences.getInstance();
-      if (!mounted || !_sameOwner) return;
-      await prefs.setString(_pendingKey, _request);
+      await widget.pendingRequests
+          .write(_owner, _request)
+          .timeout(const Duration(seconds: 10));
       if (!mounted || !_sameOwner) {
-        await prefs.remove(_pendingKey);
+        await _clearPendingRequest();
         return;
       }
       if (_image != null && _avatar == null) {
-        _avatar = await widget.repository.uploadAvatar(_request, _image!);
+        _avatar = await widget.repository
+            .uploadAvatar(_request, _image!)
+            .timeout(const Duration(seconds: 30));
       }
       if (!mounted || !_sameOwner) throw const ProxoLinkFailure('unauthorized');
       var order = 0;
-      _submitted ??= {
+      final submitted = <String, dynamic>{
         'client_request_id': _request,
         'page_kind': _type.key,
         'name': _name.text.trim(),
@@ -263,11 +294,15 @@ class _CreatePageState extends State<ProxoLinkCreatePageScreen> {
           ]
         },
       };
-      final saved = await widget.repository.save(_submitted!);
+      final saved = await widget.repository.save(submitted);
       if (!mounted || !_sameOwner) return;
       await _returnPage(saved, originRoute);
     } on ProxoLinkFailure catch (e) {
       if (!mounted || !_sameOwner) return;
+      if (e.savedCard != null) {
+        await _returnPage(e.savedCard!, originRoute);
+        return;
+      }
       if (e.code == 'idempotency_conflict') {
         // A timed-out request may finish after the reopening lookup. Resolve
         // that same owner/request instead of trapping the user on a retry that
@@ -287,27 +322,9 @@ class _CreatePageState extends State<ProxoLinkCreatePageScreen> {
         }
         if (!mounted || !_sameOwner) return;
       }
-      if (e.savedCard != null) {
-        await _returnPage(e.savedCard!, originRoute);
-      } else {
-        // Definite validation rejection permits correction; uncertain network
-        // outcomes keep the same first payload/key to avoid duplicate creates.
-        if ({
-          'invalid_provider_destination',
-          'invalid_page_settings',
-          'invalid_tiktok',
-          'invalid_avatar',
-          'invalid_card_name',
-          'invalid_bio',
-          'invalid_request',
-          'provider_required',
-          'invalid_page_type',
-          'template_not_found',
-          'isolated_staging_required',
-          'page_creation_unavailable'
-        }.contains(e.code)) _submitted = null;
-        _notice('save', e.message);
-      }
+      // Every failure releases editing. Corrections keep the original request
+      // ID: a late committed request is reconciled, never duplicated.
+      _notice('save', e.message);
     } catch (e) {
       if (mounted && _sameOwner) _notice('save', _failure(e));
     } finally {
@@ -336,7 +353,7 @@ class _CreatePageState extends State<ProxoLinkCreatePageScreen> {
           keyboardType: keyboard,
           builder: (context, direction) => TextFormField(
               controller: controller,
-              readOnly: _busy || _submitted != null || !_sameOwner,
+              readOnly: _busy || !_sameOwner,
               textDirection: direction,
               decoration: InputDecoration(labelText: ProxoStrings.text(label)),
               minLines: lines,
@@ -402,7 +419,6 @@ class _CreatePageState extends State<ProxoLinkCreatePageScreen> {
                                                   AbsorbPointer(
                                                       absorbing: _loading ||
                                                           _busy ||
-                                                          _submitted != null ||
                                                           !_sameOwner,
                                                       child: Column(
                                                           crossAxisAlignment:
@@ -558,36 +574,32 @@ class _CreatePageState extends State<ProxoLinkCreatePageScreen> {
                                                             translate: true)),
                                                 ])))),
                           Positioned(
-                              top: 12,
-                              left: 16,
-                              right: 16,
-                              child: AdValidationNotifications(
-                                  controller: _notices)),
+                              top: 8,
+                              left: ProxoSurface.gutter,
+                              right: ProxoSurface.gutter,
+                              child: Center(
+                                  child: ConstrainedBox(
+                                      constraints:
+                                          const BoxConstraints(maxWidth: 440),
+                                      child: AdValidationNotifications(
+                                          controller: _notices)))),
                         ])),
                       ]),
                     ))));
   }
 
-  Widget _loadError() => Container(
+  Widget _loadError() => ProxoEmptyState(
         key: const ValueKey('create-page-load-error'),
-        padding: const EdgeInsets.all(24),
-        decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: AdUi.controlLine)),
-        child:
-            Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-          const ProxoSymbol(ProxoSymbolName.info, size: 32, color: AdUi.blue),
-          const SizedBox(height: 20),
-          ProxoText(_loadFailure!,
-              translate: true,
-              textAlign: TextAlign.center,
-              style:
-                  const TextStyle(fontSize: 14, height: 1.7, color: AdUi.ink)),
-          const SizedBox(height: 24),
-          OutlinedButton(
-              onPressed: _loading ? null : _load,
-              child: const ProxoText('دووبارە هەوڵ بدەرەوە', translate: true)),
-        ]),
+        symbol: ProxoSymbolName.info,
+        title: 'نەتوانرا پەڕە ئامادە بکرێت',
+        body: _loadFailure!,
+        isError: true,
+        action: OutlinedButton(
+            onPressed: _loading ? null : _load,
+            style: OutlinedButton.styleFrom(
+              minimumSize: const Size.fromHeight(ProxoSurface.actionHeight),
+              textStyle: ProxoSurface.body,
+            ),
+            child: const ProxoText('دووبارە هەوڵ بدەرەوە', translate: true)),
       );
 }

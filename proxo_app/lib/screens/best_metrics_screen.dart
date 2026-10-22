@@ -3,7 +3,6 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
-import '../l10n/proxo_strings.dart';
 import '../theme/app_locale.dart';
 import '../services/ad_categories.dart';
 import '../services/best_metrics_service.dart';
@@ -84,27 +83,16 @@ class _BestMetricsScreenState extends State<BestMetricsScreen> {
         ? _ads
         : _ads.where((ad) => ad.category == _category).toList();
     final titleStyle = ResultsUi.text(size: 16);
-    final titlePainter = TextPainter(
-      text: TextSpan(
-        text: ProxoStrings.text('باشترین ئەنجامەکان'),
-        style: titleStyle,
-      ),
-      textDirection: TextDirection.rtl,
-      textScaler: MediaQuery.textScalerOf(context),
-    )..layout(maxWidth: math.max(80, MediaQuery.sizeOf(context).width - 144));
-    final toolbarHeight = math.max(64.0, titlePainter.height + 20);
-    titlePainter.dispose();
     return Theme(
       data: ResultsUi.theme(context),
       child: Directionality(
         textDirection: TextDirection.rtl,
         child: Scaffold(
           backgroundColor: const Color(0xFFF8F9FB),
-          appBar: ProxoAppBar(
+          appBar: ProxoAppBar.adaptive(
+            context,
             title: 'باشترین ئەنجامەکان',
             titleStyle: titleStyle,
-            titleMaxLines: null,
-            toolbarHeight: toolbarHeight,
           ),
           body: SafeArea(
             top: false,
@@ -222,7 +210,7 @@ class _BestMetricsScreenState extends State<BestMetricsScreen> {
             key: ValueKey('result-${ad.id}'),
             ad: ad,
             rank: _ads.indexWhere((row) => row.id == ad.id) + 1,
-              ),
+          ),
         );
     return ProxoRefresh(
       pullToRefresh: true,

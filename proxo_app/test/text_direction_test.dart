@@ -34,16 +34,24 @@ void expectLtrBoxes(String rendered, String token,
     List<ui.TextBox> Function(TextSelection) boxesForSelection) {
   final offset = rendered.indexOf(token);
   expect(offset, greaterThanOrEqualTo(0));
-  final centers = <double>[];
+  final boxesInOrder = <ui.TextBox>[];
   for (var i = 0; i < token.length; i++) {
     final boxes = boxesForSelection(
         TextSelection(baseOffset: offset + i, extentOffset: offset + i + 1));
     expect(boxes, isNotEmpty, reason: 'Every character of $token is visible');
-    centers.add((boxes.first.left + boxes.first.right) / 2);
+    boxesInOrder.add(boxes.first);
   }
-  for (var i = 1; i < centers.length; i++) {
-    expect(centers[i], greaterThanOrEqualTo(centers[i - 1] - 0.01),
-        reason: '$token retains its character order');
+  for (var i = 1; i < boxesInOrder.length; i++) {
+    final previous = boxesInOrder[i - 1];
+    final current = boxesInOrder[i];
+    if ((current.top - previous.top).abs() <= .01) {
+      expect((current.left + current.right) / 2,
+          greaterThanOrEqualTo((previous.left + previous.right) / 2 - .01),
+          reason: '$token retains LTR character order within each line');
+    } else {
+      expect(current.top, greaterThanOrEqualTo(previous.bottom - .01),
+          reason: '$token wraps in reading order without overlapping lines');
+    }
   }
 }
 

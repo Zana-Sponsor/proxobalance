@@ -1,204 +1,130 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
-import 'package:clock/clock.dart';
-import 'ad_form_components.dart';
-import 'proxo_text.dart';
+import 'proxo_notice.dart';
 
-class _ValidationNotice {
-  final String field, message;
-  DateTime entryStart;
-  bool leaving = false, armed = false, queued = false;
-  _ValidationNotice(this.field, this.message, this.entryStart);
-}
-
-/// Scoped to form validation. Backend/payment errors use the confirmation UI.
+/// The first actionable error is shown briefly; individual fields keep their
+/// validation state. There is no hidden queue that can replay obsolete errors.
 class AdValidationController extends ChangeNotifier {
-  final List<_ValidationNotice> _items = [];
-  final List<Timer> _timers = [];
+  String? _message;
+  int _generation = 0;
   bool _disposed = false;
+  Object? _owner;
+  bool Function()? _canShow;
   void show(Map<String, String> errors) {
-    var stagger = 0;
-    final requestedAt = clock.now();
-    for (final entry in errors.entries) {
-      if (_items.any((n) => n.field == entry.key)) continue;
-      final delay = Duration(milliseconds: stagger++ * 90);
-      _timers.add(Timer(delay, () {
-        if (_disposed || _items.any((n) => n.field == entry.key)) return;
-        _items.add(_ValidationNotice(entry.key, entry.value, requestedAt.add(delay))
-          ..queued = _items.length >= 3);
-        _armVisible();
-        notifyListeners();
-      }));
-    }
+    if (_disposed || _canShow?.call() == false) return;
+    final messages = errors.values
+        .map((value) => value.trim())
+        .where((value) => value.isNotEmpty);
+    if (messages.isEmpty || messages.first == _message) return;
+    _message = messages.first;
+    ++_generation;
+    notifyListeners();
   }
 
-  void _armVisible() {
-    // Rear layers are covered by the front card. Only the readable front
-    // starts its five-second lifetime; every queued error gets its own turn.
-    for (final item in _items.take(1)) {
-      if (item.armed) continue;
-      // A hidden queued notice gets a fresh timeline when its slot opens.
-      if (item.queued) {
-        item.entryStart = clock.now();
-        item.queued = false;
-      }
-      item.armed = true;
-      _timers.add(Timer(const Duration(seconds: 5), () {
-        if (_disposed) return;
-        item.leaving = true;
-        notifyListeners();
-        _timers.add(Timer(const Duration(milliseconds: 240), () {
-          if (_disposed) return;
-          _items.remove(item);
-          _armVisible();
-          notifyListeners();
-        }));
-      }));
-    }
+  void clear() {
+    if (_disposed || _message == null) return;
+    _message = null;
+    ++_generation;
+    notifyListeners();
+  }
+
+  void _expire(int generation) {
+    if (_generation == generation) clear();
+  }
+
+  void _attach(Object owner, bool Function() canShow) {
+    if (_disposed) return;
+    _owner = owner;
+    _canShow = canShow;
+  }
+
+  void _release(Object owner) {
+    if (_owner != owner) return;
+    _detach(_generation);
+    _owner = null;
+    _canShow = () => false;
+  }
+
+  void _detach(int generation) {
+    if (_disposed || _generation != generation) return;
+    // Widget removal must not replay this error if its controller is reused.
+    // Do not notify listeners while the widget tree is being torn down.
+    _message = null;
+    ++_generation;
   }
 
   @override
   void dispose() {
     _disposed = true;
-    for (final timer in _timers) {
-      timer.cancel();
-    }
-    _timers.clear();
+    _message = null;
+    _owner = null;
+    _canShow = null;
     super.dispose();
   }
 }
 
-class AdValidationNotifications extends StatelessWidget {
-  final AdValidationController controller;
+class AdValidationNotifications extends StatefulWidget {
   const AdValidationNotifications({super.key, required this.controller});
+  final AdValidationController controller;
+
   @override
-  Widget build(BuildContext context) => IgnorePointer(
-        child: AnimatedBuilder(
-          animation: controller,
-          builder: (context, _) => AnimatedSize(
-            duration: const Duration(milliseconds: 240),
-            alignment: Alignment.topCenter,
-            curve: Curves.easeOutCubic,
-            child: LayoutBuilder(builder: (context, constraints) {
-              final visible = controller._items.take(3).toList();
-              if (visible.isEmpty) return const SizedBox.shrink();
-              double height = 64;
-              for (final item in visible) {
-                final painter = TextPainter(text: TextSpan(text: item.message, style: AdUi.text(context)),
-                  textDirection: TextDirection.rtl, textScaler: MediaQuery.textScalerOf(context))
-                  ..layout(maxWidth: (constraints.maxWidth - 60).clamp(1, double.infinity));
-                if (painter.height + 32 > height) height = painter.height + 32;
-                painter.dispose();
-              }
-              height = height.clamp(64, 320).toDouble();
-              return Padding(padding: EdgeInsets.only(bottom: (visible.length - 1) * 8),
-                child: Stack(alignment: Alignment.topCenter, clipBehavior: Clip.none, children: [
-                  for (var i = visible.length - 1; i >= 0; i--)
-                    ExcludeSemantics(key: ObjectKey(visible[i]), excluding: i != 0,
-                      child: Transform.translate(offset: Offset(0, i * (8 + height * .045)),
-                        child: Transform.scale(scale: 1 - i * .045, alignment: Alignment.topCenter,
-                          child: _NoticeCard(key: ObjectKey(visible[i]), item: visible[i], depth: i, height: height)))),
-                ]),
-              );
-            }),
-          ),
-        ),
-      );
+  State<AdValidationNotifications> createState() =>
+      _AdValidationNotificationsState();
 }
 
-class _NoticeCard extends StatefulWidget {
-  final _ValidationNotice item;
-  final int depth;
-  final double height;
-  const _NoticeCard({super.key, required this.item, required this.depth, required this.height});
-  @override
-  State<_NoticeCard> createState() => _NoticeCardState();
-}
+class _AdValidationNotificationsState extends State<AdValidationNotifications> {
+  ModalRoute<dynamic>? _route;
 
-class _NoticeCardState extends State<_NoticeCard>
-    with TickerProviderStateMixin {
-  late final AnimationController _life = AnimationController(
-      vsync: this, duration: const Duration(milliseconds: 240));
-  late final Ticker _entry = createTicker((_) => _advanceEntry());
+  bool _canShow() =>
+      mounted &&
+      (_route?.isCurrent ?? true) &&
+      TickerMode.getValuesNotifier(context).value.enabled;
 
   @override
-  void initState() {
-    super.initState();
-    _advanceEntry();
-    if (_life.value < 1) _entry.start();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _route = ModalRoute.of(context);
+    final current =
+        (_route?.isCurrent ?? true) && TickerMode.valuesOf(context).enabled;
+    widget.controller._attach(this, _canShow);
+    if (!current) {
+      widget.controller._detach(widget.controller._generation);
+    }
   }
 
-  void _advanceEntry() {
-    // Entry and expiry must not acquire different start times when a busy
-    // frame mounts the widget after its scheduled notification insertion.
-    final elapsed = clock.now().difference(widget.item.entryStart);
-    _life.value = (elapsed.inMicroseconds / 240000).clamp(0.0, 1.0);
-    if (_life.value == 1 && _entry.isActive) _entry.stop();
-  }
   @override
-  void didUpdateWidget(covariant _NoticeCard oldWidget) {
+  void didUpdateWidget(covariant AdValidationNotifications oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.item.leaving && _life.status != AnimationStatus.reverse) {
-      _entry.stop();
-      _life.reverse();
+    if (oldWidget.controller != widget.controller) {
+      oldWidget.controller._release(this);
+      widget.controller._attach(this, _canShow);
     }
   }
 
   @override
   void dispose() {
-    _entry.dispose();
-    _life.dispose();
+    widget.controller._release(this);
     super.dispose();
   }
 
   @override
-  Widget build(BuildContext context) => SizeTransition(
-        sizeFactor: _life,
-        alignment: Alignment.topCenter,
-        child: FadeTransition(
-            opacity: _life,
-            child: Padding(
-              padding: EdgeInsets.zero,
-              child: SlideTransition(
-                position: Tween<Offset>(
-                        begin: const Offset(0, -0.15), end: Offset.zero)
-                    .animate(CurvedAnimation(
-                        parent: _life, curve: Curves.easeOutCubic)),
-                child: Transform(
-                    transform: Matrix4.identity()
-                      ..setEntry(3, 2, 0.001)
-                      ..rotateX(-0.025),
-                    alignment: Alignment.topCenter,
-                    child: DecoratedBox(
-                      decoration: const BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: AdUi.radius,
-                          border: Border.fromBorderSide(BorderSide(color: Color(0xFFE8EDF4))),
-                          boxShadow: [
-                            BoxShadow(
-                                color: Color(0x180F172A),
-                                blurRadius: 14,
-                                offset: Offset(0, 7)),
-                            BoxShadow(
-                                color: Color(0x0C0F172A),
-                                blurRadius: 1,
-                                spreadRadius: 1,
-                                offset: Offset(2, 3)),
-                          ]),
-                      child: SizedBox(height: widget.height, child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 10),
-                          child: Row(children: [
-                            const Icon(Icons.error_outline,
-                                size: 18, color: Color(0xFFB74956)),
-                            const SizedBox(width: 10),
-                            Expanded(
-                                child: SingleChildScrollView(child: ProxoText(widget.item.message,
-                                    style: AdUi.text(context)))),
-                          ]))),
-                    )),
-              ),
-            )),
+  Widget build(BuildContext context) => IgnorePointer(
+        child: ListenableBuilder(
+          listenable: widget.controller,
+          builder: (context, _) {
+            final controller = widget.controller;
+            if (!_canShow()) {
+              controller._detach(controller._generation);
+              return const SizedBox.shrink();
+            }
+            final message = controller._message;
+            if (message == null) return const SizedBox.shrink();
+            final generation = controller._generation;
+            return ProxoTimedNotice(
+                key: ValueKey((controller, generation)),
+                onExpired: () => controller._expire(generation),
+                onDisposed: () => controller._detach(generation),
+                child: ProxoNoticeCard(message: message));
+          },
+        ),
       );
 }

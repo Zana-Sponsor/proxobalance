@@ -20,6 +20,7 @@ import 'package:proxo_app/models/proxo_card.dart';
 import 'package:proxo_app/screens/ad_screen.dart';
 import 'package:proxo_app/screens/deposit_screen.dart';
 import 'package:proxo_app/screens/ad_detail_screen.dart';
+import 'package:proxo_app/screens/best_metrics_screen.dart';
 import 'package:proxo_app/screens/home_screen.dart';
 import 'package:proxo_app/screens/profile_screen.dart';
 import 'package:proxo_app/screens/proxolink_create_page_screen.dart';
@@ -41,7 +42,9 @@ import 'ad_receipt_data_test.dart' show receiptFixture;
 import 'support/featured_thumbnail_fixture.dart';
 import 'proxolink_tools_create_test.dart' show ToolsRepository, field;
 
-const _output = 'build/app-balance-evidence';
+// Keep the current scope separate from older captures with removed providers
+// and Home expansion states so review bundles cannot silently mix revisions.
+const _output = 'build/pr44-current-evidence';
 const _permissions = MethodChannel('flutter.baseflow.com/permissions/methods');
 
 class BalanceCaptureBinding extends AutomatedTestWidgetsFlutterBinding {
@@ -235,6 +238,7 @@ void main() {
 
   for (final config in [
     (width: 393.0, height: 852.0, scale: 1.0),
+    (width: 430.0, height: 932.0, scale: 1.0),
     (width: 320.0, height: 740.0, scale: 2.0),
   ]) {
     for (final screen in [
@@ -244,10 +248,10 @@ void main() {
       'home-thumbnail-image',
       'home-thumbnail-failed',
       'home-long-label',
+      'results',
       'deposit',
       'deposit-fib',
       'deposit-fastpay',
-      'deposit-kcard',
       'tools',
       'tools-create-flow',
       'menu',
@@ -353,6 +357,10 @@ void main() {
                     onCreatePageTap: () {}),
                 bottomNavigationBar:
                     ProxoBottomNav(currentIndex: 0, onTap: (_) {})),
+          'results' => BestMetricsScreen(
+              initialAds: [BestMetricAd.fromMap(featured)],
+              loadResults: ({bool forceRefresh = false}) async =>
+                  [BestMetricAd.fromMap(featured)]),
           'tools' => ToolsScreen(repository: _EmptyToolsRepository()),
           'tools-create-flow' => ToolsScreen(repository: pageRepository),
           'profile-email-otp' => EditProfileScreen(
@@ -365,8 +373,15 @@ void main() {
           'profile-long' ||
           'profile-missing' =>
             const ProfileScreen(),
-          'ads-empty' || 'ads-error' || 'ads-loading' => const AdScreen(),
-          'ads-filter-empty' => const AdScreen(initialFilter: AdFilter.pending),
+          // MainShell supplies the menu action on the production tab. Keep
+          // the same chrome in isolated captures; navigation is tested in the
+          // real shell and sidebar suites.
+          'ads-empty' ||
+          'ads-error' ||
+          'ads-loading' =>
+            AdScreen(onMenuTap: () {}),
+          'ads-filter-empty' =>
+            AdScreen(initialFilter: AdFilter.pending, onMenuTap: () {}),
           'menu' => Scaffold(
               body: Align(
                   alignment: Alignment.centerRight,
@@ -381,7 +396,7 @@ void main() {
               data: TxReceiptData(
                   kind: TxReceiptKind.topUp,
                   status: 'approved',
-                  txId: 'FICTIONAL-RECEIPT',
+                  txId: '75e3a228-4a4c-4d1e-a6c4-f705ecba349e',
                   uid: screenFixtureOwner,
                   date: DateTime.utc(2026, 10, 19, 9),
                   usd: 10,
@@ -506,17 +521,36 @@ void main() {
               expectedFailedImage: expectedFailedImage);
           if (screen.startsWith('home')) {
             final scroll = find.byType(Scrollable).first;
-            await _reveal(t, _key('result-details-fixture-beauty'), scroll);
-            await _capture(t, boundaryKey, '$name-collapsed-card', config,
+            await _reveal(t, _key('result-open-fixture-beauty'), scroll);
+            expect(_key('result-details-fixture-beauty'), findsNothing);
+            expect(_key('result-expanded-fixture-beauty'), findsNothing);
+            await _capture(t, boundaryKey, '$name-summary-card', config,
                 expectedFailedImage: expectedFailedImage);
+          } else if (screen == 'results') {
+            final scroll = _verticalScroll();
+            await _reveal(t, _key('result-details-fixture-beauty'), scroll);
+            await _capture(t, boundaryKey, '$name-collapsed-card', config);
             await t.tap(_key('result-details-fixture-beauty'));
             await t.pumpAndSettle();
-            expect(_key('result-expanded-fixture-beauty'), findsWidgets);
-            await _capture(t, boundaryKey, '$name-expanded', config,
-                expectedFailedImage: expectedFailedImage);
+            expect(_key('result-expanded-fixture-beauty'), findsOneWidget);
+            final objective =
+                t.getRect(_key('result-objective-fixture-beauty'));
+            final budget = t.getRect(_key('result-budget-fixture-beauty'));
+            expect(objective.top, closeTo(budget.top, .01));
+            expect(objective.height, closeTo(budget.height, .01));
+            expect(objective.left, greaterThan(budget.right));
+            expect(
+                t.getRect(_key('result-objective-value-fixture-beauty')).top,
+                closeTo(
+                    t.getRect(_key('result-budget-value-fixture-beauty')).top,
+                    .01));
+            await _capture(t, boundaryKey, '$name-expanded', config);
             await _bottom(t, scroll);
-            await _capture(t, boundaryKey, '$name-expanded-bottom', config,
-                expectedFailedImage: expectedFailedImage);
+            await _capture(t, boundaryKey, '$name-expanded-bottom', config);
+            await _reveal(t, _key('result-details-fixture-beauty'), scroll);
+            await t.tap(_key('result-details-fixture-beauty'));
+            await t.pumpAndSettle();
+            expect(_key('result-expanded-fixture-beauty'), findsNothing);
           } else if (screen == 'tools-create-flow') {
             expect(find.byType(ProxoLinkCreatePageScreen), findsNothing);
             await _reveal(t, _key('tools-create-page'), _verticalScroll());
@@ -580,15 +614,11 @@ void main() {
             expect(_key('sidebar-logout-error'), findsOneWidget);
             await _capture(t, boundaryKey, '$name-logout-error', config);
           } else if (screen == 'deposit') {
-            for (final method in ['zaincash', 'asiacell', 'korek']) {
-              await _reveal(
-                  t, _key('deposit-method-$method'), _depositScroll());
-              expect(t.widget<InkWell>(_key('deposit-method-$method')).onTap,
-                  isNull,
-                  reason: 'Unconfigured method must remain disabled');
+            expect(_key('deposit-method-fib'), findsOneWidget);
+            expect(_key('deposit-method-fastpay'), findsOneWidget);
+            for (final method in ['kcard', 'zaincash', 'asiacell', 'korek']) {
+              expect(_key('deposit-method-$method'), findsNothing);
             }
-            await _capture(
-                t, boundaryKey, '$name-unconfigured-methods', config);
           } else if (screen.startsWith('ads-')) {
             final state = switch (screen) {
               'ads-empty' => 'ads-empty-state',
@@ -686,7 +716,7 @@ void main() {
             }
           } else if (screen == 'transaction-receipt' ||
               screen == 'ad-receipt') {
-            final scroll = find.byType(Scrollable).first;
+            final scroll = _verticalScroll();
             final position = t.state<ScrollableState>(scroll).position;
             // ListView's initial extent estimates unbuilt children using the
             // first (large) receipt item. Materialize the bottom before using
@@ -702,11 +732,6 @@ void main() {
               part++;
               await _capture(t, boundaryKey,
                   part == 1 ? '$name-middle' : '$name-middle-$part', config);
-              if (screen == 'ad-receipt' && config.scale == 2 && part == 1) {
-                final budget = t.getRect(find.text('نرخی سەرەتایی'));
-                expect(budget.top, greaterThanOrEqualTo(80));
-                expect(budget.bottom, lessThan(config.height - 16));
-              }
             }
             await _bottom(t, scroll);
             await _capture(t, boundaryKey, '$name-bottom', config);

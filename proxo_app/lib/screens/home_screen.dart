@@ -10,6 +10,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:permission_handler/permission_handler.dart' as ph;
 import '../theme/app_theme.dart';
 import '../widgets/top_bar.dart';
+import '../widgets/proxo_toast.dart';
 import '../widgets/proxo_refresh.dart';
 import '../widgets/ad_feedback.dart';
 import '../widgets/proxo_popup.dart';
@@ -455,8 +456,7 @@ class _HomeScreenState extends State<HomeScreen>
       } catch (_) {}
     }
     if (mounted)
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('ئەم بەستەرە بەردەست نییە')));
+      showProxoToast(context, 'ئەم بەستەرە بەردەست نییە');
   }
 
   @override

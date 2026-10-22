@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:ui' as ui;
@@ -26,6 +27,7 @@ void main() {
   final requests = <http.Request>[];
   var optedIn = true;
   var saveFails = false;
+  Completer<void>? saveGate;
   setUpAll(() async {
     SharedPreferences.setMockInitialValues({});
     final fonts =
@@ -58,6 +60,7 @@ void main() {
               {'opted_in': optedIn},
             ];
           case '/rest/v1/rpc/pa_set_whatsapp_marketing':
+            await saveGate?.future;
             if (saveFails) {
               status = 500;
               body = {'message': 'fixture failure'};
@@ -116,6 +119,7 @@ void main() {
   setUp(() {
     requests.clear();
     saveFails = false;
+    saveGate = null;
     optedIn = true;
   });
 
@@ -267,6 +271,49 @@ void main() {
       );
     }
   }
+  testWidgets(
+      'preference timeout unlocks retained selection and repeated taps send once',
+      (t) async {
+    saveGate = Completer<void>();
+    await t.pumpWidget(host(const WhatsappMarketingScreen()));
+    await settle(t);
+    await t.tap(find.byType(CheckboxListTile));
+    await t.pump();
+    final submit =
+        t.widget<AuthPrimaryButton>(find.byType(AuthPrimaryButton)).onPressed!;
+    submit();
+    submit();
+    await t.pump();
+    expect(
+        requests
+            .where((r) => r.url.path.endsWith('pa_set_whatsapp_marketing'))
+            .length,
+        1);
+    expect(t.widget<AuthPrimaryButton>(find.byType(AuthPrimaryButton)).loading,
+        true);
+    await t.pump(const Duration(seconds: 21));
+    await settle(t);
+    final choice = t.widget<CheckboxListTile>(find.byType(CheckboxListTile));
+    expect(choice.value, false);
+    expect(choice.onChanged, isNotNull);
+    expect(t.widget<AuthPrimaryButton>(find.byType(AuthPrimaryButton)).loading,
+        false);
+    expect(t.widget<AuthPrimaryButton>(find.byType(AuthPrimaryButton)).enabled,
+        true);
+    expect(find.byType(AuthAlert), findsOneWidget);
+    // Deliver the old response after its deadline. It cannot relock the UI.
+    saveGate!.complete();
+    await settle(t);
+    saveGate = null;
+    await t.tap(find.byType(AuthPrimaryButton));
+    await settle(t);
+    expect(optedIn, false);
+    expect(t.widget<AuthPrimaryButton>(find.byType(AuthPrimaryButton)).enabled,
+        false);
+    expect(t.takeException(), isNull);
+    await t.pumpWidget(const SizedBox());
+    await t.pump();
+  });
   testWidgets('failed opt-out stays unsaved and can be retried', (t) async {
     saveFails = true;
     await t.pumpWidget(host(const WhatsappMarketingScreen()));

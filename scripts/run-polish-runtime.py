@@ -39,7 +39,8 @@ command = ['flutter', 'drive', '--profile', '--no-pub', '--keep-app-running',
 process = subprocess.Popen(command, cwd=app, stdout=subprocess.PIPE,
                            stderr=subprocess.STDOUT, text=True, bufsize=1,
                            env={**os.environ, 'FLUTTER_SUPPRESS_ANALYTICS':'true',
-                                'DART_SUPPRESS_ANALYTICS':'true'})
+                                'DART_SUPPRESS_ANALYTICS':'true',
+                                'DASH__SUPPRESS_ANALYTICS':'true'})
 with (output / 'driver.log').open('w') as log:
     for line in process.stdout:
         print(line, end='', flush=True)
@@ -49,6 +50,17 @@ with (output / 'driver.log').open('w') as log:
         if 'PROXO_POLISH_PHONE_INPUT_READY' in line:
             adb('shell', 'input', 'text', '7501234567')
             metadata['phone_input_injected'] = True
+        if 'PROXO_POLISH_MENU_BACK_READY' in line:
+            adb('shell', 'input', 'keyevent', 'KEYCODE_BACK')
+            metadata['menu_android_back_injected'] = True
+        if 'PROXO_POLISH_AD_INPUT_READY' in line:
+            adb('shell', 'input', 'text', 'Recovered-ad')
+            metadata['ad_error_input_injected'] = True
+        if 'PROXO_POLISH_AD_KEYBOARD_READY' in line:
+            screenshot('ad-error-keyboard-android')
+            (output/'ad-keyboard.log').write_bytes(adb('shell','dumpsys','input_method'))
+            adb('shell','input','keyevent','KEYCODE_BACK')
+            metadata['ad_error_keyboard_captured'] = True
         if 'PROXO_POLISH_KEYBOARD_READY' in line:
             screenshot('auth-keyboard-android')
             (output/'keyboard.log').write_bytes(adb('shell','dumpsys','input_method'))
@@ -82,6 +94,9 @@ assert data['observations'].get('completed') is True, 'Profile fixture incomplet
 assert metadata.get('background_notification_captured')
 assert metadata.get('keyboard_captured')
 assert metadata.get('phone_input_injected')
+assert metadata.get('menu_android_back_injected')
+assert metadata.get('ad_error_input_injected')
+assert metadata.get('ad_error_keyboard_captured')
 assert pull.returncode == 0, 'Android screenshots could not be pulled; see screenshot-transfer.log'
 assert len(captures) >= 30, f'Only {len(captures)} native screenshots retained'
 rows=[]

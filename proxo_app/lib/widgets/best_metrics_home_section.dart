@@ -34,7 +34,6 @@ class BestMetricsHomeSectionState extends State<BestMetricsHomeSection>
     with WidgetsBindingObserver {
   final PageController _pages = PageController();
   final Map<String, double> _heights = {};
-  final Set<String> _expanded = {};
   ScrollPosition? _parentScroll;
   Timer? _timer;
   double? _width;
@@ -94,7 +93,6 @@ class BestMetricsHomeSectionState extends State<BestMetricsHomeSection>
         _touching ||
         _scrolling ||
         _ads.length < 2 ||
-        (_ads.isNotEmpty && _expanded.contains(_ads[_page % _ads.length].id)) ||
         !_pages.hasClients ||
         !TickerMode.of(context) ||
         MediaQuery.disableAnimationsOf(context) ||
@@ -155,7 +153,6 @@ class BestMetricsHomeSectionState extends State<BestMetricsHomeSection>
         _error = null;
         _page = next;
         _heights.removeWhere((id, _) => !rows.any((ad) => ad.id == id));
-        _expanded.removeWhere((id) => !rows.any((ad) => ad.id == id));
       });
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
@@ -381,15 +378,6 @@ class BestMetricsHomeSectionState extends State<BestMetricsHomeSection>
                                 ad: ad,
                                 rank: index % _ads.length + 1,
                                 compact: true,
-                                expanded: _expanded.contains(ad.id),
-                                onExpandedChanged: (expanded) {
-                                  if (expanded) {
-                                    _expanded.add(ad.id);
-                                  } else {
-                                    _expanded.remove(ad.id);
-                                  }
-                                  _schedule();
-                                },
                                 onOpenDetails: () =>
                                     _openAll(initialAdId: ad.id),
                               ),

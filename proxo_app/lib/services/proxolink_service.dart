@@ -44,6 +44,7 @@ class ProxoLinkFailure implements Exception {
         'isolated_staging_required' ||
         'page_creation_unavailable' ||
         'template_not_found' ||
+        'providers_unavailable' ||
         'templates_unavailable' =>
           'دروستکردنی پەڕە ئێستا بەردەست نییە. تکایە دواتر هەوڵ بدەرەوە.',
         'invalid_provider_destination' ||
@@ -209,10 +210,16 @@ class ProxoLinkService
     final cache = AppDataCache.forClient(db)..bindOwner();
     final body = await cache.cache
         .get('templates', () => _request('/api/contact-templates'));
-    final templates = [
-      for (final j in body['templates'] as List)
-        ProxoTemplate.fromJson(Map<String, dynamic>.from(j as Map)),
-    ];
+    late final List<ProxoTemplate> templates;
+    try {
+      templates = [
+        for (final j in body['templates'] as List)
+          ProxoTemplate.fromJson(Map<String, dynamic>.from(j as Map)),
+      ];
+    } catch (_) {
+      cache.cache.invalidate('templates');
+      throw const ProxoLinkFailure('templates_unavailable');
+    }
     const requiredKeys = {'pill', 'pill-mint', 'pill-dark', 'pill-white'};
     final available =
         templates.where((t) => t.version == 6).map((t) => t.key).toSet();
@@ -232,10 +239,20 @@ class ProxoLinkService
       // cached disabled capability for the next five minutes.
       cache.cache.invalidate('providers');
     }
-    return [
-      for (final j in body['providers'] as List)
-        ProxoProvider.fromJson(Map<String, dynamic>.from(j as Map)),
-    ];
+    try {
+      final providers = [
+        for (final j in body['providers'] as List)
+          ProxoProvider.fromJson(Map<String, dynamic>.from(j as Map)),
+      ];
+      if (ProxoPageType.values.any((type) =>
+          !providers.any((provider) => provider.pageType == type.key))) {
+        cache.cache.invalidate('providers');
+      }
+      return providers;
+    } catch (_) {
+      cache.cache.invalidate('providers');
+      throw const ProxoLinkFailure('providers_unavailable');
+    }
   }
 
   @override
@@ -365,11 +382,14 @@ class ProxoLinkService
     final user = db.auth.currentUser?.id;
     if (user != owner) throw const ProxoLinkFailure('unauthorized');
     final path = '$user/$id/avatar-${newProxoRequestId()}.$extension';
-    await db.storage.from('proxolink-assets').uploadBinary(
+    await db.storage
+        .from('proxolink-assets')
+        .uploadBinary(
           path,
           bytes,
           fileOptions: FileOptions(contentType: mime, upsert: false),
-        );
+        )
+        .timeout(const Duration(seconds: 30));
     if (ownerScope != owner) throw const ProxoLinkFailure('unauthorized');
     return path;
   }

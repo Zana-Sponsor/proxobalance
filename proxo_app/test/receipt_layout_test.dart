@@ -95,6 +95,24 @@ void main() {
     await loader.load();
   });
 
+  testWidgets(
+      'root header keeps its centered title without a disabled back control',
+      (tester) async {
+    await tester.pumpWidget(const MaterialApp(
+      home: Scaffold(
+        body: Directionality(
+          textDirection: TextDirection.rtl,
+          child: ReceiptAppBar(title: 'ئامرازەکان', onBack: null),
+        ),
+      ),
+    ));
+    await tester.pumpAndSettle();
+    expect(find.byType(IconButton), findsNothing);
+    expect(tester.getCenter(find.text('ئامرازەکان')).dx,
+        closeTo(tester.getSize(find.byType(Scaffold)).width / 2, .01));
+    expect(tester.takeException(), isNull);
+  });
+
   // Native-size responsive layout supersedes proportional 393-dp scaling.
   // Old exact anchors remain recorded by the immutable baseline capture.
   // Assert physical margins/ink containment without relaxing tolerances.
@@ -126,8 +144,8 @@ void main() {
         closeTo(ReceiptTokens.pageTop + ReceiptTokens.cardToButton, 0.01),
       );
       final dividers = find.byType(ReceiptDivider);
-      expect(dividers, findsNWidgets(5));
-      for (var i = 0; i < 5; i++) {
+      expect(dividers, findsNWidgets(4));
+      for (var i = 0; i < 4; i++) {
         final rule = receiptPaintedRect(
           tester,
           find.descendant(
@@ -140,8 +158,8 @@ void main() {
         expect(rule.height, closeTo(ReceiptTokens.dividerThickness, 0.01));
       }
       final rows = find.byType(ReceiptRow);
-      expect(rows, findsNWidgets(13));
-      for (var i = 0; i < 13; i++) {
+      expect(rows, findsNWidgets(11));
+      for (var i = 0; i < 11; i++) {
         final row = receiptPaintedRect(tester, rows.at(i));
         expect(row.left, closeTo(columnLeft + 36, 0.01));
         expect(row.right, closeTo(columnLeft + columnWidth - 36, 0.01));
@@ -212,7 +230,11 @@ void main() {
             closeTo(width / 2, 0.01),
           );
           expect(
-            tester.getCenter(find.byType(IconButton)).dx,
+            tester
+                .getCenter(find.descendant(
+                    of: find.byType(ReceiptAppBar),
+                    matching: find.byType(IconButton)))
+                .dx,
             greaterThan(width / 2),
           );
           expect(find.byType(BottomNavigationBar), findsNothing);
@@ -240,8 +262,8 @@ void main() {
           final uid = find.text(data['id'] as String);
           final uidText = tester.widget<Text>(uid);
           expect(uidText.textDirection, TextDirection.ltr);
-          expect(uidText.maxLines, isNull);
-          expect(uidText.softWrap, true);
+          expect(uidText.maxLines, 1);
+          expect(uidText.softWrap, false);
           expect(uidText.style!.fontSize, ReceiptTokens.uidSize);
           expect(uidText.overflow, isNot(TextOverflow.ellipsis));
           expect(find.text(strings.receiptNo), findsOneWidget);
@@ -297,7 +319,14 @@ void main() {
           expect(decoration.boxShadow!.single.color, const Color(0x060F172A));
           expect(receiptPaintedRect(tester, uid).left, greaterThanOrEqualTo(0));
           expect(
-            receiptPaintedRect(tester, uid).right,
+            receiptPaintedRect(
+                    tester,
+                    find
+                        .ancestor(
+                            of: uid,
+                            matching: find.byType(SingleChildScrollView))
+                        .first)
+                .right,
             lessThanOrEqualTo(width),
           );
           for (final icon in tester.widgetList<Icon>(find.byType(Icon))) {
@@ -347,14 +376,23 @@ void main() {
                   ? ReceiptTokens.ink
                   : text.style == ReceiptTokens.rowLabel
                       ? ReceiptTokens.label
-                      : ReceiptTokens.ink,
+                      : find
+                              .ancestor(
+                                  of: find.byWidget(text),
+                                  matching: find.byType(ReceiptStatusRow))
+                              .evaluate()
+                              .isNotEmpty
+                          ? ReceiptTokens.positive
+                          : ReceiptTokens.ink,
             );
           }
 
           await tester.scrollUntilVisible(
             find.byType(ReceiptPdfButton),
             200,
-            scrollable: find.byType(Scrollable),
+            scrollable: find.byWidgetPredicate((w) =>
+                w is Scrollable &&
+                axisDirectionToAxis(w.axisDirection) == Axis.vertical),
           );
           await tester.pumpAndSettle();
           final card = receiptPaintedRect(tester, find.byType(ReceiptCard));
@@ -372,7 +410,9 @@ void main() {
           await tester.scrollUntilVisible(
             find.byType(ReceiptPdfButton),
             200,
-            scrollable: find.byType(Scrollable),
+            scrollable: find.byWidgetPredicate((w) =>
+                w is Scrollable &&
+                axisDirectionToAxis(w.axisDirection) == Axis.vertical),
           );
           await tester.pumpAndSettle();
           expect(tester.takeException(), isNull);
@@ -382,45 +422,39 @@ void main() {
   }
 
   testWidgets(
-    'long references wrap at native font size and copying preserves the original',
+    'long references stay single-line and scroll/copy the complete identifier',
     (tester) async {
       final reference =
           '${List.filled(12, 'long-reference').join('-')}@example.com';
       String? copied;
-      await tester.pumpWidget(
-        MaterialApp(
+      await tester.pumpWidget(MaterialApp(
           home: Scaffold(
-            body: Center(
-              child: SizedBox(
-                width: 228,
-                child: ReceiptIdentifierRow(
-                  label: 'ژمارەی مامەڵە',
-                  value: reference,
-                  onLongPress: () => copied = reference,
-                ),
-              ),
-            ),
-          ),
-        ),
-      );
+              body: Center(
+        child: SizedBox(
+            width: 228,
+            child: ReceiptIdentifierRow(
+              label: 'ژمارەی مامەڵە',
+              value: reference,
+              onLongPress: () => copied = reference,
+            )),
+      ))));
       await tester.pumpAndSettle();
-      expect(tester.takeException(), isNull);
       final value = tester.widget<Text>(find.text(reference));
-      expect(value.maxLines, isNull);
-      expect(value.softWrap, true);
+      expect(value.maxLines, 1);
+      expect(value.softWrap, false);
+      expect(value.textDirection, TextDirection.ltr);
       expect(value.style!.fontSize, ReceiptTokens.uidSize);
-      auditReceiptRows(tester);
-      expect(
-        tester.getSize(find.byType(ReceiptRow)).height,
-        greaterThan(ReceiptTokens.rowMinHeight),
-      );
-      expect(find.byType(SingleChildScrollView), findsNothing);
       expect(value.overflow, isNot(TextOverflow.ellipsis));
-      expect(
-        receiptPaintedRect(tester, find.text(reference)).width,
-        lessThanOrEqualTo(228.01),
-      );
-      await tester.longPress(find.text('ژمارەی مامەڵە'));
+      final scroll =
+          tester.state<ScrollableState>(find.byType(Scrollable)).position;
+      expect(scroll.maxScrollExtent, greaterThan(0));
+      scroll.jumpTo(scroll.maxScrollExtent);
+      await tester.pump();
+      final viewport =
+          receiptPaintedRect(tester, find.byType(SingleChildScrollView));
+      expect(receiptPaintedRect(tester, find.text(reference)).right,
+          closeTo(viewport.right, .01));
+      await tester.tap(find.byType(IconButton));
       expect(copied, reference);
       expect(tester.takeException(), isNull);
     },
@@ -477,11 +511,11 @@ void main() {
               'locale': 'ckb',
               'rows': auditReceiptRows(tester),
             });
-            for (final id in <String>[txId]) {
+            for (final id in <String>[txId, uid]) {
               final text = tester.widget<Text>(find.text(id));
               expect(text.textDirection, TextDirection.ltr);
-              expect(text.maxLines, isNull);
-              expect(text.softWrap, true);
+              expect(text.maxLines, 1);
+              expect(text.softWrap, false);
             }
             final signed = status == 'approved'
                 ? (kind == TxReceiptKind.topUp || kind == TxReceiptKind.refund
@@ -604,7 +638,9 @@ void main() {
     await tester.scrollUntilVisible(
       find.byType(ReceiptPdfButton),
       200,
-      scrollable: find.byType(Scrollable),
+      scrollable: find.byWidgetPredicate((w) =>
+          w is Scrollable &&
+          axisDirectionToAxis(w.axisDirection) == Axis.vertical),
     );
     await tester.pumpAndSettle();
     await tester.tap(find.byType(ReceiptPdfButton));

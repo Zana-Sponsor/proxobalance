@@ -10,7 +10,8 @@ abstract final class ProxoSurface {
   static const double maxWidth = 600;
   static const double padding = 16;
   static const double sectionGap = 24;
-  static const double radius = 18;
+  static const double radius = 16;
+  static const double controlRadius = 12;
   static const double actionHeight = 48;
   static const String fontFamily = AuthTokens.fontFamily;
   static const Color ink = AuthTokens.ink;
@@ -56,7 +57,7 @@ abstract final class ProxoSurface {
         backgroundColor: accent,
         foregroundColor: Colors.white,
         textStyle: body,
-        shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius)),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(controlRadius)),
       );
 }

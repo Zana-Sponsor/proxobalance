@@ -26,6 +26,7 @@ class BestMetricCard extends StatelessWidget {
         child: HomeBestResultCard(
             ad: ad,
             rank: rank,
+            showDetails: !compact,
             initiallyExpanded: expanded,
             onOpenDetails: onOpenDetails,
             onExpandedChanged: (value) {

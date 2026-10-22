@@ -71,6 +71,9 @@ for(const [kind,sets] of Object.entries({contact:[['whatsapp','viber','instagram
    const same=await call('cards',{method:'POST',body});assert.equal(same.status,200);assert.equal(same.json().card.id,id);
    assert.equal(same.json().card.page_kind,kind);assert.equal(same.json().card.public_path,`/${kind}/${id}`);assert.equal(fixture.rows.length,1);
    const conflict=await call('cards',{method:'POST',body:{...body,name:'different'}});assert.equal(conflict.status,409);
+   assert.equal(conflict.json().card.id,id);assert.equal(conflict.json().card.user_id,OWNER);
+   assert.equal(conflict.json().card.name,body.name);assert.equal(fixture.rows.length,1);
+   assert.doesNotMatch(conflict.body,/creation_request_hash|html_content|avatar_b64/);
    const read=await call(kind,{query:{id},auth:null});assert.equal(read.status,200);
    const config=configFromHtml(read.body);assert.equal(config.name,body.name);assert.equal(config.preview,false);
    assert.deepEqual(config.buttons.map(p=>p.type),providers);assert.doesNotMatch(read.body,new RegExp(OWNER));
@@ -103,6 +106,19 @@ test('one owner has multiple independent pages of each kind and request keys are
    const key={contact:'telegram',order:'talabat',download:'app_store'}[kind];
    const created=await call('cards',{method:'POST',body:pagePayload(kind,[key])});assert.equal(created.status,201);ids.push(created.json().card.id);
  }assert.equal(new Set(ids).size,6);assert.equal((await call('cards')).json().cards.length,6);
+});
+test('corrected retry returns only that owner\'s already-saved page and never creates a duplicate',async()=>{
+ const body=pagePayload('contact',['telegram']);
+ const first=await call('cards',{method:'POST',body});
+ const other=await call('cards',{method:'POST',body:{...body,name:'Other owner'},auth:'other-token'});
+ assert.equal(first.status,201);assert.equal(other.status,201);
+ assert.notEqual(first.json().card.id,other.json().card.id);
+ const conflict=await call('cards',{method:'POST',body:{...body,name:'Corrected after timeout'},auth:'other-token'});
+ assert.equal(conflict.status,409);assert.equal(conflict.json().error,'idempotency_conflict');
+ assert.equal(conflict.json().card.id,other.json().card.id);
+ assert.equal(conflict.json().card.user_id,OTHER);assert.equal(conflict.json().card.name,'Other owner');
+ assert.doesNotMatch(conflict.body,new RegExp(first.json().card.id+'|'+OWNER+'|creation_request_hash'));
+ assert.equal(fixture.rows.length,2);
 });
 test('auth/provider/type/owner spoofing/disabled-only settings fail before mutation',async()=>{
  const valid=pagePayload('contact',['telegram']);

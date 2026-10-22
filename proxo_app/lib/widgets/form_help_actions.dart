@@ -5,6 +5,8 @@ import '../l10n/proxo_strings.dart';
 import '../services/context_help_service.dart';
 import '../theme/app_theme.dart';
 import 'proxo_text.dart';
+import 'proxo_toast.dart';
+import 'proxo_symbol.dart';
 
 class FormHelpActions extends StatefulWidget {
   const FormHelpActions(
@@ -51,9 +53,7 @@ class _FormHelpActionsState extends State<FormHelpActions> {
 
   String tr(String text) => ProxoStrings.text(text);
   void _message(String text) {
-    if (mounted)
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: ProxoText(tr(text))));
+    if (mounted) showProxoToast(context, tr(text));
   }
 
   Future<void> _tutorial() async {
@@ -109,7 +109,8 @@ class _FormHelpActionsState extends State<FormHelpActions> {
                           IconButton(
                               tooltip: tr('داخستن'),
                               onPressed: () => Navigator.pop(context),
-                              icon: const Icon(Icons.close_rounded, size: 20))
+                              icon: const ProxoSymbol(ProxoSymbolName.close,
+                                  size: 20))
                         ]),
                         const SizedBox(height: 12),
                         if (widget.exampleAsset!.endsWith('.svg'))
@@ -154,7 +155,7 @@ class _FormHelpActionsState extends State<FormHelpActions> {
           TextButton.icon(
               key: ValueKey('help-example-${widget.helpKey}'),
               onPressed: _example,
-              icon: const Icon(Icons.image_outlined, size: 18),
+              icon: const ProxoSymbol(ProxoSymbolName.gallery, size: 18),
               label: ProxoText(tr('بینینی نمونە'),
                   style: const TextStyle(
                       fontSize: 13, fontWeight: FontWeight.w400))),
@@ -165,7 +166,7 @@ class _FormHelpActionsState extends State<FormHelpActions> {
                 ? const SizedBox.square(
                     dimension: 16,
                     child: CircularProgressIndicator(strokeWidth: 2))
-                : const Icon(Icons.play_circle_outline_rounded, size: 18),
+                : const ProxoSymbol(ProxoSymbolName.play, size: 18),
             label: ProxoText(tr('بینینی فێرکاری'),
                 style: const TextStyle(
                     fontSize: 13, fontWeight: FontWeight.w400))),

@@ -15,6 +15,7 @@ import 'package:proxo_app/screens/proxolink_create_page_screen.dart';
 import 'package:proxo_app/services/proxolink_service.dart';
 import 'package:proxo_app/theme/app_theme.dart';
 import 'package:proxo_app/widgets/ad_validation_notifications.dart';
+import 'package:proxo_app/widgets/proxo_notice.dart';
 import 'package:proxo_app/widgets/proxo_refresh.dart';
 import 'package:proxo_app/widgets/proxolink_preview.dart';
 import 'package:proxo_app/widgets/proxolink_page_card.dart';
@@ -110,7 +111,7 @@ void main() {
   size(t,393);await t.pumpWidget(host(ToolsScreen(repository:ToolsRepository([moderated(1,'pending')]),externalLauncher:(_)async=>false)));
   await t.pumpAndSettle();await tap(t,find.text('پێشبینین'));expect(find.byType(AdValidationNotifications),findsOneWidget);
   expect(find.text(const ProxoLinkFailure('browser_launch_failed').message),findsOneWidget);
-  await t.pump(const Duration(seconds:5));await t.pump(const Duration(milliseconds:500));
+  await t.pump(const Duration(milliseconds:2000));
   expect(find.text(const ProxoLinkFailure('browser_launch_failed').message),findsNothing);
  });
  testWidgets('delete confirmation blocks dependency without changing list',(t) async {
@@ -201,7 +202,7 @@ void main() {
    expect(find.text('پڕۆکسۆ Proxo 1'),findsOneWidget);
    expect(find.byType(ProxoLinkPageSkeleton),findsNothing);
    expect(handle.isRefreshing,false);
-   await t.pump(const Duration(seconds:6));await t.pumpAndSettle();
+   await t.pump(const Duration(milliseconds:2000));await t.pumpAndSettle();
    expect(find.text(const ProxoLinkFailure('network_error').message),findsNothing);
   }
   expect(repo.listReads,3);handle.dispose();
@@ -257,19 +258,17 @@ void main() {
   await t.pumpWidget(host(RepaintBoundary(key:key,child:ToolsScreen(repository:repo))));await t.pumpAndSettle();
   expect(t.takeException(),isNull);await png(t,key,'tools-${error?'error':'empty'}-$width');
  });
- testWidgets('exact shared Ad notices used by both flows; stacked entry and five readable seconds per front card',(t) async {
+ testWidgets('page and ad errors share one notification that expires two seconds after appearance',(t) async {
   size(t,393);final c=AdValidationController(),key=GlobalKey();
   await t.pumpWidget(host(Scaffold(body:Padding(padding:const EdgeInsets.all(16),
    child:RepaintBoundary(key:key,child:AdValidationNotifications(controller:c))))));
   c.show({'name':'تکایە ناو بنووسە.','provider':'تکایە بەستەرەکە بپشکنە.','image':'وێنەکە گونجاو نییە.'});
-  await t.pump(const Duration(milliseconds:700));await t.pump(const Duration(milliseconds:250));
-  expect(find.byIcon(Icons.error_outline),findsNWidgets(3));await png(t,key,'shared-create-ad-tools-error');
-  // The two covered messages survive the first expiry, then get their own
-  // full readable lifetime. Do not restore the old all-at-once disappearance.
-  for (final remaining in [2, 1, 0]) {
-    await t.pump(const Duration(seconds:5));await t.pump(const Duration(milliseconds:500));
-    expect(find.byIcon(Icons.error_outline),findsNWidgets(remaining));
-  }
+  await t.pump();
+  expect(find.byType(ProxoNoticeCard),findsOneWidget);await png(t,key,'shared-create-ad-tools-error');
+  await t.pump(const Duration(milliseconds:1999));
+  expect(find.byType(ProxoNoticeCard),findsOneWidget);
+  await t.pump(const Duration(milliseconds:1));await t.pump();
+  expect(find.byType(ProxoNoticeCard),findsNothing);
   c.dispose();
  });
  testWidgets('Home integration pattern and Tools use identical shared motion, with settled offset zero',(t) async {

@@ -42,6 +42,17 @@ class AdReceiptCard extends StatelessWidget {
                 value: r.date,
                 valueDirection: ltr,
                 valueStyle: ReceiptTokens.metadataValue),
+            ReceiptStatusRow(
+              label: l.paymentStatus,
+              value: l.paymentStatusLabel(r.paymentStatus),
+              positive: const [
+                'paid',
+                'approved',
+                'spent',
+                'no_payment_required'
+              ].contains(r.paymentStatus),
+              negative: const ['failed', 'rejected'].contains(r.paymentStatus),
+            ),
           ]),
           const ReceiptDivider(),
 
@@ -87,23 +98,28 @@ class AdReceiptCard extends StatelessWidget {
               important: true,
             ),
           ]),
-          const ReceiptDivider(),
-
           // ── ١٤) زانیاری پارەدان ─────────────────────────────────────────
-          ReceiptSectionHeading(l.sectionPayment, icon: ProxoSymbolName.wallet),
-          ReceiptRows(<Widget?>[
-            ReceiptRow(
-              label: l.paymentMethod,
-              value: r.payment,
-              valueDirection: r.paymentDir,
-            ),
-            if (r.transactionId != null)
-              ReceiptIdRow(
-                label: l.transactionId,
-                value: r.transactionId!,
-                onLongPress: () => onCopy(r.transactionId!),
+          // A free receipt already states "no payment required" above. Do not
+          // invent or repeat a payment method when no transaction took place.
+          if (r.paymentStatus != 'no_payment_required' ||
+              r.transactionId != null) ...[
+            const ReceiptDivider(),
+            ReceiptSectionHeading(l.sectionPayment,
+                icon: ProxoSymbolName.wallet),
+            ReceiptRows(<Widget?>[
+              ReceiptRow(
+                label: l.paymentMethod,
+                value: r.payment,
+                valueDirection: r.paymentDir,
               ),
-          ]),
+              if (r.transactionId != null)
+                ReceiptIdRow(
+                  label: l.transactionId,
+                  value: r.transactionId!,
+                  onLongPress: () => onCopy(r.transactionId!),
+                ),
+            ]),
+          ],
           const ReceiptDivider(),
 
           // ── ١٥) ناوی ڕیکلام + ژ.م پسوولە ────────────────────────────────

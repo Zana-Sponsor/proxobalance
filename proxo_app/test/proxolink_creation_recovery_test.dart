@@ -15,6 +15,7 @@ import 'package:proxo_app/models/proxolink_page_type.dart';
 import 'package:proxo_app/screens/proxolink_create_page_screen.dart';
 import 'package:proxo_app/screens/tools_screen.dart';
 import 'package:proxo_app/services/proxolink_service.dart';
+import 'package:proxo_app/services/proxolink_pending_request.dart';
 import 'package:proxo_app/theme/app_theme.dart';
 
 import 'proxolink_page_management_test.dart' show page;
@@ -29,11 +30,30 @@ class RecoveryRepository extends ToolsRepository
   bool? pageCreationEnabled = true;
   String? nextFailure;
   bool priorRequestFinishesLate = false;
+  bool includeSavedCard = false;
+  bool incompleteTemplates = false;
+  bool incompleteProviders = false;
   int providerReads = 0;
+  @override
+  Future<List<ProxoTemplate>> templates() async {
+    final templates = await super.templates();
+    return incompleteTemplates
+        ? [
+            ...templates.where((template) => template.key != 'pill'),
+            const ProxoTemplate(
+                key: 'unknown',
+                label: 'unknown',
+                previewPath: '/fixture',
+                version: 6,
+                requiresAvatar: false),
+          ]
+        : templates;
+  }
+
   @override
   Future<List<ProxoProvider>> providers() async {
     providerReads++;
-    return super.providers();
+    return incompleteProviders ? [] : super.providers();
   }
 
   final attempts = <Map<String, dynamic>>[];
@@ -52,8 +72,55 @@ class RecoveryRepository extends ToolsRepository
         })
       ];
     }
-    if (error != null) throw ProxoLinkFailure(error);
+    if (error != null)
+      throw ProxoLinkFailure(error,
+          savedCard: includeSavedCard ? rows.single : null);
     return super.save(data, existing: existing);
+  }
+}
+
+class FaultingPendingRequests extends ProxoLinkPendingRequestStore {
+  FaultingPendingRequests({this.failWrite = false, this.failClear = false});
+  final bool failWrite, failClear;
+  String? request;
+  int clearCalls = 0;
+  @override
+  Future<String?> read(String? owner) async => request;
+  @override
+  Future<void> write(String? owner, String value) async {
+    if (failWrite) throw StateError('storage unavailable');
+    request = value;
+  }
+
+  @override
+  Future<void> clear(String? owner) async {
+    clearCalls++;
+    if (failClear) throw StateError('storage unavailable');
+    request = null;
+  }
+}
+
+class DeferredPendingRequests extends ProxoLinkPendingRequestStore {
+  Completer<void>? readGate, writeGate, clearGate;
+  String? request;
+  final writes = <String>[];
+  @override
+  Future<String?> read(String? owner) async {
+    await readGate?.future;
+    return request;
+  }
+
+  @override
+  Future<void> write(String? owner, String value) async {
+    writes.add(value);
+    await writeGate?.future;
+    request = value;
+  }
+
+  @override
+  Future<void> clear(String? owner) async {
+    await clearGate?.future;
+    request = null;
   }
 }
 
@@ -72,8 +139,12 @@ void main() {
     await (FontLoader(kAppFont)
           ..addFont(rootBundle.load('assets/fonts/Rabar_021.ttf')))
         .load();
-    await (FontLoader('RabarAuthRegular')..addFont(rootBundle.load('assets/fonts/Rabar_022.ttf'))).load();
-  await (FontLoader('MaterialIcons')..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf'))).load();
+    await (FontLoader('RabarAuthRegular')
+          ..addFont(rootBundle.load('assets/fonts/Rabar_022.ttf')))
+        .load();
+    await (FontLoader('MaterialIcons')
+          ..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf')))
+        .load();
   });
   setUp(() => SharedPreferences.setMockInitialValues({}));
 
@@ -116,14 +187,18 @@ void main() {
       (tester) async {
     size(tester, 320, height: 900);
     final repo = RecoveryRepository([])..pageCreationEnabled = false;
-    await tester.pumpWidget(
-        host(ProxoLinkCreatePageScreen(repository: repo), scale: 2));
+    final capture = GlobalKey();
+    await tester.pumpWidget(host(
+        RepaintBoundary(
+            key: capture, child: ProxoLinkCreatePageScreen(repository: repo)),
+        scale: 2));
     await tester.pumpAndSettle();
     expect(
         find.byKey(const ValueKey('create-page-load-error')), findsOneWidget);
     expect(find.byKey(const ValueKey('create-page-submit')), findsNothing);
     expect(find.byType(TextFormField), findsNothing);
     expect(tester.takeException(), isNull);
+    await png(tester, capture, 'create-page-unavailable-320-2x');
     repo.pageCreationEnabled = true;
     final retry = tester
         .widget<OutlinedButton>(
@@ -138,7 +213,7 @@ void main() {
   });
 
   testWidgets(
-      'uncertain save retries the exact request and payload without duplicate page',
+      'uncertain save restores editing and unchanged retry retains the same request without duplicate page',
       (tester) async {
     size(tester, 393);
     final repo = RecoveryRepository([])..nextFailure = 'network_error';
@@ -149,8 +224,18 @@ void main() {
     final submit = find.byKey(const ValueKey('create-page-submit'));
     await tap(tester, submit);
     expect(repo.attempts, hasLength(1));
-    expect(tester.widget<TextField>(find.descendant(of: field('ناوی پەڕە'), matching: find.byType(TextField))).readOnly, true);
-    expect(tester.widget<TextField>(find.descendant(of: field('telegram'), matching: find.byType(TextField))).readOnly, true);
+    expect(
+        tester
+            .widget<TextField>(find.descendant(
+                of: field('ناوی پەڕە'), matching: find.byType(TextField)))
+            .readOnly,
+        false);
+    expect(
+        tester
+            .widget<TextField>(find.descendant(
+                of: field('telegram'), matching: find.byType(TextField)))
+            .readOnly,
+        false);
     final prefs = await SharedPreferences.getInstance();
     expect(prefs.getString('proxolink-create-request-fixture'),
         repo.attempts.first['client_request_id']);
@@ -160,6 +245,230 @@ void main() {
     expect(repo.rows, hasLength(1));
     expect(prefs.getString('proxolink-create-request-fixture'), isNull);
     expect(find.byType(ProxoLinkCreatePageScreen), findsNothing);
+  });
+
+  testWidgets(
+      'network failure permits input correction and saves it using the same request key',
+      (tester) async {
+    size(tester, 320);
+    final repo = RecoveryRepository([])..nextFailure = 'network_error';
+    await tester.pumpWidget(host(ToolsScreen(repository: repo)));
+    await tester.pumpAndSettle();
+    await tap(tester, find.byKey(const ValueKey('tools-create-page')));
+    await fillContact(tester);
+    await tap(tester, find.byKey(const ValueKey('create-page-submit')));
+    await tester.ensureVisible(field('ناوی پەڕە'));
+    await tester.enterText(field('ناوی پەڕە'), 'ناوی ڕاستکراوە Proxo');
+    await tap(tester, find.byKey(const ValueKey('create-page-submit')));
+    expect(repo.attempts.last['client_request_id'],
+        repo.attempts.first['client_request_id']);
+    expect(repo.rows.single.name, 'ناوی ڕاستکراوە Proxo');
+    expect(find.byType(ProxoLinkCreatePageScreen), findsNothing);
+    await tester
+        .pumpWidget(host(ToolsScreen(key: UniqueKey(), repository: repo)));
+    await tester.pumpAndSettle();
+    expect(find.text('ناوی ڕاستکراوە Proxo'), findsOneWidget);
+    expect(repo.rows, hasLength(1));
+  });
+
+  testWidgets(
+      'pending list refresh failure still loads a recoverable form with its original request key',
+      (tester) async {
+    size(tester, 393);
+    final pending = newProxoRequestId();
+    SharedPreferences.setMockInitialValues(
+        {'proxolink-create-request-fixture': pending});
+    final repo = RecoveryRepository([])..fail = true;
+    await tester.pumpWidget(host(ProxoLinkCreatePageScreen(repository: repo)));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('create-page-load-error')), findsNothing);
+    expect(find.byType(TextFormField), findsWidgets);
+    await fillContact(tester);
+    repo.nextFailure = 'network_error';
+    await tap(tester, find.byKey(const ValueKey('create-page-submit')));
+    expect(repo.attempts.single['client_request_id'], pending);
+  });
+
+  for (final missing in ['template', 'provider']) {
+    testWidgets('incomplete $missing catalog retries real initialization',
+        (tester) async {
+      size(tester, 393);
+      final repo = RecoveryRepository([])
+        ..incompleteTemplates = missing == 'template'
+        ..incompleteProviders = missing == 'provider';
+      await tester
+          .pumpWidget(host(ProxoLinkCreatePageScreen(repository: repo)));
+      await tester.pumpAndSettle();
+      expect(
+          find.byKey(const ValueKey('create-page-load-error')), findsOneWidget);
+      repo.incompleteTemplates = false;
+      repo.incompleteProviders = false;
+      await tap(
+          tester, find.widgetWithText(OutlinedButton, 'دووبارە هەوڵ بدەرەوە'));
+      expect(repo.providerReads, 2);
+      expect(
+          find.byKey(const ValueKey('create-page-load-error')), findsNothing);
+      expect(find.byKey(const ValueKey('create-page-submit')), findsOneWidget);
+    });
+  }
+
+  testWidgets(
+      'confirmed save returns its page even when local pending-key cleanup fails',
+      (tester) async {
+    size(tester, 393);
+    final repo = RecoveryRepository([]);
+    final pending = FaultingPendingRequests(failClear: true);
+    ProxoCard? result;
+    await tester.pumpWidget(host(Builder(
+        builder: (context) => TextButton(
+            onPressed: () async {
+              result = await Navigator.of(context).push<ProxoCard>(
+                  MaterialPageRoute(
+                      builder: (_) => ProxoLinkCreatePageScreen(
+                          repository: repo, pendingRequests: pending)));
+            },
+            child: const Text('Open page form')))));
+    await tap(tester, find.text('Open page form'));
+    await fillContact(tester);
+    await tap(tester, find.byKey(const ValueKey('create-page-submit')));
+    expect(result?.id, repo.rows.single.id);
+    expect(pending.clearCalls, 1);
+    expect(repo.attempts, hasLength(1));
+    expect(find.byType(ProxoLinkCreatePageScreen), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets(
+      'failed local request-key persistence prevents a write and restores editable fields',
+      (tester) async {
+    size(tester, 393);
+    final repo = RecoveryRepository([]);
+    await tester.pumpWidget(host(ProxoLinkCreatePageScreen(
+        repository: repo,
+        pendingRequests: FaultingPendingRequests(failWrite: true))));
+    await tester.pumpAndSettle();
+    await fillContact(tester);
+    await tap(tester, find.byKey(const ValueKey('create-page-submit')));
+    expect(repo.attempts, isEmpty);
+    expect(
+        tester
+            .widget<TextField>(find.descendant(
+                of: field('ناوی پەڕە'), matching: find.byType(TextField)))
+            .readOnly,
+        false);
+    expect(
+        tester
+            .widget<FilledButton>(
+                find.byKey(const ValueKey('create-page-submit')))
+            .onPressed,
+        isNotNull);
+  });
+
+  testWidgets(
+      'stalled request-key read releases loading and Retry reloads form',
+      (tester) async {
+    size(tester, 393);
+    final gate = Completer<void>();
+    final pending = DeferredPendingRequests()..readGate = gate;
+    final repo = RecoveryRepository([]);
+    await tester.pumpWidget(host(
+        ProxoLinkCreatePageScreen(repository: repo, pendingRequests: pending)));
+    await tester.pump(const Duration(seconds: 10));
+    await tester.pumpAndSettle();
+    expect(
+        find.byKey(const ValueKey('create-page-load-error')), findsOneWidget);
+    expect(repo.attempts, isEmpty);
+    gate.complete();
+    await tester.pump();
+    await tap(
+        tester, find.widgetWithText(OutlinedButton, 'دووبارە هەوڵ بدەرەوە'));
+    expect(find.byKey(const ValueKey('create-page-load-error')), findsNothing);
+    expect(find.byType(TextFormField), findsWidgets);
+  });
+
+  testWidgets('stalled request-key write unlocks editing without a late create',
+      (tester) async {
+    size(tester, 393);
+    final gate = Completer<void>();
+    final pending = DeferredPendingRequests()..writeGate = gate;
+    final repo = RecoveryRepository([]);
+    await tester.pumpWidget(host(
+        ProxoLinkCreatePageScreen(repository: repo, pendingRequests: pending)));
+    await tester.pumpAndSettle();
+    await fillContact(tester);
+    final button = find.byKey(const ValueKey('create-page-submit'));
+    await tester.ensureVisible(button);
+    await tester.tap(button);
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 10));
+    await tester.pumpAndSettle();
+    expect(repo.attempts, isEmpty);
+    expect(tester.widget<FilledButton>(button).onPressed, isNotNull);
+    final name = find.descendant(
+        of: field('ناوی پەڕە'), matching: find.byType(TextField));
+    expect(tester.widget<TextField>(name).readOnly, false);
+    await tester.ensureVisible(field('ناوی پەڕە'));
+    await tester.enterText(field('ناوی پەڕە'), 'Corrected after timeout');
+    gate.complete();
+    await tester.pumpAndSettle();
+    expect(repo.attempts, isEmpty);
+    repo.nextFailure = 'network_error';
+    await tap(tester, button);
+    expect(pending.writes.toSet(), hasLength(1));
+    expect(repo.attempts.single['client_request_id'], pending.writes.first);
+    expect(repo.attempts.single['name'], 'Corrected after timeout');
+  });
+
+  testWidgets('stalled cleanup cannot hide a confirmed saved page',
+      (tester) async {
+    size(tester, 393);
+    final gate = Completer<void>();
+    final pending = DeferredPendingRequests()..clearGate = gate;
+    final repo = RecoveryRepository([]);
+    ProxoCard? result;
+    await tester.pumpWidget(host(Builder(
+        builder: (context) => TextButton(
+            onPressed: () async {
+              result = await Navigator.of(context).push<ProxoCard>(
+                  MaterialPageRoute(
+                      builder: (_) => ProxoLinkCreatePageScreen(
+                          repository: repo, pendingRequests: pending)));
+            },
+            child: const Text('Open page form')))));
+    await tap(tester, find.text('Open page form'));
+    await fillContact(tester);
+    final button = find.byKey(const ValueKey('create-page-submit'));
+    await tester.ensureVisible(button);
+    await tester.tap(button);
+    await tester.pump();
+    expect(repo.attempts, hasLength(1));
+    await tester.pump(const Duration(seconds: 3));
+    await tester.pumpAndSettle();
+    expect(result?.id, repo.rows.single.id);
+    expect(find.byType(ProxoLinkCreatePageScreen), findsNothing);
+    gate.complete();
+    await tester.pump();
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets(
+      'late owner-safe saved conflict returns without another failing list read',
+      (tester) async {
+    size(tester, 393);
+    final repo = RecoveryRepository([])
+      ..nextFailure = 'idempotency_conflict'
+      ..priorRequestFinishesLate = true
+      ..includeSavedCard = true;
+    await tester.pumpWidget(host(ToolsScreen(repository: repo)));
+    await tester.pumpAndSettle();
+    await tap(tester, find.byKey(const ValueKey('tools-create-page')));
+    await fillContact(tester);
+    repo.fail = true;
+    await tap(tester, find.byKey(const ValueKey('create-page-submit')));
+    expect(repo.listReads, 1);
+    expect(repo.rows, hasLength(1));
+    expect(find.byType(ProxoLinkCreatePageScreen), findsNothing);
+    expect(find.text('Previously saved'), findsOneWidget);
   });
 
   testWidgets(
@@ -277,16 +586,20 @@ void main() {
     var providersStatus = 200;
     var providerBody = '';
     var saveStatus = 201;
+    var savedConflict = false;
     var changeOwnerBeforeResponse = false;
     var templateVersion = 5;
+    Completer<http.Response>? uploadGate;
     setUp(() async {
       requests.clear();
       providersStatus = 200;
       providerBody =
           jsonEncode({'ok': true, 'writes_enabled': true, 'providers': []});
       saveStatus = 201;
+      savedConflict = false;
       changeOwnerBeforeResponse = false;
       templateVersion = 5;
+      uploadGate = null;
       final transport = MockClient((request) async {
         requests.add(request);
         if (request.url.path == '/api/page-providers')
@@ -314,6 +627,7 @@ void main() {
               200);
         }
         if (request.url.path.startsWith('/storage/v1/object/')) {
+          if (uploadGate != null) return uploadGate!.future;
           return http.Response(
               jsonEncode({'Key': request.url.path.split('/object/').last}),
               200);
@@ -323,7 +637,13 @@ void main() {
           return http.Response(
               jsonEncode(saveStatus == 201
                   ? {'ok': true, 'card': page(1).toJson()}
-                  : {'ok': false, 'error': 'isolated_staging_required'}),
+                  : savedConflict
+                      ? {
+                          'ok': false,
+                          'error': 'idempotency_conflict',
+                          'card': page(1).toJson()
+                        }
+                      : {'ok': false, 'error': 'isolated_staging_required'}),
               saveStatus,
               headers: {'content-type': 'application/json; charset=utf-8'});
         }
@@ -374,6 +694,75 @@ void main() {
           jsonEncode({'ok': true, 'writes_enabled': true, 'providers': []});
       await service.providers();
       expect(service.pageCreationEnabled, true);
+    });
+
+    test(
+        'malformed and incomplete provider catalogs do not poison a later retry',
+        () async {
+      providerBody = jsonEncode({
+        'ok': true,
+        'writes_enabled': true,
+        'providers': [
+          {'provider_key': 'telegram'}
+        ]
+      });
+      await expectLater(
+          service.providers(),
+          throwsA(isA<ProxoLinkFailure>()
+              .having((e) => e.code, 'code', 'providers_unavailable')));
+      providerBody =
+          jsonEncode({'ok': true, 'writes_enabled': true, 'providers': []});
+      expect(await service.providers(), isEmpty);
+      providerBody = jsonEncode({
+        'ok': true,
+        'writes_enabled': true,
+        'providers': [
+          for (final type in ['contact', 'order', 'download'])
+            {
+              'provider_key': type,
+              'page_type': type,
+              'label': type,
+              'icon': type,
+              'input_kind': 'url'
+            }
+        ]
+      });
+      expect(await service.providers(), hasLength(3));
+      expect(requests.where((r) => r.url.path == '/api/page-providers'),
+          hasLength(3));
+    });
+
+    test(
+        'late committed conflict retains the complete saved owner card without a second request',
+        () async {
+      saveStatus = 409;
+      savedConflict = true;
+      await expectLater(
+          service.save({'client_request_id': page(1).clientRequestId}),
+          throwsA(isA<ProxoLinkFailure>()
+              .having((e) => e.code, 'code', 'idempotency_conflict')
+              .having((e) => e.savedCard?.id, 'saved ID', page(1).id)
+              .having((e) => e.savedCard?.userId, 'saved owner', userA)));
+      expect(requests, hasLength(1));
+    });
+
+    testWidgets('stalled avatar upload times out without creating a page',
+        (tester) async {
+      uploadGate = Completer<http.Response>();
+      final upload = service.uploadAvatar(newProxoRequestId(),
+          Uint8List.fromList([137, 80, 78, 71, ...List.filled(16, 0)]));
+      final expected = expectLater(upload, throwsA(isA<TimeoutException>()));
+      await tester.pump();
+      expect(requests.where((r) => r.url.path.startsWith('/storage/')),
+          hasLength(1));
+      await tester.pump(const Duration(seconds: 30));
+      await expected;
+      uploadGate!
+          .complete(http.Response(jsonEncode({'Key': 'late-upload'}), 200));
+      await tester.pump();
+      expect(
+          requests.where((r) => r.url.path == '/api/contact-cards'), isEmpty);
+      expect(tester.takeException(), isNull);
     });
 
     test(

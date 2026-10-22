@@ -11,6 +11,8 @@ import 'package:printing/printing.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:proxo_app/widgets/proxo_text.dart';
 import '../proxo_symbol.dart';
+import '../proxo_toast.dart';
+import '../../theme/proxo_surface.dart';
 
 // ═════════════════════════════════════════════════════════════════════════════
 // Receipt Kit — دیزاین سیستەمی هاوبەشی پسوولەکان
@@ -69,7 +71,7 @@ abstract final class ReceiptTokens {
   static const double contentMaxWidth = 600;
   static const double pageTop = 20;
   static const double pageBottom = 28;
-  static const double cardRadius = 18;
+  static const double cardRadius = ProxoSurface.radius;
   static const double cardVerticalPadding = 16;
 
   /// Measured reference canvas. One proportional transform preserves every
@@ -104,7 +106,7 @@ abstract final class ReceiptTokens {
   // ── دوگمەی PDF ───────────────────────────────────────────────────────────
   static const double cardToButton = 24;
   static const double buttonHeight = 48;
-  static const double buttonRadius = 18;
+  static const double buttonRadius = 12;
 
   // ── تایپۆگرافی — قەبارەی دیاریکراو، هەمووی w400 ──────────────────────────
   static const FontWeight weight = FontWeight.w400;
@@ -127,7 +129,7 @@ abstract final class ReceiptTokens {
   static const double sectionTitleSize = 16;
   static const double labelSize = 13;
   static const double valueSize = 14;
-  static const double totalSize = 16;
+  static const double totalSize = 20;
   static const double uidSize = 13;
   static const double pdfButtonSize = 14;
 
@@ -221,30 +223,29 @@ class ReceiptAppBar extends StatelessWidget {
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsetsDirectional.only(
-              start: ReceiptTokens.barSidePad,
-            ),
-            child: Align(
-              alignment: AlignmentDirectional.centerStart,
-              child: SizedBox(
-                width: ReceiptTokens.barTap,
-                height: ReceiptTokens.barTap,
-                child: IconButton(
-                  onPressed: onBack,
-                  tooltip: backTooltip ?? ProxoStrings.text('گەڕانەوە'),
-                  icon: ReceiptIcon(
-                    Directionality.of(context) == TextDirection.ltr
-                        ? Icons.arrow_back_ios_rounded
-                        : Icons.arrow_forward_ios_rounded,
-                    color: onBack == null
-                        ? ReceiptTokens.divider
-                        : ReceiptTokens.ink,
+          if (onBack != null)
+            Padding(
+              padding: const EdgeInsetsDirectional.only(
+                start: ReceiptTokens.barSidePad,
+              ),
+              child: Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: SizedBox(
+                  width: ReceiptTokens.barTap,
+                  height: ReceiptTokens.barTap,
+                  child: IconButton(
+                    onPressed: onBack,
+                    tooltip: backTooltip ?? ProxoStrings.text('گەڕانەوە'),
+                    icon: ReceiptIcon(
+                      Directionality.of(context) == TextDirection.ltr
+                          ? Icons.arrow_back_ios_rounded
+                          : Icons.arrow_forward_ios_rounded,
+                      color: ReceiptTokens.ink,
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
           if (action != null)
             Padding(
               padding: const EdgeInsetsDirectional.only(
@@ -624,8 +625,8 @@ class ReceiptMoneyRow extends StatelessWidget {
       );
 }
 
-/// Identifiers use the exact same opposite-edge row as every other field.
-/// Long LTR values wrap at native text size; copying keeps the original ID.
+/// Full references get their own width. The screen scrolls long identifiers
+/// horizontally at the user's text size; copy always receives the raw value.
 class ReceiptIdRow extends StatelessWidget {
   final String label;
   final String value;
@@ -637,12 +638,78 @@ class ReceiptIdRow extends StatelessWidget {
     this.onLongPress,
   });
   @override
+  Widget build(BuildContext context) => Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            textDirection: TextDirection.rtl,
+            children: [
+              Expanded(
+                  child: ProxoText(label,
+                      textAlign: TextAlign.right,
+                      style: ReceiptTokens.rowLabel)),
+              if (onLongPress != null && value.isNotEmpty && value != '—')
+                IconButton(
+                  tooltip: ProxoStrings.text('کۆپیکردن'),
+                  onPressed: onLongPress,
+                  constraints:
+                      const BoxConstraints.tightFor(width: 48, height: 48),
+                  padding: const EdgeInsets.all(12),
+                  icon: const ProxoSymbol(ProxoSymbolName.copy,
+                      size: 20, color: ReceiptTokens.accent),
+                ),
+            ],
+          ),
+          _ReceiptIdViewport(value: value),
+        ],
+      );
+}
+
+/// Marker for export: only this viewport is re-painted with the entire value.
+/// No screen state or scroll position is changed while producing the PDF.
+class _ReceiptIdViewport extends StatelessWidget {
+  const _ReceiptIdViewport({required this.value});
+  final String value;
+  @override
+  Widget build(BuildContext context) => Directionality(
+        textDirection: TextDirection.ltr,
+        child: ColoredBox(
+          color: ReceiptTokens.card,
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            primary: false,
+            child: ProxoText(value,
+                textDirection: TextDirection.ltr,
+                textAlign: TextAlign.left,
+                softWrap: false,
+                maxLines: 1,
+                style: ReceiptTokens.uidValue),
+          ),
+        ),
+      );
+}
+
+/// The same understated status row in advertisement and payment receipts.
+class ReceiptStatusRow extends StatelessWidget {
+  const ReceiptStatusRow(
+      {super.key,
+      required this.label,
+      required this.value,
+      this.positive = false,
+      this.negative = false});
+  final String label, value;
+  final bool positive, negative;
+  @override
   Widget build(BuildContext context) => ReceiptRow(
         label: label,
         value: value,
-        valueDirection: TextDirection.ltr,
-        valueStyle: ReceiptTokens.uidValue,
-        onLongPress: onLongPress,
+        valueStyle: ReceiptTokens.rowValue.copyWith(
+            color: negative
+                ? ReceiptTokens.negative
+                : positive
+                    ? ReceiptTokens.positive
+                    : ReceiptTokens.label),
       );
 }
 
@@ -886,20 +953,9 @@ class ReceiptSpinner extends StatelessWidget {
 }
 
 /// Receipt notices use the same restrained type and the caller's locale.
-void showReceiptMessage(BuildContext context, String message) {
-  final ScaffoldMessengerState messenger = ScaffoldMessenger.of(context);
-  messenger.hideCurrentSnackBar();
-  messenger.showSnackBar(
-    SnackBar(
-      backgroundColor: ReceiptTokens.card,
-      behavior: SnackBarBehavior.floating,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-      content: Directionality(
-        textDirection: TextDirection.rtl,
-        child: ProxoText(message, style: ReceiptTokens.rowValue),
-      ),
-    ),
-  );
+void showReceiptMessage(BuildContext context, String message,
+    {bool isError = true}) {
+  showProxoToast(context, message, isError: isError);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -951,10 +1007,20 @@ Future<bool> exportReceiptPdf({
     // half-inch print margins and never enlarge phone typography. Split only
     // between rendered rows; section headings stay with their first row.
     final rows = <Rect>[];
+    final identifiers = <({Rect bounds, String value})>[];
     Rect? cardBounds;
     final headings = <Rect>[];
     void collect(Element element) {
       final widget = element.widget;
+      if (widget is _ReceiptIdViewport) {
+        final box = element.findRenderObject();
+        if (box is RenderBox && box.hasSize) {
+          identifiers.add((
+            bounds: box.localToGlobal(Offset.zero, ancestor: ro) & box.size,
+            value: widget.value
+          ));
+        }
+      }
       if (widget is ReceiptCard) {
         final card = element.findRenderObject();
         if (card is RenderBox && card.hasSize) {
@@ -963,6 +1029,7 @@ Future<bool> exportReceiptPdf({
         }
       }
       if (widget is ReceiptRow ||
+          widget is ReceiptIdRow ||
           widget is ReceiptHeader ||
           widget is ReceiptSectionHeading) {
         final box = element.findRenderObject();
@@ -1010,7 +1077,13 @@ Future<bool> exportReceiptPdf({
       scale = fullPageScale;
     }
     final source = await ro.toImage(pixelRatio: 4.0);
-    final doc = pw.Document(title: title, author: 'Proxo', creator: 'Proxo');
+    final doc = pw.Document(
+      title: title,
+      author: 'Proxo',
+      creator: 'Proxo',
+      // Keep full references machine-readable alongside the shaped artwork.
+      keywords: identifiers.map((identifier) => identifier.value).join(' '),
+    );
     try {
       double start = 0;
       while (start < ro.size.height - 0.1) {
@@ -1034,6 +1107,34 @@ Future<bool> exportReceiptPdf({
           Rect.fromLTWH(0, 0, captureWidth * 4, height * 4),
           Paint(),
         );
+        // A viewport screenshot would lose an off-screen UUID suffix.
+        // Paint full identifiers into this page slice at a fitted single-line
+        // size, retaining the screen's scroll state and text scaling. Compose
+        // per page so export never allocates a second full-height 4x bitmap.
+        canvas.save();
+        canvas.scale(4);
+        canvas.translate(-captureLeft, -start);
+        for (final identifier in identifiers) {
+          final bounds = identifier.bounds;
+          if (bounds.bottom <= start || bounds.top >= end) continue;
+          canvas.drawRect(bounds, Paint()..color = ReceiptTokens.card);
+          final text = TextPainter(
+            text:
+                TextSpan(text: identifier.value, style: ReceiptTokens.uidValue),
+            textDirection: TextDirection.ltr,
+            maxLines: 1,
+          )..layout();
+          final fit =
+              text.width > bounds.width ? bounds.width / text.width : 1.0;
+          canvas.save();
+          canvas.translate(bounds.left,
+              bounds.top + (bounds.height - text.height * fit) / 2);
+          canvas.scale(fit);
+          text.paint(canvas, Offset.zero);
+          canvas.restore();
+          text.dispose();
+        }
+        canvas.restore();
         final picture = recorder.endRecording();
         final slice = await picture.toImage(
           (captureWidth * 4).ceil(),

@@ -14,6 +14,7 @@ import 'package:proxo_app/theme/app_theme.dart';
 import 'package:proxo_app/widgets/ad_form_components.dart';
 import 'package:proxo_app/widgets/ad_validation_notifications.dart';
 import 'package:proxo_app/widgets/proxo_text.dart';
+import 'package:proxo_app/widgets/proxo_notice.dart';
 import 'package:proxo_app/widgets/receipt/receipt_kit.dart';
 
 import 'ad_submission_test.dart' show validDraft;
@@ -32,6 +33,7 @@ class TestAdRepository extends AdCreationRepository {
   AdPendingSubmission? saved;
   AdSubmissionFailure? failure;
   Completer<String>? completion;
+  Completer<AdQuote>? quoteCompletion;
   List<Map<String, dynamic>> assets = [
     {'id': 'contact-1', 'name': 'پەڕەی ABC-123'},
   ];
@@ -48,6 +50,7 @@ class TestAdRepository extends AdCreationRepository {
   @override
   Future<AdQuote> quote(AdDraft d) async {
     lastQuoteDraft = d;
+    if (quoteCompletion != null) return quoteCompletion!.future;
     if (d.promoCode == 'BAD' || (d.promoCode == 'VALID' && couponExpired)) {
       throw const AdSubmissionFailure('INVALID_PROMO');
     }
@@ -83,15 +86,15 @@ class TestAdRepository extends AdCreationRepository {
 
 const capture = ValueKey('ad-preview-capture');
 Widget host(Widget child, {double scale = 1}) => MaterialApp(
-  theme: buildAppTheme(),
-  home: Builder(
-    builder: (context) => MediaQuery(
-      data: MediaQuery.of(context)
-          .copyWith(textScaler: TextScaler.linear(scale)),
-      child: RepaintBoundary(key: capture, child: child),
-    ),
-  ),
-);
+      theme: buildAppTheme(),
+      home: Builder(
+        builder: (context) => MediaQuery(
+          data: MediaQuery.of(context)
+              .copyWith(textScaler: TextScaler.linear(scale)),
+          child: RepaintBoundary(key: capture, child: child),
+        ),
+      ),
+    );
 Future<void> tapVisible(WidgetTester tester, Finder finder) async {
   await tester.pumpAndSettle();
   await Scrollable.ensureVisible(tester.element(finder), alignment: 0.5);
@@ -119,12 +122,15 @@ void main() {
   setUpAll(() async {
     await (FontLoader(
       'Rabar',
-    )..addFont(rootBundle.load('assets/fonts/Rabar_021.ttf'))).load();
+    )..addFont(rootBundle.load('assets/fonts/Rabar_021.ttf')))
+        .load();
     await (FontLoader(ReceiptTokens.fontFamily)
-      ..addFont(rootBundle.load(ReceiptTokens.fontAsset))).load();
+          ..addFont(rootBundle.load(ReceiptTokens.fontAsset)))
+        .load();
     await (FontLoader(
       'MaterialIcons',
-    )..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf'))).load();
+    )..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf')))
+        .load();
   });
   for (final width in [280.0, 393.0, 430.0, 768.0]) {
     for (final scale in [1.0, 1.5]) {
@@ -380,6 +386,41 @@ void main() {
     expect(find.byKey(const ValueKey('coupon-discount')), findsNothing);
     expect(repo.lastQuoteDraft!.promoCode, isNull);
   });
+  testWidgets(
+      'submit button keeps its geometry while checking and after failure',
+      (tester) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(393, 852);
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final repo = TestAdRepository();
+    await tester.pumpWidget(host(
+        AdCreateScreen(repository: repo, proxoCard: validDraft().toJson())));
+    await tester.pumpAndSettle();
+    final button = find.byKey(const ValueKey('review-ad'));
+    await tester.ensureVisible(button);
+    await tester.pumpAndSettle();
+    final before = tester.getSize(button);
+    expect(before.height, 48);
+    repo.quoteCompletion = Completer<AdQuote>();
+    await tester.tap(button);
+    await tester.pump();
+    expect(tester.getSize(button), before);
+    expect(tester.widget<FilledButton>(button).onPressed, isNull);
+    // A second tap cannot start another confirmation route.
+    await tester.tap(button);
+    await tester.pump();
+    repo.quoteCompletion!
+        .completeError(const AdSubmissionFailure('SERVER_REJECTED'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 200));
+    expect(tester.getSize(button), before);
+    expect(tester.widget<FilledButton>(button).onPressed, isNotNull);
+    expect(find.byType(AdConfirmationScreen), findsNothing);
+    expect(tester.takeException(), isNull);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
   testWidgets('insufficient balance prevents confirmation', (tester) async {
     final repo = TestAdRepository()..balance = 0;
     await tester.pumpWidget(
@@ -438,8 +479,8 @@ void main() {
       await tapVisible(tester, find.byKey(const ValueKey('ad-date')));
       await tester.pumpAndSettle();
       final now = adScheduleNow(),
-          tomorrow = DateUtils.dateOnly(adScheduleNow())
-              .add(const Duration(days: 1));
+          tomorrow =
+              DateUtils.dateOnly(adScheduleNow()).add(const Duration(days: 1));
       // Move the actual calendar to the current month (prefilled ads may be in a later year).
       final calendar = tester.widget<CalendarDatePicker>(
         find.byType(CalendarDatePicker),
@@ -574,7 +615,7 @@ void main() {
     },
   );
   testWidgets(
-    'countdown submits once and disables cancellation while processing',
+    'countdown submits once and keeps navigation available while processing',
     (tester) async {
       final repo = TestAdRepository()..completion = Completer<String>();
       final r = AdPendingSubmission.create(
@@ -603,7 +644,7 @@ void main() {
               find.byKey(const ValueKey('cancel-submission')),
             )
             .onPressed,
-        isNull,
+        isNotNull,
       );
       await tester.pump(const Duration(seconds: 2));
       expect(repo.submissions, 1);
@@ -652,7 +693,7 @@ void main() {
     },
   );
   testWidgets(
-    'leaving an uncertain result restores the frozen request and resumes the same ID',
+    'uncertain result keeps form editable and retries original ID without losing edits',
     (tester) async {
       final repo = TestAdRepository()
         ..failure = const AdSubmissionFailure('NETWORK', uncertain: true);
@@ -671,11 +712,12 @@ void main() {
       expect(find.byType(AdConfirmationScreen), findsNothing);
       expect(repo.saved!.id, original.id);
       expect(repo.saved!.draft.toJson(), original.draft.toJson());
-      expect(
-        find.byWidgetPredicate((w) => w is IgnorePointer && w.ignoring),
-        findsWidgets,
-      );
-      await tapVisible(tester, find.text('پشکنینی هەمان داواکاری'));
+      final title = find.byKey(const ValueKey('ad-title'));
+      await tester.ensureVisible(title);
+      await tester.enterText(title, 'ناوی نوێ ABC-123');
+      await tester.pump();
+      await tapVisible(tester, find.byKey(const ValueKey('payment-fastpay')));
+      await tapVisible(tester, find.byKey(const ValueKey('resume-pending-ad')));
       await tester.pump();
       expect(repo.submissions, 2);
       expect(repo.saved!.id, original.id);
@@ -687,6 +729,13 @@ void main() {
       );
       await tester.tap(find.byKey(const ValueKey('cancel-submission')));
       await tester.pumpAndSettle();
+      expect(
+          tester.widget<TextField>(title).controller!.text, 'ناوی نوێ ABC-123');
+      await tester
+          .ensureVisible(find.byKey(const ValueKey('payment-app_balance')));
+      await tester.tap(find.byKey(const ValueKey('payment-app_balance')));
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
     },
   );
   testWidgets(
@@ -713,6 +762,12 @@ void main() {
         find.textContaining('پارەدانی FastPay لە باڵانسی'),
         findsOneWidget,
       );
+      expect(find.byType(ProxoNoticeCard), findsOneWidget);
+      await tester.pump(const Duration(milliseconds: 1999));
+      expect(find.byType(ProxoNoticeCard), findsOneWidget);
+      await tester.pump(const Duration(milliseconds: 1));
+      expect(find.byType(ProxoNoticeCard), findsNothing);
+      expect(find.textContaining('پارەدانی FastPay لە باڵانسی'), findsOneWidget);
       await tester.tap(find.byKey(const ValueKey('cancel-submission')));
       await tester.pumpAndSettle();
       expect(find.byType(AdConfirmationScreen), findsNothing);
@@ -720,6 +775,68 @@ void main() {
       expect(repo.saved, isNull);
     },
   );
+  testWidgets(
+      'leaving a running request releases form and late completion is safe',
+      (tester) async {
+    final repo = TestAdRepository()..completion = Completer<String>();
+    await tester.pumpWidget(host(
+        AdCreateScreen(repository: repo, proxoCard: validDraft().toJson())));
+    await tester.pumpAndSettle();
+    await tapVisible(tester, find.byKey(const ValueKey('review-ad')));
+    await tester.pump(const Duration(seconds: 11));
+    await tester.pump();
+    expect(repo.submissions, 1);
+    await tester.tap(find.byKey(const ValueKey('cancel-submission')));
+    await tester.pump(const Duration(milliseconds: 400));
+    final field = find.byKey(const ValueKey('ad-title'));
+    await tester.ensureVisible(field);
+    await tester.enterText(field, 'Still editable');
+    await tester.pump();
+    expect(tester.widget<TextField>(field).controller!.text, 'Still editable');
+    repo.completion!
+        .completeError(const AdSubmissionFailure('NETWORK', uncertain: true));
+    await tester.pumpAndSettle();
+    expect(find.byType(AdCreateScreen), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('confirmed success clears a form retained by its shell',
+      (tester) async {
+    var created = 0;
+    final repo = TestAdRepository();
+    await tester.pumpWidget(host(AdCreateScreen(
+        repository: repo,
+        proxoCard: validDraft().toJson(),
+        onAdCreated: () => created++)));
+    await tester.pumpAndSettle();
+    await tapVisible(tester, find.byKey(const ValueKey('review-ad')));
+    await tester.pump(const Duration(seconds: 11));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.pumpAndSettle();
+    expect(created, 1);
+    expect(repo.saved, isNull);
+    expect(
+        tester
+            .widget<TextField>(find.byKey(const ValueKey('ad-title')))
+            .controller!
+            .text,
+        isEmpty);
+    expect(
+        tester
+            .widget<TextField>(find.byKey(const ValueKey('ad-code')))
+            .controller!
+            .text,
+        isEmpty);
+    expect(
+        tester
+            .widget<TextField>(find.byKey(const ValueKey('ad-coupon')))
+            .controller!
+            .text,
+        isEmpty);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('countdown pauses while the app is backgrounded', (tester) async {
     final repo = TestAdRepository()..completion = Completer<String>();
     final request = AdPendingSubmission.create(
@@ -782,44 +899,29 @@ void main() {
     });
   }
   testWidgets(
-    'three validation pages each hold five seconds and dismiss in order',
-    (tester) async {
-      final controller = AdValidationController();
-      addTearDown(controller.dispose);
-      await tester.pumpWidget(
-        host(Scaffold(body: AdValidationNotifications(controller: controller))),
-      );
-      controller.show({
-        'a': 'هەڵەی یەکەم',
-        'b': 'هەڵەی دووەم',
-        'c': 'هەڵەی سێیەم',
-        'd': 'هەڵەی چوارەم',
-      });
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 300));
-      expect(find.text('هەڵەی یەکەم'), findsOneWidget);
-      expect(find.text('هەڵەی چوارەم'), findsNothing);
-      controller.show({'a': 'هەڵەی یەکەم'});
-      await tester.pump();
-      expect(find.text('هەڵەی یەکەم'), findsOneWidget);
-      await tester.pump(const Duration(milliseconds: 4600));
-      expect(find.text('هەڵەی یەکەم'), findsOneWidget);
-      await tester.pump(const Duration(milliseconds: 350));
-      expect(find.text('هەڵەی یەکەم'), findsNothing);
-      expect(find.text('هەڵەی چوارەم'), findsOneWidget);
-      // Only the front card may expire. Each covered error must get five
-      // readable seconds after promotion, including the fourth queued card.
-      for (final next in ['هەڵەی دووەم', 'هەڵەی سێیەم', 'هەڵەی چوارەم']) {
-        await tester.pump(const Duration(milliseconds: 4800));
-        expect(find.text(next), findsOneWidget);
-        await tester.pump(const Duration(milliseconds: 450));
-        expect(find.text(next), findsNothing);
-      }
-      await tester.pumpAndSettle();
-      expect(find.byType(ProxoText), findsNothing);
-      expect(tester.takeException(), isNull);
-    },
-  );
+      'validation has one deduplicated notice lasting exactly two seconds',
+      (tester) async {
+    final controller = AdValidationController();
+    addTearDown(controller.dispose);
+    await tester.pumpWidget(host(
+        Scaffold(body: AdValidationNotifications(controller: controller))));
+    controller
+        .show({'a': 'هەڵەی یەکەم', 'b': 'هەڵەی دووەم', 'c': 'هەڵەی سێیەم'});
+    await tester.pump();
+    expect(find.text('هەڵەی یەکەم'), findsOneWidget);
+    expect(find.text('هەڵەی دووەم'), findsNothing);
+    await tester.pump(const Duration(milliseconds: 1000));
+    controller.show({'a': 'هەڵەی یەکەم'});
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 999));
+    expect(find.text('هەڵەی یەکەم'), findsOneWidget);
+    await tester.pump(const Duration(milliseconds: 1));
+    expect(find.text('هەڵەی یەکەم'), findsNothing);
+    expect(find.byType(ProxoText), findsNothing);
+    await tester.pump(const Duration(seconds: 10));
+    expect(find.byType(ProxoText), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
   testWidgets('render Create Ad preview', (tester) async {
     tester.view.devicePixelRatio = 1;
     tester.view.physicalSize = const Size(393, 852);
@@ -895,9 +997,8 @@ void main() {
     );
     await tester.pumpAndSettle();
     final scroll = find.byKey(const ValueKey('ad-form-scroll'));
-    final content = find
-        .descendant(of: scroll, matching: find.byType(Center))
-        .first;
+    final content =
+        find.descendant(of: scroll, matching: find.byType(Center)).first;
     final height =
         tester.getSize(content).height + tester.getTopLeft(scroll).dy + 48;
     tester.view.physicalSize = Size(393, height.ceilToDouble());

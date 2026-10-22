@@ -24,12 +24,19 @@ class AdDetailStrings {
   static const AdDetailStrings _kmr = AdDetailStrings._(false, true);
 
   /// کوردی بۆ هەموو زمانێک جگە لە عەرەبی.
-  static AdDetailStrings of(Locale locale) =>
-      locale.languageCode == 'ar' ? _ar : locale.languageCode == 'kmr' ? _kmr : _ckb;
+  static AdDetailStrings of(Locale locale) => locale.languageCode == 'ar'
+      ? _ar
+      : locale.languageCode == 'kmr'
+          ? _kmr
+          : _ckb;
 
   static AdDetailStrings get current => of(ProxoLocale.current.value);
 
-  String _t(String ku, String arabic) => ar ? arabic : badini ? ProxoStrings.text(ku, language: 'kmr') : ku;
+  String _t(String ku, String arabic) => ar
+      ? arabic
+      : badini
+          ? ProxoStrings.text(ku, language: 'kmr')
+          : ku;
 
   // ── AppBar / سەردێر ─────────────────────────────────────────────────────
   String get appBarTitle => _t('وردەکاری ڕیکلام', 'تفاصيل الإعلان');
@@ -39,6 +46,17 @@ class AdDetailStrings {
   // ── سەرەوە ──────────────────────────────────────────────────────────────
   String get adId => _t('ئایدی ڕیکلام', 'معرّف الإعلان');
   String get date => _t('ڕێکەوت', 'التاريخ');
+  String get paymentStatus => _t('دۆخی پارەدان', 'حالة الدفع');
+  String paymentStatusLabel(String status) => switch (status) {
+        'paid' || 'approved' || 'spent' => _t('پارەدراوە', 'مدفوع'),
+        'pending' || 'awaiting_payment' => _t('چاوەڕوانی', 'قيد الانتظار'),
+        'failed' || 'rejected' => _t('سەرکەوتوو نەبوو', 'غير ناجح'),
+        'cancelled' || 'canceled' => _t('هەڵوەشاوەتەوە', 'ملغي'),
+        'unpaid' => _t('پارە نەدراوە', 'غير مدفوع'),
+        'no_payment_required' => noPaymentRequired,
+        '' => '—',
+        _ => status,
+      };
 
   // ── ئامانجی ڕیکلام ──────────────────────────────────────────────────────
   String get sectionTarget => _t('ئامانجی ڕیکلام', 'استهداف الإعلان');
@@ -132,7 +150,8 @@ class AdDetailStrings {
     final String normalized = slug.trim().toLowerCase();
     if (normalized.isEmpty) return '—';
     if (!isSupportedAdCategory(normalized)) return slug;
-    if (!ar) return adCategoryLabel(normalized, language: badini ? 'kmr' : 'ckb');
+    if (!ar)
+      return adCategoryLabel(normalized, language: badini ? 'kmr' : 'ckb');
     return switch (normalized) {
       'cosmetics_beauty' => 'التجميل والعناية',
       'fashion_apparel' => 'الأزياء والملابس',

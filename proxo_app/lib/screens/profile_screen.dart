@@ -1,10 +1,11 @@
 import '../services/account_cache.dart';
 import '../config/backend_config.dart';
 import '../services/auth_activity_service.dart';
-import '../widgets/proxo_error_stack.dart';
+import '../widgets/proxo_toast.dart';
 import 'package:proxo_app/l10n/proxo_strings.dart';
 import '../widgets/auth/auth_header.dart';
 import '../widgets/proxo_symbol.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:proxo_app/theme/app_locale.dart';
 import 'dart:async';
 import 'dart:convert';
@@ -532,7 +533,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _showMessage(String message) {
-    ProxoErrorStack.show(context, ProxoStrings.text(message));
+    showProxoToast(context, message);
   }
 
   @override
@@ -571,7 +572,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         padding: EdgeInsets.fromLTRB(
                           ProxoSurface.gutter,
-                          ProxoSurface.sectionGap,
+                          16,
                           ProxoSurface.gutter,
                           media.padding.bottom + 24,
                         ),
@@ -674,19 +675,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   ),
                                   const SizedBox(
                                       height: ProxoSurface.sectionGap),
-                                  const KeyedSubtree(
-                                      key: ValueKey('profile-language'),
-                                      child: AuthLanguageSelector()),
-                                  const SizedBox(
-                                      height: ProxoSurface.sectionGap),
-                                  _SettingsGroup(entries: <_MenuEntry>[
-                                    _MenuEntry(
-                                        id: 'whatsapp',
-                                        icon: SolarIconsOutline.chatRoundDots,
-                                        title: 'ئاگاداریی واتسئاپ',
-                                        onTap: () => _push(
-                                            const WhatsappMarketingScreen())),
-                                  ]),
+                                  const _SectionTitle('ڕێکخستنەکان'),
+                                  const SizedBox(height: 8),
+                                  _SettingsGroup(
+                                    leading: const _ProfileLanguageTile(),
+                                    entries: <_MenuEntry>[
+                                      _MenuEntry(
+                                          id: 'whatsapp',
+                                          icon: SolarIconsOutline.chatRoundDots,
+                                          brandAsset:
+                                              'assets/icons/whatsapp.svg',
+                                          title: 'ئاگاداریی واتسئاپ',
+                                          onTap: () => _push(
+                                              const WhatsappMarketingScreen())),
+                                    ],
+                                  ),
                                   const SizedBox(height: 24),
                                   ValueListenableBuilder<bool>(
                                     valueListenable: _signingOut,
@@ -696,7 +699,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       onTap: _confirmSignOut,
                                     ),
                                   ),
-                                  const SizedBox(height: 20),
+                                  const SizedBox(height: 16),
                                   FutureBuilder<PackageInfo?>(
                                     future: _packageInfo,
                                     builder: (_, snapshot) => snapshot.data ==
@@ -941,7 +944,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     final bool emailChanged = email != currentEmail;
     final bool avatarChanged = _pendingAvatarBytes != null;
     if (!emailChanged && !avatarChanged) {
-      _showMessage('هیچ گۆڕانکارییەک نییە.');
+      _showMessage('هیچ گۆڕانکارییەک نییە.', type: ProxoToastType.info);
       return;
     }
     setState(() => _saving = true);
@@ -1241,16 +1244,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     return null;
   }
 
-  void _showMessage(String message) {
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(
-        SnackBar(
-          content: ProxoText(message,
-              translate: true, textDirection: TextDirection.rtl),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+  void _showMessage(String message,
+      {ProxoToastType type = ProxoToastType.error}) {
+    showProxoToast(context, message, type: type);
   }
 
   @override
@@ -1651,10 +1647,13 @@ class _ProfileTopBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ProxoLocale.watch(context);
-    return ColoredBox(
-      color: _ProfileColors.page,
+    return DecoratedBox(
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        border: Border(bottom: BorderSide(color: ProxoChrome.border)),
+      ),
       child: ConstrainedBox(
-        constraints: const BoxConstraints(minHeight: 56),
+        constraints: const BoxConstraints(minHeight: ProxoChrome.toolbarHeight),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8),
           child: Row(
@@ -1705,13 +1704,13 @@ class _SimpleTopBar extends StatelessWidget {
     ProxoLocale.watch(context);
     return DecoratedBox(
       decoration: const BoxDecoration(
-        color: _ProfileColors.page,
+        color: Colors.white,
         border: Border(
-          bottom: BorderSide(color: _ProfileColors.topBarHairline),
+          bottom: BorderSide(color: ProxoChrome.border),
         ),
       ),
       child: ConstrainedBox(
-        constraints: const BoxConstraints(minHeight: 56),
+        constraints: const BoxConstraints(minHeight: ProxoChrome.toolbarHeight),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8),
           child: Row(
@@ -1822,7 +1821,7 @@ class _ProfileIdentity extends StatelessWidget {
                         : data.displayName,
                     softWrap: true,
                     style: _ProfileText.userName),
-                const SizedBox(height: 8),
+                const SizedBox(height: 4),
                 ProxoText(data.contact,
                     softWrap: true,
                     textDirection: _containsArabic(data.contact)
@@ -1837,13 +1836,13 @@ class _ProfileIdentity extends StatelessWidget {
                       style: _ProfileText.userContact),
                 ],
               ]);
-          final avatar = _ProfileAvatar(data: data, diameter: 56, iconSize: 26);
+          final avatar = _ProfileAvatar(data: data, diameter: 48, iconSize: 24);
           if (stacked) {
             return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [avatar, const SizedBox(height: 12), text]);
           }
-          return Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          return Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
             avatar,
             const SizedBox(width: 12),
             Expanded(child: text)
@@ -2059,10 +2058,32 @@ class _BalanceCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(ProxoSurface.radius)),
         child:
             Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-          Row(children: [
-            const Expanded(
-                child: ProxoText('باڵانسی ڕیکلام',
-                    translate: true, style: _ProfileText.balanceLabel)),
+          Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const ProxoText('باڵانسی ڕیکلام',
+                      translate: true, style: _ProfileText.balanceLabel),
+                  const SizedBox(height: 4),
+                  ValueListenableBuilder<bool>(
+                    valueListenable: showBalance,
+                    builder: (_, visible, __) =>
+                        ValueListenableBuilder<double?>(
+                      valueListenable: balanceIqd,
+                      builder: (_, value, __) => ProxoText(
+                        visible ? _formatIqd(value) : '•••••• د.ع',
+                        key: const ValueKey('profile-balance-amount'),
+                        textDirection: TextDirection.ltr,
+                        textAlign: TextAlign.start,
+                        softWrap: true,
+                        style: _ProfileText.balanceAmount,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
             ValueListenableBuilder<bool>(
                 valueListenable: showBalance,
                 builder: (_, visible, __) => IconButton(
@@ -2079,18 +2100,7 @@ class _BalanceCard extends StatelessWidget {
                         size: 22,
                         color: AppColors.inkMuted))),
           ]),
-          ValueListenableBuilder<bool>(
-              valueListenable: showBalance,
-              builder: (_, visible, __) => ValueListenableBuilder<double?>(
-                  valueListenable: balanceIqd,
-                  builder: (_, value, __) => ProxoText(
-                      visible ? _formatIqd(value) : '•••••• د.ع',
-                      key: const ValueKey('profile-balance-amount'),
-                      textDirection: TextDirection.ltr,
-                      textAlign: TextAlign.start,
-                      softWrap: true,
-                      style: _ProfileText.balanceAmount))),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
           FilledButton(
               key: const ValueKey('profile-add-balance'),
               onPressed: onTap,
@@ -2135,23 +2145,30 @@ class _MenuEntry {
     required this.title,
     required this.onTap,
     this.subtitle,
+    this.brandAsset,
   });
 
   final String id;
   final IconData icon;
+  final String? brandAsset;
   final String title;
   final String? subtitle;
   final VoidCallback onTap;
 }
 
 class _SettingsGroup extends StatelessWidget {
-  const _SettingsGroup({required this.entries});
+  const _SettingsGroup({required this.entries, this.leading});
 
   final List<_MenuEntry> entries;
+  final Widget? leading;
 
   @override
   Widget build(BuildContext context) {
     ProxoLocale.watch(context);
+    final rows = <Widget>[
+      if (leading != null) leading!,
+      for (final entry in entries) _SettingsTile(entry: entry),
+    ];
     return Material(
       color: _ProfileColors.groupSurface,
       shape: const RoundedRectangleBorder(
@@ -2161,7 +2178,7 @@ class _SettingsGroup extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        children: List<Widget>.generate(entries.length * 2 - 1, (int index) {
+        children: List<Widget>.generate(rows.length * 2 - 1, (int index) {
           if (index.isOdd) {
             return const Padding(
               padding: EdgeInsets.symmetric(horizontal: 16),
@@ -2172,7 +2189,7 @@ class _SettingsGroup extends StatelessWidget {
               ),
             );
           }
-          return _SettingsTile(entry: entries[index ~/ 2]);
+          return rows[index ~/ 2];
         }, growable: false),
       ),
     );
@@ -2204,11 +2221,15 @@ class _SettingsTile extends StatelessWidget {
                   color: ProxoChrome.surface,
                   borderRadius: BorderRadius.all(Radius.circular(12)),
                 ),
-                child: _ProfileSymbol(
-                  entry.icon,
-                  size: 22,
-                  color: _ProfileColors.iconInk,
-                ),
+                child: entry.brandAsset == null
+                    ? _ProfileSymbol(entry.icon,
+                        size: 22, color: _ProfileColors.iconInk)
+                    : SvgPicture.asset(entry.brandAsset!,
+                        key: const ValueKey('profile-whatsapp-brand'),
+                        width: 22,
+                        height: 22,
+                        fit: BoxFit.contain,
+                        excludeFromSemantics: true),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -2248,6 +2269,56 @@ class _SettingsTile extends StatelessWidget {
   }
 }
 
+class _ProfileLanguageTile extends StatelessWidget {
+  const _ProfileLanguageTile();
+
+  @override
+  Widget build(BuildContext context) => AuthLanguageSelector(
+        key: const ValueKey('profile-language'),
+        childBuilder: (_, locale) => ConstrainedBox(
+          constraints:
+              const BoxConstraints(minHeight: ProxoSurface.actionHeight),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Row(children: [
+              Container(
+                width: 32,
+                height: 32,
+                alignment: Alignment.center,
+                decoration: const BoxDecoration(
+                  color: ProxoChrome.surface,
+                  borderRadius: BorderRadius.all(Radius.circular(12)),
+                ),
+                child: const ProxoSymbol(ProxoSymbolName.language,
+                    size: 22, color: _ProfileColors.iconInk),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const ProxoText('زمان',
+                        translate: true, style: _ProfileText.menuTitle),
+                    const SizedBox(height: 2),
+                    ProxoText(
+                        switch (locale.languageCode) {
+                          'ar' => 'العربية',
+                          'kmr' => 'کوردی بادینی',
+                          _ => 'کوردی سۆرانی',
+                        },
+                        style: _ProfileText.menuSubtitle),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              const ProxoSymbol(ProxoSymbolName.chevronDown,
+                  size: 20, color: _ProfileColors.chevron),
+            ]),
+          ),
+        ),
+      );
+}
+
 class _SignOutTile extends StatelessWidget {
   const _SignOutTile({required this.busy, required this.onTap});
 
@@ -2285,7 +2356,7 @@ class _SignOutTile extends StatelessWidget {
                   child: const _ProfileSymbol(
                     SolarIconsOutline.logout,
                     size: 22,
-                    color: _ProfileColors.iconInk,
+                    color: _ProfileColors.danger,
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -2961,6 +3032,10 @@ class _EmailChangeVerificationDialogState
         canPop: !_busy,
         child: AlertDialog(
           scrollable: true,
+          insetPadding: EdgeInsets.symmetric(
+            horizontal: MediaQuery.sizeOf(context).width < 360 ? 16 : 40,
+            vertical: 24,
+          ),
           backgroundColor: Colors.white,
           surfaceTintColor: Colors.transparent,
           shape: const RoundedRectangleBorder(
@@ -3096,7 +3171,7 @@ class _EmailChangeVerificationDialogState
                       ),
                     )
                   : ProxoText(_verified ? 'بەردەوامبوون' : 'پشتڕاستکردنەوە',
-                      translate: true),
+                      translate: true, textAlign: TextAlign.center),
             ),
           ],
         ),
@@ -3222,7 +3297,6 @@ abstract final class _ProfileColors {
   static const Color border = AuthTokens.line;
   static const Color cardBorder = ProxoChrome.border;
   static const Color hairline = AuthTokens.lineOff;
-  static const Color topBarHairline = Color(0xFFF3F4F5);
   static const Color iconSurface = Color(0xFFF4F8FA);
   static const Color chevron = AuthTokens.inkMuted;
   static const Color primary = AppColors.accent;
@@ -3245,7 +3319,11 @@ abstract final class _ProfileText {
   static const TextStyle sectionTitle = ProxoSurface.section;
   static const TextStyle menuTitle = ProxoSurface.body;
   static const TextStyle menuSubtitle = ProxoSurface.secondary;
-  static const TextStyle signOut = ProxoSurface.body;
+  static const TextStyle signOut = TextStyle(
+      fontFamily: ProxoSurface.fontFamily,
+      fontSize: 14,
+      height: 1.5,
+      color: AuthTokens.danger);
   static const TextStyle version = ProxoSurface.secondary;
   static const TextStyle fieldLabel = ProxoSurface.secondary;
   static const TextStyle field = ProxoSurface.body;

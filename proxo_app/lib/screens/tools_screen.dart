@@ -236,11 +236,14 @@ class _ToolsScreenState extends State<ToolsScreen> {
                                                 bottom: 16),
                                             child: _item(context, index)))))),
                         Positioned(
-                            top: 12,
-                            left: 16,
-                            right: 16,
-                            child: AdValidationNotifications(
-                                controller: _notices)),
+                            top: 8,
+                            left: ProxoSurface.gutter,
+                            right: ProxoSurface.gutter,
+                            child: Center(
+                                child: ConstrainedBox(
+                                    constraints: const BoxConstraints(maxWidth: 440),
+                                    child: AdValidationNotifications(
+                                        controller: _notices)))),
                       ])),
                     ]),
                   ))));
@@ -275,25 +278,6 @@ class _ToolsScreenState extends State<ToolsScreen> {
       body: failed
           ? _pages.error!.message
           : 'پەڕەیەک دروستبکە و بەستەرەکەت بەکاربهێنە.',
-      details: failed ? null : Wrap(
-        alignment: WrapAlignment.center,
-        spacing: 8,
-        runSpacing: 8,
-        children: [
-          for (final type in ProxoPageType.values)
-            DecoratedBox(
-              decoration: BoxDecoration(
-                color: const Color(0xFFF5F8FC),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                child: ProxoText(type.label, translate: true,
-                    style: ProxoSurface.secondary),
-              ),
-            ),
-        ],
-      ),
       action: failed
           ? FilledButton.icon(
               key: const ValueKey('tools-retry-pages'),

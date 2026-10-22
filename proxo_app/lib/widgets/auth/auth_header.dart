@@ -37,9 +37,13 @@ class AuthHeader extends StatelessWidget {
 }
 
 class AuthLanguageSelector extends StatelessWidget {
-  const AuthLanguageSelector({super.key, this.compact = false});
+  const AuthLanguageSelector(
+      {super.key, this.compact = false, this.childBuilder});
 
   final bool compact;
+
+  /// Reuse the same supported languages in a full settings row.
+  final Widget Function(BuildContext context, Locale locale)? childBuilder;
 
   @override
   Widget build(BuildContext context) {
@@ -81,36 +85,37 @@ class AuthLanguageSelector extends StatelessWidget {
               ),
             ),
           ],
-          child: Container(
-            constraints: const BoxConstraints(minHeight: 48, minWidth: 48),
-            padding: const EdgeInsetsDirectional.symmetric(horizontal: 12),
-            decoration: BoxDecoration(
-              color: Colors.transparent,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                const AuthIcon(
-                  'language_outline',
-                  size: 20,
-                  color: AuthTokens.ink,
+          child: childBuilder?.call(context, locale) ??
+              Container(
+                constraints: const BoxConstraints(minHeight: 48, minWidth: 48),
+                padding: const EdgeInsetsDirectional.symmetric(horizontal: 12),
+                decoration: BoxDecoration(
+                  color: Colors.transparent,
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                if (!compact) ...[
-                  const SizedBox(width: 7),
-                  Flexible(
-                    child: ProxoText(
-                      _languageName(locale),
-                      style: AuthTokens.helper.copyWith(
-                        color: AuthTokens.ink,
-                        fontWeight: FontWeight.w400,
-                      ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    const AuthIcon(
+                      'language_outline',
+                      size: 20,
+                      color: AuthTokens.ink,
                     ),
-                  ),
-                ],
-              ],
-            ),
-          ),
+                    if (!compact) ...[
+                      const SizedBox(width: 7),
+                      Flexible(
+                        child: ProxoText(
+                          _languageName(locale),
+                          style: AuthTokens.helper.copyWith(
+                            color: AuthTokens.ink,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
         );
       },
     );

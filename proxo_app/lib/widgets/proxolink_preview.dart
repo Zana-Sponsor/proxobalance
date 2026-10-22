@@ -9,6 +9,7 @@ import 'package:webview_flutter/webview_flutter.dart';
 import '../services/proxolink_service.dart';
 import 'ad_form_components.dart';
 import 'proxo_text.dart';
+import 'proxo_toast.dart';
 
 class ProxoLinkPreview extends StatefulWidget {
   final Future<Uri> Function() loadUrl;
@@ -172,9 +173,7 @@ class _ProxoLinkPreviewState extends State<ProxoLinkPreview> {
         } catch (_) {}
       }
       if (!opened && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: ProxoText('نەتوانرا ئەپەکە بکرێتەوە.', translate: true)),
-        );
+        showProxoToast(context, 'نەتوانرا ئەپەکە بکرێتەوە.');
       }
     }
     return NavigationDecision.prevent;

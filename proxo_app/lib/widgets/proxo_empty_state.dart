@@ -27,50 +27,46 @@ class ProxoEmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-        constraints: const BoxConstraints(maxWidth: ProxoSurface.maxWidth),
-        padding: const EdgeInsets.fromLTRB(ProxoSurface.padding, 24,
-            ProxoSurface.padding, ProxoSurface.padding),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(ProxoSurface.radius),
-          border: Border.all(color: ProxoSurface.line),
-        ),
+        constraints: const BoxConstraints(maxWidth: 440),
+        padding: const EdgeInsets.symmetric(
+            horizontal: ProxoSurface.padding, vertical: 24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisSize: MainAxisSize.min,
           children: [
             Center(
               child: Container(
-                width: 64,
-                height: 64,
+                width: 48,
+                height: 48,
                 decoration: BoxDecoration(
                   color:
                       isError ? AuthTokens.dangerBg : ProxoSurface.accentSoft,
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius:
+                      BorderRadius.circular(ProxoSurface.controlRadius),
                 ),
                 child: ProxoSymbol(symbol,
-                    size: 30,
+                    size: 24,
                     color: isError ? AuthTokens.danger : ProxoSurface.accent),
               ),
             ),
-            const SizedBox(height: ProxoSurface.sectionGap),
+            const SizedBox(height: 16),
             Semantics(
               header: true,
               child: ProxoText(title,
                   translate: true,
                   textAlign: TextAlign.center,
-                  style: ProxoSurface.title),
+                  style: ProxoSurface.section),
             ),
             const SizedBox(height: 8),
             ProxoText(body,
                 translate: true,
                 textAlign: TextAlign.center,
-                style: ProxoSurface.body.copyWith(color: ProxoSurface.muted)),
+                style: ProxoSurface.secondary),
             if (details != null) ...[
-              const SizedBox(height: ProxoSurface.sectionGap),
+              const SizedBox(height: 16),
               details!,
             ],
-            const SizedBox(height: ProxoSurface.sectionGap),
+            const SizedBox(height: 20),
             action,
           ],
         ),

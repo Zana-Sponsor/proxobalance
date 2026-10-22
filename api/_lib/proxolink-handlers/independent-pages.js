@@ -19,7 +19,10 @@ export async function createPage(res,owner,body) {
   const find=()=>cardRows(filter,managementColumns+',creation_request_hash');
   const reused=rows=>rows[0].creation_request_hash===hash
     ?json(res,200,{ok:true,card:safeCard(rows[0]),reused:true})
-    :json(res,409,{ok:false,error:'idempotency_conflict'});
+    // The earlier request may have committed after a client timeout. Return
+    // its owner-scoped result so corrected retries can recover without a
+    // second read or a new request ID that would create a duplicate page.
+    :json(res,409,{ok:false,error:'idempotency_conflict',card:safeCard(rows[0])});
   const previous=await find();if(previous.length)return reused(previous);
   let inserted;
   try {

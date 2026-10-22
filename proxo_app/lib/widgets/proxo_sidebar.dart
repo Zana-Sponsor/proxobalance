@@ -70,6 +70,7 @@ class _ProxoSidebarState extends State<ProxoSidebar> {
   String? _avatarUrl;
   String _userName = '';
   String _userEmail = '';
+  String _userPhone = '';
   bool _loading = true;
   bool _busy = false;
   bool _signingOut = false;
@@ -83,8 +84,10 @@ class _ProxoSidebarState extends State<ProxoSidebar> {
   void initState() {
     super.initState();
     final user = supabase.auth.currentUser;
-    _userEmail = user?.email ?? '';
-    _userName = (user?.userMetadata?['full_name'] ?? '').toString();
+    _userEmail = _visibleEmail(user?.email);
+    _userPhone =
+        (user?.userMetadata?['phone'] ?? user?.phone ?? '').toString().trim();
+    _userName = (user?.userMetadata?['full_name'] ?? '').toString().trim();
     _counter = UnreadNotificationCounter.forClient(supabase);
     _unreadNotifs = _counter.count.value;
     _counter.count.addListener(_unreadChanged);
@@ -114,27 +117,40 @@ class _ProxoSidebarState extends State<ProxoSidebar> {
     try {
       final profile = await supabase
           .from('profiles')
-          .select('full_name, email, avatar_url')
+          .select('full_name, email, phone, avatar_url')
           .eq('id', user.id)
           .maybeSingle();
       if (!mounted || supabase.auth.currentUser?.id != user.id) return;
       final name = (profile?['full_name'] ?? '').toString().trim();
-      final email = (profile?['email'] ?? user.email ?? '').toString();
+      final email = _visibleEmail(profile?['email'] ?? user.email);
+      final phone = (profile?['phone'] ?? _userPhone).toString().trim();
       final avatar = (profile?['avatar_url'] ?? '').toString();
       setState(() {
         _userName = name.isNotEmpty
             ? name
-            : (email.isNotEmpty ? email.split('@').first : '—');
+            : (_userName.isNotEmpty ? _userName : 'بەکارهێنەر');
         _userEmail = email;
+        _userPhone = phone;
         _avatarUrl = avatar.isNotEmpty ? avatar : null;
         _loading = false;
       });
     } catch (_) {
       AppTelemetryService.active
           ?.event('error', 'sidebar_profile_failed', outcome: 'failure');
-      if (mounted) setState(() => _loading = false);
+      if (mounted && supabase.auth.currentUser?.id == user.id) {
+        setState(() => _loading = false);
+      }
     }
   }
+
+  static String _visibleEmail(Object? value) {
+    final email = value?.toString().trim() ?? '';
+    return email.toLowerCase().endsWith('@phone.proxopages.com') ? '' : email;
+  }
+
+  void _openProfile() => widget.onNavigate != null
+      ? _tab('profile')
+      : unawaited(_go(() => const ProfileScreen()));
 
   void _close() {
     if (widget.onClose != null) {
@@ -251,95 +267,106 @@ class _ProxoSidebarState extends State<ProxoSidebar> {
         child: Material(
           color: Colors.white,
           child: SafeArea(
-            child: SingleChildScrollView(
-              key: const ValueKey('sidebar-scroll'),
-              controller: _menuScroll,
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 20),
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Row(children: [
-                      const Expanded(
-                          child: ProxoText('مێنیو',
-                              translate: true,
-                              style: TextStyle(
-                                  fontFamily: ProxoSurface.fontFamily,
-                                  fontSize: 16,
-                                  height: 1.4,
-                                  fontWeight: FontWeight.w700,
-                                  color: AppColors.ink))),
-                      IconButton(
-                          key: const ValueKey('sidebar-close'),
-                          tooltip: ProxoStrings.text('داخستنی مێنیو'),
-                          onPressed: _close,
-                          constraints: const BoxConstraints.tightFor(
-                              width: 48, height: 48),
-                          icon: const ProxoSymbol(ProxoSymbolName.close,
-                              size: 22, color: AppColors.inkMuted)),
-                    ]),
-                    const SizedBox(height: 8),
-                    _accountCard(),
-                    const SizedBox(height: 12),
-                    _section('بەڕێوەبردن'),
-                    _item('home', ProxoSymbolName.home, 'سەرەکی',
-                        () => _tab('home'),
-                        selected: widget.currentIndex == 0),
-                    _item('ads', ProxoSymbolName.ads, 'ڕیکلامەکان',
-                        () => _tab('ads'),
-                        selected: widget.currentIndex == 1),
-                    _item('tools', ProxoSymbolName.tools, 'پەڕەکان',
-                        () => _tab('tools'),
-                        selected: widget.currentIndex == 3),
-                    _section('هەژمار'),
-                    _item('deposit', ProxoSymbolName.wallet, 'باڵانس و پارەدان',
-                        () => _go(() => const DepositScreen())),
-                    _item(
-                        'transactions',
-                        ProxoSymbolName.history,
-                        'مێژووی مامەڵەکان',
-                        () => _go(() => const TxHistoryPage())),
-                    _item(
-                        'discounts',
-                        ProxoSymbolName.discount,
-                        'کۆدی داشکاندن',
-                        () => _go(() => const DiscountCodesPage())),
-                    const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 8),
-                        child: Divider(height: 1, color: ProxoChrome.border)),
-                    _item(
-                        'notifications',
-                        ProxoSymbolName.bell,
-                        'ئاگادارییەکان',
-                        () => _navigate((nav) async {
-                              await nav.pushNamed('/notifications');
-                            }),
-                        badge: _unreadNotifs),
-                    _item(
-                        'profile',
-                        ProxoSymbolName.settings,
-                        'پڕۆفایل و ڕێکخستنەکان',
-                        () => _go(() => const ProfileScreen()),
-                        selected: widget.currentIndex == 4),
-                    _item('help', ProxoSymbolName.help, 'یارمەتی و پشتگیری',
-                        () => _go(() => const FaqScreen())),
-                    const SizedBox(height: 12),
-                    if (_logoutError != null) ...[
-                      Semantics(
-                          liveRegion: true,
-                          child: ProxoText(_logoutError!,
-                              translate: true,
-                              key: const ValueKey('sidebar-logout-error'),
-                              style: const TextStyle(
-                                  fontFamily: ProxoSurface.fontFamily,
-                                  fontSize: 13,
-                                  height: 1.5,
-                                  color: Color(0xFFB42318)))),
-                      const SizedBox(height: 8),
-                    ],
-                    _item('logout', ProxoSymbolName.logout,
-                        _signingOut ? 'دەرچوون…' : 'چوونەدەرەوە', _signOut,
-                        danger: true, loading: _signingOut),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // The close control remains reachable even when the menu is
+                // scrolled or large text makes its content taller than a phone.
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                  child: Row(children: [
+                    const Expanded(
+                      child: ProxoText('مێنیو',
+                          translate: true, style: ProxoSurface.title),
+                    ),
+                    IconButton(
+                      key: const ValueKey('sidebar-close'),
+                      tooltip: ProxoStrings.text('داخستنی مێنیو'),
+                      onPressed: _close,
+                      constraints: const BoxConstraints.tightFor(
+                          width: ProxoChrome.actionSize,
+                          height: ProxoChrome.actionSize),
+                      icon: const ProxoSymbol(ProxoSymbolName.close,
+                          size: ProxoChrome.toolbarIconSize,
+                          color: AppColors.inkMuted),
+                    ),
                   ]),
+                ),
+                const Divider(height: 1, color: ProxoChrome.border),
+                Expanded(
+                  child: SingleChildScrollView(
+                    key: const ValueKey('sidebar-scroll'),
+                    controller: _menuScroll,
+                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        _accountCard(),
+                        const SizedBox(height: 8),
+                        _section('بەڕێوەبردن'),
+                        _item('home', ProxoSymbolName.home, 'سەرەکی',
+                            () => _tab('home'),
+                            selected: widget.currentIndex == 0),
+                        _item('ads', ProxoSymbolName.ads, 'ڕیکلامەکان',
+                            () => _tab('ads'),
+                            selected: widget.currentIndex == 1),
+                        _item('tools', ProxoSymbolName.tools, 'پەڕەکان',
+                            () => _tab('tools'),
+                            selected: widget.currentIndex == 3),
+                        _section('هەژمار'),
+                        _item(
+                            'deposit',
+                            ProxoSymbolName.wallet,
+                            'باڵانس و پارەدان',
+                            () => _go(() => const DepositScreen())),
+                        _item(
+                            'transactions',
+                            ProxoSymbolName.history,
+                            'مێژووی مامەڵەکان',
+                            () => _go(() => const TxHistoryPage())),
+                        _item(
+                            'discounts',
+                            ProxoSymbolName.discount,
+                            'کۆدی داشکاندن',
+                            () => _go(() => const DiscountCodesPage())),
+                        _item(
+                            'notifications',
+                            ProxoSymbolName.bell,
+                            'ئاگادارییەکان',
+                            () => _navigate((nav) async {
+                                  await nav.pushNamed('/notifications');
+                                }),
+                            badge: _unreadNotifs),
+                        _item('profile', ProxoSymbolName.settings,
+                            'پڕۆفایل و ڕێکخستنەکان', _openProfile,
+                            selected: widget.currentIndex == 4),
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 8),
+                          child: Divider(height: 1, color: ProxoChrome.border),
+                        ),
+                        _item('help', ProxoSymbolName.help, 'یارمەتی و پشتگیری',
+                            () => _go(() => const FaqScreen())),
+                        const SizedBox(height: 12),
+                        if (_logoutError != null) ...[
+                          Semantics(
+                            liveRegion: true,
+                            child: ProxoText(_logoutError!,
+                                translate: true,
+                                key: const ValueKey('sidebar-logout-error'),
+                                style: ProxoSurface.secondary
+                                    .copyWith(color: const Color(0xFFB42318))),
+                          ),
+                          const SizedBox(height: 8),
+                        ],
+                        _item('logout', ProxoSymbolName.logout,
+                            _signingOut ? 'دەرچوون…' : 'چوونەدەرەوە', _signOut,
+                            danger: true, loading: _signingOut),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ),
@@ -348,7 +375,7 @@ class _ProxoSidebarState extends State<ProxoSidebar> {
   }
 
   Widget _section(String text) => Padding(
-        padding: const EdgeInsetsDirectional.fromSTEB(12, 12, 12, 4),
+        padding: const EdgeInsetsDirectional.fromSTEB(12, 8, 12, 4),
         child: ProxoText(text,
             translate: true,
             style: const TextStyle(
@@ -359,55 +386,62 @@ class _ProxoSidebarState extends State<ProxoSidebar> {
                 color: AppColors.inkMuted)),
       );
 
-  Widget _accountCard() => Container(
-        key: const ValueKey('sidebar-account'),
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-            color: ProxoChrome.surface,
-            border: Border.all(color: ProxoChrome.border),
-            borderRadius: BorderRadius.circular(16)),
-        child: Row(children: [
-          ClipRRect(
-              borderRadius: BorderRadius.circular(14),
-              child: SizedBox.square(
-                dimension: 40,
-                child: _avatarUrl == null
-                    ? _avatarFallback()
-                    : Image.network(_avatarUrl!,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => _avatarFallback()),
-              )),
-          const SizedBox(width: 12),
-          Expanded(
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                ProxoText(
-                    _userName.isNotEmpty
-                        ? _userName
-                        : (_loading ? 'بارکردن…' : '—'),
-                    maxLines: 2,
+  Widget _accountCard() {
+    final contact = _userEmail.isNotEmpty ? _userEmail : _userPhone;
+    return Container(
+      key: const ValueKey('sidebar-account'),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: ProxoChrome.surface,
+        borderRadius: BorderRadius.circular(ProxoSurface.radius),
+      ),
+      child: Row(children: [
+        ClipOval(
+          child: SizedBox.square(
+            dimension: 40,
+            child: _avatarUrl == null
+                ? _avatarFallback()
+                : Image.network(_avatarUrl!,
+                    fit: BoxFit.cover,
+                    cacheWidth:
+                        (40 * MediaQuery.devicePixelRatioOf(context)).ceil(),
+                    errorBuilder: (_, __, ___) => _avatarFallback()),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ProxoText(
+                _userName.isNotEmpty
+                    ? _userName
+                    : (_loading ? 'بارکردن…' : 'بەکارهێنەر'),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: ProxoSurface.body.copyWith(fontWeight: FontWeight.w600),
+              ),
+              if (contact.isNotEmpty) ...[
+                const SizedBox(height: 4),
+                Tooltip(
+                  message: contact,
+                  child: ProxoText(
+                    contact,
+                    key: const ValueKey('sidebar-contact'),
+                    maxLines: 1,
+                    softWrap: false,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                        fontFamily: ProxoSurface.fontFamily,
-                        fontSize: 14,
-                        height: 1.45,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.ink)),
-                if (_userEmail.isNotEmpty) ...[
-                  const SizedBox(height: 2),
-                  ProxoText(_userEmail,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                          fontFamily: ProxoSurface.fontFamily,
-                          fontSize: 12,
-                          height: 1.5,
-                          color: AppColors.inkMuted)),
-                ],
-              ])),
-        ]),
-      );
+                    textDirection: TextDirection.ltr,
+                    style: ProxoSurface.secondary,
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ]),
+    );
+  }
 
   Widget _avatarFallback() => const ColoredBox(
       color: Color(0xFFE6EDFE),
@@ -437,16 +471,16 @@ class _ProxoSidebarState extends State<ProxoSidebar> {
               : selected
                   ? ProxoChrome.selected
                   : Colors.transparent,
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(ProxoSurface.controlRadius),
           child: InkWell(
             key: ValueKey('sidebar-$id'),
             onTap: _busy ? null : onTap,
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(ProxoSurface.controlRadius),
             child: ConstrainedBox(
               constraints: const BoxConstraints(minHeight: 48),
               child: Padding(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 child: Row(children: [
                   SizedBox.square(
                       dimension: 24,

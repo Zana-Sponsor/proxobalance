@@ -121,7 +121,8 @@ void main() {
             url == null ? null : await FeaturedThumbnailFixture.pending(url);
         if (fixture != null) addTearDown(fixture.dispose);
         await tester.pumpWidget(_host(
-            HomeBestResultCard(ad: thumbnailAd(url), rank: 1),
+            HomeBestResultCard(
+                ad: thumbnailAd(url), rank: 1, showDetails: true),
             scale: config.scale));
         await tester.pumpAndSettle();
         final card = find.byType(HomeBestResultCard);

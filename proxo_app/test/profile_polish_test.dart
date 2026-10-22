@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
@@ -16,6 +17,7 @@ import 'package:proxo_app/theme/app_locale.dart';
 import 'package:proxo_app/theme/proxo_surface.dart';
 import 'package:proxo_app/widgets/proxo_symbol.dart';
 import 'package:proxo_app/widgets/proxo_text.dart';
+import 'package:proxo_app/widgets/proxo_notice.dart';
 
 import '../integration_test/support/actual_screen_fixtures.dart';
 
@@ -394,6 +396,20 @@ void main() {
     await settle(t);
     expect(find.byType(AlertDialog), findsOneWidget);
     expect(t.widget<TextField>(key('profile-otp')).textAlign, TextAlign.center);
+    final confirmLabel = t.renderObject<RenderParagraph>(find.descendant(
+      of: key('profile-otp-confirm'),
+      matching: find.byType(RichText),
+    ));
+    final labelPainter = TextPainter(
+      text: confirmLabel.text,
+      textDirection: confirmLabel.textDirection,
+      textScaler: confirmLabel.textScaler,
+    )..layout(maxWidth: confirmLabel.size.width);
+    expect(labelPainter.computeLineMetrics(), hasLength(1),
+        reason: 'The full confirmation word must fit at 320dp and 200% text');
+    expect(confirmLabel.textScaler.scale(14), 28);
+    expect(confirmLabel.didExceedMaxLines, isFalse);
+    labelPainter.dispose();
     await t.enterText(key('profile-otp'), '١٢٣٤٥٦');
     await tap(t, 'profile-otp-confirm');
     expect(requests.length, 2);
@@ -464,7 +480,7 @@ void main() {
     await tap(t, 'profile-save');
     expect(requests, 0);
     expect(find.byType(AlertDialog), findsNothing);
-    expect(find.byType(SnackBar), findsOneWidget);
+    expect(find.byType(ProxoNoticeCard), findsOneWidget);
     expect(backend.nonGetAttempts, isEmpty);
     await close(t);
   });

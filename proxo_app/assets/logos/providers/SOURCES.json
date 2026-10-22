@@ -7,9 +7,9 @@
     "change": "none",
     "official_page": "https://fib.iq/",
     "downloaded_at": "2026-10-15",
-    "checked_at": "2026-10-19",
+    "checked_at": "2026-10-20",
     "license": "Provider trademark; no open-source artwork license is asserted.",
-    "verification_status": "Official asset fetched with HTTP 200 on 2026-10-19; SHA-256 matches the recorded source. The current official homepage references this logo asset."
+    "verification_status": "Original official SVG retained; its recorded 2026-10-19 HTTP 200 hash matches bundled bytes. Direct refresh on 2026-10-20 returned HTTP 403; current-day bytes could not be revalidated."
   },
   {
     "file": "qi.svg",
@@ -71,9 +71,9 @@
     "change": "none",
     "official_page": "https://www.fastpay.iq/",
     "downloaded_at": "2026-10-15",
-    "checked_at": "2026-10-19",
+    "checked_at": "2026-10-20",
     "license": "Provider trademark; no open-source artwork license is asserted.",
-    "verification_status": "Official asset fetched with HTTP 200 on 2026-10-19; SHA-256 matches the recorded source. The current official homepage references this logo asset.",
+    "verification_status": "Official asset fetched with HTTP 200 on 2026-10-20; SHA-256 matches the bundled original.",
     "verification_note": "Both https://fast-pay.iq/img/clogo.png and https://www.fastpay.iq/img/clogo.png return identical bytes. The official homepage supplies a PNG; no fabricated SVG replacement is bundled.",
     "terms": "https://www.fastpay.iq/terms"
   }

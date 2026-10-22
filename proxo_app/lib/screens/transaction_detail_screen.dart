@@ -117,7 +117,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
       await Clipboard.setData(ClipboardData(text: raw));
       if (!mounted) return;
       HapticFeedback.selectionClick();
-      showReceiptMessage(context, TxStrings.current.copied);
+      showReceiptMessage(context, TxStrings.current.copied, isError: false);
     } catch (_) {
       if (mounted) showReceiptMessage(context, TxStrings.current.copyFailed);
     }
@@ -343,8 +343,15 @@ class _TxReceiptCard extends StatelessWidget {
       _ => null,
     };
 
-    final String statusText =
-        d.status == 'rejected' ? l.statusRejected : l.statusPending;
+    final String statusText = settled
+        ? l.statusApproved
+        : d.status == 'rejected'
+            ? l.statusRejected
+            : d.status == 'pending'
+                ? l.statusPending
+                : d.status.isEmpty
+                    ? l.notRecorded
+                    : d.status;
 
     return ReceiptCard(
       child: Column(
@@ -377,8 +384,11 @@ class _TxReceiptCard extends StatelessWidget {
               valueDirection: _ltr,
               valueStyle: ReceiptTokens.metadataValue,
             ),
-            if (!settled && !_free)
-              ReceiptRow(label: l.status, value: statusText),
+            ReceiptStatusRow(
+                label: l.status,
+                value: statusText,
+                positive: settled,
+                negative: d.status == 'rejected'),
           ]),
           const ReceiptDivider(),
 
@@ -395,6 +405,11 @@ class _TxReceiptCard extends StatelessWidget {
               value: method,
               valueDirection: receiptDirOf(method),
             ),
+            if (d.uid.isNotEmpty && d.uid != d.txId)
+              ReceiptIdRow(
+                  label: l.receiptNo,
+                  value: d.uid,
+                  onLongPress: () => onCopy(d.uid)),
           ]),
 
           // ── ١٤/١٥) کۆتایی ───────────────────────────────────────────────

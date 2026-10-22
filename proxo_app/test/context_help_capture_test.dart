@@ -6,6 +6,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:proxo_app/l10n/proxo_strings.dart';
 import 'package:proxo_app/theme/app_locale.dart';
 import 'package:proxo_app/theme/app_theme.dart';
 import 'package:proxo_app/widgets/form_help_actions.dart';
@@ -75,9 +76,9 @@ void main() {
                 ResizeImage.resizeIfNeeded(
                     720,
                     null,
-                    AssetImage(
-                        video ? 'assets/images/ad_video_link_example.png'
-                            : 'assets/proxolink_thumbnails/$section-pill.png')),
+                    AssetImage(video
+                        ? 'assets/images/ad_video_link_example.png'
+                        : 'assets/proxolink_thumbnails/$section-pill.png')),
                 t.element(find.byType(FormHelpActions))));
             await t.pump();
           }
@@ -117,7 +118,9 @@ void main() {
             }));
             image.dispose();
           });
-          await t.tap(find.byIcon(Icons.close_rounded));
+          await t.tap(find.descendant(
+              of: find.byType(Dialog),
+              matching: find.byTooltip(ProxoStrings.text('داخستن'))));
           await t.pumpAndSettle();
           expect(find.byType(Dialog), findsNothing);
           expect(t.takeException(), isNull);

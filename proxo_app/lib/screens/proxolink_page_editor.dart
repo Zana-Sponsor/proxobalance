@@ -14,6 +14,7 @@ import '../models/proxolink_template_meta.dart';
 import '../services/proxolink_service.dart';
 import '../widgets/ad_form_components.dart';
 import '../widgets/proxo_text.dart';
+import '../widgets/proxo_toast.dart';
 import '../widgets/proxolink_design_selector.dart';
 import '../widgets/proxolink_preview.dart';
 import 'card_webview_screen.dart';
@@ -456,19 +457,15 @@ class ProxoLinkPageEditorState extends State<ProxoLinkPageEditor> {
       if (_existing == null)
         await (await SharedPreferences.getInstance()).remove(_pendingKey);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: ProxoText('پەڕەکە بە سەرکەوتوویی پاشەکەوت کرا.', translate: true),
-          ),
-        );
+        showProxoToast(context, 'پەڕەکە بە سەرکەوتوویی پاشەکەوت کرا.',
+            type: ProxoToastType.success);
         await widget.onSaved(card);
       }
     } on ProxoLinkFailure catch (e) {
       if (e.savedCard != null) {
         await (await SharedPreferences.getInstance()).remove(_pendingKey);
         if (mounted) {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: ProxoText(e.message, translate: true)));
+          showProxoToast(context, e.message);
           await widget.onSaved(e.savedCard);
         }
       } else if (e.savedCardId != null && mounted) {

@@ -113,7 +113,9 @@ void main() {
                     ))));
         await tester.pumpAndSettle();
         await tester.scrollUntilVisible(find.byType(ReceiptPdfButton), 200,
-            scrollable: find.byType(Scrollable));
+            scrollable: find.byWidgetPredicate((w) =>
+                w is Scrollable &&
+                axisDirectionToAxis(w.axisDirection) == Axis.vertical));
         await tester.pumpAndSettle();
         expect(tester.takeException(), isNull);
         final rowMeasurements = auditReceiptRows(tester);
@@ -151,6 +153,16 @@ void main() {
           expect(boundary.size.height, greaterThan(500));
         }
         late Future<bool> future;
+        // Export must retain both ends of the ID even when the phone viewport
+        // is currently scrolled to its suffix.
+        final idScrolls = tester.stateList<ScrollableState>(
+            find.byWidgetPredicate((w) =>
+                w is Scrollable &&
+                axisDirectionToAxis(w.axisDirection) == Axis.horizontal));
+        for (final scroll in idScrolls) {
+          scroll.position.jumpTo(scroll.position.maxScrollExtent);
+        }
+        await tester.pump();
         await tester.runAsync(() async {
           future = exportReceiptPdf(
               boundaryKey: key,
@@ -173,6 +185,11 @@ void main() {
           expect(filename,
               transaction ? 'Proxo-$txId.pdf' : 'Proxo-PARZNFHCOKVL.pdf');
           expect(String.fromCharCodes(pdf!.take(5)), '%PDF-');
+          final rawPdf = latin1.decode(pdf!);
+          // The original references are also retained in the PDF metadata,
+          // not shortened filenames or clipped viewport text.
+          expect(rawPdf, contains(transaction ? txId : receipt.adId));
+          expect(rawPdf, contains(receipt.uid));
           // A normal receipt must not orphan its last identifier on another
           // A4 page; large-text narrow receipts still paginate without cuts.
           final pages =
