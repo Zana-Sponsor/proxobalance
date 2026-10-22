@@ -23,6 +23,11 @@ class PolishRuntimeActivity : FlutterActivity() {
     private val handler = Handler(Looper.getMainLooper())
     private val output get() = File(getExternalFilesDir(null), "polish-runtime").apply { mkdirs() }
     private var resumed: MethodChannel.Result? = null
+    private var frameworkBackRegistered = false
+    override fun setFrameworkHandlesBack(handlesBack: Boolean) {
+        super.setFrameworkHandlesBack(handlesBack)
+        frameworkBackRegistered = handlesBack
+    }
     override fun onResume() {
         super.onResume()
         resumed?.success(true)
@@ -34,6 +39,17 @@ class PolishRuntimeActivity : FlutterActivity() {
             .setMethodCallHandler { call, result ->
                 try {
                     when (call.method) {
+                        "backState" -> result.success(mapOf(
+                            "framework_handles_back" to frameworkBackRegistered,
+                            "activity_finishing" to isFinishing,
+                            "activity_destroyed" to isDestroyed))
+                        "checkpoint" -> {
+                            val json = call.argument<String>("json") ?: error("Missing checkpoint")
+                            val temporary = File(output, "runtime-partial.json.tmp")
+                            temporary.writeText(json)
+                            check(temporary.renameTo(File(output, "runtime-partial.json")))
+                            result.success(true)
+                        }
                         "capture" -> {
                             val name = call.argument<String>("name") ?: ""
                             require(Regex("[a-z0-9_-]+\\.png").matches(name))

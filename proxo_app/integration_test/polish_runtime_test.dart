@@ -1,6 +1,7 @@
 // Production widgets in an Android profile build, with fictional backend data.
 // No real account, payment, message, credential or external page is used.
 import 'dart:async';
+import 'dart:convert';
 import 'dart:ui' show FrameTiming;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -48,6 +49,7 @@ import 'package:proxo_app/widgets/levels_page.dart';
 import 'package:proxo_app/widgets/proxo_refresh.dart';
 import 'package:proxo_app/widgets/proxo_notice.dart';
 import 'package:proxo_app/widgets/proxo_sidebar.dart';
+import 'package:proxo_app/widgets/proxo_drawer_navigation.dart';
 import 'package:proxo_app/widgets/tasks_page.dart';
 import '../test/ad_creation_flow_test.dart' show TestAdRepository;
 import '../test/ad_receipt_data_test.dart' show receiptFixture;
@@ -146,6 +148,12 @@ void main() {
       expect(result?['status'], 0, reason: 'Android PixelCopy $name');
     }
 
+    Future<void> checkpoint() async {
+      await native.invokeMethod<void>('checkpoint', {
+        'json': const JsonEncoder.withIndent('  ').convert(binding.reportData),
+      }).timeout(const Duration(seconds: 5));
+    }
+
     Future<void> measureFrames(
         String name, Future<void> Function() action) async {
       // Read the engine's actual frame timings directly. watchPerformance also
@@ -166,6 +174,7 @@ void main() {
       expect(frames, isNotEmpty, reason: 'Engine frame timings for $name');
       binding.reportData!['frames_$name'] =
           FrameTimingSummarizer(frames).summary;
+      await checkpoint();
     }
 
     Future<void> record(String name, Widget widget,
@@ -427,20 +436,23 @@ void main() {
         'menu-route-dismissal',
         Directionality(
           textDirection: TextDirection.ltr,
-          child: Scaffold(
-            key: drawerKey,
-            endDrawer: Directionality(
-              textDirection: TextDirection.rtl,
-              child: ProxoSidebar(
-                onClose: () => drawerKey.currentState!.closeEndDrawer(),
-                onNavigate: (destination) {
-                  menuDestinations.add(destination);
-                  drawerKey.currentState!.closeEndDrawer();
-                },
-              ),
-            ),
-            body: const SizedBox.expand(),
-          ),
+          child: Builder(
+              builder: (context) => Scaffold(
+                    key: drawerKey,
+                    onEndDrawerChanged: (_) =>
+                        syncProxoDrawerBackNavigation(context),
+                    endDrawer: Directionality(
+                      textDirection: TextDirection.rtl,
+                      child: ProxoSidebar(
+                        onClose: () => drawerKey.currentState!.closeEndDrawer(),
+                        onNavigate: (destination) {
+                          menuDestinations.add(destination);
+                          drawerKey.currentState!.closeEndDrawer();
+                        },
+                      ),
+                    ),
+                    body: const SizedBox.expand(),
+                  )),
         ), action: () async {
       for (var cycle = 0; cycle < 3; cycle++) {
         drawerKey.currentState!.openEndDrawer();
@@ -448,12 +460,32 @@ void main() {
         expect(drawerKey.currentState!.isEndDrawerOpen, isTrue);
         if (cycle == 0) {
           await capture('menu-open-native');
+          final backState = await native
+              .invokeMapMethod<String, dynamic>('backState')
+              .timeout(const Duration(seconds: 5));
+          observations['menu_native_back_registration'] = backState;
+          expect(backState?['framework_handles_back'], true,
+              reason:
+                  'Android must route Back to Flutter while the drawer is open');
+          observations['menu_android_back'] = 'awaiting native key event';
+          await checkpoint();
           print('PROXO_POLISH_MENU_BACK_READY');
           final backClock = Stopwatch()..start();
           while (drawerKey.currentState!.isEndDrawerOpen &&
               backClock.elapsed < const Duration(seconds: 8)) {
             await t.pump(const Duration(milliseconds: 16));
           }
+          expect(drawerKey.currentState!.isEndDrawerOpen, isFalse,
+              reason: 'Android Back must dismiss the drawer, not the activity');
+          final closedState = await native
+              .invokeMapMethod<String, dynamic>('backState')
+              .timeout(const Duration(seconds: 5));
+          expect(closedState?['activity_finishing'], false);
+          expect(closedState?['activity_destroyed'], false);
+          observations['menu_native_back_after_dismissal'] = closedState;
+          observations['menu_android_back'] = 'dismissed';
+          await checkpoint();
+          print('PROXO_POLISH_MENU_BACK_DISMISSED');
         } else if (cycle == 1) {
           // The exposed strip is the native scrim on this narrow viewport.
           await t.tapAt(const Offset(8, 300));

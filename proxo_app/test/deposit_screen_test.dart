@@ -486,4 +486,78 @@ void main() {
     expect(requests, isEmpty);
     await unmount(t);
   });
+
+  testWidgets('FastPay compact large text preserves reference and actions',
+      (t) async {
+    await mount(t, width: 320, scale: 2);
+    await select(t, 'fastpay');
+    await amount(t, '10000');
+    await reveal(t, 'deposit-submit');
+    t.widget<FilledButton>(key('deposit-submit')).onPressed!();
+    await settle(t);
+    final sheet = find.byType(FastPayCheckoutSheet);
+    final verticalScroll = find.descendant(
+        of: sheet,
+        matching: find.byWidgetPredicate((widget) =>
+            widget is Scrollable &&
+            axisDirectionToAxis(widget.axisDirection) == Axis.vertical));
+    final reference = t.renderObject<RenderParagraph>(key('fastpay-reference'));
+    final referenceValue = reference.text.toPlainText();
+    final referenceViewport = t.getRect(key('fastpay-reference-scroll'));
+    expect(referenceViewport.width, greaterThan(60));
+    expect(reference.didExceedMaxLines, isFalse);
+    expect(reference.textDirection, TextDirection.ltr);
+    final horizontalScroll = t.state<ScrollableState>(find.descendant(
+        of: key('fastpay-reference-scroll'),
+        matching: find.byType(Scrollable)));
+    expect(horizontalScroll.position.maxScrollExtent, greaterThan(0));
+    horizontalScroll.position.jumpTo(horizontalScroll.position.maxScrollExtent);
+    await settle(t);
+    expect(horizontalScroll.position.extentAfter, 0);
+
+    String? copied;
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(SystemChannels.platform, (call) async {
+      if (call.method == 'Clipboard.setData') {
+        copied = (call.arguments as Map)['text'] as String;
+      }
+      return null;
+    });
+    addTearDown(() => TestDefaultBinaryMessengerBinding
+        .instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(SystemChannels.platform, null));
+    await t.ensureVisible(key('fastpay-copy-reference'));
+    await t.tap(key('fastpay-copy-reference'));
+    await settle(t);
+    expect(copied, referenceValue);
+    expect(t.getSize(key('fastpay-copy-reference')).height,
+        greaterThanOrEqualTo(44));
+
+    await t.scrollUntilVisible(key('fastpay-countdown'), 180,
+        scrollable: verticalScroll);
+    final countdown =
+        t.renderObject<RenderParagraph>(key('fastpay-countdown'));
+    expect(countdown.didExceedMaxLines, isFalse);
+    final boxes = countdown.getBoxesForSelection(TextSelection(
+        baseOffset: 0, extentOffset: countdown.text.toPlainText().length));
+    expect(boxes, isNotEmpty);
+    expect(boxes.map((box) => box.top).toSet(), hasLength(1));
+
+    await t.scrollUntilVisible(find.text('بەردەوامبە'), 180,
+        scrollable: verticalScroll);
+    expect(find.text('بەردەوامبە').hitTestable(), findsOneWidget);
+    await t.scrollUntilVisible(find.text('پاشگەزبوونەوە'), 180,
+        scrollable: verticalScroll);
+    await t.tap(find.text('پاشگەزبوونەوە'));
+    await settle(t);
+    expect(find.text('ڕەتکرایەوە'), findsWidgets);
+    expect(t.renderObject<RenderParagraph>(key('fastpay-reference'))
+        .text.toPlainText(), referenceValue);
+    expect(requests, isEmpty);
+    expect(notices, isEmpty);
+    Navigator.of(t.element(sheet)).pop(false);
+    await settle(t);
+    expect(t.widget<FilledButton>(key('deposit-submit')).onPressed, isNotNull);
+    await unmount(t);
+  });
 }

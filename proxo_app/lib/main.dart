@@ -30,6 +30,7 @@ import 'widgets/bottom_nav.dart';
 import 'widgets/proxo_refresh.dart';
 import 'widgets/proxo_tab_stack.dart';
 import 'widgets/proxo_sidebar.dart';
+import 'widgets/proxo_drawer_navigation.dart';
 import 'widgets/proxo_error_stack.dart';
 import 'screens/profile_screen.dart';
 import 'widgets/no_internet_widget.dart';
@@ -549,6 +550,7 @@ class MainShellState extends State<MainShell> with WidgetsBindingObserver {
             child: Scaffold(
             key: _scaffoldKey,
             backgroundColor: AppColors.bg,
+            onEndDrawerChanged: (_) => syncProxoDrawerBackNavigation(context),
             endDrawer: Directionality(
               textDirection: TextDirection.rtl,
               child: ProxoSidebar(

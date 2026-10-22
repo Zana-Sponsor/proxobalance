@@ -29,6 +29,8 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.14.3'
+      - name: Verify profile runner timeout and cleanup
+        run: python3 -m unittest discover -s test -p 'polish_runtime_runner_test.py'
       - name: Prepare profile fixture
         working-directory: proxo_app
         run: |
