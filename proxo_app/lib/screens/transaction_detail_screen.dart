@@ -5,7 +5,6 @@ import '../l10n/tx_strings.dart';
 import '../models/receipt_pricing.dart';
 import '../theme/app_locale.dart';
 import '../widgets/receipt/receipt_kit.dart';
-import '../widgets/proxo_symbol.dart';
 
 // ═════════════════════════════════════════════════════════════════════════════
 // TransactionDetailScreen — پسوولەی مامەڵە (Proxo Transaction Detail — V1)
@@ -393,12 +392,12 @@ class _TxReceiptCard extends StatelessWidget {
           const ReceiptDivider(),
 
           // ── ١٢/١٥/١٦) پوختە ─────────────────────────────────────────────
-          ReceiptSectionHeading(heading, icon: ProxoSymbolName.graph),
+          ReceiptSectionHeading(heading),
           ReceiptRows(summaryRows),
           const ReceiptDivider(),
 
           // ── ١٣) زانیاری پارەدان ─────────────────────────────────────────
-          ReceiptSectionHeading(l.paymentInfo, icon: ProxoSymbolName.wallet),
+          ReceiptSectionHeading(l.paymentInfo),
           ReceiptRows(<Widget?>[
             ReceiptRow(
               label: l.paymentMethod,

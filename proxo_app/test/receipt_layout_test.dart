@@ -312,10 +312,7 @@ void main() {
                     .first,
               )
               .decoration as BoxDecoration;
-          expect(
-              decoration.border,
-              const Border.fromBorderSide(
-                  BorderSide(color: ReceiptTokens.divider)));
+          expect(decoration.border, isNull);
           expect(decoration.boxShadow!.single.color, const Color(0x060F172A));
           expect(receiptPaintedRect(tester, uid).left, greaterThanOrEqualTo(0));
           expect(
@@ -373,7 +370,7 @@ void main() {
             expect(
               text.style!.color,
               isHeading
-                  ? ReceiptTokens.ink
+                  ? ReceiptTokens.accent
                   : text.style == ReceiptTokens.rowLabel
                       ? ReceiptTokens.label
                       : find
@@ -420,6 +417,32 @@ void main() {
       }
     }
   }
+
+  testWidgets('short references keep the compact row and accessible copy',
+      (tester) async {
+    String? copied;
+    const id = 'PARZNFHCOKVL';
+    await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+            body: Center(
+                child: SizedBox(
+                    width: 321,
+                    child: ReceiptIdRow(
+                      label: 'ئایدی ڕیکلام',
+                      value: id,
+                      onLongPress: () => copied = id,
+                    ))))));
+    await tester.pumpAndSettle();
+    final row = tester.getRect(find.byType(ReceiptIdRow));
+    final label = tester.getRect(find.text('ئایدی ڕیکلام'));
+    final value = tester.getRect(find.text(id));
+    expect(row.height, 48);
+    expect(label.center.dy, closeTo(value.center.dy, .01));
+    expect(value.right, lessThan(label.left));
+    await tester.tap(find.byType(IconButton));
+    expect(copied, id);
+    expect(tester.takeException(), isNull);
+  });
 
   testWidgets(
     'long references stay single-line and scroll/copy the complete identifier',

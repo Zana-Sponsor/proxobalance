@@ -12,7 +12,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:proxo_app/widgets/proxo_text.dart';
 import '../proxo_symbol.dart';
 import '../proxo_toast.dart';
-import '../../theme/proxo_surface.dart';
 
 // ═════════════════════════════════════════════════════════════════════════════
 // Receipt Kit — دیزاین سیستەمی هاوبەشی پسوولەکان
@@ -25,8 +24,8 @@ import '../../theme/proxo_surface.dart';
 //
 // یاساکان (بەپێی Proxo Ad Detail — V2):
 //   • هەموو دەقێک w400؛ بێ قەڵەوکردنی زیادە لە Flutter.
-//   • Regular Auth typography, quiet labels and clearly readable values.
-//   • White 18dp cards, 20dp page gutters and a fine neutral border.
+//   • Preserve the original blue headings and borderless white receipt.
+//   • Balance regular Kurdish typography without changing the receipt identity.
 // ═════════════════════════════════════════════════════════════════════════════
 
 abstract final class ReceiptTokens {
@@ -34,7 +33,7 @@ abstract final class ReceiptTokens {
   static const String fontFamily = 'RabarAuthRegular';
   static const String fontAsset = 'assets/fonts/Rabar_022.ttf';
   // ── ڕەنگ ─────────────────────────────────────────────────────────────────
-  /// White page with a fine card border and restrained shadow.
+  /// Original white receipt, separated by a restrained shadow.
   static const Color page = Color(0xFFFFFFFF);
   static const Color historyPage = Color(0xFFF2F2F7);
   static const Color bar = Color(0xFFFFFFFF);
@@ -71,7 +70,7 @@ abstract final class ReceiptTokens {
   static const double contentMaxWidth = 600;
   static const double pageTop = 20;
   static const double pageBottom = 28;
-  static const double cardRadius = ProxoSurface.radius;
+  static const double cardRadius = 16;
   static const double cardVerticalPadding = 16;
 
   /// Measured reference canvas. One proportional transform preserves every
@@ -99,14 +98,14 @@ abstract final class ReceiptTokens {
   static const double labelMaxFraction = 0.4;
 
   // ── سەرووی پسوولە ────────────────────────────────────────────────────────
-  static const double logoHeight = 24;
-  static const double logoWidth = 84;
+  static const double logoHeight = 18;
+  static const double logoWidth = 64;
   static const String logoAsset = 'assets/images/proxo_logo.png';
 
   // ── دوگمەی PDF ───────────────────────────────────────────────────────────
   static const double cardToButton = 24;
   static const double buttonHeight = 48;
-  static const double buttonRadius = 12;
+  static const double buttonRadius = 18;
 
   // ── تایپۆگرافی — قەبارەی دیاریکراو، هەمووی w400 ──────────────────────────
   static const FontWeight weight = FontWeight.w400;
@@ -125,25 +124,27 @@ abstract final class ReceiptTokens {
       );
 
   static const double appBarTitleSize = 18;
-  static const double receiptTitleSize = 18;
-  static const double sectionTitleSize = 16;
+  static const double receiptTitleSize = 16;
+  static const double sectionTitleSize = 15;
   static const double labelSize = 13;
   static const double valueSize = 14;
-  static const double totalSize = 20;
+  static const double totalSize = 16;
   static const double uidSize = 13;
   static const double pdfButtonSize = 14;
 
   static final TextStyle barTitle = _s(appBarTitleSize, title, height: 1.4);
   static final TextStyle receiptTitle =
       _s(receiptTitleSize, title, height: 1.4);
-  static final TextStyle heading = _s(sectionTitleSize, ink);
+  static final TextStyle heading = _s(sectionTitleSize, accent);
   static final TextStyle rowLabel = _s(labelSize, label);
   static final TextStyle rowValue = _s(valueSize, ink);
   static final TextStyle uidValue = _s(uidSize, ink);
   static final TextStyle metadataValue = _s(13, ink);
-  static final TextStyle moneyValue = _s(16, ink);
+  static final TextStyle moneyValue = _s(valueSize, ink);
   static final TextStyle totalValue = _s(totalSize, ink);
-  static final TextStyle discountValue = _s(16, ink);
+  // Preserve the separate transaction-history balance summary.
+  static final TextStyle historyAmountValue = _s(20, ink);
+  static final TextStyle discountValue = _s(valueSize, ink);
   static final TextStyle button = _s(pdfButtonSize, onAccent, height: 1.5);
 
   /// سنووری قەبارەی نووسینی سیستەم — تا 1.3× بە بێ تێکچوونی دیزاین.
@@ -282,7 +283,6 @@ class ReceiptCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: ReceiptTokens.card,
           borderRadius: BorderRadius.circular(ReceiptTokens.cardRadius),
-          border: Border.all(color: ReceiptTokens.divider),
           boxShadow: ReceiptTokens.cardShadow,
         ),
         child: Padding(
@@ -457,24 +457,18 @@ class ReceiptDivider extends StatelessWidget {
 
 class ReceiptSectionHeading extends StatelessWidget {
   final String text;
-  final ProxoSymbolName icon;
 
-  const ReceiptSectionHeading(this.text,
-      {super.key, this.icon = ProxoSymbolName.info});
+  const ReceiptSectionHeading(this.text, {super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: ReceiptTokens.headingToRow),
-      child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-        ProxoSymbol(icon, size: 20, color: ReceiptTokens.accent),
-        const SizedBox(width: 8),
-        Expanded(
-            child: ProxoText(text,
-                style: ReceiptTokens.heading, textAlign: TextAlign.start)),
-      ]),
-    );
-  }
+  Widget build(BuildContext context) => Padding(
+        padding: const EdgeInsets.only(bottom: ReceiptTokens.headingToRow),
+        child: Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: ProxoText(text,
+              style: ReceiptTokens.heading, textAlign: TextAlign.start),
+        ),
+      );
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -638,31 +632,73 @@ class ReceiptIdRow extends StatelessWidget {
     this.onLongPress,
   });
   @override
-  Widget build(BuildContext context) => Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            textDirection: TextDirection.rtl,
-            children: [
-              Expanded(
-                  child: ProxoText(label,
-                      textAlign: TextAlign.right,
-                      style: ReceiptTokens.rowLabel)),
-              if (onLongPress != null && value.isNotEmpty && value != '—')
-                IconButton(
+  Widget build(BuildContext context) => LayoutBuilder(
+        builder: (context, constraints) {
+          final hasCopy =
+              onLongPress != null && value.isNotEmpty && value != '—';
+          double measure(
+              String text, TextStyle style, TextDirection direction) {
+            final painter = TextPainter(
+              text: TextSpan(text: text, style: style),
+              textDirection: direction,
+              textScaler: MediaQuery.textScalerOf(context),
+              maxLines: 1,
+            )..layout();
+            final width = painter.width;
+            painter.dispose();
+            return width;
+          }
+
+          final labelWidth =
+              measure(label, ReceiptTokens.rowLabel, TextDirection.rtl);
+          final valueWidth =
+              measure(value, ReceiptTokens.uidValue, TextDirection.ltr);
+          final inline = labelWidth +
+                  valueWidth +
+                  ReceiptTokens.labelToValue +
+                  (hasCopy ? 48 : 0) <=
+              constraints.maxWidth;
+          final labelText = ProxoText(label,
+              textAlign: TextAlign.right, style: ReceiptTokens.rowLabel);
+          final copy = hasCopy
+              ? IconButton(
                   tooltip: ProxoStrings.text('کۆپیکردن'),
                   onPressed: onLongPress,
                   constraints:
                       const BoxConstraints.tightFor(width: 48, height: 48),
-                  padding: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(14),
                   icon: const ProxoSymbol(ProxoSymbolName.copy,
                       size: 20, color: ReceiptTokens.accent),
-                ),
+                )
+              : null;
+          if (inline) {
+            // Keep short public references in the original compact detail row.
+            // Long references retain their full width and export marker below.
+            return Row(
+              textDirection: TextDirection.rtl,
+              children: [
+                labelText,
+                const SizedBox(width: ReceiptTokens.labelToValue),
+                Expanded(child: _ReceiptIdViewport(value: value)),
+                if (copy != null) copy,
+              ],
+            );
+          }
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                textDirection: TextDirection.rtl,
+                children: [
+                  Expanded(child: labelText),
+                  if (copy != null) copy,
+                ],
+              ),
+              _ReceiptIdViewport(value: value),
             ],
-          ),
-          _ReceiptIdViewport(value: value),
-        ],
+          );
+        },
       );
 }
 
@@ -789,9 +825,8 @@ class _ReceiptPdfButtonState extends State<ReceiptPdfButton> {
           textDirection: receiptDirOf(widget.label),
           textScaler: MediaQuery.textScalerOf(context),
         )..layout(
-            // Match the actual 16dp padding, 20dp icon and 8dp gap so large
-            // accessibility text gets the same wrapping in measurement/layout.
-            maxWidth: (constraints.maxWidth - 32 - 20 - 8).clamp(
+            // Match the text-only button's actual horizontal padding.
+            maxWidth: (constraints.maxWidth - 32).clamp(
               1.0,
               double.infinity,
             ),
@@ -833,24 +868,11 @@ class _ReceiptPdfButtonState extends State<ReceiptPdfButton> {
                               ),
                             ),
                           )
-                        : Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const ProxoSymbol(
-                                ProxoSymbolName.download,
-                                size: 20,
-                                color: ReceiptTokens.onAccent,
-                              ),
-                              const SizedBox(width: 8),
-                              Flexible(
-                                child: ProxoText(
-                                  widget.label,
-                                  softWrap: true,
-                                  textAlign: TextAlign.center,
-                                  style: ReceiptTokens.button,
-                                ),
-                              ),
-                            ],
+                        : ProxoText(
+                            widget.label,
+                            softWrap: true,
+                            textAlign: TextAlign.center,
+                            style: ReceiptTokens.button,
                           ),
                   ),
                 ),

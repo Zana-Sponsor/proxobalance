@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../../l10n/ad_detail_strings.dart';
 import '../../models/ad_receipt_data.dart';
 import 'receipt_kit.dart';
-import '../proxo_symbol.dart';
 
 class AdReceiptCard extends StatelessWidget {
   final AdReceiptData r;
@@ -57,7 +56,7 @@ class AdReceiptCard extends StatelessWidget {
           const ReceiptDivider(),
 
           // ── ١١) ئامانجی ڕیکلام ──────────────────────────────────────────
-          ReceiptSectionHeading(l.sectionTarget, icon: ProxoSymbolName.target),
+          ReceiptSectionHeading(l.sectionTarget),
           ReceiptRows(<Widget?>[
             ReceiptRow(label: l.age, value: r.age, valueDirection: r.ageDir),
             ReceiptRow(
@@ -84,7 +83,7 @@ class AdReceiptCard extends StatelessWidget {
           const ReceiptDivider(),
 
           // ── ١٢) پوختە ───────────────────────────────────────────────────
-          ReceiptSectionHeading(l.sectionSummary, icon: ProxoSymbolName.graph),
+          ReceiptSectionHeading(l.sectionSummary),
           ReceiptRows(<Widget?>[
             ReceiptMoneyRow(
               label: l.originalAmount,
@@ -104,8 +103,7 @@ class AdReceiptCard extends StatelessWidget {
           if (r.paymentStatus != 'no_payment_required' ||
               r.transactionId != null) ...[
             const ReceiptDivider(),
-            ReceiptSectionHeading(l.sectionPayment,
-                icon: ProxoSymbolName.wallet),
+            ReceiptSectionHeading(l.sectionPayment),
             ReceiptRows(<Widget?>[
               ReceiptRow(
                 label: l.paymentMethod,

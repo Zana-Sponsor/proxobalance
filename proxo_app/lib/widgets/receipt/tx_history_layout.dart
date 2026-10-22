@@ -133,7 +133,7 @@ class TxHistoryCard extends StatelessWidget {
                     ],
                     ProxoText(amount,
                         textAlign: TextAlign.left,
-                        style: ReceiptTokens.totalValue
+                        style: ReceiptTokens.historyAmountValue
                             .copyWith(color: amountColor)),
                     if (status != null) ...[
                       const SizedBox(height: ReceiptTokens.rowToRow),
