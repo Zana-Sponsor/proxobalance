@@ -1,0 +1,20 @@
+Analyzing 7 items...                                            
+
+   info • The import of 'dart:ui' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/scheduler.dart'. Try removing the import directive • integration_test/polish_runtime_test.dart:5:8 • unnecessary_import
+   info • The import of 'package:flutter/rendering.dart' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart'. Try removing the import directive • integration_test/polish_runtime_test.dart:8:8 • unnecessary_import
+   info • Don't invoke 'print' in production code. Try using a logging framework • integration_test/polish_runtime_test.dart:105:5 • avoid_print
+   info • Don't invoke 'print' in production code. Try using a logging framework • integration_test/polish_runtime_test.dart:231:7 • avoid_print
+   info • Statements in a for should be enclosed in a block. Try wrapping the statement in a block • integration_test/polish_runtime_test.dart:358:42 • curly_braces_in_flow_control_structures
+   info • Don't invoke 'print' in production code. Try using a logging framework • integration_test/polish_runtime_test.dart:472:11 • avoid_print
+   info • Don't invoke 'print' in production code. Try using a logging framework • integration_test/polish_runtime_test.dart:488:11 • avoid_print
+   info • Don't invoke 'print' in production code. Try using a logging framework • integration_test/polish_runtime_test.dart:574:7 • avoid_print
+   info • Don't invoke 'print' in production code. Try using a logging framework • integration_test/polish_runtime_test.dart:598:7 • avoid_print
+   info • Don't invoke 'print' in production code. Try using a logging framework • integration_test/polish_runtime_test.dart:675:7 • avoid_print
+   info • Statements in a for should be enclosed in a block. Try wrapping the statement in a block • integration_test/polish_runtime_test.dart:712:9 • curly_braces_in_flow_control_structures
+   info • Don't invoke 'print' in production code. Try using a logging framework • integration_test/polish_runtime_test.dart:759:5 • avoid_print
+   info • Don't invoke 'print' in production code. Try using a logging framework • integration_test/polish_runtime_test.dart:777:5 • avoid_print
+   info • Constructors for public widgets should have a named 'key' parameter. Try adding a named parameter to the constructor • lib/main.dart:308:9 • use_key_in_widget_constructors
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/widgets/fastpay_checkout_sheet.dart:696:11 • prefer_const_constructors
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement • lib/widgets/fastpay_checkout_sheet.dart:747:43 • deprecated_member_use
+
+16 issues found. (ran in 6.1s)

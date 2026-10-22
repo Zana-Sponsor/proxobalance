@@ -1,0 +1,113 @@
+Current scoped workflow analyzer plus native driver; pub resolution disabled.
+Analyzing 63 items...                                           
+
+   info • The import of 'dart:ui' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/scheduler.dart'. Try removing the import directive • integration_test/polish_runtime_test.dart:4:8 • unnecessary_import
+   info • The import of 'package:flutter/rendering.dart' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart'. Try removing the import directive • integration_test/polish_runtime_test.dart:7:8 • unnecessary_import
+   info • Don't invoke 'print' in production code. Try using a logging framework • integration_test/polish_runtime_test.dart:103:5 • avoid_print
+   info • Don't invoke 'print' in production code. Try using a logging framework • integration_test/polish_runtime_test.dart:222:7 • avoid_print
+   info • Statements in a for should be enclosed in a block. Try wrapping the statement in a block • integration_test/polish_runtime_test.dart:349:42 • curly_braces_in_flow_control_structures
+   info • Don't invoke 'print' in production code. Try using a logging framework • integration_test/polish_runtime_test.dart:451:11 • avoid_print
+   info • Don't invoke 'print' in production code. Try using a logging framework • integration_test/polish_runtime_test.dart:542:7 • avoid_print
+   info • Don't invoke 'print' in production code. Try using a logging framework • integration_test/polish_runtime_test.dart:566:7 • avoid_print
+   info • Don't invoke 'print' in production code. Try using a logging framework • integration_test/polish_runtime_test.dart:643:7 • avoid_print
+   info • Statements in a for should be enclosed in a block. Try wrapping the statement in a block • integration_test/polish_runtime_test.dart:680:9 • curly_braces_in_flow_control_structures
+   info • Don't invoke 'print' in production code. Try using a logging framework • integration_test/polish_runtime_test.dart:727:5 • avoid_print
+   info • Don't invoke 'print' in production code. Try using a logging framework • integration_test/polish_runtime_test.dart:745:5 • avoid_print
+   info • Constructors for public widgets should have a named 'key' parameter. Try adding a named parameter to the constructor • lib/main.dart:307:9 • use_key_in_widget_constructors
+   info • Unnecessary braces in a string interpolation. Try removing the braces • lib/screens/ad_screen.dart:903:99 • unnecessary_brace_in_string_interps
+   info • Don't use 'BuildContext's across async gaps. Try rewriting the code to not use the 'BuildContext', or guard the use with a 'mounted' check • lib/screens/ad_screen.dart:1015:13 • use_build_context_synchronously
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/ad_screen.dart:1110:51 • curly_braces_in_flow_control_structures
+   info • Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check. Guard a 'State.context' use with a 'mounted' check on the State, and other BuildContext use with a 'mounted' check on the BuildContext • lib/screens/ad_screen.dart:1552:29 • use_build_context_synchronously
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement • lib/screens/ad_screen.dart:1596:54 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement • lib/screens/ad_screen.dart:1627:62 • deprecated_member_use
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/screens/ad_screen.dart:1683:39 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/screens/ad_screen.dart:2023:33 • prefer_const_constructors
+   info • 'cacheExtent' is deprecated and shouldn't be used. Use scrollCacheExtent instead. This feature was deprecated after v3.41.0-0.0.pre. Try replacing the use of the deprecated member with the replacement • lib/screens/ad_screen.dart:2613:7 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement • lib/screens/ad_screen.dart:3233:37 • deprecated_member_use
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/ad_screen.dart:3611:55 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/ad_screen.dart:3715:68 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/ad_screen.dart:3741:39 • curly_braces_in_flow_control_structures
+   info • Use 'const' for final variables initialized to a constant value. Try replacing 'final' with 'const' • lib/screens/ad_screen.dart:4139:9 • prefer_const_declarations
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/screens/ad_screen.dart:4378:22 • prefer_const_constructors
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement • lib/screens/ad_screen.dart:4975:39 • deprecated_member_use
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/screens/ad_screen.dart:5271:26 • prefer_const_constructors
+   info • 'translate' is deprecated and shouldn't be used. Use translateByVector3, translateByVector4, or translateByDouble instead. Try replacing the use of the deprecated member with the replacement • lib/screens/ad_screen.dart:5378:9 • deprecated_member_use
+   info • 'scale' is deprecated and shouldn't be used. Use scaleByVector3, scaleByVector4, or scaleByDouble instead. Try replacing the use of the deprecated member with the replacement • lib/screens/ad_screen.dart:5379:9 • deprecated_member_use
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/best_metrics_screen.dart:52:7 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/best_metrics_screen.dart:68:11 • curly_braces_in_flow_control_structures
+   info • 'cacheExtent' is deprecated and shouldn't be used. Use scrollCacheExtent instead. This feature was deprecated after v3.41.0-0.0.pre. Try replacing the use of the deprecated member with the replacement • lib/screens/best_metrics_screen.dart:224:9 • deprecated_member_use
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/home_screen.dart:282:11 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/home_screen.dart:459:7 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/profile_screen.dart:179:47 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/profile_screen.dart:248:7 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/profile_screen.dart:319:60 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/profile_screen.dart:339:52 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/profile_screen.dart:353:52 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/profile_screen.dart:377:52 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/profile_screen.dart:403:52 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/profile_screen.dart:421:50 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/profile_screen.dart:466:52 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/profile_screen.dart:486:52 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/profile_screen.dart:504:7 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/profile_screen.dart:526:42 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/profile_screen.dart:801:27 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/profile_screen.dart:846:9 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/profile_screen.dart:933:45 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/profile_screen.dart:1035:9 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/profile_screen.dart:1174:27 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/profile_screen.dart:1594:7 • curly_braces_in_flow_control_structures
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/screens/profile_screen.dart:1672:15 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/screens/profile_screen.dart:2506:14 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/screens/profile_screen.dart:2607:30 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/screens/profile_screen.dart:2613:32 • prefer_const_constructors
+   info • Use 'const' literals as arguments to constructors of '@immutable' classes. Try adding 'const' before the literal • lib/screens/profile_screen.dart:2614:37 • prefer_const_literals_to_create_immutables
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/screens/profile_screen.dart:2615:29 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/screens/profile_screen.dart:2630:29 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/screens/profile_screen.dart:2631:29 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/screens/profile_screen.dart:2644:29 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/screens/profile_screen.dart:2645:29 • prefer_const_constructors
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/profile_screen.dart:2879:5 • curly_braces_in_flow_control_structures
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/screens/profile_screen.dart:3055:17 • prefer_const_constructors
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/services/ad_submission.dart:528:31 • curly_braces_in_flow_control_structures
+   info • The import of 'package:flutter/painting.dart' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/widgets.dart'. Try removing the import directive • lib/services/app_telemetry_service.dart:6:8 • unnecessary_import
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/services/app_telemetry_service.dart:91:7 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/services/app_telemetry_service.dart:132:9 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/services/app_telemetry_service.dart:149:7 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/services/app_telemetry_service.dart:186:60 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/services/app_telemetry_service.dart:192:54 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/services/app_telemetry_service.dart:363:7 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/services/app_telemetry_service.dart:410:9 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/services/app_telemetry_service.dart:412:9 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/services/topup_service.dart:32:11 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/services/topup_service.dart:39:13 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/services/topup_service.dart:67:11 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/services/topup_service.dart:108:7 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/services/topup_service.dart:143:7 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/services/topup_service.dart:157:9 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/services/topup_service.dart:160:9 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/services/topup_service.dart:163:9 • curly_braces_in_flow_control_structures
+   info • 'of' is deprecated and shouldn't be used. Use TickerMode.valuesOf to get both enabled and forceFrames. This feature was deprecated after v3.35.0-0.0.pre. Try replacing the use of the deprecated member with the replacement • lib/widgets/best_metrics_home_section.dart:97:21 • deprecated_member_use
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/widgets/best_metrics_home_section.dart:101:62 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/widgets/best_metrics_home_section.dart:138:7 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/widgets/best_metrics_home_section.dart:371:43 • curly_braces_in_flow_control_structures
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/widgets/fastpay_checkout_sheet.dart:722:11 • prefer_const_constructors
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement • lib/widgets/fastpay_checkout_sheet.dart:773:43 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement • lib/widgets/proxo_error_ui.dart:120:25 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement • lib/widgets/proxo_error_ui.dart:433:48 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement • lib/widgets/proxo_error_ui.dart:439:58 • deprecated_member_use
+   info • 'axisAlignment' is deprecated and shouldn't be used. Use alignment instead. This property provides full control over both axes, which is an improvement over the old axisAlignment. This feature was deprecated after v3.41.0-1.0.pre. Try replacing the use of the deprecated member with the replacement • lib/widgets/proxo_error_ui.dart:489:9 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement • lib/widgets/proxo_error_ui.dart:689:32 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement • lib/widgets/proxo_error_ui.dart:819:32 • deprecated_member_use
+   info • The imported package 'shared_preferences_platform_interface' isn't a dependency of the importing package. Try adding a dependency for 'shared_preferences_platform_interface' in the 'pubspec.yaml' file • test/pending_storage_serialization_test.dart:8:8 • depend_on_referenced_packages
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • test/pending_storage_serialization_test.dart:104:9 • curly_braces_in_flow_control_structures
+   info • Use 'const' for final variables initialized to a constant value. Try replacing 'final' with 'const' • test/profile_loading_test.dart:81:5 • prefer_const_declarations
+   info • Use 'const' for final variables initialized to a constant value. Try replacing 'final' with 'const' • test/profile_loading_test.dart:82:5 • prefer_const_declarations
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • test/profile_polish_test.dart:187:13 • curly_braces_in_flow_control_structures
+   info • The import of 'dart:typed_data' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/services.dart'. Try removing the import directive • test/proxolink_creation_recovery_test.dart:3:8 • unnecessary_import
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • test/proxolink_creation_recovery_test.dart:76:7 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • test/proxolink_creation_recovery_test.dart:606:11 • curly_braces_in_flow_control_structures
+   info • The imported package 'shared_preferences_platform_interface' isn't a dependency of the importing package. Try adding a dependency for 'shared_preferences_platform_interface' in the 'pubspec.yaml' file • test/topup_storage_deadline_test.dart:6:8 • depend_on_referenced_packages
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • test/topup_storage_deadline_test.dart:75:9 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • test/topup_storage_deadline_test.dart:77:9 • curly_braces_in_flow_control_structures
+
+108 issues found. (ran in 17.1s)

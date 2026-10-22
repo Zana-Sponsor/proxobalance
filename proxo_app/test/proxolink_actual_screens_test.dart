@@ -128,11 +128,10 @@ void main() {
         await _png(t,key,'actual-$screen-error-initial-${width.toInt()}');
         await t.tap(button);await t.pump();
         final counts=<String,int>{},visual=<String,Object>{};var previous=0;
-        for(final phase in [100,400,4900,5100,5500,10200,10800]) {
-          // Actual stagger/entry/exit needs frames between Timer callbacks.
-          // A single large fake-clock leap can mount a zero-opacity card at
-          // the observation time even though its lifetime timer has elapsed.
-          while(previous<phase){final step=(phase-previous).clamp(1,16);await t.pump(Duration(milliseconds:step));previous+=step;}
+        for(final phase in [100,400,1999,2000,2400]) {
+          // Measure the single notice from its first painted frame. Expiry
+          // removes it immediately, without a delayed fade or queued replay.
+          await t.pump(Duration(milliseconds:phase-previous));previous=phase;
           final root=key.currentContext! as Element;
           counts['${phase}ms']=screenNoticeCount(root);
           visual['${phase}ms']=screenNoticeVisualState(root);
@@ -140,13 +139,8 @@ void main() {
             final actual=screenNoticeAppearance(root);
             if(appearance==null){appearance=actual;}else{expect(actual,appearance);}
           }
-          if(phase<=4900)expect(counts['${phase}ms'],2);
-          if(phase==400||phase==4900)expect(visual['${phase}ms'],{'opacity':[1.0,1.0],'size_factor':[1.0,1.0]});
-          if(phase==5500||phase==10200) {
-            expect(counts['${phase}ms'],1);
-            expect(visual['${phase}ms'],{'opacity':[1.0],'size_factor':[1.0]});
-          }
-          if(phase==10800)expect(counts['${phase}ms'],0);
+          expect(counts['${phase}ms'],phase<2000?1:0);
+          expect(visual['${phase}ms'],{'opacity':<double>[],'size_factor':<double>[]});
           await _png(t,key,'actual-$screen-error-${phase}ms-${width.toInt()}');
           expect(t.takeException(),isNull);
         }

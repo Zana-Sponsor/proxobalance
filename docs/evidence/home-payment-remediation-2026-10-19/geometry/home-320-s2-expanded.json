@@ -1,0 +1,1403 @@
+{
+  "fixture": "Fictional records; actual production widgets; no external writes",
+  "runtime": "Flutter widget test on Linux; not a device performance test",
+  "viewport_dp": [
+    320.0,
+    740.0
+  ],
+  "capture_pixel_ratio": 2,
+  "device_pixel_ratio": 2,
+  "text_scale": 2.0,
+  "safe_area_dp": {
+    "top": 24,
+    "bottom": 16
+  },
+  "keyboard_inset_dp": 0.0,
+  "mounted_images_decoded": 1,
+  "intentional_failed_image_providers": 0,
+  "layout_exceptions": 0,
+  "nodes": [
+    {
+      "widget": "Navigator",
+      "key": "[GlobalObjectKey<NavigatorState> _WidgetsAppState#59a10]",
+      "bounds_dp": [
+        0.0,
+        0.0,
+        320.0,
+        740.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "Overlay",
+      "key": "[LabeledGlobalKey<OverlayState>#b6784]",
+      "bounds_dp": [
+        0.0,
+        0.0,
+        320.0,
+        740.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "_OverlayEntryWidget",
+      "key": "[LabeledGlobalKey<_OverlayEntryWidgetState>#eec0c]",
+      "bounds_dp": [
+        0.0,
+        0.0,
+        320.0,
+        740.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "_OverlayEntryWidget",
+      "key": "[LabeledGlobalKey<_OverlayEntryWidgetState>#34693]",
+      "bounds_dp": [
+        0.0,
+        0.0,
+        320.0,
+        740.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "_ModalScope<dynamic>",
+      "key": "[LabeledGlobalKey<_ModalScopeState<dynamic>>#208c8]",
+      "bounds_dp": [
+        0.0,
+        0.0,
+        320.0,
+        740.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "RepaintBoundary",
+      "key": "[GlobalKey#b09d7]",
+      "bounds_dp": [
+        0.0,
+        0.0,
+        320.0,
+        740.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "_InkFeatures",
+      "key": "[GlobalKey#31b57 ink renderer]",
+      "bounds_dp": [
+        0.0,
+        0.0,
+        320.0,
+        740.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "LayoutId",
+      "key": "[<_ScaffoldSlot.body>]",
+      "bounds_dp": [
+        0.0,
+        0.0,
+        320.0,
+        633.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "_InkFeatures",
+      "key": "[GlobalKey#211f3 ink renderer]",
+      "bounds_dp": [
+        0.0,
+        0.0,
+        320.0,
+        633.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "LayoutId",
+      "key": "[<_ScaffoldSlot.body>]",
+      "bounds_dp": [
+        0.0,
+        80.0,
+        320.0,
+        553.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "_ScrollSemantics",
+      "key": "[GlobalKey#92924]",
+      "bounds_dp": [
+        0.0,
+        80.0,
+        320.0,
+        553.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "RawGestureDetector",
+      "key": "[LabeledGlobalKey<RawGestureDetectorState>#6207d]",
+      "bounds_dp": [
+        0.0,
+        80.0,
+        320.0,
+        553.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "IgnorePointer",
+      "key": "[GlobalKey#e5340]",
+      "bounds_dp": [
+        0.0,
+        80.0,
+        320.0,
+        553.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "ProxoText",
+      "key": null,
+      "bounds_dp": [
+        42.0,
+        -499.0,
+        236.0,
+        126.0
+      ],
+      "intersects_viewport": false,
+      "text": "ڕیکلامی تیک تۆک بەردەستە",
+      "font_family": "Rabar",
+      "font_size": 21.0,
+      "text_scale": 2.0,
+      "exceeded_max_lines": false
+    },
+    {
+      "widget": "ProxoText",
+      "key": null,
+      "bounds_dp": [
+        42.0,
+        -365.0,
+        236.0,
+        138.0
+      ],
+      "intersects_viewport": false,
+      "text": "ڕیکلامەکانت بڕوانە و بیکەرەوە بە ئاسانی لەگەڵ Proxo",
+      "font_family": "Rabar",
+      "font_size": 14.0,
+      "text_scale": 2.0,
+      "exceeded_max_lines": false
+    },
+    {
+      "widget": "Material",
+      "key": "[<'home-create-ad'>]",
+      "bounds_dp": [
+        20.0,
+        -181.0,
+        280.0,
+        63.0
+      ],
+      "intersects_viewport": false
+    },
+    {
+      "widget": "_InkFeatures",
+      "key": "[GlobalKey#12537 ink renderer]",
+      "bounds_dp": [
+        20.0,
+        -181.0,
+        280.0,
+        63.0
+      ],
+      "intersects_viewport": false
+    },
+    {
+      "widget": "SvgPicture",
+      "key": null,
+      "bounds_dp": [
+        257.0,
+        -160.5,
+        22.0,
+        22.0
+      ],
+      "intersects_viewport": false
+    },
+    {
+      "widget": "Expanded",
+      "key": null,
+      "bounds_dp": [
+        34.0,
+        -169.0,
+        204.0,
+        39.0
+      ],
+      "intersects_viewport": false,
+      "text": "دروستکردنی ڕیکلام",
+      "font_family": "RabarAuthRegular",
+      "font_size": 13.0,
+      "text_scale": 2.0,
+      "exceeded_max_lines": false
+    },
+    {
+      "widget": "Material",
+      "key": "[<'home-add-balance'>]",
+      "bounds_dp": [
+        20.0,
+        -110.0,
+        280.0,
+        63.0
+      ],
+      "intersects_viewport": false
+    },
+    {
+      "widget": "_InkFeatures",
+      "key": "[GlobalKey#dd443 ink renderer]",
+      "bounds_dp": [
+        20.0,
+        -110.0,
+        280.0,
+        63.0
+      ],
+      "intersects_viewport": false
+    },
+    {
+      "widget": "SvgPicture",
+      "key": null,
+      "bounds_dp": [
+        257.0,
+        -89.5,
+        22.0,
+        22.0
+      ],
+      "intersects_viewport": false
+    },
+    {
+      "widget": "Expanded",
+      "key": null,
+      "bounds_dp": [
+        34.0,
+        -98.0,
+        204.0,
+        39.0
+      ],
+      "intersects_viewport": false,
+      "text": "زیادکردنی باڵانس",
+      "font_family": "RabarAuthRegular",
+      "font_size": 13.0,
+      "text_scale": 2.0,
+      "exceeded_max_lines": false
+    },
+    {
+      "widget": "Material",
+      "key": "[<'home-create-page'>]",
+      "bounds_dp": [
+        20.0,
+        -39.0,
+        280.0,
+        63.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "_InkFeatures",
+      "key": "[GlobalKey#c51db ink renderer]",
+      "bounds_dp": [
+        20.0,
+        -39.0,
+        280.0,
+        63.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "SvgPicture",
+      "key": null,
+      "bounds_dp": [
+        257.0,
+        -18.5,
+        22.0,
+        22.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "Expanded",
+      "key": null,
+      "bounds_dp": [
+        34.0,
+        -27.0,
+        204.0,
+        39.0
+      ],
+      "intersects_viewport": true,
+      "text": "دروستکردنی پەڕە",
+      "font_family": "RabarAuthRegular",
+      "font_size": 13.0,
+      "text_scale": 2.0,
+      "exceeded_max_lines": false
+    },
+    {
+      "widget": "BestMetricsHomeSection",
+      "key": "[LabeledGlobalKey<BestMetricsHomeSectionState>#7c688]",
+      "bounds_dp": [
+        20.0,
+        48.0,
+        280.0,
+        831.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "Column",
+      "key": "[<'home-results-banner'>]",
+      "bounds_dp": [
+        20.0,
+        48.0,
+        280.0,
+        831.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "SvgPicture",
+      "key": null,
+      "bounds_dp": [
+        278.0,
+        64.0,
+        22.0,
+        22.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "Flexible",
+      "key": null,
+      "bounds_dp": [
+        22.939453125,
+        48.0,
+        247.060546875,
+        54.0
+      ],
+      "intersects_viewport": true,
+      "text": "باشترین ئەنجامەکان",
+      "font_family": "RabarAuthRegular",
+      "font_size": 18.0,
+      "text_scale": 2.0,
+      "exceeded_max_lines": false
+    },
+    {
+      "widget": "TextButton",
+      "key": "[<'home-results-view-all'>]",
+      "bounds_dp": [
+        20.0,
+        102.0,
+        177.0625,
+        55.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "_InkFeatures",
+      "key": "[GlobalKey#c586e ink renderer]",
+      "bounds_dp": [
+        20.0,
+        102.0,
+        177.0625,
+        55.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "Flexible",
+      "key": null,
+      "bounds_dp": [
+        46.0,
+        110.0,
+        147.0625,
+        39.0
+      ],
+      "intersects_viewport": true,
+      "text": "بینینی ئامارەکان",
+      "font_family": "RabarAuthRegular",
+      "font_size": 13.0,
+      "text_scale": 2.0,
+      "exceeded_max_lines": false
+    },
+    {
+      "widget": "SvgPicture",
+      "key": null,
+      "bounds_dp": [
+        24.0,
+        120.5,
+        18.0,
+        18.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "PageView",
+      "key": "[<'home-results-carousel'>]",
+      "bounds_dp": [
+        20.0,
+        169.0,
+        280.0,
+        710.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "_ScrollSemantics",
+      "key": "[GlobalKey#39c03]",
+      "bounds_dp": [
+        20.0,
+        169.0,
+        280.0,
+        710.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "RawGestureDetector",
+      "key": "[LabeledGlobalKey<RawGestureDetectorState>#0f18d]",
+      "bounds_dp": [
+        20.0,
+        169.0,
+        280.0,
+        710.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "IgnorePointer",
+      "key": "[GlobalKey#8774f]",
+      "bounds_dp": [
+        20.0,
+        169.0,
+        280.0,
+        710.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "_ScrollSemantics",
+      "key": "[GlobalKey#bb81c]",
+      "bounds_dp": [
+        20.0,
+        169.0,
+        280.0,
+        710.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "RawGestureDetector",
+      "key": "[LabeledGlobalKey<RawGestureDetectorState>#2e910]",
+      "bounds_dp": [
+        20.0,
+        169.0,
+        280.0,
+        710.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "IgnorePointer",
+      "key": "[GlobalKey#3d562]",
+      "bounds_dp": [
+        20.0,
+        169.0,
+        280.0,
+        710.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "BestMetricCard",
+      "key": "[<'weekly-fixture-beauty'>]",
+      "bounds_dp": [
+        20.0,
+        169.0,
+        280.0,
+        710.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "_InkFeatures",
+      "key": "[GlobalKey#c5ca6 ink renderer]",
+      "bounds_dp": [
+        21.0,
+        170.0,
+        278.0,
+        708.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "InkWell",
+      "key": "[<'result-open-fixture-beauty'>]",
+      "bounds_dp": [
+        37.0,
+        186.0,
+        246.0,
+        132.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "SvgPicture",
+      "key": null,
+      "bounds_dp": [
+        191.0,
+        199.0,
+        16.0,
+        16.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "ProxoText",
+      "key": null,
+      "bounds_dp": [
+        161.21875,
+        189.0,
+        24.78125,
+        36.0
+      ],
+      "intersects_viewport": true,
+      "text": "#1",
+      "font_family": "RabarAuthRegular",
+      "font_size": 12.0,
+      "text_scale": 2.0,
+      "exceeded_max_lines": false
+    },
+    {
+      "widget": "ProxoText",
+      "key": null,
+      "bounds_dp": [
+        63.0,
+        234.0,
+        152.0,
+        84.0
+      ],
+      "intersects_viewport": true,
+      "text": "کۆسمەتیک و جوانکاری",
+      "font_family": "RabarAuthRegular",
+      "font_size": 14.0,
+      "text_scale": 2.0,
+      "exceeded_max_lines": false
+    },
+    {
+      "widget": "SvgPicture",
+      "key": null,
+      "bounds_dp": [
+        37.0,
+        243.0,
+        18.0,
+        18.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "SvgPicture",
+      "key": null,
+      "bounds_dp": [
+        251.0,
+        358.5,
+        20.0,
+        20.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "Expanded",
+      "key": null,
+      "bounds_dp": [
+        150.0,
+        350.5,
+        93.0,
+        36.0
+      ],
+      "intersects_viewport": true,
+      "text": "بینین",
+      "font_family": "RabarAuthRegular",
+      "font_size": 12.0,
+      "text_scale": 2.0,
+      "exceeded_max_lines": false
+    },
+    {
+      "widget": "Flexible",
+      "key": null,
+      "bounds_dp": [
+        57.033203125,
+        346.0,
+        84.966796875,
+        45.0
+      ],
+      "intersects_viewport": true,
+      "text": "84,320",
+      "font_family": "RabarAuthRegular",
+      "font_size": 15.0,
+      "text_scale": 2.0,
+      "exceeded_max_lines": false
+    },
+    {
+      "widget": "SvgPicture",
+      "key": null,
+      "bounds_dp": [
+        251.0,
+        415.5,
+        20.0,
+        20.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "Expanded",
+      "key": null,
+      "bounds_dp": [
+        150.0,
+        407.5,
+        93.0,
+        36.0
+      ],
+      "intersects_viewport": true,
+      "text": "کرتە",
+      "font_family": "RabarAuthRegular",
+      "font_size": 12.0,
+      "text_scale": 2.0,
+      "exceeded_max_lines": false
+    },
+    {
+      "widget": "Flexible",
+      "key": null,
+      "bounds_dp": [
+        72.458984375,
+        403.0,
+        69.541015625,
+        45.0
+      ],
+      "intersects_viewport": true,
+      "text": "1,246",
+      "font_family": "RabarAuthRegular",
+      "font_size": 15.0,
+      "text_scale": 2.0,
+      "exceeded_max_lines": false
+    },
+    {
+      "widget": "SvgPicture",
+      "key": null,
+      "bounds_dp": [
+        251.0,
+        472.5,
+        20.0,
+        20.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "Expanded",
+      "key": null,
+      "bounds_dp": [
+        150.0,
+        464.5,
+        93.0,
+        36.0
+      ],
+      "intersects_viewport": true,
+      "text": "تێچوو",
+      "font_family": "RabarAuthRegular",
+      "font_size": 12.0,
+      "text_scale": 2.0,
+      "exceeded_max_lines": false
+    },
+    {
+      "widget": "Flexible",
+      "key": null,
+      "bounds_dp": [
+        57.033203125,
+        460.0,
+        84.966796875,
+        45.0
+      ],
+      "intersects_viewport": true,
+      "text": "$12.50",
+      "font_family": "RabarAuthRegular",
+      "font_size": 15.0,
+      "text_scale": 2.0,
+      "exceeded_max_lines": false
+    },
+    {
+      "widget": "TextButton",
+      "key": "[<'result-details-fixture-beauty'>]",
+      "bounds_dp": [
+        37.0,
+        529.0,
+        246.0,
+        55.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "_InkFeatures",
+      "key": "[GlobalKey#b38e4 ink renderer]",
+      "bounds_dp": [
+        37.0,
+        529.0,
+        246.0,
+        55.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "Expanded",
+      "key": null,
+      "bounds_dp": [
+        67.0,
+        537.0,
+        212.0,
+        39.0
+      ],
+      "intersects_viewport": true,
+      "text": "وردەکاری کەمتر",
+      "font_family": "RabarAuthRegular",
+      "font_size": 13.0,
+      "text_scale": 2.0,
+      "exceeded_max_lines": false
+    },
+    {
+      "widget": "SvgPicture",
+      "key": null,
+      "bounds_dp": [
+        41.0,
+        547.5,
+        18.0,
+        18.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "Column",
+      "key": "[<'result-expanded-fixture-beauty'>]",
+      "bounds_dp": [
+        37.0,
+        584.0,
+        246.0,
+        278.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "ProxoText",
+      "key": null,
+      "bounds_dp": [
+        232.06640625,
+        597.0,
+        50.93359375,
+        39.0
+      ],
+      "intersects_viewport": true,
+      "text": "ئامانج",
+      "font_family": "RabarAuthRegular",
+      "font_size": 13.0,
+      "text_scale": 2.0,
+      "exceeded_max_lines": false
+    },
+    {
+      "widget": "ProxoText",
+      "key": null,
+      "bounds_dp": [
+        153.609375,
+        638.0,
+        129.390625,
+        42.0
+      ],
+      "intersects_viewport": true,
+      "text": "نامە و فرۆش",
+      "font_family": "RabarAuthRegular",
+      "font_size": 14.0,
+      "text_scale": 2.0,
+      "exceeded_max_lines": false
+    },
+    {
+      "widget": "ProxoText",
+      "key": null,
+      "bounds_dp": [
+        182.681640625,
+        688.0,
+        100.318359375,
+        39.0
+      ],
+      "intersects_viewport": true,
+      "text": "کۆی بودجە",
+      "font_family": "RabarAuthRegular",
+      "font_size": 13.0,
+      "text_scale": 2.0,
+      "exceeded_max_lines": false
+    },
+    {
+      "widget": "ProxoText",
+      "key": null,
+      "bounds_dp": [
+        239.7578125,
+        729.0,
+        43.2421875,
+        42.0
+      ],
+      "intersects_viewport": true,
+      "text": "$30",
+      "font_family": "RabarAuthRegular",
+      "font_size": 14.0,
+      "text_scale": 2.0,
+      "exceeded_max_lines": false
+    },
+    {
+      "widget": "ProxoText",
+      "key": null,
+      "bounds_dp": [
+        159.90625,
+        779.0,
+        123.09375,
+        39.0
+      ],
+      "intersects_viewport": false,
+      "text": "ماوەی ڕیکلام",
+      "font_family": "RabarAuthRegular",
+      "font_size": 13.0,
+      "text_scale": 2.0,
+      "exceeded_max_lines": false
+    },
+    {
+      "widget": "ProxoText",
+      "key": null,
+      "bounds_dp": [
+        232.939453125,
+        820.0,
+        50.060546875,
+        42.0
+      ],
+      "intersects_viewport": false,
+      "text": "3 ڕۆژ",
+      "font_family": "RabarAuthRegular",
+      "font_size": 14.0,
+      "text_scale": 2.0,
+      "exceeded_max_lines": false
+    },
+    {
+      "widget": "LayoutId",
+      "key": "[<_ScaffoldSlot.appBar>]",
+      "bounds_dp": [
+        0.0,
+        0.0,
+        320.0,
+        80.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "_InkFeatures",
+      "key": "[GlobalKey#a33d8 ink renderer]",
+      "bounds_dp": [
+        0.0,
+        0.0,
+        320.0,
+        80.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "Container",
+      "key": "[<'proxo-toolbar'>]",
+      "bounds_dp": [
+        0.0,
+        24.0,
+        320.0,
+        56.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "IconButton",
+      "key": null,
+      "bounds_dp": [
+        260.0,
+        27.5,
+        48.0,
+        48.0
+      ],
+      "intersects_viewport": true,
+      "tooltip": "مێنیو",
+      "enabled": true
+    },
+    {
+      "widget": "_InkFeatures",
+      "key": "[GlobalKey#db3cd ink renderer]",
+      "bounds_dp": [
+        260.0,
+        27.5,
+        48.0,
+        48.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "RawTooltip",
+      "key": "[LabeledGlobalKey<RawTooltipState>#c0528]",
+      "bounds_dp": [
+        260.0,
+        27.5,
+        48.0,
+        48.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "SvgPicture",
+      "key": null,
+      "bounds_dp": [
+        273.0,
+        40.5,
+        22.0,
+        22.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "SizedBox",
+      "key": "[<'notification-bell-target'>]",
+      "bounds_dp": [
+        212.0,
+        27.5,
+        48.0,
+        48.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "IconButton",
+      "key": null,
+      "bounds_dp": [
+        212.0,
+        27.5,
+        48.0,
+        48.0
+      ],
+      "intersects_viewport": true,
+      "tooltip": "ئاگادارییەکان",
+      "enabled": true
+    },
+    {
+      "widget": "_InkFeatures",
+      "key": "[GlobalKey#9f961 ink renderer]",
+      "bounds_dp": [
+        212.0,
+        27.5,
+        48.0,
+        48.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "RawTooltip",
+      "key": "[LabeledGlobalKey<RawTooltipState>#4a751]",
+      "bounds_dp": [
+        212.0,
+        27.5,
+        48.0,
+        48.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "SvgPicture",
+      "key": null,
+      "bounds_dp": [
+        225.0,
+        40.5,
+        22.0,
+        22.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "Image",
+      "key": "[<'proxo-toolbar-logo'>]",
+      "bounds_dp": [
+        12.0,
+        39.5,
+        84.0,
+        24.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "LayoutId",
+      "key": "[<_ScaffoldSlot.floatingActionButton>]",
+      "bounds_dp": [
+        16.0,
+        617.0,
+        0.0,
+        0.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "LayoutId",
+      "key": "[<_ScaffoldSlot.bottomNavigationBar>]",
+      "bounds_dp": [
+        0.0,
+        633.0,
+        320.0,
+        107.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "_InkFeatures",
+      "key": "[GlobalKey#b87e7 ink renderer]",
+      "bounds_dp": [
+        0.0,
+        633.0,
+        320.0,
+        107.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "_ScrollSemantics",
+      "key": "[GlobalKey#bc2f0]",
+      "bounds_dp": [
+        0.0,
+        634.0,
+        320.0,
+        90.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "RawGestureDetector",
+      "key": "[LabeledGlobalKey<RawGestureDetectorState>#76285]",
+      "bounds_dp": [
+        0.0,
+        634.0,
+        320.0,
+        90.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "IgnorePointer",
+      "key": "[GlobalKey#9f39a]",
+      "bounds_dp": [
+        0.0,
+        634.0,
+        320.0,
+        90.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "Semantics",
+      "key": "[GlobalKey#bc369]",
+      "bounds_dp": [
+        0.0,
+        634.0,
+        111.12109375,
+        90.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "RawTooltip",
+      "key": "[LabeledGlobalKey<RawTooltipState>#f7f78]",
+      "bounds_dp": [
+        0.0,
+        634.0,
+        111.12109375,
+        90.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "InkWell",
+      "key": "[<'bottom-nav-0'>]",
+      "bounds_dp": [
+        0.0,
+        634.0,
+        111.12109375,
+        90.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "SvgPicture",
+      "key": null,
+      "bounds_dp": [
+        43.560546875,
+        646.0,
+        24.0,
+        24.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "ProxoText",
+      "key": null,
+      "bounds_dp": [
+        16.326171875,
+        680.0,
+        78.46875,
+        36.0
+      ],
+      "intersects_viewport": true,
+      "text": "سەرەکی",
+      "font_family": "Rabar",
+      "font_size": 12.0,
+      "text_scale": 2.0,
+      "exceeded_max_lines": false
+    },
+    {
+      "widget": "Semantics",
+      "key": "[GlobalKey#47c0e]",
+      "bounds_dp": [
+        111.12109375,
+        634.0,
+        111.12109375,
+        90.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "RawTooltip",
+      "key": "[LabeledGlobalKey<RawTooltipState>#b87af]",
+      "bounds_dp": [
+        111.12109375,
+        634.0,
+        111.12109375,
+        90.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "InkWell",
+      "key": "[<'bottom-nav-1'>]",
+      "bounds_dp": [
+        111.12109375,
+        634.0,
+        111.12109375,
+        90.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "SvgPicture",
+      "key": null,
+      "bounds_dp": [
+        154.681640625,
+        646.0,
+        24.0,
+        24.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "ProxoText",
+      "key": null,
+      "bounds_dp": [
+        119.12109375,
+        680.0,
+        95.12109375,
+        36.0
+      ],
+      "intersects_viewport": true,
+      "text": "ڕیکلامەکان",
+      "font_family": "Rabar",
+      "font_size": 12.0,
+      "text_scale": 2.0,
+      "exceeded_max_lines": false
+    },
+    {
+      "widget": "Semantics",
+      "key": "[GlobalKey#49f50]",
+      "bounds_dp": [
+        222.2421875,
+        634.0,
+        111.12109375,
+        90.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "RawTooltip",
+      "key": "[LabeledGlobalKey<RawTooltipState>#14928]",
+      "bounds_dp": [
+        222.2421875,
+        634.0,
+        111.12109375,
+        90.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "InkWell",
+      "key": "[<'bottom-nav-2'>]",
+      "bounds_dp": [
+        222.2421875,
+        634.0,
+        111.12109375,
+        90.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "RichText",
+      "key": null,
+      "bounds_dp": [
+        263.802734375,
+        665.0,
+        28.0,
+        28.0
+      ],
+      "intersects_viewport": true,
+      "text": "",
+      "font_family": "MaterialIcons",
+      "font_size": 28.0,
+      "text_scale": 1.0,
+      "exceeded_max_lines": false
+    },
+    {
+      "widget": "Semantics",
+      "key": "[GlobalKey#ef6bf]",
+      "bounds_dp": [
+        333.36328125,
+        634.0,
+        111.12109375,
+        90.0
+      ],
+      "intersects_viewport": false
+    },
+    {
+      "widget": "RawTooltip",
+      "key": "[LabeledGlobalKey<RawTooltipState>#e5da9]",
+      "bounds_dp": [
+        333.36328125,
+        634.0,
+        111.12109375,
+        90.0
+      ],
+      "intersects_viewport": false
+    },
+    {
+      "widget": "InkWell",
+      "key": "[<'bottom-nav-3'>]",
+      "bounds_dp": [
+        333.36328125,
+        634.0,
+        111.12109375,
+        90.0
+      ],
+      "intersects_viewport": false
+    },
+    {
+      "widget": "SvgPicture",
+      "key": null,
+      "bounds_dp": [
+        376.923828125,
+        646.0,
+        24.0,
+        24.0
+      ],
+      "intersects_viewport": false
+    },
+    {
+      "widget": "ProxoText",
+      "key": null,
+      "bounds_dp": [
+        346.35546875,
+        680.0,
+        85.13671875,
+        36.0
+      ],
+      "intersects_viewport": false,
+      "text": "ئامرازەکان",
+      "font_family": "Rabar",
+      "font_size": 12.0,
+      "text_scale": 2.0,
+      "exceeded_max_lines": false
+    },
+    {
+      "widget": "Semantics",
+      "key": "[GlobalKey#faa2f]",
+      "bounds_dp": [
+        444.484375,
+        634.0,
+        111.12109375,
+        90.0
+      ],
+      "intersects_viewport": false
+    },
+    {
+      "widget": "RawTooltip",
+      "key": "[LabeledGlobalKey<RawTooltipState>#ff933]",
+      "bounds_dp": [
+        444.484375,
+        634.0,
+        111.12109375,
+        90.0
+      ],
+      "intersects_viewport": false
+    },
+    {
+      "widget": "InkWell",
+      "key": "[<'bottom-nav-4'>]",
+      "bounds_dp": [
+        444.484375,
+        634.0,
+        111.12109375,
+        90.0
+      ],
+      "intersects_viewport": false
+    },
+    {
+      "widget": "SvgPicture",
+      "key": null,
+      "bounds_dp": [
+        488.044921875,
+        646.0,
+        24.0,
+        24.0
+      ],
+      "intersects_viewport": false
+    },
+    {
+      "widget": "ProxoText",
+      "key": null,
+      "bounds_dp": [
+        465.703125,
+        680.0,
+        68.68359375,
+        36.0
+      ],
+      "intersects_viewport": false,
+      "text": "پڕۆفایل",
+      "font_family": "Rabar",
+      "font_size": 12.0,
+      "text_scale": 2.0,
+      "exceeded_max_lines": false
+    },
+    {
+      "widget": "LayoutId",
+      "key": "[<_ScaffoldSlot.floatingActionButton>]",
+      "bounds_dp": [
+        16.0,
+        617.0,
+        0.0,
+        0.0
+      ],
+      "intersects_viewport": true
+    }
+  ]
+}

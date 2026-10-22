@@ -1,0 +1,605 @@
+{
+  "source_commit": "3a90b93059a2a74d7eb37eb3f509582cce2fa366",
+  "source_tree": "dd6b7f4817578109d9af87f00bf7a019c1d8ab74",
+  "renderer": "Flutter3.47.2 widget tests on Linux, actual production widgets with fictional fixtures",
+  "limits": "Not a live account, hosted persistence or physical-device performance claim. Full screenshot set is retained in CI artifacts.",
+  "screenshots": [
+    {
+      "screen": "Home and shared app bar",
+      "state": "Summary only",
+      "file": "screenshots/home-393-s1.png",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "sha256": "1b8bfbb424dddc59278b3fbd170c63ca7744c40bd23245ba63371197a5d4eda9",
+      "bytes": 104004
+    },
+    {
+      "screen": "Home advertisement",
+      "state": "Loaded thumbnail",
+      "file": "screenshots/home-thumbnail-image-393-s1-summary-card.png",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "sha256": "2174e388fbcc20f6ea45d8ab237272d185e7488227662b0c6a36695cb6812e90",
+      "bytes": 101027
+    },
+    {
+      "screen": "Home advertisement",
+      "state": "Failed image fallback",
+      "file": "screenshots/home-thumbnail-failed-393-s1-summary-card.png",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "sha256": "1b8bfbb424dddc59278b3fbd170c63ca7744c40bd23245ba63371197a5d4eda9",
+      "bytes": 104004
+    },
+    {
+      "screen": "Home advertisement",
+      "state": "Long title, large text",
+      "file": "screenshots/home-long-label-320-s2-summary-card.png",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "sha256": "a8a70181810286e57553ef9e000074767481cbe0c8fa8bb29b992282594b5c37",
+      "bytes": 93128
+    },
+    {
+      "screen": "Best Results",
+      "state": "Collapsed",
+      "file": "screenshots/results-393-s1-collapsed-card.png",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "sha256": "29db01020ee889b8648d22fdeba1e7e9a5c195c4b1eb9ed5e3df32b7ae6c095a",
+      "bytes": 56928
+    },
+    {
+      "screen": "Best Results",
+      "state": "Expanded objective and budget",
+      "file": "screenshots/results-393-s1-expanded.png",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "sha256": "5be47cefcb7379860c125a34b532c65fccc5c49441b47f506b76c939081134e6",
+      "bytes": 70912
+    },
+    {
+      "screen": "Best Results",
+      "state": "Expanded details, large text",
+      "file": "screenshots/results-320-s2-expanded-bottom.png",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "sha256": "6297c2353d233ce2df156bbb3fe0110534dc9173c90da45fdf1017085fefd8f7",
+      "bytes": 78833
+    },
+    {
+      "screen": "Profile",
+      "state": "Identity, balance and account options",
+      "file": "screenshots/profile-393-s1.png",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "sha256": "e00796a4f2e9e4fed8ac136c63ae71d8e03fca72935b843b8e32ce657f652617",
+      "bytes": 111474
+    },
+    {
+      "screen": "Profile",
+      "state": "Support, language and WhatsApp",
+      "file": "screenshots/profile-393-s1-bottom.png",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "sha256": "e761f08bb0b5b5e99d3d0688d65f2f07dd17dbbe38504644f510695d65486bca",
+      "bytes": 107468
+    },
+    {
+      "screen": "Profile",
+      "state": "Long name, large text",
+      "file": "screenshots/profile-long-320-s2.png",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "sha256": "19f4b0863575a7b7525ead869fd71922a867684f662455fcc960363978d337fe",
+      "bytes": 103768
+    },
+    {
+      "screen": "Profile",
+      "state": "Settings and logout, large text",
+      "file": "screenshots/profile-320-s2-bottom.png",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "sha256": "eebe538b41c4ad466091619bc17f5453a9bc1d587f37ab9821767788f3ee256d",
+      "bytes": 81645
+    },
+    {
+      "screen": "Profile OTP",
+      "state": "Narrow dialog, large text",
+      "file": "screenshots/profile-email-otp-320-s2-dialog.png",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "sha256": "07297c0e6f1b5acb91b3d7b498824475069907a05295e1e014a345533e03757a",
+      "bytes": 86363
+    },
+    {
+      "screen": "Profile OTP",
+      "state": "Keyboard inset, large text",
+      "file": "screenshots/profile-email-otp-320-s2-keyboard-inset.png",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "sha256": "649b97d51cff313bd3a7a8c2768526dc7f84692c2f4250d29315da5da29bb7b0",
+      "bytes": 54011
+    },
+    {
+      "screen": "Menu",
+      "state": "Large viewport and bottom action",
+      "file": "screenshots/menu-430-s1-bottom.png",
+      "viewport_dp": [
+        430.0,
+        932.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "sha256": "5bfb590649198dad73256b1ed736332448dc3f5f1a5a16068d8f26de97384141",
+      "bytes": 82983
+    },
+    {
+      "screen": "Menu",
+      "state": "Small viewport and bottom action, large text",
+      "file": "screenshots/menu-320-s2-bottom.png",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "sha256": "5abc2ff798aa58cb4842c169926065bc4da0e0c76b52a368dd22ac831304a523",
+      "bytes": 84504
+    },
+    {
+      "screen": "Add Balance",
+      "state": "Amount and two providers",
+      "file": "screenshots/deposit-393-s1.png",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "sha256": "ced321aeb9d0f63da966107410baa421448d568a1ddf9ca533fcb874ad2dd582",
+      "bytes": 62859
+    },
+    {
+      "screen": "Add Balance",
+      "state": "FIB details and primary action",
+      "file": "screenshots/deposit-fib-393-s1-details.png",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "sha256": "79768eeb78618d890952f00dc0038834984768c9c5a9826e8320e1cbeedddd8c",
+      "bytes": 87850
+    },
+    {
+      "screen": "Add Balance",
+      "state": "FastPay checkout entry",
+      "file": "screenshots/deposit-fastpay-430-s1-checkout-entry.png",
+      "viewport_dp": [
+        430.0,
+        932.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "sha256": "50ff2833d1efe9d04935291af47de8eb7622ddaea28eca7c1b311d9ecdfd4b17",
+      "bytes": 87148
+    },
+    {
+      "screen": "Add Balance",
+      "state": "FIB receipt selection, large text",
+      "file": "screenshots/deposit-fib-320-s2-receipt.png",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "sha256": "9f4c94c43fac23a8b0bfe83269aa277b365b05f049fd7c22b652501fffa7a3b7",
+      "bytes": 65660
+    },
+    {
+      "screen": "Pages",
+      "state": "Empty list",
+      "file": "screenshots/tools-393-s1.png",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "sha256": "168fbd302e7e850bbd0dca5717751b387bdc2e269c1ba4be4376fe7aff1779fb",
+      "bytes": 34713
+    },
+    {
+      "screen": "Create Page",
+      "state": "Unavailable and real Retry, large text",
+      "file": "screenshots/tools-320-s2-create-unavailable.png",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "sha256": "ad93b2c48610e9836a469ed79b07fbfbfa726c5d8d1d3355ef5f769b81b0a8fb",
+      "bytes": 55272
+    },
+    {
+      "screen": "Create Page",
+      "state": "Usable form with fixture catalog",
+      "file": "screenshots/tools-create-flow-393-s1-contact-form.png",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "sha256": "8c8f3e8d22e18f5bf01b2d81e7bb5298372533c4558b39ebcc6218ecbf6f188b",
+      "bytes": 75396
+    },
+    {
+      "screen": "Create Page",
+      "state": "Saved fixture page, not hosted persistence",
+      "file": "screenshots/tools-create-flow-393-s1-created-in-memory.png",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "sha256": "9a2cd47b5f89edf90482478d2f5accbbc1a52c94b3a9979b363cccf4b128a677",
+      "bytes": 51290
+    },
+    {
+      "screen": "Advertisements",
+      "state": "Empty account and shared app bar",
+      "file": "screenshots/ads-empty-393-s1.png",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "sha256": "354b138a984e6ee601f840f761d6ae4f156062406f8da30e57a9501c13bf24e7",
+      "bytes": 48086
+    },
+    {
+      "screen": "Advertisements",
+      "state": "Empty account, large text",
+      "file": "screenshots/ads-empty-320-s2.png",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "sha256": "b0b981c4f2c94b8ebfa96b5e0f219067ad34ec3bca2145dd84198bf786608201",
+      "bytes": 58108
+    },
+    {
+      "screen": "Advertisements",
+      "state": "Request failure, large text",
+      "file": "screenshots/ads-error-320-s2.png",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "sha256": "c41266851cfb7c6416a61ff73dfba4b578e4c898e6f57114bfdee9b15539d605",
+      "bytes": 57147
+    },
+    {
+      "screen": "Payment receipt",
+      "state": "Complete standard receipt",
+      "file": "screenshots/transaction-receipt-393-s1.png",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "sha256": "7024f509bc3081c688f8a413a026cee977ab17bec87b4c2a1114026e2303ed79",
+      "bytes": 96380
+    },
+    {
+      "screen": "Advertisement receipt",
+      "state": "Header, targeting and totals",
+      "file": "screenshots/ad-receipt-393-s1.png",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "sha256": "915a54f394f85acfdc7d1185e8fc6389f7004bb0be2142392e383a728c2a3b27",
+      "bytes": 114010
+    },
+    {
+      "screen": "Advertisement receipt",
+      "state": "Payment details and full reference",
+      "file": "screenshots/ad-receipt-393-s1-bottom.png",
+      "viewport_dp": [
+        393.0,
+        852.0
+      ],
+      "text_scale": 1.0,
+      "capture_pixel_ratio": 2,
+      "sha256": "500caa96c34ebd58b5b8d4049bf81d64fcb747e1143623784013c02762774dac",
+      "bytes": 107758
+    },
+    {
+      "screen": "Payment receipt",
+      "state": "Narrow reference row, large text",
+      "file": "screenshots/transaction-receipt-320-s2.png",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "sha256": "ec97fe5fb4015e37b8dd14ada28875e711f803d9f4daf9c968b579180d95aae5",
+      "bytes": 98969
+    },
+    {
+      "screen": "Advertisement receipt",
+      "state": "Narrow reference row, large text",
+      "file": "screenshots/ad-receipt-320-s2-bottom.png",
+      "viewport_dp": [
+        320.0,
+        740.0
+      ],
+      "text_scale": 2.0,
+      "capture_pixel_ratio": 2,
+      "sha256": "105efd2a4dc58dbf4cd8e384bb0e7d4f1a861b699ba56f374112f9951af125a4",
+      "bytes": 98915
+    },
+    {
+      "screen": "Create Advertisement",
+      "state": "Complete form and pricing",
+      "file": "screenshots/create_ad_full_preview.png",
+      "viewport_dp": [
+        393,
+        852
+      ],
+      "text_scale": 1,
+      "capture_pixel_ratio": 2,
+      "full_content": true,
+      "sha256": "430b6689dccd60ba620fb4b1bf593d17b7f9e39e6d05948ef0b867b21000452c",
+      "bytes": 374410
+    },
+    {
+      "screen": "Create Advertisement",
+      "state": "Pricing, payment options and submission",
+      "file": "screenshots/create_ad_pricing_preview.png",
+      "viewport_dp": [
+        393,
+        852
+      ],
+      "text_scale": 1,
+      "capture_pixel_ratio": 2,
+      "full_content": false,
+      "sha256": "33e54b60a52cff3b410d226fbba2a4f31c587293ada9c078b7fe19404878f027",
+      "bytes": 117113
+    },
+    {
+      "screen": "Advertisement confirmation",
+      "state": "Review and submission controls",
+      "file": "screenshots/ad_confirmation_preview.png",
+      "viewport_dp": [
+        393,
+        852
+      ],
+      "text_scale": 1,
+      "capture_pixel_ratio": 2,
+      "full_content": false,
+      "sha256": "714978701214f901764f4a14ab21132e93c573a4873324e809c4f029f8abec6b",
+      "bytes": 102563
+    },
+    {
+      "file": "screenshots/checkout-fastpay-393-s1.png",
+      "source_commit": "12e4e7cc9048449cd46d347597fbedda714a5563",
+      "screen": "FastPay checkout",
+      "state": "Opened checkout — reference and summary",
+      "viewport_dp": [
+        393,
+        852
+      ],
+      "text_scale": 1,
+      "capture_pixel_ratio": 2,
+      "sha256": "f645a0dea541a533c7c433368502c1cd145c37b4c28576bbc31982c5b0ad6f66",
+      "bytes": 91054,
+      "capture_metadata": {
+        "fixture": "Actual DepositScreen to FastPayCheckoutSheet; rejecting fixture transport; no checkout initiated",
+        "viewport_dp": [
+          393.0,
+          852
+        ],
+        "text_scale": 1.0,
+        "device_pixel_ratio": 2,
+        "monospace_fixture_font": "DejaVu Sans Mono (Linux fixture substitute for platform monospace)",
+        "capture_pixel_ratio": 2,
+        "manual_requests": 0,
+        "notification_requests": 0,
+        "image_assets": [
+          "ResizeImage()",
+          "ResizeImage()",
+          "ResizeImage()"
+        ]
+      }
+    },
+    {
+      "file": "screenshots/checkout-fastpay-393-s1-bottom.png",
+      "source_commit": "12e4e7cc9048449cd46d347597fbedda714a5563",
+      "screen": "FastPay checkout",
+      "state": "Opened checkout — bottom actions",
+      "viewport_dp": [
+        393,
+        852
+      ],
+      "text_scale": 1,
+      "capture_pixel_ratio": 2,
+      "sha256": "f645a0dea541a533c7c433368502c1cd145c37b4c28576bbc31982c5b0ad6f66",
+      "bytes": 91054,
+      "capture_metadata": {
+        "fixture": "Actual DepositScreen to FastPayCheckoutSheet; rejecting fixture transport; no checkout initiated",
+        "viewport_dp": [
+          393.0,
+          852
+        ],
+        "text_scale": 1.0,
+        "device_pixel_ratio": 2,
+        "monospace_fixture_font": "DejaVu Sans Mono (Linux fixture substitute for platform monospace)",
+        "capture_pixel_ratio": 2,
+        "manual_requests": 0,
+        "notification_requests": 0,
+        "image_assets": [
+          "ResizeImage()",
+          "ResizeImage()",
+          "ResizeImage()"
+        ]
+      }
+    },
+    {
+      "file": "screenshots/checkout-fastpay-320-s2.png",
+      "source_commit": "12e4e7cc9048449cd46d347597fbedda714a5563",
+      "screen": "FastPay checkout",
+      "state": "Opened checkout — reference and summary",
+      "viewport_dp": [
+        320,
+        740
+      ],
+      "text_scale": 2,
+      "capture_pixel_ratio": 2,
+      "sha256": "01a028ccf934ed7e9d0fa1c0ea6576ae215571c1dec8763bffdd7b5c354cec2b",
+      "bytes": 86761,
+      "capture_metadata": {
+        "fixture": "Actual DepositScreen to FastPayCheckoutSheet; rejecting fixture transport; no checkout initiated",
+        "viewport_dp": [
+          320.0,
+          740
+        ],
+        "text_scale": 2.0,
+        "device_pixel_ratio": 2,
+        "monospace_fixture_font": "DejaVu Sans Mono (Linux fixture substitute for platform monospace)",
+        "capture_pixel_ratio": 2,
+        "manual_requests": 0,
+        "notification_requests": 0,
+        "image_assets": [
+          "ResizeImage()",
+          "ResizeImage()",
+          "ResizeImage()"
+        ]
+      }
+    },
+    {
+      "file": "screenshots/checkout-fastpay-320-s2-bottom.png",
+      "source_commit": "12e4e7cc9048449cd46d347597fbedda714a5563",
+      "screen": "FastPay checkout",
+      "state": "Opened checkout — bottom actions",
+      "viewport_dp": [
+        320,
+        740
+      ],
+      "text_scale": 2,
+      "capture_pixel_ratio": 2,
+      "sha256": "c03cbae41f5cb4bb7cc7a1ce7cd8c837fa57935737512266b92d8bb153a6c617",
+      "bytes": 90396,
+      "capture_metadata": {
+        "fixture": "Actual DepositScreen to FastPayCheckoutSheet; rejecting fixture transport; no checkout initiated",
+        "viewport_dp": [
+          320.0,
+          740
+        ],
+        "text_scale": 2.0,
+        "device_pixel_ratio": 2,
+        "monospace_fixture_font": "DejaVu Sans Mono (Linux fixture substitute for platform monospace)",
+        "capture_pixel_ratio": 2,
+        "manual_requests": 0,
+        "notification_requests": 0,
+        "image_assets": [
+          "ResizeImage()",
+          "ResizeImage()",
+          "ResizeImage()"
+        ]
+      }
+    }
+  ],
+  "pdfs": [
+    {
+      "file": "pdf/narrow_paid.pdf",
+      "sha256": "fcde315fc3ca143abfe2f79fd3a8ac5a3cfc84c79bed8fedef2a7638ea8734c3",
+      "bytes": 420463
+    },
+    {
+      "file": "pdf/standard_free.pdf",
+      "sha256": "63eb6ec5c30b54fa50f17a0788d8a1b140c7ee7661b78208222144cd317407a5",
+      "bytes": 194430
+    },
+    {
+      "file": "pdf/transaction_narrow.pdf",
+      "sha256": "7cf2d0f5059afacd5fe472ed9759a5613f80b1452da2196166a340c45e2781b8",
+      "bytes": 274647
+    },
+    {
+      "file": "pdf/transaction_standard.pdf",
+      "sha256": "a3efe255a9a58e55f1f8ef41cc2b1fd6c8317eb1376216037f0de34e56bfdceb",
+      "bytes": 161159
+    }
+  ],
+  "followup_source_commit": "12e4e7cc9048449cd46d347597fbedda714a5563",
+  "followup_source_tree": "f73cb469f9a3ea92e299ecb8da07c3aff0d39576"
+}

@@ -1,0 +1,125 @@
+00:00 +0: loading /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_layout_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: root header keeps its centered title without a disabled back control
+00:00 +1: native responsive receipt geometry at 280.0 dp
+00:01 +2: native responsive receipt geometry at 393.0 dp
+00:01 +3: native responsive receipt geometry at 430.0 dp
+00:01 +4: native responsive receipt geometry at 768.0 dp
+00:01 +5: native responsive receipt geometry at 963.0 dp
+00:01 +6: native responsive receipt geometry at 964.0 dp
+00:02 +7: RTL receipt at 280.0 dp, scale 1.0, ckb
+00:02 +8: RTL receipt at 280.0 dp, scale 1.0, ar
+00:02 +9: RTL receipt at 280.0 dp, scale 1.3, ckb
+00:03 +10: RTL receipt at 280.0 dp, scale 1.3, ar
+00:03 +11: RTL receipt at 280.0 dp, scale 2.0, ckb
+00:03 +12: RTL receipt at 280.0 dp, scale 2.0, ar
+00:03 +13: RTL receipt at 320.0 dp, scale 1.0, ckb
+00:03 +14: RTL receipt at 320.0 dp, scale 1.0, ar
+00:03 +15: RTL receipt at 320.0 dp, scale 1.3, ckb
+00:04 +16: RTL receipt at 320.0 dp, scale 1.3, ar
+00:04 +17: RTL receipt at 320.0 dp, scale 2.0, ckb
+00:04 +18: RTL receipt at 320.0 dp, scale 2.0, ar
+00:04 +19: RTL receipt at 360.0 dp, scale 1.0, ckb
+00:04 +20: RTL receipt at 360.0 dp, scale 1.0, ar
+00:04 +21: RTL receipt at 360.0 dp, scale 1.3, ckb
+00:05 +22: RTL receipt at 360.0 dp, scale 1.3, ar
+00:05 +23: RTL receipt at 360.0 dp, scale 2.0, ckb
+00:05 +24: RTL receipt at 360.0 dp, scale 2.0, ar
+00:05 +25: RTL receipt at 392.72727272727275 dp, scale 1.0, ckb
+00:05 +26: RTL receipt at 392.72727272727275 dp, scale 1.0, ar
+00:05 +27: RTL receipt at 392.72727272727275 dp, scale 1.3, ckb
+00:05 +28: RTL receipt at 392.72727272727275 dp, scale 1.3, ar
+00:06 +29: RTL receipt at 392.72727272727275 dp, scale 2.0, ckb
+00:06 +30: RTL receipt at 392.72727272727275 dp, scale 2.0, ar
+00:06 +31: RTL receipt at 430.0 dp, scale 1.0, ckb
+00:06 +32: RTL receipt at 430.0 dp, scale 1.0, ar
+00:06 +33: RTL receipt at 430.0 dp, scale 1.3, ckb
+00:06 +34: RTL receipt at 430.0 dp, scale 1.3, ar
+00:06 +35: RTL receipt at 430.0 dp, scale 2.0, ckb
+00:07 +36: RTL receipt at 430.0 dp, scale 2.0, ar
+00:07 +37: RTL receipt at 480.0 dp, scale 1.0, ckb
+00:07 +38: RTL receipt at 480.0 dp, scale 1.0, ar
+00:07 +39: RTL receipt at 480.0 dp, scale 1.3, ckb
+00:07 +40: RTL receipt at 480.0 dp, scale 1.3, ar
+00:07 +41: RTL receipt at 480.0 dp, scale 2.0, ckb
+00:08 +42: RTL receipt at 480.0 dp, scale 2.0, ar
+00:08 +43: RTL receipt at 640.0 dp, scale 1.0, ckb
+00:08 +44: RTL receipt at 640.0 dp, scale 1.0, ar
+00:08 +45: RTL receipt at 640.0 dp, scale 1.3, ckb
+00:08 +46: RTL receipt at 640.0 dp, scale 1.3, ar
+00:08 +47: RTL receipt at 640.0 dp, scale 2.0, ckb
+00:08 +48: RTL receipt at 640.0 dp, scale 2.0, ar
+00:08 +49: RTL receipt at 768.0 dp, scale 1.0, ckb
+00:09 +50: RTL receipt at 768.0 dp, scale 1.0, ar
+00:09 +51: RTL receipt at 768.0 dp, scale 1.3, ckb
+00:09 +52: RTL receipt at 768.0 dp, scale 1.3, ar
+00:09 +53: RTL receipt at 768.0 dp, scale 2.0, ckb
+00:09 +54: RTL receipt at 768.0 dp, scale 2.0, ar
+00:09 +55: short references keep the compact row and accessible copy
+00:09 +56: long references stay single-line and scroll/copy the complete identifier
+00:09 +57: transaction TxReceiptKind.adPayment / approved at 280.0 preserves complete IDs and neutral amounts
+00:09 +58: transaction TxReceiptKind.adPayment / approved at 320.0 preserves complete IDs and neutral amounts
+00:10 +59: transaction TxReceiptKind.adPayment / approved at 393.0 preserves complete IDs and neutral amounts
+00:10 +60: transaction TxReceiptKind.adPayment / approved at 640.0 preserves complete IDs and neutral amounts
+00:10 +61: transaction TxReceiptKind.adPayment / approved at 768.0 preserves complete IDs and neutral amounts
+00:10 +62: transaction TxReceiptKind.adPayment / pending at 280.0 preserves complete IDs and neutral amounts
+00:10 +63: transaction TxReceiptKind.adPayment / pending at 320.0 preserves complete IDs and neutral amounts
+00:10 +64: transaction TxReceiptKind.adPayment / pending at 393.0 preserves complete IDs and neutral amounts
+00:10 +65: transaction TxReceiptKind.adPayment / pending at 640.0 preserves complete IDs and neutral amounts
+00:10 +66: transaction TxReceiptKind.adPayment / pending at 768.0 preserves complete IDs and neutral amounts
+00:10 +67: transaction TxReceiptKind.adPayment / rejected at 280.0 preserves complete IDs and neutral amounts
+00:10 +68: transaction TxReceiptKind.adPayment / rejected at 320.0 preserves complete IDs and neutral amounts
+00:10 +69: transaction TxReceiptKind.adPayment / rejected at 393.0 preserves complete IDs and neutral amounts
+00:10 +70: transaction TxReceiptKind.adPayment / rejected at 640.0 preserves complete IDs and neutral amounts
+00:10 +71: transaction TxReceiptKind.adPayment / rejected at 768.0 preserves complete IDs and neutral amounts
+00:10 +72: transaction TxReceiptKind.topUp / approved at 280.0 preserves complete IDs and neutral amounts
+00:10 +73: transaction TxReceiptKind.topUp / approved at 320.0 preserves complete IDs and neutral amounts
+00:10 +74: transaction TxReceiptKind.topUp / approved at 393.0 preserves complete IDs and neutral amounts
+00:10 +75: transaction TxReceiptKind.topUp / approved at 640.0 preserves complete IDs and neutral amounts
+00:11 +76: transaction TxReceiptKind.topUp / approved at 768.0 preserves complete IDs and neutral amounts
+00:11 +77: transaction TxReceiptKind.topUp / pending at 280.0 preserves complete IDs and neutral amounts
+00:11 +78: transaction TxReceiptKind.topUp / pending at 320.0 preserves complete IDs and neutral amounts
+00:11 +79: transaction TxReceiptKind.topUp / pending at 393.0 preserves complete IDs and neutral amounts
+00:11 +80: transaction TxReceiptKind.topUp / pending at 640.0 preserves complete IDs and neutral amounts
+00:11 +81: transaction TxReceiptKind.topUp / pending at 768.0 preserves complete IDs and neutral amounts
+00:11 +82: transaction TxReceiptKind.topUp / rejected at 280.0 preserves complete IDs and neutral amounts
+00:11 +83: transaction TxReceiptKind.topUp / rejected at 320.0 preserves complete IDs and neutral amounts
+00:11 +84: transaction TxReceiptKind.topUp / rejected at 393.0 preserves complete IDs and neutral amounts
+00:11 +85: transaction TxReceiptKind.topUp / rejected at 640.0 preserves complete IDs and neutral amounts
+00:11 +86: transaction TxReceiptKind.topUp / rejected at 768.0 preserves complete IDs and neutral amounts
+00:11 +87: transaction TxReceiptKind.refund / approved at 280.0 preserves complete IDs and neutral amounts
+00:11 +88: transaction TxReceiptKind.refund / approved at 320.0 preserves complete IDs and neutral amounts
+00:11 +89: transaction TxReceiptKind.refund / approved at 393.0 preserves complete IDs and neutral amounts
+00:11 +90: transaction TxReceiptKind.refund / approved at 640.0 preserves complete IDs and neutral amounts
+00:12 +91: transaction TxReceiptKind.refund / approved at 768.0 preserves complete IDs and neutral amounts
+00:12 +92: transaction TxReceiptKind.refund / pending at 280.0 preserves complete IDs and neutral amounts
+00:12 +93: transaction TxReceiptKind.refund / pending at 320.0 preserves complete IDs and neutral amounts
+00:12 +94: transaction TxReceiptKind.refund / pending at 393.0 preserves complete IDs and neutral amounts
+00:12 +95: transaction TxReceiptKind.refund / pending at 640.0 preserves complete IDs and neutral amounts
+00:12 +96: transaction TxReceiptKind.refund / pending at 768.0 preserves complete IDs and neutral amounts
+00:12 +97: transaction TxReceiptKind.refund / rejected at 280.0 preserves complete IDs and neutral amounts
+00:12 +98: transaction TxReceiptKind.refund / rejected at 320.0 preserves complete IDs and neutral amounts
+00:12 +99: transaction TxReceiptKind.refund / rejected at 393.0 preserves complete IDs and neutral amounts
+00:12 +100: transaction TxReceiptKind.refund / rejected at 640.0 preserves complete IDs and neutral amounts
+00:12 +101: transaction TxReceiptKind.refund / rejected at 768.0 preserves complete IDs and neutral amounts
+00:12 +102: transaction TxReceiptKind.deduction / approved at 280.0 preserves complete IDs and neutral amounts
+00:12 +103: transaction TxReceiptKind.deduction / approved at 320.0 preserves complete IDs and neutral amounts
+00:12 +104: transaction TxReceiptKind.deduction / approved at 393.0 preserves complete IDs and neutral amounts
+00:12 +105: transaction TxReceiptKind.deduction / approved at 640.0 preserves complete IDs and neutral amounts
+00:12 +106: transaction TxReceiptKind.deduction / approved at 768.0 preserves complete IDs and neutral amounts
+00:13 +107: transaction TxReceiptKind.deduction / pending at 280.0 preserves complete IDs and neutral amounts
+00:13 +108: transaction TxReceiptKind.deduction / pending at 320.0 preserves complete IDs and neutral amounts
+00:13 +109: transaction TxReceiptKind.deduction / pending at 393.0 preserves complete IDs and neutral amounts
+00:13 +110: transaction TxReceiptKind.deduction / pending at 640.0 preserves complete IDs and neutral amounts
+00:13 +111: transaction TxReceiptKind.deduction / pending at 768.0 preserves complete IDs and neutral amounts
+00:13 +112: transaction TxReceiptKind.deduction / rejected at 280.0 preserves complete IDs and neutral amounts
+00:13 +113: transaction TxReceiptKind.deduction / rejected at 320.0 preserves complete IDs and neutral amounts
+00:13 +114: transaction TxReceiptKind.deduction / rejected at 393.0 preserves complete IDs and neutral amounts
+00:13 +115: transaction TxReceiptKind.deduction / rejected at 640.0 preserves complete IDs and neutral amounts
+00:13 +116: transaction TxReceiptKind.deduction / rejected at 768.0 preserves complete IDs and neutral amounts
+00:13 +117: all field types and explicit line breaks fit without lost text
+00:13 +118: removing a discount collapses its entire row and spacing
+00:13 +119: PDF export cannot start twice while already running
+00:13 +120: 100% discount shows zero and no invented payment
+00:13 +121: (tearDownAll)
+00:13 +121: All tests passed!

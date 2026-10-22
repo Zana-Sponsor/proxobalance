@@ -281,9 +281,7 @@ class _AdFeedbackDialogState extends State<_AdFeedbackDialog> {
                           foregroundColor: Colors.white,
                           disabledForegroundColor: const Color(0xFF94A3B8),
                           elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(14),
-                          ),
+                          shape: ProxoControls.shape,
                         ),
                         child: _saving
                             ? const SizedBox(

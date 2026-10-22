@@ -1,0 +1,10 @@
+00:00 +0: loading /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxo_drawer_back_test.dart
+00:00 +0: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxo_drawer_back_test.dart: open root drawer advertises Android Back handling
+00:00 +1: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/profile_menu_current_scope_test.dart: menu shows actual phone instead of synthetic authentication email
+00:00 +2: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/profile_menu_current_scope_test.dart: menu shows actual phone instead of synthetic authentication email
+00:01 +3: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/profile_menu_current_scope_test.dart: menu keeps genuine long email in one LTR line with complete tooltip
+00:01 +4: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/profile_menu_current_scope_test.dart: native drawer closes via close, outside tap and Android Back without blocking body
+00:02 +5: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/profile_menu_current_scope_test.dart: menu Profile uses the retained tab callback once
+00:02 +6: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/profile_menu_current_scope_test.dart: Profile compact balance, integrated language and authentic WhatsApp SVG
+00:03 +7: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/profile_menu_current_scope_test.dart: (tearDownAll)
+00:03 +7: All tests passed!

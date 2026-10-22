@@ -1,0 +1,57 @@
+{
+  "surface_dp": [
+    393,
+    627
+  ],
+  "capture_scale": 4,
+  "changed_pixels": 9901,
+  "changed_pixels_outside_requested_text_regions": 0,
+  "requested_text_regions_dp": {
+    "device": [
+      196,
+      264,
+      361,
+      284
+    ],
+    "category": [
+      196,
+      292,
+      361,
+      312
+    ],
+    "summary": [
+      196,
+      337,
+      361,
+      357
+    ],
+    "original_amount": [
+      196,
+      365,
+      361,
+      385
+    ],
+    "total": [
+      196,
+      421,
+      361,
+      441
+    ]
+  },
+  "tests_passed": 209,
+  "test_files": [
+    "localization_test.dart",
+    "ad_creation_flow_test.dart",
+    "responsive_ad_ui_test.dart",
+    "receipt_layout_test.dart",
+    "receipt_pdf_test.dart",
+    "receipt_reference_match_test.dart",
+    "ad_submission_test.dart"
+  ],
+  "analysis": {
+    "errors": 0,
+    "warnings": 0,
+    "preexisting_info_lints": 3
+  },
+  "original_reference_unchanged": true
+}

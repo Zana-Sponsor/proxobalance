@@ -345,12 +345,13 @@ class _VoucherPageState extends State<VoucherPage>
                     onTap: _claiming ? null : _onClaim,
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 180),
+                      constraints: const BoxConstraints(minHeight: 48),
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       decoration: BoxDecoration(
                         color: _claiming
                             ? _cDark.withOpacity(0.7)
                             : _cDark,
-                        borderRadius: BorderRadius.circular(14),
+                        borderRadius: BorderRadius.circular(ProxoControls.radius),
                         boxShadow: _claiming ? [] : [
                           BoxShadow(
                             color: _cDark.withOpacity(0.25),
@@ -595,10 +596,11 @@ class _VoucherPageState extends State<VoucherPage>
             _onClaim();
           },
           child: Container(
+            constraints: const BoxConstraints(minHeight: 48),
             padding: const EdgeInsets.symmetric(vertical: 11),
             decoration: BoxDecoration(
               color: accentColor,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(ProxoControls.radius),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,

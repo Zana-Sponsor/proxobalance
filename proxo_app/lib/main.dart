@@ -1,4 +1,5 @@
 import 'widgets/ad_activation_notice.dart';
+import 'config/backend_config.dart';
 // main.dart — Proxo App entry point
 
 import 'dart:async';
@@ -16,7 +17,7 @@ import 'services/account_cache.dart';
 import 'services/app_telemetry_service.dart';
 import 'services/observed_http_client.dart';
 import 'package:http/http.dart' as http;
-import 'screens/account_setup_screen.dart';
+import 'screens/authenticated_gate.dart';
 import 'screens/auth_screen.dart';
 import 'screens/splash_screen.dart';
 import 'screens/home_screen.dart';
@@ -29,11 +30,12 @@ import 'widgets/bottom_nav.dart';
 import 'widgets/proxo_refresh.dart';
 import 'widgets/proxo_tab_stack.dart';
 import 'widgets/proxo_sidebar.dart';
+import 'widgets/proxo_drawer_navigation.dart';
+import 'widgets/proxo_error_stack.dart';
 import 'screens/profile_screen.dart';
 import 'widgets/no_internet_widget.dart';
 import 'theme/app_theme.dart';
 import 'theme/app_locale.dart';
-import 'widgets/auth/auth_design.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Global constants
@@ -42,10 +44,8 @@ import 'widgets/auth/auth_design.dart';
 
 const double kIqdRate = 1800.0;
 
-const String kSupabaseUrl     = 'https://cojchkwssmasiejcgvbk.supabase.co';
-const String kSupabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9'
-    '.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNvamNoa3dzc21hc2llamNndmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTE1MTIsImV4cCI6MjA5Mjg4NzUxMn0'
-    '.RCALy3wpKHGAkmXWcBqEb_QFEUmh6ErdRbfrBmagvtw';
+const String kSupabaseUrl = BackendConfig.productionSupabaseUrl;
+const String kSupabaseAnonKey = BackendConfig.productionAnonKey;
 bool firebaseAvailable = false;
 
 /// URL ی n8n کراوەکەت بنووسەرەوە — بۆ ناردنی OTP ئیمێڵ
@@ -98,26 +98,29 @@ late final SupabaseClient supabase;
 // ─────────────────────────────────────────────────────────────────────────────
 
 void main() async {
+  final backend = BackendConfig.current;
   WidgetsFlutterBinding.ensureInitialized();
   // PERF: gesture resampling بۆ scroll ی جوانتر
 
   await ProxoLocale.load();
 
   await Supabase.initialize(
-    url: kSupabaseUrl,
-    anonKey: kSupabaseAnonKey,
+    url: backend.supabaseUrl,
+    anonKey: backend.supabaseAnonKey,
     httpClient: ObservedHttpClient(http.Client()),
   );
   supabase = Supabase.instance.client;
   AuthActivityService.forClient(supabase).start();
 
-  try {
-    await Firebase.initializeApp();
-    firebaseAvailable = true;
-    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
-  } catch (e, st) {
-    debugPrint('[Firebase] init failed: $e\n$st');
-    firebaseAvailable = false;
+  if (backend.productionTransportsEnabled) {
+    try {
+      await Firebase.initializeApp();
+      firebaseAvailable = true;
+      FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+    } catch (e, st) {
+      debugPrint('[Firebase] init failed: $e\n$st');
+      firebaseAvailable = false;
+    }
   }
 
   if (firebaseAvailable) {
@@ -156,7 +159,7 @@ class _ProxoAppState extends State<ProxoApp> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
         navigatorKey.currentState?.pushAndRemoveUntil(
-          MaterialPageRoute<void>(builder: (_) => const _AuthGate()), (_) => false);
+          ProxoPageRoute<void>(builder: (_) => const _AuthGate()), (_) => false);
       });
     });
   }
@@ -180,7 +183,10 @@ class _ProxoAppState extends State<ProxoApp> {
       title: 'Proxo',
       debugShowCheckedModeBanner: false,
       navigatorKey: navigatorKey,
-      navigatorObservers: [AppSectionObserver.instance],
+      navigatorObservers: [
+        AppSectionObserver.instance,
+        ProxoNoticeObserver.instance,
+      ],
       locale: frameworkLocale,
       supportedLocales: const <Locale>[
         ProxoLocale.arabic,
@@ -198,22 +204,11 @@ class _ProxoAppState extends State<ProxoApp> {
         child: AdActivationNoticeHost(
           client: Supabase.instance.client,
           onOpen: (id) => navigatorKey.currentState?.push(
-            ProxoPageRoute<void>(builder: (_) => AccountSetupGate(child: AdScreen(initialAdId: id)))),
+            ProxoPageRoute<void>(builder: (_) => AuthenticatedGate(child: AdScreen(initialAdId: id)))),
           child: child ?? const SizedBox.shrink(),
         ),
       ),
-      theme: ThemeData(
-        fontFamily: kAppFont,
-        colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primary),
-        useMaterial3: true,
-        // Shared Auth surface; screens that omit an explicit background still
-        // use the same white canvas.
-        scaffoldBackgroundColor: AuthTokens.pageBackground,
-        textTheme: const TextTheme().apply(
-          fontFamily: kAppFont,
-          decoration: TextDecoration.none,
-        ),
-      ),
+      theme: buildAppTheme(),
       home: const SplashScreen(nextScreen: _AuthGate()),
       onGenerateRoute: _onGenerateRoute,
     );
@@ -221,27 +216,24 @@ class _ProxoAppState extends State<ProxoApp> {
 
   static Route<dynamic>? _onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
-      // هەموو ڕێڕەوە ناودارەکان `ProxoPageRoute`ن، بۆیە ماوەی هاتن و
-      // چوونیان هەمان ئەوەیە کە ڕێڕەوە دەستکردەکان هەیانە (250ms).
-      // `MaterialPageRoute` خۆی 300msـە و `reverseTransitionDuration`ی
-      // جیاوازی نییە — ئیشارەتی سوایپی هەبوو، بەڵام هەستەکەی جیاواز بوو.
+      // Named and direct routes share the same 320 ms directional transition.
       case '/my-ads':
-        return ProxoPageRoute<void>(settings: settings, builder: (_) => const AccountSetupGate(child: AdScreen()));
+        return ProxoPageRoute<void>(settings: settings, builder: (_) => const AuthenticatedGate(child: AdScreen()));
       case '/notifications':
         return ProxoPageRoute<void>(settings: settings, 
-            builder: (_) => const AccountSetupGate(child: NotificationsScreen()));
+            builder: (_) => const AuthenticatedGate(child: NotificationsScreen()));
       case '/wallet':
-        return ProxoPageRoute<void>(settings: settings, builder: (_) => const AccountSetupGate(child: MainShell()));
+        return ProxoPageRoute<void>(settings: settings, builder: (_) => const AuthenticatedGate(child: MainShell()));
       case '/profile':
-        return ProxoPageRoute<void>(settings: settings, builder: (_) => const AccountSetupGate(child: ProfileScreen()));
+        return ProxoPageRoute<void>(settings: settings, builder: (_) => const AuthenticatedGate(child: ProfileScreen()));
       case '/transactions':
-        return ProxoPageRoute<void>(settings: settings, builder: (_) => const AccountSetupGate(child: TxHistoryPage()));
+        return ProxoPageRoute<void>(settings: settings, builder: (_) => const AuthenticatedGate(child: TxHistoryPage()));
       case '/coupons':
-        return ProxoPageRoute<void>(settings: settings, builder: (_) => const AccountSetupGate(child: DiscountCodesPage()));
+        return ProxoPageRoute<void>(settings: settings, builder: (_) => const AuthenticatedGate(child: DiscountCodesPage()));
       case '/faq':
-        return ProxoPageRoute<void>(settings: settings, builder: (_) => const AccountSetupGate(child: FaqScreen()));
+        return ProxoPageRoute<void>(settings: settings, builder: (_) => const AuthenticatedGate(child: FaqScreen()));
       case '/assets':
-        return ProxoPageRoute<void>(settings: settings, builder: (_) => const AccountSetupGate(child: MainShell()));
+        return ProxoPageRoute<void>(settings: settings, builder: (_) => const AuthenticatedGate(child: MainShell()));
       default:
         return null;
     }
@@ -279,13 +271,13 @@ class _AuthGateState extends State<_AuthGate> {
         }
 
         Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (_) => const AccountSetupGate(child: MainShell())),
+          ProxoPageRoute(builder: (_) => const AuthenticatedGate(child: MainShell())),
           (route) => false,
         );
       } else if (event == AuthChangeEvent.signedOut) {
         // Supabase records session revocation before credentials disappear.
         Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (_) => const AuthScreen()),
+          ProxoPageRoute(builder: (_) => const AuthScreen()),
           (route) => false,
         );
       }
@@ -301,7 +293,7 @@ class _AuthGateState extends State<_AuthGate> {
   @override
   Widget build(BuildContext context) {
     final session = supabase.auth.currentSession;
-    if (session != null) return const AccountSetupGate(child: MainShell());
+    if (session != null) return const AuthenticatedGate(child: MainShell());
     // AuthScreen now opens on its Sign In view by default (_Tab.login /
     // _Step.form) — it is the refactored screen, not a legacy fallback.
     return const AuthScreen();
@@ -385,6 +377,7 @@ class MainShellState extends State<MainShell> with WidgetsBindingObserver {
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    ProxoErrorStack.clear();
     mainShellTabRequest.removeListener(_onExternalTabRequest);
     for (final ProxoRefreshController c in _refreshers.values) {
       c.dispose();
@@ -397,6 +390,7 @@ class MainShellState extends State<MainShell> with WidgetsBindingObserver {
   // avoiding a whole-screen opacity layer during every tab change.
   void _switchTab(int index) {
     if (index == _tabIndex) return;
+    ProxoErrorStack.clear();
     setState(() {
       _builtTabs.add(index);
       _tabIndex = index;
@@ -465,7 +459,7 @@ class MainShellState extends State<MainShell> with WidgetsBindingObserver {
           //     دەستیان لێنەدراوە، و «دواوە» دەگەڕێتەوە سەر پەڕەی سەرەکی.
           onToolsTap:  () => _onTabTap(3),
           onCreatePageTap: () => Navigator.of(context).push(
-            ProxoPageRoute<void>(builder: (_) => const ToolsScreen(initialCreate: true))),
+            ProxoPageRoute<void>(builder: (_) => const ToolsScreen())),
           onFaqTap:    () => Navigator.of(context).push(
                 ProxoPageRoute<void>(builder: (_) => const FaqScreen()),
               ),
@@ -508,7 +502,7 @@ class MainShellState extends State<MainShell> with WidgetsBindingObserver {
           onGoToAds:   () => _onTabTap(1),
           onToolsTap:  () => _onTabTap(3),
           onCreatePageTap: () => Navigator.of(context).push(
-            ProxoPageRoute<void>(builder: (_) => const ToolsScreen(initialCreate: true))),
+            ProxoPageRoute<void>(builder: (_) => const ToolsScreen())),
           onFaqTap:    () => Navigator.of(context).push(
                 ProxoPageRoute<void>(builder: (_) => const FaqScreen()),
               ),
@@ -556,27 +550,23 @@ class MainShellState extends State<MainShell> with WidgetsBindingObserver {
             child: Scaffold(
             key: _scaffoldKey,
             backgroundColor: AppColors.bg,
+            onEndDrawerChanged: (_) => syncProxoDrawerBackNavigation(context),
             endDrawer: Directionality(
               textDirection: TextDirection.rtl,
               child: ProxoSidebar(
                 currentIndex: _tabIndex,
                 onClose: _closeSidebar,
                 onNavigate: (page) {
-                  _closeSidebar();
                   if (page == 'home')      _switchTab(0);
                   if (page == 'ads')       _switchTab(1);
                   if (page == 'tools')     _switchTab(3);
-                  if (page == 'tutorials') _switchTab(4);
+                  if (page == 'profile')   _switchTab(4);
                 },
               ),
             ),
-            // ⚠ `Drawer` نییە بەڵکو ڕاستەوخۆ `ProxoSidebar`ە: پانێڵەکە
-            // خۆی `Container(width: …)` + `Material` + سێبەری خۆی هەیە،
-            // بۆیە لفەکردنی بە `Drawer` دوو ڕوو و دوو سێبەری لەسەر یەک
-            // دادەنا. `DrawerController` هیچ پانییەکی ناسەپێنێت.
-            // The kept-alive IndexedStack switches immediately. Motion stays
-            // in the tiny bottom-nav indicator and press capsule, exactly like
-            // the supplied reference; no full-screen opacity/saveLayer pass.
+            // ProxoSidebar owns its bounded width and safe-area layout;
+            // Scaffold's DrawerController owns the scrim and closing motion.
+            // Kept-alive tab state with the shared short arrival transition.
             body: Directionality(
               textDirection: TextDirection.rtl,
               child: _buildBody(),

@@ -116,15 +116,8 @@
             </intent-filter>
         </activity>
 
-        <!-- ── FCM background/terminated message handler service ───────── -->
-        <!-- Without this the OS cannot wake the app when it is terminated -->
-        <service
-            android:name="com.google.firebase.messaging.FirebaseMessagingService"
-            android:exported="false">
-            <intent-filter android:priority="1000">
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
-            </intent-filter>
-        </service>
+        <!-- firebase_messaging contributes its own messaging service through
+             manifest merging. Do not override it with Firebase's base service. -->
 
         <!-- ── Default notification channel (Android 8+) ──────────────── -->
         <!-- Must match the channel id used in NotificationService._channel -->
@@ -136,6 +129,10 @@
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/ic_notification"/>
+
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/notification_color"/>
 
         <meta-data
             android:name="flutterEmbedding"

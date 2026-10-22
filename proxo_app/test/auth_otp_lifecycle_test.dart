@@ -29,7 +29,12 @@ void main() {
     shaker.dispose();
   });
 
-  Widget host({int length = 6, bool hasError = false}) => MaterialApp(
+  Widget host({
+    int length = 6,
+    bool hasError = false,
+    ValueChanged<String>? onCompleted,
+  }) =>
+      MaterialApp(
         home: Scaffold(
           body: AuthOtpBoxes(
             length: length,
@@ -37,7 +42,7 @@ void main() {
             firstBoxFocus: firstBox,
             shaker: shaker,
             hasError: hasError,
-            onCompleted: (_) {},
+            onCompleted: onCompleted ?? (_) {},
           ),
         ),
       );
@@ -65,6 +70,69 @@ void main() {
     expect(code.text, '123456');
   });
 
+  for (final sample in <String, String>{
+    'Arabic-Indic': '١٢٣٤٥٦',
+    'Eastern Arabic': '۱۲۳۴۵۶',
+    'mixed numeral paste': '1٢۳ ٤5۶',
+    'ASCII': '123456',
+  }.entries) {
+    testWidgets('${sample.key} OTP completes once and survives a rebuild',
+        (tester) async {
+      final completed = <String>[];
+      await tester.pumpWidget(host(onCompleted: completed.add));
+      await tester.pump();
+      await tester.enterText(find.byType(TextField).first, sample.value);
+      await tester.pump();
+
+      expect(code.text, '123456');
+      expect(completed, ['123456']);
+      expect(
+        tester
+            .widgetList<TextField>(find.byType(TextField))
+            .map((field) => field.controller!.text),
+        ['1', '2', '3', '4', '5', '6'],
+      );
+
+      // A server/UI state update must preserve the normalized code without
+      // repeating verification merely because the parent rebuilt.
+      await tester.pumpWidget(host(hasError: true, onCompleted: completed.add));
+      await tester.pump();
+      expect(code.text, '123456');
+      expect(completed, ['123456']);
+      expect(tester.takeException(), isNull);
+    });
+  }
+
+  testWidgets('localized typing and a later mixed paste retain earlier digits',
+      (tester) async {
+    final completed = <String>[];
+    await tester.pumpWidget(host(onCompleted: completed.add));
+    await tester.pump();
+    await tester.enterText(find.byType(TextField).at(0), '١');
+    await tester.enterText(find.byType(TextField).at(1), '۲');
+    await tester.pump();
+    expect(code.text, '12');
+    expect(completed, isEmpty);
+    expect(
+        tester
+            .widget<TextField>(find.byType(TextField).at(2))
+            .focusNode!
+            .hasFocus,
+        isTrue);
+
+    await tester.enterText(find.byType(TextField).at(2), '۳٤5۶');
+    await tester.pump();
+    expect(code.text, '123456');
+    expect(completed, ['123456']);
+    expect(
+      tester
+          .widgetList<TextField>(find.byType(TextField))
+          .map((field) => field.controller!.text),
+      ['1', '2', '3', '4', '5', '6'],
+    );
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('an external clear empties the boxes', (tester) async {
     await tester.pumpWidget(host());
     await tester.pump();
@@ -85,7 +153,8 @@ void main() {
     await tester.pump();
 
     // Replace the widget entirely — this disposes the boxes' State.
-    await tester.pumpWidget(const MaterialApp(home: Scaffold(body: SizedBox())));
+    await tester
+        .pumpWidget(const MaterialApp(home: Scaffold(body: SizedBox())));
     await tester.pump();
 
     expect(tester.takeException(), isNull);
@@ -106,7 +175,8 @@ void main() {
     // finish cleanly.
     unawaited(shaker.shakeAndReset());
     await tester.pump(const Duration(milliseconds: 80));
-    await tester.pumpWidget(const MaterialApp(home: Scaffold(body: SizedBox())));
+    await tester
+        .pumpWidget(const MaterialApp(home: Scaffold(body: SizedBox())));
     await tester.pump(const Duration(milliseconds: 400));
 
     expect(tester.takeException(), isNull);

@@ -1,0 +1,126 @@
+{
+  "recorded_at_utc": "2026-10-22T19:18:20.043095+00:00",
+  "source_commit": "3a90b93059a2a74d7eb37eb3f509582cce2fa366",
+  "source_tree": "dd6b7f4817578109d9af87f00bf7a019c1d8ab74",
+  "environment": {
+    "os": "Linux-6.18.55-x86_64-with-glibc2.39",
+    "architecture": "x86_64",
+    "flutter_version": "3.47.2",
+    "flutter_framework_revision": "d3b14c876900e553bc736ca19295fc09e3853e8e",
+    "dart_version": "3.13.2",
+    "device_runtime": "Flutter Linux widget test engine",
+    "process_timezone": "Europe/Stockholm",
+    "native_android_sdk_available": false,
+    "pub_lockfile_unchanged": true,
+    "analytics_disabled": true
+  },
+  "full_suite": {
+    "passed": 1183,
+    "failed": 0,
+    "skipped": 1,
+    "elapsed_reported_seconds": 93,
+    "exit_code": 0,
+    "log": "logs/flutter-full.log",
+    "skip_name": "staging foreground/background push helpers avoid Firebase and tokens",
+    "skip_reason": "Requires complete guarded staging build defines; exercised separately below."
+  },
+  "staging_transport_fixture": {
+    "passed": 6,
+    "failed": 0,
+    "skipped": 0,
+    "exit_code": 0,
+    "log": "logs/flutter-staging-transport.log",
+    "hosted_backend_used": false,
+    "production_delivery_allowed": false
+  },
+  "analyzers": [
+    {
+      "scope": "balanced screens and account-safe navigation plus native profile driver",
+      "errors": 0,
+      "warnings": 0,
+      "infos": 108,
+      "exit_code": 0,
+      "log": "logs/flutter-scoped-analyzer.log"
+    },
+    {
+      "scope": "changed ProxoLink code and notice lifecycle",
+      "errors": 0,
+      "warnings": 0,
+      "infos": 62,
+      "exit_code": 0,
+      "log": "logs/flutter-proxolink-analyzer.log"
+    }
+  ],
+  "schedule_regression": {
+    "stockholm_full_ad_flow_repository_and_units_passed": 61,
+    "utc_units_passed": 10,
+    "fixed": "Compare Baghdad calendar fields consistently across device time zones; preserve date/time fields and DST-gap times in saved drafts."
+  },
+  "captures": {
+    "png_count": 205,
+    "layout_exceptions": 0,
+    "output_directory": "proxo_app/build/pr44-current-evidence",
+    "index": "local-capture-index.json",
+    "viewports": [
+      {
+        "width_dp": 393,
+        "height_dp": 852,
+        "text_scale": 1
+      },
+      {
+        "width_dp": 430,
+        "height_dp": 932,
+        "text_scale": 1
+      },
+      {
+        "width_dp": 320,
+        "height_dp": 740,
+        "text_scale": 2
+      }
+    ],
+    "pixel_ratio": 2,
+    "fictional_records": true,
+    "actual_production_widgets": true,
+    "native_screenshots": false,
+    "pdf_exports": [
+      {
+        "file": "narrow_paid.pdf",
+        "pages": 3,
+        "bytes": 420463,
+        "sha256": "fcde315fc3ca143abfe2f79fd3a8ac5a3cfc84c79bed8fedef2a7638ea8734c3"
+      },
+      {
+        "file": "standard_free.pdf",
+        "pages": 1,
+        "bytes": 194430,
+        "sha256": "63eb6ec5c30b54fa50f17a0788d8a1b140c7ee7661b78208222144cd317407a5"
+      },
+      {
+        "file": "transaction_narrow.pdf",
+        "pages": 2,
+        "bytes": 274647,
+        "sha256": "7cf2d0f5059afacd5fe472ed9759a5613f80b1452da2196166a340c45e2781b8"
+      },
+      {
+        "file": "transaction_standard.pdf",
+        "pages": 1,
+        "bytes": 161159,
+        "sha256": "a3efe255a9a58e55f1f8ef41cc2b1fd6c8317eb1376216037f0de34e56bfdceb"
+      }
+    ]
+  },
+  "limits": [
+    "No local Android SDK, emulator, physical device or profile performance run; parent is running the Android35 GitHub workflow.",
+    "Fixture-backed saves and retries are tested. Production or hosted-staging page creation, account balance credit, and payment-provider transactions were not performed.",
+    "Read-only deployed page-backend failure and isolated rollout blockers are documented separately in pages.md.",
+    "Analyzer informational findings remain; zero errors and warnings does not mean zero lint messages."
+  ],
+  "log_sha256": {
+    "flutter-full.log": "fa02db8fcf060a41e73aa9396e59cdfc5a9f29bf5a949c17b7e4a54016a738e0",
+    "flutter-scoped-analyzer.log": "d3294ee29a0d105eb012ccd240ce6a1a3829d0e236b7c58522ed2fba2d2bfd48",
+    "flutter-proxolink-analyzer.log": "3f775f229cf46a7567dd46f5d5a089232cb0ecd9026c2331bacdf804fd2d7546",
+    "flutter-staging-transport.log": "a45c3158e81556fe3e146faca986597f9ae3922d165002853287163baeb2c84d",
+    "flutter-schedule-stockholm.log": "068fa8a8f43ad47660e53f50330fbafbb78340b203587514d255a73fe28cd529",
+    "flutter-schedule-utc.log": "01a2435fb84d0cd9eac30596740972b6c963809c522fe63701514f842a28c06f"
+  }
+}

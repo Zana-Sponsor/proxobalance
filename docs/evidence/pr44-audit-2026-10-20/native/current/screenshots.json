@@ -1,0 +1,130 @@
+[
+  {
+    "file": "home.png",
+    "artifact_path": "screens/home.png",
+    "caption": "Home standalone fixture with summary-only Best Results. Main-shell menu callback and bottom navigation are omitted by the fixture.",
+    "pixels": [
+      1080,
+      1920
+    ],
+    "device_pixel_ratio": 2.75,
+    "logical_viewport_dp": [
+      392.727,
+      698.182
+    ],
+    "bytes": 108088,
+    "sha256": "5bffed0120d9f2a8b4f39b3dc353e4786bc9b88fa52bb854c63968d6f1887a52"
+  },
+  {
+    "file": "menu-open-native.png",
+    "artifact_path": "screens/menu-open-native.png",
+    "caption": "Actual open RTL Drawer before Android Back; lower menu content is scrollable and is outside this viewport.",
+    "pixels": [
+      1080,
+      1920
+    ],
+    "device_pixel_ratio": 2.75,
+    "logical_viewport_dp": [
+      392.727,
+      698.182
+    ],
+    "bytes": 85458,
+    "sha256": "80b59c0f83a418ec5aa2d1a080d0b4bfce654ba4f049d601183ffac89d58a97d"
+  },
+  {
+    "file": "menu-after-dismissal.png",
+    "artifact_path": "screens/menu-route-dismissal.png",
+    "caption": "Intentionally empty fixture host after Back, scrim-tap and close-control dismissal cycles. The empty host is test setup, not a product screen.",
+    "pixels": [
+      1080,
+      1920
+    ],
+    "device_pixel_ratio": 2.75,
+    "logical_viewport_dp": [
+      392.727,
+      698.182
+    ],
+    "bytes": 12504,
+    "sha256": "daea714e185b71012070fb5b451ab27b74bf2acf8bd480ccccb2c27d4f501d46"
+  },
+  {
+    "file": "ad-submit-error.png",
+    "artifact_path": "screens/ad-submit-error.png",
+    "caption": "Uncertain advertisement response with shared non-blocking notification and recovery controls.",
+    "pixels": [
+      1080,
+      1920
+    ],
+    "device_pixel_ratio": 2.75,
+    "logical_viewport_dp": [
+      392.727,
+      698.182
+    ],
+    "bytes": 137610,
+    "sha256": "72785f76db025db9f0243851bf6177522d78195a78452cb471a7cf33e7d448d5"
+  },
+  {
+    "file": "ad-error-retry-restored.png",
+    "artifact_path": "screens/ad-error-retry-restored.png",
+    "caption": "Advertisement form after retry, preserving the title edited through Android input.",
+    "pixels": [
+      1080,
+      1920
+    ],
+    "device_pixel_ratio": 2.75,
+    "logical_viewport_dp": [
+      392.727,
+      698.182
+    ],
+    "bytes": 105383,
+    "sha256": "24307094e0e86aa2d0fc6a7c8e4ef84ee590c59a922294bbaf11c10c7294d0d9"
+  },
+  {
+    "file": "ad-error-keyboard-android.png",
+    "artifact_path": "ad-error-keyboard-android.png",
+    "caption": "Actual Android keyboard and editable Recovered-ad title following submission failure.",
+    "pixels": [
+      1080,
+      1920
+    ],
+    "device_pixel_ratio": 2.75,
+    "logical_viewport_dp": [
+      392.727,
+      698.182
+    ],
+    "bytes": 125057,
+    "sha256": "4e1dd78f338687358b1ee152c19b149629d7dff20913eaf040af3953830af5cf"
+  },
+  {
+    "file": "advertisement-receipt.png",
+    "artifact_path": "screens/ad-details.png",
+    "caption": "Actual advertisement receipt screen; additional lower content remains scrollable.",
+    "pixels": [
+      1080,
+      1920
+    ],
+    "device_pixel_ratio": 2.75,
+    "logical_viewport_dp": [
+      392.727,
+      698.182
+    ],
+    "bytes": 127650,
+    "sha256": "5c5a01f67e05080151f3a2c10e0d5101fd35f8b157c4fe5eb3dacbfdec18164c"
+  },
+  {
+    "file": "payment-receipt.png",
+    "artifact_path": "screens/transaction.png",
+    "caption": "Actual payment receipt; long identifier uses contained single-line scrolling with copy control.",
+    "pixels": [
+      1080,
+      1920
+    ],
+    "device_pixel_ratio": 2.75,
+    "logical_viewport_dp": [
+      392.727,
+      698.182
+    ],
+    "bytes": 125674,
+    "sha256": "47857e5fae6fac954aa1ff580b43ab7ec7b235926363c53e44e672229691f4ba"
+  }
+]

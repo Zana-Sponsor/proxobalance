@@ -88,6 +88,7 @@ class AdReceiptData {
   final String adName;
   final TextDirection adNameDir;
   final String uid;
+  final String paymentStatus;
 
   const AdReceiptData({
     required this.adId,
@@ -109,6 +110,7 @@ class AdReceiptData {
     required this.adName,
     required this.adNameDir,
     required this.uid,
+    this.paymentStatus = '',
   });
 
   factory AdReceiptData.from(Map<String, dynamic> ad, AdDetailStrings l) {
@@ -178,6 +180,9 @@ class AdReceiptData {
       adName: name,
       adNameDir: receiptDirOf(name),
       uid: uid,
+      paymentStatus: pricing.noPaymentRequired
+          ? 'no_payment_required'
+          : _str(ad['payment_status']),
     );
   }
 }

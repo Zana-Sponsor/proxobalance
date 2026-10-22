@@ -1,0 +1,1600 @@
+{
+  "source_commit": "ade200a23732cb5029087e1a6ccac0036f1161b9",
+  "source_tree": "35ed6cc439c5e431a474085e04395e014bc94b13",
+  "apk_filename": "Proxo-1.0.11-complete-ui.apk",
+  "apk_bytes": 93142023,
+  "apk_sha256": "65d805e69d09eddf24bfc5c449972fed0274c9c63095ae7c8795d3d962e2eda7",
+  "package": "com.proxo.proxoapp",
+  "version_name": "1.0.11",
+  "version_code": "11",
+  "min_sdk": "24",
+  "target_sdk": "36",
+  "launcher_activity": "com.proxo.proxoapp.MainActivity",
+  "manifest_debuggable": false,
+  "signature_verified": true,
+  "signature_v2_verified": true,
+  "certificate_sha256": "0c4f0aeb6ba5965626e2275b90cedabec8680d572d48eca8e421649a5155d04b",
+  "certificate_subject": "C=US, O=Android, CN=Android Debug",
+  "prior_real_examples_signer_sha256": "3144bab4cbae464f194dd01ff2ce29b42e854395ced26811b02c8aaf66c1b728",
+  "same_certificate_as_prior_real_examples": false,
+  "toolchain": {
+    "index_url": "https://dl.google.com/android/repository/repository2-1.xml",
+    "archive": {
+      "package": "build-tools;35.0.0",
+      "url": "https://dl.google.com/android/repository/build-tools_r35_linux.zip",
+      "size": 61958799,
+      "checksum": "2cfaa0bbb2336e9ec18ed3ecea84fa2e2af607bc",
+      "checksum_type": "sha1"
+    }
+  },
+  "zip_integrity_bad_member": null,
+  "private_template_asset_paths": [],
+  "asset_inventory": [
+    {
+      "path": "assets/fonts/Bahij_TheSansArabic-Bold.ttf",
+      "bytes": 307180,
+      "compressed_bytes": 95373,
+      "sha256": "1f9671e1074e2986a99a0485f4946c16086d0bcca5f26c37aa0335891ef3d0ba",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/fonts/Bahij_TheSansArabic-Light.ttf",
+      "bytes": 302968,
+      "compressed_bytes": 94887,
+      "sha256": "e64498f6c06c51b008c3454bd2e4dfcf4d4cd755b0fafaaf15005c0c194889f8",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/fonts/Bahij_TheSansArabic-Regular.ttf",
+      "bytes": 306428,
+      "compressed_bytes": 94594,
+      "sha256": "5a40be1165d4de9a6007405cc4801ad5d6a8eae76b68cf079700517b2a690951",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/fonts/Bahij_TheSansArabic-SemiBold.ttf",
+      "bytes": 306884,
+      "compressed_bytes": 95630,
+      "sha256": "611d48d0a296b7ad18a36816232c3bcd45162fb9c99384a0c525042d8e02a253",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/fonts/Rabar_021.ttf",
+      "bytes": 321496,
+      "compressed_bytes": 98368,
+      "sha256": "ba47baa90fa094eaa4c3f02c3206489e79b0e4233a7d8a4d7d98f6bb378d25c5",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/fonts/Rabar_022.source.txt",
+      "bytes": 251,
+      "compressed_bytes": 209,
+      "sha256": "2beb4a06bcefe607c46622aa8e933ec8d7befd6c106c862583d1ffee457d0f9e",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/fonts/Rabar_022.ttf",
+      "bytes": 326664,
+      "compressed_bytes": 102329,
+      "sha256": "7cd3577902d05ff51d12ed0c05f94a7c3561dd9fe050a96018b5645cfa9387a5",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/account_balance_wallet.svg",
+      "bytes": 374,
+      "compressed_bytes": 249,
+      "sha256": "c5b1e7fd334030939927b262e894baea280b14ed74863f7bbfd0abd9fdb893af",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/ad_card/ad_card_calendar.png",
+      "bytes": 5184,
+      "compressed_bytes": 5184,
+      "sha256": "daf725699f80dd7fed99be51e89641bff9eaa8b693cfc30948e609c0349ea97f",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/ad_card/ad_card_cancel.png",
+      "bytes": 13638,
+      "compressed_bytes": 13638,
+      "sha256": "378209f77c6c88f723888e8d222dead8b5d74290e1e2c14f1ea91f764da7a2dc",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/ad_card/ad_card_copy.png",
+      "bytes": 6599,
+      "compressed_bytes": 6599,
+      "sha256": "3e0dd57d790e0b4990a4d2a979213a9215ce14809dee134fbfab84544b343350",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/ad_card/ad_card_cursor.png",
+      "bytes": 14639,
+      "compressed_bytes": 14639,
+      "sha256": "87c63dbf988a7f0311d9bc71a709f2fa1e0110096fd3b29b89758e8a20a1c48a",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/ad_card/ad_card_dollar.png",
+      "bytes": 12055,
+      "compressed_bytes": 12055,
+      "sha256": "6b3e9199f198c68727913748885125d360e91bb273e96e5cc268749b639df193",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/ad_card/ad_card_eye.png",
+      "bytes": 14744,
+      "compressed_bytes": 14744,
+      "sha256": "7e4535986c510d8019afeb5d83488654471f0742ab4eedbf1eb7ab2f445d7df3",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/ad_card/ad_card_megaphone.png",
+      "bytes": 5728,
+      "compressed_bytes": 5728,
+      "sha256": "72fc17294df68ea76e58ba07f0855da13f5ef4b7b12589f213087bcabc5903a0",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/ad_card/ad_card_share.png",
+      "bytes": 6297,
+      "compressed_bytes": 6297,
+      "sha256": "c1420a544d5fdc1325df370a17d9fe6d8af38d67763266ab74a77a3a207535e7",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/ad_card/ad_card_trend_down.png",
+      "bytes": 4273,
+      "compressed_bytes": 4273,
+      "sha256": "a08742b269dde74777f9eafdbfe3dc5304e3b26a5a7fb662374954a8f04a7274",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/ad_card/ad_card_trend_up.png",
+      "bytes": 3996,
+      "compressed_bytes": 3996,
+      "sha256": "25728157dafde2c9bc4698b5b1012353db89dcd546825c8c39d2a6cd6de5f70e",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/ad_card/ad_card_wallet.png",
+      "bytes": 13026,
+      "compressed_bytes": 13026,
+      "sha256": "7b24104251a25f09c2607a6458c0d6d9b3d6263f9f16689481a12abd240b5ff0",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/add.svg",
+      "bytes": 175,
+      "compressed_bytes": 139,
+      "sha256": "670df546c8e7b8f19fb262ec89156108f87fcbcb57b19a40f37244b980cb7b53",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/arrow_drop_down.svg",
+      "bytes": 156,
+      "compressed_bytes": 128,
+      "sha256": "2ba90b2254aa2ea918ac86758f42e9fb0a646e66507fc4e0e75b1b232a50d882",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/auth/LICENSE.txt",
+      "bytes": 11357,
+      "compressed_bytes": 3948,
+      "sha256": "58d1e17ffe5109a7ae296caafcadfdbe6a7d176f0bc4ab01e12a689b0499d8bd",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/auth/SOURCES.md",
+      "bytes": 517,
+      "compressed_bytes": 351,
+      "sha256": "383993022c74213671a013a56e7f73f61e4611f53e45e3ad2db98e86ed7c6420",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/auth/account_outline.svg",
+      "bytes": 253,
+      "compressed_bytes": 188,
+      "sha256": "5dbd88ec213c3f2d759a47e3fa37deb6321a055ce822f5f957b9aea919307478",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/auth/arrow_back.svg",
+      "bytes": 328,
+      "compressed_bytes": 217,
+      "sha256": "b9b58d54e13e0e3693a10d997c1001ec270c12eaa935f993cee1d8c916236ceb",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/auth/back_outline.svg",
+      "bytes": 194,
+      "compressed_bytes": 143,
+      "sha256": "42137d80069ada7d23e451f768c319b2588b7e8870f285380dab089f56c175c2",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/auth/check_circle.svg",
+      "bytes": 526,
+      "compressed_bytes": 287,
+      "sha256": "5c90d9aaa77eacf87ed8a5cedb6f9a1b7eba6ef41e6fbf7c9a1eb221ad59d2c9",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/auth/check_outline.svg",
+      "bytes": 188,
+      "compressed_bytes": 141,
+      "sha256": "39acc44f01e6666f2278093eb73748fece3465c426871af0434f37f91643fa6e",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/auth/email_outline.svg",
+      "bytes": 235,
+      "compressed_bytes": 165,
+      "sha256": "de4b7ac700fc13776dc44327060f46d2485409d41d6ff6e5d4a2f0c0811e23f7",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/auth/error.svg",
+      "bytes": 601,
+      "compressed_bytes": 297,
+      "sha256": "3be3e5a6458c1c5ca7686532d6cd72f942c49ad00bc0e6b5702b387ef0963afd",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/auth/iraq_flag.svg",
+      "bytes": 1204,
+      "compressed_bytes": 624,
+      "sha256": "2a3ac265b9efcfb0b8761b753b8dba85b63af329deed39dc7a363e61dad70667",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/auth/language.svg",
+      "bytes": 957,
+      "compressed_bytes": 498,
+      "sha256": "7bef4e741ed558c37c166b8f06c7abbc7c964e100057f6c725a7be40809113b0",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/auth/language_outline.svg",
+      "bytes": 253,
+      "compressed_bytes": 170,
+      "sha256": "b7f140e1a6a062680078d715e4ecc51bb5994b6d9b3cfe28c746d47bc4a87aff",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/auth/lock_outline.svg",
+      "bytes": 255,
+      "compressed_bytes": 180,
+      "sha256": "25c6a7a9a86f681b693e61821edd16c2b5a665f07a5fdf97df9b205b49be4f3a",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/auth/lock_reset.svg",
+      "bytes": 761,
+      "compressed_bytes": 416,
+      "sha256": "ab203ee2027f985d4ed007fb7124eb95f66db142f36c9233a52f7d4d3472cf0d",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/auth/login.svg",
+      "bytes": 483,
+      "compressed_bytes": 268,
+      "sha256": "01812b4b5e99d4c3788e84d2661044353c76e9725f673f52b9c41123e18bc360",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/auth/person.svg",
+      "bytes": 573,
+      "compressed_bytes": 325,
+      "sha256": "b60e9574bc2566ea0e72710cd40e4f61a00449130bdc258c0a1006af6857d727",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/auth/person_add.svg",
+      "bytes": 794,
+      "compressed_bytes": 407,
+      "sha256": "97df7216731fa7d7be9d2c10ed151572cf633716e814fee5cd53b92d3636e1d0",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/auth/person_outline.svg",
+      "bytes": 229,
+      "compressed_bytes": 165,
+      "sha256": "6a756b8fac14bd0fefc246f02b66b80529fc346d0ae35c4fad449ac7a700bbfe",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/auth/phone_outline.svg",
+      "bytes": 238,
+      "compressed_bytes": 169,
+      "sha256": "6e2dc4b8df8b905610aaf098d4bda18beb8fb69692b30cb8048220213c2712f0",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/auth/recovery_outline.svg",
+      "bytes": 248,
+      "compressed_bytes": 177,
+      "sha256": "30cacb4aac295f0331c98c4685aa51c9921839267386016092eeb21878585611",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/auth/refresh.svg",
+      "bytes": 463,
+      "compressed_bytes": 283,
+      "sha256": "9287665cb15b61441487cb2d579ba5630f9b249dbcaa5991e7028aa6f925edf8",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/auth/security_outline.svg",
+      "bytes": 320,
+      "compressed_bytes": 224,
+      "sha256": "6d51368f23b99d196bd15c0dd38b687a55668cf6fc4681e2351f5277e8d706e5",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/auth/shield.svg",
+      "bytes": 354,
+      "compressed_bytes": 240,
+      "sha256": "9ff9086efcb2f97c4ce83e4df676fff9704d1ca50c3af05757a97306411bfb2d",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/auth/signin_outline.svg",
+      "bytes": 236,
+      "compressed_bytes": 165,
+      "sha256": "1798e3b2962dfba2a91c07c3af6316e77a0c7d74b73111e08d0cea67ab19e3af",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/auth/sources.json",
+      "bytes": 4538,
+      "compressed_bytes": 1059,
+      "sha256": "cf65fa485783118b861923056afaf4dca1377247a85e4678a77836a2653f5793",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/auth/verification_outline.svg",
+      "bytes": 251,
+      "compressed_bytes": 176,
+      "sha256": "68d69ba5a9cc75ff2e36cf77d47ce7f0dcda985827032265452003f92948276d",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/auth/verified_user.svg",
+      "bytes": 497,
+      "compressed_bytes": 300,
+      "sha256": "63d09054204b2fd762d716417819ac69e4f47b2dda76cbbaaa87a0b41faf1589",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/auth/visibility.svg",
+      "bytes": 620,
+      "compressed_bytes": 327,
+      "sha256": "024cf2e18ddffaed7d0f9e6872f7a09a76cc81349414a3869ae47a1f412b30ce",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/auth/visibility_off.svg",
+      "bytes": 939,
+      "compressed_bytes": 532,
+      "sha256": "ab88d1ce3372969907d0294f8b7596e5f635797a87fce1ee2e372f866088fee6",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/auth/wallet.svg",
+      "bytes": 402,
+      "compressed_bytes": 262,
+      "sha256": "6e3b7d1cbfa08306678ed02a1d0a46e16cfbc72d35e32d9fc84c7eec5dc60812",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/campaign.svg",
+      "bytes": 768,
+      "compressed_bytes": 428,
+      "sha256": "818a806827aa82928cccc1bd4953d31cc061404e50c7a5e2e510825ff76326e4",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/cancel.svg",
+      "bytes": 379,
+      "compressed_bytes": 230,
+      "sha256": "787d3c3090d367ad2b98f6bf166ef1186cbd5cddb5b9c6ec55083d022aeb07d9",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/check_circle.svg",
+      "bytes": 309,
+      "compressed_bytes": 208,
+      "sha256": "ae55ec8d20e7bc0af882be74eaaae0fbfe9c5010814a5d84025afdd37ab9228b",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/chevron_right.svg",
+      "bytes": 190,
+      "compressed_bytes": 152,
+      "sha256": "dd80108de070d899de9b4ce1ae7c80a459e5d9ef21d9c4aae4528afcddcf9895",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/content_copy.svg",
+      "bytes": 267,
+      "compressed_bytes": 188,
+      "sha256": "a978f7983cb6c8abffb09a1c71081ef2a038003114bccc7a06c1026198b17888",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/detail/det_age.png",
+      "bytes": 18907,
+      "compressed_bytes": 18907,
+      "sha256": "f3abc44b3d102d9ea1275499f062c48360bdb64c28ca1fa05aa738416948f50b",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/detail/det_end.png",
+      "bytes": 8204,
+      "compressed_bytes": 8204,
+      "sha256": "ba22d8fd37fd54a686adb3fea0c389fb59f0c27a8fd03b4912fa072cb500d600",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/detail/det_goal.png",
+      "bytes": 20716,
+      "compressed_bytes": 20716,
+      "sha256": "e1fba45193c8a6824102e2a4e5990b311f5284a7f0a9da5645b1f755488ffce3",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/detail/det_info.png",
+      "bytes": 15454,
+      "compressed_bytes": 15454,
+      "sha256": "4ad24ed2c996892492ed6c4f99d2aac524c45e8ae2814ca03f2f445a47402783",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/detail/det_info_circle.png",
+      "bytes": 13333,
+      "compressed_bytes": 13333,
+      "sha256": "eca93629863ba7aeb93469d542b4b2ba1ecc8d075b7268c5e9d79edc01523f0a",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/detail/det_invoice.png",
+      "bytes": 13919,
+      "compressed_bytes": 13919,
+      "sha256": "f58d140be68adf0f39ec97a51f7584f03d04fe28e7921650d3ecaca542db07cc",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/detail/det_location.png",
+      "bytes": 5298,
+      "compressed_bytes": 5298,
+      "sha256": "efb25f10889edc5fe52e9fc74f4f78c028fd6df5f93058e63067ea96628e3b2a",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/detail/det_price.png",
+      "bytes": 24679,
+      "compressed_bytes": 24679,
+      "sha256": "a5989b18f9f7c2c514d1a6cc500ca7855e372c5195b41156b6c37612cad9b165",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/detail/det_start.png",
+      "bytes": 8187,
+      "compressed_bytes": 8187,
+      "sha256": "b12afbfdf78106a94d14cb8d3d3a4cadcaea23c88212488f97ce3e32a343c933",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/detail/det_users.png",
+      "bytes": 12433,
+      "compressed_bytes": 12433,
+      "sha256": "c9d98faff588511f2dcfb2187652b4e3b8aaef24d581e11c4f1b6699ebdc05a4",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/detail/det_video.png",
+      "bytes": 26531,
+      "compressed_bytes": 26531,
+      "sha256": "2954429d28ad2004ffc0028bebfe5c0a23662699dccb20bd453b2a5fd1a358ac",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/event.svg",
+      "bytes": 288,
+      "compressed_bytes": 206,
+      "sha256": "ff5ffa4ff734c4103a73e778e319061f642815ce5b7c57305295ef5747a13dfe",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/filter_lines.png",
+      "bytes": 3537,
+      "compressed_bytes": 3537,
+      "sha256": "6a9a4f5bc4ff956d97fc99535d6147e1d3fdafde66c33ac7e05481cf06798195",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/help_outline.svg",
+      "bytes": 383,
+      "compressed_bytes": 245,
+      "sha256": "306a505fbf28459fa061d30c66724ab79a52e40c50c89e88dbe89372e954f4ae",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/home/home_bolt.png",
+      "bytes": 11048,
+      "compressed_bytes": 11048,
+      "sha256": "260fe5085c6d0780be368f3b116e78030cfdce75db2696779006bb6ad019f0d4",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/home/home_check.png",
+      "bytes": 9697,
+      "compressed_bytes": 9697,
+      "sha256": "0bead662ec3d57291b898d465818b42ee6cd8a7e58e4cc52cfb55a83effa98ff",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/home/home_clock.png",
+      "bytes": 13796,
+      "compressed_bytes": 13796,
+      "sha256": "7d99e3202dc1aec416decd7a85d12691e3337e6bb8b8a2fbf205eb17e622e2e1",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/home/home_reports.png",
+      "bytes": 9139,
+      "compressed_bytes": 9139,
+      "sha256": "797b293f9d7e883824b92305682601e1f97ca8902415debeb2f847038fc1c483",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/home/home_x.png",
+      "bytes": 2841,
+      "compressed_bytes": 2841,
+      "sha256": "6d08924834e0f4ee94ae3e5f7b0924732be60e8b26446b62873ea60154e7cb8c",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/insert_chart.svg",
+      "bytes": 269,
+      "compressed_bytes": 194,
+      "sha256": "1cbedbfed5bd42a43edfefb85763f87f0c99a1f1020e72ecae3bf45bc025e8f1",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/mail_outline.svg",
+      "bytes": 262,
+      "compressed_bytes": 192,
+      "sha256": "83b43fc14b016ce99cd68a56e9ebe8e26f2698119fc88bb8a139687eaa527786",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/nav/home.png",
+      "bytes": 6895,
+      "compressed_bytes": 6895,
+      "sha256": "d2c19743cbaf7c98332de876ac9a61274bcc5e01245148715817ec46f2abc406",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/nav/home_fill.png",
+      "bytes": 5271,
+      "compressed_bytes": 5271,
+      "sha256": "2eefa5fb2a4a9d0d55eb191f895f9760b7cc90580cc01d1848abdb6d2a5caca2",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/nav/megaphone.png",
+      "bytes": 20866,
+      "compressed_bytes": 20866,
+      "sha256": "b1f2b2448d9e6c8b38bafa83ff31bb3e93aa634584cca4eaca477b82e0bcbacd",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/nav/megaphone_fill.png",
+      "bytes": 14172,
+      "compressed_bytes": 14172,
+      "sha256": "635ce7809be9d129aaf3e93b6da9076005a0a6dca40c2538afaa2e338ed6a92e",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/nav/user.png",
+      "bytes": 8536,
+      "compressed_bytes": 8536,
+      "sha256": "75a3194e4cabbffe9a3ec2a4d80514868aaeb0bb56431518aa701d84bcc1706f",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/nav/user_fill.png",
+      "bytes": 11163,
+      "compressed_bytes": 11163,
+      "sha256": "8ecdbb68c06aed118140de4d40aed4acf4ee4e18850ee710e000ec8026f03dcb",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/nav/widget.png",
+      "bytes": 5256,
+      "compressed_bytes": 5256,
+      "sha256": "f5e173cec1c6e99f52da0cb2711f73855cdac03fd378f69fd54ce0c8c6256126",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/nav/widget_fill.png",
+      "bytes": 5724,
+      "compressed_bytes": 5724,
+      "sha256": "fc2e6903d3579e0738ed65c6926118f8a5e0af15b546bd1e14a7eba5af5b7608",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/open_in_new.png",
+      "bytes": 4211,
+      "compressed_bytes": 4211,
+      "sha256": "26725daee80b5ad86587183e4aca433309a1014f4152c236d34c4f0e4171b254",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/pause_circle.svg",
+      "bytes": 363,
+      "compressed_bytes": 232,
+      "sha256": "55f28071f494d3cd3970ed8fac0700f3b289ee7010585287b8524ca620c6a49b",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/results/README.md",
+      "bytes": 112,
+      "compressed_bytes": 100,
+      "sha256": "7748aad3aca08417c91526a2314be14770489fc62d1f29f4f28d221d4de4d13f",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/results/chevron.svg",
+      "bytes": 183,
+      "compressed_bytes": 137,
+      "sha256": "296d435bcd267a47fc2b557bb7720c48c04f1fd4343bf48aa30fcbe9065ed599",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/results/click.svg",
+      "bytes": 203,
+      "compressed_bytes": 154,
+      "sha256": "423e2e9420a7b8adfff00b85f709370265b50fe682d1c677be24f303b28bf676",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/results/eye.svg",
+      "bytes": 246,
+      "compressed_bytes": 172,
+      "sha256": "56569fa2e29014cd2a3e0a638b9e5ce78e599cbf99bee2d2d8c10f08a9ac6899",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/results/fire.svg",
+      "bytes": 282,
+      "compressed_bytes": 194,
+      "sha256": "0f22c12bf21a67e5007661c7afe752b48c534299c552fd6226d55e038b011f5d",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/results/image.svg",
+      "bytes": 272,
+      "compressed_bytes": 186,
+      "sha256": "a4e4de15f09ada2c52500dff7f2e4992d94f77dec7ffb167ac945fabf1cca09b",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/results/play.svg",
+      "bytes": 217,
+      "compressed_bytes": 161,
+      "sha256": "cba7ca5e543c55d973d34b0dbded89856326040d06697d5a5564e3c4e5b9cbda",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/results/refresh.svg",
+      "bytes": 200,
+      "compressed_bytes": 149,
+      "sha256": "ec316f7ac4b3f206cb2d140f982dc2efbdf50d6352f7da15423001eeb49cfdaa",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/results/trophy.svg",
+      "bytes": 284,
+      "compressed_bytes": 198,
+      "sha256": "c4ff75249150379c94b57eeda6d661fa470204ac450099d4f063b360d0006c8a",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/results/wallet.svg",
+      "bytes": 266,
+      "compressed_bytes": 187,
+      "sha256": "73c716e2725534d25acbf844568f13add23ae01fe309d421f215dc9ab25ad229",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/schedule.svg",
+      "bytes": 322,
+      "compressed_bytes": 218,
+      "sha256": "357d248d4a4a329a232e51253be220c9ab5b0e7473c32cf3f8bdfe44bdc368b9",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/share.svg",
+      "bytes": 660,
+      "compressed_bytes": 344,
+      "sha256": "310f347c9ef3fdb55e028f452f17e1f9df621ef4c67e5b1dce898afc9f398c6d",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/solar/LICENSE.md",
+      "bytes": 660,
+      "compressed_bytes": 420,
+      "sha256": "38c2390beb341be595542bfbf874f357c399b7607e506fae5202073ec2174f48",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/solar/SOURCES.json",
+      "bytes": 15825,
+      "compressed_bytes": 2866,
+      "sha256": "e225f512e0c4fbcdb9d182d65ed95883f009fcd7e2aba1a9fc2fef1f9aab132a",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/solar/add_circle.svg",
+      "bytes": 840,
+      "compressed_bytes": 339,
+      "sha256": "e1b2e506a2bee4e30b8594304125b64eb2cb104abc0b078eeea1cf4c252a5a42",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/solar/alt_arrow_down.svg",
+      "bytes": 480,
+      "compressed_bytes": 275,
+      "sha256": "0019f90847ccd6ce5a6c84a6998d2d02f10aa58961e23dc19e48fe3cbf9ab2fa",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/solar/alt_arrow_left.svg",
+      "bytes": 480,
+      "compressed_bytes": 273,
+      "sha256": "0fe6ace99f4597296ec9adfb0c6c6008549cfd65c04745d435d87fec96cfeb84",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/solar/alt_arrow_right.svg",
+      "bytes": 478,
+      "compressed_bytes": 272,
+      "sha256": "eeb8445c7c94bfd15b367c835d219c54c294c29bf72109030b74aa37dc7fab36",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/solar/bell.svg",
+      "bytes": 1210,
+      "compressed_bytes": 591,
+      "sha256": "f8a53685496e90898c46bd737ef45662aa6bc0fa8ecc8de70212d80b3174a00c",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/solar/camera.svg",
+      "bytes": 2793,
+      "compressed_bytes": 1184,
+      "sha256": "ac5cf9536744bc61ac84012e54c1cec3f82ffcf42af51ee62755c52d72ed7357",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/solar/chart_square.svg",
+      "bytes": 2227,
+      "compressed_bytes": 770,
+      "sha256": "facb17f07cd82ff7bd38c201c55876c1366468e6297026c30862646d12fe674d",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/solar/chat_round.svg",
+      "bytes": 913,
+      "compressed_bytes": 485,
+      "sha256": "2e39d54df89ef0e5cf9dd70e7fd4e1fbb75fc3b727a22e0991680c92e4a75991",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/solar/check_circle.svg",
+      "bytes": 815,
+      "compressed_bytes": 349,
+      "sha256": "4c4301c1d9f8fd648cd233f739e71b12ee5b2f194c00f13c319ba4dd2a0f51c1",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/solar/clapperboard_play.svg",
+      "bytes": 3745,
+      "compressed_bytes": 1484,
+      "sha256": "44dab4d6504e9ba9d9520100e8cbbd72bc54e5c38f396d6b50330e81d0f50f05",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/solar/close_circle.svg",
+      "bytes": 1006,
+      "compressed_bytes": 389,
+      "sha256": "88632439c6db1a9d7ee230bdad0a2bb261f7f52a84173b87a610be4542cd2795",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/solar/copy.svg",
+      "bytes": 2252,
+      "compressed_bytes": 943,
+      "sha256": "7d783880fe4bc3d0e6b1ab2c8e6e0b7f4c917bdd2906b3c826e9958f187557bb",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/solar/cup_star.svg",
+      "bytes": 6582,
+      "compressed_bytes": 2840,
+      "sha256": "bc189f7be7e8224c2bdf10acbb5dcbab00378d9139e173b35614f9794197d9d5",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/solar/cursor_square.svg",
+      "bytes": 4199,
+      "compressed_bytes": 1533,
+      "sha256": "997df484081653c4e1a78513ef628dc76c8cf402d7327a501174c4e36bc36b8d",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/solar/danger_circle.svg",
+      "bytes": 800,
+      "compressed_bytes": 333,
+      "sha256": "4fed42b96213ebb5ede6f1fa51dab9e41489caf0e84d5452925abef92590ae13",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/solar/document_text.svg",
+      "bytes": 2157,
+      "compressed_bytes": 814,
+      "sha256": "eb79fffe1c1db2810ada65ee3c04e1fd8c27c0456e1bd98eb5ec2afac0472f74",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/solar/download.svg",
+      "bytes": 2326,
+      "compressed_bytes": 995,
+      "sha256": "537775b0d74fb0d3c591a7cfcfaa96c16c3b3a53c5c388a062e5f7d1056bedb6",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/solar/eye.svg",
+      "bytes": 1667,
+      "compressed_bytes": 669,
+      "sha256": "bad1f5e80a9f591cd54bf80fd6b559f0b107b6a69d9c6362752d33549d919f76",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/solar/eye_closed.svg",
+      "bytes": 2576,
+      "compressed_bytes": 1196,
+      "sha256": "e4ab5e5bdc28a34d6b7735d91568e13c907c6177947151c3442137e1cfe9099a",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/solar/gallery_add.svg",
+      "bytes": 2378,
+      "compressed_bytes": 987,
+      "sha256": "47b8567cc4a63ad3897bc677038bc7acc079d4112997c7ecb93bf0cecaa5266f",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/solar/global.svg",
+      "bytes": 3086,
+      "compressed_bytes": 1199,
+      "sha256": "270135ee3efaa732e2c2919f1591037279196dc03cf685d7d43862c7f420dc98",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/solar/hamburger_menu.svg",
+      "bytes": 803,
+      "compressed_bytes": 295,
+      "sha256": "7a1a6265ce90a5f771105093a2d166a8544c45440058367a056c0b7eecaac6be",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/solar/history.svg",
+      "bytes": 1199,
+      "compressed_bytes": 609,
+      "sha256": "55e9117097e912b27170a5033450aac3faf19de7104459dd6597b738613d4777",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/solar/home_2.svg",
+      "bytes": 2318,
+      "compressed_bytes": 1065,
+      "sha256": "cf8f62264c8fa40f99448cfa9ebcfd91b3e62b78cff030e26ce1bce417015fb6",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/solar/info_circle.svg",
+      "bytes": 797,
+      "compressed_bytes": 336,
+      "sha256": "5cc2b42eab9eb15469e42cc7f50f17ca8077e4305114ab18cb5711507bb811c1",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/solar/key.svg",
+      "bytes": 3658,
+      "compressed_bytes": 1616,
+      "sha256": "9b9c6eec3ebda49ebe531b4e262c3ccc9e0b9c5c40bd12b8cececb4fcd957d37",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/solar/letter.svg",
+      "bytes": 2330,
+      "compressed_bytes": 961,
+      "sha256": "560344cb9e36b706ab6c4e761ada8c2c38a24a9527b5a15f016f13fffe649458",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/solar/lock_keyhole.svg",
+      "bytes": 2325,
+      "compressed_bytes": 865,
+      "sha256": "ffffb40f682313bcb10e60fa203b7d040f042f457e4abbb4bc08ee081c6eceaa",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/solar/lock_password.svg",
+      "bytes": 2368,
+      "compressed_bytes": 897,
+      "sha256": "3545195cfaffce498049447da289ba675f47137f84eb49ad0367f415cc2ea1fc",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/solar/login_2.svg",
+      "bytes": 2366,
+      "compressed_bytes": 1006,
+      "sha256": "a1b08977d1b75cb18496a966950370d1bb51a5567da59c12b00dc70eccc1a7f2",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/solar/logout_2.svg",
+      "bytes": 2312,
+      "compressed_bytes": 1000,
+      "sha256": "5a363e6d0d59a270186a570bb805ff5a04d66cfa75c8667b5116003716104907",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/solar/magnifer.svg",
+      "bytes": 667,
+      "compressed_bytes": 305,
+      "sha256": "e568903329101b226960434ad7fbc367b99208c82ff75bd710610f1aca82a84f",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/solar/pen_new_square.svg",
+      "bytes": 2812,
+      "compressed_bytes": 1236,
+      "sha256": "4bf0693b1d74653cea4548e802a1890fb642f45f772df514bc8ca1aa706f5bce",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/solar/phone.svg",
+      "bytes": 2087,
+      "compressed_bytes": 1049,
+      "sha256": "ac013d634509f6179fee6ab7a370c833399ead0919758ec2afdc78a97749c612",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/solar/play_circle.svg",
+      "bytes": 1039,
+      "compressed_bytes": 465,
+      "sha256": "96852a8886adc3c9d5f88968ea66984e9505bfb384fff786a220c7d1e26e62d7",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/solar/question_circle.svg",
+      "bytes": 1190,
+      "compressed_bytes": 518,
+      "sha256": "7987ebf026c9e2617b531d1d8165f63696664b3796f4a61c96bf08a090acfcb7",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/solar/refresh.svg",
+      "bytes": 1342,
+      "compressed_bytes": 683,
+      "sha256": "0ea2cfe26ed1b204c26eb26abb95615b22ec3c5e4957dfd7e30d01d29e61e28b",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/solar/settings.svg",
+      "bytes": 6281,
+      "compressed_bytes": 2643,
+      "sha256": "682b48f84f61084729d5fc13a7a651a0d1a7d9be9e913efdf0e5c02c697371a4",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/solar/shield_check.svg",
+      "bytes": 2702,
+      "compressed_bytes": 1239,
+      "sha256": "c599318fa4c2f9fe36f589a3f309add7c8de8bb683c0fd3e66df4f7a264ba151",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/solar/tag_price.svg",
+      "bytes": 3596,
+      "compressed_bytes": 1563,
+      "sha256": "b0cf7045bb655043e95eb4ffed7c25fb5e7c1a9e3c922ba040bc7d4afb8dfe26",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/solar/target.svg",
+      "bytes": 1198,
+      "compressed_bytes": 447,
+      "sha256": "bf76360159dbb9d0adbaf87447760c8acdb0e3dc91f701d305fa95b15fa2fdba",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/solar/trash_bin_trash.svg",
+      "bytes": 3091,
+      "compressed_bytes": 1330,
+      "sha256": "9cadfd2f5d13bb8a4b9447c29ac2dc9f5c7e71c5b06426810bc35776e02b56ec",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/solar/upload.svg",
+      "bytes": 2340,
+      "compressed_bytes": 998,
+      "sha256": "cd4a5acd852a3960e2e221f4faffff16208741e044964d452d7b3a509a4cd6bd",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/solar/user_plus_rounded.svg",
+      "bytes": 1892,
+      "compressed_bytes": 765,
+      "sha256": "f5774dcf04112310d5a2485243124740192053aab6f2bed35b579143e598eaf5",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/solar/user_rounded.svg",
+      "bytes": 1202,
+      "compressed_bytes": 499,
+      "sha256": "204312a298e3538e0ef442708e84a39c93f3e5e22b2e60de65cfafe24eb1edd1",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/solar/wallet_2.svg",
+      "bytes": 2758,
+      "compressed_bytes": 1106,
+      "sha256": "b8622b8102cc5692b33c226ed1040356acbf3a0ea8f1c15061a771c1c904d1e4",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/solar/widget_2.svg",
+      "bytes": 3998,
+      "compressed_bytes": 1293,
+      "sha256": "1ccf9ffe792280a0042cf2683dcd7db70af412be83db7560a3728c14be18819d",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/trending_down.svg",
+      "bytes": 213,
+      "compressed_bytes": 161,
+      "sha256": "6e6b21b99e83930eab4b591526e114e9cf0c19607ebd34d4232c4ddc2d84005a",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/trending_up.svg",
+      "bytes": 214,
+      "compressed_bytes": 165,
+      "sha256": "8d9666a184fd1187968e3e3a77035a35d4b81b666615ba2dda2f2d6dc48b8aa3",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/icons/visibility.svg",
+      "bytes": 474,
+      "compressed_bytes": 292,
+      "sha256": "bdd8f956ba9573ff18136d5c3afa560dc72bd7e8262ea6bb0c3989e80e0c06c8",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/images/ad_video_link_example.png",
+      "bytes": 26670,
+      "compressed_bytes": 26670,
+      "sha256": "b987786229b5c0b860cd39e510fc48f07d6e41c89fadecf1ac53672a1e175e89",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/images/auth/account_3d.png",
+      "bytes": 1098785,
+      "compressed_bytes": 1098785,
+      "sha256": "54632924d04e42f14ea04d206cc80644851df0b3ad9f41e042cfc01d2057227a",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/images/auth/verification_3d.png",
+      "bytes": 1272224,
+      "compressed_bytes": 1272224,
+      "sha256": "d68c34137d244b5fad4d4392a46533f261444e1ed3b7f4e13366c5904244229e",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/images/empty_ads.png",
+      "bytes": 99463,
+      "compressed_bytes": 99463,
+      "sha256": "0b933d91a80d709725b4fb5f1c21aa441107a48452e4f41026ae48c4ff5a697b",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/images/empty_ads_box.png",
+      "bytes": 64688,
+      "compressed_bytes": 64688,
+      "sha256": "6f9e316db5b712a1f45a82af4c503a16d26f00425c1d9dbf09bc1c2b4941d963",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/images/proxo_logo.jpg",
+      "bytes": 247070,
+      "compressed_bytes": 247070,
+      "sha256": "f6b170909b162aab6b022a531ae9c41d06ed3cf58a17a3ec3f4ca72e1912c032",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/images/proxo_logo.png",
+      "bytes": 108829,
+      "compressed_bytes": 108829,
+      "sha256": "6a91249509a4664d9fcebc8975bd9f71fbec877a6d58d4d0f323cc3d957ac591",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/logos/fastpay.jpg",
+      "bytes": 37448,
+      "compressed_bytes": 37448,
+      "sha256": "08aa79c900ac2b949220de0ebee1f663fcd6dc0c6ec389f2eb7b8bae1ba8b79c",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/logos/fastpay_logo.png",
+      "bytes": 30204,
+      "compressed_bytes": 30204,
+      "sha256": "107a48fb72ad37d9782005aa5e388ec09a880b4923752a852b6b4621566a84b4",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/logos/fib.jpg",
+      "bytes": 23003,
+      "compressed_bytes": 23003,
+      "sha256": "90b45837019ea79cd09d95f3e27fe2f7b8a01ba32cd6632d8cc70f9cc61f5fd0",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/logos/providers/NOTICE.md",
+      "bytes": 2331,
+      "compressed_bytes": 1110,
+      "sha256": "14dfc4869a99d15a4868b5b81a211de2d99012aee5d281c41f7ee7c966dec3f8",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/logos/providers/SOURCES.json",
+      "bytes": 4697,
+      "compressed_bytes": 1344,
+      "sha256": "7bf24f451898f48562286b5c407702f44c8c8994bcabe29b457e3fa8b156a9fd",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/logos/providers/asiacell.svg",
+      "bytes": 12853,
+      "compressed_bytes": 4345,
+      "sha256": "5779fcb00363c6e2a86777f0b05d5c4e0650cf67aaf6414428bb1eeb6767499e",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/logos/providers/fastpay.png",
+      "bytes": 57100,
+      "compressed_bytes": 57100,
+      "sha256": "c5aea407251e257a3fdc9c15c7b5ce3a36de4a2ffd8e2561caba9659f8941423",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/logos/providers/fib.svg",
+      "bytes": 3271,
+      "compressed_bytes": 1520,
+      "sha256": "88beb2ab9268bcaef4b96ea79213b48f31cbd373347a815836dd1d6ec5dc96f6",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/logos/providers/korek.svg",
+      "bytes": 81966,
+      "compressed_bytes": 14866,
+      "sha256": "2df2219186408d54a0e9941fa045125b3c1554c687379fa33ff8631dde49f265",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/logos/providers/qi.svg",
+      "bytes": 1059,
+      "compressed_bytes": 504,
+      "sha256": "34ee5a6501b76b039248f35c6465f7b4cbba56acacb41ffd84d6c2027d089125",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/logos/providers/zaincash.svg",
+      "bytes": 5076,
+      "compressed_bytes": 2400,
+      "sha256": "4fba912b51cc1956c53c384849fa187016c1721fd1aac1dfb87adf4a45c2cea6",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/logos/proxo_logo_white.png",
+      "bytes": 50195,
+      "compressed_bytes": 50195,
+      "sha256": "4942a638d516c746c63fa79491341d97509ff1063096d2a836779f4abf0eb035",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/logos/proxo_notification_logo.png",
+      "bytes": 37068,
+      "compressed_bytes": 37068,
+      "sha256": "02577c1e1533c12d653d6703b3d8690d56b0956fd7a9cdaf31e2c55d15f12e40",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/logos/qicard.jpg",
+      "bytes": 33922,
+      "compressed_bytes": 33922,
+      "sha256": "51e6f72359f84433ced9d990510f20293ee530e89bd86a478ac80b6418937c77",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/logos/tiktok_icon.png",
+      "bytes": 211049,
+      "compressed_bytes": 211049,
+      "sha256": "a1d4b85fe36909b6188e8683de707b1e58ae2c43313f51079ee4115d4ea53ded",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/proxolink_thumbnails/contact-pill-dark.png",
+      "bytes": 849775,
+      "compressed_bytes": 849775,
+      "sha256": "58683f32d4be33d0fef7edbc84ac0943647a4caae4a320372de0e89d2013fd38",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/proxolink_thumbnails/contact-pill-mint.png",
+      "bytes": 792847,
+      "compressed_bytes": 792847,
+      "sha256": "84c78806da105ef308a02cc8033262baddf2810f8fea09181e860cf965d518dc",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/proxolink_thumbnails/contact-pill-white.png",
+      "bytes": 514628,
+      "compressed_bytes": 514628,
+      "sha256": "73653a7e2174f412d282ac840a3b9811598de4b41cdcdbf2622b3190b1da342f",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/proxolink_thumbnails/contact-pill.png",
+      "bytes": 749667,
+      "compressed_bytes": 749667,
+      "sha256": "00c272d3a28794b2377ca3809e9bb3d5f8280451b5d1b9c2722d58574f3ac52a",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/proxolink_thumbnails/download-pill-dark.png",
+      "bytes": 477736,
+      "compressed_bytes": 477736,
+      "sha256": "28577cd6a0c58bbb1e5379b631be76b2d9e9dee33f71763c4a77a8b23a11ac00",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/proxolink_thumbnails/download-pill-mint.png",
+      "bytes": 404159,
+      "compressed_bytes": 404159,
+      "sha256": "59d6ccc7638934f49cf9d17c0ce85068b0c75ce813d3c4db559e8004513ce738",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/proxolink_thumbnails/download-pill-white.png",
+      "bytes": 147945,
+      "compressed_bytes": 147945,
+      "sha256": "0765d854615a1281338a7669a208584b53489a0815c98470b1f78412767a6c5c",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/proxolink_thumbnails/download-pill.png",
+      "bytes": 362486,
+      "compressed_bytes": 362486,
+      "sha256": "54192b41d7e396d37c926bfe9df2f6ed260ac4ddfa92570a891986172d5729ea",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/proxolink_thumbnails/order-pill-dark.png",
+      "bytes": 670880,
+      "compressed_bytes": 670880,
+      "sha256": "28a257b9478e393d26e534500e9ea9202dc07854d0864ead88aa82473bd04906",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/proxolink_thumbnails/order-pill-mint.png",
+      "bytes": 610352,
+      "compressed_bytes": 610352,
+      "sha256": "24e775ed4f7bae46027f1c091dd81ce18e85be58dc6ed08da973e0ecd4c93d86",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/proxolink_thumbnails/order-pill-white.png",
+      "bytes": 343467,
+      "compressed_bytes": 343467,
+      "sha256": "ef56ab39cea1f61b590412882578486f5cfc092d190737b829c03f1756e5332d",
+      "tracked_at_source": true,
+      "matches_source": true
+    },
+    {
+      "path": "assets/proxolink_thumbnails/order-pill.png",
+      "bytes": 562492,
+      "compressed_bytes": 562492,
+      "sha256": "3713b1593a42da01ef2745c9adfb92fc7bf47590746428933a831d0b4f28dfa6",
+      "tracked_at_source": true,
+      "matches_source": true
+    }
+  ],
+  "android_notification_splash_resources": {
+    "ic_notification": {
+      "apk_path": "res/vO.xml",
+      "present": true
+    },
+    "proxo_notification_large": {
+      "apk_path": "res/03.png",
+      "present": true,
+      "pixels_match_source": true,
+      "size": [
+        600,
+        172
+      ]
+    },
+    "proxo_logo": {
+      "apk_path": "res/cV.png",
+      "present": true,
+      "pixels_match_source": true,
+      "size": [
+        1200,
+        345
+      ]
+    },
+    "proxo_splash_mark": {
+      "apk_path": "res/Lg.xml",
+      "present": true
+    }
+  },
+  "bundled_asset_count": 185,
+  "all_bundled_project_assets_match_source": true,
+  "required_new_svg_missing": [],
+  "page_thumbnail_count": 12,
+  "known_template_marker_matches": {
+    "ttq.load": [],
+    "{{HANDLERS}}": [],
+    "function askConfirm": [],
+    "const urlParams = new URLSearchParams(window.location.search)": [],
+    "buildCardHtml": [],
+    "api.telegram.org/bot": []
+  },
+  "known_fixture_dex_matches": {
+    "PolishRuntimeActivity": [],
+    "proxo/polish-fixture": [],
+    "postBackgroundFcmFixture": [],
+    "polish_fixture": [],
+    "ProxoLinkNativeProbeActivity": [],
+    "proxo/native-capture": [],
+    "native_paint_barrier": [],
+    "proxolink-diagnostic-surface.png": []
+  },
+  "known_fixture_manifest_matches": [],
+  "synthetic_staging_marker_matches": {
+    "sb_publishable_fictionalAcceptanceKey": [],
+    "abcdefghijklmnopqrst.supabase.co": [],
+    "screen-fixtures.invalid": []
+  },
+  "synthetic_staging_scan_method": "Exact UTF-8, UTF-16LE and UTF-16BE bytes in every uncompressed APK member, including native/Dart AOT libraries and classes DEX.",
+  "privacy_check_limit": "Exact known template/credential markers across archive members and known fixture names in DEX/manifest; not proof about arbitrary code or secret values.",
+  "checks": {
+    "signature": true,
+    "badging": true,
+    "manifest_decode": true,
+    "android_brand_resources_retained": true,
+    "package": true,
+    "version_name": true,
+    "version_code": true,
+    "release_not_debuggable": true,
+    "zip_integrity": true,
+    "assets_match_source": true,
+    "new_svg_included": true,
+    "twelve_page_thumbnails": true,
+    "private_templates_absent": true,
+    "known_fixture_hooks_absent": true,
+    "synthetic_staging_config_absent": true
+  },
+  "passed": true,
+  "github_workflow_run_id": 39391606925,
+  "github_workflow_conclusion": "success",
+  "github_artifact_id": 12250317662,
+  "github_artifact_archive_sha256": "de8d7a4a70b12092c7d5e541e9998d17849e4f0cd7b2c87fd5b6944653d543cb",
+  "artifact_archive_digest_verified_by": "download step (parent agent), before APK extraction",
+  "source_tree_proof": "../ci-source-proof.json",
+  "tested_merge_commit": "d92868011776e0a5ae655fc340ae5db5e1f15e50",
+  "tested_merge_tree": "35ed6cc439c5e431a474085e04395e014bc94b13",
+  "source_and_tested_merge_trees_identical": true,
+  "signing_compatibility": "Valid Android debug certificate differs from the prior delivered 1.0.9 APK; it cannot be installed as an in-place update over that certificate."
+}

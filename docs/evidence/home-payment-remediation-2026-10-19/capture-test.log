@@ -1,0 +1,48 @@
+00:00 +0: loading /workspace/scratch/8d19aeba9fd7/proxobalance/proxo_app/test/app_balance_capture_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: actual balanced transaction-receipt 393.0 1.0
+00:01 +1: actual balanced ad-receipt 393.0 1.0
+00:01 +2: actual balanced home 393.0 1.0
+00:02 +3: actual balanced home-thumbnail-image 393.0 1.0
+00:02 +4: actual balanced home-thumbnail-failed 393.0 1.0
+00:03 +5: actual balanced home-long-label 393.0 1.0
+00:03 +6: actual balanced deposit 393.0 1.0
+00:04 +7: actual balanced deposit-fib 393.0 1.0
+00:05 +8: actual balanced deposit-fastpay 393.0 1.0
+00:06 +9: actual balanced deposit-kcard 393.0 1.0
+00:06 +10: actual balanced tools 393.0 1.0
+00:07 +11: actual balanced tools-create-flow 393.0 1.0
+00:08 +12: actual balanced menu 393.0 1.0
+00:09 +13: actual balanced profile 393.0 1.0
+00:10 +14: actual balanced profile-long 393.0 1.0
+00:11 +15: actual balanced profile-missing 393.0 1.0
+00:11 +16: actual balanced profile-email-otp 393.0 1.0
+00:12 +17: actual balanced ads-empty 393.0 1.0
+00:12 +18: actual balanced ads-filter-empty 393.0 1.0
+00:12 +19: actual balanced ads-error 393.0 1.0
+AdScreen: _loadAds failed: Bad state: fixture_network_error
+00:12 +20: actual balanced ads-loading 393.0 1.0
+00:12 +21: actual balanced transaction-receipt 320.0 2.0
+00:13 +22: actual balanced ad-receipt 320.0 2.0
+00:13 +23: actual balanced home 320.0 2.0
+00:13 +24: actual balanced home-thumbnail-image 320.0 2.0
+00:14 +25: actual balanced home-thumbnail-failed 320.0 2.0
+00:14 +26: actual balanced home-long-label 320.0 2.0
+00:14 +27: actual balanced deposit 320.0 2.0
+00:15 +28: actual balanced deposit-fib 320.0 2.0
+00:15 +29: actual balanced deposit-fastpay 320.0 2.0
+00:16 +30: actual balanced deposit-kcard 320.0 2.0
+00:16 +31: actual balanced tools 320.0 2.0
+00:16 +32: actual balanced tools-create-flow 320.0 2.0
+00:17 +33: actual balanced menu 320.0 2.0
+00:18 +34: actual balanced profile 320.0 2.0
+00:19 +35: actual balanced profile-long 320.0 2.0
+00:19 +36: actual balanced profile-missing 320.0 2.0
+00:19 +37: actual balanced profile-email-otp 320.0 2.0
+00:19 +38: actual balanced ads-empty 320.0 2.0
+00:20 +39: actual balanced ads-filter-empty 320.0 2.0
+00:20 +40: actual balanced ads-error 320.0 2.0
+AdScreen: _loadAds failed: Bad state: fixture_network_error
+00:20 +41: actual balanced ads-loading 320.0 2.0
+00:20 +42: (tearDownAll)
+00:20 +42: All tests passed!

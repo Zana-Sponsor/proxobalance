@@ -12,6 +12,7 @@ import '../services/featured_image_cache.dart';
 import 'best_metric_card.dart';
 import 'best_results_design.dart';
 import 'proxo_text.dart';
+import 'proxo_symbol.dart';
 
 typedef HomeResultsLoader = Future<List<BestMetricAd>> Function({
   bool forceRefresh,
@@ -31,7 +32,7 @@ class BestMetricsHomeSection extends StatefulWidget {
 
 class BestMetricsHomeSectionState extends State<BestMetricsHomeSection>
     with WidgetsBindingObserver {
-  final PageController _pages = PageController(viewportFraction: .94);
+  final PageController _pages = PageController();
   final Map<String, double> _heights = {};
   ScrollPosition? _parentScroll;
   Timer? _timer;
@@ -97,8 +98,7 @@ class BestMetricsHomeSectionState extends State<BestMetricsHomeSection>
         MediaQuery.disableAnimationsOf(context) ||
         MediaQuery.accessibleNavigationOf(context) ||
         !(ModalRoute.of(context)?.isCurrent ?? true) ||
-        (_parentScroll?.isScrollingNotifier.value ?? false))
-      return false;
+        (_parentScroll?.isScrollingNotifier.value ?? false)) return false;
     final box = context.findRenderObject();
     if (box is! RenderBox || !box.hasSize) return false;
     final origin = box.localToGlobal(Offset.zero);
@@ -142,8 +142,8 @@ class BestMetricsHomeSectionState extends State<BestMetricsHomeSection>
     try {
       final rows =
           await (widget.loadPreview ?? BestMetricsService.fetchHomePreview)(
-            forceRefresh: forceRefresh,
-          );
+        forceRefresh: forceRefresh,
+      );
       if (!mounted || request != _request) return;
       final currentId = _ads.isEmpty ? null : _ads[_page % _ads.length].id;
       final next = math.max(0, rows.indexWhere((ad) => ad.id == currentId));
@@ -178,12 +178,10 @@ class BestMetricsHomeSectionState extends State<BestMetricsHomeSection>
     await Navigator.of(context).push(
       PageRouteBuilder<void>(
         settings: const RouteSettings(name: 'best_metrics'),
-        transitionDuration: reduced
-            ? Duration.zero
-            : const Duration(milliseconds: 240),
-        reverseTransitionDuration: reduced
-            ? Duration.zero
-            : const Duration(milliseconds: 200),
+        transitionDuration:
+            reduced ? Duration.zero : const Duration(milliseconds: 240),
+        reverseTransitionDuration:
+            reduced ? Duration.zero : const Duration(milliseconds: 200),
         pageBuilder: (_, __, ___) =>
             BestMetricsScreen(initialAds: _ads, initialAdId: initialAdId),
         transitionsBuilder: (_, animation, __, child) => FadeTransition(
@@ -221,65 +219,31 @@ class BestMetricsHomeSectionState extends State<BestMetricsHomeSection>
           data: ResultsUi.theme(context),
           child: Directionality(
             textDirection: TextDirection.rtl,
-            child: Container(
+            child: Column(
               key: const ValueKey('home-results-banner'),
-              padding: const EdgeInsets.fromLTRB(12, 10, 12, 16),
-              decoration: const BoxDecoration(
-                color: ResultsUi.banner,
-                borderRadius: BorderRadius.all(Radius.circular(24)),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  TextButton(
-                    key: const ValueKey('home-results-view-all'),
-                    onPressed: _ads.isEmpty ? null : () => _openAll(),
-                    style: TextButton.styleFrom(
-                      minimumSize: const Size(48, 48),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 6,
-                        vertical: 12,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _heading(),
+                const SizedBox(height: 12),
+                if (_loading && _ads.isEmpty)
+                  const SizedBox(
+                    height: 180,
+                    child: Center(
+                      child: SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(strokeWidth: 2),
                       ),
                     ),
-                    child: Row(
-                      children: [
-                        const ResultIcon(
-                          'fire',
-                          size: 28,
-                          color: Color(0xFFE87832),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: ProxoText(
-                            'باشترین ئەنجامەکان',
-                            translate: true,
-                            style: ResultsUi.text(size: 17),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  if (_loading && _ads.isEmpty)
-                    const SizedBox(
-                      height: 180,
-                      child: Center(
-                        child: SizedBox(
-                          width: 24,
-                          height: 24,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        ),
-                      ),
-                    )
-                  else if (_ads.isEmpty)
-                    ResultsStateCard(
-                      error: _error != null,
-                      onRefresh: () => refresh(),
-                    )
-                  else
-                    _carousel(),
-                ],
-              ),
+                  )
+                else if (_ads.isEmpty)
+                  ResultsStateCard(
+                    error: _error != null,
+                    onRefresh: () => refresh(),
+                  )
+                else
+                  _carousel(),
+              ],
             ),
           ),
         ),
@@ -287,123 +251,185 @@ class BestMetricsHomeSectionState extends State<BestMetricsHomeSection>
     );
   }
 
+  Widget _heading() => LayoutBuilder(builder: (context, constraints) {
+        final title = Row(mainAxisSize: MainAxisSize.min, children: [
+          const ProxoSymbol(ProxoSymbolName.trophy,
+              size: 22, color: ResultsUi.blue),
+          const SizedBox(width: 8),
+          Flexible(
+              child: ProxoText('باشترین ئەنجامەکان',
+                  translate: true, style: ResultsUi.text(size: 18))),
+        ]);
+        final action = TextButton(
+          key: const ValueKey('home-results-view-all'),
+          onPressed: _ads.isEmpty ? null : () => _openAll(),
+          style: TextButton.styleFrom(
+              minimumSize: const Size(48, 48),
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8)),
+          child: Row(mainAxisSize: MainAxisSize.min, children: [
+            Flexible(
+                child: ProxoText('بینینی ئامارەکان',
+                    translate: true,
+                    style: ResultsUi.text(
+                        size: 13,
+                        color:
+                            _ads.isEmpty ? ResultsUi.muted : ResultsUi.blue))),
+            const SizedBox(width: 4),
+            ProxoSymbol(ProxoSymbolName.forward,
+                size: 18,
+                color: _ads.isEmpty ? ResultsUi.muted : ResultsUi.blue),
+          ]),
+        );
+        double measure(String text, double size) {
+          final painter = TextPainter(
+              text: TextSpan(
+                  text: ProxoStrings.text(text),
+                  style: ResultsUi.text(size: size)),
+              textDirection: TextDirection.rtl,
+              textScaler: MediaQuery.textScalerOf(context))
+            ..layout();
+          final width = painter.width;
+          painter.dispose();
+          return width;
+        }
+
+        if (measure('باشترین ئەنجامەکان', 18) +
+                measure('بینینی ئامارەکان', 13) +
+                76 >
+            constraints.maxWidth) {
+          return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                title,
+                Align(alignment: AlignmentDirectional.centerEnd, child: action)
+              ]);
+        }
+        return Row(children: [
+          Expanded(child: title),
+          const SizedBox(width: 8),
+          action
+        ]);
+      });
+
   Widget _carousel() => LayoutBuilder(
-    builder: (context, constraints) {
-      final scale = MediaQuery.textScalerOf(context);
-      if (_width != constraints.maxWidth || _scale != scale) {
-        _width = constraints.maxWidth;
-        _scale = scale;
-        _heights.clear();
-      }
-      final height = _heights.isEmpty
-          ? 272.0
-          : _heights.values.reduce(math.max);
-      return Column(
-        children: [
-          Listener(
-            onPointerDown: (_) {
-              _touching = true;
-              _schedule();
-            },
-            onPointerUp: (_) {
-              _touching = false;
-              _schedule();
-            },
-            onPointerCancel: (_) {
-              _touching = false;
-              _schedule();
-            },
-            child: NotificationListener<ScrollNotification>(
-              onNotification: (notification) {
-                if (notification.depth != 0) return false;
-                if (notification is ScrollStartNotification) {
-                  _scrolling = true;
+        builder: (context, constraints) {
+          final scale = MediaQuery.textScalerOf(context);
+          if (_width != constraints.maxWidth || _scale != scale) {
+            _width = constraints.maxWidth;
+            _scale = scale;
+            _heights.clear();
+          }
+          final height = _heights[_ads[_page % _ads.length].id] ?? 246.0;
+          return Column(
+            children: [
+              Listener(
+                onPointerDown: (_) {
+                  _touching = true;
                   _schedule();
-                }
-                if (notification is ScrollEndNotification) {
-                  _scrolling = false;
+                },
+                onPointerUp: (_) {
+                  _touching = false;
                   _schedule();
-                }
-                return false;
-              },
-              child: SizedBox(
-                height: height,
-                child: PageView.builder(
-                  key: const ValueKey('home-results-carousel'),
-                  controller: _pages,
-                  padEnds: false,
-                  physics: const BouncingScrollPhysics(),
-                  itemCount: _ads.length == 1 ? 1 : null,
-                  onPageChanged: (page) {
-                    setState(() => _page = page);
-                    _warmNext();
+                },
+                onPointerCancel: (_) {
+                  _touching = false;
+                  _schedule();
+                },
+                child: NotificationListener<ScrollNotification>(
+                  onNotification: (notification) {
+                    if (notification.depth != 0) return false;
+                    if (notification is ScrollStartNotification) {
+                      _scrolling = true;
+                      _schedule();
+                    }
+                    if (notification is ScrollEndNotification) {
+                      _scrolling = false;
+                      _schedule();
+                    }
+                    return false;
                   },
-                  itemBuilder: (context, index) {
-                    final ad = _ads[index % _ads.length];
-                    return SingleChildScrollView(
-                      physics: const NeverScrollableScrollPhysics(),
-                      child: _CardSizeObserver(
-                        onSize: (size) {
-                          if (!mounted ||
-                              ((_heights[ad.id] ?? 0) - size.height).abs() < .1)
-                            return;
-                          setState(() => _heights[ad.id] = size.height);
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 6, 10, 24),
-                          child: BestMetricCard(
-                            key: ValueKey('weekly-${ad.id}'),
-                            ad: ad,
-                            rank: index % _ads.length + 1,
-                            compact: true,
-                            onOpenDetails: () => _openAll(initialAdId: ad.id),
+                  child: SizedBox(
+                    height: height,
+                    child: PageView.builder(
+                      key: const ValueKey('home-results-carousel'),
+                      controller: _pages,
+                      padEnds: false,
+                      physics: const BouncingScrollPhysics(),
+                      itemCount: _ads.length == 1 ? 1 : null,
+                      onPageChanged: (page) {
+                        setState(() => _page = page);
+                        _warmNext();
+                      },
+                      itemBuilder: (context, index) {
+                        final ad = _ads[index % _ads.length];
+                        return SingleChildScrollView(
+                          physics: const NeverScrollableScrollPhysics(),
+                          child: _CardSizeObserver(
+                            onSize: (size) {
+                              if (!mounted ||
+                                  ((_heights[ad.id] ?? 0) - size.height).abs() <
+                                      .1) return;
+                              setState(() => _heights[ad.id] = size.height);
+                            },
+                            child: Padding(
+                              padding: EdgeInsets.zero,
+                              child: BestMetricCard(
+                                key: ValueKey('weekly-${ad.id}'),
+                                ad: ad,
+                                rank: index % _ads.length + 1,
+                                compact: true,
+                                onOpenDetails: () =>
+                                    _openAll(initialAdId: ad.id),
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                    );
-                  },
+                        );
+                      },
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ),
-          if (_ads.length > 1)
-            Semantics(
-              label: ProxoStrings.format('ڕیکلامی {index} لە {count}', {
-                'index': _page % _ads.length + 1,
-                'count': _ads.length,
-              }),
-              child: Row(
-                key: const ValueKey('home-results-dots'),
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // Keep pagination bounded even if the curator selects many adverts.
-                  for (var i = 0; i < math.min(5, _ads.length); i++)
-                    AnimatedContainer(
-                      duration: MediaQuery.disableAnimationsOf(context)
-                          ? Duration.zero
-                          : const Duration(milliseconds: 180),
-                      margin: const EdgeInsets.symmetric(horizontal: 3),
-                      width:
-                          i == (_page % _ads.length) % math.min(5, _ads.length)
-                          ? 18
-                          : 6,
-                      height: 6,
-                      decoration: BoxDecoration(
-                        color:
-                            i ==
-                                (_page % _ads.length) % math.min(5, _ads.length)
-                            ? ResultsUi.ink
-                            : const Color(0xFFD5CEC4),
-                        borderRadius: BorderRadius.circular(3),
-                      ),
-                    ),
-                ],
-              ),
-            ),
-        ],
+              if (_ads.length > 1) ...[
+                const SizedBox(height: 12),
+                Semantics(
+                  label: ProxoStrings.format('ڕیکلامی {index} لە {count}', {
+                    'index': _page % _ads.length + 1,
+                    'count': _ads.length,
+                  }),
+                  child: Row(
+                    key: const ValueKey('home-results-dots'),
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // Keep pagination bounded even if the curator selects many adverts.
+                      for (var i = 0; i < math.min(5, _ads.length); i++)
+                        AnimatedContainer(
+                          duration: MediaQuery.disableAnimationsOf(context)
+                              ? Duration.zero
+                              : const Duration(milliseconds: 180),
+                          margin: const EdgeInsets.symmetric(horizontal: 3),
+                          width: i ==
+                                  (_page % _ads.length) %
+                                      math.min(5, _ads.length)
+                              ? 18
+                              : 6,
+                          height: 6,
+                          decoration: BoxDecoration(
+                            color: i ==
+                                    (_page % _ads.length) %
+                                        math.min(5, _ads.length)
+                                ? ResultsUi.ink
+                                : const Color(0xFFD5CEC4),
+                            borderRadius: BorderRadius.circular(3),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ],
+            ],
+          );
+        },
       );
-    },
-  );
 }
 
 class _CardSizeObserver extends SingleChildRenderObjectWidget {

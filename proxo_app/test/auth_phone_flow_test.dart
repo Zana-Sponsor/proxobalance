@@ -37,12 +37,12 @@ void main() {
     expect(AuthValidators.email('a'), isNotNull);
   });
 
-  test('signup readiness includes phone, strong password and confirmation', () {
+  test('signup readiness includes email, strong password and confirmation', () {
     const String password = 'Strong#1';
     expect(
       AuthValidators.signUpReady(
         name: 'Test User',
-        phone: '+9647501234567',
+        email: 'person@example.com',
         password: password,
         confirmation: password,
       ),
@@ -51,7 +51,7 @@ void main() {
     expect(
       AuthValidators.signUpReady(
         name: 'Test User',
-        phone: '+9647501234567',
+        email: 'person@example.com',
         password: password,
         confirmation: 'Different#1',
       ),

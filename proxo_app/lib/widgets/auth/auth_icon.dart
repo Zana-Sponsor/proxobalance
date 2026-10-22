@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-/// Original Google Material Symbols Rounded SVGs, bundled for offline Auth.
-/// Source hashes and Apache-2.0 notice live beside the unmodified artwork.
+/// Offline Auth SVGs. Existing filled symbols retain their source/license;
+/// the *_outline assets are original 24px drawings with a shared 1.7px stroke.
 class AuthIcon extends StatelessWidget {
   const AuthIcon(
     this.name, {

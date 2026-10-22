@@ -1,0 +1,85 @@
+{
+  "source_commit": "1c69818fe37ce0fdb3d7b95bf715a54288141a48",
+  "environment": {
+    "os": "Linux x86_64",
+    "flutter": "3.47.2",
+    "dart": "3.13.2",
+    "renderer": "Flutter host widget test (real bundled font and image assets)",
+    "reference_viewport_dp": [
+      393,
+      627
+    ],
+    "reference_capture_scale": 4
+  },
+  "checks": {
+    "focused_tests": {
+      "passed": 215,
+      "failed": 0,
+      "files": 9,
+      "log": "logs/focused-tests.log"
+    },
+    "reference_golden": {
+      "passed": 1,
+      "included_in_215": true,
+      "differing_rgba_pixels": 0,
+      "pixels_compared": 3942576
+    },
+    "screen_capture_cases": {
+      "passed": 8,
+      "failed": 0,
+      "widths_dp": [
+        280,
+        393,
+        768
+      ],
+      "text_scales": [
+        1,
+        2
+      ],
+      "screenshots": 10,
+      "bottom_states": 2
+    },
+    "analysis": {
+      "errors": 0,
+      "warnings": 0,
+      "infos": 0,
+      "items": 9
+    },
+    "pdf_exports": {
+      "tested": 4,
+      "rendered_pages": 6,
+      "standard_embedded_image_differences": 0
+    },
+    "ui_workflow_regression": {
+      "passed": 440,
+      "failed": 0,
+      "files": 14,
+      "log": "logs/ui-workflow-regression-tests.log",
+      "overlap_with_focused_tests": true
+    },
+    "font_fixture_analysis": {
+      "errors": 0,
+      "warnings": 0,
+      "infos": 0,
+      "items": 3,
+      "log": "logs/font-loader-analysis.log"
+    }
+  },
+  "source_sha256": {
+    "proxo_app/lib/widgets/receipt/receipt_kit.dart": "0f9c47e976ce0b2ba47662a461c466772e057687ccf1eb5ae946fb22e5451534",
+    "proxo_app/lib/widgets/receipt/ad_receipt_card.dart": "3c6e4b2e98e7482360906e1d7beaacbb693ccb55bcbdce0e771f24790947f9a6",
+    "proxo_app/lib/widgets/receipt/tx_history_layout.dart": "ae5ddbf58d479afeb48247a10aea13cc398b9b9ae3a7471459c48984f2ac5ceb",
+    "proxo_app/lib/widgets/tx_history_page.dart": "b7bd5e098b60ddbe54c79de84639463d5169dd3e5e4654955b64fbfa669ab66a",
+    "proxo_app/lib/screens/transaction_detail_screen.dart": "be7054c851e6b9679e6c3b2a54eabc06b2e0387e5657c482d35e48318b881b60",
+    "proxo_app/test/receipt_reference_match_test.dart": "21b16e3649083714a4bc2dca507dfa1db6d66631a636a40dc4f55ba05a354f88",
+    "proxo_app/test/ad_creation_flow_test.dart": "2e9875650cd7fc88ddef9b6f518c2ca266790e2a6c915c06b59c20c99d4a8dd7",
+    "proxo_app/test/ad_name_direction_test.dart": "4e0203f847e5252e7cba7d0aba1b424c7148fd53bb14019b9d7b9506a2824614",
+    "proxo_app/test/text_direction_test.dart": "5b0beab2f2ed13fb6d1212af6ede4f4a4e46f398718a732a2e53e135e9298744"
+  },
+  "limits": [
+    "Golden equality applies to the supplied advertisement fixture at393dp and100%text in the recorded Flutter renderer. Other data and responsive sizes retain the same design with adaptive layout.",
+    "Uploaded image resampling differs by at most2RGB levels from the canonical screenshot; its original upload resampler is unknown.",
+    "Host widget/PDF checks do not establish physical-device frame-rate or production payment behavior. No production deployment, customer data change or live payment was performed."
+  ],
+  "implementation_commit": "2437d79014d77e0951a3dcf014ba5160c70a709a"
+}

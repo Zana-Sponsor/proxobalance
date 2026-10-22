@@ -1,0 +1,242 @@
+{
+  "schema_version": 1,
+  "inputs": {
+    "actual_flutter_capture": {
+      "file": "docs/evidence/receipt-reference-match-2026-10-23/ad-reference-393dp-4x.png",
+      "sha256": "b5f238962ffa3baae5ccd80f3db7059111c2bb03beeb46ed154e067984b32699",
+      "width_px": 1572,
+      "height_px": 2508,
+      "mode": "RGBA"
+    },
+    "immutable_repository_reference": {
+      "file": "proxo_app/docs/receipt_preview.png",
+      "sha256": "b5f238962ffa3baae5ccd80f3db7059111c2bb03beeb46ed154e067984b32699",
+      "width_px": 1572,
+      "height_px": 2508,
+      "mode": "RGBA"
+    },
+    "provided_attachment": {
+      "file": "docs/evidence/receipt-reference-match-2026-10-23/reference-upload.png",
+      "sha256": "b52290114de940319b776d9ab365df5667f7b0f9a138dcd10a427f9693b333f3",
+      "width_px": 1283,
+      "height_px": 2048,
+      "mode": "RGBA"
+    }
+  },
+  "actual_vs_reference_rgba": {
+    "pixels_compared": 3942576,
+    "channels_compared": 15770304,
+    "differing_pixels": 0,
+    "exact_pixels": 3942576,
+    "exact_pixel_fraction": 1.0,
+    "mean_absolute_channel_error": 0.0,
+    "maximum_channel_error": 0,
+    "pixels_within_one_channel_level": 3942576,
+    "fraction_within_one_channel_level": 1.0
+  },
+  "png_bytes_identical": true,
+  "provided_attachment_resize_comparison": {
+    "model": "Uniform height scale; pixel-center bilinear RGB interpolation; round to nearest; omit fractional final column",
+    "scale": 0.8165869218500797,
+    "full_scaled_width": 1283.6746411483255,
+    "attachment_width": 1283,
+    "rgb_difference": {
+      "pixels_compared": 2627584,
+      "channels_compared": 7882752,
+      "differing_pixels": 19147,
+      "exact_pixels": 2608437,
+      "exact_pixel_fraction": 0.9927130778692518,
+      "mean_absolute_channel_error": 0.006467918818199532,
+      "maximum_channel_error": 2,
+      "pixels_within_one_channel_level": 2627553,
+      "fraction_within_one_channel_level": 0.9999882020898285
+    },
+    "attachment_alpha_min_max": [
+      255,
+      255
+    ],
+    "limit": "The attachment is resized. Its original upload-resampler implementation is unknown; this comparison is near-equivalence, not a claim of exact resized-byte reproduction."
+  },
+  "canonical_geometry_dp": {
+    "surface_size": [
+      393,
+      627
+    ],
+    "capture_scale": 4,
+    "card_rect_xywh": [
+      16,
+      16,
+      361,
+      591
+    ],
+    "card_radius": 16,
+    "card_padding_horizontal_vertical": [
+      16,
+      20
+    ],
+    "data_row_x_start_end": [
+      32,
+      361
+    ],
+    "data_row_height": 20,
+    "data_row_gap": 8,
+    "label_value_gap": 8,
+    "data_row_tops": [
+      79,
+      107,
+      180,
+      208,
+      236,
+      264,
+      292,
+      365,
+      393,
+      421,
+      494,
+      539,
+      567
+    ],
+    "data_rows": 13,
+    "section_headings": 3,
+    "dividers": 5,
+    "divider_x_start_end": [
+      40,
+      353
+    ],
+    "divider_thickness": 1,
+    "divider_tops": [
+      66,
+      139,
+      324,
+      453,
+      526
+    ],
+    "divider_gap_before_after": [
+      12,
+      12
+    ],
+    "heading_gap_after": 12,
+    "logo_rect_xywh": [
+      32,
+      36,
+      62.608695652173914,
+      18
+    ],
+    "surface_bottom_margin": 20
+  },
+  "measured_original_divider_pixel_bands": [
+    {
+      "x_start_px": 160,
+      "x_end_exclusive_px": 1412,
+      "y_start_px": 264,
+      "y_end_exclusive_px": 268
+    },
+    {
+      "x_start_px": 160,
+      "x_end_exclusive_px": 1412,
+      "y_start_px": 556,
+      "y_end_exclusive_px": 560
+    },
+    {
+      "x_start_px": 160,
+      "x_end_exclusive_px": 1412,
+      "y_start_px": 1296,
+      "y_end_exclusive_px": 1300
+    },
+    {
+      "x_start_px": 160,
+      "x_end_exclusive_px": 1412,
+      "y_start_px": 1812,
+      "y_end_exclusive_px": 1816
+    },
+    {
+      "x_start_px": 160,
+      "x_end_exclusive_px": 1412,
+      "y_start_px": 2104,
+      "y_end_exclusive_px": 2108
+    }
+  ],
+  "measured_attachment_divider_pixel_bands": [
+    {
+      "x_start_px": 131,
+      "x_end_exclusive_px": 1153,
+      "y_start_px": 216,
+      "y_end_exclusive_px": 218
+    },
+    {
+      "x_start_px": 131,
+      "x_end_exclusive_px": 1153,
+      "y_start_px": 454,
+      "y_end_exclusive_px": 457
+    },
+    {
+      "x_start_px": 131,
+      "x_end_exclusive_px": 1153,
+      "y_start_px": 1059,
+      "y_end_exclusive_px": 1061
+    },
+    {
+      "x_start_px": 131,
+      "x_end_exclusive_px": 1153,
+      "y_start_px": 1480,
+      "y_end_exclusive_px": 1483
+    },
+    {
+      "x_start_px": 131,
+      "x_end_exclusive_px": 1153,
+      "y_start_px": 1718,
+      "y_end_exclusive_px": 1721
+    }
+  ],
+  "typography_and_colors": {
+    "font_asset": "assets/fonts/Rabar_021.ttf",
+    "font_sha256": "ba47baa90fa094eaa4c3f02c3206489e79b0e4233a7d8a4d7d98f6bb378d25c5",
+    "font_metadata_family_subfamily_weight": [
+      "Rabar_021",
+      "Bold",
+      700
+    ],
+    "flutter_weight": 400,
+    "line_height": 1.25,
+    "heading_sp": 13,
+    "field_and_identifier_sp": 11,
+    "total_sp": 12,
+    "page_and_card": "#FFFFFF",
+    "text": "#111111",
+    "section_heading": "#046CFA",
+    "divider": "#E5E7EB",
+    "shadow_argb_blur_offset": [
+      "#0F000000",
+      18,
+      [
+        0,
+        5
+      ]
+    ],
+    "logo_asset": "assets/images/proxo_logo.png",
+    "logo_source_pixels": [
+      1200,
+      345
+    ],
+    "logo_sha256": "6a91249509a4664d9fcebc8975bd9f71fbec877a6d58d4d0f323cc3d957ac591"
+  },
+  "provenance": {
+    "reference_first_committed": "f539e7e",
+    "exact_geometry_reference_commit": "a4149de503ae0e9d487a31cabc536fb51ee6c533",
+    "reference_git_blob": "ddf44b9182fca85047f0591dc8bbab22a0f74c7c",
+    "capture_test": "proxo_app/test/receipt_reference_match_test.dart",
+    "capture_method": "Actual AdReceiptCard inside ReceiptSurface; real bundled font and logo; fictional fixture; RepaintBoundary.toImage(pixelRatio: 4)",
+    "reference_not_regenerated": true,
+    "source_base_head_at_comparison": "1c69818fe37ce0fdb3d7b95bf715a54288141a48",
+    "source_file_sha256": {
+      "proxo_app/lib/widgets/receipt/receipt_kit.dart": "0f9c47e976ce0b2ba47662a461c466772e057687ccf1eb5ae946fb22e5451534",
+      "proxo_app/lib/widgets/receipt/ad_receipt_card.dart": "3c6e4b2e98e7482360906e1d7beaacbb693ccb55bcbdce0e771f24790947f9a6",
+      "proxo_app/test/receipt_reference_match_test.dart": "21b16e3649083714a4bc2dca507dfa1db6d66631a636a40dc4f55ba05a354f88"
+    }
+  },
+  "limits": [
+    "Exact pixel match applies to this 393dp, 100% text, fictional advertisement fixture and Flutter capture renderer.",
+    "The reference excludes the app bar and PDF button. Payment receipts use the shared design but contain different data and are not compared to advertisement pixels.",
+    "No image was edited to create a match. Uploaded resize comparison is performed in memory only."
+  ]
+}

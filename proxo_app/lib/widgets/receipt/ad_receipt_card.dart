@@ -36,7 +36,24 @@ class AdReceiptCard extends StatelessWidget {
               value: r.adId,
               onLongPress: () => onCopy(r.adId),
             ),
-            ReceiptRow(label: l.date, value: r.date, valueDirection: ltr),
+            ReceiptRow(
+                label: l.date,
+                value: r.date,
+                valueDirection: ltr,
+                valueStyle: ReceiptTokens.metadataValue),
+            if (r.paymentStatus != 'no_payment_required')
+              ReceiptStatusRow(
+                label: l.paymentStatus,
+                value: l.paymentStatusLabel(r.paymentStatus),
+                positive: const [
+                  'paid',
+                  'approved',
+                  'spent',
+                  'no_payment_required'
+                ].contains(r.paymentStatus),
+                negative:
+                    const ['failed', 'rejected'].contains(r.paymentStatus),
+              ),
           ]),
           const ReceiptDivider(),
 
@@ -82,9 +99,10 @@ class AdReceiptCard extends StatelessWidget {
               important: true,
             ),
           ]),
-          const ReceiptDivider(),
-
           // ── ١٤) زانیاری پارەدان ─────────────────────────────────────────
+          // A zero-charge advertisement still has a payment-information
+          // section, explicitly stating that no payment is required.
+          const ReceiptDivider(),
           ReceiptSectionHeading(l.sectionPayment),
           ReceiptRows(<Widget?>[
             ReceiptRow(

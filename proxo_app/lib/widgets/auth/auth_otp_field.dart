@@ -3,6 +3,7 @@ import 'package:proxo_app/theme/app_locale.dart';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:proxo_app/screens/auth/auth_models.dart' show IraqPhone;
 import 'auth_design.dart';
 import 'package:proxo_app/widgets/proxo_text.dart';
 
@@ -155,11 +156,16 @@ class _AuthOtpBoxesState extends State<AuthOtpBoxes>
   }
 
   void _onChanged(int index, String raw) {
-    final String digits = raw.replaceAll(RegExp(r'[^0-9]'), '');
+    // Iraqi Arabic and Kurdish keyboards can enter either localized digit set.
+    // Normalize before filtering, keeping the submitted OTP in ASCII.
+    final String digits =
+        IraqPhone.latinDigits(raw).replaceAll(RegExp(r'[^0-9]'), '');
 
     if (digits.length > 1) {
       int cursor = index;
-      for (int i = 0; i < digits.length && cursor < widget.length; i++, cursor++) {
+      for (int i = 0;
+          i < digits.length && cursor < widget.length;
+          i++, cursor++) {
         _boxes[cursor].text = digits[i];
         _boxes[cursor].selection = const TextSelection.collapsed(offset: 1);
       }
@@ -217,15 +223,26 @@ class _AuthOtpBoxesState extends State<AuthOtpBoxes>
         textDirection: TextDirection.ltr,
         child: LayoutBuilder(
           builder: (context, constraints) {
-            final double gap = constraints.maxWidth < 330 ? 5 : AuthTokens.otpBoxGap;
-            var columns = ((constraints.maxWidth + gap) / (48 + gap)).floor().clamp(1, widget.length);
+            final double gap =
+                constraints.maxWidth < 330 ? 5 : AuthTokens.otpBoxGap;
+            var columns = ((constraints.maxWidth + gap) / (48 + gap))
+                .floor()
+                .clamp(1, widget.length);
             if (widget.length == 6 && columns < 6 && columns >= 3) columns = 3;
-            final boxWidth = ((constraints.maxWidth - gap * (columns - 1)) / columns)
-                .clamp(1.0, AuthTokens.otpBoxWidth);
-            return Center(child: SizedBox(width: columns * boxWidth + (columns - 1) * gap,
-              child: Wrap(spacing: gap, runSpacing: 10, alignment: WrapAlignment.center,
-                children: [for (var i = 0; i < widget.length; i++) _box(context, i, boxWidth)])));
-
+            final boxWidth =
+                ((constraints.maxWidth - gap * (columns - 1)) / columns)
+                    .clamp(1.0, AuthTokens.otpBoxWidth);
+            return Center(
+                child: SizedBox(
+                    width: columns * boxWidth + (columns - 1) * gap,
+                    child: Wrap(
+                        spacing: gap,
+                        runSpacing: 10,
+                        alignment: WrapAlignment.center,
+                        children: [
+                          for (var i = 0; i < widget.length; i++)
+                            _box(context, i, boxWidth)
+                        ])));
           },
         ),
       ),
@@ -233,9 +250,9 @@ class _AuthOtpBoxesState extends State<AuthOtpBoxes>
   }
 
   Widget _box(BuildContext context, int i, double width) {
-    final bool filled  = _boxes[i].text.isNotEmpty;
+    final bool filled = _boxes[i].text.isNotEmpty;
     final bool focused = _nodes[i].hasFocus;
-    
+
     final Color border = widget.hasError
         ? AuthTokens.dangerField
         : focused
@@ -246,14 +263,15 @@ class _AuthOtpBoxesState extends State<AuthOtpBoxes>
 
     return SizedBox(
       width: width,
-      height: math.max(AuthTokens.otpBoxHeight, MediaQuery.textScalerOf(context).scale(AuthTokens.titleSize) + 24),
+      height: math.max(AuthTokens.otpBoxHeight,
+          MediaQuery.textScalerOf(context).scale(AuthTokens.titleSize) + 24),
       child: Focus(
         onKeyEvent: (node, event) => _onKey(i, event),
         child: AnimatedContainer(
           duration: AuthTokens.microTransition,
           curve: AuthTokens.microCurve,
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: focused ? Colors.white : AuthTokens.fieldFill,
             borderRadius: BorderRadius.circular(AuthTokens.otpBoxRadius),
             border: Border.all(
               color: border,
@@ -261,8 +279,9 @@ class _AuthOtpBoxesState extends State<AuthOtpBoxes>
             ),
             boxShadow: [
               BoxShadow(
-                color: const Color.fromRGBO(0, 0, 0, 0.03),
-                blurRadius: 6,
+                color:
+                    focused ? const Color(0x14046CFA) : const Color(0x040F172A),
+                blurRadius: focused ? 12 : 4,
                 offset: const Offset(0, 2),
               ),
             ],
@@ -277,14 +296,28 @@ class _AuthOtpBoxesState extends State<AuthOtpBoxes>
               focusNode: _nodes[i],
               enabled: widget.enabled,
               textAlign: TextAlign.center,
+              textAlignVertical: TextAlignVertical.center,
+              expands: true,
+              minLines: null,
+              maxLines: null,
+              strutStyle: const StrutStyle(
+                  fontFamily: AuthTokens.fontFamily,
+                  fontSize: 20,
+                  height: 1.2,
+                  forceStrutHeight: true),
               keyboardType: TextInputType.number,
-              autofillHints: i == 0 ? const <String>[AutofillHints.oneTimeCode] : null,
+              autofillHints:
+                  i == 0 ? const <String>[AutofillHints.oneTimeCode] : null,
               inputFormatters: const <TextInputFormatter>[],
               style: AuthTokens.otpDigit,
               cursorColor: AuthTokens.accent,
               showCursor: false,
+              cursorWidth:
+                  0, // No invisible caret reserve beside the centered digit.
               decoration: const InputDecoration(
                 counterText: '',
+                isCollapsed: true,
+                isDense: true,
                 border: InputBorder.none,
                 enabledBorder: InputBorder.none,
                 focusedBorder: InputBorder.none,

@@ -1,0 +1,17 @@
+   Woah! You appear to be trying to run flutter as root.
+   We strongly recommend running the flutter tool without superuser privileges.
+  /
+📎
+00:00 +0: loading proxo_app/test/whatsapp_marketing_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: Auth service forwards true/false, version and displayed locale
+00:00 +1: email signup does not ask for phone marketing consent
+00:01 +2: profile marketing opt-out ckb 393.0 wraps and persists
+00:02 +3: profile marketing opt-out ar 393.0 wraps and persists
+00:02 +4: profile marketing opt-out kmr 393.0 wraps and persists
+00:02 +5: profile marketing opt-out ckb 280.0 wraps and persists
+00:02 +6: profile marketing opt-out ar 280.0 wraps and persists
+00:02 +7: profile marketing opt-out kmr 280.0 wraps and persists
+00:03 +8: failed opt-out stays unsaved and can be retried
+00:03 +9: (tearDownAll)
+00:03 +9: All tests passed!

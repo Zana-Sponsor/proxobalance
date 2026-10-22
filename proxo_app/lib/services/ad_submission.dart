@@ -1,5 +1,7 @@
 import 'account_cache.dart';
+import '../config/backend_config.dart';
 import 'app_telemetry_service.dart';
+import 'owner_storage_queue.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
@@ -13,8 +15,20 @@ import 'package:url_launcher/url_launcher.dart';
 import 'ad_categories.dart';
 import 'proxo_pricing.dart';
 
-DateTime adScheduleNow() =>
-    DateTime.now().toUtc().add(const Duration(hours: 3));
+/// Baghdad calendar fields, carried as UTC to avoid the device's time zone or
+/// daylight-saving rules. This value is wall-clock time, not a UTC instant.
+DateTime adScheduleNow({DateTime? instant}) =>
+    (instant ?? DateTime.now()).toUtc().add(const Duration(hours: 3));
+
+DateTime _adScheduleFields(DateTime value) => DateTime.utc(
+    value.year,
+    value.month,
+    value.day,
+    value.hour,
+    value.minute,
+    value.second,
+    value.millisecond,
+    value.microsecond);
 
 String adIqd(num value, {bool discount = false}) {
   final number = value.abs().round().toString().replaceAllMapped(
@@ -89,7 +103,9 @@ class AdDraft {
       errors['code'] = 'کۆدی ڤیدیۆ بنووسە؛ زۆرترین 200 پیت';
     }
     if (schedule == null ||
-        (!immediate && schedule!.isBefore(now ?? adScheduleNow()))) {
+        (!immediate &&
+            _adScheduleFields(schedule!)
+                .isBefore(_adScheduleFields(now ?? adScheduleNow())))) {
       errors['schedule'] = 'بەروار و کاتێکی داهاتوو هەڵبژێرە';
     }
     if (!const ['app_balance', 'fastpay'].contains(paymentMethod)) {
@@ -193,7 +209,7 @@ class AdDraft {
         immediate: j['start_immediately'] == true,
         schedule: j['start_date'] == null || j['start_time'] == null
             ? null
-            : DateTime.tryParse('${j['start_date']}T${j['start_time']}'),
+            : DateTime.tryParse('${j['start_date']}T${j['start_time']}Z'),
       );
 }
 
@@ -292,6 +308,10 @@ class AdSubmissionFailure implements Exception {
   final bool paymentCredited;
   const AdSubmissionFailure(this.code,
       {this.uncertain = false, this.paymentCredited = false});
+
+  /// A brief reason for temporary feedback. Financial recovery instructions
+  /// remain in [message] so they stay readable after the notice expires.
+  String get briefMessage => _message;
   String get message => paymentCredited
       ? '$_message پارەدانی FastPay لە باڵانسی هەژمارەکەت پارێزراوە؛ بۆ دەستکاری بگەڕێوە و بە باڵانس پارە بدە.'
       : _message;
@@ -300,11 +320,15 @@ class AdSubmissionFailure implements Exception {
         'INVALID_PROMO' => 'کۆدی داشکاندن نادروستە یان بەسەرچووە',
         'INVALID_SCHEDULE' => 'کاتی ڕیکلام تێپەڕیوە؛ کاتێکی دواتر هەڵبژێرە',
         'INVALID_ASSET' => 'کەرەستەی پەیوەندی بەردەست نییە؛ دووبارە هەڵیبژێرە',
-        'PRICE_CHANGED' => 'نرخ گۆڕاوە؛ وردەکاری نرخ دووبارە بپشکنەوە',
+        'PRICE_CHANGED' => 'نرخ گۆڕاوە؛ پوختەی نرخ دووبارە بپشکنەوە',
         'NOT_AUTHENTICATED' => 'دووبارە بچۆ ژوورەوە',
         'FASTPAY_TERMINAL' => 'پارەدانی FastPay تەواو نەکرا',
         'AMOUNT_TOO_SMALL' => 'بڕی پارەدان بۆ FastPay زۆر کەمە',
         'STORAGE_UNAVAILABLE' => 'داواکاریەکە نەپارێزرا؛ دووبارە هەوڵ بدەرەوە',
+        'CANCELLED' =>
+          'پشکنین ڕاگیرا؛ ئەنجامی داواکارییەکە دەتوانیت دواتر بپشکنیتەوە',
+        'SERVER_REJECTED' =>
+          'سێرڤەر داواکارییەکەی قبوڵ نەکرد؛ زانیارییەکان بپشکنە و دووبارە هەوڵ بدەرەوە',
         'IDEMPOTENCY_CONFLICT' => 'داواکاریەکی پێشوو پێویستی بە پشکنین هەیە',
         _ => uncertain
             ? 'وەڵامی کۆتایی نەگەیشت؛ هەمان داواکاری دووبارە بپشکنەوە'
@@ -361,6 +385,11 @@ abstract class AdCreationRepository {
   Future<AdPendingSubmission?> pending();
   Future<String> submit(
       AdPendingSubmission request, ValueNotifier<AdPaymentProgress> progress);
+
+  /// Stop client polling / further writes. An already sent request cannot be
+  /// recalled: its persisted id is retained until its result is reconciled.
+  void cancelPendingOperation(String submissionId) {}
+
   Future<void> openPayment(String url) async {
     final uri = Uri.tryParse(url);
     if (uri == null ||
@@ -375,8 +404,12 @@ abstract class AdCreationRepository {
 /// All money mutations live in pa_submit_ad / pa_create_ad, never in Flutter.
 class SupabaseAdCreationRepository extends AdCreationRepository {
   static final Map<String, (String, Future<String>)> _activeSubmissions = {};
+  static final Set<String> _cancelledSubmissions = {};
+  static final _pendingStorage = OwnerStorageQueue();
   final SupabaseClient client;
-  SupabaseAdCreationRepository(this.client);
+  final BackendConfig _backend;
+  SupabaseAdCreationRepository(this.client, {BackendConfig? backendConfig})
+      : _backend = backendConfig ?? BackendConfig.current;
   String get _user =>
       client.auth.currentUser?.id ??
       (throw const AdSubmissionFailure('NOT_AUTHENTICATED'));
@@ -385,14 +418,17 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
       Map<String, dynamic>.from(raw as Map);
 
   @override
-  Future<List<Map<String, dynamic>>> loadAssets() async =>
-      List<Map<String, dynamic>>.from(await client
-          .from('proxolink_cards')
-          .select('id,name,template_key,template_version,style,color_theme,card_number,avatar_path,status,publish_status')
-          .eq('status', 'active')
-          .eq('publish_status', 'ready')
-          .eq('user_id', _user)
-          .order('created_at', ascending: false));
+  Future<List<Map<String, dynamic>>> loadAssets() async => List<
+      Map<String,
+          dynamic>>.from(await client
+      .from('proxolink_cards')
+      .select(
+          'id,name,template_key,template_version,style,color_theme,card_number,avatar_path,status,publish_status')
+      .eq('status', 'active')
+      .eq('publish_status', 'ready')
+      .eq('user_id', _user)
+      .order('created_at', ascending: false)
+      .timeout(const Duration(seconds: 20)));
 
   @override
   Future<AdQuote> quote(AdDraft draft) async {
@@ -408,7 +444,10 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
   @override
   Future<AdPendingSubmission?> pending() async {
     final owner = _user, key = _storageKey;
-    final raw = (await SharedPreferences.getInstance()).getString(key);
+    final raw = await _pendingStorage
+        .run(owner,
+            () async => (await SharedPreferences.getInstance()).getString(key))
+        .timeout(const Duration(seconds: 10));
     if (client.auth.currentUser?.id != owner || raw == null) return null;
     return AdPendingSubmission.fromJson(_map(jsonDecode(raw)));
   }
@@ -416,6 +455,9 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
   @override
   Future<String> submit(
       AdPendingSubmission request, ValueNotifier<AdPaymentProgress> progress) {
+    if (request.draft.paymentMethod == 'fastpay') {
+      _backend.requireProductionTransport();
+    }
     final user = _user;
     final active = _activeSubmissions[user];
     if (active != null) {
@@ -424,32 +466,73 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
           : Future.error(const AdSubmissionFailure('IDEMPOTENCY_CONFLICT',
               uncertain: true));
     }
-    final operation = _submit(request, progress, user)
-        .whenComplete(() => _activeSubmissions.remove(user));
+    _cancelledSubmissions.remove(request.id);
+    final operation = _submit(request, progress, user).whenComplete(() {
+      _activeSubmissions.remove(user);
+      _cancelledSubmissions.remove(request.id);
+    });
     _activeSubmissions[user] = (request.id, operation);
     return operation;
+  }
+
+  @override
+  void cancelPendingOperation(String submissionId) {
+    if (_activeSubmissions.values.any((active) => active.$1 == submissionId)) {
+      _cancelledSubmissions.add(submissionId);
+    }
+  }
+
+  void _checkCancellation(String submissionId) {
+    if (_cancelledSubmissions.contains(submissionId)) {
+      throw const AdSubmissionFailure('CANCELLED', uncertain: true);
+    }
   }
 
   Future<String> _submit(AdPendingSubmission request,
       ValueNotifier<AdPaymentProgress> progress, String owner) async {
     void checkOwner() {
-      if (client.auth.currentUser?.id != owner) throw const AdSubmissionFailure('NOT_AUTHENTICATED', uncertain: true);
+      if (client.auth.currentUser?.id != owner) {
+        throw const AdSubmissionFailure('NOT_AUTHENTICATED', uncertain: true);
+      }
     }
+
     final key = 'proxo.pending-ad.v1.$owner';
-    final prefs = await SharedPreferences.getInstance();
-    checkOwner();
-    final existing = prefs.getString(key);
-    if (existing != null &&
-        AdPendingSubmission.fromJson(_map(jsonDecode(existing))).id !=
-            request.id) {
-      throw const AdSubmissionFailure('IDEMPOTENCY_CONFLICT', uncertain: true);
-    }
-    if (!await prefs.setString(key, jsonEncode(request.toJson()))) {
-      throw const AdSubmissionFailure('STORAGE_UNAVAILABLE');
-    }
+    final prefs = await _pendingStorage.run(owner, () async {
+      final prefs = await SharedPreferences.getInstance();
+      checkOwner();
+      final existing = prefs.getString(key);
+      if (existing != null &&
+          AdPendingSubmission.fromJson(_map(jsonDecode(existing))).id !=
+              request.id) {
+        throw const AdSubmissionFailure('IDEMPOTENCY_CONFLICT',
+            uncertain: true);
+      }
+      if (!await prefs.setString(key, jsonEncode(request.toJson()))) {
+        throw const AdSubmissionFailure('STORAGE_UNAVAILABLE');
+      }
+      return prefs;
+    }).timeout(const Duration(seconds: 10));
     final telemetry = AppTelemetryService.active;
     final telemetryScope = telemetry?.sessionScope;
     String? paymentId;
+    var submitting = false;
+    // A storage error after a confirmed server result must not turn success
+    // into a failed financial operation. A stale record safely reconciles later.
+    Future<void> clearPending() async {
+      try {
+        await _pendingStorage.run(owner, () async {
+          final raw = prefs.getString(key);
+          // Only clear this completed identity, never a newer pending request.
+          if (raw == null ||
+              AdPendingSubmission.fromJson(_map(jsonDecode(raw))).id !=
+                  request.id) return;
+          await prefs.remove(key);
+        }).timeout(const Duration(seconds: 3));
+      } catch (_) {
+        debugPrint('Completed ad pending record cleanup deferred');
+      }
+    }
+
     try {
       checkOwner();
       // Recover a committed operation before checking dates or spending again.
@@ -459,7 +542,7 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
       }).timeout(const Duration(seconds: 20)));
       checkOwner();
       if (recovered['ok'] == true) {
-        await prefs.remove(key);
+        await clearPending();
         final adId = recovered['ad_id'] as String;
         AppDataCache.forClient(client).financialChanged();
         _ensureThumbnail(adId);
@@ -469,6 +552,7 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
         // A failed status lookup cannot prove that an earlier request failed.
         throw AdSubmissionFailure('${recovered['code']}', uncertain: true);
       }
+      _checkCancellation(request.id);
       final errors = request.draft.validate();
       if (errors.isNotEmpty) {
         throw AdSubmissionFailure(
@@ -478,7 +562,9 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
         paymentId = await _payWithFastPay(request, progress, owner);
       }
       checkOwner();
+      _checkCancellation(request.id);
       progress.value = const AdPaymentProgress();
+      submitting = true;
       final result = _map(await client.rpc('pa_submit_ad', params: {
         'p_submission_id': request.id,
         'p_ad': {...request.draft.toAd(), 'payment_transaction_id': paymentId},
@@ -490,18 +576,46 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
       checkOwner();
       if (result['ok'] != true) throw AdSubmissionFailure('${result['code']}');
       final adId = result['ad_id'] as String;
-      await prefs.remove(key);
+      await clearPending();
       AppDataCache.forClient(client).financialChanged();
-      telemetry?.event('action', 'ad_submit', outcome: 'success', expectedScope: telemetryScope);
+      telemetry?.event('action', 'ad_submit',
+          outcome: 'success', expectedScope: telemetryScope);
       _ensureThumbnail(adId);
       return adId;
     } on AdSubmissionFailure catch (e) {
-      telemetry?.event('action', 'ad_submit', outcome: 'failure', expectedScope: telemetryScope);
-      if (!e.uncertain) await prefs.remove(key);
+      telemetry?.event('action', 'ad_submit',
+          outcome: 'failure', expectedScope: telemetryScope);
+      if (!e.uncertain) await clearPending();
       if (!e.uncertain && paymentId != null) {
         throw AdSubmissionFailure(e.code, paymentCredited: true);
       }
       rethrow;
+    } on PostgrestException catch (error) {
+      // Only explicit validation / transaction rollback errors prove rejection.
+      // Connection errors (08xxx), 40003 and unknown gateway codes can arrive
+      // after a commit; those MUST retain the same identity for reconciliation.
+      final sqlState = error.code ?? '';
+      final definiteRejection =
+          const {'22', '23', '42'}.any(sqlState.startsWith) ||
+              const {'0A000', 'P0001', 'P0002', 'P0003', '40001', '40P01'}
+                  .contains(sqlState);
+      if (submitting && definiteRejection) {
+        await clearPending();
+        const knownCodes = {
+          'NOT_AUTHENTICATED',
+          'INSUFFICIENT_FUNDS',
+          'INVALID_PROMO',
+          'INVALID_SCHEDULE',
+          'INVALID_ASSET',
+          'PRICE_CHANGED',
+        };
+        throw AdSubmissionFailure(
+            knownCodes.contains(error.message)
+                ? error.message
+                : 'SERVER_REJECTED',
+            paymentCredited: paymentId != null);
+      }
+      throw const AdSubmissionFailure('NETWORK', uncertain: true);
     } catch (_) {
       // Keep the SAME id and frozen payload on timeout, disconnect or app kill.
       throw const AdSubmissionFailure('NETWORK', uncertain: true);
@@ -516,12 +630,17 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
     }));
   }
 
-  Future<String> _payWithFastPay(
-      AdPendingSubmission r, ValueNotifier<AdPaymentProgress> progress, String owner) async {
+  Future<String> _payWithFastPay(AdPendingSubmission r,
+      ValueNotifier<AdPaymentProgress> progress, String owner) async {
+    _backend.requireProductionTransport();
     void checkOwner() {
-      if (client.auth.currentUser?.id != owner) throw const AdSubmissionFailure('NOT_AUTHENTICATED', uncertain: true);
+      if (client.auth.currentUser?.id != owner) {
+        throw const AdSubmissionFailure('NOT_AUTHENTICATED', uncertain: true);
+      }
     }
+
     checkOwner();
+    _checkCancellation(r.id);
     if (r.quote.totalIqd < 1000) {
       throw const AdSubmissionFailure('AMOUNT_TOO_SMALL');
     }
@@ -530,6 +649,7 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
     Map<String, dynamic>? row = await _paymentRow(orderId);
     checkOwner();
     if (row == null) {
+      _checkCancellation(r.id);
       final session = client.auth.currentSession;
       if (session == null) throw const AdSubmissionFailure('NOT_AUTHENTICATED');
       progress.value =
@@ -568,6 +688,7 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
     final deadline = DateTime.now().add(const Duration(minutes: 11));
     while (DateTime.now().isBefore(deadline)) {
       checkOwner();
+      _checkCancellation(r.id);
       row ??= await _paymentRow(orderId);
       checkOwner();
       if (row != null) {
@@ -600,6 +721,7 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
       }
       await Future<void>.delayed(const Duration(seconds: 3));
       checkOwner();
+      _checkCancellation(r.id);
       final session = client.auth.currentSession;
       if (session == null) throw const AdSubmissionFailure('NOT_AUTHENTICATED');
       try {
@@ -626,5 +748,6 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
               'id,status,gateway_status,qr_url,qr_text,amount,wallet_credited')
           .eq('user_id', _user)
           .eq('fastpay_order_id', orderId)
-          .maybeSingle();
+          .maybeSingle()
+          .timeout(const Duration(seconds: 20));
 }

@@ -1,0 +1,27 @@
+   Woah! You appear to be trying to run flutter as root.
+   We strongly recommend running the flutter tool without superuser privileges.
+  /
+📎
+00:00 +0: loading proxo_app/test/auth_email_signup_test.dart
+00:00 +0: signup creates identity then sends the existing custom email API payload
+00:00 +1: auto-confirmed identity signs out before custom OTP delivery
+00:00 +2: custom delivery rejection at HTTP 429 cannot finish signup
+00:00 +3: custom delivery rejection at HTTP 200 cannot finish signup
+00:00 +4: retry after delivery failure reuses the created identity
+00:00 +5: changed password surfaces duplicate signup instead of using the old password
+00:00 +6: delivery retry with an edited name does not rewrite created identity metadata
+00:00 +7: invalid custom OTP never confirms the email or opens a session
+00:00 +8: confirmation failure cannot fall through to password sign-in
+00:00 +9: custom verification and confirmation precede the final password session
+00:00 +10: retry after rejected confirmation reuses proof but retries confirmation
+00:00 +11: lost confirmation response needs fresh OTP when proof was already consumed
+00:00 +12: retry after a sign-in network failure does not replay consumed OTP proof
+00:00 +13: successful resend clears the cached confirmation stage
+00:00 +14: cached signup verification cannot be reused with a different email
+00:00 +15: cached signup verification cannot be reused with a different userId
+00:00 +16: cached signup verification cannot be reused with a different code
+00:00 +17: cached signup verification cannot be reused with a different password
+00:00 +18: resend only calls the configured custom email API with signup context
+00:00 +19: custom resend rejects HTTP 429 delivery failure
+00:00 +20: custom resend rejects HTTP 200 delivery failure
+00:00 +21: All tests passed!

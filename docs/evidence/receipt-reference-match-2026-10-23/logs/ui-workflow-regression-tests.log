@@ -1,0 +1,454 @@
+00:00 +0: loading /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/iconography_money_test.dart
+00:00 +0: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/iconography_money_test.dart: (setUpAll)
+00:00 +0: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/iconography_money_test.dart: historical money never infers units from amount magnitude
+00:00 +1: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/iconography_money_test.dart: wallet snapshot preserves decimals and explicit unit precedence
+00:00 +2: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/iconography_money_test.dart: three semantic actions fit 280.0/1.0 and keep routes distinct
+00:00 +3: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/home_sections_test.dart: Home sections fit Size(240.0, 700.0) at system text scale 1.0
+00:00 +4: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/home_sections_test.dart: Home sections fit Size(240.0, 700.0) at system text scale 1.0
+00:01 +5: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/home_sections_test.dart: Home sections fit Size(240.0, 700.0) at system text scale 1.0
+00:01 +6: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/home_sections_test.dart: Home sections fit Size(240.0, 700.0) at system text scale 1.0
+00:01 +7: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/home_sections_test.dart: Home sections fit Size(240.0, 700.0) at system text scale 1.0
+00:01 +8: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/home_sections_test.dart: Home sections fit Size(240.0, 700.0) at system text scale 1.0
+00:01 +9: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/home_sections_test.dart: Home sections fit Size(240.0, 700.0) at system text scale 1.0
+00:01 +10: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/home_sections_test.dart: Home sections fit Size(240.0, 700.0) at system text scale 1.0
+00:01 +11: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/tx_history_layout_test.dart: LTR history fits 280.0 dp at 1.0 text scale
+00:01 +12: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/tx_history_layout_test.dart: LTR history fits 280.0 dp at 1.0 text scale
+00:01 +13: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/home_sections_test.dart: Home sections fit Size(240.0, 700.0) at system text scale 1.5
+00:01 +14: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_layout_test.dart: native responsive receipt geometry at 393.0 dp
+00:01 +15: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_layout_test.dart: native responsive receipt geometry at 393.0 dp
+00:01 +16: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_layout_test.dart: native responsive receipt geometry at 393.0 dp
+00:01 +17: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_layout_test.dart: native responsive receipt geometry at 393.0 dp
+00:01 +18: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/home_sections_test.dart: Home sections fit Size(280.0, 700.0) at system text scale 1.0
+00:01 +19: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/home_sections_test.dart: Home sections fit Size(280.0, 700.0) at system text scale 1.0
+00:01 +20: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_layout_test.dart: native responsive receipt geometry at 430.0 dp
+00:01 +21: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_layout_test.dart: native responsive receipt geometry at 430.0 dp
+00:01 +22: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/home_sections_test.dart: Home sections fit Size(280.0, 700.0) at system text scale 1.5
+00:01 +23: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/home_sections_test.dart: Home sections fit Size(280.0, 700.0) at system text scale 1.5
+00:02 +24: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_layout_test.dart: native responsive receipt geometry at 768.0 dp
+00:02 +25: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_layout_test.dart: native responsive receipt geometry at 768.0 dp
+00:02 +26: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/home_sections_test.dart: Home sections fit Size(280.0, 700.0) at system text scale 3.0
+00:02 +27: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/home_sections_test.dart: Home sections fit Size(280.0, 700.0) at system text scale 3.0
+00:02 +28: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_layout_test.dart: native responsive receipt geometry at 963.0 dp
+00:02 +29: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/tx_history_layout_test.dart: back, refresh and card taps reach their handlers
+00:02 +30: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/tx_history_layout_test.dart: back, refresh and card taps reach their handlers
+00:02 +31: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_pdf_test.dart: PDF captures full ad standard receipt
+00:02 +32: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_pdf_test.dart: PDF captures full ad standard receipt
+00:02 +33: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_pdf_test.dart: PDF captures full ad standard receipt
+00:02 +34: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_pdf_test.dart: PDF captures full ad standard receipt
+00:02 +35: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_pdf_test.dart: PDF captures full ad standard receipt
+00:02 +36: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_pdf_test.dart: PDF captures full ad standard receipt
+00:02 +37: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_pdf_test.dart: PDF captures full ad standard receipt
+00:02 +38: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_pdf_test.dart: PDF captures full ad standard receipt
+00:02 +39: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_pdf_test.dart: PDF captures full ad standard receipt
+00:02 +40: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_pdf_test.dart: PDF captures full ad standard receipt
+00:02 +41: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_pdf_test.dart: PDF captures full ad standard receipt
+00:02 +42: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_pdf_test.dart: PDF captures full ad standard receipt
+00:02 +43: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_pdf_test.dart: PDF captures full ad standard receipt
+00:02 +44: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_pdf_test.dart: PDF captures full ad standard receipt
+00:03 +45: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_pdf_test.dart: PDF captures full ad standard receipt
+00:03 +46: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_pdf_test.dart: PDF captures full ad standard receipt
+00:03 +47: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_pdf_test.dart: PDF captures full ad standard receipt
+00:03 +48: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_pdf_test.dart: PDF captures full ad standard receipt
+00:03 +49: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_pdf_test.dart: PDF captures full ad standard receipt
+00:03 +50: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_pdf_test.dart: PDF captures full ad standard receipt
+00:03 +51: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_pdf_test.dart: PDF captures full ad standard receipt
+00:03 +52: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_pdf_test.dart: PDF captures full ad standard receipt
+00:03 +53: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_pdf_test.dart: PDF captures full ad standard receipt
+00:03 +54: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_pdf_test.dart: PDF captures full ad standard receipt
+00:03 +55: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_pdf_test.dart: PDF captures full ad standard receipt
+00:03 +56: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_pdf_test.dart: PDF captures full ad standard receipt
+00:03 +57: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_pdf_test.dart: PDF captures full ad standard receipt
+00:03 +58: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_pdf_test.dart: PDF captures full ad standard receipt
+00:03 +59: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_pdf_test.dart: PDF captures full ad standard receipt
+00:03 +60: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_pdf_test.dart: PDF captures full ad standard receipt
+00:04 +61: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_pdf_test.dart: PDF captures full ad standard receipt
+00:04 +62: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 280.0 at text scale 1.0
+00:04 +63: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 280.0 at text scale 1.0
+00:04 +64: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 280.0 at text scale 1.0
+00:04 +65: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 280.0 at text scale 1.0
+00:04 +66: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 280.0 at text scale 1.0
+00:04 +67: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 280.0 at text scale 1.0
+00:04 +68: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 280.0 at text scale 1.0
+00:04 +69: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 280.0 at text scale 1.0
+00:04 +70: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 280.0 at text scale 1.0
+00:05 +71: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 280.0 at text scale 1.0
+00:05 +72: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 280.0 at text scale 1.0
+00:05 +73: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 280.0 at text scale 1.0
+00:05 +74: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 280.0 at text scale 1.0
+00:05 +75: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 280.0 at text scale 1.0
+00:05 +76: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 280.0 at text scale 1.0
+00:05 +77: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/home_sections_test.dart: carousel swipes, cached refresh and view-all keep ranking
+00:05 +78: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/home_sections_test.dart: carousel swipes, cached refresh and view-all keep ranking
+00:05 +79: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_pdf_test.dart: PDF captures full transaction standard receipt
+00:05 +80: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_pdf_test.dart: PDF captures full transaction standard receipt
+00:05 +81: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_pdf_test.dart: PDF captures full transaction standard receipt
+00:05 +82: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_pdf_test.dart: PDF captures full transaction standard receipt
+00:05 +83: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 280.0 at text scale 1.5
+00:05 +84: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_layout_test.dart: RTL receipt at 392.72727272727275 dp, scale 1.0, ar
+00:06 +85: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/home_sections_test.dart: carousel recomputes height after rotation and text-size changes
+00:06 +86: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/home_sections_test.dart: carousel recomputes height after rotation and text-size changes
+00:06 +87: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_pdf_test.dart: PDF captures full transaction narrow receipt
+00:06 +88: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_pdf_test.dart: PDF captures full transaction narrow receipt
+00:06 +89: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_pdf_test.dart: PDF captures full transaction narrow receipt
+00:06 +90: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_pdf_test.dart: PDF captures full transaction narrow receipt
+00:06 +91: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_pdf_test.dart: PDF captures full transaction narrow receipt
+00:06 +92: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_pdf_test.dart: PDF captures full transaction narrow receipt
+00:06 +93: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_pdf_test.dart: PDF captures full transaction narrow receipt
+00:06 +94: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_pdf_test.dart: PDF captures full transaction narrow receipt
+00:06 +95: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_pdf_test.dart: PDF captures full transaction narrow receipt
+00:06 +96: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 393.0 at text scale 1.5
+00:06 +97: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 393.0 at text scale 1.5
+00:06 +98: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 393.0 at text scale 1.5
+00:06 +99: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 393.0 at text scale 1.5
+00:06 +100: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 393.0 at text scale 1.5
+00:06 +101: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 393.0 at text scale 1.5
+00:06 +102: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_layout_test.dart: RTL receipt at 430.0 dp, scale 1.3, ckb
+00:07 +103: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/home_sections_test.dart: balanced Home geometry is summary-only 768.0/2.0
+00:07 +104: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 430.0 at text scale 1.0
+00:07 +105: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 430.0 at text scale 1.0
+00:07 +106: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 430.0 at text scale 1.0
+00:07 +107: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 430.0 at text scale 1.0
+00:07 +108: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 430.0 at text scale 1.0
+00:07 +109: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 430.0 at text scale 1.0
+00:07 +110: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 430.0 at text scale 1.0
+00:07 +111: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/home_sections_test.dart: reduced motion details resize safely at 393.0
+00:07 +112: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/home_sections_test.dart: reduced motion details resize safely at 393.0
+00:07 +113: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/home_sections_test.dart: reduced motion details resize safely at 393.0
+00:07 +114: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/home_sections_test.dart: reduced motion details resize safely at 393.0
+00:07 +115: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/home_sections_test.dart: reduced motion details resize safely at 393.0
+00:07 +116: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/home_sections_test.dart: reduced motion details resize safely at 393.0
+00:07 +117: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/home_sections_test.dart: reduced motion details resize safely at 393.0
+00:07 +118: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_layout_test.dart: RTL receipt at 430.0 dp, scale 2.0, ar
+00:07 +119: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_layout_test.dart: RTL receipt at 430.0 dp, scale 2.0, ar
+00:07 +120: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 430.0 at text scale 1.5
+00:07 +121: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 430.0 at text scale 1.5
+00:07 +122: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 430.0 at text scale 1.5
+00:07 +123: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 430.0 at text scale 1.5
+00:07 +124: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/home_sections_test.dart: dedicated results keep objective and budget side by side 280.0/2.0
+00:07 +125: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_layout_test.dart: RTL receipt at 480.0 dp, scale 1.3, ckb
+00:07 +126: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 768.0 at text scale 1.0
+00:08 +127: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 768.0 at text scale 1.0
+00:08 +128: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 768.0 at text scale 1.0
+00:08 +129: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_layout_test.dart: RTL receipt at 480.0 dp, scale 2.0, ckb
+00:08 +130: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/home_sections_test.dart: dedicated results keep objective and budget side by side 320.0/2.0
+00:08 +130: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_repository_test.dart: interrupted response retains frozen request and recovers without another charge
+Ad thumbnail generation deferred: StateError
+00:08 +131: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/home_sections_test.dart: dedicated results keep objective and budget side by side 320.0/2.0
+00:08 +132: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/home_sections_test.dart: dedicated results keep objective and budget side by side 320.0/2.0
+00:08 +133: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/home_sections_test.dart: dedicated results keep objective and budget side by side 320.0/2.0
+00:08 +133: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_repository_test.dart: simultaneous repeated calls share one operation; competing request is blocked
+Ad thumbnail generation deferred: StateError
+00:08 +134: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/home_sections_test.dart: dedicated results keep objective and budget side by side 320.0/2.0
+00:08 +135: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 768.0 at text scale 1.5
+00:08 +136: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 768.0 at text scale 1.5
+00:08 +137: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 768.0 at text scale 1.5
+00:08 +138: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 768.0 at text scale 1.5
+00:08 +138: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_repository_test.dart: explicit SQL rejection releases persisted request for a corrected retry
+Ad thumbnail generation deferred: StateError
+00:08 +139: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 768.0 at text scale 1.5
+00:08 +140: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 768.0 at text scale 1.5
+00:08 +141: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 768.0 at text scale 1.5
+00:08 +142: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 768.0 at text scale 1.5
+00:08 +143: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 768.0 at text scale 1.5
+00:08 +143: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_repository_test.dart: timeout retains identity and retry recovers the committed result
+Ad thumbnail generation deferred: StateError
+00:08 +144: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 768.0 at text scale 1.5
+00:08 +145: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_layout_test.dart: RTL receipt at 640.0 dp, scale 1.0, ckb
+00:08 +145: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_repository_test.dart: cancel during status read stops the next write and same ID can be retried
+Ad thumbnail generation deferred: StateError
+00:08 +146: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_layout_test.dart: RTL receipt at 640.0 dp, scale 1.0, ckb
+00:08 +147: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_layout_test.dart: RTL receipt at 640.0 dp, scale 1.0, ckb
+00:08 +148: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/home_sections_test.dart: dedicated results keep objective and budget side by side 430.0/1.0
+00:08 +149: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: invalid form shows deduplicated validation stack and cannot confirm
+00:08 +150: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: invalid form shows deduplicated validation stack and cannot confirm
+00:08 +151: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: invalid form shows deduplicated validation stack and cannot confirm
+00:08 +152: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: invalid form shows deduplicated validation stack and cannot confirm
+00:08 +153: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: invalid form shows deduplicated validation stack and cannot confirm
+00:08 +154: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: invalid form shows deduplicated validation stack and cannot confirm
+00:08 +155: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: invalid form shows deduplicated validation stack and cannot confirm
+00:08 +156: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/home_sections_test.dart: render actual Home sections phone
+00:08 +157: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_layout_test.dart: RTL receipt at 640.0 dp, scale 2.0, ar
+00:09 +158: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: touch outside title and coupon dismisses input without losing values
+00:09 +159: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: touch outside title and coupon dismisses input without losing values
+00:09 +160: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: touch outside title and coupon dismisses input without losing values
+00:09 +161: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: touch outside title and coupon dismisses input without losing values
+00:09 +162: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: touch outside title and coupon dismisses input without losing values
+00:09 +163: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: touch outside title and coupon dismisses input without losing values
+00:09 +164: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: touch outside title and coupon dismisses input without losing values
+00:09 +165: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: touch outside title and coupon dismisses input without losing values
+00:09 +166: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: touch outside title and coupon dismisses input without losing values
+00:09 +167: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: touch outside title and coupon dismisses input without losing values
+00:09 +168: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: shared AppBar, only value cards and two actions; browser return preserves route/scroll and one GET
+00:09 +169: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: shared AppBar, only value cards and two actions; browser return preserves route/scroll and one GET
+00:09 +170: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: shared AppBar, only value cards and two actions; browser return preserves route/scroll and one GET
+00:09 +171: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: shared AppBar, only value cards and two actions; browser return preserves route/scroll and one GET
+00:09 +172: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: shared AppBar, only value cards and two actions; browser return preserves route/scroll and one GET
+00:10 +173: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: shared AppBar, only value cards and two actions; browser return preserves route/scroll and one GET
+00:10 +174: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: shared AppBar, only value cards and two actions; browser return preserves route/scroll and one GET
+00:10 +175: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: shared AppBar, only value cards and two actions; browser return preserves route/scroll and one GET
+00:10 +176: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: shared AppBar, only value cards and two actions; browser return preserves route/scroll and one GET
+00:10 +177: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: shared AppBar, only value cards and two actions; browser return preserves route/scroll and one GET
+00:10 +178: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: shared AppBar, only value cards and two actions; browser return preserves route/scroll and one GET
+00:10 +179: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: shared AppBar, only value cards and two actions; browser return preserves route/scroll and one GET
+00:10 +180: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: shared AppBar, only value cards and two actions; browser return preserves route/scroll and one GET
+00:10 +181: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: shared AppBar, only value cards and two actions; browser return preserves route/scroll and one GET
+00:10 +182: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: shared AppBar, only value cards and two actions; browser return preserves route/scroll and one GET
+00:10 +183: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: shared AppBar, only value cards and two actions; browser return preserves route/scroll and one GET
+00:10 +184: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: shared AppBar, only value cards and two actions; browser return preserves route/scroll and one GET
+00:10 +185: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: shared AppBar, only value cards and two actions; browser return preserves route/scroll and one GET
+00:10 +186: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: shared AppBar, only value cards and two actions; browser return preserves route/scroll and one GET
+00:10 +187: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: both sliders update budget, forecasts and prices without compounding
+00:10 +188: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: both sliders update budget, forecasts and prices without compounding
+00:10 +189: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: both sliders update budget, forecasts and prices without compounding
+00:10 +190: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: both sliders update budget, forecasts and prices without compounding
+00:10 +191: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: both sliders update budget, forecasts and prices without compounding
+00:10 +192: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: both sliders update budget, forecasts and prices without compounding
+00:10 +193: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: both sliders update budget, forecasts and prices without compounding
+00:10 +194: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: both sliders update budget, forecasts and prices without compounding
+00:10 +195: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: both sliders update budget, forecasts and prices without compounding
+00:10 +196: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_reference_match_test.dart: matches the supplied 393 by 627 receipt reference
+00:11 +197: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_reference_match_test.dart: matches the supplied 393 by 627 receipt reference
+00:11 +198: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_reference_match_test.dart: matches the supplied 393 by 627 receipt reference
+00:11 +199: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_reference_match_test.dart: matches the supplied 393 by 627 receipt reference
+00:11 +200: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_reference_match_test.dart: matches the supplied 393 by 627 receipt reference
+00:11 +201: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_reference_match_test.dart: matches the supplied 393 by 627 receipt reference
+00:11 +202: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_reference_match_test.dart: matches the supplied 393 by 627 receipt reference
+00:11 +203: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_reference_match_test.dart: matches the supplied 393 by 627 receipt reference
+00:11 +204: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_reference_match_test.dart: matches the supplied 393 by 627 receipt reference
+00:11 +205: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_reference_match_test.dart: matches the supplied 393 by 627 receipt reference
+00:11 +206: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_reference_match_test.dart: matches the supplied 393 by 627 receipt reference
+00:11 +207: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_reference_match_test.dart: matches the supplied 393 by 627 receipt reference
+00:11 +208: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_reference_match_test.dart: matches the supplied 393 by 627 receipt reference
+00:11 +209: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_reference_match_test.dart: matches the supplied 393 by 627 receipt reference
+00:11 +210: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_reference_match_test.dart: matches the supplied 393 by 627 receipt reference
+00:11 +211: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_reference_match_test.dart: matches the supplied 393 by 627 receipt reference
+00:11 +212: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_reference_match_test.dart: matches the supplied 393 by 627 receipt reference
+00:11 +213: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_reference_match_test.dart: matches the supplied 393 by 627 receipt reference
+00:11 +214: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_reference_match_test.dart: matches the supplied 393 by 627 receipt reference
+00:11 +215: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: new Create form validates with shared notices; three types; no live WebView; back preserves Tools
+00:12 +216: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: new Create form validates with shared notices; three types; no live WebView; back preserves Tools
+00:12 +217: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: new Create form validates with shared notices; three types; no live WebView; back preserves Tools
+00:12 +218: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: new Create form validates with shared notices; three types; no live WebView; back preserves Tools
+00:12 +219: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: new Create form validates with shared notices; three types; no live WebView; back preserves Tools
+00:12 +220: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: new Create form validates with shared notices; three types; no live WebView; back preserves Tools
+00:12 +221: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: expired applied coupon is removed on the next pricing update
+00:12 +222: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: expired applied coupon is removed on the next pricing update
+00:12 +223: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: expired applied coupon is removed on the next pricing update
+00:12 +224: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: expired applied coupon is removed on the next pricing update
+00:12 +225: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: expired applied coupon is removed on the next pricing update
+00:12 +226: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: expired applied coupon is removed on the next pricing update
+00:12 +227: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: rapid create taps open one route and rapid delete taps open one confirmation
+00:12 +228: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/receipt_layout_test.dart: transaction TxReceiptKind.refund / pending at 768.0 preserves complete IDs and neutral amounts
+00:12 +229: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: submit button keeps its geometry while checking and after failure
+00:12 +230: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: submit button keeps its geometry while checking and after failure
+00:12 +231: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: submit button keeps its geometry while checking and after failure
+00:12 +232: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: submit button keeps its geometry while checking and after failure
+00:12 +233: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: submit button keeps its geometry while checking and after failure
+00:12 +234: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: submit button keeps its geometry while checking and after failure
+00:12 +235: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: submit button keeps its geometry while checking and after failure
+00:12 +236: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: submit button keeps its geometry while checking and after failure
+00:12 +237: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: submit button keeps its geometry while checking and after failure
+00:12 +238: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: submit button keeps its geometry while checking and after failure
+00:12 +239: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: submit button keeps its geometry while checking and after failure
+00:12 +240: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: submit button keeps its geometry while checking and after failure
+00:12 +241: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: submit button keeps its geometry while checking and after failure
+00:12 +242: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: submit button keeps its geometry while checking and after failure
+00:12 +243: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: submit button keeps its geometry while checking and after failure
+00:12 +244: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: submit button keeps its geometry while checking and after failure
+00:12 +245: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: submit button keeps its geometry while checking and after failure
+00:12 +246: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: submit button keeps its geometry while checking and after failure
+00:12 +247: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: submit button keeps its geometry while checking and after failure
+00:12 +248: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: submit button keeps its geometry while checking and after failure
+00:12 +249: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: submit button keeps its geometry while checking and after failure
+00:12 +250: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: submit button keeps its geometry while checking and after failure
+00:12 +251: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: single submit returns stored pending UUID and locally upserts without GET
+00:12 +252: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: single submit returns stored pending UUID and locally upserts without GET
+00:13 +253: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: single submit returns stored pending UUID and locally upserts without GET
+00:13 +254: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: single submit returns stored pending UUID and locally upserts without GET
+00:13 +255: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: single submit returns stored pending UUID and locally upserts without GET
+00:13 +256: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: single submit returns stored pending UUID and locally upserts without GET
+00:13 +257: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: single submit returns stored pending UUID and locally upserts without GET
+00:13 +258: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/text_direction_test.dart: ABC-123 stays LTR within RTL words / TextDirection.rtl
+00:13 +259: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/text_direction_test.dart: ABC-123 stays LTR within RTL words / TextDirection.rtl
+00:13 +260: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/text_direction_test.dart: ABC-123 stays LTR within RTL words / TextDirection.rtl
+00:13 +261: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/text_direction_test.dart: ABC-123 stays LTR within RTL words / TextDirection.rtl
+00:13 +262: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: unreadable pending submission blocks a fresh checkout
+00:13 +263: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: unreadable pending submission blocks a fresh checkout
+00:13 +264: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: unreadable pending submission blocks a fresh checkout
+00:13 +265: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: unreadable pending submission blocks a fresh checkout
+00:13 +266: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: unreadable pending submission blocks a fresh checkout
+00:13 +267: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: unreadable pending submission blocks a fresh checkout
+00:13 +268: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: unreadable pending submission blocks a fresh checkout
+00:13 +269: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: unreadable pending submission blocks a fresh checkout
+00:13 +270: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: unreadable pending submission blocks a fresh checkout
+00:13 +271: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: unreadable pending submission blocks a fresh checkout
+00:13 +272: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: unreadable pending submission blocks a fresh checkout
+00:13 +273: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: unreadable pending submission blocks a fresh checkout
+00:13 +274: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: unreadable pending submission blocks a fresh checkout
+00:13 +275: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: unreadable pending submission blocks a fresh checkout
+00:13 +276: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: unreadable pending submission blocks a fresh checkout
+00:13 +277: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: unreadable pending submission blocks a fresh checkout
+00:13 +278: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: retry announces a repeated failure after its previous notice expires
+00:13 +279: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: retry announces a repeated failure after its previous notice expires
+00:13 +280: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: retry announces a repeated failure after its previous notice expires
+00:13 +281: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: retry announces a repeated failure after its previous notice expires
+00:13 +282: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: retry announces a repeated failure after its previous notice expires
+00:13 +283: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: retry announces a repeated failure after its previous notice expires
+00:13 +284: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: retry announces a repeated failure after its previous notice expires
+00:13 +285: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: future scheduling uses date/time controls and survives confirmation
+00:13 +286: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: future scheduling uses date/time controls and survives confirmation
+00:13 +287: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: future scheduling uses date/time controls and survives confirmation
+00:14 +288: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: future scheduling uses date/time controls and survives confirmation
+00:14 +289: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: future scheduling uses date/time controls and survives confirmation
+00:14 +290: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: future scheduling uses date/time controls and survives confirmation
+00:14 +291: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: future scheduling uses date/time controls and survives confirmation
+00:14 +292: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: future scheduling uses date/time controls and survives confirmation
+00:14 +293: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: future scheduling uses date/time controls and survives confirmation
+00:14 +294: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: future scheduling uses date/time controls and survives confirmation
+00:14 +295: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: future scheduling uses date/time controls and survives confirmation
+00:14 +296: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: future scheduling uses date/time controls and survives confirmation
+00:14 +297: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: future scheduling uses date/time controls and survives confirmation
+00:14 +298: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: future scheduling uses date/time controls and survives confirmation
+00:15 +299: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Create download 320.0 scale1.0 full sections and crisp chooser no overflow
+00:15 +300: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_name_direction_test.dart: actual ad name accepts all languages and keeps native editing
+00:15 +301: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_name_direction_test.dart: actual ad name accepts all languages and keeps native editing
+00:15 +302: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_name_direction_test.dart: actual ad name accepts all languages and keeps native editing
+00:15 +303: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_name_direction_test.dart: actual ad name accepts all languages and keeps native editing
+00:16 +304: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_name_direction_test.dart: actual ad name accepts all languages and keeps native editing
+00:16 +305: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_name_direction_test.dart: actual ad name accepts all languages and keeps native editing
+00:16 +306: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_name_direction_test.dart: actual ad name accepts all languages and keeps native editing
+00:16 +307: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_name_direction_test.dart: actual ad name accepts all languages and keeps native editing
+00:16 +308: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_name_direction_test.dart: actual ad name accepts all languages and keeps native editing
+00:16 +309: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_name_direction_test.dart: actual ad name accepts all languages and keeps native editing
+00:16 +310: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_name_direction_test.dart: actual ad name accepts all languages and keeps native editing
+00:16 +311: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_name_direction_test.dart: actual ad name accepts all languages and keeps native editing
+00:17 +312: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_name_direction_test.dart: actual ad name accepts all languages and keeps native editing
+00:17 +313: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/responsive_ad_ui_test.dart: create fits Size(240.0, 480.0), text 1.0, density 1.0
+00:17 +314: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: uncertain result keeps form editable and retries original ID without losing edits
+00:17 +315: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: uncertain result keeps form editable and retries original ID without losing edits
+00:17 +316: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: uncertain result keeps form editable and retries original ID without losing edits
+00:17 +317: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: uncertain result keeps form editable and retries original ID without losing edits
+00:17 +318: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: uncertain result keeps form editable and retries original ID without losing edits
+00:17 +319: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_name_direction_test.dart: confirmation and receipt retain direction for "ڕیکلامی نوێ"
+00:17 +320: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_name_direction_test.dart: confirmation and receipt retain direction for "ڕیکلامی نوێ"
+00:17 +321: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/responsive_ad_ui_test.dart: history and receipt fit Size(240.0, 480.0) at text 1.0
+00:17 +322: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: editing after a paid FastPay failure switches to account credit
+00:18 +323: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: editing after a paid FastPay failure switches to account credit
+00:18 +324: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Create order 360.0 scale1.6 full sections and crisp chooser no overflow
+00:18 +325: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Create order 360.0 scale1.6 full sections and crisp chooser no overflow
+00:18 +326: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/responsive_ad_ui_test.dart: create fits Size(240.0, 568.0), text 3.0, density 2.0
+00:18 +327: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/responsive_ad_ui_test.dart: create fits Size(240.0, 568.0), text 3.0, density 2.0
+00:18 +328: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/responsive_ad_ui_test.dart: create fits Size(240.0, 568.0), text 3.0, density 2.0
+00:18 +329: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/responsive_ad_ui_test.dart: create fits Size(240.0, 568.0), text 3.0, density 2.0
+00:18 +330: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: leaving a running request releases form and late completion is safe
+00:18 +331: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: leaving a running request releases form and late completion is safe
+00:18 +332: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: leaving a running request releases form and late completion is safe
+00:18 +333: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: leaving a running request releases form and late completion is safe
+00:18 +334: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: leaving a running request releases form and late completion is safe
+00:18 +335: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: leaving a running request releases form and late completion is safe
+00:18 +336: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Create contact 375.0 scale1.0 full sections and crisp chooser no overflow
+00:18 +337: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Create contact 375.0 scale1.0 full sections and crisp chooser no overflow
+00:18 +338: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_name_direction_test.dart: confirmation and receipt retain direction for "Proxo ڕیکلام 2026!"
+00:18 +339: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: confirmed success clears a form retained by its shell
+00:19 +340: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: confirmed success clears a form retained by its shell
+00:19 +341: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/responsive_ad_ui_test.dart: create fits Size(320.0, 568.0), text 2.0, density 2.0
+00:19 +342: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Create download 375.0 scale1.0 full sections and crisp chooser no overflow
+00:19 +343: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Create download 375.0 scale1.0 full sections and crisp chooser no overflow
+00:19 +344: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Create download 375.0 scale1.0 full sections and crisp chooser no overflow
+00:19 +345: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Create download 375.0 scale1.0 full sections and crisp chooser no overflow
+00:19 +346: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Create download 375.0 scale1.0 full sections and crisp chooser no overflow
+00:19 +347: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Create download 375.0 scale1.0 full sections and crisp chooser no overflow
+00:19 +348: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Create download 375.0 scale1.0 full sections and crisp chooser no overflow
+00:19 +349: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Create download 375.0 scale1.0 full sections and crisp chooser no overflow
+00:19 +350: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/responsive_ad_ui_test.dart: create fits Size(393.0, 852.0), text 3.0, density 3.0
+00:19 +351: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/responsive_ad_ui_test.dart: create fits Size(393.0, 852.0), text 3.0, density 3.0
+00:19 +352: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/responsive_ad_ui_test.dart: create fits Size(393.0, 852.0), text 3.0, density 3.0
+00:19 +353: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/responsive_ad_ui_test.dart: create fits Size(393.0, 852.0), text 3.0, density 3.0
+00:19 +354: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: render confirmation preview
+00:19 +355: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Create order 375.0 scale1.6 full sections and crisp chooser no overflow
+00:19 +356: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Create order 375.0 scale1.6 full sections and crisp chooser no overflow
+00:20 +357: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Create order 375.0 scale1.6 full sections and crisp chooser no overflow
+00:20 +358: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: render budget preview in Iraqi dinars
+00:20 +359: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/responsive_ad_ui_test.dart: create fits Size(600.0, 960.0), text 2.0, density 1.5
+00:20 +360: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/responsive_ad_ui_test.dart: create fits Size(600.0, 960.0), text 2.0, density 1.5
+00:20 +361: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: render complete Create Ad design
+00:20 +362: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: render complete Create Ad design
+00:20 +363: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: render complete Create Ad design
+00:20 +364: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: render complete Create Ad design
+00:20 +365: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Create contact 393.0 scale1.0 full sections and crisp chooser no overflow
+00:20 +366: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/responsive_ad_ui_test.dart: create fits Size(768.0, 1024.0), text 1.0, density 2.0
+00:20 +367: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Create order 393.0 scale1.0 full sections and crisp chooser no overflow
+00:20 +368: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Create order 393.0 scale1.0 full sections and crisp chooser no overflow
+00:21 +369: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Create order 393.0 scale1.0 full sections and crisp chooser no overflow
+00:21 +370: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/responsive_ad_ui_test.dart: create fits Size(1024.0, 600.0), text 2.0, density 2.0
+00:21 +371: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Create download 393.0 scale1.0 full sections and crisp chooser no overflow
+00:21 +372: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Create download 393.0 scale1.0 full sections and crisp chooser no overflow
+00:21 +373: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Create download 393.0 scale1.0 full sections and crisp chooser no overflow
+00:21 +374: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/responsive_ad_ui_test.dart: create fits Size(1280.0, 800.0), text 1.0, density 1.0
+00:21 +375: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/responsive_ad_ui_test.dart: create fits Size(1280.0, 800.0), text 1.0, density 1.0
+00:21 +376: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/responsive_ad_ui_test.dart: create fits Size(1280.0, 800.0), text 1.0, density 1.0
+00:21 +377: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Create order 393.0 scale1.6 full sections and crisp chooser no overflow
+00:21 +378: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Create order 393.0 scale1.6 full sections and crisp chooser no overflow
+00:21 +379: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Create order 393.0 scale1.6 full sections and crisp chooser no overflow
+00:21 +380: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/responsive_ad_ui_test.dart: create fits Size(640.0, 320.0), text 2.0, density 3.0
+00:22 +381: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/responsive_ad_ui_test.dart: create fits Size(640.0, 320.0), text 2.0, density 3.0
+00:22 +382: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Tools 412.0 scale1.0 all statuses and mixed long names, restrained tablet width
+00:22 +383: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/responsive_ad_ui_test.dart: confirmation fits Size(640.0, 320.0), text 2.0, density 3.0
+00:22 +384: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Create contact 412.0 scale1.0 full sections and crisp chooser no overflow
+00:22 +385: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Create contact 412.0 scale1.0 full sections and crisp chooser no overflow
+00:22 +386: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/responsive_ad_ui_test.dart: long contact menu stays readable and selectable at large text
+00:22 +387: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/responsive_ad_ui_test.dart: long contact menu stays readable and selectable at large text
+00:22 +388: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Create download 412.0 scale1.0 full sections and crisp chooser no overflow
+00:22 +389: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/responsive_ad_ui_test.dart: keyboard and orientation changes preserve the editable draft
+00:23 +390: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/responsive_ad_ui_test.dart: keyboard and orientation changes preserve the editable draft
+00:23 +391: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Create contact 412.0 scale1.6 full sections and crisp chooser no overflow
+00:23 +392: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/responsive_ad_ui_test.dart: retry and cancellation remain reachable in short landscape
+00:23 +393: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Create order 412.0 scale1.6 full sections and crisp chooser no overflow
+00:23 +394: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/responsive_ad_ui_test.dart: render responsive tablet form preview
+00:23 +395: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/responsive_ad_ui_test.dart: render responsive tablet form preview
+00:23 +396: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/responsive_ad_ui_test.dart: render responsive tablet form preview
+00:23 +397: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Create contact 430.0 scale1.0 full sections and crisp chooser no overflow
+00:24 +398: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/responsive_ad_ui_test.dart: refined fields align and sliders accept drag gestures
+00:24 +399: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Create order 430.0 scale1.0 full sections and crisp chooser no overflow
+00:24 +400: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Create order 430.0 scale1.0 full sections and crisp chooser no overflow
+00:24 +401: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Create download 430.0 scale1.0 full sections and crisp chooser no overflow
+00:24 +402: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Tools 430.0 scale1.6 all statuses and mixed long names, restrained tablet width
+00:25 +403: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Create contact 430.0 scale1.6 full sections and crisp chooser no overflow
+00:25 +404: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Create order 430.0 scale1.6 full sections and crisp chooser no overflow
+00:25 +405: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Create download 430.0 scale1.6 full sections and crisp chooser no overflow
+00:25 +406: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Tools 600.0 scale1.0 all statuses and mixed long names, restrained tablet width
+00:25 +407: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Create contact 600.0 scale1.0 full sections and crisp chooser no overflow
+00:25 +408: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Create order 600.0 scale1.0 full sections and crisp chooser no overflow
+00:25 +409: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Create download 600.0 scale1.0 full sections and crisp chooser no overflow
+00:26 +410: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Tools 600.0 scale1.6 all statuses and mixed long names, restrained tablet width
+00:26 +411: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Create contact 600.0 scale1.6 full sections and crisp chooser no overflow
+00:26 +412: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Create order 600.0 scale1.6 full sections and crisp chooser no overflow
+00:26 +413: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Create download 600.0 scale1.6 full sections and crisp chooser no overflow
+00:26 +414: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Tools 768.0 scale1.0 all statuses and mixed long names, restrained tablet width
+00:26 +415: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Create contact 768.0 scale1.0 full sections and crisp chooser no overflow
+00:27 +416: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Create order 768.0 scale1.0 full sections and crisp chooser no overflow
+00:27 +417: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Create download 768.0 scale1.0 full sections and crisp chooser no overflow
+00:27 +418: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Tools 768.0 scale1.6 all statuses and mixed long names, restrained tablet width
+00:27 +419: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Create contact 768.0 scale1.6 full sections and crisp chooser no overflow
+00:27 +420: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Create order 768.0 scale1.6 full sections and crisp chooser no overflow
+00:28 +421: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Create download 768.0 scale1.6 full sections and crisp chooser no overflow
+00:28 +422: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Tools 1024.0 scale1.0 all statuses and mixed long names, restrained tablet width
+00:28 +423: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Create contact 1024.0 scale1.0 full sections and crisp chooser no overflow
+00:28 +424: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Create order 1024.0 scale1.0 full sections and crisp chooser no overflow
+00:28 +425: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Create download 1024.0 scale1.0 full sections and crisp chooser no overflow
+00:28 +426: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Tools 1024.0 scale1.6 all statuses and mixed long names, restrained tablet width
+00:28 +427: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Create contact 1024.0 scale1.6 full sections and crisp chooser no overflow
+00:28 +428: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Create order 1024.0 scale1.6 full sections and crisp chooser no overflow
+00:29 +429: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Create download 1024.0 scale1.6 full sections and crisp chooser no overflow
+00:29 +430: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Tools empty 320.0 evidence
+00:29 +431: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Tools error 320.0 evidence
+00:29 +432: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Tools empty 393.0 evidence
+00:29 +433: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Tools error 393.0 evidence
+00:29 +434: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Tools empty 430.0 evidence
+00:29 +435: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Tools error 430.0 evidence
+00:29 +436: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Tools empty 768.0 evidence
+00:29 +437: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Tools error 768.0 evidence
+00:29 +438: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: page and ad errors share one notification that expires two seconds after appearance
+00:29 +439: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: Home integration pattern and Tools use identical shared motion, with settled offset zero
+00:29 +440: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/proxolink_tools_create_test.dart: (tearDownAll)
+00:29 +440: All tests passed!

@@ -6,6 +6,7 @@ import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../config/backend_config.dart';
 import '../models/proxo_card.dart';
 import '../models/proxolink_page_type.dart';
 
@@ -24,32 +25,49 @@ class ProxoLinkFailure implements Exception {
   final ProxoCard? savedCard;
   const ProxoLinkFailure(this.code, {this.savedCardId, this.savedCard});
   String get message => switch (code) {
-    'forbidden' ||
-    'not_found' ||
-    'card_not_found' => 'پەڕەکە نەدۆزرایەوە یان دەسەڵاتی دەستکاری نییە.',
-    'invalid_tiktok' => 'تکایە ناوی تیک تۆک بێ بەستەر بنووسە.',
-    'browser_launch_failed' => 'نەتوانرا پەڕەکە لە وێبگەڕ بکەرێتەوە. تکایە وێبگەڕێک دابمەزرێنە.',
-    'page_archived' => 'ئەم پەڕەیە ئەرشیف کراوە.',
-    'invalid_page_type' => 'جۆری پەڕەکە گونجاو نییە.',
-    'provider_required' => 'تکایە کەمترین یەک دووگمە زیاد بکە.',
-    'idempotency_conflict' =>
-      'ئەم داواکارییە پێشتر پاشەکەوت کراوە. پەڕەکانت نوێ بکەرەوە.',
-    'saved_refresh_failed' => 'پەڕەکە پاشەکەوت کرا. بۆ بینینی نوێی بکەرەوە.',
-    'ad_dependency' => 'ئەم پەڕەیە لە ڕیکلامێکدا بەکارهاتووە و ناتوانرێت ئێستا ناچالاک بکرێت یان بسڕدرێتەوە.',
-    'isolated_staging_required' =>
-      'ئەم تایبەتمەندییە ئێستا تەنها لە ژینگەی تاقیکردنەوەدا چالاکە.',
-    'invalid_provider_destination' ||
-    'invalid_page_settings' => 'تکایە بەستەری دووگمەکان بپشکنە.',
-    'edit_conflict' =>
-      'پەڕەکە لە شوێنێکی تر دەستکاری کراوە. تکایە نوێی بکەرەوە.',
-    'unauthorized' => 'تکایە دووبارە بچۆ ژوورەوە.',
-    'avatar_required' => 'تکایە وێنەی پرۆفایل هەڵبژێرە.',
-    'invalid_avatar' =>
-      'وێنەکە گونجاو نییە. وێنەی JPEG، PNG یان WebP هەڵبژێرە.',
-    'invalid_platform_value' => 'تکایە ژمارە و ناوی پلاتفۆرمەکان بپشکنە.',
-    'publish_failed' => 'پەڕەکە پاشەکەوت کرا، بەڵام دروستکردنی سەرکەوتوو نەبوو. دەتوانیت دووبارە هەوڵ بدەیتەوە.',
-    _ => 'نەتوانرا داواکارییەکە تەواو بکرێت. تکایە دووبارە هەوڵ بدەرەوە.',
-  };
+        'forbidden' ||
+        'not_found' ||
+        'card_not_found' =>
+          'پەڕەکە نەدۆزرایەوە یان دەسەڵاتی دەستکاری نییە.',
+        'invalid_tiktok' => 'تکایە ناوی تیک تۆک بێ بەستەر بنووسە.',
+        'browser_launch_failed' =>
+          'نەتوانرا پەڕەکە لە وێبگەڕ بکەرێتەوە. تکایە وێبگەڕێک دابمەزرێنە.',
+        'page_archived' => 'ئەم پەڕەیە ئەرشیف کراوە.',
+        'invalid_page_type' => 'جۆری پەڕەکە گونجاو نییە.',
+        'provider_required' => 'تکایە کەمترین یەک دووگمە زیاد بکە.',
+        'idempotency_conflict' =>
+          'ئەم داواکارییە پێشتر پاشەکەوت کراوە. پەڕەکانت نوێ بکەرەوە.',
+        'saved_refresh_failed' =>
+          'پەڕەکە پاشەکەوت کرا. بۆ بینینی نوێی بکەرەوە.',
+        'ad_dependency' =>
+          'ئەم پەڕەیە لە ڕیکلامێکدا بەکارهاتووە و ناتوانرێت ئێستا ناچالاک بکرێت یان بسڕدرێتەوە.',
+        'isolated_staging_required' ||
+        'page_creation_unavailable' ||
+        'template_not_found' ||
+        'providers_unavailable' ||
+        'templates_unavailable' =>
+          'دروستکردنی پەڕە ئێستا بەردەست نییە. تکایە دواتر هەوڵ بدەرەوە.',
+        'invalid_provider_destination' ||
+        'invalid_page_settings' =>
+          'تکایە بەستەری دووگمەکان بپشکنە.',
+        'edit_conflict' =>
+          'پەڕەکە لە شوێنێکی تر دەستکاری کراوە. تکایە نوێی بکەرەوە.',
+        'unauthorized' => 'تکایە دووبارە بچۆ ژوورەوە.',
+        'avatar_required' => 'تکایە وێنەی پرۆفایل هەڵبژێرە.',
+        'invalid_avatar' =>
+          'وێنەکە گونجاو نییە. وێنەی JPEG، PNG یان WebP هەڵبژێرە.',
+        'invalid_platform_value' => 'تکایە ژمارە و ناوی پلاتفۆرمەکان بپشکنە.',
+        'publish_failed' =>
+          'پەڕەکە پاشەکەوت کرا، بەڵام دروستکردنی سەرکەوتوو نەبوو. دەتوانیت دووبارە هەوڵ بدەیتەوە.',
+        _ => 'نەتوانرا داواکارییەکە تەواو بکرێت. تکایە دووبارە هەوڵ بدەرەوە.',
+      };
+}
+
+/// Optional capability reported by the same server that accepts page writes.
+/// Older repositories can omit this; a production service fails closed when
+/// its provider metadata explicitly reports that authoring is unavailable.
+abstract interface class ProxoLinkAuthoringAvailability {
+  bool? get pageCreationEnabled;
 }
 
 abstract class ProxoLinkRepository {
@@ -82,13 +100,15 @@ abstract class ProxoLinkRepository {
   Uri publicUrl(String id, {String pageType = 'contact'});
 }
 
-class ProxoLinkService implements ProxoLinkRepository {
-  static const publicBase = String.fromEnvironment(
-    'PROXO_PUBLIC_BASE_URL',
-    defaultValue: 'https://www.proxobalance.app',
-  );
+class ProxoLinkService
+    implements ProxoLinkRepository, ProxoLinkAuthoringAvailability {
+  static String get publicBase => BackendConfig.current.publicBase;
   final SupabaseClient db;
-  ProxoLinkService(this.db);
+  final http.Client? httpClient;
+  bool? _pageCreationEnabled;
+  ProxoLinkService(this.db, {this.httpClient});
+  @override
+  bool? get pageCreationEnabled => _pageCreationEnabled;
   @override
   String? get ownerScope => db.auth.currentUser?.id;
   Uri _url(String path) {
@@ -115,15 +135,25 @@ class ProxoLinkService implements ProxoLinkRepository {
       });
     if (data != null) request.body = jsonEncode(data);
     try {
-      final response = await request
-          .send()
+      final response = await (httpClient?.send(request) ?? request.send())
           .then(http.Response.fromStream)
           .timeout(const Duration(seconds: 30));
       if (db.auth.currentUser?.id != session.user.id) {
         throw const ProxoLinkFailure('unauthorized');
       }
-      final body =
-          jsonDecode(utf8.decode(response.bodyBytes)) as Map<String, dynamic>;
+      if (response.statusCode == 401) {
+        throw const ProxoLinkFailure('unauthorized');
+      }
+      // A V5 server does not expose the V6 provider endpoint. Vercel returns
+      // plain text for the missing rewrite, so do not mislabel it as offline.
+      if (path == '/api/page-providers' && response.statusCode == 404) {
+        throw const ProxoLinkFailure('page_creation_unavailable');
+      }
+      final decoded = jsonDecode(utf8.decode(response.bodyBytes));
+      if (decoded is! Map<String, dynamic>) {
+        throw const ProxoLinkFailure('network_error');
+      }
+      final body = decoded;
       if (response.statusCode >= 400 || body['ok'] != true) {
         final card = body['card'] is Map
             ? Map<String, dynamic>.from(body['card'] as Map)
@@ -131,8 +161,7 @@ class ProxoLinkService implements ProxoLinkRepository {
         throw ProxoLinkFailure(
           body['error'] as String? ?? 'network_error',
           savedCardId: (body['card'] as Map?)?['id'] as String?,
-          savedCard:
-              card?['user_id'] is String &&
+          savedCard: card?['user_id'] is String &&
                   card?['created_at'] is String &&
                   card?['updated_at'] is String
               ? ProxoCard.fromJson(card!)
@@ -179,35 +208,65 @@ class ProxoLinkService implements ProxoLinkRepository {
   @override
   Future<List<ProxoTemplate>> templates() async {
     final cache = AppDataCache.forClient(db)..bindOwner();
-    final body = await cache.cache.get('templates', () => _request('/api/contact-templates')); 
-    return [
-      for (final j in body['templates'] as List)
-        ProxoTemplate.fromJson(Map<String, dynamic>.from(j as Map)),
-    ];
+    final body = await cache.cache
+        .get('templates', () => _request('/api/contact-templates'));
+    late final List<ProxoTemplate> templates;
+    try {
+      templates = [
+        for (final j in body['templates'] as List)
+          ProxoTemplate.fromJson(Map<String, dynamic>.from(j as Map)),
+      ];
+    } catch (_) {
+      cache.cache.invalidate('templates');
+      throw const ProxoLinkFailure('templates_unavailable');
+    }
+    const requiredKeys = {'pill', 'pill-mint', 'pill-dark', 'pill-white'};
+    final available =
+        templates.where((t) => t.version == 6).map((t) => t.key).toSet();
+    if (!available.containsAll(requiredKeys))
+      cache.cache.invalidate('templates');
+    return templates;
   }
 
   @override
   Future<List<ProxoProvider>> providers() async {
     final cache = AppDataCache.forClient(db)..bindOwner();
-    final body = await cache.cache.get('providers', () => _request('/api/page-providers'));
-    return [
-      for (final j in body['providers'] as List)
-        ProxoProvider.fromJson(Map<String, dynamic>.from(j as Map)),
-    ];
+    final body = await cache.cache
+        .get('providers', () => _request('/api/page-providers'));
+    _pageCreationEnabled = body['writes_enabled'] == true;
+    if (_pageCreationEnabled == false) {
+      // Retry must recheck the server after a deployment, rather than replay a
+      // cached disabled capability for the next five minutes.
+      cache.cache.invalidate('providers');
+    }
+    try {
+      final providers = [
+        for (final j in body['providers'] as List)
+          ProxoProvider.fromJson(Map<String, dynamic>.from(j as Map)),
+      ];
+      if (ProxoPageType.values.any((type) =>
+          !providers.any((provider) => provider.pageType == type.key))) {
+        cache.cache.invalidate('providers');
+      }
+      return providers;
+    } catch (_) {
+      cache.cache.invalidate('providers');
+      throw const ProxoLinkFailure('providers_unavailable');
+    }
   }
 
   @override
   Future<Uri> formPreview(
     Map<String, dynamic> data, {
     ProxoCard? existing,
-  }) async => _url(
-    (await _request(
+  }) async =>
+      _url(
+        (await _request(
           '/api/page-preview-token',
           method: 'POST',
           data: {...data, if (existing != null) 'card_id': existing.id},
-        ))['preview_path']
-        as String,
-  );
+        ))['preview_path'] as String,
+      );
 
   @override
   Future<ProxoCard> save(
@@ -263,13 +322,12 @@ class ProxoLinkService implements ProxoLinkRepository {
 
   @override
   Future<Uri> preview(String id) async => _url(
-    (await _request(
+        (await _request(
           '/api/contact-preview-token',
           method: 'POST',
           data: {'card_id': id},
-        ))['preview_path']
-        as String,
-  );
+        ))['preview_path'] as String,
+      );
   @override
   Future<Uri> templatePreview(
     String key,
@@ -277,15 +335,16 @@ class ProxoLinkService implements ProxoLinkRepository {
     String theme = 'purple',
     String language = 'ku',
     String pageType = 'contact',
-  }) async => _url(
-    ((await _request(
-              '/api/contact-templates?template_key=${Uri.encodeQueryComponent(key)}&version=$version&theme=${Uri.encodeQueryComponent(theme)}&language=${Uri.encodeQueryComponent(language)}&page_type=${Uri.encodeQueryComponent(pageType)}',
-            ))['templates']
-            as List)
-        .map((j) => ProxoTemplate.fromJson(Map<String, dynamic>.from(j as Map)))
-        .firstWhere((t) => t.key == key && t.version == version)
-        .previewPath,
-  );
+  }) async =>
+      _url(
+        ((await _request(
+          '/api/contact-templates?template_key=${Uri.encodeQueryComponent(key)}&version=$version&theme=${Uri.encodeQueryComponent(theme)}&language=${Uri.encodeQueryComponent(language)}&page_type=${Uri.encodeQueryComponent(pageType)}',
+        ))['templates'] as List)
+            .map((j) =>
+                ProxoTemplate.fromJson(Map<String, dynamic>.from(j as Map)))
+            .firstWhere((t) => t.key == key && t.version == version)
+            .previewPath,
+      );
   @override
   Uri publicUrl(String id, {String pageType = 'contact'}) {
     if (!ProxoPageType.values.any((t) => t.key == pageType))
@@ -329,7 +388,8 @@ class ProxoLinkService implements ProxoLinkRepository {
           path,
           bytes,
           fileOptions: FileOptions(contentType: mime, upsert: false),
-        );
+        )
+        .timeout(const Duration(seconds: 30));
     if (ownerScope != owner) throw const ProxoLinkFailure('unauthorized');
     return path;
   }

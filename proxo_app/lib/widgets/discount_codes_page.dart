@@ -108,7 +108,7 @@ class _DiscountCodesPageState extends State<DiscountCodesPage> {
       textDirection: ProxoLocale.directionOf(ProxoLocale.current.value),
       child: Scaffold(
         backgroundColor: AppColors.surfaceBase,
-        appBar: const ProxoAppBar(title: 'کۆدی داشکاندن'),
+        appBar: ProxoAppBar.adaptive(context, title: 'کۆدی داشکاندن'),
         body: _loading
             ? const Center(child: CircularProgressIndicator())
             : (_codes.isEmpty && _loadFailed)

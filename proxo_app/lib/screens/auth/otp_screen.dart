@@ -32,7 +32,7 @@ class OtpScreen extends StatelessWidget {
         AuthHeader.inner(onBack: onBack),
         const SizedBox(height: AuthTokens.gapHeaderToTitle),
         AuthIntro(
-          icon: 'verified_user',
+          icon: 'verification_outline',
           title: AuthStrings.otpTitle,
           subtitle: AuthStrings.otpSubtitle,
         ),

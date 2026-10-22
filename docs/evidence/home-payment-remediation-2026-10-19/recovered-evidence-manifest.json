@@ -1,0 +1,551 @@
+{
+  "source_commit": "5a6167ed6bfb44887be02aba55fcbf4d1cd45eb9",
+  "captured_at_utc": "2026-10-19",
+  "provenance": "Historical source-5a6167e GitHub artifact inventory. Current gallery paths have been recaptured and may differ; use this inventory only with the immutable artifact ZIP.",
+  "workflow_run": 39279374548,
+  "artifact_id": 12198198371,
+  "artifact_sha256": "11a930b9e446bd166ac63cbd951d3383dec3941445239c1c26c6d2b555b5190b",
+  "files": [
+    {
+      "path": "geometry/ad-receipt-320-s2-bottom.json",
+      "bytes": 17441,
+      "sha256": "95ad8bf827c050ade7e03d465a7201918e4690e2daaae970f878728bb7a52598"
+    },
+    {
+      "path": "geometry/ad-receipt-320-s2-middle.json",
+      "bytes": 17441,
+      "sha256": "95ad8bf827c050ade7e03d465a7201918e4690e2daaae970f878728bb7a52598"
+    },
+    {
+      "path": "geometry/ad-receipt-320-s2.json",
+      "bytes": 16642,
+      "sha256": "999d4795f9dfad65013c9fa22901371a69627ef74fb08e50b50ee2747ba8ba97"
+    },
+    {
+      "path": "geometry/ad-receipt-393-s1-bottom.json",
+      "bytes": 18018,
+      "sha256": "75d4d3cd7fb03a5a4fb909bffa4a14142e643e5ad6419b8f5b27d8380c13d7c8"
+    },
+    {
+      "path": "geometry/ad-receipt-393-s1.json",
+      "bytes": 17937,
+      "sha256": "7144ec54566781c785abcee137c02b1cdb5104ba85e66812353a12280ff721be"
+    },
+    {
+      "path": "geometry/deposit-320-s2-unconfigured-methods.json",
+      "bytes": 20212,
+      "sha256": "eaba34135e571272cfe5ac469a383f00894d9ebd860e99713e61b4ad1cb70b18"
+    },
+    {
+      "path": "geometry/deposit-320-s2.json",
+      "bytes": 19585,
+      "sha256": "534ebe15ad5230ac3021affc8ffab43f61d0fbcb7ab68295a709fd7e3c546cee"
+    },
+    {
+      "path": "geometry/deposit-393-s1-unconfigured-methods.json",
+      "bytes": 20566,
+      "sha256": "35e6b5b192b6ce19cf1682bb0f1c88404c0b22ff1db0b33ea1e99dd7413a7aed"
+    },
+    {
+      "path": "geometry/deposit-393-s1.json",
+      "bytes": 20566,
+      "sha256": "35e6b5b192b6ce19cf1682bb0f1c88404c0b22ff1db0b33ea1e99dd7413a7aed"
+    },
+    {
+      "path": "geometry/deposit-fastpay-320-s2-amount.json",
+      "bytes": 22738,
+      "sha256": "68e72c31d4d3e11059325f5b10289ff3e2bf8e52dd19f3ddec27299c8fdacb3e"
+    },
+    {
+      "path": "geometry/deposit-fastpay-320-s2-checkout-entry.json",
+      "bytes": 22747,
+      "sha256": "3ff2ba035d1b9e44636e178acd014c0a8a58bc3ebc7e308c79ec70930ab2696e"
+    },
+    {
+      "path": "geometry/deposit-fastpay-393-s1-amount.json",
+      "bytes": 22845,
+      "sha256": "7d73e2f669f2dbbe81fc39188ece58c3d3d2808a05b34d834ab7a9274f57922e"
+    },
+    {
+      "path": "geometry/deposit-fastpay-393-s1-checkout-entry.json",
+      "bytes": 22832,
+      "sha256": "b69498e63ed1b7d34769b1bbca59d9e6d0d57345c4cbb66a2732f7821bd125d0"
+    },
+    {
+      "path": "geometry/deposit-fib-320-s2-amount.json",
+      "bytes": 29255,
+      "sha256": "2e91d5af39a49c8d6a20b9033f65fedcd45b57bec5a808f9bf81da2887dcf800"
+    },
+    {
+      "path": "geometry/deposit-fib-320-s2-details.json",
+      "bytes": 25139,
+      "sha256": "c1c0e9ac8ae203f05b8eb13874fc0d3086f78ec1ed9b8ad465cb3a28e78725ff"
+    },
+    {
+      "path": "geometry/deposit-fib-320-s2-instructions.json",
+      "bytes": 16168,
+      "sha256": "22fdb8f17999877ae7ede08a27e5d6c32e950e1c8c05f3d5d6f6c5d208c2cce1"
+    },
+    {
+      "path": "geometry/deposit-fib-320-s2-receipt-attached.json",
+      "bytes": 16799,
+      "sha256": "7f3fc836b624535797f85b3f48cc4b374914ff6232b04ed404049330ed4f3060"
+    },
+    {
+      "path": "geometry/deposit-fib-320-s2-receipt-picker.json",
+      "bytes": 18738,
+      "sha256": "841ab3abb00de8d8c1b8bcc9a32cac446a690c7277536e65ad5293482500d81e"
+    },
+    {
+      "path": "geometry/deposit-fib-320-s2-receipt.json",
+      "bytes": 15547,
+      "sha256": "8ade8b0c80eca0d5c80d6e326c92625461ac47497f31ddd9f5412d6a38a28335"
+    },
+    {
+      "path": "geometry/deposit-fib-393-s1-amount.json",
+      "bytes": 31799,
+      "sha256": "088db4a07272b565a04957c3dce7276b9a74f9e6ff59d88e23f8a31c324bdca6"
+    },
+    {
+      "path": "geometry/deposit-fib-393-s1-details.json",
+      "bytes": 25047,
+      "sha256": "ebf0ddf01f55254cd619078faca6ec4111507a47dc3a0a10eaed1eeabc2c85d6"
+    },
+    {
+      "path": "geometry/deposit-fib-393-s1-instructions.json",
+      "bytes": 26737,
+      "sha256": "0541bf6f2288d14b52aea4fcb0a79cd8e8e630b8fab5dcc3e218d42a9d96f1d8"
+    },
+    {
+      "path": "geometry/deposit-fib-393-s1-receipt-attached.json",
+      "bytes": 26327,
+      "sha256": "be3af69a53474ce8fee173d152598da22e7b659e39a161ec90abd79b2ee9e6b5"
+    },
+    {
+      "path": "geometry/deposit-fib-393-s1-receipt-picker.json",
+      "bytes": 28238,
+      "sha256": "c32e9123d3b98db9116b9fd0c877e37053642a994a7cb3160402c97fdefb4a7a"
+    },
+    {
+      "path": "geometry/deposit-fib-393-s1-receipt.json",
+      "bytes": 25047,
+      "sha256": "ebf0ddf01f55254cd619078faca6ec4111507a47dc3a0a10eaed1eeabc2c85d6"
+    },
+    {
+      "path": "geometry/deposit-kcard-320-s2-amount.json",
+      "bytes": 29259,
+      "sha256": "7017aa8ea804610d161df7a686cb9b89c53ec2c264d123b559ed08812d133a75"
+    },
+    {
+      "path": "geometry/deposit-kcard-320-s2-details.json",
+      "bytes": 25143,
+      "sha256": "db35dbbb9023757e426204af841beb057452d3819034f7f6697f68b1fe5f0ef5"
+    },
+    {
+      "path": "geometry/deposit-kcard-320-s2-instructions.json",
+      "bytes": 16172,
+      "sha256": "2cab94d20419c0ab6269fdb297af01f07cbd30ecb4803db327e6be98ce99d839"
+    },
+    {
+      "path": "geometry/deposit-kcard-320-s2-receipt.json",
+      "bytes": 15551,
+      "sha256": "892a17c1269659716785b114ccc65a81ccda7cfa4ee218e92c4c8f2e37942746"
+    },
+    {
+      "path": "geometry/deposit-kcard-393-s1-amount.json",
+      "bytes": 31804,
+      "sha256": "b1595b48c3609b3e24e7e27d50dad9de4241f9ddd1968b486f5cca8b20e835fb"
+    },
+    {
+      "path": "geometry/deposit-kcard-393-s1-details.json",
+      "bytes": 25052,
+      "sha256": "4feed79059f5c4c482ca56d912c3902154abd08195101b240f9c70684ff6278c"
+    },
+    {
+      "path": "geometry/deposit-kcard-393-s1-instructions.json",
+      "bytes": 26742,
+      "sha256": "e70214a4779f05491784ecaad0d1d69afe181c3ff836546d6b52fbd81277223c"
+    },
+    {
+      "path": "geometry/deposit-kcard-393-s1-receipt.json",
+      "bytes": 25052,
+      "sha256": "4feed79059f5c4c482ca56d912c3902154abd08195101b240f9c70684ff6278c"
+    },
+    {
+      "path": "geometry/home-320-s2-expanded-bottom.json",
+      "bytes": 28090,
+      "sha256": "b000a8a0b39067b39466b67e2fe358cc8a9bac39bfcc4f7dbd7a8c05322ecf4d"
+    },
+    {
+      "path": "geometry/home-320-s2-expanded.json",
+      "bytes": 28054,
+      "sha256": "83a94022216d8812b8d92f4f1615ea6f0c6c5443dc46af8fa2e8128b27bb376c"
+    },
+    {
+      "path": "geometry/home-320-s2.json",
+      "bytes": 25745,
+      "sha256": "439f3f20f6856c2b41ad415b80a4fef37812e0aa7ee8e2d60d5f8fef57790a4f"
+    },
+    {
+      "path": "geometry/home-393-s1-expanded-bottom.json",
+      "bytes": 27552,
+      "sha256": "3754b4fc4dff266e5749892a3bf2e52f7f8ef571f79c920b107564bef5984328"
+    },
+    {
+      "path": "geometry/home-393-s1-expanded.json",
+      "bytes": 27553,
+      "sha256": "5ea40c4c94b40978e3eaa54031282e288b9f6b2cea6103d9f13da77ad9c3eeff"
+    },
+    {
+      "path": "geometry/home-393-s1.json",
+      "bytes": 25260,
+      "sha256": "1656563a578d9f7c1370bfc69f46dfb3b7ac3bfafa4e7e77fe197d4b0817e92b"
+    },
+    {
+      "path": "geometry/menu-320-s2-bottom.json",
+      "bytes": 15951,
+      "sha256": "d68d461f98a2d4d8b9b2839e5f94d9be812ddec3e5120b302b19aa14d507b3dd"
+    },
+    {
+      "path": "geometry/menu-320-s2-logout-error.json",
+      "bytes": 16397,
+      "sha256": "3838cd77dd47df94c518863cd5be147dc0bcd05557bd03e78ce0f0764b2de18d"
+    },
+    {
+      "path": "geometry/menu-320-s2.json",
+      "bytes": 15948,
+      "sha256": "94c4b10f2f41cb5604a3d02d7dd6460d66f4e1485000a684056a71c033e042f7"
+    },
+    {
+      "path": "geometry/menu-393-s1-bottom.json",
+      "bytes": 15964,
+      "sha256": "410058673795622b67001a519ca583506ae9319f7448a42e305c9e1fd3925f09"
+    },
+    {
+      "path": "geometry/menu-393-s1-logout-error.json",
+      "bytes": 16396,
+      "sha256": "e105d28a164dd32d52a06a7baf8a525a223550224bf2e9e5be1e46fefbba97c8"
+    },
+    {
+      "path": "geometry/menu-393-s1.json",
+      "bytes": 15964,
+      "sha256": "410058673795622b67001a519ca583506ae9319f7448a42e305c9e1fd3925f09"
+    },
+    {
+      "path": "geometry/tools-320-s2-action.json",
+      "bytes": 8054,
+      "sha256": "9d03a3178c7a1d8384106532d04c683a6cc0ee18e7ddc780fe649669e2dce9d0"
+    },
+    {
+      "path": "geometry/tools-320-s2-create-unavailable.json",
+      "bytes": 12606,
+      "sha256": "77379bb8d24586045527c32f1e5a208ecc415ebb24e117a470c0cdd744a942fe"
+    },
+    {
+      "path": "geometry/tools-320-s2.json",
+      "bytes": 8059,
+      "sha256": "3165a5ab18fb667d0b55aebf6c7131d09fdaef0652731c31ee05cc1ad9727835"
+    },
+    {
+      "path": "geometry/tools-393-s1-create-unavailable.json",
+      "bytes": 12641,
+      "sha256": "7de84b51f5d041232ef15be5056d1882121fc94b0b58cd0bde40321ae487ef55"
+    },
+    {
+      "path": "geometry/tools-393-s1.json",
+      "bytes": 8055,
+      "sha256": "0c43caa5bb8e62bf54129598b2ba33c2d80087a8a8eb71f9559f142193adddfb"
+    },
+    {
+      "path": "geometry/transaction-receipt-320-s2-bottom.json",
+      "bytes": 10604,
+      "sha256": "924806e62ce42886bb55a82d71fcd07d87ac6f0d337761c07515e938f224dada"
+    },
+    {
+      "path": "geometry/transaction-receipt-320-s2.json",
+      "bytes": 10603,
+      "sha256": "3165d87eceb02b0d5e4b4a74c195e1115378fc40204824ebcccf1d03cafc30b7"
+    },
+    {
+      "path": "geometry/transaction-receipt-393-s1-bottom.json",
+      "bytes": 10820,
+      "sha256": "9ffffe45d9e15959b3c256ce9edf6587173f540e23a16bb6727cd145de0d7f51"
+    },
+    {
+      "path": "geometry/transaction-receipt-393-s1.json",
+      "bytes": 10820,
+      "sha256": "9ffffe45d9e15959b3c256ce9edf6587173f540e23a16bb6727cd145de0d7f51"
+    },
+    {
+      "path": "widgets/ad-receipt-320-s2-bottom.png",
+      "bytes": 106956,
+      "sha256": "e07d1c1fff5f27fe531a6a78a2551bf7980006de628543365541c2bf83905dbd"
+    },
+    {
+      "path": "widgets/ad-receipt-320-s2-middle.png",
+      "bytes": 106956,
+      "sha256": "e07d1c1fff5f27fe531a6a78a2551bf7980006de628543365541c2bf83905dbd"
+    },
+    {
+      "path": "widgets/ad-receipt-320-s2.png",
+      "bytes": 96804,
+      "sha256": "855b3ef8968bc6e0ac276a70656d362259f1cfbb6b0b7c3610a2572949e1b287"
+    },
+    {
+      "path": "widgets/ad-receipt-393-s1-bottom.png",
+      "bytes": 112143,
+      "sha256": "07d7e745892302960377cd4c106a2a96314a20f2fa6b2e7e37e6e74a418863eb"
+    },
+    {
+      "path": "widgets/ad-receipt-393-s1.png",
+      "bytes": 125394,
+      "sha256": "9371c65a83131a5a87bb4e28fe859ca4d8691c2604ddaa488ca26602eb49630c"
+    },
+    {
+      "path": "widgets/deposit-320-s2-unconfigured-methods.png",
+      "bytes": 72784,
+      "sha256": "908e50e58d3e11c1c122f58a31d73243dd150c95eb62f113a4289334aaf079f1"
+    },
+    {
+      "path": "widgets/deposit-320-s2.png",
+      "bytes": 82581,
+      "sha256": "43afe7492fe8e7516b9f30b0a7eab8f10ac64bb141f9a8a314172656b00cfc24"
+    },
+    {
+      "path": "widgets/deposit-393-s1-unconfigured-methods.png",
+      "bytes": 86484,
+      "sha256": "556a8430c51ede48d9a83f37985ca009410ee3c5f529e03cd9c947f9c63ffb69"
+    },
+    {
+      "path": "widgets/deposit-393-s1.png",
+      "bytes": 86484,
+      "sha256": "556a8430c51ede48d9a83f37985ca009410ee3c5f529e03cd9c947f9c63ffb69"
+    },
+    {
+      "path": "widgets/deposit-fastpay-320-s2-amount.png",
+      "bytes": 85090,
+      "sha256": "f65ca603a1cb7ac2e1c5448e571a195cb9d0275e748079c924e29241fb32f351"
+    },
+    {
+      "path": "widgets/deposit-fastpay-320-s2-checkout-entry.png",
+      "bytes": 85031,
+      "sha256": "f3ed4cbd7e5fdccc30f568c0f1cdc3b88f9e9af7facbaa18db194625d57af618"
+    },
+    {
+      "path": "widgets/deposit-fastpay-393-s1-amount.png",
+      "bytes": 106329,
+      "sha256": "62f076cff5cf4b971a985520cfd93246852a8948ce4a2971faf2e7c40936c77b"
+    },
+    {
+      "path": "widgets/deposit-fastpay-393-s1-checkout-entry.png",
+      "bytes": 100676,
+      "sha256": "1ac0afad67b2dcf9ae9b0004503d2f28551e5f58750c8f497d51160ebc1a0a80"
+    },
+    {
+      "path": "widgets/deposit-fib-320-s2-amount.png",
+      "bytes": 87416,
+      "sha256": "bf3ce6538892205fbc697f223334ac486cf2860469ef549cdc38b322a5eadcec"
+    },
+    {
+      "path": "widgets/deposit-fib-320-s2-details.png",
+      "bytes": 82688,
+      "sha256": "dc7846b2601fc1c5adba4e0b58e18d05724e9cb4995335517824ddc6d309090a"
+    },
+    {
+      "path": "widgets/deposit-fib-320-s2-instructions.png",
+      "bytes": 102012,
+      "sha256": "9429da6cc4229d4fe43857b9dfcad068c7798fba4f3d3c87bb5db8b2d93f7e3d"
+    },
+    {
+      "path": "widgets/deposit-fib-320-s2-receipt-attached.png",
+      "bytes": 78812,
+      "sha256": "ffa062e20ef105d8e125fc70e952af1da49cd44245ed9600220a3805e55c7f2a"
+    },
+    {
+      "path": "widgets/deposit-fib-320-s2-receipt-picker.png",
+      "bytes": 70710,
+      "sha256": "68c2ae8daa411d24a74adbcbb0e1826c04011c936cc8504c56faae9127916e24"
+    },
+    {
+      "path": "widgets/deposit-fib-320-s2-receipt.png",
+      "bytes": 70857,
+      "sha256": "9c597ce174d9c1f0323e3f25ab1067c0f786eaa82ebd4aec268c216770274e11"
+    },
+    {
+      "path": "widgets/deposit-fib-393-s1-amount.png",
+      "bytes": 98487,
+      "sha256": "4f7fa8792765c77c4b95a7730a1d3e7d2c6ad2b4483b407555bd5a43f068f483"
+    },
+    {
+      "path": "widgets/deposit-fib-393-s1-details.png",
+      "bytes": 86780,
+      "sha256": "53cc7f3485dbebf09043a9f6d19449b05a0e78512fa5b8df3cc5732451259442"
+    },
+    {
+      "path": "widgets/deposit-fib-393-s1-instructions.png",
+      "bytes": 112952,
+      "sha256": "83f40e5e55554083c9be199292d7f7000adf41714c7212de66a21b5abb24b88a"
+    },
+    {
+      "path": "widgets/deposit-fib-393-s1-receipt-attached.png",
+      "bytes": 82306,
+      "sha256": "b5ce03b14300920dc0d00648bf370068edcbedc78ca63576bd01f7d8ed20ae21"
+    },
+    {
+      "path": "widgets/deposit-fib-393-s1-receipt-picker.png",
+      "bytes": 84398,
+      "sha256": "8be69f014f7dc540cd27935ffb4ac0a9d39f6c77f209406e8910061b6825625f"
+    },
+    {
+      "path": "widgets/deposit-fib-393-s1-receipt.png",
+      "bytes": 86780,
+      "sha256": "53cc7f3485dbebf09043a9f6d19449b05a0e78512fa5b8df3cc5732451259442"
+    },
+    {
+      "path": "widgets/deposit-kcard-320-s2-amount.png",
+      "bytes": 87416,
+      "sha256": "bf3ce6538892205fbc697f223334ac486cf2860469ef549cdc38b322a5eadcec"
+    },
+    {
+      "path": "widgets/deposit-kcard-320-s2-details.png",
+      "bytes": 83337,
+      "sha256": "4a858c538a68f6262c58407494ff86f8d8a651d68a33f93f9bf49542482c1bff"
+    },
+    {
+      "path": "widgets/deposit-kcard-320-s2-instructions.png",
+      "bytes": 102012,
+      "sha256": "9429da6cc4229d4fe43857b9dfcad068c7798fba4f3d3c87bb5db8b2d93f7e3d"
+    },
+    {
+      "path": "widgets/deposit-kcard-320-s2-receipt.png",
+      "bytes": 70857,
+      "sha256": "9c597ce174d9c1f0323e3f25ab1067c0f786eaa82ebd4aec268c216770274e11"
+    },
+    {
+      "path": "widgets/deposit-kcard-393-s1-amount.png",
+      "bytes": 100797,
+      "sha256": "6fa5a6438139297f652d26c68ea7b9eafb6295803b4c385a641aedf09b53c7a5"
+    },
+    {
+      "path": "widgets/deposit-kcard-393-s1-details.png",
+      "bytes": 89186,
+      "sha256": "3ce91b5a45cb86011bb9d245fd89f583148dc2d1011b1ded99dedc94d4ed217a"
+    },
+    {
+      "path": "widgets/deposit-kcard-393-s1-instructions.png",
+      "bytes": 115050,
+      "sha256": "75af5893d0b201cc97483dd81156fa2a3bb3f495e3268bc009e67eab61e8b021"
+    },
+    {
+      "path": "widgets/deposit-kcard-393-s1-receipt.png",
+      "bytes": 89186,
+      "sha256": "3ce91b5a45cb86011bb9d245fd89f583148dc2d1011b1ded99dedc94d4ed217a"
+    },
+    {
+      "path": "widgets/home-320-s2-expanded-bottom.png",
+      "bytes": 88481,
+      "sha256": "3ba28ce1c2f3a1cf4edcd628011527ea1456e0cec8587ba8936790308b0b40c7"
+    },
+    {
+      "path": "widgets/home-320-s2-expanded.png",
+      "bytes": 92289,
+      "sha256": "9baf782990e2cd2d6468b2f48d7d70c2c681a4119c34599afcb990ced2d8d543"
+    },
+    {
+      "path": "widgets/home-320-s2.png",
+      "bytes": 95065,
+      "sha256": "a4910d9e5b5abc02ee02910584d0abc5930a1bb30b2c11c63b5f713a8a6d61af"
+    },
+    {
+      "path": "widgets/home-393-s1-expanded-bottom.png",
+      "bytes": 118255,
+      "sha256": "87d8a9011c01a28cc94a8c953160921e8f218ece55f49185c03a81d9b144a464"
+    },
+    {
+      "path": "widgets/home-393-s1-expanded.png",
+      "bytes": 118498,
+      "sha256": "4749822e4b8e11439ab7e793adb3d01896f4a877a036777eeb9a34cde2af518f"
+    },
+    {
+      "path": "widgets/home-393-s1.png",
+      "bytes": 105793,
+      "sha256": "2680c3a79ede92b776913a3a45439b363f1bc60f1f25712ee50e73f0a9c18fc6"
+    },
+    {
+      "path": "widgets/menu-320-s2-bottom.png",
+      "bytes": 83268,
+      "sha256": "69e49a3f6c9817ae0864fca3e4863c963391371fb2dfe2a214a096a262c40b83"
+    },
+    {
+      "path": "widgets/menu-320-s2-logout-error.png",
+      "bytes": 91495,
+      "sha256": "e8aa6177ce04b9268ed24961c2c7d2f0e8e5a18442fa7d26e17c371360944b01"
+    },
+    {
+      "path": "widgets/menu-320-s2.png",
+      "bytes": 78725,
+      "sha256": "4d4e8716afb1199052282c3e9e527bd1b519ae4fd3c1b3c282859ed9d95c2da4"
+    },
+    {
+      "path": "widgets/menu-393-s1-bottom.png",
+      "bytes": 81286,
+      "sha256": "a66f4300cde5f34527b033aaf216bceb83943b5b6e2ba87f5269c8793a80afa1"
+    },
+    {
+      "path": "widgets/menu-393-s1-logout-error.png",
+      "bytes": 88907,
+      "sha256": "351dab2274c688ee08942cb17b34b6775e797754fecb6008e62055a3d22937d3"
+    },
+    {
+      "path": "widgets/menu-393-s1.png",
+      "bytes": 81286,
+      "sha256": "a66f4300cde5f34527b033aaf216bceb83943b5b6e2ba87f5269c8793a80afa1"
+    },
+    {
+      "path": "widgets/tools-320-s2-action.png",
+      "bytes": 79624,
+      "sha256": "37f48282ded2f5d84741d9602fba40fbe73447c78f6674d25ba2126ddbd4fe0f"
+    },
+    {
+      "path": "widgets/tools-320-s2-create-unavailable.png",
+      "bytes": 53916,
+      "sha256": "022d373a9c8333ae863f016325081b85ea122a0c725fbe8ae0ebf1e2c41f37f2"
+    },
+    {
+      "path": "widgets/tools-320-s2.png",
+      "bytes": 77296,
+      "sha256": "c9bfbaa882ac27cad3abff7b045fc7d36df2a9b3cd1145c6a0cea200563bcefe"
+    },
+    {
+      "path": "widgets/tools-393-s1-create-unavailable.png",
+      "bytes": 34307,
+      "sha256": "4e495767b974a3c1be8d20d67cd868a80c987ecc9eee7fd6fc9cc142266af76e"
+    },
+    {
+      "path": "widgets/tools-393-s1.png",
+      "bytes": 56567,
+      "sha256": "b30e57fde60bd50cfb09bd5eef27c9908914cce38a29f77919f0528633f63e3b"
+    },
+    {
+      "path": "widgets/transaction-receipt-320-s2-bottom.png",
+      "bytes": 87116,
+      "sha256": "f2cd593cab7011dab51b873e65e535ef3d093c4bcb6d74428a4f7294631e1bff"
+    },
+    {
+      "path": "widgets/transaction-receipt-320-s2.png",
+      "bytes": 92789,
+      "sha256": "d402f992dffb6d27d2701a19cc1c1e09524d69087fdbc01ffd1a636273ec630e"
+    },
+    {
+      "path": "widgets/transaction-receipt-393-s1-bottom.png",
+      "bytes": 77707,
+      "sha256": "23492baec4e62e1791c49a4a3f352cd1aacd15f99803c5f822f26f90aacb5dc3"
+    },
+    {
+      "path": "widgets/transaction-receipt-393-s1.png",
+      "bytes": 77707,
+      "sha256": "23492baec4e62e1791c49a4a3f352cd1aacd15f99803c5f822f26f90aacb5dc3"
+    }
+  ],
+  "current_gallery_supersedes_images": true
+}

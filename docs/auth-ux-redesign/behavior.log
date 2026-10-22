@@ -1,0 +1,90 @@
+   Woah! You appear to be trying to run flutter as root.
+   We strongly recommend running the flutter tool without superuser privileges.
+  /
+📎
+00:00 +0: loading proxo_app/test/auth_refresh_test.dart
+00:00 +0: proxo_app/test/auth_refresh_test.dart: (setUpAll)
+00:00 +1: proxo_app/test/auth_refresh_test.dart: (setUpAll)
+00:00 +1: proxo_app/test/auth_email_signup_test.dart: auto-confirmed identity signs out before custom OTP delivery
+00:00 +2: proxo_app/test/auth_refresh_test.dart: Auth back restores login quickly, with reduced motion false
+00:00 +3: proxo_app/test/auth_refresh_test.dart: Auth back restores login quickly, with reduced motion false
+00:00 +4: proxo_app/test/auth_refresh_test.dart: Auth back restores login quickly, with reduced motion false
+00:00 +5: proxo_app/test/auth_refresh_test.dart: Auth back restores login quickly, with reduced motion false
+00:00 +6: proxo_app/test/auth_refresh_test.dart: Auth back restores login quickly, with reduced motion false
+00:00 +7: proxo_app/test/auth_refresh_test.dart: Auth back restores login quickly, with reduced motion false
+00:00 +8: proxo_app/test/auth_refresh_test.dart: Auth back restores login quickly, with reduced motion false
+00:00 +9: proxo_app/test/auth_refresh_test.dart: Auth back restores login quickly, with reduced motion false
+00:00 +10: proxo_app/test/auth_refresh_test.dart: Auth back restores login quickly, with reduced motion false
+00:00 +11: proxo_app/test/auth_refresh_test.dart: Auth back restores login quickly, with reduced motion false
+00:00 +12: proxo_app/test/auth_refresh_test.dart: Auth back restores login quickly, with reduced motion false
+00:00 +13: proxo_app/test/auth_refresh_test.dart: Auth back restores login quickly, with reduced motion false
+00:00 +14: proxo_app/test/auth_refresh_test.dart: Auth back restores login quickly, with reduced motion false
+00:00 +15: proxo_app/test/auth_refresh_test.dart: Auth back restores login quickly, with reduced motion false
+00:00 +16: proxo_app/test/auth_refresh_test.dart: Auth back restores login quickly, with reduced motion false
+00:00 +17: proxo_app/test/auth_refresh_test.dart: Auth back restores login quickly, with reduced motion false
+00:00 +18: proxo_app/test/auth_refresh_test.dart: Auth back restores login quickly, with reduced motion false
+00:00 +19: proxo_app/test/auth_refresh_test.dart: Auth back restores login quickly, with reduced motion false
+00:00 +20: proxo_app/test/auth_refresh_test.dart: Auth back restores login quickly, with reduced motion false
+00:00 +21: proxo_app/test/auth_refresh_test.dart: Auth back restores login quickly, with reduced motion false
+00:00 +22: proxo_app/test/auth_refresh_test.dart: Auth back restores login quickly, with reduced motion false
+00:00 +23: proxo_app/test/auth_refresh_test.dart: Auth back restores login quickly, with reduced motion false
+00:00 +24: proxo_app/test/auth_refresh_test.dart: Auth back restores login quickly, with reduced motion false
+00:00 +25: proxo_app/test/auth_refresh_test.dart: Auth back restores login quickly, with reduced motion false
+00:00 +26: proxo_app/test/auth_refresh_test.dart: Auth back restores login quickly, with reduced motion false
+00:01 +27: proxo_app/test/auth_refresh_test.dart: Auth back restores login quickly, with reduced motion false
+00:01 +28: proxo_app/test/auth_refresh_test.dart: Auth back restores login quickly, with reduced motion false
+00:01 +29: proxo_app/test/auth_refresh_test.dart: Auth back restores login quickly, with reduced motion false
+00:01 +30: proxo_app/test/auth_refresh_test.dart: Auth back restores login quickly, with reduced motion false
+00:01 +31: proxo_app/test/auth_refresh_test.dart: Auth back restores login quickly, with reduced motion false
+00:01 +32: proxo_app/test/auth_refresh_test.dart: Auth back restores login quickly, with reduced motion false
+00:01 +33: proxo_app/test/auth_refresh_test.dart: Auth back restores login quickly, with reduced motion false
+00:01 +33: proxo_app/test/proxo_tab_stack_test.dart: Original kept-alive tab ticker lifecycle
+TAB_TICKS optimized=false hidden=10 active=10 pumps=10
+00:01 +34: proxo_app/test/auth_refresh_test.dart: Auth back restores login quickly, with reduced motion false
+00:01 +35: proxo_app/test/auth_refresh_test.dart: Auth back restores login quickly, with reduced motion false
+00:01 +35: proxo_app/test/proxo_tab_stack_test.dart: Scoped kept-alive tab ticker lifecycle
+TAB_TICKS optimized=true hidden=0 active=10 pumps=10
+00:01 +36: proxo_app/test/auth_refresh_test.dart: Auth back restores login quickly, with reduced motion false
+00:01 +37: proxo_app/test/auth_refresh_test.dart: Auth back restores login quickly, with reduced motion false
+00:01 +38: proxo_app/test/account_setup_test.dart: slow setup shows indeterminate loading and never builds home early
+00:02 +39: proxo_app/test/account_setup_test.dart: slow setup shows indeterminate loading and never builds home early
+00:02 +40: proxo_app/test/account_setup_test.dart: slow setup shows indeterminate loading and never builds home early
+00:02 +41: proxo_app/test/account_setup_test.dart: slow setup shows indeterminate loading and never builds home early
+00:02 +42: proxo_app/test/auth_refresh_test.dart: Auth back restores login quickly, with reduced motion true
+00:02 +43: proxo_app/test/auth_otp_lifecycle_test.dart: localized typing and a later mixed paste retain earlier digits
+00:02 +44: proxo_app/test/account_setup_test.dart: failed setup offers retry and can recover after widget termination
+00:02 +45: proxo_app/test/auth_refresh_test.dart: single signup form uses custom email delivery, opens separate OTP and Back retains values
+00:02 +46: proxo_app/test/auth_refresh_test.dart: single signup form uses custom email delivery, opens separate OTP and Back retains values
+00:02 +47: proxo_app/test/auth_refresh_test.dart: single signup form uses custom email delivery, opens separate OTP and Back retains values
+00:02 +48: proxo_app/test/auth_refresh_test.dart: single signup form uses custom email delivery, opens separate OTP and Back retains values
+00:02 +49: proxo_app/test/auth_refresh_test.dart: single signup form uses custom email delivery, opens separate OTP and Back retains values
+00:02 +50: proxo_app/test/auth_refresh_test.dart: single signup form uses custom email delivery, opens separate OTP and Back retains values
+00:02 +51: proxo_app/test/auth_refresh_test.dart: single signup form uses custom email delivery, opens separate OTP and Back retains values
+00:03 +52: proxo_app/test/whatsapp_marketing_test.dart: email signup does not ask for phone marketing consent
+00:03 +53: proxo_app/test/whatsapp_marketing_test.dart: email signup does not ask for phone marketing consent
+00:03 +54: proxo_app/test/whatsapp_marketing_test.dart: email signup does not ask for phone marketing consent
+00:03 +55: proxo_app/test/whatsapp_marketing_test.dart: email signup does not ask for phone marketing consent
+00:04 +56: proxo_app/test/whatsapp_marketing_test.dart: email signup does not ask for phone marketing consent
+00:04 +57: proxo_app/test/whatsapp_marketing_test.dart: email signup does not ask for phone marketing consent
+00:04 +58: proxo_app/test/auth_refresh_test.dart: channel pill interpolates and rapid switches retain one active form
+00:04 +59: proxo_app/test/whatsapp_marketing_test.dart: profile marketing opt-out ckb 393.0 wraps and persists
+00:05 +60: proxo_app/test/auth_refresh_test.dart: setup ckb 393 failed=false
+00:05 +61: proxo_app/test/whatsapp_marketing_test.dart: profile marketing opt-out ar 393.0 wraps and persists
+00:05 +62: proxo_app/test/whatsapp_marketing_test.dart: profile marketing opt-out ar 393.0 wraps and persists
+00:05 +63: proxo_app/test/auth_refresh_test.dart: setup ar 393 failed=false
+00:05 +64: proxo_app/test/whatsapp_marketing_test.dart: profile marketing opt-out kmr 393.0 wraps and persists
+00:05 +65: proxo_app/test/whatsapp_marketing_test.dart: profile marketing opt-out kmr 393.0 wraps and persists
+00:05 +66: proxo_app/test/auth_refresh_test.dart: setup kmr 393 failed=false
+00:05 +67: proxo_app/test/whatsapp_marketing_test.dart: profile marketing opt-out ckb 280.0 wraps and persists
+00:05 +68: proxo_app/test/whatsapp_marketing_test.dart: profile marketing opt-out ckb 280.0 wraps and persists
+00:05 +69: proxo_app/test/auth_refresh_test.dart: setup ckb 280 failed=false
+00:05 +70: proxo_app/test/whatsapp_marketing_test.dart: profile marketing opt-out ar 280.0 wraps and persists
+00:05 +71: proxo_app/test/whatsapp_marketing_test.dart: profile marketing opt-out ar 280.0 wraps and persists
+00:05 +72: proxo_app/test/whatsapp_marketing_test.dart: profile marketing opt-out ar 280.0 wraps and persists
+00:05 +73: proxo_app/test/auth_refresh_test.dart: setup ar 280 failed=true
+00:05 +74: proxo_app/test/whatsapp_marketing_test.dart: profile marketing opt-out kmr 280.0 wraps and persists
+00:06 +75: proxo_app/test/whatsapp_marketing_test.dart: profile marketing opt-out kmr 280.0 wraps and persists
+00:06 +76: proxo_app/test/auth_refresh_test.dart: setup kmr 280 failed=true
+00:06 +77: proxo_app/test/whatsapp_marketing_test.dart: failed opt-out stays unsaved and can be retried
+00:06 +78: proxo_app/test/whatsapp_marketing_test.dart: (tearDownAll)
+00:06 +78: All tests passed!

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:ui' as ui;
@@ -26,6 +27,7 @@ void main() {
   final requests = <http.Request>[];
   var optedIn = true;
   var saveFails = false;
+  Completer<void>? saveGate;
   setUpAll(() async {
     SharedPreferences.setMockInitialValues({});
     final fonts =
@@ -58,6 +60,7 @@ void main() {
               {'opted_in': optedIn},
             ];
           case '/rest/v1/rpc/pa_set_whatsapp_marketing':
+            await saveGate?.future;
             if (saveFails) {
               status = 500;
               body = {'message': 'fixture failure'};
@@ -81,8 +84,10 @@ void main() {
     String part(Object value) =>
         base64Url.encode(utf8.encode(jsonEncode(value))).replaceAll('=', '');
     const owner = '11111111-1111-4111-8111-111111111111';
-    final token =
-        '${part({'alg': 'HS256'})}.${part({'sub': owner, 'exp': DateTime.now().millisecondsSinceEpoch ~/ 1000 + 86400})}.fixture';
+    final token = '${part({'alg': 'HS256'})}.${part({
+          'sub': owner,
+          'exp': DateTime.now().millisecondsSinceEpoch ~/ 1000 + 86400
+        })}.fixture';
     await client.auth.recoverSession(
       jsonEncode(
         Session(
@@ -114,28 +119,29 @@ void main() {
   setUp(() {
     requests.clear();
     saveFails = false;
+    saveGate = null;
     optedIn = true;
   });
 
   Widget host(Widget child, {double scale = 1}) => MaterialApp(
-    debugShowCheckedModeBanner: false,
-    locale: const Locale('ar'),
-    supportedLocales: const [Locale('ar')],
-    localizationsDelegates: const [
-      GlobalMaterialLocalizations.delegate,
-      GlobalWidgetsLocalizations.delegate,
-      GlobalCupertinoLocalizations.delegate,
-    ],
-    theme: ThemeData(fontFamily: kAppFont, useMaterial3: true),
-    builder: (context, child) => ProxoLocaleScope(
-      child: MediaQuery(
-        data: MediaQuery.of(context)
-            .copyWith(textScaler: TextScaler.linear(scale)),
-        child: child!,
-      ),
-    ),
-    home: child,
-  );
+        debugShowCheckedModeBanner: false,
+        locale: const Locale('ar'),
+        supportedLocales: const [Locale('ar')],
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        theme: ThemeData(fontFamily: kAppFont, useMaterial3: true),
+        builder: (context, child) => ProxoLocaleScope(
+          child: MediaQuery(
+            data: MediaQuery.of(context)
+                .copyWith(textScaler: TextScaler.linear(scale)),
+            child: child!,
+          ),
+        ),
+        home: child,
+      );
   Future<void> settle(WidgetTester t) async {
     await t.runAsync(() async {
       await Future<void>.delayed(const Duration(milliseconds: 30));
@@ -186,7 +192,7 @@ void main() {
     },
   );
   testWidgets(
-    'signup starts unchecked and remains ready without marketing consent',
+    'email signup does not ask for phone marketing consent',
     (t) async {
       await t.pumpWidget(host(const AuthShell()));
       await settle(t);
@@ -197,37 +203,18 @@ void main() {
       await t.tap(link);
       await settle(t);
       final fields = find.byType(TextField);
+      expect(fields, findsNWidgets(4));
       await t.enterText(fields.at(0), 'Fixture User');
-      await t.enterText(fields.at(1), '7500000001');
+      await t.enterText(fields.at(1), 'fixture@example.com');
+      await t.enterText(fields.at(2), 'Example#9');
+      await t.enterText(fields.at(3), 'Example#9');
       await t.pump();
-      await t.ensureVisible(find.byKey(const ValueKey('signup-next')));
-      await t.tap(find.byKey(const ValueKey('signup-next')));
-      await settle(t);
-      expect(
-        t.widget<CheckboxListTile>(find.byType(CheckboxListTile)).value,
-        false,
-      );
-      for (final field in [0, 1]) {
-        await t.enterText(fields.at(field), 'Example#9');
-      }
-      await t.pump();
-      final button = find.byWidgetPredicate(
-        (w) => w is AuthPrimaryButton && w.label == AuthStrings.signUpButton,
-      );
+      expect(find.byType(CheckboxListTile), findsNothing);
+      expect(find.byType(AuthWhatsappConsent), findsNothing);
+      final button = find.byKey(const ValueKey('signup-submit'));
       expect(t.widget<AuthPrimaryButton>(button).enabled, true);
-      await t.ensureVisible(find.byType(CheckboxListTile));
-      await t.tap(find.byType(CheckboxListTile));
-      await t.pump();
-      expect(
-        t.widget<CheckboxListTile>(find.byType(CheckboxListTile)).value,
-        true,
-      );
-      expect(t.widget<AuthPrimaryButton>(button).enabled, true);
-      expect(
-        requests,
-        isEmpty,
-        reason: 'Toggling never sends a WhatsApp message',
-      );
+      expect(requests, isEmpty,
+          reason: 'Entering email details sends no WhatsApp request');
       await t.pumpWidget(const SizedBox());
       await t.pump();
     },
@@ -284,6 +271,49 @@ void main() {
       );
     }
   }
+  testWidgets(
+      'preference timeout unlocks retained selection and repeated taps send once',
+      (t) async {
+    saveGate = Completer<void>();
+    await t.pumpWidget(host(const WhatsappMarketingScreen()));
+    await settle(t);
+    await t.tap(find.byType(CheckboxListTile));
+    await t.pump();
+    final submit =
+        t.widget<AuthPrimaryButton>(find.byType(AuthPrimaryButton)).onPressed!;
+    submit();
+    submit();
+    await t.pump();
+    expect(
+        requests
+            .where((r) => r.url.path.endsWith('pa_set_whatsapp_marketing'))
+            .length,
+        1);
+    expect(t.widget<AuthPrimaryButton>(find.byType(AuthPrimaryButton)).loading,
+        true);
+    await t.pump(const Duration(seconds: 21));
+    await settle(t);
+    final choice = t.widget<CheckboxListTile>(find.byType(CheckboxListTile));
+    expect(choice.value, false);
+    expect(choice.onChanged, isNotNull);
+    expect(t.widget<AuthPrimaryButton>(find.byType(AuthPrimaryButton)).loading,
+        false);
+    expect(t.widget<AuthPrimaryButton>(find.byType(AuthPrimaryButton)).enabled,
+        true);
+    expect(find.byType(AuthAlert), findsOneWidget);
+    // Deliver the old response after its deadline. It cannot relock the UI.
+    saveGate!.complete();
+    await settle(t);
+    saveGate = null;
+    await t.tap(find.byType(AuthPrimaryButton));
+    await settle(t);
+    expect(optedIn, false);
+    expect(t.widget<AuthPrimaryButton>(find.byType(AuthPrimaryButton)).enabled,
+        false);
+    expect(t.takeException(), isNull);
+    await t.pumpWidget(const SizedBox());
+    await t.pump();
+  });
   testWidgets('failed opt-out stays unsaved and can be retried', (t) async {
     saveFails = true;
     await t.pumpWidget(host(const WhatsappMarketingScreen()));

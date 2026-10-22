@@ -4,41 +4,77 @@
     "url": "https://fib.iq/wp-content/themes/FIB/assets/images/header-mobile-logo.svg",
     "source_sha256": "88beb2ab9268bcaef4b96ea79213b48f31cbd373347a815836dd1d6ec5dc96f6",
     "bundled_sha256": "88beb2ab9268bcaef4b96ea79213b48f31cbd373347a815836dd1d6ec5dc96f6",
-    "change": "none"
+    "change": "none",
+    "official_page": "https://fib.iq/",
+    "downloaded_at": "2026-10-15",
+    "checked_at": "2026-10-20",
+    "license": "Provider trademark; no open-source artwork license is asserted.",
+    "verification_status": "Original official SVG retained; its recorded 2026-10-19 HTTP 200 hash matches bundled bytes. Direct refresh on 2026-10-20 returned HTTP 403; current-day bytes could not be revalidated."
   },
   {
     "file": "qi.svg",
     "url": "https://qi.iq/images/logo.svg?1=1",
     "source_sha256": "34ee5a6501b76b039248f35c6465f7b4cbba56acacb41ffd84d6c2027d089125",
     "bundled_sha256": "34ee5a6501b76b039248f35c6465f7b4cbba56acacb41ffd84d6c2027d089125",
-    "change": "none"
+    "change": "none",
+    "official_page": "https://qi.iq/en/home",
+    "downloaded_at": "2026-10-15",
+    "checked_at": "2026-10-19",
+    "license": "Provider trademark; no open-source artwork license is asserted.",
+    "verification_status": "Official asset fetched with HTTP 200 on 2026-10-19; SHA-256 matches the recorded source. The current official homepage references this logo asset."
   },
   {
     "file": "korek.svg",
     "url": "https://www.korektel.com/media/logos/Korek_En.svg",
     "source_sha256": "a0d888fc4a0a26c320062726e61a7aeb1e4c8e7c5b5614ccc8532101de1d8f3d",
     "bundled_sha256": "2df2219186408d54a0e9941fa045125b3c1554c687379fa33ff8631dde49f265",
-    "change": "CSS declarations inlined only"
+    "change": "CSS declarations inlined only",
+    "official_page": "https://www.korektel.com/",
+    "downloaded_at": "2026-10-15",
+    "checked_at": "2026-10-19",
+    "license": "Provider trademark; no open-source artwork license is asserted.",
+    "verification_status": "Official asset fetched with HTTP 200 on 2026-10-19; SHA-256 matches the recorded source. The current official homepage references this logo asset."
   },
   {
     "file": "zaincash.svg",
-    "url": "https://docs.zaincash.iq/_nuxt/logo_zc_black.D8uxnIq0.svg",
-    "source_sha256": "d46fd8ccc5b17bf7904fa0542727e376e022a67d8445816ced55c305c6b8d40a",
-    "bundled_sha256": "6bfce90d6ff1f80a0f912940977c0c223a03a30c03318127de8690172be4e622",
-    "change": "CSS declarations inlined only"
+    "url": "https://docs.zaincash.iq/Brandining/ZainCashlogos.zip",
+    "source_sha256": "28818bf311c489b557684c87bbc3ede9bec089bcb7bb996836e2c22daee3db25",
+    "bundled_sha256": "4fba912b51cc1956c53c384849fa187016c1721fd1aac1dfb87adf4a45c2cea6",
+    "change": "CSS fill declarations inlined for Flutter SVG only; paths, viewBox, original rounded-square background, gradient and brand colors unchanged.",
+    "official_page": "https://docs.zaincash.iq/",
+    "downloaded_at": "2026-10-19",
+    "checked_at": "2026-10-19",
+    "license": "Provider trademark; no open-source artwork license is asserted.",
+    "archive_member": "Icon.svg",
+    "archive_sha256": "bd51c7c671ac5457f73fe7111d4ca20555a1043f1d8738b0775829a70db7e733",
+    "verification_status": "Official merchant branding archive fetched with HTTP 200; original and Flutter-compatible render compared pixel for pixel.",
+    "brand_guidelines": "https://docs.zaincash.iq/#brand-identity",
+    "view_box": "0 0 295.19 295.19"
   },
   {
     "file": "asiacell.svg",
     "url": "https://www.asiacell.com/assets/ac-logo.svg",
     "source_sha256": "5779fcb00363c6e2a86777f0b05d5c4e0650cf67aaf6414428bb1eeb6767499e",
     "bundled_sha256": "5779fcb00363c6e2a86777f0b05d5c4e0650cf67aaf6414428bb1eeb6767499e",
-    "change": "none"
+    "change": "none",
+    "official_page": "https://www.asiacell.com/personal",
+    "downloaded_at": "2026-10-15",
+    "checked_at": "2026-10-19",
+    "license": "Provider trademark; no open-source artwork license is asserted.",
+    "verification_status": "Retained the official asset downloaded on 2026-10-15. Direct refresh on 2026-10-19 returned HTTP 503 and the website returned a bot challenge; current asset bytes could not be revalidated."
   },
   {
     "file": "fastpay.png",
     "url": "https://fast-pay.iq/img/clogo.png",
     "source_sha256": "c5aea407251e257a3fdc9c15c7b5ce3a36de4a2ffd8e2561caba9659f8941423",
     "bundled_sha256": "c5aea407251e257a3fdc9c15c7b5ce3a36de4a2ffd8e2561caba9659f8941423",
-    "change": "none"
+    "change": "none",
+    "official_page": "https://www.fastpay.iq/",
+    "downloaded_at": "2026-10-15",
+    "checked_at": "2026-10-20",
+    "license": "Provider trademark; no open-source artwork license is asserted.",
+    "verification_status": "Official asset fetched with HTTP 200 on 2026-10-20; SHA-256 matches the bundled original.",
+    "verification_note": "Both https://fast-pay.iq/img/clogo.png and https://www.fastpay.iq/img/clogo.png return identical bytes. The official homepage supplies a PNG; no fabricated SVG replacement is bundled.",
+    "terms": "https://www.fastpay.iq/terms"
   }
 ]

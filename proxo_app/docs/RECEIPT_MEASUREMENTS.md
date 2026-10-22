@@ -1,8 +1,8 @@
 # Receipt reference measurements
 
-The supplied references are 963 x 1536 and 964 x 1536 pixels. They show the same ad receipt with a one-pixel width difference. The canonical Flutter surface is 393 x 627 dp at normal system text size. Measurements below are relative to the receipt surface, excluding the app bar and PDF button.
+The current supplied reference is 1283 × 2048 pixels. It is a resized version of the existing 1572 × 2508 PNG in `receipt_preview.png`. The canonical Flutter surface is **393 × 627 logical pixels at normal text size**, captured at 4× resolution. Measurements exclude the app bar and PDF button.
 
-Both Ad Detail and Transaction Detail use `ReceiptSurface` and the shared receipt widgets. The surface lays out at 393 dp and uses one proportional paint transform to fit the available width. Margins, font sizes, shadow, radius, rules, and row spacing therefore retain fractional coordinates together. The transaction keeps its own fields and has a shorter height.
+Both advertisement and transaction receipts use the same receipt components. At the reference width, the restored advertisement originally matched the original PNG exactly. The subsequent requested Kurdish label changes are captured separately in `receipt_labels_preview.png`; all dimensions, typography and styling remain unchanged. Other widths retain native text sizing: long fields wrap, enlarged text can stack labels and values, and overflowing identifiers use a full-width single-line scroll area. Transaction receipts retain their own fields and status; their height follows their content.
 
 | Property | Canonical measurement |
 | --- | --- |
@@ -20,23 +20,27 @@ Both Ad Detail and Transaction Detail use `ReceiptSurface` and the shared receip
 | Header / section font size | 13 sp |
 | Labels, values, identifiers | 11 sp |
 | Final total | 12 sp |
-| Font family / Flutter weight | Rabar / w400 |
+| Font family / Flutter weight | ProxoReceipt (Rabar_021 bytes) / w400 |
 | Section color | #046CFA |
 | Page / card | White |
 
-The body uses the existing Rabar_021 font bytes. `w400` does not change the outlines of the bundled font. Identifiers remain complete on one line and preserve their original copied value. Larger system text is applied during canonical layout before proportional fitting.
+The receipt-only `ProxoReceipt` family uses the existing Rabar_021 font bytes. The font has its original bold outlines; Flutter requests w400 without synthesizing extra weight. Shared app headers and transaction history retain their existing Rabar_022 typography.
+
+Fitting identifiers occupy the original compact row and can be copied by long press. An overflowing identifier gets a full-width horizontal viewport and a visible copy action. All identifiers preserve their complete raw value.
 
 ## Verification
 
-The coordinate regression covers widths 280, 393, 430, 963, and 964 dp with a 0.01 dp tolerance. Existing layout tests additionally cover seven widths, three text scales, Kurdish and Arabic, four transaction kinds, three statuses, and long mixed-language fields. Bounds and baselines are measured after the canvas transform.
+`receipt_reference_match_test.dart` compares the actual production card against `receipt_labels_preview.png` at 4× resolution, incorporating only the requested Kurdish label changes. The original `receipt_preview.png` is preserved unchanged. It also asserts the surface, card, five divider positions and thirteen row rectangles above exactly. Do not regenerate the reference to accept a design change.
 
-PDF export captures the complete production surface at 4x resolution, including the card shadow and margins. Its page dimensions equal the displayed surface dimensions (1 dp = 1 PDF point); it adds no A4 margins or separate PDF typography. Pixel comparisons inspect the embedded image against the Flutter capture, then Poppler renders are reviewed visually.
+The wider layout suite covers Kurdish and Arabic, representative 280–964dp widths, 100%, 130% and 200% text, and long mixed-language fields. Separate responsive tests include 240dp at 300% text. Glyph coverage, baselines, wrapping, copied IDs and control recovery are checked.
 
-The attached references are resized images, so their RGB pixels also reflect resampling/compression. The coordinate checks measure layout precision; screenshot RGB comparison is reported separately in `receipt_pdf_comparison.json`.
+PDF export captures the production surface at 4× resolution. It places that artwork on A4 pages with 36-point margins and splits long receipts between protected rows. Fitting identifiers remain untouched in the captured artwork; only overflowing identifier viewports are repainted with the complete code for export. Full identifiers also remain in PDF metadata.
+
+The supplied attachment has resampling differences relative to its original PNG. Exact canonical matching and the separate uploaded-image comparison are recorded in [the reference report](../../docs/evidence/receipt-reference-match-2026-10-23/README.md).
 
 ## Reproduce
 
 ```sh
-CI=true flutter pub get
-CI=true flutter test test/receipt_layout_test.dart test/receipt_pdf_test.dart test/ad_receipt_data_test.dart test/ad_detail_loading_test.dart --dart-define=RECEIPT_MEASUREMENTS=docs/receipt_measurements.json --dart-define=RECEIPT_PDF_CAPTURE=docs/single_line_audit --reporter expanded
+flutter test --no-pub test/receipt_reference_match_test.dart --dart-define=RECEIPT_REFERENCE_CAPTURE=build/receipt-reference/canonical.png --reporter expanded
+flutter test --no-pub test/receipt_layout_test.dart test/receipt_pdf_test.dart test/ad_receipt_data_test.dart test/ad_detail_loading_test.dart --dart-define=RECEIPT_PDF_CAPTURE=build/receipt-reference/exports --reporter expanded
 ```

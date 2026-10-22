@@ -1,0 +1,163 @@
+{
+  "repository": "Zana-Sponsor/proxobalance",
+  "pull_request": 44,
+  "source_commit": "12e4e7cc9048449cd46d347597fbedda714a5563",
+  "source_tree": "f73cb469f9a3ea92e299ecb8da07c3aff0d39576",
+  "tested_merge_commit": "520028fa22f3e2eb9f2d565b8ba5b4e65fc1ccb2",
+  "tested_merge_tree": "f73cb469f9a3ea92e299ecb8da07c3aff0d39576",
+  "complete_tree_identical": true,
+  "run": {
+    "id": 39847041747,
+    "name": "Proxo Android polish runtime",
+    "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/39847041747",
+    "status": "completed",
+    "conclusion": "success",
+    "head_sha": "12e4e7cc9048449cd46d347597fbedda714a5563",
+    "event": "pull_request",
+    "started_at": "2026-10-22T20:14:00Z",
+    "updated_at": "2026-10-22T20:26:46Z",
+    "jobs": [
+      {
+        "id": 120062944247,
+        "name": "android-profile",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-10-22T20:14:03Z",
+        "completed_at": "2026-10-22T20:26:45Z",
+        "elapsed_seconds": 762,
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/setup-java@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run subosito/flutter-action@v2",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run gradle/actions/setup-gradle@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Verify profile runner timeout and cleanup",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Prepare profile fixture",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Enable emulator acceleration",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run reactivecircus/android-emulator-runner@v2",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Retain measured frames and actual Android screenshots",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run gradle/actions/setup-gradle@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run subosito/flutter-action@v2",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/setup-java@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ]
+      }
+    ],
+    "artifacts": [
+      {
+        "id": 12456616683,
+        "name": "proxo-polish-android-runtime",
+        "size_in_bytes": 8445871,
+        "digest": "sha256:f0137391524dcd5bd4c9f5c251467eb9afb025857689fb8b201671034a2e0129",
+        "expires_at": "2026-11-21T20:26:39Z",
+        "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/39847041747/artifacts/12456616683"
+      }
+    ]
+  },
+  "summary": {
+    "complete": true,
+    "functional_conclusion": "success",
+    "mode": "profile AOT",
+    "run_elapsed_seconds": 762,
+    "driver_elapsed_seconds": 520.802,
+    "screen_action_measurements": 45,
+    "engine_frame_count": 1515,
+    "flutter_native_pngs": 56,
+    "adb_native_pngs": 4,
+    "selected_pngs": 8,
+    "actual_viewport_pixels": [
+      1080,
+      1920
+    ],
+    "device_pixel_ratio": 2.75,
+    "menu": {
+      "native_back_dispatched": true,
+      "activity_alive_after_back": true,
+      "dismissal_cycles": 3,
+      "unintended_navigation": []
+    },
+    "ad_error_recovery": {
+      "real_android_text_input": true,
+      "keyboard_inset_pixels": 946,
+      "retry_same_pending_id": true,
+      "edits_retained": true,
+      "navigation_recovered": true
+    },
+    "performance": {
+      "build_p95_ms": 5.962,
+      "raster_p95_ms": 92.598,
+      "raster_frames_above_16ms": 1347,
+      "total_frames": 1515,
+      "assessment": "Poor software GPU raster timing; this run does not meet a16ms target or demonstrate60fps. Physical-device performance remains unverified."
+    },
+    "results_directory": "native/current",
+    "artifact_id": 12456616683,
+    "artifact_sha256": "f0137391524dcd5bd4c9f5c251467eb9afb025857689fb8b201671034a2e0129",
+    "ad_validation_notice": {
+      "observed_ms": 2043,
+      "scroll_recovered": true,
+      "source": "runtime.json observations.ad_validation_notice_*"
+    }
+  }
+}

@@ -1,0 +1,231 @@
+{
+  "screenshots": 155,
+  "viewports_dp": [
+    [
+      393,
+      852
+    ],
+    [
+      320,
+      740
+    ]
+  ],
+  "font_occurrences": {
+    "RabarAuthRegular": 2741,
+    "Rabar": 706,
+    "MaterialIcons": 82
+  },
+  "text_styles": [
+    {
+      "family": "MaterialIcons",
+      "size_dp": 16.0,
+      "scale": 1.0,
+      "node_occurrences": 10
+    },
+    {
+      "family": "MaterialIcons",
+      "size_dp": 18.0,
+      "scale": 1.0,
+      "node_occurrences": 20
+    },
+    {
+      "family": "MaterialIcons",
+      "size_dp": 24.0,
+      "scale": 1.0,
+      "node_occurrences": 20
+    },
+    {
+      "family": "MaterialIcons",
+      "size_dp": 28.0,
+      "scale": 1.0,
+      "node_occurrences": 32
+    },
+    {
+      "family": "Rabar",
+      "size_dp": 11.5,
+      "scale": 1.0,
+      "node_occurrences": 56
+    },
+    {
+      "family": "Rabar",
+      "size_dp": 12.0,
+      "scale": 1.0,
+      "node_occurrences": 80
+    },
+    {
+      "family": "Rabar",
+      "size_dp": 12.0,
+      "scale": 2.0,
+      "node_occurrences": 80
+    },
+    {
+      "family": "Rabar",
+      "size_dp": 12.5,
+      "scale": 1.0,
+      "node_occurrences": 56
+    },
+    {
+      "family": "Rabar",
+      "size_dp": 13.0,
+      "scale": 1.0,
+      "node_occurrences": 10
+    },
+    {
+      "family": "Rabar",
+      "size_dp": 13.0,
+      "scale": 2.0,
+      "node_occurrences": 10
+    },
+    {
+      "family": "Rabar",
+      "size_dp": 14.0,
+      "scale": 1.0,
+      "node_occurrences": 115
+    },
+    {
+      "family": "Rabar",
+      "size_dp": 14.0,
+      "scale": 2.0,
+      "node_occurrences": 115
+    },
+    {
+      "family": "Rabar",
+      "size_dp": 16.0,
+      "scale": 1.0,
+      "node_occurrences": 76
+    },
+    {
+      "family": "Rabar",
+      "size_dp": 16.0,
+      "scale": 1.34,
+      "node_occurrences": 14
+    },
+    {
+      "family": "Rabar",
+      "size_dp": 16.0,
+      "scale": 2.0,
+      "node_occurrences": 62
+    },
+    {
+      "family": "Rabar",
+      "size_dp": 21.0,
+      "scale": 1.0,
+      "node_occurrences": 16
+    },
+    {
+      "family": "Rabar",
+      "size_dp": 21.0,
+      "scale": 2.0,
+      "node_occurrences": 16
+    },
+    {
+      "family": "RabarAuthRegular",
+      "size_dp": 12.0,
+      "scale": 1.0,
+      "node_occurrences": 91
+    },
+    {
+      "family": "RabarAuthRegular",
+      "size_dp": 12.0,
+      "scale": 2.0,
+      "node_occurrences": 91
+    },
+    {
+      "family": "RabarAuthRegular",
+      "size_dp": 13.0,
+      "scale": 1.0,
+      "node_occurrences": 490
+    },
+    {
+      "family": "RabarAuthRegular",
+      "size_dp": 13.0,
+      "scale": 2.0,
+      "node_occurrences": 473
+    },
+    {
+      "family": "RabarAuthRegular",
+      "size_dp": 14.0,
+      "scale": 1.0,
+      "node_occurrences": 497
+    },
+    {
+      "family": "RabarAuthRegular",
+      "size_dp": 14.0,
+      "scale": 2.0,
+      "node_occurrences": 490
+    },
+    {
+      "family": "RabarAuthRegular",
+      "size_dp": 15.0,
+      "scale": 1.0,
+      "node_occurrences": 48
+    },
+    {
+      "family": "RabarAuthRegular",
+      "size_dp": 15.0,
+      "scale": 2.0,
+      "node_occurrences": 48
+    },
+    {
+      "family": "RabarAuthRegular",
+      "size_dp": 16.0,
+      "scale": 1.0,
+      "node_occurrences": 87
+    },
+    {
+      "family": "RabarAuthRegular",
+      "size_dp": 16.0,
+      "scale": 2.0,
+      "node_occurrences": 99
+    },
+    {
+      "family": "RabarAuthRegular",
+      "size_dp": 17.0,
+      "scale": 1.0,
+      "node_occurrences": 10
+    },
+    {
+      "family": "RabarAuthRegular",
+      "size_dp": 17.0,
+      "scale": 2.0,
+      "node_occurrences": 10
+    },
+    {
+      "family": "RabarAuthRegular",
+      "size_dp": 18.0,
+      "scale": 1.0,
+      "node_occurrences": 126
+    },
+    {
+      "family": "RabarAuthRegular",
+      "size_dp": 18.0,
+      "scale": 2.0,
+      "node_occurrences": 121
+    },
+    {
+      "family": "RabarAuthRegular",
+      "size_dp": 20.0,
+      "scale": 1.0,
+      "node_occurrences": 14
+    },
+    {
+      "family": "RabarAuthRegular",
+      "size_dp": 20.0,
+      "scale": 2.0,
+      "node_occurrences": 8
+    },
+    {
+      "family": "RabarAuthRegular",
+      "size_dp": 22.0,
+      "scale": 1.0,
+      "node_occurrences": 19
+    },
+    {
+      "family": "RabarAuthRegular",
+      "size_dp": 22.0,
+      "scale": 2.0,
+      "node_occurrences": 19
+    }
+  ],
+  "layout_exception_total": 0
+}

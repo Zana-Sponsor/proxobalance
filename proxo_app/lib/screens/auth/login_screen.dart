@@ -19,7 +19,7 @@ class LoginScreen extends StatelessWidget {
         const AuthHeader.login(),
         const SizedBox(height: AuthTokens.gapHeaderToTitle),
         AuthIntro(
-          icon: 'login',
+          icon: 'signin_outline',
           title: AuthStrings.signInTitle,
           subtitle: AuthStrings.signInSubtitle,
         ),

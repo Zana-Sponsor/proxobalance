@@ -1,0 +1,29 @@
+{
+  "source": "Actual AdCreateScreen and production theme rendered by Flutter",
+  "fixture": "Isolated read-only ActualAdRepository; no advertisement submitted",
+  "image_kind": "Screenshot of the real Proxo form, not a TikTok app screenshot",
+  "viewport_dp": [
+    393,
+    852
+  ],
+  "capture_bounds_dp": [
+    24.0,
+    388.0,
+    345.0,
+    106.0
+  ],
+  "pixels": [
+    1035,
+    318
+  ],
+  "dpr": 3,
+  "sample_url": "https://www.tiktok.com/@scout2015/video/6718335390845095173",
+  "sample_url_source": "https://developers.tiktok.com/docs/en/embed-videos",
+  "layout_exceptions": [],
+  "head_commit": "05d6d80dd95e275de438d3b97800419d97ea0a2b",
+  "workflow_run": 39232514249,
+  "artifact_id": 12177807146,
+  "artifact_sha256": "80f43cdde192b05c58457b98c65837ad7b798fc148cc16ded6c6ea7f6f131236",
+  "image_sha256": "b987786229b5c0b860cd39e510fc48f07d6e41c89fadecf1ac53672a1e175e89",
+  "source_asset": "proxo_app/assets/images/ad_video_link_example.png"
+}

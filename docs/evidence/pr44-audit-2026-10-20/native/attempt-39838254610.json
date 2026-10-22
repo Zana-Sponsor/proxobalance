@@ -1,0 +1,77 @@
+{
+  "run_id": 39838254610,
+  "job_id": 120032164885,
+  "source_commit": "3a90b93059a2a74d7eb37eb3f509582cce2fa366",
+  "conclusion": "cancelled",
+  "complete": false,
+  "started_at": "2026-10-22T19:13:54Z",
+  "completed_at": "2026-10-22T19:53:58Z",
+  "elapsed_seconds": 2404,
+  "profile_apk_build_seconds": 209.3,
+  "artifact": {
+    "id": 12455085567,
+    "bytes": 5993,
+    "sha256": "de72ce6e7b583c35d8dd3db97622b1c59d33d03b3a25c4a245d492d3dc069f85",
+    "files": [
+      {
+        "name": "driver.log",
+        "bytes": 24977
+      }
+    ]
+  },
+  "environment": {
+    "configuration": "Android API35 x86_64 google_apis, Flutter3.47.2 profile AOT, SwiftShader software GPU",
+    "observed_profile_apk_built": true,
+    "observed_app_launched": true,
+    "device_metadata_file_available": false
+  },
+  "screen_markers_before_interruption": 32,
+  "screen_markers": [
+    "splash",
+    "home",
+    "ads",
+    "ad-create",
+    "ad-confirmation",
+    "ad-details",
+    "tools",
+    "tools-empty",
+    "page-create",
+    "page-details",
+    "page-edit",
+    "profile",
+    "profile-edit",
+    "deposit",
+    "transaction",
+    "notifications",
+    "faq",
+    "tutorial",
+    "results",
+    "levels",
+    "tasks",
+    "vouchers",
+    "discounts",
+    "sidebar",
+    "whatsapp-preferences",
+    "account-setup-error",
+    "web-preview-error",
+    "new-password",
+    "otp",
+    "ads-empty",
+    "home-result-summary",
+    "results-expansion"
+  ],
+  "observed_failure": "Android Back injection at the open menu was followed by PolishRuntimeActivity becoming invisible and finishing. No subsequent screen marker. The driver waited for request_data until GitHub job timeout.",
+  "root_cause_status": "Back dispatch / route handling under investigation; no completed runtime or performance result.",
+  "available_results": {
+    "runtime_json": false,
+    "device_json": false,
+    "performance_summary": false,
+    "retained_native_screenshots": 0
+  },
+  "limits": [
+    "Screen markers are partial execution evidence, not a passed complete flow.",
+    "Timing statistics were held in memory and were not retained after activity shutdown; EGL log averages are not app frame benchmarks.",
+    "No physical-device or hosted payment verification."
+  ]
+}
+

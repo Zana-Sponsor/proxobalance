@@ -1,0 +1,34 @@
+   Woah! You appear to be trying to run flutter as root.
+   We strongly recommend running the flutter tool without superuser privileges.
+  /
+📎
+Analyzing 3 items...                                            
+
+   info • The import of 'dart:ui' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/scheduler.dart'. Try removing the import directive • integration_test/polish_runtime_test.dart:4:8 • unnecessary_import
+   info • The import of 'package:flutter/rendering.dart' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart'. Try removing the import directive • integration_test/polish_runtime_test.dart:7:8 • unnecessary_import
+   info • Don't invoke 'print' in production code. Try using a logging framework • integration_test/polish_runtime_test.dart:86:5 • avoid_print
+   info • Don't invoke 'print' in production code. Try using a logging framework • integration_test/polish_runtime_test.dart:203:7 • avoid_print
+   info • Statements in a for should be enclosed in a block. Try wrapping the statement in a block • integration_test/polish_runtime_test.dart:315:42 • curly_braces_in_flow_control_structures
+   info • Don't invoke 'print' in production code. Try using a logging framework • integration_test/polish_runtime_test.dart:344:7 • avoid_print
+   info • Statements in a for should be enclosed in a block. Try wrapping the statement in a block • integration_test/polish_runtime_test.dart:381:9 • curly_braces_in_flow_control_structures
+   info • Don't invoke 'print' in production code. Try using a logging framework • integration_test/polish_runtime_test.dart:428:5 • avoid_print
+   info • Don't invoke 'print' in production code. Try using a logging framework • integration_test/polish_runtime_test.dart:446:5 • avoid_print
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/auth/auth_shell.dart:115:7 • curly_braces_in_flow_control_structures
+   info • The private field _pendingWhatsappMarketing could be 'final'. Try making the field 'final' • lib/screens/auth/auth_shell.dart:183:8 • prefer_final_fields
+   info • The private field _pendingConsentLocale could be 'final'. Try making the field 'final' • lib/screens/auth/auth_shell.dart:184:10 • prefer_final_fields
+   info • Use interpolation to compose strings and values. Try using string interpolation to build the composite string • lib/screens/auth/auth_shell.dart:399:7 • prefer_interpolation_to_compose_strings
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/auth/auth_shell.dart:410:7 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/auth/auth_shell.dart:615:7 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/auth/auth_shell.dart:760:33 • curly_braces_in_flow_control_structures
+   info • Don't use 'BuildContext's across async gaps. Try rewriting the code to not use the 'BuildContext', or guard the use with a 'mounted' check • lib/screens/auth/auth_shell.dart:1080:20 • use_build_context_synchronously
+warning • Unnecessary cast. Try removing the cast • lib/screens/auth/auth_shell.dart:1229:39 • unnecessary_cast
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/auth/auth_shell.dart:1385:32 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/auth/auth_shell.dart:1387:7 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/auth/auth_shell.dart:1392:7 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/auth/auth_shell.dart:1603:19 • curly_braces_in_flow_control_structures
+   info • Use 'const' literals as arguments to constructors of '@immutable' classes. Try adding 'const' before the literal • lib/screens/auth/auth_shell.dart:1692:28 • prefer_const_literals_to_create_immutables
+warning • The member 'otpDestination' can only be used within 'package:proxo_app/screens/auth/auth_models.dart' or a test • lib/screens/auth/auth_shell.dart:1869:22 • invalid_use_of_visible_for_testing_member
+warning • The member 'otpDestination' can only be used within 'package:proxo_app/screens/auth/auth_models.dart' or a test • lib/screens/auth/auth_shell.dart:1886:22 • invalid_use_of_visible_for_testing_member
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/auth/auth_shell.dart:2049:13 • curly_braces_in_flow_control_structures
+
+26 issues found. (ran in 2.2s)

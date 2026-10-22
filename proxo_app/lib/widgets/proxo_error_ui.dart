@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import 'proxo_error_stack.dart';
+import 'proxo_notice.dart';
 import 'package:proxo_app/widgets/proxo_text.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -34,11 +35,8 @@ import 'package:proxo_app/widgets/proxo_text.dart';
 //   ProxoErrorCard       a section inside an existing scroll view failed
 //
 // ── Safe placement ───────────────────────────────────────────────────────────
-// Snacks go through `ScaffoldMessenger` with `SnackBarBehavior.floating`, so
-// Flutter itself lifts them above the bottom navigation, the FAB and the
-// keyboard — they can never sit under the nav pill or cover an input. Sheets
-// and dialogs pad themselves with `viewInsets` and sit inside `SafeArea`, so
-// notches, status bars and gesture bars stay clear.
+// Temporary notices use a pointer-transparent safe-area overlay. Sheets and
+// dialogs pad themselves with `viewInsets` and sit inside `SafeArea`.
 // ─────────────────────────────────────────────────────────────────────────────
 
 /// The visual tone of a message. This describes *severity*, not cause — the
@@ -59,7 +57,7 @@ class ProxoErrorStyle {
   static const double rField  = 12; // field-level chips
   static const double rWell   = 14; // icon wells
   static const double rInline = 16; // inline banners
-  static const double rButton = 16; // all buttons
+  static const double rButton = 18; // all buttons
   static const double rCard   = 20; // notice cards / dialogs
   static const double rSnack  = 20; // floating snack
   static const double rSheet  = 28; // bottom sheets (matches the app's sheets)
@@ -623,13 +621,8 @@ class ProxoInlineError extends StatelessWidget {
 // 3 · Snack — temporary, self-dismissing
 // ─────────────────────────────────────────────────────────────────────────────
 
-/// Shows a floating message above whatever is on screen.
-///
-/// Uses `ScaffoldMessenger` + `SnackBarBehavior.floating` on purpose: Flutter
-/// then lays it out above the bottom navigation bar, above the FAB and above
-/// an open keyboard, on every screen size, without any manual insets. That is
-/// the only placement in the framework that is guaranteed never to sit under
-/// the nav pill or cover the field the user is typing into.
+/// A compact shared notification, removed 2,000ms after its first frame.
+/// Its overlay is non-modal; request state belongs to the calling screen.
 void showProxoErrorSnack(
   BuildContext context,
   String message, {
@@ -638,16 +631,12 @@ void showProxoErrorSnack(
   /// Short severity label above the message. Pass `''` to hide it, or your own
   /// string to override the tone's default.
   String? label,
-  Duration duration = const Duration(seconds: 4),
+  Duration duration = proxoNoticeDuration,
   String? actionLabel,
   VoidCallback? onAction,
   String fontFamily = kAppFont,
   TextDirection textDirection = TextDirection.rtl,
 }) {
-  // ⚠ هەموو پەیامەکان (هەڵە، سەرکەوتن، ئاگاداری) ئێستا وەک کارتی سپیی
-  // دەق-ڕەش لە ستاکی 3D ـی `ProxoErrorStack` دەردەکەون — نەک SnackBar.
-  // واژۆی ئەم فەنکشنە وەک خۆی ماوەتەوە، بۆیە هیچ شوێنێکی بانگکردن
-  // پێویستی بە گۆڕان نییە.
   ProxoErrorStack.show(
     context,
     message,
@@ -655,95 +644,13 @@ void showProxoErrorSnack(
     actionLabel: actionLabel,
     onAction: onAction,
     direction: textDirection,
+    tone: switch (tone) {
+      ProxoErrorTone.danger => ProxoNoticeTone.error,
+      ProxoErrorTone.warning || ProxoErrorTone.offline => ProxoNoticeTone.warning,
+      ProxoErrorTone.success => ProxoNoticeTone.success,
+      ProxoErrorTone.info => ProxoNoticeTone.info,
+    },
   );
-}
-
-class _ProxoSnackBody extends StatelessWidget {
-  final String message;
-  final String label;
-  final ProxoErrorPalette palette;
-  final String fontFamily;
-  final String? actionLabel;
-  final VoidCallback? onAction;
-
-  const _ProxoSnackBody({
-    required this.message,
-    required this.label,
-    required this.palette,
-    required this.fontFamily,
-    this.actionLabel,
-    this.onAction,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final p = palette;
-    return Container(
-      padding: const EdgeInsets.symmetric(
-          horizontal: ProxoErrorStyle.s14, vertical: ProxoErrorStyle.s12),
-      decoration: BoxDecoration(
-        color: p.surface,
-        borderRadius: BorderRadius.circular(ProxoErrorStyle.rSnack),
-        border: Border.all(color: p.border),
-        boxShadow: ProxoErrorStyle.snackShadow(p.accent),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Container(
-            width: ProxoErrorStyle.wellSnack,
-            height: ProxoErrorStyle.wellSnack,
-            decoration: BoxDecoration(
-              color: p.well,
-              borderRadius: BorderRadius.circular(ProxoErrorStyle.rWell - 3),
-            ),
-            child: Center(
-              child: Icon(p.icon,
-                  size: ProxoErrorStyle.iconSnack, color: p.accent),
-            ),
-          ),
-          const SizedBox(width: ProxoErrorStyle.s12),
-          Expanded(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (label.isNotEmpty) ...[
-                  ProxoText(label, translate: true, style: ProxoErrorType.label(p.accent, fontFamily)),
-                  const SizedBox(height: ProxoErrorStyle.s2),
-                ],
-                ProxoText(
-                  message, translate: true,
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
-                  style: ProxoErrorType.body(p.ink, fontFamily),
-                ),
-              ],
-            ),
-          ),
-          if (actionLabel != null && onAction != null) ...[
-            const SizedBox(width: ProxoErrorStyle.s8),
-            GestureDetector(
-              onTap: onAction,
-              behavior: HitTestBehavior.opaque,
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: ProxoErrorStyle.s12,
-                    vertical: ProxoErrorStyle.s8),
-                decoration: BoxDecoration(
-                  color: p.well,
-                  borderRadius: BorderRadius.circular(ProxoErrorStyle.rField),
-                  border: Border.all(color: p.border),
-                ),
-                child: ProxoText(actionLabel!, translate: true,
-                    style: ProxoErrorType.button(p.accent, fontFamily)),
-              ),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

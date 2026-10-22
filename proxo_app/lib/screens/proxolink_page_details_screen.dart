@@ -13,6 +13,7 @@ import '../services/proxolink_service.dart';
 import '../theme/app_theme.dart';
 import '../widgets/ad_form_components.dart';
 import '../widgets/proxo_text.dart';
+import '../widgets/proxo_toast.dart';
 import '../widgets/proxolink_page_card.dart';
 import '../widgets/receipt/receipt_kit.dart';
 import 'card_webview_screen.dart';
@@ -95,9 +96,8 @@ class _ProxoLinkPageDetailsScreenState
     }
   }
 
-  void _message(String text) =>
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: ProxoText(text, translate: true)));
+  void _message(String text, {bool isError = true}) =>
+      showProxoToast(context, text, isError: isError);
   Future<void> _edit() async {
     if (_page == null || _busy || _loading || _error != null) return;
     final saved = await Navigator.push<ProxoCard>(
@@ -329,6 +329,7 @@ class _ProxoLinkPageDetailsScreenState
                                                 if (mounted)
                                                   _message(
                                                     'بەستەرەکە کۆپی کرا',
+                                                    isError: false,
                                                   );
                                               }
                                             : null,

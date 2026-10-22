@@ -1,0 +1,70 @@
+{
+  "source_commit": "65021db17ef8ea496ba21fa1971b583cb3c956f2",
+  "workflow_run": 39183672135,
+  "workflow_url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/39183672135",
+  "artifact_id": 12157047899,
+  "artifact_name": "proxo-release-apk",
+  "zip_sha256": "64f6ef46e449984bccff3447c7976bc63e8a4c8f5d5d36e14b642eeec8524b73",
+  "zip_size_bytes": 93017132,
+  "github_artifact_digest": "sha256:64f6ef46e449984bccff3447c7976bc63e8a4c8f5d5d36e14b642eeec8524b73",
+  "zip_digest_verified": true,
+  "tested_merge_commit": "052d34c6dbbc1ca7f7fd21c98dbd16b3abb4e34c",
+  "tested_merge_tree": "6f2cba71b896ca9a31a5799bad775a272c76ef7d",
+  "source_tree": "6f2cba71b896ca9a31a5799bad775a272c76ef7d",
+  "apk_bytes": 93016988,
+  "apk_sha256": "cc8cb4eb0114240f11a30d4559f5defd9f4b61c1deca7109e24b6d9de0dab900",
+  "package": "com.proxo.proxoapp",
+  "version": "1.0.9+9",
+  "min_sdk": 24,
+  "target_sdk": 36,
+  "signature_v2_verified": true,
+  "certificate_sha256": "4a9bc31702f804712e0dbdd14ff70ce12fcd1c3c9cabd96d995667675aeeaae2",
+  "certificate_subject": "C=US, O=Android, CN=Android Debug",
+  "profile_fixture_absent": true,
+  "bundled_assets": [
+    {
+      "path": "assets/images/auth/account_3d.png",
+      "bytes": 1098785,
+      "sha256": "54632924d04e42f14ea04d206cc80644851df0b3ad9f41e042cfc01d2057227a"
+    },
+    {
+      "path": "assets/images/auth/verification_3d.png",
+      "bytes": 1272224,
+      "sha256": "d68c34137d244b5fad4d4392a46533f261444e1ed3b7f4e13366c5904244229e"
+    },
+    {
+      "path": "assets/icons/auth/iraq_flag.svg",
+      "bytes": 1204,
+      "sha256": "2a3ac265b9efcfb0b8761b753b8dba85b63af329deed39dc7a363e61dad70667"
+    },
+    {
+      "path": "assets/icons/help/video_link_example.svg",
+      "bytes": 1810,
+      "sha256": "06cfa8ea6829f91b3ed4bbc95c1a5ef26836998f538ccc102035a1085f506a2c"
+    },
+    {
+      "path": "assets/proxolink_thumbnails/contact-pill.png",
+      "bytes": 749667,
+      "sha256": "00c272d3a28794b2377ca3809e9bb3d5f8280451b5d1b9c2722d58574f3ac52a"
+    },
+    {
+      "path": "assets/proxolink_thumbnails/order-pill.png",
+      "bytes": 562492,
+      "sha256": "3713b1593a42da01ef2745c9adfb92fc7bf47590746428933a831d0b4f28dfa6"
+    },
+    {
+      "path": "assets/proxolink_thumbnails/download-pill.png",
+      "bytes": 362486,
+      "sha256": "54192b41d7e396d37c926bfe9df2f6ed260ac4ddfa92570a891986172d5729ea"
+    }
+  ],
+  "notification": {
+    "small_icon": "ic_notification",
+    "canvas_dp": [
+      24,
+      24
+    ],
+    "color": "#046CFA",
+    "channel": "proxo_high_importance"
+  }
+}

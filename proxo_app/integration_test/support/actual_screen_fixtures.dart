@@ -17,6 +17,8 @@ import 'package:proxo_app/services/ad_submission.dart';
 import 'package:proxo_app/services/proxolink_service.dart';
 import 'package:proxo_app/widgets/ad_validation_notifications.dart';
 import 'package:proxo_app/widgets/proxo_text.dart';
+import 'package:proxo_app/widgets/proxo_notice.dart';
+import 'package:proxo_app/widgets/proxo_symbol.dart';
 
 const screenFixtureOwner='00000000-0000-4000-8000-000000000099';
 class ActualScreenBackend {
@@ -37,9 +39,38 @@ class ActualScreenBackend {
  Map<String, dynamic>? banner;
  final _sockets=<_ScreenSocket>[];
  int logoutRequests=0;
+ final nonGetAttempts=<Map<String,Object?>>[];
  bool logoutFails=false;
  ActualScreenBackend({bool allowLogout=false}){
   transport=MockClient((request)async{
+    if(request.method!='GET'){
+      String? expectedBlockedOperation;
+      if(request.method=='POST' && request.url.scheme=='https' && request.url.host=='screen-fixtures.invalid' && request.url.userInfo.isEmpty && !request.url.hasQuery){
+        try{
+          final body=jsonDecode(request.body);
+          if(body is Map && body.length==1){
+            if(request.url.path=='/functions/v1/generate-ad-thumbnail' && body['ad_id']=='00000000-0000-4000-8000-000000000001'){
+              expectedBlockedOperation='fictional_thumbnail_repair';
+            }else if(request.url.path=='/rest/v1/rpc/pa_trusted_device_lookup' && body['p_device_id'] is String && RegExp(r'^[0-9a-f]{64}$').hasMatch(body['p_device_id'] as String)){
+              expectedBlockedOperation='trusted_device_lookup';
+            }
+          }
+        }catch(_){}
+      }
+      if(request.method=='HEAD' && request.url.scheme=='https' && request.url.host=='screen-fixtures.invalid' && request.url.userInfo.isEmpty && !request.url.hasPort && !request.url.hasFragment && request.url.path=='/rest/v1/pa_notifications' && request.body.isEmpty){
+        final query=request.url.queryParametersAll;
+        if(query.length==2 && query['user_id']?.length==1 && query['user_id']?.single=='eq.$screenFixtureOwner' && query['is_read']?.length==1 && query['is_read']?.single=='eq.false'){
+          expectedBlockedOperation='unread_notification_count';
+        }
+      }
+      // Classify expected attempts, never execute them. Android Auth mounts
+      // ask for a trusted-device lookup; thumbnail repair mutates production.
+      // The shared notification bell reads its count with HEAD. All three
+      // still hit the rejecting boundary below. HTTP POST alone does not
+      // identify a write. Do not persist bodies, device hashes or headers.
+      nonGetAttempts.add({'method':request.method,'host':request.url.host,
+        'path':request.url.path,'expected_blocked_operation':expectedBlockedOperation});
+    }
     if(allowLogout && request.method=='POST' && request.url.host=='screen-fixtures.invalid' && request.url.path=='/auth/v1/logout'){
       logoutRequests++;
       return http.Response(logoutFails?'{"message":"fixture logout unavailable"}':'',logoutFails?500:204,
@@ -47,7 +78,7 @@ class ActualScreenBackend {
     }
     if(request.method!='GET'||request.url.host!='screen-fixtures.invalid')throw StateError('screen_fixture_network_boundary');
     final table=request.url.path.split('/').last;
-    if(!{'profiles','pa_ads','pa_featured_ads_public','pa_popups','pa_notifications','pa_banners','pa_wallets','pa_user_points','pa_levels','pa_challenges','pa_tutorials','pa_challenge_progress','pa_vouchers','promo_codes'}.contains(table))throw StateError('screen_fixture_network_boundary');
+    if(!{'profiles','pa_ads','pa_featured_ads_public','pa_popups','pa_notifications','pa_banners','pa_wallets','pa_user_points','pa_levels','pa_challenges','pa_tutorials','pa_challenge_progress','pa_vouchers','promo_codes','pa_settings','whatsapp_marketing_preferences'}.contains(table))throw StateError('screen_fixture_network_boundary');
     reads.update(table,(v)=>v+1,ifAbsent:()=>1);
     final response = readResponses[table];
     await readGates[table]?.future;
@@ -169,7 +200,14 @@ class ActualToolsRepository extends ProxoLinkRepository {
  }
  @override Future<List<ProxoTemplate>> templates()async=>[for(final key in ProxoLinkDesign.labels.keys)
   ProxoTemplate(key:key,label:ProxoLinkDesign.label(key),previewPath:'',version:6,requiresAvatar:false)];
- @override Future<List<ProxoProvider>> providers()async=>[const ProxoProvider(key:'telegram',pageType:'contact',label:'telegram',icon:'telegram',inputKind:'url')];
+ // A complete catalogue is required by the authoring readiness guard. Keep
+ // each page type represented with supported providers; all fixture writes
+ // and external previews remain rejected below.
+ @override Future<List<ProxoProvider>> providers()async=>const[
+   ProxoProvider(key:'telegram',pageType:'contact',label:'telegram',icon:'telegram',inputKind:'url'),
+   ProxoProvider(key:'talabat',pageType:'order',label:'talabat',icon:'talabat',inputKind:'url'),
+   ProxoProvider(key:'google_play',pageType:'download',label:'google_play',icon:'google_play',inputKind:'url'),
+ ];
  @override Future<ProxoCard> save(Map<String,dynamic> data,{ProxoCard? existing})=>throw StateError('screen_fixture_write_boundary');
  @override Future<void> action(String id,String action)=>throw StateError('screen_fixture_write_boundary');
  @override Future<Uri> preview(String id)=>throw StateError('screen_fixture_preview_boundary');
@@ -193,7 +231,7 @@ List<Element> screenElements(Element root,bool Function(Widget) predicate){
 int screenNoticeCount(Element root){
  final notices=screenElements(root,(w)=>w is AdValidationNotifications);
  if(notices.length!=1)throw StateError('screen_notice_component');
- return screenElements(notices.single,(w)=>w is Icon&&w.icon==Icons.error_outline).length;
+ return screenElements(notices.single,(w)=>w is ProxoNoticeCard).length;
 }
 Map<String,Object> screenNoticeVisualState(Element root){
  final notice=screenElements(root,(w)=>w is AdValidationNotifications).single;
@@ -206,6 +244,6 @@ Map<String,Object> screenNoticeAppearance(Element root){
  final notice=screenElements(root,(w)=>w is AdValidationNotifications).single;
  final decoration=screenElements(notice,(w)=>w is DecoratedBox&&w.decoration is BoxDecoration).map((e)=>(e.widget as DecoratedBox).decoration as BoxDecoration).first;
  final text=screenElements(notice,(w)=>w is ProxoText).first.widget as ProxoText;
- final icon=screenElements(notice,(w)=>w is Icon&&w.icon==Icons.error_outline).first.widget as Icon;
- return {'decoration':decoration.toString(),'text_style':text.style.toString(),'icon_size':icon.size??0,'icon_color':icon.color?.toARGB32()??0};
+ final icon=screenElements(notice,(w)=>w is ProxoSymbol).first.widget as ProxoSymbol;
+ return {'decoration':decoration.toString(),'text_style':text.style.toString(),'icon_size':icon.size,'icon_color':icon.color?.toARGB32()??0};
 }

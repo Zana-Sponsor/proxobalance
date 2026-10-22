@@ -6,7 +6,6 @@ import 'package:proxo_app/l10n/proxo_strings.dart';
 
 // auth/auth_shell.dart
 import 'dart:async';
-import 'dart:convert';
 import 'dart:math' show max;
 
 import 'package:flutter/foundation.dart' show ValueListenable;
@@ -14,26 +13,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../theme/app_theme.dart';
 import '../../theme/app_locale.dart';
 import '../../services/trusted_device_service.dart';
 import '../../services/auth_activity_service.dart';
+import '../../config/backend_config.dart';
 import '../account_setup_screen.dart';
+import '../authenticated_gate.dart';
 import '../../widgets/auth/auth_design.dart';
 import '../../widgets/auth/auth_otp_field.dart';
 import '../../widgets/auth/auth_widgets.dart';
 import '../../widgets/auth/auth_swap.dart';
 import '../../widgets/auth/auth_icon.dart';
 import '../../main.dart'
-    show
-        n8nWebhookUrl,
-        n8nOtpLoginWebhook,
-        wevlixOtpSendUrl,
-        supabase,
-        MainShell;
+    show n8nOtpLoginWebhook, wevlixOtpSendUrl, supabase, MainShell;
 import 'auth_models.dart';
 import 'login_screen.dart';
 import 'signup_screen.dart';
@@ -146,7 +141,10 @@ class _RateEntry {
 // ─────────────────────────────────────────────────────────────────────────────
 
 class AuthShell extends StatefulWidget {
-  const AuthShell({super.key});
+  const AuthShell({super.key, this.authService});
+
+  /// Injectable transport boundary for offline flow tests.
+  final AuthService? authService;
 
   @override
   State<AuthShell> createState() => _AuthShellState();
@@ -155,7 +153,6 @@ class AuthShell extends StatefulWidget {
 class _AuthShellState extends State<AuthShell> {
   _Tab _tab = _Tab.login;
   _Step _step = _Step.form;
-  int _signupStage = 0;
   bool _loading = false;
   final _viewScroll = ScrollController(keepScrollOffset: false);
   String _lastScrollViewKey = 'signin';
@@ -175,16 +172,15 @@ class _AuthShellState extends State<AuthShell> {
   String? _loginPassErr;
 
   final _regNameCtrl = TextEditingController();
-  final _regPhoneCtrl = TextEditingController();
+  final _regEmailCtrl = TextEditingController();
   final _regNameFocus = FocusNode();
-  final _regPhoneFocus = FocusNode();
+  final _regEmailFocus = FocusNode();
   final _regPassCtrl = TextEditingController();
   final _regPass2Ctrl = TextEditingController();
   String? _regNameErr;
-  String? _regPhoneErr;
+  String? _regEmailErr;
   String? _regPassErr;
   String? _regPass2Err;
-  bool _whatsappMarketing = false;
   bool _pendingWhatsappMarketing = false;
   String _pendingConsentLocale = 'ckb';
 
@@ -253,12 +249,17 @@ class _AuthShellState extends State<AuthShell> {
   @override
   void initState() {
     super.initState();
-    _authService = AuthService(
-      supabase: supabase,
-      emailOtpUrl: n8nOtpLoginWebhook,
-      whatsappOtpUrl: wevlixOtpSendUrl,
-    );
-    for (final FocusNode f in <FocusNode>[_loginEmailFocus, _fpEmailFocus]) {
+    _authService = widget.authService ??
+        AuthService(
+          supabase: supabase,
+          emailOtpUrl: n8nOtpLoginWebhook,
+          whatsappOtpUrl: wevlixOtpSendUrl,
+        );
+    for (final FocusNode f in <FocusNode>[
+      _loginEmailFocus,
+      _regEmailFocus,
+      _fpEmailFocus
+    ]) {
       f.addListener(_normalizeBlurredEmails);
     }
     _loadTrustedDevice();
@@ -296,6 +297,7 @@ class _AuthShellState extends State<AuthShell> {
   void _normalizeBlurredEmails() {
     _normalizeIfBlurred(_loginEmailFocus, _loginEmailCtrl);
     if (!_loginEmailFocus.hasFocus) _refreshLockState();
+    _normalizeIfBlurred(_regEmailFocus, _regEmailCtrl);
     _normalizeIfBlurred(_fpEmailFocus, _fpEmailCtrl);
   }
 
@@ -324,21 +326,24 @@ class _AuthShellState extends State<AuthShell> {
   @override
   void dispose() {
     _viewScroll.dispose();
-    _authService.close();
+    if (widget.authService == null) _authService.close();
     _resendTimer?.cancel();
-    _authService.close();
     AuthFlowGuard.inOtpFlow = false;
     _loginEmailCtrl.dispose();
     _loginPassCtrl.dispose();
-    for (final FocusNode f in <FocusNode>[_loginEmailFocus, _fpEmailFocus]) {
+    for (final FocusNode f in <FocusNode>[
+      _loginEmailFocus,
+      _regEmailFocus,
+      _fpEmailFocus
+    ]) {
       f.removeListener(_normalizeBlurredEmails);
     }
     _loginEmailFocus.dispose();
     _loginPassFocus.dispose();
     _regNameCtrl.dispose();
-    _regPhoneCtrl.dispose();
+    _regEmailCtrl.dispose();
     _regNameFocus.dispose();
-    _regPhoneFocus.dispose();
+    _regEmailFocus.dispose();
     _regPassCtrl.dispose();
     _regPass2Ctrl.dispose();
     _loginPhoneCtrl.dispose();
@@ -421,14 +426,10 @@ class _AuthShellState extends State<AuthShell> {
   /// ژمارە بە فۆرمی E.164 — `+964` + ژمارەکە بەبێ سفری پێشەوە.
   String get _phoneE164 => IraqPhone.normalize(_loginPhoneCtrl.text);
 
-  String get _regPhoneE164 => IraqPhone.normalize(_regPhoneCtrl.text);
-
   /// ژمارەی عێراقیی مۆبایل: ٧ + ٩ ژمارە = ١٠ ژمارە دوای کۆدی وڵات.
   bool get _phoneValid {
     return IraqPhone.isValid(_loginPhoneCtrl.text);
   }
-
-  bool get _regPhoneValid => IraqPhone.isValid(_regPhoneCtrl.text);
 
   /// ناردنی کۆدی واتساپ بە ڕێی وۆرکفلۆی Wevlixـی n8n.
   ///
@@ -525,7 +526,8 @@ class _AuthShellState extends State<AuthShell> {
   Future<({String? refreshToken, String? error})> _exchangePhoneOtp({
     required String phone,
     required String code,
-  }) => _authService.exchangePhoneOtp(phone: phone, code: code);
+  }) =>
+      _authService.exchangePhoneOtp(phone: phone, code: code);
 
   Future<({String? tokenHash, String? error})> _completePhoneSignup({
     required String phone,
@@ -533,14 +535,15 @@ class _AuthShellState extends State<AuthShell> {
     required String fullName,
     required String password,
     required bool whatsappMarketing,
-  }) => _authService.completePhoneSignup(
-    phone: phone,
-    code: code,
-    fullName: fullName,
-    password: password,
-    whatsappMarketing: whatsappMarketing,
-    locale: _pendingConsentLocale,
-  );
+  }) =>
+      _authService.completePhoneSignup(
+        phone: phone,
+        code: code,
+        fullName: fullName,
+        password: password,
+        whatsappMarketing: whatsappMarketing,
+        locale: _pendingConsentLocale,
+      );
 
   /// تۆکێنی refresh دەگۆڕێت بە سێشنێکی چالاک.
   ///
@@ -589,17 +592,6 @@ class _AuthShellState extends State<AuthShell> {
 
   Future<bool> _verifyLoginOtp({required String email, required String code}) =>
       _authService.verifyLoginEmailOtp(email: email, code: code);
-
-  void _notifyN8n(String action, Map<String, dynamic> data) {
-    http
-        .post(
-          Uri.parse(n8nWebhookUrl),
-          headers: {'Content-Type': 'application/json'},
-          body: jsonEncode({'action': action, ...data}),
-        )
-        .timeout(const Duration(seconds: 8))
-        .catchError((_) => http.Response('', 0));
-  }
 
   void _startResendTimer() {
     _resendSeconds.value = 60;
@@ -755,82 +747,36 @@ class _AuthShellState extends State<AuthShell> {
 
   Future<void> _doRegister() async {
     if (_loading) return;
-    final String name = _regNameCtrl.text.trim();
-    final String phone = _regPhoneE164;
-    final String pass = _regPassCtrl.text;
-    final pass2 = _regPass2Ctrl.text;
-    final marketingChoice = _whatsappMarketing;
-    final consentLocale = ProxoLocale.current.value.languageCode;
-
+    final name = _regNameCtrl.text.trim();
+    final email = AuthValidators.normalizeEmail(_regEmailCtrl.text);
+    final password = _regPassCtrl.text;
     setState(() {
-      _regNameErr = null;
-      _regPhoneErr = null;
-      _regPassErr = null;
-      _regPass2Err = null;
+      _regNameErr = AuthValidators.fullName(name);
+      _regEmailErr = AuthValidators.email(email);
+      _regPassErr = AuthValidators.newPassword(password);
+      _regPass2Err =
+          AuthValidators.confirmPassword(_regPass2Ctrl.text, password);
     });
-    final String? nameError = AuthValidators.fullName(name);
-    if (nameError != null) {
-      setState(() {
-        _regNameErr = nameError;
-        _signupStage = 0;
-      });
+    if ([_regNameErr, _regEmailErr, _regPassErr, _regPass2Err]
+        .any((e) => e != null)) return;
+    final lockMsg = _RateLimiter.check(email);
+    if (lockMsg != null) {
+      _showErrorCard(lockMsg);
       return;
     }
-    if (!_regPhoneValid) {
-      setState(() {
-        _regPhoneErr = AuthStrings.phoneInvalid;
-        _signupStage = 0;
-      });
-      return;
-    }
-    final String? passwordError = AuthValidators.newPassword(pass);
-    if (passwordError != null) {
-      setState(() => _regPassErr = passwordError);
-      return;
-    }
-    final String? confirmationError = AuthValidators.confirmPassword(
-      pass2,
-      pass,
-    );
-    if (confirmationError != null) {
-      setState(() => _regPass2Err = confirmationError);
-      return;
-    }
-
+    FocusScope.of(context).unfocus();
     setState(() => _loading = true);
     AuthFlowGuard.inOtpFlow = true;
     try {
-      final bool? exists = await _authService.phoneExists(phone);
+      final userId = await _authService.beginEmailSignup(
+          email: email, password: password, name: name);
       if (!mounted) return;
-      if (exists == true) {
-        setState(() {
-          _regPhoneErr = AuthStrings.phoneAlreadyRegistered;
-          _signupStage = 0;
-        });
-        AuthFlowGuard.inOtpFlow = false;
-        return;
-      }
-
-      final bool ok = await _authService.requestWhatsappOtp(
-        phone: phone,
-        purpose: AuthOtpPurpose.signup,
-        locale: consentLocale,
-      );
-      if (!mounted) return;
-      if (!ok) {
-        _showErrorCard(AuthStrings.otpSendFailed);
-        AuthFlowGuard.inOtpFlow = false;
-        return;
-      }
-
-      _pendingPhone = phone;
-      _pendingEmail = '';
-      _pendingUserId = '';
-      _pendingPass = pass;
+      _pendingEmail = email;
+      _pendingUserId = userId;
+      _pendingPass = password;
+      _pendingPhone = '';
       _pendingName = name;
-      _pendingWhatsappMarketing = marketingChoice;
-      _pendingConsentLocale = consentLocale;
-      _activeOtpChannel = AuthChannel.phone;
+      _activeOtpChannel = AuthChannel.email;
       _activeOtpPurpose = AuthOtpPurpose.signup;
       _otpAttempts = 0;
       _startResendTimer();
@@ -839,9 +785,79 @@ class _AuthShellState extends State<AuthShell> {
         _otpHasError = false;
         _step = _Step.otp;
       });
+    } on AuthException catch (error) {
+      AuthFlowGuard.inOtpFlow = false;
+      if (mounted) {
+        if (error.message == 'otp_send_failed' && _isNetworkError()) {
+          _showNetworkError();
+        } else {
+          _showErrorCard(_mapSignupError(error));
+        }
+      }
     } catch (_) {
       AuthFlowGuard.inOtpFlow = false;
-      _showNetworkError();
+      if (mounted) _showNetworkError();
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  String _mapSignupError(AuthException error) {
+    if (error.code == 'user_already_exists' || error.code == 'email_exists') {
+      return AuthStrings.errEmailExists;
+    }
+    if (error.code == 'weak_password') return AuthStrings.errWeakPassword;
+    return AuthStrings.otpSendFailed;
+  }
+
+  // Verify the custom API's OTP, consume the server's user-bound confirmation
+  // proof, and only then establish the session for account setup.
+  Future<void> _verifyEmailSignup() async {
+    final lockMsg = _RateLimiter.check(_pendingEmail);
+    if (lockMsg != null) {
+      _showErrorCard(lockMsg);
+      return;
+    }
+    setState(() => _loading = true);
+    try {
+      final response = await _authService.verifyEmailSignup(
+        email: _pendingEmail,
+        code: _otpCode,
+        userId: _pendingUserId,
+        password: _pendingPass,
+      );
+      if (!mounted) return;
+      final user = response.user;
+      if (user == null || response.session == null) {
+        _showErrorCard(AuthStrings.errServer);
+        return;
+      }
+      _RateLimiter.reset(_pendingEmail);
+      _pendingPass = '';
+      unawaited(AuthActivityService.forClient(supabase).recordCurrentSession());
+      unawaited(TrustedDeviceService.remember(supabase));
+      unawaited(_saveDeviceToken(user.id));
+      AuthFlowGuard.inOtpFlow = false;
+      Navigator.of(context).pushAndRemoveUntil(
+        ProxoPageRoute(
+            builder: (_) => const AccountSetupGate(child: MainShell())),
+        (route) => false,
+      );
+    } on AuthException catch (error) {
+      if (!mounted) return;
+      if (error.code == 'otp_expired' || error.code == 'access_denied') {
+        _RateLimiter.recordFail(_pendingEmail,
+            lockFor: _RateLimiter._lockForOtp);
+        setState(() => _otpHasError = true);
+        _otpShaker.shakeAndReset();
+        _showErrorCard(AuthStrings.errInvalidOtp);
+      } else {
+        _showErrorCard(AuthStrings.errServer);
+      }
+    } on PostgrestException {
+      if (mounted) _showErrorCard(AuthStrings.errServer);
+    } catch (_) {
+      if (mounted) _showNetworkError();
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -855,6 +871,11 @@ class _AuthShellState extends State<AuthShell> {
     if (_loading) return;
     if (_otpCode.length < 6) {
       _showErrorCard(AuthStrings.errEmptyField);
+      return;
+    }
+    if (_activeOtpChannel == AuthChannel.email &&
+        _activeOtpPurpose == AuthOtpPurpose.signup) {
+      await _verifyEmailSignup();
       return;
     }
     // ── کام کەناڵ؟ ───────────────────────────────────────────────────────
@@ -966,7 +987,7 @@ class _AuthShellState extends State<AuthShell> {
           AuthFlowGuard.inOtpFlow = false;
           if (!mounted) return;
           Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(
+            ProxoPageRoute(
               builder: (_) => const AccountSetupGate(child: MainShell()),
             ),
             (route) => false,
@@ -991,8 +1012,8 @@ class _AuthShellState extends State<AuthShell> {
           AuthFlowGuard.inOtpFlow = false;
           if (!mounted) return;
           Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(
-              builder: (_) => const AccountSetupGate(child: MainShell()),
+            ProxoPageRoute(
+              builder: (_) => const AuthenticatedGate(child: MainShell()),
             ),
             (r) => false,
           );
@@ -1031,8 +1052,8 @@ class _AuthShellState extends State<AuthShell> {
             AuthFlowGuard.inOtpFlow = false;
             if (!mounted) return;
             Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(
-                builder: (_) => const AccountSetupGate(child: MainShell()),
+              ProxoPageRoute(
+                builder: (_) => const AuthenticatedGate(child: MainShell()),
               ),
               (r) => false,
             );
@@ -1044,21 +1065,7 @@ class _AuthShellState extends State<AuthShell> {
         }
       }
 
-      if (_tab == _Tab.login) {
-        await signInAndNavigate();
-      } else {
-        _notifyN8n('email_verified', {
-          'email': _pendingEmail,
-          'user_id': _pendingUserId,
-        });
-        try {
-          await supabase.rpc(
-            'proxo_confirm_email',
-            params: {'p_user_id': _pendingUserId},
-          );
-        } catch (_) {}
-        await signInAndNavigate();
-      }
+      await signInAndNavigate();
     } catch (e) {
       _showNetworkError();
     } finally {
@@ -1067,12 +1074,12 @@ class _AuthShellState extends State<AuthShell> {
   }
 
   Future<void> _saveDeviceToken(String userId) async {
+    if (!BackendConfig.current.productionTransportsEnabled) return;
     try {
       final token = await FirebaseMessaging.instance.getToken();
       if (token == null) return;
-      final platform = Theme.of(context).platform == TargetPlatform.iOS
-          ? 'ios'
-          : 'android';
+      final platform =
+          Theme.of(context).platform == TargetPlatform.iOS ? 'ios' : 'android';
       await supabase.from('pa_device_tokens').upsert({
         'user_id': userId,
         'token': token,
@@ -1104,6 +1111,12 @@ class _AuthShellState extends State<AuthShell> {
           purpose: _activeOtpPurpose,
           locale: ProxoLocale.current.value.languageCode,
         );
+      } else if (_activeOtpPurpose == AuthOtpPurpose.signup) {
+        ok = await _authService.resendEmailSignup(
+          email: _pendingEmail,
+          userId: _pendingUserId,
+          name: _pendingName,
+        );
       } else if (_activeOtpPurpose == AuthOtpPurpose.login) {
         ok = await _sendLoginOtp(_pendingEmail);
       } else {
@@ -1118,6 +1131,7 @@ class _AuthShellState extends State<AuthShell> {
               : 'signup',
         );
       }
+      if (!mounted) return;
       if (ok) {
         _startResendTimer();
         _otpAttempts = 0;
@@ -1370,8 +1384,7 @@ class _AuthShellState extends State<AuthShell> {
     if (m.contains('invalid login') ||
         m.contains('invalid credentials') ||
         m.contains('invalid email or password') ||
-        m.contains('invalid'))
-      return AuthStrings.errWrongPassword;
+        m.contains('invalid')) return AuthStrings.errWrongPassword;
     if (m.contains('email already') || m.contains('already registered'))
       return AuthStrings.errEmailExists;
     if (m.contains('otp')) return AuthStrings.errInvalidOtp;
@@ -1383,12 +1396,12 @@ class _AuthShellState extends State<AuthShell> {
   }
 
   String get _viewKey => switch (_step) {
-    _Step.form => _tab == _Tab.login ? 'signin' : 'signup-$_signupStage',
-    _Step.otp => 'otp',
-    _Step.forgotEmail => 'fpEmail',
-    _Step.forgotOtp => 'fpOtp',
-    _Step.forgotNewPass => 'fpPass',
-  };
+        _Step.form => _tab == _Tab.login ? 'signin' : 'signup',
+        _Step.otp => 'otp',
+        _Step.forgotEmail => 'fpEmail',
+        _Step.forgotOtp => 'fpOtp',
+        _Step.forgotNewPass => 'fpPass',
+      };
 
   void _goToSignUp() {
     FocusScope.of(context).unfocus();
@@ -1396,8 +1409,7 @@ class _AuthShellState extends State<AuthShell> {
     setState(() {
       _tab = _Tab.register;
       _step = _Step.form;
-      _signupStage = 0;
-      _regNameErr = _regPhoneErr = _regPassErr = _regPass2Err = null;
+      _regNameErr = _regEmailErr = _regPassErr = _regPass2Err = null;
     });
   }
 
@@ -1425,22 +1437,18 @@ class _AuthShellState extends State<AuthShell> {
         _goToSignIn();
       case _Step.form:
         if (_tab == _Tab.register) {
-          if (_signupStage > 0) {
-            setState(() => _signupStage = 0);
-          } else {
-            _goToSignIn();
-          }
+          _goToSignIn();
         }
     }
   }
 
   Widget _transitionView(BuildContext context) => AuthSwap(
-    child: AbsorbPointer(
-      key: ValueKey<String>(_viewKey),
-      absorbing: _loading,
-      child: _buildCurrentView(),
-    ),
-  );
+        child: AbsorbPointer(
+          key: ValueKey<String>(_viewKey),
+          absorbing: _loading,
+          child: _buildCurrentView(),
+        ),
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -1476,7 +1484,7 @@ class _AuthShellState extends State<AuthShell> {
                 child: Center(
                   child: ConstrainedBox(
                     constraints: BoxConstraints(
-                      maxWidth: 440,
+                      maxWidth: AuthTokens.contentMaxWidth,
                       minHeight: max(0.0, viewport.maxHeight - 40),
                     ),
                     child: Column(
@@ -1494,12 +1502,13 @@ class _AuthShellState extends State<AuthShell> {
   }
 
   Widget _buildCurrentView() => switch (_step) {
-    _Step.form => _tab == _Tab.login ? _buildSignInView() : _buildSignUpView(),
-    _Step.otp => _buildOtpView(),
-    _Step.forgotEmail => _buildForgotEmailView(),
-    _Step.forgotOtp => _buildForgotOtpView(),
-    _Step.forgotNewPass => _buildForgotNewPassView(),
-  };
+        _Step.form =>
+          _tab == _Tab.login ? _buildSignInView() : _buildSignUpView(),
+        _Step.otp => _buildOtpView(),
+        _Step.forgotEmail => _buildForgotEmailView(),
+        _Step.forgotOtp => _buildForgotOtpView(),
+        _Step.forgotNewPass => _buildForgotNewPassView(),
+      };
 
   // ── View 1: Sign In ───────────────────────────────────────────────────────
 
@@ -1530,7 +1539,7 @@ class _AuthShellState extends State<AuthShell> {
               });
             },
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 24),
 
           if (_loginLockedOut)
             AuthLockoutNotice(onContactSupport: _contactSupportOnWhatsApp)
@@ -1538,7 +1547,7 @@ class _AuthShellState extends State<AuthShell> {
             AuthAlert(message: lockMsg),
 
           AuthSwap(
-            duration: const Duration(milliseconds: 260),
+            duration: const Duration(milliseconds: 320),
             child: KeyedSubtree(
               key: ValueKey<AuthChannel>(_loginChannel),
               child: _loginChannel == AuthChannel.phone
@@ -1572,7 +1581,6 @@ class _AuthShellState extends State<AuthShell> {
             onContinue: _useTrustedAccount,
             onForget: _forgetTrustedAccount,
           ),
-
         if (!_trustedSelected)
           AuthTextField(
             controller: _loginEmailCtrl,
@@ -1604,7 +1612,6 @@ class _AuthShellState extends State<AuthShell> {
             focusNode: _loginEmailFocus,
           ),
         if (!_trustedSelected) const SizedBox(height: 10),
-
         ValueListenableBuilder<bool>(
           valueListenable: _loginPasswordVisible,
           builder: (context, visible, _) => AuthTextField(
@@ -1630,7 +1637,6 @@ class _AuthShellState extends State<AuthShell> {
             ),
           ),
         ),
-
         const SizedBox(height: 10),
         Align(
           alignment: AlignmentDirectional.centerEnd,
@@ -1650,7 +1656,6 @@ class _AuthShellState extends State<AuthShell> {
                   },
           ),
         ),
-
         const SizedBox(height: 18),
         ListenableBuilder(
           listenable: Listenable.merge([_loginEmailCtrl, _loginPassCtrl]),
@@ -1691,17 +1696,7 @@ class _AuthShellState extends State<AuthShell> {
           ],
           enabled: !_phoneOtpSending,
           // پێشگری کۆدی وڵات لەناو خودی خانەکەدا — یەک سنوور، یەک فۆکەس.
-          prefix: Padding(
-            padding: const EdgeInsetsDirectional.only(end: 8),
-            child: ProxoText(
-              AuthStrings.phonePrefix,
-              textDirection: TextDirection.ltr,
-              style: AuthTokens.fieldText.copyWith(
-                fontWeight: FontWeight.w400,
-                color: AuthTokens.inkMuted,
-              ),
-            ),
-          ),
+          prefix: const IraqPhonePrefix(),
           onChanged: (_) {
             if (_loginPhoneErr != null) {
               setState(() => _loginPhoneErr = null);
@@ -1709,7 +1704,6 @@ class _AuthShellState extends State<AuthShell> {
           },
           onSubmitted: (_) => _sendPhoneOtp(),
         ),
-
         const SizedBox(height: 18),
         ListenableBuilder(
           listenable: _loginPhoneCtrl,
@@ -1726,199 +1720,140 @@ class _AuthShellState extends State<AuthShell> {
 
   // ── View 2: Sign Up ───────────────────────────────────────────────────────
 
-  Future<void> _advanceSignup() async {
-    if (_loading) return;
-    final nameError = AuthValidators.fullName(_regNameCtrl.text.trim());
-    final phoneError = _regPhoneValid ? null : AuthStrings.phoneInvalid;
-    setState(() {
-      _regNameErr = nameError;
-      _regPhoneErr = phoneError;
-      if (nameError == null && phoneError == null) _signupStage = 1;
-    });
-    if (nameError == null && phoneError == null)
-      FocusScope.of(context).unfocus();
-  }
-
   Widget _buildSignUpView() {
     return SignupScreen(
       onBack: _back,
-      stage: _signupStage,
       content: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          if (_signupStage == 0) ...[
-            AuthTextField(
+          AuthTextField(
+            controller: _regNameCtrl,
+            focusNode: _regNameFocus,
+            label: AuthStrings.fullNameLabel,
+            hint: AuthStrings.fullNameHint,
+            icon: Icons.person_outline_rounded,
+            error: _regNameErr,
+            keyboardType: TextInputType.name,
+            textInputAction: TextInputAction.next,
+            autofillHints: const [AutofillHints.name],
+            enabled: !_loading,
+            onChanged: (_) {
+              if (_regNameErr != null) setState(() => _regNameErr = null);
+            },
+            trailing: AuthClearButton(
               controller: _regNameCtrl,
               focusNode: _regNameFocus,
-              label: AuthStrings.fullNameLabel,
-              hint: AuthStrings.fullNameHint,
-              icon: Icons.person_outline_rounded,
-              error: _regNameErr,
-              keyboardType: TextInputType.name,
-              textInputAction: TextInputAction.next,
-              autofillHints: const [AutofillHints.name],
-              enabled: !_loading,
-              onChanged: (_) {
+              onCleared: () {
                 if (_regNameErr != null) setState(() => _regNameErr = null);
               },
-              trailing: AuthClearButton(
-                controller: _regNameCtrl,
-                focusNode: _regNameFocus,
-                onCleared: () {
-                  if (_regNameErr != null) setState(() => _regNameErr = null);
-                },
-              ),
             ),
-            const SizedBox(height: AuthTokens.gapBetweenFields),
-
-            AuthTextField(
-              controller: _regPhoneCtrl,
-              focusNode: _regPhoneFocus,
-              label: AuthStrings.phoneLabel,
-              hint: AuthStrings.phoneHint,
-              icon: Icons.phone_iphone_rounded,
-              error: _regPhoneErr,
-              ltr: true,
-              forceLtr: true,
-              keyboardType: TextInputType.phone,
-              textInputAction: TextInputAction.done,
-              onSubmitted: (_) => _advanceSignup(),
-              autofillHints: const [AutofillHints.telephoneNumber],
-              inputFormatters: <TextInputFormatter>[
-                const IraqPhoneInputFormatter(),
-              ],
-              enabled: !_loading,
-              prefix: Padding(
-                padding: const EdgeInsetsDirectional.only(end: 8),
-                child: ProxoText(
-                  AuthStrings.phonePrefix,
-                  textDirection: TextDirection.ltr,
-                  style: AuthTokens.fieldText.copyWith(
-                    fontWeight: FontWeight.w400,
-                    color: AuthTokens.inkMuted,
-                  ),
-                ),
-              ),
-              onChanged: (_) {
-                if (_regPhoneErr != null) setState(() => _regPhoneErr = null);
+          ),
+          const SizedBox(height: AuthTokens.gapBetweenFields),
+          AuthTextField(
+            controller: _regEmailCtrl,
+            focusNode: _regEmailFocus,
+            label: AuthStrings.emailLabel,
+            hint: AuthStrings.emailHint,
+            icon: Icons.mail_outline_rounded,
+            error: _regEmailErr,
+            forceLtr: true,
+            keyboardType: TextInputType.emailAddress,
+            textInputAction: TextInputAction.next,
+            autofillHints: const [AutofillHints.email],
+            enabled: !_loading,
+            onChanged: (_) {
+              if (_regEmailErr != null) setState(() => _regEmailErr = null);
+            },
+            trailing: AuthClearButton(
+              controller: _regEmailCtrl,
+              focusNode: _regEmailFocus,
+              onCleared: () {
+                if (_regEmailErr != null) setState(() => _regEmailErr = null);
               },
-              trailing: AuthClearButton(
-                controller: _regPhoneCtrl,
-                focusNode: _regPhoneFocus,
-                onCleared: () {
-                  if (_regPhoneErr != null) setState(() => _regPhoneErr = null);
-                },
+            ),
+          ),
+          const SizedBox(height: AuthTokens.gapBetweenFields),
+          ValueListenableBuilder<bool>(
+            valueListenable: _signupPasswordVisible,
+            builder: (context, visible, _) => AuthTextField(
+              controller: _regPassCtrl,
+              forceLtr: true,
+              label: AuthStrings.passwordLabel,
+              hint: AuthStrings.passwordHint,
+              icon: Icons.lock_outline_rounded,
+              error: _regPassErr,
+              obscure: !visible,
+              ltr: true,
+              textInputAction: TextInputAction.next,
+              autofillHints: const [AutofillHints.newPassword],
+              enabled: !_loading,
+              onChanged: (_) {
+                if (_regPassErr != null) setState(() => _regPassErr = null);
+              },
+              trailing: _visibilityToggle(
+                shown: visible,
+                onTap: () => _signupPasswordVisible.value = !visible,
               ),
             ),
-            const SizedBox(height: AuthTokens.gapBetweenFields),
-
-            ListenableBuilder(
-              listenable: Listenable.merge([_regNameCtrl, _regPhoneCtrl]),
-              builder: (context, _) => AuthPrimaryButton(
-                key: const ValueKey('signup-next'),
-                label: AuthStrings.signUpButton,
-                enabled:
-                    _regNameCtrl.text.trim().isNotEmpty &&
-                    _regPhoneCtrl.text.trim().isNotEmpty,
-                onPressed: _advanceSignup,
-              ),
-            ),
-          ] else ...[
-            ValueListenableBuilder<bool>(
-              valueListenable: _signupPasswordVisible,
-              builder: (context, visible, _) => AuthTextField(
-                controller: _regPassCtrl,
+          ),
+          const SizedBox(height: 12),
+          ValueListenableBuilder<TextEditingValue>(
+            valueListenable: _regPassCtrl,
+            builder: (context, value, _) =>
+                PasswordStrengthMeter(password: value.text),
+          ),
+          const SizedBox(height: AuthTokens.gapBetweenFields),
+          ListenableBuilder(
+            listenable: Listenable.merge([_regPassCtrl, _regPass2Ctrl]),
+            builder: (context, _) => ValueListenableBuilder<bool>(
+              valueListenable: _signupConfirmationVisible,
+              builder: (context, visible, __) => AuthTextField(
+                controller: _regPass2Ctrl,
                 forceLtr: true,
-                label: AuthStrings.passwordLabel,
+                label: AuthStrings.confirmPasswordLabel,
                 hint: AuthStrings.passwordHint,
-                icon: Icons.lock_outline_rounded,
-                error: _regPassErr,
+                icon: Icons.lock_reset_rounded,
+                error: _regPass2Err ??
+                    (_confirmMismatch(_regPassCtrl.text, _regPass2Ctrl.text)
+                        ? AuthStrings.errPasswordMismatch
+                        : null),
                 obscure: !visible,
                 ltr: true,
-                textInputAction: TextInputAction.next,
-                autofillHints: const [AutofillHints.newPassword],
+                textInputAction: TextInputAction.done,
                 enabled: !_loading,
                 onChanged: (_) {
-                  if (_regPassErr != null) setState(() => _regPassErr = null);
+                  if (_regPass2Err != null) setState(() => _regPass2Err = null);
                 },
+                onSubmitted: (_) => _doRegister(),
                 trailing: _visibilityToggle(
                   shown: visible,
-                  onTap: () => _signupPasswordVisible.value = !visible,
+                  onTap: () => _signupConfirmationVisible.value = !visible,
                 ),
               ),
             ),
-
-            const SizedBox(height: 12),
-            ValueListenableBuilder<TextEditingValue>(
-              valueListenable: _regPassCtrl,
-              builder: (context, value, _) =>
-                  PasswordStrengthMeter(password: value.text),
-            ),
-
-            const SizedBox(height: AuthTokens.gapBetweenFields),
-            ListenableBuilder(
-              listenable: Listenable.merge([_regPassCtrl, _regPass2Ctrl]),
-              builder: (context, _) => ValueListenableBuilder<bool>(
-                valueListenable: _signupConfirmationVisible,
-                builder: (context, visible, __) => AuthTextField(
-                  controller: _regPass2Ctrl,
-                  forceLtr: true,
-                  label: AuthStrings.confirmPasswordLabel,
-                  hint: AuthStrings.passwordHint,
-                  icon: Icons.lock_reset_rounded,
-                  error:
-                      _regPass2Err ??
-                      (_confirmMismatch(_regPassCtrl.text, _regPass2Ctrl.text)
-                          ? AuthStrings.errPasswordMismatch
-                          : null),
-                  obscure: !visible,
-                  ltr: true,
-                  textInputAction: TextInputAction.done,
-                  enabled: !_loading,
-                  onChanged: (_) {
-                    if (_regPass2Err != null)
-                      setState(() => _regPass2Err = null);
-                  },
-                  onSubmitted: (_) => _doRegister(),
-                  trailing: _visibilityToggle(
-                    shown: visible,
-                    onTap: () => _signupConfirmationVisible.value = !visible,
-                  ),
-                ),
+          ),
+          const SizedBox(height: AuthTokens.gapBetweenFields),
+          ListenableBuilder(
+            listenable: Listenable.merge([
+              _regNameCtrl,
+              _regEmailCtrl,
+              _regPassCtrl,
+              _regPass2Ctrl,
+            ]),
+            builder: (context, _) => AuthPrimaryButton(
+              key: const ValueKey('signup-submit'),
+              label: AuthStrings.signUpTitle,
+              loading: _loading,
+              enabled: AuthValidators.signUpReady(
+                name: _regNameCtrl.text,
+                email: _regEmailCtrl.text,
+                password: _regPassCtrl.text,
+                confirmation: _regPass2Ctrl.text,
               ),
+              onPressed: _doRegister,
             ),
-
-            const SizedBox(height: AuthTokens.gapBetweenFields),
-            AuthWhatsappConsent(
-              value: _whatsappMarketing,
-              onChanged: _loading
-                  ? null
-                  : (value) {
-                      setState(() => _whatsappMarketing = value);
-                    },
-            ),
-            const SizedBox(height: AuthTokens.gapBetweenFields),
-            ListenableBuilder(
-              listenable: Listenable.merge([
-                _regNameCtrl,
-                _regPhoneCtrl,
-                _regPassCtrl,
-                _regPass2Ctrl,
-              ]),
-              builder: (context, _) => AuthPrimaryButton(
-                label: AuthStrings.signUpButton,
-                loading: _loading,
-                enabled: AuthValidators.signUpReady(
-                  name: _regNameCtrl.text,
-                  phone: _regPhoneE164,
-                  password: _regPassCtrl.text,
-                  confirmation: _regPass2Ctrl.text,
-                ),
-                onPressed: _doRegister,
-              ),
-            ),
-          ],
-          const SizedBox(height: 24),
+          ),
+          const SizedBox(height: 20),
           _promptRow(
             lead: AuthStrings.haveAccountLead,
             action: AuthStrings.haveAccountAction,
@@ -1933,34 +1868,36 @@ class _AuthShellState extends State<AuthShell> {
   // ── View 3: OTP ───────────────────────────────────────────────────────────
 
   Widget _buildOtpView() => _otpScaffold(
-    destination: otpDestination(
-      _activeOtpChannel,
-      _activeOtpChannel == AuthChannel.phone ? _pendingPhone : _pendingEmail,
-    ),
-    codeCtrl: _otpCtrl,
-    focus: _otpFocus,
-    shaker: _otpShaker,
-    hasError: _otpHasError,
-    seconds: _resendSeconds,
-    onBack: _back,
-    onSubmit: _doVerifyOtp,
-    onResend: _resendOtp,
-  );
+        destination: otpDestination(
+          _activeOtpChannel,
+          _activeOtpChannel == AuthChannel.phone
+              ? _pendingPhone
+              : _pendingEmail,
+        ),
+        codeCtrl: _otpCtrl,
+        focus: _otpFocus,
+        shaker: _otpShaker,
+        hasError: _otpHasError,
+        seconds: _resendSeconds,
+        onBack: _back,
+        onSubmit: _doVerifyOtp,
+        onResend: _resendOtp,
+      );
 
   Widget _buildForgotOtpView() => _otpScaffold(
-    destination: otpDestination(
-      AuthChannel.email,
-      AuthValidators.normalizeEmail(_fpEmailCtrl.text),
-    ),
-    codeCtrl: _fpOtpCtrl,
-    focus: _fpOtpFocus,
-    shaker: _fpOtpShaker,
-    hasError: _fpOtpHasError,
-    seconds: _resendSeconds,
-    onBack: _back,
-    onSubmit: _doForgotVerifyOtp,
-    onResend: _resendFpOtp,
-  );
+        destination: otpDestination(
+          AuthChannel.email,
+          AuthValidators.normalizeEmail(_fpEmailCtrl.text),
+        ),
+        codeCtrl: _fpOtpCtrl,
+        focus: _fpOtpFocus,
+        shaker: _fpOtpShaker,
+        hasError: _fpOtpHasError,
+        seconds: _resendSeconds,
+        onBack: _back,
+        onSubmit: _doForgotVerifyOtp,
+        onResend: _resendFpOtp,
+      );
 
   Widget _otpScaffold({
     required String destination,
@@ -2098,22 +2035,23 @@ class _AuthShellState extends State<AuthShell> {
   }
 
   Widget _buildForgotNewPassView() => NewPasswordScreen(
-    onBack: _back,
-    password: _fpNewPassCtrl,
-    confirmation: _fpConfirmPassCtrl,
-    passwordVisible: _resetPasswordVisible,
-    confirmationVisible: _resetConfirmationVisible,
-    passwordError: _fpNewPassErr,
-    confirmationError: _fpConfirmPassErr,
-    loading: _loading,
-    onPasswordChanged: (_) {
-      if (_fpNewPassErr != null) setState(() => _fpNewPassErr = null);
-    },
-    onConfirmationChanged: (_) {
-      if (_fpConfirmPassErr != null) setState(() => _fpConfirmPassErr = null);
-    },
-    onSave: _doForgotSetPassword,
-  );
+        onBack: _back,
+        password: _fpNewPassCtrl,
+        confirmation: _fpConfirmPassCtrl,
+        passwordVisible: _resetPasswordVisible,
+        confirmationVisible: _resetConfirmationVisible,
+        passwordError: _fpNewPassErr,
+        confirmationError: _fpConfirmPassErr,
+        loading: _loading,
+        onPasswordChanged: (_) {
+          if (_fpNewPassErr != null) setState(() => _fpNewPassErr = null);
+        },
+        onConfirmationChanged: (_) {
+          if (_fpConfirmPassErr != null)
+            setState(() => _fpConfirmPassErr = null);
+        },
+        onSave: _doForgotSetPassword,
+      );
 
   // ── Small shared pieces ───────────────────────────────────────────────────
 

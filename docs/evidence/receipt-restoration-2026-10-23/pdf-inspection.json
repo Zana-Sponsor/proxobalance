@@ -1,0 +1,22 @@
+[
+  {
+    "file": "exports/narrow_paid.pdf",
+    "pages": 3,
+    "pdfinfo": "Title:           \u067e\u0633\u0648\u0648\u0644\u06d5\u06cc \u0695\u06cc\u06a9\u0644\u0627\u0645\nKeywords:        PARZNFHCOKVL 83062db4-47d0-4ce1-a3b4-33a766783553 720079a8-9cf7-44de-b3af-f396d1aaf7d8\nAuthor:          Proxo\nCreator:         Proxo\nProducer:        https://github.com/DavBfr/dart_pdf\nCreationDate:    Thu Oct 22 23:32:56 2026 CEST\nCustom Metadata: no\nMetadata Stream: no\nTagged:          no\nUserProperties:  no\nSuspects:        no\nForm:            none\nJavaScript:      no\nPages:           3\nEncrypted:       no\nPage size:       595.276 x 841.89 pts (A4)\nPage rot:        0\nFile size:       392028 bytes\nOptimized:       no\nPDF version:     1.7\n"
+  },
+  {
+    "file": "exports/standard_free.pdf",
+    "pages": 1,
+    "pdfinfo": "Title:           \u067e\u0633\u0648\u0648\u0644\u06d5\u06cc \u0695\u06cc\u06a9\u0644\u0627\u0645\nKeywords:        PARZNFHCOKVL 720079a8-9cf7-44de-b3af-f396d1aaf7d8\nAuthor:          Proxo\nCreator:         Proxo\nProducer:        https://github.com/DavBfr/dart_pdf\nCreationDate:    Thu Oct 22 23:32:54 2026 CEST\nCustom Metadata: no\nMetadata Stream: no\nTagged:          no\nUserProperties:  no\nSuspects:        no\nForm:            none\nJavaScript:      no\nPages:           1\nEncrypted:       no\nPage size:       595.276 x 841.89 pts (A4)\nPage rot:        0\nFile size:       176359 bytes\nOptimized:       no\nPDF version:     1.7\n"
+  },
+  {
+    "file": "exports/transaction_narrow.pdf",
+    "pages": 2,
+    "pdfinfo": "Title:           \u067e\u0633\u0648\u0648\u0644\u06d5\u06cc \u0695\u06cc\u06a9\u0644\u0627\u0645\nKeywords:        83062db4-47d0-4ce1-a3b4-33a766783553 720079a8-9cf7-44de-b3af-f396d1aaf7d8\nAuthor:          Proxo\nCreator:         Proxo\nProducer:        https://github.com/DavBfr/dart_pdf\nCreationDate:    Thu Oct 22 23:32:59 2026 CEST\nCustom Metadata: no\nMetadata Stream: no\nTagged:          no\nUserProperties:  no\nSuspects:        no\nForm:            none\nJavaScript:      no\nPages:           2\nEncrypted:       no\nPage size:       595.276 x 841.89 pts (A4)\nPage rot:        0\nFile size:       259709 bytes\nOptimized:       no\nPDF version:     1.7\n"
+  },
+  {
+    "file": "exports/transaction_standard.pdf",
+    "pages": 1,
+    "pdfinfo": "Title:           \u067e\u0633\u0648\u0648\u0644\u06d5\u06cc \u0695\u06cc\u06a9\u0644\u0627\u0645\nKeywords:        83062db4-47d0-4ce1-a3b4-33a766783553 720079a8-9cf7-44de-b3af-f396d1aaf7d8\nAuthor:          Proxo\nCreator:         Proxo\nProducer:        https://github.com/DavBfr/dart_pdf\nCreationDate:    Thu Oct 22 23:32:58 2026 CEST\nCustom Metadata: no\nMetadata Stream: no\nTagged:          no\nUserProperties:  no\nSuspects:        no\nForm:            none\nJavaScript:      no\nPages:           1\nEncrypted:       no\nPage size:       595.276 x 841.89 pts (A4)\nPage rot:        0\nFile size:       145356 bytes\nOptimized:       no\nPDF version:     1.7\n"
+  }
+]

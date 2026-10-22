@@ -1,4 +1,5 @@
 import 'ad_activation_bridge.dart';
+import '../config/backend_config.dart';
 // notification_service.dart  (نسخەی نوێ — توکێن پاشەکەوت دەکات)
 // بیخەرە ناو:  lib/services/notification_service.dart
 //
@@ -54,6 +55,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'notification_presentation.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // BACKGROUND HANDLER — top-level، دەرەوەی هەر کلاسێک
@@ -65,16 +67,17 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  // Validate outside the delivery catch: invalid staging must fail closed.
+  final backend = BackendConfig.current;
+  if (!backend.productionTransportsEnabled) return;
   await Firebase.initializeApp();
 
   // FIX: کاتی لۆگ ئاوت، ئاگاداری نیشان مەدە
   // Supabase initialize کردن بۆ خوێندنەوەی سێشنی پاشەکەوتکراو
   try {
     await Supabase.initialize(
-      url: 'https://cojchkwssmasiejcgvbk.supabase.co',
-      anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9'
-          '.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNvamNoa3dzc21hc2llamNndmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTE1MTIsImV4cCI6MjA5Mjg4NzUxMn0'
-          '.RCALy3wpKHGAkmXWcBqEb_QFEUmh6ErdRbfrBmagvtw',
+      url: backend.supabaseUrl,
+      anonKey: backend.supabaseAnonKey,
     );
     final session = Supabase.instance.client.auth.currentSession;
     if (session == null) return; // لۆگ ئاوتە — ئاگاداری نیشان مەدە
@@ -133,14 +136,7 @@ class NotificationService {
   // FIX: Channel ID matches AndroidManifest.xml
   //   android:value="proxo_high_importance"
   // and is used consistently in every show() call and the background handler.
-  static const _channel = AndroidNotificationChannel(
-    'proxo_high_importance',
-    'Proxo Notifications',
-    description: 'ئاگادارکردنەوەی پرۆکسۆ',
-    importance: Importance.max,
-    enableVibration: true,
-    playSound: true,
-  );
+  static const _channel = ProxoNotificationPresentation.channel;
 
   GlobalKey<NavigatorState>? _navigatorKey;
   Map<String, dynamic>? _pendingData; // FIX: ئاگاداری پاشەکەوتکراو کاتی داخستنی ئەپ
@@ -164,6 +160,7 @@ class NotificationService {
     required GlobalKey<NavigatorState> navigatorKey,
     void Function(RemoteMessage)? onForegroundMessage,
   }) async {
+    if (!BackendConfig.current.productionTransportsEnabled) return;
     _navigatorKey = navigatorKey;
 
     // NOTE: onBackgroundMessage is already registered in main() before init()
@@ -171,6 +168,12 @@ class NotificationService {
 
     // _initLocalPlugin creates the plugin + channel in the foreground process.
     await _initLocalPlugin(navigatorKey: navigatorKey);
+
+    // A data-only push is displayed by the local plugin. Its terminated-app
+    // tap is not returned by FirebaseMessaging.getInitialMessage().
+    _pendingData = ProxoNotificationPresentation.launchPayload(
+      await _localPlugin.getNotificationAppLaunchDetails(),
+    );
 
     await _messaging.setForegroundNotificationPresentationOptions(
       alert: false, // Foreground presentation is handled once below.
@@ -221,6 +224,7 @@ class NotificationService {
   // after login ensures the token is always stored in pa_device_tokens, which
   // is required for background FCM push notifications to reach the device.
   Future<void> saveTokenAfterLogin() async {
+    if (!BackendConfig.current.productionTransportsEnabled) return;
     try {
       final token = await _messaging.getToken();
       if (token != null) {
@@ -234,6 +238,7 @@ class NotificationService {
 
   // ── توکێن بخەرە Supabase ─────────────────────────────────────────────────
   static Future<void> _saveTokenToSupabase(String token) async {
+    if (!BackendConfig.current.productionTransportsEnabled) return;
     try {
       final uid = Supabase.instance.client.auth.currentUser?.id;
       if (uid == null) return;
@@ -260,6 +265,7 @@ class NotificationService {
 
   // ── توکێن کاتی logout سڕینەوە ────────────────────────────────────────────
   Future<void> removeToken() async {
+    if (!BackendConfig.current.productionTransportsEnabled) return;
     try {
       final uid   = Supabase.instance.client.auth.currentUser?.id;
       final token = await _messaging.getToken();
@@ -280,11 +286,19 @@ class NotificationService {
   // ── Helpers ───────────────────────────────────────────────────────────────
 
   // Stable notification ID: same string always → same int (no duplicates)
-  static int _stableId(String key) => key.hashCode & 0x7FFFFFFF;
 
-  Future<String?> getToken()                  => _messaging.getToken();
-  Future<void> subscribeToTopic(String topic) => _messaging.subscribeToTopic(topic);
-  Future<void> unsubscribeFromTopic(String t) => _messaging.unsubscribeFromTopic(t);
+  Future<String?> getToken() async {
+    if (!BackendConfig.current.productionTransportsEnabled) return null;
+    return _messaging.getToken();
+  }
+  Future<void> subscribeToTopic(String topic) async {
+    if (!BackendConfig.current.productionTransportsEnabled) return;
+    await _messaging.subscribeToTopic(topic);
+  }
+  Future<void> unsubscribeFromTopic(String topic) async {
+    if (!BackendConfig.current.productionTransportsEnabled) return;
+    await _messaging.unsubscribeFromTopic(topic);
+  }
 
   // ── _navigate ─────────────────────────────────────────────────────────────
 
@@ -343,60 +357,9 @@ class NotificationService {
         ?.createNotificationChannel(_channel);
   }
 
-  static Future<void> _showLocalNotification(RemoteMessage message) async {
-    final n = message.notification;
-    if (n == null) return;
-    await _localPlugin.show(
-      _stableId(message.messageId ?? (message.notification?.title ?? 'proxo')),
-      n.title,
-      n.body,
-      NotificationDetails(
-        android: AndroidNotificationDetails(
-          _channel.id,
-          _channel.name,
-          channelDescription: _channel.description,
-          importance: Importance.max,
-          priority:   Priority.high,
-          icon:       'ic_notification',
-          largeIcon:  null,
-          color:      const Color(0xFF0E78FF),
-        ),
-        iOS: const DarwinNotificationDetails(
-          presentAlert: true,
-          presentBadge: true,
-          presentSound: true,
-        ),
-      ),
-      payload: jsonEncode(message.data),
-    );
-  }
+  static Future<void> _showLocalNotification(RemoteMessage message) =>
+      ProxoNotificationPresentation.showMessage(_localPlugin, message);
 
-  static Future<void> _showFromData(Map<String, dynamic> data) async {
-    await _localPlugin.show(
-      _stableId(data['id'] as String? ?? data['title'] as String? ?? 'proxo'),
-      data['title'] as String? ?? 'Proxo',
-      data['body']  as String? ?? '',
-      NotificationDetails(
-        android: AndroidNotificationDetails(
-          _channel.id,
-          _channel.name,
-          channelDescription: _channel.description,
-          importance:   Importance.max,
-          priority:     Priority.high,
-          icon:         'ic_notification',
-          largeIcon:    null,
-          color:        const Color(0xFF0E78FF),
-          autoCancel:   true,
-          ongoing:      false,
-          showProgress: false,
-        ),
-        iOS: const DarwinNotificationDetails(
-          presentAlert: true,
-          presentBadge: true,
-          presentSound: true,
-        ),
-      ),
-      payload: jsonEncode(data),
-    );
-  }
+  static Future<void> _showFromData(Map<String, dynamic> data) =>
+      ProxoNotificationPresentation.showData(_localPlugin, data);
 }

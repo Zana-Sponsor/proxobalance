@@ -3,7 +3,6 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
-import '../l10n/proxo_strings.dart';
 import '../theme/app_locale.dart';
 import '../services/ad_categories.dart';
 import '../services/best_metrics_service.dart';
@@ -57,8 +56,8 @@ class _BestMetricsScreenState extends State<BestMetricsScreen> {
     try {
       final rows =
           await (widget.loadResults ?? BestMetricsService.fetchWeeklyResults)(
-            forceRefresh: forceRefresh,
-          );
+        forceRefresh: forceRefresh,
+      );
       if (!mounted || request != _request) return;
       setState(() {
         _ads = rows;
@@ -84,27 +83,16 @@ class _BestMetricsScreenState extends State<BestMetricsScreen> {
         ? _ads
         : _ads.where((ad) => ad.category == _category).toList();
     final titleStyle = ResultsUi.text(size: 16);
-    final titlePainter = TextPainter(
-      text: TextSpan(
-        text: ProxoStrings.text('باشترین ئەنجامەکان'),
-        style: titleStyle,
-      ),
-      textDirection: TextDirection.rtl,
-      textScaler: MediaQuery.textScalerOf(context),
-    )..layout(maxWidth: math.max(80, MediaQuery.sizeOf(context).width - 144));
-    final toolbarHeight = math.max(64.0, titlePainter.height + 20);
-    titlePainter.dispose();
     return Theme(
       data: ResultsUi.theme(context),
       child: Directionality(
         textDirection: TextDirection.rtl,
         child: Scaffold(
           backgroundColor: const Color(0xFFF8F9FB),
-          appBar: ProxoAppBar(
+          appBar: ProxoAppBar.adaptive(
+            context,
             title: 'باشترین ئەنجامەکان',
             titleStyle: titleStyle,
-            titleMaxLines: null,
-            toolbarHeight: toolbarHeight,
           ),
           body: SafeArea(
             top: false,
@@ -127,9 +115,9 @@ class _BestMetricsScreenState extends State<BestMetricsScreen> {
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
                       : filtered.isEmpty
-                      ? LayoutBuilder(
-                          builder: (context, constraints) =>
-                              SingleChildScrollView(
+                          ? LayoutBuilder(
+                              builder: (context, constraints) =>
+                                  SingleChildScrollView(
                                 physics: const AlwaysScrollableScrollPhysics(
                                   parent: BouncingScrollPhysics(),
                                 ),
@@ -147,8 +135,8 @@ class _BestMetricsScreenState extends State<BestMetricsScreen> {
                                   ),
                                 ),
                               ),
-                        )
-                      : _results(filtered),
+                            )
+                          : _results(filtered),
                 ),
               ],
             ),
@@ -159,72 +147,71 @@ class _BestMetricsScreenState extends State<BestMetricsScreen> {
   }
 
   Widget _categories() => ColoredBox(
-    color: Colors.white,
-    child: SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      physics: const BouncingScrollPhysics(),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      child: Row(
-        children: [
-          for (final option in [
-            const AdCategoryOption('all', 'هەموو'),
-            ...kAdCategories,
-          ])
-            Padding(
-              padding: const EdgeInsetsDirectional.only(end: 8),
-              child: ChoiceChip(
-                selected: option.slug == _category,
-                showCheckmark: false,
-                onSelected: (_) => setState(() {
-                  _category = option.slug;
-                  _anchorId = null;
-                }),
-                selectedColor: const Color(0xFFEAF2FF),
-                backgroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 10,
-                ),
-                side: BorderSide(
-                  color: option.slug == _category
-                      ? ResultsUi.blue.withValues(alpha: .35)
-                      : ResultsUi.line,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                label: ProxoText(
-                  option.label,
-                  translate: true,
-                  style: ResultsUi.text(
-                    size: 13,
-                    color: option.slug == _category
-                        ? ResultsUi.blue
-                        : ResultsUi.muted,
+        color: Colors.white,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          physics: const BouncingScrollPhysics(),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          child: Row(
+            children: [
+              for (final option in [
+                const AdCategoryOption('all', 'هەموو'),
+                ...kAdCategories,
+              ])
+                Padding(
+                  padding: const EdgeInsetsDirectional.only(end: 8),
+                  child: ChoiceChip(
+                    selected: option.slug == _category,
+                    showCheckmark: false,
+                    onSelected: (_) => setState(() {
+                      _category = option.slug;
+                      _anchorId = null;
+                    }),
+                    selectedColor: const Color(0xFFEAF2FF),
+                    backgroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 10,
+                    ),
+                    side: BorderSide(
+                      color: option.slug == _category
+                          ? ResultsUi.blue.withValues(alpha: .35)
+                          : ResultsUi.line,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    label: ProxoText(
+                      option.label,
+                      translate: true,
+                      style: ResultsUi.text(
+                        size: 13,
+                        color: option.slug == _category
+                            ? ResultsUi.blue
+                            : ResultsUi.muted,
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
-        ],
-      ),
-    ),
-  );
+            ],
+          ),
+        ),
+      );
 
   Widget _results(List<BestMetricAd> rows) {
     // Anchor the tapped card without estimating pixel heights or eagerly building
     // earlier cards. The preceding sliver remains reachable by scrolling back.
-    final inset = math.max(16.0, (MediaQuery.sizeOf(context).width - 600) / 2);
+    final inset = math.max(20.0, (MediaQuery.sizeOf(context).width - 600) / 2);
     final selected = math.max(0, rows.indexWhere((ad) => ad.id == _anchorId));
     final center = ValueKey('results-anchor-$_category-$_anchorId');
     Widget card(BestMetricAd ad) => Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: BestMetricCard(
-        key: ValueKey('result-${ad.id}'),
-        ad: ad,
-        rank: _ads.indexWhere((row) => row.id == ad.id) + 1,
-        expanded: ad.id == _anchorId,
-      ),
-    );
+          padding: const EdgeInsets.only(bottom: 16),
+          child: BestMetricCard(
+            key: ValueKey('result-${ad.id}'),
+            ad: ad,
+            rank: _ads.indexWhere((row) => row.id == ad.id) + 1,
+          ),
+        );
     return ProxoRefresh(
       pullToRefresh: true,
       onRefresh: () => _load(forceRefresh: true),

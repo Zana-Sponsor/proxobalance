@@ -1,0 +1,31 @@
+{
+  "tests_passed": 161,
+  "capture_cases_passed": 2,
+  "static_analysis": {
+    "errors": 0,
+    "warnings": 0,
+    "preexisting_info_lints": 1
+  },
+  "screens": {
+    "ad-receipt": {
+      "comparison": "docs/evidence/receipt-labels-2026-10-23/ad-receipt-393.png",
+      "viewport_dp": [
+        393,
+        852
+      ],
+      "capture_scale": 3,
+      "changed_pixels": 1739,
+      "changed_pixels_outside_status_value": 0
+    },
+    "receipt": {
+      "comparison": "docs/evidence/receipt-reference-match-2026-10-23/screens/receipt-393-s1.0-d3.0.png",
+      "viewport_dp": [
+        393,
+        852
+      ],
+      "capture_scale": 3,
+      "changed_pixels": 1520,
+      "changed_pixels_outside_status_value": 0
+    }
+  }
+}

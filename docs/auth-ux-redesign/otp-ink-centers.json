@@ -1,0 +1,473 @@
+{
+  "method": "Bounding boxes of dark glyph ink in each actual rendered OTP TextField, excluding blue borders. Font side bearings can make visible ink differ slightly from the geometric text center.",
+  "measurements": [
+    {
+      "screenshot": "otp-filled-kmr-393-s1.0-d3.0.png",
+      "digit": 1,
+      "text_scale": 1.0,
+      "cell_bounds_dp": [
+        34.0,
+        309.5,
+        45.0,
+        53.0
+      ],
+      "ink_center_delta_x_dp": -1.667,
+      "ink_center_delta_y_dp": -0.167
+    },
+    {
+      "screenshot": "otp-filled-kmr-393-s1.0-d3.0.png",
+      "digit": 2,
+      "text_scale": 1.0,
+      "cell_bounds_dp": [
+        89.5,
+        309.0,
+        46.0,
+        54.0
+      ],
+      "ink_center_delta_x_dp": -0.667,
+      "ink_center_delta_y_dp": -0.5
+    },
+    {
+      "screenshot": "otp-filled-kmr-393-s1.0-d3.0.png",
+      "digit": 3,
+      "text_scale": 1.0,
+      "cell_bounds_dp": [
+        145.5,
+        309.0,
+        46.0,
+        54.0
+      ],
+      "ink_center_delta_x_dp": -0.667,
+      "ink_center_delta_y_dp": -0.5
+    },
+    {
+      "screenshot": "otp-filled-kmr-393-s1.0-d3.0.png",
+      "digit": 4,
+      "text_scale": 1.0,
+      "cell_bounds_dp": [
+        201.5,
+        309.0,
+        46.0,
+        54.0
+      ],
+      "ink_center_delta_x_dp": -0.667,
+      "ink_center_delta_y_dp": -0.333
+    },
+    {
+      "screenshot": "otp-filled-kmr-393-s1.0-d3.0.png",
+      "digit": 5,
+      "text_scale": 1.0,
+      "cell_bounds_dp": [
+        257.5,
+        309.0,
+        46.0,
+        54.0
+      ],
+      "ink_center_delta_x_dp": -0.667,
+      "ink_center_delta_y_dp": -0.333
+    },
+    {
+      "screenshot": "otp-filled-kmr-393-s1.0-d3.0.png",
+      "digit": 6,
+      "text_scale": 1.0,
+      "cell_bounds_dp": [
+        313.5,
+        309.0,
+        46.0,
+        54.0
+      ],
+      "ink_center_delta_x_dp": -0.5,
+      "ink_center_delta_y_dp": -0.333
+    },
+    {
+      "screenshot": "otp-filled-ckb-280-s2.0-d2.0.png",
+      "digit": 1,
+      "text_scale": 2.0,
+      "cell_bounds_dp": [
+        64.5,
+        525.5,
+        45.0,
+        61.0
+      ],
+      "ink_center_delta_x_dp": -2.5,
+      "ink_center_delta_y_dp": -0.75
+    },
+    {
+      "screenshot": "otp-filled-ckb-280-s2.0-d2.0.png",
+      "digit": 2,
+      "text_scale": 2.0,
+      "cell_bounds_dp": [
+        117.0,
+        525.0,
+        46.0,
+        62.0
+      ],
+      "ink_center_delta_x_dp": -0.75,
+      "ink_center_delta_y_dp": -1.0
+    },
+    {
+      "screenshot": "otp-filled-ckb-280-s2.0-d2.0.png",
+      "digit": 3,
+      "text_scale": 2.0,
+      "cell_bounds_dp": [
+        170.0,
+        525.0,
+        46.0,
+        62.0
+      ],
+      "ink_center_delta_x_dp": -1.25,
+      "ink_center_delta_y_dp": -0.75
+    },
+    {
+      "screenshot": "otp-filled-ckb-280-s2.0-d2.0.png",
+      "digit": 4,
+      "text_scale": 2.0,
+      "cell_bounds_dp": [
+        64.0,
+        599.0,
+        46.0,
+        62.0
+      ],
+      "ink_center_delta_x_dp": -0.75,
+      "ink_center_delta_y_dp": -1.0
+    },
+    {
+      "screenshot": "otp-filled-ckb-280-s2.0-d2.0.png",
+      "digit": 5,
+      "text_scale": 2.0,
+      "cell_bounds_dp": [
+        117.0,
+        599.0,
+        46.0,
+        62.0
+      ],
+      "ink_center_delta_x_dp": -0.75,
+      "ink_center_delta_y_dp": -0.5
+    },
+    {
+      "screenshot": "otp-filled-ckb-280-s2.0-d2.0.png",
+      "digit": 6,
+      "text_scale": 2.0,
+      "cell_bounds_dp": [
+        170.0,
+        599.0,
+        46.0,
+        62.0
+      ],
+      "ink_center_delta_x_dp": -0.75,
+      "ink_center_delta_y_dp": -0.5
+    },
+    {
+      "screenshot": "otp-filled-ar-280-s2.0-d2.0.png",
+      "digit": 1,
+      "text_scale": 2.0,
+      "cell_bounds_dp": [
+        64.5,
+        465.5,
+        45.0,
+        61.0
+      ],
+      "ink_center_delta_x_dp": -2.5,
+      "ink_center_delta_y_dp": -0.75
+    },
+    {
+      "screenshot": "otp-filled-ar-280-s2.0-d2.0.png",
+      "digit": 2,
+      "text_scale": 2.0,
+      "cell_bounds_dp": [
+        117.0,
+        465.0,
+        46.0,
+        62.0
+      ],
+      "ink_center_delta_x_dp": -0.75,
+      "ink_center_delta_y_dp": -1.0
+    },
+    {
+      "screenshot": "otp-filled-ar-280-s2.0-d2.0.png",
+      "digit": 3,
+      "text_scale": 2.0,
+      "cell_bounds_dp": [
+        170.0,
+        465.0,
+        46.0,
+        62.0
+      ],
+      "ink_center_delta_x_dp": -1.25,
+      "ink_center_delta_y_dp": -0.75
+    },
+    {
+      "screenshot": "otp-filled-ar-280-s2.0-d2.0.png",
+      "digit": 4,
+      "text_scale": 2.0,
+      "cell_bounds_dp": [
+        64.0,
+        539.0,
+        46.0,
+        62.0
+      ],
+      "ink_center_delta_x_dp": -0.75,
+      "ink_center_delta_y_dp": -1.0
+    },
+    {
+      "screenshot": "otp-filled-ar-280-s2.0-d2.0.png",
+      "digit": 5,
+      "text_scale": 2.0,
+      "cell_bounds_dp": [
+        117.0,
+        539.0,
+        46.0,
+        62.0
+      ],
+      "ink_center_delta_x_dp": -0.75,
+      "ink_center_delta_y_dp": -0.5
+    },
+    {
+      "screenshot": "otp-filled-ar-280-s2.0-d2.0.png",
+      "digit": 6,
+      "text_scale": 2.0,
+      "cell_bounds_dp": [
+        170.0,
+        539.0,
+        46.0,
+        62.0
+      ],
+      "ink_center_delta_x_dp": -0.75,
+      "ink_center_delta_y_dp": -0.5
+    },
+    {
+      "screenshot": "otp-filled-ar-393-s1.0-d3.0.png",
+      "digit": 1,
+      "text_scale": 1.0,
+      "cell_bounds_dp": [
+        34.0,
+        309.5,
+        45.0,
+        53.0
+      ],
+      "ink_center_delta_x_dp": -1.667,
+      "ink_center_delta_y_dp": -0.167
+    },
+    {
+      "screenshot": "otp-filled-ar-393-s1.0-d3.0.png",
+      "digit": 2,
+      "text_scale": 1.0,
+      "cell_bounds_dp": [
+        89.5,
+        309.0,
+        46.0,
+        54.0
+      ],
+      "ink_center_delta_x_dp": -0.667,
+      "ink_center_delta_y_dp": -0.5
+    },
+    {
+      "screenshot": "otp-filled-ar-393-s1.0-d3.0.png",
+      "digit": 3,
+      "text_scale": 1.0,
+      "cell_bounds_dp": [
+        145.5,
+        309.0,
+        46.0,
+        54.0
+      ],
+      "ink_center_delta_x_dp": -0.667,
+      "ink_center_delta_y_dp": -0.5
+    },
+    {
+      "screenshot": "otp-filled-ar-393-s1.0-d3.0.png",
+      "digit": 4,
+      "text_scale": 1.0,
+      "cell_bounds_dp": [
+        201.5,
+        309.0,
+        46.0,
+        54.0
+      ],
+      "ink_center_delta_x_dp": -0.667,
+      "ink_center_delta_y_dp": -0.333
+    },
+    {
+      "screenshot": "otp-filled-ar-393-s1.0-d3.0.png",
+      "digit": 5,
+      "text_scale": 1.0,
+      "cell_bounds_dp": [
+        257.5,
+        309.0,
+        46.0,
+        54.0
+      ],
+      "ink_center_delta_x_dp": -0.667,
+      "ink_center_delta_y_dp": -0.333
+    },
+    {
+      "screenshot": "otp-filled-ar-393-s1.0-d3.0.png",
+      "digit": 6,
+      "text_scale": 1.0,
+      "cell_bounds_dp": [
+        313.5,
+        309.0,
+        46.0,
+        54.0
+      ],
+      "ink_center_delta_x_dp": -0.5,
+      "ink_center_delta_y_dp": -0.333
+    },
+    {
+      "screenshot": "otp-filled-kmr-280-s2.0-d2.0.png",
+      "digit": 1,
+      "text_scale": 2.0,
+      "cell_bounds_dp": [
+        64.5,
+        567.5,
+        45.0,
+        61.0
+      ],
+      "ink_center_delta_x_dp": -2.5,
+      "ink_center_delta_y_dp": -0.75
+    },
+    {
+      "screenshot": "otp-filled-kmr-280-s2.0-d2.0.png",
+      "digit": 2,
+      "text_scale": 2.0,
+      "cell_bounds_dp": [
+        117.0,
+        567.0,
+        46.0,
+        62.0
+      ],
+      "ink_center_delta_x_dp": -0.75,
+      "ink_center_delta_y_dp": -1.0
+    },
+    {
+      "screenshot": "otp-filled-kmr-280-s2.0-d2.0.png",
+      "digit": 3,
+      "text_scale": 2.0,
+      "cell_bounds_dp": [
+        170.0,
+        567.0,
+        46.0,
+        62.0
+      ],
+      "ink_center_delta_x_dp": -1.25,
+      "ink_center_delta_y_dp": -0.75
+    },
+    {
+      "screenshot": "otp-filled-kmr-280-s2.0-d2.0.png",
+      "digit": 4,
+      "text_scale": 2.0,
+      "cell_bounds_dp": [
+        64.0,
+        641.0,
+        46.0,
+        62.0
+      ],
+      "ink_center_delta_x_dp": -0.75,
+      "ink_center_delta_y_dp": -1.0
+    },
+    {
+      "screenshot": "otp-filled-kmr-280-s2.0-d2.0.png",
+      "digit": 5,
+      "text_scale": 2.0,
+      "cell_bounds_dp": [
+        117.0,
+        641.0,
+        46.0,
+        62.0
+      ],
+      "ink_center_delta_x_dp": -0.75,
+      "ink_center_delta_y_dp": -0.5
+    },
+    {
+      "screenshot": "otp-filled-kmr-280-s2.0-d2.0.png",
+      "digit": 6,
+      "text_scale": 2.0,
+      "cell_bounds_dp": [
+        170.0,
+        641.0,
+        46.0,
+        62.0
+      ],
+      "ink_center_delta_x_dp": -0.75,
+      "ink_center_delta_y_dp": -0.5
+    },
+    {
+      "screenshot": "otp-filled-ckb-393-s1.0-d3.0.png",
+      "digit": 1,
+      "text_scale": 1.0,
+      "cell_bounds_dp": [
+        34.0,
+        309.5,
+        45.0,
+        53.0
+      ],
+      "ink_center_delta_x_dp": -1.667,
+      "ink_center_delta_y_dp": -0.167
+    },
+    {
+      "screenshot": "otp-filled-ckb-393-s1.0-d3.0.png",
+      "digit": 2,
+      "text_scale": 1.0,
+      "cell_bounds_dp": [
+        89.5,
+        309.0,
+        46.0,
+        54.0
+      ],
+      "ink_center_delta_x_dp": -0.667,
+      "ink_center_delta_y_dp": -0.5
+    },
+    {
+      "screenshot": "otp-filled-ckb-393-s1.0-d3.0.png",
+      "digit": 3,
+      "text_scale": 1.0,
+      "cell_bounds_dp": [
+        145.5,
+        309.0,
+        46.0,
+        54.0
+      ],
+      "ink_center_delta_x_dp": -0.667,
+      "ink_center_delta_y_dp": -0.5
+    },
+    {
+      "screenshot": "otp-filled-ckb-393-s1.0-d3.0.png",
+      "digit": 4,
+      "text_scale": 1.0,
+      "cell_bounds_dp": [
+        201.5,
+        309.0,
+        46.0,
+        54.0
+      ],
+      "ink_center_delta_x_dp": -0.667,
+      "ink_center_delta_y_dp": -0.333
+    },
+    {
+      "screenshot": "otp-filled-ckb-393-s1.0-d3.0.png",
+      "digit": 5,
+      "text_scale": 1.0,
+      "cell_bounds_dp": [
+        257.5,
+        309.0,
+        46.0,
+        54.0
+      ],
+      "ink_center_delta_x_dp": -0.667,
+      "ink_center_delta_y_dp": -0.333
+    },
+    {
+      "screenshot": "otp-filled-ckb-393-s1.0-d3.0.png",
+      "digit": 6,
+      "text_scale": 1.0,
+      "cell_bounds_dp": [
+        313.5,
+        309.0,
+        46.0,
+        54.0
+      ],
+      "ink_center_delta_x_dp": -0.5,
+      "ink_center_delta_y_dp": -0.333
+    }
+  ]
+}

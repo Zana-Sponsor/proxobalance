@@ -1,0 +1,207 @@
+{
+  "old": {
+    "artifact_id": 12452343763,
+    "zip_bytes": 93045663,
+    "zip_sha256": "f0e29818085d06dbcef7bf3db0feb97eb3a14b722fa4f4103b7fe177d8fc4508",
+    "apk_entry": "app-release.apk",
+    "apk_bytes": 93045519,
+    "apk_sha256": "baaaec3373439bababe82a671fb7f87f416261654db456786ea37519548e55b3",
+    "entry_count": 8440,
+    "selected_entries": {
+      "classes.dex": {
+        "size": 8466628,
+        "compressed_size": 3191607,
+        "sha256": "16319a0e99ad850d04b0680cb77262a885679c8a2554997c5252a21431f209f4",
+        "markers": {
+          "fastpay-reference-scroll": false,
+          "framework_handles_back": false,
+          "ProxoDrawerPopScope": false,
+          "Proxo": false,
+          "fastpay-logo.png": false
+        }
+      },
+      "lib/arm64-v8a/libapp.so": {
+        "size": 11338632,
+        "compressed_size": 11338632,
+        "sha256": "fdb71c9f7866065fb91ec8de6da3db98241d7e8d5f31f3da601d1a55a82614d1",
+        "markers": {
+          "fastpay-reference-scroll": false,
+          "framework_handles_back": false,
+          "ProxoDrawerPopScope": false,
+          "Proxo": true,
+          "fastpay-logo.png": false
+        }
+      },
+      "lib/armeabi-v7a/libapp.so": {
+        "size": 12780104,
+        "compressed_size": 12780104,
+        "sha256": "f60c14e872c9a774f0e29a93112778ccdc90c9a36e07f1117bb3064279b08b55",
+        "markers": {
+          "fastpay-reference-scroll": false,
+          "framework_handles_back": false,
+          "ProxoDrawerPopScope": false,
+          "Proxo": true,
+          "fastpay-logo.png": false
+        }
+      },
+      "lib/x86_64/libapp.so": {
+        "size": 11666312,
+        "compressed_size": 11666312,
+        "sha256": "4a61ca9e95569716ff17a6ea1e6def233fbbe64c4d18b2a131f63c57046da878",
+        "markers": {
+          "fastpay-reference-scroll": false,
+          "framework_handles_back": false,
+          "ProxoDrawerPopScope": false,
+          "Proxo": true,
+          "fastpay-logo.png": false
+        }
+      },
+      "AndroidManifest.xml": {
+        "size": 23856,
+        "compressed_size": 4860,
+        "sha256": "f50b1b7c0e9b70d369957d1af066b06e44e8f869ad936c32a5f332b7e1f15d88",
+        "markers": {
+          "fastpay-reference-scroll": false,
+          "framework_handles_back": false,
+          "ProxoDrawerPopScope": false,
+          "Proxo": false,
+          "fastpay-logo.png": false
+        }
+      },
+      "resources.arsc": {
+        "size": 460256,
+        "compressed_size": 460256,
+        "sha256": "36dc1211699719595697c19c5841042107146b46f92d1f911a0e6105d11f81e7",
+        "markers": {
+          "fastpay-reference-scroll": false,
+          "framework_handles_back": false,
+          "ProxoDrawerPopScope": false,
+          "Proxo": false,
+          "fastpay-logo.png": false
+        }
+      }
+    }
+  },
+  "new": {
+    "artifact_id": 12457210256,
+    "zip_bytes": 93045663,
+    "zip_sha256": "d31e3982e5b0ce1f1405776283abbe8f8e4815b3144ff7ecefbc39c653baf3fe",
+    "apk_entry": "app-release.apk",
+    "apk_bytes": 93045519,
+    "apk_sha256": "5defcd6b76b03e28ed6e9f56438f1c0ea1dc1e93bada5296d7ae8c63bb67bcad",
+    "entry_count": 8440,
+    "selected_entries": {
+      "classes.dex": {
+        "size": 8466628,
+        "compressed_size": 3191607,
+        "sha256": "16319a0e99ad850d04b0680cb77262a885679c8a2554997c5252a21431f209f4",
+        "markers": {
+          "fastpay-reference-scroll": false,
+          "framework_handles_back": false,
+          "ProxoDrawerPopScope": false,
+          "Proxo": false,
+          "fastpay-logo.png": false
+        }
+      },
+      "lib/arm64-v8a/libapp.so": {
+        "size": 11338632,
+        "compressed_size": 11338632,
+        "sha256": "a5f369a83dee07143799d6e0c876daf73ba841343e6ae282d1688e6e5bfb391b",
+        "markers": {
+          "fastpay-reference-scroll": true,
+          "framework_handles_back": false,
+          "ProxoDrawerPopScope": false,
+          "Proxo": true,
+          "fastpay-logo.png": false
+        }
+      },
+      "lib/armeabi-v7a/libapp.so": {
+        "size": 12780104,
+        "compressed_size": 12780104,
+        "sha256": "f5d3c9b4ec7224ce9397261202ebb8756c4a7b1b4ec3ba5e04478eee018b21c6",
+        "markers": {
+          "fastpay-reference-scroll": true,
+          "framework_handles_back": false,
+          "ProxoDrawerPopScope": false,
+          "Proxo": true,
+          "fastpay-logo.png": false
+        }
+      },
+      "lib/x86_64/libapp.so": {
+        "size": 11666312,
+        "compressed_size": 11666312,
+        "sha256": "f6e4799f9de2a92bdd4a63b7a62b61ccf49557b795fdf5ecebea36f5b59754f3",
+        "markers": {
+          "fastpay-reference-scroll": true,
+          "framework_handles_back": false,
+          "ProxoDrawerPopScope": false,
+          "Proxo": true,
+          "fastpay-logo.png": false
+        }
+      },
+      "AndroidManifest.xml": {
+        "size": 23856,
+        "compressed_size": 4860,
+        "sha256": "f50b1b7c0e9b70d369957d1af066b06e44e8f869ad936c32a5f332b7e1f15d88",
+        "markers": {
+          "fastpay-reference-scroll": false,
+          "framework_handles_back": false,
+          "ProxoDrawerPopScope": false,
+          "Proxo": false,
+          "fastpay-logo.png": false
+        }
+      },
+      "resources.arsc": {
+        "size": 460256,
+        "compressed_size": 460256,
+        "sha256": "36dc1211699719595697c19c5841042107146b46f92d1f911a0e6105d11f81e7",
+        "markers": {
+          "fastpay-reference-scroll": false,
+          "framework_handles_back": false,
+          "ProxoDrawerPopScope": false,
+          "Proxo": false,
+          "fastpay-logo.png": false
+        }
+      }
+    }
+  },
+  "apk_identical": false,
+  "changed_entries": {
+    "lib/arm64-v8a/libapp.so": {
+      "old": {
+        "size": 11338632,
+        "compressed_size": 11338632,
+        "sha256": "fdb71c9f7866065fb91ec8de6da3db98241d7e8d5f31f3da601d1a55a82614d1"
+      },
+      "new": {
+        "size": 11338632,
+        "compressed_size": 11338632,
+        "sha256": "a5f369a83dee07143799d6e0c876daf73ba841343e6ae282d1688e6e5bfb391b"
+      }
+    },
+    "lib/armeabi-v7a/libapp.so": {
+      "old": {
+        "size": 12780104,
+        "compressed_size": 12780104,
+        "sha256": "f60c14e872c9a774f0e29a93112778ccdc90c9a36e07f1117bb3064279b08b55"
+      },
+      "new": {
+        "size": 12780104,
+        "compressed_size": 12780104,
+        "sha256": "f5d3c9b4ec7224ce9397261202ebb8756c4a7b1b4ec3ba5e04478eee018b21c6"
+      }
+    },
+    "lib/x86_64/libapp.so": {
+      "old": {
+        "size": 11666312,
+        "compressed_size": 11666312,
+        "sha256": "4a61ca9e95569716ff17a6ea1e6def233fbbe64c4d18b2a131f63c57046da878"
+      },
+      "new": {
+        "size": 11666312,
+        "compressed_size": 11666312,
+        "sha256": "f6e4799f9de2a92bdd4a63b7a62b61ccf49557b795fdf5ecebea36f5b59754f3"
+      }
+    }
+  }
+}

@@ -218,6 +218,144 @@ void main() {
     expect(submits, 0);
     expect(await repo.pending(), isNull);
   });
+  test(
+      'explicit SQL rejection releases persisted request for a corrected retry',
+      () async {
+    var submissions = 0;
+    final client = await signedClient(mockTransport((req) async {
+      if (req.url.path.endsWith('/pa_ad_submission_status')) {
+        return jsonResponse({'ok': false, 'code': 'NOT_FOUND'});
+      }
+      if (req.url.path.endsWith('/pa_submit_ad')) {
+        submissions++;
+        if (submissions == 1) {
+          return http.Response(
+              jsonEncode({
+                'code': 'P0001',
+                'message': 'INJECTED_SERVER_REJECTION',
+                'details': null,
+                'hint': null,
+              }),
+              400,
+              headers: {'content-type': 'application/json'});
+        }
+        return jsonResponse({'ok': true, 'ad_id': 'corrected-ad'});
+      }
+      return jsonResponse({'ok': true});
+    }));
+    addTearDown(client.dispose);
+    final repo = SupabaseAdCreationRepository(client), p = progress();
+    addTearDown(p.dispose);
+    await expectLater(
+        repo.submit(request(), p),
+        throwsA(isA<AdSubmissionFailure>()
+            .having((e) => e.code, 'specific rejection', 'SERVER_REJECTED')
+            .having((e) => e.uncertain, 'rollback is definite', false)));
+    expect(await repo.pending(), isNull);
+    expect(await repo.submit(request(), p), 'corrected-ad');
+    expect(submissions, 2);
+  });
+
+  for (final code in ['08007', '08006', '40003', 'PGRST504']) {
+    test('ambiguous SQL/gateway $code retains the operation identity',
+        () async {
+      final client = await signedClient(mockTransport((req) async {
+        if (req.url.path.endsWith('/pa_ad_submission_status')) {
+          return jsonResponse({'ok': false, 'code': 'NOT_FOUND'});
+        }
+        return http.Response(
+            jsonEncode({
+              'code': code,
+              'message': 'unknown completion',
+              'details': null,
+              'hint': null,
+            }),
+            500,
+            headers: {'content-type': 'application/json'});
+      }));
+      addTearDown(client.dispose);
+      final repo = SupabaseAdCreationRepository(client),
+          p = progress(),
+          r = request();
+      addTearDown(p.dispose);
+      await expectLater(
+          repo.submit(r, p),
+          throwsA(isA<AdSubmissionFailure>()
+              .having((e) => e.uncertain, 'reconciliation required', true)));
+      expect((await repo.pending())!.id, r.id);
+    });
+  }
+
+  test('timeout retains identity and retry recovers the committed result',
+      () async {
+    var committed = false, submissions = 0;
+    final client = await signedClient(mockTransport((req) async {
+      if (req.url.path.endsWith('/pa_ad_submission_status')) {
+        return jsonResponse(committed
+            ? {'ok': true, 'ad_id': 'timed-out-ad'}
+            : {'ok': false, 'code': 'NOT_FOUND'});
+      }
+      if (req.url.path.endsWith('/pa_submit_ad')) {
+        submissions++;
+        committed = true;
+        throw TimeoutException('response delayed');
+      }
+      return jsonResponse({'ok': true});
+    }));
+    addTearDown(client.dispose);
+    final repo = SupabaseAdCreationRepository(client),
+        p = progress(),
+        r = request();
+    addTearDown(p.dispose);
+    await expectLater(
+        repo.submit(r, p),
+        throwsA(isA<AdSubmissionFailure>()
+            .having((e) => e.uncertain, 'uncertain', true)));
+    expect((await repo.pending())!.id, r.id);
+    expect(await repo.submit(r, p), 'timed-out-ad');
+    expect(submissions, 1);
+  });
+
+  test(
+      'cancel during status read stops the next write and same ID can be retried',
+      () async {
+    final statusGate = Completer<http.Response>();
+    final started = Completer<void>();
+    var statusReads = 0, submits = 0;
+    final client = await signedClient(mockTransport((req) async {
+      if (req.url.path.endsWith('/pa_ad_submission_status')) {
+        if (statusReads++ == 0) {
+          started.complete();
+          return statusGate.future;
+        }
+        return jsonResponse({'ok': false, 'code': 'NOT_FOUND'});
+      }
+      if (req.url.path.endsWith('/pa_submit_ad')) {
+        submits++;
+        return jsonResponse({'ok': true, 'ad_id': 'retried-ad'});
+      }
+      return jsonResponse({'ok': true});
+    }));
+    addTearDown(client.dispose);
+    final repo = SupabaseAdCreationRepository(client),
+        p = progress(),
+        r = request();
+    addTearDown(p.dispose);
+    final operation = repo.submit(r, p);
+    await started.future;
+    repo.cancelPendingOperation(r.id);
+    final failed = expectLater(
+        operation,
+        throwsA(isA<AdSubmissionFailure>()
+            .having((e) => e.code, 'cancelled', 'CANCELLED')));
+    statusGate.complete(jsonResponse({'ok': false, 'code': 'NOT_FOUND'}));
+    await failed;
+    expect(submits, 0);
+    expect((await repo.pending())!.id, r.id);
+    expect(await repo.submit(r, p), 'retried-ad');
+    expect(submits, 1);
+  });
+
   test('paid FastPay credit is retained when final ad registration fails',
       () async {
     const paymentId = '22222222-2222-4222-8222-222222222222';

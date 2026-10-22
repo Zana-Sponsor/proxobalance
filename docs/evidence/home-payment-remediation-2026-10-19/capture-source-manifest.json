@@ -1,0 +1,2073 @@
+{
+  "base_commit": "9fdd08d14f982e40221455cc4ab5dac0f3c368e3",
+  "working_tree_source": false,
+  "source_commit": "9fdd08d14f982e40221455cc4ab5dac0f3c368e3",
+  "files": [
+    {
+      "path": "proxo_app/lib/assets/material_svg_icons.dart",
+      "sha256": "4355b8ff02b49875c2124c0e07c3d6b29fc04272ee8151b36c51583c13ce77b7",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/config/backend_config.dart",
+      "sha256": "e72e8b47bd65e81fce13bd273cb6f9c79f6a3f3544c0334412d2143f8616dccd",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/controllers/proxo_card_controller.dart",
+      "sha256": "5bbacf88168e06ec557167c4726b427d614b3426d2de581caeeb0a2e5e032fd7",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/controllers/proxolink_pages_controller.dart",
+      "sha256": "64af41a6ec86603ec3dff71e8cd052874135cd2523f0db953f5e8077d61a903d",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/l10n/ad_detail_strings.dart",
+      "sha256": "13cc8eaec5eba7520c8504bdf5085591fbc408d4572fa0ddcb2645e8c1b07336",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/l10n/app_ar.arb",
+      "sha256": "9b5abd418ff72990f006189cd6e127c24730ebd15adf3df35561a44192090739",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/l10n/app_ckb.arb",
+      "sha256": "40a73bfdd71a04660e8547ee77e61987f322e584349d4e160cae9de0c823afbf",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/l10n/app_localizations.dart",
+      "sha256": "3046bc1940e513672c32c57eadc88de31f3ab452f744bcebfd00fd726c9d9c4a",
+      "tracked_in_source_commit": false
+    },
+    {
+      "path": "proxo_app/lib/l10n/app_localizations_ar.dart",
+      "sha256": "7d931a18cf5ac26ec94961de5599d112df3d737c813079cadf867f4de5b58382",
+      "tracked_in_source_commit": false
+    },
+    {
+      "path": "proxo_app/lib/l10n/app_localizations_ckb.dart",
+      "sha256": "0a88cc6aa5bb320cd19bdd35cbf0d8941158f7f8bfdfdf1200a8bd6058c3cbd4",
+      "tracked_in_source_commit": false
+    },
+    {
+      "path": "proxo_app/lib/l10n/proxo_messages.dart",
+      "sha256": "32d7d42a8bc5b3911f2fd9c4922137be85e56ec898ba1c93d90fbb664303728d",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/l10n/proxo_strings.dart",
+      "sha256": "072042a8fd428821c0469f789a9e84ea9fc266923cd5c56a1dd5dd767dea33c2",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/l10n/tx_strings.dart",
+      "sha256": "cfd7fdd47ae348411b6eee285b8a96ded625b1790b67db889a01aa969e729cf3",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/main.dart",
+      "sha256": "d8e1cdd89c223707b653e39ce042d18b7aa5f6c96d397871aaf6fd1bc11aec67",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/models/ad_receipt_data.dart",
+      "sha256": "7a04f9fdb173334ea0843d3e8581a308c5f1fa536e748f1cf818697ce1669f24",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/models/proxo_card.dart",
+      "sha256": "17ff93f7cdd1a98ce4431aecda5b88af798977ae6987d3531e6289414a7dfed0",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/models/proxolink_design.dart",
+      "sha256": "5e9488b7882062444a7bb1a951ef1b017fcb261587fad62da47a5d6a170e5c5b",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/models/proxolink_page_type.dart",
+      "sha256": "8afa74f5a5d42bc884688783e5687a26ba86b6a5d380a66dafa4424d2572e561",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/models/proxolink_template_meta.dart",
+      "sha256": "faf6db549267a09ffe3d471650d52782902a63aca6dae581ad8e3b190ab23104",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/models/receipt_pricing.dart",
+      "sha256": "3bdefdbca0d796950c923fbd548faee9de9b72a0f9e2215fff43dc4a072dab57",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/screens/account_setup_screen.dart",
+      "sha256": "1bd67b1efa34312096ce715cae9724801170e8f7002aaeed50491d77ecb4826d",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/screens/ad_confirmation_screen.dart",
+      "sha256": "b44fe72764fb884859f0f39fe5a64744b6d99baa505d37690e85d2fae4a7fd38",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/screens/ad_create_screen.dart",
+      "sha256": "49f26805d11b1e68e5eeff454610148b292f73747dfc8068c2cd2524aa74b2f8",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/screens/ad_detail_screen.dart",
+      "sha256": "d390baa39396919c7629ee2cfbb94a2972dd0d277b9eef7df69258ff9c7fe3b3",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/screens/ad_screen.dart",
+      "sha256": "9e2fe7eeb84623745d2e911dc6147ea9db08926ee8feb34302c6674a2a48430f",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/screens/auth/auth_models.dart",
+      "sha256": "851f556bc1bbf67367d20675bd6926172056ea65891dd810c6ee9e60d29d3594",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/screens/auth/auth_service.dart",
+      "sha256": "be6329d28d13bf64edb742fc9c59f0a7fe22f0c7c4e15d910d9b065edc5cdb04",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/screens/auth/auth_shell.dart",
+      "sha256": "5faa417385823914d15f7c18a990a58ab63214e49b64ae4122e67392f1e49ca2",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/screens/auth/login_screen.dart",
+      "sha256": "9140cc01ce0ab37176b7be14c32f4d99465f144f7dc2916fc3a3b25ee7bad845",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/screens/auth/new_password_screen.dart",
+      "sha256": "b54cc7d9db984538af5b9942fac1c1b3b84a7ec08dc16ea1b8f4574482187db9",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/screens/auth/otp_screen.dart",
+      "sha256": "23c6654e352e926f542164fa5918aceca113190edc70f4abda72bd9a550a20e7",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/screens/auth/recovery_screen.dart",
+      "sha256": "0377a0133dff13535cb8bc9631a43b282464d387b401a1f720df2f218bfc5f5e",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/screens/auth/signup_screen.dart",
+      "sha256": "9998adde276691590e52678b7dd191a1c3737a8c15f00a483b56bb8b4f28c63d",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/screens/auth_screen.dart",
+      "sha256": "0cea733c4e52a75ffaaf74092491b92034e24e92bb16b8222cd887088de10ef8",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/screens/authenticated_gate.dart",
+      "sha256": "daf5bf28b559bb7b00ad2ef257524820ad197fb41a03b2528980ddcc483be9b0",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/screens/best_metrics_screen.dart",
+      "sha256": "13374bb12f909be0815ae8ebfe32f6f3545749c95377acc3a68395bba706212f",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/screens/card_webview_screen.dart",
+      "sha256": "4e9453d6c1eb2bf545be81310b60cdf415ea0154a933fc98a5fdf8709494ad5f",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/screens/deposit_screen.dart",
+      "sha256": "840eef774b28046267bbd6df864ddf7e6c4db1575816d87db08748403827ca1d",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/screens/faq_screen.dart",
+      "sha256": "5c47323ee6828181b0b178a8f91d0e3eca28ed8b0aeaefd8875b6ad1b8009d59",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/screens/home_screen.dart",
+      "sha256": "7e8418adc2187ed3becdde9af244286d00b44e9c166a3d92a2cf120fa0f50a62",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/screens/notifications_screen.dart",
+      "sha256": "72a7755c247d4b8f68f140d766e72f11b7362fa3b0d56a8d88fd1df2c7cb0a0a",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/screens/profile_screen.dart",
+      "sha256": "173cabf17b244e2bdecb53bf44adbbe022cfef053d8a2a3421fc44a26a2fafa5",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/screens/proxo_cards_list_screen.dart",
+      "sha256": "822954c81db9bfe09a561f7eac366808c8ce8d69ca0b37d1b04afc756352640f",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/screens/proxolink_create_page_screen.dart",
+      "sha256": "0347042323f14474f7c2cdf694dbdee0053f52b164b0febb1e9b74a73039ea03",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/screens/proxolink_page_details_screen.dart",
+      "sha256": "effd49eb1263cf9a1a0b3994a31f77a3f2caf19e901f739183372fb70d80dd3d",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/screens/proxolink_page_editor.dart",
+      "sha256": "2ca9b232d64768668aca504e5a1be4db88d7b9ebe06e215d8595863e861a5ca7",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/screens/proxolink_page_editor_screen.dart",
+      "sha256": "fada1bfb9e6f6171c990a540a974c626ecd56d525fa105dc13fb6a7ea0658fdc",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/screens/splash_screen.dart",
+      "sha256": "3eb2174770687303b2396d419b052e153dde12b5d759c1bf9a8fed8f3407dca6",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/screens/tools_screen.dart",
+      "sha256": "5ee529c5b31e76fbb8f710d37e459836b74f4fc66c9f76a3f68b4c30a28d89ce",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/screens/transaction_detail_screen.dart",
+      "sha256": "29fec9c329929e7b03a76a88665cca53a03984ffb83146565923992fc94cb167",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/screens/tutorial_screen.dart",
+      "sha256": "042492027b26061feffa5731b439514ecc55e3ca4867b9935ff70a4fe1af568c",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/screens/whatsapp_marketing_screen.dart",
+      "sha256": "fad689bb5aa69c2785a2a0edd08bfd78625a9bd7e8536354f7ffd8fc95dd1132",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/services/account_cache.dart",
+      "sha256": "de57be44497220ada888c2ead86551c17a3cfc09763f7f3941f3c730d11c19e9",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/services/account_setup_service.dart",
+      "sha256": "7ca68819a94148cf6134489beaf01dc89840ad394bcb62532911d8299e43072f",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/services/ad_activation_bridge.dart",
+      "sha256": "f7f2c208f730e6f60975fc6601804dab71ca8a7cd3dfe245667e200c3a674382",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/services/ad_categories.dart",
+      "sha256": "b35dd4d71ba90581107d64bbc9a47ca3a740b46d3386210177e1f7efa9c36855",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/services/ad_forecast.dart",
+      "sha256": "a1178b0949fe494ba33052ec8ad194b510a354fe78bc276e3e6e14374e01120a",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/services/ad_snapshot_cache.dart",
+      "sha256": "d62968377536c361991967589be69c9dee828827a5ab0df26e0bac115c355585",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/services/ad_submission.dart",
+      "sha256": "38546f182145e35c33a954374fcbdbe9f1d7c8604f409d26c0de73f9ed72f516",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/services/admin_notifier.dart",
+      "sha256": "67d04089910a9ff81c05ec7faa3f7a2867341eae1792e20a7b9a1a4889236e5d",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/services/app_telemetry_service.dart",
+      "sha256": "84f4c5981904bc00396b9d94c72924fec7b24195615444a4d59e32c10d417799",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/services/auth_activity_service.dart",
+      "sha256": "64454c60d732d4bb29db2c44787eed265df4b8685bd8fd6aa52b00f68fa8004d",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/services/best_metrics_service.dart",
+      "sha256": "1b5fcacdaa69e6e9be99e96a76bd2b55961ab1f8d2423165413a96c5174e81ca",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/services/context_help_service.dart",
+      "sha256": "0a3e91544fc300de5ba4484e7b26f55ef0e51fd94a9672678739d80eeb592f3f",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/services/featured_image_cache.dart",
+      "sha256": "22678922a312a83bd6ccb32fe322a53ba4c2b49bf685f75885e10dc151f08c8b",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/services/filename_sanitizer.dart",
+      "sha256": "132228c4bd63c8854666e892428e20fb0eedfd0490f7402fba8331bb28349dae",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/services/firebase_messaging_service.dart",
+      "sha256": "e119f8cb5ee42933b439589977deac71c23baa38f860d52342f31f499e76f183",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/services/notification_presentation.dart",
+      "sha256": "19b6022890c48911d48e92415dabd5b3f228aa1b07e621db11d65cd78208253d",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/services/notification_service.dart",
+      "sha256": "8b80f37085337e0ae3222d0991a1869a3e847f4d353c635b2edf204b5a70d93a",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/services/observed_http_client.dart",
+      "sha256": "5b9ff50a0ef43a11ac79e1855df10a4251922d8893793f597d8c76a30ed8febf",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/services/proxo_pricing.dart",
+      "sha256": "90466710a78c54ce4179a97e4f7525b4d567db8c3a5bc5958f68062d3735ad2e",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/services/proxolink_service.dart",
+      "sha256": "ce97ec94d584f68d2f09c83718af647ecfaee7892fd6437e839074e17a8efd46",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/services/topup_service.dart",
+      "sha256": "9508bb8b462f9d5f75b0a3064b89ea01f63dca90f307b0fb52d49323cce9b50f",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/services/trusted_device_service.dart",
+      "sha256": "8189540b140079f26a09379e207978b5b61d551bc3c4caa072e0ad2b0f9e580e",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/services/unread_notification_counter.dart",
+      "sha256": "743523df7d6f04c91c11124d131ef9f3a61b4932a489b1d0b6d4c4c48a729dc4",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/theme/app_locale.dart",
+      "sha256": "18b1e32b7b1ffe5b1a89804332fc42b269c96809a7651cc95f2b482bdd2cc238",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/theme/app_theme.dart",
+      "sha256": "c01bdc07f4e311fde3db67f865eb2184d3cd75f44d79a2af0e88c302def734b4",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/theme/proxo_chrome.dart",
+      "sha256": "b9f43b80f1b8287cf61480bcc58af0967718dbfc39ccd65a5460e629b025f624",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/theme/proxo_icons.dart",
+      "sha256": "d889450e21d5f5e911b7f37b4ad33df88d3f381d0595ce9aaeea90740ebf4958",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/theme/proxo_surface.dart",
+      "sha256": "23109d5e8efe285f997bb679e4afbb88637f208b92834b8eb4e2fcf8792be163",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/widgets/ad_activation_notice.dart",
+      "sha256": "4e566c35c8f99a515466ea0bf07009a0e09577dac2e844f436bdd9d1ac535cb7",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/widgets/ad_feedback.dart",
+      "sha256": "390570495a193ed7303868e7ea236a8543db7cb5eea8b1d91c83d94a6909bdc2",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/widgets/ad_form_components.dart",
+      "sha256": "02622579c796ef9c3302b762edf4e51cc4c180db3a9c7de82c9617936477c06e",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/widgets/ad_validation_notifications.dart",
+      "sha256": "4e2d52d9cfd56b445c3d6451105f71a2ec27f1d9840f8030e2a86fd8172e4821",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/widgets/auth/auth_design.dart",
+      "sha256": "b33a28f2e70e1d0848eaf8d48a53d5f111591e16150bf4ff67e2fe9fea657222",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/widgets/auth/auth_header.dart",
+      "sha256": "96c599cf50038ec10602145c6bda45081a9723386e017ad5aa1bb56ceeaabc48",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/widgets/auth/auth_icon.dart",
+      "sha256": "00f4552af727eaffd4871cb69d7d87c3c40ec8d8b560c2aafef5f3004a95e0ea",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/widgets/auth/auth_intro.dart",
+      "sha256": "6491511bb65ebf1e6d64522034da1304f0be75f644aaeeab5ccda31f41849611",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/widgets/auth/auth_logo.dart",
+      "sha256": "3ccaa22972ba82f267d7dfbbeb3373c92481cb3f06aac443b6c09bb0daa21ce5",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/widgets/auth/auth_otp_field.dart",
+      "sha256": "97d06c7f26ecd715580a4069772fb7e223da8df026fc8ad0706af84eda507f0f",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/widgets/auth/auth_swap.dart",
+      "sha256": "837a219e62a811cf2578ccf57d4c72caa79288acaecb110d8a1bbe5a4ae3270e",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/widgets/auth/auth_widgets.dart",
+      "sha256": "e1a05fd4cc083d96d3ac5f906a663a915b7128604fe4df57feeed5edadcfdf3f",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/widgets/best_metric_card.dart",
+      "sha256": "c70d46b030da44b03cc620386ba705cfa01d098f6b6f8683145fc744e9a342f3",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/widgets/best_metrics_home_section.dart",
+      "sha256": "b60e31ac246ff7089bb5f91a8eac7bd8bedb2408ab10a49bd810cf52a7abe8a6",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/widgets/best_results_design.dart",
+      "sha256": "6946c6a14e190a2a4bb955171c37eac88251dfdd0d1ca0497e7dc23de9f07a6c",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/widgets/bottom_nav.dart",
+      "sha256": "9dabacb58f38abcfd97d62b7b70b7f5dbcfc8dc4390a5ad6d38a60a33a640dbd",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/widgets/custom_toast.dart",
+      "sha256": "cfd91e967ca41ef7d1fe78712799c157d098f1275c1bf67b0301a538133310ba",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/widgets/discount_codes_page.dart",
+      "sha256": "a12dc33cd9358c89e6fbffaa8d39908d605872a24a574dfc9b8bf632abe9d988",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/widgets/fastpay_checkout_sheet.dart",
+      "sha256": "03099f05ceae6dba95126635ac3b39cabdc48225b8db9cf01505fb79476f0aac",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/widgets/form_help_actions.dart",
+      "sha256": "40d3cc6c0cb25817b77f08db7a1a95c039907f16e35313622606f1b08a8852f5",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/widgets/home_best_result_card.dart",
+      "sha256": "bc32648fe65f038a6faab2157ce287221f8efb11f1d5f9c26e393d77a57f241e",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/widgets/home_quick_actions.dart",
+      "sha256": "a2284b0b5d9cc0c5d26de7d14cf6b7cc7017bcb62be4a873f04bc61d00855336",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/widgets/levels_page.dart",
+      "sha256": "9a6e60b922abf0a67d8e668b1794bc05bba15ce40d3890a8141f24902e99187e",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/widgets/no_internet_widget.dart",
+      "sha256": "447736992e0ee67289a4b296b9913c13e5c90585eac7887eb40edd41b8097eb8",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/widgets/notification_bell.dart",
+      "sha256": "fbc27127aedfac0290b1f0263afc4752e603ea2452596e25c7bf966a678f7461",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_app_bar.dart",
+      "sha256": "b487aeeec6e712240100104b52417fe61f787e1ee0daa31e408905ff8adb51b0",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_banner.dart",
+      "sha256": "0edb3fb1b91eece2c2461743fba134f57aeb77ac62bd4d3bfdce6199b32e442a",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_empty_state.dart",
+      "sha256": "17d8266b25eb298be7f7edbb106eb58801af3373bd211ae252d0d4358ae87686",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_error_stack.dart",
+      "sha256": "e32cf9d848edaeac7b24ec49407b4505295442c73c479ebe8ce181d4b7223d57",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_error_ui.dart",
+      "sha256": "0fca3db035d37beac939a59a4e3d3c6fe1d31fb347645d5190b046857529c605",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_logo.dart",
+      "sha256": "d56c19b131c6caa682575566a825ec0372b55b85e65d20952d67e87fcaa022b2",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_popup.dart",
+      "sha256": "2a52a805a1f09927efd395b4d9b6e5171c15b53b3a6ee3cf9e93f6db52a90ffe",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_refresh.dart",
+      "sha256": "caf43072a5f586418a2af97baf7cb0ed4fd704f32e9cc48f79787bd6242defcd",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_sidebar.dart",
+      "sha256": "d93216806c6ff6982d66089f8af96b30016aff7343d8dce83ce9ed5a92ef1daa",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_squircle.dart",
+      "sha256": "7e1503de95781a1d2ad6592bf745eadb1739ab4723fcbad0fe28fe73950154d2",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_symbol.dart",
+      "sha256": "811fe95f398a826534bb576684be4a4e92565f4fd1f1c437924dc8e4a3e47e70",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_tab_stack.dart",
+      "sha256": "a44f15aed063b47d5e328c860310b3b535fbbf7bc2ee881bba04893f908b4947",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_text.dart",
+      "sha256": "47221782be8924bccafa80bd27d44949811d2faadef78eb66610e8e2d5832a0c",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_thumbnail_fallback.dart",
+      "sha256": "a03c8d231d345177e0f3e18bb341ca6f067af09c3f7fa99f95a03e4d66733fd2",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxo_toast.dart",
+      "sha256": "1b8c02746a94e3f43d84f0fa05729fa5a1273e4a2b68457b923916bab5606ee4",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxolink_design_selector.dart",
+      "sha256": "0858b478e9577680f3f74b698e75a3bb5170ebe5f66f54aab5b4524daac071e4",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxolink_page_card.dart",
+      "sha256": "01924f692775b6ff44932fb921a5fe96d1882a11ce8baec1345473c7a4552317",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/widgets/proxolink_preview.dart",
+      "sha256": "5840e03b93ff8c468549948acca46ce45f8af35b315c7bda0d2bbd7f7b8f345f",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/widgets/receipt/ad_receipt_card.dart",
+      "sha256": "199ecddb29dad70e37e9b07170fabf7106153bfbfd0cbf2b7cc8334d7b3116dc",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/widgets/receipt/receipt_kit.dart",
+      "sha256": "514833fd99a177cdfe7ff38e30954c2a737b408204856b79961f5f6576cf8c85",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/widgets/receipt/tx_history_layout.dart",
+      "sha256": "ef7ba6bb0658b01a3b2a5a0a989728c60eb8cf43ea14cb797ffe27df884823ae",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/widgets/result_metrics.dart",
+      "sha256": "186f299bb6343444809255fef010fbb0a63985f468ab0c442567de8ffbd5d0e1",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/widgets/result_thumbnail.dart",
+      "sha256": "a4d487f1484e67f1e27fa1c29481aeed9c77c981a825057ba8ba3d93828c68ce",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/widgets/section_title_with_gradient_dividers.dart",
+      "sha256": "806bf3e6ea168150d766398f3154432c2eb375d897100002736317af81939453",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/widgets/tasks_page.dart",
+      "sha256": "8405db1643bd3b339d929bd9be62503c28d0e6b7254a1d455c36fe4b42ed11cd",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/widgets/top_bar.dart",
+      "sha256": "8923cb20070d68431980698a4ccc6468657346fb84c5471f81656ac729c6bdd1",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/widgets/tx_history_page.dart",
+      "sha256": "341858c316f2c46a3dbee90a3135a35980d4d6226eb812f76480449254884297",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/widgets/voucher_page.dart",
+      "sha256": "40e6ddf8afee0ea91c04f19d54e747cf2457a0ad122decf76a4fffb02843dd33",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/lib/widgets/wave_overscroll.dart",
+      "sha256": "b8ed86fd0d2c9c7baf0b76fa247627fcb8396e34fc0392afa1139f85b5befe8d",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/fonts/Bahij_TheSansArabic-Bold.ttf",
+      "sha256": "1f9671e1074e2986a99a0485f4946c16086d0bcca5f26c37aa0335891ef3d0ba",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/fonts/Bahij_TheSansArabic-Light.ttf",
+      "sha256": "e64498f6c06c51b008c3454bd2e4dfcf4d4cd755b0fafaaf15005c0c194889f8",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/fonts/Bahij_TheSansArabic-Regular.ttf",
+      "sha256": "5a40be1165d4de9a6007405cc4801ad5d6a8eae76b68cf079700517b2a690951",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/fonts/Bahij_TheSansArabic-SemiBold.ttf",
+      "sha256": "611d48d0a296b7ad18a36816232c3bcd45162fb9c99384a0c525042d8e02a253",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/fonts/Rabar_021.ttf",
+      "sha256": "ba47baa90fa094eaa4c3f02c3206489e79b0e4233a7d8a4d7d98f6bb378d25c5",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/fonts/Rabar_022.source.txt",
+      "sha256": "2beb4a06bcefe607c46622aa8e933ec8d7befd6c106c862583d1ffee457d0f9e",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/fonts/Rabar_022.ttf",
+      "sha256": "7cd3577902d05ff51d12ed0c05f94a7c3561dd9fe050a96018b5645cfa9387a5",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/account_balance_wallet.svg",
+      "sha256": "c5b1e7fd334030939927b262e894baea280b14ed74863f7bbfd0abd9fdb893af",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/ad_card/ad_card_calendar.png",
+      "sha256": "daf725699f80dd7fed99be51e89641bff9eaa8b693cfc30948e609c0349ea97f",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/ad_card/ad_card_cancel.png",
+      "sha256": "378209f77c6c88f723888e8d222dead8b5d74290e1e2c14f1ea91f764da7a2dc",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/ad_card/ad_card_copy.png",
+      "sha256": "3e0dd57d790e0b4990a4d2a979213a9215ce14809dee134fbfab84544b343350",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/ad_card/ad_card_cursor.png",
+      "sha256": "87c63dbf988a7f0311d9bc71a709f2fa1e0110096fd3b29b89758e8a20a1c48a",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/ad_card/ad_card_dollar.png",
+      "sha256": "6b3e9199f198c68727913748885125d360e91bb273e96e5cc268749b639df193",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/ad_card/ad_card_eye.png",
+      "sha256": "7e4535986c510d8019afeb5d83488654471f0742ab4eedbf1eb7ab2f445d7df3",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/ad_card/ad_card_megaphone.png",
+      "sha256": "72fc17294df68ea76e58ba07f0855da13f5ef4b7b12589f213087bcabc5903a0",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/ad_card/ad_card_share.png",
+      "sha256": "c1420a544d5fdc1325df370a17d9fe6d8af38d67763266ab74a77a3a207535e7",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/ad_card/ad_card_trend_down.png",
+      "sha256": "a08742b269dde74777f9eafdbfe3dc5304e3b26a5a7fb662374954a8f04a7274",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/ad_card/ad_card_trend_up.png",
+      "sha256": "25728157dafde2c9bc4698b5b1012353db89dcd546825c8c39d2a6cd6de5f70e",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/ad_card/ad_card_wallet.png",
+      "sha256": "7b24104251a25f09c2607a6458c0d6d9b3d6263f9f16689481a12abd240b5ff0",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/add.svg",
+      "sha256": "670df546c8e7b8f19fb262ec89156108f87fcbcb57b19a40f37244b980cb7b53",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/arrow_drop_down.svg",
+      "sha256": "2ba90b2254aa2ea918ac86758f42e9fb0a646e66507fc4e0e75b1b232a50d882",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/auth/LICENSE.txt",
+      "sha256": "58d1e17ffe5109a7ae296caafcadfdbe6a7d176f0bc4ab01e12a689b0499d8bd",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/auth/SOURCES.md",
+      "sha256": "383993022c74213671a013a56e7f73f61e4611f53e45e3ad2db98e86ed7c6420",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/auth/account_outline.svg",
+      "sha256": "5dbd88ec213c3f2d759a47e3fa37deb6321a055ce822f5f957b9aea919307478",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/auth/arrow_back.svg",
+      "sha256": "b9b58d54e13e0e3693a10d997c1001ec270c12eaa935f993cee1d8c916236ceb",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/auth/back_outline.svg",
+      "sha256": "42137d80069ada7d23e451f768c319b2588b7e8870f285380dab089f56c175c2",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/auth/check_circle.svg",
+      "sha256": "5c90d9aaa77eacf87ed8a5cedb6f9a1b7eba6ef41e6fbf7c9a1eb221ad59d2c9",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/auth/check_outline.svg",
+      "sha256": "39acc44f01e6666f2278093eb73748fece3465c426871af0434f37f91643fa6e",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/auth/email_outline.svg",
+      "sha256": "de4b7ac700fc13776dc44327060f46d2485409d41d6ff6e5d4a2f0c0811e23f7",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/auth/error.svg",
+      "sha256": "3be3e5a6458c1c5ca7686532d6cd72f942c49ad00bc0e6b5702b387ef0963afd",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/auth/iraq_flag.svg",
+      "sha256": "2a3ac265b9efcfb0b8761b753b8dba85b63af329deed39dc7a363e61dad70667",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/auth/language.svg",
+      "sha256": "7bef4e741ed558c37c166b8f06c7abbc7c964e100057f6c725a7be40809113b0",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/auth/language_outline.svg",
+      "sha256": "b7f140e1a6a062680078d715e4ecc51bb5994b6d9b3cfe28c746d47bc4a87aff",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/auth/lock_outline.svg",
+      "sha256": "25c6a7a9a86f681b693e61821edd16c2b5a665f07a5fdf97df9b205b49be4f3a",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/auth/lock_reset.svg",
+      "sha256": "ab203ee2027f985d4ed007fb7124eb95f66db142f36c9233a52f7d4d3472cf0d",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/auth/login.svg",
+      "sha256": "01812b4b5e99d4c3788e84d2661044353c76e9725f673f52b9c41123e18bc360",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/auth/person.svg",
+      "sha256": "b60e9574bc2566ea0e72710cd40e4f61a00449130bdc258c0a1006af6857d727",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/auth/person_add.svg",
+      "sha256": "97df7216731fa7d7be9d2c10ed151572cf633716e814fee5cd53b92d3636e1d0",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/auth/person_outline.svg",
+      "sha256": "6a756b8fac14bd0fefc246f02b66b80529fc346d0ae35c4fad449ac7a700bbfe",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/auth/phone_outline.svg",
+      "sha256": "6e2dc4b8df8b905610aaf098d4bda18beb8fb69692b30cb8048220213c2712f0",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/auth/recovery_outline.svg",
+      "sha256": "30cacb4aac295f0331c98c4685aa51c9921839267386016092eeb21878585611",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/auth/refresh.svg",
+      "sha256": "9287665cb15b61441487cb2d579ba5630f9b249dbcaa5991e7028aa6f925edf8",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/auth/security_outline.svg",
+      "sha256": "6d51368f23b99d196bd15c0dd38b687a55668cf6fc4681e2351f5277e8d706e5",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/auth/shield.svg",
+      "sha256": "9ff9086efcb2f97c4ce83e4df676fff9704d1ca50c3af05757a97306411bfb2d",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/auth/signin_outline.svg",
+      "sha256": "1798e3b2962dfba2a91c07c3af6316e77a0c7d74b73111e08d0cea67ab19e3af",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/auth/sources.json",
+      "sha256": "cf65fa485783118b861923056afaf4dca1377247a85e4678a77836a2653f5793",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/auth/verification_outline.svg",
+      "sha256": "68d69ba5a9cc75ff2e36cf77d47ce7f0dcda985827032265452003f92948276d",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/auth/verified_user.svg",
+      "sha256": "63d09054204b2fd762d716417819ac69e4f47b2dda76cbbaaa87a0b41faf1589",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/auth/visibility.svg",
+      "sha256": "024cf2e18ddffaed7d0f9e6872f7a09a76cc81349414a3869ae47a1f412b30ce",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/auth/visibility_off.svg",
+      "sha256": "ab88d1ce3372969907d0294f8b7596e5f635797a87fce1ee2e372f866088fee6",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/auth/wallet.svg",
+      "sha256": "6e3b7d1cbfa08306678ed02a1d0a46e16cfbc72d35e32d9fc84c7eec5dc60812",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/campaign.svg",
+      "sha256": "818a806827aa82928cccc1bd4953d31cc061404e50c7a5e2e510825ff76326e4",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/cancel.svg",
+      "sha256": "787d3c3090d367ad2b98f6bf166ef1186cbd5cddb5b9c6ec55083d022aeb07d9",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/check_circle.svg",
+      "sha256": "ae55ec8d20e7bc0af882be74eaaae0fbfe9c5010814a5d84025afdd37ab9228b",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/chevron_right.svg",
+      "sha256": "dd80108de070d899de9b4ce1ae7c80a459e5d9ef21d9c4aae4528afcddcf9895",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/content_copy.svg",
+      "sha256": "a978f7983cb6c8abffb09a1c71081ef2a038003114bccc7a06c1026198b17888",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/detail/det_age.png",
+      "sha256": "f3abc44b3d102d9ea1275499f062c48360bdb64c28ca1fa05aa738416948f50b",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/detail/det_end.png",
+      "sha256": "ba22d8fd37fd54a686adb3fea0c389fb59f0c27a8fd03b4912fa072cb500d600",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/detail/det_goal.png",
+      "sha256": "e1fba45193c8a6824102e2a4e5990b311f5284a7f0a9da5645b1f755488ffce3",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/detail/det_info.png",
+      "sha256": "4ad24ed2c996892492ed6c4f99d2aac524c45e8ae2814ca03f2f445a47402783",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/detail/det_info_circle.png",
+      "sha256": "eca93629863ba7aeb93469d542b4b2ba1ecc8d075b7268c5e9d79edc01523f0a",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/detail/det_invoice.png",
+      "sha256": "f58d140be68adf0f39ec97a51f7584f03d04fe28e7921650d3ecaca542db07cc",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/detail/det_location.png",
+      "sha256": "efb25f10889edc5fe52e9fc74f4f78c028fd6df5f93058e63067ea96628e3b2a",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/detail/det_price.png",
+      "sha256": "a5989b18f9f7c2c514d1a6cc500ca7855e372c5195b41156b6c37612cad9b165",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/detail/det_start.png",
+      "sha256": "b12afbfdf78106a94d14cb8d3d3a4cadcaea23c88212488f97ce3e32a343c933",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/detail/det_users.png",
+      "sha256": "c9d98faff588511f2dcfb2187652b4e3b8aaef24d581e11c4f1b6699ebdc05a4",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/detail/det_video.png",
+      "sha256": "2954429d28ad2004ffc0028bebfe5c0a23662699dccb20bd453b2a5fd1a358ac",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/event.svg",
+      "sha256": "ff5ffa4ff734c4103a73e778e319061f642815ce5b7c57305295ef5747a13dfe",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/filter_lines.png",
+      "sha256": "6a9a4f5bc4ff956d97fc99535d6147e1d3fdafde66c33ac7e05481cf06798195",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/help_outline.svg",
+      "sha256": "306a505fbf28459fa061d30c66724ab79a52e40c50c89e88dbe89372e954f4ae",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/home/home_bolt.png",
+      "sha256": "260fe5085c6d0780be368f3b116e78030cfdce75db2696779006bb6ad019f0d4",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/home/home_check.png",
+      "sha256": "0bead662ec3d57291b898d465818b42ee6cd8a7e58e4cc52cfb55a83effa98ff",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/home/home_clock.png",
+      "sha256": "7d99e3202dc1aec416decd7a85d12691e3337e6bb8b8a2fbf205eb17e622e2e1",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/home/home_reports.png",
+      "sha256": "797b293f9d7e883824b92305682601e1f97ca8902415debeb2f847038fc1c483",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/home/home_x.png",
+      "sha256": "6d08924834e0f4ee94ae3e5f7b0924732be60e8b26446b62873ea60154e7cb8c",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/insert_chart.svg",
+      "sha256": "1cbedbfed5bd42a43edfefb85763f87f0c99a1f1020e72ecae3bf45bc025e8f1",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/mail_outline.svg",
+      "sha256": "83b43fc14b016ce99cd68a56e9ebe8e26f2698119fc88bb8a139687eaa527786",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/nav/home.png",
+      "sha256": "d2c19743cbaf7c98332de876ac9a61274bcc5e01245148715817ec46f2abc406",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/nav/home_fill.png",
+      "sha256": "2eefa5fb2a4a9d0d55eb191f895f9760b7cc90580cc01d1848abdb6d2a5caca2",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/nav/megaphone.png",
+      "sha256": "b1f2b2448d9e6c8b38bafa83ff31bb3e93aa634584cca4eaca477b82e0bcbacd",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/nav/megaphone_fill.png",
+      "sha256": "635ce7809be9d129aaf3e93b6da9076005a0a6dca40c2538afaa2e338ed6a92e",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/nav/user.png",
+      "sha256": "75a3194e4cabbffe9a3ec2a4d80514868aaeb0bb56431518aa701d84bcc1706f",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/nav/user_fill.png",
+      "sha256": "8ecdbb68c06aed118140de4d40aed4acf4ee4e18850ee710e000ec8026f03dcb",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/nav/widget.png",
+      "sha256": "f5e173cec1c6e99f52da0cb2711f73855cdac03fd378f69fd54ce0c8c6256126",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/nav/widget_fill.png",
+      "sha256": "fc2e6903d3579e0738ed65c6926118f8a5e0af15b546bd1e14a7eba5af5b7608",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/open_in_new.png",
+      "sha256": "26725daee80b5ad86587183e4aca433309a1014f4152c236d34c4f0e4171b254",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/pause_circle.svg",
+      "sha256": "55f28071f494d3cd3970ed8fac0700f3b289ee7010585287b8524ca620c6a49b",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/results/README.md",
+      "sha256": "7748aad3aca08417c91526a2314be14770489fc62d1f29f4f28d221d4de4d13f",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/results/chevron.svg",
+      "sha256": "296d435bcd267a47fc2b557bb7720c48c04f1fd4343bf48aa30fcbe9065ed599",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/results/click.svg",
+      "sha256": "423e2e9420a7b8adfff00b85f709370265b50fe682d1c677be24f303b28bf676",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/results/eye.svg",
+      "sha256": "56569fa2e29014cd2a3e0a638b9e5ce78e599cbf99bee2d2d8c10f08a9ac6899",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/results/fire.svg",
+      "sha256": "0f22c12bf21a67e5007661c7afe752b48c534299c552fd6226d55e038b011f5d",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/results/image.svg",
+      "sha256": "a4e4de15f09ada2c52500dff7f2e4992d94f77dec7ffb167ac945fabf1cca09b",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/results/play.svg",
+      "sha256": "cba7ca5e543c55d973d34b0dbded89856326040d06697d5a5564e3c4e5b9cbda",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/results/refresh.svg",
+      "sha256": "ec316f7ac4b3f206cb2d140f982dc2efbdf50d6352f7da15423001eeb49cfdaa",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/results/trophy.svg",
+      "sha256": "c4ff75249150379c94b57eeda6d661fa470204ac450099d4f063b360d0006c8a",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/results/wallet.svg",
+      "sha256": "73c716e2725534d25acbf844568f13add23ae01fe309d421f215dc9ab25ad229",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/schedule.svg",
+      "sha256": "357d248d4a4a329a232e51253be220c9ab5b0e7473c32cf3f8bdfe44bdc368b9",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/share.svg",
+      "sha256": "310f347c9ef3fdb55e028f452f17e1f9df621ef4c67e5b1dce898afc9f398c6d",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/LICENSE.md",
+      "sha256": "38c2390beb341be595542bfbf874f357c399b7607e506fae5202073ec2174f48",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/SOURCES.json",
+      "sha256": "e225f512e0c4fbcdb9d182d65ed95883f009fcd7e2aba1a9fc2fef1f9aab132a",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/add_circle.svg",
+      "sha256": "e1b2e506a2bee4e30b8594304125b64eb2cb104abc0b078eeea1cf4c252a5a42",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/alt_arrow_down.svg",
+      "sha256": "0019f90847ccd6ce5a6c84a6998d2d02f10aa58961e23dc19e48fe3cbf9ab2fa",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/alt_arrow_left.svg",
+      "sha256": "0fe6ace99f4597296ec9adfb0c6c6008549cfd65c04745d435d87fec96cfeb84",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/alt_arrow_right.svg",
+      "sha256": "eeb8445c7c94bfd15b367c835d219c54c294c29bf72109030b74aa37dc7fab36",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/bell.svg",
+      "sha256": "f8a53685496e90898c46bd737ef45662aa6bc0fa8ecc8de70212d80b3174a00c",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/camera.svg",
+      "sha256": "ac5cf9536744bc61ac84012e54c1cec3f82ffcf42af51ee62755c52d72ed7357",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/chart_square.svg",
+      "sha256": "facb17f07cd82ff7bd38c201c55876c1366468e6297026c30862646d12fe674d",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/chat_round.svg",
+      "sha256": "2e39d54df89ef0e5cf9dd70e7fd4e1fbb75fc3b727a22e0991680c92e4a75991",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/check_circle.svg",
+      "sha256": "4c4301c1d9f8fd648cd233f739e71b12ee5b2f194c00f13c319ba4dd2a0f51c1",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/clapperboard_play.svg",
+      "sha256": "44dab4d6504e9ba9d9520100e8cbbd72bc54e5c38f396d6b50330e81d0f50f05",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/close_circle.svg",
+      "sha256": "88632439c6db1a9d7ee230bdad0a2bb261f7f52a84173b87a610be4542cd2795",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/copy.svg",
+      "sha256": "7d783880fe4bc3d0e6b1ab2c8e6e0b7f4c917bdd2906b3c826e9958f187557bb",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/cup_star.svg",
+      "sha256": "bc189f7be7e8224c2bdf10acbb5dcbab00378d9139e173b35614f9794197d9d5",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/cursor_square.svg",
+      "sha256": "997df484081653c4e1a78513ef628dc76c8cf402d7327a501174c4e36bc36b8d",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/danger_circle.svg",
+      "sha256": "4fed42b96213ebb5ede6f1fa51dab9e41489caf0e84d5452925abef92590ae13",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/document_text.svg",
+      "sha256": "eb79fffe1c1db2810ada65ee3c04e1fd8c27c0456e1bd98eb5ec2afac0472f74",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/download.svg",
+      "sha256": "537775b0d74fb0d3c591a7cfcfaa96c16c3b3a53c5c388a062e5f7d1056bedb6",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/eye.svg",
+      "sha256": "bad1f5e80a9f591cd54bf80fd6b559f0b107b6a69d9c6362752d33549d919f76",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/eye_closed.svg",
+      "sha256": "e4ab5e5bdc28a34d6b7735d91568e13c907c6177947151c3442137e1cfe9099a",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/gallery_add.svg",
+      "sha256": "47b8567cc4a63ad3897bc677038bc7acc079d4112997c7ecb93bf0cecaa5266f",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/global.svg",
+      "sha256": "270135ee3efaa732e2c2919f1591037279196dc03cf685d7d43862c7f420dc98",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/hamburger_menu.svg",
+      "sha256": "7a1a6265ce90a5f771105093a2d166a8544c45440058367a056c0b7eecaac6be",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/history.svg",
+      "sha256": "55e9117097e912b27170a5033450aac3faf19de7104459dd6597b738613d4777",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/home_2.svg",
+      "sha256": "cf8f62264c8fa40f99448cfa9ebcfd91b3e62b78cff030e26ce1bce417015fb6",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/info_circle.svg",
+      "sha256": "5cc2b42eab9eb15469e42cc7f50f17ca8077e4305114ab18cb5711507bb811c1",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/key.svg",
+      "sha256": "9b9c6eec3ebda49ebe531b4e262c3ccc9e0b9c5c40bd12b8cececb4fcd957d37",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/letter.svg",
+      "sha256": "560344cb9e36b706ab6c4e761ada8c2c38a24a9527b5a15f016f13fffe649458",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/lock_keyhole.svg",
+      "sha256": "ffffb40f682313bcb10e60fa203b7d040f042f457e4abbb4bc08ee081c6eceaa",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/lock_password.svg",
+      "sha256": "3545195cfaffce498049447da289ba675f47137f84eb49ad0367f415cc2ea1fc",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/login_2.svg",
+      "sha256": "a1b08977d1b75cb18496a966950370d1bb51a5567da59c12b00dc70eccc1a7f2",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/logout_2.svg",
+      "sha256": "5a363e6d0d59a270186a570bb805ff5a04d66cfa75c8667b5116003716104907",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/magnifer.svg",
+      "sha256": "e568903329101b226960434ad7fbc367b99208c82ff75bd710610f1aca82a84f",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/pen_new_square.svg",
+      "sha256": "4bf0693b1d74653cea4548e802a1890fb642f45f772df514bc8ca1aa706f5bce",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/phone.svg",
+      "sha256": "ac013d634509f6179fee6ab7a370c833399ead0919758ec2afdc78a97749c612",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/play_circle.svg",
+      "sha256": "96852a8886adc3c9d5f88968ea66984e9505bfb384fff786a220c7d1e26e62d7",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/question_circle.svg",
+      "sha256": "7987ebf026c9e2617b531d1d8165f63696664b3796f4a61c96bf08a090acfcb7",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/refresh.svg",
+      "sha256": "0ea2cfe26ed1b204c26eb26abb95615b22ec3c5e4957dfd7e30d01d29e61e28b",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/settings.svg",
+      "sha256": "682b48f84f61084729d5fc13a7a651a0d1a7d9be9e913efdf0e5c02c697371a4",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/shield_check.svg",
+      "sha256": "c599318fa4c2f9fe36f589a3f309add7c8de8bb683c0fd3e66df4f7a264ba151",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/tag_price.svg",
+      "sha256": "b0cf7045bb655043e95eb4ffed7c25fb5e7c1a9e3c922ba040bc7d4afb8dfe26",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/target.svg",
+      "sha256": "bf76360159dbb9d0adbaf87447760c8acdb0e3dc91f701d305fa95b15fa2fdba",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/trash_bin_trash.svg",
+      "sha256": "9cadfd2f5d13bb8a4b9447c29ac2dc9f5c7e71c5b06426810bc35776e02b56ec",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/upload.svg",
+      "sha256": "cd4a5acd852a3960e2e221f4faffff16208741e044964d452d7b3a509a4cd6bd",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/user_plus_rounded.svg",
+      "sha256": "f5774dcf04112310d5a2485243124740192053aab6f2bed35b579143e598eaf5",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/user_rounded.svg",
+      "sha256": "204312a298e3538e0ef442708e84a39c93f3e5e22b2e60de65cfafe24eb1edd1",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/wallet_2.svg",
+      "sha256": "b8622b8102cc5692b33c226ed1040356acbf3a0ea8f1c15061a771c1c904d1e4",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/solar/widget_2.svg",
+      "sha256": "1ccf9ffe792280a0042cf2683dcd7db70af412be83db7560a3728c14be18819d",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/trending_down.svg",
+      "sha256": "6e6b21b99e83930eab4b591526e114e9cf0c19607ebd34d4232c4ddc2d84005a",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/trending_up.svg",
+      "sha256": "8d9666a184fd1187968e3e3a77035a35d4b81b666615ba2dda2f2d6dc48b8aa3",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/icons/visibility.svg",
+      "sha256": "bdd8f956ba9573ff18136d5c3afa560dc72bd7e8262ea6bb0c3989e80e0c06c8",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/images/ad_video_link_example.png",
+      "sha256": "b987786229b5c0b860cd39e510fc48f07d6e41c89fadecf1ac53672a1e175e89",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/images/auth/account_3d.png",
+      "sha256": "54632924d04e42f14ea04d206cc80644851df0b3ad9f41e042cfc01d2057227a",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/images/auth/verification_3d.png",
+      "sha256": "d68c34137d244b5fad4d4392a46533f261444e1ed3b7f4e13366c5904244229e",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/images/empty_ads.png",
+      "sha256": "0b933d91a80d709725b4fb5f1c21aa441107a48452e4f41026ae48c4ff5a697b",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/images/empty_ads_box.png",
+      "sha256": "6f9e316db5b712a1f45a82af4c503a16d26f00425c1d9dbf09bc1c2b4941d963",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/images/proxo_logo.jpg",
+      "sha256": "f6b170909b162aab6b022a531ae9c41d06ed3cf58a17a3ec3f4ca72e1912c032",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/images/proxo_logo.png",
+      "sha256": "6a91249509a4664d9fcebc8975bd9f71fbec877a6d58d4d0f323cc3d957ac591",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/logos/fastpay.jpg",
+      "sha256": "08aa79c900ac2b949220de0ebee1f663fcd6dc0c6ec389f2eb7b8bae1ba8b79c",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/logos/fastpay_logo.png",
+      "sha256": "107a48fb72ad37d9782005aa5e388ec09a880b4923752a852b6b4621566a84b4",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/logos/fib.jpg",
+      "sha256": "90b45837019ea79cd09d95f3e27fe2f7b8a01ba32cd6632d8cc70f9cc61f5fd0",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/logos/providers/NOTICE.md",
+      "sha256": "14dfc4869a99d15a4868b5b81a211de2d99012aee5d281c41f7ee7c966dec3f8",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/logos/providers/SOURCES.json",
+      "sha256": "7bf24f451898f48562286b5c407702f44c8c8994bcabe29b457e3fa8b156a9fd",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/logos/providers/asiacell.svg",
+      "sha256": "5779fcb00363c6e2a86777f0b05d5c4e0650cf67aaf6414428bb1eeb6767499e",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/logos/providers/fastpay.png",
+      "sha256": "c5aea407251e257a3fdc9c15c7b5ce3a36de4a2ffd8e2561caba9659f8941423",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/logos/providers/fib.svg",
+      "sha256": "88beb2ab9268bcaef4b96ea79213b48f31cbd373347a815836dd1d6ec5dc96f6",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/logos/providers/korek.svg",
+      "sha256": "2df2219186408d54a0e9941fa045125b3c1554c687379fa33ff8631dde49f265",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/logos/providers/qi.svg",
+      "sha256": "34ee5a6501b76b039248f35c6465f7b4cbba56acacb41ffd84d6c2027d089125",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/logos/providers/zaincash.svg",
+      "sha256": "4fba912b51cc1956c53c384849fa187016c1721fd1aac1dfb87adf4a45c2cea6",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/logos/proxo_logo_white.png",
+      "sha256": "4942a638d516c746c63fa79491341d97509ff1063096d2a836779f4abf0eb035",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/logos/proxo_notification_logo.png",
+      "sha256": "02577c1e1533c12d653d6703b3d8690d56b0956fd7a9cdaf31e2c55d15f12e40",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/logos/qicard.jpg",
+      "sha256": "51e6f72359f84433ced9d990510f20293ee530e89bd86a478ac80b6418937c77",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/logos/tiktok_icon.png",
+      "sha256": "a1d4b85fe36909b6188e8683de707b1e58ae2c43313f51079ee4115d4ea53ded",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/proxolink_thumbnails/contact-pill-dark.png",
+      "sha256": "58683f32d4be33d0fef7edbc84ac0943647a4caae4a320372de0e89d2013fd38",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/proxolink_thumbnails/contact-pill-mint.png",
+      "sha256": "84c78806da105ef308a02cc8033262baddf2810f8fea09181e860cf965d518dc",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/proxolink_thumbnails/contact-pill-white.png",
+      "sha256": "73653a7e2174f412d282ac840a3b9811598de4b41cdcdbf2622b3190b1da342f",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/proxolink_thumbnails/contact-pill.png",
+      "sha256": "00c272d3a28794b2377ca3809e9bb3d5f8280451b5d1b9c2722d58574f3ac52a",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/proxolink_thumbnails/download-pill-dark.png",
+      "sha256": "28577cd6a0c58bbb1e5379b631be76b2d9e9dee33f71763c4a77a8b23a11ac00",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/proxolink_thumbnails/download-pill-mint.png",
+      "sha256": "59d6ccc7638934f49cf9d17c0ce85068b0c75ce813d3c4db559e8004513ce738",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/proxolink_thumbnails/download-pill-white.png",
+      "sha256": "0765d854615a1281338a7669a208584b53489a0815c98470b1f78412767a6c5c",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/proxolink_thumbnails/download-pill.png",
+      "sha256": "54192b41d7e396d37c926bfe9df2f6ed260ac4ddfa92570a891986172d5729ea",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/proxolink_thumbnails/order-pill-dark.png",
+      "sha256": "28a257b9478e393d26e534500e9ea9202dc07854d0864ead88aa82473bd04906",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/proxolink_thumbnails/order-pill-mint.png",
+      "sha256": "24e775ed4f7bae46027f1c091dd81ce18e85be58dc6ed08da973e0ecd4c93d86",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/proxolink_thumbnails/order-pill-white.png",
+      "sha256": "ef56ab39cea1f61b590412882578486f5cfc092d190737b829c03f1756e5332d",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/proxolink_thumbnails/order-pill.png",
+      "sha256": "3713b1593a42da01ef2745c9adfb92fc7bf47590746428933a831d0b4f28dfa6",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/styles/banner.png",
+      "sha256": "41e9205d49637aad35e268f6cf8bba19bde8632c5d056758ceda0ae2546d601e",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/styles/banner_v1.webp",
+      "sha256": "3a98692eeff1c3849bf064d6f97d17683c2068325c48e3a8cf03770185ae5cdc",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/styles/card.png",
+      "sha256": "4de76042dbbe334a2959c5ecdb1e73f344954ae87ae053fe11389c53840a252b",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/styles/card_v1.webp",
+      "sha256": "e5586108cb4964611e592adcd0b5bf4691732bdb0b136f3d2d98c88e4452665f",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/styles/classic.png",
+      "sha256": "ed973a1c239a4d9609e0182a23f399127fcdf55a4c8656a8a49ce6748a4c4cb2",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/styles/classic_v1.webp",
+      "sha256": "7a4316fde2ed855197a5e85ee3154399594b38a081fa67551541940c5c083f66",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/styles/dark.png",
+      "sha256": "40c75d7190823957ea7a7e490a8a4d9133ce19aa327fbd1d1d95573b14b11023",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/styles/dark_v1.webp",
+      "sha256": "42e8d43466c72ddfae47816fb07da5f811c59027fa49922586108656fe8254f0",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/styles/light.png",
+      "sha256": "22efd73bb27aa9030ea6304200df38828786a46956c091aeb6dc8fd556a87f44",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/styles/light_v1.webp",
+      "sha256": "29ec3056630962bec59e65aaf5bd9b5d17913b83b206f62f85b95dbfc3bb1297",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/styles/neon.png",
+      "sha256": "0e2a63e209a3e8ab1597ed970820272a3fb691b4a9a7499a3218c1104b26bd70",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/styles/neon_v1.webp",
+      "sha256": "6c11190e905c308fd0890770eee93a0b07809ffb155d9a1015fc3508c2b722fd",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/styles/pill.png",
+      "sha256": "d61e8a187e259c7cbe4c2c0d44e7f9f29fd06a7f2a3d68958f89572a79df90b1",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/styles/pill_v1.webp",
+      "sha256": "939829e99c497baa24fffd93f2cf474eae491b2017d7bfd5e2980a57b05f0400",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/styles/zoom.png",
+      "sha256": "866737566ff73a05dd29a2c367b8240899da54fc8c59a29e97e5400161518b36",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/assets/styles/zoom_v1.webp",
+      "sha256": "61429711edab5e01fb98eea11faabd60aad4668d07cf37f0aad248f6b0b86926",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/account_cache_test.dart",
+      "sha256": "f6bb7ada0bc12d8466863c7df987adcf2b6160862428d4ba4430090a7919e253",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/account_setup_test.dart",
+      "sha256": "96dc85968c9945d2dd4fab101c69a4fad7341f5e635269d29299ebb71703beac",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/actual_screen_backend_boundary_test.dart",
+      "sha256": "bf9826425fe23c0afb0e38354dd6e03553cafc3f477d1178e43470ea9f1774cb",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/ad_activation_notice_test.dart",
+      "sha256": "5e2b641eaf2caf16119b86d0dc3defd2c167bbdb76c88b186c6bd00c85edecd0",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/ad_creation_flow_test.dart",
+      "sha256": "c292abbdd4f3079963aaef3784608fa3d65e65093a5197d48dea15fc4a79a3c4",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/ad_detail_loading_test.dart",
+      "sha256": "20047ff34e3934e0e291dc3c10985d5b9119904c61b5dab26ad02d8c78d4b7e1",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/ad_name_direction_test.dart",
+      "sha256": "82149f834d176f6bae974ed9af0f4703fd3e40db476e2898a7177dad228dbded",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/ad_notice_deadline_test.dart",
+      "sha256": "9d554d6be49202ac5d65cdde042f90b70604e08a19ea370c55cc77cf9ad70433",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/ad_receipt_data_test.dart",
+      "sha256": "eb0c6d2abbb4b0fef3347b0ced4c9ddab73d9702e837a3c6c95df1dfb425ec4d",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/ad_repository_test.dart",
+      "sha256": "de91e8c62377dee92f9ab4f9763575efb256e508d72091749f8702a009eee7c9",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/ad_submission_test.dart",
+      "sha256": "5cf6aeaf8af5aef1ce322f43c70d0ec342ce53bbde9d078e2386b89277cf72a4",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/app_balance_capture_test.dart",
+      "sha256": "11e8557174f640378eaf67255189d940920ccb4c2a1d7800d7bb95cfe51dac1c",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/app_telemetry_service_test.dart",
+      "sha256": "6ee2a5bec899a581a9667f7c8eb3512dd87a7625a6e1ada6f24e31daac4d980c",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/auth_activity_service_test.dart",
+      "sha256": "b1eaf14774e48ce478404981a041eb21facaa262d5bcb66ae6e9d23e6477ceea",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/auth_email_signup_test.dart",
+      "sha256": "ecdc52a3628af7d3ee35bcc9c8b63d41ec3ccdfc9e4b1f6ae86f70c44ad5848e",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/auth_otp_lifecycle_test.dart",
+      "sha256": "6c2e5957899dcb62087fd2d5db444fd710cf7f57701c24f1b8cefc7cb04e90f8",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/auth_phone_flow_test.dart",
+      "sha256": "6f2325581ced9a51cc240d05160bd8837a28c88b02eaf5c5c62af3460217dec8",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/auth_refresh_test.dart",
+      "sha256": "d4acd2740d4250ebd88a039129469225179d11d97a8ec16e07b3c75275dc98db",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/backend_config_test.dart",
+      "sha256": "9925d3111a5ecc61da8bcb97501e7b4f04254ac482fbbffd8f7b1cf72d7c899f",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/best_results_behavior_test.dart",
+      "sha256": "1d7b8f8b9ff7654236654a97fa3dbf8d2a3a3ee73b675de6ff5f17c2a2037f2d",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/chrome_behavior_test.dart",
+      "sha256": "d8af2ca62f33324e3a0a2e98b0b22a91978de66cf92f4ddd50834b2fdfed2832",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/chrome_capture_test.dart",
+      "sha256": "20feb684ec259c554f5c2d397cfbbc5dfa1ae3acf65714cdd2c6485432ffcd0d",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/context_help_capture_test.dart",
+      "sha256": "c264cf29f9aaf1287aefc16997e1fd9aa124de81ef3c0ded52ddcb30f8d096cf",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/context_help_test.dart",
+      "sha256": "a3b5fbe12626815095ddabc3f3b8b071be5d5ba88cc7c2bfdff5f1a6bef2a25c",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/deposit_screen_test.dart",
+      "sha256": "9c1231dac976a05e4a48650b30cad90c71cbc613f943d7ee3d3f003f91ba3abd",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/empty_state_ui_test.dart",
+      "sha256": "2a77e39aa784451dd006a17b7278a8ce8658385f292f3092a05785cb04757bc6",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/featured_thumbnail_test.dart",
+      "sha256": "9fea5a1a3eb0e40f9a69d13061b6b23d3e770d2b333d5c7a5eb0b8fda3b840d8",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/home_sections_test.dart",
+      "sha256": "8458a6808352c41091ae3a93d256e800a5919865d00298a131377598934ec1fe",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/iconography_money_test.dart",
+      "sha256": "f10b6517fc8952e742051a0928f7d10eefbded20a52bb7f8ed60a9090575e78f",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/localization_test.dart",
+      "sha256": "a3e57de748e600c161c3e62b48064a833c9aec46e46f57bb5f25639232e8ac05",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/native_phase_schedule_test.dart",
+      "sha256": "8517d65bc1c1565b015417202b5adce0af8794fcc2a10e13bcb73f890f9c0d4d",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/navigation_chrome_layout_test.dart",
+      "sha256": "49f3dff01fe77d65ad6aa2b620686e957320dbb6fd869676c5a44b9ef28bdb5e",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/notification_presentation_test.dart",
+      "sha256": "54ab8430f5a1495c27934275805a60b840c2a49527384a4362cf48a7a40a417a",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/polish_capture_test.dart",
+      "sha256": "4e0212fd0a586cc0cbd2906d14606590674136b21f6a496596310b69c66e5553",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/profile_loading_test.dart",
+      "sha256": "2076d108009894b85856dfadde1211b395bcdcb44240caf6263af8e49a9ac5d4",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/profile_logout_test.dart",
+      "sha256": "8ace1415c15c1f5aba3e9980d89945991ade0150e773eaaa30ec7f9c8df919f3",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/profile_polish_test.dart",
+      "sha256": "7140b50ce4343eac765f7f1e26e29bb74a962946da2e7d2cccad5e414cb573a9",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/proxo_banner_lifecycle_test.dart",
+      "sha256": "582efc94818602db0b9bddbf7954a1a454f4b952fc7aee635809f496027f9f7a",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/proxo_motion_stress_test.dart",
+      "sha256": "fd916b054a443a97eb6c1a60a1dbbfbb4e448b81adbe7d1deb65defa3c83297f",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/proxo_polish_test.dart",
+      "sha256": "84f8c6ffb568d1daeb8edfca60756fcd8b7850b9cd7290d32b42393e17f5516e",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/proxo_tab_stack_test.dart",
+      "sha256": "874c96a9aa4650585863cdd7743734fb909fc4a0e35b4d44caf94129fd67d99c",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/proxolink_actual_screens_test.dart",
+      "sha256": "f7dc5b8ae2d1e77330f49ebaf180c669916845c5f08e7930b061ca63bc59b127",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/proxolink_creation_recovery_test.dart",
+      "sha256": "4a845c1d3f3191236d312836a3eb921a5311b65c6d237c618f2abcba11437a12",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/proxolink_flow_test.dart",
+      "sha256": "6a22fd451adb71d7b37123faa732bde57c1238f1e3a9ea582d3a65fbaac490d3",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/proxolink_page_example_test.dart",
+      "sha256": "4431ab95d803fbdead64e2a62a0d2b4e017607992f5d4831767a40288a3372cd",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/proxolink_page_management_test.dart",
+      "sha256": "9a67bd79836af07cf53a9e7295b95a2703cdbe6cd1388847b90d3041ad0b869d",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/proxolink_tools_create_test.dart",
+      "sha256": "440d78fd522604eba7ee6bc0cc195cab90cf222ed8f9476775b438bb22908ea1",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/proxolink_v6_flow_test.dart",
+      "sha256": "5b5bf46ee555b7c0a7bfcf8cfc1947d8c96edf0c2239bf0db051e927f2161ec1",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/receipt_layout_test.dart",
+      "sha256": "038b996377d483d1b1ea2b62fdf01a8f84a19a42b98c54e513f63212fa9958d5",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/receipt_pdf_test.dart",
+      "sha256": "9d0fb3a3dd429f8379cb19b60a9addf3f908ce838acfc93f0cdec774cf82bd41",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/receipt_test_helpers.dart",
+      "sha256": "0f77afa43aa6d90312b4273bbb6f83430036dd43d3ad1ddc332356ff3439d55c",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/responsive_ad_ui_test.dart",
+      "sha256": "6396a3132c2d70a1efd5d56525b22c1e9572af2d4fbf2c0624a4f22b4bd8ffd9",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/sidebar_navigation_test.dart",
+      "sha256": "e30d2d519cb320958e5085324f56750585b45779e1413f91f4a1462c51d91b54",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/staging_transport_test.dart",
+      "sha256": "b32eade59a80fc6c8f53d66273e7a43ccec97078c4633ddef94ce6701c8079bc",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/support/featured_thumbnail_fixture.dart",
+      "sha256": "1454f6761910d48d9102e5cf70046600467dfc6b9e42134b8e517e48dd9ab427",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/support/memory_auth_storage.dart",
+      "sha256": "488b57222b29c3aff57a3f1f1d824f6ae52bf6555789f881291e2dbc24add9a0",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/support/session_fixture.dart",
+      "sha256": "e14eed35590d4657dae55958c42e7d55f9a48e019ed8a5c0aebbb951afd89c46",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/text_direction_test.dart",
+      "sha256": "017a1826821a94292630fd231280b5d22265272918730db26b40587482f603c4",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/tx_history_layout_test.dart",
+      "sha256": "6b5e12dff11592cd28a004745ffd6b98df4f92a72577c3ed8fc9b7658c36ce72",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/ui_balance_behavior_test.dart",
+      "sha256": "8cafbac266029a8185c04f90ab47e94ca5a7ab8d926a88f2c762b5e11c5f31a3",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/ui_refinement_test.dart",
+      "sha256": "260cf4a4b3b62d956523652469d59a459c9a03a270834d0aaaf41ede5f6236e6",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/ui_remediation_capture_test.dart",
+      "sha256": "39022912581cbd707ecda9770aa4d4361fbe7ff7c619f75bcebad0154f14898a",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/unread_notification_counter_test.dart",
+      "sha256": "9a8881f75d08d524ec5d4cafc4333bcfd57664ffa1588c06bad02be04fe0c6cf",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/test/whatsapp_marketing_test.dart",
+      "sha256": "41b788ce67f9b91e71798efabe2bd42558ecd7de26f7d754bc6959ef243483fe",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/integration_test/polish_runtime_test.dart",
+      "sha256": "5c1a2cb00a8cd5eb912660b9f446787ab1ef8a4361cd639acc1d83b552fcd673",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/integration_test/proxolink_live_test.dart",
+      "sha256": "54649101e9a8f73884ffa3ba5ba3f90bc1208edd16236e11451310bc9790c6b6",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/integration_test/proxolink_native_actual_screens.dart",
+      "sha256": "8df94d442ba143bdf565521f5d40fd4b05b93dea2c64a52b718ccc5b70f7dc1e",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/integration_test/proxolink_native_chooser.dart",
+      "sha256": "56507aaa278ac11b9476a05374d29356030b717b98bdb71edfa0d063d444c0bb",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/integration_test/proxolink_native_create_chooser.dart",
+      "sha256": "a8ebb967dfadb8a0b4ab7d5c02a009bf68830333f1d2b562459cdbfadef3ad63",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/integration_test/proxolink_native_diagnostics.dart",
+      "sha256": "29197b3dff2f928978e8a90232f74b5ac75572e15ff929c9bcf830820cbefd55",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/integration_test/proxolink_native_probe.dart",
+      "sha256": "6b67ecb5e5c3873b6821742b6337778c7b95fcde53334905227b1f6b5fed91ae",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/integration_test/proxolink_native_tools_journey.dart",
+      "sha256": "aa2a55e4c6fdcceaa11ac2b1070916286435d291c519589bd7da90877143bb95",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/integration_test/support/actual_screen_fixtures.dart",
+      "sha256": "fc850f48f84d85588dc03225fb75c75356f5bc7ca1e746f65a32560dc6d7ba5b",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/integration_test/support/native_phase_schedule.dart",
+      "sha256": "13321dc9f33b107e631ca572461d17a50acdaf4e0ed857624e862c0c4d65156d",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/integration_test/ui_iconography_test.dart",
+      "sha256": "e26be6b4ef6f598b76a2b1aa79c8c26bfebd069b787525ebd1a055706375f2db",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/pubspec.yaml",
+      "sha256": "ea5ca6779371ead84ee400f8a7dcc905cca9927ad2b9450647e0810cf9899b34",
+      "tracked_in_source_commit": true
+    },
+    {
+      "path": "proxo_app/pubspec.lock",
+      "sha256": "0863305233c20784933860a83bacad04aec1e9fb5820f3ced0ecb76b349a2855",
+      "tracked_in_source_commit": true
+    }
+  ],
+  "generated_build_files": [
+    "proxo_app/lib/l10n/app_localizations.dart",
+    "proxo_app/lib/l10n/app_localizations_ar.dart",
+    "proxo_app/lib/l10n/app_localizations_ckb.dart"
+  ],
+  "provenance": "Published source 9fdd08d; no modified tracked source files. Flutter-generated localization outputs are fingerprinted separately in generated_build_files."
+}

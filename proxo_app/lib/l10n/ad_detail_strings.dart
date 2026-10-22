@@ -24,12 +24,19 @@ class AdDetailStrings {
   static const AdDetailStrings _kmr = AdDetailStrings._(false, true);
 
   /// کوردی بۆ هەموو زمانێک جگە لە عەرەبی.
-  static AdDetailStrings of(Locale locale) =>
-      locale.languageCode == 'ar' ? _ar : locale.languageCode == 'kmr' ? _kmr : _ckb;
+  static AdDetailStrings of(Locale locale) => locale.languageCode == 'ar'
+      ? _ar
+      : locale.languageCode == 'kmr'
+          ? _kmr
+          : _ckb;
 
   static AdDetailStrings get current => of(ProxoLocale.current.value);
 
-  String _t(String ku, String arabic) => ar ? arabic : badini ? ProxoStrings.text(ku, language: 'kmr') : ku;
+  String _t(String ku, String arabic) => ar
+      ? arabic
+      : badini
+          ? ProxoStrings.text(ku, language: 'kmr')
+          : ku;
 
   // ── AppBar / سەردێر ─────────────────────────────────────────────────────
   String get appBarTitle => _t('وردەکاری ڕیکلام', 'تفاصيل الإعلان');
@@ -39,20 +46,32 @@ class AdDetailStrings {
   // ── سەرەوە ──────────────────────────────────────────────────────────────
   String get adId => _t('ئایدی ڕیکلام', 'معرّف الإعلان');
   String get date => _t('ڕێکەوت', 'التاريخ');
+  String get paymentStatus => _t('دۆخی پارەدان', 'حالة الدفع');
+  String paymentStatusLabel(String status) => switch (status) {
+        'paid' || 'approved' || 'spent' => _t('سەرکەوتوو', 'مدفوع'),
+        'pending' || 'awaiting_payment' => _t('چاوەڕوان', 'قيد الانتظار'),
+        'failed' || 'rejected' => _t('شکست', 'غير ناجح'),
+        'refunded' => _t('گەڕاوە', 'مسترد'),
+        'cancelled' || 'canceled' => _t('هەڵوەشاوەتەوە', 'ملغي'),
+        'unpaid' => _t('پارە نەدراوە', 'غير مدفوع'),
+        'no_payment_required' => noPaymentRequired,
+        '' => '—',
+        _ => status,
+      };
 
   // ── ئامانجی ڕیکلام ──────────────────────────────────────────────────────
   String get sectionTarget => _t('ئامانجی ڕیکلام', 'استهداف الإعلان');
   String get age => _t('تەمەن', 'العمر');
   String get gender => _t('ڕەگەز', 'الجنس');
   String get location => _t('شوێن', 'الموقع');
-  String get device => _t('ئامێر', 'الجهاز');
-  String get category => _t('پۆل', 'الفئة');
+  String get device => _t('جۆری ئامێر', 'الجهاز');
+  String get category => _t('جۆری پۆل', 'الفئة');
 
   // ── پوختە ───────────────────────────────────────────────────────────────
-  String get sectionSummary => _t('پوختە', 'الملخص');
-  String get originalAmount => _t('نرخی سەرەتایی', 'المبلغ الأصلي');
+  String get sectionSummary => _t('پوختەی نرخ', 'الملخص');
+  String get originalAmount => _t('نرخی لاوەکی', 'المبلغ الأصلي');
   String get discount => _t('داشکاندن', 'الخصم');
-  String get totalIqd => _t('کۆی کۆتایی', 'المبلغ النهائي');
+  String get totalIqd => _t('کۆی گشتی', 'المبلغ النهائي');
   String get iqdUnit => 'د.ع';
 
   // ── زانیاری پارەدان ─────────────────────────────────────────────────────
@@ -132,7 +151,8 @@ class AdDetailStrings {
     final String normalized = slug.trim().toLowerCase();
     if (normalized.isEmpty) return '—';
     if (!isSupportedAdCategory(normalized)) return slug;
-    if (!ar) return adCategoryLabel(normalized, language: badini ? 'kmr' : 'ckb');
+    if (!ar)
+      return adCategoryLabel(normalized, language: badini ? 'kmr' : 'ckb');
     return switch (normalized) {
       'cosmetics_beauty' => 'التجميل والعناية',
       'fashion_apparel' => 'الأزياء والملابس',

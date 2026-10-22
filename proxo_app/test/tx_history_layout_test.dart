@@ -6,7 +6,6 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:proxo_app/l10n/tx_strings.dart';
-import 'package:proxo_app/widgets/receipt/receipt_kit.dart';
 import 'package:proxo_app/widgets/receipt/tx_history_layout.dart';
 
 import 'receipt_test_helpers.dart' show receiptPaintedRect;
@@ -53,21 +52,21 @@ Widget historyHost({
               body: skeleton
                   ? const TxHistorySkeletonList()
                   : ListView.separated(
-                      padding: const EdgeInsets.all(ReceiptTokens.gutter),
+                      padding: const EdgeInsets.all(TxHistoryTokens.gutter),
                       itemCount: 2,
                       separatorBuilder: (_, __) =>
                           const SizedBox(height: TxHistoryCard.gap),
                       itemBuilder: (_, index) => Center(
                         child: ConstrainedBox(
                           constraints: const BoxConstraints(
-                            maxWidth: ReceiptTokens.contentMaxWidth,
+                            maxWidth: TxHistoryTokens.contentMaxWidth,
                           ),
                           child: TxHistoryCard(
                             key: index == 0 ? firstCardKey : null,
                             date: '22/09/2026',
                             time: '03:26 PM',
                             amount: amount,
-                            amountColor: ReceiptTokens.negative,
+                            amountColor: TxHistoryTokens.negative,
                             onTap: onOpen ?? () {},
                           ),
                         ),
@@ -84,8 +83,8 @@ Widget historyHost({
 void main() {
   HistoryPaintBinding();
   setUpAll(() async {
-    await (FontLoader(ReceiptTokens.fontFamily)
-          ..addFont(rootBundle.load('assets/fonts/Rabar_021.ttf')))
+    await (FontLoader(TxHistoryTokens.fontFamily)
+          ..addFont(rootBundle.load(TxHistoryTokens.fontAsset)))
         .load();
     await (FontLoader('MaterialIcons')
           ..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf')))
@@ -103,7 +102,9 @@ void main() {
         await tester.pumpWidget(historyHost(scale: scale));
         await tester.pumpAndSettle();
         expect(tester.takeException(), isNull);
-        expect(tester.widget<Scaffold>(find.byType(Scaffold)).bottomNavigationBar, isNull);
+        expect(
+            tester.widget<Scaffold>(find.byType(Scaffold)).bottomNavigationBar,
+            isNull);
         final l = TxStrings.of(const Locale('ckb'));
         final title = find.text(l.historyTitle);
         final back = find.byTooltip(l.back);
@@ -116,7 +117,7 @@ void main() {
         expect(tester.getSize(back), const Size(48, 48));
         expect(tester.getSize(refresh), const Size(48, 48));
         expect(tester.widget<Scaffold>(find.byType(Scaffold)).backgroundColor,
-            ReceiptTokens.page);
+            TxHistoryTokens.page);
         final card = find.byKey(firstCardKey);
         final texts = find.descendant(
             of: card,
@@ -133,9 +134,12 @@ void main() {
           ...[texts.at(0), texts.at(1), texts.at(2)]
         ]) {
           final style = tester.widget<Text>(finder).style!;
-          expect(style.fontFamily, 'Rabar');
+          expect(style.fontFamily, TxHistoryTokens.fontFamily);
           expect(style.fontWeight, FontWeight.w400);
         }
+        expect(tester.widget<Text>(texts.at(0)).style!.fontSize, 20);
+        expect(tester.widget<Text>(texts.at(1)).style!.fontSize, 13);
+        expect(tester.widget<Text>(texts.at(2)).style!.fontSize, 14);
       });
     }
   }
@@ -191,6 +195,48 @@ void main() {
     expect(find.text(l.historyTitle), findsOneWidget);
     expect(Directionality.of(tester.element(find.byTooltip(l.back))),
         TextDirection.ltr);
+  });
+
+  testWidgets('history error and empty states retain their design and retry',
+      (tester) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(320, 568);
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final l = TxStrings.of(const Locale('ckb'));
+    var retries = 0;
+    Widget stateHost({bool failed = true}) => MaterialApp(
+          home: Scaffold(
+            body: Directionality(
+              textDirection: TextDirection.rtl,
+              child: TxHistoryStateView(
+                title: failed ? l.loadErrorTitle : l.emptyTitle,
+                message: failed ? l.loadErrorBody : l.emptyBody,
+                actionLabel: failed ? l.retry : null,
+                onAction: failed ? () => retries++ : null,
+              ),
+            ),
+          ),
+        );
+    await tester.pumpWidget(stateHost());
+    await tester.pumpAndSettle();
+    final title = tester.widget<Text>(find.text(l.loadErrorTitle));
+    final message = tester.widget<Text>(find.text(l.loadErrorBody));
+    expect(title.style!.fontFamily, 'RabarAuthRegular');
+    expect(title.style!.fontSize, 16);
+    expect(message.style!.fontSize, 14);
+    final action = find.byType(InkWell);
+    expect(tester.getRect(action).left, 20);
+    expect(tester.getSize(action), const Size(280, 48));
+    await tester.tap(action);
+    await tester.pumpAndSettle();
+    expect(retries, 1);
+    expect(find.byType(CircularProgressIndicator), findsNothing);
+    await tester.pumpWidget(stateHost(failed: false));
+    await tester.pumpAndSettle();
+    expect(find.text(l.emptyTitle), findsOneWidget);
+    expect(find.byType(InkWell), findsNothing);
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('render the redesigned history screen', (tester) async {

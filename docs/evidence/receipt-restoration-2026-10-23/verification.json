@@ -1,0 +1,138 @@
+{
+  "scope": "Receipt style restoration and text balance only",
+  "base_commit": "d777c10554d86453f5448618281dd7de476f7a0a",
+  "checked_at_utc": "2026-10-22T21:37:12.276904+00:00",
+  "environment": {
+    "os": "Linux-6.18.55-x86_64-with-glibc2.39",
+    "flutter": "3.47.2",
+    "dart": "3.13.2",
+    "mode": "Flutter host widget tests and production PDF export with mocked sharing channel",
+    "timezone": "Europe/Stockholm",
+    "network": "No production requests; local fixture backend"
+  },
+  "source_sha256": {
+    "proxo_app/lib/screens/transaction_detail_screen.dart": "be7054c851e6b9679e6c3b2a54eabc06b2e0387e5657c482d35e48318b881b60",
+    "proxo_app/lib/widgets/receipt/ad_receipt_card.dart": "458f97a5c5e4ce41c50a582abc4223414bda10cd7ce970aaf61d8d9b555121a7",
+    "proxo_app/lib/widgets/receipt/receipt_kit.dart": "82fec93c15c3b38eea722f4fea379f2ed691a407979b0654e3e6d62d9596fd99",
+    "proxo_app/lib/widgets/receipt/tx_history_layout.dart": "c33f8d80a1fce34671e8d5e0126a7ea1ee661a91da2254acdc978cf887d0ce65",
+    "proxo_app/test/receipt_layout_test.dart": "1ba8b0d17187565d31f92620546a89770d94598d25b23b9207ebc155508a5a7e"
+  },
+  "verification": {
+    "targeted_tests": {
+      "files": [
+        "receipt_layout_test.dart",
+        "receipt_pdf_test.dart",
+        "ad_receipt_data_test.dart",
+        "ad_name_direction_test.dart",
+        "responsive_ad_ui_test.dart",
+        "iconography_money_test.dart",
+        "ad_detail_loading_test.dart",
+        "tx_history_layout_test.dart"
+      ],
+      "unique_tests_passed": 213,
+      "failures_remaining": 0,
+      "initial_run": {
+        "passed": 165,
+        "failed": 48,
+        "log": "logs/targeted-tests.log",
+        "failure_cause": "The intentional restoration of blue text-only section headings contradicted one obsolete black-heading assertion repeated over48 layout configurations."
+      },
+      "layout_rerun": {
+        "passed": 121,
+        "failed": 0,
+        "log": "logs/receipt-layout-rerun.log"
+      },
+      "other_seven_files": {
+        "passed": 92,
+        "failed": 0,
+        "evidence": "Initial run; unchanged by the heading-color test correction."
+      }
+    },
+    "whole_screen_capture_tests": {
+      "passed": 8,
+      "failed": 0,
+      "log": "logs/screen-captures.log",
+      "configurations": [
+        {
+          "width_dp": 280,
+          "height_dp": 852,
+          "text_scale": 1,
+          "device_pixel_ratio": 1
+        },
+        {
+          "width_dp": 393,
+          "height_dp": 852,
+          "text_scale": 1,
+          "device_pixel_ratio": 3
+        },
+        {
+          "width_dp": 393,
+          "height_dp": 852,
+          "text_scale": 2,
+          "device_pixel_ratio": 1
+        },
+        {
+          "width_dp": 768,
+          "height_dp": 852,
+          "text_scale": 1,
+          "device_pixel_ratio": 2
+        }
+      ],
+      "screens": [
+        "payment receipt",
+        "advertisement receipt"
+      ],
+      "png_count": 13,
+      "pdf_count": 8,
+      "geometry_json_count": 13
+    },
+    "scoped_analyzer": {
+      "files": 13,
+      "exit_code": 0,
+      "errors": 0,
+      "warnings": 0,
+      "infos": 4,
+      "info_type": "Existing avoid_print in test/ui_remediation_capture_test.dart",
+      "log": "logs/scoped-analyzer.log"
+    },
+    "visual_review": {
+      "focused_pdf_pages_rendered_and_inspected": 7,
+      "focused_pdf_results": [
+        {
+          "file": "exports/narrow_paid.pdf",
+          "pages": 3
+        },
+        {
+          "file": "exports/standard_free.pdf",
+          "pages": 1
+        },
+        {
+          "file": "exports/transaction_narrow.pdf",
+          "pages": 2
+        },
+        {
+          "file": "exports/transaction_standard.pdf",
+          "pages": 1
+        }
+      ],
+      "result": "Normal exports fit one page; narrow280dp/200% exports paginate without clipped rows or overlap. Full UUIDs remain visible LTR in exported output after the in-app identifier viewport was scrolled to the suffix. Restored blue section text, small proportional logo, borderless white card, compact short public ID row, and balanced values are visible. Representative whole-screen normal and narrow/big-text bottom states show the text-only PDF button accessible."
+    }
+  },
+  "artifacts": {
+    "focused_exports": "exports/",
+    "whole_screen_captures": "screens/",
+    "rendered_pdf_pages": "rendered/",
+    "screen_index": "screen-capture-index.json",
+    "receipt_measurements": "receipt-measurements.json",
+    "pdf_inspection": "pdf-inspection.json"
+  },
+  "limits": [
+    "Only the focused receipt/history tests and capture checks were repeated for this correction.",
+    "No physical-device or native profile performance measurements were repeated.",
+    "Share/download assertions use the actual production PDF generator with mocked platform sharing; no external sharing destination was contacted.",
+    "This verification does not test production payment processing or receipt retrieval against live services."
+  ],
+  "published_source_commit": "a73c8868b60058fb1a13b8b48cc44cd6145f9f79",
+  "published_source_tree": "26d598997e7b032f52952590178655fe6831c46f",
+  "source_verification": "All five tested file hashes match the published commit; those are its only source differences from base."
+}

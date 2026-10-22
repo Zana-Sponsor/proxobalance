@@ -19,9 +19,9 @@ class RecoveryScreen extends StatelessWidget {
     crossAxisAlignment: CrossAxisAlignment.stretch,
     children: [
       AuthHeader.inner(onBack: onBack),
-      const SizedBox(height: 36),
+      const SizedBox(height: AuthTokens.gapHeaderToTitle),
       AuthIntro(
-        icon: 'lock_reset',
+        icon: newPassword ? 'security_outline' : 'recovery_outline',
         title: newPassword
             ? AuthStrings.newPasswordTitle
             : AuthStrings.recoveryTitle,

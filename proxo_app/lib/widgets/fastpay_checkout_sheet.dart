@@ -28,7 +28,9 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import '../main.dart' show supabase;
+import '../config/backend_config.dart';
 import '../theme/app_theme.dart' show kAppFont;
+import 'payments/payment_option.dart';
 import 'proxo_toast.dart';
 import 'package:proxo_app/widgets/proxo_text.dart';
 
@@ -50,8 +52,6 @@ const Duration kFastPayFallbackWindow = Duration(minutes: 5);
 
 /// ماوەی نێوان دوو پشکنینی دۆخ.
 const Duration kFastPayPollInterval = Duration(seconds: 3);
-
-const String kFastPayLogoAsset = 'assets/logos/fastpay.jpg';
 
 // ── تۆکنەکانی دیزاین ──────────────────────────────────────────────────────
 
@@ -157,7 +157,9 @@ class FastPayService {
     required String orderId,
     required int billAmountIqd,
     String? note,
+    BackendConfig? backendConfig,
   }) async {
+    (backendConfig ?? BackendConfig.current).requireProductionTransport();
     final session = supabase.auth.currentSession;
     if (session == null) {
       throw const FastPayException('تکایە دووبارە بچۆ ژوورەوە');
@@ -531,7 +533,7 @@ class _FastPayCheckoutSheetState extends State<FastPayCheckoutSheet>
   Widget _header() {
     return Row(
       children: [
-        Image.asset(kFastPayLogoAsset, height: 28),
+        const ProviderLogo(provider: 'fastpay', width: 84, height: 28),
         const Spacer(),
         InkResponse(
           onTap: () => Navigator.of(context)
@@ -625,35 +627,7 @@ class _FastPayCheckoutSheetState extends State<FastPayCheckoutSheet>
             children: [
               _SummaryRow(
                 label: 'ژمارەی مامەڵە',
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Flexible(
-                      child: ProxoText(
-                        _reference,
-                        textDirection: TextDirection.ltr,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontFamily: 'monospace',
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: _kInk,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    GestureDetector(
-                      onTap: _copyRef,
-                      child: const ProxoText('کۆپیکردن', translate: true,
-                          style: TextStyle(
-                            fontFamily: kAppFont,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: _kAccent,
-                          )),
-                    ),
-                  ],
-                ),
+                child: _ReferenceValue(reference: _reference, onCopy: _copyRef),
               ),
               const Divider(height: 1, color: _kLine),
               _SummaryRow(
@@ -677,7 +651,8 @@ class _FastPayCheckoutSheetState extends State<FastPayCheckoutSheet>
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(color: _kLine),
                   ),
-                  child: Image.asset(kFastPayLogoAsset, height: 18),
+                  child: const ProviderLogo(
+                      provider: 'fastpay', width: 56, height: 18),
                 ),
               ),
               const Divider(height: 1, color: _kLine),
@@ -685,7 +660,9 @@ class _FastPayCheckoutSheetState extends State<FastPayCheckoutSheet>
                 label: 'کاتی ماوە بۆ مامەڵەکە',
                 child: ProxoText(
                   _countdown,
+                  key: const ValueKey('fastpay-countdown'),
                   textDirection: TextDirection.ltr,
+                  maxLines: 1,
                   style: TextStyle(
                     fontFamily: 'monospace',
                     fontSize: 15,
@@ -823,21 +800,84 @@ class _SummaryRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          ProxoText(label, translate: true,
-              style: const TextStyle(
-                fontFamily: kAppFont,
-                fontSize: 13,
-                color: _kSlate,
-              )),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Align(alignment: Alignment.centerLeft, child: child),
+      child: LayoutBuilder(builder: (context, constraints) {
+        final labelWidget = ProxoText(label, translate: true,
+            style: const TextStyle(
+              fontFamily: kAppFont,
+              fontSize: 13,
+              color: _kSlate,
+            ));
+        final value = Align(alignment: Alignment.centerLeft, child: child);
+        // A large unbounded label must not take all the value's width. Stack
+        // on compact screens and at accessibility sizes without shrinking text.
+        final stack = constraints.maxWidth < 280 ||
+            MediaQuery.textScalerOf(context).scale(13) > 13 * 1.3;
+        if (stack) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [labelWidget, const SizedBox(height: 8), value],
+          );
+        }
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            labelWidget,
+            const SizedBox(width: 12),
+            Expanded(child: value),
+          ],
+        );
+      }),
+    );
+  }
+}
+
+class _ReferenceValue extends StatelessWidget {
+  const _ReferenceValue({required this.reference, required this.onCopy});
+
+  final String reference;
+  final VoidCallback onCopy;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: Directionality(
+            textDirection: TextDirection.ltr,
+            child: SingleChildScrollView(
+              key: const ValueKey('fastpay-reference-scroll'),
+              scrollDirection: Axis.horizontal,
+              child: ProxoText(reference,
+                  key: const ValueKey('fastpay-reference'),
+                  textDirection: TextDirection.ltr,
+                  maxLines: 1,
+                  style: const TextStyle(
+                    fontFamily: 'monospace',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: _kInk,
+                  )),
+            ),
           ),
-        ],
-      ),
+        ),
+        const SizedBox(width: 8),
+        InkWell(
+          key: const ValueKey('fastpay-copy-reference'),
+          onTap: onCopy,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+            child: const Center(
+              child: ProxoText('کۆپیکردن', translate: true,
+                  style: TextStyle(
+                    fontFamily: kAppFont,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: _kAccent,
+                  )),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -915,34 +955,9 @@ class _StatusView extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
             border: Border.all(color: _kLine),
           ),
-          child: Row(
-            children: [
-              const ProxoText('ژمارەی مامەڵە', translate: true,
-                  style: TextStyle(
-                    fontFamily: kAppFont,
-                    fontSize: 12,
-                    color: _kSlate,
-                  )),
-              const SizedBox(width: 10),
-              Expanded(
-                child: ProxoText(
-                  reference,
-                  textDirection: TextDirection.ltr,
-                  textAlign: TextAlign.left,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontFamily: 'monospace',
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: _kInk,
-                  ),
-                ),
-              ),
-              GestureDetector(
-                onTap: onCopy,
-                child: const Icon(Icons.copy_rounded, size: 17, color: _kSlate),
-              ),
-            ],
+          child: _SummaryRow(
+            label: 'ژمارەی مامەڵە',
+            child: _ReferenceValue(reference: reference, onCopy: onCopy),
           ),
         ),
         const SizedBox(height: 16),
@@ -1020,7 +1035,8 @@ class _FastPayWebViewSheetState extends State<_FastPayWebViewSheet> {
               padding: const EdgeInsets.fromLTRB(16, 12, 12, 8),
               child: Row(
                 children: [
-                  Image.asset(kFastPayLogoAsset, height: 22),
+                  const ProviderLogo(
+                      provider: 'fastpay', width: 64, height: 22),
                   const Spacer(),
                   InkResponse(
                     onTap: () => Navigator.of(context).pop(),

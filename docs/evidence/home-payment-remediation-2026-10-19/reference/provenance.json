@@ -1,0 +1,18 @@
+{
+  "source_commit": "5a6167ed6bfb44887be02aba55fcbf4d1cd45eb9",
+  "workflow_run": 39279374797,
+  "artifact_zip_sha256": "bee052edf1ea9c2ae1b5f1b5424a99359ddf80ca35a974957a1c3e8231f3dedd",
+  "purpose": "Historical native authentication screenshot used only as existing design reference",
+  "run_status": "Failed final transport classification assertion; this is not a passed native validation claim",
+  "image_sha256": "6c7c485417f52fc412ed4de3d66c221ba827b1ff7e20ff23f121fe6a40ffb547",
+  "physical_size_px": [
+    1080,
+    1920
+  ],
+  "device_pixel_ratio": 2.75,
+  "viewport_dp": [
+    392.72727272727275,
+    698.1818181818181
+  ],
+  "device": "Android 15 x86_64 emulator, profile AOT, software GPU"
+}

@@ -44,6 +44,33 @@ void main() {
   final ar = AdDetailStrings.of(const Locale('ar'));
 
   test(
+      'receipt status comes from saved payment state without inventing success',
+      () {
+    final fixture = receiptFixture()..['payment_status'] = 'pending';
+    expect(AdReceiptData.from(fixture, ku).paymentStatus, 'pending');
+    for (final entry in <String, String>{
+      'paid': 'سەرکەوتوو',
+      'approved': 'سەرکەوتوو',
+      'spent': 'سەرکەوتوو',
+      'pending': 'چاوەڕوان',
+      'awaiting_payment': 'چاوەڕوان',
+      'refunded': 'گەڕاوە',
+      'failed': 'شکست',
+      'rejected': 'شکست',
+      'unknown_status': 'unknown_status',
+    }.entries) {
+      fixture['payment_status'] = entry.key;
+      final savedStatus = AdReceiptData.from(fixture, ku).paymentStatus;
+      expect(savedStatus, entry.key);
+      expect(ku.paymentStatusLabel(savedStatus), entry.value);
+    }
+    fixture.remove('payment_status');
+    expect(AdReceiptData.from(fixture, ku).paymentStatus, '');
+    expect(AdReceiptData.from(freeReceiptFixture(), ku).paymentStatus,
+        'no_payment_required');
+  });
+
+  test(
       'keeps public P Ad ID distinct from receipt UUID and payment transaction',
       () {
     final data = receiptFixture()

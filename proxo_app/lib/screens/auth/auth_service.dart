@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../config/backend_config.dart';
 import 'auth_models.dart';
 
 typedef PhoneLoginExchange = ({String? refreshToken, String? error});
@@ -18,18 +19,150 @@ final class AuthService {
     required String emailOtpUrl,
     required String whatsappOtpUrl,
     http.Client? httpClient,
+    BackendConfig? backendConfig,
   })  : _supabase = supabase,
         _emailOtpUrl = emailOtpUrl,
         _whatsappOtpUrl = whatsappOtpUrl,
-        _http = httpClient ?? http.Client();
+        _http = httpClient ?? http.Client(),
+        _backend = backendConfig ?? BackendConfig.current;
 
   final SupabaseClient _supabase;
   final String _emailOtpUrl;
   final String _whatsappOtpUrl;
   final http.Client _http;
+  final BackendConfig _backend;
 
   String? lastOtpError;
   int? lastOtpStatus;
+  ({String email, String password, String userId})? _createdEmailSignup;
+  ({
+    String email,
+    String userId,
+    String code,
+    String password,
+    bool confirmed
+  })? _verifiedEmailSignup;
+
+  /// Supabase stores the identity; the configured application API sends OTPs.
+  /// Keep a pending identity in memory so retrying a failed send does not try
+  /// to register the same email again. No pending credentials are persisted.
+  Future<String> beginEmailSignup({
+    required String email,
+    required String password,
+    required String name,
+  }) async {
+    // Block before signup can create an identity or trigger Auth email.
+    _backend.requireProductionTransport();
+    final normalizedEmail = email.trim().toLowerCase();
+    var pending = _createdEmailSignup;
+    if (pending == null ||
+        pending.email != normalizedEmail ||
+        pending.password != password) {
+      final response = await _supabase.auth.signUp(
+        email: normalizedEmail,
+        password: password,
+        data: {'full_name': name.trim(), 'signup_channel': 'email'},
+      );
+      final userId = response.user?.id;
+      if (userId == null || userId.isEmpty) {
+        throw const AuthException('signup_failed');
+      }
+      pending = (email: normalizedEmail, password: password, userId: userId);
+      _createdEmailSignup = pending;
+      _verifiedEmailSignup = null;
+    }
+    // The existing custom-mail setup may auto-confirm the Auth identity.
+    // Discard its provisional session before showing our separate OTP screen.
+    if (_supabase.auth.currentSession != null) {
+      await _supabase.auth.signOut(scope: SignOutScope.local);
+    }
+    final sent = await requestEmailOtp(
+      email: normalizedEmail,
+      userId: pending.userId,
+      name: name.trim(),
+      purpose: 'signup',
+    );
+    if (!sent) throw const AuthException('otp_send_failed');
+    _verifiedEmailSignup = null;
+    return pending.userId;
+  }
+
+  Future<AuthResponse> verifyEmailSignup({
+    required String email,
+    required String code,
+    required String userId,
+    required String password,
+  }) async {
+    final normalizedEmail = email.trim().toLowerCase();
+    final normalizedCode = code.trim();
+    var verified = _verifiedEmailSignup;
+    if (verified == null ||
+        verified.email != normalizedEmail ||
+        verified.userId != userId ||
+        verified.code != normalizedCode ||
+        verified.password != password) {
+      final dynamic proof = await _supabase.rpc(
+        'pa_verify_login_otp',
+        params: {'p_email': normalizedEmail, 'p_code': normalizedCode},
+      );
+      if (proof is! Map || proof['valid'] != true) {
+        throw const AuthException('Invalid or expired code',
+            code: 'otp_expired');
+      }
+      verified = (
+        email: normalizedEmail,
+        userId: userId,
+        code: normalizedCode,
+        password: password,
+        confirmed: false,
+      );
+      _verifiedEmailSignup = verified;
+    }
+    // This existing server function consumes fresh OTP proof bound to both
+    // the user ID and email. Never swallow its failure or sign in before it.
+    if (!verified.confirmed) {
+      await _supabase.rpc(
+        'proxo_confirm_email',
+        params: {'p_user_id': userId},
+      );
+      // Retrying a failed sign-in must not replay the consumed OTP. A failed
+      // confirmation response never sets this flag; resend supplies new proof
+      // if the server consumed the old proof but its response was lost.
+      _verifiedEmailSignup = (
+        email: normalizedEmail,
+        userId: userId,
+        code: normalizedCode,
+        password: password,
+        confirmed: true,
+      );
+    }
+    final response = await _supabase.auth.signInWithPassword(
+      email: normalizedEmail,
+      password: password,
+    );
+    if (response.session == null || response.user?.id != userId) {
+      await _supabase.auth.signOut(scope: SignOutScope.local);
+      throw const AuthException('signup_session_failed');
+    }
+    _createdEmailSignup = null;
+    _verifiedEmailSignup = null;
+    return response;
+  }
+
+  Future<bool> resendEmailSignup({
+    required String email,
+    required String userId,
+    required String name,
+  }) async {
+    final sent = await requestEmailOtp(
+      email: email.trim().toLowerCase(),
+      userId: userId,
+      name: name.trim(),
+      purpose: 'signup',
+    );
+    if (sent) _verifiedEmailSignup = null;
+    return sent;
+  }
 
   Future<bool> requestEmailOtp({
     required String email,
@@ -39,6 +172,7 @@ final class AuthService {
   }) async {
     _resetLastRequest();
     try {
+      _backend.requireProductionTransport();
       final http.Response response = await _http
           .post(
             Uri.parse(_emailOtpUrl),
@@ -53,7 +187,14 @@ final class AuthService {
           )
           .timeout(const Duration(seconds: 15));
       lastOtpStatus = response.statusCode;
-      if (_isSuccess(response.statusCode)) return true;
+      if (_isSuccess(response.statusCode)) {
+        final dynamic body = _asMap(response.body);
+        if (body is! Map || (body['success'] != false && body['ok'] != false)) {
+          return true;
+        }
+        lastOtpError = 'otp_send_rejected';
+        return false;
+      }
       lastOtpError = 'HTTP ${response.statusCode}';
       return false;
     } catch (error) {
@@ -65,6 +206,7 @@ final class AuthService {
   Future<bool> sendLoginEmailOtp(String email) async {
     _resetLastRequest();
     try {
+      _backend.requireProductionTransport();
       final http.Response response = await _http
           .post(
             Uri.parse(_emailOtpUrl),
@@ -116,6 +258,7 @@ final class AuthService {
     required String locale,
   }) async {
     try {
+      _backend.requireProductionTransport();
       final http.Response response = await _http
           .post(
             Uri.parse(_whatsappOtpUrl),
@@ -208,7 +351,11 @@ final class AuthService {
     }
   }
 
-  void close() => _http.close();
+  void close() {
+    _createdEmailSignup = null;
+    _verifiedEmailSignup = null;
+    _http.close();
+  }
 
   void _resetLastRequest() {
     lastOtpError = null;

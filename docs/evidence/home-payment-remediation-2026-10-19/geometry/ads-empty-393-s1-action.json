@@ -1,0 +1,483 @@
+{
+  "fixture": "Fictional records; actual production widgets; no external writes",
+  "runtime": "Flutter widget test on Linux; not a device performance test",
+  "viewport_dp": [
+    393.0,
+    852.0
+  ],
+  "capture_pixel_ratio": 2,
+  "device_pixel_ratio": 2,
+  "text_scale": 1.0,
+  "safe_area_dp": {
+    "top": 24,
+    "bottom": 16
+  },
+  "keyboard_inset_dp": 0.0,
+  "mounted_images_decoded": 1,
+  "intentional_failed_image_providers": 0,
+  "layout_exceptions": 0,
+  "nodes": [
+    {
+      "widget": "Navigator",
+      "key": "[GlobalObjectKey<NavigatorState> _WidgetsAppState#9fe2c]",
+      "bounds_dp": [
+        0.0,
+        0.0,
+        393.0,
+        852.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "Overlay",
+      "key": "[LabeledGlobalKey<OverlayState>#58dce]",
+      "bounds_dp": [
+        0.0,
+        0.0,
+        393.0,
+        852.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "_OverlayEntryWidget",
+      "key": "[LabeledGlobalKey<_OverlayEntryWidgetState>#6fb2b]",
+      "bounds_dp": [
+        0.0,
+        0.0,
+        393.0,
+        852.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "_OverlayEntryWidget",
+      "key": "[LabeledGlobalKey<_OverlayEntryWidgetState>#53d38]",
+      "bounds_dp": [
+        0.0,
+        0.0,
+        393.0,
+        852.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "_ModalScope<dynamic>",
+      "key": "[LabeledGlobalKey<_ModalScopeState<dynamic>>#667da]",
+      "bounds_dp": [
+        0.0,
+        0.0,
+        393.0,
+        852.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "RepaintBoundary",
+      "key": "[GlobalKey#23277]",
+      "bounds_dp": [
+        0.0,
+        0.0,
+        393.0,
+        852.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "_InkFeatures",
+      "key": "[GlobalKey#c7eba ink renderer]",
+      "bounds_dp": [
+        0.0,
+        0.0,
+        393.0,
+        852.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "LayoutId",
+      "key": "[<_ScaffoldSlot.body>]",
+      "bounds_dp": [
+        0.0,
+        80.0,
+        393.0,
+        772.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "_ScrollSemantics",
+      "key": "[GlobalKey#346a1]",
+      "bounds_dp": [
+        18.0,
+        88.0,
+        357.0,
+        40.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "RawGestureDetector",
+      "key": "[LabeledGlobalKey<RawGestureDetectorState>#29944]",
+      "bounds_dp": [
+        18.0,
+        88.0,
+        357.0,
+        40.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "IgnorePointer",
+      "key": "[GlobalKey#0df24]",
+      "bounds_dp": [
+        18.0,
+        88.0,
+        357.0,
+        40.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "ProxoText",
+      "key": null,
+      "bounds_dp": [
+        289.666259765625,
+        100.5,
+        73.333740234375,
+        13.0
+      ],
+      "intersects_viewport": true,
+      "text": "هەموو دۆخەکان",
+      "font_family": "Rabar",
+      "font_size": 12.5,
+      "text_scale": 1.0,
+      "exceeded_max_lines": false
+    },
+    {
+      "widget": "ProxoText",
+      "key": null,
+      "bounds_dp": [
+        238.220703125,
+        100.5,
+        25.445556640625,
+        13.0
+      ],
+      "intersects_viewport": true,
+      "text": "چالاک",
+      "font_family": "Rabar",
+      "font_size": 12.5,
+      "text_scale": 1.0,
+      "exceeded_max_lines": false
+    },
+    {
+      "widget": "ProxoText",
+      "key": null,
+      "bounds_dp": [
+        172.370849609375,
+        100.5,
+        39.849853515625,
+        13.0
+      ],
+      "intersects_viewport": true,
+      "text": "چاوەڕوان",
+      "font_family": "Rabar",
+      "font_size": 12.5,
+      "text_scale": 1.0,
+      "exceeded_max_lines": false
+    },
+    {
+      "widget": "ProxoText",
+      "key": null,
+      "bounds_dp": [
+        91.0546875,
+        100.5,
+        55.316162109375,
+        13.0
+      ],
+      "intersects_viewport": true,
+      "text": "پێداچوونەوە",
+      "font_family": "Rabar",
+      "font_size": 12.5,
+      "text_scale": 1.0,
+      "exceeded_max_lines": false
+    },
+    {
+      "widget": "ProxoText",
+      "key": null,
+      "bounds_dp": [
+        19.8642578125,
+        100.5,
+        45.1904296875,
+        13.0
+      ],
+      "intersects_viewport": true,
+      "text": "خشتەکراو",
+      "font_family": "Rabar",
+      "font_size": 12.5,
+      "text_scale": 1.0,
+      "exceeded_max_lines": false
+    },
+    {
+      "widget": "ProxoText",
+      "key": null,
+      "bounds_dp": [
+        -42.54931640625,
+        100.5,
+        36.41357421875,
+        13.0
+      ],
+      "intersects_viewport": false,
+      "text": "ڕەتکراوە",
+      "font_family": "Rabar",
+      "font_size": 12.5,
+      "text_scale": 1.0,
+      "exceeded_max_lines": false
+    },
+    {
+      "widget": "ProxoText",
+      "key": null,
+      "bounds_dp": [
+        -108.216064453125,
+        100.5,
+        39.666748046875,
+        13.0
+      ],
+      "intersects_viewport": false,
+      "text": "تەواوبوو",
+      "font_family": "Rabar",
+      "font_size": 12.5,
+      "text_scale": 1.0,
+      "exceeded_max_lines": false
+    },
+    {
+      "widget": "ProxoText",
+      "key": null,
+      "bounds_dp": [
+        -168.871826171875,
+        100.5,
+        34.65576171875,
+        13.0
+      ],
+      "intersects_viewport": false,
+      "text": "ڕاگیراوە",
+      "font_family": "Rabar",
+      "font_size": 12.5,
+      "text_scale": 1.0,
+      "exceeded_max_lines": false
+    },
+    {
+      "widget": "ListView",
+      "key": "[String <'empty_ads_state'>]",
+      "bounds_dp": [
+        0.0,
+        136.0,
+        393.0,
+        716.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "RawGestureDetector",
+      "key": "[LabeledGlobalKey<RawGestureDetectorState>#24a23]",
+      "bounds_dp": [
+        0.0,
+        136.0,
+        393.0,
+        716.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "IgnorePointer",
+      "key": "[GlobalKey#0360d]",
+      "bounds_dp": [
+        0.0,
+        136.0,
+        393.0,
+        716.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "ProxoEmptyState",
+      "key": "[<'ads-empty-state'>]",
+      "bounds_dp": [
+        20.0,
+        160.0,
+        353.0,
+        258.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "SvgPicture",
+      "key": null,
+      "bounds_dp": [
+        181.5,
+        202.0,
+        30.0,
+        30.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "ProxoText",
+      "key": null,
+      "bounds_dp": [
+        37.0,
+        273.0,
+        319.0,
+        27.0
+      ],
+      "intersects_viewport": true,
+      "text": "هێشتا هیچ ڕیکلامێک نییە!",
+      "font_family": "RabarAuthRegular",
+      "font_size": 18.0,
+      "text_scale": 1.0,
+      "exceeded_max_lines": false
+    },
+    {
+      "widget": "ProxoText",
+      "key": null,
+      "bounds_dp": [
+        37.0,
+        308.0,
+        319.0,
+        21.0
+      ],
+      "intersects_viewport": true,
+      "text": "کاتێک ڕیکلامێک تۆمار دەکەیت، لێرە دەردەکەوێت.",
+      "font_family": "RabarAuthRegular",
+      "font_size": 14.0,
+      "text_scale": 1.0,
+      "exceeded_max_lines": false
+    },
+    {
+      "widget": "FilledButton",
+      "key": "[<'ads-create-empty'>]",
+      "bounds_dp": [
+        37.0,
+        353.0,
+        319.0,
+        48.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "_InkFeatures",
+      "key": "[GlobalKey#4e452 ink renderer]",
+      "bounds_dp": [
+        37.0,
+        353.0,
+        319.0,
+        48.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "SvgPicture",
+      "key": null,
+      "bounds_dp": [
+        223.22021484375,
+        367.0,
+        20.0,
+        20.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "Flexible",
+      "key": null,
+      "bounds_dp": [
+        149.77978515625,
+        366.5,
+        65.4404296875,
+        21.0
+      ],
+      "intersects_viewport": true,
+      "text": "ڕیکلامێک بکە",
+      "font_family": "RabarAuthRegular",
+      "font_size": 14.0,
+      "text_scale": 1.0,
+      "exceeded_max_lines": false
+    },
+    {
+      "widget": "KeyedSubtree",
+      "key": "[<1>]",
+      "bounds_dp": [
+        0.0,
+        136.0,
+        393.0,
+        716.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "SizedBox",
+      "key": "[<'sk_none'>]",
+      "bounds_dp": [
+        0.0,
+        136.0,
+        393.0,
+        716.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "LayoutId",
+      "key": "[<_ScaffoldSlot.appBar>]",
+      "bounds_dp": [
+        0.0,
+        0.0,
+        393.0,
+        80.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "_InkFeatures",
+      "key": "[GlobalKey#b8d24 ink renderer]",
+      "bounds_dp": [
+        0.0,
+        0.0,
+        393.0,
+        80.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "Container",
+      "key": "[<'proxo-toolbar'>]",
+      "bounds_dp": [
+        0.0,
+        24.0,
+        393.0,
+        56.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "Image",
+      "key": "[<'proxo-toolbar-logo'>]",
+      "bounds_dp": [
+        297.0,
+        39.5,
+        84.0,
+        24.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "LayoutId",
+      "key": "[<_ScaffoldSlot.floatingActionButton>]",
+      "bounds_dp": [
+        377.0,
+        836.0,
+        0.0,
+        0.0
+      ],
+      "intersects_viewport": true
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+   Woah! You appear to be trying to run flutter as root.
+   We strongly recommend running the flutter tool without superuser privileges.
+  /
+📎
+00:00 +0: loading /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/deposit_screen_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: deposit content fits 320.0 dp at text scale 1.0
+00:01 +1: deposit content fits 320.0 dp at text scale 2.0
+00:02 +2: deposit content fits 393.0 dp at text scale 1.0
+00:02 +3: deposit content fits 393.0 dp at text scale 2.0
+00:03 +4: deposit content fits 430.0 dp at text scale 1.0
+00:03 +5: deposit content fits 430.0 dp at text scale 2.0
+00:03 +6: deposit content fits 768.0 dp at text scale 1.0
+00:04 +7: deposit content fits 768.0 dp at text scale 2.0
+00:04 +8: only FastPay and FIB are offered and recipient remains exact
+00:04 +9: localized amounts and chips preserve exact request total across providers
+00:04 +10: copy uses the selected recipient and has a 48 dp target
+00:05 +11: missing receipt and sender block submission
+00:05 +12: picker failure is recoverable and completion after disposal is safe
+00:06 +13: submission snapshots details, locks edits and joins double taps
+00:06 +14: failed submission keeps the form and reuses the retry key
+DepositScreen: submit failed: StateError
+00:07 +15: changing account during a pending top-up cannot notify or close the new route
+DepositScreen: submit failed: TopupFailure
+00:08 +16: the success delay cannot pop a route opened after submission
+00:10 +17: FastPay keeps one checkout route and no manual submission
+00:10 +18: FastPay compact large text preserves reference and actions
+00:10 +19: (tearDownAll)
+00:10 +19: All tests passed!

@@ -34,16 +34,24 @@ void expectLtrBoxes(String rendered, String token,
     List<ui.TextBox> Function(TextSelection) boxesForSelection) {
   final offset = rendered.indexOf(token);
   expect(offset, greaterThanOrEqualTo(0));
-  final centers = <double>[];
+  final boxesInOrder = <ui.TextBox>[];
   for (var i = 0; i < token.length; i++) {
     final boxes = boxesForSelection(
         TextSelection(baseOffset: offset + i, extentOffset: offset + i + 1));
     expect(boxes, isNotEmpty, reason: 'Every character of $token is visible');
-    centers.add((boxes.first.left + boxes.first.right) / 2);
+    boxesInOrder.add(boxes.first);
   }
-  for (var i = 1; i < centers.length; i++) {
-    expect(centers[i], greaterThanOrEqualTo(centers[i - 1] - 0.01),
-        reason: '$token retains its character order');
+  for (var i = 1; i < boxesInOrder.length; i++) {
+    final previous = boxesInOrder[i - 1];
+    final current = boxesInOrder[i];
+    if ((current.top - previous.top).abs() <= .01) {
+      expect((current.left + current.right) / 2,
+          greaterThanOrEqualTo((previous.left + previous.right) / 2 - .01),
+          reason: '$token retains LTR character order within each line');
+    } else {
+      expect(current.top, greaterThanOrEqualTo(previous.bottom - .01),
+          reason: '$token wraps in reading order without overlapping lines');
+    }
   }
 }
 
@@ -52,6 +60,12 @@ void main() {
   setUpAll(() async {
     await (FontLoader('Rabar')
           ..addFont(rootBundle.load('assets/fonts/Rabar_021.ttf')))
+        .load();
+    await (FontLoader(ReceiptTokens.fontFamily)
+          ..addFont(rootBundle.load(ReceiptTokens.fontAsset)))
+        .load();
+    await (FontLoader('RabarAuthRegular')
+          ..addFont(rootBundle.load('assets/fonts/Rabar_022.ttf')))
         .load();
     await (FontLoader('MaterialIcons')
           ..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf')))
@@ -176,7 +190,9 @@ void main() {
       expect(
           shared.getDryBaseline(shared.constraints, TextBaseline.alphabetic),
           closeTo(
-              native.getDryBaseline(native.constraints, TextBaseline.alphabetic)!, 0.01));
+              native.getDryBaseline(
+                  native.constraints, TextBaseline.alphabetic)!,
+              0.01));
     }
   });
 
@@ -272,8 +288,7 @@ void main() {
                   child: ReceiptRows([
                     ReceiptRow(label: 'ناو', value: 'New Ad 2021'),
                     ReceiptRow(label: 'کۆد', value: 'ABC-123'),
-                    ReceiptRow(
-                        label: 'ڕێکەوت', value: '19/09/2026 03:26 PM'),
+                    ReceiptRow(label: 'ڕێکەوت', value: '19/09/2026 03:26 PM'),
                     ReceiptRow(label: 'بڕ', value: '-36,000 د.ع'),
                   ]),
                 ),

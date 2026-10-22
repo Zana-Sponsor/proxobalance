@@ -1,0 +1,12 @@
+00:00 +0: loading /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_submission_test.dart
+00:00 +0: form validation covers required fields and invalid targeting
+00:00 +1: scheduling validates future dates, immediate uses server clock
+00:00 +2: Baghdad scheduling compares calendar fields across device time zones
+00:00 +3: Baghdad persisted schedule preserves a device DST gap time
+00:00 +4: frozen submission survives serialization without bidi controls
+00:00 +5: daily budget multiplication never compounds an earlier total
+00:00 +6: frozen checkout uses the exact server-quoted IQD amount
+00:00 +7: fee is included, percentage/fixed coupons and levels use existing formula
+00:00 +8: views forecast uses delivery budget and never counts every impression as a view
+00:00 +9: messages forecast has contact clicks and historical view-rate bounds
+00:00 +10: All tests passed!

@@ -3,7 +3,10 @@ import 'package:proxo_app/services/ad_submission.dart';
 import 'package:proxo_app/services/ad_forecast.dart';
 
 AdDraft validDraft(
-        {String goal = 'views', String? asset, bool immediate = true}) =>
+        {String goal = 'views',
+        String? asset,
+        bool immediate = true,
+        DateTime? schedule}) =>
     AdDraft(
         title: 'ڕیکلام ABC-123',
         link: 'https://www.tiktok.com/@proxo/video/123456789',
@@ -12,7 +15,7 @@ AdDraft validDraft(
         category: 'cosmetics_beauty',
         assetId: asset,
         paymentMethod: 'app_balance',
-        schedule: DateTime(2030, 1, 1),
+        schedule: schedule ?? DateTime(2030, 1, 1),
         immediate: immediate);
 
 void main() {
@@ -50,6 +53,44 @@ void main() {
         AdDraft.fromJson({...old.toJson(), 'start_immediately': true})
             .validate(),
         isEmpty);
+  });
+  test('Baghdad scheduling compares calendar fields across device time zones',
+      () {
+    final now = adScheduleNow(instant: DateTime.utc(2026, 10, 22, 19, 7));
+    expect(now, DateTime.utc(2026, 10, 22, 22, 7));
+    // Pickers and old pending drafts can carry device-local DateTimes. The
+    // backend receives their Baghdad fields, not their device-zone instant.
+    for (final nextDay in [
+      DateTime(2026, 10, 23),
+      DateTime.utc(2026, 10, 23),
+    ]) {
+      final draft = validDraft(immediate: false, schedule: nextDay);
+      expect(draft.validate(now: now), isNot(contains('schedule')));
+      expect(draft.toAd()['start_date'], '2026-10-23');
+      expect(draft.toAd()['start_time'], '00:00');
+      final restored = AdDraft.fromJson(draft.toJson());
+      expect(restored.schedule, DateTime.utc(2026, 10, 23));
+      expect(restored.validate(now: now), isNot(contains('schedule')));
+    }
+    for (final earlier in [
+      DateTime(2026, 10, 22, 22, 6),
+      DateTime.utc(2026, 10, 22, 22, 6),
+    ]) {
+      expect(validDraft(immediate: false, schedule: earlier).validate(now: now),
+          contains('schedule'));
+    }
+  });
+  test('Baghdad persisted schedule preserves a device DST gap time', () {
+    // 02:30 is skipped in Stockholm on this date, but is valid in Baghdad.
+    final draft = AdDraft.fromJson({
+      ...validDraft(immediate: false).toJson(),
+      'start_date': '2027-03-28',
+      'start_time': '02:30',
+    });
+    expect(draft.schedule, DateTime.utc(2027, 3, 28, 2, 30));
+    expect(draft.toAd()['start_time'], '02:30');
+    expect(draft.validate(now: DateTime.utc(2027, 3, 28, 2, 29)),
+        isNot(contains('schedule')));
   });
   test('frozen submission survives serialization without bidi controls', () {
     final request = AdPendingSubmission.create(

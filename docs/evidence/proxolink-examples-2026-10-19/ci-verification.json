@@ -1,0 +1,50 @@
+{
+  "source_commit": "eca117d1338e8b0e8f04e6573aa0e0af34574a28",
+  "source_tree": "89e99bb527e9cfcac9f312d9fd9217a590b86b94",
+  "tested_merge_commit": "ba867942896571d6fbcc38e77ec533a320c239dc",
+  "tested_merge_tree": "89e99bb527e9cfcac9f312d9fd9217a590b86b94",
+  "trees_equal": true,
+  "verify_workflow_run": 39232901469,
+  "verify_jobs": [
+    {
+      "id": 117994914779,
+      "name": "backend",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 117994915109,
+      "name": "responsive",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 117994915127,
+      "name": "database",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 117994915133,
+      "name": "edge-functions",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 117994915152,
+      "name": "flutter",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ],
+  "full_flutter_tests": 882,
+  "example_workflow_run": 39232901508,
+  "example_flutter_tests": 34,
+  "selection_cases": 24,
+  "browser_footer_cases": 96,
+  "published_screenshots": 72,
+  "android_runtime_workflow_run": 39232901476,
+  "android_runtime_job": 117994935778,
+  "android_runtime_conclusion": "success",
+  "note": "The detailed native performance/transport limits in the prior Auth report still apply. No physical-device 60fps or remote FCM delivery claim."
+}

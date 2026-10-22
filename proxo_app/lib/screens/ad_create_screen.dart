@@ -1,3 +1,5 @@
+import '../widgets/form_help_actions.dart';
+import 'package:proxo_app/theme/app_theme.dart';
 import 'package:proxo_app/l10n/proxo_strings.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -6,6 +8,9 @@ import '../services/ad_categories.dart';
 import '../services/ad_forecast.dart';
 import '../services/ad_submission.dart';
 import '../widgets/ad_form_components.dart';
+import '../widgets/payments/payment_option.dart';
+import '../widgets/proxo_symbol.dart';
+import '../theme/proxo_surface.dart';
 import '../widgets/ad_validation_notifications.dart';
 import '../widgets/proxo_text.dart';
 import '../widgets/receipt/receipt_kit.dart';
@@ -76,19 +81,20 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
   }
 
   Future<void> _initialize() async {
-    await _loadPending();
+    await _loadPending(restoreDraft: true);
     await Future.wait([_loadAssets(), _loadQuote()]);
   }
 
-  Future<void> _loadPending() async {
+  Future<void> _loadPending({bool restoreDraft = false}) async {
     if (mounted) setState(() => _pendingLoading = true);
     try {
-      final pending = await _repository.pending();
+      final pending =
+          await _repository.pending().timeout(const Duration(seconds: 10));
       if (!mounted) return;
       setState(() {
         _pendingLoadFailed = false;
         _pending = pending;
-        if (pending != null) {
+        if (pending != null && restoreDraft) {
           _restore(pending.draft);
           _quote = pending.quote;
         }
@@ -141,10 +147,10 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
   AdDraft _draft({String? coupon, bool replaceCoupon = false}) {
     final now = adScheduleNow();
     final schedule = _immediate
-        ? DateTime(now.year, now.month, now.day, now.hour, now.minute + 2)
+        ? DateTime.utc(now.year, now.month, now.day, now.hour, now.minute + 2)
         : _date == null || _time == null
             ? null
-            : DateTime(_date!.year, _date!.month, _date!.day, _time!.hour,
+            : DateTime.utc(_date!.year, _date!.month, _date!.day, _time!.hour,
                 _time!.minute);
     return AdDraft(
         title: _name.text,
@@ -304,13 +310,11 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
   Future<void> _createContact() async {
     final card = widget.createContactPage != null
         ? await widget.createContactPage!(context)
-        : await Navigator.of(context).push<Map<String, dynamic>>(
-            MaterialPageRoute(
-                settings: const RouteSettings(name: 'tools'),
-                builder: (routeContext) => ToolsScreen(
-                    initialCreate: true,
-                    onUseForAd: (card) =>
-                        Navigator.of(routeContext).pop(card))));
+        : await Navigator.of(context).push<Map<String, dynamic>>(ProxoPageRoute(
+            settings: const RouteSettings(name: 'tools'),
+            builder: (routeContext) => ToolsScreen(
+                initialCreate: true,
+                onUseForAd: (card) => Navigator.of(routeContext).pop(card))));
     if (!mounted) return;
     await _loadAssets();
     if (mounted &&
@@ -358,7 +362,14 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
       });
       if (draft.paymentMethod == 'app_balance' &&
           quote.balanceUsd + 0.000001 < quote.costUsd) {
-        setState(() => _quoteError = ProxoStrings.text('باڵانسی پێویستت بەردەست نییە') + '\n' + ProxoStrings.format('بەردەست: {available} USD — پێویست: {required} USD', {'available':quote.balanceUsd.toStringAsFixed(2), 'required':quote.costUsd.toStringAsFixed(2)}));
+        setState(() => _quoteError =
+            ProxoStrings.text('باڵانسی پێویستت بەردەست نییە') +
+                '\n' +
+                ProxoStrings.format(
+                    'بەردەست: {available} USD — پێویست: {required} USD', {
+                  'available': quote.balanceUsd.toStringAsFixed(2),
+                  'required': quote.costUsd.toStringAsFixed(2)
+                }));
         return;
       }
       if (draft.paymentMethod == 'fastpay' && quote.totalIqd < 1000) {
@@ -368,9 +379,11 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
       await _openConfirmation(AdPendingSubmission.create(draft, quote));
     } catch (e) {
       if (mounted) {
-        setState(() => _quoteError = e is AdSubmissionFailure
+        final message = e is AdSubmissionFailure
             ? e.message
-            : 'پشکنینی نرخ سەرکەوتوو نەبوو');
+            : 'پشکنینی نرخ سەرکەوتوو نەبوو';
+        setState(() => _quoteError = message);
+        _errors.show({'submission': message});
       }
     } finally {
       if (mounted) setState(() => _openingConfirmation = false);
@@ -379,24 +392,74 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
 
   Future<void> _openConfirmation(AdPendingSubmission request,
       {bool resume = false}) async {
-    setState(() => _openingConfirmation = true);
-    final result = await Navigator.of(context).push<AdConfirmationResult>(
-        MaterialPageRoute(
-            settings: const RouteSettings(name: 'ad_confirmation'),
-            builder: (_) => AdConfirmationScreen(
-                request: request, repository: _repository, resume: resume)));
     if (!mounted) return;
-    if (result?.adId != null) {
-      widget.onAdCreated?.call();
-      if (mounted) Navigator.of(context).pop('refresh');
-      return;
+    setState(() => _openingConfirmation = true);
+    try {
+      final result = await Navigator.of(context).push<AdConfirmationResult>(
+          ProxoPageRoute(
+              settings: const RouteSettings(name: 'ad_confirmation'),
+              builder: (_) => AdConfirmationScreen(
+                  request: request, repository: _repository, resume: resume)));
+      if (!mounted) return;
+      if (result?.adId != null) {
+        // Clear completed state before notifying the parent. A form kept alive
+        // by a shell/failed pop must never display a completed submission again.
+        _resetCompletedForm();
+        widget.onAdCreated?.call();
+        if (mounted && Navigator.of(context).canPop()) {
+          Navigator.of(context).pop('refresh');
+        }
+        return;
+      }
+      if (result?.useWallet == true) {
+        setState(() => _payment = 'app_balance');
+        await _loadQuote();
+      }
+      await _loadPending();
+      if (!mounted) return;
+      // Navigation can finish before persistence / an in-flight request. Keep
+      // its identity locally as well; never create a second financial operation.
+      if (result?.pending == true && _pending == null) {
+        setState(() => _pending = request);
+      }
+    } catch (error) {
+      if (mounted) {
+        _errors.show({
+          'submission': error is AdSubmissionFailure
+              ? error.message
+              : 'داواکارییەکە تەواو نەکرا؛ دووبارە هەوڵ بدەرەوە'
+        });
+      }
+    } finally {
+      if (mounted) setState(() => _openingConfirmation = false);
     }
-    if (result?.useWallet == true) {
-      setState(() => _payment = 'app_balance');
-      await _loadQuote();
-    }
-    await _loadPending();
-    if (mounted) setState(() => _openingConfirmation = false);
+  }
+
+  void _resetCompletedForm() {
+    _quoteTimer?.cancel();
+    ++_quoteRevision;
+    _errors.clear();
+    setState(() {
+      for (final controller in [_name, _code, _link, _note, _coupon]) {
+        controller.clear();
+      }
+      _goal = _category = _assetId = _payment = _appliedCoupon = null;
+      _location = _gender = _device = 'all';
+      _ages
+        ..clear()
+        ..add('all');
+      _daily = 10;
+      _days = 1;
+      _immediate = true;
+      _date = null;
+      _time = null;
+      _fieldErrors = {};
+      _pending = null;
+      _pendingLoadFailed = false;
+      _quoteError = _couponMessage = null;
+      _couponValid = _couponBusy = _quoteBusy = false;
+      _quote = null;
+    });
   }
 
   @override
@@ -408,110 +471,130 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
             child: Scaffold(
               backgroundColor: Colors.white,
               body: SafeArea(
-                  top: false, bottom: false, child: Column(children: [
-                ReceiptAppBar(translateTitle: true,
-                    title: 'دروستکردنی ڕیکلام',
-                    onBack: () => Navigator.of(context).maybePop()),
-                Expanded(
-                    child: Stack(children: [
-                  SingleChildScrollView(
-                    key: const ValueKey('ad-form-scroll'),
-                    padding: EdgeInsets.fromLTRB(16, 20, 16,
-                        28 + MediaQuery.paddingOf(context).bottom),
-                    child: Center(
-                        child: ConstrainedBox(
-                            constraints: const BoxConstraints(maxWidth: 600),
-                            child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  if (_pendingLoadFailed) ...[
-                                    AdFormSection(
-                                        title: 'پشکنینی داواکاریی پێشوو',
-                                        child: Column(children: [
-                                          ProxoText(
-                                              'داواکارییە پێشووەکە بار نەبوو؛ پێش داواکارییەکی نوێ دووبارە هەوڵ بدەرەوە.', translate: true,
-                                              style: AdUi.text(context)),
-                                          TextButton(
-                                              onPressed: _pendingLoading
-                                                  ? null
-                                                  : _loadPending,
-                                              child: const ProxoText(
-                                                  'دووبارە پشکنینەوە', translate: true)),
-                                        ])),
-                                    const SizedBox(height: 18),
-                                  ],
-                                  if (_pending != null) ...[
-                                    AdFormSection(
-                                        title: 'داواکارییەکی پێشوو',
-                                        child: Column(children: [
-                                          ProxoText(
-                                              'ئەنجامی داواکارییەکە پێویستی بە پشکنین هەیە.', translate: true,
-                                              style: AdUi.text(context)),
-                                          const SizedBox(height: 12),
-                                          FilledButton(
-                                              onPressed: _openingConfirmation
-                                                  ? null
-                                                  : _checkout,
-                                              child: const ProxoText(
-                                                  'پشکنینی هەمان داواکاری', translate: true)),
-                                        ])),
-                                    const SizedBox(height: 18),
-                                  ],
-                                  IgnorePointer(
-                                      ignoring: _pending != null,
-                                      child: Column(
+                  top: false,
+                  bottom: false,
+                  child: Column(children: [
+                    ReceiptAppBar(
+                        translateTitle: true,
+                        title: 'دروستکردنی ڕیکلام',
+                        onBack: () => Navigator.of(context).maybePop()),
+                    Expanded(
+                        child: Stack(children: [
+                      SingleChildScrollView(
+                        key: const ValueKey('ad-form-scroll'),
+                        keyboardDismissBehavior:
+                            ScrollViewKeyboardDismissBehavior.onDrag,
+                        padding: EdgeInsets.fromLTRB(
+                            ProxoSurface.gutter,
+                            16,
+                            ProxoSurface.gutter,
+                            28 + MediaQuery.paddingOf(context).bottom),
+                        child: Center(
+                            child: ConstrainedBox(
+                                constraints:
+                                    const BoxConstraints(maxWidth: 600),
+                                child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.stretch,
+                                    children: [
+                                      if (_pendingLoadFailed) ...[
+                                        AdFormSection(
+                                            title: 'پشکنینی داواکاریی پێشوو',
+                                            child: Column(children: [
+                                              ProxoText(
+                                                  'داواکارییە پێشووەکە بار نەبوو؛ پێش داواکارییەکی نوێ دووبارە هەوڵ بدەرەوە.',
+                                                  translate: true,
+                                                  style: AdUi.text(context)),
+                                              TextButton(
+                                                  onPressed: _pendingLoading
+                                                      ? null
+                                                      : _loadPending,
+                                                  child: const ProxoText(
+                                                      'دووبارە پشکنینەوە',
+                                                      translate: true)),
+                                            ])),
+                                        const SizedBox(height: 18),
+                                      ],
+                                      if (_pending != null) ...[
+                                        AdFormSection(
+                                            title: 'داواکارییەکی پێشوو',
+                                            child: Column(children: [
+                                              ProxoText(
+                                                  'دەتوانیت زانیارییەکان دەستکاری بکەیت. پێش ناردنێکی نوێ، ئەنجامی داواکاریی پێشوو بپشکنە.',
+                                                  translate: true,
+                                                  style: AdUi.text(context)),
+                                              const SizedBox(height: 12),
+                                              FilledButton(
+                                                  key: const ValueKey(
+                                                      'resume-pending-ad'),
+                                                  onPressed:
+                                                      _openingConfirmation
+                                                          ? null
+                                                          : _checkout,
+                                                  child: const ProxoText(
+                                                      'پشکنینی هەمان داواکاری',
+                                                      translate: true)),
+                                            ])),
+                                        const SizedBox(height: 18),
+                                      ],
+                                      Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.stretch,
                                           children: [
                                             _information(context),
-                                            const SizedBox(height: AdUi.sectionGap),
+                                            const SizedBox(
+                                                height: AdUi.sectionGap),
                                             _objective(context),
-                                            const SizedBox(height: AdUi.sectionGap),
+                                            const SizedBox(
+                                                height: AdUi.sectionGap),
                                             _audience(context),
-                                            const SizedBox(height: AdUi.sectionGap),
+                                            const SizedBox(
+                                                height: AdUi.sectionGap),
                                             _budget(context),
-                                            const SizedBox(height: AdUi.sectionGap),
+                                            const SizedBox(
+                                                height: AdUi.sectionGap),
                                             _schedule(context),
-                                            const SizedBox(height: AdUi.sectionGap),
+                                            const SizedBox(
+                                                height: AdUi.sectionGap),
                                             _couponSection(context),
-                                            const SizedBox(height: AdUi.sectionGap),
+                                            const SizedBox(
+                                                height: AdUi.sectionGap),
                                             _forecast(context),
-                                            const SizedBox(height: AdUi.sectionGap),
+                                            const SizedBox(
+                                                height: AdUi.sectionGap),
                                             _pricing(context),
-                                            const SizedBox(height: AdUi.sectionGap),
+                                            const SizedBox(
+                                                height: AdUi.sectionGap),
                                             _submission(context),
-                                          ])),
-                                ]))),
-                  ),
-                  Positioned(
-                      top: 8,
-                      left: 16,
-                      right: 16,
-                      child: IgnorePointer(
-                          child: Align(
-                              alignment: Alignment.topCenter,
+                                          ]),
+                                    ]))),
+                      ),
+                      Positioned(
+                          top: 8,
+                          left: ProxoSurface.gutter,
+                          right: ProxoSurface.gutter,
+                          child: Center(
                               child: ConstrainedBox(
-                                  constraints: BoxConstraints(
-                                      maxWidth: 600,
-                                      maxHeight:
-                                          MediaQuery.sizeOf(context).height *
-                                              0.28),
-                                  child: SingleChildScrollView(
-                                      child: AdValidationNotifications(
-                                          controller: _errors)))))),
-                ])),
-              ])),
+                                  constraints:
+                                      const BoxConstraints(maxWidth: 440),
+                                  child: AdValidationNotifications(
+                                      controller: _errors)))),
+                    ])),
+                  ])),
             )),
       ));
   Widget _label(BuildContext context, String label) => Padding(
       padding: const EdgeInsets.only(bottom: 10),
-      child: ProxoText(label, translate: true,
-          style: AdUi.text(context), textAlign: TextAlign.right));
+      child: ProxoText(label,
+          translate: true,
+          style: AdUi.text(context),
+          textAlign: TextAlign.right));
   Widget _error(BuildContext context, String key) => _fieldErrors[key] == null
       ? const SizedBox.shrink()
       : Padding(
           padding: const EdgeInsets.only(top: 6),
-          child: ProxoText(_fieldErrors[key]!, translate: true,
+          child: ProxoText(_fieldErrors[key]!,
+              translate: true,
               style: AdUi.text(context, color: const Color(0xFFB74956))));
   Widget _field(BuildContext context, String id,
           TextEditingController controller, String label,
@@ -525,7 +608,8 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
             builder: (_, direction) => TextField(
                 key: ValueKey('ad-$id'),
                 controller: controller,
-                onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
+                onTapOutside: (_) =>
+                    FocusManager.instance.primaryFocus?.unfocus(),
                 textDirection: direction,
                 textAlign: TextAlign.start,
                 keyboardType: keyboard,
@@ -550,15 +634,24 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
             keyboard: TextInputType.name),
         const SizedBox(height: 20),
         _field(context, 'code', _code, 'کۆدی ڤیدیۆ', ltr: true),
+        const FormHelpActions(helpKey: 'ad_video_code'),
         const SizedBox(height: 20),
         // Existing video processing and thumbnails require the URL as well as the authorization code.
         _field(context, 'link', _link, 'بەستەری ڤیدیۆ',
             ltr: true, keyboard: TextInputType.url),
+        const FormHelpActions(
+            helpKey: 'ad_video_link',
+            exampleAsset: 'assets/images/ad_video_link_example.png',
+            exampleCaption:
+                'سکرینشۆتی خانەی بەستەر لە ئەپی Proxo؛ بەستەری ڤیدیۆی خۆت دابنێ',
+            sampleValue:
+                'https://www.tiktok.com/@scout2015/video/6718335390845095173'),
         const SizedBox(height: 8),
         ExpansionTile(
             tilePadding: EdgeInsets.zero,
             childrenPadding: EdgeInsets.zero,
-            title: ProxoText('تێبینی (ئارەزوومەندانە)', translate: true,
+            title: ProxoText('تێبینی (ئارەزوومەندانە)',
+                translate: true,
                 style: AdUi.text(context, color: AdUi.secondary)),
             children: [_field(context, 'note', _note, 'تێبینی', maxLines: 3)]),
       ]));
@@ -608,15 +701,18 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
                             TextButton(
                                 onPressed: _loadAssets,
                                 child: const ProxoText(
-                                    'دووبارە بارکردنەوەی پەڕەکان', translate: true))
+                                    'دووبارە بارکردنەوەی پەڕەکان',
+                                    translate: true))
                           else if (_assets.isEmpty)
                             ProxoText(
-                                'پەڕەی پەیوەندیت نییە؛ پەڕەیەکی نوێ دروست بکە.', translate: true,
+                                'پەڕەی پەیوەندیت نییە؛ پەڕەیەکی نوێ دروست بکە.',
+                                translate: true,
                                 style:
                                     AdUi.text(context, color: AdUi.secondary))
                           else
                             DropdownButtonFormField<String>(
-            onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+                                onTap: () => FocusManager.instance.primaryFocus
+                                    ?.unfocus(),
                                 key: ValueKey(
                                     'asset-$_assetId-${_assets.length}'),
                                 initialValue: _assetId,
@@ -625,8 +721,8 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
                                 itemHeight: null,
                                 style: AdUi.text(context),
                                 decoration: AdUi.dropdownDecoration,
-                                hint:
-                                    const ProxoText('پەڕەی پەیوەندی هەڵبژێرە', translate: true),
+                                hint: const ProxoText('پەڕەی پەیوەندی هەڵبژێرە',
+                                    translate: true),
                                 items: [
                                   for (final a in _assets)
                                     DropdownMenuItem(
@@ -643,8 +739,8 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
                               alignment: Alignment.centerRight,
                               child: OutlinedButton(
                                   onPressed: _createContact,
-                                  child:
-                                      const ProxoText('دروستکردنی پەڕەی نوێ', translate: true))),
+                                  child: const ProxoText('دروستکردنی پەڕەی نوێ',
+                                      translate: true))),
                         ]))),
       ]));
   Widget _audience(BuildContext context) => AdFormSection(
@@ -698,7 +794,7 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
             const [('all', 'هەموو'), ('male', 'نێر'), ('female', 'مێ')],
             (v) => setState(() => _gender = v)),
         const SizedBox(height: 24),
-        _label(context, 'پۆل'),
+        _label(context, 'جۆری پۆل'),
         DropdownButtonFormField<String>(
             onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
             key: ValueKey('category-$_category'),
@@ -711,7 +807,8 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
             hint: const ProxoText('پۆلی ڕیکلام هەڵبژێرە', translate: true),
             items: [
               for (final c in kAdCategories)
-                DropdownMenuItem(value: c.slug, child: ProxoText(c.label, translate: true))
+                DropdownMenuItem(
+                    value: c.slug, child: ProxoText(c.label, translate: true))
             ],
             onChanged: (v) => setState(() {
                   _category = v;
@@ -719,7 +816,7 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
                 })),
         _error(context, 'category'),
         const SizedBox(height: 24),
-        _label(context, 'ئامێر'),
+        _label(context, 'جۆری ئامێر'),
         _choices(
             context,
             'device',
@@ -737,7 +834,9 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
   Widget _budget(BuildContext context) => AdFormSection(
       title: 'بودجە و ماوەی ڕیکلام',
       child: Column(children: [
-        AdValueRow(label: 'بودجەی ڕۆژانە', value: _budgetIqd(_daily),
+        AdValueRow(
+            label: 'بودجەی ڕۆژانە',
+            value: _budgetIqd(_daily),
             valueColor: AdUi.blue),
         const SizedBox(height: 6),
         Directionality(
@@ -754,10 +853,14 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
                   setState(() => _daily = _budgets[v.round()]);
                   _refreshQuote();
                 })),
-        AdValueRow(label: _budgetIqd(_budgets.last),
-            value: _budgetIqd(_budgets.first), color: AdUi.secondary),
+        AdValueRow(
+            label: _budgetIqd(_budgets.last),
+            value: _budgetIqd(_budgets.first),
+            color: AdUi.secondary),
         const SizedBox(height: 24),
-        AdValueRow(label: 'ماوەی ڕیکلام', value: ProxoStrings.format('{count} ڕۆژ', {'count':_days}),
+        AdValueRow(
+            label: 'ماوەی ڕیکلام',
+            value: ProxoStrings.format('{count} ڕۆژ', {'count': _days}),
             valueColor: AdUi.blue),
         const SizedBox(height: 6),
         Directionality(
@@ -774,8 +877,7 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
                   setState(() => _days = v.round());
                   _refreshQuote();
                 })),
-        const AdValueRow(label: '7 ڕۆژ', value: '1 ڕۆژ',
-            color: AdUi.secondary),
+        const AdValueRow(label: '7 ڕۆژ', value: '1 ڕۆژ', color: AdUi.secondary),
         const Divider(height: 32, color: AdUi.controlLine),
         AdValueRow(
             label: 'کۆی بودجە',
@@ -790,70 +892,77 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
             context,
             'schedule',
             _immediate ? 'now' : 'later',
-            const [
-              ('now', 'ئێستا'),
-              ('later', 'دیاریکردنی کات')
-            ],
+            const [('now', 'ئێستا'), ('later', 'دیاریکردنی کات')],
             (v) => setState(() => _immediate = v == 'now')),
         AnimatedSize(
             duration: const Duration(milliseconds: 240),
             curve: Curves.easeOutCubic,
             alignment: Alignment.topRight,
-            child: _immediate ? const SizedBox.shrink() : Padding(
-              padding: const EdgeInsets.only(top: 20),
-              child: Wrap(spacing: 10, runSpacing: 10, children: [
-            OutlinedButton(
-                key: const ValueKey('ad-date'),
-                onPressed: () async {
-                  FocusManager.instance.primaryFocus?.unfocus();
-                  final now = adScheduleNow(),
-                      today = DateTime(adScheduleNow().year,
-                          adScheduleNow().month, adScheduleNow().day);
-                  final lastDate =
-                      DateUtils.dateOnly(now.add(const Duration(days: 90)));
-                  final date = await showDatePicker(
-                      context: context,
-                      initialDate: _date != null &&
-                              !_date!.isBefore(today) &&
-                              !DateUtils.dateOnly(_date!).isAfter(lastDate)
-                          ? _date
-                          : today,
-                      firstDate: today,
-                      lastDate: lastDate,
-                      builder: (_, child) => Directionality(
-                          textDirection: TextDirection.rtl, child: child!));
-                  if (mounted && date != null) {
-                    setState(() {
-                      _date = date;
-                      _fieldErrors.remove('schedule');
-                    });
-                  }
-                },
-                child: ProxoText(translate: true, _date == null
-                    ? 'بەروار هەڵبژێرە'
-                    : '${_date!.day}/${_date!.month}/${_date!.year}')),
-            OutlinedButton(
-                key: const ValueKey('ad-time'),
-                onPressed: () async {
-                  FocusManager.instance.primaryFocus?.unfocus();
-                  final now = adScheduleNow();
-                  final time = await showTimePicker(
-                      context: context,
-                      initialTime: _time ??
-                          TimeOfDay(hour: now.hour, minute: now.minute),
-                      builder: (_, child) => Directionality(
-                          textDirection: TextDirection.rtl, child: child!));
-                  if (mounted && time != null) {
-                    setState(() {
-                      _time = time;
-                      _fieldErrors.remove('schedule');
-                    });
-                  }
-                },
-                child: ProxoText(translate: true, _time == null
-                    ? 'کات هەڵبژێرە'
-                    : '${_time!.hour.toString().padLeft(2, '0')}:${_time!.minute.toString().padLeft(2, '0')}')),
-          ]))),
+            child: _immediate
+                ? const SizedBox.shrink()
+                : Padding(
+                    padding: const EdgeInsets.only(top: 20),
+                    child: Wrap(spacing: 10, runSpacing: 10, children: [
+                      OutlinedButton(
+                          key: const ValueKey('ad-date'),
+                          onPressed: () async {
+                            FocusManager.instance.primaryFocus?.unfocus();
+                            final now = adScheduleNow(),
+                                today = DateUtils.dateOnly(now);
+                            final lastDate = DateUtils.dateOnly(
+                                now.add(const Duration(days: 90)));
+                            final date = await showDatePicker(
+                                context: context,
+                                initialDate: _date != null &&
+                                        !DateUtils.dateOnly(_date!)
+                                            .isBefore(today) &&
+                                        !DateUtils.dateOnly(_date!)
+                                            .isAfter(lastDate)
+                                    ? _date
+                                    : today,
+                                firstDate: today,
+                                lastDate: lastDate,
+                                builder: (_, child) => Directionality(
+                                    textDirection: TextDirection.rtl,
+                                    child: child!));
+                            if (mounted && date != null) {
+                              setState(() {
+                                _date = date;
+                                _fieldErrors.remove('schedule');
+                              });
+                            }
+                          },
+                          child: ProxoText(
+                              translate: true,
+                              _date == null
+                                  ? 'بەروار هەڵبژێرە'
+                                  : '${_date!.day}/${_date!.month}/${_date!.year}')),
+                      OutlinedButton(
+                          key: const ValueKey('ad-time'),
+                          onPressed: () async {
+                            FocusManager.instance.primaryFocus?.unfocus();
+                            final now = adScheduleNow();
+                            final time = await showTimePicker(
+                                context: context,
+                                initialTime: _time ??
+                                    TimeOfDay(
+                                        hour: now.hour, minute: now.minute),
+                                builder: (_, child) => Directionality(
+                                    textDirection: TextDirection.rtl,
+                                    child: child!));
+                            if (mounted && time != null) {
+                              setState(() {
+                                _time = time;
+                                _fieldErrors.remove('schedule');
+                              });
+                            }
+                          },
+                          child: ProxoText(
+                              translate: true,
+                              _time == null
+                                  ? 'کات هەڵبژێرە'
+                                  : '${_time!.hour.toString().padLeft(2, '0')}:${_time!.minute.toString().padLeft(2, '0')}')),
+                    ]))),
         _error(context, 'schedule'),
       ]));
   Widget _couponSection(BuildContext context) => AdFormSection(
@@ -864,7 +973,8 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
             forceLtr: true,
             builder: (_, dir) => TextField(
                 key: const ValueKey('ad-coupon'),
-                onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
+                onTapOutside: (_) =>
+                    FocusManager.instance.primaryFocus?.unfocus(),
                 controller: _coupon,
                 textDirection: dir,
                 style: AdUi.text(context),
@@ -879,16 +989,19 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
                   _refreshQuote(clearPromo: true);
                 },
                 decoration: const InputDecoration(
-                    hint: ProxoText('کۆدی داشکاندن (ئارەزوومەندانە)', translate: true)))),
+                    hint: ProxoText('کۆدی داشکاندن (ئارەزوومەندانە)',
+                        translate: true)))),
         const SizedBox(height: 14),
         Align(
             alignment: Alignment.centerRight,
             child: OutlinedButton(
                 onPressed: _couponBusy ? null : _applyCoupon,
-                child: ProxoText(_couponBusy ? 'پشکنین…' : 'بەکارهێنانی کۆد', translate: true))),
+                child: ProxoText(_couponBusy ? 'پشکنین…' : 'بەکارهێنانی کۆد',
+                    translate: true))),
         if (_couponMessage != null) ...[
           const SizedBox(height: 8),
-          ProxoText(_couponMessage!, translate: true,
+          ProxoText(_couponMessage!,
+              translate: true,
               style: AdUi.text(context,
                   color: _couponValid ? AdUi.green : const Color(0xFFB74956)))
         ],
@@ -910,7 +1023,8 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
         child:
             Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           if (_goal == null)
-            ProxoText('سەرەتا ئامانجی ڕیکلام هەڵبژێرە.', translate: true,
+            ProxoText('سەرەتا ئامانجی ڕیکلام هەڵبژێرە.',
+                translate: true,
                 style: AdUi.text(context, color: AdUi.secondary))
           else ...[
             Container(
@@ -932,23 +1046,26 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
                 ])),
             if (_goal == 'messages') ...[
               const SizedBox(height: 12),
-              ProxoText('کرتەی پەڕەی پەیوەندی؛ بە گریمانەی کاتی.', translate: true,
+              ProxoText('کرتەی پەڕەی پەیوەندی؛ بە گریمانەی کاتی.',
+                  translate: true,
                   style: AdUi.text(context, color: AdUi.secondary))
             ],
             if (f.provisionalViews) ...[
               const SizedBox(height: 10),
-              ProxoText('پێشبینی بینین بە گریمانەی کاتی.', translate: true,
+              ProxoText('پێشبینی بینین بە گریمانەی کاتی.',
+                  translate: true,
                   style: AdUi.text(context, color: AdUi.secondary))
             ],
           ],
           const SizedBox(height: 18),
-          ProxoText(adForecastDisclaimer, translate: true,
+          ProxoText(adForecastDisclaimer,
+              translate: true,
               style: AdUi.text(context, color: AdUi.secondary)),
         ]));
   }
 
   Widget _pricing(BuildContext context) => AdFormSection(
-      title: 'وردەکاری نرخ',
+      title: 'پوختەی نرخ',
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         if (_quote != null) ...[
           AdPriceDetails(quote: _quote!),
@@ -956,16 +1073,17 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
           Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
               decoration: const BoxDecoration(
-                  color: AdUi.controlSurface,
-                  borderRadius: AdUi.controlRadius),
+                  color: AdUi.controlSurface, borderRadius: AdUi.controlRadius),
               child: AdValueRow(
                   label: 'باڵانسی بەردەست',
                   value: adIqd(_quote!.balanceUsd * _quote!.rate),
-                  color: AdUi.secondary, valueColor: AdUi.ink)),
+                  color: AdUi.secondary,
+                  valueColor: AdUi.ink)),
           if (_payment == 'app_balance' &&
               _quote!.balanceUsd + 0.000001 < _quote!.costUsd) ...[
             const SizedBox(height: 10),
-            ProxoText('باڵانسی پێویستت بەردەست نییە', translate: true,
+            ProxoText('باڵانسی پێویستت بەردەست نییە',
+                translate: true,
                 style: AdUi.text(context, color: const Color(0xFFB74956)))
           ],
         ],
@@ -975,7 +1093,8 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
         ],
         if (_quoteError != null) ...[
           const SizedBox(height: 12),
-          ProxoText(_quoteError!, translate: true,
+          ProxoText(_quoteError!,
+              translate: true,
               style: AdUi.text(context, color: const Color(0xFFB74956))),
           Align(
               alignment: Alignment.centerRight,
@@ -988,22 +1107,56 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
       title: 'ناردنی ڕیکلام',
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         _label(context, 'ڕێگای پارەدان'),
-        _choices(
-            context,
-            'payment',
-            _payment ?? '',
-            const [('app_balance', 'باڵانسی هەژمار'), ('fastpay', 'FastPay')],
-            (v) => setState(() => _payment = v)),
+        PaymentOption(
+            key: const ValueKey('payment-app_balance'),
+            label: ProxoStrings.text('باڵانسی هەژمار'),
+            leading: const ProxoSymbol(ProxoSymbolName.wallet,
+                size: 26, color: AdUi.blue),
+            selected: _payment == 'app_balance',
+            onTap: () => setState(() {
+                  _payment = 'app_balance';
+                  _fieldErrors.remove('payment');
+                })),
+        const SizedBox(height: 12),
+        PaymentOption(
+            key: const ValueKey('payment-fastpay'),
+            label: 'FastPay',
+            leading: const ProviderLogo(provider: 'fastpay'),
+            selected: _payment == 'fastpay',
+            onTap: () => setState(() {
+                  _payment = 'fastpay';
+                  _fieldErrors.remove('payment');
+                })),
         _error(context, 'payment'),
-        const SizedBox(height: 24),
-        Padding(
-            padding: const EdgeInsets.only(bottom: 4),
-            child: FilledButton(
+        const SizedBox(height: 16),
+        FilledButton(
             key: const ValueKey('review-ad'),
+            style: FilledButton.styleFrom(
+              minimumSize: const Size.fromHeight(48),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              shape: RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.circular(ProxoSurface.controlRadius)),
+            ),
             onPressed: _openingConfirmation || _couponBusy || _pendingLoading
                 ? null
                 : _checkout,
-            child: ProxoText(
-                _openingConfirmation ? 'پشکنین…' : 'پشکنین و ناردنی ڕیکلام'))),
+            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: _openingConfirmation
+                      ? const CircularProgressIndicator(
+                          strokeWidth: 2, color: Colors.white)
+                      : const ProxoSymbol(ProxoSymbolName.check,
+                          size: 20, color: Colors.white)),
+              const SizedBox(width: 8),
+              Flexible(
+                  child: ProxoText(
+                      _pending != null
+                          ? 'پشکنینی داواکاریی پێشوو'
+                          : 'پشکنین و ناردنی ڕیکلام',
+                      textAlign: TextAlign.center)),
+            ])),
       ]));
 }

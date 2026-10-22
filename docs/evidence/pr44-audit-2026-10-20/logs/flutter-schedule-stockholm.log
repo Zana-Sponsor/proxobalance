@@ -1,0 +1,74 @@
+00:00 +0: loading /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_submission_test.dart
+00:00 +0: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_submission_test.dart: form validation covers required fields and invalid targeting
+00:00 +1: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_submission_test.dart: scheduling validates future dates, immediate uses server clock
+00:00 +2: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_submission_test.dart: Baghdad scheduling compares calendar fields across device time zones
+00:00 +3: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_submission_test.dart: Baghdad persisted schedule preserves a device DST gap time
+00:00 +4: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_submission_test.dart: frozen submission survives serialization without bidi controls
+00:00 +5: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_submission_test.dart: daily budget multiplication never compounds an earlier total
+00:00 +6: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_submission_test.dart: frozen checkout uses the exact server-quoted IQD amount
+00:00 +7: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_submission_test.dart: fee is included, percentage/fixed coupons and levels use existing formula
+00:00 +8: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_submission_test.dart: views forecast uses delivery budget and never counts every impression as a view
+00:00 +9: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_submission_test.dart: messages forecast has contact clicks and historical view-rate bounds
+00:00 +10: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: (setUpAll)
+00:00 +10: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_repository_test.dart: interrupted response retains frozen request and recovers without another charge
+Ad thumbnail generation deferred: StateError
+00:00 +11: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 280.0 at text scale 1.0
+00:00 +12: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 280.0 at text scale 1.0
+00:00 +12: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_repository_test.dart: simultaneous repeated calls share one operation; competing request is blocked
+Ad thumbnail generation deferred: StateError
+00:00 +13: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 280.0 at text scale 1.0
+00:00 +14: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 280.0 at text scale 1.0
+00:00 +15: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 280.0 at text scale 1.0
+00:00 +16: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 280.0 at text scale 1.0
+00:00 +16: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_repository_test.dart: explicit SQL rejection releases persisted request for a corrected retry
+Ad thumbnail generation deferred: StateError
+00:00 +17: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 280.0 at text scale 1.0
+00:00 +18: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 280.0 at text scale 1.0
+00:00 +19: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 280.0 at text scale 1.0
+00:00 +20: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 280.0 at text scale 1.0
+00:00 +21: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 280.0 at text scale 1.0
+00:00 +21: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_repository_test.dart: timeout retains identity and retry recovers the committed result
+Ad thumbnail generation deferred: StateError
+00:00 +22: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 280.0 at text scale 1.0
+00:00 +22: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_repository_test.dart: cancel during status read stops the next write and same ID can be retried
+Ad thumbnail generation deferred: StateError
+00:00 +23: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 280.0 at text scale 1.0
+00:01 +24: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 280.0 at text scale 1.0
+00:02 +25: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 280.0 at text scale 1.5
+00:02 +26: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 393.0 at text scale 1.0
+00:03 +27: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 393.0 at text scale 1.5
+00:03 +28: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 430.0 at text scale 1.0
+00:03 +29: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 430.0 at text scale 1.5
+00:04 +30: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 768.0 at text scale 1.0
+00:04 +31: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: create form fits 768.0 at text scale 1.5
+00:04 +32: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: invalid form shows deduplicated validation stack and cannot confirm
+00:05 +33: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: touch outside title and coupon dismisses input without losing values
+00:05 +34: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: targeting natural widths, RTL order and supported values
+00:05 +35: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: both sliders update budget, forecasts and prices without compounding
+00:06 +36: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: valid coupon highlights label and value; invalid coupon has no discount
+00:07 +37: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: contact creation returns to preserved form and selects new page
+00:07 +38: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: expired applied coupon is removed on the next pricing update
+00:07 +39: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: submit button keeps its geometry while checking and after failure
+00:08 +40: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: insufficient balance prevents confirmation
+00:08 +41: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: unreadable pending submission blocks a fresh checkout
+00:08 +42: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: future scheduling uses date/time controls and survives confirmation
+00:09 +43: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: incomplete future scheduling cannot reach confirmation
+00:10 +44: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: cancel countdown returns to entered form without submitting
+00:10 +45: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: successful confirmation returns refresh and invokes creation once
+00:10 +46: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: countdown submits once and keeps navigation available while processing
+00:10 +47: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: uncertain failures retry same key and allow safe navigation away
+00:10 +48: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: uncertain result keeps form editable and retries original ID without losing edits
+00:11 +49: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: editing after a paid FastPay failure switches to account credit
+00:11 +50: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: leaving a running request releases form and late completion is safe
+00:12 +51: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: confirmed success clears a form retained by its shell
+00:12 +52: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: countdown pauses while the app is backgrounded
+00:12 +53: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: confirmation fits 280.0 with long mixed values
+00:12 +54: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: confirmation fits 393.0 with long mixed values
+00:12 +55: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: confirmation fits 768.0 with long mixed values
+00:12 +56: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: validation has one deduplicated notice lasting exactly two seconds
+00:12 +57: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: render Create Ad preview
+00:12 +58: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: render confirmation preview
+00:13 +59: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: render budget preview in Iraqi dinars
+00:13 +60: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: render complete Create Ad design
+00:13 +61: /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ad_creation_flow_test.dart: (tearDownAll)
+00:13 +61: All tests passed!

@@ -19,12 +19,19 @@ class TxStrings {
   static const TxStrings _ar = TxStrings._(true);
   static const TxStrings _kmr = TxStrings._(false, true);
 
-  static TxStrings of(Locale locale) =>
-      locale.languageCode == 'ar' ? _ar : locale.languageCode == 'kmr' ? _kmr : _ckb;
+  static TxStrings of(Locale locale) => locale.languageCode == 'ar'
+      ? _ar
+      : locale.languageCode == 'kmr'
+          ? _kmr
+          : _ckb;
 
   static TxStrings get current => of(ProxoLocale.current.value);
 
-  String _t(String ku, String arabic) => ar ? arabic : badini ? ProxoStrings.text(ku, language: 'kmr') : ku;
+  String _t(String ku, String arabic) => ar
+      ? arabic
+      : badini
+          ? ProxoStrings.text(ku, language: 'kmr')
+          : ku;
 
   // ── مێژوو ───────────────────────────────────────────────────────────────
   String get historyTitle => _t('مێژووی مامەڵەکان', 'سجل المعاملات');
@@ -44,13 +51,17 @@ class TxStrings {
   // ── وردەکاری ────────────────────────────────────────────────────────────
   String get detailTitle => _t('وردەکاری مامەڵە', 'تفاصيل المعاملة');
   String get receiptTitle => _t('پسوولەی مامەڵە', 'إيصال المعاملة');
+  String get receiptNo => _t('ژ.م پسوولە', 'رقم الإيصال');
   String get txId => _t('ئایدی مامەڵە', 'معرّف المعاملة');
   String get date => _t('ڕێکەوت', 'التاريخ');
   String get status => _t('دۆخ', 'الحالة');
   String get notRecorded => _t('تۆمار نەکراوە', 'غير مسجل');
-  String get amountUnavailable => _t('بڕ یان دراو تۆمار نەکراوە', 'المبلغ أو العملة غير مسجلين');
-  String get statusPending => _t('چاوەڕوانی', 'قيد الانتظار');
-  String get statusRejected => _t('ڕەتکراوە', 'مرفوضة');
+  String get amountUnavailable =>
+      _t('بڕ یان دراو تۆمار نەکراوە', 'المبلغ أو العملة غير مسجلين');
+  String get statusPending => _t('چاوەڕوان', 'قيد الانتظار');
+  String get statusApproved => _t('سەرکەوتوو', 'مكتملة');
+  String get statusRefunded => _t('گەڕاوە', 'مسترد');
+  String get statusRejected => _t('شکست', 'مرفوضة');
 
   String get summary => _t('پوختە', 'الملخص');
   String get topUpSummary => _t('پوختەی زیادکردنی پارە', 'ملخص إضافة الرصيد');

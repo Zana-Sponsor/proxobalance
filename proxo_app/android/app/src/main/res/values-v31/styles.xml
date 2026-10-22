@@ -11,9 +11,8 @@
     <style name="LaunchTheme" parent="@android:style/Theme.Black.NoTitleBar">
         <item name="android:windowBackground">@drawable/launch_background</item>
         <item name="android:windowSplashScreenBackground">@color/splash_background</item>
-        <!-- Optional: a 288x288 adaptive icon drawable shown by the OS.
-        <item name="android:windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
-        -->
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/proxo_splash_mark</item>
+        <item name="android:windowSplashScreenIconBackgroundColor">@color/splash_background</item>
     </style>
 
     <style name="NormalTheme" parent="@android:style/Theme.Black.NoTitleBar">
