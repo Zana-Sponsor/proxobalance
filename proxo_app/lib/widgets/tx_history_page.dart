@@ -518,7 +518,7 @@ class TxHistorySheetState extends State<TxHistoryPage> {
     if (s.items.isEmpty && s.failed) {
       return Directionality(
         textDirection: TextDirection.rtl,
-        child: ReceiptStateView(
+        child: TxHistoryStateView(
           title: l.loadErrorTitle,
           message: l.loadErrorBody,
           actionLabel: l.retry,
@@ -533,7 +533,7 @@ class TxHistorySheetState extends State<TxHistoryPage> {
     if (s.items.isEmpty) {
       return Directionality(
         textDirection: TextDirection.rtl,
-        child: ReceiptStateView(title: l.emptyTitle, message: l.emptyBody),
+        child: TxHistoryStateView(title: l.emptyTitle, message: l.emptyBody),
       );
     }
 
@@ -542,10 +542,10 @@ class TxHistorySheetState extends State<TxHistoryPage> {
         parent: AlwaysScrollableScrollPhysics(),
       ),
       padding: const EdgeInsets.fromLTRB(
-        ReceiptTokens.gutter,
-        ReceiptTokens.pageTop,
-        ReceiptTokens.gutter,
-        ReceiptTokens.pageBottom,
+        TxHistoryTokens.gutter,
+        TxHistoryTokens.pageTop,
+        TxHistoryTokens.gutter,
+        TxHistoryTokens.pageBottom,
       ),
       itemCount: s.items.length,
       separatorBuilder: (_, __) => const SizedBox(height: TxHistoryCard.gap),
@@ -554,7 +554,7 @@ class TxHistorySheetState extends State<TxHistoryPage> {
         return Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(
-              maxWidth: ReceiptTokens.contentMaxWidth,
+              maxWidth: TxHistoryTokens.contentMaxWidth,
             ),
             child: _TxCard(item: t, onTap: () => _openDetail(t)),
           ),
@@ -596,8 +596,8 @@ class _TxCard extends StatelessWidget {
         !t.isSettled || (t.amtIqd == null && t.usd == null)
         ? const Color(0xFF6B7280)
         : t.isIn
-        ? ReceiptTokens.positive
-        : ReceiptTokens.negative;
+        ? TxHistoryTokens.positive
+        : TxHistoryTokens.negative;
     return TxHistoryCard(
       label: _localizedLabel(t.label),
       status: t.isSettled

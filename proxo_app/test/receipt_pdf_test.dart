@@ -28,6 +28,9 @@ void main() {
     final loader = FontLoader(ReceiptTokens.fontFamily)
       ..addFont(rootBundle.load(ReceiptTokens.fontAsset));
     await loader.load();
+    final appFont = FontLoader('RabarAuthRegular')
+      ..addFont(rootBundle.load('assets/fonts/Rabar_022.ttf'));
+    await appFont.load();
   });
   for (final transaction in [false, true]) {
     for (final narrow in [false, true]) {
@@ -144,7 +147,7 @@ void main() {
         final cardRect = receiptPaintedRect(tester, find.byType(ReceiptCard));
         expect(boundary.size.width, narrow ? 280 : 393);
         const factor = 1.0;
-        expect(cardRect.left - surfaceRect.left, closeTo(20 * factor, 0.01));
+        expect(cardRect.left - surfaceRect.left, closeTo(16 * factor, 0.01));
         expect(cardRect.top - surfaceRect.top,
             closeTo(ReceiptTokens.pageTop * factor, 0.01));
         expect(surfaceRect.bottom - cardRect.bottom,

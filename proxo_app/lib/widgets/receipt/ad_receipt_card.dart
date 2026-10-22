@@ -41,17 +41,19 @@ class AdReceiptCard extends StatelessWidget {
                 value: r.date,
                 valueDirection: ltr,
                 valueStyle: ReceiptTokens.metadataValue),
-            ReceiptStatusRow(
-              label: l.paymentStatus,
-              value: l.paymentStatusLabel(r.paymentStatus),
-              positive: const [
-                'paid',
-                'approved',
-                'spent',
-                'no_payment_required'
-              ].contains(r.paymentStatus),
-              negative: const ['failed', 'rejected'].contains(r.paymentStatus),
-            ),
+            if (r.paymentStatus != 'no_payment_required')
+              ReceiptStatusRow(
+                label: l.paymentStatus,
+                value: l.paymentStatusLabel(r.paymentStatus),
+                positive: const [
+                  'paid',
+                  'approved',
+                  'spent',
+                  'no_payment_required'
+                ].contains(r.paymentStatus),
+                negative:
+                    const ['failed', 'rejected'].contains(r.paymentStatus),
+              ),
           ]),
           const ReceiptDivider(),
 
@@ -98,26 +100,23 @@ class AdReceiptCard extends StatelessWidget {
             ),
           ]),
           // ── ١٤) زانیاری پارەدان ─────────────────────────────────────────
-          // A free receipt already states "no payment required" above. Do not
-          // invent or repeat a payment method when no transaction took place.
-          if (r.paymentStatus != 'no_payment_required' ||
-              r.transactionId != null) ...[
-            const ReceiptDivider(),
-            ReceiptSectionHeading(l.sectionPayment),
-            ReceiptRows(<Widget?>[
-              ReceiptRow(
-                label: l.paymentMethod,
-                value: r.payment,
-                valueDirection: r.paymentDir,
+          // A zero-charge advertisement still has a payment-information
+          // section, explicitly stating that no payment is required.
+          const ReceiptDivider(),
+          ReceiptSectionHeading(l.sectionPayment),
+          ReceiptRows(<Widget?>[
+            ReceiptRow(
+              label: l.paymentMethod,
+              value: r.payment,
+              valueDirection: r.paymentDir,
+            ),
+            if (r.transactionId != null)
+              ReceiptIdRow(
+                label: l.transactionId,
+                value: r.transactionId!,
+                onLongPress: () => onCopy(r.transactionId!),
               ),
-              if (r.transactionId != null)
-                ReceiptIdRow(
-                  label: l.transactionId,
-                  value: r.transactionId!,
-                  onLongPress: () => onCopy(r.transactionId!),
-                ),
-            ]),
-          ],
+          ]),
           const ReceiptDivider(),
 
           // ── ١٥) ناوی ڕیکلام + ژ.م پسوولە ────────────────────────────────

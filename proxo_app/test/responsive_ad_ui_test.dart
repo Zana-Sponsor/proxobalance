@@ -71,6 +71,10 @@ void main() {
     await (FontLoader(ReceiptTokens.fontFamily)
           ..addFont(rootBundle.load(ReceiptTokens.fontAsset)))
         .load();
+    // Receipts use Rabar021; the unchanged forms, headers and history use022.
+    await (FontLoader('RabarAuthRegular')
+          ..addFont(rootBundle.load('assets/fonts/Rabar_022.ttf')))
+        .load();
     await (FontLoader('MaterialIcons')
           ..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf')))
         .load();

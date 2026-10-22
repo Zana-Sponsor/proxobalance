@@ -93,6 +93,9 @@ void main() {
     final loader = FontLoader(ReceiptTokens.fontFamily)
       ..addFont(rootBundle.load(ReceiptTokens.fontAsset));
     await loader.load();
+    final appFont = FontLoader('RabarAuthRegular')
+      ..addFont(rootBundle.load('assets/fonts/Rabar_022.ttf'));
+    await appFont.load();
   });
 
   testWidgets(
@@ -113,9 +116,8 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  // Native-size responsive layout supersedes proportional 393-dp scaling.
-  // Old exact anchors remain recorded by the immutable baseline capture.
-  // Assert physical margins/ink containment without relaxing tolerances.
+  // Preserve the reference's native 393-dp margins while allowing content to
+  // reflow at other widths and large text sizes without shrinking the font.
   for (final width in <double>[280, 393, 430, 768, 963, 964]) {
     testWidgets('native responsive receipt geometry at $width dp', (
       tester,
@@ -144,8 +146,8 @@ void main() {
         closeTo(ReceiptTokens.pageTop + ReceiptTokens.cardToButton, 0.01),
       );
       final dividers = find.byType(ReceiptDivider);
-      expect(dividers, findsNWidgets(4));
-      for (var i = 0; i < 4; i++) {
+      expect(dividers, findsNWidgets(5));
+      for (var i = 0; i < 5; i++) {
         final rule = receiptPaintedRect(
           tester,
           find.descendant(
@@ -153,16 +155,17 @@ void main() {
             matching: find.byType(ColoredBox),
           ),
         );
-        expect(rule.left, closeTo(columnLeft + 36, 0.01));
-        expect(rule.width, closeTo(columnWidth - 72, 0.01));
+        expect(rule.left, closeTo(columnLeft + 40, 0.01));
+        expect(rule.width, closeTo(columnWidth - 80, 0.01));
         expect(rule.height, closeTo(ReceiptTokens.dividerThickness, 0.01));
       }
       final rows = find.byType(ReceiptRow);
       expect(rows, findsNWidgets(11));
+      expect(find.byType(ReceiptIdRow), findsNWidgets(2));
       for (var i = 0; i < 11; i++) {
         final row = receiptPaintedRect(tester, rows.at(i));
-        expect(row.left, closeTo(columnLeft + 36, 0.01));
-        expect(row.right, closeTo(columnLeft + columnWidth - 36, 0.01));
+        expect(row.left, closeTo(columnLeft + 32, 0.01));
+        expect(row.right, closeTo(columnLeft + columnWidth - 32, 0.01));
         expect(row.height, greaterThanOrEqualTo(ReceiptTokens.rowMinHeight));
         if (i > 0) {
           expect(
@@ -212,17 +215,33 @@ void main() {
 
           if (width == 320 && scale == 2) {
             final header = find.byType(ReceiptHeader);
-            final title = receiptPaintedRect(
-                tester,
-                find.descendant(
-                    of: header,
-                    matching:
-                        find.byWidgetPredicate((widget) => widget is Text)));
+            final titleFinder = find.descendant(
+                of: header,
+                matching: find.byWidgetPredicate((widget) => widget is Text));
+            final title = receiptPaintedRect(tester, titleFinder);
+            final text = tester.widget<Text>(titleFinder);
             final logo = receiptPaintedRect(tester,
                 find.descendant(of: header, matching: find.byType(Image)));
             final bounds = receiptPaintedRect(tester, header);
-            expect(title.width, closeTo(bounds.width, .01));
-            expect(title.top - logo.bottom, closeTo(12, .01));
+            final naturalTitle = TextPainter(
+                text: TextSpan(text: text.data, style: text.style),
+                textDirection: TextDirection.rtl,
+                textScaler: TextScaler.linear(scale))
+              ..layout();
+            final fits = naturalTitle.width +
+                    logo.width +
+                    ReceiptTokens.labelToValue <=
+                bounds.width;
+            naturalTitle.dispose();
+            if (fits) {
+              expect(title.center.dy, closeTo(logo.center.dy, .01));
+              expect(title.left - logo.right,
+                  closeTo(ReceiptTokens.labelToValue, .01));
+              expect(title.right, closeTo(bounds.right, .01));
+            } else {
+              expect(title.width, closeTo(bounds.width, .01));
+              expect(title.top - logo.bottom, closeTo(12, .01));
+            }
           }
 
           expect(
@@ -313,7 +332,7 @@ void main() {
               )
               .decoration as BoxDecoration;
           expect(decoration.border, isNull);
-          expect(decoration.boxShadow!.single.color, const Color(0x060F172A));
+          expect(decoration.boxShadow!.single.color, const Color(0x0F000000));
           expect(receiptPaintedRect(tester, uid).left, greaterThanOrEqualTo(0));
           expect(
             receiptPaintedRect(
@@ -329,11 +348,11 @@ void main() {
           for (final icon in tester.widgetList<Icon>(find.byType(Icon))) {
             expect(icon.size, ReceiptTokens.iconSize);
           }
-          expect(ReceiptTokens.rowValue.fontSize, 14);
+          expect(ReceiptTokens.rowValue.fontSize, 11);
           for (final divider in find.byType(ReceiptDivider).evaluate()) {
             expect(
               receiptPaintedRect(tester, find.byWidget(divider.widget)).height,
-              closeTo(24 * factor, 0.01),
+              closeTo(25 * factor, 0.01),
             );
           }
           measurements.add({
@@ -347,7 +366,7 @@ void main() {
             'heading_font_size': ReceiptTokens.heading.fontSize! * factor,
             'heading_gap': ReceiptTokens.headingToRow * factor,
             'row_gap': ReceiptTokens.rowToRow * factor,
-            'divider_height_with_spacing': 24 * factor,
+            'divider_height_with_spacing': 25 * factor,
             'rows': measuredRows,
           });
 
@@ -403,7 +422,7 @@ void main() {
           expect(card.width, closeTo(width - margin * 2, 0.01));
           expect(button.left, closeTo(card.left, 0.01));
           expect(button.width, closeTo(card.width, 0.01));
-          expect(button.top - card.bottom, closeTo(24 * factor, 0.01));
+          expect(button.top - card.bottom, closeTo(20 * factor, 0.01));
           await tester.scrollUntilVisible(
             find.byType(ReceiptPdfButton),
             200,
@@ -436,10 +455,11 @@ void main() {
     final row = tester.getRect(find.byType(ReceiptIdRow));
     final label = tester.getRect(find.text('ئایدی ڕیکلام'));
     final value = tester.getRect(find.text(id));
-    expect(row.height, 48);
+    expect(row.height, 20);
     expect(label.center.dy, closeTo(value.center.dy, .01));
     expect(value.right, lessThan(label.left));
-    await tester.tap(find.byType(IconButton));
+    expect(find.byType(IconButton), findsNothing);
+    await tester.longPress(find.text('ئایدی ڕیکلام'));
     expect(copied, id);
     expect(tester.takeException(), isNull);
   });
