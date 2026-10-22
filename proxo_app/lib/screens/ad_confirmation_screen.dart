@@ -265,7 +265,7 @@ class _AdConfirmationScreenState extends State<AdConfirmationScreen>
                                           child: _summary()),
                                       const SizedBox(height: 18),
                                       AdFormSection(
-                                          title: 'وردەکاری نرخ',
+                                          title: 'پوختەی نرخ',
                                           child: AdPriceDetails(
                                               quote: widget.request.quote,
                                               showTotal: false)),
@@ -509,7 +509,7 @@ class _AdConfirmationScreenState extends State<AdConfirmationScreen>
           title: ProxoText('ئامانجی بینەران',
               translate: true, style: AdUi.text(context)),
           children: [
-            AdValueRow(label: 'پۆل', value: adCategoryLabel(d.category)),
+            AdValueRow(label: 'جۆری پۆل', value: adCategoryLabel(d.category)),
             const SizedBox(height: 12),
             AdValueRow(
                 label: 'شوێن',
@@ -534,7 +534,7 @@ class _AdConfirmationScreenState extends State<AdConfirmationScreen>
                     d.gender),
             const SizedBox(height: 12),
             AdValueRow(
-                label: 'ئامێر',
+                label: 'جۆری ئامێر',
                 value: {
                       'all': 'هەموو',
                       'iphone': 'iPhone',

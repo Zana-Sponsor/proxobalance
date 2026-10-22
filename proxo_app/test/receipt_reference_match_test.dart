@@ -26,7 +26,7 @@ void main() {
         .load();
   });
 
-  testWidgets('matches the supplied 393 by 627 receipt reference',
+  testWidgets('preserves reference geometry with the requested Kurdish labels',
       (tester) async {
     tester.view.devicePixelRatio = 1;
     tester.view.physicalSize = const Size(393, 900);
@@ -75,9 +75,11 @@ void main() {
         image.dispose();
       }
     });
-    // This golden predates the changes: never regenerate it to accept drift.
+    // The original receipt_preview.png remains immutable. This separate
+    // baseline changes only the Kurdish labels requested on 2026-10-23; the
+    // exact reference geometry is still asserted below.
     await tester.runAsync(() => expectLater(
-        pngBytes!, matchesGoldenFile('../docs/receipt_preview.png')));
+        pngBytes!, matchesGoldenFile('../docs/receipt_labels_preview.png')));
     const capturePath = String.fromEnvironment('RECEIPT_REFERENCE_CAPTURE');
     if (capturePath.isNotEmpty) {
       await tester.runAsync(() async {

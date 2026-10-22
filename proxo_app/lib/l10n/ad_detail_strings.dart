@@ -63,14 +63,14 @@ class AdDetailStrings {
   String get age => _t('تەمەن', 'العمر');
   String get gender => _t('ڕەگەز', 'الجنس');
   String get location => _t('شوێن', 'الموقع');
-  String get device => _t('ئامێر', 'الجهاز');
-  String get category => _t('پۆل', 'الفئة');
+  String get device => _t('جۆری ئامێر', 'الجهاز');
+  String get category => _t('جۆری پۆل', 'الفئة');
 
   // ── پوختە ───────────────────────────────────────────────────────────────
-  String get sectionSummary => _t('پوختە', 'الملخص');
-  String get originalAmount => _t('نرخی سەرەتایی', 'المبلغ الأصلي');
+  String get sectionSummary => _t('پوختەی نرخ', 'الملخص');
+  String get originalAmount => _t('نرخی لاوەکی', 'المبلغ الأصلي');
   String get discount => _t('داشکاندن', 'الخصم');
-  String get totalIqd => _t('کۆی کۆتایی', 'المبلغ النهائي');
+  String get totalIqd => _t('کۆی گشتی', 'المبلغ النهائي');
   String get iqdUnit => 'د.ع';
 
   // ── زانیاری پارەدان ─────────────────────────────────────────────────────

@@ -2,7 +2,7 @@
 
 The current supplied reference is 1283 × 2048 pixels. It is a resized version of the existing 1572 × 2508 PNG in `receipt_preview.png`. The canonical Flutter surface is **393 × 627 logical pixels at normal text size**, captured at 4× resolution. Measurements exclude the app bar and PDF button.
 
-Both advertisement and transaction receipts use the same receipt components. At the reference width, the pictured advertisement matches the original PNG exactly. Other widths retain native text sizing: long fields wrap, enlarged text can stack labels and values, and overflowing identifiers use a full-width single-line scroll area. Transaction receipts retain their own fields and status; their height follows their content.
+Both advertisement and transaction receipts use the same receipt components. At the reference width, the restored advertisement originally matched the original PNG exactly. The subsequent requested Kurdish label changes are captured separately in `receipt_labels_preview.png`; all dimensions, typography and styling remain unchanged. Other widths retain native text sizing: long fields wrap, enlarged text can stack labels and values, and overflowing identifiers use a full-width single-line scroll area. Transaction receipts retain their own fields and status; their height follows their content.
 
 | Property | Canonical measurement |
 | --- | --- |
@@ -30,7 +30,7 @@ Fitting identifiers occupy the original compact row and can be copied by long pr
 
 ## Verification
 
-`receipt_reference_match_test.dart` compares the actual production card against the unchanged historical PNG at 4× resolution. It also asserts the surface, card, five divider positions and thirteen row rectangles above exactly. Do not regenerate the reference to accept a design change.
+`receipt_reference_match_test.dart` compares the actual production card against `receipt_labels_preview.png` at 4× resolution, incorporating only the requested Kurdish label changes. The original `receipt_preview.png` is preserved unchanged. It also asserts the surface, card, five divider positions and thirteen row rectangles above exactly. Do not regenerate the reference to accept a design change.
 
 The wider layout suite covers Kurdish and Arabic, representative 280–964dp widths, 100%, 130% and 200% text, and long mixed-language fields. Separate responsive tests include 240dp at 300% text. Glyph coverage, baselines, wrapping, copied IDs and control recovery are checked.
 

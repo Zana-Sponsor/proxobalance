@@ -190,23 +190,23 @@ class AdPriceDetails extends StatelessWidget {
   const AdPriceDetails({super.key, required this.quote, this.showTotal = true});
   @override
   Widget build(BuildContext context) => Column(children: [
-        AdValueRow(label: 'نرخی سەرەتایی', value: adIqd(quote.sponsorIqd)),
+        AdValueRow(label: 'نرخی لاوەکی', value: adIqd(quote.sponsorIqd)),
         const SizedBox(height: 12),
-        AdValueRow(label: 'تێچووی خزمەتگوزاری', value: adIqd(quote.serviceIqd)),
+        AdValueRow(label: 'کرێی خزمەتگوزاری', value: adIqd(quote.serviceIqd)),
         const SizedBox(height: 12),
         AdValueRow(label: 'ماوەی ڕیکلام', value: '${quote.days} ڕۆژ'),
         if (quote.promoUsd > 0 && quote.promoIqd > 0) ...[
           const SizedBox(height: 12),
           AdValueRow(
               key: const ValueKey('coupon-discount'),
-              label: 'داشکاندنی کۆبۆن',
+              label: 'داشکاندن',
               value: adIqd(quote.promoIqd, discount: true),
               color: AdUi.green),
         ],
         if (quote.levelUsd > 0 && quote.levelIqd > 0) ...[
           const SizedBox(height: 12),
           AdValueRow(
-              label: 'داشکاندنی ئاست',
+              label: 'داشکاندن',
               value: adIqd(quote.levelIqd, discount: true),
               color: AdUi.green),
         ],

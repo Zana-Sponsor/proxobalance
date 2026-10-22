@@ -320,7 +320,7 @@ class AdSubmissionFailure implements Exception {
         'INVALID_PROMO' => 'کۆدی داشکاندن نادروستە یان بەسەرچووە',
         'INVALID_SCHEDULE' => 'کاتی ڕیکلام تێپەڕیوە؛ کاتێکی دواتر هەڵبژێرە',
         'INVALID_ASSET' => 'کەرەستەی پەیوەندی بەردەست نییە؛ دووبارە هەڵیبژێرە',
-        'PRICE_CHANGED' => 'نرخ گۆڕاوە؛ وردەکاری نرخ دووبارە بپشکنەوە',
+        'PRICE_CHANGED' => 'نرخ گۆڕاوە؛ پوختەی نرخ دووبارە بپشکنەوە',
         'NOT_AUTHENTICATED' => 'دووبارە بچۆ ژوورەوە',
         'FASTPAY_TERMINAL' => 'پارەدانی FastPay تەواو نەکرا',
         'AMOUNT_TOO_SMALL' => 'بڕی پارەدان بۆ FastPay زۆر کەمە',

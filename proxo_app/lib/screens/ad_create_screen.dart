@@ -794,7 +794,7 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
             const [('all', 'هەموو'), ('male', 'نێر'), ('female', 'مێ')],
             (v) => setState(() => _gender = v)),
         const SizedBox(height: 24),
-        _label(context, 'پۆل'),
+        _label(context, 'جۆری پۆل'),
         DropdownButtonFormField<String>(
             onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
             key: ValueKey('category-$_category'),
@@ -816,7 +816,7 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
                 })),
         _error(context, 'category'),
         const SizedBox(height: 24),
-        _label(context, 'ئامێر'),
+        _label(context, 'جۆری ئامێر'),
         _choices(
             context,
             'device',
@@ -1065,7 +1065,7 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
   }
 
   Widget _pricing(BuildContext context) => AdFormSection(
-      title: 'وردەکاری نرخ',
+      title: 'پوختەی نرخ',
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         if (_quote != null) ...[
           AdPriceDetails(quote: _quote!),
