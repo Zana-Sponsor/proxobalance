@@ -560,6 +560,12 @@ void main() {
               expect(text.maxLines, 1);
               expect(text.softWrap, false);
             }
+            final expectedStatus = status == 'approved'
+                ? (kind == TxReceiptKind.refund ? 'گەڕاوە' : 'سەرکەوتوو')
+                : status == 'pending'
+                    ? 'چاوەڕوان'
+                    : 'شکست';
+            expect(find.text(expectedStatus), findsOneWidget);
             final signed = status == 'approved'
                 ? (kind == TxReceiptKind.topUp || kind == TxReceiptKind.refund
                     ? '+'

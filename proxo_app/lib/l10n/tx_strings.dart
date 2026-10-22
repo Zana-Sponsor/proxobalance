@@ -58,9 +58,10 @@ class TxStrings {
   String get notRecorded => _t('تۆمار نەکراوە', 'غير مسجل');
   String get amountUnavailable =>
       _t('بڕ یان دراو تۆمار نەکراوە', 'المبلغ أو العملة غير مسجلين');
-  String get statusPending => _t('چاوەڕوانی', 'قيد الانتظار');
-  String get statusApproved => _t('تەواوبووە', 'مكتملة');
-  String get statusRejected => _t('ڕەتکراوە', 'مرفوضة');
+  String get statusPending => _t('چاوەڕوان', 'قيد الانتظار');
+  String get statusApproved => _t('سەرکەوتوو', 'مكتملة');
+  String get statusRefunded => _t('گەڕاوە', 'مسترد');
+  String get statusRejected => _t('شکست', 'مرفوضة');
 
   String get summary => _t('پوختە', 'الملخص');
   String get topUpSummary => _t('پوختەی زیادکردنی پارە', 'ملخص إضافة الرصيد');

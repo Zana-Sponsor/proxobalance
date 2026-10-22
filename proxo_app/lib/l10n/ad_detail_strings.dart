@@ -48,9 +48,10 @@ class AdDetailStrings {
   String get date => _t('ڕێکەوت', 'التاريخ');
   String get paymentStatus => _t('دۆخی پارەدان', 'حالة الدفع');
   String paymentStatusLabel(String status) => switch (status) {
-        'paid' || 'approved' || 'spent' => _t('پارەدراوە', 'مدفوع'),
-        'pending' || 'awaiting_payment' => _t('چاوەڕوانی', 'قيد الانتظار'),
-        'failed' || 'rejected' => _t('سەرکەوتوو نەبوو', 'غير ناجح'),
+        'paid' || 'approved' || 'spent' => _t('سەرکەوتوو', 'مدفوع'),
+        'pending' || 'awaiting_payment' => _t('چاوەڕوان', 'قيد الانتظار'),
+        'failed' || 'rejected' => _t('شکست', 'غير ناجح'),
+        'refunded' => _t('گەڕاوە', 'مسترد'),
         'cancelled' || 'canceled' => _t('هەڵوەشاوەتەوە', 'ملغي'),
         'unpaid' => _t('پارە نەدراوە', 'غير مدفوع'),
         'no_payment_required' => noPaymentRequired,

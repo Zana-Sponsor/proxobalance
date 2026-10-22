@@ -343,7 +343,7 @@ class _TxReceiptCard extends StatelessWidget {
     };
 
     final String statusText = settled
-        ? l.statusApproved
+        ? (d.kind == TxReceiptKind.refund ? l.statusRefunded : l.statusApproved)
         : d.status == 'rejected'
             ? l.statusRejected
             : d.status == 'pending'
