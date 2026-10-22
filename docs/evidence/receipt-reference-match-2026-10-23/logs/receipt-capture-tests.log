@@ -1,0 +1,44 @@
+00:00 +0: loading /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/ui_remediation_capture_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: render receipt (280.0, 1.0, 1.0)
+EVIDENCE start receipt (280.0, 1.0, 1.0)
+EVIDENCE painted receipt-280-s1.0-d1.0
+EVIDENCE screenshot receipt-280-s1.0-d1.0
+EVIDENCE PDF receipt-280-s1.0-d1.0 done=true
+00:01 +1: render ad-receipt (280.0, 1.0, 1.0)
+EVIDENCE start ad-receipt (280.0, 1.0, 1.0)
+EVIDENCE painted ad-receipt-280-s1.0-d1.0
+EVIDENCE screenshot ad-receipt-280-s1.0-d1.0
+EVIDENCE PDF ad-receipt-280-s1.0-d1.0 done=true
+00:02 +2: render receipt (393.0, 1.0, 3.0)
+EVIDENCE start receipt (393.0, 1.0, 3.0)
+EVIDENCE painted receipt-393-s1.0-d3.0
+EVIDENCE screenshot receipt-393-s1.0-d3.0
+EVIDENCE PDF receipt-393-s1.0-d3.0 done=true
+00:02 +3: render ad-receipt (393.0, 1.0, 3.0)
+EVIDENCE start ad-receipt (393.0, 1.0, 3.0)
+EVIDENCE painted ad-receipt-393-s1.0-d3.0
+EVIDENCE screenshot ad-receipt-393-s1.0-d3.0
+EVIDENCE PDF ad-receipt-393-s1.0-d3.0 done=true
+00:03 +4: render receipt (393.0, 2.0, 1.0)
+EVIDENCE start receipt (393.0, 2.0, 1.0)
+EVIDENCE painted receipt-393-s2.0-d1.0
+EVIDENCE screenshot receipt-393-s2.0-d1.0
+EVIDENCE PDF receipt-393-s2.0-d1.0 done=true
+00:04 +5: render ad-receipt (393.0, 2.0, 1.0)
+EVIDENCE start ad-receipt (393.0, 2.0, 1.0)
+EVIDENCE painted ad-receipt-393-s2.0-d1.0
+EVIDENCE screenshot ad-receipt-393-s2.0-d1.0
+EVIDENCE PDF ad-receipt-393-s2.0-d1.0 done=true
+00:05 +6: render receipt (768.0, 1.0, 2.0)
+EVIDENCE start receipt (768.0, 1.0, 2.0)
+EVIDENCE painted receipt-768-s1.0-d2.0
+EVIDENCE screenshot receipt-768-s1.0-d2.0
+EVIDENCE PDF receipt-768-s1.0-d2.0 done=true
+00:05 +7: render ad-receipt (768.0, 1.0, 2.0)
+EVIDENCE start ad-receipt (768.0, 1.0, 2.0)
+EVIDENCE painted ad-receipt-768-s1.0-d2.0
+EVIDENCE screenshot ad-receipt-768-s1.0-d2.0
+EVIDENCE PDF ad-receipt-768-s1.0-d2.0 done=true
+00:07 +8: (tearDownAll)
+00:07 +8: All tests passed!

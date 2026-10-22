@@ -1,0 +1,385 @@
+{
+  "source_commit": "2437d79014d77e0951a3dcf014ba5160c70a709a",
+  "review_method": "Read-only visual inspection of every current full-screen receipt PNG and its viewport metadata; unmodified file copies. Excluded prior-run optional bottom captures after timestamp and font metadata checks.",
+  "environment": "Flutter widget test on Linux using fictional deterministic records and actual production widgets; not a physical Android device or performance build.",
+  "fresh_test_configurations": 8,
+  "current_screen_pngs_reviewed": 10,
+  "current_jsons_copied": 10,
+  "current_screen_pdfs_copied": 8,
+  "screen_pdf_visual_review": "These eight PDFs were copied and hashed, not separately visually inspected in this screen review. Separate pdf-review.json records four export fixtures and all six rendered pages actually reviewed.",
+  "screens": [
+    {
+      "file": "screens/ad-receipt-280-s1.0-d1.0-bottom.png",
+      "pixels": [
+        280,
+        852
+      ],
+      "viewport_dp": [
+        280.0,
+        852
+      ],
+      "device_pixel_ratio": 1.0,
+      "text_scale": 1.0,
+      "state": "scrolled to lower receipt/PDF action",
+      "receipt_type": "advertisement",
+      "observations": [
+        "Scrolled bottom state exposes complete PDF action above screen edge.",
+        "Both UUID rows, totals, advertisement name and payment provider remain legible.",
+        "Top receipt content is outside the scroll viewport intentionally; fixed app bar remains visible."
+      ],
+      "visible_layout_defects": []
+    },
+    {
+      "file": "screens/ad-receipt-280-s1.0-d1.0.png",
+      "pixels": [
+        280,
+        852
+      ],
+      "viewport_dp": [
+        280.0,
+        852
+      ],
+      "device_pixel_ratio": 1.0,
+      "text_scale": 1.0,
+      "state": "initial receipt viewport",
+      "receipt_type": "advertisement",
+      "observations": [
+        "Compact advertisement receipt retains blue section headings and canonical bold receipt glyphs.",
+        "Transaction and receipt UUIDs use dedicated full-width rows with copy controls; values remain on one LTR line.",
+        "PDF action extends below initial viewport; paired bottom capture shows complete action."
+      ],
+      "visible_layout_defects": []
+    },
+    {
+      "file": "screens/ad-receipt-393-s1.0-d3.0.png",
+      "pixels": [
+        1179,
+        2556
+      ],
+      "viewport_dp": [
+        393.0,
+        852
+      ],
+      "device_pixel_ratio": 3.0,
+      "text_scale": 1.0,
+      "state": "initial receipt viewport",
+      "receipt_type": "advertisement",
+      "observations": [
+        "Complete receipt and PDF action fit in viewport.",
+        "Full transaction and receipt UUIDs fit inline on single LTR lines without copy icons; fitting identifiers retain long-press copy behavior in source/tests.",
+        "Canonical blue headings, black receipt text and restrained separators are consistent with reference."
+      ],
+      "visible_layout_defects": []
+    },
+    {
+      "file": "screens/ad-receipt-393-s2.0-d1.0-bottom.png",
+      "pixels": [
+        393,
+        852
+      ],
+      "viewport_dp": [
+        393.0,
+        852
+      ],
+      "device_pixel_ratio": 1.0,
+      "text_scale": 2.0,
+      "state": "scrolled to lower receipt/PDF action",
+      "receipt_type": "advertisement",
+      "observations": [
+        "Scrolled lower state exposes provider, both identifier rows, advertisement name and complete PDF action.",
+        "UUIDs remain single LTR lines in horizontal viewports with copy controls; screenshot shows prefix and intentionally excludes off-viewport suffix.",
+        "No overlap between enlarged text, separators or action."
+      ],
+      "visible_layout_defects": []
+    },
+    {
+      "file": "screens/ad-receipt-393-s2.0-d1.0.png",
+      "pixels": [
+        393,
+        852
+      ],
+      "viewport_dp": [
+        393.0,
+        852
+      ],
+      "device_pixel_ratio": 1.0,
+      "text_scale": 2.0,
+      "state": "initial receipt viewport",
+      "receipt_type": "advertisement",
+      "observations": [
+        "200% text scaling is preserved; advertisement sections extend below viewport without overlap.",
+        "Section headings, amounts and labels remain aligned; lower payment/reference rows are reached by scrolling."
+      ],
+      "visible_layout_defects": []
+    },
+    {
+      "file": "screens/ad-receipt-768-s1.0-d2.0.png",
+      "pixels": [
+        1536,
+        1704
+      ],
+      "viewport_dp": [
+        768.0,
+        852
+      ],
+      "device_pixel_ratio": 2.0,
+      "text_scale": 1.0,
+      "state": "initial receipt viewport",
+      "receipt_type": "advertisement",
+      "observations": [
+        "Wide layout centers constrained receipt surface and aligned PDF action.",
+        "Full UUIDs fit inline and remain on one LTR line.",
+        "Blue headings and consistent row baselines preserve original receipt appearance."
+      ],
+      "visible_layout_defects": []
+    },
+    {
+      "file": "screens/receipt-280-s1.0-d1.0.png",
+      "pixels": [
+        280,
+        852
+      ],
+      "viewport_dp": [
+        280.0,
+        852
+      ],
+      "device_pixel_ratio": 1.0,
+      "text_scale": 1.0,
+      "state": "initial receipt viewport",
+      "receipt_type": "payment",
+      "observations": [
+        "Complete payment receipt and PDF action fit viewport.",
+        "Full receipt reference appears on a dedicated LTR row with copy action.",
+        "Amount, status and payment-source rows remain legible without overlap."
+      ],
+      "visible_layout_defects": []
+    },
+    {
+      "file": "screens/receipt-393-s1.0-d3.0.png",
+      "pixels": [
+        1179,
+        2556
+      ],
+      "viewport_dp": [
+        393.0,
+        852
+      ],
+      "device_pixel_ratio": 3.0,
+      "text_scale": 1.0,
+      "state": "initial receipt viewport",
+      "receipt_type": "payment",
+      "observations": [
+        "Complete payment receipt and PDF action fit viewport.",
+        "Full UUID fits inline on one LTR line.",
+        "Payment receipt uses the same logo, font, colors, dividers and row rhythm as advertisement receipt."
+      ],
+      "visible_layout_defects": []
+    },
+    {
+      "file": "screens/receipt-393-s2.0-d1.0.png",
+      "pixels": [
+        393,
+        852
+      ],
+      "viewport_dp": [
+        393.0,
+        852
+      ],
+      "device_pixel_ratio": 1.0,
+      "text_scale": 2.0,
+      "state": "initial receipt viewport",
+      "receipt_type": "payment",
+      "observations": [
+        "Complete payment receipt and PDF action fit viewport at 200% text.",
+        "Long payment-source label/value stack naturally; UUID uses contained horizontal viewport and copy action.",
+        "No text overlap or horizontal page overflow visible."
+      ],
+      "visible_layout_defects": []
+    },
+    {
+      "file": "screens/receipt-768-s1.0-d2.0.png",
+      "pixels": [
+        1536,
+        1704
+      ],
+      "viewport_dp": [
+        768.0,
+        852
+      ],
+      "device_pixel_ratio": 2.0,
+      "text_scale": 1.0,
+      "state": "initial receipt viewport",
+      "receipt_type": "payment",
+      "observations": [
+        "Wide payment receipt and PDF action share constrained centered width.",
+        "Full UUID fits inline and all receipt rows remain legible.",
+        "Additional whitespace is outside the compact receipt rather than inside oversized cards."
+      ],
+      "visible_layout_defects": []
+    }
+  ],
+  "excluded_stale_files": [
+    {
+      "stem": "ad-receipt-393-s1.0-d3.0-bottom",
+      "reason": "Prior run 21:35 UTC; current capture run 22:14 UTC no longer needs this optional bottom view. Old regular-font appearance conflicts with canonical ProxoReceipt source.",
+      "copied": false
+    },
+    {
+      "stem": "ad-receipt-768-s1.0-d2.0-bottom",
+      "reason": "Prior run 21:35 UTC; current capture run 22:14 UTC no longer needs this optional bottom view. Old regular-font appearance conflicts with canonical ProxoReceipt source.",
+      "copied": false
+    },
+    {
+      "stem": "receipt-393-s2.0-d1.0-bottom",
+      "reason": "Prior run 21:35 UTC; current capture run 22:14 UTC no longer needs this optional bottom view. Old regular-font appearance conflicts with canonical ProxoReceipt source.",
+      "copied": false
+    }
+  ],
+  "files": [
+    {
+      "file": "screens/ad-receipt-280-s1.0-d1.0-bottom.json",
+      "sha256": "cb8798f1dc62d74cfa0755b4026fce578999d38ebc55dee2fda84b0d2341ced3",
+      "source_mtime_utc": "2026-10-22T22:14:27.435624+00:00"
+    },
+    {
+      "file": "screens/ad-receipt-280-s1.0-d1.0-bottom.png",
+      "sha256": "33f04144aa8e61b17fa1808c8c73a1d2a7e44f8868a42d356010fbe87ec0f2ae",
+      "source_mtime_utc": "2026-10-22T22:14:27.431624+00:00"
+    },
+    {
+      "file": "screens/ad-receipt-280-s1.0-d1.0.json",
+      "sha256": "ce2cb82d5fb931fa1f2371b7f6314b0dffdd02b4dff31653b1e9d8a270714e52",
+      "source_mtime_utc": "2026-10-22T22:14:26.943614+00:00"
+    },
+    {
+      "file": "screens/ad-receipt-280-s1.0-d1.0.pdf",
+      "sha256": "434e25b944d9de4143ea8254e96f1dd406a303cc3ea2b95bc7d8900f5fef71ff",
+      "source_mtime_utc": "2026-10-22T22:14:27.387623+00:00"
+    },
+    {
+      "file": "screens/ad-receipt-280-s1.0-d1.0.png",
+      "sha256": "5dfb46988bff1d49bc2f803efeb80ff5e9454dd670711d1a032342afd6769c94",
+      "source_mtime_utc": "2026-10-22T22:14:26.943614+00:00"
+    },
+    {
+      "file": "screens/ad-receipt-393-s1.0-d3.0.json",
+      "sha256": "32ffb84bd22d96a57fe3378fab673793208ad2fd123ab50c46aa8082ac629737",
+      "source_mtime_utc": "2026-10-22T22:14:28.191638+00:00"
+    },
+    {
+      "file": "screens/ad-receipt-393-s1.0-d3.0.pdf",
+      "sha256": "5568b552dfdc03ac83c5f4fddf90b39da0c940b907082616d25531df74271482",
+      "source_mtime_utc": "2026-10-22T22:14:28.755649+00:00"
+    },
+    {
+      "file": "screens/ad-receipt-393-s1.0-d3.0.png",
+      "sha256": "0d1cbe7bcb07dff46743e64937136d398912cf76ef96e2e3c0e15f2557a13513",
+      "source_mtime_utc": "2026-10-22T22:14:28.187638+00:00"
+    },
+    {
+      "file": "screens/ad-receipt-393-s2.0-d1.0-bottom.json",
+      "sha256": "af68e349b06135eedd3b190cdfd8fdb0bd3716d9ec978e616ce3787c8ed45f23",
+      "source_mtime_utc": "2026-10-22T22:14:30.487683+00:00"
+    },
+    {
+      "file": "screens/ad-receipt-393-s2.0-d1.0-bottom.png",
+      "sha256": "6cb5efc02d3f0b0e4217d974f6481c44555564438dd4ba964960804eaffd50f4",
+      "source_mtime_utc": "2026-10-22T22:14:30.483682+00:00"
+    },
+    {
+      "file": "screens/ad-receipt-393-s2.0-d1.0.json",
+      "sha256": "e6f8c4bd9035ac5f39afb38970932b1839bf5ff9f4b839382cff01855fb6bc76",
+      "source_mtime_utc": "2026-10-22T22:14:29.523664+00:00"
+    },
+    {
+      "file": "screens/ad-receipt-393-s2.0-d1.0.pdf",
+      "sha256": "6f2d814c2d800a0c8b17f686abbb9a207345f8fced9dffc28d1e37dd38c34d58",
+      "source_mtime_utc": "2026-10-22T22:14:30.399681+00:00"
+    },
+    {
+      "file": "screens/ad-receipt-393-s2.0-d1.0.png",
+      "sha256": "b3b8ac3b5962f11aba8f43771cd80b8385b5c278093c532dd4f239af0e04692e",
+      "source_mtime_utc": "2026-10-22T22:14:29.523664+00:00"
+    },
+    {
+      "file": "screens/ad-receipt-768-s1.0-d2.0.json",
+      "sha256": "9a4842ebe44e37af04fb9fb6838a7c0c8f6110c6dccfd330bef5c228361f5562",
+      "source_mtime_utc": "2026-10-22T22:14:31.435701+00:00"
+    },
+    {
+      "file": "screens/ad-receipt-768-s1.0-d2.0.pdf",
+      "sha256": "c0c6061f51c8523725b19b20f1a1a58de4d4c69440a69a1f7ba5dc7c3759fd5b",
+      "source_mtime_utc": "2026-10-22T22:14:32.355718+00:00"
+    },
+    {
+      "file": "screens/ad-receipt-768-s1.0-d2.0.png",
+      "sha256": "582369ab75d699f2506c0b81a3087197ab03d241d8812bb869eb88bc15d6c142",
+      "source_mtime_utc": "2026-10-22T22:14:31.435701+00:00"
+    },
+    {
+      "file": "screens/receipt-280-s1.0-d1.0.json",
+      "sha256": "f80fed5a58245b6930b9cddc0e021006c674ee99375b00307d95ff14ae5237f5",
+      "source_mtime_utc": "2026-10-22T22:14:26.371603+00:00"
+    },
+    {
+      "file": "screens/receipt-280-s1.0-d1.0.pdf",
+      "sha256": "82af75eba6ac69c768a8923cd90e2cde49cd06ea6a45520d6ad02e66b251a31e",
+      "source_mtime_utc": "2026-10-22T22:14:26.743610+00:00"
+    },
+    {
+      "file": "screens/receipt-280-s1.0-d1.0.png",
+      "sha256": "70e409e2cedbde36b2330ac4bebc931f1d4509be5504fe24327bb7188cd1696a",
+      "source_mtime_utc": "2026-10-22T22:14:26.363603+00:00"
+    },
+    {
+      "file": "screens/receipt-393-s1.0-d3.0.json",
+      "sha256": "d08e43d089b003000c01c7983e5ec7c3ee9f03721b8e7941c6a5eb3ea568a886",
+      "source_mtime_utc": "2026-10-22T22:14:27.627627+00:00"
+    },
+    {
+      "file": "screens/receipt-393-s1.0-d3.0.pdf",
+      "sha256": "12a625a4c07737a77b68936786ccb1ff83e325f41e74e18408019a1d3e10f6ac",
+      "source_mtime_utc": "2026-10-22T22:14:27.963634+00:00"
+    },
+    {
+      "file": "screens/receipt-393-s1.0-d3.0.png",
+      "sha256": "6e3bb40cb7f0543da0409b9f82ffbff360a5db33dc4f0b13031805e17ecfc424",
+      "source_mtime_utc": "2026-10-22T22:14:27.627627+00:00"
+    },
+    {
+      "file": "screens/receipt-393-s2.0-d1.0.json",
+      "sha256": "ad8d2c025cb5ab03472f4630cb089bbb164424b44ce4711b594645167cc747c0",
+      "source_mtime_utc": "2026-10-22T22:14:28.875651+00:00"
+    },
+    {
+      "file": "screens/receipt-393-s2.0-d1.0.pdf",
+      "sha256": "81cb838c6066400701941310c4cf517882e0779b2ea9b23e35143a3a09df8afd",
+      "source_mtime_utc": "2026-10-22T22:14:29.383661+00:00"
+    },
+    {
+      "file": "screens/receipt-393-s2.0-d1.0.png",
+      "sha256": "56bd285666f243eefd9b5e1c724bc956536a0c461736629fce2e0be2daf2811a",
+      "source_mtime_utc": "2026-10-22T22:14:28.875651+00:00"
+    },
+    {
+      "file": "screens/receipt-768-s1.0-d2.0.json",
+      "sha256": "94a03d570426ca16d8228e1669d1894d21f737c2dfb1b6746366dd9ea9b72fea",
+      "source_mtime_utc": "2026-10-22T22:14:30.655686+00:00"
+    },
+    {
+      "file": "screens/receipt-768-s1.0-d2.0.pdf",
+      "sha256": "c0d43f35309f52beee7e51b8f597c46ca14e8e55342d33b8833b557148652aed",
+      "source_mtime_utc": "2026-10-22T22:14:31.211696+00:00"
+    },
+    {
+      "file": "screens/receipt-768-s1.0-d2.0.png",
+      "sha256": "60122162e44a8ee538205e7880bbbe5ef6096d2704ec9e94a3290563095b6221",
+      "source_mtime_utc": "2026-10-22T22:14:30.655686+00:00"
+    }
+  ],
+  "limitations": [
+    "Screenshots demonstrate fixture rendering, not live transaction creation or device performance.",
+    "A static image cannot demonstrate horizontal scrolling or clipboard action; these are covered by separate widget checks.",
+    "At 200% text, off-viewport UUID suffix remains accessible through contained horizontal scrolling/copy and full PDF output; screenshot clipping inside that viewport is intentional."
+  ]
+}

@@ -1,0 +1,189 @@
+{
+  "review_method": "Read-only visual inspection of every rendered PDF page and every corresponding full widget PNG, plus PDF metadata and standard embedded-image comparison. No Flutter run and no images modified.",
+  "pdfs_reviewed": 4,
+  "pdf_pages_reviewed": 6,
+  "widget_pngs_reviewed": 4,
+  "artifacts": [
+    {
+      "name": "standard_free",
+      "widget_width_dp": 393,
+      "text_scale": 1,
+      "locale": "ckb",
+      "pdf": {
+        "file": "proxo_app/build/receipt-reference/exports/standard_free.pdf",
+        "sha256": "80c3836972e2c8f487d4ecac6926d1080c562c8641e905f5b3ff7a2ea628cdeb"
+      },
+      "source_widget_png": {
+        "file": "proxo_app/build/receipt-reference/exports/standard_free.png",
+        "sha256": "b5f238962ffa3baae5ccd80f3db7059111c2bb03beeb46ed154e067984b32699",
+        "pixels": [
+          1572,
+          2508
+        ]
+      },
+      "page_count": 1,
+      "rendered_pages": [
+        {
+          "file": "proxo_app/build/receipt-reference/rendered/standard_free-page-1.png",
+          "sha256": "4676e06d1eb518d762916971c11f6be2afd1f252a21c3f8f490bff951e707da2",
+          "page": 1,
+          "pixels": [
+            834,
+            1179
+          ],
+          "visually_reviewed": true
+        }
+      ],
+      "full_identifier_metadata": "PARZNFHCOKVL 720079a8-9cf7-44de-b3af-f396d1aaf7d8",
+      "visual_result": "No clipped text, overlapping rows or distorted logo observed. Blue headings, original receipt typography and aligned amounts are preserved.",
+      "embedded_image_vs_widget_rgb": {
+        "dimensions": [
+          1572,
+          2508
+        ],
+        "differing_pixels": 0,
+        "mean_absolute_channel_error": 0.0,
+        "maximum_channel_error": 0
+      }
+    },
+    {
+      "name": "transaction_standard",
+      "widget_width_dp": 393,
+      "text_scale": 1,
+      "locale": "ckb",
+      "pdf": {
+        "file": "proxo_app/build/receipt-reference/exports/transaction_standard.pdf",
+        "sha256": "a3ef92dbaff32f180e8c8c6e0360ca954927711e8e6cf16a3e145e915ddffbca"
+      },
+      "source_widget_png": {
+        "file": "proxo_app/build/receipt-reference/exports/transaction_standard.png",
+        "sha256": "05b8a0b7498a9e7f362c6b988560d5b61d8d45b2ff3dc8c044029141a499bcc0",
+        "pixels": [
+          1572,
+          1768
+        ]
+      },
+      "page_count": 1,
+      "rendered_pages": [
+        {
+          "file": "proxo_app/build/receipt-reference/rendered/transaction_standard-page-1.png",
+          "sha256": "1b66e6a79b619fcabe5fe70eedbd58506b898f9a4194c9e7382361e787e9cf5a",
+          "page": 1,
+          "pixels": [
+            834,
+            1179
+          ],
+          "visually_reviewed": true
+        }
+      ],
+      "full_identifier_metadata": "83062db4-47d0-4ce1-a3b4-33a766783553 720079a8-9cf7-44de-b3af-f396d1aaf7d8",
+      "visual_result": "No clipped text, overlapping rows or distorted logo observed. Blue headings, original receipt typography and aligned amounts are preserved.",
+      "embedded_image_vs_widget_rgb": {
+        "dimensions": [
+          1572,
+          1768
+        ],
+        "differing_pixels": 0,
+        "mean_absolute_channel_error": 0.0,
+        "maximum_channel_error": 0
+      }
+    },
+    {
+      "name": "narrow_paid",
+      "widget_width_dp": 280,
+      "text_scale": 2,
+      "locale": "ckb",
+      "pdf": {
+        "file": "proxo_app/build/receipt-reference/exports/narrow_paid.pdf",
+        "sha256": "e5b64ef215d402101d297af7d2769c10753d92914fa70209be4c6895c00c826a"
+      },
+      "source_widget_png": {
+        "file": "proxo_app/build/receipt-reference/exports/narrow_paid.png",
+        "sha256": "30311683c3659eeb5b53b8d883d8b64b9c76a8331b4f09694660ecb40e4d58c2",
+        "pixels": [
+          1120,
+          5332
+        ]
+      },
+      "page_count": 2,
+      "rendered_pages": [
+        {
+          "file": "proxo_app/build/receipt-reference/rendered/narrow_paid-page-1.png",
+          "sha256": "283cdeb523758ba7c97cb925bca483be0e5c8e8ea7d088c2207d223fd8cfe7d4",
+          "page": 1,
+          "pixels": [
+            834,
+            1179
+          ],
+          "visually_reviewed": true
+        },
+        {
+          "file": "proxo_app/build/receipt-reference/rendered/narrow_paid-page-2.png",
+          "sha256": "69e06bf949eb24d11d1658f4b50d1b9cd104c43eddc0f54649d687f5ec0c49eb",
+          "page": 2,
+          "pixels": [
+            834,
+            1179
+          ],
+          "visually_reviewed": true
+        }
+      ],
+      "full_identifier_metadata": "PARZNFHCOKVL 83062db4-47d0-4ce1-a3b4-33a766783553 720079a8-9cf7-44de-b3af-f396d1aaf7d8",
+      "visual_result": "No clipped text, overlapping rows or distorted logo observed. Blue headings, original receipt typography and aligned amounts are preserved.",
+      "identifier_review": "The widget PNG intentionally shows the scrolled identifier suffix. The actual PDF visibly contains the complete LTR reference on one line; metadata retains the complete raw value.",
+      "pagination_review": "All rows and headings remain complete across the page break."
+    },
+    {
+      "name": "transaction_narrow",
+      "widget_width_dp": 280,
+      "text_scale": 2,
+      "locale": "ar",
+      "pdf": {
+        "file": "proxo_app/build/receipt-reference/exports/transaction_narrow.pdf",
+        "sha256": "3f0de71aac260d5f53c19f85755338e1e8c218fba888a050054c3de17f364f74"
+      },
+      "source_widget_png": {
+        "file": "proxo_app/build/receipt-reference/exports/transaction_narrow.png",
+        "sha256": "ddd78b78466e82fe1831174237e9469538bea41fd80afe149d759ae69d4dc436",
+        "pixels": [
+          1120,
+          3460
+        ]
+      },
+      "page_count": 2,
+      "rendered_pages": [
+        {
+          "file": "proxo_app/build/receipt-reference/rendered/transaction_narrow-page-1.png",
+          "sha256": "e75ac9f8bbe00a8be58f9a6b239d76057646bb4732cf41740165cf45aa587c31",
+          "page": 1,
+          "pixels": [
+            834,
+            1179
+          ],
+          "visually_reviewed": true
+        },
+        {
+          "file": "proxo_app/build/receipt-reference/rendered/transaction_narrow-page-2.png",
+          "sha256": "0ab348c887f35c961123e50eeeb32d54d980157399e122c8a108a78b35f6012e",
+          "page": 2,
+          "pixels": [
+            834,
+            1179
+          ],
+          "visually_reviewed": true
+        }
+      ],
+      "full_identifier_metadata": "83062db4-47d0-4ce1-a3b4-33a766783553 720079a8-9cf7-44de-b3af-f396d1aaf7d8",
+      "visual_result": "No clipped text, overlapping rows or distorted logo observed. Blue headings, original receipt typography and aligned amounts are preserved.",
+      "identifier_review": "The widget PNG intentionally shows the scrolled identifier suffix. The actual PDF visibly contains the complete LTR reference on one line; metadata retains the complete raw value.",
+      "pagination_review": "All rows and headings remain complete across the page break.",
+      "pagination_note": "The final multiline advertisement-name row continues on page 2 to preserve the active 200% text size; this leaves unused space on that page."
+    }
+  ],
+  "observed_layout_defects": [],
+  "limits": [
+    "Fixture data only; no production transaction or physical printer tested.",
+    "Rendered PDF pages use PyMuPDF at 834x1179 pixels. Renderer-specific antialiasing can differ from other PDF viewers.",
+    "Exact original-artwork pixel identity is separately verified for the canonical advertisement fixture; payment receipts contain their own transaction fields."
+  ]
+}
