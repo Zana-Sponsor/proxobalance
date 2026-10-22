@@ -1,0 +1,10 @@
+   Woah! You appear to be trying to run flutter as root.
+   We strongly recommend running the flutter tool without superuser privileges.
+  /
+📎
+00:00 +0: loading /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/checkout_logo_capture_temp_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: capture official checkout 393.0 1.0
+00:01 +1: capture official checkout 320.0 2.0
+00:02 +2: (tearDownAll)
+00:02 +2: All tests passed!

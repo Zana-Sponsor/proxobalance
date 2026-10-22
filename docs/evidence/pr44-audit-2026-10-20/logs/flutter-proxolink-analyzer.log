@@ -1,0 +1,66 @@
+Analyzing 23 items...                                           
+
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/controllers/proxolink_pages_controller.dart:73:11 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/controllers/proxolink_pages_controller.dart:97:9 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/controllers/proxolink_pages_controller.dart:106:7 • curly_braces_in_flow_control_structures
+   info • Unnecessary 'const' keyword. Try removing the keyword • lib/models/proxolink_template_meta.dart:169:17 • unnecessary_const
+   info • Unnecessary 'const' keyword. Try removing the keyword • lib/models/proxolink_template_meta.dart:174:16 • unnecessary_const
+   info • Unnecessary 'const' keyword. Try removing the keyword • lib/models/proxolink_template_meta.dart:175:14 • unnecessary_const
+   info • Unnecessary 'const' keyword. Try removing the keyword • lib/models/proxolink_template_meta.dart:183:17 • unnecessary_const
+   info • Unnecessary 'const' keyword. Try removing the keyword • lib/models/proxolink_template_meta.dart:188:16 • unnecessary_const
+   info • Unnecessary 'const' keyword. Try removing the keyword • lib/models/proxolink_template_meta.dart:189:14 • unnecessary_const
+   info • Unnecessary 'const' keyword. Try removing the keyword • lib/models/proxolink_template_meta.dart:197:17 • unnecessary_const
+   info • Unnecessary 'const' keyword. Try removing the keyword • lib/models/proxolink_template_meta.dart:202:16 • unnecessary_const
+   info • Unnecessary 'const' keyword. Try removing the keyword • lib/models/proxolink_template_meta.dart:203:14 • unnecessary_const
+   info • Unnecessary 'const' keyword. Try removing the keyword • lib/models/proxolink_template_meta.dart:211:17 • unnecessary_const
+   info • Unnecessary 'const' keyword. Try removing the keyword • lib/models/proxolink_template_meta.dart:216:16 • unnecessary_const
+   info • Unnecessary 'const' keyword. Try removing the keyword • lib/models/proxolink_template_meta.dart:217:14 • unnecessary_const
+   info • Unnecessary 'const' keyword. Try removing the keyword • lib/models/proxolink_template_meta.dart:225:17 • unnecessary_const
+   info • Unnecessary 'const' keyword. Try removing the keyword • lib/models/proxolink_template_meta.dart:230:16 • unnecessary_const
+   info • Unnecessary 'const' keyword. Try removing the keyword • lib/models/proxolink_template_meta.dart:231:14 • unnecessary_const
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/proxolink_create_page_screen.dart:89:7 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/proxolink_create_page_screen.dart:134:9 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/proxolink_create_page_screen.dart:205:9 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/proxolink_create_page_screen.dart:221:7 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/proxolink_create_page_screen.dart:223:7 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/proxolink_create_page_screen.dart:226:7 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/proxolink_create_page_screen.dart:231:7 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/proxolink_create_page_screen.dart:374:11 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/proxolink_page_details_screen.dart:56:15 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/proxolink_page_details_screen.dart:330:51 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/proxolink_page_editor.dart:176:11 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/proxolink_page_editor.dart:204:7 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/proxolink_page_editor.dart:243:9 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/proxolink_page_editor.dart:249:9 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/proxolink_page_editor.dart:282:9 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/proxolink_page_editor.dart:335:9 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/proxolink_page_editor.dart:352:9 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/proxolink_page_editor.dart:426:7 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/proxolink_page_editor.dart:458:9 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/proxolink_page_editor.dart:483:9 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/proxolink_page_editor.dart:806:33 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/proxolink_page_editor.dart:812:33 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/proxolink_page_editor_screen.dart:29:7 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/tools_screen.dart:57:7 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/tools_screen.dart:89:7 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/tools_screen.dart:92:7 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/tools_screen.dart:112:9 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/tools_screen.dart:148:7 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/tools_screen.dart:153:9 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/tools_screen.dart:214:37 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/screens/tools_screen.dart:253:9 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/services/proxolink_service.dart:227:7 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/services/proxolink_service.dart:351:7 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/services/proxolink_service.dart:360:7 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/widgets/proxo_refresh.dart:159:47 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/widgets/proxolink_page_card.dart:45:7 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/widgets/proxolink_preview.dart:73:7 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/widgets/proxolink_preview.dart:135:7 • curly_braces_in_flow_control_structures
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • test/ad_notice_deadline_test.dart:353:39 • prefer_const_constructors
+   info • Don't invoke 'print' in production code. Try using a logging framework • test/proxo_banner_lifecycle_test.dart:47:5 • avoid_print
+   info • Don't invoke 'print' in production code. Try using a logging framework • test/proxo_banner_lifecycle_test.dart:62:5 • avoid_print
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • test/proxo_banner_lifecycle_test.dart:67:13 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • test/proxo_banner_lifecycle_test.dart:84:13 • curly_braces_in_flow_control_structures
+   info • Don't invoke 'print' in production code. Try using a logging framework • test/proxo_tab_stack_test.dart:59:7 • avoid_print
+
+62 issues found. (ran in 6.8s)

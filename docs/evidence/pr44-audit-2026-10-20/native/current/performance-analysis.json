@@ -1,0 +1,989 @@
+{
+  "mode": "profile AOT",
+  "environment": "GitHub ubuntu-latest Android15/API35 x86_64 google_apis emulator; SwiftShader software GPU; Flutter3.47.2",
+  "actual_physical_viewport_px": [
+    1080,
+    1920
+  ],
+  "dpr": 2.75,
+  "logical_viewport_dp": [
+    392.72727272727275,
+    698.1818181818181
+  ],
+  "requested_size_discrepancy": "Runner requested1080x2340; observed Android wm override, Flutter view and screenshot dimensions were1080x1920. Results are labelled with observed dimensions.",
+  "scenario_count": 45,
+  "method": "Concatenate actual engine FrameTiming microsecond arrays across all45 fixture mount/action/scroll scenarios. Nearest-rank percentiles: sorted[ceil(p*n)-1]. Budget threshold is strictly greater than16ms, matching Flutter FrameTimingSummarizer. These are scripted mixed/cold scenarios, not sustained production frame-rate sampling.",
+  "build": {
+    "frame_count": 1515,
+    "mean_ms": 1.772,
+    "p50_ms": 0.85,
+    "p95_ms": 5.962,
+    "p99_ms": 14.335,
+    "max_ms": 97.113,
+    "over_16ms": 10
+  },
+  "raster": {
+    "frame_count": 1515,
+    "mean_ms": 42.677,
+    "p50_ms": 30.464,
+    "p95_ms": 92.598,
+    "p99_ms": 140.545,
+    "max_ms": 672.341,
+    "over_16ms": 1347
+  },
+  "either_over_16ms": 1347,
+  "per_scenario": [
+    {
+      "screen": "splash",
+      "build": {
+        "frame_count": 3,
+        "mean_ms": 1.122,
+        "p50_ms": 0.413,
+        "p95_ms": 2.813,
+        "p99_ms": 2.813,
+        "max_ms": 2.813,
+        "over_16ms": 0
+      },
+      "raster": {
+        "frame_count": 3,
+        "mean_ms": 249.072,
+        "p50_ms": 69.642,
+        "p95_ms": 622.602,
+        "p99_ms": 622.602,
+        "max_ms": 622.602,
+        "over_16ms": 3
+      }
+    },
+    {
+      "screen": "home",
+      "build": {
+        "frame_count": 6,
+        "mean_ms": 5.027,
+        "p50_ms": 3.694,
+        "p95_ms": 11.065,
+        "p99_ms": 11.065,
+        "max_ms": 11.065,
+        "over_16ms": 0
+      },
+      "raster": {
+        "frame_count": 6,
+        "mean_ms": 220.808,
+        "p50_ms": 100.372,
+        "p95_ms": 672.341,
+        "p99_ms": 672.341,
+        "max_ms": 672.341,
+        "over_16ms": 6
+      }
+    },
+    {
+      "screen": "ads",
+      "build": {
+        "frame_count": 5,
+        "mean_ms": 2.654,
+        "p50_ms": 0.619,
+        "p95_ms": 7.262,
+        "p99_ms": 7.262,
+        "max_ms": 7.262,
+        "over_16ms": 0
+      },
+      "raster": {
+        "frame_count": 5,
+        "mean_ms": 118.48,
+        "p50_ms": 63.938,
+        "p95_ms": 275.025,
+        "p99_ms": 275.025,
+        "max_ms": 275.025,
+        "over_16ms": 5
+      }
+    },
+    {
+      "screen": "ad-create",
+      "build": {
+        "frame_count": 8,
+        "mean_ms": 7.014,
+        "p50_ms": 2.042,
+        "p95_ms": 34.23,
+        "p99_ms": 34.23,
+        "max_ms": 34.23,
+        "over_16ms": 1
+      },
+      "raster": {
+        "frame_count": 8,
+        "mean_ms": 84.372,
+        "p50_ms": 80.428,
+        "p95_ms": 101.08,
+        "p99_ms": 101.08,
+        "max_ms": 101.08,
+        "over_16ms": 8
+      }
+    },
+    {
+      "screen": "ad-confirmation",
+      "build": {
+        "frame_count": 75,
+        "mean_ms": 1.864,
+        "p50_ms": 1.299,
+        "p95_ms": 4.759,
+        "p99_ms": 9.425,
+        "max_ms": 9.425,
+        "over_16ms": 0
+      },
+      "raster": {
+        "frame_count": 75,
+        "mean_ms": 45.384,
+        "p50_ms": 42.884,
+        "p95_ms": 65.788,
+        "p99_ms": 68.622,
+        "max_ms": 68.622,
+        "over_16ms": 75
+      }
+    },
+    {
+      "screen": "ad-details",
+      "build": {
+        "frame_count": 7,
+        "mean_ms": 2.549,
+        "p50_ms": 0.484,
+        "p95_ms": 10.114,
+        "p99_ms": 10.114,
+        "max_ms": 10.114,
+        "over_16ms": 0
+      },
+      "raster": {
+        "frame_count": 7,
+        "mean_ms": 68.78,
+        "p50_ms": 59.288,
+        "p95_ms": 134.003,
+        "p99_ms": 134.003,
+        "max_ms": 134.003,
+        "over_16ms": 7
+      }
+    },
+    {
+      "screen": "tools",
+      "build": {
+        "frame_count": 21,
+        "mean_ms": 1.572,
+        "p50_ms": 0.4,
+        "p95_ms": 4.8,
+        "p99_ms": 13.789,
+        "max_ms": 13.789,
+        "over_16ms": 0
+      },
+      "raster": {
+        "frame_count": 21,
+        "mean_ms": 76.425,
+        "p50_ms": 75.579,
+        "p95_ms": 90.479,
+        "p99_ms": 98.18,
+        "max_ms": 98.18,
+        "over_16ms": 21
+      }
+    },
+    {
+      "screen": "tools-empty",
+      "build": {
+        "frame_count": 4,
+        "mean_ms": 1.135,
+        "p50_ms": 0.203,
+        "p95_ms": 2.239,
+        "p99_ms": 2.239,
+        "max_ms": 2.239,
+        "over_16ms": 0
+      },
+      "raster": {
+        "frame_count": 4,
+        "mean_ms": 30.859,
+        "p50_ms": 19.295,
+        "p95_ms": 60.789,
+        "p99_ms": 60.789,
+        "max_ms": 60.789,
+        "over_16ms": 4
+      }
+    },
+    {
+      "screen": "page-create",
+      "build": {
+        "frame_count": 8,
+        "mean_ms": 3.355,
+        "p50_ms": 1.633,
+        "p95_ms": 9.31,
+        "p99_ms": 9.31,
+        "max_ms": 9.31,
+        "over_16ms": 0
+      },
+      "raster": {
+        "frame_count": 8,
+        "mean_ms": 93.076,
+        "p50_ms": 97.187,
+        "p95_ms": 114.567,
+        "p99_ms": 114.567,
+        "max_ms": 114.567,
+        "over_16ms": 8
+      }
+    },
+    {
+      "screen": "page-details",
+      "build": {
+        "frame_count": 27,
+        "mean_ms": 5.044,
+        "p50_ms": 0.748,
+        "p95_ms": 7.026,
+        "p99_ms": 97.113,
+        "max_ms": 97.113,
+        "over_16ms": 1
+      },
+      "raster": {
+        "frame_count": 27,
+        "mean_ms": 93.692,
+        "p50_ms": 76.624,
+        "p95_ms": 135.284,
+        "p99_ms": 361.743,
+        "max_ms": 361.743,
+        "over_16ms": 27
+      }
+    },
+    {
+      "screen": "page-edit",
+      "build": {
+        "frame_count": 53,
+        "mean_ms": 2.791,
+        "p50_ms": 1.899,
+        "p95_ms": 7.84,
+        "p99_ms": 10.38,
+        "max_ms": 10.38,
+        "over_16ms": 0
+      },
+      "raster": {
+        "frame_count": 53,
+        "mean_ms": 82.959,
+        "p50_ms": 82.616,
+        "p95_ms": 110.914,
+        "p99_ms": 119.916,
+        "max_ms": 119.916,
+        "over_16ms": 53
+      }
+    },
+    {
+      "screen": "profile",
+      "build": {
+        "frame_count": 8,
+        "mean_ms": 2.009,
+        "p50_ms": 0.271,
+        "p95_ms": 8.832,
+        "p99_ms": 8.832,
+        "max_ms": 8.832,
+        "over_16ms": 0
+      },
+      "raster": {
+        "frame_count": 8,
+        "mean_ms": 40.803,
+        "p50_ms": 39.473,
+        "p95_ms": 67.115,
+        "p99_ms": 67.115,
+        "max_ms": 67.115,
+        "over_16ms": 8
+      }
+    },
+    {
+      "screen": "profile-edit",
+      "build": {
+        "frame_count": 50,
+        "mean_ms": 1.301,
+        "p50_ms": 0.846,
+        "p95_ms": 3.922,
+        "p99_ms": 6.441,
+        "max_ms": 6.441,
+        "over_16ms": 0
+      },
+      "raster": {
+        "frame_count": 50,
+        "mean_ms": 21.786,
+        "p50_ms": 19.948,
+        "p95_ms": 32.874,
+        "p99_ms": 34.548,
+        "max_ms": 34.548,
+        "over_16ms": 49
+      }
+    },
+    {
+      "screen": "deposit",
+      "build": {
+        "frame_count": 3,
+        "mean_ms": 2.678,
+        "p50_ms": 1.499,
+        "p95_ms": 6.287,
+        "p99_ms": 6.287,
+        "max_ms": 6.287,
+        "over_16ms": 0
+      },
+      "raster": {
+        "frame_count": 3,
+        "mean_ms": 42.096,
+        "p50_ms": 32.963,
+        "p95_ms": 71.314,
+        "p99_ms": 71.314,
+        "max_ms": 71.314,
+        "over_16ms": 3
+      }
+    },
+    {
+      "screen": "transaction",
+      "build": {
+        "frame_count": 36,
+        "mean_ms": 0.682,
+        "p50_ms": 0.402,
+        "p95_ms": 3.3,
+        "p99_ms": 6.283,
+        "max_ms": 6.283,
+        "over_16ms": 0
+      },
+      "raster": {
+        "frame_count": 36,
+        "mean_ms": 52.525,
+        "p50_ms": 52.485,
+        "p95_ms": 67.733,
+        "p99_ms": 71.33,
+        "max_ms": 71.33,
+        "over_16ms": 36
+      }
+    },
+    {
+      "screen": "notifications",
+      "build": {
+        "frame_count": 4,
+        "mean_ms": 3.535,
+        "p50_ms": 0.444,
+        "p95_ms": 6.864,
+        "p99_ms": 6.864,
+        "max_ms": 6.864,
+        "over_16ms": 0
+      },
+      "raster": {
+        "frame_count": 4,
+        "mean_ms": 78.996,
+        "p50_ms": 36.087,
+        "p95_ms": 224.393,
+        "p99_ms": 224.393,
+        "max_ms": 224.393,
+        "over_16ms": 4
+      }
+    },
+    {
+      "screen": "faq",
+      "build": {
+        "frame_count": 3,
+        "mean_ms": 1.631,
+        "p50_ms": 0.32,
+        "p95_ms": 4.388,
+        "p99_ms": 4.388,
+        "max_ms": 4.388,
+        "over_16ms": 0
+      },
+      "raster": {
+        "frame_count": 3,
+        "mean_ms": 58.833,
+        "p50_ms": 58.373,
+        "p95_ms": 60.741,
+        "p99_ms": 60.741,
+        "max_ms": 60.741,
+        "over_16ms": 3
+      }
+    },
+    {
+      "screen": "tutorial",
+      "build": {
+        "frame_count": 8,
+        "mean_ms": 1.212,
+        "p50_ms": 0.44,
+        "p95_ms": 4.55,
+        "p99_ms": 4.55,
+        "max_ms": 4.55,
+        "over_16ms": 0
+      },
+      "raster": {
+        "frame_count": 8,
+        "mean_ms": 36.115,
+        "p50_ms": 34.407,
+        "p95_ms": 57.003,
+        "p99_ms": 57.003,
+        "max_ms": 57.003,
+        "over_16ms": 6
+      }
+    },
+    {
+      "screen": "results",
+      "build": {
+        "frame_count": 13,
+        "mean_ms": 1.884,
+        "p50_ms": 0.488,
+        "p95_ms": 9.419,
+        "p99_ms": 9.419,
+        "max_ms": 9.419,
+        "over_16ms": 0
+      },
+      "raster": {
+        "frame_count": 13,
+        "mean_ms": 24.521,
+        "p50_ms": 23.248,
+        "p95_ms": 36.247,
+        "p99_ms": 36.247,
+        "max_ms": 36.247,
+        "over_16ms": 13
+      }
+    },
+    {
+      "screen": "levels",
+      "build": {
+        "frame_count": 4,
+        "mean_ms": 2.08,
+        "p50_ms": 0.197,
+        "p95_ms": 5.14,
+        "p99_ms": 5.14,
+        "max_ms": 5.14,
+        "over_16ms": 0
+      },
+      "raster": {
+        "frame_count": 4,
+        "mean_ms": 39.447,
+        "p50_ms": 45.001,
+        "p95_ms": 52.711,
+        "p99_ms": 52.711,
+        "max_ms": 52.711,
+        "over_16ms": 3
+      }
+    },
+    {
+      "screen": "tasks",
+      "build": {
+        "frame_count": 4,
+        "mean_ms": 1.186,
+        "p50_ms": 0.169,
+        "p95_ms": 2.226,
+        "p99_ms": 2.226,
+        "max_ms": 2.226,
+        "over_16ms": 0
+      },
+      "raster": {
+        "frame_count": 4,
+        "mean_ms": 18.774,
+        "p50_ms": 15.192,
+        "p95_ms": 31.103,
+        "p99_ms": 31.103,
+        "max_ms": 31.103,
+        "over_16ms": 2
+      }
+    },
+    {
+      "screen": "vouchers",
+      "build": {
+        "frame_count": 8,
+        "mean_ms": 1.122,
+        "p50_ms": 0.287,
+        "p95_ms": 3.859,
+        "p99_ms": 3.859,
+        "max_ms": 3.859,
+        "over_16ms": 0
+      },
+      "raster": {
+        "frame_count": 8,
+        "mean_ms": 71.635,
+        "p50_ms": 55.238,
+        "p95_ms": 238.531,
+        "p99_ms": 238.531,
+        "max_ms": 238.531,
+        "over_16ms": 7
+      }
+    },
+    {
+      "screen": "discounts",
+      "build": {
+        "frame_count": 4,
+        "mean_ms": 1.264,
+        "p50_ms": 0.199,
+        "p95_ms": 2.82,
+        "p99_ms": 2.82,
+        "max_ms": 2.82,
+        "over_16ms": 0
+      },
+      "raster": {
+        "frame_count": 4,
+        "mean_ms": 11.529,
+        "p50_ms": 10.404,
+        "p95_ms": 15.951,
+        "p99_ms": 15.951,
+        "max_ms": 15.951,
+        "over_16ms": 0
+      }
+    },
+    {
+      "screen": "sidebar",
+      "build": {
+        "frame_count": 20,
+        "mean_ms": 0.869,
+        "p50_ms": 0.357,
+        "p95_ms": 4.2,
+        "p99_ms": 6.234,
+        "max_ms": 6.234,
+        "over_16ms": 0
+      },
+      "raster": {
+        "frame_count": 20,
+        "mean_ms": 53.472,
+        "p50_ms": 57.289,
+        "p95_ms": 73.76,
+        "p99_ms": 76.002,
+        "max_ms": 76.002,
+        "over_16ms": 20
+      }
+    },
+    {
+      "screen": "whatsapp-preferences",
+      "build": {
+        "frame_count": 4,
+        "mean_ms": 1.476,
+        "p50_ms": 0.182,
+        "p95_ms": 2.989,
+        "p99_ms": 2.989,
+        "max_ms": 2.989,
+        "over_16ms": 0
+      },
+      "raster": {
+        "frame_count": 4,
+        "mean_ms": 12.28,
+        "p50_ms": 11.076,
+        "p95_ms": 16.692,
+        "p99_ms": 16.692,
+        "max_ms": 16.692,
+        "over_16ms": 1
+      }
+    },
+    {
+      "screen": "account-setup-error",
+      "build": {
+        "frame_count": 3,
+        "mean_ms": 1.288,
+        "p50_ms": 0.648,
+        "p95_ms": 3.026,
+        "p99_ms": 3.026,
+        "max_ms": 3.026,
+        "over_16ms": 0
+      },
+      "raster": {
+        "frame_count": 3,
+        "mean_ms": 20.807,
+        "p50_ms": 19.531,
+        "p95_ms": 25.161,
+        "p99_ms": 25.161,
+        "max_ms": 25.161,
+        "over_16ms": 3
+      }
+    },
+    {
+      "screen": "web-preview-error",
+      "build": {
+        "frame_count": 4,
+        "mean_ms": 0.926,
+        "p50_ms": 0.206,
+        "p95_ms": 1.887,
+        "p99_ms": 1.887,
+        "max_ms": 1.887,
+        "over_16ms": 0
+      },
+      "raster": {
+        "frame_count": 4,
+        "mean_ms": 13.373,
+        "p50_ms": 10.735,
+        "p95_ms": 22.972,
+        "p99_ms": 22.972,
+        "max_ms": 22.972,
+        "over_16ms": 1
+      }
+    },
+    {
+      "screen": "new-password",
+      "build": {
+        "frame_count": 3,
+        "mean_ms": 2.638,
+        "p50_ms": 1.302,
+        "p95_ms": 6.408,
+        "p99_ms": 6.408,
+        "max_ms": 6.408,
+        "over_16ms": 0
+      },
+      "raster": {
+        "frame_count": 3,
+        "mean_ms": 26.164,
+        "p50_ms": 21.697,
+        "p95_ms": 40.117,
+        "p99_ms": 40.117,
+        "max_ms": 40.117,
+        "over_16ms": 3
+      }
+    },
+    {
+      "screen": "otp",
+      "build": {
+        "frame_count": 9,
+        "mean_ms": 4.164,
+        "p50_ms": 3.048,
+        "p95_ms": 14.796,
+        "p99_ms": 14.796,
+        "max_ms": 14.796,
+        "over_16ms": 0
+      },
+      "raster": {
+        "frame_count": 9,
+        "mean_ms": 22.374,
+        "p50_ms": 22.676,
+        "p95_ms": 30.789,
+        "p99_ms": 30.789,
+        "max_ms": 30.789,
+        "over_16ms": 9
+      }
+    },
+    {
+      "screen": "ads-empty",
+      "build": {
+        "frame_count": 8,
+        "mean_ms": 1.451,
+        "p50_ms": 0.367,
+        "p95_ms": 5.729,
+        "p99_ms": 5.729,
+        "max_ms": 5.729,
+        "over_16ms": 0
+      },
+      "raster": {
+        "frame_count": 8,
+        "mean_ms": 89.33,
+        "p50_ms": 24.368,
+        "p95_ms": 373.907,
+        "p99_ms": 373.907,
+        "max_ms": 373.907,
+        "over_16ms": 7
+      }
+    },
+    {
+      "screen": "home-result-summary",
+      "build": {
+        "frame_count": 17,
+        "mean_ms": 1.27,
+        "p50_ms": 0.488,
+        "p95_ms": 5.535,
+        "p99_ms": 5.535,
+        "max_ms": 5.535,
+        "over_16ms": 0
+      },
+      "raster": {
+        "frame_count": 17,
+        "mean_ms": 41.182,
+        "p50_ms": 43.474,
+        "p95_ms": 69.481,
+        "p99_ms": 69.481,
+        "max_ms": 69.481,
+        "over_16ms": 16
+      }
+    },
+    {
+      "screen": "results-expansion",
+      "build": {
+        "frame_count": 117,
+        "mean_ms": 1.1,
+        "p50_ms": 0.682,
+        "p95_ms": 3.796,
+        "p99_ms": 7.457,
+        "max_ms": 8.616,
+        "over_16ms": 0
+      },
+      "raster": {
+        "frame_count": 117,
+        "mean_ms": 28.645,
+        "p50_ms": 25.976,
+        "p95_ms": 39.743,
+        "p99_ms": 52.857,
+        "max_ms": 140.011,
+        "over_16ms": 117
+      }
+    },
+    {
+      "screen": "menu-route-dismissal",
+      "build": {
+        "frame_count": 69,
+        "mean_ms": 0.956,
+        "p50_ms": 0.443,
+        "p95_ms": 3.664,
+        "p99_ms": 6.048,
+        "max_ms": 6.048,
+        "over_16ms": 0
+      },
+      "raster": {
+        "frame_count": 69,
+        "mean_ms": 19.12,
+        "p50_ms": 17.63,
+        "p95_ms": 35.955,
+        "p99_ms": 41.985,
+        "max_ms": 41.985,
+        "over_16ms": 41
+      }
+    },
+    {
+      "screen": "ad-validation-notice-scroll",
+      "build": {
+        "frame_count": 36,
+        "mean_ms": 2.119,
+        "p50_ms": 0.437,
+        "p95_ms": 14.071,
+        "p99_ms": 15.435,
+        "max_ms": 15.435,
+        "over_16ms": 0
+      },
+      "raster": {
+        "frame_count": 36,
+        "mean_ms": 86.488,
+        "p50_ms": 84.833,
+        "p95_ms": 105.079,
+        "p99_ms": 117.89,
+        "max_ms": 117.89,
+        "over_16ms": 36
+      }
+    },
+    {
+      "screen": "ad-create-error-recovery",
+      "build": {
+        "frame_count": 272,
+        "mean_ms": 2.325,
+        "p50_ms": 0.952,
+        "p95_ms": 9.853,
+        "p99_ms": 24.193,
+        "max_ms": 85.282,
+        "over_16ms": 7
+      },
+      "raster": {
+        "frame_count": 272,
+        "mean_ms": 48.433,
+        "p50_ms": 32.474,
+        "p95_ms": 95.213,
+        "p99_ms": 145.31,
+        "max_ms": 272.476,
+        "over_16ms": 272
+      }
+    },
+    {
+      "screen": "deposit-fib",
+      "build": {
+        "frame_count": 89,
+        "mean_ms": 1.281,
+        "p50_ms": 0.673,
+        "p95_ms": 4.354,
+        "p99_ms": 8.376,
+        "max_ms": 8.376,
+        "over_16ms": 0
+      },
+      "raster": {
+        "frame_count": 89,
+        "mean_ms": 26.904,
+        "p50_ms": 23.268,
+        "p95_ms": 58.533,
+        "p99_ms": 63.231,
+        "max_ms": 63.231,
+        "over_16ms": 88
+      }
+    },
+    {
+      "screen": "deposit-fastpay",
+      "build": {
+        "frame_count": 65,
+        "mean_ms": 1.146,
+        "p50_ms": 0.639,
+        "p95_ms": 4.445,
+        "p99_ms": 5.712,
+        "max_ms": 5.712,
+        "over_16ms": 0
+      },
+      "raster": {
+        "frame_count": 65,
+        "mean_ms": 32.182,
+        "p50_ms": 20.044,
+        "p95_ms": 70.986,
+        "p99_ms": 318.438,
+        "max_ms": 318.438,
+        "over_16ms": 62
+      }
+    },
+    {
+      "screen": "ad-video-example",
+      "build": {
+        "frame_count": 16,
+        "mean_ms": 4.684,
+        "p50_ms": 1.918,
+        "p95_ms": 16.802,
+        "p99_ms": 16.802,
+        "max_ms": 16.802,
+        "over_16ms": 1
+      },
+      "raster": {
+        "frame_count": 16,
+        "mean_ms": 89.281,
+        "p50_ms": 87.334,
+        "p95_ms": 117.727,
+        "p99_ms": 117.727,
+        "max_ms": 117.727,
+        "over_16ms": 16
+      }
+    },
+    {
+      "screen": "page-example",
+      "build": {
+        "frame_count": 14,
+        "mean_ms": 4.165,
+        "p50_ms": 2.852,
+        "p95_ms": 15.438,
+        "p99_ms": 15.438,
+        "max_ms": 15.438,
+        "over_16ms": 0
+      },
+      "raster": {
+        "frame_count": 14,
+        "mean_ms": 98.058,
+        "p50_ms": 85.839,
+        "p95_ms": 155.434,
+        "p99_ms": 155.434,
+        "max_ms": 155.434,
+        "over_16ms": 14
+      }
+    },
+    {
+      "screen": "auth-login",
+      "build": {
+        "frame_count": 33,
+        "mean_ms": 1.231,
+        "p50_ms": 0.5,
+        "p95_ms": 4.343,
+        "p99_ms": 7.968,
+        "max_ms": 7.968,
+        "over_16ms": 0
+      },
+      "raster": {
+        "frame_count": 33,
+        "mean_ms": 38.523,
+        "p50_ms": 44.78,
+        "p95_ms": 63.087,
+        "p99_ms": 64.813,
+        "max_ms": 64.813,
+        "over_16ms": 29
+      }
+    },
+    {
+      "screen": "auth-phone",
+      "build": {
+        "frame_count": 46,
+        "mean_ms": 2.121,
+        "p50_ms": 0.783,
+        "p95_ms": 11.3,
+        "p99_ms": 15.036,
+        "max_ms": 15.036,
+        "over_16ms": 0
+      },
+      "raster": {
+        "frame_count": 46,
+        "mean_ms": 20.834,
+        "p50_ms": 14.812,
+        "p95_ms": 46.104,
+        "p99_ms": 55.75,
+        "max_ms": 55.75,
+        "over_16ms": 22
+      }
+    },
+    {
+      "screen": "auth-signup",
+      "build": {
+        "frame_count": 43,
+        "mean_ms": 1.239,
+        "p50_ms": 0.559,
+        "p95_ms": 4.528,
+        "p99_ms": 8.434,
+        "max_ms": 8.434,
+        "over_16ms": 0
+      },
+      "raster": {
+        "frame_count": 43,
+        "mean_ms": 34.646,
+        "p50_ms": 29.135,
+        "p95_ms": 63.042,
+        "p99_ms": 69.456,
+        "max_ms": 69.456,
+        "over_16ms": 28
+      }
+    },
+    {
+      "screen": "auth-recovery",
+      "build": {
+        "frame_count": 29,
+        "mean_ms": 1.305,
+        "p50_ms": 0.703,
+        "p95_ms": 4.732,
+        "p99_ms": 9.117,
+        "max_ms": 9.117,
+        "over_16ms": 0
+      },
+      "raster": {
+        "frame_count": 29,
+        "mean_ms": 23.885,
+        "p50_ms": 19.144,
+        "p95_ms": 49.817,
+        "p99_ms": 51.38,
+        "max_ms": 51.38,
+        "over_16ms": 18
+      }
+    },
+    {
+      "screen": "auth-channel-cycles",
+      "build": {
+        "frame_count": 200,
+        "mean_ms": 1.303,
+        "p50_ms": 0.864,
+        "p95_ms": 3.99,
+        "p99_ms": 6.085,
+        "max_ms": 10.52,
+        "over_16ms": 0
+      },
+      "raster": {
+        "frame_count": 200,
+        "mean_ms": 24.629,
+        "p50_ms": 19.698,
+        "p95_ms": 55.582,
+        "p99_ms": 64.893,
+        "max_ms": 69.263,
+        "over_16ms": 138
+      }
+    },
+    {
+      "screen": "home-refresh",
+      "build": {
+        "frame_count": 56,
+        "mean_ms": 1.012,
+        "p50_ms": 0.694,
+        "p95_ms": 3.513,
+        "p99_ms": 6.004,
+        "max_ms": 6.004,
+        "over_16ms": 0
+      },
+      "raster": {
+        "frame_count": 56,
+        "mean_ms": 38.111,
+        "p50_ms": 36.639,
+        "p95_ms": 58.576,
+        "p99_ms": 65.307,
+        "max_ms": 65.307,
+        "over_16ms": 55
+      }
+    }
+  ],
+  "interpretation": "Functional profile fixture passed. Software rasterization exceeded16ms on1347/1515 recorded frames; this run does not demonstrate60fps or smooth physical-device performance. UI build timing is reported separately from GPU/raster timing. Physical-device profiling remains required before a smoothness claim.",
+  "limits": [
+    "No real payment initiation, FCM network delivery or hosted writes; all non-GET calls are rejected by the local fixture.",
+    "No hardware-GPU or physical-device timing.",
+    "Selected native screens are standalone widget hosts; main-shell navigation is omitted except for the explicit real Drawer route harness.",
+    "App exceptions and overflow assertions are covered by fixture assertions; this is not exhaustive device coverage."
+  ]
+}

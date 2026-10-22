@@ -1,0 +1,23 @@
+{
+  "repository": "Zana-Sponsor/proxobalance",
+  "pull_request": 44,
+  "source_commit": "12e4e7cc9048449cd46d347597fbedda714a5563",
+  "source_tree": "f73cb469f9a3ea92e299ecb8da07c3aff0d39576",
+  "source_parents": [
+    "3a90b93059a2a74d7eb37eb3f509582cce2fa366"
+  ],
+  "tested_merge_commit": "520028fa22f3e2eb9f2d565b8ba5b4e65fc1ccb2",
+  "tested_merge_tree": "f73cb469f9a3ea92e299ecb8da07c3aff0d39576",
+  "tested_merge_parents": [
+    "b86c93466fa993d93934fb72c5999761782fdbb1",
+    "12e4e7cc9048449cd46d347597fbedda714a5563"
+  ],
+  "complete_tree_identical": true,
+  "verification": "GitHub REST git/commits; pull_request workflow head_sha matches source",
+  "workflow_runs": {
+    "verify": 39847041768,
+    "android_profile": 39847041747,
+    "ui_evidence": 39847041757,
+    "real_examples": 39847041760
+  }
+}

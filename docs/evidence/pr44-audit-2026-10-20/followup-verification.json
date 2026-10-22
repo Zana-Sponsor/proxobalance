@@ -1,0 +1,182 @@
+{
+  "recorded_at_utc": "2026-10-22T20:12:11.427289+00:00",
+  "base_source_commit": "3a90b93059a2a74d7eb37eb3f509582cce2fa366",
+  "current_local_head": "3a90b93059a2a74d7eb37eb3f509582cce2fa366",
+  "verified_source_sha256": {
+    ".github/workflows/polish-runtime.yml": "28a8710d957df04a2257e132a5b177ef2dcc589cd911a2a7cc41517a4a8add27",
+    "proxo_app/android/app/src/profile/kotlin/com/proxo/proxoapp/PolishRuntimeActivity.kt": "7446f27d5a85cb555ff359cc5df88c3cd6454010cf8f163f361863e149bcce4b",
+    "proxo_app/integration_test/polish_runtime_test.dart": "4697008a4c79394f964732e016f75f8a09cc3d6ec57c2d1226db9c8c99d43569",
+    "proxo_app/lib/main.dart": "2edaed9a82cede8aa52fdc8af18ea2624c11afedb5ee04ec9693cf13b81dff1d",
+    "proxo_app/lib/widgets/fastpay_checkout_sheet.dart": "48df276d7f859796c50fbd792583339a25253cc891711bfec9dbadddb729a17c",
+    "proxo_app/lib/widgets/proxo_drawer_navigation.dart": "b73aadc23ce2eb0e0653b2bd1f87eaca8eb483ced3fb8f4d9341b738402b7630",
+    "proxo_app/test/deposit_screen_test.dart": "aee58f71344fec585e6ab354b01b54013213eaa487c2a711908f9a6fa3c9fc62",
+    "proxo_app/test/proxo_drawer_back_test.dart": "361a8a35b0793aebef6119979679f0cbe5448b7fa2d738654aa39fac8c248e1c",
+    "proxo_app/test_driver/polish_runtime_driver.dart": "66fc20fe1caf15781712d3c23619e2db652c767c6233b32f03fb5e0ec863047a",
+    "scripts/run-polish-runtime.py": "ac98eb580d09e0ab7e8f0ec5992049c65a7c0ea99a39ef3bf74706419436d1c5",
+    "test/polish_runtime_runner_test.py": "2ae40202c1c16e661fb1c17165b06d58ae2357a56323441ac1c19d78d7701db8"
+  },
+  "scope": [
+    "Root drawer Android Back registration notification and regression coverage",
+    "FastPay official shared logo and responsive receipt/reference summary",
+    "Bounded native profile runner, driver and partial-runtime recovery evidence"
+  ],
+  "environment_reference": "local-verification.json",
+  "full_suite": {
+    "passed": 1186,
+    "failed": 0,
+    "skipped": 1,
+    "exit_code": 0,
+    "elapsed_reported_seconds": 102,
+    "log": "logs/followup-flutter-full.log",
+    "skip": "The staging-only Firebase/token suppression case needs guarded staging build defines; that fixture passed separately at the base checkpoint."
+  },
+  "focused_drawer_and_menu": {
+    "passed": 7,
+    "failed": 0,
+    "exit_code": 0,
+    "log": "logs/followup-drawer-verified.log",
+    "baseline": "logs/followup-drawer-baseline-failure.log"
+  },
+  "focused_deposit_and_checkout": {
+    "passed": 19,
+    "failed": 0,
+    "exit_code": 0,
+    "log": "logs/followup-checkout-focused.log"
+  },
+  "capture_fixture": {
+    "passed": 2,
+    "failed": 0,
+    "exit_code": 0,
+    "log": "logs/followup-checkout-captures.log"
+  },
+  "analyzer": {
+    "errors": 0,
+    "warnings": 0,
+    "infos": 16,
+    "exit_code": 0,
+    "log": "logs/followup-flutter-scoped-analyzer.log",
+    "scope": [
+      "lib/widgets/proxo_drawer_navigation.dart",
+      "test/proxo_drawer_back_test.dart",
+      "lib/main.dart",
+      "lib/widgets/fastpay_checkout_sheet.dart",
+      "test/deposit_screen_test.dart",
+      "integration_test/polish_runtime_test.dart",
+      "test_driver/polish_runtime_driver.dart"
+    ]
+  },
+  "python_runner_tests": {
+    "passed": 7,
+    "failed": 0,
+    "exit_code": 0,
+    "log": "logs/followup-python-runner.log"
+  },
+  "checkout_captures": [
+    {
+      "file": "checkout-fastpay-320-s2-bottom.png",
+      "sha256": "c03cbae41f5cb4bb7cc7a1ce7cd8c837fa57935737512266b92d8bb153a6c617",
+      "metadata": {
+        "fixture": "Actual DepositScreen to FastPayCheckoutSheet; rejecting fixture transport; no checkout initiated",
+        "viewport_dp": [
+          320.0,
+          740
+        ],
+        "text_scale": 2.0,
+        "device_pixel_ratio": 2,
+        "monospace_fixture_font": "DejaVu Sans Mono (Linux fixture substitute for platform monospace)",
+        "capture_pixel_ratio": 2,
+        "manual_requests": 0,
+        "notification_requests": 0,
+        "image_assets": [
+          "ResizeImage()",
+          "ResizeImage()",
+          "ResizeImage()"
+        ]
+      }
+    },
+    {
+      "file": "checkout-fastpay-320-s2.png",
+      "sha256": "01a028ccf934ed7e9d0fa1c0ea6576ae215571c1dec8763bffdd7b5c354cec2b",
+      "metadata": {
+        "fixture": "Actual DepositScreen to FastPayCheckoutSheet; rejecting fixture transport; no checkout initiated",
+        "viewport_dp": [
+          320.0,
+          740
+        ],
+        "text_scale": 2.0,
+        "device_pixel_ratio": 2,
+        "monospace_fixture_font": "DejaVu Sans Mono (Linux fixture substitute for platform monospace)",
+        "capture_pixel_ratio": 2,
+        "manual_requests": 0,
+        "notification_requests": 0,
+        "image_assets": [
+          "ResizeImage()",
+          "ResizeImage()",
+          "ResizeImage()"
+        ]
+      }
+    },
+    {
+      "file": "checkout-fastpay-393-s1-bottom.png",
+      "sha256": "f645a0dea541a533c7c433368502c1cd145c37b4c28576bbc31982c5b0ad6f66",
+      "metadata": {
+        "fixture": "Actual DepositScreen to FastPayCheckoutSheet; rejecting fixture transport; no checkout initiated",
+        "viewport_dp": [
+          393.0,
+          852
+        ],
+        "text_scale": 1.0,
+        "device_pixel_ratio": 2,
+        "monospace_fixture_font": "DejaVu Sans Mono (Linux fixture substitute for platform monospace)",
+        "capture_pixel_ratio": 2,
+        "manual_requests": 0,
+        "notification_requests": 0,
+        "image_assets": [
+          "ResizeImage()",
+          "ResizeImage()",
+          "ResizeImage()"
+        ]
+      }
+    },
+    {
+      "file": "checkout-fastpay-393-s1.png",
+      "sha256": "f645a0dea541a533c7c433368502c1cd145c37b4c28576bbc31982c5b0ad6f66",
+      "metadata": {
+        "fixture": "Actual DepositScreen to FastPayCheckoutSheet; rejecting fixture transport; no checkout initiated",
+        "viewport_dp": [
+          393.0,
+          852
+        ],
+        "text_scale": 1.0,
+        "device_pixel_ratio": 2,
+        "monospace_fixture_font": "DejaVu Sans Mono (Linux fixture substitute for platform monospace)",
+        "capture_pixel_ratio": 2,
+        "manual_requests": 0,
+        "notification_requests": 0,
+        "image_assets": [
+          "ResizeImage()",
+          "ResizeImage()",
+          "ResizeImage()"
+        ]
+      }
+    }
+  ],
+  "limits": [
+    "Actual Android Back behavior after this fix still requires the new native profile CI run. Widget tests establish framework Back registration and route behavior.",
+    "Kotlin/profile APK compilation cannot run locally because the Android SDK is unavailable. Dart fixture and driver analysis passes.",
+    "Checkout screenshot fixtures open the real sheet but do not initiate a payment. Linux monospace substitution is disclosed in each capture metadata file.",
+    "Prior base checkpoint screenshots, PDFs and logs remain preserved; the follow-up full suite used no receipt-export output defines."
+  ],
+  "log_sha256": {
+    "followup-flutter-full.log": "e84f3a27e9e5549e290abbd1986d29aa6590a623dba0b35a048e30d0fdfbffce",
+    "followup-flutter-scoped-analyzer.log": "70f6cf6b703a4d32a924578ea5511c04b52f546eb531f49292f172ca2c737d4f",
+    "followup-drawer-baseline-failure.log": "3eac85d9ba279ef66bc2cfc9cd7354194a00b607641db0e623d8f23d3081f23f",
+    "followup-drawer-verified.log": "19bb92b89ad9b46a3c8ec76c725ca3852dedd8c80bd8c7f3064a3bea64e8cc01",
+    "followup-python-runner.log": "1cdd250c4f148181b550e3cd966d2c769c0aa2d3aa2b8ddfc48686811bc06eaf",
+    "followup-checkout-focused.log": "ed7d0b3c5b20460bbadfd8b8f76c23ec0dec01a192a06ef86b50680db58381a9",
+    "followup-checkout-captures.log": "afafbff1e3f8a6a63a716c5f3b717609b832b33eedf2a982aae8a65eddee6e1a"
+  },
+  "published_source_commit": "12e4e7cc9048449cd46d347597fbedda714a5563",
+  "published_source_tree": "f73cb469f9a3ea92e299ecb8da07c3aff0d39576",
+  "publication_proof": "All eleven changed source files match the verified SHA-256 values; no other path differs from the base checkpoint."
+}

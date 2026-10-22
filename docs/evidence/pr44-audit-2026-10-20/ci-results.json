@@ -1,0 +1,993 @@
+{
+  "repository": "Zana-Sponsor/proxobalance",
+  "pull_request": 44,
+  "checked_at_utc": "2026-10-22T19:57:09.036Z",
+  "scope": "Published source checkpoint; later follow-up commits require separate verification.",
+  "source_commit": "3a90b93059a2a74d7eb37eb3f509582cce2fa366",
+  "source_tree": "dd6b7f4817578109d9af87f00bf7a019c1d8ab74",
+  "tested_merge_commit": "006e638a7406d2e6f02ac094175c5bc8651ac5a3",
+  "tested_merge_tree": "dd6b7f4817578109d9af87f00bf7a019c1d8ab74",
+  "complete_tree_identical": true,
+  "runs": [
+    {
+      "id": 39838254642,
+      "name": "Verify ProxoLink",
+      "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/39838254642",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "3a90b93059a2a74d7eb37eb3f509582cce2fa366",
+      "event": "pull_request",
+      "started_at": "2026-10-22T19:13:51Z",
+      "updated_at": "2026-10-22T19:26:51Z",
+      "jobs": [
+        {
+          "id": 120032165000,
+          "name": "flutter",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-22T19:13:54Z",
+          "completed_at": "2026-10-22T19:26:50Z",
+          "elapsed_seconds": 776,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-java@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run subosito/flutter-action@v2",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Render requested high-DPI footer thumbnails if source bundle is pending",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/upload-artifact@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run flutter pub get",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Analyze changed ProxoLink code",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Reproduce banner subscription lifecycle and verify fix",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Reproduce unused Home request and verify removal",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Preserve historical notice regression and verify current two-second lifecycle",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run flutter test test/proxolink_v6_flow_test.dart test/proxolink_flow_test.dart test/proxolink_page_management_test.dart test/proxolink_tools_create_test.dart test/proxolink_actual_screens_test.dart test/ad_repository_test.dart test/ad_creation_flow_test.dart test/ad_submission_test.dart test/text_direction_test.dart test/native_phase_schedule_test.dart test/ad_notice_deadline_test.dart test/proxo_tab_stack_test.dart test/proxo_banner_lifecycle_test.dart",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify the complete Flutter behavior and visual suite",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify isolated staging blocks production delivery",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Analyze balanced screens and account-safe navigation",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/upload-artifact@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run gradle/actions/setup-gradle@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Restore wrapper if missing",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run flutter build apk --release --no-tree-shake-icons",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Scan release APK for template source",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Measure thumbnail-only release APK impact",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain installable APK",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/upload-artifact@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run gradle/actions/setup-gradle@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run subosito/flutter-action@v2",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-java@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 120032165282,
+          "name": "responsive",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-22T19:13:54Z",
+          "completed_at": "2026-10-22T19:18:12Z",
+          "elapsed_seconds": 258,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run npm ci",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run npx playwright install --with-deps chromium",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run node scripts/proxolink-repaint-contract.mjs",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run node scripts/proxolink-v6-responsive.mjs",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/upload-artifact@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 120032165326,
+          "name": "database",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-22T19:13:54Z",
+          "completed_at": "2026-10-22T19:14:31Z",
+          "elapsed_seconds": 37,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Initialize containers",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run npm ci",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run psql -v ON_ERROR_STOP=1 -f test/fixtures/proxolink-v5-database.sql",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify migration transaction rollback",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run psql -v ON_ERROR_STOP=1 -f proxo_app/supabase/migrations/20261006220119_proxolink_v6_independent_pages.sql",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify additive migration is rerunnable",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run psql -v ON_ERROR_STOP=1 -f test/proxolink-v6-database.sql",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify page-management migration transaction and contract",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify Tools moderation migration rollback, rerun and security",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run node scripts/proxolink-v6-database.mjs",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Stop containers",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 120032165390,
+          "name": "edge-functions",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-22T19:13:54Z",
+          "completed_at": "2026-10-22T19:14:13Z",
+          "elapsed_seconds": 19,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run denoland/setup-deno@v2",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run deno check proxo_app/supabase/functions/delete-user/index.ts",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run deno check proxo_app/supabase/functions/notify-tool-created/index.ts",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run denoland/setup-deno@v2",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 120032165395,
+          "name": "backend",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-22T19:13:54Z",
+          "completed_at": "2026-10-22T19:14:15Z",
+          "elapsed_seconds": 21,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run npm ci",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run npm test",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run npm run build",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run test \"$(find api -maxdepth 1 -name '*.js' | wc -l)\" -le 12",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run node scripts/scan-proxolink-source.mjs",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        }
+      ],
+      "artifacts": [
+        {
+          "id": 12453040482,
+          "name": "proxolink-ui-verification",
+          "size_in_bytes": 28984517,
+          "digest": "sha256:22c62aa2b439a7ee400792747c1db446bb5ac0da42647de3ab681a4e67bc69c7",
+          "expires_at": "2026-10-29T19:21:56Z",
+          "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/39838254642/artifacts/12453040482"
+        },
+        {
+          "id": 12452343763,
+          "name": "proxo-release-apk",
+          "size_in_bytes": 93045663,
+          "digest": "sha256:f0e29818085d06dbcef7bf3db0feb97eb3a14b722fa4f4103b7fe177d8fc4508",
+          "expires_at": "2026-11-21T19:26:40Z",
+          "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/39838254642/artifacts/12452343763"
+        },
+        {
+          "id": 12452002594,
+          "name": "proxolink-footer-thumbnails",
+          "size_in_bytes": 6184774,
+          "digest": "sha256:3a0e793dede1a1b543dbb156ba0ed8b6ef6f027401d80bbefcdb43824987168a",
+          "expires_at": "2026-10-29T19:14:37Z",
+          "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/39838254642/artifacts/12452002594"
+        },
+        {
+          "id": 12451838542,
+          "name": "proxolink-thumbnail-apk-size",
+          "size_in_bytes": 1083,
+          "digest": "sha256:a20ce860f013b4dcfc6a6cd546ebc7dafa6a53b80be8522076375f874eacd426",
+          "expires_at": "2026-10-29T19:26:43Z",
+          "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/39838254642/artifacts/12451838542"
+        },
+        {
+          "id": 12451807667,
+          "name": "proxolink-v6-responsive",
+          "size_in_bytes": 1604642,
+          "digest": "sha256:bc00b1a1efde7aa21c24d53c1b9027991ce6f58ccf19c5e461e05237a05b5fdb",
+          "expires_at": "2026-10-29T19:18:10Z",
+          "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/39838254642/artifacts/12451807667"
+        }
+      ]
+    },
+    {
+      "id": 39838254610,
+      "name": "Proxo Android polish runtime",
+      "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/39838254610",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "head_sha": "3a90b93059a2a74d7eb37eb3f509582cce2fa366",
+      "event": "pull_request",
+      "started_at": "2026-10-22T19:13:51Z",
+      "updated_at": "2026-10-22T19:53:58Z",
+      "jobs": [
+        {
+          "id": 120032164885,
+          "name": "android-profile",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "started_at": "2026-10-22T19:13:54Z",
+          "completed_at": "2026-10-22T19:53:58Z",
+          "elapsed_seconds": 2404,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-java@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run subosito/flutter-action@v2",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run gradle/actions/setup-gradle@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Prepare profile fixture",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Enable emulator acceleration",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run reactivecircus/android-emulator-runner@v2",
+              "status": "completed",
+              "conclusion": "cancelled"
+            },
+            {
+              "name": "Retain measured frames and actual Android screenshots",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run gradle/actions/setup-gradle@v4",
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Post Run subosito/flutter-action@v2",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-java@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        }
+      ],
+      "artifacts": [
+        {
+          "id": 12455085567,
+          "name": "proxo-polish-android-runtime",
+          "size_in_bytes": 5993,
+          "digest": "sha256:de72ce6e7b583c35d8dd3db97622b1c59d33d03b3a25c4a245d492d3dc069f85",
+          "expires_at": "2026-11-21T19:53:55Z",
+          "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/39838254610/artifacts/12455085567"
+        }
+      ]
+    },
+    {
+      "id": 39838254615,
+      "name": "UI remediation evidence",
+      "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/39838254615",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "3a90b93059a2a74d7eb37eb3f509582cce2fa366",
+      "event": "pull_request",
+      "started_at": "2026-10-22T19:13:51Z",
+      "updated_at": "2026-10-22T19:16:38Z",
+      "jobs": [
+        {
+          "id": 120032164693,
+          "name": "render (candidate)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-22T19:13:54Z",
+          "completed_at": "2026-10-22T19:16:37Z",
+          "elapsed_seconds": 163,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run subosito/flutter-action@v2",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Use identical capture harness on both sources",
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Run flutter pub get",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Capture actual widgets, geometry and exported PDF",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify changed behavior and responsive consumers",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Upload unapproved before and after evidence",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run subosito/flutter-action@v2",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 120032165072,
+          "name": "render (baseline)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-22T19:13:54Z",
+          "completed_at": "2026-10-22T19:15:20Z",
+          "elapsed_seconds": 86,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run subosito/flutter-action@v2",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Use identical capture harness on both sources",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run flutter pub get",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Capture actual widgets, geometry and exported PDF",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify changed behavior and responsive consumers",
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Upload unapproved before and after evidence",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run subosito/flutter-action@v2",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        }
+      ],
+      "artifacts": [
+        {
+          "id": 12452386809,
+          "name": "ui-remediation-candidate",
+          "size_in_bytes": 11941286,
+          "digest": "sha256:e5b5c81ce03133c5e8b75ec85d48be07e59aae6c4c938a0b381a6ea630682f1b",
+          "expires_at": "2027-01-20T19:13:51Z",
+          "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/39838254615/artifacts/12452386809"
+        },
+        {
+          "id": 12452291867,
+          "name": "ui-remediation-baseline",
+          "size_in_bytes": 11692167,
+          "digest": "sha256:5cf86981b02731a548cbd8913f64e551d202785d09e5b097bddbb98645d70bf4",
+          "expires_at": "2027-01-20T19:13:51Z",
+          "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/39838254615/artifacts/12452291867"
+        }
+      ]
+    },
+    {
+      "id": 39838254664,
+      "name": "Real example images and footer evidence",
+      "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/39838254664",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "3a90b93059a2a74d7eb37eb3f509582cce2fa366",
+      "event": "pull_request",
+      "started_at": "2026-10-22T19:13:51Z",
+      "updated_at": "2026-10-22T19:29:53Z",
+      "jobs": [
+        {
+          "id": 120032164534,
+          "name": "capture",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-22T19:13:54Z",
+          "completed_at": "2026-10-22T19:15:34Z",
+          "elapsed_seconds": 100,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run subosito/flutter-action@v2",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run flutter pub get",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run flutter test tool/capture_ad_link_example.dart --reporter expanded",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify actual page selections and localized example dialogs",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/upload-artifact@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/upload-artifact@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run subosito/flutter-action@v2",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 120032165387,
+          "name": "footers",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-22T19:13:54Z",
+          "completed_at": "2026-10-22T19:29:52Z",
+          "elapsed_seconds": 958,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run npm ci",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run npx playwright install --with-deps chromium",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run node scripts/verify-proxolink-footers.mjs",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/upload-artifact@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        }
+      ],
+      "artifacts": [
+        {
+          "id": 12452480825,
+          "name": "real-ad-link-example",
+          "size_in_bytes": 27683,
+          "digest": "sha256:127d504baf640f9acd7b315eb4f5c0af6d49cb61cc1417580c0b82111a8375c5",
+          "expires_at": "2026-11-21T19:15:26Z",
+          "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/39838254664/artifacts/12452480825"
+        },
+        {
+          "id": 12452473264,
+          "name": "real-page-footer-evidence",
+          "size_in_bytes": 6518516,
+          "digest": "sha256:739e3ad4067c81a498ff7404b5902bcb561cc2fb19ee51faffc48b51d86fe552",
+          "expires_at": "2026-11-21T19:29:47Z",
+          "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/39838254664/artifacts/12452473264"
+        },
+        {
+          "id": 12451872149,
+          "name": "real-example-dialogs",
+          "size_in_bytes": 12861489,
+          "digest": "sha256:5538404984de394ad50f7039e296f70eb29acb34536a966d3ae7c19248b52a25",
+          "expires_at": "2026-11-21T19:15:28Z",
+          "url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/39838254664/artifacts/12451872149"
+        }
+      ]
+    }
+  ],
+  "verified_counts": {
+    "flutter_full": {
+      "passed": 1183,
+      "skipped": 1,
+      "failed": 0,
+      "skip": "Explicit opt-in staging case excluded from normal suite"
+    },
+    "flutter_focused": 269,
+    "shared_notices": 13,
+    "staging_transport": 6,
+    "backend": 180,
+    "postgres_backed_lifecycles": 7,
+    "release_apk_bytes": 93045519
+  },
+  "native_runtime": {
+    "complete": false,
+    "conclusion": "cancelled",
+    "reason": "Job time limit after Android Back closed PolishRuntimeActivity during menu-route-dismissal; driver awaited request_data.",
+    "performance_summary_available": false,
+    "screenshots_retained": 0,
+    "partial_artifact_files": [
+      "driver.log"
+    ],
+    "next_action": "Diagnose and fix native Back integration; run the profile fixture again."
+  },
+  "limits": [
+    "CI database is isolated PostgreSQL, not hosted production.",
+    "Release APK build success is separate from native profile-runtime success.",
+    "Native software-emulator timing would not establish physical-device smoothness; no completed timing report was retained in this run.",
+    "No live payment or production hosted-write verification."
+  ]
+}
+

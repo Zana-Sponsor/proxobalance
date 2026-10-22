@@ -1,0 +1,8 @@
+00:00 +0: loading /workspace/scratch/5a65f2640c19/proxo-current/proxo_app/test/staging_transport_test.dart
+00:00 +0: staging email login, signup resend and recovery send no HTTP
+00:00 +1: staging signup fails before creating identity or sending Auth mail
+00:00 +2: every staging WhatsApp OTP purpose fails before HTTP
+00:00 +3: staging wallet checkout fails before Auth or order-create request
+00:00 +4: staging FastPay ad checkout fails before submission or payment state
+00:00 +5: staging foreground/background push helpers avoid Firebase and tokens
+00:00 +6: All tests passed!
