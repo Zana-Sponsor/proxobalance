@@ -5,6 +5,14 @@
   "outputDirectory": "public",
   "rewrites": [
     {
+      "source": "/api/tiktok-dm",
+      "destination": "/api/meta-ads?platform=tiktok"
+    },
+    {
+      "source": "/api/v1/wallet/refund",
+      "destination": "/api/meta-ads?op=refund"
+    },
+    {
       "source": "/exchange-admin",
       "destination": "/exchange-admin.html"
     },
@@ -102,6 +110,9 @@
     }
   ],
   "functions": {
+    "api/meta-ads.js": {
+      "maxDuration": 60
+    },
     "api/*.js": {
       "maxDuration": 15
     }

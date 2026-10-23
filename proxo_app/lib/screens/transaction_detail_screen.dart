@@ -77,7 +77,10 @@ class TxReceiptData {
     required this.voucherCode,
   });
 
-  bool get isSettled => status == 'approved' || status == 'spent';
+  // A refund changes the debit's status, never the fact that it was captured.
+  bool get isSettled => status == 'approved' || status == 'spent' ||
+      (kind == TxReceiptKind.adPayment &&
+          const {'refund_pending', 'refunded', 'partially_refunded'}.contains(status));
 }
 
 class TransactionDetailScreen extends StatefulWidget {
@@ -342,15 +345,17 @@ class _TxReceiptCard extends StatelessWidget {
       _ => null,
     };
 
-    final String statusText = settled
-        ? (d.kind == TxReceiptKind.refund ? l.statusRefunded : l.statusApproved)
-        : d.status == 'rejected'
-            ? l.statusRejected
-            : d.status == 'pending'
-                ? l.statusPending
-                : d.status.isEmpty
-                    ? l.notRecorded
-                    : d.status;
+    final String statusText = switch (d.status) {
+      'refunded' => l.statusRefunded,
+      'refund_pending' => l.statusRefundPending,
+      'partially_refunded' => l.statusPartiallyRefunded,
+      'rejected' => l.statusRejected,
+      'pending' => l.statusPending,
+      '' => l.notRecorded,
+      _ => settled
+          ? (d.kind == TxReceiptKind.refund ? l.statusRefunded : l.statusApproved)
+          : d.status,
+    };
 
     return ReceiptCard(
       child: Column(
@@ -386,7 +391,7 @@ class _TxReceiptCard extends StatelessWidget {
             ReceiptStatusRow(
                 label: l.status,
                 value: statusText,
-                positive: settled,
+                positive: settled && d.status != 'refund_pending',
                 negative: d.status == 'rejected'),
           ]),
           const ReceiptDivider(),

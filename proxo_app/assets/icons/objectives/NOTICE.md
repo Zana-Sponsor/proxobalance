@@ -1,0 +1,1 @@
+Original Proxo objective artwork created for this integration. Transparent 96px PNG masters render at 20dp. No font, Material, SVG, or runtime image dependency. Green chat, pink-red eye, pale-blue people; shared bounds and stroke weight.

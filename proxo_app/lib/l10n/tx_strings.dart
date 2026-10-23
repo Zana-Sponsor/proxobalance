@@ -61,6 +61,8 @@ class TxStrings {
   String get statusPending => _t('چاوەڕوان', 'قيد الانتظار');
   String get statusApproved => _t('سەرکەوتوو', 'مكتملة');
   String get statusRefunded => _t('گەڕاوە', 'مسترد');
+  String get statusRefundPending => _t('چاوەڕێی گەڕاندنەوە', 'بانتظار الاسترداد');
+  String get statusPartiallyRefunded => _t('بەشێکی گەڕاوەتەوە', 'مسترد جزئياً');
   String get statusRejected => _t('شکست', 'مرفوضة');
 
   String get summary => _t('پوختە', 'الملخص');

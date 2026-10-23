@@ -144,15 +144,18 @@ class AdFormSection extends StatelessWidget {
 class AdChoice extends StatelessWidget {
   final String label;
   final bool selected;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
+  final Widget? icon;
   const AdChoice(
       {super.key,
       required this.label,
       required this.selected,
-      required this.onTap});
+      required this.onTap,
+      this.icon});
   @override
   Widget build(BuildContext context) => Semantics(
         selected: selected,
+        enabled: onTap != null,
         button: true,
         child: Material(
             color: Colors.transparent,
@@ -160,7 +163,9 @@ class AdChoice extends StatelessWidget {
               borderRadius: AdUi.controlRadius,
               onTap: onTap,
               child: AnimatedContainer(
-                duration: const Duration(milliseconds: 180),
+                duration: MediaQuery.disableAnimationsOf(context)
+                    ? Duration.zero
+                    : const Duration(milliseconds: 180),
                 curve: Curves.easeOutCubic,
                 constraints: const BoxConstraints(minHeight: 48),
                 padding:
@@ -174,11 +179,19 @@ class AdChoice extends StatelessWidget {
                 child: Center(
                     widthFactor: 1,
                     heightFactor: 1,
-                    child: ProxoText(label,
-                        translate: true,
-                        textAlign: TextAlign.center,
-                        style: AdUi.text(context,
-                            color: selected ? AdUi.blue : AdUi.ink))),
+                    child: Row(mainAxisSize: MainAxisSize.min, children: [
+                      if (icon != null) ...[icon!, const SizedBox(width: 8)],
+                      Flexible(
+                          child: ProxoText(label,
+                              translate: true,
+                              textAlign: TextAlign.center,
+                              style: AdUi.text(context,
+                                  color: onTap == null
+                                      ? AdUi.secondary
+                                      : selected
+                                          ? AdUi.blue
+                                          : AdUi.ink))),
+                    ])),
               ),
             )),
       );
@@ -193,21 +206,12 @@ class AdPriceDetails extends StatelessWidget {
         AdValueRow(label: 'نرخی لاوەکی', value: adIqd(quote.sponsorIqd)),
         const SizedBox(height: 12),
         AdValueRow(label: 'کرێی خزمەتگوزاری', value: adIqd(quote.serviceIqd)),
-        const SizedBox(height: 12),
-        AdValueRow(label: 'ماوەی ڕیکلام', value: '${quote.days} ڕۆژ'),
-        if (quote.promoUsd > 0 && quote.promoIqd > 0) ...[
+        if (quote.promoIqd + quote.levelIqd > 0) ...[
           const SizedBox(height: 12),
           AdValueRow(
               key: const ValueKey('coupon-discount'),
               label: 'داشکاندن',
-              value: adIqd(quote.promoIqd, discount: true),
-              color: AdUi.green),
-        ],
-        if (quote.levelUsd > 0 && quote.levelIqd > 0) ...[
-          const SizedBox(height: 12),
-          AdValueRow(
-              label: 'داشکاندن',
-              value: adIqd(quote.levelIqd, discount: true),
+              value: adIqd(quote.promoIqd + quote.levelIqd, discount: true),
               color: AdUi.green),
         ],
         if (showTotal) ...[

@@ -36,6 +36,9 @@ class ActualScreenBackend {
  bool includeNotifications = false;
  bool adsUnavailable = false;
  bool emptyAds = false;
+ bool metaEnabled = false;
+ final adQueries = <Uri>[];
+ Future<Object> Function(Uri)? adsResponder;
  Map<String, dynamic>? banner;
  final _sockets=<_ScreenSocket>[];
  int logoutRequests=0;
@@ -43,6 +46,18 @@ class ActualScreenBackend {
  bool logoutFails=false;
  ActualScreenBackend({bool allowLogout=false}){
   transport=MockClient((request)async{
+    // This one parameterless RPC is a read. Keep the mutation boundary below
+    // closed for every other body, host, path and method.
+    if (request.method == 'POST' && request.url.scheme == 'https' &&
+        request.url.host == 'screen-fixtures.invalid' &&
+        request.url.userInfo.isEmpty && !request.url.hasPort &&
+        !request.url.hasQuery && !request.url.hasFragment &&
+        request.url.path == '/rest/v1/rpc/pa_ad_capabilities' &&
+        const {'{}', 'null'}.contains(request.body.trim())) {
+      return http.Response(jsonEncode({'meta_enabled': metaEnabled,
+        'server_time': DateTime.now().toUtc().toIso8601String()}), 200,
+        request: request, headers: {'content-type': 'application/json'});
+    }
     if(request.method!='GET'){
       String? expectedBlockedOperation;
       if(request.method=='POST' && request.url.scheme=='https' && request.url.host=='screen-fixtures.invalid' && request.url.userInfo.isEmpty && !request.url.hasQuery){
@@ -80,6 +95,14 @@ class ActualScreenBackend {
     final table=request.url.path.split('/').last;
     if(!{'profiles','pa_ads','pa_featured_ads_public','pa_popups','pa_notifications','pa_banners','pa_wallets','pa_user_points','pa_levels','pa_challenges','pa_tutorials','pa_challenge_progress','pa_vouchers','promo_codes','pa_settings','whatsapp_marketing_preferences'}.contains(table))throw StateError('screen_fixture_network_boundary');
     reads.update(table,(v)=>v+1,ifAbsent:()=>1);
+    if (table == 'pa_ads') {
+      adQueries.add(request.url);
+      final responder = adsResponder;
+      if (responder != null) {
+        return http.Response(jsonEncode(await responder(request.url)), 200,
+          request: request, headers: {'content-type': 'application/json'});
+      }
+    }
     final response = readResponses[table];
     await readGates[table]?.future;
     if(table=='pa_banners')await bannerGate?.future;
@@ -125,6 +148,16 @@ class ActualScreenBackend {
    socket.emit('realtime:banner_rt','postgres_changes',{'ids':[0],'data':{
     'schema':'public','table':'pa_banners','type':'UPDATE','commit_timestamp':'2026-10-13T00:00:00Z',
     'columns':[],'record':{'id':'fixture-banner'},'old_record':{}}});
+  }
+ }
+ void emitAdChange(Map<String,dynamic> record,{String event='UPDATE'}){
+  for(final socket in _sockets){
+   for(final topic in socket.joinedTopics.where((t)=>t.startsWith('realtime:ads_metrics_rt_'))){
+    socket.emit(topic,'postgres_changes',{'ids':[0],'data':{
+     'schema':'public','table':'pa_ads','type':event,
+     'commit_timestamp':DateTime.now().toUtc().toIso8601String(),'columns':[],
+     'record':record,'old_record':{}}});
+   }
   }
  }
  void emitProfileChange(Map<String,dynamic> record,{bool wallet=false}){

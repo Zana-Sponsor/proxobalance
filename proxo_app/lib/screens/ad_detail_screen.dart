@@ -47,7 +47,8 @@ import '../widgets/receipt/receipt_kit.dart';
 const String kAdsTable = 'pa_ads';
 
 /// تەنها ئەو کۆڵۆمانەی پسوولەکە پێویستیەتی.
-const String _kAdColumns = 'id,public_ad_id,title,status,'
+const String _kAdColumns =
+    'id,public_ad_id,title,status,platform,service_type,fulfillment_kind,receipt_uid,'
     'created_at,updated_at,thumbnail_url,needs_update,reject_reason,'
     'age_groups,target_age,gender,target_gender,location,target_location,'
     'device_type,category,payment_method,'
@@ -257,14 +258,23 @@ class _AdDetailScreenState extends State<AdDetailScreen> {
       // Optional receipt-only lookup. A zero-value ledger entry is not a payment.
       if (loader == null &&
           !ReceiptPricing.from(next).noPaymentRequired &&
-          receiptText(next['payment_transaction_id']).isEmpty) {
+          ((next['platform'] == 'META' ||
+                  next['fulfillment_kind'] == 'tiktok_conversation_auto')
+              ? receiptText(next['receipt_uid']).isEmpty
+              : receiptText(next['payment_transaction_id']).isEmpty)) {
         try {
           final transaction = await supabase
               .from('pa_transactions')
               .select('id,method,gateway')
               .eq('ad_id', widget.adId)
               .eq('type', 'ad_payment')
-              .eq('status', 'approved')
+              .inFilter('status', const [
+                'approved',
+                'spent',
+                'refund_pending',
+                'refunded',
+                'partially_refunded',
+              ])
               .gt('amount', 0)
               .order('created_at', ascending: true)
               .limit(1)
@@ -351,7 +361,8 @@ class _AdDetailScreenState extends State<AdDetailScreen> {
       await Clipboard.setData(ClipboardData(text: raw));
       if (!mounted) return;
       unawaited(HapticFeedback.selectionClick());
-      showReceiptMessage(context, AdDetailStrings.current.copied, isError: false);
+      showReceiptMessage(context, AdDetailStrings.current.copied,
+          isError: false);
     } catch (_) {
       if (mounted) {
         showReceiptMessage(context, AdDetailStrings.current.copyFailed);
@@ -397,7 +408,8 @@ class _AdDetailScreenState extends State<AdDetailScreen> {
           backgroundColor: ReceiptTokens.page,
           body: Column(
             children: <Widget>[
-              ReceiptAppBar(title: l.appBarTitle, translateTitle: false, onBack: _back),
+              ReceiptAppBar(
+                  title: l.appBarTitle, translateTitle: false, onBack: _back),
               Expanded(
                 child: SafeArea(
                   top: false,

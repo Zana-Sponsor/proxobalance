@@ -148,8 +148,14 @@ class AdReceiptData {
     final payment = pricing.noPaymentRequired
         ? l.noPaymentRequired
         : l.paymentLabel(storedMethod);
+    // Automated ads' payment_transaction_id identifies a FastPay funding credit.
+    // The existing transaction slot must identify the separate captured debit.
     final transaction = [
-      ad['payment_transaction_id'],
+      if (ad['platform'] == 'META' ||
+          ad['fulfillment_kind'] == 'tiktok_conversation_auto')
+        ad['receipt_uid']
+      else
+        ad['payment_transaction_id'],
       ad['receipt_transaction_id'],
     ].map(receiptText).firstWhere((v) => v.isNotEmpty, orElse: () => '');
 

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../services/ad_categories.dart';
 import '../services/ad_submission.dart';
+import '../services/meta_ad_draft.dart';
 import '../widgets/ad_form_components.dart';
 import '../widgets/proxo_text.dart';
 import '../widgets/proxo_error_stack.dart';
@@ -484,9 +485,51 @@ class _AdConfirmationScreenState extends State<AdConfirmationScreen>
     final s = d.schedule;
     final rows = <(String, String)>[
       ('ناوی ڕیکلام', d.title),
-      ('کۆدی ڤیدیۆ', d.code),
-      ('ئامانج', d.goal == 'messages' ? 'نامە و فرۆش' : 'کارلێک و بینین'),
-      if (d.goal == 'messages')
+      if (!d.isMeta && !d.isTikTokDirect) ('کۆدی ڤیدیۆ', d.code),
+      (
+        'ئامانج',
+        d.isMeta
+            ? metaObjectiveLabels[d.goal] ?? ''
+            : d.goal == 'messages'
+                ? 'نامە'
+                : 'بینین'
+      ),
+      if (d.isMeta) ...[
+        ('لینکی پەیج', d.pageUrl),
+        ('لینکی پۆست / ڤیدیۆ', d.link),
+        (
+          'شوێنی پیشاندان',
+          MetaAdSelection.canonical(d.placements)
+              .map((p) => p == 'facebook' ? 'Facebook' : 'Instagram')
+              .join('، ')
+        ),
+        if (d.goal == 'messages')
+          (
+            'ڕێگای نامە',
+            MetaAdSelection.canonical(d.destinations)
+                .map((p) =>
+                    const {
+                      'WHATSAPP': 'WhatsApp',
+                      'MESSENGER': 'Messenger',
+                      'INSTAGRAM_DIRECT': 'Instagram Direct'
+                    }[p] ??
+                    p)
+                .join('، ')
+          ),
+      ],
+      if (d.isTikTokDirect)
+        (
+          'هەژماری تیک تۆک',
+          d.tiktokUsername == null ? '' : '@${d.tiktokUsername}'
+        ),
+      if (d.isTikTokDirect)
+        (
+          'ڤیدیۆ',
+          d.tiktokVideoCaption.isEmpty
+              ? 'ڤیدیۆی هەڵبژێردراو'
+              : d.tiktokVideoCaption
+        ),
+      if (!d.isMeta && !d.isTikTokDirect && d.goal == 'messages')
         ('پەڕەی پەیوەندی', d.assetName ?? d.assetId ?? ''),
       ('بودجەی ڕۆژانە', adIqd(d.dailyBudget * widget.request.quote.rate)),
       (
@@ -509,20 +552,30 @@ class _AdConfirmationScreenState extends State<AdConfirmationScreen>
           title: ProxoText('ئامانجی بینەران',
               translate: true, style: AdUi.text(context)),
           children: [
-            AdValueRow(label: 'جۆری پۆل', value: adCategoryLabel(d.category)),
-            const SizedBox(height: 12),
+            if (!d.isMeta) ...[
+              AdValueRow(label: 'جۆری پۆل', value: adCategoryLabel(d.category)),
+              const SizedBox(height: 12),
+            ],
             AdValueRow(
                 label: 'شوێن',
                 value: {
                       'all': 'هەموو',
                       'kurdistan': 'کوردستان',
-                      'iraq': 'عێراق'
+                      'iraq': 'عێراق',
+                      'erbil': 'هەولێر',
+                      'sulaymaniyah': 'سلێمانی',
+                      'duhok': 'دهۆک',
+                      'baghdad': 'بەغدا'
                     }[d.location] ??
                     d.location),
             const SizedBox(height: 12),
             AdValueRow(
                 label: 'تەمەن',
-                value: d.ages.contains('all') ? 'هەموو' : d.ages.join(', ')),
+                value: d.isMeta
+                    ? '${d.ageMin}–${d.ageMax == 65 ? '65+' : d.ageMax}'
+                    : d.ages.contains('all')
+                        ? 'هەموو'
+                        : d.ages.join(', ')),
             const SizedBox(height: 12),
             AdValueRow(
                 label: 'ڕەگەز',
@@ -532,15 +585,17 @@ class _AdConfirmationScreenState extends State<AdConfirmationScreen>
                       'female': 'مێ'
                     }[d.gender] ??
                     d.gender),
-            const SizedBox(height: 12),
-            AdValueRow(
-                label: 'جۆری ئامێر',
-                value: {
-                      'all': 'هەموو',
-                      'iphone': 'iPhone',
-                      'android': 'Android'
-                    }[d.device] ??
-                    d.device),
+            if (!d.isMeta) ...[
+              const SizedBox(height: 12),
+              AdValueRow(
+                  label: 'جۆری ئامێر',
+                  value: {
+                        'all': 'هەموو',
+                        'iphone': 'iPhone',
+                        'android': 'Android'
+                      }[d.device] ??
+                      d.device),
+            ],
           ]),
       if (d.note.isNotEmpty)
         ProxoText(d.note, style: AdUi.text(context, color: AdUi.secondary)),

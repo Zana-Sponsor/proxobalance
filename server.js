@@ -13,6 +13,7 @@ import securityAdminHandler from './api/security-admin.js';
 import trackHandler from './api/track.js';
 import proxolinkHandler from './api/proxolink.js';
 import formsHandler from './api/forms.js';
+import metaAdsHandler from './api/meta-ads.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -45,6 +46,15 @@ const proxoRoute=(op,parameters=()=>({}))=>(req,res)=>{
 };
 app.all('/api/proxolink',proxolinkHandler);
 app.all('/api/forms',formsHandler);
+app.all('/api/meta-ads',metaAdsHandler);
+app.all('/api/tiktok-dm',(req,res)=>{
+  Object.defineProperty(req,'query',{value:{...req.query,platform:'tiktok'},configurable:true});
+  return metaAdsHandler(req,res);
+});
+app.post('/api/v1/wallet/refund',(req,res)=>{
+  Object.defineProperty(req,'query',{value:{...req.query,op:'refund'},configurable:true});
+  return metaAdsHandler(req,res);
+});
 for(const op of ['cards','card-action','preview-token','ad-links','templates'])
   app.all('/api/contact-'+op,proxoRoute(op));
 app.get('/contact-preview',proxoRoute('template-preview'));

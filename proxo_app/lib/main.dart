@@ -14,6 +14,8 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'services/notification_service.dart';
 import 'services/auth_activity_service.dart';
 import 'services/account_cache.dart';
+import 'services/ad_feature_config.dart';
+import 'widgets/tiktok_dm_account_picker.dart' show clearTikTokDmCache;
 import 'services/app_telemetry_service.dart';
 import 'services/observed_http_client.dart';
 import 'package:http/http.dart' as http;
@@ -153,6 +155,7 @@ class _ProxoAppState extends State<ProxoApp> {
     _auth = client.auth.onAuthStateChange.listen((state) {
       final previous = _owner;
       _owner = state.session?.user.id;
+      if (previous != null && previous != _owner) clearTikTokDmCache(previous);
       if (previous == null || previous == _owner || AuthScreen.inOtpFlow) return;
       // This listener outlives the login route. Remove every private route,
       // including a details sheet open when the session is remotely revoked.
@@ -305,7 +308,7 @@ class _AuthGateState extends State<_AuthGate> {
 // ─────────────────────────────────────────────────────────────────────────────
 
 class MainShell extends StatefulWidget {
-  const MainShell();
+  const MainShell({super.key});
 
   @override
   State<MainShell> createState() => MainShellState();
@@ -314,6 +317,8 @@ class MainShell extends StatefulWidget {
 class MainShellState extends State<MainShell> with WidgetsBindingObserver {
   int  _tabIndex       = 0;
   bool _creatingAd = false;
+  bool _metaEnabled = false;
+  int _adAccessRevision = 0;
 
   /// ⚠ `_sidebarOpen` و `_sidebarKey` لابران.
   ///
@@ -357,6 +362,7 @@ class MainShellState extends State<MainShell> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    unawaited(_refreshAdAccess());
     mainShellTab.value = _tabIndex;
     mainShellTabRequest.addListener(_onExternalTabRequest);
     // FIX: ئاگاداری پاشەکەوتکراو کاتی داخستنی ئەپ — دوای کردنەوەی تەواو navigate بکە
@@ -365,6 +371,39 @@ class MainShellState extends State<MainShell> with WidgetsBindingObserver {
         NotificationService.instance.navigateFromPending();
       }
     });
+  }
+
+  Future<void> _refreshAdAccess() async {
+    final revision = ++_adAccessRevision;
+    final config = await AdFeatureConfig.load(supabase);
+    if (mounted && revision == _adAccessRevision) {
+      setState(() => _metaEnabled = config.meta);
+    }
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) unawaited(_refreshAdAccess());
+  }
+
+  Future<void> _openAd(String platform) async {
+    if (_creatingAd) return;
+    _creatingAd = true;
+    try {
+      if (platform == 'META') {
+        await _refreshAdAccess();
+        if (!mounted || !_metaEnabled) return;
+      }
+      if (!mounted) return;
+      final result = await Navigator.of(context).push(
+        ProxoPageRoute<String>(builder: (_) => AdCreateScreen(platform: platform)),
+      );
+      if (result == 'refresh' && mounted) {
+        if (_tabIndex == 1) {
+          unawaited(_refreshers[1]!.refresh());
+        } else { _switchTab(1); }
+      }
+    } finally { _creatingAd = false; }
   }
 
   void _onExternalTabRequest() {
@@ -410,24 +449,7 @@ class MainShellState extends State<MainShell> with WidgetsBindingObserver {
         return;
       }
       if (index == 2) {
-        if (_creatingAd) return;
-        _creatingAd = true;
-        try {
-          final result = await Navigator.of(context).push(
-            ProxoPageRoute<String>(builder: (_) => const AdCreateScreen()),
-          );
-          if (result == 'refresh' && mounted) {
-            if (_tabIndex == 1) {
-              // Already active: refresh the retained list. Switching from
-              // another tab invokes AdScreen's own activation sync instead.
-              unawaited(_refreshers[1]!.refresh());
-            } else {
-              _switchTab(1);
-            }
-          }
-        } finally {
-          _creatingAd = false;
-        }
+        await _openAd('TIKTOK');
         return;
       }
       _switchTab(index);
@@ -574,6 +596,8 @@ class MainShellState extends State<MainShell> with WidgetsBindingObserver {
             bottomNavigationBar: ProxoBottomNav(
               currentIndex: _tabIndex,
               onTap: _onTabTap,
+              metaEnabled: _metaEnabled,
+              onCreatePlatform: (platform) => unawaited(_openAd(platform)),
             ),
             ),
           ),
