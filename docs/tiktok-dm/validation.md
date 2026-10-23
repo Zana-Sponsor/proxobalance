@@ -1,5 +1,7 @@
 # Local implementation verification — 23 October 2026
 
+**Historical baseline record.** The 25-section continuation added real OAuth, immutable FastPay attempts, private activation and nonfinal report evidence. Current status/counts are in the [completion ledger](../tiktok-dm-completion-status-2026-10-23.md); the baseline results below do not certify the new runtime paths.
+
 These results apply to the combined Meta v8 / TikTok Direct Message v15 implementation on `codex/meta-tiktok-shared-create`, stacked on PR #44's `058f2f6ca7040481d82f5eaaec6edee28b1d3615` receipt baseline. All account, payment and provider fixtures are synthetic. No production migration, target n8n import, external provider mutation, payment or refund was executed.
 
 ## Flutter
@@ -51,4 +53,4 @@ The final `npm test` run passed **257 tests**. This includes 33 Meta contract te
 
 ## Limits that remain
 
-All rollout/FastPay/activation flags remain OFF, all workflow exports are inactive, and creation requests use PAUSED/DISABLE. There is no automatic paid-activation endpoint. Secure owner-correlated TikTok authorization, actual account/targeting eligibility, a real authoritative settlement-evidence source, retained FastPay quote binding, target n8n execution and the prompt's full staging/native-device acceptance remain unresolved. See [release blockers](README.md#release-blockers) and [configuration evidence](backend-config.md).
+All rollout/FastPay/activation flags remain OFF, all workflow exports are inactive, and creation requests use PAUSED/DISABLE. The continuation implements private activation, OAuth and immutable FastPay quote binding; see the current ledger. The immutable Accounts-to-Marketing join, actual account/targeting eligibility, authoritative finality, deployed staging execution and physical-device acceptance remain unresolved. See [release blockers](README.md#release-blockers) and [configuration evidence](backend-config.md).

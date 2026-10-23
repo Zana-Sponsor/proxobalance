@@ -2,7 +2,9 @@
 
 This extends the existing Proxo Create Ad, account, payment, finance/outbox, receipt and realtime flows. The combined PR also includes [Meta v8](../meta-ads/README.md). The owner's later v15 shared-payment instructions govern both platforms: a compact selected-method card, confirmed Account Balance by default, and Change opening the shared bottom sheet. A row choice is temporary until Confirm; dismissing preserves the previous method.
 
-**The feature remains OFF.** The repository contains no automatic paid-activation path. All three Smart+ creation stages explicitly request `DISABLE`; every n8n export is inactive. No production database migration, external workflow publication, live account authorization, paid ad or real payment/refund was performed by these local checks.
+**The feature remains OFF.** A separate private approval-bound activation path now exists, with independent DB/environment gates OFF and no activation scheduler. All three Smart+ creation stages explicitly request `DISABLE`; every n8n export is inactive. No production database migration, external workflow publication, live account authorization, paid ad or real payment/refund was performed by these local checks.
+
+The current 25-section continuation status supersedes earlier baseline acceptance claims: [completion ledger](../tiktok-dm-completion-status-2026-10-23.md).
 
 ## Implementation and authoritative scope
 
@@ -23,7 +25,7 @@ TikTok keeps its $10 customer minimum. Gross daily budget × duration determines
 
 Any fresh status observation can enforce a due budget/end stop, and a persisted stop whose acknowledgment was lost is confirmed without another pause POST when the group is already disabled. A known-ad failure or explicit rejection records a failure stop and disables delivery before the settlement wait. Unavailable spend does not block an already justified stop, and never becomes zero or refund evidence. Database claims keep incomplete creation with reconciliation and prevent ordinary status polling from taking final-refund work. Raw provider status stays server-side; existing canonical statuses and Supabase Realtime drive the current UI. Manual/unknown-cause disable is paused, not automatically completed.
 
-Unused-budget settlement requires a confirmed stop, at least two hours, sufficiently stable authoritative spend and an exact archived provider-settlement attestation. Two hours or two equal reports alone are insufficient. The amount is `max(original captured paid media after discounts − settled spend, 0)`, bounded by the original debit; the gross campaign allocation is not refunded as a discount subsidy. A known ad's zero-spend report cannot bypass waiting/finality. A failed chain with no possible created ad can use the separate safe pre-delivery compensation path after durable state and disabled-ancestor checks. Original debits and linked credits remain in the existing ledger/history.
+Unused-budget settlement requires a confirmed stop, at least two hours and an immutable provider-supported completeness record. Current offline report candidates remain nonfinal; manual archived attestations and capability arrays cannot authorize refunds. Two hours or two equal reports alone are insufficient. The amount is `max(original captured paid media after discounts − settled spend, 0)`, bounded by the original debit; the gross campaign allocation is not refunded as a discount subsidy. A known ad's zero-spend report cannot bypass waiting/finality. A failed chain with no possible created ad can use the separate safe pre-delivery compensation path after durable state and disabled-ancestor checks. Original debits and linked credits remain in the existing ledger/history.
 
 ## Design evidence and receipt preservation
 
@@ -44,10 +46,10 @@ The approved advertisement receipt renderer, dimensions, typography, Proxo brand
 
 | Unresolved prerequisite | Required before enablement |
 | --- | --- |
-| Owner-correlated authorization | A reviewed provider-supported completion mechanism or independently verified owner-binding procedure. A generic BC QR URL, matching username or list difference is insufficient. Public connect routes currently return `TIKTOK_AUTH_CORRELATION_UNAVAILABLE`. |
+| Owner-correlated authorization | Real Accounts OAuth now verifies the provider owner and username. A provider-supported immutable Accounts-to-Marketing/BC asset join is still required; success remains unlinked. Generic QR, username/list differences and manual rows cannot complete it. |
 | Actual account eligibility | Credentials/scopes, BC and advertiser relationship, supported Conversation/identity allowlists, Iraq targeting, language/device/age controls, current budget minimum/timezone, approved welcome message and creative/music eligibility. |
 | Automatic settlement evidence | A real protected source of per-ad-group provider settlement proof. It was not established here; refund remains pending without it. |
-| FastPay | Existing payment workflow must preserve the immutable TikTok quote/funding relationship through verified callback, retry and compensation. TikTok DM FastPay remains disabled. |
+| FastPay | Immutable quote/payment attempts and independent gateway validation are implemented. Actual sandbox credentials, callback execution and staging verification remain required; paid production remains disabled. |
 | n8n and deployed services | Import the six exports into the intended runtime, map credentials, run controlled failure/retry/idempotency scenarios, and verify database/API/realtime behavior. JSON/Node checks are not target-runtime execution. |
 | Final acceptance | Safe real-account checks, actual native-inbox destination, spend-stop/report latency, physical-device RTL/safe-area/keyboard tests and the prompt's complete staging matrix. Local screenshots are not proof of pixel equality to an unavailable reference. |
 

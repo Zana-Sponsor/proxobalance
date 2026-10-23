@@ -49,7 +49,7 @@ if(typeof body==='string') {
   catch { throw new Error('TIKTOK_DM_WORKER_INVALID_RESPONSE'); }
 }
 if(!body || body.ok!==true || ![0,1].includes(body.processed)
-  || !['idle','blocked','paused','observed','reconcile','refunded','connected','disconnected','videos_ready','guarded'].includes(body.status))
+  || !['idle','blocked','paused','observed','reconcile','refunded','connected','disconnected','videos_ready','guarded','refreshed','revoked'].includes(body.status))
   throw new Error('TIKTOK_DM_WORKER_INVALID_RESPONSE');
 const result={ok:true,processed:body.processed,status:body.status};
 if(typeof body.error_code==='string' && /^[A-Z][A-Z0-9_]{0,99}$/.test(body.error_code))
@@ -84,7 +84,7 @@ for(const definition of definitions){
         sendBody:true,specifyBody:'json',jsonBody:'{}',
         options:{timeout:60000,redirect:{redirect:{followRedirects:false}},
           response:{response:{fullResponse:true,neverError:true,responseFormat:'text'}}}},
-      credentials:{httpHeaderAuth:{name:'Proxo TikTok DM worker'}},
+      credentials:{httpHeaderAuth:{id:null,name:'UNCONFIGURED — Proxo TikTok DM worker'}},
       retryOnFail:true,maxTries:3,waitBetweenTries:5000,onError:'continueRegularOutput',
       notes:'Only transport failures retry here. The backend owns durable claims, bounded stage backoff and uncertain-outcome reconciliation.'});
     nodes.push({id:`${definition.file}-${operation}-result`,name:resultName,type:'n8n-nodes-base.code',typeVersion:2,

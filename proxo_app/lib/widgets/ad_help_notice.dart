@@ -43,7 +43,8 @@ class _AdHelpNoticeState extends State<AdHelpNotice>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed &&
         (_lastLoad == null ||
-            DateTime.now().difference(_lastLoad!) > const Duration(minutes: 2))) {
+            DateTime.now().difference(_lastLoad!) >
+                const Duration(minutes: 2))) {
       _load();
     }
   }
@@ -69,12 +70,13 @@ class _AdHelpNoticeState extends State<AdHelpNotice>
   Widget build(BuildContext context) {
     final n = _notice;
     if (n == null ||
-        n['enabled'] != true ||
-        '${n['body_ku'] ?? ''}'.trim().isEmpty) {
+        n['active'] != true ||
+        n['message'] is! String ||
+        (n['message'] as String).trim().isEmpty) {
       return const SizedBox.shrink();
     }
     final uri =
-        ContextHelpService.validVideoUrl('${n['tutorial_url'] ?? ''}'.trim());
+        ContextHelpService.validVideoUrl('${n['video_url'] ?? ''}'.trim());
     return Padding(
         padding: const EdgeInsets.only(bottom: AdUi.sectionGap),
         child: Container(
@@ -84,9 +86,7 @@ class _AdHelpNoticeState extends State<AdHelpNotice>
             child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  if ('${n['title_ku'] ?? ''}'.trim().isNotEmpty)
-                    ProxoText('${n['title_ku']}', style: AdUi.text(context)),
-                  ProxoText('${n['body_ku']}',
+                  ProxoText(n['message'] as String,
                       style: AdUi.text(context, color: AdUi.secondary)),
                   if (uri != null)
                     Align(
@@ -94,8 +94,7 @@ class _AdHelpNoticeState extends State<AdHelpNotice>
                         child: TextButton(
                             onPressed: () => launchUrl(uri,
                                 mode: LaunchMode.externalApplication),
-                            child: ProxoText(
-                                '${n['tutorial_label_ku'] ?? 'بینینی فێرکاری'}'))),
+                            child: const ProxoText('بینینی فێرکاری'))),
                 ])));
   }
 }

@@ -85,8 +85,33 @@ class _AdPaymentCardState extends State<AdPaymentCard> {
           ..layout();
         final changeWidth = math.max(48.0, change.width + 16);
         change.dispose();
+        final labelWidth = constraints.maxWidth - 24 - 44 - 8 - 8 - changeWidth;
+        final stacked = labelWidth < 48;
         final height = _paymentRowHeight(
-            context, constraints.maxWidth - 24 - 44 - 8 - 8 - changeWidth);
+            context, stacked ? constraints.maxWidth - 24 - 44 - 8 : labelWidth);
+        final identity = <Widget>[
+          SizedBox(
+              width: 44,
+              height: 32,
+              child: Center(child: _paymentLogo(widget.value))),
+          const SizedBox(width: 8),
+          Expanded(
+              child: ProxoText(
+                  widget.value == 'fastpay' ? 'FastPay' : _walletLabel,
+                  style: ProxoSurface.body)),
+        ];
+        final changeButton = SizedBox(
+            width: stacked
+                ? math.min(changeWidth, constraints.maxWidth - 24)
+                : changeWidth,
+            child: TextButton(
+                key: const ValueKey('change-payment'),
+                style: TextButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    minimumSize: const Size(48, 48),
+                    textStyle: ProxoSurface.body),
+                onPressed: widget.busy || _opening ? null : _change,
+                child: const ProxoText('گۆڕین')));
         return Material(
           key: const ValueKey('selected-payment-card'),
           color: Colors.white,
@@ -98,31 +123,21 @@ class _AdPaymentCardState extends State<AdPaymentCard> {
               constraints: BoxConstraints(minHeight: height),
               child: Padding(
                   padding: const EdgeInsets.all(12),
-                  child: Row(children: [
-                    SizedBox(
-                        width: 44,
-                        height: 32,
-                        child: Center(child: _paymentLogo(widget.value))),
-                    const SizedBox(width: 8),
-                    Expanded(
-                        child: ProxoText(
-                            widget.value == 'fastpay'
-                                ? 'FastPay'
-                                : _walletLabel,
-                            style: ProxoSurface.body)),
-                    const SizedBox(width: 8),
-                    SizedBox(
-                        width: changeWidth,
-                        child: TextButton(
-                            key: const ValueKey('change-payment'),
-                            style: TextButton.styleFrom(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 8),
-                                minimumSize: const Size(48, 48),
-                                textStyle: ProxoSurface.body),
-                            onPressed: widget.busy || _opening ? null : _change,
-                            child: const ProxoText('گۆڕین'))),
-                  ]))),
+                  child: stacked
+                      ? Column(mainAxisSize: MainAxisSize.min, children: [
+                          SizedBox(
+                              height: height - 24,
+                              child: Row(children: identity)),
+                          const SizedBox(height: 8),
+                          Align(
+                              alignment: AlignmentDirectional.centerEnd,
+                              child: changeButton),
+                        ])
+                      : Row(children: [
+                          ...identity,
+                          const SizedBox(width: 8),
+                          changeButton,
+                        ]))),
         );
       });
 }

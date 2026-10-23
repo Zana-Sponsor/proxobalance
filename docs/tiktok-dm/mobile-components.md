@@ -8,7 +8,7 @@ The compact video carousel appears only after selecting a ready account. A pagin
 
 `TikTokDmConnectSheet` requests a server-owned authorization session, renders only a returned HTTPS TikTok authorization URL, and polls the Proxo backend with bounded backoff while active. Repeated checks coalesce. Closing the sheet or backgrounding stops polling. A status-only response preserves the same session's requested username and QR URL. A mismatch remains an error; the verified account never replaces the requested username silently.
 
-The authorization provider currently fails closed with `TIKTOK_AUTH_CORRELATION_UNAVAILABLE` until a supported, verifiable session-to-identity correlation is configured. UI fixtures with synthetic URLs demonstrate rendering/state behavior only; they do not establish live authorization support.
+The backend now implements real Accounts OAuth session/state/callback/username verification. It reports `TIKTOK_IDENTITY_JOIN_UNVERIFIED` after successful OAuth until an immutable provider-supported Marketing/BC join is available; it never fabricates a connected advertising account. UI fixtures with synthetic URLs demonstrate rendering/state behavior only; they do not establish live authorization support.
 
 The QR bitmap is generated locally using the already resolved `qr` 3.0.2 package. Its four-module quiet zone is preserved. [`tiktok_qr_tutorial.dart`](../../proxo_app/lib/widgets/tiktok_qr_tutorial.dart) is original bundled vector animation code: it draws a generic phone and scan line without screenshots, external assets, provider UI copies, or authorization data. Reduced-motion settings render a still frame.
 

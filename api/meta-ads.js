@@ -103,5 +103,6 @@ const metaHandler=createMetaHandler();
 export default async function advertisingDispatcher(req,res) {
   const platform=String(req.query?.platform||new URL(req.url,'https://local.invalid').searchParams.get('platform')||'');
   if(platform==='tiktok')return (await import('./_lib/tiktok/handler.js')).default(req,res);
+  if(platform==='payments')return (await import('./_lib/payments/handler.js')).default(req,res);
   return metaHandler(req,res);
 }

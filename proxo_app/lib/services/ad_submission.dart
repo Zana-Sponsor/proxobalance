@@ -647,6 +647,10 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
           String op, Map<String, dynamic> body) =>
       _adsCall('tiktok-dm', op, body);
 
+  Future<Map<String, dynamic>> _paymentCall(
+          String op, Map<String, dynamic> body) =>
+      _adsCall('meta-ads', op, body, platform: 'payments');
+
   @override
   Future<bool> tiktokDmAvailable() async {
     try {
@@ -684,11 +688,17 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
   }
 
   Future<Map<String, dynamic>> _adsCall(
-      String service, String op, Map<String, dynamic> body) async {
+      String service, String op, Map<String, dynamic> body,
+      {String? platform}) async {
     final token = client.auth.currentSession?.accessToken;
     if (token == null) throw const AdSubmissionFailure('NOT_AUTHENTICATED');
     final response = await http
-        .post(Uri.parse('${_backend.publicBase}/api/$service?op=$op'),
+        .post(
+            Uri.parse('${_backend.publicBase}/api/$service').replace(
+                queryParameters: {
+                  'op': op,
+                  if (platform != null) 'platform': platform
+                }),
             headers: {
               'Authorization': 'Bearer $token',
               'Content-Type': 'application/json'
@@ -761,7 +771,9 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
   @override
   Future<String> submit(
       AdPendingSubmission request, ValueNotifier<AdPaymentProgress> progress) {
-    if (request.draft.paymentMethod == 'fastpay') {
+    if (request.draft.paymentMethod == 'fastpay' &&
+        !request.draft.isMeta &&
+        !request.draft.isTikTokDirect) {
       _backend.requireProductionTransport();
     }
     final user = _user;
@@ -850,8 +862,11 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
       }).timeout(const Duration(seconds: 20)));
       checkOwner();
       if (recovered['ok'] == true) {
+        final adId = recovered['ad_id'];
+        if (adId is! String || adId.isEmpty) {
+          throw const AdSubmissionFailure('NETWORK', uncertain: true);
+        }
         await clearPending();
-        final adId = recovered['ad_id'] as String;
         AppDataCache.forClient(client).financialChanged();
         if (!request.draft.isMeta && !request.draft.isTikTokDirect) {
           _ensureThumbnail(adId);
@@ -864,6 +879,16 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
       }
       _checkCancellation(request.id);
       final automated = request.draft.isMeta || request.draft.isTikTokDirect;
+      if (automated && request.draft.paymentMethod == 'fastpay') {
+        // The server recovers an existing immutable attempt before checking
+        // quote expiry, dates or flags. A verified payment also accepts the ad
+        // and inserts its outbox atomically, including when this app is closed.
+        final adId = await _payAutomatedAd(request, progress, owner);
+        checkOwner();
+        await clearPending();
+        AppDataCache.forClient(client).financialChanged();
+        return adId;
+      }
       final trustedTime = automated ? await serverTime() : null;
       if (automated && trustedTime == null) {
         throw const AdSubmissionFailure('SERVER_TIME_UNAVAILABLE');
@@ -991,6 +1016,85 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
             (_) {}, onError: (Object e, StackTrace s) {
       debugPrint('Ad thumbnail generation deferred: ${e.runtimeType}');
     }));
+  }
+
+  Future<String> _payAutomatedAd(AdPendingSubmission request,
+      ValueNotifier<AdPaymentProgress> progress, String owner) async {
+    void checkOwner() {
+      if (client.auth.currentUser?.id != owner) {
+        throw const AdSubmissionFailure('NOT_AUTHENTICATED', uncertain: true);
+      }
+    }
+
+    checkOwner();
+    _checkCancellation(request.id);
+    progress.value =
+        const AdPaymentProgress(message: 'پارەدانی FastPay ئامادە دەکرێت…');
+    // Once an attempt exists, all interrupted reads retain the same frozen
+    // request. An expired QR is not proof that a late payment cannot arrive.
+    try {
+      var attempt = await _paymentCall('prepare', {
+        'submission_id': request.id,
+        'platform': request.draft.isMeta ? 'META' : 'TIKTOK',
+        'quote_id': (request.draft.isMeta
+            ? request.quote.metaContract
+            : request.quote.tiktokContract)?['quote_id'],
+        'expected_cost_usd': request.quote.costUsd,
+        'expected_amount_iqd': request.quote.totalIqd,
+      });
+      final deadline = DateTime.now().add(const Duration(minutes: 11));
+      while (true) {
+        checkOwner();
+        if (attempt['currency'] != 'IQD' ||
+            num.tryParse('${attempt['amount_iqd']}') !=
+                request.quote.totalIqd ||
+            attempt['environment'] !=
+                (_backend.isStaging ? 'sandbox' : 'production')) {
+          throw const AdSubmissionFailure('PAYMENT_ATTEMPT_MISMATCH',
+              uncertain: true);
+        }
+        final status = '${attempt['status']}';
+        if (status == 'funded' || status == 'compensated') {
+          final result = attempt['result'];
+          final adId = result is Map ? result['ad_id'] : attempt['ad_id'];
+          if (adId is! String || adId.isEmpty) {
+            throw const AdSubmissionFailure('FASTPAY_WAIT', uncertain: true);
+          }
+          return adId;
+        }
+        if (_cancelledSubmissions.contains(request.id)) {
+          final attemptId = attempt['attempt_id'];
+          if (attemptId is String && attemptId.isNotEmpty) {
+            await _paymentCall('cancel', {'attempt_id': attemptId});
+            checkOwner();
+          }
+          throw const AdSubmissionFailure('CANCELLED', uncertain: true);
+        }
+        if (const ['expired', 'declined', 'cancelled'].contains(status) ||
+            !DateTime.now().isBefore(deadline)) {
+          throw const AdSubmissionFailure('FASTPAY_WAIT', uncertain: true);
+        }
+        final orderId = attempt['order_id'];
+        final qr = attempt['qr_text'];
+        progress.value = AdPaymentProgress(
+          message: 'پارەدان بکە؛ پشتڕاستکردنەوە بە خۆکارە',
+          waitingForPayment: true,
+          qrUrl: attempt['qr_url'] as String?,
+          deepLink: qr is String && qr.isNotEmpty && orderId is String
+              ? 'appFpp://fast-pay.cash/qrpay'
+                  '?qrdata=${Uri.encodeQueryComponent(qr)}&clientUri=appfpclientProxo'
+                  '&transactionId=${Uri.encodeQueryComponent(orderId)}'
+              : null,
+        );
+        await Future<void>.delayed(const Duration(seconds: 3));
+        checkOwner();
+        // Poll only our server. Its trusted gateway validation and durable
+        // worker own settlement; Flutter never marks paid or submits again.
+        attempt = await _paymentCall('status', {'submission_id': request.id});
+      }
+    } on AdSubmissionFailure catch (error) {
+      throw AdSubmissionFailure(error.code, uncertain: true);
+    }
   }
 
   Future<String> _payWithFastPay(AdPendingSubmission r,

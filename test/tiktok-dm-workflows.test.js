@@ -55,7 +55,7 @@ test('Six required TikTok exports are inactive, credential-only and have complet
       for(const output of connection.main)for(const edge of output)assert.ok(names.has(edge.node));
     }
     for(const node of workflow.nodes.filter(n=>n.type==='n8n-nodes-base.httpRequest')){
-      assert.deepEqual(node.credentials,{httpHeaderAuth:{name:'Proxo TikTok DM worker'}});
+      assert.deepEqual(node.credentials,{httpHeaderAuth:{id:null,name:'UNCONFIGURED — Proxo TikTok DM worker'}});
       assert.equal(node.parameters.authentication,'genericCredentialType');
       assert.equal(node.parameters.genericAuthType,'httpHeaderAuth');
       assert.equal(node.parameters.options.redirect.redirect.followRedirects,false);
@@ -104,6 +104,17 @@ test('Unsupported authorization correlation stays blocked without leaking or fab
   assert.equal(output.error,undefined);
   assert.deepEqual(output.result,{ok:true,processed:0,status:'blocked',error_code:'TIKTOK_AUTH_CORRELATION_UNAVAILABLE'});
   assert.doesNotMatch(JSON.stringify(output.result),/secret|authorization_url|identity|request_id/);
+});
+
+test('Account maintenance accepts refreshed/revoked results without exposing OAuth material',()=>{
+  for(const status of ['refreshed','revoked']){
+    const output=run('proxo_tiktok_account_connect',{'worker-account-connect':success(status,{
+      processed:1,access_token:'secret',refresh_token:'secret',authorization_url:'secret'})});
+    assert.equal(output.error,undefined);
+    assert.deepEqual(output.result,{ok:true,processed:1,status});
+    assert.deepEqual(output.calls.map(call=>call.operation),['worker-account-connect']);
+  }
+  assert.ok(Object.values(routes).every(operations=>!operations.includes('worker-activate')));
 });
 
 test('Status, uncertain-outcome reconciliation and final refund run in fixed order with no supplied money or clock',()=>{

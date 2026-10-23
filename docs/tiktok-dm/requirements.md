@@ -1,5 +1,7 @@
 # TikTok Direct Message v15 requirements and release traceability
 
+This is the v15 baseline traceability record. The later 25-section continuation adds OAuth, immutable payments, activation and report evidence; its [current completion ledger](../tiktok-dm-completion-status-2026-10-23.md) supersedes implementation-status and test-count checkpoints below while retaining the original requirements.
+
 Source: the owner's `Proxo_TikTok_Direct_Message_Account_Connection_Prompt_UPDATED_v15_SelectedPaymentCard(1).txt`, 4,204 lines. This register covers the base sections and every authoritative appendix. Line numbers refer to that uploaded version, not a generated interpretation. Later authoritative instructions take precedence where they conflict; unchanged earlier requirements still apply.
 
 **This is a development handover, not production acceptance.** Source presence, fixture tests, provider documentation and real account verification are separate evidence. The implementation has local regression evidence recorded below; live release acceptance remains open. Production enablement, publishing scheduled automation, paid delivery and unsupported authorization are not approved by a passing unit test. The mandatory test-before-release rule at source lines 3–43 requires safe account, API, SQL/RLS, imported n8n, financial, realtime and manual device verification before release. Open external gates are recorded below.

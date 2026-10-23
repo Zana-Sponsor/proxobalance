@@ -41,11 +41,11 @@ export function identityParams(account) {
 export function verifyOwnerBinding(account,{now=Date.now()}={}) {
   const binding=account?.owner_binding_proof;
   // A generic BC QR and request log ID can never populate this evidence.
-  // It is writable only by the privileged, independently audited owner-binding
-  // procedure; no client or workflow can finalize a connection by list diff.
+  // Only an actual correlated provider authorization can populate this proof;
+  // there is no independent/manual owner-verification completion shortcut.
   if(!binding||binding.verified!==true||!binding.reference||binding.proxo_user_id!==account.user_id||binding.identity_id!==account.identity_id||
       binding.asset_id!==account.asset_id||binding.business_center_id!==account.business_center_id||binding.advertiser_id!==account.advertiser_id||
-      !['PROVIDER_CORRELATED_AUTHORIZATION','INDEPENDENT_OWNER_VERIFICATION'].includes(binding.method)||
+      binding.method!=='PROVIDER_CORRELATED_AUTHORIZATION'||
       !fresh(binding.verified_at,now,30*86400000)||username(binding.verified_username)!==username(account.requested_username))fail('TIKTOK_OWNER_BINDING_UNVERIFIED');
 }
 export function readiness(account,{now=Date.now()}={}) {
@@ -133,10 +133,10 @@ export async function listVideos(api,account,{cursor,now=Date.now()}={}) {
 export async function preflight(api,account,ad,{now=Date.now(),acceptedStart}={}) {
   const cap=readiness(account,{now});
   const time=schedule(ad,{now,acceptedStart});
-  const [identity,advertiserResponse,videoResponse,welcomeResponse]=await Promise.all([
+  const [identity,advertiserResponse,videoResponse,welcomeResponse,geography]=await Promise.all([
     verifyIdentity(api,account,{now}),api('advertiser/info/',{advertiser_ids:[account.advertiser_id],fields:['advertiser_id','currency','timezone','display_timezone']}),
     api('identity/video/info/',{...identityParams(account),item_id:ad.tiktok_item_id}),
-    api('creative/auto_message/get/',{advertiser_id:account.advertiser_id,auto_message_type:'WELCOME_MESSAGE',auto_message_id:cap.auto_message_id})]);
+    api('creative/auto_message/get/',{advertiser_id:account.advertiser_id,auto_message_type:'WELCOME_MESSAGE',auto_message_id:cap.auto_message_id}),verifyIraqTargeting(api,account,ad)]);
   const welcome=(welcomeResponse.list||welcomeResponse.auto_message_list)?.find(m=>m.auto_message_id===cap.auto_message_id);
   if(!welcome||welcome.auto_message_type!=='WELCOME_MESSAGE'||welcome.audit_status!=='PASS')fail('TIKTOK_WELCOME_MESSAGE_UNAVAILABLE');
   const advertiser=advertiserResponse.list?.find(a=>a.advertiser_id===account.advertiser_id);
@@ -157,7 +157,20 @@ export async function preflight(api,account,ad,{now=Date.now(),acceptedStart}={}
   const budget=money(ad,cap.budget.minimum_minor);
   return {authorized:true,ready:true,account_id:account.id,api_version:API_VERSION,flow:cap.flow,verified_at:new Date(now).toISOString(),
     identity:identityParams(account),verified_username:identity.username,item_id:video.item_id,targeting,auto_message_id:cap.auto_message_id,
-    advertiser_timezone:advertiser.display_timezone,...time,...budget,declared_budget_usd:budget.tiktok_declared_budget_minor/100};
+    advertiser_timezone:advertiser.display_timezone,geography,...time,...budget,declared_budget_usd:budget.tiktok_declared_budget_minor/100};
+}
+export async function verifyIraqTargeting(api,account,ad) {
+  const parameters={advertiser_id:account.advertiser_id,objective_type:'LEAD_GENERATION',promotion_type:'LEAD_GEN_CLICK_TO_TT_DIRECT_MESSAGE',placements:['PLACEMENT_TIKTOK'],
+    ...(ad.device_type==='all'?{}:{operating_system:ad.device_type==='iphone'?'IOS':'ANDROID'})};
+  const regions=await api('tool/region/',{...parameters,level_range:'TO_COUNTRY',language:'en'});
+  const countries=regions.region_info?.filter(r=>r.region_code==='IQ'&&r.level==='COUNTRY');
+  if(!Array.isArray(countries)||countries.length!==1||!numeric(countries[0].location_id)||countries[0].location_id!==account.capabilities.iraq_location_id)
+    fail('TIKTOK_IRAQ_TARGETING_UNAVAILABLE');
+  const tags=await api('tool/targeting/info/',{...parameters,scene:'GEO',targeting_ids:[countries[0].location_id]});
+  const matches=tags.targeting_tag_list?.filter(t=>t.targeting_type==='GEO'&&t.geo?.geo_id===countries[0].location_id);
+  if(!Array.isArray(matches)||matches.length!==1||matches[0].status_info?.status!=='ENABLED'||matches[0].geo.region_code!=='IQ'||matches[0].geo.geo_type!=='COUNTRY')
+    fail('TIKTOK_IRAQ_TARGETING_UNAVAILABLE');
+  return {location_id:countries[0].location_id,region_code:'IQ',status:'ENABLED',source:'tool/region/+tool/targeting/info/'};
 }
 const stageKey={campaign:'campaign_id',adgroup:'adgroup_id',ad:'smart_plus_ad_id'};
 export function stageParameters(stage,job) {
@@ -223,32 +236,48 @@ export async function pauseGroup(api,job) {
   if(observed.operation_status!=='DISABLE')fail('TIKTOK_STOP_UNCONFIRMED',{uncertain:true,status:409});
   return observed;
 }
-export async function reportSpend(api,job) {
+export async function reportMetrics(api,job) {
   const id=job.provider_ids?.adgroup;
   if(!numeric(id))fail('TIKTOK_PROVIDER_ID_MISSING');
   const report=await api('report/integrated/get/',{advertiser_id:job.evidence.identity.advertiser_id,report_type:'BASIC',data_level:'AUCTION_ADGROUP',
-    dimensions:['adgroup_id'],metrics:['spend'],query_lifetime:true,filtering:[{field_name:'adgroup_ids',filter_type:'IN',filter_value:JSON.stringify([id])},
+    dimensions:['adgroup_id'],metrics:['spend','impressions','clicks','video_play_actions','reach','conversion'],query_lifetime:true,filtering:[{field_name:'adgroup_ids',filter_type:'IN',filter_value:JSON.stringify([id])},
       {field_name:'adgroup_status',filter_type:'IN',filter_value:JSON.stringify(['STATUS_ALL'])}],page:1,page_size:100});
   if(!Array.isArray(report.list)||report.list.length!==1||report.list[0].dimensions?.adgroup_id!==id||
       !/^\d+(?:\.\d{1,6})?$/.test(String(report.list[0].metrics?.spend)))fail('TIKTOK_SPEND_NOT_AVAILABLE',{retryable:true,status:503});
   const spend=Number(report.list[0].metrics.spend);
   if(!Number.isFinite(spend)||spend<0)fail('TIKTOK_SPEND_NOT_AVAILABLE',{retryable:true,status:503});
-  return spend;
+  const metrics={};
+  for(const [provider,local]of Object.entries({impressions:'impressions',clicks:'clicks',video_play_actions:'video_views',reach:'reach',conversion:'conversions'})) {
+    const value=report.list[0].metrics[provider];
+    if(value!==undefined&&value!==null&&/^\d+(?:\.0+)?$/.test(String(value))&&Number.isSafeInteger(Number(value)))metrics[local]=Number(value);
+  }
+  return {spend_usd:spend,metrics};
+}
+export async function reportSpend(api,job){return (await reportMetrics(api,job)).spend_usd;}
+function providerTimestamp(value) {
+  if(typeof value!=='string'||!/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(value))return null;
+  const parsed=Date.parse(value.replace(' ','T')+'Z');
+  return Number.isFinite(parsed)&&new Date(parsed).toISOString().slice(0,19).replace('T',' ')===value?new Date(parsed).toISOString():null;
 }
 export async function observe(api,job,{now=Date.now(),allowMissingSpend=false}={}) {
   const ids=job.provider_ids||{};
   const [campaign,group,ad,report]=await Promise.all([readStage(api,'campaign',job),readStage(api,'adgroup',job),ids.ad?readStage(api,'ad',job):Promise.resolve(null),
-    reportSpend(api,job).then(value=>({value}),error=>({error}))]);
+    reportMetrics(api,job).then(value=>({value}),error=>({error}))]);
   const chain=[campaign,group,...(ad?[ad]:[])];
   if(chain.some(o=>!['ENABLE','DISABLE'].includes(o.operation_status)))fail('TIKTOK_OPERATION_STATUS_UNKNOWN',{retryable:true,status:503});
+  for(const [index,key]of ['campaign','adgroup','ad'].entries()) {
+    const changed=providerTimestamp(chain[index]?.modify_time),previous=job.observation?.raw_statuses?.[key]?.modify_time;
+    if(changed&&previous&&Date.parse(changed)<Date.parse(previous))fail('TIKTOK_STALE_PROVIDER_OBSERVATION',{retryable:true,status:503});
+  }
   if(report.error&&!allowMissingSpend)throw report.error;
-  const spend=report.error?null:report.value;
+  const spend=report.error?null:report.value.spend_usd;
   const rejection=chain.find(o=>['ADGROUP_STATUS_AUDIT_DENY','AD_STATUS_AUDIT_DENY','AD_STATUS_PRIVACY_POLICY_REJECTED'].includes(o.secondary_status));
   const status=rejection?.secondary_status||ad?.secondary_status||group.secondary_status,paused=chain.some(o=>o.operation_status==='DISABLE');
   return {operation_status:paused?'DISABLE':'ENABLE',secondary_status:status,spend_usd:spend,provider_observed_at:new Date(now).toISOString(),
     provider_ad_id:ids.ad||null,provider_adgroup_id:ids.adgroup,paused,chain_paused:chain.every(o=>o.operation_status==='DISABLE'),
-    raw_statuses:Object.fromEntries(['campaign','adgroup','ad'].map((key,i)=>[key,chain[i]?{operation_status:chain[i].operation_status,secondary_status:chain[i].secondary_status}:null])),
-    terminal:['ADGROUP_STATUS_TIME_DONE','AD_STATUS_DONE'].includes(status),metrics:spend===null?{}:{spend_usd:spend}};
+    raw_statuses:Object.fromEntries(['campaign','adgroup','ad'].map((key,i)=>[key,chain[i]?{operation_status:chain[i].operation_status,secondary_status:chain[i].secondary_status,
+      ...Object.fromEntries(['create_time','modify_time'].flatMap(field=>providerTimestamp(chain[i][field])?[[field,providerTimestamp(chain[i][field])]]:[]))}:null])),
+    terminal:['ADGROUP_STATUS_TIME_DONE','AD_STATUS_DONE'].includes(status),metrics:spend===null?{}:report.value.metrics};
 }
 export async function unlinkAdvertiser(api,account) {
   // REVOKING is committed before this method is called. Broad BC revocation is

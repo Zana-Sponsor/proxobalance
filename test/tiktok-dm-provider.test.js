@@ -2,8 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { normalizeAd,username,money,schedule,fingerprint,TikTokError } from '../api/_lib/tiktok/contract.js';
-import { tiktokClient,readiness,verifyIdentity,publicVideo,listVideos,preflight,stageParameters,reconcileStage,observe,reportSpend,unlinkAdvertiser } from '../api/_lib/tiktok/provider.js';
-import { runWorker,settlementProof } from '../api/_lib/tiktok/worker.js';
+import { tiktokClient,readiness,verifyIdentity,publicVideo,listVideos,preflight,stageParameters,reconcileStage,observe,reportSpend,reportMetrics,unlinkAdvertiser } from '../api/_lib/tiktok/provider.js';
+import { runWorker } from '../api/_lib/tiktok/worker.js';
 import { createTikTokHandler,publicAccount } from '../api/_lib/tiktok/handler.js';
 
 const now=Date.parse('2026-10-23T10:00:00Z'),at=new Date(now).toISOString();
@@ -12,7 +12,7 @@ const ad=()=>normalizeAd({title:'Direct message',goal:'messages',message_destina
   customer_note:'',daily_budget:10,days:1,payment_method:'app_balance',start_date:null,start_time:null,start_immediately:true},{now});
 const account=()=>({id:aid,user_id:uid,status:'CONNECTED',requested_username:'Our.Store',verified_username:'our.store',identity_id:'222',identity_type:'BC_AUTH_TT',business_center_id:'333',identity_authorized_bc_id:'333',asset_id:'444',advertiser_id:'111',
   available_status:'AVAILABLE',can_pull_video:true,can_manage_message:true,message_ads_eligible:true,last_verified_at:at,access_token_env:'TIKTOK_TEST_TOKEN',
-  owner_binding_proof:{verified:true,reference:'private-review-42',method:'INDEPENDENT_OWNER_VERIFICATION',proxo_user_id:uid,identity_id:'222',asset_id:'444',business_center_id:'333',advertiser_id:'111',verified_username:'Our.Store',verified_at:at},
+  owner_binding_proof:{verified:true,reference:'mock-correlated-authorization',method:'PROVIDER_CORRELATED_AUTHORIZATION',proxo_user_id:uid,identity_id:'222',asset_id:'444',business_center_id:'333',advertiser_id:'111',verified_username:'Our.Store',verified_at:at},
   capabilities:{api_version:'v1.3',flow:'UPGRADED_SMART_PLUS_DM',evidence_reference:'private-advertiser-test-42',verified_at:at,conversation_allowlisted:true,adgroup_identity_allowlisted:true,
     iraq_conversation_verified:true,targeting_country:'IQ',iraq_location_id:'888',manual_targeting_verified:true,dm_receiving_verified:true,auto_message_id:'666',auto_message_verified_at:at,
     budget:{currency:'USD',mode:'BUDGET_MODE_TOTAL',minimum_minor:2000,verified_at:at},spend_guard_verified:true,advertiser_timezone:'Asia/Baghdad'}});
@@ -29,6 +29,8 @@ function fixture({calls=[],identityOverride={},videoOverride={},musicStatus='WIT
       case 'identity/video/get/':return {video_list:[video(),video('556','STATUS_ONLY_FRIEND_SEE'),video('557','ITEM_STATUS_ONLY_AUTHOR_SEE')],has_more:true,cursor:'999'};
       case 'identity/music/authorization/':return {music_authorization:[{item_id:params.item_id,music_status:musicStatus}]};
       case 'tool/language/':return {languages:[{name:'English',code:'en'},{name:'Turkish',code:'verified_tr_code'}]};
+      case 'tool/region/':return {region_info:[{location_id:'888',region_code:'IQ',level:'COUNTRY'}]};
+      case 'tool/targeting/info/':return {targeting_tag_list:[{targeting_type:'GEO',status_info:{status:'ENABLED'},geo:{geo_id:'888',region_code:'IQ',geo_type:'COUNTRY'}}]};
       case 'creative/auto_message/get/':return {list:[{auto_message_id:'666',auto_message_type:'WELCOME_MESSAGE',audit_status:welcomeStatus}]};
       default:throw Error(`unexpected ${path}`);
     }
@@ -53,6 +55,7 @@ test('Direct Message contract rejects manual branch fields, keeps budget, canoni
 test('generic QR/list-diff cannot bind owners; account readiness requires exact approved tuple and ownership',async()=>{
   const a=account();
   assert.throws(()=>readiness({...a,owner_binding_proof:{verified:true,reference:'qr-log-id'}}),{code:'TIKTOK_OWNER_BINDING_UNVERIFIED'});
+  assert.throws(()=>readiness({...a,owner_binding_proof:{...a.owner_binding_proof,method:'INDEPENDENT_OWNER_VERIFICATION'}},{now}),{code:'TIKTOK_OWNER_BINDING_UNVERIFIED'});
   assert.throws(()=>readiness({...a,capabilities:{...a.capabilities,iraq_conversation_verified:false}},{now}),{code:'TIKTOK_IRAQ_CONVERSATION_UNAVAILABLE'});
   assert.throws(()=>readiness({...a,capabilities:{...a.capabilities,flow:'MANUAL_CLICK'}},{now}),{code:'TIKTOK_CONVERSATION_TUPLE_NOT_VERIFIED'});
   await assert.rejects(verifyIdentity(fixture({identityOverride:{username:'other.store'}}),a,{now}),{code:'TIKTOK_USERNAME_MISMATCH'});
@@ -82,6 +85,25 @@ test('quote preflight revalidates selected public video, music, welcome and exac
   await assert.rejects(preflight(fixture({videoOverride:{status:'ITEM_STATUS_ONLY_AUTHOR_SEE'}}),account(),a,{now}),{code:'TIKTOK_VIDEO_NOT_PUBLIC_OR_AVAILABLE'});
   await assert.rejects(preflight(fixture({welcomeStatus:'REJECTED'}),account(),a,{now}),{code:'TIKTOK_WELCOME_MESSAGE_UNAVAILABLE'});
   await assert.rejects(preflight(fixture({musicStatus:'AUTHORIZATION_MISSING'}),account(),a,{now}),{code:'TIKTOK_VIDEO_MUSIC_INELIGIBLE'});
+});
+
+test('live geo capability must expose enabled Iraq for the exact messaging placement tuple',async()=>{
+  for(const variation of ['country','disabled','identifier']){
+    const api=fixture();
+    await assert.rejects(preflight(async(path,params,method)=>{
+      if(path==='tool/region/'&&variation==='country')return {region_info:[{location_id:'888',region_code:'US',level:'COUNTRY'}]};
+      if(path==='tool/targeting/info/')return {targeting_tag_list:[{targeting_type:'GEO',status_info:{status:variation==='disabled'?'DISABLED':'ENABLED'},geo:{geo_id:variation==='identifier'?'999':'888',region_code:'IQ',geo_type:'COUNTRY'}}]};
+      return api(path,params,method);
+    },account(),ad(),{now}),{code:'TIKTOK_IRAQ_TARGETING_UNAVAILABLE'});
+  }
+});
+
+test('real report metrics retain provider-supported counts only and never invent unavailable values',async()=>{
+  const j=await job();j.provider_ids={campaign:'701',adgroup:'702',ad:'703'};let query;
+  const report=await reportMetrics(async(path,params)=>{assert.equal(path,'report/integrated/get/');query=params;return {list:[{dimensions:{adgroup_id:'702'},metrics:{spend:'1.2345',impressions:'12',clicks:'0.00',video_play_actions:'8',reach:null,conversion:'unknown'}}]};},j);
+  assert.deepEqual(query.metrics,['spend','impressions','clicks','video_play_actions','reach','conversion']);assert.equal(query.query_lifetime,true);
+  assert.deepEqual(report,{spend_usd:1.2345,metrics:{impressions:12,clicks:0,video_views:8}});
+  await assert.rejects(reportMetrics(async()=>({list:[{dimensions:{adgroup_id:'999'},metrics:{spend:'0'}}]}),j),{code:'TIKTOK_SPEND_NOT_AVAILABLE'});
 });
 
 test('Smart+ builders create only disabled Conversation entities and preserve native existing identity/item',async()=>{
@@ -114,9 +136,9 @@ test('worker commits intent before POST and never blindly retries an unknown cre
   await runWorker('create',deps);assert.equal(posts,1);assert(!events.includes('refund'));assert(!events.includes('reject'));
 });
 
-test('worker returns explicit blocked QR without API calls or forged request',async()=>{
-  let calls=0;const result=await runWorker('account-connect',{service:async()=>{calls++;}});
-  assert.equal(result.status,'blocked');assert.equal(result.error_code,'TIKTOK_AUTH_CORRELATION_UNAVAILABLE');assert.equal(calls,0);
+test('account worker maintains real OAuth grants, prioritizing revoke without fabricating a connected identity',async()=>{
+  const calls=[];const result=await runWorker('account-connect',{oauthTokenWorkerImpl:async kind=>{calls.push(kind);return {ok:true,processed:0,status:'idle'};}});
+  assert.equal(result.status,'idle');assert.deepEqual(calls,['revoke','refresh']);assert.equal(result.authorization_url,undefined);
 });
 
 test('never-created terminal job refunds safely even when provider credentials are unavailable',async()=>{
@@ -153,6 +175,14 @@ test('status considers disabled ancestors/ad; reporting errors and empty data ne
   const events=[];
   await runWorker('status',{service:async action=>{events.push(action);return action==='claim'?j:{ok:true};},clientFactory:()=>async()=>{throw new TikTokError('TIKTOK_UNAVAILABLE',{retryable:true});},now:()=>now});
   assert(!events.includes('observe'));assert(!events.includes('refund'));
+});
+
+test('actual provider UTC timestamps are retained separately from fetch time and older snapshots cannot replace them',async()=>{
+  const j=await job();j.provider_ids={campaign:'701',adgroup:'702',ad:'703'};const base=providerState(j);
+  const api=async(path,params,method)=>{const result=await base(path,params,method);if(path.startsWith('smart_plus/'))Object.assign(result.list[0],{create_time:'2026-10-22 09:00:00',modify_time:'2026-10-23 09:59:00'});return result;};
+  const observed=await observe(api,j,{now});assert.equal(observed.raw_statuses.ad.modify_time,'2026-10-23T09:59:00.000Z');assert.equal(observed.provider_observed_at,at);
+  j.observation={raw_statuses:{ad:{modify_time:'2026-10-23T10:00:00.000Z'}}};
+  await assert.rejects(observe(api,j,{now}),{code:'TIKTOK_STALE_PROVIDER_OBSERVATION'});
 });
 
 test('a known ad with terminal failure and current zero report cannot bypass final-settlement waiting',async()=>{
@@ -195,11 +225,12 @@ test('rejected known ad with confirmed failure stop reaches settlement after the
   j.stop_intent={reason:'provider_failure'};j.refund_eligible_at=new Date(now-1000).toISOString();
   j.account.capabilities.settled_reports=[{verified:true,source:'PROVIDER_SETTLEMENT_EXPORT',reference:'rejected-final',adgroup_id:'702',final_spend_usd:0,settled_at:at}];
   const events=[];let posts=0;const api=providerState(j,{spend:'0',groupStatus:'DISABLE',adSecondaryStatus:'AD_STATUS_PRIVACY_POLICY_REJECTED'});
-  const result=await runWorker('reconcile',{service:async(action,{payload}={})=>{events.push({action,payload});return action==='claim'?j:action==='final_observe'?{ok:true,settled:true}:{ok:true,status:'rejected'};},
+  const result=await runWorker('reconcile',{service:async(action,{payload}={})=>{events.push({action,payload});return action==='claim'?j:{ok:true,status:'rejected'};},
+    settlementCollectorImpl:async()=>({source:'TIKTOK_OFFLINE_REPORT_CANDIDATE',settlement_verified:false}),
     clientFactory:()=>async(path,params,method)=>{if(method==='POST')posts++;return api(path,params,method);},now:()=>now});
-  assert.equal(posts,0);assert.equal(result.status,'refunded');
+  assert.equal(posts,0);assert.equal(result.status,'reconcile');
   assert(!events.some(e=>e.action==='stop_intent'));
-  assert(events.find(e=>e.action==='final_observe').payload.settlement_verified);assert(events.some(e=>e.action==='refund'));
+  assert(events.some(e=>e.action==='ingest_report_candidate'));assert(!events.some(e=>['refund','final_observe'].includes(e.action)));
 });
 
 test('partial campaign-only failure proves disabled ancestors before compensating without fake provider report',async()=>{
@@ -209,17 +240,14 @@ test('partial campaign-only failure proves disabled ancestors before compensatin
   assert.equal(result.status,'refunded');assert.equal(events.find(e=>e.action==='observe').payload.spend_source,'NO_DELIVERABLE_AD_CHAIN');assert(events.some(e=>e.action==='refund'));
 });
 
-test('settlement requires exact authoritative attestation, two-hour eligibility, and supports persisted budget stop',async()=>{
+test('manual settlement capability flags cannot authorize refunds; candidate and immutable record lookup remain required',async()=>{
   const j=await job();j.provider_ids={campaign:'701',adgroup:'702',ad:'703'};j.refund_eligible_at=new Date(now-60000).toISOString();j.stop_intent={reason:'budget_limit'};
-  const observation={spend_usd:9.9};
-  assert.equal(settlementProof(j,observation,{now}).settlement_verified,false);
   j.account.capabilities.settled_reports=[{verified:true,source:'PROVIDER_SETTLEMENT_EXPORT',reference:'settlement1',adgroup_id:'702',final_spend_usd:9.9,settled_at:at}];
-  assert.equal(settlementProof(j,observation,{now}).settlement_verified,true);
-  j.account.capabilities.settled_reports[0].final_spend_usd=null;assert.equal(settlementProof(j,{spend_usd:0},{now}).settlement_verified,false);j.account.capabilities.settled_reports[0].final_spend_usd=9.9;
   const events=[];
-  const result=await runWorker('refund',{service:async(action,{payload}={})=>{events.push({action,payload});return action==='claim'?j:action==='final_observe'?{ok:true,settled:true}:{ok:true};},
+  const result=await runWorker('refund',{service:async(action,{payload}={})=>{events.push({action,payload});return action==='claim'?j:{ok:true};},
+    settlementCollectorImpl:async()=>({source:'TIKTOK_OFFLINE_REPORT_CANDIDATE',settlement_verified:false}),
     clientFactory:()=>providerState(j,{spend:'9.90',groupStatus:'DISABLE'}),now:()=>now});
-  assert.equal(result.status,'refunded');assert(events.find(e=>e.action==='final_observe').payload.settlement_verified);assert(events.some(e=>e.action==='refund'));assert(events.some(e=>e.action==='pause_complete'));
+  assert.equal(result.status,'reconcile');assert(events.some(e=>e.action==='settlement_lookup'));assert(!events.some(e=>['refund','final_observe'].includes(e.action)));assert(events.some(e=>e.action==='pause_complete'));
   j.refund_eligible_at=new Date(now+1000).toISOString();events.length=0;
   await runWorker('refund',{service:async action=>{events.push({action});return action==='claim'?j:{ok:true};},clientFactory:()=>providerState(j),now:()=>now});
   assert(!events.some(e=>e.action==='refund'||e.action==='final_observe'));
@@ -231,7 +259,8 @@ test('status worker enforces threshold and recovers a lost pause acknowledgment 
   const base=providerState(j,{groupStatus:'DISABLE',spend:'9.90'});j.stop_intent={reason:'budget_limit'};
   j.refund_eligible_at=new Date(now-1000).toISOString();j.canonical_status='completed';
   j.account.capabilities.settled_reports=[{verified:true,source:'PROVIDER_SETTLEMENT_EXPORT',reference:'settlement',adgroup_id:'702',final_spend_usd:9.9,settled_at:at}];
-  const result=await runWorker('status',{service:async(action)=>{events.push(action);return action==='claim'?j:action==='pause_complete'?{ok:true,status:'completed'}:action==='final_observe'?{ok:true,settled:true}:{ok:true};},
+  const result=await runWorker('status',{service:async(action)=>{events.push(action);return action==='claim'?j:action==='pause_complete'?{ok:true,status:'completed'}:action==='settlement_lookup'?{ok:true,settlement_verified:true,settlement_record_id:aid}:action==='final_observe'?{ok:true,settled:true}:{ok:true};},
+    settlementCollectorImpl:async()=>({source:'TIKTOK_OFFLINE_REPORT_CANDIDATE',settlement_verified:false}),
     clientFactory:()=>async(p,q,m)=>{if(m==='POST')posts++;return base(p,q,m);},now:()=>now});
   assert.equal(posts,0);assert(events.includes('pause_complete'));assert(events.includes('final_observe'));assert(events.includes('refund'));assert.equal(result.status,'refunded');
 });
@@ -255,7 +284,7 @@ test('isolated HTTP API authenticates and masks private proof; quote readonly an
   const post=async(op,body,token='jwt')=>{const r=await fetch(`${url}?op=${op}`,{method:'POST',headers:{Authorization:`Bearer ${token}`,'Content-Type':'application/json'},body:JSON.stringify(body)});return {status:r.status,body:await r.json()};};
   assert.equal((await post('accounts',{},'bad')).status,401);assert.equal(events.length,0);
   const accounts=await post('accounts',{});assert.equal(accounts.body.accounts[0].dm_ready,true);assert(!JSON.stringify(accounts.body).includes('owner_binding_proof'));assert(!JSON.stringify(accounts.body).includes('access_token_env'));
-  const connect=await post('connect-start',{username:'Our.Store',idempotency_key:uid});assert.equal(connect.status,409);assert.equal(connect.body.code,'TIKTOK_AUTH_CORRELATION_UNAVAILABLE');assert.equal(connect.body.authorization_url,undefined);
+  const connect=await post('connect-start',{username:'Our.Store',idempotency_key:uid});assert.equal(connect.status,503);assert.equal(connect.body.code,'TIKTOK_OAUTH_NOT_CONFIGURED');assert.equal(connect.body.authorization_url,undefined);
   events.length=0;assert.equal((await post('quote',{ad:draft})).status,200);assert.deepEqual(events.map(e=>e.action),['gate','account','store_quote']);
   events.length=0;assert.equal((await post('submit',{submission_id:uid,ad:draft,quote_id:jid,expected_cost_usd:0,expected_price_iqd:0})).status,200);assert.deepEqual(events.map(e=>e.action),['pa_submit_ad']);
   assert.equal(events[0].payload.p_ad.tiktok_quote_id,jid);assert.equal(events[0].payload.p_expected_cost_usd,0);

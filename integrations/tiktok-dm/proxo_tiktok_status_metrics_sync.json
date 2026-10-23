@@ -82,7 +82,8 @@
       },
       "credentials": {
         "httpHeaderAuth": {
-          "name": "Proxo TikTok DM worker"
+          "id": null,
+          "name": "UNCONFIGURED — Proxo TikTok DM worker"
         }
       },
       "retryOnFail": true,
@@ -102,7 +103,7 @@
       ],
       "parameters": {
         "mode": "runOnceForEachItem",
-        "jsCode": "// Do not return authorization URLs, provider payloads, headers or customer records.\nconst response=$json;\nif(!response || response.error || !Number.isInteger(response.statusCode))\n  throw new Error('TIKTOK_DM_WORKER_TRANSPORT_UNAVAILABLE');\nif(response.statusCode===401 || response.statusCode===403)\n  throw new Error('TIKTOK_DM_WORKER_AUTHORIZATION_FAILED');\nif(response.statusCode===429 || response.statusCode>=500)\n  throw new Error('TIKTOK_DM_WORKER_TEMPORARILY_UNAVAILABLE');\nif(response.statusCode<200 || response.statusCode>=300)\n  throw new Error('TIKTOK_DM_WORKER_REQUEST_REJECTED');\nlet body=response.body;\nif(typeof body==='string') {\n  try { body=JSON.parse(body); }\n  catch { throw new Error('TIKTOK_DM_WORKER_INVALID_RESPONSE'); }\n}\nif(!body || body.ok!==true || ![0,1].includes(body.processed)\n  || !['idle','blocked','paused','observed','reconcile','refunded','connected','disconnected','videos_ready','guarded'].includes(body.status))\n  throw new Error('TIKTOK_DM_WORKER_INVALID_RESPONSE');\nconst result={ok:true,processed:body.processed,status:body.status};\nif(typeof body.error_code==='string' && /^[A-Z][A-Z0-9_]{0,99}$/.test(body.error_code))\n  result.error_code=body.error_code;\nreturn {json:result};"
+        "jsCode": "// Do not return authorization URLs, provider payloads, headers or customer records.\nconst response=$json;\nif(!response || response.error || !Number.isInteger(response.statusCode))\n  throw new Error('TIKTOK_DM_WORKER_TRANSPORT_UNAVAILABLE');\nif(response.statusCode===401 || response.statusCode===403)\n  throw new Error('TIKTOK_DM_WORKER_AUTHORIZATION_FAILED');\nif(response.statusCode===429 || response.statusCode>=500)\n  throw new Error('TIKTOK_DM_WORKER_TEMPORARILY_UNAVAILABLE');\nif(response.statusCode<200 || response.statusCode>=300)\n  throw new Error('TIKTOK_DM_WORKER_REQUEST_REJECTED');\nlet body=response.body;\nif(typeof body==='string') {\n  try { body=JSON.parse(body); }\n  catch { throw new Error('TIKTOK_DM_WORKER_INVALID_RESPONSE'); }\n}\nif(!body || body.ok!==true || ![0,1].includes(body.processed)\n  || !['idle','blocked','paused','observed','reconcile','refunded','connected','disconnected','videos_ready','guarded','refreshed','revoked'].includes(body.status))\n  throw new Error('TIKTOK_DM_WORKER_INVALID_RESPONSE');\nconst result={ok:true,processed:body.processed,status:body.status};\nif(typeof body.error_code==='string' && /^[A-Z][A-Z0-9_]{0,99}$/.test(body.error_code))\n  result.error_code=body.error_code;\nreturn {json:result};"
       }
     },
     {
@@ -140,7 +141,8 @@
       },
       "credentials": {
         "httpHeaderAuth": {
-          "name": "Proxo TikTok DM worker"
+          "id": null,
+          "name": "UNCONFIGURED — Proxo TikTok DM worker"
         }
       },
       "retryOnFail": true,
@@ -160,7 +162,7 @@
       ],
       "parameters": {
         "mode": "runOnceForEachItem",
-        "jsCode": "// Do not return authorization URLs, provider payloads, headers or customer records.\nconst response=$json;\nif(!response || response.error || !Number.isInteger(response.statusCode))\n  throw new Error('TIKTOK_DM_WORKER_TRANSPORT_UNAVAILABLE');\nif(response.statusCode===401 || response.statusCode===403)\n  throw new Error('TIKTOK_DM_WORKER_AUTHORIZATION_FAILED');\nif(response.statusCode===429 || response.statusCode>=500)\n  throw new Error('TIKTOK_DM_WORKER_TEMPORARILY_UNAVAILABLE');\nif(response.statusCode<200 || response.statusCode>=300)\n  throw new Error('TIKTOK_DM_WORKER_REQUEST_REJECTED');\nlet body=response.body;\nif(typeof body==='string') {\n  try { body=JSON.parse(body); }\n  catch { throw new Error('TIKTOK_DM_WORKER_INVALID_RESPONSE'); }\n}\nif(!body || body.ok!==true || ![0,1].includes(body.processed)\n  || !['idle','blocked','paused','observed','reconcile','refunded','connected','disconnected','videos_ready','guarded'].includes(body.status))\n  throw new Error('TIKTOK_DM_WORKER_INVALID_RESPONSE');\nconst result={ok:true,processed:body.processed,status:body.status};\nif(typeof body.error_code==='string' && /^[A-Z][A-Z0-9_]{0,99}$/.test(body.error_code))\n  result.error_code=body.error_code;\nreturn {json:result};"
+        "jsCode": "// Do not return authorization URLs, provider payloads, headers or customer records.\nconst response=$json;\nif(!response || response.error || !Number.isInteger(response.statusCode))\n  throw new Error('TIKTOK_DM_WORKER_TRANSPORT_UNAVAILABLE');\nif(response.statusCode===401 || response.statusCode===403)\n  throw new Error('TIKTOK_DM_WORKER_AUTHORIZATION_FAILED');\nif(response.statusCode===429 || response.statusCode>=500)\n  throw new Error('TIKTOK_DM_WORKER_TEMPORARILY_UNAVAILABLE');\nif(response.statusCode<200 || response.statusCode>=300)\n  throw new Error('TIKTOK_DM_WORKER_REQUEST_REJECTED');\nlet body=response.body;\nif(typeof body==='string') {\n  try { body=JSON.parse(body); }\n  catch { throw new Error('TIKTOK_DM_WORKER_INVALID_RESPONSE'); }\n}\nif(!body || body.ok!==true || ![0,1].includes(body.processed)\n  || !['idle','blocked','paused','observed','reconcile','refunded','connected','disconnected','videos_ready','guarded','refreshed','revoked'].includes(body.status))\n  throw new Error('TIKTOK_DM_WORKER_INVALID_RESPONSE');\nconst result={ok:true,processed:body.processed,status:body.status};\nif(typeof body.error_code==='string' && /^[A-Z][A-Z0-9_]{0,99}$/.test(body.error_code))\n  result.error_code=body.error_code;\nreturn {json:result};"
       }
     },
     {
@@ -198,7 +200,8 @@
       },
       "credentials": {
         "httpHeaderAuth": {
-          "name": "Proxo TikTok DM worker"
+          "id": null,
+          "name": "UNCONFIGURED — Proxo TikTok DM worker"
         }
       },
       "retryOnFail": true,
@@ -218,7 +221,7 @@
       ],
       "parameters": {
         "mode": "runOnceForEachItem",
-        "jsCode": "// Do not return authorization URLs, provider payloads, headers or customer records.\nconst response=$json;\nif(!response || response.error || !Number.isInteger(response.statusCode))\n  throw new Error('TIKTOK_DM_WORKER_TRANSPORT_UNAVAILABLE');\nif(response.statusCode===401 || response.statusCode===403)\n  throw new Error('TIKTOK_DM_WORKER_AUTHORIZATION_FAILED');\nif(response.statusCode===429 || response.statusCode>=500)\n  throw new Error('TIKTOK_DM_WORKER_TEMPORARILY_UNAVAILABLE');\nif(response.statusCode<200 || response.statusCode>=300)\n  throw new Error('TIKTOK_DM_WORKER_REQUEST_REJECTED');\nlet body=response.body;\nif(typeof body==='string') {\n  try { body=JSON.parse(body); }\n  catch { throw new Error('TIKTOK_DM_WORKER_INVALID_RESPONSE'); }\n}\nif(!body || body.ok!==true || ![0,1].includes(body.processed)\n  || !['idle','blocked','paused','observed','reconcile','refunded','connected','disconnected','videos_ready','guarded'].includes(body.status))\n  throw new Error('TIKTOK_DM_WORKER_INVALID_RESPONSE');\nconst result={ok:true,processed:body.processed,status:body.status};\nif(typeof body.error_code==='string' && /^[A-Z][A-Z0-9_]{0,99}$/.test(body.error_code))\n  result.error_code=body.error_code;\nreturn {json:result};"
+        "jsCode": "// Do not return authorization URLs, provider payloads, headers or customer records.\nconst response=$json;\nif(!response || response.error || !Number.isInteger(response.statusCode))\n  throw new Error('TIKTOK_DM_WORKER_TRANSPORT_UNAVAILABLE');\nif(response.statusCode===401 || response.statusCode===403)\n  throw new Error('TIKTOK_DM_WORKER_AUTHORIZATION_FAILED');\nif(response.statusCode===429 || response.statusCode>=500)\n  throw new Error('TIKTOK_DM_WORKER_TEMPORARILY_UNAVAILABLE');\nif(response.statusCode<200 || response.statusCode>=300)\n  throw new Error('TIKTOK_DM_WORKER_REQUEST_REJECTED');\nlet body=response.body;\nif(typeof body==='string') {\n  try { body=JSON.parse(body); }\n  catch { throw new Error('TIKTOK_DM_WORKER_INVALID_RESPONSE'); }\n}\nif(!body || body.ok!==true || ![0,1].includes(body.processed)\n  || !['idle','blocked','paused','observed','reconcile','refunded','connected','disconnected','videos_ready','guarded','refreshed','revoked'].includes(body.status))\n  throw new Error('TIKTOK_DM_WORKER_INVALID_RESPONSE');\nconst result={ok:true,processed:body.processed,status:body.status};\nif(typeof body.error_code==='string' && /^[A-Z][A-Z0-9_]{0,99}$/.test(body.error_code))\n  result.error_code=body.error_code;\nreturn {json:result};"
       }
     }
   ],

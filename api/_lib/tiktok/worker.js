@@ -1,5 +1,7 @@
-import { TikTokError,fail,fingerprint,fresh } from './contract.js';
+import { TikTokError,fail,fingerprint,uuid } from './contract.js';
 import { clientFor,listVideos,unlinkAdvertiser,preflight,stageParameters,createStage,reconcileStage,readStage,observe,pauseGroup } from './provider.js';
+import { runOAuthTokenWorker } from './oauth.js';
+import { collectOfflineSpendCandidate } from './settlement.js';
 
 const stages=['campaign','adgroup','ad'];
 const inflight=job=>Object.values(job.stages||{}).some(s=>s.state==='inflight');
@@ -7,19 +9,12 @@ const safeCode=error=>error instanceof TikTokError?error.code:'TIKTOK_WORKER_UNA
 function stableEvidence(e) {
   return Object.fromEntries(['account_id','flow','identity','verified_username','item_id','targeting','auto_message_id','advertiser_timezone','declared_budget_usd','proxo_total_budget_minor','spend_stop_threshold_minor'].map(k=>[k,e[k]]));
 }
-export function settlementProof(job,observation,{now=Date.now()}={}) {
-  // Reporting has no finality flag. A stable pair of samples is necessary but
-  // insufficient: require an independently verified provider settlement record
-  // for this exact ad group and amount. No client can submit this evidence.
-  const proof=job.account?.capabilities?.settled_reports?.find(p=>p.verified===true&&p.source==='PROVIDER_SETTLEMENT_EXPORT'&&
-    p.adgroup_id===job.provider_ids.adgroup&&typeof p.reference==='string'&&p.reference.trim()&&
-    (typeof p.final_spend_usd==='number'||typeof p.final_spend_usd==='string'&&/^\d+(?:\.\d{1,6})?$/.test(p.final_spend_usd))&&
-    Number.isFinite(Number(p.final_spend_usd))&&Number(p.final_spend_usd)===observation.spend_usd&&Date.parse(p.settled_at)>=Date.parse(job.refund_eligible_at)&&fresh(p.settled_at,now,7*86400000));
-  return proof?{settlement_verified:true,settlement_reference:proof.reference,settlement_source:proof.source}:{settlement_verified:false};
-}
-export async function runWorker(kind,{service,env=process.env,fetchImpl=fetch,now=Date.now,clientFactory,preflightImpl=preflight}={}) {
+export async function runWorker(kind,{service,env=process.env,fetchImpl=fetch,now=Date.now,clientFactory,preflightImpl=preflight,settlementCollectorImpl=collectOfflineSpendCandidate,oauthTokenWorkerImpl=runOAuthTokenWorker}={}) {
   if(!['account-connect','account-videos','account-disconnect','create','budget','status','reconcile','refund'].includes(kind))fail('INVALID_WORKER_KIND');
-  if(kind==='account-connect')return {ok:true,processed:0,status:'blocked',error_code:'TIKTOK_AUTH_CORRELATION_UNAVAILABLE'};
+  if(kind==='account-connect') {
+    const revoked=await oauthTokenWorkerImpl('revoke',{service,env,fetchImpl,now});
+    return revoked.processed?revoked:oauthTokenWorkerImpl('refresh',{service,env,fetchImpl,now});
+  }
   const job=await service('claim',{payload:{kind}});
   if(!job?.id)return {ok:true,processed:0,status:'idle'};
   const call=(action,payload={})=>service(action,{id:job.id,token:job.lease_token,payload});
@@ -134,8 +129,15 @@ export async function runWorker(kind,{service,env=process.env,fetchImpl=fetch,no
     // Final-spend work shares the existing outbox. Running it on any eligible
     // observation prevents status polling from starving reconciliation/refund.
     if(kind==='refund'||finalDue) {
-      const result=await call('final_observe',{...observation,...settlementProof(job,observation,{now:now()})});
-      if(result?.settled===true){await call('refund',{reason:'TIKTOK_CONFIRMED_UNUSED_BUDGET'});return {ok:true,processed:1,status:'refunded'};}
+      const candidate=await settlementCollectorImpl(api,job,{now:now()});
+      await call('ingest_report_candidate',candidate);
+      const settlement=await call('settlement_lookup');
+      // Only an immutable backend-verified record can authorize final finance.
+      // Account capability arrays and caller-supplied booleans are not evidence.
+      if(settlement?.settlement_verified===true&&uuid(settlement.settlement_record_id)) {
+        const result=await call('final_observe',{...observation,settlement_record_id:settlement.settlement_record_id});
+        if(result?.settled===true){await call('refund',{reason:'TIKTOK_CONFIRMED_UNUSED_BUDGET'});return {ok:true,processed:1,status:'refunded'};}
+      }
       await call('finish',{status:'completed',error_code:'FINAL_REPORT_SETTLEMENT_PENDING'});
       return {ok:true,processed:1,status:'reconcile',error_code:'FINAL_REPORT_SETTLEMENT_PENDING'};
     }

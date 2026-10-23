@@ -46,7 +46,7 @@ class ActualScreenBackend {
  bool logoutFails=false;
  ActualScreenBackend({bool allowLogout=false}){
   transport=MockClient((request)async{
-    // This one parameterless RPC is a read. Keep the mutation boundary below
+    // These narrowly matched RPCs are reads. Keep the mutation boundary below
     // closed for every other body, host, path and method.
     if (request.method == 'POST' && request.url.scheme == 'https' &&
         request.url.host == 'screen-fixtures.invalid' &&
@@ -56,6 +56,17 @@ class ActualScreenBackend {
         const {'{}', 'null'}.contains(request.body.trim())) {
       return http.Response(jsonEncode({'meta_enabled': metaEnabled,
         'server_time': DateTime.now().toUtc().toIso8601String()}), 200,
+        request: request, headers: {'content-type': 'application/json'});
+    }
+    if (request.method == 'POST' && request.url.scheme == 'https' &&
+        request.url.host == 'screen-fixtures.invalid' &&
+        request.url.userInfo.isEmpty && !request.url.hasPort &&
+        !request.url.hasQuery && !request.url.hasFragment &&
+        request.url.path == '/rest/v1/rpc/pa_ad_help' &&
+        RegExp(r'^\{\s*"p_platform"\s*:\s*"(?:META|TIKTOK)"\s*\}$')
+            .hasMatch(request.body.trim())) {
+      // The real SQL returns null when no enabled platform/all notice exists.
+      return http.Response('null', 200,
         request: request, headers: {'content-type': 'application/json'});
     }
     if(request.method!='GET'){

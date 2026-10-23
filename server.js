@@ -47,6 +47,16 @@ const proxoRoute=(op,parameters=()=>({}))=>(req,res)=>{
 app.all('/api/proxolink',proxolinkHandler);
 app.all('/api/forms',formsHandler);
 app.all('/api/meta-ads',metaAdsHandler);
+app.get('/api/tiktok-dm/callback/',(req,res)=>{
+  if(!req.path.endsWith('/')) {
+    const query=req.originalUrl.indexOf('?');
+    res.setHeader('Cache-Control','no-store');
+    res.setHeader('Referrer-Policy','no-referrer');
+    return res.redirect(308,'/api/tiktok-dm/callback/'+(query<0?'':req.originalUrl.slice(query)));
+  }
+  Object.defineProperty(req,'query',{value:{...req.query,platform:'tiktok',op:'oauth-callback'},configurable:true});
+  return metaAdsHandler(req,res);
+});
 app.all('/api/tiktok-dm',(req,res)=>{
   Object.defineProperty(req,'query',{value:{...req.query,platform:'tiktok'},configurable:true});
   return metaAdsHandler(req,res);

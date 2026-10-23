@@ -3,7 +3,18 @@
   "framework": null,
   "buildCommand": "npm run build",
   "outputDirectory": "public",
+  "redirects": [
+    {
+      "source": "/api/tiktok-dm/callback",
+      "destination": "/api/tiktok-dm/callback/",
+      "permanent": true
+    }
+  ],
   "rewrites": [
+    {
+      "source": "/api/tiktok-dm/callback/",
+      "destination": "/api/meta-ads?platform=tiktok&op=oauth-callback"
+    },
     {
       "source": "/api/tiktok-dm",
       "destination": "/api/meta-ads?platform=tiktok"

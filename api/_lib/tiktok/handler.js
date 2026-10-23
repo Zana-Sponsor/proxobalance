@@ -1,9 +1,11 @@
 import { timingSafeEqual } from 'node:crypto';
 import { readJson,json } from '../security.js';
 import { backend } from '../../meta-ads.js';
-import { TikTokError,fail,uuid,username,normalizeAd,fingerprint,fresh } from './contract.js';
+import { TikTokError,fail,uuid,normalizeAd,fingerprint,fresh } from './contract.js';
 import { clientFor,readiness,listVideos,preflight } from './provider.js';
 import { runWorker } from './worker.js';
+import { oauthConfig,startAuthorization,completeAuthorization,publicConnection,runOAuthTokenWorker } from './oauth.js';
+import { runActivationWorker } from './activation.js';
 
 const exact=(v,keys)=>v&&typeof v==='object'&&!Array.isArray(v)&&Object.keys(v).every(k=>keys.includes(k));
 function workerAuth(req,env) {
@@ -21,15 +23,27 @@ export function publicAccount(account,{now=Date.now()}={}) {
 export function createTikTokHandler({env=process.env,fetchImpl=fetch,db,now=Date.now,workerImpl=runWorker,preflightImpl=preflight,videosImpl=listVideos}={}) {
   return async(req,res)=>{
     try {
-      if(req.method!=='POST'){res.setHeader('Allow','POST');return json(res,405,{ok:false,error:'METHOD_NOT_ALLOWED',code:'METHOD_NOT_ALLOWED'});}
       const op=String(req.query?.op||new URL(req.url,'https://local.invalid').searchParams.get('op')||'');
       const api=db||backend({env,fetchImpl,serviceName:'pa_tiktok_dm_service',errorPrefix:'TIKTOK'});
+      if(op==='oauth-callback'&&req.method==='GET') {
+        res.setHeader('Cache-Control','no-store');res.setHeader('Referrer-Policy','no-referrer');
+        return json(res,200,await completeAuthorization(api.service,req,{env,fetchImpl,now:now()}));
+      }
+      if(req.method!=='POST'){res.setHeader('Allow','POST');return json(res,405,{ok:false,error:'METHOD_NOT_ALLOWED',code:'METHOD_NOT_ALLOWED'});}
+      if(['worker-oauth-refresh','worker-oauth-revoke'].includes(op)) {
+        if(!workerAuth(req,env))fail('UNAUTHORIZED',{status:401});if(!exact(await readJson(req,1024),[]))fail('INVALID_INPUT');
+        return json(res,200,await runOAuthTokenWorker(op.slice('worker-oauth-'.length),{service:api.service,env,fetchImpl,now}));
+      }
+      if(op==='worker-activate') {
+        if(!workerAuth(req,env))fail('UNAUTHORIZED',{status:401});if(!exact(await readJson(req,1024),[]))fail('INVALID_INPUT');
+        return json(res,200,await runActivationWorker({service:api.service,env,fetchImpl,now}));
+      }
       if(['account-connect','account-videos','account-disconnect','create','budget','status','reconcile','refund'].some(kind=>op===`worker-${kind}`)) {
         if(!workerAuth(req,env))fail('UNAUTHORIZED',{status:401});
         if(!exact(await readJson(req,1024),[]))fail('INVALID_INPUT');
         return json(res,200,await workerImpl(op.slice(7),{service:api.service,env,fetchImpl,now}));
       }
-      if(!['accounts','connect-start','connect-status','videos','disconnect','seen','quote','submit'].includes(op))fail('NOT_FOUND',{status:404});
+      if(!['accounts','connect-start','connect-status','connect-revoke','activation-approve','videos','disconnect','seen','quote','submit'].includes(op))fail('NOT_FOUND',{status:404});
       const user=await api.authenticate(req);if(!uuid(user?.id))fail('UNAUTHORIZED',{status:401});
       const body=await readJson(req,32768);
       const call=(action,{id=null,payload={}}={})=>api.service(action,{userId:user.id,id,payload});
@@ -37,19 +51,26 @@ export function createTikTokHandler({env=process.env,fetchImpl=fetch,db,now=Date
         if(!exact(body,[]))fail('INVALID_INPUT');
         const result=await call('list_accounts');const rows=Array.isArray(result)?result:result?.accounts;
         if(!Array.isArray(rows))fail('TIKTOK_BACKEND_RESPONSE_INVALID',{status:503});
-        return json(res,200,{ok:true,accounts:rows.map(a=>publicAccount(a,{now:now()})),pending_request:null});
+        const pending=result?.pending_request;
+        return json(res,200,{ok:true,accounts:rows.map(a=>publicAccount(a,{now:now()})),pending_request:pending?publicConnection(pending,{config:oauthConfig(env),includeAuthorization:true}):null});
       }
       if(op==='seen'){if(!exact(body,[]))fail('INVALID_INPUT');return json(res,200,await call('seen'));}
       if(op==='connect-start') {
         if(!exact(body,['username','idempotency_key'])||!uuid(body.idempotency_key))fail('INVALID_INPUT');
-        username(body.username);await call('gate');
-        // Official BC QR responses have no proved owner/session correlation.
-        // Do not mint a fake session, expiry, authorization URL or completion.
-        fail('TIKTOK_AUTH_CORRELATION_UNAVAILABLE',{status:409});
+        return json(res,200,await startAuthorization(api.service,user.id,body,{env,now:now()}));
       }
       if(op==='connect-status') {
         if(!exact(body,['request_id'])||!uuid(body.request_id))fail('INVALID_INPUT');
-        fail('TIKTOK_AUTH_CORRELATION_UNAVAILABLE',{status:409});
+        const request=await call('oauth_status',{id:body.request_id});
+        return json(res,200,publicConnection(request,{config:oauthConfig(env),includeAuthorization:true}));
+      }
+      if(op==='connect-revoke') {
+        if(!exact(body,['request_id'])||!uuid(body.request_id))fail('INVALID_INPUT');
+        await call('oauth_revoke',{id:body.request_id});return json(res,200,{ok:true,status:'REVOKING'});
+      }
+      if(op==='activation-approve') {
+        if(!exact(body,['job_id','approval_id','reason'])||!uuid(body.job_id)||!uuid(body.approval_id)||typeof body.reason!=='string'||body.reason.trim().length<8||body.reason.length>500)fail('INVALID_INPUT');
+        return json(res,200,await api.user(req,'pa_tiktok_dm_approve_activation',{p_job_id:body.job_id,p_approval_id:body.approval_id,p_reason:body.reason.trim()}));
       }
       if(op==='disconnect') {
         if(!exact(body,['account_id','idempotency_key'])||!uuid(body.account_id)||!uuid(body.idempotency_key))fail('INVALID_INPUT');
