@@ -16,6 +16,9 @@ class PaymentOption extends StatelessWidget {
     required this.selected,
     required this.onTap,
     this.tapKey,
+    this.grouped = false,
+    this.minimumHeight = 72,
+    this.selectedOnlyCheck = false,
   });
 
   final String label;
@@ -24,6 +27,9 @@ class PaymentOption extends StatelessWidget {
   final bool selected;
   final VoidCallback? onTap;
   final Key? tapKey;
+  final bool grouped;
+  final double minimumHeight;
+  final bool selectedOnlyCheck;
 
   @override
   Widget build(BuildContext context) => Semantics(
@@ -32,19 +38,22 @@ class PaymentOption extends StatelessWidget {
         enabled: onTap != null,
         child: Material(
           color: selected ? AppColors.accentSoft : Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(ProxoSurface.controlRadius),
-            side: BorderSide(
-              color: selected ? AppColors.accent : ProxoSurface.line,
-              width: selected ? 1.5 : 1,
-            ),
-          ),
+          shape: grouped
+              ? null
+              : RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.circular(ProxoSurface.controlRadius),
+                  side: BorderSide(
+                    color: selected ? AppColors.accent : ProxoSurface.line,
+                    width: selected ? 1.5 : 1,
+                  ),
+                ),
           clipBehavior: Clip.antiAlias,
           child: InkWell(
             key: tapKey,
             onTap: onTap,
             child: ConstrainedBox(
-              constraints: const BoxConstraints(minHeight: 72),
+              constraints: BoxConstraints(minHeight: minimumHeight),
               child: Padding(
                 padding: const EdgeInsets.all(12),
                 child: Row(children: [
@@ -73,15 +82,17 @@ class PaymentOption extends StatelessWidget {
                       child: selected
                           ? const ProxoSymbol(ProxoSymbolName.check,
                               size: 22, color: AppColors.accent)
-                          : Container(
-                              width: 20,
-                              height: 20,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                    color: ProxoSurface.line, width: 1.5),
-                              ),
-                            ),
+                          : selectedOnlyCheck
+                              ? const SizedBox.shrink()
+                              : Container(
+                                  width: 20,
+                                  height: 20,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                        color: ProxoSurface.line, width: 1.5),
+                                  ),
+                                ),
                     ),
                   ),
                 ]),

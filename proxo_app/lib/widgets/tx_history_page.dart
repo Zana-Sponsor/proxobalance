@@ -103,7 +103,9 @@ class _TxItem {
 
   /// هەمان یاسای باڵانسی ڕۆیشتوو: پارەی زیادکراو تەنها کاتێک `approved`
   /// بێت، پارەی بڕدراو هەمیشە جگە لە `rejected`.
-  bool get isSettled => status == 'approved' || status == 'spent';
+  bool get isSettled => status == 'approved' || status == 'spent' ||
+      (kind == 'spend' &&
+          const {'refund_pending', 'refunded', 'partially_refunded'}.contains(status));
 
   TxReceiptData toReceipt() {
     final TxReceiptKind k = switch (kind) {
@@ -259,7 +261,7 @@ class TxHistorySheetState extends State<TxHistoryPage> {
             .order('created_at', ascending: false),
         supabase
             .from('pa_ads')
-            .select('id,title,budget,created_at,ad_number,status')
+            .select('id,title,budget,created_at,ad_number,payment_status')
             .eq('user_id', user.id)
             .order('created_at', ascending: false),
         supabase
@@ -275,6 +277,7 @@ class TxHistorySheetState extends State<TxHistoryPage> {
       final coinRes = results[2] as List<dynamic>;
       final items = <_TxItem>[];
       final adNumsWithPaymentTx = <String>{};
+      final adIdsWithPaymentTx = <String>{};
       final adIdByNumber = <String, String>{
         for (final a in adRes)
           if (a['ad_number'] != null && receiptText(a['id']).isNotEmpty)
@@ -306,6 +309,8 @@ class TxHistorySheetState extends State<TxHistoryPage> {
         final rawAfter = storedWalletBalanceUsd(t, 'balance_after');
 
         if (type == 'ad_payment') {
+          final linkedAdId = receiptText(t['ad_id']);
+          if (linkedAdId.isNotEmpty) adIdsWithPaymentTx.add(linkedAdId);
           final adNumInNote = _extractAdNum(note);
           final effectiveAdNum = adNum ?? adNumInNote;
           if (effectiveAdNum != null) adNumsWithPaymentTx.add(effectiveAdNum);
@@ -349,7 +354,8 @@ class TxHistorySheetState extends State<TxHistoryPage> {
         String kind, label;
         String effectiveStatus = status;
 
-        if (kind2 == 'refund' || type == 'refund') {
+        if (const {'refund', 'ad_unspent_refund'}.contains(kind2) ||
+            const {'refund', 'ad_unspent_refund'}.contains(type)) {
           kind = 'refund';
           final effectiveAdNum = adNum ?? _extractAdNum(note);
           label =
@@ -409,9 +415,14 @@ class TxHistorySheetState extends State<TxHistoryPage> {
       // ── pa_ads — تەنها ڕیکلامی کۆنی بێ تۆماری ad_payment ──────────────────
       for (final a in adRes) {
         final adNum = a['ad_number']?.toString() ?? '—';
-        if (adNumsWithPaymentTx.contains(adNum)) continue;
+        if (adIdsWithPaymentTx.contains(receiptText(a['id'])) ||
+            adNumsWithPaymentTx.contains(adNum)) {
+          continue;
+        }
         final budget = receiptNum(a['budget'])?.toDouble() ?? 0;
-        final adStatus = (a['status'] ?? 'spent').toString();
+        // A campaign lifecycle is not evidence of a wallet movement.
+        final paymentStatus = receiptText(a['payment_status']);
+        final adStatus = paymentStatus == 'paid' ? 'spent' : paymentStatus;
         final date =
             DateTime.tryParse((a['created_at'] ?? '').toString()) ??
             DateTime.now();
@@ -480,10 +491,6 @@ class TxHistorySheetState extends State<TxHistoryPage> {
   // ── ڕێڕەو ─────────────────────────────────────────────────────────────────
 
   void _openDetail(_TxItem t) {
-    if (t.kind == 'spend' && (t.receiptAdId ?? '').isNotEmpty) {
-      Navigator.of(context).push(adDetailsRoute(adId: t.receiptAdId));
-      return;
-    }
     Navigator.of(context).push(
       ProxoPageRoute<void>(
         builder: (_) => TransactionDetailScreen(data: t.toReceipt()),
@@ -600,11 +607,13 @@ class _TxCard extends StatelessWidget {
         : TxHistoryTokens.negative;
     return TxHistoryCard(
       label: _localizedLabel(t.label),
-      status: t.isSettled
-          ? null
-          : t.status == 'rejected'
-          ? TxStrings.current.statusRejected
-          : TxStrings.current.statusPending,
+      status: switch (t.status) {
+        'refunded' => TxStrings.current.statusRefunded,
+        'refund_pending' => TxStrings.current.statusRefundPending,
+        'partially_refunded' => TxStrings.current.statusPartiallyRefunded,
+        'rejected' => TxStrings.current.statusRejected,
+        _ => t.isSettled ? null : TxStrings.current.statusPending,
+      },
       date: receiptDay(b),
       time: receiptTime(b, spaced: true),
       amount: amount,

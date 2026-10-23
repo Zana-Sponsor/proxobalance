@@ -1,0 +1,172 @@
+{
+  "name": "Proxo FastPay — immutable ad payment reconciliation",
+  "active": false,
+  "nodes": [
+    {
+      "id": "fastpay-ad-reconcile-schedule",
+      "name": "Scheduled poll",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 1
+            }
+          ]
+        }
+      },
+      "notes": "Keep inactive until private backend configuration and controlled verification are complete."
+    },
+    {
+      "id": "fastpay-ad-reconcile-manual",
+      "name": "Controlled manual test",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        200
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "fastpay-ad-reconcile-config",
+      "name": "Validate backend configuration",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        100
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Polling cannot select a customer, attempt, amount or verification result.\nconst origin=$vars.PROXO_AD_PAYMENTS_BACKEND_ORIGIN;\nif(typeof origin!=='string'\n  || !/^https:\\/\\/(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z]{2,63}$/.test(origin)\n  || /\\.(?:localhost|local|internal|invalid|test)$/.test(origin))\n  throw new Error('FASTPAY_AD_BACKEND_ORIGIN_NOT_CONFIGURED');\nreturn {json:{origin}};"
+      }
+    },
+    {
+      "id": "fastpay-ad-reconcile-http",
+      "name": "Poll trusted payment reconciliation",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        480,
+        100
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Validate backend configuration').item.json.origin + '/api/meta-ads?platform=payments&op=worker-reconcile' }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{}",
+        "options": {
+          "timeout": 60000,
+          "redirect": {
+            "redirect": {
+              "followRedirects": false
+            }
+          },
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "text"
+            }
+          }
+        }
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": null,
+          "name": "UNCONFIGURED — Proxo FastPay ad worker"
+        }
+      },
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "onError": "continueRegularOutput",
+      "notes": "Only transport failures retry. The backend claims a durable lease, independently verifies FastPay, and commits payment idempotently. It never creates a QR here."
+    },
+    {
+      "id": "fastpay-ad-reconcile-check",
+      "name": "Check reconciliation result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        100
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// No gateway response, customer record, transaction ID or credential is retained.\nconst response=$json;\nif(!response || response.error || !Number.isInteger(response.statusCode))\n  throw new Error('FASTPAY_AD_WORKER_TRANSPORT_UNAVAILABLE');\nif(response.statusCode===401 || response.statusCode===403)\n  throw new Error('FASTPAY_AD_WORKER_AUTHORIZATION_FAILED');\nif(response.statusCode===429 || response.statusCode>=500)\n  throw new Error('FASTPAY_AD_WORKER_TEMPORARILY_UNAVAILABLE');\nif(response.statusCode<200 || response.statusCode>=300)\n  throw new Error('FASTPAY_AD_WORKER_REQUEST_REJECTED');\nlet body=response.body;\nif(typeof body==='string'){\n  try{body=JSON.parse(body);}catch{throw new Error('FASTPAY_AD_WORKER_INVALID_RESPONSE');}\n}\nif(!body || body.ok!==true || ![0,1].includes(body.processed)\n  || !['idle','pending','funded','compensated','reconcile'].includes(body.status))\n  throw new Error('FASTPAY_AD_WORKER_INVALID_RESPONSE');\nconst result={ok:true,processed:body.processed,status:body.status};\nif(typeof body.error_code==='string' && /^[A-Z][A-Z0-9_]{0,99}$/.test(body.error_code))result.error_code=body.error_code;\nreturn {json:result};"
+      }
+    }
+  ],
+  "connections": {
+    "Scheduled poll": {
+      "main": [
+        [
+          {
+            "node": "Validate backend configuration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Controlled manual test": {
+      "main": [
+        [
+          {
+            "node": "Validate backend configuration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate backend configuration": {
+      "main": [
+        [
+          {
+            "node": "Poll trusted payment reconciliation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Poll trusted payment reconciliation": {
+      "main": [
+        [
+          {
+            "node": "Check reconciliation result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Baghdad",
+    "executionTimeout": 240,
+    "saveDataErrorExecution": "none",
+    "saveDataSuccessExecution": "none",
+    "saveManualExecutions": false,
+    "saveExecutionProgress": false
+  },
+  "pinData": {},
+  "tags": [],
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "description": "Reconcile persisted immutable Meta/TikTok FastPay attempts through a private backend. No caller-supplied verification, QR creation, gateway refund or provider activation."
+}

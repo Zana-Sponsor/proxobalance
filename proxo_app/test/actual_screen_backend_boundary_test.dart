@@ -6,6 +6,55 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../integration_test/support/actual_screen_fixtures.dart';
 
 void main() {
+  test('exact ad help reads return the real disabled SQL response', () async {
+    final backend = ActualScreenBackend();
+    final client = SupabaseClient(
+        'https://screen-fixtures.invalid', 'fictional-publishable-key',
+        httpClient: backend.transport,
+        authOptions: const AuthClientOptions(autoRefreshToken: false));
+    addTearDown(client.dispose);
+    for (final platform in ['META', 'TIKTOK']) {
+      expect(await client.rpc('pa_ad_help', params: {'p_platform': platform}),
+          isNull);
+    }
+    expect(backend.nonGetAttempts, isEmpty);
+  });
+
+  test('help fixture rejects different hosts, methods, paths and body shapes',
+      () async {
+    final backend = ActualScreenBackend();
+    addTearDown(backend.transport.close);
+    const url = 'https://screen-fixtures.invalid/rest/v1/rpc/pa_ad_help';
+    const body = '{"p_platform":"TIKTOK"}';
+    final cases = [
+      ('https://other.invalid/rest/v1/rpc/pa_ad_help', body),
+      (url.replaceFirst('https:', 'http:'), body),
+      (url.replaceFirst('screen-fixtures', 'user@screen-fixtures'), body),
+      (url.replaceFirst('.invalid/', '.invalid:8443/'), body),
+      ('$url?x=1', body),
+      ('$url#fragment', body),
+      ('$url/extra', body),
+      (url, '{}'),
+      (url, 'null'),
+      (url, '{"p_platform":"OTHER"}'),
+      (url, '{"p_platform":"TIKTOK","active":true}'),
+      (url, '{"p_platform":"TIKTOK","p_platform":"META"}'),
+      (url, '{"p_platform":true}'),
+      (url, 'not-json'),
+    ];
+    for (final (uri, payload) in cases) {
+      await expectLater(backend.transport.post(Uri.parse(uri), body: payload),
+          throwsA(isA<StateError>()));
+    }
+    await expectLater(backend.transport.put(Uri.parse(url), body: body),
+        throwsA(isA<StateError>()));
+    expect(backend.nonGetAttempts, hasLength(cases.length + 1));
+    expect(
+        backend.nonGetAttempts
+            .every((attempt) => attempt['expected_blocked_operation'] == null),
+        isTrue);
+  });
+
   test('actual unread count HEAD is classified but remains blocked', () async {
     final backend = ActualScreenBackend();
     final client = SupabaseClient(

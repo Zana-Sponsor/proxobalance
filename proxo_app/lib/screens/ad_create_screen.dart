@@ -1,14 +1,23 @@
 import '../widgets/form_help_actions.dart';
+import '../services/meta_ad_draft.dart';
+import '../widgets/ad_objective_icon.dart';
+import '../widgets/ad_brand_logo.dart';
+import '../widgets/ad_help_notice.dart';
+import '../widgets/ad_payment_card.dart';
+import '../widgets/ad_schedule_picker.dart';
 import 'package:proxo_app/theme/app_theme.dart';
 import 'package:proxo_app/l10n/proxo_strings.dart';
 import 'dart:async';
+import 'dart:convert';
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../main.dart' show supabase;
 import '../services/ad_categories.dart';
 import '../services/ad_forecast.dart';
 import '../services/ad_submission.dart';
+import '../services/tiktok_dm_accounts.dart';
+import '../widgets/tiktok_dm_account_picker.dart';
 import '../widgets/ad_form_components.dart';
-import '../widgets/payments/payment_option.dart';
 import '../widgets/proxo_symbol.dart';
 import '../theme/proxo_surface.dart';
 import '../widgets/ad_validation_notifications.dart';
@@ -18,21 +27,118 @@ import 'ad_confirmation_screen.dart';
 import 'tools_screen.dart';
 
 class AdCreateScreen extends StatefulWidget {
+  final String platform;
   final Map<String, dynamic>? proxoCard;
   final VoidCallback? onAdCreated;
   final AdCreationRepository? repository;
+  final TikTokDmRepository? tiktokRepository;
   final Future<Map<String, dynamic>?> Function(BuildContext)? createContactPage;
   const AdCreateScreen(
       {super.key,
+      this.platform = 'TIKTOK',
       this.proxoCard,
       this.onAdCreated,
       this.repository,
+      this.tiktokRepository,
       this.createContactPage});
   @override
   State<AdCreateScreen> createState() => _AdCreateScreenState();
 }
 
-class _AdCreateScreenState extends State<AdCreateScreen> {
+class _AdCreateScreenState extends State<AdCreateScreen>
+    with WidgetsBindingObserver {
+  bool get _isMeta => widget.platform == 'META';
+  bool _metaAllowed = false, _accessLoading = true;
+  bool _metaFastPayAllowed = false;
+  bool _tiktokDmAllowed = false,
+      _tiktokFastPayAllowed = false,
+      _tiktokDmSeen = true;
+  String _messageDestination = 'external_contact';
+  TikTokDmSelection? _tiktokSelection;
+  bool get _isTikTokDirect =>
+      !_isMeta &&
+      _goal == 'messages' &&
+      _messageDestination == 'direct_message';
+  late final TikTokDmRepository _tiktokRepository =
+      widget.tiktokRepository ?? SupabaseTikTokDmRepository(supabase);
+  MetaAdSelection _selection = const MetaAdSelection();
+  final _page = TextEditingController();
+  int _ageMin = 18, _ageMax = 65;
+  DateTime? _trustedAt;
+  final Stopwatch _serverElapsed = Stopwatch();
+  DateTime _now() =>
+      adScheduleNow(instant: _trustedAt?.add(_serverElapsed.elapsed));
+  List<int> get _budgetOptions =>
+      _isMeta ? const [2, 3, 4, 5, 10, 20, 50, 100, 200, 500, 1000] : _budgets;
+  int _accessRevision = 0;
+  Timer? _clockTimer;
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) unawaited(_resume());
+  }
+
+  Future<void> _resume() async {
+    await _refreshAccess();
+    if (mounted) _refreshQuote();
+  }
+
+  Future<void> _refreshAccess() async {
+    final revision = ++_accessRevision;
+    DateTime? time;
+    var allowed = !_isMeta;
+    var fastPayAllowed = !_isMeta;
+    var dmAllowed = false, dmFastPay = false, dmSeen = true;
+    try {
+      time = await _repository.serverTime();
+      allowed = !_isMeta || await _repository.metaAvailable();
+      fastPayAllowed = !_isMeta || await _repository.metaFastPayAvailable();
+      if (!_isMeta) {
+        dmAllowed = await _repository.tiktokDmAvailable();
+        if (dmAllowed) {
+          dmFastPay = await _repository.tiktokDmFastPayAvailable();
+          dmSeen = await _repository.tiktokDmSeen();
+        }
+      }
+    } catch (_) {
+      allowed = !_isMeta;
+    }
+    if (!mounted || revision != _accessRevision) return;
+    ++_quoteRevision;
+    setState(() {
+      if (time != null) {
+        _trustedAt = time;
+        _serverElapsed
+          ..reset()
+          ..start();
+      }
+      _metaAllowed = allowed && (!_isMeta || _trustedAt != null);
+      _metaFastPayAllowed = fastPayAllowed;
+      _tiktokDmAllowed = dmAllowed && _trustedAt != null;
+      _tiktokFastPayAllowed = dmFastPay;
+      _tiktokDmSeen = dmSeen;
+      if (!_tiktokDmAllowed) _tiktokSelection = null;
+
+      _accessLoading = false;
+      _validateSchedule();
+    });
+    _scheduleClockTick();
+  }
+
+  void _validateSchedule() {
+    if (_immediate || _date == null || _time == null) return;
+    final selected = DateTime.utc(
+        _date!.year, _date!.month, _date!.day, _time!.hour, _time!.minute);
+    if (!selected.isAfter(_now())) {
+      _fieldErrors['schedule'] = 'کاتی دەستپێک دەبێت لە داهاتوودا بێت';
+    } else {
+      _fieldErrors.remove('schedule');
+    }
+  }
+
+  void _textChanged() {
+    if (mounted) _refreshQuote();
+  }
+
   static const _budgets = [10, 20, 50, 100, 200, 500, 1000];
   final _name = TextEditingController(),
       _code = TextEditingController(),
@@ -43,7 +149,8 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
   late final AdCreationRepository _repository;
   List<Map<String, dynamic>> _assets = [];
   bool _assetsLoading = true, _assetsFailed = false;
-  String? _goal, _category, _assetId, _payment, _appliedCoupon;
+  String? _goal, _category, _assetId, _appliedCoupon;
+  String _payment = 'app_balance';
   String _location = 'all', _gender = 'all', _device = 'all';
   final Set<String> _ages = {'all'};
   int _daily = 10, _days = 1, _quoteRevision = 0;
@@ -60,12 +167,15 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
   AdPendingSubmission? _pending;
   bool _pendingLoadFailed = false;
   bool _pendingLoading = true;
+  bool _markingDirectMessageSeen = false;
   Map<String, String> _fieldErrors = {};
   Timer? _quoteTimer;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    if (_isMeta) _daily = 5;
     _repository = widget.repository ?? SupabaseAdCreationRepository(supabase);
     if (widget.proxoCard != null) {
       final j = widget.proxoCard!;
@@ -77,15 +187,45 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
         _assetId = j['id']?.toString();
       }
     }
+    for (final c in [_name, _code, _link, _note, _page]) {
+      c.addListener(_textChanged);
+    }
+    _scheduleClockTick();
     unawaited(_initialize());
   }
 
+  void _scheduleClockTick() {
+    _clockTimer?.cancel();
+    final now = _now();
+    _clockTimer = Timer(
+        Duration(milliseconds: 60000 - now.second * 1000 - now.millisecond),
+        () {
+      if (!mounted) return;
+      setState(_validateSchedule);
+      _refreshQuote();
+      _scheduleClockTick();
+    });
+  }
+
   Future<void> _initialize() async {
-    await _loadPending(restoreDraft: true);
-    await Future.wait([_loadAssets(), _loadQuote()]);
+    final initialDraft = _draftFingerprint();
+    await _refreshAccess();
+    await _loadPending(restoreDraft: initialDraft == _draftFingerprint());
+    await Future.wait([if (!_isMeta) _loadAssets(), _loadQuote()]);
+  }
+
+  String _draftFingerprint() {
+    final draft = _draft().toJson();
+    // The trusted clock can advance while recovery loads. It is not an edit.
+    if (_immediate) {
+      draft.remove('start_date');
+      draft.remove('start_time');
+    }
+    return jsonEncode({...draft, 'coupon_input': _coupon.text});
   }
 
   Future<void> _loadPending({bool restoreDraft = false}) async {
+    final beforeLoad = _draftFingerprint();
     if (mounted) setState(() => _pendingLoading = true);
     try {
       final pending =
@@ -94,7 +234,10 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
       setState(() {
         _pendingLoadFailed = false;
         _pending = pending;
-        if (pending != null && restoreDraft) {
+        if (pending != null &&
+            restoreDraft &&
+            beforeLoad == _draftFingerprint() &&
+            pending.draft.isMeta == _isMeta) {
           _restore(pending.draft);
           _quote = pending.quote;
         }
@@ -110,17 +253,34 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
 
   void _restore(AdDraft d) {
     _name.text = d.title;
+    _page.text = d.pageUrl;
+    _selection =
+        MetaAdSelection(placements: d.placements, destinations: d.destinations);
+    _ageMin = d.ageMin;
+    _ageMax = d.ageMax;
     _code.text = d.code;
     _link.text = d.link;
     _note.text = d.note;
     _goal = d.goal;
+    _messageDestination = d.messageDestination;
+    _tiktokSelection =
+        d.isTikTokDirect && d.tiktokAccountId != null && d.tiktokItemId != null
+            ? TikTokDmSelection(
+                accountId: d.tiktokAccountId!,
+                itemId: d.tiktokItemId!,
+                username: d.tiktokUsername ?? '',
+                caption: d.tiktokVideoCaption,
+                permalink: '')
+            : null;
     _category = isSupportedAdCategory(d.category) ? d.category : null;
     _assetId = d.assetId;
-    _payment = d.paymentMethod;
+    _payment = d.paymentMethod == 'fastpay' ? 'fastpay' : 'app_balance';
     _location = d.location;
     _gender = d.gender;
     _device = d.device;
-    _daily = _budgets.contains(d.dailyBudget) ? d.dailyBudget : 10;
+    _daily = _budgetOptions.contains(d.dailyBudget)
+        ? d.dailyBudget
+        : (_isMeta ? 5 : 10);
     _days = d.days.clamp(1, 7);
     _ages
       ..clear()
@@ -136,6 +296,9 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _clockTimer?.cancel();
+    _page.dispose();
     _quoteTimer?.cancel();
     _errors.dispose();
     for (final c in [_name, _code, _link, _note, _coupon]) {
@@ -145,7 +308,7 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
   }
 
   AdDraft _draft({String? coupon, bool replaceCoupon = false}) {
-    final now = adScheduleNow();
+    final now = _now();
     final schedule = _immediate
         ? DateTime.utc(now.year, now.month, now.day, now.hour, now.minute + 2)
         : _date == null || _time == null
@@ -154,10 +317,22 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
                 _time!.minute);
     return AdDraft(
         title: _name.text,
+        platform: widget.platform,
+        pageUrl: _page.text,
+        placements: _selection.placements,
+        destinations: _selection.destinations,
+        ageMin: _ageMin,
+        ageMax: _ageMax,
         link: _link.text,
         code: _code.text,
         note: _note.text,
         goal: _goal,
+        messageDestination: _messageDestination,
+        tiktokAccountId: _isTikTokDirect ? _tiktokSelection?.accountId : null,
+        tiktokItemId: _isTikTokDirect ? _tiktokSelection?.itemId : null,
+        tiktokUsername: _isTikTokDirect ? _tiktokSelection?.username : null,
+        tiktokVideoCaption:
+            _isTikTokDirect ? _tiktokSelection?.caption ?? '' : '',
         category: _category,
         assetId: _assetId,
         assetName: _assets
@@ -218,6 +393,11 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
   }
 
   Future<void> _loadQuote() async {
+    if ((_isMeta && !_metaAllowed) ||
+        (_isTikTokDirect && (!_tiktokDmAllowed || _tiktokSelection == null))) {
+      if (mounted) setState(() => _quoteBusy = false);
+      return;
+    }
     final revision = ++_quoteRevision;
     if (mounted) {
       setState(() {
@@ -324,11 +504,21 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
         _assetId = card['id']?.toString();
         _fieldErrors.remove('asset');
       });
+      _refreshQuote();
     }
   }
 
   Future<void> _checkout() async {
     if (_openingConfirmation || _pendingLoading) return;
+    setState(() => _openingConfirmation = true);
+    try {
+      await _prepareCheckout();
+    } finally {
+      if (mounted) setState(() => _openingConfirmation = false);
+    }
+  }
+
+  Future<void> _prepareCheckout() async {
     if (_pendingLoadFailed) {
       await _loadPending();
       if (!mounted || _pendingLoadFailed) return;
@@ -338,9 +528,28 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
       await _openConfirmation(_pending!, resume: true);
       return;
     }
+    await _refreshAccess();
+    if (!mounted) return;
     final draft = _draft();
-    final errors = draft.validate();
-    if (draft.goal == 'messages' &&
+    final errors = draft.validate(now: _now());
+    if (_isMeta && !_metaAllowed) {
+      errors['platform'] = 'ئەم خزمەتگوزارییە بەردەست نییە';
+    }
+    if (_isMeta && draft.paymentMethod == 'fastpay' && !_metaFastPayAllowed) {
+      errors['payment'] = 'FastPay ئێستا بەردەست نییە';
+    }
+    if (_isTikTokDirect && !_tiktokDmAllowed) {
+      errors['tiktok_account'] = 'نامەی ڕاستەوخۆ ئێستا بەردەست نییە';
+    }
+    if (_isTikTokDirect &&
+        draft.paymentMethod == 'fastpay' &&
+        !_tiktokFastPayAllowed) {
+      errors['payment'] = 'FastPay ئێستا بەردەست نییە';
+    }
+
+    if (!_isMeta &&
+        !_isTikTokDirect &&
+        draft.goal == 'messages' &&
         !_assets.any((a) => '${a['id']}' == draft.assetId)) {
       errors['asset'] = 'پەڕەی پەیوەندییەکی بەردەست هەڵبژێرە';
     }
@@ -352,9 +561,9 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
     setState(() => _openingConfirmation = true);
     try {
       _quoteTimer?.cancel();
-      ++_quoteRevision;
+      final revision = ++_quoteRevision;
       final quote = await _repository.quote(draft);
-      if (!mounted) return;
+      if (!mounted || revision != _quoteRevision) return;
       setState(() {
         _quote = quote;
         _quoteBusy = false;
@@ -411,10 +620,14 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
         }
         return;
       }
+      await _refreshAccess();
+      if (!mounted) return;
       if (result?.useWallet == true) {
-        setState(() => _payment = 'app_balance');
-        await _loadQuote();
+        setState(() {
+          _payment = 'app_balance';
+        });
       }
+      await _loadQuote();
       await _loadPending();
       if (!mounted) return;
       // Navigation can finish before persistence / an in-flight request. Keep
@@ -443,12 +656,19 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
       for (final controller in [_name, _code, _link, _note, _coupon]) {
         controller.clear();
       }
-      _goal = _category = _assetId = _payment = _appliedCoupon = null;
+      _goal = _category = _assetId = _appliedCoupon = null;
+      _messageDestination = 'external_contact';
+      _tiktokSelection = null;
+      _payment = 'app_balance';
       _location = _gender = _device = 'all';
       _ages
         ..clear()
         ..add('all');
-      _daily = 10;
+      _daily = _isMeta ? 5 : 10;
+      _page.clear();
+      _selection = const MetaAdSelection();
+      _ageMin = 18;
+      _ageMax = 65;
       _days = 1;
       _immediate = true;
       _date = null;
@@ -460,6 +680,8 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
       _couponValid = _couponBusy = _quoteBusy = false;
       _quote = null;
     });
+    _quoteTimer?.cancel();
+    ++_quoteRevision;
   }
 
   @override
@@ -480,50 +702,18 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
                         onBack: () => Navigator.of(context).maybePop()),
                     Expanded(
                         child: Stack(children: [
-                      SingleChildScrollView(
-                        key: const ValueKey('ad-form-scroll'),
-                        keyboardDismissBehavior:
-                            ScrollViewKeyboardDismissBehavior.onDrag,
-                        padding: EdgeInsets.fromLTRB(
-                            ProxoSurface.gutter,
-                            16,
-                            ProxoSurface.gutter,
-                            28 + MediaQuery.paddingOf(context).bottom),
-                        child: Center(
-                            child: ConstrainedBox(
-                                constraints:
-                                    const BoxConstraints(maxWidth: 600),
-                                child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.stretch,
-                                    children: [
-                                      if (_pendingLoadFailed) ...[
-                                        AdFormSection(
-                                            title: 'پشکنینی داواکاریی پێشوو',
-                                            child: Column(children: [
-                                              ProxoText(
-                                                  'داواکارییە پێشووەکە بار نەبوو؛ پێش داواکارییەکی نوێ دووبارە هەوڵ بدەرەوە.',
-                                                  translate: true,
-                                                  style: AdUi.text(context)),
-                                              TextButton(
-                                                  onPressed: _pendingLoading
-                                                      ? null
-                                                      : _loadPending,
-                                                  child: const ProxoText(
-                                                      'دووبارە پشکنینەوە',
-                                                      translate: true)),
-                                            ])),
-                                        const SizedBox(height: 18),
-                                      ],
-                                      if (_pending != null) ...[
-                                        AdFormSection(
-                                            title: 'داواکارییەکی پێشوو',
-                                            child: Column(children: [
-                                              ProxoText(
-                                                  'دەتوانیت زانیارییەکان دەستکاری بکەیت. پێش ناردنێکی نوێ، ئەنجامی داواکاریی پێشوو بپشکنە.',
-                                                  translate: true,
-                                                  style: AdUi.text(context)),
-                                              const SizedBox(height: 12),
+                      if (_isMeta && (_accessLoading || !_metaAllowed))
+                        Center(
+                            child: Padding(
+                                padding: const EdgeInsets.all(24),
+                                child: _accessLoading || _pendingLoading
+                                    ? const CircularProgressIndicator()
+                                    : Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                            const ProxoText(
+                                                'ئەم خزمەتگوزارییە بەردەست نییە'),
+                                            if (_pending != null)
                                               FilledButton(
                                                   key: const ValueKey(
                                                       'resume-pending-ad'),
@@ -532,43 +722,145 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
                                                           ? null
                                                           : _checkout,
                                                   child: const ProxoText(
-                                                      'پشکنینی هەمان داواکاری',
-                                                      translate: true)),
-                                            ])),
-                                        const SizedBox(height: 18),
-                                      ],
-                                      Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.stretch,
-                                          children: [
-                                            _information(context),
-                                            const SizedBox(
-                                                height: AdUi.sectionGap),
-                                            _objective(context),
-                                            const SizedBox(
-                                                height: AdUi.sectionGap),
-                                            _audience(context),
-                                            const SizedBox(
-                                                height: AdUi.sectionGap),
-                                            _budget(context),
-                                            const SizedBox(
-                                                height: AdUi.sectionGap),
-                                            _schedule(context),
-                                            const SizedBox(
-                                                height: AdUi.sectionGap),
-                                            _couponSection(context),
-                                            const SizedBox(
-                                                height: AdUi.sectionGap),
-                                            _forecast(context),
-                                            const SizedBox(
-                                                height: AdUi.sectionGap),
-                                            _pricing(context),
-                                            const SizedBox(
-                                                height: AdUi.sectionGap),
-                                            _submission(context),
-                                          ]),
-                                    ]))),
-                      ),
+                                                      'پشکنینی هەمان داواکاری')),
+                                            if (_pendingLoadFailed)
+                                              TextButton(
+                                                  onPressed: _loadPending,
+                                                  child: const ProxoText(
+                                                      'دووبارە پشکنینەوە')),
+                                          ])))
+                      else
+                        SingleChildScrollView(
+                          key: const ValueKey('ad-form-scroll'),
+                          keyboardDismissBehavior:
+                              ScrollViewKeyboardDismissBehavior.onDrag,
+                          padding: EdgeInsets.fromLTRB(
+                              ProxoSurface.gutter,
+                              16,
+                              ProxoSurface.gutter,
+                              28 + MediaQuery.paddingOf(context).bottom),
+                          child: Center(
+                              child: ConstrainedBox(
+                                  constraints:
+                                      const BoxConstraints(maxWidth: 600),
+                                  child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.stretch,
+                                      children: [
+                                        if (_pendingLoadFailed) ...[
+                                          AdFormSection(
+                                              title: 'پشکنینی داواکاریی پێشوو',
+                                              child: Column(children: [
+                                                ProxoText(
+                                                    'داواکارییە پێشووەکە بار نەبوو؛ پێش داواکارییەکی نوێ دووبارە هەوڵ بدەرەوە.',
+                                                    translate: true,
+                                                    style: AdUi.text(context)),
+                                                TextButton(
+                                                    onPressed: _pendingLoading
+                                                        ? null
+                                                        : _loadPending,
+                                                    child: const ProxoText(
+                                                        'دووبارە پشکنینەوە',
+                                                        translate: true)),
+                                              ])),
+                                          const SizedBox(height: 18),
+                                        ],
+                                        if (_pending != null) ...[
+                                          AdFormSection(
+                                              title: 'داواکارییەکی پێشوو',
+                                              child: Column(children: [
+                                                ProxoText(
+                                                    'دەتوانیت زانیارییەکان دەستکاری بکەیت. پێش ناردنێکی نوێ، ئەنجامی داواکاریی پێشوو بپشکنە.',
+                                                    translate: true,
+                                                    style: AdUi.text(context)),
+                                                const SizedBox(height: 12),
+                                                FilledButton(
+                                                    key: const ValueKey(
+                                                        'resume-pending-ad'),
+                                                    onPressed:
+                                                        _openingConfirmation
+                                                            ? null
+                                                            : _checkout,
+                                                    child: const ProxoText(
+                                                        'پشکنینی هەمان داواکاری',
+                                                        translate: true)),
+                                              ])),
+                                          const SizedBox(height: 18),
+                                        ],
+                                        Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.stretch,
+                                            children: [
+                                              AdHelpNotice(
+                                                  platform: widget.platform),
+                                              _objective(context),
+                                              const SizedBox(
+                                                  height: AdUi.sectionGap),
+                                              _information(context),
+                                              const SizedBox(
+                                                  height: AdUi.sectionGap),
+                                              if (_isTikTokDirect) ...[
+                                                if (_tiktokDmAllowed)
+                                                  TikTokDmAccountPicker(
+                                                      repository:
+                                                          _tiktokRepository,
+                                                      selectedAccountId:
+                                                          _tiktokSelection
+                                                              ?.accountId,
+                                                      selectedItemId:
+                                                          _tiktokSelection
+                                                              ?.itemId,
+                                                      onChanged: (selection) {
+                                                        setState(() {
+                                                          _tiktokSelection =
+                                                              selection;
+                                                          _fieldErrors.remove(
+                                                              'tiktok_account');
+                                                          _fieldErrors.remove(
+                                                              'tiktok_video');
+                                                        });
+                                                        _refreshQuote();
+                                                      })
+                                                else
+                                                  const ProxoText(
+                                                      'نامەی ڕاستەوخۆ ئێستا بەردەست نییە'),
+                                                _error(
+                                                    context, 'tiktok_account'),
+                                                _error(context, 'tiktok_video'),
+                                                const SizedBox(
+                                                    height: AdUi.sectionGap),
+                                              ],
+                                              if (!_isMeta &&
+                                                  _goal == 'messages' &&
+                                                  !_isTikTokDirect) ...[
+                                                _contactAsset(context),
+                                                const SizedBox(
+                                                    height: AdUi.sectionGap),
+                                              ],
+                                              _audience(context),
+                                              const SizedBox(
+                                                  height: AdUi.sectionGap),
+                                              _budget(context),
+                                              const SizedBox(
+                                                  height: AdUi.sectionGap),
+                                              _schedule(context),
+                                              const SizedBox(
+                                                  height: AdUi.sectionGap),
+                                              if (!_isMeta) ...[
+                                                _couponSection(context),
+                                                const SizedBox(
+                                                    height: AdUi.sectionGap),
+                                              ],
+                                              _forecast(context),
+                                              const SizedBox(
+                                                  height: AdUi.sectionGap),
+                                              _pricing(context),
+                                              const SizedBox(
+                                                  height: AdUi.sectionGap),
+                                              _submission(context),
+                                            ]),
+                                      ]))),
+                        ),
                       Positioned(
                           top: 8,
                           left: ProxoSurface.gutter,
@@ -632,116 +924,300 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         _field(context, 'title', _name, 'ناوی ڕیکلام',
             keyboard: TextInputType.name),
-        const SizedBox(height: 20),
-        _field(context, 'code', _code, 'کۆدی ڤیدیۆ', ltr: true),
-        const FormHelpActions(helpKey: 'ad_video_code'),
-        const SizedBox(height: 20),
+        if (!_isTikTokDirect) const SizedBox(height: 20),
+        if (!_isMeta && !_isTikTokDirect) ...[
+          _field(context, 'code', _code, 'کۆدی ڤیدیۆ', ltr: true),
+          const FormHelpActions(helpKey: 'ad_video_code'),
+          const SizedBox(height: 20),
+        ],
         // Existing video processing and thumbnails require the URL as well as the authorization code.
-        _field(context, 'link', _link, 'بەستەری ڤیدیۆ',
-            ltr: true, keyboard: TextInputType.url),
-        const FormHelpActions(
-            helpKey: 'ad_video_link',
-            exampleAsset: 'assets/images/ad_video_link_example.png',
-            exampleCaption:
-                'سکرینشۆتی خانەی بەستەر لە ئەپی Proxo؛ بەستەری ڤیدیۆی خۆت دابنێ',
-            sampleValue:
-                'https://www.tiktok.com/@scout2015/video/6718335390845095173'),
-        const SizedBox(height: 8),
-        ExpansionTile(
-            tilePadding: EdgeInsets.zero,
-            childrenPadding: EdgeInsets.zero,
-            title: ProxoText('تێبینی (ئارەزوومەندانە)',
-                translate: true,
-                style: AdUi.text(context, color: AdUi.secondary)),
-            children: [_field(context, 'note', _note, 'تێبینی', maxLines: 3)]),
+        if (!_isTikTokDirect)
+          _field(context, 'link', _link,
+              _isMeta ? 'لینکی پۆست / ڤیدیۆ' : 'بەستەری ڤیدیۆ',
+              ltr: true, keyboard: TextInputType.url),
+        if (!_isMeta && !_isTikTokDirect)
+          const FormHelpActions(
+              helpKey: 'ad_video_link',
+              exampleAsset: 'assets/images/ad_video_link_example.png',
+              exampleCaption:
+                  'سکرینشۆتی خانەی بەستەر لە ئەپی Proxo؛ بەستەری ڤیدیۆی خۆت دابنێ',
+              sampleValue:
+                  'https://www.tiktok.com/@scout2015/video/6718335390845095173'),
+        if (_isMeta) ...[
+          const SizedBox(height: 20),
+          _field(context, 'page', _page, 'لینکی پەیجی فەیسبووک',
+              ltr: true, keyboard: TextInputType.url),
+        ],
+        if (!_isMeta) ...[
+          const SizedBox(height: 8),
+          ExpansionTile(
+              tilePadding: EdgeInsets.zero,
+              childrenPadding: EdgeInsets.zero,
+              title: ProxoText('تێبینی (ئارەزوومەندانە)',
+                  translate: true,
+                  style: AdUi.text(context, color: AdUi.secondary)),
+              children: [
+                _field(context, 'note', _note, 'تێبینی', maxLines: 3)
+              ]),
+        ],
       ]));
   Widget _choices(BuildContext context, String field, String value,
           List<(String, String)> options, ValueChanged<String> onChanged) =>
-      Wrap(
-          spacing: 10,
-          runSpacing: 10,
-          textDirection: TextDirection.rtl,
-          children: [
-            for (final o in options)
-              AdChoice(
-                  key: ValueKey('$field-${o.$1}'),
-                  label: o.$2,
-                  selected: value == o.$1,
-                  onTap: () {
-                    FocusManager.instance.primaryFocus?.unfocus();
-                    onChanged(o.$1);
-                    setState(() => _fieldErrors.remove(field));
-                  })
-          ]);
+      LayoutBuilder(builder: (context, constraints) {
+        double? choiceWidth;
+        if (field == 'goal' || field == 'contact-destination') {
+          var widest = 0.0;
+          for (final option in options) {
+            final painter = TextPainter(
+                text: TextSpan(
+                    text: ProxoStrings.text(option.$2),
+                    style: AdUi.text(context)),
+                textDirection: TextDirection.rtl,
+                textScaler: MediaQuery.textScalerOf(context))
+              ..layout();
+            widest = math.max(widest, painter.width);
+            painter.dispose();
+          }
+          choiceWidth = math.min(
+              constraints.maxWidth, widest + (field == 'goal' ? 62 : 34));
+        }
+        return Wrap(
+            spacing: 10,
+            runSpacing: 10,
+            textDirection: TextDirection.rtl,
+            children: [
+              for (final option in options)
+                SizedBox(
+                    width: choiceWidth,
+                    child: Stack(
+                        fit: StackFit.passthrough,
+                        clipBehavior: Clip.none,
+                        children: [
+                          AdChoice(
+                              key: ValueKey('$field-${option.$1}'),
+                              label: option.$2,
+                              icon: field == 'goal'
+                                  ? AdObjectiveIcon(option.$1)
+                                  : null,
+                              selected: value == option.$1,
+                              onTap: () {
+                                FocusManager.instance.primaryFocus?.unfocus();
+                                onChanged(option.$1);
+                                if (field != 'goal') _refreshQuote();
+                                setState(() => _fieldErrors.remove(field));
+                              }),
+                          if (field == 'contact-destination' &&
+                              option.$1 == 'direct_message' &&
+                              !_tiktokDmSeen)
+                            Positioned(
+                                top: -7,
+                                left: 8,
+                                child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 6, vertical: 1),
+                                    decoration: BoxDecoration(
+                                        color: AdUi.blue,
+                                        borderRadius: BorderRadius.circular(6)),
+                                    child: ProxoText('نوێ',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .labelSmall
+                                            ?.copyWith(color: Colors.white)))),
+                        ]))
+            ]);
+      });
+  void _markDirectMessageSeen() {
+    if (_tiktokDmSeen || _markingDirectMessageSeen) return;
+    _markingDirectMessageSeen = true;
+    unawaited(_repository
+        .markTikTokDmSeen()
+        .then((_) {
+          if (mounted) setState(() => _tiktokDmSeen = true);
+        })
+        .catchError((_) {})
+        .whenComplete(() {
+          _markingDirectMessageSeen = false;
+        }));
+  }
+
   Widget _objective(BuildContext context) => AdFormSection(
       title: 'ئامانجی ڕیکلام',
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        _choices(context, 'goal', _goal ?? '', const [
-          ('views', 'کارلێک و بینین'),
-          ('messages', 'نامە و فرۆش')
-        ], (v) {
-          setState(() => _goal = v);
+        _choices(
+            context,
+            'goal',
+            _goal ?? '',
+            _isMeta
+                ? metaObjectiveLabels.entries
+                    .map((e) => (e.key, e.value))
+                    .toList()
+                : const [('views', 'بینین'), ('messages', 'نامە')], (v) {
+          setState(() {
+            if (_goal != v) _tiktokSelection = null;
+            _goal = v;
+          });
+          if (_isTikTokDirect) _markDirectMessageSeen();
           _refreshQuote();
         }),
+        if (!_isMeta && _goal == 'messages') ...[
+          const SizedBox(height: 20),
+          _label(context, 'شوێنی پەیوەندی'),
+          _choices(context, 'contact-destination', _messageDestination, const [
+            ('direct_message', 'نامەی ڕاستەوخۆ'),
+            ('external_contact', 'پەیوەندی دەرەکی')
+          ], (value) {
+            setState(() {
+              _messageDestination = value;
+              _tiktokSelection = null;
+              _fieldErrors.remove('asset');
+              _fieldErrors.remove('tiktok_account');
+              _fieldErrors.remove('tiktok_video');
+              _quote = null;
+            });
+            if (value == 'direct_message') _markDirectMessageSeen();
+            _refreshQuote();
+          }),
+          _error(context, 'destination'),
+        ],
         _error(context, 'goal'),
-        AnimatedSize(
-            duration: const Duration(milliseconds: 240),
-            alignment: Alignment.topCenter,
-            child: _goal != 'messages'
-                ? const SizedBox.shrink()
-                : Padding(
-                    padding: const EdgeInsets.only(top: 24),
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          _label(context, 'پەڕەی پەیوەندی'),
-                          if (_assetsLoading)
-                            const LinearProgressIndicator(minHeight: 2)
-                          else if (_assetsFailed)
-                            TextButton(
-                                onPressed: _loadAssets,
-                                child: const ProxoText(
-                                    'دووبارە بارکردنەوەی پەڕەکان',
-                                    translate: true))
-                          else if (_assets.isEmpty)
-                            ProxoText(
-                                'پەڕەی پەیوەندیت نییە؛ پەڕەیەکی نوێ دروست بکە.',
-                                translate: true,
-                                style:
-                                    AdUi.text(context, color: AdUi.secondary))
-                          else
-                            DropdownButtonFormField<String>(
-                                onTap: () => FocusManager.instance.primaryFocus
-                                    ?.unfocus(),
-                                key: ValueKey(
-                                    'asset-$_assetId-${_assets.length}'),
-                                initialValue: _assetId,
-                                isExpanded: true,
-                                isDense: false,
-                                itemHeight: null,
-                                style: AdUi.text(context),
-                                decoration: AdUi.dropdownDecoration,
-                                hint: const ProxoText('پەڕەی پەیوەندی هەڵبژێرە',
-                                    translate: true),
-                                items: [
-                                  for (final a in _assets)
-                                    DropdownMenuItem(
-                                        value: '${a['id']}',
-                                        child: ProxoText('${a['name'] ?? ''}'))
-                                ],
-                                onChanged: (v) => setState(() {
-                                      _assetId = v;
-                                      _fieldErrors.remove('asset');
-                                    })),
-                          _error(context, 'asset'),
-                          const SizedBox(height: 14),
-                          Align(
-                              alignment: Alignment.centerRight,
-                              child: OutlinedButton(
-                                  onPressed: _createContact,
-                                  child: const ProxoText('دروستکردنی پەڕەی نوێ',
-                                      translate: true))),
-                        ]))),
+        if (_isMeta) ...[
+          const SizedBox(height: 20),
+          _label(context, 'شوێنی پیشاندان'),
+          Wrap(spacing: 10, runSpacing: 10, children: [
+            for (final p in const [
+              ('facebook', 'فەیسبووک'),
+              ('instagram', 'ئینستاگرام')
+            ])
+              AdChoice(
+                  key: ValueKey('placement-${p.$1}'),
+                  label: p.$2,
+                  icon: AdBrandLogo(p.$1),
+                  selected: _selection.placements.contains(p.$1),
+                  onTap: () {
+                    final next = _selection.togglePlacement(p.$1);
+                    if (identical(next, _selection)) {
+                      setState(() => _fieldErrors['placements'] =
+                          'لانیکەم یەک شوێنی پیشاندان هەڵبژێرە');
+                      return;
+                    }
+                    setState(() {
+                      _selection = next;
+                      _fieldErrors.remove('placements');
+                      if (_goal == 'messages' && next.destinations.isEmpty) {
+                        _fieldErrors['destinations'] =
+                            'لانیکەم یەک ڕێگای نامەی بەردەست هەڵبژێرە';
+                      }
+                    });
+                    _refreshQuote();
+                  }),
+          ]),
+          _error(context, 'placements'),
+          AnimatedSize(
+              duration: MediaQuery.disableAnimationsOf(context)
+                  ? Duration.zero
+                  : const Duration(milliseconds: 180),
+              child: _goal != 'messages'
+                  ? const SizedBox.shrink()
+                  : Padding(
+                      padding: const EdgeInsets.only(top: 20),
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            _label(context, 'ڕێگاکانی نامە'),
+                            Wrap(spacing: 10, runSpacing: 10, children: [
+                              for (final d in const [
+                                ('WHATSAPP', 'واتسئاپ', 'whatsapp'),
+                                ('MESSENGER', 'مەسنجەر', 'messenger'),
+                                (
+                                  'INSTAGRAM_DIRECT',
+                                  'نامەی ئینستاگرام',
+                                  'instagram'
+                                )
+                              ])
+                                AdChoice(
+                                    key: ValueKey('destination-${d.$1}'),
+                                    label: d.$2,
+                                    icon: AdBrandLogo(d.$3),
+                                    selected:
+                                        _selection.destinations.contains(d.$1),
+                                    onTap: !_selection.available(d.$1) &&
+                                            !_selection.destinations
+                                                .contains(d.$1)
+                                        ? null
+                                        : () {
+                                            final next = _selection
+                                                .toggleDestination(d.$1);
+                                            setState(() {
+                                              if (identical(next, _selection)) {
+                                                _fieldErrors['destinations'] =
+                                                    'لانیکەم یەک ڕێگای نامەی بەردەست هەڵبژێرە';
+                                              } else {
+                                                _selection = next;
+                                                _fieldErrors
+                                                    .remove('destinations');
+                                              }
+                                            });
+                                            _refreshQuote();
+                                          }),
+                            ]),
+                            _error(context, 'destinations'),
+                            if (!_selection.placements.contains('facebook'))
+                              ProxoText('بۆ مەسنجەر، فەیسبووک چالاک بکە',
+                                  style: AdUi.text(context,
+                                      color: AdUi.secondary)),
+                            if (!_selection.placements.contains('instagram'))
+                              ProxoText(
+                                  'بۆ نامەی ئینستاگرام، ئینستاگرام چالاک بکە',
+                                  style: AdUi.text(context,
+                                      color: AdUi.secondary)),
+                          ]))),
+        ],
+      ]));
+  Widget _contactAsset(BuildContext context) => AdFormSection(
+      title: 'پەڕەی پەیوەندی',
+      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+        if (_assetsLoading)
+          const LinearProgressIndicator(minHeight: 2)
+        else if (_assetsFailed)
+          TextButton(
+              onPressed: _loadAssets,
+              child: const ProxoText('دووبارە بارکردنەوەی پەڕەکان',
+                  translate: true))
+        else if (_assets.isEmpty)
+          ProxoText('پەڕەی پەیوەندیت نییە؛ پەڕەیەکی نوێ دروست بکە.',
+              translate: true, style: AdUi.text(context, color: AdUi.secondary))
+        else
+          DropdownButtonFormField<String>(
+              onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+              key: ValueKey('asset-$_assetId-${_assets.length}'),
+              initialValue: _assetId,
+              isExpanded: true,
+              isDense: false,
+              itemHeight: null,
+              style: AdUi.text(context),
+              decoration: AdUi.dropdownDecoration,
+              hint: const ProxoText('پەڕەی پەیوەندی هەڵبژێرە', translate: true),
+              items: [
+                for (final a in _assets)
+                  DropdownMenuItem(
+                      value: '${a['id']}',
+                      child: ProxoText('${a['name'] ?? ''}'))
+              ],
+              onChanged: (v) {
+                setState(() {
+                  _assetId = v;
+                  _fieldErrors.remove('asset');
+                });
+                _refreshQuote();
+              }),
+        _error(context, 'asset'),
+        const SizedBox(height: 14),
+        Align(
+            alignment: Alignment.centerRight,
+            child: OutlinedButton(
+                onPressed: _createContact,
+                child:
+                    const ProxoText('دروستکردنی پەڕەی نوێ', translate: true))),
       ]));
   Widget _audience(BuildContext context) => AdFormSection(
       title: 'ئامانجی بینەران',
@@ -751,28 +1227,55 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
             context,
             'location',
             _location,
-            const [
-              ('all', 'هەموو'),
-              ('kurdistan', 'کوردستان'),
-              ('iraq', 'عێراق')
-            ],
+            _isMeta
+                ? const [
+                    ('all', 'هەموو عێراق'),
+                    ('erbil', 'هەولێر'),
+                    ('sulaymaniyah', 'سلێمانی'),
+                    ('duhok', 'دهۆک'),
+                    ('baghdad', 'بەغدا')
+                  ]
+                : const [
+                    ('all', 'هەموو'),
+                    ('kurdistan', 'کوردستان'),
+                    ('iraq', 'عێراق')
+                  ],
             (v) => setState(() => _location = v)),
         const SizedBox(height: 24),
         _label(context, 'تەمەن'),
-        Wrap(spacing: 10, runSpacing: 10, children: [
-          for (final age in const [
-            'all',
-            '18-24',
-            '25-34',
-            '35-44',
-            '45-54',
-            '55+'
-          ])
-            AdChoice(
-                key: ValueKey('age-$age'),
-                label: age == 'all' ? 'هەموو' : age,
-                selected: _ages.contains(age),
-                onTap: () => setState(() {
+        if (_isMeta) ...[
+          AdValueRow(
+              label: 'تەمەن',
+              value: '$_ageMin – ${_ageMax == 65 ? '65+' : _ageMax}'),
+          RangeSlider(
+              key: const ValueKey('meta-age'),
+              min: 18,
+              max: 65,
+              divisions: 47,
+              values: RangeValues(_ageMin.toDouble(), _ageMax.toDouble()),
+              onChanged: (v) {
+                setState(() {
+                  _ageMin = v.start.round();
+                  _ageMax = v.end.round();
+                });
+                _refreshQuote();
+              }),
+        ] else
+          Wrap(spacing: 10, runSpacing: 10, children: [
+            for (final age in const [
+              'all',
+              '18-24',
+              '25-34',
+              '35-44',
+              '45-54',
+              '55+'
+            ])
+              AdChoice(
+                  key: ValueKey('age-$age'),
+                  label: age == 'all' ? 'هەموو' : age,
+                  selected: _ages.contains(age),
+                  onTap: () {
+                    setState(() {
                       FocusManager.instance.primaryFocus?.unfocus();
                       if (age == 'all') {
                         _ages
@@ -783,8 +1286,10 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
                         if (!_ages.add(age)) _ages.remove(age);
                         if (_ages.isEmpty) _ages.add('all');
                       }
-                    }))
-        ]),
+                    });
+                    _refreshQuote();
+                  })
+          ]),
         const SizedBox(height: 24),
         _label(context, 'ڕەگەز'),
         _choices(
@@ -793,40 +1298,45 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
             _gender,
             const [('all', 'هەموو'), ('male', 'نێر'), ('female', 'مێ')],
             (v) => setState(() => _gender = v)),
-        const SizedBox(height: 24),
-        _label(context, 'جۆری پۆل'),
-        DropdownButtonFormField<String>(
-            onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-            key: ValueKey('category-$_category'),
-            initialValue: _category,
-            isExpanded: true,
-            isDense: false,
-            itemHeight: null,
-            style: AdUi.text(context),
-            decoration: AdUi.dropdownDecoration,
-            hint: const ProxoText('پۆلی ڕیکلام هەڵبژێرە', translate: true),
-            items: [
-              for (final c in kAdCategories)
-                DropdownMenuItem(
-                    value: c.slug, child: ProxoText(c.label, translate: true))
-            ],
-            onChanged: (v) => setState(() {
+        if (!_isMeta) ...[
+          const SizedBox(height: 24),
+          _label(context, 'جۆری پۆل'),
+          DropdownButtonFormField<String>(
+              onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+              key: ValueKey('category-$_category'),
+              initialValue: _category,
+              isExpanded: true,
+              isDense: false,
+              itemHeight: null,
+              style: AdUi.text(context),
+              decoration: AdUi.dropdownDecoration,
+              hint: const ProxoText('پۆلی ڕیکلام هەڵبژێرە', translate: true),
+              items: [
+                for (final c in kAdCategories)
+                  DropdownMenuItem(
+                      value: c.slug, child: ProxoText(c.label, translate: true))
+              ],
+              onChanged: (v) {
+                setState(() {
                   _category = v;
                   _fieldErrors.remove('category');
-                })),
-        _error(context, 'category'),
-        const SizedBox(height: 24),
-        _label(context, 'جۆری ئامێر'),
-        _choices(
-            context,
-            'device',
-            _device,
-            const [
-              ('all', 'هەموو'),
-              ('iphone', 'iPhone'),
-              ('android', 'Android')
-            ],
-            (v) => setState(() => _device = v)),
+                });
+                _refreshQuote();
+              }),
+          _error(context, 'category'),
+          const SizedBox(height: 24),
+          _label(context, 'جۆری ئامێر'),
+          _choices(
+              context,
+              'device',
+              _device,
+              const [
+                ('all', 'هەموو'),
+                ('iphone', 'iPhone'),
+                ('android', 'Android')
+              ],
+              (v) => setState(() => _device = v)),
+        ],
         _error(context, 'audience'),
       ]));
   String _budgetIqd(int usd) => adIqd(usd * (_quote?.rate ?? 1800));
@@ -844,18 +1354,18 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
             child: Slider(
                 key: const ValueKey('daily-budget-slider'),
                 min: 0,
-                max: (_budgets.length - 1).toDouble(),
-                divisions: _budgets.length - 1,
-                value: _budgets.indexOf(_daily).toDouble(),
+                max: (_budgetOptions.length - 1).toDouble(),
+                divisions: _budgetOptions.length - 1,
+                value: _budgetOptions.indexOf(_daily).toDouble(),
                 activeColor: AdUi.blue,
                 label: _budgetIqd(_daily),
                 onChanged: (v) {
-                  setState(() => _daily = _budgets[v.round()]);
+                  setState(() => _daily = _budgetOptions[v.round()]);
                   _refreshQuote();
                 })),
         AdValueRow(
-            label: _budgetIqd(_budgets.last),
-            value: _budgetIqd(_budgets.first),
+            label: _budgetIqd(_budgetOptions.last),
+            value: _budgetIqd(_budgetOptions.first),
             color: AdUi.secondary),
         const SizedBox(height: 24),
         AdValueRow(
@@ -907,29 +1417,17 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
                           key: const ValueKey('ad-date'),
                           onPressed: () async {
                             FocusManager.instance.primaryFocus?.unfocus();
-                            final now = adScheduleNow(),
-                                today = DateUtils.dateOnly(now);
-                            final lastDate = DateUtils.dateOnly(
-                                now.add(const Duration(days: 90)));
-                            final date = await showDatePicker(
+                            final date = await showAdDatePicker(
                                 context: context,
-                                initialDate: _date != null &&
-                                        !DateUtils.dateOnly(_date!)
-                                            .isBefore(today) &&
-                                        !DateUtils.dateOnly(_date!)
-                                            .isAfter(lastDate)
-                                    ? _date
-                                    : today,
-                                firstDate: today,
-                                lastDate: lastDate,
-                                builder: (_, child) => Directionality(
-                                    textDirection: TextDirection.rtl,
-                                    child: child!));
+                                now: _now,
+                                initialDate: _date);
                             if (mounted && date != null) {
                               setState(() {
                                 _date = date;
                                 _fieldErrors.remove('schedule');
+                                _validateSchedule();
                               });
+                              _refreshQuote();
                             }
                           },
                           child: ProxoText(
@@ -941,20 +1439,19 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
                           key: const ValueKey('ad-time'),
                           onPressed: () async {
                             FocusManager.instance.primaryFocus?.unfocus();
-                            final now = adScheduleNow();
-                            final time = await showTimePicker(
+                            final now = _now();
+                            final time = await showAdTimePicker(
                                 context: context,
-                                initialTime: _time ??
-                                    TimeOfDay(
-                                        hour: now.hour, minute: now.minute),
-                                builder: (_, child) => Directionality(
-                                    textDirection: TextDirection.rtl,
-                                    child: child!));
+                                date: _date ?? now,
+                                now: _now,
+                                initialTime: _time);
                             if (mounted && time != null) {
                               setState(() {
+                                _date ??= DateUtils.dateOnly(now);
                                 _time = time;
-                                _fieldErrors.remove('schedule');
+                                _validateSchedule();
                               });
+                              _refreshQuote();
                             }
                           },
                           child: ProxoText(
@@ -1007,6 +1504,12 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
         ],
       ]));
   Widget _forecast(BuildContext context) {
+    if (_isMeta || _isTikTokDirect) {
+      return AdFormSection(
+          title: 'پێشبینی ئەنجام',
+          child: ProxoText('پێشبینی بەردەست نییە',
+              style: AdUi.text(context, color: AdUi.secondary)));
+    }
     final f = AdForecast.calculate(
         goal: _goal ?? 'views',
         dailyBudget: _daily,
@@ -1106,27 +1609,23 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
   Widget _submission(BuildContext context) => AdFormSection(
       title: 'ناردنی ڕیکلام',
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        _label(context, 'ڕێگای پارەدان'),
-        PaymentOption(
-            key: const ValueKey('payment-app_balance'),
-            label: ProxoStrings.text('باڵانسی هەژمار'),
-            leading: const ProxoSymbol(ProxoSymbolName.wallet,
-                size: 26, color: AdUi.blue),
-            selected: _payment == 'app_balance',
-            onTap: () => setState(() {
-                  _payment = 'app_balance';
-                  _fieldErrors.remove('payment');
-                })),
-        const SizedBox(height: 12),
-        PaymentOption(
-            key: const ValueKey('payment-fastpay'),
-            label: 'FastPay',
-            leading: const ProviderLogo(provider: 'fastpay'),
-            selected: _payment == 'fastpay',
-            onTap: () => setState(() {
-                  _payment = 'fastpay';
-                  _fieldErrors.remove('payment');
-                })),
+        _label(context, 'شێوازەکانی پارەدان'),
+        AdPaymentCard(
+          value: _payment,
+          busy: _openingConfirmation,
+          fastPayEnabled: _isMeta
+              ? _metaFastPayAllowed
+              : _isTikTokDirect
+                  ? _tiktokFastPayAllowed
+                  : true,
+          onChanged: (value) {
+            setState(() {
+              _payment = value;
+              _fieldErrors.remove('payment');
+            });
+            _refreshQuote();
+          },
+        ),
         _error(context, 'payment'),
         const SizedBox(height: 16),
         FilledButton(
@@ -1155,7 +1654,7 @@ class _AdCreateScreenState extends State<AdCreateScreen> {
                   child: ProxoText(
                       _pending != null
                           ? 'پشکنینی داواکاریی پێشوو'
-                          : 'پشکنین و ناردنی ڕیکلام',
+                          : 'سپۆنسەر بکە${_quote == null ? '' : ' — ${adIqd(_quote!.totalIqd)}'}',
                       textAlign: TextAlign.center)),
             ])),
       ]));

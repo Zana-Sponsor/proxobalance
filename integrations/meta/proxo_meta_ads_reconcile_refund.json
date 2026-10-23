@@ -1,0 +1,171 @@
+{
+  "name": "Proxo Meta — reconcile and compensate",
+  "nodes": [
+    {
+      "id": "meta-reconcile_refund-schedule",
+      "name": "Scheduled poll",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 2
+            }
+          ]
+        }
+      },
+      "notes": "Inactive until staged verification and the owner’s release rules allow activation."
+    },
+    {
+      "id": "meta-reconcile_refund-manual",
+      "name": "Controlled manual test",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        200
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "meta-reconcile_refund-configuration",
+      "name": "Validate backend configuration",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        100
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Ignore trigger payloads. Orders and money are loaded by the authenticated backend.\nconst origin=$vars.PROXO_META_BACKEND_ORIGIN;\nif(typeof origin!=='string'\n  || !/^https:\\/\\/(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z]{2,63}$/.test(origin)\n  || /\\.(?:localhost|local|internal|invalid|test)$/.test(origin))\n  throw new Error('META_BACKEND_ORIGIN_NOT_CONFIGURED');\nreturn {json:{url:origin+\"/api/meta-ads?op=worker-reconcile\"}};"
+      }
+    },
+    {
+      "id": "meta-reconcile_refund-worker",
+      "name": "Call authenticated worker",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        520,
+        100
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $json.url }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{}",
+        "options": {
+          "timeout": 60000,
+          "redirect": {
+            "redirect": {
+              "followRedirects": false
+            }
+          },
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "text"
+            }
+          }
+        }
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "name": "Proxo Meta worker"
+        }
+      },
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "onError": "continueRegularOutput",
+      "notes": "Retries cover transport failures only. HTTP errors reach the sanitized result check. Durable leases and stage retries belong to the backend."
+    },
+    {
+      "id": "meta-reconcile_refund-result",
+      "name": "Check sanitized result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        780,
+        100
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Keep only the application worker contract; never return raw headers or diagnostics.\nconst response=$json;\nif(!response || response.error || !Number.isInteger(response.statusCode))\n  throw new Error('META_WORKER_TRANSPORT_UNAVAILABLE');\nif(response.statusCode===401 || response.statusCode===403)\n  throw new Error('META_WORKER_AUTHORIZATION_FAILED');\nif(response.statusCode===429 || response.statusCode>=500)\n  throw new Error('META_WORKER_TEMPORARILY_UNAVAILABLE');\nif(response.statusCode<200 || response.statusCode>=300)\n  throw new Error('META_WORKER_REQUEST_REJECTED');\nlet body=response.body;\nif(typeof body==='string') {\n  try { body=JSON.parse(body); }\n  catch { throw new Error('META_WORKER_INVALID_RESPONSE'); }\n}\nif(!body || body.ok!==true || ![0,1].includes(body.processed)\n  || !['idle','paused','observed','reconcile','refunded'].includes(body.status))\n  throw new Error('META_WORKER_INVALID_RESPONSE');\nconst result={ok:true,processed:body.processed,status:body.status};\nif(typeof body.error_code==='string' && /^[A-Z][A-Z0-9_]{0,79}$/.test(body.error_code))\n  result.error_code=body.error_code;\nreturn {json:result};"
+      }
+    }
+  ],
+  "connections": {
+    "Scheduled poll": {
+      "main": [
+        [
+          {
+            "node": "Validate backend configuration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Controlled manual test": {
+      "main": [
+        [
+          {
+            "node": "Validate backend configuration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate backend configuration": {
+      "main": [
+        [
+          {
+            "node": "Call authenticated worker",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call authenticated worker": {
+      "main": [
+        [
+          {
+            "node": "Check sanitized result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Baghdad",
+    "executionTimeout": 240,
+    "saveDataErrorExecution": "none",
+    "saveDataSuccessExecution": "none",
+    "saveManualExecutions": false,
+    "saveExecutionProgress": false
+  },
+  "pinData": {},
+  "tags": [],
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "description": "Reconcile unknown or partial outcomes and dispatch proven-safe compensation through the authenticated backend."
+}

@@ -1,0 +1,337 @@
+{
+  "observed_at_utc": "2026-10-23T20:56:45.522642+00:00",
+  "starting_commit": "88287b3aa2dd7036003ea58d505f3e2590d85a77",
+  "state": "uncommitted continuation; final PR commit records the published revision",
+  "runtime": {
+    "flutter": "3.47.8",
+    "dart": "3.13.7",
+    "node": "v24.19.0",
+    "CI": "true"
+  },
+  "verification": [
+    {
+      "name": "full Flutter suite",
+      "command": "CI=true flutter test --no-pub --reporter expanded",
+      "test_file_count": 80,
+      "passed": 1268,
+      "skipped": 1,
+      "failed": 0,
+      "exit_code": 0,
+      "log": "flutter-full-pr46-continuation.log",
+      "skip": "staging foreground/background push helpers avoid Firebase and tokens requires complete guarded staging build defines",
+      "limit": "Local widget/unit tests with controlled fixtures, not physical device or live service acceptance.",
+      "source_checkpoint": "Full suite preceded the final three payment recovery edits; the affected payment files were then rerun successfully in the separate 24-test run."
+    },
+    {
+      "name": "final payment recovery rerun",
+      "command": "CI=true flutter test --no-pub test/ad_fastpay_attempt_test.dart test/ad_repository_test.dart --reporter expanded",
+      "passed": 24,
+      "failed": 0,
+      "exit_code": 0,
+      "log": "flutter-payment-recovery-final.log",
+      "limit": "Run after the three final recovery regressions were added. Overlaps the full suite; do not add counts."
+    },
+    {
+      "name": "full Node suite",
+      "command": "npm test",
+      "passed": 310,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "log": "node-continuation-final.log",
+      "limit": "Controlled transports and local HTTP, not deployed provider/n8n execution.",
+      "source_checkpoint": "Final rerun after both workflow generators, all seven exports, workflow tests and integration handovers adopted explicit null-ID unconfigured credential markers. Supersedes the earlier 308-test run."
+    },
+    {
+      "name": "npm lint",
+      "command": "npm run lint",
+      "exit_code": 0,
+      "log": "npm-lint-continuation.log",
+      "scope": "node --check server.js"
+    },
+    {
+      "name": "local build",
+      "command": "npm run build",
+      "exit_code": 0,
+      "referenced_assets_verified": 17,
+      "log": "npm-build-continuation.log",
+      "limit": "Static output preparation; no Vercel deployment or Flutter native release build."
+    },
+    {
+      "name": "scoped Dart analyzer",
+      "command": "CI=true flutter analyze --no-pub lib/widgets/ad_payment_card.dart lib/widgets/ad_help_notice.dart integration_test/support/actual_screen_fixtures.dart test/ad_help_notice_test.dart test/ad_payment_card_responsive_test.dart test/actual_screen_backend_boundary_test.dart",
+      "errors": 0,
+      "warnings": 0,
+      "infos": 5,
+      "log": "ci-regressions-analyze.log",
+      "limit": "Five existing fixture-file lints: two transitive imports, two braces, one const. Not a clean whole-repository analyzer claim."
+    },
+    {
+      "name": "Meta baseline database",
+      "command": "PGLITE_MODULE=/absolute/path/to/@electric-sql/pglite/dist/index.js node scripts/test-meta-database.mjs",
+      "assertions_passed": 77,
+      "failed": 0,
+      "log": "proxo-meta-final-review.log",
+      "migration_scope": "Baseline finance fixture plus Meta and TikTok DM migrations; does not load the newer payment/OAuth/activation/report stack.",
+      "result_provenance": "independent final QA rerun; exit 0",
+      "limit": "Disposable local PostgreSQL fixtures only; no external database/provider calls. Separate suites, not a combined count."
+    },
+    {
+      "name": "TikTok DM baseline database",
+      "command": "PGLITE_MODULE=/absolute/path/to/@electric-sql/pglite/dist/index.js node scripts/test-tiktok-dm-database.mjs",
+      "assertions_passed": 130,
+      "failed": 0,
+      "log": "proxo-tiktok-dm-final-review.log",
+      "migration_scope": "Baseline finance fixture plus Meta and TikTok DM migrations; does not load the newer payment/OAuth/activation/report stack.",
+      "result_provenance": "independent final QA rerun; exit 0",
+      "limit": "Disposable local PostgreSQL fixtures only; no external database/provider calls. Separate suites, not a combined count."
+    },
+    {
+      "name": "immutable ad payments database",
+      "command": "PGLITE_MODULE=/absolute/path/to/@electric-sql/pglite/dist/index.js node scripts/test-ad-payments-database.mjs",
+      "assertions_passed": 98,
+      "failed": 0,
+      "log": "proxo-payments-final.log",
+      "migration_scope": "Complete timestamp-ordered additive stack: Meta, TikTok DM, immutable payments, OAuth, activation, report boundary.",
+      "result_provenance": "finance owner final run; PASS output independently inspected",
+      "limit": "Disposable local PostgreSQL fixtures only; no external database/provider calls. Separate suites, not a combined count."
+    },
+    {
+      "name": "TikTok OAuth database",
+      "command": "PGLITE_MODULE=/absolute/path/to/@electric-sql/pglite/dist/index.js node scripts/test-tiktok-oauth-database.mjs",
+      "assertions_passed": 79,
+      "failed": 0,
+      "log": "proxo-oauth-final-review.log",
+      "migration_scope": "Complete timestamp-ordered additive stack: Meta, TikTok DM, immutable payments, OAuth, activation, report boundary.",
+      "result_provenance": "independent final QA rerun; exit 0",
+      "limit": "Disposable local PostgreSQL fixtures only; no external database/provider calls. Separate suites, not a combined count."
+    },
+    {
+      "name": "TikTok activation database",
+      "command": "PGLITE_MODULE=/absolute/path/to/@electric-sql/pglite/dist/index.js node scripts/test-tiktok-activation-database.mjs",
+      "assertions_passed": 64,
+      "failed": 0,
+      "log": "proxo-activation-final-review.log",
+      "migration_scope": "Complete timestamp-ordered additive stack: Meta, TikTok DM, immutable payments, OAuth, activation, report boundary.",
+      "result_provenance": "independent final QA rerun; exit 0",
+      "limit": "Disposable local PostgreSQL fixtures only; no external database/provider calls. Separate suites, not a combined count."
+    },
+    {
+      "name": "TikTok report boundary database",
+      "command": "PGLITE_MODULE=/absolute/path/to/@electric-sql/pglite/dist/index.js node scripts/test-tiktok-report-database.mjs",
+      "assertions_passed": 29,
+      "failed": 0,
+      "log": "proxo-report-final.log",
+      "migration_scope": "Complete timestamp-ordered additive stack: Meta, TikTok DM, immutable payments, OAuth, activation, report boundary.",
+      "result_provenance": "finance owner final run; PASS output independently inspected",
+      "limit": "Disposable local PostgreSQL fixtures only; no external database/provider calls. Separate suites, not a combined count."
+    }
+  ],
+  "ci_regressions": [
+    {
+      "job_url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/40016601155/job/120630143130",
+      "observed_failure": "RenderFlex overflow 26px right in responsive_ad_ui_test.dart:117, Size 240x568/text3.0/density2.0",
+      "reproduced_before_fix": true,
+      "fixed_by": "Measured payment card switches to stacked Change button when remaining label width is below 48px; existing normal row preserved. Both methods retain equal measured height.",
+      "regression_evidence": [
+        "responsive-before.log",
+        "responsive-after.log",
+        "full Flutter suite",
+        "ad_payment_card_responsive_test.dart"
+      ]
+    },
+    {
+      "job_url": "https://github.com/Zana-Sponsor/proxobalance/actions/runs/40016601251/job/120630143826",
+      "observed_failure": "Android emulator fixture network audit rejected three readonly POST /rest/v1/rpc/pa_ad_help requests.",
+      "fixed_by": "Exact fixture HTTPS host/path/method/single-field platform body returns real disabled SQL null. Unexpected hosts/methods/parameters/duplicate keys remain rejected.",
+      "regression_evidence": [
+        "actual_screen_backend_boundary_test.dart",
+        "full Flutter suite"
+      ],
+      "android_runtime_rerun": false
+    },
+    {
+      "observed_failure": "Help widget expected enabled/body_ku/tutorial_url while SQL returns active/message/video_url.",
+      "fixed_by": "Widget consumes the canonical SQL contract and retains existing notice styling and tutorial wording.",
+      "regression_evidence": [
+        "ad_help_notice_test.dart",
+        "full Flutter suite"
+      ]
+    }
+  ],
+  "receipt": {
+    "baseline_commit": "058f2f6ca7040481d82f5eaaec6edee28b1d3615",
+    "renderer_and_reference_diff": [],
+    "tests": [
+      "receipt_reference_match_test.dart",
+      "receipt_platform_refund_test.dart"
+    ],
+    "included_in_full_suite": true,
+    "new_logo_slot": false
+  },
+  "generated_artifacts": {
+    "retained": [
+      "proxo_app/docs/meta_ads_evidence/payment_sheet_280_2x.png"
+    ],
+    "retained_note": "Payment sheet unchanged; dimmed background scroll reflects narrow large-text card height correction.",
+    "restored_unrelated": [
+      "proxo_app/docs/ad_confirmation_large_text_preview.png",
+      "proxo_app/docs/create_ad_tablet_preview.png"
+    ],
+    "cleaned": "Local npm build copies in public/ restored/removed; one generated Python cache removed."
+  },
+  "unverified": [
+    "physical Android device",
+    "new Android emulator CI run",
+    "live TikTok authorization and immutable Marketing join",
+    "actual provider creation/activation",
+    "FastPay staging payment/callback",
+    "authoritative final settlement",
+    "deployed Vercel runtime",
+    "complete target n8n staging matrix"
+  ],
+  "source_sha256": {
+    "server.js": "ff87392d61e0b16c032502e559c66536f35d6c219fd7ae0873653095ca11b740",
+    "vercel.json": "a58855a56810c9941b2e3b7eb961b1be08781f3ca7dca0158c02a6a2d89c1c52",
+    "proxo_app/lib/widgets/ad_payment_card.dart": "be8ff544f1b284650532847af1b50e13522ffe80f796f88d9843246a0a133827",
+    "proxo_app/lib/widgets/ad_help_notice.dart": "f355f2d1d6a940a312b3b722f88e9bca1ce1976c97e76d5fe85b1ba0423b887a",
+    "proxo_app/integration_test/support/actual_screen_fixtures.dart": "6c72f6142b920acf33365034483714a933a5c86f19b2ca2f55d34c2d654a7b83",
+    "proxo_app/test/actual_screen_backend_boundary_test.dart": "5787cc42f445de39678b0323acfb357e9c8f25bac30ba918407113074fd2b6f1",
+    "proxo_app/test/ad_help_notice_test.dart": "bd7a9d5ae7ba1ea7170460284d25991d2250d3dc2da5bed3fd494d85e8fc9350",
+    "proxo_app/test/ad_payment_card_responsive_test.dart": "a2d0d7c3cae4ff097a9d132cba6a36b532c9effa5033acd9f006365f711f20d9",
+    "proxo_app/lib/services/ad_submission.dart": "a9c4e103690de16d7cc6533043ad42219b680451753ef662e58d8753d64d3759",
+    "proxo_app/test/ad_fastpay_attempt_test.dart": "8117fdc203f2d4f937818dd9040dd11a3d4873c8a3a1bf0a65da238c7098922c",
+    "proxo_app/test/ad_repository_test.dart": "eb93412325d005bffb0c3879e897726e0b2ea7ca4cc5e0fc5c0cdeb47fe4d28e",
+    "scripts/test-meta-database.mjs": "0b2a4147b217a48cf97cd3499f5d6ebdbeda22913031e582a7c9c99e47188b73",
+    "scripts/test-tiktok-dm-database.mjs": "702ea30dcd463d5835f563518f51c719aaed926ed1e6bc25ad4412b58a42e032",
+    "scripts/test-ad-payments-database.mjs": "ae7339c120c4d88ba4dc4b18cd6349117d392b358c8ae2a1c5687576219a7c65",
+    "scripts/test-tiktok-oauth-database.mjs": "3c873a27cdc032f71ac58065f09e749f4578cc0e672dab44f69c14873ac3f233",
+    "scripts/test-tiktok-activation-database.mjs": "b851652af489b1ed89c314464c8d35366ed2dfc52457127a3c3d880363963d3f",
+    "scripts/test-tiktok-report-database.mjs": "2beb6e82ef2b4bf1883c432f8b948e4d7456993713c7a1fe8468267b8a0a00fa",
+    "proxo_app/supabase/migrations/20261022235825_meta_ads_private_v3.sql": "b6a27deb3bfb2d19be803a6dfe14d35f2e8d0c071f3cb2d82f3beb4178927b8e",
+    "proxo_app/supabase/migrations/20261023193522_tiktok_dm_private_v1.sql": "1a0755b2f6bee6591972b197f1db86b3ac16d2df97197f64916ecc20749c86c8",
+    "proxo_app/supabase/migrations/20261023202139_immutable_ad_fastpay_attempts.sql": "956572eea35f32d945077f4d859bb5dae9a46d15893c51cbe222b7884a15488f",
+    "proxo_app/supabase/migrations/20261023202252_tiktok_oauth_private_lifecycle.sql": "eb19aa0a6dfceee174a771d115ab1d823708b1081b3c6260d5fb1fb7de79dd66",
+    "proxo_app/supabase/migrations/20261023202432_tiktok_activation_approval_journal.sql": "0643a600b5ad4e4c8ece0c3612754d795f29fce8b62aeecd5633bf45445668f0",
+    "proxo_app/supabase/migrations/20261023203029_tiktok_report_evidence_boundary.sql": "b6113d2fc74cbfbec5377c2c4be5dbb5a2076f6e580e310749224d84a6a33b74",
+    "integrations/tiktok-dm/proxo_tiktok_account_connect.json": "ac7806cc7b3805ac18c93113f4b8a4ce4f704d16d90996dd3834f886bce3659b",
+    "integrations/tiktok-dm/proxo_tiktok_account_disconnect.json": "33d150548d879489c2fd99fe4a8c78dcfa91d3cf8757e6a6d693261cb7951574",
+    "integrations/tiktok-dm/proxo_tiktok_account_videos.json": "bbe8b773a6f7e818d4d3178bc77f1f2543b58265e0b8db4ccdb47f0b7cd938ef",
+    "integrations/tiktok-dm/proxo_tiktok_conversation_fulfill.json": "74b1b01d995e81fe6547d0e1e272fa5b1aa86c260677838eb26cf812df41fdba",
+    "integrations/tiktok-dm/proxo_tiktok_conversation_spend_guard.json": "1b997a97b31cc69611ec8bef5578210d0cd8788d0d96a4b2a65dae44792d8085",
+    "integrations/tiktok-dm/proxo_tiktok_status_metrics_sync.json": "799682814647d555319a1fc464bbbad37d3f6a13e27e0e49655b70c94bd18810",
+    "integrations/fastpay-ad/proxo_fastpay_ad_reconcile.json": "fad4f1c620dc0a66605730da2eb2ac1922dfde638400fa3c2dbd84a12aad9c3c",
+    "integrations/tiktok-dm/build-workflows.mjs": "c9d52abba7621d0cf7e777a86c4f236086a0dd2149cc559cf0944e28a3931dcd",
+    "integrations/fastpay-ad/build-workflow.mjs": "cb30ba250e002451fcccd6f9b618e9444f4f22cc1d5469b3aa2bb90c8d5d2b73",
+    "test/tiktok-dm-workflows.test.js": "1000e9325e3ed781ddf982d408d8832d43cbe8a6c4c0cab92ed8dd406c064941",
+    "test/fastpay-ad-payments.test.js": "3e7fe2f2db4bdaa4979723ca742b861fd708d5986ab2e3f2e18a77b0360ca203",
+    "integrations/tiktok-dm/README.md": "2689a00681e912eeaf46821dc8435ebb37266722e86eea46d23199804fbbd9be",
+    "integrations/fastpay-ad/README.md": "083f410f2a291fc263aaf03c43818e5dc3652d1eaa9f98577f55f0cd9309f6e2"
+  },
+  "raw_log_provenance": {
+    "flutter-full-pr46-continuation.log": {
+      "sha256": "b4264d48ad860e46605d5d5f084a5be8c86885146c19013f720039f3f50f90cd",
+      "bytes": 236289,
+      "retained_in_repository": false,
+      "summary": "01:52 +1268 ~1: All tests passed!"
+    },
+    "flutter-payment-recovery-final.log": {
+      "sha256": "687f2736d875512c477450afde8454c22f252291ebcda29c30ea2e5a6e415adf",
+      "bytes": 4391,
+      "retained_in_repository": false,
+      "summary": "00:00 +24: All tests passed!"
+    },
+    "node-continuation-final.log": {
+      "sha256": "a863729a1c051d74917c2a59d27863d12c58b52670fefaf40d0ccfef126a5c26",
+      "bytes": 30942,
+      "retained_in_repository": false,
+      "summary": "310 tests; 310 passed; 0 failed; 0 skipped; process exit 0."
+    },
+    "npm-lint-continuation.log": {
+      "sha256": "d20855a0c8ce22991aa28ec56fad805f5f8dc6f1fad1dfca84df69fbef9b2c5d",
+      "bytes": 157,
+      "retained_in_repository": false,
+      "summary": ""
+    },
+    "npm-build-continuation.log": {
+      "sha256": "84d8998b8205b6a730a0dce0502c38cf79b06cf5764ad208d74987f99f4d164c",
+      "bytes": 284,
+      "retained_in_repository": false,
+      "summary": "Output: public/index.html; verified 17 referenced assets."
+    },
+    "ci-regressions-analyze.log": {
+      "sha256": "f7455a420ed4953a312b273630c35dbf1614e84bfc96ec9896c6cd1ad8356b91",
+      "bytes": 1272,
+      "retained_in_repository": false,
+      "summary": "5 issues found. (ran in 4.2s)"
+    },
+    "responsive-before.log": {
+      "sha256": "6742971b39ae20d0524ed4279a52c0ead38512e35c72128110d42392e22ceafb",
+      "bytes": 2057,
+      "retained_in_repository": false,
+      "summary": "  /workspace/scratch/43a583048faa/proxobalance/proxo_app/test/responsive_ad_ui_test.dart: create fits Size(240.0, 568.0), text 3.0, density 2.0"
+    },
+    "responsive-after.log": {
+      "sha256": "68397ecc350b00929d02afac3bc94006aab62a3d5399bbbfe9df89ccdbeceba5",
+      "bytes": 242,
+      "retained_in_repository": false,
+      "summary": "00:01 +1: All tests passed!"
+    },
+    "proxo-meta-final-review.log": {
+      "sha256": "1d0d8171f766d04c5813927dd90e0208b04419dc352c1651d72e0512564328ce",
+      "bytes": 87,
+      "retained_in_repository": false,
+      "summary": "PASS 77 Meta PostgreSQL integration assertions (disposable PGlite; no external calls)."
+    },
+    "proxo-tiktok-dm-final-review.log": {
+      "sha256": "e692f873d001a6065fe7b70aa7114e8f4008af23d431b6cc501377d1d2dafd56",
+      "bytes": 93,
+      "retained_in_repository": false,
+      "summary": "PASS 130 TikTok DM PostgreSQL integration assertions (disposable PGlite; no external calls)."
+    },
+    "proxo-payments-final.log": {
+      "sha256": "6c05a2fc544866f6b1fdb44ec2a973dde2047006ddff4ef92cfd5e4fa1e0403d",
+      "bytes": 51,
+      "retained_in_repository": false,
+      "summary": "PASS 98 immutable ad payment PostgreSQL assertions"
+    },
+    "proxo-oauth-final-review.log": {
+      "sha256": "133da87b546b1b3b92418ae7059cf2182f635530cb04770e632f15e81197f967",
+      "bytes": 94,
+      "retained_in_repository": false,
+      "summary": "TikTok OAuth database: 79 assertions passed (isolated PostgreSQL; no runtime/provider calls)."
+    },
+    "proxo-activation-final-review.log": {
+      "sha256": "0dd419641b25fff0eff72b6de64813fecf9938c0e6117aa4fbedee999607c1d3",
+      "bytes": 88,
+      "retained_in_repository": false,
+      "summary": "PASS 64 TikTok activation PostgreSQL assertions (disposable PGlite; no external calls)."
+    },
+    "proxo-report-final.log": {
+      "sha256": "d6b80040bf60b4dd005bdf56340160afed730d8aef9fe33d99c6813922be7dbc",
+      "bytes": 54,
+      "retained_in_repository": false,
+      "summary": "PASS 29 TikTok report authority PostgreSQL assertions"
+    }
+  },
+  "database_boundary": "The final report migration supersedes the earlier manually attested settlement path. Baseline Meta/TikTok scripts do not load that migration; composed report tests prove candidates cannot authorize known-ad settlement/refunds.",
+  "integration_regressions": [
+    {
+      "runtime": "n8n 2.23.4",
+      "observed_by": "integration owner during actual inactive UI import",
+      "issue": "A name-only missing credential was dropped during import and the HTTP editor selected an unrelated existing credential.",
+      "correction": "Both generators and all seven TikTok/FastPay exports use explicit id:null with an UNCONFIGURED marker name that must not match any stored credential.",
+      "source_reference": "Exact tagged n8n source is linked in both integration READMEs.",
+      "local_export_check": {
+        "exports": 7,
+        "http_nodes": 9,
+        "all_inactive": true,
+        "all_worker_credential_ids_null": true
+      },
+      "ui_observation": "Integration owner observed a blank HTTP credential selector after replacement. Final cleanup/re-export inventory is maintained separately.",
+      "executions_performed": false,
+      "publication_performed": false,
+      "limit": "This local evidence does not certify every runtime graph replacement or credential mapping; no staging execution was performed."
+    }
+  ]
+}

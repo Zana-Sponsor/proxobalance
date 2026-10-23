@@ -3,7 +3,26 @@
   "framework": null,
   "buildCommand": "npm run build",
   "outputDirectory": "public",
+  "redirects": [
+    {
+      "source": "/api/tiktok-dm/callback",
+      "destination": "/api/tiktok-dm/callback/",
+      "permanent": true
+    }
+  ],
   "rewrites": [
+    {
+      "source": "/api/tiktok-dm/callback/",
+      "destination": "/api/meta-ads?platform=tiktok&op=oauth-callback"
+    },
+    {
+      "source": "/api/tiktok-dm",
+      "destination": "/api/meta-ads?platform=tiktok"
+    },
+    {
+      "source": "/api/v1/wallet/refund",
+      "destination": "/api/meta-ads?op=refund"
+    },
     {
       "source": "/exchange-admin",
       "destination": "/exchange-admin.html"
@@ -102,6 +121,9 @@
     }
   ],
   "functions": {
+    "api/meta-ads.js": {
+      "maxDuration": 60
+    },
     "api/*.js": {
       "maxDuration": 15
     }

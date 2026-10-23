@@ -13,6 +13,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'ad_categories.dart';
+import 'meta_ad_draft.dart';
+import 'tiktok_dm_accounts.dart' show tiktokDmMessage;
 import 'proxo_pricing.dart';
 
 /// Baghdad calendar fields, carried as UTC to avoid the device's time zone or
@@ -39,6 +41,17 @@ String adIqd(num value, {bool discount = false}) {
 @immutable
 class AdDraft {
   final String title, link, code, note;
+  final String platform, pageUrl;
+  final String messageDestination;
+  final String? tiktokAccountId, tiktokItemId, tiktokUsername;
+  final String tiktokVideoCaption;
+  bool get isTikTokDirect =>
+      platform == 'TIKTOK' &&
+      goal == 'messages' &&
+      messageDestination == 'direct_message';
+  final Set<String> placements, destinations;
+  final int ageMin, ageMax;
+  bool get isMeta => platform == 'META';
   final String? goal,
       category,
       assetId,
@@ -54,6 +67,17 @@ class AdDraft {
 
   const AdDraft({
     this.title = '',
+    this.platform = 'TIKTOK',
+    this.pageUrl = '',
+    this.messageDestination = 'external_contact',
+    this.tiktokAccountId,
+    this.tiktokItemId,
+    this.tiktokUsername,
+    this.tiktokVideoCaption = '',
+    this.placements = const {'facebook', 'instagram'},
+    this.destinations = const {'WHATSAPP', 'MESSENGER', 'INSTAGRAM_DIRECT'},
+    this.ageMin = 18,
+    this.ageMax = 65,
     this.link = '',
     this.code = '',
     this.note = '',
@@ -76,33 +100,41 @@ class AdDraft {
 
   Map<String, String> validate({DateTime? now}) {
     final errors = <String, String>{};
-    if (title.trim().isEmpty || title.trim().length > 120) {
+    if (title.trim().isEmpty || title.trim().runes.length > 120) {
       errors['title'] = 'ناوی ڕیکلام بنووسە؛ زۆرترین 120 پیت';
     }
-    if (!const ['messages', 'views'].contains(goal)) {
+    if (!(isMeta ? metaObjectiveLabels.keys : const ['messages', 'views'])
+        .contains(goal)) {
       errors['goal'] = 'ئامانجی ڕیکلام هەڵبژێرە';
     }
-    if (!isSupportedAdCategory(category)) {
+    if (!isMeta && !isSupportedAdCategory(category)) {
       errors['category'] = 'بەشی ڕیکلام هەڵبژێرە';
     }
-    if (goal == 'messages' && (assetId == null || assetId!.isEmpty)) {
+    if (!isMeta &&
+        !isTikTokDirect &&
+        goal == 'messages' &&
+        (assetId == null || assetId!.isEmpty)) {
       errors['asset'] = 'کەرەستەی پەیوەندی هەڵبژێرە';
     }
     final uri = Uri.tryParse(link.trim());
-    if (uri == null ||
-        uri.scheme != 'https' ||
-        uri.userInfo.isNotEmpty ||
-        !(uri.host.toLowerCase() == 'tiktok.com' ||
-            uri.host.toLowerCase().endsWith('.tiktok.com')) ||
-        uri.path.isEmpty ||
-        uri.path == '/' ||
-        link.length > 2048) {
+    if (!isMeta &&
+        !isTikTokDirect &&
+        (uri == null ||
+            uri.scheme != 'https' ||
+            uri.userInfo.isNotEmpty ||
+            !(uri.host.toLowerCase() == 'tiktok.com' ||
+                uri.host.toLowerCase().endsWith('.tiktok.com')) ||
+            uri.path.isEmpty ||
+            uri.path == '/' ||
+            link.length > 2048)) {
       errors['link'] = 'بەستەرێکی دروستی ڤیدیۆی TikTok بنووسە';
     }
-    if (code.trim().isEmpty || code.trim().length > 200) {
+    if (!isMeta &&
+        !isTikTokDirect &&
+        (code.trim().isEmpty || code.trim().length > 200)) {
       errors['code'] = 'کۆدی ڤیدیۆ بنووسە؛ زۆرترین 200 پیت';
     }
-    if (schedule == null ||
+    if ((!immediate && schedule == null) ||
         (!immediate &&
             _adScheduleFields(schedule!)
                 .isBefore(_adScheduleFields(now ?? adScheduleNow())))) {
@@ -111,7 +143,9 @@ class AdDraft {
     if (!const ['app_balance', 'fastpay'].contains(paymentMethod)) {
       errors['payment'] = 'ڕێگای پارەدان هەڵبژێرە';
     }
-    if (!const [10, 20, 50, 100, 200, 500, 1000].contains(dailyBudget) ||
+    if (!(isMeta
+            ? dailyBudget >= 2 && dailyBudget <= 1000
+            : const [10, 20, 50, 100, 200, 500, 1000].contains(dailyBudget)) ||
         days < 1 ||
         days > 7) {
       errors['budget'] = 'بودجە و ماوەی ڕیکلام بپشکنەوە';
@@ -127,26 +161,101 @@ class AdDraft {
             ].contains(v)) ||
         (ages.length > 1 && ages.contains('all')) ||
         !const ['all', 'male', 'female'].contains(gender) ||
-        !const ['all', 'kurdistan', 'iraq'].contains(location) ||
+        !(isMeta
+                ? const ['all', 'erbil', 'sulaymaniyah', 'duhok', 'baghdad']
+                : const ['all', 'kurdistan', 'iraq'])
+            .contains(location) ||
         !const ['all', 'iphone', 'android'].contains(device)) {
       errors['audience'] = 'هەڵبژاردەکانی ئامانجی ڕیکلام بپشکنەوە';
     }
     if (note.trim().length > 500) {
       errors['note'] = 'تێبینی نابێت لە 500 پیت زیاتر بێت';
     }
+    if (!isMeta &&
+        goal == 'messages' &&
+        !const {'direct_message', 'external_contact'}
+            .contains(messageDestination)) {
+      errors['destination'] = 'شوێنی پەیوەندی هەڵبژێرە';
+    }
+    if (isTikTokDirect) {
+      if (tiktokAccountId == null || tiktokAccountId!.isEmpty) {
+        errors['tiktok_account'] = 'هەژمارێکی پەیوەستکراوی تیک تۆک هەڵبژێرە';
+      }
+      if (tiktokItemId == null || tiktokItemId!.isEmpty) {
+        errors['tiktok_video'] = 'ڤیدیۆیەکی گونجاو هەڵبژێرە';
+      }
+    }
+    if (isMeta) {
+      if (!validMetaUrl(link)) errors['link'] = 'لینکی پۆست / ڤیدیۆ بپشکنەوە';
+      if (!validMetaUrl(pageUrl, page: true)) {
+        errors['page'] = 'لینکی پەیجی فەیسبووک بپشکنەوە';
+      }
+      if (placements.isEmpty ||
+          placements.any((p) => !const {'facebook', 'instagram'}.contains(p))) {
+        errors['placements'] = 'لانیکەم یەک شوێنی پیشاندان هەڵبژێرە';
+      }
+      final selection =
+          MetaAdSelection(placements: placements, destinations: destinations);
+      if (goal == 'messages' &&
+          (destinations.isEmpty ||
+              destinations.any((d) => !selection.available(d)))) {
+        errors['destinations'] = 'لانیکەم یەک ڕێگای نامەی بەردەست هەڵبژێرە';
+      }
+      if (ageMin < 18 || ageMax > 65 || ageMin > ageMax) {
+        errors['audience'] = 'مەودای تەمەن بپشکنەوە';
+      }
+    }
     return errors;
   }
+
+  Map<String, dynamic> toMetaContract() => {
+        'schema_version': 3,
+        'platform': 'META',
+        'ad_name': title.trim(),
+        'objective': metaObjectiveCodes[goal],
+        'page_url': pageUrl.trim(),
+        'post_url': link.trim(),
+        'placements': MetaAdSelection.canonical(placements),
+        if (goal == 'messages')
+          'destinations': MetaAdSelection.canonical(destinations),
+        'currency': 'USD',
+        'budget_daily': dailyBudget,
+        'duration_days': days,
+        'payment_method': paymentMethod == 'fastpay' ? 'FASTPAY' : 'WALLET',
+        'schedule': {
+          'mode': immediate ? 'IMMEDIATE' : 'SCHEDULED',
+          'timezone': 'Asia/Baghdad',
+          if (!immediate && schedule != null)
+            'start_at': _adScheduleFields(schedule!)
+                .subtract(const Duration(hours: 3))
+                .toIso8601String()
+        },
+        'targeting': {
+          'location': location,
+          'gender': gender.toUpperCase(),
+          'age_min': ageMin,
+          'age_max': ageMax
+        },
+      };
 
   Map<String, dynamic> toAd() {
     String two(int n) => '$n'.padLeft(2, '0');
     return {
       'title': title.trim(),
-      'video_link': link.trim(),
-      'video_code': code.trim(),
-      'post_code': code.trim(),
+      if (!isTikTokDirect) ...{
+        'video_link': link.trim(),
+        'video_code': code.trim(),
+        'post_code': code.trim(),
+      },
       'goal': goal,
+      if (!isMeta && goal == 'messages')
+        'message_destination': messageDestination,
+      if (isTikTokDirect) ...{
+        'tiktok_account_id': tiktokAccountId,
+        'tiktok_item_id': tiktokItemId,
+      },
       'category': category,
-      'asset_id': goal == 'messages' ? assetId : null,
+      if (!isTikTokDirect) 'asset_id': goal == 'messages' ? assetId : null,
       'age_groups': ages,
       'gender': gender,
       'location': location,
@@ -167,7 +276,17 @@ class AdDraft {
 
   Map<String, dynamic> toJson() => {
         ...toAd(),
+        if (isMeta) ...{
+          'platform': platform,
+          'page_url': pageUrl,
+          'placements': MetaAdSelection.canonical(placements),
+          'destinations': MetaAdSelection.canonical(destinations),
+          'age_min': ageMin,
+          'age_max': ageMax
+        },
         'asset_name': assetName,
+        if (isTikTokDirect) 'tiktok_username': tiktokUsername,
+        if (isTikTokDirect) 'tiktok_video_caption': tiktokVideoCaption,
         'promo_id': promoId,
         'promo_code': promoCode
       };
@@ -190,6 +309,19 @@ class AdDraft {
 
   factory AdDraft.fromJson(Map<String, dynamic> j) => AdDraft(
         title: j['title']?.toString() ?? '',
+        platform: j['platform']?.toString() ?? 'TIKTOK',
+        pageUrl: j['page_url']?.toString() ?? '',
+        messageDestination:
+            j['message_destination']?.toString() ?? 'external_contact',
+        tiktokAccountId: j['tiktok_account_id']?.toString(),
+        tiktokItemId: j['tiktok_item_id']?.toString(),
+        tiktokUsername: j['tiktok_username']?.toString(),
+        tiktokVideoCaption: j['tiktok_video_caption']?.toString() ?? '',
+        placements: Set<String>.from(
+            j['placements'] ?? const ['facebook', 'instagram']),
+        destinations: Set<String>.from(j['destinations'] ?? const []),
+        ageMin: (j['age_min'] as num?)?.toInt() ?? 18,
+        ageMax: (j['age_max'] as num?)?.toInt() ?? 65,
         link: j['video_link']?.toString() ?? '',
         code: (j['video_code'] ?? j['post_code'])?.toString() ?? '',
         note: j['customer_note']?.toString() ?? '',
@@ -220,6 +352,8 @@ class AdQuote {
   final double levelPercent, levelFixedIqd, promoPercent, promoFixedIqd;
   final int days;
   final int? quotedIqd;
+  final Map<String, dynamic>? metaContract;
+  final Map<String, dynamic>? tiktokContract;
   const AdQuote(
       {required this.grossUsd,
       required this.costUsd,
@@ -230,18 +364,23 @@ class AdQuote {
       this.days = 1,
       this.historicalViewRate,
       this.quotedIqd,
+      this.metaContract,
+      this.tiktokContract,
       this.levelPercent = 0,
       this.levelFixedIqd = 0,
       this.promoPercent = 0,
       this.promoFixedIqd = 0});
   int get totalIqd => quotedIqd ?? (costUsd * rate).round();
   int get grossIqd => (grossUsd * rate).round();
-  int get serviceIqd =>
-      (grossUsd * rate * ProxoPricing.serviceFeePercent).round();
+  int get serviceIqd => metaContract != null
+      ? 0
+      : (grossUsd * rate * ProxoPricing.serviceFeePercent).round();
   int get sponsorIqd => grossIqd - serviceIqd;
   int get promoIqd => (promoUsd * rate).round();
   int get levelIqd => (levelUsd * rate).round();
   Map<String, dynamic> toJson() => {
+        if (metaContract != null) 'meta_contract': metaContract,
+        if (tiktokContract != null) 'tiktok_contract': tiktokContract,
         'gross_usd': grossUsd,
         'cost_usd': costUsd,
         'amount_iqd': totalIqd,
@@ -269,6 +408,8 @@ class AdQuote {
             .clamp(0.0, gross)
             .toDouble();
     return AdQuote(
+        metaContract: metaContract == null ? null : {'preview_only': true},
+        tiktokContract: tiktokContract == null ? null : {'preview_only': true},
         grossUsd: gross,
         costUsd: round6(gross - level - promo).clamp(0.0, gross).toDouble(),
         rate: rate,
@@ -286,6 +427,8 @@ class AdQuote {
   factory AdQuote.fromJson(Map<String, dynamic> j) {
     double n(String k) => (j[k] as num?)?.toDouble() ?? 0;
     return AdQuote(
+        metaContract: (j['meta_contract'] as Map?)?.cast<String, dynamic>(),
+        tiktokContract: (j['tiktok_contract'] as Map?)?.cast<String, dynamic>(),
         grossUsd: n('gross_usd'),
         costUsd: n('cost_usd'),
         quotedIqd: num.tryParse('${j['amount_iqd']}')?.round(),
@@ -321,6 +464,51 @@ class AdSubmissionFailure implements Exception {
         'INVALID_SCHEDULE' => 'کاتی ڕیکلام تێپەڕیوە؛ کاتێکی دواتر هەڵبژێرە',
         'INVALID_ASSET' => 'کەرەستەی پەیوەندی بەردەست نییە؛ دووبارە هەڵیبژێرە',
         'PRICE_CHANGED' => 'نرخ گۆڕاوە؛ پوختەی نرخ دووبارە بپشکنەوە',
+        'QUOTE_EXPIRED' ||
+        'QUOTE_MISMATCH' ||
+        'INVALID_QUOTE' =>
+          'پوختەی نرخ نوێ بکەرەوە و دووبارە پشتڕاستی بکەرەوە',
+        'META_DISABLED' ||
+        'FEATURE_DISABLED' ||
+        'NOT_ELIGIBLE' =>
+          'دروستکردنی ڕیکلامی Meta ئێستا بەردەست نییە',
+        'FASTPAY_DISABLED' ||
+        'PAYMENT_NOT_ENABLED' =>
+          'پارەدانی FastPay بۆ ئەم ڕیکلامە ئێستا بەردەست نییە؛ باڵانسی هەژمار هەڵبژێرە',
+        'TIKTOK_DM_DISABLED' ||
+        'CONVERSATION_UNAVAILABLE' ||
+        'DM_NOT_ELIGIBLE' =>
+          'ڕیکلامی نامەی ڕاستەوخۆ بۆ ئەم هەژمارە بەردەست نییە',
+        'VIDEO_UNAVAILABLE' =>
+          'ڤیدیۆی هەڵبژێردراو چیتر بەردەست نییە؛ ڤیدیۆیەکی تر هەڵبژێرە',
+        'ACCOUNT_NOT_LINKED' ||
+        'ACCOUNT_UNAVAILABLE' ||
+        'MESSAGE_PERMISSION_REQUIRED' ||
+        'VIDEO_PERMISSION_REQUIRED' =>
+          'هەژمار یان مۆڵەتەکانی تیک تۆک پشتڕاست نەکرانەوە؛ پەیوەندییەکە نوێ بکەرەوە',
+        'BUDGET_BELOW_PROVIDER_MINIMUM' ||
+        'PROVIDER_BUDGET_MINIMUM' =>
+          'بودجە لە کەمترین بڕی ڕێگەپێدراوی تیک تۆک کەمترە؛ بودجەی زیاتر هەڵبژێرە',
+        'UNSUPPORTED_LOCATION' ||
+        'TARGETING_UNAVAILABLE' =>
+          'ناوچەی هەڵبژێردراو بۆ ئەم ڕیکلامە پشتڕاست نەکراوەتەوە',
+        'PAGE_UNRESOLVED' ||
+        'PAGE_ACCESS_REQUIRED' =>
+          'پەیجەکە یان دەسەڵاتی ڕیکلامکردنی پشتڕاست نەکرایەوە؛ لینکی پەیج بپشکنەوە',
+        'POST_UNRESOLVED' ||
+        'POST_PAGE_MISMATCH' =>
+          'پۆستەکە و پەیوەندی بە پەیجەکە پشتڕاست نەکرایەوە؛ لینکەکان بپشکنەوە',
+        'INCOMPATIBLE_DESTINATIONS' ||
+        'INVALID_DESTINATIONS' =>
+          'ڕێگاکانی نامە لەگەڵ شوێنی پیشاندان بپشکنەوە',
+        'WHATSAPP_NOT_LINKED' ||
+        'INSTAGRAM_NOT_LINKED' =>
+          'هەژماری پەیوەستکراو بە پەیجەکە پشتڕاست نەکرایەوە',
+        'UNSUPPORTED_CONFIGURATION' ||
+        'CAPABILITY_UNVERIFIED' =>
+          'ئەم هەڵبژاردنانە هێشتا بۆ هەژماری ڕیکلام پشتڕاست نەکراونەتەوە',
+        'SERVER_TIME_UNAVAILABLE' =>
+          'کاتی سێرڤەر پشتڕاست نەکرایەوە؛ دووبارە هەوڵ بدەرەوە',
         'NOT_AUTHENTICATED' => 'دووبارە بچۆ ژوورەوە',
         'FASTPAY_TERMINAL' => 'پارەدانی FastPay تەواو نەکرا',
         'AMOUNT_TOO_SMALL' => 'بڕی پارەدان بۆ FastPay زۆر کەمە',
@@ -332,7 +520,9 @@ class AdSubmissionFailure implements Exception {
         'IDEMPOTENCY_CONFLICT' => 'داواکاریەکی پێشوو پێویستی بە پشکنین هەیە',
         _ => uncertain
             ? 'وەڵامی کۆتایی نەگەیشت؛ هەمان داواکاری دووبارە بپشکنەوە'
-            : 'زانیارییەکان یان پەیوەندی بپشکنەوە و دووبارە هەوڵ بدەرەوە',
+            : code.startsWith('TIKTOK_')
+                ? tiktokDmMessage(code)
+                : 'زانیارییەکان یان پەیوەندی بپشکنەوە و دووبارە هەوڵ بدەرەوە',
       };
 }
 
@@ -383,6 +573,13 @@ abstract class AdCreationRepository {
   Future<List<Map<String, dynamic>>> loadAssets();
   Future<AdQuote> quote(AdDraft draft);
   Future<AdPendingSubmission?> pending();
+  Future<bool> metaAvailable() async => false;
+  Future<bool> metaFastPayAvailable() async => false;
+  Future<bool> tiktokDmAvailable() async => false;
+  Future<bool> tiktokDmFastPayAvailable() async => false;
+  Future<bool> tiktokDmSeen() async => true;
+  Future<void> markTikTokDmSeen() async {}
+  Future<DateTime?> serverTime() async => null;
   Future<String> submit(
       AdPendingSubmission request, ValueNotifier<AdPaymentProgress> progress);
 
@@ -413,6 +610,112 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
   String get _user =>
       client.auth.currentUser?.id ??
       (throw const AdSubmissionFailure('NOT_AUTHENTICATED'));
+  @override
+  Future<bool> metaAvailable() async {
+    try {
+      return (await client.rpc('pa_ad_capabilities'))['meta_enabled'] == true;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  @override
+  Future<DateTime?> serverTime() async {
+    try {
+      return DateTime.tryParse(
+          '${(await client.rpc('pa_ad_capabilities'))['server_time']}');
+    } catch (_) {
+      return null;
+    }
+  }
+
+  @override
+  Future<bool> metaFastPayAvailable() async {
+    try {
+      return (await client.rpc('pa_ad_capabilities'))['meta_fastpay_enabled'] ==
+          true;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  Future<Map<String, dynamic>> _metaCall(
+          String op, Map<String, dynamic> body) =>
+      _adsCall('meta-ads', op, body);
+
+  Future<Map<String, dynamic>> _tiktokCall(
+          String op, Map<String, dynamic> body) =>
+      _adsCall('tiktok-dm', op, body);
+
+  Future<Map<String, dynamic>> _paymentCall(
+          String op, Map<String, dynamic> body) =>
+      _adsCall('meta-ads', op, body, platform: 'payments');
+
+  @override
+  Future<bool> tiktokDmAvailable() async {
+    try {
+      return (await client.rpc('pa_ad_capabilities'))['tiktok_dm_enabled'] ==
+          true;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  @override
+  Future<bool> tiktokDmFastPayAvailable() async {
+    try {
+      return (await client
+              .rpc('pa_ad_capabilities'))['tiktok_dm_fastpay_enabled'] ==
+          true;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  @override
+  Future<bool> tiktokDmSeen() async {
+    try {
+      return (await client.rpc('pa_ad_capabilities'))['tiktok_dm_seen'] !=
+          false;
+    } catch (_) {
+      return true;
+    }
+  }
+
+  @override
+  Future<void> markTikTokDmSeen() async {
+    await _tiktokCall('seen', const {});
+  }
+
+  Future<Map<String, dynamic>> _adsCall(
+      String service, String op, Map<String, dynamic> body,
+      {String? platform}) async {
+    final token = client.auth.currentSession?.accessToken;
+    if (token == null) throw const AdSubmissionFailure('NOT_AUTHENTICATED');
+    final response = await http
+        .post(
+            Uri.parse('${_backend.publicBase}/api/$service').replace(
+                queryParameters: {
+                  'op': op,
+                  if (platform != null) 'platform': platform
+                }),
+            headers: {
+              'Authorization': 'Bearer $token',
+              'Content-Type': 'application/json'
+            },
+            body: jsonEncode(body))
+        .timeout(Duration(seconds: op == 'quote' ? 60 : 25));
+    final value = _map(jsonDecode(utf8.decode(response.bodyBytes)));
+    if (response.statusCode >= 500) {
+      throw const AdSubmissionFailure('NETWORK', uncertain: true);
+    }
+    if (value['ok'] != true) {
+      throw AdSubmissionFailure('${value['code']}',
+          uncertain: value['uncertain'] == true);
+    }
+    return value;
+  }
+
   String get _storageKey => 'proxo.pending-ad.v1.$_user';
   Map<String, dynamic> _map(dynamic raw) =>
       Map<String, dynamic>.from(raw as Map);
@@ -432,6 +735,19 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
 
   @override
   Future<AdQuote> quote(AdDraft draft) async {
+    if (draft.isTikTokDirect) {
+      final j = await _tiktokCall('quote', {
+        'ad': draft.toAd(),
+        'promo_id': draft.promoId,
+        'promo_code': draft.promoCode,
+      });
+      return AdQuote.fromJson({...j, 'tiktok_contract': j, 'days': draft.days});
+    }
+    if (draft.isMeta) {
+      final j =
+          await _metaCall('quote', {'configuration': draft.toMetaContract()});
+      return AdQuote.fromJson({...j, 'meta_contract': j, 'days': draft.days});
+    }
     final j = _map(await client.rpc('pa_preview_ad', params: {
       'p_ad': draft.toAd(),
       'p_promo_id': draft.promoId,
@@ -455,7 +771,9 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
   @override
   Future<String> submit(
       AdPendingSubmission request, ValueNotifier<AdPaymentProgress> progress) {
-    if (request.draft.paymentMethod == 'fastpay') {
+    if (request.draft.paymentMethod == 'fastpay' &&
+        !request.draft.isMeta &&
+        !request.draft.isTikTokDirect) {
       _backend.requireProductionTransport();
     }
     final user = _user;
@@ -525,7 +843,9 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
           // Only clear this completed identity, never a newer pending request.
           if (raw == null ||
               AdPendingSubmission.fromJson(_map(jsonDecode(raw))).id !=
-                  request.id) return;
+                  request.id) {
+            return;
+          }
           await prefs.remove(key);
         }).timeout(const Duration(seconds: 3));
       } catch (_) {
@@ -542,10 +862,15 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
       }).timeout(const Duration(seconds: 20)));
       checkOwner();
       if (recovered['ok'] == true) {
+        final adId = recovered['ad_id'];
+        if (adId is! String || adId.isEmpty) {
+          throw const AdSubmissionFailure('NETWORK', uncertain: true);
+        }
         await clearPending();
-        final adId = recovered['ad_id'] as String;
         AppDataCache.forClient(client).financialChanged();
-        _ensureThumbnail(adId);
+        if (!request.draft.isMeta && !request.draft.isTikTokDirect) {
+          _ensureThumbnail(adId);
+        }
         return adId;
       }
       if (recovered['code'] != 'NOT_FOUND') {
@@ -553,10 +878,73 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
         throw AdSubmissionFailure('${recovered['code']}', uncertain: true);
       }
       _checkCancellation(request.id);
-      final errors = request.draft.validate();
+      final automated = request.draft.isMeta || request.draft.isTikTokDirect;
+      if (automated && request.draft.paymentMethod == 'fastpay') {
+        // The server recovers an existing immutable attempt before checking
+        // quote expiry, dates or flags. A verified payment also accepts the ad
+        // and inserts its outbox atomically, including when this app is closed.
+        final adId = await _payAutomatedAd(request, progress, owner);
+        checkOwner();
+        await clearPending();
+        AppDataCache.forClient(client).financialChanged();
+        return adId;
+      }
+      final trustedTime = automated ? await serverTime() : null;
+      if (automated && trustedTime == null) {
+        throw const AdSubmissionFailure('SERVER_TIME_UNAVAILABLE');
+      }
+      checkOwner();
+      final errors = request.draft.validate(
+          now:
+              trustedTime == null ? null : adScheduleNow(instant: trustedTime));
       if (errors.isNotEmpty) {
         throw AdSubmissionFailure(
             errors.containsKey('schedule') ? 'INVALID_SCHEDULE' : 'INVALID_AD');
+      }
+      if (request.draft.isTikTokDirect) {
+        if (request.draft.paymentMethod == 'fastpay') {
+          paymentId = await _payWithFastPay(request, progress, owner);
+        }
+        checkOwner();
+        _checkCancellation(request.id);
+        progress.value = const AdPaymentProgress();
+        submitting = true;
+        final result = await _tiktokCall('submit', {
+          'submission_id': request.id,
+          'ad': request.draft.toAd(),
+          'quote_id': request.quote.tiktokContract?['quote_id'],
+          'expected_cost_usd': request.quote.costUsd,
+          'expected_price_iqd': request.quote.totalIqd,
+          'promo_id': request.draft.promoId,
+          'promo_code': request.draft.promoCode,
+          if (paymentId != null) 'payment_transaction_id': paymentId,
+        });
+        checkOwner();
+        await clearPending();
+        AppDataCache.forClient(client).financialChanged();
+        return result['ad_id'] as String;
+      }
+      if (request.draft.isMeta) {
+        // Recovery above is deliberately first: flags/quotes may have expired.
+        if (request.draft.paymentMethod == 'fastpay') {
+          paymentId = await _payWithFastPay(request, progress, owner);
+        }
+        checkOwner();
+        _checkCancellation(request.id);
+        progress.value = const AdPaymentProgress();
+        submitting = true;
+        final result = await _metaCall('submit', {
+          'submission_id': request.id,
+          'configuration': request.draft.toMetaContract(),
+          'quote_id': request.quote.metaContract?['quote_id'],
+          'expected_total_iqd': request.quote.totalIqd,
+          'expected_total_minor': (request.quote.costUsd * 100).round(),
+          if (paymentId != null) 'payment_transaction_id': paymentId,
+        });
+        checkOwner();
+        await clearPending();
+        AppDataCache.forClient(client).financialChanged();
+        return result['ad_id'] as String;
       }
       if (request.draft.paymentMethod == 'fastpay') {
         paymentId = await _payWithFastPay(request, progress, owner);
@@ -630,6 +1018,85 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
     }));
   }
 
+  Future<String> _payAutomatedAd(AdPendingSubmission request,
+      ValueNotifier<AdPaymentProgress> progress, String owner) async {
+    void checkOwner() {
+      if (client.auth.currentUser?.id != owner) {
+        throw const AdSubmissionFailure('NOT_AUTHENTICATED', uncertain: true);
+      }
+    }
+
+    checkOwner();
+    _checkCancellation(request.id);
+    progress.value =
+        const AdPaymentProgress(message: 'پارەدانی FastPay ئامادە دەکرێت…');
+    // Once an attempt exists, all interrupted reads retain the same frozen
+    // request. An expired QR is not proof that a late payment cannot arrive.
+    try {
+      var attempt = await _paymentCall('prepare', {
+        'submission_id': request.id,
+        'platform': request.draft.isMeta ? 'META' : 'TIKTOK',
+        'quote_id': (request.draft.isMeta
+            ? request.quote.metaContract
+            : request.quote.tiktokContract)?['quote_id'],
+        'expected_cost_usd': request.quote.costUsd,
+        'expected_amount_iqd': request.quote.totalIqd,
+      });
+      final deadline = DateTime.now().add(const Duration(minutes: 11));
+      while (true) {
+        checkOwner();
+        if (attempt['currency'] != 'IQD' ||
+            num.tryParse('${attempt['amount_iqd']}') !=
+                request.quote.totalIqd ||
+            attempt['environment'] !=
+                (_backend.isStaging ? 'sandbox' : 'production')) {
+          throw const AdSubmissionFailure('PAYMENT_ATTEMPT_MISMATCH',
+              uncertain: true);
+        }
+        final status = '${attempt['status']}';
+        if (status == 'funded' || status == 'compensated') {
+          final result = attempt['result'];
+          final adId = result is Map ? result['ad_id'] : attempt['ad_id'];
+          if (adId is! String || adId.isEmpty) {
+            throw const AdSubmissionFailure('FASTPAY_WAIT', uncertain: true);
+          }
+          return adId;
+        }
+        if (_cancelledSubmissions.contains(request.id)) {
+          final attemptId = attempt['attempt_id'];
+          if (attemptId is String && attemptId.isNotEmpty) {
+            await _paymentCall('cancel', {'attempt_id': attemptId});
+            checkOwner();
+          }
+          throw const AdSubmissionFailure('CANCELLED', uncertain: true);
+        }
+        if (const ['expired', 'declined', 'cancelled'].contains(status) ||
+            !DateTime.now().isBefore(deadline)) {
+          throw const AdSubmissionFailure('FASTPAY_WAIT', uncertain: true);
+        }
+        final orderId = attempt['order_id'];
+        final qr = attempt['qr_text'];
+        progress.value = AdPaymentProgress(
+          message: 'پارەدان بکە؛ پشتڕاستکردنەوە بە خۆکارە',
+          waitingForPayment: true,
+          qrUrl: attempt['qr_url'] as String?,
+          deepLink: qr is String && qr.isNotEmpty && orderId is String
+              ? 'appFpp://fast-pay.cash/qrpay'
+                  '?qrdata=${Uri.encodeQueryComponent(qr)}&clientUri=appfpclientProxo'
+                  '&transactionId=${Uri.encodeQueryComponent(orderId)}'
+              : null,
+        );
+        await Future<void>.delayed(const Duration(seconds: 3));
+        checkOwner();
+        // Poll only our server. Its trusted gateway validation and durable
+        // worker own settlement; Flutter never marks paid or submits again.
+        attempt = await _paymentCall('status', {'submission_id': request.id});
+      }
+    } on AdSubmissionFailure catch (error) {
+      throw AdSubmissionFailure(error.code, uncertain: true);
+    }
+  }
+
   Future<String> _payWithFastPay(AdPendingSubmission r,
       ValueNotifier<AdPaymentProgress> progress, String owner) async {
     _backend.requireProductionTransport();
@@ -667,6 +1134,17 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
                 'currency': 'IQD',
                 'note': 'Proxo ad payment',
                 'ad': {
+                  if (r.draft.isMeta) ...{
+                    'platform': 'META',
+                    'quote_id': r.quote.metaContract?['quote_id'],
+                    'configuration': r.quote.metaContract?['configuration'] ??
+                        r.draft.toMetaContract(),
+                  },
+                  if (r.draft.isTikTokDirect) ...{
+                    'platform': 'TIKTOK',
+                    'message_destination': 'direct_message',
+                    'tiktok_quote_id': r.quote.tiktokContract?['quote_id'],
+                  },
                   'daily_budget': r.draft.dailyBudget,
                   'days': r.draft.days
                 },
