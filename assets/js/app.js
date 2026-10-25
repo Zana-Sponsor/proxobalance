@@ -1819,8 +1819,8 @@ async function openOrderConfirm(){
     '<div class="confirm-row"><span class="confirm-row-label">بڕی وەرگیراو</span><span class="confirm-row-value accent" dir="ltr">'+escHtml(totalTxt)+'</span></div>';
   const displayAmt=(from==='USDT')?`${formatNum(amtValue)}$`:`${formatNum(amtValue)} IQD`;
   document.getElementById('confirmSummary').innerHTML =
-    '<div class="confirm-row"><span class="confirm-row-label">'+methodIconHTML(from,'sz-sm')+' لە</span><span class="confirm-row-value">'+METHOD_META[from].label+'</span></div>'
-    + '<div class="confirm-row"><span class="confirm-row-label">'+methodIconHTML(to,'sz-sm')+' بۆ</span><span class="confirm-row-value">'+METHOD_META[to].label+'</span></div>'
+    '<div class="confirm-row"><span class="confirm-row-label">'+methodIconHTML(from,'sz-sm')+' لە</span><span class="confirm-row-value">'+escHtml(METHOD_META[from].label)+'</span></div>'
+    + '<div class="confirm-row"><span class="confirm-row-label">'+methodIconHTML(to,'sz-sm')+' بۆ</span><span class="confirm-row-value">'+escHtml(METHOD_META[to].label)+'</span></div>'
     + '<div class="confirm-row"><span class="confirm-row-label">بڕی پارە</span><span class="confirm-row-value" dir="ltr">'+displayAmt+'</span></div>'
     + payoutRows
     + senderIdentityRow
@@ -2580,7 +2580,7 @@ function chgHeadline(r){
     case 'allow_from':    return r.new_value==='true' ? 'ناردن کرایەوە' : 'ناردن داخرا';
     case 'new_route':   return 'ڕێگایەکی نوێ زیادکرا';
     case 'new_wallet':  return 'واڵێتێکی نوێ زیادکرا';
-    default: return CHG_FIELD_LABEL[r.field] || r.field;
+    default: return escHtml(CHG_FIELD_LABEL[r.field] || r.field);
   }
 }
 // One plain sentence so nobody has to decode the numbers themselves
