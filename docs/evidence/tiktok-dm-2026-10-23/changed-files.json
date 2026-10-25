@@ -1,6 +1,6 @@
 {
   "base_commit": "88287b3aa2dd7036003ea58d505f3e2590d85a77",
-  "scope": "Continuation changes in the commit containing this manifest; excludes earlier PR implementation.",
+  "scope": "Continuation implementation and subsequent screenshot/publication-readiness follow-up relative to the audited starting commit; excludes earlier PR implementation.",
   "files": [
     {
       "path": "api/_lib/payments/backend.js",
@@ -55,6 +55,10 @@
       "status": "added"
     },
     {
+      "path": "docs/evidence/tiktok-dm-2026-10-23/historical/payment-sheet-280-2x-before.png",
+      "status": "added"
+    },
+    {
       "path": "docs/evidence/tiktok-dm-2026-10-23/local-validation.json",
       "status": "added"
     },
@@ -64,6 +68,26 @@
     },
     {
       "path": "docs/evidence/tiktok-dm-2026-10-23/n8n-imports-verified.jpg",
+      "status": "added"
+    },
+    {
+      "path": "docs/evidence/tiktok-dm-2026-10-23/n8n-production-config-blocked-2026-10-24.jpg",
+      "status": "added"
+    },
+    {
+      "path": "docs/evidence/tiktok-dm-2026-10-23/n8n-unpublished-after-check-2026-10-24.jpg",
+      "status": "added"
+    },
+    {
+      "path": "docs/evidence/tiktok-dm-2026-10-23/production-readiness-2026-10-24.json",
+      "status": "added"
+    },
+    {
+      "path": "docs/evidence/tiktok-dm-2026-10-23/screenshots-inventory.json",
+      "status": "added"
+    },
+    {
+      "path": "docs/evidence/tiktok-dm-2026-10-23/screenshots.md",
       "status": "added"
     },
     {
@@ -255,5 +279,5 @@
       "status": "modified"
     }
   ],
-  "file_count": 63
+  "file_count": 69
 }
