@@ -330,13 +330,22 @@ function throttled(key) {
   return false;
 }
 
+function parseJsonInput(raw) {
+  try { return raw ? JSON.parse(raw) : {}; }
+  catch { throw Object.assign(new Error('Invalid JSON'), { status: 400 }); }
+}
+
 export async function readJson(req, maxBytes = 64 * 1024) {
-  const declared = Number(header(req, 'content-length') || 0);
+  const rawLength = header(req, 'content-length');
+  const declared = rawLength ? Number(rawLength) : 0;
+  if (!Number.isFinite(declared) || declared < 0) {
+    throw Object.assign(new Error('Invalid Content-Length'), { status: 400 });
+  }
   if (declared > maxBytes) throw Object.assign(new Error('Payload too large'), { status: 413 });
   if (req.body !== undefined && req.body !== null) {
     const raw = typeof req.body === 'string' ? req.body : JSON.stringify(req.body);
     if (Buffer.byteLength(raw, 'utf8') > maxBytes) throw Object.assign(new Error('Payload too large'), { status: 413 });
-    return typeof req.body === 'string' ? JSON.parse(raw || '{}') : req.body;
+    return typeof req.body === 'string' ? parseJsonInput(raw || '{}') : req.body;
   }
   let size = 0;
   const chunks = [];
@@ -346,7 +355,7 @@ export async function readJson(req, maxBytes = 64 * 1024) {
     chunks.push(chunk);
   }
   const raw = Buffer.concat(chunks).toString('utf8');
-  return raw ? JSON.parse(raw) : {};
+  return parseJsonInput(raw);
 }
 
 export function json(res, status, body) {

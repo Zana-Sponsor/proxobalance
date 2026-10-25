@@ -170,13 +170,34 @@ function json(res, status, body) {
 const ok   = (res, data)                 => json(res, 200, { ok: true, data });
 const fail = (res, status, error, code)  => json(res, status, { ok: false, error, code });
 
-async function readBody(req) {
-  if (req.body && typeof req.body === 'object') return req.body;      // Vercel parsed it
-  if (typeof req.body === 'string') { try { return JSON.parse(req.body); } catch { return {}; } }
+async function readBody(req, maxBytes = 64 * 1024) {
+  const rawLength = req.headers?.['content-length'];
+  const declared = rawLength == null || rawLength === '' ? 0 : Number(rawLength);
+  if (!Number.isFinite(declared) || declared < 0)
+    throw { status: 400, code: 'invalid_content_length', message: 'Invalid Content-Length' };
+  if (declared > maxBytes)
+    throw { status: 413, code: 'payload_too_large', message: 'Payload too large' };
+
+  if (req.body !== undefined && req.body !== null) {
+    const raw = typeof req.body === 'string' ? req.body : JSON.stringify(req.body);
+    if (Buffer.byteLength(raw, 'utf8') > maxBytes)
+      throw { status: 413, code: 'payload_too_large', message: 'Payload too large' };
+    if (typeof req.body === 'object') return req.body;
+    try { return JSON.parse(raw || '{}'); }
+    catch { throw { status: 400, code: 'invalid_json', message: 'Invalid JSON' }; }
+  }
+
   const chunks = [];
-  for await (const c of req) chunks.push(c);
+  let size = 0;
+  for await (const chunk of req) {
+    size += chunk.length;
+    if (size > maxBytes)
+      throw { status: 413, code: 'payload_too_large', message: 'Payload too large' };
+    chunks.push(chunk);
+  }
   if (!chunks.length) return {};
-  try { return JSON.parse(Buffer.concat(chunks).toString('utf8')); } catch { return {}; }
+  try { return JSON.parse(Buffer.concat(chunks).toString('utf8')); }
+  catch { throw { status: 400, code: 'invalid_json', message: 'Invalid JSON' }; }
 }
 
 // ── auth gate ────────────────────────────────────────────────
