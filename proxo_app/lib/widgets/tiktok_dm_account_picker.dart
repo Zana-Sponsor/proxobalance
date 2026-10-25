@@ -7,6 +7,7 @@ import 'package:qr/qr.dart' as qr;
 import 'package:shimmer/shimmer.dart';
 
 import '../services/tiktok_dm_accounts.dart';
+import '../theme/tiktok_ad_tokens.dart';
 import 'ad_brand_logo.dart';
 import 'ad_form_components.dart';
 import 'proxo_text.dart';
@@ -33,6 +34,7 @@ class TikTokDmAccountPicker extends StatefulWidget {
   final TikTokDmSelection? initialSelection;
   final String? selectedAccountId, selectedItemId;
   final bool enabled;
+  final bool openSections;
   const TikTokDmAccountPicker(
       {super.key,
       required this.repository,
@@ -40,7 +42,8 @@ class TikTokDmAccountPicker extends StatefulWidget {
       this.initialSelection,
       this.selectedAccountId,
       this.selectedItemId,
-      this.enabled = true});
+      this.enabled = true,
+      this.openSections = false});
   @override
   State<TikTokDmAccountPicker> createState() => _TikTokDmAccountPickerState();
 }
@@ -403,6 +406,8 @@ class _TikTokDmAccountPickerState extends State<TikTokDmAccountPicker>
   Widget build(BuildContext context) =>
       Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         AdFormSection(
+            style:
+                widget.openSections ? AdSectionStyle.open : AdSectionStyle.card,
             title: 'هەژماری تیک تۆک',
             subtitle:
                 'ئەو هەژمارە هەڵبژێرە کە دەتەوێت نامەکانت تێیدا وەربگریت. ڤیدیۆی ڕیکلام و هەژماری وەرگرتنی نامە دەبێت هەمان هەژمار بن.',
@@ -460,8 +465,14 @@ class _TikTokDmAccountPickerState extends State<TikTokDmAccountPicker>
                   ]),
                 ])),
         if (_selectedAccount != null && _accountsError == null) ...[
-          const SizedBox(height: AdUi.sectionGap),
+          SizedBox(
+              height: widget.openSections
+                  ? TikTokAdTokens.sectionGap
+                  : AdUi.sectionGap),
           AdFormSection(
+              style: widget.openSections
+                  ? AdSectionStyle.open
+                  : AdSectionStyle.card,
               title: 'ڤیدیۆی تیک تۆک',
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,

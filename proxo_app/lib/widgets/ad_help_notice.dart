@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../services/context_help_service.dart';
+import '../theme/tiktok_ad_tokens.dart';
 import 'ad_form_components.dart';
 import 'proxo_text.dart';
 
 class AdHelpNotice extends StatefulWidget {
-  const AdHelpNotice({super.key, required this.platform});
+  const AdHelpNotice(
+      {super.key, required this.platform, this.balanced = false});
   final String platform;
+  final bool balanced;
   @override
   State<AdHelpNotice> createState() => _AdHelpNoticeState();
 }
@@ -78,7 +81,9 @@ class _AdHelpNoticeState extends State<AdHelpNotice>
     final uri =
         ContextHelpService.validVideoUrl('${n['video_url'] ?? ''}'.trim());
     return Padding(
-        padding: const EdgeInsets.only(bottom: AdUi.sectionGap),
+        padding: EdgeInsets.only(
+            bottom:
+                widget.balanced ? TikTokAdTokens.sectionGap : AdUi.sectionGap),
         child: Container(
             padding: const EdgeInsets.all(14),
             decoration: const BoxDecoration(
@@ -87,7 +92,9 @@ class _AdHelpNoticeState extends State<AdHelpNotice>
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   ProxoText(n['message'] as String,
-                      style: AdUi.text(context, color: AdUi.secondary)),
+                      style: widget.balanced
+                          ? TikTokAdTokens.helper
+                          : AdUi.text(context, color: AdUi.secondary)),
                   if (uri != null)
                     Align(
                         alignment: AlignmentDirectional.centerStart,

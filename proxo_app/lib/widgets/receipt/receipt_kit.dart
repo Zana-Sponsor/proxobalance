@@ -159,6 +159,9 @@ class ReceiptAppBar extends StatelessWidget {
   final String? backTooltip;
   final Widget? action;
 
+  /// Optional screen-specific typography; receipt defaults remain unchanged.
+  final TextStyle? titleStyle;
+
   const ReceiptAppBar({
     super.key,
     required this.title,
@@ -166,6 +169,7 @@ class ReceiptAppBar extends StatelessWidget {
     required this.onBack,
     this.backTooltip,
     this.action,
+    this.titleStyle,
   });
 
   @override
@@ -179,8 +183,9 @@ class ReceiptAppBar extends StatelessWidget {
     ProxoLocale.watch(context);
     final displayTitle = translateTitle ? ProxoStrings.text(title) : title;
     final double top = MediaQuery.paddingOf(context).top;
+    final effectiveTitleStyle = titleStyle ?? ReceiptTokens.barTitle;
     final titlePainter = TextPainter(
-      text: TextSpan(text: displayTitle, style: ReceiptTokens.barTitle),
+      text: TextSpan(text: displayTitle, style: effectiveTitleStyle),
       textDirection: receiptDirOf(displayTitle),
       textScaler: MediaQuery.textScalerOf(context),
     )..layout(
@@ -216,7 +221,7 @@ class ReceiptAppBar extends StatelessWidget {
                 displayTitle,
                 textDirection: TextDirection.rtl,
                 textAlign: TextAlign.center,
-                style: ReceiptTokens.barTitle,
+                style: effectiveTitleStyle,
               ),
             ),
           ),

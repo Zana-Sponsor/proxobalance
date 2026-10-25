@@ -1,0 +1,446 @@
+{
+  "source_baseline": "57af051fcf85ab911d96c729be5cdbbeceaa0038",
+  "specification_sha256": "b00095a9ff00326fbe517946518f0cc191de2e86542fb487f8931c92f05e0e18",
+  "renderer": "Flutter 3.47.8 widget renderer; actual app widgets, bundled fonts, fictional repository fixtures",
+  "pixel_ratio": 2,
+  "capture_count": 37,
+  "captures": [
+    {
+      "file": "01-top-create-ad.png",
+      "scenario": "top create ad",
+      "pixel_width": 786,
+      "pixel_height": 1704,
+      "logical_width": 393.0,
+      "logical_height": 852.0,
+      "text_scale": 1,
+      "sha256": "1b75367e9df3ec96a69cfda2f5d6ccb8ecc0235c9f1277563bde161b1361962a",
+      "source": "proxo_app/test/tiktok_balanced_ui_test.dart"
+    },
+    {
+      "file": "02-ad-types.png",
+      "scenario": "ad types",
+      "pixel_width": 786,
+      "pixel_height": 1704,
+      "logical_width": 393.0,
+      "logical_height": 852.0,
+      "text_scale": 1,
+      "sha256": "8a9b7dbf8cc0ee5abee9b4a8ef53d6cc376a5a854fa2af001b5f2ea54953eaa1",
+      "source": "proxo_app/test/tiktok_balanced_ui_test.dart"
+    },
+    {
+      "file": "03-ad-name.png",
+      "scenario": "ad name",
+      "pixel_width": 786,
+      "pixel_height": 1704,
+      "logical_width": 393.0,
+      "logical_height": 852.0,
+      "text_scale": 1,
+      "sha256": "a80351e034a47568343a91eedf9447042a98e2d30bdb82f0669cac4853de0218",
+      "source": "proxo_app/test/tiktok_balanced_ui_test.dart"
+    },
+    {
+      "file": "04-media.png",
+      "scenario": "media",
+      "pixel_width": 786,
+      "pixel_height": 1704,
+      "logical_width": 393.0,
+      "logical_height": 852.0,
+      "text_scale": 1,
+      "sha256": "7db4efb109aafea1951e0d0b1e66a7d1a2a32e05e3a71b09410a0d5844e8eef1",
+      "source": "proxo_app/test/tiktok_balanced_ui_test.dart"
+    },
+    {
+      "file": "05-contact-destination.png",
+      "scenario": "contact destination",
+      "pixel_width": 786,
+      "pixel_height": 1704,
+      "logical_width": 393.0,
+      "logical_height": 852.0,
+      "text_scale": 1,
+      "sha256": "ded5faab022700e0211882eceb612956569be8ac40a1211ce492c14be4169474",
+      "source": "proxo_app/test/tiktok_balanced_ui_test.dart"
+    },
+    {
+      "file": "06-contact-page-collapsed.png",
+      "scenario": "contact page collapsed",
+      "pixel_width": 786,
+      "pixel_height": 1704,
+      "logical_width": 393.0,
+      "logical_height": 852.0,
+      "text_scale": 1,
+      "sha256": "f2cc591ec4a7f400768a159f835460859e70489530ab245413ac4e16c36481d2",
+      "source": "proxo_app/test/tiktok_balanced_ui_test.dart"
+    },
+    {
+      "file": "07-contact-page-expanded.png",
+      "scenario": "contact page expanded",
+      "pixel_width": 786,
+      "pixel_height": 1704,
+      "logical_width": 393.0,
+      "logical_height": 852.0,
+      "text_scale": 1,
+      "sha256": "3928972e11285f70032d03910da3b2b8f89122019265deba610e3008c6d9c0b3",
+      "source": "proxo_app/test/tiktok_balanced_ui_test.dart"
+    },
+    {
+      "file": "08-age.png",
+      "scenario": "age",
+      "pixel_width": 786,
+      "pixel_height": 1704,
+      "logical_width": 393.0,
+      "logical_height": 852.0,
+      "text_scale": 1,
+      "sha256": "1d6d081b6f9dab7685000b4a534648a77defcf1c7b99bf1fe2c0b459390a4f38",
+      "source": "proxo_app/test/tiktok_balanced_ui_test.dart"
+    },
+    {
+      "file": "09-gender.png",
+      "scenario": "gender",
+      "pixel_width": 786,
+      "pixel_height": 1704,
+      "logical_width": 393.0,
+      "logical_height": 852.0,
+      "text_scale": 1,
+      "sha256": "a21637d2e266d26a19ba31cfdf9746079f1680ed9b4ee2273bf077cd4ab77458",
+      "source": "proxo_app/test/tiktok_balanced_ui_test.dart"
+    },
+    {
+      "file": "10-budget.png",
+      "scenario": "budget",
+      "pixel_width": 786,
+      "pixel_height": 1704,
+      "logical_width": 393.0,
+      "logical_height": 852.0,
+      "text_scale": 1,
+      "sha256": "0cffb191c139cc9dd77d6377b4784d674de81d6c9db93995fe2f3f99fd0219e9",
+      "source": "proxo_app/test/tiktok_balanced_ui_test.dart"
+    },
+    {
+      "file": "11-schedule.png",
+      "scenario": "schedule",
+      "pixel_width": 786,
+      "pixel_height": 1704,
+      "logical_width": 393.0,
+      "logical_height": 852.0,
+      "text_scale": 1,
+      "sha256": "39dbe463b966affba1251d73869eb5c66e889c5e1c272e25bd3e644f48c645dd",
+      "source": "proxo_app/test/tiktok_balanced_ui_test.dart"
+    },
+    {
+      "file": "12-payment.png",
+      "scenario": "payment",
+      "pixel_width": 786,
+      "pixel_height": 1704,
+      "logical_width": 393.0,
+      "logical_height": 852.0,
+      "text_scale": 1,
+      "sha256": "c1aaa02d73dba8a4a72c0307ff5d324e3ffab5fabb1e250d5c12668a3e39ef53",
+      "source": "proxo_app/test/tiktok_balanced_ui_test.dart"
+    },
+    {
+      "file": "13-separate-sponsor.png",
+      "scenario": "separate sponsor",
+      "pixel_width": 786,
+      "pixel_height": 1704,
+      "logical_width": 393.0,
+      "logical_height": 852.0,
+      "text_scale": 1,
+      "sha256": "c1aaa02d73dba8a4a72c0307ff5d324e3ffab5fabb1e250d5c12668a3e39ef53",
+      "source": "proxo_app/test/tiktok_balanced_ui_test.dart"
+    },
+    {
+      "file": "14-price-collapsed.png",
+      "scenario": "price collapsed",
+      "pixel_width": 786,
+      "pixel_height": 1704,
+      "logical_width": 393.0,
+      "logical_height": 852.0,
+      "text_scale": 1,
+      "sha256": "c1aaa02d73dba8a4a72c0307ff5d324e3ffab5fabb1e250d5c12668a3e39ef53",
+      "source": "proxo_app/test/tiktok_balanced_ui_test.dart"
+    },
+    {
+      "file": "15-price-expanded.png",
+      "scenario": "price expanded",
+      "pixel_width": 786,
+      "pixel_height": 1704,
+      "logical_width": 393.0,
+      "logical_height": 852.0,
+      "text_scale": 1,
+      "sha256": "beb5708770a2b5bbbb065f6d5bdbd003094656b0e435b5660c7915a737156853",
+      "source": "proxo_app/test/tiktok_balanced_ui_test.dart"
+    },
+    {
+      "file": "16-price-loading.png",
+      "scenario": "price loading",
+      "pixel_width": 786,
+      "pixel_height": 1704,
+      "logical_width": 393.0,
+      "logical_height": 852.0,
+      "text_scale": 1,
+      "sha256": "65c57813cf27c5ad4dd3a08a3fd14e98b4e529c747e56c42148391db4db0b20c",
+      "source": "proxo_app/test/tiktok_balanced_ui_test.dart"
+    },
+    {
+      "file": "17-scroll-behind-price.png",
+      "scenario": "scroll behind price",
+      "pixel_width": 786,
+      "pixel_height": 1704,
+      "logical_width": 393.0,
+      "logical_height": 852.0,
+      "text_scale": 1,
+      "sha256": "60ada1ffdebb2298266657b50812434b0a77047468d1370a0558d442d2b9a627",
+      "source": "proxo_app/test/tiktok_balanced_ui_test.dart"
+    },
+    {
+      "file": "18-price-and-bottom-navigation.png",
+      "scenario": "price and bottom navigation",
+      "pixel_width": 786,
+      "pixel_height": 1704,
+      "logical_width": 393.0,
+      "logical_height": 852.0,
+      "text_scale": 1,
+      "sha256": "60ada1ffdebb2298266657b50812434b0a77047468d1370a0558d442d2b9a627",
+      "source": "proxo_app/test/tiktok_balanced_ui_test.dart"
+    },
+    {
+      "file": "19-layout-320.png",
+      "scenario": "layout 320",
+      "pixel_width": 640,
+      "pixel_height": 1600,
+      "logical_width": 320.0,
+      "logical_height": 800.0,
+      "text_scale": 1,
+      "sha256": "46ab179a4aa94486cfaabd6ea299709ebb2011fe4e3baff03ccb1522340daddf",
+      "source": "proxo_app/test/tiktok_balanced_ui_test.dart"
+    },
+    {
+      "file": "19-layout-320-expanded.png",
+      "scenario": "layout 320 expanded",
+      "pixel_width": 640,
+      "pixel_height": 1600,
+      "logical_width": 320.0,
+      "logical_height": 800.0,
+      "text_scale": 1,
+      "sha256": "69f25967f066708c59a25d57008b143323a01da261871379ba5870fdcf555282",
+      "source": "proxo_app/test/tiktok_balanced_ui_test.dart"
+    },
+    {
+      "file": "20-layout-280.png",
+      "scenario": "layout 280",
+      "pixel_width": 560,
+      "pixel_height": 1400,
+      "logical_width": 280.0,
+      "logical_height": 700.0,
+      "text_scale": 1,
+      "sha256": "a2ba5a4a4e3c496e216930b76f877d16989047842f8eb9e138cfb2d20c5ce830",
+      "source": "proxo_app/test/tiktok_balanced_ui_test.dart"
+    },
+    {
+      "file": "20-layout-280-expanded.png",
+      "scenario": "layout 280 expanded",
+      "pixel_width": 560,
+      "pixel_height": 1400,
+      "logical_width": 280.0,
+      "logical_height": 700.0,
+      "text_scale": 1,
+      "sha256": "71369a464f12bb26b50d7a6ca90a9f5b3e83169052b390ef5771c3781992c465",
+      "source": "proxo_app/test/tiktok_balanced_ui_test.dart"
+    },
+    {
+      "file": "21-large-text-393.png",
+      "scenario": "large text 393",
+      "pixel_width": 786,
+      "pixel_height": 1704,
+      "logical_width": 393.0,
+      "logical_height": 852.0,
+      "text_scale": 2,
+      "sha256": "73c64c8a714c9560752a07b5976a44f7e0eb8a37ac3e574cd36c1eed8f74dea7",
+      "source": "proxo_app/test/tiktok_balanced_ui_test.dart"
+    },
+    {
+      "file": "21-large-text-393-expanded.png",
+      "scenario": "large text 393 expanded",
+      "pixel_width": 786,
+      "pixel_height": 1704,
+      "logical_width": 393.0,
+      "logical_height": 852.0,
+      "text_scale": 2,
+      "sha256": "739b6ed1af2c14cb3cef198446cc08c3347ff562b1a2eaf0967ad1d0e12e388a",
+      "source": "proxo_app/test/tiktok_balanced_ui_test.dart"
+    },
+    {
+      "file": "22-contact-selected-platform-logos.png",
+      "scenario": "contact selected platform logos",
+      "pixel_width": 786,
+      "pixel_height": 1704,
+      "logical_width": 393.0,
+      "logical_height": 852.0,
+      "text_scale": 1,
+      "sha256": "ba8aa327a200b35d808a81712e6f317a10295240721cad6c0a060a6a4277760d",
+      "source": "proxo_app/test/tiktok_balanced_ui_test.dart"
+    },
+    {
+      "file": "23-price-expanded-loading.png",
+      "scenario": "price expanded loading",
+      "pixel_width": 786,
+      "pixel_height": 1704,
+      "logical_width": 393.0,
+      "logical_height": 852.0,
+      "text_scale": 1,
+      "sha256": "179a06ed0053dc78d6e46034728f621d76837de9163c59e5fa75f9fff0241b80",
+      "source": "proxo_app/test/tiktok_balanced_ui_test.dart"
+    },
+    {
+      "file": "24-restaurant-resources.png",
+      "scenario": "restaurant resources",
+      "pixel_width": 786,
+      "pixel_height": 1704,
+      "logical_width": 393.0,
+      "logical_height": 852.0,
+      "text_scale": 1,
+      "sha256": "8db6a1a46fdf9499be827ce5811bf9c8a47eabac12cd93ba4dd52774e94fb3dd",
+      "source": "proxo_app/test/tiktok_balanced_ui_test.dart"
+    },
+    {
+      "file": "25-app-resources.png",
+      "scenario": "app resources",
+      "pixel_width": 786,
+      "pixel_height": 1704,
+      "logical_width": 393.0,
+      "logical_height": 852.0,
+      "text_scale": 1,
+      "sha256": "f954dbdbc3ba6628d75d9d6693c4dfe3333debca32716b5ac103383871a9feee",
+      "source": "proxo_app/test/tiktok_balanced_ui_test.dart"
+    },
+    {
+      "file": "26-direct-message-open-sections.png",
+      "scenario": "direct message open sections",
+      "pixel_width": 786,
+      "pixel_height": 1704,
+      "logical_width": 393.0,
+      "logical_height": 852.0,
+      "text_scale": 1,
+      "sha256": "3983dd925a4c15b681bb2149c4af17bc4c91f6be851988055baa3ebbac7e0fb9",
+      "source": "proxo_app/test/tiktok_balanced_ui_test.dart"
+    },
+    {
+      "file": "27-large-text-320.png",
+      "scenario": "large text 320",
+      "pixel_width": 640,
+      "pixel_height": 1600,
+      "logical_width": 320.0,
+      "logical_height": 800.0,
+      "text_scale": 2,
+      "sha256": "bb08d9d96a11cbff6e0cd06a127392ecd36206d3b355d48845f9dac5db193e3a",
+      "source": "proxo_app/test/tiktok_balanced_ui_test.dart"
+    },
+    {
+      "file": "27-large-text-320-expanded.png",
+      "scenario": "large text 320 expanded",
+      "pixel_width": 640,
+      "pixel_height": 1600,
+      "logical_width": 320.0,
+      "logical_height": 800.0,
+      "text_scale": 2,
+      "sha256": "c4f9f307a71bfaf5007e5082e7086b4482121baf458b5e25c52884922340c5ff",
+      "source": "proxo_app/test/tiktok_balanced_ui_test.dart"
+    },
+    {
+      "file": "28-large-text-280.png",
+      "scenario": "large text 280",
+      "pixel_width": 560,
+      "pixel_height": 1400,
+      "logical_width": 280.0,
+      "logical_height": 700.0,
+      "text_scale": 2,
+      "sha256": "f0aa2dc3a3b1a8a3505013520061c91b04d99ce99114547efa6e32570421b41f",
+      "source": "proxo_app/test/tiktok_balanced_ui_test.dart"
+    },
+    {
+      "file": "28-large-text-280-expanded.png",
+      "scenario": "large text 280 expanded",
+      "pixel_width": 560,
+      "pixel_height": 1400,
+      "logical_width": 280.0,
+      "logical_height": 700.0,
+      "text_scale": 2,
+      "sha256": "e716a218a8536f047212953ffebf47ce37400809a68d88e1bc1756975fc08349",
+      "source": "proxo_app/test/tiktok_balanced_ui_test.dart"
+    },
+    {
+      "file": "29-price-with-discount.png",
+      "scenario": "price with discount",
+      "pixel_width": 786,
+      "pixel_height": 1704,
+      "logical_width": 393.0,
+      "logical_height": 852.0,
+      "text_scale": 1,
+      "sha256": "14af4a361b143ca550ef1c804998a6d71417a60c3883aee951ed3134e9323c47",
+      "source": "proxo_app/test/tiktok_balanced_ui_test.dart"
+    },
+    {
+      "file": "30-price-error.png",
+      "scenario": "price error",
+      "pixel_width": 786,
+      "pixel_height": 1704,
+      "logical_width": 393.0,
+      "logical_height": 852.0,
+      "text_scale": 1,
+      "sha256": "fa29e7538c41c275b3b22fa5cfe0f07cb8e4a7caa76c3ad83c3fcea7914590c1",
+      "source": "proxo_app/test/tiktok_balanced_ui_test.dart"
+    },
+    {
+      "file": "31-price-recovered.png",
+      "scenario": "price recovered",
+      "pixel_width": 786,
+      "pixel_height": 1704,
+      "logical_width": 393.0,
+      "logical_height": 852.0,
+      "text_scale": 1,
+      "sha256": "c136eb1bfa2353d614aadd8e773c6801a1028bc70f50cda4a507a61dfe97202b",
+      "source": "proxo_app/test/tiktok_balanced_ui_test.dart"
+    },
+    {
+      "file": "32-narrow-price-details-scrolled.png",
+      "scenario": "narrow price details scrolled",
+      "pixel_width": 560,
+      "pixel_height": 1400,
+      "logical_width": 280.0,
+      "logical_height": 700.0,
+      "text_scale": 2,
+      "sha256": "393940aa1f3e5c63fdf369a70ab91d2dc62a18333de196b7964217c030608b5b",
+      "source": "proxo_app/test/tiktok_balanced_ui_test.dart"
+    }
+  ],
+  "review_sheets": [
+    {
+      "file": "review-sheet-01.jpg",
+      "sha256": "14a4f6d1c24879233e40399615f692cd48c954dc8cef505a40df26fc7af74585"
+    },
+    {
+      "file": "review-sheet-02.jpg",
+      "sha256": "2493090de0d0e4d770db2d3bde461f46ac502f7f971d9840b51e64511bccf739"
+    },
+    {
+      "file": "review-sheet-03.jpg",
+      "sha256": "221ce2bfe632ada10b21b1c8a5ed6f08ce5dcfd84a84e78f4ae612a351e6b9c3"
+    },
+    {
+      "file": "review-sheet-04.jpg",
+      "sha256": "9cff2a655db8e30615b42f425830866cb5427dbf879ef5c158b4a09202685d1e"
+    },
+    {
+      "file": "review-sheet-05.jpg",
+      "sha256": "dc5d8a6f4615ee99b70f4660b0817208b45219369c1e8ce56035092226840124"
+    },
+    {
+      "file": "review-sheet-06.jpg",
+      "sha256": "18dcea173a1503964ce1b103c7b2c4f4648b57203182af8ff3e85492dcf1626e"
+    },
+    {
+      "file": "review-sheet-07.jpg",
+      "sha256": "976cbef7ecc3d87123e70d157241b8f4a3474874f96e32b0c324bbe159df6644"
+    }
+  ]
+}

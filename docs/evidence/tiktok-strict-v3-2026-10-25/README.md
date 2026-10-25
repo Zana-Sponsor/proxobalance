@@ -1,3 +1,5 @@
+> **Historical visual evidence:** this appearance was rejected in the later 25 October prompt. Use the [new balanced UI correction](../tiktok-balanced-2026-10-25/README.md) for the current design.
+
 # Strict v3 — 34 required screenshot states
 
 These are actual Flutter renders of production widgets, using deterministic test repositories. They are **controlled fixtures, not physical Android screenshots or live-provider acceptance**. Standard captures are 393 × 852 logical pixels rendered at 2×; states 33–34 are 280 × 700 with 200% text. The requested states overlap, so some full-screen captures are intentionally identical.

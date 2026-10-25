@@ -36,10 +36,12 @@ class AdPaymentCard extends StatefulWidget {
       required this.value,
       required this.onChanged,
       this.busy = false,
-      this.fastPayEnabled = true});
+      this.fastPayEnabled = true,
+      this.balanced = false});
   final String value;
   final ValueChanged<String> onChanged;
   final bool busy, fastPayEnabled;
+  final bool balanced;
   @override
   State<AdPaymentCard> createState() => _AdPaymentCardState();
 }
@@ -86,7 +88,16 @@ class _AdPaymentCardState extends State<AdPaymentCard> {
         final changeWidth = math.max(48.0, change.width + 16);
         change.dispose();
         final labelWidth = constraints.maxWidth - 24 - 44 - 8 - 8 - changeWidth;
-        final stacked = labelWidth < 48;
+        final labelMeasure = TextPainter(
+            text: TextSpan(
+                text: ProxoStrings.text(_walletLabel),
+                style: ProxoSurface.body),
+            textDirection: TextDirection.rtl,
+            textScaler: MediaQuery.textScalerOf(context))
+          ..layout();
+        final stacked = labelWidth <
+            (widget.balanced ? labelMeasure.minIntrinsicWidth : 48);
+        labelMeasure.dispose();
         final height = _paymentRowHeight(
             context, stacked ? constraints.maxWidth - 24 - 44 - 8 : labelWidth);
         final identity = <Widget>[

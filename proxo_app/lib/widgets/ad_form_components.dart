@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../services/ad_submission.dart';
 import '../theme/app_theme.dart';
 import '../theme/proxo_surface.dart';
+import '../theme/tiktok_ad_tokens.dart';
 import 'proxo_text.dart';
 import 'receipt/receipt_kit.dart';
 
@@ -143,8 +144,7 @@ class AdFormSection extends StatelessWidget {
                 title,
                 translate: true,
                 style: style == AdSectionStyle.open
-                    ? AdUi.heading(context)
-                        .copyWith(fontSize: 17, fontWeight: FontWeight.w600)
+                    ? TikTokAdTokens.heading
                     : AdUi.heading(context),
                 textAlign: TextAlign.right,
               ),
@@ -153,10 +153,15 @@ class AdFormSection extends StatelessWidget {
                 ProxoText(
                   subtitle!,
                   translate: true,
-                  style: AdUi.text(context, color: AdUi.secondary),
+                  style: style == AdSectionStyle.open
+                      ? TikTokAdTokens.helper
+                      : AdUi.text(context, color: AdUi.secondary),
                 ),
               ],
-              const SizedBox(height: 20),
+              SizedBox(
+                  height: style == AdSectionStyle.open
+                      ? TikTokAdTokens.headingGap
+                      : 20),
               child,
             ],
           ),
@@ -184,9 +189,15 @@ class AdChoice extends StatelessWidget {
   Widget build(BuildContext context) {
     final primary = style == AdChoiceStyle.primary;
     final scoped = style != AdChoiceStyle.standard;
+    final blue = scoped ? TikTokAdTokens.blue : AdUi.blue;
+    final radius = scoped ? TikTokAdTokens.controlRadius : AdUi.controlRadius;
     final foreground = primary
-        ? (selected ? Colors.white : const Color(0xFF64748B))
-        : (selected ? AdUi.blue : AdUi.ink);
+        ? (selected ? Colors.white : TikTokAdTokens.muted)
+        : (selected
+            ? blue
+            : scoped
+                ? TikTokAdTokens.ink
+                : AdUi.ink);
     return Semantics(
       selected: selected,
       enabled: onTap != null,
@@ -194,7 +205,7 @@ class AdChoice extends StatelessWidget {
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          borderRadius: AdUi.controlRadius,
+          borderRadius: radius,
           onTap: onTap,
           child: AnimatedContainer(
             duration: MediaQuery.disableAnimationsOf(context)
@@ -202,29 +213,30 @@ class AdChoice extends StatelessWidget {
                 : const Duration(milliseconds: 180),
             curve: Curves.easeOutCubic,
             constraints: BoxConstraints(minHeight: minimumHeight),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: EdgeInsets.symmetric(
+                horizontal: scoped ? 12 : 16, vertical: 12),
             decoration: BoxDecoration(
               color: selected
-                  ? (primary ? AdUi.blue : AppColors.accentSoft)
+                  ? (primary
+                      ? blue
+                      : scoped
+                          ? TikTokAdTokens.blueSoft
+                          : AppColors.accentSoft)
                   : Colors.white,
-              borderRadius: AdUi.controlRadius,
+              borderRadius: radius,
               border: Border.all(
                 color: primary && selected
                     ? Colors.transparent
                     : selected
-                        ? (scoped ? AdUi.blue : AdUi.selectedLine)
+                        ? (scoped ? blue : AdUi.selectedLine)
                         : scoped
                             ? const Color(0xFFCBD5E1)
                             : AdUi.controlLine,
               ),
               boxShadow: scoped
-                  ? const [
-                      BoxShadow(
-                        color: Color(0x080F172A),
-                        blurRadius: 5,
-                        offset: Offset(0, 2),
-                      ),
-                    ]
+                  ? (selected
+                      ? TikTokAdTokens.selectedShadow
+                      : TikTokAdTokens.controlShadow)
                   : null,
             ),
             child: Center(
@@ -253,11 +265,10 @@ class AdChoice extends StatelessWidget {
                         label,
                         translate: true,
                         textAlign: TextAlign.center,
-                        style: AdUi.text(context, color: color ?? foreground)
-                            .copyWith(
-                          fontWeight:
-                              scoped ? FontWeight.w500 : FontWeight.w400,
-                        ),
+                        style: (scoped
+                                ? TikTokAdTokens.choice
+                                : AdUi.text(context))
+                            .copyWith(color: color ?? foreground),
                       ),
                     ),
                   ),
@@ -274,30 +285,107 @@ class AdChoice extends StatelessWidget {
 class AdPriceDetails extends StatelessWidget {
   final AdQuote quote;
   final bool showTotal;
-  const AdPriceDetails({super.key, required this.quote, this.showTotal = true});
+  final bool balanced, loading, stackRows;
+  final double amountWidth, leadingWidth;
+  const AdPriceDetails(
+      {super.key,
+      required this.quote,
+      this.showTotal = true,
+      this.balanced = false,
+      this.loading = false,
+      this.stackRows = false,
+      this.amountWidth = 110,
+      this.leadingWidth = 48});
   @override
-  Widget build(BuildContext context) => Column(children: [
-        AdValueRow(label: 'نرخی لاوەکی', value: adIqd(quote.sponsorIqd)),
+  Widget build(BuildContext context) {
+    if (balanced) {
+      Widget row(String id, String label, String value, {Color? color}) {
+        final amount = SizedBox(
+            width: stackRows ? null : amountWidth,
+            child: Stack(alignment: Alignment.centerLeft, children: [
+              Visibility(
+                  visible: !loading,
+                  maintainState: true,
+                  maintainAnimation: true,
+                  maintainSize: true,
+                  child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: ProxoText(value,
+                              key: ValueKey('price-value-$id'),
+                              softWrap: false,
+                              textAlign: TextAlign.left,
+                              style: TikTokAdTokens.priceAmount
+                                  .copyWith(color: color))))),
+              if (loading)
+                const SizedBox(
+                    width: 36,
+                    height: 6,
+                    child: DecoratedBox(
+                        decoration: BoxDecoration(
+                            color: TikTokAdTokens.fieldLine,
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(3))))),
+            ]));
+        final name = ProxoText(label,
+            key: ValueKey('price-label-$id'),
+            translate: true,
+            textAlign: TextAlign.right,
+            style: TikTokAdTokens.priceLabel.copyWith(color: color));
+        if (stackRows) {
+          return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [name, const SizedBox(height: 6), amount]);
+        }
+        return Row(
+            textDirection: TextDirection.ltr,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SizedBox(width: leadingWidth),
+              amount,
+              const SizedBox(width: 12),
+              Expanded(child: name)
+            ]);
+      }
+
+      return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+        row('unit', 'نرخی لاوەکی', adIqd(quote.sponsorIqd)),
         const SizedBox(height: 12),
-        AdValueRow(label: 'کرێی خزمەتگوزاری', value: adIqd(quote.serviceIqd)),
+        row('fee', 'کرێی خزمەتگوزاری', adIqd(quote.serviceIqd)),
         if (quote.promoIqd + quote.levelIqd > 0) ...[
           const SizedBox(height: 12),
-          AdValueRow(
+          KeyedSubtree(
               key: const ValueKey('coupon-discount'),
-              label: 'داشکاندن',
-              value: adIqd(quote.promoIqd + quote.levelIqd, discount: true),
-              color: AdUi.green),
-        ],
-        if (showTotal) ...[
-          const Divider(height: 24, color: ReceiptTokens.divider),
-          AdValueRow(
-              key: const ValueKey('ad-total'),
-              label: 'کۆی گشتی',
-              value: adIqd(quote.totalIqd),
-              color: AdUi.blue,
-              emphasis: true),
+              child: row('discount', 'داشکاندن',
+                  adIqd(quote.promoIqd + quote.levelIqd, discount: true),
+                  color: AdUi.green)),
         ],
       ]);
+    }
+    return Column(children: [
+      AdValueRow(label: 'نرخی لاوەکی', value: adIqd(quote.sponsorIqd)),
+      const SizedBox(height: 12),
+      AdValueRow(label: 'کرێی خزمەتگوزاری', value: adIqd(quote.serviceIqd)),
+      if (quote.promoIqd + quote.levelIqd > 0) ...[
+        const SizedBox(height: 12),
+        AdValueRow(
+            key: const ValueKey('coupon-discount'),
+            label: 'داشکاندن',
+            value: adIqd(quote.promoIqd + quote.levelIqd, discount: true),
+            color: AdUi.green),
+      ],
+      if (showTotal) ...[
+        const Divider(height: 24, color: ReceiptTokens.divider),
+        AdValueRow(
+            key: const ValueKey('ad-total'),
+            label: 'کۆی گشتی',
+            value: adIqd(quote.totalIqd),
+            color: AdUi.blue,
+            emphasis: true),
+      ],
+    ]);
+  }
 }
 
 class AdValueRow extends StatelessWidget {

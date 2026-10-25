@@ -1,3 +1,5 @@
+> **Historical visual evidence:** this appearance was rejected in the later 25 October prompt. Use the [new balanced UI correction](../tiktok-balanced-ui/implementation-report.md) for the current design.
+
 # TikTok Create Ad — strict v3 implementation and verification
 
 Source baseline: `4e755dd8c48b248df6b6534f63388d4cb693e376`. The already-published historical gallery is parent commit `d1e1eba6d5d0dc6a95c399263a5061064d8ad713`; this strict-v3 report and its new screenshots are separate from that earlier evidence. The [supplied specification](specification.md) is preserved verbatim. This report separates source implementation, automated fixture evidence, and live production acceptance.

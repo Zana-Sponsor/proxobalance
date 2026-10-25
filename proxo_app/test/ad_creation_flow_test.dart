@@ -172,7 +172,8 @@ void main() {
         )) {
           expect(text.data?.toUpperCase() ?? '', isNot(contains('CPM')));
           if (text.style != null) {
-            expect(text.style!.fontWeight, isIn([FontWeight.w400, FontWeight.w500, FontWeight.w600]));
+            expect(text.style!.fontWeight,
+                isIn([FontWeight.w400, FontWeight.w500, FontWeight.w600]));
           }
         }
       });
@@ -225,7 +226,7 @@ void main() {
       expect(tester.takeException(), isNull);
     },
   );
-  testWidgets('targeting natural widths, RTL order and supported values', (
+  testWidgets('targeting equal widths, RTL order and supported values', (
     tester,
   ) async {
     await tester.pumpWidget(
@@ -240,7 +241,7 @@ void main() {
     expect(tester.getCenter(all).dx, greaterThan(tester.getCenter(ku).dx));
     expect(tester.getCenter(ku).dx, greaterThan(tester.getCenter(iq).dx));
     expect(tester.getSize(all).height, tester.getSize(ku).height);
-    expect(tester.getSize(all).width, isNot(tester.getSize(ku).width));
+    expect(tester.getSize(all).width, tester.getSize(ku).width);
     await tapVisible(tester, ku);
     expect(tester.widget<AdChoice>(ku).selected, isTrue);
     await tapVisible(tester, find.byKey(const ValueKey('gender-female')));
@@ -371,7 +372,8 @@ void main() {
         'پاراستنی ناو',
       );
       await tapVisible(tester, find.byKey(const ValueKey('goal-contact')));
-      await tapVisible(tester, find.byKey(const ValueKey('contact-page-disclosure')));
+      await tapVisible(
+          tester, find.byKey(const ValueKey('contact-page-disclosure')));
       await tapVisible(tester, find.text('دروستکردنی پەڕەی نوێ'));
       await tester.pumpAndSettle();
       expect(
@@ -425,7 +427,7 @@ void main() {
     await tester.ensureVisible(button);
     await tester.pumpAndSettle();
     final before = tester.getSize(button);
-    expect(before.height, 48);
+    expect(before.height, 50);
     repo.quoteCompletion = Completer<AdQuote>();
     await tester.tap(button);
     await tester.pump();
@@ -586,8 +588,13 @@ void main() {
     await reviewAd(tester);
     expect(find.byType(AdConfirmationScreen), findsOneWidget);
     expect(repo.submissions, 0);
-    expect(tester.widget<AdConfirmationScreen>(find.byType(AdConfirmationScreen))
-        .request.draft.title, 'Edited title survives cancel');
+    expect(
+        tester
+            .widget<AdConfirmationScreen>(find.byType(AdConfirmationScreen))
+            .request
+            .draft
+            .title,
+        'Edited title survives cancel');
     await tester.pump(const Duration(seconds: 1));
     await tester.tap(find.byKey(const ValueKey('cancel-submission')));
     await tester.pumpAndSettle();

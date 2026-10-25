@@ -3,17 +3,18 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:proxo_app/widgets/ad_form_components.dart';
 import 'package:proxo_app/widgets/proxo_text.dart';
 import 'package:proxo_app/theme/app_theme.dart';
+import 'package:proxo_app/theme/tiktok_ad_tokens.dart';
 
 void main() {
   Widget host(Widget child) => MaterialApp(
-    theme: buildAppTheme(),
-    home: Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(
-        body: Center(child: SizedBox(width: 240, child: child)),
-      ),
-    ),
-  );
+        theme: buildAppTheme(),
+        home: Directionality(
+          textDirection: TextDirection.rtl,
+          child: Scaffold(
+            body: Center(child: SizedBox(width: 240, child: child)),
+          ),
+        ),
+      );
 
   for (final style in [AdChoiceStyle.primary, AdChoiceStyle.secondary]) {
     testWidgets(
@@ -57,10 +58,12 @@ void main() {
         expect(inactive.color, Colors.white);
         expect(
           tester.widget<ProxoText>(text).style!.color,
-          style == AdChoiceStyle.primary ? const Color(0xFF64748B) : AdUi.ink,
+          style == AdChoiceStyle.primary
+              ? TikTokAdTokens.muted
+              : TikTokAdTokens.ink,
         );
         expect((inactive.border! as Border).top.color, const Color(0xFFCBD5E1));
-        expect(inactive.borderRadius, AdUi.controlRadius);
+        expect(inactive.borderRadius, TikTokAdTokens.controlRadius);
         final animated = tester.widget<AnimatedContainer>(container);
         expect(animated.duration, const Duration(milliseconds: 180));
         expect(animated.curve, Curves.easeOutCubic);
@@ -70,14 +73,15 @@ void main() {
         expect(tester.getTopLeft(choice), position);
         final active = decoration();
         if (style == AdChoiceStyle.primary) {
-          expect(active.color, AdUi.blue);
+          expect(active.color, TikTokAdTokens.blue);
           expect(tester.widget<ProxoText>(text).style!.color, Colors.white);
           expect((active.border! as Border).top.color, Colors.transparent);
         } else {
-          expect(active.color, isNot(AdUi.blue));
+          expect(active.color, isNot(TikTokAdTokens.blue));
           expect(active.color, isNot(Colors.white));
-          expect(tester.widget<ProxoText>(text).style!.color, AdUi.blue);
-          expect((active.border! as Border).top.color, AdUi.blue);
+          expect(
+              tester.widget<ProxoText>(text).style!.color, TikTokAdTokens.blue);
+          expect((active.border! as Border).top.color, TikTokAdTokens.blue);
         }
         change(() => selected = false);
         await tester.pumpAndSettle();
@@ -112,13 +116,13 @@ void main() {
         ),
       );
       Container surface(String key) => tester.widget<Container>(
-        find
-            .descendant(
-              of: find.byKey(ValueKey(key)),
-              matching: find.byType(Container),
-            )
-            .first,
-      );
+            find
+                .descendant(
+                  of: find.byKey(ValueKey(key)),
+                  matching: find.byType(Container),
+                )
+                .first,
+          );
       expect(surface('flat').decoration, isNull);
       expect(surface('flat').padding, EdgeInsets.zero);
       expect(surface('default').decoration, isA<BoxDecoration>());
